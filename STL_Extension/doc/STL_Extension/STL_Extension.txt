@@ -1,0 +1,364 @@
+namespace CGAL {
+/*!
+
+\mainpage STL Extensions for %CGAL
+\anchor Chapter_STL_Extensions_for_CGAL
+
+\cgalAutoToc
+\authors Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
+
+\section stl_intro Introduction
+
+\cgal is designed in the spirit of the generic programming paradigm
+to work together with the Standard Template Library (\stl)
+\cite cgal:ansi-is14882-98, \cite cgal:a-gps-98. This chapter documents non-geometric
+\stl-like components that are not provided in the \stl standard but
+in \cgal: a doubly-connected list managing items in place (where
+inserted items are not copied), a compact container, a multi-set class that
+uses three-valued comparisons and offers additional functionality,
+generic algorithms, iterators, functor adaptors for binding and swapping
+arguments and for composition, functors for projection and creation and
+adaptor classes around iterators and circulators. See also circulators in
+Chapter \ref Chapter_Handles_Ranges_and_Circulators "Handles and Circulators".
+A class storing polymorphic objects
+is also provided, as well as a class to manage the uncertainty of some values.
+Finally, tags and policy classes to specify complexity trade-offs of data-structures,
+and a class which helps specifying that the default types in template
+parameter lists are desired is also provided.
+
+\section stl_doubly Doubly-Connected List Managing Items in Place
+
+The class `In_place_list<T,bool>` manages a
+sequence of items in place in a doubly-connected list. Its goals are
+the flexible handling of memory management and performance
+optimization. The item type has to provide the two necessary
+pointers `&T::next_link` and `&T::prev_link`. One possibility
+to obtain these pointers is to inherit them from the base class
+`In_place_list_base<T>`.
+
+The class `In_place_list<T,bool>` is a container quite similar
+to \stl containers, with the advantage that it is able to handle the
+stored elements by reference instead of copying them. It is possible
+to delete an element only knowing its address and no iterator to it.
+This used to simplify mutually pointed data structures like a halfedge
+data structure for planar maps or polyhedral surfaces (the current design
+does not need this anymore). The usual iterators are also available.
+
+\section stl_compact Compact Container
+
+The class `Compact_container<T, Allocator>` is an \stl like container
+which provides a very compact storage for its elements. It achieves this goal
+by requiring `T` to provide access to a pointer in it, which is going to be
+used by `Compact_container<T, Allocator>` for its internal management.
+The traits class `Compact_container_traits<T>` specifies the way to
+access that pointer. The class `Compact_container_base` can be
+used as a base class to provide the pointer, although in this case you do not
+get the most compact representation. The values that this pointer can have
+during valid use of the object are valid pointer values to 4 bytes aligned
+objects (i.e., the two least significant bits of the pointer need to be zero
+when the object is constructed). Another interesting property of this
+container is that iterators are not invalidated during `insert` or
+`erase` operations.
+
+The main deviation from the \stl container concept is that the `++` and
+`--` operators of the iterator do not have a constant time complexity in
+all cases. The actual complexity is related to the maximum size that the
+container has had during its life time compared to its current size, because
+the iterator has to go over the "erased" elements as well, so the bad case is
+when the container used to contain lots of elements, but now has far less. In
+this case, we suggest to do a copy of the container in order to "defragment"
+the internal representation.
+
+This container has been developed in order to efficiently handle large data
+structures like the triangulation and halfedge data structures. It can
+probably be useful for other kinds of graphs as well.
+
+\section stl_multi Multiset with Extended Functionality
+
+The class `Multiset<Type,Compare,Allocator>` represents a
+multi-set of elements of type `Type`, represented as a red-black tree
+(see \cite clrs-ia-01 for an excellent introduction to red-black
+trees). It differs from the \stl's `multiset` class-template mainly due
+to the fact that it is parameterized by a comparison functor `Compare`
+that returns the three-valued `Comparison_result` (namely it returns
+either `SMALLER`, `EQUAL`, or `LARGER`), rather than a <I>less</I>
+functor returning `bool`. Thus, it is possible to maintain
+the underlying red-black tree with less invocations of the comparison functor,
+which can considerably decrease running times, especially when comparing
+elements of type `Type` is an expensive operation.
+
+`Multiset<Type,Compare,Allocator>` also guarantees that the order of
+elements sent to the comparison functor is fixed. For example, if we insert
+a new element `x` into the set (or erase an element from the set), then
+we always invoke `Compare()(x, y)` (and never `Compare()(y, x)`),
+where `y` is an element already stored in the set. This behavior, not
+supported by `std::multiset`, is sometimes crucial for designing more
+efficient comparison predicates.
+
+The interface of `Multiset<Type,Compare,Allocator>` is in general
+derived from `std::multiset`. However, it extends the interface by
+offering some additional operations, such as: inserting of an element into
+the set given its <I>exact</I> position (and not just using an insertion hint);
+looking up keys whose type may differ from `Type`, as long as users supply
+a comparison functor `CompareKey`, between the keys and set elements;
+and catenating and splitting sets.
+
+\section stl_polyobject Polymorphic Object
+
+The class `Object` can store an object of whatever other type.
+It can be used by a function to return objects of different types.
+A mechanism to extract the stored object based on its type is also provided.
+This class is similar to `boost::any`.
+
+\section stl_uncertainty Uncertainty Management
+
+The class `Uncertain<T>` represents a range of values of type `T`.
+`T` is allowed to stand for `bool`, or \cgal's enumeration types
+`Sign`, `Comparison_result`, `Orientation`, `Oriented_side`,
+`Bounded_side` and `Angle`.
+
+The idea is that sometimes you are not sure of the result of a function,
+and you would like to communicate that to the caller. `Uncertain<T>`
+allows just that. It also provides functions to naturally extend the
+Boolean operations for `Uncertain<bool>` for example.
+
+`Uncertain<T>` is used in \cgal as the return type of geometric predicates
+when the number type used is interval arithmetic like `Interval_nt`.
+End users typically do not see it as it is hidden in the implementation
+of the filtered predicates provided by the various filtered kernels,
+but it is important that providers of predicates that are meant to be
+filtered by `Filtered_predicate`, know about it.
+
+It can also be used in other contexts as well, as it is a general tool.
+
+\section stl_complexity Complexity Tags and Policies
+
+Some data structures and algorithms can be implemented with different
+complexity trade-offs between memory usage and time complexity. \cgal provides
+the tags `Fast` and `Compact` which can be used to select between those
+variants. For example, the `Location_policy` class is parameterized by
+these tags and allows to specify the complexity of point location (currently in
+`Delaunay_triangulation_3` only). Convenient typedefs `Fast_location`
+and `Compact_location` are also provided.
+
+\section stl_defaults Default Arguments in Template Parameter Lists
+
+In \cpp, it is possible to specify defaults at the end of a template parameter
+list. Specifying that one wishes to use the default is simply done by omitting
+it. This is however possible only at the end of the list. `Default`
+provides a simple mechanism that performs something equivalent anywhere in the
+sequence.
+
+\section stl_wrappers C++ 11 Wrappers
+
+Wrappers for the classes `array` and `tuple` which, based on
+availability, either use the version of <I>Boost</I> or the one
+provided by the standard library are provided in the namespace
+`CGAL::cpp11`. The namespace alias `CGAL::cpp11` is provided
+for backward compatibility. Those are documented for completeness and
+implementers. They are not intended to be used by users of the
+library.
+
+\section secchecks Checks
+
+Much of the \cgal code contains checks.
+For example, all checks used in the kernel code are prefixed by
+`CGAL_KERNEL`.
+Other packages have their own prefixes, as documented in the corresponding
+chapters.
+Some are there to check if the kernel behaves correctly, others are there to
+check if the user calls kernel routines in an acceptable manner.
+
+There are five types of checks.
+The first three are errors and lead to a halt of the program if they fail.
+The fourth only leads to a warning, and the last one is compile-time only.
+
+<DL>
+<DT>Preconditions</DT>
+<DD>
+check if the caller of a routine has called it in a proper fashion.
+If such a check fails it is the responsibility of the caller (usually the user of the library).
+</DD>
+<DT>Postconditions</DT>
+<DD>
+check if a routine does what it promises to do.
+If such a check fails it is the fault of this routine, so of the library.
+</DD>
+<DT>Assertions</DT>
+<DD>
+are other checks that do not fit in the above two
+categories.
+</DD>
+<DT>Warnings</DT>
+<DD>
+are checks for which it is not so severe if they fail.
+</DD>
+<DT>Static assertions</DT>
+<DD>
+are compile-time assertions, used e.g. to verify
+the values of compile-time constants or compare types for (in)equality.
+</DD>
+</DL>
+
+By default, all of these checks are performed.
+It is however possible to turn them off through the use of compile time
+switches.
+For example, for the checks in the kernel code, these switches are the
+following:
+`CGAL_KERNEL_NO_PRECONDITIONS`,
+`CGAL_KERNEL_NO_POSTCONDITIONS`,
+`CGAL_KERNEL_NO_ASSERTIONS` and
+`CGAL_KERNEL_NO_WARNINGS`.
+
+So, in order to compile the file `foo.cpp` with the postcondition checks
+off, you can do:
+
+`CC -DCGAL_KERNEL_NO_POSTCONDITIONS foo.cpp`
+
+This is also preferably done by modifying your makefile by adding
+`-DCGAL_KERNEL_NO_POSTCONDITIONS` to the `CXXFLAGS` variable.
+
+The name `KERNEL` in the macro name can be replaced by a package
+specific name in order to control assertions done in a given package.
+This name is given in the documentation of the corresponding package,
+in case it exists.
+
+Note that global macros can also be used to control the behavior over the
+whole \cgal library:
+
+- `CGAL_NO_PRECONDITIONS`,
+- `CGAL_NO_POSTCONDITIONS`,
+- `CGAL_NO_ASSERTIONS`,
+- `CGAL_NO_WARNINGS` and
+- `CGAL_NDEBUG`.
+
+
+Setting the macro `CGAL_NDEBUG` disables all checks.
+Note that the standard flag `NDEBUG` sets `CGAL_NDEBUG`, but it also
+affects the standard `assert` macro.
+This way, adding `-DCGAL_NDEBUG` to your compilation flags removes
+absolutely all checks.  This is the default recommended setup for performing
+timing benchmarks for example.
+
+Not all checks are on by default.
+The first four types of checks can be marked as expensive or exactness checks
+(or both).
+These checks need to be turned on explicitly by supplying one or both of
+the compile time switches `CGAL_KERNEL_CHECK_EXPENSIVE` and
+`CGAL_KERNEL_CHECK_EXACTNESS`.
+
+Expensive checks are, as the word says, checks that take a considerable
+time to compute.
+Considerable is an imprecise phrase.
+Checks that add less than 10 percent to the execution time of the routine
+they are in are not expensive.
+Checks that can double the execution time are.
+Somewhere in between lies the border line.
+Checks that increase the asymptotic running time of an algorithm are always
+considered expensive.
+Exactness checks are checks that rely on exact arithmetic.
+For example, if the intersection of two lines is computed, the postcondition
+of this routine may state that the intersection point lies on both lines.
+However, if the computation is done with doubles as number type, this may not
+be the case, due to round off errors.
+So, exactness checks should only be turned on if the computation is done
+with some exact number type.
+
+By definition, static assertions are both inexpensive and unaffected by precision
+management. Thus, the categories do not apply for static assertions.
+
+\subsection stl_alteriung Altering the Failure Behavior
+
+As stated above, if a postcondition, precondition or assertion is
+violated, an exception is thrown, and if nothing is done to catch it,
+the program will abort.
+This behavior can be changed by means of the function `set_error_behaviour()`
+and the enum `Failure_behaviour`.
+
+The `THROW_EXCEPTION` value is the default, which throws an exception.
+
+If the `EXIT` value is set, the program will stop and return a value
+indicating failure, but not dump the core.
+The `CONTINUE` value tells the checks to go on after diagnosing the error.
+Note that since \cgal 3.4, `CONTINUE` has the same effect as
+`THROW_EXCEPTION` for errors (but it keeps its meaning for warnings), it is
+not possible anymore to let assertion failures simply continue (except by
+totally disabling them).
+
+\cgalAdvanced If the `EXIT_WITH_SUCCESS` value is set, the program will stop and
+return a value corresponding to successful execution and not dump the core.
+
+The value that is returned by `set_error_behaviour()` is the value that was in use before.
+
+For warnings we provide `set_warning_behaviour()` which works in the same way.
+The only difference is that for warnings the default value is
+`CONTINUE`.
+
+
+\subsection stl_control Control at a Finer Granularity
+
+The compile time flags as described up to now all operate on the whole
+library.
+Sometimes you may want to have a finer control.
+\cgal offers the possibility to turn checks on and off with a bit finer
+granularity, namely the module in which the routines are defined.
+The name of the module is to be appended directly after the \cgal prefix.
+So, the flag `CGAL_KERNEL_NO_ASSERTIONS` switches off assertions in
+the kernel only, the flag `CGAL_CH_CHECK_EXPENSIVE` turns on
+expensive checks in the convex hull module.
+The name of a particular module is documented with that module.
+
+
+\subsection stl_customizing Customizing how Errors are Reported
+
+Normally, error messages are written to the standard error output.
+It is possible to do something different with them.
+To that end you can register your own handler using
+`set_error_handler(Failure_function handler)`
+This function should be declared as follows.
+
+
+There are several things that you can do with your own handler.
+You can display a diagnostic message in a different way, for instance in
+a pop up window or to a log file (or a combination).
+You can also implement a different policy on what to do after an error.
+For instance, you can throw an exception or ask the user in a dialog
+whether to abort or to continue.
+If you do this, it is best to set the error behavior to
+`CONTINUE`, so that it does not interfere with your policy.
+
+You can register two handlers, one for warnings and one for errors.
+Of course, you can use the same function for both if you want.
+When you set a handler, the previous handler is returned, so you can restore
+it if you want.
+
+
+
+\subsubsection stl_failure_example Example
+
+\code{.cpp}
+#include <CGAL/assertions.h>
+
+void my_failure_handler(
+    const char *type,
+    const char *expr,
+    const char* file,
+    int line,
+    const char* msg)
+{
+    // report the error in some way.
+}
+
+void foo()
+{
+    CGAL::Failure_function prev;
+    prev = CGAL::set_error_handler(my_failure_handler);
+    // call some routines.
+    CGAL::set_error_handler(prev);
+}
+\endcode
+
+
+*/
+} /* namespace CGAL */
+

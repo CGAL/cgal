@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ArrangementDemoWindow</class>
+ <widget class="QMainWindow" name="ArrangementDemoWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>946</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>946</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionNewTab"/>
+    <addaction name="actionCloseTab"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuMode">
+    <property name="title">
+     <string>&amp;Mode</string>
+    </property>
+    <addaction name="actionDrag"/>
+    <addaction name="actionInsert"/>
+    <addaction name="actionDelete"/>
+    <addaction name="actionPointLocation"/>
+    <addaction name="actionRayShootingUp"/>
+    <addaction name="actionRayShootingDown"/>
+    <addaction name="actionMerge"/>
+    <addaction name="actionSplit"/>
+    <addaction name="actionFill"/>
+   </widget>
+   <widget class="QMenu" name="menuTraits">
+    <property name="title">
+     <string>&amp;Traits</string>
+    </property>
+    <addaction name="actionSegment"/>
+    <addaction name="actionPolyline"/>
+    <addaction name="actionConic"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionSnapMode"/>
+    <addaction name="actionGridSnapMode"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowGrid"/>
+    <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
+   </widget>
+   <widget class="QMenu" name="menuT_ools">
+    <property name="title">
+     <string>T&amp;ools</string>
+    </property>
+    <addaction name="actionOverlay"/>
+   </widget>
+   <widget class="QMenu" name="menuTesting">
+    <property name="title">
+     <string>Testing</string>
+    </property>
+    <addaction name="actionPrintConicCurves"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menuMode"/>
+   <addaction name="menuTraits"/>
+   <addaction name="menuT_ools"/>
+   <addaction name="menuTesting"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionDrag"/>
+   <addaction name="actionInsert"/>
+   <addaction name="actionDelete"/>
+   <addaction name="actionPointLocation"/>
+   <addaction name="actionRayShootingUp"/>
+   <addaction name="actionRayShootingDown"/>
+   <addaction name="actionMerge"/>
+   <addaction name="actionSplit"/>
+   <addaction name="separator"/>
+   <addaction name="actionFill"/>
+   <addaction name="actionFillColor"/>
+   <addaction name="separator"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
+   <addaction name="separator"/>
+   <addaction name="actionSnapMode"/>
+   <addaction name="actionGridSnapMode"/>
+   <addaction name="separator"/>
+   <addaction name="actionLowerEnvelope"/>
+   <addaction name="actionUpperEnvelope"/>
+   <addaction name="separator"/>
+   <addaction name="actionConicSegment"/>
+   <addaction name="actionCurveRay"/>
+   <addaction name="actionCurveLine"/>
+   <addaction name="actionConicCircle"/>
+   <addaction name="actionConicEllipse"/>
+   <addaction name="actionConicThreePoint"/>
+   <addaction name="actionConicFivePoint"/>
+  </widget>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionInsert">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_insert.xpm</normaloff>:/icons/demo_insert.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Insert</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_delete.xpm</normaloff>:/icons/demo_delete.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="actionDrag">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/hand.xpm</normaloff>:/icons/hand.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Drag</string>
+   </property>
+  </action>
+  <action name="actionPointLocation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_pointlocation.xpm</normaloff>:/icons/demo_pointlocation.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Point Location</string>
+   </property>
+  </action>
+  <action name="actionRayShootingUp">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_rayshoot_up.xpm</normaloff>:/icons/demo_rayshoot_up.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Ray Shooting Up</string>
+   </property>
+  </action>
+  <action name="actionRayShootingDown">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_rayshoot_down.xpm</normaloff>:/icons/demo_rayshoot_down.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Ray Shooting Down</string>
+   </property>
+  </action>
+  <action name="actionMerge">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_merge.xpm</normaloff>:/icons/demo_merge.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Merge</string>
+   </property>
+  </action>
+  <action name="actionSplit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_split.xpm</normaloff>:/icons/demo_split.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Split</string>
+   </property>
+  </action>
+  <action name="actionFill">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_fill.xpm</normaloff>:/icons/demo_fill.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Fill</string>
+   </property>
+  </action>
+  <action name="actionSnapMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_snapvertex.xpm</normaloff>:/icons/demo_snapvertex.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Enable snapping</string>
+   </property>
+  </action>
+  <action name="actionGridSnapMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_snapgrid.xpm</normaloff>:/icons/demo_snapgrid.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Snap to grid</string>
+   </property>
+  </action>
+  <action name="actionSegment">
+   <property name="text">
+    <string>Segment</string>
+   </property>
+  </action>
+  <action name="actionPolyline">
+   <property name="text">
+    <string>Polyline</string>
+   </property>
+  </action>
+  <action name="actionConic">
+   <property name="text">
+    <string>Conic</string>
+   </property>
+  </action>
+  <action name="actionNewTab">
+   <property name="text">
+    <string>New tab</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOverlay">
+   <property name="text">
+    <string>&amp;Overlay...</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>&amp;Preferences...</string>
+   </property>
+  </action>
+  <action name="actionShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;grid</string>
+   </property>
+  </action>
+  <action name="actionLowerEnvelope">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/lower_env_xpm.xpm</normaloff>:/icons/lower_env_xpm.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Lower envelope</string>
+   </property>
+  </action>
+  <action name="actionUpperEnvelope">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/upper_env_xpm.xpm</normaloff>:/icons/upper_env_xpm.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Upper envelope</string>
+   </property>
+  </action>
+  <action name="actionConicSegment">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_segment.xpm</normaloff>:/icons/demo_conic_segment.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Segment</string>
+   </property>
+  </action>
+  <action name="actionConicCircle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_circle.xpm</normaloff>:/icons/demo_conic_circle.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Circle</string>
+   </property>
+  </action>
+  <action name="actionConicEllipse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_ellipse.xpm</normaloff>:/icons/demo_conic_ellipse.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Ellipse</string>
+   </property>
+  </action>
+  <action name="actionConicThreePoint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_3points.xpm</normaloff>:/icons/demo_conic_3points.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Three Point Conic</string>
+   </property>
+  </action>
+  <action name="actionConicFivePoint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_5points.xpm</normaloff>:/icons/demo_conic_5points.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Five Point Conic</string>
+   </property>
+  </action>
+  <action name="actionCloseTab">
+   <property name="text">
+    <string>Close Tab</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionPrintConicCurves">
+   <property name="text">
+    <string>Print conic curves</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_zoomin.xpm</normaloff>:/icons/demo_zoomin.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_zoomout.xpm</normaloff>:/icons/demo_zoomout.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="actionCurveRay">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_ray.xpm</normaloff>:/icons/demo_conic_ray.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Ray</string>
+   </property>
+  </action>
+  <action name="actionCurveLine">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ArrangementDemoWindow.qrc">
+     <normaloff>:/icons/demo_conic_line.xpm</normaloff>:/icons/demo_conic_line.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Line</string>
+   </property>
+  </action>
+  <action name="actionFillColor">
+   <property name="text">
+    <string>Fill Color</string>
+   </property>
+   <property name="toolTip">
+    <string>Set the fill color</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="ArrangementDemoWindow.qrc"/>
+ </resources>
+ <connections/>
+</ui>

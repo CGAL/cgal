@@ -362,8 +362,14 @@ Scene_polygon_soup_item::orient()
           stack.push(index);
         }
         else {
-//           qDebug() << "else" << it_same_orient->second.size() << it_other_orient->second.size();
-          success = false; // non-orientable
+          // qDebug() << "else" << it_same_orient->second.size() << 
+          //   (it_other_orient == edges.end() ? 0 : it_other_orient->second.size());
+          if(it_same_orient->second.size() != 1 || 
+             (it_other_orient != edges.end() && it_other_orient->second.size() > 0)) 
+          {
+            // qDebug() << tr("non orientable");
+            success = false; // non-orientable
+          }
         }
       } // end for on all edges of one 
     } // end while loop on the polygons of the connected component

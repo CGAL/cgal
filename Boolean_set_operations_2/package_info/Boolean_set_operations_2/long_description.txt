@@ -1,6 +1,6 @@
 This package consists of the implementation of Boolean set-operations
 on point sets bounded by weakly x-monotone curves in 2-dimensional
-Euclidean space. (Continuous planar curves or vertical segments.} In
+Euclidean space. (Continuous planar curves or vertical segments.) In
 particular, it contains the implementation of regularized Boolean
 set-operations, intersection predicates, and point containment predicates.
 

@@ -1,0 +1,31 @@
+<RCC>
+  <qresource>
+    <file>icons/demo_fill.xpm</file>
+    <file>icons/demo_conic_line.xpm</file>
+    <file>icons/demo_zoomin.xpm</file>
+    <file>icons/demo_zoomout.xpm</file>
+    <file>icons/yellow_icon.xpm</file>
+    <file>icons/red_icon.xpm</file>
+    <file>icons/green_icon.xpm</file>
+    <file>icons/blue_icon.xpm</file>
+    <file>icons/demo_conic_circle.xpm</file>
+    <file>icons/demo_conic_ellipse.xpm</file>
+    <file>icons/demo_conic_5points.xpm</file>
+    <file>icons/demo_conic_segment.xpm</file>
+    <file>icons/demo_conic_3points.xpm</file>
+    <file>icons/demo_snapvertex.xpm</file>
+    <file>icons/demo_conic_ray.xpm</file>
+    <file>icons/lower_env_xpm.xpm</file>
+    <file>icons/upper_env_xpm.xpm</file>
+    <file>icons/demo_snapgrid.xpm</file>
+    <file>icons/demo_split.xpm</file>
+    <file>icons/demo_merge.xpm</file>
+    <file>icons/demo_rayshoot_down.xpm</file>
+    <file>icons/demo_rayshoot_up.xpm</file>
+    <file>icons/demo_insert.xpm</file>
+    <file>icons/hand.xpm</file>
+    <file>icons/demo_delete.xpm</file>
+    <file>icons/demo_pointlocation.xpm</file>
+    <file>help/about.html</file>
+  </qresource>
+</RCC>

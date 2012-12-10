@@ -19,7 +19,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
+#include <CGAL/Poisson_implicit_surface_3.h>
 #include <CGAL/IO/output_surface_facets_to_polyhedron.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
@@ -61,12 +61,43 @@ typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_fun
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+typedef CGAL::Poisson_implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
 // AABB tree
 typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
+
+
+struct Counter {
+  int i, N;
+  Counter(int N)
+    : i(0), N(N)
+  {}
+
+  void operator()()
+  {
+    i++;
+    if(i == N){
+      std::cerr << "Counter reached " << N << std::endl;
+    }
+  }
+  
+};
+
+struct InsertVisitor {
+
+  Counter& c;
+  InsertVisitor(Counter& c)
+    : c(c)
+  {}
+
+  void before_insertion()
+  {
+    c();
+  }
+
+};
 
 
 // ----------------------------------------------------------------------------
@@ -113,6 +144,8 @@ int main(int argc, char * argv[])
       std::string solver_name = "no_solver_available";
       #endif
     #endif
+    double approximation_ratio = 0.02;
+    double average_spacing_ratio = 5;
 
     // decode parameters
     std::string input_filename  = argv[1];
@@ -125,6 +158,10 @@ int main(int argc, char * argv[])
         sm_distance = atof(argv[++i]);
       else if (std::string(argv[i])=="-solver")
         solver_name = argv[++i];
+      else if (std::string(argv[i])=="-approx")
+        approximation_ratio = atof(argv[++i]);
+      else if (std::string(argv[i])=="-ratio")
+        average_spacing_ratio = atof(argv[++i]);
       else {
         std::cerr << "Error: invalid option " << argv[i] << "\n";
         return EXIT_FAILURE;
@@ -215,6 +252,11 @@ int main(int argc, char * argv[])
 
     CGAL::Timer reconstruction_timer; reconstruction_timer.start();
 
+    
+    Counter counter(std::distance(points.begin(), points.end()));
+    InsertVisitor visitor(counter) ;
+    
+
     //***************************************
     // Computes implicit function
     //***************************************
@@ -227,7 +269,9 @@ int main(int argc, char * argv[])
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
+                              CGAL::make_dereference_property_map(points.begin()),
+                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
+                              visitor);
 
     #ifdef CGAL_TAUCS_ENABLED
     if (solver_name == "taucs")
@@ -249,7 +293,10 @@ int main(int argc, char * argv[])
 
       // Computes the Poisson indicator function f()
       // at each vertex of the triangulation.
-      if ( ! function.compute_implicit_function(solver) )
+
+      if ( ! function.compute_implicit_function(solver, visitor, 
+                                                approximation_ratio,
+                                                average_spacing_ratio) )
       {
         std::cerr << "Error: cannot compute implicit function" << std::endl;
         return EXIT_FAILURE;
@@ -262,7 +309,10 @@ int main(int argc, char * argv[])
       if (solver_name == "eigen")
       {
         std::cerr << "Use Eigen 3\n";
-        if ( ! function.compute_implicit_function() )
+        CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_symmetric_matrix<double>::EigenType> > solver;
+        if ( ! function.compute_implicit_function(solver, visitor, 
+                                                approximation_ratio,
+                                                average_spacing_ratio) )
         {
           std::cerr << "Error: cannot compute implicit function" << std::endl;
           return EXIT_FAILURE;

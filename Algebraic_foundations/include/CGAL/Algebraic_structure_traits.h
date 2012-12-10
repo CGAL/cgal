@@ -24,8 +24,11 @@
 #ifndef CGAL_ALGEBRAIC_STRUCTURE_TRAITS_H
 #define CGAL_ALGEBRAIC_STRUCTURE_TRAITS_H
 
-#include <CGAL/number_type_basic.h>
+#include <functional>
+#include <CGAL/tags.h>
 #include <CGAL/type_traits.h>
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 

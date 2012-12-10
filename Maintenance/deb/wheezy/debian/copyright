@@ -164,9 +164,9 @@ Copyright (from upstream file LICENSE)
    CGAL, are the following third-party libraries, available under their own
    licenses:
 
-   - CORE, in the directories "include/CGAL/CORE" and "src/CGAL_Core", is
+   - CORE, in the directories "include/CGAL/CORE" and "src/CGALCore", is
      licensed under the LGPL (see LICENSE.LGPL).
-   - ImageIO, in the directory "src/CGAL_ImageIO", is licensed under the LGPL
+   - ImageIO, in the directory "src/CGALimageIO", is licensed under the LGPL
      (see LICENSE.LGPL).
    - OpenNL, in the directory "include/CGAL/OpenNL", is licensed under the LGPL
     (see LICENSE.LGPL).
@@ -312,7 +312,7 @@ CORE
 ====
 
 The following copyright statement applies to the CORE library in
-src/CGAL_Core and include/CGAL/CORE.
+src/CGALCore and include/CGAL/CORE.
 
    Core Library Version 1.7, August 2004
    Copyright (c) 1995-2004 Exact Computation Project
@@ -336,7 +336,7 @@ ImageIO
 =======
 
 The following copyright statement applies to the ImageIO library in
-src/CGAL_ImageIO.
+src/CGALimageIO.
 
    Copyright (c) 2005, 2006 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
    All rights reserved.

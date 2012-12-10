@@ -24,20 +24,22 @@ else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
     find_path(NTL_INCLUDE_DIR
               NAMES NTL/ZZ.h
-              HINTS
-              $ENV{NTL_INC_DIR}
+              HINTS ENV NTL_INC_DIR
+                    ENV NTL_DIR
+              PATH_SUFFIXES include
               DOC "The directory containing the NTL include files"
              )
 
     find_library(NTL_LIBRARY
                  NAMES ntl
-                 HINTS
-                 $ENV{NTL_LIB_DIR}
+                 HINTS ENV NTL_LIB_DIR
+                       ENV NTL_DIR
+                 PATH_SUFFIXES lib
                  DOC "Path to the NTL library"
                 )
 
-    if ( NTL_INCLUDE_DIR AND NTL_LIBRARY ) 
-      
+    if ( NTL_INCLUDE_DIR AND NTL_LIBRARY )
+
        #check version
 
        set( NTL_VERSION_H "${NTL_INCLUDE_DIR}/NTL/version.h" )
@@ -45,10 +47,10 @@ else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
        if ( EXISTS ${NTL_VERSION_H} )
 
          file( READ "${NTL_VERSION_H}" NTL_VERSION_H_CONTENTS )
-  
-         string( REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" CGAL_NTL_VERSION "${NTL_VERSION_H_CONTENTS}" )
-  
-         #message( STATUS "DETECTED NTL_VERSION = '${CGAL_NTL_VERSION}'" )
+
+         string( REGEX MATCH "[0-9]+(\\.[0-9]+)+" CGAL_NTL_VERSION "${NTL_VERSION_H_CONTENTS}" )
+
+         message( STATUS "DETECTED NTL_VERSION = '${CGAL_NTL_VERSION}'" )
 
          IS_VERSION_GREATER( "${CGAL_NTL_VERSION}" "5.0.0" _IS_NTL_VERSION_GREATER )
 
@@ -61,7 +63,7 @@ else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
 
        endif (EXISTS ${NTL_VERSION_H} )
 
-    endif ( NTL_INCLUDE_DIR AND NTL_LIBRARY ) 
+    endif ( NTL_INCLUDE_DIR AND NTL_LIBRARY )
 
     if ( NTL_FOUND )
 
@@ -77,7 +79,7 @@ else( (TARGET CGAL AND NOT WITH_GMP) OR NOT GMP_FOUND )
                                          DEFAULT_MSG
                                          NTL_LIBRARY
                                          NTL_INCLUDE_DIR )
-    
+
       mark_as_advanced( NTL_INCLUDE_DIR NTL_LIBRARY )
 
       # TODO add flag to CGAL Polynomials

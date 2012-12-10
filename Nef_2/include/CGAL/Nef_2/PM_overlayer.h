@@ -34,6 +34,9 @@
 #define CGAL_NEF_DEBUG 13
 #include <CGAL/Nef_2/debug.h>
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
+
 #ifndef CGAL_USE_LEDA
 #define LEDA_MEMORY(t) 
 #endif
@@ -226,7 +229,7 @@ if there is no vertex in the relative interior of the embedding of $e$.
 
 The faces refer to the maximal connected open point sets of the
 planar subdivision implied by the embedding of the vertices and edges.
-Faces are bounded by possibly several face cycles\footnote{For the
+Faces are bounded by possibly several face cycles\cgalFootnote{For the
 definition of plane maps and their concepts see the manual page of
 |PMConstDecorator|.} including isolated vertices. The overlay process
 in the method |create| creates the objects, the topology of the result
@@ -958,7 +961,8 @@ bool is_forward_edge(const Const_decorator& N,
 
 void assert_type_precondition() const
 { typename PM_decorator_::Point p1; Point p2;
-  assert_equal_types(p1,p2); }
+  BOOST_STATIC_ASSERT((boost::is_same<typename PM_decorator_::Point, Point>::value)); }
+
 
 
 

@@ -20,6 +20,9 @@
 //
 // Generated from script create_assertions.sh
 
+
+/// \cond SKIP_IN_MANUAL
+
 /// @file surface_mesh_parameterization_assertions.h
 /// Define checking macros for the Surface_mesh_parameterization package
 
@@ -362,3 +365,5 @@
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_warning_code(CODE) CODE
 #  define CGAL_surface_mesh_parameterization_expensive_exactness_warnings 1
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_NO_WARNINGS
+
+/// \endcond

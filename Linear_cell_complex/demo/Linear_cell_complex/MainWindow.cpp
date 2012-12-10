@@ -272,8 +272,8 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
   Triangulation T;
 
   std::ifstream ifs (qPrintable (fileName));
-  std::istream_iterator < Point_3 > begin (ifs), end;
-  T.insert (begin, end);
+  T.insert (std::istream_iterator < Point_3 >(ifs),
+            std::istream_iterator < Point_3 >() );
 
   CGAL::import_from_triangulation_3 < LCC, Triangulation >(*scene.lcc, T);
 
@@ -479,8 +479,8 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
   Dart_handle dh;
   
   std::ifstream ifs (qPrintable (fileName));
-  std::istream_iterator < Point_3 > begin (ifs), end;
-  T.insert (begin, end);
+  T.insert (std::istream_iterator < Point_3 >(ifs),
+            std::istream_iterator < Point_3 >() );
 
   std::map<Triangulation::Cell_handle,
       LCC::Dart_handle > vol_to_dart;

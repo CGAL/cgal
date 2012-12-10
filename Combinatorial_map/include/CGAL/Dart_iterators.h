@@ -1173,7 +1173,10 @@ namespace CGAL {
       mmark_number(amark)
     {
       if (adart!=NULL)
-        this->mmap->mark(adart, mmark_number); 
+      {
+        this->mmap->mark_null_dart(mmark_number);
+        this->mmap->mark(adart, mmark_number);
+      }
     }
 
     /// Rewind of the iterator to its beginning.
@@ -1183,6 +1186,7 @@ namespace CGAL {
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark(*this, mmark_number);
+      this->mmap->mark_null_dart(mmark_number);
     }
 
     /// Prefix ++ operator.
@@ -1200,14 +1204,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
       for ( unsigned int k=i+1; k<=d; ++k )
@@ -1218,14 +1221,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
 
@@ -1283,7 +1285,10 @@ namespace CGAL {
       mmark_number(amark)
     {
       if (adart!=NULL)
-        this->mmap->mark(adart, mmark_number); 
+      {
+        this->mmap->mark(adart, mmark_number);
+        this->mmap->mark_null_dart(mmark_number);
+      }
     }
 
     /// Rewind of the iterator to its beginning.
@@ -1293,6 +1298,7 @@ namespace CGAL {
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
+      this->mmap->mark_null_dart(mmark_number);
     }
 
     /// Prefix ++ operator.
@@ -1311,14 +1317,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
 
@@ -1375,7 +1380,12 @@ namespace CGAL {
                                      int amark):
       Base(amap, adart),
       mmark_number(amark)
-    { if (adart!=NULL) this->mmap->mark(adart, mmark_number); }
+    { if (adart!=NULL)
+      {
+        this->mmap->mark(adart, mmark_number);
+        this->mmap->mark_null_dart(mmark_number);
+      }      
+    }
 
     /// Rewind of the iterator to its beginning.
     void rewind()
@@ -1384,6 +1394,7 @@ namespace CGAL {
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
+      this->mmap->mark_null_dart(mmark_number);
     }
 
     /// Prefix ++ operator.
@@ -1402,14 +1413,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(0)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETA0I;
           }
           else
           {
             mto_treat.push((*this)->beta(0)->beta(k));
-            this->mmap->mark((*this)->beta(0)->beta(k), mmark_number);
-          }              
+          }
+          this->mmap->mark((*this)->beta(0)->beta(k), mmark_number);                      
         }
         if ( this->is_unmarked2((*this), k, 1, mmark_number) )
         {
@@ -1417,14 +1427,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k)->beta(1); 
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI1;
           }
           else
           {
             mto_treat.push((*this)->beta(k)->beta(1));
-            this->mmap->mark((*this)->beta(k)->beta(1), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k)->beta(1), mmark_number);
         }
         for ( unsigned int l=k+1; l<=d; ++l )
         {
@@ -1434,14 +1443,13 @@ namespace CGAL {
             {
               nd = (*this)->beta(k)->beta(l); 
               CGAL_assertion(nd!=Map::null_dart_handle);
-              this->mmap->mark(nd, mmark_number);
               this->mprev_op = OP_BETAIJ;
             }
             else
             {
               mto_treat.push((*this)->beta(k)->beta(l));
-              this->mmap->mark((*this)->beta(k)->beta(l), mmark_number);
             }
+            this->mmap->mark((*this)->beta(k)->beta(l), mmark_number);
           }
           if ( this->is_unmarked2((*this), l, k, mmark_number) )
           {
@@ -1449,14 +1457,13 @@ namespace CGAL {
             {
               nd = (*this)->beta(l)->beta(k); 
               CGAL_assertion(nd!=Map::null_dart_handle);
-              this->mmap->mark(nd, mmark_number);
               this->mprev_op = OP_BETAJI;
             }
             else
             {
               mto_treat.push((*this)->beta(l)->beta(k));
-              this->mmap->mark((*this)->beta(l)->beta(k), mmark_number);
             }
+            this->mmap->mark((*this)->beta(l)->beta(k), mmark_number);
           }
         }
       }
@@ -1893,7 +1900,11 @@ namespace CGAL {
     {
       CGAL_assertion( d>=3 && d<=Map::dimension );
       CGAL_assertion( i>=3 && i<=Map::dimension );
-      if (adart!=NULL) this->mmap->mark(adart, mmark_number); 
+      if (adart!=NULL)
+      {
+        this->mmap->mark(adart, mmark_number);
+        this->mmap->mark_null_dart(mmark_number);
+      }
     }
 
     /// Rewind of the iterator to its beginning.
@@ -1903,6 +1914,7 @@ namespace CGAL {
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
+      this->mmap->mark_null_dart(mmark_number);
     }
 
     /// Prefix ++ operator.
@@ -1921,14 +1933,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
 
@@ -1941,14 +1952,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
 
@@ -2012,7 +2022,11 @@ namespace CGAL {
       mmark_number(amark)
     {
       CGAL_assertion( i>=3 && i<=Map::dimension );
-      if (adart!=NULL) this->mmap->mark(adart, mmark_number); 
+      if (adart!=NULL)
+      {
+        this->mmap->mark(adart, mmark_number);
+        this->mmap->mark_null_dart(mmark_number);
+      }
     }
 
     /// Rewind of the iterator to its beginning.
@@ -2022,6 +2036,7 @@ namespace CGAL {
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
+      this->mmap->mark_null_dart(mmark_number);
     }
 
     /// Prefix ++ operator.
@@ -2040,14 +2055,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
       for ( int k=2; k<=d; ++k )
@@ -2059,14 +2073,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
 
@@ -2126,7 +2139,12 @@ namespace CGAL {
                                            int amark):
       Base(amap, adart),
       mmark_number(amark)
-    { if (adart!=NULL) this->mmap->mark(adart, mmark_number); }
+    { if (adart!=NULL)
+      {
+        this->mmap->mark(adart, mmark_number);
+        this->mmap->mark_null_dart(mmark_number);
+      }
+    }
 
     /// Rewind of the iterator to its beginning.
     void rewind()
@@ -2134,6 +2152,7 @@ namespace CGAL {
       CGAL_assertion(mmark_number != -1);
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
+      this->mmap->mark_null_dart(mmark_number);
       this->mmap->mark((*this), mmark_number);
     }
 
@@ -2153,14 +2172,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
 
@@ -2247,7 +2265,12 @@ namespace CGAL {
                                            int amark):
       Base(amap, adart),
       mmark_number(amark)
-    { this->mmap->mark(adart, mmark_number); }
+    { if ( adart!=NULL)
+      {
+        this->mmap->mark(adart, mmark_number);
+        this->mmap->mark_null_dart(mmark_number);
+      }
+    }
 
     /// Rewind of the iterator to its beginning.
     void rewind()
@@ -2256,6 +2279,7 @@ namespace CGAL {
       Base::rewind();
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark((*this), mmark_number);
+      this->mmap->mark_null_dart(mmark_number);
     }
 
     /// Prefix ++ operator.
@@ -2274,14 +2298,13 @@ namespace CGAL {
           {
             nd = (*this)->beta(k);
             CGAL_assertion(nd!=Map::null_dart_handle);
-            this->mmap->mark(nd, mmark_number);
             this->mprev_op = OP_BETAI;
           }
           else
           {
             mto_treat.push((*this)->beta(k));
-            this->mmap->mark((*this)->beta(k), mmark_number);
           }
+          this->mmap->mark((*this)->beta(k), mmark_number);
         }
       }
 

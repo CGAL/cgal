@@ -53,17 +53,17 @@ namespace polyhedron_type_fwd_h {
   typedef CGAL::Mesh_3::Robust_intersection_traits_3<K1> Kernel;
 }
 
+#else // USE_FORWARD_DECL
+
+#include "Polyhedron_type.h"
+
+#endif // USE_FORWARD_DECL
+
 // surface mesh
 typedef CGAL::Polyhedron_3<polyhedron_type_fwd_h::Kernel,
                            Polyhedron_demo_items<int>,
                            // CGAL::Polyhedron_items_3,
                            CGAL::HalfedgeDS_default,
                            std::allocator<int> > Polyhedron;
-
-#else // USE_FORWARD_DECL
-
-#include "Polyhedron_type.h"
-
-#endif // USE_FORWARD_DECL
 
 #endif // POLYHEDRON_TYPE_FWD_H

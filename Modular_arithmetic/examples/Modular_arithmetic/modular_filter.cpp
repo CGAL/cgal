@@ -1,18 +1,3 @@
-/* Modular arithmetic can be used as a filter, in this example modular 
-   arithmetic is used to avoid unnecessary gcd computations of polynomials. 
-   A gcd computation can be very costly due to coefficient growth within the 
-   Euclidean algorithm. 
-   
-   The general idea is that firstly the gcd is computed with respect 
-   to one prime only. If this modular gcd is constant we can (in most cases) 
-   conclude that the actual gcd is constant as well. 
-   
-   For this purpose the example introduces the function may_have_common_factor.
-   Note that there are two versions of this function, namely for the case 
-   that the coefficient type is Modularizable and that it is not. 
-   If the type is not Modularizable the filter is just not applied and the 
-   function returns true. 
-*/
 
 #include <CGAL/basic.h>
 

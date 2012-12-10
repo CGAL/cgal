@@ -24,6 +24,7 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 /// A Point_vertex_handle_3 objects wraps either
 /// a Vertex_handle or a 3D point.
@@ -182,6 +183,7 @@ class Search_traits_vertex_handle_3
                           Construct_cartesian_const_iterator_vertex_handle_3<Vertex_handle> >
 {};
 
+/// \endcond
 
 } //namespace CGAL
 

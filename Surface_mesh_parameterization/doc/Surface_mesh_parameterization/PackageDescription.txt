@@ -1,0 +1,158 @@
+/// \defgroup PkgSurfaceParameterization Planar Parameterization of Triangulated Surface Meshes Reference
+
+
+/*!
+\addtogroup PkgSurfaceParameterization
+\cgalPkgDescriptionBegin{Planar Parameterization of Triangulated Surface Meshes,PkgSurfaceParameterizationSummary}
+\cgalPkgPicture{bimbaDetail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy}
+\cgalPkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.  This package implements several surface mesh parameterization methods, such as least squares conformal maps, discrete conformal map, discrete authalic parameterization, Floater mean value coordinates or Tutte barycentric mapping.}
+\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes,PkgSurfaceParameterization}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.2}
+\cgalPkgDependsOn{Solvers as \ref thirdpartyEigen.}
+\cgalPkgBib{cgal:sal-pptsm2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+Output
+----------------
+
+A `(u,v)` pair is computed for each inner vertex (i.e. its halfedges share the same `(u,v)` pair), while a `(u,v)` pair is computed for each border halfedge. The user must iterate over the mesh halfedges to get the result. 
+
+Checks and Assertions
+----------------
+
+The package performs the next checks:
+
+For <i>fixed</i> border parameterizations:
+ - Preconditions:
+    - check that the border is mapped onto a convex polygon.
+    - check that the input mesh is triangular.
+    - check that the input mesh is a surface with one connected component.
+ - Postconditions:
+    - check one-to-one mapping.
+
+For <i>free</i> border parameterizations:
+
+ - Preconditions:
+    - check that the input mesh is triangular.
+    - check that the input mesh is a surface with one connected component.
+ -Postconditions:
+    - check one-to-one mapping.
+
+Assertions are optional checks. The assertion flags for the package
+use `SURFACE_MESH_PARAMETERIZATION` in their names (e.g. `CGAL_SURFACE_MESH_PARAMETERIZATION_NO_ASSERTIONS`).
+*/
+
+/// \defgroup PkgSurfaceParameterizationMainFunction Main Function
+/// \ingroup PkgSurfaceParameterization
+
+/// \defgroup PkgSurfaceParameterizationConcepts Concepts
+/// \ingroup PkgSurfaceParameterization
+
+/*!
+ \defgroup PkgSurfaceParameterizationMethods Surface Parameterization Methods
+ \ingroup PkgSurfaceParameterization
+
+This \cgal package implements several parameterization methods:
+
+ - Fixed border:
+  - Tutte Barycentric Mapping \cite t-hdg-63.
+     One-to-one mapping is guaranteed for convex border.
+  - Floater Mean Value Coordinates \cite cgal:f-mvc-03.
+     One-to-one mapping is guaranteed for convex border.
+  - Discrete Conformal Map \cite cgal:eddhls-maam-95.
+    Conditionally guaranteed if all weights are positive and border is convex.
+  - Discrete Authalic parameterization \cite cgal:dma-ipsm-02.
+    Conditionally guaranteed if all weights are positive and border is convex.
+ - Free border:
+  - Least Squares Conformal Maps \cite cgal:lprm-lscm-02.
+*/
+
+/*!
+ \defgroup PkgSurfaceParameterizationBorderParameterizationMethods Border Parameterization Methods
+ \ingroup PkgSurfaceParameterization
+
+Border parameterization methods define a
+set of constraints (a constraint specifies two (u,v) coordinates for
+each instance of a vertex along the border).
+
+This package implements all common border parameterization methods:
+ - For fixed border methods:
+   - the user can select a border
+      parameterization among two common methods: uniform or
+      arc-length parameterizations.
+   - one convex shape specified by:
+    - one shape among a set of standard ones (circle, square).
+ - For free border methods: at least two constraints (the pinned
+vertices).
+*/
+
+
+
+/*! \defgroup PkgSurfaceParameterizationMesh Mesh
+    \ingroup PkgSurfaceParameterization
+
+The general definition of input meshes handled directly by `CGAL::parameterize()` is:
+
+ - Model of `ParameterizationMesh_3`.
+ - Triangulated.
+ - 2-manifold.
+ - Oriented.
+ - Homeomorphic to a disc (may have holes).
+
+This package provides a model of the `ParameterizationMesh_3` concept
+to access `CGAL::Polyhedron_3<Traits>`: 
+
+`CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
+
+The meshes supported <I>indirectly</I> by the package can be of any genus and
+have any number of connected components. If it is not a topological
+disc, the input mesh has to come with a description of a cutting path (an oriented list of
+vertices) which is the border of a topological disc.  If no cutting path is
+given as input, we assume that the surface border is the longest border already
+in the input mesh (the other borders will be considered as holes).
+
+The `CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>`
+class is responsible for <I>virtually</I> cutting
+a patch in a `ParameterizationPatchableMesh_3` mesh.
+The resulting patch is a topological
+disk (if the input cutting path is correct)
+and provides a `ParameterizationMesh_3` interface. It can be used as
+parameter of `CGAL::parameterize()`.
+
+Note that this way the user is responsible for cutting a closed mesh of
+arbitrary genus (even a topological disc with an intricate seam
+cut), as long as this condition is fulfilled.
+
+The package provides an interface with `CGAL::Polyhedron_3<Traits>`: 
+
+`CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>`
+*/
+
+
+
+/*! \defgroup PkgSurfaceParameterizationAlgebra Sparse Linear Algebra
+ \ingroup PkgSurfaceParameterization
+
+Since parameterizing meshes requires
+efficient representation of sparse matrices and efficient iterative or
+direct linear solvers, we provide an interface to several
+sparse linear solvers:
+ - <span class="textsc">Eigen</span> 3.1 (or greater) is the library recommended by CGAL solving sparse systems.
+ - OpenNL (authored by Bruno Lévy) is shipped with CGAL is the default solver.
+  - `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
+  - `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
+*/
+
+/*!
+\defgroup PkgSurfaceParameterizationHelper Helper Class
+\ingroup PkgSurfaceParameterization
+*/
+
+

@@ -463,7 +463,7 @@ namespace CGAL {
      */
     bool is_marked(Dart_const_handle adart, int amark) const
     {
-      CGAL_assertion( adart != null_dart_handle );
+      // CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       return adart->get_mark(amark)!=mmask_marks[(size_type)amark];
@@ -519,6 +519,28 @@ namespace CGAL {
       adart->set_mark(amark, mmask_marks[(size_type)amark]);      
     }
 
+    /** Mark null_dart (used as a sentinel in iterators).
+     * As null dart does not belong to the set of darts, it is not counted
+     * as number of marked darts.
+     * @param amark the given mark.
+     */
+    void mark_null_dart(int amark) const
+    {
+      CGAL_assertion( is_reserved(amark) );
+
+      null_dart_handle->set_mark(amark, !mmask_marks[(size_type)amark]);
+    }
+
+    /** Unmark null_dart.
+     * @param amark the given mark.
+     */
+    void unmark_null_dart(int amark) const
+    {
+      CGAL_assertion( is_reserved(amark) );
+
+      null_dart_handle->set_mark(amark, mmask_marks[(size_type)amark]);
+    }
+
     /** Unmark all the darts of the map for a given mark.
      * If all the darts are marked or unmarked, this operation takes O(1)
      * operations, otherwise it traverses all the darts of the map.
@@ -536,6 +558,7 @@ namespace CGAL {
       }
       else
       {
+        unmark_null_dart(amark);
         for (typename Dart_range::const_iterator it(darts().begin()), 
                itend(darts().end()); it!=itend; ++it)
           unmark(it, amark);
@@ -1905,6 +1928,7 @@ namespace CGAL {
         }
         for (unsigned int i=0; i<tounmark.size(); ++i) 
         {
+          unmark(null_dart_handle, tounmark[i]);
           CGAL_assertion(is_whole_map_unmarked(tounmark[i]));
           free_mark(tounmark[i]);
         }
@@ -2474,7 +2498,7 @@ namespace CGAL {
        CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,
                                                B6,B7,B8,B9> > Base;
       
-      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int amark=-1): 
+      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int /*amark*/=-1):
         Base(amap, adart)
       {}
     };

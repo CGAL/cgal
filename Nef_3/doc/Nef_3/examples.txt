@@ -1,0 +1,22 @@
+/*!
+\example Nef_3/comparison.cpp
+\example Nef_3/complex_construction.cpp
+\example Nef_3/exploration_SM.cpp
+\example Nef_3/extended_kernel.cpp
+\example Nef_3/handling_double_coordinates.cpp
+\example Nef_3/interface_polyhedron.cpp
+\example Nef_3/nef_3_construction.cpp
+\example Nef_3/nef_3_point_location.cpp
+\example Nef_3/nef_3_simple.cpp
+\example Nef_3/nefIO.cpp
+\example Nef_3/offIO.cpp
+\example Nef_3/point_set_operations.cpp
+\example Nef_3/polygon_construction.cpp
+\example Nef_3/polyline_construction.cpp
+\example Nef_3/set_operations.cpp
+\example Nef_3/shell_exploration.cpp
+\example Nef_3/topological_operations.cpp
+\example Nef_3/transformation.cpp
+\example Nef_3/visualization_SM.cpp
+\example Nef_3/visualization_SNC.cpp
+*/

@@ -697,7 +697,7 @@ public:
     }
 
     template < typename T >
-    boost::optional<Curve_end> operator()(T& t) const
+    boost::optional<Curve_end> operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return boost::none;
@@ -718,7 +718,7 @@ public:
     }
     
     template < typename T >
-    Point operator()(T& t) const
+    Point operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return Point();
@@ -786,7 +786,7 @@ public:
     }
 
     template <typename T>
-    boost::optional<const X_monotone_curve_2&> operator()(T& t) const
+    boost::optional<const X_monotone_curve_2&> operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return boost::none;
@@ -2252,7 +2252,7 @@ private:
     }
     if (traits->is_td_edge(item))
     { 
-      bool is_active = traits->is_active(item);
+      // bool is_active = traits->is_active(item);
       // if the map item represents an edge
       const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), item));
       

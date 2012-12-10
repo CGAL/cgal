@@ -4,7 +4,7 @@
 #include "Polyhedron_demo_io_plugin_interface.h"
 
 #include "Camera_positions_list.h"
-#include "Viewer.h"
+#include "Viewer_interface.h"
 
 #include <QMainWindow>
 
@@ -19,7 +19,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   QList<QAction*> actions() const;
 
-  QString name() const { return "Polyhedron_demo_camera_positions_plugin"; }
+  QString name() const { return "camera_positions_plugin"; }
   QString nameFilters() const { return "Camera positions (*.camera.txt)"; }
   bool canLoad() const { return true; }
   Scene_item* load(QFileInfo fileinfo) { cpl->load(fileinfo.filePath()); return 0; }
@@ -34,7 +34,7 @@ private:
 void Polyhedron_demo_camera_positions_plugin::init(QMainWindow* mainWindow, Scene_interface*)
 {
   cpl = new Camera_positions_list(mainWindow);
-  cpl->setViewer(mainWindow->findChild<Viewer*>("viewer"));
+  cpl->setViewer(mainWindow->findChild<Viewer_interface*>("viewer"));
   mainWindow->addDockWidget(Qt::LeftDockWidgetArea, cpl);
 }
 

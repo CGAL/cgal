@@ -22,6 +22,8 @@
 class QEvent;
 class QMouseEvent;
 
+class Viewer_interface;
+
 class SCENE_EXPORT Scene  :
   public QAbstractListModel, public Scene_interface, public Scene_draw_interface
 {
@@ -78,7 +80,9 @@ public:
   // draw() is called by Viewer::draw()
   void draw();
   void drawWithNames();
-  
+  void draw(Viewer_interface*);
+  void drawWithNames(Viewer_interface*);
+
   bool keyPressEvent(QKeyEvent* e);
 
   // Get scene bounding box
@@ -136,7 +140,7 @@ private slots:
   void setSelectionRay(double, double, double, double, double, double);
 
 private:
-  void draw_aux(bool with_names);
+  void draw_aux(bool with_names, Viewer_interface*);
   typedef QList<Scene_item*> Entries;
   Entries m_entries;
   int selected_item;

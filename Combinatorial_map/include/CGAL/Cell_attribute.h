@@ -99,7 +99,7 @@ namespace CGAL {
     /// operator =
     /// We do nothing since we must not copy mrefcounting.
     Cell_attribute_without_info& 
-    operator=(const Cell_attribute_without_info& acell)
+    operator=(const Cell_attribute_without_info& /*acell*/)
     { return *this; }
 
     /// Get the dart associated with the cell.

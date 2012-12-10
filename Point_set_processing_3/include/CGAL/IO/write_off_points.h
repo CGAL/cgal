@@ -37,18 +37,18 @@ namespace CGAL {
 
 
 //===================================================================================
+/// \ingroup PkgPointSetProcessing
 /// Saves the [first, beyond) range of points (positions + normals) to a .off ASCII stream.
 /// The function writes for each point a line with the x y z position
 /// followed by the nx ny nz normal.
 ///
-/// @commentheading Precondition: normals must be unit vectors.
+/// \pre normals must be unit vectors
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @param NormalPMap is a model of boost::WritablePropertyMap with a value_type = Vector_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/WritablePropertyMap.html">boost::WritablePropertyMap</a> with a value_type = Vector_3<Kernel>.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return true on success.
@@ -143,14 +143,14 @@ write_off_points_and_normals(
 
 
 //===================================================================================
+/// \ingroup PkgPointSetProcessing
 /// Saves the [first, beyond) range of points (positions only) to a .off ASCII stream.
 /// The function writes for each point a line with the x y z position.
 ///
-/// @commentheading Template Parameters:
-/// @param ForwardIterator iterator over input points.
-/// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3<Kernel>.
+/// @tparam ForwardIterator iterator over input points.
+/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @param Kernel Geometric traits class.
+/// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return true on success.

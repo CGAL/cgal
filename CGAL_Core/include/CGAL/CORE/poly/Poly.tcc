@@ -146,7 +146,7 @@ template <class NT>
 void Polynomial<NT>::constructFromString(string & s, char myX) {
   if(myX != 'x' || myX != 'X'){
     //Replace myX with 'x'.
-    unsigned int loc = s.find(myX, 0);
+    string::size_type loc = s.find(myX, 0);
     while(loc != string::npos){
       s.replace(loc,1,1,'x');
       loc = s.find(myX, loc+1);
@@ -307,7 +307,7 @@ template <class NT>
 Polynomial<NT> Polynomial<NT>::getpoly(string & s){
 
     //Remove white spaces from the string
-    unsigned int cnt=s.find(' ',0);
+    string::size_type cnt=s.find(' ',0);
     while(cnt != string::npos){
       s.erase(cnt, 1);
       cnt = s.find(' ', cnt);
@@ -321,7 +321,7 @@ Polynomial<NT> Polynomial<NT>::getpoly(string & s){
     //To handle the case when there is one '=' sign
     //Suppose s is of the form s1 = s2. Then we assign s to
     //s1 + (-1)(s2) and reset len
-    unsigned int loc;
+    string::size_type loc;
     if((loc=s.find('=',0)) != string::npos){
       s.replace(loc,1,1,'+');
       string s3 = "(-1)(";

@@ -1,0 +1,63 @@
+/// \defgroup PkgHDS Halfedge Data Structures Reference
+/// \defgroup PkgHDSConcepts Concepts
+/// \ingroup PkgHDS
+
+/// \defgroup  PkgHDS_HDS Halfedge Data Structures
+/// \ingroup PkgHDS
+
+/// \defgroup  PkgHDS_Items Item Classes
+/// \ingroup PkgHDS
+
+/// \defgroup  PkgHDS_VHF Vertices, Halfedges, Faces
+/// \ingroup PkgHDS
+
+/// \defgroup  PkgHDS_Decorators Decorators
+/// \ingroup PkgHDS
+/// Classes that provide additional functions 
+/// to examine and to modify a halfedge data structure.
+
+
+/*!
+\addtogroup PkgHDS
+\todo check generated documentation
+\cgalPkgDescriptionBegin{Halfedge Data Structures,PkgHDSSummary}
+\cgalPkgPicture{HalfedgeDS/fig/HalfedgeDS-teaser-small.gif}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Lutz Kettner}
+\cgalPkgDesc{A halfedge data structure is an edge-centered data structure capable of maintaining incidence information of vertices, edges and faces, for example for planar maps, polyhedra, or other orientable, two-dimensional surfaces embedded in arbitrary dimension. Each edge is decomposed into two halfedges with opposite orientations. One incident face and one incident vertex are stored in each halfedge. For each face and each vertex, one incident halfedge is stored. Reduced variants of the halfedge data structure can omit some of these information, for example the halfedge pointers in faces or the storage of faces at all.}
+\cgalPkgManuals{Chapter_Halfedge_Data_Structures,PkgHDS}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{1.0}
+\cgalPkgBib{cgal:k-hds}
+\cgalPkgLicense{\ref licensesLGPL  "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+A halfedge data structure (abbreviated as `HalfedgeDS`, or
+`HDS` for template parameters) is an edge-centered data structure
+capable of maintaining incidence information of vertices, edges and
+faces, for example for planar maps or polyhedral surfaces. It is a
+combinatorial data structure, geometric interpretation is added by
+classes built on top of the halfedge data structure.These classes
+might be more convenient to use than the halfedge data structure
+directly, since the halfedge data structure is meant as an
+implementation layer.See for example the `Polyhedron_3`
+class in the package \ref Chapter_3D_Polyhedral_Surfaces "3D Polyhedral Surface".
+
+The data structure provided here is known as the
+FE-structure \cite w-ebdss-85, as
+halfedges \cite m-ism-88, \cite cgal:bfh-mgedm-95 or as the doubly connected edge
+list (DCEL) \cite bkos-cgaa-97, although the original reference for
+the DCEL \cite mp-fitcp-78 describes a related but different data
+structure. The halfedge data structure can also be seen as one of the
+variants of the quad-edge data structure \cite gs-pmgsc-85. In
+general, the quad-edge data can represent non-orientable 2-manifolds,
+but the variant here is restricted to orientable 2-manifolds only. An
+overview and comparison of these different data structures together
+with a thorough description of the design implemented here can be
+found in \cite k-ugpdd-99.
+
+
+*/
+

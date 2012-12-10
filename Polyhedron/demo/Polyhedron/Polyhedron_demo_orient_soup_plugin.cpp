@@ -25,7 +25,8 @@ public:
 
   bool applicable() const {
     Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices()) {
-      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
+      if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index))||
+         qobject_cast<Scene_polyhedron_item*>(scene->item(index)))
         return true;
     }
     return false;
@@ -110,9 +111,9 @@ void Polyhedron_demo_orient_soup_plugin::orient()
           scene->itemChanged(item);
         }
       }
+      QApplication::restoreOverrideCursor();
     }
   }
-  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()

@@ -1,0 +1,9 @@
+/*!
+\example Minkowski_sum_2/approx_inset.cpp
+\example Minkowski_sum_2/approx_offset.cpp
+\example Minkowski_sum_2/exact_inset.cpp
+\example Minkowski_sum_2/exact_offset.cpp
+\example Minkowski_sum_2/sum_by_decomposition.cpp
+\example Minkowski_sum_2/sum_triangles.cpp
+\example Minkowski_sum_2/sum_with_holes.cpp
+*/

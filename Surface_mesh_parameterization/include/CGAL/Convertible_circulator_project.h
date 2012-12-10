@@ -26,11 +26,11 @@
 
 namespace CGAL {
 
+/// \cond SKIP_IN_MANUAL
 
 /// This class inherits from Circulator_project<> +
 /// adds a conversion to handle/const handle.
 /// See Circulator_project<> documentation.
-
 template<class C,               ///< Internal circulator.
          class Fct,             ///< Conversion functor.
          class Ref,
@@ -46,8 +46,8 @@ class Convertible_circulator_project
 
 public:
 
-  /// CREATION
-  /// --------
+  /// \name Creation
+  /// @{
 
     Convertible_circulator_project() {}
     Convertible_circulator_project(Base base) : Base(base) {}
@@ -55,8 +55,10 @@ public:
     Convertible_circulator_project(const Self& cir) : Base(cir) {}
     Self& operator=(const Self& cir) { Base::operator=(cir); return *this; }
 
-  /// OPERATIONS Forward Category
-  /// ---------------------------
+  /// @}
+
+  /// \name Forward Category
+  ///@{
 
     bool  operator==(Nullptr_t ptr) const { return (const Base&)*this == ptr; }
     bool  operator!=(Nullptr_t ptr) const { return ! (*this == ptr); }
@@ -65,20 +67,26 @@ public:
 
     Self& operator++()     { Base::operator++(); return *this; }
     Self  operator++(int)  { Self tmp(*this); ++(*this); return tmp; }
+  ///@}
 
-  /// OPERATIONS Bidirectional Category
-  /// ---------------------------------
+  /// \name Bidirectional Category
+  /// @{
 
     Self& operator--()     { Base::operator--(); return *this; }
     Self  operator--(int)  { Self tmp(*this); --(*this); return tmp; }
 
-  /// EXTRA CASTS
-  /// -----------
+  /// @}
+
+  /// \name Conversion
+  /// @{
 
     operator Handle()               { return Base::operator->(); }
     operator ConstHandle() const    { return Base::operator->(); }
-};
 
+  /// @}
+
+};
+/// \endcond
 
 } //namespace CGAL
 

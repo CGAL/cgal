@@ -1,0 +1,84 @@
+/// \defgroup PkgArrangement2 2D Arrangement Reference
+
+/// \defgroup PkgArrangement2Concepts Concepts
+/// \ingroup PkgArrangement2
+
+/// \cgalConceptNamespace
+/// The namespace containing concepts specific to Arrangements.
+namespace ArrTraits {}
+
+/// \defgroup PkgArrangement2ConceptsDCEL DCEL Concepts
+/// \ingroup PkgArrangement2Concepts
+
+/// \defgroup PkgArrangement2ConceptsGeometricObjects Geometric Object Concepts
+/// \ingroup PkgArrangement2Concepts
+
+/// \defgroup PkgArrangement2ConceptsFunctionObjects Function Object Concepts
+/// \ingroup PkgArrangement2Concepts
+
+/// \defgroup PkgArrangement2ConceptsTraits Traits Concepts
+/// \ingroup PkgArrangement2Concepts
+
+/// \defgroup PkgArrangement2TraitsClasses Traits Classes
+/// \ingroup PkgArrangement2
+
+/// \defgroup PkgArrangement2DCEL DCEL
+/// \ingroup PkgArrangement2
+
+/// \defgroup PkgArrangement2IO I/O
+/// \ingroup PkgArrangement2
+
+/// \defgroup PkgArrangement2op_left_shift operator<<
+/// \ingroup PkgArrangement2IO
+
+/// \defgroup PkgArrangement2op_right_shift operator>>
+/// \ingroup PkgArrangement2IO
+
+/// \defgroup PkgArrangement2PointLocation Point Location
+/// \ingroup PkgArrangement2
+
+/// \defgroup PkgArrangement2Overlay Overlay
+/// \ingroup PkgArrangement2
+
+/// \defgroup PkgArrangement2Funcs Free Functions
+/// \ingroup PkgArrangement2
+
+/// \defgroup PkgArrangement2Insert insert
+/// \ingroup PkgArrangement2Funcs
+
+/// \defgroup PkgArrangement2Tags Tags
+/// \ingroup PkgArrangement2
+
+/// \defgroup PkgArrangement2Enums Enumerations
+/// \ingroup PkgArrangement2
+
+/*!
+\addtogroup PkgArrangement2
+\todo check generated documentation
+\cgalPkgDescriptionBegin{2D Arrangements,PkgArrangement2Summary}
+\cgalPkgPicture{Arrangement_2.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren Salzman, and Baruch Zukerman}
+\cgalPkgDesc{This package can be used to construct, maintain, alter, and display arrangements in the plane. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also includes generic implementations of two algorithmic frameworks, that are, computing the zone of an arrangement, and line-sweeping the plane, the arrangements is embedded on. These frameworks are used in turn in the implementations of other operations on arrangements. Computing the overlay of two arrangements, for example, is based on the sweep-line framework.   Arrangements and arrangement components can also be extended to store additional data. An important extension stores the construction history of the arrangement, such that it is possible to obtain the originating curve of an arrangement subcurve.}
+\cgalPkgManuals{Chapter_2D_Arrangements,PkgArrangement2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.1}
+\cgalPkgBib{cgal:wfzh-a2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+Given a set \f$ \mathcal{C}\f$ of planar curves, the <I>arrangement</I>
+\f$ {\mathcal A}({\mathcal C})\f$ is the subdivision of the plane induced
+by the curves in \f$ \mathcal{C}\f$ into maximally connected cells. The cells
+can be \f$ 0\f$-dimensional (<I>vertices</I>), \f$ 1\f$-dimensional (<I>edges</I>)
+or \f$ 2\f$-dimensional (<I>faces</I>).
+
+The class `Arrangement_2<Traits,Dcel>` encapsulates a data structure
+that maintains arrangements of arbitrary bounded planar curves. It comes
+with a variety of algorithms that operate on planar arrangement,
+such as point-location queries and overlay computations, which are
+implemented as peripheral classes or as free (global) functions.
+*/
+

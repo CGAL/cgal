@@ -28,6 +28,8 @@
 #include <CGAL/Cartesian/Point_2.h>
 #include <CGAL/Cartesian/Line_2.h>
 
+#include <CGAL/Cartesian/Direction_2.h>
+
 namespace CGAL {
 
 template < class K >

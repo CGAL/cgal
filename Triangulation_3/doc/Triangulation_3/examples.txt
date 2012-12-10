@@ -1,0 +1,12 @@
+/*!
+\example Triangulation_3/simple_triangulation_3.cpp
+\example Triangulation_3/color.cpp
+\example Triangulation_3/adding_handles_3.cpp
+\example Triangulation_3/info_insert_with_pair_iterator.cpp
+\example Triangulation_3/info_insert_with_zip_iterator.cpp
+\example Triangulation_3/info_insert_with_transform_iterator.cpp
+\example Triangulation_3/simplex.cpp
+\example Triangulation_3/fast_location_3.cpp
+\example Triangulation_3/find_conflicts_3.cpp
+\example Triangulation_3/regular_3.cpp
+*/

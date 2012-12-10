@@ -25,6 +25,7 @@
 #include <iostream>
 #include <fstream>
 
+/// \cond SKIP_IN_MANUAL
 
 // Trace utilities
 // ---------------
@@ -54,5 +55,6 @@ inline void print_stderr(const char *fmt, ...)
   #define CGAL_TRACE_STREAM  if (false) std::cerr
 #endif
 
+/// \endcond
 
 #endif // CGAL_TRACE_H

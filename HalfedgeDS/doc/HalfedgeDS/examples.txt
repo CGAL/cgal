@@ -1,0 +1,11 @@
+/*!
+\example HalfedgeDS/hds_prog_color.cpp
+\example HalfedgeDS/hds_prog_compact2.cpp
+\example HalfedgeDS/hds_prog_compact.cpp
+\example HalfedgeDS/hds_prog_default.cpp
+\example HalfedgeDS/hds_prog_edge_iterator.cpp
+\example HalfedgeDS/hds_prog_graph2.cpp
+\example HalfedgeDS/hds_prog_graph.cpp
+\example HalfedgeDS/hds_prog_halfedge_iterator.cpp
+\example HalfedgeDS/hds_prog_vector.cpp
+*/

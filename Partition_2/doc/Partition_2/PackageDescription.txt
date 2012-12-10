@@ -1,0 +1,36 @@
+/// \defgroup PkgPolygonPartitioning2 2D Polygon Partitioning Reference
+/// \defgroup PkgPolygonPartitioning2Concepts Concepts
+/// \ingroup PkgPolygonPartitioning2
+/*!
+\addtogroup PkgPolygonPartitioning2
+\todo check generated documentation
+\cgalPkgDescriptionBegin{2D Polygon Partitioning,PkgPolygonPartitioning2Summary}
+\cgalPkgPicture{Partition_2/fig/Partition_2-teaser-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Susan Hert}
+\cgalPkgDesc{This package provides functions for partitioning polygons in monotone or convex polygons. The algorithms can produce results with the minimal number of polygons, as well as approximations which have no more than four  times the optimal number of convex pieces but they differ in  their runtime complexities.}
+\cgalPkgManuals{Chapter_2D_Polygon_Partitioning,PkgPolygonPartitioning2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.3}
+\cgalPkgBib{cgal:h-pp2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Polygon Partition,partition_2.zip}
+\cgalPkgDemo{Operations on Polygons,polygon.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+The assertion flags for this package use `PARTITION` in their names
+(<I>e.g.</I>, `CGAL_PARTITION_NO_POSTCONDITIONS`).
+The precondition checks for the planar polygon partitioning functions
+are: counterclockwise ordering of the input vertices and simplicity of the 
+polygon these vertices represent.
+
+The postcondition checks are: simplicity, counterclockwise orientation,
+and convexity (or \f$ y\f$-monotonicity) of the partition polygons
+and validity of the partition (<I>i.e.</I>, the partition polygons are 
+nonoverlapping and the union of these polygons is the same as the
+original polygon).
+
+*/
+

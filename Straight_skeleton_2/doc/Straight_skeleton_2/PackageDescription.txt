@@ -1,0 +1,34 @@
+/// \defgroup PkgStraightSkeleton2 2D Straight Skeleton and Polygon Offsetting Reference
+/// \defgroup PkgStraightSkeleton2Concepts Concepts
+/// \ingroup PkgStraightSkeleton2
+
+/// \defgroup PkgStraightSkeleton2Classes Classes
+/// \ingroup PkgStraightSkeleton2
+
+/// \defgroup PkgStraightSkeleton2Auxiliary Auxiliary Classes
+/// \ingroup PkgStraightSkeleton2
+
+/// \defgroup PkgStraightSkeleton2Functions Functions
+/// \ingroup PkgStraightSkeleton2
+
+/*!
+\addtogroup PkgStraightSkeleton2
+\todo check generated documentation
+\cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2Summary}
+\cgalPkgPicture{Straight_skeleton_2/fig/StraightSkeletonTeaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Fernando Cacciola}
+\cgalPkgDesc{This package implements an algorithm to construct a halfedge data structure representing the straight skeleton in the interior of 2D polygons with holes and an algorithm to construct inward offset polygons at any offset distance given a straight skeleton.}
+\cgalPkgManuals{Chapter_2D_Straight_Skeleton_and_Polygon_Offsetting,PkgStraightSkeleton2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.2}
+\cgalPkgDependsOn{\ref PkgHDSSummary}
+\cgalPkgBib{cgal:c-sspo2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Straight Skeleton,straight_skeleton_2.zip}
+\cgalPkgDemo{Operations on Polygons,polygon.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+*/
+

@@ -29,6 +29,8 @@
 #include <climits>
 #include <vector>
 
+/// \file Square_border_parameterizer_3.h
+
 namespace CGAL {
 
 
@@ -36,25 +38,23 @@ namespace CGAL {
 // Class Square_border_parameterizer_3
 //
 
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a square.
-/// Square_border_parameterizer_3 is a pure virtual class, thus
+/// `Square_border_parameterizer_3` is a pure virtual class, thus
 /// cannot be instantiated.
 ///
 /// It implements most of the algorithm. Subclasses just
-/// have to implement compute_edge_length() to compute a segment's length.
+/// have to implement `compute_edge_length(`) to compute a segment's length.
 ///
 /// Implementation note:
-/// To simplify the implementation, BorderParameterizer_3 models know only the
-/// ParameterizationMesh_3 class. They do not know the parameterization algorithm
+/// To simplify the implementation, `BorderParameterizer_3` models know only the
+/// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// @heading Is Model for the Concepts:
-/// Model of the BorderParameterizer_3 concept (although you cannot instantiate this class).
+/// \cgalModels `BorderParameterizer_3`
 ///
-/// @heading Design Pattern:
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3.
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Square_border_parameterizer_3
@@ -108,8 +108,8 @@ public:
 
     // Default constructor, copy constructor and operator =() are fine
 
-    /// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
-    /// on border's shape. Mark them as "parameterized".
+    /// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
+    /// on border's shape. Mark them as <i>parameterized</i>.
     typename Parameterizer_traits_3<Adaptor>::Error_code
                                         parameterize_border(Adaptor& mesh);
 
@@ -282,6 +282,9 @@ Square_border_parameterizer_3<Adaptor>::closest_iterator(Adaptor& mesh,
 // Class Square_border_uniform_parameterizer_3
 //
 
+
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+///
 /// This class parameterizes the border of a 3D surface onto a square
 /// in a uniform manner: points are equally spaced.
 ///
@@ -289,11 +292,8 @@ Square_border_parameterizer_3<Adaptor>::closest_iterator(Adaptor& mesh,
 /// algorithm. This class implements only compute_edge_length() to compute a
 /// segment's length.
 ///
-/// @heading Is Model for the Concepts: Model of the BorderParameterizer_3 concept.
+/// \cgalModels `BorderParameterizer_3`
 ///
-/// @heading Design Pattern:
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3.
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Square_border_uniform_parameterizer_3
@@ -362,6 +362,8 @@ protected:
 // Class Square_border_arc_length_parameterizer_3
 //
 
+/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+///
 /// This class parameterizes the border of a 3D surface onto a square,
 /// with an arc-length parameterization: (u,v) values are
 /// proportional to the length of border edges.
@@ -370,11 +372,8 @@ protected:
 /// algorithm. This class implements only compute_edge_length() to compute a
 /// segment's length.
 ///
-/// @heading Is Model for the Concepts: Model of the BorderParameterizer_3 concept.
+/// \cgalModels `BorderParameterizer_3`
 ///
-/// @heading Design Pattern:
-/// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
-/// a strategy of border parameterization for models of ParameterizationMesh_3
 
 template<class ParameterizationMesh_3>      //< 3D surface
 class Square_border_arc_length_parameterizer_3

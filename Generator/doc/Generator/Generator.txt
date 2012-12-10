@@ -1,0 +1,256 @@
+
+namespace CGAL {
+/*!
+
+\mainpage Geometric %Object Generators
+\anchor Chapter_Geometric_Object_Generators
+\anchor chapterGenerators
+\cgalAutoToc
+\authors Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, and Sven Sch&ouml;nherr 
+
+\section GeneratorIntroduction Introduction
+
+A variety of generators for geometric objects are provided in \cgal.
+They are useful as synthetic test data sets, e.g. for testing
+algorithms on degenerate object sets and for performance analysis.
+
+Two kinds of point generators are provided: first, random point
+generators and second deterministic point generators. Most random
+point generators and a few deterministic point generators are provided
+as input iterators. The input iterators model an infinite sequence of
+points. The function `CGAL::copy_n()` can be used to copy a
+finite sequence. The iterator adaptor
+`Counting_iterator` can be used to create finite iterator
+ranges.
+Other generators are provided as functions that write to output
+iterators. Further functions add degeneracies or random perturbations.
+
+In 2D, we provide input iterators to generate random points in a disc
+(`Random_points_in_disc_2`), 
+in a square (`Random_points_in_square_2`),
+on a circle (`Random_points_on_circle_2`), 
+on a segment (`Random_points_on_segment`),
+and on a square (`Random_points_on_square_2`).
+For generating grid points we provide three functions,
+`points_on_segment_2()`,
+`points_on_square_grid_2()` that write to output iterators and
+an input iterator `Points_on_segment_2`.
+
+For 3D points, input iterators are provided for random points uniformly 
+distributed in a sphere (`Random_points_in_sphere_3`)
+or cube (`Random_points_in_cube_3`) or on the boundary of a sphere
+(`Random_points_on_sphere_3`).
+For generating 3D grid points, we provide the function 
+`points_on_cube_grid_3()` that writes to
+an output iterator.
+
+For higher dimensions, input iterators are provided for random points uniformly 
+distributed in a `d`-dimensional cube (`Random_points_in_cube_d`)
+or `d`-dimensional ball (`Random_points_in_ball_d`) or on the boundary of a 
+sphere (`Random_points_on_sphere_d`).
+For generating grid points, we provide the function 
+`points_on_cube_grid_d()` that writes to
+an output iterator.
+
+We also provide two functions for generating more complex geometric objects.
+The function `random_convex_set_2()` computes a random convex planar
+point set of a given size where the points are drawn from a specific
+domain and `random_polygon_2()` generates a random simple polygon from
+points drawn from a specific domain.
+
+\subsection GeneratorRandomPerturbations Random Perturbations
+
+Degenerate input sets like grid points can be randomly perturbed by a
+small amount to produce <I>quasi</I>-degenerate test sets. This
+challenges numerical stability of algorithms using inexact arithmetic and
+exact predicates to compute the sign of expressions slightly off from zero.
+For this the function `perturb_points_2()` is provided.
+
+\subsection GeneratorAddingDegeneracies Adding Degeneracies
+
+For a given point set certain kinds of degeneracies can be produced
+by adding new points. The `random_selection()` function is
+useful for generating multiple copies of identical points.
+The function `random_collinear_points_2()` adds collinearities to
+a point set.
+
+\subsection GeneratorSupportFunctionsandClassesforGenerators Support Functions and Classes for Generators
+
+The function `random_selection()` chooses `n` items at random from a random
+access iterator range which is useful to produce degenerate input data
+sets with multiple entries of identical items.
+
+The class `Combination_enumerator<CombinationElement>` is used to enumerate
+all fixed-size combinations (subsets) of a range of elements. It is useful
+in the context of high-dimensional triangulations, e.g., for enumerating the
+faces of a simplex.
+
+\section GeneratorExample_1 Example Generating Degenerate Point Sets
+
+We want to generate a test set of 1000 points, where 60% are chosen
+randomly in a small disc, 20% are from a larger grid, 10% are duplicates
+points, and 10% collinear points. A random shuffle removes the
+construction order from the test set. See \cgalFigureRef{figurePointGenerator}
+for the example output.
+
+\cgalExample{Generator/random_degenerate_point_set.cpp}
+
+\cgalFigureBegin{figurePointGenerator,generators_prog1.png}
+Output of example program for point generators.
+\cgalFigureEnd
+
+\section GeneratorExampleGridPoints Example Generating Grid Points
+
+The second example demonstrates the point generators with integer
+points. Floating point arithmetic is sufficient to produce
+regular integer grids. See \cgalFigureRef{figureIntegerPointGenerator}
+for the example output.
+
+\cgalExample{Generator/random_grid.cpp}
+
+\cgalFigureBegin{figureIntegerPointGenerator,generators_prog2.png}
+Output of example program for point generators working
+\cgalFigureEnd
+
+\section secsegment_example Examples Generating Segments
+
+The following two examples illustrate the use of the generic functions
+from Section \ref STLAlgos like
+`Join_input_iterator_2` to generate 
+composed objects from other
+generators - here two-dimensional segments from two point generators.
+
+We want to generate a test set of 200 segments, where one endpoint is
+chosen randomly from a horizontal segment of length 200, and the other
+endpoint is chosen randomly from a circle of radius 250. See \cgalFigureRef{figureSegmentGenerator} for the example output.
+
+\cgalExample{Generator/random_segments1.cpp}
+
+\cgalFigureBegin{figureSegmentGenerator,Segment_generator_prog1.png}
+Output of example program for the generic segment generator.
+\cgalFigureEnd
+
+The second example generates a regular structure of 100 segments; see
+\cgalFigureRef{figureSegmentGeneratorFan} for the example output. It uses
+the `Points_on_segment_2` iterator, `Join_input_iterator_2` and
+`Counting_iterator` to avoid any intermediate storage of the generated
+objects until they are used.
+
+\cgalExample{Generator/random_segments2.cpp}
+
+\cgalFigureBegin{figureSegmentGeneratorFan,Segment_generator_prog2.png}
+Output of example program for the generic segment generator using pre-computed point locations.
+\cgalFigureEnd
+
+\section GeneratorExample_2 Example Generating Point Sets in `d` Dimensions
+
+The following example generates points inside a cube in dimension 5
+(examples for ball and sphere are available in the example directory) :
+
+\cgalExample{Generator/cube_d.cpp}
+
+The output of this example looks like:
+\verbatim
+Generating 10 random points in a cube in 5D, coordinates from -100 to 100
+5 32.9521 26.0403 59.3979 -99.2553 15.5102 
+5 80.3731 30.809 7.32491 -90.2544 94.5635 
+5 -71.3412 -31.933 -98.0734 79.6493 66.6104 
+5 -78.5065 -58.2397 -33.9096 81.2196 57.2512 
+5 21.4093 26.7661 57.6083 23.4958 93.1047 
+5 10.5895 -21.8914 70.9726 36.756 -42.2667 
+5 23.9813 54.4519 -26.0894 -85.18 -21.0775 
+5 -48.7499 59.9873 6.22335 -4.16011 81.0727 
+5 -11.6615 5.53147 -32.6578 -79.9283 44.5679 
+5 53.0183 78.3228 -28.5665 83.3503 68.0482 
+\endverbatim
+
+Next example generates grid points in dimension `d=4`.
+Since the required number of
+points, 20 is between \f$ 2^d\f$ and \f$ 3^d\f$ the supporting grid has
+\f$ 3\times 3\times 3\times 3\f$ points.
+Since the size parameter is 5, the
+coordinates are in \f$ \{-5, 0, 5\}\f$, but since the number of points
+verifies \f$ 20\leq 3^{d-1}\f$, all
+generated points have the same last coordinate \f$ -5\f$.
+
+\cgalExample{Generator/grid_d.cpp}
+
+The output of previous example corresponds to the points of this
+figure depicted in red or pink (pink points are "inside" the cube). 
+The output is:
+
+\verbatim
+Generating 20 grid points in 4D
+4 -5 -5 -5 -5 
+4 0 -5 -5 -5 
+4 5 -5 -5 -5 
+4 -5 0 -5 -5 
+4 0 0 -5 -5 
+4 5 0 -5 -5 
+4 -5 5 -5 -5 
+4 0 5 -5 -5 
+4 5 5 -5 -5 
+4 -5 -5 0 -5 
+4 0 -5 0 -5 
+4 5 -5 0 -5 
+4 -5 0 0 -5 
+4 0 0 0 -5 
+4 5 0 0 -5 
+4 -5 5 0 -5 
+4 0 5 0 -5 
+4 5 5 0 -5 
+4 -5 -5 5 -5 
+4 0 -5 5 -5 
+\endverbatim
+
+\image html hypergrid.gif
+
+\section GeneratorExGenCombi Example Generating Combinations
+
+\subsection GeneratorFromRangeInt From a Range of Integers
+
+The following example enumerates and outputs all subsets of 3 elements from the
+range \f$ [10, 15]\f$. Accordingly, it outputs \f$ \frac{6!}{3! 3!}=20\f$
+triples.
+
+
+\cgalExample{Generator/combination_enumerator.cpp}
+
+The output of this example is:
+\verbatim
+Taking 3 distinct integers in the range [10, 15]: {10 11 12} {10 11 13} {10 11 14}
+{10 11 15} {10 12 13} {10 12 14} {10 12 15} {10 13 14} {10 13 15} {10 14 15}
+{11 12 13} {11 12 14} {11 12 15} {11 13 14} {11 13 15} {11 14 15} {12 13 14}
+{12 13 15} {12 14 15} {13 14 15}
+Enumerated 20 combinations.
+\endverbatim
+
+\subsection GeneratorFromArrayStr From an Array of Strings
+The following example generates all pairs of names from a set of names stored
+in an array of strings.
+
+\cgalExample{Generator/name_pairs.cpp}
+
+\section GeneratorDesign Design and Implementation History
+
+Lutz Kettner coded generators in 2D and 3D
+For points <I>in</I> and <I>on</I> sphere, points are generated in a cube up
+to the moment the point is inside the sphere, then it is normalized to go on the
+boundary if needed.
+
+Sven Sch&ouml;nherr implemented the Random class.
+
+Michael Hoffmann coded the random convex polygon,
+
+Geert-Jan Giezeman and Susan Hert coded the random simple polygon.
+
+Olivier Devillers coded generators in high dimensions.
+For points <I>in ball</I> and <I>on sphere</I>, points are generated on a
+sphere/ball boundary as a product of normal distributions, then it is
+normalized.
+If needed a random radius (with relevant distribution)
+is used to put the point inside the ball.
+
+*/ 
+} /* namespace CGAL */
+

@@ -1,0 +1,221 @@
+body, table, div, p, dl {
+    font: Lucida Grande,sans-serif;
+}
+
+.textsc {
+    font-variant: small-caps;
+}
+
+#projectnumber {
+    display: none;
+}
+
+#back-nav {
+    border-bottom: 1px solid;
+    padding: 0.5em;
+    background-color: #FAF9FB;
+}
+
+#back-nav h2 {
+    display: inline;
+}
+
+#back-nav ul
+{
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+#back-nav li
+{
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}
+
+.tparams .paramname {
+    font-weight: bold;
+    vertical-align: top;
+}
+
+h1 {
+    font-size: 180%;
+}
+
+h2 {
+    font-size: 120%;
+}
+
+
+h1.groupheader {
+    font-size: 150%;
+}
+
+/* enable this to make sections more alike */
+/* h2.groupheader { */
+/*     border-bottom: none; */
+/*     color: black; */
+/*     font-size: 100%; */
+/*     font-weight: bold; */
+/*     margin-top: 1.75em; */
+/*     padding-bottom: 0; */
+/*     padding-top: 0; */
+/*     width: 100%; */
+/* } */
+
+a.el {
+    font-weight: normal;
+}
+
+.PkgSummary {
+    width: 60%;
+}
+
+.PkgShortInfo {
+    width: 20%;
+}
+
+.PkgSummary, .PkgShortInfo, .PkgImage, .PkgImage .image {
+    display:inline-block;
+    padding:5px;
+    vertical-align:middle;
+}
+
+.PkgAuthors {
+    font-style: italic;
+}
+
+.PkgDescription {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: justify;
+}
+
+/* footnote support */
+
+blockquote sup {
+	position: absolute;
+	right: 3px;
+	top: 3px;
+}
+
+.footnote ol li:hover {
+	text-decoration: underline;
+}
+
+a.footnoteBackref, a.footnoteLink {
+	text-decoration: none;
+}
+
+ol.footnotesList {
+        margin: 0;
+	font-size: 0.8em;
+	padding-top: 5px;
+}
+
+ol.footnotesList > li {
+	text-indent: -1.5em;
+	padding-left: 1.5em;
+	vertical-align: top;
+}
+
+.footnoteBackReferenceGroup {
+	padding-right: 0.5em;
+}
+.footnoteBackref {
+	padding-right: 0.25em;
+}
+span.footnoteContent {
+
+}
+span.footnoteContent > p:first-child, span.footnoteContent > div:first-child { 
+	display: inline; 
+}
+span.footnoteContent p, span.footnoteContent div {
+	text-indent: 0em;
+}
+
+/* footnote support end */
+
+dl
+{
+        padding: 0 0 0 0;
+}
+
+dl.section, dl.hasModels, dl.debugs, dl.models, dl.refines, dl.requires
+{
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+dl.section dt a, dl.hasModels dt a, dl.debugs dt a, 
+dl.models dt a, dl.refines dt a, dl.advanced dt a, 
+dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
+{
+    font-weight: bold;
+    color: black;
+}
+
+div.cgal_figure_caption {
+	text-align: center;
+}
+
+div.groupText {
+    font-style: none;
+}
+
+#projectname
+{
+    font: 200% Tahoma, Arial,sans-serif;
+}
+
+/* fix the back button by hacking the layout */
+/* this becomes unnecessary with the latest doxygen, r834 */
+#top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+#doc-content {
+    /* this is the header/footer padding */
+    /* so the content does not hide behind them */
+    padding-top: 91px;
+    padding-bottom: 32px;
+    overflow: visible;
+}
+
+#side-nav {
+    position: fixed;
+}
+
+#titlearea {
+    background: white;
+}
+
+/* this adjusts the anchors inside the doc-content div by the height of */
+/* the header. this is necessary because anchors are not adjusted by the */
+/* height of the position: fixed top div. */
+#doc-content a.anchor {
+    padding-top: 91px; 
+    margin-top: -91px;
+}
+
+#doc-content .anchor {
+    padding-top: 91px; 
+    margin-top: -91px;
+}
+
+#MSearchResultsWindow {
+    z-index: 2;
+}

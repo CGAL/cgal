@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-inline void check_gl_error(const char* filename, long line)
+inline bool check_gl_error(const char* filename, long line)
 {
   GLenum error = glGetError();
   if(error != GL_NO_ERROR) {
@@ -36,7 +36,9 @@ inline void check_gl_error(const char* filename, long line)
     }
     while(error != GL_NO_ERROR);
     std::cerr << "end of errors\n";
+    return true;
   }
+  return false;
 }
 
 } // end namespace CGAL

@@ -24,7 +24,7 @@
 #define CGAL_REGULAR_TRIANGULATION_CELL_BASE_3_H
 
 #include <list>
-#include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_cell_base_3.h>
 
 namespace CGAL {
 

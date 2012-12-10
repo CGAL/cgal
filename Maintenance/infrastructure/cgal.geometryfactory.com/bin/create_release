@@ -3,7 +3,17 @@
 LC_ALL=POSIX;
 export LC_ALL
 
-svn up "$1"
+if [ -d "$1/.git" ]; then
+    pushd $1
+    branch=`git rev-parse --abbrev-ref HEAD`
+    echo "Git repository, in branch '$branch'"
+    git fetch
+    git reset --hard origin/$branch
+    popd
+else
+    svn up "$1"
+fi
+
 # Update the candidates branch, if any.
 [ -d "$2" ] && svn up "$2"
 
@@ -32,4 +42,5 @@ fi
 "$HOME/bin/update_manual_tools"
 
 # Launch create_new_release
-exec "$HOME/CGAL/Scripts/developer_scripts/create_new_release" "$@"
+exec "$HOME/CGAL/Scripts/developer_scripts/create_new_release" --no-scm-update "$@"
+#                       --no-scm-update because branches have already been updated

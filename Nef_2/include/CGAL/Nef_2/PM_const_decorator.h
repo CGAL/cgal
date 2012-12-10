@@ -83,7 +83,7 @@ target(e)|. The list of all edges with source |v| is called the
 adjacency list |A(v)|.
 
 Edges are paired into twins. For each edge |e = (v,w)| there's an edge
-|twin(e) = (w,v)| and |twin(twin(e)) == e|\footnote{The existence of 
+|twin(e) = (w,v)| and |twin(twin(e)) == e|\cgalFootnote{The existence of 
 the edge pairs makes |P| a bidirected graph, the |twin| links make
 |P| a map.}.
 

@@ -33,7 +33,7 @@
 #include <cassert>
 #include <CGAL/circulator.h>
 // needed for test data structures
-#include <CGAL/circulator_impl.h>
+#include <CGAL/Circulator/Circulator_adapters.h>
 
 using namespace CGAL;
 

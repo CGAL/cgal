@@ -1,0 +1,33 @@
+/// \defgroup PkgInscribedAreas Inscribed Areas Reference
+
+/// \defgroup PkgInscribedAreasConcepts Concepts
+/// \ingroup PkgInscribedAreas
+
+/*!
+\addtogroup PkgInscribedAreas
+\todo check generated documentation
+\cgalPkgDescriptionBegin{Inscribed Areas,PkgInscribedAreasSummary}
+\cgalPkgPicture{ler-detail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Michael Hoffmann and Eli Packer}
+\cgalPkgDesc{This package provides algorithms for computing inscribed areas. The algorithms for computing inscribed areas are: the largest inscribed k-gon (area or perimeter) of a convex point set and the largest inscribed iso-rectangle.}
+\cgalPkgManuals{Chapter_Inscribed_Areas,PkgInscribedAreas}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{1.1}
+\cgalPkgBib{cgal:hp-ia}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{2D Inscribed k-gon as part of Polygon demo,polygon.zip}
+\cgalPkgDemo{2D Largest Empty Rectangle,largest_empty_rect_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+\section Inscribed_areasAssertions Assertions
+
+The optimization code uses infix `OPTIMISATION` in the assertions,
+e.g. defining the compiler flag
+`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
+checking off, cf. Section  \ref secchecks.
+*/
+

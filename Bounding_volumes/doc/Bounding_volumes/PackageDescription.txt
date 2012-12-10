@@ -1,0 +1,28 @@
+/// \defgroup PkgBoundingVolumes Bounding Volumes Reference
+/// \defgroup PkgBoundingVolumesConcepts Concepts
+/// \ingroup PkgBoundingVolumes
+/*!
+\addtogroup PkgBoundingVolumes
+\todo check generated documentation
+\cgalPkgDescriptionBegin{Bounding Volumes,PkgBoundingVolumesSummary}
+\cgalPkgPicture{minCircle.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr}
+\cgalPkgDesc{This package provides algorithms for computing optimal bounding volumes of point sets. In d-dimensional space, the smallest enclosing sphere, ellipsoid (approximate), and annulus can be computed. In 3-dimensional space, the smallest enclosing strip is available as well, and in 2-dimensional space, there are algorithms for a number of additional volumes (rectangles, parallelograms, \f$ k=2,3,4\f$ axis-aligned rectangles). The smallest enclosing sphere algorithm can also be applied to a set of d-dimensional spheres.}
+\cgalPkgManuals{Chapter_Bounding_Volumes,PkgBoundingVolumes}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{1.1}
+\cgalPkgBib{cgal:fghhs-bv}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Bounding Volumes,bounding_volumes_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+The optimization code uses infix `OPTIMISATION` in the assertions,
+e.g. defining the compiler flag
+`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
+checking off, cf. Section  \ref secchecks.
+
+*/
+

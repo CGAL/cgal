@@ -1,0 +1,11 @@
+/*!
+\example Skin_surface_3/NGHK_skin_surface_simple.cpp
+\example Skin_surface_3/NGHK_skin_surface_subdiv.cpp
+\example Skin_surface_3/skin_surface_pdb_reader.cpp
+\example Skin_surface_3/skin_surface_retrieve_defining_weighted_points.cpp
+\example Skin_surface_3/skin_surface_simple.cpp
+\example Skin_surface_3/skin_surface_subdiv.cpp
+\example Skin_surface_3/skin_surface_subdiv_with_normals.cpp
+\example Skin_surface_3/union_of_balls_simple.cpp
+\example Skin_surface_3/union_of_balls_subdiv.cpp
+*/

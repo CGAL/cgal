@@ -104,7 +104,7 @@ namespace CGAL {
       // std::cout<<"  end facet."<<std::endl;
     }
 
-    void begin_surface( std::size_t v, std::size_t f, std::size_t h)
+    void begin_surface( std::size_t v, std::size_t /*f*/, std::size_t /*h*/)
     {
       new_vertices  = 0;
       first_dart    = NULL;

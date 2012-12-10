@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-/// C++ class wrapping a Win32 structured exception.
+// C++ class wrapping a Win32 structured exception.
 class Win32_exception
 {
 // Data
@@ -45,6 +45,7 @@ public:
 };
 
 
+/// \internal
 /// Class Win32_exception_handler:
 /// - Translate Win32 structured exceptions to C++ exceptions.
 /// - Protect application against stack overflow using _resetstkoflw()

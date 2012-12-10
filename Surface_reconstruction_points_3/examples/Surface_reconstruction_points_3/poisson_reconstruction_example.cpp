@@ -52,16 +52,16 @@ int main(void)
     }
 
     // Creates implicit function from the read points using the default solver.
+
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
-    Poisson_reconstruction_function function(
-                              points.begin(), points.end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()));
+    Poisson_reconstruction_function function(points.begin(), points.end(),
+                                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()) );
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
-    if ( ! function.compute_implicit_function() )
+    if ( ! function.compute_implicit_function() ) 
       return EXIT_FAILURE;
 
     // Computes average spacing

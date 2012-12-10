@@ -1,0 +1,29 @@
+/// \defgroup PkgPolynomial Polynomial Reference
+/// \defgroup PkgPolynomialConcepts Concepts
+/// \ingroup PkgPolynomial
+
+/// \defgroup PkgPolynomialClasses Classes
+/// \ingroup PkgPolynomial
+
+/// \defgroup PkgPolynomialFunctions Functions
+/// \ingroup PkgPolynomial
+/*!
+\addtogroup PkgPolynomial
+\todo check generated documentation
+\cgalPkgDescriptionBegin{Polynomial,PkgPolynomialSummary}
+\cgalPkgPicture{Polynomial.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Michael Hemmer}
+\cgalPkgDesc{This package introduces a concept for univariate and multivariate  polynomials in \f$ d\f$ variables. Though the concept is written for an arbitrary  number of variables, the number of variables is considered as fixed for a  particular model of this concept.}
+\cgalPkgManuals{Chapter_Polynomial,PkgPolynomial}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.3}
+\cgalPkgBib{cgal:h-p}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\ref PolynomialClassified  "Classified Reference Pages"
+*/
+

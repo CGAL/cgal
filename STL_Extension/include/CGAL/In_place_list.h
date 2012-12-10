@@ -32,8 +32,6 @@
 #include <iterator>
 #include <functional>
 #include <algorithm>
-#include <CGAL/circulator_impl.h>
-#include <CGAL/circulator.h>
 #include <CGAL/memory.h>
 
 namespace CGAL {

@@ -19,8 +19,10 @@ DO_IT=""                 # Real mode (svn tag, copy to HTTP server), versus loca
 DO_NOT_TAG=""            # If set, do not call svn tag
 DO_TAG=""                # If set, svn tag is called anyway
 NO_TESTUITE=""           # If set, the LATEST file is not updated
+NO_SCM=""                # If set, git pull is not called.
 SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
 VERBOSE=""               # Verbose mode (displays log to standard err)
+SCM=svn
 
 SOURCES_DIR_HAS_BEEN_SET=
 CANDIDATES_DIR_HAS_BEEN_SET=
@@ -37,6 +39,7 @@ usage() {
     echo '  --do-not-tag     : when used with --do-it, the tag is not created.'
     echo '  --tag            : when used without --do-it, the tag is created, but files'
     echo '                     are not published'
+    echo '  --no-scm-update  : do not "svn update" or "git pull"'
     echo '  --no-testsuite   : when used with --do-it, the tag is made, files are published,'
     echo '                     but the LATEST file is not updated.'
     echo '  --verbose        : print log to standard output, instead of the log file'
@@ -62,6 +65,10 @@ while [ $1 ]; do
         ;;
         --do-it)
             DO_IT="y"
+            shift; continue
+        ;;
+        --no-scm-update)
+            NO_SCM="y";
             shift; continue
         ;;
         --tag)
@@ -152,11 +159,21 @@ set -x
 cd ${TMPDIR} || return
 
 # Update the working copy
-svn update ${SOURCES_DIR}
-if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
-    svn update ${CANDIDATES_DIR}
+if [ -d "${SOURCES_DIR}/.git" ]; then
+    pushd "${SOURCES_DIR}"
+    [ -z "$NO_SCM" ] && git pull
+    CGAL_GIT_HASH=`git rev-parse HEAD`
+    CGAL_SVN_REVISION=99999
+    popd
+    SCM=git
+else
+    [ -z "$NO_SCM" ] && svn update ${SOURCES_DIR}
+    CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
+    CGAL_GIT_HASH=n/a
 fi
-CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
+if [ "$SCM" = "svn" -a -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
+    [ -z "$NO_SCM" ] && svn update ${CANDIDATES_DIR}
+fi
 
 # Set the major/minor/bugfix release numbers
 NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
@@ -216,6 +233,7 @@ fi
 # Add the SVN revision to version.h
 cd "${release_name}"
 sed -i -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h
+sed -i -e "s/define CGAL_GIT_HASH .*/define CGAL_GIT_HASH $CGAL_GIT_HASH/" include/CGAL/version.h
 cd ..
 # Make the release tarball
 tar -cf "${release_name}.tar" "${release_name}"
@@ -241,7 +259,7 @@ if [ -n "$DO_TAG" ]; then
     if [ -n "$NO_TESTSUITE" ]; then
         TAG_MSG_EXTRA=" (no testsuite)"
     fi
-    svn cp -m "Internal release tag for $release_name$TAG_MSG_EXTRA (automated commit)" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
+    [ "$SCM" = "svn" ] && svn cp -m "Internal release tag for $release_name$TAG_MSG_EXTRA (automated commit)" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
 fi
 
 # Build the SRPM
@@ -272,7 +290,13 @@ if [ -n "$DO_PUBLIC" ]; then
     rm -rf bench* Bench* test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
     rm -f examples/*/cgal_test* demo/*/cgal_test*
     find . -name .scm-urls -exec rm '{}' '+'
+
+    # Modify the version numbers in <CGAL/version.h>
     sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
+
+    # Patch the date and CGAL version in man(1) pages
+    sed -i -e "s/@DATE@/`date '+%B %Y'`/; s/@CGAL_VERSION@/$public_release_version/" auxiliary/*.1
+
     echo -n $public_release_version > VERSION 2>&1
     cd ..
 

@@ -1,163 +1,246 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: LargestEmptyIsoRectangleTraits_2.tex
-% +------------------------------------------------------------------------+
-% | 06.04.2000   Author
-% | Package: Package
-% | 
-\RCSdef{\RCSSnapRoundingTraits_2Rev}{$Id$}
-\RCSdefDate{\RCSSnapRoundingTraits_2Date}{$Date$}
-% |
-%%RefPage: end of header, begin of main body
-% +------------------------------------------------------------------------+
+% | Reference manual page: SnapRoundingTraits_2.tex
+% | Package: Snap_rounding_2
 
+\ccRefPageBegin
 \begin{ccRefConcept}{SnapRoundingTraits_2}
 
-%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[concept]{} %% add further index entries
-
 \ccDefinition
-  
-The concept \ccRefName\ lists the set of requirements that must be fulfilled by
-an instance of the \ccc{Traits} template-parameter of
-the function \ccc{snap_rounding_2<Traits,InputIterator,OutputContainer>()}.
-This concept provides the types of the geometric primitives used in
-this class and some function object types for the required
-predicates on those primitives.
+% ===========
+The concept \ccRefName{} lists the set of requirements that must be fulfilled
+by an instance of the \ccc{Traits} template-parameter of the free function
+\ccc{snap_rounding_2<Traits,InputIterator,OutputContainer>()}. The list
+includes the nested types of the geometric primitives used in this class and
+some function object types for the required predicates on those primitives.
 
 \ccRefines
-This concept refines the standard concepts DefaultConstructible, Assignable and
-CopyConstructible. It also refines the concept
-\ccc{SweepLineTraits_2} \lcTex{(\ccRefPage{SweepLineTraits_2})}.
-An instance of this concept is used as the traits class for the
-\ccc{Sweep_line_2.get_intersection_points()} operation. The requirements listed
-below are induced by compnents of the \ccc{snap_rounding_2()} function other
-than the call to \ccc{Sweep_line_2.get_intersection_points()}. Naturally, some
-of them may already be listed in \ccc{SweepLineTraits_2}.
+% ========
+\ccc{ArrangementTraits_2}
 
 \ccTypes
+% ======
 \ccNestedType{FT}{The number type. This type must fulfill the requirements on
 \ccc{FieldNumberType}}
 \ccGlue
-\ccNestedType{Point_2}{The point type.}
+\ccNestedType{Point_2}{Models the concept \ccc{ArrTraits::Point_2}.}
 \ccGlue
-\ccNestedType{Segment_2}{The segment type.}
+\ccNestedType{Segment_2}{Models the concept
+  \ccc{ArrTraits::XMonotoneCurve_2}.}
 \ccGlue
-\ccNestedType{Iso_rectangle_2}{The iso-rectangle type.}
+\ccNestedType{Iso_rectangle_2}{Models the concept
+  \ccc{SRTraits_2::IsoRectangle_2}.}
 
-\ccNestedType{Construct_vertex_2}{Function object. Must provide the operator
-\ccc{Point_2 operator()(Segment_2 seg, int i)}, which returns the source or
-target of \ccc{seg}. If \ccc{i} modulo 2 is 0, the source is returned,
-otherwise the target is returned. }
-\ccGlue
-\ccNestedType{Construct_segment_2}{Function object. Must provide the operator
-\ccc{Segment_2 operator()(Point_2 p, Point_2 q)}, which  introduces a segment
-with source \ccc{p} and target \ccc{q}. The segment is directed from the
-source towards the target.}
-\ccGlue
-\ccNestedType{Construct_iso_rectangle_2}{Function object. Must provide the
-operator
-\ccc{Iso_rectangle_2 operator()(Point_2 left, Point_2 right, Point_2 bottom,
-Point_2 top)}, which  introduces an iso-oriented rectangle fo whose minimal
-$x$ coordinate is the one of \ccc{left}, the maximal $x$ coordinate is the one
-of \ccc{right}, the minimal $y$ coordinate is the one of \ccc{bottom}, the
-maximal $y$ coordinate is the one of \ccc{top}. }
+\ccHeading{Functor Types}
+% =======================
+\ccThree{Construct_iso_rectangle_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
 
-\ccNestedType{To_double}{Function object. Must provide the operator
-\ccc{double  operator()(FT)}, which computes an approximation of a given number
-of type \ccc{FT}. The precision of this operation is of not high significance,
-as it is only used in the implementation of the heuristic technique to exploit
-a cluster of kd-trees rather than just one.}
+\ccNestedType{Construct_vertex_2}{Models the concept
+  \ccc{SRTraits_2::ConstructVertex_2}.}
 \ccGlue
-\ccNestedType{Compare_x_2}{Function object. Must provide the operator
-\ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
-which returns 
-\ccc{SMALLER, EQUAL} or \ccc{LARGER} according to the
-$x$-ordering of points \ccc{p} and \ccc{q}.}
+\ccNestedType{Construct_segment_2}{Models the concept
+  \ccc{SRTraits_2::ConstructSegment_2}.}
 \ccGlue
-\ccNestedType{Compare_y_2}{Function object. Must provide the operator
-\ccc{Comparison_result operator()(Point_2 p, Point_2 q)}
-which returns
-\ccc{SMALLER, EQUAL} or \ccc{ LARGER}
-according to the
-$y$-ordering of points \ccc{p} and \ccc{q}.}
+\ccNestedType{Construct_iso_rectangle_2}{Models the concept
+  \ccc{SRTraits_2::ConstructIsoRectangle_2}.}
+
+\ccNestedType{To_double}{Models the concept
+  \ccc{RealEmbeddableTraits::ToDouble}. The precision of this operation is
+  of not high significance, as it is only used in the implementation of the
+  heuristic technique to exploit a cluster of kd-trees rather than just one.}
 \ccGlue
+\ccNestedType{Compare_x_2}{Models the concept \ccc{SRTraits_2::CompareX_2}.}
+\ccGlue
+\ccNestedType{Compare_y_2}{Models the concept \ccc{SRTraits_2::CompareY_2}.}
+\ccGlue
+\ccNestedType{Snap_2}{Models the concept \ccc{SRTraits_2::Snap_2}.}
 
-\ccNestedType{Snap_2}{Rounds a point to a center of a pixel (unit square)
-in the grid used by the Snap Rounding algorithm. Note that no conversion
-to an integer grid is done yet. Must have the syntax
-\ccc{void operator()(Point_2 p,FT pixel_size,FT &x,FT &y)} where $p$ is the
-input point, \ccc{pixel_size} is the size of the pixel of the grid,
-and $x$ and $y$ are the $x$ and $y$-coordinates of the rounded point
-respectively.}
+\ccNestedType{Integer_grid_point_2}{Models the concept
+  \ccc{SRTraits_2::IntegerGridPoint_2}.}
 
-\ccNestedType{Integer_grid_point_2}{Convert coordinates
-into an integer representation where one unit is equal to pixel size.
-For instance, if a point has the coordinates $(3.7,5.3)$ and the pixel
-size is $0.5$, then the new point will have the coordinates of $(7,10)$.
-Note, however, that the number type remains the same here, although
-integers are represented.
-Must have the syntax \ccc{Point_2 operator()(Point_2 p,NT pixel_size)}
-where $p$ is the converted point and \ccc{pixel_size} is the size of the pixel
-of the grid.}
+\ccNestedType{Minkowski_sum_with_pixel_2}{Models the concept
+  \ccc{SRTraits:MinkowskiSumWithPixel_2}.}
 
-\ccNestedType{Minkowski_sum_with_pixel_2}{Returns the vertices of a polygon,
-which is the Minkowski sum of a segment and a square centered at the origin
-with edge size \ccc{pixel edge}.
-Must have the syntax
-\ccc{void operator()(std::list<Point_2>& vertices_list, Segment_2 s,
-NT unit_square)}
-where \ccc{vertices_list} is the list of the vertices of the Minkowski sum
-polygon, $s$ is the input segment and \ccc{unit_square} is the edge size of
-the pixel.}
-
-\ccCreation
+% \ccCreation
+% =========
 \ccCreationVariable{traits}  %% choose variable name
-This concept refines the standard concepts DefaultConstructible, Assignable and
-CopyConstructible.
 
-% \ccConstructor{SnapRoundingTraits_2();}{Default constructor.}
-% \ccGlue
-% \ccConstructor{SnapRoundingTraits_2(SnapRoundingTraits_2);}
-% {Copy constructor}
-% \ccMethod{SnapRoundingTraits_2 operator=(SnapRoundingTraits_2 gtr);}
-% {Assignment operator.}
+\ccHeading{Accessing Functor Objects}
+% ===================================
+\ccThree{Minkowski_sum_with_pixel_2}{minkowski_sum_with_pixel_2_object() const;}{}
+\ccMethod{Construct_vertex_2 construct_vertex_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_segment_2 construct_segment_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_iso_rectangle_2 construct_iso_rectangle_2_object() const;}{}
 
-\ccOperations
-
-The following functions construct the required function objects occasionally
-referred as functors listed above.
-% Each of these objects provide a necessary operation to carry out the
-% snap-rounding procedure.
-
-\ccThree{Minkowski_sum_with_pixel_2}{minkowski_sum_with_pixel_2_object();}{}
-\ccMethod{Construct_vertex_2 construct_vertex_2_object();}{}
+\ccMethod{Compare_x_2 compare_x_2_object() const;}{}
 \ccGlue
-\ccMethod{Construct_segment_2 construct_segment_2_object();}{}
+\ccMethod{Compare_y_2 compare_y_2_object() const;}{}
 \ccGlue
-\ccMethod{Construct_iso_rectangle_2 construct_iso_rectangle_2_object();}{}
-
-\ccMethod{Compare_x_2 compare_x_2_object();}{}                               
+\ccMethod{Snap_2 snap_2_object() const;}{}
 \ccGlue
-\ccMethod{Compare_y_2 compare_y_2_object();}{}
+\ccMethod{Integer_grid_point_2 integer_grid_point_2_object() const;}{}
 \ccGlue
-\ccMethod{Snap_2 snap_2_object();}{}
-\ccGlue
-\ccMethod{Integer_grid_point_2 integer_grid_point_2_object();}{}
-\ccGlue
-\ccMethod{Minkowski_sum_with_pixel_2 minkowski_sum_with_pixel_2_object();}{}
-\ccGlue
-
+\ccMethod{Minkowski_sum_with_pixel_2 minkowski_sum_with_pixel_2_object() const;}{}
 
 \ccHasModels
+% ==========
 \ccc{CGAL::Snap_rounding_traits<Kernel>}
 
 \ccSeeAlso
+% ========
 \ccc{CGAL::Snap_rounding_2<Traits>}
 
 \end{ccRefConcept}
+\ccRefPageEnd
 
-% +------------------------------------------------------------------------+
-%%RefPage: end of main body, begin of footer
-% EOF
-% +------------------------------------------------------------------------+
+%%%%%%%% Geometric Objects %%%%%%%%
+% =================================
 
+%%%%%%%% IsoRectangle_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::IsoRectangle_2}
+\ccDefinition
+Represents an iso rectangle.
+
+\ccRefines{DefaultConstructible, CopyConstructible, Assignable}
+
+\ccHasModels\ccc{SRTraits_2::Iso_rectangle_2}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Functors %%%%%%%%
+% ========================
+%%%%%%%% ConstructVertex_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::ConstructVertex_2}
+\ccRefines{AdaptableBinaryFunction}
+
+\ccHasModels\ccc{SRTraits_2::Construct_vertex_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Point_2 operator()(Segment_2 seg, int i);}{%
+  returns the source or target of \ccc{seg}. If \ccc{i} modulo $2$ is $0$,
+  the source is returned, otherwise the target is returned.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ConstructSegment_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::ConstructSegment_2}
+\ccRefines{AdaptableBinaryFunction}
+
+\ccHasModels\ccc{SRTraits_2::Construct_segment_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Segment_2 operator()(Point_2 p, Point_2 q);}{%
+  introduces a segment with source \ccc{p} and target \ccc{q}. The segment
+  is directed from the source towards the target.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ConstructIsoRectangle_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::ConstructIsoRectangle_2}
+\ccRefines{AdaptableQuaternaryFunction}
+
+\ccHasModels\ccc{SRTraits_2::Construct_iso_rectangle_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Iso_rectangle_2 operator()(Point_2 left, Point_2 right,
+                                     Point_2 bottom, Point_2 top);}{%
+  introduces an iso-oriented rectangle fo whose minimal $x$ coordinate
+  is the one of \ccc{left}, the maximal $x$ coordinate is the one of
+  \ccc{right}, the minimal $y$ coordinate is the one of \ccc{bottom},
+  the maximal $y$ coordinate is the one of \ccc{top}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareX_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::CompareX_2}
+\ccRefines{AdaptableBinaryFunction}
+
+\ccHasModels\ccc{SRTraits_2::Compare_x_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Comparison_result operator()(Point_2 p, Point_2 q);}{%
+  returns \ccc{SMALLER, EQUAL}, or \ccc{LARGER} according to the $x$-ordering
+  of the points \ccc{p} and \ccc{q}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareY_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::CompareY_2}
+\ccRefines{AdaptableBinaryFunction}
+
+\ccHasModels\ccc{SRTraits_2::Compare_y_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Comparison_result operator()(Point_2 p, Point_2 q);}{%
+  returns \ccc{SMALLER, EQUAL}, or \ccc{LARGER} according to the $y$-ordering
+  of the points \ccc{p} and \ccc{q}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Snap_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::Snap_2}
+\ccRefines{AdaptableQuaternaryFunction}
+
+\ccHasModels\ccc{SRTraits_2::Snap_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{void operator()(Point_2 p, FT pixel_size, FT &x, FT &y);}{%
+  rounds a point to a center of a pixel (unit square) in the grid used by
+  the Snap Rounding algorithm. Note that no conversion to an integer grid
+  is done yet. $p$ is the input point, \ccc{pixel_size} is the size of the
+  pixel of the grid, and $x$ and $y$ are the $x$ and $y$-coordinates of
+  the rounded point respectively.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% IntegerGridPoint_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::IntegerGridPoint_2}
+\ccRefines{AdaptableBinaryFunction}
+
+\ccHasModels\ccc{SRTraits_2::Integer_grid_point_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Point_2 operator()(Point_2 p, NT pixel_size);}{%
+  converts coordinates into an integer representation where one unit is equal
+  to pixel size. For instance, if a point has the coordinates $(3.7,5.3)$
+  and the pixel size is $0.5$, then the new point will have the coordinates
+  of $(7,10)$. Note, however, that the number type remains the same here,
+  although integers are represented. $p$ is the converted point and
+  \ccc{pixel_size} is the size of the pixel of the grid.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% MinkowskiSumWithPixel_2
+\ccRefPageBegin
+\begin{ccRefConcept}{SRTraits_2::MinkowskiSumWithPixel_2}
+\ccRefines{AdaptableTernaryFunction}
+
+\ccHasModels\ccc{SRTraits_2::Minkowski_sum_with_pixel_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{void operator()(std::list<Point_2>& vertices_list, Segment_2 s,
+                          NT unit_square);}{%
+  returns the vertices of a polygon, which is the Minkowski sum of a segment
+  and a square centered at the origin with edge size \ccc{pixel edge}.
+  \ccc{vertices_list} is the list of the vertices of the Minkowski sum
+  polygon, $s$ is the input segment and \ccc{unit_square} is the edge
+  size of the pixel.}
+\end{ccRefConcept}
+\ccRefPageEnd

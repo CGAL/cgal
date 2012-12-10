@@ -376,7 +376,7 @@ public:
 
   The faces refer to the maximal connected open point sets of the
   spherical subdivision implied by the embedding of the vertices and
-  edges.  SFaces are bounded by possibly several face cycles\footnote{For
+  edges.  SFaces are bounded by possibly several face cycles\cgalFootnote{For
   the definition of sphere maps and their concepts see the manual page
   of |SM_decorator|.} including isolated vertices. The overlay process
   in the method |create_from_segments| creates the objects and the
