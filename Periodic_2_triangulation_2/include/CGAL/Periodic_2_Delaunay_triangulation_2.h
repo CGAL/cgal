@@ -608,13 +608,13 @@ is_valid(bool verbose, int level) const
          fit != this->faces_end(); ++fit) {
       for (int i=0; i<3; i++) {
         p[i] = &fit->vertex(i)->point();
-        off[i] = get_offset(fit,i);
+        off[i] = this->get_offset(fit,i);
       }
 
       /// Check whether the vertices of the neighbor lie outside the circumcircle of the face
       for (int i=0; i<3; ++i) {
         p[3]   = &fit->vertex(i)->point();
-        off[3] = combine_offsets(get_offset(fit,i), get_neighbor_offset(fit, i));
+        off[3] = this->combine_offsets(this->get_offset(fit,i), this->get_neighbor_offset(fit, i));
 
         result &= ON_POSITIVE_SIDE !=
           this->side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
@@ -1091,8 +1091,8 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
   // this is the old removal procedure that is used now only if d > 7
 
     std::list<Edge> hole;
-    make_hole(v, hole);
-    fill_hole_delaunay(hole);
+    this->make_hole(v, hole);
+    this->fill_hole_delaunay(hole);
     return;
 }
 
