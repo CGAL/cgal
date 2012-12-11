@@ -211,7 +211,7 @@ size_type number_of_faces() const{return _tds.number_of_faces();}
   bool is_too_close(const Point& p, const Point& q)const;
   //------------------------------------------------------------------------PREDICATES----------------------------------------
   Orientation orientation(const Point& p, const Point& q, const Point& r) const;
-  Orientation orientation_1(const Point& p, const Point& q) const;
+  //Orientation orientation_1(const Point& p, const Point& q) const;
   Orientation orientation(const Face_handle f) const;
   Orientation orientation(const Face_handle f, const Point& p)const;
   Orientation orientation(const Point&p, const Point& q, const Point& r, const Point &s) const;
@@ -1036,7 +1036,7 @@ equal(const Point &p, const Point &q) const
 		return compare_xyz(p, q) == EQUAL;
 }
 	
-
+/*
 template <class Gt, class Tds >
 inline
 Orientation
@@ -1044,7 +1044,7 @@ Triangulation_sphere_2<Gt, Tds>::
 coplanar_orientation(const Point& p, const Point& q,const Point& r ) const
 {
 	return geom_traits().orientation_1_object()(p,q,r);
-}
+}*/
 	
 template <class Gt, class Tds >
 inline
@@ -1077,7 +1077,7 @@ orientation(const Face_handle fh,const Point& r ) const
 	return orientation(fh->vertex(0)->point(), fh->vertex(1)->point(), fh->vertex(2)->point(),r);
 }	
 	
-	
+/*	
 template <class Gt, class Tds >
 inline
 Orientation
@@ -1085,7 +1085,7 @@ Triangulation_sphere_2<Gt, Tds>::
 orientation_1(const Point& p, const Point& q ) const
 {
   return geom_traits().orientation_1_object()(p,q);
-}
+}*/
 
 template <class Gt, class Tds >
 Orientation

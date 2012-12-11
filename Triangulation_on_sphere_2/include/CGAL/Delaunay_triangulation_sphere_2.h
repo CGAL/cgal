@@ -19,7 +19,8 @@ namespace CGAL {
 
 template < class Gt,
            class Tds  = Triangulation_data_structure_2 <
-                        Regular_triangulation_vertex_base_2<Gt>,
+                        //Regular_triangulation_vertex_base_2<Gt>,
+	Triangulation_vertex_base_2<Gt>,
 		        Delaunay_triangulation_face_base_sphere_2<Gt> > >
 class Delaunay_triangulation_sphere_2
   : public Triangulation_sphere_2<Gt,Tds>
@@ -926,6 +927,7 @@ test_dim_up(const Point &p) const
 	Vertex_handle v2=f->vertex(1);
 	Vertex_handle v3=f->neighbor(0)->vertex(1);
 		
+	v1->point();
 	return (power_test(v1->point(), v2->point(), v3->point(),p)!=ON_ORIENTED_BOUNDARY);
 		
 }

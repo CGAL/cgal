@@ -77,7 +77,7 @@ Power_test_2(const Point_2& sphere)
 : _sphere(sphere)
 {}
 	
-	
+/*	
 template < typename K >
 class Orientation_sphere_1
 {
@@ -93,15 +93,13 @@ public:
  }
 		
  Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
- {
-			//return coplanar_orientation(_sphere,p,q,r);
+ {			
 	return coplanar_orientation(p,q,r,_sphere);
  }
 		
  Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r,const Point_2& s) const
  {
 	    	return coplanar_orientation(p,q,r,s);
-			//return coplanar_orientation(p,q,r,_sphere);
  }
 		
 protected :
@@ -115,7 +113,7 @@ template < typename K >
 Orientation_sphere_1<K>::
 Orientation_sphere_1(const Point_2& sphere)
 : _sphere(sphere)
-{}
+{}*/
 	
 	
 	
@@ -130,26 +128,20 @@ public:
 	
  Orientation_sphere_2(const Point_2& sphere);
 		
-  Comparison_result operator()(const Point_2& p,
-							 const Point_2& q,
-							 const Point_2& test) const
-  {
-		return orientation(_sphere,p,q,test);
-	}
+ Comparison_result operator()(const Point_2& p, const Point_2& q,
+							 const Point_2& r) const
+  {	return orientation(_sphere,p,q,r);}
 		
-	Comparison_result operator()(const Point_2& p, const Point_2& q,
-									 const Point_2& r, const Point_2 & s) const
-	{
-			return orientation(p,q,r,s);
-	}
-
+ Comparison_result operator()(const Point_2& p, const Point_2& q,
+							 const Point_2& r, const Point_2 & s) const
+	{return orientation(p,q,r,s);}
 		
 		
 protected :
 Point_2  _sphere;
-	
-
 };
+	
+	
 template < typename K >
 Orientation_sphere_2<K>::
  Orientation_sphere_2(const Point_2& sphere)
@@ -161,15 +153,14 @@ template < typename K >
 class Coradial_sphere_2
 {
 public:
-	typedef typename K::Point_2                  Point_2;
-		
-	Coradial_sphere_2(const Point_2& sphere);
-		
-	bool operator()(const Point_2& p, const Point_2 q) const
-	{
-		return collinear(_sphere,p,q) &&
-		( are_ordered_along_line(_sphere,p,q) || are_ordered_along_line(_sphere,q,p) );
-	}
+ typedef typename K::Point_2                  Point_2;
+Coradial_sphere_2(const Point_2& sphere);
+
+ bool operator()(const Point_2& p, const Point_2 q) const
+ {
+	return collinear(_sphere,p,q) &&
+	( are_ordered_along_line(_sphere,p,q) || are_ordered_along_line(_sphere,q,p) );
+ }
 		
 protected :
 Point_2  _sphere;
@@ -190,18 +181,18 @@ template < typename K >
 class Inside_cone_2
 {
 public:
-	typedef typename K::Point_2                  Point_2;
+ typedef typename K::Point_2                  Point_2;
 		
-	Inside_cone_2(const Point_2& sphere);
+ Inside_cone_2(const Point_2& sphere);
 	
-	bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
-	{
-		if( collinear(_sphere,p,r)||collinear(_sphere,q,r)||orientation(_sphere,p,q,r)!=COLLINEAR)
-			return false;
-		if( collinear(_sphere,p,q) )
-				return true;
-			return coplanar_orientation(_sphere,p,q,r) == ( POSITIVE==coplanar_orientation(_sphere,q,p,r) );
-		}
+bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+{
+	if( collinear(_sphere,p,r)||collinear(_sphere,q,r)||orientation(_sphere,p,q,r)!=COLLINEAR)
+		return false;
+	if( collinear(_sphere,p,q) )
+		return true;
+	return coplanar_orientation(_sphere,p,q,r) == ( POSITIVE==coplanar_orientation(_sphere,q,p,r) );
+}
 		
 protected :
 	Point_2  _sphere;
@@ -215,20 +206,6 @@ Inside_cone_2<K>::
 Inside_cone_2(const Point_2& sphere)
 : _sphere(sphere)
 {}
-	
-
-
-
-/*template < typename K >
-class Distance_2{
-public:
- typedef  double result_type;
- typedef typename K::Point_2                  Point_2;
-	double operator ()(const Point_2 & p, const Point_2 & q)	{
-		return CGAL::squared_distance(p,q);
-	}
-};*/
-	
 	
 template < class R >
 class Delaunay_triangulation_sphere_traits_2
@@ -250,7 +227,8 @@ public:
   typedef CGAL::Orientation_sphere_2<Self>               Orientation_2;
   typedef CGAL::Coradial_sphere_2<Self>                  Coradial_sphere_2;
   typedef CGAL::Inside_cone_2<Self>                      Inside_cone_2;
-  typedef CGAL::Orientation_sphere_1<Self>               Orientation_1;
+  //typedef CGAL::Orientation_sphere_1<Self>               Orientation_1;
+	typedef typename R::Coplanar_orientation_3			Orientation_1;
   typedef typename R::Compute_squared_distance_3         Compute_squared_distance_2;
 	typedef typename R::Compare_xyz_3					 Compare_xyz_3;
 	
@@ -277,7 +255,7 @@ public:
 
   Orientation_1
   orientation_1_object() const
-  {return Orientation_1(_sphere);}
+  {return Orientation_1();}
 
   Power_test_2 
   power_test_2_object() const

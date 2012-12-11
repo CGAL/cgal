@@ -90,4 +90,58 @@ int main()
   assert(result==CGAL::ON_ORIENTED_BOUNDARY);
   result=traits2.power_test_2_object()(P0,P13); 
   assert(result==CGAL::ON_NEGATIVE_SIDE);
+	
+	
+	std::cout<<"Test Orientation_2"<<std::endl;	
+	Point p21 = Point(0.5, 0.5, sqrt(0.75));
+	Point p22 = Point(- 0.5, 0.5, sqrt(0.75));
+	Point p23 = Point(0, -1, sqrt(0.75));
+	Point p24 = Point(0,0,-1);
+	Point p25 = Point(0,0,-1.5);
+	Point p26 = Point(1,1,2*sqrt(0.75));
+	
+	result = traits.orientation_2_object()(p21,p22,p23);
+	assert (result == CGAL::ON_POSITIVE_SIDE);
+	result = traits.orientation_2_object()(p23,p22,p21);
+	assert (result == CGAL::ON_NEGATIVE_SIDE);
+	result = traits.orientation_2_object()(p24,p21,p22, p23);
+	assert (result == CGAL::ON_POSITIVE_SIDE);
+	
+	std::cout<<"Test Coradial_sphere_2"<<std::endl;
+	bool coradial;
+	coradial = traits.coradial_sphere_2_object()(p24,p25);
+	assert (coradial);
+	coradial = traits.coradial_sphere_2_object()(p25, p24);
+	assert(coradial);
+	coradial = traits.coradial_sphere_2_object()(p21, p26);
+	assert(coradial);
+	coradial = traits.coradial_sphere_2_object()(p22, p26);
+	assert(!coradial);
+
+	std::cout<<"Test Inside_cone_2"<<std::endl;
+	Point p31 =  Point(1,1,1);
+	Point p32 = Point(-1,1,1);
+	Point p33 = Point(0, sqrt(1.5),sqrt(1.5));
+	Point p34 = Point(0, -sqrt(2),-1);
+	Point p35= Point(0.9,0.9,0.9);
+	Point p36 = Point(0, sqrt(2.5),0);
+	
+	bool inside;
+	//conde defined by 0, p31 and p32
+	inside = traits.inside_cone_2_object()(p31,p32,p33);
+	assert(inside);
+	inside = traits.inside_cone_2_object()(p31,p32,p34);
+	assert(!inside);
+	inside = traits.inside_cone_2_object()(p31,p32,p35);
+	assert(!inside);
+	//not coplanar
+	inside = traits.inside_cone_2_object()(p31,p32,p36);
+	assert(!inside);
+	
+	
+	
+	
+	
+	
+	
 } 

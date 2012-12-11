@@ -103,9 +103,7 @@ typedef typename Predicate::result_type result_type;
 		
 		
 result_type operator()(const Point& p0, const Point& p1)  {
-	Base_point b0 = project(p0);
-	Base_point b1 = project(p1);
-	return Predicate()(project(p0), project(p1));
+		return Predicate()(project(p0), project(p1));
 }
 		
 result_type operator()(const Point& p0, const Point& p1, const Point& p2)  {
@@ -157,12 +155,12 @@ typedef Traits_with_projection_adaptor<Base,Self,typename Base::Power_test_2>
 	  Coradial_sphere_2;
  typedef Traits_with_projection_adaptor<Base,Self,typename Base::Inside_cone_2 >
 	Inside_cone_2;
-typedef Traits_with_projection_adaptor<Base,Self,typename Base::Orientation_1 >
+typedef Traits_with_projection_adaptor2<R,Self,typename Base::Orientation_1 >
 	Orientation_1;
  typedef Traits_with_projection_adaptor2<R, Self , typename Base ::Compute_squared_distance_2>
 	Compute_squared_distance_2;
 typedef Traits_with_projection_adaptor2<R , Self, typename Base::Compare_xyz_3>
-	Cpmpute_xyz_3;
+	Compare_xyz_3;
 
 	
  typedef boost::false_type  requires_test;
@@ -170,7 +168,7 @@ typedef Traits_with_projection_adaptor2<R , Self, typename Base::Compare_xyz_3>
 	void set_radius(double radius){	_radius = radius;}
 		
 		
-Projection_sphere_traits_3(const Base_point& sphere=Base_point(0,0,0));
+Projection_sphere_traits_3(const Base_point& sphere=Base_point(0,0,0), double radius = 1);
 		
 Orientation_2
 orientation_2_object()const
@@ -178,7 +176,7 @@ orientation_2_object()const
 		
 Orientation_1
 orientation_1_object() const 
-{return Orientation_1(_sphere, _radius);}
+{return Orientation_1( _radius);}
 		
 Power_test_2 
 power_test_2_object() const
@@ -196,7 +194,10 @@ Compute_squared_distance_2
 compute_squared_distance_3_object() const
 	{ return Compute_squared_distance_2( _radius);}
 		
-		
+Compare_xyz_3
+compare_xyz_3_object()const
+	{return Compare_xyz_3(_radius);}
+	
 protected :
 	Base_point _sphere;
 		
@@ -204,8 +205,8 @@ protected :
 	
 template < class R >
 Projection_sphere_traits_3<R> ::
-Projection_sphere_traits_3(const Base_point& sphere)
-: _sphere(sphere)
+Projection_sphere_traits_3(const Base_point& sphere, double radius)
+: _sphere(sphere), _radius(radius)
 {}
 	
 	

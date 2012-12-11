@@ -2,15 +2,78 @@
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/Triangulation_sphere_2.h>
 #include <CGAL/Delaunay_triangulation_sphere_2.h>
+#include <CGAL/Projection_sphere_traits_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Projection_sphere_traits_3<K>						 Pgt;
 typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                 DTOS;
-typedef DTOS::Point												Point;
+typedef CGAL::Delaunay_triangulation_sphere_2<Pgt>               PDTOS;
 
-template<class DTOS>
-void test (){
+
+void testProjection(){
+	PDTOS pdtos;
+	typedef PDTOS::Point												Point;
+
+	
+	double radius = 1000;
+	std::vector<Point> points;
+	pdtos.set_radius(radius);
+	
+	//legal points
+	Point p1 = Point (radius/sqrt(2), 0, radius/sqrt(2));
+	points.push_back(p1);
+	
+	
+	
+	Point p2 = Point (-radius/sqrt(3), radius/sqrt(3),-radius/sqrt(3));
+	points.push_back(p2);
+		
+	
+	Point p3 = Point ( radius,0,0);
+	points.push_back(p3);
+	
+	Point p4 = Point (-radius/sqrt(2), -radius/sqrt(2) , 0);
+	points.push_back(p4);
+	
+	
+		
+	//points original not on sphere
+	Point p5 = Point (radius, 0, -0.5 * radius);
+	points.push_back(p5);
+	
+	
+	
+	
+	//Points too close
+	Point p6 = Point (5*radius, pow(2,-25),0);
+	points.push_back(p6);
+	
+				
+	
+	
+	Point p7 = Point(-7*radius/sqrt(3), 7* radius/sqrt(3),-7*radius/sqrt(3)+pow(2,-35));
+	points.push_back(p7);
+	
+	
+		
+	
+	pdtos.insert(points.begin(), points.end());
+	double anz = pdtos.number_of_vertices();
+	assert(pdtos.number_of_vertices()==5);
+	pdtos.is_valid();
+	
+	
+}
+
+
+
+
+
+void testDelaunay (){
 	DTOS dtos;
+	typedef DTOS::Point												Point;
+
 	double radius =1000;
 	dtos.set_radius(radius);
 	std::vector<Point> points;
@@ -97,8 +160,11 @@ void test (){
 
 
 int main(){
-	std::cout<<"Test inserting illegal points"<<std::endl;
-	test<DTOS>();
+	std::cout<<"Test inserting illegal points with Delaunay_traits"<<std::endl;
+	//testDelaunay();
+	
+	std::cout<<"Test inserting illegal points with Projection_traits"<<std::endl;
+	testProjection();
 	
 	return 0;
 }

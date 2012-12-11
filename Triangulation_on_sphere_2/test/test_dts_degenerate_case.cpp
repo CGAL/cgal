@@ -1,22 +1,23 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
 #include <CGAL/Triangulation_sphere_2.h>
 #include <CGAL/Delaunay_triangulation_sphere_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
-//typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
-typedef CGAL::Projection_sphere_traits_3<K>						Gt;
+typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
+typedef CGAL::Projection_sphere_traits_3<K>						Gt2;
 typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                 DTOS;
-typedef DTOS::Point												Point;
-typedef DTOS::Face_handle                                 Face_handle;
-typedef DTOS::Vertex_handle									Vertex_handle;
-typedef DTOS::All_faces_iterator                            Face_iterator;
-typedef DTOS::All_vertices_iterator                           Vertex_iterator;
+typedef CGAL::Delaunay_triangulation_sphere_2<Gt2>                 PDTOS;
+//typedef DTOS::Point												Point;
+typedef DTOS::Face_handle										Face_handle;
 
 
 
-bool has_face(Face_handle fh, Vertex_handle v0, Vertex_handle v1, Vertex_handle v2){
+template < class Face_handle, class Vertex_handle>
+bool has_face(const Face_handle& fh,const Vertex_handle& v0,const Vertex_handle& v1, const Vertex_handle& v2){
+//bool has_face(typename Triangul::Face_handle fh,typename Triangul::Vertex_handle v0, typename Triangul::Vertex_handle v1,typename Triangul::Vertex_handle v2){ 
+
 	bool test1, test2, test3;
 	for(int i=0;i<=2; i++){
 		test1 = (v0->point()==fh->vertex(i)->point());
@@ -39,7 +40,15 @@ bool has_face(Face_handle fh, Vertex_handle v0, Vertex_handle v1, Vertex_handle 
 	
 	return true;
 }
-bool are_equal(DTOS triA, DTOS triB){
+
+template <class Triangul>
+bool are_equal(Triangul triA, Triangul triB){
+	typedef typename Triangul::All_faces_iterator                            Face_iterator;
+	typedef typename Triangul::All_vertices_iterator                          Vertex_iterator;
+	typedef typename Triangul::Face_handle    Face_handle;
+	typedef typename Triangul::Vertex_handle     Vertex_handle;
+	typedef  typename  Triangul::Point           Point;
+
 	bool test = false;
 	bool found = false;
 	if (triA.number_of_vertices()!= triB.number_of_vertices())
@@ -54,7 +63,12 @@ bool are_equal(DTOS triA, DTOS triB){
 	 for( ; fiA != triA.all_faces_end(); ++fiA ){
 		found=false;
 		for(fiB=triB.all_faces_begin(); fiB!=triB.all_faces_end(); fiB++){
-			test = has_face(fiB, fiA->vertex(0), fiA->vertex(1), fiA->vertex(2));
+			Face_handle fb = Face_handle(fiB);
+			Face_handle fa = Face_handle(fiA);
+			Vertex_handle v0 = fa->vertex(0);
+			Vertex_handle v1 = fa->vertex(1);
+			Vertex_handle v2= fa->vertex(2);
+			test = has_face(fb, v0, v1, v2);
 			if(test){
 				found=true;
 				break;
@@ -81,14 +95,12 @@ void test(){
 	DTOS dtos;
 	DTOS dtos2;
 	DTOS dtos3;
-	
 	dtos.set_radius(radius);
 	dtos2.set_radius(radius);
 	dtos3.set_radius(radius);
 	std::vector<K::Point_3> points;
 	std::vector<K::Point_3> points2;
-	std::vector<K::Point_3> points3;
-	std::vector<K::Point_3> points4;
+	
 	
 	
 	// insert 5 coplanar points. Points are also coplanar with the center of the sphere
@@ -106,7 +118,7 @@ void test(){
 	points.push_back(p6);
 	points.resize(6);
 	
-	
+	//Delaunay-triangulation_sphere_traits
 	dtos.insert(p1);
 	dtos.insert(p2);
 	dtos.insert(p3);
@@ -190,7 +202,9 @@ void test(){
 
 
 int main(){
-
+	std::cout<<"testing with Delaunay_triangulation_sphere_traits:  "<<std::endl;
 	test<DTOS>();
+	std::cout<< "testing with Projection_sphere_traits:  "<<std::endl;
+	test<PDTOS>();
 return 0;
 }
