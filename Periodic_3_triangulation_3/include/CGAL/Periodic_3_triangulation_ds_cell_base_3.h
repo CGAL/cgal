@@ -53,7 +53,7 @@ public:
   Periodic_3_triangulation_ds_cell_base_3(
       const Vertex_handle& v0, const Vertex_handle& v1,
       const Vertex_handle& v2, const Vertex_handle& v3)
-#ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
+#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : V((Vertex_handle[4]) {v0, v1, v2, v3}),
       _additional_flag(0), off(0) {}
 #else
@@ -68,7 +68,7 @@ public:
       const Vertex_handle& v2, const Vertex_handle& v3,
       const Cell_handle&   n0, const Cell_handle&   n1,
       const Cell_handle&   n2, const Cell_handle&   n3) 
-#ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
+#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : N((Cell_handle[4]) {n0, n1, n2, n3}),
       V((Vertex_handle[4]) {v0, v1, v2, v3}),
       _additional_flag(0), off(0) {}
