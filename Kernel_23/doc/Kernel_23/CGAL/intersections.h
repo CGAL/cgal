@@ -171,8 +171,8 @@ depending on the arguments.
 The following table gives the possible values for `Type1` and `Type2`
 and the resulting return types `T...` in `boost::optional< boost::variant< T... > >`. 
 The resulting return type can be obtained through
-`boost::result_of<Kernel::Intersect_2(A, B)>::type` or
-`boost::result_of<Kernel::Intersect_3(A, B)>::type`.
+`boost::result_of<Kernel::Intersect_2(A, B)>::%type` or
+`boost::result_of<Kernel::Intersect_3(A, B)>::%type`.
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">

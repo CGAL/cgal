@@ -62,7 +62,7 @@ with `Dispatch_output_iterator`.
 
 Since both the number of intersections, if any, and their types, depend
 on the arguments, the function expects an output iterator on
-`boost::result_of<Kernel::Intersect_3(Type1, Type2)>::type`,
+`boost::result_of<Kernel::Intersect_3(Type1, Type2)>::%type`,
 as presented below.
 
 \sa `CGAL::do_intersect` 

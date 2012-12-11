@@ -51,7 +51,7 @@ with `Dispatch_output_iterator`.
 
 Since both the number of intersections, if any, and their types, depend
 on the arguments, the function expects an output iterator on
-`boost::result_of<K::Intersect_2(Type1, Type2)>::type`, as
+`boost::result_of<K::Intersect_2(Type1, Type2)>::%type`, as
 presented below.
 
 \sa `do_intersect` 
