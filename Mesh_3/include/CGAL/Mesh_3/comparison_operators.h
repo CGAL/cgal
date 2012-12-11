@@ -70,7 +70,7 @@ namespace CGAL {
     };
 
     template<typename Tr>
-    struct Triangulation_canonical_facets_comparator
+    struct Triangulation_finite_facets_comparator
       : public std::binary_function<typename Tr::Facet,
                                     typename Tr::Facet,
                                     bool>
@@ -101,44 +101,7 @@ namespace CGAL {
         return false;
       }
     };
-
-    template<typename Tr>
-    struct Triangulation_Finite_facets_comparator
-      : public std::binary_function<typename Tr::Facet,
-                                    typename Tr::Facet,
-                                    bool>
-    {
-      typedef typename Tr::Facet Facet;
-      typedef typename Tr::Vertex_handle Vertex_handle;
-
-      Triangulation_Finite_facets_comparator(const Tr& tr)
-        : tr_(tr) {}
-
-      bool operator()(const Facet& f1, const Facet& f2) const
-      {
-        return Triangulation_canonical_facets_comparator<Tr>(
-          canonical(f1),
-          canonical(f2));
-      }
-
-      Facet canonical(const Facet& f) const
-      {
-        const Facet mirror = tr_.mirror_facet(f);
-        Vertex_handle vf = f.first->vertex(f.second);
-        Vertex_handle vm = mirror.first->vertex(mirror.second);
-        if(tr_.is_infinite(vf))
-          return mirror;
-        else if(tr_.is_infinite(vm))
-          return f;
-
-        Vertex_handle_comparator<Vertex_handle> vcomp;
-        return vcomp(vf,vm) ? f : mirror;
-      }
     
-    private:
-      const Tr& tr_;
-    };
-
     template<typename Facet>
     struct Polyhedron_Facet_handle_comparator  
       : public std::binary_function<typename Facet::Facet_handle, 
