@@ -48,7 +48,8 @@ template <typename T>
 void 
 TriangulationMovingPoint<T>::localize_and_insert_point(QPointF qt_point)
 {
-  Point p(qt_point.x(), qt_point.y());
+  Converter<typename T::Geom_traits> convert;
+  Point p = convert(qt_point);
   double dx = dt->domain().xmax() - dt->domain().xmin();
   double dy = dt->domain().ymax() - dt->domain().ymin();
   p = Point(p.x()- std::floor(p.x()/dx), p.y()- std::floor(p.y()/dy));
