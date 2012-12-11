@@ -3751,11 +3751,9 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(Face_handle f,
 template<class Gt, class Tds>
 Bounded_side Periodic_2_triangulation_2<Gt, Tds>::bounded_side(const Point &p0,
     const Point &p1, const Point &p2, const Point &p) const {
-  std::cout << __FUNCTION__ << ", l:" << __LINE__ << std::endl;
 
   // return position of point p with respect to triangle p0p1p2
   CGAL_triangulation_precondition( orientation(p0, p1, p2) != COLLINEAR);
-  std::cout << __FUNCTION__ << ", l:" << __LINE__ << std::endl;
 
   Orientation o1 = orientation(p0, p1, p);
   Orientation o2 = orientation(p1, p2, p);
