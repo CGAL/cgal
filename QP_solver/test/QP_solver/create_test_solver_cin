@@ -84,6 +84,10 @@ else
  MASTERS=$(find test_solver_data/masters -name '*mps')
 fi
 
+# get git status to check for
+GIT_UNVERSIONED=$(cd test_solver_data; git status --porcelain | awk '{if($1=="??") {print "basename " $2}}' | sh;)
+#echo "$GIT_UNVERSIONED"
+
 # generate derivates and, in parallel, add them to the list of files that
 # will finally consitute test_solver.cin:
 LIST=""
@@ -124,8 +128,12 @@ for file in $MASTERS
       echo "  File '${name}.mps' is up-to-date."
   fi
 
+ 
+  
+
   # add derivates and original to file list:
   DERS="$DERS $file"
+  
   for der in $DERS
     do
     # add file:
@@ -134,31 +142,33 @@ for file in $MASTERS
     # check whether the file exists in the SVN repository:
     tmpf=`basename "$der"`
     tmpd=`dirname "$der"`
-    if grep -q "name=\\\"$tmpf\\\"" "$tmpd/.svn/entries"; then 
-	echo -n ""; 
-    else 
-	MISSINGFILES="$MISSINGFILES $der" 
+    
+    if (echo "$GIT_UNVERSIONED" | grep -q "$tmpf") then
+    	MISSINGFILES="$MISSINGFILES $der"
+    else
+    	echo -n "";
     fi
   done
 done
 
-# collect cycle MPS files:
-echo "Collecting cycle MPS files..."
-CYCLES=$(find test_solver_data/cycle_cases -name '*mps')
+# collect individual MPS files:
+echo "Collecting individual MPS files..."
+INDIVIDUAL=$(find test_solver_data/individual_cases -name '*mps')
 
 # add cycle cases to file list:
-for cycle in $CYCLES
+for case in $INDIVIDUAL
   do
-  LIST="${LIST} $level eb $cycle" # only ad exact bland pricing
-  echo "  File '${cycle}' added."
+  LIST="${LIST} $level eb $case" # only ad exact bland pricing
+  echo "  File '${case}' added."
   
   # check whether the file exists in the SVN repository:
-    tmpf=`basename "$cycle"`
-    tmpd=`dirname "$cycle"`
-    if grep -q "name=\\\"$tmpf\\\"" "$tmpd/.svn/entries"; then 
-	echo -n ""; 
-    else 
-	MISSINGFILES="$MISSINGFILES $cycle" 
+    tmpf=`basename "$case"`
+    tmpd=`dirname "$case"`
+    
+    if (echo "$GIT_UNVERSIONED" | grep -q "$tmpf") then
+    	MISSINGFILES="$MISSINGFILES $case"
+    else
+    	echo -n "";
     fi
 done
 
