@@ -60,8 +60,8 @@ the following function overloads are also available.
 The iterator versions of those functions can be used in conjunction
 with `Dispatch_output_iterator`.
 
-Since both the number of intersections, if any, and their type, depend
-on the arguments, the functions expects an output iterator on
+Since both the number of intersections, if any, and their types, depend
+on the arguments, the function expects an output iterator on
 `boost::result_of<Kernel::Intersect_3(Type1, Type2)>::type`,
 as presented below.
 
@@ -76,7 +76,7 @@ two objects. `intersections` iterates on
 elements of type `result_of< Intersect_3(SphericalType1, SphericalType2) >`, in lexicographic order,
 when this ordering is defined on the computed objects,
 
-where `SphericalType1` and `SphericalType2` can both be either:
+where `SphericalType1` and `SphericalType2` can both be one of:
 
 - `Sphere_3<SphericalKernel>`,
 - `Plane_3<SphericalKernel>`,

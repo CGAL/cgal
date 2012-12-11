@@ -26,13 +26,17 @@ bool do_intersect(Type1<R> obj1, Type2<R> obj2);
 /*!
 \ingroup PkgKernelDFunctions
 
-returns the intersection result of \f$ f1\f$ and \f$ f2\f$.
+returns the intersection between \f$ f1\f$ and \f$ f2\f$.
+
 \pre The objects are of the same dimension.
 
 The same functionality is also available through the functor `Kernel::Intersect_d`.
  
-The possible value for types `Type1` and `Type2` and
-the value for `T...` in `boost::optional< boost::variant< T... > >` are the following:
+The following table gives the possible values for `Type1` and `Type2`
+and the resulting return types `T...` in `boost::optional< boost::variant< T... > >`.
+
+The resulting return type can be obtained through
+`boost::result_of(Kernel::Intersect_d(A, B)>::type`.
 
 <DIV ALIGN="CENTER"> 
 <TABLE CELLPADDING=3 BORDER="1"> 
@@ -153,6 +157,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 
 \sa `do_intersect`
 \sa `Kernel_d::Intersect_d` 
+\sa CGAL_INTERSECTION_VERSION
 \sa <a HREF="http://www.boost.org/doc/libs/release/libs/optional/index.html">`boost::optional`</a>
 \sa <a HREF="http://www.boost.org/doc/html/variant.html">`boost::variant`</a>
 \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`boost::result_of`</a>

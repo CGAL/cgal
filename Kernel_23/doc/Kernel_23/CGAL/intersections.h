@@ -151,7 +151,7 @@ void foo(Segment_2<R> seg, Line_2<R> lin)
 \ingroup intersection
 
 \sa `do_intersect` 
-
+\sa CGAL_INTERSECTION_VERSION
 */
 /// @{
 
@@ -168,13 +168,11 @@ complete segment.
 Here, `Intersect_23` means either `Intersect_2` or `Intersect_3`,
 depending on the arguments.
 
-The possible values for types `Type1` and `Type2` and
-the value for `T...` in `boost::optional< boost::variant<
-  T... > >` are the following and can be obtained through
-`boost::result_of(Intersect_2(A, B)>::type` or
-`boost::result_of(Intersect_3(A, B)>::type`.
- 
-
+The following table gives the possible values for `Type1` and `Type2`
+and the resulting return types `T...` in `boost::optional< boost::variant< T... > >`. 
+The resulting return type can be obtained through
+`boost::result_of<Kernel::Intersect_2(A, B)>::type` or
+`boost::result_of<Kernel::Intersect_3(A, B)>::type`.
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
@@ -399,21 +397,22 @@ void foo(const Segment_2<R>& seg, const Line_2<R>& lin)
 }
 \endcode
 
-
-Another example showing the use of the intersection function as a plain function call and with `Dispatch_output_iterator` combined with a standard library algorithm.
+Another example showing the use of the intersection function as a
+plain function call and with `Dispatch_output_iterator` combined with
+a standard library algorithm.
 
 \cgalExample{Kernel_23/intersections.cpp}
 
-
-
 */
-boost::result_of<Intersect_23(Type1, Type2)>::type
+template <typename Kernel>
+boost::result_of<Kernel::Intersect_23(Type1, Type2)>::type
 intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);
 
 /*!
-returns the intersection of 3 planes, which can be either a
+returns the intersection of 3 planes, which can be a
 point, a line, a plane, or empty.
 */
+template <typename Kernel>
 boost::optional< boost::variant< Point_3, Line_3, Plane_3 > > 
 intersection(const Plane_3<Kernel>& pl1,
              const Plane_3<Kernel>& pl2,
