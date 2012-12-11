@@ -68,7 +68,7 @@ struct Triangulation_mesher_level_traits_3 :
   }
 
   class Zone {
-    typedef CGAL::Mesh_3::Triangulation_canonical_facets_comparator<Tr> Facet_comp;
+    typedef CGAL::Mesh_3::Triangulation_finite_facets_comparator<Tr> Facet_comp;
     typedef CGAL::Mesh_3::Cell_handle_comparator<Tr> Cell_comp;
 
     typedef std::set<Cell_handle, Cell_comp> Cells;

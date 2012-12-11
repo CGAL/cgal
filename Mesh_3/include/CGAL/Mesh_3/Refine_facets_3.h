@@ -93,7 +93,7 @@ template<class Tr,
          class Container_ = Meshes::Double_map_container<
             typename Tr::Facet,
             typename Criteria::Facet_quality,
-            CGAL::Mesh_3::Triangulation_canonical_facets_comparator<Tr> > >
+            CGAL::Mesh_3::Triangulation_finite_facets_comparator<Tr> > >
 class Refine_facets_3
 : public Mesher_level<Tr,
                       Refine_facets_3<Tr,
