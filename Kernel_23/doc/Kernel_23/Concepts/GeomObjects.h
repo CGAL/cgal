@@ -239,7 +239,7 @@ public:
 
   A type representing different types of objects in two dimensions. 
 
-  \deprecated since %CGAL 4.2
+  \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
 
   \cgalRefines CopyConstructible
   \cgalRefines Assignable
@@ -261,7 +261,7 @@ public:
 
   A type representing different types of objects in three dimensions. 
 
-  \deprecated since %CGAL 4.2
+  \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
 
   \cgalRefines CopyConstructible
   \cgalRefines Assignable

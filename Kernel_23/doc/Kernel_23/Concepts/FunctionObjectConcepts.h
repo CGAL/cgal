@@ -4144,7 +4144,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with one argument) 
 
- \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
+  \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
 
   \sa `CGAL::Object` 
   \sa `Kernel::Assign_2` 
