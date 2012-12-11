@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Less_or_equal_lexicographically_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 returns `true` iff \f$ p\f$ is 
 lexicographically smaller than \f$ q\f$ with respect to %Cartesian 
@@ -22,8 +19,6 @@ lexicographic order of points or equal to \f$ q\f$.
 */ 
 bool operator()(const Kernel_d::Point_d& p, const 
 Kernel_d::Point_d& q); 
-
-/// @}
 
 }; /* end Kernel_d::Less_or_equal_lexicographically_d */
 

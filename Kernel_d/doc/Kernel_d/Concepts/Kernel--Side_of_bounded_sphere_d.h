@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Side_of_bounded_sphere_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 returns the relative position of point 
 `p` to the sphere defined by `A = tuple [first,last)`. The 
@@ -24,8 +21,6 @@ order of the points of \f$ A\f$ does not matter.
 template <class ForwardIterator> Bounded_side 
 operator()( ForwardIterator first, ForwardIterator last, const 
 Kernel_d::Point_d& p); 
-
-/// @}
 
 }; /* end Kernel_d::Side_of_bounded_sphere_d */
 

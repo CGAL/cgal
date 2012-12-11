@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Linear_rank_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 computes 
 the linear rank of the vectors in `A = tuple [first,last)`. 
@@ -22,8 +19,6 @@ the linear rank of the vectors in `A = tuple [first,last)`.
 */ 
 template <class ForwardIterator> int 
 operator()(ForwardIterator first, ForwardIterator last); 
-
-/// @}
 
 }; /* end Kernel_d::Linear_rank_d */
 

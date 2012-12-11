@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Linear_base_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 computes a basis of the linear space 
 spanned by the vectors in `A = tuple [first,last)` and returns 
@@ -26,8 +23,6 @@ template <class
 ForwardIterator, class OutputIterator> int 
 operator()(ForwardIterator first, ForwardIterator last, 
 OutputIterator result); 
-
-/// @}
 
 }; /* end Kernel_d::Linear_base_d */
 

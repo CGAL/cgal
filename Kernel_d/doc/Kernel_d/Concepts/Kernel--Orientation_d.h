@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Orientation_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 determines the orientation of the points of the tuple 
 `A = tuple [first,last)` where \f$ A\f$ consists of \f$ d + 1\f$ points in 
@@ -29,8 +26,6 @@ the \f$ i\f$-th point in \f$ A\f$.
 */ 
 template <class ForwardIterator> 
 Orientation operator()(ForwardIterator first, ForwardIterator last); 
-
-/// @}
 
 }; /* end Kernel_d::Orientation_d */
 

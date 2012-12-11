@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Center_of_sphere_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 returns the 
 center of the sphere spanned by the points in `A = tuple [first,last)`.
@@ -21,8 +18,6 @@ center of the sphere spanned by the points in `A = tuple [first,last)`.
 */ 
 template <class ForwardIterator> Kernel_d::Point_d 
 operator()(ForwardIterator first, ForwardIterator last); 
-
-/// @}
 
 }; /* end Kernel_d::Center_of_sphere_d */
 

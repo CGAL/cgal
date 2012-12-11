@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Component_accessor_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 returns 
 the dimension of \f$ p\f$. 
@@ -34,8 +31,6 @@ returns the ith %Cartesian coordinate of \f$ p\f$.
 */ 
 Kernel_d::FT cartesian(const Kernel_d::Point_d& p, int 
 i); 
-
-/// @}
 
 }; /* end Kernel_d::Component_accessor_d */
 
