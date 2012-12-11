@@ -1,3 +1,21 @@
+/// \file intersections.h
+
+/*!
+\def CGAL_INTERSECTION_VERSION
+
+\ingroup intersection
+
+The macro `CGAL_INTERSECTION_VERSION` can be used to configure
+which version of the `intersection()` function should be used and
+enables the corresponding APIs in other \cgal packages. It should be
+defined before any \cgal header is included.
+
+- `CGAL_INTERSECTION_VERSION == 1` `intersection()` uses `Object`
+- `CGAL_INTERSECTION_VERSION == 2` `intersection()` uses `boost::optional< boost::variant< T... > >`
+
+*/
+#define CGAL_INTERSECTION_VERSION
+
 namespace CGAL {
 
 /*!
@@ -12,16 +30,9 @@ function are available.
 \addtogroup do_intersect_linear do_intersect (2D/3D Linear Kernel)
 \ingroup do_intersect
 
-\code
-#include <CGAL/intersections.h>
-\endcode
-  
-\sa \ref do_intersect_circular
-\sa \ref do_intersect_spherical
 \sa `intersection`
-  
-\details See Chapter  \ref chapterkernel23 for details on a linear kernel instantiation.
 */
+
 /// @{
 /*!
 checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
@@ -64,126 +75,6 @@ Also, `Type1` and `Type2` can be respectively of types
 */
 bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 /// @}
-
-
-
-/*!
-\addtogroup do_intersect_circular do_intersect (2D Circular Kernel)
-\ingroup do_intersect
-
-\code
-#include <CGAL/Circular_kernel_intersections.h>
-\endcode
-  
-\sa \ref do_intersect_linear
-\sa \ref do_intersect_spherical
-\sa `intersection`
-
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
-
-
-When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
-the following function overloads are also available.
-
-
-*/
-/// @{
-/*!
-checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
-`obj2` intersect if there is a point `p` that is part of both `obj1`
-and `obj2`.  The intersection region of those two objects is defined
-as the set of all points `p` that are part of both `obj1` and `obj2`.
-Note that for objects like triangles and polygons that enclose a
-bounded region, this region is part of the object.
-
-`Type1` and `Type2` can be any of
-the following:
-
-- `Line_2<CircularKernel>`
-- `Circle_2<CircularKernel>`
-- `Line_arc_2<CircularKernel>`
-- `Circular_arc_2<CircularKernel>`
-
-An example illustrating this is presented in
-Chapter  \ref Chapter_2D_Circular_Geometry_Kernel.
-*/
-bool do_intersect(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2);
-/// @}
-
-
-/*!
-\addtogroup do_intersect_spherical do_intersect (3D Spherical Kernel)
-\ingroup do_intersect
-
-\code
-#include <CGAL/Spherical_kernel_intersections.h>
-\endcode
-  
-\sa \ref do_intersect_linear
-\sa \ref do_intersect_circular
-\sa `intersection`
-
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
-
-
-When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
-the following function overloads are also available.
-
-
-*/
-/// @{
-/*!
-checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
-`obj2` intersect if there is a point `p` that is part of both `obj1`
-and `obj2`.  The intersection region of those two objects is defined
-as the set of all points `p` that are part of both `obj1` and `obj2`.
-Note that for objects like triangles and polygons that enclose a
-bounded region, this region is part of the object.
-
-`Type1` and `Type2` can be any of
-the following:
-
-- `Line_3<SphericalKernel>`
-- `Circle_3<SphericalKernel>`
-- `Plane_3<SphericalKernel>`
-- `Sphere_3<SphericalKernel>`
-- `Line_arc_3<SphericalKernel>`
-- `Circular_arc_3<SphericalKernel>`
-
-An example illustrating this is presented in
-Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
-*/
-bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2);
-
-/*!
-checks whether `obj1`, `obj2` and `obj3` intersect.
-
-`Type1`, `Type2` and `Type3` can be:
-
-- `Sphere_3<SphericalKernel>`
-- `Plane_3<SphericalKernel>`
-*/
-bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2, Type3<SphericalKernel> obj3);
-
-/// @}
-
-
-
-/*!
-\addtogroup intersection
-
-The macro `CGAL_INTERSECTION_VERSION` can be used to configure
-which version of the `intersection()` function should be used and
-enables the corresponding APIs in other \cgal packages. It should be
-defined before any \cgal header is included.
-
-- `CGAL_INTERSECTION_VERSION == 1` `intersection()` uses `Object`
-- `CGAL_INTERSECTION_VERSION == 2` `intersection()` uses `boost::optional< boost::variant< T... > >`
-
-*/
-
-#define CGAL_INTERSECTION_VERSION
-
 
 /*!
 \addtogroup intersection
@@ -252,8 +143,6 @@ void foo(Segment_2<R> seg, Line_2<R> lin)
 }
 \endcode
 
-
-
 */
 
 
@@ -261,15 +150,7 @@ void foo(Segment_2<R> seg, Line_2<R> lin)
 \addtogroup intersection_linear intersection (2D/3D Linear Kernel)
 \ingroup intersection
 
-\code
-#include <CGAL/intersections.h>
-\endcode
-
-\sa intersection_circular
-\sa intersection_spherical
-\sa `CGAL::do_intersect` 
-
-\details See Chapter  \ref chapterkernel23 for details on a linear kernel instantiation.
+\sa `do_intersect` 
 
 */
 /// @{
@@ -537,164 +418,6 @@ boost::optional< boost::variant< Point_3, Line_3, Plane_3 > >
 intersection(const Plane_3<Kernel>& pl1,
              const Plane_3<Kernel>& pl2,
              const Plane_3<Kernel>& pl3);
-
-/// @}
-
-/*!
-\addtogroup intersection_circular intersection (2D Circular Kernel)
-\ingroup intersection
-
-\code
-#include <CGAL/Circular_kernel_intersections.h>
-\endcode
-
-\sa intersection_linear
-\sa intersection_spherical
-\sa `CGAL::do_intersect` 
-
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
-
-When using a circular kernel, in addition to the function overloads documented \ref intersection_linear "here",
-the following function overloads are also available.
-
-The iterator versions of those functions can be used in conjunction
-with `Dispatch_output_iterator`.
-
-Since both the number of intersections, if any, and their type, depend
-on the arguments, the function expects an output iterator on
-`boost::result_of<K::Intersect_2(Type1, Type2)>::type`, as
-presented below.
-
-*/
-
-/// @{
-
-/*!
-Constructs the intersection elements between the
-two objects and stores them in the OutputIterator in lexicographic order,
-
-where both, `Type1` and `Type2`, can be either
-
-- `Line_2<CircularKernel>` or
-- `Line_arc_2<CircularKernel>` or
-- `Circle_2<CircularKernel>` or
-- `Circular_arc_2<CircularKernel>`
-
-\details Depending on the types `Type1` and `Type2`, these elements can be assigned to
-
-- `std::pair<Circular_arc_point_2<CircularKernel>, unsigned>`,
-  where the unsigned integer is the multiplicity of the corresponding
-  intersection point between `obj1` and `obj2`,
-- `Circular_arc_2<CircularKernel>` in case of an overlap of 
-  two circular arcs,
-- `Line_arc_2<CircularKernel>` in case of an overlap of two 
-  line segments or
-- `Line_2<CircularKernel>` or 
-  `Circle_2<CircularKernel>` in case of two equal input lines or circles.
-
-*/
-template < typename Type1, typename Type2, typename OutputIterator >
-OutputIterator
-intersection(const Type1 &obj1, const Type2 &obj2,
-             OutputIterator intersections);
-
-
-
-/// @}
-
-/*!
-\addtogroup intersection_spherical intersection (3D Spherical Kernel)
-\ingroup intersection
-
-\code
-#include <CGAL/Spherical_kernel_intersections.h>
-\endcode
-
-\sa intersection_linear
-\sa intersection_circular
-\sa `CGAL::do_intersect` 
-
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
-
-When using a spherical kernel, in addition to the function overloads documented \ref intersection_linear "here",
-the following function overloads are also available.
-
-The iterator versions of those functions can be used in conjunction
-`Dispatch_output_iterator`.
-
-Since both the number of intersections, if any, and their type, depend
-on the arguments, the functions expects an output iterator on
-`boost::result_of<Kernel::Intersect_3(Type1, Type2)>::type`,
-as presented below.
-*/
-/// @{
-
-/*!
-Copies in the output iterator the intersection elements between the
-two objects. `intersections` iterates on
-elements of type `result_of< Intersect_3(SphericalType1, SphericalType2) >`, in lexicographic order,
-when this ordering is defined on the computed objects,
-
-where `SphericalType1` and `SphericalType2` can both be either:
-
-- `Sphere_3<SphericalKernel>`,
-- `Plane_3<SphericalKernel>`,
-- `Line_3<SphericalKernel>`,
-- `Circle_3<SphericalKernel>`,
-- `Line_arc_3<SphericalKernel>` or
-- `Circular_arc_3<SphericalKernel>`,
-
-
-and depending on the types `SphericalType1` and `SphericalType2`, the computed 
-type can be
-
-- `std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>`,
-  where the unsigned integer is the multiplicity of the corresponding
-  intersection point between `obj1` and `obj2`,
-- `SphericalType1`, when `SphericalType1` and `SphericalType2` are equal, 
-  and if the two objets `obj1` and `obj2` are equal,
-- `Line_3<SphericalKernel>` or 
-  `Circle_3<SphericalKernel>` when `SphericalType1` and `SphericalType2` 
-  are two-dimensional objets intersecting along a curve (2 planes, or 2
-  spheres, or one plane and one sphere),
-- `Circular_arc_3<SphericalKernel>` in case of an overlap of 
-  two circular arcs or
-- `Line_arc_3<SphericalKernel>` in case of an overlap of two 
-  line segments. 
-*/
-template < typename SphericalType1, typename SphericalType1,  typename OutputIterator >
-OutputIterator
-intersection(const SphericalType1 &obj1, const SphericalType2 &obj2,
-             OutputIterator intersections);
-
-
-/*!
-Copies in the output iterator the intersection elements between the
-three objects. `intersections` iterates on
-elements of type `boost::variant< Circle_3, Plane_3, Sphere_3, std::pair< Circular_arc_point_3, unsigned > >`, in lexicographic order 
-when this ordering is defined on the computed objects
-
-where `Type1`, `Type2` and `Type3`
-can be either
-
-- `Sphere_3<SphericalKernel>` or
-- `Plane_3<SphericalKernel>`
-
-
-and depending of these types, the computed return value
-
-- `std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>`,
-  where the unsigned integer is the multiplicity of the corresponding
-  intersection point,
-- `Circle_3<SphericalKernel>` or
-- `Type1`, when `Type1`, `Type2` and 
-  `Type3` are equal, and if the three objets `obj1` and `obj2` 
-  and `obj3` are equal.
-*/
-  template < typename Type1, typename Type2, typename Type3, typename OutputIterator >
-OutputIterator
-intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
-             OutputIterator intersections);
 
 /// @}
 }

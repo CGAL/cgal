@@ -489,7 +489,7 @@ especially integer types and rationals.
 \subsection Kernel_23VariantReturnValues Intersections and Variant Return Types
 
 Some functions, for example `intersection()`, can return different types of objects. To achieve this
-in a type safe way \cgal uses return values of type
+in a type-safe way \cgal uses return values of type
 `boost::optional< boost::variant< T \ldots\ > >` were `T...` is a
 list of all possible resulting geometric objects.  The exact result
 type of an intersection can be determined through the metafunction
@@ -498,7 +498,7 @@ type of an intersection can be determined through the metafunction
 `Type1` and `Type2` are the types of the objects used in the
 intersection computation. See
 <A HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`boost::result_of`</A>
-for more information about this mechanism.
+for more details about this mechanism.
  
 
 
@@ -506,10 +506,8 @@ for more information about this mechanism.
 Example 
 -------
 
-In the following example,  `result_of` is used to query the return
-value for the intersection computation:
-
-
+In the following example, `result_of` is used to query the type of the
+return value for the intersection computation:
 
 \code{.cpp}
 typedef Cartesian<double> K;
@@ -566,7 +564,7 @@ This may pay off if many tests with respect to the plane are made.
 Nevertheless, unless the number type is exact, the constructed plane 
 is only approximated, and round-off errors may lead 
 `oriented_side(p)` to return an orientation 
-which is different from the orientation of `p`, `q`, `r`, and `s`.
+which is different from the real orientation of `p`, `q`, `r`, and `s`.
 
 In \cgal, we provide predicates in which such
 geometric decisions are made directly with a reference to the input points
@@ -595,7 +593,7 @@ kernel concept (but there are some exceptions).
 
 \subsection Kernel_23AnExtensiveExample An Extensive Example
 
-Assume you have the following point class, where the coordinates are
+Assume we have the following point class, where the coordinates are
 stored in an array of `doubles`, where we have another data member
 `color`, which shows up in the constructor.
 

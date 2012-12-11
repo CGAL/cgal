@@ -124,12 +124,15 @@ The following example demonstrates the most common use of
 \code
 #include <CGAL/intersections_d.h> 
 
- 
 template<typename R>
 struct Intersection_visitor {
   typedef result_type void;
-  void operator()(const Point_d<R>& p) const { /* handle point */ }
-  void operator()(const Segment_d<R>& s) const { /* handle segment */ }
+  void operator()(const Point_d<R>& p) const { 
+  // handle point
+  }
+  void operator()(const Segment_d<R>& s) const { 
+  // handle segment 
+  }
 };
 
 template <class R> 
@@ -150,7 +153,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 
 \sa `do_intersect`
 \sa `Kernel_d::Intersect_d` 
-\sa <a HREF="http://www.boost.org/doc/libs/release/libs/optional/index.html"> `boost::optional`</a>
+\sa <a HREF="http://www.boost.org/doc/libs/release/libs/optional/index.html">`boost::optional`</a>
 \sa <a HREF="http://www.boost.org/doc/html/variant.html">`boost::variant`</a>
 \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`boost::result_of`</a>
 
