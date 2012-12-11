@@ -616,7 +616,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Kernel_d/doc/Kernel_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Kernel_d/doc/Kernel_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Kernel_d.tag</string>
-          <string name="EXAMPLE_PATH">../Kernel_d/examples</string>
           <string name="IMAGE_PATH">../Kernel_d/doc/Kernel_d/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
           <list name="TAGFILES" append="true">
