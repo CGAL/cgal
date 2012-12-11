@@ -629,15 +629,10 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex(const Point  &p, Face_handle f) const
 {
-    NGHK_NYI;
   switch (this->dimension()) {
   case 0:
-    if (this->number_of_vertices() == 0) return Vertex_handle();
-    if (this->number_of_vertices() == 1) return this->finite_vertex();
+    return Vertex_handle();
     //break;
-  case 1:
-    return nearest_vertex_1D(p);
-    //break;      
   case 2:
     return nearest_vertex_2D(p,f);
     //break;
@@ -650,25 +645,21 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>:: 
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
-    NGHK_NYI;
   CGAL_triangulation_precondition(this->dimension() == 2);
   f = this->locate(p,f);
 
-  typename Geom_traits::Compare_distance_2 
-    compare_distance =  this->geom_traits().compare_distance_2_object();
-  Vertex_handle nn =  !this->is_infinite(f->vertex(0)) ? f->vertex(0):f->vertex(1);
-  if ( !this->is_infinite(f->vertex(1)) && compare_distance(p,
-					    f->vertex(1)->point(),
-					    nn->point()) == SMALLER) 
-    nn=f->vertex(1);
-  if ( !this->is_infinite(f->vertex(2)) && compare_distance(p,
-					    f->vertex(2)->point(), 
-					    nn->point()) == SMALLER) 
-    nn=f->vertex(2);
+  typename Geom_traits::Compare_distance_2 compare_distance =
+    this->geom_traits().compare_distance_2_object();
+  Vertex_handle nn =  f->vertex(0);
+  if (compare_distance(p, f->vertex(1)->point(), nn->point()) == SMALLER) 
+    nn = f->vertex(1);
+  if (compare_distance(p, f->vertex(2)->point(), nn->point()) == SMALLER) 
+    nn = f->vertex(2);
        
   look_nearest_neighbor(p,f,0,nn);
   look_nearest_neighbor(p,f,1,nn);
   look_nearest_neighbor(p,f,2,nn);
+
   return nn;
 }
 
@@ -699,17 +690,15 @@ look_nearest_neighbor(const Point& p,
 		      int i,
 		      Vertex_handle& nn) const
 {
-    NGHK_NYI;
   Face_handle  ni=f->neighbor(i);
-  if ( ON_POSITIVE_SIDE != side_of_oriented_circle(ni,p,true) ) return;
+  if ( this->side_of_oriented_circle(ni,p,true) != ON_POSITIVE_SIDE )
+    return;
 
-  typename Geom_traits::Compare_distance_2 
-    compare_distance =  this->geom_traits().compare_distance_2_object();
+  typename Geom_traits::Compare_distance_2 compare_distance =
+    this->geom_traits().compare_distance_2_object();
   i = ni->index(f);
-  if ( !this->is_infinite(ni->vertex(i)) &&
-       compare_distance(p, 
-	      ni->vertex(i)->point(),
-	      nn->point())  == SMALLER)  nn=ni->vertex(i);
+  if (compare_distance(p, ni->vertex(i)->point(), nn->point()) == SMALLER)
+    nn=ni->vertex(i);
     
   // recursive exploration of triangles whose circumcircle contains p
   look_nearest_neighbor(p, ni, ccw(i), nn);
@@ -995,13 +984,16 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v)
 {
-    NGHK_NYI;
   int d;
 
-  CGAL_triangulation_precondition( v != Vertex_handle());
-  CGAL_triangulation_precondition( !this->is_infinite(v));
+  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_triangulation_precondition(this->dimension() == 2);
 
-  if ( this->dimension() <= 1) { Triangulation::remove(v); return; }
+  if ( this->number_of_vertices() == 1) {
+    // Last vertex
+    Triangulation::remove(v);
+    return;
+  }
 
   static int maxd=30;
   static std::vector<Face_handle> f(maxd);
@@ -1016,30 +1008,17 @@ remove(Vertex_handle v)
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
-		   std::vector<Vertex_handle> &w, std::vector<int> &i,
+remove_degree_init(Vertex_handle v,
+                   std::vector<Face_handle> &f,
+		   std::vector<Vertex_handle> &w,
+                   std::vector<int> &i,
 		   int &d, int &maxd)
 {
-    NGHK_NYI;
+  NGHK_NYI;
   f[0] = v->face();d=0;
   do{
     i[d] = f[d]->index(v);
     w[d] = f[d]->vertex( ccw(i[d]) );
-    if(this->is_infinite(w[d])) {
-      f[0] = f[d]; i[0]=i[d]; w[0]=w[d];
-      w[0]->set_face( f[0]->neighbor(i[0]));
-      f[1] = f[0]->neighbor( ccw(i[0]) );
-      i[1] = f[1]->index(v);
-      w[1] = f[1]->vertex( ccw(i[1]) );
-      if ( this->is_infinite( f[1]->neighbor( i[1] ) ) ){//otherwise dim remains 2
-	if ( this->test_dim_down(v) ) {
-	  d=0;
-	  this->tds().remove_dim_down(v);
-	  return; 
-	}
-      }
-      d=1;
-    }
     w[d]->set_face( f[d]->neighbor(i[d]));//do no longer bother about set_face 
     ++d;
     if ( d==maxd) { maxd *=2; f.resize(maxd); w.resize(maxd); i.resize(maxd);}

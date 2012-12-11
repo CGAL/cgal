@@ -64,7 +64,9 @@ template <typename T>
 void 
 TriangulationPointInput<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-  emit (generate(CGAL::make_object(p)));
+  if (!(event->modifiers()  & ::Qt::ShiftModifier)) {
+    emit (generate(CGAL::make_object(p)));
+  }
 }
 
 

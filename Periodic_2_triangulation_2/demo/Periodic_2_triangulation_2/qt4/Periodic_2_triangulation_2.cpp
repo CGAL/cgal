@@ -202,10 +202,10 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(pt_pi);
-//    scene.installEventFilter(trv);
+    scene.installEventFilter(trv);
   } else {
     scene.removeEventFilter(pt_pi);
-//    scene.removeEventFilter(trv);
+    scene.removeEventFilter(trv);
   }
 }
 
