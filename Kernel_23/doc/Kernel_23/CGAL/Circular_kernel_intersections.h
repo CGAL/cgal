@@ -8,9 +8,6 @@ namespace CGAL {
 
 When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
 the following function overloads are also available.
-
-\sa `intersection`
-
 */
 
 /// @{
@@ -53,8 +50,6 @@ Since both the number of intersections, if any, and their types, depend
 on the arguments, the function expects an output iterator on
 `boost::result_of<K::Intersect_2(Type1, Type2)>::%type`, as
 presented below.
-
-\sa `do_intersect` 
 */
 
 /// @{

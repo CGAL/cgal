@@ -24,13 +24,13 @@ namespace CGAL {
 \brief 
 \details Depending on which \cgal kernel is used, different overloads of this global
 function are available.
+
+\sa intersection
 */
 
 /*!
 \addtogroup do_intersect_linear do_intersect (2D/3D Linear Kernel)
 \ingroup do_intersect
-
-\sa `intersection`
 */
 
 /// @{
@@ -94,64 +94,14 @@ new style is recommended. To enable the old style without any overhead,
 the macro `CGAL_INTERSECTION_VERSION` must be defined to
 `1` before any \cgal header is included.
 
-### Upgrading code from CGAL::Object to boost::variant###
-
-Code can be upgraded by using either `boost::get` or the
-`boost::static_visitor<T>`.
-
-\code
-#include <CGAL/intersections.h>
-
-template<typename R>
-struct Intersection_visitor : public boost::static_visitor<> {
-  void operator()(const Point_2& p) const 
-  { // Point_2  
-  }
-  void operator()(const Segment_2& s) const 
-  { // Segment_2 
-  }
-};
-
-template <class R>
-void foo(Segment_2<R> seg, Line_2<R> lin)
-{
-  CGAL::Object obj = intersection(seg1, seg2);
-  if(const Point_2* foo = object_cast<Point_2>(&obj)) {
-    // Point_2 
-  } else if(const Segment_2* foo = object_cast<Segment_2>(&obj)) {
-    // Segment_2 
-  } else {
-    // empty
-  }
-
-  // becomes
-  auto result = intersection(seg, lin);
-  if(result) {
-    if(const Point_2* foo = boost::get<Point_2>(&*obj)) {
-      // Point_2 
-    } else if(const Segment_2* foo = boost::get<Segment_2>(&*obj)) {
-      // Segment_2 
-    }
-  } else {
-    // empty
-  }
-
-  // or with boost::static_visitor<T>
-  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
-  else { // empty  
-  }
-}
-\endcode
-
+\sa \ref upgrading_object
+\sa \ref do_intersect
+\sa CGAL_INTERSECTION_VERSION
 */
-
 
 /*!
 \addtogroup intersection_linear intersection (2D/3D Linear Kernel)
 \ingroup intersection
-
-\sa `do_intersect` 
-\sa CGAL_INTERSECTION_VERSION
 */
 /// @{
 
