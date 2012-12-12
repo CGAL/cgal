@@ -379,7 +379,7 @@ private:
      */
     bool operator()(const Cell_handle& ch, const bool update = true) const
     {
-      typedef typename MeshDomain::Subdomain Subdomain;
+      typedef boost::optional<typename MeshDomain::Subdomain_index> Subdomain;
       
       if ( c3t3_.triangulation().is_infinite(ch) )
         return false;
@@ -404,7 +404,7 @@ private:
                         const Facet& facet,
                         const bool update) const
     {
-      typedef typename MeshDomain::Surface_patch Surface_patch;    
+      typedef boost::optional<typename MeshDomain::Surface_patch_index> Surface_patch;
       
       typename MeshDomain::Do_intersect_surface do_intersect_surface =
         domain_.do_intersect_surface_object();

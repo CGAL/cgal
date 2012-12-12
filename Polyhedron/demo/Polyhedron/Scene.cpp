@@ -1,3 +1,4 @@
+#include <CGAL/check_gl_error.h>
 #include "config.h"
 #include "Scene.h"
 #include "Scene_item.h"
@@ -233,10 +234,22 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
 	else
 	  ::glShadeModel(GL_FLAT);
 
+        if(CGAL::check_gl_error(__FILE__, __LINE__)) {
+          std::cerr << "GL error was before the drawing of the item \""
+                    << qPrintable(item.name()) << "\"\n"
+                    << "  with_name = " << std::boolalpha << with_names
+                    << std::endl;
+        }
         if(viewer)
           item.draw(viewer);
         else
           item.draw();
+        if(CGAL::check_gl_error(__FILE__, __LINE__)) {
+          std::cerr << "GL error was after the drawing of the item \""
+                    << qPrintable(item.name()) << "\"\n"
+                    << "  with_name = " << std::boolalpha << with_names
+                    << std::endl;
+        }
       }
     }
     if(with_names) {
