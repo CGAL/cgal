@@ -54,7 +54,7 @@ public:
       const Vertex_handle& v0, const Vertex_handle& v1,
       const Vertex_handle& v2, const Vertex_handle& v3)
 #ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-    : V((Vertex_handle[4]) {v0, v1, v2, v3}),
+    : V{v0, v1, v2, v3},
       _additional_flag(0), off(0) {}
 #else
     : _additional_flag(0), off(0) {
