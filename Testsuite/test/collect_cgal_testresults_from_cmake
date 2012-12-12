@@ -298,8 +298,8 @@ for DIR in $TEST_DIRECTORIES ; do
       echo "  Test files from:" >> "$TEST_REPORT"
       cat .scm-urls >> "$TEST_REPORT"
       echo  >> "$TEST_REPORT"
-    elif [ -f ../../.scm-branch ]; then
-      cat ../../.scm-branch >> "$TEST_REPORT"
+    elif [ -f ../../../../.scm-branch ]; then
+      cat ../../../../.scm-branch >> "$TEST_REPORT"
       echo  >> "$TEST_REPORT"
     fi
 
