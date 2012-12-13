@@ -64,9 +64,6 @@ int main(){
 	double radius;
 	nu_of_pts =pow(2,10);
 	radius=6000000;
-	double minDist = radius * pow (2, -25);
-	double minDist2 = pow(minDist, 2);
-	int invalid = 0;
 	CGAL::Timer time;
 
 	CGAL::Random random(nu_of_pts);

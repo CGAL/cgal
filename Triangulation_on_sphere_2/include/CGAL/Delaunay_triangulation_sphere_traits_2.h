@@ -37,9 +37,7 @@ class Power_test_2
 			    const Point_2& q,
 			    const Point_2& r,
 			    const Point_2& s) const
-  {
-	  return orientation(p,q,r,s);
-  }
+  {  return orientation(p,q,r,s); }
 	
 
   Oriented_side operator() (const Point_2& p,
@@ -53,7 +51,7 @@ class Power_test_2
    Oriented_side operator() (const Point_2& p,
 			     const Point_2& q) const
   {
-    Comparison_result pq=compare_xyz(p,q);
+	 Comparison_result pq=compare_xyz(p,q);
       
     if(pq==EQUAL){
       return ON_ORIENTED_BOUNDARY;
@@ -77,7 +75,7 @@ Power_test_2(const Point_2& sphere)
 : _sphere(sphere)
 {}
 	
-/*	
+	
 template < typename K >
 class Orientation_sphere_1
 {
@@ -88,19 +86,14 @@ public:
  Orientation_sphere_1(const Point_2& sphere);
 		
  Comparison_result operator()(const Point_2& p, const Point_2& q) const
- {
-  return coplanar_orientation(_sphere,p,q);
- }
+  { return coplanar_orientation(_sphere,p,q);}
 		
  Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
- {			
-	return coplanar_orientation(p,q,r,_sphere);
- }
+  {	return coplanar_orientation(p,q,r,_sphere); }
 		
  Comparison_result operator()(const Point_2& p, const Point_2& q, const Point_2& r,const Point_2& s) const
- {
-	    	return coplanar_orientation(p,q,r,s);
- }
+	{ return coplanar_orientation(p,q,r,s);}
+ 
 		
 protected :
 Point_2  _sphere;
@@ -113,7 +106,7 @@ template < typename K >
 Orientation_sphere_1<K>::
 Orientation_sphere_1(const Point_2& sphere)
 : _sphere(sphere)
-{}*/
+{}
 	
 	
 	
@@ -228,9 +221,9 @@ public:
   typedef CGAL::Coradial_sphere_2<Self>                  Coradial_sphere_2;
   typedef CGAL::Inside_cone_2<Self>                      Inside_cone_2;
   //typedef CGAL::Orientation_sphere_1<Self>               Orientation_1;
-	typedef typename R::Coplanar_orientation_3			Orientation_1;
+  typedef typename R::Coplanar_orientation_3			Orientation_1;
   typedef typename R::Compute_squared_distance_3         Compute_squared_distance_2;
-	typedef typename R::Compare_xyz_3					 Compare_xyz_3;
+  typedef typename R::Compare_xyz_3					 Compare_xyz_3;
 	
  	
 	

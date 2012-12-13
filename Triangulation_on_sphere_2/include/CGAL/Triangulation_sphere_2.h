@@ -1036,16 +1036,7 @@ equal(const Point &p, const Point &q) const
 		return compare_xyz(p, q) == EQUAL;
 }
 	
-/*
-template <class Gt, class Tds >
-inline
-Orientation
-Triangulation_sphere_2<Gt, Tds>::
-coplanar_orientation(const Point& p, const Point& q,const Point& r ) const
-{
-	return geom_traits().orientation_1_object()(p,q,r);
-}*/
-	
+
 template <class Gt, class Tds >
 inline
 Orientation
@@ -1054,9 +1045,6 @@ coplanar_orientation(const Point& p, const Point& q,const Point& r, const  Point
 {
 	return geom_traits().orientation_1_object()(p,q,r,s);
 }
-	
-	
-	
 	
 	
 template <class Gt, class Tds >

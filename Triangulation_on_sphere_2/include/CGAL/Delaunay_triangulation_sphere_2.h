@@ -116,7 +116,7 @@ public:
   bool is_valid_face(Face_handle fh,bool verbose = false, int level = 0 ) const;
   bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
   bool is_plane() const;
-  bool check_neighboring()
+  void check_neighboring()
   {
     All_faces_iterator eit;
     if(dimension()==1){
@@ -749,8 +749,9 @@ insert_outside_affine_hull_regular(const Point& p)
 	const Point p1=f->vertex(1)->point();
 	const Point p2=fn->vertex(1)->point();
 	Orientation orient = orientation(p0, p1, p2);
+	 CGAL_triangulation_assertion(orient!=NEGATIVE);
 	Orientation orient2 = power_test(p0, p1, p2, p);
-	CGAL_triangulation_assertion(orient!=NEGATIVE);
+	
 	 
 	if(orient2==POSITIVE)
 	  conform =true;
