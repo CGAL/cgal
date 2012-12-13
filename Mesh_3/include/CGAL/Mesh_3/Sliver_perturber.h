@@ -57,6 +57,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/mutex.h>
+# include <tbb/task.h>
 #endif
 
 #include <boost/format.hpp>
