@@ -375,7 +375,11 @@ public:
   // Irrelevant here
   void set_index(int) {}
   int get_index() const { return 0; }
-  bool less_than (const WorkItem &other) const { return true; }
+  bool less_than (const WorkItem &other) const 
+  { 
+    // Just compare addresses
+    return this < &other; 
+  }
 
 private:
   Func      m_func;
@@ -764,6 +768,19 @@ public:
   void set_bbox(const Bbox_3 &/*bbox*/)
   {
     // We don't need it.
+  }
+  
+  template <typename Func>
+  void enqueue_work(Func f, tbb::task &parent_task)
+  {
+    WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
+    WorkBatch &workbuffer = m_tls_work_buffers.local();
+    workbuffer.add_work_item(p_item);
+    if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
+    {
+      add_batch_and_enqueue_task(workbuffer, parent_task);
+      workbuffer.clear();
+    }
   }
 
   template <typename Func, typename Quality>
