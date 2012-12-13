@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Monotone and Sorted Matrix Search
+\mainpage User Manual 
 \anchor Chapter_Monotone_and_Sorted_Matrix_Search
 \anchor chapMatrixSearch
 

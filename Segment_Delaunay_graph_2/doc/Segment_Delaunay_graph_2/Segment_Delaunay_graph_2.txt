@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Segment Delaunay Graphs
+\mainpage User Manual 
 \anchor Chapter_2D_Segment_Delaunay_Graphs
 \anchor chaptersegdel2
 \cgalAutoToc

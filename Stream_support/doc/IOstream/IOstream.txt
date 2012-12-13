@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage IO Streams
+\mainpage User Manual 
 \anchor Chapter_IO_Streams
 \anchor Chapter_operator_for_IO_streams
 \cgalAutoToc

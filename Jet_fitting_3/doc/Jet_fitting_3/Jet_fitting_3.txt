@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Estimation of Local Differential Properties of Point-Sampled Surfaces
+\mainpage User Manual 
 \anchor Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces
 \anchor chapJetfitting3
 \cgalAutoToc

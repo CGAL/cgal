@@ -1232,7 +1232,7 @@ public:
 
     \image html euler_facet.gif
 
-  */ 
+n  */ 
   Halfedge_handle join_facet( Halfedge_handle h); 
 
   /*! 

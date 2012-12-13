@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage %CGAL and the %Qt Graphics View Framework
+\mainpage User Manual 
 \anchor Chapter_CGAL_and_the_Qt_Graphics_View_Framework
 \anchor chapterQGraphicsView
 \cgalAutoToc

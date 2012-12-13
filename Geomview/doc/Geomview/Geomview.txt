@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Geomview
+\mainpage User Manual 
 \anchor Chapter_Geomview
 \cgalAutoToc
 \authors Andreas Fabri and Sylvain Pion

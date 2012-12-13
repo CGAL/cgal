@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Surface Reconstruction from Point Sets
+\mainpage User Manual 
 \anchor Chapter_Surface_Reconstruction_from_Point_Sets
 \cgalAutoToc
 

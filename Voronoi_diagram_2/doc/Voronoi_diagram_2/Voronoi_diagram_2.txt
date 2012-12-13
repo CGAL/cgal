@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Voronoi Diagram Adaptor
+\mainpage User Manual 
 \anchor Chapter_2D_Voronoi_Diagram_Adaptor
 \anchor chaptervda
 \cgalAutoToc

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage CGAL Ipelets
+\mainpage User Manual 
 \anchor Chapter_CGAL_Ipelets
 \anchor chapcgalipelets
 \cgalAutoToc

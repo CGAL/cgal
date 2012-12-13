@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage dD Geometry %Kernel
+\mainpage User Manual 
 \anchor Chapter_dD_Geometry_Kernel
 \cgalAutoToc
 \author Michael Seel

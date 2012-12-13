@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Alpha Shapes
+\mainpage User Manual 
 \anchor Chapter_2D_Alpha_Shapes
 \anchor I1ChapterAlphashapes2D
 \cgalAutoToc

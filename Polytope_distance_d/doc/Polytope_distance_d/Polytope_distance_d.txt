@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Optimal Distances
+\mainpage User Manual 
 \anchor Chapter_Optimal_Distances
 \anchor chapOptimalDistances
 \cgalAutoToc

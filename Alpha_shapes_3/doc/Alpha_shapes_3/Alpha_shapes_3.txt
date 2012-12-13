@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Alpha Shapes
+\mainpage User Manual 
 \anchor Chapter_3D_Alpha_Shapes
 \cgalAutoToc
 \authors Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec

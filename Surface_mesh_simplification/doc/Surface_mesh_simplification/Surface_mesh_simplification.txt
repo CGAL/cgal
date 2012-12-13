@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Triangulated Surface Mesh Simplification
+\mainpage User Manual 
 \anchor Chapter_Triangulated_Surface_Mesh_Simplification
 
 \cgalAutoToc

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Triangulation Data Structure
+\mainpage User Manual 
 \anchor Chapter_2D_Triangulation_Data_Structure
 
 \cgalAutoToc

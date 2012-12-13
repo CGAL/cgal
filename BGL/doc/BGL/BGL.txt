@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage CGAL and the Boost Graph Library
+\mainpage User Manual 
 \anchor Chapter_CGAL_and_the_Boost_Graph_Library
 \anchor chapterBGL
 \cgalAutoToc

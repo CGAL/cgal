@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Algebraic Foundations
+\mainpage User Manual 
 \anchor Chapter_Algebraic_Foundations
 
 \cgalAutoToc

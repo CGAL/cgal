@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Halfedge Data Structures
+\mainpage User Manual 
 \anchor Chapter_Halfedge_Data_Structures
 \anchor chapterHalfedgeDS
 \cgalAutoToc

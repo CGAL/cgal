@@ -1,7 +1,7 @@
 \namespace CGAL {
 /*!
 
-\mainpage 3D Triangulation Data Structure
+\mainpage User Manual 
 \anchor Chapter_3D_Triangulation_Data_Structure
 \anchor chapterTDS3
 

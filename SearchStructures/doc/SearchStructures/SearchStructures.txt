@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage dD %Range and Segment Trees
+\mainpage User Manual 
 \anchor Chapter_dD_Range_and_Segment_Trees
 \anchor Trees
 \cgalAutoToc
