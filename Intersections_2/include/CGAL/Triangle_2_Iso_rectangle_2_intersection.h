@@ -30,14 +30,15 @@
 #include <vector>
 #include <list>
 
-namespace CGAL{
-  template <class R>
+namespace CGAL{ namespace internal{
+
+  template <class K>
   Object
-  intersection(const Triangle_2<R> &t, const Iso_rectangle_2<R> &r)
+  intersection(const typename K::Triangle_2 &t, const typename K::Iso_rectangle_2 &r, const K&)
   {
-    typedef typename R::FT FT;
-    typedef Segment_2<R> Segment;
-    typedef Point_2<R>   Point;
+    typedef typename K::FT FT;
+    typedef typename K::Segment_2 Segment;
+    typedef typename K::Point_2   Point;
 
     FT xr1, yr1, xr2, yr2;  
     bool position[3][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
@@ -252,7 +253,10 @@ namespace CGAL{
             result.push_back(s[k].source());
         }
       }
-
+      //remove duplicated consecutive points
+      typename std::vector<Point>::iterator last = std::unique(result.begin(),result.end());
+      result.erase(last,result.end());
+      
       switch(result.size()){
         case 0:
           return Object();
@@ -261,7 +265,7 @@ namespace CGAL{
         case 2:
           return make_object(Segment(result[0], result[1]));
         case 3:
-          return make_object(Triangle_2<R>(result[0], result[1], result[2]));
+          return make_object(typename K::Triangle_2(result[0], result[1], result[2]));
         default:
           return make_object(result);
       }
@@ -269,6 +273,74 @@ namespace CGAL{
     }//end if(intersection)
     return Object();
   }//end intersection
+  
+  template <class K>
+  Object
+  inline intersection(const typename K::Iso_rectangle_2 &r, const typename K::Triangle_2 &t, const K& k)
+  {
+    return intersection(t,r,k);
+  }
+  
+  template <class K>
+  bool do_intersect(
+    const typename K::Triangle_2 &tr,
+    const typename K::Iso_rectangle_2 &ir,
+    const K& k)
+  {
+    //1) check if at least one vertex of tr is not outside ir
+    //2) if not, check if at least on vertex of tr is not outside tr
+    
+    typename K::Has_on_unbounded_side_2 unbounded_side=k.has_on_unbounded_side_2_object();
+    typename K::Construct_vertex_2 vertex=k.construct_vertex_2_object();
+    for (int i=0;i<3;++i)
+      if ( !unbounded_side( ir,vertex(tr,i) ) ) return true;
+    for (int i=0;i<4;++i)
+      if ( !unbounded_side( tr,vertex(ir,i) ) ) return true;
+    return false;
+  }
+
+  template <class K>
+  inline bool do_intersect(
+    const typename K::Iso_rectangle_2 &ir,
+    const typename K::Triangle_2 &tr,
+    const K& k)
+  {
+    return do_intersect(tr,ir,k);
+  }
+  
+  } //namespace internal
+  
+  template <class K>
+  Object
+  inline intersection(const Iso_rectangle_2<K> &r, const Triangle_2<K> &t)
+  {
+    return typename K::Intersect_2()(r,t);
+  }
+
+  template <class K>
+  Object
+  inline intersection(const Triangle_2<K> &t, const Iso_rectangle_2<K> &r)
+  {
+    return typename K::Intersect_2()(t,r);
+  }
+  
+  template <class K>
+  inline bool
+  do_intersect(const Iso_rectangle_2<K> & iso,
+               const Triangle_2<K> &tr)
+  {
+    typedef typename K::Do_intersect_2 Do_intersect;
+    return Do_intersect()(iso, tr);
+  }
+
+  template <class K>
+  inline bool
+  do_intersect(const Triangle_2<K> &tr, const Iso_rectangle_2<K> &iso)
+  {
+    typedef typename K::Do_intersect_2 Do_intersect;
+    return Do_intersect()(tr, iso);
+  }
+  
 }//end namespace
 
 #endif

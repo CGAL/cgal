@@ -27,15 +27,11 @@
 
 #ifndef CGAL_CFG_NO_CPP0X_TUPLE
 #  include <tuple>
+#else
+#  include <boost/tuple/tuple.hpp>
+#  include <boost/tuple/tuple_comparison.hpp>
+#  include <utility>
 #endif
-#ifndef CGAL_CFG_NO_TR1_TUPLE
-#  include <tr1/tuple>
-#  include <tr1/utility>
-#endif
-
-#include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_comparison.hpp>
-#include <utility>
 
 namespace CGAL {
 
@@ -48,13 +44,6 @@ using std::tie;
 using std::get;
 using std::tuple_size;
 using std::tuple_element;
-#elif !defined CGAL_CFG_NO_TR1_TUPLE
-using std::tr1::tuple;
-using std::tr1::make_tuple;
-using std::tr1::tie;
-using std::tr1::get;
-using std::tr1::tuple_size;
-using std::tr1::tuple_element;
 #else
 using boost::tuple;
 using boost::make_tuple;
@@ -72,8 +61,8 @@ struct tuple_element: public boost::tuples::element<N,T>{};
 #endif
 
 
-#if defined(CGAL_CFG_NO_CPP0X_TUPLE) && defined(CGAL_CFG_NO_TR1_TUPLE)
-// If not TR1 or C++11 tuple, we need to add get<N>(std::pair).
+#if defined(CGAL_CFG_NO_CPP0X_TUPLE)
+// If not C++11 tuple, we need to add get<N>(std::pair).
 
 ////////////////////////////////////////////////////////////
 //                                                        //

@@ -27,6 +27,7 @@
 
 #include <CGAL/Handle_for_virtual.h>
 #include <CGAL/rational_rotation.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
 

@@ -37,6 +37,11 @@
 #endif
 #endif
 
+#include <CGAL/Point_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
+
 namespace CGAL {
 
 template <class NumberType>

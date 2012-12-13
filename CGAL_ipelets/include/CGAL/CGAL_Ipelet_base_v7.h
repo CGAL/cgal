@@ -60,7 +60,8 @@ namespace CGAL{
     typedef ipe::Curve  IpeSegmentSubPath;//ipe6 compatibility
     typedef ipe::Matrix IpeMatrix;//ipe6 compatibility
     typedef ipe::Path   IpePath;//ipe6 compatibility
-  
+    //indicates if the selection should be primary or secondary. Exactly one primary selection should exist
+    ipe::TSelect get_selection_type() const { return get_IpePage()->primarySelection()==-1 ? ipe::EPrimarySelected : ipe::ESecondarySelected;}  
     //ipe6 compatibility
     void transform_selected_objects_(const IpeMatrix& tfm) const {
       for (int i=0;i<get_IpePage()->count();++i)
@@ -82,7 +83,7 @@ namespace CGAL{
           //~ grp->push_back( get_IpePage()->object(i-1) );      
           get_IpePage()->remove(i-1);      
         }
-      get_IpePage()->append(ipe::ESecondarySelected,CURRENTLAYER,grp);    
+      get_IpePage()->append(get_selection_type(),CURRENTLAYER,grp);    
     }
     
   
@@ -318,7 +319,7 @@ public:
         shape.appendSubPath(*it);
       if (delete_underlying_polygons)
         delete_selected_objects_();
-      get_IpePage()->append(ipe::ESecondarySelected,CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));    
+      get_IpePage()->append(get_selection_type(),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));    
     }
     
     void 
@@ -372,7 +373,7 @@ public:
           obj_ipe->setPathMode(ipe::EStrokedAndFilled);
           obj_ipe->setFill(ipe::Attribute::BLACK());
         }
-        get_IpePage()->append( (deselect_all?ipe::ENotSelected:ipe::ESecondarySelected),CURRENTLAYER,obj_ipe);
+        get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,obj_ipe);
         return obj_ipe;
       }
       return NULL;  
@@ -386,14 +387,14 @@ public:
                                 );
       ipe::Shape shape;
       shape.appendSubPath(ellipse);
-      get_IpePage()->append( (deselect_all?ipe::ENotSelected:ipe::EPrimarySelected),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
+      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
     }
  
     void
     draw_in_ipe(const Point_2& P,bool deselect_all=false) const 
     {
       ipe::Reference *mark = new ipe::Reference(CURRENTATTRIBUTES,CURRENTATTRIBUTES.iMarkShape, ipe::Vector(CGAL::to_double(P.x()),CGAL::to_double(P.y())));
-      get_IpePage()->append( (deselect_all?ipe::ENotSelected:ipe::ESecondarySelected),CURRENTLAYER,mark);      
+      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,mark);      
     }
     
     void 
@@ -402,7 +403,7 @@ public:
       ipe::Segment seg_ipe;
       seg_ipe.iP = ipe::Vector(CGAL::to_double(S.point(0).x()),CGAL::to_double(S.point(0).y()));
       seg_ipe.iQ = ipe::Vector(CGAL::to_double(S.point(1).x()),CGAL::to_double(S.point(1).y()));
-      get_IpePage()->append( (deselect_all?ipe::ENotSelected:ipe::ESecondarySelected),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,ipe::Shape(seg_ipe)));      
+      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,ipe::Shape(seg_ipe)));      
     }
     
     template<class Container>
@@ -431,7 +432,7 @@ public:
                                    ipeS,ipeT);
       ipe::Shape shape;
       shape.appendSubPath(SSP_ipe);
-      get_IpePage()->append( (deselect_all?ipe::ENotSelected:ipe::ESecondarySelected),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
+      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
     }
 
 
@@ -448,7 +449,7 @@ public:
       SSP_ipe->setClosed(true);
       ipe::Shape shape;
       shape.appendSubPath(SSP_ipe);
-      get_IpePage()->append( (deselect_all?ipe::ENotSelected:ipe::ESecondarySelected),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
+      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
     }
     
     void 
@@ -466,7 +467,7 @@ public:
       SSP_ipe->setClosed(true);
       ipe::Shape shape;
       shape.appendSubPath(SSP_ipe);
-      get_IpePage()->append( (deselect_all?ipe::ENotSelected:ipe::ESecondarySelected),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
+      get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
     }
     
     

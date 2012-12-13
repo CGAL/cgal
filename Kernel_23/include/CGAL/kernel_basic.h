@@ -25,17 +25,7 @@
 #ifndef CGAL_KERNEL_BASIC_H
 #define CGAL_KERNEL_BASIC_H
 
-#ifndef CGAL_KERNEL_INLINE
-#  define CGAL_KERNEL_INLINE inline
-#endif
-
-#ifndef CGAL_KERNEL_MEDIUM_INLINE
-#  define CGAL_KERNEL_MEDIUM_INLINE
-#endif
-
-#ifndef CGAL_KERNEL_LARGE_INLINE
-#  define CGAL_KERNEL_LARGE_INLINE
-#endif
+#include <CGAL/kernel_config.h>
 
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/enum.h>

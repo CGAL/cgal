@@ -46,10 +46,10 @@ This profile is used by the stop, cost and placement policies.
 \ccGlue    
   \ccMethod{vertex_descriptor v1() const;}{The other vertex of the edge to be collapsed.}
 \ccGlue    
-  \ccMethod{edge_descriptor v0v1() const;}{One of the directed edges corresponding to the undirected
+  \ccMethod{edge_descriptor v0_v1() const;}{One of the directed edges corresponding to the undirected
    edge being collapsed.}
 \ccGlue    
-  \ccMethod{edge_descriptor v1v0() const;}{The other directed edge corresponding to the undirected
+  \ccMethod{edge_descriptor v1_v0() const;}{The other directed edge corresponding to the undirected
   edge being collapsed.}
 \ccGlue    
   \ccMethod{Point const& p0() const;}{The point of vertex $v0$.}
@@ -60,11 +60,11 @@ This profile is used by the stop, cost and placement policies.
            {If $v0v1$ belongs to a finite face (is not a border edge)
            the third vertex of that triangular face, a {\em null descriptor} otherwise.}
 \ccGlue    
-  \ccMethod{edge_descriptor v1vL() const;}
+  \ccMethod{edge_descriptor v_1vL() const;}
            {If $v0v1$ belongs to a finite face (is not a border edge) 
            the directed edge from $v1$ to $vL$, a {\em null descriptor} otherwise.}
 \ccGlue    
-  \ccMethod{edge_descriptor vLv0() const;}
+  \ccMethod{edge_descriptor vL_v0() const;}
            {If $v0v1$ belongs to a finite face (is not a border edge) 
            the directed edge from $vL$ to $v0$, a {\em null descriptor} otherwise.}
 \ccGlue    
@@ -72,11 +72,11 @@ This profile is used by the stop, cost and placement policies.
            {If $v1v0$ belongs to a finite face (is not a border edge)
            the third vertex of that triangular face, a {\em null descriptor} otherwise.}
 \ccGlue    
-  \ccMethod{edge_descriptor v0vR() const;}
+  \ccMethod{edge_descriptor v0_vR() const;}
            {If $v1v0$ belongs to a finite face (is not a border edge) 
            the directed edge from $v0$ to $vR$, a {\em null descriptor} otherwise.}
 \ccGlue    
-  \ccMethod{edge_descriptor vRv1() const;}
+  \ccMethod{edge_descriptor vR_v1() const;}
            {If $v1v0$ belongs to a finite face (is not a border edge) 
            the directed edge from $vR$ to $v1$, a {\em null descriptor} otherwise.}
 \ccGlue    

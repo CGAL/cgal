@@ -33,14 +33,13 @@
 
 \usepackage{cc_manual}
 
-\RCSdef{\lcRevision}{$Id$}
-\RCSdefDate{\lcDate}{$Date$}
+%\RCSdef{\lcRevision}{$Id$}
+%\RCSdefDate{\lcDate}{$Date$}
 
 % Print a release note.
 \catcode`\@=11\relax
 \newwrite\@unused
 \def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
-\typeout{latex_to_html.sty: \lcRevision. \lcDate.}
 \catcode`\@=12\relax
 
 % ___________________________________________________________________________

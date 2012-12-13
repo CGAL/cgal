@@ -13,15 +13,17 @@
 \ccDefinition 
 %============
 
-The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
-concept that allows for the construction and maintenance of arrangements of
-linear objects which may be bounded (line segments) or unbounded (rays
-and lines). The traits class is parameterized with a \cgal-kernel model;
-see the reference page of \ccc{Arr_segment_traits_2<Kernel>}
+The traits class \ccRefName{} is a model of the \ccc{ArrangementTraits_2}
+concept, which enables the construction and maintenance of arrangements of
+linear objects. The linear objects may be bounded (line segments) or
+unbounded (rays and lines). Thus, it is also a model of the concept
+\ccc{ArrangementOpenBoundaryTraits_2}. The traits class is parameterized
+with a \cgal-kernel model; see the reference page of
+\ccc{Arr_segment_traits_2<Kernel>}
 (\ccRefPage{CGAL::Arr_segment_traits_2<Kernel>}) for further explanations
 and recommendations on choosing a kernel.
 
-\ccRefName\ defines \ccc{Kernel::Point_2} as its point type. The nested
+\ccRefName{} defines \ccc{Kernel::Point_2} as its point type. The nested
 \ccc{X_monotone_curve_2} and \ccc{Curve_2} types defined by the traits class
 (as is the case with the various segment-traits classes, both types
 refer to the same class, as {\sl every} linear object is (weakly) $x$-monotone),
@@ -35,8 +37,9 @@ it to the respective kernel object (say, to a \ccc{Kernel::Ray_2}).
  
 \ccIsModel
     \ccc{ArrangementTraits_2} \\
-    \ccc{ArrangementLandmarkTraits_2}
-
+    \ccc{ArrangementLandmarkTraits_2} \\
+    \ccc{ArrangementOpenBoundaryTraits_2}
+    
 \subsection*{Class 
         Arr\_linear\_traits\_2$<$Kernel$>$::Curve\_2}
 %====================================================

@@ -1187,7 +1187,7 @@ filter_output_iterator(I e, const P& p)
 { return Filter_output_iterator< I, P >(e, p); }
 
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE)
 
 namespace internal {
 

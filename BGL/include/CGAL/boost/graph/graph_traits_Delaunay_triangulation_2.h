@@ -337,6 +337,15 @@ namespace boost {
     typedef typename map_gen::const_type const_type;
   };
 
+  // see struct property_map in Polyehdron for an explanation
+  template <class Gt, class Tds, class Tag>
+  struct property_map<const CGAL::Delaunay_triangulation_2<Gt,Tds>, Tag> {
+    typedef typename 
+      DT2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
+    typedef typename map_gen::type type;
+    typedef typename map_gen::const_type const_type;
+  };
+
   template <class Gt, class Tds, class PropertyTag, class Key>
   inline
   typename boost::property_traits<

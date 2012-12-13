@@ -62,6 +62,7 @@
     <addaction name="actionSetPolyhedronA"/>
     <addaction name="actionSetPolyhedronB"/>
     <addaction name="actionSelect_all_items"/>
+    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
@@ -631,6 +632,11 @@
   <action name="actionLoad_Script">
    <property name="text">
     <string>Load &amp;Script</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>&amp;Preferences</string>
    </property>
   </action>
  </widget>

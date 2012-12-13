@@ -9,7 +9,7 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-set(PACKAGE_ROOT ../..)
+set(PACKAGE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 # Add several CGAL packages to the include and link paths,
 # if they lie in ${PACKAGE_ROOT}/.
@@ -100,5 +100,9 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
   endif( QGLVIEWER_FOUND)
 else(CGAL_FOUND AND CGAL_Qt4_FOUND)
+  if(RUNNING_CGAL_AUTO_TEST)
+    # Just to avoid a warning from CMake if that variable is set on the command line...
+  endif()
+
   message(STATUS "NOTICE: This demo needs Qt4, and will not be compiled.")
 endif(CGAL_FOUND AND CGAL_Qt4_FOUND)

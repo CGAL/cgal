@@ -100,6 +100,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
+  qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
 
   include(AddFileDependencies)
 
@@ -216,7 +217,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #      MainWindow_curvature_estimation.cpp
       MainWindow_moc.cpp
 #      Viewer_moc.cpp
-      ${MainWindowUI_files} ${RESOURCE_FILES} )
+      ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     if(EIGEN3_FOUND OR TAUCS_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
