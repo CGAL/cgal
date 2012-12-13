@@ -1290,12 +1290,9 @@ doc_pdf
 *.user
 *.aps
 doc_doxygen
-======= end
 CMakeCache.txt
 CMakeFiles
-<<<<<<< variant A
 *.qrc.depends
->>>>>>> variant B
 cmake_install.cmake
 Doxyfile
 *.dir
