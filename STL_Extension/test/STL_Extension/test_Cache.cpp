@@ -19,7 +19,7 @@
 #include <CGAL/function_objects.h>
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 struct Int_rep {
     int val;
