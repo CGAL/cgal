@@ -1196,11 +1196,11 @@ private:
   
     if (tseg.is_horizontal()) {
       Point_2 txmax = ( CGAL::compare(tseg.source().x(), tseg.target().x())
-                        == SMALLER ) ? tseg.target().x()
-                                     : tseg.source().x();
+                        == SMALLER ) ? tseg.target()
+                                     : tseg.source();
       Point_2 txmin = ( CGAL::compare(tseg.source().x(), tseg.target().x())
-                        == SMALLER ) ? tseg.source().x()
-                        : tseg.target().x();
+                        == SMALLER ) ? tseg.source()
+                                     : tseg.target();
       if (CGAL::compare(uy - dup , uz * tseg.source().y()) == SMALLER &&
           CGAL::compare(uz * tseg.source().y() , uy + dup) == SMALLER &&
           CGAL::compare(ux - dup , uz * txmax.x()) == SMALLER ) {
@@ -1216,11 +1216,11 @@ private:
     
     } else {// tseg is vertical
       Point_2 tymax = ( CGAL::compare(tseg.source().y(), tseg.target().y())
-                        == SMALLER ) ? tseg.target().y()
-                                     : tseg.source().y();
+                        == SMALLER ) ? tseg.target()
+                                     : tseg.source();
       Point_2 tymin = ( CGAL::compare(tseg.source().y(), tseg.target().y())
-                        == SMALLER ) ? tseg.source().y()
-                                     : tseg.target().y();
+                        == SMALLER ) ? tseg.source()
+                                     : tseg.target();
       if (CGAL::compare(ux - dup , uz * tseg.source().x()) == SMALLER &&
           CGAL::compare(uz * tseg.source().x() , ux + dup) == SMALLER &&
           CGAL::compare(uy - dup , uz * tymax.y()) == SMALLER ) {
