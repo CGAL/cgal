@@ -117,6 +117,10 @@ public:
     CGAL_triangulation_precondition( i >= 0 && i < 3 );
     return ((_off>>2*i)&3);
   }
+  bool has_zero_offsets() const {
+    return (_off&63) == 0;
+  }
+
   void set_offsets(unsigned int o0, unsigned int o1, unsigned int o2) {
     // 192=11000000
     _off = _off | 192;

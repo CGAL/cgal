@@ -75,6 +75,7 @@ public:
 
 public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
+  using Triangulation::empty;
   using Triangulation::cw;
   using Triangulation::ccw;
   using Triangulation::tds;
@@ -140,7 +141,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
-         bool is_large_point_set = false)
+         bool is_large_point_set = true)
   {
     if (first == last) return 0;
 
@@ -155,7 +156,7 @@ public:
     std::vector<Vertex_handle> dummy_points;
     typename std::vector<Point>::iterator pbegin = points.begin();
     if (is_large_point_set) {
-      dummy_points = insert_dummy_points();
+      dummy_points = this->insert_dummy_points();
     } else {
       // The empty triangulation is a 1-cover by definition, insert at least one point
       insert(*pbegin); ++pbegin;
@@ -171,9 +172,8 @@ public:
     // Insert the points
     std::set<Vertex_handle> double_vertices;
     spatial_sort (pbegin, points.end(), geom_traits());
-    Vertex_handle vh;
-    Face_handle f;
-    Offset o; Locate_type lt; int li;
+
+    Face_handle f; Locate_type lt; int li;
 
     for (typename std::vector<Point>::const_iterator p = pbegin, end = points.end();
          p != end; ++p)
@@ -323,13 +323,6 @@ private:
   /// NGHK: Not yet implemented
   bool test_conflict(const Point  &p, Face_handle fh) const;
 
-
-  /// NGHK: Not yet implemented
-  std::vector<Vertex_handle> insert_dummy_points()
-  {
-    NGHK_NYI;
-    return std::vector<Vertex_handle>();
-  }
 
   /// NGHK: Not yet implemented
   template <class OutputItFaces>
@@ -796,7 +789,7 @@ insert(const Point  &p,  Face_handle start)
   CGAL_triangulation_assertion((this->domain().ymin() <= p.y()) &&
                                (p.y() < this->domain().ymax()));
 
-  if (this->number_of_stored_vertices() == 0) {
+  if (empty()) {
     return this->insert_first(p);
   }
 
@@ -930,20 +923,39 @@ propagating_flip(Face_handle& f,int i)
   // NGHK: TODO use simplicity condition to improve performance (offsets==0)
   Face_handle nb = f->neighbor(i);
 
-  const Point *p[4];
-  Offset off[4];
+  CGAL_BRANCH_PROFILER("propagating_flip(), simplicity check failures", tmp);
+  if (f->has_zero_offsets() && nb->has_zero_offsets())
+  {
 
-  for (int index=0; index<3; ++index) {
-    p[index]   = &nb->vertex(index)->point();
-    off[index] = this->get_offset_face(nb,index);
-  }
-  p[3]   = &f->vertex(i)->point();
-  off[3] = this->combine_offsets(this->get_offset_face(f,i), this->get_neighbor_offset(f, i));
+    // No periodic offsets
+    const Point *p[4];
 
-  if ( ON_POSITIVE_SIDE !=
-       this->side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
-                                     off[0], off[1], off[2], off[3], true) ) {
-    return;
+    for (int index=0; index<3; ++index) {
+      p[index]   = &nb->vertex(index)->point();
+    }
+    p[3]   = &f->vertex(i)->point();
+
+    if ( ON_POSITIVE_SIDE !=
+        side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3], true) ) {
+      return;
+    }
+  } else {
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    const Point *p[4];
+    Offset off[4];
+
+    for (int index=0; index<3; ++index) {
+      p[index]   = &nb->vertex(index)->point();
+      off[index] = this->get_offset_face(nb,index);
+    }
+    p[3]   = &f->vertex(i)->point();
+    off[3] = this->combine_offsets(this->get_offset_face(f,i), this->get_neighbor_offset(f, i));
+
+    if ( ON_POSITIVE_SIDE !=
+        side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
+                                off[0], off[1], off[2], off[3], true) ) {
+      return;
+    }
   }
   this->flip_single_edge(f, i);
   propagating_flip(f,i);

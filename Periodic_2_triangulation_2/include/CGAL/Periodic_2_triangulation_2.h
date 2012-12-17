@@ -1980,6 +1980,11 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
     remove_too_long_edge(f, i);
 
   Face_handle nb = f->neighbor(i);
+  if (f->has_zero_offsets() && nb->has_zero_offsets()) {
+    _tds.flip(f, i);
+    return;
+  }
+
   int nb_index = nb->index(f);
   int offsets[4];
   offsets[0] = f->offset(i);
