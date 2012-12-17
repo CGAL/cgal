@@ -22,7 +22,7 @@
 
 #ifdef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 #include <boost/mpl/if.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 // This file is included in Combinatorial_map_utility.h, in the namespace
 // CGAL::internal

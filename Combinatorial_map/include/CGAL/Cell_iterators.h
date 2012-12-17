@@ -23,6 +23,8 @@
 #include <CGAL/Dart_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 
+#include <boost/type_traits/is_same.hpp>
+
 // TODO do all the orbit iterator of any orbit ?
 
 namespace CGAL {
