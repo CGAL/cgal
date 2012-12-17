@@ -2205,6 +2205,13 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_face(const Point& p, const Offset
   CGAL_triangulation_assertion(number_of_vertices() != 0);
   CGAL_triangulation_assertion((!is_1_cover()) || (o == Offset()));
 
+  if (f->has_zero_offsets() && o.is_zero()) {
+    Vertex_handle v = _tds.insert_in_face(f);
+    v->set_point(p);
+    return v;
+  }
+
+
   // Choose the periodic copy of tester.point() that is inside c.
   Offset current_off = get_location_offset(f, p, o);
 
