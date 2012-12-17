@@ -151,13 +151,18 @@ public:
     // applied to empty triangulations.
     if (n!=0) is_large_point_set = false;
 
+    std::set<Vertex_handle> dummy_points;
     std::vector<Point> points(first, last);
-    std::random_shuffle (points.begin(), points.end());
-    std::vector<Vertex_handle> dummy_points;
     typename std::vector<Point>::iterator pbegin = points.begin();
+
     if (is_large_point_set) {
-      dummy_points = this->insert_dummy_points();
+      std::vector<Vertex_handle> tmp_dummy_points = this->insert_dummy_points();
+      std::copy(tmp_dummy_points.begin(), tmp_dummy_points.end(),
+                std::inserter(dummy_points, dummy_points.begin()));
     } else {
+      std::random_shuffle (points.begin(), points.end());
+      pbegin = points.begin();
+
       // The empty triangulation is a 1-cover by definition, insert at least one point
       insert(*pbegin); ++pbegin;
       while (!is_1_cover()) {
@@ -170,7 +175,6 @@ public:
     CGAL_assertion(is_1_cover());
 
     // Insert the points
-    std::set<Vertex_handle> double_vertices;
     spatial_sort (pbegin, points.end(), geom_traits());
 
     Face_handle f; Locate_type lt; int li;
@@ -181,18 +185,18 @@ public:
       f = locate(*p, lt, li, f);
 
       if (lt == Triangulation::VERTEX) {
-        double_vertices.insert(f->vertex(li));
+        dummy_points.erase(f->vertex(li));
       } else {
         insert(*p, lt, f, li);
       }
     }
 
-    if (is_large_point_set) {
-      for (unsigned int i=0; i<dummy_points.size(); i++) {
-        if (double_vertices.find(dummy_points[i]) == double_vertices.end())
-          Triangulation::remove(dummy_points[i]);
-      }
-    }
+    // if (is_large_point_set) {
+    //   for (typename std::set<Vertex_handle>::const_iterator it = dummy_points.begin();
+    //        it != dummy_points.end(); ++it) {
+    //       remove(*it);
+    //   }
+    // }
 
     return number_of_vertices() - n;
   }
@@ -316,8 +320,9 @@ public:
 private:
   /// Not in the documentation
   /// NGHK: Not yet implemented
-  void restore_Delaunay(Vertex_handle v);
+  inline void restore_Delaunay(Vertex_handle v);
 
+  inline bool locally_Delaunay(const Face_handle &f, int i, const Face_handle &nb);
 
   // return whether p is inside the circumcircle of fh
   /// NGHK: Not yet implemented
@@ -351,8 +356,13 @@ private:
   bool is_delaunay_after_displacement(Vertex_handle v,
                                       const Point &p) const;
 
-  /// NGHK: Not yet implemented
-  void propagating_flip(Face_handle& f,int i);
+#ifndef CGAL_DT2_USE_RECURSIVE_PROPAGATING_FLIP
+  void non_recursive_propagating_flip(Face_handle f,int i);
+  void propagating_flip(const Face_handle& f,int i, int depth=0);
+#else
+  void propagating_flip(const Face_handle& f,int i);
+#endif
+
   /// NGHK: Not yet implemented
   void remove_2D(Vertex_handle v );
 
@@ -821,6 +831,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
 {
   Vertex_handle vh = Triangulation::insert(p,lt,loc,li);
+
   if (lt != Triangulation::VERTEX) {
     restore_Delaunay(vh);
 
@@ -901,8 +912,6 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 restore_Delaunay(Vertex_handle v)
 {
-  if(dimension() <= 1) return;
-
   Face_handle f=v->face();
   Face_handle next;
   int i;
@@ -915,18 +924,84 @@ restore_Delaunay(Vertex_handle v)
   } while(next != start);
 }
 
+
+#ifndef CGAL_DT2_USE_RECURSIVE_PROPAGATING_FLIP
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+non_recursive_propagating_flip(Face_handle f , int i)
+{
+  std::stack<Edge> edges;
+  const Vertex_handle& vp = f->vertex(i);
+  const Point& p = vp->point();
+  edges.push(Edge(f,i));
+
+  while(! edges.empty()){
+    const Edge& e = edges.top();
+    f = e.first; 
+    i = e.second;
+    const Face_handle& n = f->neighbor(i);
+    
+    if (locally_Delaunay(f, i, n)) {
+      edges.pop();
+      continue;
+    }
+    this->flip_single_edge(f, i);
+    // As we haven't popped it, we don't have to push it
+    edges.push(Edge(n,n->index(vp)));
+  }
+}
+
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+propagating_flip(const Face_handle& f,int i, int depth)
+{
+#ifdef CGAL_DT2_IMMEDIATELY_NON_RECURSIVE_PROPAGATING_FLIP
+  non_recursive_propagating_flip(f,i);
+#else
+  int max_depth = 100;
+  if(depth==max_depth){
+    non_recursive_propagating_flip(f,i);
+    return;
+  }
+  Face_handle n = f->neighbor(i);
+      
+  if (locally_Delaunay(f, i, n))
+    return;
+
+  this->flip_single_edge(f, i);
+  propagating_flip(f,i,depth+1);
+  i = n->index(f->vertex(i));
+  propagating_flip(n,i,depth+1);
+#endif
+}
+#else 
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 propagating_flip(Face_handle& f,int i)
 {
-  // NGHK: TODO use simplicity condition to improve performance (offsets==0)
   Face_handle nb = f->neighbor(i);
 
-  CGAL_BRANCH_PROFILER("propagating_flip(), simplicity check failures", tmp);
+  if (locally_Delaunay(f, nb))
+    return;
+
+  this->flip_single_edge(f, i);
+  propagating_flip(f,i);
+  i = nb->index(f->vertex(i));
+  propagating_flip(nb,i);
+}
+#endif
+
+template < class Gt, class Tds >
+bool
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+locally_Delaunay(const Face_handle &f, int i, const Face_handle &nb) {
+  CGAL_BRANCH_PROFILER("locally_Delaunay(), simplicity check failures", tmp);
+
   if (f->has_zero_offsets() && nb->has_zero_offsets())
   {
-
     // No periodic offsets
     const Point *p[4];
 
@@ -935,34 +1010,24 @@ propagating_flip(Face_handle& f,int i)
     }
     p[3]   = &f->vertex(i)->point();
 
-    if ( ON_POSITIVE_SIDE !=
-        side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3], true) ) {
-      return;
-    }
-  } else {
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    const Point *p[4];
-    Offset off[4];
-
-    for (int index=0; index<3; ++index) {
-      p[index]   = &nb->vertex(index)->point();
-      off[index] = this->get_offset_face(nb,index);
-    }
-    p[3]   = &f->vertex(i)->point();
-    off[3] = this->combine_offsets(this->get_offset_face(f,i), this->get_neighbor_offset(f, i));
-
-    if ( ON_POSITIVE_SIDE !=
-        side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
-                                off[0], off[1], off[2], off[3], true) ) {
-      return;
-    }
+    return (ON_POSITIVE_SIDE != side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3], true) );
   }
-  this->flip_single_edge(f, i);
-  propagating_flip(f,i);
-  i = nb->index(f->vertex(i));
-  propagating_flip(nb,i);
-}
 
+  CGAL_BRANCH_PROFILER_BRANCH(tmp);
+  const Point *p[4];
+  Offset off[4];
+  
+  for (int index=0; index<3; ++index) {
+    p[index]   = &nb->vertex(index)->point();
+    off[index] = this->get_offset_face(nb,index);
+  }
+  p[3]   = &f->vertex(i)->point();
+  off[3] = this->combine_offsets(this->get_offset_face(f,i), this->get_neighbor_offset(f, i));
+  
+  return (ON_POSITIVE_SIDE !=
+          side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
+                                  off[0], off[1], off[2], off[3], true) );
+}
 
 ///////////////////////////////////////////////////////////////
 //  REMOVE    see INRIA RResearch Report 7104

@@ -3859,7 +3859,6 @@ template<class Gt, class Tds>
 Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
     const Point &p0, const Point &p1, const Point &p2, const Point &p,
     bool perturb) const {
-  CGAL_assertion(false && "NGHK: NYI");
   CGAL_triangulation_precondition( orientation(p0, p1, p2) == POSITIVE );
 
   typename Gt::Side_of_oriented_circle_2 pred =
