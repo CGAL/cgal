@@ -1044,6 +1044,7 @@ public:
   Offset get_offset(Face_handle f, int i) const {
     if (is_1_cover())
       return int_to_off(f->offset(i));
+
     Virtual_vertex_map_it it = _virtual_vertices.find(f->vertex(i));
     if (it != _virtual_vertices.end())
       return combine_offsets(it->second.second, int_to_off(f->offset(i)));
@@ -1101,7 +1102,7 @@ protected:
     // Fall back to 1-cover if the criterion that the longest edge is shorter
     // than sqrt(0.166) is fulfilled.
     if (this->_too_long_edge_counter == 0) {
-      CGAL_triangulation_expensive_assertion(is_valid());
+      CGAL_triangulation_expensive_assertion( is_valid() );
       this->convert_to_1_sheeted_covering();
       CGAL_triangulation_expensive_assertion( is_valid() );
     }
@@ -1956,6 +1957,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i) {
       flip_single_edge(fh, index);
     }
   }
+
+  try_to_convert_to_one_cover();
 }
 template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i) {
@@ -2271,6 +2274,9 @@ Periodic_2_triangulation_2<Gt, Tds>::insert(const Point &p, Face_handle start) {
   locate_time += (std::clock()-start_time)/(double)CLOCKS_PER_SEC;
 #endif
 
+  if (start != Face_handle()) {
+    CGAL_assertion(start->vertex(0) != Vertex_handle());
+  }
   return insert(p, lt, loc, li);
 }
 
@@ -2351,7 +2357,6 @@ Periodic_2_triangulation_2<Gt, Tds>::insert(const Point& p,
   total_time += (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
 #endif
 
-  try_to_convert_to_one_cover();
 
   return vh;
 }
@@ -3116,6 +3121,12 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering() {
       // because neighboring information still needs to be extracted.
       it->set_additional_flag(to_delete ? 1 : 0);
     }
+
+    _cover = make_array(1, 1);
+    _virtual_vertices.clear();
+    _virtual_vertices_reverse.clear();
+    _too_long_edge_counter = 0;
+    _too_long_edges.clear();
   }
 
   // ###################################################################

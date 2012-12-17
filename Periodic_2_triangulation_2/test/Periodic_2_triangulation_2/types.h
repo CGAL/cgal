@@ -21,6 +21,7 @@ typedef Gt::Point_2                                 Point;
 typedef Gt::Vector_2                                Vector;
 typedef Gt::Segment_2                               Segment;
 typedef Gt::Triangle_2                              Triangle;
+typedef Gt::Iso_rectangle_2                         Iso_rectangle;
 
 #ifdef CGAL_USE_DELAUNAY
 typedef Periodic_2_Delaunay_triangulation_2<Gt>     Triangulation;

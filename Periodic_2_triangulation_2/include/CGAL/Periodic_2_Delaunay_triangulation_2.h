@@ -160,12 +160,13 @@ public:
     for (typename std::vector<Point>::const_iterator p = pbegin, end = points.end();
          p != end; ++p)
     {
-      // TODO(NGHK): Slight overhead because of the double locate, change insert()
       f = this->locate(*p, lt, li, f);
-      if (lt == Triangulation::VERTEX)
+      
+      if (lt == Triangulation::VERTEX) {
         double_vertices.insert(f->vertex(li));
-      else 
-        insert(*p, f);
+      } else {
+        insert(*p, lt, f, li);
+      }
     }
     
     if (is_large_point_set) {
@@ -793,7 +794,7 @@ insert(const Point  &p,  Face_handle start)
   Face_handle loc = this->locate (p, lt, li, start);
 
   /// Call the insert function with the located simplex
-  return this->insert(p, lt, loc, li);
+  return insert(p, lt, loc, li);
 }
   
 template < class Gt, class Tds >
