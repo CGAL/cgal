@@ -10,8 +10,8 @@
 
 using namespace CGAL;
 
-typedef Exact_predicates_inexact_constructions_kernel K;
-//struct K : public Exact_predicates_inexact_constructions_kernel {};
+//typedef Exact_predicates_inexact_constructions_kernel K;
+struct K : public Exact_predicates_inexact_constructions_kernel {};
 //typedef Simple_cartesian<Gmpq> K;
 //typedef Simple_cartesian<double> K;
 
@@ -33,6 +33,8 @@ typedef Triangulation::Offset                       Offset;
 typedef Triangulation::Vertex_circulator            Vertex_circulator;
 typedef Triangulation::Vertex_handle                Vertex_handle;
 typedef Triangulation::Face_handle                  Face_handle;
+typedef Triangulation::Vertex_iterator              Vertex_iterator;
+typedef Triangulation::Face_iterator                Face_iterator;
 typedef Triangulation::Periodic_point_iterator      Periodic_point_iterator;
 typedef Triangulation::Periodic_segment_iterator    Periodic_segment_iterator;
 typedef Triangulation::Periodic_triangle_iterator   Periodic_triangle_iterator;

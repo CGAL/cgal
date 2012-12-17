@@ -1098,6 +1098,10 @@ protected:
       return vh;
   }
 
+  /// NGHK: implemented
+  std::vector<Vertex_handle> insert_dummy_points();
+
+
   inline void try_to_convert_to_one_cover() {
     // Fall back to 1-cover if the criterion that the longest edge is shorter
     // than sqrt(0.166) is fulfilled.
@@ -4466,6 +4470,8 @@ operator!=(const Periodic_2_triangulation_2<GT,TDS1> &t1,
 {
   return ! (t1 == t2);
 }
+
+#include <CGAL/Periodic_2_triangulation_dummy_12.h>
 
 } //namespace CGAL
 
