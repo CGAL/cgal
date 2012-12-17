@@ -2206,7 +2206,7 @@ namespace CGAL {
 
       // We call the on_split functor
       internal::Apply_cell_functor<Type_attr,
-        typename Type_attr::On_merge>::run(*a1,*a2);
+        typename Type_attr::On_split>::run(*a1,*a2);
 
       // We set the dart of the cell a1 onto adart1.
       a1->set_dart(adart1);
