@@ -30,7 +30,7 @@ int main ()
   // TODO: Test with long chains of sub-polylines
 
   /* Poyline's outline:
-   *     
+   *
    *     *       *
    *     / \     / \
    *    /   \   /   \
@@ -44,11 +44,11 @@ int main ()
   points1[3] = Point_2 (4, 4);
   points1[4] = Point_2 (6, 0);
   Polyline_2            pi1 (&points1[0], &points1[5]);
-   insert (arr, pi1);
+  // insert (arr, pi1);
 
   /* Polyline's outline:
    *
-   *      *             * 
+   *      *             *
    *     /             / \
    *    /             /   \
    *   *             *     *
@@ -74,13 +74,13 @@ int main ()
   insert (arr, pi2);
 
   /* Polyline's outline:
-   *         
+   *
    *         *
-   *        / \      
+   *        / \
    *       /   \
    *      /     \
    * *---*       *
-   * 
+   *
    */
   std::vector<Point_2>  points3 (4);
   points3[0] = Point_2 (0, 2);
@@ -88,7 +88,7 @@ int main ()
   points3[2] = Point_2 (3, 6);
   points3[3] = Point_2 (5, 2);
   Polyline_2            pi3 (points3.begin(), points3.end());
-  insert (arr, pi3);
+  // insert (arr, pi3);
 
 
   /*Polyline's outline:
@@ -120,7 +120,7 @@ int main ()
   points5.push_back (Point_2(-2,2));
   points5.push_back (Point_2(-2,-2));
   Polyline_2 pi5 (points5.begin(),points5.end());
-  insert (arr, pi5); 
+  // insert (arr, pi5);
 
   /* Polyline's outline:
    * Single vertical segment
@@ -130,7 +130,7 @@ int main ()
   points6.push_back (Point_2( 0,-4));
   points6.push_back (Point_2( 0,7));
   Polyline_2 pi6 (points6.begin(), points6.end());
-  insert (arr, pi6);
+  // insert (arr, pi6);
 
   /* Polyline's outline:
    * Single vertical segment
@@ -145,9 +145,9 @@ int main ()
   points7.push_back (Point_2 (2,3));
   points7.push_back (Point_2 (2,4));
   Polyline_2 pi7 (points7.begin(), points7.end());
-  insert (arr, pi7);
+  // insert (arr, pi7);
 
-  // Print the arrangement  
+  // Print the arrangement
   print_arrangement (arr);
   return 0;
 }
