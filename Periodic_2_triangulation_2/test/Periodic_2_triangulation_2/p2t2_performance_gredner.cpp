@@ -1,4 +1,4 @@
-#define CGAL_PROFILE
+// #define CGAL_PROFILE
 
 #include "./types.h"
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -42,11 +42,9 @@ void test(const std::vector<Point> &input,
 
 int main(int argc, char * argv[]) {
   srand(42);
-  bool periodic_triangulation = true;
   const char *filename = "/home/nico/Code/periodic_data_sets/512000_000.dat";
-  if (argc == 3) {
-    periodic_triangulation = (argv[1][0] == 'p');
-    filename = argv[2];
+  if (argc == 2) {
+    filename = argv[1];
   }
   std::cout << "testing file: " << filename << std::endl;
   std::ifstream file (filename, std::ios::in|std::ios::binary);
@@ -64,18 +62,23 @@ int main(int argc, char * argv[]) {
   std::random_shuffle(pts.begin(), pts.end());
 
   std::vector< std::pair<int, double> > timings;
-  if (periodic_triangulation) {
+
+  if (true) {
+    timings.clear();
     Periodic_2_Delaunay_triangulation_2<Gt> t(Iso_rectangle(0,0,domain[0],domain[1]));
     test(pts, t, timings);
 
     std::cout << "Periodic  space, " << filename << ", ";
-  } else {
+    std::cout << timings.back().first << ", " << timings.back().second << std::endl;
+  }
+  if (false) {
+    timings.clear();
     Delaunay_triangulation_2<Gt> t;
     test(pts, t, timings);
 
     std::cout << "Euclidean space, " << filename << ", ";
+    std::cout << timings.back().first << ", " << timings.back().second << std::endl;
   }
 
-  std::cout << timings.back().first << ", " << timings.back().second << std::endl;
   return 0;
 }
