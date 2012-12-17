@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Regularized Boolean Set-Operations
+\mainpage User Manual 
 \anchor Chapter_2D_Regularized_Boolean_Set-Operations
 
 \anchor chapter_Boolean_set_operations_2

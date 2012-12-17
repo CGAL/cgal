@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage STL Extensions for %CGAL
+\mainpage User Manual 
 \anchor Chapter_STL_Extensions_for_CGAL
 
 \cgalAutoToc

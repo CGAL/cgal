@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Inscribed Areas
+\mainpage User Manual 
 \anchor Chapter_Inscribed_Areas
 \anchor chapInscribedAreas
 

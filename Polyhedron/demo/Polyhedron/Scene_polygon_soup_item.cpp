@@ -36,6 +36,9 @@ struct Polygon_soup :
   Edges non_manifold_edges;
   bool display_non_manifold_edges;
 
+  Polygon_soup():
+    display_non_manifold_edges(false){}
+
   Polygon_soup* clone() const {
     Polygon_soup* result = new Polygon_soup();
     result->points = points;

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\mainpage 2D Polygon
+\mainpage User Manual 
 \anchor Chapter_2D_Polygon
 \anchor Chapter_Polygon
 

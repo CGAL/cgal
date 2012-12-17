@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Linear Cell Complex
+\mainpage User Manual 
 \anchor Chapter_Linear_Cell_Complex
 \anchor ChapterLinearCellComplex
 

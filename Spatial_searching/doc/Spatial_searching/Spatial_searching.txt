@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage dD Spatial Searching
+\mainpage User Manual 
 \anchor Chapter_dD_Spatial_Searching
 \anchor ChapterUserSpatialSearching
 \cgalAutoToc

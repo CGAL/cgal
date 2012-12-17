@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Polyhedral Surfaces
+\mainpage User Manual 
 \anchor Chapter_3D_Polyhedral_Surfaces
 \anchor chapterPolyhedron
 

@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage dD Convex Hulls and Delaunay Triangulations
+\mainpage User Manual 
 \anchor Chapter_dD_Convex_Hulls_and_Delaunay_Triangulations
 \anchor chapconvexhulld
 \cgalAutoToc

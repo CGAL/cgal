@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Handles, Ranges, and Circulators
+\mainpage User Manual 
 \anchor Chapter_Handles_Ranges_and_Circulators
 \anchor chapterCirculators
 

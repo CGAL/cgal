@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Interval Skip List
+\mainpage User Manual 
 \anchor Chapter_Interval_Skip_List
 \anchor ChapterIntervalskiplist
 \cgalAutoToc

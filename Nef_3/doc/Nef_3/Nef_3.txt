@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Boolean Operations on Nef Polyhedra
+\mainpage User Manual 
 \anchor Chapter_3D_Boolean_Operations_on_Nef_Polyhedra
 \anchor chapterNef3
 

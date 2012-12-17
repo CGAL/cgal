@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Profiling Tools, Hash Map, Union-find, Modifiers
+\mainpage User Manual 
 \anchor Chapter_Profiling_Tools_Hash_Map_Union-find_Modifiers
 
 \anchor chapMiscellany

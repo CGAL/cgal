@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Combinatorial Maps
+\mainpage User Manual 
 \anchor Chapter_Combinatorial_Maps
 \anchor ChapterCombinatorialMap
 

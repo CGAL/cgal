@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Periodic Triangulations
+\mainpage User Manual 
 \anchor Chapter_3D_Periodic_Triangulations
 \anchor chapterP3Triangulation3
 

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Apollonius Graphs (Delaunay Graphs of Disks)
+\mainpage User Manual 
 \anchor Chapter_2D_Apollonius_Graphs
 \anchor chapterapollonius2
 \cgalAutoToc

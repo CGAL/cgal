@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Mesh Generation
+\mainpage User Manual 
 \anchor Chapter_3D_Mesh_Generation
 \anchor userchaptermesh3
 \authors Pierre Alliez, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec

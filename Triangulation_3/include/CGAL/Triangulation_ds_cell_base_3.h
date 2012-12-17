@@ -47,8 +47,8 @@ public:
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3)
-#ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
-    : V((Vertex_handle[4]) {v0, v1, v2, v3} ) {}
+#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
+    : V{v0, v1, v2, v3} {}
 #else
   { set_vertices(v0, v1, v2, v3); }
 #endif
@@ -57,7 +57,7 @@ public:
                                Vertex_handle v2, Vertex_handle v3,
                                Cell_handle   n0, Cell_handle   n1,
                                Cell_handle   n2, Cell_handle   n3)
-#ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
+#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
     : N((Cell_handle[4]) {n0, n1, n2, n3}), V((Vertex_handle[4]) {v0, v1, v2, v3} ) {}
 #else
   {
