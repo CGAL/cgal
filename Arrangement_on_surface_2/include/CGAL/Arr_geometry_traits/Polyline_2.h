@@ -130,6 +130,7 @@ public:
    * To properly implemented this function the traits class is needed,
    * thus it is deprecated.
    * \pre The last segment of the polyline is bounded.
+   * TODO: Implement the alternative in the traits class
    */
   CGAL_DEPRECATED void push_back (const Point_2 & p)
   {
@@ -146,7 +147,7 @@ public:
   Bbox_2 bbox() const
   {
     // Compute the union of the bounding boxes of all segments.
-    unsigned int  n = this->size();
+    unsigned int  n = this->number_of_segments();
     Bbox_2        bbox;
     unsigned int  i;
 
@@ -161,9 +162,9 @@ public:
     return (bbox);
   }
 
-  CGAL_DEPRECATED class Point_const_iterator;
+  class Point_const_iterator;
   friend class Point_const_iterator;
-  CGAL_DEPRECATED typedef std::reverse_iterator<Point_const_iterator>
+  typedef std::reverse_iterator<Point_const_iterator>
      Point_const_reverse_iterator;
 
   /*! An iterator for the polyline points. */
@@ -198,7 +199,8 @@ public:
   	m_num_pts = 0;
       else
   	m_num_pts =
-  	  (m_cvP->size() == 0) ? 0 : static_cast<int>(m_cvP->size() + 1);
+  	  (m_cvP->number_of_segments() == 0) ?
+        0 : static_cast<int>(m_cvP->number_of_segments() + 1);
     }
 
   public:
@@ -289,7 +291,7 @@ public:
   /* ! Get an iterator for the polyline points.*/
   CGAL_DEPRECATED Point_const_iterator begin() const
   {
-    if (size() == 0)
+    if (number_of_segments() == 0)
       return (Point_const_iterator (NULL, -1));
     else
       return (Point_const_iterator (this, 0));
@@ -298,10 +300,10 @@ public:
   /*! Get a past-the-end iterator for the polyline points.*/
   CGAL_DEPRECATED Point_const_iterator end() const
   {
-    if (size() == 0)
+    if (number_of_segments() == 0)
       return (Point_const_iterator (NULL, -1));
     else
-      return (Point_const_iterator (this, size() + 1));
+      return (Point_const_iterator (this, number_of_segments() + 1));
   }
 
   /*! Get a reverse iterator for the polyline points. */
@@ -337,15 +339,17 @@ public:
   Segment_const_reverse_iterator rend_segments() const
   { return (Segment_const_reverse_iterator (begin_segments())); }
 
-  /*!
+  /*! Deprecated!
    * Get the number of points contained in the polyline.
-   * TODO: @Efi: verify - this is now deprected.
-   *             Should I add a functor number_of_points() in the traits class?
+   * In general (for example if the polyline is not bounded), then the number
+   * of vertices cannot be read-off from the number of segments, and the
+   * traits class is needed.
+   * TODO: Implement a functor in the traits class
    * \return The number of points.
    */
   CGAL_DEPRECATED unsigned int points() const
   {
-    return (size() == 0) ? 0 : size() + 1;
+    return (number_of_segments() == 0) ? 0 : number_of_segments() + 1;
   }
 
   /*! Deprecated! Replaced by number_of_segments()
@@ -375,7 +379,7 @@ public:
    */
   inline const Segment_2& operator[] (const unsigned int i) const
   {
-    CGAL_assertion (i < size());
+    CGAL_assertion (i < number_of_segments());
     return (m_segments[i]);
   }
 
@@ -425,6 +429,7 @@ public:
    * polyline segments.
    */
   template <typename InputIterator>
+  // TODO: @Efi: do I have to do something additional here?
   CGAL_DEPRECATED void construct_x_monotone_polyline
   (InputIterator begin, InputIterator end,
    const Point_2& /* */)
@@ -467,30 +472,32 @@ public:
 
   /*!
    * Append a segment to the (x-monotone) polyline.
+   * Warning: This is a risky function! Don't use it! Prefer the
+   *          provided implementation in the traits class.
    * \param seg The new segment to be appended to the polyline.
    * \pre If the polyline is not empty, seg source must be the
    *      same as the target point of the last segment in the polyline
    *      (thus it must extend it to the right).
-   * TODO: @Efi: I still don't know what to do here.
+   * TODO: Implement an alternative in the traits class
    */
-  CGAL_DEPRECATED inline void push_back (const Segment_2& seg)
+  inline void push_back (const Segment_2& seg)
   {
-    CGAL_precondition_code
-      (
-       Segment_traits_2   seg_tr;
-       const unsigned int n = this->size()
-       );
-    CGAL_precondition_code
-      (typename Segment_traits_2::Construct_min_vertex_2 min_v =
-       seg_tr.construct_min_vertex_2_object();
-       typename Segment_traits_2::Construct_max_vertex_2 max_v =
-       seg_tr.construct_max_vertex_2_object();
-       typename Segment_traits_2::Equal_2 equal =
-       seg_tr.equal_2_object();
+    // CGAL_precondition_code
+    //   (
+    //    Segment_traits_2   seg_tr;
+    //    const unsigned int n = this->number_of_segments()
+    //    );
+    // CGAL_precondition_code
+    //   (typename Segment_traits_2::Construct_min_vertex_2 min_v =
+    //    seg_tr.construct_min_vertex_2_object();
+    //    typename Segment_traits_2::Construct_max_vertex_2 max_v =
+    //    seg_tr.construct_max_vertex_2_object();
+    //    typename Segment_traits_2::Equal_2 equal =
+    //    seg_tr.equal_2_object();
 
-       CGAL_precondition (n == 0 ||
-			  equal(max_v(this->m_segments[n-1]),min_v(seg)));
-       );
+    //    CGAL_precondition (n == 0 ||
+		// 	  equal(max_v(this->m_segments[n-1]),min_v(seg)));
+    //    );
     this->m_segments.push_back (seg);
   }
 
@@ -502,7 +509,7 @@ private:
     typename Base::const_reverse_iterator  pt = ps;
     ++pt;
 
-    std::vector<Segment_2>  rev_segs (this->size());
+    std::vector<Segment_2>  rev_segs (this->number_of_segments());
     unsigned int            i = 0;
 
     while (pt != this->rend())

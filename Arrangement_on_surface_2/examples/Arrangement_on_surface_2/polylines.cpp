@@ -71,7 +71,7 @@ int main ()
   points2.push_back (Point_2 (5, 3));
   points2.push_back (Point_2 (4, 2));
   Polyline_2            pi2 (points2.begin(), points2.end());
-  insert (arr, pi2);
+  // insert (arr, pi2);
 
   /* Polyline's outline:
    *
@@ -120,7 +120,7 @@ int main ()
   points5.push_back (Point_2(-2,2));
   points5.push_back (Point_2(-2,-2));
   Polyline_2 pi5 (points5.begin(),points5.end());
-  // insert (arr, pi5);
+  insert (arr, pi5);
 
   /* Polyline's outline:
    * Single vertical segment
