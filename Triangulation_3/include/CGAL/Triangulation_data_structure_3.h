@@ -3433,7 +3433,7 @@ copy_tds(const TDS_src& tds,
 }
 
 //utilities for copy_tds
-namespace internal {
+namespace internal { namespace TDS_3{
   template <class Vertex_src,class Vertex_tgt>
   struct Default_vertex_converter;
   template <class Cell_src,class Cell_tgt>
@@ -3459,7 +3459,7 @@ namespace internal {
     
     void operator()(const Cell&,Cell&) const {}
   };
-} //namespace internal
+} } //namespace internal::TDS_3
 
 template <class Vb, class Cb>
 template<class TDS_src>
@@ -3467,8 +3467,8 @@ typename Triangulation_data_structure_3<Vb,Cb>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb>::
 copy_tds(const TDS_src& src,typename TDS_src::Vertex_handle vert)
 {
-  internal::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
-  internal::Default_cell_converter<typename TDS_src::Cell,Cell>  setc;
+  internal::TDS_3::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
+  internal::TDS_3::Default_cell_converter<typename TDS_src::Cell,Cell>  setc;
   return copy_tds(src,vert,setv,setc);
 }
 
