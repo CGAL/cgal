@@ -77,7 +77,21 @@ public:
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
   using Triangulation::cw;
   using Triangulation::ccw;
+  using Triangulation::tds;
+  using Triangulation::is_infinite;
+  using Triangulation::get_offset_vertex;
+  using Triangulation::get_offset_face;
   using Triangulation::geom_traits;
+  using Triangulation::is_1_cover;
+  using Triangulation::dimension;
+  using Triangulation::number_of_vertices;
+  using Triangulation::faces_begin;
+  using Triangulation::finite_edges_begin;
+  using Triangulation::finite_edges_end;
+  using Triangulation::side_of_oriented_circle;
+  using Triangulation::get_neighbor_offset;
+  using Triangulation::combine_offsets;
+  using Triangulation::locate;
 #endif
 
   /// \name Constructors
@@ -130,7 +144,7 @@ public:
   {
     if (first == last) return 0;
 
-    size_type n = this->number_of_vertices();
+    size_type n = number_of_vertices();
 
     // The heuristic discards the existing triangulation so it can only be
     // applied to empty triangulations.
@@ -143,12 +157,16 @@ public:
     if (is_large_point_set) {
       dummy_points = insert_dummy_points();
     } else {
-      while (!this->is_1_cover()) {
+      // The empty triangulation is a 1-cover by definition, insert at least one point
+      insert(*pbegin); ++pbegin;
+      while (!is_1_cover()) {
         insert(*pbegin);
         ++pbegin;
-        if (pbegin == points.end()) return this->number_of_vertices() - n;
+        if (pbegin == points.end()) return number_of_vertices() - n;
       }
     }
+
+    CGAL_assertion(is_1_cover());
 
     // Insert the points
     std::set<Vertex_handle> double_vertices;
@@ -160,15 +178,15 @@ public:
     for (typename std::vector<Point>::const_iterator p = pbegin, end = points.end();
          p != end; ++p)
     {
-      f = this->locate(*p, lt, li, f);
-      
+      f = locate(*p, lt, li, f);
+
       if (lt == Triangulation::VERTEX) {
         double_vertices.insert(f->vertex(li));
       } else {
         insert(*p, lt, f, li);
       }
     }
-    
+
     if (is_large_point_set) {
       for (unsigned int i=0; i<dummy_points.size(); i++) {
         if (double_vertices.find(dummy_points[i]) == double_vertices.end())
@@ -176,7 +194,7 @@ public:
       }
     }
 
-    return this->number_of_vertices() - n;
+    return number_of_vertices() - n;
   }
 
   /// NGHK: Not yet implemented
@@ -198,18 +216,18 @@ public:
   /// NGHK: Not yet implemented
   Vertex_handle
   nearest_vertex(const Point& p, Face_handle f= Face_handle()) const;
-  
+
   /// NGHK: Not yet implemented
-  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  template <class OutputItFaces, class OutputItBoundaryEdges>
   std::pair<OutputItFaces,OutputItBoundaryEdges>
-  get_conflicts_and_boundary(const Point  &p, 
-			     OutputItFaces fit, 
+  get_conflicts_and_boundary(const Point  &p,
+			     OutputItFaces fit,
 			     OutputItBoundaryEdges eit,
 			     Face_handle start = Face_handle()) const {
-    CGAL_triangulation_precondition( this->dimension() == 2);
+    CGAL_triangulation_precondition( dimension() == 2);
     int li;
     Locate_type lt;
-    Face_handle fh = this->locate(p,lt,li, start);
+    Face_handle fh = locate(p,lt,li, start);
     switch(lt) {
       //case Triangulation::EMPTY:
     case Triangulation::VERTEX:
@@ -222,36 +240,36 @@ public:
       pit = propagate_conflicts(p,fh,0,pit);
       pit = propagate_conflicts(p,fh,1,pit);
       pit = propagate_conflicts(p,fh,2,pit);
-      return pit;    
+      return pit;
     }
     CGAL_triangulation_assertion(false);
     return std::make_pair(fit,eit);
-  } 
+  }
 
   /// NGHK: Not yet implemented
-  template <class OutputItFaces> 
+  template <class OutputItFaces>
   OutputItFaces
-  get_conflicts (const Point  &p, 
-		 OutputItFaces fit, 
+  get_conflicts (const Point  &p,
+		 OutputItFaces fit,
 		 Face_handle start= Face_handle()) const {
-    std::pair<OutputItFaces,Emptyset_iterator> pp = 
+    std::pair<OutputItFaces,Emptyset_iterator> pp =
       get_conflicts_and_boundary(p,fit,Emptyset_iterator(),start);
     return pp.first;
   }
 
   /// NGHK: Not yet implemented
-  template <class OutputItBoundaryEdges> 
+  template <class OutputItBoundaryEdges>
   OutputItBoundaryEdges
-  get_boundary_of_conflicts(const Point  &p, 
-			    OutputItBoundaryEdges eit, 
+  get_boundary_of_conflicts(const Point  &p,
+			    OutputItBoundaryEdges eit,
 			    Face_handle start= Face_handle()) const {
-    std::pair<Emptyset_iterator, OutputItBoundaryEdges> pp = 
+    std::pair<Emptyset_iterator, OutputItBoundaryEdges> pp =
       get_conflicts_and_boundary(p,Emptyset_iterator(),eit,start);
     return pp.second;
   }
   // \}
-   
- 
+
+
   /// \name Dual
   // \{
   /// Returns the dual of f, which is the circumcenter of f.
@@ -271,8 +289,8 @@ public:
   template < class Stream>
   Stream& draw_dual(Stream & ps) {
     NGHK_NYI;
-    Finite_edges_iterator eit= this->finite_edges_begin();
-    for (; eit != this->finite_edges_end(); ++eit) {
+    Finite_edges_iterator eit= finite_edges_begin();
+    for (; eit != finite_edges_end(); ++eit) {
       Object o = dual(eit);
 	typename Geom_traits::Line_2  l;
 	typename Geom_traits::Ray_2   r;
@@ -284,7 +302,7 @@ public:
     return ps;
   }
   // \}
-  
+
   /// \name Checking
   // \{
   /// NGHK: Not yet implemented
@@ -301,10 +319,6 @@ private:
   void restore_Delaunay(Vertex_handle v);
 
 
-  /// NGHK: Remove, avoid errors, no infinite simplices in the periodic triangulation
-  template <class T>
-  inline bool is_infinite(T t) const { return false; } 
-
   // return whether p is inside the circumcircle of fh
   /// NGHK: Not yet implemented
   bool test_conflict(const Point  &p, Face_handle fh) const;
@@ -314,33 +328,34 @@ private:
   std::vector<Vertex_handle> insert_dummy_points()
   {
     NGHK_NYI;
+    return std::vector<Vertex_handle>();
   }
-  
+
   /// NGHK: Not yet implemented
   template <class OutputItFaces>
-  Vertex_handle insert_and_give_new_faces(const Point  &p, 
+  Vertex_handle insert_and_give_new_faces(const Point  &p,
                                           OutputItFaces fit,
                                           Face_handle start = Face_handle() );
   /// NGHK: Not yet implemented
   template <class OutputItFaces>
   Vertex_handle insert_and_give_new_faces(const Point& p,
                                           Locate_type lt,
-                                          Face_handle loc, int li, 
+                                          Face_handle loc, int li,
                                           OutputItFaces fit);
 
   /// NGHK: Not yet implemented
   template <class OutputItFaces>
-  Vertex_handle move_if_no_collision_and_give_new_faces(Vertex_handle v, 
-                                                        const Point &p, 
+  Vertex_handle move_if_no_collision_and_give_new_faces(Vertex_handle v,
+                                                        const Point &p,
                                                         OutputItFaces fit);
 
   /// NGHK: Not yet implemented
   template <class OutputItFaces>
-  void remove_and_give_new_faces(Vertex_handle v, 
+  void remove_and_give_new_faces(Vertex_handle v,
                                  OutputItFaces fit);
 
   /// NGHK: Not yet implemented
-  bool is_delaunay_after_displacement(Vertex_handle v, 
+  bool is_delaunay_after_displacement(Vertex_handle v,
                                       const Point &p) const;
 
   /// NGHK: Not yet implemented
@@ -368,7 +383,7 @@ private:
   void remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i );
   /// NGHK: Not yet implemented
-  void remove_degree5_star   (Vertex_handle &v, 
+  void remove_degree5_star   (Vertex_handle &v,
      Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,
      Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,
      int           ,int           ,int           ,int           ,int );
@@ -422,7 +437,7 @@ private:
     return (test_conflict( w[x]->point(), f[j]) );
   }
   /// NGHK: Not yet implemented
-  void rotate7(int j, std::vector<Vertex_handle> &w, 
+  void rotate7(int j, std::vector<Vertex_handle> &w,
 	       std::vector<Face_handle> &f, std::vector<int> &i);
   /// NGHK: Not yet implemented
   void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
@@ -458,10 +473,10 @@ private:
 			      Vertex_handle& nn) const;
 
   /// NGHK: Not yet implemented
-  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  template <class OutputItFaces, class OutputItBoundaryEdges>
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   propagate_conflicts (const Point  &p,
-		       Face_handle fh, 
+		       Face_handle fh,
 		       int i,
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
 		       pit)  const {
@@ -482,12 +497,12 @@ private:
   {
     NGHK_NYI;
     std::list<Edge> edges;
-    Face_circulator fc = this->incident_faces(v), done(fc);
+    Face_circulator fc = incident_faces(v), done(fc);
     int degree = 0;
     do {
       if((++degree) > 3) break;
     } while(++fc != done);
-    fc = this->incident_faces(v);
+    fc = incident_faces(v);
     done = fc;
     if(degree == 3) {
       do {
@@ -498,7 +513,7 @@ private:
       do {
         int i = fc->index(v);
         edges.push_back(Edge(fc, i));
-        edges.push_back(Edge(fc, this->cw(i)));
+        edges.push_back(Edge(fc, cw(i)));
       } while(++fc != done);
     }
     while(!edges.empty()) {
@@ -506,16 +521,16 @@ private:
       Face_handle f = e.first;
       int i = e.second;
       edges.pop_front();
-      if(this->is_infinite(f->vertex(i))) continue;
+      if(is_infinite(f->vertex(i))) continue;
       Face_handle fi = f->neighbor(i);
       int mi = this->_tds.mirror_index(f, i);
       Vertex_handle vm = this->_tds.mirror_vertex(f, i);
-      if(this->is_infinite(vm)) continue;
+      if(is_infinite(vm)) continue;
       if(this->side_of_oriented_circle(f, vm->point(),true) == ON_POSITIVE_SIDE) {
         this->_tds.flip(f, i);
         edges.push_back(Edge(f, i));
-        edges.push_back(Edge(f, this->cw(i)));
-        edges.push_back(Edge(fi, this->cw(mi)));
+        edges.push_back(Edge(f, cw(i)));
+        edges.push_back(Edge(fi, cw(mi)));
         edges.push_back(Edge(fi, mi));
       }
     }
@@ -525,14 +540,14 @@ private:
   void restore_edges(Vertex_handle v, std::set<Face_handle> &faces)
   {
     NGHK_NYI;
-    typedef std::list<Edge> Edges_list;	
+    typedef std::list<Edge> Edges_list;
     Edges_list edges;
-    Face_circulator fc = this->incident_faces(v), done(fc);
+    Face_circulator fc = incident_faces(v), done(fc);
     int degree = 0;
     do {
       if((++degree) > 3) break;
     } while(++fc != done);
-    fc = this->incident_faces(v);
+    fc = incident_faces(v);
     done = fc;
     if(degree == 3) {
       do {
@@ -543,7 +558,7 @@ private:
       do {
         int i = fc->index(v);
         edges.push_back(Edge(fc, i));
-        edges.push_back(Edge(fc, this->cw(i)));
+        edges.push_back(Edge(fc, cw(i)));
       } while(++fc != done);
     }
     while(!edges.empty()) {
@@ -552,16 +567,16 @@ private:
       int i = e.second;
       edges.pop_front();
       faces.insert(f);
-      if(this->is_infinite(f->vertex(i))) continue;
+      if(is_infinite(f->vertex(i))) continue;
       Face_handle fi = f->neighbor(i);
       int mi = this->_tds.mirror_index(f, i);
       Vertex_handle vm = this->_tds.mirror_vertex(f, i);
-      if(this->is_infinite(vm)) continue;
+      if(is_infinite(vm)) continue;
       if(this->side_of_oriented_circle(f, vm->point()) == ON_POSITIVE_SIDE) {
         this->_tds.flip(f, i);
         edges.push_back(Edge(f, i));
-        edges.push_back(Edge(f, this->cw(i)));
-        edges.push_back(Edge(fi, this->cw(mi)));
+        edges.push_back(Edge(f, cw(i)));
+        edges.push_back(Edge(fi, cw(mi)));
         edges.push_back(Edge(fi, mi));
       }
     }
@@ -578,10 +593,10 @@ test_conflict(const Point  &p, Face_handle fh) const
   // return true  if P is inside the circumcircle of fh
   // if fh is infinite, return true when p is in the positive
   // halfspace or on the boundary and in the  finite edge of fh
-  Oriented_side os = this->side_of_oriented_circle(fh,p,true);
+  Oriented_side os = side_of_oriented_circle(fh,p,true);
   if (os == ON_POSITIVE_SIDE) return true;
- 
-//   if (os == ON_ORIENTED_BOUNDARY && this->is_infinite(fh)) {
+
+//   if (os == ON_ORIENTED_BOUNDARY && is_infinite(fh)) {
 //     int i = fh->index(this->infinite_vertex());
 //     return collinear_between(fh->vertex(cw(i))->point(), p,
 // 			     fh->vertex(ccw(i))->point() );
@@ -599,24 +614,24 @@ is_valid(bool verbose, int level) const
   bool result = Periodic_2_triangulation_2<Gt,Tds>::is_valid(verbose, level);
 
   // Check in_sphere:
-  if (this->dimension()==2) {
+  if (dimension()==2) {
     const Point *p[4]; Offset off[4];
-    for (Face_iterator fit = this->faces_begin();
+    for (Face_iterator fit = faces_begin();
          fit != this->faces_end(); ++fit) {
       for (int i=0; i<3; i++) {
         p[i] = &fit->vertex(i)->point();
-        off[i] = this->get_offset(fit,i);
+        off[i] = get_offset_face(fit,i);
       }
 
       /// Check whether the vertices of the neighbor lie outside the circumcircle of the face
       for (int i=0; i<3; ++i) {
         p[3]   = &fit->vertex(i)->point();
-        off[3] = this->combine_offsets(this->get_offset(fit,i), this->get_neighbor_offset(fit, i));
+        off[3] = combine_offsets(get_offset_face(fit,i), get_neighbor_offset(fit, i));
 
         result &= ON_POSITIVE_SIDE !=
-          this->side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
-                                        off[0], off[1], off[2], off[3],
-                                        false);
+          side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
+                                  off[0], off[1], off[2], off[3],
+                                  false);
         CGAL_triangulation_assertion(result);
       }
     }
@@ -627,10 +642,10 @@ is_valid(bool verbose, int level) const
 
 template < class Gt, class Tds >
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
-Periodic_2_Delaunay_triangulation_2<Gt,Tds>:: 
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex(const Point  &p, Face_handle f) const
 {
-  switch (this->dimension()) {
+  switch (dimension()) {
   case 0:
     return Vertex_handle();
     //break;
@@ -640,23 +655,23 @@ nearest_vertex(const Point  &p, Face_handle f) const
   }
   return Vertex_handle();
 }
-  
+
 template < class Gt, class Tds >
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
-Periodic_2_Delaunay_triangulation_2<Gt,Tds>:: 
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
-  CGAL_triangulation_precondition(this->dimension() == 2);
-  f = this->locate(p,f);
+  CGAL_triangulation_precondition(dimension() == 2);
+  f = locate(p,f);
 
   typename Geom_traits::Compare_distance_2 compare_distance =
-    this->geom_traits().compare_distance_2_object();
+    geom_traits().compare_distance_2_object();
   Vertex_handle nn =  f->vertex(0);
-  if (compare_distance(p, f->vertex(1)->point(), nn->point()) == SMALLER) 
+  if (compare_distance(p, f->vertex(1)->point(), nn->point()) == SMALLER)
     nn = f->vertex(1);
-  if (compare_distance(p, f->vertex(2)->point(), nn->point()) == SMALLER) 
+  if (compare_distance(p, f->vertex(2)->point(), nn->point()) == SMALLER)
     nn = f->vertex(2);
-       
+
   look_nearest_neighbor(p,f,0,nn);
   look_nearest_neighbor(p,f,1,nn);
   look_nearest_neighbor(p,f,2,nn);
@@ -666,23 +681,23 @@ nearest_vertex_2D(const Point& p, Face_handle f) const
 
 template < class Gt, class Tds >
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
-Periodic_2_Delaunay_triangulation_2<Gt,Tds>:: 
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 nearest_vertex_1D(const Point& p) const
 {
     NGHK_NYI;
-  typename Geom_traits::Compare_distance_2 
-    compare_distance =  this->geom_traits().compare_distance_2_object();
+  typename Geom_traits::Compare_distance_2
+    compare_distance =  geom_traits().compare_distance_2_object();
   Vertex_handle nn;
-  
+
   Finite_vertices_iterator vit=this->finite_vertices_begin();
   nn = vit;
   for ( ; vit != this->finite_vertices_end(); ++vit){
-    if (compare_distance(p, vit->point(), nn->point()) == SMALLER) 
+    if (compare_distance(p, vit->point(), nn->point()) == SMALLER)
       nn = vit;
-  } 
+  }
   return nn;
 }
-  
+
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
@@ -696,15 +711,15 @@ look_nearest_neighbor(const Point& p,
     return;
 
   typename Geom_traits::Compare_distance_2 compare_distance =
-    this->geom_traits().compare_distance_2_object();
+    geom_traits().compare_distance_2_object();
   i = ni->index(f);
   if (compare_distance(p, ni->vertex(i)->point(), nn->point()) == SMALLER)
     nn=ni->vertex(i);
-    
+
   // recursive exploration of triangles whose circumcircle contains p
   look_nearest_neighbor(p, ni, ccw(i), nn);
   look_nearest_neighbor(p, ni, cw(i), nn);
-} 
+}
 
 //DUALITY
 template<class Gt, class Tds>
@@ -714,11 +729,11 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
     NGHK_NYI;
-  CGAL_triangulation_precondition (this->dimension()==2);
+  CGAL_triangulation_precondition (dimension()==2);
   return circumcenter(f);
 }
 
-  
+
 template < class Gt, class Tds >
 inline typename Gt::Segment_2
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
@@ -728,24 +743,24 @@ dual(const Edge &e) const
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
 
-  CGAL_triangulation_precondition (!this->is_infinite(e));
-  if( this->dimension()== 1 ){
+  CGAL_triangulation_precondition (!is_infinite(e));
+  if( dimension()== 1 ){
     const Point& p = (e.first)->vertex(cw(e.second))->point();
     const Point& q = (e.first)->vertex(ccw(e.second))->point();
-    Line l  = this->geom_traits().construct_bisector_2_object()(p,q);
+    Line l  = geom_traits().construct_bisector_2_object()(p,q);
     return make_object(l);
   }
-		    
+
   // dimension==2
-  if( (!this->is_infinite(e.first)) &&
-      (!this->is_infinite(e.first->neighbor(e.second))) ) {
-    Segment s = this->geom_traits().construct_segment_2_object()
+  if( (!is_infinite(e.first)) &&
+      (!is_infinite(e.first->neighbor(e.second))) ) {
+    Segment s = geom_traits().construct_segment_2_object()
                           (dual(e.first),dual(e.first->neighbor(e.second)));
     return s;
   }
 //   // one of the adjacent faces is infinite
 //   Face_handle f; int i;
-//   if (this->is_infinite(e.first)) {
+//   if (is_infinite(e.first)) {
 //     f=e.first->neighbor(e.second); i=f->index(e.first);
 //   }
 //   else {
@@ -753,14 +768,14 @@ dual(const Edge &e) const
 //   }
 //   const Point& p = f->vertex(cw(i))->point();
 //   const Point& q = f->vertex(ccw(i))->point();
-//   Line l = this->geom_traits().construct_bisector_2_object()(p,q);
-//   Ray r = this->geom_traits().construct_ray_2_object()(dual(f), l);
+//   Line l = geom_traits().construct_bisector_2_object()(p,q);
+//   Ray r = geom_traits().construct_ray_2_object()(dual(f), l);
 //   return make_object(r);
 }
-  
+
 template < class Gt, class Tds >
 inline typename Gt::Segment_2
-Periodic_2_Delaunay_triangulation_2<Gt,Tds>::  
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 dual(const Edge_circulator& ec) const
 {
     NGHK_NYI;
@@ -780,23 +795,23 @@ insert(const Point  &p,  Face_handle start)
                                (p.x() < this->domain().xmax()));
   CGAL_triangulation_assertion((this->domain().ymin() <= p.y()) &&
                                (p.y() < this->domain().ymax()));
-  
+
   if (this->number_of_stored_vertices() == 0) {
     return this->insert_first(p);
   }
-  
+
   if (start == Face_handle()) {
     start = this->faces_begin();
   }
 
   Locate_type lt;
   int li;
-  Face_handle loc = this->locate (p, lt, li, start);
+  Face_handle loc = locate (p, lt, li, start);
 
   /// Call the insert function with the located simplex
   return insert(p, lt, loc, li);
 }
-  
+
 template < class Gt, class Tds >
 inline
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
@@ -805,7 +820,7 @@ push_back(const Point &p)
 {
   return insert(p);
 }
-  
+
 template < class Gt, class Tds >
 inline
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
@@ -816,7 +831,7 @@ insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
   if (lt != Triangulation::VERTEX) {
     restore_Delaunay(vh);
 
-    if (!this->is_1_cover()) {
+    if (!is_1_cover()) {
       typename Triangulation::Virtual_vertex_reverse_map_it vertices_it =
         this->virtual_vertices_reverse().find(vh);
       CGAL_triangulation_assertion(vertices_it != this->virtual_vertices_reverse().end());
@@ -832,23 +847,23 @@ insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
 template < class Gt, class Tds >
 template < class OutputItFaces >
 inline
-typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle 
+typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-insert_and_give_new_faces(const Point  &p, 
+insert_and_give_new_faces(const Point  &p,
                           OutputItFaces oif,
                           Face_handle start)
 {
     NGHK_NYI;
   Vertex_handle v = insert(p, start);
-  int dimension = this->dimension();
-  if(dimension == 2)
+  int dim = dimension();
+  if(dim == 2)
   {
     Face_circulator fc = this->incident_faces(v), done(fc);
     do {
       *oif++ = fc;
     } while(++fc != done);
   }
-  else if(dimension == 1)
+  else if(dim == 1)
   {
     Face_handle c = v->face();
     *oif++ = c;
@@ -857,35 +872,35 @@ insert_and_give_new_faces(const Point  &p,
   else *oif++ = v->face(); // dimension == 0
   return v;
 }
-		
+
 template < class Gt, class Tds >
 template < class OutputItFaces >
 inline
-typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle 
+typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 insert_and_give_new_faces(const Point  &p,
                           Locate_type lt,
-                          Face_handle loc, int li, 
+                          Face_handle loc, int li,
                           OutputItFaces oif)
 {
     NGHK_NYI;
   Vertex_handle v = insert(p, lt, loc, li);
-  int dimension = this->dimension();
-  if(dimension == 2)
+  int dim = dimension();
+  if(dim == 2)
   {
     Face_circulator fc = this->incident_faces(v), done(fc);
     do {
       *oif++ = fc;
     } while(++fc != done);
   }
-  else if(dimension == 1)
+  else if(dim == 1)
   {
     Face_handle c = v->face();
     *oif++ = c;
     *oif++ = c->neighbor((~(c->index(v)))&1);
   }
-  else *oif++ = v->face(); // dimension == 0	
-  return v;	
+  else *oif++ = v->face(); // dimension == 0
+  return v;
 }
 
 template < class Gt, class Tds >
@@ -893,7 +908,7 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 restore_Delaunay(Vertex_handle v)
 {
-  if(this->dimension() <= 1) return;
+  if(dimension() <= 1) return;
 
   Face_handle f=v->face();
   Face_handle next;
@@ -915,17 +930,17 @@ propagating_flip(Face_handle& f,int i)
   // NGHK: TODO use simplicity condition to improve performance (offsets==0)
   Face_handle nb = f->neighbor(i);
 
-  const Point *p[4]; 
+  const Point *p[4];
   Offset off[4];
 
   for (int index=0; index<3; ++index) {
     p[index]   = &nb->vertex(index)->point();
-    off[index] = this->get_offset(nb,index);
+    off[index] = this->get_offset_face(nb,index);
   }
   p[3]   = &f->vertex(i)->point();
-  off[3] = this->combine_offsets(this->get_offset(f,i), this->get_neighbor_offset(f, i));
+  off[3] = this->combine_offsets(this->get_offset_face(f,i), this->get_neighbor_offset(f, i));
 
-  if ( ON_POSITIVE_SIDE != 
+  if ( ON_POSITIVE_SIDE !=
        this->side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
                                      off[0], off[1], off[2], off[3], true) ) {
     return;
@@ -948,20 +963,20 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
 {
   NGHK_NYI;
   CGAL_triangulation_precondition( v != Vertex_handle());
-  CGAL_triangulation_precondition( !this->is_infinite(v));
-    
+  CGAL_triangulation_precondition( !is_infinite(v));
+
   if(this->number_of_vertices() == 1) this->remove_first(v);
   else if(this->number_of_vertices() == 2) this->remove_second(v);
-  else if( this->dimension() == 1) 
+  else if( dimension() == 1)
   {
     Point p = v->point();
     Triangulation::remove(v);
-    *fit++ = this->locate(p);
+    *fit++ = locate(p);
   }
-  else if (this->test_dim_down(v)) {  
-    this->_tds.remove_dim_down(v);  
-    for(All_faces_iterator afi = this-> all_faces_begin(); 
-        afi != this->all_faces_end(); 
+  else if (this->test_dim_down(v)) {
+    this->_tds.remove_dim_down(v);
+    for(All_faces_iterator afi = this-> all_faces_begin();
+        afi != this->all_faces_end();
         afi++) *fit++ = afi;
   }
   else {
@@ -976,7 +991,7 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
     Face_circulator fc(v[0]),done;
     do *fit++ = fc++; while (fc!=done);
   }
-  return;		
+  return;
 }
 
 
@@ -988,7 +1003,7 @@ remove(Vertex_handle v)
   int d;
 
   CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(this->dimension() == 2);
+  CGAL_triangulation_precondition(dimension() == 2);
 
   if ( this->number_of_vertices() == 1) {
     // Last vertex
@@ -1020,7 +1035,7 @@ remove_degree_init(Vertex_handle v,
   do{
     i[d] = f[d]->index(v);
     w[d] = f[d]->vertex( ccw(i[d]) );
-    w[d]->set_face( f[d]->neighbor(i[d]));//do no longer bother about set_face 
+    w[d]->set_face( f[d]->neighbor(i[d]));//do no longer bother about set_face
     ++d;
     if ( d==maxd) { maxd *=2; f.resize(maxd); w.resize(maxd); i.resize(maxd);}
     f[d] = f[d-1]->neighbor( ccw(i[d-1]) );
@@ -1035,7 +1050,7 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree_triangulate(Vertex_handle v,
                           std::vector<Face_handle> &f,
-                          std::vector<Vertex_handle> &w, 
+                          std::vector<Vertex_handle> &w,
                           std::vector<int> &i,int d)
 {
     NGHK_NYI;
@@ -1059,7 +1074,7 @@ template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
-                std::vector<Vertex_handle> &, 
+                std::vector<Vertex_handle> &,
                 std::vector<int> &,int)
 {
     NGHK_NYI;
@@ -1084,15 +1099,15 @@ remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
 
   // modify the triangulation
   Face_handle nn= f[1]->neighbor( i[1] );
-  this->tds().set_adjacency(f[0], ccw(i[0]) , nn , nn->index(f[1])  );
+  tds().set_adjacency(f[0], ccw(i[0]) , nn , nn->index(f[1])  );
   nn= f[2]->neighbor( i[2] );
-  this->tds().set_adjacency(f[0], cw(i[0]) , nn , nn->index(f[2])  );
+  tds().set_adjacency(f[0], cw(i[0]) , nn , nn->index(f[2])  );
   f[0]->set_vertex  (            i[0] , f[1]->vertex( cw(i[1]) ) );
-  
+
   // clean container
-  this->tds().delete_face(f[1]);
-  this->tds().delete_face(f[2]);
-  
+  tds().delete_face(f[1]);
+  tds().delete_face(f[2]);
+
   return;
 }
 
@@ -1114,23 +1129,23 @@ remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
     // diagonal 1 3
     f[1]->set_vertex( i[1], w[3] ); //w1 w2 w3
     nn = f[3]->neighbor( i[3] );
-    this->tds().set_adjacency(f[0], cw(i[0]) , nn , nn->index(f[3])  );
+    tds().set_adjacency(f[0], cw(i[0]) , nn , nn->index(f[3])  );
     nn = f[2]->neighbor( i[2] );
-    this->tds().set_adjacency(f[1], ccw(i[1]) , nn , nn->index(f[2]) );
+    tds().set_adjacency(f[1], ccw(i[1]) , nn , nn->index(f[2]) );
     // clean container
-    this->tds().delete_face(f[2]);
-    this->tds().delete_face(f[3]);
+    tds().delete_face(f[2]);
+    tds().delete_face(f[3]);
   }else{
     // diagonal 0 2
     f[0]->set_vertex( i[0], w[2]); //w0 w1 w2
     f[3]->set_vertex( i[3], w[2]); //w3 w0 w2
     nn = f[1]->neighbor( i[1] );
-    this->tds().set_adjacency(f[0], ccw(i[0]) , nn , nn->index(f[1])  );
+    tds().set_adjacency(f[0], ccw(i[0]) , nn , nn->index(f[1])  );
     nn = f[2]->neighbor( i[2] );
-    this->tds().set_adjacency(f[3], cw(i[3]) , nn , nn->index(f[2])  );
+    tds().set_adjacency(f[3], cw(i[3]) , nn , nn->index(f[2])  );
     // clean container
-    this->tds().delete_face(f[1]);
-    this->tds().delete_face(f[2]);
+    tds().delete_face(f[1]);
+    tds().delete_face(f[2]);
   }
 
   return;
@@ -1141,7 +1156,7 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
 	       std::vector<Vertex_handle> &w, std::vector<int> &i )
-{  
+{
     NGHK_NYI;
   // removing a degree 5 vertex
   // only w[0] can be infinite
@@ -1158,8 +1173,8 @@ remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
 	remove_degree5_star(v,f[1],f[2],f[3],f[4],f[0],
 			      w[1],w[2],w[3],w[4],w[0],
 			      i[1],i[2],i[3],i[4],i[0]);
-			      
-			      
+
+
       }
     }else{
       // star from 3
@@ -1187,7 +1202,7 @@ remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
 			    i[0],i[1],i[2],i[3],i[4]);
     }
   }
-  
+
   return;
 }
 
@@ -1208,11 +1223,11 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
   f2->set_vertex( i2, v0) ;  // f2 = v2v3v0
   f3->set_vertex( i3, v0) ;  // f3 = v3v4v0
   nn = f0->neighbor( i0 );
-  this->tds().set_adjacency(f1, cw(i1) , nn , nn->index(f0) );
+  tds().set_adjacency(f1, cw(i1) , nn , nn->index(f0) );
   nn = f4->neighbor( i4 );
-  this->tds().set_adjacency(f3, ccw(i3) , nn , nn->index(f4) );
-  this->tds().delete_face(f0);
-  this->tds().delete_face(f4);
+  tds().set_adjacency(f3, ccw(i3) , nn , nn->index(f4) );
+  tds().delete_face(f0);
+  tds().delete_face(f4);
 }
 
 template < class Gt, class Tds >
@@ -1364,11 +1379,11 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
   f3->set_vertex( i3, v0) ;  // f3 = v3v4v0
   f4->set_vertex( i4, v0) ;  // f4 = v4v5v0
   nn = f0->neighbor( i0 );
-  this->tds().set_adjacency(f1, cw(i1), nn, nn->index(f0));
+  tds().set_adjacency(f1, cw(i1), nn, nn->index(f0));
   nn = f5->neighbor( i5 );
-  this->tds().set_adjacency(f4, ccw(i4), nn,  nn->index(f5));
-  this->tds().delete_face(f0);
-  this->tds().delete_face(f5);
+  tds().set_adjacency(f4, ccw(i4), nn,  nn->index(f5));
+  tds().delete_face(f0);
+  tds().delete_face(f5);
 }
 
 template < class Gt, class Tds >
@@ -1389,12 +1404,12 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
   f4->set_vertex( i4, v3) ;  // f4 = v4v5v3
   f5->set_vertex( i5, v3) ;  // f5 = v5v0v3
   nn = f0->neighbor( i0 );
-  this->tds().set_adjacency(f1, cw(i1) , nn , nn->index(f0)  );
+  tds().set_adjacency(f1, cw(i1) , nn , nn->index(f0)  );
   nn = f3->neighbor( i3 );
-  this->tds().set_adjacency(f4, cw(i4) , nn, nn->index(f3) );
-  this->tds().set_adjacency(f2, ccw(i2) , f5 , ccw(i5)  );
-  this->tds().delete_face(f0);
-  this->tds().delete_face(f3);
+  tds().set_adjacency(f4, cw(i4) , nn, nn->index(f3) );
+  tds().set_adjacency(f2, ccw(i2) , f5 , ccw(i5)  );
+  tds().delete_face(f0);
+  tds().delete_face(f3);
 }
 
 template < class Gt, class Tds >
@@ -1415,12 +1430,12 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
   f3->set_vertex( i3, v0) ;  // f3 = v3v4v0
   f4->set_vertex( i4, v0) ;  // f4 = v4v5v0
   nn = f2->neighbor( i2 );
-  this->tds().set_adjacency(f1, ccw(i1) , nn , nn->index(f2)  );
+  tds().set_adjacency(f1, ccw(i1) , nn , nn->index(f2)  );
   nn = f5->neighbor( i5 );
-  this->tds().set_adjacency(f4, ccw(i4) , nn , nn->index(f5) );
-  this->tds().set_adjacency(f0, cw(i0) , f3, cw(i3) );
-  this->tds().delete_face(f2);
-  this->tds().delete_face(f5);
+  tds().set_adjacency(f4, ccw(i4) , nn , nn->index(f5) );
+  tds().set_adjacency(f0, cw(i0) , f3, cw(i3) );
+  tds().delete_face(f2);
+  tds().delete_face(f5);
 }
 
 template < class Gt, class Tds >
@@ -1439,19 +1454,19 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
   f0->set_vertex( i0, v2) ;  // f0 = v0v1v2
   f2->set_vertex( i2, v4) ;  // f2 = v2v3v4
   f4->set_vertex( i4, v0) ;  // f4 = v4v5v0
-  f1->set_vertex( i1, v4) ; 
+  f1->set_vertex( i1, v4) ;
   f1->set_vertex( ccw(i1), v0) ;  // f1 = v0v2v4
   nn = f1->neighbor( i1 );
-  this->tds().set_adjacency(f0, ccw(i0) , nn , nn->index(f1) );
+  tds().set_adjacency(f0, ccw(i0) , nn , nn->index(f1) );
   nn = f3->neighbor( i3 );
-  this->tds().set_adjacency(f2, ccw(i2) , nn , nn->index(f3) );
+  tds().set_adjacency(f2, ccw(i2) , nn , nn->index(f3) );
   nn = f5->neighbor( i5 );
-  this->tds().set_adjacency(f4, ccw(i4) , nn , nn->index(f5) );
-  this->tds().set_adjacency(f0, cw(i0) , f1 , i1  );
-  this->tds().set_adjacency(f4, cw(i4) , f1 , cw(i1) );
+  tds().set_adjacency(f4, ccw(i4) , nn , nn->index(f5) );
+  tds().set_adjacency(f0, cw(i0) , f1 , i1  );
+  tds().set_adjacency(f4, cw(i4) , f1 , cw(i1) );
 
-  this->tds().delete_face(f3);
-  this->tds().delete_face(f5);
+  tds().delete_face(f3);
+  tds().delete_face(f5);
 }
 
 
@@ -1460,7 +1475,7 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i)
-{ 
+{
     NGHK_NYI;
   // removing a degree 7 vertex
   // only w[0] can be infinite
@@ -1852,7 +1867,7 @@ remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 	  if (incircle(4,5,6,3,f,w,i)) {
 	    remove_degree7_rightfan(v,  3  ,f,w,i);
 	  }else{
-	    remove_degree7_star(v,  3  ,f,w,i);    
+	    remove_degree7_star(v,  3  ,f,w,i);
 	  }}}}}
 }
 
@@ -1861,7 +1876,7 @@ remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-rotate7(int j,  std::vector<Vertex_handle> &w, 
+rotate7(int j,  std::vector<Vertex_handle> &w,
 	       std::vector<Face_handle> &f, std::vector<int> &i)
 {
     NGHK_NYI;
@@ -1894,11 +1909,11 @@ std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
   f[5]->set_vertex( i[5], w[0]) ;  // f5 = w5w6w0
 
   nn = f[0]->neighbor( i[0] );
-  this->tds().set_adjacency(f[1], cw(i[1]) , nn , nn->index(f[0])  );
+  tds().set_adjacency(f[1], cw(i[1]) , nn , nn->index(f[0])  );
   nn = f[6]->neighbor( i[6] );
-  this->tds().set_adjacency(f[5], ccw(i[5]) , nn , nn->index(f[6]) );
-  this->tds().delete_face(f[0]);
-  this->tds().delete_face(f[6]);
+  tds().set_adjacency(f[5], ccw(i[5]) , nn , nn->index(f[6]) );
+  tds().delete_face(f[0]);
+  tds().delete_face(f[6]);
 }
 template < class Gt, class Tds >
 inline void
@@ -1912,26 +1927,26 @@ remove_degree7_zigzag (Vertex_handle &, int j,
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[3]) ;  // f1 = w1w2w3
-  f[2]->set_vertex(ccw(i[2]), w[1]) ;  
+  f[2]->set_vertex(ccw(i[2]), w[1]) ;
   f[2]->set_vertex(    i[2] , w[0]) ;  // f2 = w1w3w0
   f[3]->set_vertex(    i[3] , w[0]) ;  // f3 = w3w4w0
-  f[4]->set_vertex( cw(i[4]), w[6]) ;  
+  f[4]->set_vertex( cw(i[4]), w[6]) ;
   f[4]->set_vertex(    i[4] , w[0]) ;  // f4 = w4w6w0
   f[5]->set_vertex(    i[5] , w[4]) ;  // f5 = w5w6w4
 
   nn = f[2]->neighbor( i[2] );
-  this->tds().set_adjacency(f[1], ccw(i[1]) , nn, nn->index(f[2]) );
+  tds().set_adjacency(f[1], ccw(i[1]) , nn, nn->index(f[2]) );
   nn = f[0]->neighbor( i[0] );
-  this->tds().set_adjacency(f[2], cw(i[2]) , nn , nn->index(f[0]) );
+  tds().set_adjacency(f[2], cw(i[2]) , nn , nn->index(f[0]) );
   nn = f[6]->neighbor( i[6] );
-  this->tds().set_adjacency(f[4], ccw(i[4]) , nn , nn->index(f[6])  );
+  tds().set_adjacency(f[4], ccw(i[4]) , nn , nn->index(f[6])  );
   nn = f[4]->neighbor( i[4] );
-  this->tds().set_adjacency(f[5], cw(i[5]) , nn , nn->index(f[4])  );
-  this->tds().set_adjacency(f[1], cw(i[1]) , f[2] , i[2]   );
-  this->tds().set_adjacency(f[4], i[4]  , f[5] , ccw(i[5])  );
+  tds().set_adjacency(f[5], cw(i[5]) , nn , nn->index(f[4])  );
+  tds().set_adjacency(f[1], cw(i[1]) , f[2] , i[2]   );
+  tds().set_adjacency(f[4], i[4]  , f[5] , ccw(i[5])  );
 
-  this->tds().delete_face(f[0]);
-  this->tds().delete_face(f[6]);
+  tds().delete_face(f[0]);
+  tds().delete_face(f[6]);
 }
 template < class Gt, class Tds >
 inline void
@@ -1945,22 +1960,22 @@ remove_degree7_leftdelta(Vertex_handle &, int j,
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[0]) ;  // f1 = w1w2w0
   f[2]->set_vertex(    i[2] , w[0]) ;  // f2 = w2w3w0
-  f[3]->set_vertex( cw(i[3]), w[5]) ;  
+  f[3]->set_vertex( cw(i[3]), w[5]) ;
   f[3]->set_vertex(    i[3] , w[0]) ;  // f3 = w3w5w0
   f[4]->set_vertex(    i[4] , w[3]) ;  // f4 = w4w5w3
   f[5]->set_vertex(    i[5] , w[0]) ;  // f5 = w5w6w0
 
   nn = f[0]->neighbor( i[0] );
-  this->tds().set_adjacency(f[1], cw(i[1]) , nn , nn->index(f[0])  );
+  tds().set_adjacency(f[1], cw(i[1]) , nn , nn->index(f[0])  );
   nn = f[3]->neighbor( i[3] );
-  this->tds().set_adjacency(f[4], cw(i[4]) , nn , nn->index(f[3]) );
+  tds().set_adjacency(f[4], cw(i[4]) , nn , nn->index(f[3]) );
   nn = f[6]->neighbor( i[6] );
-  this->tds().set_adjacency(f[5], ccw(i[5]) , nn , nn->index(f[6])  );
-  this->tds().set_adjacency(f[3], i[3]  , f[4] , ccw(i[4])  );
-  this->tds().set_adjacency(f[3], ccw(i[3]) , f[5] ,  cw(i[5]) );
+  tds().set_adjacency(f[5], ccw(i[5]) , nn , nn->index(f[6])  );
+  tds().set_adjacency(f[3], i[3]  , f[4] , ccw(i[4])  );
+  tds().set_adjacency(f[3], ccw(i[3]) , f[5] ,  cw(i[5]) );
 
-  this->tds().delete_face(f[0]);
-  this->tds().delete_face(f[6]);
+  tds().delete_face(f[0]);
+  tds().delete_face(f[6]);
 }
 template < class Gt, class Tds >
 inline void
@@ -1974,22 +1989,22 @@ remove_degree7_rightdelta(Vertex_handle &, int j,
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[0]) ;  // f1 = w1w2w0
   f[2]->set_vertex(    i[2] , w[4]) ;  // f2 = w2w3w4
-  f[3]->set_vertex(ccw(i[3]), w[2]) ;  
+  f[3]->set_vertex(ccw(i[3]), w[2]) ;
   f[3]->set_vertex(    i[3] , w[0]) ;  // f3 = w2w4w0
   f[4]->set_vertex(    i[4] , w[0]) ;  // f4 = w4w5w0
   f[5]->set_vertex(    i[5] , w[0]) ;  // f5 = w5w6w0
 
   nn = f[0]->neighbor( i[0] );
-  this->tds().set_adjacency(f[1], cw(i[1]) , nn , nn->index(f[0]) );
+  tds().set_adjacency(f[1], cw(i[1]) , nn , nn->index(f[0]) );
   nn = f[3]->neighbor( i[3] );
-  this->tds().set_adjacency(f[2], ccw(i[2]) , nn, nn->index(f[3]) );
+  tds().set_adjacency(f[2], ccw(i[2]) , nn, nn->index(f[3]) );
   nn = f[6]->neighbor( i[6] );
-  this->tds().set_adjacency(f[5], ccw(i[5]) , nn , nn->index(f[6]) );
-  this->tds().set_adjacency(f[1], ccw(i[1]) , f[3], cw(i[3])  );
-  this->tds().set_adjacency(f[3], i[3]  , f[2], cw(i[2]) );
+  tds().set_adjacency(f[5], ccw(i[5]) , nn , nn->index(f[6]) );
+  tds().set_adjacency(f[1], ccw(i[1]) , f[3], cw(i[3])  );
+  tds().set_adjacency(f[3], i[3]  , f[2], cw(i[2]) );
 
-  this->tds().delete_face(f[0]);
-  this->tds().delete_face(f[6]);
+  tds().delete_face(f[0]);
+  tds().delete_face(f[6]);
 }
 template < class Gt, class Tds >
 inline void
@@ -2008,14 +2023,14 @@ remove_degree7_leftfan(Vertex_handle &, int j,
   f[6]->set_vertex(    i[6] , w[4]) ;  // f6 = w6w0w4
 
   nn = f[0]->neighbor( i[0] );
-  this->tds().set_adjacency(f[1], cw(i[1]) , nn, nn->index(f[0]) );
+  tds().set_adjacency(f[1], cw(i[1]) , nn, nn->index(f[0]) );
   nn = f[5]->neighbor( i[5] );
-  this->tds().set_adjacency(f[4], ccw(i[4]) , nn, nn->index(f[5]) );
-  this->tds().set_adjacency(f[3], ccw(i[3]) , f[6], ccw(i[6]) );
-  this->tds().set_adjacency(f[6], cw(i[6]) , f[4], cw(i[4]) );
+  tds().set_adjacency(f[4], ccw(i[4]) , nn, nn->index(f[5]) );
+  tds().set_adjacency(f[3], ccw(i[3]) , f[6], ccw(i[6]) );
+  tds().set_adjacency(f[6], cw(i[6]) , f[4], cw(i[4]) );
 
-  this->tds().delete_face(f[0]);
-  this->tds().delete_face(f[5]);
+  tds().delete_face(f[0]);
+  tds().delete_face(f[5]);
 }
 template < class Gt, class Tds >
 inline void
@@ -2035,14 +2050,14 @@ remove_degree7_rightfan(Vertex_handle &, int j,
   f[5]->set_vertex(    i[5] , w[0]) ;  // f5 = w5w6w0
 
   nn = f[1]->neighbor( i[1] );
-  this->tds().set_adjacency(f[2], cw(i[2]) , nn, nn->index(f[1]) );
+  tds().set_adjacency(f[2], cw(i[2]) , nn, nn->index(f[1]) );
   nn = f[6]->neighbor( i[6] );
-  this->tds().set_adjacency(f[5], ccw(i[5]) , nn, nn->index(f[6]) );
-  this->tds().set_adjacency(f[2], ccw(i[2]) , f[0], ccw(i[0])  );
-  this->tds().set_adjacency(f[0], cw(i[0]) , f[3] , cw(i[3]) );
+  tds().set_adjacency(f[5], ccw(i[5]) , nn, nn->index(f[6]) );
+  tds().set_adjacency(f[2], ccw(i[2]) , f[0], ccw(i[0])  );
+  tds().set_adjacency(f[0], cw(i[0]) , f[3] , cw(i[3]) );
 
-  this->tds().delete_face(f[1]);
-  this->tds().delete_face(f[6]);
+  tds().delete_face(f[1]);
+  tds().delete_face(f[6]);
 }
 
 
@@ -2056,9 +2071,9 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 move_if_no_collision(Vertex_handle v, const Point &p) {
     NGHK_NYI;
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_triangulation_precondition(!is_infinite(v));
   if(v->point() == p) return v;
-  const int dim = this->dimension();
+  const int dim = dimension();
 
   if(dim == 2) {
     Point ant = v->point();
@@ -2078,7 +2093,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   Locate_type lt;
   int li;
   Vertex_handle inserted;
-  Face_handle loc = this->locate(p, lt, li, v->face());
+  Face_handle loc = locate(p, lt, li, v->face());
 
   if(lt == Periodic_2_triangulation_2<Gt,Tds>::VERTEX) return loc->vertex(li);
 
@@ -2087,9 +2102,9 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
     return v;
   }
 
-  size_type n_vertices = this->tds().number_of_vertices();
+  size_type n_vertices = tds().number_of_vertices();
 
-  if((lt == Triangulation::EMPTY) && 
+  if((lt == Triangulation::EMPTY) &&
      (dim == 1) && (n_vertices == 3)) {
     v->point() = p;
     return v;
@@ -2127,9 +2142,9 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   if((lt != Triangulation::EMPTY) && this->test_dim_down(v)) {
     // verify if p and two static vertices are collinear in this case
     int iinf = 0;
-    Face_circulator finf = this->incident_faces(this->infinite_vertex()), 
+    Face_circulator finf = this->incident_faces(this->infinite_vertex()),
       fdone(finf);
-    do { 
+    do {
       if(!finf->has_vertex(v))
       {
         iinf = ~(finf->index(this->infinite_vertex()));
@@ -2141,7 +2156,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
                          p) == COLLINEAR)
     {
       v->point() = p;
-      this->tds().dim_down(loc, loc->index(v));
+      tds().dim_down(loc, loc->index(v));
       return v;
     }
   }
@@ -2170,10 +2185,10 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
       int i = f->index(inserted);
       f->set_vertex(i, v);
     }
-  
+
   v->set_point(p);
   v->set_face(inserted->face());
-  
+
   this->delete_vertex(inserted);
 
   return v;
@@ -2184,7 +2199,7 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 move(Vertex_handle v, const Point &p) {
     NGHK_NYI;
-  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_triangulation_precondition(!is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
@@ -2195,14 +2210,14 @@ move(Vertex_handle v, const Point &p) {
 }
 
 template <class Gt, class Tds >
-bool 
+bool
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
 {
     NGHK_NYI;
-  CGAL_triangulation_precondition(!this->is_infinite(v));		
-  CGAL_triangulation_precondition(this->dimension() == 2);	
-  CGAL_triangulation_precondition(!this->test_dim_down(v));	
+  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_triangulation_precondition(!this->test_dim_down(v));
 	if(v->point() == p) return true;
   Point ant = v->point();
   v->set_point(p);
@@ -2228,7 +2243,7 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
     do {
       int i = fc->index(v);
       edges.push_back(Edge(fc, i));
-      edges.push_back(Edge(fc, this->cw(i)));
+      edges.push_back(Edge(fc, cw(i)));
     } while(++fc != done);
   }
   while(!edges.empty()) {
@@ -2236,10 +2251,10 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
     Face_handle f = e.first;
     int i = e.second;
     edges.pop_front();
-    if(this->is_infinite(f->vertex(i))) continue;
+    if(is_infinite(f->vertex(i))) continue;
     Face_handle fi = f->neighbor(i);
     Vertex_handle vm = this->_tds.mirror_vertex(f, i);
-    if(this->is_infinite(vm)) continue;
+    if(is_infinite(vm)) continue;
     if(this->side_of_oriented_circle(f, vm->point()) == ON_POSITIVE_SIDE) {
       v->set_point(ant);
       return false;
@@ -2251,18 +2266,18 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
 
 template <class Gt, class Tds >
 template <class OutputItFaces>
-typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle 
+typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-move_if_no_collision_and_give_new_faces(Vertex_handle v, 
+move_if_no_collision_and_give_new_faces(Vertex_handle v,
                                         const Point &p,
                                         OutputItFaces oif)
 {
     NGHK_NYI;
-  CGAL_triangulation_precondition(!this->is_infinite(v));	
+  CGAL_triangulation_precondition(!is_infinite(v));
   if(v->point() == p) return v;
 
-  typedef std::list<Face_handle>                        Faces_list;	
-  const int dim = this->dimension();
+  typedef std::list<Face_handle>                        Faces_list;
+  const int dim = dimension();
 
   if(dim == 2) {
     Point ant = v->point();
@@ -2285,7 +2300,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
   Locate_type lt;
   int li;
   Vertex_handle inserted;
-  Face_handle loc = this->locate(p, lt, li, v->face());
+  Face_handle loc = locate(p, lt, li, v->face());
 
   if(lt == Triangulation::VERTEX) return loc->vertex(li);
 
@@ -2294,14 +2309,14 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
     return v;
   }
 
-  size_type n_vertices = this->tds().number_of_vertices();
+  size_type n_vertices = tds().number_of_vertices();
 
-  if((lt == Triangulation::EMPTY) && 
+  if((lt == Triangulation::EMPTY) &&
      (dim == 1) && (n_vertices == 3)) {
     v->point() = p;
-    for(All_faces_iterator afi = this-> all_faces_begin(); 
-        afi != this->all_faces_end(); 
-        afi++) *oif++ = afi;	
+    for(All_faces_iterator afi = this-> all_faces_begin();
+        afi != this->all_faces_end();
+        afi++) *oif++ = afi;
     return v;
   }
 
@@ -2333,19 +2348,19 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
       this->delete_vertex(inserted);
     }
     *oif++ = v->face();
-    if(v->face()->neighbor(0)->has_vertex(v)) 
+    if(v->face()->neighbor(0)->has_vertex(v))
       *oif++ = v->face()->neighbor(0);
-    if(v->face()->neighbor(1)->has_vertex(v)) 
-      *oif++ = v->face()->neighbor(1);			
+    if(v->face()->neighbor(1)->has_vertex(v))
+      *oif++ = v->face()->neighbor(1);
     return v;
   }
 
   if((lt != Triangulation::EMPTY) && this->test_dim_down(v)) {
     // verify if p and two static vertices are collinear in this case
     int iinf;
-    Face_circulator finf = incident_faces(this->infinite_vertex()), 
+    Face_circulator finf = incident_faces(this->infinite_vertex()),
       fdone(finf);
-    do { 
+    do {
       if(!finf->has_vertex(v))
       {
         iinf = ~(finf->index(this->infinite_vertex()));
@@ -2357,9 +2372,9 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
                          p) == COLLINEAR)
     {
       v->point() = p;
-      this->tds().dim_down(loc, loc->index(v));
-      for(All_faces_iterator afi = this-> all_faces_begin(); 
-          afi != this->all_faces_end(); 
+      tds().dim_down(loc, loc->index(v));
+      for(All_faces_iterator afi = this-> all_faces_begin();
+          afi != this->all_faces_end();
           afi++) *oif++ = afi;
       return v;
     }
@@ -2381,7 +2396,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
     remove_degree_triangulate(v,f,w,i,d);
     this->delete_vertex(v);
     Face_circulator fc(v[0]),done;
-    do *oif++ = fc++; while (fc!=done);    
+    do *oif++ = fc++; while (fc!=done);
   }
 
   fc = this->incident_faces(inserted), done(fc);
