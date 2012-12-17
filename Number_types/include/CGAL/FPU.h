@@ -126,8 +126,13 @@ inline double IA_force_to_double(double x)
 {
 #if defined __GNUG__ && !defined __INTEL_COMPILER
   // Intel does not emulate GCC perfectly...
+  // Is that still true?
+#ifdef CGAL_SAFE_SSE2
+  asm("" : "+mx"(x) );
+#else
   asm("" : "=m"(x) : "m"(x));
   // asm("" : "+m"(x) );
+#endif
   return x;
 #else
   volatile double e = x;
