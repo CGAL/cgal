@@ -36,6 +36,7 @@
 #include <CGAL/streamlines_assertions.h>
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/random/uniform_real.hpp> // undocumented class
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 
