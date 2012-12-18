@@ -9,6 +9,11 @@ if [ -d "$1/.git" ]; then
     echo "Git repository, in branch '$branch'"
     git fetch
     git reset --hard origin/$branch
+    git clean -f
+
+    # Hard-reset integration "every day" even if today's "$branch" is not integration
+    git push -f origin origin/master:integration
+
     popd
 else
     svn up "$1"
