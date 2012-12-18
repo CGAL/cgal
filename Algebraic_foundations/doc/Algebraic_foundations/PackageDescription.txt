@@ -1,48 +1,7 @@
 /// \defgroup PkgAlgebraicFoundations Algebraic Foundations Reference
 
-
-/// \defgroup PkgAlgebraicFoundationsFunctions Global Functions
-/// \ingroup PkgAlgebraicFoundations
-
-/// \defgroup PkgAlgebraicFoundationsAlgebraicStructures Algebraic Structures
-/// \ingroup PkgAlgebraicFoundations
-
 /// \defgroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts Concepts
-/// \ingroup PkgAlgebraicFoundationsAlgebraicStructures
-
-
-/// \defgroup PkgAlgebraicFoundationsRealEmbeddable Real Embeddable
 /// \ingroup PkgAlgebraicFoundations
-
-/// \defgroup PkgAlgebraicFoundationsRealEmbeddableConcepts Concepts
-/// \ingroup PkgAlgebraicFoundationsRealEmbeddable
-
-/// \defgroup PkgAlgebraicFoundationsRealNumberTypes Real Number Types
-/// \ingroup PkgAlgebraicFoundations
-
-/// \defgroup PkgAlgebraicFoundationsRealNumberTypesConcepts Concepts
-/// \ingroup PkgAlgebraicFoundationsRealNumberTypes
-
-
-/// \defgroup PkgAlgebraicFoundationsInteroperability Interoperability
-/// \ingroup PkgAlgebraicFoundations
-
-/// \defgroup PkgAlgebraicFoundationsInteroperabilityConcepts Concepts
-/// \ingroup PkgAlgebraicFoundationsInteroperability
-
-
-/// \defgroup PkgAlgebraicFoundationsFractions Fractions
-/// \ingroup PkgAlgebraicFoundations
-
-/// \defgroup PkgAlgebraicFoundationsFractionsConcepts Concepts
-/// \ingroup PkgAlgebraicFoundationsFractions
-
-
-/// \defgroup PkgAlgebraicFoundationsMiscellaneous Miscellaneous
-/// \ingroup PkgAlgebraicFoundations
-
-/// \defgroup PkgAlgebraicFoundationsMiscellaneousConcepts Concepts
-/// \ingroup PkgAlgebraicFoundationsMiscellaneous
 
 /*!
 \addtogroup PkgAlgebraicFoundations
@@ -62,7 +21,133 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\ref AlgebraicFoundationsClassified  "Classified Reference Pages"
+\section Algebraic_foundationsAlgebraicStructures Algebraic Structures
+
+\subsection Algebraic_foundationsConcepts Concepts
+
+- `IntegralDomainWithoutDivision`
+- `IntegralDomain`
+- `UniqueFactorizationDomain`
+- `EuclideanRing`
+- `Field`
+- `FieldWithSqrt`
+- `FieldWithKthRoot`
+- `FieldWithRootOf`
+
+- `AlgebraicStructureTraits`
+- `AlgebraicStructureTraits::IsZero`
+- `AlgebraicStructureTraits::IsOne`
+- `AlgebraicStructureTraits::Square`
+- `AlgebraicStructureTraits::Simplify`
+- `AlgebraicStructureTraits::UnitPart`
+- `AlgebraicStructureTraits::IntegralDivision`
+- `AlgebraicStructureTraits::Divides`
+- `AlgebraicStructureTraits::Gcd`
+- `AlgebraicStructureTraits::DivMod`
+- `AlgebraicStructureTraits::Div`
+- `AlgebraicStructureTraits::Mod`
+- `AlgebraicStructureTraits::Inverse`
+- `AlgebraicStructureTraits::Sqrt`
+- `AlgebraicStructureTraits::IsSquare`
+- `AlgebraicStructureTraits::KthRoot`
+- `AlgebraicStructureTraits::RootOf`
+
+\subsection Algebraic_foundationsClasses Classes
+
+- `CGAL::Algebraic_structure_traits<T>`
+- `CGAL::Integral_domain_without_division_tag`
+- `CGAL::Integral_domain_tag`
+- `CGAL::Field_tag`
+- `CGAL::Field_with_sqrt_tag`
+- `CGAL::Unique_factorization_domain_tag`
+- `CGAL::Euclidean_ring_tag`
+
+\subsection Algebraic_foundationsGlobalFunctions Global Functions
+
+- `CGAL::is_zero`
+- `CGAL::is_one`
+- `CGAL::square`
+- `CGAL::simplify`
+- `CGAL::unit_part`
+- `CGAL::integral_division`
+- `CGAL::is_square`
+- `CGAL::gcd`
+- `CGAL::div_mod`
+- `CGAL::div`
+- `CGAL::mod`
+- `CGAL::inverse`
+- `CGAL::sqrt`
+- `CGAL::kth_root`
+- `CGAL::root_of`
+
+\section Algebraic_foundationsRealEmbeddable Real Embeddable
+
+\subsection Algebraic_foundationsConcepts_1 Concepts
+
+- `RealEmbeddable`
+
+- `RealEmbeddableTraits`
+- `RealEmbeddableTraits::IsZero`
+- `RealEmbeddableTraits::Abs`
+- `RealEmbeddableTraits::Sgn`
+- `RealEmbeddableTraits::IsPositive`
+- `RealEmbeddableTraits::IsNegative`
+- `RealEmbeddableTraits::Compare`
+- `RealEmbeddableTraits::ToDouble`
+- `RealEmbeddableTraits::ToInterval`
+
+\subsection Algebraic_foundationsClasses_1 Classes
+
+- `CGAL::Real_embeddable_traits<T>`
+
+\subsection Algebraic_foundationsGlobalFunctions_1 Global Functions
+
+- `CGAL::is_zero`
+- `CGAL::abs`
+- `CGAL::sign`
+- `CGAL::is_positive`
+- `CGAL::is_negative`
+- `CGAL::compare`
+- `CGAL::to_double`
+- `CGAL::to_interval`
+
+\section Algebraic_foundationsRealNumberTypes Real Number Types
+
+\subsection Algebraic_foundationsConcepts_2 Concepts
+
+- `RingNumberType`
+- `FieldNumberType`
+
+\section Algebraic_foundationsInteroperability_1 Interoperability
+
+\subsection Algebraic_foundationsConcepts_3 Concepts
+
+- `ExplicitInteroperable`
+- `ImplicitInteroperable`
+
+\subsection Algebraic_foundationsClasses_2 Classes
+
+- `CGAL::Coercion_traits<A,B>`
+
+\section Algebraic_foundationsFractions_1 Fractions
+
+\subsection Algebraic_foundationsConcepts_4 Concepts
+
+- `Fraction`
+- `FractionTraits`
+- `FractionTraits::Decompose`
+- `FractionTraits::Compose`
+- `FractionTraits::CommonFactor`
+
+\subsection Algebraic_foundationsClasses_3 Classes
+
+- `CGAL::Fraction_traits<T>`
+
+\section Algebraic_foundationsMiscellaneous Miscellaneous
+
+\subsection Algebraic_foundationsConcepts_5 Concepts
+- `FromIntConstructible`
+- `FromDoubleConstructible`
 
 */
 
