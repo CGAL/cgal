@@ -2900,25 +2900,25 @@ bool Periodic_2_triangulation_2<Gt, Tds>::compare_walks(const Point& p,
 template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle
 Periodic_2_triangulation_2<Gt, Tds>::
-march_locate_2D(Face_handle c, const Point& query,
+march_locate_2D(Face_handle f, const Point& query,
                 const Offset& o_p, Locate_type& lt, int& li) const {
-  int cumm_off = 0;
-  Offset off_query = o_p;
   CGAL_assertion(!empty());
+
+  Offset off_query = o_p;
 
   // Random generator
   boost::rand48 rng;
   boost::uniform_smallint<> two(0, 1);
-  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > coin(
-      rng, two);
+  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > coin(rng, two);
 
-  cumm_off = c->offset(0) | c->offset(1) | c->offset(2);
-  if (is_1_cover() && cumm_off != 0) {
-    if (((cumm_off & 2) == 2) && (FT(2) * query.x() < (_domain.xmax()
-        + _domain.xmin())))
+  // Give the point the best start-offset possible
+  if (is_1_cover() && !f->has_zero_offsets()) {
+    int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
+    if (((cumm_off & 2) == 2) &&
+        (FT(2) * query.x() < (_domain.xmax() + _domain.xmin())))
       off_query += Offset(1, 0);
-    if (((cumm_off & 1) == 1) && (FT(2) * query.y() < (_domain.ymax()
-        + _domain.ymin())))
+    if (((cumm_off & 1) == 1) &&
+        (FT(2) * query.y() < (_domain.ymax() + _domain.ymin())))
       off_query += Offset(0, 1);
   }
 
@@ -2934,47 +2934,51 @@ march_locate_2D(Face_handle c, const Point& query,
     // edge before or the edge after the edge leading to prev
     int left_first = coin() % 2;
 
+    bool simplicity_criterion =
+      f->has_zero_offsets() && off_query.is_null() && is_1_cover();
+
     const Point *p[3] = {
-      &c->vertex(0)->point(),
-      &c->vertex(1)->point(),
-      &c->vertex(2)->point()
+      &f->vertex(0)->point(),
+      &f->vertex(1)->point(),
+      &f->vertex(2)->point()
     };
 
     // Get the offsets
-    int cumm_off = c->offset(0) | c->offset(1) | c->offset(2);
-    bool simplicity_criterion =
-      (cumm_off == 0) && (off_query.is_null()) && is_1_cover();
-    if (!is_1_cover()) {
-      // Just fetch the vertices of c as points with offsets
-      for (int i = 0; i < 3; i++) {
-        off[i] = get_offset_face(c, i);
-      }
-    } else if (!simplicity_criterion) {
-      // We are on the one cover and on the boundary between domains
-      // Hence, we need to check predicates with offsets
-      for (int i = 0; i < 3; i++) {
-        off[i] = int_to_off(c->offset(i));
+    if (!simplicity_criterion) {
+      if (!is_1_cover()) {
+        // Just fetch the vertices of c as points with offsets
+        for (int i = 0; i < 3; i++) {
+          off[i] = get_offset_face(f, i);
+        }
+      } else {
+        //cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
+        // We are on the one cover and on the boundary between domains
+        // Hence, we need to check predicates with offsets
+        for (int i = 0; i < 3; i++) {
+          off[i] = int_to_off(f->offset(i));
+        }
       }
     }
 
     if (prev == Face_handle()) {
-      prev = c;
+      prev = f;
       // First step, also check the prev_index
       if (simplicity_criterion) {
-        o[ccw(prev_index)] = 
+        o[ccw(prev_index)] =
           orientation(*p[ccw(prev_index)], *p[cw(prev_index)], query);
       } else {
-        o[ccw(prev_index)] = 
+        o[ccw(prev_index)] =
           orientation(*p[ccw(prev_index)], *p[cw(prev_index)], query,
                       off[ccw(prev_index)], off[cw(prev_index)], off_query);
       }
       if (o[ccw(prev_index)] == NEGATIVE) {
-        // This assignment is already done: prev = c
-        c = c->neighbor(prev_index);
-        int new_index = c->index(prev);
-        off_query = combine_offsets(off_query, 
-                                    get_neighbor_offset(prev, prev_index,
-                                                        c, new_index));
+        // This assignment is already done: prev = f
+        f = f->neighbor(prev_index);
+        int new_index = f->index(prev);
+        if (!(simplicity_criterion && f->has_zero_offsets()))
+          off_query = combine_offsets(off_query,
+                                      get_neighbor_offset(prev, prev_index,
+                                                          f, new_index));
         prev_index = new_index;
         continue;
       }
@@ -2992,32 +2996,32 @@ march_locate_2D(Face_handle c, const Point& query,
                       off[prev_index], off[ccw(prev_index)], off_query);
       }
       if (o[prev_index] == NEGATIVE) {
-        prev = c;
-        c = c->neighbor(cw(prev_index));
-        int new_index = c->index(prev);
-        off_query = combine_offsets(off_query, 
-                                    get_neighbor_offset(prev, cw(prev_index),
-                                                        c, new_index));
+        prev = f;
+        f = f->neighbor(cw(prev_index));
+        int new_index = f->index(prev);
+        if (!(simplicity_criterion && f->has_zero_offsets()))
+          off_query = combine_offsets(off_query,
+                                      get_neighbor_offset(prev, cw(prev_index), f, new_index));
         prev_index = new_index;
         continue;
       }
     }
     { // Do right side
       if (simplicity_criterion) {
-        o[cw(prev_index)] = 
+        o[cw(prev_index)] =
           orientation(*p[cw(prev_index)], *p[prev_index], query);
       } else {
-        o[cw(prev_index)] = 
+        o[cw(prev_index)] =
           orientation(*p[cw(prev_index)], *p[prev_index], query,
                       off[cw(prev_index)], off[prev_index], off_query);
       }
       if (o[cw(prev_index)] == NEGATIVE) {
-        prev = c;
-        c = c->neighbor(ccw(prev_index));
-        int new_index = c->index(prev);
-        off_query = combine_offsets(off_query,
-                                    get_neighbor_offset(prev, ccw(prev_index),
-                                                        c, new_index));
+        prev = f;
+        f = f->neighbor(ccw(prev_index));
+        int new_index = f->index(prev);
+        if (!(simplicity_criterion && f->has_zero_offsets()))
+          off_query = combine_offsets(off_query,
+                                      get_neighbor_offset(prev, ccw(prev_index), f, new_index));
         prev_index = new_index;
         continue;
       }
@@ -3030,17 +3034,17 @@ march_locate_2D(Face_handle c, const Point& query,
                                     off[prev_index], off[ccw(prev_index)], off_query);
       }
       if (o[prev_index] == NEGATIVE) {
-        prev = c;
-        c = c->neighbor(cw(prev_index));
-        int new_index = c->index(prev);
-        off_query = combine_offsets(off_query,
-                                    get_neighbor_offset(prev, cw(prev_index),
-                                                        c, new_index));
+        prev = f;
+        f = f->neighbor(cw(prev_index));
+        int new_index = f->index(prev);
+        if (!(simplicity_criterion && f->has_zero_offsets()))
+          off_query = combine_offsets(off_query,
+                                      get_neighbor_offset(prev, cw(prev_index), f, new_index));
         prev_index = new_index;
         continue;
       }
     }
-    
+
     // now p is in c or on its boundary
     int sum = (o[0] == COLLINEAR) + (o[1] == COLLINEAR) + (o[2] == COLLINEAR);
     switch (sum) {
@@ -3060,7 +3064,7 @@ march_locate_2D(Face_handle c, const Point& query,
       break;
     }
     }
-    return c;
+    return f;
   }
 }
 
