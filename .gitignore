@@ -1336,6 +1336,9 @@ Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/Viewer.moc
 Triangulation_on_sphere_2/demo/Mesh_on_sphere_2/ui_Mainwindow.h
 Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/Triangulation_on_sphere_2_.build/
 Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/Triangulation_on_sphere_2_.xcodeproj/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/CMakeLists.txt	Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/Mainwindow.moc
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/Release/
+Triangulation_on_sphere_2/demo/Triangulation_on_sphere_2/simpleViewer.xcodeproj/
 
 
 VERSION

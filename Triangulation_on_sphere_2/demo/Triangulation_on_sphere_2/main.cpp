@@ -1,7 +1,7 @@
 //Author: Sebastien Loriot sebastien.loriot@sophia.inria.fr
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_spherical_kernel_3.h>
-//#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
 #include <CGAL/Delaunay_triangulation_sphere_2.h>
 #include <CGAL/utility.h>
@@ -18,7 +18,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel         Kernel;
 #include "simpleViewer.h"
 #include "ui_Mainwindow.h"
 
-//typedef CGAL::Regular_triangulation_sphere_traits_2<Kernel>         Gt;
+//typedef CGAL::Delaunay_triangulation_sphere_traits_2<Kernel>         Gt;
 typedef CGAL::Projection_sphere_traits_3<Kernel>					Gt;
 typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                 RTOS;
 

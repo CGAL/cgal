@@ -13,15 +13,11 @@
 
 namespace CGAL { 
 
-//TODO :
-//copy constructor and assignation
-
 
 template < class Gt,
            class Tds  = Triangulation_data_structure_2 <
-                        //Regular_triangulation_vertex_base_2<Gt>,
-	Triangulation_vertex_base_2<Gt>,
-		        Delaunay_triangulation_face_base_sphere_2<Gt> > >
+             Triangulation_vertex_base_2<Gt>,
+		     Delaunay_triangulation_face_base_sphere_2<Gt> > >
 class Delaunay_triangulation_sphere_2
   : public Triangulation_sphere_2<Gt,Tds>
 {
@@ -317,8 +313,6 @@ int insert(InputIterator first, InputIterator last)
 	Face_handle hint;
 	Vertex_handle v;
 	for (typename std::vector<Point>::const_iterator p = points.begin(),end = points.end(); p != end; ++p){
-		//insert(*p, hint);
-		//insert (*p, hint)->face();
 		v = insert (*p, hint);
 		if( v != Vertex_handle())
 			hint = v->face();
@@ -492,7 +486,7 @@ is_plane()const{
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
-is_valid(bool verbose, int level ) const //int level
+is_valid(bool verbose, int level ) const 
 {
 	bool result = true;
 	
@@ -748,8 +742,8 @@ insert_outside_affine_hull_regular(const Point& p)
 	const Point p0=f->vertex(0)->point();
 	const Point p1=f->vertex(1)->point();
 	const Point p2=fn->vertex(1)->point();
-	Orientation orient = orientation(p0, p1, p2);
-	 CGAL_triangulation_assertion(orient!=NEGATIVE);
+	
+	 CGAL_triangulation_assertion(orientation(p0, p1, p2)!=NEGATIVE);
 	Orientation orient2 = power_test(p0, p1, p2, p);
 	
 	 

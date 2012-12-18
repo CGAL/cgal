@@ -62,7 +62,7 @@ int main(){
 	
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =pow(2,10);
+	nu_of_pts =pow(2,23);
 	radius=6000000;
 	CGAL::Timer time;
 
@@ -72,27 +72,26 @@ int main(){
 	
 	
 	std::vector<Point> points;
+	std::vector<Point> points2(points.size()+1);
 	std::vector<Vertex_handle> vertices;
 	vertices.reserve(nu_of_pts);
 	
+	points2.push_back(Point(0,0,0));
 	
 	for (int count=0; count<nu_of_pts; count++) {
 		Point p = *on_sphere;
 		points.push_back(p);
+		points2.push_back(p);
 		on_sphere++;
 	}
-	
-	
-	
-	//Triangulation with points on the sphere
-	RTOS rtos;
+		RTOS rtos;
 	rtos.set_radius(radius);
 
 	std::cout<<" ***STARTING***"<<std::endl;
 	time.start();
 	rtos.insert(points.begin(),points.end());
 	time.stop();
-	std::cout<<"running time triangulation sphere    "<< time.time()<<std::endl;
+	std::cout<<"triangulation sphere    "<< time.time()<<std::endl;
 
 	
 
@@ -105,16 +104,16 @@ int main(){
 	time.start();
 	rtos2.insert(points.begin(),points.end());
 	time.stop();
-	std::cout<<"running time triangulation sphere projection traits:   "<< time.time()<<std::endl;
+	std::cout<<"triangulation sphere projection traits:   "<< time.time()<<std::endl;
 	
 	
 	
-		
+	/*	
 	Polyhedron_3 poly;
 	
 	time.reset();
 	time.start();
-	CGAL::convex_hull_3(points.begin(), points.end(), poly);
+	CGAL::convex_hull_3(points2.begin(), points2.end(), poly);
 	time.stop();
 	std::cout << "Static :" << time.time() <<" "<<  std::endl;
 	
@@ -124,25 +123,35 @@ int main(){
 	
 	time.reset();
 	time.start();
-	CGAL::convex_hull_incremental_3( points.begin(), points.end(), poly, false);
+	CGAL::convex_hull_incremental_3( points2.begin(), points2.end(), poly, false);
 	time.stop();
-	std::cout << "incremental EPIC :" << time.time() << std::endl;
+	std::cout << "incremental EPIC :" << time.time() << std::endl;*/
 	
 		
 	time.reset();
 	time.start();
-	Delaunay T_on(points.begin(), points.end());
+	Delaunay T;
+	T.insert(Point(0,0,0));
+    T.insert(points.begin(), points.end());
 	time.stop();
 	std::cout << "Delaunay on sphere:" << time.time() << std::endl;
 	
-	time.reset();
+	/*time.reset();
 	time.start();
 	Delaunay_fast T_fast_on(points.begin(), points.end());
+	
 	time.stop();
-	std::cout << "Delaunay fast location on sphere  :" << time.time() << std::endl;
+	std::cout << "Delaunay fast location on sphere  :" << time.time() << std::endl;*/
 	
 	
-	
+	time.reset();
+	time.start();
+	Delaunay_fast T_fast_on2;
+	T_fast_on2.insert(Point(0,0,0));
+	T_fast_on2.insert(points.begin(), points.end());
+	time.stop();
+	std::cout << "Delaunay fast location on sphere  with dummy:" << time.time() << std::endl;
+
 	
 	
 }
