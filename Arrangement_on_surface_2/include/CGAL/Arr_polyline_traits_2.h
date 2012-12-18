@@ -561,13 +561,21 @@ public:
      * If cv contains one or more segments then p is appended to the last
      * segment in the container. TODO: the container has to be well ordered!?
      * TODO: Add comments
+     * TODO: Test!
      */
-    template<class OutputIterator>
     void operator()(const Curve_2& cv, Point_2& p) const
-    {}
+    {
+      if (cv.number_of_segments() == 0)
+        {
+          cv.push_back(Segment_2(p,p));
+        }
+      else
+        {
+        }
+    }
   };
 
-  /*! Get a Make_x_monotone_2 functor object. */
+  /*! Get a Push_Back_2 functor object. */
   Push_back_2 push_back_2_object() const
   { return Push_back_2(this); }
 

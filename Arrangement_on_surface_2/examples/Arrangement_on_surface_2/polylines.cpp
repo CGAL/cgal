@@ -24,6 +24,8 @@ int main ()
 {
   Traits_2 traits;
 
+  Traits_2::Push_back_2 push_back = traits.push_back_2_object();
+
   Arrangement_2         arr;
 
   // TODO: Add test with isolated points.
