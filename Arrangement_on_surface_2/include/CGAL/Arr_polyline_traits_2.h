@@ -567,6 +567,7 @@ public:
     {
       if (cv.number_of_segments() == 0)
         {
+          // TODO: Verify that cv is not x-monotone
           cv.push_back(Segment_2(p,p));
         }
       else
