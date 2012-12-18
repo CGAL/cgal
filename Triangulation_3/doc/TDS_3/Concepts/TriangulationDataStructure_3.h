@@ -459,6 +459,28 @@ Vertex_handle
 copy_tds(const TriangulationDataStructure_3 & tds1, 
 Vertex_handle v = Vertex_handle()); 
 
+/*!
+`tds_src` is copied into `this`. As the vertex and cell types might be different
+and incompatible, the creation of new cells and vertices is made thanks to the
+functors `convert_vertex` and `convert_cell`, that convert vertex and cell types.
+For each vertex `v_src` in `tds_src`, the corresponding vertex `v_tgt` in `this` is a
+copy of the vertex returned by `convert_vertex(v_src)`. The same operations are
+done for cells with the functor convert_cell. If `v != TDS_src::Vertex_handle()`,
+a handle to the vertex created in `this` that is the copy of `v` is returned,
+otherwise `Vertex_handle()` is returned.
+
+ - A model of `ConvertVertex` must provide two operator()'s that are responsible for converting the source vertex `v_src` into the target vertex:
+  - `Vertex operator()(const TDS_src::Vertex& v_src);` This operator is used to create the vertex from `v_src`.
+  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt);` This operator is meant to be used in case heavy data should transferred to `v_tgt`. 
+ - A model of ConvertCell must provide two operator()'s that are responsible for converting the source cell `c_src` into the target cell:
+  - `Cell operator()(const TDS_src::Cell& c_src);` This operator is used to create the cell from `c_src`.
+  - `Cell operator()(const TDS_src::Cell& c_src, Cell& c_tgt);` This operator is meant to be used in case heavy data should transferred to `c_tgt`.
+
+\pre The optional argument `v` is a vertex of `tds_src` or is `Vertex_handle()`.
+*/
+template <class TDS_src, class ConvertVertex, class ConvertCell>
+Vertex_handle tds.copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertCell& convert_cell);
+
 /*! 
 Swaps `tds` and `tds1`. There is no copy of cells and vertices, 
 thus this method runs in constant time. This method should be preferred to 
