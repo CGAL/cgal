@@ -126,7 +126,7 @@ inline double IA_force_to_double(double x)
 {
 #if defined __GNUG__ && !defined __INTEL_COMPILER
   // Intel does not emulate GCC perfectly...
-  // Is that still true?
+  // Is that still true? -- Marc Glisse, 2012-12-17
 #ifdef CGAL_SAFE_SSE2
   asm("" : "+mx"(x) );
 #else
