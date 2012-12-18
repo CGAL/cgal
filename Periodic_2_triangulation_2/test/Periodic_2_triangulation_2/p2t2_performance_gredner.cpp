@@ -34,6 +34,11 @@ int main(int argc, char * argv[]) {
   float coords[2];
   while (!file.eof()) {
     file.read((char *)&coords[0], 2 * sizeof(float));
+    while (coords[0] < 0) coords[0] += domain[0];
+    while (coords[1] < 0) coords[1] += domain[1];
+    while (coords[0] >= domain[0]) coords[0] -= domain[0];
+    while (coords[1] >= domain[1]) coords[1] -= domain[1];
+
     pts.push_back(Point(coords[0], coords[1]));
   }
 
