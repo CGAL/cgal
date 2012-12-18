@@ -18,11 +18,8 @@ public:
 Projected_point()
 	:Base_point(){}
 	
-Projected_point(const Base_point &p)
-	:Base_point(p){compute_scale(p);}
-
-Projected_point(double x, double y, double z)
-	:Base_point(x,y,z){compute_scale(x,y,z);}
+Projected_point(const Base_point &p, const typename K::Point_3& sphere_center)
+	:Base_point(p){compute_scale( p-(sphere_center-ORIGIN) );}
 	
 public:	
 	double _scale;
@@ -197,12 +194,31 @@ compute_squared_distance_3_object() const
 Compare_xyz_3
 compare_xyz_3_object()const
 	{return Compare_xyz_3(_radius);}
-	
+
+struct Construct_projected_point_3
+ : public std::unary_function<Base_point,Point_2>
+{
+  const Base_point& sphere_center;
+
+  Point_2 operator()(const Base_point& pt) const
+  {
+    return Point_2(pt, sphere_center);
+  }
+
+  Construct_projected_point_3(const Base_point& sc)
+    :sphere_center(sc) {}
+};
+
+Construct_projected_point_3
+construct_projected_point_3_object() const {
+  return Construct_projected_point_3(_sphere);
+};
+
 protected :
 	Base_point _sphere;
 		
 	};
-	
+
 template < class R >
 Projection_sphere_traits_3<R> ::
 Projection_sphere_traits_3(const Base_point& sphere, double radius)
