@@ -154,6 +154,8 @@ Periodic_2_triangulation_2<GT,TDS>::insert_dummy_points() {
     ret_vector[i] = vertices[i];
   }
 
+  CGAL_assertion(is_valid());
+
   return ret_vector;
 }
 
