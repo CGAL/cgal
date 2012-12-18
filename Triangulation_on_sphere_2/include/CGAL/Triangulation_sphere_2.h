@@ -22,7 +22,7 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/spatial_sort.h>
-#include <CGaL/Triangulation_2.h>
+#include <CGAL/Triangulation_2.h>
 #include <CGAL/squared_distance_3.h>
 #include <boost/type_traits.hpp>
 #include <boost/type_traits/integral_constant.hpp>
