@@ -2155,11 +2155,11 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   if(dim == 2) {
     Point ant = v->point();
     v->set_point(p);
-		// This option optimizes only when most of the
-	  // displacements would not break the orientation
-	  // of the faces.. we will consider this as an a priori,
-	  // because otherwise it is pointless to just do
-	  // not rebuild from scratch.
+    // This option optimizes only when most of the
+    // displacements would not break the orientation
+    // of the faces.. we will consider this as an a priori,
+    // because otherwise it is pointless to just do
+    // not rebuild from scratch.
     if(this->well_oriented(v)) {
       restore_edges(v);
       return v;
