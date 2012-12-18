@@ -34,6 +34,8 @@ namespace CGAL {
     {
       bool operator()(const Vertex_handle& v1, const Vertex_handle& v2) const 
       { 
+        if(v1 == v2)
+          return false;
         return v1->point() < v2->point(); 
       }
     };
@@ -49,6 +51,8 @@ namespace CGAL {
 
       bool operator()(const Cell_handle& c1, const Cell_handle& c2) const
       {
+        if(c1 == c2)
+          return false;
         std::vector<Vertex_handle> v1;
         std::vector<Vertex_handle> v2;
         for(int i = 0; i < 4; ++i)
@@ -80,6 +84,8 @@ namespace CGAL {
 
       bool operator()(const Facet& f1, const Facet& f2) const
       {
+        if(f1 == f2)
+          return false;
         Vertex_handle_comparator<Vertex_handle> vcomp;
         std::vector<Vertex_handle> vf1;
         std::vector<Vertex_handle> vf2;
@@ -114,6 +120,8 @@ namespace CGAL {
 
       bool operator()(const Facet_handle& pf1, const Facet_handle& pf2) const
       { 
+        if(pf1 == pf2)
+          return false;
         //collect vertices of both facets
         std::vector<Vertex_handle> vertices_f1;
         std::vector<Vertex_handle> vertices_f2;
@@ -160,6 +168,9 @@ namespace CGAL {
 
       bool operator()(const Halfedge_handle& he1, const Halfedge_handle& he2) const
       {     
+        if(he1 == he2)
+          return false;
+
         //collect vertices of both facets
         std::vector<Vertex_handle> vertices_he1;
         vertices_he1.push_back(he1->vertex());
