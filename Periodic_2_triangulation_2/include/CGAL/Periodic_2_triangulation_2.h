@@ -20,15 +20,6 @@
 
 #define NGHK_NYI { std::cout << "NYI: " << __PRETTY_FUNCTION__ << std::endl; CGAL_assertion(false); }
 
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-#include <ctime>
-extern double total_time;
-extern double locate_time;
-extern double insert_time;
-extern double periodic_locate_time;
-extern double periodic_insert_time;
-#endif
-
 #include <CGAL/basic.h>
 
 #include <list>
@@ -1344,11 +1335,11 @@ protected:
   Offset get_location_offset(Face_handle f, const Point &p, const Offset &o) const {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
-    int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
-    if (cumm_off == 0) {
+    if (f->has_zero_offsets()) {
       // default case:
       return Offset();
     } else {
+      int cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
       // Special case for the periodic space.
       // Fetch vertices and respective offsets of c from _virtual_vertices
       const Point *pts[3];
@@ -2212,58 +2203,62 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_face(const Point& p, const Offset
   CGAL_triangulation_assertion(number_of_vertices() != 0);
   CGAL_triangulation_assertion((!is_1_cover()) || (o == Offset()));
 
-  if (f->has_zero_offsets() && o.is_zero()) {
-    Vertex_handle v = _tds.insert_in_face(f);
-    v->set_point(p);
-    return v;
-  }
+  const bool simplicity_criterion = f->has_zero_offsets() && o.is_zero();
 
 
-  // Choose the periodic copy of tester.point() that is inside c.
-  Offset current_off = get_location_offset(f, p, o);
-
-  CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o,current_off)) != ON_NEGATIVE_SIDE);
+  Offset current_off;
 
   // Save the neighbors and the offsets
   Face_handle nb[3];
   int nb_index[3];
   int offsets[3];
   CGAL_triangulation_assertion_code( Vertex_handle vertices[3]; )
-  for (int i = 0; i < 3; ++i) {
-    nb[i] = f->neighbor(i);
-    nb_index[i] = nb[i]->index(f);
-    offsets[i] = f->offset(i);
-    CGAL_triangulation_assertion_code( vertices[i] = f->vertex(i); );
+
+  if (!simplicity_criterion) {
+    // Choose the periodic copy of tester.point() that is inside c.
+    current_off = get_location_offset(f, p, o);
+
+    CGAL_triangulation_assertion(oriented_side(f, p, combine_offsets(o,current_off)) != ON_NEGATIVE_SIDE);
+
+    for (int i = 0; i < 3; ++i) {
+      nb[i] = f->neighbor(i);
+      nb_index[i] = nb[i]->index(f);
+      offsets[i] = f->offset(i);
+      CGAL_triangulation_assertion_code( vertices[i] = f->vertex(i); );
+    }
   }
 
   // Insert the new vertex
   Vertex_handle v = _tds.insert_in_face(f);
   v->set_point(p);
 
-  // Update the offsets
-  int v_offset = off_to_int(current_off);
-  int new_offsets[3];
-  for (int i = 0; i < 3; ++i) {
-    Face_handle new_face = nb[i]->neighbor(nb_index[i]);
-    int v_index = new_face->index(v);
+  if (!simplicity_criterion) {
+    // Update the offsets
+    int v_offset = off_to_int(current_off);
+    int new_offsets[3];
+    for (int i = 0; i < 3; ++i) {
+      Face_handle new_face = nb[i]->neighbor(nb_index[i]);
+      int v_index = new_face->index(v);
 
-    CGAL_triangulation_assertion(new_face->vertex(ccw(v_index)) == vertices[ccw(i)]);
-    CGAL_triangulation_assertion(new_face->vertex(cw(v_index)) == vertices[cw(i)]);
+      CGAL_triangulation_assertion(new_face->vertex(ccw(v_index)) == vertices[ccw(i)]);
+      CGAL_triangulation_assertion(new_face->vertex(cw(v_index)) == vertices[cw(i)]);
 
-    new_offsets[v_index] = v_offset;
-    new_offsets[ccw(v_index)] = offsets[ccw(i)];
-    new_offsets[cw(v_index)] = offsets[cw(i)];
-    set_offsets(new_face, new_offsets[0], new_offsets[1], new_offsets[2]);
+      new_offsets[v_index] = v_offset;
+      new_offsets[ccw(v_index)] = offsets[ccw(i)];
+      new_offsets[cw(v_index)] = offsets[cw(i)];
+      set_offsets(new_face, new_offsets[0], new_offsets[1], new_offsets[2]);
+    }
   }
 
-  // update the book-keeping in case of a periodic copy
-  if (vh != Vertex_handle()) {
-    _virtual_vertices[v] = Virtual_vertex(vh, o);
-    _virtual_vertices_reverse[vh].push_back(v);
-  }
+  if (!is_1_cover()) {
+    // update the book-keeping in case of a periodic copy
+    if (vh != Vertex_handle()) {
+      _virtual_vertices[v] = Virtual_vertex(vh, o);
+      _virtual_vertices_reverse[vh].push_back(v);
+    }
 
-  if (!is_1_cover())
     insert_too_long_edges_in_star(v);
+  }
 
   return v;
 }
@@ -2271,9 +2266,6 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_face(const Point& p, const Offset
 template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_triangulation_2<Gt, Tds>::insert(const Point &p, Face_handle start) {
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-  std::clock_t start_time;
-#endif
   CGAL_triangulation_assertion((_domain.xmin() <= p.x()) &&
       (p.x() < _domain.xmax()));
   CGAL_triangulation_assertion((_domain.ymin() <= p.y()) &&
@@ -2287,18 +2279,9 @@ Periodic_2_triangulation_2<Gt, Tds>::insert(const Point &p, Face_handle start) {
     start = faces_begin();
   }
 
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-  std::clock_t total_start = std::clock();
-#endif
   Locate_type lt;
   int li;
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-  start_time = std::clock();
-#endif
   Face_handle loc = locate(p, lt, li, start);
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-  locate_time += (std::clock()-start_time)/(double)CLOCKS_PER_SEC;
-#endif
 
   if (start != Face_handle()) {
     CGAL_assertion(start->vertex(0) != Vertex_handle());
@@ -2310,7 +2293,6 @@ template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_triangulation_2<Gt, Tds>::insert(const Point& p, 
                                             Locate_type lt, Face_handle loc, int li) {
-  Face_handle start = loc;
   if (number_of_stored_vertices() == 0) {
     return insert_first(p);
   }
@@ -2334,17 +2316,12 @@ Periodic_2_triangulation_2<Gt, Tds>::insert(const Point& p,
         != _virtual_vertices_reverse.end());
   }
 
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-  start_time = std::clock();
-#endif
   Vertex_handle vh = insert(p, Offset(), lt, loc, li, Vertex_handle());
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-  insert_time += (std::clock()-start_time)/(double)CLOCKS_PER_SEC;
-#endif
 
   // Don't add periodic copies if we are on the 1-cover
   if (is_1_cover())
     return vh;
+
   // Don't continue if the point lies on a vertex as this will break the
   // start_vertices array below.
   if (lt == VERTEX)
@@ -2357,32 +2334,15 @@ Periodic_2_triangulation_2<Gt, Tds>::insert(const Point& p,
   for (int i = 0; i < number_of_sheets()[0]; i++) {
     for (int j = 0; j < number_of_sheets()[1]; j++) {
       if ((i != 0) || (j != 0)) {
-        start = start_vertices[i * 3 + j - 1]->face();
+        loc = start_vertices[i * 3 + j - 1]->face();
         Offset offset(i, j);
 
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-        start_time = std::clock();
-#endif
-        loc = locate(p, offset, lt, li, start);
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-        periodic_locate_time += (std::clock()-start_time)/(double)CLOCKS_PER_SEC;
-#endif
+        loc = locate(p, offset, lt, li, loc);
 
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-        start_time = std::clock();
-#endif
         insert(p, offset, lt, loc, li, vh);
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-        periodic_insert_time += (std::clock()-start_time)/(double)CLOCKS_PER_SEC;
-#endif
       }
     }
   }
-
-#ifdef CGAL_PERIODIC_2_TRIANGULATION_2_PROFILE
-  total_time += (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
-#endif
-
 
   return vh;
 }
@@ -2391,7 +2351,7 @@ template<class Gt, class Tds>
 typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle Periodic_2_triangulation_2<
     Gt, Tds>::insert(const Point& p, const Offset &o, Locate_type lt,
     Face_handle loc, int li, Vertex_handle vh)
-// insert a point p, whose localisation is known (lt, f, i)
+// insert a point p, whose localization is known (lt, f, i)
 {
   Vertex_handle result;
   switch (lt) {
