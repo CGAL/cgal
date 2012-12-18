@@ -778,7 +778,8 @@ EXCLUDE_SYMBOLS        = Tr \
                          Vb \
                          Cb \
                          Fb \
-                         K
+                         K \
+                         Traits
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
