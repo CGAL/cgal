@@ -1,5 +1,5 @@
-#ifndef CGAL_KD_KERNEL_3_INTERFACE_H
-#define CGAL_KD_KERNEL_3_INTERFACE_H
+#ifndef CGAL_KD_KERNEL_D_INTERFACE_H
+#define CGAL_KD_KERNEL_D_INTERFACE_H
 
 #include <CGAL/functor_tags.h>
 #include <CGAL/transforming_iterator.h>
@@ -164,4 +164,4 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 };
 }
 
-#endif
+#endif // CGAL_KD_KERNEL_D_INTERFACE_H
