@@ -1882,26 +1882,29 @@ bool Periodic_2_triangulation_2<Gt, Tds>::flippable(Face_handle f, int i) {
   int j = nb->index(f);
 
   const Point *p[4];
-  Offset off[4];
 
-  // i
-  p[0] = &f->vertex(i)->point();
-  off[0] = get_offset_face(f, i);
-  // opposite
-  p[1] = &nb->vertex(j)->point();
-  off[1] = combine_offsets(get_offset_face(nb, j), get_neighbor_offset(nb, j, f, i));
-  // ccw
-  p[2] = &f->vertex(ccw(i))->point();
-  off[2] = get_offset_face(f, ccw(i));
-  // cw
-  p[3] = &f->vertex(cw(i))->point();
-  off[3] = get_offset_face(f, cw(i));
+  p[0] = &f->vertex(i)->point();      // i
+  p[1] = &nb->vertex(j)->point();     // opposite
+  p[2] = &f->vertex(ccw(i))->point(); // ccw
+  p[3] = &f->vertex(cw(i))->point();  // cw
 
-  // TODO(NGHK): Optimize predicates when off == 0
-  if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) != RIGHT_TURN)
-    return false;
-  if (orientation(*p[0], *p[1], *p[3], off[0], off[1], off[3]) != LEFT_TURN)
-    return false;
+  if (f->has_zero_offsets() && nb->has_zero_offsets()) {
+    if (orientation(*p[0], *p[1], *p[2]) != RIGHT_TURN)
+      return false;
+    if (orientation(*p[0], *p[1], *p[3]) != LEFT_TURN)
+      return false;
+  } else {
+    Offset off[4];
+    off[0] = get_offset_face(f, i);
+    off[1] = combine_offsets(get_offset_face(nb, j), get_neighbor_offset(nb, j, f, i));
+    off[2] = get_offset_face(f, ccw(i));
+    off[3] = get_offset_face(f, cw(i));
+    
+    if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) != RIGHT_TURN)
+      return false;
+    if (orientation(*p[0], *p[1], *p[3], off[0], off[1], off[3]) != LEFT_TURN)
+      return false;
+  }
 
   return true;
 }
@@ -1982,6 +1985,10 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
   Face_handle nb = f->neighbor(i);
   if (f->has_zero_offsets() && nb->has_zero_offsets()) {
     _tds.flip(f, i);
+
+    if (!is_1_cover())
+      insert_too_long_edge(f, ccw(i));
+
     return;
   }
 
