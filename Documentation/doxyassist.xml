@@ -1236,7 +1236,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Triangulation_3.tag</string>
           <string name="IMAGE_PATH">../Triangulation_3/doc/Triangulation_3/fig</string>
           <string name="EXAMPLE_PATH">../Triangulation_3/examples</string>
-          <bool name="BRIEF_MEMBER_DESC">false</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
             <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
