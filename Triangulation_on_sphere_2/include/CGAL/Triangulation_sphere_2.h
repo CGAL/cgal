@@ -27,8 +27,7 @@
 #include <boost/type_traits.hpp>
 #include <boost/type_traits/integral_constant.hpp>
 
-//TO DO
-// too_close find correspondign vertex, were the distance is to smal
+
 namespace CGAL {
 
 template < class Gt, class Tds > class Triangulation_sphere_2;
@@ -79,7 +78,7 @@ public:
   typedef typename Tds::Vertex_iterator         All_vertices_iterator;
 
 	
-	// This class is used to generate the Finite_*_iterators.
+	// This class is used to generate the Solid*_iterators.
 class Ghost_tester
 {
   const Triangulation_sphere_2 *t;
@@ -148,10 +147,9 @@ protected:
   Gt  _gt;
   Tds _tds;
  Face_handle _ghost;
- double _radius;
- double _minDistSquared;
-  double _minRadiusSquared;
- double _maxRadiusSquared;
+ double _minDistSquared;   //minimal distance of two points to each other
+  double _minRadiusSquared;//minimal distance of a point from center
+ double _maxRadiusSquared; //maximal distance of a point from center
  mutable Random rng;  
   
 
@@ -399,7 +397,6 @@ template <class Gt, class Tds >
 void
 Triangulation_sphere_2<Gt, Tds>::
 init(double radius){
-	_radius = radius;
 	double minRadius = radius*(1-pow(2, -50));
 	_minRadiusSquared = minRadius * minRadius;
 	double maxRadius = radius*(1+pow(2, -50));
@@ -416,7 +413,7 @@ template <class Gt, class Tds >
 Triangulation_sphere_2<Gt, Tds>::
 Triangulation_sphere_2(const Triangulation_sphere_2 &tr) 
   : _gt(tr._gt), _tds(tr._tds)
-	{init(tr._radius);}
+	{init(_gt._radius);}
 
 template <class Gt, class Tds >
 void
@@ -436,7 +433,7 @@ copy_triangulation(const Triangulation_sphere_2 &tr)
   _tds.clear();
   _gt = tr._gt;
   _tds = tr._tds;
-   init(tr._radius);
+   init(_gt._radius);
 }
 
   //Assignement
