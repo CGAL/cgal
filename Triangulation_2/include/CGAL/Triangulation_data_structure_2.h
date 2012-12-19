@@ -1776,8 +1776,7 @@ copy_tds(const TDS_src& tds_src,
         const ConvertVertex& convert_vertex,
         const ConvertFace& convert_face)
 {
-  if (this == &tds_src) return Vertex_handle();
-  if (vert != Vertex_handle()) 
+  if (vert != typename TDS_src::Vertex_handle()) 
     CGAL_triangulation_precondition( tds_src.is_vertex(vert));
 
   clear();
@@ -1790,11 +1789,11 @@ copy_tds(const TDS_src& tds_src,
   if(n == 0) {return Vertex_handle();}
   
   //initializes maps
-  Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
-  Unique_hash_map<Face_handle,Face_handle> fmap;
+  Unique_hash_map<typename TDS_src::Vertex_handle,Vertex_handle> vmap;
+  Unique_hash_map<typename TDS_src::Face_handle,Face_handle> fmap;
 
   // create vertices
-  Vertex_iterator vit1 = tds_src.vertices_begin();
+  typename TDS_src::Vertex_iterator vit1 = tds_src.vertices_begin();
   for( ; vit1 != tds_src.vertices_end(); ++vit1) {
     Vertex_handle vh = create_vertex( convert_vertex(*vit1) );
     vmap[vit1] = vh;
@@ -1802,7 +1801,7 @@ copy_tds(const TDS_src& tds_src,
   }
 
   //create faces 
-  Face_iterator fit1 = tds_src.faces().begin();
+  typename TDS_src::Face_iterator fit1 = tds_src.faces().begin();
   for( ; fit1 != tds_src.faces_end(); ++fit1) {
     Face_handle fh = create_face( convert_face(*fit1) );
     fmap[fit1] = fh;
@@ -1827,7 +1826,7 @@ copy_tds(const TDS_src& tds_src,
   // remove the post condition because it is false when copying the
   // TDS of a regular triangulation because of hidden vertices
   // CGAL_triangulation_postcondition( is_valid() );
-  return (vert == Vertex_handle())  ? Vertex_handle() : vmap[vert];
+  return (vert == typename TDS_src::Vertex_handle())  ? Vertex_handle() : vmap[vert];
 }
 
 //utilities for copy_tds
@@ -1865,6 +1864,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 copy_tds(const Tds &src, Vertex_handle vh)
   // return the vertex corresponding to vh in the new tds
 {
+  if (this == &src) return Vertex_handle();
   internal::TDS_2::Default_vertex_converter<Vertex,Vertex> setv;
   internal::TDS_2::Default_face_converter<Face,Face>  setf;
   return copy_tds(src,vh,setv,setf);
