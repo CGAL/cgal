@@ -43,7 +43,7 @@ class VectorC2
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Direction_2          Direction_2;
 
-  typedef cpp0x::array<FT, 2>               Rep;
+  typedef cpp11::array<FT, 2>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

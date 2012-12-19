@@ -49,7 +49,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
   BidirectionalIterator              beta;
   BidirectionalIterator              iter;
   CGAL_ch_precondition( first != last );
-  CGAL_ch_precondition( cpp0x::next(first) != last );
+  CGAL_ch_precondition( cpp11::next(first) != last );
 
   --last;
   CGAL_ch_precondition( *first != *last );
@@ -142,7 +142,7 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
   BidirectionalIterator              beta;
   BidirectionalIterator              iter;
   CGAL_ch_precondition( first != last );
-  CGAL_ch_precondition( cpp0x::next(first) != last );
+  CGAL_ch_precondition( cpp11::next(first) != last );
 
   --last;
   CGAL_ch_precondition(! equal_points(*first,*last) );

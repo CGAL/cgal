@@ -34,7 +34,7 @@ enum Intersection_type {FACET,EDGE,VERTEX,EMPTY,COPLNR};
 template <class Polyhedron,class Is_const>
 struct Intersection_types{
   typedef typename Polyhedron_types<Polyhedron,Is_const>::Halfedge_handle Intersection_info;
-  typedef cpp0x::tuple<Intersection_type,Intersection_info,bool,bool> Intersection_result;
+  typedef cpp11::tuple<Intersection_type,Intersection_info,bool,bool> Intersection_result;
 };
 
 
@@ -59,25 +59,25 @@ find_intersection(const typename Kernel::Point_3& p, const typename Kernel::Poin
   int nb_coplanar=(ab==COPLANAR?1:0) + (bc==COPLANAR?1:0) + (ca==COPLANAR?1:0);
   
   if ( nb_coplanar==0 )
-    return cpp0x::make_tuple(FACET,Intersection_info(fh->halfedge()),is_vertex_coplanar,is_vertex_opposite_coplanar);
+    return cpp11::make_tuple(FACET,Intersection_info(fh->halfedge()),is_vertex_coplanar,is_vertex_opposite_coplanar);
   
   if (nb_coplanar==1){
     if (ab==COPLANAR)
-      return cpp0x::make_tuple(EDGE,Intersection_info(fh->halfedge()->next()),is_vertex_coplanar,is_vertex_opposite_coplanar);
+      return cpp11::make_tuple(EDGE,Intersection_info(fh->halfedge()->next()),is_vertex_coplanar,is_vertex_opposite_coplanar);
     if (bc==COPLANAR)
-      return cpp0x::make_tuple(EDGE,Intersection_info(fh->halfedge()->next()->next()),is_vertex_coplanar,is_vertex_opposite_coplanar);
+      return cpp11::make_tuple(EDGE,Intersection_info(fh->halfedge()->next()->next()),is_vertex_coplanar,is_vertex_opposite_coplanar);
     CGAL_assertion(ca==COPLANAR);
-    return cpp0x::make_tuple(EDGE,Intersection_info(fh->halfedge()),is_vertex_coplanar,is_vertex_opposite_coplanar);
+    return cpp11::make_tuple(EDGE,Intersection_info(fh->halfedge()),is_vertex_coplanar,is_vertex_opposite_coplanar);
   }
   
   CGAL_assertion(nb_coplanar==2);
   
   if (ab!=COPLANAR)
-    return cpp0x::make_tuple(VERTEX,Intersection_info(fh->halfedge()->next()->next()),is_vertex_coplanar,is_vertex_opposite_coplanar);
+    return cpp11::make_tuple(VERTEX,Intersection_info(fh->halfedge()->next()->next()),is_vertex_coplanar,is_vertex_opposite_coplanar);
   if (bc!=COPLANAR)
-    return cpp0x::make_tuple(VERTEX,Intersection_info(fh->halfedge()),is_vertex_coplanar,is_vertex_opposite_coplanar);
+    return cpp11::make_tuple(VERTEX,Intersection_info(fh->halfedge()),is_vertex_coplanar,is_vertex_opposite_coplanar);
   CGAL_assertion(ca!=COPLANAR);
-  return cpp0x::make_tuple(VERTEX,Intersection_info(fh->halfedge()->next()),is_vertex_coplanar,is_vertex_opposite_coplanar);
+  return cpp11::make_tuple(VERTEX,Intersection_info(fh->halfedge()->next()),is_vertex_coplanar,is_vertex_opposite_coplanar);
 }
 
 

@@ -170,7 +170,7 @@ public:
   typedef typename Mesh_3::details::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
-  typedef CGAL::cpp0x::tuple<Point_3,Index,int> Intersection;
+  typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename IGT::FT         FT;
@@ -574,8 +574,8 @@ Construct_initial_points::operator()(OutputIterator pts,
     const Ray_3 ray_shot = ray(center, vector(CGAL::ORIGIN,*random_point));
     if(r_domain_.do_intersect_surface_object()(ray_shot)) {
       Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
-      *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
-                              CGAL::cpp0x::get<1>(intersection));
+      *pts++ = std::make_pair(CGAL::cpp11::get<0>(intersection),
+                              CGAL::cpp11::get<1>(intersection));
         
       --i;
         

@@ -149,9 +149,9 @@ void Polyhedron_demo_intersection_plugin::intersection()
   To_container to_container(new_item->polylines);
   To_infos to_infos(polylines_infos);
   CGAL::Dispatch_output_iterator<
-    CGAL::cpp0x::tuple<Polylines_container::value_type,
+    CGAL::cpp11::tuple<Polylines_container::value_type,
                        Polyline_info>,
-    CGAL::cpp0x::tuple<To_container, 
+    CGAL::cpp11::tuple<To_container, 
                        To_infos> > out_iterator(to_container,
                                                 to_infos);
 

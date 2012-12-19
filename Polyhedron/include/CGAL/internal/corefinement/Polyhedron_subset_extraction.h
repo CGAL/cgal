@@ -86,7 +86,7 @@ public:
       do{
         bool is_new_vertex;
         typename Vertices::iterator it_vertex;
-        ::CGAL::cpp0x::tie(it_vertex,is_new_vertex)=vertices.insert(std::make_pair(curr->vertex(),index));
+        ::CGAL::cpp11::tie(it_vertex,is_new_vertex)=vertices.insert(std::make_pair(curr->vertex(),index));
         if (is_new_vertex) {
           ++index;
           points.push_back(curr->vertex());

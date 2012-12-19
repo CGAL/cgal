@@ -88,7 +88,7 @@ _test_regular_neighbors_2( const Triangul & )
 
   // Create n+m-4 points within a disc of radius 2
   CGAL::Random_points_in_square_2<Bare_point> g(r);
-  CGAL::cpp0x::copy_n( g, n+m, std::back_inserter(points));
+  CGAL::cpp11::copy_n( g, n+m, std::back_inserter(points));
 
 
   CGAL::Random random;

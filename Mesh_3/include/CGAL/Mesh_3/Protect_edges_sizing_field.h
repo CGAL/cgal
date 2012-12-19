@@ -519,7 +519,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_balls_on_edges()
 {
   // Get features
-  typedef CGAL::cpp0x::tuple<Curve_segment_index,
+  typedef CGAL::cpp11::tuple<Curve_segment_index,
                              std::pair<Bare_point,Index>,
                              std::pair<Bare_point,Index> >    Feature_tuple;
   typedef std::vector<Feature_tuple>                          Input_features;
@@ -531,17 +531,17 @@ insert_balls_on_edges()
   for ( typename Input_features::iterator fit = input_features.begin(),
        end = input_features.end() ; fit != end ; ++fit )
   {
-    const Curve_segment_index& curve_index = CGAL::cpp0x::get<0>(*fit);
+    const Curve_segment_index& curve_index = CGAL::cpp11::get<0>(*fit);
     if ( ! is_treated(curve_index) )
     {
 #ifdef PROTECTION_DEBUG
       std::cerr << "** treat curve #" << curve_index << std::endl;
 #endif
-      const Bare_point& p = CGAL::cpp0x::get<1>(*fit).first;
-      const Bare_point& q = CGAL::cpp0x::get<2>(*fit).first; 
+      const Bare_point& p = CGAL::cpp11::get<1>(*fit).first;
+      const Bare_point& q = CGAL::cpp11::get<2>(*fit).first; 
       
-      const Index& p_index = CGAL::cpp0x::get<1>(*fit).second;
-      const Index& q_index = CGAL::cpp0x::get<2>(*fit).second;
+      const Index& p_index = CGAL::cpp11::get<1>(*fit).second;
+      const Index& q_index = CGAL::cpp11::get<2>(*fit).second;
       
       Vertex_handle vp,vq;
       if ( ! domain_.is_cycle(p, curve_index) )

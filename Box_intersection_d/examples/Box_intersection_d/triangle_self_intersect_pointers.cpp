@@ -35,7 +35,7 @@ int main() {
     typedef CGAL::Join_input_iterator_3<Pts,Pts,Pts,Creator> Triangle_gen;
     Pts    points( 1); // in centered cube [-1,1)^3
     Triangle_gen triangle_gen( points, points, points);
-    CGAL::cpp0x::copy_n( triangle_gen, 10, std::back_inserter(triangles));
+    CGAL::cpp11::copy_n( triangle_gen, 10, std::back_inserter(triangles));
 
     // Create the corresponding vector of bounding boxes
     std::vector<Box> boxes;

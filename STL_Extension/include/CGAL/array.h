@@ -42,7 +42,7 @@ using boost::array;
 namespace cpp0x = cpp11;
 
 // This using is just for short-term backward-compat, people should take the
-// habit to use CGAL::cpp0x::array.
+// habit to use CGAL::cpp11::array.
 using cpp11::array;
 
 
