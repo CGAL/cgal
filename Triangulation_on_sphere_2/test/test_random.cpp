@@ -56,7 +56,7 @@ int main(){
 	
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =pow(2,5);
+	nu_of_pts =pow(2,10);
 	radius=6000000;
 	CGAL::Timer time;
 
@@ -66,7 +66,8 @@ int main(){
 	
 	
 	std::vector<Point> points;
-	std::vector<Point> points2(points.size()+1);
+	//std::vector<Point> points2(points.size()+1);
+	std::vector<Point> points2;
 	//std::vector<Vertex_handle> vertices;
 	//vertices.reserve(nu_of_pts);
 	
@@ -139,13 +140,7 @@ int main(){
 	time.stop();
 	std::cout << "Delaunay on sphere:" << time.time() << std::endl;
 	
-	/*time.reset();
-	time.start();
-	Delaunay_fast T_fast_on(points.begin(), points.end());
-	
-	time.stop();
-	std::cout << "Delaunay fast location on sphere  :" << time.time() << std::endl;*/
-	
+		
 	
 	time.reset();
 	time.start();
@@ -153,7 +148,7 @@ int main(){
 	T_fast_on2.insert(Point(0,0,0));
 	T_fast_on2.insert(points.begin(), points.end());
 	time.stop();
-	std::cout << "Delaunay fast location on sphere  with dummy:" << time.time() << std::endl;
+	std::cout << "Delaunay fast location on sphere  :" << time.time() << std::endl;
 
 	
 	
