@@ -348,7 +348,10 @@ private:
 public:
   void clear();
   Vertex_handle copy_tds(const Tds &tds, Vertex_handle = Vertex_handle());
-  
+
+  template <class TDS_src,class ConvertVertex,class ConvertFace>
+  Vertex_handle copy_tds(const TDS_src&, typename TDS_src::Vertex_handle,const ConvertVertex&,const ConvertFace&);
+
   // I/O
   Vertex_handle file_input(std::istream& is, bool skip_first=false);
   void file_output(std::ostream& os,
@@ -1764,19 +1767,22 @@ is_valid(bool verbose, int level) const
   return result;
 }
 
-template <  class Vb, class Fb>
+template <class Vb, class Fb>
+template <class TDS_src,class ConvertVertex,class ConvertFace>
 typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
 Triangulation_data_structure_2<Vb,Fb>::
-copy_tds(const Tds &tds, Vertex_handle vh)
-  // return the vertex corresponding to vh in the new tds
+copy_tds(const TDS_src& tds_src,
+        typename TDS_src::Vertex_handle vert,
+        const ConvertVertex& convert_vertex,
+        const ConvertFace& convert_face)
 {
-  if (this == &tds) return Vertex_handle();
-  if (vh != Vertex_handle()) 
-    CGAL_triangulation_precondition( tds.is_vertex(vh));
+  if (this == &tds_src) return Vertex_handle();
+  if (vert != Vertex_handle()) 
+    CGAL_triangulation_precondition( tds_src.is_vertex(vert));
 
   clear();
-  size_type n = tds.number_of_vertices();
-  set_dimension(tds.dimension());
+  size_type n = tds_src.number_of_vertices();
+  set_dimension(tds_src.dimension());
 
   // Number of pointers to cell/vertex to copy per cell.
   int dim = (std::max)(1, dimension() + 1);
@@ -1788,26 +1794,30 @@ copy_tds(const Tds &tds, Vertex_handle vh)
   Unique_hash_map<Face_handle,Face_handle> fmap;
 
   // create vertices
-  Vertex_iterator vit1 = tds.vertices_begin();
-  for( ; vit1 != tds.vertices_end(); ++vit1) {
-    vmap[vit1] = create_vertex(vit1);
+  Vertex_iterator vit1 = tds_src.vertices_begin();
+  for( ; vit1 != tds_src.vertices_end(); ++vit1) {
+    Vertex_handle vh = create_vertex( convert_vertex(*vit1) );
+    vmap[vit1] = vh;
+    convert_vertex(*vit1, *vh);
   }
 
   //create faces 
-  Face_iterator fit1 = tds.faces().begin();
-  for( ; fit1 != tds.faces_end(); ++fit1) {
-    fmap[fit1] = create_face(fit1);
+  Face_iterator fit1 = tds_src.faces().begin();
+  for( ; fit1 != tds_src.faces_end(); ++fit1) {
+    Face_handle fh = create_face( convert_face(*fit1) );
+    fmap[fit1] = fh;
+    convert_face(*fit1, *fh);
   }
 
   //link vertices to a cell 
-  vit1 = tds.vertices_begin();
-  for ( ; vit1 != tds.vertices_end(); vit1++) {
+  vit1 = tds_src.vertices_begin();
+  for ( ; vit1 != tds_src.vertices_end(); vit1++) {
     vmap[vit1]->set_face(fmap[vit1->face()]);
   }
 
   //update vertices and neighbor pointers
-  fit1 = tds.faces().begin();
-  for ( ; fit1 != tds.faces_end(); ++fit1) {
+  fit1 = tds_src.faces().begin();
+  for ( ; fit1 != tds_src.faces_end(); ++fit1) {
       for (int j = 0; j < dim ; ++j) {
 	fmap[fit1]->set_vertex(j, vmap[fit1->vertex(j)] );
 	fmap[fit1]->set_neighbor(j, fmap[fit1->neighbor(j)]);
@@ -1817,9 +1827,48 @@ copy_tds(const Tds &tds, Vertex_handle vh)
   // remove the post condition because it is false when copying the
   // TDS of a regular triangulation because of hidden vertices
   // CGAL_triangulation_postcondition( is_valid() );
-  return (vh == Vertex_handle())  ? Vertex_handle() : vmap[vh];
+  return (vert == Vertex_handle())  ? Vertex_handle() : vmap[vert];
 }
- 
+
+//utilities for copy_tds
+namespace internal { namespace TDS_2{
+  template <class Vertex_src,class Vertex_tgt>
+  struct Default_vertex_converter;
+  template <class Face_src,class Face_tgt>
+  struct Default_face_converter;
+  
+  template <class Vertex>
+  struct Default_vertex_converter<Vertex,Vertex>
+  {
+    inline
+    const Vertex& operator()(const Vertex& src) const {
+      return src;
+    }
+    
+    void operator()(const Vertex&,Vertex&) const {}
+  };
+  
+  template <class Face>
+  struct Default_face_converter<Face,Face>{
+    inline
+    const Face& operator()(const Face& src) const {
+      return src;
+    } 
+    
+    void operator()(const Face&,Face&) const {}
+  };
+} } //namespace internal::TDS_2
+
+template <  class Vb, class Fb>
+typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
+Triangulation_data_structure_2<Vb,Fb>::
+copy_tds(const Tds &src, Vertex_handle vh)
+  // return the vertex corresponding to vh in the new tds
+{
+  internal::TDS_2::Default_vertex_converter<Vertex,Vertex> setv;
+  internal::TDS_2::Default_face_converter<Face,Face>  setf;
+  return copy_tds(src,vh,setv,setf);
+}
 
 template < class Vb, class Fb>
 void
