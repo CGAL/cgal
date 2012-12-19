@@ -1,3 +1,5 @@
+#include <boost/iterator/transform_iterator.hpp>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
@@ -34,17 +36,10 @@ typedef CGAL::Delaunay_triangulation_3<K>         Delaunay;
 
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
 typedef CGAL::Projection_sphere_traits_3<K>							Gt2;
-typedef CGAL::Delaunay_triangulation_sphere_2<Gt>              RTOS;
-typedef CGAL::Delaunay_triangulation_sphere_2<Gt2>              RTOS2;
-typedef RTOS::Vertex_handle                             Vertex_handle;
-typedef RTOS::Face_handle                                 Face_handle;
-typedef K::Point_3                                            Point;
-typedef RTOS::All_faces_iterator                            Face_iterator;
-typedef RTOS::All_vertices_iterator                           Vertex_iterator;
-typedef RTOS::Solid_faces_iterator						Solid_faces_iterator;
-typedef RTOS::All_edges_iterator						All_edges_iterator;
-typedef RTOS::Locate_type                                 Locate_type;
-typedef RTOS::Edge                                               Edge;
+typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                   RTOS;
+typedef CGAL::Delaunay_triangulation_sphere_2<Gt2>                  RTOS2;
+typedef K::Point_3                                                 Point;
+
 
 
 
@@ -59,10 +54,9 @@ typedef CGAL::Creator_uniform_3<double, Point>  PointCreator;
 int main(){
 	
 	
-	
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =pow(2,23);
+	nu_of_pts =pow(2,5);
 	radius=6000000;
 	CGAL::Timer time;
 
@@ -73,8 +67,8 @@ int main(){
 	
 	std::vector<Point> points;
 	std::vector<Point> points2(points.size()+1);
-	std::vector<Vertex_handle> vertices;
-	vertices.reserve(nu_of_pts);
+	//std::vector<Vertex_handle> vertices;
+	//vertices.reserve(nu_of_pts);
 	
 	points2.push_back(Point(0,0,0));
 	
@@ -84,7 +78,8 @@ int main(){
 		points2.push_back(p);
 		on_sphere++;
 	}
-		RTOS rtos;
+	//Delaunay_traits
+	RTOS rtos;
 	rtos.set_radius(radius);
 
 	std::cout<<" ***STARTING***"<<std::endl;
@@ -96,19 +91,26 @@ int main(){
 	
 
 	
-	//Triangulation with points on the sphere
-	RTOS2 rtos2;
-	rtos2.set_radius(radius);
+	//Triangulation with points on the sphere (projection_traits)
+	Gt2 traits(K::Point_3(0,0,0));
+	RTOS2 dtos(traits);
+	dtos.set_radius(radius);
+	Gt2::Construct_projected_point_3 cst =
+    traits.construct_projected_point_3_object();
 	
+		
 	time.reset();
 	time.start();
-	rtos2.insert(points.begin(),points.end());
+	dtos.insert(
+				boost::make_transform_iterator(points.begin(), cst),
+				boost::make_transform_iterator(points.end(), cst)
+				);
 	time.stop();
 	std::cout<<"triangulation sphere projection traits:   "<< time.time()<<std::endl;
 	
 	
 	
-	/*	
+	
 	Polyhedron_3 poly;
 	
 	time.reset();
@@ -116,6 +118,7 @@ int main(){
 	CGAL::convex_hull_3(points2.begin(), points2.end(), poly);
 	time.stop();
 	std::cout << "Static :" << time.time() <<" "<<  std::endl;
+
 	
 	poly.clear();
 		
@@ -125,7 +128,7 @@ int main(){
 	time.start();
 	CGAL::convex_hull_incremental_3( points2.begin(), points2.end(), poly, false);
 	time.stop();
-	std::cout << "incremental EPIC :" << time.time() << std::endl;*/
+	std::cout << "incremental EPIC :" << time.time() << std::endl;
 	
 		
 	time.reset();

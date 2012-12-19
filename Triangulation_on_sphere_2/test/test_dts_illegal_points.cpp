@@ -12,8 +12,14 @@ typedef CGAL::Delaunay_triangulation_sphere_2<Pgt>               PDTOS;
 
 
 void testProjection(){
-	PDTOS pdtos;
-	typedef PDTOS::Point												Point;
+	typedef K::Point_3                             Point;
+	Pgt traits(Point(0,0,0));
+	PDTOS pdtos(traits);
+	
+	Pgt::Construct_projected_point_3 cst =
+    traits.construct_projected_point_3_object();
+
+	
 
 	
 	double radius = 1000;
@@ -56,10 +62,11 @@ void testProjection(){
 	points.push_back(p7);
 	
 	
-		
+	pdtos.insert(
+				boost::make_transform_iterator(points.begin(), cst),
+				boost::make_transform_iterator(points.end(), cst)
+				);	
 	
-	pdtos.insert(points.begin(), points.end());
-	double anz = pdtos.number_of_vertices();
 	assert(pdtos.number_of_vertices()==5);
 	pdtos.is_valid();
 	

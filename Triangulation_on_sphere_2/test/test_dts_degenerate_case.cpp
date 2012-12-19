@@ -3,12 +3,14 @@
 #include <CGAL/Projection_sphere_traits_3.h>
 #include <CGAL/Triangulation_sphere_2.h>
 #include <CGAL/Delaunay_triangulation_sphere_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
-typedef CGAL::Projection_sphere_traits_3<K>						Gt2;
+typedef CGAL::Projection_sphere_traits_3<K>						  Projection_traits;
 typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                 DTOS;
-typedef CGAL::Delaunay_triangulation_sphere_2<Gt2>                 PDTOS;
+typedef CGAL::Delaunay_triangulation_sphere_2<Projection_traits>      PDTOS;
 //typedef DTOS::Point												Point;
 typedef DTOS::Face_handle										Face_handle;
 
@@ -85,8 +87,8 @@ bool are_equal(Triangul triA, Triangul triB){
 
 
 
-template<class DTOS>
-void test(){
+//template<class DTOS>
+void test_Delaunay(){
 	
 //tests whether it is possible to insert points in degenerated positions and whether the result is uniquely defined after this.	
 	double radius = 100;
@@ -192,19 +194,108 @@ void test(){
 			  
 	assert(are_equal(dtos3, dtos2)==true);		
 	assert(are_equal(dtos3, dtos)==true);
-	assert(are_equal(dtos, dtos2)==true);
-	
-	
-	
+	assert(are_equal(dtos, dtos2)==true);	
 		
 
 }
 
+void test_Projection(){
+	Projection_traits traits(K::Point_3(0,0,0));
+	PDTOS pdtos(traits);
+	
+	Projection_traits::Construct_projected_point_3 cst =
+    traits.construct_projected_point_3_object();
+	
+	
+	
+	//tests whether it is possible to insert points in degenerated positions and whether the result is uniquely defined after this.	
+	double radius = 100;
+	double radius2 = radius*radius;
+	typedef K::Point_3 Point_3;
+	//DTOS dtos;
+	PDTOS pdtos2(traits);
+	PDTOS pdtos3(traits);
+	pdtos.set_radius(radius);
+	pdtos2.set_radius(radius);
+	pdtos3.set_radius(radius);
+	std::vector<K::Point_3> points;
+	std::vector<K::Point_3> points2;
+	
+	
+	
+	// insert 5 coplanar points. Points are also coplanar with the center of the sphere
+	Point_3 p1=Point_3(radius/sqrt(2), radius/sqrt(2), 0);
+	Point_3 p2 = Point_3(-1*radius/sqrt(2), radius/sqrt(2), 0);
+	Point_3 p3 = Point_3(-1*radius/sqrt(2), -1*radius/sqrt(2), 0);
+	Point_3 p4 = Point_3(radius/sqrt(2), -1*radius/sqrt(2), 0);
+	Point_3 p5 = Point_3(radius,0,0);
+	Point_3 p6 = Point_3(0,0,radius);
+	points.push_back(p1);
+	points.push_back(p2);
+	points.push_back(p3);
+	points.push_back(p4);
+	points.push_back(p5);
+	points.push_back(p6);
+	points.resize(6);
+	
+	pdtos.insert(
+				boost::make_transform_iterator(points.begin(), cst),
+				boost::make_transform_iterator(points.end(), cst)
+	);
+	pdtos.is_valid();
+	
+	//Delaunay-triangulation_sphere_traits
+		
+	
+	//insert   coplanar Points. Points are coplanar but not coplanar with the center of the sphere
+	pdtos.clear();
+	pdtos2.clear();
+	pdtos3.clear();
+	Point_3 p0 = Point_3(0,0,radius);
+	points2.push_back(p0);
+	Point_3 p21 = Point_3(1/sqrt(2),1/sqrt(2),sqrt(radius2-1));
+	points2.push_back(p21);
+	
+	Point_3 p22 = Point_3(-1/sqrt(2), -1/sqrt(2), sqrt(radius2-1));
+	points2.push_back(p22);
+	
+	Point_3 p23 = Point_3(0,1,sqrt(radius2-1));
+	points2.push_back(p23);
+	
+	Point_3 p24 = Point_3(1,0,sqrt(radius2-1));
+	points2.push_back(p24);
+	
+	Point_3 p25 = Point_3(-1/sqrt(2), 1/sqrt(2), sqrt(radius2-1));
+	points2.push_back(p25);
+	
+	Point_3 p26 = Point_3(1/sqrt(2), -1/sqrt(2), sqrt(radius2-1));
+	points2.push_back(p26);
+	
+	Point_3 p27 = Point_3(radius, 0 ,0);
+	points2.push_back(p27);
+	
+	
+	points2.resize(7);
+	
+	pdtos2.insert(
+				boost::make_transform_iterator(points.begin(), cst),
+				boost::make_transform_iterator(points.end(), cst)
+	);
+	pdtos2.is_valid();
+	
+	
+	
+	
+}
+
+
 
 int main(){
 	std::cout<<"testing with Delaunay_triangulation_sphere_traits:  "<<std::endl;
-	test<DTOS>();
+	//test<DTOS>();
+	test_Delaunay();
 	std::cout<< "testing with Projection_sphere_traits:  "<<std::endl;
-	test<PDTOS>();
+	//test<PDTOS>();
+	test_Projection();
 return 0;
 }
