@@ -140,47 +140,52 @@ protected:
     virtual void create_vertex(Vertex_const_handle v1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
-      std::cout << "v1: " << v1->point() << ", " << v1->data() << std::endl;
-      std::cout << "v2: " << v2->point() << ", " << v2->data() << std::endl;
+      std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
+      std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
       v->set_data(v1->data() + v2->data());
+      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
     }
 
     /*! Create a vertex v that mathces v1, which lies of the edge e2. */
     virtual void create_vertex(Vertex_const_handle  v1, Halfedge_const_handle e2,
                                Vertex_handle v) const
     {
-      std::cout << "v1: " << v1->point() << ", " << v1->data() << std::endl;
-      std::cout << "e2: " << e2->source()->point() << ", " << e2->data()
+      std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
+      std::cout << "  e2: " << e2->source()->point() << ", " << e2->data()
                 << std::endl;
       v->set_data(v1->data() + e2->data());
+      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
     }
     
     /*! Create a vertex v that mathces v1, contained in the face f2. */
     virtual void create_vertex(Vertex_const_handle v1, Face_const_handle f2,
                                Vertex_handle v) const
     {
-      std::cout << "v1: " << v1->point() << ", " << v1->data() << std::endl;
-      std::cout << "f2: " << f2->data() << std::endl;
+      std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
+      std::cout << "  f2: " << f2->data() << std::endl;
       v->set_data(v1->data() + f2->data());
+      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
     }
 
     /*! Create a vertex v that mathces v2, which lies of the edge e1. */
     virtual void create_vertex(Halfedge_const_handle e1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
-      std::cout << "e1: " << e1->source()->point() << ", " << e1->data()
+      std::cout << "  e1: " << e1->source()->point() << ", " << e1->data()
                 << std::endl;
-      std::cout << "v2: " << v2->point() << ", " << v2->data() << std::endl;
+      std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
       v->set_data(e1->data() + v2->data());
+      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
     }
 
     /*! Create a vertex v that mathces v2, contained in the face f1. */
     virtual void create_vertex(Face_const_handle f1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
-      std::cout << "f1: " << f1->data() << std::endl;
-      std::cout << "v2: " << v2->point() << ", " << v2->data() << std::endl;
+      std::cout << "  f1: " << f1->data() << std::endl;
+      std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
       v->set_data(f1->data() + v2->data());
+      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
     }
 
     /*! Create a vertex v that mathces the intersection of the edges e1 and e2.
@@ -189,11 +194,12 @@ protected:
                                Halfedge_const_handle e2,
                                Vertex_handle v) const
     {
-      std::cout << "e1: " << e1->source()->point() << ", " << e1->data()
+      std::cout << "  e1: " << e1->source()->point() << ", " << e1->data()
                 << std::endl;
-      std::cout << "e2: " << e2->source()->point() << ", " << e2->data()
+      std::cout << "  e2: " << e2->source()->point() << ", " << e2->data()
                 << std::endl;
       v->set_data(e1->data() + e2->data());
+      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
     }
 
     /*! Create an edge e that matches the overlap between e1 and e2. */
