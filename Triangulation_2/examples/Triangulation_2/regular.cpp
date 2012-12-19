@@ -11,15 +11,16 @@ typedef CGAL::Regular_triangulation_2<Traits> Regular_triangulation;
 
 int main()
 {
-   Regular_triangulation rt;
    std::ifstream in("data/regular.cin");
 
    Regular_triangulation::Weighted_point wp;
    int count = 0;
+   std::vector<Regular_triangulation::Weighted_point> wpoints;
    while(in >> wp){
        count++;
-     rt.insert(wp);
+     wpoints.push_back(wp);
    }
+   Regular_triangulation rt(wpoints.begin(), wpoints.end());
    rt.is_valid();
    std::cout << "number of inserted points : " << count << std::endl;
    std::cout << "number of vertices :  " ;

@@ -95,6 +95,13 @@ copy constructor. All the vertices and faces are duplicated.
 Delaunay_triangulation_2( 
 const Delaunay_triangulation_2<Traits,Tds> &tr); 
 
+/*!
+Equivalent to constructing an empty triangulation with the optional traits class argument and calling insert(first,last).
+*/
+template < class InputIterator >
+Delaunay_triangulation_2<Traits,Tds> dt ( InputIterator first, InputIterator last, Traits gt = Traits());
+
+
 /// @} 
 
 /// \name Insertion and Removal 

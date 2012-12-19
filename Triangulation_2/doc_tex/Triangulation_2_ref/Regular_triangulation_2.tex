@@ -183,6 +183,11 @@ hidden vertices.}
 \ccConstructor{Regular_triangulation_2(const Regular_triangulation_2 &rt);}
 {Copy constructor.}
 
+\ccConstructor{template < class InputIterator>
+               Regular_triangulation_2(
+               InputIterator first, InputIterator last,
+               const Delaunay_triangulation_2<Traits,Tds> &tr);}
+{Equivalent to constructing an empty triangulation with the optional traits class argument and calling insert(first,last).}
 
 \ccHeading{Insertion and Removal}
 
