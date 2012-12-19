@@ -488,7 +488,7 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
       // We have a handle from the current event, representing the right end
       // of the subcurve - use it to insert the subcurve.
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
-        std::cout << "CGAL_CSLV call insert_from_right_vertex" << std::endl;
+      std::cout << "CGAL_CSLV call insert_from_right_vertex" << std::endl;
 #endif
       res = this->insert_from_right_vertex(cv, he_right, sc);
     }
@@ -499,7 +499,37 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
         std::cout << "CGAL_CSLV call insert_in_face_interior" << std::endl;
 #endif
-      res = this->insert_in_face_interior(cv, sc);
+      Vertex_handle v_left = last_event->vertex_handle();
+      if ((v_left != m_invalid_vertex) && (v_left->degree() > 0)) {
+        // The left vertex, v_left, is a boundary vertex, which already has
+        // some incident halfedges. We look for the predecessor halfedge and
+        // insert the curve from this left vertex.
+        Arr_parameter_space bx = last_event->parameter_space_in_x();
+        Arr_parameter_space by = last_event->parameter_space_in_y();
+        CGAL_assertion((bx != ARR_INTERIOR) || (by != ARR_INTERIOR));
+        Halfedge_handle l_prev = Halfedge_handle
+          (m_top_traits->locate_around_boundary_vertex(&(*v_left), _curve(cv),
+                                                       ARR_MIN_END, bx, by));
+        res = this->insert_from_left_vertex(cv, l_prev, sc);
+      }
+      else {
+        Event* curr_event = this->current_event();
+        Vertex_handle v_right = curr_event->vertex_handle();
+        if ((v_right != m_invalid_vertex) && (v_right->degree() > 0)) {
+          // The right vertex v_right is a boundary vertex which already has
+          // some incident halfedges. We look for the predecessor halfedge and
+          // insert the curve from this right vertex.
+          Arr_parameter_space bx = curr_event->parameter_space_in_x();
+          Arr_parameter_space by = curr_event->parameter_space_in_y();
+          CGAL_assertion((bx != ARR_INTERIOR) || (by != ARR_INTERIOR));
+          Halfedge_handle r_prev = Halfedge_handle
+            (m_top_traits->locate_around_boundary_vertex(&(*v_right), _curve(cv),
+                                                         ARR_MAX_END, bx, by));
+          res = this->insert_from_right_vertex (cv, r_prev, sc);
+        }
+        else
+          res = this->insert_in_face_interior(cv, sc);
+      }
     }
   } 
   else 
@@ -616,71 +646,29 @@ insert_in_face_interior (const X_monotone_curve_2& cv, Subcurve* sc)
 
   // Check if the vertex to be associated with the left end of the curve has
   // already been created.
-  Event         *last_event = last_event_on_subcurve(sc);
+  Event* last_event = last_event_on_subcurve(sc);
   Vertex_handle  v1 = last_event->vertex_handle();
-  bool           create_v1 = false;
+  CGAL_assertion((v1 == m_invalid_vertex) || (v1->degree() == 0));
 
   if (v1 == m_invalid_vertex)
-  {
-    // Mark that we should create the vertex v1 later on (if we created it
-    // now, and ended up calling insert_from_right_vertex(), this vertex
-    // would be constructed twice!)
-    create_v1 = true;
-  }
-  else if (v1->degree() > 0)
-  {
-    // In this case the left vertex v1 is a boundary vertex which already has
-    // some incident halfedges. We look for the predecessor halfedge and
-    // and insert the curve from this left vertex.
-    Arr_parameter_space   bx = last_event->parameter_space_in_x();
-    Arr_parameter_space   by = last_event->parameter_space_in_y();
-
-    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
-
-    Halfedge_handle l_prev = Halfedge_handle
-      (m_top_traits->locate_around_boundary_vertex (&(*v1), _curve(cv),
-                                                    ARR_MIN_END, bx, by));
-    
-    return (this->insert_from_left_vertex (cv, l_prev, sc));
-  }
+    // Create the vertex to be associated with the left end of the curve.
+    v1 = m_arr_access.create_vertex (_point (last_event->point()));
 
   // Check if the vertex to be associated with the right end of the curve has
   // already been created.
-  Event         *curr_event = this->current_event();
+  Event* curr_event = this->current_event();
   Vertex_handle  v2 = curr_event->vertex_handle();
+  CGAL_assertion((v2 == m_invalid_vertex) || (v2->degree() == 0));
 
   if (v2 == m_invalid_vertex)
-  {
     // Create the vertex to be associated with the right end of the curve.
     v2 = m_arr_access.create_vertex (_point (curr_event->point()));
-  }
-  else if (v2->degree() > 0)
-  {
-    // In this case the right vertex v2 is a boundary vertex which already has
-    // some incident halfedges. We look for the predecessor halfedge and
-    // and insert the curve from this right vertex.
-    Arr_parameter_space   bx = curr_event->parameter_space_in_x();
-    Arr_parameter_space   by = curr_event->parameter_space_in_y();
-
-    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
-
-    Halfedge_handle r_prev = Halfedge_handle
-      (m_top_traits->locate_around_boundary_vertex (&(*v2), _curve(cv),
-                                                    ARR_MAX_END, bx, by));
-    
-    return (this->insert_from_right_vertex (cv, r_prev, sc));
-  }
-
-  // If necessary, create the vertex to be associated with the left end
-  // of the curve.
-  if (create_v1)
-    v1 = m_arr_access.create_vertex (_point (last_event->point()));
 
   // Perform the insertion between the two (currently isolated) vertices in
   // the interior of the current top face, as given by the helper class.
   Halfedge_handle  res =
-    m_arr_access.insert_in_face_interior_ex (m_helper.top_face(), _curve(cv), ARR_LEFT_TO_RIGHT,
-                                             v1, v2);
+    m_arr_access.insert_in_face_interior_ex (m_helper.top_face(), _curve(cv),
+                                             ARR_LEFT_TO_RIGHT, v1, v2);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
