@@ -185,7 +185,7 @@ A model of \ccc{ConvertVertex} must provide two operator()'s that are responsibl
 \ccc{void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt);} This operator is meant to be used in case heavy data should transferred to \ccc{v_tgt}.
 A model of ConvertCell must provide two operator()'s that are responsible for converting the source cell \ccc{c_src} into the target cell:
 \ccc{Cell operator()(const TDS_src::Cell& c_src);} This operator is used to create the cell from \ccc{c_src}.
-\ccc{Cell operator()(const TDS_src::Cell& c_src, Cell& c_tgt);} This operator is meant to be used in case heavy data should transferred to \ccc{c_tgt}. 
+\ccc{void operator()(const TDS_src::Cell& c_src, Cell& c_tgt);} This operator is meant to be used in case heavy data should transferred to \ccc{c_tgt}. 
 \ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds_src} or is \ccc{Vertex_handle()}.}}
 
 \ccMethod{void swap(TriangulationDataStructure_3 & tds1);} 

@@ -474,7 +474,7 @@ otherwise `Vertex_handle()` is returned.
   - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt);` This operator is meant to be used in case heavy data should transferred to `v_tgt`. 
  - A model of ConvertCell must provide two operator()'s that are responsible for converting the source cell `c_src` into the target cell:
   - `Cell operator()(const TDS_src::Cell& c_src);` This operator is used to create the cell from `c_src`.
-  - `Cell operator()(const TDS_src::Cell& c_src, Cell& c_tgt);` This operator is meant to be used in case heavy data should transferred to `c_tgt`.
+  - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt);` This operator is meant to be used in case heavy data should transferred to `c_tgt`.
 
 \pre The optional argument `v` is a vertex of `tds_src` or is `Vertex_handle()`.
 */
