@@ -112,8 +112,8 @@ public:
     // With one degenerated segment, where source=target.
     if (pt == end)
       {
-	m_segments.push_back(Segment_2(*ps,*ps));
-	return;
+        m_segments.push_back(Segment_2(*ps,*ps));
+        return;
       }
 
     // Construct a segment from each to adjacent points.
@@ -126,11 +126,23 @@ public:
   }
 
   /*!
+   * Append a segment to the (x-monotone) polyline.
+   * Warning: This is a risky function! Don't use it! Prefer the
+   *          provided implementation in the traits class.
+   * \param seg The new segment to be appended to the polyline.
+   * \pre If the polyline is not empty, seg source must be the
+   *      same as the target point of the last segment in the polyline
+   *      (thus it must extend it to the right).
+   */
+  inline void push_back (const Segment_2& seg)
+  {
+    this->m_segments.push_back (seg);
+  }
+
+  /*!
    * Append a point to the polyline.
    * To properly implemented this function the traits class is needed,
    * thus it is deprecated.
-   * \pre The last segment of the polyline is bounded.
-   * TODO: Implement the alternative in the traits class
    */
   CGAL_DEPRECATED void push_back (const Point_2 & p)
   {
@@ -154,21 +166,21 @@ public:
     for (i = 0; i < n; ++i)
     {
       if (i > 0)
-	bbox = bbox +(*this)[i].bbox();
+        bbox = bbox +(*this)[i].bbox();
       else
-	bbox = (*this)[i].bbox();
+        bbox = (*this)[i].bbox();
     }
 
     return (bbox);
   }
 
-  class Point_const_iterator;
-  friend class Point_const_iterator;
-  typedef std::reverse_iterator<Point_const_iterator>
-     Point_const_reverse_iterator;
+  class const_iterator;
+  friend class const_iterator;
+  typedef std::reverse_iterator<const_iterator>
+     const_reverse_iterator;
 
   /*! An iterator for the polyline points. */
-  CGAL_DEPRECATED class Point_const_iterator
+  CGAL_DEPRECATED class const_iterator
   {
   public:
 
@@ -191,22 +203,22 @@ public:
      * \param cv The scanned curve.
      * \param index The index of the segment.
      */
-    Point_const_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
+    const_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
       m_cvP(cvP),
       m_index(index)
     {
       if (m_cvP == NULL)
-  	m_num_pts = 0;
+        m_num_pts = 0;
       else
-  	m_num_pts =
-  	  (m_cvP->number_of_segments() == 0) ?
+        m_num_pts =
+          (m_cvP->number_of_segments() == 0) ?
         0 : static_cast<int>(m_cvP->number_of_segments() + 1);
     }
 
   public:
 
     /*! Default constructor. */
-    Point_const_iterator() :
+    const_iterator() :
       m_cvP(NULL),
       m_num_pts(0),
       m_index(-1)
@@ -229,7 +241,7 @@ public:
       else
       {
         // Return the target of the(i-1)'st segment.
-  	return ((*m_cvP)[m_index - 1]).target();
+        return ((*m_cvP)[m_index - 1]).target();
       }
     }
 
@@ -243,44 +255,44 @@ public:
     }
 
     /*! Increment operators. */
-    Point_const_iterator& operator++()
+    const_iterator& operator++()
     {
       if (m_cvP != NULL && m_index < m_num_pts)
-  	++m_index;
+        ++m_index;
       return (*this);
     }
 
-    Point_const_iterator operator++ (int)
+    const_iterator operator++ (int)
     {
-      Point_const_iterator  temp = *this;
+      const_iterator  temp = *this;
       if (m_cvP != NULL && m_index < m_num_pts)
-  	++m_index;
+        ++m_index;
       return (temp);
     }
 
     /*! Decrement operators. */
-    Point_const_iterator& operator-- ()
+    const_iterator& operator-- ()
     {
       if (m_cvP != NULL && m_index >= 0)
-  	--m_index;
+        --m_index;
       return (*this);
     }
 
-    Point_const_iterator operator--(int)
+    const_iterator operator--(int)
     {
-      Point_const_iterator  temp = *this;
+      const_iterator  temp = *this;
       if (m_cvP != NULL && m_index >= 0)
-  	--m_index;
+        --m_index;
       return (temp);
     }
 
     /*! Equality operators. */
-    bool operator==(const Point_const_iterator& it) const
+    bool operator==(const const_iterator& it) const
     {
       return (m_cvP == it.m_cvP && m_index == it.m_index);
     }
 
-    bool operator!=(const Point_const_iterator& it) const
+    bool operator!=(const const_iterator& it) const
     {
       return (m_cvP != it.m_cvP || m_index != it.m_index);
     }
@@ -289,33 +301,33 @@ public:
   };
 
   /* ! Get an iterator for the polyline points.*/
-  CGAL_DEPRECATED Point_const_iterator begin() const
+  CGAL_DEPRECATED const_iterator begin() const
   {
     if (number_of_segments() == 0)
-      return (Point_const_iterator (NULL, -1));
+      return (const_iterator (NULL, -1));
     else
-      return (Point_const_iterator (this, 0));
+      return (const_iterator (this, 0));
   }
 
   /*! Get a past-the-end iterator for the polyline points.*/
-  CGAL_DEPRECATED Point_const_iterator end() const
+  CGAL_DEPRECATED const_iterator end() const
   {
     if (number_of_segments() == 0)
-      return (Point_const_iterator (NULL, -1));
+      return (const_iterator (NULL, -1));
     else
-      return (Point_const_iterator (this, number_of_segments() + 1));
+      return (const_iterator (this, number_of_segments() + 1));
   }
 
   /*! Get a reverse iterator for the polyline points. */
-  CGAL_DEPRECATED Point_const_reverse_iterator rbegin() const
+  CGAL_DEPRECATED const_reverse_iterator rbegin() const
   {
-    return (Point_const_reverse_iterator (end()));
+    return (const_reverse_iterator (end()));
   }
 
   /*! Get a reverse past-the-end iterator for the polyline points. */
-  CGAL_DEPRECATED Point_const_reverse_iterator rend() const
+  CGAL_DEPRECATED const_reverse_iterator rend() const
   {
-    return (Point_const_reverse_iterator (begin()));
+    return (const_reverse_iterator (begin()));
   }
 
   typedef typename Segments_container::const_iterator
@@ -344,7 +356,6 @@ public:
    * In general (for example if the polyline is not bounded), then the number
    * of vertices cannot be read-off from the number of segments, and the
    * traits class is needed.
-   * TODO: Implement a functor in the traits class
    * \return The number of points.
    */
   CGAL_DEPRECATED unsigned int points() const
@@ -363,8 +374,6 @@ public:
 
   /*!
    * Get the number of segments that comprise the poyline.
-   * TODO: @Efi: should the be migrated to the traits class as well?
-   *             After all, it is a traits of the polyline.
    * \return The number of segments.
    */
   Segments_container_size number_of_segments() const
@@ -431,8 +440,8 @@ public:
   template <typename InputIterator>
   // TODO: @Efi: do I have to do something additional here?
   CGAL_DEPRECATED void construct_x_monotone_polyline
-  (InputIterator begin, InputIterator end,
-   const Point_2& /* */)
+    (InputIterator begin, InputIterator end,
+     const Point_2& /* */)
   {
     // Make sure the range of points contains at least two points.
     Segment_traits_2 seg_traits;
@@ -470,37 +479,6 @@ public:
       _reverse();
   }
 
-  /*!
-   * Append a segment to the (x-monotone) polyline.
-   * Warning: This is a risky function! Don't use it! Prefer the
-   *          provided implementation in the traits class.
-   * \param seg The new segment to be appended to the polyline.
-   * \pre If the polyline is not empty, seg source must be the
-   *      same as the target point of the last segment in the polyline
-   *      (thus it must extend it to the right).
-   * TODO: Implement an alternative in the traits class
-   */
-  inline void push_back (const Segment_2& seg)
-  {
-    // CGAL_precondition_code
-    //   (
-    //    Segment_traits_2   seg_tr;
-    //    const unsigned int n = this->number_of_segments()
-    //    );
-    // CGAL_precondition_code
-    //   (typename Segment_traits_2::Construct_min_vertex_2 min_v =
-    //    seg_tr.construct_min_vertex_2_object();
-    //    typename Segment_traits_2::Construct_max_vertex_2 max_v =
-    //    seg_tr.construct_max_vertex_2_object();
-    //    typename Segment_traits_2::Equal_2 equal =
-    //    seg_tr.equal_2_object();
-
-    //    CGAL_precondition (n == 0 ||
-		// 	  equal(max_v(this->m_segments[n-1]),min_v(seg)));
-    //    );
-    this->m_segments.push_back (seg);
-  }
-
 private:
   /*! Reverse the polyline. */
   void _reverse()
@@ -528,7 +506,7 @@ private:
   /*! Output operator for a polyline. */
   template <typename SegmentTraits>
   std::ostream& operator<< (std::ostream & os,
-			    const _Polyline_2<SegmentTraits>& cv)
+                            const _Polyline_2<SegmentTraits>& cv)
   {
     // TODO: @Efi: Confirm the this is the exporter you want
     typename _Polyline_2<SegmentTraits>::Segment_const_iterator  iter =
@@ -536,8 +514,8 @@ private:
 
     while (iter != cv.end_segments())
       {
-	os << "  " << *iter;
-	++iter;
+        os << "  " << *iter;
+        ++iter;
       }
     return (os);
   }
@@ -546,7 +524,7 @@ private:
   /*! Input operator for a polyline. */
   template <typename SegmentTraits>
   std::istream& operator>> (std::istream& is,
-			    _Polyline_2<SegmentTraits>& pl)
+                            _Polyline_2<SegmentTraits>& pl)
   {
     typedef _Polyline_2<SegmentTraits>  Curve_2;
     typedef typename Curve_2::Point_2   Point_2;
@@ -563,8 +541,8 @@ private:
 
     for (i = 0; i < n_pts; ++i)
       {
-	is >> p;
-	pts.push_back(p);
+        is >> p;
+        pts.push_back(p);
       }
 
     // Create the polyline curve.
