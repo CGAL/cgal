@@ -423,6 +423,9 @@ namespace CGAL {
            
            return CGAL::Uncertain<CGAL::Sign>::indeterminate();
          }
+    //Sandeep: Added to avoid compiler warning
+    CGAL_assertion(false);
+    return NEGATIVE;
     }
     
     //-----------------------------------------------------------------------
@@ -487,6 +490,9 @@ namespace CGAL {
         }
       }
     } // end of case where neither p nor q is on t
+    //Sandeep: Added to avoid compiler warning
+    CGAL_assertion(false);
+    return NEGATIVE;
     } // end of incircle_pps
     
     
@@ -560,6 +566,9 @@ namespace CGAL {
         return POSITIVE;
       }
     } // end of case where q is not on t
+    //Sandeep: Added to avoid compiler warning
+    CGAL_assertion(false);
+    return NEGATIVE;
     } // end of function incircle_sps
     
     
