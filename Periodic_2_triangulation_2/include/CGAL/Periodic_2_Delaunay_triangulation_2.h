@@ -191,12 +191,12 @@ public:
       }
     }
 
-    // if (is_large_point_set) {
-    //   for (typename std::set<Vertex_handle>::const_iterator it = dummy_points.begin();
-    //        it != dummy_points.end(); ++it) {
-    //       remove(*it);
-    //   }
-    // }
+//    if (is_large_point_set) {
+//      for (typename std::set<Vertex_handle>::const_iterator it = dummy_points.begin();
+//          it != dummy_points.end(); ++it) {
+//        remove(*it);
+//      }
+//    }
 
     return number_of_vertices() - n;
   }
@@ -369,7 +369,8 @@ private:
 // auxilliary functions for remove
   /// NGHK: Not yet implemented
   void remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<int> &i,int&d,int&maxd);
+         std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+         std::vector<int> &i,int&d,int&maxd);
   /// NGHK: Not yet implemented
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i,int d);
@@ -1000,33 +1001,33 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 locally_Delaunay(const Face_handle &f, int i, const Face_handle &nb) {
   CGAL_BRANCH_PROFILER("locally_Delaunay(), simplicity check failures", tmp);
 
-  if (f->has_zero_offsets() && nb->has_zero_offsets())
-  {
-    // No periodic offsets
-    const Point *p[4];
+  bool simplicity_criterion = is_1_cover() && f->has_zero_offsets() && nb->has_zero_offsets();
 
-    for (int index=0; index<3; ++index) {
-      p[index]   = &nb->vertex(index)->point();
-    }
-    p[3]   = &f->vertex(i)->point();
-
-    return (ON_POSITIVE_SIDE != side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3], true) );
-  }
-
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
   const Point *p[4];
-  Offset off[4];
-  
   for (int index=0; index<3; ++index) {
     p[index]   = &nb->vertex(index)->point();
-    off[index] = this->get_offset_face(nb,index);
   }
   p[3]   = &f->vertex(i)->point();
-  off[3] = this->combine_offsets(this->get_offset_face(f,i), this->get_neighbor_offset(f, i));
-  
-  return (ON_POSITIVE_SIDE !=
-          side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
-                                  off[0], off[1], off[2], off[3], true) );
+
+  Oriented_side os;
+  if (simplicity_criterion) {
+    // No periodic offsets
+    os = side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3], true);
+  } else {
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+
+    Offset off[4];
+
+    for (int index=0; index<3; ++index) {
+      off[index] = get_offset_face(nb,index);
+    }
+    off[3] = combine_offsets(get_offset_face(f,i), get_neighbor_offset(f, i));
+
+    os = side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
+                                 off[0], off[1], off[2], off[3], true);
+  }
+
+  return (ON_POSITIVE_SIDE != os);
 }
 
 ///////////////////////////////////////////////////////////////
@@ -1092,10 +1093,12 @@ remove(Vertex_handle v)
   static std::vector<Face_handle> f(maxd);
   static std::vector<int> i(maxd);
   static std::vector<Vertex_handle> w(maxd);
-  remove_degree_init(v,f,w,i,d,maxd);
-  if (d == 0) return; //  dim is going down
-  remove_degree_triangulate(v,f,w,i,d);
-  this->delete_vertex(v);
+  static std::vector<Offset> offset_w(maxd);
+
+  remove_degree_init(v,f,w,offset_w,i,d,maxd);
+
+  //remove_degree_triangulate(v,f,w,i,d);
+  //this->delete_vertex(v);
 }
 
 template < class Gt, class Tds >
@@ -1104,10 +1107,10 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree_init(Vertex_handle v,
                    std::vector<Face_handle> &f,
 		   std::vector<Vertex_handle> &w,
+		   std::vector<Offset> &offset_w,
                    std::vector<int> &i,
 		   int &d, int &maxd)
 {
-  NGHK_NYI;
   f[0] = v->face();d=0;
   do{
     i[d] = f[d]->index(v);
@@ -1130,7 +1133,7 @@ remove_degree_triangulate(Vertex_handle v,
                           std::vector<Vertex_handle> &w,
                           std::vector<int> &i,int d)
 {
-    NGHK_NYI;
+  NGHK_NYI;
   switch (d) {
   case 3:
     remove_degree3(v,f,w,i);    break;
