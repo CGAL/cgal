@@ -45,6 +45,7 @@ public:
   typedef typename Gt::Iso_rectangle_2         Iso_rectangle;
   typedef array<int, 2>                        Covering_sheets;
   
+  typedef typename Gt::FT                      FT;
   typedef typename Gt::Point_2                 Point;
   typedef typename Gt::Segment_2               Segment;
   typedef typename Gt::Triangle_2              Triangle;
@@ -80,8 +81,7 @@ public:
   using Triangulation::ccw;
   using Triangulation::tds;
   using Triangulation::is_infinite;
-  using Triangulation::get_offset_vertex;
-  using Triangulation::get_offset_face;
+  using Triangulation::get_offset;
   using Triangulation::geom_traits;
   using Triangulation::is_1_cover;
   using Triangulation::dimension;
@@ -141,7 +141,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
-         bool is_large_point_set = true)
+         bool is_large_point_set = false)
   {
     if (first == last) return 0;
 
@@ -191,12 +191,12 @@ public:
       }
     }
 
-//    if (is_large_point_set) {
-//      for (typename std::set<Vertex_handle>::const_iterator it = dummy_points.begin();
-//          it != dummy_points.end(); ++it) {
-//        remove(*it);
-//      }
-//    }
+    if (is_large_point_set) {
+      for (typename std::set<Vertex_handle>::const_iterator it = dummy_points.begin();
+          it != dummy_points.end(); ++it) {
+        remove(*it);
+      }
+    }
 
     return number_of_vertices() - n;
   }
@@ -624,13 +624,13 @@ is_valid(bool verbose, int level) const
          fit != this->faces_end(); ++fit) {
       for (int i=0; i<3; i++) {
         p[i] = &fit->vertex(i)->point();
-        off[i] = get_offset_face(fit,i);
+        off[i] = get_offset(fit,i);
       }
 
       /// Check whether the vertices of the neighbor lie outside the circumcircle of the face
       for (int i=0; i<3; ++i) {
         p[3]   = &fit->vertex(i)->point();
-        off[3] = combine_offsets(get_offset_face(fit,i), get_neighbor_offset(fit, i));
+        off[3] = combine_offsets(get_offset(fit,i), get_neighbor_offset(fit, i));
 
         result &= ON_POSITIVE_SIDE !=
           side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
@@ -844,8 +844,14 @@ insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
       for (size_t i=0; i<virtual_vertices.size(); ++i) {
         restore_Delaunay(virtual_vertices[i]);
       }
+
+      this->try_to_convert_to_one_cover();
+      if (is_1_cover()) {
+        CGAL_triangulation_assertion(is_valid());
+      }
     }
   }
+
   return vh;
 }
 
@@ -1019,9 +1025,9 @@ locally_Delaunay(const Face_handle &f, int i, const Face_handle &nb) {
     Offset off[4];
 
     for (int index=0; index<3; ++index) {
-      off[index] = get_offset_face(nb,index);
+      off[index] = get_offset(nb,index);
     }
-    off[3] = combine_offsets(get_offset_face(f,i), get_neighbor_offset(f, i));
+    off[3] = combine_offsets(get_offset(f,i), get_neighbor_offset(f, i));
 
     os = side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
                                  off[0], off[1], off[2], off[3], true);
@@ -1111,16 +1117,34 @@ remove_degree_init(Vertex_handle v,
                    std::vector<int> &i,
 		   int &d, int &maxd)
 {
+  Bbox_2 bbox;
+  bbox = bbox + v->point().bbox();
+
   f[0] = v->face();d=0;
+
   do{
     i[d] = f[d]->index(v);
     w[d] = f[d]->vertex( ccw(i[d]) );
+    offset_w[d] = get_offset(f[d], ccw(i[d])) - get_offset(f[d], i[d]);
     w[d]->set_face( f[d]->neighbor(i[d]));//do no longer bother about set_face
+
+    bbox = bbox + this->construct_point(w[d]->point(), offset_w[d]).bbox();
+
     ++d;
-    if ( d==maxd) { maxd *=2; f.resize(maxd); w.resize(maxd); i.resize(maxd);}
+    if ( d==maxd) {
+      maxd *=2;
+      f.resize(maxd);
+      w.resize(maxd);
+      offset_w.resize(maxd);
+      i.resize(maxd);
+    }
     f[d] = f[d-1]->neighbor( ccw(i[d-1]) );
   } while(f[d]!=f[0]);
-  // all vertices finite but possibly w[0]
+
+  if ((bbox.xmax()-bbox.xmin() > FT(2)*(this->domain().xmax() - this->domain().xmin())) ||
+      (bbox.ymax()-bbox.ymin() > FT(2)*(this->domain().ymax() - this->domain().ymin()))) {
+    this->convert_to_9_sheeted_covering();
+  }
 }
 
 

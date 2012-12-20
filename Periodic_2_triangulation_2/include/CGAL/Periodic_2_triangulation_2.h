@@ -422,7 +422,7 @@ public:
   /// outside domain of an input point.
   /// \n NGHK: Not implemented
   Periodic_point periodic_point(const Vertex_handle &v) const {
-    return Periodic_point(v->point(), get_offset_vertex(v));
+    return Periodic_point(v->point(), get_offset(v));
   }
 
   /// If t is represented in the 1-sheeted covering space, this
@@ -434,7 +434,7 @@ public:
   /// \pre i == {0,1,2}
   /// \n NGHK: Not implemented
   Periodic_point periodic_point(const Face_handle &f, int i) const {
-    return Periodic_point(f->vertex(i)->point(), get_offset_face(f, i));
+    return Periodic_point(f->vertex(i)->point(), get_offset(f, i));
   }
 
   /// Returns the periodic segment formed by the two point-offset
@@ -485,7 +485,7 @@ public:
   /// \n NGHK: not implemented
   Point circumcenter(Face_handle f) const {
     return construct_circumcenter(f->vertex(0)->point(), f->vertex(1)->point(),
-        f->vertex(2)->point(), get_offset_face(f, 0), get_offset_face(f, 1), get_offset_face(
+        f->vertex(2)->point(), get_offset(f, 0), get_offset(f, 1), get_offset(
             f, 2));
   }
 
@@ -1032,7 +1032,7 @@ public:
   /// [Undoc] returns the combined offset of the vertex
   /// (if we are not on the 1-cover) and the offset defined by the face.
   /// NGHK: implemented
-  Offset get_offset_face(Face_handle f, int i) const {
+  Offset get_offset(Face_handle f, int i) const {
     if (is_1_cover())
       return int_to_off(f->offset(i));
 
@@ -1044,7 +1044,7 @@ public:
   }
   /// [Undoc] Returns the offset of the vertex if we are not on the 1-cover.
   /// NGHK: implemented
-  Offset get_offset_vertex(Vertex_handle vh) const {
+  Offset get_offset(Vertex_handle vh) const {
     if (is_1_cover())
       return Offset();
     Virtual_vertex_map_it it = _virtual_vertices.find(vh);
@@ -1096,7 +1096,7 @@ protected:
   inline void try_to_convert_to_one_cover() {
     // Fall back to 1-cover if the criterion that the longest edge is shorter
     // than sqrt(0.166) is fulfilled.
-    if (this->_too_long_edge_counter == 0) {
+    if (_too_long_edge_counter == 0 && !is_1_cover()) {
       CGAL_triangulation_expensive_assertion( is_valid() );
       this->convert_to_1_sheeted_covering();
       CGAL_triangulation_expensive_assertion( is_valid() );
@@ -1346,7 +1346,7 @@ protected:
       Offset off[3];
       for (int i = 0; i < 3; i++) {
         pts[i] = &(f->vertex(i)->point());
-        off[i] = get_offset_face(f, i);
+        off[i] = get_offset(f, i);
       }
 
       // Main idea seems to just test all possibilities.
@@ -1564,7 +1564,7 @@ copy_multiple_covering(const Periodic_2_triangulation_2<GT,TDS> & tr) {
   // automatically copy with the tds.
   for (Vertex_iterator vit = tr.vertices_begin() ;
        vit != tr.vertices_end() ; ++vit) {
-    vit->set_offset(tr.get_offset_vertex(vit));
+    vit->set_offset(tr.get_offset(vit));
   }
   // copy the tds
   _tds = tr.tds();
@@ -1597,7 +1597,7 @@ copy_multiple_covering(const Periodic_2_triangulation_2<GT,TDS> & tr) {
                                              std::make_pair(*vlist_it,off)));
       _virtual_vertices_reverse.find(*vlist_it)
         ->second[3*off[0]+off[1]-1]=vit2;
-      CGAL_triangulation_assertion(get_offset_vertex(vit2) == off);
+      CGAL_triangulation_assertion(get_offset(vit2) == off);
     }
   }
   // Cleanup vertex offsets
@@ -1627,9 +1627,9 @@ copy_multiple_covering(const Periodic_2_triangulation_2<GT,TDS> & tr) {
     edge_to_add = std::make_pair(eit->first->vertex(i),
                                  eit->first->vertex(j));
     p1 = construct_point(eit->first->vertex(i)->point(),
-        get_offset_face(eit->first, i));
+        get_offset(eit->first, i));
     p2 = construct_point(eit->first->vertex(j)->point(),
-        get_offset_face(eit->first, j));
+        get_offset(eit->first, j));
     Vertex_handle v_no = eit->first->vertex(i);
     if (squared_distance(p1,p2) > _edge_length_threshold) {
       CGAL_triangulation_assertion(
@@ -1683,7 +1683,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(Face_handle fh, bool verbose,
   xmin = ymin = 3;
   xmax = ymax = 0;
   for (int i = 0; i < 3; ++i) {
-    Offset o = get_offset_face(fh, i);
+    Offset o = get_offset(fh, i);
     xmin = (std::min)(xmin, o[0]);
     xmax = (std::max)(xmax, o[0]);
     ymin = (std::min)(ymin, o[1]);
@@ -1695,7 +1695,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(Face_handle fh, bool verbose,
   if (!result) {
     std::cerr << "min/max: " << xmin << "," << xmax << " " << ymin << "," << ymax << std::endl;
     for (int i = 0; i < 3; ++i) {
-      Offset o = get_offset_face(fh, i);
+      Offset o = get_offset(fh, i);
       std::cerr << "Offset: " << o << std::endl;
     }
     std::cerr << std::endl;
@@ -1717,7 +1717,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) cons
     for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
       for (int i = 0; i < 3; i++) {
         p[i] = &fit->vertex(i)->point();
-        off[i] = get_offset_face(fit, i);
+        off[i] = get_offset(fit, i);
       }
 
       if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) != POSITIVE) {
@@ -1818,9 +1818,9 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose,
     for (Edge_iterator eit = edges_begin(); eit != edges_end(); ++eit) {
       Vertex_handle vh1 = eit->first->vertex(ccw(eit->second));
       Vertex_handle vh2 = eit->first->vertex(cw(eit->second));
-      Point p1 = construct_point(vh1->point(), get_offset_face(eit->first, ccw(
+      Point p1 = construct_point(vh1->point(), get_offset(eit->first, ccw(
           eit->second)));
-      Point p2 = construct_point(vh2->point(), get_offset_face(eit->first, cw(
+      Point p2 = construct_point(vh2->point(), get_offset(eit->first, cw(
           eit->second)));
       result &= (!edge_is_too_long(p1, p2));
     }
@@ -1830,9 +1830,9 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose,
     for (Edge_iterator eit = edges_begin(); eit != edges_end(); ++eit) {
       Vertex_handle vh1 = eit->first->vertex(ccw(eit->second));
       Vertex_handle vh2 = eit->first->vertex(cw(eit->second));
-      Point p1 = construct_point(vh1->point(), get_offset_face(eit->first, ccw(
+      Point p1 = construct_point(vh1->point(), get_offset(eit->first, ccw(
           eit->second)));
-      Point p2 = construct_point(vh2->point(), get_offset_face(eit->first, cw(
+      Point p2 = construct_point(vh2->point(), get_offset(eit->first, cw(
           eit->second)));
 
       if (&*vh2 < &*vh1)
@@ -1879,17 +1879,17 @@ bool Periodic_2_triangulation_2<Gt, Tds>::flippable(Face_handle f, int i) {
   p[2] = &f->vertex(ccw(i))->point(); // ccw
   p[3] = &f->vertex(cw(i))->point();  // cw
 
-  if (f->has_zero_offsets() && nb->has_zero_offsets()) {
+  if (is_1_cover() && f->has_zero_offsets() && nb->has_zero_offsets()) {
     if (orientation(*p[0], *p[1], *p[2]) != RIGHT_TURN)
       return false;
     if (orientation(*p[0], *p[1], *p[3]) != LEFT_TURN)
       return false;
   } else {
     Offset off[4];
-    off[0] = get_offset_face(f, i);
-    off[1] = combine_offsets(get_offset_face(nb, j), get_neighbor_offset(nb, j, f, i));
-    off[2] = get_offset_face(f, ccw(i));
-    off[3] = get_offset_face(f, cw(i));
+    off[0] = get_offset(f, i);
+    off[1] = combine_offsets(get_offset(nb, j), get_neighbor_offset(nb, j, f, i));
+    off[2] = get_offset(f, ccw(i));
+    off[3] = get_offset(f, cw(i));
     
     if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) != RIGHT_TURN)
       return false;
@@ -2178,9 +2178,9 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_edge(const Point& p, const Offset
   CGAL_triangulation_assertion_code(Offset current_off = get_location_offset(f, p, o));
   CGAL_triangulation_exactness_precondition
   (orientation(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
-          get_offset_face(f,cw(i)), combine_offsets(o, current_offset), get_offset_face(f, ccw(i))) == COLLINEAR &&
+          get_offset(f,cw(i)), combine_offsets(o, current_offset), get_offset(f, ccw(i))) == COLLINEAR &&
       collinear_between(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
-          get_offset_face(f,cw(i)), combine_offsets(o, current_offset), get_offset_face(f, ccw(i))) );
+          get_offset(f,cw(i)), combine_offsets(o, current_offset), get_offset(f, ccw(i))) );
 
   /// Insert in the face and flip an edge
   Vertex_handle v = insert_in_face(p, o, f, vh);
@@ -2908,10 +2908,9 @@ march_locate_2D(Face_handle f, const Point& query,
       if (!is_1_cover()) {
         // Just fetch the vertices of c as points with offsets
         for (int i = 0; i < 3; i++) {
-          off[i] = get_offset_face(f, i);
+          off[i] = get_offset(f, i);
         }
       } else {
-        //cumm_off = f->offset(0) | f->offset(1) | f->offset(2);
         // We are on the one cover and on the boundary between domains
         // Hence, we need to check predicates with offsets
         for (int i = 0; i < 3; i++) {
@@ -3111,12 +3110,6 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_1_sheeted_covering() {
       // because neighboring information still needs to be extracted.
       it->set_additional_flag(to_delete ? 1 : 0);
     }
-
-    _cover = make_array(1, 1);
-    _virtual_vertices.clear();
-    _virtual_vertices_reverse.clear();
-    _too_long_edge_counter = 0;
-    _too_long_edges.clear();
   }
 
   // ###################################################################
@@ -3515,9 +3508,9 @@ inline int Periodic_2_triangulation_2<GT, TDS>::find_too_long_edges(std::map<
   Vertex_handle v_no, vh;
   for (Edge_iterator eit = edges_begin(); eit != edges_end(); eit++) {
     p1 = construct_point(eit->first->vertex(ccw(eit->second))->point(),
-        get_offset_face(eit->first, ccw(eit->second)));
+        get_offset(eit->first, ccw(eit->second)));
     p2 = construct_point(eit->first->vertex(cw(eit->second))->point(),
-        get_offset_face(eit->first, cw(eit->second)));
+        get_offset(eit->first, cw(eit->second)));
     if (edge_is_too_long(p1, p2)) {
       if (&*(eit->first->vertex(ccw(eit->second))) < &*(eit->first->vertex(cw(
           eit->second)))) {
@@ -3535,9 +3528,9 @@ inline int Periodic_2_triangulation_2<GT, TDS>::find_too_long_edges(std::map<
 }
 
 /**
- * - ch->offset(i) is an bit triple encapsulated in an integer. Each bit
+ * - fh->offset(i) is an bit tuple encapsulated in an integer. Each bit
  *   represents the offset in one direction --> 2-cover!
- * - it_to_off(int) decodes this again.
+ * - int_to_off(int) decodes this again.
  * - Finally the offset vector is multiplied by cover.
  *   So if we are working in 3-cover we translate it to the neighboring
  *   3-cover and not only to the neighboring domain.
@@ -3631,7 +3624,7 @@ Bounded_side Periodic_2_triangulation_2<Gt, Tds>::side_of_face(const Point &q,
     const Point *p[3];
     for (int i = 0; i < 3; i++) {
       p[i] = &(f->vertex(i)->point());
-      offs[i] = get_offset_face(f, i);
+      offs[i] = get_offset(f, i);
     }
     CGAL_triangulation_assertion(orientation(*p[0], *p[1], *p[2],
             offs[0], offs[1], offs[2]) == POSITIVE);
@@ -3726,9 +3719,9 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(Face_handle f,
     }
   } else { // Special case for the periodic space.
     Offset off_q;
-    Offset off0 = get_offset_face(f, 0);
-    Offset off1 = get_offset_face(f, 1);
-    Offset off2 = get_offset_face(f, 2);
+    Offset off0 = get_offset(f, 0);
+    Offset off1 = get_offset(f, 1);
+    Offset off2 = get_offset(f, 2);
 
     // return position of point p with respect to the oriented triangle p0p1p2
     // the orientation of the vertices is assumed to be counter clockwise
@@ -3917,8 +3910,8 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
   // the cell.
   while (os == ON_NEGATIVE_SIDE && i < 4) {
     os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(),
-        f->vertex(2)->point(), p, get_offset_face(f, 0), get_offset_face(f, 1),
-        get_offset_face(f, 2), combine_offsets(Offset(), int_to_off(i)), perturb);
+        f->vertex(2)->point(), p, get_offset(f, 0), get_offset(f, 1),
+        get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)), perturb);
     i++;
   }
 
@@ -4041,9 +4034,9 @@ void Periodic_2_triangulation_2<Gt, Tds>::insert_too_long_edges_in_star(
     Vertex_handle vh2 = f->vertex(i2);
 
     // Point corresponding to v
-    Point p1 = construct_point(vh->point(), get_offset_face(f, f->index(vh)));
+    Point p1 = construct_point(vh->point(), get_offset(f, f->index(vh)));
     // Point corresponding to the other vertex
-    Point p2 = construct_point(vh2->point(), get_offset_face(f, i2));
+    Point p2 = construct_point(vh2->point(), get_offset(f, i2));
 
     if (&*vh < &*vh2) {
       if (edge_is_too_long(p1, p2) && (find(_too_long_edges[vh].begin(),
@@ -4070,8 +4063,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::insert_too_long_edge(Face_handle f,
     int i) {
   Vertex_handle vh1 = f->vertex(ccw(i));
   Vertex_handle vh2 = f->vertex(cw(i));
-  Point p1 = construct_point(vh1->point(), get_offset_face(f, ccw(i)));
-  Point p2 = construct_point(vh2->point(), get_offset_face(f, cw(i)));
+  Point p1 = construct_point(vh1->point(), get_offset(f, ccw(i)));
+  Point p2 = construct_point(vh2->point(), get_offset(f, cw(i)));
 
   if (&*vh1 < &*vh2) {
     if (edge_is_too_long(p1, p2) && (find(_too_long_edges[vh1].begin(),
@@ -4102,9 +4095,9 @@ void Periodic_2_triangulation_2<Gt, Tds>::remove_too_long_edges_in_star(
     Vertex_handle vh2 = f->vertex(i2);
 
     // Point corresponding to v
-    Point p1 = construct_point(vh->point(), get_offset_face(f, f->index(vh)));
+    Point p1 = construct_point(vh->point(), get_offset(f, f->index(vh)));
     // Point corresponding to the other vertex
-    Point p2 = construct_point(vh2->point(), get_offset_face(f, i2));
+    Point p2 = construct_point(vh2->point(), get_offset(f, i2));
 
     if (&*vh < &*vh2) {
       if (edge_is_too_long(p1, p2) && (find(_too_long_edges[vh].begin(),
@@ -4131,8 +4124,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::remove_too_long_edge(Face_handle f,
     int i) {
   Vertex_handle vh1 = f->vertex(cw(i));
   Vertex_handle vh2 = f->vertex(ccw(i));
-  Point p1 = construct_point(vh1->point(), get_offset_face(f, cw(i)));
-  Point p2 = construct_point(vh2->point(), get_offset_face(f, ccw(i)));
+  Point p1 = construct_point(vh1->point(), get_offset(f, cw(i)));
+  Point p2 = construct_point(vh2->point(), get_offset(f, ccw(i)));
   if (edge_is_too_long(p1, p2)) {
     if (&*vh1 < &*vh2) {
       typename std::list<Vertex_handle>::iterator it = find(
@@ -4390,7 +4383,7 @@ operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
   for (Vertex_iterator2 vit2 = t2.vertices_begin() ;
       vit2 != t2.vertices_end(); ++vit2) {
     if (t1.compare_xy(vit2->point(), v1->point(),
-		  t2.get_offset_vertex(vit2), t1.get_offset_vertex(v1)) != EQUAL)
+		  t2.get_offset(vit2), t1.get_offset(v1)) != EQUAL)
       continue;
     iv2 = static_cast<Vertex_handle2>(vit2);
     break;
@@ -4406,27 +4399,27 @@ operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
   Vertex_handle1 v3 = c->vertex(t1.ccw(c->index(v1)));
   Point p2 = v2->point();
   Point p3 = v3->point();
-  Offset o2 = t1.get_offset_vertex(v2);
-  Offset o3 = t1.get_offset_vertex(v3);
+  Offset o2 = t1.get_offset(v2);
+  Offset o3 = t1.get_offset(v3);
 
   Face_circulator2 fc = t2.incident_faces(iv2), done(fc);
   do {
     int inf = fc->index(iv2);
 
     if (t1.compare_xy(p2, fc->vertex((inf+1)%4)->point(),
-                      o2, t2.get_offset_face(fc->vertex((inf+1)%4))) == EQUAL)
+                      o2, t2.get_offset(fc->vertex((inf+1)%4))) == EQUAL)
       Vmap.insert(std::make_pair(v2, fc->vertex((inf+1)%4)));
     else if (t1.compare_xy(p2, fc->vertex((inf+2)%4)->point(),
-                           o2, t2.get_offset_face(fc->vertex((inf+2)%4))) == EQUAL)
+                           o2, t2.get_offset(fc->vertex((inf+2)%4))) == EQUAL)
       Vmap.insert(std::make_pair(v2, fc->vertex((inf+2)%4)));
     else
       continue; // None matched v2.
 
     if (t1.compare_xy(p3, fc->vertex((inf+1)%4)->point(),
-                      o3, t2.get_offset_face(fc->vertex((inf+1)%4))) == EQUAL)
+                      o3, t2.get_offset(fc->vertex((inf+1)%4))) == EQUAL)
       Vmap.insert(std::make_pair(v3, fc->vertex((inf+1)%4)));
     else if (t1.compare_xy(p3, fc->vertex((inf+2)%4)->point(),
-                           o3, t2.get_offset_face(fc->vertex((inf+2)%4))) == EQUAL)
+                           o3, t2.get_offset(fc->vertex((inf+2)%4))) == EQUAL)
       Vmap.insert(std::make_pair(v3, fc->vertex((inf+2)%4)));
     else
       continue; // None matched v3.
