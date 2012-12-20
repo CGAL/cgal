@@ -114,7 +114,7 @@ private:
 };
 
 
-template < class Kernel, class Off = typename CGAL::Periodic_2_offset_2  >
+template < class Kernel, class Off = typename CGAL::Periodic_2_offset_2 >
 class Periodic_2_triangulation_traits_base_2 : public Kernel {
 public:
 //private:
@@ -240,7 +240,7 @@ protected:
 
 
 // Forward declaration for the filtered traits
-template < typename K, typename Off = CGAL::Periodic_2_offset_2 >
+template < typename K, typename Off = CGAL::Periodic_2_offset_2, bool Has_filtered_predicates = K::Has_filtered_predicates  >
 class Periodic_2_triangulation_traits_2;
 
 } //namespace CGAL 
@@ -258,26 +258,18 @@ namespace CGAL {
 template < typename K, typename Off >
 class Periodic_2_triangulation_filtered_traits_base_2;
 
-template < class K, class Off>
+template < class K, class Off, bool b>
 class Periodic_2_triangulation_traits_2
   : public Periodic_2_triangulation_traits_base_2<K, Off>
 {
 };
 
-template < typename CK, typename Off >
-class Periodic_2_triangulation_traits_2 < Filtered_kernel<CK>, Off>
-  : public Periodic_2_triangulation_filtered_traits_2 <
-  Filtered_kernel<CK>, Off >
+template < typename K, typename Off >
+class Periodic_2_triangulation_traits_2 < K, Off, true>
+  : public Periodic_2_triangulation_filtered_traits_2 <K, Off >
 {
 public:
-  typedef Filtered_kernel<CK>  Kernel;
-};
-
-template < class Off >
-class Periodic_2_triangulation_traits_2<CGAL::Epick, Off>
-  : public Periodic_2_triangulation_filtered_traits_2<CGAL::Epick, Off>
-{
-  typedef CGAL::Epick Kernel;
+  typedef K  Kernel;
 };
 
 } //namespace CGAL

@@ -545,11 +545,17 @@ protected:
 
 namespace CGAL {
 
-template < typename K, typename Off = typename CGAL::Periodic_2_offset_2 >
-class Periodic_2_triangulation_filtered_traits_2
+template < typename K, typename Off = typename CGAL::Periodic_2_offset_2, bool Has_static_filters = K::Has_static_filters >
+class Periodic_2_triangulation_filtered_traits_2;
+
+template < typename K, typename Off, bool Has_static_filters >  
+class Periodic_2_triangulation_filtered_traits_2:
+  Periodic_2_triangulation_filtered_traits_base_2<K, Off> {};
+  
+template < typename K, typename Off >
+class Periodic_2_triangulation_filtered_traits_2<K,Off,true>
   : public Periodic_2_triangulation_statically_filtered_traits_2<
-  Periodic_2_triangulation_filtered_traits_base_2<K, Off> > {
-};
+  Periodic_2_triangulation_filtered_traits_base_2<K, Off> > {};
 
 } //namespace CGAL
 
