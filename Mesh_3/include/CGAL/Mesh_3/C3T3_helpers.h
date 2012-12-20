@@ -2464,6 +2464,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
   // Get incident facets
   Facet_vector facets;
   tr_.finite_incident_facets(v,std::back_inserter(facets));
+  CGAL::Mesh_3::Triangulation_finite_facets_comparator<typename C3T3::Triangulation> fcomp;
+  std::sort(facets.begin(), facets.end(), fcomp);
 
   // Get adjacent surface points
   std::vector<Point_3> surface_point_vector;
