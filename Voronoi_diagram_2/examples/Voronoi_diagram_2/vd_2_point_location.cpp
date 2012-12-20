@@ -74,7 +74,7 @@ int main()
       std::cout << "face." << std::endl;
       std::cout << "The vertices of the Voronoi face are"
                 << " (in counterclockwise order):" << std::endl;
-      Ccb_halfedge_circulator ec_start = (*f)->outer_ccb();
+      Ccb_halfedge_circulator ec_start = (*f)->ccb();
       Ccb_halfedge_circulator ec = ec_start;
       do {
         print_endpoint(ec, false);
