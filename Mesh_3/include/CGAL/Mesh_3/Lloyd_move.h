@@ -245,6 +245,9 @@ private:
     Facet_vector incident_facets;
     incident_facets.reserve(64);
     c3t3.triangulation().finite_incident_facets(v,std::back_inserter(incident_facets));
+
+    CGAL::Mesh_3::Triangulation_finite_facets_comparator<Tr> fcomp;
+    std::sort(incident_facets.begin(), incident_facets.end(), fcomp);
     
     std::vector<Point_3> points;
     points.reserve(64);
@@ -436,6 +439,12 @@ private:
     Vector_3 w = orthogonal_vector(plane);
     w = w / CGAL::sqrt(w*w);
     
+    if(CGAL::ORIGIN + v < CGAL::ORIGIN + u)
+    {
+      Vector_3 tmp = v;
+      v = u;
+      u = tmp;
+    }
     return Aff_transformation_3(u.x(),v.x(),w.x(),reference_point.x(),
                                 u.y(),v.y(),w.y(),reference_point.y(),
                                 u.z(),v.z(),w.z(),reference_point.z());
@@ -511,7 +520,7 @@ private:
     typename Gt::Construct_vector_3 vector =
       Gt().construct_vector_3_object();
     
-    Cell_circulator current_cell = tr.incident_cells(edge);
+    Cell_circulator current_cell = tr.incident_cells(edge, edge.first);
     Cell_circulator done = current_cell;
     
     // a & b are fixed points

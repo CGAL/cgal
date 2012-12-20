@@ -33,6 +33,7 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_global_optimizer_visitor.h>
 #include <CGAL/Prevent_deref.h>
+#include <CGAL/Mesh_3/comparison_operators.h>
 
 #include <vector>
 #include <list>
@@ -66,13 +67,17 @@ class Mesh_global_optimizer
   
   typedef typename std::vector<Cell_handle>                 Cell_vector;
   typedef typename std::vector<Vertex_handle>               Vertex_vector;
-  typedef typename std::set<Vertex_handle>                  Vertex_set;
   typedef std::vector<std::pair<Vertex_handle, Point_3> >   Moves_vector;
+
+  typedef CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> Vcomp;
+  typedef CGAL::Mesh_3::Cell_handle_comparator<Tr> Cell_comp;
+  typedef typename std::set<Vertex_handle, Vcomp>     Vertex_set;
+  typedef typename std::set<Cell_handle, Cell_comp>   Cell_set;
   
 #ifdef CGAL_INTRUSIVE_LIST
   typedef Intrusive_list<Cell_handle>   Outdated_cell_set;
 #else 
-  typedef std::set<Cell_handle>         Outdated_cell_set;
+  typedef Cell_set                      Outdated_cell_set;
 #endif //CGAL_INTRUSIVE_LIST
 
 #ifdef CGAL_INTRUSIVE_LIST
@@ -444,6 +449,7 @@ compute_move(const Vertex_handle& v)
   Cell_vector incident_cells;
   incident_cells.reserve(64);
   tr_.incident_cells(v, std::back_inserter(incident_cells));
+  std::sort(incident_cells.begin(), incident_cells.end(), Cell_comp());
 
   // Get move from move function
   Vector_3 move = move_function_(v, incident_cells, c3t3_, sizing_field_);
