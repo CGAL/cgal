@@ -29,6 +29,8 @@
 #include <CGAL/array.h>
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 
+#include <boost/next_prior.hpp>
+
 namespace CGAL {
 
 template < class R_ >
