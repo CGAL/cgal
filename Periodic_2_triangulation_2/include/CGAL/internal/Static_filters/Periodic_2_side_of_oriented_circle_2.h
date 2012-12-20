@@ -53,69 +53,80 @@ public:
 
   Oriented_side
   operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r,
-             const Point_2 &s) const
+             const Point_2 &t) const
   {
-      CGAL_PROFILER("Periodic_2_side_of_oriented_circle_2 calls");
+    CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Periodic_2_side_of_oriented_circle_2", tmp);
 
-      double px, py, qx, qy, rx, ry, sx, sy;
+    Get_approx<Point_2> get_approx; // Identity functor for all points
+                                    // but lazy points.
 
-      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
-          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
-          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
-          fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy)) {
+    double px, py, qx, qy, rx, ry, tx, ty;
 
-          CGAL_PROFILER("Periodic_2_side_of_oriented_circle_2 semi-static attempts");
+    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
+        fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry) &&
+        fit_in_double(get_approx(t).x(), tx) && fit_in_double(get_approx(t).y(), ty))
+    {
+        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-          double psx = px - sx;
-          double psy = py - sy;
-          double pt2 = CGAL_NTS square(psx) + CGAL_NTS square(psy);
-          double qsx = qx - sx;
-          double qsy = qy - sy;
-          double qt2 = CGAL_NTS square(qsx) + CGAL_NTS square(qsy);
-          double rsx = rx - sx;
-          double rsy = ry - sy;
-          double rt2 = CGAL_NTS square(rsx) + CGAL_NTS square(rsy);
+        double qpx = qx-px;
+        double qpy = qy-py;
+        double rpx = rx-px;
+        double rpy = ry-py;
+        double tpx = tx-px;
+        double tpy = ty-py;
 
-          // Compute the semi-static bound.
-          double maxx = CGAL::abs(psx);
-          double maxy = CGAL::abs(psy);
+        double tqx = tx-qx;
+        double tqy = ty-qy;
+        double rqx = rx-qx;
+        double rqy = ry-qy;
 
-          double aqsx = CGAL::abs(qsx);
-          double aqsy = CGAL::abs(qsy);
+        double det = CGAL::determinant(qpx*tpy - qpy*tpx, tpx*tqx + tpy*tqy,
+                                       qpx*rpy - qpy*rpx, rpx*rqx + rpy*rqy);
 
-          double arsx = CGAL::abs(rsx);
-          double arsy = CGAL::abs(rsy);
-          
-          if (maxx < aqsx) maxx = aqsx;
-          if (maxx < arsx) maxx = arsx;
+        // We compute the semi-static bound.
+        double maxx = CGAL::abs(qpx);
+        double maxy = CGAL::abs(qpy);
 
-          if (maxy < aqsy) maxy = aqsy;
-          if (maxy < arsy) maxy = arsy;
+        double arpx = CGAL::abs(rpx);
+        double arpy = CGAL::abs(rpy);
 
-          // Sort maxx < maxy.
-          if (maxx > maxy)
-              std::swap(maxx, maxy);
+        double atqx = CGAL::abs(tqx);
+        double atqy = CGAL::abs(tqy);
 
-          double eps = 1.2466136531027298e-13 * maxx * maxy * (maxy * maxy);
+        double atpx = CGAL::abs(tpx);
+        double atpy = CGAL::abs(tpy);
 
-          double det = -CGAL::determinant(psx, psy, pt2,
-                                          qsx, qsy, qt2,
-                                          rsx, rsy, rt2);
+        double arqx = CGAL::abs(rqx);
+        double arqy = CGAL::abs(rqy);
 
-          // Protect against underflow in the computation of eps.
-          if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
-            if (maxx == 0)
-              return ON_ORIENTED_BOUNDARY;
-          }
-          // Protect against overflow in the computation of det.
-          else if (maxy < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
-            if (det > eps)  return ON_POSITIVE_SIDE;
-            if (det < -eps) return ON_NEGATIVE_SIDE;
-          }
+        if (maxx < arpx) maxx = arpx;
+        if (maxx < atpx) maxx = atpx;
+        if (maxx < atqx) maxx = atqx;
+        if (maxx < arqx) maxx = arqx;
 
-          CGAL_PROFILER("Periodic_2_side_of_oriented_circle_2 semi-static failures");
-      }
-      return Base::operator()(p, q, r, s);
+        if (maxy < arpy) maxy = arpy;
+        if (maxy < atpy) maxy = atpy;
+        if (maxy < atqy) maxy = atqy;
+        if (maxy < arqy) maxy = arqy;
+
+        if (maxx > maxy)  std::swap(maxx, maxy);
+
+        // Protect against underflow in the computation of eps.
+        if (maxx < 1e-73) {
+          if (maxx == 0)
+            return ON_ORIENTED_BOUNDARY;
+        }
+        else if (maxy < 1e76) /* sqrt(sqrt(max_double/16 [hadamard])) */ {
+          double eps = 8.8878565762001373e-15 * maxx * maxy * (maxy*maxy);
+          if (det > eps)  return ON_POSITIVE_SIDE;
+          if (det < -eps) return ON_NEGATIVE_SIDE;
+        }
+
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+    }
+
+    return Base::operator()(p, q, r, t);
   }
 
   Oriented_side
