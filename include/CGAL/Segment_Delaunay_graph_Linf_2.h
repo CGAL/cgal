@@ -1000,9 +1000,9 @@ public:
 
     Object o = primal(e);
 
-    if (CGAL::assign(pcl, o))   str << pcl;
-    if (CGAL::assign(pcr, o))   str << pcr;
-    if (CGAL::assign(pcs, o))   str << pcs; 
+    if (CGAL::assign(pcl, o))   pcl.draw(str);
+    if (CGAL::assign(pcr, o))   pcr.draw(str);
+    if (CGAL::assign(pcs, o))   pcs.draw(str);
 
     return str;
   }
