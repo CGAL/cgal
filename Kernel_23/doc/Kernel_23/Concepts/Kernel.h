@@ -82,41 +82,6 @@ public:
   */ 
   typedef Hidden_type Angle; 
 
-  /// @} 
-
-  /// \name Dimension handling
-  /// @{
-
-  /*!
-    A class to extract the ambient dimension for each object listed in
-    the <b>Geometric Object</b> section of the Kernel concept.
-    \todo This shouldn't appear in the concepts group.
-  */
-  template <class T>
-  class Ambient_dimension
-  {
-  public:
-    /*!
-      `dim` is the ambient dimension of the geometric object `T`.
-    */
-    typedef Dimension_tag<dim> type;
-  };
-
-  /*!
-    A class to extract the feature dimension for each object listed in
-    the <b>Geometric Object</b> section of the Kernel concept.
-    \todo This shouldn't appear in the concepts group.
-  */
-  template <class T>
-  class Feature_dimension
-  {
-  public:
-    /*!
-      `dim` is the feature dimension of the geometric object `T`.
-    */
-    typedef Dimension_tag<dim> type;
-  };
-
   /// @}
 
   /// \name Constants 

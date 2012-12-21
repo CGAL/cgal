@@ -28,7 +28,7 @@ assert(dimension == 2);
 \sa `CGAL::Feature_dimension<T, K>` 
 
 */
-template< typename T, typename K >
+template< typename T, typename K = typename Kernel_traits<T>::Kernel >
 class Ambient_dimension {
 public:
 
@@ -157,7 +157,7 @@ assert(dimension == 0);
 \sa `CGAL::Ambient_dimension<T, K>` 
 
 */
-template< typename T, typename K >
+template< typename T, typename K = typename Kernel_traits<T>::Kernel >
 class Feature_dimension {
 public:
 
