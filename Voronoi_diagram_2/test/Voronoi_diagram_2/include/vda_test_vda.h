@@ -53,7 +53,7 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
     Halfedge_handle e = f->halfedge();
     CGAL_assertion( e->face() == f );
 
-    CCBHC hc_start = f->outer_ccb();
+    CCBHC hc_start = f->ccb();
     CCBHC hc = hc_start;
     test_circulator(hc);
 
