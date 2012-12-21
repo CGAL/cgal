@@ -32,6 +32,7 @@
  */
 
 #include <iterator>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -59,19 +60,37 @@ private:
   typedef Arr_polyline_traits_2<Segment_traits_2>    Self;
 
   // Data members:
-  Segment_traits_2   m_seg_traits;           // The base segment-traits class.
+  const Segment_traits_2*   m_seg_traits;    // The base segment-traits class.
+  bool m_own_traits;
 
 private:
   enum { INVALID_INDEX = 0xffffffff };
 
 public:
   /*! Default constructor */
-  Arr_polyline_traits_2() : m_seg_traits() {}
+  Arr_polyline_traits_2() :
+    m_seg_traits(new Segment_traits_2()), m_own_traits(true) {}
+
+  /*! Constructor with given segment traits
+   * \param seg_traits an already existing segment tarits which is passed will
+   *        be used by the class.
+   */
+  Arr_polyline_traits_2(const Segment_traits_2* seg_traits) :
+    m_seg_traits(seg_traits), m_own_traits(false){ }
+
+  /* Destructor
+   * Deletes the segment tarits class in case it was constructed during the
+   * construction of this.
+   */
+  ~Arr_polyline_traits_2(){
+    if (m_own_traits)
+      delete m_seg_traits;
+  }
 
   /*! Obtain the segment traits.
    * \return the segment traits.
    */
-  const Segment_traits_2* segment_traits_2() const { return &m_seg_traits; }
+  const Segment_traits_2* segment_traits_2() const { return m_seg_traits; }
 
   /// \name Types and functors inherited from the base segment traits.
   //@{
@@ -90,14 +109,14 @@ public:
 
   /*! Get a Compare_x_2 functor object. */
   Compare_x_2 compare_x_2_object() const
-  { return m_seg_traits.compare_x_2_object(); }
+  { return m_seg_traits->compare_x_2_object(); }
 
   /*! Compare two points lexigoraphically: by x, then by y. */
   typedef typename Segment_traits_2::Compare_xy_2       Compare_xy_2;
 
   /*! Get a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object() const
-  { return m_seg_traits.compare_xy_2_object(); }
+  { return m_seg_traits->compare_xy_2_object(); }
 
   ///@}
 
@@ -124,7 +143,7 @@ public:
   };
 
   Number_of_points_2 number_of_points_2_object() const
-  { return Number_of_points_2(&m_seg_traits); }
+  { return Number_of_points_2(m_seg_traits); }
 
 
   class Construct_min_vertex_2 {
@@ -152,7 +171,7 @@ public:
 
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(&m_seg_traits); }
+  { return Construct_min_vertex_2(m_seg_traits); }
 
   class Construct_max_vertex_2 {
   protected:
@@ -181,7 +200,7 @@ public:
 
   /*! Get a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(&m_seg_traits); }
+  { return Construct_max_vertex_2(m_seg_traits); }
 
   class Is_vertical_2 {
   protected:
@@ -208,7 +227,7 @@ public:
 
   /*! Get an Is_vertical_2 functor object. */
   Is_vertical_2 is_vertical_2_object() const
-  { return Is_vertical_2(&m_seg_traits); }
+  { return Is_vertical_2(m_seg_traits); }
 
   class Compare_y_at_x_2 {
   protected:
@@ -245,7 +264,7 @@ public:
 
   /*! Get a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(&m_seg_traits); }
+  { return Compare_y_at_x_2(m_seg_traits); }
 
   class Compare_y_at_x_left_2 {
   protected:
@@ -292,7 +311,7 @@ public:
 
   /*! Get a Compare_y_at_x_left_2 functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(&m_seg_traits); }
+  { return Compare_y_at_x_left_2(m_seg_traits); }
 
   class Compare_y_at_x_right_2 {
   protected:
@@ -340,7 +359,7 @@ public:
 
   /*! Get a Compare_y_at_x_right_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(&m_seg_traits); }
+  { return Compare_y_at_x_right_2(m_seg_traits); }
 
   class Equal_2 {
   protected:
@@ -361,7 +380,7 @@ public:
      * \return (true) if the two point are the same;(false) otherwise.
      */
     bool operator()(const Point_2& p1, const Point_2& p2) const
-    { return m_poly_traits->m_seg_traits.equal_2_object()(p1, p2); }
+    { return m_poly_traits->m_seg_traits->equal_2_object()(p1, p2); }
 
     /*!
      * Check if the two x-monotone curves are the same(have the same graph).
@@ -377,15 +396,15 @@ public:
 
       // Check the pairwise equality of the contained segments.
       typename Segment_traits_2::Equal_2 equal =
-        m_poly_traits->m_seg_traits.equal_2_object();
+        m_poly_traits->m_seg_traits->equal_2_object();
       typename Segment_traits_2::Compare_x_2 compare_x =
-        m_poly_traits->m_seg_traits.compare_x_2_object();
+        m_poly_traits->m_seg_traits->compare_x_2_object();
       typename Segment_traits_2::Compare_y_at_x_2 compare_y_at_x =
-        m_poly_traits->m_seg_traits.compare_y_at_x_2_object();
+        m_poly_traits->m_seg_traits->compare_y_at_x_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_poly_traits->m_seg_traits.construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_poly_traits->m_seg_traits.construct_max_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
       Is_vertical_2 is_vertical = m_poly_traits->is_vertical_2_object();
       Point_2 point1,point2;
       Comparison_result res_x;
@@ -569,7 +588,7 @@ public:
 
   /*! Functor to enable pushing back of either points or segments to an
    *  existing polyline.
-   *  TODO: Add documentation to the wiki
+   *  TODO: Extend and complete the documentation
    */
   class Push_back_2 {
   protected:
@@ -587,7 +606,6 @@ public:
      * \param cv a polyline. Note, cv is not (necessarily) x-monotone.
      * \param p a point to be appended to cv
      * \pre cv contains at least two segments
-     * TODO: Test!
      */
     void operator()(const Curve_2& cv, Point_2& p) const
     {
@@ -616,7 +634,6 @@ public:
      * \param cv a polyline. Note, cv is not (necessarily) x-monotone.
      * \param seg a segment to be appended to cv
      * \pre cv is not an isolated point
-     * TODO: test
      */
     void operator()(const Curve_2& cv, Segment_2& seg) const
     {
@@ -655,7 +672,6 @@ public:
      * \param p the point to be pushed back.
      * \pre cv contains at least one segment
      * \pre p is to the right of cv
-     * TODO: test
      */
     void operator()(const X_monotone_curve_2& cv, Point_2& p) const
     {
@@ -681,7 +697,6 @@ public:
      * \pre cv is not an isolated point (in case it contains only one segment)
      * \pre seg is (strongly) right to cv, that it extends cv in
      *      a strong x-monotone manner.
-     * TODO: test
      */
     void operator()(const X_monotone_curve_2& cv, Segment_2& seg) const
     {
@@ -761,6 +776,8 @@ public:
 
       // Push all segments labeled(0, 1, ... , i-1) into c1.
       // TODO: EFEF: Use std::copy ? instead of the loop.
+      //       Dror: Something like:
+      // std::copy(&cv[0],&cv[i],c1.begin())
       unsigned int j;
       for (j = 0; j < i; ++j)
         c1.push_back(cv[j]);
@@ -794,7 +811,7 @@ public:
 
   /*! Get a Split_2 functor object. */
   Split_2 split_2_object() const
-  { return Split_2(&m_seg_traits); }
+  { return Split_2(m_seg_traits); }
 
   class Intersect_2 {
   protected:
@@ -995,7 +1012,7 @@ public:
 
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object() const
-  { return Intersect_2(&m_seg_traits); }
+  { return Intersect_2(m_seg_traits); }
 
   class Are_mergeable_2 {
   protected:
@@ -1039,7 +1056,7 @@ public:
 
   /*! Get an Are_mergeable_2 functor object. */
   Are_mergeable_2 are_mergeable_2_object() const
-  { return Are_mergeable_2(&m_seg_traits); }
+  { return Are_mergeable_2(m_seg_traits); }
 
   /*! \class Merge_2
    * A functor that merges two x-monotone arcs into one.
@@ -1138,7 +1155,7 @@ public:
 
   /*! Get an Approximate_2 functor object. */
   Approximate_2 approximate_2_object() const
-  { return m_seg_traits.approximate_2_object(); }
+  { return m_seg_traits->approximate_2_object(); }
 
   class Construct_curve_2 {
   protected:
@@ -1178,18 +1195,37 @@ public:
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin, InputIterator end)
     {
-      return contructor_impl(begin, end, *begin);
+      typedef typename std::iterator_traits<InputIterator>::value_type VT;
+      typedef typename boost::is_same<VT,Point_2>::type Is_point;
+      return contructor_impl(begin, end, Is_point());
     }
 
     /*! Construction implementation from a range of points.
      * When constructing from a range of points there are no tests to
      * run and the construction is straight forward in the polyline's class.
+     * \pre The range contains at least two points
+     * \pre Consecutive points are disjoint.
      */
     template <typename InputIterator>
     Curve_2 contructor_impl (InputIterator begin, InputIterator end,
-                             const Point_2&) const
+                             boost::true_type) const
     {
-      // TODO: Verify that repeated points are discraded!
+      // The range must contain at least two points.
+      CGAL_precondition (std::distance(begin,end)>1);
+      CGAL_precondition_code
+        (
+         typename Segment_traits_2::Equal_2 equal =
+         m_seg_traits->equal_2_object();
+         InputIterator curr = begin;
+         InputIterator next = curr;
+         ++next;
+         while (next!=end)
+           {
+             CGAL_precondition(!equal(*curr,*next));
+             ++next;
+             ++curr;
+           }
+         );
       return Curve_2(begin,end);
     }
 
@@ -1199,7 +1235,7 @@ public:
      */
     template <typename InputIterator>
     Curve_2 contructor_impl (InputIterator begin, InputIterator end,
-                             const Segment_2&) const
+                             boost::false_type) const
     {
       CGAL_precondition(begin != end);
 
@@ -1235,7 +1271,7 @@ public:
 
   /*! Get a Construct_curve_2 functor object. */
   Construct_curve_2 construct_curve_2_object() const
-  { return Construct_curve_2(&m_seg_traits); }
+  { return Construct_curve_2(m_seg_traits); }
 
   class Construct_x_monotone_curve_2 {
   protected:
@@ -1281,6 +1317,7 @@ public:
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
     {
+      // TODO: Eliminate the usage of *begin
       return contructor_impl(begin, end, *begin);
     }
 
@@ -1404,7 +1441,7 @@ public:
 
   /*! Get a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
-  { return Construct_x_monotone_curve_2(&m_seg_traits); }
+  { return Construct_x_monotone_curve_2(m_seg_traits); }
   //@}
 
 private:

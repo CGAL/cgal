@@ -64,13 +64,16 @@ public:
    * - Range of linear object. The polyline is the sequence of linear objects.
    * \param begin An iterator pointing to the first point in the range.
    * \param end An iterator pointing after the last point in the range.
-   * \pre Depends on the range's content. See the implementations for furtehr
+   * \pre Depends on the range's content. See the implementations for further
    *      details.
    */
   template <typename InputIterator>
   _Polyline_2(InputIterator begin, InputIterator end) :
     m_segments()
   {
+    // TODO: Get rid of *begin, by using the trick from the traits.
+    // TODO: add a big excuse for duplicating the dispatching.
+
     construct_polyline(begin, end, *begin);
   }
 
@@ -80,10 +83,15 @@ public:
    * \param end An iterator pointing after the past-the-end segment
    *        in the range.
    * \pre The end of segment n should be the beginning of segment n+1.
+   *
+   * TODO: After we remove the next followin function
+   * this following one will become private.
+   * TODO: once this become private the traits has to become a friend.
+   *
    */
   template <typename InputIterator>
   void construct_polyline(InputIterator begin, InputIterator end,
-                          const Segment_2& /* */)
+                          const Segment_2&)
   {
     m_segments.assign(begin, end);
   }
@@ -96,8 +104,8 @@ public:
    *      In other cases, an empty polyline will be created.
    */
   template <typename InputIterator>
-  void construct_polyline(InputIterator begin, InputIterator end,
-                          const Point_2& /* */)
+  CGAL_DEPRECATED void construct_polyline
+    (InputIterator begin, InputIterator end, const Point_2&)
   {
     // Check if there are no points in the range:
     InputIterator  ps = begin;
@@ -133,6 +141,8 @@ public:
    * \pre If the polyline is not empty, seg source must be the
    *      same as the target point of the last segment in the polyline
    *      (thus it must extend it to the right).
+   * TODO: Make this private in the next version (after the tarits becomes
+   * friendly...)
    */
   inline void push_back (const Segment_2& seg)
   {
@@ -153,7 +163,9 @@ public:
 
   /*!
    * TODO: (for UNBOUNDED case) Code has to be changed for unbounded case
-   * Create a bounding-box for the polyline.
+   * Create a bounding-box for the polyline. And should be moved to the traits.
+   * Look for bbox in other traits, and see what is done there? If nothing is
+   * found, just leave it...
    * \return The bounding-box.
    */
   Bbox_2 bbox() const
@@ -377,9 +389,7 @@ public:
    * \return The number of segments.
    */
   Segments_container_size number_of_segments() const
-  {
-    return Segments_container_size(m_segments.size());
-  }
+  { return m_segments.size(); }
 
   /*!
    * Get the ith segment of the polyline.

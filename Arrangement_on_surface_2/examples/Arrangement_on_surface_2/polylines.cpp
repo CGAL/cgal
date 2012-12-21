@@ -25,6 +25,8 @@ int main ()
   Traits_2 traits;
 
   Traits_2::Push_back_2 push_back = traits.push_back_2_object();
+  Traits_2::Construct_curve_2 polyline_const =
+    traits.construct_curve_2_object();
 
   Arrangement_2         arr;
 
@@ -72,7 +74,8 @@ int main ()
   points2.push_back (Point_2 (6, 2));
   points2.push_back (Point_2 (5, 3));
   points2.push_back (Point_2 (4, 2));
-  Polyline_2            pi2 (points2.begin(), points2.end());
+  // Constructing the polyline using the traits class
+  Polyline_2 pi2 = polyline_const(points2.begin(), points2.end());
   // insert (arr, pi2);
 
   /* Polyline's outline:
