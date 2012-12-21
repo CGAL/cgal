@@ -400,14 +400,14 @@ public:
  
 // We use a base class here to have the specialization below to work.
 // Otherwise there is a cycle in the derivation.
-template < class R, class W = typename R::RT>
+template < class R, class W = typename R::RT, bool Has_filtered_predicates = R::Has_filtered_predicates>
 class Regular_triangulation_euclidean_traits_2
   : public Regular_triangulation_euclidean_traits_base_2<R, W>
 {};
 
 } //namespace CGAL
 
-// Now specialize for Filtered_kernel<CK>, to get
+// Now specialize for Kernel with filtered predicates, to get
 // the filtered traits automatically.
 #include <CGAL/Regular_triangulation_filtered_traits_2.h>
 #include <CGAL/Filtered_kernel.h>
@@ -419,12 +419,12 @@ template < typename K >
 class Regular_triangulation_filtered_traits_2;
 
 
-template < typename CK >
-class Regular_triangulation_euclidean_traits_2 < Filtered_kernel<CK> >
-  : public Regular_triangulation_filtered_traits_2 < Filtered_kernel<CK> >
+template < typename K, class W >
+class Regular_triangulation_euclidean_traits_2 < K, W, true >
+  : public Regular_triangulation_filtered_traits_2 < K >
 {
 public:
-  typedef Filtered_kernel<CK>   Kernel;
+  typedef K   Kernel;
 };
 
 } //namespace CGAL
