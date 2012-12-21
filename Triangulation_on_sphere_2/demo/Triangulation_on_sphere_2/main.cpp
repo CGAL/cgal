@@ -72,7 +72,6 @@ public slots:
     	  
 	Projection_traits::Construct_projected_point_3 cst =
 	traits.construct_projected_point_3_object();
-	  
 	dtos.insert(
 		boost::make_transform_iterator(lst_pt.begin(), cst),
 		boost::make_transform_iterator(lst_pt.end(), cst)
