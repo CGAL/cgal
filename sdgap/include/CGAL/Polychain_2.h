@@ -114,13 +114,13 @@ operator<<(std::ostream &os,
 
 
 /* the following not allowed in some compilers: */
-/* 
-template< class Stream, 
+/*
+template< class Stream,
           class Traits_P,
-          class Container_P = std::vector<typename Traits_P::Point_2> 
+          class Container_P = std::vector<typename Traits_P::Point_2>
         >
 inline
-Stream& operator<<(Stream &s, 
+Stream& operator<<(Stream &s,
                    const Polychainsegment_2 <Traits_P, Container_P> &P)
 {
   P.draw(s);
@@ -132,11 +132,11 @@ Stream& operator<<(Stream &s,
 /* instead, we use overloading */
 
 /*
-template< class Stream, 
+template< class Stream,
           class Traits_P
         >
 inline
-Stream& operator<<(Stream &s, 
+Stream& operator<<(Stream &s,
                    const Polychainsegment_2 <Traits_P> &P)
 {
   P.draw(s);
@@ -144,12 +144,12 @@ Stream& operator<<(Stream &s,
 }
 
 
-template< class Stream, 
+template< class Stream,
           class Traits_P,
-          class Container_P 
+          class Container_P
         >
 inline
-Stream& operator<<(Stream &s, 
+Stream& operator<<(Stream &s,
                    const Polychainsegment_2 <Traits_P, Container_P> &P)
 {
   P.draw(s);
@@ -163,7 +163,7 @@ Stream& operator<<(Stream &s,
 
 template <class Traits_P, class Container_P
         = std::vector<typename Traits_P::Point_2> >
-class Polychainray_2 : 
+class Polychainray_2 :
   public Polychainsegment_2<Traits_P, Container_P> {
 
 public:
@@ -176,7 +176,7 @@ private:
     OutgoingDirection outgoing;
 
 public:
- 
+
     // constructors
 
     Polychainray_2(): Base(), outgoing() {}
@@ -185,14 +185,14 @@ public:
       : Base((Base) pcr), outgoing(pcr.outgoing) {}
 
     template <class InputIterator>
-    Polychainray_2(InputIterator first, InputIterator last, 
+    Polychainray_2(InputIterator first, InputIterator last,
 	           OutgoingDirection d,
               Traits p_traits = Traits())
         : Base(first, last, p_traits), outgoing(d)
     {
     }
 
-    
+
     // get_outgoing
 
     OutgoingDirection get_outgoing() const {
@@ -200,19 +200,19 @@ public:
     }
 
 
-    // drawing 
+    // drawing
 
     template< class K >
     void draw(CGAL::Qt::PainterOstream<K>& stream) const {
       typedef typename K::Segment_2 Segment_2;
       typedef typename K::Ray_2 Ray_2;
-      typedef typename 
+      typedef typename
 	  Polychainray_2<Traits_P,Container_P>::Vertex_const_iterator VI;
 
       CGAL_assertion( this->size() > 0 );
 
       VI source = this->vertices_begin();
-      if (this->size() > 1) { 
+      if (this->size() > 1) {
         VI target = source+1;
         for( ; target!=this->vertices_end(); ++source, ++target)
         {
@@ -284,16 +284,16 @@ operator<<(std::ostream &os, const Polychainray_2<Traits_P,Container_P>& p)
   }
 }
 
-    
+
 
 
 
 /*
-template< class Stream, 
+template< class Stream,
           class Traits_P
         >
 inline
-Stream& operator<<(Stream &s, 
+Stream& operator<<(Stream &s,
                    const Polychainray_2 <Traits_P> &P)
 {
   P.draw(s);
@@ -301,12 +301,12 @@ Stream& operator<<(Stream &s,
 }
 
 
-template< class Stream, 
+template< class Stream,
           class Traits_P,
-          class Container_P 
+          class Container_P
         >
 inline
-Stream& operator<<(Stream &s, 
+Stream& operator<<(Stream &s,
                    const Polychainray_2 <Traits_P, Container_P> &P)
 {
   P.draw(s);
@@ -334,7 +334,7 @@ private:
     IncomingDirection incoming;
 
 public:
- 
+
     // constructors
 
     Polychainline_2() : Base(), incoming() {}
@@ -344,7 +344,7 @@ public:
 
     template <class InputIterator>
     Polychainline_2(IncomingDirection dinc,
-	            InputIterator first, InputIterator last, 
+	            InputIterator first, InputIterator last,
 	            OutgoingDirection dout,
                     Traits p_traits = Traits())
         : Base(first, last, dout, p_traits), incoming(dinc)
@@ -376,7 +376,7 @@ public:
 
       reverse.resize(npts);
 
-      //std::reverse_copy(this->vertices_begin(), 
+      //std::reverse_copy(this->vertices_begin(),
       //                  this->vertices_end(),
       //                  reverse);
 
@@ -386,11 +386,11 @@ public:
 
       unsigned int i = npts - 1;
 
-      for (VI vi = this->vertices_begin(); 
+      for (VI vi = this->vertices_begin();
               vi != this->vertices_end();
               ++vi)
       {
-        //CGAL_SDG_DEBUG(std::cout << "debug pcl_reverse setting at " << i 
+        //CGAL_SDG_DEBUG(std::cout << "debug pcl_reverse setting at " << i
         //          << " value " << *vi << std::endl;);
         reverse[i] = *vi;
         --i;
@@ -399,14 +399,14 @@ public:
 
       // then also swap incoming and outgoing directions
 
-      //return Self(this->get_outgoing(), 
-      //            reverse.begin(), 
-      //            reverse.end(), 
+      //return Self(this->get_outgoing(),
+      //            reverse.begin(),
+      //            reverse.end(),
       //            this->get_incoming());
 
-      Self pclreverse(this->get_outgoing(), 
-                      reverse.begin(), 
-                      reverse.end(), 
+      Self pclreverse(this->get_outgoing(),
+                      reverse.begin(),
+                      reverse.end(),
                       this->get_incoming());
 
       //CGAL_SDG_DEBUG(std::cout << "pcl_reverse res= " << pclreverse << std::endl;);
@@ -415,11 +415,11 @@ public:
     }
 
     // first_intersection_point_with
-    typename Traits_P::Point_2 
+    typename Traits_P::Point_2
     first_intersection_point_with(
         const Polychainline_2<Traits_P,Container_P>& pcl)
     {
-      // for every piece of object, 
+      // for every piece of object,
       // try intersecting with every piece of pcl
 
       typedef typename Traits_P::Point_2    Point_2;
@@ -427,20 +427,20 @@ public:
       typedef typename Traits_P::Segment_2  Segment_2;
 
 //#if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection entering this=" 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection entering this="
                                     << *this << " pcl=" << pcl << std::endl;);
-//#endif 
+//#endif
 
-      typedef typename 
+      typedef typename
 	  Polychainline_2<Traits_P,Container_P>::
-                     Vertex_const_iterator 
+                     Vertex_const_iterator
           VI;
 
       typedef typename std::vector<typename Traits_P::Segment_2>::
                const_iterator SI;
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection thissize=" << this->size() 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection thissize=" << this->size()
                                     << " pclsize=" << pcl.size() << std::endl;);
 #endif
 
@@ -450,7 +450,7 @@ public:
 #if 0
       CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
                                     << "creating empty vectors" << std::endl;);
-#endif 
+#endif
 
       // create two empty vectors for storing the segments
       std::vector<Segment_2> segmentsthis;
@@ -458,10 +458,10 @@ public:
 
       VI sourcethis = this->vertices_begin();
       Ray_2 rayincthis(*sourcethis, this->get_incoming());
-      if (this->size() > 1) { 
+      if (this->size() > 1) {
         VI targetthis = sourcethis+1;
-        for( ; 
-            targetthis != this->vertices_end(); 
+        for( ;
+            targetthis != this->vertices_end();
             ++sourcethis, ++targetthis)
         {
           segmentsthis.push_back(Segment_2(*sourcethis, *targetthis));
@@ -472,17 +472,17 @@ public:
       CGAL_assertion(this->size() == (segmentsthis.size() + 1));
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
                      << "segmentsthis computed" << std::endl;);
-#endif 
+#endif
 
 
       VI sourcepcl  = pcl.vertices_begin();
       Ray_2 rayincpcl (*sourcepcl,  pcl.get_incoming());
-      if (pcl.size() > 1) { 
+      if (pcl.size() > 1) {
         VI targetpcl = sourcepcl+1;
-        for( ; 
-            targetpcl != pcl.vertices_end(); 
+        for( ;
+            targetpcl != pcl.vertices_end();
             ++sourcepcl, ++targetpcl)
         {
           segmentspcl.push_back(Segment_2(*sourcepcl, *targetpcl));
@@ -493,38 +493,38 @@ public:
       CGAL_assertion(pcl.size() == (segmentspcl.size() + 1));
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
                      << "segmentspcl computed" << std::endl;);
-#endif 
+#endif
 
 
       CGAL::Object result;
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
                     << "trying rayincthis with pcl" << std::endl;);
-#endif 
+#endif
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying ray " << rayincthis 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying ray " << rayincthis
                      << " with ray " << rayincpcl << std::endl;);
-#endif 
+#endif
 
       result = CGAL::intersection(rayincthis, rayincpcl);
       if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
         return *ipoint;
       }
 
-      for (SI sipcl = segmentspcl.begin(); 
+      for (SI sipcl = segmentspcl.begin();
               sipcl != segmentspcl.end();
               ++sipcl) {
 #if 0
-        CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying ray " << rayincthis 
+        CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying ray " << rayincthis
                        << " with segment " << *sipcl << std::endl;);
-#endif 
-      
+#endif
+
         result = CGAL::intersection(rayincthis, *sipcl);
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
           return *ipoint;
@@ -532,10 +532,10 @@ public:
       }
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying ray " << rayincthis 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying ray " << rayincthis
                      << " with ray " << rayoutpcl << std::endl;);
-#endif 
+#endif
 
       result = CGAL::intersection(rayincthis, rayoutpcl);
       if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
@@ -543,33 +543,33 @@ public:
       }
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
                      << "trying segmentsthis with pcl" << std::endl;);
-#endif 
+#endif
 
-      for (SI sithis = segmentsthis.begin(); 
+      for (SI sithis = segmentsthis.begin();
               sithis != segmentsthis.end();
               ++sithis) {
 
 #if 0
-        CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying segment " << *sithis 
+        CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying segment " << *sithis
                        << " with ray " << rayincpcl << std::endl;);
-#endif 
+#endif
 
         result = CGAL::intersection(*sithis, rayincpcl);
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
           return *ipoint;
         }
 
-        for (SI sipcl = segmentspcl.begin(); 
+        for (SI sipcl = segmentspcl.begin();
             sipcl != segmentspcl.end();
             ++sipcl) {
 #if 0
-          CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying segment " << *sithis 
+          CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying segment " << *sithis
                          << " with segment " << *sipcl << std::endl;);
-#endif 
+#endif
 
           result = CGAL::intersection(*sithis, *sipcl);
           if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
@@ -578,10 +578,10 @@ public:
         }
 
 #if 0
-        CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying segment " << *sithis 
+        CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying segment " << *sithis
                        << " with ray " << rayoutpcl << std::endl;);
-#endif 
+#endif
 
         result = CGAL::intersection(*sithis, rayoutpcl);
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
@@ -591,13 +591,13 @@ public:
       }
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
                      << "trying rayoutthis with pcl" << std::endl;);
 #endif
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying ray " << rayoutthis 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying ray " << rayoutthis
                      << " with ray " << rayincpcl << std::endl;);
 #endif
 
@@ -605,15 +605,15 @@ public:
       if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
         return *ipoint;
       }
-      
-      for (SI sipcl = segmentspcl.begin(); 
+
+      for (SI sipcl = segmentspcl.begin();
               sipcl != segmentspcl.end();
               ++sipcl) {
 #if 0
-        CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying ray " << rayoutthis 
+        CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying ray " << rayoutthis
                        << " with segment " << *sipcl << std::endl;);
-#endif 
+#endif
 
         result = CGAL::intersection(rayoutthis, *sipcl);
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
@@ -622,17 +622,17 @@ public:
       }
 
 #if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection " 
-                << "trying ray " << rayoutthis 
+      CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
+                << "trying ray " << rayoutthis
                      << " with ray " << rayoutpcl << std::endl;);
-#endif 
+#endif
 
       result = CGAL::intersection(rayoutthis, rayoutpcl);
       if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
         return *ipoint;
       }
 
-      CGAL_SDG_DEBUG(std::cout << "debug error: no intersection found for " 
+      CGAL_SDG_DEBUG(std::cout << "debug error: no intersection found for "
                      << "this=" << *this << " pcl=" << pcl << std::endl;);
 
       CGAL_assertion(false);
@@ -644,30 +644,30 @@ public:
     }
 
 
-    // drawing 
+    // drawing
 
     template< class K >
     void draw(CGAL::Qt::PainterOstream<K>& stream) const {
       typedef typename K::Segment_2 Segment_2;
       typedef typename K::Ray_2 Ray_2;
-      typedef typename 
+      typedef typename
 	  Polychainline_2<Traits_P,Container_P>::Vertex_const_iterator VI;
 
       CGAL_assertion( this->size() > 0 );
 
       VI source = this->vertices_begin();
-      
+
       // draw outgoing ray from first point
       stream << Ray_2(*source, this->get_incoming());
 
-      if (this->size() > 1) { 
+      if (this->size() > 1) {
         VI target = source+1;
         for( ; target!=this->vertices_end(); ++source, ++target)
         {
           stream << Segment_2(*source, *target);
         }
       }
-      
+
       // now source contains the last point;
       // draw outgoing ray from this point
       stream << Ray_2(*source, this->get_outgoing());
@@ -743,11 +743,11 @@ operator<<(std::ostream &os, const Polychainline_2<Traits_P,Container_P>& p)
 
 
 /*
-template< class Stream, 
+template< class Stream,
           class Traits_P
         >
 inline
-Stream& operator<<(Stream &s, 
+Stream& operator<<(Stream &s,
                    const Polychainline_2 <Traits_P> &P)
 {
   P.draw(s);
@@ -755,12 +755,12 @@ Stream& operator<<(Stream &s,
 }
 
 
-template< class Stream, 
+template< class Stream,
           class Traits_P,
-          class Container_P 
+          class Container_P
         >
 inline
-Stream& operator<<(Stream &s, 
+Stream& operator<<(Stream &s,
                    const Polychainline_2 <Traits_P, Container_P> &P)
 {
   P.draw(s);
