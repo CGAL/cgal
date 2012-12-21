@@ -22,7 +22,7 @@ class Polychainsegment_2 : public Polygon_2<Traits_P, Container_P> {
     typedef Traits_P Traits;
     typedef Polygon_2<Traits_P, Container_P> Base;
 
-    // constructors 
+    // constructors
 
     Polychainsegment_2() : Base() {}
 
@@ -31,11 +31,11 @@ class Polychainsegment_2 : public Polygon_2<Traits_P, Container_P> {
       : Base((Base) pc) {}
 
     template <class InputIterator>
-    Polychainsegment_2(InputIterator first, InputIterator last, 
+    Polychainsegment_2(InputIterator first, InputIterator last,
                        Traits p_traits = Traits())
         : Base(first, last, p_traits)  {}
 
-    
+
     template< class K >
     void draw(CGAL::Qt::PainterOstream<K>& stream) const {
       typedef typename K::Segment_2 Segment_2;
@@ -43,12 +43,29 @@ class Polychainsegment_2 : public Polygon_2<Traits_P, Container_P> {
                         Traits_P,Container_P>::Vertex_const_iterator
               VI;
 
-      if (this->size() > 1) { 
+      if (this->size() > 1) {
         VI source = this->vertices_begin();
         VI target = source+1;
         for( ; target!=this->vertices_end(); ++source, ++target)
         {
           stream << Segment_2(*source, *target);
+        }
+      }
+    }
+
+    template< class Stream >
+    void draw(Stream & str) const
+    {
+      typedef typename Traits_P::Segment_2 Segment_2;
+      typedef typename Polychainsegment_2<
+                        Traits_P,Container_P>::Vertex_const_iterator
+              VI;
+      if (this->size() > 1) {
+        VI source = this->vertices_begin();
+        VI target = source+1;
+        for( ; target!=this->vertices_end(); ++source, ++target)
+        {
+          str << Segment_2(*source, *target);
         }
       }
     }
@@ -60,11 +77,11 @@ class Polychainsegment_2 : public Polygon_2<Traits_P, Container_P> {
 
 template <class Traits_P, class Container_P>
 std::ostream&
-operator<<(std::ostream &os, 
+operator<<(std::ostream &os,
            const Polychainsegment_2<Traits_P,Container_P>& p)
 {
   typename Polychainsegment_2<Traits_P,Container_P>
-              ::Vertex_const_iterator 
+              ::Vertex_const_iterator
            i;
 
   switch(os.iword(IO::mode)) {
@@ -196,6 +213,28 @@ public:
 
       VI source = this->vertices_begin();
       if (this->size() > 1) { 
+        VI target = source+1;
+        for( ; target!=this->vertices_end(); ++source, ++target)
+        {
+          stream << Segment_2(*source, *target);
+        }
+      }
+      // now source contains the last point;
+      // draw outgoing ray from this point
+      stream << Ray_2(*source, this->get_outgoing());
+    }
+
+    template< class Stream >
+    void draw(Stream & stream) const {
+      typedef typename Traits_P::Segment_2 Segment_2;
+      typedef typename Traits_P::Ray_2 Ray_2;
+      typedef typename
+	  Polychainray_2<Traits_P,Container_P>::Vertex_const_iterator VI;
+
+      CGAL_assertion( this->size() > 0 );
+
+      VI source = this->vertices_begin();
+      if (this->size() > 1) {
         VI target = source+1;
         for( ; target!=this->vertices_end(); ++source, ++target)
         {
@@ -629,6 +668,33 @@ public:
         }
       }
       
+      // now source contains the last point;
+      // draw outgoing ray from this point
+      stream << Ray_2(*source, this->get_outgoing());
+    }
+
+    template< class Stream >
+    void draw(Stream & stream) const {
+      typedef typename Traits_P::Segment_2 Segment_2;
+      typedef typename Traits_P::Ray_2 Ray_2;
+      typedef typename
+	  Polychainline_2<Traits_P,Container_P>::Vertex_const_iterator VI;
+
+      CGAL_assertion( this->size() > 0 );
+
+      VI source = this->vertices_begin();
+
+      // draw outgoing ray from first point
+      stream << Ray_2(*source, this->get_incoming());
+
+      if (this->size() > 1) {
+        VI target = source+1;
+        for( ; target!=this->vertices_end(); ++source, ++target)
+        {
+          stream << Segment_2(*source, *target);
+        }
+      }
+
       // now source contains the last point;
       // draw outgoing ray from this point
       stream << Ray_2(*source, this->get_outgoing());
