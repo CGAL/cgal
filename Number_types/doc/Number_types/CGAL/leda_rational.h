@@ -1,4 +1,4 @@
-
+namespace CGAL {
 /*!
 \ingroup nt_leda
 
@@ -15,5 +15,8 @@ multiprecision rational numbers provided by <span class="textsc">LEDA</span>.
 For more details on the number types of \leda we refer to the \leda manual \cite cgal:mnsu-lum. 
 */
 
-class leda_rational {
-}; /* end leda_rational */
+class leda_rational {}; /* end leda_rational */
+
+} // CGAL
+
+

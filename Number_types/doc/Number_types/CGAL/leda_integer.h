@@ -1,5 +1,4 @@
-
-
+namespace CGAL {
 /*!
 \ingroup nt_leda
 
@@ -15,5 +14,8 @@ For more details on the number types of \leda we refer to the \leda manual \cite
 
 */
 
-class leda_integer {
-}; /* end leda_integer */
+class leda_integer {}; /* end leda_integer */
+
+} // CGAL
+
+
