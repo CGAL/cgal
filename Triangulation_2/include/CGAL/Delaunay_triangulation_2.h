@@ -90,7 +90,15 @@ public:
 	       const Delaunay_triangulation_2<Gt,Tds> &tr)
        : Triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition( is_valid() );  }
-  
+
+ template <class InputIterator>
+ Delaunay_triangulation_2(InputIterator first, InputIterator last,
+                          const Gt& gt = Gt())
+ : Triangulation_2<Gt,Tds>(gt)
+ {
+  insert(first,last);
+ }
+
 // CHECK -QUERY
   bool is_valid(bool verbose = false, int level = 0) const;
 

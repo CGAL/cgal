@@ -198,6 +198,13 @@ Copy constructor.
 */ 
 Regular_triangulation_2(const Regular_triangulation_2 &rt); 
 
+/*!
+Equivalent to constructing an empty triangulation with the optional traits class argument and calling insert(first,last).
+*/
+template < class InputIterator >
+Regular_triangulation_2<Traits,Tds> rt ( InputIterator first, InputIterator last, Traits gt = Traits());
+
+
 /// @} 
 
 /// \name Insertion and Removal 

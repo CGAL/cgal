@@ -17,8 +17,7 @@ int main()
   std::istream_iterator<Point> begin(in);
   std::istream_iterator<Point> end;
 
-  Delaunay dt;
-  dt.insert(begin, end);
+  Delaunay dt(begin, end);
   std::cout << dt.number_of_vertices() << std::endl;
   return 0;
 }
