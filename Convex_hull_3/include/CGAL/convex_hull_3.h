@@ -43,7 +43,7 @@
 #include <vector>
 #include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_floating_point.hpp>
 #include <CGAL/internal/Exact_type_selector.h>
 
 

@@ -28,7 +28,7 @@
 #include <CGAL/Hilbert_sort_3.h>
 #include <CGAL/Hilbert_sort_d.h>
 
-#include <boost/random.hpp>
+#include <boost/random/random_number_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
 
 #include <algorithm>

@@ -24,6 +24,8 @@
 #include <CGAL/Compact_container.h>
 #include <iostream>
 
+#include <boost/type_traits/is_same.hpp>
+
 namespace CGAL 
 {
   namespace internal

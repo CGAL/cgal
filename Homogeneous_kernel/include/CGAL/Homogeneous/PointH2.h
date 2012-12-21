@@ -27,10 +27,9 @@
 
 #include <CGAL/Origin.h>
 #include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
-#include <boost/utility.hpp>
 
 namespace CGAL {
 

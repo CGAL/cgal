@@ -23,7 +23,9 @@
 #define CGAL_IS_ITERATOR_H
 
 #include <iterator>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/remove_cv.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {

@@ -32,8 +32,9 @@
 #include <CGAL/use.h>
 #include <vector>
 #include <map>
-#include <boost/type_traits.hpp>
 #include <CGAL/tuple.h>
+
+#include <boost/config.hpp>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)

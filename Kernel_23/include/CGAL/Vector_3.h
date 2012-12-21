@@ -29,7 +29,7 @@
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 

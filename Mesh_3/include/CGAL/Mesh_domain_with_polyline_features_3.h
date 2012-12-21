@@ -33,7 +33,7 @@
 #include <vector>
 #include <set>
 #include <map>
-#include <boost/utility.hpp> // for boost::prior and boost::next
+#include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 
 namespace CGAL {
