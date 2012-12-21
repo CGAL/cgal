@@ -35,7 +35,7 @@ int main() {
     typedef Creator_uniform_2< Point, Segment> Seg_creator;
     typedef Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
     Seg_iterator g( p1, p2);
-    CGAL::cpp0x::copy_n( g, 200, std::back_inserter(segs));
+    CGAL::cpp11::copy_n( g, 200, std::back_inserter(segs));
 
     assert( segs.size() == 200);
     for ( Vector::iterator i = segs.begin(); i != segs.end(); i++){

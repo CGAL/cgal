@@ -20,7 +20,7 @@ int main() {
 
     // Create 600 points within a disc of radius 150.
     Random_points_in_disc_2<Point,Creator> g( 150.0);
-    CGAL::cpp0x::copy_n( g, 600, std::back_inserter(points));
+    CGAL::cpp11::copy_n( g, 600, std::back_inserter(points));
 
     // Create 200 points from a 15 x 15 grid.
     points_on_square_grid_2( 250.0, 200, std::back_inserter(points),Creator());

@@ -93,7 +93,7 @@ void generate_sphere_points(const int& n,
 			    //the test point + normal
 			    Point &p, Vector &normal){
   CGAL::Random_points_on_sphere_3<Point> g(r);
-  CGAL::cpp0x::copy_n( g, n, std::back_inserter(points));
+  CGAL::cpp11::copy_n( g, n, std::back_inserter(points));
   p = Point(0,0, r);
   normal = Vector(p - CGAL::ORIGIN);
 }
@@ -109,7 +109,7 @@ void generate_cylinder_points(const int& n,
   Point_2_vector points_2;
   points_2.reserve(n);
   CGAL::Random_points_on_circle_2<Point_2> g(r);
-  CGAL::cpp0x::copy_n( g, n , std::back_inserter(points_2));
+  CGAL::cpp11::copy_n( g, n , std::back_inserter(points_2));
   CGAL::Random random;
 
   double h;

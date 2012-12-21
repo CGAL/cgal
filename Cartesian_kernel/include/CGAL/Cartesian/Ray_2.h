@@ -36,7 +36,7 @@ class RayC2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Ray_2                Ray_2;
 
-  typedef cpp0x::array<Point_2, 2>          Rep;
+  typedef cpp11::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

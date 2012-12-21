@@ -13,10 +13,10 @@
 %% +=========================================================================+
 
 %% +---------------------------------------------+
-\begin{ccRefFunction}{cpp0x::next}
+\begin{ccRefFunction}{cpp11::next}
   \label{sectionNext}
   \label{sectionGenericFunctions}
-  There is actually no function in namespace \ccc{CGAL::cpp0x} with
+  There is actually no function in namespace \ccc{CGAL::cpp11} with
   this name, but a using declaration which imports a function from
   another namespace. By order of priority: the one in namespace
   \ccc{std} is used (provided by C++0x), if not found, then the one in
@@ -31,15 +31,15 @@
 
   \ccSeeAlso
   \ccAnchor{http://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior}{boost::next} \\
-  \ccRefIdfierPage{CGAL::cpp0x::prev}
+  \ccRefIdfierPage{CGAL::cpp11::prev}
 
 \end{ccRefFunction}
 
 %% +---------------------------------------------+
-\begin{ccRefFunction}{cpp0x::prev}
+\begin{ccRefFunction}{cpp11::prev}
   \label{sectionPrev}
   If C++0x is available the function \ccc{std::prev} is imported into
-  the namespace \ccc{CGAL::cpp0x}, otherwise \ccc{CGAL::cpp0x::prev} is declared with the
+  the namespace \ccc{CGAL::cpp11}, otherwise \ccc{CGAL::cpp11::prev} is declared with the
   signature as given in $\mathsection 24.4.4$ of the ISO C++ Standard
   and forwarded to \ccc{boost::prior}.
 
@@ -52,14 +52,14 @@
 
   \ccSeeAlso
   \ccAnchor{http://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior}{boost::prior} \\
-  \ccRefIdfierPage{CGAL::cpp0x::next}
+  \ccRefIdfierPage{CGAL::cpp11::next}
 
 \end{ccRefFunction}
 
 %% +---------------------------------------------+
 \begin{ccRefFunction}{predecessor}
   \label{sectionPredecessor}
-  This function is deprecated. \ccc{CGAL::cpp0x::prev} should be used
+  This function is deprecated. \ccc{CGAL::cpp11::prev} should be used
   instead.
   
 
@@ -83,7 +83,7 @@
 \begin{ccRefFunction}{successor}
   \label{sectionSuccessor}
 
-  This function is deprecated. \ccc{CGAL::cpp0x::next} should be used
+  This function is deprecated. \ccc{CGAL::cpp11::next} should be used
   instead.
 
   \begin{ccDeprecated}
@@ -104,7 +104,7 @@
 
 %% +---------------------------------------------+
 
-\begin{ccRefFunction}{cpp0x::copy_n}
+\begin{ccRefFunction}{cpp11::copy_n}
   This provides an implementation of the standard function
   \ccc{copy_n} from the C++0x standard. If \ccc{copy_n} is available
   in the \ccc{std::} namespace a using declaration is used, otherwise
@@ -119,7 +119,7 @@
 \end{ccRefFunction}
 
 \begin{ccRefFunction}{copy_n}
-  This function is deprecated, \ccc{CGAL::cpp0x::copy_n} should be used instead.
+  This function is deprecated, \ccc{CGAL::cpp11::copy_n} should be used instead.
   \begin{ccDeprecated}
     \label{sectionCopyN}
 
@@ -279,8 +279,8 @@
   It also inherits from \ccc{O}, which makes it easy to treat like a tuple.
 
   \ccParameters
-  \ccc{V} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of values to be accepted and dispatched.
-  \ccc{O} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of corresponding output iterators.
+  \ccc{V} must be a \ccc{CGAL::cpp11::tuple<...>} of the types of values to be accepted and dispatched.
+  \ccc{O} must be a \ccc{CGAL::cpp11::tuple<...>} of the types of corresponding output iterators.
 
   \ccInclude{CGAL/iterator.h}
 
@@ -326,8 +326,8 @@
   It also inherits from \ccc{O}, which makes it easy to treat like a tuple.
 
   \ccParameters
-  \ccc{V} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of values to be accepted and dispatched.
-  \ccc{O} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of corresponding output iterators.
+  \ccc{V} must be a \ccc{CGAL::cpp11::tuple<...>} of the types of values to be accepted and dispatched.
+  \ccc{O} must be a \ccc{CGAL::cpp11::tuple<...>} of the types of corresponding output iterators.
 
   \ccInclude{CGAL/iterator.h}
 
@@ -1506,7 +1506,7 @@
 
 \begin{ccRefClass}{Twotuple<T>}
   This class is deprecated, and will be removed in some future \cgal\ release.
-  Please use \ccc{CGAL::cpp0x::array} instead.
+  Please use \ccc{CGAL::cpp11::array} instead.
 
   \begin{ccDeprecated}
   \ccDefinition The \ccRefName\ class stores a homogeneous (same type) pair
@@ -1546,7 +1546,7 @@
 
 \begin{ccRefClass}{Threetuple<T>}
   This class is deprecated, and will be removed in some future \cgal\ release.
-  Please use \ccc{CGAL::cpp0x::array} instead.
+  Please use \ccc{CGAL::cpp11::array} instead.
   
   \begin{ccDeprecated}
   \ccDefinition The \ccRefName\ class stores a homogeneous (same type) triple
@@ -1588,7 +1588,7 @@
 
 \begin{ccRefClass}{Fourtuple<T>}
   This class is deprecated, and will be removed in some future \cgal\ release.
-  Please use \ccc{CGAL::cpp0x::array} instead.
+  Please use \ccc{CGAL::cpp11::array} instead.
   
   \begin{ccDeprecated}
   \ccDefinition The \ccRefName\ class stores a homogeneous (same type)
@@ -1632,7 +1632,7 @@
 
 \begin{ccRefClass}{Sixtuple<T>}
   This class is deprecated, and will be removed in some future \cgal\ release.
-  Please use \ccc{CGAL::cpp0x::array} instead.
+  Please use \ccc{CGAL::cpp11::array} instead.
 
   \begin{ccDeprecated}
   \ccDefinition The \ccRefName\ class stores a homogeneous (same type)
@@ -1691,7 +1691,7 @@
   accessing the elements of a container.
 
   This class is NOT RECOMMENDED anymore.  We recommend that you use
-  \ccc{CGAL::cpp0x::tuple} or \ccc{CGAL::cpp0x::array} instead for new uses.
+  \ccc{CGAL::cpp11::tuple} or \ccc{CGAL::cpp11::array} instead for new uses.
 
   \ccInclude{CGAL/utility.h}
   
@@ -1785,7 +1785,7 @@
   container.
 
   This class is NOT RECOMMENDED anymore.  We recommend that you use
-  \ccc{CGAL::cpp0x::tuple} or \ccc{CGAL::cpp0x::array} instead for new uses.
+  \ccc{CGAL::cpp11::tuple} or \ccc{CGAL::cpp11::array} instead for new uses.
 
   \ccInclude{CGAL/utility.h}
   

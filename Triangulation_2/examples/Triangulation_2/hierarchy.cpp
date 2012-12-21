@@ -21,7 +21,7 @@ int main( )
   std::cout << "insertion of 1000 random points" << std::endl;
   Triangulation t;
   CGAL::Random_points_in_square_2<Point,Creator> g(1.);
-  CGAL::cpp0x::copy_n( g, 1000, std::back_inserter(t));
+  CGAL::cpp11::copy_n( g, 1000, std::back_inserter(t));
 
   //verbose mode of is_valid ; shows the number of vertices at each  level
   std::cout << "The number of vertices at successive levels" << std::endl;

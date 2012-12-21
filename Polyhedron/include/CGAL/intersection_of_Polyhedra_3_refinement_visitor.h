@@ -136,7 +136,7 @@ namespace CGAL
     std::map<int,Vertex_handle>&                           node_to_polyhedron_vertex_;
     std::map<std::pair<int,int>,Halfedge_handle>&          edge_to_hedge_;
     std::vector<std::pair<int,int> >                       edges_to_create_;
-    std::vector<CGAL::cpp0x::tuple<int,int,int> >          faces_to_create_;
+    std::vector<CGAL::cpp11::tuple<int,int,int> >          faces_to_create_;
     
     typename HDS::Halfedge::Base*
     unlock_halfedge(Halfedge_handle h){
@@ -192,7 +192,7 @@ namespace CGAL
         typename Triangulation::Vertex_handle v1=it->vertex(1);
         typename Triangulation::Vertex_handle v2=it->vertex(2);
         //warning in degenerate case we can have non wanted triangles: need exact here
-        faces_to_create_.push_back( CGAL::cpp0x::make_tuple( v0->info(),v1->info(),v2->info() ) );
+        faces_to_create_.push_back( CGAL::cpp11::make_tuple( v0->info(),v1->info(),v2->info() ) );
       }
     }
 
@@ -234,12 +234,12 @@ namespace CGAL
 //        std::cerr << "edges " << it->first <<  " " << it->second << std::endl;
       }
       
-      std::vector<CGAL::cpp0x::tuple<int,int,int> >::iterator it=faces_to_create_.begin();
+      std::vector<CGAL::cpp11::tuple<int,int,int> >::iterator it=faces_to_create_.begin();
       
       //create the new faces and update adjacencies
       while (true)
       {
-        int i=cpp0x::get<0>(*it),j=cpp0x::get<1>(*it),k=cpp0x::get<2>(*it);
+        int i=cpp11::get<0>(*it),j=cpp11::get<1>(*it),k=cpp11::get<2>(*it);
 //        std::cerr << "faces " << i <<  " " << j  << " " << k<< std::endl;        
         Halfedge_handle current  = edge_to_hedge_.find(std::make_pair(i,j))->second;
         Halfedge_handle next     = edge_to_hedge_.find(std::make_pair(j,k))->second;

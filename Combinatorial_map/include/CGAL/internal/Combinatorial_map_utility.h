@@ -44,21 +44,21 @@ namespace CGAL
     template<typename ... Items>
     struct Convert_tuple_with_void;    
     template<typename ... Items>
-    struct Convert_tuple_with_void<CGAL::cpp0x::tuple<Items...> >
+    struct Convert_tuple_with_void<CGAL::cpp11::tuple<Items...> >
     {
-      typedef CGAL::cpp0x::tuple<typename Convert_void<Items>::type... > type;
+      typedef CGAL::cpp11::tuple<typename Convert_void<Items>::type... > type;
     };
 
     // Length of a variadic template
     template<typename ... T>
     struct My_length;    
     template<typename T1, typename ... T>
-    struct My_length<CGAL::cpp0x::tuple<T1, T...> >
+    struct My_length<CGAL::cpp11::tuple<T1, T...> >
     {
-      static const int value = My_length<CGAL::cpp0x::tuple<T...> >::value + 1;
+      static const int value = My_length<CGAL::cpp11::tuple<T...> >::value + 1;
     };    
     template<>
-    struct My_length<CGAL::cpp0x::tuple<> >
+    struct My_length<CGAL::cpp11::tuple<> >
     {
       static const int value = 0;
     };
@@ -67,17 +67,17 @@ namespace CGAL
     template<class Type,class Tuple>
     struct Number_of_type_in_tuple;    
     template<class Type,typename ... Items>
-    struct Number_of_type_in_tuple<Type,CGAL::cpp0x::tuple<Type,Items...> >{
+    struct Number_of_type_in_tuple<Type,CGAL::cpp11::tuple<Type,Items...> >{
       static const int value=Number_of_type_in_tuple
-        <Type,CGAL::cpp0x::tuple<Items...> >::value+1;
+        <Type,CGAL::cpp11::tuple<Items...> >::value+1;
     };
     template<class Type,class Other, typename ... Items>
-    struct Number_of_type_in_tuple<Type,CGAL::cpp0x::tuple<Other,Items...> >{
+    struct Number_of_type_in_tuple<Type,CGAL::cpp11::tuple<Other,Items...> >{
       static const int value=Number_of_type_in_tuple
-        <Type,CGAL::cpp0x::tuple<Items...> >::value;
+        <Type,CGAL::cpp11::tuple<Items...> >::value;
     };
     template<class Type>
-    struct Number_of_type_in_tuple<Type,CGAL::cpp0x::tuple<> >{
+    struct Number_of_type_in_tuple<Type,CGAL::cpp11::tuple<> >{
       static const int value=0;
     };
 
@@ -85,21 +85,21 @@ namespace CGAL
     template<class Type, class Tuple>
     struct Number_of_different_type_in_tuple;    
     template<class Type, typename Other, typename ... Items>
-    struct Number_of_different_type_in_tuple<Type,CGAL::cpp0x::tuple
+    struct Number_of_different_type_in_tuple<Type,CGAL::cpp11::tuple
                                              <Other, Items...> >
     {
       static const int value=Number_of_different_type_in_tuple
-        <Type,CGAL::cpp0x::tuple<Items...> >::value+1;
+        <Type,CGAL::cpp11::tuple<Items...> >::value+1;
     };
     template<class Type, typename ... Items>
-    struct Number_of_different_type_in_tuple<Type, CGAL::cpp0x::tuple
+    struct Number_of_different_type_in_tuple<Type, CGAL::cpp11::tuple
                                              <Type,Items...> >
     {
       static const int value=Number_of_different_type_in_tuple
-        <Type,CGAL::cpp0x::tuple<Items...> >::value;
+        <Type,CGAL::cpp11::tuple<Items...> >::value;
     };
     template<class Type>
-    struct Number_of_different_type_in_tuple<Type, CGAL::cpp0x::tuple<> >
+    struct Number_of_different_type_in_tuple<Type, CGAL::cpp11::tuple<> >
     {
       static const int value=0;
     };
@@ -112,23 +112,23 @@ namespace CGAL
     struct Nb_type_in_tuple_up_to_k;
     
     template <class Type,int dim,int k,class T1,class ... T>
-    struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp0x::tuple<T1,T...>,dim>
+    struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp11::tuple<T1,T...>,dim>
     {
       static const int pos= Nb_type_in_tuple_up_to_k
-        <Type,k,CGAL::cpp0x::tuple<T...>,dim>::pos - 1;
+        <Type,k,CGAL::cpp11::tuple<T...>,dim>::pos - 1;
       
       static const int value =
         ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? 0:-dim-1 )
         :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 1:0 )
                            + Nb_type_in_tuple_up_to_k
-                           <Type,k,CGAL::cpp0x::tuple
+                           <Type,k,CGAL::cpp11::tuple
                            <T...>,dim >::value)
              :0
              );
     };
     
     template <class Type,int dim,int k,class T1>
-    struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp0x::tuple<T1>,dim >
+    struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp11::tuple<T1>,dim >
     {
       static const int pos=dim;
       static const int value=(pos==k?
@@ -145,23 +145,23 @@ namespace CGAL
     
     template <class Type,int dim,int k,class T1,class ... T>
     struct Nb_type_different_in_tuple_up_to_k<Type,k,
-                                              CGAL::cpp0x::tuple<T1,T...>,dim>
+                                              CGAL::cpp11::tuple<T1,T...>,dim>
     {
       static const int pos = Nb_type_different_in_tuple_up_to_k
-        <Type,k,CGAL::cpp0x::tuple<T...>,dim >::pos - 1;
+        <Type,k,CGAL::cpp11::tuple<T...>,dim >::pos - 1;
       
       static const int value =
         ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? -dim-1 : 0 )
         :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 0:1 )
                            + Nb_type_different_in_tuple_up_to_k
-                           <Type,k,CGAL::cpp0x::tuple<T...>,dim >::value)
+                           <Type,k,CGAL::cpp11::tuple<T...>,dim >::value)
              :0
              );
     };
 
     template <class Type,int dim,int k,class T1>
     struct Nb_type_different_in_tuple_up_to_k<Type,k,
-                                              CGAL::cpp0x::tuple<T1>,dim >
+                                              CGAL::cpp11::tuple<T1>,dim >
     {
       static const int pos=dim;
       static const int value=(pos==k?
@@ -173,38 +173,38 @@ namespace CGAL
     template <template <class D> class Functor,class T>
     struct Tuple_converter;
     template <template <class D> class Functor,class ...T>
-    struct Tuple_converter<Functor,CGAL::cpp0x::tuple<T...> >{
-      typedef CGAL::cpp0x::tuple<typename Functor<T>::type... > type;
+    struct Tuple_converter<Functor,CGAL::cpp11::tuple<T...> >{
+      typedef CGAL::cpp11::tuple<typename Functor<T>::type... > type;
     };
 
     // To scan a given tuple, and keep only type different from Type
     // to build the tuple Attribute_type.
-    template <class Type,class Res, class Tuple=CGAL::cpp0x::tuple<> >
+    template <class Type,class Res, class Tuple=CGAL::cpp11::tuple<> >
     struct Keep_type_different_of;
     
     template < class Type,class ... Res >
-    struct Keep_type_different_of<Type,CGAL::cpp0x::tuple<>,
-                                  CGAL::cpp0x::tuple<Res...> >
+    struct Keep_type_different_of<Type,CGAL::cpp11::tuple<>,
+                                  CGAL::cpp11::tuple<Res...> >
     {
-      typedef CGAL::cpp0x::tuple<Res...> type;
+      typedef CGAL::cpp11::tuple<Res...> type;
     };
 
     template < class Type,class ... T, class ... Res >
     struct Keep_type_different_of<Type,
-                                  CGAL::cpp0x::tuple<Type,T ...>,
-                                  CGAL::cpp0x::tuple<Res...> >
+                                  CGAL::cpp11::tuple<Type,T ...>,
+                                  CGAL::cpp11::tuple<Res...> >
     {
       typedef typename Keep_type_different_of
-      <Type,CGAL::cpp0x::tuple<T ...>,CGAL::cpp0x::tuple<Res...> >::type type;
+      <Type,CGAL::cpp11::tuple<T ...>,CGAL::cpp11::tuple<Res...> >::type type;
     };
 
     template < class Type, class Other, class ... T, class ... Res >
-    struct Keep_type_different_of<Type,CGAL::cpp0x::tuple<Other,T...>, 
-                                  CGAL::cpp0x::tuple<Res...> >
+    struct Keep_type_different_of<Type,CGAL::cpp11::tuple<Other,T...>, 
+                                  CGAL::cpp11::tuple<Res...> >
     {
       typedef typename Keep_type_different_of
-      <Type, CGAL::cpp0x::tuple<T...>,
-       CGAL::cpp0x::tuple<Res...,Other> >::type type;
+      <Type, CGAL::cpp11::tuple<T...>,
+       CGAL::cpp11::tuple<Res...,Other> >::type type;
     };
 
     //Helper class to statically call a functor
@@ -262,18 +262,18 @@ namespace CGAL
     
     template <class Functor,class Head, class ... Items,int n>
     struct Foreach_static_restricted<Functor,
-                                     CGAL::cpp0x::tuple<Head,Items...>,n>
+                                     CGAL::cpp11::tuple<Head,Items...>,n>
     {
       template <class  ... T>
       static void run(const T& ... t){
         Conditionnal_run<Functor,n,Head>::run(t...);
         Foreach_static_restricted
-          <Functor,CGAL::cpp0x::tuple<Items...>,n+1>::run(t...);
+          <Functor,CGAL::cpp11::tuple<Items...>,n+1>::run(t...);
       }
     };
     
     template <class Functor,int n>
-    struct Foreach_static_restricted<Functor,CGAL::cpp0x::tuple<>,n>{
+    struct Foreach_static_restricted<Functor,CGAL::cpp11::tuple<>,n>{
       template <class  ... T>
       static void run(const T& ... ){}
     };
@@ -288,7 +288,7 @@ namespace CGAL
     struct Apply_functor_to_each_tuple_element
     {
       static void run(Tuple& t){
-        Functor() ( CGAL::cpp0x::get<pos>(t) );
+        Functor() ( CGAL::cpp11::get<pos>(t) );
         Apply_functor_to_each_tuple_element<Functor,Tuple,pos-1>::run(t);
       }
     };
@@ -390,7 +390,7 @@ namespace CGAL
       template<int d, int in_tuple=(d<CGAL::internal::My_length
                                     <Attributes>::value)>
       struct Attribute_type
-      { typedef typename CGAL::cpp0x::tuple_element<d,Attributes>::type type; };
+      { typedef typename CGAL::cpp11::tuple_element<d,Attributes>::type type; };
 
     template<int d>
     struct Attribute_type<d,0>
@@ -398,10 +398,10 @@ namespace CGAL
 
     // Helper class allowing to retreive the d-cell-handle attribute
     template<int d, class Type=typename
-             CGAL::cpp0x::tuple_element<d,Attributes>::type>
+             CGAL::cpp11::tuple_element<d,Attributes>::type>
     struct Attribute_handle
     {
-      typedef typename CGAL::cpp0x::tuple_element
+      typedef typename CGAL::cpp11::tuple_element
       <Dimension_index<d>::value,Attribute_handles>::type type;
     };
   
@@ -411,10 +411,10 @@ namespace CGAL
 
     // Helper class allowing to retreive the d-cell-const handle attribute
     template<int d,
-             class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type>
+             class Type=typename CGAL::cpp11::tuple_element<d,Attributes>::type>
     struct Attribute_const_handle
     {
-      typedef typename CGAL::cpp0x::tuple_element
+      typedef typename CGAL::cpp11::tuple_element
       <Dimension_index<d>::value, Attribute_const_handles>::type type;
     };
   
@@ -424,10 +424,10 @@ namespace CGAL
 
     // Helper class allowing to retreive the d-cell-iterator attribute
     template<int d,
-             class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type>
+             class Type=typename CGAL::cpp11::tuple_element<d,Attributes>::type>
     struct Attribute_iterator
     {
-      typedef typename CGAL::cpp0x::tuple_element<Dimension_index<d>::value,
+      typedef typename CGAL::cpp11::tuple_element<Dimension_index<d>::value,
                                                   Attribute_iterators>::type 
       type;
     };
@@ -438,10 +438,10 @@ namespace CGAL
 
     // Helper class allowing to retreive the d-cell-const handle attribute
     template<int d,
-             class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type>
+             class Type=typename CGAL::cpp11::tuple_element<d,Attributes>::type>
     struct Attribute_const_iterator
     {
-      typedef typename CGAL::cpp0x::tuple_element
+      typedef typename CGAL::cpp11::tuple_element
       <Dimension_index<d>::value, Attribute_const_iterators>::type type;
     };
   
@@ -451,10 +451,10 @@ namespace CGAL
 
     // Helper class allowing to retreive the d-cell-attribute range
     template<int d, class Type=
-             typename CGAL::cpp0x::tuple_element<d,Attributes>::type>
+             typename CGAL::cpp11::tuple_element<d,Attributes>::type>
     struct Attribute_range
     {
-      typedef typename CGAL::cpp0x::tuple_element<Dimension_index<d>::value,
+      typedef typename CGAL::cpp11::tuple_element<Dimension_index<d>::value,
                                                   Attribute_ranges>::type type;
     };
   
@@ -464,10 +464,10 @@ namespace CGAL
 
     // Helper class allowing to retreive the d-cell-attribute range
     template<int d,
-             class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type>
+             class Type=typename CGAL::cpp11::tuple_element<d,Attributes>::type>
     struct Attribute_const_range
     {
-      typedef const typename CGAL::cpp0x::tuple_element
+      typedef const typename CGAL::cpp11::tuple_element
       <Dimension_index<d>::value, Attribute_ranges >::type type;
     };
   

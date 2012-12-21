@@ -226,7 +226,7 @@ MainWindow::on_actionGenerateSegments_triggered()
   typedef CGAL::Creator_uniform_2< Point_2, Segment_2> Seg_creator;
   typedef CGAL::Join_input_iterator_2< Rpos_generator, Rpoc_generator, Seg_creator> Seg_iterator;
   Seg_iterator g( rpos, rpoc);
-  CGAL::cpp0x::copy_n( g, 200, std::back_inserter(segments));
+  CGAL::cpp11::copy_n( g, 200, std::back_inserter(segments));
   
   emit(changed());
 }

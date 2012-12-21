@@ -27,7 +27,7 @@ struct Myitems_2
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
                                             Divide_by_two_functor> myattrib;
-    typedef CGAL::cpp0x::tuple<myattrib, myattrib, myattrib>
+    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib>
     Attributes;
   };
 };
@@ -41,7 +41,7 @@ struct Myitems_3
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
                                             Divide_by_two_functor> myattrib;
-    typedef CGAL::cpp0x::tuple<myattrib, myattrib, myattrib, myattrib>
+    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib>
     Attributes;
   };
 };
@@ -55,7 +55,7 @@ struct Myitems_4
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
                                             Divide_by_two_functor> myattrib;
-    typedef CGAL::cpp0x::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
+    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
     Attributes;
   };
 };

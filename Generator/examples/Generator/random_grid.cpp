@@ -31,7 +31,7 @@ int main() {
 
     // Create 250 points within a disc of radius 150.
     Random_points_in_disc_2<Point,Creator> g( 150.0);
-    CGAL::cpp0x::copy_n( g, 250, std::back_inserter(points));
+    CGAL::cpp11::copy_n( g, 250, std::back_inserter(points));
 
     // Check that we have really created 500 points.
     assert( points.size() == 500);
