@@ -32,6 +32,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 
 #include <boost/optional.hpp>
+#include <boost/next_prior.hpp>
 
 #include <fstream>
 #include <sstream>

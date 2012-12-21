@@ -40,6 +40,7 @@
 #include <CGAL/internal/corefinement/intersection_triangle_segment_3.h>
 #include <CGAL/internal/corefinement/intersection_coplanar_triangles_3.h>
 
+#include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 
 #ifdef CGAL_COREFINEMENT_DEBUG
