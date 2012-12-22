@@ -1,0 +1,97 @@
+
+/*!
+\ingroup PkgTriangulationsConcepts
+\cgalconcept
+
+The concept `TriangulationVertex` describes the requirements on the type used by the 
+class `Triangulation<TriangulationTraits, TriangulationDataStructure>`, and its derived classes, to 
+represent a vertex. 
+
+\refines ::TriangulationDSVertex 
+We only list below the additional specific requirements of \refines ::TriangulationVertex. 
+Compared to \refines ::TriangulationDSVertex, the main difference is the addition of 
+CONVERRORRefines: an association of the vertex into a geometric point. 
+
+\hasModel CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex> 
+
+Input/Output 
+-------------- 
+
+These operators can be used directly and are called by the I/O 
+operator of class `Triangulation`. 
+
+\sa `Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>` 
+\sa `TriangulationFullCell` 
+\sa `Triangulation<TriangulationTraits, TriangulationDataStructure>` 
+
+*/
+
+class TriangulationVertex {
+public:
+
+/// \name Types 
+/// @{
+
+/*! 
+The type of the point stored in the vertex. It must be 
+the same as the point type `TriangulationTraits::Point` (or its refined 
+concepts) when the `TriangulationVertex` is used in the class 
+`Triangulation<TriangulationTraits, TriangulationDataStructure>` (or its derived classes). 
+*/ 
+typedef Hidden_type Point; 
+
+/// @} 
+
+/// \name Creation 
+/// @{
+
+/*! 
+Constructs a vertex with incident full cell `c`. The vertex is embedded at point `p`. 
+*/ 
+TriangulationVertex(Full_cell_handle c, const Point & p); 
+
+/*! 
+Same as above, but without incident full cell. 
+*/ 
+TriangulationVertex(const Point & p); 
+
+/*! 
+Same as above, but with a default-constructed `Point`. 
+*/ 
+TriangulationVertex(); 
+
+/// @} 
+
+/// \name Operations 
+/// @{
+
+/*! 
+The parameter `p` becomes the new geometrical position of the vertex. 
+*/ 
+void set_point(const Point & p); 
+
+/*! 
+Returns the vertex's position. 
+*/ 
+const Point & point() const; 
+
+CONVERROR: ccFunction inside class or concept, try to relate 
+/*! 
+Inputs the non-combinatorial information given by the vertex, i.e., 
+the point and other possible information. 
+\relates TriangulationVertex 
+*/ 
+istream & operator>>(istream & is, TriangulationVertex & v); 
+
+CONVERROR: ccFunction inside class or concept, try to relate 
+/*! 
+Outputs the non-combinatorial information given by the vertex, i.e., 
+the point and other possible information. 
+\relates TriangulationVertex 
+*/ 
+ostream & operator<<(ostream & os, const TriangulationVertex & v); 
+
+/// @}
+
+}; /* end TriangulationVertex */
+

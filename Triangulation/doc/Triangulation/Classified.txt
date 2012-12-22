@@ -1,0 +1,261 @@
+
+\authors Samuel Hornus  and Olivier Devillers
+
+A triangulation is a pure simplicial complex, connected and without
+singularities. Its faces are such that two of them either do not
+intersect or share a common face.
+
+The basic triangulation class of \cgal is primarily designed to
+represent the triangulations of a set of points \f$ A\f$ in \f$ \R^d\f$.
+ It can be
+viewed as a partition of the convex hull of \f$ A\f$ into simplices whose
+vertices are the points of \f$ A\f$. Together with the unbounded full cells having
+the convex hull boundary as its frontier, the triangulation forms a
+partition of \f$ \R^d\f$.
+
+In order to deal only with full dimensional simplices (full cells),
+ which is convenient for many
+applications, the space outside the convex hull is subdivided into
+full cells by
+considering that each convex hull facet is incident to an infinite
+full cell having as vertex an auxiliary vertex called the infinite
+vertex. In that way, each facet is incident to exactly two full cells and
+special cases at the boundary of the convex hull are simple to deal
+with.
+
+A triangulation is a collection of vertices and full cells that are linked
+together through incidence and adjacency relations. Each full cell gives
+access to its incident vertices and to its adjacent
+full cells. Each vertex gives access to one of its incident full cells.
+
+The vertices of a full cell are indexed in positive
+orientation, the positive orientation being defined by the orientation
+of the underlying Euclidean space \f$ \R^d\f$. The neighbors of a full cell are also
+indexed  in such a way that the neighbor indexed by \f$ i\f$
+is opposite to the vertex with the same index.
+
+# Reference Pages Sorted by Type #
+
+## Concepts ##
+
+## Triangulation data structure ##
+
+`TriangulationDataStructure`
+
+The above concept defines three types,
+`Vertex`, `Full_cell` and `Face`, that must respectively fulfill the
+following concepts:
+
+`TriangulationDSVertex`
+
+`TriangulationDSFullCell`
+
+`TriangulationDSFace`
+
+## (Geometric) triangulations ##
+
+`TriangulationTraits`
+
+`DelaunayTriangulationTraits`
+
+`TriangulationVertex`
+
+`TriangulationFullCell`
+
+The latter two concepts are also abbreviated respectively as `TrVertex` and `TrFullCell`.
+
+## Classes ##
+
+## Triangulation data structure ##
+
+\ref ::CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>
+
+\ref ::CGAL::Triangulation_ds_vertex<TriangulationDataStructure>
+
+\ref ::CGAL::Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>
+
+\ref ::CGAL::Triangulation_face<TriangulationDataStructure>
+
+## (Geometric) triangulations ##
+
+\ref ::CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>
+
+\ref ::CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>
+
+\ref ::CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>
+
+\ref ::CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>
+
+## Enums ##
+
+\ref ::CGAL::Triangulation::Locate_type
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+    
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+   
+  
+  
+  
+  
+  
+  
+    
+    
+  
+
+
