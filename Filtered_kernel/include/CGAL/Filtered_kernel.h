@@ -26,6 +26,10 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
+// We need a simple forward declaration to avoid including the whole
+// homogeneous kernel here.
+#include <CGAL/Homogeneous_converter.h>
+#include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 
 #include <CGAL/MP_Float.h>
@@ -76,7 +80,6 @@ template < typename CK >
 struct Filtered_kernel_base_RT
   : public CK
 {
-  // FIXME: This does not work for homogeneous kernels. Use CK::Rep_tag to dispatch, and for homogeneous use Simple_homogeneous for all predicates?
     typedef typename internal::Exact_ring_selector<typename CK::RT>::Type  Exact_rt;
     typedef Simple_cartesian<Exact_rt>                       EK_rt;
     typedef Simple_cartesian<Interval_nt_advanced>           AK_rt;
@@ -84,7 +87,8 @@ struct Filtered_kernel_base_RT
     typedef Cartesian_converter<CK, AK_rt>                   C2F_rt;
 
 // Change the predicates for which we know the Simple_cartesian implementation
-// does not use divisions.
+// does not use divisions. Use a different macro in interface_macros to
+// distinguish those predicates?
 #define CGAL_Kernel_pred(P, Pf) \
     typedef Filtered_predicate<typename EK_rt::P, typename AK_rt::P, C2E_rt, C2F_rt> P; \
     P Pf() const { return P(); }
@@ -106,8 +110,43 @@ CGAL_Kernel_pred(Side_of_oriented_sphere_3,
 };
 
 template < typename CK >
-struct Filtered_kernel_base
+struct Filtered_kernel_base_hom
+  : public CK
+{
+    typedef typename internal::Exact_ring_selector<typename CK::RT>::Type  Exact_nt;
+    typedef Simple_homogeneous<Exact_nt>                         Exact_kernel;
+    typedef Simple_cartesian<Interval_nt_advanced>               Approximate_kernel;
+    typedef Homogeneous_converter<CK, Exact_kernel>              C2E;
+    typedef Cartesian_converter<CK, Approximate_kernel>          C2F;
+    // Note that the converter will call point.x() and point.y() and convert
+    // those to intervals; it could instead call point.hx(), point.hy() and
+    // point.hz(), convert them to intervals and then divide to get x and y.
+
+    // We change the predicates.
+#define CGAL_Kernel_pred(P, Pf) \
+    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
+    P Pf() const { return P(); }
+
+    // We don't touch the constructions.
+#define CGAL_Kernel_cons(Y,Z)
+
+#include <CGAL/Kernel/interface_macros.h>
+
+};
+
+template < typename CK, typename = typename CK::Rep_tag /* Cartesian_tag */>
+struct Filtered_kernel_base_impl
   : public Filtered_kernel_base_RT < Filtered_kernel_base_FT < CK > >
+{};
+
+template < typename CK >
+struct Filtered_kernel_base_impl < CK, Homogeneous_tag >
+  : public Filtered_kernel_base_hom < CK >
+{};
+
+template < typename CK >
+struct Filtered_kernel_base
+  : public Filtered_kernel_base_impl < CK >
 {
     enum { Has_filtered_predicates = true };
     typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
