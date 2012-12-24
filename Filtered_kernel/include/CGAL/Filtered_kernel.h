@@ -54,7 +54,7 @@ template < typename CK >
 struct Filtered_kernel_base
   : public CK
 {
-    typedef typename internal::Exact_type_selector<typename CK::RT>::Type  Exact_nt;
+    typedef typename internal::Exact_field_selector<typename CK::RT>::Type  Exact_nt;
     typedef Simple_cartesian<Exact_nt>                           Exact_kernel;
     typedef Simple_cartesian<Interval_nt_advanced>               Approximate_kernel;
     typedef Cartesian_converter<CK, Exact_kernel>                C2E;

@@ -123,7 +123,7 @@ public:
 //and in case of failure, exact arithmetic is used.
 template <class Kernel>
 class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel>,Tag_true>{
-  typedef Simple_cartesian<CGAL::internal::Exact_type_selector<double>::Type>         PK;
+  typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>         PK;
   typedef Simple_cartesian<Interval_nt_advanced >                               CK;  
   typedef Convex_hull_traits_3<Kernel>                                          Traits;
   typedef typename Traits::Point_3                                              Point_3;
