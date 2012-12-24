@@ -51,7 +51,7 @@ namespace CGAL {
 // Exact_kernel = exact kernel called when needed by the filter.
 // Approximate_kernel = filtering "interval" kernel
 template < typename CK >
-struct Filtered_kernel_base
+struct Filtered_kernel_base_FT
   : public CK
 {
     typedef typename internal::Exact_field_selector<typename CK::RT>::Type  Exact_nt;
@@ -60,6 +60,54 @@ struct Filtered_kernel_base
     typedef Cartesian_converter<CK, Exact_kernel>                C2E;
     typedef Cartesian_converter<CK, Approximate_kernel>          C2F;
 
+    // We change the predicates.
+#define CGAL_Kernel_pred(P, Pf) \
+    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
+    P Pf() const { return P(); }
+
+    // We don't touch the constructions.
+#define CGAL_Kernel_cons(Y,Z)
+
+#include <CGAL/Kernel/interface_macros.h>
+
+};
+
+template < typename CK >
+struct Filtered_kernel_base_RT
+  : public CK
+{
+    typedef typename internal::Exact_ring_selector<typename CK::RT>::Type  Exact_rt;
+    typedef Simple_cartesian<Exact_rt>                       EK_rt;
+    typedef Simple_cartesian<Interval_nt_advanced>           AK_rt;
+    typedef Cartesian_converter<CK, EK_rt>                   C2E_rt;
+    typedef Cartesian_converter<CK, AK_rt>                   C2F_rt;
+
+// Change the predicates for which we know the Simple_cartesian implementation
+// does not use divisions.
+#define CGAL_Kernel_pred(P, Pf) \
+    typedef Filtered_predicate<typename EK_rt::P, typename AK_rt::P, C2E_rt, C2F_rt> P; \
+    P Pf() const { return P(); }
+
+CGAL_Kernel_pred(Orientation_2,
+                 orientation_2_object)
+CGAL_Kernel_pred(Orientation_3,
+                 orientation_3_object)
+CGAL_Kernel_pred(Side_of_bounded_circle_2,
+                 side_of_bounded_circle_2_object)
+CGAL_Kernel_pred(Side_of_bounded_sphere_3,
+                 side_of_bounded_sphere_3_object)
+CGAL_Kernel_pred(Side_of_oriented_circle_2,
+                 side_of_oriented_circle_2_object)
+CGAL_Kernel_pred(Side_of_oriented_sphere_3,
+                 side_of_oriented_sphere_3_object)
+
+#undef CGAL_Kernel_pred
+};
+
+template < typename CK >
+struct Filtered_kernel_base
+  : public Filtered_kernel_base_RT < Filtered_kernel_base_FT < CK > >
+{
     enum { Has_filtered_predicates = true };
     typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
 
@@ -78,17 +126,6 @@ struct Filtered_kernel_base
     struct Feature_dimension {
         typedef typename T::Feature_dimension type; // maybe not the right way...
     };
-
-    // We change the predicates.
-#define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
-    P Pf() const { return P(); }
-
-    // We don't touch the constructions.
-#define CGAL_Kernel_cons(Y,Z)
-
-#include <CGAL/Kernel/interface_macros.h>
-
 };
 
 template < typename CK >
