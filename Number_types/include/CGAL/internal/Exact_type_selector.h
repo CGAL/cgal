@@ -35,6 +35,7 @@
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
+#  include <CGAL/Gmpzf.h>
 #endif
 #ifdef CGAL_USE_GMPXX
 #  include <CGAL/gmpxx.h>
@@ -53,7 +54,7 @@ class Expr;
 
 namespace CGAL { namespace internal {
 
-// A class which tells the prefered "exact number type" corresponding to a type.
+// Two classes which tell the prefered "exact number types" corresponding to a type.
 
 // The default template chooses Gmpq or Quotient<MP_Float>.
 // It should support the built-in types.
@@ -65,9 +66,28 @@ struct Exact_field_selector
 { typedef Quotient<MP_Float> Type; };
 #endif
 
+// By default, a field is a safe choice of ring.
+template < typename T >
+struct Exact_ring_selector : Exact_field_selector < T > { };
+
+template <>
+struct Exact_ring_selector<double>
+#if defined(CGAL_HAS_THREADS) || !defined(CGAL_USE_GMP)
+{ typedef MP_Float Type; };
+#else
+{ typedef Gmpzf Type; };
+#endif
+
+template <>
+struct Exact_ring_selector<float> : Exact_ring_selector<double> { };
+
 template <>
 struct Exact_field_selector<MP_Float>
 { typedef Quotient<MP_Float> Type; };
+
+template <>
+struct Exact_ring_selector<MP_Float>
+{ typedef MP_Float Type; };
 
 template <>
 struct Exact_field_selector<Quotient<MP_Float> >
@@ -80,6 +100,14 @@ struct Exact_field_selector<Gmpz>
 { typedef Gmpq  Type; };
 
 template <>
+struct Exact_ring_selector<Gmpz>
+{ typedef Gmpz  Type; };
+
+template <>
+struct Exact_ring_selector<Gmpzf>
+{ typedef Gmpzf Type; };
+
+template <>
 struct Exact_field_selector<Gmpq>
 { typedef Gmpq  Type; };
 #endif
@@ -90,6 +118,10 @@ struct Exact_field_selector< ::mpz_class>
 { typedef ::mpq_class  Type; };
 
 template <>
+struct Exact_ring_selector< ::mpz_class>
+{ typedef ::mpz_class  Type; };
+
+template <>
 struct Exact_field_selector< ::mpq_class>
 { typedef ::mpq_class  Type; };
 #endif
@@ -98,6 +130,10 @@ struct Exact_field_selector< ::mpq_class>
 template <>
 struct Exact_field_selector<leda_integer>
 { typedef leda_rational  Type; };
+
+template <>
+struct Exact_ring_selector<leda_integer>
+{ typedef leda_integer   Type; };
 
 template <>
 struct Exact_field_selector<leda_rational>
@@ -122,6 +158,8 @@ struct Exact_field_selector<Lazy_exact_nt<ET> >
   // - using Lazy_exact_nt<ET> might use sharper intervals.
   typedef ET  Type;
   // typedef Lazy_exact_nt<ET>  Type;
+
+  // Should this forward to Exact_field_selector<ET> ? -- Marc Glisse, 2012-12.
 };
 
 } } // namespace CGAL::internal
