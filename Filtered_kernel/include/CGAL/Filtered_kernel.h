@@ -76,6 +76,7 @@ template < typename CK >
 struct Filtered_kernel_base_RT
   : public CK
 {
+  // FIXME: This does not work for homogeneous kernels. Use CK::Rep_tag to dispatch, and for homogeneous use Simple_homogeneous for all predicates?
     typedef typename internal::Exact_ring_selector<typename CK::RT>::Type  Exact_rt;
     typedef Simple_cartesian<Exact_rt>                       EK_rt;
     typedef Simple_cartesian<Interval_nt_advanced>           AK_rt;
