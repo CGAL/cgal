@@ -274,7 +274,8 @@ Gmpzf& Gmpzf::operator*=( const Gmpzf& b)
   mpz_mul(result.man(), man(), b.man());
   e += b.exp();
   swap (result);
-  canonicalize();
+  if(is_zero()) e=0; // product is 0 or odd, so we can skip canonicalize()
+  CGAL_postcondition(is_canonical());
   return *this;
 }
 
@@ -456,8 +457,10 @@ void Gmpzf::canonicalize()
   if (!is_zero()) {
     // chop off trailing zeros in m
     unsigned long zeros = mpz_scan1(man(), 0);
-    mpz_tdiv_q_2exp( man(), man(), zeros);  // bit-wise right-shift
-    e += zeros;
+    if (zeros != 0) {
+      mpz_tdiv_q_2exp( man(), man(), zeros);  // bit-wise right-shift
+      e += zeros;
+    }
   } else {
     e = 0;
   }
