@@ -163,7 +163,7 @@ public:
       e = 0;
       return;
     }
-    static int p = std::numeric_limits<double>::digits;
+    const int p = std::numeric_limits<double>::digits;
     CGAL_assertion(CGAL_NTS is_finite(d) & is_valid(d));
     int exp;
     double x = std::frexp(d, &exp); // x in [1/2, 1], x*2^exp = d
