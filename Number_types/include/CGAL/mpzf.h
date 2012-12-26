@@ -64,6 +64,9 @@ template <class T, class D> CGAL_THREAD_LOCAL T pool2<T,D>::data = 0;
 }
 
 
+// TODO:
+// * make data==0 a valid state for the number 0.
+// * try a simpler version of aors to check if the longer code is worth it.
 struct mpzf {
   typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
 
@@ -79,6 +82,7 @@ struct mpzf {
   // (2100*degree) bits, or (33*degree) mp_limb_t, which is very
   // small. I checked by including an array of 150 limbs in every mpzf
   // and it shaved another 17% from the running-time.
+  // 2012-12-26: gain is closer to 11% now.
   // BONUS: doing that would be thread-safe!
   void init(unsigned mini=2){
     if(!pool::empty()){
@@ -133,7 +137,16 @@ struct mpzf {
     std::swap(data,x.data);
     return *this;
   }
+  friend mpzf operator-(mpzf&& x){
+    mpzf ret = std::move(x);
+    ret.size = -ret.size;
+  }
 #endif
+  mpzf(int i) : exp(0) { // assume that int is smaller than mp_limb_t
+    init();
+    if (i == 0) { size = 0; }
+    else        { size = 1; data[0] = i; }
+  }
   mpzf(double d){
     init();
     union {
@@ -386,6 +399,14 @@ struct mpzf {
     //res.print();
     return res;
   }
+
+  friend mpzf operator-(mpzf const&x){
+    mpzf ret = x;
+    ret.size = -ret.size;
+  }
+  mpzf& operator+=(mpzf const&x){ *this=*this+x; return *this; }
+  mpzf& operator-=(mpzf const&x){ *this=*this-x; return *this; }
+  mpzf& operator*=(mpzf const&x){ *this=*this*x; return *this; }
 };
 
 #if 0
