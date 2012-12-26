@@ -18,14 +18,54 @@
 // triangulation by a factor larger than 6 (more is possible, see
 // the comment before mpzf::init()).
 
+#if !defined(CGAL_HAS_THREADS)
+#define CGAL_THREAD_LOCAL
+#elif __cplusplus >= 201103L
+#define CGAL_THREAD_LOCAL thread_local
+#elif defined(_MSC_VER)
+#define CGAL_THREAD_LOCAL __declspec(thread)
+#else
+#define CGAL_THREAD_LOCAL __thread
+// Too bad for the others
+#endif
+
+namespace mpzf_impl {
+template <class T, class = void> struct pool1 {
+  static T pop() { T ret = data.back(); data.pop_back(); return ret; }
+  static void push(T t) { data.push_back(t); }
+  static bool empty() { return data.empty(); }
+  static const int extra = 0;
+  private:
+  // thread_local would be fine, but not __declspec(thread) and for most
+  // compilers not __thread, since data is not POD.
+  static std::vector<T> data;
+};
+template <class T, class D> std::vector<T> pool1<T,D>::data;
+
+// Use an intrusive single-linked list instead (allocate one more limb and use
+// it to store the pointer to next), the difference isn't that noticable (still
+// the list wins).  Neither is thread-safe (both can be with threadlocal, and
+// the list can be with an atomic compare-exchange). With gcc, TLS affects the
+// vector version (almost +20% when constructing a Delaunay triangulation), but
+// for the list it seems basically free?!
+
+// Warning: this isn't truly generic!
+template <class T, class = void> struct pool2 {
+  static T pop() { T ret = data; data = ptr(data); return ret; }
+  static void push(T t) { ptr(t) = data; data = t; }
+  static bool empty() { return data == 0; }
+  static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
+  private:
+  BOOST_STATIC_ASSERT(sizeof(T) >= sizeof(T*));
+  static CGAL_THREAD_LOCAL T data;
+  static T& ptr(T t) { t -= extra+1; return *reinterpret_cast<T*>(t); }
+};
+template <class T, class D> CGAL_THREAD_LOCAL T pool2<T,D>::data = 0;
+}
+
+
 struct mpzf {
-  static std::vector<mp_limb_t*> pool;
-  // could use an intrusive single-linked list instead (allocate one
-  // more limb and use it to store the pointer to next), but the
-  // difference probably wouldn't be that noticable (still worth a
-  // try...), and neither is thread-safe (both can be with
-  // threadlocal, and the list can be with an atomic
-  // compare-exchange).
+  typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
 
   mp_limb_t* data;
   int size;
@@ -41,19 +81,19 @@ struct mpzf {
   // and it shaved another 17% from the running-time.
   // BONUS: doing that would be thread-safe!
   void init(unsigned mini=2){
-    if(!pool.empty()){
-      data = pool.back();
-      pool.pop_back();
+    if(!pool::empty()){
+      data = pool::pop();
       if(data[-1] >= mini) return; // TODO: when mini==2, no need to check
-      delete[] --data; // too small, useless
+      data -= pool::extra+1;
+      delete[] data; // too small, useless
     }
     if(mini<2) mini=2;
-    data = (new mp_limb_t[mini+1]) + 1;
+    data = (new mp_limb_t[mini+(pool::extra+1)]) + (pool::extra+1);
     data[-1] = mini;
   }
   void clear(){
     while(*--data==0); ++data; // in case we skipped final zeroes
-    pool.push_back(data);
+    pool::push(data);
   }
   ~mpzf(){ clear(); }
   mpzf(): size(0), exp(0) { init(); }
@@ -346,7 +386,6 @@ struct mpzf {
     return res;
   }
 };
-std::vector<mp_limb_t*> mpzf::pool;
 
 #if 0
 void f(double d){
@@ -402,7 +441,7 @@ int main(){
 }
 #endif
 
-#if 0
+#if 1
 namespace CGAL {
   template <> class Algebraic_structure_traits< mpzf >
     : public Algebraic_structure_traits_base< mpzf, Integral_domain_without_division_tag >  {
