@@ -105,6 +105,7 @@ struct mpzf {
     if(this==&x) return *this;
     while(*--data==0); // factor that code somewhere?
     if(*data<asize){
+      data -= pool::extra;
       delete[] data;
       init(asize);
     } else ++data;
