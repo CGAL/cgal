@@ -14,7 +14,7 @@ In addition to the requirements described in the concept
 Delaunay triangulation plugged in a basic alpha shapes provides the
 following.
 
-\cgalHasModel All `CGAL` kernels. 
+\cgalHasModel All %CGAL kernels. 
 \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended) 
 \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel` 
 \cgalHasModel `CGAL::Filtered_kernel` 

@@ -7,21 +7,21 @@ namespace CGAL {
 The class `Alpha_shape_cell_base_3` is the default model for the concept 
 `AlphaShapeCell_3`. 
 
-The class has four parameters. The traits class `Traits` is the one that is provided 
+\tparam Traits is the geometric traits class that is provided 
 to the `Alpha_shape_3` class. 
-The second parameter `Fb` is a base class instantiated by default 
-with `CGAL::Triangulation_cell_base_3<Traits>`. 
-The third parameter `ExactAlphaComparisonTag` is a tag that, when set to 
-`CGAL::Tag_true`, triggers exact comparisons between alpha values. See the description 
-provided in the documentation of `Alpha_shape_3` for more details. The default value is `CGAL::Tag_false`. 
-The fourth parameter `WeightedTag` is used only if `ExactAlphaComparisonTag` is `CGAL::Tag_true`. It 
-must be `CGAL::Tag_true` if the underlying triangulation of the alpha shape to be used is a regular triangulation 
-and `CGAL::Tag_false` otherwise. The default is `CGAL::Tag_false`. 
+\tparam Cb must be a cell base class instantiated by default 
+with `Triangulation_cell_base_3<Traits>`. 
+\tparam ExactAlphaComparisonTag is a tag that, when set to 
+`Tag_true`, triggers exact comparisons between alpha values. See the description 
+provided in the documentation of `Alpha_shape_3` for more details. The default value is `Tag_false`. 
+\tparam WeightedTag is used only if `ExactAlphaComparisonTag` is `Tag_true`. It 
+must be `Tag_true` if the underlying triangulation of the alpha shape to be used is a Regular triangulation 
+and `Tag_false` otherwise. The default is `Tag_false`. 
 
 \cgalModels `AlphaShapeCell_3`
 
 */
-template< typename Traits, typename Fb, typename ExactAlphaComparisonTag, typename WeightedTag >
+template< typename Traits, typename Cb, typename ExactAlphaComparisonTag, typename WeightedTag >
 class Alpha_shape_cell_base_3 : public Fb {
 public:
 
@@ -42,12 +42,12 @@ Each face has three critical alpha values, called
 The face will be exterior for any \f$ \alpha < \f$ `alpha_min`, 
 singular for `alpha_min` \f$ \leq \alpha < \f$ `alpha_mid`, 
 regular for `alpha_mid` \f$ \leq \alpha < \f$ `alpha_max` 
-and interior for `alpha_max` \f$ \leq alpha\f$. 
+and interior for `alpha_max` \f$ \leq \alpha\f$. 
 The value `alpha_min` is undefined for faces which are not Gabriel 
 faces and therefore do not appear in the alpha complex 
 without any of their 
 including face. The value `alpha_max` is undefined 
-for convex hull faces which can never be interior, 
+for convex hull faces which can never be interior.
 The data structure also includes two Boolean to mark 
 if the face is a Gabriel face or a convex hull face. 
 
@@ -75,12 +75,12 @@ Alpha_status();
 /// @{
 
 /*! 
-sets Gabriel marker; 
+sets Gabriel marker. 
 */ 
 void set_is_Gabriel(bool yesorno); 
 
 /*! 
-sets convex hull marker; 
+sets convex hull marker.
 */ 
 void set_is_on_chull(bool yesorno); 
 
@@ -105,29 +105,29 @@ void set_alpha_max(NT alpha);
 /// @{
 
 /*! 
-Returns true for Gabriel faces; 
+Returns true for Gabriel faces. 
 */ 
 bool is_Gabriel() const ; 
 
 /*! 
-Returns true for convex hull faces; 
+Returns true for convex hull faces. 
 */ 
 bool is_on_chull() const; 
 
 /*! 
-Returns the `alpha_min` 
+Returns the `alpha_min`. 
 \pre `is_Gabriel()` returns false; 
 */ 
 NT alpha_min() const; 
 
 /*! 
-Returns the `alpha_mid`; 
+Returns the `alpha_mid`.
 */ 
 NT alpha_mid() const; 
 
 /*! 
 Returns `alpha_max`. 
-\pre `is_on_chull()` returns false. 
+\pre `is_on_chull()` returns `false`. 
 */ 
 NT alpha_max() const; 
 

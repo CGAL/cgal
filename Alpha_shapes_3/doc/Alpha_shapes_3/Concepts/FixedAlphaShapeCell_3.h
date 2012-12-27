@@ -5,7 +5,7 @@
 
 This concept describes the requirements for the base cell of a alpha shape with a fixed value alpha. 
 
-\cgalRefines `TriangulationCellBase_3.` 
+\cgalRefines `TriangulationCellBase_3` 
 
 \cgalHasModel `CGAL::Fixed_alpha_shape_cell_base_3`
 
@@ -54,7 +54,7 @@ Classification_type get_facet_classification_type(int i);
 /// @{
 
 /*! 
-Sets classification of the cell. 
+Sets the classification of the cell. 
 */ 
 void set_classification_type(Classification_type type); 
 

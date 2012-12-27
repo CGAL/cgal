@@ -7,16 +7,15 @@ namespace CGAL {
 The class `Fixed_alpha_shape_cell_base_3` is the default model for the concept 
 `FixedAlphaShapeCell_3`. 
 
-The class has two parameters. The traits class `Traits` 
-provides the number type for alpha values. 
-The second parameter `Fb` is a base class instantiated by default 
-with `CGAL::Triangulation_cell_base_3<Traits>`. 
+\tparam Traits provides the number type for alpha values. 
+\tparam Cb must be a cell base class and it is instantiated by default 
+with `Triangulation_cell_base_3<Traits>`. 
 
 \cgalModels `FixedAlphaShapeCell_3`
 
 */
-template< typename Traits, typename Fb >
-class Fixed_alpha_shape_cell_base_3 : public Fb {
+template< typename Traits, typename Cb >
+class Fixed_alpha_shape_cell_base_3 : public Cb {
 public:
 
 /// @}

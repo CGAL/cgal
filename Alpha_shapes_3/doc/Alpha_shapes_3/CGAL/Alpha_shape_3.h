@@ -36,20 +36,20 @@ is an internal format.
 
 ### Implementation ###
 
-In GENERAL mode, the alpha intervals of each triangulation 
+In `GENERAL` mode, the alpha intervals of each triangulation 
 face is computed and stored at initialization time. 
-In REGULARIZED mode, the alpha shape intervals of edges 
+In `REGULARIZED` mode, the alpha shape intervals of edges 
 are not stored nor computed at initialization. 
 Edges are simply classified on the fly upon request. 
 This allows to have much faster building of alpha shapes in 
-REGULARIZED mode. 
+`REGULARIZED` mode. 
 
-`A.alpha find` uses linear search, while 
-`A.alpha lower bound` and `A.alpha upper bound` 
+Function `Alpha_shape_3::alpha_find()` uses linear search, while 
+`Alpha_shape_3::alpha_lower_bound()` and `Alpha_shape_3::alpha_upper_bound()` 
 use binary search. 
-`A.number of solid components` performs a graph traversal and takes time 
+`Alpha_shape_3::number_of_solid_components()` performs a graph traversal and takes time 
 linear in the number of cells of the underlying triangulation. 
-`A.find of optimal alpha` uses binary search and takes time 
+`Alpha_shape_3::find_optimal_alpha()` uses binary search and takes time 
 \f$ O(n \log n)\f$, where \f$ n\f$ is the number of points. 
 
 */
@@ -98,15 +98,17 @@ the increasing sequence of different alpha values.
 typedef Hidden_type Alpha_iterator; 
 
 /*! 
-In GENERAL mode, the alpha complex can have singular faces, 
-i. e. faces of dimension \f$ k\f$, for \f$ k=(0,1,2)\f$ 
-that are not subfaces of a \f$ k+1\f$ face of the complex. 
-In REGULARIZED mode, the complex is regularized, that is 
-singular faces are dropped and the alpha complex 
-includes only a subset of the tetrahedral cells 
-of the triangulation and the subfaces of those cells. 
+In GENERAL mode,  
+In REGULARIZED mode,  
 */ 
-enum Mode {GENERAL, REGULARIZED}; 
+enum Mode {GENERAL, /**< the alpha complex can have singular faces, 
+                       i.e., faces of dimension \f$ k\f$, for \f$ k=(0,1,2)\f$ 
+                       that are not subfaces of a \f$ k+1\f$ face of the complex.*/
+           REGULARIZED /**< the complex is regularized, that is 
+                          singular faces are dropped and the alpha complex 
+                          includes only a subset of the tetrahedral cells 
+                          of the triangulation and the subfaces of those cells. */
+}; 
 
 /*! 
 Enum to classify the faces of the underlying 
@@ -152,7 +154,7 @@ Mode m = REGULARIZED);
 /*! 
 Builds an alpha shape of mode `m` for the points in the range 
 `[first,last)` and  set the current alpha value to `alpha`. 
-\tparam InputIterator must be an input iterator with value type `Point` (the type point of the underlying triangulation.) 
+\tparam InputIterator must be an input iterator with value type `Point` (the point type of the underlying triangulation.) 
 */ 
 template < class InputIterator > 
 Alpha_shape_3( 
@@ -222,7 +224,7 @@ const FT&
 get_alpha(void) const; 
 
 /*! 
-Returns the `n`-th \f$ alpha\f$-value, sorted in an increasing order. 
+Returns the `n`-th `alpha`-value, sorted in an increasing order. 
 \pre `n` < number of alphas. 
 */ 
 const FT& get_nth_alpha(int n) const; 

@@ -44,13 +44,12 @@ default constructor.
 AlphaShapeVertex_3(); 
 
 /*! 
-constructor setting 
-the point associated to. 
+constructor setting the point. 
 */ 
 AlphaShapeVertex_3(Point p); 
 
 /*! 
-constructor setting the point associated to and an incident cell. 
+constructor setting the point and an incident cell. 
 */ 
 AlphaShapeVertex_3(Point p, const Cell_handle& c); 
 

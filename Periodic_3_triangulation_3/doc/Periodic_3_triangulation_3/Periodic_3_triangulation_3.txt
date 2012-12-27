@@ -359,9 +359,10 @@ exact.
 
 \subsection Periodic_3_triangulation_3PeriodicAlphaShapes Periodic Alpha Shapes
 
-It is possible to use `Periodic_3_Delaunay_triangulation_3`
-as underlying triangulation for computing alpha shapes (cf. Chapter \ref Chapter_3D_Alpha_Shapes). For an example see
-Section \ref l1_SectPeriodicAS3D.
+It is possible to use the class `Periodic_3_Delaunay_triangulation_3`
+as underlying triangulation for computing alpha shapes. For an example see
+Section \ref AlphaShape_3DExampleForPeriodicAlphaShapes of the chapter on
+3D alpha shapes.
 
 \section Periodic_3_triangulation_3Design Design and Implementation History
 
