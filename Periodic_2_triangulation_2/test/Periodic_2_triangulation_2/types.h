@@ -10,8 +10,8 @@
 
 using namespace CGAL;
 
-//typedef Exact_predicates_inexact_constructions_kernel K;
-struct K : public Exact_predicates_inexact_constructions_kernel {};
+typedef Exact_predicates_inexact_constructions_kernel K;
+//struct K : public Exact_predicates_inexact_constructions_kernel {};
 //typedef Simple_cartesian<Gmpq> K;
 //typedef Simple_cartesian<double> K;
 
