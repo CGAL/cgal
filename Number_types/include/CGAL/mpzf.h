@@ -454,62 +454,7 @@ struct mpzf {
 };
 }
 
-#if 0
-void f(double d){
-  union { struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s; double d; } u;
-  u.d = d;
-  uint64_t m = (1L<<52)|u.s.man;
-  int e = (int)u.s.exp-1075;
-  std::cout << std::hex << m << ' ';
-  std::cout << std::dec << e << ' ';
-  std::cout << (u.s.sig?"-":"+") << ldexp(m,e) << std::endl;
-}
 
-void g(double d){
-  union { struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s; double d; } u;
-  u.d = d;
-  if(u.s.exp==0){std::cout << "zero or denorm\n"; return;}
-  uint64_t m = (1L<<52)|u.s.man;
-  int e1 = (int)u.s.exp+13;
-  int e2 = e1 % 64;
-  int e = e1 / 64 - 17;
-  uint64_t m2;
-  uint64_t m1;
-  __int128 mm;
-  if(__builtin_ctzll(m)+e2>=64){
-    m2 = 0;
-    m1 = m >> (64-e2);
-    mm = m1;
-    ++e;
-  }else{
-    m1 = m << e2;
-    m2 = e2 ? (m >> (64-e2)) : 0;
-    mm = ((__int128)m2 << 64) | m1;
-  }
-  std::cout << std::hex << m2 << ' ' << m1 << "   ";
-  std::cout << std::dec << e << ' ';
-  std::cout << (u.s.sig?"-":"+") << ldexp(mm,64*e) << std::endl;
-}
-
-int main(){
-  using CGAL::mpzf;
-//  g(ldexp(1,-999));
-//  g(ldexp(1,999));
-//  g(0);
-//  mpzf x(-.000001);
-  mpzf x=+ldexp(1,128);
-  mpzf y=x+ldexp(1,65); y.print();
-  mpzf z=+ldexp(1,132);
-  //y*y;
-  //y*y*y*y*y*y*y*y*y*y*y;
-  (z+y).print();
-  (y+z).print();
-  (z-y).print();
-  (y-z).print();
-}
-#endif
-
-#if 1
 namespace CGAL {
   template <> class Algebraic_structure_traits< mpzf >
     : public Algebraic_structure_traits_base< mpzf, Integral_domain_without_division_tag >  {
@@ -529,5 +474,4 @@ namespace CGAL {
 	  };
     };
 }
-#endif
 #endif // CGAL_MPZF_H
