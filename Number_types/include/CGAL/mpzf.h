@@ -1,3 +1,5 @@
+#ifndef CGAL_MPZF_H
+#define CGAL_MPZF_H
 #include <cstdlib>
 #include <assert.h>
 #include <stdint.h>
@@ -28,7 +30,7 @@
 #define CGAL_THREAD_LOCAL __thread
 // Too bad for the others
 #endif
-
+namespace CGAL {
 namespace mpzf_impl {
 template <class T, class = void> struct pool1 {
   static T pop() { T ret = data.back(); data.pop_back(); return ret; }
@@ -198,7 +200,7 @@ struct mpzf {
     while(--asize>=0) { std::cout << data[asize] << ' '; }
     std::cout << std::dec << "exp " << exp << ' ';
     asize = std::abs(size);
-    std::cout << "double: " << ldexp(data[asize-1],64*(exp+asize-1))*((size<0)?-1:1) << '\n';
+    std::cout << "double: " << std::ldexp((double)data[asize-1],64*(exp+asize-1))*((size<0)?-1:1) << '\n';
   }
   friend int abscmp(mpzf const&a, mpzf const&b){
     int asize=std::abs(a.size);
@@ -418,7 +420,39 @@ struct mpzf {
   mpzf& operator+=(mpzf const&x){ *this=*this+x; return *this; }
   mpzf& operator-=(mpzf const&x){ *this=*this-x; return *this; }
   mpzf& operator*=(mpzf const&x){ *this=*this*x; return *this; }
+
+  bool is_canonical () const {
+    if (size == 0) return true;
+    if (data[0] == 0) return false;
+    if (data[std::abs(size)-1] == 0) return false;
+    return true;
+  }
+
+#ifdef CGAL_USE_GMPXX
+  // For testing purposes
+  operator mpq_class () const {
+    mpq_class q;
+    if (size != 0) {
+      mpz_import (mpq_numref (q.get_mpq_t()),
+		  std::abs(size),
+		  -1, // data[0] is the least significant part
+		  sizeof(mp_limb_t),
+		  0, // native endianness inside mp_limb_t
+		  GMP_NAIL_BITS, // should be 0
+		  data);
+      if (exp > 0)
+	q <<= (sizeof(mp_limb_t) * CHAR_BIT *  exp);
+      else if (exp < 0)
+	q >>= (sizeof(mp_limb_t) * CHAR_BIT * -exp);
+
+      if (size < 0)
+	q = -q;
+    }
+    return q;
+  }
+#endif
 };
+}
 
 #if 0
 void f(double d){
@@ -458,6 +492,7 @@ void g(double d){
 }
 
 int main(){
+  using CGAL::mpzf;
 //  g(ldexp(1,-999));
 //  g(ldexp(1,999));
 //  g(0);
@@ -495,3 +530,4 @@ namespace CGAL {
     };
 }
 #endif
+#endif // CGAL_MPZF_H
