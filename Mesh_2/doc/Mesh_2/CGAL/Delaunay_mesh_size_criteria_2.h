@@ -21,7 +21,7 @@ so \f$ B=\sqrt{2}\f$ corresponds to \f$ \alpha_{min} \ge 20.7\f$ degrees.
 This traits class defines also a size criteria: all segments of all 
 triangles must be shorter than a bound \f$ S\f$. 
 
-
+\tparam CDT must be a 2D constrained Delaunay triangulation.
 
 \cgalModels `MeshingCriteria_2`
 

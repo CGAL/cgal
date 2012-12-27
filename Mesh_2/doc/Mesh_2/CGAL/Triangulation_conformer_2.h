@@ -47,8 +47,8 @@ The class `Triangulation_conformer_2` is an auxiliary class of
 `Delaunay_mesher_2<CDT>`. It permits to refine a constrained 
 Delaunay triangulation into a conforming Delaunay or conforming 
 Gabriel triangulation. For standard needs, consider using the global 
-functions `make_conforming_Gabriel_2` and 
-`make_conforming_Delaunay_2`. 
+functions `make_conforming_Gabriel_2()` and 
+`make_conforming_Delaunay_2()`. 
 
 
 \tparam CDT must be a 2D constrained Delaunay triangulation
@@ -68,7 +68,7 @@ new `Triangulation_conformer_2` object if the triangulation has been modified.
 The conforming methods insert points into constrained edges, thereby splitting 
 them into several sub-constraints. You have access to the initial inserted 
 constraints if you instantiate the template parameter by a 
-`CGAL::Constrained_triangulation_plus_2<CDT>`. 
+`Constrained_triangulation_plus_2<CDT>`. 
 
 */
 template< typename CDT >

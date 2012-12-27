@@ -297,7 +297,7 @@ never meshed.
 and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
 
 \tparam Criteria must be a model of the concept `MeshingCriteria_2`. 
-\tparam InputIterator must be an input iterator with valur type `CDT::Geom_traits::Point_2`.
+\tparam InputIterator must be an input iterator with value type `CDT::Geom_traits::Point_2`.
 
 \cgalRequires The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
 \cgalRequires `CDT::Face_handle` must be the same as `Criteria::Face_handle`. 
