@@ -128,21 +128,21 @@ namespace CGAL {
 		template<typename ConstPrimitiveIterator>
 		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
-    /// Add a sequence of primitives to the set of primitive of the
-    /// AABB_tree. Type InputIterator can be any const iterator
-    /// such that AABB_tree::Primitive has a constructor taking an
-    /// InputIterator as argument.
+    /// Adds a sequence of primitives to the set of primitives of the
+    /// tree. Type ConstPrimitiveIterator can be any const iterator
+    /// such that `AABB_tree::Primitive` has a constructor taking an
+    /// ConstPrimitiveIterator as argument.
 		template<typename ConstPrimitiveIterator>
 		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
 
-    /// Add a primitive to the set of primitives of the AABB_tree.
+    /// Adds a primitive to the set of primitives of the tree.
     inline void insert(const Primitive& p);
 
     /// \name Advanced
     ///@{
 
-    /// After one or more calls to AABB_tree::insert the internal data
-    /// structure of AABB_tree must be reconstructed. This procedure
+    /// After one or more calls to `AABB_tree::insert()` the internal data
+    /// structure of the tree must be reconstructed. This procedure
     /// has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
     /// primitives of the tree.  This procedure is called implicitly
     /// at the first call to a query member function. You can call
@@ -153,13 +153,13 @@ namespace CGAL {
 
     ///@}
 
-		// Non virtual destructor
+		// Non virtual destructor.
 		~AABB_tree()
 		{
 			clear();
 		}
 
-		/// Clears the tree AABB_tree.
+		/// Clears the tree.
 		void clear()
 		{
 			// clear AABB tree
@@ -174,7 +174,7 @@ namespace CGAL {
     /// Returns the number of primitives in the tree.
 		size_type size() const { return m_primitives.size(); }
     
-    /// Returns \c true, iff tree contains no primitive.
+    /// Returns \c true, iff the tree contains no primitive.
 		bool empty() const { return m_primitives.empty(); }
 
 private:    
@@ -202,7 +202,7 @@ public:
 
     /// Outputs to the iterator the list of all intersected primitives
     /// ids. This function does not compute the intersection points
-    /// and is hence faster than the function `all_intersections`
+    /// and is hence faster than the function `all_intersections()`
     /// function below. Type `Query` must be a type for which
     /// `do_intersect` predicates are defined
     /// in the traits class AABBTraits.
@@ -252,7 +252,7 @@ public:
 
     /// Returns the minimum squared distance between the query point
     /// and all input primitives. Method
-    /// `accelerate_distance_queries` should be called before the
+    /// `accelerate_distance_queries()` should be called before the
     /// first distance query, so that an internal secondary search
     /// structure is build, for improving performance.
 		FT squared_distance(const Point& query) const;
@@ -260,7 +260,7 @@ public:
     /// Returns the point in the union of all input primitives which
     /// is closest to the query. In case there are several closest
     /// points, one arbitrarily chosen closest point is
-    /// returned. Method `accelerate_distance_queries` should be
+    /// returned. Method `accelerate_distance_queries()` should be
     /// called before the first distance query, so that an internal
     /// secondary search structure is build, for improving
     /// performance.
@@ -269,7 +269,7 @@ public:
     
     /// Returns a `Point_and_primitive_id` which realizes the
     /// smallest distance between the query point and all input
-    /// primitives. Method `accelerate_distance_queries` should be
+    /// primitives. Method `accelerate_distance_queries()` should be
     /// called before the first distance query, so that an internal
     /// secondary search structure is build, for improving
     /// performance.
@@ -319,7 +319,7 @@ public:
     /// In order to accelerate distance queries significantly, the
     /// AABB tree builds an internal KD-tree containing a set of
     /// potential hints, when the method
-    /// `accelerate_distance_queries` is called. This KD-tree
+    /// `accelerate_distance_queries()` is called. This KD-tree
     /// provides very good hints that allow the algorithms to run much
     /// faster than with a default hint (such as the
     /// `reference_point` of the first primitive). The set of

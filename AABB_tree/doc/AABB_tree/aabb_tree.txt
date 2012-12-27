@@ -61,15 +61,15 @@ objects.
 
 Tests: 
 
-- Function AABB_tree::do_intersect() tests if the input primitives are
+- Function `AABB_tree::do_intersect()` tests if the input primitives are
 intersected by the query. This function is fast as it involves only
 predicates and stops after the first encountered intersection.
-- Function AABB_tree::number_of_intersected_primitives counts all
+- Function `AABB_tree::number_of_intersected_primitives()` counts all
 intersected primitives.
-- Function AABB_tree::all_intersected_primitives enumerates all intersected
+- Function `AABB_tree::all_intersected_primitives()` enumerates all intersected
 primitives ids without constructing the corresponding intersection
 objects.
-- Function AABB_tree::any_intersected_primitive returns the first
+- Function `AABB_tree::any_intersected_primitive()` returns the first
 encountered intersecting primitive id (if any) without constructing
 the corresponding intersection object, and stops after the first
 encountered intersection. Note that the traversal order of the tree is
@@ -78,9 +78,9 @@ the intersections with respect to the query.
 
 Constructions: 
 
-- Function  AABB_tree::all_intersections() detects and constructs all
+- Function  `AABB_tree::all_intersections()` detects and constructs all
 intersection objects with the input primitives.
-- Function  AABB_tree::any_intersection() detects and constructs the first
+- Function  `AABB_tree::any_intersection()` detects and constructs the first
 encountered intersection and constructs the corresponding object. This
 function is fast as it stops after the first encountered intersection.
 
@@ -156,7 +156,7 @@ triangle query and the closest point from a point query.
 
 The AABB tree is a static data structure, but it allows to insert
 primitives, and will internally rebuild triggered by the first query,
-or because the user calls the `AABB_tree::build` method.  The following
+or because the user calls the `AABB_tree::build()` method.  The following
 example illustrates this for two polyhedral surfaces.
 
 \include AABB_insertion_example.cpp
@@ -267,7 +267,7 @@ surface mesh.
 
 
 \cgalFigureBegin{figAABB-tree-bench,bench.png}
-Number of queries per second against number of triangles for the knot model with 14K (shown), 57K, 230K and 921K triangles. We call the `all_intersections` function with segment queries randomly chosen within the bounding box.
+Number of queries per second against number of triangles for the knot model with 14K (shown), 57K, 230K and 921K triangles. We call the `all_intersections()` function with segment queries randomly chosen within the bounding box.
 \cgalFigureEnd
 
 The following table measures the number of `AABB_tree::all_intersections()`
@@ -322,7 +322,7 @@ query and location of query in space.
 
 - %Kernel: The type of \cgal kernel turns out to dominate the final
   execution times, the maximum performances being obtained with the
-  simple Cartesian kernel parameterized with the double precision
+  `Simple_cartesian` kernel parameterized with the double precision
   number type. In applications where the intersection and distance
   execution times are crucial it is possible to use this kernel for
   the AABB tree in combination with a more robust kernel for the main
