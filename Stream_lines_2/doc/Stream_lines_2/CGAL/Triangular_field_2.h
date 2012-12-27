@@ -6,7 +6,7 @@ namespace CGAL {
 
 This class provides a vector field specified by a set of sample points 
 defined on a triangulated domain. All sample points are inserted to a 
-`Delaunay triangulation`, and for each point `p` in the domain 
+Delaunay triangulation, and for each point `p` in the domain 
 located in a face `f`, its vector value is interpolated from the 
 vertices of the face `f`. 
 
@@ -45,13 +45,13 @@ typedef StreamLinesTraits_2::Vector_2 Vector_2;
 /// @{
 
 /*! 
-Defines the points in the range 
-`[first_point, `last_point) 
-as the sample points of the grid, with the corresponding number of vectors started at `first_vector`. 
-\pre The `value_type` of `InputIterator1` is `Point_2`. 
-\pre The `value_type` of `InputIterator2` is `Vector_2`. 
+Defines the points in the range `[first_point, last_point)` 
+as the sample points of the triangular field, with the corresponding number of vectors started at `first_vector`. 
+\tparam PointInputIterator must be an input iterator with the value type `Point_2`. 
+\tparam VectorInputIterator must be an input iterator with the value type `Vector_2`. 
 */ 
-Triangular_field_2( InputIterator1 first_point, InputIterator1 last_point, InputIterator2 first_vector); 
+mplate <class PointIterator1, class VectorInputIterator>
+Triangular_field_2( PointInputIterator first_point, PointInputIterator last_point, VectorInputIterator first_vector); 
 
 /// @}
 

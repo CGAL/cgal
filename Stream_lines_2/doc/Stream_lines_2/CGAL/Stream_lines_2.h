@@ -101,12 +101,12 @@ void update();
 /*! 
 returns the separating distance. 
 */ 
-void get_separating_distance(); 
+FT get_separating_distance() const; 
 
 /*! 
 returns the saturation ratio. 
 */ 
-void get_saturation_ratio(); 
+FT get_saturation_ratio() const; 
 
 /*! 
 prints the streamlines to an ASCII file: line by line, and point by point. 

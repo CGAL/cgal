@@ -46,7 +46,7 @@ typedef Hidden_type Vector_2;
 /// @{
 
 /*! 
-Any constructor has to allow the user to fill the vector values (i.e. assign a vector to each position within the domain). 
+Any constructor has to allow the user to fill the vector values, i.e., assign a vector to each position within the domain. 
 */ 
 VectorField_2(); 
 
@@ -56,26 +56,25 @@ VectorField_2();
 /// @{
 
 /*! 
-returns 
-the bounding box of the whole domain. 
+returns the bounding box of the whole domain. 
 */ 
 Geom_traits::Iso_rectangle_2 bbox(); 
 
 /*! 
 returns the vector field value and the local density. 
-\pre `is_in_domain(p)` must be true. 
+\pre `is_in_domain(p)` must be `true`. 
 */ 
 std::pair<Vector_2,FT> get_field(Point_2 p); 
 
 /*! 
-returns true if the point p 
-is inside the domain boundaries, false otherwise. 
+returns `true` if the point `p` 
+is inside the domain boundaries, `false` otherwise. 
 */ 
 bool is_in_domain(Point_2 p); 
 
 /*! 
-returns the integration step at the point p (i.e. the distance between `p` and the next point in the polyline.). 
-\pre `is_in_domain(p)` must be true. 
+returns the integration step at the point `p`, i.e., the distance between `p` and the next point in the polyline. 
+\pre `is_in_domain(p)` must be `true`. 
 */ 
 FT get_integration_step(Point_2 p); 
 
