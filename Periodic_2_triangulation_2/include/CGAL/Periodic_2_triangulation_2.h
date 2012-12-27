@@ -2666,10 +2666,6 @@ void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(
       ff = (* ++hit).first;    ii = (*hit).second;
       fn = (* ++hit).first;    in = (*hit).second;
       Face_handle newf = create_face(f,i,ff,ii,fn,in);
-      // set_offsets(newf,
-      //     vertex_offsets[newf->vertex(0)],
-      //     vertex_offsets[newf->vertex(1)],
-      //     vertex_offsets[newf->vertex(2)]);
       Offset oo0(vertex_offsets[newf->vertex(0)]);
       Offset oo1(vertex_offsets[newf->vertex(1)]);
       Offset oo2(vertex_offsets[newf->vertex(2)]);
