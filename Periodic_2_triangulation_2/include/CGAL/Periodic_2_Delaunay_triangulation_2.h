@@ -93,6 +93,7 @@ public:
   using Triangulation::get_neighbor_offset;
   using Triangulation::combine_offsets;
   using Triangulation::locate;
+  using Triangulation::number_of_sheets;
 #endif
 
   /// \name Constructors
@@ -384,7 +385,8 @@ private:
       std::vector<int> &i,int d);
   /// NGHK: Not yet implemented
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
+                      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+                      std::vector<int> &i);
   /// NGHK: Not yet implemented
   void remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i);
@@ -1200,21 +1202,25 @@ remove_degree_triangulate(Vertex_handle v,
   switch (d) {
   case 3:
     // ++deg[3];
-    remove_degree_d(v,f,w,offset_w,i,d);    break;
-    // remove_degree3(v,f,w,offset_w,i);    break;
+    remove_degree3(v,f,w,offset_w,i);    break;
+    //remove_degree_d(v,f,w,offset_w,i,d);    break;
   case 4:
+    // TODO(NGHK): Implement optimized removal
     // ++deg[4];
     remove_degree_d(v,f,w,offset_w,i,d);    break;
 //    remove_degree4(v,f,w,offset_w,i);    break;
   case 5:
+    // TODO(NGHK): Implement optimized removal
     // ++deg[5];
     remove_degree_d(v,f,w,offset_w,i,d);    break;
 //    remove_degree5(v,f,w,offset_w,i);    break;
   case 6:
+    // TODO(NGHK): Implement optimized removal
     // ++deg[6];
     remove_degree_d(v,f,w,offset_w,i,d);    break;
 //    remove_degree6(v,f,w,offset_w,i);    break;
   case 7:
+    // TODO(NGHK): Implement optimized removal
     // ++deg[7];
     remove_degree_d(v,f,w,offset_w,i,d);    break;
 //    remove_degree7(v,f,w,offset_w,i);    break;
@@ -1256,13 +1262,10 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
-	       std::vector<Vertex_handle> &, std::vector<int> &i)
+remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
+               std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+               std::vector<int> &i)
 {
-    NGHK_NYI;
-  // removing a degree 3 vertex
-  // only w[0] can be infinite
-
   // modify the triangulation
   Face_handle nn= f[1]->neighbor( i[1] );
   tds().set_adjacency(f[0], ccw(i[0]) , nn , nn->index(f[1])  );
@@ -1274,6 +1277,20 @@ remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
   tds().delete_face(f[1]);
   tds().delete_face(f[2]);
 
+  if (o[0].x() < 0 || o[1].x() < 0 || o[2].x() < 0) {
+    o[0] += Offset(number_of_sheets()[0], 0);
+    o[1] += Offset(number_of_sheets()[0], 0);
+    o[2] += Offset(number_of_sheets()[0], 0);
+  }
+  if (o[0].y() < 0 || o[1].y() < 0 || o[2].y() < 0) {
+    o[0] += Offset(0, number_of_sheets()[1]);
+    o[1] += Offset(0, number_of_sheets()[1]);
+    o[2] += Offset(0, number_of_sheets()[1]);
+  }
+  this->set_offsets(f[0], 
+                    (o[0].x() >= number_of_sheets()[0] ? 2 : 0) + (o[0].y() >= number_of_sheets()[1] ? 1 : 0),
+                    (o[1].x() >= number_of_sheets()[0] ? 2 : 0) + (o[1].y() >= number_of_sheets()[1] ? 1 : 0),
+                    (o[2].x() >= number_of_sheets()[0] ? 2 : 0) + (o[2].y() >= number_of_sheets()[1] ? 1 : 0));
   return;
 }
 
