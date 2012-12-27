@@ -141,7 +141,7 @@ dimension of the box, and for a policy class \cite cgal:a-mcdgp-01
 selecting among several solutions for providing the `id`-number.
 
 The function signatures for the bipartite case look as follows. The 
-signatures for the complete case with the `box_self_intersection_d`
+signatures for the complete case with the `box_self_intersection_d()`
 function look the same except for the single iterator range.
 
 \code{.cpp}
