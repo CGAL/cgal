@@ -366,17 +366,22 @@ private:
   /// NGHK: Not yet implemented
   void remove_2D(Vertex_handle v );
 
-// auxilliary functions for remove
+  // auxilliary functions for remove
+  // returns false if we first need to convert to a 9-cover before the vertex can be removed
+  bool remove_single_vertex(Vertex_handle v, const Offset &v_o);
   /// NGHK: Not yet implemented
-  void remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,
-         std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
-         std::vector<int> &i,int&d,int&maxd);
+  bool remove_degree_init(Vertex_handle v, const Offset &v_o,
+      std::vector<Face_handle> &f,
+      std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+      std::vector<int> &i, int &d, int &maxd);
   /// NGHK: Not yet implemented
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i,int d);
-  /// NGHK: Not yet implemented
-  void remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i,int d);
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+		      std::vector<int> &i,int d);
+  void remove_degree_d(
+      Vertex_handle v, std::vector<Face_handle> &f,
+      std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+      std::vector<int> &i,int d);
   /// NGHK: Not yet implemented
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i);
@@ -1084,7 +1089,8 @@ void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v)
 {
-  int d;
+  // Make sure we have the original vertex
+  v = this->get_original_vertex(v);
 
   CGAL_triangulation_precondition(v != Vertex_handle());
   CGAL_triangulation_precondition(dimension() == 2);
@@ -1095,37 +1101,65 @@ remove(Vertex_handle v)
     return;
   }
 
+  if (!remove_single_vertex(v, Offset())) {
+    // The vertex was not removed as we need to revert to the 9-cover first
+    this->convert_to_9_sheeted_covering();
+
+    remove_single_vertex(v, Offset());
+  }
+
+  if (!is_1_cover()) {
+    CGAL_assertion(this->virtual_vertices_reverse().find(v) != this->virtual_vertices_reverse().end());
+    const std::vector<Vertex_handle> &virtual_copies = this->virtual_vertices_reverse().find(v)->second;
+    for (size_t i=0; i<8; ++i) {
+      remove_single_vertex(virtual_copies[i], Offset((i+1)/3, (i+1)%3));
+    }
+    this->remove_from_virtual_copies(v);
+  }
+}
+
+template < class Gt, class Tds >
+bool
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_single_vertex(Vertex_handle v, const Offset &v_o) {
   static int maxd=30;
   static std::vector<Face_handle> f(maxd);
   static std::vector<int> i(maxd);
   static std::vector<Vertex_handle> w(maxd);
   static std::vector<Offset> offset_w(maxd);
+  int d;
 
-  remove_degree_init(v,f,w,offset_w,i,d,maxd);
+  if (remove_degree_init(v,v_o, f,w,offset_w,i,d,maxd)) {
+    if (is_1_cover()) {
+      // Don't delete if the hole is too big and the triangulation is a 1-cover
+      return false;
+    }
+  }
 
-  //remove_degree_triangulate(v,f,w,i,d);
-  //this->delete_vertex(v);
+  remove_degree_triangulate(v,f,w,offset_w,i,d);
+  this->delete_vertex(v);
+
+  return true;
 }
 
 template < class Gt, class Tds >
-void
+bool
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_init(Vertex_handle v,
+remove_degree_init(Vertex_handle v, const Offset &v_o,
                    std::vector<Face_handle> &f,
 		   std::vector<Vertex_handle> &w,
 		   std::vector<Offset> &offset_w,
                    std::vector<int> &i,
 		   int &d, int &maxd)
 {
-  Bbox_2 bbox;
-  bbox = bbox + v->point().bbox();
+  Bbox_2 bbox = v->point().bbox();
 
   f[0] = v->face();d=0;
 
   do{
     i[d] = f[d]->index(v);
     w[d] = f[d]->vertex( ccw(i[d]) );
-    offset_w[d] = get_offset(f[d], ccw(i[d])) - get_offset(f[d], i[d]);
+    offset_w[d] = get_offset(f[d], ccw(i[d])) - get_offset(f[d], i[d]) + v_o;
     w[d]->set_face( f[d]->neighbor(i[d]));//do no longer bother about set_face
 
     bbox = bbox + this->construct_point(w[d]->point(), offset_w[d]).bbox();
@@ -1138,13 +1172,13 @@ remove_degree_init(Vertex_handle v,
       offset_w.resize(maxd);
       i.resize(maxd);
     }
+
     f[d] = f[d-1]->neighbor( ccw(i[d-1]) );
+
   } while(f[d]!=f[0]);
 
-  if ((bbox.xmax()-bbox.xmin() > FT(2)*(this->domain().xmax() - this->domain().xmin())) ||
-      (bbox.ymax()-bbox.ymin() > FT(2)*(this->domain().ymax() - this->domain().ymin()))) {
-    this->convert_to_9_sheeted_covering();
-  }
+  return is_1_cover() &&
+      this->edge_is_too_long(Point(bbox.xmin(), bbox.ymin()), Point(bbox.xmax(), bbox.ymax()));
 }
 
 
@@ -1155,40 +1189,68 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree_triangulate(Vertex_handle v,
                           std::vector<Face_handle> &f,
                           std::vector<Vertex_handle> &w,
+                          std::vector<Offset> &offset_w,
                           std::vector<int> &i,int d)
 {
-  NGHK_NYI;
+  // static int total = 0;
+  // static int deg[10];
+  // if (total == 0)
+  //   for (int i=0; i<10; ++i) deg[i] = 0;
+  // ++total;
   switch (d) {
   case 3:
-    remove_degree3(v,f,w,i);    break;
+    // ++deg[3];
+    remove_degree_d(v,f,w,offset_w,i,d);    break;
+    // remove_degree3(v,f,w,offset_w,i);    break;
   case 4:
-    remove_degree4(v,f,w,i);    break;
+    // ++deg[4];
+    remove_degree_d(v,f,w,offset_w,i,d);    break;
+//    remove_degree4(v,f,w,offset_w,i);    break;
   case 5:
-    remove_degree5(v,f,w,i);    break;
+    // ++deg[5];
+    remove_degree_d(v,f,w,offset_w,i,d);    break;
+//    remove_degree5(v,f,w,offset_w,i);    break;
   case 6:
-    remove_degree6(v,f,w,i);    break;
+    // ++deg[6];
+    remove_degree_d(v,f,w,offset_w,i,d);    break;
+//    remove_degree6(v,f,w,offset_w,i);    break;
   case 7:
-    remove_degree7(v,f,w,i);    break;
+    // ++deg[7];
+    remove_degree_d(v,f,w,offset_w,i,d);    break;
+//    remove_degree7(v,f,w,offset_w,i);    break;
   default:
-    remove_degree_d(v,f,w,i,d);    break;
+    // ++deg[8];
+    remove_degree_d(v,f,w,offset_w,i,d);    break;
   }
+  // std::cout << "3: " << (deg[3]*100)/total
+  //           << ", 4: " << (deg[4]*100)/total
+  //           << ", 5: " << (deg[5]*100)/total
+  //           << ", 6: " << (deg[6]*100)/total
+  //           << ", 7: " << (deg[7]*100)/total
+  //           << ", r: " << (deg[8]*100)/total
+  //           << std::endl;
+
+  // result: 3: 1, 4: 9, 5: 23, 6: 35, 7: 19, r: 10
+
 }
 
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
-                std::vector<Vertex_handle> &,
-                std::vector<int> &,int)
+remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
+                std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+                std::vector<int> &i,int d)
 {
-    NGHK_NYI;
-  // removing a degree d vertex, (dim is not going down)
-  // this is the old removal procedure that is used now only if d > 7
+  std::list<Edge> hole;
+  this->make_hole(v, hole);
 
-    std::list<Edge> hole;
-    this->make_hole(v, hole);
-    this->fill_hole_delaunay(hole);
-    return;
+  std::map<Vertex_handle, Offset> vertex_offsets;
+  for (size_t idx=0; idx<d; ++idx) {
+    vertex_offsets[w[idx]] = offset_w[idx];
+  }
+  this->fill_hole_delaunay(hole, vertex_offsets);
+
+  return;
 }
 
 template < class Gt, class Tds >
