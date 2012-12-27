@@ -22,7 +22,7 @@ A container type to get (and put) the three special values
 typedef Hidden_type Interval_3; 
 
 /*! 
-A type to hold a coordinate type class. 
+A coordinate type.
 The type must provide a copy constructor, assignment, comparison 
 operators, negation, multiplication, division and allow the 
 declaration and initialization with a small integer constant 

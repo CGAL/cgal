@@ -23,12 +23,12 @@ public:
 /// @{
 
 /*! 
-A type to hold a coordinate type class. 
+A coordinate type.
 The type must provide a copy constructor, assignment, comparison 
 operators, negation, multiplication, division and allow the 
 declaration and initialization with a small integer constant 
 (cf. requirements for number types). 
-\pre An obvious choice would be coordinate type of the point class. 
+ An obvious choice would be coordinate type of the point class. 
 */ 
 typedef Hidden_type FT; 
 
@@ -41,7 +41,7 @@ typedef Hidden_type FT;
 /*! 
 A default constructor. 
 */ 
-Gt(); 
+  AlphaShapeTraits_2(); 
 
 /// @} 
 
