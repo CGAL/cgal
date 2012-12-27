@@ -47,7 +47,13 @@ template <class T, class D> std::vector<T> pool1<T,D>::data;
 // the list wins).  Neither is thread-safe (both can be with threadlocal, and
 // the list can be with an atomic compare-exchange). With gcc, TLS affects the
 // vector version (almost +20% when constructing a Delaunay triangulation), but
-// for the list it seems basically free?!
+// for the list it seems basically free. The slowdown is because of PR55812.
+// Note that as is, pool has a memory leak if people create and destroy threads
+// regularly. We want to add a destructor so that a pool is cleared at thread
+// destruction (or stored in a central atomic location, for reuse by the next
+// created thread) but then we would suffer from the same gcc bug (and not work
+// with implementations missing the C++11 thread_local), so we may want to
+// attach the destructor to a different object (one we never use).
 
 // Warning: this isn't truly generic!
 template <class T, class = void> struct pool2 {
@@ -69,6 +75,10 @@ template <class T, class D> CGAL_THREAD_LOCAL T pool2<T,D>::data = 0;
 // * try a simpler version of aors to check if the longer code is worth it.
 struct mpzf {
   typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
+  static void clear_pool () {
+    while (!pool::empty())
+      delete[] (pool::pop() - (pool::extra + 1));
+  }
 
   mp_limb_t* data;
   int size;
@@ -356,6 +366,7 @@ struct mpzf {
       assert(carry==0);
       res.size+=absxsize;
       while(/*res.size>0&&*/res.data[res.size-1]==0) --res.size;
+      while(/*res.size>0&&*/res.data[0]==0){--res.size;++res.data;++res.exp;}
       if(xsize<0) res.size=-res.size;
     }
     return res;
