@@ -1228,6 +1228,23 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
+        <name>2D Periodic Triangulations</name>
+        <input>../Periodic_2_triangulation_2/doc/</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2</string>
+          <string name="STRIP_FROM_INC_PATH">../Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2</string>
+          <string name="GENERATE_TAGFILE">./tags/Periodic_2_triangulation_2.tag</string>
+          <string name="IMAGE_PATH">../Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig</string>
+          <string name="EXAMPLE_PATH">../Periodic_2_triangulation_2/examples</string>
+          <list name="TAGFILES" append="true">
+            <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Spatial_sorting.tag=../../CGAL.CGAL.Spatial-Sorting/html</item>
+          </list>
+        </doxygen>
+      </project>
+
+      <project>
         <name>3D Triangulation</name>
         <input>../Triangulation_3/doc/Triangulation_3</input>
         <doxygen>
@@ -1484,6 +1501,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Point_set_processing_3/doc/Point_set_processing_3/fig</item>
           <item>../Point_set_processing_3/doc/Property_map/fig</item>
           <item>../Kinetic_data_structures/doc/Kinetic_framework/fig</item>
+          <item>../Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig</item>
           <item>../Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig</item>
           <item>../Spatial_searching/doc/Spatial_searching/fig</item>
           <item>../Spatial_sorting/doc/Spatial_sorting/fig</item>
@@ -1557,6 +1575,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
           <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
           <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+          <item>./tags/Periodic_2_triangulation_2.tag=../../CGAL.CGAL.2D-Periodic-Triangulations/html</item>
           <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
           <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
           <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulations/html</item>
