@@ -180,10 +180,10 @@ public:
   typedef typename Triangulation::Cell_handle   Cell_handle;
 
   // Geometric types
-  typedef typename Geom_traits::FT FT; ///< typedef to Geom_traits::FT
-  typedef typename Geom_traits::Point_3 Point; ///< typedef to Geom_traits::Point_3
-  typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
-  typedef typename Geom_traits::Sphere_3 Sphere; ///< typedef to Geom_traits::Sphere_3
+  typedef typename Geom_traits::FT FT; ///< number type.
+  typedef typename Geom_traits::Point_3 Point; ///< point type.
+  typedef typename Geom_traits::Vector_3 Vector; ///< vector type.
+  typedef typename Geom_traits::Sphere_3 Sphere; 
 
   /// @}
 
@@ -277,7 +277,7 @@ public:
 
 
   /*! 
-    Creates a Poisson implicit function from the [first, beyond) range of points. 
+    Creates a Poisson implicit function from the  range of points `[first, beyond)`. 
 
     \tparam InputIterator iterator over input points. 
 
