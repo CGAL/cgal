@@ -4,7 +4,7 @@
 
 This concept defines the representation of an envelope diagram of a set 
 of planar curve. The <I>envelope diagram</I> is a subdivision of the \f$ x\f$-axis 
-into \f$ 0\f$-dimensional cells (<I>vertices</I>) and \f$ 1\f$-dimensional cells 
+into 0-dimensional cells (<I>vertices</I>) and 1-dimensional cells 
 (<I>edges</I>), such that the identity of the curves that induce the lower 
 envelope (or the upper envelope) over each cell is fixed. 
 
@@ -62,8 +62,7 @@ the size type (convertible to `size_t`).
 typedef Hidden_type Size; 
 
 /*! 
-an iterator for the \f$ x\f$-monotone curves that induce a diagram feature. 
-Its value-type is `X_monotone_curve_2`. 
+an iterator for the \f$ x\f$-monotone curves that induce a diagram feature, with value type `X_monotone_curve_2`. 
 */ 
 typedef Hidden_type Curve_const_iterator; 
 
