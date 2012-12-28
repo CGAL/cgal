@@ -123,8 +123,9 @@ template <class T, class = void> struct pool4 {
 #undef CGAL_MPZF_THREAD_LOCAL
 #undef CGAL_MPZF_TLS
 
-// TODO: make data==0 a valid state for number 0. Incompatible with the cache.
-// * make more things private.
+// TODO:
+// * make data==0 a valid state for number 0. Incompatible with the cache. I
+//   tried, and it doesn't seem to help (may even hurt a bit).
 struct mpzf {
   private:
 #ifdef CGAL_MPZF_USE_CACHE
@@ -142,11 +143,6 @@ struct mpzf {
 #else
   typedef mpzf_impl::pool4<mp_limb_t*,mpzf> pool;
 #endif
-  public:
-  static void clear_pool () {
-    while (!pool::empty())
-      delete[] (pool::pop() - (pool::extra + 1));
-  }
 
   mp_limb_t* data;
 #ifdef CGAL_MPZF_USE_CACHE
@@ -190,14 +186,23 @@ struct mpzf {
     ++data;
     pool::push(data);
   }
+
+  mpzf(noalloc){}
+  mpzf(allocate,int i) { init(i); }
+
+  public:
+
+  static void clear_pool () {
+    while (!pool::empty())
+      delete[] (pool::pop() - (pool::extra + 1));
+  }
+
   ~mpzf(){
     clear();
   }
   mpzf(): size(0), exp(0) {
     init();
   }
-  mpzf(noalloc){}
-  mpzf(allocate,int i) { init(i); }
   mpzf& operator=(mpzf const& x){
     unsigned asize=std::abs(x.size);
     if(asize==0) { exp=0; size=0; return *this; }
@@ -314,6 +319,7 @@ struct mpzf {
   friend bool operator<=(mpzf const&a, mpzf const&b){
     return !(a>b);
   }
+  private:
   static mpzf aors(mpzf const&a, mpzf const&b, int bsize){
     mpzf res=noalloc();
     if(bsize==0){
@@ -456,6 +462,7 @@ struct mpzf {
     }
     return res;
   }
+  public:
   friend mpzf operator+(mpzf const&a, mpzf const&b){
     return aors(a,b,b.size);
   }
@@ -508,6 +515,8 @@ struct mpzf {
     return true;
   }
 
+  CGAL::Sign sign () const { return CGAL::sign(size); }
+
 #ifdef CGAL_USE_GMPXX
   // For testing purposes
   operator mpq_class () const {
@@ -549,7 +558,7 @@ namespace CGAL {
 	  : public std::unary_function< Type, ::CGAL::Sign > {
 	    public:
 	      ::CGAL::Sign operator()( const Type& x ) const {
-		return CGAL::Sign((x.size<0)?-1:(x.size>0));
+		return x.sign();
 	      }
 	  };
     };
