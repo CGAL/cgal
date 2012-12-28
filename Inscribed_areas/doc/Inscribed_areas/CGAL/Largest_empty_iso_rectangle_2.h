@@ -154,9 +154,9 @@ void
 push_back(const Point_2& p); 
 
 /*! 
-Inserts the points in the range `[first, last)` Returns the number of inserted points. 
+Inserts the points in the range `[first, last)`, and returns the number of inserted points. 
 
-\cgalRequires The valuetype of `first` and `last` is `Point`.
+\tparam InputIterator must be an iterator with value type `Point_2`.
 */ 
 template < class InputIterator > 
 int 
