@@ -8,22 +8,35 @@
 #include <iostream>
 #include <gmp.h>
 
+#if defined(__GNUC__) && defined(__GNUC_MINOR__) \
+    && (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 \
+    && __cplusplus >= 201103L
+#define CGAL_CAN_USE_CXX11_THREAD_LOCAL
+#endif
+
+#ifdef CGAL_MPZF_NO_USE_CACHE
+# ifdef CGAL_MPZF_USE_CACHE
+#  undef CGAL_MPZF_USE_CACHE
+# endif
+#else
+# if !defined(CGAL_MPZF_USE_CACHE) \
+     && defined(CGAL_HAS_THREADS) \
+     && !defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
+#  define CGAL_MPZF_USE_CACHE
+# endif
+#endif
 // FIXME:
 // this code is experimental. It assumes there is an int64_t type, it
-// may assume little endianness, it uses a gcc builtin, things get
-// instantiated that should be in src/, others work only thanks to
-// inlining, etc. And the aors function is complicated enough that it
-// likely has bugs.
+// may assume little endianness, it uses a gcc builtin, etc.
 
 // On a dataset provided by Andreas, replacing Gmpq with this type in
 // Epick reduced the running time of the construction of a Delaunay
-// triangulation by a factor larger than 6 (more is possible, see
-// the comment before mpzf::init()).
+// triangulation by a factor larger than 6
 
 #if !defined(CGAL_HAS_THREADS)
 #define CGAL_MPZF_THREAD_LOCAL
 #define CGAL_MPZF_TLS
-#elif __cplusplus >= 201103L
+#elif defined(CGAL_CAN_USE_CXX11_THREAD_LOCAL)
 #define CGAL_MPZF_THREAD_LOCAL thread_local
 #define CGAL_MPZF_TLS thread_local
 #elif defined(_MSC_VER)
@@ -38,7 +51,7 @@ namespace CGAL {
 namespace mpzf_impl {
 // Warning: these pools aren't generic at all!
 
-  // Not thread-safe
+// Not thread-safe
 template <class T, class = void> struct pool1 {
   static T pop() { T ret = data.back(); data.pop_back(); return ret; }
   static void push(T t) { data.push_back(t); }
@@ -54,15 +67,9 @@ template <class T, class D> std::vector<T> pool1<T,D>::data;
 // Use an intrusive single-linked list instead (allocate one more limb and use
 // it to store the pointer to next), the difference isn't that noticable (still
 // the list wins).  Neither is thread-safe (both can be with threadlocal, and
-// the list can be with an atomic compare-exchange). With gcc, TLS affects the
-// vector version (almost +20% when constructing a Delaunay triangulation), but
-// for the list it seems basically free. The slowdown is because of PR55812.
-// Note that as is, pool has a memory leak if people create and destroy threads
-// regularly. We want to add a destructor so that a pool is cleared at thread
-// destruction (or stored in a central atomic location, for reuse by the next
-// created thread) but then we would suffer from the same gcc bug (and not work
-// with implementations missing the C++11 thread_local), so we may want to
-// attach the destructor to a different object (one we never use).
+// the list can be with an atomic compare-exchange (never tried)).  With gcc,
+// TLS has a large effect on classes with constructor/destructor, but is free
+// for a simple pointer.  The slowdown is because of PR55812.
 
 // Leaks at thread destruction
 template <class T, class = void> struct pool2 {
@@ -79,9 +86,7 @@ template <class T, class = void> struct pool2 {
   static T& ptr(T t) { t -= extra+1; return *reinterpret_cast<T*>(t); }
 };
 
-// Wrong test: gcc only supports it in 4.8+ (and with bad performance at least
-// in 4.8), and the others not at all.
-#if __cplusplus >= 201103L
+#if defined(CGAL_CAN_USE_CXX11_THREAD_LOCAL)
 template <class T, class = void> struct pool3 {
   static T pop() { T ret = data(); data() = ptr(data()); return ret; }
   static void push(T t) { ptr(t) = data(); data() = t; }
@@ -118,17 +123,34 @@ template <class T, class = void> struct pool4 {
 #undef CGAL_MPZF_THREAD_LOCAL
 #undef CGAL_MPZF_TLS
 
-// TODO:
-// * make data==0 a valid state for the number 0.
-// * try a simpler version of aors to check if the longer code is worth it.
+// TODO: make data==0 a valid state for number 0. Incompatible with the cache.
 struct mpzf {
+  private:
+#ifdef CGAL_MPZF_USE_CACHE
+  // More experiments to determine the best value would be good. It likely
+  // depends on the usage. Note that pool2 is fast enough that a conditional
+  // cache slows it down. A purely static cache (crash if it isn't large
+  // enough) still wins by about 11% on the Delaunay_3 construction, but is
+  // more complicated to handle.
+  static const int cache_size = 9;
+#endif
+#if !defined(CGAL_HAS_THREADS) || defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
   typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
+#elif defined(CGAL_CAN_USE_CXX11_THREAD_LOCAL)
+  typedef mpzf_impl::pool3<mp_limb_t*,mpzf> pool;
+#else
+  typedef mpzf_impl::pool4<mp_limb_t*,mpzf> pool;
+#endif
+  public:
   static void clear_pool () {
     while (!pool::empty())
       delete[] (pool::pop() - (pool::extra + 1));
   }
 
   mp_limb_t* data;
+#ifdef CGAL_MPZF_USE_CACHE
+  mp_limb_t cache[cache_size + 1];
+#endif
   int size;
   int exp;
 
@@ -143,18 +165,32 @@ struct mpzf {
   // 2012-12-26: gain is closer to 11% now.
   // BONUS: doing that would be thread-safe!
   void init(unsigned mini=2){
+#ifdef CGAL_MPZF_USE_CACHE
+    if (mini <= cache_size) {
+      cache[0] = cache_size;
+      data = cache + 1;
+      return;
+    }
+#endif
     if(!pool::empty()){
       data = pool::pop();
       if(data[-1] >= mini) return; // TODO: when mini==2, no need to check
-      data -= pool::extra+1;
-      delete[] data; // too small, useless
+      --data;
+#ifdef CGAL_MPZF_USE_CACHE
+      if (data != cache)
+#endif
+	delete[] (data - pool::extra); // too small, useless
     }
     if(mini<2) mini=2;
     data = (new mp_limb_t[mini+(pool::extra+1)]) + (pool::extra+1);
     data[-1] = mini;
   }
   void clear(){
-    while(*--data==0); ++data; // in case we skipped final zeroes
+    while(*--data==0); // in case we skipped final zeroes
+#ifdef CGAL_MPZF_USE_CACHE
+    if (data == cache) return;
+#endif
+    ++data;
     pool::push(data);
   }
   ~mpzf(){ clear(); }
@@ -167,8 +203,10 @@ struct mpzf {
     if(this==&x) return *this;
     while(*--data==0); // factor that code somewhere?
     if(*data<asize){
-      data -= pool::extra;
-      delete[] data;
+#ifdef CGAL_MPZF_USE_CACHE
+      if (data != cache)
+#endif
+	delete[] (data - pool::extra);
       init(asize);
     } else ++data;
     size=x.size;
@@ -183,15 +221,14 @@ struct mpzf {
     exp=x.exp;
     if(size!=0) mpn_copyi(data,x.data,asize);
   }
-#if __cplusplus >= 201103L
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) \
+    && !defined(CGAL_MPZF_USE_CACHE)
   mpzf(mpzf&& x):data(x.data),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
   }
   mpzf& operator=(mpzf&& x){
-    // Should have 2 levels, one with just the members and one with
-    // the algos, so that I could write a single std::swap.
     std::swap(size,x.size);
-    std::swap(exp ,x.exp );
+    exp = x.exp;
     std::swap(data,x.data);
     return *this;
   }
@@ -234,7 +271,6 @@ struct mpzf {
       }
     }
     if(u.s.sig) size=-size;
-    //print();
   }
   // For debug purposes only
   void print()const{
@@ -432,7 +468,6 @@ struct mpzf {
     mpzf res(allocate(),siz);
     if(asize==0||bsize==0){res.exp=0;res.size=0;return res;}
     res.exp=a.exp+b.exp;
-    // TODO: call mpn_mul_123456 if possible?
     mp_limb_t high;
     if(asize>=bsize)
       high = mpn_mul(res.data,a.data,asize,b.data,bsize);
@@ -441,7 +476,6 @@ struct mpzf {
     if(high==0) --siz;
     if(res.data[0]==0) { ++res.data; ++res.exp; --siz; }
     res.size=((a.size^b.size)>=0)?siz:-siz;
-    //res.print();
     return res;
   }
   friend mpzf square(mpzf const&a){
@@ -455,7 +489,6 @@ struct mpzf {
     if(high==0) --siz;
     if(res.data[0]==0) { ++res.data; ++res.exp; --siz; }
     res.size=siz;
-    //res.print();
     return res;
   }
 
