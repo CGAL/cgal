@@ -400,7 +400,7 @@ classes:
 `Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` and
 `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`.
 
-Arithmetic Filtering##
+\subsection Segment_Delaunay_graph_2ArithmeticFiltering Arithmetic Filtering
 
 As mentioned above, performing computations with exact arithmetic
 can be very costly. For this reason we have devoted considerable
