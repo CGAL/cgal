@@ -11,7 +11,7 @@ while the actual point type is `Base_traits::Point_3`.
 
 \tparam Base_traits must be a model for `SpatialSortingTraits_3`. 
 \tparam PointPropertyMap must be a model of <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</A> 
-with `Base_traits::Point_3` as `value_type`. 
+with value type `Base_traits::Point_3`.
 
 \cgalModels `SpatialSortingTraits_3`
 

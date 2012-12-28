@@ -8,9 +8,8 @@ The function object `Hilbert_sort_2` sorts iterator ranges of
 at the median 
 or the middle depending on the `PolicyTag`. 
 
-### Requirements ###
 
-`Traits` is a model for `SpatialSortingTraits`. 
+\tparam Traits must be a model for `SpatialSortingTraits`. 
 
 */
 template< typename Traits, typename PolicyTag >
@@ -31,8 +30,8 @@ Hilbert_sort_2(const Traits &traits = Traits());
 /// @{
 
 /*! 
-sorts the range [`begin`, `end`). 
-\cgalRequires `std::iterator_traits<RandomAccessIterator>::value_type` equals to `Traits::Point_2`. 
+sorts the range `[begin, end)`. 
+\tparam RandomAccessIterator must be an iterator with value type `Traits::Point_2`. 
 */ 
 template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const; 
 

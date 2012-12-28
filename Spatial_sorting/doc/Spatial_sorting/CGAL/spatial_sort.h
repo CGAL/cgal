@@ -3,12 +3,12 @@ namespace CGAL {
 /*!
 \ingroup PkgSpatialSorting
 
-The function `spatial_sort` sorts an iterator range of points in a way that 
+The function `spatial_sort()` sorts an iterator range of points in a way that 
 improves space locality. Two points close in the order will be close 
 geometrically, and two points close geometrically will have a high probability 
 of being close in the order. 
 
-sorts the range [`begin`,`end`) in place. 
+sorts the range `[begin, end)` in place. 
 
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<RandomAccessIterator>::value_type` is defined. 
