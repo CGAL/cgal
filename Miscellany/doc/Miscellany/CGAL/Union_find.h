@@ -64,28 +64,28 @@ Union_find<T,A>();
 /*! 
 the allocator of the partition. 
 */ 
-allocator get_allocator() ; 
+allocator get_allocator() const; 
 
 /*! 
 returns the number of disjoint sets of the partition. 
 */ 
-std::size_t number_of_sets() ; 
+std::size_t number_of_sets() const; 
 
 /*! 
 returns the number of values of the partition. 
 */ 
-std::size_t size() ; 
+std::size_t size() const; 
 
 /*! 
 returns the memory consumed by the partition. 
 */ 
-std::size_t bytes() ; 
+std::size_t bytes() const; 
 
 /*! 
 returns the size of the set 
 containing `h`. 
 */ 
-std::size_t size( const_handle h) ; 
+std::size_t size( const_handle h) const; 
 
 /*! 
 reinitializes to an empty partition. 
@@ -113,7 +113,7 @@ insert(Forward_iterator first, Forward_iterator beyond) ;
 /*! 
 
 */ 
-handle find(handle h) ; 
+handle find(handle h) const; 
 
 /*! 
 returns a 
@@ -121,7 +121,7 @@ canonical handle of the set that contains `h`, i.e.,
 `P.same_set(h,h2)` iff `P.find(h) == P.find(h2)`.
 \pre `h` is a handle in `P`. 
 */ 
-const_handle find( const_handle p) ; 
+const_handle find( const_handle p) const; 
 
 /*! 
 unites the sets of 
@@ -135,19 +135,19 @@ returns
 true iff `h1` and `h2` belong to the same set of `P`. 
 \pre `h1` and `h2` are in `P`. 
 */ 
-bool same_set( const_handle h1, const_handle h2) ; 
+bool same_set( const_handle h1, const_handle h2) const; 
 
 /*! 
 returns an iterator pointing to the 
 first value of the partition. 
 */ 
-iterator begin() ; 
+iterator begin() const; 
 
 /*! 
 returns an iterator pointing beyond the 
 last value of the partition. 
 */ 
-iterator end() ; 
+iterator end() const; 
 
 /// @}
 

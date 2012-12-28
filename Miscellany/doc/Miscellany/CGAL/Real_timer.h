@@ -61,30 +61,30 @@ void reset();
 /*! 
 `true` if the current state is running. 
 */ 
-bool is_running(); 
+bool is_running() const; 
 
 /*! 
 real time in seconds, or 0 if the 
 underlying system call failed. 
 */ 
-double time(); 
+double time() const; 
 
 /*! 
 number of start/stop-intervals since 
 the last reset. 
 */ 
-int intervals(); 
+int intervals() const; 
 
 /*! 
 smallest possible time step in seconds, 
 or -1 if the system call failed. 
 */ 
-double precision(); 
+double precision() const; 
 
 /*! 
 maximal representable time in seconds. 
 */ 
-double max(); 
+double max const(); 
 
 /// @}
 

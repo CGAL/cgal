@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgProfilingTools
 
-An instance `map` of the parameterized data type `Unique_hash_map` is an 
+An instance `map` of the class template `Unique_hash_map` is an 
 injective mapping from the set of keys of type `Key` to the set of 
 variables of type `Data`. New keys can be inserted at any time, 
 however keys cannot be individually deleted. 
@@ -114,7 +114,7 @@ defined in `map`. Note that there can be keys defined that have not
 been inserted explicitly. Their variables are initialized to 
 `default_value`. 
 */ 
-bool is_defined( const Key& key); 
+bool is_defined( const Key& key) const; 
 
 /*! 
 
