@@ -84,10 +84,9 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges_3Functions
 
-The function `compute_min_ridges` is a shortcut to the method of the same name 
+The function `compute_min_ridges()` is a shortcut to the method of the same name 
 of the class `Ridge_approximation`. 
 
-\sa `Ridge_approximation` 
 
 */
 template < class TriangulatedSurfaceMesh, 
