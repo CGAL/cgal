@@ -21,17 +21,24 @@
 // the comment before mpzf::init()).
 
 #if !defined(CGAL_HAS_THREADS)
-#define CGAL_THREAD_LOCAL
+#define CGAL_MPZF_THREAD_LOCAL
+#define CGAL_MPZF_TLS
 #elif __cplusplus >= 201103L
-#define CGAL_THREAD_LOCAL thread_local
+#define CGAL_MPZF_THREAD_LOCAL thread_local
+#define CGAL_MPZF_TLS thread_local
 #elif defined(_MSC_VER)
-#define CGAL_THREAD_LOCAL __declspec(thread)
+#define CGAL_MPZF_THREAD_LOCAL __declspec(thread)
+#define CGAL_MPZF_TLS
 #else
-#define CGAL_THREAD_LOCAL __thread
+#define CGAL_MPZF_THREAD_LOCAL __thread
+#define CGAL_MPZF_TLS
 // Too bad for the others
 #endif
 namespace CGAL {
 namespace mpzf_impl {
+// Warning: these pools aren't generic at all!
+
+  // Not thread-safe
 template <class T, class = void> struct pool1 {
   static T pop() { T ret = data.back(); data.pop_back(); return ret; }
   static void push(T t) { data.push_back(t); }
@@ -57,20 +64,59 @@ template <class T, class D> std::vector<T> pool1<T,D>::data;
 // with implementations missing the C++11 thread_local), so we may want to
 // attach the destructor to a different object (one we never use).
 
-// Warning: this isn't truly generic!
+// Leaks at thread destruction
 template <class T, class = void> struct pool2 {
-  static T pop() { T ret = data; data = ptr(data); return ret; }
-  static void push(T t) { ptr(t) = data; data = t; }
-  static bool empty() { return data == 0; }
+  static T pop() { T ret = data(); data() = ptr(data()); return ret; }
+  static void push(T t) { ptr(t) = data(); data() = t; }
+  static bool empty() { return data() == 0; }
   static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
   private:
   BOOST_STATIC_ASSERT(sizeof(T) >= sizeof(T*));
-  static CGAL_THREAD_LOCAL T data;
+  static T& data () {
+    static CGAL_MPZF_TLS T data_ = 0;
+    return data_;
+  }
   static T& ptr(T t) { t -= extra+1; return *reinterpret_cast<T*>(t); }
 };
-template <class T, class D> CGAL_THREAD_LOCAL T pool2<T,D>::data = 0;
+
+// Wrong test: gcc only supports it in 4.8+ (and with bad performance at least
+// in 4.8), and the others not at all.
+#if __cplusplus >= 201103L
+template <class T, class = void> struct pool3 {
+  static T pop() { T ret = data(); data() = ptr(data()); return ret; }
+  static void push(T t) { ptr(t) = data(); data() = t; }
+  static bool empty() { return data() == 0; }
+  static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
+  private:
+  BOOST_STATIC_ASSERT(sizeof(T) >= sizeof(T*));
+  struct cleaner {
+    T data_ = 0; 
+    ~cleaner(){
+      // Deallocate everything. As an alternative, we could store it in a
+      // global location, for re-use by a later thread.
+      while (!empty())
+	delete[] (pop() - (extra + 1));
+    }
+  };
+  static T& data () {
+    static thread_local cleaner obj;
+    return obj.data_;
+  }
+  static T& ptr(T t) { t -= extra+1; return *reinterpret_cast<T*>(t); }
+};
+#endif
+
+// No caching
+template <class T, class = void> struct pool4 {
+  static T pop() { throw "Shouldn't be here!"; }
+  static void push(T t) { delete (t - (extra+1)); }
+  static bool empty() { return true; }
+  static const int extra = 0;
+};
 }
 
+#undef CGAL_MPZF_THREAD_LOCAL
+#undef CGAL_MPZF_TLS
 
 // TODO:
 // * make data==0 a valid state for the number 0.
