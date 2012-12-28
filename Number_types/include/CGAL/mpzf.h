@@ -8,6 +8,11 @@
 #include <iostream>
 #include <gmp.h>
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#pragma intrinsic(_BitScanForward64)
+#endif
+
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) \
     && (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 \
     && __cplusplus >= 201103L
@@ -27,7 +32,7 @@
 #endif
 // FIXME:
 // this code is experimental. It assumes there is an int64_t type, it
-// may assume little endianness, it uses a gcc builtin, etc.
+// may assume little endianness, etc.
 
 // On a dataset provided by Andreas, replacing Gmpq with this type in
 // Epick reduced the running time of the construction of a Delaunay
@@ -118,7 +123,18 @@ template <class T, class = void> struct pool4 {
   static bool empty() { return true; }
   static const int extra = 0;
 };
+
+// Only used with an argument known not to be 0.
+inline int ctz (uint64_t x) {
+#ifdef _MSC_VER
+  unsigned long ret;
+  _BitScanForward64(&ret, x);
+  return (int)ret;
+#else
+  return __builtin_ctzll (x);
+#endif
 }
+} // namespace mpzf_impl
 
 #undef CGAL_MPZF_THREAD_LOCAL
 #undef CGAL_MPZF_TLS
@@ -263,7 +279,7 @@ struct mpzf {
     int e1 = (int)u.s.exp+13;
     int e2 = e1 % 64;
     exp = e1 / 64 - 17;
-    if(__builtin_ctzll(m)+e2>=64){
+    if(mpzf_impl::ctz(m)+e2>=64){
       data[0] = m >> (64-e2);
       size = 1;
       ++exp;
