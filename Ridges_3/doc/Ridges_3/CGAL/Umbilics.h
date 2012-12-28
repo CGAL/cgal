@@ -14,7 +14,6 @@ enum Umbilic_type { NON_GENERIC_UMBILIC, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC };
 The function `compute_umbilics` is a shortcut to the method `compute` of 
 the class `Umbilic_approximation`. 
 
-\sa `Umbilic_approximation` 
 
 */
 template < class TriangulatedSurfaceMesh, 
@@ -44,14 +43,14 @@ umbilics on a triangular polyhedral surface.
 \tparam Vertex2FTPropertyMap, Vertex2VectorPropertyMap provide 
 the differential properties of the surface associated to its vertices. 
 
-Requirements (checked at compile time) : the types 
-`TriangulatedSurfaceMesh::Traits::FT` and 
-`Vertex2FTPropertyMap::value_type` must coincide; the types 
-`TriangulatedSurfaceMesh::Traits::Vector_3` and 
-`Vertex2VectorPropertyMap::value_type` must coincide; the types 
-`TriangulatedSurfaceMesh::Vertex_handle`, 
-`Vertex2FTPropertyMap::key_type` and 
-`Vertex2VectorPropertyMap::key_type` must coincide; 
+Requirements (checked at compile time) : 
+- the types `TriangulatedSurfaceMesh::Traits::FT` and 
+  `Vertex2FTPropertyMap::value_type` must coincide;
+- the types `TriangulatedSurfaceMesh::Traits::Vector_3` and 
+  `Vertex2VectorPropertyMap::value_type` must coincide; 
+- the types `TriangulatedSurfaceMesh::Vertex_handle`, 
+  `Vertex2FTPropertyMap::key_type` and 
+  `Vertex2VectorPropertyMap::key_type` must coincide; 
 
 \sa `Umbilic` 
 \sa `TriangulatedSurfaceMesh` 
@@ -142,17 +141,17 @@ typedef typename TriangulatedSurfaceMesh::Halfedge_handle Halfedge_handle;
 /*! 
 
 */ 
-const Vertex_handle vertex(); 
+Vertex_handle vertex() const; 
 
 /*! 
 
 */ 
-const Umbilic_type umbilic_type(); 
+Umbilic_type umbilic_type() const; 
 
 /*! 
 
 */ 
-const std::list<Halfedge_handle>& contour_list() ; 
+const std::list<Halfedge_handle>& contour_list()const; 
 
 /// @}
 

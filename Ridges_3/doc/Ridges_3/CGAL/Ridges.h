@@ -25,14 +25,13 @@ enum Ridge_type {
 /*!
 \ingroup PkgRidges_3Functions
 
-The function `compute_crest_ridges` is a shortcut to the method of the same name 
+The function `compute_crest_ridges()` is a shortcut to the method of the same name 
 of the class `Ridge_approximation`. 
 
 The operator `<<` is overloaded for this class and returns the
 line type, strength, sharpness and coordinates of the points of the
 polyline.
 
-\sa `Ridge_approximation` 
 
 */
 template < class TriangulatedSurfaceMesh, 
@@ -58,10 +57,8 @@ namespace CGAL {
 /*!
 \ingroup PkgRidges_3Functions
 
-The function `compute_max_ridges` is a shortcut to the method of the same name 
+The function `compute_max_ridges()` is a shortcut to the method of the same name 
 of the class `Ridge_approximation`. 
-
-\sa `Ridge_approximation` 
 
 */
 template < class TriangulatedSurfaceMesh, 
@@ -124,14 +121,14 @@ ridges of a triangular polyhedral surface.
 \tparam Vertex2FTPropertyMap, Vertex2VectorPropertyMap provide the differential properties of 
 the surface associated to its vertices. 
 
-Requirements (checked at compile time): the types 
-`TriangulatedSurfaceMesh::Traits::FT` and 
-`Vertex2FTPropertyMap::value_type` must coincide; the types 
-`TriangulatedSurfaceMesh::Traits::Vector_3` and 
-`Vertex2VectorPropertyMap::value_type` must coincide; the types 
-`TriangulatedSurfaceMesh::Vertex_handle`, 
-`Vertex2FTPropertyMap::key_type` and 
-`Vertex2VectorPropertyMap::key_type` must coincide; 
+Requirements (checked at compile time): 
+- the types `TriangulatedSurfaceMesh::Traits::FT` and 
+ `Vertex2FTPropertyMap::value_type` must coincide; 
+- the types `TriangulatedSurfaceMesh::Traits::Vector_3` and 
+  `Vertex2VectorPropertyMap::value_type` must coincide; 
+- the types `TriangulatedSurfaceMesh::Vertex_handle`, 
+  `Vertex2FTPropertyMap::key_type` and 
+  `Vertex2VectorPropertyMap::key_type` must coincide; 
 
 \sa `Ridge_line` 
 
@@ -254,22 +251,22 @@ Ridge_line();
 /*! 
 
 */ 
-const Ridge_type line_type(); 
+Ridge_type line_type() const; 
 
 /*! 
 
 */ 
-const FT strength(); 
+FT strength() const; 
 
 /*! 
 
 */ 
-const FT sharpness(); 
+FT sharpness() const; 
 
 /*! 
 
 */ 
-const std::list<Ridge_halfhedge>* line(); 
+const std::list<Ridge_halfhedge>* line() const; 
 
 /*!
 Writes the line type, strength, sharpness and coordinates of the
