@@ -125,11 +125,11 @@ is granted at the end of the Delaunay refinement, this may no longer be true aft
 some optimization processes. Also beware that the default behavior does involve some 
 optimization processes. 
 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::odt_optimize_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
 \sa `CGAL::parameters::exude` 
 \sa `CGAL::parameters::no_exude` 
 \sa `CGAL::parameters::perturb` 
@@ -182,10 +182,10 @@ refine_mesh_3(c3t3,
               parameters::exude(parameters::time_limit=10)); 
 \endcode 
 
-\sa `CGAL::no_exude` 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::no_exude()` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Exude_options exude(
@@ -205,9 +205,9 @@ Provides a `Features_options` value such that
 0 and 1-dimensional input features are taken into account 
 if domain is a model of the refined concept `MeshDomainWithFeatures_3`. 
 
-\sa `CGAL::make_mesh_3`
-\sa `CGAL::refine_mesh_3`
-\sa `CGAL::parameters::no_features`
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::refine_mesh_3()`
+\sa `CGAL::parameters::no_features()`
 
 */
 parameters::internal::Features_options features();
@@ -242,10 +242,10 @@ refine_mesh_3(c3t3,
 
 \endcode 
 
-\sa `CGAL::no_lloyd` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::no_lloyd()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Lloyd_options lloyd(
@@ -269,10 +269,10 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
                               parameters::no_exude()); 
 \endcode 
 
-\sa `CGAL::parameters::exude` 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::exude()` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Exude_options no_exude();
@@ -290,9 +290,9 @@ in the mesh.
 Return a `Features_options` value that prevents the mesh generator 
 to take into account 0 and 1-dimensional input features. 
 
-\sa `CGAL::make_mesh_3`, 
-\sa `CGAL::refine_mesh_3`, 
-\sa `CGAL::parameters::features`. 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
+\sa `CGAL::parameters::features()` 
 
 */
 parameters::internal::Features_options no_features();
@@ -312,10 +312,10 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
                               parameters::no_lloyd()); 
 \endcode 
 
-\sa `CGAL::parameters::lloyd` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::lloyd()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Lloyd_options no_lloyd();
@@ -335,10 +335,10 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
                               parameters::no_odt()); 
 \endcode 
 
-\sa `CGAL::parameters::odt` 
-\sa `CGAL::odt_optimize_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::odt()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Odt_options no_odt();
@@ -358,10 +358,10 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
                               parameters::no_perturb()); 
 \endcode 
 
-\sa `CGAL::parameters::perturb` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::perturb()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Perturb_options no_perturb();
@@ -395,10 +395,10 @@ refine_mesh_3(c3t3,
               parameters::odt(parameters::time_limit=10)); 
 \endcode 
 
-\sa `CGAL::no_odt` 
-\sa `CGAL::odt_optimize_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::no_odt()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Odt_options odt(
@@ -437,10 +437,10 @@ refine_mesh_3(c3t3,
 
 \endcode 
 
-\sa `CGAL::no_perturb` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::no_perturb()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Perturb_options perturb(

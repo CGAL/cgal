@@ -39,7 +39,7 @@ is a relative error bound expressed as a ratio to the bounding sphere radius.
 \cgalModels `MeshDomain_3` 
 
 \sa `BisectionGeometricTraits_3` 
-\sa `CGAL::make_mesh_3`. 
+\sa `CGAL::make_mesh_3()`. 
 
 */
 template< typename Function, typename BGT >

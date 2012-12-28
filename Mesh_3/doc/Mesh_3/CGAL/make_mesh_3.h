@@ -126,21 +126,21 @@ is granted at the end of the Delaunay refinement, this may no longer be true aft
 some optimization processes. Also beware that the default behavior does involve some 
 optimization processes. 
 
-\sa `refine_mesh_3` 
-\sa `parameters::features` 
-\sa `parameters::no_features` 
-\sa `exude_mesh_3` 
-\sa `perturb_mesh_3`
-\sa `lloyd_optimize_mesh_3` 
-\sa `odt_optimize_mesh_3` 
-\sa `parameters::exude` 
-\sa `parameters::no_exude` 
-\sa `parameters::perturb` 
-\sa `parameters::no_perturb` 
-\sa `parameters::lloyd` 
-\sa `parameters::no_lloyd` 
-\sa `parameters::odt` 
-\sa `parameters::no_odt` 
+\sa `refine_mesh_3()` 
+\sa `parameters::features()` 
+\sa `parameters::no_features()` 
+\sa `exude_mesh_3()` 
+\sa `perturb_mesh_3()`
+\sa `lloyd_optimize_mesh_3()` 
+\sa `odt_optimize_mesh_3()` 
+\sa `parameters::exude()` 
+\sa `parameters::no_exude()` 
+\sa `parameters::perturb()` 
+\sa `parameters::no_perturb()` 
+\sa `parameters::lloyd()` 
+\sa `parameters::no_lloyd()` 
+\sa `parameters::odt()` 
+\sa `parameters::no_odt()` 
 
 */
 

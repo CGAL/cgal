@@ -103,7 +103,7 @@ parameters (from <I>Boost.Parameter</I>) for convenient criteria
 construction.
 
 \tparam FT must be a model of `Field`
-\tparam Fieldi (\f$ i\in\{1..4\}\f$) should be either a model 
+\tparam Fieldi (`i`=1,..,4) should be either a model 
 of the concept `Field` or a model of the concept `MeshDomainField_3`
 
 The parameters are named parameters and can be passed in any order

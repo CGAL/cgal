@@ -3,8 +3,15 @@ namespace CGAL {
 /*!
 \ingroup PkgMatrixSearch
 
+\brief computes the maximum (as specified by `compare_strictly`) 
+entry for each row of `m` and writes the corresponding column 
+to `t`, i.e., `t[i]` is set to the index of the column 
+containing the maximum element in row `i`.\ The maximum \f$ m_r\f$ 
+of a row \f$ r\f$ is the leftmost element for which 
+`compare_strictly`\f$ (m_r,\,x)\f$ is false for all elements \f$ x\f$ in 
+\f$ r\f$. 
 
-The function `monotone_matrix_search` computes the maxima
+The function `monotone_matrix_search()` computes the maxima
 for all rows of a totally monotone matrix.
 
 More precisely, monotony for matrices is defined as follows. 
@@ -25,13 +32,7 @@ rmax_M(i_2)\; .
 monotone (or equivalently: iff all \f$ 2 \times 2\f$ submatrices are 
 monotone). 
 
-computes the maximum (as specified by `compare_strictly`) 
-entry for each row of `m` and writes the corresponding column 
-to `t`, i.e. `t[i]` is set to the index of the column 
-containing the maximum element in row `i`. The maximum \f$ m_r\f$ 
-of a row \f$ r\f$ is the leftmost element for which 
-`compare_strictly`\f$ (m_r,\,x)\f$ is false for all elements \f$ x\f$ in 
-\f$ r\f$. 
+
 
 \pre `t` points to a structure of size at least `m.number_of_rows()` 
 
@@ -43,10 +44,10 @@ binary function: `Matrix::Value` \f$ \times\f$
 (non-reflexive) total ordering on `Matrix::Value`. 
 
 \sa `MonotoneMatrixSearchTraits` 
-\sa `CGAL::all_furthest_neighbors_2`
-\sa `CGAL::maximum_area_inscribed_k_gon_2`
-\sa `CGAL::maximum_perimeter_inscribed_k_gon_2`
-\sa `CGAL::extremal_polygon_2`
+\sa `CGAL::all_furthest_neighbors_2()`
+\sa `CGAL::maximum_area_inscribed_k_gon_2()`
+\sa `CGAL::maximum_perimeter_inscribed_k_gon_2()`
+\sa `CGAL::extremal_polygon_2()`
 
 ### Implementation ###
 

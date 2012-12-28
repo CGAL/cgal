@@ -8,10 +8,10 @@ optimization process termination reasons.  Note that depending on what
 parameters have been set to the optimizer, each return value may
 represent a failure or a success.
 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::odt_optimize_mesh_3` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
 
 */
 enum Mesh_optimization_return_code {

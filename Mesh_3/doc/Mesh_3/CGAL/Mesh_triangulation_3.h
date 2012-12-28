@@ -11,7 +11,7 @@ triangulation of a mesh generation process.
 \tparam Gt stands for a model of `RegularTriangulationTraits_3` 
 and defaults to `Kernel_traits<MD>::Kernel`. 
 
-\sa `CGAL::make_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
 
 */

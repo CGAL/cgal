@@ -87,11 +87,11 @@ lloyd_optimize_mesh_3(c3t3,
 \endcode 
 
 \sa `CGAL::Mesh_optimization_return_code` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::odt_optimize_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
 
 */
 
