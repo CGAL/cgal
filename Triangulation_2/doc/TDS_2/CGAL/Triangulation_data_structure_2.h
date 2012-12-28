@@ -99,30 +99,30 @@ Vertex_range & vertices();
 
 /*! 
 Joins 
-the vertices that are endpoints of the edge `(f,i)`. It returns 
+the vertices that are endpoints of the edge `(f,i)`, and returns 
 a vertex handle to common vertex (see 
-Fig. \ref figtdssplitjoin). 
+Fig.\ \ref figtdssplitjoin). 
 \pre `f` must be different from `Face_handle()` and `i` must be `0`, `1` or `2`. 
 */ 
 Vertex_handle join_vertices(Face_handle f, int i); 
 
 /*! 
 Joins 
-the vertices that are endpoints of the edge `e`. It returns 
+the vertices that are endpoints of the edge `e`, and returns 
 a vertex handle to common vertex. 
 */ 
 Vertex_handle join_vertices(Edge e); 
 
 /*! 
 Joins 
-the vertices that are endpoints of the edge `*eit`. It returns 
+the vertices that are endpoints of the edge `*eit`, and returns 
 a vertex handle to common vertex. 
 */ 
 Vertex_handle join_vertices(Edge_iterator eit); 
 
 /*! 
 Joins 
-the vertices that are endpoints of the edge `*ec`. It returns 
+the vertices that are endpoints of the edge `*ec`, and returns 
 a vertex handle to common vertex. 
 */ 
 Vertex_handle join_vertices(Edges_circulator ec); 

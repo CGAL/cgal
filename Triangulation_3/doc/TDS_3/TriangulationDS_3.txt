@@ -27,7 +27,7 @@ topological sphere \f$ S^d\f$ in \f$ \R^{d+1}\f$.
 This chapter deals with 3D-triangulation data structures, meant to
 maintain the combinatorial information for 3D-geometric
 triangulations. The reader interested in geometric triangulations of
-\f$ \R^3\f$ is advised to read Chapter \ref chapterTriangulation3.
+\f$ \R^3\f$ is advised to read Chapter \ref chapterTriangulation3 "3D Triangulations.
 
 \section TDS3secintro Representation 
 
