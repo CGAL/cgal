@@ -5,7 +5,7 @@
 
 The concept `SnapRoundingTraits_2` lists the set of requirements that must be fulfilled by 
 an instance of the `Traits` template-parameter of 
-the free function \ref CGAL::snap_rounding_2() "CGAL::snap_rounding_2<Traits,InputIterator,OutputContainer>()". 
+the free function \ref CGAL::snap_rounding_2() `CGAL::snap_rounding_2<Traits,InputIterator,OutputContainer>()`. 
 The list includes the nested types of the geometric primitives used in this class and
 some function object types for the required predicates on those primitives.
 
@@ -13,7 +13,6 @@ some function object types for the required predicates on those primitives.
 
 \cgalHasModel `CGAL::Snap_rounding_traits_2<Kernel>` 
 
-\sa `CGAL::Snap_rounding_2<Kernel>` 
 
 \todo check generated documentation page and in particular nested concepts
 */
