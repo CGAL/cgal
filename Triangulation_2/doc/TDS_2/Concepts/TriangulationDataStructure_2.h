@@ -30,7 +30,7 @@ is opposite to the vertex with the same index.
 Each edge has two implicit representations : the edge 
 of a face `f` which is opposed to the vertex indexed `i`, 
 can be represented as well as an edge of the `neighbor(i)` of 
-`f`. See Figure \ref TDS_2D_Fig_neighbors1 
+`f`. See Figure \ref Triangulation_2D_Fig_neighbors1 
 
 The triangulation data structure 
 is responsible for the combinatorial integrity of the triangulation. 
@@ -336,12 +336,12 @@ bool is_valid() const;
 /// @{
 
 /*! 
-Returns \f$ i+1\f$ modulo 3.\pre \f$ 0\leq i \leq2\f$. 
+Returns \f$ i+1\f$ modulo 3, with \f$ 0\leq i \leq2\f$. 
 */ 
 int ccw(int i) const; 
 
 /*! 
-Returns \f$ i+2\f$ modulo 3.\pre \f$ 0\leq i \leq2\f$. 
+Returns \f$ i+2\f$ modulo 3, with  \f$ 0\leq i \leq2\f$. 
 */ 
 int cw(int i) const; 
 
@@ -480,7 +480,7 @@ Default constructor.
 TriangulationDataStructure_2(); 
 
 /*! 
-Copy constructor. All vertices and faces are duplicated. 
+Copy constructor, performing a deep copy, that is all vertices and faces are duplicated. 
 */ 
 TriangulationDataStructure_2( const 
 TriangulationDataStructure_2& tds1); 
@@ -584,7 +584,9 @@ returns `true` if
 bool is_edge(Vertex_handle va, Vertex_handle vb) const; 
 
 /*! 
-as previous. In addition, if true is returned 
+returns `true` if 
+`(va, vb)` is an edge of  the triangulation data structure. 
+In addition, if true is returned 
 `fr` and `i` are set such that the pair `(fr,i)` 
 is the description 
 of the ordered edge `(va, vb)`. 
@@ -607,7 +609,9 @@ Vertex_handle v3)
 const; 
 
 /*! 
-as above. In addition, if `true` is returned, `fr` is a handle 
+`true` if there is a face having `v1`, `v2`, and `v3` 
+as vertices. 
+ In addition, if `true` is returned, `fr` is a handle 
 to the face with `v1`, `v2` and `v3` 
 as vertices. 
 */ 
@@ -892,12 +896,12 @@ void delete_vertex(Vertex_handle );
 /// @{
 
 /*! 
-returns \f$ i+1\f$ modulo 3.\pre \f$ 0\leq i \leq2\f$. 
+returns \f$ i+1\f$ modulo 3, with\f$ 0\leq i \leq2\f$. 
 */ 
 int ccw(int i) const; 
 
 /*! 
-returns \f$ i+2\f$ modulo 3.\pre \f$ 0\leq i \leq2\f$. 
+returns \f$ i+2\f$ modulo 3, with \f$ 0\leq i \leq2\f$. 
 */ 
 int cw(int i) const; 
 
