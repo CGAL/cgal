@@ -105,18 +105,18 @@ Envelope_diagram_2 (EnvTraits *traits);
     /// @{
     
     /*!
-    returns the number of \f$ xy\f$-monotone surfaces that induce `e`. 
+    returns the number of \f$ xy\f$-monotone surfaces that induce the halfedge. 
     */ 
     size_t number_of_surfaces () const; 
     
     /*! 
-    returns an iterator for the first \f$ xy\f$-monotone surface that induces `e`. 
+    returns an iterator for the first \f$ xy\f$-monotone surface that induces the halfedge. 
     */ 
     Surface_const_iterator surfaces_begin () const; 
     
     /*! 
     returns a past-the-end iterator for the \f$ xy\f$-monotone surfaces that induce 
-    `e`. 
+    the halfedge. 
     */ 
     Surface_const_iterator surfaces_end () const; 
     
@@ -134,23 +134,23 @@ Envelope_diagram_2 (EnvTraits *traits);
     /// @{
     
     /*! 
-    returns the number of \f$ xy\f$-monotone surfaces that induce `f`. 
+    returns the number of \f$ xy\f$-monotone surfaces that induce the face. 
     */ 
     size_t number_of_surfaces () const; 
     
     /*! 
-    returns an iterator for the first \f$ xy\f$-monotone surface that induces `f`. 
+    returns an iterator for the first \f$ xy\f$-monotone surface that induces the face. 
     */ 
     Surface_const_iterator surfaces_begin () const; 
     
     /*! 
     returns a past-the-end iterator for the \f$ xy\f$-monotone surfaces that induce 
-    `f`. 
+    the face. 
     */ 
     Surface_const_iterator surfaces_end () const; 
     
     /*! 
-    returns the first \f$ xy\f$-monotone surface that induce `f`. 
+    returns the first \f$ xy\f$-monotone surface that induce the face. 
     \pre The number of surfaces is not 0. 
     */ 
     Xy_monotone_surface_3 surface () const; 
@@ -170,7 +170,8 @@ namespace CGAL {
 Computes the lower envelope of a set of surfaces in \f$ \mathbb{R}^3\f$,
 as given by the range `[begin, end)`. The lower envelope is
 represented using the output minimization diagram `diag`.
-\pre The value-type of `InputIterator` is `Traits::Surface_3`.
+\tparam Traits must be a model of `EnvelopeTraits_3.
+\tparam InputIterator must be an input iterator with value type `Traits::Surface_3`.
 */
 template<class InputIterator, class Traits>
 void lower_envelope_3 (InputIterator begin, InputIterator end,
@@ -186,7 +187,8 @@ namespace CGAL {
 Computes the lower envelope of a set of \f$ xy\f$-monotone surfaces in
 \f$ \mathbb{R}^3\f$, as given by the range `[begin, end)`. The lower 
 envelope is represented using the output minimization diagram `diag`.
-\pre The value-type of `InputIterator` is `Traits::Xy_monotone_surface_3`.
+\tparam Traits must be a model of `EnvelopeTraits_3.
+\tparam InputIterator must be an input iterator with value type `Traits::Xy_monotone_surface_3`.
 */
 template<class InputIterator, class Traits>
 void lower_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
@@ -202,7 +204,8 @@ namespace CGAL {
 Computes the upper envelope of a set of surfaces in \f$ \mathbb{R}^3\f$,
 as given by the range `[begin, end)`. The upper envelope is
 represented using the output maximization diagram `diag`.
-\pre The value-type of `InputIterator` is `Traits::Surface_3`.
+\tparam Traits must be a model of `EnvelopeTraits_3.
+\tparam InputIterator must be an input iterator with value type `Traits::Surface_3`.
 */
 template<class InputIterator, class Traits>
 void upper_envelope_3 (InputIterator begin, InputIterator end,
@@ -218,7 +221,8 @@ namespace CGAL {
 Computes the upper envelope of a set of \f$ xy\f$-monotone surfaces in 
 \f$ \mathbb{R}^3\f$, as given by the range `[begin, end)`. The lower 
 envelope is represented using the output maximization diagram `diag`.
-\pre The value-type of `InputIterator` is `Traits::Xy_monotone_surface_3`.
+\tparam Traits must be a model of `EnvelopeTraits_3.
+\tparam InputIterator must be an input iterator with value type `Traits::Xy_monotone_surface_3`.
 */
 template<class InputIterator, class Traits>
 void upper_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
