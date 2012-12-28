@@ -124,6 +124,7 @@ template <class T, class = void> struct pool4 {
 #undef CGAL_MPZF_TLS
 
 // TODO: make data==0 a valid state for number 0. Incompatible with the cache.
+// * make more things private.
 struct mpzf {
   private:
 #ifdef CGAL_MPZF_USE_CACHE
@@ -175,11 +176,7 @@ struct mpzf {
     if(!pool::empty()){
       data = pool::pop();
       if(data[-1] >= mini) return; // TODO: when mini==2, no need to check
-      --data;
-#ifdef CGAL_MPZF_USE_CACHE
-      if (data != cache)
-#endif
-	delete[] (data - pool::extra); // too small, useless
+      delete[] (data - (pool::extra+1)); // too small, useless
     }
     if(mini<2) mini=2;
     data = (new mp_limb_t[mini+(pool::extra+1)]) + (pool::extra+1);
@@ -193,8 +190,12 @@ struct mpzf {
     ++data;
     pool::push(data);
   }
-  ~mpzf(){ clear(); }
-  mpzf(): size(0), exp(0) { init(); }
+  ~mpzf(){
+    clear();
+  }
+  mpzf(): size(0), exp(0) {
+    init();
+  }
   mpzf(noalloc){}
   mpzf(allocate,int i) { init(i); }
   mpzf& operator=(mpzf const& x){
