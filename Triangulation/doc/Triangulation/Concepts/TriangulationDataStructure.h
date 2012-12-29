@@ -15,11 +15,11 @@ simplex is also a face of itself.) In particular, it does not
 contain any \f$ \cd+1\f$-face, and any \f$ \cd-1\f$-face belongs to exactly
 two \f$ \cd\f$-dimensional full cells.
 
-Values of \f$ \cd\f$ (the <I>current dimension</I> of the complex) include <UL>
+Values of \f$ \cd\f$ (the <I>current dimension</I> of the complex) include
 
+<DL>
 <DT><B>-2</B><DD> This corresponds to the non-existence of any object in
 the triangulation.
-
 <DT><B>-1</B><DD> This corresponds to a single vertex and a single full cell,
 which is also the unique vertex and the unique full cell in the
 `TriangulationDataStructure`.
@@ -35,7 +35,7 @@ triangulation of the \f$ 0\f$-sphere.
 
 <DT><B>\f$ \cd>0\f$</B><DD> This corresponds to a standard triangulation of the sphere
 \f$ \sphere^\cd\f$.
-</UL>
+</DL>
 
 An \f$ i\f$-simplex is a simplex with \f$ i+1\f$ vertices. An \f$ i\f$-simplex \f$ \sigma\f$ is
 incident to a \f$ j\f$-simplex \f$ \sigma'\f$, \f$ j<i\f$, if and only if \f$ \sigma'\f$
@@ -328,14 +328,14 @@ out);
 
 /*!
 Returns a handle to the `i`-th `Vertex` of the `Full_cell` `c`.
-\pre $0 \leq i \leq $`tds`.`current_dimension()` and `c!=Full_cell_handle()`.
+\pre \f$0 \leq i \leq \f$`tds`.`current_dimension()` and `c!=Full_cell_handle()`.
 */
 Vertex_handle vertex(Full_cell_handle c, const int i) const;
 
 /*!
 Returns the index of the vertex mirror of the `i`-th vertex of `c`.
 Equivalently, returns the index of `c` as a neighbor of its `i`-th neighbor.
-\pre $0 \leq i \leq $`tds`.`current_dimension`()
+\pre \f$0 \leq i \leq \f$`tds`.`current_dimension`()
 
 and `c!=Full_cell_handle()`.
 */
@@ -345,7 +345,7 @@ int mirror_index(Full_cell_handle c, int i) const;
 Returns the vertex mirror of the `i`-th vertex of `c`.
 Equivalently, returns the vertex of the `i`-th neighbor of `c`
 that is not vertex of `c`.
-\pre $0 \leq i \leq $`tds`.`current_dimension`()
+\pre \f$0 \leq i \leq \f$`tds`.`current_dimension`()
 
 and `c!=Full_cell_handle()`.
 */
@@ -381,7 +381,7 @@ Full_cell_handle full_cell(Vertex_handle v) const;
 /*!
 Returns a `Full_cell_handle` pointing to the `Full_cell`
 opposite to the `i`-th vertex of `c`.
-\pre $0 \leq i \leq $`tds`.`current_dimension()`
+\pre \f$0 \leq i \leq \f$`tds`.`current_dimension()`
 
 and `c` is not the default constructed `Full_cell_handle`
 */
@@ -453,7 +453,7 @@ Inserts a vertex in the triangulation data structure by subdividing the
 `Face f`. Returns a handle to the newly created `Vertex`.
 
 \cgalFigureBegin{triangulationfiginsertface,insert-in-face.png}
-Insertion in face, \f$ \cd=3\f$ \anchor 
+Insertion in face, \f$ \cd=3\f$
 \cgalFigureEnd
 */
 Vertex_handle insert_in_face(const Face & f);
@@ -506,7 +506,7 @@ The indexing of the vertices in the
 full cell is such that, if `f` was a full cell of maximal dimension in the
 initial complex, then `(f,v)`, in this order, is the corresponding full cell
 in the updated triangulation. A handle to `v` is returned
-(see Figure \ref triangulationfiginsertincreasedim).
+(see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre `tds`.
 If the current dimension is -2 (empty triangulation), then `star`
 has to be omitted, otherwise
@@ -550,7 +550,7 @@ j);
 /*!
 Forces the current dimension
 of the complex to `d`.
-\pre $-1 \leq d \leq $`maximal_dimension()`.
+\pre \f$-1 \leq d \leq \f$`maximal_dimension()`.
 */
 void set_current_dimension(int d);
 
@@ -567,7 +567,7 @@ void clear();
 /*!
 Contracts the
 `Face f` to a single vertex. Returns a handle to that vertex
-(see Figure \ref triangulationfigcollapseface).
+(see Figure \cgalFigureRef{triangulationfigcollapseface}).
 \pre The boundary of the full cells incident to `f`
 is a topological sphere of dimension
 `tds`.`current_dimension()`-1).
@@ -587,7 +587,7 @@ This method does exactly the opposite of
 full cells not containing `star` are removed
 full cells containing `star` but not `v` loose vertex `star`
 full cells containing `star` and `v` loose vertex `v`
-(see Figure \ref triangulationfiginsertincreasedim).
+(see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre All cells contains either `star` or `v`.
 Edge `star-v` exists in the triangulation
 and `current_dimension()!=2`.

@@ -7,8 +7,8 @@ The concept `TriangulationFullCell` describes the requirements on the type used 
 class `Triangulation<TriangulationTraits, TriangulationDataStructure>`, and its derived classes, to
 represent a full cell.
 
-\refines ::TriangulationDSFullCell
-We only list below the additional specific requirements of \refines ::TriangulationFullCell.
+\cgalRefines ::TriangulationDSFullCell We only list below the
+additional specific requirements of ::TriangulationFullCell.
 
 \cgalHasModel CGAL::Triangulation_full_cell<TriangulationTraits, TriangulationDSFullCell>
 

@@ -408,7 +408,9 @@ triangulation, then `loc_type` is set to
 If the `query` point lies inside the affine hull
 of the points, a \f$ k\f$-face that contains `query` in its relative
 interior is returned. (If the \f$ k\f$-face is finite, it is
-unique.)<UL> <DT><B>\f$ k=0\f$</B><DD> `loc_type` is set to `ON_VERTEX`,
+unique.)
+
+<DL> <DT><B>\f$ k=0\f$</B><DD> `loc_type` is set to `ON_VERTEX`,
 `f` is set to the vertex `v` the `query` lies on and a full cell
 having `v` as a vertex is returned.
 <DT><B>\f$ 0<k<\f$`c.current_dimension()-1`</B><DD> `loc_type` is set to
@@ -424,7 +426,7 @@ the finite facet containing the
 as in the `locate` method above. If the `query` point lies
 <I>inside</I> the convex hull of the points in the triangulation, then
 `loc_type` is set to `IN_FULL_CELL` and the unique full cell containing
-the `query` point is returned. </UL>
+the `query` point is returned. </DL>
 */
 Full_cell_handle locate(const Point & query, Locate_type & loc_type,
 Face & f, Facet & ft, Full_cell_handle hint = Full_cell_handle()) const;
@@ -486,13 +488,13 @@ Vertex_handle insert(const Point p, Vertex_handle hint);
 `Vertex` at that position. The action taken depends on the value of
 `loc_type`:
 
-<UL> <DT><B>`ON_VERTEX`</B><DD> The point of the
+<DL> <DT><B>`ON_VERTEX`</B><DD> The point of the
 p`Vertex` described by `f` is set to `p`. 
 <DT><B>`IN_FACE`</B><DD> The point `p` is inserted in the `Face f`. 
 <DT><B>`IN_FACET`</B><DD> The point `p` is inserted in the `Facet ft`.
 <DT><B>Anything else</B><DD> The point `p` is inserted in the triangulation according to the value
 of `loc_type`, using the full cell `c`.
-</UL>
+</DL>
 
 This method is used internally by the other `insert()` methods.
 */
@@ -506,11 +508,11 @@ order to ``fill it''. A `Vertex_handle` to the new `Vertex` is
 returned. The facet `ft` must lie on the boundary of \f$ C\f$ and its
 defining full cell, `tr`.`full_cell(ft)` must lie inside \f$ C\f$. Handles
 to the newly created full cells are output in the `out` output iterator.
-\pre $C\f$ must be a (geometric) ball, must contain \ccc{p} in its
+\pre \f$C\f$ must be a (geometric) ball, must contain `p` in its
 interior and not contain any vertex all of whose incident full cells are in
 \f$C\f$ . (This implies that `t.current_dimension()`\f$ \geq 2\f$ if
 \f$|C|>1\f$ .) The boundary of \f$C\f$ must be a triangulation of the sphere
-\f$\f$ \mathcal S \f$^k-1$.
+\f$ \mathcal S ^k-1\f$.
 */
 template < typename ForwardIterator, typename OutputIterator >
 Vertex_handle insert_in_hole(const Point & p, ForwardIterator s,

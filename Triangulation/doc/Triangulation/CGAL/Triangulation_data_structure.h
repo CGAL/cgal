@@ -95,11 +95,12 @@ typedef Hidden_type Full_cell_data;
 
 /*! 
 \cgalAdvanced A set `C` of full cells satisfying the same condition as in method 
-`Triangulation_data_structure``::insert_in_hole()` is assumed to be marked. This 
+`Triangulation_data_structure::insert_in_hole()` is assumed to be marked. This 
 method creates new full cells from vertex `v` to the boundary of `C`. 
 The boundary is recognized by checking the mark of the full cells. 
-This method is used by `Triangulation_data_structure``::insert_in_hole()`. 
-\pre same as `Triangulation_data_structure``::insert_in_hole()` 
+This method is used by `Triangulation_data_structure::insert_in_hole()`. 
+s
+\pre same as `Triangulation_data_structure::insert_in_hole()` 
 
 */ 
 template< OutputIterator > Full_cell_handle insert_in_tagged_hole( 

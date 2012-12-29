@@ -32,8 +32,7 @@ public:
 /// @{
 
 /*!
-<I>Optional for the triangulation data
-structure alone.</I>
+  Optional for the triangulation data structure alone.
 */
 typedef Hidden_type Point;
 

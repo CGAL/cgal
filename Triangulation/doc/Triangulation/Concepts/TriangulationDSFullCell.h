@@ -119,13 +119,13 @@ Vertex_handle_iterator vertices_end() const;
 
 /*!
 Returns the `i`-th vertex
-of the full cell. \pre $0 \leq i \leq $`maximal_dimension()`.
+of the full cell. \pre \f$0 \leq i \leq \f$ `maximal_dimension()`.
 */
 Vertex_handle vertex(const int i) const;
 
 /*!
 Returns the
-full cell opposite to the `i`-th vertex of the full cell `c`. \pre $0 \leq i \leq $`maximal_dimension()`.
+full cell opposite to the `i`-th vertex of the full cell `c`. \pre \f$0 \leq i \leq \f$`maximal_dimension()`.
 */
 Full_cell_handle neighbor(const int i) const;
 
@@ -134,7 +134,7 @@ Returns the index `j` of
 the full cell `c`as a neighbor in the full cell `c``.neighbor(i);`. If the
 returned integer is not negative, it holds that `c`.`neighbor(i)->neighbor(j) == ``c`. Returns
 `-1` if `c`has no adjacent full cell of index `i`.
-\pre $0 \leq i \leq $`maximal_dimension()`.
+\pre \f$0 \leq i \leq \f$ `maximal_dimension()`.
 */
 int mirror_index(const int i) const;
 
@@ -170,7 +170,7 @@ TDS_data & get_tds_data();
 `c`. This function works even if the adjacency information stored in the
 neighbor full cell `*``c``.neighbor(i)` is corrupted. This is useful
 when temporary corruption is necessary during surgical operation on a
-triangulation. \pre $0 \leq i,\f$ \ccc{cur_dim}\f$ \leq $`maximal_dimension()`.
+triangulation. \pre \f$0 \leq i,\f$ `cur_dim` \f$ \leq \f$ `maximal_dimension()`.
 */
 Vertex_handle mirror_vertex(const int i, const int cur_dim) const;
 
@@ -182,7 +182,7 @@ Vertex_handle mirror_vertex(const int i, const int cur_dim) const;
 /*!
 Sets the \f$ i\f$-th
 vertex of the full cell.
-\pre $0 \leq i \leq $`maximal_dimension()`.
+\pre \f$0 \leq i \leq \f$ `maximal_dimension()`.
 */
 void set_vertex(const int i, Vertex_handle v);
 
@@ -190,7 +190,7 @@ void set_vertex(const int i, Vertex_handle v);
 Sets the
 `i`-th neighbor of `c` to `n`. Full cell `n` is
 opposite to the \f$ i\f$-th vertex of `c`.
-\pre $0 \leq i \leq $`maximal_dimension()`.
+\pre \f$0 \leq i \leq \f$`maximal_dimension()`.
 */
 void set_neighbor(const int i, Full_cell_handle n);
 
@@ -201,14 +201,14 @@ to the index, in `c``->neighbor(i)`, of the full cell `c`.
 
 Note: an implementation of the concept `c` may choose not to store mirror
 indices, in which case this function should do nothing.
-\pre $0 \leq i \leq $`maximal_dimension()`.
+\pre \f$0 \leq i \leq \f$`maximal_dimension()`.
 */
 void set_mirror_index(const int i, const int index);
 
 /*!
 Switches the orientation of the
 full cell `c` by swapping its vertices with index `d1` and `d2`.
-\pre $0 \leq d1,d2 \leq $`maximal_dimension()`.
+\pre \f$0 \leq d1,d2 \leq \f$`maximal_dimension()`.
 */
 void swap_vertices(int d1, int d2);
 

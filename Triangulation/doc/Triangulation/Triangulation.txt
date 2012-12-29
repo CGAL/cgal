@@ -35,7 +35,7 @@ In the sequel, we will call these maximal simplices <I>full cells</I>.
 A <I>face</I> of a simplex is a subset of it.
 A <I>proper face</I> of a simplex is a strict subset of it.
 
-If the vertices are embedded into Euclidean space \f$ \real^d\f$, we deal with
+If the vertices are embedded into Euclidean space \f$ \R^d\f$, we deal with
 <I>finite simplicial complexes</I> which have slightly different simplices
 and additional requirements:
 <UL>
@@ -127,7 +127,7 @@ Two full cells \f$ \sigma\f$ and \f$ \sigma'\f$ sharing a facet are called
 
 Possible values of \f$ \cd\f$ (the <I>current dimension</I> of the triangulation) include
 <BLOCKQUOTE>
-<UL>
+<DL>
 <DT><B>\f$ \cd=-2\f$</B><DD> This corresponds to the non-existence of any object in
 the `TriangulationDataStructure`.
 <DT><B>\f$ \cd=-1\f$</B><DD> This corresponds to a single vertex and a single full cell. In a
@@ -137,7 +137,8 @@ the infinite vertex), each corresponding to a full cell;
 the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
 <DT><B>\f$ 0<\cd\le\ad\f$</B><DD> This corresponds to a standard triangulation of
-the sphere \f$ \sphere^\cd\f$.</UL>
+the sphere \f$ \sphere^\cd\f$.
+</DL>
 </BLOCKQUOTE>
 
 \subsection triangulationtdsimpl The class `Triangulation_data_structure` 
@@ -158,7 +159,7 @@ neighbors. Its vertices and neighbors are indexed from \f$ 0\f$ to \f$ d \f$. Th
 of its neighbors have the following meaning: the \f$ i\f$-th neighbor of \f$ \sigma\f$
 is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th vertex of
 \f$ \sigma\f$; in other words, it is the neighbor of \f$ \sigma\f$ <I>opposite</I> to
-the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \ref triangulationfigfullcell).
+the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).
 
 \cgalFigureBegin{triangulationfigfullcell,simplex-structure.png}
 Indexing the vertices and neighbors of a full cell \f$ c\f$ in dimension \f$ \cd=2\f$.
@@ -166,7 +167,7 @@ Indexing the vertices and neighbors of a full cell \f$ c\f$ in dimension \f$ \cd
 
 \cgalAdvanced The index of a full cell \f$ c\f$ in the \f$ i\f$-th
 neighbor of \f$ c\f$ is called the <I>\f$ i\f$-th mirror-index</I> of
-\f$ c\f$ (Figure \ref triangulationfigfullcell).  Mirror indices are
+\f$ c\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).  Mirror indices are
 often needed for maintaining the triangulation data structure. Thus,
 it might be desirable, for performance reasons, to store the mirror
 indices alongside the references to the vertices and neighbors in a

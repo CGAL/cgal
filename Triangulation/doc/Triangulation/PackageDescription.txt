@@ -14,7 +14,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.6}
-\cgalPkgBib{}
+\cgalPkgBib{cgal:hd-t}
 \cgalPkgLicense{\ref licensesLGPL L"GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
