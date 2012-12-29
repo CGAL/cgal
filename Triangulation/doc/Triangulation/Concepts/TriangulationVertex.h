@@ -7,12 +7,12 @@ The concept `TriangulationVertex` describes the requirements on the type used by
 class `Triangulation<TriangulationTraits, TriangulationDataStructure>`, and its derived classes, to 
 represent a vertex. 
 
-\refines ::TriangulationDSVertex 
-We only list below the additional specific requirements of \refines ::TriangulationVertex. 
-Compared to \refines ::TriangulationDSVertex, the main difference is the addition of 
-CONVERRORRefines: an association of the vertex into a geometric point. 
+\cgalRefines ::TriangulationDSVertex 
+We only list below the additional specific requirements of ::TriangulationVertex. 
+Compared to ::TriangulationDSVertex, the main difference is the addition of 
+an association of the vertex into a geometric point. 
 
-\hasModel CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex> 
+\cgalHasModel CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex> 
 
 Input/Output 
 -------------- 
@@ -75,21 +75,17 @@ Returns the vertex's position.
 */ 
 const Point & point() const; 
 
-CONVERROR: ccFunction inside class or concept, try to relate 
 /*! 
 Inputs the non-combinatorial information given by the vertex, i.e., 
 the point and other possible information. 
-\relates TriangulationVertex 
 */ 
-istream & operator>>(istream & is, TriangulationVertex & v); 
+std::istream & operator>>(std::istream & is, TriangulationVertex & v); 
 
-CONVERROR: ccFunction inside class or concept, try to relate 
 /*! 
 Outputs the non-combinatorial information given by the vertex, i.e., 
 the point and other possible information. 
-\relates TriangulationVertex 
 */ 
-ostream & operator<<(ostream & os, const TriangulationVertex & v); 
+std::ostream & operator<<(std::ostream & os, const TriangulationVertex & v); 
 
 /// @}
 

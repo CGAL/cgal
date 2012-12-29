@@ -1,11 +1,9 @@
 
-\page chaptriangulations Triangulations
-
 namespace CGAL {
 /*!
 
 \mainpage Triangulations
-\anchor chaptriangulations
+\anchor Chapter_Triangulations
 
 \authors Samuel Hornus and Olivier Devillers
 
@@ -162,22 +160,17 @@ is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th ve
 \f$ \sigma\f$; in other words, it is the neighbor of \f$ \sigma\f$ <I>opposite</I> to
 the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \ref triangulationfigfullcell).
 
-CONVERROR HtmlOnly needs treatment 
-<center>
-<img border=0 src="./fig/simplex-structure.png" align="middle"
-alt="Index the vertices and neighbors of a full cell">
-</center>
-CONVERROR EndHtmlOnly
-CAPTION Indexing the vertices and neighbors of a full cell \f$ c\f$ in dimension \f$ \cd=2\f$.
-\anchor triangulationfigfullcell
+\cgalFigureBegin{triangulationfigfullcell,simplex-structure.png}
+Indexing the vertices and neighbors of a full cell \f$ c\f$ in dimension \f$ \cd=2\f$.
+\cgalFigureEnd
 
-CONVERROR ADVANCED
-The index of a full cell \f$ c\f$ in the \f$ i\f$-th neighbor of \f$ c\f$ is called the
-<I>\f$ i\f$-th mirror-index</I> of \f$ c\f$ (Figure \ref triangulationfigfullcell).
-Mirror indices are often needed for maintaining the triangulation data
-structure. Thus, it might be desirable, for performance reasons, to store the
-mirror indices alongside the references to the vertices and neighbors in a full
-cell. This improves speed a little, but requires more memory.
+\cgalAdvanced The index of a full cell \f$ c\f$ in the \f$ i\f$-th
+neighbor of \f$ c\f$ is called the <I>\f$ i\f$-th mirror-index</I> of
+\f$ c\f$ (Figure \ref triangulationfigfullcell).  Mirror indices are
+often needed for maintaining the triangulation data structure. Thus,
+it might be desirable, for performance reasons, to store the mirror
+indices alongside the references to the vertices and neighbors in a
+full cell. This improves speed a little, but requires more memory.
 
 \cgal provides the class template
 `Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>` for representing full cells in a triangulation. Its
@@ -227,10 +220,9 @@ In particular, models of the concepts `TriangulationDSVertex` and
 `TriangulationDSFullCell` must provide a nested template `Rebind_TDS`
 which is documented in those two concept's reference manual pages.
 
-CONVERROR ADVANCED
-The user that is in need of a custom vertex or full cell class, is
-encouraged to read the documentation of the \cgal `Triangulation_2` or `Triangulation_3` package.
-ADVANCED END
+\cgalAdvanced The user that is in need of a custom vertex or full cell
+class, is encouraged to read the documentation of the \cgal
+`Triangulation_2` or `Triangulation_3` package.
 
 \subsection triangulationtdsexamples Examples 
 
@@ -262,14 +254,9 @@ dimension, from the dimension of `c` to dimension 1, and inserting a new
 vertex in each face. For the enumeration, we use a combination enumerator,
 which is not documented, but provided in \cgal.
 
-CONVERROR HtmlOnly needs treatment 
-<center>
-<img border=0 src="./fig/barycentric-subdivision.png" align="middle"
-alt="Barycentric subdivision">
-</center>
-CONVERROR EndHtmlOnly
-CAPTION Barycentric subdivision in dimension \f$ \cd=2\f$.
-\anchor triangulationfigbarycentric
+\cgalFigureBegin{triangulationfigbarycentric,barycentric-subdivision.png}
+Barycentric subdivision in dimension \f$ \cd=2\f$.
+\cgalFigureEnd
 
 \cgalexample{barycentric_subdivision.cpp}
 

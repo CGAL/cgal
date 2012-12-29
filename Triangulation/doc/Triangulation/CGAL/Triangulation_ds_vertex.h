@@ -23,8 +23,7 @@ Parameters
 The template parameter `TriangulationDataStructure` must be a model of the 
 `TriangulationDataStructure` concept. 
 
-\models ::TriangulationDSVertex 
-CONVERRORIsModel: CONVERROR DEBUG 
+\cgalModels ::TriangulationDSVertex 
 
 Rebind mechanism 
 -------------- 
@@ -41,10 +40,14 @@ class Triangulation_ds_vertex {
 public:
 
 /// \name Validity check 
-CONVERROR Check if this needs to be spread\n/// The `is_valid` method is only minimally defined in the `TriangulationDSVertex` concept, so that we document it more precisely here, for the model `Triangulation_ds_vertex`: CONVERROR ADVANCED
 /// @{
 
 /*! 
+
+\cgalAdvanced The `is_valid` method is only minimally defined in the
+`TriangulationDSVertex` concept, so that we document it more precisely
+here, for the model `Triangulation_ds_vertex`:
+
 Implements the validity checks required by the concept 
 `TriangulationDSVertex`. Does not implement additional checks. 
 */ 

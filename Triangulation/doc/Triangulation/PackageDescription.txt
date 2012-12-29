@@ -1,18 +1,22 @@
-
-
 /// \defgroup PkgTriangulations Triangulations
 /// \defgroup PkgTriangulationsConcepts Concepts
 /// \ingroup PkgTriangulations
+
 /*!
 \addtogroup PkgTriangulations
 \todo check generated documentation
-\PkgDescriptionBegin{Triangulations}
-\PkgPicture{detail.png}
-\PkgAuthor{Samuel Hornus  and Olivier Devillers}
-\PkgDesc{The package `Triangulation` provides classes for manipulating triangulations (pure simplicial complexes) in Euclidean spaces whose dimension can be specified at compile-time or at run-time. Specifically, it provides a combinatorial Triangulation data structure, which is extended into geometric triangulation and Delaunay triangulation classes. Point location and point insertion are supported. The Delaunay triangulation also supports point removal.}
-\PkgSince{3.6}
-\cgalbib{}
-\license{CONVERROR Fix Label \ref licensesLGPL }
-\PkgDescriptionEnd
+\cgalPkgDescriptionBegin{Triangulations,PkgTriangulationsSummary}
+\cgalPkgPicture{detail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Samuel Hornus and Olivier Devillers}
+\cgalPkgDesc{The package `Triangulation` provides classes for manipulating triangulations (pure simplicial complexes) in Euclidean spaces whose dimension can be specified at compile-time or at run-time. Specifically, it provides a combinatorial Triangulation data structure, which is extended into geometric triangulation and Delaunay triangulation classes. Point location and point insertion are supported. The Delaunay triangulation also supports point removal.}
+\cgalPkgManuals{Chapter_Triangulations,PkgTriangulations}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.6}
+\cgalPkgBib{}
+\cgalPkgLicense{\ref licensesLGPL L"GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
 */
 

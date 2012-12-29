@@ -36,39 +36,41 @@ third parameter be specified. It also accepts the tag `CGAL::Default` as
 third parameter. In both cases, `TriangulationDSFullCell` defaults to 
 `CGAL::Triangulation_ds_full_cell<>`. 
 
-CONVERRORIsModel: `TriangulationDataStructure`. 
-CONVERRORIsModel: In addition, the class `Triangulation_data_structure` provides the following types and methods: 
+\cgalModels `TriangulationDataStructure`. In addition, the class
+`Triangulation_data_structure` provides the following types and
+methods.
 
 \sa `Triangulation_ds_vertex` 
 \sa `Triangulation_ds_full_cell` 
 \sa `Triangulation` 
-
 */
 template< typename Dimensionality, typename TriangulationDSVertex, typename TriangulationDSFullCell >
 class Triangulation_data_structure {
 public:
 
 /// \name Creation 
-CONVERROR Check if this needs to be spread\n/// CONVERROR DEBUG
 /// @{
 
 /*! 
 The copy constructor. Creates a copy of the `Triangulation_data_structure` `t2` passed as 
 argument. All vertices and full cells are duplicated. 
 */ 
-XXXXXXX(const Triangulation_data_structure & t2); 
+Triangulation_data_structure(const Triangulation_data_structure & t2); 
 
 /// @} 
 
 /// \name Validity check 
-CONVERROR Check if this needs to be spread\n/// The `is_valid` method is only minimally defined in the `TriangulationDataStructure` concept, so that we document it more precisely here, for the model `Triangulation_data_structure`: CONVERROR ADVANCED
 /// @{
 
 /*! 
 Implements the validity checks required by the concept 
 `TriangulationDataStructure`. 
 
-Note that passing all these tests does not guaranty that we have a 
+The `is_valid` method is only minimally defined in the
+`TriangulationDataStructure` concept, so that we document it more
+precisely here, for the model `Triangulation_data_structure`.
+
+Note that passing all these tests does not guarantee that we have a 
 triangulation (abstract pure simplicial complex). 
 */ 
 bool is_valid(bool verbose = true) const; 
@@ -79,10 +81,10 @@ bool is_valid(bool verbose = true) const;
 /// @{
 
 /*! 
-A data member of type `Full_cell_data` is stored in every full cell (models 
-of the concept `TriangulationDSFullCell`). It is used to mark 
-some 
-full cells, during modifications of the triangulation data structure. 
+\cgalAdvanced A data member of type `Full_cell_data` is stored in every full cell
+(models of the concept `TriangulationDSFullCell`). It is used to mark
+some full cells, during modifications of the triangulation data
+structure.
 */ 
 typedef Hidden_type Full_cell_data; 
 
@@ -92,7 +94,7 @@ typedef Hidden_type Full_cell_data;
 /// @{
 
 /*! 
-A set `C` of full cells satisfying the same condition as in method 
+\cgalAdvanced A set `C` of full cells satisfying the same condition as in method 
 `Triangulation_data_structure``::insert_in_hole()` is assumed to be marked. This 
 method creates new full cells from vertex `v` to the boundary of `C`. 
 The boundary is recognized by checking the mark of the full cells. 

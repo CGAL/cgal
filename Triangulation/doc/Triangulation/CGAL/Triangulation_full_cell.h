@@ -29,16 +29,9 @@ The class template `Triangulation_full_cell` accepts that no third parameter be 
 It also accepts the tag `CGAL::Default` as third parameter. In both 
 cases, `TriangulationDSFullCell` defaults to `CGAL::Triangulation_ds_full_cell<>`. 
 
-Inherits From 
--------------- 
-
-CONVERROR Inherits From must be handled manually, e.g. adjust the class decl 
-
-`TriangulationDSFullCell` (the third template parameter) 
-
-\models ::TriangulationFullCell 
-CONVERRORIsModel: Additionally, the class `Triangulation_full_cell` also provides the following type, 
-CONVERRORIsModel: constructors and methods: 
+\cgalModels ::TriangulationFullCell Additionally, the class
+`Triangulation_full_cell` also provides the following types,
+constructors and methods:
 
 \sa `Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>` 
 \sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>` 
@@ -47,7 +40,7 @@ CONVERRORIsModel: constructors and methods:
 
 */
 template< typename TriangulationTraits, typename Data, typename TriangulationDSFullCell >
-class Triangulation_full_cell {
+class Triangulation_full_cell : public TriangulationDSFullCell {
 public:
 
 /// \name Types 
@@ -87,23 +80,19 @@ Returns a non-const reference to the stored data.
 */ 
 Data & data(); 
 
-CONVERROR: ccFunction inside class or concept, try to relate 
 /*! 
 Inputs the non-combinatorial information given by the cell, i.e., 
 the point and other possible information. The data of type `Data` is 
 also read. 
-\relates Triangulation_full_cell 
 */ 
-istream & operator>>(istream & is, Triangulation_full_cell & v); 
+std::istream & operator>>(std::istream & is, Triangulation_full_cell & v); 
 
-CONVERROR: ccFunction inside class or concept, try to relate 
 /*! 
 Outputs the non-combinatorial information given by the cell, i.e., 
 the point and other possible information. The data of type `Data` is 
 also written. 
-\relates Triangulation_full_cell 
 */ 
-ostream & operator<<(ostream & os, const Triangulation_full_cell & v); 
+std::ostream & operator<<(std::ostream & os, const Triangulation_full_cell & v); 
 
 /// @}
 

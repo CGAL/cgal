@@ -46,8 +46,7 @@ indices are stored.
 </UL> 
 See the user manual for how to choose the second option. 
 
-\models ::TriangulationDSFullCell 
-CONVERRORIsModel: CONVERROR DEBUG 
+\cgalModels ::TriangulationDSFullCell 
 
 Rebind mechanism 
 -------------- 
@@ -64,12 +63,15 @@ class Triangulation_ds_full_cell {
 public:
 
 /// \name Validity check 
-CONVERROR Check if this needs to be spread\n/// The `is_valid` method is only minimally defined in the `TriangulationDSFullCell` concept, so that we document it more precisely here, for the model `Triangulation_ds_full_cell`: CONVERROR ADVANCED
 /// @{
 
 /*! 
 
-Implements the validity checks required by the concept 
+The `is_valid` method is only minimally defined in the
+`TriangulationDSFullCell` concept, so that we document it more
+precisely here, for the model `Triangulation_ds_full_cell`.
+
+\cgalAdvanced Implements the validity checks required by the concept 
 `TriangulationDSFullCell`. In addition, it is checked that there is no 
 `NULL` handle to vertices in the middle of non-`NULL` ones, that is, 
 that the internal memory layout is not corrupted. 

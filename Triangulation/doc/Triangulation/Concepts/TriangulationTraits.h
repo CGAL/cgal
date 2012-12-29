@@ -14,24 +14,21 @@ spatial sorting, thus besides the requirements below,
 a class provided as `TriangulationTraits` should also satisfy the concept 
 `SpatialSortingTraits_d`. 
 
-\refines ::SpatialSortingTraits_d 
-CONVERRORRefines: If a range of points is inserted, the 
-traits must refine \refines ::SpatialSortingTraits_d, This is not needed 
-CONVERRORRefines: if the points are inserted one by one. 
+\cgalRefines ::SpatialSortingTraits_d If a range of points is inserted, the 
+traits must refine `SpatialSortingTraits_d`, This is not needed 
+if the points are inserted one by one. 
 
-CONVERRORHasModels: `CGAL::Cartesian_d<FT, Dim, LA>`, 
-CONVERRORHasModels: `CGAL::????<K>` (recommended). 
+\cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
+\cgalHasModel `CGAL::????<K>` (recommended)
 
 \sa `DelaunayTriangulationTraits` 
 \sa `Triangulation` 
-
 */
 
 class TriangulationTraits {
 public:
 
 /// \name Types 
-CONVERROR Check if this needs to be spread\n/// In the \f$ D\f$-dimensional oriented space, a \f$ k-1\f$ dimensional subspace (flat) define by \f$ k\f$ points can be oriented in two different ways. Choosing the orientation of any simplex defined by \f$ k\f$ points fix the orientation of all other simplices. To be able to orient lower dimensional flats, we use the following classes:
 /// @{
 
 /*! 
@@ -85,6 +82,17 @@ must be affinely independent.
 
 */ 
 typedef Hidden_type Contained_in_affine_hull_d; 
+
+/// @}
+
+/// \name
+/// In the \f$ D\f$-dimensional oriented space, a \f$ k-1\f$
+/// dimensional subspace (flat) define by \f$ k\f$ points can be
+/// oriented in two different ways. Choosing the orientation of any
+/// simplex defined by \f$ k\f$ points fix the orientation of all
+/// other simplices. To be able to orient lower dimensional flats, we
+/// use the following classes:
+/// @{
 
 /*! 
 
@@ -159,7 +167,7 @@ TriangulationTraits();
 /// @} 
 
 /// \name Operations 
-CONVERROR Check if this needs to be spread\n/// The following methods permit access to the traits class's predicates:
+/// The following methods permit access to the traits class's predicates:
 /// @{
 
 /*! 

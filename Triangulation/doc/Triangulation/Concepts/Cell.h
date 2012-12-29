@@ -1,5 +1,3 @@
-
-CONVERROR Additional namespace TriangulationDataStructure:: required
 /*!
 \ingroup PkgTriangulationsConcepts
 \cgalconcept
@@ -16,16 +14,14 @@ In order to obtain new cells or destruct unused cells, the user must call the
 `new_full_cell()` and `delete_full_cell()` methods of the triangulation data 
 structure. 
 
-\sa `TriangulationDataStructure::Vertex` 
-CONVERRORSeeAlso: `TriangulationDataStructure`. 
+\sa `TriangulationDataStructure::Vertex`
+\sa `TriangulationDataStructure`
 
 */
-
-class Cell {
+class TriangulationDataStructure::Cell {
 public:
 
 /// \name Types 
-CONVERROR Check if this needs to be spread\n/// The class `Cell` defines the following types.
 /// @{
 
 /*! 
@@ -97,7 +93,6 @@ bool has_neighbor(Full_cell_handle n, int & i) const;
 /// @} 
 
 /// \name Setting 
-CONVERROR Check if this needs to be spread\n/// CONVERROR DEBUG
 /// @{
 
 /*! 
@@ -118,11 +113,10 @@ void set_neighbor(int i, Full_cell_handle n);
 /// @{
 
 /*! 
-User defined local validity checking function. 
+\cgalDebug User defined local validity checking function. 
 */ 
 bool is_valid(bool verbose = false) const; 
 
 /// @}
 
 }; /* end Cell */
-

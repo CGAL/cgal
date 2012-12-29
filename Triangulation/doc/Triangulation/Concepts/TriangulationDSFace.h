@@ -10,7 +10,7 @@ It gives access to a handle to a full cell `c` containing the face
 `c`, i.e., the dimension of `f` is strictly less than 
 the dimension of `c`. 
 
-CONVERRORHasModels: `CGAL::Triangulation_face<TriangulationDataStructure>`. 
+\cgalHasModel `CGAL::Triangulation_face<TriangulationDataStructure>`
 
 \sa `TriangulationDataStructure::FullCell` 
 \sa `TriangulationDataStructure::Vertex` 
@@ -42,7 +42,9 @@ typedef Hidden_type Vertex_handle;
 /// @} 
 
 /// \name Creation 
-CONVERROR Check if this needs to be spread\n/// There is no default constructor, since the maximal dimension (of the full cells) must be known by the constructors of a `TriangulationDSFace`.
+/// There is no default constructor, since the maximal dimension (of
+/// the full cells) must be known by the constructors of a
+/// `TriangulationDSFace`.
 /// @{
 
 /*! 

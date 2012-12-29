@@ -25,20 +25,15 @@ tag `CGAL::Default` as
 the second parameter. In both cases, `TriangulationDataStructure` defaults to 
 `Triangulation_data_structure<Maximal_dimension<TriangulationTraits::Point_d>::type, Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>`. 
 
-Inherits From 
--------------- 
-
-CONVERROR Inherits From must be handled manually, e.g. adjust the class decl`Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. 
-
 The class `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` inherits all the types 
 defined in the base class `Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. Additionally, it 
 defines or overloads the following methods: 
 
-CONVERRORSeeAlso: `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`, 
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
 
 */
 template< typename DelaunayTriangulationTraits, typename TriangulationDataStructure >
-class Delaunay_triangulation {
+class Delaunay_triangulation : public Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure> {
 public:
 
 /// \name Creation 
@@ -82,7 +77,6 @@ start, ForwardIterator end);
 /// @} 
 
 /// \name Point insertion 
-CONVERROR Check if this needs to be spread\n/// CONVERROR ADVANCED
 /// @{
 
 /*! 
@@ -110,7 +104,7 @@ Same as above but uses a vertex as starting place for the search.
 Vertex_handle insert(const Point & p, Vertex_handle hint); 
 
 /*! 
-Inserts the point `p` in the Delaunay triangulation 
+n\cgalAdvanced Inserts the point `p` in the Delaunay triangulation 
 and ensures that the empty-ball property is preserved. 
 Returns a handle to the 
 (possibly newly created) vertex at that position. The behavior depends on the 
@@ -132,7 +126,7 @@ Vertex_handle insert(const Point & p, const Locate_type lt,
 const Face & f, const Facet & ft, const Full_cell_handle c); 
 
 /*! 
-Inserts the point `p` in the Delaunay triangulation. Returns a handle to the 
+\cgalAdvanced Inserts the point `p` in the Delaunay triangulation. Returns a handle to the 
 (possibly newly created) vertex at that position. \pre The point `p` 
 must lie outside the affine hull of the Delaunay triangulation. This implies that 
 `dt`.`current_dimension()` must be less that 
@@ -141,7 +135,7 @@ must lie outside the affine hull of the Delaunay triangulation. This implies tha
 Vertex_handle insert_outside_affine_hull(const Point & p); 
 
 /*! 
-Inserts the point `p` in the Delaunay triangulation. Returns a handle to the 
+\cgalAdvanced Inserts the point `p` in the Delaunay triangulation. Returns a handle to the 
 (possibly newly created) vertex at that position. 
 \pre The point `p` 
 must be in conflict with the full cell `c`. 
@@ -152,7 +146,6 @@ Full_cell_handle c);
 /// @} 
 
 /// \name Queries 
-CONVERROR Check if this needs to be spread\n/// CONVERROR ADVANCED
 /// @{
 
 /*! 
@@ -165,7 +158,7 @@ bool is_in_conflict(const Point & p, Full_cell_const_handle c)
 const; 
 
 /*! 
-Outputs handles to the full cells in confict with 
+\cgalAdvanced Outputs handles to the full cells in confict with 
 point `p` into the `OutputIterator out`. The full cell `c` is used 
 as a starting point for gathering the full cells in conflict with 
 `p`. 
