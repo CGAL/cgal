@@ -82,7 +82,7 @@ void test2(){
   typedef typename K1::Construct_point_d CP;
   typedef typename K1::Construct_vector_d CV;
   typedef typename K1::Construct_segment_d CS;
-  typedef typename K1::template Functor<CGAL::Segment_extremity_tag>::type CSE;
+  typedef typename CGAL::Get_functor<K1, CGAL::Segment_extremity_tag>::type CSE;
   typedef typename K1::Construct_cartesian_const_iterator_d CCI;
   typedef typename K1::Orientation_d PO;
   typedef typename K1::Side_of_oriented_sphere_d SOS;
@@ -160,7 +160,7 @@ void test3(){
   typedef typename K1::Construct_point_d CP_;
   typedef typename K1::Construct_vector_d CV;
   typedef typename K1::Construct_segment_d CS;
-  typedef typename K1::template Functor<CGAL::Segment_extremity_tag>::type CSE;
+  typedef typename CGAL::Get_functor<K1, CGAL::Segment_extremity_tag>::type CSE;
   typedef typename K1::Construct_cartesian_const_iterator_d CCI;
   typedef typename K1::Orientation_d PO;
   typedef typename K1::Side_of_oriented_sphere_d SOS;

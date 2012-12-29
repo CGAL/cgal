@@ -9,8 +9,8 @@ namespace CGAL {
 
   template <class K, class T> struct Get_type
     : K::template Type<T> {};
-  template <class K, class F> struct Get_functor
-    : K::template Functor<F> {};
+  template <class K, class F, class O=void> struct Get_functor
+    : K::template Functor<F, O> {};
 
 	class Null_type {~Null_type();}; // no such object should be created
 

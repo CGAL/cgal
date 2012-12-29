@@ -28,7 +28,7 @@ template<class R_,class Derived_> struct Cartesian_define_all_functors_
 {
 	typedef R_ Kernel_base;
 	template<class F, class D=void> struct Functor
-		: Kernel_base::template Functor<F,D>
+		: Get_functor<Kernel_base,F,D>
 	{ };
 #define CGAL_Kernel_cons2(F,f) \
 	template<class D> struct Functor <F##_tag,D> { \
@@ -85,7 +85,7 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_constructors>::type Derived;
 	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
-		R_::template Functor<F,D> {};
+		Get_functor<R_,F,D> {};
 	template<class F,class D> struct Functor<F,D,Construct_tag> {
 		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
 		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
@@ -107,7 +107,7 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_predicates>::type Derived;
 	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
-		R_::template Functor<F,D> {};
+		Get_functor<R_,F,D> {};
 	template<class F,class D> struct Functor<F,D,Predicate_tag> {
 		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
 		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
@@ -126,7 +126,7 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_computes>::type Derived;
 	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
-		R_::template Functor<F,D> {};
+		Get_functor<R_,F,D> {};
 	template<class F,class D> struct Functor<F,D,Compute_tag> {
 		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
 		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,

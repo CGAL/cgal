@@ -81,7 +81,7 @@ struct Cartesian_change_FT_base : public
     };
 
     template<class T,class U=void,class=typename map_functor_type<T>::type> struct Functor :
-	    Kernel_base::template Functor<T,U> { };
+	    Get_functor<Kernel_base,T,U> { };
     template<class T,class U> struct Functor<T,U,Compute_tag>
 	{ typedef Null_functor type; };
     template<class T,class U> struct Functor<T,U,Predicate_tag>

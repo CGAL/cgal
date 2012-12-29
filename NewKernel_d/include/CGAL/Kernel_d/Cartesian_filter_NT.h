@@ -18,7 +18,7 @@ struct Cartesian_filter_NT : public Base_
     typedef Cartesian_change_FT<Kernel_base,Exact_nt> K2;
 
     template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor :
-       Kernel_base::template Functor<T,D> {};
+       Get_functor<Kernel_base,T,D> {};
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
 	    struct type {
 		    //TODO: use compression (derive from a compressed_pair?)
