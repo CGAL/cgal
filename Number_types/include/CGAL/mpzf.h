@@ -259,10 +259,33 @@ struct mpzf {
     ret.size = -ret.size;
   }
 #endif
-  mpzf(int i) : exp(0) { // assume that int is smaller than mp_limb_t
+  mpzf(int i) : exp(0) {
+    // assume that int is smaller than mp_limb_t
     init();
-    if (i == 0) { size = 0; }
-    else        { size = 1; data[0] = i; }
+    if      (i == 0)    { size = 0; }
+    else if (i >  0)    { size = 1; data[0] = i; }
+    else /* (i <  0) */ { size =-1; data[0] = -(mp_limb_t)i; }
+    // cast to mp_limb_t because -INT_MIN is undefined
+  }
+  mpzf(unsigned int i) : exp(0) {
+    // assume that int is smaller than mp_limb_t
+    init();
+    if      (i == 0)    { size = 0; }
+    else /* (i >  0) */ { size = 1; data[0] = i; }
+  }
+  mpzf(long i) : exp(0) {
+    // assume that long is smaller than mp_limb_t
+    init();
+    if      (i == 0)    { size = 0; }
+    else if (i >  0)    { size = 1; data[0] = i; }
+    else /* (i <  0) */ { size =-1; data[0] = -(mp_limb_t)i; }
+    // cast to mp_limb_t because -LONG_MIN is undefined
+  }
+  mpzf(unsigned long i) : exp(0) {
+    // assume that long is smaller than mp_limb_t
+    init();
+    if      (i == 0)    { size = 0; }
+    else /* (i >  0) */ { size = 1; data[0] = i; }
   }
   mpzf(double d){
     init();
