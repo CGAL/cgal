@@ -31,8 +31,8 @@
 # endif
 #endif
 // FIXME:
-// this code is experimental. It assumes there is an int64_t type, it
-// may assume little endianness, etc.
+// this code is experimental. It assumes there is an int64_t type which is used
+// as mp_limb_t by gmp, it may assume little endianness, etc.
 
 // On a dataset provided by Andreas, replacing Gmpq with this type in
 // Epick reduced the running time of the construction of a Delaunay
@@ -271,12 +271,20 @@ struct mpzf {
       double d;
     } u;
     u.d = d;
-    if(u.s.exp==0){
-      if(d==0){ size=0; exp=0; return; }
-      throw "denormal\n";
+    uint64_t m;
+    uint64_t dexp = u.s.exp;
+    if (dexp == 0) {
+      if (d == 0) { size=0; exp=0; return; }
+      else { // denormal number
+	m = u.s.man;
+	++dexp;
+      }
+    } else {
+      m = (1L<<52) | u.s.man;
     }
-    uint64_t m = (1L<<52)|u.s.man;
-    int e1 = (int)u.s.exp+13;
+    int e1 = (int)dexp+13;
+    // FIXME: make it more general! But not slower...
+    BOOST_STATIC_ASSERT(GMP_NUMB_BITS == 64);
     int e2 = e1 % 64;
     exp = e1 / 64 - 17;
     if(mpzf_impl::ctz(m)+e2>=64){
