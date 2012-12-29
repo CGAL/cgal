@@ -16,16 +16,16 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef Kernel_d_interface<Base> Kernel;
 	typedef Base_ R_; // for the macros
 	typedef typename Base::Flat_orientation Flat_orientation_d;
-	typedef typename Base::Point Point_d;
-	typedef typename Base::Vector Vector_d;
-	typedef typename Base::Segment Segment_d;
-	typedef typename Base::Sphere Sphere_d;
-	typedef typename Base::Hyperplane Hyperplane_d;
+	typedef typename Get_type<Base, Point_tag>::type	Point_d;
+	typedef typename Get_type<Base, Vector_tag>::type	Vector_d;
+	typedef typename Get_type<Base, Segment_tag>::type	Segment_d;
+	typedef typename Get_type<Base, Sphere_tag>::type	Sphere_d;
+	typedef typename Get_type<Base, Hyperplane_tag>::type	Hyperplane_d;
 	typedef Vector_d Direction_d;
-	typedef typename Base::Line Line_d;
-	typedef typename Base::Ray Ray_d;
-	typedef typename Base::Iso_box Iso_box_d;
-	typedef typename Base::Aff_transformation Aff_transformation_d;
+	typedef typename Get_type<Base, Line_tag>::type	Line_d;
+	typedef typename Get_type<Base, Ray_tag>::type	Ray_d;
+	typedef typename Get_type<Base, Iso_box_tag>::type	Iso_box_d;
+	typedef typename Get_type<Base, Aff_transformation_tag>::type	Aff_transformation_d;
 	typedef typename Get_functor<Base, Compute_point_cartesian_coordinate_tag>::type Compute_coordinate_d;
 	typedef typename Get_functor<Base, Compare_lexicographically_tag>::type Compare_lexicographically_d;
 	typedef typename Get_functor<Base, Equal_points_tag>::type Equal_d;
@@ -55,7 +55,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Midpoint_tag>::type Midpoint_d;
 	struct Component_accessor_d : private Store_kernel<R_> {
 	  CGAL_FUNCTOR_INIT_STORE(Component_accessor_d)
-	  typedef typename Base::Point Point;
+	  typedef typename Get_type<Base, Point_tag>::type Point;
 	  typedef typename Base::RT RT;
 	  typedef typename Base::FT FT;
 	  int dimension(Point const&p){

@@ -184,9 +184,9 @@ template<class R_> struct Construct_cartesian_const_iterator {
 template<class R_> struct Midpoint {
 	CGAL_FUNCTOR_INIT_IGNORE(Midpoint)
 	typedef R_ R;
-	typedef typename R::Point first_argument_type;
-	typedef typename R::Point second_argument_type;
-	typedef typename R::Point result_type;
+	typedef typename Get_type<R, Point_tag>::type first_argument_type;
+	typedef typename Get_type<R, Point_tag>::type second_argument_type;
+	typedef typename Get_type<R, Point_tag>::type result_type;
 
 	result_type operator()(result_type const& a, result_type const& b)const{
 		return (a+b)/2;
@@ -196,9 +196,9 @@ template<class R_> struct Midpoint {
 template<class R_> struct Sum_of_vectors {
 	CGAL_FUNCTOR_INIT_IGNORE(Sum_of_vectors)
 	typedef R_ R;
-	typedef typename R::Vector first_argument_type;
-	typedef typename R::Vector second_argument_type;
-	typedef typename R::Vector result_type;
+	typedef typename Get_type<R, Vector_tag>::type first_argument_type;
+	typedef typename Get_type<R, Vector_tag>::type second_argument_type;
+	typedef typename Get_type<R, Vector_tag>::type result_type;
 
 	result_type operator()(result_type const& a, result_type const& b)const{
 		return a+b;
@@ -208,9 +208,9 @@ template<class R_> struct Sum_of_vectors {
 template<class R_> struct Difference_of_vectors {
 	CGAL_FUNCTOR_INIT_IGNORE(Difference_of_vectors)
 	typedef R_ R;
-	typedef typename R::Vector first_argument_type;
-	typedef typename R::Vector second_argument_type;
-	typedef typename R::Vector result_type;
+	typedef typename Get_type<R, Vector_tag>::type first_argument_type;
+	typedef typename Get_type<R, Vector_tag>::type second_argument_type;
+	typedef typename Get_type<R, Vector_tag>::type result_type;
 
 	result_type operator()(result_type const& a, result_type const& b)const{
 		return a-b;
@@ -220,8 +220,8 @@ template<class R_> struct Difference_of_vectors {
 template<class R_> struct Opposite_vector {
 	CGAL_FUNCTOR_INIT_IGNORE(Opposite_vector)
 	typedef R_ R;
-	typedef typename R::Vector result_type;
-	typedef typename R::Vector argument_type;
+	typedef typename Get_type<R, Vector_tag>::type result_type;
+	typedef typename Get_type<R, Vector_tag>::type argument_type;
 
 	result_type operator()(result_type const& v)const{
 		return -v;
@@ -233,8 +233,8 @@ template<class R_> struct Scalar_product {
 	typedef R_ R;
 	typedef typename R::LA_vector LA;
 	typedef typename R::RT result_type;
-	typedef typename R::Vector first_argument_type;
-	typedef typename R::Vector second_argument_type;
+	typedef typename Get_type<R, Vector_tag>::type first_argument_type;
+	typedef typename Get_type<R, Vector_tag>::type second_argument_type;
 
 	result_type operator()(first_argument_type const& a, second_argument_type const& b)const{
 		return LA::dot_product(a,b);
@@ -246,7 +246,7 @@ template<class R_> struct Squared_distance_to_origin_stored {
 	typedef R_ R;
 	typedef typename R::LA_vector LA;
 	typedef typename R::RT result_type;
-	typedef typename R::Point argument_type;
+	typedef typename Get_type<R, Point_tag>::type argument_type;
 
 	result_type operator()(argument_type const& a)const{
 		return LA::squared_norm(a);
@@ -258,7 +258,7 @@ template<class R_> struct Squared_distance_to_origin_via_dotprod {
 	typedef R_ R;
 	typedef typename R::LA_vector LA;
 	typedef typename R::RT result_type;
-	typedef typename R::Point argument_type;
+	typedef typename Get_type<R, Point_tag>::type argument_type;
 
 	result_type operator()(argument_type const& a)const{
 		return LA::dot_product(a,a);

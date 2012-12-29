@@ -6,7 +6,7 @@
 namespace CGAL {
 template <class R_> class Line {
 	typedef typename R_::FT FT_;
-	typedef typename R_::Point Point_;
+	typedef typename Get_type<R_, Point_tag>::type	Point_;
 	typedef std::pair<Point_,Point_> Data_;
 	Data_ data;
 	public:
@@ -24,9 +24,9 @@ template <class R_> class Line {
 namespace CartesianDKernelFunctors {
   template <class R_> struct Construct_line : Store_kernel<R_> {
     CGAL_FUNCTOR_INIT_STORE(Construct_line)
-    typedef typename R_::Line result_type;
-    typedef typename R_::Point Point;
-    typedef typename R_::Vector Vector;
+    typedef typename Get_type<R_, Line_tag>::type	result_type;
+    typedef typename Get_type<R_, Point_tag>::type	Point;
+    typedef typename Get_type<R_, Vector_tag>::type	Vector;
     typedef typename Get_functor<R_, Translated_point_tag>::type Tp_;
     //typedef typename Get_functor<R_, Difference_of_points_tag>::type Dp_;
     //typedef typename Get_functor<R_, Scaled_vector_tag>::type Sv_;

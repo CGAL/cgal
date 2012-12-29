@@ -16,19 +16,19 @@
 namespace CGAL {
 
 template <class R_>
-class Point_d : public R_::Kernel_base::Point
+class Point_d : public Get_type<typename R_::Kernel_base, Point_tag>::type
 		// Deriving won't work if the point is just a __m256d.
 		// Test boost/std::is_class for instance
 {
-  typedef typename R_::RT                    RT_;
-  typedef typename R_::FT                    FT_;
-  typedef typename R_::Kernel_base           Kbase;
-  typedef typename R_::Vector                Vector_;
+  typedef typename R_::RT			RT_;
+  typedef typename R_::FT			FT_;
+  typedef typename R_::Kernel_base		Kbase;
+  typedef typename Get_type<R_, Vector_tag>::type	Vector_;
   typedef typename Get_functor<Kbase, Construct_ttag<Point_tag> >::type CPBase;
   typedef typename Get_functor<Kbase, Compute_point_cartesian_coordinate_tag>::type CCBase;
 
   typedef Point_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Point>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Point_tag>::type>::value));
 
 public:
 
@@ -37,7 +37,7 @@ public:
   typedef Dimension_tag<0>  Feature_dimension;
 
   typedef typename R_::Point_cartesian_const_iterator Cartesian_const_iterator;
-  typedef typename Kbase::Point      Rep;
+  typedef typename Get_type<Kbase, Point_tag>::type      Rep;
 
   const Rep& rep() const
   {

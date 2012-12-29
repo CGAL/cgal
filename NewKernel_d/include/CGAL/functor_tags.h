@@ -7,8 +7,12 @@ namespace CGAL {
 
   // Find a better place for this later
 
+#if 1
   template <class K, class T> struct Get_type
     : K::template Type<T> {};
+#else
+#define Get_type Read_tag_type
+#endif
   template <class K, class F, class O=void> struct Get_functor
     : K::template Functor<F, O> {};
 

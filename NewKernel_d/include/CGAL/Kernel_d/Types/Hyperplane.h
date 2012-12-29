@@ -4,8 +4,8 @@
 namespace CGAL {
 template <class R_> class Hyperplane {
 	typedef typename R_::FT FT_;
-	typedef typename R_::Point Point_;
-	typedef typename R_::Vector Vector_;
+	typedef typename Get_type<R_, Point_tag>::type	Point_;
+	typedef typename Get_type<R_, Vector_tag>::type	Vector_;
 	Vector_ v_;
 	FT_ s_;
 
@@ -19,9 +19,9 @@ template <class R_> class Hyperplane {
 namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_hyperplane)
-  typedef typename R_::Hyperplane result_type;
-  typedef typename R_::Point Point;
-  typedef typename R_::Vector Vector;
+  typedef typename Get_type<R_, Hyperplane_tag>::type	result_type;
+  typedef typename Get_type<R_, Point_tag>::type	Point;
+  typedef typename Get_type<R_, Vector_tag>::type	Vector;
   typedef typename R_::FT FT;
   typedef typename R_::LA LA;
   result_type operator()(Vector const&a, FT const&b)const{
@@ -34,15 +34,15 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
 };
 template <class R_> struct Orthogonal_vector {
   CGAL_FUNCTOR_INIT_IGNORE(Orthogonal_vector)
-  typedef typename R_::Hyperplane Hyperplane;
-  typedef typename R_::Point result_type;
+  typedef typename Get_type<R_, Hyperplane_tag>::type	Hyperplane;
+  typedef typename Get_type<R_, Point_tag>::type	result_type;
   result_type operator()(Hyperplane const&s)const{
     return s.orthogonal_vector();
   }
 };
 template <class R_> struct Hyperplane_translation {
   CGAL_FUNCTOR_INIT_IGNORE(Hyperplane_translation)
-  typedef typename R_::Hyperplane Hyperplane;
+  typedef typename Get_type<R_, Hyperplane_tag>::type	Hyperplane;
   typedef typename R_::FT result_type;
   // TODO: Is_exact?
   result_type operator()(Hyperplane const&s)const{

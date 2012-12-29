@@ -44,7 +44,7 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 	CGAL_FUNCTOR_INIT_STORE(Construct_flat_orientation)
 	typedef R_ R;
 	typedef typename R_::FT FT;
-	typedef typename R::Point Point;
+	typedef typename Get_type<R, Point_tag>::type Point;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type Dplusone;
 	typedef typename R::LA::template Rebind_dimension<Dynamic_dimension_tag,Dplusone>::Other LA;
 	typedef typename LA::Square_matrix Matrix;
@@ -97,7 +97,7 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Contained_in_affine_hull)
         typedef R_ R;
         typedef typename R_::FT FT;
-        typedef typename R::Point Point;
+        typedef typename Get_type<R, Point_tag>::type Point;
         typedef typename R::Boolean result_type;
 	typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type CCC;
 	typedef typename Get_functor<R, Point_dimension_tag>::type PD;
@@ -156,7 +156,7 @@ template<class R_> struct In_flat_orientation : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(In_flat_orientation)
         typedef R_ R;
         typedef typename R_::FT FT;
-        typedef typename R::Point Point;
+        typedef typename Get_type<R, Point_tag>::type Point;
         typedef typename R::Orientation result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
@@ -194,7 +194,7 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
         CGAL_FUNCTOR_INIT_STORE(In_flat_side_of_oriented_sphere)
         typedef R_ R;
         typedef typename R_::FT FT;
-        typedef typename R::Point Point;
+        typedef typename Get_type<R, Point_tag>::type Point;
         typedef typename R::Orientation result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension,2>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension,2>::type D2;

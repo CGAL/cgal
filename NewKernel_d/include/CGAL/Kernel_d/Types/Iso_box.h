@@ -8,7 +8,7 @@
 namespace CGAL {
 template <class R_> class Iso_box {
 	typedef typename R_::FT FT_;
-	typedef typename R_::Point Point_;
+	typedef typename Get_type<R_, Point_tag>::type	Point_;
 	typedef std::pair<Point_,Point_> Data_;
 	Data_ data;
 	public:
@@ -24,10 +24,10 @@ template <class R_> class Iso_box {
 namespace CartesianDKernelFunctors {
   template <class R_> struct Construct_iso_box : Store_kernel<R_> {
     CGAL_FUNCTOR_INIT_STORE(Construct_iso_box)
-    typedef typename R_::Iso_box result_type;
+    typedef typename Get_type<R_, Iso_box_tag>::type	result_type;
     typedef typename R_::RT RT;
-    typedef typename R_::Point Point;
-    typedef typename R_::Vector Vector;
+    typedef typename Get_type<R_, Point_tag>::type	Point;
+    typedef typename Get_type<R_, Vector_tag>::type	Vector;
     typedef typename Get_functor<R_, Construct_ttag<Point_tag> >::type Cp_;
     typedef typename Get_functor<R_, Construct_ttag<Point_cartesian_const_iterator_tag> >::type Ci_;
     result_type operator()(Point const&a, Point const&b)const{

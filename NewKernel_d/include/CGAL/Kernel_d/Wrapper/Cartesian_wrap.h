@@ -84,7 +84,9 @@ struct Cartesian_wrap : public Base_
     typedef Cartesian_wrap Self;
     typedef typename Default::Get<Derived_, Self>::type Derived;
 
+    template <class T, class=void> struct Type : Get_type<Base_, T> {};
 #define CGAL_Kernel_obj(X,Y) \
+    template <class D> struct Type<X##_tag, D> { typedef X##_d<Derived> type; }; \
     typedef X##_d<Derived> X;
 #define CGAL_Kernel_obj3(X,Y)
 
@@ -160,7 +162,9 @@ struct Cartesian_refcount : public Base_
 
     //FIXME: Use object_list (or a list passed as argument)
     //TODO: A generic object wrapper should work just fine, no need to have a different one for each type.
+    template <class T, class=void> struct Type : Get_type<Base_, T> {};
 #define CGAL_Kernel_obj(X,Y) \
+    template <class D> struct Type<X##_tag, D> { typedef X##_rc_d<Cartesian_refcount> type; }; \
     typedef X##_rc_d<Cartesian_refcount> X;
 
     CGAL_Kernel_obj(Point,point)

@@ -26,7 +26,7 @@ class Vector_rc_d
   typedef typename Get_functor<Kbase, Compute_vector_cartesian_coordinate_tag>::type CCBase;
 
   typedef Vector_rc_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Vector>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Vector_tag>::type>::value));
 
 public:
   typedef R_ R;
@@ -36,7 +36,7 @@ public:
   typedef Dimension_tag<0>  Feature_dimension;
 
   typedef typename R_::Vector_cartesian_const_iterator Cartesian_const_iterator;
-  typedef typename Kbase::Vector      Rep;
+  typedef typename Get_type<Kbase, Vector_tag>::type	Rep;
   typedef Handle_for<Rep> Data;
 
 private:

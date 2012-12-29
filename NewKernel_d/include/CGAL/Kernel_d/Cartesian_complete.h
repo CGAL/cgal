@@ -57,21 +57,17 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_types>::type Derived;
-#if 0
 	template <class T,class=void> struct Type : Read_tag_type<Kernel_base,T> {};
 #define CGAL_Kernel_obj2(X,Y) \
 	template <class D> struct Type<X##_tag,D> { \
 		static const bool inbase = \
 	          Provides_tag_type<Kernel_base, X##_tag>::value; \
-		typedef typename Read_tag_type<Kernel_base,X##_tag> B_; \
-		typedef typename boost::mpl::if_c<force_||!inbase,Wrap_type<X##Cd<Derived> >,B_>::type::type type; \
-	};
-	//FIXME: move away from Type<>
-	//Implement by chaining things like Define_segment?
-#endif
-	//FIXME: needs to be conditional!!!
-#define CGAL_Kernel_obj2(X,Y) \
+		typedef Get_type<Kernel_base,X##_tag> B_; \
+		typedef typename boost::mpl::if_c<force_||!inbase,Wrap_type<CGAL::X<Derived> >,B_>::type::type type; \
+	}; \
 	typedef CGAL::X<Derived> X;
+	//Implement by chaining things like Define_segment?
+	//FIXME: needs to be conditional!!!
 #include <CGAL/Kernel_d/interface_macros.h>
 };
 

@@ -16,17 +16,17 @@
 namespace CGAL {
 
 template <class R_>
-class Vector_d : public R_::Kernel_base::Vector
+class Vector_d : public Get_type<typename R_::Kernel_base, Vector_tag>::type
 {
   typedef typename R_::RT                    RT_;
   typedef typename R_::FT                    FT_;
   typedef typename R_::Kernel_base           Kbase;
-  typedef typename R_::Point                 Point_;
+  typedef typename Get_type<R_, Point_tag>::type	Point_;
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_tag> >::type CVBase;
   typedef typename Get_functor<Kbase, Compute_vector_cartesian_coordinate_tag>::type CCBase;
 
   typedef Vector_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Vector>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Vector_tag>::type>::value));
 
 public:
 
@@ -35,7 +35,7 @@ public:
   typedef Dimension_tag<0>  Feature_dimension;
 
   typedef typename R_::Vector_cartesian_const_iterator Cartesian_const_iterator;
-  typedef typename Kbase::Vector      Rep;
+  typedef typename Get_type<Kbase, Vector_tag>::type	Rep;
 
   const Rep& rep() const
   {
