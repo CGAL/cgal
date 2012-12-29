@@ -5,17 +5,17 @@
 
 The `TriangulationDataStructure` concept describes objects responsible for storing and
 maintaining the combinatorial part of a
-\f$ \cd\f$-dimensional pure simplicial complex (all simplices that are not
-sub-faces of another have the same dimension \f$ \cd\f$).
+\f$ d\f$-dimensional pure simplicial complex (all simplices that are not
+sub-faces of another have the same dimension \f$ d\f$).
 Its topology is the topology
-of the sphere \f$ \sphere^\cd\f$ with \f$ d\in[-2,\ad]\f$.
-In a pure (or homogeneous) simplicial \f$ \cd\f$-complex, all
-faces are sub-faces of some \f$ \cd\f$-simplex. (A
+of the sphere \f$ \mathcal S^d\f$ with \f$ d\in[-2,D]\f$.
+In a pure (or homogeneous) simplicial \f$ d\f$-complex, all
+faces are sub-faces of some \f$ d\f$-simplex. (A
 simplex is also a face of itself.) In particular, it does not
-contain any \f$ \cd+1\f$-face, and any \f$ \cd-1\f$-face belongs to exactly
-two \f$ \cd\f$-dimensional full cells.
+contain any \f$ d+1\f$-face, and any \f$ d-1\f$-face belongs to exactly
+two \f$ d\f$-dimensional full cells.
 
-Values of \f$ \cd\f$ (the <I>current dimension</I> of the complex) include
+Values of \f$ d\f$ (the <I>current dimension</I> of the complex) include
 
 <DL>
 <DT><B>-2</B><DD> This corresponds to the non-existence of any object in
@@ -33,8 +33,8 @@ corresponds to <I>the vertex at infinity</I>.
 the two full cells being neighbor of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
 
-<DT><B>\f$ \cd>0\f$</B><DD> This corresponds to a standard triangulation of the sphere
-\f$ \sphere^\cd\f$.
+<DT><B>\f$ d>0\f$</B><DD> This corresponds to a standard triangulation of the sphere
+\f$ \mathcal S^d\f$.
 </DL>
 
 An \f$ i\f$-simplex is a simplex with \f$ i+1\f$ vertices. An \f$ i\f$-simplex \f$ \sigma\f$ is
@@ -440,7 +440,7 @@ it. The full cell
 share the vertex `v`.
 
 \cgalFigureBegin{triangulationfiginsertfullcell,insert-in-cell.png}
-Insertion in a full cell, \f$ \cd=2\f$
+Insertion in a full cell, \f$ d=2\f$
 \cgalFigureEnd
 
 \pre Current dimension is positive and `c` is a full cell of
@@ -453,7 +453,7 @@ Inserts a vertex in the triangulation data structure by subdividing the
 `Face f`. Returns a handle to the newly created `Vertex`.
 
 \cgalFigureBegin{triangulationfiginsertface,insert-in-face.png}
-Insertion in face, \f$ \cd=3\f$
+Insertion in face, \f$ d=3\f$
 \cgalFigureEnd
 */
 Vertex_handle insert_in_face(const Face & f);
@@ -474,11 +474,11 @@ to ``fill it''. A `Vertex_handle` to the new `Vertex` is returned.
 does not, with `f=(c,i)`.
 \f$ H\f$ the union of full cells in \f$ C\f$ is simply connected and its
 boundary \f$ \partial H\f$ is a
-combinatorial triangulation of the sphere \f$ \sphere^{d-1}\f$.
+combinatorial triangulation of the sphere \f$ \mathcal S^{d-1}\f$.
 All vertices of the triangulation are on \f$ \partial H\f$.
 
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
-Insertion in a hole, \f$ \cd=2\f$
+Insertion in a hole, \f$ d=2\f$
 \cgalFigureEnd
 */
 template< class ForwardIterator > Vertex_handle
@@ -493,11 +493,11 @@ Vertex_handle insert_in_hole(ForwardIterator start, ForwardIterator end, Facet
 f, OutputIterator out);
 
 /*!
-Transforms a triangulation of the sphere \f$ \sphere^d\f$ into the
-triangulation of the sphere \f$ \sphere^{d+1}\f$ by adding a new vertex
+Transforms a triangulation of the sphere \f$ \mathcal S^d\f$ into the
+triangulation of the sphere \f$ \mathcal S^{d+1}\f$ by adding a new vertex
 `v`.
 `v` is used to triangulate one of the two half-spheres of
-\f$ \sphere^{d+1}\f$ (\f$ v\f$ is added as \f$ (d+2)^{th}\f$ vertex to all
+\f$ \mathcal S^{d+1}\f$ (\f$ v\f$ is added as \f$ (d+2)^{th}\f$ vertex to all
 full cells)
 and `star` is used to triangulate the other half-sphere
 (all full cells that do not already have star as vertex are duplicated,
@@ -514,7 +514,7 @@ the current dimension must be strictly less than the maximal dimension
 and `star` must be a vertex of `tds`.
 
 \cgalFigureBegin{triangulationfiginsertincreasedim,insert-increase-dim.png}
-Insertion, increasing the dimension from \f$ \cd=1\f$ to \f$ \cd=2\f$
+Insertion, increasing the dimension from \f$ d=1\f$ to \f$ d=2\f$
 \cgalFigureEnd
 
 */
@@ -573,7 +573,7 @@ is a topological sphere of dimension
 `tds`.`current_dimension()`-1).
 
 \cgalFigureBegin{triangulationfigcollapseface,collapse-face.png}
-Collapsing an edge in dimension \f$ \cd=3\f$, `v` is returned.
+Collapsing an edge in dimension \f$ d=3\f$, `v` is returned.
 \cgalFigureEnd
 
 

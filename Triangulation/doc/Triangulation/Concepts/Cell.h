@@ -4,7 +4,7 @@
 
 The concept `Cell` stores 
 `Vertex_handle`s to its vertices and `Full_cell_handle`s 
-to its neighbors. The vertices are indexed \f$ 0, 1,\ldots,\cd\f$ in consistent 
+to its neighbors. The vertices are indexed \f$ 0, 1,\ldots,d\f$ in consistent 
 order. The neighbor indexed \f$ i\f$ lies opposite to vertex `i`. 
 
 Creation 
@@ -46,7 +46,7 @@ typedef TriangulationDataStructure::Full_cell_handle Full_cell_handle;
 
 /*! 
 Returns the vertex `i` of `c`. 
-\pre \f$ i \in[0,\ad]\f$. 
+\pre \f$ i \in[0,D]\f$. 
 */ 
 Vertex_handle vertex(int i) const; 
 
@@ -69,7 +69,7 @@ bool has_vertex(Vertex_handle v, int & i) const;
 
 /*! 
 Returns the neighbor `i` of `c`. 
-\pre \f$ i \in[0,\ad]\f$. 
+\pre \f$ i \in[0,D]\f$. 
 */ 
 Full_cell_handle neighbor(const int i) const; 
 
@@ -97,13 +97,13 @@ bool has_neighbor(Full_cell_handle n, int & i) const;
 
 /*! 
 Sets vertex `i` to `v`. 
-\pre \f$ i \in[0,\ad]\f$. 
+\pre \f$ i \in[0,D]\f$. 
 */ 
 void set_vertex(int i, Vertex_handle v); 
 
 /*! 
 Sets neighbor `i` to `n`. 
-\pre \f$ i \in[0,\ad]\f$. 
+\pre \f$ i \in[0,D]\f$. 
 */ 
 void set_neighbor(int i, Full_cell_handle n); 
 

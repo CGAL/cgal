@@ -110,34 +110,34 @@ This maximal dimension can be chosen by the user at the creation of a `Triangula
 A `TriangulationDataStructure` also knows the <I>current dimension</I> of its full cells,
 which can be queried with `tds.current_dimension()`. In the sequel, let
 us denote the maximal dimension with \f$ D \f$ and the current dimension with \f$ d \f$.
-The inequalities \f$ -2\leq\cd\leq\ad\f$ and \f$ 0<\ad\f$ always hold.
-The special meaning of negative values for \f$ d\f$ is explained below.
+The inequalities \f$ -2 \leq d \leq D\f$ and \f$ 0 \le D\f$ always hold.
+The special meaning of negative values for \f$d\f$ is explained below.
 
-## The data structure triangulates \f$ \sphere^\cd\f$ ##
+## The data structure triangulates \f$ \mathcal S^d\f$ ##
 
 A `TriangulationDataStructure` can be viewed as
-a triangulation of the topological sphere \f$ \sphere^\cd\f$,
+a triangulation of the topological sphere \f$ \mathcal S^d\f$,
 i.e., its faces can be embedded to form a partition of
-\f$ \sphere^\cd\f$ into \f$ \cd\f$-simplices.
+\f$ \mathcal S^d\f$ into \f$d\f$-simplices.
 
 One nice consequence of the above important fact is that a full cell has
-always exactly \f$ \cd+1\f$ neighbors.
+always exactly \f$ d+1\f$ neighbors.
 Two full cells \f$ \sigma\f$ and \f$ \sigma'\f$ sharing a facet are called
 <I>neighbors</I>.
 
-Possible values of \f$ \cd\f$ (the <I>current dimension</I> of the triangulation) include
+Possible values of \f$d\f$ (the <I>current dimension</I> of the triangulation) include
 <BLOCKQUOTE>
 <DL>
-<DT><B>\f$ \cd=-2\f$</B><DD> This corresponds to the non-existence of any object in
+<DT><B>\f$d=-2\f$</B><DD> This corresponds to the non-existence of any object in
 the `TriangulationDataStructure`.
-<DT><B>\f$ \cd=-1\f$</B><DD> This corresponds to a single vertex and a single full cell. In a
+<DT><B>\f$d=-1\f$</B><DD> This corresponds to a single vertex and a single full cell. In a
 geometric triangulation, this vertex corresponds to the vertex at infinity.
-<DT><B>\f$ \cd=0\f$</B><DD> This corresponds to two vertices (geometrically, the finite vertex and
+<DT><B>\f$d=0\f$</B><DD> This corresponds to two vertices (geometrically, the finite vertex and
 the infinite vertex), each corresponding to a full cell;
 the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
-<DT><B>\f$ 0<\cd\le\ad\f$</B><DD> This corresponds to a standard triangulation of
-the sphere \f$ \sphere^\cd\f$.
+<DT><B>\f$ 0< d \le D\f$</B><DD> This corresponds to a standard triangulation of
+the sphere \f$ \mathcal S^d\f$.
 </DL>
 </BLOCKQUOTE>
 
@@ -154,7 +154,7 @@ A `TriangulationDataStructure` explicitly stores its vertices and full cells.
 Each vertex stores a reference (a `handle`) to one of its incident
 full cells.
 
-Each full cell stores references to its \f$ \cd+1\f$ vertices and
+Each full cell stores references to its \f$ d+1\f$ vertices and
 neighbors. Its vertices and neighbors are indexed from \f$ 0\f$ to \f$ d \f$. The indices
 of its neighbors have the following meaning: the \f$ i\f$-th neighbor of \f$ \sigma\f$
 is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th vertex of
@@ -162,7 +162,7 @@ is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th ve
 the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).
 
 \cgalFigureBegin{triangulationfigfullcell,simplex-structure.png}
-Indexing the vertices and neighbors of a full cell \f$ c\f$ in dimension \f$ \cd=2\f$.
+Indexing the vertices and neighbors of a full cell \f$ c\f$ in dimension \f$ d=2\f$.
 \cgalFigureEnd
 
 \cgalAdvanced The index of a full cell \f$ c\f$ in the \f$ i\f$-th
@@ -173,12 +173,13 @@ it might be desirable, for performance reasons, to store the mirror
 indices alongside the references to the vertices and neighbors in a
 full cell. This improves speed a little, but requires more memory.
 
-\cgal provides the class template
-`Triangulation_ds_full_cell<TriangulationDataStructure, TDSFullCellStoragePolicy>` for representing full cells in a triangulation. Its
-second template parameter is used to specify wether or not the mirror indices
-should be kept in memory or computed on-the-fly, which is the default case.
-Please refer to the documentation of that class template for specific details.
-ADVANCED END
+\cgalAdvanced \cgal provides the class template
+`Triangulation_ds_full_cell<TriangulationDataStructure,
+TDSFullCellStoragePolicy>` for representing full cells in a
+triangulation. Its second template parameter is used to specify wether
+or not the mirror indices should be kept in memory or computed
+on-the-fly, which is the default case.  Please refer to the
+documentation of that class template for specific details.
 
 ## Instantiating the class template ##
 
@@ -256,7 +257,7 @@ vertex in each face. For the enumeration, we use a combination enumerator,
 which is not documented, but provided in \cgal.
 
 \cgalFigureBegin{triangulationfigbarycentric,barycentric-subdivision.png}
-Barycentric subdivision in dimension \f$ \cd=2\f$.
+Barycentric subdivision in dimension \f$ d=2\f$.
 \cgalFigureEnd
 
 \cgalExample{barycentric_subdivision.cpp}
@@ -442,7 +443,7 @@ retaining an efficient update of the Delaunay triangulation.
 The current implementation locate points by walking in the
 triangulation, and sort the points with spatial sort to insert a
 set of points. Thus the theoretical complexity are
-\f$ O(n\log n)\f$ for inserting \f$ n\f$ random points and \f$ O(n^{\frac{1}{\cd}})\f$
+\f$ O(n\log n)\f$ for inserting \f$ n\f$ random points and \f$ O(n^{\frac{1}{d}})\f$
 for inserting one point in a triangulation of \f$ n\f$ random points.
 
 The actual timing are the following:
