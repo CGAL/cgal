@@ -50,7 +50,7 @@ struct Cartesian_change_FT_base : public
 
     template<class Tag,class Type_>
     struct Construct_cartesian_const_iterator_ {
-	    typedef typename Kernel_base::template Functor<Tag>::type Functor_base;
+	    typedef typename Get_functor<Kernel_base, Tag>::type Functor_base;
 	    Construct_cartesian_const_iterator_(){}
 	    Construct_cartesian_const_iterator_(Self const&r):f(r){}
 	    Functor_base f;
@@ -69,7 +69,7 @@ struct Cartesian_change_FT_base : public
 
     template<class Tag>
     struct Compute_cartesian_coordinate {
-	    typedef typename Kernel_base::template Functor<Tag>::type Functor_base;
+	    typedef typename Get_functor<Kernel_base, Tag>::type Functor_base;
 	    Compute_cartesian_coordinate(){}
 	    Compute_cartesian_coordinate(Self const&r):f(r){}
 	    Functor_base f;

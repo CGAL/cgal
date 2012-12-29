@@ -13,7 +13,7 @@ template<class R_> struct Construct_segment {
 	typedef R_ R;
 	typedef typename R_::Point Point;
 	typedef typename R_::Segment Segment;
-	typedef typename R_::template Functor<Construct_ttag<Point_tag> >::type CP;
+	typedef typename Get_functor<R_, Construct_ttag<Point_tag> >::type CP;
 	typedef Segment result_type;
 	result_type operator()(Point const&a, Point const&b)const{
 		return result_type(a,b);
@@ -61,7 +61,7 @@ struct Define_segment : public Base_ {
 	typedef typename Base::Object_list::template add<Segment_tag>::type Object_list;
 
 	// TODO: forward the second Functor argument (like fast, no_filter)
-	template<class T,class=void> struct Functor : Base_::template Functor<T> {};
+	template<class T,class=void> struct Functor : Get_functor<Base_, T> {};
 
 	template<class D> struct Functor<Construct_ttag<Segment_tag>,D> {
 		typedef CartesianDKernelFunctors::Construct_segment<Derived> type;

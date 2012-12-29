@@ -33,8 +33,8 @@ struct Cartesian_filter_K : public Base_,
     template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor :
 	    Kernel_base::template Functor<T,D> {};
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
-	    typedef typename AK::template Functor<T>::type AP;
-	    typedef typename EK::template Functor<T>::type EP;
+	    typedef typename Get_functor<AK, T>::type AP;
+	    typedef typename Get_functor<EK, T>::type EP;
 	    typedef Filtered_predicate<EP,AP,C2E,C2A> type;
     };
 // TODO:

@@ -28,8 +28,8 @@ namespace CartesianDKernelFunctors {
     typedef typename R_::RT RT;
     typedef typename R_::Point Point;
     typedef typename R_::Vector Vector;
-    typedef typename R_::template Functor<Construct_ttag<Point_tag> >::type Cp_;
-    typedef typename R_::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type Ci_;
+    typedef typename Get_functor<R_, Construct_ttag<Point_tag> >::type Cp_;
+    typedef typename Get_functor<R_, Construct_ttag<Point_cartesian_const_iterator_tag> >::type Ci_;
     result_type operator()(Point const&a, Point const&b)const{
       Cp_ cp(this->kernel());
       Ci_ ci(this->kernel());

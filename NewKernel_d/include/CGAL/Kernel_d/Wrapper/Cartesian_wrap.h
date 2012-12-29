@@ -93,8 +93,8 @@ struct Cartesian_wrap : public Base_
 #include <CGAL/Kernel_d/interface_macros.h>
 
     //Translate the arguments
-    template<class T,class D=void,class=typename map_functor_type<T>::type,bool=boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value> struct Functor {
-	    typedef typename Kernel_base::template Functor<T>::type B;
+    template<class T,class D=void,class=typename map_functor_type<T>::type,bool=boost::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value> struct Functor {
+	    typedef typename Get_functor<Kernel_base, T>::type B;
 	    struct type {
 		    B b;
 		    type(){}
@@ -123,7 +123,7 @@ struct Cartesian_wrap : public Base_
     };
 
     template<class T,class D> struct Functor<T,D,Construct_tag,false> {
-	    typedef typename Kernel_base::template Functor<T>::type B;
+	    typedef typename Get_functor<Kernel_base, T>::type B;
 	    struct type {
 		    B b;
 		    type(){}
@@ -171,14 +171,14 @@ struct Cartesian_refcount : public Base_
 	    //typedef typename map_functor_type<T>::type f_t;
 	    typedef typename map_result_tag<T>::type r_t;
 	    enum {
-		    is_nul = boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value,
+		    is_nul = boost::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value,
 		    ret_rcobj = boost::is_same<r_t,Point_tag>::value || boost::is_same<r_t,Vector_tag>::value
 	    };
     };
 
     //Translate the arguments
     template<class T,class D=void,bool=Dispatch<T>::is_nul,bool=Dispatch<T>::ret_rcobj> struct Functor {
-	    typedef typename Kernel_base::template Functor<T>::type B;
+	    typedef typename Get_functor<Kernel_base, T>::type B;
 	    struct type {
 		    B b;
 		    type(){}
@@ -210,7 +210,7 @@ struct Cartesian_refcount : public Base_
     };
 
     template<class T,class D> struct Functor<T,D,false,true> {
-	    typedef typename Kernel_base::template Functor<T>::type B;
+	    typedef typename Get_functor<Kernel_base, T>::type B;
 	    struct type {
 		    B b;
 		    type(){}

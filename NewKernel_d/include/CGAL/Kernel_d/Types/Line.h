@@ -27,9 +27,9 @@ namespace CartesianDKernelFunctors {
     typedef typename R_::Line result_type;
     typedef typename R_::Point Point;
     typedef typename R_::Vector Vector;
-    typedef typename R_::template Functor<Translated_point_tag>::type Tp_;
-    //typedef typename R_::template Functor<Difference_of_points_tag>::type Dp_;
-    //typedef typename R_::template Functor<Scaled_vector_tag>::type Sv_;
+    typedef typename Get_functor<R_, Translated_point_tag>::type Tp_;
+    //typedef typename Get_functor<R_, Difference_of_points_tag>::type Dp_;
+    //typedef typename Get_functor<R_, Scaled_vector_tag>::type Sv_;
     result_type operator()(Point const&a, Point const&b)const{
       return result_type(a,b);
     }

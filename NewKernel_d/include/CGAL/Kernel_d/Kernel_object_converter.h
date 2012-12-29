@@ -16,8 +16,8 @@ struct Point_converter_help {
 	typedef typename K2::Point result_type;
 	template <class C>
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		typename K1::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type i(k1);
-		typename K2::template Functor<Construct_ttag<Point_tag> >::type cp(k2);
+		typename Get_functor<K1, Construct_ttag<Point_cartesian_const_iterator_tag> >::type i(k1);
+		typename Get_functor<K2, Construct_ttag<Point_tag> >::type cp(k2);
 		return cp(conv(i(p,Begin_tag())),conv(i(p,End_tag())));
 	}
 };
@@ -30,8 +30,8 @@ struct Point_converter_help<Dimension_tag<d>,K1,K2> {
 	typedef typename K2::Point result_type;
 	template <class C,int...I>
 	result_type help(Indices<I...>, K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		typename K1::template Functor<Compute_point_cartesian_coordinate_tag>::type cc(k1);
-		typename K2::template Functor<Construct_ttag<Point_tag> >::type cp(k2);
+		typename Get_functor<K1, Compute_point_cartesian_coordinate_tag>::type cc(k1);
+		typename Get_functor<K2, Construct_ttag<Point_tag> >::type cp(k2);
 		return cp(conv(cc(p,I))...);
 	}
 	template <class C>
@@ -57,8 +57,8 @@ template <class K1, class K2> struct KO_converter<Vector_tag,K1,K2>{
 	typedef typename K2::Vector result_type;
 	template <class C>
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& v) const {
-		typename K1::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type i(k1);
-		typename K2::template Functor<Construct_ttag<Vector_tag> >::type cp(k2);
+		typename Get_functor<K1, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type i(k1);
+		typename Get_functor<K2, Construct_ttag<Vector_tag> >::type cp(k2);
 		return cp(conv(i(v,Begin_tag())),conv(i(v,End_tag())));
 	}
 };
@@ -68,8 +68,8 @@ template <class K1, class K2> struct KO_converter<Segment_tag,K1,K2>{
 	typedef typename K2::Segment result_type;
 	template <class C>
 	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
-		typename K1::template Functor<Segment_extremity_tag>::type f(k1);
-		typename K2::template Functor<Construct_ttag<Segment_tag> >::type cs(k2);
+		typename Get_functor<K1, Segment_extremity_tag>::type f(k1);
+		typename Get_functor<K2, Construct_ttag<Segment_tag> >::type cs(k2);
 		return cs(conv(f(s,0)),conv(f(s,1)));
 	}
 };

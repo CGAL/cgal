@@ -14,8 +14,8 @@ template <class Base_,class R_> struct Orientation_of_points_2 : private Store_k
 	typedef typename R_::Point Point;
 	typedef typename R_::Orientation result_type;
 	typedef typename R_::FT FT;
-	typedef typename R_::template Functor<Compute_point_cartesian_coordinate_tag>::type CC;
-	typedef typename Base_::template Functor<Orientation_of_points_tag>::type Orientation_base;
+	typedef typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type CC;
+	typedef typename Get_functor<Base_, Orientation_of_points_tag>::type Orientation_base;
 	// TODO: Move this out for easy reuse
 	struct Adapter {
 		struct Point_2 {
@@ -59,12 +59,12 @@ struct Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> : public R_ {
   CGAL_CONSTEXPR Cartesian_static_filters(int d):R_(d){}
 	typedef Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> Self;
 	typedef typename Default::Get<Derived_,Self>::type Derived;
-	template <class T, class=void> struct Functor : R_::template Functor<T> {};
+	template <class T, class=void> struct Functor : Get_functor<R_, T> {};
 	template <class D> struct Functor <Orientation_of_points_tag,D> {
 		typedef
 			//typename boost::conditional<
 			//boost::is_same<D,No_filter_tag>::value,
-			//typename R_::template Functor<Orientation_of_points_tag>::type,
+			//typename Get_functor<R_, Orientation_of_points_tag>::type,
 			SFA::Orientation_of_points_2<R_,Derived>
 			//	>::type
 				type;

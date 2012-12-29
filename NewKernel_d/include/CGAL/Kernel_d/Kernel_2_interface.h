@@ -16,7 +16,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 	struct Segment_2 {};
 	typedef cpp0x::tuple<Point_2,Point_2,Point_2> Triangle_2; // triangulation insists...
 	template <class T,int i> struct Help_2p_i {
-		typedef typename Base::template Functor<T>::type LT;
+		typedef typename Get_functor<Base, T>::type LT;
 		typedef typename LT::result_type result_type;
 		LT lt;
 		Help_2p_i(Kernel const&k):lt(k){}
@@ -29,7 +29,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 	typedef Help_2p_i<Compare_point_cartesian_coordinate_tag,0> Compare_x_2;
 	typedef Help_2p_i<Compare_point_cartesian_coordinate_tag,1> Compare_y_2;
 	struct Compare_distance_2 {
-		typedef typename Base::template Functor<Compare_distance_tag>::type CD;
+		typedef typename Get_functor<Base, Compare_distance_tag>::type CD;
 		typedef typename CD::result_type result_type;
 		CD cd;
 		Compare_distance_2(Kernel const&k):cd(k){}
@@ -41,7 +41,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 		}
 	};
 	struct Orientation_2 {
-		typedef typename Base::template Functor<Orientation_of_points_tag>::type O;
+		typedef typename Get_functor<Base, Orientation_of_points_tag>::type O;
 		typedef typename O::result_type result_type;
 		O o;
 		Orientation_2(Kernel const&k):o(k){}
@@ -53,7 +53,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 		}
 	};
 	struct Side_of_oriented_sphere_2 {
-		typedef typename Base::template Functor<Side_of_oriented_sphere_tag>::type SOS;
+		typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type SOS;
 		typedef typename SOS::result_type result_type;
 		SOS sos;
 		Side_of_oriented_sphere_2(Kernel const&k):sos(k){}

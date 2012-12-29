@@ -4,6 +4,14 @@
 #include <CGAL/marcutils.h>
 #include <boost/mpl/has_xxx.hpp>
 namespace CGAL {
+
+  // Find a better place for this later
+
+  template <class K, class T> struct Get_type
+    : K::template Type<T> {};
+  template <class K, class F> struct Get_functor
+    : K::template Functor<F> {};
+
 	class Null_type {~Null_type();}; // no such object should be created
 
 	// To construct iterators

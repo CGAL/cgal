@@ -17,7 +17,7 @@ struct Nth_iterator_element : private Store_kernel<K> {
   Nth_iterator_element(K const&k):Store_kernel<K>(k){}
   typedef typename Read_tag_type<K, typename iterator_tag_traits<T>::value_tag>::type result_type;
   template<class U> result_type operator()(CGAL_FORWARDABLE(U) u, int i) const {
-    typename K::template Functor<Construct_ttag<T> >::type ci(this->kernel());
+    typename Get_functor<K, Construct_ttag<T> >::type ci(this->kernel());
     return *cpp0x::next(ci(CGAL_FORWARD(U,u),Begin_tag()),i);
   }
 };
@@ -28,7 +28,7 @@ struct Select_nth_element_functor {
 };
 template<class K, class T>
 struct Select_nth_element_functor <K, T, true> :
-  K::template Functor<typename iterator_tag_traits<T>::nth_element> {};
+  Get_functor<K, typename iterator_tag_traits<T>::nth_element> {};
 
 namespace internal {
   template<class A,class B,class C,bool/*is_NT=false*/>
@@ -138,18 +138,18 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     };
 	    //FIXME: what do we do with D here?
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
-	    typedef typename Approximate_kernel::template Functor<T>::type FA;
-	    typedef typename Exact_kernel::template Functor<T>::type FE;
+	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
+	    typedef typename Get_functor<Exact_kernel, T>::type FE;
 	    typedef Filtered_predicate<FE,FA,C2E,C2A> type;
     };
     template<class T,class D> struct Functor<T,D,Compute_tag> {
-	    typedef typename Approximate_kernel::template Functor<T>::type FA;
-	    typedef typename Exact_kernel::template Functor<T>::type FE;
+	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
+	    typedef typename Get_functor<Exact_kernel, T>::type FE;
 	    typedef Lazy_construction_nt<Kernel,FA,FE> type;
     };
     template<class T,class D> struct Functor<T,D,Construct_tag> {
-	    typedef typename Approximate_kernel::template Functor<T>::type FA;
-	    typedef typename Exact_kernel::template Functor<T>::type FE;
+	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
+	    typedef typename Get_functor<Exact_kernel, T>::type FE;
 	    typedef Lazy_construction<Kernel,FA,FE> type;
     };
 

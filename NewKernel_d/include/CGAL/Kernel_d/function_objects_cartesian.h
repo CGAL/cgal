@@ -35,8 +35,8 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
-		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
-		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
+		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
 		Point const& p0=*f++;
 		int d=pd(p0);
 		Matrix m(d,d);
@@ -69,7 +69,7 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 #define VAR2(Z,I,N) BOOST_PP_REPEAT(N,VAR,I)
 #define CODE(Z,N,_) \
 	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
-		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
+		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
 		Matrix m(N,N); \
 		BOOST_PP_REPEAT(N,VAR2,N) \
 		return R::LA::sign_of_determinant(CGAL_MOVE(m)); \
@@ -97,7 +97,7 @@ template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> 
 	};
 	template<class P0,class...P> result_type operator()(P0 const&x,P&&...p)const{
 		static_assert(d==sizeof...(P),"Wrong number of arguments");
-		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 		return Help<typename N_increasing_indices<d*d>::type>()(c,x,std::forward_as_tuple(std::forward<P>(p)...));
 	}
 
@@ -128,7 +128,7 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 	typedef typename R::Point Point; \
 	typedef typename R::Orientation result_type; \
 	result_type operator()(Point const&x, BOOST_PP_ENUM_PARAMS(N,Point const&p)) const { \
-		typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
+		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel()); \
 		BOOST_PP_REPEAT(N,VAR4,) \
 		return sign_of_determinant(BOOST_PP_ENUM(N,VAR2,N)); \
 	} \
@@ -159,8 +159,8 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter e)const{
-		typename R::template Functor<Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
-		typename R::template Functor<Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
+		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
 		Vector const& v0=*f;
 		int d=vd(v0);
 		Matrix m(d,d);
@@ -198,15 +198,15 @@ template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::v
 	typedef typename R::Vector Vector;
 	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
-	typedef typename R::template Functor<Orientation_of_points_tag>::type OP;
-	typedef typename R::template Functor<Orientation_of_vectors_tag>::type OV;
+	typedef typename Get_functor<R, Orientation_of_points_tag>::type OP;
+	typedef typename Get_functor<R, Orientation_of_vectors_tag>::type OV;
 
 	//FIXME!!!
 	//when Point and Vector are distinct types, the dispatch should be made
 	//in a way that doesn't instantiate a conversion from Point to Vector
 	template<class Iter>
 	result_type operator()(Iter const&f, Iter const& e)const{
-		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
+		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
 		typename std::iterator_traits<Iter>::difference_type d=std::distance(f,e);
 		int dim=pd(*f); // BAD
 		if(d==dim) return OV(this->kernel())(f,e);
@@ -222,8 +222,8 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 	typedef typename R::Vector Vector;
 	typedef typename R::Point Point;
 	typedef typename R::Orientation result_type;
-	typedef typename R::template Functor<Orientation_of_points_tag>::type OP;
-	typedef typename R::template Functor<Orientation_of_vectors_tag>::type OV;
+	typedef typename Get_functor<R, Orientation_of_points_tag>::type OP;
+	typedef typename Get_functor<R, Orientation_of_vectors_tag>::type OV;
 	typedef typename R::LA::Square_matrix Matrix;
 
 	//FIXME!!!
@@ -256,9 +256,9 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
-	  typedef typename R::template Functor<Squared_distance_to_origin_tag>::type Sqdo;
-	  typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
-	  typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
+	  typedef typename Get_functor<R, Squared_distance_to_origin_tag>::type Sqdo;
+	  typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+	  typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
 
 	  Point const& p0=*f++;
 	  int d=pd(p0);
@@ -308,8 +308,8 @@ template<class R_> struct Point_to_vector : private Store_kernel<R_> {
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
-	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Vector_tag> >::type CV;
+	typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
 	typedef Point argument_type;
 	result_type operator()(argument_type const&v)const{
@@ -324,8 +324,8 @@ template<class R_> struct Vector_to_point : private Store_kernel<R_> {
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Construct_ttag<Point_tag> >::type CV;
-	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Point_tag> >::type CV;
+	typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Point result_type;
 	typedef Vector argument_type;
 	result_type operator()(argument_type const&v)const{
@@ -339,8 +339,8 @@ template<class R_> struct Opposite_vector : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
-	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Vector_tag> >::type CV;
+	typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
 	typedef Vector argument_type;
 	result_type operator()(Vector const&v)const{
@@ -354,8 +354,8 @@ template<class R_> struct Scaled_vector : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
-	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Vector_tag> >::type CV;
+	typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
 	typedef Vector first_argument_type;
 	typedef FT second_argument_type;
@@ -370,8 +370,8 @@ template<class R_> struct Sum_of_vectors : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
-	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Vector_tag> >::type CV;
+	typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
 	typedef Vector first_argument_type;
 	typedef Vector second_argument_type;
@@ -386,8 +386,8 @@ template<class R_> struct Difference_of_vectors : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
-	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Vector_tag> >::type CV;
+	typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
 	typedef Vector first_argument_type;
 	typedef Vector second_argument_type;
@@ -403,9 +403,9 @@ template<class R_> struct Translated_point : private Store_kernel<R_> {
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Construct_ttag<Point_tag> >::type CP;
-	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
-	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
+	typedef typename Get_functor<R, Construct_ttag<Point_tag> >::type CP;
+	typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
+	typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
 	typedef Point  result_type;
 	typedef Point  first_argument_type;
 	typedef Vector second_argument_type;
@@ -422,8 +422,8 @@ template<class R_> struct Difference_of_points : private Store_kernel<R_> {
 	typedef typename R_::RT RT;
 	typedef typename R::Point Point;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_ttag<Vector_tag> >::type CV;
-	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Vector_tag> >::type CV;
+	typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	typedef Vector result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
@@ -439,8 +439,8 @@ template<class R_> struct Midpoint : private Store_kernel<R_> {
 	typedef typename R_::FT FT;
 	typedef typename R_::RT RT;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Construct_ttag<Point_tag> >::type CP;
-	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Point_tag> >::type CP;
+	typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	typedef Point result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
@@ -463,7 +463,7 @@ template<class R_> struct Squared_length : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Vector Vector;
-	typedef typename R::template Functor<Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
 	typedef RT result_type;
 	typedef Vector argument_type;
 	result_type operator()(Vector const&a)const{
@@ -479,7 +479,7 @@ template<class R_> struct Squared_distance_to_origin : private Store_kernel<R_> 
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	typedef RT result_type;
 	typedef Point argument_type;
 	result_type operator()(Point const&a)const{
@@ -495,7 +495,7 @@ template<class R_> struct Squared_distance : private Store_kernel<R_> {
 	typedef R_ R;
 	typedef typename R_::RT RT;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	typedef RT result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
@@ -516,7 +516,7 @@ template<class R_> struct Compare_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_distance)
 	typedef R_ R;
 	typedef typename R::Point Point;
-	typedef typename R::template Functor<Squared_distance_tag>::type CSD;
+	typedef typename Get_functor<R, Squared_distance_tag>::type CSD;
 	typedef typename R_::Comparison_result result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
@@ -536,7 +536,7 @@ template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel
 	CGAL_FUNCTOR_INIT_STORE(Less_point_cartesian_coordinate)
 	typedef R_ R;
 	typedef typename R::Boolean result_type;
-	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type Cc;
+	typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type Cc;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
 	typedef typename CGAL::Is_exact<Cc> Is_exact;
@@ -552,7 +552,7 @@ template<class R_> struct Compare_point_cartesian_coordinate : private Store_ker
 	CGAL_FUNCTOR_INIT_STORE(Compare_point_cartesian_coordinate)
 	typedef R_ R;
 	typedef typename R::Comparison_result result_type;
-	typedef typename R::template Functor<Compute_point_cartesian_coordinate_tag>::type Cc;
+	typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type Cc;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
 	typedef typename CGAL::Is_exact<Cc> Is_exact;
@@ -568,7 +568,7 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_lexicographically)
 	typedef R_ R;
 	typedef typename R::Comparison_result result_type;
-	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
 	typedef typename CGAL::Is_exact<CI> Is_exact;
@@ -597,7 +597,7 @@ template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Less_lexicographically)
 	typedef R_ R;
 	typedef typename R::Boolean result_type;
-	typedef typename R::template Functor<Compare_lexicographically_tag>::type CL;
+	typedef typename Get_functor<R, Compare_lexicographically_tag>::type CL;
 	typedef typename CGAL::Is_exact<CL> Is_exact;
 
 	template <class V, class W>
@@ -611,7 +611,7 @@ template<class R_> struct Less_or_equal_lexicographically : private Store_kernel
 	CGAL_FUNCTOR_INIT_STORE(Less_or_equal_lexicographically)
 	typedef R_ R;
 	typedef typename R::Boolean result_type;
-	typedef typename R::template Functor<Compare_lexicographically_tag>::type CL;
+	typedef typename Get_functor<R, Compare_lexicographically_tag>::type CL;
 	typedef typename CGAL::Is_exact<CL> Is_exact;
 
 	template <class V, class W>
@@ -625,7 +625,7 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Equal_points)
 	typedef R_ R;
 	typedef typename R::Boolean result_type;
-	typedef typename R::template Functor<Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+	typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
 	// TODO: This is_exact thing should be reengineered.
 	// the goal is to have a way to tell: don't filter this
 	typedef typename CGAL::Is_exact<CI> Is_exact;

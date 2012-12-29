@@ -17,7 +17,7 @@ template <class Base_> struct Kernel_3_interface : public Base_ {
 	typedef cpp0x::tuple<Point_3,Point_3,Point_3> Triangle_3; // placeholder
 	typedef cpp0x::tuple<Point_3,Point_3,Point_3,Point_3> Tetrahedron_3; // placeholder
 	struct Compare_xyz_3 {
-		typedef typename Base::template Functor<Compare_lexicographically_tag>::type CL;
+		typedef typename Get_functor<Base, Compare_lexicographically_tag>::type CL;
 		typedef typename CL::result_type result_type;
 		CL cl;
 		Compare_xyz_3(Kernel const&k):cl(k){}
@@ -26,7 +26,7 @@ template <class Base_> struct Kernel_3_interface : public Base_ {
 		}
 	};
 	struct Compare_distance_3 {
-		typedef typename Base::template Functor<Compare_distance_tag>::type CD;
+		typedef typename Get_functor<Base, Compare_distance_tag>::type CD;
 		typedef typename CD::result_type result_type;
 		CD cd;
 		Compare_distance_3(Kernel const&k):cd(k){}
@@ -38,7 +38,7 @@ template <class Base_> struct Kernel_3_interface : public Base_ {
 		}
 	};
 	struct Orientation_3 {
-		typedef typename Base::template Functor<Orientation_of_points_tag>::type O;
+		typedef typename Get_functor<Base, Orientation_of_points_tag>::type O;
 		typedef typename O::result_type result_type;
 		O o;
 		Orientation_3(Kernel const&k):o(k){}
@@ -50,7 +50,7 @@ template <class Base_> struct Kernel_3_interface : public Base_ {
 		}
 	};
 	struct Side_of_oriented_sphere_3 {
-		typedef typename Base::template Functor<Side_of_oriented_sphere_tag>::type SOS;
+		typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type SOS;
 		typedef typename SOS::result_type result_type;
 		SOS sos;
 		Side_of_oriented_sphere_3(Kernel const&k):sos(k){}

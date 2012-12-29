@@ -87,9 +87,9 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
 		R_::template Functor<F,D> {};
 	template<class F,class D> struct Functor<F,D,Construct_tag> {
-		typedef typename Kernel_base::template Functor<F>::type Base_functor;
+		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
 		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
-			typename Cartesian_define_all_functors<R_,Derived>::template Functor<F>::type,
+			typename Get_functor<Cartesian_define_all_functors<R_,Derived>, F>::type,
 			Base_functor>::type type;
 	};
 
@@ -109,9 +109,9 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
 		R_::template Functor<F,D> {};
 	template<class F,class D> struct Functor<F,D,Predicate_tag> {
-		typedef typename Kernel_base::template Functor<F>::type Base_functor;
+		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
 		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
-			typename Cartesian_define_all_functors<R_,Derived>::template Functor<F>::type,
+			typename Get_functor<Cartesian_define_all_functors<R_,Derived>, F>::type,
 			Base_functor>::type type;
 	};
 
@@ -128,9 +128,9 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
 		R_::template Functor<F,D> {};
 	template<class F,class D> struct Functor<F,D,Compute_tag> {
-		typedef typename Kernel_base::template Functor<F>::type Base_functor;
+		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
 		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
-			typename Cartesian_define_all_functors<R_,Derived>::template Functor<F>::type,
+			typename Get_functor<Cartesian_define_all_functors<R_,Derived>, F>::type,
 			Base_functor>::type type;
 	};
 

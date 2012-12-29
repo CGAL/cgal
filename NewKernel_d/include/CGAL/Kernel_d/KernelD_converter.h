@@ -57,7 +57,7 @@ class KernelD_converter_
 	typedef KernelD_converter_<Final_,K1,K2,Rest> Base;
 	typedef typename Read_tag_type<K1,Tag>::type K1_Obj;
 	typedef typename Read_tag_type<K2,Tag>::type K2_Obj;
-	typedef typename K1::template Functor<Convert_ttag<Tag> >::type K1_Conv;
+	typedef typename Get_functor<K1, Convert_ttag<Tag> >::type K1_Conv;
 	typedef KO_converter<Tag,K1,K2> KOC;
 	typedef BOOSTD is_same<K1_Conv, Null_functor> no_converter;
 	typedef typename internal::Map_taglist_to_typelist<K1,Rest>::type::template contains<K1_Obj> duplicate;
