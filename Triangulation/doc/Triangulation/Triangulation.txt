@@ -2,9 +2,10 @@
 namespace CGAL {
 /*!
 
-\mainpage Triangulations
+\mainpage User Manual
 \anchor Chapter_Triangulations
 
+\cgalAutoToc
 \authors Samuel Hornus and Olivier Devillers
 
 This package proposes data structure and algorithms to compute
@@ -15,7 +16,7 @@ combinatorial part of a triangulation while the geometric classes
 compute a (Delaunay) triangulation of a set of points and to maintain
 it under insertions (and deletions in the Delaunay case).
 
-\section triangulationintro Introduction 
+# Introduction #
 
 ## Some definitions ##
 
@@ -95,7 +96,7 @@ If the maximal dimension of a simplex in the triangulation is
 Two faces \f$ \sigma\f$ and \f$ \sigma'\f$ are <I>incident</I> if and only if
 \f$ \sigma'\f$ is a proper sub-face of \f$ \sigma\f$ or <I>vice versa</I>.
 
-\section triangulationtds Triangulation Data Structure 
+# Triangulation Data Structure #
 
 In this section, we describe the concept `TriangulationDataStructure` for
 which \cgal provides one model class:
@@ -141,7 +142,7 @@ the sphere \f$ \mathcal S^d\f$.
 </DL>
 </BLOCKQUOTE>
 
-\subsection triangulationtdsimpl The class `Triangulation_data_structure` 
+## The class `Triangulation_data_structure` ##
 
 We give here some details about the class
 `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
@@ -226,9 +227,9 @@ which is documented in those two concept's reference manual pages.
 class, is encouraged to read the documentation of the \cgal
 `Triangulation_2` or `Triangulation_3` package.
 
-\subsection triangulationtdsexamples Examples 
+## Examples ##
 
-## Incremental Construction ##
+### Incremental Construction ###
 
 The following examples shows how to construct a triangulation data structure by
 inserting vertices. Its main interest is that it demonstrates most of the API
@@ -245,7 +246,7 @@ It is also possible to fix it at run time, as in the next example.
 
 \cgalExample{triangulation_data_structure_dynamic.cpp}
 
-## Barycentric subdivision ##
+### Barycentric subdivision ###
 
 This example provides a function for computing the barycentric subdivision of a
 single full cell `c` in a triangulation data structure. The other
@@ -302,7 +303,7 @@ as various geometric predicates used by the `Triangulation` class.
 
 The following example shows how to construct a triangulation in which we insert
 random points. In `STEP 1`, we generate one hundred random points in
-\f$ \real^5\f$, which we then insert into a triangulation. In `STEP 2`, we
+\f$ \mathcal R^5\f$, which we then insert into a triangulation. In `STEP 2`, we
 ask the triangulation to construct the set of edges
 (\f$ 1\f$ dimensional faces) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
@@ -426,8 +427,7 @@ for the computation of Delaunay triangulations.
 
 ## Examples ##
 
-## Access to the conflict zone and created full cells during point
-insertion ##
+## Access to the conflict zone and created full cells during point insertion ##
 
 When using a full cell type containing additional custom information, it may be
 useful to get an efficient access to the full cells that are going to be erased

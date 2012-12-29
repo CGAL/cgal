@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgTriangulations
 
 The class `Delaunay_triangulation` is used to maintain the full cells and vertices of a
-Delaunay triangulation in \f$ \real^D\f$. It permits point insertion and
+Delaunay triangulation in \f$ \mathcal R^D\f$. It permits point insertion and
 removal. The dimension \f$ D\f$ should be kept reasonably small,
 see the performance section in the user manual for what reasonable
 means.
