@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `Cell` stores 
 `Vertex_handle`s to its vertices and `Full_cell_handle`s 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationDSFullCell` describes what a full cell is in a model of the concept
 `TriangulationDataStructure`. It sets requirements of combinatorial nature

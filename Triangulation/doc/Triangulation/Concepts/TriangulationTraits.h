@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationTraits` describes the various types and functions that a class 
 must provide as the first parameter (`TriangulationTraits`) to the class template 

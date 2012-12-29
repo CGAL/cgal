@@ -236,12 +236,12 @@ manual documentation of the methods that are called (see here:
 `TriangulationDataStructure`) and by trying to understand the various
 `assert(...)` statements.
 
-\cgalexample{triangulation_data_structure_static.cpp}
+\cgalExample{triangulation_data_structure_static.cpp}
 
 In previous example, the maximal dimension is fixed at compile time.
 It is also possible to fix it at run time, as in the next example.
 
-\cgalexample{triangulation_data_structure_dynamic.cpp}
+\cgalExample{triangulation_data_structure_dynamic.cpp}
 
 ## Barycentric subdivision ##
 
@@ -258,7 +258,7 @@ which is not documented, but provided in \cgal.
 Barycentric subdivision in dimension \f$ \cd=2\f$.
 \cgalFigureEnd
 
-\cgalexample{barycentric_subdivision.cpp}
+\cgalExample{barycentric_subdivision.cpp}
 
 # Triangulations #
 
@@ -306,7 +306,7 @@ ask the triangulation to construct the set of edges
 these edges are in bijection with the vertices on the convex hull of the
 points. This gives us a handy way to count the convex hull vertices.
 
-\cgalexample{triangulation.cpp}
+\cgalExample{triangulation.cpp}
 
 ## Traversing the facets of the convex hull ##
 
@@ -434,7 +434,7 @@ created full cells. The second part of code example below shows how one can have
 access to both the conflict zone and the created full cells, while still
 retaining an efficient update of the Delaunay triangulation.
 
-\cgalexample{delaunay.cpp}
+\cgalExample{delaunay.cpp}
 
 # Complexity and Performances #
 

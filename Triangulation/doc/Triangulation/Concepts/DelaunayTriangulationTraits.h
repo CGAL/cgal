@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `DelaunayTriangulationTraits` describes the various types and functions that a class
 has to provide as the first parameter (`DCTraits`) to the class template

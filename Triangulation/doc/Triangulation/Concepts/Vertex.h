@@ -1,6 +1,6 @@
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `Vertex` represents the vertex class of a triangulation
 data structure. It must define

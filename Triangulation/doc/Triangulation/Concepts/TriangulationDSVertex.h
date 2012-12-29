@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationDSVertex` describes what a vertex is in a model of the concept
 `TriangulationDataStructure`. It sets requirements of combinatorial nature

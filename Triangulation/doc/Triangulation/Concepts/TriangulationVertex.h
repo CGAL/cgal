@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 The concept `TriangulationVertex` describes the requirements on the type used by the 
 class `Triangulation<TriangulationTraits, TriangulationDataStructure>`, and its derived classes, to 

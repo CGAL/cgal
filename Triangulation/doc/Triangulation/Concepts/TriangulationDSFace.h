@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 A `TriangulationDSFace` describes a `k`-face `f` in a triangulation. 
 It gives access to a handle to a full cell `c` containing the face 

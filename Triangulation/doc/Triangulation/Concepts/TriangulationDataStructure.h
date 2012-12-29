@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgTriangulationsConcepts
-\cgalconcept
+\cgalConcept
 
 The `TriangulationDataStructure` concept describes objects responsible for storing and
 maintaining the combinatorial part of a
