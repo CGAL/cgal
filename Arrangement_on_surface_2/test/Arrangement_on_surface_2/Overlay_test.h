@@ -143,18 +143,22 @@ protected:
       std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
       std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
       v->set_data(v1->data() + v2->data());
-      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << std::endl;
     }
 
     /*! Create a vertex v that mathces v1, which lies of the edge e2. */
-    virtual void create_vertex(Vertex_const_handle  v1, Halfedge_const_handle e2,
+    virtual void create_vertex(Vertex_const_handle  v1,
+                               Halfedge_const_handle e2,
                                Vertex_handle v) const
     {
       std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
-      std::cout << "  e2: " << e2->source()->point() << ", " << e2->data()
-                << std::endl;
+      std::cout << "  e2: " << e2->source()->point() << "=>"
+                << e2->target()->point()
+                << ", " << e2->data() << std::endl;
       v->set_data(v1->data() + e2->data());
-      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << std::endl;
     }
     
     /*! Create a vertex v that mathces v1, contained in the face f2. */
@@ -165,17 +169,20 @@ protected:
       std::cout << "  f2: " << f2->data() << std::endl;
       v->set_data(v1->data() + f2->data());
       std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << std::endl;
     }
 
     /*! Create a vertex v that mathces v2, which lies of the edge e1. */
     virtual void create_vertex(Halfedge_const_handle e1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
-      std::cout << "  e1: " << e1->source()->point() << ", " << e1->data()
-                << std::endl;
+      std::cout << "  e1: " << e1->source()->point() << "=>"
+                << e1->target()->point()
+                << ", " << e1->data() << std::endl;
       std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
       v->set_data(e1->data() + v2->data());
-      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << std::endl;
     }
 
     /*! Create a vertex v that mathces v2, contained in the face f1. */
@@ -185,7 +192,8 @@ protected:
       std::cout << "  f1: " << f1->data() << std::endl;
       std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
       v->set_data(f1->data() + v2->data());
-      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << std::endl;
     }
 
     /*! Create a vertex v that mathces the intersection of the edges e1 and e2.
@@ -194,42 +202,78 @@ protected:
                                Halfedge_const_handle e2,
                                Vertex_handle v) const
     {
-      std::cout << "  e1: " << e1->source()->point() << ", " << e1->data()
-                << std::endl;
-      std::cout << "  e2: " << e2->source()->point() << ", " << e2->data()
-                << std::endl;
+      std::cout << "  e1: " << e1->source()->point() << "=>"
+                << e1->target()->point()
+                << ", " << e1->data() << std::endl;
+      std::cout << "  e2: " << e2->source()->point()  << "=>"
+                << e2->target()->point() 
+                << ", " << e2->data() << std::endl;
       v->set_data(e1->data() + e2->data());
-      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+      std::cout << std::endl;
     }
 
     /*! Create an edge e that matches the overlap between e1 and e2. */
     virtual void create_edge(Halfedge_const_handle e1, Halfedge_const_handle e2,
                              Halfedge_handle e) const
     {
+      std::cout << "  e1: " << e1->source()->point() << "=>"
+                << e1->target()->point()
+                << ", " << e1->data() << std::endl;
+      std::cout << "  e2: " << e2->source()->point() << "=>"
+                << e2->target()->point()
+                << ", " << e2->data() << std::endl;
       e->set_data(e1->data() + e2->data());
       e->twin()->set_data(e1->data() + e2->data());
+      std::cout << "  e: " << e->source()->point() << "=>"
+                << e->target()->point()
+                << ", " << e->data() << std::endl;
+      std::cout << std::endl;
     }
 
     /*! Create an edge e that matches the edge e1, contained in the face f2. */
     virtual void create_edge(Halfedge_const_handle e1, Face_const_handle f2,
                              Halfedge_handle e) const
     {
+      std::cout << "  e1: " << e1->source()->point() << "=>"
+                << e1->target()->point()
+                << ", " << e1->data()
+                << std::endl;
+      std::cout << "  f2: " << f2->data() << std::endl;
       e->set_data(e1->data() + f2->data());
       e->twin()->set_data(e1->data() + f2->data());
+      std::cout << "  e: " << e->source()->point() << "=>"
+                << e->target()->point()
+                << ", " << e->data() << std::endl;
+      std::cout << std::endl;
     }
 
     /*! Create an edge e that matches the edge e2, contained in the face f1. */
     virtual void create_edge(Face_const_handle f1, Halfedge_const_handle e2,
                              Halfedge_handle e) const
     {
+      std::cout << "  f1: " << f1->data() << std::endl;
+      std::cout << "  e2: " << e2->source()->point() << "=>"
+                << e2->target()->point()
+                << ", " << e2->data() << std::endl;
       e->set_data(f1->data() + e2->data());
       e->twin()->set_data(f1->data() + e2->data());
+      std::cout << "  e: " << e->source()->point() << "=>"
+                << e->target()->point()
+                << ", " << e->data() << std::endl;
+      std::cout << std::endl;
     }
 
     /*! Create a face f that matches the overlapping region between f1 and f2. */
     virtual void create_face(Face_const_handle f1, Face_const_handle f2,
                              Face_handle f) const
-    { f->set_data(f1->data() + f2->data()); }
+    {
+      std::cout << "  f1: " << f1->data() << std::endl;
+      std::cout << "  f2: " << f2->data() << std::endl;
+      f->set_data(f1->data() + f2->data());
+      std::cout << "  f: " << f->data() << std::endl;
+      std::cout << std::endl;
+    }
   };
 
   // A functor that tests whether two points are equal
@@ -428,6 +472,8 @@ construct_arr(Arrangement& arr,
               Curve_iterator xcurves_begin, Curve_iterator xcurves_end,
               Point_iterator points_begin, Point_iterator points_end)
 {
+  typedef T_Geom_traits                 Geom_traits;
+  
 #if 1
   // Insert the curves incrementally.<
   Curve_iterator cit;
@@ -455,6 +501,24 @@ construct_arr(Arrangement& arr,
     CGAL::insert_point(arr, point);
   }
   if (m_verbose_level > 2) std::cout << "inserted" << std::endl;
+
+  #if 0
+  // Merge mergeable vertices
+  Vertex_iterator vit;
+  Vertex_iterator vit_next;
+  const Geom_traits* traits = arr.geometry_traits();
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); vit = vit_next) {
+    vit_next = vit;
+    ++vit_next;
+    if (vit->degree() != 2) continue;
+    Halfedge_around_vertex_circulator eit = vit->incident_halfedges();
+    if (traits->are_mergeable_2_object()(eit->curve(), eit->next()->curve())) {
+      Xcurve_2 xcv;
+      traits->merge_2_object()(eit->curve(), eit->next()->curve(), xcv);
+      arr.merge_edge(eit, eit->next(), xcv);
+    }
+  }
+  #endif
 }
 
 // Read input data for a single arrangement
