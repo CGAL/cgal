@@ -86,7 +86,7 @@ struct Lazy_cartesian_types
 
 template <class EK_, class AK_, class E2A_/*, class Kernel_=Default*/>
 struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
-  Define_kernel_types<Lazy_cartesian_types<EK_,AK_,E2A_,Lazy_cartesian<EK_,AK_,E2A_> > >
+  Lazy_cartesian_types<EK_,AK_,E2A_,Lazy_cartesian<EK_,AK_,E2A_> >
 {
     //CGAL_CONSTEXPR Lazy_cartesian(){}
     //CGAL_CONSTEXPR Lazy_cartesian(int d):Base_(d){}
@@ -100,7 +100,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     EK_ const& exact_kernel()const{return ek;}
 
     typedef Lazy_cartesian Self;
-    typedef Define_kernel_types<Lazy_cartesian_types<EK_,AK_,E2A_,Self> > Base;
+    typedef Lazy_cartesian_types<EK_,AK_,E2A_,Self> Base;
     //typedef typename Default::Get<Kernel_,Self>::type Kernel;
     typedef Self  Kernel;
     typedef AK_   Approximate_kernel;
@@ -172,7 +172,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
 	    }
     };
     template<class T,class D> struct Functor<T,D,Construct_iterator_tag> {
-	    typedef Construct_iter<typename Get_type<Base,typename map_result_tag<T>::type>::type> type;
+	    typedef Construct_iter<typename Base::template Iterator<typename map_result_tag<T>::type>::type> type;
     };
 
 

@@ -36,7 +36,7 @@ public:
   typedef typename R_::Default_ambient_dimension Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
-  typedef typename R_::Point_cartesian_const_iterator Cartesian_const_iterator;
+  //typedef typename R_::Point_cartesian_const_iterator Cartesian_const_iterator;
   typedef typename Get_type<Kbase, Point_tag>::type      Rep;
 
   const Rep& rep() const

@@ -48,7 +48,7 @@ typedef CGAL::Define_segment<RC> K0;
 typedef K0 K2;
 #elif 0
 typedef CGAL::Cartesian_filter_NT<K0> K2;
-#elif 1
+#elif 0
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
 #elif 1
 typedef CGAL::Lazy_cartesian<KE,KA,CGAL::KernelD_converter<KE,KA> > K2;
