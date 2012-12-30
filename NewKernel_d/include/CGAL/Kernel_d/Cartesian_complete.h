@@ -57,11 +57,11 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_types>::type Derived;
-	template <class T,class=void> struct Type : Read_tag_type<Kernel_base,T> {};
+	template <class T,class=void> struct Type : Get_type<Kernel_base,T> {};
 #define CGAL_Kernel_obj2(X,Y) \
 	template <class D> struct Type<X##_tag,D> { \
 		static const bool inbase = \
-	          Provides_tag_type<Kernel_base, X##_tag>::value; \
+	          Provides_type<Kernel_base, X##_tag>::value; \
 		typedef Get_type<Kernel_base,X##_tag> B_; \
 		typedef typename boost::mpl::if_c<force_||!inbase,Wrap_type<CGAL::X<Derived> >,B_>::type::type type; \
 	}; \

@@ -3,20 +3,18 @@
 #include <CGAL/tags.h> // for Null_tag
 #include <CGAL/marcutils.h>
 #include <boost/mpl/has_xxx.hpp>
+#include <boost/mpl/not.hpp>
+#include <boost/type_traits/is_same.hpp>
 namespace CGAL {
 
   // Find a better place for this later
 
-#if 1
   template <class K, class T> struct Get_type
     : K::template Type<T> {};
-#else
-#define Get_type Read_tag_type
-#endif
   template <class K, class F, class O=void> struct Get_functor
     : K::template Functor<F, O> {};
 
-	class Null_type {~Null_type();}; // no such object should be created
+  class Null_type {~Null_type();}; // no such object should be created
 
 	// To construct iterators
 	struct Begin_tag {};
@@ -36,18 +34,32 @@ namespace CGAL {
 
 	template<class> struct map_functor_type { typedef Misc_tag type; };
 	template<class Tag, class Obj, class Base> struct Typedef_tag_type;
-	template<class Kernel, class Tag> struct Read_tag_type {};
-	template<class Kernel, class Tag> struct Provides_tag_type;
+	//template<class Kernel, class Tag> struct Read_tag_type {};
+
+	template<class Kernel, class Tag, class S = Get_type<Kernel, Tag>,
+	  bool = internal::has_type<S>::value /* false */>
+	struct Provides_type : boost::false_type {};
+	template<class Kernel, class Tag, class S>
+	struct Provides_type <Kernel, Tag, S, true>
+	  : boost::mpl::not_<boost::is_same<typename S::type, Null_type> > {};
+
+	template<class Kernel, class Tag, class S = Get_functor<Kernel, Tag>,
+	  bool = internal::has_type<S>::value /* false */>
+	struct Provides_functor : boost::false_type {};
+	template<class Kernel, class Tag, class S>
+	struct Provides_functor <Kernel, Tag, S, true>
+	  : boost::mpl::not_<boost::is_same<typename S::type, Null_functor> > {};
 
 
 #define DECL_OBJ(X) struct X##_tag {}; \
   template<class Obj,class Base> \
-  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
-  namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) } \
-  template<class Kernel> \
-  struct Provides_tag_type<Kernel, X##_tag> : has_object::has_##X<Kernel> {}; \
-  template<class Kernel> \
-  struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
+  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; };
+
+  //namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) }
+  //template<class Kernel>
+  //struct Provides_tag_type<Kernel, X##_tag> : has_object::has_##X<Kernel> {};
+  //template<class Kernel>
+  //struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 
 	// Not exactly objects, but the extras can't hurt.
 	DECL_OBJ(FT);
@@ -96,12 +108,13 @@ namespace CGAL {
     typedef C##_tag container; \
   }; \
   template<class Obj,class Base> \
-  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
-  namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) } \
-  template<class Kernel> \
-  struct Provides_tag_type<Kernel, X##_tag> : has_object::has_##X<Kernel> {}; \
-  template<class Kernel> \
-  struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
+  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; };
+
+  //namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) }
+  //template<class Kernel>
+  //struct Provides_tag_type<Kernel, X##_tag> : has_object::has_##X<Kernel> {};
+  //template<class Kernel>
+  //struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 
 	DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT, Compute_vector_cartesian_coordinate, Vector);
 	DECL_ITER_OBJ(Point_cartesian_const_iterator, FT, Compute_point_cartesian_coordinate, Point);

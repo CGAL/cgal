@@ -42,9 +42,9 @@ struct Cartesian_change_FT_base : public
     //FIXME: use Iterator_list!
     /*
     template<class T,bool=BOOSTD is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
-    struct Iterator : Read_tag_type<Kernel_base,T> {};
+    struct Iterator : Get_type<Kernel_base,T> {};
     template<class T> struct Iterator<T,true> {
-      typedef transforming_iterator<FT_converter,typename Read_tag_type<Kernel_base,T>::type> type;
+      typedef transforming_iterator<FT_converter,typename Get_type<Kernel_base,T>::type> type;
     };
     */
 

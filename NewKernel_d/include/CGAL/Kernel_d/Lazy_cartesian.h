@@ -15,7 +15,7 @@ template<class K,class T>
 struct Nth_iterator_element : private Store_kernel<K> {
   Nth_iterator_element(){}
   Nth_iterator_element(K const&k):Store_kernel<K>(k){}
-  typedef typename Read_tag_type<K, typename iterator_tag_traits<T>::value_tag>::type result_type;
+  typedef typename Get_type<K, typename iterator_tag_traits<T>::value_tag>::type result_type;
   template<class U> result_type operator()(CGAL_FORWARDABLE(U) u, int i) const {
     typename Get_functor<K, Construct_ttag<T> >::type ci(this->kernel());
     return *cpp0x::next(ci(CGAL_FORWARD(U,u),Begin_tag()),i);
@@ -56,8 +56,8 @@ struct Lazy_cartesian_types
 
     template <class T,class=void> struct Type {
 	    typedef Lazy<
-		    typename Read_tag_type<AK_,T>::type,
-		    typename Read_tag_type<EK_,T>::type,
+		    typename Get_type<AK_,T>::type,
+		    typename Get_type<EK_,T>::type,
 		    typename EK_::FT, E2A_> type;
     };
     template <class D> struct Type<FT_tag,D> {
@@ -172,7 +172,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
 	    }
     };
     template<class T,class D> struct Functor<T,D,Construct_iterator_tag> {
-	    typedef Construct_iter<typename Read_tag_type<Base,typename map_result_tag<T>::type>::type> type;
+	    typedef Construct_iter<typename Get_type<Base,typename map_result_tag<T>::type>::type> type;
     };
 
 

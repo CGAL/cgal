@@ -19,7 +19,7 @@ namespace internal {
 // Reverses order, but that shouldn't matter.
 template<class K,class T> struct Map_taglist_to_typelist :
   Map_taglist_to_typelist<K,typename T::tail>::type
-  ::template add<typename Read_tag_type<K, typename T::head>::type>
+  ::template add<typename Get_type<K, typename T::head>::type>
 {};
 template<class K> struct Map_taglist_to_typelist<K,typeset<> > : typeset<> {};
 }
@@ -55,8 +55,8 @@ class KernelD_converter_
 	typedef typename List::head Tag;
 	typedef typename List::tail Rest;
 	typedef KernelD_converter_<Final_,K1,K2,Rest> Base;
-	typedef typename Read_tag_type<K1,Tag>::type K1_Obj;
-	typedef typename Read_tag_type<K2,Tag>::type K2_Obj;
+	typedef typename Get_type<K1,Tag>::type K1_Obj;
+	typedef typename Get_type<K2,Tag>::type K2_Obj;
 	typedef typename Get_functor<K1, Convert_ttag<Tag> >::type K1_Conv;
 	typedef KO_converter<Tag,K1,K2> KOC;
 	typedef BOOSTD is_same<K1_Conv, Null_functor> no_converter;

@@ -132,7 +132,7 @@ struct Cartesian_wrap : public Base_
 		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
 		    // FIXME: Self or Derived?
-		    typedef typename Read_tag_type<Self,result_tag>::type result_type;
+		    typedef typename Get_type<Self,result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
@@ -220,7 +220,7 @@ struct Cartesian_refcount : public Base_
 		    type(){}
 		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
-		    typedef typename Read_tag_type<Self,result_tag>::type result_type;
+		    typedef typename Get_type<Self,result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
