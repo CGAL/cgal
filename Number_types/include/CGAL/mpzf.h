@@ -310,19 +310,40 @@ struct mpzf {
     BOOST_STATIC_ASSERT(GMP_NUMB_BITS == 64);
     int e2 = e1 % 64;
     exp = e1 / 64 - 17;
+#if 0
+    // This seems very slightly faster
     if(mpzf_impl::ctz(m)+e2>=64){
       data[0] = m >> (64-e2);
       size = 1;
       ++exp;
     }else{
       data[0] = m << e2;
-      if(e2>11){
+      if(e2>11){ // Wrong test for denormals
 	data[1] = m >> (64-e2);
 	size = 2;
       } else {
 	size = 1;
       }
     }
+#else
+    mp_limb_t d0 = (m << e2) & GMP_NUMB_MASK;
+    mp_limb_t d1 = m >> (GMP_NUMB_BITS - e2);
+    if (d0 == 0) {
+      data[0] = d1;
+      size = 1;
+      ++exp;
+    }
+    else {
+      data[0] = d0;
+      if (d1 == 0) {
+	size = 1;
+      }
+      else {
+	data[1] = d1;
+	size = 2;
+      }
+    }
+#endif
     if(u.s.sig) size=-size;
   }
   // For debug purposes only
