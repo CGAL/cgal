@@ -57,8 +57,8 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
     }
 
     QString simplificationMethod() const { return m_simplificationMethod->currentText(); }
-    float randomSimplificationPercentage() const { return m_randomSimplificationPercentage->value(); }
-    float gridCellSize() const { return m_gridCellSize->value(); }
+    double randomSimplificationPercentage() const { return m_randomSimplificationPercentage->value(); }
+    double gridCellSize() const { return m_gridCellSize->value(); }
 };
 
 void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggered()
@@ -111,7 +111,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
                                       dialog.gridCellSize()*average_spacing);
     }
 
-    int nb_points_to_remove = std::distance(first_point_to_remove, points->end());
+    std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Simplification: " << nb_points_to_remove << " point(s) are selected for removal ("
                                     << task_timer.time() << " seconds, "

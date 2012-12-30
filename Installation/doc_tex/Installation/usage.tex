@@ -83,8 +83,8 @@ configuration.
   ``com2'') of \cgal\ to which the executable(s) should be linked. Valid components are \cgal's
   libraries (i.e.~``Core'', ``ImageIO'', ``Qt3'' and ``Qt4''; note
   that it only make sense to either pick ``Qt3'' or ``Qt4'') and all
-  preconfigured 3rd party software, such as ``MPFI'', ``RS3'',
-  or ``LAPACK''). An example is \texttt{-c Core:GMP:RS3:MPFI}
+  preconfigured 3rd party software, such as ``MPFI'' or ``RS3''
+  ). An example is \texttt{-c Core:GMP:RS3:MPFI}
 
 \item [\texttt{-b boost1:boost2:...}] Lists components (``boost1'',
   ``boost2'') of \boost\ to which the executable(s) should be
@@ -121,8 +121,8 @@ link with \cgal\ and essential third party libraries. Beyond,
 \texttt{find\_package} can demand for \texttt{COMPONENTS} of \cgal,
 that is, all \cgal\ libraries libCGAL\_Core (``Core''),
 libCGAL\_ImageIO (``ImageIO'') , libCGAL\_Qt3 (``Qt3'') and libCGAL\_Qt4
-(``Qt4'') or optional 3rd party software such as ``MPFI'', ``RS3'' or
-``LAPACK''. A user is free to create the \texttt{CMakeLists.txt}
+(``Qt4'') or optional 3rd party software such as ``MPFI'' or ``RS3''.
+A user is free to create the \texttt{CMakeLists.txt}
 without calling the script (manual creation).
 
 

@@ -35,7 +35,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
         message( STATUS "  ${lib} definitions:  ${${vlib}_DEFINITIONS}" )
       else() 
         message( STATUS "${lib} has been configured") 
-        use_lib( ${vlib} "{${vlib}_USE_FILE}")
+        use_lib( ${vlib} ${${vlib}_USE_FILE})
       endif()
    
       # TODO EBEB what about Qt3, Qt4, zlib etc?

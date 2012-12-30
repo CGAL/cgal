@@ -36,5 +36,6 @@
 #include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
 #include <CGAL/Point_2_Iso_rectangle_2_intersection.h>
 #include <CGAL/Iso_rectangle_2_Iso_rectangle_2_intersection.h>
+#include <CGAL/Triangle_2_Iso_rectangle_2_intersection.h>
 
 #endif

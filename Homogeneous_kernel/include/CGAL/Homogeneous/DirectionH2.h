@@ -27,6 +27,8 @@
 
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/kernel_config.h>
+#include <CGAL/number_type_basic.h>
 
 namespace CGAL {
 

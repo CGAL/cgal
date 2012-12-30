@@ -40,12 +40,8 @@ using \ccc{Filtered_predicate} and \ccc{Filtered_kernel}.
 %\ccConstructor{Lazy_exact_nt(const Lazy_exact_nt &);}
 %{copy constructor.}
 %\ccGlue
-\ccConstructor{Lazy_exact_nt(int i)}
-{introduces the integral value \ccc{i}.}
-\ccGlue
-\ccConstructor{Lazy_exact_nt(double d)}
-{introduces the floating point value \ccc{d} (works only if \ccc{NT} has a
-constructor from a double too).}
+\ccConstructor{Lazy_exact_nt(builtin x)}
+{introduces the value \ccc{x}, of any builtin arithmetic type (int, double, etc) (works only if \ccc{NT} has a constructor from this type too).}
 \ccGlue
 \ccConstructor{Lazy_exact_nt(NT n)}
 {introduces the value \ccc{n}.}

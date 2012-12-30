@@ -96,12 +96,27 @@ Number of lines of code of CGAL<br>
 (using <a href="http://www.dwheeler.com/sloccount/">
 David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code> and <code>src/</code> directories).
 </caption>
-<tr><td><img src="images/release_history_sloccount_from_pdf.png" alt="Releases size graph">
+<tr><td><img src="images/release_history_sloccount.png" alt="Releases size graph">
 </table>
 <td width="10%">
 </table>
 
 <HR>
+
+<h2 id="release4.2">Release 4.2 </h2>
+<div>
+<p> Release date: </p>
+
+<h3>3D Fast Intersection and Distance Computation</h3>
+<ul>
+<li> Update requirements of the concepts <code>AABBTraits</code> and <code>AABBGeomTraits</code> to match the implementation of the package.
+</ul>
+
+<h3>Generator</h3>
+<ul>
+<li> Addition of the <code>Combination_enumerator</code>
+</ul>
+
 
 <h2 id="release4.1">Release 4.1 </h2>
 <div>
@@ -109,8 +124,12 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 
 <h3>Installation</h3>
 <ul>
-<li>CGAL-4.1 no longer supports the Intel Compiler version 11.0. The Intel
-  Compiler version 12.1 is supported instead.</li>
+<li>Additional supported platforms:
+  <ul>
+    <li>The Apple Clang compiler versions 3.1 and 3.2 are now supported on
+      Mac OS X.</li>
+  </ul>
+</li>
 <li>Improved configuration for essential and optional external third party software</li>
 <li>Added more general script to create CMakeLists.txt files: <tt>cgal_create_CMakeLists</tt></li>
 <li>Availability tests for C++11 features are now performed with the help of <a href="http://www.boost.org/libs/config">Boost.Config</a>. A Boost version of 1.40.0 or higher is needed to use C++11 features.</li>

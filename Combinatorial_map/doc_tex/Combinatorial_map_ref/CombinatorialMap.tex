@@ -184,15 +184,32 @@ if for all dart handle \emph{dh} such that
 \ccMethod{size_type number_of_darts() const;}
     {Returns the number of darts in \ccc{cm}.}
 
-\ccMethod{Dart_handle dart_handle(Dart& adart);}
-    {Returns the dart handle of \ccc{adart}.}
-\ccGlue
-\ccMethod{Dart_const_handle dart_handle(const Dart& adart) const;}
-    {Returns the dart const handle of \ccc{adart}.}
-
 \ccMethod{template <unsigned int i> size_type number_of_attributes() const;}
    {Returns the number of \emph{i}-attributes in \ccc{cm}. 
      \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
+
+\ccMethod{Dart_handle dart_handle(Dart& adart);}
+    {Returns the dart handle of \ccc{adart}.
+\ccPrecond{\ccc{adart}\myin{}\ccc{cm.darts()}.}}
+\ccGlue
+\ccMethod{Dart_const_handle dart_handle(const Dart& adart) const;}
+    {Returns the dart const handle of \ccc{adart}.
+\ccPrecond{\ccc{adart}\myin{}\ccc{cm.darts()}.}}
+
+\ccMethod{Dart_handle beta(Dart_handle dh, int i, int j) const;}
+{Returns \betaj{}(\betai{}(\ccc{dh})). 
+ Overloads of this member function are defined that take from one to nine integer as arguments.
+ For each function, betas are applied in the same order as their indices are given as parameters. 
+ For example \ccc{beta(dh,1)}=\betaun{}(\ccc{dh}),
+ and \ccc{beta(dh,1,2,3,0)}=\betazero{}(\betatrois{}(\betadeux{}(\betaun{}(\ccc{dh})))).
+\ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, 0\myleq{}\emph{j}\myleq{}\emph{dimension} and \ccc{*dh}\myin{}\ccc{cm.darts()}.}
+}
+\ccGlue
+\ccMethod{Dart_const_handle beta(Dart_const_handle dh, int i, int j) const;}
+{Returns \betaj{}(\betai{}(\ccc{dh})).
+  Overloads of this member function are defined that take from one to nine integer as arguments.
+\ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, 0\myleq{}\emph{j}\myleq{}\emph{dimension} and \ccc{*dh}\myin{}\ccc{cm.darts()}.}
+}
 
 \ccMethod{template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;}
          {Returns true iff \ccc{dh1} can be \emph{i}-sewn with \ccc{dh2} by 
@@ -290,27 +307,40 @@ combinatorial tetrahedra:\\
 
 % +-----------------------------------+
 \ccHeading{Modifiers}
-\ccMethod{Dart_handle create_dart();} 
-   {Creates a new dart in \ccc{cm}, and returns the corresponding handle.
-    A new dart is initialized to be \emph{i}-free,
-    \myforall{}\emph{i}: 0\myleq{}\emph{i}\myleq{}\emph{dimension}, and to have no associated 
-    attribute for each non void attribute.
-  }
-\ccMethod{void erase_dart(Dart_handle dh);}
-   {Removes \ccc{*dh} from \ccc{cm}.}
+\ccMethod{template<typename T1> Dart_handle create_dart(T1 t1);} 
+  {Creates a new dart in \ccc{cm}, and returns the corresponding handle.
+   Calls the constructor of dart having \ccc{T1} as parameter.
+   A new dart is initialized to be \emph{i}-free,
+   \myforall{}\emph{i}: 0\myleq{}\emph{i}\myleq{}\emph{dimension}, and to have no associated 
+   attribute for each non void attribute.
+   Overloads of this member function are defined that take from zero to nine arguments.
+   With zero argument, \ccc{create_dart()} creates a new dart by using the default constructor.
+   }
 
-\ccMethod{template<unsigned int i> Attribute_handle<i>::type create_attribute();}
-{Creates a new \emph{i}-attribute in \ccc{cm}, and returns the corresponding handle.
-  \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
+\ccMethod{void erase_dart(Dart_handle dh);}
+   {Removes \ccc{*dh} from \ccc{cm}.
+     \ccPrecond{\ccc{*dh}\myin{}\ccc{cm.darts()}.}
+}
+
+\ccMethod{template<unsigned int i,typename T1> Attribute_handle<i>::type create_attribute(T1 t1);} 
+  {Creates a new \emph{i}-attribute in \ccc{cm}, and returns the corresponding handle.
+   Calls the constructor of \emph{i}-attribute having \ccc{T1} as parameter.
+   Overloads of this member function are defined that take from zero to nine arguments.
+   With zero argument, \ccc{create_attribute<i>()} creates a new \emph{i}-attribute by using the default constructor.
+   \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
+
+% \ccMethod{template<unsigned int i> Attribute_handle<i>::type create_attribute();}
+% {Creates a new \emph{i}-attribute in \ccc{cm}, and returns the corresponding handle.
+%   \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
 	
-\ccMethod{template<unsigned int i,class A> Attribute_handle<i>::type 
-  create_attribute(const A&a);}
-{Creates a new \emph{i}-attribute in \ccc{cm} initialized 
-  by the constructor \ccc{A(a)}, and returns the corresponding handle. \ccc{A} must be 
-  a type compatible with the information contained in the \emph{i}-attributes 
-  (compatible means that there is a constructor for the information type 
-  taking an \emph{A} as parameter).
-  \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
+% \ccMethod{template<unsigned int i,class A> Attribute_handle<i>::type 
+%   create_attribute(const A&a);}
+% {Creates a new \emph{i}-attribute in \ccc{cm} initialized 
+%   by the constructor \ccc{A(a)}, and returns the corresponding handle. \ccc{A} must be 
+%   a type compatible with the information contained in the \emph{i}-attributes 
+%   (compatible means that there is a constructor for the information type 
+%   taking an \emph{A} as parameter).
+%   \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
 
 \ccMethod{template <unsigned int i> void erase_attribute(Attribute_handle<i>::type ah);}
 {Removes the \emph{i}-attribute \ccc{*ah} from \ccc{cm}.
@@ -448,7 +478,7 @@ combinatorial tetrahedra:\\
 \end{ccAdvanced}
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Combinatorial_map<d,CMItems,Alloc>}
+\ccRefIdfierPage{CGAL::Combinatorial_map<d,Items,Alloc>}
 
 % \ccSeeAlso
 % \ccRefIdfierPage{CGAL::CombinatorialMapWithPoints}

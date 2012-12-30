@@ -1,24 +1,24 @@
 find_package( GMP QUIET )
 
 if( GMP_FOUND )
-  
+
   if( MPFI_INCLUDE_DIR AND MPFI_LIBRARIES )
     set( MPFI_FOUND TRUE )
   endif( MPFI_INCLUDE_DIR AND MPFI_LIBRARIES )
 
   find_path(MPFI_INCLUDE_DIR NAMES mpfi.h
-            HINTS
-            $ENV{MPFI_INC_DIR}
-            PATHS 
-            ${GMP_INCLUDE_DIR_SEARCH}
+            HINTS ENV MPFI_INC_DIR
+                  ENV MPFI_DIR
+            PATHS ${GMP_INCLUDE_DIR_SEARCH}
+            PATH_SUFFIXES include
             DOC "The directory containing the MPFI header files"
            )
 
   find_library(MPFI_LIBRARIES NAMES mpfi
-               HINTS
-               $ENV{MPFI_LIB_DIR}
-               PATHS 
-               ${GMP_LIBRARIES_DIR_SEARCH}
+               HINTS ENV MPFI_LIB_DIR
+                     ENV MPFI_DIR
+               PATHS ${GMP_LIBRARIES_DIR_SEARCH}
+               PATH_SUFFIXES lib
                DOC "Directory containing the MPFI library"
                )
 

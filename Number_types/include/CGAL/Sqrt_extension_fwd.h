@@ -24,6 +24,8 @@
 #ifndef CGAL_SQRT_EXTENSION_FWD_H
 #define CGAL_SQRT_EXTENSION_FWD_H
 
+#include <CGAL/tags.h>
+
 namespace CGAL{
 
 template <class NT_,class ROOT_, class AllowCompareDifferentExtensions = ::CGAL::Tag_false, class FilterPredicates = ::CGAL::Tag_false > 

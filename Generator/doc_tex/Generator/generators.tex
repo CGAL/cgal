@@ -91,6 +91,11 @@ The function \ccc{random_selection} chooses $n$ items at random from a random
 access iterator range which is useful to produce degenerate input data
 sets with multiple entries of identical items.
 
+The class \ccc{Combination_enumerator<CombinationElement>} is used to enumerate
+all fixed-size combinations (subsets) of a range of elements. It is useful
+in the context of high-dimensional triangulations, e.g., for enumerating the
+faces of a simplex.
+
 \section{Example Generating Degenerate Point Sets}
 
 We want to generate a test set of 1000 points, where 60\% are chosen
@@ -312,6 +317,33 @@ Generating 20 grid points in 4D
 \end{center}
 \end{ccTexOnly}
 
+
+\section{Example Generating Combinations}
+
+\paragraph{From a Range of Integers}
+
+The following example enumerates and outputs all subsets of 3 elements from the
+range $[10, 15]$. Accordingly, it outputs $\displaystyle\frac{6!}{3! 3!}=20$
+triples.
+
+\smallskip
+\ccIncludeExampleCode{Generator/combination_enumerator.cpp}
+
+The output of this example is:
+\begin{verbatim}
+Taking 3 distinct integers in the range [10, 15]: {10 11 12} {10 11 13} {10 11 14}
+{10 11 15} {10 12 13} {10 12 14} {10 12 15} {10 13 14} {10 13 15} {10 14 15}
+{11 12 13} {11 12 14} {11 12 15} {11 13 14} {11 13 15} {11 14 15} {12 13 14}
+{12 13 15} {12 14 15} {13 14 15}
+Enumerated 20 combinations.
+\end{verbatim}
+
+\paragraph{From an Array of Strings}
+The following example generates all pairs of names from a set of names stored
+in an array of strings.
+
+\smallskip
+\ccIncludeExampleCode{Generator/name_pairs.cpp}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Design and Implementation History}

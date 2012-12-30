@@ -23,8 +23,6 @@
 #include <CGAL/config.h>
 #ifndef CGAL_CFG_NO_CPP0X_ARRAY
 #  include <array>
-#elif !defined CGAL_CFG_NO_TR1_ARRAY
-#  include <tr1/array>
 #else
 #  include <boost/array.hpp>
 #endif
@@ -35,8 +33,6 @@ namespace cpp11 {
 
 #ifndef CGAL_CFG_NO_CPP0X_ARRAY
 using std::array;
-#elif !defined CGAL_CFG_NO_TR1_ARRAY
-using std::tr1::array;
 #else
 using boost::array;
 #endif

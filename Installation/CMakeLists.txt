@@ -13,12 +13,10 @@ else()
 endif()
 
 # Tested version:
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+  cmake_policy(VERSION 2.8.4)
+else()
+  cmake_policy(VERSION 2.6)
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -155,21 +153,15 @@ if ( CGAL_BRANCH_BUILD )
   set(CGAL_CREATED_VERSION_NR "1${CGAL_TMP_MAJOR}${CGAL_TMP_MINOR}${CGAL_BUGFIX_VERSION}${CGAL_TMP_BUILD}")
   message(STATUS "CGAL_VERSION_NR is ${CGAL_CREATED_VERSION_NR}")
 
-  if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
-
-    # The function Subversion_GET_REVISION is defined in ../CMakeLists.txt
-    Subversion_GET_REVISION("${CMAKE_SOURCE_DIR}" CGAL_TMP_REVISION)
-    set(CGAL_CREATED_SVN_REVISION "${CGAL_TMP_REVISION}")
-    message(STATUS "CGAL_SVN_REVISION is ${CGAL_TMP_REVISION}")
-  
-  endif()
-
   if ( ${CGAL_SCM_NAME} STREQUAL "git" )
 
     ### TODO EBEB GIT_NR?
     set(CGAL_GIT_HASH "n/a")
+    set(CGAL_CREATED_SVN_REVISION "99999")
 
     message(STATUS "CGAL_GIT_HASH is ${CGAL_GIT_HASH}")
+    message(STATUS "CGAL_CREATED_SVN_REVISION is ${CGAL_CREATED_SVN_REVISION} (dummy)")
+
   endif()
 
   file(REMOVE ${CMAKE_BINARY_DIR}/include/CGAL/version.h)
@@ -579,6 +571,7 @@ cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" )
 
 # default is on, but some use-cases need to set it to off, e.g., debian packages
 option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external libraries" ON)
+
 # additional info: some header files in CGAL add additional code if
 # certain optional libs are installed, and some examples/tests rely on
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
@@ -641,6 +634,7 @@ add_config_flag( CGAL_USE_LEDA )
 add_config_flag( CGAL_USE_MPFI )
 add_config_flag( CGAL_USE_RS )
 add_config_flag( CGAL_USE_NTL )
+
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
 if (NOT ${WITH_CGAL_Core}) 
@@ -768,26 +762,18 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-# fake to simplify loop
-set(CGAL_CGAL_LIBRARY ${CGAL_LIBRARY})
-hide_variable(CGAL_CGAL_LIBRARY)
-
-# Set CGAL_INSTALLED_LIBRARY, CGAL_INSTALLED_Qt3_LIBRARY and so on. Those
+# Set CGAL_LIBRARY_INSTALLED, CGAL_Qt3_LIBRARY_INSTALLED and so on. Those
 # variables are the path to the libraries installed by the install
 # target. Used in the generation of the installed CGALConfig.cmake
 foreach(lib ${CGAL_CONFIGURED_LIBRARIES} CGAL) # note the added fake 'CGAL'
-  if(CGAL_${lib}_LIBRARY)
-    get_filename_component(lib_name "${CGAL_${lib}_LIBRARY}" NAME)
-    set(CGAL_INSTALLED_${lib}_LIBRARY "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
-  else()
-    set(CGAL_INSTALLED_${lib}_LIBRARY "")
+ if(${lib}_LIBRARY)
+    get_filename_component(lib_name "${${lib}_LIBRARY}" NAME)
+    set(${lib}_LIBRARY_INSTALLED "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
+ else()
+    set(${lib}_LIBRARY_INSTALLED "")
   endif()
-  hide_variable(CGAL_INSTALLED_${lib}_LIBRARY)
+  hide_variable(${lib}_LIBRARY_INSTALLED)
 endforeach()
-
-# set back from the fake
-set(CGAL_INSTALLED_LIBRARY  ${CGAL_INSTALLED_CGAL_LIBRARY})
-hide_variable(CGAL_INSTALLED_LIBRARY)
 
 create_CGALconfig_files()
 
@@ -894,6 +880,7 @@ if ( NOT RUNNING_CGAL_AUTO_TEST )
 
   add_programs(examples examples OFF )
   add_programs(demo     demos    OFF )
+  add_programs(test     tests    OFF )
   
 endif()
 
@@ -955,3 +942,65 @@ if( WITH_CPACK AND EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
     
 endif()
 
+
+if ( CGAL_BRANCH_BUILD )
+  option(CGAL_ENABLE_CHECK_HEADERS 
+    "Enable the special targets \"check_pkg_headers\", and \"check_pkg_<package>_headers\" for each package"
+    FALSE)
+
+  if(CGAL_ENABLE_CHECK_HEADERS)
+
+    if(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
+      execute_process(COMMAND 
+        ${CMAKE_CXX_COMPILER} -x c++ -fsyntax-only ${CMAKE_CURRENT_SOURCE_DIR}/config/support/test_syntaxonly.cpp
+        ERROR_QUIET
+        RESULT_VARIABLE ok)
+      if(ok EQUAL 0)
+        set(CGAL_CHECK_SYNTAX_ONLY ON CACHE INTERNAL "")
+      else()
+        set(CGAL_CHECK_SYNTAX_ONLY OFF CACHE INTERNAL "")
+      endif()
+    endif(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
+
+    if(NOT CGAL_CHECK_SYNTAX_ONLY)
+      message(FATAL_ERROR "Your compiler does not seem to support -fsyntax-only.
+You must disable CGAL_ENABLE_CHECK_HEADERS.")
+    endif()
+
+    ## Fill the variable include_options with all the -I and -isystem options
+    set(include_options)
+    foreach (incdir ${CGAL_INCLUDE_DIRS})
+      list(APPEND include_options "-I${incdir}")
+    endforeach()
+    foreach (incdir ${CGAL_3RD_PARTY_INCLUDE_DIRS})
+      list(APPEND include_options "-isystem${incdir}")
+    endforeach()
+    include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
+
+    ## Loop on package and headers
+    set(check_pkg_target_list)
+    foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
+      if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
+        set(depends "")
+        file(GLOB ${package}_HEADERS 
+          RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include" 
+          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h")
+        foreach(header ${${package}_HEADERS})
+          string(REPLACE "/" "__" header2 "${header}")
+          string(REPLACE "." "_" header2 "${header2}")
+          add_custom_command(OUTPUT check_${header2}
+            COMMAND ${CMAKE_CXX_COMPILER} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} ${include_options} -x c++ -fsyntax-only "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+            COMMAND ${CMAKE_COMMAND} -E touch check_${header2}
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+            VERBATIM
+            COMMENT "Check header ${header}"
+            )
+          list(APPEND depends check_${header2})
+        endforeach() # look on headers
+        add_custom_target(check_pkg_${package}_headers DEPENDS ${depends})
+        list(APPEND check_pkg_target_list check_pkg_${package}_headers)
+      endif() # if the package has an include directory
+    endforeach() # loop on packages
+    add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
+  endif()
+endif( CGAL_BRANCH_BUILD )

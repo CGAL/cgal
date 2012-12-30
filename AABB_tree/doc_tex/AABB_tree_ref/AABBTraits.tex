@@ -50,8 +50,12 @@ During the construction of the \ccc{AABB_tree}, the primitives are sorted accord
 \ccNestedType{Compute_bbox}{A functor object to compute the bounding box of a set of primitives. Provides the operator:
 \ccc{Bounding_box operator()(Input_iterator begin,                                              Input_iterator beyond);} Iterator \ccc{InputIterator} must have \ccc{Primitive} as value type. }
 
-\ccNestedType{Splitting_direction}{A functor object to specify the direction along which the bounding box should be split:
-\ccc{Axis operator()(const Bounding_box& bbox);} which returns the direction used for splitting \ccc{bbox}. It is usually the axis aligned with the longest edge of \ccc{bbox}.}
+%remove as not used any where in the code
+%\ccNestedType{Splitting_direction}{A functor object to specify the direction along which the bounding box should be split:
+%\ccc{Axis operator()(const Bounding_box& bbox);} which returns the direction used for splitting \ccc{bbox}. It is usually the axis aligned with the longest edge of \ccc{bbox}.}
+
+\ccNestedType{Squared_distance}{A functor object to compute the squared distance between two points. Provides the operator:
+\ccc{FT operator()(const Point_3& p, const Point_3 & q);} which returns the squared distance between \ccc{p} and \ccc{q}.}
 
 The following predicates are required for each type \ccc{Query}
 for which the class \ccc{AABB_tree<AT>} may receive an intersection detection or computation query.
@@ -71,8 +75,7 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 \ccNestedType{Closest_point}{A functor object to compute closest point from the query on a primitive. Provides the operator:
 \ccc{Point_3 operator()(const Query& query, const Primitive& primitive, const Point_3 & closest);} which returns the closest point to \ccc{query}, among \ccc{closest} and all points of the primitive.}
 
-\ccNestedType{Squared_distance}{A functor object to compute the squared distance between the query and a point. Provides the operator:
-\ccc{FT operator()(const Query& query, const Point_3 & p);} which returns the squared distance between \ccc{query} and \ccc{p}.}
+
 
 \ccCreationVariable{traits}  %% choose variable name
 
@@ -93,6 +96,8 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 \ccMethod{Compare_distance compare_distance_object();}{Returns the distance comparison functor.}
 
 \ccMethod{Closest_point closest_point_object();}{Returns the closest point constructor.}
+
+\ccMethod{Squared_distance squared_distance_object();}{Returns the squared distance functor.}
 
 \ccHasModels
 \ccc{AABB_traits<GeomTraits,Primitive>}.

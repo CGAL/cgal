@@ -162,9 +162,10 @@ struct Solve_RS_1{
             }
         }
         for(int i=0;i<nr;++i){
-            *res++=std::make_pair(*new Algebraic(x[i],p,i,m[i],
-                                                 i?x[i-1]:NULL,
-                                                 i==nr-1?NULL:x[i+1]),
+            *res++=std::make_pair(*new Algebraic(x[i],p,i,m[i]
+                                                 //,i?x[i-1]:NULL,
+                                                 //i==nr-1?NULL:x[i+1]
+                                                 ),
                                   m[i]);
         }
         free(m);
@@ -191,9 +192,10 @@ struct Solve_RS_1{
             m=0;    // we won't calculate multiplicities
         }
         for(int i=0;i<nr;++i)
-            *res++=*new Algebraic(x[i],p,i,m,
-                            i?x[i-1]:NULL,
-                            i==nr-1?NULL:x[i+1]);
+            *res++=*new Algebraic(x[i],p,i,m
+                            //,i?x[i-1]:NULL,
+                            //i==nr-1?NULL:x[i+1]
+                            );
         free(x);
         return res;
     }
@@ -283,7 +285,9 @@ struct Construct_alg_1{
         mpfi_init(i);
         mpfr_set(&i->left,l.fr(),GMP_RNDD);
         mpfr_set(&i->right,u.fr(),GMP_RNDU);
-        return Algebraic(i,convert()(p),0,0,NULL,NULL);
+        return Algebraic(i,convert()(p),0,0
+                         //,NULL,NULL
+                        );
     }
 };  // Construct_alg_1
 
@@ -426,22 +430,20 @@ struct Approximate_absolute_1:
 
   std::pair<Bound,Bound>
   operator()(const Algebraic& x, int prec) const {
-//--------------------------------------------------
-//     Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
-//     while(prec>0?
-//           (x.sup()-x.inf())*error>Bound(1):
-//           (x.sup()-x.inf())>error){
-//       RS3::refine_1(x,CGAL::abs(prec));
-//     }
-//--------------------------------------------------
-    RS3::refine_1(x,std::max<unsigned>(CGAL::abs(prec),
-                                       mpfi_get_prec(x.mpfi())));
-    //if(mpfi_get_prec(x.mpfi())<CGAL::abs(prec)){
-    //        RS3::refine_1(x,CGAL::abs(prec));
-    //}
-    CGAL_assertion(prec>0?
-                   (x.sup()-x.inf())*CGAL::ipower(Bound(2),prec)<=Bound(1):
-                   (x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec));
+    RS3::refine_1(x,CGAL::abs(prec));
+
+    CGAL_postcondition_code(
+     CGAL::Gmpfr::Precision_type
+        subprec=1+
+            std::max<CGAL::Gmpfr::Precision_type>(x.inf().get_precision(),
+                                                  x.sup().get_precision());
+        CGAL::Gmpfr width=CGAL::Gmpfr::sub(x.sup(),x.inf(),subprec);
+    )
+    CGAL_postcondition_code(if(prec>0))
+    CGAL_postcondition(width*CGAL::ipower(Bound(2),prec)<=Bound(1));
+    CGAL_postcondition_code(else)
+    CGAL_postcondition(width<=CGAL::ipower(Bound(2),-prec));
+
     return std::make_pair(x.inf(),x.sup());
   }
 };
@@ -453,18 +455,20 @@ struct Approximate_relative_1
     if(CGAL::is_zero(x))
       return std::make_pair(Bound(0),Bound(0));
 
-    Bound error = CGAL::ipower(Bound(2),CGAL::abs(prec));
-    Bound max_b = (CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
+    Bound error=CGAL::ipower(Bound(2),CGAL::abs(prec));
+    Bound max_b=(CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
     while(prec>0?
           (x.sup()-x.inf())*error>max_b:
           (x.sup()-x.inf())>error*max_b){
-      RS3::refine_1(x,std::max<unsigned>(CGAL::abs(prec),
-                                         mpfi_get_prec(x.mpfi())));
-      max_b = (CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
+      RS3::refine_1(x,mpfi_get_prec(x.mpfi())+CGAL::abs(prec));
+      max_b=(CGAL::max)(CGAL::abs(x.sup()),CGAL::abs(x.inf()));
     }
-    CGAL_assertion(prec>0?
-                   (x.sup()-x.inf())*CGAL::ipower(Bound(2),prec)<=max_b:
-                   (x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec)*max_b);
+
+    CGAL_postcondition_code(if(prec>0))
+    CGAL_postcondition((x.sup()-x.inf())*CGAL::ipower(Bound(2),prec)<=max_b);
+    CGAL_postcondition_code(else)
+    CGAL_postcondition((x.sup()-x.inf())<=CGAL::ipower(Bound(2),-prec)*max_b);
+
     return std::make_pair(x.inf(),x.sup());
   }
 };

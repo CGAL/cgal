@@ -24,6 +24,8 @@
 #include <QInputDialog>
 #include <QTreeView>
 #include <QMap>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include <stdexcept>
 
@@ -38,6 +40,7 @@
 #include "Polyhedron_demo_io_plugin_interface.h"
 
 #include "ui_MainWindow.h"
+#include "ui_Preferences.h"
 
 #include "Show_point_dialog.h"
 
@@ -198,8 +201,11 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
-  connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
-          this, SLOT(showSceneContextMenu(const QPoint &)));
+
+  // The contextMenuPolicy of infoLabel is now the default one, so that one
+  // can easily copy-paste its text.
+  // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
+  //         this, SLOT(showSceneContextMenu(const QPoint &)));
 
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer->camera(), SLOT(interpolateToFitScene()));
@@ -211,9 +217,6 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(ui->actionDraw_two_sides, SIGNAL(toggled(bool)),
           viewer, SLOT(setTwoSides(bool)));
-
-  // enable anti-aliasing by default
-  // ui->actionAntiAliasing->setChecked(true);
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
@@ -290,6 +293,8 @@ MainWindow::MainWindow(QWidget* parent)
 #  endif
 #endif
 
+  readSettings(); // Among other things, the column widths are stored.
+
   // Load plugins, and re-enable actions that need it.
   loadPlugins();
 
@@ -299,7 +304,6 @@ MainWindow::MainWindow(QWidget* parent)
   }
   ui->menuDockWindows->removeAction(ui->dummyAction);
 
-  readSettings(); // Among other things, the column widths are stored.
 
 #ifdef QT_SCRIPT_LIB
   // evaluate_script("print(plugins);");
@@ -342,9 +346,9 @@ void MainWindow::filterOperations()
 
 #ifdef QT_SCRIPT_LIB
 void MainWindow::evaluate_script(QString script,
-                                 const QString& /*filename*/,
+                                 const QString& filename,
                                  const bool quiet) {
-  QScriptValue value = script_engine->evaluate(script);
+  QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
     QTextStream err(stderr);
     err << "Qt Script exception:\n"
@@ -383,7 +387,7 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
 #  endif
 #endif
   // If we are here, then the debugger is not available
-  this->error(tr("Your version of Qt is too old, and for that reason"
+  this->error(tr("Your version of Qt is too old, and for that reason "
                  "the Qt Script Debugger is not available."));
 }
 
@@ -417,14 +421,20 @@ void MainWindow::loadPlugins()
            qPrintable(pluginsDir.absolutePath()));
     Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files)) {
       if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
+        //set plugin name
+        QString name = fileName;
+        name.remove(QRegExp("^lib"));
+        name.remove(QRegExp("\\..*"));
+        //do not load it if it is in the blacklist
+        if ( plugin_blacklist.contains(name) ){
+          qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
+          continue;
+        }
         qDebug("### Loading \"%s\"...", qPrintable(fileName));
         QPluginLoader loader;
         loader.setFileName(pluginsDir.absoluteFilePath(fileName));
         QObject *obj = loader.instance();
         if(obj) {
-          QString name = fileName;
-          name.remove(QRegExp("^lib"));
-          name.remove(QRegExp("\\..*"));
           obj->setObjectName(name);
           initPlugin(obj);
           initIOPlugin(obj);
@@ -461,6 +471,7 @@ bool MainWindow::initPlugin(QObject* obj)
     qobject_cast<Polyhedron_demo_plugin_interface*>(obj);
   if(plugin) {
     // Call plugin's init() method
+    obj->setParent(this);
     plugin->init(this, this->scene, this);
     plugins << qMakePair(plugin, obj->objectName());
 #ifdef QT_SCRIPT_LIB
@@ -628,7 +639,6 @@ void MainWindow::reload_item() {
               << "that is not a Scene_item*\n";
     return;
   }
-
   QString filename = item->property("source filename").toString();
   QString loader_name = item->property("loader_name").toString();
   if(filename.isEmpty() || loader_name.isEmpty()) {
@@ -775,7 +785,9 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
   }
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   item = loader->load(fileinfo);
+  QApplication::restoreOverrideCursor();
   if(!item) {
     throw std::logic_error(QString("Could not load item from file %1 using plugin %2")
                            .arg(fileinfo.absoluteFilePath()).arg(loader->name()).toStdString());
@@ -961,12 +973,30 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
+  {
+    QSettings settings;
+    // enable anti-aliasing 
+    ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
+    // read plugin blacklist
+    QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
+    Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
+  }
   this->readState("MainWindow", Size|State);
 }
 
 void MainWindow::writeSettings()
 {
   this->writeState("MainWindow");
+  {
+    QSettings settings;
+    settings.setValue("antialiasing", 
+                      ui->actionAntiAliasing->isChecked());
+    //setting plugin blacklist
+    QStringList blacklist;
+    Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
+    if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
+    else settings.remove("plugin_blacklist");
+  }
   std::cerr << "Write setting... done.\n";
 }
 
@@ -1069,6 +1099,7 @@ void MainWindow::on_actionLoad_triggered()
       this->addToRecentFiles(filename);
     } else {
       open(filename);
+      this->addToRecentFiles(filename);
     }
   }
 }
@@ -1160,6 +1191,58 @@ void MainWindow::on_actionSetPolyhedronB_triggered()
 {
   int i = getSelectedSceneItemIndex();
   scene->setItemB(i);
+}
+void MainWindow::on_actionPreferences_triggered()
+{
+  QDialog dialog(this);
+  Ui::PreferencesDialog prefdiag;
+  prefdiag.setupUi(&dialog);
+  
+  
+  QStandardItemModel* iStandardModel = new QStandardItemModel(this);
+  //add blacklisted plugins
+  Q_FOREACH(QString name, plugin_blacklist)
+  {
+    QStandardItem* item =  new QStandardItem(name);
+    item->setCheckable(true);
+    item->setCheckState(Qt::Checked);
+    iStandardModel->appendRow(item);
+  }
+  
+  //add operations plugins
+  Q_FOREACH(PluginNamePair pair,plugins){
+    QStandardItem* item =  new QStandardItem(pair.second);
+    item->setCheckable(true);
+    iStandardModel->appendRow(item);
+  }
+  
+  //add io-plugins
+  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins)
+  {
+    QStandardItem* item =  new QStandardItem(plugin->name());
+    item->setCheckable(true);
+    if ( plugin_blacklist.contains(plugin->name()) ) item->setCheckState(Qt::Checked);
+    iStandardModel->appendRow(item);
+  }
+
+  //Setting the model
+  prefdiag.listView->setModel(iStandardModel);
+  
+  dialog.exec();  
+  
+  if ( dialog.result() )
+  {
+    plugin_blacklist.clear();
+    for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k)
+    {
+      QStandardItem* item=iStandardModel->item(k);
+      if (item->checkState()==Qt::Checked)
+        plugin_blacklist.insert(item->text());
+    }
+  }
+  
+  for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k) delete iStandardModel->item(k);
+  delete iStandardModel;
 }
 
 void MainWindow::on_actionSetBackgroundColor_triggered()

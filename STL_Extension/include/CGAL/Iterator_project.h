@@ -27,6 +27,8 @@
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
 
+#include <iterator>
+
 namespace CGAL {
 
 // Relies on iterator traits. Quite simplified compared to earlier version.

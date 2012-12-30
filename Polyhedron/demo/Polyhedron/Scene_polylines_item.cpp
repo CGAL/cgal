@@ -20,7 +20,7 @@ namespace {
       c = c.darker(dv);
 #undef darker
     }
-    ::glColor4f(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
+    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
   }
 }
 
@@ -327,6 +327,11 @@ QMenu* Scene_polylines_item::contextMenu()
     QAction* action = menu->addAction(tr("Display corners with radius..."));
     connect(action, SIGNAL(triggered()),
             this, SLOT(change_corner_radii()));
+
+    QAction* actionSmoothPolylines = 
+      menu->addAction(tr("Smooth polylines"));
+    actionSmoothPolylines->setObjectName("actionSmoothPolylines");
+    connect(actionSmoothPolylines, SIGNAL(triggered()),this, SLOT(smooth()));
     menu->setProperty(prop_name, true);
   }
   return menu;

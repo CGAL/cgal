@@ -208,6 +208,30 @@ class Modular_traits< Gmpz > {
 #  pragma warning(pop)
 #endif
 
+#ifdef CGAL_EIGEN3_ENABLED
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CGAL::Gmpz>
+  {     
+    typedef CGAL::Gmpz Real;
+    typedef CGAL::Gmpq NonInteger;
+    typedef CGAL::Gmpz Nested;
+
+    static inline Real epsilon() { return 0; }
+
+    enum {
+      IsInteger = 1,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 30,
+      MulCost = 50
+    };
+  };
+}
+#endif
+
 
 //since types are included by Gmp_coercion_traits.h:
 #include <CGAL/Gmpz.h>

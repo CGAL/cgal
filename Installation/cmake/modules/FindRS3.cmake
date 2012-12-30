@@ -13,23 +13,29 @@ if( MPFI_FOUND )
 
   find_path(RS3_INCLUDE_DIR
             NAMES rs3_fncts.h
-            HINTS
-            $ENV{RS_INC_DIR}
-# TODO uses the same environment variable
+            HINTS ENV RS3_INC_DIR
+                  ENV RS3_DIR
+                  ENV RS_INC_DIR
+                  ENV RS_DIR
+            PATHS ${RS_INCLUDE_DIR}
+            PATH_SUFFIXES include
             DOC "The directory containing the RS3 include files"
            )
 
   find_library(RS3_LIBRARIES
                NAMES rs3
-               HINTS
-               $ENV{RS_LIB_DIR}
-# TODO uses the same environment variable
+               HINTS ENV RS3_LIB_DIR
+                     ENV RS3_DIR
+                     ENV RS_LIB_DIR
+                     ENV RS_DIR
+               PATHS ${RS_LIBRARIES_DIR}
+               PATH_SUFFIXES lib
                DOC "Path to the RS3 library"
               )
 
   get_dependency_version( GMP )
 
-  IS_VERSION_LESS("$GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
+  IS_VERSION_LESS("${GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
 
   if(_IS_GMP_VERSION_TO_LOW)
 

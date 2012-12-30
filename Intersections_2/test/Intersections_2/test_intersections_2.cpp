@@ -21,10 +21,6 @@
 #include <iostream>
 #include <cassert>
 
-#ifdef NDEBUG
-#  error The test-suite needs no NDEBUG defined
-#endif
-
 const double epsilon = 0.001;
 
 struct randomint {
@@ -115,6 +111,14 @@ struct Test {
 	assert(CGAL::intersection(o1, o2).empty());
 	assert(!CGAL::do_intersect(o2, o1));
 	assert(CGAL::intersection(o2, o1).empty());
+    
+	//check with the functors
+	typename CGAL::Kernel_traits<O1>::Kernel::Do_intersect_2 do_2;
+	typename CGAL::Kernel_traits<O1>::Kernel::Intersect_2 i_2;
+	assert(!do_2(o1, o2));
+	assert(i_2(o1, o2).empty());
+	assert(!do_2(o2, o1));
+	assert(i_2(o2, o1).empty());
   }
 
   template < typename Res, typename O1, typename O2 >
@@ -308,6 +312,19 @@ struct Test {
     check_intersection     (Rec(p( 10,  12), p(30, 40)), Rec(p(  25,   40), p( 26,  103)), Rec(P(25, 40), P(26, 40)));
   }
 
+  void T_Rec()
+  {
+    std::cout << "Triangle Iso_rectangle\n";
+    check_no_intersection  (Rec(p( 10,  12), p(30, 40)), T(p(    4,   0), p(  12,   4), p(-4,  8)));
+    check_intersection<T>(Rec(p( 0,  0), p(1, 1)), T(p(    -1,   0), p(  -1,   2), p(2,  2)));
+    check_intersection<T>(Rec(p( 0,  0), p(1, 1)), T(p(    -1,   0), p(2,  2), p(  -1,   2)));
+    check_intersection<Pol>(Rec(p( 0,  0), p(1, 1)), T(p(    -1,   -2), p(  -1,   2), p(5,  2)));
+    check_intersection<T>(Rec(p( 0,  0), p(2, 2)), T(p(    0,   0), p(  1,   0), p(0,  1)));
+    check_intersection<T>(Rec(p( 0,  0), p(3, 3)), T(p(    1,   1), p(  2,   1), p(1,  2)));
+    check_intersection<P>(Rec(p( 0,  0), p(1, 1)), T(p(  -1,   0), p(    0,  0), p(0,  -1)));
+    check_intersection<P>(Rec(p( 0,  0), p(1, 1)), T(p(    0,  0), p(  -1,   0), p(0,  -1)));
+  }
+  
   void run()
   {
     std::cout << "2D Intersection tests\n";
@@ -326,6 +343,7 @@ struct Test {
     R_Rec();
     S_Rec();
     Rec_Rec();
+    T_Rec();
   }
 
 };

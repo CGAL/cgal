@@ -19,10 +19,14 @@
 //
 // Author(s)     : Sylvain Pion
 
+#ifndef CGAL_MP_FLOAT_IMPL_H
+#define CGAL_MP_FLOAT_IMPL_H
+
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
 #include <functional>
 #include <cmath>
+#include <CGAL/MP_Float.h>
 
 namespace CGAL {
 
@@ -505,3 +509,5 @@ operator>> (std::istream & is, MP_Float &b)
 }
 
 } //namespace CGAL
+
+#endif // CGAL_MP_FLOAT_IMPL_H

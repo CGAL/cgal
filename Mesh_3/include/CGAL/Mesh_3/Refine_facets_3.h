@@ -31,6 +31,8 @@
 #include <CGAL/Meshes/Double_map_container.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 
+#include <CGAL/Object.h>
+
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -692,6 +694,7 @@ compute_facet_properties(const Facet& facet) const
 
   // Functor
   typename Gt::Is_degenerate_3 is_degenerate = Gt().is_degenerate_3_object();
+  typename Gt::Compare_xyz_3 compare_xyz = Gt().compare_xyz_3_object();
   typename MD::Do_intersect_surface do_intersect_surface =
       r_oracle_.do_intersect_surface_object();
 
@@ -714,7 +717,7 @@ compute_facet_properties(const Facet& facet) const
       // Trick to have canonical vector : thus, we compute alwais the same
       // intersection
       Segment_3 segment = *p_segment;
-      if ( CGAL::compare_xyz(p_segment->source(),p_segment->target())
+      if ( compare_xyz(p_segment->source(),p_segment->target())
               == CGAL::LARGER )
       {
         typename Gt::Construct_opposite_segment_3 opposite =
@@ -764,7 +767,8 @@ compute_facet_properties(const Facet& facet) const
       // Trick to have canonical vector : thus, we compute alwais the same
       // intersection
       Line_3 line = *p_line;
-      if ( CGAL::compare_xyz(p_line->point(0),p_line->point(1))
+      typename Gt::Compare_xyz_3 compare_xyz = Gt().compare_xyz_3_object();
+      if ( compare_xyz(p_line->point(0),p_line->point(1))
               == CGAL::LARGER )
       {
         typename Gt::Construct_opposite_line_3 opposite =
