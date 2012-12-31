@@ -19,6 +19,9 @@
 #include <boost/preprocessor/repetition.hpp>
 #include <CGAL/Rational_traits.h>
 #include <CGAL/tuple.h>
+#include <boost/mpl/has_xxx.hpp>
+#include <boost/mpl/not.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #ifdef CGAL_CXX0X
 #define BOOSTD std::
@@ -30,6 +33,13 @@ namespace CGAL {
 namespace internal {
 	BOOST_MPL_HAS_XXX_TRAIT_DEF(type)
 }
+
+template <class T, class No, bool=internal::has_type<T>::value /*false*/>
+struct Has_type_different_from : boost::false_type {};
+template <class T, class No>
+struct Has_type_different_from <T, No, true>
+: boost::mpl::not_<boost::is_same<typename T::type, No> > {};
+
 
 	template <class T> struct Wrap_type { typedef T type; };
 
@@ -220,5 +230,34 @@ BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
 #endif
 	};
 }
+
+#define CGAL_STRIP_PAREN_(...) __VA_ARGS__
+#define CGAL_STRIP_PAREN(...) CGAL_STRIP_PAREN_ __VA_ARGS__
+// What to do with O? pass it down to other functors or drop it?
+#define CGAL_KD_DEFAULT_FUNCTOR(Tag,Name,ReqTyp,ReqFun) \
+    template <class K, class O> \
+    struct Get_functor<K, Tag, O, \
+      typename boost::mpl::if_c< \
+        Provides_functor_i<K, Tag, O>::value \
+        || !Provides_types<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqTyp> >::value \
+        || !Provides_functors<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqFun> >::value \
+      , int, void>::type> \
+    { \
+      typedef Name<K> type; \
+    }
+
+// Not used yet, may need some changes.
+#define CGAL_KD_DEFAULT_TYPE(Tag,Name,ReqTyp,ReqFun) \
+    template <class K> \
+    struct Get_type<K, Tag, \
+      typename boost::mpl::if_c< \
+        Provides_type_i<K, Tag>::value \
+        || !Provides_types<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqTyp> >::value \
+        || !Provides_functors<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqFun> >::value \
+      , int, void>::type> \
+    { \
+      typedef Name<K> type; \
+    }
+
 
 #endif

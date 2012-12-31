@@ -621,6 +621,10 @@ template<class R_> struct Less_or_equal_lexicographically : private Store_kernel
 	}
 };
 
+}
+CGAL_KD_DEFAULT_FUNCTOR(Less_or_equal_lexicographically_tag,CartesianDKernelFunctors::Less_or_equal_lexicographically,(),(Compare_lexicographically_tag));
+namespace CartesianDKernelFunctors {
+
 template<class R_> struct Equal_points : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Equal_points)
 	typedef R_ R;

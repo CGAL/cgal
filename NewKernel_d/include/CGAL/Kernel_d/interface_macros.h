@@ -109,12 +109,12 @@ CGAL_Kernel_pred(Less_lexicographically,
 		 less_lexicographically_object)
 CGAL_Kernel_pred(Equal_points,
 		 equal_points_object)
-CGAL_Kernel_pred(Less_or_equal_lexicographically,
-		 less_or_equal_lexicographically_object)
+//CGAL_Kernel_pred(Less_or_equal_lexicographically,
+//		 less_or_equal_lexicographically_object)
 CGAL_Kernel_pred(Contained_in_affine_hull,
 		 contained_in_affine_hull_object)
-CGAL_Kernel_pred(In_flat_orientation,
-		 in_flat_orientation_object)
+//CGAL_Kernel_pred(In_flat_orientation,
+//		 in_flat_orientation_object)
 CGAL_Kernel_pred(In_flat_side_of_oriented_sphere,
 		 in_flat_side_of_oriented_sphere_object)
 CGAL_Kernel_pred(Construct_flat_orientation,

@@ -5,14 +5,22 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/not.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/empty.hpp>
+#include <boost/mpl/front.hpp>
+#include <boost/mpl/pop_front.hpp>
 namespace CGAL {
 
   // Find a better place for this later
 
-  template <class K, class T> struct Get_type
+  template <class K, class T, class=void> struct Get_type
     : K::template Type<T> {};
-  template <class K, class F, class O=void> struct Get_functor
+  template <class K, class F, class O=void, class=void> struct Get_functor
     : K::template Functor<F, O> {};
+#ifdef CGAL_CXX0X
+  template <class K, class T> using Type = typename Get_type<K, T>::type;
+  template <class K, class T> using Functor = typename Get_functor<K, T>::type;
+#endif
 
   class Null_type {~Null_type();}; // no such object should be created
 
@@ -36,19 +44,43 @@ namespace CGAL {
 	template<class Tag, class Obj, class Base> struct Typedef_tag_type;
 	//template<class Kernel, class Tag> struct Read_tag_type {};
 
-	template<class Kernel, class Tag, class S = Get_type<Kernel, Tag>,
-	  bool = internal::has_type<S>::value /* false */>
-	struct Provides_type : boost::false_type {};
-	template<class Kernel, class Tag, class S>
-	struct Provides_type <Kernel, Tag, S, true>
-	  : boost::mpl::not_<boost::is_same<typename S::type, Null_type> > {};
+	template<class Kernel, class Tag>
+	struct Provides_type
+	  : Has_type_different_from<Get_type<Kernel, Tag>, Null_type> {};
 
-	template<class Kernel, class Tag, class S = Get_functor<Kernel, Tag>,
-	  bool = internal::has_type<S>::value /* false */>
-	struct Provides_functor : boost::false_type {};
-	template<class Kernel, class Tag, class S>
-	struct Provides_functor <Kernel, Tag, S, true>
-	  : boost::mpl::not_<boost::is_same<typename S::type, Null_functor> > {};
+	template<class Kernel, class Tag, class O=void>
+	struct Provides_functor
+	  : Has_type_different_from<Get_functor<Kernel, Tag, O>, Null_functor> {};
+
+	template<class K, class List, bool=boost::mpl::empty<List>::type::value>
+	struct Provides_functors : boost::mpl::and_ <
+				   Provides_functor<K, typename boost::mpl::front<List>::type>,
+				   Provides_functors<K, typename boost::mpl::pop_front<List>::type> > {};
+	template<class K, class List>
+	struct Provides_functors<K, List, true> : boost::true_type {};
+
+	template<class K, class List, bool=boost::mpl::empty<List>::type::value>
+	struct Provides_types : boost::mpl::and_ <
+				   Provides_type<K, typename boost::mpl::front<List>::type>,
+				   Provides_types<K, typename boost::mpl::pop_front<List>::type> > {};
+	template<class K, class List>
+	struct Provides_types<K, List, true> : boost::true_type {};
+
+	namespace internal { BOOST_MPL_HAS_XXX_TEMPLATE_DEF(Type) }
+	template<class Kernel, class Tag,
+	  bool = internal::has_Type<Kernel>::value /* false */>
+	struct Provides_type_i : boost::false_type {};
+	template<class Kernel, class Tag>
+	struct Provides_type_i <Kernel, Tag, true>
+	  : Has_type_different_from<typename Kernel::template Type<Tag>, Null_type> {};
+
+	namespace internal { BOOST_MPL_HAS_XXX_TEMPLATE_DEF(Functor) }
+	template<class Kernel, class Tag, class O=void,
+	  bool = internal::has_Functor<Kernel>::value /* false */>
+	struct Provides_functor_i : boost::false_type {};
+	template<class Kernel, class Tag, class O>
+	struct Provides_functor_i <Kernel, Tag, O, true>
+	  : Has_type_different_from<typename Kernel::template Functor<Tag, O>, Null_type> {};
 
 
 #define DECL_OBJ(X) struct X##_tag {}; \
