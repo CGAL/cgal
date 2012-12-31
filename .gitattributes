@@ -364,7 +364,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_adaptor/spheric
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_adaptor/spherical_arcs/merge -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_adaptor/spherical_arcs/points -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_adaptor/spherical_arcs/xcurves -text
-<<<<<<< HEAD
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_construction/geodesic_arcs_on_sphere/test01.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_construction/segments/test47.txt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/test_observer/test01.txt -text
@@ -459,13 +458,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
-=======
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_circle_segments.cmd -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_dynamic_segments.cmd -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_linear.cmd -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_overlay.cmd -text
->>>>>>> origin/hot-fixes-for-Git
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/todo -text
 Arrangement_on_surface_2/test/Sweep_line_2/CompareCurveList.h eol=lf
 Arrangement_on_surface_2/test/Sweep_line_2/DATA/polylines/big_overlap -text
