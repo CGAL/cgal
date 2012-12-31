@@ -51,7 +51,7 @@ DEF SNAP Snapshot {
   quality 98
   sequence FALSE
   dirName "."
-  fileName "test07"
+  fileName "test08"
 }
 
 Transform {
@@ -101,14 +101,16 @@ Transform {
 		aosMarkedVertexStyle "none"
 		coord DEF COORD ExactCoordinate {
 		  ratPoint [
-			    0 0 -1 0 1 0
-			    0 1 0 0 0 1
-			    0 0 -1 1 -1 0
-			    1 -1 0 0 0 1
+			    -1 -1 -1 0 0 -1
+			    0 0 1 -1 -1 1
+			    0 -1 0 -1 -1 -1
+			    -1 -1 1 0 -1 0
+			    0 0 -1 -1 1 0
+			    -1 1 0 0 0 1
 			   ]
 		}
 		# pointIndex [6 7]
-		curveIndex [0 1 2 3 4 5 6 7]
+		curveIndex [0 1 2 3 4 5 6 7 8 9 10 11]
 	      }
 	    }
 
@@ -136,14 +138,13 @@ Transform {
 		aosMarkedVertexStyle "none"
 		coord DEF COORD2 ExactCoordinate {
 		  ratPoint [
-			    0 0 -1 0 -1 0
-			    0 -1 0 0 0 1
-			    0 0 -1 1 1 0
-			    1 1 0 0 0 1
+			    -1 -3 1 -1 -3 -1
+			    1 -1 0 -1 -3 1
+			    -1 -3 -1 1 -1 0
 			   ]
 		}
 		# pointIndex [6 7]
-		curveIndex [0 1 2 3 4 5 6 7]
+		curveIndex [0 1 2 3 4 5]
 	      }
 	    }
 	    

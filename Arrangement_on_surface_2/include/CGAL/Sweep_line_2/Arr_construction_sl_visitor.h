@@ -314,7 +314,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
       // The vertex is not located below any valid curve, so we use the helper
       // class to mark that this index should belong to the current top face.
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
-        std::cout << "CGAL_CSLV adding a " << m_sc_counter << std::endl;
+      std::cout << "CGAL_CSLV adding a " << m_sc_counter << std::endl;
 #endif
       m_helper.add_subcurve_in_top_face(m_sc_counter);
     }
@@ -354,7 +354,6 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
     // vertex indices list of the curve the event "sees" from below.
     m_sc_counter++;
     (*(event->right_curves_rbegin()))->set_index(m_sc_counter);
-
     if (iter != this->status_line_end()) {
       // The vertex "sees" the subcurve of the given position from below.
       Subcurve *sc_above = *iter;
@@ -364,7 +363,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
       // The vertex is not located below any valid curve, so we use the helper
       // class to mark that this index should belong to the current top face.
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
-        std::cout << "CGAL_CSLV adding b " << m_sc_counter << std::endl;
+      std::cout << "CGAL_CSLV adding b " << m_sc_counter << std::endl;
 #endif
       m_helper.add_subcurve_in_top_face(m_sc_counter);
     }
@@ -456,7 +455,8 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
   }
 #endif
 
-  // Check whether the previous event on the curve is not in the arrangement yet.
+  // Check whether the previous event on the curve is not in the arrangement
+  // yet.
   if (he_left == invalid_he) {
     Vertex_handle v_left = last_event->vertex_handle();
     // Check whether the vertex to be associated with the left end of
@@ -874,11 +874,10 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 template <class Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Vertex_handle
 Arr_construction_sl_visitor<Hlpr>::
-insert_isolated_vertex(const Point_2& pt,
-                        Status_line_iterator /* iter */)
+insert_isolated_vertex(const Point_2& pt, Status_line_iterator /* iter */)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
-    std::cout << "CGAL_CSLV insert_isolated_vertex:\npoint:" << pt << std::endl;
+  std::cout << "CGAL_CSLV insert_isolated_vertex:\npoint:" << pt << std::endl;
 #endif
 
   // Insert the isolated vertex in the interior of the current top face, as
@@ -892,7 +891,7 @@ insert_isolated_vertex(const Point_2& pt,
 template <class Hlpr>
 void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
 {
-#if 0
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
   std::cout << "CGAL_CSLV relocate" << std::endl;
   std::cout << "HeCv: " << he->curve() << std::endl;
   std::cout << "HeDi: " << he->direction() << std::endl;
@@ -907,6 +906,10 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
   const Halfedge_handle       invalid_he;
   Vertex_handle               v;
 
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
+  std::cout << "m_sc_counter: " << m_sc_counter << std::endl;
+  std::cout << "m_sc_he_table: " << m_sc_he_table.size() << std::endl;
+#endif
   do {
     // We are interested only in halfedges directed from right to left.
     if (curr_he->direction() == ARR_LEFT_TO_RIGHT) {
@@ -922,8 +925,6 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
     for (itr = indices_list.begin(); itr != indices_list.end(); ++itr) {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
       std::cout << "itr: " << *itr << std::endl;
-      std::cout << "m_sc_counter: " << m_sc_counter << std::endl;
-      std::cout << "m_sc_he_table: " << m_sc_he_table.size() << std::endl;
 #endif
       CGAL_assertion(*itr != 0);
 
@@ -931,14 +932,14 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
       // m_sc_he_table, we know that this subcurve matches a halfedge that is
       // not yet mapped. This can happen only if this halfedge is he itself.
       // As we know that he lies on the outer CCB of the new face, it is
-      // definately not a hole in the face, therefore we can ignore it.
-      if (*itr > m_sc_counter || *itr >= m_sc_he_table.size())
+      // definitely not a hole in the face, therefore we can ignore it.
+      if ((*itr > m_sc_counter) || (*itr >= m_sc_he_table.size()))
         continue; 
       
       Halfedge_handle he_on_face = m_sc_he_table[*itr];
           
       if (he_on_face == invalid_he) {
-        // If the halfedge handle is invalis, then we have an index for an
+        // If the halfedge handle is invalid, then we have an index for an
         // isolated vertex. Move this vertex to the new face, if necessary.
         v = m_iso_verts_map[*itr];
         
@@ -983,9 +984,9 @@ _map_new_halfedge(unsigned int i, Halfedge_handle he)
             << he->direction() << std::endl;
 #endif
   CGAL_assertion(i != 0);
+  // Resize the index table if needed.
   if (i >= m_sc_he_table.size())
-    // Resize the index table if we reached it capacity.
-    m_sc_he_table.resize(2*i);
+    m_sc_he_table.resize(i+1);
   
   // Map the index to the given halfedge handle.
   m_sc_he_table[i] = he;

@@ -98,10 +98,7 @@ public:
 
   /* A notification issued before the sweep process starts. */
   virtual void before_sweep()
-  {
-    // Get the unbounded face.
-    m_spherical_face = Face_handle(m_top_traits->spherical_face());
-  }
+  { m_spherical_face = Face_handle(m_top_traits->spherical_face()); }
 
   /*! A notification invoked before the sweep-line starts handling the given
    * event.
@@ -222,7 +219,7 @@ public:
                      (event->number_of_right_curves() == 0));
       const X_monotone_curve_2 & xc =
         (*(event->left_curves_begin()))->last_curve();
-      DVertex * v = m_top_traits->discontinuity_vertex(xc, ARR_MAX_END);
+      DVertex* v = m_top_traits->discontinuity_vertex(xc, ARR_MAX_END);
 
       // Check whether a corresponding vertex already exists on the line
       // of discontinuity. If not, create one now.
@@ -247,24 +244,17 @@ public:
 
   /*! Get the indices of the halfedges below the subcurve. */
   Indices_list& halfedge_indices_list()
-  {
-    return (m_subcurves_at_nf);
-  }
-
-
+  { return m_subcurves_at_nf; }
 
   /*! A notification invoked before the given event it deallocated. */
-  void before_deallocate_event(Event* event) { return; }
+  void before_deallocate_event(Event* /* event */) {}
   //@} 
   
   /*! Set the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
   void set_halfedge_indices_map(Halfedge_indices_map& table)
-  {
-    m_he_ind_map_p = &table;
-    return;
-  }
+  { m_he_ind_map_p = &table; }
 
   /*! Determine if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
