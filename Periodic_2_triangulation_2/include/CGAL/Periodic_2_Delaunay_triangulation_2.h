@@ -325,11 +325,6 @@ private:
 
   inline bool locally_Delaunay(const Face_handle &f, int i, const Face_handle &nb);
 
-  // return whether p is inside the circumcircle of fh
-  /// NGHK: Not yet implemented
-  bool test_conflict(const Point  &p, Face_handle fh) const;
-
-
   /// NGHK: Not yet implemented
   template <class OutputItFaces>
   Vertex_handle insert_and_give_new_faces(const Point  &p,
@@ -383,21 +378,23 @@ private:
       Vertex_handle v, std::vector<Face_handle> &f,
       std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
       std::vector<int> &i,int d);
-  /// NGHK: Not yet implemented
+  /// NGHK: implemented
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
   /// NGHK: Not yet implemented
   void remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  /// NGHK: Not yet implemented
+  /// NGHK: implemented
   void remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i );
-  /// NGHK: Not yet implemented
+                      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+                      std::vector<int> &i);
+  /// NGHK: implemented
   void remove_degree5_star   (Vertex_handle &v,
-     Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,
-     Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,
-     int           ,int           ,int           ,int           ,int );
+                              Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,
+                              Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,
+                              Offset&,Offset&,Offset&,Offset&,Offset&,
+                              int           ,int           ,int           ,int           ,int );
   /// NGHK: Not yet implemented
   void remove_degree6(Vertex_handle v , std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i);
@@ -437,15 +434,15 @@ private:
   void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i);
   /// NGHK: Not yet implemented
-  bool incircle(int x, int j, int, int l, std::vector<Face_handle> &f,
-		std::vector<Vertex_handle> &w, std::vector<int> &i){
-    NGHK_NYI;
-    // k is supposed to be j+1 modulo degree, x is supposed to be finite
-    //test if w[x] inside circle w[j]w[k]w[l] (f[j] has vertices w[j]w[k])
+  bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
+		std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i) {
     // THE FOLLOWING LINE IS TO BE REMOVED. JUST THERE FOR STUPID PRECONDITION
-    //if (geom_traits().orientation_2_object()(w[j]->point(),w[k]->point(),w[l]->point())!=POSITIVE) return true;
-    f[j]->set_vertex( i[j], w[l]) ; // change vertex v for another one
-    return (test_conflict( w[x]->point(), f[j]) );
+    //if (geom_traits().orientation_2_object()(w[j]->point(),w[k]->point(),w[l]->point(),
+    //                                         o[j], o[k], o[l]) != POSITIVE)
+    //  return true;
+
+    return this->side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
+                                         o[j], o[k], o[l], o[x], true) ==  ON_POSITIVE_SIDE;
   }
   /// NGHK: Not yet implemented
   void rotate7(int j, std::vector<Vertex_handle> &w,
@@ -594,27 +591,6 @@ private:
   }
 
 };
-
-template < class Gt, class Tds >
-inline bool
-Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-test_conflict(const Point  &p, Face_handle fh) const
-{
-  NGHK_NYI;
-  // return true  if P is inside the circumcircle of fh
-  // if fh is infinite, return true when p is in the positive
-  // halfspace or on the boundary and in the  finite edge of fh
-  Oriented_side os = side_of_oriented_circle(fh,p,true);
-  if (os == ON_POSITIVE_SIDE) return true;
-
-//   if (os == ON_ORIENTED_BOUNDARY && is_infinite(fh)) {
-//     int i = fh->index(this->infinite_vertex());
-//     return collinear_between(fh->vertex(cw(i))->point(), p,
-// 			     fh->vertex(ccw(i))->point() );
-//   }
-
-  return false;
-}
 
 template < class Gt, class Tds >
 bool
@@ -1092,7 +1068,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove(Vertex_handle v)
 {
   // Make sure we have the original vertex
-  v = this->get_original_vertex(v);
+  CGAL_assertion(v == this->get_original_vertex(v));
 
   CGAL_triangulation_precondition(v != Vertex_handle());
   CGAL_triangulation_precondition(dimension() == 2);
@@ -1212,8 +1188,8 @@ remove_degree_triangulate(Vertex_handle v,
   case 5:
     // TODO(NGHK): Implement optimized removal
     // ++deg[5];
-    remove_degree_d(v,f,w,offset_w,i,d);    break;
-//    remove_degree5(v,f,w,offset_w,i);    break;
+    //remove_degree_d(v,f,w,offset_w,i,d);    break;
+    remove_degree5(v,f,w,offset_w,i);    break;
   case 6:
     // TODO(NGHK): Implement optimized removal
     // ++deg[6];
@@ -1277,20 +1253,26 @@ remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
   tds().delete_face(f[1]);
   tds().delete_face(f[2]);
 
-  if (o[0].x() < 0 || o[1].x() < 0 || o[2].x() < 0) {
-    o[0] += Offset(number_of_sheets()[0], 0);
-    o[1] += Offset(number_of_sheets()[0], 0);
-    o[2] += Offset(number_of_sheets()[0], 0);
+  Offset oo[3];
+  oo[    i[0] ] = o[2];
+  oo[ cw(i[0])] = o[1];
+  oo[ccw(i[0])] = o[0];
+
+  if (oo[0].x() < 0 || oo[1].x() < 0 || oo[2].x() < 0) {
+    oo[0] += Offset(number_of_sheets()[0], 0);
+    oo[1] += Offset(number_of_sheets()[0], 0);
+    oo[2] += Offset(number_of_sheets()[0], 0);
   }
-  if (o[0].y() < 0 || o[1].y() < 0 || o[2].y() < 0) {
-    o[0] += Offset(0, number_of_sheets()[1]);
-    o[1] += Offset(0, number_of_sheets()[1]);
-    o[2] += Offset(0, number_of_sheets()[1]);
+  if (oo[0].y() < 0 || oo[1].y() < 0 || oo[2].y() < 0) {
+    oo[0] += Offset(0, number_of_sheets()[1]);
+    oo[1] += Offset(0, number_of_sheets()[1]);
+    oo[2] += Offset(0, number_of_sheets()[1]);
   }
   this->set_offsets(f[0], 
-                    (o[0].x() >= number_of_sheets()[0] ? 2 : 0) + (o[0].y() >= number_of_sheets()[1] ? 1 : 0),
-                    (o[1].x() >= number_of_sheets()[0] ? 2 : 0) + (o[1].y() >= number_of_sheets()[1] ? 1 : 0),
-                    (o[2].x() >= number_of_sheets()[0] ? 2 : 0) + (o[2].y() >= number_of_sheets()[1] ? 1 : 0));
+                    (oo[0].x() >= number_of_sheets()[0] ? 2 : 0) + (oo[0].y() >= number_of_sheets()[1] ? 1 : 0),
+                    (oo[1].x() >= number_of_sheets()[0] ? 2 : 0) + (oo[1].y() >= number_of_sheets()[1] ? 1 : 0),
+                    (oo[2].x() >= number_of_sheets()[0] ? 2 : 0) + (oo[2].y() >= number_of_sheets()[1] ? 1 : 0));
+
   return;
 }
 
@@ -1338,23 +1320,25 @@ template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
-	       std::vector<Vertex_handle> &w, std::vector<int> &i )
+               std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+               std::vector<int> &i)
 {
-    NGHK_NYI;
   // removing a degree 5 vertex
-  // only w[0] can be infinite
+  this->remove_too_long_edges_in_star(v);
 
-  if (incircle(3,0,1,2,f,w,i)) {
-    if (incircle(4,0,1,3,f,w,i)) {
-      if (incircle(4,1,2,3,f,w,i)) {
+  if (incircle(3,0,1,2,f,w,o,i)) {
+    if (incircle(4,0,1,3,f,w,o,i)) {
+      if (incircle(4,1,2,3,f,w,o,i)) {
 	// star from 4
 	remove_degree5_star(v,f[4],f[0],f[1],f[2],f[3],
 			      w[4],w[0],w[1],w[2],w[3],
+			      o[4],o[0],o[1],o[2],o[3],
 			      i[4],i[0],i[1],i[2],i[3]);
       }else{
 	//star from 1
 	remove_degree5_star(v,f[1],f[2],f[3],f[4],f[0],
 			      w[1],w[2],w[3],w[4],w[0],
+			      o[1],o[2],o[3],o[4],o[0],
 			      i[1],i[2],i[3],i[4],i[0]);
 
 
@@ -1363,54 +1347,93 @@ remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
       // star from 3
       remove_degree5_star(v,f[3],f[4],f[0],f[1],f[2],
 			    w[3],w[4],w[0],w[1],w[2],
+			    o[3],o[4],o[0],o[1],o[2],
 			    i[3],i[4],i[0],i[1],i[2]);
     }
   } else {
-    if (incircle(4,2,3,0,f,w,i)){
-      if (incircle(4,0,1,2,f,w,i)){
+    if (incircle(4,2,3,0,f,w,o,i)){
+      if (incircle(4,0,1,2,f,w,o,i)){
 	// star from 4
 	remove_degree5_star(v,f[4],f[0],f[1],f[2],f[3],
 			      w[4],w[0],w[1],w[2],w[3],
+			      o[4],o[0],o[1],o[2],o[3],
 			      i[4],i[0],i[1],i[2],i[3]);
       }else{
 	//star from 2
 	remove_degree5_star(v,f[2],f[3],f[4],f[0],f[1],
 			      w[2],w[3],w[4],w[0],w[1],
+			      o[2],o[3],o[4],o[0],o[1],
 			      i[2],i[3],i[4],i[0],i[1]);
       }
     }else{
       // star from 0
       remove_degree5_star(v,f[0],f[1],f[2],f[3],f[4],
 			    w[0],w[1],w[2],w[3],w[4],
+			    o[0],o[1],o[2],o[3],o[4],
 			    i[0],i[1],i[2],i[3],i[4]);
     }
   }
-
   return;
 }
 
 template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
-(
- Vertex_handle &,
- Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
- Face_handle &  f3, Face_handle &  f4,
- Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
- Vertex_handle &, Vertex_handle &,
+(Vertex_handle &,
+ Face_handle &f0, Face_handle &f1, Face_handle &f2, Face_handle &f3, Face_handle &f4,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &, Vertex_handle &, Vertex_handle &,
+ Offset &o0, Offset &o1, Offset &o2, Offset &o3, Offset &o4,
  int i0, int i1, int i2, int i3, int i4 )
-{ // removing a degree 5 vertex, staring from v0
-    NGHK_NYI;
+{ // removing a degree 5 vertex, starring from v0
   Face_handle nn;
   f1->set_vertex( i1, v0) ;  // f1 = v1v2v0
   f2->set_vertex( i2, v0) ;  // f2 = v2v3v0
   f3->set_vertex( i3, v0) ;  // f3 = v3v4v0
+
   nn = f0->neighbor( i0 );
   tds().set_adjacency(f1, cw(i1) , nn , nn->index(f0) );
   nn = f4->neighbor( i4 );
   tds().set_adjacency(f3, ccw(i3) , nn , nn->index(f4) );
   tds().delete_face(f0);
   tds().delete_face(f4);
+
+  if (o0.x() < 0 || o1.x() < 0 || o2.x() < 0 || o3.x() < 0 || o4.x() < 0) {
+    o0 += Offset(number_of_sheets()[0], 0);
+    o1 += Offset(number_of_sheets()[0], 0);
+    o2 += Offset(number_of_sheets()[0], 0);
+    o3 += Offset(number_of_sheets()[0], 0);
+    o4 += Offset(number_of_sheets()[0], 0);
+  }
+  if (o0.y() < 0 || o1.y() < 0 || o2.y() < 0 || o3.y() < 0 || o4.y() < 0) {
+    o0 += Offset(0, number_of_sheets()[1]);
+    o1 += Offset(0, number_of_sheets()[1]);
+    o2 += Offset(0, number_of_sheets()[1]);
+    o3 += Offset(0, number_of_sheets()[1]);
+    o4 += Offset(0, number_of_sheets()[1]);
+  }
+  int oo0 = (o0.x() >= number_of_sheets()[0] ? 2 : 0) + (o0.y() >= number_of_sheets()[1] ? 1 : 0);
+  int oo1 = (o1.x() >= number_of_sheets()[0] ? 2 : 0) + (o1.y() >= number_of_sheets()[1] ? 1 : 0);
+  int oo2 = (o2.x() >= number_of_sheets()[0] ? 2 : 0) + (o2.y() >= number_of_sheets()[1] ? 1 : 0);
+  int oo3 = (o3.x() >= number_of_sheets()[0] ? 2 : 0) + (o3.y() >= number_of_sheets()[1] ? 1 : 0);
+  int oo4 = (o4.x() >= number_of_sheets()[0] ? 2 : 0) + (o4.y() >= number_of_sheets()[1] ? 1 : 0);
+
+  int oo[3];
+  oo[i1]      = oo0;
+  oo[ccw(i1)] = oo1;
+  oo[ cw(i1)] = oo2;
+  this->set_offsets(f1, oo[0], oo[1], oo[2]);
+  oo[i2]      = oo0;
+  oo[ccw(i2)] = oo2;
+  oo[ cw(i2)] = oo3;
+  this->set_offsets(f2, oo[0], oo[1], oo[2]);
+  oo[i3]      = oo0;
+  oo[ccw(i3)] = oo3;
+  oo[ cw(i3)] = oo4;
+  this->set_offsets(f3, oo[0], oo[1], oo[2]);
+
+  //this->insert_too_long_edges_in_star(f1->vertex(i1));
+  this->insert_too_long_edge(f1, ccw(i1));
+  this->insert_too_long_edge(f2, ccw(i2));
 }
 
 template < class Gt, class Tds >

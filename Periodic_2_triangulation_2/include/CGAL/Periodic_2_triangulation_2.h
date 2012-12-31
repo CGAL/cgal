@@ -678,17 +678,15 @@ public:
   }
 
   /// begin iterator over the non-virtual vertices
-  /// \n NGHK: Not yet implemented
-  void unique_vertices_begin() const {
-    // Unique_vertex_iterator unique_vertices_begin() const {
-    //   return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this), vertices_begin());
+  Unique_vertex_iterator unique_vertices_begin() const {
+    return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this),
+	                         vertices_begin());
   }
   /// past-the-end iterator over the non-virtual vertices
-  /// \n NGHK: Not yet implemented
-  void unique_vertices_end() const {
-    //Unique_vertex_iterator unique_vertices_end() const {
-    //  return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this));
+  Unique_vertex_iterator unique_vertices_end() const {
+    return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this));
   }
+
   // \}
   /// \name Geometric iterators
   //\{
@@ -1749,7 +1747,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) cons
   // check number of euler characteristic. This cannot be done by the Tds
   // which does not know the genus
   result &= (number_of_stored_vertices() - number_of_stored_edges()
-      + number_of_stored_faces() == 0);
+             + number_of_stored_faces() == 0);
   CGAL_triangulation_assertion(result);
 
   result &= is_valid_too_long_edges(verbose, level);
@@ -1824,10 +1822,8 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose,
     for (Edge_iterator eit = edges_begin(); eit != edges_end(); ++eit) {
       Vertex_handle vh1 = eit->first->vertex(ccw(eit->second));
       Vertex_handle vh2 = eit->first->vertex(cw(eit->second));
-      Point p1 = construct_point(vh1->point(), get_offset(eit->first, ccw(
-                                                                          eit->second)));
-      Point p2 = construct_point(vh2->point(), get_offset(eit->first, cw(
-                                                                         eit->second)));
+      Point p1 = construct_point(vh1->point(), get_offset(eit->first, ccw(eit->second)));
+      Point p2 = construct_point(vh2->point(), get_offset(eit->first, cw(eit->second)));
       result &= (!edge_is_too_long(p1, p2));
     }
     CGAL_triangulation_assertion(result);
@@ -1847,6 +1843,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose,
       
       bool too_long = edge_is_too_long(p1, p2);
       result &= (too_long == edge_is_too_long(p2, p1));
+      CGAL_triangulation_assertion(result);
 
       Too_long_edges_map_it it = _too_long_edges.find(vh1);
       if (it == _too_long_edges.end()) {
@@ -2724,9 +2721,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(
           v3=vv;
           cut_after=hit;
         } else {
-          if (this->side_of_oriented_circle(
-              p0,p1,v3->point(),p,
-              o0,o1,vertex_offsets[v3],o, true) ==  ON_POSITIVE_SIDE) {
+          if (this->side_of_oriented_circle(p0,p1,v3->point(),p,
+                                            o0,o1,vertex_offsets[v3],o, true) ==  ON_POSITIVE_SIDE) {
             v2=vv;
             v3=vv;
             cut_after=hit;
@@ -2776,19 +2772,19 @@ void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(
       in = (hole.back()).second;
       if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
         newf = create_face(fn,in,ff,ii);
-      Offset oo0 = o0;
-      Offset oo1 = o1;
-      Offset oo2 = vertex_offsets[v2];
-      if (oo0.x() < 0 || oo1.x() < 0 || oo2.x() < 0) {
-        oo0 += Offset(_cover[0], 0); oo1 += Offset(_cover[0], 0); oo2 += Offset(_cover[0], 0);
-      }
-      if (oo0.y() < 0 || oo1.y() < 0 || oo2.y() < 0) {
-        oo0 += Offset(0, _cover[1]); oo1 += Offset(0, _cover[1]); oo2 += Offset(0, _cover[1]);
-      }
-      set_offsets(newf,
-                  (oo2.x() >= _cover[0] ? 2 : 0) + (oo2.y() >= _cover[1] ? 1 : 0), 
-                  (oo0.x() >= _cover[0] ? 2 : 0) + (oo0.y() >= _cover[1] ? 1 : 0),
-                  (oo1.x() >= _cover[0] ? 2 : 0) + (oo1.y() >= _cover[1] ? 1 : 0));
+        Offset oo0 = o0;
+        Offset oo1 = o1;
+        Offset oo2 = vertex_offsets[v2];
+        if (oo0.x() < 0 || oo1.x() < 0 || oo2.x() < 0) {
+          oo0 += Offset(_cover[0], 0); oo1 += Offset(_cover[0], 0); oo2 += Offset(_cover[0], 0);
+        }
+        if (oo0.y() < 0 || oo1.y() < 0 || oo2.y() < 0) {
+          oo0 += Offset(0, _cover[1]); oo1 += Offset(0, _cover[1]); oo2 += Offset(0, _cover[1]);
+        }
+        set_offsets(newf,
+                    (oo2.x() >= _cover[0] ? 2 : 0) + (oo2.y() >= _cover[1] ? 1 : 0), 
+                    (oo0.x() >= _cover[0] ? 2 : 0) + (oo0.y() >= _cover[1] ? 1 : 0),
+                    (oo1.x() >= _cover[0] ? 2 : 0) + (oo1.y() >= _cover[1] ? 1 : 0));
         insert_too_long_edge(newf, 1);
         insert_too_long_edge(newf, 2);
         hole.pop_back();
@@ -2798,19 +2794,19 @@ void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(
         // split the hole in two holes
         CGAL_assertion(v2 != Vertex_handle());
         newf = create_face(ff,ii,v2);
-      Offset oo0 = o0;
-      Offset oo1 = o1;
-      Offset oo2 = vertex_offsets[v2];
-      if (oo0.x() < 0 || oo1.x() < 0 || oo2.x() < 0) {
-        oo0 += Offset(_cover[0], 0); oo1 += Offset(_cover[0], 0); oo2 += Offset(_cover[0], 0);
-      }
-      if (oo0.y() < 0 || oo1.y() < 0 || oo2.y() < 0) {
-        oo0 += Offset(0, _cover[1]); oo1 += Offset(0, _cover[1]); oo2 += Offset(0, _cover[1]);
-      }
-      set_offsets(newf, 
-                  (oo0.x() >= _cover[0] ? 2 : 0) + (oo0.y() >= _cover[1] ? 1 : 0),
-                  (oo1.x() >= _cover[0] ? 2 : 0) + (oo1.y() >= _cover[1] ? 1 : 0),
-                  (oo2.x() >= _cover[0] ? 2 : 0) + (oo2.y() >= _cover[1] ? 1 : 0));
+        Offset oo0 = o0;
+        Offset oo1 = o1;
+        Offset oo2 = vertex_offsets[v2];
+        if (oo0.x() < 0 || oo1.x() < 0 || oo2.x() < 0) {
+          oo0 += Offset(_cover[0], 0); oo1 += Offset(_cover[0], 0); oo2 += Offset(_cover[0], 0);
+        }
+        if (oo0.y() < 0 || oo1.y() < 0 || oo2.y() < 0) {
+          oo0 += Offset(0, _cover[1]); oo1 += Offset(0, _cover[1]); oo2 += Offset(0, _cover[1]);
+        }
+        set_offsets(newf, 
+                    (oo0.x() >= _cover[0] ? 2 : 0) + (oo0.y() >= _cover[1] ? 1 : 0),
+                    (oo1.x() >= _cover[0] ? 2 : 0) + (oo1.y() >= _cover[1] ? 1 : 0),
+                    (oo2.x() >= _cover[0] ? 2 : 0) + (oo2.y() >= _cover[1] ? 1 : 0));
 
 
         // set_offsets(newf, o0, o1, o2);
@@ -4142,15 +4138,15 @@ void Periodic_2_triangulation_2<Gt, Tds>::insert_too_long_edge(Face_handle f,
   Point p2 = construct_point(vh2->point(), get_offset(f, cw(i)));
 
   if (&*vh1 < &*vh2) {
-    if (edge_is_too_long(p1, p2) && (find(_too_long_edges[vh1].begin(),
-        _too_long_edges[vh1].end(), vh2) == _too_long_edges[vh1].end())) {
+    if (edge_is_too_long(p1, p2) &&
+        (find(_too_long_edges[vh1].begin(), _too_long_edges[vh1].end(), vh2) == _too_long_edges[vh1].end())) {
       _too_long_edges[vh1].push_back(vh2);
       _too_long_edge_counter++;
     }
   } else {
     CGAL_triangulation_precondition(&*vh2 < &*vh1);
-    if (edge_is_too_long(p1, p2) && (find(_too_long_edges[vh2].begin(),
-        _too_long_edges[vh2].end(), vh1) == _too_long_edges[vh2].end())) {
+    if (edge_is_too_long(p2, p1) &&
+        (find(_too_long_edges[vh2].begin(), _too_long_edges[vh2].end(), vh1) == _too_long_edges[vh2].end())) {
       _too_long_edges[vh2].push_back(vh1);
       _too_long_edge_counter++;
     }
