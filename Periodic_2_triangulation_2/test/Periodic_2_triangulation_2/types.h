@@ -43,5 +43,5 @@ typedef Periodic_2_Delaunay_triangulation_2<Gt>     Delaunay_triangulation;
 
 typedef CGAL::Creator_uniform_2<double,Point>             Creator;
 typedef CGAL::Random_points_in_square_2<Point, Creator>   Random_points_in_square;
-
+typedef CGAL::Random_points_on_circle_2<Point, Creator>   Random_points_on_circle;
 #endif // P2T2_UNIT_TEST_TYPES_H
