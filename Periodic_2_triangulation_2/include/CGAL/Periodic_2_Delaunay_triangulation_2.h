@@ -1088,10 +1088,12 @@ remove(Vertex_handle v)
 
   if (!is_1_cover()) {
     CGAL_assertion(this->virtual_vertices_reverse().find(v) != this->virtual_vertices_reverse().end());
+
     const std::vector<Vertex_handle> &virtual_copies = this->virtual_vertices_reverse().find(v)->second;
     for (size_t i=0; i<8; ++i) {
       remove_single_vertex(virtual_copies[i], Offset((i+1)/3, (i+1)%3));
     }
+
     this->remove_from_virtual_copies(v);
   }
 }
@@ -1138,7 +1140,7 @@ remove_degree_init(Vertex_handle v, const Offset &v_o,
     i[d] = f[d]->index(v);
     w[d] = f[d]->vertex( ccw(i[d]) );
     offset_w[d] = get_offset(f[d], ccw(i[d])) - get_offset(f[d], i[d]) + v_o;
-    w[d]->set_face( f[d]->neighbor(i[d]));//do no longer bother about set_face
+    w[d]->set_face( f[d]->neighbor(i[d])); // do no longer bother about set_face
 
     bbox = bbox + this->construct_point(w[d]->point(), offset_w[d]).bbox();
 

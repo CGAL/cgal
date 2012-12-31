@@ -2049,13 +2049,14 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
 template<class Gt, class Tds>
 void
 Periodic_2_triangulation_2<Gt, Tds>::remove_from_virtual_copies(Vertex_handle v) {
-  CGAL_assertion(_virtual_vertices_reverse.find(v) != _virtual_vertices_reverse.end());
+  typename Virtual_vertex_reverse_map::iterator rev_it = _virtual_vertices_reverse.find(v);
+  CGAL_triangulation_assertion(rev_it != _virtual_vertices_reverse.end());
 
-  const std::vector<Vertex_handle> &virtual_copies = _virtual_vertices_reverse.find(v)->second;
+  const std::vector<Vertex_handle> &virtual_copies = rev_it->second;
   for (size_t i=0; i<virtual_copies.size(); ++i) {
     _virtual_vertices.erase(virtual_copies[i]);
   }
-  _virtual_vertices_reverse.erase(v);
+  _virtual_vertices_reverse.erase(rev_it);
 }
 
 template<class Gt, class Tds>
@@ -4156,6 +4157,9 @@ void Periodic_2_triangulation_2<Gt, Tds>::insert_too_long_edge(Face_handle f,
 template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::remove_too_long_edges_in_star(
     Vertex_handle vh) {
+  if (is_1_cover())
+    return;
+
   // Insert the too long edges in the star of vh
   Face_handle f = vh->face();
   Face_handle f_start = f;
