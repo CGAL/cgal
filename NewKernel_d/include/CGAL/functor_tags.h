@@ -127,7 +127,8 @@ namespace CGAL {
 #undef DECL_OBJ_
 #undef DECL_OBJ
 
-	CGAL_KD_DEFAULT_TYPE(RT_tag,(typename Get_type<K, FT_tag>::type),(FT_tag),());
+	CGAL_KD_DEFAULT_TYPE(RT_tag,(typename Get_type<K, FT_tag>::type),(),());
+	CGAL_KD_DEFAULT_TYPE(FT_tag,(CGAL::Quotient<typename Get_type<K, RT_tag>::type>),(),());
 
 #define SMURF2(A,B) CGAL_KD_DEFAULT_TYPE(A##_tag,(typename Same_uncertainty_nt<B, typename Get_type<K,RT_tag>::type>::type),(RT_tag),())
 #define SMURF1(A) SMURF2(A,CGAL::A)
