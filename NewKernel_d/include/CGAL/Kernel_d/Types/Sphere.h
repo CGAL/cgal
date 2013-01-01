@@ -3,7 +3,7 @@
 #include <CGAL/store_kernel.h>
 namespace CGAL {
 template <class R_> class Sphere {
-	typedef typename R_::FT FT_;
+	typedef typename Get_type<R_, FT_tag>::type FT_;
 	typedef typename Get_type<R_, Point_tag>::type	Point_;
 	Point_ c_;
 	FT_ r2_;
@@ -20,7 +20,7 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_sphere)
   typedef typename Get_type<R_, Sphere_tag>::type	result_type;
   typedef typename Get_type<R_, Point_tag>::type	Point;
-  typedef typename R_::FT FT;
+  typedef typename Get_type<R_, FT_tag>::type FT;
   typedef typename R_::LA LA;
   result_type operator()(Point const&a, FT const&b)const{
     return result_type(a,b);
@@ -41,7 +41,7 @@ template <class R_> struct Center_of_sphere {
 template <class R_> struct Squared_radius {
   CGAL_FUNCTOR_INIT_IGNORE(Squared_radius)
   typedef typename Get_type<R_, Sphere_tag>::type	Sphere;
-  typedef typename R_::FT result_type;
+  typedef typename Get_type<R_, FT_tag>::type result_type;
   // TODO: Is_exact?
   result_type operator()(Sphere const&s)const{
     return s.squared_radius();

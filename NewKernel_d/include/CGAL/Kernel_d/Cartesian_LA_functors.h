@@ -18,7 +18,7 @@ template<class R_,int dim_> struct Construct_LA_vector_ {
 };
 #define CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,N> { \
 	typedef typename R::Constructor Constructor; \
-	typedef typename R::RT RT; \
+	typedef typename Get_type<R, RT_tag>::type RT; \
 	typedef typename R::Vector_ result_type; \
 	result_type operator() \
 	(BOOST_PP_ENUM_PARAMS(N,RT const& t)) const { \
@@ -44,8 +44,8 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	CGAL_FUNCTOR_INIT_STORE(Construct_LA_vector)
 	typedef R_ R;
 	typedef typename R::Constructor Constructor;
-	typedef typename R::RT RT;
-	typedef typename R::FT FT;
+	typedef typename Get_type<R, RT_tag>::type RT;
+	typedef typename Get_type<R, FT_tag>::type FT;
 	typedef typename R::Vector_ result_type;
 	typedef typename R_::Default_ambient_dimension Dimension;
 	static const int static_dim=Dimension::value;
@@ -147,7 +147,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 template<class R_> struct Compute_cartesian_coordinate {
 	CGAL_FUNCTOR_INIT_IGNORE(Compute_cartesian_coordinate)
 	typedef R_ R;
-	typedef typename R_::RT RT;
+	typedef typename Get_type<R, RT_tag>::type RT;
 	typedef typename R::Vector_ first_argument_type;
 	typedef int second_argument_type;
 	typedef Tag_true Is_exact;
@@ -232,7 +232,7 @@ template<class R_> struct Scalar_product {
 	CGAL_FUNCTOR_INIT_IGNORE(Scalar_product)
 	typedef R_ R;
 	typedef typename R::LA_vector LA;
-	typedef typename R::RT result_type;
+	typedef typename Get_type<R, RT_tag>::type result_type;
 	typedef typename Get_type<R, Vector_tag>::type first_argument_type;
 	typedef typename Get_type<R, Vector_tag>::type second_argument_type;
 
@@ -245,7 +245,7 @@ template<class R_> struct Squared_distance_to_origin_stored {
 	CGAL_FUNCTOR_INIT_IGNORE(Squared_distance_to_origin_stored)
 	typedef R_ R;
 	typedef typename R::LA_vector LA;
-	typedef typename R::RT result_type;
+	typedef typename Get_type<R, RT_tag>::type result_type;
 	typedef typename Get_type<R, Point_tag>::type argument_type;
 
 	result_type operator()(argument_type const& a)const{
@@ -257,7 +257,7 @@ template<class R_> struct Squared_distance_to_origin_via_dotprod {
 	CGAL_FUNCTOR_INIT_IGNORE(Squared_distance_to_origin_via_dotprod)
 	typedef R_ R;
 	typedef typename R::LA_vector LA;
-	typedef typename R::RT result_type;
+	typedef typename Get_type<R, RT_tag>::type result_type;
 	typedef typename Get_type<R, Point_tag>::type argument_type;
 
 	result_type operator()(argument_type const& a)const{
@@ -270,7 +270,7 @@ template<class R_> struct Orientation_of_vectors {
 	typedef R_ R;
 	typedef typename R::Vector_cartesian_const_iterator first_argument_type;
 	typedef typename R::Vector_cartesian_const_iterator second_argument_type;
-	typedef typename R::Orientation result_type;
+	typedef typename Get_type<R, Orientation_tag>::type result_type;
 	typedef typename R::LA_vector LA;
 
 	template<class Iter>
@@ -284,7 +284,7 @@ template<class R_> struct Orientation_of_points {
 	typedef R_ R;
 	typedef typename R::Point_cartesian_const_iterator first_argument_type;
 	typedef typename R::Point_cartesian_const_iterator second_argument_type;
-	typedef typename R::Orientation result_type;
+	typedef typename Get_type<R, Orientation_tag>::type result_type;
 	typedef typename R::LA_vector LA;
 
 	template<class Iter>

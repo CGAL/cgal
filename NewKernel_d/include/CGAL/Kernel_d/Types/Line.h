@@ -5,7 +5,7 @@
 #include <CGAL/Kernel/mpl.h>
 namespace CGAL {
 template <class R_> class Line {
-	typedef typename R_::FT FT_;
+	typedef typename Get_type<R_, FT_tag>::type FT_;
 	typedef typename Get_type<R_, Point_tag>::type	Point_;
 	typedef std::pair<Point_,Point_> Data_;
 	Data_ data;

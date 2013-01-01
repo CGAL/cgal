@@ -29,29 +29,12 @@ template < typename FT_, typename Dim_,
   /* Default LA to Vec or to LA_eigen? */
 struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 {
-    typedef FT_                                         FT;
-    typedef FT_                                         RT;
     typedef Cartesian_LA_base_d<FT_,Dim_>               Self;
     typedef Cartesian_tag                               Rep_tag;
     typedef Cartesian_tag                               Kernel_tag;
     typedef Dim_              Default_ambient_dimension;
     typedef Dim_              Max_ambient_dimension;
     typedef LA_               LA;
-
-    typedef typename Same_uncertainty_nt<bool, FT>::type
-                                                        Boolean;
-    typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
-                                                        Sign;
-    typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
-                                                        Comparison_result;
-    typedef typename Same_uncertainty_nt<CGAL::Orientation, FT>::type
-                                                        Orientation;
-    typedef typename Same_uncertainty_nt<CGAL::Oriented_side, FT>::type
-                                                        Oriented_side;
-    typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type
-                                                        Bounded_side;
-    typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
-                                                        Angle;
 
     typedef Vec_     LA_vector;
     typedef typename LA_vector::Vector Point;
@@ -64,8 +47,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class, class=void> struct Type {};
     template<class D> struct Type< Point_tag, D> { typedef Vector_ type; };
     template<class D> struct Type<Vector_tag, D> { typedef Vector_ type; };
-    template<class D> struct Type<    RT_tag, D> { typedef      RT type; };
-    template<class D> struct Type<    FT_tag, D> { typedef      FT type; };
+    template<class D> struct Type<    RT_tag, D> { typedef     FT_ type; };
+    template<class D> struct Type<    FT_tag, D> { typedef     FT_ type; };
 
     typedef typeset<Point_tag>
       ::add<Vector_tag>::type

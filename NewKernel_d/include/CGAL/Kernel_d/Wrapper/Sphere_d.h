@@ -14,9 +14,9 @@
 namespace CGAL {
 
 template <class R_>
-class Sphere_d : public R_::Kernel_base::Sphere
+class Sphere_d : public Get_type<typename R_::Kernel_base, Sphere_tag>::type
 {
-  typedef typename R_::FT			FT_;
+  typedef typename Get_type<R_, FT_tag>::type		FT_;
   typedef typename R_::Kernel_base		Kbase;
   typedef typename Get_type<R_, Point_tag>::type	Point_;
   typedef typename Get_functor<Kbase, Construct_ttag<Sphere_tag> >::type	CSBase;
@@ -24,7 +24,7 @@ class Sphere_d : public R_::Kernel_base::Sphere
   typedef typename Get_functor<Kbase, Squared_radius_tag>::type			SRBase;
 
   typedef Sphere_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Sphere>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Sphere_tag>::type>::value));
 
 public:
 

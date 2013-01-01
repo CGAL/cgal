@@ -109,8 +109,8 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
 	typedef KernelD_converter Self;
 	typedef Self Final_;
 	typedef KernelD_converter_<Self,K1,K2,List_> Base;
-	typedef typename K1::FT FT1;
-	typedef typename K2::FT FT2;
+	typedef typename Get_type<K1, FT_tag>::type FT1;
+	typedef typename Get_type<K2, FT_tag>::type FT2;
 	typedef NT_converter<FT1, FT2> NTc;
 	NTc c; // TODO: compressed storage as this is likely empty and the converter gets passed around (and stored in iterators)
 

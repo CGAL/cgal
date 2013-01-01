@@ -17,26 +17,9 @@ struct Cartesian_change_FT_base : public
 
     typedef Cartesian_change_FT_base Self;
     typedef Base_ Kernel_base;
-    typedef FT_ RT;
-    typedef FT_ FT;
     typedef LA_ LA;
 
-    typedef typename Same_uncertainty_nt<bool, FT>::type
-	    Boolean;
-    typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
-	    Sign;
-    typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
-	    Comparison_result;
-    typedef typename Same_uncertainty_nt<CGAL::Orientation, FT>::type
-	    Orientation;
-    typedef typename Same_uncertainty_nt<CGAL::Oriented_side, FT>::type
-	    Oriented_side;
-    typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type
-	    Bounded_side;
-    typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
-	    Angle;
-
-    typedef NT_converter<typename Kernel_base::FT,FT> FT_converter;
+    typedef NT_converter<typename Get_type<Kernel_base, FT_tag>::type,FT_> FT_converter;
     typedef transforming_iterator<FT_converter,typename Kernel_base::Point_cartesian_const_iterator> Point_cartesian_const_iterator;
     typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
     //FIXME: use Iterator_list!
@@ -73,14 +56,14 @@ struct Cartesian_change_FT_base : public
 	    Compute_cartesian_coordinate(){}
 	    Compute_cartesian_coordinate(Self const&r):f(r){}
 	    Functor_base f;
-	    typedef FT result_type;
+	    typedef FT_ result_type;
 	    template<class Obj_>
 	    result_type operator()(Obj_ const& v,int i)const{
 		    return FT_converter()(f(v,i));
 	    }
     };
 
-    template<class T,class U=void,class=typename map_functor_type<T>::type> struct Functor :
+    template<class T,class U=void,class=typename Get_functor_category<Cartesian_change_FT_base,T>::type> struct Functor :
 	    Get_functor<Kernel_base,T,U> { };
     template<class T,class U> struct Functor<T,U,Compute_tag>
 	{ typedef Null_functor type; };

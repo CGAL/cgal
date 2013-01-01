@@ -5,7 +5,7 @@
 #include <CGAL/Kernel/mpl.h>
 namespace CGAL {
 template <class R_> class Ray {
-	typedef typename R_::FT FT_;
+	typedef typename Get_type<R_, FT_tag>::type FT_;
 	typedef typename Get_type<R_, Point_tag>::type	Point_;
 	typedef typename Get_type<R_, Vector_tag>::type	Vector_;
 	typedef std::pair<Point_,Vector_> Data_;

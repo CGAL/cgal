@@ -4,7 +4,7 @@
 #include <CGAL/functor_tags.h>
 namespace CGAL {
 template <class R_> class Segment {
-	typedef typename R_::FT FT_;
+	typedef typename Get_type<R_, FT_tag>::type FT_;
 	typedef typename Get_type<R_, Point_tag>::type	Point_;
 	//typedef typename R_::Vector Vector_;
 	//typedef typename Get_functor<R_, Construct_ttag<Vector_tag> >::type Cv_;

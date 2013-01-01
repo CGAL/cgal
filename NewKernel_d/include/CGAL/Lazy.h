@@ -1569,7 +1569,7 @@ struct Lazy_functor_2_2
   typedef void result_type;
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
+  typedef typename Get_type<EK, FT_tag>::type EFT;
   typedef typename LK::E2A E2A;
 
   AC ac;
@@ -1611,7 +1611,7 @@ struct Lazy_intersect_with_iterators
   static const bool Protection = true;
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
+  typedef typename Get_type<EK, FT_tag>::type EFT;
   typedef typename LK::E2A E2A;
   typedef void result_type;
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
@@ -1690,7 +1690,7 @@ struct Lazy_construction_object
 
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
+  typedef typename Get_type<EK, FT_tag>::type EFT;
   typedef typename LK::E2A E2A;
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
@@ -1783,7 +1783,7 @@ struct Lazy_construction
 
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename EK::FT EFT;
+  typedef typename Get_type<EK, FT_tag>::type EFT;
   typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
   typedef typename decay<typename AC::result_type>::type AT;
   typedef typename decay<typename EC::result_type>::type ET;

@@ -54,17 +54,16 @@ struct Lazy_cartesian_types
       typename EK_::Iterator_list
 	>::type Iterator_list;
 
-    template <class T,class=void> struct Type {
+    template <class T,class=typename Get_type_category<Kernel_,T>::type> struct Type {};
+    template <class T> struct Type<T,Object_tag> {
 	    typedef Lazy<
 		    typename Get_type<AK_,T>::type,
 		    typename Get_type<EK_,T>::type,
-		    typename EK_::FT, E2A_> type;
+		    typename Get_type<EK_, FT_tag>::type,
+		    E2A_> type;
     };
-    template <class D> struct Type<FT_tag,D> {
-      typedef CGAL::Lazy_exact_nt<typename EK_::FT>  type;
-    };
-    template <class D> struct Type<RT_tag,D> {
-      typedef CGAL::Lazy_exact_nt<typename EK_::RT>  type;
+    template <class T> struct Type<T,Number_tag> {
+      typedef CGAL::Lazy_exact_nt<typename Get_type<EK_,T>::type>  type;
     };
 
     template <class T> struct Iterator {
@@ -108,8 +107,6 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     typedef E2A_  E2A;
     typedef Approx_converter<Kernel, Approximate_kernel>   C2A;
     typedef Exact_converter<Kernel, Exact_kernel>    C2E;
-    typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;
-    typedef CGAL::Lazy_exact_nt<typename Exact_kernel::RT>  RT;
 
     typedef typename Exact_kernel::Rep_tag Rep_tag;
     typedef typename Exact_kernel::Kernel_tag Kernel_tag;
@@ -118,22 +115,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     typedef typename Exact_kernel::Flat_orientation Flat_orientation;
     // Check that Approximate_kernel agrees with all that...
 
-    typedef typename Same_uncertainty_nt<bool, FT>::type
-	    Boolean;
-    typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
-	    Sign;
-    typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
-	    Comparison_result;
-    typedef typename Same_uncertainty_nt<CGAL::Orientation, FT>::type
-	    Orientation;
-    typedef typename Same_uncertainty_nt<CGAL::Oriented_side, FT>::type
-	    Oriented_side;
-    typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type
-	    Bounded_side;
-    typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
-	    Angle;
-
-    template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor {
+    template<class T,class D=void,class=typename Get_functor_category<Lazy_cartesian,T,D>::type> struct Functor {
 	    typedef Null_functor type;
     };
 	    //FIXME: what do we do with D here?

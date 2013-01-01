@@ -18,8 +18,8 @@ namespace CGAL {
 template <class R_>
 class Vector_d : public Get_type<typename R_::Kernel_base, Vector_tag>::type
 {
-  typedef typename R_::RT                    RT_;
-  typedef typename R_::FT                    FT_;
+  typedef typename Get_type<R_, RT_tag>::type		RT_;
+  typedef typename Get_type<R_, FT_tag>::type		FT_;
   typedef typename R_::Kernel_base           Kbase;
   typedef typename Get_type<R_, Point_tag>::type	Point_;
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_tag> >::type CVBase;

@@ -7,7 +7,7 @@
 #include <CGAL/transforming_pair_iterator.h>
 namespace CGAL {
 template <class R_> class Iso_box {
-	typedef typename R_::FT FT_;
+	typedef typename Get_type<R_, FT_tag>::type FT_;
 	typedef typename Get_type<R_, Point_tag>::type	Point_;
 	typedef std::pair<Point_,Point_> Data_;
 	Data_ data;
@@ -25,7 +25,7 @@ namespace CartesianDKernelFunctors {
   template <class R_> struct Construct_iso_box : Store_kernel<R_> {
     CGAL_FUNCTOR_INIT_STORE(Construct_iso_box)
     typedef typename Get_type<R_, Iso_box_tag>::type	result_type;
-    typedef typename R_::RT RT;
+    typedef typename Get_type<R_, RT_tag>::type RT;
     typedef typename Get_type<R_, Point_tag>::type	Point;
     typedef typename Get_type<R_, Vector_tag>::type	Vector;
     typedef typename Get_functor<R_, Construct_ttag<Point_tag> >::type Cp_;

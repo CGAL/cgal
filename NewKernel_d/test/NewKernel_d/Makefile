@@ -9,7 +9,7 @@ normal:
 	./a.out
 
 cxx0x:
-	g++ -std=c++0x -O2 test.cpp -lCGAL -lboost_thread -frounding-math -Wall -Wextra -I. -lmpfr -lgmp -DCGAL_CXX0X -I../../include ${EIGEN_INC} ${CGAL_INC}
-	./a.out
+	g++ -std=c++0x -O2 test.cpp -lCGAL -lboost_thread -frounding-math -Wall -Wextra -I. -lmpfr -lgmp -DCGAL_CXX0X -I../../include ${EIGEN_INC} ${CGAL_INC} -o b.out
+	./b.out
 
 #-DBOOST_RESULT_OF_USE_DECLTYPE 

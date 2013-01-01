@@ -20,8 +20,8 @@ class Point_d : public Get_type<typename R_::Kernel_base, Point_tag>::type
 		// Deriving won't work if the point is just a __m256d.
 		// Test boost/std::is_class for instance
 {
-  typedef typename R_::RT			RT_;
-  typedef typename R_::FT			FT_;
+  typedef typename Get_type<R_, RT_tag>::type		RT_;
+  typedef typename Get_type<R_, FT_tag>::type		FT_;
   typedef typename R_::Kernel_base		Kbase;
   typedef typename Get_type<R_, Vector_tag>::type	Vector_;
   typedef typename Get_functor<Kbase, Construct_ttag<Point_tag> >::type CPBase;

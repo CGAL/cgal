@@ -15,6 +15,15 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef Base_ Base;
 	typedef Kernel_d_interface<Base> Kernel;
 	typedef Base_ R_; // for the macros
+	typedef typename Get_type<Base, RT_tag>::type RT;
+	typedef typename Get_type<Base, FT_tag>::type FT;
+	typedef typename Get_type<Base, Bool_tag>::type Boolean;
+	typedef typename Get_type<Base, Sign_tag>::type Sign;
+	typedef typename Get_type<Base, Comparison_result_tag>::type Comparison_result;
+	typedef typename Get_type<Base, Orientation_tag>::type Orientation;
+	typedef typename Get_type<Base, Oriented_side_tag>::type Oriented_side;
+	typedef typename Get_type<Base, Bounded_side_tag>::type Bounded_side;
+	typedef typename Get_type<Base, Angle_tag>::type Angle;
 	typedef typename Base::Flat_orientation Flat_orientation_d;
 	typedef typename Get_type<Base, Point_tag>::type	Point_d;
 	typedef typename Get_type<Base, Vector_tag>::type	Vector_d;
@@ -55,16 +64,13 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Midpoint_tag>::type Midpoint_d;
 	struct Component_accessor_d : private Store_kernel<R_> {
 	  CGAL_FUNCTOR_INIT_STORE(Component_accessor_d)
-	  typedef typename Get_type<Base, Point_tag>::type Point;
-	  typedef typename Base::RT RT;
-	  typedef typename Base::FT FT;
-	  int dimension(Point const&p){
+	  int dimension(Point_d const&p){
 	    return this->kernel().point_dimension_d_object()(p);
 	  }
-	  FT cartesian(Point const&p, int i){
+	  FT cartesian(Point_d const&p, int i){
 	    return this->kernel().compute_coordinate_d_object()(p);
 	  }
-	  RT homogeneous(Point const&p, int i){
+	  RT homogeneous(Point_d const&p, int i){
 	    throw "not implemented yet";
 	    return 0;
 	    // FIXME

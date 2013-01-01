@@ -43,7 +43,7 @@ inline void debug_matrix(std::ostream& o, Mat const&mat) {
 template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_flat_orientation)
 	typedef R_ R;
-	typedef typename R_::FT FT;
+	typedef typename Get_type<R, FT_tag>::type FT;
 	typedef typename Get_type<R, Point_tag>::type Point;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type Dplusone;
 	typedef typename R::LA::template Rebind_dimension<Dynamic_dimension_tag,Dplusone>::Other LA;
@@ -96,9 +96,9 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Contained_in_affine_hull)
         typedef R_ R;
-        typedef typename R_::FT FT;
+	typedef typename Get_type<R, FT_tag>::type FT;
         typedef typename Get_type<R, Point_tag>::type Point;
-        typedef typename R::Boolean result_type;
+	typedef typename Get_type<R, Bool_tag>::type result_type;
 	typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type CCC;
 	typedef typename Get_functor<R, Point_dimension_tag>::type PD;
 	//typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
@@ -155,9 +155,9 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
 template<class R_> struct In_flat_orientation : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(In_flat_orientation)
         typedef R_ R;
-        typedef typename R_::FT FT;
+	typedef typename Get_type<R, FT_tag>::type FT;
         typedef typename Get_type<R, Point_tag>::type Point;
-        typedef typename R::Orientation result_type;
+	typedef typename Get_type<R, Orientation_tag>::type result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
 	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
@@ -193,9 +193,9 @@ template<class R_> struct In_flat_orientation : private Store_kernel<R_> {
 template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(In_flat_side_of_oriented_sphere)
         typedef R_ R;
-        typedef typename R_::FT FT;
+	typedef typename Get_type<R, FT_tag>::type FT;
         typedef typename Get_type<R, Point_tag>::type Point;
-        typedef typename R::Orientation result_type;
+	typedef typename Get_type<R, Orientation_tag>::type result_type;
 	typedef typename Increment_dimension<typename R::Default_ambient_dimension,2>::type D1;
 	typedef typename Increment_dimension<typename R::Max_ambient_dimension,2>::type D2;
 	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
@@ -239,6 +239,6 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 
 
 }
-CGAL_KD_DEFAULT_FUNCTOR(In_flat_orientation_tag,CartesianDKernelFunctors::In_flat_orientation,(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
+CGAL_KD_DEFAULT_FUNCTOR(In_flat_orientation,(CartesianDKernelFunctors::In_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 }
 #endif

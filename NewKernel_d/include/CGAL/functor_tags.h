@@ -40,7 +40,7 @@ namespace CGAL {
 	template<class>struct Construct_ttag {};
 	template<class>struct Convert_ttag {};
 
-	template<class> struct map_functor_type { typedef Misc_tag type; };
+	template <class K, class F, class=void, class=void> struct Get_functor_category { typedef Misc_tag type; };
 	template<class Tg, class Obj, class Base> struct Typedef_tag_type;
 	//template<class Kernel, class Tg> struct Read_tag_type {};
 
@@ -82,12 +82,18 @@ namespace CGAL {
 	struct Provides_functor_i <Kernel, Tg, O, true>
 	  : Has_type_different_from<typename Kernel::template Functor<Tg, O>, Null_type> {};
 
+	struct Number_tag {};
+	struct Discrete_tag {};
+	struct Object_tag {};
+	template <class K, class T, class=void> struct Get_type_category;
 
-#define DECL_OBJ_(X) \
+#define DECL_OBJ_(X,Y) \
   template<class Obj,class Base> \
-  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }
-#define DECL_OBJ(X) struct X##_tag {}; \
-  DECL_OBJ_(X)
+  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }; \
+  template<class K, class D> \
+  struct Get_type_category <K, X##_tag, D> { typedef Y##_tag type; }
+#define DECL_OBJ(X,Y) struct X##_tag {}; \
+  DECL_OBJ_(X,Y)
 
   //namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) }
   //template<class Kernel>
@@ -96,30 +102,42 @@ namespace CGAL {
   //struct Read_tag_type<Kernel, X##_tag> { typedef typename Kernel::X type; }
 
 	// Not exactly objects, but the extras can't hurt.
-	DECL_OBJ(FT);
-	DECL_OBJ(RT);
+	DECL_OBJ(FT, Number);
+	DECL_OBJ(RT, Number);
 
-	//DECL_OBJ(Boolean); // FIXME: Boolean_tag is already taken, and is a template :-(
-	DECL_OBJ(Comparison_result);
-	DECL_OBJ(Sign);
-	DECL_OBJ(Orientation); // Note: duplicate with the functor tag!
-	DECL_OBJ(Oriented_side);
-	DECL_OBJ(Bounded_side);
-	DECL_OBJ(Angle);
+	DECL_OBJ(Bool, Discrete); // Boolean_tag is already taken, and is a template :-(
+	DECL_OBJ(Comparison_result, Discrete);
+	DECL_OBJ(Sign, Discrete);
+	DECL_OBJ(Orientation, Discrete); // Note: duplicate with the functor tag!
+	DECL_OBJ(Oriented_side, Discrete);
+	DECL_OBJ(Bounded_side, Discrete);
+	DECL_OBJ(Angle, Discrete);
 
-	DECL_OBJ(Vector);
-	DECL_OBJ(Point);
-	DECL_OBJ(Segment);
-	DECL_OBJ(Sphere);
-	DECL_OBJ(Line);
-	DECL_OBJ(Direction);
-	DECL_OBJ(Hyperplane);
-	DECL_OBJ(Ray);
-	DECL_OBJ(Iso_box);
-	DECL_OBJ(Bbox);
-	DECL_OBJ(Aff_transformation);
+	DECL_OBJ(Vector, Object);
+	DECL_OBJ(Point, Object);
+	DECL_OBJ(Segment, Object);
+	DECL_OBJ(Sphere, Object);
+	DECL_OBJ(Line, Object);
+	DECL_OBJ(Direction, Object);
+	DECL_OBJ(Hyperplane, Object);
+	DECL_OBJ(Ray, Object);
+	DECL_OBJ(Iso_box, Object);
+	DECL_OBJ(Bbox, Object);
+	DECL_OBJ(Aff_transformation, Object);
 #undef DECL_OBJ_
 #undef DECL_OBJ
+
+#define SMURF2(A,B) CGAL_KD_DEFAULT_TYPE(A,(typename Same_uncertainty_nt<B, typename Get_type<K,RT_tag>::type>::type),(RT_tag),())
+#define SMURF1(A) SMURF2(A,CGAL::A)
+	SMURF2(Bool, bool);
+	SMURF1(Sign);
+	SMURF1(Comparison_result);
+	SMURF1(Orientation);
+	SMURF1(Oriented_side);
+	SMURF1(Bounded_side);
+	SMURF1(Angle);
+#undef SMURF1
+#undef SMURF2
 
 	template<class> struct is_NT_tag { enum { value = false }; };
 	template<> struct is_NT_tag<FT_tag> { enum { value = true }; };
@@ -131,7 +149,7 @@ namespace CGAL {
 	};
 
 #define DECL_COMPUTE(X) struct X##_tag {}; \
-	template<>struct map_functor_type<X##_tag>{typedef Compute_tag type;}
+	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Compute_tag type;}
 	DECL_COMPUTE(Compute_point_cartesian_coordinate);
 	DECL_COMPUTE(Compute_vector_cartesian_coordinate);
 	DECL_COMPUTE(Compute_homogeneous_coordinate);
@@ -166,15 +184,16 @@ namespace CGAL {
 	template<class>struct map_result_tag{typedef Null_type type;};
 	template<class T>struct map_result_tag<Construct_ttag<T> >{typedef T type;};
 
-	template<class T>struct map_functor_type<Construct_ttag<T> > :
+	template<class A,class T,class B,class C>struct Get_functor_category<A,Construct_ttag<T>,B,C> :
 	  BOOSTD conditional<iterator_tag_traits<T>::is_iterator,
 		 Construct_iterator_tag,
 		 Construct_tag> {};
 
-	template<class T>struct map_functor_type<Convert_ttag<T> >{typedef Misc_tag type;};
+	// Really?
+	template<class A,class T,class B,class C>struct Get_functor_category<A,Convert_ttag<T>,B,C>{typedef Misc_tag type;};
 #define DECL_CONSTRUCT(X,Y) struct X##_tag {}; \
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
-	template<>struct map_functor_type<X##_tag>{typedef Construct_tag type;}
+	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Construct_tag type;}
 	DECL_CONSTRUCT(Midpoint,Point);
 	DECL_CONSTRUCT(Center_of_sphere,Point);
 	DECL_CONSTRUCT(Segment_extremity,Point);
@@ -199,7 +218,7 @@ namespace CGAL {
 
 	//FIXME: choose a convention: prefix with Predicate_ ?
 #define DECL_PREDICATE_(X) \
-	template<>struct map_functor_type<X##_tag>{typedef Predicate_tag type;}
+	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Predicate_tag type;}
 #define DECL_PREDICATE(X) struct X##_tag {}; \
 	DECL_PREDICATE_(X)
 	DECL_PREDICATE(Less_point_cartesian_coordinate);
@@ -220,7 +239,7 @@ namespace CGAL {
 #undef DECL_PREDICATE
 
 #define DECL_MISC(X) struct X##_tag {}; \
-	template<>struct map_functor_type<X##_tag>{typedef Misc_tag type;}
+	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Misc_tag type;}
 	//TODO: split into _begin and _end ?
 	//DECL_MISC(Construct_point_cartesian_const_iterator);
 	//DECL_MISC(Construct_vector_cartesian_const_iterator);

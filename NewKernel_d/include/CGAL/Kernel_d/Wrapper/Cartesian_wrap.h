@@ -95,7 +95,7 @@ struct Cartesian_wrap : public Base_
 #include <CGAL/Kernel_d/interface_macros.h>
 
     //Translate the arguments
-    template<class T,class D=void,class=typename map_functor_type<T>::type,bool=boost::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value> struct Functor {
+    template<class T,class D=void,class=typename Get_functor_category<Derived,T>::type,bool=boost::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value> struct Functor {
 	    typedef typename Get_functor<Kernel_base, T>::type B;
 	    struct type {
 		    B b;
