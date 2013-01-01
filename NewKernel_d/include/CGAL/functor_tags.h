@@ -127,6 +127,8 @@ namespace CGAL {
 #undef DECL_OBJ_
 #undef DECL_OBJ
 
+	CGAL_KD_DEFAULT_TYPE(RT_tag,(typename Get_type<K, FT_tag>::type),(FT_tag),());
+
 #define SMURF2(A,B) CGAL_KD_DEFAULT_TYPE(A##_tag,(typename Same_uncertainty_nt<B, typename Get_type<K,RT_tag>::type>::type),(RT_tag),())
 #define SMURF1(A) SMURF2(A,CGAL::A)
 	SMURF2(Bool, bool);
@@ -139,6 +141,7 @@ namespace CGAL {
 #undef SMURF1
 #undef SMURF2
 
+	// TODO: replace with Get_type_category
 	template<class> struct is_NT_tag { enum { value = false }; };
 	template<> struct is_NT_tag<FT_tag> { enum { value = true }; };
 	template<> struct is_NT_tag<RT_tag> { enum { value = true }; };

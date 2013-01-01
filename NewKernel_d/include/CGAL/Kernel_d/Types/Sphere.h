@@ -48,5 +48,9 @@ template <class R_> struct Squared_radius {
   }
 };
 }
+CGAL_KD_DEFAULT_TYPE(Sphere_tag,(CGAL::Sphere<K>),(Point_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Sphere_tag>,(CartesianDKernelFunctors::Construct_sphere<K>),(Sphere_tag,Point_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Center_of_sphere_tag,(CartesianDKernelFunctors::Center_of_sphere<K>),(Sphere_tag,Point_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Squared_radius_tag,(CartesianDKernelFunctors::Squared_radius<K>),(Sphere_tag),());
 } // namespace CGAL
 #endif

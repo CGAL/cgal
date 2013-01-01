@@ -38,7 +38,7 @@
 CGAL_Kernel_obj1(Vector,vector)
 CGAL_Kernel_obj1(Point,point)
 CGAL_Kernel_obj2(Segment,segment)
-CGAL_Kernel_obj2(Sphere,sphere)
+//CGAL_Kernel_obj2(Sphere,sphere)
 CGAL_Kernel_obj3(Line,line)
 CGAL_Kernel_obj3(Ray,ray)
 //CGAL_Kernel_obj3(Hyperplane,hyperplane)
@@ -111,14 +111,14 @@ CGAL_Kernel_pred(Orientation,
 //		 equal_points_object)
 //CGAL_Kernel_pred(Less_or_equal_lexicographically,
 //		 less_or_equal_lexicographically_object)
-CGAL_Kernel_pred(Contained_in_affine_hull,
-		 contained_in_affine_hull_object)
+//CGAL_Kernel_pred(Contained_in_affine_hull,
+//		 contained_in_affine_hull_object)
 //CGAL_Kernel_pred(In_flat_orientation,
 //		 in_flat_orientation_object)
-CGAL_Kernel_pred(In_flat_side_of_oriented_sphere,
-		 in_flat_side_of_oriented_sphere_object)
-CGAL_Kernel_pred(Construct_flat_orientation,
-		 construct_flat_orientation_object)
+//CGAL_Kernel_pred(In_flat_side_of_oriented_sphere,
+//		 in_flat_side_of_oriented_sphere_object)
+//CGAL_Kernel_pred(Construct_flat_orientation,
+//		 construct_flat_orientation_object)
 
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_comp
