@@ -127,7 +127,7 @@ namespace CGAL {
 #undef DECL_OBJ_
 #undef DECL_OBJ
 
-#define SMURF2(A,B) CGAL_KD_DEFAULT_TYPE(A,(typename Same_uncertainty_nt<B, typename Get_type<K,RT_tag>::type>::type),(RT_tag),())
+#define SMURF2(A,B) CGAL_KD_DEFAULT_TYPE(A##_tag,(typename Same_uncertainty_nt<B, typename Get_type<K,RT_tag>::type>::type),(RT_tag),())
 #define SMURF1(A) SMURF2(A,CGAL::A)
 	SMURF2(Bool, bool);
 	SMURF1(Sign);

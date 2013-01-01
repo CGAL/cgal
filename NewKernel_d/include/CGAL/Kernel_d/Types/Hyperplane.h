@@ -4,7 +4,6 @@
 namespace CGAL {
 template <class R_> class Hyperplane {
 	typedef typename Get_type<R_, FT_tag>::type FT_;
-	typedef typename Get_type<R_, Point_tag>::type	Point_;
 	typedef typename Get_type<R_, Vector_tag>::type	Vector_;
 	Vector_ v_;
 	FT_ s_;
@@ -20,7 +19,6 @@ namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_hyperplane)
   typedef typename Get_type<R_, Hyperplane_tag>::type	result_type;
-  typedef typename Get_type<R_, Point_tag>::type	Point;
   typedef typename Get_type<R_, Vector_tag>::type	Vector;
   typedef typename Get_type<R_, FT_tag>::type FT;
   typedef typename R_::LA LA;
@@ -35,7 +33,7 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
 template <class R_> struct Orthogonal_vector {
   CGAL_FUNCTOR_INIT_IGNORE(Orthogonal_vector)
   typedef typename Get_type<R_, Hyperplane_tag>::type	Hyperplane;
-  typedef typename Get_type<R_, Point_tag>::type	result_type;
+  typedef typename Get_type<R_, Vector_tag>::type	result_type;
   result_type operator()(Hyperplane const&s)const{
     return s.orthogonal_vector();
   }
@@ -50,5 +48,10 @@ template <class R_> struct Hyperplane_translation {
   }
 };
 }
+//TODO: Add a condition that the hyperplane type is the one from this file.
+CGAL_KD_DEFAULT_TYPE(Hyperplane_tag,(CGAL::Hyperplane<K>),(Vector_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Hyperplane_tag>,(CartesianDKernelFunctors::Construct_hyperplane<K>),(Vector_tag,Hyperplane_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Orthogonal_vector_tag,(CartesianDKernelFunctors::Orthogonal_vector<K>),(Vector_tag,Hyperplane_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Hyperplane_translation_tag,(CartesianDKernelFunctors::Hyperplane_translation<K>),(Hyperplane_tag),());
 } // namespace CGAL
 #endif

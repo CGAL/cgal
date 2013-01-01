@@ -12,6 +12,7 @@
 #include <CGAL/transforming_pair_iterator.h>
 #include <CGAL/functor_tags.h>
 #include <CGAL/functor_properties.h>
+#include <CGAL/predicates/sign_of_determinant.h>
 #include <functional>
 #ifdef CGAL_CXX0X
 #include <initializer_list>
@@ -147,9 +148,11 @@ template<class R_> struct Orientation_of_points<R_,Dimension_tag<N>,true> : priv
 #undef VAR
 
 #endif
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_points_tag,(CartesianDKernelFunctors::Orientation_of_points<K>),(Point_tag),(Point_dimension_tag,Compute_point_cartesian_coordinate_tag));
 
-
+namespace CartesianDKernelFunctors {
 template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_vectors)
 	typedef R_ R;
@@ -161,6 +164,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	result_type operator()(Iter f, Iter e)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		// FIXME: Uh? Using it on a vector ?!
 		Vector const& v0=*f;
 		int d=vd(v0);
 		Matrix m(d,d);
@@ -190,7 +194,11 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	//TODO
 #endif
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_vectors_tag,(CartesianDKernelFunctors::Orientation_of_vectors<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
 #if 0
 template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation)
@@ -301,7 +309,11 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	//TODO
 #endif
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Side_of_oriented_sphere_tag,(CartesianDKernelFunctors::Side_of_oriented_sphere<K>),(Point_tag),(Point_dimension_tag,Squared_distance_to_origin_tag,Compute_point_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Point_to_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Point_to_vector)
 	typedef R_ R;
@@ -317,7 +329,11 @@ template<class R_> struct Point_to_vector : private Store_kernel<R_> {
 		return CV(this->kernel())(ci(v,Begin_tag(),ci(v,End_tag())));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Point_to_vector_tag,(CartesianDKernelFunctors::Point_to_vector<K>),(Point_tag,Vector_tag),(Construct_ttag<Vector_tag>, Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Vector_to_point : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Vector_to_point)
 	typedef R_ R;
@@ -333,7 +349,11 @@ template<class R_> struct Vector_to_point : private Store_kernel<R_> {
 		return CV(this->kernel())(ci(v,Begin_tag(),ci(v,End_tag())));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Vector_to_point_tag,(CartesianDKernelFunctors::Vector_to_point<K>),(Point_tag,Vector_tag),(Construct_ttag<Point_tag>, Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Opposite_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Opposite_vector)
 	typedef R_ R;
@@ -348,7 +368,11 @@ template<class R_> struct Opposite_vector : private Store_kernel<R_> {
 		return CV(this->kernel())(make_transforming_iterator(ci(v,Begin_tag()),std::negate<RT>()),make_transforming_iterator(ci(v,End_tag()),std::negate<RT>()));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Opposite_vector_tag,(CartesianDKernelFunctors::Opposite_vector<K>),(Vector_tag),(Construct_ttag<Vector_tag>, Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Scaled_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Scaled_vector)
 	typedef R_ R;
@@ -364,7 +388,11 @@ template<class R_> struct Scaled_vector : private Store_kernel<R_> {
 		return CV(this->kernel())(make_transforming_iterator(ci(v,Begin_tag()),Scale<FT>(s)),make_transforming_iterator(ci(v,End_tag()),Scale<FT>(s)));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Scaled_vector_tag,(CartesianDKernelFunctors::Scaled_vector<K>),(Vector_tag),(Construct_ttag<Vector_tag>, Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Sum_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Sum_of_vectors)
 	typedef R_ R;
@@ -380,7 +408,11 @@ template<class R_> struct Sum_of_vectors : private Store_kernel<R_> {
 		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::plus<RT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::plus<RT>()));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Sum_of_vectors_tag,(CartesianDKernelFunctors::Sum_of_vectors<K>),(Vector_tag),(Construct_ttag<Vector_tag>, Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Difference_of_vectors : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Difference_of_vectors)
 	typedef R_ R;
@@ -396,7 +428,11 @@ template<class R_> struct Difference_of_vectors : private Store_kernel<R_> {
 		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<RT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<RT>()));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Difference_of_vectors_tag,(CartesianDKernelFunctors::Difference_of_vectors<K>),(Vector_tag),(Construct_ttag<Vector_tag>, Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Translated_point : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Translated_point)
 	typedef R_ R;
@@ -415,7 +451,11 @@ template<class R_> struct Translated_point : private Store_kernel<R_> {
 		return CP(this->kernel())(make_transforming_pair_iterator(cpi(a,Begin_tag()),cvi(b,Begin_tag()),std::plus<RT>()),make_transforming_pair_iterator(cpi(a,End_tag()),cvi(b,End_tag()),std::plus<RT>()));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Translated_point_tag,(CartesianDKernelFunctors::Translated_point<K>),(Point_tag, Vector_tag),(Construct_ttag<Point_tag>, Construct_ttag<Vector_cartesian_const_iterator_tag>, Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Difference_of_points : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Difference_of_points)
 	typedef R_ R;
@@ -432,7 +472,11 @@ template<class R_> struct Difference_of_points : private Store_kernel<R_> {
 		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<RT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<RT>()));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Difference_of_points_tag,(CartesianDKernelFunctors::Difference_of_points<K>),(Point_tag, Vector_tag),(Construct_ttag<Vector_tag>, Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Midpoint : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Midpoint)
 	typedef R_ R;
@@ -457,7 +501,11 @@ template<class R_> struct Midpoint : private Store_kernel<R_> {
 		return CP(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),Average()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),Average()));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Midpoint_tag,(CartesianDKernelFunctors::Midpoint<K>),(Point_tag),(Construct_ttag<Point_tag>, Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Squared_length : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Squared_length)
 	typedef R_ R;
@@ -473,7 +521,11 @@ template<class R_> struct Squared_length : private Store_kernel<R_> {
 		return std::accumulate(make_transforming_iterator(ci(a,Begin_tag()),f),make_transforming_iterator(ci(a,End_tag()),f),RT(0));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Squared_length_tag,(CartesianDKernelFunctors::Squared_length<K>),(Vector_tag),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Squared_distance_to_origin : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Squared_distance_to_origin)
 	typedef R_ R;
@@ -489,7 +541,11 @@ template<class R_> struct Squared_distance_to_origin : private Store_kernel<R_> 
 		return std::accumulate(make_transforming_iterator(ci(a,Begin_tag()),f),make_transforming_iterator(ci(a,End_tag()),f),RT(0));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Squared_distance_to_origin_tag,(CartesianDKernelFunctors::Squared_distance_to_origin<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Squared_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Squared_distance)
 	typedef R_ R;
@@ -511,7 +567,11 @@ template<class R_> struct Squared_distance : private Store_kernel<R_> {
 		return std::accumulate(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),f),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),f),RT(0));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Squared_distance_tag,(CartesianDKernelFunctors::Squared_distance<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Compare_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_distance)
 	typedef R_ R;
@@ -531,7 +591,11 @@ template<class R_> struct Compare_distance : private Store_kernel<R_> {
 		return CGAL_NTS compare(csd(a,b),csd(c,d));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Compare_distance_tag,(CartesianDKernelFunctors::Compare_distance<K>),(Point_tag),(Squared_distance_tag));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Less_point_cartesian_coordinate)
 	typedef R_ R;
@@ -547,7 +611,11 @@ template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel
 		return c(a,i)<c(b,i);
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Less_point_cartesian_coordinate_tag,(CartesianDKernelFunctors::Less_point_cartesian_coordinate<K>),(),(Compute_point_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Compare_point_cartesian_coordinate : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_point_cartesian_coordinate)
 	typedef R_ R;
@@ -563,7 +631,11 @@ template<class R_> struct Compare_point_cartesian_coordinate : private Store_ker
 		return CGAL_NTS compare(c(a,i),c(b,i));
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Compare_point_cartesian_coordinate_tag,(CartesianDKernelFunctors::Compare_point_cartesian_coordinate<K>),(),(Compute_point_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_lexicographically)
 	typedef R_ R;
@@ -592,7 +664,11 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 		return res;
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Compare_lexicographically_tag,(CartesianDKernelFunctors::Compare_lexicographically<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Less_lexicographically)
 	typedef R_ R;
@@ -606,7 +682,11 @@ template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
 		return c(a,b) < 0;
 	}
 };
+}
 
+CGAL_KD_DEFAULT_FUNCTOR(Less_lexicographically_tag,(CartesianDKernelFunctors::Less_lexicographically<K>),(),(Compare_lexicographically_tag));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Less_or_equal_lexicographically : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Less_or_equal_lexicographically)
 	typedef R_ R;
@@ -620,11 +700,11 @@ template<class R_> struct Less_or_equal_lexicographically : private Store_kernel
 		return c(a,b) <= 0;
 	}
 };
-
 }
-CGAL_KD_DEFAULT_FUNCTOR(Less_or_equal_lexicographically,(CartesianDKernelFunctors::Less_or_equal_lexicographically<K>),(),(Compare_lexicographically_tag));
-namespace CartesianDKernelFunctors {
 
+CGAL_KD_DEFAULT_FUNCTOR(Less_or_equal_lexicographically_tag,(CartesianDKernelFunctors::Less_or_equal_lexicographically<K>),(),(Compare_lexicographically_tag));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Equal_points : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Equal_points)
 	typedef R_ R;
@@ -652,9 +732,10 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 		return res;
 	}
 };
-
-
 }
+
+CGAL_KD_DEFAULT_FUNCTOR(Equal_points_tag,(CartesianDKernelFunctors::Equal_points<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+
 }
 #include <CGAL/Kernel_d/Coaffine.h>
 #endif // CGAL_KERNEL_D_FUNCTION_OBJECTS_CARTESIAN_H

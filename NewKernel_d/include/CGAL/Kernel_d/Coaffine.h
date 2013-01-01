@@ -239,6 +239,6 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 
 
 }
-CGAL_KD_DEFAULT_FUNCTOR(In_flat_orientation,(CartesianDKernelFunctors::In_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
+CGAL_KD_DEFAULT_FUNCTOR(In_flat_orientation_tag,(CartesianDKernelFunctors::In_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 }
 #endif

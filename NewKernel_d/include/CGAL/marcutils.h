@@ -237,9 +237,9 @@ BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
 // What to do with O? pass it down to other functors or drop it?
 #define CGAL_KD_DEFAULT_FUNCTOR(Tg,Name,ReqTyp,ReqFun) \
     template <class K, class O> \
-    struct Get_functor<K, Tg##_tag, O, \
+    struct Get_functor<K, Tg, O, \
       typename boost::mpl::if_c< \
-        Provides_functor_i<K, Tg##_tag, O>::value \
+        Provides_functor_i<K, Tg, O>::value \
         || !Provides_types<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqTyp> >::value \
         || !Provides_functors<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqFun> >::value \
       , int, void>::type> \
@@ -250,9 +250,9 @@ BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
 // Not used yet, may need some changes.
 #define CGAL_KD_DEFAULT_TYPE(Tg,Name,ReqTyp,ReqFun) \
     template <class K> \
-    struct Get_type<K, Tg##_tag, \
+    struct Get_type<K, Tg, \
       typename boost::mpl::if_c< \
-        Provides_type_i<K, Tg##_tag>::value \
+        Provides_type_i<K, Tg>::value \
         || !Provides_types<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqTyp> >::value \
         || !Provides_functors<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqFun> >::value \
       , int, void>::type> \
