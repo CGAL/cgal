@@ -48,9 +48,9 @@ struct Cartesian_change_FT_base : public
     };
     */
 
-    template<class Tag,class Type_>
+    template<class Tag_,class Type_>
     struct Construct_cartesian_const_iterator_ {
-	    typedef typename Get_functor<Kernel_base, Tag>::type Functor_base;
+	    typedef typename Get_functor<Kernel_base, Tag_>::type Functor_base;
 	    Construct_cartesian_const_iterator_(){}
 	    Construct_cartesian_const_iterator_(Self const&r):f(r){}
 	    Functor_base f;
@@ -67,9 +67,9 @@ struct Cartesian_change_FT_base : public
     typedef Construct_cartesian_const_iterator_<Construct_ttag<Point_cartesian_const_iterator_tag>,Point_cartesian_const_iterator> Construct_point_cartesian_const_iterator;
     typedef Construct_cartesian_const_iterator_<Construct_ttag<Vector_cartesian_const_iterator_tag>,Vector_cartesian_const_iterator> Construct_vector_cartesian_const_iterator;
 
-    template<class Tag>
+    template<class Tag_>
     struct Compute_cartesian_coordinate {
-	    typedef typename Get_functor<Kernel_base, Tag>::type Functor_base;
+	    typedef typename Get_functor<Kernel_base, Tag_>::type Functor_base;
 	    Compute_cartesian_coordinate(){}
 	    Compute_cartesian_coordinate(Self const&r):f(r){}
 	    Functor_base f;

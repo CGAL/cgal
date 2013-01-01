@@ -231,14 +231,15 @@ BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
 	};
 }
 
+// TODO: make a Cartesian-only variant
 #define CGAL_STRIP_PAREN_(...) __VA_ARGS__
 #define CGAL_STRIP_PAREN(...) CGAL_STRIP_PAREN_ __VA_ARGS__
 // What to do with O? pass it down to other functors or drop it?
-#define CGAL_KD_DEFAULT_FUNCTOR(Tag,Name,ReqTyp,ReqFun) \
+#define CGAL_KD_DEFAULT_FUNCTOR(Tg,Name,ReqTyp,ReqFun) \
     template <class K, class O> \
-    struct Get_functor<K, Tag, O, \
+    struct Get_functor<K, Tg, O, \
       typename boost::mpl::if_c< \
-        Provides_functor_i<K, Tag, O>::value \
+        Provides_functor_i<K, Tg, O>::value \
         || !Provides_types<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqTyp> >::value \
         || !Provides_functors<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqFun> >::value \
       , int, void>::type> \
@@ -247,11 +248,11 @@ BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
     }
 
 // Not used yet, may need some changes.
-#define CGAL_KD_DEFAULT_TYPE(Tag,Name,ReqTyp,ReqFun) \
+#define CGAL_KD_DEFAULT_TYPE(Tg,Name,ReqTyp,ReqFun) \
     template <class K> \
-    struct Get_type<K, Tag, \
+    struct Get_type<K, Tg, \
       typename boost::mpl::if_c< \
-        Provides_type_i<K, Tag>::value \
+        Provides_type_i<K, Tg>::value \
         || !Provides_types<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqTyp> >::value \
         || !Provides_functors<K, boost::mpl::vector<CGAL_STRIP_PAREN_ ReqFun> >::value \
       , int, void>::type> \

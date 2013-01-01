@@ -41,16 +41,16 @@ namespace CGAL {
 	template<class>struct Convert_ttag {};
 
 	template<class> struct map_functor_type { typedef Misc_tag type; };
-	template<class Tag, class Obj, class Base> struct Typedef_tag_type;
-	//template<class Kernel, class Tag> struct Read_tag_type {};
+	template<class Tg, class Obj, class Base> struct Typedef_tag_type;
+	//template<class Kernel, class Tg> struct Read_tag_type {};
 
-	template<class Kernel, class Tag>
+	template<class Kernel, class Tg>
 	struct Provides_type
-	  : Has_type_different_from<Get_type<Kernel, Tag>, Null_type> {};
+	  : Has_type_different_from<Get_type<Kernel, Tg>, Null_type> {};
 
-	template<class Kernel, class Tag, class O=void>
+	template<class Kernel, class Tg, class O=void>
 	struct Provides_functor
-	  : Has_type_different_from<Get_functor<Kernel, Tag, O>, Null_functor> {};
+	  : Has_type_different_from<Get_functor<Kernel, Tg, O>, Null_functor> {};
 
 	template<class K, class List, bool=boost::mpl::empty<List>::type::value>
 	struct Provides_functors : boost::mpl::and_ <
@@ -67,25 +67,27 @@ namespace CGAL {
 	struct Provides_types<K, List, true> : boost::true_type {};
 
 	namespace internal { BOOST_MPL_HAS_XXX_TEMPLATE_DEF(Type) }
-	template<class Kernel, class Tag,
+	template<class Kernel, class Tg,
 	  bool = internal::has_Type<Kernel>::value /* false */>
 	struct Provides_type_i : boost::false_type {};
-	template<class Kernel, class Tag>
-	struct Provides_type_i <Kernel, Tag, true>
-	  : Has_type_different_from<typename Kernel::template Type<Tag>, Null_type> {};
+	template<class Kernel, class Tg>
+	struct Provides_type_i <Kernel, Tg, true>
+	  : Has_type_different_from<typename Kernel::template Type<Tg>, Null_type> {};
 
 	namespace internal { BOOST_MPL_HAS_XXX_TEMPLATE_DEF(Functor) }
-	template<class Kernel, class Tag, class O=void,
+	template<class Kernel, class Tg, class O=void,
 	  bool = internal::has_Functor<Kernel>::value /* false */>
 	struct Provides_functor_i : boost::false_type {};
-	template<class Kernel, class Tag, class O>
-	struct Provides_functor_i <Kernel, Tag, O, true>
-	  : Has_type_different_from<typename Kernel::template Functor<Tag, O>, Null_type> {};
+	template<class Kernel, class Tg, class O>
+	struct Provides_functor_i <Kernel, Tg, O, true>
+	  : Has_type_different_from<typename Kernel::template Functor<Tg, O>, Null_type> {};
 
 
-#define DECL_OBJ(X) struct X##_tag {}; \
+#define DECL_OBJ_(X) \
   template<class Obj,class Base> \
-  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; };
+  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }
+#define DECL_OBJ(X) struct X##_tag {}; \
+  DECL_OBJ_(X)
 
   //namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) }
   //template<class Kernel>
@@ -96,6 +98,14 @@ namespace CGAL {
 	// Not exactly objects, but the extras can't hurt.
 	DECL_OBJ(FT);
 	DECL_OBJ(RT);
+
+	//DECL_OBJ(Boolean); // FIXME: Boolean_tag is already taken, and is a template :-(
+	DECL_OBJ(Comparison_result);
+	DECL_OBJ(Sign);
+	DECL_OBJ(Orientation); // Note: duplicate with the functor tag!
+	DECL_OBJ(Oriented_side);
+	DECL_OBJ(Bounded_side);
+	DECL_OBJ(Angle);
 
 	DECL_OBJ(Vector);
 	DECL_OBJ(Point);
@@ -108,6 +118,7 @@ namespace CGAL {
 	DECL_OBJ(Iso_box);
 	DECL_OBJ(Bbox);
 	DECL_OBJ(Aff_transformation);
+#undef DECL_OBJ_
 #undef DECL_OBJ
 
 	template<class> struct is_NT_tag { enum { value = false }; };
@@ -140,7 +151,7 @@ namespace CGAL {
     typedef C##_tag container; \
   }; \
   template<class Obj,class Base> \
-  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; };
+  struct Typedef_tag_type<X##_tag, Obj, Base> : Base { typedef Obj X; }
 
   //namespace has_object { BOOST_MPL_HAS_XXX_TRAIT_DEF(X) }
   //template<class Kernel>
@@ -187,8 +198,10 @@ namespace CGAL {
 #endif
 
 	//FIXME: choose a convention: prefix with Predicate_ ?
-#define DECL_PREDICATE(X) struct X##_tag {}; \
+#define DECL_PREDICATE_(X) \
 	template<>struct map_functor_type<X##_tag>{typedef Predicate_tag type;}
+#define DECL_PREDICATE(X) struct X##_tag {}; \
+	DECL_PREDICATE_(X)
 	DECL_PREDICATE(Less_point_cartesian_coordinate);
 	DECL_PREDICATE(Compare_point_cartesian_coordinate);
 	DECL_PREDICATE(Compare_distance);
@@ -196,7 +209,7 @@ namespace CGAL {
 	DECL_PREDICATE(Less_lexicographically);
 	DECL_PREDICATE(Less_or_equal_lexicographically);
 	DECL_PREDICATE(Equal_points);
-	DECL_PREDICATE(Orientation);
+	DECL_PREDICATE_(Orientation); // duplicate with the type
 	DECL_PREDICATE(Orientation_of_points);
 	DECL_PREDICATE(Orientation_of_vectors);
 	DECL_PREDICATE(Side_of_oriented_sphere);

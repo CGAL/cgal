@@ -64,6 +64,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class, class=void> struct Type {};
     template<class D> struct Type< Point_tag, D> { typedef Vector_ type; };
     template<class D> struct Type<Vector_tag, D> { typedef Vector_ type; };
+    template<class D> struct Type<    RT_tag, D> { typedef      RT type; };
+    template<class D> struct Type<    FT_tag, D> { typedef      FT type; };
 
     typedef typeset<Point_tag>
       ::add<Vector_tag>::type

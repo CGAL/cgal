@@ -79,12 +79,12 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  // Kernel_d requires a common iterator type for points and vectors
 	  // TODO: provide this mixed functor in preKernel?
 	  CGAL_static_assertion((boost::is_same<typename CGAL::decay<typename boost::result_of<CVI(Vector_d,CGAL::Begin_tag)>::type>::type, result_type>::value));
-	  template <class Tag>
-	  result_type operator()(Point_d const&p, Tag t)const{
+	  template <class Tag_>
+	  result_type operator()(Point_d const&p, Tag_ t)const{
 	    return CPI(this->kernel())(p,t);
 	  }
-	  template <class Tag>
-	  result_type operator()(Vector_d const&v, Tag t)const{
+	  template <class Tag_>
+	  result_type operator()(Vector_d const&v, Tag_ t)const{
 	    return CVI(this->kernel())(v,t);
 	  }
 

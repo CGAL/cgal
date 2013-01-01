@@ -10,10 +10,10 @@
 
 namespace CGAL {
   namespace internal {
-    template<class K,class Tag,bool=iterator_tag_traits<Tag>::is_iterator>
-      struct Type_or_iter : K::template Type<Tag> {};
-    template<class K,class Tag>
-      struct Type_or_iter<K, Tag, true> : K::template Iterator<Tag> {};
+    template<class K,class Tag_,bool=iterator_tag_traits<Tag_>::is_iterator>
+      struct Type_or_iter : K::template Type<Tag_> {};
+    template<class K,class Tag_>
+      struct Type_or_iter<K, Tag_, true> : K::template Iterator<Tag_> {};
   }
   template<class K, class Base=K, class List=typename typeset_union<typename K::Object_list,typename K::Iterator_list>::type> struct Define_kernel_types;
   template<class K, class Base>
