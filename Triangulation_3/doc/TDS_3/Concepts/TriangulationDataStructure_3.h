@@ -43,8 +43,7 @@ topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3
  
 
 The second template parameter of the basic triangulation class 
-(see Chapter \ref chapterTriangulation3 
-) 
+(see Chapter \ref chapterTriangulation3 "3D Triangulations") 
 `CGAL::Triangulation_3` is a triangulation data structure class. (See 
 Chapter \ref chapterTDS3.) 
 

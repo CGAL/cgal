@@ -23,7 +23,7 @@ The polyhedral surface is realized as a container class that manages
 vertices, halfedges, facets with their incidences, and that maintains
 the combinatorial integrity of them. It is based on the highly
 flexible design of the halfedge data structure, see the introduction
-in Chapter \ref chapterHalfedgeDS "Halfedge Data Structure" and \cite k-ugpdd-99. However, the
+in Chapter \ref chapterHalfedgeDS "Halfedge Data Structures" and \cite k-ugpdd-99. However, the
 polyhedral surface can be used and understood without knowing the
 underlying design. Some of the examples in this chapter introduce also
 gradually into first applications of this flexibility.
@@ -453,7 +453,7 @@ attribute is available in the type `Polyhedron_3::Facet`. However,
 typedef for `My_face`, but it is derived therefrom. Thus,
 everything that we put in the local face type except constructors is
 then available in the `Polyhedron_::Facet` type. For more
-details, see the Chapter \ref chapterHalfedgeDS "Halfedge Data Structure" 
+details, see the Chapter \ref chapterHalfedgeDS "Halfedge Data Structures" 
 on the halfedge data structure design.
 
 Pulling all pieces together, the full example program illustrates how easy

@@ -1163,7 +1163,7 @@ The new solution to resolve the template dependency
 is based on a rebind mechanism similar to the mechanism used in the 
 standard allocator class std::allocator. The rebind mechanism
 is described in Section \ref TDS_2D_default "The Default Triangulation Data Structure" 
-of Chapter \ref Chapter_2D_Triangulation_Data_Structure "Triangulation Data Structure".
+of Chapter \ref Chapter_2D_Triangulation_Data_Structure "2D Triangulation Data Structure".
 For now, we will just notice that the design
 requires
 the existence in the vertex and face base classes 

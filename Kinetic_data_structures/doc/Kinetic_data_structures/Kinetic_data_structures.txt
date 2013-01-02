@@ -21,7 +21,7 @@ though the basic building blocks are changing continuously.
 
 This chapter describes a number of such kinetic data structures
 implemented using the Kinetic framework described in
-Chapter \ref chapterkinetic. We first, in
+Chapter \ref chapterkinetic "Kinetic Framework". We first, in
 Section \ref seckds_intro introduce kinetic data structures and
 sweepline algorithms. This section can be skipped if the reader is
 already familiar with the area. The next sections,
@@ -165,7 +165,7 @@ combinatorial structure needs to be updated.
 \section seckds_overview An Overview of the Kinetic Framework 
 
 The provided kinetic data structures are implemented on top of the
-Kinetic framework presented in Chapter \ref chapterkinetic. It is
+Kinetic framework presented in Chapter \ref chapterkinetic "Kinetic Framework". It is
 not necessary to know the details of the framework, but some
 familiarity is useful. Here we presented a quick overview of the
 framework.

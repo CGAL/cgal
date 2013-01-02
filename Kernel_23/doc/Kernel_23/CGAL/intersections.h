@@ -20,7 +20,7 @@ function are available.
 \sa \ref do_intersect_spherical
 \sa `intersection`
   
-\details See Chapter  \ref chapterkernel23 for details on a linear kernel instantiation.
+\details See Chapter  \ref chapterkernel23 "2D and 3D Geometry Kernel" for details on a linear kernel instantiation.
 */
 /// @{
 /*!
@@ -79,7 +79,7 @@ bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 \sa \ref do_intersect_spherical
 \sa `intersection`
 
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel" for details on a circular kernel instantiation.
 
 
 When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
@@ -105,7 +105,7 @@ the following:
 - `Circular_arc_2<CircularKernel>`
 
 An example illustrating this is presented in
-Chapter  \ref Chapter_2D_Circular_Geometry_Kernel.
+Chapter  \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel".
 */
 bool do_intersect(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2);
 /// @}
@@ -123,7 +123,7 @@ bool do_intersect(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2);
 \sa \ref do_intersect_circular
 \sa `intersection`
 
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel" for details on a spherical kernel instantiation.
 
 
 When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
@@ -151,7 +151,7 @@ the following:
 - `Circular_arc_3<SphericalKernel>`
 
 An example illustrating this is presented in
-Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
+Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel".
 */
 bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2);
 
@@ -190,7 +190,7 @@ function are available.
 \sa `CGAL::do_intersect` 
 \sa `CGAL::Object` 
 
-\details See Chapter  \ref chapterkernel23 for details on a linear kernel instantiation.
+\details See Chapter  \ref chapterkernel23 "2D and 3D Geometry Kernel" for details on a linear kernel instantiation.
 */
 /// @{
 
@@ -433,7 +433,7 @@ Object intersection(const Plane_3<Kernel>& pl1,
 \sa `CGAL::do_intersect` 
 \sa `CGAL::Object`
 
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel" for details on a circular kernel instantiation.
 
 When using a circular kernel, in addition to the function overloads documented \ref intersection_linear "here",
 the following function overloads are also available.
@@ -492,7 +492,7 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 \sa `CGAL::do_intersect` 
 \sa `CGAL::Object`
 
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel" for details on a spherical kernel instantiation.
 
 When using a spherical kernel, in addition to the function overloads documented \ref intersection_linear "here",
 the following function overloads are also available.

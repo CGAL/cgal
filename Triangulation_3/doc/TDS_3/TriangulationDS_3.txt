@@ -14,7 +14,7 @@ geometric information related to the position of vertices.
 
 \cgal provides 3D geometric triangulations in which these
 two aspects are clearly separated.
-As described in Chapter \ref chapterTriangulation3, a geometric
+As described in Chapter \ref chapterTriangulation3 "3D Triangulations", a geometric
 triangulation of a set of points in \f$ \R^d\f$, \f$ d\leq 3\f$ is a partition of the
 whole space \f$ \R^d\f$ into cells having \f$ d+1\f$ vertices. Some of them
 are infinite, they are obtained by linking an additional vertex at
@@ -27,7 +27,7 @@ topological sphere \f$ S^d\f$ in \f$ \R^{d+1}\f$.
 This chapter deals with 3D-triangulation data structures, meant to
 maintain the combinatorial information for 3D-geometric
 triangulations. The reader interested in geometric triangulations of
-\f$ \R^3\f$ is advised to read Chapter \ref chapterTriangulation3 "3D Triangulations.
+\f$ \R^3\f$ is advised to read Chapter \ref chapterTriangulation3 "3D Triangulations".
 
 \section TDS3secintro Representation 
 
@@ -179,7 +179,7 @@ layer upon which a geometric layer can be built \cite k-ddsps-98. This
 geometric layer is typically one of the 3D-triangulation classes of \cgal:
 `Triangulation_3`, `Delaunay_triangulation_3` and
 `Regular_triangulation_3`. This relation is described in more details in
-Chapter \ref chapterTriangulation3, where the
+Chapter \ref chapterTriangulation3 "3D Triangulations", where the
 Section \ref Triangulation3secdesign explains other important parts of the
 design related to the geometry.
 
@@ -209,7 +209,7 @@ or \f$ 2\f$-face. It also allows one, if the dimension of the triangulation is
 smaller than \f$ 3\f$, to insert a vertex so that the dimension of the triangulation
 is increased by one. The TDS is responsible for the combinatorial integrity of
 the eventual geometric triangulation built on top of it (the upper layer,
-see Chapter \ref chapterTriangulation3).
+see Chapter \ref chapterTriangulation3 "3D Triangulations").
 </UL>
 
 The user has several ways to add his own data in the vertex and cell base classes used by the TDS. He can either:
