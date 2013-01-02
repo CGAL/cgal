@@ -82,6 +82,11 @@ public:
     : ep(c2e(o1), c2e(o2)), ap(c2a(o1), c2a(o2))
   {}
 
+  explicit Filtered_predicate(const EP&  e, const AP&  a)
+    : ep(e), ap(a)
+  {}
+
+
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename... Args>
   result_type
