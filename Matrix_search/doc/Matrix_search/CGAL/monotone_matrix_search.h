@@ -44,10 +44,10 @@ binary function: `Matrix::Value` \f$ \times\f$
 (non-reflexive) total ordering on `Matrix::Value`. 
 
 \sa `MonotoneMatrixSearchTraits` 
-\sa `CGAL::all_furthest_neighbors_2()`
-\sa `CGAL::maximum_area_inscribed_k_gon_2()`
-\sa `CGAL::maximum_perimeter_inscribed_k_gon_2()`
-\sa `CGAL::extremal_polygon_2()`
+\sa `all_furthest_neighbors_2()`
+\sa `maximum_area_inscribed_k_gon_2()`
+\sa `maximum_perimeter_inscribed_k_gon_2()`
+\sa `extremal_polygon_2()`
 
 ### Implementation ###
 
