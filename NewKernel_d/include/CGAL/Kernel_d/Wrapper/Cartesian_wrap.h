@@ -9,8 +9,7 @@
 #include <CGAL/Kernel_d/Wrapper/Segment_d.h>
 #include <CGAL/Kernel_d/Wrapper/Sphere_d.h>
 
-#include <CGAL/Kernel_d/Wrapper/Point_rc_d.h>
-#include <CGAL/Kernel_d/Wrapper/Vector_rc_d.h>
+#include <CGAL/Kernel_d/Wrapper/Ref_count_obj.h>
 
 #include <boost/mpl/or.hpp>
 
@@ -160,12 +159,11 @@ struct Cartesian_refcount : public Base_
     typedef Base_ Kernel_base;
     typedef Cartesian_refcount Self;
 
-    //FIXME: Use object_list (or a list passed as argument)
-    //TODO: A generic object wrapper should work just fine, no need to have a different one for each type.
+    // FIXME: Use object_list, or a list passed as argument, or anything
+    // automatic.
     template <class T, class=void> struct Type : Get_type<Base_, T> {};
 #define CGAL_Kernel_obj(X,Y) \
-    template <class D> struct Type<X##_tag, D> { typedef X##_rc_d<Cartesian_refcount> type; }; \
-    typedef X##_rc_d<Cartesian_refcount> X;
+    template <class D> struct Type<X##_tag, D> { typedef Ref_count_obj<Cartesian_refcount, X##_tag> type; };
 
     CGAL_Kernel_obj(Point,point)
     CGAL_Kernel_obj(Vector,vector)
