@@ -7,7 +7,7 @@ sequences of iso-oriented boxes. This concept defines the access
 functions to the dimension, the `id`-number, and the boundaries of 
 the boxes manipulated in these algorithms. 
 
-\cgalRefines `Assignable.` 
+\cgalRefines `Assignable` 
 
 \cgalHasModel CGAL::Box_intersection_d::Box_traits_d
 
