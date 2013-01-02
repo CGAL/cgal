@@ -89,7 +89,7 @@ and an index (the facet `i` of a cell `c` is the facet of
 `c` that is opposite to the vertex with index `i`) and an edge
 is given by a cell and two indices (the edge `(i,j)` of a cell
 `c` is the edge whose endpoints are the vertices of `c` with
-indices `i` and `j`). See Figure \ref TDS3figrepres.
+indices `i` and `j`). See Figure \cgalFigureRef{TDS3figrepres} of chapter 3D Triangulation Data Structure.
 
 Some point sets do not admit a triangulation in \f$ \mathbb T_c^3\f$. In
 this case we use 27 periodic copies of the point set arranged in a

@@ -58,7 +58,7 @@ orientation, the positive orientation being defined by the orientation
 of the underlying space \f$ \mathbb T_c^3\f$. The neighbors of a cell are
 also indexed with 0, 1, 2, 3 in such a way that the neighbor indexed
 by \f$ i\f$ is opposite to the vertex with the same index. See
-Figure  \ref P3Triangulation3figorient.
+Figure  \cgalFigureRef{P3Triangulation3figorient}.
 
 In order to be able to specify the tetrahedra that contain vertices
 both inside and outside the original domain we store an additional
