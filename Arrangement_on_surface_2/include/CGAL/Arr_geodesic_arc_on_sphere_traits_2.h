@@ -3162,8 +3162,8 @@ template <typename Kernel, typename OutputStream>
 OutputStream& operator<<(OutputStream& os,
                          const Arr_extended_direction_3<Kernel>& ed)
 {
-  CGAL::To_double<typename Kernel::FT> todouble;
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
+  CGAL::To_double<typename Kernel::FT> todouble;
   os << "("
      << ed.dx() << ", " << ed.dy() << ",  " << ed.dz();
   os << ")"
