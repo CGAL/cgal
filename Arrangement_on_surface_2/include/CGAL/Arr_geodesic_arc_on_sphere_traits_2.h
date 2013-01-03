@@ -2245,8 +2245,8 @@ public:
 
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
     Direction_2 dir_xy = Traits::project_xy(dir);
-    Kernel kernel;
-    typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
+    const Kernel* kernel = this;
+    typename Kernel::Equal_2 equal_2 = kernel->equal_2_object();
     const Direction_2& xy = Traits::identification_xy();
     m_location = equal_2(dir_xy, xy) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
 #endif
