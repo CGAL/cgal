@@ -33,5 +33,138 @@
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\section CK3_GeometricConcepts Geometric Concepts
+
+- `SphericalKernel`
+
+\subsection CK3_Objecttypes Object types
+
+- `SphericalKernel::CircularArc_3`
+- `SphericalKernel::CircularArcPoint_3`
+- `SphericalKernel::LineArc_3`
+
+\subsection CK3_Functors Functors
+
+- `SphericalKernel::ConstructPlane_3`
+- `SphericalKernel::ConstructSphere_3`
+- `SphericalKernel::ConstructLine_3`
+- `SphericalKernel::ConstructCircle_3`
+- `SphericalKernel::ConstructCircularArcPoint_3`
+- `SphericalKernel::ConstructLineArc_3`
+- `SphericalKernel::ConstructCircularArc_3`
+- `SphericalKernel::ConstructCircularMinVertex_3`
+- `SphericalKernel::ConstructCircularMaxVertex_3`
+- `SphericalKernel::ConstructCircularSourceVertex_3`
+- `SphericalKernel::ConstructCircularTargetVertex_3`
+- `SphericalKernel::ConstructBbox_3`
+- `SphericalKernel::CompareX_3`
+- `SphericalKernel::CompareY_3`
+- `SphericalKernel::CompareZ_3`
+- `SphericalKernel::CompareXY_3`
+- `SphericalKernel::CompareXYZ_3`
+- `SphericalKernel::CompareTheta_3`
+- `SphericalKernel::CompareThetaZ_3`
+- `SphericalKernel::CompareZAtTheta_3`
+- `SphericalKernel::CompareZToRight_3`
+- `SphericalKernel::Equal_3`
+- `SphericalKernel::HasOn_3`
+- `SphericalKernel::DoOverlap_3`
+- `SphericalKernel::DoIntersect_3`
+- `SphericalKernel::IsThetaMonotone_3`
+- `SphericalKernel::BoundedSide_3`
+- `SphericalKernel::HasOnBoundedSide_3`
+- `SphericalKernel::HasOnUnboundedSide_3`
+- `SphericalKernel::Intersect_3`
+- `SphericalKernel::Split_3`
+- `SphericalKernel::MakeThetaMonotone_3`
+- `SphericalKernel::ComputeCircularX_3`
+- `SphericalKernel::ComputeCircularY_3`
+- `SphericalKernel::ComputeCircularZ_3`
+- `SphericalKernel::ComputeApproximateSquaredLength_3`
+- `SphericalKernel::ComputeApproximateAngle_3`
+- `SphericalKernel::GetEquation`
+
+\section CK3_GeometricKernels Geometric Kernels and Classes
+
+\subsection CK3_Kernels Kernels
+
+- `CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`
+- `CGAL::Exact_spherical_kernel_3`
+
+\subsection CK3_Points Points
+
+- `CGAL::Circular_arc_point_3<SphericalKernel>`
+
+\subsection CK3_Arcs Arcs
+
+- `CGAL::Line_arc_3<SphericalKernel>`
+- `CGAL::Circular_arc_3<SphericalKernel>`
+
+\subsection CK3_ConstantsandEnumerations Constants and Enumerations
+
+- `CGAL::Circle_type`
+
+\section CK3_GeometricGlobal Geometric Global Functions
+
+- \ref compare_x "CGAL::compare_x"
+- \ref compare_y "CGAL::compare_y"
+- \ref compare_z "CGAL::compare_z"
+- \ref compare_xy "CGAL::compare_xy"
+- \ref compare_xyz "CGAL::compare_xyz"
+- `CGAL::compare_theta`
+- `CGAL::compare_theta_z`
+- `CGAL::is_theta_monotone`
+- `CGAL::classify`
+- `CGAL::x_extremal_point`
+- `CGAL::y_extremal_point`
+- `CGAL::z_extremal_point`
+- `CGAL::theta_extremal_point`
+- `CGAL::x_extremal_points`
+- `CGAL::y_extremal_points`
+- `CGAL::z_extremal_points`
+- `CGAL::theta_extremal_points`
+- \ref do_intersect "CGAL::do_intersect"
+- \ref intersection "CGAL::intersection"
+
+\section CK3_AlgebraicConcepts Algebraic Concepts
+
+- `AlgebraicKernelForSpheres`
+
+\subsection CK3_Functors_1 Functors
+
+- `AlgebraicKernelForSpheres::ConstructPolynomial_1_3`
+- `AlgebraicKernelForSpheres::ConstructPolynomialForSpheres_2_3`
+- `AlgebraicKernelForSpheres::ConstructPolynomialsForLines_3`
+- `AlgebraicKernelForSpheres::CompareX`
+- `AlgebraicKernelForSpheres::CompareY`
+- `AlgebraicKernelForSpheres::CompareZ`
+- `AlgebraicKernelForSpheres::CompareXY`
+- `AlgebraicKernelForSpheres::CompareXYZ`
+- `AlgebraicKernelForSpheres::SignAt`
+- `AlgebraicKernelForSpheres::XCriticalPoints`
+- `AlgebraicKernelForSpheres::YCriticalPoints`
+- `AlgebraicKernelForSpheres::ZCriticalPoints`
+- `AlgebraicKernelForSpheres::Solve`
+
+\section CK3_AlgebraicKernel Algebraic Kernel and Classes
+
+\subsection CK3_Kernel Kernel
+
+- `CGAL::Algebraic_kernel_for_spheres_2_3<RT>`
+
+\subsection CK3_Polynomials Polynomials
+
+- `CGAL::Polynomial_1_3<RT>`
+- `CGAL::Polynomial_for_spheres_2_3<FT>`
+- `CGAL::Polynomials_for_lines_3<FT>`
+
+\subsection CK3_RootsofPolynomials Roots of Polynomials
+
+- `CGAL::Sqrt_extension<NT,ROOT>`
+- `CGAL::Root_for_spheres_2_3<RT>`
+- `CGAL::Root_of_traits<RT>`
+
+
 */
 
