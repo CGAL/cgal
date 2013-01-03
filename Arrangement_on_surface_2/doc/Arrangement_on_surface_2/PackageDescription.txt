@@ -80,5 +80,127 @@ that maintains arrangements of arbitrary bounded planar curves. It comes
 with a variety of algorithms that operate on planar arrangement,
 such as point-location queries and overlay computations, which are
 implemented as peripheral classes or as free (global) functions.
+
+\section Aos_ref_Enumerations Enumerations
+
+- `CGAL::Arr_parameter_space`
+- `CGAL::Arr_curve_end`
+- `CGAL::Arr_halfedge_direction`
+
+\section Aos_ref_Tags Tags
+
+- `CGAL::Arr_oblivious_side_tag`
+- `CGAL::Arr_open_side_tag`
+
+\section Aos_ref_Concepts Concepts
+
+- `ArrangementDcel`
+- `ArrangementDcelWithRebind`
+- `ArrangementDcelVertex`
+- `ArrangementDcelHalfedge`
+- `ArrangementDcelFace`
+- `ArrangementDcelHole`
+- `ArrangementDcelIsolatedVertex`
+- `ArrangementBasicTraits_2`
+- `ArrangementLandmarkTraits_2`
+- `ArrangementXMonotoneTraits_2`
+- `ArrangementTraits_2`
+- `ArrangementOpenBoundaryTraits_2`
+- `ArrangementInputFormatter`
+- `ArrangementOutputFormatter`
+- `ArrangementWithHistoryInputFormatter`
+- `ArrangementWithHistoryOutputFormatter`
+- `ArrangementPointLocation_2`
+- `ArrangementVerticalRayShoot_2`
+
+\section Aos_ref_GeometricObjectConcepts Geometric Object Concepts
+
+- `ArrTraits::Point_2`
+- `ArrTraits::XMonotoneCurve_2`
+- `ArrTraits::Curve_2`
+
+\section Aos_ref_FunctionObjectConcepts Function Object Concepts
+
+- `ArrTraits::CompareX_2`
+- `ArrTraits::CompareXy_2`
+- `ArrTraits::ConstructMinVertex_2`
+- `ArrTraits::ConstructMaxVertex_2`
+- `ArrTraits::IsVertical_2`
+- `ArrTraits::CompareYAtX_2`
+- `ArrTraits::CompareYAtXLeft_2`
+- `ArrTraits::CompareYAtXRight_2`
+- `ArrTraits::Equal_2`
+- `ArrTraits::ParameterSpaceInX_2`
+- `ArrTraits::ParameterSpaceInY_2`
+- `ArrTraits::CompareXAtLimit_2`
+- `ArrTraits::CompareXNearLimit_2`
+- `ArrTraits::CompareYNearBoundary_2`
+- `ArrTraits::Intersect_2`
+- `ArrTraits::Split_2`
+- `ArrTraits::AreMergeable_2`
+- `ArrTraits::Merge_2`
+- `ArrTraits::MakeXMonotone_2`
+- `ArrTraits::Approximate_2`
+- `ArrTraits::ConstructXMonotoneCurve_2`
+
+\section Aos_ref_Classes Classes
+
+- `CGAL::Arrangement_2<Traits,Dcel>`
+- `CGAL::Arr_accessor<Arrangement>`
+- `CGAL::Arr_observer<Arrangement>`
+- `CGAL::Arrangement_with_history_2<Traits,Dcel>`
+- `CGAL::Arrangement_2::Vertex`
+- `CGAL::Arrangement_2::Halfedge`
+- `CGAL::Arrangement_2::Face`
+- `CGAL::Arr_dcel_base<V,H,F>`
+- `CGAL::Arr_default_dcel<Traits>`
+- `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`
+- `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>`
+- `CGAL::Arr_segment_traits_2<Kernel>`
+- `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
+- `CGAL::Arr_linear_traits_2<Kernel>`
+- `CGAL::Arr_polyline_traits_2<SegmentTraits>`
+- `CGAL::Arr_circle_segment_traits_2<Kernel>`
+- `CGAL::Arr_line_arc_traits_2<CircularKernel>`
+- `CGAL::Arr_circular_arc_traits_2<CircularKernel>`
+- `CGAL::Arr_circular_line_arc_traits_2<CircularKernel>`
+- `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
+- `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
+- `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
+- `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
+- `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>`
+- `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>`
+- `CGAL::Arr_text_formatter<Arrangement>`
+- `CGAL::Arr_face_extended_text_formatter<Arrangement>`
+- `CGAL::Arr_extended_dcel_text_formatter<Arrangement>`
+- `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
+- `CGAL::Arr_naive_point_location<Arrangement>`
+- `CGAL::Arr_walk_along_line_point_location<Arrangement>`
+- `CGAL::Arr_trapezoid_ric_point_location<Arrangement>`
+- `CGAL::Arr_landmarks_point_location<Arrangement,Generator>`
+
+\section Aos_ref_Tags Tags
+
+- `CGAL::Arr_oblivious_side_tag`
+- `CGAL::Arr_open_side_tag`
+
+\section Aos_ref_Functions Functions
+
+- `CGAL::is_valid`
+- `CGAL::insert`
+- `CGAL::insert_non_intersecting_curve`
+- `CGAL::insert_non_intersecting_curves`
+- `CGAL::insert_point`
+- `CGAL::remove_edge`
+- `CGAL::remove_vertex`
+- `CGAL::locate`
+- `CGAL::decompose`
+- `CGAL::overlay`
+- `CGAL::read`
+- `CGAL::write`
+- `CGAL::remove_curve`
+- \ref PkgArrangement2op_left_shift "CGAL::operator<<"
+- \ref PkgArrangement2op_right_shift "CGAL::operator<<"
+
 */
 
