@@ -108,7 +108,7 @@ Transform {
 			   ]
 		}
 		normal ExactNormal {
-		  ratVector [.707107 .707107 0
+		  ratVector [1 1 0
 			     1 0 0, 1 0 0, 1 0 0, 1 0 0, # ignored
 			    ]
 		}

@@ -102,9 +102,7 @@ Transform {
 		  ratPoint [0 0 -1 0 0 1]
 		}
 		normal ExactNormal {
-		  ratVector [.8944 -.4472 0,	# 2 -1 0
-			     -1 0 0
-			    ] 
+		  ratVector [2 -1 0, -1 0 0] 
 		}
 		# pointIndex [6 7]
 		curveIndex [0 1 0 1]
@@ -138,9 +136,7 @@ Transform {
 		  ratPoint [0 0 -1 0 0 1]
 		}
 		normal ExactNormal {
-		  ratVector [-.8944 -.4472 0,	# -2 -1 0
-			     1 0 0
-			    ]
+		  ratVector [-2 -1 0, 1 0 0]
 		}
 		# pointIndex [6 7]
 		curveIndex [0 1 0 1]
