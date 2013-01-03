@@ -37,5 +37,115 @@
 \cgalPkgDemo{Arrangement of Circular Arcs,circular_kernel.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\section CK2_GeometricConcepts Geometric Concepts
+
+- `CircularKernel`
+
+\subsection CK2_Functors Functors
+
+- `CircularKernel::ConstructLine_2`
+- `CircularKernel::ConstructCircle_2`
+- `CircularKernel::ConstructCircularArcPoint_2`
+- `CircularKernel::ConstructLineArc_2`
+- `CircularKernel::ConstructCircularArc_2`
+- `CircularKernel::ComputeCircularX_2`
+- `CircularKernel::ComputeCircularY_2`
+- `CircularKernel::ConstructCircularMinVertex_2`
+- `CircularKernel::ConstructCircularMaxVertex_2`
+- `CircularKernel::ConstructCircularSourceVertex_2`
+- `CircularKernel::ConstructCircularTargetVertex_2`
+- `CircularKernel::ConstructBbox_2`
+- `CircularKernel::CompareX_2`
+- `CircularKernel::CompareY_2`
+- `CircularKernel::CompareXY_2`
+- `CircularKernel::Equal_2`
+- `CircularKernel::CompareYatX_2`
+- `CircularKernel::CompareYtoRight_2`
+- `CircularKernel::HasOn_2`
+- `CircularKernel::DoOverlap_2`
+- `CircularKernel::DoIntersect_2`
+- `CircularKernel::BoundedSide_2`
+- `CircularKernel::HasOnBoundedSide_2`
+- `CircularKernel::HasOnUnboundedSide_2`
+- `CircularKernel::InXRange_2`
+- `CircularKernel::IsVertical_2`
+- `CircularKernel::IsXMonotone_2`
+- `CircularKernel::IsYMonotone_2`
+- `CircularKernel::MakeXMonotone_2`
+- `CircularKernel::MakeXYMonotone_2`
+- `CircularKernel::Intersect_2`
+- `CircularKernel::Split_2`
+- `CircularKernel::GetEquation`
+
+\section CK2_GeometricKernelsandClasses Geometric Kernels and Classes
+
+\subsection CK2_Kernels Kernels
+
+- `CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>`
+- `CGAL::Exact_circular_kernel_2`
+
+\subsection CK2_Points Points
+
+- `CGAL::Circular_arc_point_2<CircularKernel>`
+
+\subsection CK2_Arcs Arcs
+
+- `CGAL::Circular_arc_2<CircularKernel>`
+- `CGAL::Line_arc_2<CircularKernel>`
+
+\section CK2_GeometricGlobalFunctions Geometric Global Functions
+
+- \ref compare_x "CGAL::compare_x"
+- \ref compare_y "CGAL::compare_y"
+- \ref compare_xy "CGAL::compare_xy"
+- \ref compare_y_at_x "CGAL::compare_y_at_x"
+- `CGAL::compare_y_to_right`
+- `CGAL::has_in_x_range`
+- `CGAL::has_on`
+- \ref do_intersect "CGAL::do_intersect"
+- \ref intersection "CGAL::intersection"
+- `CGAL::x_extremal_point`
+- `CGAL::y_extremal_point`
+- `CGAL::x_extremal_points`
+- `CGAL::y_extremal_points`
+- `CGAL::make_x_monotone`
+- `CGAL::make_xy_monotone`
+
+\section CK2_AlgebraicConcepts Algebraic Concepts
+
+- `AlgebraicKernelForCircles`
+
+\subsection CK2_Functors Functors
+
+
+- `AlgebraicKernelForCircles::ConstructPolynomial_1_2`
+- `AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2`
+- `AlgebraicKernelForCircles::CompareX`
+- `AlgebraicKernelForCircles::CompareY`
+- `AlgebraicKernelForCircles::CompareXY`
+- `AlgebraicKernelForCircles::SignAt`
+- `AlgebraicKernelForCircles::XCriticalPoints`
+- `AlgebraicKernelForCircles::YCriticalPoints`
+- `AlgebraicKernelForCircles::Solve`
+
+\section CK2_AlgebraicKernelandClasses Algebraic Kernel and Classes
+
+\subsection CK2_Kernel Kernel 
+
+- `CGAL::Algebraic_kernel_for_circles_2_2<RT>`
+
+\subsection CK2_Polynomials Polynomials
+
+- `CGAL::Polynomial_1_2<RT>`
+- `CGAL::Polynomial_for_circles_2_2<FT>`
+
+\subsection CK2_RootsofPolynomials Roots of Polynomials
+
+- `CGAL::Sqrt_extension<NT,ROOT>`
+- `CGAL::Root_for_circles_2_2<FT>`
+- `CGAL::Root_of_traits<RT>`
+
+
 */
 
