@@ -48,7 +48,6 @@ DEF HIDE_DISCONTINUITY_KEY SingleKeySensor {
 DEF SNAP Snapshot {
   image Image { }
   fileFormat "jpg"
-  quality 98
   sequence FALSE
   dirName "."
   fileName "test07"
@@ -99,16 +98,17 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 100
 		aosMarkedVertexStyle "none"
-		coord DEF COORD ExactCoordinate {
-		  ratPoint [
-			    0 0 -1 0 1 0
-			    0 1 0 0 0 1
-			    0 0 -1 1 -1 0
-			    1 -1 0 0 0 1
-			   ]
+		coord ExactCoordinate {
+		  ratPoint [0 0 -1 0 0 1]
+		}
+		normal ExactNormal {
+		  ratVector [.8944 -.4472 0,	# 2 -1 0
+			     -1 0 0
+			    ] 
 		}
 		# pointIndex [6 7]
-		curveIndex [0 1 2 3 4 5 6 7]
+		curveIndex [0 1 0 1]
+		normalIndex[0 1]
 	      }
 	    }
 
@@ -134,16 +134,17 @@ Transform {
 		aosMarkedEdgeIndex 100
 		aosMarkedVertexIndex 100
 		aosMarkedVertexStyle "none"
-		coord DEF COORD2 ExactCoordinate {
-		  ratPoint [
-			    0 0 -1 0 -1 0
-			    0 -1 0 0 0 1
-			    0 0 -1 1 1 0
-			    1 1 0 0 0 1
-			   ]
+		coord ExactCoordinate {
+		  ratPoint [0 0 -1 0 0 1]
+		}
+		normal ExactNormal {
+		  ratVector [-.8944 -.4472 0,	# -2 -1 0
+			     1 0 0
+			    ]
 		}
 		# pointIndex [6 7]
-		curveIndex [0 1 2 3 4 5 6 7]
+		curveIndex [0 1 0 1]
+		normalIndex[0 1]
 	      }
 	    }
 	    

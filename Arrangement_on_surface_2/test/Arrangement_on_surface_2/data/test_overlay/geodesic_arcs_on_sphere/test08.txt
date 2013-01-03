@@ -1,62 +1,71 @@
-6
--1 -1 -1 0 0 -1
-0 0 1 -1 -1 1
-0 -1 0 -1 -1 -1
--1 -1 1 0 -1 0
-0 0 -1 -1 1 0
--1 1 0 0 0 1
+5
+-1 -1 -1 0 0 -1 0
+0 0 1 -1 -1 1 0
+0 -1 0 -1 -1 -1 0
+-1 -1 1 0 -1 0 0
+0 0 -1 0 0 1 1 1 1 0
 0
 3
--1 -3 1 -1 -3 -1
-1 -1 0 -1 -3 1
--1 -3 -1 1 -1 0
+-1 -3 1 -1 -3 -1 0
+1 -1 0 -1 -3 1 0
+-1 -3 -1 1 -1 0 0
 0
 # BEGIN ARRANGEMENT
 # number_of_vertices
-6
-# number_of_edges
 8
+# number_of_edges
+10
 # number_of_faces
 4
 # BEGIN VERTICES
-4 2 1 0 0 -1
+4 2 1 0/1 0/1 -1/1
 8
-4 4 1 0 -1 0
-9
-4 3 1 0 0 1
-4
-4 4 1 1 -1 0
-15
-4 4 1 1 1 0
-15
-4 4 1 0 1 0
-9
+4 4 1 -1/1 -1/1 -1/1
+7
+4 3 1 0/1 0/1 1/1
+6
+4 4 1 -1/1 -1/1 1/1
+8
+4 4 1 -1/1 -3/1 -1/1
+6
+4 4 1 -1/1 -3/1 1/1
+5
+4 4 1 0/1 -1/1 0/1
+12
+4 4 1 1/1 -1/1 0/1
+18
 # END VERTICES
 # BEGIN EDGES
-1 0 1 1 0 0 -1 0 -1 0
-8
-8
-2 1 1 1 0 -1 0 0 0 1
-8
-8
-3 0 1 1 0 0 -1 1 -1 0
-14
-14
-2 3 1 1 1 -1 0 0 0 1
-14
-14
-4 0 1 1 0 0 -1 1 1 0
-14
-14
-2 4 1 1 1 1 0 0 0 1
-14
-14
-5 0 1 1 0 0 -1 0 1 0
-8
-8
-2 5 1 1 0 1 0 0 0 1
-8
-8
+1 0 1 1 -1/1 -1/1 -1/1 0/1 0/1 -1/1 0
+6
+6
+2 3 1 1 0/1 0/1 1/1 -1/1 -1/1 1/1 0
+6
+6
+4 1 1 1 -1/1 -3/1 -1/1 -1/1 -1/1 -1/1 0
+6
+6
+5 4 1 1 -1/1 -3/1 1/1 -1/1 -3/1 -1/1 0
+9
+9
+3 5 0 1 -1/1 -1/1 1/1 -1/1 -3/1 1/1 0
+6
+6
+6 4 1 1 0/1 -1/1 0/1 -1/1 -3/1 -1/1 0
+12
+12
+5 6 0 1 -1/1 -3/1 1/1 0/1 -1/1 0/1 0
+12
+12
+7 4 1 1 -1/1 -3/1 -1/1 1/1 -1/1 0/1 0
+18
+18
+5 7 0 1 1/1 -1/1 0/1 -1/1 -3/1 1/1 0
+18
+18
+2 0 1 1 0/1 0/1 -1/1 0/1 0/1 1/1 1 1/1 1/1 0/1
+6
+6
 # END EDGES
 # BEGIN FACES
 # BEGIN FACE
@@ -66,11 +75,24 @@
 # number_of_inner_ccbs
 1
 # halfedges_on_inner_ccb
-4
-1 3 14 12 
+6
+1 5 7 9 3 18 
 # number_of_isolated_vertices
 0
-12
+11
+# END FACE
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+1
+# halfedges_on_outer_ccb
+3
+13 6 11 
+# number_of_inner_ccbs
+0
+# number_of_isolated_vertices
+0
+17
 # END FACE
 # BEGIN FACE
 0 1 
@@ -78,38 +100,25 @@
 1
 # halfedges_on_outer_ccb
 4
-7 2 0 5 
+17 12 10 15 
 # number_of_inner_ccbs
 0
 # number_of_isolated_vertices
 0
-18
+26
 # END FACE
 # BEGIN FACE
 0 1 
 # number_of_outer_ccbs
 1
 # halfedges_on_outer_ccb
-4
-11 6 4 9 
+7
+19 2 8 16 14 4 0 
 # number_of_inner_ccbs
 0
 # number_of_isolated_vertices
 0
-24
-# END FACE
-# BEGIN FACE
-0 1 
-# number_of_outer_ccbs
-1
-# halfedges_on_outer_ccb
-4
-15 10 8 13 
-# number_of_inner_ccbs
-0
-# number_of_isolated_vertices
-0
-18
+20
 # END FACE
 # END FACES
 # END ARRANGEMENT

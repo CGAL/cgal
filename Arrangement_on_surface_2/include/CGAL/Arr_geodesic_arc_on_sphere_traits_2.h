@@ -765,10 +765,18 @@ public:
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_3 equal_3 = kernel->equal_3_object();
       if (xc1.is_full() || xc2.is_full()) {
-        return (xc1.is_full() && xc2.is_full() &&
-                equal_3(xc1.left(), xc2.left()));
+        if (!xc1.is_full() || !xc2.is_full()) return false;
+        typename Kernel::Construct_opposite_direction_3 opposite_3 =
+          kernel->construct_opposite_direction_3_object();
+        return (equal_3(xc1.normal(), xc2.normal()) ||
+                equal_3(opposite_3(xc1.normal()), xc2.normal()));
       }
-      
+
+      if (xc1.is_meridian() || xc2.is_meridian()) {
+        return (xc1.is_meridian() && xc2.is_meridian() &&
+                equal_3(xc1.normal(), xc2.normal()));
+      }
+
       return (equal_3(xc1.left(), xc2.left()) &&
               equal_3(xc1.right(), xc2.right()));
     }
@@ -1392,7 +1400,7 @@ public:
       if (c.is_full()) {
         // The spherical arc is full
         if (c.is_vertical()) {
-          // The arc is vertical => divide it into 2 half arcs;
+          // The arc is vertical => divide it into 2 meridians;
           const Direction_3& np = m_traits->neg_pole();
           const Direction_3& pp = m_traits->pos_pole();
           X_monotone_curve_2 xc1(np, pp, c.normal(), true, true);
@@ -1549,12 +1557,12 @@ public:
       CGAL_precondition(!equal_3(p, source));
       CGAL_precondition(!equal_3(p, target));
 
-      xc1.normal(xc.normal());
+      xc1.set_normal(xc.normal());
       xc1.set_is_vertical(xc.is_vertical());
       xc1.set_is_degenerate(false);
       xc1.set_is_empty(false);
 
-      xc2.normal(xc.normal());
+      xc2.set_normal(xc.normal());
       xc2.set_is_vertical(xc.is_vertical());
       xc2.set_is_empty(false);
       
@@ -1913,16 +1921,17 @@ public:
                     const X_monotone_curve_2& xc2) const
     {
       if (xc1.is_empty() || xc2.is_empty()) return true;
-      if (xc1.is_full() && xc2.is_full()) return false;
+      if ((xc1.is_full() || xc1.is_meridian()) &&
+          (xc2.is_full() || xc2.is_meridian())) return false;
 
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
       if (xc1.is_degenerate() && xc2.is_degenerate())
         return equal(xc1.left(), xc2.left());
-      if (xc1.is_full() && xc2.is_degenerate())
+      if ((xc1.is_full() || xc1.is_meridian()) && xc2.is_degenerate())
         return xc1.has_on(xc2.left());
-      if (xc2.is_full() && xc1.is_degenerate())
+      if ((xc2.is_full() || xc2.is_meridian()) && xc1.is_degenerate())
         return xc2.has_on(xc1.left());
 
       const Direction_3& normal1 = xc1.normal();
@@ -2005,13 +2014,13 @@ public:
           xc1.source().is_mid_boundary() ? xc1.source() : xc1.target();
         xc.set_source(p);
         xc.set_target(p);
-        xc.normal(xc1.normal());
+        xc.set_normal(xc1.normal());
         xc.set_is_full(true);
       }
 #endif
       
       if (xc1.is_directed_right() || xc2.is_directed_right()) {
-        xc.normal(xc1.is_directed_right() ? xc1.normal() : xc2.normal());
+        xc.set_normal(xc1.is_directed_right() ? xc1.normal() : xc2.normal());
         xc.set_is_directed_right(true);
 
         if (eq1) {
@@ -2023,7 +2032,7 @@ public:
           xc.set_target(xc1.right());
         }
       } else {
-        xc.normal(xc1.normal());
+        xc.set_normal(xc1.normal());
         xc.set_is_directed_right(false);
 
         if (eq1) {
@@ -2281,14 +2290,14 @@ public:
  */
 template <typename T_Kernel>
 class Arr_x_monotone_geodesic_arc_on_sphere_3 {
-protected:
+public:
   typedef T_Kernel                                    Kernel;
-  
+  typedef typename Kernel::Direction_3                Direction_3;
   typedef typename Kernel::Plane_3                    Plane_3;
   typedef typename Kernel::Vector_3                   Vector_3;
   typedef typename Kernel::Direction_2                Direction_2;
-  typedef typename Kernel::Direction_3                Direction_3;
 
+protected:
   // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_extended_direction_3<Kernel>      Arr_extended_direction_3;
 
@@ -2401,8 +2410,9 @@ public:
     return (*this);
   }
   
-  /*! Construct a spherical_arc from two endpoint directions. It is assumed
-   * that the arc is the one with the smaller angle among the two.
+  /*! Construct the minor arc from two endpoint directions. The minor arc
+   *  is the one with the smaller angle among the two geodesic arcs with
+   * the given endpoints.
    * 1. Find out whether the arc is x-monotone.
    * 2. If it is x-monotone,
    *    2.1 Find out whether it is vertical, and
@@ -2413,7 +2423,7 @@ public:
    * \param source the source point.
    * \param target the target point.
    * \pre the source and target cannot be equal.
-   * \pre the source and target cannot be opposite of each other.
+   * \pre the source and target cannot be antipodal.
    */
   Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3& source,
@@ -2423,7 +2433,14 @@ public:
     m_is_full(false),
     m_is_degenerate(false),
     m_is_empty(false)
-  { init(); }
+  {
+    Kernel kernel;
+    CGAL_precondition(!kernel.equal_3_object()
+                      (kernel.construct_opposite_direction_3_object()(m_source),
+                       m_target));
+    m_normal = construct_normal_3(m_source, m_target);
+    init();
+  }
 
   /*! Initialize a spherical_arc given that the two endpoint directions
    * have been set. It is assumed that the arc is the one with the smaller
@@ -2438,7 +2455,6 @@ public:
    * \param source the source point.
    * \param target the target point.
    * \pre the source and target cannot be equal.
-   * \pre the source and target cannot be opposite of each other.
    */
   void init()
   {
@@ -2446,10 +2462,6 @@ public:
 
     Kernel kernel;
     CGAL_precondition(!kernel.equal_3_object()(m_source, m_target));
-    CGAL_precondition(!kernel.equal_3_object()
-                      (kernel.construct_opposite_direction_3_object()(m_source),
-                       m_target));
-    m_normal = construct_normal_3(m_source, m_target);
       
     // Check whether any one of the endpoint coincide with a pole:
     if (m_source.is_max_boundary()) {
@@ -2660,7 +2672,7 @@ public:
   /*! Set the direction of the underlying plane.
    * \param normal the plane direction.
    */
-  void normal(const Direction_3& normal) { m_normal = normal; }
+  void set_normal(const Direction_3& normal) { m_normal = normal; }
 
   void set_is_vertical(bool flag) { m_is_vertical = flag; }
   void set_is_directed_right(bool flag) { m_is_directed_right = flag; }
@@ -2775,6 +2787,10 @@ public:
     return kernel.counterclockwise_in_between_2_object()(p, l, r);
   }
 
+  /*! Determines whether the curve is a meridian */
+  bool is_meridian() const
+  { return left().is_min_boundary() && right().is_max_boundary(); }
+  
 #if 0
   /*! Create a bounding box for the spherical_arc */
   Bbox_2 bbox() const
@@ -2825,14 +2841,18 @@ public:
 template <typename T_Kernel>
 class Arr_geodesic_arc_on_sphere_3 :
   public Arr_x_monotone_geodesic_arc_on_sphere_3<T_Kernel> {
-protected:
+public:
   typedef T_Kernel                                              Kernel;
-  typedef Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel> Base;
 
+protected:
+  typedef Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>       Base;
+
+public:
   typedef typename Base::Plane_3                                Plane_3;
   typedef typename Base::Direction_3                            Direction_3;
   typedef typename Base::Direction_2                            Direction_2;
   
+protected:
   // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_extended_direction_3<Kernel>    Arr_extended_direction_3;
 
@@ -2870,13 +2890,13 @@ public:
    * \pre plane contains trg
    */
   Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3& src,
-                                     const Arr_extended_direction_3& trg,
-                                     const Direction_3& normal,
-                                     bool is_x_monotone, bool is_vertical,
-                                     bool is_directed_right,
-                                     bool is_full = false,
-                                     bool is_degenerate = false,
-                                     bool is_empty = false) :
+                               const Arr_extended_direction_3& trg,
+                               const Direction_3& normal,
+                               bool is_x_monotone, bool is_vertical,
+                               bool is_directed_right,
+                               bool is_full = false,
+                               bool is_degenerate = false,
+                               bool is_empty = false) :
     Base(src, trg, normal,
          is_vertical, is_directed_right, is_full, is_degenerate, is_empty),
     m_is_x_monotone(is_x_monotone)
@@ -2992,6 +3012,7 @@ public:
    * \param plane the containing plane.
    * \param source the source-point direction.
    * \param target the target-point direction.
+   * \param normal the normal to the plane containing the arc
    * \pre plane contain the origin
    * \pre Both endpoints lie on the given plane.
    */
@@ -3003,7 +3024,7 @@ public:
 
     this->set_source(source);
     this->set_target(target);
-    this->normal(normal);
+    this->set_normal(normal);
     this->set_is_degenerate(false);
     this->set_is_empty(false);
 
@@ -3143,23 +3164,20 @@ OutputStream& operator<<(OutputStream& os,
 {
   CGAL::To_double<typename Kernel::FT> todouble;
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
-  os << "(";
-#endif
-#if 0
-  os << ed.dx() << ", " << ed.dy() << ", " << ed.dz();
-#else
-  os << static_cast<float>(todouble(ed.dx())) << ", "
-     << static_cast<float>(todouble(ed.dy())) << ", "
-     << static_cast<float>(todouble(ed.dz()));
-#endif
-#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
+  os << "("
+     << ed.dx() << ", " << ed.dy() << ",  " << ed.dz();
   os << ")"
      << ", "
-     <<
-    (ed.is_min_boundary() ? "min" :
-     ed.is_max_boundary() ? "max" :
-     ed.is_mid_boundary() ? "dis" : "reg");
+     << (ed.is_min_boundary() ? "min" :
+         ed.is_max_boundary() ? "max" :
+         ed.is_mid_boundary() ? "dis" : "reg");
+#else
+  //    << static_cast<float>(todouble(ed.dx())) << ", "
+  //    << static_cast<float>(todouble(ed.dy())) << ", "
+  //    << static_cast<float>(todouble(ed.dz()));
 #endif
+  const typename Kernel::Direction_3* dir = &ed;
+  os << *dir;
   return os;
 }
 
@@ -3170,15 +3188,17 @@ operator<<(OutputStream& os,
            const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>& arc)
 {
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
-  os << "(";
-#endif
-  os << "(" << arc.source() << "), (" << arc.target() << ")";
-#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "("
+     << "(" << arc.source() << "), (" << arc.target() << ")"
+     << "("
      << ", (" << arc.normal() << ")"
      << ", " << (arc.is_vertical() ? " |" : "!|")
      << ", " << (arc.is_directed_right() ? "=>" : "<=")
      << ", " << (arc.is_full() ? "o" : "/");
+#else
+  os << arc.source() << " " << arc.target() << " ";
+  if (!arc.is_meridian()) os << "0";
+  else os << "1 " << arc.normal();
 #endif
   return os;
 }
@@ -3204,6 +3224,23 @@ operator>>(InputStream& is,
   is >> source >> target;
   arc.set_source(source);
   arc.set_target(target);
+  unsigned int flag;
+  is >> flag;
+  if (flag == 1) {
+    typename Kernel::Direction_3 normal;
+    is >> normal;
+    arc.set_normal(normal);
+  }
+  else {
+    Kernel kernel;
+    CGAL_precondition(!kernel.equal_3_object()
+                      (kernel.construct_opposite_direction_3_object()(source),
+                       target));
+    typename Kernel::Vector_3 v =
+      kernel.construct_cross_product_vector_3_object()(source.vector(),
+                                                       target.vector());
+    arc.set_normal(v.direction());
+  }    
   arc.init();
   return is;
 }  

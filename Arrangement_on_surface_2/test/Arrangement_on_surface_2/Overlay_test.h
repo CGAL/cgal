@@ -829,7 +829,8 @@ equivalent_arr(const Arrangement& arr1, const Arrangement& arr2)
     {
       const Xcurve_2& xcv2 = heit2->curve();
       if ((vertex_map[heit1->source()] == heit2->source()) &&
-          (vertex_map[heit1->target()] == heit2->target()))
+          (vertex_map[heit1->target()] == heit2->target()) &&
+          equal(xcv1, xcv2))
       {
         if (halfedge_map[heit1] != invalid_heit) {
           std::cerr << "The halfedge ((" << heit1->source()->point()
@@ -841,14 +842,6 @@ equivalent_arr(const Arrangement& arr1, const Arrangement& arr2)
         halfedge_map[heit1] = heit2;
         found = true;
 
-        if (!equal(xcv1, xcv2)) {
-          std::cerr << "The halfedge ((" << heit1->source()->point()
-                    << " => " << heit1->target()->point() << "), "
-                    << heit1->data() << ") x-monotone curve does not match ("
-                    << heit2->curve() << ")!" << std::endl;
-          return false;
-        }
-        
         if (heit1->data() != heit2->data()) {
           std::cerr << "The halfedge ((" << heit1->source()->point()
                     << " => " << heit1->target()->point() << "), "
