@@ -2434,7 +2434,7 @@ public:
     m_is_degenerate(false),
     m_is_empty(false)
   {
-    Kernel kernel;
+    CGAL_precondition_code(Kernel kernel);
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(m_source),
                        m_target));
