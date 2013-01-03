@@ -111,7 +111,7 @@ that sphere. Each normal circle defines two such points;
 the \f$ \theta\f$-extremal point of a polar circle is the pole the circle
 goes through. No such point is defined on a bipolar or a threaded
 circle. 
-These definitions are illustrated on Fig. \ref figdefcircles.
+These definitions are illustrated on Figure \cgalFigureRef{figdefcircles}.
 Notice that the \f$ \theta\f$-extremal points should not be confused with
 the endpoints of an arbitrary arc on a sphere.
 
