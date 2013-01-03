@@ -97,10 +97,17 @@ depth(const Lazy<AT,ET,EFT,E2A>& l)
   inline unsigned  depth (const T&  ) { return 0; }
 
 
+CGAL_LAZY_FORWARD(long double)
 CGAL_LAZY_FORWARD(double)
 CGAL_LAZY_FORWARD(float)
 CGAL_LAZY_FORWARD(int)
-CGAL_LAZY_FORWARD(unsigned)
+CGAL_LAZY_FORWARD(unsigned int)
+CGAL_LAZY_FORWARD(long)
+CGAL_LAZY_FORWARD(unsigned long)
+#ifdef CGAL_USE_LONG_LONG
+CGAL_LAZY_FORWARD(long long)
+CGAL_LAZY_FORWARD(unsigned long long)
+#endif
 CGAL_LAZY_FORWARD(Return_base_tag)
 CGAL_LAZY_FORWARD(Null_vector)
 CGAL_LAZY_FORWARD(Origin)
