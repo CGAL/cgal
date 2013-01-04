@@ -5,8 +5,8 @@
 The `PolyhedronItems_3` concept refines the `HalfedgeDSItems`
 concept. In addition to the requirements stated there, a model for
 this concept must fulfill the following requirements for the local
-`PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex` type and
-`PolyhedronItems_3::Face_wrapper<Refs,Traits>::Face` type in order to
+\ref HalfedgeDSItems::Vertex "PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex" type and
+\ref HalfedgeDSItems::Face "PolyhedronItems_3::Face_wrapper<Refs,Traits>::Face" type in order to
 support the point for vertices and the optional plane equation for
 facets. Note that the items class uses face instead of facet. Only the
 polyhedral surface renames faces to facets.
