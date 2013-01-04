@@ -21,7 +21,7 @@ polynomial \f$ p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1\f$.
 
 Note that the `result_type` is the coercion type of the value type of the 
 given iterator range and `PolynomialTraits_d::Innermost_coefficient_type`. 
-In particular `std::iterator_traits<Input_iterator>::value_type` must be 
+In particular `std::iterator_traits<Input_iterator>::%value_type` must be 
 `ExplicitInteroperable` with `PolynomialTraits_d::Innermost_coefficient_type`. 
 Hence, it can not be provided as a public type in advance. 
 

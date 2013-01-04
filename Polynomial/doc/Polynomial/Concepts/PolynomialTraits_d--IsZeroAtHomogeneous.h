@@ -42,7 +42,7 @@ typedef bool result_type;
 Computes whether \f$ p\f$ is zero at the homogeneous point given by the iterator range, 
 where `begin` is referring to the innermost variable. 
 \pre (end-begin==`PolynomialTraits_d::d`+1) 
-\pre `std::iterator_traits< InputIterator >::value_type` is `ExplicitInteroperable` with `PolynomialTraits_d::Innermost_coefficient_type`. 
+\pre `std::iterator_traits< InputIterator >::%value_type` is `ExplicitInteroperable` with `PolynomialTraits_d::Innermost_coefficient_type`. 
 
 */ 
 template <class InputIterator> 
