@@ -19,10 +19,31 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\section Assertions
 The optimization code uses infix `OPTIMISATION` in the assertions,
 e.g. defining the compiler flag
 `CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
 checking off, cf. Section  \ref secchecks.
+
+\section PolytopeD_Allfurthestneighbors All furthest neighbors
+
+- `CGAL::all_furthest_neighbors_2`
+- `AllFurthestNeighborsTraits_2`
+
+\section PolytopeD_Width Width
+
+- `CGAL::Width_3<Traits>`
+- `CGAL::Width_default_traits_3<K>`
+- `WidthTraits_3`
+
+\section PolytopeD_PolytopeDistance Polytope Distance
+
+- `CGAL::Polytope_distance_d<Traits>`
+- `CGAL::Polytope_distance_d_traits_2<K,ET,NT>`
+- `CGAL::Polytope_distance_d_traits_3<K,ET,NT>`
+- `CGAL::Polytope_distance_d_traits_d<K,ET,NT>`
+- `PolytopeDistanceDTraits`
+
 
 */
 
