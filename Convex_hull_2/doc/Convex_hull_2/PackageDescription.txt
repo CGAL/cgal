@@ -38,7 +38,7 @@
 
 \section CH2_Definitions Definitions
 
-A subset \f$S \in \mathbb{R}^2 \f$ is convex if for any two points `p` and `q`
+A subset \f$S \subseteq \mathbb{R}^2 \f$ is convex if for any two points `p` and `q`
 in the set the line segment with endpoints `p` and `q` is contained in \f$ S \f$.
 The convex hull of a set \f$ S \f$ is the smallest convex set containing \f$ S \f$.
 The convex hull of a set of points `P` is a convex polygon with vertices in `P`.
