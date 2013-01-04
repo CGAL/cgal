@@ -25,7 +25,7 @@
 \cgalPkgPicture{kdsFramework.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Daniel Russel}
-\cgalPkgDesc{Kinetic data structures allow combinatorial geometric structures to be maintained as the primitives move. The package provides a framework to ease implementing and debugging kinetic data structures. The package supports exact or inexact operations on primitives which move along polynomial trajectories.  }
+\cgalPkgDesc{%Kinetic data structures allow combinatorial geometric structures to be maintained as the primitives move. The package provides a framework to ease implementing and debugging kinetic data structures. The package supports exact or inexact operations on primitives which move along polynomial trajectories.  }
 \cgalPkgManuals{Chapter_Kinetic_Framework,PkgKdsFramework}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -36,7 +36,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-Kinetic data structures are a way of adding motion to classical
+%Kinetic data structures are a way of adding motion to classical
 geometric data structures. \cgal provides a number of classes to aid
 implementation of kinetic data structures.
 
