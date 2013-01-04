@@ -22,14 +22,14 @@ returns `false`.
 
 - `Traits` is a model of the concept 
   `ConvexPartitionIsValidTraits_2`. 
-- `std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
+- `std::iterator_traits<InputIterator>::%value_type` should be `Traits::Point_2`, 
   which should also be the type of the points stored in an object 
   of type `Traits::Polygon_2`. 
-- `std::iterator_traits<ForwardIterator>::value_type` should be `Traits::Polygon_2`. 
+- `std::iterator_traits<ForwardIterator>::%value_type` should be `Traits::Polygon_2`. 
 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 
@@ -84,14 +84,14 @@ tested by `Traits::Is_valid()`.
   `PartitionIsValidTraits_2` and the 
   concept defining the requirements for the validity test 
   implemented by `Traits::Is_valid()`. 
-- `std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
+- `std::iterator_traits<InputIterator>::%value_type` should be `Traits::Point_2`, 
   which should also be the type of the points stored in an object 
   of type `Traits::Polygon_2`. 
-- `std::iterator_traits<ForwardIterator>::value_type` should be 
+- `std::iterator_traits<ForwardIterator>::%value_type` should be 
   `Traits::Polygon_2`. 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 
@@ -144,14 +144,14 @@ returns false.
 
 - `Traits` is a model of the concept 
   `YMonotonePartitionIsValidTraits_2`. 
-- `std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
+- `std::iterator_traits<InputIterator>::%value_type` should be `Traits::Point_2`, 
   which should also be the type of the points stored in an object 
   of type `Traits::Polygon_2`. 
-- `std::iterator_traits<ForwardIterator>::value_type` should be 
+- `std::iterator_traits<ForwardIterator>::%value_type` should be 
   `Traits::Polygon_2`. 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
 \sa `CGAL::y_monotone_partition_2` 
 \sa `CGAL::is_y_monotone_2` 

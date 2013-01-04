@@ -11,10 +11,10 @@ returns `false`.
 ###Requires ###
 
 - `Traits` is a model of the concept `IsYMonotoneTraits_2`. 
-- `std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`. 
+- `std::iterator_traits<InputIterator>::%value_type` should be `Traits::Point_2`. 
 
 The default traits class `Default_traits` is the kernel in which the 
-type `std::iterator_traits<InputIterator>::value_type` is defined. 
+type `std::iterator_traits<InputIterator>::%value_type` is defined. 
 
 \sa `CGAL::Is_y_monotone_2<Traits>` 
 \sa `CGAL::y_monotone_partition_2` 

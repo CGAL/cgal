@@ -23,8 +23,8 @@ counterclockwise-oriented polygon.
 and, for the purposes of checking the postcondition that the partition 
 produced is valid, it should also be a model of 
 the concept `ConvexPartitionIsValidTraits_2`. 
-<LI>`std::iterator_traits<OutputIterator>::value_type` should be `Traits::Polygon_2`. 
-<LI>`std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
+<LI>`std::iterator_traits<OutputIterator>::%value_type` should be `Traits::Polygon_2`. 
+<LI>`std::iterator_traits<InputIterator>::%value_type` should be `Traits::Point_2`, 
 which should also be the type of the points stored in an object 
 of type `Traits::Polygon_2`. 
 <LI>Points in the range `[first, beyond)` must define a simple polygon 
@@ -32,7 +32,7 @@ whose vertices are oriented counterclockwise.
 </OL> 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `std::iterator_traits<InputIterator1>::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator1>::%value_type`. 
 
 \sa `CGAL::convex_partition_is_valid_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 
@@ -97,16 +97,16 @@ be a model of `YMonotonePartitionIsValidTraits_2`.
 For the purpose of checking 
 the postcondition that the convex partition is valid, `Traits` 
 must also be a model of `ConvexPartitionIsValidTraits_2`. 
-<LI>`std::iterator_traits<OutputIterator>::value_type` is equivalent to 
+<LI>`std::iterator_traits<OutputIterator>::%value_type` is equivalent to 
 `Traits::Polygon_2`. 
-<LI>`std::iterator_traits<InputIterator>::value_type` is equivalent to 
+<LI>`std::iterator_traits<InputIterator>::%value_type` is equivalent to 
 `Traits::Point_2`, 
 which should also be equivalent to the type of the points stored in 
 an object of type `Traits::Polygon_2`. 
 </OL> 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::convex_partition_is_valid_2` 
@@ -166,15 +166,15 @@ For the purposes of checking the
 postcondition that the partition is valid, `Traits` should 
 also be a model of `ConvexPartitionIsValidTraits_2`. 
 
-<LI>`std::iterator_traits<OutputIterator>::value_type` should be 
+<LI>`std::iterator_traits<OutputIterator>::%value_type` should be 
 `Traits::Polygon_2`. 
-<LI>`std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
+<LI>`std::iterator_traits<InputIterator>::%value_type` should be `Traits::Point_2`, 
 which should also be the type of the points stored in an object 
 of type `Traits::Polygon_2`. 
 </OL> 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::convex_partition_is_valid_2` 
@@ -237,15 +237,15 @@ the resulting sequence of polygons is returned.
 and, for the purposes 
 of checking the postcondition that the partition is valid, it should 
 also be a model of `YMonotonePartitionIsValidTraits_2`. 
-<LI>`std::iterator_traits<OutputIterator>::value_type` should be 
+<LI>`std::iterator_traits<OutputIterator>::%value_type` should be 
 `Traits::Polygon_2`. 
-<LI>`std::iterator_traits<InputIterator>::value_type` should be `Traits::Point_2`, 
+<LI>`std::iterator_traits<InputIterator>::%value_type` should be `Traits::Point_2`, 
 which should also be the type of the points stored in an object 
 of type `Traits::Polygon_2`. 
 </OL> 
 
 The default traits class `Default_traits` is `Partition_traits_2`, 
-with the representation type determined by `std::iterator_traits<InputIterator>::value_type`. 
+with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
 \sa `CGAL::approx_convex_partition_2` 
 \sa `CGAL::greene_approx_convex_partition_2` 
