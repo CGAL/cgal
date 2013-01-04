@@ -39,6 +39,8 @@ namespace CartesianDKernelFunctors {
     }
   };
 }
+CGAL_KD_DEFAULT_TYPE(Ray_tag,(CGAL::Ray<K>),(Point_tag,Vector_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Ray_tag>,(CartesianDKernelFunctors::Construct_ray<K>),(Point_tag,Ray_tag,Vector_tag),(Difference_of_points_tag));
 
 } // namespace CGAL
 

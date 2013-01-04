@@ -112,6 +112,7 @@ namespace CGAL {
 	DECL_OBJ(Oriented_side, Discrete);
 	DECL_OBJ(Bounded_side, Discrete);
 	DECL_OBJ(Angle, Discrete);
+	DECL_OBJ(Flat_orientation, Discrete);
 
 	DECL_OBJ(Vector, Object);
 	DECL_OBJ(Point, Object);

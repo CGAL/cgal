@@ -14,7 +14,7 @@ namespace CartesianDKernelFunctors {
 template<class R_> struct Construct_aff_transformation {
   CGAL_FUNCTOR_INIT_IGNORE(Construct_aff_transformation)
   typedef R_ R;
-  typedef typename R::Aff_transformation result_type;
+  typedef typename Get_type<R, Aff_transformation_tag>::type result_type;
 #ifdef CGAL_CXX0X
   template<class...T>
   result_type operator()(T&&...)const{return result_type();}
@@ -32,5 +32,8 @@ template<class R_> struct Construct_aff_transformation {
 #endif
 };
 }
+CGAL_KD_DEFAULT_TYPE(Aff_transformation_tag,(CGAL::Aff_transformation<K>),(),());
+CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Aff_transformation_tag>,(CartesianDKernelFunctors::Construct_aff_transformation<K>),(Aff_transformation_tag),());
+
 }
 #endif

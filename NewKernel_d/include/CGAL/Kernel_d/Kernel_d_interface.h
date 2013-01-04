@@ -24,7 +24,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_type<Base, Oriented_side_tag>::type Oriented_side;
 	typedef typename Get_type<Base, Bounded_side_tag>::type Bounded_side;
 	typedef typename Get_type<Base, Angle_tag>::type Angle;
-	typedef typename Base::Flat_orientation Flat_orientation_d;
+	typedef typename Get_type<Base, Flat_orientation_tag>::type Flat_orientation_d;
 	typedef typename Get_type<Base, Point_tag>::type	Point_d;
 	typedef typename Get_type<Base, Vector_tag>::type	Vector_d;
 	typedef typename Get_type<Base, Segment_tag>::type	Segment_d;

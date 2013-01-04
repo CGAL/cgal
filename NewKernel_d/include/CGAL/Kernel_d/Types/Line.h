@@ -39,6 +39,8 @@ namespace CartesianDKernelFunctors {
     }
   };
 }
+CGAL_KD_DEFAULT_TYPE(Line_tag,(CGAL::Line<K>),(Point_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Line_tag>,(CartesianDKernelFunctors::Construct_line<K>),(Line_tag,Point_tag,Vector_tag),(Translated_point_tag));
 
 } // namespace CGAL
 

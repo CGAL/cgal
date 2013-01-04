@@ -123,6 +123,7 @@ struct Cartesian_wrap : public Base_
 	    typedef Null_functor type;
     };
 
+    // FIXME: only when the return type is wrapped! See refcount, which does it better.
     template<class T,class D> struct Functor<T,D,Construct_tag,false> {
 	    typedef typename Get_functor<Kernel_base, T>::type B;
 	    struct type {

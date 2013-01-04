@@ -112,7 +112,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     typedef typename Exact_kernel::Kernel_tag Kernel_tag;
     typedef typename Exact_kernel::Default_ambient_dimension Default_ambient_dimension;
     typedef typename Exact_kernel::Max_ambient_dimension Max_ambient_dimension;
-    typedef typename Exact_kernel::Flat_orientation Flat_orientation;
+    //typedef typename Exact_kernel::Flat_orientation Flat_orientation;
     // Check that Approximate_kernel agrees with all that...
 
     template<class T,class D=void,class=typename Get_functor_category<Lazy_cartesian,T,D>::type> struct Functor {

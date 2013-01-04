@@ -27,7 +27,6 @@ namespace CartesianDKernelFunctors {
     typedef typename Get_type<R_, Iso_box_tag>::type	result_type;
     typedef typename Get_type<R_, RT_tag>::type RT;
     typedef typename Get_type<R_, Point_tag>::type	Point;
-    typedef typename Get_type<R_, Vector_tag>::type	Vector;
     typedef typename Get_functor<R_, Construct_ttag<Point_tag> >::type Cp_;
     typedef typename Get_functor<R_, Construct_ttag<Point_cartesian_const_iterator_tag> >::type Ci_;
     result_type operator()(Point const&a, Point const&b)const{
@@ -42,6 +41,8 @@ namespace CartesianDKernelFunctors {
     }
   };
 }
+CGAL_KD_DEFAULT_TYPE(Iso_box_tag,(CGAL::Iso_box<K>),(Point_tag),());
+CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Iso_box_tag>,(CartesianDKernelFunctors::Construct_iso_box<K>),(Iso_box_tag,Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>,Construct_ttag<Point_tag>));
 
 } // namespace CGAL
 
