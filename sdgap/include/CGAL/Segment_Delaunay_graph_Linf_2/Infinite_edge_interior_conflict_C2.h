@@ -103,7 +103,7 @@ namespace CGAL {
         
         if (is_s_endp_of_q and is_r_endp_of_q) {
           CGAL_SDG_DEBUG(std::cout << "sandeep: debug infcf s,r are end points of q" << std::endl;);
-          return false;
+          return (sgn == POSITIVE);
         }
         
       }
