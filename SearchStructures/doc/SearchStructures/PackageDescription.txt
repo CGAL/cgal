@@ -32,5 +32,30 @@ latter often seems to perform better.
 However, the range tree as implemented in \cgal is more flexible than the
 \f$ Kd\f$-tree implementation, in that it enables to layer together range trees
 and segment trees in the same data structure.
+
+\section SearchStruct_Concepts Concepts
+
+- `RangeSegmentTreeTraits_k`
+- `Sublayer`
+
+\section SearchStruct_TraitsClasses Traits Classes
+
+- `CGAL::Range_segment_tree_traits_set_2<R>`
+- `CGAL::Range_segment_tree_traits_set_3<R>`
+- `CGAL::Range_tree_traits_map_2<R,T>`
+- `CGAL::Range_tree_traits_map_3<R,T>`
+- `CGAL::Segment_tree_traits_map_2<R,T>`
+- `CGAL::Segment_tree_traits_map_3<R,T>`
+- `CGAL::tree_interval_traits`
+- `CGAL::tree_point_traits`
+
+\section SearchStruct_SearchStructure Search Structure Classes
+
+- `CGAL::Range_tree_d<Data, Window, Traits>`
+- `CGAL::Range_tree_k<Traits>`
+- `CGAL::Segment_tree_d<Data, Window, Traits>`
+- `CGAL::Segment_tree_k<Traits>`
+- `CGAL::Tree_anchor<Data, Window>`
+
 */
 
