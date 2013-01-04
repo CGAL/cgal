@@ -38,7 +38,7 @@ structure used to represent the Apollonius graph. The classes
 `Triangulation_data_structure_2<Vb,Fb>` are models of the
 aforementioned concepts.
 
-## Concepts ##
+# Concepts #
 
 - `ApolloniusSite_2`
 - `ApolloniusGraphDataStructure_2`
@@ -46,7 +46,7 @@ aforementioned concepts.
 - `ApolloniusGraphTraits_2`
 - `ApolloniusGraphHierarchyVertexBase_2`
 
-## Classes ##
+# Classes #
 
 - `CGAL::Apollonius_graph_2<Gt,Agds>`
 - `CGAL::Apollonius_site_2<K>`

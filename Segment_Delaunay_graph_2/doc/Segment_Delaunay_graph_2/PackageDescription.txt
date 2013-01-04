@@ -38,7 +38,7 @@ the class
 `CGAL::Triangulation_data_structure_2<Vb,Fb>` is a model of the
 `SegmentDelaunayGraphDataStructure_2` concept.
 
-## Concepts ##
+# Concepts #
 
 - `SegmentDelaunayGraphSite_2`
 - `SegmentDelaunayGraphStorageSite_2`
@@ -47,7 +47,7 @@ the class
 - `SegmentDelaunayGraphTraits_2`
 - `SegmentDelaunayGraphHierarchyVertexBase_2`
 
-## Classes ##
+# Classes #
 
 - `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
 - `CGAL::Segment_Delaunay_graph_site_2<K>`

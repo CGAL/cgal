@@ -24,30 +24,36 @@ e.g. defining the compiler flag
 `CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
 checking off, cf. Section  \ref secchecks.
 
-## Bounding Areas and Volumes ##
+# Bounding Areas and Volumes #
 
 - `CGAL::Min_circle_2<Traits>`
 - `CGAL::Min_circle_2_traits_2<K>`
 - `MinCircle2Traits`<BR>
+
 - `CGAL::Min_ellipse_2<Traits>`
 - `CGAL::Min_ellipse_2_traits_2<K>`
 - `MinEllipse2Traits`<BR>
+
 - `CGAL::Approximate_min_ellipsoid_d<Traits>`
 - `ApproximateMinEllipsoid_d_Traits_d`<BR>
+
 - `CGAL::min_rectangle_2`
 - `CGAL::min_parallelogram_2`
 - `CGAL::min_strip_2`
 - `CGAL::Min_quadrilateral_default_traits_2<K>`
 - `MinQuadrilateralTraits_2`<BR>
+
 - `CGAL::rectangular_p_center_2`
 - `CGAL::Rectangular_p_center_default_traits_2<K>`
 - `RectangularPCenterTraits_2`<BR>
+
 - `CGAL::Min_sphere_d<Traits>`
 - `CGAL::Min_annulus_d<Traits>`
 - `CGAL::Min_sphere_annulus_d_traits_2<K,ET,NT>`
 - `CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>`
 - `CGAL::Min_sphere_annulus_d_traits_d<K,ET,NT>`
 - `MinSphereAnnulusDTraits`<BR>
+
 - `CGAL::Min_sphere_of_spheres_d<Traits>`
 - `MinSphereOfSpheresTraits`
 */
