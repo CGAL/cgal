@@ -114,7 +114,7 @@ public:
   // if given_normal.monge_normal < 0 then change the orientation
   // if z=g(x,y) in the basis (d1,d2,n) then in the basis (d2,d1,-n)
   // z=h(x,y)=-g(y,x)
-  void comply_wrt_given_normal(const Vector_3 given_normal);
+  void comply_wrt_given_normal(const Vector_3& given_normal);
   void dump_verbose(std::ostream& out_stream) const;
   void dump_4ogl(std::ostream& out_stream, const FT scale);
 };
@@ -226,7 +226,7 @@ set_up(std::size_t degree) {
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form::
-comply_wrt_given_normal(const Vector_3 given_normal)
+comply_wrt_given_normal(const Vector_3& given_normal)
 {
   if ( given_normal*this->normal_direction() < 0 )
     {

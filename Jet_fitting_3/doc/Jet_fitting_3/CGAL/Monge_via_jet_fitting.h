@@ -148,7 +148,7 @@ given_normal.monge_normal \f$ < 0\f$ then change the orientation: if
 \f$ z=g(x,y)\f$ in the basis (d1,d2,n) then in the basis (d2,d1,-n) 
 \f$ z=h(x,y)=-g(y,x)\f$. 
 */ 
-void comply_wrt_given_normal(const Vector_3 given_normal); 
+void comply_wrt_given_normal(const Vector_3& given_normal); 
 
 /// @}
 
