@@ -48,6 +48,75 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\section NT_NumberTypeClasses Number Type Classes and Concepts
+
+- \ref int.h "int"
+- \ref int.h "short int"
+- \ref int.h "long  int"
+- \ref long_long.h "long  long int"
+- \ref float.h "float"
+- \ref double.h "double"
+- \ref long_double.h "long double"
+
+\subsection NT_CORE CORE
+
+- `CORE::BigInt`
+- `CORE::BigRat`
+- `CORE::BigFloat`
+- `CORE::Expr`
+
+\subsection NT_LEDA LEDA
+
+- `leda_integer`
+- `leda_rational`
+- `leda_bigfloat`
+- `leda_real`
+
+\subsection NT_GMP GMP
+
+- `mpz_class`
+- `mpq_class`
+- `CGAL::Gmpz`
+- `CGAL::Gmpq`
+- `CGAL::Gmpzf`
+- `CGAL::Gmpfr`
+- `CGAL::Gmpfi`
+
+\subsection NT_CGAL CGAL
+
+- `CGAL::MP_Float`
+- `CGAL::Interval_nt<Protected>`
+- `CGAL::Lazy_exact_nt<NT>`
+- `CGAL::Quotient<NT>`
+- `CGAL::Number_type_checker<NT1,NT2,Comparator>`
+
+\section NT_RelatesRational Relates Rational
+
+- `CGAL::Rational_traits<NT>`
+- `CGAL::simplest_rational_in_interval`
+- `CGAL::to_rational`
+
+\section NT_RelatesAlgebraic Relates Algebraic Extensions
+
+- `RootOf_2`
+- `CGAL::Root_of_traits<RT>`
+- `CGAL::make_root_of_2<RT>`
+- `CGAL::make_sqrt<RT>`
+- `CGAL::compute_roots_of_2<RT,OutputIterator>`
+- `CGAL::Sqrt_extension<NT,ROOT>`
+
+\section NT_Utilities Utilities
+
+- `CGAL::Min<T,Less>`
+- `CGAL::Max<T,Less>`
+- `CGAL::Is_valid<T>`
+- `CGAL::min`
+- `CGAL::max`
+- `CGAL::is_valid`
+- `CGAL::Set_ieee_double_precision`
+- `CGAL::Protect_FPU_rounding<Protected>`
+
+
 \todo Document `CGAL_FE_TONEAREST` etc
 */
 
