@@ -386,9 +386,9 @@ namespace CGAL {
             Oriented_side os =
             oriented_side_of_line(lperp, t.point());
             CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
-                            << (( os == ON_NEGATIVE_SIDE ) ? POSITIVE : NEGATIVE)
+                            << (( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE)
                             << std::endl ;);
-            return ( os == ON_NEGATIVE_SIDE ) ? POSITIVE : NEGATIVE;
+            return ( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE;
           }
           else {
             CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
@@ -410,9 +410,9 @@ namespace CGAL {
             Oriented_side os =
             oriented_side_of_line(lperp, t.point());
             CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
-                            << (( os == ON_NEGATIVE_SIDE ) ? POSITIVE : NEGATIVE)
+                            << (( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE)
                             << std::endl ;);
-            return ( os == ON_NEGATIVE_SIDE ) ? POSITIVE : NEGATIVE;
+            return ( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE;
           }
           else {
             CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
