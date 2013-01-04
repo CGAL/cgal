@@ -377,8 +377,8 @@ public:
           } else { // compare_x_2(seg.source(),pnt) == LARGER
             points[0] = Point_2(pnt.x() + seglenhalf, pnt.y() + seglenhalf);
             points[1] = Point_2(pnt.x() + seglenhalf, pnt.y() - seglenhalf);
-            d1 = Direction_2(-1,-1);
-            d2 = Direction_2(-1,+1);
+            d2 = Direction_2(-1,-1);
+            d1 = Direction_2(-1,+1);
           }
           
           if (q.is_point()) {
