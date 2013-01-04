@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewGraphicsItemClasses
 
 An object of type `TriangulationGraphicsItem` is a graphics item that encapsulates a 2D triangulation. 
 

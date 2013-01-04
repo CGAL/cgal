@@ -1,6 +1,11 @@
 /// \defgroup PkgGraphicsView CGAL and the Qt Graphics View Framework Reference
-/// \defgroup PkgGraphicsViewConcepts Concepts
+/// \defgroup PkgGraphicsViewGraphicsItemClasses Graphics Item Classes
 /// \ingroup PkgGraphicsView
+/// \defgroup PkgGraphicsViewInputClasses Input Classes
+/// \ingroup PkgGraphicsView
+/// \defgroup PkgGraphicsViewMiscClasses Miscellaneous Classes
+/// \ingroup PkgGraphicsView
+
 /*!
 \addtogroup PkgGraphicsView
 

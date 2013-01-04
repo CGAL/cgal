@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewMiscClasses
 
 An object of type `Converter` converts 2D \cgal `Kernel` objects to their equivalent 
 objects in <I>Qt</I>, and the other way round. Note that some objects have no equivalent. 

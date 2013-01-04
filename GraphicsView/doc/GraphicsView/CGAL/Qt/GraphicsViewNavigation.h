@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewMiscClasses
 
 An object of type `GraphicsViewNavigation` can be added as event filter to a `Qt::QGraphicsView` and its viewport. 
 

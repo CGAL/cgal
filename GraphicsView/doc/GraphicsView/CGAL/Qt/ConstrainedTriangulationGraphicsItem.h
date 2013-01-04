@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewGraphicsItemClasses
 
 An object of type `ConstrainedTriangulationGraphicsItem` is a graphics item that encapsulates a constrained triangulation. 
 
