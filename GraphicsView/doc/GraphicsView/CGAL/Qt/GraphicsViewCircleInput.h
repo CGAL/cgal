@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewInputClasses
 
 An object of type `GraphicsViewCircleInput` creates a circle, defined by either 
 center and radius, or two or three points on the circle. A new 

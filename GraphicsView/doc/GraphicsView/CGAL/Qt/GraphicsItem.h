@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewGraphicsItemClasses
 
 The \cgal graphics items hold pointers to \cgal data structures. When a data structure changes, 
 a signal is emitted. An object derived from type `GraphicsItem` must provide an implementation of the 

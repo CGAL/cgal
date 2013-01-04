@@ -3503,7 +3503,7 @@ and a descriptor of the vertex that precedes \f$ v\f$ in the shortest path from 
 
 If the vertex descriptors are simply indices, boost supplies tools to
 easily represent property maps using vectors.
-\ccc{Arr_vertex_index_map<Arrangement>} class allows create such
+`Arr_vertex_index_map<Arrangement>` class allows create such
 indices, and together with `boost::vector_property_map<Type, IndexMap>`
 allows for an efficient mapping of `Vertex_handle` objects to
 properties of type `Type`. Note however that unlike the

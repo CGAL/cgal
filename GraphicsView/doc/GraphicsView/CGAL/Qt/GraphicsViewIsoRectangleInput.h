@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewInputClasses
 
 An object of type `GraphicsViewIsoRectangleInput` creates an axis parallel rectangle. 
 

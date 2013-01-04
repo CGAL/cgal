@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewGraphicsItemClasses
 
 An object of type `VoronoiGraphicsItem` is a graphics item that 
 encapsulates a Delaunay triangulation in order to draw its dual, the 

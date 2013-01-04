@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewMiscClasses
 
 An object of type `PainterOstream` provides output operators for `Kernel` objects. 
 As \cgal has unbounded objects the `PainterOstream` must be constructed with a clipping rectangle. 

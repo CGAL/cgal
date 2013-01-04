@@ -23,7 +23,7 @@
 \cgalPkgPicture{kdsDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Daniel Russel}
-\cgalPkgDesc{Kinetic data structures allow combinatorial structures to be maintained as the primitives move. The package provides implementations of kinetic data structures for Delaunay triangulations in two and three dimensions, sorting of points in one dimension and regular triangulations in three dimensions. The package supports exact or inexact operations on primitives which move along polynomial trajectories.  }
+\cgalPkgDesc{%Kinetic data structures allow combinatorial structures to be maintained as the primitives move. The package provides implementations of kinetic data structures for Delaunay triangulations in two and three dimensions, sorting of points in one dimension and regular triangulations in three dimensions. The package supports exact or inexact operations on primitives which move along polynomial trajectories.  }
 \cgalPkgManuals{Chapter_Kinetic_Data_Structures,PkgKds}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -34,7 +34,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-Kinetic data structures are a way of adding motion to classical
+%Kinetic data structures are a way of adding motion to classical
 geometric data structures. \cgal provides several prepackaged kinetic
 data structures. Here we present those kinetic data structures and the
 helper classes that allow their activity to be monitored.

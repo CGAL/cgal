@@ -40,7 +40,7 @@ typedef CGAL::Sign result_type;
 Returns the sign of \f$ p\f$ at the given Cartesian point, where `begin` is referring 
 to the innermost variable. 
 \pre (`end-begin` == `PolynomialTraits_d::d`) 
-\pre `std::iterator_traits< InputIterator >::value_type` is `ExplicitInteroperable` with `PolynomialTraits_d::Innermost_coefficient_type`. 
+\pre `std::iterator_traits< InputIterator >::%value_type` is `ExplicitInteroperable` with `PolynomialTraits_d::Innermost_coefficient_type`. 
 
 */ 
 template <class InputIterator> 

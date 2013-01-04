@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSpatialSorting
+\ingroup PkgSpatialSortingFunctions
 
 The function `hilbert_sort()` sorts an iterator range of points 
 along a Hilbert curve. 
@@ -9,14 +9,14 @@ along a Hilbert curve.
 sorts the range `[begin, end)` in place. 
 
 The default traits class `Default_traits` is the kernel in which the type 
-`std::iterator_traits<RandomAccessIterator>::value_type` is defined. 
+`std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
 The default policy is `Hilbert_sort_median_policy()` and the 
 other option is `Hilbert_sort_middle_policy()`. 
 
 ### Requirements ###
 
 <OL> 
-<LI>`std::iterator_traits<RandomAccessIterator>::value_type` is convertible to 
+<LI>`std::iterator_traits<RandomAccessIterator>::%value_type` is convertible to 
 `Traits::Point_2`, `Traits::Point_3`, or `Traits::Point_d`. 
 <LI>`Traits` is a model for concept `SpatialSortingTraits_2`, 
 `SpatialSortingTraits_3`, or `SpatialSortingTraits_d`. 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSpatialSorting
+\ingroup PkgSpatialSortingFunctionObjects
 
 The function object `Hilbert_sort_d` sorts iterator ranges of 
 `Traits::Point_d` along a Hilbert curve by recursively subdividing at the median 

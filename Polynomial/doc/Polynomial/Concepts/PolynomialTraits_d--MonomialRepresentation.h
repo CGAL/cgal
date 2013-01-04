@@ -26,7 +26,7 @@ public:
 
 /*! 
 Writes the monom representation of \f$ p\f$ into the given output iterator \f$ it\f$. 
-\pre `std::iterator_traits< OutputIterator >::value_type` must be constructible from `std::pair<CGAL::Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>`. 
+\pre `std::iterator_traits< OutputIterator >::%value_type` must be constructible from `std::pair<CGAL::Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>`. 
 
 */ 
 template<class OutputIterator> 

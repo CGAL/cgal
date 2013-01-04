@@ -44,7 +44,7 @@ typedef PolynomialTraits_d::Polynomial_d result_type;
 
 Returns \f$ p\f$ with interchanged variables as defined by the iterator range. 
 \pre (end-begin == `PolynomialTraits_d::d`) 
-\pre `std::iterator_traits< InputIterator >::value_type` is convertible to int. 
+\pre `std::iterator_traits< InputIterator >::%value_type` is convertible to int. 
 \pre The iterator range contains each value in \f$ \{0,\dots,d-1\}\f$ exactly once. 
 
 */ 

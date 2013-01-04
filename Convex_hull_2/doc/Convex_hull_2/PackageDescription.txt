@@ -36,8 +36,20 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-Assertions
-==========
+A subset \f$S \subseteq \mathbb{R}^2 \f$ is convex if for any two points `p` and `q`
+in the set the line segment with endpoints `p` and `q` is contained in \f$ S \f$.
+The convex hull of a set \f$ S \f$ is the smallest convex set containing \f$ S \f$.
+The convex hull of a set of points `P` is a convex polygon with vertices in `P`.
+A point in `P` is an extreme point (with respect to `P`) if it is a vertex
+of the convex hull of `P`.
+
+\cgal provides functions for computing convex hulls in two dimensions as well
+as functions for testing if a given set of points is strongly convex or not.
+There are also a number of functions available for computing particular extreme
+points in 2D and subsequences of the hull points, such as the lower hull or
+upper hull of a set of points. 
+
+# Assertions #
 
 The assertion flags for the convex hull and extreme point algorithms
 use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
@@ -46,6 +58,51 @@ check tests only convexity (if not disabled), but not containment of the
 input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
 defining `CGAL_CH_CHECK_EXPENSIVE`.
+
+# Concepts #
+
+- `ConvexHullTraits_2`
+
+# Traits Classes #
+
+- `CGAL::Convex_hull_constructive_traits_2<R>`
+- `CGAL::Convex_hull_projective_xy_traits_2<Point_3>`
+- `CGAL::Convex_hull_projective_xz_traits_2<Point_3>`
+- `CGAL::Convex_hull_projective_yz_traits_2<Point_3>`
+- `CGAL::Convex_hull_traits_2<R>`
+
+# Convex Hull Functions #
+
+- `CGAL::ch_akl_toussaint`
+- `CGAL::ch_bykat`
+- `CGAL::ch_eddy`
+- `CGAL::ch_graham_andrew`
+- `CGAL::ch_jarvis`
+- `CGAL::ch_melkman`
+- `CGAL::convex_hull_2`
+
+# Convexity Checking Functions #
+
+- `CGAL::is_ccw_strongly_convex_2`
+- `CGAL::is_cw_strongly_convex_2`
+
+# Hull Subsequence Functions #
+
+- `CGAL::ch_graham_andrew_scan`
+- `CGAL::ch_jarvis_march`
+- `CGAL::lower_hull_points_2`
+- `CGAL::upper_hull_points_2`
+
+# Extreme Point Functions #
+
+- `CGAL::ch_e_point`
+- `CGAL::ch_nswe_point`
+- `CGAL::ch_n_point`
+- `CGAL::ch_ns_point`
+- `CGAL::ch_s_point`
+- `CGAL::ch_w_point`
+- `CGAL::ch_we_point`
+
 
 */
 
