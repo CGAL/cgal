@@ -12,6 +12,8 @@
 #include <CGAL/Kernel_d/Wrapper/Ref_count_obj.h>
 
 #include <boost/mpl/or.hpp>
+#include <boost/mpl/contains.hpp>
+#include <boost/mpl/vector.hpp>
 
 //TODO: do we want to store the kernel ref in the Object wrappers? It would allow for additions and operator[] and things like that to work, but objects would still need to be created by functors.
 
@@ -71,6 +73,19 @@ template <class T> transforming_iterator<Forward_rep,typename boost::enable_if<I
 };
 }
 
+template <class B, class K, class T, bool = Provides_type<B, T>::value>
+struct Map_wrapping_type : Get_type<B, T> {};
+#define CGAL_REGISTER_OBJECT_WRAPPER(X) \
+  template <class B, class K> \
+  struct Map_wrapping_type <B, K, X##_tag, true> { \
+    typedef X##_d<K> type; \
+  }
+CGAL_REGISTER_OBJECT_WRAPPER(Point);
+CGAL_REGISTER_OBJECT_WRAPPER(Vector);
+CGAL_REGISTER_OBJECT_WRAPPER(Segment);
+CGAL_REGISTER_OBJECT_WRAPPER(Sphere);
+#undef CGAL_REGISTER_OBJECT_WRAPPER
+
 // Note: this tends to be an all or nothing thing currently, wrapping
 // only some types breaks, probably because we don't check whether the
 // return type is indeed wrapped.
@@ -82,18 +97,18 @@ struct Cartesian_wrap : public Base_
     typedef Base_ Kernel_base;
     typedef Cartesian_wrap Self;
     typedef typename Default::Get<Derived_, Self>::type Derived;
+    // FIXME: The list doesn't belong here.
+    typedef boost::mpl::vector<Point_tag,Segment_tag,Sphere_tag,Vector_tag> Wrapped_list;
 
-    template <class T, class=void> struct Type : Get_type<Base_, T> {};
-#define CGAL_Kernel_obj(X,Y) \
-    template <class D> struct Type<X##_tag, D> { typedef X##_d<Derived> type; };
-#define CGAL_Kernel_obj3(X,Y)
-
-    //CGAL_Kernel_obj(Segment,segment)
-	    //TODO: use Object_list, intersected with the list of objects that do have a wrapper available.
-#include <CGAL/Kernel_d/interface_macros.h>
+    template <class T>
+    struct Type : Map_wrapping_type<Base_, Derived, T> {};
 
     //Translate the arguments
-    template<class T,class D=void,class=typename Get_functor_category<Derived,T>::type,bool=boost::is_same<typename Get_functor<Kernel_base, T>::type,Null_functor>::value> struct Functor {
+    template <class T, class D = void,
+      class=typename Get_functor_category<Derived,T>::type,
+      bool=Provides_functor<Kernel_base, T>::value,
+      bool=boost::mpl::contains<Wrapped_list,typename map_result_tag<T>::type>::type::value>
+    struct Functor {
 	    typedef typename Get_functor<Kernel_base, T>::type B;
 	    struct type {
 		    B b;
@@ -117,13 +132,14 @@ struct Cartesian_wrap : public Base_
 	    };
     };
 
-    //Translate both the arguments and the result
-    template<class T,class D,class C> struct Functor<T,D,C,true> {
-	    typedef Null_functor type;
-    };
+    // Preserve the difference between Null_functor and nothing.
+    template <class T, class D, class C, bool b>
+    struct Functor <T, D, C, false, b>
+      : Get_functor <Kernel_base, T> {};
 
-    // FIXME: only when the return type is wrapped! See refcount, which does it better.
-    template<class T,class D> struct Functor<T,D,Construct_tag,false> {
+    //Translate both the arguments and the result
+    //TODO: Check Is_wrapper instead of relying on map_result_tag?
+    template<class T,class D> struct Functor<T,D,Construct_tag,true,true> {
 	    typedef typename Get_functor<Kernel_base, T>::type B;
 	    struct type {
 		    B b;
