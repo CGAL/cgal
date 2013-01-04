@@ -16,12 +16,6 @@
 
 
 namespace CGAL {
-namespace internal {
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Segment)
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Ray)
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Direction)
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Line)
-}
 
 template<class R_,class Derived_> struct Cartesian_define_all_functors_
 : public R_
@@ -39,8 +33,8 @@ template<class R_,class Derived_> struct Cartesian_define_all_functors_
 	template<class D> struct Functor <Construct_ttag<X##_tag>,D> { \
 		typedef CartesianDKernelFunctors::Construct_##Y<Derived_> type; \
 	};
-#define CGAL_Kernel_pred(F,f) CGAL_Kernel_cons2(F,f)
-#define CGAL_Kernel_comp2(F,f) CGAL_Kernel_cons2(F,f)
+//#define CGAL_Kernel_pred(F,f) CGAL_Kernel_cons2(F,f)
+//#define CGAL_Kernel_comp2(F,f) CGAL_Kernel_cons2(F,f)
 
 #include <CGAL/Kernel_d/interface_macros.h>
 
@@ -64,8 +58,7 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 	          Provides_type<Kernel_base, X##_tag>::value; \
 		typedef Get_type<Kernel_base,X##_tag> B_; \
 		typedef typename boost::mpl::if_c<force_||!inbase,Wrap_type<CGAL::X<Derived> >,B_>::type::type type; \
-	}; \
-	typedef CGAL::X<Derived> X;
+	};
 	//Implement by chaining things like Define_segment?
 	//FIXME: needs to be conditional!!!
 #include <CGAL/Kernel_d/interface_macros.h>
