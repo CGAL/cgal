@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSpatialSorting
+\ingroup PkgSpatialSortingFunctionObjects
 
 The class `Multiscale_sort` represents a sorting algorithm adaptor. 
 Given a range of \f$ n\f$ points: 

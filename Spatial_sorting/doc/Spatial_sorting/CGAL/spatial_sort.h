@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSpatialSorting
+\ingroup PkgSpatialSortingFunctions
 
 The function `spatial_sort` sorts an iterator range of points in a way that 
 improves space locality. Two points close in the order will be close 

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSpatialSorting
+\ingroup PkgSpatialSortingFunctions
 
 The function `hilbert_sort` sorts an iterator range of points 
 along a Hilbert curve. 
