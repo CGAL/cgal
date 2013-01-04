@@ -35,8 +35,8 @@
 #  define CGAL_Kernel_obj3(X,Y) CGAL_Kernel_obj2(X,Y)
 #endif
 
-CGAL_Kernel_obj1(Vector,vector)
-CGAL_Kernel_obj1(Point,point)
+//CGAL_Kernel_obj1(Vector,vector)
+//CGAL_Kernel_obj1(Point,point)
 CGAL_Kernel_obj2(Segment,segment)
 //CGAL_Kernel_obj2(Sphere,sphere)
 //CGAL_Kernel_obj3(Line,line)
