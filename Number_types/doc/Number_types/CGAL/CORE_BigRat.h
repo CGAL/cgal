@@ -1,5 +1,4 @@
 
-namespace CGAL {
 namespace CORE {
 /*!
 \ingroup nt_core
@@ -21,4 +20,3 @@ requirements on number types.
 class BigRat {
 }; /* end CORE::BigRat */
 }/* end namespace CORE */
-} /* end namespace CGAL */

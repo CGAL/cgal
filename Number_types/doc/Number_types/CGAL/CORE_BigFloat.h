@@ -1,6 +1,4 @@
 
-namespace CGAL {
-
 namespace CORE {
 
 /*!
@@ -25,4 +23,3 @@ requirements on number types.
 class BigFloat {
 }; /* end CORE::BigFloat */
 } /* end namespace CORE */
-} /* end namespace CGAL */

@@ -1,5 +1,4 @@
 
-namespace CGAL {
 namespace CORE {
 /*!
 \ingroup nt_core
@@ -22,4 +21,4 @@ requirements on number types.
 class Expr {
 }; /* end CORE::Expr */
 } /* end namespace CORE */
-} /* end namespace CGAL */
+
