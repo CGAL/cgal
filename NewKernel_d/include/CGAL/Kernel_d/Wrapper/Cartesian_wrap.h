@@ -85,8 +85,7 @@ struct Cartesian_wrap : public Base_
 
     template <class T, class=void> struct Type : Get_type<Base_, T> {};
 #define CGAL_Kernel_obj(X,Y) \
-    template <class D> struct Type<X##_tag, D> { typedef X##_d<Derived> type; }; \
-    typedef X##_d<Derived> X;
+    template <class D> struct Type<X##_tag, D> { typedef X##_d<Derived> type; };
 #define CGAL_Kernel_obj3(X,Y)
 
     //CGAL_Kernel_obj(Segment,segment)

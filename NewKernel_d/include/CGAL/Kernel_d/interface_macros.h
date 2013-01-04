@@ -45,10 +45,10 @@ CGAL_Kernel_obj2(Segment,segment)
 //CGAL_Kernel_obj3(Aff_transformation,aff_transformation)
 //CGAL_Kernel_obj3(Iso_box,iso_box)
 
-CGAL_Kernel_cons1(Construct_point_cartesian_const_iterator,
-		  construct_point_cartesian_const_iterator_object)
-CGAL_Kernel_cons1(Construct_vector_cartesian_const_iterator,
-		  construct_vector_cartesian_const_iterator_object)
+//CGAL_Kernel_cons1(Construct_point_cartesian_const_iterator,
+//		  construct_point_cartesian_const_iterator_object)
+//CGAL_Kernel_cons1(Construct_vector_cartesian_const_iterator,
+//		  construct_vector_cartesian_const_iterator_object)
 //CGAL_Kernel_cons2(Sum_of_vectors,
 //		  sum_of_vectors_object)
 //CGAL_Kernel_cons2(Difference_of_vectors,
@@ -76,10 +76,10 @@ CGAL_Kernel_cons1(Construct_vector_cartesian_const_iterator,
 CGAL_Kernel_cons2(Segment_extremity,
 		  segment_extremity_object)
 
-CGAL_Kernel_comp1(Compute_point_cartesian_coordinate,
-		  compute_point_cartesian_coordinate_object)
-CGAL_Kernel_comp1(Compute_vector_cartesian_coordinate,
-		  compute_vector_cartesian_coordinate_object)
+//CGAL_Kernel_comp1(Compute_point_cartesian_coordinate,
+//		  compute_point_cartesian_coordinate_object)
+//CGAL_Kernel_comp1(Compute_vector_cartesian_coordinate,
+//		  compute_vector_cartesian_coordinate_object)
 //CGAL_Kernel_comp2(Squared_length,
 //		  squared_length_object)
 //CGAL_Kernel_comp2(Squared_distance,
