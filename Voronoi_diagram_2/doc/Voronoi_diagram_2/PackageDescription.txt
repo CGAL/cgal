@@ -54,4 +54,32 @@ Voronoi diagram as well as for performing nearest site queries.
 The third template parameter corresponds to the chosen adaptation
 policy and provides the necessary types and functors needed for
 performing this adaptation.
+
+\section Voronoi_Concepts Concepts
+
+- `DelaunayGraph_2`
+- `AdaptationTraits_2`
+- `AdaptationPolicy_2`
+
+\section Voronoi_Classes Classes
+
+- `CGAL::Voronoi_diagram_2<DG,AT,AP>`
+- \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge"
+- \ref CGAL::Voronoi_diagram_2::Vertex "CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex"
+- \ref CGAL::Voronoi_diagram_2::Face "CGAL::Voronoi_diagram_2<DG,AT,AP>::Face"
+- `CGAL::Apollonius_graph_adaptation_traits_2<AG2>`
+- `CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>`
+- `CGAL::Regular_triangulation_adaptation_traits_2<RT2>`
+- `CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>`
+- `CGAL::Identity_policy_2<DG,AT>`
+- `CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>`
+- `CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>`
+- `CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>`
+- `CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>`
+- `CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>`
+- `CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>`
+- `CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>`
+- `CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>`
+
+
 */
