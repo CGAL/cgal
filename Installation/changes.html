@@ -111,20 +111,20 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <ul>
 <li>This is the last release whose <tt>UseCGAL.cmake</tt> file (if
   using CGAL in a CMake build environment)
-  contains the line <tt>link_libraries(${CGAL_LIBRARIES_DIR}
-  ${CGAL_3RD_PARTY_LIBRARIES_DIRS})</tt>, as this is a deprecated
+  contains the line <code>link_libraries(${CGAL_LIBRARIES_DIR}
+  ${CGAL_3RD_PARTY_LIBRARIES_DIRS})</code>, as this is a deprecated
   CMake command. The correct way to link with CGAL's libraries (as for
   required 3rd party libraries) is to use
-  <tt>target_link_libraries</tt> which specifies for each build target
-  which libraries should be linked. The following serves as example:</BR>
-  <tt> find_package(CGAL)</BR>
-       include(${CGAL_USE_FILE}) </BR>
-       add_executable(myexe main.cpp) </BR>
-       target_link_libraries(myexe ${CGAL_LIBRARIES})</BR>
-  </tt>
+  <code>target_link_libraries</code> which specifies for each build target
+  which libraries should be linked. The following serves as example:
+  <pre>
+  find_package(CGAL)
+  include(${CGAL_USE_FILE})
+  add_executable(myexe main.cpp)
+  target_link_libraries(myexe ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})</pre>
   We also expect further changes in CGAL's CMake setup (change of
   variable names, consistency of filename and output, removing
-  essential libraries, building executables).
+  essential libraries, building executables, removal of <code>${CGAL_3RD_PARTY_LIBRARIES}</code>).
   </li>
 </ul>
 
