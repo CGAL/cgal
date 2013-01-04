@@ -224,9 +224,9 @@ ALIASES += "cgalFigureBegin{9}=\anchor fig__\1 \n  <CENTER> <TABLE border=0> <TR
 
 ALIASES += "cgalFigureBegin{10}=\anchor fig__\1 \n <CENTER> <TABLE border=0> <TR> <TD> \image html \2 \n </TD> <TD> \image html \3 \n </TD> <TD> \image html \4 \n </TD> <TD> \image html \5 \n </TD> <TD> \image html \6 \n </TD> <TD> \image html \7 \n </TD> <TD> \image html \8 \n </TD> <TD> \image html \9 \n </TD> <TD> \image html \10 \n </TD> </TR> </TABLE> </CENTER> \htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
 
-ALIASES += "cgalFigureEnd=\htmlonly </div> \endhtmlonly"
+ALIASES += "cgalFigureEnd=\htmlonly </div> \endhtmlonly <br>"
 ALIASES += "cgalFigureCaptionBegin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
-ALIASES += "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly"
+ALIASES += "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly <br>"
                          
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
