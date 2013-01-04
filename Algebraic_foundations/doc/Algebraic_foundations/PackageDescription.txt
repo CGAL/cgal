@@ -21,9 +21,9 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\section Algebraic_foundationsAlgebraicStructures Algebraic Structures
+# Algebraic Structures #
 
-\subsection Algebraic_foundationsConcepts Concepts
+## Concepts ##
 
 - `IntegralDomainWithoutDivision`
 - `IntegralDomain`
@@ -52,7 +52,7 @@
 - `AlgebraicStructureTraits::KthRoot`
 - `AlgebraicStructureTraits::RootOf`
 
-\subsection Algebraic_foundationsClasses Classes
+## Classes ##
 
 - `CGAL::Algebraic_structure_traits<T>`
 - `CGAL::Integral_domain_without_division_tag`
@@ -62,7 +62,7 @@
 - `CGAL::Unique_factorization_domain_tag`
 - `CGAL::Euclidean_ring_tag`
 
-\subsection Algebraic_foundationsGlobalFunctions Global Functions
+## Global Functions ##
 
 - `CGAL::is_zero`
 - `CGAL::is_one`
@@ -80,9 +80,9 @@
 - `CGAL::kth_root`
 - `CGAL::root_of`
 
-\section Algebraic_foundationsRealEmbeddable Real Embeddable
+# Real Embeddable #
 
-\subsection Algebraic_foundationsConcepts_1 Concepts
+## Concepts ##
 
 - `RealEmbeddable`
 
@@ -96,11 +96,11 @@
 - `RealEmbeddableTraits::ToDouble`
 - `RealEmbeddableTraits::ToInterval`
 
-\subsection Algebraic_foundationsClasses_1 Classes
+## Classes ##
 
 - `CGAL::Real_embeddable_traits<T>`
 
-\subsection Algebraic_foundationsGlobalFunctions_1 Global Functions
+## Global Functions ##
 
 - `CGAL::is_zero`
 - `CGAL::abs`
@@ -111,27 +111,27 @@
 - `CGAL::to_double`
 - `CGAL::to_interval`
 
-\section Algebraic_foundationsRealNumberTypes Real Number Types
+# Real Number Types #
 
-\subsection Algebraic_foundationsConcepts_2 Concepts
+## Concepts ##
 
 - `RingNumberType`
 - `FieldNumberType`
 
-\section Algebraic_foundationsInteroperability_1 Interoperability
+# Interoperability #
 
-\subsection Algebraic_foundationsConcepts_3 Concepts
+## Concepts ##
 
 - `ExplicitInteroperable`
 - `ImplicitInteroperable`
 
-\subsection Algebraic_foundationsClasses_2 Classes
+## Classes ##
 
 - `CGAL::Coercion_traits<A,B>`
 
-\section Algebraic_foundationsFractions_1 Fractions
+# Fractions #
 
-\subsection Algebraic_foundationsConcepts_4 Concepts
+## Concepts ##
 
 - `Fraction`
 - `FractionTraits`
@@ -139,13 +139,13 @@
 - `FractionTraits::Compose`
 - `FractionTraits::CommonFactor`
 
-\subsection Algebraic_foundationsClasses_3 Classes
+## Classes ##
 
 - `CGAL::Fraction_traits<T>`
 
-\section Algebraic_foundationsMiscellaneous Miscellaneous
+# Miscellaneous #
 
-\subsection Algebraic_foundationsConcepts_5 Concepts
+## Concepts ##
 - `FromIntConstructible`
 - `FromDoubleConstructible`
 

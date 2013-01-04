@@ -65,7 +65,7 @@ both inside and outside the original domain we store an additional
 offset information in each vertex of a cell. These offsets are models
 of the concept `Periodic_3Offset_3`.
 
-\section PT3_Concepts Concepts
+# Concepts #
 
 - `Periodic_3DelaunayTriangulationTraits_3`
 - `TriangulationDataStructure_3`
@@ -73,9 +73,9 @@ of the concept `Periodic_3Offset_3`.
 - `Periodic_3TriangulationDSVertexBase_3`
 - `Periodic_3Offset_3`
 
-\section PT3_Classes Classes
+# Classes #
 
-\subsection PT3_MainClasses Main Classes
+## Main Classes ##
 
 - `CGAL::Periodic_3_triangulation_3<PT,TDS>`
 - `CGAL::Periodic_3_Delaunay_triangulation_3<PT,TDS>`
@@ -84,11 +84,11 @@ of the concept `Periodic_3Offset_3`.
 - `CGAL::Periodic_3_triangulation_ds_vertex_base_3<>`
 - `CGAL::Periodic_3_offset_3`
 
-\subsection PT3_TraitsClasses Traits Classes
+## Traits Classes ##
 
 - `CGAL::Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>`
 
-\section PT3_Enums Enums
+# Enums #
 
 - `CGAL::Periodic_3_triangulation_3::Iterator_type`
 - `CGAL::Periodic_3_triangulation_3::Locate_type`

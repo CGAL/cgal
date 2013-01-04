@@ -47,7 +47,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\section Mesh_3Concepts Concepts
+# Concepts #
 
 Here are the main concepts of this package:
 
@@ -73,7 +73,7 @@ related to the template parameters of some models of the main concepts:
 - `MeshPolyline_3`
 - `TriangleAccessor_3`
 
-\section Mesh_3Classes Classes
+# Classes #
 
 - `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
 - `CGAL::Mesh_triangulation_3<MD,Gt>`
@@ -96,7 +96,7 @@ and their associated classes:
 - `CGAL::Mesh_polyhedron_3<IGT>`
 - `CGAL::Triangle_accessor_3<CGAL::Polyhedron_3<K>,K>`
 
-\section Mesh_3FunctionTemplates Function Templates
+# Function Templates #
 
 - `CGAL::make_mesh_3`
 - `CGAL::refine_mesh_3`
@@ -105,7 +105,7 @@ and their associated classes:
 - `CGAL::lloyd_optimize_mesh_3`
 - `CGAL::odt_optimize_mesh_3`
 
-\section Mesh_3CGALparametersFunctions CGAL::parameters Functions
+# CGAL::parameters Functions #
 
 - `CGAL::parameters::features`
 - `CGAL::parameters::no_features`
@@ -118,7 +118,7 @@ and their associated classes:
 - `CGAL::parameters::odt`
 - `CGAL::parameters::no_odt`
 
-\section Mesh_3Enumerations Enumerations
+# Enumerations #
 
 - `CGAL::Mesh_optimization_return_code`
 - `CGAL::Mesh_facet_topology`

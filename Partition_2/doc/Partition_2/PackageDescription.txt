@@ -24,7 +24,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\section Partition2_Definitions Definitions
+# Definitions #
 
 A <i>partition</i> of a polygon is a set 
 of polygons such that the interiors of the polygons do not intersect and
@@ -53,7 +53,7 @@ a convex partitioning from a triangulation of a polygon.
 Each of the partitioning functions uses a traits class to supply the
 primitive types and predicates used by the algorithms.
 
-\section Partition2_Assertions Assertions
+# Assertions #
 
 The assertion flags for this package use `PARTITION` in their names
 (<I>e.g.</I>, `CGAL_PARTITION_NO_POSTCONDITIONS`).

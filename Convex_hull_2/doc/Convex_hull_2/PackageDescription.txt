@@ -49,7 +49,7 @@ There are also a number of functions available for computing particular extreme
 points in 2D and subsequences of the hull points, such as the lower hull or
 upper hull of a set of points. 
 
-\section CH2_Assertions Assertions
+# Assertions #
 
 The assertion flags for the convex hull and extreme point algorithms
 use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
@@ -59,11 +59,11 @@ input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
 defining `CGAL_CH_CHECK_EXPENSIVE`.
 
-\section CH2_Concepts Concepts
+# Concepts #
 
 - `ConvexHullTraits_2`
 
-\section CH2_TraitsClasses Traits Classes
+# Traits Classes #
 
 - `CGAL::Convex_hull_constructive_traits_2<R>`
 - `CGAL::Convex_hull_projective_xy_traits_2<Point_3>`
@@ -71,7 +71,7 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 - `CGAL::Convex_hull_projective_yz_traits_2<Point_3>`
 - `CGAL::Convex_hull_traits_2<R>`
 
-\section CH2_ConvexHullFunctions Convex Hull Functions
+# Convex Hull Functions #
 
 - `CGAL::ch_akl_toussaint`
 - `CGAL::ch_bykat`
@@ -81,19 +81,19 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 - `CGAL::ch_melkman`
 - `CGAL::convex_hull_2`
 
-\section CH2_ConvexityChecking Convexity Checking Functions
+# Convexity Checking Functions #
 
 - `CGAL::is_ccw_strongly_convex_2`
 - `CGAL::is_cw_strongly_convex_2`
 
-\section CH2_HullSubsequence Hull Subsequence Functions
+# Hull Subsequence Functions #
 
 - `CGAL::ch_graham_andrew_scan`
 - `CGAL::ch_jarvis_march`
 - `CGAL::lower_hull_points_2`
 - `CGAL::upper_hull_points_2`
 
-\section CH2_ExtremePointFunctions Extreme Point Functions
+# Extreme Point Functions #
 
 - `CGAL::ch_e_point`
 - `CGAL::ch_nswe_point`

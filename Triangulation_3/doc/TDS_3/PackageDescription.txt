@@ -45,7 +45,7 @@ dimension 1, each cell represents one edge \f$ (0,1)\f$. (See
 Section  \ref TDS3secintro.)
 
 
-\section TDS3_Concepts Concepts
+# Concepts #
 
 - `TriangulationDataStructure_3`
 - `TriangulationDataStructure_3::Cell`
@@ -53,7 +53,7 @@ Section  \ref TDS3secintro.)
 - `TriangulationDSCellBase_3`
 - `TriangulationDSVertexBase_3`
 
-\section TDS3_Classes Classes
+# Classes #
 
 - `CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>` is a model for the concept of the 3D-triangulation data structure `TriangulationDataStructure_3`. It is templated by base classes for vertices and cells.
 
@@ -65,7 +65,7 @@ Section  \ref TDS3secintro.)
 - `CGAL::Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>`
 - `CGAL::Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>`
 
-\section TDS3_HelperClasses Helper Classes
+# Helper Classes #
 
 - `CGAL::Triangulation_utils_3` defines operations on the indices of vertices and neighbors within
 a cell of a triangulation.
