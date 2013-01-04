@@ -23,7 +23,7 @@ enum Ridge_type {
 
 
 /*!
-\ingroup PkgRidges_3Functions
+\ingroup PkgRidges_3
 
 The function `compute_crest_ridges` is a shortcut to the method of the same name 
 of the class `Ridge_approximation`. 
@@ -56,7 +56,7 @@ CGAL::Ridge_order order = CGAL::Ridge_order_3);
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3Functions
+\ingroup PkgRidges_3
 
 The function `compute_max_ridges` is a shortcut to the method of the same name 
 of the class `Ridge_approximation`. 
@@ -85,7 +85,7 @@ CGAL::Ridge_order order = CGAL::Ridge_order_3);
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3Functions
+\ingroup PkgRidges_3
 
 The function `compute_min_ridges` is a shortcut to the method of the same name 
 of the class `Ridge_approximation`. 
@@ -115,7 +115,7 @@ CGAL::Ridge_order order = CGAL::Ridge_order_3);
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3Classes
+\ingroup PkgRidges_3
 
 The class `Ridge_approximation` computes the approximation of 
 ridges of a triangular polyhedral surface. 
@@ -202,7 +202,7 @@ template <class OutputIterator> OutputIterator compute_crest_ridges(OutputIterat
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3Classes
+\ingroup PkgRidges_3
 
 The class `Ridge_line` stores the description of a ridge line. The list 
 of halfedges defines a connected sequence of edges (but not as 
@@ -286,7 +286,7 @@ std::ostream& operator<<(std::ostream& o, const Ridge_line<TriangulatedSurfaceMe
 namespace CGAL {
 
 /*!
-\ingroup PkgRidges_3Classes
+\ingroup PkgRidges_3
 
 The class `Vertex2Data_Property_Map_with_std_map` is a model of the concepts 
 `Vertex2FTPropertyMap` and `Vertex2VectorPropertyMap` to be used for 
@@ -323,7 +323,7 @@ typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
 typedef typename TriangulatedSurfaceMesh::Vertex_handle Vertex_handle; 
 
 /*!
-  \ingroup PkgRidges_3Classes
+  \ingroup PkgRidges_3
 */
 struct Vertex_cmp{bool operator();}; 
 
