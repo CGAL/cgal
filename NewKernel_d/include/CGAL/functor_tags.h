@@ -66,7 +66,7 @@ namespace CGAL {
 	template<class K, class List>
 	struct Provides_types<K, List, true> : boost::true_type {};
 
-	namespace internal { BOOST_MPL_HAS_XXX_TEMPLATE_DEF(Type) }
+	namespace internal { BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_Type,template Type<Null_tag>,false) }
 	template<class Kernel, class Tg,
 	  bool = internal::has_Type<Kernel>::value /* false */>
 	struct Provides_type_i : boost::false_type {};
@@ -74,18 +74,22 @@ namespace CGAL {
 	struct Provides_type_i <Kernel, Tg, true>
 	  : Has_type_different_from<typename Kernel::template Type<Tg>, Null_type> {};
 
-	namespace internal { BOOST_MPL_HAS_XXX_TEMPLATE_DEF(Functor) }
+	namespace internal { BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_Functor,template Functor<Null_tag>,false) }
 	template<class Kernel, class Tg, class O=void,
 	  bool = internal::has_Functor<Kernel>::value /* false */>
 	struct Provides_functor_i : boost::false_type {};
 	template<class Kernel, class Tg, class O>
 	struct Provides_functor_i <Kernel, Tg, O, true>
-	  : Has_type_different_from<typename Kernel::template Functor<Tg, O>, Null_type> {};
+	  : Has_type_different_from<typename Kernel::template Functor<Tg, O>, Null_functor> {};
 
 	struct Number_tag {};
 	struct Discrete_tag {};
 	struct Object_tag {};
-	template <class K, class T, class=void> struct Get_type_category;
+	template <class K, class T, class=void> struct Get_type_category {
+	  // The lazy kernel uses it too eagerly,
+	  // so it currently needs a default.
+	  typedef Null_tag type;
+	};
 
 #define DECL_OBJ_(X,Y) \
   template<class Obj,class Base> \

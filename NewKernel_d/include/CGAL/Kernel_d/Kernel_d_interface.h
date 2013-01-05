@@ -90,7 +90,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    return CPI(this->kernel())(p,t);
 	  }
 	  template <class Tag_>
-	  result_type operator()(Vector_d const&v, Tag_ t)const{
+	  result_type operator()(typename First_if_different<Vector_d,Point_d>::Type const&v, Tag_ t)const{
 	    return CVI(this->kernel())(v,t);
 	  }
 
@@ -101,7 +101,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  result_type operator()(Point_d const&p, int)const{
 	    return operator()(p, End_tag());
 	  }
-	  result_type operator()(Vector_d const&v, int)const{
+	  result_type operator()(typename First_if_different<Vector_d,Point_d>::Type const&v, int)const{
 	    return operator()(v, End_tag());
 	  }
 	};

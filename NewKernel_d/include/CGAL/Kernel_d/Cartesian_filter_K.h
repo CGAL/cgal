@@ -30,6 +30,9 @@ struct Cartesian_filter_K : public Base_,
     typedef KernelD_converter<Kernel_base,AK> C2A;
     typedef KernelD_converter<Kernel_base,EK> C2E;
 
+    template<class T> struct Type :
+      Get_type<Kernel_base,T> {};
+
     template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_K,T>::type> struct Functor :
 	    Get_functor<Kernel_base,T,D> {};
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
