@@ -381,6 +381,9 @@ namespace CGAL {
             CGAL_SDG_DEBUG( std::cout << "debug incircle_p orientation p =" << p
                            << " q=" << pq << " r=" << t << " o="<< o << std::endl; );
             if ( CGAL::is_certain(o == RIGHT_TURN) )  {
+              CGAL_SDG_DEBUG(
+                  std::cout << "debug incircle_p certain o =" << o
+                            << std::endl; );
                
               //Line_2 l = compute_supporting_line(Segment_2(p.point(), pq));
               Line_2 l = compute_supporting_line(q);
