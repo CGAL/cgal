@@ -6,8 +6,6 @@
 #include <CGAL/Kernel_d/Cartesian_filter_NT.h>
 #include <CGAL/Kernel_d/Cartesian_filter_K.h>
 #include <CGAL/Kernel_d/Lazy_cartesian.h>
-#include <CGAL/Kernel_d/Define_segment.h>
-#include <CGAL/Kernel_d/Define_kernel_types.h>
 #include <CGAL/Kernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/Kernel_d/Kernel_d_interface.h>
 #include <CGAL/Gmpq.h>

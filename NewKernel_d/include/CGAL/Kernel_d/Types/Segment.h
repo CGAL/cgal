@@ -1,11 +1,47 @@
-#ifndef CGAL_KD_DEFINE_SEGMENT_H
-#define CGAL_KD_DEFINE_SEGMENT_H
+#ifndef CGAL_KERNELD_SEGMENTD_H
+#define CGAL_KERNELD_SEGMENTD_H
 #include <utility>
-#include <CGAL/marcutils.h>
 #include <CGAL/functor_tags.h>
-#include <CGAL/Kernel_d/Types/Segmentd.h>
-
 namespace CGAL {
+template <class R_> class Segment {
+	typedef typename Get_type<R_, FT_tag>::type FT_;
+	typedef typename Get_type<R_, Point_tag>::type	Point_;
+	//typedef typename R_::Vector Vector_;
+	//typedef typename Get_functor<R_, Construct_ttag<Vector_tag> >::type Cv_;
+//	typedef typename R_::Squared_distance Csd_;
+	typedef std::pair<Point_,Point_> Data_;
+	Data_ data;
+	public:
+	//typedef Segmentd<R_> Segment;
+#ifdef CGAL_CXX0X
+	//FIXME: don't forward directly, piecewise_constuct should call the point construction functor (I guess? or is it unnecessary?)
+	template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment>>::value>::type>
+	Segment(U&&...u):data(std::forward<U>(u)...){}
+#else
+	Segment(){}
+	Segment(Point_ const&a, Point_ const&b): data(a,b) {}
+	//template<class A,class T1,class T2>
+	  //Segment(A const&,T1 const&t1,T2 const&t2)
+#endif
+	Point_ source()const{return data.first;}
+	Point_ target()const{return data.second;}
+	Point_ operator[](int i)const{
+		if((i%2)==0)
+			return source();
+		else
+			return target();
+	}
+	Segment opposite()const{
+		return Segment(target(),source());
+	}
+	//Vector_ vector()const{
+	//	return Cv_()(data.first,data.second);
+	//}
+//	FT_ squared_length()const{
+//		return Csd_()(data.first,data.second);
+//	}
+};
+
 namespace CartesianDKernelFunctors {
 
 template<class R_> struct Construct_segment {
@@ -50,33 +86,11 @@ template<class R_> struct Segment_extremity {
 #endif
 };
 } // CartesianDKernelFunctors
+
+CGAL_KD_DEFAULT_TYPE(Segment_tag,(CGAL::Segment<K>),(Point_tag),());
 CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Segment_tag>,(CartesianDKernelFunctors::Construct_segment<K>),(Segment_tag,Point_tag),(Construct_ttag<Point_tag>));
 CGAL_KD_DEFAULT_FUNCTOR(Segment_extremity_tag,(CartesianDKernelFunctors::Segment_extremity<K>),(Segment_tag,Point_tag),());
 
-template<class Base_, class Derived_=Default>
-struct Define_segment : public Base_ {
-#if 0
-	typedef Base_ Base;
-	typedef Define_segment<Base_,Derived_> Self;
-	typedef typename Default::Get<Derived_,Self>::type Derived;
+} // namespace CGAL
 
-	typedef CGAL::Segment<Derived> Segment;
-	typedef typename Base::Object_list::template add<Segment_tag>::type Object_list;
-	template<class T,class=void> struct Type : Inherit_type<Base_, T> {};
-	template<class D> struct Type<Segment_tag, D> {
-	  typedef CGAL::Segment<Derived> type;
-	};
-
-	// TODO: forward the second Functor argument (like fast, no_filter)
-	template<class T,class=void> struct Functor : Inherit_functor<Base_, T> {};
-
-	template<class D> struct Functor<Construct_ttag<Segment_tag>,D> {
-		typedef CartesianDKernelFunctors::Construct_segment<Derived> type;
-	};
-	template<class D> struct Functor<Segment_extremity_tag,D> {
-		typedef CartesianDKernelFunctors::Segment_extremity<Derived> type;
-	};
-#endif
-};
-}
-#endif
+#endif // CGAL_KERNELD_SEGMENTD_H
