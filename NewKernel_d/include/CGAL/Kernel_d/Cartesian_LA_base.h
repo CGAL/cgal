@@ -52,6 +52,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 
     typedef typeset<Point_tag>
       ::add<Vector_tag>::type
+    // FIXME: Segment has nothing to do here.
+      ::add<Segment_tag>::type
       Object_list;
 
     typedef typeset< Point_cartesian_const_iterator_tag>::type

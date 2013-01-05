@@ -41,6 +41,7 @@ template <class R_> class Segment {
 //		return Csd_()(data.first,data.second);
 //	}
 };
+CGAL_KD_DEFAULT_TYPE(Segment_tag,(CGAL::Segment<K>),(Point_tag),());
 
 } // namespace CGAL
 

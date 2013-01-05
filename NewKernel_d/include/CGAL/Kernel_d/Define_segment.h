@@ -50,9 +50,12 @@ template<class R_> struct Segment_extremity {
 #endif
 };
 } // CartesianDKernelFunctors
+CGAL_KD_DEFAULT_FUNCTOR(Construct_ttag<Segment_tag>,(CartesianDKernelFunctors::Construct_segment<K>),(Segment_tag,Point_tag),(Construct_ttag<Point_tag>));
+CGAL_KD_DEFAULT_FUNCTOR(Segment_extremity_tag,(CartesianDKernelFunctors::Segment_extremity<K>),(Segment_tag,Point_tag),());
 
 template<class Base_, class Derived_=Default>
 struct Define_segment : public Base_ {
+#if 0
 	typedef Base_ Base;
 	typedef Define_segment<Base_,Derived_> Self;
 	typedef typename Default::Get<Derived_,Self>::type Derived;
@@ -73,6 +76,7 @@ struct Define_segment : public Base_ {
 	template<class D> struct Functor<Segment_extremity_tag,D> {
 		typedef CartesianDKernelFunctors::Segment_extremity<Derived> type;
 	};
+#endif
 };
 }
 #endif
