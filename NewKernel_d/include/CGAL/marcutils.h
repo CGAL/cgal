@@ -246,6 +246,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
       , int, void>::type> \
     { \
       typedef CGAL_STRIP_PAREN_ Name type; \
+      typedef K Bound_kernel; \
     }
 
 // Not used yet, may need some changes.
@@ -259,6 +260,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
       , int, void>::type> \
     { \
       typedef CGAL_STRIP_PAREN_ Name type; \
+      typedef K Bound_kernel; \
     }
 
 

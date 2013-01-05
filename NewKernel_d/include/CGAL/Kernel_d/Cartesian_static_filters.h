@@ -59,7 +59,7 @@ struct Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> : public R_ {
   CGAL_CONSTEXPR Cartesian_static_filters(int d):R_(d){}
 	typedef Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> Self;
 	typedef typename Default::Get<Derived_,Self>::type Derived;
-	template <class T, class=void> struct Functor : Get_functor<R_, T> {};
+	template <class T, class=void> struct Functor : Inherit_functor<R_, T> {};
 	template <class D> struct Functor <Orientation_of_points_tag,D> {
 		typedef
 			//typename boost::conditional<

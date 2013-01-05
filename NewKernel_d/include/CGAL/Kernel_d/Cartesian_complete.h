@@ -22,21 +22,14 @@ template<class R_,class Derived_> struct Cartesian_define_all_functors_
 {
 	typedef R_ Kernel_base;
 	template<class F, class D=void> struct Functor
-		: Get_functor<Kernel_base,F,D>
+		: Inherit_functor<Kernel_base,F,D>
 	{ };
-#define CGAL_Kernel_cons2(F,f) \
-	template<class D> struct Functor <F##_tag,D> { \
-		typedef CartesianDKernelFunctors::F<Derived_> type; \
+	template<class D> struct Functor <Segment_extremity_tag,D> {
+		typedef CartesianDKernelFunctors::Segment_extremity<Derived_> type;
 	};
-	//type f() const { return type(); }
-#define CGAL_Kernel_obj2(X,Y) \
-	template<class D> struct Functor <Construct_ttag<X##_tag>,D> { \
-		typedef CartesianDKernelFunctors::Construct_##Y<Derived_> type; \
+	template<class D> struct Functor <Construct_ttag<Segment_tag>,D> {
+		typedef CartesianDKernelFunctors::Construct_segment<Derived_> type;
 	};
-//#define CGAL_Kernel_pred(F,f) CGAL_Kernel_cons2(F,f)
-//#define CGAL_Kernel_comp2(F,f) CGAL_Kernel_cons2(F,f)
-
-#include <CGAL/Kernel_d/interface_macros.h>
 
 };
 
@@ -51,17 +44,13 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_types>::type Derived;
-	template <class T,class=void> struct Type : Get_type<Kernel_base,T> {};
-#define CGAL_Kernel_obj2(X,Y) \
-	template <class D> struct Type<X##_tag,D> { \
-		static const bool inbase = \
-	          Provides_type<Kernel_base, X##_tag>::value; \
-		typedef Get_type<Kernel_base,X##_tag> B_; \
-		typedef typename boost::mpl::if_c<force_||!inbase,Wrap_type<CGAL::X<Derived> >,B_>::type::type type; \
+	template <class T,class=void> struct Type : Inherit_type<Kernel_base,T> {};
+	template <class D> struct Type<Segment_tag,D> {
+		static const bool inbase =
+	          Provides_type<Kernel_base, Segment_tag>::value;
+		typedef Get_type<Kernel_base,Segment_tag> B_;
+		typedef typename boost::mpl::if_c<force_||!inbase,Wrap_type<CGAL::Segment<Derived> >,B_>::type::type type;
 	};
-	//Implement by chaining things like Define_segment?
-	//FIXME: needs to be conditional!!!
-#include <CGAL/Kernel_d/interface_macros.h>
 };
 
 
@@ -73,13 +62,19 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_constructors>::type Derived;
-	template<class F,class D=void,class=typename Get_functor_category<Derived,F>::type> struct Functor :
-		Get_functor<R_,F,D> {};
-	template<class F,class D> struct Functor<F,D,Construct_tag> {
-		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
-		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
-			typename Get_functor<Cartesian_define_all_functors<R_,Derived>, F>::type,
-			Base_functor>::type type;
+	template<class F,class D=void> struct Functor :
+		Inherit_functor<R_,F,D> {};
+	template<class D> struct Functor<Construct_ttag<Segment_tag>,D> {
+	  typedef typename Get_functor<Kernel_base, Construct_ttag<Segment_tag> >::type Base_functor;
+	  typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
+		  typename Get_functor<Cartesian_define_all_functors<R_,Derived>, Construct_ttag<Segment_tag> >::type,
+		  Base_functor>::type type;
+	};
+	template<class D> struct Functor<Segment_extremity_tag,D> {
+	  typedef typename Get_functor<Kernel_base, Segment_extremity_tag>::type Base_functor;
+	  typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
+		  typename Get_functor<Cartesian_define_all_functors<R_,Derived>, Segment_extremity_tag>::type,
+		  Base_functor>::type type;
 	};
 
 };
@@ -89,18 +84,6 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 {
   CGAL_CONSTEXPR Cartesian_complete_predicates(){}
   CGAL_CONSTEXPR Cartesian_complete_predicates(int d):R_(d){}
-
-	typedef R_ Kernel_base;
-	typedef typename Default::Get<Derived_,Cartesian_complete_predicates>::type Derived;
-	template<class F,class D=void,class=typename Get_functor_category<Derived,F>::type> struct Functor :
-		Get_functor<R_,F,D> {};
-	template<class F,class D> struct Functor<F,D,Predicate_tag> {
-		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
-		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
-			typename Get_functor<Cartesian_define_all_functors<R_,Derived>, F>::type,
-			Base_functor>::type type;
-	};
-
 };
 
 template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_complete_computes 
@@ -108,18 +91,6 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
 {
   CGAL_CONSTEXPR Cartesian_complete_computes(){}
   CGAL_CONSTEXPR Cartesian_complete_computes(int d):R_(d){}
-
-	typedef R_ Kernel_base;
-	typedef typename Default::Get<Derived_,Cartesian_complete_computes>::type Derived;
-	template<class F,class D=void,class=typename Get_functor_category<Derived,F>::type> struct Functor :
-		Get_functor<R_,F,D> {};
-	template<class F,class D> struct Functor<F,D,Compute_tag> {
-		typedef typename Get_functor<Kernel_base, F>::type Base_functor;
-		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
-			typename Get_functor<Cartesian_define_all_functors<R_,Derived>, F>::type,
-			Base_functor>::type type;
-	};
-
 };
 
 }

@@ -82,6 +82,20 @@ namespace CGAL {
 	struct Provides_functor_i <Kernel, Tg, O, true>
 	  : Has_type_different_from<typename Kernel::template Functor<Tg, O>, Null_functor> {};
 
+	// TODO: Refine this a bit.
+	template <class K, class T, class D=void,
+		  //bool=Provides_functor<K,T>::value,
+		  //bool=Provides_functor_i<K,T>::value,
+		  bool=internal::has_Functor<K>::value>
+	struct Inherit_functor : K::template Functor<T> {};
+	template <class K, class T, class D>
+	struct Inherit_functor <K, T, D, false> {};
+
+	template <class K, class T, bool=internal::has_Type<K>::value>
+	struct Inherit_type : K::template Type<T> {};
+	template <class K, class T>
+	struct Inherit_type <K, T, false> {};
+
 	struct Number_tag {};
 	struct Discrete_tag {};
 	struct Object_tag {};

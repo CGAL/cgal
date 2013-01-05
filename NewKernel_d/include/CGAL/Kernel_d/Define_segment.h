@@ -59,13 +59,13 @@ struct Define_segment : public Base_ {
 
 	typedef CGAL::Segment<Derived> Segment;
 	typedef typename Base::Object_list::template add<Segment_tag>::type Object_list;
-	template<class T,class=void> struct Type : Get_type<Base_, T> {};
+	template<class T,class=void> struct Type : Inherit_type<Base_, T> {};
 	template<class D> struct Type<Segment_tag, D> {
 	  typedef CGAL::Segment<Derived> type;
 	};
 
 	// TODO: forward the second Functor argument (like fast, no_filter)
-	template<class T,class=void> struct Functor : Get_functor<Base_, T> {};
+	template<class T,class=void> struct Functor : Inherit_functor<Base_, T> {};
 
 	template<class D> struct Functor<Construct_ttag<Segment_tag>,D> {
 		typedef CartesianDKernelFunctors::Construct_segment<Derived> type;
