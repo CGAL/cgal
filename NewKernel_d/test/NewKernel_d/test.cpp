@@ -22,17 +22,9 @@ typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
 
 struct RC: public
 CGAL::Cartesian_static_filters<CGAL::Dimension_tag<2>, // Yes, it is silly to put it there.
-CGAL::Cartesian_complete_predicates<
-CGAL::Cartesian_complete_constructors<
-CGAL::Cartesian_complete_computes<
-CGAL::Cartesian_complete_types<
-CGAL::Cartesian_refcount<
-CGAL::Cartesian_LA_base_d<double,CGAL::Dimension_tag<2> >
->
->, false, RC
->, false, RC
->, false, RC
->, RC
+ CGAL::Cartesian_refcount<
+  CGAL::Cartesian_LA_base_d<double,CGAL::Dimension_tag<2> >
+ >, RC
 >
 {
 	RC(){}

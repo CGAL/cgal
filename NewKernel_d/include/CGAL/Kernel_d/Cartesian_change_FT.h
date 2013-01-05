@@ -19,6 +19,10 @@ struct Cartesian_change_FT_base : public
     typedef Base_ Kernel_base;
     typedef LA_ LA;
 
+    template <class T, class D=void> struct Type : Inherit_type<Base_, T> {};
+    template <class D> struct Type <FT_tag, D> { typedef FT_ type; };
+    template <class D> struct Type <RT_tag, D> { typedef FT_ type; };
+
     typedef NT_converter<typename Get_type<Kernel_base, FT_tag>::type,FT_> FT_converter;
     typedef transforming_iterator<FT_converter,typename Kernel_base::Point_cartesian_const_iterator> Point_cartesian_const_iterator;
     typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
@@ -64,11 +68,9 @@ struct Cartesian_change_FT_base : public
     };
 
     template<class T,class U=void,class=typename Get_functor_category<Cartesian_change_FT_base,T>::type> struct Functor :
-	    Get_functor<Kernel_base,T,U> { };
-    template<class T,class U> struct Functor<T,U,Compute_tag>
-	{ typedef Null_functor type; };
-    template<class T,class U> struct Functor<T,U,Predicate_tag>
-	{ typedef Null_functor type; };
+	    Inherit_functor<Kernel_base,T,U> { };
+    template<class T,class U> struct Functor<T,U,Compute_tag> { };
+    template<class T,class U> struct Functor<T,U,Predicate_tag> { };
     template<class D> struct Functor<Compute_point_cartesian_coordinate_tag,D,Compute_tag> {
 	    typedef Compute_cartesian_coordinate<Compute_point_cartesian_coordinate_tag> type;
     };
@@ -85,11 +87,7 @@ struct Cartesian_change_FT_base : public
 
 template < typename Base_, typename FT_>
 struct Cartesian_change_FT : public
-Cartesian_complete_predicates<
-Cartesian_complete_computes<
 	Cartesian_change_FT_base<Base_,FT_>
-, true, Cartesian_change_FT<Base_,FT_> >
-, true, Cartesian_change_FT<Base_,FT_> >
 {
     CGAL_CONSTEXPR Cartesian_change_FT(){}
     CGAL_CONSTEXPR Cartesian_change_FT(int d):Cartesian_change_FT_base<Base_,FT_>(d){}
