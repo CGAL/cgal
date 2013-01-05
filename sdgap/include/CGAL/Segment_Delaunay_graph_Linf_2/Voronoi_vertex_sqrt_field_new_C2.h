@@ -530,7 +530,12 @@ private:
     CGAL_SDG_DEBUG(std::cout << "debug: compute_vv PPS entering p=" << sp 
       << " q=" << sq << " r=" << sr << std::endl;);
 
-    if ( is_vv_computed ) { return; }
+    if ( is_vv_computed ) {
+      
+      CGAL_SDG_DEBUG(std::cout << "sandeep PPS vertex is computed" << sp
+                     << " q=" << sq << " r=" << sr << std::endl;);
+      return;
+    }
     is_vv_computed = true;
   
     FT ux, uy, uz;

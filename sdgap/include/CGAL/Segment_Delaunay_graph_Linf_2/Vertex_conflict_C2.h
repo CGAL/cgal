@@ -378,6 +378,8 @@ namespace CGAL {
             
             Point_2 pq = same_points(p, q.source_site()) ? q.target() : q.source();
             o = orientation_linf(p.point(), pq, t.point());
+            CGAL_SDG_DEBUG( std::cout << "debug incircle_p orientation p =" << p
+                           << " q=" << pq << " r=" << t << " o="<< o << std::endl; );
             if ( CGAL::is_certain(o == RIGHT_TURN) )  {
                
               //Line_2 l = compute_supporting_line(Segment_2(p.point(), pq));
@@ -407,7 +409,10 @@ namespace CGAL {
                               << POSITIVE
                               << std::endl ;);
               return POSITIVE;
-            } 
+            }
+            else {
+              return NEGATIVE;
+            }
           }
         }
         else { // p is a segment and q is a point
@@ -415,6 +420,8 @@ namespace CGAL {
                same_points(q, p.target_site()) ) {
             Point_2 pp =  same_points(q, p.source_site()) ? p.target() : p.source();
             o = orientation_linf(pp, q.point(), t.point());
+            CGAL_SDG_DEBUG( std::cout << "debug incircle_p orientation p =" << pp
+                           << " q=" << q << " r=" << t << " o="<< o << std::endl; );
             if ( CGAL::is_certain(o == RIGHT_TURN) )  {
               Line_2 l = compute_supporting_line(p);
               //Line_2 lperp = compute_cw_perpendicular(l, q.point());
@@ -443,6 +450,9 @@ namespace CGAL {
                              << POSITIVE
                              << std::endl ;);
               return POSITIVE;
+            }
+            else {
+              return NEGATIVE;
             }
           }
         }
