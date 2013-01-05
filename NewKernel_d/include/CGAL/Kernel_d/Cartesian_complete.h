@@ -90,9 +90,6 @@ template<class R_,bool force_=false,class Derived_=Default> struct Cartesian_com
   CGAL_CONSTEXPR Cartesian_complete_predicates(){}
   CGAL_CONSTEXPR Cartesian_complete_predicates(int d):R_(d){}
 
-	// TODO: this doesn't look like the right place for this typedef...
-	typedef CartesianDKernelFunctors::Flat_orientation Flat_orientation;
-
 	typedef R_ Kernel_base;
 	typedef typename Default::Get<Derived_,Cartesian_complete_predicates>::type Derived;
 	template<class F,class D=void,class=typename Get_functor_category<Derived,F>::type> struct Functor :
