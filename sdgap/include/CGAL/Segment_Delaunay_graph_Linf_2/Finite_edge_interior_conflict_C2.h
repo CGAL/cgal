@@ -962,13 +962,6 @@ public:
       Segment_2 seg = (p.is_point())? q.segment(): p.segment();
 
       if (seg.is_horizontal() or seg.is_vertical()) {
-        if (p.is_point()) {
-          CGAL_assertion( same_points(p, q.source_site()) or
-                          same_points(p, q.target_site())   ) ;
-        } else {
-          CGAL_assertion( same_points(q, p.source_site()) or
-                          same_points(q, p.target_site())   ) ;
-        }
         return false;
       }
 

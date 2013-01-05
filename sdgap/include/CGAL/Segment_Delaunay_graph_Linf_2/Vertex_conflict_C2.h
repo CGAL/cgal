@@ -372,53 +372,78 @@ namespace CGAL {
         // wrt perpendicular line passing through p
         Orientation o;
         if ( p.is_point() && q.is_segment() ) {
-          CGAL_assertion( same_points(p, q.source_site()) or
-                          same_points(p, q.target_site()) );
-          Point_2 pq = same_points(p, q.source_site()) ? q.target() : q.source();
-          o = orientation_linf(p.point(), pq, t.point());
-          if ( CGAL::is_certain(o == RIGHT_TURN) )  {
+          
+          if(same_points(p, q.source_site()) or
+             same_points(p, q.target_site()) ) {
+            
+            Point_2 pq = same_points(p, q.source_site()) ? q.target() : q.source();
+            o = orientation_linf(p.point(), pq, t.point());
+            if ( CGAL::is_certain(o == RIGHT_TURN) )  {
                
-            //Line_2 l = compute_supporting_line(Segment_2(p.point(), pq));
-            Line_2 l = compute_supporting_line(q);
-            Line_2 lperp = same_points(p, q.source_site()) ?
+              //Line_2 l = compute_supporting_line(Segment_2(p.point(), pq));
+              Line_2 l = compute_supporting_line(q);
+              Line_2 lperp = same_points(p, q.source_site()) ?
                            compute_cw_perpendicular(l, p.point())
                            : compute_perpendicular(l, p.point());
-            Oriented_side os =
-            oriented_side_of_line(lperp, t.point());
-            CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
+              Oriented_side os =
+              oriented_side_of_line(lperp, t.point());
+              CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
                             << (( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE)
                             << std::endl ;);
-            return ( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE;
+              return ( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE;
+            }
+            else {
+              CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
+                             << POSITIVE
+                             << std::endl ;);
+              return POSITIVE;
+            }
           }
           else {
-            CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
-                            << POSITIVE
-                            << std::endl ;);
-            return POSITIVE;
+            // Sandeep: point p is not end point of segment q
+            Line_2 l = compute_supporting_line(q);
+            if ( !( oriented_side_of_line(l, t.point()) == oriented_side_of_line(l, p.point()) ) ) {
+              CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
+                              << POSITIVE
+                              << std::endl ;);
+              return POSITIVE;
+            } 
           }
-        } else { // p is a segment and q is a point
-          CGAL_assertion( same_points(q, p.source_site()) or
-                          same_points(q, p.target_site()) );
-          Point_2 pp =  same_points(q, p.source_site()) ? p.target() : p.source();
-          o = orientation_linf(pp, q.point(), t.point());
-          if ( CGAL::is_certain(o == RIGHT_TURN) )  {
-            Line_2 l = compute_supporting_line(p);
-            //Line_2 lperp = compute_cw_perpendicular(l, q.point());
-            Line_2 lperp = same_points(q, p.source_site()) ?
+        }
+        else { // p is a segment and q is a point
+          if ( same_points(q, p.source_site()) or
+               same_points(q, p.target_site()) ) {
+            Point_2 pp =  same_points(q, p.source_site()) ? p.target() : p.source();
+            o = orientation_linf(pp, q.point(), t.point());
+            if ( CGAL::is_certain(o == RIGHT_TURN) )  {
+              Line_2 l = compute_supporting_line(p);
+              //Line_2 lperp = compute_cw_perpendicular(l, q.point());
+              Line_2 lperp = same_points(q, p.source_site()) ?
                            compute_cw_perpendicular(l, q.point())
                            : compute_perpendicular(l, q.point());
-            Oriented_side os =
-            oriented_side_of_line(lperp, t.point());
-            CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
+              Oriented_side os =
+              oriented_side_of_line(lperp, t.point());
+              CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
                             << (( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE)
                             << std::endl ;);
-            return ( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE;
-          }
-          else {
-            CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
+              return ( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE;
+            }
+            else {
+              CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
                             << POSITIVE
                             << std::endl ;);
-            return POSITIVE;
+              return POSITIVE;
+            }
+          }
+          else {
+            // Sandeep: point q is not end point of segment p
+            Line_2 l = compute_supporting_line(p);
+            if ( !( oriented_side_of_line(l, t.point()) == oriented_side_of_line(l, q.point()) ) ) {
+              CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
+                             << POSITIVE
+                             << std::endl ;);
+              return POSITIVE;
+            }
           }
         }
            
