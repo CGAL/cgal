@@ -9,12 +9,26 @@
 #include <ctime>
 #include <algorithm>
 
+const double pre_run = true;
+const double do_remove = true;
+const int n_runs = 3;
+
 template <class T>
-double test(const std::vector<Point> &input, T &t)
+void test(const std::vector<Point> &input, T &t)
 {
-  std::clock_t total_start = std::clock();
   t.insert(input.begin(), input.end());
-  return (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
+
+  if (do_remove) {
+    std::vector<typename T::Vertex_handle> vhs;
+    for (typename T::Vertex_iterator it = t.vertices_begin(); it != t.vertices_end(); ++it) {
+      vhs.push_back(it);
+    }
+    
+    std::random_shuffle(vhs.begin(), vhs.end());
+    vhs.resize(vhs.size()/2);
+    for (size_t i=0; i<vhs.size(); ++i)
+      t.remove(vhs[i]);
+  }
 }
 
 int main(int argc, char * argv[]) {
@@ -42,29 +56,37 @@ int main(int argc, char * argv[]) {
     pts.push_back(Point(coords[0], coords[1]));
   }
 
-  if (false) {
-    // Warming up ...
-    std::random_shuffle(pts.begin(), pts.end());
-    Delaunay_triangulation_2<Gt> t;
-    test(pts, t);
-
-    std::random_shuffle(pts.begin(), pts.end());
-    Periodic_2_Delaunay_triangulation_2<Gt> t2(Iso_rectangle(0,0,domain[0],domain[1]));
-    test(pts, t2);
-  }
   if (true) {
-    std::random_shuffle(pts.begin(), pts.end());
-    Delaunay_triangulation_2<Gt> t;
+    if (pre_run) {
+      Delaunay_triangulation_2<Gt> t;
+      test(pts, t);
+    }
 
-    std::cout << "Euclidean space, " << filename << ", ";
-    std::cout << test(pts, t) << std::endl;
+    std::clock_t total_start = std::clock();
+    for (int i=0; i<n_runs; ++i) {
+      Delaunay_triangulation_2<Gt> t;
+      test(pts, t);
+    }
+    double total_time = (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
+
+    std::cout << "Euclidean space, " << filename << ", " << total_time << std::endl;
   }
-  if (true) {
-    std::random_shuffle(pts.begin(), pts.end());
-    Periodic_2_Delaunay_triangulation_2<Gt> t(Iso_rectangle(0,0,domain[0],domain[1]));
 
-    std::cout << "Periodic  space, " << filename << ", ";
-    std::cout << test(pts, t) << std::endl;
+  if (true) {
+    if (pre_run) {
+      Periodic_2_Delaunay_triangulation_2<Gt> t(Iso_rectangle(0,0,domain[0],domain[1]));
+      test(pts, t);
+    }
+
+    std::clock_t total_start = std::clock();
+    for (int i=0; i<n_runs; ++i) {
+      Periodic_2_Delaunay_triangulation_2<Gt> t(Iso_rectangle(0,0,domain[0],domain[1]));
+      test(pts, t);
+    }
+    double total_time = (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
+
+    std::cout << "Periodic  space, " << filename << ", " << total_time << std::endl;
+
   }
 
   return 0;
