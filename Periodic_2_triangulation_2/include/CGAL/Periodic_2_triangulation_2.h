@@ -903,13 +903,13 @@ public:
 
   /// Determines whether the point p lies on the (un-)bounded side of
   /// the circle through the points p0, p1 and p2
-  ///\n NGHK: Not yet implemented
+  ///\n NGHK: implemented
   Oriented_side
   side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
       const Point &p, bool perturb) const;
   /// Determines whether the point (p,o) lies on the (un-)bounded side of
   /// the circle through the points (p0,o0), (p1,o1) and (p2,o2)
-  ///\n NGHK: Not yet implemented
+  ///\n NGHK: implemented
   Oriented_side
   side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
       const Point &p, const Offset &o0, const Offset &o1, const Offset &o2,
@@ -954,13 +954,10 @@ public:
   ///\n NGHK: Not yet implemented
   bool xy_equal(const Point& p, const Point& q) const;
   /// Returns the orientation of p1,p2,p3
-  ///\n NGHK: Not yet implemented
-  Orientation
-      orientation(const Point& p1, const Point& p2, const Point& p3) const;
+  Orientation orientation(const Point& p1, const Point& p2, const Point& p3) const;
   /// Returns the orientation of (p1,o1), (p2,o2), (p3,o3)
-  ///\n NGHK: Not yet implemented
   Orientation orientation(const Point& p1, const Point& p2, const Point& p3,
-      const Offset& o1, const Offset& o2, const Offset& o3) const;
+                          const Offset& o1, const Offset& o2, const Offset& o3) const;
   //\}
 
 
@@ -1433,6 +1430,29 @@ protected:
   /// \n NGHK: implemented
   bool is_valid_too_long_edges(bool verbose = false, int level = 0) const;
 
+  /** @name Checking helpers */ //@{
+  /// calls has_self_edges for every cell of the triangulation
+  bool has_self_edges() const {
+    Face_iterator it;
+    for ( it = all_faces_begin(); it != all_faces_end(); ++it )
+      if (has_self_edges(it)) return true;
+    return false;
+  }
+  bool has_self_edges(Face_handle fh) const {
+    CGAL_triangulation_assertion((fh->vertex(0) != fh->vertex(1)) || 
+                                 (fh->offset(0) != fh->offset(1)));
+    CGAL_triangulation_assertion((fh->vertex(0) != fh->vertex(2)) || 
+                                 (fh->offset(0) != fh->offset(2)));
+    CGAL_triangulation_assertion((fh->vertex(1) != fh->vertex(2)) || 
+                                 (fh->offset(1) != fh->offset(2)));
+    return ((fh->vertex(0) == fh->vertex(1)) ||
+            (fh->vertex(0) == fh->vertex(2)) ||
+            (fh->vertex(1) == fh->vertex(2)));
+  }
+
+  //@}
+  
+
 protected:
   // Protected data of Periodic_2_triangulation_2
   /// \name Triangulation data members
@@ -1726,10 +1746,11 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) cons
 
       if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) != POSITIVE) {
         if (verbose) {
-          std::cerr << "Periodic_2_triangulation_2: wrong orientation:"
-              << std::endl;
-          std::cerr << *p[0] << " \t" << off[0] << "\n" << *p[1] << " \t"
-              << off[1] << "\n" << *p[2] << " \t" << off[2] << std::endl;
+          std::cerr
+            << "Periodic_2_triangulation_2: wrong orientation:" << "\n"
+            << *p[0] << " \t" << off[0] << "\n"
+            << *p[1] << " \t" << off[1] << "\n"
+            << *p[2] << " \t" << off[2] << std::endl;
         }
         result = false;
       }
@@ -1750,7 +1771,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) cons
              + number_of_stored_faces() == 0);
   CGAL_triangulation_assertion(result);
 
-  result &= is_valid_too_long_edges(verbose, level);
+  result &= !has_self_edges();
   CGAL_triangulation_assertion(result);
 
   // Edges should not be longer than 1 periodicity
@@ -2699,6 +2720,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(
     const Point& p1 = v1->point();
     const Offset o0 = vertex_offsets[v0];
     const Offset o1 = vertex_offsets[v1];
+    bool simplicity_criterion = (o0 == o1);
 
     typename Hole::iterator hdone = hole.end();
     hit =  hole.begin();
@@ -2716,14 +2738,29 @@ void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(
       const Point &p = vv->point();
       CGAL_assertion(vertex_offsets.find(vv) != vertex_offsets.end());
       const Offset o = vertex_offsets[vv];
-      if (orientation(p0,p1,p, o0,o1,o) == COUNTERCLOCKWISE) {
+      Orientation orient;
+      simplicity_criterion &= (o == o0);
+      if (simplicity_criterion)
+        orient = orientation(p0,p1,p);
+      else
+        orient = orientation(p0,p1,p, o0,o1,o);
+
+      if (orient == COUNTERCLOCKWISE) {
         if (v2 == Vertex_handle()) {
           v2=vv;
           v3=vv;
           cut_after=hit;
         } else {
-          if (this->side_of_oriented_circle(p0,p1,v3->point(),p,
-                                            o0,o1,vertex_offsets[v3],o, true) ==  ON_POSITIVE_SIDE) {
+          Offset o3 = vertex_offsets[v3];
+          Oriented_side side;
+          if (simplicity_criterion && (o3 == o0))
+            side = side_of_oriented_circle(p0,p1,v3->point(),p,
+                                           true);
+          else
+            side = side_of_oriented_circle(p0,p1,v3->point(),p,
+                                           o0,o1,o3,o,
+                                           true);
+          if (side == ON_POSITIVE_SIDE) {
             v2=vv;
             v3=vv;
             cut_after=hit;
