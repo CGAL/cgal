@@ -543,11 +543,12 @@ private:
     bool p_endp_r = is_endpoint_of(sp, sr);
     bool q_endp_r = is_endpoint_of(sq, sr);
 
-    //incase p or q is end point of r no square is possible in ccw sense
-    CGAL_assertion(not (p_endp_r or q_endp_r));
+    //incase p and q both are end point of r no square is possible 
+    CGAL_assertion(not (p_endp_r and q_endp_r));
   
     bool samexpq = (scmpx(sp, sq) == EQUAL);
     bool sameypq = (scmpy(sp, sq) == EQUAL);
+    //assert not same points
     CGAL_assertion(not (samexpq and sameypq));
   
     Point_2 pp = sp.point(), qp = sq.point();
@@ -556,74 +557,124 @@ private:
     //case 1: r is horizontal
     //Case 2: r is vertical
     if (rs.is_horizontal()) {
-      if( CGAL::compare( abs(pp.x() - qp.x()),
-                         abs(pp.y() - rs.source().y()) )
-                         == LARGER &&
-          CGAL::compare( abs(pp.x() - qp.x()),
-                         abs(qp.y() - rs.source().y()) )
-                         == LARGER ) {
-        // This is the case when diffx is greater than diffy
-      
-        ux = pp.x() + qp.x();
-        uy = FT(2) * rs.source().y() + pp.x() - qp.x();
-        uz = FT(2);
-      } else {
-        // diffy is greater
-        if (sameypq) {
-          ux = pp.x() + qp.x();
-          uy = pp.y() + rs.source().y();
-          uz = FT(2);
-        } else if ( CGAL::compare( abs(pp.y() - rs.source().y()),
-                                   abs(qp.y() - rs.source().y()) )
-                                   == LARGER) {
-          // p is more distant than q from r
-          ux = FT(2) * qp.x() + pp.y() - rs.source().y();
-          uy = pp.y() + rs.source().y();
-          uz = FT(2);
-        
-        } else {
-          // q is more distant than p from r
-          ux = FT(2) * pp.x() - qp.y() + rs.source().y();
-          uy = qp.y() + rs.source().y();
-          uz = FT(2);
-        
-        }
-      }// end of diffy greater
-    
-    } else {//rs is vertical
-      if( CGAL::compare( abs(pp.y() - qp.y()),
-                         abs(pp.x() - rs.source().x()) )
-                         == LARGER &&
-          CGAL::compare( abs(pp.y() - qp.y()),
-                         abs(qp.x() - rs.source().x()) )
-                         == LARGER ) {
-        // This is the case when diffy is greater than diffx
-      
-        ux = FT(2) * rs.source().x() + pp.y() - qp.y();
+      if (p_endp_r or q_endp_r) {
         uy = pp.y() + qp.y();
         uz = FT(2);
-      } else {
-        // diffx is greater
-        if (samexpq) {
-          ux = pp.x() + rs.source().x();
+        if (p_endp_r) {
+          Comparison_result cmpxpr =
+          (same_points(sp, sr.source_site()))?
+          CGAL::compare(pp.x(),rs.target().x()):
+          CGAL::compare(pp.x(),rs.source().x());
+          
+          ux = (cmpxpr == SMALLER) ? FT(2) * pp.x() - abs( pp.y() - qp.y() )
+                                   : FT(2) * pp.x() + abs( pp.y() - qp.y() );
+        }
+        else {//q_endp_r
+          Comparison_result cmpxqr =
+          (same_points(sq, sr.source_site()))?
+          CGAL::compare(qp.x(),rs.target().x()):
+          CGAL::compare(qp.x(),rs.source().x());
+          
+          ux = (cmpxqr == SMALLER) ? FT(2) * qp.x() - abs( pp.y() - qp.y() )
+                                   : FT(2) * qp.x() + abs( pp.y() - qp.y() );
+        }
+      }//end of case when p or q is end point of r
+      else {
+        // p or q is not end point of r
+        if( CGAL::compare( abs(pp.x() - qp.x()),
+                           abs(pp.y() - rs.source().y()) )
+                           == LARGER &&
+            CGAL::compare( abs(pp.x() - qp.x()),
+                           abs(qp.y() - rs.source().y()) )
+                           == LARGER ) {
+          // This is the case when diffx is greater than diffy
+      
+          ux = pp.x() + qp.x();
+          uy = FT(2) * rs.source().y() + pp.x() - qp.x();
+          uz = FT(2);
+        } else {
+          // diffy is greater
+          if (sameypq) {
+            ux = pp.x() + qp.x();
+            uy = pp.y() + rs.source().y();
+            uz = FT(2);
+          } else if ( CGAL::compare( abs(pp.y() - rs.source().y()),
+                                     abs(qp.y() - rs.source().y()) )
+                                     == LARGER) {
+            // p is more distant than q from r
+            ux = FT(2) * qp.x() + pp.y() - rs.source().y();
+            uy = pp.y() + rs.source().y();
+            uz = FT(2);
+        
+          } else {
+            // q is more distant than p from r
+            ux = FT(2) * pp.x() - qp.y() + rs.source().y();
+            uy = qp.y() + rs.source().y();
+            uz = FT(2);
+        
+          }
+        }// end of diffy greater
+      }//end of case when p or q is not end point of r
+    } else {//rs is vertical
+      if (p_endp_r or q_endp_r) {
+        //p or q is end point of r
+        ux = pp.x() + qp.x();
+        uz = FT(2);
+        if (p_endp_r) {
+          Comparison_result cmpypr =
+          (same_points(sp, sr.source_site()))?
+          CGAL::compare(pp.y(),rs.target().y()):
+          CGAL::compare(pp.y(),rs.source().y());
+          
+          uy = (cmpypr == SMALLER) ? FT(2) * pp.y() - abs( pp.x() - qp.x() )
+                                   : FT(2) * pp.y() + abs( pp.x() - qp.x() );
+        }
+        else {//q_endp_r
+          Comparison_result cmpyqr =
+          (same_points(sq, sr.source_site()))?
+          CGAL::compare(qp.y(),rs.target().y()):
+          CGAL::compare(qp.y(),rs.source().y());
+          
+          uy = (cmpyqr == SMALLER) ? FT(2) * qp.y() - abs( pp.x() - qp.x() )
+                                   : FT(2) * qp.y() + abs( pp.x() - qp.x() );
+        }
+      }//end of case when p or q is end point of r
+      else {
+        //here p or q is not end point of r
+        if( CGAL::compare( abs(pp.y() - qp.y()),
+                           abs(pp.x() - rs.source().x()) )
+                           == LARGER &&
+            CGAL::compare( abs(pp.y() - qp.y()),
+                           abs(qp.x() - rs.source().x()) )
+                           == LARGER ) {
+          // This is the case when diffy is greater than diffx
+      
+          ux = FT(2) * rs.source().x() + pp.y() - qp.y();
           uy = pp.y() + qp.y();
           uz = FT(2);
-        } else if ( CGAL::compare( abs(pp.x() - rs.source().x()),
-                                   abs(qp.x() - rs.source().x()) )
-                                   == LARGER) {
-          // p is more distant than q from r
-          ux = pp.x() + rs.source().x();
-          uy = FT(2) * qp.y() + pp.x() - rs.source().x();
-          uz = FT(2);
-        
         } else {
-          // q is more distant than p from r
-          ux = qp.x() + rs.source().x();
-          uy = FT(2) * pp.y() - qp.x() + rs.source().x();
-          uz = FT(2);
+          // diffx is greater
+          if (samexpq) {
+            ux = pp.x() + rs.source().x();
+            uy = pp.y() + qp.y();
+            uz = FT(2);
+          } else if ( CGAL::compare( abs(pp.x() - rs.source().x()),
+                                     abs(qp.x() - rs.source().x()) )
+                                     == LARGER) {
+            // p is more distant than q from r
+            ux = pp.x() + rs.source().x();
+            uy = FT(2) * qp.y() + pp.x() - rs.source().x();
+            uz = FT(2);
         
-        }
-      }// end of diffx greater
+          } else {
+            // q is more distant than p from r
+            ux = qp.x() + rs.source().x();
+            uy = FT(2) * pp.y() - qp.x() + rs.source().x();
+            uz = FT(2);
+        
+          }
+        }// end of diffx greater
+      }//end of case when p or q is end point of r
     }//end of vertical rs
 
     vv = Point_2(ux / uz, uy / uz);

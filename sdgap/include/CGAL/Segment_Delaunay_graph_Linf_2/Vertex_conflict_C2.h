@@ -380,7 +380,7 @@ namespace CGAL {
             o = orientation_linf(p.point(), pq, t.point());
             CGAL_SDG_DEBUG( std::cout << "debug incircle_p orientation p =" << p
                            << " q=" << pq << " r=" << t << " o="<< o << std::endl; );
-            if ( CGAL::is_certain(o == RIGHT_TURN) )  {
+            if ( o == RIGHT_TURN )  {
               CGAL_SDG_DEBUG(
                   std::cout << "debug incircle_p certain o =" << o
                             << std::endl; );
@@ -425,7 +425,10 @@ namespace CGAL {
             o = orientation_linf(pp, q.point(), t.point());
             CGAL_SDG_DEBUG( std::cout << "debug incircle_p orientation p =" << pp
                            << " q=" << q << " r=" << t << " o="<< o << std::endl; );
-            if ( CGAL::is_certain(o == RIGHT_TURN) )  {
+            if ( o == RIGHT_TURN )  {
+              CGAL_SDG_DEBUG(
+                             std::cout << "debug incircle_p certain o =" << o
+                             << std::endl; );
               Line_2 l = compute_supporting_line(p);
               //Line_2 lperp = compute_cw_perpendicular(l, q.point());
               Line_2 lperp = same_points(q, p.source_site()) ?
@@ -464,6 +467,9 @@ namespace CGAL {
       }
       //Sandeep: Added to avoid compiler warning
       CGAL_assertion(false);
+      CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p should not reach here "
+                   << NEGATIVE
+                   << std::endl ;);
       return NEGATIVE;
     }
     
