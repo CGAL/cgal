@@ -46,13 +46,12 @@ void
 TriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {  
   if ((event->modifiers()  & ::Qt::ShiftModifier) && (! (event->modifiers() & ::Qt::ControlModifier))) {
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
     if(dt->number_of_vertices() == 0) {
       dt->clear();
     } else {
       Converter<typename T::Geom_traits> convert;
       typename T::Vertex_handle selected_vertex = dt->nearest_vertex(convert(event->scenePos()));
-//      dt->remove(selected_vertex);
+      dt->remove(selected_vertex);
     }
     emit (modelChanged());
   }
