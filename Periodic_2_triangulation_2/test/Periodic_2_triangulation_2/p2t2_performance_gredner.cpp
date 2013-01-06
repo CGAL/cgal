@@ -9,8 +9,8 @@
 #include <ctime>
 #include <algorithm>
 
-const double pre_run = true;
-const double do_remove = true;
+const bool pre_run = true;
+const bool do_remove = true;
 const int n_runs = 3;
 
 template <class T>
