@@ -491,7 +491,7 @@ read_arr(std::istream& in, Arrangement& arr,
   in >> num_of_curves;
   for (i = 0; i < num_of_curves; ++i) {
     Base_xcurve_2 base_xcv;
-    this->read_xcurve(in, base_xcv);
+    if (!this->read_xcurve(in, base_xcv)) return false;
     Xcurve_2 xcv(base_xcv, 1);
     *xcurves++ = xcv;
   }
@@ -500,9 +500,11 @@ read_arr(std::istream& in, Arrangement& arr,
   in >> num_of_isolated_points;
   for (i = 0; i < num_of_isolated_points; ++i) {
     Point_2 point;
-    this->read_point(in, point);
+    if (!this->read_point(in, point)) return false;
     *isolated_points++ = point;
   }
+
+  return true;
 }
 
 template <typename T_Geom_traits, typename T_Topol_traits>
@@ -635,6 +637,8 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init_arr(Arrangement& arr)
     for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
       std::cout << fit->data() << std::endl;
   }
+
+  return true;
 }
 
 // Initialize the test

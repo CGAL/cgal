@@ -240,13 +240,16 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
   if (! std::equal(curves_res.begin(), xcit, m_xcurves.begin(), curve_eq))
     return false;
 
-  if (m_verbose_level > 3) {
-    Face_const_iterator fit;
-    for (fit = m_arr->faces_begin(); fit != m_arr->faces_end(); ++fit) {
+  Face_const_iterator fit;
+  for (fit = m_arr->faces_begin(); fit != m_arr->faces_end(); ++fit) {
+    if (m_verbose_level > 1)
       std::cout << "Face: # inner " << fit->number_of_inner_ccbs()
                 << ", # outer: " << fit->number_of_outer_ccbs()
                 << std::endl;
-    }
+    if ((m_arr->number_of_faces() > 1) &&
+        (fit->number_of_inner_ccbs() == 0) &&
+        (fit->number_of_outer_ccbs() == 0))
+      return false;
   }
   
   return true;
