@@ -382,9 +382,10 @@ private:
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
-  /// NGHK: Not yet implemented
+  /// NGHK: implemented
   void remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+                      std::vector<int> &i);
   /// NGHK: implemented
   void remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w, std::vector<Offset> &o,
@@ -442,11 +443,16 @@ private:
   /// NGHK: Not yet implemented
   void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  /// NGHK: Not yet implemented
   bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
 		std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i) {
-    return this->side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
-                                         o[j], o[k], o[l], o[x], true) ==  ON_POSITIVE_SIDE;
+    
+    if ((o[j] == o[k]) && (o[j] == o[l]) && (o[j] == o[x]))
+      return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
+                                     true) ==  ON_POSITIVE_SIDE;
+    else
+      return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
+                                     o[j], o[k], o[l], o[x],
+                                     true) ==  ON_POSITIVE_SIDE;
   }
   /// NGHK: Not yet implemented
   void rotate7(int j, std::vector<Vertex_handle> &w,
@@ -1189,8 +1195,8 @@ remove_degree_triangulate(Vertex_handle v,
   case 4:
     // TODO(NGHK): Implement optimized removal
     // ++deg[4];
-    remove_degree_d(v,f,w,offset_w,i,d);    break;
-    //remove_degree4(v,f,w,offset_w,i);    break;
+    //remove_degree_d(v,f,w,offset_w,i,d);    break;
+    remove_degree4(v,f,w,offset_w,i);    break;
   case 5:
     // TODO(NGHK): Implement optimized removal
     // ++deg[5];
@@ -1286,18 +1292,34 @@ template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
-	       std::vector<Vertex_handle> &w, std::vector<int> &i )
+	       std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+               std::vector<int> &i )
 {
-    NGHK_NYI;
   // removing a degree 4 vertex
-  // only w[0] can be infinite
 
   Face_handle nn;
-  // modify f[0] f[1] for incircle test
-  f[0]->set_vertex( i[0], w[3] ); //w0 w1 w3
 
-  if ( !test_conflict( w[2]->point(), f[0]) )  {
+  int oo[4];
+  if ((o[0] == o[1]) && (o[0] == o[2]) && (o[0] == o[3])) {
+    for (int i=0; i<4; ++i) oo[i] = 0;
+  } else {
+    Covering_sheets cover = number_of_sheets();
+    if ((o[0].x() < 0) || (o[1].x() < 0) || (o[2].x() < 0) || (o[3].x() < 0))
+      for (int i=0; i<4; ++i)
+        o[i] += Offset(cover[0], 0);
+
+    if ((o[0].y() < 0) || (o[1].y() < 0) || (o[2].y() < 0) || (o[3].y() < 0))
+      for (int i=0; i<4; ++i)
+        o[i] += Offset(0, cover[1]);
+
+    for (int i=0; i<4; ++i) {
+      oo[i] = (o[i].x() >= cover[0] ? 2 : 0) + (o[i].y() >= cover[1] ? 1 : 0); 
+    }
+  }
+
+  if ( !incircle(2,0,1,3,f,w,o,i) )  {
     // diagonal 1 3
+    f[0]->set_vertex( i[0], w[3] ); //w0 w1 w3
     f[1]->set_vertex( i[1], w[3] ); //w1 w2 w3
     nn = f[3]->neighbor( i[3] );
     tds().set_adjacency(f[0], cw(i[0]) , nn , nn->index(f[3])  );
@@ -1306,6 +1328,18 @@ remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
     // clean container
     tds().delete_face(f[2]);
     tds().delete_face(f[3]);
+
+    int o_face[3];
+    o_face[i[0]]      = oo[3];
+    o_face[ccw(i[0])] = oo[0];
+    o_face[ cw(i[0])] = oo[1];
+    this->set_offsets(f[0], o_face[0], o_face[1], o_face[2]);
+    o_face[i[1]]      = oo[3];
+    o_face[ccw(i[1])] = oo[1];
+    o_face[ cw(i[1])] = oo[2];
+    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+
+    this->insert_too_long_edge(f[0], ccw(i[0]));
   }else{
     // diagonal 0 2
     f[0]->set_vertex( i[0], w[2]); //w0 w1 w2
@@ -1317,9 +1351,19 @@ remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
     // clean container
     tds().delete_face(f[1]);
     tds().delete_face(f[2]);
-  }
 
-  return;
+    int o_face[3];
+    o_face[i[0]]      = oo[2];
+    o_face[ccw(i[0])] = oo[0];
+    o_face[ cw(i[0])] = oo[1];
+    this->set_offsets(f[0], o_face[0], o_face[1], o_face[2]);
+    o_face[i[3]]      = oo[2];
+    o_face[ccw(i[3])] = oo[3];
+    o_face[ cw(i[3])] = oo[0];
+    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+
+    this->insert_too_long_edge(f[3], ccw(i[3]));
+  }
 }
 
 template < class Gt, class Tds >
