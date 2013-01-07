@@ -661,8 +661,9 @@ public:
       
       if (are_same_points(sitep,sites.source_site())
           or are_same_points(sitep,sites.target_site())) {
-        npts = 1;	
+        npts = 2;
         points[0] = v;
+        points[1] = pnt;
         Point_2 pseg = 
           (are_same_points(sitep,sites.source_site())) ? 
             seg.target() : seg.source();
