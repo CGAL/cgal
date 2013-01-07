@@ -1,4 +1,6 @@
-namespace CGAL {
+
+
+
 /*!
 \ingroup nt_leda
 
@@ -16,7 +18,10 @@ For more details on the number types of \leda we refer to the \leda manual \cite
 
 */
 
-class leda_bigfloat {}; /* end leda_bigfloat */
-} // CGAL
+class leda_bigfloat {
+public:
 
+/// @}
+
+}; /* end leda_bigfloat */
 
