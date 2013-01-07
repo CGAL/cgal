@@ -714,16 +714,17 @@ public:
           FT seglenhalf ( half *
                          CGAL::abs ( pnt.y() - seg.source().y() ) );
           Direction_2 d;
+          Point_2 minps = (compare_x_2(seg.source(),seg.target())) ? seg.source() : seg.target();
           if ( compare_y_2(seg.source(),pnt) == SMALLER ) {
-            points[1] = (compare_x_2(v, pnt) == SMALLER) ?
+            points[1] = (compare_x_2(pnt, minps) != LARGER) ?
                          Point_2(pnt.x() + seglenhalf, pnt.y() - seglenhalf):
                          Point_2(pnt.x() - seglenhalf, pnt.y() - seglenhalf);
-            d = (compare_x_2(v, pnt) == SMALLER) ? Direction_2(+1,+1) : Direction_2(-1,+1);
+            d = (compare_x_2(pnt, minps) != LARGER) ? Direction_2(+1,+1) : Direction_2(-1,+1);
           } else { // compare_y_2(seg.source(),pnt) == LARGER
-            points[1] = (compare_x_2(v, pnt) == SMALLER) ?
+            points[1] = (compare_x_2(pnt, minps) != LARGER) ?
                          Point_2(pnt.x() + seglenhalf, pnt.y() + seglenhalf):
                          Point_2(pnt.x() - seglenhalf, pnt.y() + seglenhalf);
-            d = (compare_x_2(v, pnt) == SMALLER) ? Direction_2(+1,-1) : Direction_2(-1,-1);
+            d = (compare_x_2(pnt, minps) != LARGER) ? Direction_2(+1,-1) : Direction_2(-1,-1);
           }
           
           //if (q.is_point()) {
@@ -731,6 +732,7 @@ public:
           //}
           
           Polychainray pcr(points, points+npts, d);
+          CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
           return pcr;
           
         }// end of horizontal case
@@ -759,6 +761,7 @@ public:
             //}
             
           Polychainray pcr(points, points+npts, d);
+          CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
           return pcr;
           
         } // end of vertical case
@@ -766,137 +769,6 @@ public:
           // pnt is not end point of seg
           // seg must not be horizontal or vertical
           CGAL_assertion( not(seg.is_horizontal() or seg.is_vertical()) );
-          // bisector ray always starts with v
-          points[0] = v;
-          Line_2 lseg = seg.supporting_line();
-          Point_2 phor,pver;
-          phor = Point_2(lseg.x_at_y(pnt.y()), pnt.y());
-          pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x())); 
-          //pfirst and plast are points on the supporting line of seg
-          Point_2 pfirst, plast;
-          //pcfirst and pclast are points on the bisector
-          Point_2 pcfirst, pclast;
-          // segment with positive slope will have pfirst as phor
-          // segment with negative slope will have pfirst as pver
-          pfirst = (compare_x_2(seg.source(),seg.target()) 
-                    == compare_y_2(seg.source(),seg.target())) 
-          ? phor : pver;
-          plast = (compare_x_2(seg.source(),seg.target()) 
-                   == compare_y_2(seg.source(),seg.target())) 
-          ? pver : phor;
-        
-          FT half = FT(0.5);  
-          Point_2 pmid_pfirst_pnt = midpoint(pfirst, pnt);
-          Point_2 pmid_plast_pnt = midpoint(plast, pnt);
-          FT seglenhalffirst ( half *
-                              CGAL::abs(
-                                        CGAL::abs(pnt.x()-pfirst.x()) - 
-                                        CGAL::abs(pnt.y()-pfirst.y()))   );
-          FT seglenhalflast ( half *
-                             CGAL::abs(
-                                       CGAL::abs(pnt.x()-plast.x()) - 
-                                       CGAL::abs(pnt.y()-plast.y()))   );
-        
-          if (compare_x_2(seg.source(),seg.target()) 
-              == compare_y_2(seg.source(),seg.target())) {
-            //segment with positive slope
-            if ( (compare_x_2(seg.source(),seg.target()) == SMALLER 
-                  and lseg.has_on_positive_side(pnt))
-                or (compare_x_2(seg.source(),seg.target()) == LARGER 
-                    and lseg.has_on_negative_side(pnt)) ) {
-              //pcfirst is center of square , pfirst = phor, upward direction
-              //pclast is center of sqaure, plast = pver, left direction
-              pcfirst = Point_2(pmid_pfirst_pnt.x(),
-                                pmid_pfirst_pnt.y()+seglenhalffirst);
-              pclast = Point_2(pmid_plast_pnt.x()-seglenhalflast,
-                                pmid_plast_pnt.y());
-            } else {
-              //pfirst = phor , pcfirst in downward direction
-              //plast = pvor , pclast in right direction
-              pcfirst = Point_2(pmid_pfirst_pnt.x(),
-                                pmid_pfirst_pnt.y()-seglenhalffirst);
-              pclast = Point_2(pmid_plast_pnt.x()+seglenhalflast,
-                                pmid_plast_pnt.y());
-            }
-          }
-          else {
-            //segment with negative slope
-            if ( (compare_x_2(seg.source(),seg.target()) == SMALLER 
-                  and lseg.has_on_positive_side(pnt))
-                or (compare_x_2(seg.source(),seg.target()) == LARGER
-                    and lseg.has_on_negative_side(pnt)) ) {
-              //pcfirst is center of square , pfirst = pver, right direction
-              //pclast is center of sqaure, plast = phor, upward direction
-              pcfirst = Point_2(pmid_pfirst_pnt.x()+seglenhalffirst,
-                                pmid_pfirst_pnt.y());
-              pclast = Point_2(pmid_plast_pnt.x(),
-                                pmid_plast_pnt.y()+seglenhalflast);
-            } else {
-              //pfirst = pver , pcfirst in left direction
-              //plast = phor , pclast in downward direction
-              pcfirst = Point_2(pmid_pfirst_pnt.x()-seglenhalffirst,
-                                pmid_pfirst_pnt.y());
-              pclast = Point_2(pmid_plast_pnt.x(),
-                                pmid_plast_pnt.y()-seglenhalflast);
-            }
-          }//end of pcfirst and pclast
-        
-          //compute pmid and then pcmid = mid point of pmid and pnt
-          Line_2 lmid(pnt,pcfirst);
-          Line_2 lmidp = lmid.perpendicular(pnt);
-          CGAL::Object pmidobject = intersection(lmidp, lseg);
-          Point_2 pmid;
-          if(CGAL::assign(pmid, pmidobject)){
-            points[2] = midpoint(pmid, pnt);
-          }
- 
-          points[1]=pcfirst;
-          points[3]=pclast;
-        
-          CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[1] <<
-          " point2 = " << points[2] << " point3 = "
-          << points[3] << std::endl; );
-        
-          if (p.is_segment()) {
-            std::swap(points[1], points[3]);
-          }
-          CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[1] <<
-          " point2 = " << points[2] << " point3 = "
-          << points[3] << std::endl; );
-        
-          //oriented line from pcfirst to pnt
-          Line_2 l(points[1], pnt);
-        
-          Direction_2 d(l.perpendicular(pnt));
-          if (p.is_point()) {
-            d = -d;
-          }
-        
-          if (l.perpendicular(pnt).has_on_positive_side(v)) {
-            if ( (p.is_segment() and l.has_on_positive_side(v))
-                or(p.is_point() and l.has_on_negative_side(v)) ) {
-              npts = 4;
-            } else {
-              npts = 3;
-              points[1] = points[2];
-              points[2] = points[3];
-            }
-          }
-          else {
-            if ( (p.is_segment() and l.has_on_negative_side(v))
-                or(p.is_point() and l.has_on_positive_side(v)) ) {
-              npts = 2;
-              points[1] = points[3];
-            }
-            else {
-              npts = 1;
-            }
-          }
-        
-          Polychainray pcr(points, points+npts, d);
-          CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
-          return pcr;
-        
         }
       
       }//END of point NOT END POINT of segment case
