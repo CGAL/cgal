@@ -18,7 +18,7 @@ returns `false`.
 
 
 
-\cgalHeading{Requires }
+\cgalHeading{Requires}
 
 - `Traits` is a model of the concept 
   `ConvexPartitionIsValidTraits_2`. 

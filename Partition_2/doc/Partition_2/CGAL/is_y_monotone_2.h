@@ -8,7 +8,7 @@ determines if the sequence of points in the range
 polygon or not. If so, the function returns `true`, otherwise it
 returns `false`. 
 
-\cgalHeading{Requires }
+\cgalHeading{Requires}
 
 - `Traits` is a model of the concept `IsYMonotoneTraits_2`. 
 - `std::iterator_traits<InputIterator>::%value_type` should be `Traits::Point_2`. 
