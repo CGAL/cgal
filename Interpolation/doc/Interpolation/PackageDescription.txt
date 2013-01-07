@@ -44,7 +44,7 @@ barycentric coordinates. They are provided in this package under the
 name `CGAL::linear_interpolation()` and
 `CGAL::quadratic_interpolation()`.
 
-# Natural Neighbor Interpolation #
+## Natural Neighbor Interpolation ##
 
 Natural neighbor coordinates are defined by Sibson in 1980 and are based on the Voronoi
 diagram of the data points. Interpolation methods based on natural

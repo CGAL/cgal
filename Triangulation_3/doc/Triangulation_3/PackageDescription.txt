@@ -65,7 +65,7 @@ indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index. See
 Figure \cgalFigureRef{Triangulation3figorient}.
 
-# Concepts #
+## Concepts ##
 
 - `TriangulationTraits_3`
 - `DelaunayTriangulationTraits_3`
@@ -78,9 +78,9 @@ Figure \cgalFigureRef{Triangulation3figorient}.
 - `TriangulationDataStructure_3`
 - `WeightedPoint`
 
-# Classes #
+## Classes ##
 
-## Main Classes ##
+### Main Classes ###
 
 - `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>`
 - `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3,LocationPolicy>`
@@ -95,11 +95,11 @@ Figure \cgalFigureRef{Triangulation3figorient}.
 - `CGAL::Regular_triangulation_cell_base_3<Traits,Cb>`
 - `CGAL::Triangulation_simplex_3<Triangulation_3>`
 
-## Traits Classes ##
+### Traits Classes ###
 
 - `CGAL::Regular_triangulation_euclidean_traits_3<K,Weight>`
 
-# Enums #
+## Enums ##
 
 - `CGAL::Triangulation_3::Locate_type`
 

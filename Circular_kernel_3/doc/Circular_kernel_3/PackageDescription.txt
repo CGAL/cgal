@@ -34,17 +34,17 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-# Geometric Concepts #
+## Geometric Concepts ##
 
 - `SphericalKernel`
 
-## Object types ##
+### Object types ###
 
 - `SphericalKernel::CircularArc_3`
 - `SphericalKernel::CircularArcPoint_3`
 - `SphericalKernel::LineArc_3`
 
-## Functors ##
+### Functors ###
 
 - `SphericalKernel::ConstructPlane_3`
 - `SphericalKernel::ConstructSphere_3`
@@ -85,27 +85,27 @@
 - `SphericalKernel::ComputeApproximateAngle_3`
 - `SphericalKernel::GetEquation`
 
-# Geometric Kernels and Classes #
+## Geometric Kernels and Classes ##
 
-## Kernels ##
+### Kernels ###
 
 - `CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>`
 - `CGAL::Exact_spherical_kernel_3`
 
-## Points ##
+### Points ###
 
 - `CGAL::Circular_arc_point_3<SphericalKernel>`
 
-## Arcs ##
+### Arcs ###
 
 - `CGAL::Line_arc_3<SphericalKernel>`
 - `CGAL::Circular_arc_3<SphericalKernel>`
 
-## Constants and Enumerations ##
+### Constants and Enumerations ###
 
 - `CGAL::Circle_type`
 
-# Geometric Global Functions #
+## Geometric Global Functions ##
 
 - \ref compare_x "CGAL::compare_x"
 - \ref compare_y "CGAL::compare_y"
@@ -127,11 +127,11 @@
 - \ref do_intersect "CGAL::do_intersect"
 - \ref intersection "CGAL::intersection"
 
-# Algebraic Concepts #
+## Algebraic Concepts ##
 
 - `AlgebraicKernelForSpheres`
 
-## Functors ##
+### Functors ###
 
 - `AlgebraicKernelForSpheres::ConstructPolynomial_1_3`
 - `AlgebraicKernelForSpheres::ConstructPolynomialForSpheres_2_3`
@@ -147,19 +147,19 @@
 - `AlgebraicKernelForSpheres::ZCriticalPoints`
 - `AlgebraicKernelForSpheres::Solve`
 
-# Algebraic Kernel and Classes #
+## Algebraic Kernel and Classes ##
 
-## Kernel ##
+### Kernel ###
 
 - `CGAL::Algebraic_kernel_for_spheres_2_3<RT>`
 
-## Polynomials ##
+### Polynomials ###
 
 - `CGAL::Polynomial_1_3<RT>`
 - `CGAL::Polynomial_for_spheres_2_3<FT>`
 - `CGAL::Polynomials_for_lines_3<FT>`
 
-## Roots of Polynomials ##
+### Roots of Polynomials ###
 
 - `CGAL::Sqrt_extension<NT,ROOT>`
 - `CGAL::Root_for_spheres_2_3<RT>`

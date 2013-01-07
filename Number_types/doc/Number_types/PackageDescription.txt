@@ -48,7 +48,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-# Number Type Classes and Concepts #
+## Number Type Classes and Concepts ##
 
 - \ref int.h "int"
 - \ref int.h "short int"
@@ -58,21 +58,21 @@
 - \ref double.h "double"
 - \ref long_double.h "long double"
 
-## CORE ##
+### CORE ###
 
 - `CORE::BigInt`
 - `CORE::BigRat`
 - `CORE::BigFloat`
 - `CORE::Expr`
 
-## LEDA ##
+### LEDA ###
 
 - `leda_integer`
 - `leda_rational`
 - `leda_bigfloat`
 - `leda_real`
 
-## GMP ##
+### GMP ###
 
 - `mpz_class`
 - `mpq_class`
@@ -82,7 +82,7 @@
 - `CGAL::Gmpfr`
 - `CGAL::Gmpfi`
 
-## CGAL ##
+### CGAL ###
 
 - `CGAL::MP_Float`
 - `CGAL::Interval_nt<Protected>`
@@ -90,13 +90,13 @@
 - `CGAL::Quotient<NT>`
 - `CGAL::Number_type_checker<NT1,NT2,Comparator>`
 
-# Relates Rational #
+## Relates Rational ##
 
 - `CGAL::Rational_traits<NT>`
 - `CGAL::simplest_rational_in_interval`
 - `CGAL::to_rational`
 
-# Relates Algebraic Extensions #
+## Relates Algebraic Extensions ##
 
 - `RootOf_2`
 - `CGAL::Root_of_traits<RT>`
@@ -105,7 +105,7 @@
 - `CGAL::compute_roots_of_2<RT,OutputIterator>`
 - `CGAL::Sqrt_extension<NT,ROOT>`
 
-# Utilities #
+## Utilities ##
 
 - `CGAL::Min<T,Less>`
 - `CGAL::Max<T,Less>`

@@ -23,7 +23,7 @@
 \cgalPkgDescriptionEnd
 
 
-# Assertions #
+## Assertions ##
 
 The optimization code uses infix `OPTIMISATION` in the assertions,
 e.g. defining the compiler flag

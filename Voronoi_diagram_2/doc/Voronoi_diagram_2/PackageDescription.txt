@@ -55,13 +55,13 @@ The third template parameter corresponds to the chosen adaptation
 policy and provides the necessary types and functors needed for
 performing this adaptation.
 
-# Concepts #
+## Concepts ##
 
 - `DelaunayGraph_2`
 - `AdaptationTraits_2`
 - `AdaptationPolicy_2`
 
-# Classes #
+## Classes ##
 
 - `CGAL::Voronoi_diagram_2<DG,AT,AP>`
 - \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge"

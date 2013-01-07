@@ -38,11 +38,11 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-# Geometric Concepts #
+## Geometric Concepts ##
 
 - `CircularKernel`
 
-## Functors ##
+### Functors ###
 
 - `CircularKernel::ConstructLine_2`
 - `CircularKernel::ConstructCircle_2`
@@ -78,23 +78,23 @@
 - `CircularKernel::Split_2`
 - `CircularKernel::GetEquation`
 
-# Geometric Kernels and Classes #
+## Geometric Kernels and Classes ##
 
-## Kernels ##
+### Kernels ###
 
 - `CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>`
 - `CGAL::Exact_circular_kernel_2`
 
-## Points ##
+### Points ###
 
 - `CGAL::Circular_arc_point_2<CircularKernel>`
 
-## Arcs ##
+### Arcs ###
 
 - `CGAL::Circular_arc_2<CircularKernel>`
 - `CGAL::Line_arc_2<CircularKernel>`
 
-# Geometric Global Functions #
+## Geometric Global Functions ##
 
 - \ref compare_x "CGAL::compare_x"
 - \ref compare_y "CGAL::compare_y"
@@ -112,11 +112,11 @@
 - `CGAL::make_x_monotone`
 - `CGAL::make_xy_monotone`
 
-# Algebraic Concepts #
+## Algebraic Concepts ##
 
 - `AlgebraicKernelForCircles`
 
-## Functors ##
+### Functors ###
 
 
 - `AlgebraicKernelForCircles::ConstructPolynomial_1_2`
@@ -129,18 +129,18 @@
 - `AlgebraicKernelForCircles::YCriticalPoints`
 - `AlgebraicKernelForCircles::Solve`
 
-# Algebraic Kernel and Classes #
+## Algebraic Kernel and Classes ##
 
-## Kernel  ##
+### Kernel  ###
 
 - `CGAL::Algebraic_kernel_for_circles_2_2<RT>`
 
-## Polynomials ##
+### Polynomials ###
 
 - `CGAL::Polynomial_1_2<RT>`
 - `CGAL::Polynomial_for_circles_2_2<FT>`
 
-## Roots of Polynomials ##
+### Roots of Polynomials ###
 
 - `CGAL::Sqrt_extension<NT,ROOT>`
 - `CGAL::Root_for_circles_2_2<FT>`

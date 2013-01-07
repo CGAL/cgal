@@ -24,7 +24,7 @@ e.g. defining the compiler flag
 `CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
 checking off, cf. Section  \ref secchecks.
 
-# Bounding Areas and Volumes #
+## Bounding Areas and Volumes ##
 
 - `CGAL::Min_circle_2<Traits>`
 - `CGAL::Min_circle_2_traits_2<K>`

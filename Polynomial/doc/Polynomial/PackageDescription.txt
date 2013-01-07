@@ -24,7 +24,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-# Concepts #
+## Concepts ##
 
 - `Polynomial_d`
 - `PolynomialTraits_d`
@@ -93,14 +93,14 @@
 - `PolynomialTraits_d::SturmHabichtSequenceWithCofactors`
 - `PolynomialTraits_d::PrincipalSturmHabichtSequence`
 
-# Classes #
+## Classes ##
 
 - `CGAL::Polynomial<Coeff>`
 - `CGAL::Polynomial_traits_d<Polynomial_d>`
 - `CGAL::Exponent_vector`
 - `CGAL::Polynomial_type_generator<T,d>`
 
-# Functions #
+## Functions ##
 
 - `CGAL::get_coefficient`
 - `CGAL::get_innermost_coefficient`
