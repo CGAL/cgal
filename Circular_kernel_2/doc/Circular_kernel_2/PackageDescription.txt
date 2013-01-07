@@ -129,9 +129,9 @@
 - `AlgebraicKernelForCircles::YCriticalPoints`
 - `AlgebraicKernelForCircles::Solve`
 
-## Algebraic Kernel and Classes ##
+## Algebraic %Kernel and Classes ##
 
-### Kernel  ###
+### %Kernel  ###
 
 - `CGAL::Algebraic_kernel_for_circles_2_2<RT>`
 
