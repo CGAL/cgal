@@ -17,7 +17,7 @@
 /*!
 \addtogroup PkgTriangulation3
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Triangulation,PkgTriangulation3Summary}
+\cgalPkgDescriptionBegin{3D Triangulations,PkgTriangulation3Summary}
 \cgalPkgPicture{twotets.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sylvain Pion and Monique Teillaud}
@@ -28,7 +28,7 @@
 \cgalPkgSince{2.1}
 \cgalPkgBib{cgal:pt-t3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
-\cgalPkgDemo{3D Triangulation,triangulation_3.zip}
+\cgalPkgDemo{3D Triangulations,triangulation_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

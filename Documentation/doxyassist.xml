@@ -1230,7 +1230,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>3D Triangulation</name>
+        <name>3D Triangulations</name>
         <input>../Triangulation_3/doc/Triangulation_3</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Triangulation_3/doc/Triangulation_3</string>
