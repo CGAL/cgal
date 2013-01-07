@@ -21,7 +21,7 @@
 /*!
 \addtogroup PkgKdsFramework
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Kinetic Framework,PkgKdsFrameworeSummary}
+\cgalPkgDescriptionBegin{Kinetic Framework,PkgKdsFrameworkSummary}
 \cgalPkgPicture{kdsFramework.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Daniel Russel}
