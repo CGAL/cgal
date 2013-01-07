@@ -1252,8 +1252,7 @@ n  */
 
     \image html euler_vertex.gif
 
-\cgalHeading{Note}
-
+\note
     A special application of the split is 
     `split_vertex(h,h->%next()->%opposite())` which is equivalent to an 
     edge split of the halfedge `h->%next()` that creates a new 

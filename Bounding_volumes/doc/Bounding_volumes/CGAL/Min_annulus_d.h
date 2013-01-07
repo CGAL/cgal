@@ -268,8 +268,7 @@ FT squared_outer_radius( ) const;
 returns an iterator referring to the first coordinate 
 of the center of `min_annulus`. 
 
-\cgalHeading{Note}
-
+\note
 The coordinates have a rational 
 representation, i.e. the first \f$ d\f$ elements of the iterator 
 range are the numerators and the \f$ (d\!+\!1)\f$-st element is the 

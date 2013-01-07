@@ -296,8 +296,7 @@ FT squared_distance( ) const;
 returns an iterator referring to the first coordinate of the 
 realizing point of \f$ P\f$. 
 
-\cgalHeading{Note}
-
+\note
 The coordinates have a rational 
 representation, i.e.\ the first \f$ d\f$ elements of the iterator 
 range are the numerators and the \f$ (d\!+\!1)\f$-st element is the 
@@ -318,8 +317,7 @@ realizing_point_p_coordinates_end() const;
 returns an iterator referring to the first coordinate of the 
 realizing point of \f$ Q\f$. 
 
-\cgalHeading{Note}
-
+\note
 The coordinates have a rational 
 representation, i.e.\ the first \f$ d\f$ elements of the iterator 
 range are the numerators and the \f$ (d\!+\!1)\f$-st element is the 
