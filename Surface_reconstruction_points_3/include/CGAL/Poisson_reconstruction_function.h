@@ -175,8 +175,10 @@ public:
   /// @{
 
   typedef Gt Geom_traits; ///< Geometric traits class
+  /// \cond SKIP_IN_MANUAL
   typedef Reconstruction_triangulation_3<Robust_circumcenter_filtered_traits_3<Gt> >
                                                    Triangulation;
+  /// \endcond
   typedef typename Triangulation::Cell_handle   Cell_handle;
 
   // Geometric types
@@ -352,12 +354,12 @@ public:
   {
     return m_tr->bounding_sphere();
   }
-
+  
+  /// \cond SKIP_IN_MANUAL
   const Triangulation& tr() const {
     return *m_tr;
   }
-
-  /// \cond SKIP_IN_MANUAL
+  
   // This variant requires all parameters.
   template <class SparseLinearAlgebraTraits_d,
             class Visitor>
@@ -582,7 +584,8 @@ public:
            c * m_hint->vertex(2)->f() +
            d * m_hint->vertex(3)->f();
   }
-
+  
+  /// \cond SKIP_IN_MANUAL
   void initialize_cell_indices()
   {
     int i=0;
@@ -601,9 +604,6 @@ public:
       (*m_Bary)[i][0]=-1;
     }
   }
-
-
-
 
   void initialize_cell_normals() const
   {
@@ -660,6 +660,7 @@ public:
            vc.x(), vc.y(), vc.z(),
            entry[0],entry[1],entry[2],entry[3],entry[4],entry[5],entry[6],entry[7],entry[8]);
   }
+  /// \endcond
   
   /// Returns a point located inside the inferred surface.
   Point get_inner_point() const
