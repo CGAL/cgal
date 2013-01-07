@@ -556,27 +556,46 @@ private:
     //Sandeep: We divide the computation in two cases
     //case 1: r is horizontal
     //Case 2: r is vertical
-    if (rs.is_horizontal()) {
-      if (p_endp_r or q_endp_r) {
-        uy = pp.y() + qp.y();
-        uz = FT(2);
-        if (p_endp_r) {
-          Comparison_result cmpxpr =
-          (same_points(sp, sr.source_site()))?
-          CGAL::compare(pp.x(),rs.target().x()):
-          CGAL::compare(pp.x(),rs.source().x());
+    if ( rs.is_horizontal() ) {
+      if ( p_endp_r or q_endp_r ) {
+        // p or q is end point of r
+        if ( CGAL::compare( abs(pp.x() - qp.x()),
+                            abs(pp.y() - qp.y()) )
+                            != LARGER ) {// for SMALLER or EQUAL
           
-          ux = (cmpxpr == SMALLER) ? FT(2) * pp.x() - abs( pp.y() - qp.y() )
-                                   : FT(2) * pp.x() + abs( pp.y() - qp.y() );
+          uy = pp.y() + qp.y();
+          uz = FT(2);
+          if (p_endp_r) {
+            Comparison_result cmpxpr =
+            (same_points(sp, sr.source_site()))?
+            CGAL::compare(pp.x(),rs.target().x()):
+            CGAL::compare(pp.x(),rs.source().x());
+          
+            ux = (cmpxpr == SMALLER) ? FT(2) * pp.x() - abs( pp.y() - qp.y() )
+                                     : FT(2) * pp.x() + abs( pp.y() - qp.y() );
+          }
+          else {//q_endp_r
+            Comparison_result cmpxqr =
+            (same_points(sq, sr.source_site()))?
+            CGAL::compare(qp.x(),rs.target().x()):
+            CGAL::compare(qp.x(),rs.source().x());
+          
+            ux = (cmpxqr == SMALLER) ? FT(2) * qp.x() - abs( pp.y() - qp.y() )
+                                     : FT(2) * qp.x() + abs( pp.y() - qp.y() );
+          }
         }
-        else {//q_endp_r
-          Comparison_result cmpxqr =
-          (same_points(sq, sr.source_site()))?
-          CGAL::compare(qp.x(),rs.target().x()):
-          CGAL::compare(qp.x(),rs.source().x());
-          
-          ux = (cmpxqr == SMALLER) ? FT(2) * qp.x() - abs( pp.y() - qp.y() )
-                                   : FT(2) * qp.x() + abs( pp.y() - qp.y() );
+        else { // compare( abs(pp.x() - qp.x()),abs(pp.y() - qp.y()) ) == LARGER
+          ux = pp.x() + qp.x();
+          uz = FT(2);
+          Comparison_result cmpypq = CGAL::compare(pp.y(),qp.y());
+          if (p_endp_r) {
+            uy = (cmpypq == SMALLER) ? FT(2) * pp.y() + abs( pp.x() - qp.x() )
+                                     : FT(2) * pp.y() - abs( pp.x() - qp.x() );
+          }
+          else {//q_endp_r
+            uy = (cmpypq == SMALLER) ? FT(2) * qp.y() - abs( pp.x() - qp.x() )
+                                     : FT(2) * qp.y() + abs( pp.x() - qp.x() );
+          }
         }
       }//end of case when p or q is end point of r
       else {
@@ -618,25 +637,42 @@ private:
     } else {//rs is vertical
       if (p_endp_r or q_endp_r) {
         //p or q is end point of r
-        ux = pp.x() + qp.x();
-        uz = FT(2);
-        if (p_endp_r) {
-          Comparison_result cmpypr =
-          (same_points(sp, sr.source_site()))?
-          CGAL::compare(pp.y(),rs.target().y()):
-          CGAL::compare(pp.y(),rs.source().y());
+        if ( CGAL::compare( abs(pp.x() - qp.x()),
+                            abs(pp.y() - qp.y()) )
+                            != SMALLER ) { //for LARGER or EQUAL
+          ux = pp.x() + qp.x();
+          uz = FT(2);
+          if (p_endp_r) {
+            Comparison_result cmpypr =
+            (same_points(sp, sr.source_site()))?
+            CGAL::compare(pp.y(),rs.target().y()):
+            CGAL::compare(pp.y(),rs.source().y());
           
-          uy = (cmpypr == SMALLER) ? FT(2) * pp.y() - abs( pp.x() - qp.x() )
-                                   : FT(2) * pp.y() + abs( pp.x() - qp.x() );
+            uy = (cmpypr == SMALLER) ? FT(2) * pp.y() - abs( pp.x() - qp.x() )
+                                     : FT(2) * pp.y() + abs( pp.x() - qp.x() );
+          }
+          else {//q_endp_r
+            Comparison_result cmpyqr =
+            (same_points(sq, sr.source_site()))?
+            CGAL::compare(qp.y(),rs.target().y()):
+            CGAL::compare(qp.y(),rs.source().y());
+          
+            uy = (cmpyqr == SMALLER) ? FT(2) * qp.y() - abs( pp.x() - qp.x() )
+                                     : FT(2) * qp.y() + abs( pp.x() - qp.x() );
+          }
         }
-        else {//q_endp_r
-          Comparison_result cmpyqr =
-          (same_points(sq, sr.source_site()))?
-          CGAL::compare(qp.y(),rs.target().y()):
-          CGAL::compare(qp.y(),rs.source().y());
-          
-          uy = (cmpyqr == SMALLER) ? FT(2) * qp.y() - abs( pp.x() - qp.x() )
-                                   : FT(2) * qp.y() + abs( pp.x() - qp.x() );
+        else { // compare( abs(pp.x() - qp.x()),abs(pp.y() - qp.y()) ) == SMALLER
+          uy = pp.y() + qp.y();
+          uz = FT(2);
+          Comparison_result cmpxpq = CGAL::compare(pp.x(),qp.x());
+          if (p_endp_r) {
+            ux = (cmpxpq == SMALLER) ? FT(2) * pp.x() + abs( pp.y() - qp.y() )
+                                     : FT(2) * pp.x() - abs( pp.y() - qp.y() );
+          }
+          else {//q_endp_r
+            ux = (cmpxpq == SMALLER) ? FT(2) * qp.x() - abs( pp.y() - qp.y() )
+                                     : FT(2) * qp.x() + abs( pp.y() - qp.y() );
+          }
         }
       }//end of case when p or q is end point of r
       else {
