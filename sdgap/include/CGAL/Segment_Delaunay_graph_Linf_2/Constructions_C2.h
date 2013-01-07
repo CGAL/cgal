@@ -714,7 +714,44 @@ public:
           FT seglenhalf ( half *
                          CGAL::abs ( pnt.y() - seg.source().y() ) );
           Direction_2 d;
-          Point_2 minps = (compare_x_2(seg.source(),seg.target())) ? seg.source() : seg.target();
+          Point_2 minps = (compare_x_2(seg.source(),seg.target()) == SMALLER)
+                          ? seg.source() : seg.target();
+          Point_2 maxps = (compare_x_2(seg.source(),seg.target()) == LARGER)
+                          ? seg.source() : seg.target();
+          
+          //point lies in the region of end point of segment
+          //p is not end point, q is segment and r is end point of q
+          //and p is in the region r
+          //we put a assertion that r is end point of q
+          Equal_2 are_same_points;
+          CGAL_assertion(are_same_points(r, sites.source_site())or
+                         are_same_points(r, sites.target_site()));
+          
+          if (compare_x_2(pnt, minps) == SMALLER) {
+            if (CGAL::compare( abs(pnt.x() - minps.x()),
+                               abs(pnt.y() - minps.y()) )
+                               != SMALLER ) {
+              npts--;
+              d = (compare_y_2(seg.source(),pnt) == SMALLER) ? Direction_2(+1,+1) : Direction_2(+1,-1);
+              Polychainray pcr(points, points+npts, d);
+              CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
+              return pcr;
+            }
+          }
+          if (compare_x_2(pnt,maxps) == LARGER) {
+            if (CGAL::compare( abs(pnt.x() - maxps.x()),
+                               abs(pnt.y() - maxps.y()) )
+                               != SMALLER ) {
+              npts--;
+              d = (compare_y_2(seg.source(),pnt) == SMALLER) ? Direction_2(-1,+1) : Direction_2(-1,-1);
+              Polychainray pcr(points, points+npts, d);
+              CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
+              return pcr;
+            }
+          }
+          //point lies in the region of segment
+          //p is not end point, q is segment and r is end point of q
+          //and p is in the region q, ray has two linear components
           if ( compare_y_2(seg.source(),pnt) == SMALLER ) {
             points[1] = (compare_x_2(pnt, minps) != LARGER) ?
                          Point_2(pnt.x() + seglenhalf, pnt.y() - seglenhalf):
@@ -743,19 +780,56 @@ public:
           FT seglenhalf ( half *
                          CGAL::abs ( pnt.x() - seg.source().x() ) );
           Direction_2 d;
+          Point_2 minps = (compare_y_2(seg.source(),seg.target()) == SMALLER)
+                          ? seg.source() : seg.target();
+          Point_2 maxps = (compare_y_2(seg.source(),seg.target()) == LARGER)
+                          ? seg.source() : seg.target();
+          
+          //point lies in the region of end point of segment
+          //p is not end point, q is segment and r is end point of q
+          //and p is in the region r
+          //we put a assertion that r is end point of q
+          Equal_2 are_same_points;
+          CGAL_assertion( are_same_points(r, sites.source_site())or
+                          are_same_points(r, sites.target_site()) );
+          
+          if (compare_y_2(pnt, minps) == SMALLER) {
+            if (CGAL::compare( abs(pnt.x() - minps.x()),
+                               abs(pnt.y() - minps.y()) )
+                               != LARGER ) {
+              npts--;
+              d = (compare_x_2(seg.source(),pnt) == SMALLER) ? Direction_2(+1,+1) : Direction_2(-1,+1);
+              Polychainray pcr(points, points+npts, d);
+              CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
+              return pcr;
+            }
+          }
+          if (compare_y_2(pnt,maxps) == LARGER) {
+            if (CGAL::compare( abs(pnt.x() - maxps.x()),
+                               abs(pnt.y() - maxps.y()) )
+                               != LARGER ) {
+              npts--;
+              d = (compare_x_2(seg.source(),pnt) == SMALLER) ? Direction_2(+1,-1) : Direction_2(-1,-1);
+              Polychainray pcr(points, points+npts, d);
+              CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
+              return pcr;
+            }
+          }
+          //point lies in the region of segment
+          //p is not end point, q is segment and r is end point of q
+          //and p is in the region q, ray has two linear components
           if ( compare_x_2(seg.source(),pnt) == SMALLER ) {
-            points[1] = (compare_y_2(v, pnt) == SMALLER) ?
+            points[1] = (compare_y_2(pnt, minps) != LARGER) ?
                          Point_2(pnt.x() - seglenhalf, pnt.y() + seglenhalf):
                          Point_2(pnt.x() - seglenhalf, pnt.y() - seglenhalf);
-            d = (compare_y_2(v, pnt) == SMALLER) ? Direction_2(+1,+1) : Direction_2(+1,-1);
+            d = (compare_y_2(pnt, minps) != LARGER) ? Direction_2(+1,+1) : Direction_2(+1,-1);
           } else { // compare_x_2(seg.source(),pnt) == LARGER
-            points[1] = (compare_y_2(v, pnt) == SMALLER) ?
+            points[1] = (compare_y_2(pnt, minps) != LARGER) ?
                          Point_2(pnt.x() + seglenhalf, pnt.y() + seglenhalf):
                          Point_2(pnt.x() + seglenhalf, pnt.y() - seglenhalf);
-            d = (compare_y_2(v, pnt) == SMALLER) ? Direction_2(-1,+1) : Direction_2(-1,-1);
-            
+            d = (compare_y_2(pnt, minps) != LARGER) ? Direction_2(-1,+1) : Direction_2(-1,-1);
           }
-            
+          
             //if (q.is_point()) {
             //Sandeep: To check possibly no changes required!
             //}
