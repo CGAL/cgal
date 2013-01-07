@@ -162,13 +162,13 @@ The function `parameters::exude()` allows the user to trigger a call to `exude_m
 It also allows the user to pass parameters 
 to the optimization function `exude_mesh_3()` through these mesh generation functions. 
 
-### Parameters ##
+### Parameters ###
 
 The parameters are named parameters. They are the same (i.e. they have the same 
 name and the same default values) as the parameters of `exude_mesh_3()` 
 function. See its manual page for further details. 
 
-### Example ##
+### Example ###
 
 \code{.cpp} 
 // Mesh generation with an exudation step 
@@ -221,13 +221,13 @@ The function `parameters::lloyd()` allows the user to trigger a call of
 parameters to the optimization function 
 `lloyd_optimize_mesh_3()` through these mesh generation functions. 
 
-### Parameters ## 
+### Parameters ###
 
 The parameters are named parameters. They are the same (i.e. they have the same 
 name and the same default values) as the parameters of the `lloyd_optimize_mesh_3()` 
 function. See its manual page for further details. 
 
-### Example ## 
+### Example ###
 
 \code{.cpp} 
 // Mesh generation with lloyd optimization step 
@@ -260,7 +260,7 @@ double parameters::freeze_bound = 0.01);
 The function `parameters::no_exude()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no exudation must be done. 
 
-### Example ##
+### Example ###
 
 \code{.cpp} 
 // Mesh generation without exudation 
@@ -303,7 +303,7 @@ parameters::internal::Features_options no_features();
 The function `parameters::no_lloyd()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no lloyd optimization must be done. 
 
-### Example ##
+### Example ###
 
 \code{.cpp} 
 // Mesh generation without lloyd optimization 
@@ -326,7 +326,7 @@ parameters::internal::Lloyd_options no_lloyd();
 The function `parameters::no_odt()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no odt optimization must be done. 
 
-### Example ##
+### Example ###
 
 \code{.cpp} 
 // Mesh generation without odt optimization 
@@ -349,7 +349,7 @@ parameters::internal::Odt_options no_odt();
 The function `parameters::no_perturb()` allows the user to tell mesh generation global functions 
 `make_mesh_3()` and `refine_mesh_3()` that no perturbation must be done. 
 
-### Example ##
+### Example ###
 
 \code{.cpp} 
 // Mesh generation without perturbation 
@@ -375,13 +375,13 @@ The function `parameters::odt()` allows the user to trigger a call to
 allows the user to pass parameters to the optimization function 
 `odt_optimize_mesh_3()` through these mesh generation functions. 
 
-### Parameters ##
+### Parameters ###
 
 The parameters are named parameters. They are the same (i.e. they have the same 
 name and the same default values) as the parameters of `odt_optimize_mesh_3()` 
 function. See its manual page for further details. 
 
-### Example ##
+### Example ###
 
 \code{.cpp} 
 // Mesh generation with odt optimization step 
@@ -416,13 +416,13 @@ The function `parameters::perturb()` allows the user to trigger a call to
 allows the user to pass parameters 
 to the optimization function `perturb_mesh_3()` through these mesh generation functions. 
 
-### Parameters ##
+### Parameters ###
 
 The parameters are named parameters. They are the same (i.e. they have the same 
 name and the same default values) as the parameters of `perturb_mesh_3()` 
 function. See its manual page for further details. 
 
-### Example ##
+### Example ###
 
 \code{.cpp} 
 // Mesh generation with a perturbation step 

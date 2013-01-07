@@ -72,7 +72,7 @@ which is:
 is achieved. 
 </UL> 
 
-### Example ##
+### Example ###
 
 
 \code{.cpp} 

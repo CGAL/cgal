@@ -41,7 +41,7 @@ In the following subsections, each named parameter is documented as a helper fun
 function is the actual parameter to `edge_collapse()`, while the name of the helper 
 function designates which formal argument it is. 
 
-### vertex_index_map(VertexIndexMap vpm) ## #
+### vertex_index_map(VertexIndexMap vpm) ###
 
 Maps each vertex in the surface into an unsigned integer number 
 in the range `[0,num_vertices(surface))`. 
@@ -62,7 +62,7 @@ An external property map can be easily obtained by calling
 `get(vertex_external_index,surface)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each vertex. 
 
-### edge_index_map(EdgeIndexMap eim) ## 
+### edge_index_map(EdgeIndexMap eim) ### 
 
 Maps each <I>directed</I> edge in the surface into an unsigned integer number 
 in the range `[0,num_edges(surface))`. 
@@ -83,7 +83,7 @@ An external property map can be easily obtained by calling
 `get(edge_external_index,surface)`. This constructs on the fly, and returns, 
 a property map which non-intrusively associates a proper id with each edge. 
 
-### edge_is_border_map(EdgeIsBorderMap ebm) ## 
+### edge_is_border_map(EdgeIsBorderMap ebm) ### 
 
 Maps each <I>directed</I> edge in the surface into a Boolean value 
 which indicates if the edge belongs to the boundary of the surface 
@@ -96,7 +96,7 @@ and whose `value_type` is `bool`.
 
 <B>%Default</B>: the property map obtained by calling `get(edge_is_border,surface)`. 
 
-### get_cost(GetCost gc) ## 
+### get_cost(GetCost gc) ### 
 
 The policy which returns the collapse cost for an edge. 
 
@@ -105,7 +105,7 @@ The type of `gc` must be a model of the `GetCost` concept.
 <B>%Default</B>: 
 `CGAL::Surface_mesh_simplification::LindstromTurk_cost<EdgeCollapsableMesh>`. 
 
-### get_placement(GetPlacement gp) ## 
+### get_placement(GetPlacement gp) ### 
 
 The policy which returns the placement (position of the replacemet vertex) 
 for an edge. 
@@ -115,7 +115,7 @@ The type of `gp` must be a model of the `GetPlacement` concept.
 <B>%Default</B>: 
 `CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableMesh>` 
 
-### visitor(EdgeCollapseSimplificationVisitor v) ## 
+### visitor(EdgeCollapseSimplificationVisitor v) ### 
 
 The visitor that is called by the `edge_collapse` function 
 in certain points to allow the user to track the simplification process. 
@@ -135,7 +135,7 @@ simply qualify the <I>first</I>
 \cgalFootnote{The second and subsequent named parameters shall not be qualified as they are member functions} 
 named parameter with `CGAL::`, as shown in the examples in the user manual. 
 
-### Semantics ##
+### Semantics ###
 
 
 The simplification process continues until the `should_stop` policy returns `true` 

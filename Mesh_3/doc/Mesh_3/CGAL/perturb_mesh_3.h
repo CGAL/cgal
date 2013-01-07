@@ -60,7 +60,7 @@ which is:
 </UL> 
 
 
-### Example ## 
+### Example ###
 
 \code{.cpp} 
 // Perturb until every dihedral angle of the mesh is >= 10 degrees 
