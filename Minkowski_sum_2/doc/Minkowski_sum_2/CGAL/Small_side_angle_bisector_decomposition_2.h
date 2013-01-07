@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2Classes
+\ingroup PkgMinkowskiSum2
 
 \anchor mink_refssab_decomp 
 

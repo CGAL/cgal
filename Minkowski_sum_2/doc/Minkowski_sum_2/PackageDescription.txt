@@ -1,11 +1,7 @@
 /// \defgroup PkgMinkowskiSum2 2D Minkowski Sums Reference
 /// \defgroup PkgMinkowskiSum2Concepts Concepts
 /// \ingroup PkgMinkowskiSum2
-/// \defgroup PkgMinkowskiSum2Classes Decomposition Strategies
-/// \ingroup PkgMinkowskiSum2
-/// \defgroup PkgMinkowskiSum2Functions Functions
-/// The main function of this package is `minkowski_sum_2()`.
-/// \ingroup PkgMinkowskiSum2
+
 
 /*!
 \addtogroup PkgMinkowskiSum2
