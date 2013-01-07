@@ -63,9 +63,8 @@ not relocated). The parameter `freeze_bound` gives the threshold ratio. At each 
 moves, unfreezes the neighboring vertices. 
 
 
-### Return Values ##
-
-The function `odt_optimize_mesh_3()` returns a value of type `Mesh_optimization_return_code` 
+\return
+The function `odt_optimize_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
 <UL> 
 <LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached. 

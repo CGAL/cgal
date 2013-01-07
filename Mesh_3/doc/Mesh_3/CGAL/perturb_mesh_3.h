@@ -50,15 +50,15 @@ the perturber then runs as long as
 steps are successful. 
 
 
-### Return Values ##
-
-The function `perturb_mesh_3()` returns a value of type `Mesh_optimization_return_code` 
+\return
+The function `perturb_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
 <UL> 
 <LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 
 <LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached. 
 <LI>`CGAL::CANT_IMPROVE_ANYMORE` when the perturbation process stops because the last step is unsuccessful. 
 </UL> 
+
 
 ### Example ## 
 

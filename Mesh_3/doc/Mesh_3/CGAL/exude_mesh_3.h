@@ -44,9 +44,8 @@ it can improve the smallest dihedral angles of the set of cells
 incident to some vertices. 
 
 
-### Return Values ##
-
-The function `exude_mesh_3()` returns a value of type `Mesh_optimization_return_code` 
+\return
+The function `exude_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
 <UL> 
 <LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 
