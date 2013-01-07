@@ -8,7 +8,7 @@ and the search classes. `Kernel` must be a \cgal kernel.
 
 `Kernel` must be a d-dimensional \cgal kernel. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 Expects for the template argument a model of the concept `Kernel_d`, 
 for example `Cartesian_d<double>`. 

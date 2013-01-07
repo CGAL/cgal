@@ -32,7 +32,7 @@ two-dimensional \cgal kernel.
 \sa `CGAL::Min_ellipse_2_traits_2<K>` 
 \sa `MinEllipse2Traits` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 We implement the incremental algorithm of Welzl, with move-to-front 
 heuristic \cite w-sedbe-91a, using the primitives as described 
@@ -46,7 +46,7 @@ take up to linear time, but substantially less than computing the new
 smallest enclosing ellipse from scratch. The clear operation and the check 
 for validity each takes linear time. 
 
-### Example ###
+\cgalHeading{Example}
 
 To illustrate the usage of `Min_ellipse_2` and to show that randomization 
 can be useful in certain cases, we give an example. The example also 

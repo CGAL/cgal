@@ -11,7 +11,7 @@ replacing each point with a random point from the `xeps` \f$ \times\f$
 `yeps` rectangle centered at the original point.  Two random numbers
 are needed from `rnd` for each point.
 
-### Requires ###
+\cgalHeading{Requires}
 
 - `Creator` must be a function object accepting two
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point
@@ -72,7 +72,7 @@ The function creates the first \f$ n\f$ points on the regular \f$ \lceil\sqrt{n}
 the \f$ n\f$ points.
 
 
-### Requires ###
+\cgalHeading{Requires}
 
 - `Creator` must be a function object accepting two
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point
@@ -108,7 +108,7 @@ in the range `[first,last)`.
 Three random numbers are needed from `rnd` for each point.
 Returns the value of `first2` after inserting the \f$ n\f$ points.
 
-### Requires ###
+\cgalHeading{Requires}
 
 - `Creator` must be a function object accepting two
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point

@@ -48,7 +48,7 @@ true.
 \cgalRequires `Traits` is a model for `SortedMatrixSearchTraits`. 
 \cgalRequires Value type of `RandomAccessIterator` is `Traits::Matrix`. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The implementation uses an algorithm by 
 Frederickson and Johnson\cite fj-fkppc-83, \cite fj-gsrsm-84 and runs in 

@@ -22,7 +22,7 @@ There are two default template arguments:
 `Combinatorial_map_min_items<d>` for `Items` and 
 `CGAL_ALLOCATOR(int)` from the `<CGAL/memory.h>` header file for `Alloc`. 
 
-##Complexity##
+\cgalHeading{Complexity}
 
 
 The complexity of `sew` and `unsew` is in <I>O</I>(\f$ |\f$<I>S</I>\f$ |\f$\f$ \times\f$\f$ |\f$<I>c</I>\f$ |\f$), <I>S</I> 

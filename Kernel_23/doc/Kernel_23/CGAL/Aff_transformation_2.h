@@ -40,7 +40,7 @@ therefore do not appear in the constructors.
 \sa `Translation` 
 \sa `rational_rotation_approximation` 
 
-### Example ###
+\cgalHeading{Example}
 
 \code
 typedef Cartesian<double> K; 

@@ -121,11 +121,11 @@ requirements for container (i.e.\ to have a `begin()` and an
 `reference`, `const_reference`, `value_type`,
 `size_type`, and `difference_type`).
 
-### Types ###
+\cgalHeading{Types}
 
 All types required for circulators are provided.
 
-### Operations ###
+\cgalHeading{Operations}
 
 The adaptor conforms to the requirements of the corresponding
 circulator category. An additional member function
@@ -136,7 +136,7 @@ the same position as the circulator does.
 \sa `Circulator_from_iterator`
 \sa `Circulator`
 
-### Example ###
+\cgalHeading{Example}
 
 The following program composes two adaptors - from a container to a
 circulator and back to an iterator. It applies an \stl sort algorithm
@@ -192,7 +192,7 @@ category. The circulator will be mutable or non-mutable according to
 the iterator. Iterators provide no `size_type`. This adapter
 assumes `std::size_t` instead.
 
-### Operations ###
+\cgalHeading{Operations}
 
 The adaptor conforms to the requirements of the respective circulator
 category. An additional member function `current_iterator()`
@@ -203,7 +203,7 @@ circulator does.
 \sa `Circulator_from_container`
 \sa `Circulator`
 
-### Example ###
+\cgalHeading{Example}
 
 The following program composes two adaptors - from an iterator to a
 circulator and back to an iterator. It applies an \stl sort algorithm
@@ -313,7 +313,7 @@ circulator category for iterators, i.e.\ one of
 `Forward_circulator_tag`, `Bidirectional_circulator_tag`, or
 `Random_access_circulator_tag`.
 
-### Example ###
+\cgalHeading{Example}
 
 A generic function `bar` that distinguishes between a call with a
 circulator range and a call with an iterator range:
@@ -386,7 +386,7 @@ otherwise.
 \sa `Circulator_from_container`
 \sa `Circulator`
 
-### Example ###
+\cgalHeading{Example}
 
 The generic <TT>reverse()</TT> algorithm from the \stl can be used with an
 adaptor if at least a bidirectional circulator <TT>c</TT> is given.
@@ -399,7 +399,7 @@ reverse( container.begin(), container.end());
 
 \endcode
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The iterator adaptor keeps track of the number of rounds a circulator
 has done around the ring-like data structure (a kind of winding
@@ -552,7 +552,7 @@ the range is empty or not.
 
 \pre `IC` is either a circulator or an iterator type. The range `[i, j)` is valid.
 
-### Example ###
+\cgalHeading{Example}
 
 The following function `process_all` accepts a range `[i, j)` of an iterator or circulator `IC` and processes each
 element in this range:

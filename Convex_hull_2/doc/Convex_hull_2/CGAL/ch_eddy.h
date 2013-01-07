@@ -14,7 +14,7 @@ cyclic sequence of extreme points is cut into a linear sequence.
 The default traits class `Default_traits` is the kernel in which the 
 type value type of `ForwardIterator` is defined. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `InputIterator` and 
@@ -38,7 +38,7 @@ functions that return instances of these types:
 \sa `CGAL::ch_melkman` 
 \sa `CGAL::convex_hull_2` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function implements Eddy's algorithm 
 \cite e-nchap-77, which is the two-dimensional version of the quickhull 

@@ -979,7 +979,7 @@ namespace CGAL {
   into \f$ x\f$-monotone subcurves (and perhaps isolated points), which are
   inserted into the arrangement.
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL>
   <LI>If the curve is \f$ x\f$-monotone curve then The instantiated
@@ -1067,7 +1067,7 @@ void insert (Arrangement_2<Traits,Dcel>& arr,
   edges or vertices of the existing arrangement `arr`. 
   \pre If provided, `pl` must be attached to the given arrangement `arr`. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>If `c` is \f$ x\f$-monotone then the instantiated `GeomTraits` 
@@ -1108,7 +1108,7 @@ bool do_intersect (
 
   \pre If provided, `pl` must be attached to the given arrangement `arr`. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>The instantiated `Traits` class must model the restricted 
@@ -1135,7 +1135,7 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
   disjoint in their interior and pairwise interior-disjoint from all existing 
   arrangement vertices and edges. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>The instantiated `Traits` class must model the 
@@ -1166,7 +1166,7 @@ void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
 
   \pre If provided, `pl` must be attached to the given arrangement `arr`. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>The instantiated `Traits` class must model the 
@@ -1201,7 +1201,7 @@ insert_point (Arrangement_2<Traits,Dcel>& arr,
   function may take a considerable amount of time; it is recommended to be 
   used only for debugging purposes. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   The instantiated traits class must model the concept 
   `ArranagmentXMonotoneTraits_2`. 
@@ -1229,7 +1229,7 @@ bool is_valid (const Arrangement_2<Traits, Dcel>& arr);
   is returned. Otherwise, the face to which the edge was incident before the 
   removal is returned. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>The instantiated traits class must model the concept 
@@ -1254,7 +1254,7 @@ remove_edge (Arrangement_2<Traits,Dcel>& arr,
   The function returns a boolean value that indicates whether it succeeded 
   removing the vertex from the arrangement. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>The instantiated `Traits` class must model the 
@@ -1286,7 +1286,7 @@ bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
   arrangement `arr`. 
   \pre If provided, `pl` must be attached to the given arrangement `arr`. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>The instantiated `GeomTraits` class must model the 

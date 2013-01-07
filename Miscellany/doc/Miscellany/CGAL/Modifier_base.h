@@ -11,7 +11,7 @@ function `operator()`, which accepts a single reference parameter
 `R&` on which the modifier is allowed to work. `R` is the 
 type of the internal representation that is to be modified. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following fragment defines a class <TT>A</TT> with an internal 
 representation <TT>i</TT> of type <TT>int</TT>. It provides a member 

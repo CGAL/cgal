@@ -56,7 +56,7 @@ namespace CGAL {
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
 
-###   Implementation ###
+\cgalHeading{Implementation}
 
   The algorithm is trivially testing all pairs and runs therefore in time 
   \f$ O(nm)\f$ where \f$ n\f$ is the size of the first sequence and \f$ m\f$ is the 
@@ -130,7 +130,7 @@ namespace CGAL {
   values `Box_intersection_d::COMPLETE` and 
   `Box_intersection_d::BIPARTITE`. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>`RandomAccessIterator1`, and \f$ \ldots\f$ `2`, must be 
@@ -154,7 +154,7 @@ namespace CGAL {
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
 
-  ### Implementation ###
+\cgalHeading{Implementation}
 
   The implemented algorithm is described in \cite cgal:ze-fsbi-02 as 
   version two. Its performance depends on a `cutoff` parameter. 
@@ -186,7 +186,7 @@ namespace CGAL {
   cutoff parameters are recommended. See also 
   Section \ref secboxintersperformance . 
 
-  ### Example ###
+\cgalHeading{Example}
 
   The box implementation provided with 
   `Box_intersection_d::Box_d<double,2>` has a special 
@@ -327,7 +327,7 @@ namespace CGAL {
   concept and that the box handle, i.e., the iterators value type, is 
   identical to the box type or a pointer to the box type. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>`ForwardIterator` must be a forward iterator. We call its 
@@ -351,7 +351,7 @@ namespace CGAL {
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
 
-  ### Implementation ###
+\cgalHeading{Implementation}
 
   The algorithm is trivially testing all pairs and runs therefore in time 
   \f$ O(n^2)\f$ where \f$ n\f$ is the size of the input sequence. This algorithm 
@@ -447,7 +447,7 @@ namespace CGAL {
   concept and that the box handle, i.e., the iterators value type, is 
   identical to the box type or a pointer to the box type. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>`RandomAccessIterator` must be a mutable random-access 
@@ -470,12 +470,12 @@ namespace CGAL {
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
 
-  ### Implementation ###
+\cgalHeading{Implementation}
 
   See the implementation section of the `box_intersection_d()` 
   function.
 
-  ### Example ###
+\cgalHeading{Example}
 
   The box implementation provided with 
   `Box_intersection_d::Box_d<double,2>` has a special 

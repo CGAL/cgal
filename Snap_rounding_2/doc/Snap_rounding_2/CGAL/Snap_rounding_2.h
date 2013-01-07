@@ -75,7 +75,7 @@ this is a basic requirement of SR.
 
 
 
-#### About the Number of kd-Trees ####
+\cgalHeading{About the Number of kd-Trees}
 
 A basic query used in the algorithm is to report the hot pixels of 
 size \f$ w\f$ that a certain segment \f$ s\f$ intersects. An alternative way to 

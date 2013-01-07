@@ -7,7 +7,7 @@ The class `Interval_skip_list_interval` represents intervals with lower and uppe
 bound of type `Value`. These intervals 
 can be open or closed at each endpoint. 
 
-### I/O ###
+\cgalHeading{I/O}
 
 The output operator is defined for `std::ostream`. 
 

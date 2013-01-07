@@ -40,7 +40,7 @@ two-, three-, and \f$ d\f$-dimensional \cgal kernel, respectively.
 \sa `CGAL::Polytope_distance_d_traits_d<K,ET,NT>` 
 \sa `PolytopeDistanceDTraits` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The problem of finding the distance between two convex polytopes given as 
 the convex hulls of two finite point sets can be formulated as an 
@@ -296,7 +296,7 @@ FT squared_distance( ) const;
 returns an iterator referring to the first coordinate of the 
 realizing point of \f$ P\f$. 
 
-### Note ###
+\cgalHeading{Note}
 
 The coordinates have a rational 
 representation, i.e.\ the first \f$ d\f$ elements of the iterator 
@@ -318,7 +318,7 @@ realizing_point_p_coordinates_end() const;
 returns an iterator referring to the first coordinate of the 
 realizing point of \f$ Q\f$. 
 
-### Note ###
+\cgalHeading{Note}
 
 The coordinates have a rational 
 representation, i.e.\ the first \f$ d\f$ elements of the iterator 

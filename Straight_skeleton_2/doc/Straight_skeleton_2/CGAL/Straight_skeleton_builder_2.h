@@ -33,7 +33,7 @@ namespace CGAL {
 
 The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter must be a model of the `StraightSkeletonBuilderTraits_2` concept, its second template parameter, must be a model of the `StraightSkeleton_2` concept, and its third template paramter must be a model of the `StraightSkeletonBuilder_2_Visitor` concept. If this last parameter is ommitted, the class `CGAL::Dummy_straight_skeleton_builder_2_visitor<Skel>` is used. 
 
-### Algorithm ###
+\cgalHeading{Algorithm}
 
 The implemented algorithm is closely based on \cite cgal:fo-ss-98 with the addition of <I>vertex events</I> as described in \cite cgal:ee-rrccpp-98. 
 

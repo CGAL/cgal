@@ -25,7 +25,7 @@ points are collected by a \f$ k\f$-nearest neighbor or a range search
 query, this permits to verify that a large enough neighborhood has
 been considered.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Dt` is equivalent to the class 
@@ -38,7 +38,7 @@ been considered.
 \sa CGAL::Voronoi_intersection_2_traits_3<K> 
 \sa CGAL::surface_neighbor_coordinates_3 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 These functions compute the regular triangulation of 
 the sample points and the point `p` using a traits class 

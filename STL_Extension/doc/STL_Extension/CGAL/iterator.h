@@ -58,7 +58,7 @@ from input iterators.
 
 \cgalModels `InputIterator`
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 `Iterator` is a model for
 `InputIterator`.
@@ -114,7 +114,7 @@ among those based on the type of the value type which is put in it.
 Other types are also accepted, and the object is simply discarded in this case.
 It also inherits from `O`, which makes it easy to treat like a tuple.
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 `V` must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
 `O` must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
@@ -196,7 +196,7 @@ The class `Dispatch_output_iterator` defines an
 among those based on the type of the value type which is put in it.
 It also inherits from `O`, which makes it easy to treat like a tuple.
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 `V` must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
 `O` must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
@@ -445,7 +445,7 @@ with opaque values will not work.
 
 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 For random access iterators or circulators, it is done in constant
 time by subtracting `i`. For other iterator categories, an \stl

@@ -53,7 +53,7 @@ for two-, three-, and \f$ d\f$-dimensional points respectively.
 \sa `CGAL::Min_sphere_of_spheres_d<Traits>` 
 \sa `CGAL::Min_annulus_d<Traits>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 We implement the algorithm of Welzl with move-to-front 
 heuristic \cite w-sedbe-91a for small point sets, combined with a new 
@@ -66,7 +66,7 @@ but substantially less than computing the new smallest enclosing
 sphere from scratch. The clear operation and the check for validity 
 each take linear time. 
 
-### Example ###
+\cgalHeading{Example}
 
 \cgalExample{Min_sphere_d/min_sphere_d.cpp} 
 

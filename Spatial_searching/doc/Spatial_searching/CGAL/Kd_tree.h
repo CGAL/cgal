@@ -5,7 +5,7 @@ namespace CGAL {
 
 The class `Kd_tree` defines a `k-d` tree. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 Expects for the first template argument a model of the concept 
 `SearchTraits`, for example `Search_traits_2<Simple_cartesian<double> >`. 

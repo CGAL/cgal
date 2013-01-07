@@ -21,7 +21,7 @@ of type `Data` specified in the definition of `map`.
 \sa `UniqueHashFunction` 
 \sa `CGAL::Handle_hash_function` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 `Unique_hash_map` is implemented via a chained hashing scheme. Access 
 operations `map``[i]` take expected time \f$ O(1)\f$. The `table_size` 

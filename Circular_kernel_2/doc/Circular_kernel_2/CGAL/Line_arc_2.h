@@ -6,7 +6,7 @@ namespace CGAL {
 
 \cgalModels `CircularKernel::LineArc_2`
 
-### I/O ###
+\cgalHeading{I/O}
 
 The format for input/output is, for each line arc: a `Line_2` 
 (the supporting line) and two `Circular_arc_point_2` (the two endpoints), 

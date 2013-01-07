@@ -108,7 +108,7 @@ namespace CGAL {
 
 The class `Umbilic` stores the description of an umbilic. 
 
-### Operations ###
+\cgalHeading{Operations}
 
 The insert operator `<<` is overloaded for `Umbilic`, it 
 gives the location (3d coordinates of the vertex) and the type. 

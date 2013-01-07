@@ -28,7 +28,7 @@ then the default traits class of `::convex_hull_3()` is `Convex_hull_traits_3<R>
 
 \sa `convex_hull_incremental_3()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The algorithm implemented by these functions is the quickhull algorithm of 
 Barnard <I>et al.</I> \cite bdh-qach-96. 

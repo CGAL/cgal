@@ -15,7 +15,7 @@ counts the number of calls of the `Real_timer::start()` member function since th
 last reset. If the reset occures while the timer is running it counts as the 
 first interval. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The timer class is based on the C function `gettimeofday()` on 
 POSIX systems and the C function `_ftime()` on MS Visual C++. 

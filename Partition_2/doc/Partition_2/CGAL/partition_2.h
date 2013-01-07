@@ -15,7 +15,7 @@ no more than four times the minimal number.
 \pre The points in the range [`first`, `beyond`) define a simple
 counterclockwise-oriented polygon.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Traits` is a model of the concept 
@@ -41,7 +41,7 @@ with the representation type determined by `std::iterator_traits<InputIterator1>
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 \sa `CGAL::y_monotone_partition_2` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function implements the algorithm of Hertel and Mehlhorn 
 \cite hm-ftsp-83 and is based on the class 
@@ -49,7 +49,7 @@ This function implements the algorithm of Hertel and Mehlhorn
 the polygon, the function requires \f$ O(n)\f$ time and 
 space for a polygon with \f$ n\f$ vertices. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program computes an approximately optimal 
 convex partitioning of a polygon using the default 
@@ -85,7 +85,7 @@ the resulting sequence of polygons is returned.
 
 \pre The points in the range [`first`, `beyond`) define a simple, counterclockwise-oriented polygon.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Traits` is a model of the concepts `PartitionTraits_2` 
@@ -114,7 +114,7 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \sa `CGAL::partition_is_valid_2` 
 \sa `CGAL::y_monotone_partition_2` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function implements the approximation algorithm of 
 Greene \cite g-dpcp-83 and requires \f$ O(n \log n)\f$ time and \f$ O(n)\f$ space 
@@ -122,7 +122,7 @@ to produce a convex partitioning given a \f$ y\f$-monotone partitioning of a
 polygon with \f$ n\f$ vertices. The function `y_monotone_partition_2()` 
 is used to produce the monotone partition. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program computes an approximately optimal 
 convex partitioning of a polygon using the default 
@@ -158,7 +158,7 @@ the resulting sequence of polygons is returned.
 
 \pre The points in the range [`first`, `beyond`) define a simple, counterclockwise-oriented polygon.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Traits` is a model of the concept `OptimalConvexPartitionTraits_2`. 
@@ -182,13 +182,13 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \sa `CGAL::partition_is_valid_2` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function implements the dynamic programming algorithm of Greene 
 \cite g-dpcp-83, which requires \f$ O(n^4)\f$ time and \f$ O(n^3)\f$ space to 
 produce a partitioning of a polygon with \f$ n\f$ vertices. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program computes an optimal 
 convex partitioning of a polygon using the default 
@@ -229,7 +229,7 @@ the resulting sequence of polygons is returned.
 \pre The points in the range [`first`, `beyond`) define a simple, counterclockwise-oriented polygon.
 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Traits` is a model of the concept 
@@ -253,13 +253,13 @@ with the representation type determined by `std::iterator_traits<InputIterator>:
 \sa `CGAL::partition_is_valid_2` 
 \sa `CGAL::y_monotone_partition_is_valid_2` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function implements the algorithm presented by de Berg <I>et al.</I> 
 \cite bkos-cgaa-97 which requires \f$ O(n \log n)\f$ time 
 and \f$ O(n)\f$ space for a polygon with \f$ n\f$ vertices. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program computes a \f$ y\f$-monotone partitioning 
 of a polygon using the default 

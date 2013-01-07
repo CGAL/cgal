@@ -113,7 +113,7 @@ using the \f$ d\f$-dimensional \cgal kernel; the models
 
 \sa `CGAL::Min_ellipse_2<Traits>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 We implement Khachyian's algorithm for rounding 
 polytopes \cite cgal:k-rprnm-96. Internally, we use 
@@ -122,7 +122,7 @@ Cholesky-decomposition. The algorithm's running time is
 \f$ {\cal O}(nd^2(\epsilon^{-1}+\ln d + \ln\ln(n)))\f$, where \f$ n=|P|\f$ and 
 \f$ 1+\epsilon\f$ is the desired approximation ratio. 
 
-## Example ###
+\cgalHeading{Example}
 
 To illustrate the usage of `Approximate_min_ellipsoid_d` we give two examples in 2D. The 
 first program generates a random set \f$ P\subset\E^2\f$ and outputs the 

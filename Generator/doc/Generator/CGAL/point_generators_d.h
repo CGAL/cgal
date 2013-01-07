@@ -13,7 +13,7 @@ within the hypercube \f$ [-a,a]^{dim}\f$.
 
 \returns the value of \f$ o\f$ after inserting the \f$ n\f$ points.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <UL>
 <LI>`Creator` must be a functor accepting an integer (the dimension)

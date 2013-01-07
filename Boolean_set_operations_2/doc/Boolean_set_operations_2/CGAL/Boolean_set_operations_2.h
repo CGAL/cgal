@@ -73,7 +73,7 @@ The signature of the function is
   OutputIterator difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
 \endcode
 
-###Parameters###
+\cgalHeading{Parameters}
 
 The types of the paramters of the `difference()` function are any of the following combinations.
 
@@ -192,7 +192,7 @@ The signature of the function is
   bool do_intersect(const Type1 & p1, const Type2 & p2);
 \endcode
 
-###Parameters###
+\cgalHeading{Parameters}
 
 The types of the paramters of the `do_intersect()` function are any of the following combinations.
 
@@ -322,7 +322,7 @@ The signature of the function is
 \endcode
 
 
-###Parameters###
+\cgalHeading{Parameters}
 
 The types of the paramters of the `intersection()` function are any of the following combinations.
 
@@ -481,7 +481,7 @@ The signature of the function is
   bool join(const Type1 & p1, const Type2 & p2, General_polygon_with_holes_2 & res);
 \endcode
 
-###Parameters###
+\cgalHeading{Parameters}
 
 The types of the paramters of the `join()` function are any of the following combinations.
 
@@ -635,7 +635,7 @@ The signature of the function is
   Oriented_side oriented_side(const Type1 & p1, const Type2 & p2);
 \endcode
 
-###Parameters###
+\cgalHeading{Parameters}
 
 The types of the paramters of the `oriented_side()` function are any of the following combinations.
 
@@ -721,7 +721,7 @@ The signature of the function is
   OutputIterator symmetric_difference(const Type1 & p1, const Type2 & p2, OutputIterator oi);
 \endcode
 
-###Parameters###
+\cgalHeading{Parameters}
 
 The types of the paramters of the `symmetric_difference()` function are any of the following combinations.
 

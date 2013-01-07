@@ -47,7 +47,7 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 `Tag` can only be either `Fast` or `Compact` currently. 
 

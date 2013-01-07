@@ -21,7 +21,7 @@ and `C3T3::Triangulation` its nested triangulation type.
 
 \cgalModels `MeshCriteria_3`
 
-### Example ###
+\cgalHeading{Example}
 
 \code{.cpp}
 

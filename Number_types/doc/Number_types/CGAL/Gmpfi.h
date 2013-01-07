@@ -21,7 +21,7 @@ and <TT>long double</TT>.
 \cgalModels `FieldWithKthRoot` 
 \cgalModels `RealEmbeddable` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 All interval operations are performed by the <span class="textsc">Mpfi</span> library. The class 
 `Gmpfi` is not reference counted, but its members are. 

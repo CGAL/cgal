@@ -19,7 +19,7 @@ the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits:
 Note that this class is at the same time used for <I>basic</I> and 
 for <I>weighted</I> Alpha Shapes. 
 
-### Inherits From ###
+\cgalHeading{Inherits From}
 
 Inherits from `Dt`.
 
@@ -28,13 +28,13 @@ This class is the underlying triangulation class.
 The modifying functions `insert` and `remove` will overwrite 
 the inherited functions. At the moment, only the static version is implemented. 
 
-### I/O ###
+\cgalHeading{I/O}
 
 The I/O operators are defined for `iostream`, and for 
 the window stream provided by \cgal. The format for the iostream 
 is an internal format. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 In `GENERAL` mode, the alpha intervals of each triangulation 
 face is computed and stored at initialization time. 

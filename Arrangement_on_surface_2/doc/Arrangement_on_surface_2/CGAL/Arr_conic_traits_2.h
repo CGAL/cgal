@@ -77,7 +77,7 @@ supports the merging of curves of opposite directions.
 \cgalModels `ArrangementLandmarkTraits_2`
 \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
 
-### Types ###
+\cgalHeading{Types}
 
 
 */

@@ -54,7 +54,7 @@ which is:
 the smallest dihedral angle of the set of cells incident to some vertex in the mesh. 
 </UL> 
 
-### Example ###
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Exude without sliver_bound, using at most 10s CPU time 

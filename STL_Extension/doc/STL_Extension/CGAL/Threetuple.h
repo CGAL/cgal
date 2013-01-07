@@ -16,7 +16,7 @@ accessing the elements of a container.
 
 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 `T` must be `Assignable`.
 

@@ -73,7 +73,7 @@ which is:
 is achieved. 
 </UL> 
 
-### Example ###
+\cgalHeading{Example}
 
 \code{.cpp} 
 // 100 iterations of Odt-smoothing 

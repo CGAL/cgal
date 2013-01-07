@@ -13,7 +13,7 @@ cyclic sequence of extreme points is cut into a linear sequence.
 The default traits class `Default_traits` is the kernel in which the 
 value type of `ForwardIterator` is defined. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `ForwardIterator` and 
@@ -37,7 +37,7 @@ functions that return instances of these types:
 \sa `CGAL::ch_melkman` 
 \sa `CGAL::convex_hull_2` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function uses the algorithm of Akl and 
 Toussaint \cite at-fcha-78 that requires \f$ O(n \log n)\f$ time for \f$ n\f$ input 

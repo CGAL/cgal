@@ -16,14 +16,14 @@ additional template parameters.
 
 \cgalModels `TriangulationDataStructure_2`
 
-### Modifiers ###
+\cgalHeading{Modifiers}
 
 In addition to the modifiers required by the 
 `TriangulationDataStructure_2` concept, the `Triangulation_data_structure_2` class 
 supports also the modifiers below. Note also that the modifiers below 
 guarantee the combinatorial validity of the resulting data structure. 
 
-### Illustrations ###
+\cgalHeading{Illustrations}
 
 \anchor figtdssplitjoin 
 \image html join_split.gif "The join and split operations."

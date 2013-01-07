@@ -55,7 +55,7 @@ functions `make_conforming_Gabriel_2()` and
 and its geometric traits class must be 
 a model of the concept `ConformingDelaunayTriangulationTraits_2`. 
 
-### Using This Class ###
+\cgalHeading{Using This Class}
 
 The constructor of the class `Triangulation_conformer_2` takes a reference to a `CDT` 
 as an argument. A call to the method `make_conforming_Delaunay()` or 

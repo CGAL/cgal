@@ -6,7 +6,7 @@ namespace CGAL {
 The class `Interval_skip_list` is a dynamic data structure that 
 allows to find all members of a set of intervals that overlap a point. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The insertion and deletion of a segment in the interval skip list 
 takes expected time \f$ O(\log^2 n)\f$, if the segment endpoints are 

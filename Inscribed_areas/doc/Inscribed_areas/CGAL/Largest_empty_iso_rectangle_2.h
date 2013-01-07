@@ -11,7 +11,7 @@ that do not contain any point of the point set.
 
 \tparam T must be a model of the concept `LargestEmptyIsoRectangleTraits_2`.
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The algorithm is an implementation of \cite o-naler-90. The runtime of an 
 insertion or a removal is \f$ O(\log n)\f$. A query takes \f$ O(n^2)\f$ worst 

@@ -34,7 +34,7 @@ way to extract the desired type for a template parameter which may be defaulted
 using `Default`. It is enough to fetch the type as 
 `Default::Get<Parameter, Type>::%type`, as in the example program below. 
 
-### Example ###
+\cgalHeading{Example}
 
 \cgalExample{STL_Extension/Default.cpp} 
 

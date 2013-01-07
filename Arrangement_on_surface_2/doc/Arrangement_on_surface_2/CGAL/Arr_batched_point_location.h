@@ -14,7 +14,7 @@ pairs in the output sequence are sorted in increasing \f$ xy\f$-lexicographical
 order of the query points. The function returns a past-the-end iterator of 
 the output sequence. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <UL> 
 <LI>`InputIterator::value_type` must be `Traits::Point_2`. 

@@ -23,7 +23,7 @@ all halfedge data structures and will not appear here again.
 \sa `CGAL::HalfedgeDS_items_decorator<HDS>` 
 \sa `CGAL::HalfedgeDS_const_decorator<HDS>` 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program fragment illustrates the implementation of the 
 Euler operator `split_vertex()` for a simplified polyhedron class. 

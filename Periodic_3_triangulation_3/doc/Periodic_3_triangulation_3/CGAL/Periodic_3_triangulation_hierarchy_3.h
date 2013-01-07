@@ -8,7 +8,7 @@ The class `Periodic_3_triangulation_hierarchy_3` implements a
 triangulation augmented with a data structure which allows fast point 
 location queries. 
 
-### Template Parameters ###
+\cgalHeading{Template Parameters}
 
 It is templated by a parameter which must be instantiated by one of the \cgal periodic triangulation classes. <I>In the current 
 implementation, only `Periodic_3_Delaunay_triangulation_3` is 
@@ -33,7 +33,7 @@ hierarchy into a file will lose the hierarchic structure and reading
 it from the file will result in an ordinary triangulation whose 
 efficiency will be the same as `PTr`. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The data structure is a hierarchy of triangulations. The triangulation 
 at the lowest level is the original triangulation where operations and 

@@ -18,7 +18,7 @@ other option is `Hilbert_sort_middle_policy()`.
 
 The default values for the thresholds and the ratio depends on the dimension. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`std::iterator_traits<RandomAccessIterator>::%value_type` is convertible to 
@@ -27,7 +27,7 @@ The default values for the thresholds and the ratio depends on the dimension.
 `SpatialSortingTraits_3`, or `SpatialSortingTraits_d`. 
 </OL> 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Creates an instance of `Multiscale_sort<Hilbert_sort>` 
 where `Hilbert_sort` is an Hilbert sorting object, 

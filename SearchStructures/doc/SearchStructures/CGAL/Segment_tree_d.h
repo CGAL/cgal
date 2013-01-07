@@ -6,7 +6,7 @@ namespace CGAL {
 
 \brief  A \f$ d\f$-dimensional segment tree stores  \f$ d\f$-dimensional intervals and can be used to find all intervals that enclose, partially overlap, or contain a query interval, which may be a point.
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 A \f$ d\f$-dimensional segment tree is constructed in \f$ {O}(n\log n^d)\f$ time. 
 An inverse range query is performed in time \f$ {O}(k+{\log}^d n )\f$, where \f$ k\f$ 

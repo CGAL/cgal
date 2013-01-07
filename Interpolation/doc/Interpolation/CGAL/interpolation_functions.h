@@ -13,7 +13,7 @@ whether the retrieval was successful.
 This class can be used to provide the values and gradients of the 
 interpolation functions. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The class 
 `Data_access` has the container type `Map` as template parameter. 
@@ -68,13 +68,13 @@ generates the interpolated function value computed by Farin's interpolant.
 The function `farin_c1_interpolation()` interpolates the function values and the 
 gradients that are provided by functors using the method described in \cite f-sodt-90. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The value type of `RandomAccessIterator` is a pair 
 associating a point to a (non-normalized) barycentric coordinate. See 
 `sibson_c1_interpolation()` for the other parameters. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 Same requirements as for `sibson_c1_interpolation()` only the 
 iterator must provide random access and `Traits::FT` does not need 
@@ -118,7 +118,7 @@ corresponding to each point of the point/coordinate pairs in the
 range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
 \pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `ForwardIterator` is a pair of 
@@ -166,11 +166,11 @@ pairs in the range \f$ \left[\right.\f$ `first`,
 `beyond`\f$ \left.\right)\f$. See also
 `sibson_c1_interpolation`. \pre `norm` \f$ \neq0\f$ `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 See `sibson_c1_interpolation`. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 Same requirements as for 
 `sibson_c1_interpolation()` only that `Traits::FT` does not need 
@@ -215,7 +215,7 @@ interpolated function value as first and `true` as second value. \pre
 `p` of the point/coordinate pairs in the range \f$\left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The template parameter `Traits` is to be 
 instantiated with a model of `InterpolationTraits`. 
@@ -228,7 +228,7 @@ coordinates for the query point `p`. The functor
 function given a point. `function_gradient` allows to access the 
 function gradient given a point. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Traits` is a model of the concept 

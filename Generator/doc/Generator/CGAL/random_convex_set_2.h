@@ -14,7 +14,7 @@ we cannot easily describe the resulting distribution.
 
  
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 - `PointGenerator` is a model of the concept PointGenerator 
 - `Traits` is a model of the concept RandomConvexSetTraits_2 
@@ -28,14 +28,14 @@ R >` for some representation class `R`,
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The implementation uses the centroid method 
 described in \cite cgal:s-zkm-96 and has a worst case running time of \f$ O(r 
 \cdot n + n \cdot \log n)\f$, where \f$ r\f$ is the time needed by `pg` 
 to generate a random point. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program displays a random convex 500-gon where the 
 points are drawn uniformly from the unit square centered at the 

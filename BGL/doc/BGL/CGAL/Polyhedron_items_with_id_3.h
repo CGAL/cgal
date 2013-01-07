@@ -15,11 +15,11 @@ halfedge.
 
 \cgalModels `PolyhedronItems_3` 
 
-### Operations ###
+\cgalHeading{Operations}
 
 Supported as required by the `PolyhedronItems_3` concept. 
 
-### Additional Methods in All Three Items ###
+\cgalHeading{Additional Methods in All Three Items}
 
 \code
 int id() const; // Returns the index. 

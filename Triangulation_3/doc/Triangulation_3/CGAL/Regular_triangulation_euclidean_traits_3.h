@@ -24,7 +24,7 @@ of that class is set to `true`.
 
 \cgalModels `RegularTriangulationTraits_3`
 
-### Operations ###
+\cgalHeading{Operations}
 
 The following functions give access to the predicate and constructor 
 functors. 

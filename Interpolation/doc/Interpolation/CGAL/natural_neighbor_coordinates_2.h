@@ -9,7 +9,7 @@ called Sibson's coordinates, for `2D` points provided a two-dimensional
 triangulation and a query point in the convex hull of the vertices 
 of the triangulation. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Dt` are equivalent to the class 
@@ -30,7 +30,7 @@ the traits class of the `polygon_area_2` function.
 associating a point and its natural neighbor coordinate. 
 </OL> 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function computes the area of the sub-cells 
 stolen from the Voronoi cells of the points in `dt` when inserting 

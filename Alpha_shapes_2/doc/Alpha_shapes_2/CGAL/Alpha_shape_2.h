@@ -27,7 +27,7 @@ kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_
 overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
 the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
 
-### Inherits From ###
+\cgalHeading{Inherits From}
 
 Inherits from `Dt`.
 
@@ -36,12 +36,12 @@ This class is the underlying triangulation class.
 The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite 
 the inherited functions. At the moment, only the static version is implemented. 
 
-### I/O ###
+\cgalHeading{I/O}
 
 The I/O operators are defined for `std::iostream`. The format for the iostream 
 is an internal format. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The set of intervals associated with the 
 \f$ k\f$-dimensional faces of the underlying triangulation are 

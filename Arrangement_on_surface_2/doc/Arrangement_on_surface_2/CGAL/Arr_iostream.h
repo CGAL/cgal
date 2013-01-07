@@ -6,7 +6,7 @@ namespace CGAL {
 The function `read` reads a given arrangement from a given input stream
 using a specific input format.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <UL>
 <LI>The instantiated `Formatter` class must model the
@@ -43,7 +43,7 @@ std::istream& read (Arrangement_2<Traits,Dcel>& arr,
 The function `write` writes a given arrangement into a given output stream
 using a specific output format.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <UL>
 <LI>The instantiated `Formatter` class must model the

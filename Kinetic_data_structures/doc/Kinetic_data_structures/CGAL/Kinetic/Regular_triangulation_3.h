@@ -21,7 +21,7 @@ vertex base.
 \sa `Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>`
 \sa `Kinetic::RegularTriangulationVisitor_3`
 
-### Example ###
+\cgalHeading{Example}
 
 \cgalExample{Kinetic_data_structures/Kinetic_regular_triangulation_3.cpp} 
 

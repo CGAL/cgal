@@ -13,7 +13,7 @@ is processed.
 \sa `Kinetic::ActiveObjectsTable`
 \sa `Kinetic::Active_objects_vector<MovingObject>`
 
-### Example ###
+\cgalHeading{Example}
 
 \code{.cpp} 
 

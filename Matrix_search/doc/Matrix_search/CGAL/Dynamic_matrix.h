@@ -17,7 +17,7 @@ matrix search.
 \sa `MonotoneMatrixSearchTraits` 
 \sa `BasicMatrix` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 All operations take constant time except for 
 `extract_all_even_rows()` which needs time linear in the number 

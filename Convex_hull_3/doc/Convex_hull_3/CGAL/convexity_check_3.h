@@ -11,7 +11,7 @@ vertices of the convex hull).
 The default traits class is the kernel in which the type 
 `Polyhedron::Point_3` is defined. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Polyhedron::Point_3` is equivalent to `Traits::Point_3`. 
@@ -34,7 +34,7 @@ the facet type must be `ConvexHullPolyhedronFacet_3`.
 </OL> 
 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function implements the tests described in \cite mnssssu-cgpvg-96 to 
 determine convexity and requires \f$ O(e + f)\f$ time for a polyhedron with 

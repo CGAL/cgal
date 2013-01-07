@@ -12,7 +12,7 @@ upper child, and a pointer to its separator.  An extended internal
 node is an internal node containing the lower and upper limit of an
 extended node's rectangle along the node's cutting dimension.
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 Expects for the template argument a model of the concept `SearchTraits`, 
 for example `Search_traits_2<Simple_cartesian<double> >`, or `Cartesian_d<double>`. 

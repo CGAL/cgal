@@ -15,7 +15,7 @@ points has a non-zero probability of being constructed, some polygons may
 have higher probabilities than others. The overall distribution of the 
 generated polygons is not known since it depends on the generated points. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 - `Traits` is a model of the concept RandomPolygonTraits_2 
 - `PointGenerator::value_type` is equivalent to 
@@ -28,7 +28,7 @@ The default traits class `Default_traits` is the kernel in which
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The implementation is based on the method of eliminating self-intersections in 
 a polygon by using so-called "2-opt" moves. Such a move eliminates an 
@@ -39,7 +39,7 @@ Intersecting edges are detected using a simple sweep through the vertices
 and then one intersection is chosen at random to eliminate after each sweep. 
 The worse-case running time is therefore \f$ O(n^4 \log n)\f$. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program displays a random simple polygon with up to 100 
 vertices, where the vertex coordinates are drawn uniformly from the 

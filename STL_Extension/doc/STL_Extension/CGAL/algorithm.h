@@ -41,7 +41,7 @@ maximal element of a range. It is modeled after the STL functions
 one only iterates once over the sequence. This is more efficient
 especially for large and/or complex sequences.
 
-### Example ###
+\cgalHeading{Example}
 
 The following example program computes the minimal and
 maximal element of the sequence ` (3,\,6,\,5)`. Hence the output is

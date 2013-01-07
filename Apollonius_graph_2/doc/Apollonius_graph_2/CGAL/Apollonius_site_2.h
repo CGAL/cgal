@@ -10,12 +10,12 @@ The class `Apollonius_site_2` is a model for the concept
 
 \cgalModels `ApolloniusSite_2`
 
-### Types ###
+\cgalHeading{Types}
 
 The class `Apollonius_site_2` does not introduce any types in addition to the 
 concept `ApolloniusSite_2`. 
 
-### I/O ###
+\cgalHeading{I/O}
 
 The I/O operators are defined for `iostream`. 
 

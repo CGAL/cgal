@@ -18,7 +18,7 @@ To use the tags or base classes only it is sufficient to include:
 \sa `is_empty_range`
 \sa `Circulator`
 
-### Example ###
+\cgalHeading{Example}
 
 The above declarations can be used to distinguish between iterators
 and circulators and between different circulator categories. The
@@ -34,7 +34,7 @@ example program illustrates both.
 /*!
 \addtogroup PkgHandlesAndCirculatorsBaseClasses
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Since not all current compilers can eliminate the space needed for the
 compile time tags even when deriving from them, we implement a variant

@@ -13,7 +13,7 @@ The tag `tag` identifies the dimension to be considered from the objects. For po
 
 The class `K` is the kernel in which the value type of the  `InputIterator` is defined. It can be omitted and deduced automatically from the value type. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`InputIterator` must have a value type equivalent to `K::Point_2` or 

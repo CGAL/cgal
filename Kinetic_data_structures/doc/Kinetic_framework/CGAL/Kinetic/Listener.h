@@ -59,7 +59,7 @@ writing my own.
 
 \sa `Multi_listener<Interface>`
 
-### Example ###
+\cgalHeading{Example}
 
 Here is a simplier class that provides notifications: 
 

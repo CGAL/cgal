@@ -11,7 +11,7 @@ grid within the cube
 inserting the \f$ n\f$ points.
 
 
-###Requires###
+\cgalHeading{Requires}
 - `Creator` must be a function object accepting three
   `double` values \f$ x\f$, \f$ y\f$, and \f$ z\f$ and returning an initialized
   point `(x,y,z)` of type `P`. Predefined implementations for

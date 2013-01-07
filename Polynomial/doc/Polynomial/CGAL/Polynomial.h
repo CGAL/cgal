@@ -39,7 +39,7 @@ model of `Modularizable`, where the homomorphic map on the polynomials
 is simply defined as the canonical extension of the homomorphic map which is 
 defined on the coefficient type. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Inexact and limited-precision types can be used as coefficients, 
 but at the user's risk. The algorithms implemented were written with 

@@ -16,7 +16,7 @@ the kernel is only an approximation of Euclidean geometry.
 
 \cgalModels `Kernel`
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 All geometric objects in `Cartesian` are reference counted. 
 

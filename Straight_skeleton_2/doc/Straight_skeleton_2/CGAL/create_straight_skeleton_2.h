@@ -11,7 +11,7 @@ The outer boundary `F` is constructed by enlarging the bounding box of `P` a dis
 `d` is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`K` is any \cgal kernel. 
@@ -43,7 +43,7 @@ The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interi
 The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`. 
 `d` is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`K` is any \cgal kernel. 

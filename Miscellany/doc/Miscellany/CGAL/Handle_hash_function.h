@@ -14,7 +14,7 @@ return a unique address.
 
 \sa `CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Plain type cast of `&*key` to `std::size_t` and devided 
 by the size of the `std::iterator_traits<Handle>::value_type` to 

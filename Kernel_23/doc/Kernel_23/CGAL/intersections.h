@@ -385,7 +385,7 @@ p    <TD>Point_3, or Segment_3</TD>
 </TABLE>
 </DIV>
 
-### Example ###
+\cgalHeading{Example}
 
 The following example demonstrates the most common use of 
 `intersection` routines with the 2D and 3D Linear %Kernel.

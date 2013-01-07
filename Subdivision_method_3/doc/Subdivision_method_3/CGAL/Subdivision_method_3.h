@@ -27,7 +27,7 @@ and the \f$ \sqrt{3}\f$ triangulation.
 These refinements are respectively used in 
 Catmull-Clark, Loop, Doo-Sabin and \f$ \sqrt{3}\f$ subdivision. 
 
-### Refinement Host ###
+\cgalHeading{Refinement Host}
 
 A refinement host is a template function of 
 a polyhedron class and a geometry mask class. It refines 
@@ -38,7 +38,7 @@ the geometry masks.
 
 \image html RefSchemes.gif
 
-### Example ###
+\cgalHeading{Example}
 
 This example program subdivides a polyhedral mesh with 
 Catmull-Clark subdivision. 

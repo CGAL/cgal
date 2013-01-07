@@ -12,7 +12,7 @@ gradient for all data points that lie inside the convex hull of the
 data points. One function exists for each type of natural neighbor
 coordinates.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `ForwardIterator` is a pair of point/coordinate 
@@ -38,7 +38,7 @@ provide a multiplication and addition operation with the type
 \sa `CGAL::regular_neighbor_coordinates_2()` 
 \sa `CGAL::surface_neighbor_coordinates_3()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function implements Sibson's gradient 
 estimation method based on natural neighbor coordinates 
