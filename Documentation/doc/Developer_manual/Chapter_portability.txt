@@ -213,9 +213,9 @@ operating system and compiler that is defined as follows.
 </CENTER>
 
 <DL>
-<DT><B>\f$ <\f$arch\f$ >\f$</B><DD> is the system architecture as defined by ``<TT>uname -p</TT>" or "<TT>uname -m</TT>",
-<DT><B>\f$ <\f$os\f$ >\f$</B><DD> is the operating system as defined by ``<TT>uname
-    -s</TT>'',
+<DT><B>\f$ <\f$arch\f$ >\f$</B><DD> is the system architecture as defined by <TT>uname -p</TT> or <TT>uname -m</TT>,
+<DT><B>\f$ <\f$os\f$ >\f$</B><DD> is the operating system as defined by <TT>uname
+    -s</TT>,
 <DT><B>\f$ <\f$os-version\f$ >\f$</B><DD> is the operating system version as defined by
   "<TT>uname -r</TT>",
 <DT><B>\f$ <\f$comp\f$ >\f$</B><DD> is the basename of the compiler executable (if it

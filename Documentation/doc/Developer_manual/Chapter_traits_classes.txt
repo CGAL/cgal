@@ -3,8 +3,8 @@
 \page chaptraits_classes Traits Classes
 \author Bernd G&auml;rtner (<TT>gaertner@inf.ethz.ch</TT>)
 
-The concept of a traits class is central to %CGAL. The name ``traits
-class'' comes from a standard \cpp design pattern
+The concept of a traits class is central to %CGAL. The name <i>traits
+class</i> comes from a standard \cpp design pattern
 \cite cgal:m-tnutt-95; you may have heard about iterator traits which
 follow this design pattern. 
 The traits class is used in template code to reflect properties (traits)
