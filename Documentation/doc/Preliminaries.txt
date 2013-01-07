@@ -160,8 +160,7 @@ protocol. If a functor `F` has the same return type across all
 overloads of `operator()`, the nested type
 `F::result_type` is defined to be that type. Otherwise the
 return type of calling the functor with an argument of type
-`Arg` can be accessed through
-`boost::result_of<F(Arg)>::type`.
+`Arg` can be accessed through `boost::%result_of<F(Arg)>::%type`.
 
 \section preliminaries_secchecks Checks
 
