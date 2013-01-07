@@ -64,9 +64,9 @@ performing this adaptation.
 ## Classes ##
 
 - `CGAL::Voronoi_diagram_2<DG,AT,AP>`
-- \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge"
-- \ref CGAL::Voronoi_diagram_2::Vertex "CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex"
-- \ref CGAL::Voronoi_diagram_2::Face "CGAL::Voronoi_diagram_2<DG,AT,AP>::Face"
+- \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink
+- \link CGAL::Voronoi_diagram_2::Vertex `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` \endlink
+- \link CGAL::Voronoi_diagram_2::Face `CGAL::Voronoi_diagram_2<DG,AT,AP>::Face` \endlink
 - `CGAL::Apollonius_graph_adaptation_traits_2<AG2>`
 - `CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>`
 - `CGAL::Regular_triangulation_adaptation_traits_2<RT2>`

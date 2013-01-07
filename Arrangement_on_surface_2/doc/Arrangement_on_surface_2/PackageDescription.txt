@@ -199,8 +199,8 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::read`
 - `CGAL::write`
 - `CGAL::remove_curve`
-- \ref PkgArrangement2op_left_shift "CGAL::operator<<"
-- \ref PkgArrangement2op_right_shift "CGAL::operator<<"
+- \link PkgArrangement2op_left_shift `CGAL::operator<<` \endlink
+- \link PkgArrangement2op_right_shift `CGAL::operator<<` \endlink
 
 */
 

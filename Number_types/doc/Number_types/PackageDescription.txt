@@ -50,15 +50,15 @@
 
 ## Number Type Classes and Concepts ##
 
-- \ref int.h "int"
-- \ref int.h "short int"
-- \ref int.h "long  int"
-- \ref long_long.h "long  long int"
-- \ref float.h "float"
-- \ref double.h "double"
-- \ref long_double.h "long double"
+- \link int.h `int` \endlink
+- \link int.h `short int` \endlink
+- \link int.h `long  int` \endlink
+- \link long_long.h `long  long int` \endlink
+- \link float.h `float` \endlink
+- \link double.h `double` \endlink
+- \link long_double.h `long double` \endlink
 
-### CORE ###
+### %CORE ###
 
 - `CORE::BigInt`
 - `CORE::BigRat`
@@ -82,7 +82,7 @@
 - `CGAL::Gmpfr`
 - `CGAL::Gmpfi`
 
-### CGAL ###
+### %CGAL ###
 
 - `CGAL::MP_Float`
 - `CGAL::Interval_nt<Protected>`

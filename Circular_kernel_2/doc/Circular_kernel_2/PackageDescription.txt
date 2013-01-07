@@ -96,15 +96,15 @@
 
 ## Geometric Global Functions ##
 
-- \ref compare_x "CGAL::compare_x"
-- \ref compare_y "CGAL::compare_y"
-- \ref compare_xy "CGAL::compare_xy"
-- \ref compare_y_at_x "CGAL::compare_y_at_x"
+- \link compare_x `CGAL::compare_x` \endlink
+- \link compare_y `CGAL::compare_y` \endlink
+- \link compare_xy `CGAL::compare_xy` \endlink
+- \link compare_y_at_x `CGAL::compare_y_at_x` \endlink
 - `CGAL::compare_y_to_right`
 - `CGAL::has_in_x_range`
 - `CGAL::has_on`
-- \ref do_intersect "CGAL::do_intersect"
-- \ref intersection "CGAL::intersection"
+- \link do_intersect `CGAL::do_intersect` \endlink
+- \link intersection `CGAL::intersection` \endlink
 - `CGAL::x_extremal_point`
 - `CGAL::y_extremal_point`
 - `CGAL::x_extremal_points`
