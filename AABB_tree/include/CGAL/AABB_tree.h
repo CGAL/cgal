@@ -100,7 +100,7 @@ namespace CGAL {
     ///@{
 
     /**
-     * @brief Default Constructor.
+     * @brief %Default Constructor.
      *
      * Constructs an empty tree.
      */

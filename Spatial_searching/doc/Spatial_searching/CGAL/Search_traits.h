@@ -38,7 +38,7 @@ typedef CartesianIterator Cartesian_const_iterator_d;
 
 /*! 
 A functor with 
-two function operators, which return the begin and past the end iterator for the Cartesian coordinates. 
+two function operators, which return the begin and past the end iterator for the %Cartesian coordinates. 
 The functor for begin has as argument a `Point_d`. The functor for the past the end iterator, 
 has as argument a `Point_d` and an `int`. 
 */ 

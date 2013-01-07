@@ -87,7 +87,7 @@ typedef std::size_t ID;
 /// @{
 
 /*! 
-Default constructor. No 
+%Default constructor. No 
 particular initialization. 
 */ 
 Box_with_handle_d(); 

@@ -185,7 +185,7 @@ typedef Hidden_type Axes_lengths_iterator;
 /*! 
 A model of STL concept 
 `RandomAccessIterator` with value type `double` that is used 
-to iterate over the Cartesian coordinates of the direction of a fixed 
+to iterate over the %Cartesian coordinates of the direction of a fixed 
 axis of the computed ellipsoid, see 
 `axis_direction_cartesian_begin()`. 
 */ 
@@ -348,7 +348,7 @@ Axes_lengths_iterator axes_lengths_end();
 
 /*! 
 returns an iterator 
-pointing to the first of the \f$ d\f$ Cartesian coordinates of the 
+pointing to the first of the \f$ d\f$ %Cartesian coordinates of the 
 computed ellipsoid's \f$ i\f$th axis direction (i.e., unit vector in 
 direction of the ellipsoid's \f$ i\f$th axis). The direction described 
 by this iterator is a floating-point approximation to the exact 
