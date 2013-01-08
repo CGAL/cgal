@@ -16,7 +16,7 @@ using a specific input format.
 </UL>
 
 
-\sa `write`
+\sa \link write `CGAL::write()` \endlink
 
   
 \sa operator<<
@@ -52,7 +52,7 @@ using a specific output format.
   `ArrangementWithHistoryOutputFormatter` concept.
 </UL>
 
-\sa \ref read
+\sa \link read `CGAL::read()` \endlink
 \sa operator<<
 \sa operator>>
 */
