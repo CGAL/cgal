@@ -23,6 +23,8 @@
 #ifndef CGAL_MESH_TRIANGULATION_3_H
 #define CGAL_MESH_TRIANGULATION_3_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Kernel_traits.h>
 
 #include <CGAL/Regular_triangulation_3.h>
