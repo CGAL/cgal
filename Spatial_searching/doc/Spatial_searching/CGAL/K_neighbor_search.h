@@ -98,9 +98,7 @@ Returns the appropriate past-the-end const iterator.
 iterator end() const; 
 
 /*! 
-
-\cgalAdvanced Inserts statistics of the search process into the output stream `s`. 
-
+Inserts statistics of the search process into the output stream `s`.
 */ 
 std::ostream& statistics(std::ostream& s); 
 
