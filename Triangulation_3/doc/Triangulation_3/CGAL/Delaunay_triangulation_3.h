@@ -320,7 +320,7 @@ Cell_handle c);
 /// @}
 
 /*! \name
-A point `p` is said to be in conflict with a cell `c` in dimension 3 (resp.\ a facet `f` in dimension 2) iff `dt`.`side_of_sphere(c, p)` (resp.\ `dt`.`side_of_circle(f, p)`) returns `ON_BOUNDED_SIDE`. The set of cells (resp.\ facets in dimension 2) which are in conflict with `p` is connected, and it forms a hole.
+A point `p` is said to be in conflict with a cell `c` in dimension 3 (resp.\ a facet `f` in dimension 2) iff `dt.side_of_sphere(c, p)` (resp.\ `dt.side_of_circle(f, p)`) returns `ON_BOUNDED_SIDE`. The set of cells (resp.\ facets in dimension 2) which are in conflict with `p` is connected, and it forms a hole.
 */
 /// @{
 
