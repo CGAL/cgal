@@ -47,8 +47,8 @@ public:
     \cgalModels `LessThanComparable` 
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
-    \sa \ref CGAL::Voronoi_diagram_2::Vertex "CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex" 
-    \sa \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge"
+    \sa \link CGAL::Voronoi_diagram_2::Vertex `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` \endlink
+    \sa \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink
     \sa `DelaunayGraph_2` 
 
   */
@@ -175,8 +175,8 @@ public:
     \cgalModels `LessThanComparable`
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
-    \sa \ref CGAL::Voronoi_diagram_2::Vertex "CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex"
-    \sa \ref CGAL::Voronoi_diagram_2::Face "CGAL::Voronoi_diagram_2<DG,AT,AP>::Face"
+    \sa \link CGAL::Voronoi_diagram_2::Vertex `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` \endlink
+    \sa \link CGAL::Voronoi_diagram_2::Face `CGAL::Voronoi_diagram_2<DG,AT,AP>::Face` \endlink
     \sa `DelaunayGraph_2` 
 
   */
@@ -415,8 +415,8 @@ public:
     \cgalModels `LessThanComparable`
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
-    \sa \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge" 
-    \sa \ref CGAL::Voronoi_diagram_2::Face "CGAL::Voronoi_diagram_2<DG,AT,AP>::Face" 
+    \sa \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink
+    \sa \link CGAL::Voronoi_diagram_2::Face `CGAL::Voronoi_diagram_2<DG,AT,AP>::Face` \endlink
     \sa `DelaunayGraph_2` 
 
   */
