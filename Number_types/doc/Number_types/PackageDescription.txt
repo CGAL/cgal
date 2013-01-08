@@ -93,8 +93,8 @@
 ## Relates Rational ##
 
 - `CGAL::Rational_traits<NT>`
-- `CGAL::simplest_rational_in_interval`
-- `CGAL::to_rational`
+- `CGAL::simplest_rational_in_interval()`
+- `CGAL::to_rational()`
 
 ## Relates Algebraic Extensions ##
 
@@ -110,9 +110,9 @@
 - `CGAL::Min<T,Less>`
 - `CGAL::Max<T,Less>`
 - `CGAL::Is_valid<T>`
-- `CGAL::min`
-- `CGAL::max`
-- `CGAL::is_valid`
+- `CGAL::min()`
+- `CGAL::max()`
+- `CGAL::is_valid()`
 - `CGAL::Set_ieee_double_precision`
 - `CGAL::Protect_FPU_rounding<Protected>`
 

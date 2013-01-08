@@ -102,64 +102,64 @@
 
 ## Functions ##
 
-- `CGAL::get_coefficient`
-- `CGAL::get_innermost_coefficient`
+- `CGAL::get_coefficient()`
+- `CGAL::get_innermost_coefficient()`
 
-- `CGAL::permute`
-- `CGAL::swap`
-- `CGAL::move`
+- `CGAL::permute()`
+- `CGAL::swap()`
+- `CGAL::move()`
 
-- `CGAL::degree`
-- `CGAL::total_degree`
-- `CGAL::degree_vector`
-- `CGAL::leading_coefficient`
-- `CGAL::innermost_leading_coefficient`
+- `CGAL::degree()`
+- `CGAL::total_degree()`
+- `CGAL::degree_vector()`
+- `CGAL::leading_coefficient()`
+- `CGAL::innermost_leading_coefficient()`
 
-- `CGAL::canonicalize`
-- `CGAL::differentiate`
+- `CGAL::canonicalize()`
+- `CGAL::differentiate()`
 
-- `CGAL::evaluate`
-- `CGAL::evaluate_homogeneous`
-- `CGAL::substitute`
-- `CGAL::substitute_homogeneous`
-- `CGAL::is_zero_at`
-- `CGAL::is_zero_at_homogeneous`
-- `CGAL::sign_at`
-- `CGAL::sign_at_homogeneous`
+- `CGAL::evaluate()`
+- `CGAL::evaluate_homogeneous()`
+- `CGAL::substitute()`
+- `CGAL::substitute_homogeneous()`
+- `CGAL::is_zero_at()`
+- `CGAL::is_zero_at_homogeneous()`
+- `CGAL::sign_at()`
+- `CGAL::sign_at_homogeneous()`
 
-- `CGAL::compare`
+- `CGAL::compare()`
 
-- `CGAL::univariate_content`
-- `CGAL::multivariate_content`
+- `CGAL::univariate_content()`
+- `CGAL::multivariate_content()`
 
-- `CGAL::square_free_factorize`
-- `CGAL::make_square_free`
+- `CGAL::square_free_factorize()`
+- `CGAL::make_square_free()`
 
-- `CGAL::pseudo_division`
-- `CGAL::pseudo_division_quotient`
-- `CGAL::pseudo_division_remainder`
+- `CGAL::pseudo_division()`
+- `CGAL::pseudo_division_quotient()`
+- `CGAL::pseudo_division_remainder()`
 
-- `CGAL::gcd_up_to_constant_factor`
-- `CGAL::integral_division_up_to_constant_factor`
-- `CGAL::univariate_content_up_to_constant_factor`
-- `CGAL::square_free_factorize_up_to_constant_factor`
+- `CGAL::gcd_up_to_constant_factor()`
+- `CGAL::integral_division_up_to_constant_factor()`
+- `CGAL::univariate_content_up_to_constant_factor()`
+- `CGAL::square_free_factorize_up_to_constant_factor()`
 
-- `CGAL::shift`
-- `CGAL::negate`
-- `CGAL::invert`
-- `CGAL::translate`
-- `CGAL::translate_homogeneous`
-- `CGAL::scale`
-- `CGAL::scale_homogeneous`
+- `CGAL::shift()`
+- `CGAL::negate()`
+- `CGAL::invert()`
+- `CGAL::translate()`
+- `CGAL::translate_homogeneous()`
+- `CGAL::scale()`
+- `CGAL::scale_homogeneous()`
 
-- `CGAL::resultant`
-- `CGAL::polynomial_subresultants`
-- `CGAL::polynomial_subresultants_with_cofactors`
-- `CGAL::principal_subresultants`
-- `CGAL::sturm_habicht_sequence`
-- `CGAL::sturm_habicht_sequence_with_cofactors`
-- `CGAL::principal_sturm_habicht_sequence`
-- `CGAL::number_of_real_roots`
+- `CGAL::resultant()`
+- `CGAL::polynomial_subresultants()`
+- `CGAL::polynomial_subresultants_with_cofactors()`
+- `CGAL::principal_subresultants()`
+- `CGAL::sturm_habicht_sequence()`
+- `CGAL::sturm_habicht_sequence_with_cofactors()`
+- `CGAL::principal_sturm_habicht_sequence()`
+- `CGAL::number_of_real_roots()`
 
 
 */

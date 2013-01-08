@@ -64,21 +64,21 @@
 
 ### Global Functions ###
 
-- `CGAL::is_zero`
-- `CGAL::is_one`
-- `CGAL::square`
-- `CGAL::simplify`
-- `CGAL::unit_part`
-- `CGAL::integral_division`
-- `CGAL::is_square`
-- `CGAL::gcd`
-- `CGAL::div_mod`
-- `CGAL::div`
-- `CGAL::mod`
-- `CGAL::inverse`
-- `CGAL::sqrt`
-- `CGAL::kth_root`
-- `CGAL::root_of`
+- `CGAL::is_zero()`
+- `CGAL::is_one()`
+- `CGAL::square()`
+- `CGAL::simplify()`
+- `CGAL::unit_part()`
+- `CGAL::integral_division()`
+- `CGAL::is_square()`
+- `CGAL::gcd()`
+- `CGAL::div_mod()`
+- `CGAL::div()`
+- `CGAL::mod()`
+- `CGAL::inverse()`
+- `CGAL::sqrt()`
+- `CGAL::kth_root()`
+- `CGAL::root_of()`
 
 ## Real Embeddable ##
 
@@ -102,14 +102,14 @@
 
 ### Global Functions ###
 
-- `CGAL::is_zero`
-- `CGAL::abs`
-- `CGAL::sign`
-- `CGAL::is_positive`
-- `CGAL::is_negative`
-- `CGAL::compare`
-- `CGAL::to_double`
-- `CGAL::to_interval`
+- `CGAL::is_zero()`
+- `CGAL::abs()`
+- `CGAL::sign()`
+- `CGAL::is_positive()`
+- `CGAL::is_negative()`
+- `CGAL::compare()`
+- `CGAL::to_double()`
+- `CGAL::to_interval()`
 
 ## Real Number Types ##
 

@@ -45,17 +45,17 @@ This module provides makers to construct a program, as well as functions to solv
 
  In case you want to construct a program from complicated iterators (whose types you don't know, or simply don't want to bother with), we provide four makers.
 
-- `CGAL::make_quadratic_program_from_iterators`
-- `CGAL::make_linear_program_from_iterators`
-- `CGAL::make_nonnegative_quadratic_program_from_iterators`
-- `CGAL::make_nonnegative_linear_program_from_iterators`.
+- `CGAL::make_quadratic_program_from_iterators()`
+- `CGAL::make_linear_program_from_iterators()`
+- `CGAL::make_nonnegative_quadratic_program_from_iterators()`
+- `CGAL::make_nonnegative_linear_program_from_iterators()`
 
 There are four functions to solve a program, one for each program concept.
 
-- `CGAL::solve_quadratic_program`
-- `CGAL::solve_linear_program`
-- `CGAL::solve_nonnegative_quadratic_program`
-- `CGAL::solve_nonnegative_linear_program`
+- `CGAL::solve_quadratic_program()`
+- `CGAL::solve_linear_program()`
+- `CGAL::solve_nonnegative_quadratic_program()`
+- `CGAL::solve_nonnegative_linear_program()`
 
 The solution process can customized by passing an object of the class
 
@@ -63,10 +63,10 @@ The solution process can customized by passing an object of the class
 
 Programs can be written to an output stream in MPSFormat, using one of the following four functions.
 
-- `CGAL::print_quadratic_program`
-- `CGAL::print_linear_program`
-- `CGAL::print_nonnegative_quadratic_program`
-- `CGAL::print_nonnegative_linear_program`
+- `CGAL::print_quadratic_program()`
+- `CGAL::print_linear_program()`
+- `CGAL::print_nonnegative_quadratic_program()`
+- `CGAL::print_nonnegative_linear_program()`
 
 */
 
@@ -128,17 +128,17 @@ In case you want to construct a program from complicated iterators
 (whose types you don't know, or simply don't want to bother with),
 we provide four makers.
 
-- `CGAL::make_quadratic_program_from_iterators`
-- `CGAL::make_linear_program_from_iterators`
-- `CGAL::make_nonnegative_quadratic_program_from_iterators`
-- `CGAL::make_nonnegative_linear_program_from_iterators`
+- `CGAL::make_quadratic_program_from_iterators()`
+- `CGAL::make_linear_program_from_iterators()`
+- `CGAL::make_nonnegative_quadratic_program_from_iterators()`
+- `CGAL::make_nonnegative_linear_program_from_iterators()`
 
 There are four functions to solve a program, one for each program concept:
 
-- `CGAL::solve_quadratic_program`
-- `CGAL::solve_linear_program`
-- `CGAL::solve_nonnegative_quadratic_program`
-- `CGAL::solve_nonnegative_linear_program`
+- `CGAL::solve_quadratic_program()`
+- `CGAL::solve_linear_program()`
+- `CGAL::solve_nonnegative_quadratic_program()`
+- `CGAL::solve_nonnegative_linear_program()`
 
 The solution process can customized by passing an object of the class
 
@@ -147,10 +147,10 @@ The solution process can customized by passing an object of the class
 Programs can be written to an output stream in MPSFormat,
 using one of the following four functions:
 
-- `CGAL::print_quadratic_program`
-- `CGAL::print_linear_program`
-- `CGAL::print_nonnegative_quadratic_program`
-- `CGAL::print_nonnegative_linear_program`
+- `CGAL::print_quadratic_program()`
+- `CGAL::print_linear_program()`
+- `CGAL::print_nonnegative_quadratic_program()`
+- `CGAL::print_nonnegative_linear_program()`
 
 
 */

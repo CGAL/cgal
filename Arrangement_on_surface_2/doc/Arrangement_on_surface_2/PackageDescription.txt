@@ -186,19 +186,19 @@ implemented as peripheral classes or as free (global) functions.
 
 ## Functions ##
 
-- `CGAL::is_valid`
-- `CGAL::insert`
-- `CGAL::insert_non_intersecting_curve`
-- `CGAL::insert_non_intersecting_curves`
-- `CGAL::insert_point`
-- `CGAL::remove_edge`
-- `CGAL::remove_vertex`
-- `CGAL::locate`
-- `CGAL::decompose`
-- `CGAL::overlay`
-- `CGAL::read`
-- `CGAL::write`
-- `CGAL::remove_curve`
+- `CGAL::is_valid()`
+- `CGAL::insert()`
+- `CGAL::insert_non_intersecting_curve()`
+- `CGAL::insert_non_intersecting_curves()`
+- `CGAL::insert_point()`
+- `CGAL::remove_edge()`
+- `CGAL::remove_vertex()`
+- `CGAL::locate()`
+- `CGAL::decompose()`
+- `CGAL::overlay()`
+- `CGAL::read()`
+- `CGAL::write()`
+- `CGAL::remove_curve()`
 - \link PkgArrangement2op_left_shift `CGAL::operator<<` \endlink
 - \link PkgArrangement2op_right_shift `CGAL::operator<<` \endlink
 

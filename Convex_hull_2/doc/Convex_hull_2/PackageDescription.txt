@@ -73,35 +73,35 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 
 ## Convex Hull Functions ##
 
-- `CGAL::ch_akl_toussaint`
-- `CGAL::ch_bykat`
-- `CGAL::ch_eddy`
-- `CGAL::ch_graham_andrew`
-- `CGAL::ch_jarvis`
-- `CGAL::ch_melkman`
-- `CGAL::convex_hull_2`
+- `CGAL::ch_akl_toussaint()`
+- `CGAL::ch_bykat()`
+- `CGAL::ch_eddy()`
+- `CGAL::ch_graham_andrew()`
+- `CGAL::ch_jarvis()`
+- `CGAL::ch_melkman()`
+- `CGAL::convex_hull_2()`
 
 ## Convexity Checking Functions ##
 
-- `CGAL::is_ccw_strongly_convex_2`
-- `CGAL::is_cw_strongly_convex_2`
+- `CGAL::is_ccw_strongly_convex_2()`
+- `CGAL::is_cw_strongly_convex_2()`
 
 ## Hull Subsequence Functions ##
 
-- `CGAL::ch_graham_andrew_scan`
-- `CGAL::ch_jarvis_march`
-- `CGAL::lower_hull_points_2`
-- `CGAL::upper_hull_points_2`
+- `CGAL::ch_graham_andrew_scan()`
+- `CGAL::ch_jarvis_march()`
+- `CGAL::lower_hull_points_2()`
+- `CGAL::upper_hull_points_2()`
 
 ## Extreme Point Functions ##
 
-- `CGAL::ch_e_point`
-- `CGAL::ch_nswe_point`
-- `CGAL::ch_n_point`
-- `CGAL::ch_ns_point`
-- `CGAL::ch_s_point`
-- `CGAL::ch_w_point`
-- `CGAL::ch_we_point`
+- `CGAL::ch_e_point()`
+- `CGAL::ch_nswe_point()`
+- `CGAL::ch_n_point()`
+- `CGAL::ch_ns_point()`
+- `CGAL::ch_s_point()`
+- `CGAL::ch_w_point()`
+- `CGAL::ch_we_point()`
 
 
 */
