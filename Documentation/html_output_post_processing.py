@@ -150,7 +150,7 @@ def main():
         description='''This script makes adjustments to the doxygen output. 
 It replaces some text in specifically marked classes with the appropriate text for a concept, 
 removes some unneeded files, and performs minor repair on some glitches.''')
-    parser.add_argument('--output', metavar='/path/to/doxygen/output', required=True)
+    parser.add_argument('--output', metavar='/path/to/doxygen/output', default="output")
     
     args = parser.parse_args()
     resources_absdir=path.join( path.dirname(path.abspath(argv[0]) ),"resources")
