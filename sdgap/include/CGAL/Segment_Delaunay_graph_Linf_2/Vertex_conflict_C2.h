@@ -397,11 +397,17 @@ namespace CGAL {
                             << std::endl ;);
               return ( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE;
             }
-            else {
+            else {// should return negative for o == ZERO and ost != osq
+              Line_2 l = compute_supporting_line(q);
+              Line_2 lperp = compute_perpendicular(l, p.point());
+              Oriented_side ost =
+              oriented_side_of_line(lperp, t.point());
+              Oriented_side osq =
+              oriented_side_of_line(lperp, pq);
               CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
-                             << POSITIVE
+                             << ((o == ZERO and (ost != osq)) ? NEGATIVE : POSITIVE)
                              << std::endl ;);
-              return POSITIVE;
+              return ((o == ZERO) and (ost != osq)) ? NEGATIVE : POSITIVE;
             }
           }
           else {
@@ -441,11 +447,17 @@ namespace CGAL {
                             << std::endl ;);
               return ( os == ON_POSITIVE_SIDE ) ? POSITIVE : NEGATIVE;
             }
-            else {
+            else {// should return negative for o == ZERO and ost != osp
+              Line_2 l = compute_supporting_line(p);
+              Line_2 lperp = compute_perpendicular(l, q.point());
+              Oriented_side ost =
+              oriented_side_of_line(lperp, t.point());
+              Oriented_side osp =
+              oriented_side_of_line(lperp, pp);
               CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
-                            << POSITIVE
-                            << std::endl ;);
-              return POSITIVE;
+                             << ((o == ZERO and (ost != osp)) ? NEGATIVE : POSITIVE)
+                             << std::endl ;);
+              return ((o == ZERO) and (ost != osp)) ? NEGATIVE : POSITIVE;
             }
           }
           else {
