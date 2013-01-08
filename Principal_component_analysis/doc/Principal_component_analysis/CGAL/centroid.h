@@ -20,8 +20,6 @@ computes the centroid of the tetrahedron edges (3D segments) and
 specifying a dimension 2 computes the centroid of the tetrahedron
 facets (3D triangles).
 
-\sa \ref barycenter
-
 */
 /// @{
 
@@ -53,6 +51,10 @@ The value type must be either `K::Point_3`, `K::Segment_3`,
 of balls the user must call the function with value type `K::Sphere_3`
 and with dimension tag of 3. The tag must range between
 `Dimension_tag<0>` and `Dimension_tag<3>`.
+
+\sa `CGAL::barycenter()`
+\sa \link centroid `CGAL::centroid()` \endlink
+
 */
 template < typename InputIterator, typename Tag >
 Deduced
@@ -82,6 +84,10 @@ The value type must be either `K::Point_3`, `K::Segment_3`,
 of balls the user must call the function with value type `K::Sphere_3`
 and with dimension tag of 3. The tag must range between
 `Dimension_tag<0>` and `Dimension_tag<3>`.
+
+\sa `CGAL::barycenter()`
+\sa \link centroid `CGAL::centroid()` \endlink
+
 */
 template < typename InputIterator, typename K, typename Tag >
 Deduced

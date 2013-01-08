@@ -14,11 +14,11 @@ weighted points. The user can also optionally pass an explicit kernel,
 in case the default, based on `Kernel_traits` is not sufficient. The
 dimension is also deduced automatically.
 
-\sa `CGAL::centroid` 
 */
 /// @{
 
 /*!
+
 computes the barycenter of a non-empty set of 2D or 3D weighted
 points.
 
@@ -34,6 +34,10 @@ CGAL::Kernel_traits<
 `std::pair<K::Point_2, K::FT>` or `std::pair<K::Point_3, K::FT>`.
 
 \pre first != beyond, and the sum of the weights is non-zero.
+
+\sa `CGAL::centroid()`
+\sa \link barycenter `CGAL::barycenter()` \endlink
+
 */
 template < typename InputIterator >
 Deduced
@@ -49,7 +53,11 @@ the input values.
 \cgalRequires The value type of `InputIterator` must be
 `std::pair<K::Point_2, K::FT>` or `std::pair<K::Point_3, K::FT>`.
 
-\pre first != beyond, and the sum of the weights is non-zero. 
+\pre first != beyond, and the sum of the weights is non-zero.
+
+\sa `CGAL::centroid()`
+\sa \link barycenter `CGAL::barycenter()` \endlink
+
 */
 template < typename InputIterator, typename K >
 Deduced
