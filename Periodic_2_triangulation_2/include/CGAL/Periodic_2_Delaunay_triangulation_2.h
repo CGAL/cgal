@@ -440,9 +440,33 @@ private:
 			      Offset&,Offset&,Offset&,
 			      int           ,int           ,int           ,
 			      int           ,int           ,int  );
-  /// NGHK: Not yet implemented
+  /// NGHK: implemented
   void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+                      std::vector<int> &i);
+
+  /// NGHK: implemented
+  void rotate7(int j, std::vector<Vertex_handle> &w,
+	       std::vector<Face_handle> &f, std::vector<Offset> &o, std::vector<int> &i);
+  /// NGHK: implemented
+  void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+  /// NGHK: implemented
+  void remove_degree7_zigzag    (Vertex_handle&,int,std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+  /// NGHK: implemented
+  void remove_degree7_leftdelta (Vertex_handle&,int,std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+  /// NGHK: implemented
+  void remove_degree7_rightdelta(Vertex_handle&,int,std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+  /// NGHK: implemented
+  void remove_degree7_leftfan   (Vertex_handle&,int,std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+  /// NGHK: implemented
+  void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+
   bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
 		std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i) {
     
@@ -454,27 +478,7 @@ private:
                                      o[j], o[k], o[l], o[x],
                                      true) ==  ON_POSITIVE_SIDE;
   }
-  /// NGHK: Not yet implemented
-  void rotate7(int j, std::vector<Vertex_handle> &w,
-	       std::vector<Face_handle> &f, std::vector<int> &i);
-  /// NGHK: Not yet implemented
-  void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  /// NGHK: Not yet implemented
-  void remove_degree7_zigzag    (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  /// NGHK: Not yet implemented
-  void remove_degree7_leftdelta (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  /// NGHK: Not yet implemented
-  void remove_degree7_rightdelta(Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  /// NGHK: Not yet implemented
-  void remove_degree7_leftfan   (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
-  /// NGHK: Not yet implemented
-  void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<int> &i);
+
 // end of auxilliary functions for remove
 
 
@@ -1210,8 +1214,8 @@ remove_degree_triangulate(Vertex_handle v,
   case 7:
     // TODO(NGHK): Implement optimized removal
     // ++deg[7];
-    remove_degree_d(v,f,w,offset_w,i,d);    break;
-    //remove_degree7(v,f,w,offset_w,i);    break;
+    //remove_degree_d(v,f,w,offset_w,i,d);    break;
+    remove_degree7(v,f,w,offset_w,i);    break;
   default:
     // ++deg[8];
     remove_degree_d(v,f,w,offset_w,i,d);    break;
@@ -1714,7 +1718,6 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
   this->insert_too_long_edge(f1, ccw(i1));
   this->insert_too_long_edge(f2, ccw(i2));
   this->insert_too_long_edge(f3, ccw(i3));
-  this->insert_too_long_edge(f4, ccw(i4));
 }
 
 template < class Gt, class Tds >
@@ -1949,400 +1952,399 @@ template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
-               std::vector<Vertex_handle> &w, std::vector<int> &i)
+               std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+               std::vector<int> &i)
 {
-    NGHK_NYI;
   // removing a degree 7 vertex
-  // only w[0] can be infinite
 
-  if (incircle(2,0,1,3,f,w,i)) { // sweeping from above
-    if (incircle(2,3,4,0,f,w,i)) {
-      if (incircle(5,3,4,6,f,w,i)) {
-	if (incircle(5,3,4,2,f,w,i)) {
-	  if (incircle(6,2,3,5,f,w,i)) {
-	    if (incircle(6,0,1,2,f,w,i)) {
-	      remove_degree7_leftfan(v,  6  ,f,w,i);
+  if (incircle(2,0,1,3,f,w,o,i)) { // sweeping from above
+    if (incircle(2,3,4,0,f,w,o,i)) {
+      if (incircle(5,3,4,6,f,w,o,i)) {
+	if (incircle(5,3,4,2,f,w,o,i)) {
+	  if (incircle(6,2,3,5,f,w,o,i)) {
+	    if (incircle(6,0,1,2,f,w,o,i)) {
+	      remove_degree7_leftfan(v,  6  ,f,w,o,i);
 	    }else{
-	      remove_degree7_zigzag(v,  6  ,f,w,i);
+	      remove_degree7_zigzag(v,  6  ,f,w,o,i);
 	    }}else{
-	    if (incircle(5,0,1,2,f,w,i)) {
-	      if (incircle(6,1,2,5,f,w,i)) {
-		remove_degree7_zigzag(v, 2   ,f,w,i);
+	    if (incircle(5,0,1,2,f,w,o,i)) {
+	      if (incircle(6,1,2,5,f,w,o,i)) {
+		remove_degree7_zigzag(v, 2   ,f,w,o,i);
 	      }else{
-		if (incircle(6,0,1,5,f,w,i)) {
-		  remove_degree7_rightfan(v, 5   ,f,w,i);
+		if (incircle(6,0,1,5,f,w,o,i)) {
+		  remove_degree7_rightfan(v, 5   ,f,w,o,i);
 		}else{
-		  remove_degree7_star(v,  5  ,f,w,i);
+		  remove_degree7_star(v,  5  ,f,w,o,i);
 		}}}else{
-	      if (incircle(2,5,6,0,f,w,i)) {
-		if (incircle(6,0,1,2,f,w,i)) {
-		  remove_degree7_zigzag(v,  2  ,f,w,i);
+	      if (incircle(2,5,6,0,f,w,o,i)) {
+		if (incircle(6,0,1,2,f,w,o,i)) {
+		  remove_degree7_zigzag(v,  2  ,f,w,o,i);
 		}else{
-		  remove_degree7_rightfan(v,  2  ,f,w,i);
+		  remove_degree7_rightfan(v,  2  ,f,w,o,i);
 		}}else{
-		remove_degree7_rightdelta(v,  5  ,f,w,i);
+		remove_degree7_rightdelta(v,  5  ,f,w,o,i);
 	      }}}}else{
-	  if (incircle(4,0,1,2,f,w,i)) {
-	    if (incircle(5,1,2,4,f,w,i)) {
-	      if (incircle(6,1,2,5,f,w,i)) {
-		remove_degree7_leftfan(v,  2  ,f,w,i);
+	  if (incircle(4,0,1,2,f,w,o,i)) {
+	    if (incircle(5,1,2,4,f,w,o,i)) {
+	      if (incircle(6,1,2,5,f,w,o,i)) {
+		remove_degree7_leftfan(v,  2  ,f,w,o,i);
 	      }else{
-		if (incircle(6,0,1,5,f,w,i)) {
-		  remove_degree7_zigzag(v,  5  ,f,w,i);
+		if (incircle(6,0,1,5,f,w,o,i)) {
+		  remove_degree7_zigzag(v,  5  ,f,w,o,i);
 		}else{
-		  remove_degree7_leftfan(v,  5  ,f,w,i);
+		  remove_degree7_leftfan(v,  5  ,f,w,o,i);
 		}}}else{
-	      if (incircle(5,0,1,4,f,w,i)) {
-		if (incircle(6,0,1,5,f,w,i)) {
-		  remove_degree7_rightfan(v,  1  ,f,w,i);
+	      if (incircle(5,0,1,4,f,w,o,i)) {
+		if (incircle(6,0,1,5,f,w,o,i)) {
+		  remove_degree7_rightfan(v,  1  ,f,w,o,i);
 		}else{
-		  remove_degree7_zigzag(v,  1  ,f,w,i);
+		  remove_degree7_zigzag(v,  1  ,f,w,o,i);
 		}}else{
-		remove_degree7_rightfan(v,  4  ,f,w,i);
+		remove_degree7_rightfan(v,  4  ,f,w,o,i);
 	      }}}else{
-	    if (incircle(2,4,5,0,f,w,i)) {
-	      if (incircle(5,0,1,2,f,w,i)) {
-		if (incircle(6,1,2,5,f,w,i)) {
-		  remove_degree7_leftfan(v,  2  ,f,w,i);
+	    if (incircle(2,4,5,0,f,w,o,i)) {
+	      if (incircle(5,0,1,2,f,w,o,i)) {
+		if (incircle(6,1,2,5,f,w,o,i)) {
+		  remove_degree7_leftfan(v,  2  ,f,w,o,i);
 		}else{
-		  if (incircle(6,0,1,5,f,w,i)) {
-		    remove_degree7_zigzag(v,  5  ,f,w,i);
+		  if (incircle(6,0,1,5,f,w,o,i)) {
+		    remove_degree7_zigzag(v,  5  ,f,w,o,i);
 		  }else{
-		    remove_degree7_leftfan(v,  5  ,f,w,i);
+		    remove_degree7_leftfan(v,  5  ,f,w,o,i);
 		  }}}else{
-		if (incircle(2,5,6,0,f,w,i)) {
-		  if (incircle(6,0,1,2,f,w,i)) {
-		    remove_degree7_leftfan(v,  2  ,f,w,i);
+		if (incircle(2,5,6,0,f,w,o,i)) {
+		  if (incircle(6,0,1,2,f,w,o,i)) {
+		    remove_degree7_leftfan(v,  2  ,f,w,o,i);
 		  }else{
-		    remove_degree7_star(v,  2  ,f,w,i);
+		    remove_degree7_star(v,  2  ,f,w,o,i);
 		  }}else{
-		  remove_degree7_leftdelta(v,  2  ,f,w,i);
+		  remove_degree7_leftdelta(v,  2  ,f,w,o,i);
 		}}}else{
-	      remove_degree7_rightdelta(v,  0  ,f,w,i);
+	      remove_degree7_rightdelta(v,  0  ,f,w,o,i);
 	    }}}}else{
-	if (incircle(6,3,4,2,f,w,i)) {
-	  if (incircle(6,0,1,2,f,w,i)) {
-	    remove_degree7_star(v,  6  ,f,w,i);
+	if (incircle(6,3,4,2,f,w,o,i)) {
+	  if (incircle(6,0,1,2,f,w,o,i)) {
+	    remove_degree7_star(v,  6  ,f,w,o,i);
 	  }else{
-	    remove_degree7_rightfan(v,  6  ,f,w,i);
+	    remove_degree7_rightfan(v,  6  ,f,w,o,i);
 	  }}else{
-	  if (incircle(4,0,1,2,f,w,i)) {
-	    if (incircle(2,4,5,6,f,w,i)) {
-	      if (incircle(5,1,2,4,f,w,i)) {
-		if (incircle(6,1,2,5,f,w,i)) {
-		  remove_degree7_leftfan(v,  2  ,f,w,i);
+	  if (incircle(4,0,1,2,f,w,o,i)) {
+	    if (incircle(2,4,5,6,f,w,o,i)) {
+	      if (incircle(5,1,2,4,f,w,o,i)) {
+		if (incircle(6,1,2,5,f,w,o,i)) {
+		  remove_degree7_leftfan(v,  2  ,f,w,o,i);
 		}else{
-		  if (incircle(6,0,1,5,f,w,i)) {
-		    remove_degree7_zigzag(v,  5  ,f,w,i);
+		  if (incircle(6,0,1,5,f,w,o,i)) {
+		    remove_degree7_zigzag(v,  5  ,f,w,o,i);
 		  }else{
-		    remove_degree7_leftfan(v,  5  ,f,w,i);
+		    remove_degree7_leftfan(v,  5  ,f,w,o,i);
 		  }}}else{
-		if (incircle(5,0,1,4,f,w,i)) {
-		  if (incircle(6,0,1,5,f,w,i)) {
-		    remove_degree7_rightfan(v,  1  ,f,w,i);
+		if (incircle(5,0,1,4,f,w,o,i)) {
+		  if (incircle(6,0,1,5,f,w,o,i)) {
+		    remove_degree7_rightfan(v,  1  ,f,w,o,i);
 		  }else{
-		    remove_degree7_zigzag(v,  1  ,f,w,i);
+		    remove_degree7_zigzag(v,  1  ,f,w,o,i);
 		  }} else{
-		  remove_degree7_rightfan(v,  4  ,f,w,i);
+		  remove_degree7_rightfan(v,  4  ,f,w,o,i);
 		}}} else {
-	      if (incircle(6,1,2,4,f,w,i)) {
-		remove_degree7_leftdelta(v,  6  ,f,w,i);
+	      if (incircle(6,1,2,4,f,w,o,i)) {
+		remove_degree7_leftdelta(v,  6  ,f,w,o,i);
 	      }else{
-		if (incircle(1,4,5,6,f,w,i)) {
-		  if (incircle(1,4,5,0,f,w,i)) {
-		    if (incircle(6,0,1,5,f,w,i)) {
-		      remove_degree7_rightfan(v,  1  ,f,w,i);
+		if (incircle(1,4,5,6,f,w,o,i)) {
+		  if (incircle(1,4,5,0,f,w,o,i)) {
+		    if (incircle(6,0,1,5,f,w,o,i)) {
+		      remove_degree7_rightfan(v,  1  ,f,w,o,i);
 		    }else{
-		      remove_degree7_zigzag(v,  1  ,f,w,i);
+		      remove_degree7_zigzag(v,  1  ,f,w,o,i);
 		    }}else{
-		    remove_degree7_rightfan(v,  4  ,f,w,i);
+		    remove_degree7_rightfan(v,  4  ,f,w,o,i);
 		  }} else {
-		  if (incircle(6,0,1,4,f,w,i)) {
-		    remove_degree7_rightdelta(v,  4  ,f,w,i);
+		  if (incircle(6,0,1,4,f,w,o,i)) {
+		    remove_degree7_rightdelta(v,  4  ,f,w,o,i);
 		  }else{
-		    if (incircle(6,4,5,0,f,w,i)) {
-		      remove_degree7_star(v,  4  ,f,w,i);
+		    if (incircle(6,4,5,0,f,w,o,i)) {
+		      remove_degree7_star(v,  4  ,f,w,o,i);
 		    }else{
-		      remove_degree7_rightfan(v,  4  ,f,w,i);
+		      remove_degree7_rightfan(v,  4  ,f,w,o,i);
 		    }}}}}}else{
-	    if (incircle(2,4,5,6,f,w,i)) {
-	      if (incircle(2,4,5,0,f,w,i)) {
-		if (incircle(5,0,1,2,f,w,i)) {
-		  if (incircle(6,1,2,5,f,w,i)) {
-		    remove_degree7_leftfan(v,  2  ,f,w,i);
+	    if (incircle(2,4,5,6,f,w,o,i)) {
+	      if (incircle(2,4,5,0,f,w,o,i)) {
+		if (incircle(5,0,1,2,f,w,o,i)) {
+		  if (incircle(6,1,2,5,f,w,o,i)) {
+		    remove_degree7_leftfan(v,  2  ,f,w,o,i);
 		  }else{
-		    if (incircle(6,0,1,5,f,w,i)) {
-		      remove_degree7_zigzag(v,  5  ,f,w,i);
+		    if (incircle(6,0,1,5,f,w,o,i)) {
+		      remove_degree7_zigzag(v,  5  ,f,w,o,i);
 		    }else{
-		      remove_degree7_leftfan(v,  5  ,f,w,i);
+		      remove_degree7_leftfan(v,  5  ,f,w,o,i);
 		    }}}else{
-		  if (incircle(2,5,6,0,f,w,i)) {
-		    if (incircle(6,0,1,2,f,w,i)) {
-		      remove_degree7_leftfan(v,  2  ,f,w,i);
+		  if (incircle(2,5,6,0,f,w,o,i)) {
+		    if (incircle(6,0,1,2,f,w,o,i)) {
+		      remove_degree7_leftfan(v,  2  ,f,w,o,i);
 		    }else{
-		      remove_degree7_star(v,  2  ,f,w,i);
+		      remove_degree7_star(v,  2  ,f,w,o,i);
 		    }}else{
-		    remove_degree7_leftdelta(v,  2  ,f,w,i);
+		    remove_degree7_leftdelta(v,  2  ,f,w,o,i);
 		  }}}else{
-		remove_degree7_rightdelta(v,  0  ,f,w,i);
+		remove_degree7_rightdelta(v,  0  ,f,w,o,i);
 	      }}else{
-	      if (incircle(2,6,0,4,f,w,i)) {
-		if (incircle(6,0,1,2,f,w,i)) {
-		  remove_degree7_leftdelta(v,  6  ,f,w,i);
+	      if (incircle(2,6,0,4,f,w,o,i)) {
+		if (incircle(6,0,1,2,f,w,o,i)) {
+		  remove_degree7_leftdelta(v,  6  ,f,w,o,i);
 		}else{
-		  remove_degree7_rightdelta(v,  2  ,f,w,i);
+		  remove_degree7_rightdelta(v,  2  ,f,w,o,i);
 		}}else{
-		if (incircle(6,4,5,0,f,w,i)) {
-		  remove_degree7_leftdelta(v,  4  ,f,w,i);
+		if (incircle(6,4,5,0,f,w,o,i)) {
+		  remove_degree7_leftdelta(v,  4  ,f,w,o,i);
 		}else{
-		  remove_degree7_rightdelta(v,  0  ,f,w,i);
+		  remove_degree7_rightdelta(v,  0  ,f,w,o,i);
 		}}}}}}} else{
-      if (incircle(5,3,4,6,f,w,i)) {
-	if (incircle(5,3,4,0,f,w,i)) {
-	  if (incircle(5,2,3,0,f,w,i)) {
-	    if (incircle(6,2,3,5,f,w,i)) {
-	      if (incircle(6,0,1,2,f,w,i)) {
-		remove_degree7_leftfan(v,  6  ,f,w,i);
+      if (incircle(5,3,4,6,f,w,o,i)) {
+	if (incircle(5,3,4,0,f,w,o,i)) {
+	  if (incircle(5,2,3,0,f,w,o,i)) {
+	    if (incircle(6,2,3,5,f,w,o,i)) {
+	      if (incircle(6,0,1,2,f,w,o,i)) {
+		remove_degree7_leftfan(v,  6  ,f,w,o,i);
 	      }else{
-		remove_degree7_zigzag(v,  6  ,f,w,i);
+		remove_degree7_zigzag(v,  6  ,f,w,o,i);
 	      }}else
-	      if (incircle(5,0,1,2,f,w,i)) {
-	  	if (incircle(6,1,2,5,f,w,i)) {
-		  remove_degree7_zigzag(v,  2  ,f,w,i);
+	      if (incircle(5,0,1,2,f,w,o,i)) {
+	  	if (incircle(6,1,2,5,f,w,o,i)) {
+		  remove_degree7_zigzag(v,  2  ,f,w,o,i);
 		}else{
-		  if (incircle(6,0,1,5,f,w,i)) {
-		    remove_degree7_rightfan(v,  5  ,f,w,i);
+		  if (incircle(6,0,1,5,f,w,o,i)) {
+		    remove_degree7_rightfan(v,  5  ,f,w,o,i);
 		  }else{
-		    remove_degree7_star(v,  5  ,f,w,i);
+		    remove_degree7_star(v,  5  ,f,w,o,i);
 		  }}}else{
-		if (incircle(2,5,6,0,f,w,i)) {
-		  if (incircle(6,0,1,2,f,w,i)) {
-		    remove_degree7_zigzag(v,  2  ,f,w,i);
+		if (incircle(2,5,6,0,f,w,o,i)) {
+		  if (incircle(6,0,1,2,f,w,o,i)) {
+		    remove_degree7_zigzag(v,  2  ,f,w,o,i);
 		  }else{
-		    remove_degree7_rightfan(v,  2  ,f,w,i);
+		    remove_degree7_rightfan(v,  2  ,f,w,o,i);
 		  }}else{
-		  remove_degree7_rightdelta(v,  5  ,f,w,i);
+		  remove_degree7_rightdelta(v,  5  ,f,w,o,i);
 		}}}else{
-	    if (incircle(3,5,6,0,f,w,i)) {
-	      if (incircle(6,2,3,0,f,w,i)) {
-		if (incircle(6,0,1,2,f,w,i)) {
-		  remove_degree7_leftfan(v,  6  ,f,w,i);
+	    if (incircle(3,5,6,0,f,w,o,i)) {
+	      if (incircle(6,2,3,0,f,w,o,i)) {
+		if (incircle(6,0,1,2,f,w,o,i)) {
+		  remove_degree7_leftfan(v,  6  ,f,w,o,i);
 		}else{
-		  remove_degree7_zigzag(v,  6  ,f,w,i);
+		  remove_degree7_zigzag(v,  6  ,f,w,o,i);
 		}}else{
-		remove_degree7_leftfan(v,  3  ,f,w,i);
+		remove_degree7_leftfan(v,  3  ,f,w,o,i);
 	      }}else{
-	      remove_degree7_leftdelta(v,  0  ,f,w,i);
+	      remove_degree7_leftdelta(v,  0  ,f,w,o,i);
 	    }}}else{
-	  remove_degree7_star(v,  0  ,f,w,i);
+	  remove_degree7_star(v,  0  ,f,w,o,i);
 	}}else{
-	if (incircle(6,3,4,0,f,w,i)) {
-	  if (incircle(6,2,3,0,f,w,i)) {
-	    if (incircle(6,0,1,2,f,w,i)) {
-	      remove_degree7_star(v,  6  ,f,w,i);
+	if (incircle(6,3,4,0,f,w,o,i)) {
+	  if (incircle(6,2,3,0,f,w,o,i)) {
+	    if (incircle(6,0,1,2,f,w,o,i)) {
+	      remove_degree7_star(v,  6  ,f,w,o,i);
 	    }else{
-	      remove_degree7_rightfan(v,  6  ,f,w,i);
+	      remove_degree7_rightfan(v,  6  ,f,w,o,i);
 	    }}else{
-	    remove_degree7_zigzag(v,  3  ,f,w,i);
+	    remove_degree7_zigzag(v,  3  ,f,w,o,i);
 	  }}else{
-	  if (incircle(6,4,5,0,f,w,i)) {
-	    remove_degree7_leftfan(v,  0  ,f,w,i);
+	  if (incircle(6,4,5,0,f,w,o,i)) {
+	    remove_degree7_leftfan(v,  0  ,f,w,o,i);
 	  }else{
-	    remove_degree7_star(v,  0  ,f,w,i);
+	    remove_degree7_star(v,  0  ,f,w,o,i);
 	  }}}}}else{  //sweeping from below
-    if (incircle(1,6,0,3,f,w,i)) {
-      if (incircle(5,6,0,4,f,w,i)) {
-	if (incircle(5,6,0,1,f,w,i)) {
-	  if (incircle(4,0,1,5,f,w,i)) {
-	    if (incircle(4,2,3,1,f,w,i)) {
-	      remove_degree7_rightfan(v,  4  ,f,w,i);
+    if (incircle(1,6,0,3,f,w,o,i)) {
+      if (incircle(5,6,0,4,f,w,o,i)) {
+	if (incircle(5,6,0,1,f,w,o,i)) {
+	  if (incircle(4,0,1,5,f,w,o,i)) {
+	    if (incircle(4,2,3,1,f,w,o,i)) {
+	      remove_degree7_rightfan(v,  4  ,f,w,o,i);
 	    }else{
-	      remove_degree7_zigzag(v,  4  ,f,w,i);
+	      remove_degree7_zigzag(v,  4  ,f,w,o,i);
 	    }}else{
-	    if (incircle(5,2,3,1,f,w,i)) {
-	      if (incircle(4,1,2,5,f,w,i)) {
-		remove_degree7_zigzag(v, 1   ,f,w,i);
+	    if (incircle(5,2,3,1,f,w,o,i)) {
+	      if (incircle(4,1,2,5,f,w,o,i)) {
+		remove_degree7_zigzag(v, 1   ,f,w,o,i);
 	      }else{
-		if (incircle(4,2,3,5,f,w,i)) {
-		  remove_degree7_leftfan(v, 5   ,f,w,i);
+		if (incircle(4,2,3,5,f,w,o,i)) {
+		  remove_degree7_leftfan(v, 5   ,f,w,o,i);
 		}else{
-		  remove_degree7_star(v,  5  ,f,w,i);
+		  remove_degree7_star(v,  5  ,f,w,o,i);
 		}}}else{
-	      if (incircle(1,4,5,3,f,w,i)) {
-		if (incircle(4,2,3,1,f,w,i)) {
-		  remove_degree7_zigzag(v,  1  ,f,w,i);
+	      if (incircle(1,4,5,3,f,w,o,i)) {
+		if (incircle(4,2,3,1,f,w,o,i)) {
+		  remove_degree7_zigzag(v,  1  ,f,w,o,i);
 		}else{
-		  remove_degree7_leftfan(v,  1  ,f,w,i);
+		  remove_degree7_leftfan(v,  1  ,f,w,o,i);
 		}}else{
-		remove_degree7_leftdelta(v,  5  ,f,w,i);
+		remove_degree7_leftdelta(v,  5  ,f,w,o,i);
 	      }}}}else{
-	  if (incircle(6,2,3,1,f,w,i)) {
-	    if (incircle(5,1,2,6,f,w,i)) {
-	      if (incircle(4,1,2,5,f,w,i)) {
-		remove_degree7_rightfan(v,  1  ,f,w,i);
+	  if (incircle(6,2,3,1,f,w,o,i)) {
+	    if (incircle(5,1,2,6,f,w,o,i)) {
+	      if (incircle(4,1,2,5,f,w,o,i)) {
+		remove_degree7_rightfan(v,  1  ,f,w,o,i);
 	      }else{
-		if (incircle(4,2,3,5,f,w,i)) {
-		  remove_degree7_zigzag(v,  5  ,f,w,i);
+		if (incircle(4,2,3,5,f,w,o,i)) {
+		  remove_degree7_zigzag(v,  5  ,f,w,o,i);
 		}else{
-		  remove_degree7_rightfan(v,  5  ,f,w,i);
+		  remove_degree7_rightfan(v,  5  ,f,w,o,i);
 		}}}else{
-	      if (incircle(5,2,3,6,f,w,i)) {
-		if (incircle(4,2,3,5,f,w,i)) {
-		  remove_degree7_leftfan(v,  2  ,f,w,i);
+	      if (incircle(5,2,3,6,f,w,o,i)) {
+		if (incircle(4,2,3,5,f,w,o,i)) {
+		  remove_degree7_leftfan(v,  2  ,f,w,o,i);
 		}else{
-		  remove_degree7_zigzag(v,  2  ,f,w,i);
+		  remove_degree7_zigzag(v,  2  ,f,w,o,i);
 		}}else{
-		remove_degree7_leftfan(v,  6  ,f,w,i);
+		remove_degree7_leftfan(v,  6  ,f,w,o,i);
 	      }}}else{
-	    if (incircle(1,5,6,3,f,w,i)) {
-	      if (incircle(5,2,3,1,f,w,i)) {
-		if (incircle(4,1,2,5,f,w,i)) {
-		  remove_degree7_rightfan(v,  1  ,f,w,i);
+	    if (incircle(1,5,6,3,f,w,o,i)) {
+	      if (incircle(5,2,3,1,f,w,o,i)) {
+		if (incircle(4,1,2,5,f,w,o,i)) {
+		  remove_degree7_rightfan(v,  1  ,f,w,o,i);
 		}else{
-		  if (incircle(4,2,3,5,f,w,i)) {
-		    remove_degree7_zigzag(v,  5  ,f,w,i);
+		  if (incircle(4,2,3,5,f,w,o,i)) {
+		    remove_degree7_zigzag(v,  5  ,f,w,o,i);
 		  }else{
-		    remove_degree7_rightfan(v,  5  ,f,w,i);
+		    remove_degree7_rightfan(v,  5  ,f,w,o,i);
 		  }}}else{
-		if (incircle(1,4,5,3,f,w,i)) {
-		  if (incircle(4,2,3,1,f,w,i)) {
-		    remove_degree7_rightfan(v,  1  ,f,w,i);
+		if (incircle(1,4,5,3,f,w,o,i)) {
+		  if (incircle(4,2,3,1,f,w,o,i)) {
+		    remove_degree7_rightfan(v,  1  ,f,w,o,i);
 		  }else{
-		    remove_degree7_star(v,  1  ,f,w,i);
+		    remove_degree7_star(v,  1  ,f,w,o,i);
 		  }}else{
-		  remove_degree7_rightdelta(v,  1  ,f,w,i);
+		  remove_degree7_rightdelta(v,  1  ,f,w,o,i);
 		}}}else{
-	      remove_degree7_leftdelta(v,  3  ,f,w,i);
+	      remove_degree7_leftdelta(v,  3  ,f,w,o,i);
 	    }}}}else{
-	if (incircle(4,6,0,1,f,w,i)) {
-	  if (incircle(4,2,3,1,f,w,i)) {
-	    remove_degree7_star(v,  4  ,f,w,i);
+	if (incircle(4,6,0,1,f,w,o,i)) {
+	  if (incircle(4,2,3,1,f,w,o,i)) {
+	    remove_degree7_star(v,  4  ,f,w,o,i);
 	  }else{
-	    remove_degree7_leftfan(v,  4  ,f,w,i);
+	    remove_degree7_leftfan(v,  4  ,f,w,o,i);
 	  }}else{
-	  if (incircle(6,2,3,1,f,w,i)) {
-	    if (incircle(1,5,6,4,f,w,i)) {
-	      if (incircle(5,1,2,6,f,w,i)) {
-		if (incircle(4,1,2,5,f,w,i)) {
-		  remove_degree7_rightfan(v,  1  ,f,w,i);
+	  if (incircle(6,2,3,1,f,w,o,i)) {
+	    if (incircle(1,5,6,4,f,w,o,i)) {
+	      if (incircle(5,1,2,6,f,w,o,i)) {
+		if (incircle(4,1,2,5,f,w,o,i)) {
+		  remove_degree7_rightfan(v,  1  ,f,w,o,i);
 		}else{
-		  if (incircle(4,2,3,5,f,w,i)) {
-		    remove_degree7_zigzag(v,  5  ,f,w,i);
+		  if (incircle(4,2,3,5,f,w,o,i)) {
+		    remove_degree7_zigzag(v,  5  ,f,w,o,i);
 		  }else{
-		    remove_degree7_rightfan(v,  5  ,f,w,i);
+		    remove_degree7_rightfan(v,  5  ,f,w,o,i);
 		  }}}else{
-		if (incircle(5,2,3,6,f,w,i)) {
-		  if (incircle(4,2,3,5,f,w,i)) {
-		    remove_degree7_leftfan(v,  2  ,f,w,i);
+		if (incircle(5,2,3,6,f,w,o,i)) {
+		  if (incircle(4,2,3,5,f,w,o,i)) {
+		    remove_degree7_leftfan(v,  2  ,f,w,o,i);
 		  }else{
-		    remove_degree7_zigzag(v,  2  ,f,w,i);
+		    remove_degree7_zigzag(v,  2  ,f,w,o,i);
 		  }} else{
-		  remove_degree7_leftfan(v,  6  ,f,w,i);
+		  remove_degree7_leftfan(v,  6  ,f,w,o,i);
 		}}} else {
-	      if (incircle(4,1,2,6,f,w,i)) {
-		remove_degree7_rightdelta(v,  4  ,f,w,i);
+	      if (incircle(4,1,2,6,f,w,o,i)) {
+		remove_degree7_rightdelta(v,  4  ,f,w,o,i);
 	      }else{
-		if (incircle(2,5,6,4,f,w,i)) {
-		  if (incircle(2,5,6,3,f,w,i)) {
-		    if (incircle(4,2,3,5,f,w,i)) {
-		      remove_degree7_leftfan(v,  2  ,f,w,i);
+		if (incircle(2,5,6,4,f,w,o,i)) {
+		  if (incircle(2,5,6,3,f,w,o,i)) {
+		    if (incircle(4,2,3,5,f,w,o,i)) {
+		      remove_degree7_leftfan(v,  2  ,f,w,o,i);
 		    }else{
-		      remove_degree7_zigzag(v,  2  ,f,w,i);
+		      remove_degree7_zigzag(v,  2  ,f,w,o,i);
 		    }}else{
-		    remove_degree7_leftfan(v,  6  ,f,w,i);
+		    remove_degree7_leftfan(v,  6  ,f,w,o,i);
 		  }} else {
-		  if (incircle(4,2,3,6,f,w,i)) {
-		    remove_degree7_leftdelta(v,  6  ,f,w,i);
+		  if (incircle(4,2,3,6,f,w,o,i)) {
+		    remove_degree7_leftdelta(v,  6  ,f,w,o,i);
 		  }else{
-		    if (incircle(4,5,6,3,f,w,i)) {
-		      remove_degree7_star(v,  6  ,f,w,i);
+		    if (incircle(4,5,6,3,f,w,o,i)) {
+		      remove_degree7_star(v,  6  ,f,w,o,i);
 		    }else{
-		      remove_degree7_leftfan(v,  6  ,f,w,i);
+		      remove_degree7_leftfan(v,  6  ,f,w,o,i);
 		    }}}}}}else{
-	    if (incircle(1,5,6,4,f,w,i)) {
-	      if (incircle(1,5,6,3,f,w,i)) {
-		if (incircle(5,2,3,1,f,w,i)) {
-		  if (incircle(4,1,2,5,f,w,i)) {
-		    remove_degree7_rightfan(v,  1  ,f,w,i);
+	    if (incircle(1,5,6,4,f,w,o,i)) {
+	      if (incircle(1,5,6,3,f,w,o,i)) {
+		if (incircle(5,2,3,1,f,w,o,i)) {
+		  if (incircle(4,1,2,5,f,w,o,i)) {
+		    remove_degree7_rightfan(v,  1  ,f,w,o,i);
 		  }else{
-		    if (incircle(4,2,3,5,f,w,i)) {
-		      remove_degree7_zigzag(v,  5  ,f,w,i);
+		    if (incircle(4,2,3,5,f,w,o,i)) {
+		      remove_degree7_zigzag(v,  5  ,f,w,o,i);
 		    }else{
-		      remove_degree7_rightfan(v,  5  ,f,w,i);
+		      remove_degree7_rightfan(v,  5  ,f,w,o,i);
 		    }}}else{
-		  if (incircle(1,4,5,3,f,w,i)) {
-		    if (incircle(4,2,3,1,f,w,i)) {
-		      remove_degree7_rightfan(v,  1  ,f,w,i);
+		  if (incircle(1,4,5,3,f,w,o,i)) {
+		    if (incircle(4,2,3,1,f,w,o,i)) {
+		      remove_degree7_rightfan(v,  1  ,f,w,o,i);
 		    }else{
-		      remove_degree7_star(v,  1  ,f,w,i);
+		      remove_degree7_star(v,  1  ,f,w,o,i);
 		    }}else{
-		    remove_degree7_rightdelta(v,  1  ,f,w,i);
+		    remove_degree7_rightdelta(v,  1  ,f,w,o,i);
 		  }}}else{
-		remove_degree7_leftdelta(v,  3  ,f,w,i);
+		remove_degree7_leftdelta(v,  3  ,f,w,o,i);
 	      }}else{
-	      if (incircle(1,3,4,6,f,w,i)) {
-		if (incircle(4,2,3,1,f,w,i)) {
-		  remove_degree7_rightdelta(v,  4  ,f,w,i);
+	      if (incircle(1,3,4,6,f,w,o,i)) {
+		if (incircle(4,2,3,1,f,w,o,i)) {
+		  remove_degree7_rightdelta(v,  4  ,f,w,o,i);
 		}else{
-		  remove_degree7_leftdelta(v,  1  ,f,w,i);
+		  remove_degree7_leftdelta(v,  1  ,f,w,o,i);
 		}}else{
-		if (incircle(4,5,6,3,f,w,i)) {
-		  remove_degree7_rightdelta(v,  6  ,f,w,i);
+		if (incircle(4,5,6,3,f,w,o,i)) {
+		  remove_degree7_rightdelta(v,  6  ,f,w,o,i);
 		}else{
-		  remove_degree7_leftdelta(v,  3  ,f,w,i);
+		  remove_degree7_leftdelta(v,  3  ,f,w,o,i);
 		}}}}}}} else{
-      if (incircle(5,6,0,4,f,w,i)) {
-	if (incircle(5,6,0,3,f,w,i)) {
-	  if (incircle(5,0,1,3,f,w,i)) {
-	    if (incircle(4,0,1,5,f,w,i)) {
-	      if (incircle(4,2,3,1,f,w,i)) {
-		remove_degree7_rightfan(v,  4  ,f,w,i);
+      if (incircle(5,6,0,4,f,w,o,i)) {
+	if (incircle(5,6,0,3,f,w,o,i)) {
+	  if (incircle(5,0,1,3,f,w,o,i)) {
+	    if (incircle(4,0,1,5,f,w,o,i)) {
+	      if (incircle(4,2,3,1,f,w,o,i)) {
+		remove_degree7_rightfan(v,  4  ,f,w,o,i);
 	      }else{
-		remove_degree7_zigzag(v,  4  ,f,w,i);
+		remove_degree7_zigzag(v,  4  ,f,w,o,i);
 	      }}else
-	      if (incircle(5,2,3,1,f,w,i)) {
-	  	if (incircle(4,1,2,5,f,w,i)) {
-		  remove_degree7_zigzag(v,  1  ,f,w,i);
+	      if (incircle(5,2,3,1,f,w,o,i)) {
+	  	if (incircle(4,1,2,5,f,w,o,i)) {
+		  remove_degree7_zigzag(v,  1  ,f,w,o,i);
 		}else{
-		  if (incircle(4,2,3,5,f,w,i)) {
-		    remove_degree7_leftfan(v,  5  ,f,w,i);
+		  if (incircle(4,2,3,5,f,w,o,i)) {
+		    remove_degree7_leftfan(v,  5  ,f,w,o,i);
 		  }else{
-		    remove_degree7_star(v,  5  ,f,w,i);
+		    remove_degree7_star(v,  5  ,f,w,o,i);
 		  }}}else{
-		if (incircle(1,4,5,3,f,w,i)) {
-		  if (incircle(4,2,3,1,f,w,i)) {
-		    remove_degree7_zigzag(v,  1  ,f,w,i);
+		if (incircle(1,4,5,3,f,w,o,i)) {
+		  if (incircle(4,2,3,1,f,w,o,i)) {
+		    remove_degree7_zigzag(v,  1  ,f,w,o,i);
 		  }else{
-		    remove_degree7_leftfan(v,  1  ,f,w,i);
+		    remove_degree7_leftfan(v,  1  ,f,w,o,i);
 		  }}else{
-		  remove_degree7_leftdelta(v,  5  ,f,w,i);
+		  remove_degree7_leftdelta(v,  5  ,f,w,o,i);
 		}}}else{
-	    if (! incircle(3,4,5,0,f,w,i)) {
-	      if (incircle(4,0,1,3,f,w,i)) {
-		if (incircle(4,2,3,1,f,w,i)) {
-		  remove_degree7_rightfan(v,  4  ,f,w,i);
+	    if (! incircle(3,4,5,0,f,w,o,i)) {
+	      if (incircle(4,0,1,3,f,w,o,i)) {
+		if (incircle(4,2,3,1,f,w,o,i)) {
+		  remove_degree7_rightfan(v,  4  ,f,w,o,i);
 		}else{
-		  remove_degree7_zigzag(v,  4  ,f,w,i);
+		  remove_degree7_zigzag(v,  4  ,f,w,o,i);
 		}}else{
-		remove_degree7_rightfan(v,  0  ,f,w,i);
+		remove_degree7_rightfan(v,  0  ,f,w,o,i);
 	      }}else{
-	      remove_degree7_rightdelta(v,  3  ,f,w,i);
+	      remove_degree7_rightdelta(v,  3  ,f,w,o,i);
 	    }}}else{
-	  remove_degree7_star(v,  3  ,f,w,i);
+	  remove_degree7_star(v,  3  ,f,w,o,i);
 	}}else{
-	if (incircle(4,6,0,3,f,w,i)) {
-	  if (incircle(4,0,1,3,f,w,i)) {
-	    if (incircle(4,2,3,1,f,w,i)) {
-	      remove_degree7_star(v,  4  ,f,w,i);
+	if (incircle(4,6,0,3,f,w,o,i)) {
+	  if (incircle(4,0,1,3,f,w,o,i)) {
+	    if (incircle(4,2,3,1,f,w,o,i)) {
+	      remove_degree7_star(v,  4  ,f,w,o,i);
 	    }else{
-	      remove_degree7_leftfan(v,  4  ,f,w,i);
+	      remove_degree7_leftfan(v,  4  ,f,w,o,i);
 	    }}else{
-	    remove_degree7_zigzag(v,  0  ,f,w,i);
+	    remove_degree7_zigzag(v,  0  ,f,w,o,i);
 	  }}else{
-	  if (incircle(4,5,6,3,f,w,i)) {
-	    remove_degree7_rightfan(v,  3  ,f,w,i);
+	  if (incircle(4,5,6,3,f,w,o,i)) {
+	    remove_degree7_rightfan(v,  3  ,f,w,o,i);
 	  }else{
-	    remove_degree7_star(v,  3  ,f,w,i);
+	    remove_degree7_star(v,  3  ,f,w,o,i);
 	  }}}}}
 }
 
@@ -2352,30 +2354,28 @@ template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 rotate7(int j,  std::vector<Vertex_handle> &w,
-	       std::vector<Face_handle> &f, std::vector<int> &i)
+        std::vector<Face_handle> &f, std::vector<Offset> &o, std::vector<int> &i)
 {
-    NGHK_NYI;
   if (j==0) return;
   Face_handle ff=f[0];
   int ii=i[0],k=0,kk=(6*j)%7;
   Vertex_handle ww=w[0];
+  Offset oo=o[0];
   for (int jj=0; k!=kk; jj=k) { // 7 is prime
     k=(jj+j)%7;
-    w[jj]=w[k]; f[jj]=f[k]; i[jj]=i[k];
+    w[jj]=w[k]; f[jj]=f[k]; o[jj] = o[k]; i[jj]=i[k];
   }
-  w[kk]=ww;f[kk]=ff;i[kk]=ii;
+  w[kk]=ww;f[kk]=ff;o[kk]=oo;i[kk]=ii;
 }
 
 template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_star   (Vertex_handle &, int j,
-std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
+std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
 { // removing a degree 7 vertex, staring from w[j]
-    NGHK_NYI;
-
-  rotate7(j,w,f,i);
-
+  rotate7(j,w,f,o,i);
+  
   Face_handle nn;
   f[1]->set_vertex( i[1], w[0]) ;  // f1 = w1w2w0
   f[2]->set_vertex( i[2], w[0]) ;  // f2 = w2w3w0
@@ -2389,16 +2389,46 @@ std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
   tds().set_adjacency(f[5], ccw(i[5]) , nn , nn->index(f[6]) );
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
+  
+  bool add[2];
+  add[0] = add[1] = false;
+  for (int cnt=0; cnt<7; ++cnt) {
+    add[0] |= o[cnt].x() < 0;
+    add[1] |= o[cnt].y() < 0;
+  }
+  if (add[0] || add[1]) {
+    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
+    for (int i=0; i<7; ++i) o[i] += oo;
+  }
+
+  int oo[7];
+  for (int cnt=0; cnt<7; ++cnt)
+    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
+
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+
+  this->insert_too_long_edge(f[1], ccw(i[1]));
+  this->insert_too_long_edge(f[2], ccw(i[2]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4], ccw(i[4]));
 }
 template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_zigzag (Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
 { // removing a degree 7 vertex, zigzag, w[j] = middle point
-    NGHK_NYI;
-
- rotate7(j,w,f,i);
+  rotate7(j,w,f,o,i);
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[3]) ;  // f1 = w1w2w3
@@ -2422,15 +2452,46 @@ remove_degree7_zigzag (Vertex_handle &, int j,
 
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
+
+  bool add[2];
+  add[0] = add[1] = false;
+  for (int cnt=0; cnt<7; ++cnt) {
+    add[0] |= o[cnt].x() < 0;
+    add[1] |= o[cnt].y() < 0;
+  }
+  if (add[0] || add[1]) {
+    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
+    for (int i=0; i<7; ++i) o[i] += oo;
+  }
+
+  int oo[7];
+  for (int cnt=0; cnt<7; ++cnt)
+    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
+
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+
+  this->insert_too_long_edge(f[1],  cw(i[1]));
+  this->insert_too_long_edge(f[2], ccw(i[2]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4],     i[4]);
 }
 template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_leftdelta(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
 { // removing a degree 7 vertex, left delta from w[j]
-    NGHK_NYI;
- rotate7(j,w,f,i);
+  rotate7(j,w,f,o,i);
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[0]) ;  // f1 = w1w2w0
@@ -2451,15 +2512,46 @@ remove_degree7_leftdelta(Vertex_handle &, int j,
 
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
+
+  bool add[2];
+  add[0] = add[1] = false;
+  for (int cnt=0; cnt<7; ++cnt) {
+    add[0] |= o[cnt].x() < 0;
+    add[1] |= o[cnt].y() < 0;
+  }
+  if (add[0] || add[1]) {
+    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
+    for (int i=0; i<7; ++i) o[i] += oo;
+  }
+
+  int oo[7];
+  for (int cnt=0; cnt<7; ++cnt)
+    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
+
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+
+  this->insert_too_long_edge(f[1], ccw(i[1]));
+  this->insert_too_long_edge(f[2], ccw(i[2]));
+  this->insert_too_long_edge(f[3],     i[3]);
+  this->insert_too_long_edge(f[3], ccw(i[3]));
 }
 template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_rightdelta(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
 { // removing a degree 7 vertex, right delta from w[j]
-    NGHK_NYI;
-  rotate7(j,w,f,i);
+  rotate7(j,w,f,o,i);
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[0]) ;  // f1 = w1w2w0
@@ -2480,15 +2572,46 @@ remove_degree7_rightdelta(Vertex_handle &, int j,
 
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
+
+  bool add[2];
+  add[0] = add[1] = false;
+  for (int cnt=0; cnt<7; ++cnt) {
+    add[0] |= o[cnt].x() < 0;
+    add[1] |= o[cnt].y() < 0;
+  }
+  if (add[0] || add[1]) {
+    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
+    for (int i=0; i<7; ++i) o[i] += oo;
+  }
+
+  int oo[7];
+  for (int cnt=0; cnt<7; ++cnt)
+    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
+
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+
+  this->insert_too_long_edge(f[1], ccw(i[1]));
+  this->insert_too_long_edge(f[2],  cw(i[2]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4], ccw(i[4]));
 }
 template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_leftfan(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
 { // removing a degree 7 vertex, left fan from w[j]
-    NGHK_NYI;
-  rotate7(j,w,f,i);
+  rotate7(j,w,f,o,i);
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[0]) ;  // f1 = w1w2w0
@@ -2506,16 +2629,46 @@ remove_degree7_leftfan(Vertex_handle &, int j,
 
   tds().delete_face(f[0]);
   tds().delete_face(f[5]);
+
+  bool add[2];
+  add[0] = add[1] = false;
+  for (int cnt=0; cnt<7; ++cnt) {
+    add[0] |= o[cnt].x() < 0;
+    add[1] |= o[cnt].y() < 0;
+  }
+  if (add[0] || add[1]) {
+    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
+    for (int i=0; i<7; ++i) o[i] += oo;
+  }
+
+  int oo[7];
+  for (int cnt=0; cnt<7; ++cnt)
+    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
+
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[6]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[6]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[6]; o_face[ cw(ii)] = oo[0];
+  this->set_offsets(f[6], o_face[0], o_face[1], o_face[2]);
+
+  this->insert_too_long_edge(f[1], ccw(i[1]));
+  this->insert_too_long_edge(f[2], ccw(i[2]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4],  cw(i[4]));
 }
 template < class Gt, class Tds >
 inline void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_rightfan(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
 { // removing a degree 7 vertex, right fan from w[j]
-    NGHK_NYI;
-
-  rotate7(j,w,f,i);
+  rotate7(j,w,f,o,i);
 
   Face_handle nn;
   f[0]->set_vertex(    i[0] , w[3]) ;  // f0 = w0w1w3
@@ -2533,6 +2686,38 @@ remove_degree7_rightfan(Vertex_handle &, int j,
 
   tds().delete_face(f[1]);
   tds().delete_face(f[6]);
+
+  bool add[2];
+  add[0] = add[1] = false;
+  for (int cnt=0; cnt<7; ++cnt) {
+    add[0] |= o[cnt].x() < 0;
+    add[1] |= o[cnt].y() < 0;
+  }
+  if (add[0] || add[1]) {
+    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
+    for (int i=0; i<7; ++i) o[i] += oo;
+  }
+
+  int oo[7];
+  for (int cnt=0; cnt<7; ++cnt)
+    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
+
+  int o_face[3]; int ii;
+  ii = i[0]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[0]; o_face[ cw(ii)] = oo[1];
+  this->set_offsets(f[0], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[1]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+
+  this->insert_too_long_edge(f[0], ccw(i[0]));
+  this->insert_too_long_edge(f[0],  cw(i[0]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4], ccw(i[4]));
 }
 
 
