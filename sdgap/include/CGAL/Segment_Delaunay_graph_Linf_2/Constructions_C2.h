@@ -6,6 +6,7 @@
 #include <CGAL/enum.h>
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_C2.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
 
 #include <CGAL/Polychain_2.h>
 #include <CGAL/intersections.h>
@@ -905,6 +906,8 @@ public:
   typedef typename Gt::Equal_2           Equal_2;
 
   typedef typename Gt::FT                FT;
+  //typedef Basic_predicates_C2<Gt>        Base;
+  //using Base::oriented_side_of_line;
 
   result_type operator()(const Site_2& p, const Site_2& q,
                          const Site_2& r, const Site_2& s) const
@@ -1070,7 +1073,24 @@ public:
             (are_same_points(q, p.source_site())or
             are_same_points(q, p.target_site()))) )
       {
-        npts = 2;
+        Point_2 pnt = (p.is_point()) ? p.point() : q.point();
+        Segment_2 seg = (p.is_segment()) ? p.segment() : q.segment();
+        Line_2 l = seg.supporting_line();
+        
+        npts = ((l.has_on_positive_side(vpqr) and l.has_on_negative_side(vqps))
+              or(l.has_on_positive_side(vqps) and l.has_on_negative_side(vpqr)))
+              ? 3 : 2;
+        if(npts == 3){
+          points[1] = pnt;
+        }
+        points[npts-1] = vqps;
+        Polychainsegment pcs(points, points+npts);
+      
+        CGAL_SDG_DEBUG( std::cout <<
+                       " Sandeep: debug construct bisector segment is " <<
+                       pcs << " Sandeep npts = " << npts << std::endl; );
+        
+        return pcs;
       }
       else {
         //pnt is the point site and seg is the segment site
