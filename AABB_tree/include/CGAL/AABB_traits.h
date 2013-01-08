@@ -50,9 +50,9 @@ namespace CGAL {
 /// \tparam Primitive must be a model of the concept \ref AABBPrimitive and provide the
 /// type of primitives stored in the AABB_tree.
 ///
-/// \sa \ref AABBTraits
-/// \sa AABB_tree
-/// \sa \ref AABBPrimitive
+/// \sa `AABBTraits`
+/// \sa `AABB_tree`
+/// \sa `AABBPrimitive`
 template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits
 {

@@ -46,8 +46,8 @@ namespace CGAL {
     /// \tparam Polyhedron must be a 
     /// \c CGAL::Polyhedron_3 whose points have type \c Point.
     ///
-    /// \sa \ref AABBPrimitive
-    /// \sa AABB_polyhedron_triangle_primitive
+    /// \sa `AABBPrimitive`
+    /// \sa `AABB_polyhedron_triangle_primitive`
     template<typename GeomTraits, typename Polyhedron>
     class AABB_polyhedron_segment_primitive
     {

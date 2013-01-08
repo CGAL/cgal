@@ -47,8 +47,8 @@ namespace CGAL {
    * queries, provided that the corresponding predicates are
    * implemented in the traits class AABBTraits.
    *
-   * \sa \ref AABBTraits
-   * \sa \ref AABBPrimitive
+   * \sa `AABBTraits`
+   * \sa `AABBPrimitive`
    *
    */
 	template <typename AABBTraits>
