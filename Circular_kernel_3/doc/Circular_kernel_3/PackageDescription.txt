@@ -107,25 +107,25 @@
 
 ## Geometric Global Functions ##
 
-- \link compare_x `CGAL::compare_x` \endlink
-- \link compare_y `CGAL::compare_y` \endlink
-- \link compare_z `CGAL::compare_z` \endlink
-- \link compare_xy `CGAL::compare_xy` \endlink
-- \link compare_xyz `CGAL::compare_xyz` \endlink
-- `CGAL::compare_theta`
-- `CGAL::compare_theta_z`
-- `CGAL::is_theta_monotone`
-- `CGAL::classify`
-- `CGAL::x_extremal_point`
-- `CGAL::y_extremal_point`
-- `CGAL::z_extremal_point`
-- `CGAL::theta_extremal_point`
-- `CGAL::x_extremal_points`
-- `CGAL::y_extremal_points`
-- `CGAL::z_extremal_points`
-- `CGAL::theta_extremal_points`
-- \link do_intersect `CGAL::do_intersect` \endlink
-- \link intersection `CGAL::intersection` \endlink
+- \link compare_x_spherical `CGAL::compare_x()` \endlink
+- \link compare_y_spherical `CGAL::compare_y()` \endlink
+- \link compare_z_spherical `CGAL::compare_z()` \endlink
+- \link compare_xy_spherical `CGAL::compare_xy()` \endlink
+- \link compare_xyz_spherical `CGAL::compare_xyz()` \endlink
+- `CGAL::compare_theta()`
+- `CGAL::compare_theta_z()`
+- `CGAL::is_theta_monotone()`
+- `CGAL::classify()`
+- `CGAL::x_extremal_point()`
+- `CGAL::y_extremal_point()`
+- `CGAL::z_extremal_point()`
+- `CGAL::theta_extremal_point()`
+- `CGAL::x_extremal_points()`
+- `CGAL::y_extremal_points()`
+- `CGAL::z_extremal_points()`
+- `CGAL::theta_extremal_points()`
+- \link do_intersect `CGAL::do_intersect()` \endlink
+- \link intersection `CGAL::intersection()` \endlink
 
 ## Algebraic Concepts ##
 
