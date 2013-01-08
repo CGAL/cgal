@@ -732,7 +732,13 @@ public:
                                abs(pnt.y() - minps.y()) )
                                != SMALLER ) {
               npts--;
-              d = (compare_y_2(seg.source(),pnt) == SMALLER) ? Direction_2(+1,+1) : Direction_2(+1,-1);
+              if (compare_y_2(seg.source(),pnt) == EQUAL) {
+                d = (p.is_point()) ? Direction_2(0,-1): Direction_2(0,+1);
+              }
+              else {
+                d = (compare_y_2(seg.source(),pnt) == SMALLER) ?
+                     Direction_2(+1,+1) : Direction_2(+1,-1);
+              }
               Polychainray pcr(points, points+npts, d);
               CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
               return pcr;
@@ -743,7 +749,13 @@ public:
                                abs(pnt.y() - maxps.y()) )
                                != SMALLER ) {
               npts--;
-              d = (compare_y_2(seg.source(),pnt) == SMALLER) ? Direction_2(-1,+1) : Direction_2(-1,-1);
+              if (compare_y_2(seg.source(),pnt) == EQUAL) {
+                d = (p.is_point()) ? Direction_2(0,+1): Direction_2(0,-1);
+              }
+              else {
+                d = (compare_y_2(seg.source(),pnt) == SMALLER) ?
+                     Direction_2(-1,+1) : Direction_2(-1,-1);
+              }
               Polychainray pcr(points, points+npts, d);
               CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
               return pcr;
@@ -798,7 +810,13 @@ public:
                                abs(pnt.y() - minps.y()) )
                                != LARGER ) {
               npts--;
-              d = (compare_x_2(seg.source(),pnt) == SMALLER) ? Direction_2(+1,+1) : Direction_2(-1,+1);
+              if (compare_x_2(seg.source(),pnt) == EQUAL) {
+                d = (p.is_point()) ? Direction_2(1,0) : Direction_2(-1,0);
+              }
+              else {
+                d = (compare_x_2(seg.source(),pnt) == SMALLER) ?
+                     Direction_2(+1,+1) : Direction_2(-1,+1);
+              }
               Polychainray pcr(points, points+npts, d);
               CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
               return pcr;
@@ -809,7 +827,13 @@ public:
                                abs(pnt.y() - maxps.y()) )
                                != LARGER ) {
               npts--;
-              d = (compare_x_2(seg.source(),pnt) == SMALLER) ? Direction_2(+1,-1) : Direction_2(-1,-1);
+              if (compare_x_2(seg.source(),pnt) == EQUAL) {
+                d = (p.is_point()) ? Direction_2(-1,0) : Direction_2(+1,0);
+              }
+              else {
+                d = (compare_x_2(seg.source(),pnt) == SMALLER) ?
+                     Direction_2(+1,-1) : Direction_2(-1,-1);
+              }
               Polychainray pcr(points, points+npts, d);
               CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
               return pcr;
