@@ -9,6 +9,12 @@
   #include <crtdbg.h>
 #endif
 
+// Without TBB_USE_THREADING_TOOL Intel Inspector XE will report false positives in Intel TBB
+// (http://software.intel.com/en-us/articles/compiler-settings-for-threading-error-analysis-in-intel-inspector-xe/)
+#ifdef _DEBUG
+# define TBB_USE_THREADING_TOOL
+#endif
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -42,6 +48,8 @@ namespace po = boost::program_options;
 //#define MESH_3_IMPLICIT_WITH_FEATURES
 //#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
 //#define MESH_3_BENCHMARK_EXPORT_TO_MESH
+//#define MESH_3_BENCHMARK_LLOYD
+#define MESH_3_BENCHMARK_PERTURB
 
 // ==========================================================================
 // MESH_3 GENERAL PARAMETERS
@@ -49,9 +57,10 @@ namespace po = boost::program_options;
 
 //#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE // WARNING: VERY SLOW
 //#define CGAL_MESH_3_VERBOSE
+//#define CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
 //#define CGAL_MESH_3_VERY_VERBOSE
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-#define CGAL_MESH_3_OPTIMIZER_VERBOSE
+//#define CGAL_MESH_3_OPTIMIZER_VERBOSE
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
 #define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
@@ -71,9 +80,9 @@ const int     TET_SHAPE                = 3;
 #   Warning("CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
 # endif
 
-# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
-//# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
-//# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
+//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
+# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
   // ==========================================================================
   // Concurrency activation
@@ -147,8 +156,8 @@ const int     TET_SHAPE                = 3;
 
 #else // !CONCURRENT_MESH_3
 
-# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
-//# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
 #endif // CONCURRENT_MESH_3
@@ -617,15 +626,25 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 
   // Mesh generation
 #ifdef _DEBUG
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(time_limit=10), no_perturb(), no_exude());
+  double timelimit = 10;
 #else
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, 
-                                      criteria, 
-                                      lloyd(),
-                                      no_odt(),
-                                      no_perturb(), 
-                                      no_exude());
+  double timelimit = 0;
 #endif
+
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
+                                     , criteria
+# ifdef MESH_3_BENCHMARK_LLOYD
+                                     , lloyd(time_limit=timelimit)
+# else
+                                     , no_lloyd()
+# endif
+                                     , no_odt()
+# ifdef MESH_3_BENCHMARK_PERTURB
+                                     , perturb(time_limit=timelimit)
+# else
+                                     , no_perturb()
+#endif
+                                     , no_exude());
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -700,15 +719,25 @@ bool make_mesh_3D_images(const std::string &input_filename,
 
   // Mesh generation
 #ifdef _DEBUG
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(time_limit=10), no_perturb(), no_exude());
+  double timelimit = 10;
 #else
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, 
-                                      criteria, 
-                                      lloyd(),
-                                      no_odt(),
-                                      no_perturb(), 
-                                      no_exude());
+  double timelimit = 0;
 #endif
+
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
+                                     , criteria
+# ifdef MESH_3_BENCHMARK_LLOYD
+                                     , lloyd(time_limit=timelimit)
+# else
+                                     , no_lloyd()
+# endif
+                                     , no_odt()
+# ifdef MESH_3_BENCHMARK_PERTURB
+                                     , perturb(time_limit=timelimit)
+# else
+                                     , no_perturb()
+#endif
+                                     , no_exude());
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -814,15 +843,25 @@ bool make_mesh_implicit(double facet_approx,
 
   // Mesh generation
 #ifdef _DEBUG
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, lloyd(time_limit=10), no_perturb(), no_exude());
+  double timelimit = 10;
 #else
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, 
-                                      criteria, 
-                                      lloyd(),
-                                      no_odt(),
-                                      no_perturb(), 
-                                      no_exude());
+  double timelimit = 0;
 #endif
+
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
+                                     , criteria
+# ifdef MESH_3_BENCHMARK_LLOYD
+                                     , lloyd(time_limit=timelimit)
+# else
+                                     , no_lloyd()
+# endif
+                                     , no_odt()
+# ifdef MESH_3_BENCHMARK_PERTURB
+                                     , perturb(time_limit=timelimit)
+# else
+                                     , no_perturb()
+#endif
+                                     , no_exude());
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -900,7 +939,7 @@ int main()
   {
     int i = 1;
 #ifdef CONCURRENT_MESH_3
-    //for(num_threads = 1 ; num_threads <= 12 ; ++num_threads)
+    //for(num_threads = 8 ; num_threads <= 12 ; ++num_threads)
     /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ;
       Concurrent_mesher_config::get().num_work_items_per_batch < 100 ;
       Concurrent_mesher_config::get().num_work_items_per_batch += 5)*/
@@ -989,9 +1028,9 @@ int main()
 
             if (input == "Klein_function")
               make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Klein_function(), input);
-            else if (input == "Tanglecube_function")
+            /*else if (input == "Tanglecube_function")
               make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Tanglecube_function(), input);
-            /*else if (input == "Sphere_function")
+            else if (input == "Sphere_function")
               make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Sphere_function(1.), input);
             else if (input == "Thin_cylinder_function")
             {

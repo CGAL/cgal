@@ -119,7 +119,7 @@ public:
 
 protected:
   /// Stores visited facets
-  bool visited_facets[4];
+  int visited_facets[4]; // CJTODO: ne pas mettre bool car risque de data race. A remplacer par un tbb::atomic<char> et utiliser CAS pour le mettre à jour bit à bit
 };
 #endif // CGAL_LINKED_WITH_TBB
 

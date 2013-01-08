@@ -51,7 +51,10 @@ public:
   }
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
-    : _c(c), m_is_in_queue(0) {}
+    : _c(c) 
+  {
+    m_is_in_queue = false;
+  }
 
   Cell_handle cell() const 
   { return _c; }  
@@ -87,6 +90,24 @@ public:
   { return _c.for_compact_container(); }
 
   // CJTODO TEMP TEST
+ 
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+	  this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+
   tbb::atomic<bool> m_is_in_queue;
 
 private:

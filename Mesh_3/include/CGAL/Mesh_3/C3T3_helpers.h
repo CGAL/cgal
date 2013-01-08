@@ -468,24 +468,43 @@ public:
     }
     return true;
   }
-
-  bool try_lock_vertex_no_spin(Vertex_handle vh, int lock_radius = 0) const
+  
+  bool try_lock_point_no_spin(const Point_3 &p, int lock_radius = 0) const
   {
     if (m_lock_ds)
     {
-      return m_lock_ds->try_lock(vh->point(), lock_radius, true).first;
+      return m_lock_ds->try_lock(p, lock_radius, true).first;
     }
     return true;
+  }
+
+  bool try_lock_vertex_no_spin(Vertex_handle vh, int lock_radius = 0) const
+  {
+    return try_lock_point_no_spin(vh->point(), lock_radius);
   }
 
   bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const
   {
     bool success = true;
-
+    
+    // CJTODO TEMP
+    if ((((unsigned int)cell_handle->for_compact_container()) & 3) != 0)
+    {
+      std::cerr << "BLA2: " << std::hex << (unsigned int)cell_handle->for_compact_container() << std::endl; // CJTODO TEMP
+      int *p = 0; *p = 2;
+    }
     // Lock the element area on the grid
     for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
     {
+      //std::cerr << std::hex << (unsigned int)(&*cell_handle) << std::endl; // CJTODO TEMP
       Vertex_handle vh = cell_handle->vertex(iVertex);
+      //std::cerr << "vh: " << std::hex << (unsigned int)&*vh << std::endl; // CJTODO TEMP
+      // CJTODO TEMP
+      if ((((unsigned int)vh->for_compact_container()) & 3) != 0)
+      {
+        std::cerr << "BLA8: " << std::hex << (unsigned int)vh->for_compact_container() << std::endl; // CJTODO TEMP
+        int *p = 0; *p = 2;
+      }
       success = try_lock_vertex(vh, lock_radius);
     }
 
@@ -801,6 +820,19 @@ public:
   void
   get_incident_cells_without_using_tds_data(const Vertex_handle& v,
                                             Cell_vector &cells) const;
+  
+  template <typename Filter>
+  void
+  get_incident_cells_without_using_tds_data(const Vertex_handle& v,
+                                            Cell_vector &cells,
+                                            const Filter &filter) const;
+
+  template <typename SliverCriterion>
+  void
+  get_incident_slivers_without_using_tds_data(const Vertex_handle& v,
+                                              const SliverCriterion& criterion,
+                                              const FT& sliver_bound,
+                                              Cell_vector &slivers) const;
 
   /**
    * Outputs to out the sliver (wrt \c criterion and \c sliver_bound) incident
@@ -2053,7 +2085,7 @@ update_mesh_topo_change(const Point_3& new_position,
                                 p_could_lock_zone);
 
   if (p_could_lock_zone && *p_could_lock_zone == false)
-    return make_pair(false, Vertex_handle());
+    return std::make_pair(false, Vertex_handle());
   
   if(insertion_conflict_boundary.empty())
     return std::make_pair(false,old_vertex); //new_location is a vertex already
@@ -2498,16 +2530,16 @@ move_point(const Vertex_handle& old_vertex,
   CGAL_assertion(p_could_lock_zone != 0);
   *p_could_lock_zone = true;
   
-  Cell_vector incident_cells_;
-  incident_cells_.reserve(64);
   if (!try_lock_vertex(old_vertex)) // LOCK
   {
     *p_could_lock_zone = false;
-    unlock_all_elements();
+    //unlock_all_elements(); CJTODO commenté pour test
     return Vertex_handle();
   }
 
   //======= Get incident cells ==========
+  Cell_vector incident_cells_;
+  incident_cells_.reserve(64);
   if (try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
   {
     *p_could_lock_zone = false;
@@ -2518,7 +2550,7 @@ move_point(const Vertex_handle& old_vertex,
   if (!try_lock_point(new_position)) // LOCK
   {
     *p_could_lock_zone = false;
-    unlock_all_elements();
+    //unlock_all_elements(); CJTODO commenté pour test
     return Vertex_handle();
   }
   if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells_) )
@@ -2549,7 +2581,7 @@ move_point(const Vertex_handle& old_vertex,
     
     if (*p_could_lock_zone == false)
     {
-      unlock_all_elements();
+      //unlock_all_elements(); CJTODO commenté pour test
       return Vertex_handle();
     }
   
@@ -3053,6 +3085,41 @@ get_incident_cells_without_using_tds_data(const Vertex_handle& v,
 }
 
 
+
+template <typename C3T3, typename MD>
+template <typename Filter>
+void
+C3T3_helpers<C3T3,MD>::
+get_incident_cells_without_using_tds_data(const Vertex_handle& v,
+                                          Cell_vector &cells,
+                                          const Filter &filter) const
+{
+  std::vector<Cell_handle> tmp_cells;
+  tmp_cells.reserve(64);
+  get_incident_cells_without_using_tds_data(v, tmp_cells);
+  
+  BOOST_FOREACH(Cell_handle& ch, 
+                std::make_pair(tmp_cells.begin(), tmp_cells.end()))
+  {
+    if (filter(ch))
+      cells.push_back(ch);
+  }
+}
+
+template <typename C3T3, typename MD>
+template <typename SliverCriterion>
+void
+C3T3_helpers<C3T3,MD>::
+get_incident_slivers_without_using_tds_data(const Vertex_handle& v,
+                                            const SliverCriterion& criterion,
+                                            const FT& sliver_bound,
+                                            Cell_vector &slivers) const
+{
+  Is_sliver<SliverCriterion> i_s(c3t3_, criterion, sliver_bound);
+  get_incident_cells_without_using_tds_data(v, slivers, i_s);
+}
+
+
 template <typename C3T3, typename MD>
 bool
 C3T3_helpers<C3T3,MD>::
@@ -3060,9 +3127,15 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
                                 Cell_vector &cells) const
 {
   Cell_handle d = v->cell();
+  // CJTODO TEMP
+  if ((((unsigned int)d->for_compact_container()) & 3) != 0)
+  {
+    std::cerr << "BLA3: " << std::hex << (unsigned int)d->for_compact_container() << std::endl; // CJTODO TEMP
+    int *p = 0; *p = 2;
+  }
   if (!try_lock_element(d)) // LOCK
   {
-    unlock_all_elements();
+    //unlock_all_elements(); CJTODO commenté pour test
     return false;
   }
   cells.push_back(d);
@@ -3076,6 +3149,14 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
       if (c->vertex(i) == v)
         continue;
       Cell_handle next = c->neighbor(i);
+
+      // CJTODO TEMP
+      if ((((unsigned int)next->for_compact_container()) & 3) != 0)
+      {
+        std::cerr << "BLA1: " << std::hex << (unsigned int)next->for_compact_container() << std::endl; // CJTODO TEMP
+        int *p = 0; *p = 2;
+      }
+
       if (!try_lock_element(next)) // LOCK
       {
         BOOST_FOREACH(Cell_handle& ch, 
@@ -3084,7 +3165,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
           ch->tds_data().clear();
         }
         cells.clear();
-        unlock_all_elements();
+        //unlock_all_elements(); CJTODO commenté pour test
         return false;
       }
       if (! next->tds_data().is_clear())
@@ -3132,10 +3213,10 @@ C3T3_helpers<C3T3,MD>::
 try_lock_and_get_incident_slivers(const Vertex_handle& v,
                                   const SliverCriterion& criterion,
                                   const FT& sliver_bound,
-                                  Cell_vector &cells) const
+                                  Cell_vector &slivers) const
 {
   Is_sliver<SliverCriterion> i_s(c3t3_, criterion, sliver_bound);
-  return try_lock_and_get_incident_cells(v, cells, i_s);
+  return try_lock_and_get_incident_cells(v, slivers, i_s);
 }
 
 
@@ -3290,7 +3371,20 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
 {
   // Get triangulation_vertex incident cells : removal conflict zone
   // CJTODO: hasn't it already been computed in "move_point"?
-  tr_.incident_cells(v, removal_conflict_cells);
+  //tr_.incident_cells(v, removal_conflict_cells);
+  //=====  CJTODO TEST
+  Cell_vector incident_cells_;
+  if (try_lock_and_get_incident_cells(v, incident_cells_) == false)
+  {
+    *p_could_lock_zone = false;
+    return;
+  }
+  BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells_.begin(), 
+                                                incident_cells_.end()))
+  {
+    *removal_conflict_cells++ = ch;
+  }
+  //===== /CJTODO TEST
 
   // Get conflict_point conflict zone 
   int li=0;

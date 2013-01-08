@@ -456,12 +456,20 @@ protected:
     // Topology could not change moving this vertex
     if ( i > max_step_nb_ )
       return std::make_pair(false,v);
-    
+
+    // CJTODO TEST
+    if (p_could_lock_zone && !helper.try_lock_point(final_loc))
+    {
+      *p_could_lock_zone = false;
+      return std::make_pair(false,v);
+    }
+       
     // we know that there will be a combinatorial change
     return helper.update_mesh_topo_change(final_loc,
                                           v,
                                           criterion,
-                                          std::back_inserter(modified_vertices));
+                                          std::back_inserter(modified_vertices),
+                                          p_could_lock_zone);
   }
   
   
@@ -1210,6 +1218,13 @@ private:
       if ( c3t3.in_dimension(moving_vertex) < 3 )
         new_location = helper.project_on_surface(new_location, moving_vertex);
       
+      // CJTODO TEST
+      if (p_could_lock_zone && !helper.try_lock_point(new_location))
+      {
+        *p_could_lock_zone = false;
+        return std::make_pair(false,v);
+      }
+
       // try to move vertex
       std::vector<Vertex_handle> tmp_mod_vertices;
       std::pair<bool,Vertex_handle> update =

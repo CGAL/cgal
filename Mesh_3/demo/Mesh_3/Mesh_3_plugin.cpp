@@ -217,7 +217,6 @@ void Mesh_3_plugin::mesh_3()
   const double facet_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
-    
 
   // -----------------------------------
   // Dispatch mesh process

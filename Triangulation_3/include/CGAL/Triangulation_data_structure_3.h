@@ -145,7 +145,7 @@ public:
   typedef typename boost::mpl::if_c
   <
     used_by_parallel_mesh_3,
-    Concurrent_compact_container<Vertex>,
+    Concurrent_compact_container<Vertex, Default, CCC_strategy_with_counter<Vertex> >,
     Compact_container<Vertex>
   >::type                                                 Vertex_range;
 

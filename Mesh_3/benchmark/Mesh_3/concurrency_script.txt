@@ -21,16 +21,16 @@
 #########################################################
 ##### Benchmark for refinement+lloyd
 #########################################################
- D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.002	  0.0025  1
- D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off        0.0068  0.003	  0.006	  1
- D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                              0.0068  0.0015  0.003	  1
- D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                             0.0068  0.003	  0.006	  1
- Klein_function                                                           0.0068  0.01    0.06	  1
- Tanglecube_function                                                      0.0068  0.007	  0.035	  1
- Sphere_function                                                          0.0068  0.006   0.02	  1
- Thin_cylinder_function                                                   0.0068  0.002	  0.004	  1
- Pancake_function                                                         0.0068  0.02	  0.02	  1
- D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/cheese.off         0.0068  0.002	  0.002	  1
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.002	  0.0025  1
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off        0.0068  0.003	  0.006	  1
+#D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                              0.0068  0.0015  0.003	  1
+#D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                             0.0068  0.003	  0.006	  1
+#Klein_function                                                           0.0068  0.01    0.06	  1
+#Tanglecube_function                                                      0.0068  0.007	  0.035	  1
+#Sphere_function                                                          0.0068  0.006   0.02	  1
+#Thin_cylinder_function                                                   0.0068  0.002	  0.004	  1
+#Pancake_function                                                         0.0068  0.02	  0.02	  1
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/cheese.off         0.0068  0.002	  0.002	  1
 
 #########################################################
 ##### Benchmark according to number of elements
@@ -47,7 +47,7 @@
 #########################################################
 ##### A few seconds
 #########################################################
-Klein_function															                              0.0068  0.02	  0.05	  1
+#Klein_function															                              0.0068  0.02	  0.05	  1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		    0.0068  0.003	  0.003	  1
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		    0.0068  0.008	  0.008	  2
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/cheese.off         0.0068  0.005	  0.005   1
@@ -64,6 +64,7 @@ Klein_function															                              0.0068  0.02	  0.05	 
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off        0.0068  2.68	  2.68	  150
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off        0.0068  1.68	  1.68	  150
 #D:/INRIA/CGAL/svn/cgal/trunk/Mesh_3/examples/Mesh_3/data/fandisk.off	    0.0068  0.05	  0.05	  1
+ D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off		    0.0200  0.05    0.25    10
 
 #########################################################
 ##### Benchmark for TOMS article
@@ -230,14 +231,14 @@ Klein_function															                              0.0068  0.02	  0.05	 
 
 ####### Parallel optimizers ########
 #D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off       0.0068  0.005	  0.005	  10
-#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off        0.0068  0.006	  0.006	  1
-#D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                              0.0068  0.003   0.003	  1
-#D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                             0.0068  0.005	  0.006	  1
-#Klein_function                                                           0.0068  0.02    0.06	  1
-#Tanglecube_function                                                      0.0068  0.01	  0.05	  1
-#Sphere_function                                                          0.0068  0.006   0.02	  1
-#Thin_cylinder_function                                                   0.0068  0.002	  0.004	  1
-#Pancake_function                                                         0.0068  0.02	  0.02	  1
-#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/cheese.off         0.0068  0.002	  0.002	  1
+#D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/fandisk.off        0.0068  0.006	  0.006	  10
+#D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                              0.0068  0.003   0.003	  1000
+ D:/INRIA/Data/_Models/BigOFF/bimba_400kf.off                             0.0068  0.005	  0.006	  10
+ Klein_function                                                           0.0068  0.02    0.06	  10
+ Tanglecube_function                                                      0.0068  0.01	  0.05	  10
+ Sphere_function                                                          0.0068  0.006   0.02	  10
+ Thin_cylinder_function                                                   0.0068  0.002	  0.004	  10
+ Pancake_function                                                         0.0068  0.02	  0.02	  10
+ D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/cheese.off         0.0068  0.002	  0.002	  10
 
 #Klein_function                                                           0.068  0.04    0.15	  1

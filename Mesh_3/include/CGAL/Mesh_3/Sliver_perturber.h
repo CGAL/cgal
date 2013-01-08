@@ -158,6 +158,7 @@ class Sliver_perturber
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Vertex                   Vertex;
+  typedef typename MeshDomain::Point_3          Point_3;
   
   typedef typename std::vector<Cell_handle>     Cell_vector;
   typedef typename std::vector<Vertex_handle>   Vertex_vector;
@@ -194,6 +195,7 @@ private:
     /// Constructor
     PVertex()
     : vertex_handle_()
+    , in_dimension_(-1)
     , incident_sliver_nb_(0)
     , min_value_(SliverCriterion::max_value)
     , try_nb_(0)
@@ -204,6 +206,8 @@ private:
 
     PVertex(const Vertex_handle& vh, id_type id)
     : vertex_handle_(vh)
+    , in_dimension_(vh->in_dimension())
+    , vh_erase_counter_when_added_(vh->get_erase_counter())
     , incident_sliver_nb_(0)
     , min_value_(SliverCriterion::max_value)
     , try_nb_(0)
@@ -214,8 +218,19 @@ private:
     
     /// Associated vertex
     const Vertex_handle& vertex() const { return vertex_handle_; }
-    void set_vertex(const Vertex_handle& vh) { vertex_handle_ = vh; }
+    void set_vertex(const Vertex_handle& vh) 
+    { 
+      vertex_handle_ = vh; 
+      update_saved_erase_counter(); 
+    }
+    void update_saved_erase_counter()
+    {
+      vh_erase_counter_when_added_ = vertex_handle_->get_erase_counter(); 
+      vh_point_when_added_ = vertex_handle_->point(); 
+    }
     
+    int in_dimension() const { return in_dimension_; }
+
     /// Incident slivers number
     unsigned int sliver_nb() const { return incident_sliver_nb_; }
     void set_sliver_nb(const unsigned int n) { incident_sliver_nb_ = n; }
@@ -248,6 +263,11 @@ private:
     /// Zombie
     void set_zombie(bool is_zombie) { is_zombie_ = is_zombie; }
     bool is_zombie() const { return is_zombie_; }
+    bool is_vh_zombie() const 
+    { 
+      return vertex_handle_->get_erase_counter() != vh_erase_counter_when_added_
+        || vh_point_when_added_ != vertex_handle_->point(); 
+    }
     
     /// Operators
     bool operator==(const PVertex& pv) const { return ( id() == pv.id() ); }
@@ -255,8 +275,8 @@ private:
     bool operator<(const PVertex& pv) const
     { 
       // vertex type (smallest-interior first)
-      if ( vertex()->in_dimension() != pv.vertex()->in_dimension() )
-        return vertex()->in_dimension() > pv.vertex()->in_dimension();
+      if ( in_dimension() != pv.in_dimension() )
+        return in_dimension() > pv.in_dimension();
       // nb incident slivers (smallest first)
       else if ( sliver_nb() != pv.sliver_nb() )
         return sliver_nb() < pv.sliver_nb();
@@ -275,6 +295,9 @@ private:
   private:
     /// Private datas
     Vertex_handle vertex_handle_;
+    unsigned int vh_erase_counter_when_added_;
+    Point_3 vh_point_when_added_;
+    int in_dimension_;
     unsigned int incident_sliver_nb_;
     FT min_value_;
     unsigned int try_nb_;
@@ -486,6 +509,7 @@ private:
   Mesh_3::Auto_worksharing_ds   *m_worksharing_ds;
   mutable tbb::task             *m_empty_root_task;
   mutable MutexType              m_pqueue_mut;
+  mutable MutexType              m_debug_mut; // CJTODO TEMP
 };
   
   
@@ -510,6 +534,9 @@ Sliver_perturber(C3T3& c3t3,
   , time_limit_(-1)
   , running_time_()
 {
+  //CJTODO TEST
+  //static tbb::task_scheduler_init init(1);
+
   // If we're multi-thread
   tr_.set_lock_data_structure(get_lock_data_structure());
   m_worksharing_ds = new Mesh_3::Auto_worksharing_ds(c3t3.bbox()); // CJTODO: delete!!!
@@ -1085,14 +1112,23 @@ perturb_vertex( PVertex pv
               , bool *p_could_lock_zone
               ) const
 {
+  //MutexType::scoped_lock pdebug_lock(m_debug_mut);
+
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(
     "early withdrawals / late withdrawals / successes [Perturber]");
 #endif
 
   *p_could_lock_zone = true;
+  
+  // Zombie?
+  if (pv.is_vh_zombie())
+  {
+    return;
+  }
 
-  if (!helper_.try_lock_vertex_no_spin(pv.vertex()))
+  Point p = pv.vertex()->point();
+  if (!helper_.try_lock_point_no_spin(p) || p != pv.vertex()->point())
   {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!
@@ -1100,14 +1136,41 @@ perturb_vertex( PVertex pv
     *p_could_lock_zone = false;
     return;
   }
+  
+  // Zombie?
+  if (pv.is_vh_zombie())
+  {
+    return;
+  }
 
   CGAL_assertion(pv.is_perturbable());
 
   int num_new_vertices_to_treat = 0;
 
+  // CJTODO TEMP
+  if (((unsigned int)&*pv.vertex() & 3) != 0)
+    std::cerr << "ARG" << std::endl;
+
+  if (((unsigned int)&*pv.vertex()->cell() & 3) != 0)
+    std::cerr << "ARG2" << std::endl;
+
+
+  //std::cerr << std::hex << "Thread " << std::this_thread::get_id() << ": C=" << (unsigned int)&*pv.vertex()->cell() << std::endl;
+
+  unsigned int fcc = (unsigned int)pv.vertex()->cell()->for_compact_container();
+  if ((fcc & 3) != 0)
+  {
+    std::cerr << "Vertex: " << pv.vertex()->point().x() << " " << pv.vertex()->point().y() << " " << pv.vertex()->point().z() << std::endl
+              << std::hex 
+              << "v: " << (unsigned int)&*pv.vertex()
+              << " / v->cell->fcc: " << fcc << std::endl;
+    int *p = 0; *p = 2;
+  }
+
   Cell_vector slivers;
   slivers.reserve(8);
   if (!helper_.try_lock_and_get_incident_slivers(
+
     pv.vertex(), sliver_criterion_, sliver_bound, slivers))
   {
     *p_could_lock_zone = false;
@@ -1144,6 +1207,8 @@ perturb_vertex( PVertex pv
     
     if (*p_could_lock_zone)
     {
+      pv.vertex()->increment_erase_counter(); // CJTODO TEST
+
       // If vertex has changed - may happen in two cases: vertex has been moved
       // or vertex has been reverted to the same location -
       if ( perturbation_ok.second != pv.vertex() )
@@ -1170,10 +1235,14 @@ perturb_vertex( PVertex pv
       {
         // If perturbation fails, try next one
         pv.set_perturbation(pv.perturbation()->next());
+        // Set the vertex again to update 
+        pv.update_saved_erase_counter();
       
         if ( NULL == pv.perturbation() )
         {
+          //std::cerr << "bad_vertices.push_back(pv.vertex())..."; // CJTODO TEMP
           bad_vertices.push_back(pv.vertex());
+          //std::cerr << "done" << std::endl; // CJTODO TEMP
         }
       }
       
@@ -1224,13 +1293,17 @@ void
 Sliver_perturber<C3T3,Md,Sc,V_>::
 update_pvertex(PVertex& pv, const FT& sliver_bound) const
 {
-#ifdef CGAL_NEW_INCIDENT_SLIVERS
+/*#ifdef CGAL_NEW_INCIDENT_SLIVERS
   Cell_vector slivers;
   helper_.new_incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound, std::back_inserter(slivers));
 #else
   Cell_vector slivers =
     helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
-#endif
+#endif*/
+
+  Cell_vector slivers;
+  helper_.get_incident_slivers_without_using_tds_data(
+    pv.vertex(), sliver_criterion_, sliver_bound, slivers);
   
   pv.set_sliver_nb(static_cast<unsigned int>(slivers.size()));
   pv.set_min_value(helper_.min_sliver_value(slivers, sliver_criterion_));
@@ -1393,8 +1466,8 @@ enqueue_task(const PVertex &pv,
 {
   CGAL_assertion(m_empty_root_task != 0);
 
-  if (pv.vertex()->m_is_in_queue.compare_and_swap(true, false))
-    return;
+  /*if (pv.vertex()->m_is_in_queue.compare_and_swap(true, false))
+    return;*/
    
   m_worksharing_ds->enqueue_work(
     [&, sliver_bound, pv /*, pqueue, visitor, bad_vertices*/]()
