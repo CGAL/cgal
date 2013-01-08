@@ -435,7 +435,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Stream_support/doc/IOstream/</string>
           <string name="STRIP_FROM_INC_PATH">../Stream_support/doc/IOstream/</string>
           <string name="GENERATE_TAGFILE">./tags/Stream_support.tag</string>
-          <string name="EXAMPLE_PATH">../Stream_support/examples</string>
           <string name="IMAGE_PATH">../Stream_support/doc/IOstream/fig</string>
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
