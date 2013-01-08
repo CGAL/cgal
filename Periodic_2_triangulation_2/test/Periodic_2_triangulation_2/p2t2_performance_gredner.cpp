@@ -13,9 +13,28 @@ const bool pre_run = true;
 const bool do_remove = true;
 const int n_runs = 3;
 
+void load_data(const char *filename, Iso_rectangle &domain, std::vector<Point> &pts) {
+  std::ifstream file (filename, std::ios::in|std::ios::binary);
+  if (!file.is_open()) exit(1);
+
+  float dom[2];
+  file.read((char *)&dom[0], 2 * sizeof(float));
+  domain = Iso_rectangle(0,0,dom[0],dom[1]);
+
+  float coords[2];
+  while (!file.eof()) {
+    file.read((char *)&coords[0], 2 * sizeof(float));
+    while (coords[0] < 0) coords[0] += dom[0];
+    while (coords[1] < 0) coords[1] += dom[1];
+    while (coords[0] >= dom[0]) coords[0] -= dom[0];
+    while (coords[1] >= dom[1]) coords[1] -= dom[1];
+
+    pts.push_back(Point(coords[0], coords[1]));
+  }
+}
+
 template <class T>
-void test(const std::vector<Point> &input, T &t)
-{
+void test(const std::vector<Point> &input, T &t) {
   t.insert(input.begin(), input.end());
 
   if (do_remove) {
@@ -37,24 +56,10 @@ int main(int argc, char * argv[]) {
   if (argc == 2) {
     filename = argv[1];
   }
-  std::cout << "testing file: " << filename << std::endl;
-  std::ifstream file (filename, std::ios::in|std::ios::binary);
-  if (!file.is_open()) return 0;
 
-  float domain[2];
-  file.read((char *)&domain[0], 2 * sizeof(float));
-
+  Iso_rectangle domain;
   std::vector<Point> pts;
-  float coords[2];
-  while (!file.eof()) {
-    file.read((char *)&coords[0], 2 * sizeof(float));
-    while (coords[0] < 0) coords[0] += domain[0];
-    while (coords[1] < 0) coords[1] += domain[1];
-    while (coords[0] >= domain[0]) coords[0] -= domain[0];
-    while (coords[1] >= domain[1]) coords[1] -= domain[1];
-
-    pts.push_back(Point(coords[0], coords[1]));
-  }
+  load_data(filename, domain, pts);
 
   if (true) {
     if (pre_run) {
@@ -74,13 +79,13 @@ int main(int argc, char * argv[]) {
 
   if (true) {
     if (pre_run) {
-      Periodic_2_Delaunay_triangulation_2<Gt> t(Iso_rectangle(0,0,domain[0],domain[1]));
+      Periodic_2_Delaunay_triangulation_2<Gt> t(domain);
       test(pts, t);
     }
 
     std::clock_t total_start = std::clock();
     for (int i=0; i<n_runs; ++i) {
-      Periodic_2_Delaunay_triangulation_2<Gt> t(Iso_rectangle(0,0,domain[0],domain[1]));
+      Periodic_2_Delaunay_triangulation_2<Gt> t(domain);
       test(pts, t);
     }
     double total_time = (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
