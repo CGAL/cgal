@@ -106,7 +106,7 @@ public:
   nearest_vertex(const Point& p, Face_handle f= Face_handle()) const;
   
   bool does_conflict(const Point  &p, Face_handle fh) const;// deprecated
-  bool test_conflict(const Point  &p, Face_handle fh) const;
+  bool test_conflict(const Point  &p, Face_handle fh, bool strict = true) const;
   bool find_conflicts(const Point  &p,                //deprecated
 		      std::list<Face_handle>& conflicts,
 		      Face_handle start= Face_handle() ) const;
@@ -404,7 +404,8 @@ public:
   get_conflicts_and_boundary(const Point  &p, 
 			     OutputItFaces fit, 
 			     OutputItBoundaryEdges eit,
-			     Face_handle start = Face_handle()) const {
+			     Face_handle start = Face_handle(),
+                             bool strict = true) const {
     CGAL_triangulation_precondition( this->dimension() == 2);
     int li;
     Locate_type lt;
@@ -419,9 +420,9 @@ public:
       *fit++ = fh; //put fh in OutputItFaces
       std::pair<OutputItFaces,OutputItBoundaryEdges>
 	pit = std::make_pair(fit,eit);
-      pit = propagate_conflicts(p,fh,0,pit);
-      pit = propagate_conflicts(p,fh,1,pit);
-      pit = propagate_conflicts(p,fh,2,pit);
+      pit = propagate_conflicts(p,fh,0,pit, strict);
+      pit = propagate_conflicts(p,fh,1,pit, strict);
+      pit = propagate_conflicts(p,fh,2,pit, strict);
       return pit;    
     }
     CGAL_triangulation_assertion(false);
@@ -432,9 +433,10 @@ public:
   OutputItFaces
   get_conflicts (const Point  &p, 
 		 OutputItFaces fit, 
-		 Face_handle start= Face_handle()) const {
+		 Face_handle start= Face_handle(),
+                 bool strict = true) const {
     std::pair<OutputItFaces,Emptyset_iterator> pp = 
-      get_conflicts_and_boundary(p,fit,Emptyset_iterator(),start);
+      get_conflicts_and_boundary(p,fit,Emptyset_iterator(),start, strict);
     return pp.first;
   }
 
@@ -442,9 +444,10 @@ public:
   OutputItBoundaryEdges
   get_boundary_of_conflicts(const Point  &p, 
 			    OutputItBoundaryEdges eit, 
-			    Face_handle start= Face_handle()) const {
+			    Face_handle start= Face_handle(),
+                            bool strict = true) const {
     std::pair<Emptyset_iterator, OutputItBoundaryEdges> pp = 
-      get_conflicts_and_boundary(p,Emptyset_iterator(),eit,start);
+      get_conflicts_and_boundary(p,Emptyset_iterator(),eit,start,strict);
     return pp.second;
   }
 
@@ -460,15 +463,16 @@ private:
 		       const Face_handle fh, 
 		       const int i,
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
-		       pit)  const {
+		       pit,
+                       bool strict = true)  const {
     Face_handle fn = fh->neighbor(i);
-    if (! test_conflict(p,fn)) {
+    if (! test_conflict(p,fn,strict)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
     } else {
       *(pit.first)++ = fn;
       int j = fn->index(fh);
-      pit = propagate_conflicts(p,fn,ccw(j),pit);
-      pit = propagate_conflicts(p,fn,cw(j), pit);
+      pit = propagate_conflicts(p,fn,ccw(j),pit,strict);
+      pit = propagate_conflicts(p,fn,cw(j), pit,strict);
     }
     return pit;
   }
@@ -478,7 +482,8 @@ private:
   non_recursive_propagate_conflicts ( const Point  &p,
                                       const Face_handle fh, 
                                       const int i,
-		                      std::pair<OutputItFaces,OutputItBoundaryEdges> pit)  const 
+		                      std::pair<OutputItFaces,OutputItBoundaryEdges> pit,
+                                      bool strict = true)  const 
   {
     std::stack<std::pair<Face_handle, int> > stack;
     stack.push( std::make_pair(fh,i) );
@@ -488,7 +493,7 @@ private:
       const int i=stack.top().second;
       stack.pop();
       Face_handle fn = fh->neighbor(i);
-      if (! test_conflict(p,fn)) {
+      if (! test_conflict(p,fn,strict)) {
         *(pit.second)++ = Edge(fn, fn->index(fh));
       } else {
         *(pit.first)++ = fn;
@@ -507,19 +512,20 @@ private:
 		       const int i,
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
 		       pit,
+                       bool strict = true,
                        int depth=0)  const 
   {
     if (depth == 100)
-      return non_recursive_propagate_conflicts(p, fh, i, pit);
+      return non_recursive_propagate_conflicts(p, fh, i, pit, strict);
 
     Face_handle fn = fh->neighbor(i);
-    if (! test_conflict(p,fn)) {
+    if (! test_conflict(p,fn,strict)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
     } else {
       *(pit.first)++ = fn;
       int j = fn->index(fh);
-      pit = propagate_conflicts(p,fn,ccw(j),pit,depth+1);
-      pit = propagate_conflicts(p,fn,cw(j), pit,depth+1);
+      pit = propagate_conflicts(p,fn,ccw(j),pit, strict, depth+1);
+      pit = propagate_conflicts(p,fn,cw(j), pit, strict, depth+1);
     }
     return pit;
   }
@@ -618,8 +624,12 @@ protected:
 template < class Gt, class Tds >
 inline bool
 Delaunay_triangulation_2<Gt,Tds>::
-test_conflict(const Point  &p, Face_handle fh) const
+test_conflict(const Point  &p, Face_handle fh, bool strict) const
 {
+  if(! strict){
+    Oriented_side os = side_of_oriented_circle(fh,p,false);
+    return os == ON_POSITIVE_SIDE;
+  }
   // return true  if P is inside the circumcircle of fh
   // if fh is infinite, return true when p is in the positive
   // halfspace or on the boundary and in the  finite edge of fh
