@@ -18,7 +18,7 @@ function are available.
   
 \sa \ref do_intersect_circular
 \sa \ref do_intersect_spherical
-\sa `intersection`
+\sa \link intersection `CGAL::intersection()` \endlink
   
 \details See Chapter  \ref chapterkernel23 "2D and 3D Geometry Kernel" for details on a linear kernel instantiation.
 */
