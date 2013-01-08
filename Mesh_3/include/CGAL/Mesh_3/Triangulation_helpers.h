@@ -112,18 +112,10 @@ no_topological_change(const Tr& tr,
                       const Point_3& p,
                       Cell_vector& cells_tos) const
 {
-  bool np = true;
-  Point_3 fp = v0->point();
-  v0->set_point(p);
-  
-/// @TODO: One can do the same checks without the set_point.
-/// In the following orientation or side_of_power_sphere tests, just
-/// replace v0->point() by p.
+  bool np = true;   
 
   if(!well_oriented(tr, cells_tos)) 
   {
-    // Reset (restore) v0
-    v0->set_point(fp);
     return false;
   }
   
@@ -150,6 +142,9 @@ no_topological_change(const Tr& tr,
       Vertex_handle v1 = c->vertex(j);
       if(tr.is_infinite(v1)) 
       {
+        // Otherwise, we need to use "p" instead of cj->vertex(mj)->point() (see in the "else")
+        CGAL_assertion(cj->vertex(mj) != v0);
+        
         if(tr.side_of_power_sphere(c, cj->vertex(mj)->point(), false) 
            != CGAL::ON_UNBOUNDED_SIDE) 
         {
@@ -159,7 +154,9 @@ no_topological_change(const Tr& tr,
       }
       else
       {
-        if(tr.side_of_power_sphere(cj, v1->point(), false) 
+        // Simulates v0 being moved at position "p"
+        Point_3 p = (v1 == v0 ? p : v1->point());
+        if(tr.side_of_power_sphere(cj, p, false) 
            != CGAL::ON_UNBOUNDED_SIDE) 
         {
           np = false; 
@@ -168,9 +165,6 @@ no_topological_change(const Tr& tr,
       }
     }
   }
-  
-  // Reset (restore) v0
-  v0->set_point(fp);
 
   return np;
 }
