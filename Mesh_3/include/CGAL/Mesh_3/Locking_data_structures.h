@@ -97,23 +97,8 @@ public:
 
   bool try_lock(int cell_index, bool no_spin = false)
   {
-    bool ret = false;
-    // Already locked by this thread?
-    if (m_tls_grids.local()[cell_index])
-    {
-      ret = true;
-    }
-    // Otherwise, try to lock it
-    else
-    {
-      if (try_lock_cell(cell_index, no_spin))
-      {
-        ret = true;
-        m_tls_grids.local()[cell_index] = true;
-        m_tls_locked_cells.local().push_back(cell_index);
-      }
-    }
-    return ret;
+    return m_tls_grids.local()[cell_index] 
+        || try_lock_cell(cell_index, no_spin);
   }
 
   bool try_lock(int index_x, int index_y, int index_z, int lock_radius, 
