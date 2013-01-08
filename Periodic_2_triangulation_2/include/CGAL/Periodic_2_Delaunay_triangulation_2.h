@@ -449,6 +449,9 @@ private:
   void rotate7(int j, std::vector<Vertex_handle> &w,
 	       std::vector<Face_handle> &f, std::vector<Offset> &o, std::vector<int> &i);
   /// NGHK: implemented
+  /// Returns whether the simplicity criterion is satisfied
+  bool get_offset_degree7(std::vector<Offset> &in_o, int out_o[]);
+  /// NGHK: implemented
   void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
   /// NGHK: implemented
@@ -2351,7 +2354,7 @@ remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 
 
 template < class Gt, class Tds >
-inline void
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 rotate7(int j,  std::vector<Vertex_handle> &w,
         std::vector<Face_handle> &f, std::vector<Offset> &o, std::vector<int> &i)
@@ -2366,6 +2369,34 @@ rotate7(int j,  std::vector<Vertex_handle> &w,
     w[jj]=w[k]; f[jj]=f[k]; o[jj] = o[k]; i[jj]=i[k];
   }
   w[kk]=ww;f[kk]=ff;o[kk]=oo;i[kk]=ii;
+}
+
+template < class Gt, class Tds >
+bool
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+get_offset_degree7(std::vector<Offset> &in_o, int out_o[]) {
+  bool add[2], simplicity_criterion;
+  
+  add[0] = add[1] = false;
+  simplicity_criterion = is_1_cover();
+
+  for (int cnt=0; cnt<7; ++cnt) {
+    simplicity_criterion &= (in_o[cnt] == in_o[0]);
+    add[0] |= in_o[cnt].x() < 0;
+    add[1] |= in_o[cnt].y() < 0;
+  }
+  if (simplicity_criterion) return true;
+
+  Covering_sheets c = number_of_sheets();
+  if (add[0] || add[1]) {
+    const Offset oo = Offset(add[0]?c[0]:0, add[1]?c[1]:0);
+    for (int i=0; i<7; ++i) in_o[i] += oo;
+  }
+
+  for (int cnt=0; cnt<7; ++cnt)
+    out_o[cnt] = (in_o[cnt].x() >= c[0] ? 2 : 0) + (in_o[cnt].y() >= c[1] ? 1 : 0);
+
+  return false;
 }
 
 template < class Gt, class Tds >
@@ -2390,37 +2421,31 @@ std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<Offset> 
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
   
-  bool add[2];
-  add[0] = add[1] = false;
-  for (int cnt=0; cnt<7; ++cnt) {
-    add[0] |= o[cnt].x() < 0;
-    add[1] |= o[cnt].y() < 0;
-  }
-  if (add[0] || add[1]) {
-    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
-    for (int i=0; i<7; ++i) o[i] += oo;
-  }
-
   int oo[7];
-  for (int cnt=0; cnt<7; ++cnt)
-    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
+  if (get_offset_degree7(o, oo)) {
+    this->set_offsets(f[1], 0, 0, 0);
+    this->set_offsets(f[2], 0, 0, 0);
+    this->set_offsets(f[3], 0, 0, 0);
+    this->set_offsets(f[4], 0, 0, 0);
+    this->set_offsets(f[5], 0, 0, 0);
+  } else {
+    int o_face[3]; int ii;
+    ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+    ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+    ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+    ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
 
-  int o_face[3]; int ii;
-  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
-  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-
-  this->insert_too_long_edge(f[1], ccw(i[1]));
-  this->insert_too_long_edge(f[2], ccw(i[2]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4], ccw(i[4]));
+    this->insert_too_long_edge(f[1], ccw(i[1]));
+    this->insert_too_long_edge(f[2], ccw(i[2]));
+    this->insert_too_long_edge(f[3], ccw(i[3]));
+    this->insert_too_long_edge(f[4], ccw(i[4]));
+  }
 }
 template < class Gt, class Tds >
 inline void
@@ -2453,37 +2478,31 @@ remove_degree7_zigzag (Vertex_handle &, int j,
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
 
-  bool add[2];
-  add[0] = add[1] = false;
-  for (int cnt=0; cnt<7; ++cnt) {
-    add[0] |= o[cnt].x() < 0;
-    add[1] |= o[cnt].y() < 0;
-  }
-  if (add[0] || add[1]) {
-    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
-    for (int i=0; i<7; ++i) o[i] += oo;
-  }
-
   int oo[7];
-  for (int cnt=0; cnt<7; ++cnt)
-    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
-
-  int o_face[3]; int ii;
-  ii = i[1]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[3];
-  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
-  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[6];
-  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-  ii = i[5]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-
-  this->insert_too_long_edge(f[1],  cw(i[1]));
-  this->insert_too_long_edge(f[2], ccw(i[2]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4],     i[4]);
+  if (get_offset_degree7(o, oo)) {
+    this->set_offsets(f[1], 0, 0, 0);
+    this->set_offsets(f[2], 0, 0, 0);
+    this->set_offsets(f[3], 0, 0, 0);
+    this->set_offsets(f[4], 0, 0, 0);
+    this->set_offsets(f[5], 0, 0, 0);
+  } else {
+    int o_face[3]; int ii;
+    ii = i[1]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+    ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[3];
+    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+    ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[6];
+    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+    ii = i[5]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+    
+    this->insert_too_long_edge(f[1],  cw(i[1]));
+    this->insert_too_long_edge(f[2], ccw(i[2]));
+    this->insert_too_long_edge(f[3], ccw(i[3]));
+    this->insert_too_long_edge(f[4],     i[4]);
+  }
 }
 template < class Gt, class Tds >
 inline void
@@ -2513,37 +2532,31 @@ remove_degree7_leftdelta(Vertex_handle &, int j,
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
 
-  bool add[2];
-  add[0] = add[1] = false;
-  for (int cnt=0; cnt<7; ++cnt) {
-    add[0] |= o[cnt].x() < 0;
-    add[1] |= o[cnt].y() < 0;
-  }
-  if (add[0] || add[1]) {
-    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
-    for (int i=0; i<7; ++i) o[i] += oo;
-  }
-
   int oo[7];
-  for (int cnt=0; cnt<7; ++cnt)
-    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
-
-  int o_face[3]; int ii;
-  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[5];
-  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-  ii = i[4]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-
-  this->insert_too_long_edge(f[1], ccw(i[1]));
-  this->insert_too_long_edge(f[2], ccw(i[2]));
-  this->insert_too_long_edge(f[3],     i[3]);
-  this->insert_too_long_edge(f[3], ccw(i[3]));
+  if (get_offset_degree7(o, oo)) {
+    this->set_offsets(f[1], 0, 0, 0);
+    this->set_offsets(f[2], 0, 0, 0);
+    this->set_offsets(f[3], 0, 0, 0);
+    this->set_offsets(f[4], 0, 0, 0);
+    this->set_offsets(f[5], 0, 0, 0);
+  } else {
+    int o_face[3]; int ii;
+    ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+    ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[5];
+    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+    ii = i[4]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+    ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+    
+    this->insert_too_long_edge(f[1], ccw(i[1]));
+    this->insert_too_long_edge(f[2], ccw(i[2]));
+    this->insert_too_long_edge(f[3],     i[3]);
+    this->insert_too_long_edge(f[3], ccw(i[3]));
+  }
 }
 template < class Gt, class Tds >
 inline void
@@ -2573,37 +2586,31 @@ remove_degree7_rightdelta(Vertex_handle &, int j,
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
 
-  bool add[2];
-  add[0] = add[1] = false;
-  for (int cnt=0; cnt<7; ++cnt) {
-    add[0] |= o[cnt].x() < 0;
-    add[1] |= o[cnt].y() < 0;
-  }
-  if (add[0] || add[1]) {
-    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
-    for (int i=0; i<7; ++i) o[i] += oo;
-  }
-
   int oo[7];
-  for (int cnt=0; cnt<7; ++cnt)
-    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
-
-  int o_face[3]; int ii;
-  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-  ii = i[2]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[4];
-  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-
-  this->insert_too_long_edge(f[1], ccw(i[1]));
-  this->insert_too_long_edge(f[2],  cw(i[2]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4], ccw(i[4]));
+  if (get_offset_degree7(o, oo)) {
+    this->set_offsets(f[1], 0, 0, 0);
+    this->set_offsets(f[2], 0, 0, 0);
+    this->set_offsets(f[3], 0, 0, 0);
+    this->set_offsets(f[4], 0, 0, 0);
+    this->set_offsets(f[5], 0, 0, 0);
+  } else {
+    int o_face[3]; int ii;
+    ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+    ii = i[2]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[4];
+    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+    ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+    ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+    
+    this->insert_too_long_edge(f[1], ccw(i[1]));
+    this->insert_too_long_edge(f[2],  cw(i[2]));
+    this->insert_too_long_edge(f[3], ccw(i[3]));
+    this->insert_too_long_edge(f[4], ccw(i[4]));
+  }
 }
 template < class Gt, class Tds >
 inline void
@@ -2630,37 +2637,31 @@ remove_degree7_leftfan(Vertex_handle &, int j,
   tds().delete_face(f[0]);
   tds().delete_face(f[5]);
 
-  bool add[2];
-  add[0] = add[1] = false;
-  for (int cnt=0; cnt<7; ++cnt) {
-    add[0] |= o[cnt].x() < 0;
-    add[1] |= o[cnt].y() < 0;
-  }
-  if (add[0] || add[1]) {
-    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
-    for (int i=0; i<7; ++i) o[i] += oo;
-  }
-
   int oo[7];
-  for (int cnt=0; cnt<7; ++cnt)
-    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
-
-  int o_face[3]; int ii;
-  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
-  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-  ii = i[4]; o_face[ii] = oo[6]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-  ii = i[6]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[6]; o_face[ cw(ii)] = oo[0];
-  this->set_offsets(f[6], o_face[0], o_face[1], o_face[2]);
-
-  this->insert_too_long_edge(f[1], ccw(i[1]));
-  this->insert_too_long_edge(f[2], ccw(i[2]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4],  cw(i[4]));
+  if (get_offset_degree7(o, oo)) {
+    this->set_offsets(f[1], 0, 0, 0);
+    this->set_offsets(f[2], 0, 0, 0);
+    this->set_offsets(f[3], 0, 0, 0);
+    this->set_offsets(f[4], 0, 0, 0);
+    this->set_offsets(f[6], 0, 0, 0);
+  } else {
+    int o_face[3]; int ii;
+    ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+    ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+    ii = i[4]; o_face[ii] = oo[6]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+    ii = i[6]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[6]; o_face[ cw(ii)] = oo[0];
+    this->set_offsets(f[6], o_face[0], o_face[1], o_face[2]);
+    
+    this->insert_too_long_edge(f[1], ccw(i[1]));
+    this->insert_too_long_edge(f[2], ccw(i[2]));
+    this->insert_too_long_edge(f[3], ccw(i[3]));
+    this->insert_too_long_edge(f[4],  cw(i[4]));
+  }
 }
 template < class Gt, class Tds >
 inline void
@@ -2687,37 +2688,31 @@ remove_degree7_rightfan(Vertex_handle &, int j,
   tds().delete_face(f[1]);
   tds().delete_face(f[6]);
 
-  bool add[2];
-  add[0] = add[1] = false;
-  for (int cnt=0; cnt<7; ++cnt) {
-    add[0] |= o[cnt].x() < 0;
-    add[1] |= o[cnt].y() < 0;
-  }
-  if (add[0] || add[1]) {
-    Offset oo = Offset(add[0]?number_of_sheets()[0]:0, add[1]?number_of_sheets()[1]:0);
-    for (int i=0; i<7; ++i) o[i] += oo;
-  }
-
   int oo[7];
-  for (int cnt=0; cnt<7; ++cnt)
-    oo[cnt] = (o[cnt].x() >= number_of_sheets()[0] ? 2 : 0) + (o[cnt].y() >= number_of_sheets()[1] ? 1 : 0);
-
-  int o_face[3]; int ii;
-  ii = i[0]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[0]; o_face[ cw(ii)] = oo[1];
-  this->set_offsets(f[0], o_face[0], o_face[1], o_face[2]);
-  ii = i[2]; o_face[ii] = oo[1]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
-  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-
-  this->insert_too_long_edge(f[0], ccw(i[0]));
-  this->insert_too_long_edge(f[0],  cw(i[0]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4], ccw(i[4]));
+  if (get_offset_degree7(o, oo)) {
+    this->set_offsets(f[0], 0, 0, 0);
+    this->set_offsets(f[2], 0, 0, 0);
+    this->set_offsets(f[3], 0, 0, 0);
+    this->set_offsets(f[4], 0, 0, 0);
+    this->set_offsets(f[5], 0, 0, 0);
+  } else {
+    int o_face[3]; int ii;
+    ii = i[0]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[0]; o_face[ cw(ii)] = oo[1];
+    this->set_offsets(f[0], o_face[0], o_face[1], o_face[2]);
+    ii = i[2]; o_face[ii] = oo[1]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+    ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+    ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+    
+    this->insert_too_long_edge(f[0], ccw(i[0]));
+    this->insert_too_long_edge(f[0],  cw(i[0]));
+    this->insert_too_long_edge(f[3], ccw(i[3]));
+    this->insert_too_long_edge(f[4], ccw(i[4]));
+  }
 }
 
 
