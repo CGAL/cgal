@@ -115,7 +115,7 @@
 #define CGAL_CFG_NO_TR1_ARRAY 1
 // never use TR1
 #define CGAL_CFG_NO_TR1_TUPLE 1
-#if !defined(__GNUC__)
+#if !defined(__GNUC__) || defined(__INTEL_COMPILER)
 #define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
 #endif
 #if defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) || (BOOST_VERSION < 105100)
