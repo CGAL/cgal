@@ -225,8 +225,7 @@ private:
     }
     void update_saved_erase_counter()
     {
-      vh_erase_counter_when_added_ = vertex_handle_->get_erase_counter(); 
-      vh_point_when_added_ = vertex_handle_->point(); 
+      vh_erase_counter_when_added_ = vertex_handle_->get_erase_counter();
     }
     
     int in_dimension() const { return in_dimension_; }
@@ -264,9 +263,8 @@ private:
     void set_zombie(bool is_zombie) { is_zombie_ = is_zombie; }
     bool is_zombie() const { return is_zombie_; }
     bool is_vh_zombie() const 
-    { 
-      return vertex_handle_->get_erase_counter() != vh_erase_counter_when_added_
-        || vh_point_when_added_ != vertex_handle_->point(); 
+    {
+      return vertex_handle_->get_erase_counter() != vh_erase_counter_when_added_; 
     }
     
     /// Operators
@@ -509,7 +507,6 @@ private:
   Mesh_3::Auto_worksharing_ds   *m_worksharing_ds;
   mutable tbb::task             *m_empty_root_task;
   mutable MutexType              m_pqueue_mut;
-  mutable MutexType              m_debug_mut; // CJTODO TEMP
 };
   
   
@@ -553,6 +550,8 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
   helper_.reset_cache();
   
   // Init time counter
+  if (running_time_.is_running()) 
+    running_time_.stop();
   running_time_.reset();
   running_time_.start();
   
@@ -1112,8 +1111,6 @@ perturb_vertex( PVertex pv
               , bool *p_could_lock_zone
               ) const
 {
-  //MutexType::scoped_lock pdebug_lock(m_debug_mut);
-
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(
     "early withdrawals / late withdrawals / successes [Perturber]");
@@ -1137,7 +1134,7 @@ perturb_vertex( PVertex pv
     return;
   }
   
-  // Zombie?
+  // Zombie? (in case the vertex has changed in the meantime)
   if (pv.is_vh_zombie())
   {
     return;
@@ -1207,8 +1204,6 @@ perturb_vertex( PVertex pv
     
     if (*p_could_lock_zone)
     {
-      pv.vertex()->increment_erase_counter(); // CJTODO TEST
-
       // If vertex has changed - may happen in two cases: vertex has been moved
       // or vertex has been reverted to the same location -
       if ( perturbation_ok.second != pv.vertex() )
@@ -1216,7 +1211,14 @@ perturb_vertex( PVertex pv
         // Update pvertex vertex
         pv.set_vertex(perturbation_ok.second);
       }
-    
+      // If the vertex hasn't changed, we still need to "virtually" increment
+      // the erase counter, because we need to invalidate the PVertex that
+      // may be in other threads' queues
+      else
+      {
+        pv.vertex()->increment_erase_counter();
+      }
+
       // If v has been moved
       if ( perturbation_ok.first )
       {
@@ -1235,7 +1237,6 @@ perturb_vertex( PVertex pv
       {
         // If perturbation fails, try next one
         pv.set_perturbation(pv.perturbation()->next());
-        // Set the vertex again to update 
         pv.update_saved_erase_counter();
       
         if ( NULL == pv.perturbation() )

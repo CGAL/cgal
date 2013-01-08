@@ -3371,20 +3371,7 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
 {
   // Get triangulation_vertex incident cells : removal conflict zone
   // CJTODO: hasn't it already been computed in "move_point"?
-  //tr_.incident_cells(v, removal_conflict_cells);
-  //=====  CJTODO TEST
-  Cell_vector incident_cells_;
-  if (try_lock_and_get_incident_cells(v, incident_cells_) == false)
-  {
-    *p_could_lock_zone = false;
-    return;
-  }
-  BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells_.begin(), 
-                                                incident_cells_.end()))
-  {
-    *removal_conflict_cells++ = ch;
-  }
-  //===== /CJTODO TEST
+  tr_.incident_cells(v, removal_conflict_cells);
 
   // Get conflict_point conflict zone 
   int li=0;
