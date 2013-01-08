@@ -77,7 +77,7 @@ bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
   
 \sa \ref do_intersect_linear
 \sa \ref do_intersect_spherical
-\sa `intersection`
+\sa \link intersection `CGAL::intersection()` \endlink
 
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel" for details on a circular kernel instantiation.
 
@@ -121,7 +121,7 @@ bool do_intersect(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2);
   
 \sa \ref do_intersect_linear
 \sa \ref do_intersect_circular
-\sa `intersection`
+\sa \link intersection `CGAL::intersection()` \endlink
 
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel" for details on a spherical kernel instantiation.
 
@@ -187,7 +187,7 @@ function are available.
 
 \sa intersection_circular
 \sa intersection_spherical
-\sa `CGAL::do_intersect` 
+\sa \link do_intersect `CGAL::do_intersect()` \endlink
 \sa `CGAL::Object` 
 
 \details See Chapter  \ref chapterkernel23 "2D and 3D Geometry Kernel" for details on a linear kernel instantiation.
@@ -430,7 +430,7 @@ Object intersection(const Plane_3<Kernel>& pl1,
 
 \sa intersection_linear
 \sa intersection_spherical
-\sa `CGAL::do_intersect` 
+\sa \link do_intersect `CGAL::do_intersect()` \endlink
 \sa `CGAL::Object`
 
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel" for details on a circular kernel instantiation.
@@ -489,7 +489,7 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 
 \sa intersection_linear
 \sa intersection_circular
-\sa `CGAL::do_intersect` 
+\sa \link do_intersect `CGAL::do_intersect()` \endlink
 \sa `CGAL::Object`
 
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel" for details on a spherical kernel instantiation.
