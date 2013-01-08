@@ -79,7 +79,13 @@ if( TBB_FOUND )
   add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
   include_directories ( ${TBB_INCLUDE_DIRS} )
   link_directories( ${TBB_LIBRARY_DIRS} )
-endif( TBB_FOUND )
+  # Note: the next 2 lines are not required under MSVC (auto-link)
+  if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  else()
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_DEBUG_LIBRARIES})
+  endif()
+endif()
   
 # Creates a new CMake option, turned ON by default
 option(ACTIVATE_MSVC_PRECOMPILED_HEADERS

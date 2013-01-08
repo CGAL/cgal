@@ -73,8 +73,8 @@ if ( CGAL_FOUND )
   # And add -DCONCURRENT_MESH_3 if that option is ON
   if( ACTIVATE_CONCURRENT_MESH_3 )
     add_definitions( -DCONCURRENT_MESH_3 )
-    find_package( TBB REQUIRED )
-  else( ACTIVATE_CONCURRENT_MESH_3 )
+    find_package( TBB REQUIRED )	
+  else()
     option( LINK_WITH_TBB
       "Link with TBB anyway so we can use TBB timers for profiling"
       ON)
@@ -87,10 +87,13 @@ if ( CGAL_FOUND )
     add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
     include_directories ( ${TBB_INCLUDE_DIRS} )
     link_directories( ${TBB_LIBRARY_DIRS} )
-    # Note: the next 2 lines are not required under MSVC. What about DEBUG versions?
-    link_libraries( ${TBB_LIBRARY} )
-    link_libraries( ${TBB_MALLOC_LIBRARY} )
-  endif( TBB_FOUND )
+    # Note: the next 2 lines are not required under MSVC (auto-link)
+    if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
+      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+    else()
+      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_DEBUG_LIBRARIES})
+    endif()
+  endif()
   
   include( ${CGAL_USE_FILE} )
   find_package(Boost COMPONENTS program_options REQUIRED)
