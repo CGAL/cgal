@@ -249,6 +249,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         # TODO count figures
         write_out_html(d, fn)
 
+    # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
+    re_replace_in_file('%CGAL','CGAL',glob.glob('./CGAL.CGAL/html/navtree.js')[0])
     clean_doc()
     
     
