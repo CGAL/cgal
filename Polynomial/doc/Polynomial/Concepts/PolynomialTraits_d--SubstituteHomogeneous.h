@@ -28,7 +28,7 @@ Hence, it can not be provided as a public type in advance.
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`
 \sa `PolynomialTraits_d::Substitute`
-\sa  \ref CGAL::Coercion_traits
+\sa  `CGAL::Coercion_traits`
 
 */
 
