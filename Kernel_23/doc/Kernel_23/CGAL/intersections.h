@@ -68,7 +68,7 @@ bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 
 
 /*!
-\addtogroup do_intersect_circular CGAL::do_intersect() (2D Circular Kernel)
+\addtogroup do_intersect_circular
 \ingroup do_intersect
 
 \code
@@ -112,7 +112,7 @@ bool do_intersect(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2);
 
 
 /*!
-\addtogroup do_intersect_spherical CGAL::do_intersect() (3D Spherical Kernel)
+\addtogroup do_intersect_spherical
 \ingroup do_intersect
 
 \code
@@ -178,7 +178,7 @@ function are available.
 
 
 /*!
-\addtogroup intersection_linear CGAL::intersection() (2D/3D Linear Kernel)
+\addtogroup intersection_linear
 \ingroup intersection
 
 \code
@@ -421,7 +421,7 @@ Object intersection(const Plane_3<Kernel>& pl1,
 /// @}
 
 /*!
-\addtogroup intersection_circular CGAL::intersection() (2D Circular Kernel)
+\addtogroup intersection_circular
 \ingroup intersection
 
 \code
@@ -480,7 +480,7 @@ intersection(const Type1 &obj1, const Type2 &obj2,
 /// @}
 
 /*!
-\addtogroup intersection_spherical CGAL::intersection() (3D Spherical Kernel)
+\addtogroup intersection_spherical
 \ingroup intersection
 
 \code

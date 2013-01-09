@@ -1692,6 +1692,12 @@ const CGAL::Vector_3<Kernel>& w);
 
 /// \defgroup do_intersect CGAL::do_intersect()
 /// \ingroup kernel_global_function
+/// \defgroup do_intersect_linear CGAL::do_intersect() (2D/3D Linear Kernel)
+/// \ingroup do_intersect
+/// \defgroup do_intersect_circular CGAL::do_intersect() (2D Circular Kernel)
+/// \ingroup do_intersect
+/// \defgroup do_intersect_spherical CGAL::do_intersect() (3D Spherical Kernel)
+/// \ingroup do_intersect
 
 /// \defgroup equidistant_line CGAL::equidistant_line()
 /// \ingroup kernel_global_function
@@ -1942,6 +1948,12 @@ const CGAL::Point_3<Kernel>& t);
 
 /// \defgroup intersection CGAL::intersection()
 /// \ingroup kernel_global_function
+/// \defgroup intersection_linear CGAL::intersection() (2D/3D Linear Kernel)
+/// \ingroup intersection
+/// \defgroup intersection_circular CGAL::intersection() (2D Circular Kernel)
+/// \ingroup intersection
+/// \defgroup intersection_spherical CGAL::intersection() (3D Spherical Kernel)
+/// \ingroup intersection
 
 /// \defgroup left_turn CGAL::left_turn()
 /// \ingroup kernel_global_function
