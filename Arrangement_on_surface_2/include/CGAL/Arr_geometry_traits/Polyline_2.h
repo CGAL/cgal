@@ -342,6 +342,13 @@ public:
     return (const_reverse_iterator (begin()));
   }
 
+  // TODO: This was added to handle the Split_2. Understand whether
+  // also a reverse version should be implemented?
+  typedef typename Segments_container::iterator Segment_iterator;
+
+  Segment_iterator begin_segments()
+  { return m_segments.begin(); }
+
   typedef typename Segments_container::const_iterator
     Segment_const_iterator;
   typedef typename std::reverse_iterator<Segment_const_iterator>

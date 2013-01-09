@@ -20,8 +20,16 @@
 //                 Ron Wein  <wein@post.tau.ac.il>
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
+// TODO: Complete the documentation of the changes derived from the cleaning
+
 // TODO: Add a tag HAS_SOURCE_TARGET and dispatch calls in
 // Push_back_2 accordingly.
+// @Efi: In order to implement this suggested approach, tons of
+//       other things have to be done. Therefore, we prefer not to
+//       do it right now, and first finish this cleaning - otherwise,
+//       it won't end... In other words, as far as we understand, this
+//       tagging issue is not parrt of the cleaning work, and thus
+//       we want to wait with it.
 
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
 #define CGAL_ARR_POLYLINE_TRAITS_2_H
@@ -588,7 +596,6 @@ public:
 
   /*! Functor to enable pushing back of either points or segments to an
    *  existing polyline.
-   *  TODO: Extend and complete the documentation
    */
   class Push_back_2 {
   protected:
@@ -775,12 +782,11 @@ public:
       c2.clear();
 
       // Push all segments labeled(0, 1, ... , i-1) into c1.
-      // TODO: EFEF: Use std::copy ? instead of the loop.
-      //       Dror: Something like:
-      // std::copy(&cv[0],&cv[i],c1.begin())
-      unsigned int j;
-      for (j = 0; j < i; ++j)
-        c1.push_back(cv[j]);
+      // Instead of the following 3 lines, we use copy, as follows:
+      // unsigned int j;
+      // for (j = 0; j < i; ++j)
+      //   c1.push_back(cv[j]);
+      std::copy(&cv[0],&cv[i],c1.begin_segments());
 
       // Check whether the split point is cv[i]'s source of target.
       if (equal(max_vertex(cv[i]), p)) {
@@ -802,9 +808,13 @@ public:
       // Push all segments labeled(i+1, i+2, ... , n-1) into cv1.
       unsigned int n = cv.number_of_segments();
 
-      // EFEF: Use std::copy ? instead of the loop.
-      for (j = i+1; j < n; ++j)
-        c2.push_back(cv[j]);
+      // TODO: Like several line before, instead of using a loop
+      // we switch to copy. Howver, there's a problem, which has to be
+      // addressed. In particular, &cv[n] is NOT past-the-end.
+      // These are the two original lines.
+      // for (j = i+1; j < n; ++j)
+      //   c2.push_back(cv[j]);
+      std::copy(&cv[i+1],&cv[n],c2.begin_segments());
     }
   };
   friend class Split_2;
@@ -1302,13 +1312,15 @@ public:
     /*! Returns an x-monotone curve consists of one given segment.
      * \param seg input segment
      * \return A polyline with one segment, namely seg.
-     * TODO: @Efi: Should this be implemented?
+     * @Efi: Should this be implemented?
      * EFEF: Mo. The following could be implemented:
      * X_monotone_curve_2 operator()(const Segment_2& seg) { ... }
      * Dror: Sorry, I don't understand what you suggest to do here...
      *       Can you explain? Is the '&' the only difference?
-     * TODO: If yes:Use this implementations in the Make_x_monotone_2,
+     *       If yes:Use this implementations in the Make_x_monotone_2,
      *       when there's only one segment.
+     * TODO: @Efi: What should be down here? This has to be removed
+     *             as far as we understand.
      */
     // X_monotone_curve_2 operator()(const Segment_2 seg) const
     // {
@@ -1317,13 +1329,14 @@ public:
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
     {
-      // TODO: Eliminate the usage of *begin
-      return contructor_impl(begin, end, *begin);
+      typedef typename std::iterator_traits<InputIterator>::value_type VT;
+      typedef typename boost::is_same<VT,Point_2>::type Is_point;
+      return contructor_impl(begin, end, Is_point());
     }
 
     template <typename InputIterator>
     X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
-                                       const Point_2&) const
+                                       boost::true_type) const
     {
       // TODO: @Efi A construction of x-monotone curve (at least ideally)
       //            should never happen from points - right? Therefore,
@@ -1333,6 +1346,10 @@ public:
       //       should be deprecated.
       // Dror: In this case, given the deprecation in the Polyline_2
       //       this discussion can be closed, isn't it?
+      // @Efi: We think that if this specific implementation is kept, then
+      //       the tests should be implemented as well. That is, make sure that
+      //       the range of points given as an input form indeed an x-mono
+      //       curve.
       return X_monotone_curve_2(begin, end);
     }
 
@@ -1351,7 +1368,7 @@ public:
      */
     template <typename InputIterator>
     X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
-                                       const Segment_2&) const
+                                       boost::false_type) const
     {
       CGAL_precondition(begin != end);
 
@@ -1417,25 +1434,13 @@ public:
       // are biderctional.
       if (rev)
         {
-          /*
-           * This part reverse the order of the segments and orient each
-           * segment from left to right.
-           * TODO: In theory, this should not be taken into account
-           *       as the segments' source/target have no meaning.
-           *       Instead, something like the following should be used:
-           // return X_monotone_curve_2(
-           //                std::reverse_iterator<InputIterator>(end),
-           //                std::reverse_iterator<InputIterator>(begin));
-           *
-           */
-          std::vector<Segment_2> reversed_cont;
-          for (InputIterator it = begin ; it != end ; ++it)
-            reversed_cont.push_back(Segment_2(min_v(*it),max_v(*it)));
-          std::reverse(reversed_cont.begin(),reversed_cont.end());
-          return X_monotone_curve_2(reversed_cont.begin(),
-                                    reversed_cont.end());
+          // Reverse the _order_ of the segments in the container.
+          return X_monotone_curve_2(
+                         std::reverse_iterator<InputIterator>(end),
+                         std::reverse_iterator<InputIterator>(begin));
         }
-      return X_monotone_curve_2(begin, end);
+      else
+        return X_monotone_curve_2(begin, end);
     }
   };
 
