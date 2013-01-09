@@ -35,7 +35,7 @@ public:
     The `Curve_2` (and the `X_monotone_curve_2`) class nested within 
     the linear-traits can represent all types of linear objects. The class 
     supports the copy and default constructor and the assignment operator. 
-    In addition, the `operator<<` and `operator>>` for linear objects 
+    In addition, the \link PkgArrangement2op_left_shift `operator<<` \endlink and \link PkgArrangement2op_right_shift `operator>>` \endlink for linear objects 
     are defined for standard output and input streams. 
   */
   class Curve_2 {

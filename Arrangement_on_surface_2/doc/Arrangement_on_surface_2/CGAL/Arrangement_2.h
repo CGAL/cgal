@@ -973,7 +973,7 @@ namespace CGAL {
 
 /*!
   \ingroup PkgArrangement2Insert insert
-  The function `insert` inserts one or more curves or \f$ x\f$-monotone curves
+  The function `%insert` inserts one or more curves or \f$ x\f$-monotone curves
   into a given arrangement, where no restrictions are imposed on the inserted
   curves. If an inserted curve is not \f$ x\f$-monotone curve, it is subdivided
   into \f$ x\f$-monotone subcurves (and perhaps isolated points), which are

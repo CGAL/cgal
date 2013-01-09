@@ -43,7 +43,7 @@ namespace ArrTraits {}
 /// \defgroup PkgArrangement2Funcs Free Functions
 /// \ingroup PkgArrangement2
 
-/// \defgroup PkgArrangement2Insert insert
+/// \defgroup PkgArrangement2Insert CGAL::insert()
 /// \ingroup PkgArrangement2Funcs
 
 /// \defgroup PkgArrangement2Tags Tags

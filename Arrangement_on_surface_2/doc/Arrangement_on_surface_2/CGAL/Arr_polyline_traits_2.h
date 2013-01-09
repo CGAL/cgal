@@ -43,8 +43,8 @@ self-intersecting) and support their construction from any range of points.
 
 The copy and default constructor as well as 
 the assignment operator are provided for polyline curves. In addition, 
-an `operator<<` for the curves is defined for standard output streams, 
-and an `operator>>` for the curves is defined for standard input streams. 
+an \link PkgArrangement2op_left_shift `operator<<` \endlink for the curves is defined for standard output streams, 
+and an \link PkgArrangement2op_right_shift `operator>>` \endlink for the curves is defined for standard input streams. 
 
 */
 class Curve_2 {

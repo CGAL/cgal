@@ -21,8 +21,8 @@ the `<<` operator and read from an input stream using the `>>` operator.
 \cgalModels `ArrangementInputFormatter`
 \cgalModels `ArrangementOutputFormatter`
 
-\sa `read` 
-\sa `write` 
+\sa `PkgArrangement2Read` 
+\sa `PkgArrangement2Write` 
 \sa `Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>` 
 
 */
@@ -55,8 +55,8 @@ can all be written to an input stream using the `<<` operator and read from an i
 \cgalModels `ArrangementInputFormatter`
 \cgalModels `ArrangementOutputFormatter`
 
-\sa `read` 
-\sa `write` 
+\sa `PkgArrangement2Read` 
+\sa `PkgArrangement2Write` 
 \sa `Arr_face_extended_dcel<Traits,FData,V,H,F>` 
 
 */
@@ -88,8 +88,8 @@ operator.
 \cgalModels `ArrangementInputFormatter`
 \cgalModels `ArrangementOutputFormatter`
 
-\sa `read` 
-\sa `write` 
+\sa `PkgArrangement2Read` 
+\sa `PkgArrangement2Write` 
 
 */
 template< typename Arrangement >
