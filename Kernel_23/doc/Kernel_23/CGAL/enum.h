@@ -37,7 +37,7 @@ Bounded_side opposite(const Bounded_side &o);
 
 /*!
 \ingroup kernel_enums
-\sa `CGAL::angle`
+\sa `angle_grp`
  */
 enum Angle {OBTUSE, RIGHT, ACUTE};
 
