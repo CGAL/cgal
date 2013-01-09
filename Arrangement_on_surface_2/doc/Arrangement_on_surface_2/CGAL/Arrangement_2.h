@@ -36,20 +36,20 @@ namespace CGAL {
 
   Insertion Functions
 
-  \sa CGAL::insert
-  \sa CGAL::insert_non_intersecting_curve
-  \sa CGAL::insert_non_intersecting_curves
-  \sa CGAL::insert_point
+  \sa `PkgArrangement2Insert`
+  \sa `CGAL::insert_non_intersecting_curve`
+  \sa `CGAL::insert_non_intersecting_curves`
+  \sa `CGAL::insert_point`
 
   Removal functions 
 
-  \sa CGAL::remove_edge
-  \sa CGAL::remove_vertex
+  \sa `CGAL::remove_edge`
+  \sa `CGAL::remove_vertex`
 
   Input/output functions 
 
-  \sa CGAL::read
-  \sa CGAL::write
+  \sa `PkgArrangement2Read`
+  \sa `PkgArrangement2Write`
 
 */
 template< typename Traits, typename Dcel >

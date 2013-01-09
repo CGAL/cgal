@@ -39,8 +39,8 @@ namespace CGAL {
  * on the curve is stored. This information is used to retrieve
  * hints when a subcurve of this curve is inserted into the planar map.
  *
- * Inherits from Sweep_line_subcurve
- * \sa Sweep_line_subcurve
+ * Inherits from `Sweep_line_subcurve`
+ * \sa `Sweep_line_subcurve`
  */
 
 template<class Traits_>

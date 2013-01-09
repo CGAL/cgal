@@ -61,8 +61,8 @@ is a model of the `EuclideanRing` concept.
 
 \sa `EuclideanRing` 
 \sa `AlgebraicStructureTraits::Div` 
-\sa CGAL::mod 
-\sa CGAL::div_mod 
+\sa `CGAL::mod`
+\sa `CGAL::div_mod`
 
 */
 template< class NT1, class NT2> 
@@ -96,8 +96,8 @@ is a model of the `EuclideanRing` concept.
 
 \sa `EuclideanRing` 
 \sa `AlgebraicStructureTraits::DivMod` 
-\sa CGAL::mod 
-\sa CGAL::div 
+\sa `CGAL::mod`
+\sa `CGAL::div`
 
 */
 template <class NT1, class NT2> 
@@ -344,8 +344,8 @@ is a model of the `EuclideanRing` concept.
 
 \sa `EuclideanRing` 
 \sa `AlgebraicStructureTraits::DivMod` 
-\sa CGAL::div_mod 
-\sa CGAL::div 
+\sa `CGAL::div_mod`
+\sa `CGAL::div`
 
 */
 template< class NT1, class NT2> 

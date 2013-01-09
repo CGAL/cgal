@@ -46,7 +46,7 @@ with innermost coefficient type `Coefficient`.
 Constitutes a model of the concept `Polynomial_d` 
 with two variables. 
 
-\sa CGAL::Polynomial_d
+\sa `CGAL::Polynomial_d`
 */ 
 typedef Hidden_type Polynomial_2; 
 

@@ -54,7 +54,7 @@ enum Comparison_result { SMALLER, EQUAL, LARGER };
 
 /*!
 \ingroup kernel_enums
-\sa CGAL::Orientation
+\sa `CGAL::Orientation`
 */
 enum  Sign { NEGATIVE, ZERO, POSITIVE };
 

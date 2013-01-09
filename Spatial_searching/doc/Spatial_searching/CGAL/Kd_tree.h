@@ -16,7 +16,6 @@ It defaults to `Sliding_midpoint<Traits>`.
 Expects for the third template argument `Tag_true`, if the 
 tree shall be built with extended nodes, and `Tag_false` otherwise. 
 
-\sa Tree
 \sa `CGAL::Kd_tree_node<Traits>` 
 \sa `CGAL::Search_traits_2<Kernel>` 
 \sa `CGAL::Search_traits_3<Kernel>` 

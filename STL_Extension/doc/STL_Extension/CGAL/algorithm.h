@@ -145,7 +145,7 @@ is used.
 
 
 \sa <a href="http://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior">boost::next</a>
-\sa CGAL::cpp11::prev
+\sa `CGAL::cpp11::prev`
 
 */
 template <typename ForwardIterator>

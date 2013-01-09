@@ -19,8 +19,8 @@ using a specific input format.
 \sa `PkgArrangement2Write`
 
   
-\sa PkgArrangement2op_left_shift
-\sa PkgArrangement2op_right_shift
+\sa `PkgArrangement2op_left_shift`
+\sa `PkgArrangement2op_right_shift`
 */
 /// @{
 
@@ -53,8 +53,8 @@ using a specific output format.
 </UL>
 
 \sa `PkgArrangement2Read`
-\sa PkgArrangement2op_left_shift
-\sa PkgArrangement2op_right_shift
+\sa `PkgArrangement2op_left_shift`
+\sa `PkgArrangement2op_right_shift`
 */
 /// @{
 
