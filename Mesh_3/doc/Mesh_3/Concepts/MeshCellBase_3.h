@@ -31,7 +31,7 @@ of a surface facet, the center of its biggest Delaunay surface ball.
 
 \cgalHasModel `CGAL::Mesh_cell_base_3<MD,Gt,Cb>` 
 
-\sa `CGAL::make_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
 \sa `MeshDomain_3` 
 \sa `MeshComplex_3InTriangulation_3` 
 

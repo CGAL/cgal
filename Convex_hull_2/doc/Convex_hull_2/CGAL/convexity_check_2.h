@@ -27,8 +27,8 @@ functions that return instances of these types:
 <LI>`Traits::Left_turn_2`. 
 </UL> 
 
-\sa `CGAL::is_cw_strongly_convex_2` 
-\sa `CGAL::is_strongly_convex_3` 
+\sa `CGAL::is_cw_strongly_convex_2()` 
+\sa `CGAL::is_strongly_convex_3()` 
 
 \cgalHeading{Implementation}
 
@@ -76,8 +76,8 @@ functions that return instances of these types:
 <LI>`Traits::Left_turn_2`. 
 </UL> 
 
-\sa `CGAL::is_ccw_strongly_convex_2` 
-\sa `CGAL::is_strongly_convex_3` 
+\sa `CGAL::is_ccw_strongly_convex_2()` 
+\sa `CGAL::is_strongly_convex_3()` 
 
 \cgalHeading{Implementation}
 

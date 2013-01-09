@@ -17,11 +17,11 @@ the `complement function` writes them into an output iterator
 
 
 
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
+\sa `CGAL::do_intersect()` 
+\sa `CGAL::intersection()` 
+\sa `CGAL::join()` 
+\sa `CGAL::difference()` 
+\sa `CGAL::symmetric_difference()` 
 */
 /// @{
 
@@ -91,10 +91,10 @@ The types of the paramters of the `difference()` function are any of the followi
 </table> 
 </div> 
 
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::symmetric_difference` 
+\sa `CGAL::do_intersect()` 
+\sa `CGAL::intersection()` 
+\sa `CGAL::join()` 
+\sa `CGAL::symmetric_difference()` 
 
 */
 
@@ -211,10 +211,10 @@ The types of the paramters of the `do_intersect()` function are any of the follo
 </div> 
 
 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
+\sa `CGAL::intersection()` 
+\sa `CGAL::join()` 
+\sa `CGAL::difference()` 
+\sa `CGAL::symmetric_difference()` 
 
 */
 
@@ -342,10 +342,10 @@ The types of the paramters of the `intersection()` function are any of the follo
 </div> 
 
 
-\sa `CGAL::do_intersect` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
+\sa `CGAL::do_intersect()` 
+\sa `CGAL::join()` 
+\sa `CGAL::difference()` 
+\sa `CGAL::symmetric_difference()` 
 
 */
 
@@ -499,10 +499,10 @@ The types of the paramters of the `join()` function are any of the following com
 </table> 
 </div> 
 
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::difference` 
-\sa `CGAL::symmetric_difference` 
+\sa `CGAL::do_intersect()` 
+\sa `CGAL::intersection()` 
+\sa `CGAL::difference()` 
+\sa `CGAL::symmetric_difference()` 
 
 */
 
@@ -653,7 +653,7 @@ The types of the paramters of the `oriented_side()` function are any of the foll
 </table> 
 </div> 
 
-\sa `CGAL::do_intersect` 
+\sa `CGAL::do_intersect()` 
 
 */
 
@@ -740,10 +740,10 @@ The types of the paramters of the `symmetric_difference()` function are any of t
 </div> 
 
 
-\sa `CGAL::do_intersect` 
-\sa `CGAL::intersection` 
-\sa `CGAL::join` 
-\sa `CGAL::difference` 
+\sa `CGAL::do_intersect()` 
+\sa `CGAL::intersection()` 
+\sa `CGAL::join()` 
+\sa `CGAL::difference()` 
 
 */
 

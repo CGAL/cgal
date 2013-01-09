@@ -18,7 +18,7 @@ It is by default `std::vector<typename Kernel::Point_2>`.
 
 \cgalModels `PolygonConvexDecomposition_2`
 
-\sa `CGAL::greene_approx_convex_partition_2` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
 
 */
 template< typename Kernel, typename Container >
@@ -55,7 +55,7 @@ It is by default `std::vector<typename Kernel::Point_2>`.
 
 \cgalModels `PolygonConvexDecomposition_2`
 
-\sa `CGAL::approx_convex_partition_2` 
+\sa `CGAL::approx_convex_partition_2()` 
 
 */
 template< typename Kernel, typename Container >
@@ -89,7 +89,7 @@ It is by default `std::vector<typename Kernel::Point_2>`.
 
 \cgalModels `PolygonConvexDecomposition_2`
 
-\sa `CGAL::optimal_convex_partition_2` 
+\sa `CGAL::optimal_convex_partition_2()` 
 
 */
 template< typename Kernel, typename Container >

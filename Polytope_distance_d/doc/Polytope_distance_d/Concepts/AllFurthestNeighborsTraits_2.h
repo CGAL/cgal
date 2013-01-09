@@ -12,7 +12,7 @@ convex polygon using the function `all_furthest_neighbors_2`.
 \cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>`
 \cgalHasModel `CGAL::Simple_homogeneous<RingNumberType>`
 
-\sa `CGAL::all_furthest_neighbors_2` 
+\sa `CGAL::all_furthest_neighbors_2()` 
 
 ### Notes ###
 

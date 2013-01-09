@@ -97,7 +97,7 @@ instead.
 The function `predecessor` returns the previous iterator,
 i.e. the result of `operator--` on a bidirectional iterator.
 
-\sa `CGAL::successor`
+\sa `CGAL::successor()`
 
 \returns `--it`.
 */
@@ -119,7 +119,7 @@ The function `successor` returns the next iterator, i.e.
 the result of `operator++` on a forward iterator.
 
 
-\sa `CGAL::predecessor`
+\sa `CGAL::predecessor()`
 
 \returns `++it`.
 */
@@ -145,7 +145,7 @@ is used.
 
 
 \sa <a href="http://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior">boost::next</a>
-\sa `CGAL::cpp11::prev`
+\sa `CGAL::cpp11::prev()`
 
 */
 template <typename ForwardIterator>

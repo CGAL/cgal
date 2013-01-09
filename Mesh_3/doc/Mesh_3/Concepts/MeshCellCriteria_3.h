@@ -14,8 +14,8 @@ handle the refinement criteria for mesh tetrahedra.
 \sa `MeshEdgeCriteria_3` 
 \sa `MeshFacetCriteria_3` 
 \sa `MeshCriteria_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 

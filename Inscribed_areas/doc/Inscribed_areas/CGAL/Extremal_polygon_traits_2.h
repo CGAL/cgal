@@ -12,9 +12,9 @@ be inscribed into a given convex polygon \f$ P\f$ using the function
 
 \cgalModels `ExtremalPolygonTraits_2`
 
-\sa `CGAL::maximum_area_inscribed_k_gon_2`
-\sa `CGAL::maximum_perimeter_inscribed_k_gon_2`
-\sa `CGAL::extremal_polygon_2`
+\sa `CGAL::maximum_area_inscribed_k_gon_2()`
+\sa `CGAL::maximum_perimeter_inscribed_k_gon_2()`
+\sa `CGAL::extremal_polygon_2()`
 \sa `CGAL::Extremal_polygon_perimeter_traits_2<K>`
 \sa `ExtremalPolygonTraits_2` 
 
@@ -114,9 +114,9 @@ k\f$-gon \f$ P_k\f$ that can be inscribed into a given convex polygon
 
 \cgalModels `ExtremalPolygonTraits_2`
 
-\sa `CGAL::maximum_area_inscribed_k_gon_2`
-\sa `CGAL::maximum_perimeter_inscribed_k_gon_2`
-\sa `CGAL::extremal_polygon_2`
+\sa `CGAL::maximum_area_inscribed_k_gon_2()`
+\sa `CGAL::maximum_perimeter_inscribed_k_gon_2()`
+\sa `CGAL::extremal_polygon_2()`
 \sa `CGAL::Extremal_polygon_area_traits_2<K>`
 \sa `ExtremalPolygonTraits_2` 
 

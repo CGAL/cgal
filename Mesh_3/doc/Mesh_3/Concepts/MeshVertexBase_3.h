@@ -20,8 +20,8 @@ and to an index characteristic of this face.
 
 \cgalHasModel `CGAL::Mesh_vertex_base_3<MD,Gt,Vb>` 
 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 \sa `MeshDomain_3` 
 
 */

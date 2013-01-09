@@ -63,7 +63,7 @@ from input iterators.
 `Iterator` is a model for
 `InputIterator`.
 
-\sa `CGAL::copy_n`
+\sa `CGAL::copy_n()`
 
 
 */

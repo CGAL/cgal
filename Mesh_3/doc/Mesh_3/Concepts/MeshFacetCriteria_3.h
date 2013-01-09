@@ -14,8 +14,8 @@ handle the refinement criteria for surface facets.
 \sa `MeshCellCriteria_3` 
 \sa `MeshEdgeCriteria_3` 
 \sa `MeshCriteria_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 

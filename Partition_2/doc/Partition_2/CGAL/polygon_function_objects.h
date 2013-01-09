@@ -8,7 +8,7 @@ a convex polygon or not.
 
 \cgalModels `PolygonIsValid`
 
-\sa `CGAL::convex_partition_is_valid_2` 
+\sa `CGAL::convex_partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
 \cgalHeading{Implementation}
@@ -57,7 +57,7 @@ Function object class that indicates all sequences of points are valid.
 
 \cgalModels `PolygonIsValid`
 
-\sa `CGAL::partition_is_valid_2` 
+\sa `CGAL::partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
 \cgalHeading{Implementation}
@@ -105,7 +105,7 @@ a \f$ y\f$-monotone polygon or not.
 
 \cgalModels `PolygonIsValid`
 
-\sa `CGAL::convex_partition_is_valid_2` 
+\sa `CGAL::convex_partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
 \cgalHeading{Implementation}

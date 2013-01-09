@@ -35,8 +35,8 @@ and strictly outside the domain (resp. the subdomain).
 
 \sa `MeshVertexBase_3`
 \sa `MeshCellBase_3`
-\sa `CGAL::make_mesh_3`
-\sa `CGAL::refine_mesh_3`
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::refine_mesh_3()`
 
 */
 

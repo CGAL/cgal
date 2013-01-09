@@ -35,7 +35,7 @@ for `AllFurthestNeighborsTraits_2`.
 </OL> 
 
 \sa `AllFurthestNeighborsTraits_2` 
-\sa `CGAL::monotone_matrix_search` 
+\sa `CGAL::monotone_matrix_search()` 
 
 \cgalHeading{Implementation}
 

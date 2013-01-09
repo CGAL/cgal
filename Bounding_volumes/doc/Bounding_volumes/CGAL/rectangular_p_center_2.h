@@ -12,7 +12,7 @@ using the function `rectangular_p_center_2`.
 
 \cgalModels `RectangularPCenterTraits_2`
 
-\sa `CGAL::rectangular_p_center_2` 
+\sa `CGAL::rectangular_p_center_2()` 
 
 */
 template< typename K >
@@ -240,7 +240,7 @@ is a model for `RectangularPCenterTraits_2`.
 
 \sa `RectangularPCenterTraits_2` 
 \sa `CGAL::Rectangular_p_center_default_traits_2<K>` 
-\sa `CGAL::sorted_matrix_search` 
+\sa `CGAL::sorted_matrix_search()` 
 
 \cgalHeading{Implementation}
 

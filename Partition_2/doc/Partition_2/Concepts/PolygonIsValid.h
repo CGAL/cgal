@@ -9,13 +9,13 @@ meanings (e.g., convex or \f$ y\f$-monotone).
 \cgalHasModel `CGAL::Is_convex_2<Traits>` 
 \cgalHasModel `CGAL::Is_y_monotone_2<Traits>` 
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::convex_partition_is_valid_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
-\sa `CGAL::optimal_convex_partition_2` 
-\sa `CGAL::partition_is_valid_2` 
-\sa `CGAL::y_monotone_partition_2` 
-\sa `CGAL::y_monotone_partition_is_valid_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::convex_partition_is_valid_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
+\sa `CGAL::optimal_convex_partition_2()` 
+\sa `CGAL::partition_is_valid_2()` 
+\sa `CGAL::y_monotone_partition_2()` 
+\sa `CGAL::y_monotone_partition_is_valid_2()` 
 
 */
 

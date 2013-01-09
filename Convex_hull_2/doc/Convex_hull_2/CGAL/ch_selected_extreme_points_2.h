@@ -20,12 +20,12 @@ value type of `ForwardIterator` is defined.
 the concept `ConvexHullTraits_2` and the corresponding member 
 function that returns an instance of this type. 
 
-\sa `CGAL::ch_nswe_point` 
-\sa `CGAL::ch_n_point` 
-\sa `CGAL::ch_ns_point` 
-\sa `CGAL::ch_s_point` 
-\sa `CGAL::ch_w_point` 
-\sa `CGAL::ch_we_point` 
+\sa `CGAL::ch_nswe_point()` 
+\sa `CGAL::ch_n_point()` 
+\sa `CGAL::ch_ns_point()` 
+\sa `CGAL::ch_s_point()` 
+\sa `CGAL::ch_w_point()` 
+\sa `CGAL::ch_we_point()` 
 
 
 */
@@ -59,12 +59,12 @@ The default traits class `Default_traits` is the kernel in which the type
 the concept `ConvexHullTraits_2` and the corresponding member 
 function that returns an instance of this type. 
 
-\sa `CGAL::ch_e_point` 
-\sa `CGAL::ch_nswe_point` 
-\sa `CGAL::ch_ns_point` 
-\sa `CGAL::ch_s_point` 
-\sa `CGAL::ch_w_point` 
-\sa `CGAL::ch_we_point` 
+\sa `CGAL::ch_e_point()` 
+\sa `CGAL::ch_nswe_point()` 
+\sa `CGAL::ch_ns_point()` 
+\sa `CGAL::ch_s_point()` 
+\sa `CGAL::ch_w_point()` 
+\sa `CGAL::ch_we_point()` 
 
 
 */
@@ -100,12 +100,12 @@ value type of `ForwardIterator` is defined.
 the concept `ConvexHullTraits_2` and the corresponding member 
 function that returns an instance of this type. 
 
-\sa `CGAL::ch_e_point` 
-\sa `CGAL::ch_nswe_point` 
-\sa `CGAL::ch_n_point` 
-\sa `CGAL::ch_s_point` 
-\sa `CGAL::ch_w_point` 
-\sa `CGAL::ch_we_point` 
+\sa `CGAL::ch_e_point()` 
+\sa `CGAL::ch_nswe_point()` 
+\sa `CGAL::ch_n_point()` 
+\sa `CGAL::ch_s_point()` 
+\sa `CGAL::ch_w_point()` 
+\sa `CGAL::ch_we_point()` 
 
 
 */
@@ -150,12 +150,12 @@ functions that return instances of these types:
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-\sa `CGAL::ch_e_point` 
-\sa `CGAL::ch_n_point` 
-\sa `CGAL::ch_ns_point` 
-\sa `CGAL::ch_s_point` 
-\sa `CGAL::ch_w_point` 
-\sa `CGAL::ch_we_point` 
+\sa `CGAL::ch_e_point()` 
+\sa `CGAL::ch_n_point()` 
+\sa `CGAL::ch_ns_point()` 
+\sa `CGAL::ch_s_point()` 
+\sa `CGAL::ch_w_point()` 
+\sa `CGAL::ch_we_point()` 
 
 
 */
@@ -192,12 +192,12 @@ type `ForwardIterator::value_type` is defined.
 the concept `ConvexHullTraits_2` and the corresponding member 
 function that returns an instance of this type. 
 
-\sa `CGAL::ch_e_point` 
-\sa `CGAL::ch_nswe_point` 
-\sa `CGAL::ch_n_point` 
-\sa `CGAL::ch_ns_point` 
-\sa `CGAL::ch_w_point` 
-\sa `CGAL::ch_we_point` 
+\sa `CGAL::ch_e_point()` 
+\sa `CGAL::ch_nswe_point()` 
+\sa `CGAL::ch_n_point()` 
+\sa `CGAL::ch_ns_point()` 
+\sa `CGAL::ch_w_point()` 
+\sa `CGAL::ch_we_point()` 
 
 
 */
@@ -233,12 +233,12 @@ type `ForwardIterator::value_type` is defined.
 the concept `ConvexHullTraits_2` and the corresponding member 
 function that returns an instance of this type. 
 
-\sa `CGAL::ch_e_point` 
-\sa `CGAL::ch_nswe_point` 
-\sa `CGAL::ch_n_point` 
-\sa `CGAL::ch_ns_point` 
-\sa `CGAL::ch_s_point` 
-\sa `CGAL::ch_w_point` 
+\sa `CGAL::ch_e_point()` 
+\sa `CGAL::ch_nswe_point()` 
+\sa `CGAL::ch_n_point()` 
+\sa `CGAL::ch_ns_point()` 
+\sa `CGAL::ch_s_point()` 
+\sa `CGAL::ch_w_point()` 
 
 
 */
@@ -273,12 +273,12 @@ function that returns an instance of this type.
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-\sa `CGAL::ch_e_point` 
-\sa `CGAL::ch_nswe_point` 
-\sa `CGAL::ch_n_point` 
-\sa `CGAL::ch_ns_point` 
-\sa `CGAL::ch_s_point` 
-\sa `CGAL::ch_we_point` 
+\sa `CGAL::ch_e_point()` 
+\sa `CGAL::ch_nswe_point()` 
+\sa `CGAL::ch_n_point()` 
+\sa `CGAL::ch_ns_point()` 
+\sa `CGAL::ch_s_point()` 
+\sa `CGAL::ch_we_point()` 
 
 
 */

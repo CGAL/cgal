@@ -10,7 +10,7 @@ that fulfills a certain feasibility criterion using the function
 
 \cgalHasModel `CGAL::Sorted_matrix_search_traits_adaptor<F,M>`
 
-\sa `CGAL::sorted_matrix_search`
+\sa `CGAL::sorted_matrix_search()`
 \sa `BasicMatrix` 
 
 */

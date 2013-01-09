@@ -31,12 +31,12 @@ functions that return instances of these types:
 </UL> 
 </OL> 
 
-\sa `CGAL::ch_akl_toussaint` 
-\sa `CGAL::ch_eddy` 
-\sa `CGAL::ch_graham_andrew` 
-\sa `CGAL::ch_jarvis` 
-\sa `CGAL::ch_melkman` 
-\sa `CGAL::convex_hull_2` 
+\sa `CGAL::ch_akl_toussaint()` 
+\sa `CGAL::ch_eddy()` 
+\sa `CGAL::ch_graham_andrew()` 
+\sa `CGAL::ch_jarvis()` 
+\sa `CGAL::ch_melkman()` 
+\sa `CGAL::convex_hull_2()` 
 
 \cgalHeading{Implementation}
 

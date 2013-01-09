@@ -23,9 +23,9 @@ inserting the \f$ n\f$ points.
   the `value_type` in this case.
 
 
-\sa `CGAL::points_on_square_grid_2`
+\sa `CGAL::points_on_square_grid_2()`
 
-\sa `CGAL::random_selection`
+\sa `CGAL::random_selection()`
 
 */
 template <class OutputIterator, class Creator>
@@ -44,7 +44,7 @@ distributed in a half-open cube. The default `Creator` is
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_sphere_3<Point_3, Creator>`
@@ -111,7 +111,7 @@ distributed in an open sphere. The default `Creator` is
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
@@ -181,7 +181,7 @@ rounding errors.
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`

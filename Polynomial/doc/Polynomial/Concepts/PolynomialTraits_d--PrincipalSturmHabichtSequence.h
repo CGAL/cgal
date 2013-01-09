@@ -25,7 +25,7 @@ the polynomial \f$ f\f$.
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`
-\sa `CGAL::number_of_real_roots`
+\sa `CGAL::number_of_real_roots()`
 \sa `PolynomialTraits_d::Resultant`
 \sa `PolynomialTraits_d::SturmHabichtSequence`
 \sa `PolynomialTraits_d::PrincipalSubresultants`

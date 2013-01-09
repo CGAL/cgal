@@ -13,7 +13,7 @@ matrix search.
 \cgalModels `MonotoneMatrixSearchTraits`
 \cgalModels `BasicMatrix`
 
-\sa `CGAL::monotone_matrix_search`
+\sa `CGAL::monotone_matrix_search()`
 \sa `MonotoneMatrixSearchTraits` 
 \sa `BasicMatrix` 
 

@@ -93,7 +93,7 @@ are combined.
 
 
 
-\sa `CGAL::compare_to_less` 
+\sa `CGAL::compare_to_less()` 
 
 
 */

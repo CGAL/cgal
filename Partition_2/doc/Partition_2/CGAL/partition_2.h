@@ -34,12 +34,12 @@ whose vertices are oriented counterclockwise.
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `std::iterator_traits<InputIterator1>::%value_type`. 
 
-\sa `CGAL::convex_partition_is_valid_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
-\sa `CGAL::optimal_convex_partition_2` 
-\sa `CGAL::partition_is_valid_2` 
+\sa `CGAL::convex_partition_is_valid_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
+\sa `CGAL::optimal_convex_partition_2()` 
+\sa `CGAL::partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
-\sa `CGAL::y_monotone_partition_2` 
+\sa `CGAL::y_monotone_partition_2()` 
 
 \cgalHeading{Implementation}
 
@@ -108,11 +108,11 @@ an object of type `Traits::Polygon_2`.
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::convex_partition_is_valid_2` 
-\sa `CGAL::optimal_convex_partition_2` 
-\sa `CGAL::partition_is_valid_2` 
-\sa `CGAL::y_monotone_partition_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::convex_partition_is_valid_2()` 
+\sa `CGAL::optimal_convex_partition_2()` 
+\sa `CGAL::partition_is_valid_2()` 
+\sa `CGAL::y_monotone_partition_2()` 
 
 \cgalHeading{Implementation}
 
@@ -176,10 +176,10 @@ of type `Traits::Polygon_2`.
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::convex_partition_is_valid_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
-\sa `CGAL::partition_is_valid_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::convex_partition_is_valid_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
+\sa `CGAL::partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
 \cgalHeading{Implementation}
@@ -247,11 +247,11 @@ of type `Traits::Polygon_2`.
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
-\sa `CGAL::optimal_convex_partition_2` 
-\sa `CGAL::partition_is_valid_2` 
-\sa `CGAL::y_monotone_partition_is_valid_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
+\sa `CGAL::optimal_convex_partition_2()` 
+\sa `CGAL::partition_is_valid_2()` 
+\sa `CGAL::y_monotone_partition_is_valid_2()` 
 
 \cgalHeading{Implementation}
 

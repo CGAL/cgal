@@ -43,7 +43,7 @@ the center of its biggest Delaunay surface ball.
 \sa `SurfaceMeshComplex_2InTriangulation_3` 
 \sa `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>` 
 \sa `CGAL::Surface_mesh_default_triangulation_3` 
-\sa `CGAL::make_surface_mesh` 
+\sa `CGAL::make_surface_mesh()` 
 
 */
 

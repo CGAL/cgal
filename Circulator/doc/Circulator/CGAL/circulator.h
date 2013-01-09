@@ -667,8 +667,8 @@ iterators or circulators,  a backwards loop macro
 `CGAL_For_all_backwards(i, j)` exists that decrements `j` until
 it reaches `i`.
 
-\sa `CGAL::iterator_distance`
-\sa `CGAL::is_empty_range`
+\sa `CGAL::iterator_distance()`
+\sa `CGAL::is_empty_range()`
 \sa `CGAL::Circulator_tag`
 \sa `CGAL::Circulator_traits`
 \sa `CGAL::Assert_circulator_or_iterator`

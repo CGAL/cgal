@@ -15,9 +15,9 @@ specified, in case that precondition checking is disabled.
 \cgalHasModel `CGAL::Extremal_polygon_area_traits_2<K>`
 \cgalHasModel `CGAL::Extremal_polygon_perimeter_traits_2<K>`
 
-\sa `CGAL::maximum_area_inscribed_k_gon_2`
-\sa `CGAL::maximum_perimeter_inscribed_k_gon_2`
-\sa `CGAL::extremal_polygon_2`
+\sa `CGAL::maximum_area_inscribed_k_gon_2()`
+\sa `CGAL::maximum_perimeter_inscribed_k_gon_2()`
+\sa `CGAL::extremal_polygon_2()`
 
 */
 

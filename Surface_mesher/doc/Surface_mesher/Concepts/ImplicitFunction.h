@@ -11,7 +11,7 @@ whose `operator()` computes the values of a function
 \cgalHasModel any pointer to a function of type `FT (*)(Point)`
 
 \sa `CGAL::Implicit_surface_3<Traits, Function>`
-\sa `CGAL::make_surface_mesh` 
+\sa `CGAL::make_surface_mesh()` 
 
 */
 

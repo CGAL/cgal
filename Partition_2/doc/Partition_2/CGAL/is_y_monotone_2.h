@@ -17,8 +17,8 @@ The default traits class `Default_traits` is the kernel in which the
 type `std::iterator_traits<InputIterator>::%value_type` is defined. 
 
 \sa `CGAL::Is_y_monotone_2<Traits>` 
-\sa `CGAL::y_monotone_partition_2` 
-\sa `CGAL::y_monotone_partition_is_valid_2` 
+\sa `CGAL::y_monotone_partition_2()` 
+\sa `CGAL::y_monotone_partition_is_valid_2()` 
 
 \cgalHeading{Implementation}
 

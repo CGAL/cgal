@@ -31,20 +31,20 @@ namespace CGAL {
   \sa `ArrangementDcel` 
   \sa `Arr_default_dcel<Traits>` 
   \sa `ArrangementBasicTraits_2` 
-  \sa `CGAL::overlay` 
-  \sa `CGAL::is_valid` 
+  \sa `CGAL::overlay()` 
+  \sa `CGAL::is_valid()` 
 
   Insertion Functions
 
   \sa `PkgArrangement2Insert`
-  \sa `CGAL::insert_non_intersecting_curve`
-  \sa `CGAL::insert_non_intersecting_curves`
-  \sa `CGAL::insert_point`
+  \sa `CGAL::insert_non_intersecting_curve()`
+  \sa `CGAL::insert_non_intersecting_curves()`
+  \sa `CGAL::insert_point()`
 
   Removal functions 
 
-  \sa `CGAL::remove_edge`
-  \sa `CGAL::remove_vertex`
+  \sa `CGAL::remove_edge()`
+  \sa `CGAL::remove_vertex()`
 
   Input/output functions 
 

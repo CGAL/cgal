@@ -31,11 +31,11 @@ returns `false`.
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
-\sa `CGAL::optimal_convex_partition_2` 
-\sa `CGAL::partition_is_valid_2` 
-\sa `CGAL::is_convex_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
+\sa `CGAL::optimal_convex_partition_2()` 
+\sa `CGAL::partition_is_valid_2()` 
+\sa `CGAL::is_convex_2()` 
 
 \cgalHeading{Implementation}
 
@@ -93,13 +93,13 @@ tested by `Traits::Is_valid()`.
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
-\sa `CGAL::is_y_monotone_2` 
-\sa `CGAL::optimal_convex_partition_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
+\sa `CGAL::is_y_monotone_2()` 
+\sa `CGAL::optimal_convex_partition_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
-\sa `CGAL::y_monotone_partition_2` 
-\sa `CGAL::is_convex_2` 
+\sa `CGAL::y_monotone_partition_2()` 
+\sa `CGAL::is_convex_2()` 
 
 \cgalHeading{Implementation}
 
@@ -153,9 +153,9 @@ returns false.
 The default traits class `Default_traits` is `Partition_traits_2`, 
 with the representation type determined by `std::iterator_traits<InputIterator>::%value_type`. 
 
-\sa `CGAL::y_monotone_partition_2` 
-\sa `CGAL::is_y_monotone_2` 
-\sa `CGAL::partition_is_valid_2` 
+\sa `CGAL::y_monotone_partition_2()` 
+\sa `CGAL::is_y_monotone_2()` 
+\sa `CGAL::partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
 \cgalHeading{Implementation}
