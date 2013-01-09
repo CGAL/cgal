@@ -25,8 +25,8 @@ is in <span class="textsc">Ascii</span> mode.
 
 \sa `CGAL::set_mode()`
 \sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode `
-\sa `CGAL::set_pretty_mode `
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
 \sa `CGAL::get_mode()`
 \sa `CGAL::is_ascii()`
 \sa `CGAL::is_binary()`

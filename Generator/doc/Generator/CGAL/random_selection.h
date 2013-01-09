@@ -16,7 +16,7 @@ Returns the value of `result` after inserting the `n` items.
 
 
 
-\sa `CGAL::perturb_points_2` 
+\sa `CGAL::perturb_points_2()` 
 */
 template <class RandomAccessIterator, class Size, 
 class OutputIterator, class Random>

@@ -21,7 +21,7 @@ for the approximation error criterion.
 \sa `MeshFacetCriteria_3` 
 \sa `CGAL::Mesh_criteria_3<Tr>` 
 \sa `MeshDomainField_3` 
-\sa `CGAL::make_mesh_3` 
+\sa `CGAL::make_mesh_3()`
 
 */
 template< typename Tr >

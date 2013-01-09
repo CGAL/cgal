@@ -193,7 +193,7 @@ area_2( ForwardIterator first, ForwardIterator last,
 /// 
 /// 
 /// \sa `PolygonTraits_2 `
-/// \sa `CGAL::orientation_2 `
+/// \sa `CGAL::orientation_2()`
 /// \sa `CGAL::Polygon_2 `
 template <class ForwardIterator, class PolygonTraits>
 typename PolygonTraits::FT 
