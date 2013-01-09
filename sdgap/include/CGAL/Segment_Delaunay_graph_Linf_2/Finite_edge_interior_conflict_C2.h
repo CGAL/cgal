@@ -696,8 +696,8 @@ public:
     }
 
     if (t.is_point() and (sgn == NEGATIVE)) {
-	  CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
-		        << true << std::endl; );
+	    CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
+		                  << true << std::endl; );
       return true; 
     }
 
@@ -724,9 +724,10 @@ public:
 
           CGAL_SDG_DEBUG( std::cout << "debug fecf p is not endpoint of q"
             << std::endl; );
-
-          CGAL_assertion( not ( q.segment().is_horizontal() or
-                                q.segment().is_vertical()     ) ) ; 
+          //sandeep: remove the following assertion, so need to check later
+          //if logic holds for hor and ver segments
+          //CGAL_assertion( not ( q.segment().is_horizontal() or
+            //                    q.segment().is_vertical()     ) ) ;
 
           Line_2 lseg = compute_supporting_line(q.supporting_site());
 
@@ -740,8 +741,8 @@ public:
           CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
           if (ossegp != ossegt) {
-			CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
-			          << false << std::endl; );
+			      CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
+			                      << false << std::endl; );
             return false;
           } else {  
             // here, t and p are on the same side of q
@@ -796,8 +797,10 @@ public:
 			        << false << std::endl; );
           return false;
         } else { // q is not endpoint of p
-          CGAL_assertion( not ( p.segment().is_horizontal() or
-                                p.segment().is_vertical()     ) ) ; 
+          //sandeep: remove the following assertion, so need to check later
+          //if logic holds for hor and ver segments
+          //CGAL_assertion( not ( p.segment().is_horizontal() or
+            //                    p.segment().is_vertical()     ) ) ;
 
           Line_2 lseg = compute_supporting_line(p.supporting_site());
 
@@ -811,8 +814,8 @@ public:
           CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
           if (ossegq != ossegt) {
-			CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
-			          << false << std::endl; );
+			      CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
+			                      << false << std::endl; );
             return false;
           } else {  
             // here, t and q are on the same side of p

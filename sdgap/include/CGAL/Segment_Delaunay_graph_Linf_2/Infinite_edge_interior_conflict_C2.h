@@ -124,10 +124,11 @@ namespace CGAL {
         Sign sgn1 = CGAL::compare(0, cmpxst * cmpxtq + cmpyst * cmpytq);
         
         CGAL_assertion( sgn1 != ZERO );
+        CGAL_SDG_DEBUG(std::cout << "sandeep: debug infcf about to return " << (sgn1 == POSITIVE) << std::endl;);
         
         return (sgn1 == POSITIVE);
       }
-      
+      CGAL_SDG_DEBUG(std::cout << "sandeep: debug infcf about to return " << (sgn == NEGATIVE) << std::endl;);
       return ( sgn == NEGATIVE );
       }
     
