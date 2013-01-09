@@ -2,7 +2,6 @@
 namespace CGAL {
 
 /*!
-\internal
 \ingroup PkgKernel23
 
 \cgal defines a symbolic constant 
@@ -22,7 +21,6 @@ public:
 namespace CGAL {
 
 /*!
-\internal
 \ingroup PkgKernel23
 
 \cgal defines a symbolic constant 
