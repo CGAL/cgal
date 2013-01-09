@@ -1,10 +1,10 @@
 namespace CGAL {
 
 /*!
-\defgroup surface_neighbor_coordinates_3 surface_neighbor_coordinates_3
+\defgroup PkgInterpolationSurfaceNeighborCoordinates3 3D Surface Neighbor Coordinates Functions
 \ingroup PkgInterpolation2SurfaceNeighbor
 
-The function `surface_neighbor_coordinates_3()` computes natural neighbor coordinates for 
+The functions `surface_neighbor_coordinates_3()` compute natural neighbor coordinates for 
 surface points associated to a finite set of sample points issued from 
 the surface. The coordinates are computed from the intersection of the 
 Voronoi cell of the query point `p` with the tangent plane to the 
@@ -38,14 +38,14 @@ associating a point and its natural neighbor coordinate.
 \sa `CGAL::sibson_c1_interpolation()` 
 \sa `CGAL::farin_c1_interpolation()`
 \sa `CGAL::Voronoi_intersection_2_traits_3<K>`
-\sa `CGAL::surface_neighbors_3()`
+\sa PkgInterpolationSurfaceNeighbors3
 
 \cgalHeading{Implementation}
 
 This functions construct the regular triangulation of the input points 
 instantiated with `Voronoi_intersection_2_traits_3<Kernel>` or `ITraits` if provided. 
 They return the result of the function call 
-`regular_neighbor_coordinates_2()` 
+`PkgInterpolationRegularNeighborCoordinates2`
 with the regular triangulation and `p` as arguments. 
 
 */

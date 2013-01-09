@@ -83,11 +83,11 @@ to provide the square root operation.
 \sa `CGAL::Data_access<Map>` 
 \sa `CGAL::linear_interpolation()` 
 \sa `CGAL::sibson_c1_interpolation()` 
-\sa `CGAL::sibson_gradient_fitting()` 
+\sa PkgInterpolationSibsonGradientFitting
 \sa `CGAL::Interpolation_traits_2<K>`
-\sa `CGAL::natural_neighbor_coordinates_2()` 
-\sa `CGAL::regular_neighbor_coordinates_2()` 
-\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 
 s. 
 */
@@ -140,9 +140,9 @@ point type as `key_type` and the function value type as
 </OL> 
 
 \sa `CGAL::Data_access<Map>` 
-\sa `CGAL::natural_neighbor_coordinates_2()`
-\sa `CGAL::regular_neighbor_coordinates_2()`
-\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 
 */
 template < class ForwardIterator, class Functor> typename
@@ -179,13 +179,13 @@ to provide the square root operation.
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
 \sa `CGAL::Data_access<Map>` 
-\sa `CGAL::sibson_gradient_fitting()`
+\sa PkgInterpolationSibsonGradientFitting
 \sa `CGAL::linear_interpolation()`
 \sa `CGAL::Interpolation_traits_2<K>` 
 \sa `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
-\sa `CGAL::natural_neighbor_coordinates_2()` 
-\sa `CGAL::regular_neighbor_coordinates_2()`
-\sa `CGAL::surface_neighbor_coordinates_3()`
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 */
 template < class ForwardIterator, class Functor, class
 GradFunctor, class Traits> typename Functor::result_type
@@ -261,13 +261,13 @@ the square root operation `sqrt()`.
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
 \sa `CGAL::Data_access<Map>` 
-\sa `CGAL::sibson_gradient_fitting()`
+\sa PkgInterpolationSibsonGradientFitting
 \sa `CGAL::linear_interpolation()`
 \sa `CGAL::Interpolation_traits_2<K>` 
 \sa `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
-\sa `CGAL::natural_neighbor_coordinates_2()`
-\sa `CGAL::regular_neighbor_coordinates_2()`
-\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 */
 template < class ForwardIterator, class Functor, class
 GradFunctor, class Traits> std::pair< typename Functor::result_type,

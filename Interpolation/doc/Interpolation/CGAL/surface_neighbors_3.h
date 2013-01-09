@@ -1,11 +1,11 @@
 namespace CGAL {
 
 /*!
-\defgroup surface_neighbors_3 surface_neighbors_3
+\defgroup PkgInterpolationSurfaceNeighbors3 3D Surface Neighbors Functions
 \ingroup PkgInterpolation2SurfaceNeighbor
 
 Given a set of sample points issued from a surface and a query point 
-`p`, the function `surface_neighbors_3` computes the neighbors of `p` on 
+`p`, the functions `surface_neighbors_3` compute the neighbors of `p` on 
 the surface within the sample points. If the sampling is sufficiently 
 dense, the neighbors are provably close to the point `p` on the 
 surface (cf. the manual pages and 
@@ -35,8 +35,8 @@ been considered.
 <LI>`ITraits` is equivalent to the class `Voronoi_intersection_2_traits_3<K>`. 
 </OL> 
 
-\sa CGAL::Voronoi_intersection_2_traits_3<K> 
-\sa CGAL::surface_neighbor_coordinates_3 
+\sa `CGAL::Voronoi_intersection_2_traits_3<K>`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 
 \cgalHeading{Implementation}
 

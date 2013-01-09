@@ -1,10 +1,10 @@
 namespace CGAL {
 
 /*!
-\defgroup natural_neighbor_coordinates_2 natural_neighbor_coordinates_2
+\defgroup PkgInterpolationNaturalNeighborCoordinates2 CGAL::natural_neighbor_coordinates_2()
 \ingroup PkgInterpolation2NatNeighbor
 
-The function `natural_neighbor_coordinates_2` computes natural neighbor coordinates, also 
+The functions `natural_neighbor_coordinates_2` compute natural neighbor coordinates, also 
 called Sibson's coordinates, for `2D` points provided a two-dimensional 
 triangulation and a query point in the convex hull of the vertices 
 of the triangulation. 
@@ -42,8 +42,8 @@ value of the result triple is set to `false`.
 
 \sa `CGAL::linear_interpolation()`
 \sa `CGAL::sibson_c1_interpolation()` 
-\sa `CGAL::surface_neighbor_coordinates_3()` 
-\sa `CGAL::regular_neighbor_coordinates_2()` 
+\sa PkgInterpolationSurfaceNeighborCoordinates3
+\sa `PkgInterpolationRegularNeighborCoordinates2`
 
 */
 /// @{

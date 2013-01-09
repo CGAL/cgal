@@ -1,10 +1,10 @@
 namespace CGAL {
 
 /*!
-\defgroup sibson_gradient_fitting sibson_gradient_fitting
+\defgroup PkgInterpolationSibsonGradientFitting Sibson gradient fitting functions
 \ingroup PkgInterpolation2Interpolation
 
-The function `sibson_gradient_fitting()` approximates the gradient of a
+These functions approximate the gradient of a
 function at a point `p` given natural neighbor coordinates for `p` and
 its neighbors' function values. The approximation method is described
 in \cite s-bdnni-81. Further functions are provided to fit the
@@ -34,9 +34,9 @@ provide a multiplication and addition operation with the type
 \sa `CGAL::farin_c1_interpolation()`
 \sa `CGAL::quadratic_interpolation()` 
 \sa `CGAL::Interpolation_gradient_fitting_traits_2<K>`
-\sa `CGAL::natural_neighbor_coordinates_2()` 
-\sa `CGAL::regular_neighbor_coordinates_2()` 
-\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 
 \cgalHeading{Implementation}
 
@@ -48,7 +48,7 @@ estimation method based on natural neighbor coordinates
 /// @{
 
 /*!
-This function estimates the
+estimates the
 gradient of a function at the point `p` given natural neighbor
 coordinates of `p` in the range \f$ \left[\right.\f$ `first`,
 `beyond`\f$ \left.\right)\f$ and the function values of the neighbors
@@ -67,7 +67,7 @@ Functor f, const Traits& traits);
 /*!
 estimates the function gradients at all vertices of `dt` that lie
 inside the convex hull using the coordinates computed by the
-function `natural_neighbor_coordinates_2()`.
+function `PkgInterpolationNaturalNeighborCoordinates2`.
 The value type of `OutputIterator` is a pair associating a point to a
 vector. The sequence of point/gradient pairs computed by this
 function is placed starting at `out`. The function returns an
@@ -82,7 +82,7 @@ dt, OutputIterator out, Functor f, const Traits& traits);
 /*!
 estimates the function gradients at all vertices of `rt` that lie
 inside the convex hull using the coordinates computed by the
-function `regular_neighbor_coordinates_2()`.
+functions `PkgInterpolationRegularNeighborCoordinates2`.
 The value type of `OutputIterator` is a pair associating a point to a
 vector. The sequence of point/gradient pairs computed by this
 function is placed starting at `out`. The function returns an
