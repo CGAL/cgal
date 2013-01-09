@@ -551,11 +551,11 @@ namespace CGAL {
         return NEGATIVE;
       } else {
         // here, neither p nor q is on t
+        // sandeep, one of p or q can be on t
         if (t.segment().is_horizontal() or
             t.segment().is_vertical())     {
           // here segment is horizontal or vertical;
-          // there are similarities with L2 case here
-        
+          // here we have difference from L2
           if ( is_p_on_t ) {
             // p is an endpoint of t
             // in this case the p,q,oo vertex is destroyed only if the
@@ -564,13 +564,13 @@ namespace CGAL {
             Point_2 pt = is_p_tsrc ? t.target() : t.source();
             Orientation o = CGAL::orientation(p.point(), q.point(), pt);
           
-            return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
+            return (o == RIGHT_TURN) ? POSITIVE : NEGATIVE;
           } else if ( is_q_on_t ) {
             CGAL_SDG_DEBUG(std::cout << "debug incircle_pps q is endp of t" << std::endl; );
             Point_2 pt = is_q_tsrc ? t.target() : t.source();
             Orientation o = CGAL::orientation(p.point(), q.point(), pt);
           
-            return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
+            return (o == RIGHT_TURN) ? POSITIVE : NEGATIVE;
           } else {
             // maybe here I should immediately return POSITIVE;
             // since we insert endpoints of segments first, p and q cannot
@@ -581,9 +581,9 @@ namespace CGAL {
             Orientation o2 = CGAL::orientation(pp, qq, t.target());
           
             if ( o1 == RIGHT_TURN || o2 == RIGHT_TURN ) {
-              return NEGATIVE;
+              return POSITIVE;
             }
-            return POSITIVE;
+            return NEGATIVE;
           }
         }
       } // end of case where neither p nor q is on t

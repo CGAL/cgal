@@ -324,10 +324,10 @@ public:
                        (cmpx == EQUAL)? 0 : 
                        (  cmpx  == SMALLER )? -1 : +1);*/
         
-        if (q.is_point()) {
-          d1 = -d1;
-          d2 = -d2;
-        }
+        //if (q.is_point()) {
+          //d1 = -d1;
+          //d2 = -d2;
+        //}
 											 
         Polychainline pcl(d1, points, points+npts, d2);
         return pcl;
