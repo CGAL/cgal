@@ -424,22 +424,22 @@ namespace CGAL {
               if (q.segment().is_horizontal()) {
                 CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p p=point, q= hsegment about to return "
                                << ((cmpy(q.segment().source(),p.point()) == SMALLER) ?
-                               ((cmpx(p.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) :
-                               ((cmpx(p.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE))
+                               ((cmpx(p.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) :
+                               ((cmpx(p.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE))
                                << std::endl ;);
                 return (cmpy(q.segment().source(),p.point()) == SMALLER) ?
-                        ((cmpx(p.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) :
-                        ((cmpx(p.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) ;
+                        ((cmpx(p.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) :
+                        ((cmpx(p.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) ;
               }
               else { // q is vertical
                 CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p p=point, q= vsegment about to return "
                                << ((cmpx(q.segment().source(),p.point()) == SMALLER) ?
-                               ((cmpy(p.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) :
-                               ((cmpy(p.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE))
+                               ((cmpy(p.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) :
+                               ((cmpy(p.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE))
                                << std::endl ;);
                 return (cmpx(q.segment().source(),p.point()) == SMALLER) ?
-                        ((cmpy(p.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) :
-                        ((cmpy(p.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) ;
+                        ((cmpy(p.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) :
+                        ((cmpy(p.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) ;
               }
             }
           }
@@ -494,22 +494,22 @@ namespace CGAL {
               if (p.segment().is_horizontal()) {
                 CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p q=point, p= hsegment about to return "
                                << ((cmpy(p.segment().source(),q.point()) == SMALLER) ?
-                               ((cmpx(q.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) :
-                               ((cmpx(q.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE))
+                               ((cmpx(q.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) :
+                               ((cmpx(q.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE))
                                << std::endl ;);
                 return (cmpy(p.segment().source(),q.point()) == SMALLER) ?
-                        ((cmpx(q.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) :
-                        ((cmpx(q.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) ;
+                        ((cmpx(q.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) :
+                        ((cmpx(q.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) ;
               }
               else { // p is vertical
                 CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p q=point, p= vsegment about to return "
                                << ((cmpx(p.segment().source(),p.point()) == SMALLER) ?
-                               ((cmpy(q.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) :
-                               ((cmpy(q.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE))
+                               ((cmpy(q.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) :
+                               ((cmpy(q.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE))
                                << std::endl ;);
                 return (cmpx(p.segment().source(),p.point()) == SMALLER) ?
-                        ((cmpy(q.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) :
-                        ((cmpy(q.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) ;
+                        ((cmpy(q.point(),t.point()) != SMALLER) ? NEGATIVE : POSITIVE) :
+                        ((cmpy(q.point(),t.point()) != LARGER) ? NEGATIVE : POSITIVE) ;
               }
             }
           }
