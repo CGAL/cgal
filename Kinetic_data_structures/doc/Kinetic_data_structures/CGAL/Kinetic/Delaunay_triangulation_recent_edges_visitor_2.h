@@ -3,7 +3,7 @@ namespace CGAL { namespace Kinetic {
 /*!
 \ingroup PkgKdsTri2
 
-The concept `Kinetic::Delaunay_triangulation_recent_edges_visitor_2` provides a model of 
+The class `Kinetic::Delaunay_triangulation_recent_edges_visitor_2` provides a model of 
 `Kinetic::DelaunayTriangulationVisitor_2` which tracks which edges were created in 
 the most recent change. 
 

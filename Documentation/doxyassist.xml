@@ -1329,6 +1329,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Kinetic_data_structures/examples/Kinetic_data_structures</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Kinetic_framework.tag=../../CGAL.CGAL.Kinetic-Framework/html</item>
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
           </list>
         </doxygen>
       </project>

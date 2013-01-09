@@ -20,7 +20,7 @@ structure which is maintained changes at discrete times (events) even
 though the basic building blocks are changing continuously.
 
 This chapter describes a number of such kinetic data structures
-implemented using the Kinetic framework described in
+implemented using the %Kinetic framework described in
 Chapter \ref chapterkinetic "Kinetic Framework". We first, in
 Section \ref seckds_intro introduce kinetic data structures and
 sweepline algorithms. This section can be skipped if the reader is
@@ -62,7 +62,7 @@ We are working on that one, but you will have to wait.
 
 \section seckds_intro An Overview of Kinetic Data Structures and Sweep Algorithms 
 
-Kinetic data structures were first introduced in by Basch et. al. in
+%Kinetic data structures were first introduced in by Basch et. al. in
 1997 \cite cgal:bgh-dsmd-97. The idea stems from the observation that
 most, if not all, computational geometry structures are built using
 <I>predicates</I> - functions on quantities defining the geometric

@@ -34,9 +34,6 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-%Kinetic data structures are a way of adding motion to classical
-geometric data structures. \cgal provides several prepackaged kinetic
-data structures. Here we present those kinetic data structures and the
-helper classes that allow their activity to be monitored.
+
 */
 

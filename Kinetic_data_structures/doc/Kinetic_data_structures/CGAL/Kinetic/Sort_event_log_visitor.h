@@ -3,7 +3,7 @@ namespace CGAL { namespace Kinetic {
 /*!
 \ingroup PkgKdsSorting
 
-The concept `Kinetic::Sort_event_log_visitor` provides a model of 
+The class `Kinetic::Sort_event_log_visitor` provides a model of 
 `SortVisitor` and `EventLogVisitor` which logs changes to the structure. 
 
 \cgalModels `Kinetic::SortVisitor`
