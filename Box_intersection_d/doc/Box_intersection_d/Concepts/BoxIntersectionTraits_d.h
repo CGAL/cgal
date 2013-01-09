@@ -11,10 +11,10 @@ the boxes manipulated in these algorithms.
 
 \cgalHasModel CGAL::Box_intersection_d::Box_traits_d
 
-\sa `CGAL::box_intersection_d` 
-\sa `CGAL::box_self_intersection_d` 
-\sa `CGAL::box_intersection_all_pairs_d` 
-\sa `CGAL::box_self_intersection_all_pairs_d` 
+\sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
 
 */
 

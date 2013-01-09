@@ -49,9 +49,9 @@ namespace CGAL {
   offer a specialized implementation 
   `box_self_intersection_all_pairs` for this application. 
 
-  \sa `CGAL::box_intersection_d()` 
-  \sa `CGAL::box_self_intersection_d()` 
-  \sa `CGAL::box_self_intersection_all_pairs_d()` 
+  \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
   \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
@@ -148,8 +148,8 @@ namespace CGAL {
   <LI>`BoxTraits` must be of the `BoxIntersectionTraits_d` concept. 
   </UL> 
 
-  \sa `CGAL::box_self_intersection_d()` 
-  \sa `CGAL::box_intersection_all_pairs_d()` 
+  \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
   \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
@@ -344,9 +344,9 @@ namespace CGAL {
   <LI>`BoxTraits` must be of the `BoxIntersectionTraits_d` concept. 
   </UL> 
 
-  \sa `CGAL::box_intersection_d()` 
-  \sa `CGAL::box_self_intersection_d()` 
-  \sa `CGAL::box_intersection_all_pairs_d()` 
+  \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
   \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
@@ -464,8 +464,8 @@ namespace CGAL {
   <LI>`BoxTraits` must be of the `BoxIntersectionTraits_d` concept. 
   </UL> 
 
-  \sa `CGAL::box_intersection_d()` 
-  \sa `CGAL::box_self_intersection_all_pairs_d()` 
+  \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
   \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
