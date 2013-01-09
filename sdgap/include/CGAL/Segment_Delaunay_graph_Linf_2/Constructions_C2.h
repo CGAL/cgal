@@ -715,6 +715,58 @@ public:
           FT seglenhalf ( half *
                          CGAL::abs ( pnt.y() - seg.source().y() ) );
           Direction_2 d;
+          
+          if (not(are_same_points(r, sites.source_site())or
+                  are_same_points(r, sites.target_site())) and
+              not(are_same_points(sitep, sites.source_site())or
+                  are_same_points(sitep, sites.target_site())) ) {
+            //sitep and r are not end point of sites
+            npts = 3;
+            if(p.is_point()) {
+              if ( compare_y_2(seg.source(),pnt) == SMALLER ) {
+                //p lies above q
+                points[1] = Point_2(pnt.x() + seglenhalf, pnt.y() - seglenhalf);
+                points[2] = Point_2(pnt.x() - seglenhalf, pnt.y() - seglenhalf);
+                d = Direction_2(-1,+1);
+                npts = (compare_x_2(v, points[1]) == LARGER) ? 3
+                       : ((compare_x_2(v, points[2]) == LARGER) ? 2 : 1);
+              } else { // compare_y_2(seg.source(),pnt) == LARGER
+                // p lies below q
+                points[1] = Point_2(pnt.x() - seglenhalf, pnt.y() + seglenhalf);
+                points[2] = Point_2(pnt.x() + seglenhalf, pnt.y() + seglenhalf);
+                d = Direction_2(+1,-1);
+                npts = (compare_x_2(v, points[1]) == SMALLER) ? 3
+                       : ((compare_x_2(v, points[2]) == SMALLER) ? 2 : 1);
+              }
+              if (npts == 2){
+                points[1] = points[2];
+              }
+            }
+            else {// q is point
+              if ( compare_y_2(seg.source(),pnt) == SMALLER ) {
+                //q lies above p
+                points[2] = Point_2(pnt.x() + seglenhalf, pnt.y() - seglenhalf);
+                points[1] = Point_2(pnt.x() - seglenhalf, pnt.y() - seglenhalf);
+                d = Direction_2(+1,+1);
+                npts = (compare_x_2(v, points[1]) == SMALLER) ? 3
+                       : ((compare_x_2(v, points[2]) == SMALLER) ? 2 : 1);
+              } else { // compare_y_2(seg.source(),pnt) == LARGER
+                // q lies below p
+                points[2] = Point_2(pnt.x() - seglenhalf, pnt.y() + seglenhalf);
+                points[1] = Point_2(pnt.x() + seglenhalf, pnt.y() + seglenhalf);
+                d = Direction_2(-1,-1);
+                npts = (compare_x_2(v, points[1]) == LARGER) ? 3
+                       : ((compare_x_2(v, points[2]) == LARGER) ? 2 : 1);
+              }
+              if (npts == 2){
+                points[1] = points[2];
+              }
+            }
+            Polychainray pcr(points, points+npts, d);
+            CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
+            return pcr;
+          }
+          
           Point_2 minps = (compare_x_2(seg.source(),seg.target()) == SMALLER)
                           ? seg.source() : seg.target();
           Point_2 maxps = (compare_x_2(seg.source(),seg.target()) == LARGER)
@@ -793,6 +845,58 @@ public:
           FT seglenhalf ( half *
                          CGAL::abs ( pnt.x() - seg.source().x() ) );
           Direction_2 d;
+          
+          if (not(are_same_points(r, sites.source_site())or
+                  are_same_points(r, sites.target_site())) and
+              not(are_same_points(sitep, sites.source_site())or
+                  are_same_points(sitep, sites.target_site())) ) {
+            //sitep and r are not end point of sites
+            npts = 3;
+            if(p.is_point()) {
+              if ( compare_x_2(seg.source(),pnt) == SMALLER ) {
+                //p lies right of q
+                points[1] = Point_2(pnt.x() - seglenhalf, pnt.y() - seglenhalf);
+                points[2] = Point_2(pnt.x() - seglenhalf, pnt.y() + seglenhalf);
+                d = Direction_2(+1,+1);
+                npts = (compare_y_2(v, points[1]) == SMALLER) ? 3
+                       : ((compare_y_2(v, points[2]) == SMALLER) ? 2 : 1);
+              } else { // compare_x_2(seg.source(),pnt) == LARGER
+                // p lies left of q
+                points[1] = Point_2(pnt.x() + seglenhalf, pnt.y() + seglenhalf);
+                points[2] = Point_2(pnt.x() + seglenhalf, pnt.y() - seglenhalf);
+                d = Direction_2(-1,-1);
+                npts = (compare_y_2(v, points[1]) == LARGER) ? 3
+                       : ((compare_y_2(v, points[2]) == LARGER) ? 2 : 1);
+              }
+              if (npts == 2){
+                points[1] = points[2];
+              }
+            } else {// q is point
+              if ( compare_x_2(seg.source(),pnt) == SMALLER ) {
+                //q lies right of p
+                points[2] = Point_2(pnt.x() - seglenhalf, pnt.y() - seglenhalf);
+                points[1] = Point_2(pnt.x() - seglenhalf, pnt.y() + seglenhalf);
+
+                d = Direction_2(+1,-1);
+                npts = (compare_y_2(v, points[1]) == LARGER) ? 3
+                       : ((compare_y_2(v, points[2]) == LARGER) ? 2 : 1);
+              } else { // compare_x_2(seg.source(),pnt) == LARGER
+                // q lies left of p
+                points[2] = Point_2(pnt.x() + seglenhalf, pnt.y() + seglenhalf);
+                points[1] = Point_2(pnt.x() + seglenhalf, pnt.y() - seglenhalf);
+                d = Direction_2(-1,+1);
+                npts = (compare_y_2(v, points[1]) == SMALLER) ? 3
+                       : ((compare_y_2(v, points[2]) == SMALLER) ? 2 : 1);
+              }
+              if (npts == 2){
+                points[1] = points[2];
+              }
+            }
+            Polychainray pcr(points, points+npts, d);
+            CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
+            return pcr;
+          }
+
           Point_2 minps = (compare_y_2(seg.source(),seg.target()) == SMALLER)
                           ? seg.source() : seg.target();
           Point_2 maxps = (compare_y_2(seg.source(),seg.target()) == LARGER)
