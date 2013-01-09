@@ -722,6 +722,20 @@ const CGAL::Point_2<Kernel>& q,
 const CGAL::Point_2<Kernel>& r,
 const CGAL::Point_2<Kernel>& s);
 
+/// @}
+
+/// \defgroup compare_signed_distance_to_plane compare_signed_distance_to_plane
+/// \ingroup kernel_global_function
+/// \sa `CGAL::compare_distance_to_point` 
+/// \sa `CGAL::compare_signed_distance_to_line` 
+/// \sa `CGAL::has_larger_distance_to_point` 
+/// \sa `CGAL::has_larger_signed_distance_to_line` 
+/// \sa `CGAL::has_larger_signed_distance_to_plane` 
+/// \sa `CGAL::has_smaller_distance_to_point` 
+/// \sa `CGAL::has_smaller_signed_distance_to_line` 
+/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// @{
+
 /*!
 returns `CGAL::LARGER`
 iff the signed distance of `p` and 
