@@ -103,10 +103,7 @@ protected:
     : m_localization_id(0)
 # endif
   {
-    visited_facets[0] = 
-      visited_facets[1] = 
-      visited_facets[2] = 
-      visited_facets[3] = false;
+    bits_ = 0;
   }
 
 public: 
@@ -123,26 +120,34 @@ public:
   {
     ++this->m_erase_counter;
   }
-
+  
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
-    visited_facets[facet] = true;
+    char current_bits = bits_;
+    while (bits_.compare_and_swap(current_bits | (1 << facet), current_bits) != current_bits)
+    {
+      current_bits = bits_;
+    }
   }
 
   /// Marks \c facet as not visited
   void reset_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
-    visited_facets[facet] = false;
+    char current_bits = bits_;
+    while (bits_.compare_and_swap(current_bits & (15 & ~(1 << facet)), current_bits) != current_bits)
+    {
+      current_bits = bits_;
+    }
   }
 
   /// Returns \c true if \c facet is marked as visited
   bool is_facet_visited (const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
-    return visited_facets[facet];
+    return ( (bits_ & (1 << facet)) != 0 );
   }
 
 # ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
@@ -165,8 +170,8 @@ protected:
 #endif
 
 private:
-  /// Stores visited facets
-  int visited_facets[4]; // CJTODO: ne pas mettre bool car risque de data race. A remplacer par un tbb::atomic<char> et utiliser CAS pour le mettre à jour bit à bit
+  /// Stores visited facets (4 first bits)
+  tbb::atomic<char> bits_;
 };
 #endif // CGAL_LINKED_WITH_TBB
 

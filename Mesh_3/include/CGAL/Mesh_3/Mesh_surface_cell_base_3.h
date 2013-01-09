@@ -31,6 +31,10 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/atomic.h>
+#endif
+
 #ifdef _MSC_VER
 // Kill warning "C4351: new behavior: elements of array
 // 'CGAL::Mesh_3::Mesh_surface_cell_base_3<GT,MT,Cb>::surface_index_table_'
@@ -90,36 +94,41 @@ class Mesh_surface_cell_base_3_base<Parallel_tag>
 public:
   Mesh_surface_cell_base_3_base() 
   {
-    visited_facets[0] = 
-      visited_facets[1] = 
-      visited_facets[2] = 
-      visited_facets[3] = false;
+    bits_ = 0;
   }
   
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
-    visited_facets[facet] = true;
+    char current_bits = bits_;
+    while (bits_.compare_and_swap(current_bits | (1 << facet), current_bits) != current_bits)
+    {
+      current_bits = bits_;
+    }
   }
 
   /// Marks \c facet as not visited
   void reset_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
-    visited_facets[facet] = false;
+    char current_bits = bits_;
+    while (bits_.compare_and_swap(current_bits & (15 & ~(1 << facet)), current_bits) != current_bits)
+    {
+      current_bits = bits_;
+    }
   }
 
   /// Returns \c true if \c facet is marked as visited
   bool is_facet_visited (const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
-    return visited_facets[facet];
+    return ( (bits_ & (1 << facet)) != 0 );
   }
 
 protected:
-  /// Stores visited facets
-  int visited_facets[4]; // CJTODO: ne pas mettre bool car risque de data race. A remplacer par un tbb::atomic<char> et utiliser CAS pour le mettre à jour bit à bit
+  /// Stores visited facets (4 first bits)
+  tbb::atomic<char> bits_;
 };
 #endif // CGAL_LINKED_WITH_TBB
 
