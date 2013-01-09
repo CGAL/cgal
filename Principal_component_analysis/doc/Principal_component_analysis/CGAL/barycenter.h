@@ -15,7 +15,7 @@ in case the default, based on `Kernel_traits` is not sufficient. The
 dimension is also deduced automatically.
 
 \sa \link PkgPrincipalComponentAnalysisDCentroid `CGAL::centroid()` \endlink
-\sa \link barycenter `CGAL::barycenter() (Linear Kernel)` \endlink
+\sa \link barycenter_grp `CGAL::barycenter() (Linear Kernel)` \endlink
 
 */
 /// @{

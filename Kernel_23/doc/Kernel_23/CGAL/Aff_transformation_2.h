@@ -38,7 +38,7 @@ therefore do not appear in the constructors.
 \sa `Rotation`
 \sa `Scaling`
 \sa `Translation` 
-\sa `rational_rotation_approximation` 
+\sa `rational_rotation_approximation_grp` 
 
 \cgalHeading{Example}
 

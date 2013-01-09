@@ -22,7 +22,7 @@ facets (3D triangles).
 
 
 \sa \link PkgPrincipalComponentAnalysisDBary `CGAL::barycenter()` \endlink
-\sa \link centroid `CGAL::centroid() (Linear Kernel)` \endlink
+\sa \link centroid_grp `CGAL::centroid() (Linear Kernel)` \endlink
 
 */
 /// @{

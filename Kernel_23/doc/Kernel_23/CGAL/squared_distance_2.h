@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\addtogroup squared_distance
+\addtogroup squared_distance_grp
 
 \code
 #include <squared_distance_2.h> //for 2D functions

@@ -7,7 +7,7 @@
 
 \cgalRefines `Kernel::DoIntersect_3`
 
-\sa \link do_intersect `CGAL::do_intersect()` \endlink
+\sa \link do_intersect_grp `CGAL::do_intersect()` \endlink
 
 */
 

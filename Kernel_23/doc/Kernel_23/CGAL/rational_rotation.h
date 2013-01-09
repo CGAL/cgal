@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\addtogroup rational_rotation_approximation
+\addtogroup rational_rotation_approximation_grp
 
 */
 

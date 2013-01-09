@@ -13,8 +13,8 @@ will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros. 
 
 \sa `Kernel::Vector_3` 
-\sa `CGAL::cross_product` 
-\sa `CGAL::determinant` 
+\sa `cross_product_grp` 
+\sa `determinant_grp` 
 
 */
 template< typename Kernel >

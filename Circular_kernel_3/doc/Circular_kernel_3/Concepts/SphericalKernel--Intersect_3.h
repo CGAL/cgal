@@ -4,7 +4,7 @@
 \cgalConcept
 
 \cgalRefines `Kernel::Intersect_3`
-\sa \link intersection `CGAL::intersection()` \endlink
+\sa \link intersection_grp `CGAL::intersection()` \endlink
 
 */
 class SphericalKernel::Intersect_3 {

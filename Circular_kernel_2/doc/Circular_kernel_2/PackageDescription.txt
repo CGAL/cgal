@@ -96,15 +96,15 @@
 
 ## Geometric Global Functions ##
 
-- \link compare_x_circular `CGAL::compare_x()` \endlink
-- \link compare_y_circular `CGAL::compare_y()` \endlink
-- \link compare_xy_circular `CGAL::compare_xy()` \endlink
-- \link compare_y_at_x `CGAL::compare_y_at_x()` \endlink
+- \link compare_x_circular_grp `CGAL::compare_x()` \endlink
+- \link compare_y_circular_grp `CGAL::compare_y()` \endlink
+- \link compare_xy_circular_grp `CGAL::compare_xy()` \endlink
+- \link compare_y_at_x_grp `CGAL::compare_y_at_x()` \endlink
 - `CGAL::compare_y_to_right()`
 - `CGAL::has_in_x_range()`
 - `CGAL::has_on()`
-- \link do_intersect `CGAL::do_intersect()` \endlink
-- \link intersection `CGAL::intersection()` \endlink
+- \link do_intersect_circular_grp `CGAL::do_intersect()` \endlink
+- \link intersection_circular_grp `CGAL::intersection()` \endlink
 - `CGAL::x_extremal_point()`
 - `CGAL::y_extremal_point()`
 - `CGAL::x_extremal_points()`

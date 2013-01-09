@@ -5,7 +5,7 @@
 
 \cgalRefines `Kernel::Intersect_2`
 
-\sa \link intersection `CGAL::intersection()` \endlink
+\sa \link intersection_grp `CGAL::intersection()` \endlink
 
 */
 
