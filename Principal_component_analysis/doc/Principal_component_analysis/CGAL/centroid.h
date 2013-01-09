@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPrincipalComponentAnalysisDCentroid
+\addtogroup PkgPrincipalComponentAnalysisDCentroid
 
 The function `centroid` computes the (uniform) center of mass of a set
 of 2D or 3D bounded objects. In 2D these objects include points,
@@ -19,6 +19,10 @@ of the tetrahedron vertices (3D points), specifying a dimension 1
 computes the centroid of the tetrahedron edges (3D segments) and
 specifying a dimension 2 computes the centroid of the tetrahedron
 facets (3D triangles).
+
+
+\sa \link PkgPrincipalComponentAnalysisDBary `CGAL::barycenter()` \endlink
+\sa \link centroid `CGAL::centroid() (Linear Kernel)` \endlink
 
 */
 /// @{
@@ -52,9 +56,6 @@ of balls the user must call the function with value type `K::Sphere_3`
 and with dimension tag of 3. The tag must range between
 `Dimension_tag<0>` and `Dimension_tag<3>`.
 
-\sa `CGAL::barycenter()`
-\sa \link centroid `CGAL::centroid()` \endlink
-
 */
 template < typename InputIterator, typename Tag >
 Deduced
@@ -84,9 +85,6 @@ The value type must be either `K::Point_3`, `K::Segment_3`,
 of balls the user must call the function with value type `K::Sphere_3`
 and with dimension tag of 3. The tag must range between
 `Dimension_tag<0>` and `Dimension_tag<3>`.
-
-\sa `CGAL::barycenter()`
-\sa \link centroid `CGAL::centroid()` \endlink
 
 */
 template < typename InputIterator, typename K, typename Tag >

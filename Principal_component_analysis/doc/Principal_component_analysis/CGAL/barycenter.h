@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPrincipalComponentAnalysisDBary
+\addtogroup PkgPrincipalComponentAnalysisDBary
 
 
 The function `barycenter` computes the barycenter (weighted center of
@@ -13,6 +13,9 @@ There is a set of overloaded `barycenter` functions for 2D and 3D
 weighted points. The user can also optionally pass an explicit kernel,
 in case the default, based on `Kernel_traits` is not sufficient. The
 dimension is also deduced automatically.
+
+\sa \link PkgPrincipalComponentAnalysisDCentroid `CGAL::centroid()` \endlink
+\sa \link barycenter `CGAL::barycenter() (Linear Kernel)` \endlink
 
 */
 /// @{
@@ -35,9 +38,6 @@ CGAL::Kernel_traits<
 
 \pre first != beyond, and the sum of the weights is non-zero.
 
-\sa `CGAL::centroid()`
-\sa \link barycenter `CGAL::barycenter()` \endlink
-
 */
 template < typename InputIterator >
 Deduced
@@ -54,9 +54,6 @@ the input values.
 `std::pair<K::Point_2, K::FT>` or `std::pair<K::Point_3, K::FT>`.
 
 \pre first != beyond, and the sum of the weights is non-zero.
-
-\sa `CGAL::centroid()`
-\sa \link barycenter `CGAL::barycenter()` \endlink
 
 */
 template < typename InputIterator, typename K >

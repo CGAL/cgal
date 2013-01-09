@@ -1,18 +1,18 @@
 /// \defgroup PkgPrincipalComponentAnalysisD Principal Component Analysis Reference
 
-/// \defgroup PkgPrincipalComponentAnalysisDBary barycenter
+/// \defgroup PkgPrincipalComponentAnalysisDBary CGAL::barycenter()
 /// \ingroup PkgPrincipalComponentAnalysisD
 
-/// \defgroup PkgPrincipalComponentAnalysisDbb bounding_box
+/// \defgroup PkgPrincipalComponentAnalysisDbb CGAL::bounding_box()
 /// \ingroup PkgPrincipalComponentAnalysisD
 
-/// \defgroup PkgPrincipalComponentAnalysisDCentroid centroid
+/// \defgroup PkgPrincipalComponentAnalysisDCentroid CGAL::centroid()
 /// \ingroup PkgPrincipalComponentAnalysisD
 
-/// \defgroup PkgPrincipalComponentAnalysisDLLSF2 linear_least_square_fitting_2
+/// \defgroup PkgPrincipalComponentAnalysisDLLSF2 CGAL::linear_least_square_fitting_2()
 /// \ingroup PkgPrincipalComponentAnalysisD
 
-/// \defgroup PkgPrincipalComponentAnalysisDLLSF3 linear_least_square_fitting_3
+/// \defgroup PkgPrincipalComponentAnalysisDLLSF3 CGAL::linear_least_square_fitting_3()
 /// \ingroup PkgPrincipalComponentAnalysisD
 
 /*!
