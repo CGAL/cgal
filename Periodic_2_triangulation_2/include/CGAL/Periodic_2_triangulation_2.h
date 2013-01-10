@@ -1215,6 +1215,9 @@ protected:
   /// NGHK: Not yet implemented
   void fill_hole(Vertex_handle v, std::list<Edge> & hole);
   /// NGHK: Implemented
+  /// Assumes that all offsets are (0,0)
+  void fill_hole_delaunay(std::list<Edge> & hole);
+  /// Fill hole over a periodic boundary
   void fill_hole_delaunay(std::list<Edge> & hole,
                           std::map<Vertex_handle, Offset> vertex_offsets);
 
@@ -2657,6 +2660,141 @@ void Periodic_2_triangulation_2<Gt, Tds>::fill_hole(Vertex_handle v, std::list<
 }
 
 template<class Gt, class Tds>
+void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(std::list<Edge> & first_hole) {
+  typename Gt::Side_of_oriented_circle_2 in_circle = geom_traits().side_of_oriented_circle_2_object();
+
+  typedef std::list<Edge> Hole;
+  typedef std::list<Hole> Hole_list;
+
+  Face_handle  f, ff, fn;
+  int i, ii, in;
+  Hole_list hole_list;
+  Hole hole;
+
+  hole_list.push_front(first_hole);
+
+  while( ! hole_list.empty())
+  {
+    hole = hole_list.front();
+    hole_list.pop_front();
+    typename Hole::iterator hit = hole.begin();
+
+    // if the hole has only three edges, create the triangle
+    if (hole.size() == 3) {
+      hit = hole.begin();
+      f = (*hit).first;        i = (*hit).second;
+      ff = (* ++hit).first;    ii = (*hit).second;
+      fn = (* ++hit).first;    in = (*hit).second;
+      Face_handle newf = create_face(f,i,ff,ii,fn,in);
+      newf->set_offsets(0,0,0);
+      
+      continue;
+    }
+
+    // else find an edge with two finite vertices
+    // on the hole boundary
+    // and the new triangle adjacent to that edge
+    //  cut the hole and push it back
+
+    // take the first neighboring face and pop it;
+    ff = (hole.front()).first;
+    ii =(hole.front()).second;
+    hole.pop_front();
+
+    Vertex_handle v0 = ff->vertex(cw(ii));
+    Vertex_handle v1 = ff->vertex(ccw(ii));
+    Vertex_handle v2 = Vertex_handle();
+    Vertex_handle v3 = Vertex_handle();
+    const Point& p0 = v0->point();
+    const Point& p1 = v1->point();
+
+    typename Hole::iterator hdone = hole.end();
+    hit =  hole.begin();
+    typename Hole::iterator cut_after(hit);
+
+    // if tested vertex is c with respect to the vertex opposite
+    // to NULL neighbor,
+    // stop at the before last face;
+    hdone--;
+    while( hit != hdone) {
+      fn = (*hit).first;
+      in = (*hit).second;
+      Vertex_handle vv = fn->vertex(ccw(in));
+
+      const Point &p = vv->point();
+      Orientation orient = orientation(p0,p1,p);
+
+      if (orient == COUNTERCLOCKWISE) {
+        if (v2 == Vertex_handle()) {
+          v2=vv;
+          v3=vv;
+          cut_after=hit;
+        } else {
+          Oriented_side side = side_of_oriented_circle(p0,p1,v3->point(),p,true);
+          if (side == ON_POSITIVE_SIDE) {
+            v2=vv;
+            v3=vv;
+            cut_after=hit;
+          }
+        }
+      }
+
+      ++hit;
+    }
+
+    // create new triangle and update adjacency relations
+    Face_handle newf;
+
+    //update the hole and push back in the Hole_List stack
+    // if v2 belongs to the neighbor following or preceding *f
+    // the hole remain a single hole
+    // otherwise it is split in two holes
+
+    fn = (hole.front()).first;
+    in = (hole.front()).second;
+    if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
+      newf = create_face(ff,ii,fn,in);
+
+      newf->set_offsets(0,0,0);
+
+      hole.pop_front();
+      hole.push_front(Edge(newf,1));
+      hole_list.push_front(hole);
+    }
+    else{
+      fn = (hole.back()).first;
+      in = (hole.back()).second;
+      if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
+        newf = create_face(fn,in,ff,ii);
+        newf->set_offsets(0,0,0);
+
+        hole.pop_back();
+        hole.push_back(Edge(newf,1));
+        hole_list.push_front(hole);
+      } else {
+        // split the hole in two holes
+        CGAL_assertion(v2 != Vertex_handle());
+        newf = create_face(ff,ii,v2);
+        newf->set_offsets(0,0,0);
+
+        Hole new_hole;
+        ++cut_after;
+        while( hole.begin() != cut_after )
+        {
+          new_hole.push_back(hole.front());
+          hole.pop_front();
+        }
+
+        hole.push_front(Edge( newf,1));
+        new_hole.push_front(Edge( newf,0));
+        hole_list.push_front(hole);
+        hole_list.push_front(new_hole);
+      }
+    }
+  }
+}
+
+template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(
     std::list<Edge> & first_hole,
     std::map<Vertex_handle, Offset> vertex_offsets) {
@@ -2699,6 +2837,10 @@ void Periodic_2_triangulation_2<Gt, Tds>::fill_hole_delaunay(
                   (oo1.x() >= _cover[0] ? 2 : 0) + (oo1.y() >= _cover[1] ? 1 : 0),
                   (oo2.x() >= _cover[0] ? 2 : 0) + (oo2.y() >= _cover[1] ? 1 : 0));
       
+      insert_too_long_edge(newf, 0);
+      insert_too_long_edge(newf, 1);
+      insert_too_long_edge(newf, 2);
+
       continue;
     }
 

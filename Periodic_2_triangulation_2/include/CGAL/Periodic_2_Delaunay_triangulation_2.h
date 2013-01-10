@@ -365,20 +365,28 @@ private:
   // auxilliary functions for remove
   // returns false if we first need to convert to a 9-cover before the vertex can be removed
   bool remove_single_vertex(Vertex_handle v, const Offset &v_o);
-  /// NGHK: Not yet implemented
-  bool remove_degree_init(Vertex_handle v, const Offset &v_o,
-      std::vector<Face_handle> &f,
-      std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
-      std::vector<int> &i, int &d, int &maxd);
-  /// NGHK: Not yet implemented
-  void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
-		      std::vector<int> &i,int d);
-  void remove_degree_d(
-      Vertex_handle v, std::vector<Face_handle> &f,
-      std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
-      std::vector<int> &i,int d);
   /// NGHK: implemented
+  bool remove_degree_init(Vertex_handle v, const Offset &v_o,
+                          std::vector<Face_handle> &f,
+                          std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+                          std::vector<int> &i, int &d, int &maxd, bool &simplicity_criterion);
+  /// NGHK: implemented
+  void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
+                                 std::vector<Vertex_handle> &w,
+                                 std::vector<int> &i,int d);
+  void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
+                                 std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+                                 std::vector<int> &i,int d);
+  void remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
+                       std::vector<Vertex_handle> &w, 
+                       std::vector<int> &i,int d);
+  void remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
+                       std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+                       std::vector<int> &i,int d);
+  /// NGHK: implemented
+  void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
+                      std::vector<Vertex_handle> &w,
+                      std::vector<int> &i);
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
@@ -386,7 +394,13 @@ private:
   void remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
+  void remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w,
+                      std::vector<int> &i);
   /// NGHK: implemented
+  void remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
+                      std::vector<Vertex_handle> &w,
+                      std::vector<int> &i);
   void remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
@@ -394,13 +408,27 @@ private:
   void remove_degree5_star   (Vertex_handle &v,
                               Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,
                               Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,
+                              int           ,int           ,int           ,int           ,int );
+  void remove_degree5_star   (Vertex_handle &v,
+                              Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,
+                              Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,
                               Offset&,Offset&,Offset&,Offset&,Offset&,
                               int           ,int           ,int           ,int           ,int );
   /// NGHK: implemented
   void remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w,
+                      std::vector<int> &i);
+  void remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
   /// NGHK: implemented
+  void remove_degree6_star   (Vertex_handle &v,
+			      Face_handle & ,Face_handle & ,Face_handle & ,
+			      Face_handle & ,Face_handle & ,Face_handle & ,
+			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
+			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
+			      int           ,int           ,int           ,
+			      int           ,int           ,int );
   void remove_degree6_star   (Vertex_handle &v,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
@@ -416,8 +444,23 @@ private:
 			      Face_handle & ,Face_handle & ,Face_handle & ,
 			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
 			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
+			      int           ,int           ,int           ,
+			      int           ,int           ,int  );
+  void remove_degree6_N      (Vertex_handle &v,
+			      Face_handle & ,Face_handle & ,Face_handle & ,
+			      Face_handle & ,Face_handle & ,Face_handle & ,
+			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
+			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
 			      Offset&,Offset&,Offset&,
 			      Offset&,Offset&,Offset&,
+			      int           ,int           ,int           ,
+			      int           ,int           ,int  );
+  /// NGHK: implemented
+  void remove_degree6_antiN  (Vertex_handle &v,
+			      Face_handle & ,Face_handle & ,Face_handle & ,
+			      Face_handle & ,Face_handle & ,Face_handle & ,
+			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
+			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
 			      int           ,int           ,int           ,
 			      int           ,int           ,int  );
   /// NGHK: implemented
@@ -436,50 +479,78 @@ private:
 			      Face_handle & ,Face_handle & ,Face_handle & ,
 			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
 			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
+			      int           ,int           ,int           ,
+			      int           ,int           ,int  );
+  void remove_degree6_diamond(Vertex_handle &v,
+			      Face_handle & ,Face_handle & ,Face_handle & ,
+			      Face_handle & ,Face_handle & ,Face_handle & ,
+			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
+			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
 			      Offset&,Offset&,Offset&,
 			      Offset&,Offset&,Offset&,
 			      int           ,int           ,int           ,
 			      int           ,int           ,int  );
   /// NGHK: implemented
   void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
+		      std::vector<Vertex_handle> &w,
+                      std::vector<int> &i);
+  void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
 
   /// NGHK: implemented
   void rotate7(int j, std::vector<Vertex_handle> &w,
-	       std::vector<Face_handle> &f, std::vector<Offset> &o, std::vector<int> &i);
+	       std::vector<Face_handle> &f,
+               std::vector<int> &i);
+  void rotate7(int j, std::vector<Vertex_handle> &w,
+	       std::vector<Face_handle> &f, std::vector<Offset> &o,
+               std::vector<int> &i);
   /// NGHK: implemented
   /// Returns whether the simplicity criterion is satisfied
-  bool get_offset_degree7(std::vector<Offset> &in_o, int out_o[]);
+  void get_offset_degree7(std::vector<Offset> &in_o, int out_o[]);
   /// NGHK: implemented
   void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+                                 std::vector<Vertex_handle> &w, std::vector<int> &i);
+  void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
+                                 std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
   /// NGHK: implemented
   void remove_degree7_zigzag    (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+                                 std::vector<Vertex_handle> &w, std::vector<int> &i);
+  void remove_degree7_zigzag    (Vertex_handle&,int,std::vector<Face_handle> &f,
+                                 std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
   /// NGHK: implemented
   void remove_degree7_leftdelta (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+                                 std::vector<Vertex_handle> &w, std::vector<int> &i);
+  void remove_degree7_leftdelta (Vertex_handle&,int,std::vector<Face_handle> &f,
+                                 std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
   /// NGHK: implemented
   void remove_degree7_rightdelta(Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+                                 std::vector<Vertex_handle> &w, std::vector<int> &i);
+  void remove_degree7_rightdelta(Vertex_handle&,int,std::vector<Face_handle> &f,
+                                 std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
   /// NGHK: implemented
   void remove_degree7_leftfan   (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+                                 std::vector<Vertex_handle> &w, std::vector<int> &i);
+  void remove_degree7_leftfan   (Vertex_handle&,int,std::vector<Face_handle> &f,
+                                 std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
   /// NGHK: implemented
   void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
-		      std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
+                                 std::vector<Vertex_handle> &w, std::vector<int> &i);
+  void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
+                                 std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
 
+  bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
+		std::vector<Vertex_handle> &w, std::vector<int> &i) {
+    
+    return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
+                                   true) ==  ON_POSITIVE_SIDE;
+  }
   bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
 		std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i) {
     
-    if ((o[j] == o[k]) && (o[j] == o[l]) && (o[j] == o[x]))
-      return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
-                                     true) ==  ON_POSITIVE_SIDE;
-    else
-      return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
-                                     o[j], o[k], o[l], o[x],
-                                     true) ==  ON_POSITIVE_SIDE;
+    return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
+                                   o[j], o[k], o[l], o[x],
+                                   true) ==  ON_POSITIVE_SIDE;
   }
 
 // end of auxilliary functions for remove
@@ -1125,15 +1196,20 @@ remove_single_vertex(Vertex_handle v, const Offset &v_o) {
   static std::vector<Vertex_handle> w(maxd);
   static std::vector<Offset> offset_w(maxd);
   int d;
+  bool simplicity_criterion;
 
-  if (remove_degree_init(v,v_o, f,w,offset_w,i,d,maxd)) {
+  if (remove_degree_init(v,v_o, f,w,offset_w,i,d,maxd, simplicity_criterion)) {
     if (is_1_cover()) {
       // Don't delete if the hole is too big and the triangulation is a 1-cover
       return false;
     }
   }
 
-  remove_degree_triangulate(v,f,w,offset_w,i,d);
+  if (simplicity_criterion)
+    remove_degree_triangulate(v,f,w,i,d);
+  else
+    remove_degree_triangulate(v,f,w,offset_w,i,d);
+
   this->delete_vertex(v);
 
   return true;
@@ -1147,9 +1223,11 @@ remove_degree_init(Vertex_handle v, const Offset &v_o,
 		   std::vector<Vertex_handle> &w,
 		   std::vector<Offset> &offset_w,
                    std::vector<int> &i,
-		   int &d, int &maxd)
+		   int &d, int &maxd,
+                   bool &simplicity_criterion)
 {
   Bbox_2 bbox = v->point().bbox();
+  simplicity_criterion = is_1_cover();
 
   f[0] = v->face();d=0;
 
@@ -1158,6 +1236,7 @@ remove_degree_init(Vertex_handle v, const Offset &v_o,
     w[d] = f[d]->vertex( ccw(i[d]) );
     offset_w[d] = get_offset(f[d], ccw(i[d])) - get_offset(f[d], i[d]) + v_o;
     w[d]->set_face( f[d]->neighbor(i[d])); // do no longer bother about set_face
+    simplicity_criterion &= (offset_w[d] == offset_w[0]);
 
     bbox = bbox + this->construct_point(w[d]->point(), offset_w[d]).bbox();
 
@@ -1186,55 +1265,67 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree_triangulate(Vertex_handle v,
                           std::vector<Face_handle> &f,
                           std::vector<Vertex_handle> &w,
+                          std::vector<int> &i,int d)
+{
+  // degree: 3: 1%, 4: 9%, 5: 23%, 6: 35%, 7: 19%, r: 10%
+
+  switch (d) {
+  case 3:
+    remove_degree3(v,f,w,i);    break;
+  case 4:
+    remove_degree4(v,f,w,i);    break;
+  case 5:
+    remove_degree5(v,f,w,i);    break;
+  case 6:
+    remove_degree6(v,f,w,i);    break;
+  case 7:
+    remove_degree7(v,f,w,i);    break;
+  default:
+    remove_degree_d(v,f,w,i,d); break;
+  }
+}
+
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree_triangulate(Vertex_handle v,
+                          std::vector<Face_handle> &f,
+                          std::vector<Vertex_handle> &w,
                           std::vector<Offset> &offset_w,
                           std::vector<int> &i,int d)
 {
-  // static int total = 0;
-  // static int deg[10];
-  // if (total == 0)
-  //   for (int i=0; i<10; ++i) deg[i] = 0;
-  // ++total;
+  // degree: 3: 1%, 4: 9%, 5: 23%, 6: 35%, 7: 19%, r: 10%
+
   switch (d) {
   case 3:
-    // ++deg[3];
     remove_degree3(v,f,w,offset_w,i);    break;
-    //remove_degree_d(v,f,w,offset_w,i,d);    break;
   case 4:
-    // TODO(NGHK): Implement optimized removal
-    // ++deg[4];
-    //remove_degree_d(v,f,w,offset_w,i,d);    break;
     remove_degree4(v,f,w,offset_w,i);    break;
   case 5:
-    // TODO(NGHK): Implement optimized removal
-    // ++deg[5];
-    //remove_degree_d(v,f,w,offset_w,i,d);    break;
     remove_degree5(v,f,w,offset_w,i);    break;
   case 6:
-    // TODO(NGHK): Implement optimized removal
-    // ++deg[6];
-    //remove_degree_d(v,f,w,offset_w,i,d);    break;
     remove_degree6(v,f,w,offset_w,i);    break;
   case 7:
-    // TODO(NGHK): Implement optimized removal
-    // ++deg[7];
-    //remove_degree_d(v,f,w,offset_w,i,d);    break;
     remove_degree7(v,f,w,offset_w,i);    break;
   default:
-    // ++deg[8];
-    remove_degree_d(v,f,w,offset_w,i,d);    break;
+    remove_degree_d(v,f,w,offset_w,i,d); break;
   }
-  // std::cout << "3: " << (deg[3]*100)/total
-  //           << ", 4: " << (deg[4]*100)/total
-  //           << ", 5: " << (deg[5]*100)/total
-  //           << ", 6: " << (deg[6]*100)/total
-  //           << ", 7: " << (deg[7]*100)/total
-  //           << ", r: " << (deg[8]*100)/total
-  //           << std::endl;
-
-  // result: 3: 1, 4: 9, 5: 23, 6: 35, 7: 19, r: 10
-
 }
 
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
+                std::vector<Vertex_handle> &w,
+                std::vector<int> &i,int d)
+{
+  std::list<Edge> hole;
+  this->make_hole(v, hole);
+
+  this->fill_hole_delaunay(hole);
+
+  return;
+}
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
@@ -1249,11 +1340,34 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
   for (size_t idx=0; idx<d; ++idx) {
     vertex_offsets[w[idx]] = offset_w[idx];
   }
+
   this->fill_hole_delaunay(hole, vertex_offsets);
 
   return;
 }
 
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
+               std::vector<Vertex_handle> &w, 
+               std::vector<int> &i)
+{
+  // modify the triangulation
+  Face_handle nn= f[1]->neighbor( i[1] );
+  tds().set_adjacency(f[0], ccw(i[0]) , nn , nn->index(f[1])  );
+  nn= f[2]->neighbor( i[2] );
+  tds().set_adjacency(f[0], cw(i[0]) , nn , nn->index(f[2])  );
+  f[0]->set_vertex  (            i[0] , f[1]->vertex( cw(i[1]) ) );
+
+  // clean container
+  tds().delete_face(f[1]);
+  tds().delete_face(f[2]);
+
+  this->set_offsets(f[0], 0,0,0);
+
+  return;
+}
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
@@ -1293,6 +1407,50 @@ remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
                     (oo[2].x() >= number_of_sheets()[0] ? 2 : 0) + (oo[2].y() >= number_of_sheets()[1] ? 1 : 0));
 
   return;
+}
+
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
+	       std::vector<Vertex_handle> &w, 
+               std::vector<int> &i )
+{
+  // removing a degree 4 vertex
+
+  Face_handle nn;
+
+  if ( !incircle(2,0,1,3,f,w,i) )  {
+    // diagonal 1 3
+    f[0]->set_vertex( i[0], w[3] ); //w0 w1 w3
+    f[1]->set_vertex( i[1], w[3] ); //w1 w2 w3
+    nn = f[3]->neighbor( i[3] );
+    tds().set_adjacency(f[0], cw(i[0]) , nn , nn->index(f[3])  );
+    nn = f[2]->neighbor( i[2] );
+    tds().set_adjacency(f[1], ccw(i[1]) , nn , nn->index(f[2]) );
+    // clean container
+    tds().delete_face(f[2]);
+    tds().delete_face(f[3]);
+
+    f[0]->set_offsets(0,0,0);
+    f[1]->set_offsets(0,0,0);
+
+    this->insert_too_long_edge(f[0], ccw(i[0]));
+  }else{
+    // diagonal 0 2
+    f[0]->set_vertex( i[0], w[2]); //w0 w1 w2
+    f[3]->set_vertex( i[3], w[2]); //w3 w0 w2
+    nn = f[1]->neighbor( i[1] );
+    tds().set_adjacency(f[0], ccw(i[0]) , nn , nn->index(f[1])  );
+    nn = f[2]->neighbor( i[2] );
+    tds().set_adjacency(f[3], cw(i[3]) , nn , nn->index(f[2])  );
+    // clean container
+    tds().delete_face(f[1]);
+    tds().delete_face(f[2]);
+
+    f[0]->set_offsets(0,0,0);
+    f[3]->set_offsets(0,0,0);
+  }
 }
 
 template < class Gt, class Tds >
@@ -1377,6 +1535,59 @@ template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
+               std::vector<Vertex_handle> &w,
+               std::vector<int> &i)
+{
+  // removing a degree 5 vertex
+  this->remove_too_long_edges_in_star(v);
+
+  if (incircle(3,0,1,2,f,w,i)) {
+    if (incircle(4,0,1,3,f,w,i)) {
+      if (incircle(4,1,2,3,f,w,i)) {
+	// star from 4
+	remove_degree5_star(v,f[4],f[0],f[1],f[2],f[3],
+			      w[4],w[0],w[1],w[2],w[3],
+			      i[4],i[0],i[1],i[2],i[3]);
+      }else{
+	//star from 1
+	remove_degree5_star(v,f[1],f[2],f[3],f[4],f[0],
+			      w[1],w[2],w[3],w[4],w[0],
+			      i[1],i[2],i[3],i[4],i[0]);
+
+
+      }
+    }else{
+      // star from 3
+      remove_degree5_star(v,f[3],f[4],f[0],f[1],f[2],
+			    w[3],w[4],w[0],w[1],w[2],
+			    i[3],i[4],i[0],i[1],i[2]);
+    }
+  } else {
+    if (incircle(4,2,3,0,f,w,i)){
+      if (incircle(4,0,1,2,f,w,i)){
+	// star from 4
+	remove_degree5_star(v,f[4],f[0],f[1],f[2],f[3],
+			      w[4],w[0],w[1],w[2],w[3],
+			      i[4],i[0],i[1],i[2],i[3]);
+      }else{
+	//star from 2
+	remove_degree5_star(v,f[2],f[3],f[4],f[0],f[1],
+			      w[2],w[3],w[4],w[0],w[1],
+			      i[2],i[3],i[4],i[0],i[1]);
+      }
+    }else{
+      // star from 0
+      remove_degree5_star(v,f[0],f[1],f[2],f[3],f[4],
+			    w[0],w[1],w[2],w[3],w[4],
+			    i[0],i[1],i[2],i[3],i[4]);
+    }
+  }
+  return;
+}
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
                std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                std::vector<int> &i)
 {
@@ -1434,7 +1645,31 @@ remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
 }
 
 template < class Gt, class Tds >
-inline void
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
+(Vertex_handle &,
+ Face_handle &f0, Face_handle &f1, Face_handle &f2, Face_handle &f3, Face_handle &f4,
+ Vertex_handle &v0, Vertex_handle &, Vertex_handle &, Vertex_handle &, Vertex_handle &,
+ int i0, int i1, int i2, int i3, int i4 )
+{ // removing a degree 5 vertex, starring from v0
+  Face_handle nn;
+  f1->set_vertex( i1, v0) ;  // f1 = v1v2v0
+  f2->set_vertex( i2, v0) ;  // f2 = v2v3v0
+  f3->set_vertex( i3, v0) ;  // f3 = v3v4v0
+
+  nn = f0->neighbor( i0 );
+  tds().set_adjacency(f1, cw(i1) , nn , nn->index(f0) );
+  nn = f4->neighbor( i4 );
+  tds().set_adjacency(f3, ccw(i3) , nn , nn->index(f4) );
+  tds().delete_face(f0);
+  tds().delete_face(f4);
+
+  f1->set_offsets(0,0,0);
+  f2->set_offsets(0,0,0);
+  f3->set_offsets(0,0,0);
+}
+template < class Gt, class Tds >
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
 (Vertex_handle &,
  Face_handle &f0, Face_handle &f1, Face_handle &f2, Face_handle &f3, Face_handle &f4,
@@ -1491,6 +1726,138 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
   //this->insert_too_long_edges_in_star(f1->vertex(i1));
   this->insert_too_long_edge(f1, ccw(i1));
   this->insert_too_long_edge(f2, ccw(i2));
+}
+
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
+               std::vector<Vertex_handle> &w, 
+               std::vector<int> &i)
+{
+  if(incircle(1,2,3,0,f,w,i)){
+    if(incircle(4,2,3,5,f,w,i)){
+      if(incircle(1,2,3,4,f,w,i)){
+	if(incircle(4,0,1,3,f,w,i)){
+	  if(incircle(5,0,1,4,f,w,i)){
+	    remove_degree6_star(v,
+                                f[1],f[2],f[3],f[4],f[5],f[0],
+				w[1],w[2],w[3],w[4],w[5],w[0],
+				i[1],i[2],i[3],i[4],i[5],i[0]);
+	  }else{
+	    remove_degree6_N(v,
+                             f[1],f[2],f[3],f[4],f[5],f[0],
+                             w[1],w[2],w[3],w[4],w[5],w[0],
+                             i[1],i[2],i[3],i[4],i[5],i[0]);
+	  }}else{
+	  remove_degree6_antiN(v,
+                               f[0],f[1],f[2],f[3],f[4],f[5],
+			       w[0],w[1],w[2],w[3],w[4],w[5],
+			       i[0],i[1],i[2],i[3],i[4],i[5]);
+	}}else{
+	if(incircle(5,1,2,4,f,w,i)){
+	  remove_degree6_N(v,f[2],f[3],f[4],f[5],f[0],f[1],
+			   w[2],w[3],w[4],w[5],w[0],w[1],
+			   i[2],i[3],i[4],i[5],i[0],i[1]);
+	}else{
+	  if(incircle(5,0,1,4,f,w,i)){
+	    remove_degree6_antiN(v,
+                                 f[1],f[2],f[3],f[4],f[5],f[0],
+                                 w[1],w[2],w[3],w[4],w[5],w[0],
+                                 i[1],i[2],i[3],i[4],i[5],i[0]);
+	  }else{
+	    remove_degree6_star(v,f[4],f[5],f[0],f[1],f[2],f[3],
+				w[4],w[5],w[0],w[1],w[2],w[3],
+				i[4],i[5],i[0],i[1],i[2],i[3]);
+	  }}}}else{
+      if(incircle(1,2,3,5,f,w,i)){
+	if(incircle(1,3,4,5,f,w,i)){
+	  if(incircle(4,0,1,3,f,w,i)){
+	    if(incircle(5,0,1,4,f,w,i)){
+	    remove_degree6_star(v,f[1],f[2],f[3],f[4],f[5],f[0],
+				w[1],w[2],w[3],w[4],w[5],w[0],
+				i[1],i[2],i[3],i[4],i[5],i[0]);
+	    }else{
+	    remove_degree6_N(v,f[1],f[2],f[3],f[4],f[5],f[0],
+				w[1],w[2],w[3],w[4],w[5],w[0],
+				i[1],i[2],i[3],i[4],i[5],i[0]);
+	    }}else{
+	  remove_degree6_antiN(v,f[0],f[1],f[2],f[3],f[4],f[5],
+			       w[0],w[1],w[2],w[3],w[4],w[5],
+			       i[0],i[1],i[2],i[3],i[4],i[5]);
+	  }}else{
+	  if(incircle(5,0,1,3,f,w,i)){
+	    remove_degree6_diamond(v,f[1],f[2],f[3],f[4],f[5],f[0],
+				w[1],w[2],w[3],w[4],w[5],w[0],
+				i[1],i[2],i[3],i[4],i[5],i[0]);
+	  }else{
+	    if(incircle(4,5,0,3,f,w,i)){
+	  remove_degree6_antiN(v,f[0],f[1],f[2],f[3],f[4],f[5],
+			       w[0],w[1],w[2],w[3],w[4],w[5],
+			       i[0],i[1],i[2],i[3],i[4],i[5]);
+	    }else{
+	    remove_degree6_star(v,f[3],f[4],f[5],f[0],f[1],f[2],
+				w[3],w[4],w[5],w[0],w[1],w[2],
+				i[3],i[4],i[5],i[0],i[1],i[2]);
+	    }}}}else{
+	    remove_degree6_star(v,f[5],f[0],f[1],f[2],f[3],f[4],
+				w[5],w[0],w[1],w[2],w[3],w[4],
+				i[5],i[0],i[1],i[2],i[3],i[4]);
+      }}}else{
+    if(incircle(4,2,3,5,f,w,i)){
+      if(incircle(4,2,3,0,f,w,i)){
+	if(incircle(4,0,1,2,f,w,i)){
+	  if(incircle(4,1,2,5,f,w,i)){
+	    if(incircle(4,0,1,5,f,w,i)){
+	    remove_degree6_star(v,f[4],f[5],f[0],f[1],f[2],f[3],
+				w[4],w[5],w[0],w[1],w[2],w[3],
+				i[4],i[5],i[0],i[1],i[2],i[3]);
+	    }else{
+	    remove_degree6_antiN(v,f[1],f[2],f[3],f[4],f[5],f[0],
+				w[1],w[2],w[3],w[4],w[5],w[0],
+				i[1],i[2],i[3],i[4],i[5],i[0]);
+	    }}else{
+	  remove_degree6_N(v,f[2],f[3],f[4],f[5],f[0],f[1],
+			   w[2],w[3],w[4],w[5],w[0],w[1],
+			   i[2],i[3],i[4],i[5],i[0],i[1]);
+	  }}else{
+	  if(incircle(4,5,0,2,f,w,i)){
+	  remove_degree6_diamond(v,f[0],f[1],f[2],f[3],f[4],f[5],
+			       w[0],w[1],w[2],w[3],w[4],w[5],
+			       i[0],i[1],i[2],i[3],i[4],i[5]);
+	  }else{
+	    if(incircle(5,0,1,2,f,w,i)){
+	  remove_degree6_N(v,f[2],f[3],f[4],f[5],f[0],f[1],
+			   w[2],w[3],w[4],w[5],w[0],w[1],
+			   i[2],i[3],i[4],i[5],i[0],i[1]);
+	    }else{
+	  remove_degree6_star(v,f[2],f[3],f[4],f[5],f[0],f[1],
+			   w[2],w[3],w[4],w[5],w[0],w[1],
+			   i[2],i[3],i[4],i[5],i[0],i[1]);
+	    }}}}else{
+	  remove_degree6_star(v,f[0],f[1],f[2],f[3],f[4],f[5],
+			       w[0],w[1],w[2],w[3],w[4],w[5],
+			       i[0],i[1],i[2],i[3],i[4],i[5]);
+      }}else{
+      if(incircle(5,2,3,0,f,w,i)){
+	if(incircle(5,0,1,2,f,w,i)){
+	  remove_degree6_star(v,f[5],f[0],f[1],f[2],f[3],f[4],
+			       w[5],w[0],w[1],w[2],w[3],w[4],
+                               i[5],i[0],i[1],i[2],i[3],i[4]);
+	}else{
+	  remove_degree6_antiN(v,f[2],f[3],f[4],f[5],f[0],f[1],
+			   w[2],w[3],w[4],w[5],w[0],w[1],
+			   i[2],i[3],i[4],i[5],i[0],i[1]);
+	}}else{
+	  if(incircle(4,5,0,3,f,w,i)){
+	  remove_degree6_star(v,f[0],f[1],f[2],f[3],f[4],f[5],
+			       w[0],w[1],w[2],w[3],w[4],w[5],
+			       i[0],i[1],i[2],i[3],i[4],i[5]);
+	  }else{
+            remove_degree6_N(v,f[0],f[1],f[2],f[3],f[4],f[5],
+			       w[0],w[1],w[2],w[3],w[4],w[5],
+			       i[0],i[1],i[2],i[3],i[4],i[5]);
+	  }}}}
 }
 
 template < class Gt, class Tds >
@@ -1653,15 +2020,13 @@ remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
 }
 
 template < class Gt, class Tds >
-inline void
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
 (Vertex_handle &,
  Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
  Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
  Vertex_handle &, Vertex_handle &, Vertex_handle &,
- Offset &o0, Offset &o1, Offset &o2,
- Offset &o3, Offset &o4, Offset &o5,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, staring from v0
   Face_handle nn;
@@ -1676,7 +2041,29 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
   tds().delete_face(f0);
   tds().delete_face(f5);
 
+  f1->set_offsets(0,0,0);
+  f2->set_offsets(0,0,0);
+  f3->set_offsets(0,0,0);
+  f4->set_offsets(0,0,0);
+}
 
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
+(Vertex_handle &v,
+ Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
+ Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
+ Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
+ Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Offset &o0, Offset &o1, Offset &o2,
+ Offset &o3, Offset &o4, Offset &o5,
+ int i0, int i1, int i2, int i3, int i4, int i5 )
+{ // removing a degree 6 vertex, staring from v0
+  remove_degree6_star(v,
+                      f0, f1, f2, f3, f4, f5,
+                      v0, v1, v2, v3, v4, v5,
+                      i0, i1, i2, i3, i4, i5);
+  
   if (o0.x() < 0 || o1.x() < 0 || o2.x() < 0 || o3.x() < 0 || o4.x() < 0 || o5.x() < 0) {
     o0 += Offset(number_of_sheets()[0], 0);
     o1 += Offset(number_of_sheets()[0], 0);
@@ -1724,7 +2111,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
 }
 
 template < class Gt, class Tds >
-inline void
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
 (
  Vertex_handle &,
@@ -1732,8 +2119,6 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
  Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
  Vertex_handle &v3, Vertex_handle &, Vertex_handle &,
- Offset &o0, Offset &o1, Offset &o2,
- Offset &o3, Offset &o4, Offset &o5,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, N configuration with diagonal v0v3
   Face_handle nn;
@@ -1749,6 +2134,29 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
   tds().delete_face(f0);
   tds().delete_face(f3);
 
+  f1->set_offsets(0,0,0);
+  f2->set_offsets(0,0,0);
+  f4->set_offsets(0,0,0);
+  f5->set_offsets(0,0,0);
+}
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
+(
+ Vertex_handle &v,
+ Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
+ Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
+ Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
+ Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Offset &o0, Offset &o1, Offset &o2,
+ Offset &o3, Offset &o4, Offset &o5,
+ int i0, int i1, int i2, int i3, int i4, int i5 )
+{ // removing a degree 6 vertex, N configuration with diagonal v0v3
+
+  remove_degree6_N(v,
+                   f0,f1,f2,f3,f4,f5,
+                   v0,v1,v2,v3,v4,v5,
+                   i0,i1,i2,i3,i4,i5);
 
   if (o0.x() < 0 || o1.x() < 0 || o2.x() < 0 || o3.x() < 0 || o4.x() < 0 || o5.x() < 0) {
     o0 += Offset(number_of_sheets()[0], 0);
@@ -1797,8 +2205,9 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
   this->insert_too_long_edge(f5, ccw(i5));
 }
 
+
 template < class Gt, class Tds >
-inline void
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
 (
  Vertex_handle &,
@@ -1806,8 +2215,6 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
  Vertex_handle &v0, Vertex_handle &, Vertex_handle &,
  Vertex_handle &v3, Vertex_handle &, Vertex_handle &,
- Offset &o0, Offset &o1, Offset &o2,
- Offset &o3, Offset &o4, Offset &o5,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, antiN configuration with diagonal v0v3
   Face_handle nn;
@@ -1823,7 +2230,28 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
   tds().delete_face(f2);
   tds().delete_face(f5);
 
-
+  f0->set_offsets(0,0,0);
+  f1->set_offsets(0,0,0);
+  f3->set_offsets(0,0,0);
+  f4->set_offsets(0,0,0);
+}
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
+(
+ Vertex_handle &v,
+ Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
+ Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
+ Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
+ Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Offset &o0, Offset &o1, Offset &o2,
+ Offset &o3, Offset &o4, Offset &o5,
+ int i0, int i1, int i2, int i3, int i4, int i5 )
+{ // removing a degree 6 vertex, antiN configuration with diagonal v0v3
+  remove_degree6_antiN(v,
+                       f0,f1,f2,f3,f4,f5,
+                       v0,v1,v2,v3,v4,v5,
+                       i0,i1,i2,i3,i4,i5);
 
   if (o0.x() < 0 || o1.x() < 0 || o2.x() < 0 || o3.x() < 0 || o4.x() < 0 || o5.x() < 0) {
     o0 += Offset(number_of_sheets()[0], 0);
@@ -1873,7 +2301,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
 }
 
 template < class Gt, class Tds >
-inline void
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
 (
  Vertex_handle &,
@@ -1881,8 +2309,6 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
  Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
  Vertex_handle &v0, Vertex_handle &, Vertex_handle &v2,
  Vertex_handle &, Vertex_handle &v4, Vertex_handle &,
- Offset &o0, Offset &o1, Offset &o2,
- Offset &o3, Offset &o4, Offset &o5,
  int i0, int i1, int i2, int i3, int i4, int i5 )
 { // removing a degree 6 vertex, with chords v0v2 v2v4 v4v0
   Face_handle nn;
@@ -1903,6 +2329,29 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
   tds().delete_face(f3);
   tds().delete_face(f5);
 
+
+  f0->set_offsets(0,0,0);
+  f1->set_offsets(0,0,0);
+  f2->set_offsets(0,0,0);
+  f4->set_offsets(0,0,0);
+}
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
+(
+ Vertex_handle &v,
+ Face_handle &  f0, Face_handle &  f1, Face_handle &  f2,
+ Face_handle &  f3, Face_handle &  f4, Face_handle &  f5,
+ Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2,
+ Vertex_handle &v3, Vertex_handle &v4, Vertex_handle &v5,
+ Offset &o0, Offset &o1, Offset &o2,
+ Offset &o3, Offset &o4, Offset &o5,
+ int i0, int i1, int i2, int i3, int i4, int i5 )
+{ // removing a degree 6 vertex, with chords v0v2 v2v4 v4v0
+  remove_degree6_diamond(v,
+                         f0,f1,f2,f3,f4,f5,
+                         v0,v1,v2,v3,v4,v5,
+                         i0,i1,i2,i3,i4,i5);
 
   if (o0.x() < 0 || o1.x() < 0 || o2.x() < 0 || o3.x() < 0 || o4.x() < 0 || o5.x() < 0) {
     o0 += Offset(number_of_sheets()[0], 0);
@@ -1951,6 +2400,405 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
 }
 
 
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
+               std::vector<Vertex_handle> &w,
+               std::vector<int> &i)
+{
+  // removing a degree 7 vertex
+
+  if (incircle(2,0,1,3,f,w,i)) { // sweeping from above
+    if (incircle(2,3,4,0,f,w,i)) {
+      if (incircle(5,3,4,6,f,w,i)) {
+	if (incircle(5,3,4,2,f,w,i)) {
+	  if (incircle(6,2,3,5,f,w,i)) {
+	    if (incircle(6,0,1,2,f,w,i)) {
+	      remove_degree7_leftfan(v,  6  ,f,w,i);
+	    }else{
+	      remove_degree7_zigzag(v,  6  ,f,w,i);
+	    }}else{
+	    if (incircle(5,0,1,2,f,w,i)) {
+	      if (incircle(6,1,2,5,f,w,i)) {
+		remove_degree7_zigzag(v, 2   ,f,w,i);
+	      }else{
+		if (incircle(6,0,1,5,f,w,i)) {
+		  remove_degree7_rightfan(v, 5   ,f,w,i);
+		}else{
+		  remove_degree7_star(v,  5  ,f,w,i);
+		}}}else{
+	      if (incircle(2,5,6,0,f,w,i)) {
+		if (incircle(6,0,1,2,f,w,i)) {
+		  remove_degree7_zigzag(v,  2  ,f,w,i);
+		}else{
+		  remove_degree7_rightfan(v,  2  ,f,w,i);
+		}}else{
+		remove_degree7_rightdelta(v,  5  ,f,w,i);
+	      }}}}else{
+	  if (incircle(4,0,1,2,f,w,i)) {
+	    if (incircle(5,1,2,4,f,w,i)) {
+	      if (incircle(6,1,2,5,f,w,i)) {
+		remove_degree7_leftfan(v,  2  ,f,w,i);
+	      }else{
+		if (incircle(6,0,1,5,f,w,i)) {
+		  remove_degree7_zigzag(v,  5  ,f,w,i);
+		}else{
+		  remove_degree7_leftfan(v,  5  ,f,w,i);
+		}}}else{
+	      if (incircle(5,0,1,4,f,w,i)) {
+		if (incircle(6,0,1,5,f,w,i)) {
+		  remove_degree7_rightfan(v,  1  ,f,w,i);
+		}else{
+		  remove_degree7_zigzag(v,  1  ,f,w,i);
+		}}else{
+		remove_degree7_rightfan(v,  4  ,f,w,i);
+	      }}}else{
+	    if (incircle(2,4,5,0,f,w,i)) {
+	      if (incircle(5,0,1,2,f,w,i)) {
+		if (incircle(6,1,2,5,f,w,i)) {
+		  remove_degree7_leftfan(v,  2  ,f,w,i);
+		}else{
+		  if (incircle(6,0,1,5,f,w,i)) {
+		    remove_degree7_zigzag(v,  5  ,f,w,i);
+		  }else{
+		    remove_degree7_leftfan(v,  5  ,f,w,i);
+		  }}}else{
+		if (incircle(2,5,6,0,f,w,i)) {
+		  if (incircle(6,0,1,2,f,w,i)) {
+		    remove_degree7_leftfan(v,  2  ,f,w,i);
+		  }else{
+		    remove_degree7_star(v,  2  ,f,w,i);
+		  }}else{
+		  remove_degree7_leftdelta(v,  2  ,f,w,i);
+		}}}else{
+	      remove_degree7_rightdelta(v,  0  ,f,w,i);
+	    }}}}else{
+	if (incircle(6,3,4,2,f,w,i)) {
+	  if (incircle(6,0,1,2,f,w,i)) {
+	    remove_degree7_star(v,  6  ,f,w,i);
+	  }else{
+	    remove_degree7_rightfan(v,  6  ,f,w,i);
+	  }}else{
+	  if (incircle(4,0,1,2,f,w,i)) {
+	    if (incircle(2,4,5,6,f,w,i)) {
+	      if (incircle(5,1,2,4,f,w,i)) {
+		if (incircle(6,1,2,5,f,w,i)) {
+		  remove_degree7_leftfan(v,  2  ,f,w,i);
+		}else{
+		  if (incircle(6,0,1,5,f,w,i)) {
+		    remove_degree7_zigzag(v,  5  ,f,w,i);
+		  }else{
+		    remove_degree7_leftfan(v,  5  ,f,w,i);
+		  }}}else{
+		if (incircle(5,0,1,4,f,w,i)) {
+		  if (incircle(6,0,1,5,f,w,i)) {
+		    remove_degree7_rightfan(v,  1  ,f,w,i);
+		  }else{
+		    remove_degree7_zigzag(v,  1  ,f,w,i);
+		  }} else{
+		  remove_degree7_rightfan(v,  4  ,f,w,i);
+		}}} else {
+	      if (incircle(6,1,2,4,f,w,i)) {
+		remove_degree7_leftdelta(v,  6  ,f,w,i);
+	      }else{
+		if (incircle(1,4,5,6,f,w,i)) {
+		  if (incircle(1,4,5,0,f,w,i)) {
+		    if (incircle(6,0,1,5,f,w,i)) {
+		      remove_degree7_rightfan(v,  1  ,f,w,i);
+		    }else{
+		      remove_degree7_zigzag(v,  1  ,f,w,i);
+		    }}else{
+		    remove_degree7_rightfan(v,  4  ,f,w,i);
+		  }} else {
+		  if (incircle(6,0,1,4,f,w,i)) {
+		    remove_degree7_rightdelta(v,  4  ,f,w,i);
+		  }else{
+		    if (incircle(6,4,5,0,f,w,i)) {
+		      remove_degree7_star(v,  4  ,f,w,i);
+		    }else{
+		      remove_degree7_rightfan(v,  4  ,f,w,i);
+		    }}}}}}else{
+	    if (incircle(2,4,5,6,f,w,i)) {
+	      if (incircle(2,4,5,0,f,w,i)) {
+		if (incircle(5,0,1,2,f,w,i)) {
+		  if (incircle(6,1,2,5,f,w,i)) {
+		    remove_degree7_leftfan(v,  2  ,f,w,i);
+		  }else{
+		    if (incircle(6,0,1,5,f,w,i)) {
+		      remove_degree7_zigzag(v,  5  ,f,w,i);
+		    }else{
+		      remove_degree7_leftfan(v,  5  ,f,w,i);
+		    }}}else{
+		  if (incircle(2,5,6,0,f,w,i)) {
+		    if (incircle(6,0,1,2,f,w,i)) {
+		      remove_degree7_leftfan(v,  2  ,f,w,i);
+		    }else{
+		      remove_degree7_star(v,  2  ,f,w,i);
+		    }}else{
+		    remove_degree7_leftdelta(v,  2  ,f,w,i);
+		  }}}else{
+		remove_degree7_rightdelta(v,  0  ,f,w,i);
+	      }}else{
+	      if (incircle(2,6,0,4,f,w,i)) {
+		if (incircle(6,0,1,2,f,w,i)) {
+		  remove_degree7_leftdelta(v,  6  ,f,w,i);
+		}else{
+		  remove_degree7_rightdelta(v,  2  ,f,w,i);
+		}}else{
+		if (incircle(6,4,5,0,f,w,i)) {
+		  remove_degree7_leftdelta(v,  4  ,f,w,i);
+		}else{
+		  remove_degree7_rightdelta(v,  0  ,f,w,i);
+		}}}}}}} else{
+      if (incircle(5,3,4,6,f,w,i)) {
+	if (incircle(5,3,4,0,f,w,i)) {
+	  if (incircle(5,2,3,0,f,w,i)) {
+	    if (incircle(6,2,3,5,f,w,i)) {
+	      if (incircle(6,0,1,2,f,w,i)) {
+		remove_degree7_leftfan(v,  6  ,f,w,i);
+	      }else{
+		remove_degree7_zigzag(v,  6  ,f,w,i);
+	      }}else
+	      if (incircle(5,0,1,2,f,w,i)) {
+	  	if (incircle(6,1,2,5,f,w,i)) {
+		  remove_degree7_zigzag(v,  2  ,f,w,i);
+		}else{
+		  if (incircle(6,0,1,5,f,w,i)) {
+		    remove_degree7_rightfan(v,  5  ,f,w,i);
+		  }else{
+		    remove_degree7_star(v,  5  ,f,w,i);
+		  }}}else{
+		if (incircle(2,5,6,0,f,w,i)) {
+		  if (incircle(6,0,1,2,f,w,i)) {
+		    remove_degree7_zigzag(v,  2  ,f,w,i);
+		  }else{
+		    remove_degree7_rightfan(v,  2  ,f,w,i);
+		  }}else{
+		  remove_degree7_rightdelta(v,  5  ,f,w,i);
+		}}}else{
+	    if (incircle(3,5,6,0,f,w,i)) {
+	      if (incircle(6,2,3,0,f,w,i)) {
+		if (incircle(6,0,1,2,f,w,i)) {
+		  remove_degree7_leftfan(v,  6  ,f,w,i);
+		}else{
+		  remove_degree7_zigzag(v,  6  ,f,w,i);
+		}}else{
+		remove_degree7_leftfan(v,  3  ,f,w,i);
+	      }}else{
+	      remove_degree7_leftdelta(v,  0  ,f,w,i);
+	    }}}else{
+	  remove_degree7_star(v,  0  ,f,w,i);
+	}}else{
+	if (incircle(6,3,4,0,f,w,i)) {
+	  if (incircle(6,2,3,0,f,w,i)) {
+	    if (incircle(6,0,1,2,f,w,i)) {
+	      remove_degree7_star(v,  6  ,f,w,i);
+	    }else{
+	      remove_degree7_rightfan(v,  6  ,f,w,i);
+	    }}else{
+	    remove_degree7_zigzag(v,  3  ,f,w,i);
+	  }}else{
+	  if (incircle(6,4,5,0,f,w,i)) {
+	    remove_degree7_leftfan(v,  0  ,f,w,i);
+	  }else{
+	    remove_degree7_star(v,  0  ,f,w,i);
+	  }}}}}else{  //sweeping from below
+    if (incircle(1,6,0,3,f,w,i)) {
+      if (incircle(5,6,0,4,f,w,i)) {
+	if (incircle(5,6,0,1,f,w,i)) {
+	  if (incircle(4,0,1,5,f,w,i)) {
+	    if (incircle(4,2,3,1,f,w,i)) {
+	      remove_degree7_rightfan(v,  4  ,f,w,i);
+	    }else{
+	      remove_degree7_zigzag(v,  4  ,f,w,i);
+	    }}else{
+	    if (incircle(5,2,3,1,f,w,i)) {
+	      if (incircle(4,1,2,5,f,w,i)) {
+		remove_degree7_zigzag(v, 1   ,f,w,i);
+	      }else{
+		if (incircle(4,2,3,5,f,w,i)) {
+		  remove_degree7_leftfan(v, 5   ,f,w,i);
+		}else{
+		  remove_degree7_star(v,  5  ,f,w,i);
+		}}}else{
+	      if (incircle(1,4,5,3,f,w,i)) {
+		if (incircle(4,2,3,1,f,w,i)) {
+		  remove_degree7_zigzag(v,  1  ,f,w,i);
+		}else{
+		  remove_degree7_leftfan(v,  1  ,f,w,i);
+		}}else{
+		remove_degree7_leftdelta(v,  5  ,f,w,i);
+	      }}}}else{
+	  if (incircle(6,2,3,1,f,w,i)) {
+	    if (incircle(5,1,2,6,f,w,i)) {
+	      if (incircle(4,1,2,5,f,w,i)) {
+		remove_degree7_rightfan(v,  1  ,f,w,i);
+	      }else{
+		if (incircle(4,2,3,5,f,w,i)) {
+		  remove_degree7_zigzag(v,  5  ,f,w,i);
+		}else{
+		  remove_degree7_rightfan(v,  5  ,f,w,i);
+		}}}else{
+	      if (incircle(5,2,3,6,f,w,i)) {
+		if (incircle(4,2,3,5,f,w,i)) {
+		  remove_degree7_leftfan(v,  2  ,f,w,i);
+		}else{
+		  remove_degree7_zigzag(v,  2  ,f,w,i);
+		}}else{
+		remove_degree7_leftfan(v,  6  ,f,w,i);
+	      }}}else{
+	    if (incircle(1,5,6,3,f,w,i)) {
+	      if (incircle(5,2,3,1,f,w,i)) {
+		if (incircle(4,1,2,5,f,w,i)) {
+		  remove_degree7_rightfan(v,  1  ,f,w,i);
+		}else{
+		  if (incircle(4,2,3,5,f,w,i)) {
+		    remove_degree7_zigzag(v,  5  ,f,w,i);
+		  }else{
+		    remove_degree7_rightfan(v,  5  ,f,w,i);
+		  }}}else{
+		if (incircle(1,4,5,3,f,w,i)) {
+		  if (incircle(4,2,3,1,f,w,i)) {
+		    remove_degree7_rightfan(v,  1  ,f,w,i);
+		  }else{
+		    remove_degree7_star(v,  1  ,f,w,i);
+		  }}else{
+		  remove_degree7_rightdelta(v,  1  ,f,w,i);
+		}}}else{
+	      remove_degree7_leftdelta(v,  3  ,f,w,i);
+	    }}}}else{
+	if (incircle(4,6,0,1,f,w,i)) {
+	  if (incircle(4,2,3,1,f,w,i)) {
+	    remove_degree7_star(v,  4  ,f,w,i);
+	  }else{
+	    remove_degree7_leftfan(v,  4  ,f,w,i);
+	  }}else{
+	  if (incircle(6,2,3,1,f,w,i)) {
+	    if (incircle(1,5,6,4,f,w,i)) {
+	      if (incircle(5,1,2,6,f,w,i)) {
+		if (incircle(4,1,2,5,f,w,i)) {
+		  remove_degree7_rightfan(v,  1  ,f,w,i);
+		}else{
+		  if (incircle(4,2,3,5,f,w,i)) {
+		    remove_degree7_zigzag(v,  5  ,f,w,i);
+		  }else{
+		    remove_degree7_rightfan(v,  5  ,f,w,i);
+		  }}}else{
+		if (incircle(5,2,3,6,f,w,i)) {
+		  if (incircle(4,2,3,5,f,w,i)) {
+		    remove_degree7_leftfan(v,  2  ,f,w,i);
+		  }else{
+		    remove_degree7_zigzag(v,  2  ,f,w,i);
+		  }} else{
+		  remove_degree7_leftfan(v,  6  ,f,w,i);
+		}}} else {
+	      if (incircle(4,1,2,6,f,w,i)) {
+		remove_degree7_rightdelta(v,  4  ,f,w,i);
+	      }else{
+		if (incircle(2,5,6,4,f,w,i)) {
+		  if (incircle(2,5,6,3,f,w,i)) {
+		    if (incircle(4,2,3,5,f,w,i)) {
+		      remove_degree7_leftfan(v,  2  ,f,w,i);
+		    }else{
+		      remove_degree7_zigzag(v,  2  ,f,w,i);
+		    }}else{
+		    remove_degree7_leftfan(v,  6  ,f,w,i);
+		  }} else {
+		  if (incircle(4,2,3,6,f,w,i)) {
+		    remove_degree7_leftdelta(v,  6  ,f,w,i);
+		  }else{
+		    if (incircle(4,5,6,3,f,w,i)) {
+		      remove_degree7_star(v,  6  ,f,w,i);
+		    }else{
+		      remove_degree7_leftfan(v,  6  ,f,w,i);
+		    }}}}}}else{
+	    if (incircle(1,5,6,4,f,w,i)) {
+	      if (incircle(1,5,6,3,f,w,i)) {
+		if (incircle(5,2,3,1,f,w,i)) {
+		  if (incircle(4,1,2,5,f,w,i)) {
+		    remove_degree7_rightfan(v,  1  ,f,w,i);
+		  }else{
+		    if (incircle(4,2,3,5,f,w,i)) {
+		      remove_degree7_zigzag(v,  5  ,f,w,i);
+		    }else{
+		      remove_degree7_rightfan(v,  5  ,f,w,i);
+		    }}}else{
+		  if (incircle(1,4,5,3,f,w,i)) {
+		    if (incircle(4,2,3,1,f,w,i)) {
+		      remove_degree7_rightfan(v,  1  ,f,w,i);
+		    }else{
+		      remove_degree7_star(v,  1  ,f,w,i);
+		    }}else{
+		    remove_degree7_rightdelta(v,  1  ,f,w,i);
+		  }}}else{
+		remove_degree7_leftdelta(v,  3  ,f,w,i);
+	      }}else{
+	      if (incircle(1,3,4,6,f,w,i)) {
+		if (incircle(4,2,3,1,f,w,i)) {
+		  remove_degree7_rightdelta(v,  4  ,f,w,i);
+		}else{
+		  remove_degree7_leftdelta(v,  1  ,f,w,i);
+		}}else{
+		if (incircle(4,5,6,3,f,w,i)) {
+		  remove_degree7_rightdelta(v,  6  ,f,w,i);
+		}else{
+		  remove_degree7_leftdelta(v,  3  ,f,w,i);
+		}}}}}}} else{
+      if (incircle(5,6,0,4,f,w,i)) {
+	if (incircle(5,6,0,3,f,w,i)) {
+	  if (incircle(5,0,1,3,f,w,i)) {
+	    if (incircle(4,0,1,5,f,w,i)) {
+	      if (incircle(4,2,3,1,f,w,i)) {
+		remove_degree7_rightfan(v,  4  ,f,w,i);
+	      }else{
+		remove_degree7_zigzag(v,  4  ,f,w,i);
+	      }}else
+	      if (incircle(5,2,3,1,f,w,i)) {
+	  	if (incircle(4,1,2,5,f,w,i)) {
+		  remove_degree7_zigzag(v,  1  ,f,w,i);
+		}else{
+		  if (incircle(4,2,3,5,f,w,i)) {
+		    remove_degree7_leftfan(v,  5  ,f,w,i);
+		  }else{
+		    remove_degree7_star(v,  5  ,f,w,i);
+		  }}}else{
+		if (incircle(1,4,5,3,f,w,i)) {
+		  if (incircle(4,2,3,1,f,w,i)) {
+		    remove_degree7_zigzag(v,  1  ,f,w,i);
+		  }else{
+		    remove_degree7_leftfan(v,  1  ,f,w,i);
+		  }}else{
+		  remove_degree7_leftdelta(v,  5  ,f,w,i);
+		}}}else{
+	    if (! incircle(3,4,5,0,f,w,i)) {
+	      if (incircle(4,0,1,3,f,w,i)) {
+		if (incircle(4,2,3,1,f,w,i)) {
+		  remove_degree7_rightfan(v,  4  ,f,w,i);
+		}else{
+		  remove_degree7_zigzag(v,  4  ,f,w,i);
+		}}else{
+		remove_degree7_rightfan(v,  0  ,f,w,i);
+	      }}else{
+	      remove_degree7_rightdelta(v,  3  ,f,w,i);
+	    }}}else{
+	  remove_degree7_star(v,  3  ,f,w,i);
+	}}else{
+	if (incircle(4,6,0,3,f,w,i)) {
+	  if (incircle(4,0,1,3,f,w,i)) {
+	    if (incircle(4,2,3,1,f,w,i)) {
+	      remove_degree7_star(v,  4  ,f,w,i);
+	    }else{
+	      remove_degree7_leftfan(v,  4  ,f,w,i);
+	    }}else{
+	    remove_degree7_zigzag(v,  0  ,f,w,i);
+	  }}else{
+	  if (incircle(4,5,6,3,f,w,i)) {
+	    remove_degree7_rightfan(v,  3  ,f,w,i);
+	  }else{
+	    remove_degree7_star(v,  3  ,f,w,i);
+	  }}}}}
+}
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
@@ -2357,6 +3205,22 @@ template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 rotate7(int j,  std::vector<Vertex_handle> &w,
+        std::vector<Face_handle> &f, std::vector<int> &i)
+{
+  if (j==0) return;
+  Face_handle ff=f[0];
+  int ii=i[0],k=0,kk=(6*j)%7;
+  Vertex_handle ww=w[0];
+  for (int jj=0; k!=kk; jj=k) { // 7 is prime
+    k=(jj+j)%7;
+    w[jj]=w[k]; f[jj]=f[k]; i[jj]=i[k];
+  }
+  w[kk]=ww;f[kk]=ff;i[kk]=ii;
+}
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+rotate7(int j,  std::vector<Vertex_handle> &w,
         std::vector<Face_handle> &f, std::vector<Offset> &o, std::vector<int> &i)
 {
   if (j==0) return;
@@ -2372,20 +3236,17 @@ rotate7(int j,  std::vector<Vertex_handle> &w,
 }
 
 template < class Gt, class Tds >
-bool
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 get_offset_degree7(std::vector<Offset> &in_o, int out_o[]) {
-  bool add[2], simplicity_criterion;
+  bool add[2];
   
   add[0] = add[1] = false;
-  simplicity_criterion = is_1_cover();
 
   for (int cnt=0; cnt<7; ++cnt) {
-    simplicity_criterion &= (in_o[cnt] == in_o[0]);
     add[0] |= in_o[cnt].x() < 0;
     add[1] |= in_o[cnt].y() < 0;
   }
-  if (simplicity_criterion) return true;
 
   Covering_sheets c = number_of_sheets();
   if (add[0] || add[1]) {
@@ -2395,17 +3256,15 @@ get_offset_degree7(std::vector<Offset> &in_o, int out_o[]) {
 
   for (int cnt=0; cnt<7; ++cnt)
     out_o[cnt] = (in_o[cnt].x() >= c[0] ? 2 : 0) + (in_o[cnt].y() >= c[1] ? 1 : 0);
-
-  return false;
 }
 
 template < class Gt, class Tds >
-inline void
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_star   (Vertex_handle &, int j,
-std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, staring from w[j]
-  rotate7(j,w,f,o,i);
+  rotate7(j,w,f,i);
   
   Face_handle nn;
   f[1]->set_vertex( i[1], w[0]) ;  // f1 = w1w2w0
@@ -2421,39 +3280,50 @@ std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<Offset> 
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
   
-  int oo[7];
-  if (get_offset_degree7(o, oo)) {
-    this->set_offsets(f[1], 0, 0, 0);
-    this->set_offsets(f[2], 0, 0, 0);
-    this->set_offsets(f[3], 0, 0, 0);
-    this->set_offsets(f[4], 0, 0, 0);
-    this->set_offsets(f[5], 0, 0, 0);
-  } else {
-    int o_face[3]; int ii;
-    ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-    ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
-    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-    ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-    ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
 
-    this->insert_too_long_edge(f[1], ccw(i[1]));
-    this->insert_too_long_edge(f[2], ccw(i[2]));
-    this->insert_too_long_edge(f[3], ccw(i[3]));
-    this->insert_too_long_edge(f[4], ccw(i[4]));
-  }
+  f[1]->set_offsets(0, 0, 0);
+  f[2]->set_offsets(0, 0, 0);
+  f[3]->set_offsets(0, 0, 0);
+  f[4]->set_offsets(0, 0, 0);
+  f[5]->set_offsets(0, 0, 0);
 }
 template < class Gt, class Tds >
-inline void
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree7_star   (Vertex_handle &v, int j,
+std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+{ // removing a degree 7 vertex, staring from w[j]
+
+  // Rotate the offset as well
+  rotate7(j,w,f,o,i);
+  remove_degree7_star(v, /* !! */ 0, f, w, i);
+  
+  int oo[7];
+  get_offset_degree7(o, oo);
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+  
+  this->insert_too_long_edge(f[1], ccw(i[1]));
+  this->insert_too_long_edge(f[2], ccw(i[2]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4], ccw(i[4]));
+}
+template < class Gt, class Tds >
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_zigzag (Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, zigzag, w[j] = middle point
-  rotate7(j,w,f,o,i);
+  rotate7(j,w,f,i);
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[3]) ;  // f1 = w1w2w3
@@ -2478,39 +3348,50 @@ remove_degree7_zigzag (Vertex_handle &, int j,
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
 
-  int oo[7];
-  if (get_offset_degree7(o, oo)) {
-    this->set_offsets(f[1], 0, 0, 0);
-    this->set_offsets(f[2], 0, 0, 0);
-    this->set_offsets(f[3], 0, 0, 0);
-    this->set_offsets(f[4], 0, 0, 0);
-    this->set_offsets(f[5], 0, 0, 0);
-  } else {
-    int o_face[3]; int ii;
-    ii = i[1]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-    ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[3];
-    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
-    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-    ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[6];
-    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-    ii = i[5]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-    
-    this->insert_too_long_edge(f[1],  cw(i[1]));
-    this->insert_too_long_edge(f[2], ccw(i[2]));
-    this->insert_too_long_edge(f[3], ccw(i[3]));
-    this->insert_too_long_edge(f[4],     i[4]);
-  }
+
+  f[1]->set_offsets(0, 0, 0);
+  f[2]->set_offsets(0, 0, 0);
+  f[3]->set_offsets(0, 0, 0);
+  f[4]->set_offsets(0, 0, 0);
+  f[5]->set_offsets(0, 0, 0);
 }
 template < class Gt, class Tds >
-inline void
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree7_zigzag (Vertex_handle &v, int j,
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+{ // removing a degree 7 vertex, zigzag, w[j] = middle point
+
+  // Rotate the offset as well
+  rotate7(j,w,f,o,i);
+  remove_degree7_zigzag(v, /* !! */ 0, f, w, i);
+
+  int oo[7];
+  get_offset_degree7(o, oo);
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+  
+  this->insert_too_long_edge(f[1],  cw(i[1]));
+  this->insert_too_long_edge(f[2], ccw(i[2]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4],     i[4]);
+}
+template < class Gt, class Tds >
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_leftdelta(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, left delta from w[j]
-  rotate7(j,w,f,o,i);
+  rotate7(j,w,f,i);
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[0]) ;  // f1 = w1w2w0
@@ -2532,39 +3413,50 @@ remove_degree7_leftdelta(Vertex_handle &, int j,
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
 
-  int oo[7];
-  if (get_offset_degree7(o, oo)) {
-    this->set_offsets(f[1], 0, 0, 0);
-    this->set_offsets(f[2], 0, 0, 0);
-    this->set_offsets(f[3], 0, 0, 0);
-    this->set_offsets(f[4], 0, 0, 0);
-    this->set_offsets(f[5], 0, 0, 0);
-  } else {
-    int o_face[3]; int ii;
-    ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-    ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[5];
-    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-    ii = i[4]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-    ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-    
-    this->insert_too_long_edge(f[1], ccw(i[1]));
-    this->insert_too_long_edge(f[2], ccw(i[2]));
-    this->insert_too_long_edge(f[3],     i[3]);
-    this->insert_too_long_edge(f[3], ccw(i[3]));
-  }
+  f[1]->set_offsets(0, 0, 0);
+  f[2]->set_offsets(0, 0, 0);
+  f[3]->set_offsets(0, 0, 0);
+  f[4]->set_offsets(0, 0, 0);
+  f[5]->set_offsets(0, 0, 0);
 }
 template < class Gt, class Tds >
-inline void
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree7_leftdelta(Vertex_handle &v, int j,
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+{ // removing a degree 7 vertex, left delta from w[j]
+
+  // Rotate the offset as well
+  rotate7(j,w,f,o,i);
+  remove_degree7_leftdelta(v, /* !! */ 0, f, w, i);
+
+  int oo[7];
+  get_offset_degree7(o, oo);
+
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+    
+  this->insert_too_long_edge(f[1], ccw(i[1]));
+  this->insert_too_long_edge(f[2], ccw(i[2]));
+  this->insert_too_long_edge(f[3],     i[3]);
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+}
+template < class Gt, class Tds >
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_rightdelta(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, right delta from w[j]
-  rotate7(j,w,f,o,i);
+  rotate7(j,w,f,i);
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[0]) ;  // f1 = w1w2w0
@@ -2586,39 +3478,49 @@ remove_degree7_rightdelta(Vertex_handle &, int j,
   tds().delete_face(f[0]);
   tds().delete_face(f[6]);
 
-  int oo[7];
-  if (get_offset_degree7(o, oo)) {
-    this->set_offsets(f[1], 0, 0, 0);
-    this->set_offsets(f[2], 0, 0, 0);
-    this->set_offsets(f[3], 0, 0, 0);
-    this->set_offsets(f[4], 0, 0, 0);
-    this->set_offsets(f[5], 0, 0, 0);
-  } else {
-    int o_face[3]; int ii;
-    ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-    ii = i[2]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[4];
-    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-    ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-    ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-    
-    this->insert_too_long_edge(f[1], ccw(i[1]));
-    this->insert_too_long_edge(f[2],  cw(i[2]));
-    this->insert_too_long_edge(f[3], ccw(i[3]));
-    this->insert_too_long_edge(f[4], ccw(i[4]));
-  }
+  f[1]->set_offsets(0, 0, 0);
+  f[2]->set_offsets(0, 0, 0);
+  f[3]->set_offsets(0, 0, 0);
+  f[4]->set_offsets(0, 0, 0);
+  f[5]->set_offsets(0, 0, 0);
 }
 template < class Gt, class Tds >
-inline void
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree7_rightdelta(Vertex_handle &v, int j,
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+{ // removing a degree 7 vertex, right delta from w[j]
+
+  // Rotate the offset as well
+  rotate7(j,w,f,o,i);
+  remove_degree7_rightdelta(v, /* !! */ 0, f, w, i);
+
+  int oo[7];
+  get_offset_degree7(o, oo);
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+    
+  this->insert_too_long_edge(f[1], ccw(i[1]));
+  this->insert_too_long_edge(f[2],  cw(i[2]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4], ccw(i[4]));
+}
+template < class Gt, class Tds >
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_leftfan(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, left fan from w[j]
-  rotate7(j,w,f,o,i);
+  rotate7(j,w,f,i);
 
   Face_handle nn;
   f[1]->set_vertex(    i[1] , w[0]) ;  // f1 = w1w2w0
@@ -2637,39 +3539,50 @@ remove_degree7_leftfan(Vertex_handle &, int j,
   tds().delete_face(f[0]);
   tds().delete_face(f[5]);
 
-  int oo[7];
-  if (get_offset_degree7(o, oo)) {
-    this->set_offsets(f[1], 0, 0, 0);
-    this->set_offsets(f[2], 0, 0, 0);
-    this->set_offsets(f[3], 0, 0, 0);
-    this->set_offsets(f[4], 0, 0, 0);
-    this->set_offsets(f[6], 0, 0, 0);
-  } else {
-    int o_face[3]; int ii;
-    ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
-    this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
-    ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
-    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-    ii = i[4]; o_face[ii] = oo[6]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-    ii = i[6]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[6]; o_face[ cw(ii)] = oo[0];
-    this->set_offsets(f[6], o_face[0], o_face[1], o_face[2]);
-    
-    this->insert_too_long_edge(f[1], ccw(i[1]));
-    this->insert_too_long_edge(f[2], ccw(i[2]));
-    this->insert_too_long_edge(f[3], ccw(i[3]));
-    this->insert_too_long_edge(f[4],  cw(i[4]));
-  }
+  f[1]->set_offsets(0, 0, 0);
+  f[2]->set_offsets(0, 0, 0);
+  f[3]->set_offsets(0, 0, 0);
+  f[4]->set_offsets(0, 0, 0);
+  f[6]->set_offsets(0, 0, 0);
 }
 template < class Gt, class Tds >
-inline void
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree7_leftfan(Vertex_handle &v, int j,
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+{ // removing a degree 7 vertex, left fan from w[j]
+
+  // Rotate the offset as well
+  rotate7(j,w,f,o,i);
+  remove_degree7_leftfan(v, /* !! */ 0, f, w, i);
+
+  int oo[7];
+  get_offset_degree7(o, oo);
+
+  int o_face[3]; int ii;
+  ii = i[1]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[1]; o_face[ cw(ii)] = oo[2];
+  this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[6]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[6]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[6]; o_face[ cw(ii)] = oo[0];
+  this->set_offsets(f[6], o_face[0], o_face[1], o_face[2]);
+  
+  this->insert_too_long_edge(f[1], ccw(i[1]));
+  this->insert_too_long_edge(f[2], ccw(i[2]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4],  cw(i[4]));
+}
+template < class Gt, class Tds >
+void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 remove_degree7_rightfan(Vertex_handle &, int j,
- std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<int> &i)
 { // removing a degree 7 vertex, right fan from w[j]
-  rotate7(j,w,f,o,i);
+  rotate7(j,w,f,i);
 
   Face_handle nn;
   f[0]->set_vertex(    i[0] , w[3]) ;  // f0 = w0w1w3
@@ -2688,31 +3601,41 @@ remove_degree7_rightfan(Vertex_handle &, int j,
   tds().delete_face(f[1]);
   tds().delete_face(f[6]);
 
+  f[0]->set_offsets(0, 0, 0);
+  f[2]->set_offsets(0, 0, 0);
+  f[3]->set_offsets(0, 0, 0);
+  f[4]->set_offsets(0, 0, 0);
+  f[5]->set_offsets(0, 0, 0);
+}
+template < class Gt, class Tds >
+void
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+remove_degree7_rightfan(Vertex_handle &v, int j,
+ std::vector<Face_handle> &f,std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i)
+{ // removing a degree 7 vertex, right fan from w[j]
+
+  // Rotate the offset as well
+  rotate7(j,w,f,o,i);
+  remove_degree7_rightfan(v, /* !! */ 0, f, w, i);
+
   int oo[7];
-  if (get_offset_degree7(o, oo)) {
-    this->set_offsets(f[0], 0, 0, 0);
-    this->set_offsets(f[2], 0, 0, 0);
-    this->set_offsets(f[3], 0, 0, 0);
-    this->set_offsets(f[4], 0, 0, 0);
-    this->set_offsets(f[5], 0, 0, 0);
-  } else {
-    int o_face[3]; int ii;
-    ii = i[0]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[0]; o_face[ cw(ii)] = oo[1];
-    this->set_offsets(f[0], o_face[0], o_face[1], o_face[2]);
-    ii = i[2]; o_face[ii] = oo[1]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
-    this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
-    ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
-    this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
-    ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
-    this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
-    ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
-    this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
-    
-    this->insert_too_long_edge(f[0], ccw(i[0]));
-    this->insert_too_long_edge(f[0],  cw(i[0]));
-    this->insert_too_long_edge(f[3], ccw(i[3]));
-    this->insert_too_long_edge(f[4], ccw(i[4]));
-  }
+  get_offset_degree7(o, oo);
+  int o_face[3]; int ii;
+  ii = i[0]; o_face[ii] = oo[3]; o_face[ccw(ii)] = oo[0]; o_face[ cw(ii)] = oo[1];
+  this->set_offsets(f[0], o_face[0], o_face[1], o_face[2]);
+  ii = i[2]; o_face[ii] = oo[1]; o_face[ccw(ii)] = oo[2]; o_face[ cw(ii)] = oo[3];
+  this->set_offsets(f[2], o_face[0], o_face[1], o_face[2]);
+  ii = i[3]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[3]; o_face[ cw(ii)] = oo[4];
+  this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
+  ii = i[4]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[4]; o_face[ cw(ii)] = oo[5];
+  this->set_offsets(f[4], o_face[0], o_face[1], o_face[2]);
+  ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
+  this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
+  
+  this->insert_too_long_edge(f[0], ccw(i[0]));
+  this->insert_too_long_edge(f[0],  cw(i[0]));
+  this->insert_too_long_edge(f[3], ccw(i[3]));
+  this->insert_too_long_edge(f[4], ccw(i[4]));
 }
 
 
