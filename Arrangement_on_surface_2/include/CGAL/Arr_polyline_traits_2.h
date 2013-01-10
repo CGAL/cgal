@@ -24,11 +24,14 @@
 
 // TODO: Add a tag HAS_SOURCE_TARGET and dispatch calls in
 // Push_back_2 accordingly.
-// @Efi: In order to implement this suggested approach, tons of
-//       other things have to be done. Therefore, we prefer not to
-//       do it right now, and first finish this cleaning - otherwise,
+// @Efi: In order to implement this suggested approach (namely using
+//       the TAGs), tons of other things have to be done. Furthermore,
+//       the code without this is more general, and this is desirable. True,
+//       the price we pay here is in the efficiency.
+//       Therefore, we prefer not to do it right now, and first finish this
+//       cleaning (without adding TAGs)- otherwise,
 //       it won't end... In other words, as far as we understand, this
-//       tagging issue is not parrt of the cleaning work, and thus
+//       tagging issue is not part of the cleaning work, and thus
 //       we want to wait with it.
 
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
@@ -808,13 +811,18 @@ public:
       // Push all segments labeled(i+1, i+2, ... , n-1) into cv1.
       unsigned int n = cv.number_of_segments();
 
-      // TODO: Like several line before, instead of using a loop
+      // TODO: Has to be fixed!
+      // Like several line before, instead of using a loop
       // we switch to copy. Howver, there's a problem, which has to be
       // addressed. In particular, &cv[n] is NOT past-the-end.
       // These are the two original lines.
       // for (j = i+1; j < n; ++j)
       //   c2.push_back(cv[j]);
-      std::copy(&cv[i+1],&cv[n],c2.begin_segments());
+
+      typedef typename Curve_2::Segment_const_iterator const_seg_iterator;
+      const_seg_iterator it = cv.begin_segments();
+      std::advance(it,(i+1));
+      std::copy(it,cv.end_segments(),c2.begin_segments());
     }
   };
   friend class Split_2;
