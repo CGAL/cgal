@@ -95,7 +95,7 @@ public:
   }
 
   /// Destructor
-  ~Work_statistics()
+  virtual ~Work_statistics()
   {
     delete [] m_occupation_grid;
     delete [] m_num_batches_grid;
@@ -401,6 +401,7 @@ public:
   typedef std::vector<const WorkItem *> Batch;
 #endif
   typedef Batch::const_iterator BatchConstIterator;
+  typedef Batch::iterator       BatchIterator;
 
   WorkBatch() {}
 
@@ -411,6 +412,17 @@ public:
 #else
     m_batch.push_back(p_item);
 #endif
+  }
+
+  void move_first_elements(WorkBatch &dest, int num_elements)
+  {
+    BatchIterator it = m_batch.begin();
+    BatchIterator it_end = m_batch.end();
+    for (int i = 0 ; i < num_elements && it != it_end ; ++it)
+    {
+      dest.add_work_item(*it);
+    }
+    m_batch.erase(m_batch.begin(), it);
   }
 
   void run()
@@ -476,7 +488,7 @@ public:
   }
 
   /// Destructor
-  ~Simple_worksharing_ds()
+  virtual ~Simple_worksharing_ds()
   {
   }
 
@@ -548,7 +560,7 @@ public:
   }
 
   /// Destructor
-  ~Load_based_worksharing_ds()
+  virtual ~Load_based_worksharing_ds()
   {
     delete [] m_tls_work_buffers;
     delete [] m_work_batches;
@@ -761,7 +773,7 @@ public:
   }
 
   /// Destructor
-  ~Auto_worksharing_ds()
+  virtual ~Auto_worksharing_ds()
   {
   }
 
@@ -778,6 +790,9 @@ public:
     workbuffer.add_work_item(p_item);
     if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
     {
+      /*WorkBatch wb;
+      workbuffer.move_first_elements(wb, NUM_WORK_ITEMS_PER_BATCH);
+      add_batch_and_enqueue_task(wb, parent_task);*/
       add_batch_and_enqueue_task(workbuffer, parent_task);
       workbuffer.clear();
     }
@@ -791,6 +806,9 @@ public:
     workbuffer.add_work_item(p_item);
     if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
     {
+      /*WorkBatch wb;
+      workbuffer.move_first_elements(wb, NUM_WORK_ITEMS_PER_BATCH);
+      add_batch_and_enqueue_task(wb, parent_task);*/
       add_batch_and_enqueue_task(workbuffer, parent_task);
       workbuffer.clear();
     }
@@ -873,7 +891,7 @@ public:
   }
 
   /// Destructor
-  ~Localization_id_based_worksharing_ds()
+  virtual ~Localization_id_based_worksharing_ds()
   {
   }
 
@@ -1001,7 +1019,7 @@ public:
   }
 
   /// Destructor
-  ~Localization_id_based_shared_worksharing_ds()
+  virtual ~Localization_id_based_shared_worksharing_ds()
   {
   }
 

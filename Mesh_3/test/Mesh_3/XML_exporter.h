@@ -157,7 +157,7 @@ public:
     }
   }
 
-  ~Streaming_XML_exporter()
+  virtual ~Streaming_XML_exporter()
   {
     close_file();
   }

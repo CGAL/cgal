@@ -47,13 +47,11 @@ public:
 #ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
     m_grid_index_cache = -1;
 #endif
-    m_is_in_queue = false;
   }
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
     : _c(c) 
   {
-    m_is_in_queue = false;
   }
 
   Cell_handle cell() const 
@@ -107,8 +105,6 @@ public:
   
   typedef tbb::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
-
-  tbb::atomic<bool> m_is_in_queue;
 
 private:
 
