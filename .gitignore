@@ -1,5 +1,4 @@
 /*build
-AABB_tree/demo/AABB_tree/*.exe
 AABB_tree/demo/AABB_tree/AABB_demo
 AABB_tree/demo/AABB_tree/CMakeLists.txt
 AABB_tree/demo/AABB_tree/Makefile
@@ -31,13 +30,10 @@ Algebraic_foundations/test/Algebraic_foundations/extended_euclidean_algorithm
 Algebraic_foundations/test/Algebraic_foundations/ipower
 Algebraic_kernel_d/test/Algebraic_kernel_d/cgal_test_with_cmake
 Algebraic_kernel_d/test/Algebraic_kernel_d/rs_isolator
-Alpha_shapes_2/demo/Alpha_shapes_2/*.exe
 Alpha_shapes_2/demo/Alpha_shapes_2/Makefile
 Alpha_shapes_2/demo/Alpha_shapes_2/alpha_shapes_2
-Alpha_shapes_2/examples/Alpha_shapes_2/*.exe
 Alpha_shapes_2/examples/Alpha_shapes_2/Makefile
 Alpha_shapes_2/examples/Alpha_shapes_2/alpha_shapes_2
-Alpha_shapes_3/demo/Alpha_shapes_3/*.exe
 Alpha_shapes_3/demo/Alpha_shapes_3/Makefile
 Alpha_shapes_3/demo/Alpha_shapes_3/alpha_shapes_3
 Alpha_shapes_3/demo/Alpha_shapes_3/weighted_alpha_shapes_3
@@ -46,7 +42,6 @@ Alpha_shapes_3/test/Alpha_shapes_3/cgal_test_with_cmake
 Alpha_shapes_3/test/Alpha_shapes_3/test_alpha_shape_3
 Alpha_shapes_3/test/Alpha_shapes_3/test_fixed_alpha_shape_3
 Alpha_shapes_3/test/Alpha_shapes_3/test_weighted_alpha_shape_3
-Apollonius_graph_2/demo/Apollonius_graph_2/*.exe
 Apollonius_graph_2/demo/Apollonius_graph_2/Makefile
 Apollonius_graph_2/demo/Apollonius_graph_2/apollonius_graph_2
 Arithmetic_kernel/test/Arithmetic_kernel/Arithmetic_kernel
@@ -118,7 +113,6 @@ BGL/examples/BGL_arrangement_2/dual
 BGL/examples/BGL_arrangement_2/primal
 BGL/test/BGL/CMakeLists.txt
 BGL/test/BGL/cgal_test_with_cmake
-Boolean_set_operations_2/demo/Boolean_set_operations_2/*.exe
 Boolean_set_operations_2/demo/Boolean_set_operations_2/Makefile
 Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations_2
 Box_intersection_d/test/Box_intersection_d/CMakeLists.txt
@@ -132,17 +126,14 @@ CGAL_ImageIO/demo/CGALimageIO/Makefile
 CGAL_ImageIO/demo/CGALimageIO/cgal_test_with_cmake
 CGAL_ImageIO/demo/CGALimageIO/cmake_install.cmake
 CGAL_ImageIO/demo/CGALimageIO/image_to_vtk_viewer
-CGAL_ImageIO/examples/CGALimageIO/*.exe
 CGAL_ImageIO/examples/CGALimageIO/Makefile
 CGAL_ImageIO/examples/CGALimageIO/cgal_test_with_cmake
 CGAL_ImageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGAL_ImageIO/examples/CGALimageIO/makefile
 CGAL_ImageIO/examples/CGALimageIO/test_imageio
 CGAL_ImageIO/src/CGAL_ImageIO/Makefile
-CGAL_ImageIO/test/CGAL_ImageIO/*.exe
 CGAL_ImageIO/test/CGAL_ImageIO/Makefile
 CGAL_ImageIO/test/CGAL_ImageIO/test_trilinear_interpolation
-Circular_kernel_3/demo/Circular_kernel_3/*.exe
 Circular_kernel_3/demo/Circular_kernel_3/Circular_kernel_3_demo
 Circular_kernel_3/demo/Circular_kernel_3/Makefile
 Circular_kernel_3/test/Circular_kernel_3/cgal_test_with_cmake
@@ -177,12 +168,10 @@ Generator/test/Generator/rcs_test
 Generator/test/Generator/test_combination_enumerator
 Generator/test/Generator/test_generators
 GraphicsView/TAGS
-GraphicsView/demo/Circular_kernel_2/*.exe
 GraphicsView/demo/Circular_kernel_2/Circular_kernel_2
 GraphicsView/demo/Circular_kernel_2/Makefile
 GraphicsView/demo/Circular_kernel_2/qrc_*.cxx
 GraphicsView/demo/Circular_kernel_2/ui_*.h
-GraphicsView/demo/GraphicsView/*.exe
 GraphicsView/demo/GraphicsView/*_moc.cpp
 GraphicsView/demo/GraphicsView/Delaunay_triangulation
 GraphicsView/demo/GraphicsView/Makefile
@@ -192,12 +181,10 @@ GraphicsView/demo/GraphicsView/qrc_*.cxx
 GraphicsView/demo/GraphicsView/ui_*.h
 GraphicsView/demo/Polygon/*.cpp_parameters
 GraphicsView/demo/Polygon/*.dir
-GraphicsView/demo/Polygon/*.exe
 GraphicsView/demo/Polygon/Makefile
 GraphicsView/demo/Polygon/Polygon_2
 GraphicsView/demo/Polygon/qrc_Polygon_2.cxx
 GraphicsView/demo/Polygon/ui_Polygon_2.h
-GraphicsView/demo/Triangulation_2/*.exe
 GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2
 GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2
 GraphicsView/demo/Triangulation_2/Makefile
@@ -239,12 +226,10 @@ Intersections_3/test/Intersections_3/test_intersections_3
 Intersections_3/test/Intersections_3/triangle_3_triangle_3_intersection
 Intersections_3/test/Intersections_3/triangle_other
 Intersections_3/test/Intersections_3/triangle_other_intersection_test
-Jet_fitting_3/examples/Jet_fitting_3/*.exe
 Jet_fitting_3/examples/Jet_fitting_3/Makefile
 Jet_fitting_3/examples/Jet_fitting_3/Mesh_estimation
 Jet_fitting_3/examples/Jet_fitting_3/Single_estimation
 Jet_fitting_3/examples/Jet_fitting_3/VC
-Jet_fitting_3/test/Jet_fitting_3/*.exe
 Jet_fitting_3/test/Jet_fitting_3/Makefile
 Jet_fitting_3/test/Jet_fitting_3/blind_1pt
 Kernel_23/test/Kernel_23/CMakeLists.txt
@@ -404,7 +389,6 @@ Mesh_2/examples/Mesh_2/my_makefile
 Mesh_2/examples/Mesh_2/semantic.cache
 Mesh_2/include/CGAL/semantic.cache
 Mesh_2/test/Mesh_2/*.core
-Mesh_2/test/Mesh_2/*.exe
 Mesh_2/test/Mesh_2/.*.deps
 Mesh_2/test/Mesh_2/CMakeLists.txt
 Mesh_2/test/Mesh_2/Makefile
@@ -423,7 +407,6 @@ Mesh_2/test/Mesh_2/test_vertex_and_face_bases
 Mesh_3/*.tags.xml
 Mesh_3/.*.deps
 Mesh_3/applications/*.cgal
-Mesh_3/applications/*.exe
 Mesh_3/applications/*.maillage
 Mesh_3/applications/*.mesh
 Mesh_3/applications/*.png
@@ -445,7 +428,6 @@ Mesh_3/applications/read_mesh
 Mesh_3/applications/slivers_exuder
 Mesh_3/applications/stat_mesh
 Mesh_3/applications/test_off
-Mesh_3/demo/Mesh_3/*.exe
 Mesh_3/demo/Mesh_3/Makefile
 Mesh_3/demo/Mesh_3/Mesh_3
 Mesh_3/demo/Mesh_3/out.mesh
@@ -658,7 +640,6 @@ Optimisation_basic/Makefile
 Optimisation_basic/bin
 Optimisation_basic/doc_ps
 Optimisation_basic/src/Optimisation
-Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/*.exe
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/Makefile
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/Periodic_3_triangulation_3.qch
 Periodic_3_triangulation_3/demo/Periodic_3_triangulation_3/demo_delaunay_qt
@@ -732,7 +713,6 @@ Point_set_processing_3/test/Point_set_processing_3/remove_outliers_test
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test
 Polyhedron/demo/Polyhedron/*.cpp_parameters
 Polyhedron/demo/Polyhedron/*.dir
-Polyhedron/demo/Polyhedron/*.exe
 Polyhedron/demo/Polyhedron/*.ii
 Polyhedron/demo/Polyhedron/*.kdev*
 Polyhedron/demo/Polyhedron/*.off
@@ -856,10 +836,8 @@ Random_numbers/.tmp
 Random_numbers/Makefile
 Random_numbers/bin
 Random_numbers/doc_ps
-Ridges_3/examples/Ridges_3/*.exe
 Ridges_3/examples/Ridges_3/Compute_Ridges_Umbilics
 Ridges_3/examples/Ridges_3/Makefile
-Ridges_3/test/Ridges_3/*.exe
 Ridges_3/test/Ridges_3/Makefile
 Ridges_3/test/Ridges_3/ridge_test
 STL_Extension/test/STL_Extension/CMakeLists.txt
@@ -902,7 +880,6 @@ Skin_surface_3/test/Skin_surface_3/msgs.txt
 Skin_surface_3/test/Skin_surface_3/subdivision_test
 Spatial_sorting/test/Spatial_sorting/CMakeLists.txt
 Spatial_sorting/test/Spatial_sorting/cgal_test_with_cmake
-Stream_lines_2/demo/Stream_lines_2/*.exe
 Stream_lines_2/demo/Stream_lines_2/Makefile
 Stream_lines_2/demo/Stream_lines_2/streamlines
 Surface_mesh_parameterization/doc_doxygen
@@ -910,7 +887,6 @@ Surface_mesh_parameterization/doc_html
 Surface_mesh_parameterization/doc_pdf
 Surface_mesh_parameterization/doc_ps
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/*.eps
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/*.exe
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/*.kdev*
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/*.ncb
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/*.obj
@@ -932,7 +908,6 @@ Surface_mesh_parameterization/examples/Surface_mesh_parameterization/makefile
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/release
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test[!!-~](release)
-Surface_mesh_parameterization/test/Surface_mesh_parameterization/*.exe
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/*.kdev*
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/*.ncb
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/*.suo
@@ -949,7 +924,6 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/makefile
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/release
 Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/#[!!-~]cmake[!!-~]stuff:
-Surface_mesher/demo/Surface_mesher/*.exe
 Surface_mesher/demo/Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/.qglviewer.xml
 Surface_mesher/demo/Surface_mesher/CMakeCache.txt
@@ -957,7 +931,6 @@ Surface_mesher/demo/Surface_mesher/CMakeFiles
 Surface_mesher/demo/Surface_mesher/Makefile
 Surface_mesher/demo/Surface_mesher/Surface_mesher
 Surface_mesher/demo/Surface_mesher/Surface_mesher_Qt4_Demo
-Surface_mesher/demo/Surface_mesher/VTK/*.exe
 Surface_mesher/demo/Surface_mesher/VTK/Makefile
 Surface_mesher/demo/Surface_mesher/VTK/mesh_a_3D_image
 Surface_mesher/demo/Surface_mesher/VTK/mesh_a_VTK_3D_image
@@ -1031,7 +1004,6 @@ Surface_mesher/doc_tex/Surface_mesher_ref/*.pdflg
 Surface_mesher/doc_tex/Surface_mesher_ref/auto
 Surface_mesher/doc_tex/auto
 Surface_mesher/doxygen
-Surface_mesher/examples/Surface_mesher/*.exe
 Surface_mesher/examples/Surface_mesher/.*.deps
 Surface_mesher/examples/Surface_mesher/ProgramOutput.mesh_a_3d_gray_image.*
 Surface_mesher/examples/Surface_mesher/mesh_a_3d_gray_image
@@ -1043,7 +1015,6 @@ Surface_mesher/examples/Surface_mesher/sphere_union.mesh
 Surface_mesher/examples/Surface_mesher/sphere_union.off
 Surface_mesher/examples/Surface_mesher/test_imageio
 Surface_mesher/include/CGAL/Mesh_3
-Surface_mesher/test/Surface_mesher/*.exe
 Surface_mesher/test/Surface_mesher/.*.deps
 Surface_mesher/test/Surface_mesher/combined_spheres
 Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test
@@ -1100,7 +1071,6 @@ Surface_reconstruction_points_3/test/Surface_reconstruction_points_3/release
 Testsuite/test/myrun_testsuite_with_cmake
 Triangulation_2/CMakeLists.txt
 Triangulation_2/cgal_test_with_cmake
-Triangulation_2/demo/Triangulation_2/*.exe
 Triangulation_2/demo/Triangulation_2/Makefile
 Triangulation_2/demo/Triangulation_2/constrained
 Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2
@@ -1109,7 +1079,6 @@ Triangulation_2/demo/Triangulation_2/regular_triangulation_2
 Triangulation_2/examples/Triangulation_2/CMakeLists.txt
 Triangulation_2/examples/Triangulation_2/cgal_test_with_cmake
 Triangulation_2/examples/Triangulation_2/regular
-Triangulation_2/test/Triangulation_2/*.exe
 Triangulation_2/test/Triangulation_2/CMakeLists.txt
 Triangulation_2/test/Triangulation_2/Makefile
 Triangulation_2/test/Triangulation_2/T??.triangulation
@@ -1134,7 +1103,6 @@ Triangulation_2/test/Triangulation_2/vrml_tds*
 Triangulation_3/benchmark/Triangulation_3/CMakeLists.txt
 Triangulation_3/benchmark/Triangulation_3/cgal_test_with_cmake
 Triangulation_3/benchmark/Triangulation_3/simple
-Triangulation_3/examples/Triangulation_3/*.exe
 Triangulation_3/examples/Triangulation_3/CMakeLists.txt
 Triangulation_3/examples/Triangulation_3/adding_handles_3
 Triangulation_3/examples/Triangulation_3/cgal_test_with_cmake
