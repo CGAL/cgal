@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgInterpolation2SurfaceNeighbor
 
 Given a set of sample points issued from a surface and a query point 
-`p`, the functions `surface_neighbors_3` compute the neighbors of `p` on 
+`p`, the functions `surface_neighbors_3()` compute the neighbors of `p` on 
 the surface within the sample points. If the sampling is sufficiently 
 dense, the neighbors are provably close to the point `p` on the 
 surface (cf. the manual pages and 
@@ -15,7 +15,7 @@ to the power diagram which is equivalent to the intersection of the
 Voronoi cell of the query point `p` with the tangent plane to the 
 surface at `p`. 
 
-The functions \c surface_neighbors_certified_3 also return, in
+The functions \c surface_neighbors_certified_3() also return, in
 addition, a Boolean value that certifies whether or not, the Voronoi
 cell of `p` can be affected by points that lie outside the input
 range, i.e. outside the ball centered on `p` passing through the

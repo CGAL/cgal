@@ -4,7 +4,7 @@ namespace CGAL {
 \defgroup PkgInterpolationNaturalNeighborCoordinates2 CGAL::natural_neighbor_coordinates_2()
 \ingroup PkgInterpolation2NatNeighbor
 
-The functions `natural_neighbor_coordinates_2` compute natural neighbor coordinates, also 
+The functions `natural_neighbor_coordinates_2()` compute natural neighbor coordinates, also 
 called Sibson's coordinates, for `2D` points provided a two-dimensional 
 triangulation and a query point in the convex hull of the vertices 
 of the triangulation. 
@@ -23,7 +23,7 @@ Only the following members of this traits class are used:
 <LI>`Point_2` 
 <LI>`construct_circumcenter_2_object` 
 <LI>Additionally, `Traits` must meet the requirements for 
-the traits class of the `polygon_area_2` function. 
+the traits class of the `polygon_area_2()` function. 
 </UL> 
 <LI>`OutputIterator::value_type` is equivalent to 
 `std::pair<Dt::Point_2, Dt::Geom_traits::FT>`, i.e. a pair 
