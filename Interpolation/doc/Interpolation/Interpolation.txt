@@ -114,13 +114,13 @@ returned. If the query point is already located and/or the boundary
 edges of the conflict zone are already determined, alternative
 functions allow to avoid the re-computation.
 
-\subsection InterpolationExampleforNaturalNeighborCoordinates Example for Natural Neighbor Coordinates
+\subsubsection InterpolationExampleforNaturalNeighborCoordinates Example for Natural Neighbor Coordinates
 
 The signature of all coordinate computation functions is about the
 same.
 \cgalExample{Interpolation/nn_coordinates_2.cpp}
 
-\subsection InterpolationExampleforRegularNeighborCoordinates Example for Regular Neighbor Coordinates
+\subsubsection InterpolationExampleforRegularNeighborCoordinates Example for Regular Neighbor Coordinates
 
 For regular neighbor coordinates, it is sufficient to replace the name
 of the function and the type of triangulation passed as parameter. A
@@ -169,7 +169,7 @@ well known and for example provided by \cgal in the class
 
 \subsection InterpolationImplementation_1 Implementation
 
-\subsection InterpolationVoronoiIntersectionDiagrams Voronoi Intersection Diagrams
+\subsubsection InterpolationVoronoiIntersectionDiagrams Voronoi Intersection Diagrams
 
 In \cgal, the regular triangulation dual to the intersection of a \f$ 3D\f$
 Voronoi diagram with a plane \f$ \mathcal{H}\f$ can be computed by
@@ -190,7 +190,7 @@ This approach allows to avoid the explicit constructions of the
 projected points and the weights which are very prone to rounding
 errors.
 
-\subsection InterpolationNaturalNeighborCoordinateson Natural Neighbor Coordinates on Surfaces
+\subsubsection InterpolationNaturalNeighborCoordinateson Natural Neighbor Coordinates on Surfaces
 
 The computation of natural neighbor coordinates on surfaces is based
 upon the computation of regular neighbor coordinates with respect to
@@ -217,7 +217,7 @@ point) can still influence the result. This allows to iteratively
 enlarge the set of input points until the range is sufficient to
 certify the result.
 
-\subsection InterpolationSurfaceNeighbors Surface Neighbors
+\subsubsection InterpolationSurfaceNeighbors Surface Neighbors
 
 The surface neighbors of the query point are its neighbors in the
 regular triangulation that is dual to \f$ {\rm Vor}(\mathcal{P}) \cap
@@ -235,7 +235,7 @@ provided.
 
 \subsection InterpolationIntroduction_2 Introduction
 
-\subsection InterpolationLinearPrecisionInterpolation Linear Precision Interpolation
+\subsubsection InterpolationLinearPrecisionInterpolation Linear Precision Interpolation
 
 Sibson \cite s-bdnni-81 defines a very simple interpolant that
 re-produces linear functions exactly. The interpolation of
@@ -251,7 +251,7 @@ by the barycentric coordinate property. The first example in
 Subsection \ref subsecinterpol_examples shows how the function is
 called.
 
-\subsection InterpolationSibson Sibson's C^1 Continuous Interpolant
+\subsubsection InterpolationSibson Sibson's C^1 Continuous Interpolant
 
 In \cite s-bdnni-81, Sibson describes a second interpolation method
 that relies also on the function gradient \f$ \mathbf{g_i}\f$ for all \f$ \mathbf{p_i} \in \mathcal{P}\f$. It is \f$ C^1\f$ continuous with gradient \f$ \mathbf{g_i}\f$ at
@@ -293,7 +293,7 @@ computation needed to compute the distance \f$ \|\mathbf{x} -
 around \f$ f(0)\f$, the faster the interpolant approaches \f$ \xi_i\f$ as
 \f$ \mathbf{x} \rightarrow \mathbf{p_i}\f$.
 
-\subsection InterpolationFarin Farin's C^1 Continuous Interpolant
+\subsubsection InterpolationFarin Farin's C^1 Continuous Interpolant
 
 Farin \cite f-sodt-90 extended Sibson's work and realizes a \f$ C^1\f$
 continuous interpolant by embedding natural neighbor coordinates in
@@ -304,7 +304,7 @@ approximated from the function values by Sibson's method
 \cite s-bdnni-81 (see Section \ref sgradient_fitting) which is exact only
 for spherical quadrics.
 
-\subsection InterpolationQuadraticPrecisionInterpolants Quadratic Precision Interpolants
+\subsubsection InterpolationQuadraticPrecisionInterpolants Quadratic Precision Interpolants
 
 Knowing the gradient \f$ \mathbf{g_i}\f$ for all \f$ \mathbf{p_i} \in
 \mathcal{P}\f$, we formulate a very simple interpolant that reproduces
