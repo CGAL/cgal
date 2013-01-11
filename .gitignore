@@ -1,4 +1,4 @@
-/*build
+/*build*
 AABB_tree/demo/AABB_tree/AABB_demo
 AABB_tree/demo/AABB_tree/CMakeLists.txt
 AABB_tree/demo/AABB_tree/Makefile
@@ -142,7 +142,6 @@ Circular_kernel_3/test/Circular_kernel_3/test_Lazy_spherical_kernel_basics
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_basics
 Circular_kernel_3/test/Circular_kernel_3/test_Spherical_kernel_with_core
-Distance_3/include
 Documentation/log/*.*
 Documentation/output
 Documentation/tags/*.*
@@ -212,6 +211,7 @@ Installation/auxiliary/gdb/python/CGAL/printers.pyc
 Installation/auxiliary/gdb/test
 Installation/cmake/modules/*.tmp
 Installation/test/Installation/cgal_test
+/Installation/test/Installation/cgal_test_with_cmake
 Installation/test/Installation/deprecation_warning
 Interpolation/demo/Interpolation/cgal_test_with_cmake
 Intersections_2/test/Intersections_2/CMakeLists.txt
@@ -336,7 +336,7 @@ Mesh_2/demo/Mesh_2/semantic.cache
 Mesh_2/doc_html
 Mesh_2/doc_pdf
 Mesh_2/doc_ps
-Mesh_2/doc_tex/**.aux
+Mesh_2/doc_tex/*.aux
 Mesh_2/doc_tex/*.blg
 Mesh_2/doc_tex/*.cb
 Mesh_2/doc_tex/*.cgallog
@@ -982,7 +982,6 @@ Surface_mesher/examples/Surface_mesher/sphere_union-before.mesh
 Surface_mesher/examples/Surface_mesher/sphere_union.mesh
 Surface_mesher/examples/Surface_mesher/sphere_union.off
 Surface_mesher/examples/Surface_mesher/test_imageio
-Surface_mesher/include/CGAL/Mesh_3
 Surface_mesher/test/Surface_mesher/.*.deps
 Surface_mesher/test/Surface_mesher/combined_spheres
 Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test
@@ -1108,13 +1107,26 @@ Triangulation_3/test/Triangulation_3/test_static_filters
 Triangulation_3/test/Triangulation_3/test_triangulation_3
 Triangulation_3/test/Triangulation_3/test_triangulation_tds
 Triangulation_3/test/Triangulation_3/test_triangulation_tds_3
-/build*
+
+## GLOBAL EXCLUSION PATTERNS ##
+
+# CMake auxiliary files:
 cmake_install.cmake
-cgal_test_with_cmake.log
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+
+# Editors' automatic backups
 *.bak
 *.bk?
-*.old
+.*~
+*~
+.#*
+
+# MacOS file http://en.wikipedia.org/wiki/.DS_Store(
 .DS_Store
+
+# Binaries:
 *.a
 *.o
 *.obj
@@ -1123,11 +1135,15 @@ cgal_test_with_cmake.log
 *.exe
 *.so
 *.so.*
+
+# Sub-directories used by Visual Studio to put binaries:
 debug
 release
 Debug
 Release
 x64
+
+# LaTeX and CGAL manual tools things:
 *.blg
 *.cgallog
 *.aux
@@ -1137,57 +1153,57 @@ x64
 *.ilg
 *.pdflg
 *.log
-
 *.toc
 *.cgallog.tmp*
 *.inc
 *.dvi
 *.mtc*
 *.idx
+*.cpp.noheader
+*.h.noheader
+*.h.filename
+*.cpp.filename
+
+# LaTeX documentation products:
+doc_ps
+doc_html
+doc_pdf
+
+# Testsuite things:
 ProgramOutput*
 ErrorOutput*
 CompilerOutput*
 error.txt
-*.ncb
-*.suo
-contents.obv
-.xvpics
+cgal_test_with_cmake.log
+
+# File created by the Semantic Bovinator (an Emacs package)
 semantic.cache
-doc_ps
-doc_html
-doc_pdf
-*.moc
-.*~
-*~
-.#*
-*.user
-*.aps
-doc_doxygen
-CMakeCache.txt
-CMakeFiles
-*.qrc.depends
-cmake_install.cmake
-Doxyfile
-*.dir
-gmon.*
+
+
+# Files produced by a Qt compilation/execution
 .qglviewer.xml
+*.moc
 *.moc_parameters
 *.cpp_parameters
 *_moc.cpp
 ui_*.h
 qrc_*.cxx
-*.sbr
+*.qrc.depends
+
+# Emacs file
 .dir-locals.el
+
+# We do not want those files
+*.old
 *.tmp
+Makefile
+.scm-urls
+
+# Visual Studio produced file:
+*.user
 *.ilk
 *.pdb
 *.exe.*
-Makefile
-*.cpp.noheader
-*.h.noheader
-*.h.filename
-*.cpp.filename
-.scm-urls
 *.exp
 *.resource.txt
 *.manifest
@@ -1195,3 +1211,20 @@ Makefile
 *.vcproj
 *.sln
 *.depends
+
+# The rest: "various" things that I do not know how to classify
+# -- Laurent Rineau, 2013/01/11
+*.ncb
+*.suo
+contents.obv
+.xvpics
+*.sbr
+*.aps
+doc_doxygen
+Doxyfile
+*.dir
+gmon.*
+
+
+# TODO:
+#   remove everything about /doc_tex once LaTeX is not longer supported
