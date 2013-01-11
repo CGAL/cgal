@@ -19,9 +19,8 @@ The functions \c surface_neighbors_certified_3 also return, in
 addition, a Boolean value that certifies whether or not, the Voronoi
 cell of `p` can be affected by points that lie outside the input
 range, i.e. outside the ball centered on `p` passing through the
-furthest sample point from `p` in the range \f$
-\left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$. If the sample
-points are collected by a \f$ k\f$-nearest neighbor or a range search
+furthest sample point from `p` in the range `[first, beyond)`. If the sample
+points are collected by a k-nearest neighbor or a range search
 query, this permits to verify that a large enough neighborhood has
 been considered.
 
@@ -51,7 +50,7 @@ of the cell of `p` in this diagram.
 
 /*!
 The sample points \f$ \mathcal{P}\f$ are provided in the range 
-\f$\left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
+`[first, beyond)`.
 `InputIterator::value_type` is the point type `Kernel::Point_3`. The
 tangent plane is defined by the point `p` and the vector `normal`. The
 parameter `K` determines the kernel type that will instantiate the
@@ -59,7 +58,7 @@ template parameter of `Voronoi_intersection_2_traits_3<K>`.
 
 The surface neighbors of `p` are computed which are the
 neighbors of `p` in the regular triangulation that is dual to
-the intersection of the \f$ 3D\f$ Voronoi diagram of \f$ \mathcal{P}\f$ with
+the intersection of the 3D Voronoi diagram of \f$ \mathcal{P}\f$ with
 the tangent plane. The point sequence that is computed by the
 function is placed starting at `out`. The function returns an
 iterator that is placed past-the-end of the resulting point
@@ -85,7 +84,7 @@ const ITraits& traits);
 /*!
 Similar to the first function. The additional third return
 value is `true` if the furthest point in the range
-\f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$ is further
+`[first, beyond)` is further
 away from `p` than twice the distance from `p` to the
 furthest vertex of the intersection of the Voronoi cell of `p`
 with the tangent plane defined be `(p,normal)`. It is
@@ -101,8 +100,7 @@ K);
 /*!
 The same as above except that this function
 takes the maximal distance from `p` to the points in the range
-\f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$ as additional
-parameter.
+`[first, beyond)` as additional parameter.
 */
 template <class OutputIterator, class InputIterator, class
 Kernel> std::pair< OutputIterator, bool >

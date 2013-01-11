@@ -63,8 +63,8 @@ std::pair< Data_type, bool> operator()(const Key_type& p);
 
 generates the interpolated function value computed by Farin's interpolant.
 
-\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
-\pre The range \f$ \left[\right.\f$ `first`, `beyond`\f$ \left.\right)\f$ contains either one or more than three element
+\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range `[first, beyond).
+\pre The range `[first, beyond)` contains either one or more than three element
 The function `farin_c1_interpolation()` interpolates the function values and the 
 gradients that are provided by functors using the method described in \cite f-sodt-90. 
 
@@ -89,7 +89,6 @@ to provide the square root operation.
 \sa `PkgInterpolationRegularNeighborCoordinates2`
 \sa PkgInterpolationSurfaceNeighborCoordinates3
 
-s. 
 */
 template < class RandomAccessIterator, class Functor,
 class GradFunctor, class Traits> typename Functor::result_type
@@ -115,8 +114,8 @@ function value and a Boolean. The Boolean indicates whether the
 function value could be retrieved correctly. This function generates
 the interpolated function value as the weighted sum of the values
 corresponding to each point of the point/coordinate pairs in the
-range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
-\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
+range `[first, beyond)`.
+\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range `[first, beyond)`.
 
 \cgalHeading{Requirements}
 
@@ -155,20 +154,22 @@ norm, Functor function_values);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The function `quadratic_interpolation` interpolates the function values and first degree 
+The function `quadratic_interpolation()` interpolates the function values and first degree 
 functions defined from the function gradients. Both, function values and 
 gradients, must be provided by functors. 
 
 This function generates the
 interpolated function value as the weighted sum of the values plus a
 linear term in the gradient for each point of the point/coordinate
-pairs in the range \f$ \left[\right.\f$ `first`,
-`beyond`\f$ \left.\right)\f$. See also
-`sibson_c1_interpolation`. \pre `norm` \f$ \neq0\f$ `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
+pairs in the range `[first, beyond)`. See also
+`sibson_c1_interpolation()`. 
+
+\pre `norm` \f$ \neq0\f$ `function_value(p).second == true` for all
+points `p` of the point/coordinate pairs in the range `[first, beyond)`.
 
 \cgalHeading{Parameters}
 
-See `sibson_c1_interpolation`. 
+See `sibson_c1_interpolation()`. 
 
 \cgalHeading{Requirements}
 
@@ -200,7 +201,7 @@ function_gradient,const Traits& traits);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The function `sibson_c1_interpolation` interpolates the function values and the 
+The function `sibson_c1_interpolation()` interpolates the function values and the 
 gradients that are provided by functors 
 following the method described in \cite s-bdnni-81. 
 
@@ -210,9 +211,10 @@ This function generates the interpolated function value at the point
 If the functor `function_gradient` cannot supply the gradient of a
 point, the function returns a pair where the Boolean is set to
 `false`. If the interpolation was successful, the pair contains the
-interpolated function value as first and `true` as second value. \pre
-`norm` \f$ \neq0\f$. `function_value(p).second == true` for all points
-`p` of the point/coordinate pairs in the range \f$\left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
+interpolated function value as first and `true` as second value. 
+
+\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points
+`p` of the point/coordinate pairs in the range `[first, beyond)`.
 
 
 \cgalHeading{Parameters}
@@ -221,8 +223,7 @@ The template parameter `Traits` is to be
 instantiated with a model of `InterpolationTraits`. 
 The value type of `ForwardIterator` is a pair associating a point to a 
 (non-normalized) barycentric coordinate. `norm` is the 
-normalization factor. The range \f$ \left[\right.\f$ 
-`first`,`beyond`\f$ \left.\right)\f$ contains the barycentric 
+normalization factor. The range `[first, beyond)` contains the barycentric 
 coordinates for the query point `p`. The functor 
 `function_value` allows to access the value of the interpolated 
 function given a point. `function_gradient` allows to access the 

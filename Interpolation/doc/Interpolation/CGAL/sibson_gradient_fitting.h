@@ -50,8 +50,7 @@ estimation method based on natural neighbor coordinates
 /*!
 estimates the
 gradient of a function at the point `p` given natural neighbor
-coordinates of `p` in the range \f$ \left[\right.\f$ `first`,
-`beyond`\f$ \left.\right)\f$ and the function values of the neighbors
+coordinates of `p` in the range `[first, beyond)` and the function values of the neighbors
 provided by the functor `f`. `norm` is the normalization
 factor of the barycentric coordinates.
 */
