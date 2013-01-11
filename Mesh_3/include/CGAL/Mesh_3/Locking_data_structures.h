@@ -266,7 +266,7 @@ protected:
   }
 
   /// Destructor
-  ~Grid_locking_ds_base()
+  virtual ~Grid_locking_ds_base()
   {
     for( TLS_grid::iterator it_grid = m_tls_grids.begin() ;
              it_grid != m_tls_grids.end() ;
@@ -348,7 +348,7 @@ public:
       m_grid[i] = false;
   }
 
-  ~Simple_grid_locking_ds()
+  virtual ~Simple_grid_locking_ds()
   {
     delete [] m_grid;
   }
@@ -409,7 +409,7 @@ public:
   }
 
   /// Destructor
-  ~Simple_grid_locking_ds_with_thread_ids()
+  virtual ~Simple_grid_locking_ds_with_thread_ids()
   {
     delete [] m_grid;
   }
@@ -495,7 +495,7 @@ public:
   }
 
   /// Destructor
-  ~Simple_grid_locking_ds_with_mutex()
+  virtual ~Simple_grid_locking_ds_with_mutex()
   {
     delete [] m_grid;
   }
