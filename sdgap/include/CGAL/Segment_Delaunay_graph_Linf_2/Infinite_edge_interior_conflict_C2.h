@@ -67,8 +67,13 @@ namespace CGAL {
                      << ' ' << sgn << std::endl;);
       
       if ( t.is_segment() ) {
-        //Sandeep: This is because end points of a segment are inserted first
-        return false;
+        if (sgn == NEGATIVE and s.is_segment()) {
+          return true;
+        }
+        else {
+          //Sandeep: This is because end points of a segment are inserted first
+          return false;
+        }
       }
       
       

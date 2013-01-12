@@ -421,6 +421,15 @@ namespace CGAL {
             }
             else {
               // Sandeep: p and t are on same side of suppline(q)
+              if (( oriented_side_of_line(l, t.point()) == oriented_side_of_line(l, p.point()) )
+                  and ( oriented_side_of_line(l, t.point()) == ZERO )) {
+                //p and t lies on the supporting line of q
+                CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
+                               << POSITIVE
+                               << std::endl ;);
+                return POSITIVE;
+              }
+              //Sandeep: here p and t both are on positive or negative side of q
               if (q.segment().is_horizontal()) {
                 CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p p=point, q= hsegment about to return "
                                << ((cmpy(q.segment().source(),p.point()) == SMALLER) ?
@@ -491,6 +500,15 @@ namespace CGAL {
             }
             else {
               // Sandeep: q and t are on same side of suppline(p)
+              if (( oriented_side_of_line(l, t.point()) == oriented_side_of_line(l, q.point()) )
+                  and ( oriented_side_of_line(l, t.point()) == ZERO )) {
+                //p and t lies on the supporting line of q
+                CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p about to return "
+                               << POSITIVE
+                               << std::endl ;);
+                return POSITIVE;
+              }
+              //Sandeep: here p and t both are on positive or negative side of q
               if (p.segment().is_horizontal()) {
                 CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p q=point, p= hsegment about to return "
                                << ((cmpy(p.segment().source(),q.point()) == SMALLER) ?
@@ -660,7 +678,7 @@ namespace CGAL {
        
         if ( p.segment().is_horizontal() or
              p.segment().is_vertical()      ) {
-          return POSITIVE;
+          return NEGATIVE;
         }
       } // end of case where q is not on t
       //Sandeep: Added to avoid compiler warning

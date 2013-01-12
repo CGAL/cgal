@@ -737,8 +737,8 @@ public:
           Oriented_side ossegt = 
             oriented_side_of_line(lseg, t.point());
 
-          CGAL_assertion(ossegp != ON_ORIENTED_BOUNDARY);
-          CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
+          //CGAL_assertion(ossegp != ON_ORIENTED_BOUNDARY);
+          //CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
           if (ossegp != ossegt) {
 			      CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
@@ -810,8 +810,8 @@ public:
           Oriented_side ossegt = 
             oriented_side_of_line(lseg, t.point());
 
-          CGAL_assertion(ossegq != ON_ORIENTED_BOUNDARY);
-          CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
+          //CGAL_assertion(ossegq != ON_ORIENTED_BOUNDARY);
+          //CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
           if (ossegq != ossegt) {
 			      CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
