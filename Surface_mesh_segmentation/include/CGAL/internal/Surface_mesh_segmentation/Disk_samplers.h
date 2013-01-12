@@ -76,8 +76,8 @@ public:
         *out_it++ = Tuple(R * cos(Q), R * sin(Q), weight);
       }
     } else {
-      const double custom_power = 8.0 /
-                                  8.0; // it determines how much sampling is biased to center
+      const double custom_power =
+        1.0; // it determines how much sampling is biased to center
       // for uniform result one can use 0.5 (i.e. sqrt)
       for(int i = 0; i < number_of_points; ++i) {
         double Q = i * golden_ratio * CGAL_PI;

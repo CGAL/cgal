@@ -75,10 +75,10 @@ public:
           it != neighbors.end(); ++it) {
         double spatial_weight = gaussian_function(it->second,
                                 window_size / 2.0); // window_size => 2*sigma
-        double domain_weight = gaussian_function(values[it->first] -  current_sdf_value,
-                               1.5 * deviation);
+        double range_weight = gaussian_function(values[it->first] - current_sdf_value,
+                                                1.5 * deviation);
         // we can use just spatial_weight for Gauissian filtering
-        double weight = spatial_weight * domain_weight;
+        double weight = spatial_weight * range_weight;
 
         total_sdf_value += values[it->first] * weight;
         total_weight += weight;
@@ -86,11 +86,11 @@ public:
       smoothed_values.push_back(total_sdf_value / total_weight);
     }
     // put smoothed values back again to values pmap.
-    std::size_t index = 0;
+    std::vector<double>::iterator smoothed_value_it = smoothed_values.begin();
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end();
-        ++facet_it, ++index) {
-      values[facet_it] = smoothed_values[index];
+        ++facet_it, ++smoothed_value_it) {
+      values[facet_it] = *smoothed_value_it;
     }
   }
 private:
@@ -124,9 +124,9 @@ public:
     smoothed_values.reserve(mesh.size_of_facets());
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      //Find neighbors and put their values into a list
       std::map<Facet_const_handle, int> neighbors;
-      NeighborSelector()(facet_it, window_size, neighbors);
+      NeighborSelector()(facet_it, window_size,
+                         neighbors); // gather neighbors in the window
 
       std::vector<double> neighbor_values;
       neighbor_values.reserve(neighbors.size());
@@ -147,11 +147,11 @@ public:
       smoothed_values.push_back(median_sdf);
     }
     // put smoothed values back again to values pmap.
-    std::size_t index = 0;
+    std::vector<double>::iterator smoothed_value_it = smoothed_values.begin();
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end();
         ++facet_it, ++index) {
-      values[facet_it] = smoothed_values[index];
+      values[facet_it] = *smoothed_value_it;
     }
   }
 };
@@ -194,7 +194,7 @@ public:
             // if insertion is OK, then check its level
             facet_queue.push(
               new_pair);                                      // if its level is equal to max_level do not put it in
-          }                                                                    // queue since we do not want to traverse its childs
+          }                                                                    // queue since we do not want to traverse its neighbors
         }
       } while(++facet_circulator != pair.first->facet_begin());
 
@@ -224,9 +224,11 @@ public:
                   int max_level,
                   std::map<Facet_const_handle, int>& neighbors) const {
     typedef std::pair<Facet_const_handle, int> Facet_level_pair;
+
     std::queue<Facet_level_pair> facet_queue;
     facet_queue.push(Facet_level_pair(facet, 0));
     neighbors.insert(facet_queue.front());
+
     while(!facet_queue.empty()) {
       const Facet_level_pair& pair = facet_queue.front();
 
@@ -238,7 +240,7 @@ public:
           vertex->vertex_begin();
         do { // for each vertex loop on incoming edges (through those edges loop on neighbor facets which includes the vertex)
           if(!vertex_circulator->is_border()) {
-            Facet_level_pair new_pair(facet_circulator->opposite()->facet(),
+            Facet_level_pair new_pair(vertex_circulator->opposite()->facet(),
                                       pair.second + 1);
             if(neighbors.insert(new_pair).second
                 && new_pair.second < max_level) { // first insert new_pair to map

@@ -174,8 +174,8 @@ private:
     std::vector<double> distance_square(points.size(),
                                         (std::numeric_limits<double>::max)());
     // distance_square stores squared distance to the closest center for each point.
-    // say, distance_square -> [ 0.1, 0.2, 0.3, 0.4, ... ]
-    // then corresponding distance_square_cumulative -> [ 0.1, 0.3, 0.6, 1, ...]
+    // say, distance_square -> [ 0.1, 0.2, 0.3, 0.1, ... ]
+    // then corresponding distance_square_cumulative -> [ 0.1, 0.3, 0.6, 0.7, ...]
     double initial_mean = points[rand() % points.size()].data;
     make_center(initial_mean);
 

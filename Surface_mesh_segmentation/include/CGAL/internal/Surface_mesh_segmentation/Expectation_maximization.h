@@ -114,7 +114,9 @@ public:
     init_type(init_type) {
     // For initialization with k-means, with one run
     if(init_type == K_MEANS_INITIALIZATION) {
-      K_means_clustering k_means(number_of_centers, data);
+      K_means_clustering k_means(number_of_centers, data,
+                                 K_means_clustering::PLUS_INITIALIZATION,
+                                 number_of_runs, maximum_iteration);
       std::vector<int> initial_center_ids;
       k_means.fill_with_center_ids(initial_center_ids);
 

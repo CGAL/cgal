@@ -102,6 +102,7 @@ public:
     Filter()(mesh, get_window_size(), sdf_pmap);
     std::pair<double, double> min_max_sdf_values = linear_normalize_sdf_values(
           sdf_pmap);
+
     // return minimum and maximum sdf values before normalization
     return min_max_sdf_values;
   }
@@ -141,7 +142,7 @@ public:
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end();
         ++facet_it, ++label_it) {
-      segment_pmap[facet_it] = *label_it;
+      segment_pmap[facet_it] = *label_it; // fill with cluster-ids
     }
     // assign a segment id for each facet
     int number_of_segments = assign_segments(number_of_centers, sdf_pmap,
@@ -183,7 +184,7 @@ private:
    * normalized_sdf = log( alpha * ( current_sdf - min_sdf ) / ( max_sdf - min_sdf ) + 1 ) / log( alpha + 1 )
    * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
    * @param[out] normalized_sdf_values normalized values stored in facet iteration order
-   * Important note: @a sdf_values should contain linearly normalized values between [0-1]
+   * Important note: @a sdf_values parameter should contain linearly normalized values between [0-1]
    */
   template<class SDFPropertyMap>
   void log_normalize_sdf_values(SDFPropertyMap sdf_values,
@@ -291,7 +292,7 @@ private:
    */
   void log_normalize_probability_matrix(std::vector<std::vector<double> >&
                                         probabilities) const {
-    const double epsilon = 1e-5;
+    const double epsilon = 5e-6;
     for(std::vector<std::vector<double> >::iterator it_i = probabilities.begin();
         it_i != probabilities.end(); ++it_i) {
       for(std::vector<double>::iterator it = it_i->begin(); it != it_i->end(); ++it) {
@@ -325,7 +326,7 @@ private:
       facet_index_map[facet_it] = facet_index;
     }
 
-    const double epsilon = 1e-5;
+    const double epsilon = 5e-6;
     // edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     for(Edge_const_iterator edge_it = mesh.edges_begin();
         edge_it != mesh.edges_end(); ++edge_it) {
