@@ -714,6 +714,13 @@ namespace CGAL {
         Point_2 pt = is_p_tsrc ? t.target() : t.source();
       
         Orientation o = orientation_linf(p.point(), pq, pt);
+        
+        if (o == LEFT_TURN) {
+          //sandeep: if t is vertical segment then it is quidistant from vertex q,p,inf
+          CGAL_SDG_DEBUG(std::cout << "debug incircle_pss p, pq, pt LEFT_TURN "
+                         << "returns ZERO" << std::endl; );
+          return ZERO;
+        }
       
         if (o == DEGENERATE) {
         
