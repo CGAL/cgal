@@ -581,6 +581,20 @@ struct mpzf {
     res.size=siz;
     return res;
   }
+  friend mpzf mpzf_gcd(mpzf const&a, mpzf const&b){
+    // FIXME: Untested
+    if (a.size == 0 || b.size == 0) return 0;
+    int asize=std::abs(a.size);
+    int bsize=std::abs(b.size);
+    int rsize=std::min(asize, bsize);
+    mpzf res(allocate(), rsize);
+    res.exp = 0; // Pick a.exp? or the average?
+    if (asize < bsize)
+      res.size = mpn_gcd(res.data, b.data, bsize, a.data, asize);
+    else
+      res.size = mpn_gcd(res.data, a.data, asize, b.data, bsize);
+    return res;
+  }
   friend mpzf operator/(mpzf const&a, mpzf const&b){
     // FIXME: Untested
     int asize=std::abs(a.size);
@@ -684,7 +698,6 @@ namespace CGAL {
 
 	struct Is_zero
 	  : public std::unary_function< Type, bool > {
-	    public:
 	      bool operator()( const Type& x ) const {
 		return x.sign() == 0;
 	      }
@@ -692,15 +705,22 @@ namespace CGAL {
 
 	struct Is_one
 	  : public std::unary_function< Type, bool > {
-	    public:
 	      bool operator()( const Type& x ) const {
 		return x == 1;
 	      }
 	  };
 
+	struct Gcd
+	  : public std::binary_function< Type, Type, Type > {
+	      Type operator()(
+		  const Type& x,
+		  const Type& y ) const {
+		return mpzf_gcd(x, y);
+	      }
+	  };
+
 	class Square
 	  : public std::unary_function< Type, Type > {
-	    public:
 	      Type operator()( const Type& x ) const {
 		return mpzf_square(x);
 	      }
@@ -710,9 +730,8 @@ namespace CGAL {
   template <> class Real_embeddable_traits< mpzf >
     : public INTERN_RET::Real_embeddable_traits_base< mpzf , CGAL::Tag_true > {
       public:
-	class Sgn
+	struct Sgn
 	  : public std::unary_function< Type, ::CGAL::Sign > {
-	    public:
 	      ::CGAL::Sign operator()( const Type& x ) const {
 		return x.sign();
 	      }
