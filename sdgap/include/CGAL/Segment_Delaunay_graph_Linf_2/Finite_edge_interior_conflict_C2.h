@@ -923,13 +923,6 @@ public:
 
       // philaris: 
 
-      CGAL_assertion( p.is_point() ?
-                      ((not same_points(p, q.source_site())) and
-                       (not same_points(p, q.target_site())))    :
-                      ((not same_points(q, p.source_site())) and
-                       (not same_points(q, p.target_site())))    
-                    ) ;
-
       //sandeep: if t is segment and it not intersects the wedge 
       //as defined by s and p in the basic predicate
       //intersects_segment_interior_inf_wedge_sp 
