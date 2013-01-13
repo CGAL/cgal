@@ -761,7 +761,6 @@ namespace CGAL {
         //if ( q.segment().is_horizontal() or
         //     q.segment().is_vertical()      ) {
         return POSITIVE;
-        } 
       } // end of case where p is not on t
     } // end of function incircle_pss
   
