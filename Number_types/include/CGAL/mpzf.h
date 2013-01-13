@@ -586,32 +586,30 @@ struct mpzf {
   }
   friend mpzf mpzf_gcd(mpzf const&a, mpzf const&b){
     // FIXME: Untested
-    if (a.size == 0 || b.size == 0) return 0;
+    if (a.size == 0) return b;
+    if (b.size == 0) return a;
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
-    int rsize=std::min(asize, bsize);
     int atz=mpzf_impl::ctz(a.data()[0]);
     int btz=mpzf_impl::ctz(b.data()[0]);
     int rtz=std::min(atz,btz);
-    mpzf a2(allocate(), asize);
-    mpzf b2(allocate(), bsize);
-    mpzf res(allocate(), rsize);
-    //TODO: use res for a2 or b2 to save one allocation.
+    mpzf tmp(allocate(), asize);
+    mpzf res(allocate(), bsize);
     if (atz != 0) {
-      mpn_rshift(a2.data(), a.data(), asize, atz);
-      if(a2.data()[asize-1]==0) --asize;
+      mpn_rshift(tmp.data(), a.data(), asize, atz);
+      if(tmp.data()[asize-1]==0) --asize;
     }
-    else { mpn_copyi(a2.data(), a.data(), asize); }
+    else { mpn_copyi(tmp.data(), a.data(), asize); }
     if (btz != 0) {
-      mpn_rshift(b2.data(), b.data(), bsize, btz);
-      if(b2.data()[bsize-1]==0) --bsize;
+      mpn_rshift(res.data(), b.data(), bsize, btz);
+      if(res.data()[bsize-1]==0) --bsize;
     }
-    else { mpn_copyi(b2.data(), b.data(), bsize); }
-    res.exp = 0; // Pick a.exp? or the average?
+    else { mpn_copyi(res.data(), b.data(), bsize); }
+    res.exp = 0; // Pick b.exp? or the average? 0 helps return 1 more often.
     if (asize < bsize)
-      res.size = mpn_gcd(res.data(), b2.data(), bsize, a2.data(), asize);
+      res.size = mpn_gcd(res.data(), res.data(), bsize, tmp.data(), asize);
     else
-      res.size = mpn_gcd(res.data(), a2.data(), asize, b2.data(), bsize);
+      res.size = mpn_gcd(res.data(), tmp.data(), asize, res.data(), bsize);
     if(rtz!=0) {
       mp_limb_t c = mpn_lshift(res.data(), res.data(), res.size, rtz);
       if(c) { res.data()[res.size]=c; ++res.size; }
