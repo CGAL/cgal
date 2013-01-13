@@ -61,26 +61,37 @@ namespace CGAL {
     Boolean   operator()(const Site_2& q, const Site_2& s, const Site_2& r,
                          const Site_2& t, Sign sgn) const
       {
-      
-      CGAL_SDG_DEBUG(std::cout << "debug infinite-edge-int-cf entering (q,s,r,t,sgn)= "
-                     << q << ' ' << s << ' ' << r << ' ' << t
-                     << ' ' << sgn << std::endl;);
-      
+
+      CGAL_SDG_DEBUG(std::cout <<
+          "debug infinite-edge-int-cf entering (q,s,r,t,sgn)= "
+          << q << ' ' << s << ' ' << r << ' ' << t
+          << ' ' << sgn << std::endl;);
+
       if ( t.is_segment() ) {
         if (sgn == NEGATIVE and s.is_segment()) {
+          CGAL_SDG_DEBUG(std::cout <<
+              "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
+                     << q << ' ' << s << ' ' << r << ' ' << t
+                     << ' ' << sgn << " returns " << true <<
+                     std::endl;);
           return true;
         }
         else {
           //Sandeep: This is because end points of a segment are inserted first
+          CGAL_SDG_DEBUG(std::cout <<
+              "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
+                     << q << ' ' << s << ' ' << r << ' ' << t
+                     << ' ' << sgn << " returns " << false <<
+                     std::endl;);
           return false;
         }
       }
-      
-      
+
+
       // here and below, t is always a point
-      
+
       if ( q.is_segment() ) {
-        
+
         // philaris: difference from L2 here;
         // in L2, r and s are endpoints of q
         // in Linf they still have to be points, but
@@ -96,21 +107,26 @@ namespace CGAL {
         //           q
         //
         CGAL_assertion(s.is_point() and r.is_point());
-        
+
         CGAL_assertion( q.segment().is_horizontal() or q.segment().is_vertical() );
-        
+
         bool is_s_endp_of_q =
         same_points(s, q.source_site()) or
         same_points(s, q.target_site());
         bool is_r_endp_of_q =
         same_points(r, q.source_site()) or
         same_points(r, q.target_site());
-        
+
         if (is_s_endp_of_q and is_r_endp_of_q) {
           CGAL_SDG_DEBUG(std::cout << "sandeep: debug infcf s,r are end points of q" << std::endl;);
+          CGAL_SDG_DEBUG(std::cout <<
+              "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
+                     << q << ' ' << s << ' ' << r << ' ' << t
+                     << ' ' << sgn << " returns " << (sgn==POSITIVE) <<
+                     std::endl;);
           return (sgn == POSITIVE);
         }
-        
+
       }
       if ( s.is_point() && r.is_point() && same_points(s, r) ) {
         // MK::ERROR: write this code using the compare_x_2 and
@@ -127,16 +143,27 @@ namespace CGAL {
         
         //Sign sgn1 = -sign_of( cmpxst * cmpxtq + cmpyst * cmpytq );
         Sign sgn1 = CGAL::compare(0, cmpxst * cmpxtq + cmpyst * cmpytq);
-        
+
         CGAL_assertion( sgn1 != ZERO );
         CGAL_SDG_DEBUG(std::cout << "sandeep: debug infcf about to return " << (sgn1 == POSITIVE) << std::endl;);
-        
+        CGAL_SDG_DEBUG(std::cout <<
+            "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
+               << q << ' ' << s << ' ' << r << ' ' << t
+               << ' ' << sgn << " returns " << (sgn1==POSITIVE)
+               << std::endl;);
         return (sgn1 == POSITIVE);
       }
-      CGAL_SDG_DEBUG(std::cout << "sandeep: debug infcf about to return " << (sgn == NEGATIVE) << std::endl;);
+      CGAL_SDG_DEBUG(std::cout <<
+          "sandeep: debug infcf about to return "
+          << (sgn == NEGATIVE) << std::endl;);
+      CGAL_SDG_DEBUG(std::cout <<
+          "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
+             << q << ' ' << s << ' ' << r << ' ' << t
+             << ' ' << sgn << " returns " << (sgn==NEGATIVE)
+             << std::endl;);
       return ( sgn == NEGATIVE );
       }
-    
+
     };
     
     
