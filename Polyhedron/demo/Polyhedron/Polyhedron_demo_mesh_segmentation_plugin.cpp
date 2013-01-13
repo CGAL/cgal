@@ -218,7 +218,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     check_and_set_ids(pair->first->polyhedron());
     pair->second.resize(item->polyhedron()->size_of_facets(), 0.0);
     Polyhedron_with_id_to_vector_property_map<Polyhedron, double>  sdf_pmap(&pair->second);
-    std::pair<double, double> min_max_sdf = sdf_values_computation(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);
+    std::pair<double, double> min_max_sdf = compute_sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);
     std::cout << "SDF computation is completed. Min-SDF : " << min_max_sdf.first << " " "Max-SDF : " << min_max_sdf.second << std::endl;
 
     pair->first->set_color_vector_read_only(true);
@@ -282,7 +282,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
             // compute sdf values
             check_and_set_ids(pair->first->polyhedron());
             Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_pmap(&pair->second);
-            sdf_values_computation(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);    
+            compute_sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);    
         }           
     }
     else
@@ -297,7 +297,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
             // compute sdf values
             check_and_set_ids(pair->first->polyhedron());
             Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_pmap(&pair->second);
-            sdf_values_computation(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);                     
+            compute_sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);                     
         }
         else
         {
@@ -310,7 +310,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     Polyhedron_with_id_to_vector_property_map<Polyhedron, int> segment_pmap(&internal_segment_map);
     Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_pmap(&pair->second);
 
-    int nb_segments = surface_mesh_segmentation_from_sdf_values(*(pair->first->polyhedron())
+    int nb_segments = segment_from_sdf_values(*(pair->first->polyhedron())
         ,sdf_pmap, segment_pmap, number_of_clusters, smoothness); 
     std::cout << "Segmentation is completed. Number of segments : " << nb_segments << std::endl;  
     pair->first->set_color_vector_read_only(true);  
