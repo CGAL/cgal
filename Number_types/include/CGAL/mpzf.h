@@ -162,7 +162,10 @@ struct mpzf {
   typedef mpzf_impl::pool4<mp_limb_t*,mpzf> pool;
 #endif
 
-  mp_limb_t* data;
+  mp_limb_t* data_;
+  inline mp_limb_t*& data() { return data_; };
+  inline mp_limb_t const* data() const { return data_; };
+
 #ifdef CGAL_MPZF_USE_CACHE
   mp_limb_t cache[cache_size + 1];
 #endif
@@ -183,26 +186,26 @@ struct mpzf {
 #ifdef CGAL_MPZF_USE_CACHE
     if (mini <= cache_size) {
       cache[0] = cache_size;
-      data = cache + 1;
+      data() = cache + 1;
       return;
     }
 #endif
     if(!pool::empty()){
-      data = pool::pop();
-      if(data[-1] >= mini) return; // TODO: when mini==2, no need to check
-      delete[] (data - (pool::extra+1)); // too small, useless
+      data() = pool::pop();
+      if(data()[-1] >= mini) return; // TODO: when mini==2, no need to check
+      delete[] (data() - (pool::extra+1)); // too small, useless
     }
     if(mini<2) mini=2;
-    data = (new mp_limb_t[mini+(pool::extra+1)]) + (pool::extra+1);
-    data[-1] = mini;
+    data() = (new mp_limb_t[mini+(pool::extra+1)]) + (pool::extra+1);
+    data()[-1] = mini;
   }
   void clear(){
-    while(*--data==0); // in case we skipped final zeroes
+    while(*--data()==0); // in case we skipped final zeroes
 #ifdef CGAL_MPZF_USE_CACHE
-    if (data == cache) return;
+    if (data() == cache) return;
 #endif
-    ++data;
-    pool::push(data);
+    ++data();
+    pool::push(data());
   }
 
   mpzf(noalloc){}
@@ -225,17 +228,17 @@ struct mpzf {
     unsigned asize=std::abs(x.size);
     if(asize==0) { exp=0; size=0; return *this; }
     if(this==&x) return *this;
-    while(*--data==0); // factor that code somewhere?
-    if(*data<asize){
+    while(*--data()==0); // factor that code somewhere?
+    if(*data()<asize){
 #ifdef CGAL_MPZF_USE_CACHE
-      if (data != cache)
+      if (data() != cache)
 #endif
-	delete[] (data - pool::extra);
+	delete[] (data() - pool::extra);
       init(asize);
-    } else ++data;
+    } else ++data();
     size=x.size;
     exp=x.exp;
-    mpn_copyi(data,x.data,asize);
+    mpn_copyi(data(),x.data(),asize);
     return *this;
   }
   mpzf(mpzf const& x){
@@ -243,11 +246,11 @@ struct mpzf {
     init(asize);
     size=x.size;
     exp=x.exp;
-    if(size!=0) mpn_copyi(data,x.data,asize);
+    if(size!=0) mpn_copyi(data(),x.data(),asize);
   }
 #if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) \
     && !defined(CGAL_MPZF_USE_CACHE)
-  mpzf(mpzf&& x):data(x.data),size(x.size),exp(x.exp){
+  mpzf(mpzf&& x):data(x.data()),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
     x.size = 0;
     x.exp = 0;
@@ -255,7 +258,7 @@ struct mpzf {
   mpzf& operator=(mpzf&& x){
     std::swap(size,x.size);
     exp = x.exp;
-    std::swap(data,x.data);
+    std::swap(data(),x.data());
     return *this;
   }
   friend mpzf operator-(mpzf&& x){
@@ -267,29 +270,29 @@ struct mpzf {
     // assume that int is smaller than mp_limb_t
     init();
     if      (i == 0)    { size = 0; }
-    else if (i >  0)    { size = 1; data[0] = i; }
-    else /* (i <  0) */ { size =-1; data[0] = -(mp_limb_t)i; }
+    else if (i >  0)    { size = 1; data()[0] = i; }
+    else /* (i <  0) */ { size =-1; data()[0] = -(mp_limb_t)i; }
     // cast to mp_limb_t because -INT_MIN is undefined
   }
   mpzf(unsigned int i) : exp(0) {
     // assume that int is smaller than mp_limb_t
     init();
     if      (i == 0)    { size = 0; }
-    else /* (i >  0) */ { size = 1; data[0] = i; }
+    else /* (i >  0) */ { size = 1; data()[0] = i; }
   }
   mpzf(long i) : exp(0) {
     // assume that long is smaller than mp_limb_t
     init();
     if      (i == 0)    { size = 0; }
-    else if (i >  0)    { size = 1; data[0] = i; }
-    else /* (i <  0) */ { size =-1; data[0] = -(mp_limb_t)i; }
+    else if (i >  0)    { size = 1; data()[0] = i; }
+    else /* (i <  0) */ { size =-1; data()[0] = -(mp_limb_t)i; }
     // cast to mp_limb_t because -LONG_MIN is undefined
   }
   mpzf(unsigned long i) : exp(0) {
     // assume that long is smaller than mp_limb_t
     init();
     if      (i == 0)    { size = 0; }
-    else /* (i >  0) */ { size = 1; data[0] = i; }
+    else /* (i >  0) */ { size = 1; data()[0] = i; }
   }
   mpzf(double d){
     init();
@@ -318,13 +321,13 @@ struct mpzf {
 #if 0
     // This seems very slightly faster
     if(mpzf_impl::ctz(m)+e2>=64){
-      data[0] = m >> (64-e2);
+      data()[0] = m >> (64-e2);
       size = 1;
       ++exp;
     }else{
-      data[0] = m << e2;
+      data()[0] = m << e2;
       if(e2>11){ // Wrong test for denormals
-	data[1] = m >> (64-e2);
+	data()[1] = m >> (64-e2);
 	size = 2;
       } else {
 	size = 1;
@@ -334,17 +337,17 @@ struct mpzf {
     mp_limb_t d0 = (m << e2) & GMP_NUMB_MASK;
     mp_limb_t d1 = m >> (GMP_NUMB_BITS - e2);
     if (d0 == 0) {
-      data[0] = d1;
+      data()[0] = d1;
       size = 1;
       ++exp;
     }
     else {
-      data[0] = d0;
+      data()[0] = d0;
       if (d1 == 0) {
 	size = 1;
       }
       else {
-	data[1] = d1;
+	data()[1] = d1;
 	size = 2;
       }
     }
@@ -358,10 +361,10 @@ struct mpzf {
     if(size<0) std::cout << "- ";
     int asize = std::abs(size);
     std::cout << std::hex;
-    while(--asize>=0) { std::cout << data[asize] << ' '; }
+    while(--asize>=0) { std::cout << data()[asize] << ' '; }
     std::cout << std::dec << "exp " << exp << ' ';
     asize = std::abs(size);
-    std::cout << "double: " << std::ldexp((double)data[asize-1],64*(exp+asize-1))*((size<0)?-1:1) << '\n';
+    std::cout << "double: " << std::ldexp((double)data()[asize-1],64*(exp+asize-1))*((size<0)?-1:1) << '\n';
   }
   friend int abscmp(mpzf const&a, mpzf const&b){
     // This assumes that size==0 implies exp==0. Is it true?
@@ -371,11 +374,11 @@ struct mpzf {
     int bh=bsize+b.exp;
     if(ah!=bh) return ah-bh;
     int minsize=std::min(asize,bsize);
-    mp_limb_t* adata=a.data+(asize-1);
-    mp_limb_t* bdata=b.data+(bsize-1);
+    const mp_limb_t* adata=a.data()+(asize-1);
+    const mp_limb_t* bdata=b.data()+(bsize-1);
     for(int i=0;i<minsize;++i,--adata,--bdata){
-      mp_limb_t aa=*adata;
-      mp_limb_t bb=*bdata;
+      const mp_limb_t aa=*adata;
+      const mp_limb_t bb=*bdata;
       if(aa!=bb) return (aa<bb)?-1:1;
     }
     return asize-bsize; // this assumes that we get rid of trailing zeros...
@@ -396,7 +399,7 @@ struct mpzf {
   friend bool operator==(mpzf const&a, mpzf const&b){
     if (a.exp != b.exp || a.size != b.size) return false;
     if (a.size == 0) return true;
-    return mpn_cmp(a.data, b.data, std::abs(a.size)) == 0;
+    return mpn_cmp(a.data(), b.data(), std::abs(a.size)) == 0;
   }
   friend bool operator!=(mpzf const&a, mpzf const&b){
     return !(a==b);
@@ -409,7 +412,7 @@ struct mpzf {
       res.init(size);
       res.exp=a.exp;
       res.size=a.size;
-      if(size!=0) mpn_copyi(res.data,a.data,size);
+      if(size!=0) mpn_copyi(res.data(),a.data(),size);
       return res;
     }
     int asize=a.size;
@@ -418,21 +421,21 @@ struct mpzf {
       res.init(size);
       res.exp=b.exp;
       res.size=bsize;
-      mpn_copyi(res.data,b.data,size);
+      mpn_copyi(res.data(),b.data(),size);
       return res;
     }
     if((asize^bsize)>=0){
       // Addition
       int absasize=std::abs(asize);
       int absbsize=std::abs(bsize);
-      mp_limb_t* adata=a.data;
-      mp_limb_t* bdata=b.data;
+      const mp_limb_t* adata=a.data();
+      const mp_limb_t* bdata=b.data();
       int aexp=a.exp;
       int bexp=b.exp;
       if(aexp<bexp){ res.exp=a.exp; aexp=0; bexp=b.exp-a.exp; }
       else { res.exp=b.exp; aexp=a.exp-b.exp; bexp=0; }
       res.init(std::max(absasize+aexp,absbsize+bexp)+1);
-      mp_limb_t* rdata=res.data;
+      mp_limb_t* rdata=res.data();
       res.size=0;
       // TODO: if aexp>0, swap a and b so we don't repeat the code.
       if(0<bexp){
@@ -485,7 +488,7 @@ struct mpzf {
 	}
       }
       // unnecessary if a.exp != b.exp
-      while(/*res.size>0&&*/res.data[0]==0){--res.size;++res.data;++res.exp;}
+      while(/*res.size>0&&*/res.data()[0]==0){--res.size;++res.data();++res.exp;}
       if(bsize<0) res.size=-res.size;
     } else {
       // Subtraction
@@ -498,14 +501,14 @@ struct mpzf {
       else { x=&a; y=&b; }
       int absxsize=std::abs(xsize);
       int absysize=std::abs(ysize);
-      mp_limb_t* xdata=x->data;
-      mp_limb_t* ydata=y->data;
+      const mp_limb_t* xdata=x->data();
+      const mp_limb_t* ydata=y->data();
       int xexp=x->exp;
       int yexp=y->exp;
       if(xexp<yexp){ res.exp=xexp; yexp-=xexp; xexp=0; }
       else { res.exp=yexp; xexp-=yexp; yexp=0; }
       res.init(std::max(absxsize+xexp,absysize+yexp)+1);
-      mp_limb_t* rdata=res.data;
+      mp_limb_t* rdata=res.data();
       res.size=0;
       bool carry1=false;
       if(0<yexp){ // must have overlap since x is larger
@@ -522,7 +525,7 @@ struct mpzf {
 	  rdata=std::fill_n(rdata,xexp-absysize,-1);
 	  mpn_sub_1(rdata, xdata, absxsize, 1);
 	  res.size=absxsize+xexp;
-	  if(res.data[res.size-1]==0) --res.size;
+	  if(res.data()[res.size-1]==0) --res.size;
 	  if(xsize<0) res.size=-res.size;
 	  return res;
 	} else {
@@ -538,8 +541,8 @@ struct mpzf {
       if(carry1) carry+=mpn_sub_1(rdata, rdata, absxsize, 1);
       assert(carry==0);
       res.size+=absxsize;
-      while(/*res.size>0&&*/res.data[res.size-1]==0) --res.size;
-      while(/*res.size>0&&*/res.data[0]==0){--res.size;++res.data;++res.exp;}
+      while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
+      while(/*res.size>0&&*/res.data()[0]==0){--res.size;++res.data();++res.exp;}
       if(xsize<0) res.size=-res.size;
     }
     return res;
@@ -560,11 +563,11 @@ struct mpzf {
     res.exp=a.exp+b.exp;
     mp_limb_t high;
     if(asize>=bsize)
-      high = mpn_mul(res.data,a.data,asize,b.data,bsize);
+      high = mpn_mul(res.data(),a.data(),asize,b.data(),bsize);
     else
-      high = mpn_mul(res.data,b.data,bsize,a.data,asize);
+      high = mpn_mul(res.data(),b.data(),bsize,a.data(),asize);
     if(high==0) --siz;
-    if(res.data[0]==0) { ++res.data; ++res.exp; --siz; }
+    if(res.data()[0]==0) { ++res.data(); ++res.exp; --siz; }
     res.size=((a.size^b.size)>=0)?siz:-siz;
     return res;
   }
@@ -574,10 +577,10 @@ struct mpzf {
     mpzf res(allocate(),siz);
     res.exp=2*a.exp;
     if(asize==0){res.size=0;return res;}
-    mpn_sqr(res.data,a.data,asize);
-    mp_limb_t high = res.data[siz-1];
+    mpn_sqr(res.data(),a.data(),asize);
+    mp_limb_t high = res.data()[siz-1];
     if(high==0) --siz;
-    if(res.data[0]==0) { ++res.data; ++res.exp; --siz; }
+    if(res.data()[0]==0) { ++res.data(); ++res.exp; --siz; }
     res.size=siz;
     return res;
   }
@@ -587,12 +590,32 @@ struct mpzf {
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
     int rsize=std::min(asize, bsize);
+    int atz=mpzf_impl::ctz(a.data()[0]);
+    int btz=mpzf_impl::ctz(b.data()[0]);
+    int rtz=std::min(atz,btz);
+    mpzf a2(allocate(), asize);
+    mpzf b2(allocate(), bsize);
     mpzf res(allocate(), rsize);
+    //TODO: use res for a2 or b2 to save one allocation.
+    if (atz != 0) {
+      mpn_rshift(a2.data(), a.data(), asize, atz);
+      if(a2.data()[asize-1]==0) --asize;
+    }
+    else { mpn_copyi(a2.data(), a.data(), asize); }
+    if (btz != 0) {
+      mpn_rshift(b2.data(), b.data(), bsize, btz);
+      if(b2.data()[bsize-1]==0) --bsize;
+    }
+    else { mpn_copyi(b2.data(), b.data(), bsize); }
     res.exp = 0; // Pick a.exp? or the average?
     if (asize < bsize)
-      res.size = mpn_gcd(res.data, b.data, bsize, a.data, asize);
+      res.size = mpn_gcd(res.data(), b2.data(), bsize, a2.data(), asize);
     else
-      res.size = mpn_gcd(res.data, a.data, asize, b.data, bsize);
+      res.size = mpn_gcd(res.data(), a2.data(), asize, b2.data(), bsize);
+    if(rtz!=0) {
+      mp_limb_t c = mpn_lshift(res.data(), res.data(), res.size, rtz);
+      if(c) { res.data()[res.size]=c; ++res.size; }
+    }
     return res;
   }
   friend mpzf operator/(mpzf const&a, mpzf const&b){
@@ -605,9 +628,9 @@ struct mpzf {
     if(asize==0){res.exp=0;res.size=0;return res;}
     res.size=siz;
     res.exp=a.exp-b.exp;
-    mp_limb_t *adata = a.data;
-    mp_limb_t *bdata = b.data;
-    mp_limb_t *qp = res.data;
+    const mp_limb_t *adata = a.data();
+    const mp_limb_t *bdata = b.data();
+    mp_limb_t *qp = res.data();
     mp_limb_t *rp = qp + siz;
     if(mpzf_impl::ctz(adata[0]) >= mpzf_impl::ctz(bdata[0])){ // Easy case
       --res.size;
@@ -627,19 +650,19 @@ struct mpzf {
     }
     else{
       mpzf a2(allocate(),asize+1);
-      a2.data[0]=0;
-      mpn_copyi(a2.data+1,a.data,asize);
+      a2.data()[0]=0;
+      mpn_copyi(a2.data()+1,a.data(),asize);
       // No need to complete a2, we just want the buffer.
       //a2.size=(a.size<0)?(a.size-1):(a.size+1);
       //a2.exp = a.exp-1;
-      mpn_tdiv_qr(qp, rp, 0, a2.data, asize+1, bdata, bsize);
+      mpn_tdiv_qr(qp, rp, 0, a2.data(), asize+1, bdata, bsize);
       CGAL_assertion_code(
 	  for (int i=0; i<bsize; ++i)
 	    if (rp[i] != 0) throw std::logic_error("non exact mpzf division");
       )
     }
-    while(/*res.size>0&&*/res.data[res.size-1]==0) --res.size;
-    //while(/*res.size>0&&*/res.data[0]==0){--res.size;++res.data;++res.exp;}
+    while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
+    //while(/*res.size>0&&*/res.data()[0]==0){--res.size;++res.data();++res.exp;}
     if((a.size^b.size)<0) res.size=-res.size;
     return res;
   }
@@ -655,8 +678,8 @@ struct mpzf {
 
   bool is_canonical () const {
     if (size == 0) return true;
-    if (data[0] == 0) return false;
-    if (data[std::abs(size)-1] == 0) return false;
+    if (data()[0] == 0) return false;
+    if (data()[std::abs(size)-1] == 0) return false;
     return true;
   }
 
@@ -669,11 +692,11 @@ struct mpzf {
     if (size != 0) {
       mpz_import (mpq_numref (q.get_mpq_t()),
 		  std::abs(size),
-		  -1, // data[0] is the least significant part
+		  -1, // data()[0] is the least significant part
 		  sizeof(mp_limb_t),
 		  0, // native endianness inside mp_limb_t
 		  GMP_NAIL_BITS, // should be 0
-		  data);
+		  data());
       if (exp > 0)
 	q <<= (sizeof(mp_limb_t) * CHAR_BIT *  exp);
       else if (exp < 0)
