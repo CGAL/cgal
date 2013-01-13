@@ -1,11 +1,13 @@
 #ifndef CGAL_MPZF_H
 #define CGAL_MPZF_H
 #include <cstdlib>
+#include <climits>
 #include <assert.h>
 #include <stdint.h>
 #include <vector>
 #include <math.h>
 #include <iostream>
+#include <stdexcept>
 #include <gmp.h>
 
 #ifdef _MSC_VER
@@ -150,7 +152,7 @@ struct mpzf {
   // cache slows it down. A purely static cache (crash if it isn't large
   // enough) still wins by about 11% on the Delaunay_3 construction, but is
   // more complicated to handle.
-  static const int cache_size = 9;
+  static const unsigned int cache_size = 9;
 #endif
 #if !defined(CGAL_HAS_THREADS) || defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
   typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
@@ -310,6 +312,7 @@ struct mpzf {
     BOOST_STATIC_ASSERT(GMP_NUMB_BITS == 64);
     int e2 = e1 % 64;
     exp = e1 / 64 - 17;
+    // 52+1023+13==17*64 ?
 #if 0
     // This seems very slightly faster
     if(mpzf_impl::ctz(m)+e2>=64){
@@ -386,6 +389,13 @@ struct mpzf {
   }
   friend bool operator<=(mpzf const&a, mpzf const&b){
     return !(a>b);
+  }
+  friend bool operator==(mpzf const&a, mpzf const&b){
+    if (a.exp != b.exp || a.size != b.size) return false;
+    return mpn_cmp(a.data, b.data, std::abs(a.size)) == 0;
+  }
+  friend bool operator!=(mpzf const&a, mpzf const&b){
+    return !(a==b);
   }
   private:
   static mpzf aors(mpzf const&a, mpzf const&b, int bsize){
@@ -554,7 +564,7 @@ struct mpzf {
     res.size=((a.size^b.size)>=0)?siz:-siz;
     return res;
   }
-  friend mpzf square(mpzf const&a){
+  friend mpzf mpzf_square(mpzf const&a){
     int asize=std::abs(a.size);
     int siz=2*asize;
     mpzf res(allocate(),siz);
@@ -567,10 +577,59 @@ struct mpzf {
     res.size=siz;
     return res;
   }
+  friend mpzf operator/(mpzf const&a, mpzf const&b){
+    // FIXME: Untested
+    int asize=std::abs(a.size);
+    int bsize=std::abs(b.size);
+    int siz=asize+2-bsize;
+    mpzf res(allocate(),asize+2);
+    if(bsize==0){throw std::range_error("Division by zero");}
+    if(asize==0){res.exp=0;res.size=0;return res;}
+    res.size=siz;
+    res.exp=a.exp-b.exp;
+    mp_limb_t *adata = a.data;
+    mp_limb_t *bdata = b.data;
+    mp_limb_t *qp = res.data;
+    mp_limb_t *rp = qp + siz;
+    if(mpzf_impl::ctz(adata[0]) >= mpzf_impl::ctz(bdata[0])){ // Easy case
+      --res.size;
+      mpn_tdiv_qr(qp, rp, 0, adata, asize, bdata, bsize);
+      CGAL_assertion_code(
+	  for (int i=0; i<bsize; ++i)
+	    if (rp[i] != 0) throw std::logic_error("non exact mpzf division");
+      )
+    }
+    else if(adata[-1]==0){ // We are lucky
+      --adata; ++asize; --res.exp;
+      mpn_tdiv_qr(qp, rp, 0, adata, asize, bdata, bsize);
+      CGAL_assertion_code(
+	  for (int i=0; i<bsize; ++i)
+	    if (rp[i] != 0) throw std::logic_error("non exact mpzf division");
+      )
+    }
+    else{
+      mpzf a2(allocate(),asize+1);
+      a2.data[0]=0;
+      mpn_copyi(a2.data+1,a.data,asize);
+      // No need to complete a2, we just want the buffer.
+      //a2.size=(a.size<0)?(a.size-1):(a.size+1);
+      //a2.exp = a.exp-1;
+      mpn_tdiv_qr(qp, rp, 0, a2.data, asize+1, bdata, bsize);
+      CGAL_assertion_code(
+	  for (int i=0; i<bsize; ++i)
+	    if (rp[i] != 0) throw std::logic_error("non exact mpzf division");
+      )
+    }
+    while(/*res.size>0&&*/res.data[res.size-1]==0) --res.size;
+    //while(/*res.size>0&&*/res.data[0]==0){--res.size;++res.data;++res.exp;}
+    if((a.size^b.size)<0) res.size=-res.size;
+    return res;
+  }
 
   friend mpzf operator-(mpzf const&x){
     mpzf ret = x;
     ret.size = -ret.size;
+    return ret;
   }
   mpzf& operator+=(mpzf const&x){ *this=*this+x; return *this; }
   mpzf& operator-=(mpzf const&x){ *this=*this-x; return *this; }
@@ -618,6 +677,31 @@ namespace CGAL {
       public:
 	typedef Tag_true            Is_exact;
 	typedef Tag_false            Is_numerical_sensitive;
+
+	struct Is_zero
+	  : public std::unary_function< Type, bool > {
+	    public:
+	      bool operator()( const Type& x ) const {
+		return x.sign() == 0;
+	      }
+	  };
+
+	struct Is_one
+	  : public std::unary_function< Type, bool > {
+	    public:
+	      bool operator()( const Type& x ) const {
+		return x == 1;
+	      }
+	  };
+
+	class Square
+	  : public std::unary_function< Type, Type > {
+	    public:
+	      Type operator()( const Type& x ) const {
+		return mpzf_square(x);
+	      }
+	  };
+
     };
   template <> class Real_embeddable_traits< mpzf >
     : public INTERN_RET::Real_embeddable_traits_base< mpzf , CGAL::Tag_true > {
@@ -629,6 +713,7 @@ namespace CGAL {
 		return x.sign();
 	      }
 	  };
+
     };
 }
 #endif // CGAL_MPZF_H
