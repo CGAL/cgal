@@ -249,6 +249,8 @@ struct mpzf {
     && !defined(CGAL_MPZF_USE_CACHE)
   mpzf(mpzf&& x):data(x.data),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
+    x.size = 0;
+    x.exp = 0;
   }
   mpzf& operator=(mpzf&& x){
     std::swap(size,x.size);
@@ -362,6 +364,7 @@ struct mpzf {
     std::cout << "double: " << std::ldexp((double)data[asize-1],64*(exp+asize-1))*((size<0)?-1:1) << '\n';
   }
   friend int abscmp(mpzf const&a, mpzf const&b){
+    // This assumes that size==0 implies exp==0. Is it true?
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
     int ah=asize+a.exp;
@@ -392,6 +395,7 @@ struct mpzf {
   }
   friend bool operator==(mpzf const&a, mpzf const&b){
     if (a.exp != b.exp || a.size != b.size) return false;
+    if (a.size == 0) return true;
     return mpn_cmp(a.data, b.data, std::abs(a.size)) == 0;
   }
   friend bool operator!=(mpzf const&a, mpzf const&b){
