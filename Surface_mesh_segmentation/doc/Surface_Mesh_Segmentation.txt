@@ -43,7 +43,7 @@ the SDF value is calculated by first applying outlier removal and then taking av
 
 We use sampling method from \cite Vogel1979Sampling to sample points from base of the cone, then combine them with apex of the cone as origin while constructing rays. 
 Our sampling method is biased to center in order to make sampling uniform to angle.
-As a result, we do not use mentioned weighting schema in the paper in order to reduce the contributions of rays with larger angles. 
+As a result, we do not use mentioned weighting schema, stated in the paper, in order to reduce the contributions of rays with larger angles. 
 A comparison with biased and uniform sampling of points can be seen in \ref Figure-2. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into one Median Absolute Deviation (MAD) from the median of all lengths.  
 
 After calculating SDF values for each facet, bilateral smoothing (an edge-preserving filtering technique) \cite Tomasi1998Bilateral is applied. 
@@ -72,14 +72,14 @@ The output of this step is a matrix that contains probability values for each fa
 These probability values are used as input in the graph-cut step that follows.
 
 \anchor Figure-4
-\image latex effect_of_levels.png "Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively." width=12cm
+\image latex effect_of_levels.png "Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively." width=16cm
 \image html effect_of_levels.png "Figure 4: Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively."
 
 ## Graph-Cut ##
 The final hard clustering, which gives the final partitioning of the mesh, is obtained by minimizing an energy function. 
 This energy function combines the aforementioned probability matrix and geometric surface features. 
 The result of the algorithm is assigned clusters for each facet, 
-however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under same cluster (i.e segments).
+however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under same cluster (i.e for each segments / surface patches).
 
 The expression of energy function that is minimized using alpha-expansion graph cut algorithm \cite Boykov2001FastApproximate is the following:
 
