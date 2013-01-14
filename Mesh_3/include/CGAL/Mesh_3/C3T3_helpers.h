@@ -401,6 +401,11 @@ public:
     return true;
   }
   
+  bool try_lock_point_no_spin(const Point_3 &p, int lock_radius = 0) const
+  {
+    return true;
+  }
+
   bool try_lock_vertex_no_spin(Vertex_handle vh, int lock_radius = 0) const
   {
     return true;
@@ -486,7 +491,7 @@ public:
   bool try_lock_element(Cell_handle cell_handle, int lock_radius = 0) const
   {
     bool success = true;
-    
+
     // Lock the element area on the grid
     for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
     {
@@ -2519,6 +2524,7 @@ move_point(const Vertex_handle& old_vertex,
   if (!try_lock_vertex(old_vertex)) // LOCK
   {
     *p_could_lock_zone = false;
+    unlock_all_elements();
     return Vertex_handle();
   }
 
@@ -2535,6 +2541,7 @@ move_point(const Vertex_handle& old_vertex,
   if (!try_lock_point(new_position)) // LOCK
   {
     *p_could_lock_zone = false;
+    unlock_all_elements();
     return Vertex_handle();
   }
   if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells_) )
@@ -2565,6 +2572,7 @@ move_point(const Vertex_handle& old_vertex,
     
     if (*p_could_lock_zone == false)
     {
+      unlock_all_elements();
       return Vertex_handle();
     }
   
@@ -3112,6 +3120,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
   Cell_handle d = v->cell();
   if (!try_lock_element(d)) // LOCK
   {
+    unlock_all_elements();
     return false;
   }
   cells.push_back(d);
@@ -3134,6 +3143,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
           ch->tds_data().clear();
         }
         cells.clear();
+        unlock_all_elements();
         return false;
       }
       if (! next->tds_data().is_clear())

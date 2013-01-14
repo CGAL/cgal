@@ -229,7 +229,7 @@ public:
              const SliverCriterion& criterion,
              const FT& sliver_bound,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *p_could_lock_zone) const
+             bool *p_could_lock_zone = 0) const
   {
 #ifndef CGAL_MESH_3_PERTURBER_VERBOSE
     return do_perturb(v, slivers, c3t3, domain, criterion,
