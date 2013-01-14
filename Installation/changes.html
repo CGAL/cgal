@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<!-- $Id$ 
+<!-- $Id$
      $URL$
 -->
 <html lang="en-US">
@@ -21,7 +21,7 @@
     {
       counter-reset:subsection;
     }
-    
+
     h3:before
     {
       content:counter(section) ". ";
@@ -45,7 +45,7 @@
 <tr>
 
 <!--#include virtual="menu.inc" -->
- 
+
 
 
 <td valign="top">
@@ -107,6 +107,27 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <div>
 <p> Release date: </p>
 
+<h3>Installation</h3>
+<ul>
+<li>This is the last release whose <tt>UseCGAL.cmake</tt> file (if
+  using CGAL in a CMake build environment)
+  contains the line <code>link_libraries(${CGAL_LIBRARIES_DIR}
+  ${CGAL_3RD_PARTY_LIBRARIES_DIRS})</code>, as this is a deprecated
+  CMake command. The correct way to link with CGAL's libraries (as for
+  required 3rd party libraries) is to use
+  <code>target_link_libraries</code> which specifies for each build target
+  which libraries should be linked. The following serves as example:
+  <pre>
+  find_package(CGAL)
+  include(${CGAL_USE_FILE})
+  add_executable(myexe main.cpp)
+  target_link_libraries(myexe ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})</pre>
+  We also expect further changes in CGAL's CMake setup (change of
+  variable names, consistency of filename and output, removing
+  essential libraries, building executables, removal of <code>${CGAL_3RD_PARTY_LIBRARIES}</code>).
+  </li>
+</ul>
+
 <h3>3D Fast Intersection and Distance Computation</h3>
 <ul>
 <li> Update requirements of the concepts <code>AABBTraits</code> and <code>AABBGeomTraits</code> to match the implementation of the package.
@@ -137,7 +158,7 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <ul>
 <li> Add a constructor for <code>Regular_triangulation_2</code> and <code>Delaunay_triangulation_2</code> from a range of points or a range of points with info.
 </ul>
-
+</div>
 
 
 <h2 id="release4.1">Release 4.1 </h2>
@@ -163,7 +184,7 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
   trapezoidal decomposition point-location strategy. The new
   implementation enables point location in unbounded arrangements. It
   constructs a search structure of guaranteed linear size with
-  guaranteed logarithmic query time. 
+  guaranteed logarithmic query time.
 </li>
 </ul>
 
@@ -267,7 +288,7 @@ the following has been changed since CGAL-4.0:</p>
 <h3>Surface Mesh Parameterization</h3>
 <ul>
 <li>Fix a memory leak.</li>
-<li>Fix a compatibility issue with Eigen-3.1 of <code>Eigen_solver_traits</code>. This fix also affects the usage of 
+<li>Fix a compatibility issue with Eigen-3.1 of <code>Eigen_solver_traits</code>. This fix also affects the usage of
 that class in the package <i>Surface Reconstruction from Point Sets</i>.</li>
 </ul>
 
@@ -289,8 +310,8 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
   CGAL.</p>
 
   <p>The CGAL project, driven by the CGAL Editorial Board, has decided to
-  change the license scheme of CGAL. We increased the major number 
-  of the CGAL version to '4' in order to reflect this license change. 
+  change the license scheme of CGAL. We increased the major number
+  of the CGAL version to '4' in order to reflect this license change.
   The CGAL-4.x series is released under:</p>
   <ul>
     <li>LGPLv3+ (that is LGPL <em>"either version 3 of the License, or (at your
@@ -333,7 +354,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
     cells of the object plus the incidence and adjacency relations
     between cells. Geometry is added to combinatorial maps simply by
     associating a point to each vertex of the map.  This data
-    structure can be seen as the generalization in dD of the 
+    structure can be seen as the generalization in dD of the
     <code>Polyhedron_3</code>.</li>
 </ul>
 
@@ -352,7 +373,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
 <h3>AABB Tree</h3>
 <ul>
   <li>Document constness of member functions of the <code>AABB_tree</code> class.</li>
-  <li>The class <code>AABB_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
+  <li>The class <code>AABB_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL,
       this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
 </ul>
 
@@ -361,7 +382,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
   <li>Add an extra template parameter to the class <code>Alpha_shape_2</code> that allows a certified construction using
       a traits class with exact predicates and inexact constructions.</li>
   <li>An object of type <code>Alpha_shape_2</code> can now be constructed from a triangulation.</li>
-      
+
 </ul>
 
 <h3>3D Alpha Shapes</h3>
@@ -386,10 +407,10 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
   <li>The const-correctness of this package have been worked out. The transition for users should be smooth in
   general, however adding few const in user code might be needed in some cases.
   </li>
-  <li>The class <code>Kd_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL, 
-      this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>  
+  <li>The class <code>Kd_tree</code> is now guaranteed to be read-only thread-safe. As usual in CGAL,
+      this small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
   <li>Bug-fix in <code>Orthogonal_incremental_neighbor_search</code> and <code>Incremental_neighbor_search</code> classes. Several calls to <code>begin()</code>
-      now allow to make several nearest neighbor search queries independently.</li>  
+      now allow to make several nearest neighbor search queries independently.</li>
 </ul>
 
 <h3>STL Extension</h3>
@@ -401,7 +422,7 @@ CGAL 4.0 offers the following improvements and new functionality :  </p>
 
 <h3>Triangulation_2</h3>
 <ul>
-  <li> Fix a thread-safety issue in <code>Delaunay_triangulation_2</code> remove functions.  As usual in CGAL, 
+  <li> Fix a thread-safety issue in <code>Delaunay_triangulation_2</code> remove functions.  As usual in CGAL,
       the small overhead introduced for thread-safety can be deactivated by defining <code>CGAL_HAS_NO_THREADS</code>.</li>
   <li> Add extraction operator for the class <code>Constrained_triangulation_2</code> (and thus to all inheriting classes).</li>
 </ul>
@@ -418,7 +439,7 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
 <h3>General</h3>
 <ul>
   <li>The class <code>Root_of_2</code> is now deprecated. It is recommended to use the class <code>Sqrt_extension</code> instead.</li>
-  <li>The class <code>Sqrt_extension</code> is now used everywhere in CGAL where an algebraic number of degree 2 is needed. 
+  <li>The class <code>Sqrt_extension</code> is now used everywhere in CGAL where an algebraic number of degree 2 is needed.
       This change has been done in the <code>Root_of_traits</code> mechanism (indirectly packages 2D Circular kernel and 3D Spherical kernel)
       and the packages 2D Segment Delaunay Graphs and 2D Arrangements.</li>
   <li>Various fixes in the manual.</li>
@@ -437,7 +458,7 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
       <li>The quickhull implementation of CGAL (<code>CGAL::convex_hull_3</code>)
           has been worked out to provide very better performances.</li>
       <li>The function <code>CGAL::convex_hull_3</code> no longer computes the plane
-          equations of the facets of the output polyhedron. However an example is 
+          equations of the facets of the output polyhedron. However an example is
           provided to show how to compute them easily.</li>
       <li>A global function <code>convex_hull_3_to_polyhedron_3</code> is now provided to extract
       the convex hull of a 3D points set from a triangulation of these points.</li>
@@ -446,12 +467,12 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
 <h3>dD Spatial Searching (major new feature added)</h3>
 <ul>
       <li>A traits-class and distance adapter that together with a point property map,
-       allow to make nearest neighbor queries on keys instead of points have been added.</li> 
-      <li>Few bug fixes in the documentation have revealed some inconsistencies 
-      that have been corrected. Two traits class concept are now documented (<code>RangeSearchTraits</code> 
-      and <code>SearchTraits</code>). Most other changes concerns only classes documented as advanced. 
-      One issue that user can encounter is due to an additional requirement on the nested 
-      class <code>Construct_cartesian_const_iterator_d</code> defined in the concept SearchTraits that must 
+       allow to make nearest neighbor queries on keys instead of points have been added.</li>
+      <li>Few bug fixes in the documentation have revealed some inconsistencies
+      that have been corrected. Two traits class concept are now documented (<code>RangeSearchTraits</code>
+      and <code>SearchTraits</code>). Most other changes concerns only classes documented as advanced.
+      One issue that user can encounter is due to an additional requirement on the nested
+      class <code>Construct_cartesian_const_iterator_d</code> defined in the concept SearchTraits that must
       provide a nested type <code>result_type</code>.</li>
 </ul>
 
@@ -460,12 +481,12 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
       <li>General dimension is now supported.</li>
       <li>Hilbert sorting admits now two policies: splitting at
       median or at middle (see user manual).</li>
-      <li>Using a property map, sorting on keys instead of points is now easier</li> 
+      <li>Using a property map, sorting on keys instead of points is now easier</li>
 </ul>
 
 <h3>dD Kernel</h3>
 <ul>
-      <li>The d-dimensional kernel concept and models have been modified 
+      <li>The d-dimensional kernel concept and models have been modified
           to additionally provide two new functors <code>Less_coordinate_d</code> and <code>Point_dimension_d</code>.</li>
 </ul>
 
@@ -488,8 +509,8 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
       <li>The deprecated member function <code>is_at_infinity()</code> of
         <code>Arrangement_2::Vertex</code> has been removed. It has been previously
         replaced new function <code>is_at_open_boundary()</code>.
-  
-      <li> The tags in the geometry traits that indicate the type of boundary of 
+
+      <li> The tags in the geometry traits that indicate the type of boundary of
        the embedding surface were replaced by the following new tags:
 <pre>
          Left_side_category
@@ -516,7 +537,7 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
   <li>Initial support for the LLVM Clang compiler (prereleases of version 2.9).</li>
   <li>Full support for the options -strict-ansi of the Intel Compiler 11,
   and -ansi of the GNU g++ compiler.</li>
-  <li>Adding a concept of ranges. In the following releases, it will be the 
+  <li>Adding a concept of ranges. In the following releases, it will be the
       way to provide a set of objects (vs. a couple of iterators).</li>
   <li>Fix a memory leak in CORE polynomials.</li>
   <li>Various fixes in the manual.</li>
@@ -532,7 +553,7 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
 
 <h3>2D Triangulations (major new feature added)</h3>
 <ul>
-  <li>Add a way to efficiently insert a range of points with information 
+  <li>Add a way to efficiently insert a range of points with information
       into a 2D Delaunay and regular triangulation.
   <li>Add member function mirror_edge taking an edge as parameter.
   <li>Fix an infinite loop in constrained triangulation.
@@ -542,7 +563,7 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
 <ul>
   <li>Add a way to efficiently insert a range of points with information into
       a 3D Delaunay and regular triangulation.
-  <li>Add a member function to remove a cluster of points from a Delaunay or 
+  <li>Add a member function to remove a cluster of points from a Delaunay or
       regular triangulation.
   <li>function vertices_in_conflict is renamed vertices_on_conflict_zone_boundary
       for Delaunay and regular triangulation. Function vertices_inside_conflict_zone
@@ -561,13 +582,13 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
 
 <h3>AABB tree</h3>
 <ul>
-  <li>Adding the possibility to iteratively add primitives to an existing 
+  <li>Adding the possibility to iteratively add primitives to an existing
       tree and to build it only when no further insertion is needed.
 </ul>
 
 <h3>2D and 3D Kernel</h3>
 <ul>
-  <li>Better handling of 2D points with elevation (3D points projected onto 
+  <li>Better handling of 2D points with elevation (3D points projected onto
       trivial planes). More general traits classes (Projection_traits_xy_3,
       Projection_traits_yz_3,Projection_traits_yz_3) are provided to work with
       triangulations, algorithms on polygons, alpha-shapes, convex hull algorithm...
@@ -575,14 +596,14 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
   <li>Exact_predicates_exact_constructions_kernel now better use the static filters
       which leads to performance improvements.
   <li>Add an overload for the global function angle, taking three 3D points.
-  <li>In the 2D and 3D kernel concept, the constant Boolean Has_filtered_predicates 
+  <li>In the 2D and 3D kernel concept, the constant Boolean Has_filtered_predicates
       is now deprecated. It is now required to use Has_filtered_predicates_tag
       (being either Tag_true or Tag_false).
   <li>Compare_distance_2 and Compare_distance_3 provide additional operators
       for 3 and 4 elements.
   <li>Add intersection test and intersection computation capabilities
       between an object of type Ray_3 and either an object of type Line_3, Segment_3 or Ray_3.
-  <li>Improve intersection test performance between an object of type Bbox_3 and an object of type 
+  <li>Improve intersection test performance between an object of type Bbox_3 and an object of type
       Plane_3 or Triangle_3 by avoiding arithmetic filter failures.
 </ul>
 
@@ -614,18 +635,18 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
 <h3>Algebraic Foundations</h3>
 <ul>
   <li>Algebraic_structure_traits now provides an Inverse functor for Fields.
-      There is also a new global function inverse. 
+      There is also a new global function inverse.
 </ul>
 
 <h3>Bounding Volumes</h3>
 <ul>
-  <li> dD Min sphere of spheres has a new traits class for the min sphere of points. 
+  <li> dD Min sphere of spheres has a new traits class for the min sphere of points.
 </ul>
 
 <h3>Triangulated Surface Mesh Simplification</h3>
 <ul>
-  <li>The priority queue internally used to prioritize edge simplifications is no longer 
-      a relaxed heap but a binomial heap. This fix guarantees that all edges satisfying 
+  <li>The priority queue internally used to prioritize edge simplifications is no longer
+      a relaxed heap but a binomial heap. This fix guarantees that all edges satisfying
       a simplification criteria are removed (if possible).
 </ul>
 
@@ -638,12 +659,12 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
 <ul>
   <li>Fix a bug in the method insert_at_vertices of the Arrangement_2 class.
   <li>Fix several bugs in the traits class Arr_Bezier_curve_traits_2 for arrangement of Bezier curves.
-</ul> 
+</ul>
 
 <h3>2D Minkowski Sums</h3>
 <ul>
   <li>A bug in the convolution method was fixed.
-</ul> 
+</ul>
 </DIV>
 
 <h2 id="release3.7">Release 3.7 </h2>
@@ -698,7 +719,7 @@ CGAL 3.7 offers the following improvements and new functionality :  </p>
 <h3>Arithmetic and Algebra</h3>
 <ul>
   <li> New models Algebraic_kernel_d_1 and Algebraic_kernel_d_2 for the
-    corresponding concepts. They provide generic support for various 
+    corresponding concepts. They provide generic support for various
     coefficient types
 </ul>
 
@@ -714,12 +735,12 @@ CGAL 3.7 offers the following improvements and new functionality :  </p>
   <li>The Delaunay and regular 2D triangulations now use a symbolic
     perturbation to choose a particular triangulation in co-circular cases.
 
-  <li>The return type of the template member function 
+  <li>The return type of the template member function
     insert(It beg, It end), taking an iterator range of points,
     has been changed from int to std::ptrdiff_t.
 
   <li>Classes Triangulation_euclidean_traits_xy_3, Triangulation_euclidean_traits_yz_3
-    and Triangulation_euclidean_traits_xz_3 are now model of the concept 
+    and Triangulation_euclidean_traits_xz_3 are now model of the concept
     ConstrainedTriangulationTraits_2. They can be used with and without intersection
     of constraints.
 
@@ -732,7 +753,7 @@ CGAL 3.7 offers the following improvements and new functionality :  </p>
 
 <h3>3D Triangulations</h3>
    <ul>
-  <li>The return type of the template member function 
+  <li>The return type of the template member function
     insert(It beg, It end), taking an iterator range of points,
     has been changed from int to std::ptrdiff_t.
   <li>3D Delaunay triangulations now provide vertex relocation by the mean
@@ -773,7 +794,7 @@ CGAL 3.7 offers the following improvements and new functionality :  </p>
   <li>Improved performance and minor bug fix.
   </ul>
 
- 	
+
 <h3>2D Range and Neighbor Search</h3>
   <ul>
   <li>The type int in the API has been changed to std::size_t
@@ -911,7 +932,7 @@ CGAL 3.6 offers the following improvements and new functionality : </p>
 <h4>2D Regularized Boolean Set-Operations</h4>
 <ul>
 <li> Fixed General_polygon_set_2::arrangement() to return the proper type
-    of object.  
+    of object.
 </ul>
 
 
@@ -942,7 +963,7 @@ CGAL 3.6 offers the following improvements and new functionality : </p>
    </ul>
   <li> Fix the location of built plugins of demo/Polyhedron/, when CGAL is
     configured with WITH_demos=ON
-  <li> Fix a bug in test_facet function of the incremental builder:    
+  <li> Fix a bug in test_facet function of the incremental builder:
     the function did not test if while a new facet makes a vertex manifold,
     no other facet incident to that vertex breaks the manifold property.
 </ul>
@@ -976,11 +997,11 @@ CGAL 3.6 offers the following improvements and new functionality : </p>
 
 <ul><li> New demo: 3D periodic Lloyd algorithm.
 
-<li> New functionality for Voronoi diagrams: dual of an edge and of a vertex, 
-    volume and centroid of the dual of a vertex. 
+<li> New functionality for Voronoi diagrams: dual of an edge and of a vertex,
+    volume and centroid of the dual of a vertex.
 
-<li> The package can now be used with the 3D Alpha Shapes package to compute 
-    periodic alpha shapes. 
+<li> The package can now be used with the 3D Alpha Shapes package to compute
+    periodic alpha shapes.
 </ul>
 
 <h4>3D Alpha shapes</h4>
@@ -988,8 +1009,8 @@ CGAL 3.6 offers the following improvements and new functionality : </p>
 <ul><li> The class Weighted_alpha_shape_euclidean_traits_3 is deprecated, the class
     Regular_triangulation_euclidean_traits_3 must be used instead.
 
-<li> The package can now be used together with the 3D Periodic Triangulation 
-    package to compute periodic alpha shapes. 
+<li> The package can now be used together with the 3D Periodic Triangulation
+    package to compute periodic alpha shapes.
 </ul>
 
 <h4>2D/3D Triangulations, 2D Segment Delaunay Graph, 2D Apollonius Graph,
@@ -1127,7 +1148,7 @@ This is a bug fix release.</p>
     new functions return an enumeration of a new type, namely
     Arr_parameter_space.
 
-  <li> The tags in the geometry traits that indicate the type of boundary of 
+  <li> The tags in the geometry traits that indicate the type of boundary of
     the embedding surface were replaced by the following new tags:
     Arr_left_side_tag
     Arr_bottom_side_tag
@@ -1256,7 +1277,7 @@ in functionality.  There have also been a number of bug fixes for this release.
 
 <li>Qt3 based demos are still there but the documentation has been removed as the CGAL::Qt_Widget will be deprecated.
 
-<li>Qt4 based demos use the Qt GraphicsView framework and the libQGLViewer. 
+<li>Qt4 based demos use the Qt GraphicsView framework and the libQGLViewer.
 </ul>
 
 <h3> Installation</h3>
@@ -1274,7 +1295,7 @@ in functionality.  There have also been a number of bug fixes for this release.
 
 <h3>Modular Arithmetic (new package)</h3>
 <ul>
-<li>  This package provides arithmetic over finite fields. 
+<li>  This package provides arithmetic over finite fields.
 </ul>
 
 
@@ -1284,7 +1305,7 @@ in functionality.  There have also been a number of bug fixes for this release.
     a profiling counter enabled with CGAL_PROFILE.
 
 
-<li> Fix of a bug in CORE/Expr.h; as a consequence, the arrangement demo works properly when handling 
+<li> Fix of a bug in CORE/Expr.h; as a consequence, the arrangement demo works properly when handling
      arrangements of conics, for example, when defining an arc with 5 points.
 
 </ul>
@@ -1293,7 +1314,7 @@ in functionality.  There have also been a number of bug fixes for this release.
 
 <h3>3D Spherical Geometry Kernel  (new package)</h3>
 <ul>
-<li> This package is an extension of the linear CGAL Kernel. It offers functionalities on spheres, 
+<li> This package is an extension of the linear CGAL Kernel. It offers functionalities on spheres,
     circles, circular arcs and line segments in the 3D space.
 </ul>
 
@@ -1358,40 +1379,40 @@ in functionality.  There have also been a number of bug fixes for this release.
 
 <h3>2D Arrangements</h3>
 <ul>
-  <li> Changed the name of the arrangement package from Arrangement_2 to Arrangement_on_surface_2 
-    to reflect the potential capabilities of the package to construct and maintain arrangements 
-    induced by curves embedded on two dimensional surfaces in three space. Most of these capabilities 
+  <li> Changed the name of the arrangement package from Arrangement_2 to Arrangement_on_surface_2
+    to reflect the potential capabilities of the package to construct and maintain arrangements
+    induced by curves embedded on two dimensional surfaces in three space. Most of these capabilities
     will become available only in future releases though.
-  <li> Enhanced the geometry traits concept to handle arrangements embedded on surfaces. Each geometry-traits 
+  <li> Enhanced the geometry traits concept to handle arrangements embedded on surfaces. Each geometry-traits
     class must now define the 'Boundary_category' tag.
-  <li> Fixed a bug in Arr_polyline_traits_2.h, where the operator that compares two curves failed to evaluate 
+  <li> Fixed a bug in Arr_polyline_traits_2.h, where the operator that compares two curves failed to evaluate
     the correct result (true) when the curves are different, but their graphs are identical.
-  <li> Permanently removed IO/Arr_postscript_file_stream.h and IO/Polyline_2_postscript_file_stream.h, 
+  <li> Permanently removed IO/Arr_postscript_file_stream.h and IO/Polyline_2_postscript_file_stream.h,
     as they depend on obsolete features and LEDA.
-  <li> Fixed several bugs in the arrangement demo and enhanced it. e.g., fixed background color change, 
+  <li> Fixed several bugs in the arrangement demo and enhanced it. e.g., fixed background color change,
     allowed vertex coloring , enabled "smart" color selection, etc.
-  <li> Enhanced the arrangement demo with new features, such as allowing the abortion of the merge function 
+  <li> Enhanced the arrangement demo with new features, such as allowing the abortion of the merge function
     (de-select), updated the how-to description, etc.
-  <li> Replace the functions CGAL::insert_curve(), CGAL::insert_curves(), CGAL::insert_x_monotone_curve(), 
-    and CGAL::insert_x_monotone_curves() with a single overloaded function CGAL::insert(). The former 
-    4 functions are now deprecated, and may no longer be supported in future releases. 
+  <li> Replace the functions CGAL::insert_curve(), CGAL::insert_curves(), CGAL::insert_x_monotone_curve(),
+    and CGAL::insert_x_monotone_curves() with a single overloaded function CGAL::insert(). The former
+    4 functions are now deprecated, and may no longer be supported in future releases.
 </ul>
 
 <h3>Envelopes of Surfaces in 3D</h3>
 
 <ul>
-<li> Fixed a bug in the computation of the envelope of unbounded planes caused by multiple removals 
+<li> Fixed a bug in the computation of the envelope of unbounded planes caused by multiple removals
     of vertices at infinity.
 </ul>
 
 <h3>2D Regularized Boolean Set-Operations</h3>
 <ul>
   <li> Fixed a bug in connect_holes() that caused failures when connecting holes touching the outer boundary.
-  <li> Fixed the concept GeneralPolygonSetTraits_2. Introduced two new concepts GpsTraitsGeneralPolygon_2 
-    and GpsTraitsGeneralPolygonWithHoles_2. Fixed the definition of the two nested required types Polygon_2 
-    and Polygon_with_holes_2 of the GeneralPolygonSetTraits_2 concept. They must model now the two new 
-    concepts above. 
-  <li> Added a default template parameter to 'General_polygon_set_2' to allow users to pass their specialized 
+  <li> Fixed the concept GeneralPolygonSetTraits_2. Introduced two new concepts GpsTraitsGeneralPolygon_2
+    and GpsTraitsGeneralPolygonWithHoles_2. Fixed the definition of the two nested required types Polygon_2
+    and Polygon_with_holes_2 of the GeneralPolygonSetTraits_2 concept. They must model now the two new
+    concepts above.
+  <li> Added a default template parameter to 'General_polygon_set_2' to allow users to pass their specialized
     DCEL used to instantiate the underlying arrangement.
   <li> Enhanced the BOP demo to use multiple windows.
 </ul>
@@ -1399,10 +1420,10 @@ in functionality.  There have also been a number of bug fixes for this release.
 <h3>2D Minkowski Sums</h3>
 <ul>
  <li> Fixed a few bugs in the approximate offset function, making it robust to highly degenerate inputs.
-  <li> Fixed a bug in the exact Minkowski sum computation when processing degenerate inputs that induce overlapping 
+  <li> Fixed a bug in the exact Minkowski sum computation when processing degenerate inputs that induce overlapping
     of contiguous segments in the convolution cycles.
   <li> Optimized the approximate offset function (reduced time consumption up to a factor of 2 in some cases).
-  <li> Added functionality to compute the offset (or to approximate the offset) of a Polygon_with_holes_2 
+  <li> Added functionality to compute the offset (or to approximate the offset) of a Polygon_with_holes_2
     (and not just of a Polygon_2).
   <li> Added the functionality to compute (or to approximate) the inner offset of a polygon.
 </ul>
@@ -1523,7 +1544,7 @@ in functionality.  There have also been a number of bug fixes for this release.
 <li> Intel C++ compiler 9
 <li> Microsoft Visual C++ compiler 8.0
 </ul>
-	
+
 <p>The following platforms are no longer supported:
 
 <UL>
@@ -1536,7 +1557,7 @@ of GNU g++'s STL (-D_GLIBCXX_DEBUG).</p>
 <p>CGAL now works around the preprocessor macros 'min' and 'max' defined
 in <code>&lt;windows.h&gt;</code> which were clashing with min/max functions.
 </p>
- 
+
 
 <H3>Installation</H3>
 
@@ -1572,8 +1593,8 @@ This package defines what algebra means for CGAL, in terms of concepts, classes 
 <p>
 <ul>
   <li> 2D Circular Kernel<br>
-Efficiency improved through geometric filtering of predicates, introduced with 
-  the filtered kernel Filtered_bbox_circular_kernel_2<.>, and also chosen for the 
+Efficiency improved through geometric filtering of predicates, introduced with
+  the filtered kernel Filtered_bbox_circular_kernel_2<.>, and also chosen for the
   predefined kernel Exact_circular_kernel_2.
 
   <li> Linear Kernel<br>
@@ -1614,23 +1635,23 @@ Efficiency improved through geometric filtering of predicates, introduced with
 <p>
 <li>Envelopes of Curves in 2D  (new package)<br>
 
-  This package contains two sets of functions that construct the lower and upper envelope diagram 
+  This package contains two sets of functions that construct the lower and upper envelope diagram
   for a given range of bounded or unbounded curves.
 
 <p>
 <li>Envelopes of Surfaces in 3D  (new package)<br>
 
-  This package contains two sets of functions that construct the lower and upper envelope diagram 
-  for a given range of bounded or unbounded surfaces. The envelope diagram is realized as a 
+  This package contains two sets of functions that construct the lower and upper envelope diagram
+  for a given range of bounded or unbounded surfaces. The envelope diagram is realized as a
   2D arrangement.
 
 <p>
 <li>Minkowski Sums in 2D  (new package)<br>
 
-  This package contains functions for computing planar Minkowski sums of two closed polygons, 
-  and for a polygon and a disc (an operation also known as offsetting or dilating a polygon). 
-  The package also contains an efficient approximation algorithm for the offset computation, 
-  which provides a guaranteed approximation bound while significantly expediting the running 
+  This package contains functions for computing planar Minkowski sums of two closed polygons,
+  and for a polygon and a disc (an operation also known as offsetting or dilating a polygon).
+  The package also contains an efficient approximation algorithm for the offset computation,
+  which provides a guaranteed approximation bound while significantly expediting the running
   times w.r.t. the exact computation procedure.
 
 <p>
@@ -1648,9 +1669,9 @@ Efficiency improved through geometric filtering of predicates, introduced with
   namely lines, rays and line segments.
 <li> Added traits classes that handle circular arcs based on the circular kernel.
 <li> Added a traits class that supports Bezier curves.
-<li> Enhanced the traits class that supports rational functions to     
+<li> Enhanced the traits class that supports rational functions to
   handle unbounded (as well as bounded) arcs
-<li> Added a free function called decompose() that produces the symbolic vertical decomposition of a 
+<li> Added a free function called decompose() that produces the symbolic vertical decomposition of a
   given arrangement, performing a batched vertical ray-shooting query from all arrangement vertices.
 <li> Fixed a memory leak in the sweep-line code.
 <li> Fixed a bug in computing the minor axis of non-degenerate hyperbolas.
@@ -1658,18 +1679,18 @@ Efficiency improved through geometric filtering of predicates, introduced with
 
 <li>Boolean Set Operations<br>
 <ul>
-<li> Added the DCEL as a default template parameter to the General_polygon_set_2 and Polygon_set_2 classes. 
+<li> Added the DCEL as a default template parameter to the General_polygon_set_2 and Polygon_set_2 classes.
   This allows users to extend the DCEL of the underlying arrangement.
-<li> Added a function template called connect_holes() that connects the holes in a given polygon with holes, 
+<li> Added a function template called connect_holes() that connects the holes in a given polygon with holes,
   turning it into a sequence of points, where the holes are connceted to the outer boundary using
-  zero-width passages. 
-<li> Added a non-const function member to General_polygon_set_2 that obtains the underlying arrangement. 
+  zero-width passages.
+<li> Added a non-const function member to General_polygon_set_2 that obtains the underlying arrangement.
 </ul>
 
 <p>
 <li>2D and 3D Triangulations<br>
 <ul>
-<li> The constructors and insert member functions which take an iterator range perform spatial sorting 
+<li> The constructors and insert member functions which take an iterator range perform spatial sorting
   in order to speed up the insertion.
 </ul>
 
@@ -1677,7 +1698,7 @@ Efficiency improved through geometric filtering of predicates, introduced with
 <p>
 <li>Optimal Distances
 <br>
-<ul> 
+<ul>
 <li>Polytope_distance_d:
   has support for homogeneous points; bugfix in fast exact version.
 </ul>
@@ -1686,7 +1707,7 @@ Efficiency improved through geometric filtering of predicates, introduced with
 <p>
 <li>Bounding Volumes
 <br>
-<ul> 
+<ul>
 <li>Min_annulus_d has support for homogeneous points; bugfix in fast exact version.
 </ul>
 
@@ -1699,7 +1720,7 @@ Efficiency improved through geometric filtering of predicates, introduced with
 
 This package provides the glue layer for several CGAL data structures such that
 they become models of the BGL graph concept.
- 
+
 <p>
 <li>Spatial Sorting  (new package)<br>
 
@@ -1712,7 +1733,7 @@ an iterator range of points as argument.
 <li>Linear and Quadratic Programming Solver  (new package)<br>
 This package contains algorithms for minimizing linear and
 convex quadratic functions over polyhedral domains, described by linear
-equations and inequalities. 
+equations and inequalities.
 </ul>
 </DIV>
 
@@ -1737,22 +1758,22 @@ This is a bug fix release
 <ul>
   <li> Rename Bool to avoid a clash with a macro in X11 headers.
 </ul>
-<h3> Arrangement</H3> 
- 
+<h3> Arrangement</H3>
+
 <ul>
-  <li> Derived the Arr_segment_traits_2 Arrangement_2 traits class from the parameterized Kernel. 
-    This allows the use of this traits class in an extended range of applications that require 
-    kernel objects and operations on these objects beyond the ones required by the Arrangement_2 
+  <li> Derived the Arr_segment_traits_2 Arrangement_2 traits class from the parameterized Kernel.
+    This allows the use of this traits class in an extended range of applications that require
+    kernel objects and operations on these objects beyond the ones required by the Arrangement_2
     class itself.
-  <li> Fixed a compilation bug in the code that handles overlay of arrangements instantiated with 
+  <li> Fixed a compilation bug in the code that handles overlay of arrangements instantiated with
     different DCEL classes.
-  <li> Fixed a couple of bugs in the implementation of the Trapezoidal RIC point-location strategy 
+  <li> Fixed a couple of bugs in the implementation of the Trapezoidal RIC point-location strategy
 </ul>
 
 <h3> Triangulation, Alpha Shapes </H3>
 <ul>
-  <li> Qualify calls to filter_iterator with "CGAL::" to avoid overload ambiguities with 
-  Boost's filter_iterator. 
+  <li> Qualify calls to filter_iterator with "CGAL::" to avoid overload ambiguities with
+  Boost's filter_iterator.
 </ul>
 
 <h3> Surface Mesher</H3>
@@ -1786,13 +1807,13 @@ in functionality.  There have also been a number of bug fixes for this release.
 
 <UL>
    <LI>SunPro CC versions 5.4 and 5.5 on Solaris
-   <LI>SGI Mips Pro 
+   <LI>SGI Mips Pro
 </UL>
 
 <p>
 For Visual C++ the installation scripts choose the multi-threaded dynamically
 linked runtime (/MD). Before it was the single-threaded static runtime (/ML).</p>
- 
+
 
 <H3>Installation</H3>
 
@@ -1804,7 +1825,7 @@ linked runtime (/MD). Before it was the single-threaded static runtime (/ML).</p
 
 <h3>Manuals</h3>
 <ul>
-<li> User and Reference manual pages of a package are in the same chapter 
+<li> User and Reference manual pages of a package are in the same chapter
 </ul>
 
 
@@ -1813,7 +1834,7 @@ linked runtime (/MD). Before it was the single-threaded static runtime (/ML).</p
 <p>
 <ul>
   <li> 2D Circular Kernel (new package)<br>
-This package is an extension of the linear CGAL Kernel. It offers functionalities 
+This package is an extension of the linear CGAL Kernel. It offers functionalities
 on circles, circular arcs and line segments in the plane.
 </ul>
 
@@ -2036,7 +2057,7 @@ The following functionality has been added or changed:<BR><BR>
 
 <UL>
    <LI> Improved efficiency of filtered kernels.
-   <LI>More predicates and constructions. 
+   <LI>More predicates and constructions.
 </UL>
 
 
@@ -2100,7 +2121,7 @@ computing, it can be classified as a finite precision approximation
 technique. Iterated Snap Roundingis a modification
 of Snap Rounding in which each vertex is at least half-the-width-of-a-pixel away
 from any non-incident edge. This package supports both
-methods. 
+methods.
 </LI>
 
 <LI>3D Triangulations
@@ -2108,7 +2129,7 @@ methods.
 <UL>
  <LI> Triangulation_3: added operator==(),removed push_back() and copy_triangulation().
 <LI> Delaunay_3 : added nearest_vertex(), move_point(), vertices_in_conflict().
-<LI> Regular_3 :  added filtered traits class, and nearest_power_vertex(). 
+<LI> Regular_3 :  added filtered traits class, and nearest_power_vertex().
 </UL>
 
 
@@ -2159,8 +2180,8 @@ methods.
 <UL>
 <LI> The models
 
-    <TT>Min_sphere_of_spheres_d_traits_2&lt;K,FT,UseSqrt,Algorithm&gt;</TT>, 
-    <TT>Min_sphere_of_spheres_d_traits_3&lt;K,FT,UseSqrt,Algorithm&gt;</TT>, and 
+    <TT>Min_sphere_of_spheres_d_traits_2&lt;K,FT,UseSqrt,Algorithm&gt;</TT>,
+    <TT>Min_sphere_of_spheres_d_traits_3&lt;K,FT,UseSqrt,Algorithm&gt;</TT>, and
     <TT>Min_sphere_of_spheres_d_traits_d&lt;K,FT,Dim,UseSqrt,Algorithm&gt;</TT>
 
   of concept <TT>MinSphereOfSpheresTraits</TT> now represent a sphere
@@ -2176,7 +2197,7 @@ methods.
 <UL>
       <LI> New Tutorial on CGAL Polyhedron for Subdivision Algorithms with
         interactive demo viewer in source code available.
-          
+
       <LI> Added example program for efficient self-intersection test.
       - Added small helper functions, such as vertex_degree, facet_degree,
         edge_flip, and is_closed.
@@ -2192,7 +2213,7 @@ methods.
 
 </DIV>
 
- 
+
 <h2 id="release3.0.1">Release 3.0.1</h2>
 <DIV>
 <p>Release date: February 2004</p>
@@ -2213,7 +2234,7 @@ No new features have been added in 3.0.1.  Here is the list of bug-fixes.<p>
       correctly handle a degenerate case.
 </ul>
 
-<H3>2D Triangulation</H3> 
+<H3>2D Triangulation</H3>
 
 <ul>
   <li> added missing figure in html doc
@@ -2234,11 +2255,11 @@ No new features have been added in 3.0.1.  Here is the list of bug-fixes.<p>
 <ul>
   <li>Lazy_exact_nt:
     <ul>
-      <li>added the possibility to select the relative precision of 
-          <tt>to_double()</tt> (by default 1e-5).  This should fix reports 
-          that some circumcenters computations have poor coordinates, 
+      <li>added the possibility to select the relative precision of
+          <tt>to_double()</tt> (by default 1e-5).  This should fix reports
+          that some circumcenters computations have poor coordinates,
           e.g. nan).
-      <li>when exact computation is triggered, the interval is recomputed, 
+      <li>when exact computation is triggered, the interval is recomputed,
           this should speed up some kinds of computations.
     </ul>
   <li><tt>to_interval(Quotient&lt;MP_Float&gt;)</tt>: avoid spurious overflows.
@@ -2248,8 +2269,8 @@ No new features have been added in 3.0.1.  Here is the list of bug-fixes.<p>
 
 <ul>
   <li>
-  missing acknowledgment in the manual and minor clarification of 
-  
+  missing acknowledgment in the manual and minor clarification of
+
      <tt>intersection()</tt> documentation.
 </ul>
 
@@ -2266,7 +2287,7 @@ in functionality.  There have also been a number of bug fixes for this release.<
 <p>The license has been changed to either the LGPL (GNU Lesser General Public
 License v2.1) or the QPL (Q Public License v1.0) depending on each package.
 So CGAL remains free of use for you, if your usage meets the criteria of these
-licenses, otherwise, a commercial license has to be purchased from 
+licenses, otherwise, a commercial license has to be purchased from
 GeometryFactory.</p>
 
 <p>
@@ -2307,11 +2328,11 @@ The following functionality has been added or changed:<BR><BR>
      </UL>
     <LI> Progress has been made towards the complete adaptability and
       extensibility of our kernels.
-    <LI> New faster Triangle_3 intersection test routines. 
+    <LI> New faster Triangle_3 intersection test routines.
 		<br><i>(see Erratum)</i>
     <LI> Added a Kernel concept archetype to check that generic algorithms
       don't use more functionality than they should.
-    <LI> A few more miscellaneous functions. 
+    <LI> A few more miscellaneous functions.
 </UL>
 
 <H3>Basic Library</H3>
@@ -2328,9 +2349,9 @@ Algorithms for computing the Apollonius
 
   <LI>dD Min Sphere of Spheres (new package)<BR>
       Algorithms to compute the smallest
-      enclosing sphere of a given set of spheres in R<sup>d</sup>.  
+      enclosing sphere of a given set of spheres in R<sup>d</sup>.
       The package provides
-      an algorithm with maximal expected running time 
+      an algorithm with maximal expected running time
       <i>O(2<sup>O(d)</sup> n)</i> and a
       fast and robust heuristic (for dimension less than 30).
 
@@ -2342,7 +2363,7 @@ Provides exact and approximate distance
         <li> both nearest and furthest neighbor searching
         <li> both exact and approximate searching
         <li> (approximate) range searching
-        <li> (approximate) <i>k</i>-nearest and <i>k</i>-furthest neighbor 
+        <li> (approximate) <i>k</i>-nearest and <i>k</i>-furthest neighbor
              searching
         <li> (approximate) incremental nearest and incremental furthest neighbor
           searching
@@ -2360,7 +2381,7 @@ this package is deprecated, its documentation is removed.
        iso-rectangles that are inside a given iso-rectangle bounding box,
        and that do not contain any point of the point set P.
 
-<LI> 2D Triangulation and 
+<LI> 2D Triangulation and
      3D Triangulation<BR>
      <UL>
       <LI> The classes Triangulation_data_structure_2 (and 3), which implements
@@ -2399,13 +2420,13 @@ this package is deprecated, its documentation is removed.
      </UL>
 
 <LI> Interval Skip List (new package)<BR>
-An interval skip list is a data strucure for finding all intervals 
-      that contain a point, and for stabbing queries, that is for answering 
-      the question whether a given point is contained in an interval or not. 
+An interval skip list is a data strucure for finding all intervals
+      that contain a point, and for stabbing queries, that is for answering
+      the question whether a given point is contained in an interval or not.
 
-<LI> 
+<LI>
        Planar Maps and
-       
+
        Arrangements<BR>
 
  The changes concern mainly the traits classes.
@@ -2420,7 +2441,7 @@ An interval skip list is a data strucure for finding all intervals
 	   operation based on a sweep-line algorithm only a subset of the
 	   requirements is needed. Preconditions were added where appropriate
 	   to tighten the requirements further.
-           
+
            <p>
            The following functions have been renamed:
            <UL>
@@ -2576,14 +2597,14 @@ An interval skip list is a data strucure for finding all intervals
       <LI> The old design that was deprecated since CGAL 2.3 has been removed.
       <LI> Class <tt>Polyhedron_incremental_builder_3</tt>:
 	 <UL>
-	  <LI>Renamed local enum <tt>ABSOLUTE</tt> to 
+	  <LI>Renamed local enum <tt>ABSOLUTE</tt> to
               <tt>ABSOLUTE_INDEXING</tt>, and <tt>RELATIVE</tt> to
-              <tt>RELATIVE_INDEXING</tt> to avoid conflicts with similarly 
+              <tt>RELATIVE_INDEXING</tt> to avoid conflicts with similarly
               named macros of another library.
-	  <LI>Changed member functions <tt>add_vertex()</tt>, 
-              <tt>begin_facet()</tt>, and <tt>end_facet()</tt> to return 
+	  <LI>Changed member functions <tt>add_vertex()</tt>,
+              <tt>begin_facet()</tt>, and <tt>end_facet()</tt> to return
               useful handles.
-          <LI>Added <tt>test_facet()</tt> to check facets for validity 
+          <LI>Added <tt>test_facet()</tt> to check facets for validity
               before adding them.
           <LI>Added <tt>vertex( size_t i)</tt> to return <tt>Vertex_handle</tt>
               for index <tt>i</tt>.
@@ -2657,17 +2678,17 @@ An interval skip list is a data strucure for finding all intervals
 
 <ul>
 <li> Intersection test routines
-    <p>The documentation of 
+    <p>The documentation of
     CGAL::do_intersect
     should mention, for the 3D case:
     <br>
-    Also, in three-dimensional space <i>Type1</i> can be 
+    Also, in three-dimensional space <i>Type1</i> can be
     <ul>
         <li>either
-        <i>Plane_3&lt;Kernel&gt;</i> 
+        <i>Plane_3&lt;Kernel&gt;</i>
         <li>or <i>Triangle_3&lt;Kernel&gt;</i>
     </ul>
-    and <i>Type2</i> any of 
+    and <i>Type2</i> any of
     <ul>
         <li><i>Plane_3&lt;Kernel&gt;</i>
         <li><i>Line_3&lt;Kernel&gt;</i>
@@ -2677,14 +2698,14 @@ An interval skip list is a data strucure for finding all intervals
     </ul>
 
     <p>
-    In the same way, for 
+    In the same way, for
     <i>Kernel::DoIntersect_3</i>:
     <br>
     for all pairs <i>Type1</i> and <i>Type2</i>, where
-    the type <i>Type1</i> is 
+    the type <i>Type1</i> is
     <ul>
         <li>either
-        <i>Kernel::Plane_3</i> 
+        <i>Kernel::Plane_3</i>
         <li>or <i>Kernel::Triangle_3</i>
     </ul>
 
@@ -2698,8 +2719,8 @@ An interval skip list is a data strucure for finding all intervals
     </ul>
 
     <p>
-    Philippe Guigue (I<small>NRIA</small> Sophia-Antipolis) should be 
-    mentioned as one of the authors. 
+    Philippe Guigue (I<small>NRIA</small> Sophia-Antipolis) should be
+    mentioned as one of the authors.
 
 </ul>
 
@@ -2747,9 +2768,9 @@ The following functionality has been added or changed:<BR><BR>
       subcurves or a planar map.
       <BR><BR>
 
-  <LI> 
+  <LI>
        Planar Maps and
-       
+
        Arrangements
 
   <UL>
@@ -2767,7 +2788,7 @@ The following functionality has been added or changed:<BR><BR>
   </UL>
   <BR><BR>
 
-  <LI> 
+  <LI>
        Polyhedral Surface
   <UL>
   <LI>  new design introduced with release 2.3 now supported by VC7 compiler
@@ -2887,7 +2908,7 @@ release that introduces the leda namespace.
 <LI> The following deficiencies relate to planar maps, planar maps of
      intersecting curves (pmwx), arrangements and sweep line.
    <UL>
-    <LI> On KCC, Borland and SunPro we guarantee neither compilation nor 
+    <LI> On KCC, Borland and SunPro we guarantee neither compilation nor
          correct execution for all of the packages above.
     <LI> On VC6 and VC7 we guarantee neither compilation nor correct
          execution of the sweep line package.
@@ -2898,7 +2919,7 @@ release that introduces the leda namespace.
          (mind that the so-called leda polyline traits does compile).
     <LI> On g++ (on Irix 6.5) the segment-circle (Arr_segment_circle_traits_2)
          traits does not compile for either of the above packages.
-   </UL>      
+   </UL>
 </UL>
 
 
@@ -2916,7 +2937,7 @@ in functionality.</p>
 Additional supported platform:
 
 <UL>
-   <LI> Gnu g++ 3.0 on Solaris and Linux 
+   <LI> Gnu g++ 3.0 on Solaris and Linux
 </UL>
 
 <p>
@@ -2927,27 +2948,27 @@ The following functionality has been added:<BR><BR>
 <LI> The 2D and 3D kernels now serve as models of the new kernel concept
      described in the recent paper, "An Adaptable and Extensible Geometry
      Kernel" by Susan Hert, Micheal Hoffmann, Lutz Kettner, Sylvain Pion,
-     and Michael Seel to be presented at 
-     WAE 2001 (and 
+     and Michael Seel to be presented at
+     WAE 2001 (and
      soon available as a technical report).  This new kernel is
      completely compatible with the previous design but is more flexible
      in that it allows geometric predicates as well as objects to be easily
      exchanged and adapted individually to users' needs.
 
-<LI> A new kernel called <TT>Simple_homogeneous</TT> is available. It is 
+<LI> A new kernel called <TT>Simple_homogeneous</TT> is available. It is
      equivalent to <TT>Homogeneous</TT> but without reference-counted objects.
 
-<LI> A new kernel called <TT>Filtered_kernel</TT> is available that allows 
+<LI> A new kernel called <TT>Filtered_kernel</TT> is available that allows
      one to build kernel traits classes that use exact and efficient predicates.
 
-<LI> There are two classes, <TT>Cartesian_converter</TT> and 
+<LI> There are two classes, <TT>Cartesian_converter</TT> and
      <TT>Homogeneous_converter</TT>
      that allows one to convert objects between different Cartesian and
      homogeneous kernels, respectively.
 
-<LI> A new d-dimensional kernel, <TT>Kernel_d</TT> is available.  It provides 
-     diverse kernel objects, predicates and constructions in d dimensions with 
-     two representations based on the kernel families <TT>Cartesean_d</TT> and 
+<LI> A new d-dimensional kernel, <TT>Kernel_d</TT> is available.  It provides
+     diverse kernel objects, predicates and constructions in d dimensions with
+     two representations based on the kernel families <TT>Cartesean_d</TT> and
      <TT>Homogeneous_d</TT>
 </UL>
 
@@ -2969,16 +2990,16 @@ The following functionality has been added:<BR><BR>
 <UL>
   <LI> The function <TT>convex_hull_3</TT> now uses a new implementation of the
        quickhull algorithm and no longer requires LEDA.
-  <LI> A new <TT>convex_hull_incremental_3</TT> function based on the new 
+  <LI> A new <TT>convex_hull_incremental_3</TT> function based on the new
        d-dimensional convex hull class is available for comparison purposes.
 </UL><BR>
 
-<LI> 
+<LI>
      <TT>Convex_hull_d, Delaunay_d</TT><BR>
      Two new application classes offering the calculation of d-dimensional
      convex hulls and delaunay triangulations<BR><BR>
 
-<LI> 
+<LI>
      Polygons and Polygon Operations<BR>
      <UL>
        <LI> The traits class requirements have been changed.
@@ -2987,29 +3008,29 @@ The following functionality has been added:<BR><BR>
             polygons. You need to set a flag to select this behaviour.
      </UL>
      <BR>
-     
+
      <BR><BR>
-<LI> 
+<LI>
      Planar Nef Polyhedra<BR>
      A new class (<TT>Nef_polyhedron_2</TT>) representing planar Nef polyhedra =
      rectilinearly bounded points sets that are the result of binary and
      topological operations starting from halfplanes.
 
      <BR><BR>
-<LI> A new package offering functions to 
-     
+<LI> A new package offering functions to
+
      partition planar polygons into
      convex and y-monotone pieces is available.
 
      <BR><BR>
-<LI> 
-     Planar Maps and 
-     
+<LI>
+     Planar Maps and
+
      Arrangements
      <UL>
-     <LI> A new class <TT>Planar_map_with_intersections_2&lt;Planar_map&gt;</TT> for 
-          planar maps of possibly intersecting, possibly non-x-monotone, 
-          possibly overlapping curves (like <TT>Arrangement_2</TT> but without 
+     <LI> A new class <TT>Planar_map_with_intersections_2&lt;Planar_map&gt;</TT> for
+          planar maps of possibly intersecting, possibly non-x-monotone,
+          possibly overlapping curves (like <TT>Arrangement_2</TT> but without
           the hierarchy tree).
 
      <LI> I/O utilities for planar maps and arrangements for textual and
@@ -3020,15 +3041,15 @@ The following functionality has been added:<BR><BR>
           (<TT>Arr_segment_circle_traits&lt;NT&gt;</TT>).
 
      <LI> New faster traits for polylines specialized for using the LEDA
-          rational kernel (<TT>Arr_leda_polylines_traits</TT>). The LEDA 
+          rational kernel (<TT>Arr_leda_polylines_traits</TT>). The LEDA
           traits for segments was also made faster.
 
-     <LI> A new point location strategy 
+     <LI> A new point location strategy
           (<TT>Pm_simple_point_location&lt;Planar_map&gt;</TT>).
      </UL>
      <BR><BR>
 
-<LI> 
+<LI>
      Halfedge Data Structure<BR><BR>
 
      The halfedge data structure has been completely revised. The new design
@@ -3048,7 +3069,7 @@ The following functionality has been added:<BR><BR>
      therefore considerably faster.
 
      <BR><BR>
-<LI>  
+<LI>
       Polyhedral Surface
 
      <BR><BR>
@@ -3075,11 +3096,11 @@ The following functionality has been added:<BR><BR>
      automatically the old design for MSVC++6.0 and the new design
      otherwise. This automatism can be overwritten by defining appropriate
      macros before the include files. The old design is selected with the
-     <TT>CGAL_USE_POLYHEDRON_DESIGN_ONE</TT> macro. The new design is selected 
+     <TT>CGAL_USE_POLYHEDRON_DESIGN_ONE</TT> macro. The new design is selected
      with the <TT>CGAL_USE_POLYHEDRON_DESIGN_TWO</TT> macro.
 
      <BR><BR>
-<LI> 
+<LI>
      2D Triangulation
      <UL>
      <LI> The geometric traits class requirements have been changed to conform
@@ -3101,39 +3122,39 @@ The following functionality has been added:<BR><BR>
      </UL>
 
      <BR>
-<LI>  
+<LI>
       3D Triangulation
      <UL>
      <LI> Major improvements
           <UL>
-            <LI> A new class <TT>Triangulation_hierarchy_3</TT> that allows a 
-                 faster point location, and thus construction of the Delaunay 
+            <LI> A new class <TT>Triangulation_hierarchy_3</TT> that allows a
+                 faster point location, and thus construction of the Delaunay
                  triangulation
-            <LI> A new method for removing a vertex from a Delaunay 
+            <LI> A new method for removing a vertex from a Delaunay
                  triangulation that solves all degenerate cases
-            <LI> Running time of the usual location and insertion methods 
+            <LI> Running time of the usual location and insertion methods
                  improved
          </UL>
-     
+
      <LI> A bit more functionality, such as
           <UL>
           <LI> New geomview output
-          <LI> dual methods in Delaunay triangulations to draw the Voronoi 
+          <LI> dual methods in Delaunay triangulations to draw the Voronoi
                diagram
           </UL>
      <LI> More demos and examples
-   
+
      <LI> Changes in interface
           <UL>
           <LI> Traits classes requirements have been modified
           <LI> The kernel can be used directly as a traits class (except for
                regular triangulation)
-          <LI> insert methods in <TT>Triangulation_data_structure</TT> have a 
+          <LI> insert methods in <TT>Triangulation_data_structure</TT> have a
                new interface
           </UL>
      </UL>
      <BR>
-<LI> A new class (<TT>Alpha_shapes_3</TT>) that computes Alpha shapes of point 
+<LI> A new class (<TT>Alpha_shapes_3</TT>) that computes Alpha shapes of point
      sets in 3D is available.
 
      <BR><BR>
@@ -3144,9 +3165,9 @@ The following functionality has been added:<BR><BR>
 
 <LI> Point_set_2
     <UL>
-    <LI>  now independent of LEDA; based on the CGAL Delaunay triangulation 
+    <LI>  now independent of LEDA; based on the CGAL Delaunay triangulation
     <LI>  traits class requirements adapted to new kernel concept.
-    <LI>  function template versions of the provided query operations are 
+    <LI>  function template versions of the provided query operations are
           available
     </UL>
 </UL>
@@ -3155,29 +3176,29 @@ The following functionality has been added:<BR><BR>
 <UL>
 <LI>  Number types:
       <UL>
-       <LI> <TT>Lazy_exact_nt&lt;NT&gt;</TT> is a new number type wrapper to speed 
+       <LI> <TT>Lazy_exact_nt&lt;NT&gt;</TT> is a new number type wrapper to speed
             up exact number types.
-       <LI> <TT>MP_Float</TT> is a new multiprecision floating point number 
-            type. It can do exact additions, subtractions and multiplications 
+       <LI> <TT>MP_Float</TT> is a new multiprecision floating point number
+            type. It can do exact additions, subtractions and multiplications
             over floating point values.
       </UL>
 
 <LI>  <TT>In_place_list</TT> has a new third template parameter
       (with a suitable default) for an STL-compliant allocator.
 
-<LI>  
+<LI>
       <TT>Unique_hash_map</TT> is a new support class.
 
-<LI>  
+<LI>
       <TT>Union_find</TT> is a new support class.
 
-<LI> 
+<LI>
      <TT>Geomview_stream</TT> :
     <UL>
     <LI> Geomview version 1.8.1 is now required.
     <LI> no need to have a <TT>~/.geomview</TT> file anymore.
     <LI> new output operators for triangulations.
-    <LI> new output operators for <TT>Ray_2</TT>, <TT>Line_2</TT>, 
+    <LI> new output operators for <TT>Ray_2</TT>, <TT>Line_2</TT>,
          <TT>Ray_3</TT>, <TT>Line_3</TT>, <TT>Sphere_3</TT>.
     <LI> various new manipulators.
     </UL>
@@ -3218,19 +3239,19 @@ The following functionality has been added:
 
 <LI> New optimisation algorithms
      <UL>
-        <LI> Min_annulus_d - Algorithm for computing the smallest enclosing 
+        <LI> Min_annulus_d - Algorithm for computing the smallest enclosing
              annulus of points in arbitrary dimension
-        <LI> Polytope_distance_d - Algorithm for computing the (squared) 
+        <LI> Polytope_distance_d - Algorithm for computing the (squared)
              distance between two convex polytopes in arbitrary dimension
-        <LI> Width_3 - Algorithm for computing the (squared) width of points 
+        <LI> Width_3 - Algorithm for computing the (squared) width of points
              sets in three dimensions
      </UL>
 
 <LI> 2D Triangulations
      <UL>
        <LI> There are now two triangulation data structures available in CGAL.
-            The new one uses a list to store the faces and allows one to 
-            represent two-dimensional triangulations embedded in three spaces 
+            The new one uses a list to store the faces and allows one to
+            represent two-dimensional triangulations embedded in three spaces
             as well as planar triangulations.
        <LI> The triangulation hierarchy which allows fast location query
             is now available.
@@ -3238,7 +3259,7 @@ The following functionality has been added:
 
 <LI> Inifinite objects can now be included in planar maps.
 
-<LI> Removal as well as insertions of vertices for 3D Delaunay triangulations 
+<LI> Removal as well as insertions of vertices for 3D Delaunay triangulations
      is now possible.
 
 <LI> A generator for ``random'' simple polygons is now available.
@@ -3251,8 +3272,8 @@ The following functionality has been added:
 <P>
 The following functionality has been removed:
 <UL>
-  <LI> The binary operations on polygons (union, intersection ...) have been 
-       removed.  Those operations were not documented in the previous release 
+  <LI> The binary operations on polygons (union, intersection ...) have been
+       removed.  Those operations were not documented in the previous release
        (2.1).  Arrangements can often be used as a substitute.
 </UL>
 </DIV>
@@ -3284,18 +3305,18 @@ The following functionality has been added:
 <LI> Alpha shapes and weighted alpha shapes in 2D. Alpha shapes are a
      generalization of the convex hull of a point set.
 <LI> Arrangements in 2D. Arrangements are related to and based on planar maps.
-     The major difference between the two is that curves are allowed to 
+     The major difference between the two is that curves are allowed to
      intersect in the case of arrangements.
-<LI> Extensions to triangulations in 2D.  Constrained triangulations are now 
-     dynamic: they support insertions of new constraint as well as removal of 
+<LI> Extensions to triangulations in 2D.  Constrained triangulations are now
+     dynamic: they support insertions of new constraint as well as removal of
      existing constraints.  There are also constrained Delaunay triangulations.
 <LI> Triangulations in 3D were added, both Delaunay triangulations and regular
      triangulations.
-<LI> Min_quadrilateral optimisations have been added.  These are algorithms to 
-     compute the minimum enclosing rectangle/parallelogram (arbitrary 
-     orientation) and the minimum enclosing strip of a convex point set. 
+<LI> Min_quadrilateral optimisations have been added.  These are algorithms to
+     compute the minimum enclosing rectangle/parallelogram (arbitrary
+     orientation) and the minimum enclosing strip of a convex point set.
 <LI> 2d Point_set is a package for 2d range search operations, Delaunay
-     triangulation, nearest neighbor queries. This package works only if 
+     triangulation, nearest neighbor queries. This package works only if
      LEDA
      is installed.
 <LI> Support for GeoWin visualization library. This also depends on
@@ -3312,8 +3333,8 @@ The following functionality has been added:
 <DIV>
 <p>Release date: June 1999</p>
 
-<p>The main difference from release 1.2 is the 
-introduction of namespaces -- namespace <TT>std</TT> for code from 
+<p>The main difference from release 1.2 is the
+introduction of namespaces -- namespace <TT>std</TT> for code from
 the standard library and namespace <TT>CGAL</TT> for
 the CGAL library.
 </DIV>
@@ -3325,9 +3346,9 @@ the CGAL library.
 <p>Additions to release 1.1 include: </p>
 
 <UL>
-   <LI>topological map 
-   <LI>planar map overlay 
-   <LI>regular and constrained triangulations 
+   <LI>topological map
+   <LI>planar map overlay
+   <LI>regular and constrained triangulations
 </UL>
 </DIV>
 
