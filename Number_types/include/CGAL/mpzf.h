@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <vector>
 #include <math.h>
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <gmp.h>
@@ -102,7 +103,7 @@ template <class T, class = void> struct pool3 {
   private:
   BOOST_STATIC_ASSERT(sizeof(T) >= sizeof(T*));
   struct cleaner {
-    T data_ = 0; 
+    T data_ = 0;
     ~cleaner(){
       // Deallocate everything. As an alternative, we could store it in a
       // global location, for re-use by a later thread.
@@ -547,13 +548,16 @@ struct mpzf {
     }
     return res;
   }
+
   public:
   friend mpzf operator+(mpzf const&a, mpzf const&b){
     return aors(a,b,b.size);
   }
+
   friend mpzf operator-(mpzf const&a, mpzf const&b){
     return aors(a,b,-b.size);
   }
+
   friend mpzf operator*(mpzf const&a, mpzf const&b){
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
@@ -571,6 +575,7 @@ struct mpzf {
     res.size=((a.size^b.size)>=0)?siz:-siz;
     return res;
   }
+
   friend mpzf mpzf_square(mpzf const&a){
     int asize=std::abs(a.size);
     int siz=2*asize;
@@ -584,38 +589,7 @@ struct mpzf {
     res.size=siz;
     return res;
   }
-  friend mpzf mpzf_gcd(mpzf const&a, mpzf const&b){
-    // FIXME: Untested
-    if (a.size == 0) return b;
-    if (b.size == 0) return a;
-    int asize=std::abs(a.size);
-    int bsize=std::abs(b.size);
-    int atz=mpzf_impl::ctz(a.data()[0]);
-    int btz=mpzf_impl::ctz(b.data()[0]);
-    int rtz=std::min(atz,btz);
-    mpzf tmp(allocate(), asize);
-    mpzf res(allocate(), bsize);
-    if (atz != 0) {
-      mpn_rshift(tmp.data(), a.data(), asize, atz);
-      if(tmp.data()[asize-1]==0) --asize;
-    }
-    else { mpn_copyi(tmp.data(), a.data(), asize); }
-    if (btz != 0) {
-      mpn_rshift(res.data(), b.data(), bsize, btz);
-      if(res.data()[bsize-1]==0) --bsize;
-    }
-    else { mpn_copyi(res.data(), b.data(), bsize); }
-    res.exp = 0; // Pick b.exp? or the average? 0 helps return 1 more often.
-    if (asize < bsize)
-      res.size = mpn_gcd(res.data(), res.data(), bsize, tmp.data(), asize);
-    else
-      res.size = mpn_gcd(res.data(), tmp.data(), asize, res.data(), bsize);
-    if(rtz!=0) {
-      mp_limb_t c = mpn_lshift(res.data(), res.data(), res.size, rtz);
-      if(c) { res.data()[res.size]=c; ++res.size; }
-    }
-    return res;
-  }
+
   friend mpzf operator/(mpzf const&a, mpzf const&b){
     // FIXME: Untested
     int asize=std::abs(a.size);
@@ -665,6 +639,76 @@ struct mpzf {
     return res;
   }
 
+  friend mpzf mpzf_gcd(mpzf const&a, mpzf const&b){
+    // FIXME: Untested
+    if (a.size == 0) return b;
+    if (b.size == 0) return a;
+    int asize=std::abs(a.size);
+    int bsize=std::abs(b.size);
+    int atz=mpzf_impl::ctz(a.data()[0]);
+    int btz=mpzf_impl::ctz(b.data()[0]);
+    int rtz=std::min(atz,btz);
+    mpzf tmp(allocate(), asize);
+    mpzf res(allocate(), bsize);
+    if (atz != 0) {
+      mpn_rshift(tmp.data(), a.data(), asize, atz);
+      if(tmp.data()[asize-1]==0) --asize;
+    }
+    else { mpn_copyi(tmp.data(), a.data(), asize); }
+    if (btz != 0) {
+      mpn_rshift(res.data(), b.data(), bsize, btz);
+      if(res.data()[bsize-1]==0) --bsize;
+    }
+    else { mpn_copyi(res.data(), b.data(), bsize); }
+    res.exp = 0; // Pick b.exp? or the average? 0 helps return 1 more often.
+    if (asize < bsize)
+      res.size = mpn_gcd(res.data(), res.data(), bsize, tmp.data(), asize);
+    else
+      res.size = mpn_gcd(res.data(), tmp.data(), asize, res.data(), bsize);
+    if(rtz!=0) {
+      mp_limb_t c = mpn_lshift(res.data(), res.data(), res.size, rtz);
+      if(c) { res.data()[res.size]=c; ++res.size; }
+    }
+    return res;
+  }
+
+  friend bool mpzf_is_square(mpzf const&x){
+    if (x.size < 0) return false;
+    if (x.size == 0) return true;
+    // Assume that GMP_NUMB_BITS is even.
+    return mpn_perfect_square_p (x.data(), x.size);
+  }
+
+  friend mpzf mpzf_sqrt(mpzf const&x){
+    if (x.size < 0) throw std::range_error("Sqrt of negative number");
+    if (x.size == 0) return 0;
+    if (x.size % 2 == 0) {
+      mpzf res(allocate(), x.size / 2);
+      res.exp = x.exp / 2;
+      res.size = x.size / 2;
+      CGAL_assertion_code(mp_size_t rem=)
+      mpn_sqrtrem(res.data(), 0, x.data(), x.size);
+      CGAL_assertion(rem==0);
+    }
+    else if (x.data()[-1] == 0) {
+      mpzf res(allocate(), (x.size + 1) / 2);
+      res.exp = (x.exp - 1) / 2;
+      res.size = (x.size + 1) / 2;
+      CGAL_assertion_code(mp_size_t rem=)
+      mpn_sqrtrem(res.data(), 0, x.data()-1, x.size+1);
+      CGAL_assertion(rem==0);
+    }
+    else {
+      mpzf res(allocate(), (x.size + 1) / 2);
+      res.exp = (x.exp - 1) / 2;
+      res.size = (x.size + 1) / 2;
+      CGAL_assertion_code(mp_size_t rem=)
+      mpn_sqrtrem(res.data(), 0, x.data(), x.size);
+      CGAL_assertion(rem==0);
+      mpn_lshift(res.data(), res.data(), res.size, GMP_NUMB_BITS / 2);
+    }
+  }
+
   friend mpzf operator-(mpzf const&x){
     mpzf ret = x;
     ret.size = -ret.size;
@@ -682,6 +726,18 @@ struct mpzf {
   }
 
   CGAL::Sign sign () const { return CGAL::sign(size); }
+
+  double to_double () const {
+    // Assumes GMP_NUMB_BITS == 64
+    using std::ldexp;
+    if(size==0) return 0;
+    int asize = std::abs(size);
+    mp_limb_t top = data()[asize-1];
+    double dtop = top;
+    if(top >= (1LL<<53) || asize == 1) /* ok */ ;
+    else { dtop += (double)data()[asize-2] * ldexp(1.,-GMP_NUMB_BITS); }
+    return ldexp( (size<0) ? -dtop : dtop, exp * GMP_NUMB_BITS);
+  }
 
 #ifdef CGAL_USE_GMPXX
   // For testing purposes
@@ -705,59 +761,123 @@ struct mpzf {
     }
     return q;
   }
+  friend void simplify_quotient(mpzf& a, mpzf& b){
+    // Avoid quotient(2^huge_a/2^huge_b)
+    a.exp -= b.exp;
+    b.exp = 0;
+    // Simplify with gcd?
+  }
 #endif
 };
 }
 
 
 namespace CGAL {
-  template <> class Algebraic_structure_traits< mpzf >
+  template <> struct Algebraic_structure_traits< mpzf >
     : public Algebraic_structure_traits_base< mpzf, Integral_domain_without_division_tag >  {
-      public:
-	typedef Tag_true            Is_exact;
-	typedef Tag_false            Is_numerical_sensitive;
+      typedef Tag_true            Is_exact;
+      typedef Tag_false            Is_numerical_sensitive;
 
-	struct Is_zero
-	  : public std::unary_function< Type, bool > {
-	      bool operator()( const Type& x ) const {
-		return x.sign() == 0;
-	      }
-	  };
+      struct Is_zero
+	: public std::unary_function< Type, bool > {
+	  bool operator()( const Type& x ) const {
+	    return x.sign() == 0;
+	  }
+	};
 
-	struct Is_one
-	  : public std::unary_function< Type, bool > {
-	      bool operator()( const Type& x ) const {
-		return x == 1;
-	      }
-	  };
+      struct Is_one
+	: public std::unary_function< Type, bool > {
+	  bool operator()( const Type& x ) const {
+	    return x == 1;
+	  }
+	};
 
-	struct Gcd
-	  : public std::binary_function< Type, Type, Type > {
-	      Type operator()(
-		  const Type& x,
-		  const Type& y ) const {
-		return mpzf_gcd(x, y);
-	      }
-	  };
+      struct Gcd
+	: public std::binary_function< Type, Type, Type > {
+	  Type operator()(
+	      const Type& x,
+	      const Type& y ) const {
+	    return mpzf_gcd(x, y);
+	  }
+	};
 
-	class Square
-	  : public std::unary_function< Type, Type > {
-	      Type operator()( const Type& x ) const {
-		return mpzf_square(x);
-	      }
-	  };
+      struct Square
+	: public std::unary_function< Type, Type > {
+	  Type operator()( const Type& x ) const {
+	    return mpzf_square(x);
+	  }
+	};
+
+      struct Integral_division
+	: public std::binary_function< Type, Type, Type > {
+	  Type operator()(
+	      const Type& x,
+	      const Type& y ) const {
+	    return x / y;
+	  }
+	};
+
+      struct Sqrt
+	: public std::unary_function< Type, Type > {
+	  Type operator()( const Type& x) const {
+	    return mpzf_sqrt(x);
+	  }
+	};
+
+      struct Is_square
+	: public std::binary_function< Type, Type&, bool > {
+	  bool operator()( const Type& x, Type& y ) const {
+	    // TODO: avoid doing 2 calls.
+	    if (!mpzf_is_square(x)) return false;
+	    y = mpzf_sqrt(x);
+	    return true;
+	  }
+	  bool operator()( const Type& x) const {
+	    return mpzf_is_square(x);
+	  }
+	};
 
     };
-  template <> class Real_embeddable_traits< mpzf >
+  template <> struct Real_embeddable_traits< mpzf >
     : public INTERN_RET::Real_embeddable_traits_base< mpzf , CGAL::Tag_true > {
-      public:
-	struct Sgn
-	  : public std::unary_function< Type, ::CGAL::Sign > {
-	      ::CGAL::Sign operator()( const Type& x ) const {
-		return x.sign();
-	      }
-	  };
+      struct Sgn
+	: public std::unary_function< Type, ::CGAL::Sign > {
+	  ::CGAL::Sign operator()( const Type& x ) const {
+	    return x.sign();
+	  }
+	};
+
+      struct To_double
+	: public std::unary_function< Type, double > {
+	  public:
+	    double operator()( const Type& x ) const {
+	      return x.to_double();
+	    }
+	};
+
+#if 0
+      struct Compare
+	: public std::binary_function< Type,
+	Type,
+	Comparison_result > {
+	  public:
+	    Comparison_result operator()(
+		const Type& x,
+		const Type& y ) const {
+	      return mpzf_cmp(x,y);
+	    }
+	};
+
+      struct To_interval
+	: public std::unary_function< Type, std::pair< double, double > > {
+	  public:
+	    std::pair<double, double> operator()( const Type& x ) const {
+	      return x.to_interval();
+	    }
+	};
+#endif
 
     };
+
 }
 #endif // CGAL_MPZF_H
