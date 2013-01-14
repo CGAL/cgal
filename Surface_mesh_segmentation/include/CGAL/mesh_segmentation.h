@@ -114,6 +114,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] segment_ids the segment id of each facet
+ * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet
  * @param number_of_levels number of clusters for soft clustering
  * @param smoothing_lambda factor in the interval [0,1] which indicates the importance of surface features in energy minimization
