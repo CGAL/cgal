@@ -26,8 +26,6 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
-// We need a simple forward declaration to avoid including the whole
-// homogeneous kernel here.
 #include <CGAL/Homogeneous_converter.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
@@ -37,6 +35,7 @@
 #include <CGAL/internal/Exact_type_selector.h>
 
 #include <CGAL/internal/Static_filters/Static_filters.h>
+#include <boost/type_traits.hpp>
 
 // This file contains the definition of a generic kernel filter.
 //
@@ -50,104 +49,46 @@
 //   traits-like mechanism ?
 
 namespace CGAL {
+namespace Filter {
+template <class CK, class Rep=typename CK::Rep_tag /* Cartesian_tag */>
+struct Select_exact_kernel
+{
+  typedef typename internal::Exact_field_selector<typename CK::RT>::Type  Exact_nt;
+  typedef typename internal::Exact_ring_selector <typename CK::RT>::Type  Exact_rt;
+  typedef Simple_cartesian<Exact_nt>			Exact_kernel;
+  typedef Simple_cartesian<Exact_rt>			Exact_kernel_rt;
+  typedef Cartesian_converter<CK, Exact_kernel>		C2E;
+  typedef Cartesian_converter<CK, Exact_kernel_rt>	C2E_rt;
+};
+
+template <class CK>
+struct Select_exact_kernel <CK, Homogeneous_tag>
+{
+  typedef typename internal::Exact_ring_selector<typename CK::RT>::Type  Exact_nt;
+  typedef Simple_homogeneous<Exact_nt>			Exact_kernel;
+  typedef Homogeneous_converter<CK, Exact_kernel>	C2E;
+  typedef Exact_kernel					Exact_kernel_rt;
+  typedef C2E						C2E_rt;
+};
+}
 
 // CK = eventually rebound construction kernel (gets Point_2 from).
 // Exact_kernel = exact kernel called when needed by the filter.
 // Approximate_kernel = filtering "interval" kernel
 template < typename CK >
-struct Filtered_kernel_base_FT
-  : public CK
-{
-    typedef typename internal::Exact_field_selector<typename CK::RT>::Type  Exact_nt;
-    typedef Simple_cartesian<Exact_nt>                           Exact_kernel;
-    typedef Simple_cartesian<Interval_nt_advanced>               Approximate_kernel;
-    typedef Cartesian_converter<CK, Exact_kernel>                C2E;
-    typedef Cartesian_converter<CK, Approximate_kernel>          C2F;
-
-    // We change the predicates.
-#define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
-    P Pf() const { return P(); }
-
-    // We don't touch the constructions.
-#define CGAL_Kernel_cons(Y,Z)
-
-#include <CGAL/Kernel/interface_macros.h>
-
-};
-
-template < typename CK >
-struct Filtered_kernel_base_RT
-  : public CK
-{
-    typedef typename internal::Exact_ring_selector<typename CK::RT>::Type  Exact_rt;
-    typedef Simple_cartesian<Exact_rt>                       EK_rt;
-    typedef Simple_cartesian<Interval_nt_advanced>           AK_rt;
-    typedef Cartesian_converter<CK, EK_rt>                   C2E_rt;
-    typedef Cartesian_converter<CK, AK_rt>                   C2F_rt;
-
-// Change the predicates for which we know the Simple_cartesian implementation
-// does not use divisions. Use a different macro in interface_macros to
-// distinguish those predicates?
-#define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename EK_rt::P, typename AK_rt::P, C2E_rt, C2F_rt> P; \
-    P Pf() const { return P(); }
-
-CGAL_Kernel_pred(Orientation_2,
-                 orientation_2_object)
-CGAL_Kernel_pred(Orientation_3,
-                 orientation_3_object)
-CGAL_Kernel_pred(Side_of_bounded_circle_2,
-                 side_of_bounded_circle_2_object)
-CGAL_Kernel_pred(Side_of_bounded_sphere_3,
-                 side_of_bounded_sphere_3_object)
-CGAL_Kernel_pred(Side_of_oriented_circle_2,
-                 side_of_oriented_circle_2_object)
-CGAL_Kernel_pred(Side_of_oriented_sphere_3,
-                 side_of_oriented_sphere_3_object)
-
-#undef CGAL_Kernel_pred
-};
-
-template < typename CK >
-struct Filtered_kernel_base_hom
-  : public CK
-{
-    typedef typename internal::Exact_ring_selector<typename CK::RT>::Type  Exact_nt;
-    typedef Simple_homogeneous<Exact_nt>                         Exact_kernel;
-    typedef Simple_cartesian<Interval_nt_advanced>               Approximate_kernel;
-    typedef Homogeneous_converter<CK, Exact_kernel>              C2E;
-    typedef Cartesian_converter<CK, Approximate_kernel>          C2F;
-    // Note that the converter will call point.x() and point.y() and convert
-    // those to intervals; it could instead call point.hx(), point.hy() and
-    // point.hz(), convert them to intervals and then divide to get x and y.
-
-    // We change the predicates.
-#define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
-    P Pf() const { return P(); }
-
-    // We don't touch the constructions.
-#define CGAL_Kernel_cons(Y,Z)
-
-#include <CGAL/Kernel/interface_macros.h>
-
-};
-
-template < typename CK, typename = typename CK::Rep_tag /* Cartesian_tag */>
-struct Filtered_kernel_base_impl
-  : public Filtered_kernel_base_RT < Filtered_kernel_base_FT < CK > >
-{};
-
-template < typename CK >
-struct Filtered_kernel_base_impl < CK, Homogeneous_tag >
-  : public Filtered_kernel_base_hom < CK >
-{};
-
-template < typename CK >
 struct Filtered_kernel_base
-  : public Filtered_kernel_base_impl < CK >
+  : public CK
 {
+  // Use Select_exact_kernel as a base class?
+    typedef typename Filter::Select_exact_kernel<CK>::Exact_nt Exact_nt;
+    typedef typename Filter::Select_exact_kernel<CK>::Exact_kernel Exact_kernel;
+    typedef typename Filter::Select_exact_kernel<CK>::Exact_kernel_rt Exact_kernel_rt;
+    typedef typename Filter::Select_exact_kernel<CK>::C2E C2E;
+    typedef typename Filter::Select_exact_kernel<CK>::C2E_rt C2E_rt;
+
+    typedef Simple_cartesian<Interval_nt_advanced>        Approximate_kernel;
+    typedef Cartesian_converter<CK, Approximate_kernel>   C2F;
+
     enum { Has_filtered_predicates = true };
     typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
 
@@ -166,6 +107,21 @@ struct Filtered_kernel_base
     struct Feature_dimension {
         typedef typename T::Feature_dimension type; // maybe not the right way...
     };
+
+    // We change the predicates.
+#define CGAL_Kernel_pred(P, Pf) \
+    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
+    P Pf() const { return P(); }
+
+#define CGAL_Kernel_pred_RT(P, Pf) \
+    typedef Filtered_predicate<typename Exact_kernel_rt::P, typename Approximate_kernel::P, C2E_rt, C2F> P; \
+    P Pf() const { return P(); }
+
+    // We don't touch the constructions.
+#define CGAL_Kernel_cons(Y,Z)
+
+#include <CGAL/Kernel/interface_macros.h>
+
 };
 
 template < typename CK >
