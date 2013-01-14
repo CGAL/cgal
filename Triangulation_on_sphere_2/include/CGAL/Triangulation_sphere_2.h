@@ -321,7 +321,7 @@ Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f = Face_handle
 	
 	
 Edge_circulator incident_edges(Vertex_handle v, Face_handle f = Face_handle()) const{
-	return _tds.incidet_edges(v,f);
+	return _tds.incident_edges(v,f);
 }
 	
 	
