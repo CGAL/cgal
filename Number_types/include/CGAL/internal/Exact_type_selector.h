@@ -152,15 +152,18 @@ struct Exact_field_selector<CORE::Expr>
 
 template < typename ET >
 struct Exact_field_selector<Lazy_exact_nt<ET> >
+: Exact_field_selector<ET>
 {
   // We have a choice here :
   // - using ET gets rid of the DAG computation as well as redoing the interval
   // - using Lazy_exact_nt<ET> might use sharper intervals.
-  typedef ET  Type;
+  // typedef ET  Type;
   // typedef Lazy_exact_nt<ET>  Type;
-
-  // Should this forward to Exact_field_selector<ET> ? -- Marc Glisse, 2012-12.
 };
+template < typename ET >
+struct Exact_ring_selector<Lazy_exact_nt<ET> >
+: Exact_ring_selector<ET>
+{};
 
 } } // namespace CGAL::internal
 
