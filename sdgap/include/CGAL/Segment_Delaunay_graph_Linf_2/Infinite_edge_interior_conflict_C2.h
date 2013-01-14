@@ -68,7 +68,7 @@ namespace CGAL {
           << ' ' << sgn << std::endl;);
 
       if ( t.is_segment() ) {
-        if (sgn == NEGATIVE and s.is_segment()) {
+        if (sgn == NEGATIVE and (s.is_segment() or r.is_segment() or q.is_segment())) {
           CGAL_SDG_DEBUG(std::cout <<
               "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
                      << q << ' ' << s << ' ' << r << ' ' << t

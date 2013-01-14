@@ -164,11 +164,65 @@ public:
   result_type
       operator()(const Site_2& p, const Site_2& q) const
   {
-    CGAL_assertion( !(p.is_segment() && q.is_segment()) );
+    //CGAL_assertion( !(p.is_segment() && q.is_segment()) );
+    //Sandeep: we can have bisector line when p and q are both segments
+    //and p,q share an end point.
 
     CGAL_SDG_DEBUG( std::cout << "debug construct bisector line " 
               << "p=" << p << " q=" << q << std::endl; );
-
+    if (p.is_segment() and q.is_segment()) {
+      // p and q both segment
+      unsigned int npts = 1;
+      Point_2 points[1];
+      Equal_2 are_same_points;//the arguments are sites
+      //points[0] is the common end point of p and q
+      Point_2 cpt = ( (are_same_points(p.source_site(),q.source_site())) or
+                      (are_same_points(p.source_site(),q.target_site())) ) ?
+                       p.source_site().point() : p.target_site().point();
+      points[0] = cpt;
+      //cps = common point site
+      Site_2 cps = ( (are_same_points(p.source_site(),q.source_site())) or
+                     (are_same_points(p.source_site(),q.target_site())) ) ?
+                      p.source_site() : p.target_site();
+      
+      Point_2 pp = are_same_points(cps, p.source_site()) ?
+                   p.source_site().point() : p.target_site().point();
+      Point_2 qp = are_same_points(cps, q.source_site()) ?
+                   q.source_site().point() : q.target_site().point();
+      Direction_2 d;
+      Compare_x_2 compare_x_2;
+      Compare_y_2 compare_y_2;
+      // the bisector should leave p to the right and q to the left
+      if (p.segment().is_horizontal() and q.segment().is_horizontal()) {
+        //both horizontal
+        d = (compare_x_2(pp,qp) == SMALLER) ? Direction_2(0,-1) : Direction_2(0,+1);
+      } else if (p.segment().is_vertical() and q.segment().is_vertical()) {
+        //p is vertical and q is vertical
+        d = (compare_y_2(pp,qp) == SMALLER) ? Direction_2(+1,0) : Direction_2(-1,0);
+      } else if (p.segment().is_horizontal() and q.segment().is_vertical()) {
+        // p is horizontal q is vertical
+        if (compare_y_2(cpt,qp) == SMALLER) {
+          d = (compare_x_2(cpt,pp)==SMALLER) ? Direction_2(+1,+1) : Direction_2(+1,-1);
+        } else {//vertical segment q lies below horizontal segment p
+          d = (compare_x_2(cpt,pp)==SMALLER) ? Direction_2(-1,+1) : Direction_2(-1,-1);
+        }
+      } else {
+        // p is vertical and q is horizontal
+        if (compare_x_2(cpt,qp) == SMALLER) {// q lies right of p
+          d = (compare_y_2(cpt,pp)==SMALLER) ? Direction_2(-1,-1) : Direction_2(+1,-1);
+        } else {//q lies left of p
+          d = (compare_y_2(cpt,pp)==SMALLER) ? Direction_2(-1,+1) : Direction_2(+1,+1);
+        }
+      }
+      
+      Polychainline pcl(-d, points, points+npts, d);
+      
+      CGAL_SDG_DEBUG( std::cout << "debug construct bisector line is "
+                                << pcl << std::endl; );
+      
+      return pcl;
+    }
+      
     if ( p.is_point() and q.is_point() ) { 
       Point_2 pp = p.point(); 
       Point_2 pq = q.point();
