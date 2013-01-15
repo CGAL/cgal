@@ -284,7 +284,7 @@ traits);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The same as `sibson_interpolation()` except that no square root
+The same as `sibson_c1_interpolation()` except that no square root
 operation is needed for FT.
 */
 template < class ForwardIterator, class Functor, class
