@@ -46,8 +46,8 @@ public:
   typedef typename Base::Solid_faces_iterator     Solid_faces_iterator;
   typedef typename Base::Solid_edges_iterator     Solid_edges_iterator;
   typedef typename Base::Contour_edges_iterator Contour_edges_iterator;
-  typedef typename Base::Face::Vertex_list        Vertex_list;
-  typedef typename Vertex_list::iterator          Vertex_list_iterator;
+	  //typedef typename Base::Vertex_list        Vertex_list;
+  //typedef typename Vertex_list::iterator          Vertex_list_iterator;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;

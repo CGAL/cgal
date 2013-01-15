@@ -225,11 +225,11 @@ public:
   typedef typename R::Compute_squared_distance_3         Compute_squared_distance_2;
   typedef typename R::Compare_xyz_3					 Compare_xyz_3;
 	
- 	
+ 	double _radius;
 	
 	
   typedef boost::true_type  requires_test;
-	void set_radius(double a){}
+	void set_radius(double a){_radius = a;}
 	
 
   Delaunay_triangulation_sphere_traits_2(const Point_2& sphere=Point_2(0,0,0));
