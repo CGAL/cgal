@@ -6,8 +6,9 @@ $Date$
 
 
 
-
 TODO:
+ * Optimize removal (with offsets == 0)
+
  * Documentation
    * obvious things (that Nico is certainly aware of) still TODOs left, and NGHKs
    - Demo's
@@ -27,7 +28,7 @@ TODO:
 
 
  * Add \ccMethod{bool has_zero_offsets() const;} to the face base and use it where possible to speed up code
- * Batch insertion, check 12 points and update if not possible.
+ * BATCH INSERTION, check 12 points and update if not possible.
  * Periodic_2_triangulation_2
    * Remove Periodic_2_vertex_base: This is exactly the same as the Triangulation_vertex_base.
    * Check copyright notice

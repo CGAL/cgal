@@ -47,8 +47,6 @@ Face_handle test_point_location(const Triangulation &t,
 int main() {
   Triangulation t;
   Face_handle fh;
-  Triangulation::Locate_type lt, lt2;
-  int li, li2;
 
   // Check the empty triangulation
   fh = test_point_location(t, Point(0.5, 0.5), Triangulation::EMPTY);

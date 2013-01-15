@@ -7,13 +7,13 @@ int main(int argc, char* argv[]) {
 
   Vector midpoint(0.5, 0.5);
 
-  Vertex_handle vh = t.nearest_vertex(Point(0,0) + midpoint);
-  CGAL_assertion(vh == Vertex_handle());
+  // Vertex_handle vh = t.nearest_vertex(Point(0,0) + midpoint);
+  // CGAL_assertion(vh == Vertex_handle());
 
   Vertex_handle vh_midpoint = t.insert(Point(0,0) + midpoint);
-  vh = t.nearest_vertex(Point(0,0) + midpoint);
-  CGAL_assertion(vh == vh_midpoint);
-  t.remove(vh);
+  // vh = t.nearest_vertex(Point(0,0) + midpoint);
+  // CGAL_assertion(vh == vh_midpoint);
+  t.remove(vh_midpoint);
   CGAL_assertion(t.empty());
 
   Random random(1284141159);

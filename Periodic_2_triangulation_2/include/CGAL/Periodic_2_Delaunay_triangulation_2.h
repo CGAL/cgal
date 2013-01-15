@@ -142,7 +142,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
-         bool is_large_point_set = false)
+         bool is_large_point_set = true)
   {
     if (first == last) return 0;
 
@@ -577,7 +577,7 @@ private:
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
 		       pit)  const {
     Face_handle fn = fh->neighbor(i);
-    if (! test_conflict(p,fn)) {
+    if (! this->test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
     } else {
       *(pit.first)++ = fn;
@@ -1011,7 +1011,6 @@ non_recursive_propagating_flip(Face_handle f , int i)
 {
   std::stack<Edge> edges;
   const Vertex_handle& vp = f->vertex(i);
-  const Point& p = vp->point();
   edges.push(Edge(f,i));
 
   while(! edges.empty()){
@@ -1337,7 +1336,7 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
   this->make_hole(v, hole);
 
   std::map<Vertex_handle, Offset> vertex_offsets;
-  for (size_t idx=0; idx<d; ++idx) {
+  for (int idx=0; idx<d; ++idx) {
     vertex_offsets[w[idx]] = offset_w[idx];
   }
 

@@ -1286,7 +1286,7 @@ protected:
   bool from_convex_hull(Vertex_handle v) {
     NGHK_NYI;
     CGAL_triangulation_precondition(!is_infinite(v));
-    Vertex_circulator vc = incident_vertices(v), done(vc);
+    Vertex_circulator vc = adjacent_vertices(v), done(vc);
     do {
       if (is_infinite(vc))
         return true;
@@ -1519,9 +1519,11 @@ private:
 // CONSTRUCTORS
 template<class Gt, class Tds>
 Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
-    const Iso_rectangle & domain, const Geom_traits& geom_traits) :
-  _gt(geom_traits), _tds(), _domain(domain), _too_long_edge_counter(0), _cover(
-      make_array(1, 1)) {
+    const Iso_rectangle & domain, const Geom_traits& geom_traits)
+  : _gt(geom_traits), _tds()
+  , _cover(make_array(1, 1))
+  , _domain(domain)
+  , _too_long_edge_counter(0) {
   CGAL_triangulation_precondition(_domain.xmax() - _domain.xmin() ==
       _domain.ymax() - _domain.ymin());
   _gt.set_domain(_domain);
@@ -1534,8 +1536,11 @@ template<class Gt, class Tds>
 template < class InputIterator >
 Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
 		InputIterator first, InputIterator last,
-		const Iso_rectangle & domain, const Gt& geom_traits) :
-		_gt(geom_traits), _tds(), _domain(domain), _too_long_edge_counter(0), _cover(make_array(1, 1)) {
+		const Iso_rectangle & domain, const Gt& geom_traits)
+  : _gt(geom_traits), _tds()
+  , _cover(make_array(1, 1))
+  , _domain(domain)
+  , _too_long_edge_counter(0) {
 	CGAL_triangulation_precondition(_domain.xmax()-_domain.xmin() == _domain.ymax()-_domain.ymin());
 
 	_gt.set_domain(_domain);
@@ -1550,9 +1555,9 @@ template<class Gt, class Tds>
 Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
     const Periodic_2_triangulation_2 &tr)
   : _gt(tr._gt)
+  , _cover(tr._cover)
   , _domain(tr._domain)
-  , _edge_length_threshold(tr._edge_length_threshold)
-  , _cover(tr._cover) {
+  , _edge_length_threshold(tr._edge_length_threshold) {
   if (is_1_cover()) {
     _tds = tr.tds();
   } else {
@@ -1794,7 +1799,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) cons
     const Vertex_handle &copy = it->first;
     const Vertex_handle &orig = it->second.first;
     const Offset &off = it->second.second;
-    int index = number_of_sheets()[0] * off[0] + off[1] - 1;
+    size_t index = number_of_sheets()[0] * off[0] + off[1] - 1;
     Virtual_vertex_reverse_map_it rev_it = _virtual_vertices_reverse.find(orig);
     if (rev_it != _virtual_vertices_reverse.end()) {
       if (index < rev_it->second.size()) {
@@ -2369,7 +2374,7 @@ Periodic_2_triangulation_2<Gt, Tds>::insert(const Point& p,
 
   const std::vector<Vertex_handle> &start_vertices =
       _virtual_vertices_reverse.find(vstart)->second;
-  CGAL_assertion(start_vertices.size() == number_of_sheets()[0] * number_of_sheets()[1] - 1);
+  CGAL_assertion(start_vertices.size() == size_t(number_of_sheets()[0] * number_of_sheets()[1] - 1));
 
   for (int i = 0; i < number_of_sheets()[0]; i++) {
     for (int j = 0; j < number_of_sheets()[1]; j++) {
@@ -3943,7 +3948,7 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(
 
 template<class Gt, class Tds>
 Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(Face_handle f,
-    const Point& p, const Offset &o) const {
+                                                                 const Point& p, const Offset &o) const {
   Point &p0 = f->vertex(0)->point();
   Point &p1 = f->vertex(1)->point();
   Point &p2 = f->vertex(2)->point();
@@ -3989,6 +3994,9 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(Face_handle f,
 
     return ON_NEGATIVE_SIDE;
   }
+
+  CGAL_assertion(false);
+  return ON_NEGATIVE_SIDE;
 }
 
 template<class Gt, class Tds>
@@ -4458,9 +4466,9 @@ inline bool Periodic_2_triangulation_2<GT, TDS>::is_triangulation_in_1_sheet() c
     std::set<Vertex_handle> nb_v_odom;
     Vertex_handle vh;
     Offset off;
-    Vertex_circulator vcir = incident_vertices(vit);
+    Vertex_circulator vcir = adjacent_vertices(vit);
     Vertex_circulator vstart = vcir;
-    int degree = 0;
+    size_t degree = 0;
     do {
       get_vertex(vcir, vh, off);
       nb_v_odom.insert(vh);

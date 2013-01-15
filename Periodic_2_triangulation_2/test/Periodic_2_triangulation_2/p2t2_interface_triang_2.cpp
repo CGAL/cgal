@@ -34,25 +34,35 @@ void test_global_access() {
   T t;
   const T &t_const = t;
 
-  const typename T::Geom_traits &gt = t.geom_traits();
+  typename T::Geom_traits gt;
+  gt = t.geom_traits();
 
-  const typename T::Triangulation_data_structure &tds = t_const.tds();
-  typename T::Triangulation_data_structure &tds2 = t.tds();
-  const typename T::Iso_rectangle &domain = t_const.domain();
-  const typename T::Covering_sheets &sheets = t_const.number_of_sheets();
-  int dimension = t_const.dimension();
+  t_const.tds();
+  t.tds();
+  t_const.domain();
+  t_const.number_of_sheets();
+  t_const.dimension();
 
-  int number_of_vertices = t_const.number_of_vertices();
-  int number_of_faces = t_const.number_of_faces();
-  int number_of_stored_vertices = t_const.number_of_stored_vertices();
-  int number_of_stored_faces = t_const.number_of_stored_faces();
+  size_t number_of_vertices = t_const.number_of_vertices();
+  CGAL_assertion(number_of_vertices == t.number_of_vertices());
+  size_t number_of_faces = t_const.number_of_faces();
+  CGAL_assertion(number_of_faces == t.number_of_faces());
+  size_t number_of_stored_vertices = t_const.number_of_stored_vertices();
+  CGAL_assertion(number_of_stored_vertices == t.number_of_stored_vertices());
+  size_t number_of_stored_faces = t_const.number_of_stored_faces();
+  CGAL_assertion(number_of_stored_faces == t.number_of_stored_faces());
 
-  int number_of_edges = t_const.number_of_edges();
-  int number_of_stored_edges = t_const.number_of_stored_edges();
+  size_t number_of_edges = t_const.number_of_edges();
+  CGAL_assertion(number_of_edges == t.number_of_edges());
+  size_t number_of_stored_edges = t_const.number_of_stored_edges();
+  CGAL_assertion(number_of_stored_edges == t.number_of_stored_edges());
 
   bool ext1 = t_const.is_extensible_triangulation_in_1_sheet_h1();
+  CGAL_assertion(ext1 == t.is_extensible_triangulation_in_1_sheet_h1());
   bool ext2 = t_const.is_extensible_triangulation_in_1_sheet_h2();
+  CGAL_assertion(ext2 == t.is_extensible_triangulation_in_1_sheet_h2());
   bool is_triang1 = t_const.is_triangulation_in_1_sheet();
+  CGAL_assertion(is_triang1 == t.is_triangulation_in_1_sheet());
   t.convert_to_1_sheeted_covering();
   t.convert_to_9_sheeted_covering();
 }
@@ -95,18 +105,17 @@ void test_predicates() {
   typedef typename T::Face_handle     Face_handle;
 
   T t;
-  const T &t_const = t;
 
   Vertex_handle vh0 = t.insert(Point(0.5, 0.5));
   Vertex_handle vh1 = t.insert(Point(0.7, 0.5));
   Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
 
-  bool b = t.is_edge(vh0, vh1);
+  t.is_edge(vh0, vh1);
   Face_handle fh; int i;
-  b = t.is_edge(vh0, vh1, fh, i);
+  t.is_edge(vh0, vh1, fh, i);
   
-  b = t.is_face(vh0, vh1, vh2);
-  b = t.is_face(vh0, vh1, vh2, fh);
+  t.is_face(vh0, vh1, vh2);
+  t.is_face(vh0, vh1, vh2, fh);
 }
 
 template <class T>
@@ -129,8 +138,8 @@ void test_queries() {
   fh = t_const.locate(p0, lt, li);
   fh = t_const.locate(p0, lt, li, fh);
 
-  CGAL::Oriented_side os = t_const.oriented_side(fh, p0);
-  os = t_const.side_of_oriented_circle(fh, p0);
+  t_const.oriented_side(fh, p0);
+  t_const.side_of_oriented_circle(fh, p0);
 }
 
 template <class T>
@@ -241,7 +250,7 @@ void test_circulators() {
   vcir = t_const.adjacent_vertices(vh0, fcir);
 
   Vertex_handle v_mirror = t_const.mirror_vertex(fcir, 0);
-  int mirror_index = t_const.mirror_index(fcir, 0);
+  t_const.mirror_index(fcir, 0);
 }
 
 template <class T>
@@ -319,7 +328,6 @@ void test_miscellaneous() {
   typedef typename T::Face_handle     Face_handle;
 
   T t;
-  const T &t_const = t;
 
   Point p0(0.5, 0.5);
   Point p1(0.8, 0.6);
@@ -331,21 +339,22 @@ void test_miscellaneous() {
 
   t.set_domain(typename T::Iso_rectangle(0,0,2,2));
   int i = t.ccw(0);
-  i = t.cw(0);
+  int j = t.cw(0);
+  CGAL_assertion(i+j == 3);
 
   t = T();
   vh0 = t.insert(p0);
   vh1 = t.insert(p1);
   vh2 = t.insert(p2);
   Face_handle fh = t.faces_begin();
-  bool b = t.flippable(fh, 0);
-  size_t deg = t.degree(vh0);
+  t.flippable(fh, 0);
+  t.degree(vh0);
 
-  b = t.is_valid();
-  b = t.is_valid(true);
-  b = t.is_valid(false);
-  b = t.is_valid(true, 0);
-  b = t.is_valid(false, 0);
+  t.is_valid();
+  t.is_valid(true);
+  t.is_valid(false);
+  t.is_valid(true, 0);
+  t.is_valid(false, 0);
 }
 
 template <class T>

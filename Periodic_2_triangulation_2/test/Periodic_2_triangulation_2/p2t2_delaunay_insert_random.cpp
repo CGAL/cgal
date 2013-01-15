@@ -1,6 +1,6 @@
 #define CGAL_USE_DELAUNAY
 
-#define N_PTS 25000
+#define N_PTS 500
 
 #include "./p2t2_triangulation_insert_random.cpp"
 

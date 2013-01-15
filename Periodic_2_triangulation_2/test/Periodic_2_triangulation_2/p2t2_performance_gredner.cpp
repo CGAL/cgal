@@ -10,7 +10,7 @@
 #include <algorithm>
 
 const bool pre_run = true;
-const bool do_remove = true;
+const bool do_remove = false;
 const int n_runs = 3;
 
 void load_data(const char *filename, Iso_rectangle &domain, std::vector<Point> &pts) {
@@ -35,7 +35,7 @@ void load_data(const char *filename, Iso_rectangle &domain, std::vector<Point> &
 
 template <class T>
 void test(const std::vector<Point> &input, T &t) {
-  t.insert(input.begin(), input.end());
+  t.insert(input.begin(), input.end(), true);
 
   if (do_remove) {
     std::vector<typename T::Vertex_handle> vhs;
@@ -61,38 +61,38 @@ int main(int argc, char * argv[]) {
   std::vector<Point> pts;
   load_data(filename, domain, pts);
 
-  if (true) {
-    if (pre_run) {
-      Delaunay_triangulation_2<Gt> t;
-      test(pts, t);
-    }
+  for (int run=0; run<3; ++run) {
+    // if (true) {
+    //   if (pre_run) {
+    //     Delaunay_triangulation_2<Gt> t;
+    //     test(pts, t);
+    //   }
 
-    std::clock_t total_start = std::clock();
-    for (int i=0; i<n_runs; ++i) {
-      Delaunay_triangulation_2<Gt> t;
-      test(pts, t);
-    }
-    double total_time = (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
+    //   std::clock_t total_start = std::clock();
+    //   for (int i=0; i<n_runs; ++i) {
+    //     Delaunay_triangulation_2<Gt> t;
+    //     test(pts, t);
+    //   }
+    //   double total_time = (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
 
-    std::cout << "Euclidean space, " << filename << ", " << total_time << std::endl;
+    //   std::cout << "Euclidean space, " << filename << ", " << total_time << std::endl;
+    // }
+
+    if (true) {
+      if (pre_run) {
+        Periodic_2_Delaunay_triangulation_2<Gt> t(domain);
+        test(pts, t);
+      }
+
+      std::clock_t total_start = std::clock();
+      for (int i=0; i<n_runs; ++i) {
+        Periodic_2_Delaunay_triangulation_2<Gt> t(domain);
+        test(pts, t);
+      }
+      double total_time = (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
+
+      std::cout << "Periodic  space, " << filename << ", " << total_time << std::endl;
+    }
   }
-
-  if (true) {
-    if (pre_run) {
-      Periodic_2_Delaunay_triangulation_2<Gt> t(domain);
-      test(pts, t);
-    }
-
-    std::clock_t total_start = std::clock();
-    for (int i=0; i<n_runs; ++i) {
-      Periodic_2_Delaunay_triangulation_2<Gt> t(domain);
-      test(pts, t);
-    }
-    double total_time = (std::clock()-total_start)/(double)CLOCKS_PER_SEC;
-
-    std::cout << "Periodic  space, " << filename << ", " << total_time << std::endl;
-
-  }
-
   return 0;
 }

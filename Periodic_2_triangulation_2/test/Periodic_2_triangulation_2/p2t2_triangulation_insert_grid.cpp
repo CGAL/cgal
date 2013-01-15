@@ -7,9 +7,7 @@ void test_insertion_xy(int x_order, int y_order) {
   std::cout << "xy: " << x_order << " " << y_order << std::endl;
   Triangulation t;
 
-  Triangulation::Locate_type lt;
   Triangulation::Face_handle fh;
-  int i;
 
   // Insert the first point
   for (int x=-N; x<N; x++) {

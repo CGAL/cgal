@@ -18,7 +18,6 @@ typedef Triangulation::Periodic_segment_iterator    Periodic_segment_iterator;
 typedef Triangulation::Periodic_triangle_iterator   Periodic_triangle_iterator;
 
 void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t) {
-  int nr = t.number_of_vertices();
   CGAL_assertion(t.number_of_vertices() == 1);
   
   Point &p = t.vertices_begin()->point();
@@ -44,6 +43,7 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
             on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
             on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
             Triangle triangle = t.triangle(*triang_it);
+            triangle.vertex(0); // Avoid warning
             ++triang_it;
           }
           CGAL_assertion(on_boundary == 6);
@@ -61,6 +61,7 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
             on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
             on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
             Triangle triangle = t.triangle(*triang_it);
+            triangle.vertex(0); // Avoid warning
             ++triang_it;
           }
           CGAL_assertion(on_boundary == 2);
@@ -78,6 +79,7 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
             on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
             on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
             Triangle triangle = t.triangle(*triang_it);
+            triangle.vertex(0); // Avoid warning
             ++triang_it;
           }
           CGAL_assertion(on_boundary == 0);
@@ -155,6 +157,7 @@ int main() {
     CGAL_assertion(std::distance(it, beyond) == 9);
     while(it != beyond) {
       Point p = t.point(*it);
+      p.x(); // Avoid warning
       ++it;
     }    
   }
@@ -164,6 +167,7 @@ int main() {
     CGAL_assertion(std::distance(it, beyond) == 27);
     while(it != beyond) {
       Segment s = t.segment(*it);
+      s.point(0); // Avoid warning
       ++it;
     }    
   }
@@ -173,6 +177,7 @@ int main() {
     CGAL_assertion(std::distance(it, beyond) == 18);
     while(it != beyond) {
       Triangle triangle = t.triangle(*it);
+      triangle.vertex(0); // Avoid warning
       ++it;
     }    
   }
