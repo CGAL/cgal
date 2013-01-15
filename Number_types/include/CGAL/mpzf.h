@@ -14,6 +14,7 @@
 #ifdef _MSC_VER
 #include <intrin.h>
 #pragma intrinsic(_BitScanForward64)
+#pragma intrinsic(_BitScanReverse64)
 #endif
 
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) \
@@ -134,7 +135,17 @@ inline int ctz (uint64_t x) {
   _BitScanForward64(&ret, x);
   return (int)ret;
 #else
+  // Assume long long is 64 bits
   return __builtin_ctzll (x);
+#endif
+}
+inline int clz (uint64_t x) {
+#ifdef _MSC_VER
+  unsigned long ret;
+  _BitScanReverse64(&ret, x);
+  return 63 - (int)ret;
+#else
+  return __builtin_clzll (x);
 #endif
 }
 } // namespace mpzf_impl
@@ -744,6 +755,44 @@ struct mpzf {
     return ldexp( (size<0) ? -dtop : dtop, exp * GMP_NUMB_BITS);
   }
 
+  std::pair<double, double> to_interval () const {
+    // Assumes GMP_NUMB_BITS == 64
+    if (size == 0) return std::make_pair(0., 0.);
+    double dl, dh;
+    int asize = std::abs(size);
+    int e = 64 * (exp + asize);
+    mp_limb_t x = data()[asize-1];
+    int lz = mpzf_impl::clz(x);
+    if (lz <= 11) {
+      if (lz != 11) {
+	e += (11 - lz);
+	x >>= (11 - lz);
+      }
+      dl = x;
+      dh = x + 1;
+      // Check for the few cases where dh=x works (asize==1 and the evicted
+      // bits from x were 0s)
+    }
+    else if (asize == 1) {
+      dl = dh = x; // conversion is exact
+    }
+    else {
+      mp_limb_t y = data()[asize-2];
+      e -= (lz - 11);
+      x <<= (lz - 11);
+      y >>= (75 - lz);
+      x |= y;
+      dl = x;
+      dh = x + 1;
+      // Check for the few cases where dh=x works (asize==2 and the evicted
+      // bits from y were 0s)
+    }
+    dl = std::ldexp (dl, e);
+    dh = std::ldexp (dh, e); // Avoid calling ldexp twice
+    if (size < 0) return std::make_pair (-dh, -dl);
+    else return std::make_pair (dl, dh);
+  }
+
 #ifdef CGAL_USE_GMPXX
   // For testing purposes
   operator mpq_class () const {
@@ -854,17 +903,13 @@ namespace CGAL {
 
       struct To_double
 	: public std::unary_function< Type, double > {
-	  public:
 	    double operator()( const Type& x ) const {
 	      return x.to_double();
 	    }
 	};
 
       struct Compare
-	: public std::binary_function< Type,
-	Type,
-	Comparison_result > {
-	  public:
+	: public std::binary_function< Type, Type, Comparison_result > {
 	    Comparison_result operator()(
 		const Type& x,
 		const Type& y ) const {
@@ -872,15 +917,12 @@ namespace CGAL {
 	    }
 	};
 
-#if 0
       struct To_interval
 	: public std::unary_function< Type, std::pair< double, double > > {
-	  public:
 	    std::pair<double, double> operator()( const Type& x ) const {
 	      return x.to_interval();
 	    }
 	};
-#endif
 
     };
 
