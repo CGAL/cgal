@@ -955,12 +955,128 @@ public:
     file_output(os, P, true);
   }
 
+  void file_output_verbose(std::ostream& os) const {
+    const char inf_vertex[] = "infinite vertex";
+    const char vid[] = {'A', 'B', 'C'};
+
+    os << "SDG verbose output" << std::endl;
+    os << "==================" << std::endl;
+    os << "dimension of sdg = " << dimension() << std::endl;
+    os << "number of vertices in sdg = "
+      << number_of_vertices() << std::endl;
+    os << "number of faces in sdg = " << number_of_faces() << std::endl;
+    os << "number of input sites in sdg = "
+      << number_of_input_sites() << std::endl;
+    os << "number of output sites in sdg = "
+      << number_of_output_sites() << std::endl;
+    // print the vertices of the segment Delaunay graph
+    os << std::endl;
+    os << "Output sites / vertices of sdg:" << std::endl;
+    os << "-------------------------------" << std::endl;
+    Finite_vertices_iterator     fvit;
+    All_vertices_iterator avit;
+    Vertex_handle vh;
+
+    int v_count=0;
+    for (avit = all_vertices_begin();
+        avit != all_vertices_end(); ++avit) {
+      vh = avit;
+      if (is_infinite(vh)) {
+        os << "vertex " << ++v_count << " : " << inf_vertex << std::endl;
+      } else {
+        os << "vertex " << ++v_count << " : " << avit->site() << std::endl;
+      }
+    }
+
+    os << std::endl;
+    os << "Edges of sdg:" << std::endl;
+    os << "-------------" << std::endl;
+
+    All_edges_iterator eit = all_edges_begin();
+    for (int k = 1; eit != all_edges_end(); ++eit, ++k) {
+      Edge e = *eit;
+      // get the vertices defining the edge
+
+      Vertex_handle v[] = {
+        (e.first)->vertex(ccw(e.second)),
+        (this->dimension() == 1 ?
+          (e.first)->vertex(cw(e.second)):
+          (e.first)->vertex(e.second))
+      };
+
+      os << "--- Edge " << k << " ---" << std::endl;
+      for (int i = 0; i < 2; i++) {
+        // check if the vertex is the vertex at infinity; if yes, print
+        // the corresponding string, otherwise print the site
+        if ( is_infinite(v[i]) ) {
+          os << vid[i] << ": " << inf_vertex << std::endl;
+        } else {
+          os << vid[i] << ": " << v[i]->site() << std::endl;
+        }
+      }
+      os << std::endl;
+    }
+
+    os << std::endl;
+    os << "Faces of sdg:" << std::endl;
+    os << "-------------" << std::endl;
+
+    All_faces_iterator fit = all_faces_begin();
+    for (int k = 1; fit != all_faces_end(); ++fit, ++k) {
+      Face f = *fit;
+      // get the vertices defining the face
+      Vertex_handle v[] = { f.vertex(0),
+        f.vertex(1),
+        f.vertex(2)
+      };
+
+      os << "--- Face " << k << " ---" << std::endl;
+      for (int i = 0; i < 3; i++) {
+        // check if the vertex is the vertex at infinity; if yes, print
+        // the corresponding string, otherwise print the site
+        if ( is_infinite(v[i]) ) {
+          os << vid[i] << ": " << inf_vertex << std::endl;
+        } else {
+          os << vid[i] << ": " << v[i]->site() << std::endl;
+        }
+      }
+      os << std::endl;
+    }
+    //Sandeep: A counterclockwise traversal of the vertices adjacent to the infinite_vertex
+    //is a clockwise traversal of the convex hull.
+    os << std::endl;
+    os << "Convex-hull of sdg:" << std::endl;
+    os << "-------------------" << std::endl;
+    Vertex_handle v_inf = infinite_vertex();
+    Vertex_circulator	 vc1 = incident_vertices(v_inf);
+    Vertex_circulator	 vc2 = vc1;
+    if (is_infinite(v_inf)){
+      os << "vertex 0 : " << inf_vertex << std::endl;
+    }
+    int cnt = 0;
+    if (vc1 != 0) {
+      do {
+        vh = vc1;
+        if (is_infinite(vh)) {
+          os << "vertex " << ++cnt << " : " << inf_vertex << std::endl;
+        } else {
+          os << "vertex " << ++cnt << " : " << vc1->site() << std::endl;
+        }
+      } while (++vc1 != vc2);
+    }
+
+    os << "=======================" << std::endl;
+    os << "SDG verbose output ends" << std::endl;
+    os << "=======================" << std::endl;
+
+  }
+
   template< class Stream >
   Stream& draw_dual(Stream& str) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
-      //std::cout << "debug draw edge " << *eit << std::endl;
+      //std::cerr << "debug draw edge " << *eit << std::endl;
       draw_dual_edge(*eit, str);
     }
     return str;

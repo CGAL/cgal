@@ -53,6 +53,9 @@ insert_first(const Storage_site_2& ss, const Point_2& p)
 
   Vertex_handle v = this->_tds.insert_second();
   v->set_site(ss);
+
+  CGAL_SDG_DEBUG(file_output_verbose(std::cout););
+
   return v;
 }
 
@@ -73,8 +76,9 @@ insert_second(const Storage_site_2& ss, const Point_2& p)
     merge_info(finite_vertices_begin(), ss);
     return finite_vertices_begin();
   }
-
-  return create_vertex_dim_up(ss);
+  Vertex_handle v = create_vertex_dim_up(ss);
+  CGAL_SDG_DEBUG(file_output_verbose(std::cout););
+  return v;
 }
 
 template<class Gt, class ST, class D_S, class LTag>
@@ -510,6 +514,8 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 #endif
 
   //std::cout << "debug insert_point2 finishing" << std::endl;
+
+  CGAL_SDG_DEBUG( file_output_verbose(std::cout); ) ;
 
   return v;
 }
