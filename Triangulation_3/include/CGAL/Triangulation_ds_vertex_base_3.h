@@ -29,8 +29,49 @@
 
 namespace CGAL {
 
+
+// Sequential
+template <bool used_by_parallel_mesh_3>
+class Triangulation_ds_vertex_base_3_base
+{
+public:
+  // Dummy
+  unsigned int get_erase_counter() const { return 0; }
+  void set_erase_counter(unsigned int) {}
+  void increment_erase_counter() {}
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Specialized version (Parallel)
+template <>
+class Triangulation_ds_vertex_base_3_base<true>
+{
+public:
+  
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+	  this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+
+};
+#endif // CGAL_LINKED_WITH_TBB
+
 template < typename TDS = void >
 class Triangulation_ds_vertex_base_3
+: public Triangulation_ds_vertex_base_3_base<TDS::Is_for_parallel_mesh_3>
 {
 public:
   typedef TDS                          Triangulation_data_structure;
@@ -86,25 +127,6 @@ public:
   { return _c.for_compact_container(); }
   void * & for_compact_container()
   { return _c.for_compact_container(); }
-
-  // CJTODO TEMP TEST
- 
-  // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
-  {
-    return this->m_erase_counter;
-  }
-  void set_erase_counter(unsigned int c)
-  {
-	  this->m_erase_counter = c;
-  }
-  void increment_erase_counter()
-  {
-    ++this->m_erase_counter;
-  }
-  
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
-  Erase_counter_type                m_erase_counter;
 
 private:
 
