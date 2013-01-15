@@ -367,7 +367,7 @@ struct mpzf {
     asize = std::abs(size);
     std::cout << "double: " << std::ldexp((double)data()[asize-1],64*(exp+asize-1))*((size<0)?-1:1) << '\n';
   }
-  friend int abscmp(mpzf const&a, mpzf const&b){
+  friend int mpzf_abscmp(mpzf const&a, mpzf const&b){
     // This assumes that size==0 implies exp==0. Is it true?
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
@@ -384,9 +384,14 @@ struct mpzf {
     }
     return asize-bsize; // this assumes that we get rid of trailing zeros...
   }
+  friend int mpzf_cmp (mpzf const&a, mpzf const&b){
+    if ((a.size ^ b.size) < 0) return (a.size < 0) ? -1 : 1;
+    int res = mpzf_abscmp(a, b);
+    return (a.size < 0) ? -res : res;
+  }
   friend bool operator<(mpzf const&a, mpzf const&b){
-    if((a.size^b.size)<0) return a.size<0;
-    return ((a.size<0)?abscmp(b,a):abscmp(a,b))<0;
+    if((a.size ^ b.size) < 0) return a.size < 0;
+    return ((a.size < 0) ? mpzf_abscmp(b, a) : mpzf_abscmp(a, b)) < 0;
   }
   friend bool operator>(mpzf const&a, mpzf const&b){
     return b<a;
@@ -496,7 +501,7 @@ struct mpzf {
       const mpzf *x, *y;
       int xsize=a.size;
       int ysize=bsize;
-      int cmp=abscmp(a,b);
+      int cmp=mpzf_abscmp(a,b);
       if(cmp==0){ res.init(); res.size=0; res.exp=0; return res; }
       if(cmp<0) { x=&b; y=&a; std::swap(xsize, ysize); }
       else { x=&a; y=&b; }
@@ -855,7 +860,6 @@ namespace CGAL {
 	    }
 	};
 
-#if 0
       struct Compare
 	: public std::binary_function< Type,
 	Type,
@@ -864,10 +868,11 @@ namespace CGAL {
 	    Comparison_result operator()(
 		const Type& x,
 		const Type& y ) const {
-	      return mpzf_cmp(x,y);
+	      return CGAL::sign(mpzf_cmp(x,y));
 	    }
 	};
 
+#if 0
       struct To_interval
 	: public std::unary_function< Type, std::pair< double, double > > {
 	  public:
