@@ -39,7 +39,6 @@ int main()
     // and a facet on the boundary of this hole in f.
     std::vector<Face_handle> V;
 
-    // NGHK: was find_conflicts
     T.get_conflicts(p,
                     std::back_inserter(V), // Conflict cells in V
                     f);

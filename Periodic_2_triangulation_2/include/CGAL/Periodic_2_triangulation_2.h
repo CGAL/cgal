@@ -568,8 +568,8 @@ public:
   /// the circle through the vertices of f
   ///\n NGHK: Not yet implemented
   Oriented_side
-      side_of_oriented_circle(Face_handle f, const Point & p, bool perturb =
-          false) const;
+  side_of_oriented_circle(Face_handle f,
+                          const Point & p, bool perturb = false) const;
   // \}
 
 
@@ -1100,14 +1100,6 @@ protected:
       CGAL_triangulation_expensive_assertion( is_valid() );
     }
   }
-
-
-  /// Determines whether the point (p,o) lies on the (un-)bounded side of
-  /// the circle through the vertices of f
-  ///\n NGHK: Not yet implemented
-  Oriented_side
-  side_of_oriented_circle(Face_handle f, const Point & p, const Offset &o,
-      bool perturb = false) const;
 
 protected:
   // Protected functions of Periodic_2_triangulation_2
@@ -4157,9 +4149,9 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
   // TODO: optimize which copies to check depending on the offsets in
   // the cell.
   while (os == ON_NEGATIVE_SIDE && i < 4) {
-    os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(),
-        f->vertex(2)->point(), p, get_offset(f, 0), get_offset(f, 1),
-        get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)), perturb);
+    os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p, 
+                                 get_offset(f, 0), get_offset(f, 1), get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)),
+                                 perturb);
     i++;
   }
 

@@ -577,7 +577,7 @@ private:
 		       std::pair<OutputItFaces,OutputItBoundaryEdges>
 		       pit)  const {
     Face_handle fn = fh->neighbor(i);
-    if (! this->test_conflict(p,fn)) {
+    if (! test_conflict(p,fn)) {
       *(pit.second)++ = Edge(fn, fn->index(fh));
     } else {
       *(pit.first)++ = fn;
@@ -586,6 +586,10 @@ private:
       pit = propagate_conflicts(p,fn,cw(j), pit);
     }
     return pit;
+  }
+
+  bool test_conflict(const Point &p, Face_handle fh) const {
+    return side_of_oriented_circle(fh, p, true) ==  ON_POSITIVE_SIDE;
   }
 
   /// NGHK: Not yet implemented
