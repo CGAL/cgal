@@ -153,5 +153,10 @@ int main( int argc, char *argv[] ) {
     } while (++vc1 != vc2);
   }
   
+  //Write the current state of the segment Delaunay graph to an output stream.
+  //ostream os;
+  //sdg.file_output (ostream& os);
+  cout << sdg ;
+  
   return 0;
 }
