@@ -20,19 +20,17 @@
 //                 Ron Wein  <wein@post.tau.ac.il>
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
+/*
+ * Next is a list of tasks that should be implemented:
+ * TODO: Add a tag HAS_SOURCE_TARGET and dispatch calls in
+ *       Push_back_2 accordingly.
+ * TODO: In Number_of_points_2. In general, for example in the unbounded case,
+ *       the number of vertices of a polyline cannot be read-off from the
+ *       number of segments. Thus, this has to be changed.
+ */
+
 // TODO: Complete the documentation of the changes derived from the cleaning
 
-// TODO: Add a tag HAS_SOURCE_TARGET and dispatch calls in
-// Push_back_2 accordingly.
-// @Efi: In order to implement this suggested approach (namely using
-//       the TAGs), tons of other things have to be done. Furthermore,
-//       the code without this is more general, and this is desirable. True,
-//       the price we pay here is in the efficiency.
-//       Therefore, we prefer not to do it right now, and first finish this
-//       cleaning (without adding TAGs)- otherwise,
-//       it won't end... In other words, as far as we understand, this
-//       tagging issue is not part of the cleaning work, and thus
-//       we want to wait with it.
 
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
 #define CGAL_ARR_POLYLINE_TRAITS_2_H
@@ -147,7 +145,6 @@ public:
 
     const int operator()(const Curve_2& cv) const
     {
-      // TODO: (unbounded case) has to be changed.
       int num_seg = cv.number_of_segments();
       return (num_seg == 0) ? 0 : num_seg + 1;
     }
@@ -1308,6 +1305,7 @@ public:
      * \param q The second point.
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
+     * TODO: Efi suggests that this can be more efficient. How?
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
@@ -1320,15 +1318,7 @@ public:
     /*! Returns an x-monotone curve consists of one given segment.
      * \param seg input segment
      * \return A polyline with one segment, namely seg.
-     * @Efi: Should this be implemented?
-     * EFEF: Mo. The following could be implemented:
-     * X_monotone_curve_2 operator()(const Segment_2& seg) { ... }
-     * Dror: Sorry, I don't understand what you suggest to do here...
-     *       Can you explain? Is the '&' the only difference?
-     *       If yes:Use this implementations in the Make_x_monotone_2,
-     *       when there's only one segment.
-     * TODO: @Efi: What should be down here? This has to be removed
-     *             as far as we understand.
+     * TODO: Implement this construction (as per Efi's recommendation)
      */
     // X_monotone_curve_2 operator()(const Segment_2 seg) const
     // {
@@ -1346,26 +1336,15 @@ public:
     X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
                                        boost::true_type) const
     {
-      // TODO: @Efi A construction of x-monotone curve (at least ideally)
-      //            should never happen from points - right? Therefore,
-      //            this can be kept only for backwards compatibility and/or
-      //            until it is being deprecated. What do you think?
-      // EFEF: Why? Only the direct constructor in _X_monotone_polyline_2
-      //       should be deprecated.
-      // Dror: In this case, given the deprecation in the Polyline_2
-      //       this discussion can be closed, isn't it?
-      // @Efi: We think that if this specific implementation is kept, then
-      //       the tests should be implemented as well. That is, make sure that
-      //       the range of points given as an input form indeed an x-mono
-      //       curve.
+      // TODO: Implement tests of the validity of the input.
       return X_monotone_curve_2(begin, end);
     }
 
     /*! Returns an x-monotone polyline from a range of segments.
      * \param begin An iterator pointing to the first segment in the range.
      * \param end An iterator pointing to the past-the-end segment in the range.
-     * \pre The range is not emnpty.
-     * \pre One endpoint of the ith segment is an endpoint of the
+     * \pre The range is not empty.
+     * \pre One endpoint of the i-th segment is an endpoint of the
      *      (i+1)th segment.
      * \pre The sequence of segments in the range forms a weak
      *      x-monotone polyline.

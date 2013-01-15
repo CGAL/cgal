@@ -455,7 +455,6 @@ public:
    * polyline segments.
    */
   template <typename InputIterator>
-  // TODO: @Efi: do I have to do something additional here?
   CGAL_DEPRECATED void construct_x_monotone_polyline
     (InputIterator begin, InputIterator end,
      const Point_2& /* */)
@@ -525,7 +524,6 @@ private:
   std::ostream& operator<< (std::ostream & os,
                             const _Polyline_2<SegmentTraits>& cv)
   {
-    // TODO: @Efi: Confirm the this is the exporter you want
     typename _Polyline_2<SegmentTraits>::Segment_const_iterator  iter =
       cv.begin_segments();
 
