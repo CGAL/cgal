@@ -382,11 +382,11 @@ int main(int argc, char **argv)
     return app.exec();
   }
   catch (char const *str) {
-    std::cerr << "EXCEPTION: " << str << endl;
+    std::cerr << "EXCEPTION: " << str << std::endl;
     return -1;
   }
   catch (...) {
-    std::cerr << "Unknown exception!" << endl;
+    std::cerr << "Unknown exception!" << std::endl;
     return -1;
   }
 }
