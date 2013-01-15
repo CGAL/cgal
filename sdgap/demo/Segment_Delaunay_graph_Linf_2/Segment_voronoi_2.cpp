@@ -401,6 +401,8 @@ MainWindow::loadSitesInput(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   while (ifs >> site) {
     svd.insert(site);
+
+    CGAL_SDG_DEBUG( svd.file_output_verbose(std::cout); ) ;
   }
   
   emit(changed());
