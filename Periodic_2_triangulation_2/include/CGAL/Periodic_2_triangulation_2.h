@@ -4080,9 +4080,7 @@ template<class Gt, class Tds>
 Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
     const Point &p0, const Point &p1, const Point &p2, const Point &p,
     bool perturb) const {
-  typename Gt::Side_of_oriented_circle_2 pred =
-      geom_traits().side_of_oriented_circle_2_object();
-  Oriented_side os = pred(p0, p1, p2, p);
+  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p);
   if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
     return os;
 
@@ -4116,9 +4114,7 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
     const Point &p0, const Point &p1, const Point &p2, const Point &p,
     const Offset &o0, const Offset &o1, const Offset &o2, const Offset &o,
     bool perturb) const {
-  typename Gt::Side_of_oriented_circle_2 pred =
-      geom_traits().side_of_oriented_circle_2_object();
-  Oriented_side os = pred(p0, p1, p2, p, o0, o1, o2, o);
+  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p, o0, o1, o2, o);
   if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
     return os;
 
