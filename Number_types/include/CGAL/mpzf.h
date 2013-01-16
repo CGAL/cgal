@@ -375,6 +375,7 @@ struct mpzf {
     std::cout << std::hex;
     while(--asize>=0) { std::cout << data()[asize] << ' '; }
     std::cout << std::dec << "exp " << exp << ' ';
+    std::cout << std::dec << "size " << size << ' ';
     asize = std::abs(size);
     std::cout << "double: " << std::ldexp((double)data()[asize-1],64*(exp+asize-1))*((size<0)?-1:1) << '\n';
   }
@@ -752,7 +753,7 @@ struct mpzf {
     double dtop = top;
     if(top >= (1LL<<53) || asize == 1) /* ok */ ;
     else { dtop += (double)data()[asize-2] * ldexp(1.,-GMP_NUMB_BITS); }
-    return ldexp( (size<0) ? -dtop : dtop, exp * GMP_NUMB_BITS);
+    return ldexp( (size<0) ? -dtop : dtop, (asize-1+exp) * GMP_NUMB_BITS);
   }
 
   std::pair<double, double> to_interval () const {
@@ -760,7 +761,7 @@ struct mpzf {
     if (size == 0) return std::make_pair(0., 0.);
     double dl, dh;
     int asize = std::abs(size);
-    int e = 64 * (exp + asize);
+    int e = 64 * (asize - 1 + exp);
     mp_limb_t x = data()[asize-1];
     int lz = mpzf_impl::clz(x);
     if (lz <= 11) {
@@ -787,8 +788,9 @@ struct mpzf {
       // Check for the few cases where dh=x works (asize==2 and the evicted
       // bits from y were 0s)
     }
-    dl = std::ldexp (dl, e);
+    dl = std::ldexp (dl, e); // Unsafe if it gives +infinity?
     dh = std::ldexp (dh, e); // Avoid calling ldexp twice
+    // Use ldexp(Interval_nt,int) to delegate the hard thinking.
     if (size < 0) return std::make_pair (-dh, -dl);
     else return std::make_pair (dl, dh);
   }
