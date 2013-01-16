@@ -957,7 +957,6 @@ public:
 
   void file_output_verbose(std::ostream& os) const {
     const char inf_vertex[] = "infinite vertex";
-    const char vid[] = {'A', 'B', 'C'};
     const char v_id[] = {'p', 'q', 'r', 's'};
 
     os << "SDG verbose output" << std::endl;
@@ -978,9 +977,14 @@ public:
     All_vertices_iterator avit;
     Vertex_handle vh;
 
+    if (dimension() < 2) {
+      CGAL_assertion(number_of_faces() == 0);
+    }
+
     int v_count=0;
     for (avit = all_vertices_begin();
-        avit != all_vertices_end(); ++avit) {
+         avit != all_vertices_end();
+         ++avit) {
       vh = avit;
       if (is_infinite(vh)) {
         os << "vertex " << ++v_count << " : " << inf_vertex << std::endl;
@@ -1015,28 +1019,6 @@ public:
         // check if the vertex is the vertex at infinity; if yes, print
         // the corresponding string, otherwise print the site
         if ( is_infinite(v[i]) ) {
-          os << vid[i] << ": " << inf_vertex << std::endl;
-        } else {
-          os << vid[i] << ": " << v[i]->site() << std::endl;
-        }
-      }
-      os << std::endl;
-    }
-    
-    Finite_edges_iterator efit = finite_edges_begin();
-    for (int k = 1; efit != finite_edges_end(); ++efit, ++k) {
-      Edge e = *efit;
-      // get the vertices defining the Voronoi edge
-      Vertex_handle v[] = { e.first->vertex( ccw(e.second) ),
-        e.first->vertex( cw(e.second) ),
-        e.first->vertex( e.second ),
-        tds().mirror_vertex(e.first, e.second) };
-      
-      os << "--- Voronoi Edge " << k << " ---" << std::endl;
-      for (int i = 0; i < 4; i++) {
-        // check if the vertex is the vertex at infinity; if yes, print
-        // the corresponding string, otherwise print the site
-        if ( is_infinite(v[i]) ) {
           os << v_id[i] << ": " << inf_vertex << std::endl;
         } else {
           os << v_id[i] << ": " << v[i]->site() << std::endl;
@@ -1063,13 +1045,46 @@ public:
         // check if the vertex is the vertex at infinity; if yes, print
         // the corresponding string, otherwise print the site
         if ( is_infinite(v[i]) ) {
-          os << vid[i] << ": " << inf_vertex << std::endl;
+          os << v_id[i] << ": " << inf_vertex << std::endl;
         } else {
-          os << vid[i] << ": " << v[i]->site() << std::endl;
+          os << v_id[i] << ": " << v[i]->site() << std::endl;
         }
       }
       os << std::endl;
     }
+
+    if (dimension() > 1) {
+      os << std::endl;
+      os << "Voronoi edges of sdg:" << std::endl;
+      os << "---------------------" << std::endl;
+
+      All_edges_iterator efit = all_edges_begin();
+      for (int k = 1; efit != all_edges_end(); ++efit, ++k) {
+        Edge e = *efit;
+        // get the vertices defining the Voronoi edge
+        Vertex_handle v[] = {
+          (e.first)->vertex( ccw(e.second) ),
+          (e.first)->vertex(  cw(e.second) ),
+          (e.first)->vertex(     e.second  ),
+          (this->dimension() == 1) ?
+            (e.first)->vertex(   e.second  ) :
+            tds().mirror_vertex(e.first, e.second)
+        };
+
+        os << "--- Voronoi Edge " << k << " ---" << std::endl;
+        for (int i = 0; i < 4; i++) {
+          // check if the vertex is the vertex at infinity; if yes, print
+          // the corresponding string, otherwise print the site
+          if ( is_infinite(v[i]) ) {
+            os << v_id[i] << ": " << inf_vertex << std::endl;
+          } else {
+            os << v_id[i] << ": " << v[i]->site() << std::endl;
+          }
+        }
+        os << std::endl;
+      }
+    }
+
     //Sandeep: A counterclockwise traversal of the vertices adjacent to the infinite_vertex
     //is a clockwise traversal of the convex hull.
     os << std::endl;
@@ -1086,6 +1101,7 @@ public:
     if (vc1 != 0) {
       do {
         vh = vc1;
+        CGAL_assertion(not is_infinite(vh));
         if (is_infinite(vh)) {
           os << "vertex " << ++cnt << " : " << inf_vertex << std::endl;
         } else {
