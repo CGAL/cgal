@@ -706,6 +706,7 @@ struct mpzf {
       CGAL_assertion_code(mp_size_t rem=)
       mpn_sqrtrem(res.data(), 0, x.data(), x.size);
       CGAL_assertion(rem==0);
+      return res;
     }
     else if (x.data()[-1] == 0) {
       mpzf res(allocate(), (x.size + 1) / 2);
@@ -714,6 +715,7 @@ struct mpzf {
       CGAL_assertion_code(mp_size_t rem=)
       mpn_sqrtrem(res.data(), 0, x.data()-1, x.size+1);
       CGAL_assertion(rem==0);
+      return res;
     }
     else {
       mpzf res(allocate(), (x.size + 1) / 2);
@@ -723,6 +725,7 @@ struct mpzf {
       mpn_sqrtrem(res.data(), 0, x.data(), x.size);
       CGAL_assertion(rem==0);
       mpn_lshift(res.data(), res.data(), res.size, GMP_NUMB_BITS / 2);
+      return res;
     }
   }
 
