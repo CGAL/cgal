@@ -170,9 +170,13 @@ namespace CGAL {
 
 		/// Returns the axis-aligned bounding box of the whole tree.
 		/// \pre `!empty()`
-		const Bounding_box& bbox() const { 
+		const Bounding_box bbox() const { 
 			CGAL_precondition(!empty());
-			return root_node()->bbox(); 
+			if(size() > 1)
+				return root_node()->bbox(); 
+			else
+				return AABB_traits().compute_bbox_object()(m_primitives.begin(), 
+																									 m_primitives.end());
 		}
     
     /// Returns the number of primitives in the tree.
@@ -386,7 +390,9 @@ public:
     // clear nodes
     void clear_nodes()
     {
-			delete [] m_p_root_node;
+			if(size() > 1) {
+				delete [] m_p_root_node;
+			}
 			m_p_root_node = NULL;
     }
 
@@ -405,8 +411,16 @@ public:
 		template <class Query, class Traversal_traits>
 		void traversal(const Query& query, Traversal_traits& traits) const
 		{
-			if(!empty())
+			switch(size())
+			{
+			case 0:
+				break;
+			case 1:
+				traits.intersection(query, singleton_data());
+				break;
+			default: // if(size() >= 2)
 				root_node()->template traversal<Traversal_traits,Query>(query, traits, m_primitives.size());
+			}
 		}
 
 	private:
@@ -441,6 +455,7 @@ public:
     #endif
   
     const Node* root_node() const {
+			CGAL_assertion(size() > 1);
       if(m_need_build){
         #ifdef CGAL_HAS_THREADS
         //this ensures that build() will be called once
@@ -451,6 +466,11 @@ public:
       }
       return m_p_root_node;
     }
+
+		const Primitive& singleton_data() const {
+			CGAL_assertion(size() == 1);
+			return *m_primitives.begin();
+		}
 
 		// search KD-tree
 		mutable const Search_tree* m_p_search_tree;
@@ -547,10 +567,11 @@ public:
 			}
 
 			// constructs the tree
-			m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
+			m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
+														m_primitives.size());
 		}
 
-    // In case the users has switched on the acceletated distance query
+    // In case the users has switched on the accelerated distance query
     // data structure with the default arguments, then it has to be
     // rebuilt.
     if(m_default_search_tree_constructed)
