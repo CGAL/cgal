@@ -10,6 +10,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <gmp.h>
+#include <CGAL/enum.h>
+#include <CGAL/Interval_nt.h>
 
 #ifdef _MSC_VER
 #include <intrin.h>
@@ -791,11 +793,13 @@ struct mpzf {
       // Check for the few cases where dh=x works (asize==2 and the evicted
       // bits from y were 0s)
     }
-    dl = std::ldexp (dl, e); // Unsafe if it gives +infinity?
-    dh = std::ldexp (dh, e); // Avoid calling ldexp twice
-    // Use ldexp(Interval_nt,int) to delegate the hard thinking.
-    if (size < 0) return std::make_pair (-dh, -dl);
-    else return std::make_pair (dl, dh);
+    typedef Interval_nt<> IA;
+    IA res (dl, dh);
+    res = ldexp (res, e);
+    if (size < 0) res = -res;
+    return CGAL::to_interval(res);
+    // Use ldexp(Interval_nt,int) to delegate the hard thinking
+    // about over/underflow.
   }
 
 #ifdef CGAL_USE_GMPXX
