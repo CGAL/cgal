@@ -53,6 +53,28 @@ class Triangulation_helpers
     }
   };
   
+  /**
+   * A functor to get the point of a vertex vh, but replacing
+   * it by m_p when vh == m_vh
+   */
+  struct Point_getter
+  {
+    /// When the requested will be about vh, the returned point will be p
+    /// instead of vh->point()
+    Point_getter(const Vertex_handle &vh, const Point_3&p)
+      : m_vh(vh), m_p(p)
+    {}
+
+    const Point_3& operator()(const Vertex_handle &vh) const
+    {
+      return (vh == m_vh ? m_p : vh->point());
+    }
+    
+  private:
+    const Vertex_handle m_vh;
+    const Point_3 &m_p;
+  };
+  
 public:
   /// Constructor / Destructor
   Triangulation_helpers() {}
@@ -73,9 +95,17 @@ public:
                              const Vertex_handle& v,
                              const Point_3& p,
                              Cell_vector& cells_tos) const;
-
-
+  bool no_topological_change__without_set_point(
+                             const Tr& tr,
+                             const Vertex_handle& v,
+                             const Point_3& p,
+                             Cell_vector& cells_tos) const;
+  
   bool no_topological_change(const Tr& tr,
+                             const Vertex_handle& v,
+                             const Point_3& p) const;  
+  bool no_topological_change__without_set_point(
+                             const Tr& tr,
                              const Vertex_handle& v,
                              const Point_3& p) const;
   
@@ -83,8 +113,13 @@ private:
   /**
    * Returns true if \c v is well_oriented on each cell of \c cell_tos
    */
+  // For sequential version
   bool well_oriented(const Tr& tr,
                      const Cell_vector& cell_tos) const;
+  // For parallel version
+  bool well_oriented(const Tr& tr,
+                     const Cell_vector& cell_tos,
+                     const Point_getter& pg) const;
 };
   
   
@@ -103,7 +138,7 @@ move_point(Tr& tr,
     tr.remove(v);
   }
 }
-  
+
 template<typename Tr>
 bool
 Triangulation_helpers<Tr>::
@@ -112,10 +147,14 @@ no_topological_change(const Tr& tr,
                       const Point_3& p,
                       Cell_vector& cells_tos) const
 {
-  bool np = true;   
-
+  bool np = true;
+  Point_3 fp = v0->point();
+  v0->set_point(p);
+  
   if(!well_oriented(tr, cells_tos)) 
   {
+    // Reset (restore) v0
+    v0->set_point(fp);
     return false;
   }
   
@@ -142,9 +181,6 @@ no_topological_change(const Tr& tr,
       Vertex_handle v1 = c->vertex(j);
       if(tr.is_infinite(v1)) 
       {
-        // Otherwise, we need to use "p" instead of cj->vertex(mj)->point() (see in the "else")
-        CGAL_assertion(cj->vertex(mj) != v0);
-        
         if(tr.side_of_power_sphere(c, cj->vertex(mj)->point(), false) 
            != CGAL::ON_UNBOUNDED_SIDE) 
         {
@@ -154,9 +190,93 @@ no_topological_change(const Tr& tr,
       }
       else
       {
-        // Simulates v0 being moved at position "p"
-        Point_3 p = (v1 == v0 ? p : v1->point());
-        if(tr.side_of_power_sphere(cj, p, false) 
+        if(tr.side_of_power_sphere(cj, v1->point(), false) 
+           != CGAL::ON_UNBOUNDED_SIDE) 
+        {
+          np = false; 
+          break;
+        }
+      }
+    }
+  }
+  
+  // Reset (restore) v0
+  v0->set_point(fp);
+
+  return np;
+}
+  
+template<typename Tr>
+bool
+Triangulation_helpers<Tr>::
+no_topological_change__without_set_point(
+  const Tr& tr,
+  const Vertex_handle& v0,
+  const Point_3& p,
+  Cell_vector& cells_tos) const
+{
+  bool np = true;
+
+  Point_getter pg(v0, p);
+
+  if(!well_oriented(tr, cells_tos, pg)) 
+  {
+    return false;
+  }
+  
+  // Reset visited tags of facets
+  std::for_each(cells_tos.begin(), cells_tos.end(), Reset_facet_visited());
+  
+  for ( typename Cell_vector::iterator cit = cells_tos.begin() ;
+        cit != cells_tos.end() ;
+        ++cit )
+  {
+    Cell_handle c = *cit;
+    for(int j=0; j<4; j++) 
+    {
+      // Treat each facet only once
+      if(c->is_facet_visited(j))
+        continue;
+      
+      // Set facet and it's mirror's one visited
+      Cell_handle cj = c->neighbor(j);
+      int mj = tr.mirror_index(c, j);
+      c->set_facet_visited(j);
+      cj->set_facet_visited(mj);
+
+      Vertex_handle v1 = c->vertex(j);
+      if(tr.is_infinite(v1)) 
+      {
+        // Build a copy of c, and replace V0 by a temporary vertex (position "p")
+        Cell_handle::value_type c_copy (*c);
+        int i_v0;
+        if (c_copy.has_vertex(v0, i_v0))
+        {
+          Vertex_handle::value_type v;
+          v.set_point(p);
+          c_copy.set_vertex(i_v0, &v);
+        }
+
+        if(tr.side_of_power_sphere(&c_copy, pg(cj->vertex(mj)), false) 
+           != CGAL::ON_UNBOUNDED_SIDE) 
+        {
+          np = false; 
+          break;
+        }
+      }
+      else
+      {
+        // Build a copy of cj, and replace V0 by a temporary vertex (position "p")
+        Cell_handle::value_type cj_copy (*cj);
+        int i_v0;
+        if (cj_copy.has_vertex(v0, i_v0))
+        {
+          Vertex_handle::value_type v;
+          v.set_point(p);
+          cj_copy.set_vertex(i_v0, &v);
+        }
+
+        if(tr.side_of_power_sphere(&cj_copy, pg(v1), false) 
            != CGAL::ON_UNBOUNDED_SIDE) 
         {
           np = false; 
@@ -168,7 +288,7 @@ no_topological_change(const Tr& tr,
 
   return np;
 }
-  
+
 
 template<typename Tr>
 bool
@@ -183,10 +303,23 @@ no_topological_change(const Tr& tr,
   return no_topological_change(tr, v0, p, cells_tos);
 }
 
-  
+template<typename Tr>
+bool
+Triangulation_helpers<Tr>::
+no_topological_change__without_set_point(
+                      const Tr& tr,
+                      const Vertex_handle& v0,
+                      const Point_3& p) const
+{
+  Cell_vector cells_tos;
+  cells_tos.reserve(64);
+  tr.incident_cells(v0, std::back_inserter(cells_tos));
+  return no_topological_change__without_set_point(tr, v0, p, cells_tos);
+}
+
+
 /// This function well_oriented is called by no_topological_change after a
 /// v->set_point(p)
-/// @TODO: One can do the same checks without the set_point.
 template<typename Tr>
 bool
 Triangulation_helpers<Tr>::
@@ -212,6 +345,40 @@ well_oriented(const Tr& tr,
                               c->vertex(1)->point(),
                               c->vertex(2)->point(),
                               c->vertex(3)->point()) != CGAL::POSITIVE)
+      return false;
+  }
+  return true;
+} 
+
+/// Another version for the parallel version
+/// Here, the set_point is not done before, but we use a Point_getter instance
+/// to get the point of a vertex.
+template<typename Tr>
+bool
+Triangulation_helpers<Tr>::
+well_oriented(const Tr& tr,
+              const Cell_vector& cells_tos,
+              const Point_getter& pg) const
+{
+  typename Cell_vector::const_iterator it = cells_tos.begin();
+  for( ; it != cells_tos.end() ; ++it)
+  {
+    Cell_handle c = *it;
+    if( tr.is_infinite(c) ) 
+    {
+      int iv = c->index(tr.infinite_vertex());
+      Cell_handle cj = c->neighbor(iv);
+      int mj = tr.mirror_index(c, iv);
+      if(CGAL::orientation(pg(cj->vertex(mj)),
+                           pg(c->vertex((iv+1)&3)),
+                           pg(c->vertex((iv+2)&3)),
+                           pg(c->vertex((iv+3)&3))) != CGAL::NEGATIVE)
+        return false;
+    }
+    else if(CGAL::orientation(pg(c->vertex(0)),
+                              pg(c->vertex(1)),
+                              pg(c->vertex(2)),
+                              pg(c->vertex(3))) != CGAL::POSITIVE)
       return false;
   }
   return true;

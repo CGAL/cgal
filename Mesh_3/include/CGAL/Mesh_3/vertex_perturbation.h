@@ -442,15 +442,33 @@ protected:
 
     // as long as no topological change takes place
     unsigned int i = 0;
-    while( Th().no_topological_change(c3t3.triangulation(), v, final_loc) 
-          && (++i <= max_step_nb_) )
+    // Concurrent-safe version
+    if (p_could_lock_zone)
     {
-      new_loc = new_loc + step_length * gradient_vector;
+      while(Th().no_topological_change__without_set_point(c3t3.triangulation(), 
+                                                          v, final_loc) 
+            && (++i <= max_step_nb_) )
+      {
+        new_loc = new_loc + step_length * gradient_vector;
       
-      if ( c3t3.in_dimension(v) == 3 )
-        final_loc = new_loc;
-      else 
-        final_loc = helper.project_on_surface(new_loc, v);
+        if ( c3t3.in_dimension(v) == 3 )
+          final_loc = new_loc;
+        else 
+          final_loc = helper.project_on_surface(new_loc, v);
+      }
+    }
+    else
+    {
+      while( Th().no_topological_change(c3t3.triangulation(), v, final_loc) 
+            && (++i <= max_step_nb_) )
+      {
+        new_loc = new_loc + step_length * gradient_vector;
+      
+        if ( c3t3.in_dimension(v) == 3 )
+          final_loc = new_loc;
+        else 
+          final_loc = helper.project_on_surface(new_loc, v);
+      }
     }
     
     // Topology could not change moving this vertex
