@@ -151,7 +151,7 @@ public:
     std::vector<double>::iterator smoothed_value_it = smoothed_values.begin();
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end();
-        ++facet_it, ++index) {
+        ++facet_it) {
       values[facet_it] = *smoothed_value_it;
     }
   }

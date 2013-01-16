@@ -16,7 +16,7 @@ template<typename AABBTraits, typename Query, typename Output_iterator>
 class Listing_intersection_traits_ray_or_segment_triangle
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Point_3 Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
