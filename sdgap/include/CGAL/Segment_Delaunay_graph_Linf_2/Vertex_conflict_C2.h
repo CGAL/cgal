@@ -675,7 +675,16 @@ namespace CGAL {
         return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
       } else {
         // philaris: serious difference for Linf here, related to L2
-       
+        // sandeep:in original call of incircle_s p is point q is segment and t is segment
+        // here p is segment, q is point and t is segment, p and q are shuffled
+        
+        //Sandeep: we assert that p and t has common end point
+        CGAL_assertion(same_points(p.source_site(),t.source_site()) or same_points(p.source_site(),t.target_site())
+                       or same_points(p.target_site(),t.source_site()) or same_points(p.target_site(),t.target_site()));
+        // q is not on t
+        if (is_q_on_p) {
+          return POSITIVE;
+        }
         if ( p.segment().is_horizontal() or
              p.segment().is_vertical()      ) {
           return NEGATIVE;
