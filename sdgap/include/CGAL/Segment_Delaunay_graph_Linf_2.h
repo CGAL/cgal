@@ -1055,7 +1055,8 @@ public:
     Vertex_handle v_inf = infinite_vertex();
     Vertex_circulator	 vc1 = incident_vertices(v_inf);
     Vertex_circulator	 vc2 = vc1;
-    if (is_infinite(v_inf)){
+    CGAL_precondition(sdg.is_infinite(v_inf));
+    /*if (is_infinite(v_inf)){
       os << "vertex 0 : " << inf_vertex << std::endl;
     }
     int cnt = 0;

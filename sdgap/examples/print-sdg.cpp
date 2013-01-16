@@ -138,9 +138,10 @@ int main( int argc, char *argv[] ) {
   SDG2::Vertex_handle v_inf = sdg.infinite_vertex();
   SDG2::Vertex_circulator	 vc1 = sdg.incident_vertices(v_inf);
   SDG2::Vertex_circulator	 vc2 = vc1;
-  if (sdg.is_infinite(v_inf)){
+  CGAL_precondition(sdg.is_infinite(v_inf));
+  /*if (sdg.is_infinite(v_inf)){
     cout << "vertex 0 : " << inf_vertex << endl;
-  }
+  }*/
   int cnt = 0;
   if (vc1 != 0) {
     do {
