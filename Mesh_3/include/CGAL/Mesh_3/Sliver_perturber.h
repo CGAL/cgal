@@ -591,8 +591,14 @@ private:
   /**
    * Update bad vertices vector, wrt \c sliver_bound
    */
-  void update_bad_vertices(Bad_vertices_vector &bad_vertices,
+  // Sequential
+  void update_bad_vertices(std::vector<Vertex_handle> &bad_vertices,
                            const FT& sliver_bound) const;
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  void update_bad_vertices(tbb::concurrent_vector<Vertex_handle> &bad_vertices,
+                           const FT& sliver_bound) const;
+#endif
   
   /**
    * Initializes vertices ids
@@ -1334,15 +1340,40 @@ update_pvertex__concurrent(PVertex& pv, const FT& sliver_bound) const
 }
 #endif  
   
+// Sequential
 template <typename C3T3, typename Md, typename Sc, typename V_>
 void
 Sliver_perturber<C3T3,Md,Sc,V_>::
-update_bad_vertices(Bad_vertices_vector &bad_vertices,
+update_bad_vertices(std::vector<Vertex_handle> &bad_vertices,
                     const FT& sliver_bound) const
 {
-  Bad_vertices_vector tmpv;
+  typename std::vector<Vertex_handle>::iterator vit = bad_vertices.begin();
+  while ( vit != bad_vertices.end() )
+  {
+    if ( tr_.is_vertex(*vit)
+        && helper_.min_incident_value(*vit,sliver_criterion_) <= sliver_bound )
+    {
+      ++vit;
+    }
+    else
+    { 
+      vit = bad_vertices.erase(vit);
+    }
+  }
+}
+  
+#ifdef CGAL_LINKED_WITH_TBB
+// Parallel
+template <typename C3T3, typename Md, typename Sc, typename V_>
+void
+Sliver_perturber<C3T3,Md,Sc,V_>::
+update_bad_vertices(tbb::concurrent_vector<Vertex_handle> &bad_vertices,
+                    const FT& sliver_bound) const
+{
+  tbb::concurrent_vector<Vertex_handle> tmpv;
 
-  typename Bad_vertices_vector::iterator vit = bad_vertices.begin();
+  typename tbb::concurrent_vector<Vertex_handle>::iterator vit 
+    = bad_vertices.begin();
   while ( vit != bad_vertices.end() )
   {
     if ( tr_.is_vertex(*vit)
@@ -1354,7 +1385,8 @@ update_bad_vertices(Bad_vertices_vector &bad_vertices,
   }
   bad_vertices.swap(tmpv);
 }
-  
+#endif // CGAL_LINKED_WITH_TBB
+
   
 template <typename C3T3, typename Md, typename Sc, typename V_>
 void
@@ -1438,7 +1470,7 @@ Sliver_perturber<C3T3,Md,Sc,V_>::
 reset_perturbation_counters()
 {
   typename Perturbation_vector::iterator it = perturbation_vector_.begin();
-  for ( ; it !=_vector_.end() ; ++it )
+  for ( ; it != perturbation_vector_.end() ; ++it )
   {
     it->reset_counter();
     it->reset_timer();
