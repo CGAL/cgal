@@ -958,6 +958,7 @@ public:
   void file_output_verbose(std::ostream& os) const {
     const char inf_vertex[] = "infinite vertex";
     const char vid[] = {'A', 'B', 'C'};
+    const char v_id[] = {'p', 'q', 'r', 's'};
 
     os << "SDG verbose output" << std::endl;
     os << "==================" << std::endl;
@@ -1021,6 +1022,28 @@ public:
       }
       os << std::endl;
     }
+    
+    Finite_edges_iterator efit = finite_edges_begin();
+    for (int k = 1; efit != finite_edges_end(); ++efit, ++k) {
+      Edge e = *efit;
+      // get the vertices defining the Voronoi edge
+      Vertex_handle v[] = { e.first->vertex( ccw(e.second) ),
+        e.first->vertex( cw(e.second) ),
+        e.first->vertex( e.second ),
+        tds().mirror_vertex(e.first, e.second) };
+      
+      os << "--- Voronoi Edge " << k << " ---" << std::endl;
+      for (int i = 0; i < 4; i++) {
+        // check if the vertex is the vertex at infinity; if yes, print
+        // the corresponding string, otherwise print the site
+        if ( is_infinite(v[i]) ) {
+          os << v_id[i] << ": " << inf_vertex << std::endl;
+        } else {
+          os << v_id[i] << ": " << v[i]->site() << std::endl;
+        }
+      }
+      os << std::endl;
+    }
 
     os << std::endl;
     os << "Faces of sdg:" << std::endl;
@@ -1055,10 +1078,10 @@ public:
     Vertex_handle v_inf = infinite_vertex();
     Vertex_circulator	 vc1 = incident_vertices(v_inf);
     Vertex_circulator	 vc2 = vc1;
-    CGAL_precondition(sdg.is_infinite(v_inf));
+    CGAL_precondition(is_infinite(v_inf));
     /*if (is_infinite(v_inf)){
       os << "vertex 0 : " << inf_vertex << std::endl;
-    }
+    }*/
     int cnt = 0;
     if (vc1 != 0) {
       do {

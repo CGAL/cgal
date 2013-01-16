@@ -56,6 +56,7 @@ int main( int argc, char *argv[] ) {
 
   string inf_vertex("infinite vertex");
   char vid[] = {'A', 'B', 'C'};
+  char v_id[] = {'p', 'q', 'r', 's'};
 
   cout << "Sandeep: the number of vertices in sdg = " << sdg.number_of_vertices() << endl;
   cout << "Sandeep: the number of faces in sdg = " << sdg.number_of_faces() << endl;
@@ -100,6 +101,28 @@ int main( int argc, char *argv[] ) {
         cout << vid[i] << ": " << inf_vertex << endl;
       } else {
         cout << vid[i] << ": " << v[i]->site() << endl;
+      }
+    }
+    cout << endl;
+  }
+  
+  SDG2::Finite_edges_iterator efit = sdg.finite_edges_begin();
+  for (int k = 1; efit != sdg.finite_edges_end(); ++efit, ++k) {
+    SDG2::Edge e = *efit;
+    // get the vertices defining the Voronoi edge
+    SDG2::Vertex_handle v[] = { e.first->vertex( sdg.ccw(e.second) ),
+      e.first->vertex( sdg.cw(e.second) ),
+      e.first->vertex( e.second ),
+      sdg.tds().mirror_vertex(e.first, e.second) };
+    
+    cout << "--- Voronoi Edge " << k << " ---" << endl;
+    for (int i = 0; i < 4; i++) {
+      // check if the vertex is the vertex at infinity; if yes, print
+      // the corresponding string, otherwise print the site
+      if ( sdg.is_infinite(v[i]) ) {
+        cout << v_id[i] << ": " << inf_vertex << endl;
+      } else {
+        cout << v_id[i] << ": " << v[i]->site() << endl;
       }
     }
     cout << endl;
