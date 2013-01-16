@@ -89,7 +89,7 @@ int main( int argc, char *argv[] ) {
     SDG2::Edge e = *eit;
     // get the vertices defining the edge
     SDG2::Vertex_handle v[] = { e.first->vertex(sdg.ccw(e.second)),
-      e.first->vertex(e.second)
+      e.first->vertex(sdg.cw(e.second))
     };
     
     cout << "--- Edge " << k << " ---" << endl;

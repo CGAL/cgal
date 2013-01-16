@@ -997,12 +997,17 @@ public:
       Edge e = *eit;
       // get the vertices defining the edge
 
-      Vertex_handle v[] = {
+      /*Vertex_handle v[] = {
         (e.first)->vertex(ccw(e.second)),
         (this->dimension() == 1 ?
           (e.first)->vertex(cw(e.second)):
           (e.first)->vertex(e.second))
+      };*/
+      Vertex_handle v[] = {
+        (e.first)->vertex(ccw(e.second)),
+        (e.first)->vertex(cw(e.second))
       };
+
 
       os << "--- Edge " << k << " ---" << std::endl;
       for (int i = 0; i < 2; i++) {
