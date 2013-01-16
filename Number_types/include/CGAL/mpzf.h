@@ -832,10 +832,25 @@ struct mpzf {
   }
 #endif
 };
+
+// Copied from Gmpzf, not sure that's the best thing to do.
+inline
+std::ostream& operator<< (std::ostream& os, const mpzf& a)
+{
+    return os << a.to_double();
+}
+
+inline
+std::istream& operator>> (std::istream& is, mpzf& a)
+{
+  double d;
+  is >> d;
+  if (is.good())
+    a = d;
+  return is;
 }
 
 
-namespace CGAL {
   template <> struct Algebraic_structure_traits< mpzf >
     : public Algebraic_structure_traits_base< mpzf, Integral_domain_without_division_tag >  {
       typedef Tag_true            Is_exact;
