@@ -1,5 +1,8 @@
 #ifndef CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
+
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 /**
  * @file Alpha_expansion_graph_cut.h
  * @brief This file contains 3 graph-cut algorithms, which can be used as a template parameter for CGAL::internal::Surface_mesh_segmentation.
@@ -31,7 +34,6 @@
 
 namespace CGAL
 {
-/// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal
 {
 

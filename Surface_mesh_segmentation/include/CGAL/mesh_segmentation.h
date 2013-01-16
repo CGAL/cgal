@@ -8,12 +8,12 @@
 #include <CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h>
 #include <boost/config.hpp>
 
-/** CGAL */
 namespace CGAL
 {
 
 
 /*!
+ * \ingroup PkgSurfaceSegmentation
  * @brief Function computing the Shape Diameter Function over a surface mesh.
  *
  * This function implements the Shape Diameter Function (SDF) as described in \cite shapira2008consistent.
@@ -53,6 +53,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
 
 
 /*!
+ * \ingroup PkgSurfaceSegmentation
  * @brief Function computing the segmentation of a surface mesh given an SDF value per facet.
  *
  * This function fills a property map which associates a segment-id (between [0, number of segments -1]) to each facet.
@@ -99,6 +100,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
 
 
 /*!
+ * \ingroup PkgSurfaceSegmentation
  * @brief Function computing the segmentation of a surface mesh.
  *
  * Basically this function combines CGAL::sdf_values_computation and
