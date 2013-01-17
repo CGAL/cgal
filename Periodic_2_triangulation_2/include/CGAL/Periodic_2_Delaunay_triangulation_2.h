@@ -23,6 +23,15 @@
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/iterator.h>
 
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+#include <CGAL/Spatial_sort_traits_adapter_2.h>
+#include <CGAL/internal/info_check.h>
+
+#include <boost/iterator/zip_iterator.hpp>
+#include <boost/mpl/and.hpp>
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
+
 namespace CGAL {
 
 template <
@@ -139,10 +148,21 @@ public:
   Vertex_handle push_back(const Point &p);
 
   /// NGHK: Not yet implemented
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
-         bool is_large_point_set = true)
+         bool is_large_point_set = true,
+         typename boost::enable_if<
+           boost::is_convertible<
+             typename std::iterator_traits<InputIterator>::value_type,
+             Point
+             > >::type* = NULL)
+#else
+  template < class InputIterator >
+  std::ptrdiff_t
+  insert(InputIterator first, InputIterator last, bool is_large_point_set = true)
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO 
   {
     if (first == last) return 0;
 
@@ -167,9 +187,10 @@ public:
       // The empty triangulation is a 1-cover by definition, insert at least one point
       insert(*pbegin); ++pbegin;
       while (!is_1_cover()) {
+        if (pbegin == points.end())
+          return number_of_vertices() - n;
         insert(*pbegin);
         ++pbegin;
-        if (pbegin == points.end()) return number_of_vertices() - n;
       }
     }
 
@@ -201,6 +222,133 @@ public:
 
     return number_of_vertices() - n;
   }
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+private:  
+  //top stands for tuple-or-pair
+  template <class Info>
+  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
+  template <class Info>
+  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
+  template <class Info>
+  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
+  template <class Info>
+  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
+
+  template <class Tuple_or_pair,class InputIterator>
+  std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last, bool is_large_point_set)
+  {
+    if (first == last) return 0;
+
+    std::vector<std::ptrdiff_t> indices;
+    std::vector<Point> points;
+    std::vector<typename Tds::Vertex::Info> infos;
+    std::ptrdiff_t index=0;
+    for (InputIterator it=first;it!=last;++it){
+      Tuple_or_pair value=*it;
+      points.push_back( top_get_first(value)  );
+      infos.push_back ( top_get_second(value) );
+      indices.push_back(index++);
+    }
+
+    typedef Spatial_sort_traits_adapter_2<Geom_traits,Point*> Search_traits;
+    
+    size_type n = number_of_vertices();
+
+    // The heuristic discards the existing triangulation so it can only be
+    // applied to empty triangulations.
+    if (n!=0) is_large_point_set = false;
+
+    std::set<Vertex_handle> dummy_points;
+    typename std::vector<std::ptrdiff_t>::iterator pbegin = indices.begin();
+
+    if (is_large_point_set) {
+      std::vector<Vertex_handle> tmp_dummy_points = this->insert_dummy_points();
+      std::copy(tmp_dummy_points.begin(), tmp_dummy_points.end(),
+                std::inserter(dummy_points, dummy_points.begin()));
+    } else {
+      std::random_shuffle(indices.begin(),indices.end());
+      pbegin = indices.begin();
+
+      Vertex_handle v_new;
+
+      // The empty triangulation is a 1-cover by definition, insert at least one point
+      v_new = insert(points[*pbegin]);
+      v_new->info() = infos[*pbegin];
+      ++pbegin;
+
+      while (!is_1_cover()) {
+        if (pbegin == indices.end())
+          return number_of_vertices() - n;
+        v_new = insert(points[*pbegin]);
+        v_new->info() = infos[*pbegin];
+        ++pbegin;
+      }
+    }
+
+    CGAL_assertion(is_1_cover());
+
+    // Insert the points
+    spatial_sort(indices.begin(),indices.end(),Search_traits(&(points[0]),geom_traits()));
+
+    Face_handle f; Locate_type lt; int li;
+
+    Face_handle hint;
+    for (typename std::vector<std::ptrdiff_t>::const_iterator it = pbegin, end = indices.end();
+      it != end; ++it){
+      f = locate(points[*it], lt, li, f);
+
+      if (lt == Triangulation::VERTEX) {
+        // Always copy the info, it might be a dummy vertex
+        f->vertex(li)->info() = infos[*it];
+        dummy_points.erase(f->vertex(li));
+      } else {
+        Vertex_handle v_new = insert(points[*it], lt, f, li);
+        v_new->info() = infos[*it];
+      }
+    }
+
+    if (is_large_point_set) {
+      for (typename std::set<Vertex_handle>::const_iterator it = dummy_points.begin();
+           it != dummy_points.end(); ++it) {
+        remove(*it);
+      }
+    }
+
+    return number_of_vertices() - n;
+  }
+  
+ 
+public:
+
+  template < class InputIterator >
+  std::ptrdiff_t
+  insert( InputIterator first,
+          InputIterator last,
+          bool is_large_point_set = true,
+          typename boost::enable_if<
+            boost::is_convertible<
+              typename std::iterator_traits<InputIterator>::value_type,
+              std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
+            > >::type* =NULL
+  )
+  {
+    return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last, is_large_point_set);
+  }
+
+  template <class  InputIterator_1,class InputIterator_2>
+  std::ptrdiff_t
+  insert( boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
+          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
+          bool is_large_point_set = true,
+          typename boost::enable_if<
+            boost::mpl::and_<
+              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
+              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
+            > >::type* =NULL)
+  {
+    return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last,is_large_point_set);
+  }
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
   /// NGHK: Not yet implemented
   void  remove(Vertex_handle v );

@@ -1700,7 +1700,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::clear() {
 }
 
 template<class Gt, class Tds>
-bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(Face_handle fh, bool verbose, int level) const {
+bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(Face_handle fh, bool /*verbose*/, int /*level*/) const {
   bool result = true;
 
   int xmin, xmax, ymin, ymax;
@@ -2087,8 +2087,6 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle Periodic_2_triangula
   // The empty triangulation has a single sheeted cover
   _cover = make_array(3, 3);
 
-  FT px = p.x();
-  FT py = p.y();
   /// Virtual vertices, one per periodic domain
   Vertex_handle vir_vertices[3][3];
   /// Virtual faces, two per periodic domain
@@ -2470,7 +2468,7 @@ inline void Periodic_2_triangulation_2<Gt, Tds>::remove_degree_3_single_copy(Ver
 }
 
 template<class Gt, class Tds>
-inline void Periodic_2_triangulation_2<Gt, Tds>::remove_first(Vertex_handle v) {
+inline void Periodic_2_triangulation_2<Gt, Tds>::remove_first(Vertex_handle) {
   CGAL_assertion(number_of_vertices() == 1);
   clear();
   return;
