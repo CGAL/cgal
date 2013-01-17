@@ -13,6 +13,11 @@
 #include <CGAL/enum.h>
 #include <CGAL/Interval_nt.h>
 
+// The following is currently assumed in several places. I hope I am not
+// making too many other assumptions.
+#if GMP_NUMB_BITS == 64
+#define CGAL_HAS_MPZF
+
 #ifdef _MSC_VER
 #include <intrin.h>
 #pragma intrinsic(_BitScanForward64)
@@ -951,4 +956,5 @@ std::istream& operator>> (std::istream& is, mpzf& a)
     };
 
 }
+#endif // GMP_NUMB_BITS == 64
 #endif // CGAL_MPZF_H
