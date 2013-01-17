@@ -1,5 +1,5 @@
 //#define CGAL_USE_BOOST_BIMAP
-//#define CGAL_SDG_VERBOSE 
+#define CGAL_SDG_VERBOSE
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -401,6 +401,8 @@ MainWindow::loadSitesInput(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   while (ifs >> site) {
     svd.insert(site);
+
+    CGAL_SDG_DEBUG( svd.file_output_verbose(std::cout); ) ;
   }
   
   emit(changed());
