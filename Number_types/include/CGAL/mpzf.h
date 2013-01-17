@@ -20,7 +20,6 @@
 #include <cstdlib>
 #include <climits>
 #include <assert.h>
-#include <stdint.h>
 #include <vector>
 #include <math.h>
 #include <cmath>
@@ -32,8 +31,13 @@
 
 // The following is currently assumed in several places. I hope I am not
 // making too many other assumptions.
-#if GMP_NUMB_BITS == 64
+// * limbs are 64 bits
+// * uint64_t and stdint.h exist
+// * mpn_neg and mpn_copyi exist
+#if __GNU_MP_VERSION >= 5 && GMP_NUMB_BITS == 64 && defined BOOST_HAS_STDINT_H
 #define CGAL_HAS_MPZF 1
+
+#include <stdint.h>
 
 #ifdef _MSC_VER
 #include <intrin.h>
