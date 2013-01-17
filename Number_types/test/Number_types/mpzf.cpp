@@ -1,6 +1,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/mpzf.h>
-
+#include <iostream>
+#ifdef CGAL_HAS_MPZF
 using CGAL::mpzf;
 int main(){
   mpzf a=3;
@@ -37,3 +38,8 @@ int main(){
   assert(!CGAL::is_square(b));
   assert(a.is_canonical() && b.is_canonical() && c.is_canonical() && d.is_canonical() && f.is_canonical());
 }
+#else
+int main(){
+  std::cout << "mpzf is not supported on this platform.\n";
+}
+#endif

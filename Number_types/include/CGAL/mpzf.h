@@ -33,7 +33,7 @@
 // The following is currently assumed in several places. I hope I am not
 // making too many other assumptions.
 #if GMP_NUMB_BITS == 64
-#define CGAL_HAS_MPZF
+#define CGAL_HAS_MPZF 1
 
 #ifdef _MSC_VER
 #include <intrin.h>
