@@ -848,6 +848,8 @@ public:
     clear();
     _domain = domain;
     _gt.set_domain(_domain);
+    _edge_length_threshold = 
+      FT(0.166) * (_domain.xmax()-_domain.xmin()) * (_domain.xmax()-_domain.xmin());
   }
   //\}
 
@@ -1519,10 +1521,7 @@ Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
   , _too_long_edge_counter(0) {
   CGAL_triangulation_precondition(_domain.xmax() - _domain.xmin() ==
       _domain.ymax() - _domain.ymin());
-  _gt.set_domain(_domain);
-  _edge_length_threshold = (FT(0.166) * (_domain.xmax() - _domain.xmin())
-      * (_domain.xmax() - _domain.xmin()));
-
+  set_domain(_domain);
 }
 
 template<class Gt, class Tds>
@@ -1534,13 +1533,11 @@ Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
   , _cover(make_array(1, 1))
   , _domain(domain)
   , _too_long_edge_counter(0) {
-	CGAL_triangulation_precondition(_domain.xmax()-_domain.xmin() == _domain.ymax()-_domain.ymin());
-
-	_gt.set_domain(_domain);
-	_edge_length_threshold = (FT(0.166) * (_domain.xmax() - _domain.xmin())
-			* (_domain.xmax() - _domain.xmin()));
-
-	insert(first, last);
+  CGAL_triangulation_precondition(_domain.xmax()-_domain.xmin() == _domain.ymax()-_domain.ymin());
+  
+  set_domain(_domain);
+  
+  insert(first, last);
 }
 
 // copy constructor duplicates vertices and faces
