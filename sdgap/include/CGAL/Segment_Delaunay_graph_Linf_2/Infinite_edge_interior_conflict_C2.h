@@ -68,23 +68,13 @@ namespace CGAL {
           << ' ' << sgn << std::endl;);
 
       if ( t.is_segment() ) {
-        if (sgn == NEGATIVE and (s.is_segment() or r.is_segment() or q.is_segment())) {
-          CGAL_SDG_DEBUG(std::cout <<
-              "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
-                     << q << ' ' << s << ' ' << r << ' ' << t
-                     << ' ' << sgn << " returns " << true <<
-                     std::endl;);
-          return true;
-        }
-        else {
-          //Sandeep: This is because end points of a segment are inserted first
-          CGAL_SDG_DEBUG(std::cout <<
+        //Sandeep: This is because end points of a segment are inserted first
+        CGAL_SDG_DEBUG(std::cout <<
               "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
                      << q << ' ' << s << ' ' << r << ' ' << t
                      << ' ' << sgn << " returns " << false <<
                      std::endl;);
-          return false;
-        }
+        return false;
       }
 
 
