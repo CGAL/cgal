@@ -687,14 +687,14 @@ private:
   void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
 
-  bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
-		std::vector<Vertex_handle> &w, std::vector<int> &i) {
+  bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &,
+		std::vector<Vertex_handle> &w, std::vector<int> &) {
     
     return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
                                    true) ==  ON_POSITIVE_SIDE;
   }
-  bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &f,
-		std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i) {
+  bool incircle(int x, int j, int k, int l, std::vector<Face_handle> &,
+		std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &) {
     
     return side_of_oriented_circle(w[j]->point(), w[k]->point(), w[l]->point(), w[x]->point(),
                                    o[j], o[k], o[l], o[x],
@@ -1466,9 +1466,9 @@ remove_degree_triangulate(Vertex_handle v,
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
-                std::vector<Vertex_handle> &w,
-                std::vector<int> &i,int d)
+remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
+                std::vector<Vertex_handle> &,
+                std::vector<int> &, int)
 {
   std::list<Edge> hole;
   this->make_hole(v, hole);
@@ -1480,9 +1480,9 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
+remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
                 std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
-                std::vector<int> &i,int d)
+                std::vector<int> &,int d)
 {
   std::list<Edge> hole;
   this->make_hole(v, hole);
@@ -1500,8 +1500,8 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
-               std::vector<Vertex_handle> &w, 
+remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
+               std::vector<Vertex_handle> &,
                std::vector<int> &i)
 {
   // modify the triangulation
@@ -1522,8 +1522,8 @@ remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
 template < class Gt, class Tds >
 void
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
-               std::vector<Vertex_handle> &w, std::vector<Offset> &o,
+remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
+               std::vector<Vertex_handle> &, std::vector<Offset> &o,
                std::vector<int> &i)
 {
   // modify the triangulation

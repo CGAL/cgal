@@ -2,7 +2,7 @@
 
 const int N_PTS = 50;
 
-int main(int argc, char* argv[]) {
+int main() {
   Triangulation t;
 
   Vector midpoint(0.5, 0.5);

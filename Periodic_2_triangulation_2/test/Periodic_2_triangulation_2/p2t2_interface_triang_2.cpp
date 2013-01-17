@@ -370,7 +370,7 @@ void test() {
   test_miscellaneous<T>();
 }
 
-int main(int argc, char *argv[]) {
+int main() {
   typedef Periodic_2_triangulation_2<Gt>              P2T2;
   typedef Periodic_2_Delaunay_triangulation_2<Gt>     DP2T2;
 

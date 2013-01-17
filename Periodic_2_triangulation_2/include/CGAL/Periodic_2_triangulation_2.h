@@ -846,6 +846,7 @@ public:
   /// it erases the existing triangulation.
   void set_domain(const Iso_rectangle &domain) {
     clear();
+    _domain = domain;
     _gt.set_domain(_domain);
   }
   //\}
