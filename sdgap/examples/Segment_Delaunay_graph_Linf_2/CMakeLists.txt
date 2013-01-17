@@ -29,6 +29,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "sdg-red-blue-info.cpp" )
   create_single_source_cgal_program( "sdg-voronoi-edges.cpp" )
   create_single_source_cgal_program( "print-sdg.cpp" )
+  create_single_source_cgal_program( "print-sdg-l2.cpp" )
 
 else()
   
