@@ -15,7 +15,7 @@ endif()
 
 ## Compiler flags: C++11
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++0x")        ## Optimize
+    set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -std=c++0x")
 endif()
 
 # Creates a new CMake option, turned ON by default

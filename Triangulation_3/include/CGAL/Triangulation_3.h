@@ -798,7 +798,7 @@ public:
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
   Cell_handle
-  locate(const Point & p, Cell_handle start = Cell_handle(), 
+  locate(const Point & p, Cell_handle start = Cell_handle(),
          bool *p_could_lock_zone = 0) const
   {
       Locate_type lt;
@@ -808,19 +808,19 @@ public:
 
   Cell_handle
   locate(const Point & p,
-	 Locate_type & lt, int & li, int & lj, Vertex_handle hint, 
+	 Locate_type & lt, int & li, int & lj, Vertex_handle hint,
    bool *p_could_lock_zone = 0) const
   {
-      return locate(p, l     li, lj, 
+      return locate(p, lt, li, lj,
         hint == Vertex_handle() ? infinite_cell() : hint->cell(),
         p_could_lock_zone);
   }
 
   Cell_handle
-  locate(const Point & p, Vertex_handle hint, 
+  locate(const Point & p, Vertex_handle hint,
          bool *p_could_lock_zone = 0) const
     {
-      return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell(), 
+      return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell(),
         p_could_lock_zone);
   }
 
@@ -2296,7 +2296,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 #ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
             if (p_could_lock_zone)
             {
-              //previous->unlock(); // DON'T do that, "c" may be in 
+              //previous->unlock(); // DON'T do that, "c" may be in
                                     // the same locking cell as "previous"
               //c->lock(); // WARNING: not atomic! => DEADLOCKS?
               if (!try_lock_element(c))
@@ -2524,7 +2524,7 @@ inexact_locate(const Point & t, Cell_handle start,
                bool *p_could_lock_zone, int n_of_turns) const
 {
   CGAL_triangulation_expensive_assertion(start == Cell_handle() || tds().is_simplex(start) );
-  
+
   if (p_could_lock_zone)
     *p_could_lock_zone = true;
 
@@ -2547,7 +2547,7 @@ inexact_locate(const Point & t, Cell_handle start,
   // Remembers the previous cell to avoid useless orientation tests.
   Cell_handle previous = Cell_handle();
   Cell_handle c = start;
-  
+
 #ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (p_could_lock_zone)
     {
@@ -2596,7 +2596,7 @@ inexact_locate(const Point & t, Cell_handle start,
 #ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (p_could_lock_zone)
     {
-      //previous->unlock(); // DON'T do that, "c" may be in 
+      //previous->unlock(); // DON'T do that, "c" may be in
                             // the same locking cell as "previous"
       //c->lock(); // WARNING: not atomic! => DEADLOCKS?
       if (!try_lock_element(c))

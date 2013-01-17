@@ -88,7 +88,7 @@ public:
   {
     return m_tls_grids.local()[cell_index];
   }
-  
+
   template <typename P3>
   bool is_locked_by_this_thread(const P3 &point)
   {
@@ -97,11 +97,11 @@ public:
 
   bool try_lock(int cell_index, bool no_spin = false)
   {
-    return m_tls_grids.local()[cell_index] 
+    return m_tls_grids.local()[cell_index]
         || try_lock_cell(cell_index, no_spin);
   }
 
-  bool try_lock(int index_x, int index_y, int index_z, int lock_radius, 
+  bool try_lock(int index_x, int index_y, int index_z, int lock_radius,
                 bool no_spin = false)
   {
     if (lock_radius == 0)
@@ -275,7 +275,7 @@ protected:
       delete [] *it_grid;
     }
   }
-  
+
   template <typename P3>
   int get_grid_index(const P3& point)
   {
@@ -379,6 +379,14 @@ protected:
 // class Simple_grid_locking_ds_with_thread_ids
 //******************************************************************************
 
+static unsigned int init_TLS_thread_ids()
+{
+  static tbb::atomic<unsigned int> last_id;
+  unsigned int id = ++last_id;
+  // Ensure it is > 0
+  return (1 + id%(std::numeric_limits<unsigned int>::max()));
+}
+
 class Simple_grid_locking_ds_with_thread_ids
   : public Grid_locking_ds_base<Simple_grid_locking_ds_with_thread_ids>
 {
@@ -390,15 +398,7 @@ public:
   Simple_grid_locking_ds_with_thread_ids(const Bbox_3 &bbox,
                                          int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
-    m_tls_thread_ids(
-      [=]() -> unsigned int // CJTODO: lambdas OK?
-      {
-        static tbb::atomic<unsigned int> last_id;
-        unsigned int id = ++last_id;
-        // Ensure it is > 0
-        return (1 + id%(std::numeric_limits<unsigned int>::max()));
-      }
-    )
+    m_tls_thread_ids(init_TLS_thread_ids)
   {
     int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;

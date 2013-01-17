@@ -59,8 +59,10 @@ if (WIN32)
     set(_TBB_DEFAULT_INSTALL_DIR "C:/Program Files/Intel/TBB" "C:/Program Files (x86)/Intel/TBB")
     set(_TBB_LIB_NAME "tbb")
     set(_TBB_LIB_MALLOC_NAME "${_TBB_LIB_NAME}malloc")
+    set(_TBB_LIB_MALLOCPROXY_NAME "${_TBB_LIB_NAME}malloc_proxy")
     set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_NAME}_debug")
     set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_NAME}_debug")
+    set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_NAME}_debug")
     if (MSVC71)
         set (_TBB_COMPILER "vc7.1")
     endif(MSVC71)
@@ -84,8 +86,10 @@ if (UNIX)
         # libs: libtbb.dylib, libtbbmalloc.dylib, *_debug
         set(_TBB_LIB_NAME "tbb")
         set(_TBB_LIB_MALLOC_NAME "${_TBB_LIB_NAME}malloc")
+        set(_TBB_LIB_MALLOCPROXY_NAME "${_TBB_LIB_NAME}malloc_proxy")
         set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_NAME}_debug")
         set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_NAME}_debug")
+        set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_NAME}_debug")
         # default flavor on apple: ia32/cc4.0.1_os10.4.9
         # Jiri: There is no reason to presume there is only one flavor and
         #       that user's setting of variables should be ignored.
@@ -104,8 +108,10 @@ if (UNIX)
         set(_TBB_DEFAULT_INSTALL_DIR "/opt/intel/tbb" "/usr/local/include" "/usr/include")
         set(_TBB_LIB_NAME "tbb")
         set(_TBB_LIB_MALLOC_NAME "${_TBB_LIB_NAME}malloc")
+        set(_TBB_LIB_MALLOCPROXY_NAME "${_TBB_LIB_NAME}malloc_proxy")
         set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_NAME}_debug")
         set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_NAME}_debug")
+        set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_NAME}_debug")
         # has em64t/cc3.2.3_libc2.3.2_kernel2.4.21 em64t/cc3.3.3_libc2.3.3_kernel2.6.5 em64t/cc3.4.3_libc2.3.4_kernel2.6.9 em64t/cc4.1.0_libc2.4_kernel2.6.16.21
         # has ia32/*
         # has itanium/*
@@ -228,19 +234,24 @@ find_library(TBB_LIBRARY ${_TBB_LIB_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
 find_library(TBB_MALLOC_LIBRARY ${_TBB_LIB_MALLOC_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+find_library(TBB_MALLOCPROXY_LIBRARY ${_TBB_LIB_MALLOCPROXY_NAME} HINTS ${_TBB_LIBRARY_DIR}
+        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
 
 #Extract path from TBB_LIBRARY name
 get_filename_component(TBB_LIBRARY_DIR ${TBB_LIBRARY} PATH)
 
 #TBB_CORRECT_LIB_DIR(TBB_LIBRARY)
 #TBB_CORRECT_LIB_DIR(TBB_MALLOC_LIBRARY)
-mark_as_advanced(TBB_LIBRARY TBB_MALLOC_LIBRARY)
+#TBB_CORRECT_LIB_DIR(TBB_MALLOCPROXY_LIBRARY)
+mark_as_advanced(TBB_LIBRARY TBB_MALLOC_LIBRARY TBB_MALLOCPROXY_LIBRARY)
 
 #-- Look for debug libraries
 # Jiri: Changed the same way as for the release libraries.
 find_library(TBB_LIBRARY_DEBUG ${_TBB_LIB_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
 find_library(TBB_MALLOC_LIBRARY_DEBUG ${_TBB_LIB_MALLOC_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
+        PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
+find_library(TBB_MALLOCPROXY_LIBRARY_DEBUG ${_TBB_LIB_MALLOCPROXY_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
 
 # Jiri: Self-built TBB stores the debug libraries in a separate directory.
@@ -249,14 +260,15 @@ get_filename_component(TBB_LIBRARY_DEBUG_DIR ${TBB_LIBRARY_DEBUG} PATH)
 
 #TBB_CORRECT_LIB_DIR(TBB_LIBRARY_DEBUG)
 #TBB_CORRECT_LIB_DIR(TBB_MALLOC_LIBRARY_DEBUG)
-mark_as_advanced(TBB_LIBRARY_DEBUG TBB_MALLOC_LIBRARY_DEBUG)
+#TBB_CORRECT_LIB_DIR(TBB_MALLOCPROXY_LIBRARY_DEBUG)
+mark_as_advanced(TBB_LIBRARY_DEBUG TBB_MALLOC_LIBRARY_DEBUG TBB_MALLOCPROXY_LIBRARY_DEBUG)
 
 
 if (TBB_INCLUDE_DIR)
     if (TBB_LIBRARY)
         set (TBB_FOUND "YES")
-        set (TBB_LIBRARIES ${TBB_LIBRARY} ${TBB_MALLOC_LIBRARY} ${TBB_LIBRARIES})
-        set (TBB_DEBUG_LIBRARIES ${TBB_LIBRARY_DEBUG} ${TBB_MALLOC_LIBRARY_DEBUG} ${TBB_DEBUG_LIBRARIES})
+        set (TBB_LIBRARIES ${TBB_LIBRARY} ${TBB_MALLOC_LIBRARY} ${TBB_MALLOCPROXY_LIBRARY} ${TBB_LIBRARIES})
+        set (TBB_DEBUG_LIBRARIES ${TBB_LIBRARY_DEBUG} ${TBB_MALLOC_LIBRARY_DEBUG} ${TBB_MALLOCPROXY_LIBRARY_DEBUG} ${TBB_DEBUG_LIBRARIES})
         set (TBB_INCLUDE_DIRS ${TBB_INCLUDE_DIR} CACHE PATH "TBB include directory" FORCE)
         set (TBB_LIBRARY_DIRS ${TBB_LIBRARY_DIR} CACHE PATH "TBB library directory" FORCE)
         # Jiri: Self-built TBB stores the debug libraries in a separate directory.

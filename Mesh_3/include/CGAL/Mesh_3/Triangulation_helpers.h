@@ -19,7 +19,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_TRIANGULATION_HELPERS_H
@@ -30,8 +30,8 @@
 namespace CGAL {
 
 namespace Mesh_3 {
-  
-  
+
+
 template<typename Tr>
 class Triangulation_helpers
 {
@@ -40,7 +40,7 @@ class Triangulation_helpers
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef std::vector<Cell_handle>              Cell_vector;
-  
+
   /**
    * A functor to reset visited flag of each facet of a cell
    */
@@ -52,7 +52,7 @@ class Triangulation_helpers
         c->reset_visited(i);
     }
   };
-  
+
   /**
    * A functor to get the point of a vertex vh, but replacing
    * it by m_p when vh == m_vh
@@ -69,24 +69,24 @@ class Triangulation_helpers
     {
       return (vh == m_vh ? m_p : vh->point());
     }
-    
+
   private:
     const Vertex_handle m_vh;
     const Point_3 &m_p;
   };
-  
+
 public:
   /// Constructor / Destructor
   Triangulation_helpers() {}
   ~Triangulation_helpers() {}
-  
+
   /**
    * Moves point from \c v to \c p.
    */
   void move_point(Tr& tr,
                   const Vertex_handle& v,
                   const Point_3& p) const;
-  
+
   /**
    * Returns true if moving \c v to \c p makes no topological
    * change in \c tr
@@ -100,15 +100,15 @@ public:
                              const Vertex_handle& v,
                              const Point_3& p,
                              Cell_vector& cells_tos) const;
-  
+
   bool no_topological_change(const Tr& tr,
                              const Vertex_handle& v,
-                             const Point_3& p) const;  
+                             const Point_3& p) const;
   bool no_topological_change__without_set_point(
                              const Tr& tr,
                              const Vertex_handle& v,
                              const Point_3& p) const;
-  
+
 private:
   /**
    * Returns true if \c v is well_oriented on each cell of \c cell_tos
@@ -121,8 +121,8 @@ private:
                      const Cell_vector& cell_tos,
                      const Point_getter& pg) const;
 };
-  
-  
+
+
 template<typename Tr>
 void
 Triangulation_helpers<Tr>::
@@ -150,62 +150,62 @@ no_topological_change(const Tr& tr,
   bool np = true;
   Point_3 fp = v0->point();
   v0->set_point(p);
-  
-  if(!well_oriented(tr, cells_tos)) 
+
+  if(!well_oriented(tr, cells_tos))
   {
     // Reset (restore) v0
     v0->set_point(fp);
     return false;
   }
-  
+
   // Reset visited tags of facets
   std::for_each(cells_tos.begin(), cells_tos.end(), Reset_facet_visited());
-  
+
   for ( typename Cell_vector::iterator cit = cells_tos.begin() ;
         cit != cells_tos.end() ;
         ++cit )
   {
     Cell_handle c = *cit;
-    for(int j=0; j<4; j++) 
+    for(int j=0; j<4; j++)
     {
       // Treat each facet only once
       if(c->is_facet_visited(j))
         continue;
-      
+
       // Set facet and it's mirror's one visited
       Cell_handle cj = c->neighbor(j);
       int mj = tr.mirror_index(c, j);
       c->set_facet_visited(j);
-      cj->set_facet_visited(mj);   
-      
+      cj->set_facet_visited(mj);
+
       Vertex_handle v1 = c->vertex(j);
-      if(tr.is_infinite(v1)) 
+      if(tr.is_infinite(v1))
       {
-        if(tr.side_of_power_sphere(c, cj->vertex(mj)->point(), false) 
-           != CGAL::ON_UNBOUNDED_SIDE) 
+        if(tr.side_of_power_sphere(c, cj->vertex(mj)->point(), false)
+           != CGAL::ON_UNBOUNDED_SIDE)
         {
-          np = false; 
+          np = false;
           break;
         }
       }
       else
       {
-        if(tr.side_of_power_sphere(cj, v1->point(), false) 
-           != CGAL::ON_UNBOUNDED_SIDE) 
+        if(tr.side_of_power_sphere(cj, v1->point(), false)
+           != CGAL::ON_UNBOUNDED_SIDE)
         {
-          np = false; 
+          np = false;
           break;
         }
       }
     }
   }
-  
+
   // Reset (restore) v0
   v0->set_point(fp);
 
   return np;
 }
-  
+
 template<typename Tr>
 bool
 Triangulation_helpers<Tr>::
@@ -219,25 +219,25 @@ no_topological_change__without_set_point(
 
   Point_getter pg(v0, p);
 
-  if(!well_oriented(tr, cells_tos, pg)) 
+  if(!well_oriented(tr, cells_tos, pg))
   {
     return false;
   }
-  
+
   // Reset visited tags of facets
   std::for_each(cells_tos.begin(), cells_tos.end(), Reset_facet_visited());
-  
+
   for ( typename Cell_vector::iterator cit = cells_tos.begin() ;
         cit != cells_tos.end() ;
         ++cit )
   {
     Cell_handle c = *cit;
-    for(int j=0; j<4; j++) 
+    for(int j=0; j<4; j++)
     {
       // Treat each facet only once
       if(c->is_facet_visited(j))
         continue;
-      
+
       // Set facet and it's mirror's one visited
       Cell_handle cj = c->neighbor(j);
       int mj = tr.mirror_index(c, j);
@@ -245,41 +245,41 @@ no_topological_change__without_set_point(
       cj->set_facet_visited(mj);
 
       Vertex_handle v1 = c->vertex(j);
-      if(tr.is_infinite(v1)) 
+      if(tr.is_infinite(v1))
       {
         // Build a copy of c, and replace V0 by a temporary vertex (position "p")
-        Cell_handle::value_type c_copy (*c);
+        typename Cell_handle::value_type c_copy (*c);
         int i_v0;
         if (c_copy.has_vertex(v0, i_v0))
         {
-          Vertex_handle::value_type v;
+          typename Vertex_handle::value_type v;
           v.set_point(p);
           c_copy.set_vertex(i_v0, &v);
         }
 
-        if(tr.side_of_power_sphere(&c_copy, pg(cj->vertex(mj)), false) 
-           != CGAL::ON_UNBOUNDED_SIDE) 
+        if(tr.side_of_power_sphere(&c_copy, pg(cj->vertex(mj)), false)
+           != CGAL::ON_UNBOUNDED_SIDE)
         {
-          np = false; 
+          np = false;
           break;
         }
       }
       else
       {
         // Build a copy of cj, and replace V0 by a temporary vertex (position "p")
-        Cell_handle::value_type cj_copy (*cj);
+        typename Cell_handle::value_type cj_copy (*cj);
         int i_v0;
         if (cj_copy.has_vertex(v0, i_v0))
         {
-          Vertex_handle::value_type v;
+          typename Vertex_handle::value_type v;
           v.set_point(p);
           cj_copy.set_vertex(i_v0, &v);
         }
 
-        if(tr.side_of_power_sphere(&cj_copy, pg(v1), false) 
-           != CGAL::ON_UNBOUNDED_SIDE) 
+        if(tr.side_of_power_sphere(&cj_copy, pg(v1), false)
+           != CGAL::ON_UNBOUNDED_SIDE)
         {
-          np = false; 
+          np = false;
           break;
         }
       }
@@ -330,7 +330,7 @@ well_oriented(const Tr& tr,
   for( ; it != cells_tos.end() ; ++it)
   {
     Cell_handle c = *it;
-    if( tr.is_infinite(c) ) 
+    if( tr.is_infinite(c) )
     {
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
@@ -348,7 +348,7 @@ well_oriented(const Tr& tr,
       return false;
   }
   return true;
-} 
+}
 
 /// Another version for the parallel version
 /// Here, the set_point is not done before, but we use a Point_getter instance
@@ -364,7 +364,7 @@ well_oriented(const Tr& tr,
   for( ; it != cells_tos.end() ; ++it)
   {
     Cell_handle c = *it;
-    if( tr.is_infinite(c) ) 
+    if( tr.is_infinite(c) )
     {
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
@@ -382,12 +382,12 @@ well_oriented(const Tr& tr,
       return false;
   }
   return true;
-} 
+}
 
 
 
-} // end namespace Mesh_3 
-  
+} // end namespace Mesh_3
+
 } //namespace CGAL
 
 #endif // CGAL_MESH_3_TRIANGULATION_HELPERS_H
