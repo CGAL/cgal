@@ -593,17 +593,32 @@ private:
         } else if ( CGAL::compare( abs(pp.y() - rs.source().y()),
                                    abs(qp.y() - rs.source().y()) )
                                    == LARGER) {
-          // p is more distant than q from r 
-          ux_ = RT(2) * qp.x() + pp.y() - rs.source().y();
-          uy_ = pp.y() + rs.source().y();
-          uz_ = RT(2);
+          // p is more distant than q from r
+          if (samexpq) {
+            uy_ = pp.y() + qp.y();
+            uz_ = RT(2);
+            ux_ = (CGAL::compare(pp.y(),rs.source().y()) == LARGER) ?
+            RT(2) * pp.x() + (pp.y() + qp.y() - RT(2) * rs.source().y()):
+            RT(2) * pp.x() - (RT(2) * rs.source().y() - pp.y() - qp.y());
+          } else {
+            ux_ = RT(2) * qp.x() + pp.y() - rs.source().y();
+            uy_ = pp.y() + rs.source().y();
+            uz_ = RT(2);
+          }
           
         } else {
           // q is more distant than p from r
-          ux_ = RT(2) * pp.x() - qp.y() + rs.source().y();
-          uy_ = qp.y() + rs.source().y();
-          uz_ = RT(2);
-          
+          if (samexpq) {
+            uy_ = pp.y() + qp.y();
+            uz_ = RT(2);
+            ux_ = (CGAL::compare(pp.y(),rs.source().y()) == LARGER) ?
+            RT(2) * pp.x() - (pp.y() + qp.y() - RT(2) * rs.source().y()):
+            RT(2) * pp.x() + (RT(2) * rs.source().y() - pp.y() - qp.y());
+          } else {
+            ux_ = RT(2) * pp.x() - qp.y() + rs.source().y();
+            uy_ = qp.y() + rs.source().y();
+            uz_ = RT(2);
+          }
         }
       }// end of diffy greater
     
@@ -629,16 +644,30 @@ private:
                                    abs(qp.x() - rs.source().x()) )
                                    == LARGER) {
           // p is more distant than q from r
-          ux_ = pp.x() + rs.source().x();
-          uy_ = RT(2) * qp.y() + pp.x() - rs.source().x();
-          uz_ = RT(2);
-          
+          if (sameypq) {
+            ux_ = pp.y() + qp.y();
+            uz_ = RT(2);
+            uy_ = (CGAL::compare(pp.x(),rs.source().x()) == LARGER) ?
+            RT(2) * pp.y() - (pp.x() + qp.x() - RT(2) * rs.source().x()):
+            RT(2) * pp.y() + (RT(2) * rs.source().x() - pp.x() - qp.x());
+          } else {
+            ux_ = pp.x() + rs.source().x();
+            uy_ = RT(2) * qp.y() + pp.x() - rs.source().x();
+            uz_ = RT(2);
+          }
         } else {
           // q is more distant than p from r
-          ux_ = qp.x() + rs.source().x();
-          uy_ = RT(2) * pp.y() - qp.x() + rs.source().x();
-          uz_ = RT(2);
-          
+          if (sameypq) {
+            ux_ = pp.y() + qp.y();
+            uz_ = RT(2);
+            uy_ = (CGAL::compare(pp.x(),rs.source().x()) == LARGER) ?
+            RT(2) * pp.y() + (pp.x() + qp.x() - RT(2) * rs.source().x()):
+            RT(2) * pp.y() - (RT(2) * rs.source().x() - pp.x() - qp.x());
+          } else {
+            ux_ = qp.x() + rs.source().x();
+            uy_ = RT(2) * pp.y() - qp.x() + rs.source().x();
+            uz_ = RT(2);
+          }
         }
       }// end of diffx greater
     }//end of vertical rs

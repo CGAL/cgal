@@ -621,16 +621,30 @@ private:
                                      abs(qp.y() - rs.source().y()) )
                                      == LARGER) {
             // p is more distant than q from r
-            ux = FT(2) * qp.x() + pp.y() - rs.source().y();
-            uy = pp.y() + rs.source().y();
-            uz = FT(2);
-        
+            if (samexpq) {
+              uy = pp.y() + qp.y();
+              uz = FT(2);
+              ux = (CGAL::compare(pp.y(),rs.source().y()) == LARGER) ?
+              FT(2) * pp.x() + (pp.y() + qp.y() - FT(2) * rs.source().y()):
+              FT(2) * pp.x() - (FT(2) * rs.source().y() - pp.y() - qp.y());
+            } else {
+              ux = FT(2) * qp.x() + pp.y() - rs.source().y();
+              uy = pp.y() + rs.source().y();
+              uz = FT(2);
+            }
           } else {
             // q is more distant than p from r
-            ux = FT(2) * pp.x() - qp.y() + rs.source().y();
-            uy = qp.y() + rs.source().y();
-            uz = FT(2);
-        
+            if (samexpq) {
+              uy = pp.y() + qp.y();
+              uz = FT(2);
+              ux = (CGAL::compare(pp.y(),rs.source().y()) == LARGER) ?
+              FT(2) * pp.x() - (pp.y() + qp.y() - FT(2) * rs.source().y()):
+              FT(2) * pp.x() + (FT(2) * rs.source().y() - pp.y() - qp.y());
+            } else {
+              ux = FT(2) * pp.x() - qp.y() + rs.source().y();
+              uy = qp.y() + rs.source().y();
+              uz = FT(2);
+            }
           }
         }// end of diffy greater
       }//end of case when p or q is not end point of r
@@ -698,19 +712,33 @@ private:
                                      abs(qp.x() - rs.source().x()) )
                                      == LARGER) {
             // p is more distant than q from r
-            ux = pp.x() + rs.source().x();
-            uy = FT(2) * qp.y() + pp.x() - rs.source().x();
-            uz = FT(2);
-        
+            if (sameypq) {
+              ux = pp.y() + qp.y();
+              uz = FT(2);
+              uy = (CGAL::compare(pp.x(),rs.source().x()) == LARGER) ?
+              FT(2) * pp.y() - (pp.x() + qp.x() - FT(2) * rs.source().x()):
+              FT(2) * pp.y() + (FT(2) * rs.source().x() - pp.x() - qp.x());
+            } else {
+              ux = pp.x() + rs.source().x();
+              uy = FT(2) * qp.y() + pp.x() - rs.source().x();
+              uz = FT(2);
+            }        
           } else {
             // q is more distant than p from r
-            ux = qp.x() + rs.source().x();
-            uy = FT(2) * pp.y() - qp.x() + rs.source().x();
-            uz = FT(2);
-        
+            if (sameypq) {
+              ux = pp.y() + qp.y();
+              uz = FT(2);
+              uy = (CGAL::compare(pp.x(),rs.source().x()) == LARGER) ?
+              FT(2) * pp.y() + (pp.x() + qp.x() - FT(2) * rs.source().x()):
+              FT(2) * pp.y() - (FT(2) * rs.source().x() - pp.x() - qp.x());
+            } else {
+              ux = qp.x() + rs.source().x();
+              uy = FT(2) * pp.y() - qp.x() + rs.source().x();
+              uz = FT(2);
+            }
           }
         }// end of diffx greater
-      }//end of case when p or q is end point of r
+      }//end of case when p or q is not end point of r
     }//end of vertical rs
 
     vv = Point_2(ux / uz, uy / uz);

@@ -565,11 +565,11 @@ private:
   //Case 2: r is vertical
   if (rs.is_horizontal()) {
     if( CGAL::compare( abs(pp.x() - qp.x()),
-                      abs(pp.y() - rs.source().y()) )
-       == LARGER &&
+                       abs(pp.y() - rs.source().y()) )
+                       == LARGER &&
        CGAL::compare( abs(pp.x() - qp.x()),
-                     abs(qp.y() - rs.source().y()) )
-       == LARGER ) {
+                      abs(qp.y() - rs.source().y()) )
+                      == LARGER ) {
       // This is the case when diffx is greater than diffy
       
       ux = pp.x() + qp.x();
@@ -582,29 +582,42 @@ private:
         uy = pp.y() + rs.source().y();
         uz = FT(2);
       } else if ( CGAL::compare( abs(pp.y() - rs.source().y()),
-                                abs(qp.y() - rs.source().y()) )
-                 == LARGER) {
+                                 abs(qp.y() - rs.source().y()) )
+                                 == LARGER) {
         // p is more distant than q from r
-        ux = FT(2) * qp.x() + pp.y() - rs.source().y();
-        uy = pp.y() + rs.source().y();
-        uz = FT(2);
-        
+        if (samexpq) {
+          uy = pp.y() + qp.y();
+          uz = FT(2);
+          ux = (CGAL::compare(pp.y(),rs.source().y()) == LARGER) ?
+          (FT(2) * pp.x() + (pp.y() + qp.y() - FT(2) * rs.source().y())) :
+          (FT(2) * pp.x() - (FT(2) * rs.source().y() - pp.y() - qp.y()));
+        } else {
+          ux = FT(2) * qp.x() + pp.y() - rs.source().y();
+          uy = pp.y() + rs.source().y();
+          uz = FT(2);
+        }
       } else {
         // q is more distant than p from r
-        ux = FT(2) * pp.x() - qp.y() + rs.source().y();
-        uy = qp.y() + rs.source().y();
-        uz = FT(2);
-        
+        if (samexpq) {
+          uy = pp.y() + qp.y();
+          uz = FT(2);
+          ux = (CGAL::compare(pp.y(),rs.source().y()) == LARGER) ?
+          (FT(2) * pp.x() - (pp.y() + qp.y() - FT(2) * rs.source().y())) :
+          (FT(2) * pp.x() + (FT(2) * rs.source().y() - pp.y() - qp.y()));
+        } else {
+          ux = FT(2) * pp.x() - qp.y() + rs.source().y();
+          uy = qp.y() + rs.source().y();
+          uz = FT(2);
+        }
       }
     }// end of diffy greater
-    
   } else {//rs is vertical
     if( CGAL::compare( abs(pp.y() - qp.y()),
-                      abs(pp.x() - rs.source().x()) )
-       == LARGER &&
+                       abs(pp.x() - rs.source().x()) )
+                       == LARGER &&
        CGAL::compare( abs(pp.y() - qp.y()),
-                     abs(qp.x() - rs.source().x()) )
-       == LARGER ) {
+                      abs(qp.x() - rs.source().x()) )
+                      == LARGER ) {
       // This is the case when diffy is greater than diffx
       
       ux = FT(2) * rs.source().x() + pp.y() - qp.y();
@@ -617,19 +630,34 @@ private:
         uy = pp.y() + qp.y();
         uz = FT(2);
       } else if ( CGAL::compare( abs(pp.x() - rs.source().x()),
-                                abs(qp.x() - rs.source().x()) )
-                 == LARGER) {
-        // p is more distant than q from r
-        ux = pp.x() + rs.source().x();
-        uy = FT(2) * qp.y() + pp.x() - rs.source().x();
-        uz = FT(2);
+                                 abs(qp.x() - rs.source().x()) )
+                                 == LARGER) {
         
+        // p is more distant than q from r
+        if (sameypq) {
+          ux = pp.y() + qp.y();
+          uz = FT(2);
+          uy = (CGAL::compare(pp.x(),rs.source().x()) == LARGER) ?
+          (FT(2) * pp.y() - (pp.x() + qp.x() - FT(2) * rs.source().x())) :
+          (FT(2) * pp.y() + (FT(2) * rs.source().x() - pp.x() - qp.x()));
+        } else {
+          ux = pp.x() + rs.source().x();
+          uy = FT(2) * qp.y() + pp.x() - rs.source().x();
+          uz = FT(2);
+        }
       } else {
         // q is more distant than p from r
-        ux = qp.x() + rs.source().x();
-        uy = FT(2) * pp.y() - qp.x() + rs.source().x();
-        uz = FT(2);
-        
+        if (sameypq) {
+          ux = pp.y() + qp.y();
+          uz = FT(2);
+          uy = (CGAL::compare(pp.x(),rs.source().x()) == LARGER) ?
+          (FT(2) * pp.y() + (pp.x() + qp.x() - FT(2) * rs.source().x())) :
+          (FT(2) * pp.y() - (FT(2) * rs.source().x() - pp.x() - qp.x()));
+        } else {
+          ux = qp.x() + rs.source().x();
+          uy = FT(2) * pp.y() - qp.x() + rs.source().x();
+          uz = FT(2);
+        }
       }
     }// end of diffx greater
   }//end of vertical rs
