@@ -68,6 +68,27 @@ namespace CGAL {
           << ' ' << sgn << std::endl;);
 
       if ( t.is_segment() ) {
+        //Sandeep: we should return true if q is common end point of r/s and t
+        if (sgn == NEGATIVE and q.is_point() and s.is_point() and r.is_segment()) {
+          bool is_q_endp_of_r =
+          same_points(q, r.source_site()) or
+          same_points(q, r.target_site());
+          bool is_s_endp_of_t =
+          same_points(s, t.source_site()) or
+          same_points(s, t.target_site());
+          bool is_q_endp_of_t =
+          same_points(q, t.source_site()) or
+          same_points(q, t.target_site());
+          
+          if (is_q_endp_of_r and is_q_endp_of_t and is_s_endp_of_t) {
+            //Sandeep: we should return true if q is common end point of r/s and t
+            CGAL_SDG_DEBUG(std::cout << "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
+                                     << q << ' ' << s << ' ' << r << ' ' << t
+                                     << ' ' << sgn << " returns " << true <<
+                                     std::endl;);
+            return true;
+          }
+        }
         //Sandeep: This is because end points of a segment are inserted first
         CGAL_SDG_DEBUG(std::cout <<
               "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
