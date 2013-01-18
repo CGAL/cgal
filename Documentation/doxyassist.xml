@@ -290,7 +290,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
-            <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulations/html</item>
             <item>./tags/Surface_mesh_simplification.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Simplification/html</item>
           </list>
@@ -886,7 +885,6 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
             <item>./tags/Inscribed_areas.tag=../../CGAL.CGAL.Inscribed-Areas/html</item>
-            <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
           </list>
         </doxygen>
       </project>
@@ -974,7 +972,6 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Polynomial.tag=../../CGAL.CGAL.Polynomial/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
-            <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
             </list>
         </doxygen>
       </project>
@@ -1007,7 +1004,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
             <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulations/html</item>
-            <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
@@ -1108,7 +1104,6 @@ namespace for the XML file to be processed properly.  -->
             <item>../Nef_S2/doc/Nef_S2/fig/complex.gif</item>
           </list>
           <list name="TAGFILES" append="true">
-            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
           </list>
         </doxygen>
@@ -1168,7 +1163,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
-            <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
@@ -1366,7 +1360,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
             <item>./tags/Nef_S2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons-Embedded-on-the-Sphere/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
-            <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
