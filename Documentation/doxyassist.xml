@@ -255,7 +255,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
             <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
             <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular-Arithmetic/html</item>
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
             <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
             <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           </list>
@@ -585,10 +584,11 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Circular_kernel_3/examples</string>
           <string name="IMAGE_PATH">../Circular_kernel_3/doc/Circular_kernel_3/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
-          <list name="TAGFILES" append="true">
+          <list name="TAGFILES" append="false">
             <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
             <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
           </list>
         </doxygen>
       </project>
@@ -731,7 +731,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Polygon.tag=../../CGAL.CGAL.Polygon/html</item>
             <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
             <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
