@@ -596,6 +596,11 @@ private:
   make_pvertex(const Vertex_handle& vh,
                const FT& sliver_bound,
                const typename PVertex::id_type& pv_id) const;
+  PVertex
+  make_pvertex__concurrent(
+               const Vertex_handle& vh,
+               const FT& sliver_bound,
+               const typename PVertex::id_type& pv_id) const;
 
   /**
    * Updates a pvertex \c pv
@@ -716,6 +721,10 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
   running_time_.reset();
   running_time_.start();
 
+#ifdef MESH_3_PROFILING
+  WallClockTimer t;
+#endif
+
   // Build priority queue (we use one queue for all steps)
   PQueue pqueue(tr_.number_of_vertices());
 
@@ -751,6 +760,10 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
       current_bound = sliver_bound;
     }
   }
+  
+#ifdef MESH_3_PROFILING
+  double exudation_time = t.elapsed();
+#endif
 
   running_time_.stop();
 
@@ -761,27 +774,48 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
   print_final_perturbations_statistics();
 #endif
 
-#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", running_time_.time());
+#ifdef MESH_3_PROFILING
+  std::cerr << std::endl << "Total perturbation 'wall-clock' time: " 
+            << exudation_time << "s" << std::endl;
 #endif
 
+  Mesh_optimization_return_code ret;
+
   if ( is_time_limit_reached() ) {
-#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << "Perturbation return code: TIME_LIMIT_REACHED\n\n";
 #endif // CGAL_MESH_3_PERTURBER_VERBOSE
-    return TIME_LIMIT_REACHED;
+    ret = TIME_LIMIT_REACHED;
   }
-
-  if ( !perturbation_ok ) {
-#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+  else if ( !perturbation_ok ) {
+#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << "Perturbation return code: CANT_IMPROVE_ANYMORE\n\n";
 #endif // CGAL_MESH_3_PERTURBER_VERBOSE
-    return CANT_IMPROVE_ANYMORE;
+    ret = CANT_IMPROVE_ANYMORE;
   }
-#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
-  std::cerr << "Perturbation return code: BOUND_REACHED\n\n";
+  else
+  {
+#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
+    std::cerr << "Perturbation return code: BOUND_REACHED\n\n";
 #endif // CGAL_MESH_3_PERTURBER_VERBOSE
-  return BOUND_REACHED;
+    ret = BOUND_REACHED;
+  }
+
+#if defined(CGAL_MESH_3_EXPORT_PERFORMANCE_DATA) \
+ && defined(MESH_3_PROFILING)
+  if (ret == BOUND_REACHED)
+  {
+    CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", exudation_time);
+  }
+  else
+  {
+    CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time",
+      (ret == CANT_IMPROVE_ANYMORE ? 
+      "CANT_IMPROVE_ANYMORE" : "TIME_LIMIT_REACHED"));
+  }
+#endif
+
+  return ret;
 }
 
 
@@ -1124,7 +1158,7 @@ update_priority_queue( const Vertex_vector& vertices
        vit != vertices.end() ;
        ++vit )
   {
-    PVertex pv = make_pvertex(*vit,sliver_bound,get_pvertex_id(*vit));
+    PVertex pv = make_pvertex__concurrent(*vit,sliver_bound,get_pvertex_id(*vit));
     if (pv.is_perturbable())
     {
       enqueue_task(pv, sliver_bound, visitor, bad_vertices);
@@ -1314,6 +1348,7 @@ perturb_vertex( PVertex pv
 #endif
 
 
+// Sequential
 template <typename C3T3, typename Md, typename Sc, typename V_>
 typename Sliver_perturber<C3T3,Md,Sc,V_>::PVertex
 Sliver_perturber<C3T3,Md,Sc,V_>::
@@ -1328,6 +1363,24 @@ make_pvertex(const Vertex_handle& vh,
 
   return pv;
 }
+
+// Parallel
+template <typename C3T3, typename Md, typename Sc, typename V_>
+typename Sliver_perturber<C3T3,Md,Sc,V_>::PVertex
+Sliver_perturber<C3T3,Md,Sc,V_>::
+make_pvertex__concurrent(
+             const Vertex_handle& vh,
+             const FT& sliver_bound,
+             const typename PVertex::id_type& pv_id) const
+{
+  // Make pvertex in all cases
+  PVertex pv(vh,pv_id);
+  pv.set_perturbation(&perturbation_vector_.front());
+  update_pvertex__concurrent(pv, sliver_bound);
+
+  return pv;
+}
+
 
 // Sequential
 template <typename C3T3, typename Md, typename Sc, typename V_>
