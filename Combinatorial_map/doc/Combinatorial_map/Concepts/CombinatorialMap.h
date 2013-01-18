@@ -91,8 +91,8 @@ template <unsigned int i>
 struct Attribute_type {
   /*! 
     Type of <I>i</I>-attributes, a model of `CellAttribute` concept. 
-    `Attribute_type<i>::type::Dart_handle` is equal to `Dart_handle`, and 
-    `Attribute_type<i>::type::Dart_const_handle` is equal to `Dart_const_handle`. 
+    `Attribute_type<i>::%type::Dart_handle` is equal to `Dart_handle`, and 
+    `Attribute_type<i>::%type::Dart_const_handle` is equal to `Dart_const_handle`. 
     \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
     and <I>i</I>-attributes are non void. 
   */ 
@@ -102,7 +102,7 @@ struct Attribute_type {
 template<unsigned int i> 
 struct Attribute_handle {
   /*! 
-  Handle to <I>i</I>-attributes, equal to `Dart::Attribute_handle<i>::type`. 
+  Handle to <I>i</I>-attributes, equal to \link Dart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink. 
   \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
        and <I>i</I>-attributes are non void. 
   */ 
@@ -112,7 +112,7 @@ struct Attribute_handle {
 template<unsigned int i> 
 struct Attribute_const_handle {
   /*! 
-  Const handle to <I>i</I>-attributes, equal to `Dart::Attribute_const_handle<i>::type`. 
+  Const handle to <I>i</I>-attributes, equal to \link Dart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink. 
   \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
        and <I>i</I>-attributes are non void. 
   */ 
@@ -146,7 +146,7 @@ Range of all the <I>i</I>-attributes.
 The <I>i</I>-attributes must be non void, and
   0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension". 
 This type is a model of `Range` concept, its iterator type is bidirectional and its value type is
-  `Attribute_type<i>::type`.
+  \link CombinatorialMap::Attribute_type `Attribute_type<i>::type` \endlink.
   \todo add links when typedef are ok
 */ 
   typedef Hidden_type type;
@@ -160,7 +160,7 @@ Const range of all the <I>i</I>-attributes.
 The <I>i</I>-attributes must be non void, and
   0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension". 
 This type is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is
-  `Attribute_type<i>::type`.
+  \link CombinatorialMap::Attribute_type `Attribute_type<i>::type`\endlink.
     \todo add links when typedef are ok
 */ 
   typedef Hidden_type type;
@@ -551,7 +551,7 @@ the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are
 considered. If one attribute is 
 NULL and the other not, the non NULL attribute is associated to all 
 the darts of the resulting cell. When the two attributes are non 
-NULL, functor \ref CellAttribute::On_merge "Attribute_type<i>::type::On_merge"
+NULL, functor \ref CellAttribute::On_merge `Attribute_type<i>::%type::On_merge`
 is called on 
 the two attributes <I>attr1</I> and <I>attr2</I>. Then, the attribute 
 <I>attr1</I> is associated to all darts of the resulting 
@@ -576,7 +576,7 @@ attributes are updated to ensure the validity of the combinatorial map: for each
 operation, if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then 
 this attribute is duplicated into <I>attr2</I>, and all the darts 
 belonging to <I>c2</I> are associated with this new attribute. Finally, 
-the functor \ref CellAttribute::On_split "Attribute_type<i>::type::On_split"
+the functor \ref CellAttribute::On_split `Attribute_type<i>::%type::On_split`
 is called on the 
 two attributes <I>attr1</I> and <I>attr2</I>. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",

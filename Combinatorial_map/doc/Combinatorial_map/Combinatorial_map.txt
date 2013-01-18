@@ -309,8 +309,8 @@ containing <I>d0</I> is defined in terms of orbit by \f$
 
 There is a special case for vertices. Given a dart <I>d0</I>, the set
 of darts contained in the same vertex as <I>d0</I> are the darts that
-can be reached from <I>d0</I> by using any combination of \f$
-\beta_i\f$\f$ \circ\f$\f$ \beta_j\f$, \f$ \forall\f$<I>i</I>,<I>j</I>,
+can be reached from <I>d0</I> by using any combination of
+\f$\beta_i \circ\f$\f$ \beta_j\f$, \f$ \forall\f$<I>i</I>,<I>j</I>,
 1\f$ \leq\f$<I>i</I>\f$ <\f$<I>j</I>\f$ \leq\f$<I>d</I>, and their
 inverse. The 0-cell containing <I>d0</I> is defined in terms of orbit
 by \f$ \langle{}\f${\f$ \beta_i\f$\f$ \circ\f$\f$ \beta_j\f$\f$
@@ -395,8 +395,8 @@ is {10}\f$ \neq\f$\f$ \emptyset\f$. Finally, facets <I>f1</I> and
 We can consider <I>i</I>-cells in a dimension <I>d'</I> with
 <I>i</I>\f$ \leq\f$<I>d'</I>\f$ \leq\f$ <I>d</I>. The idea is to
 consider the <I>i</I>-cells as if the combinatorial map was in
-<I>d'</I> dimension. For that, we only take into account the \f$
-\beta_j\f$s for <I>j</I>\f$ \leq\f$<I>d'</I>. The <I>i</I>-cell
+<I>d'</I> dimension. For that, we only take into account the 
+\f$ \beta_j \f$s for <I>j</I>\f$ \leq\f$<I>d'</I>. The <I>i</I>-cell
 containing <I>d0</I> in dimension <I>d'</I> is the orbit \f$
 \langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_{i-1}\f$,\f$
 \beta_{i+1}\f$,...,\f$ \beta_{d'}\f$\f$
@@ -629,8 +629,8 @@ all the <I>i</I>-attributes of the combinatorial map. Finally,
 attributes. We can use
 \link CombinatorialMap::Attribute_handle `Combinatorial_map::Attribute_handle<i>::type`\endlink
 for a handle to the <I>i</I>-attributes (and the const version
-`Combinatorial_map::Attribute_const_handle<i>::type`) and
-`Combinatorial_map::Attribute_type<i>::type` for the type of the
+\link CombinatorialMap::Attribute_const_handle `Combinatorial_map::Attribute_const_handle<i>::type` \endlink) and
+\link CombinatorialMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the
 <I>i</I>-attributes.
 
 \todo Add links to the corresponding types in CombinatorialMap concept asap the types were defined correctly in the concept.
@@ -682,7 +682,7 @@ Each instance `d0` of `Dart<d,CMap>` stores the \f$ \beta_i\f$
 pointers in an array of <I>d</I>+1 `Dart_handle` (because we describe
 also the \f$ \beta_0\f$ pointer). It also stores the attributes
 associated to this dart in a tuple of
-`CMap::Attribute_handle<i>::type`, one for each non void
+\link CombinatorialMap::Attribute_handle `CMap::Attribute_handle<i>::type` \endlink, one for each non void
 <I>i</I>-attribute.
 
 Methods are defined allowing to retrieve each \f$ \beta_i\f$ and each

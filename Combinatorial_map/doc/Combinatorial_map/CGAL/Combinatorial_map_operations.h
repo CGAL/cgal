@@ -10,7 +10,7 @@ Returns a handle on one dart belonging to the new 0-cell.
 See example in \cgalFigureRef{figinsertvertex}.
 
 If 1-attributes are non void, 
-`Attribute_type<1>::type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 1-attribute associated
+`Attribute_type<1>::%type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 1-attribute associated
 with <I>dh</I> and <I>a'</I> the new 1-attribute created during the operation.
 
 \sa `CGAL::insert_cell_0_in_cell_2<CMap>`
@@ -39,7 +39,7 @@ Returns a handle on one dart belonging to the new 0-cell.
 See example in \cgalFigureRef{figtriangulate}.
 
 If 2-attributes are non void, 
-`Attribute_type<2>::type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated
+`Attribute_type<2>::%type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated
 with `dh` and <I>a'</I> each new 2-attribute created during the operation.
 
 
@@ -69,7 +69,7 @@ Returns \f$ \beta_0\f$(`dh1`), a handle on one dart belonging to the new 1-cell.
 See example in \cgalFigureRef{figinsertedge}.
 
 If 2-attributes are non void, 
-`Attribute_type<2>::type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated
+`Attribute_type<2>::%type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated
 with `dh` and <I>a'</I> the new 2-attribute created during the operation.
 
 
@@ -101,7 +101,7 @@ Returns a handle on one dart belonging to the new 2-cell.
 See example in \cgalFigureRef{figinsertface}.
 
 If 3-attributes are non void, 
-`Attribute_type<3>::type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 3-attribute associated
+`Attribute_type<3>::%type::On_split`(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 3-attribute associated
 with `dh` and <I>a'</I> the new 3-attribute created during the operation.
 
 
@@ -228,13 +228,13 @@ See examples in \cgalFigureRef{figinsertvertex}, \cgalFigureRef{figinsertedge} a
 
 If `i`\f$ <\f$`CMap::dimension`, and <I>i+1</I>-attributes are
 non void, and if there are two distinct (<I>i+1</I>)-cells around dart
-`dh`, `Attribute_type<i+1>::type::On_merge`(<I>a1</I>,<I>a2</I>) is
+`dh`, `Attribute_type<i+1>::%type::On_merge`(<I>a1</I>,<I>a2</I>) is
 called, with <I>a1</I> the (<I>i+1</I>)-attribute associated to `dh`,
 and <I>a2</I> the (<I>i+1</I>)-attribute associated to \f$ \beta_{i+1}\f$(<I>dh</I>).
 
 If a <I>j</I>-cell is disconnected in two <I>j</I>-cells during the
 operation, and if <I>j</I>-attributes are non void,
-`Attribute_type<j>::type::On_split`(<I>a</I>,<I>a'</I>) is called 
+`Attribute_type<j>::%type::On_split`(<I>a</I>,<I>a'</I>) is called 
 with <I>a</I> the original <I>j</I>-attribute and <I>a'</I> the new 
 <I>j</I>-attribute created due to the disconnection.
 
