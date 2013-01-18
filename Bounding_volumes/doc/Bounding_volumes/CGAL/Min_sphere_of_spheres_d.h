@@ -222,7 +222,7 @@ Result radius( ) const;
 
 /*! 
 returns a const-iterator to the first of the 
-`Traits::D` center coordinates of `minsphere`. The iterator returns 
+`Traits::%D` center coordinates of `minsphere`. The iterator returns 
 objects of type `Result`. If `FT` is an exact number type, 
 then a center coordinate is represented by a pair \f$ (a,b)\f$ describing 
 the real number \f$ a+b\sqrt{t}\f$, where \f$ t\f$ is the minsphere's 
@@ -233,7 +233,7 @@ const;
 
 /*! 
 returns the corresponding past-the-end iterator, i.e.\ 
-`center_cartesian_begin()+Traits::D`. 
+`center_cartesian_begin()+Traits::%D`. 
 \pre `minsphere` is not empty. 
 */ 
 Cartesian_const_iterator center_cartesian_end( ) 

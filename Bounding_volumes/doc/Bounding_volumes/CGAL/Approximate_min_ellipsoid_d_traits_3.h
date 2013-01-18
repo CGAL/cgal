@@ -15,7 +15,7 @@ exact computations.
 
 \tparam ET must be a model for the concept 
 `EuclideanRing` with exact arithmetic operations, i.e., the type 
-`Algebraic_structure_traits<ET>::Is_exact` must be 
+\link AlgebraicStructureTraits::Is_exact `Algebraic_structure_traits<ET>::Is_exact` \endlink must be 
 `Tag_true`  (Examples of such a 
 number-type are `MP_Float`, `CORE::Expr`, and `Gmpq`.) 
 
