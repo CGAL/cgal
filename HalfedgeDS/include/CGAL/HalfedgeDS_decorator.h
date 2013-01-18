@@ -878,6 +878,11 @@ private:
         hds->vertices_erase( v);
     }
 
+    void vertices_erase( Vertex_handle  , Vertex_handle  , Tag_false) {}
+    void vertices_erase( Vertex_handle v1, Vertex_handle v2, Tag_true) {
+        hds->vertices_erase( v1, v2);
+    }
+
     void vertices_pop_front( Tag_false) {}
     void vertices_pop_front( Tag_true) {
         hds->vertices_pop_front();
@@ -891,6 +896,11 @@ private:
     void faces_erase( Face_handle  , Tag_false) {}
     void faces_erase( Face_handle f, Tag_true) {
         hds->faces_erase( f);
+    }
+
+    void faces_erase( Face_handle  , Face_handle  , Tag_false) {}
+    void faces_erase( Face_handle f1, Face_handle f2, Tag_true) {
+        hds->faces_erase( f1, f2);
     }
 
     void faces_pop_front( Tag_false) {}
