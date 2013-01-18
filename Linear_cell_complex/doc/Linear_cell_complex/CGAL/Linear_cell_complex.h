@@ -109,32 +109,32 @@ typedef Traits::Vector Vector;
 
 /*! 
 Type of 0-attributes, a model of `CellAttributeWithPoint` concept 
-(a shortcut for `Attribute_type_d<0>::type`). 
+(a shortcut for \link CombinatorialMap::Attribute_type `Attribute_type<0>::type` \endlink). 
 */ 
 typedef Hidden_type Vertex_attribute; 
 
 /*! 
 Handle through 0-attributes 
-(a shortcut for `Attribute_handle_type_d<0>::type`). 
+(a shortcut for \link CombinatorialMap::Attribute_handle `Attribute_handle<0>::type` \endlink). 
 */ 
 typedef Hidden_type Vertex_attribute_handle; 
 
 /*! 
 Const handle through 0-attributes 
-(a shortcut for `Attribute_const_handle_type_d<0>::type`). 
+(a shortcut for \link CombinatorialMap::Attribute_handle `Attribute_const_handle<0>::type` \endlink). 
 */ 
 typedef Hidden_type Vertex_attribute_const_handle; 
 
 /*! 
 Range of all the 0-attributes, a model of the `Range` concept 
-(a shortcut for `Attribute_range_d<0>::type`). 
+(a shortcut for \link CombinatorialMap::Attribute_range `Attribute_range<0>::type` \endlink). 
 Iterator inner type is bidirectional iterator and value type is `Vertex_attribute`. 
 */ 
 typedef Hidden_type Vertex_attribute_range; 
 
 /*! 
 Const range of all the 0-attributes, a model of the `ConstRange` concept 
-a shortcut for `Attribute_const_range_d<0>::type`). 
+a shortcut for \link CombinatorialMap::Attribute_const_range `Attribute_const_range<0>::type` \endlink). 
 Iterator inner type is bidirectional iterator and value type is `Vertex_attribute`. 
 */ 
 typedef Hidden_type Vertex_attribute_const_range; 
