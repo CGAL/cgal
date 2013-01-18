@@ -801,6 +801,7 @@ public:
     {
         Assert_compile_time_tag(Supports_removal(), Tag_true());
         Assert_compile_time_tag(Supports_vertex_halfedge(), Tag_true());
+        Assert_compile_time_tag(Supports_halfedge_vertex(), Tag_true());
 
         unsigned int nb_erased_components = 0,
                      nb_isolated_vertices = 0;
@@ -972,9 +973,8 @@ private:
             number_of_vertices++;
 
             // Add vertex's "free" neighbors to the list
-            Halfedge_around_vertex_circulator neighbor_cir, neighbor_end;
-            neighbor_cir = pVertex->vertex_begin();
-            neighbor_end = neighbor_cir;
+            Halfedge_around_vertex_circulator neighbor_cir(pVertex->halfedge()),
+                                              neighbor_end = neighbor_cir;
             CGAL_For_all(neighbor_cir,neighbor_end)
             {
                 Vertex_handle neighbor = neighbor_cir->opposite()->vertex();

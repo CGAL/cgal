@@ -195,7 +195,10 @@ Erases the small connected components and the isolated vertices.
 Keep `nb_components_to_keep` largest connected components. 
 Returns the number of connected components erased (ignoring isolated vertices). 
 
-\cgalRequires  supports vertices, halfedges, and removal operation. */ 
+\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`,
+               `Supports_vertex_halfedge` \f$ \equiv\f$ `CGAL::Tag_true` and
+              `Supports_halfedge_vertex` \f$ \equiv\f$ `CGAL::Tag_true`
+*/
 unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 
 /// @} 
