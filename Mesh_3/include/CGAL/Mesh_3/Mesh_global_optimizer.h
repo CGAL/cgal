@@ -422,6 +422,10 @@ operator()(int nb_iterations, Visitor visitor)
 {
   running_time_.reset();
   running_time_.start();
+  
+#ifdef MESH_3_PROFILING
+  WallClockTimer t;
+#endif
 
   // Fill set containing moving vertices
   // first, take them all
@@ -503,6 +507,13 @@ operator()(int nb_iterations, Visitor visitor)
       break;
   }
   running_time_.stop();
+  
+#ifdef MESH_3_PROFILING
+  double optim_time = t.elapsed();
+# ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+  CGAL_MESH_3_SET_PERFORMANCE_DATA(std::string(Mf::name()) + "_optim_time", optim_time);
+# endif
+#endif
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   if ( do_freeze_ && nb_frozen_points_ == initial_vertices_nb )
@@ -520,8 +531,9 @@ operator()(int nb_iterations, Visitor visitor)
             << "s" << std::endl << std::endl;
 #endif
 
-#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
-  CGAL_MESH_3_SET_PERFORMANCE_DATA(std::string(Mf::name()) + "_optim_time", running_time_.time());
+#ifdef MESH_3_PROFILING
+  std::cerr << std::endl << "Total optimization 'wall-clock' time: " 
+            << optim_time << "s" << std::endl;
 #endif
 
   if ( do_freeze_ && nb_frozen_points_ == initial_vertices_nb )
