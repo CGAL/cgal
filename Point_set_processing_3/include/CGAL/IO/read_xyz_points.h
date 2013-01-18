@@ -85,6 +85,8 @@ read_xyz_points_and_normals(
   long pointsCount; // number of points in file
   int lineNumber = 0; // line counter
   std::string line; // line buffer
+  std::istringstream iss;
+
   while(getline(stream,line))
   {
     // position + normal
@@ -102,28 +104,35 @@ read_xyz_points_and_normals(
     {
       continue;
     }
-    // ...or reads position + normal...
-    else if (std::istringstream(line) >> x >> y >> z >> nx >> ny >> nz)
-    {
-      Point point(x,y,z);
-      Vector normal(nx,ny,nz);
-      Enriched_point pwn;
-      put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
-      put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
-      *output++ = pwn;
-    }
-    // ...or reads only position...
-    else if (std::istringstream(line) >> x >> y >> z)
-    {
-      Point point(x,y,z);
-      Vector normal = CGAL::NULL_VECTOR;
-      Enriched_point pwn;
-      put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
-      put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
-      *output++ = pwn;
+    // ...or reads position...
+    else {
+      iss.clear();
+      iss.str(line);
+      if (iss >> x >> y >> z)
+        {
+          Point point(x,y,z);
+          Vector normal = CGAL::NULL_VECTOR;
+          // ... + normal...
+          if (iss >> nx)
+            {
+              // In case we could read one number, we expect that there are two more
+              if(iss  >> ny >> nz){
+                normal = Vector(nx,ny,nz);
+              } else {
+                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+            }
+          Enriched_point pwn;
+          put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
+          put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+          *output++ = pwn;
+          continue;
+        } 
+      
     }
     // ...or skips number of points on first line (optional)
-    else if (lineNumber == 1 && std::istringstream(line) >> pointsCount)
+    if (lineNumber == 1 && std::istringstream(line) >> pointsCount)
     {
       continue;
     }
