@@ -52,7 +52,7 @@ const Traits& t);
 \ingroup PkgInscribedAreas
 
 
-\breifcomputes a maximum area inscribed `k`-gon of the convex polygon 
+\brief computes a maximum area inscribed `k`-gon of the convex polygon 
 described by [`points_begin`, `points_end`), writes its 
 vertices to `o` and returns the past-the-end iterator of this 
 sequence. 
