@@ -89,7 +89,7 @@ class Ghost_tester
    return fit->is_ghost();
   }
  bool operator()(const All_edges_iterator & eit) const {
-   Face_handle f = eit->first();
+   Face_handle f = eit->first;
    bool edge1 = f->is_ghost();
    bool edge2 = f->neighbor(eit->second)->is_ghost();
    bool result = edge1&&edge2;
@@ -104,7 +104,7 @@ class Contour_tester
 	Contour_tester() {}
 	Contour_tester(const Triangulation_sphere_2 *tr)	  : t(tr) {}
 	bool operator() (const All_edges_iterator & eit) const {
-	 Face_handle f = eit->first();
+	 Face_handle f = eit->first;
 	 bool edge1 = f->is_ghost();
 	 bool edge2 = f->neighbor(eit->second)->is_ghost();
 	return edge1 !=edge2;
