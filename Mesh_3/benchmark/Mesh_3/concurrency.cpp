@@ -57,7 +57,7 @@ namespace po = boost::program_options;
 
 //#define CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE // WARNING: VERY SLOW
 //#define CGAL_MESH_3_VERBOSE
-#define CGAL_MESH_3_PERTURBER_VERBOSE
+//#define CGAL_MESH_3_PERTURBER_VERBOSE
 //#define CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
 //#define CGAL_MESH_3_VERY_VERBOSE
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
@@ -128,7 +128,7 @@ const int     TET_SHAPE                = 3;
 //#   endif
 //#   define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 //#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT // better performance?
 # endif
 
   // ==========================================================================
@@ -157,8 +157,8 @@ const int     TET_SHAPE                = 3;
 
 #else // !CONCURRENT_MESH_3
 
-//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
-# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+//# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
 #endif // CONCURRENT_MESH_3
@@ -190,7 +190,7 @@ public:
             construct_subelements_names())
   {}
 
-  ~XML_perf_data()
+  virtual ~XML_perf_data()
   {
   }
 
@@ -628,8 +628,10 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   // Mesh generation
 #ifdef _DEBUG
   double timelimit = 10;
+  double sliverbound = 4;
 #else
   double timelimit = 0;
+  double sliverbound = 7;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
@@ -641,7 +643,8 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 # endif
                                      , no_odt()
 # ifdef MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit=timelimit)
+                                     , perturb(time_limit = timelimit, 
+                                               sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
@@ -721,8 +724,10 @@ bool make_mesh_3D_images(const std::string &input_filename,
   // Mesh generation
 #ifdef _DEBUG
   double timelimit = 10;
+  double sliverbound = 4;
 #else
   double timelimit = 0;
+  double sliverbound = 7;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
@@ -734,7 +739,8 @@ bool make_mesh_3D_images(const std::string &input_filename,
 # endif
                                      , no_odt()
 # ifdef MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit=timelimit)
+                                     , perturb(time_limit = timelimit, 
+                                               sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
@@ -845,8 +851,10 @@ bool make_mesh_implicit(double facet_approx,
   // Mesh generation
 #ifdef _DEBUG
   double timelimit = 10;
+  double sliverbound = 4;
 #else
   double timelimit = 0;
+  double sliverbound = 7;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
@@ -858,7 +866,8 @@ bool make_mesh_implicit(double facet_approx,
 # endif
                                      , no_odt()
 # ifdef MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit=timelimit)
+                                     , perturb(time_limit = timelimit, 
+                                               sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
