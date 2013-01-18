@@ -244,7 +244,7 @@ the tetrahedra present in `atr`, a `Triangulation_3`;
 the cells present in `ap`, a `Polyhedron_3`.
 </UL>
 
-Lastly, the function \link\import_from_polyhedron_3() `import_from_plane_graph(lcc,ais)` \endlink adds in
+Lastly, the function \link import_from_polyhedron_3() `import_from_plane_graph(lcc,ais)` \endlink adds in
 `lcc` all the cells reconstructed from the planar graph read in
 `ais`, a `std::istream` (see the reference manual for the file
 format).

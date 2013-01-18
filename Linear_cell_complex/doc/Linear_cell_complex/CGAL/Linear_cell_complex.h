@@ -264,7 +264,7 @@ Returns a handle on one dart of this cell.
 \pre 1\f$ \leq\f$`dimension`\f$ \leq\f$2 and `*dh`\f$ \in\f$`lcc.darts()`. 
 
 If <I>i</I>-attributes are non void, 
-`Attribute_type<i>::type::On_split`(<I>a</I>,<I>a'</I>) is called, 
+`Attribute_type<i>::%type::On_split`(<I>a</I>,<I>a'</I>) is called, 
 with <I>a</I> the original <I>i</I>-attribute associated 
 with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation. 
 
@@ -277,7 +277,7 @@ Returns a handle on one dart of this cell.
 \pre 1\f$ \leq\f$`dimension`\f$ \leq\f$2 and `*dh`\f$ \in\f$`lcc.darts()`. 
 
 If <I>i</I>-attributes are non void, 
-`Attribute_type<i>::type::On_split`(<I>a</I>,<I>a'</I>) is called, 
+`Attribute_type<i>::%type::On_split`(<I>a</I>,<I>a'</I>) is called, 
 with <I>a</I> the original <I>i</I>-attribute associated 
 with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation. 
 
