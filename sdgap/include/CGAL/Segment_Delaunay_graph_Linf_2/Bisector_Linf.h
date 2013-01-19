@@ -171,60 +171,13 @@ private:
       Comparison_result cmpx = compare_x_2(pnt, pq);
       Comparison_result cmpy = compare_y_2(pnt, pq);
       
-      //compute direction of rays from the end point of segment	
-      Direction_2 d1,d2;
-      if (cmpy == EQUAL) {//vertical line
-        if (cmpx == SMALLER) {
-          d1 = Direction_2(-1,+1);
-          d2 = Direction_2(-1,-1);
-        } else {
-          d1 = Direction_2(+1,-1);
-          d2 = Direction_2(+1,+1);
-        }
-      } else if (cmpx == EQUAL) {//horizontal line
-        if (cmpy == SMALLER) {
-          d1 = Direction_2(-1,-1);
-          d2 = Direction_2(+1,-1);
-        } else {
-          d1 = Direction_2(+1,+1);
-          d2 = Direction_2(-1,+1);
-        }
-      } else if (cmpx == cmpy) {//segment with positive slope
-        if (cmpx == SMALLER) {
-          d1 = Direction_2(-1,+1);
-          d2 = Direction_2(+1,-1);
-        } else {
-          d1 = Direction_2(+1,-1);
-          d2 = Direction_2(-1,+1);
-        }
-      } else { // segment with negative slope
-        if (cmpx == SMALLER) {
-          d1 = Direction_2(+1,+1);
-          d2 = Direction_2(-1,-1);  
-        } else {
-          d1 = Direction_2(-1,-1);
-          d2 = Direction_2(+1,+1);
-        }
-      }//end of computing direction of rays through end points of segment
+      Direction_2 d (
+                     (cmpy == EQUAL)? 0 : 
+                     (  cmpy  == SMALLER )? +1 : -1, 
+                     (cmpx == EQUAL)? 0 : 
+                     (  cmpx  == SMALLER )? -1 : +1);
       
-      /*Direction_2 d1 (
-       (cmpy == EQUAL)? 0 : 
-       (  cmpy  == SMALLER )? +1 : -1, 
-       (cmpx == EQUAL)? 0 : 
-       (  cmpx  == SMALLER )? -1 : +1);
-       
-       Direction_2 d2 (
-       (cmpy == EQUAL)? 0 : 
-       (  cmpy  == SMALLER )? +1 : -1, 
-       (cmpx == EQUAL)? 0 : 
-       (  cmpx  == SMALLER )? -1 : +1);*/
-      
-      if (q.is_point()) {
-        d1 = -d1;
-        d2 = -d2;
-      }      
-      
-      Polychainline pcl(d1, points, points+npts, d2);
+      Polychainline pcl(-d, points, points+npts, d);
       return pcl;
       
     }

@@ -26,12 +26,6 @@
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Compare_x_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Compare_y_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Is_horizontal_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Is_vertical_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Is_plus45_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Is_minus45_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Is_slope_positive_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Is_slope_negative_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Are_parallel_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_segments_C2.h>

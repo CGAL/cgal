@@ -133,31 +133,7 @@ public:
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Compare_y_2<K>
   Compare_y_2;
-  
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Is_horizontal_2<K>
-  Is_horizontal_2;
-  
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Is_vertical_2<K>
-  Is_vertical_2;
 
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Is_plus45_2<K>
-  Is_plus45_2;
-  
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Is_minus45_2<K>
-  Is_minus45_2;
-  
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Is_slope_positive_2<K>
-  Is_slope_positive_2;
-  
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Is_slope_negative_2<K>
-  Is_slope_negative_2;  
-  
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Orientation_L2_C2<K>
   Orientation_L2_2;
@@ -260,37 +236,7 @@ public:
   compare_y_2_object() const {
     return Compare_y_2();
   }
-  
-  Is_horizontal_2
-  is_horizontal_2_object() const {
-    return Is_horizontal_2();
-  }  
-  
-  Is_vertical_2
-  is_vertical_2_object() const {
-    return Is_vertical_2();
-  } 
-  
-  Is_plus45_2
-  Is_plus45_2_object() const {
-    return Is_plus45_2();
-  }
-  
-  Is_minus45_2
-  Is_minus45_2_object() const {
-    return Is_minus45_2();
-  }
-  
-  Is_slope_positive_2
-  Is_slope_positive_2_object() const {
-    return Is_slope_positive_2();
-  }
-  
-  Is_slope_negative_2
-  Is_slope_negative_2_object() const {
-    return Is_slope_negative_2();
-  }
-  
+
   Orientation_L2_2
   orientation_L2_2_object() const {
     return Orientation_L2_2();

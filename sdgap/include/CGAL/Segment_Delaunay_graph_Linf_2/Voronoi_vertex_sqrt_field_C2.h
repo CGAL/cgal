@@ -1,3 +1,24 @@
+// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France) and
+// Notre Dame University (U.S.A.).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Segment_Delaunay_graph_Linf_2/include/CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_sqrt_field_C2.h $
+// $Id: Voronoi_vertex_sqrt_field_C2.h 56668 2010-06-09 08:45:58Z sloriot $
+// 
+//
+// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_VORONOI_VERTEX_SQRT_FIELD_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_VORONOI_VERTEX_SQRT_FIELD_C2_H
@@ -476,60 +497,15 @@ private:
       uz = FT(1);
       return;
     }
-  //sandeep: We will find the vertex by comparisons and simple arithmatic
-  
-  Point_2 qsrc = q.source_site().point();
-  Point_2 rsrc = r.source_site().point();
-  
-  Segment_2 qseg = q.segment();
-  Segment_2 rseg = r.segment();
-  //case1:when q and r are both horizontal
-  if (qseg.is_horizontal() and rseg.is_horizontal()) {
-    //if (CGAL::compare(q.source_site().y(),r.source_site().y()) == LARGER)
-    ux = FT(2) * pp.x() - qsrc.y() + rsrc.y();
-    uy = qsrc.y() + rsrc.y();
-    uz = FT(2);
-    return;
-  }
-  //case2:when q and r are both vertical
-  if (qseg.is_vertical() and rseg.is_vertical()) {
-    ux = qsrc.x() + rsrc.x();
-    uy = FT(2) * pp.y() + qsrc.x() - rsrc.x();
-    uz = FT(2);
-    return;
-  }
-  //case3:when q is horizontal and r is vertical
-  if (qseg.is_horizontal() and rseg.is_vertical()) {
-    if (CGAL::compare( abs(pp.x() - rsrc.x()),
-                      abs(pp.y() - qsrc.y()) )
-        == SMALLER ) {
-      //diff x is smaller than diff y
-      ux = FT(2) * rsrc.x() + qsrc.y() - pp.y();
-      uy = qsrc.y() + pp.y();
-      uz = FT(2);
-    } else {//diff x is larger or equal to diff y
-      ux = pp.x() + rsrc.x();
-      uy = FT(2) * qsrc.y() + rsrc.x() - pp.x();
-      uz = FT(2);
-    }
-    return;
-  }
-  //case4:when q is vertical and r is horizontal
-  if (CGAL::compare( abs(pp.x() - qsrc.x()),
-                    abs(pp.y() - rsrc.y()) )
-      == SMALLER ) {
-    //diff x is smaller than diff y
-    ux = FT(2) * qsrc.x() - rsrc.y() + pp.y();
-    uy = rsrc.y() + pp.y();
-    uz = FT(2);
-  } else {//diff x is larger or equal to diff y
-    ux = pp.x() + qsrc.x();
-    uy = FT(2) * rsrc.y() - qsrc.x() + pp.x();
-    uz = FT(2);
-  }
-  
-  return;
 
+    Polychainline_2 bpq = bisector_linf(sp, sq);
+    Polychainline_2 bqr = bisector_linf(sq, sr);
+
+    Point_2 vv = bpq.first_intersection_point_with(bqr);
+
+    ux = vv.x();
+    uy = vv.y();
+    uz = FT(1);
 
   }
 
@@ -540,128 +516,34 @@ private:
   void
   compute_pps(const Site_2& p, const Site_2& q, const Site_2& r)
   {
-  CGAL_precondition( p.is_point() && q.is_point() &&
-                    r.is_segment() );
-  
-  CGAL_SDG_DEBUG(std::cout << "debug: compute_pps entering p=" << p
-                 << " q=" << q << " r=" << r << std::endl;);
-  
-  v_type = PPS;
-  
-  bool p_endp_r = is_endpoint_of(p, r);
-  bool q_endp_r = is_endpoint_of(q, r);
-  //incase p or q is end point of r no square is possible in ccw sense
-  CGAL_assertion(not (p_endp_r or q_endp_r));
-  
-  bool samexpq = (scmpx(p, q) == EQUAL);
-  bool sameypq = (scmpy(p, q) == EQUAL);
-  
-  bool samecoordpq = samexpq or sameypq ;
-  
-  Point_2 pp = p.point(), qp = q.point();
-  Segment_2 rs = r.segment();
-  //Sandeep: We divide the computation in two cases
-  //case 1: r is horizontal
-  //Case 2: r is vertical
-  if (rs.is_horizontal()) {
-    if( CGAL::compare( abs(pp.x() - qp.x()),
-                       abs(pp.y() - rs.source().y()) )
-                       == LARGER &&
-       CGAL::compare( abs(pp.x() - qp.x()),
-                      abs(qp.y() - rs.source().y()) )
-                      == LARGER ) {
-      // This is the case when diffx is greater than diffy
-      
-      ux = pp.x() + qp.x();
-      uy = FT(2) * rs.source().y() + pp.x() - qp.x();
-      uz = FT(2);
+    CGAL_precondition( p.is_point() && q.is_point() &&
+		       r.is_segment() );
+
+    bool p_endp_r = is_endpoint_of(p, r);
+    bool q_endp_r = is_endpoint_of(q, r);
+
+    CGAL_assertion(not (p_endp_r and q_endp_r));
+
+    // goodbisector is brp if p is endpoint of r,
+    // otherwise it is bqr
+    Polychainline_2 goodbisector;
+    if (p_endp_r) {
+      goodbisector = bisector_linf(r, p);
+      CGAL_SDG_DEBUG(std::cout << "debug: brp r=" << r << " p=" << p << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: brp res=" << goodbisector << std::endl;);
     } else {
-      // diffy is greater
-      if (sameypq) {
-        ux = pp.x() + qp.x();
-        uy = pp.y() + rs.source().y();
-        uz = FT(2);
-      } else if ( CGAL::compare( abs(pp.y() - rs.source().y()),
-                                 abs(qp.y() - rs.source().y()) )
-                                 == LARGER) {
-        // p is more distant than q from r
-        if (samexpq) {
-          uy = pp.y() + qp.y();
-          uz = FT(2);
-          ux = (CGAL::compare(pp.y(),rs.source().y()) == LARGER) ?
-          (FT(2) * pp.x() + (pp.y() + qp.y() - FT(2) * rs.source().y())) :
-          (FT(2) * pp.x() - (FT(2) * rs.source().y() - pp.y() - qp.y()));
-        } else {
-          ux = FT(2) * qp.x() + pp.y() - rs.source().y();
-          uy = pp.y() + rs.source().y();
-          uz = FT(2);
-        }
-      } else {
-        // q is more distant than p from r
-        if (samexpq) {
-          uy = pp.y() + qp.y();
-          uz = FT(2);
-          ux = (CGAL::compare(pp.y(),rs.source().y()) == LARGER) ?
-          (FT(2) * pp.x() - (pp.y() + qp.y() - FT(2) * rs.source().y())) :
-          (FT(2) * pp.x() + (FT(2) * rs.source().y() - pp.y() - qp.y()));
-        } else {
-          ux = FT(2) * pp.x() - qp.y() + rs.source().y();
-          uy = qp.y() + rs.source().y();
-          uz = FT(2);
-        }
-      }
-    }// end of diffy greater
-  } else {//rs is vertical
-    if( CGAL::compare( abs(pp.y() - qp.y()),
-                       abs(pp.x() - rs.source().x()) )
-                       == LARGER &&
-       CGAL::compare( abs(pp.y() - qp.y()),
-                      abs(qp.x() - rs.source().x()) )
-                      == LARGER ) {
-      // This is the case when diffy is greater than diffx
-      
-      ux = FT(2) * rs.source().x() + pp.y() - qp.y();
-      uy = pp.y() + qp.y();
-      uz = FT(2);
-    } else {
-      // diffx is greater
-      if (samexpq) {
-        ux = pp.x() + rs.source().x();
-        uy = pp.y() + qp.y();
-        uz = FT(2);
-      } else if ( CGAL::compare( abs(pp.x() - rs.source().x()),
-                                 abs(qp.x() - rs.source().x()) )
-                                 == LARGER) {
-        
-        // p is more distant than q from r
-        if (sameypq) {
-          ux = pp.y() + qp.y();
-          uz = FT(2);
-          uy = (CGAL::compare(pp.x(),rs.source().x()) == LARGER) ?
-          (FT(2) * pp.y() - (pp.x() + qp.x() - FT(2) * rs.source().x())) :
-          (FT(2) * pp.y() + (FT(2) * rs.source().x() - pp.x() - qp.x()));
-        } else {
-          ux = pp.x() + rs.source().x();
-          uy = FT(2) * qp.y() + pp.x() - rs.source().x();
-          uz = FT(2);
-        }
-      } else {
-        // q is more distant than p from r
-        if (sameypq) {
-          ux = pp.y() + qp.y();
-          uz = FT(2);
-          uy = (CGAL::compare(pp.x(),rs.source().x()) == LARGER) ?
-          (FT(2) * pp.y() + (pp.x() + qp.x() - FT(2) * rs.source().x())) :
-          (FT(2) * pp.y() - (FT(2) * rs.source().x() - pp.x() - qp.x()));
-        } else {
-          ux = qp.x() + rs.source().x();
-          uy = FT(2) * pp.y() - qp.x() + rs.source().x();
-          uz = FT(2);
-        }
-      }
-    }// end of diffx greater
-  }//end of vertical rs
-  return;
+      goodbisector = bisector_linf(q, r);
+      CGAL_SDG_DEBUG(std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: bqr res=" << goodbisector << std::endl;);
+    }
+
+    Polychainline_2 bpq = bisector_linf(p, q);
+
+    Point_2 vv = bpq.first_intersection_point_with(goodbisector);
+
+    ux = vv.x();
+    uy = vv.y();
+    uz = RT(1);
   }
 
 
@@ -670,7 +552,7 @@ private:
 		      const Tag_false&) const
   {
     return true;
-  }
+  } 
 
   bool check_if_exact(const Site_2& s, unsigned int i,
 		      const Tag_true&) const
@@ -725,61 +607,17 @@ private:
   void
   compute_sss(const Site_2& p, const Site_2& q, const Site_2& r)
   {
-  CGAL_precondition( p.is_segment() && q.is_segment() &&
-                    r.is_segment() );
-  
-  int numh=0, numv=0;
-  Segment_2 ps = p.segment(), qs = q.segment(), rs = r.segment();
-  
-  (ps.is_horizontal()) ? numh++ : numv++;
-  (qs.is_horizontal()) ? numh++ : numv++;
-  (rs.is_horizontal()) ? numh++ : numv++;
-  
-  CGAL_assertion(numh == 2 or numv == 2);
-  
-  if (numv == 2) { // two vertical and one horizontal segment
-    if (ps.is_horizontal()) {
-      ux = qs.source().x() + rs.source().x();
-      uy = FT(2) * ps.source().y() + qs.source().x() - rs.source().x();
-      uz = FT(2);
-    }
-    if (qs.is_horizontal()) {
-      ux = ps.source().x() + rs.source().x();
-      uy = FT(2) * qs.source().y() + rs.source().x() - ps.source().x();
-      uz = FT(2);
-    }
-    if (rs.is_horizontal()) {
-      ux = qs.source().x() + ps.source().x();
-      uy = FT(2) * rs.source().y() + ps.source().x() - qs.source().x();
-      uz = FT(2);
-    }
-    
-  } else { // two horizontal and one vertical segment
-    if (ps.is_vertical()) {
-      uy = qs.source().y() + rs.source().y();
-      ux = FT(2) * ps.source().x() + rs.source().y() - qs.source().y();
-      uz = FT(2);
-    }
-    if (qs.is_vertical()) {
-      uy = ps.source().y() + rs.source().y();
-      ux = FT(2) * qs.source().x() + ps.source().y() - rs.source().y();
-      uz = FT(2);
-    }
-    if (rs.is_vertical()) {
-      uy = qs.source().y() + ps.source().y();
-      ux = FT(2) * rs.source().x() + qs.source().y() - ps.source().y();
-      uz = FT(2);
-    }
-    
-  }//end of two horizontal and one vertical segment case
-  
+    CGAL_precondition( p.is_segment() && q.is_segment() &&
+		       r.is_segment() );
 
-  
+    Polychainline_2 bpq = bisector_linf(p, q);
+    Polychainline_2 bqr = bisector_linf(q, r);
 
+    Point_2 vv = bpq.first_intersection_point_with(bqr); 
 
-    
-
-    return;
+    ux = vv.x();
+    uy = vv.y();
+    uz = RT(1);
 
   }
 
@@ -1203,72 +1041,31 @@ private:
     if (certainly( d2 == NEGATIVE ) ) { return NEGATIVE; }
     if (! is_certain( d2 == NEGATIVE ) ) { return indeterminate<Sign>(); }
 
-    //Line_2 l = compute_supporting_line(t.supporting_site());
-    //Sign sl = incircle(l);
+    Line_2 l = compute_supporting_line(t.supporting_site());
+    Sign sl = incircle(l);
 
-    Segment_2 tseg = t.segment();
-  
-    FT dup;
-    if (p_.is_point()) {
-      Point_2 pp = p_.point();
-      dup = CGAL::max(CGAL::abs(ux - pp.x() * uz),
-                      CGAL::abs(uy - pp.y() * uz));
-    } else {//p_ is segment
-      Segment_2 pseg = p_.segment();
-      if (pseg.is_horizontal()) {
-        dup = CGAL::abs(uy - pseg.source().y() * uz);
-      } else {//p_ is vertical
-        dup = CGAL::abs(ux - pseg.source().x() * uz);
+    //if ( sl == POSITIVE ) { return sl; }
+    if (certainly( sl == POSITIVE )) { return sl; }
+    if (! is_certain( sl == POSITIVE )) { return indeterminate<Sign>(); }
+
+    if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) { return ZERO; }
+
+    Oriented_side os1 = oriented_side(l, t.source());
+    Oriented_side os2 = oriented_side(l, t.target());
+
+    if ( sl == ZERO ) {
+      if (os1 == ON_ORIENTED_BOUNDARY || os2 == ON_ORIENTED_BOUNDARY) {
+	return ZERO;
       }
+      return ( os1 == os2 ) ? POSITIVE : ZERO;
     }
-  
-    if (tseg.is_horizontal()) {
-      Point_2 txmax = ( CGAL::compare(tseg.source().x(), tseg.target().x())
-                        == SMALLER ) ? tseg.target()
-                                     : tseg.source();
-      Point_2 txmin = ( CGAL::compare(tseg.source().x(), tseg.target().x())
-                        == SMALLER ) ? tseg.source()
-                                     : tseg.target();
-      if (CGAL::compare(uy - dup , uz * tseg.source().y()) == SMALLER &&
-          CGAL::compare(uz * tseg.source().y() , uy + dup) == SMALLER &&
-          CGAL::compare(ux - dup , uz * txmax.x()) == SMALLER ) {
-        return NEGATIVE;
-      } else if (CGAL::compare(uy - dup , uz * tseg.source().y()) == LARGER or
-                 CGAL::compare(uz * tseg.source().y() , uy + dup) == LARGER or
-                 CGAL::compare(ux - dup , uz * txmax.x()) == LARGER or
-                 CGAL::compare(ux + dup , uz * txmin.x()) == SMALLER) {
-        return POSITIVE;
-      } else {
-        return ZERO;
-      }
-    
-    } else {// tseg is vertical
-      Point_2 tymax = ( CGAL::compare(tseg.source().y(), tseg.target().y())
-                        == SMALLER ) ? tseg.target()
-                                     : tseg.source();
-      Point_2 tymin = ( CGAL::compare(tseg.source().y(), tseg.target().y())
-                        == SMALLER ) ? tseg.source()
-                                     : tseg.target();
-      if (CGAL::compare(ux - dup , uz * tseg.source().x()) == SMALLER &&
-          CGAL::compare(uz * tseg.source().x() , ux + dup) == SMALLER &&
-          CGAL::compare(uy - dup , uz * tymax.y()) == SMALLER ) {
-        return NEGATIVE;
-      } else if (CGAL::compare(ux - dup , uz * tseg.source().x()) == LARGER or
-                 CGAL::compare(uz * tseg.source().x() , ux + dup) == LARGER or
-                 CGAL::compare(uy - dup , uz * tymax.y()) == LARGER or
-                 CGAL::compare(uy + dup , uz * tymin.y()) == SMALLER) {
-        return POSITIVE;
-      } else {
-        return ZERO;
-      }
-    
-    }//end of tseg vertical
 
+    return (os1 == os2) ? POSITIVE : NEGATIVE;
   }
 
   //--------------------------------------------------------------------------
 
-  Sign incircle_s(const Site_2& t) const
+  Sign incircle_s(const Site_2& t) const 
   {
     CGAL_precondition( t.is_segment() );
 

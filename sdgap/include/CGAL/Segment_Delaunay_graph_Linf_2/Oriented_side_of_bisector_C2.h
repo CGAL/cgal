@@ -123,46 +123,27 @@ private:
 
     bool is_src = same_points(p, s.source_site());
     bool is_trg = same_points(p, s.target_site());
-  
-    Point_2 pp = p.point(), qq = q.point();
 
     if ( is_src || is_trg ) {
-      // p is end point of s
       Line_2 ls = compute_supporting_line(s.supporting_site());
       Line_2 lp = compute_linf_perpendicular(ls, p.point());
 
       if ( is_trg ) {
-	      lp = opposite_line(lp);
+	lp = opposite_line(lp);
       }
 
       Oriented_side os = oriented_side_of_line(lp, q.point());
 
-      if ( os == ON_NEGATIVE_SIDE ) {
-	      return SMALLER;
-      } else {// ( os == ON_POSITIVE_SIDE or os == ON_ORIENTED_SIDE) {
-        if (s.segment().is_horizontal()) {
-          
-          return ( CGAL::compare( abs(pp.x() - qq.x()),
-                                  abs(pp.y() - qq.y()) ) == SMALLER )
-                 ? SMALLER
-                 : (CGAL::compare( abs(pp.x() - qq.x()),
-                                   abs(pp.y() - qq.y()) ) == LARGER )
-                 ? LARGER
-                 : EQUAL;
-                  
-        } else { // s is vertical
-          
-          return ( CGAL::compare( abs(pp.x() - qq.x()),
-                                  abs(pp.y() - qq.y()) ) == SMALLER )
-                 ? LARGER
-                 : (CGAL::compare( abs(pp.x() - qq.x()),
-                                   abs(pp.y() - qq.y()) ) == LARGER )
-                 ? SMALLER
-                 : EQUAL;
-          
-        }
+      if ( os == ON_POSITIVE_SIDE ) {
+	return LARGER;
+      } else if ( os == ON_NEGATIVE_SIDE) {
+	return SMALLER;
+      } else {
+	return EQUAL;
       }
     }
+
+    Point_2 pp = p.point(), qq = q.point();
 
     // here, we have to compute closest point of segment to q
 
