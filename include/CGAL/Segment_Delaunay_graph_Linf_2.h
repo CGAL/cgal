@@ -1123,7 +1123,6 @@ public:
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
-      //std::cout << "debug draw edge " << *eit << std::endl;
       draw_dual_edge(*eit, str);
     }
     return str;

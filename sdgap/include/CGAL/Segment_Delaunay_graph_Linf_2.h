@@ -955,6 +955,7 @@ public:
     file_output(os, P, true);
   }
 
+
   void file_output_verbose(std::ostream& os) const {
     const char inf_vertex[] = "infinite vertex";
     const char v_id[] = {'p', 'q', 'r', 's'};
@@ -1116,12 +1117,12 @@ public:
 
   }
 
+
   template< class Stream >
   Stream& draw_dual(Stream& str) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
-      //std::cerr << "debug draw edge " << *eit << std::endl;
       draw_dual_edge(*eit, str);
     }
     return str;
