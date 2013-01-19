@@ -662,16 +662,23 @@ public:
   Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& r,
 		       const Site_2& s, const Site_2& t, Sign sgn) const
   {
-    CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf entering (p,q,r,s,t,sgn)= " 
-        << p << ' ' << q << ' ' << r << ' ' << s << ' ' << t 
-        << ' ' << sgn << std::endl; ); 
+    Boolean retval;
+    CGAL_SDG_DEBUG(
+        std::cout << "debug finite-edge-int-cf entering (p,q,r,s,t,sgn)= "
+        << p << ' ' << q << ' ' << r << ' ' << s << ' ' << t
+        << ' ' << sgn << std::endl; );
     if ( sgn == POSITIVE ) {
-      return is_interior_in_conflict_none(p, q, r, s, t, Method_tag());
+      retval = is_interior_in_conflict_none(p, q, r, s, t, Method_tag());
     } else if ( sgn == NEGATIVE ) {
-      return is_interior_in_conflict_both(p, q, r, s, t, Method_tag());
+      retval = is_interior_in_conflict_both(p, q, r, s, t, Method_tag());
     } else {
-      return is_interior_in_conflict_touch(p, q, r, s, t, Method_tag());
+      retval = is_interior_in_conflict_touch(p, q, r, s, t, Method_tag());
     }
+    CGAL_SDG_DEBUG( std::cout <<
+        "debug finite-edge-int-cf with (p,q,r,s,t,sgn)= "
+        << p << ' ' << q << ' ' << r << ' ' << s << ' ' << t
+        << ' ' << sgn << " returns " << retval << std::endl; );
+    return retval;
   }
 
 
@@ -679,10 +686,11 @@ public:
   Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& r,
 		       const Site_2& t, Sign sgn) const
   {
-    CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf entering (p,q,r,t,sgn)= (" 
-        << p << ") (" << q << ") (" << r <<  " (r not ignored)) (" 
-        << t << ")  "  
-        << sgn << std::endl; ); 
+    CGAL_SDG_DEBUG(
+        std::cout << "debug finite-edge-int-cf entering (p,q,r,t,sgn)= ("
+        << p << ") (" << q << ") (" << r <<  " (r not ignored)) ("
+        << t << ")  "
+        << sgn << std::endl; );
 
     /*
     if ( t.is_point() ) {
@@ -690,18 +698,26 @@ public:
     }
     */
 
-    // if p, q, t are points, then return (sgn == NEGATIVE) 
+    // if p, q, t are points, then return (sgn == NEGATIVE)
     if (t.is_point() and p.is_point() and q.is_point()) {
-      return ( sgn == NEGATIVE ); 
+      CGAL_SDG_DEBUG( std::cout <<
+          "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+          << p << ") (" << q << ") (" << r <<  " ) ("
+          << t << ")  "
+          << sgn << " returns " << (sgn==NEGATIVE) << std::endl; );
+      return ( sgn == NEGATIVE );
     }
 
     if (t.is_point() and (sgn == NEGATIVE)) {
-	  CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
-		        << true << std::endl; );
-      return true; 
+      CGAL_SDG_DEBUG( std::cout <<
+          "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+          << p << ") (" << q << ") (" << r <<  ") ("
+          << t << ")  "
+          << sgn << " returns " << true << std::endl; );
+      return true;
     }
 
-    // here and on, t is a segment 
+    // here and on, t is a segment
     // or t is a point and sgn != NEGATIVE
 
     if ( sgn != NEGATIVE ) {
@@ -719,6 +735,11 @@ public:
       if ( p.is_point() and q.is_segment() ) {
         if (same_points(p, q.source_site()) or
             same_points(p, q.target_site())   ) {
+          CGAL_SDG_DEBUG( std::cout <<
+              "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+              << p << ") (" << q << ") (" << r <<  ") ("
+              << t << ")  "
+              << sgn << " returns " << false << std::endl; );
           return false;
         } else { // p is not endpoint of q
 
@@ -726,30 +747,34 @@ public:
             << std::endl; );
 
           CGAL_assertion( not ( q.segment().is_horizontal() or
-                                q.segment().is_vertical()     ) ) ; 
+                                q.segment().is_vertical()     ) ) ;
 
           Line_2 lseg = compute_supporting_line(q.supporting_site());
 
-          Oriented_side ossegp = 
+          Oriented_side ossegp =
             oriented_side_of_line(lseg, p.point());
 
-          Oriented_side ossegt = 
+          Oriented_side ossegt =
             oriented_side_of_line(lseg, t.point());
 
           CGAL_assertion(ossegp != ON_ORIENTED_BOUNDARY);
           CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
           if (ossegp != ossegt) {
-			CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
-			          << false << std::endl; );
+            CGAL_SDG_DEBUG( std::cout <<
+                "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+                << p << ") (" << q << ") (" << r <<  ") ("
+                << t << ")  "
+                << sgn << " returns " << false << std::endl; );
             return false;
-          } else {  
+          } else {
             // here, t and p are on the same side of q
 
-            CGAL_SDG_DEBUG( std::cout << "debug t and p on the same side of q"
-              << std::endl; );
+            CGAL_SDG_DEBUG(
+                std::cout << "debug fecf: t and p on the same side of q"
+                << std::endl; );
 
-            // compute linf projection of infinite 
+            // compute linf projection of infinite
             // Voronoi vertex (p, inf, q)
 
             Point_2 proj_of_infv;
@@ -757,34 +782,42 @@ public:
               CGAL::sign(lseg.a()) == CGAL::sign(lseg.b());
 
             if (has_lseg_neg_slope) {
-              proj_of_infv = 
+              proj_of_infv =
                 compute_horizontal_projection(lseg, p.point());
             } else {
-              proj_of_infv = 
+              proj_of_infv =
                 compute_vertical_projection(lseg, p.point());
             }
 
             // compute linf projection of pqr Voronoi vertex
             Voronoi_vertex_2 vpqr(p, q, r);
 
-            Point_2 proj_of_vpqr = 
+            Point_2 proj_of_vpqr =
               compute_linf_projection_nonhom(lseg, vpqr.point());
 
-            Line_2 line_inf = 
+            Line_2 line_inf =
               compute_linf_perpendicular(lseg, proj_of_infv);
 
-            Line_2 line_fin = 
+            Line_2 line_fin =
               compute_linf_perpendicular(lseg, proj_of_vpqr);
 
-            Oriented_side os_line_inf = 
+            Oriented_side os_line_inf =
               oriented_side_of_line(line_inf, t.point());
 
-            Oriented_side os_line_fin = 
+            Oriented_side os_line_fin =
               oriented_side_of_line(line_fin, t.point());
-			  
-            return ( os_line_inf == os_line_fin) ? false : true;
 
-          } // end of case where 
+            Boolean retval = ( os_line_inf == os_line_fin) ? false : true;
+
+            CGAL_SDG_DEBUG( std::cout <<
+                "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+                << p << ") (" << q << ") (" << r <<  ") ("
+                << t << ")  "
+                << sgn << " returns " << retval << std::endl; );
+
+            return retval;
+
+          } // end of case where
             // t, p are on the same side of q
         } // end of case where p is not endpoint of q
       } // end of case where p is point and q is segment
@@ -792,32 +825,38 @@ public:
       if ( p.is_segment() and q.is_point() ) {
         if (same_points(q, p.source_site()) or
             same_points(q, p.target_site())   ) {
-		  CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
-			        << false << std::endl; );
+          CGAL_SDG_DEBUG( std::cout <<
+              "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+              << p << ") (" << q << ") (" << r <<  ") ("
+              << t << ")  "
+              << sgn << " returns " << false << std::endl; );
           return false;
         } else { // q is not endpoint of p
           CGAL_assertion( not ( p.segment().is_horizontal() or
-                                p.segment().is_vertical()     ) ) ; 
+                                p.segment().is_vertical()     ) ) ;
 
           Line_2 lseg = compute_supporting_line(p.supporting_site());
 
-          Oriented_side ossegq = 
+          Oriented_side ossegq =
             oriented_side_of_line(lseg, q.point());
 
-          Oriented_side ossegt = 
+          Oriented_side ossegt =
             oriented_side_of_line(lseg, t.point());
 
           CGAL_assertion(ossegq != ON_ORIENTED_BOUNDARY);
           CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
           if (ossegq != ossegt) {
-			CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
-			          << false << std::endl; );
+            CGAL_SDG_DEBUG( std::cout <<
+              "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+              << p << ") (" << q << ") (" << r <<  ") ("
+              << t << ")  "
+              << sgn << " returns " << false << std::endl; );
             return false;
-          } else {  
+          } else {
             // here, t and q are on the same side of p
 
-            // compute linf projection of infinite 
+            // compute linf projection of infinite
             // Voronoi vertex (p, inf, q)
 
             Point_2 proj_of_infv;
@@ -825,39 +864,52 @@ public:
               CGAL::sign(lseg.a()) == CGAL::sign(lseg.b());
 
             if (has_lseg_neg_slope) {
-              proj_of_infv = 
+              proj_of_infv =
                 compute_vertical_projection(lseg, q.point());
             } else {
-              proj_of_infv = 
+              proj_of_infv =
                 compute_horizontal_projection(lseg, q.point());
             }
 
             // compute linf projection of pqr Voronoi vertex
             Voronoi_vertex_2 vpqr(p, q, r);
 
-            Point_2 proj_of_vpqr = 
+            Point_2 proj_of_vpqr =
               compute_linf_projection_nonhom(lseg, vpqr.point());
 
-            Line_2 line_inf = 
+            Line_2 line_inf =
               compute_linf_perpendicular(lseg, proj_of_infv);
 
-            Line_2 line_fin = 
+            Line_2 line_fin =
               compute_linf_perpendicular(lseg, proj_of_vpqr);
 
-            Oriented_side os_line_inf = 
+            Oriented_side os_line_inf =
               oriented_side_of_line(line_inf, t.point());
 
-            Oriented_side os_line_fin = 
+            Oriented_side os_line_fin =
               oriented_side_of_line(line_fin, t.point());
-            
-            return ( os_line_inf == os_line_fin) ? false : true;
 
-          } // end of case where 
+            Boolean retval = ( os_line_inf == os_line_fin) ? false : true;
+
+            CGAL_SDG_DEBUG( std::cout <<
+                "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+                << p << ") (" << q << ") (" << r <<  ") ("
+                << t << ")  "
+                << sgn << " returns " << retval << std::endl; );
+
+            return retval;
+
+          } // end of case where
             // t, q are on the same side of p
         } // end of case where q is not endpoint of p
       } // end of case where q is point and p is segment
-	  CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf retval pqrt= " 
-	        	<< false << std::endl; );
+
+      CGAL_SDG_DEBUG( std::cout <<
+          "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+          << p << ") (" << q << ") (" << r <<  ") ("
+          << t << ")  "
+          << sgn << " returns " << false << std::endl; );
+
       return false;
     }
 
@@ -868,62 +920,67 @@ public:
       // therefore, one of them is a point and the other is a segment
       CGAL_assertion( p.is_point() or q.is_point() );
 
-      // philaris: 
+      // philaris:
 
       CGAL_assertion( p.is_point() ?
                       ((not same_points(p, q.source_site())) and
                        (not same_points(p, q.target_site())))    :
                       ((not same_points(q, p.source_site())) and
-                       (not same_points(q, p.target_site())))    
+                       (not same_points(q, p.target_site())))
                     ) ;
 
-      //sandeep: if t is segment and it not intersects the wedge 
+      //sandeep: if t is segment and it not intersects the wedge
       //as defined by s and p in the basic predicate
-      //intersects_segment_interior_inf_wedge_sp 
+      //intersects_segment_interior_inf_wedge_sp
       // then return false
       if (t.is_segment()) {
         bool result;
-      
-        if(p.is_point()) {
+
+        if (p.is_point()) {
           //p may be end point of t
-          if ( same_points(p,t.source_site()) 
+          if ( same_points(p,t.source_site())
                or same_points(p,t.target_site()) ) {
-            CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
-            << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
-            << t << ")  "  
-            << sgn << " retval= " << true << std::endl; ); 
+            CGAL_SDG_DEBUG(
+                std::cout
+                << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+                << p << ") (" << q << ") (" << r <<  ") ("
+                << t << ")  "
+                << sgn << " returns " << true << std::endl; );
             return true;
           } else {
             result = intersects_segment_interior_inf_wedge_sp(q,p,t);
           }
         } else { // p is segment and q is point
           //q may be endpoint of t
-            if ( same_points(q,t.source_site()) 
+            if ( same_points(q,t.source_site())
                  or same_points(q,t.target_site())) {
-              CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
-              << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
-              << t << ")  "  
-              << sgn << " retval= " << true << std::endl; ); 
+              CGAL_SDG_DEBUG( std::cout
+                  << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+                  << p << ") (" << q << ") (" << r <<  ") ("
+                  << t << ")  "
+                  << sgn << " returns " << true << std::endl; );
               return true;
             } else {
               result = intersects_segment_interior_inf_wedge_sp(p,q,t);
             }
         }
-        
-        if (result == false){ 
-          CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
-          << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
-          << t << ")  "  
-          << sgn << " retval= " << false << std::endl; ); 
+
+        if (result == false) {
+          CGAL_SDG_DEBUG( std::cout
+              << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+              << p << ") (" << q << ") (" << r <<  ") ("
+              << t << ")  "
+              << sgn << " returns " << false << std::endl; );
           return false;
-        } 
+        }
       }//end of t is segment
 
       // philaris: tocheck
-      CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= (" 
-        << p << ") (" << q << ") (" << r <<  " (r ignored)) (" 
-        << t << ")  "  
-        << sgn << " retval= " << true << std::endl; ); 
+      CGAL_SDG_DEBUG( std::cout
+          << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+          << p << ") (" << q << ") (" << r <<  ") ("
+          << t << ")  "
+          << sgn << " returns " << true << std::endl; );
       // philaris: always return true
       return true;
     }
@@ -936,15 +993,18 @@ public:
       same_points(q, t.source_site()) || same_points(q, t.target_site());
 
     // philaris: change for Linf
-    if ((cmpx(p.point(), q.point()) == EQUAL) or 
+    if ((cmpx(p.point(), q.point()) == EQUAL) or
         (cmpy(p.point(), q.point()) == EQUAL)    ) {
       // if p or q have one same coordinate, behave like in L2
       return ( p_is_endpoint && q_is_endpoint );
     } else {
       // philaris: tocheck
       CGAL_assertion(sgn == NEGATIVE);
-	  CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf pqrt retval= " 
-	        	<< true << std::endl; );
+      CGAL_SDG_DEBUG( std::cout
+          << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+          << p << ") (" << q << ") (" << r <<  ") ("
+          << t << ")  "
+          << sgn << " returns " << true << std::endl; );
       return true;
     }
   }
@@ -952,9 +1012,10 @@ public:
   Boolean   operator()(const Site_2& p, const Site_2& q, const Site_2& t,
 		       Sign sgn) const
   {
-    CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf entering (p,q,t,sgn)= " 
-        << p << ' ' << q << ' ' << t << ' '  
-        << "(sgn " << sgn << " not ignored)"  << std::endl; ); 
+    CGAL_SDG_DEBUG(
+        std::cout << "debug finite-edge-int-cf entering (p,q,t,sgn)= "
+        << p << ' ' << q << ' ' << t << ' '
+        << "(sgn " << sgn << " not ignored)"  << std::endl; );
 
     CGAL_assertion( not ( p.is_segment() and q.is_segment()) );
 
@@ -969,6 +1030,11 @@ public:
           CGAL_assertion( same_points(q, p.source_site()) or
                           same_points(q, p.target_site())   ) ;
         }
+        CGAL_SDG_DEBUG(
+            std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+            << p << ' ' << q << ' ' << t << ' '
+            << "(sgn " << sgn << " not ignored)" << " returns "
+            << false << std::endl; );
         return false;
       }
 
@@ -990,14 +1056,20 @@ public:
                          (not same_points(q, p.target_site()))    );
           result = intersects_segment_interior_inf_wedge_sp(p,q,t);
         }
-        
+
+        CGAL_SDG_DEBUG(
+            std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+            << p << ' ' << q << ' ' << t << ' '
+            << "(sgn " << sgn << " not ignored)" << " returns "
+            << result << std::endl; );
+
         if (result == true) {
           return true;
         } else {
           return false;
         }
         //return false;
-      }  
+      }
 
       CGAL_assertion(t.is_point());
 
@@ -1005,85 +1077,114 @@ public:
         if (p.is_point() and q.is_segment()) {
           if (same_points(p, q.source_site()) or
               same_points(p, q.target_site())   ) {
+            CGAL_SDG_DEBUG(
+                std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+                << p << ' ' << q << ' ' << t << ' '
+                << "(sgn " << sgn << " not ignored)" << " returns "
+                << false << std::endl; );
             return false;
-          } 
+          }
         } // end of case: p: point, q: segment
-        else 
-        // if (p.is_segment() and q.is_point()) 
+        else
+        // if (p.is_segment() and q.is_point())
         {
           if (same_points(q, p.source_site()) or
               same_points(q, p.target_site())   ) {
+            CGAL_SDG_DEBUG(
+                std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+                << p << ' ' << q << ' ' << t << ' '
+                << "(sgn " << sgn << " not ignored)" << " returns "
+                << false << std::endl; );
             return false;
-          } 
+          }
         } // end of case: p: segment, q: point
 
         Point_2 pnt = (p.is_point())? p.point(): q.point();
-        Line_2 lseg = (p.is_point()) ? 
+        Line_2 lseg = (p.is_point()) ?
           compute_supporting_line(q.supporting_site()) :
           compute_supporting_line(p.supporting_site()) ;
 
-        Oriented_side ossegpnt = 
+        Oriented_side ossegpnt =
           oriented_side_of_line(lseg, pnt);
 
-        Oriented_side ossegt = 
+        Oriented_side ossegt =
           oriented_side_of_line(lseg, t.point());
 
         CGAL_assertion(ossegpnt != ON_ORIENTED_BOUNDARY);
         CGAL_assertion(ossegt != ON_ORIENTED_BOUNDARY);
 
         if (ossegpnt != ossegt) {
+          CGAL_SDG_DEBUG(
+              std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+              << p << ' ' << q << ' ' << t << ' '
+              << "(sgn " << sgn << " not ignored)" << " returns "
+              << false << std::endl; );
           return false;
-        } else {  
+        } else {
           // here, t and pnt are on the same side of seg
 
-          Point_2 proj_hor = 
+          Point_2 proj_hor =
             compute_horizontal_projection(lseg, pnt);
 
-          Point_2 proj_ver = 
+          Point_2 proj_ver =
             compute_vertical_projection(lseg, pnt);
 
-          Line_2 lineh = 
+          Line_2 lineh =
             compute_linf_perpendicular(lseg, proj_hor);
 
-          Line_2 linev = 
+          Line_2 linev =
             compute_linf_perpendicular(lseg, proj_ver);
 
-          Oriented_side os_lineh = 
+          Oriented_side os_lineh =
             oriented_side_of_line(lineh, t.point());
 
-          Oriented_side os_linev = 
+          Oriented_side os_linev =
             oriented_side_of_line(linev, t.point());
 
-          return ( os_lineh == os_linev ) ? false : true;
+          Boolean retval = ( os_lineh == os_linev ) ? false : true;
+
+          CGAL_SDG_DEBUG(
+              std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+              << p << ' ' << q << ' ' << t << ' '
+              << "(sgn " << sgn << " not ignored)" << " returns "
+              << retval << std::endl; );
+
+          return retval;
 
         } // end of case: t and pnt on the same side of seg
 
-      } // end of case: sgn == POSITIVE 
+      } // end of case: sgn == POSITIVE
 
       return false;
     } // end of case: any of p, q is a segment
 
-    CGAL_SDG_DEBUG( std::cout << "debug tocheck here p, q points" << std::endl; );
+    CGAL_SDG_DEBUG(
+        std::cout << "debug tocheck here p, q points" << std::endl; );
 
     // both p and q are points
     if ( t.is_point() ) {
-      // philaris: adaptation as follows: 
+      // philaris: adaptation as follows:
       // predicate: position of t related to bbox(p, q)
-
 
       Comparison_result cmpxpt = cmpx(p.point(), t.point());
       Comparison_result cmpxtq = cmpx(t.point(), q.point());
       Comparison_result cmpypt = cmpy(p.point(), t.point());
       Comparison_result cmpytq = cmpy(t.point(), q.point());
- 
+
       //Sign s1 = -sign_of( cmpxpt * cmpxtq + cmpypt * cmpytq );
       Sign s1 = CGAL::compare(0, cmpxpt * cmpxtq + cmpypt * cmpytq);
 
       CGAL_assertion( s1 != ZERO );
 
       CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf (p,q,t)= " 
-        << p << ' ' << q << ' ' << t 
-        << "  s1= " << s1 << std::endl; ); 
+        << p << ' ' << q << ' ' << t
+        << "  s1= " << s1 << std::endl; );
+
+      CGAL_SDG_DEBUG(
+          std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+          << p << ' ' << q << ' ' << t << ' '
+          << "(sgn " << sgn << " not ignored)" << " returns "
+          << ( s1 == NEGATIVE ) << std::endl; );
 
       return ( s1 == NEGATIVE );
     }
@@ -1099,11 +1200,22 @@ public:
     Comparison_result cmpypq = cmpy(p.point(), q.point());
 
     if ((cmpxpq == EQUAL) or (cmpypq == EQUAL)) {
+      CGAL_SDG_DEBUG(
+          std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+          << p << ' ' << q << ' ' << t << ' '
+          << "(sgn " << sgn << " not ignored)" << " returns "
+          << ( bp && bq ) << std::endl; );
       return ( bp && bq );
     } else {
       // check if interior of segment has non-empty intersection
       // with the bounding box of p, q
-      return intersects_segment_interior_bbox(t, p, q);
+      Boolean retval = intersects_segment_interior_bbox(t, p, q);
+      CGAL_SDG_DEBUG(
+          std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+          << p << ' ' << q << ' ' << t << ' '
+          << "(sgn " << sgn << " not ignored)" << " returns "
+          << retval << std::endl; );
+      return retval;
     }
   }
 
