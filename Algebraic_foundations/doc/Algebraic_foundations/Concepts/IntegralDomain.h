@@ -12,8 +12,8 @@ We intend to reserve the operator syntax for use with a `Field`.
 Moreover, `CGAL::Algebraic_structure_traits< IntegralDomain >` is a model of 
 `AlgebraicStructureTraits` providing: 
 
-- `CGAL::Algebraic_structure_traits< IntegralDomain >::Algebraic_type` derived from `CGAL::Integral_domain_tag` 
-- `CGAL::Algebraic_structure_traits< IntegralDomain >::Integral_division`  which is a model of `AlgebraicStructureTraits::IntegralDivision`
+- \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< IntegralDomain >::Algebraic_category` \endlink derived from `CGAL::Integral_domain_tag` 
+- \link AlgebraicStructureTraits::Integral_division `CGAL::Algebraic_structure_traits< IntegralDomain >::Integral_division` \endlink  which is a model of `AlgebraicStructureTraits::IntegralDivision`
 - `CGAL::Algebraic_structure_traits< IntegralDomain >::Divides`  which is a model of `AlgebraicStructureTraits::Divides`
 
 \cgalRefines `IntegralDomainWithoutDivision` 
