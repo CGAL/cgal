@@ -91,7 +91,7 @@ TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   if (!movePointToInsert) return;
 
   if (insertedPoint && (vh != Vertex_handle())) {
-    // TODO(NGHK): Re-add dt->remove(vh);
+    dt->remove(vh);
     vh = Vertex_handle();
   }
 
@@ -108,7 +108,7 @@ TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
   }
 
   if (insertedPoint && (vh != Vertex_handle())) {
-    // TODO(NGHK): Re-add dt->remove(vh);
+    dt->remove(vh);
     vh = Vertex_handle();
   }
   
