@@ -31,8 +31,8 @@ struct Exact_predicates_tag{};
 
 A constrained triangulation is a triangulation of a set of points 
 which has to include among its edges 
-a given set of segments 
-joining the points. The given segments are 
+a given set of polylines 
+joining the points. The given polylines are 
 called <I>constraints</I> and the corresponding 
 edges in the triangulation are called <I>constrained edges</I>. 
 
@@ -43,8 +43,8 @@ There are three versions of constrained triangulations
 <UL> 
 <LI>In the basic version, the constrained triangulation 
 does not handle intersecting constraints, and the set of input 
-constraints is required to be a set of segments that do not intersect 
-except possibly at their endpoints. Any number of constrained edges 
+constraints is required to be a set of polylines that do not intersect 
+except possibly at their points. Any number of constrained edges 
 are allowed to share the same endpoint. Vertical constrained edges 
 are allowed as well as 
 constrained edges with null length. 
@@ -70,7 +70,7 @@ evaluation of predicates and exact computation of intersections.)
 This last version finds its full efficiency when used in conjunction 
 with a constraint hierarchy data structure 
 as provided in the class 
-`Constrained_triangulation_plus_2`. See 
+`Polylne_constrained_triangulation_2`. See 
 Section \ref Section_2D_Triangulations_Constrained_Plus. 
 </UL> 
 </UL> 
@@ -83,7 +83,7 @@ of the concept `TriangulationTraits_2`.
 When intersection of input constraints are supported, 
 the geometric traits class 
 is required to provide additional function object types 
-to compute the intersection of two segments. 
+to compute the intersection of two segments of polylines. 
 It has then to be a model of the concept 
 `ConstrainedTriangulationTraits_2`. 
 
@@ -148,8 +148,7 @@ public:
 /// @{
 
 /*! 
-The type of input 
-constraints 
+\deprecated The type of constraints.
 */ 
 typedef std::pair<Point,Point> Constraint; 
 
@@ -181,7 +180,8 @@ Constrained_triangulation_2& ct1);
 A templated constructor which introduces and builds 
 a constrained triangulation with constrained edges in the range 
 `[first,last)`.
-\tparam InputIterator must be an input iterator with the value type `Constraint`. 
+\tparam InputIterator must be an input iterator with the value type `std::pair<Point,Point>`, `Polygon_2`, or range of points.
+\todo Formalize range of points. 
 */ 
 template<class InputIterator> Constrained_triangulation_2( 
 InputIterator first, 
@@ -264,7 +264,7 @@ void insert_constraint(Point a, Point b);
 /*! 
 Equivalent to `insert(c.first, c.second)`. 
 */ 
-void push_back(const Constraint& c); 
+  void push_back(const std::pair<Point,Point>& c); 
 
 /*! 
 Inserts the line segment `s` whose endpoints are the vertices 
@@ -273,6 +273,26 @@ Inserts the line segment `s` whose endpoints are the vertices
 are removed and new ones are created. 
 */ 
 void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb); 
+
+/*!
+Inserts the polyline defined by the iterator range `[begin,end)`. 
+\tparam InputIterator must be an input iterator with value type `Point`.
+*/
+template <typename InputIterator>
+void insert_constraint(InputIterator begin, InputIterator end);
+
+/*!
+Inserts the polyline defined by the iterator range `range`. 
+\tparam InputIterator must be an input iterator with value type `Point`.
+*/
+template <typename IteratorRange>
+void insert_constraint(IteratorRange range);
+
+/*!
+Inserts the polygon. 
+*/
+void insert_constraint(const Polygon_2& polygon);
+
 
 /*! 
 Removes a vertex `v`. 
