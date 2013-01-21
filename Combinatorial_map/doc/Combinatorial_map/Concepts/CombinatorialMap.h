@@ -87,37 +87,34 @@ size of the tuple is <I>k</I>, with <I>k</I>\f$
 */ 
 typedef Hidden_type Attributes; 
 
-template <unsigned int i>
-struct Attribute_type {
   /*! 
-    Type of <I>i</I>-attributes, a model of `CellAttribute` concept. 
+    `Attribute_type<i>::%type` is the type of <I>i</I>-attributes, a model of `CellAttribute` concept. 
     `Attribute_type<i>::%type::Dart_handle` is equal to `Dart_handle`, and 
     `Attribute_type<i>::%type::Dart_const_handle` is equal to `Dart_const_handle`. 
     \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
+    \note It can be implemented using a nested template class.
     and <I>i</I>-attributes are non void. 
   */ 
-  typedef Hidden_type type;
-};
+  template <unsigned int i>
+  using Attribute_type = Hidden_type;
 
-template<unsigned int i> 
-struct Attribute_handle {
   /*! 
-  Handle to <I>i</I>-attributes, equal to \link Dart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink. 
+  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes, equal to \link Dart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink. 
   \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
        and <I>i</I>-attributes are non void. 
+  \note It can be implemented using a nested template class.
   */ 
-  typedef Hidden_type type;
-};
+  template <unsigned int i>
+  using Attribute_handle = Hidden_type;
 
-template<unsigned int i> 
-struct Attribute_const_handle {
   /*! 
-  Const handle to <I>i</I>-attributes, equal to \link Dart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink. 
+  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes, equal to \link Dart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink. 
   \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
        and <I>i</I>-attributes are non void. 
+  \note It can be implemented using a nested template class.
   */ 
-  typedef Hidden_type type;
-};
+  template <unsigned int i>
+  using Attribute_const_handle = Hidden_type;
 
 /// @} 
 
@@ -139,32 +136,29 @@ This type is a model of `ConstRange` concept, its iterator type is bidirectional
 typedef Hidden_type Dart_const_range; 
 
 
-template<unsigned int i> 
-struct Attribute_range {
-/*! 
-Range of all the <I>i</I>-attributes.
+/*!
+`Attribute_range<i>::%type` is the range of all the <I>i</I>-attributes.
 The <I>i</I>-attributes must be non void, and
   0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension". 
-This type is a model of `Range` concept, its iterator type is bidirectional and its value type is
+`Attribute_range<i>::%type` is a model of `Range` concept, its iterator type is bidirectional and its value type is
   \link CombinatorialMap::Attribute_type `Attribute_type<i>::type` \endlink.
+  \note It can be implemented using a nested template class.
   \todo add links when typedef are ok
 */ 
-  typedef Hidden_type type;
-};
+  template <unsigned int i>
+  using Attribute_range = Hidden_type;
 
 
-template<unsigned int i> 
-struct Attribute_const_range {
-/*! 
-Const range of all the <I>i</I>-attributes.
+/*! `Attribute_const_range<i>::%type` is the const range of all the <I>i</I>-attributes.
 The <I>i</I>-attributes must be non void, and
   0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension". 
-This type is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is
+`Attribute_const_range<i>::%type` is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is
   \link CombinatorialMap::Attribute_type `Attribute_type<i>::type`\endlink.
+\note It can be implemented using a nested template class.
     \todo add links when typedef are ok
 */ 
-  typedef Hidden_type type;
-};
+template <unsigned int i>
+using Attribute_const_range = Hidden_type;
 
 /*! 
 Range of all the darts of the `<Beta...>` orbit. 
