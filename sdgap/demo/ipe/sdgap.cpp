@@ -27,15 +27,17 @@ namespace CGAL_sdgap {
   typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Kernel>  Gt;
   typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>             SDG2;
 
-  const unsigned int num_entries = 2;
+  const unsigned int num_entries = 3;
 
   const std::string sublabel[] = {
     "Segment VD Linf axis-parallel",
+    "Segment skeleton Linf axis-parallel",
     "Help"
   };
 
   const std::string helpmsg[] = {
     "Draw the L_inf Voronoi diagram of axis-parallel segments in Linf",
+    "Draw the L_inf Voronoi skeleton of axis-parallel segments in Linf",
   };
 
   class sdgapIpelet
@@ -113,7 +115,11 @@ namespace CGAL_sdgap {
 
     svd.insert(pt_list.begin(),pt_list.end());
 
-    draw_dual_in_ipe(svd, bbox);
+    if ( fn == 0 ) {
+      draw_dual_in_ipe(svd, bbox);
+    } else {
+      draw_skeleton_in_ipe(svd, bbox);
+    }
 
   } // end of void sdgapIpelet::protected_run(int fn)
 

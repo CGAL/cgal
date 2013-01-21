@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
--- CGAL bisectors ipelet description
+-- CGAL sdgap ipelet description
 ----------------------------------------------------------------------
 
 label = "SVDLinfAP"
@@ -18,6 +18,7 @@ end
 
 methods = {
   { label="Segment VD Linf axis-parallel" },
+  { label="Segment skeleton Linf axis-parallel" },
   { label="Help" },
 }
 
