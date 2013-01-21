@@ -102,6 +102,8 @@ def re_replace_in_file(pat, s_after, fname):
         os.rename(out_fname, fname)
 
 def is_concept_file(filename):
+  if not path.exists(filename):
+    return False;
   d = pq(filename=filename, parser='html')
   ident = d('#CGALConcept')
   return ident.size() == 1
