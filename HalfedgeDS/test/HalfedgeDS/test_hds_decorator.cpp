@@ -237,9 +237,84 @@ void test_HalfedgeDS_decorator2() {
     CGAL_assertion( decorator.is_valid( false, 4));
 }
 
+
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Modifier_base.h>
+
+template <class HDS>
+struct Build_triangle : public CGAL::Modifier_base<HDS> {
+  double x_,y_; //origin
+
+  Build_triangle(double x, double y):x_(x),y_(y) {}
+  void operator()( HDS& hds) {
+      // Postcondition: `hds' is a valid polyhedral surface.
+      CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
+      B.begin_surface( 4, 2, 8);
+      typedef typename HDS::Vertex   Vertex;
+      typedef typename Vertex::Point Point;
+      B.add_vertex( Point( x_, y_));
+      B.add_vertex( Point( x_+1, y_+0));
+      B.add_vertex( Point( x_+0, y_+1));
+      B.add_vertex( Point( x_+0, y_+-1));
+      B.begin_facet();
+      B.add_vertex_to_facet( 0);
+      B.add_vertex_to_facet( 1);
+      B.add_vertex_to_facet( 2);
+      B.end_facet();
+      B.begin_facet();
+      B.add_vertex_to_facet( 1);
+      B.add_vertex_to_facet( 0);
+      B.add_vertex_to_facet( 3);
+      B.end_facet();
+      B.end_surface();
+  }
+};
+
+#include <CGAL/HalfedgeDS_vertex_base.h>
+#include <CGAL/HalfedgeDS_halfedge_base.h>
+#include <CGAL/HalfedgeDS_face_base.h>
+
+void test_HalfedgeDS_decorator3() {
+    // Simple instantiation of the default halfedge data structure.
+    typedef CGAL::HalfedgeDS_default<Dummy_traits_2>  HDS;
+    typedef CGAL::HalfedgeDS_decorator<HDS>          Decorator;
+    typedef HDS::Halfedge_handle                     Halfedge_handle;
+    typedef HDS::Face_handle                         Face_handle;
+
+    HDS hds;
+
+    Build_triangle<HDS> modifier(0,0);
+    modifier(hds);
+    modifier.x_=33;
+    modifier.y_=33;
+    modifier(hds);
+
+
+    Decorator decorator(hds);
+    decorator.keep_largest_connected_components(1);
+
+    hds.normalize_border();
+
+    CGAL_assertion( hds.size_of_vertices() == 4);
+    CGAL_assertion( hds.size_of_halfedges() == 10);
+    CGAL_assertion( hds.size_of_faces() == 2);
+    CGAL_assertion( decorator.is_valid( false, 4));
+
+    decorator.vertices_erase(hds.vertices_begin());
+    decorator.vertices_erase(hds.vertices_begin(), hds.vertices_end());
+
+    decorator.faces_erase(hds.faces_begin());
+    decorator.faces_erase(hds.faces_begin(), hds.faces_end());
+
+    CGAL_assertion( hds.size_of_vertices() == 0);
+    CGAL_assertion( hds.size_of_halfedges() == 10);
+    CGAL_assertion( hds.size_of_faces() == 0);
+
+}
 int main() {
     test_HalfedgeDS_decorator();
     test_HalfedgeDS_decorator2();
+    test_HalfedgeDS_decorator3();
     return 0;
 }
 // EOF //

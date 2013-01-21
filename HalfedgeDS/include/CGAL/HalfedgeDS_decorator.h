@@ -801,6 +801,7 @@ public:
     {
         Assert_compile_time_tag(Supports_removal(), Tag_true());
         Assert_compile_time_tag(Supports_vertex_halfedge(), Tag_true());
+        Assert_compile_time_tag(Supports_halfedge_vertex(), Tag_true());
 
         unsigned int nb_erased_components = 0,
                      nb_isolated_vertices = 0;
@@ -878,6 +879,11 @@ private:
         hds->vertices_erase( v);
     }
 
+    void vertices_erase( Vertex_handle  , Vertex_handle  , Tag_false) {}
+    void vertices_erase( Vertex_handle v1, Vertex_handle v2, Tag_true) {
+        hds->vertices_erase( v1, v2);
+    }
+
     void vertices_pop_front( Tag_false) {}
     void vertices_pop_front( Tag_true) {
         hds->vertices_pop_front();
@@ -891,6 +897,11 @@ private:
     void faces_erase( Face_handle  , Tag_false) {}
     void faces_erase( Face_handle f, Tag_true) {
         hds->faces_erase( f);
+    }
+
+    void faces_erase( Face_handle  , Face_handle  , Tag_false) {}
+    void faces_erase( Face_handle f1, Face_handle f2, Tag_true) {
+        hds->faces_erase( f1, f2);
     }
 
     void faces_pop_front( Tag_false) {}
@@ -962,9 +973,8 @@ private:
             number_of_vertices++;
 
             // Add vertex's "free" neighbors to the list
-            Halfedge_around_vertex_circulator neighbor_cir, neighbor_end;
-            neighbor_cir = pVertex->vertex_begin();
-            neighbor_end = neighbor_cir;
+            Halfedge_around_vertex_circulator neighbor_cir(pVertex->halfedge()),
+                                              neighbor_end = neighbor_cir;
             CGAL_For_all(neighbor_cir,neighbor_end)
             {
                 Vertex_handle neighbor = neighbor_cir->opposite()->vertex();

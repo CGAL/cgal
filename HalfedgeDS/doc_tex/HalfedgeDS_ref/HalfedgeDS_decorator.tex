@@ -145,7 +145,10 @@ incidence relations except if mentioned otherwise.
     {Erases the small connected components and the isolated vertices.
      Keep \ccc{nb_components_to_keep} largest connected components.
      Returns the number of connected components erased (ignoring isolated vertices).
-     \ccCommentHeading{Requirement} supports vertices, halfedges, and removal operation.}
+     \ccCommentHeading{Requirement}  \ccc{Supports_removal} $\equiv$
+     \ccc{CGAL::Tag_true}, \ccc{Supports_vertex_halfedge} $\equiv$ \ccc{CGAL::Tag_true}
+     and \ccc{Supports_halfedge_vertex} $\equiv$ \ccc{CGAL::Tag_true}.
+     }
 
 % -----------------------------------------
 \ccHeading{Modifying Functions (For Border Halfedges)}
