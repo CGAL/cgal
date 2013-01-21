@@ -1,0 +1,25 @@
+\begin{ccRefConcept}{PolylineConstrainedTriangulationVertexBase_2}
+
+\ccDefinition
+
+A \ccc{CGAL::Polyline_constrained_triangulation_2<Tr>} expects either
+a \ccc{CGAL::Constrained_triangulation_2<Traits, TDS, Itag>} or a
+\ccc{CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Itag>} as its
+argument. The \ccStyle{Vertex} type of this argument has to be a model
+of \ccClassName{}. It provides two members to store the cost of a
+vertex and a switch to indicate if the vertex is fixed.
+
+\ccCreationVariable{v}
+
+\ccVariable{bool fixed;}{Indicate if a vertex is fixed.}
+\ccVariable{double cost;}{The cost of a variable.}
+
+\ccHasModels
+
+\ccc{CGAL::Polyline_constrained_triangulation_vertex_base_2<Vb>}
+
+\ccSeeAlso
+\ccc{CGAL::Polyline_constrained_triangulation_2} \\
+\ccc{CGAL::Polyline_constrained_triangulation_vertex_base_2<Vb>}
+
+\end{ccRefConcept}

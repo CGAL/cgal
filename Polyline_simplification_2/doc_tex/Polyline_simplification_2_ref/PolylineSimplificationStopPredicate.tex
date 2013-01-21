@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PolylineSimplificationStopPredicate.tex
+% +------------------------------------------------------------------------+
+% | April 2009   Fernando Cacciola
+% | Package: Package
+% |
+\RCSdef{\RCSPolylineSimplificationStopPredicateRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSPolylineSimplificationStopPredicateDate}{$Date: 2007-09-07 12:29:10 -0300 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PolylineSimplificationStopPredicate}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Models of this concept are passed to the polyline simplification algorithm to indicate when to stop.
+
+%END-AUTO(\ccDefinition)
+  
+\ccCreationVariable{stop}  %% choose variable name
+
+\ccOperations
+
+% Reduce left margin
+\ccThree{12}{12}{}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{template<class Tr> 
+          bool operator()(Polyline_constrained_triangulation_2<Tr> const& pct, 
+          Polyline_constrained_triangulation_2<Tr>::Vertices_in_constraint_iterator viq, 
+          Polyline_constrained_triangulation_2<Tr>::FT cost, 
+          std::size_t initial_count, 
+          std::size_t current_count) const;}
+{
+Indicates if the simplification must be stopped. This method is called right before each vertex is about to be removed
+\ccCommentHeading{Parameters}  \\
+\ccc{cdt}: The underlying polyline constrained Delaunay triangulation which embeds the polyline set.\\
+\ccc{viq}: The current vertex about to be removed.\\
+\ccc{cost}: The associated cost for removing the current vertex (as given by \ccc{PolylineSimplificationCostFunction}).\\
+\ccc{initial_count}: The initial number of vertices in the entire polyline set (including intersection vertices not in any source polyline).\\
+\ccc{current_count}: The current number of vertices.
+\ccCommentHeading{Returns} \ccc{true} if the algorithm shall stop, \ccc{false} if it shall continue.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\ccc{Polyline_simplification_2::Stop_below_count_ratio_threshold}  \\
+\ccc{Polyline_simplification_2::Stop_below_count_threshold}  \\
+\ccc{Polyline_simplification_2::Stop_below_cost_threshold}
+
+%END-AUTO(\ccHasModels)
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

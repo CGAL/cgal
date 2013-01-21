@@ -1188,6 +1188,28 @@ resulting triangulation.
 
 
 
+\section{Polylines as Constraints \label{Section_2D_Polyline_Constrainted_Triangulation}}
+
+The class \ccc{Polyline_constrained_triangulation_2<Tr>} is
+similar to the class  \ccc{Constrained_triangulation_plus_2<Tr>}.
+It is more powerful, as constraints are not only segments, but
+arbitrary polylines.
+It stores how constraints are split in subconstraints when
+they intersect, and it allows to find the enclosing constraint
+for a subconstraint. Additionally, the polyline constraints can be simplified with
+the polyline simplification algorithm described in 
+Chapter~\ref{chapter-polylinesimplification}.
+
+\subsection{Example: Polylines as Constraints}
+
+The following example shows how to insert polylines
+and what to do with them.
+
+\ccIncludeExampleCode{Triangulation_2/polylines.cpp}
+
+
+
+
 
 \section{The Triangulation Hierarchy\label{Section_2D_Triangulations_Hierarchy}}
 
