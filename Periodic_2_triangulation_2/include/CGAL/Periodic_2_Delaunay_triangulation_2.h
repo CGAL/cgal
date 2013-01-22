@@ -108,13 +108,13 @@ public:
   /// \name Constructors
   // \{
   /// Constructor
-  /// NGHK: Not yet implemented
+  /// NGHK: implemented
   Periodic_2_Delaunay_triangulation_2(const Iso_rectangle & domain = Iso_rectangle(0,0,1,1),
                                      const Gt& gt = Gt())
     : Periodic_2_triangulation_2<Gt,Tds>(domain, gt) {}
 
   /// Copy constructor
-  /// \n NGHK: Not yet implemented
+  /// \n NGHK: implemented
   Periodic_2_Delaunay_triangulation_2(
 	       const Periodic_2_Delaunay_triangulation_2<Gt,Tds> &tr)
     : Periodic_2_triangulation_2<Gt,Tds>(tr) {
@@ -134,10 +134,10 @@ public:
 
   /// \name Insertion-Removal
   // \{
-  /// NGHK: Not yet implemented
+  /// NGHK: implemented
   Vertex_handle insert(const Point  &p, 
 		       Face_handle start = Face_handle() );
-  /// NGHK: Not yet implemented
+  /// NGHK: implemented
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
@@ -147,7 +147,7 @@ public:
   /// NGHK: Implemented
   Vertex_handle push_back(const Point &p);
 
-  /// NGHK: Not yet implemented
+  /// NGHK: implemented
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t
@@ -350,7 +350,7 @@ public:
   }
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
-  /// NGHK: Not yet implemented
+  /// NGHK: Not implemented
   void  remove(Vertex_handle v );
   // \}
 
