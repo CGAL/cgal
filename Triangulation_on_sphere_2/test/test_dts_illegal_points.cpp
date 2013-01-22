@@ -72,11 +72,6 @@ void testProjection(){
 	
 	
 }
-
-
-
-
-
 void testDelaunay (){
 	DTOS dtos;
 	typedef DTOS::Point												Point;
@@ -168,7 +163,7 @@ void testDelaunay (){
 
 int main(){
 	std::cout<<"Test inserting illegal points with Delaunay_traits"<<std::endl;
-	//testDelaunay();
+	testDelaunay();
 	
 	std::cout<<"Test inserting illegal points with Projection_traits"<<std::endl;
 	testProjection();
