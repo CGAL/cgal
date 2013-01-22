@@ -118,7 +118,7 @@ Curve_2 (InputIterator pts_begin, InputIterator pts_end);
 /*! 
 returns the number of control points that define `B`. 
 */ 
-size_t number_of_control_point () const; 
+size_t number_of_control_points () const; 
 
 /*! 
 returns the \f$ k\f$th control point. Note that the first control point equals 
