@@ -89,9 +89,14 @@ class Ghost_tester
    return fit->is_ghost();
   }
  bool operator()(const All_edges_iterator & eit) const {
+	 int dim = t->dimension();
    Face_handle f = eit->first;
+	 t->show_all();
+	 t->show_face(f);
    bool edge1 = f->is_ghost();
-   bool edge2 = f->neighbor(eit->second)->is_ghost();
+	 Face_handle f2 = f->neighbor(eit->second);
+	 bool edge2b = f2->is_ghost();
+   bool edge2 = (f->neighbor(eit->second))->is_ghost();
    bool result = edge1&&edge2;
    return !result;
  }
@@ -274,11 +279,11 @@ Solid_faces_iterator solid_faces_end() const {
 }
 	
 Solid_edges_iterator solid_edges_begin() const {
-	if ( dimension() < 1 )
-		return solid_edges_end();
-	return CGAL::filter_iterator (all_edges_begin(), Ghost_tester(this),
-								  all_edges_end());
-}
+		if ( dimension() < 1 )
+			return solid_edges_end();
+		return CGAL::filter_iterator (all_edges_end(), Ghost_tester(this),
+									  all_edges_begin());
+	}
 	
 Solid_edges_iterator solid_edges_end() const {
 	return CGAL::filter_iterator (all_edges_end(), Ghost_tester(this));
@@ -287,8 +292,8 @@ Solid_edges_iterator solid_edges_end() const {
 Contour_edges_iterator contour_edges_begin() const{
  if(dimension()<1)
 	return contour_edges_begin();
- return CGAL::filter_iterator (all_edges_begin(), Ghost_tester(this),
-									  all_edges_end());
+ return CGAL::filter_iterator (all_edges_end(), Ghost_tester(this),
+									  all_edges_begin());
 }
 	
 Contour_edges_iterator contour_edges_end() const{
@@ -605,19 +610,7 @@ CGAL_precondition(dimension()>=-1);
  case 1:{
 	 
 	 All_vertices_iterator vi=vertices_begin(); 
-  /*Vertex_handle v0 = f->vertex(0);
-  Vertex_handle v1= f->neighbor(0)->vertex(0);
-  if (is_too_close(v0->point(),p)){
-	lt = TOO_CLOSE;
-	li=0;
-	 return;
-   } 
-  if(is_too_close(v1->point(),p)){
-	lt = TOO_CLOSE;
-   li=1;
-   return;
-   }*/
-	 for(;vi!=vertices_end();vi++)
+  	 for(;vi!=vertices_end();vi++)
 	 if(is_too_close(vi->point(),p)){
 		 lt = TOO_CLOSE;
 		 li=1;
