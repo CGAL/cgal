@@ -18,6 +18,7 @@
 #ifndef CGAL_MPZF_H
 #define CGAL_MPZF_H
 #include <cstdlib>
+#include <algorithm>
 #include <climits>
 #include <assert.h>
 #include <vector>
@@ -33,9 +34,19 @@
 // making too many other assumptions.
 // * limbs are 64 bits
 // * uint64_t and stdint.h exist
-// * mpn_neg and mpn_copyi exist
-#if __GNU_MP_VERSION >= 5 && GMP_NUMB_BITS == 64 && defined BOOST_HAS_STDINT_H
+// * mpn_neg(_n) exists
+#if __GNU_MP_VERSION * 10 + __GNU_MP_VERSION_MINOR >= 43 \
+    && GMP_NUMB_BITS == 64 && defined BOOST_HAS_STDINT_H
 #define CGAL_HAS_MPZF 1
+
+// GMP-4.3.* has a different name for mpn_neg.
+#ifndef mpn_neg
+#define mpn_neg mpn_neg_n
+#endif
+// GMP before 5.0 doesn't provide mpn_copyi.
+#ifndef mpn_copyi
+#define mpn_copyi(dst, src, siz) std::copy((src), (src)+(siz), (dst))
+#endif
 
 #include <stdint.h>
 
