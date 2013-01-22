@@ -52,7 +52,8 @@
 # TBB_DEBUG_LIBRARIES, the libraries to link against to use TBB with debug symbols.
 # TBB_FOUND, If false, don't try to use TBB.
 # TBB_INTERFACE_VERSION, as defined in tbb/tbb_stddef.h
-         
+
+
 if (WIN32)
     # has em64t/vc8 em64t/vc9
     # has ia32/vc7.1 ia32/vc8 ia32/vc9
@@ -279,7 +280,7 @@ if (TBB_INCLUDE_DIR)
 endif (TBB_INCLUDE_DIR)
 
 if (NOT TBB_FOUND)
-    message("ERROR: Intel TBB NOT found! Please define the TBBROOT or TBB_INSTALL_DIR environment variable.")
+    message("ERROR: Intel TBB NOT found! Please define the TBBROOT and/or TBB_ARCH_PLATFORM environment variable.")
     message(STATUS "Looked for Threading Building Blocks in ${_TBB_INSTALL_DIR}")
     SET(TBB_INSTALL_DIR "TBB_INSTALL_DIR_NOT_FOUND" CACHE STRING "Intel TBB install directory")
     # do only throw fatal, if this pkg is REQUIRED
