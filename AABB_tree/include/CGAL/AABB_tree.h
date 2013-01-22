@@ -169,7 +169,15 @@ namespace CGAL {
 		}
 
 		/// Returns the axis-aligned bounding box of the whole tree.
-		const Bounding_box& bbox() const { return root_node()->bbox(); }
+		/// \pre `!empty()`
+		const Bounding_box bbox() const { 
+			CGAL_precondition(!empty());
+			if(size() > 1)
+				return root_node()->bbox(); 
+			else
+				return AABB_traits().compute_bbox_object()(m_primitives.begin(), 
+																									 m_primitives.end());
+		}
     
     /// Returns the number of primitives in the tree.
 		size_type size() const { return m_primitives.size(); }
@@ -255,6 +263,7 @@ public:
     /// `accelerate_distance_queries()` should be called before the
     /// first distance query, so that an internal secondary search
     /// structure is build, for improving performance.
+		/// \pre `!empty()`
 		FT squared_distance(const Point& query) const;
 
     /// Returns the point in the union of all input primitives which
@@ -264,6 +273,7 @@ public:
     /// called before the first distance query, so that an internal
     /// secondary search structure is build, for improving
     /// performance.
+		/// \pre `!empty()`
 		Point closest_point(const Point& query) const;
 
     
@@ -273,6 +283,7 @@ public:
     /// called before the first distance query, so that an internal
     /// secondary search structure is build, for improving
     /// performance.
+		/// \pre `!empty()`
 		Point_and_primitive_id closest_point_and_primitive(const Point& query) const;
 
 
@@ -357,17 +368,20 @@ public:
     
     /// Returns the minimum squared distance between the query point
     /// and all input primitives. The internal KD-tree is not used.
+		/// \pre `!empty()`
 		FT squared_distance(const Point& query, const Point& hint) const;
 
     /// Returns the point in the union of all input primitives which
     /// is closest to the query. In case there are several closest
     /// points, one arbitrarily chosen closest point is returned. The
     /// internal KD-tree is not used.
+		/// \pre `!empty()`
 		Point closest_point(const Point& query, const Point& hint) const;
     
     /// Returns a `Point_and_primitive_id` which realizes the
     /// smallest distance between the query point and all input
     /// primitives. The internal KD-tree is not used.
+		/// \pre `!empty()`
 		Point_and_primitive_id closest_point_and_primitive(const Point& query, const Point_and_primitive_id& hint) const;
 
     ///@}
@@ -376,7 +390,9 @@ public:
     // clear nodes
     void clear_nodes()
     {
-			delete [] m_p_root_node;
+			if(size() > 1) {
+				delete [] m_p_root_node;
+			}
 			m_p_root_node = NULL;
     }
 
@@ -395,10 +411,16 @@ public:
 		template <class Query, class Traversal_traits>
 		void traversal(const Query& query, Traversal_traits& traits) const
 		{
-			if(!empty())
+			switch(size())
+			{
+			case 0:
+				break;
+			case 1:
+				traits.intersection(query, singleton_data());
+				break;
+			default: // if(size() >= 2)
 				root_node()->template traversal<Traversal_traits,Query>(query, traits, m_primitives.size());
-			else
-				std::cerr << "AABB tree traversal with empty tree" << std::endl;
+			}
 		}
 
 	private:
@@ -433,6 +455,7 @@ public:
     #endif
   
     const Node* root_node() const {
+			CGAL_assertion(size() > 1);
       if(m_need_build){
         #ifdef CGAL_HAS_THREADS
         //this ensures that build() will be called once
@@ -443,6 +466,11 @@ public:
       }
       return m_p_root_node;
     }
+
+		const Primitive& singleton_data() const {
+			CGAL_assertion(size() == 1);
+			return *m_primitives.begin();
+		}
 
 		// search KD-tree
 		mutable const Search_tree* m_p_search_tree;
@@ -526,22 +554,24 @@ public:
 	{
     clear_nodes();
 
-    CGAL_assertion(m_primitives.size() > 1);
+    if(m_primitives.size() > 1) {
 
-		// allocates tree nodes
-		m_p_root_node = new Node[m_primitives.size()-1]();
-		if(m_p_root_node == NULL)
-		{
-			std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
-			CGAL_assertion(m_p_root_node != NULL);
-      m_primitives.clear();
-			clear();
+			// allocates tree nodes
+			m_p_root_node = new Node[m_primitives.size()-1]();
+			if(m_p_root_node == NULL)
+			{
+				std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
+				CGAL_assertion(m_p_root_node != NULL);
+				m_primitives.clear();
+				clear();
+			}
+
+			// constructs the tree
+			m_p_root_node->expand(m_primitives.begin(), m_primitives.end(),
+														m_primitives.size());
 		}
 
-		// constructs the tree
-		m_p_root_node->expand(m_primitives.begin(), m_primitives.end(), m_primitives.size());
-
-    // In case the users has switched on the acceletated distance query
+    // In case the users has switched on the accelerated distance query
     // data structure with the default arguments, then it has to be
     // rebuilt.
     if(m_default_search_tree_constructed)
@@ -575,7 +605,7 @@ public:
 	template<typename Tr>
 	bool AABB_tree<Tr>::accelerate_distance_queries() const
 	{
-		CGAL_assertion(!m_primitives.empty());
+		if(m_primitives.empty()) return true;
     #ifdef CGAL_HAS_THREADS
     //this ensures that this function will be done once
     boost::mutex::scoped_lock scoped_lock(kd_tree_mutex);
@@ -686,6 +716,7 @@ public:
 		AABB_tree<Tr>::closest_point(const Point& query,
 		const Point& hint) const
 	{
+		CGAL_precondition(!empty());
 		typename Primitive::Id hint_primitive = m_primitives[0].id();
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
@@ -700,6 +731,7 @@ public:
 	typename AABB_tree<Tr>::Point
 		AABB_tree<Tr>::closest_point(const Point& query) const
 	{
+		CGAL_precondition(!empty());
 		const Point_and_primitive_id hint = best_hint(query);
 		return closest_point(query,hint.first);
 	}
@@ -710,6 +742,7 @@ public:
 		AABB_tree<Tr>::squared_distance(const Point& query,
 		const Point& hint) const
 	{
+		CGAL_precondition(!empty());
 		const Point closest = this->closest_point(query, hint);
 		return Tr().squared_distance_object()(query, closest);
 	}
@@ -719,6 +752,7 @@ public:
 	typename AABB_tree<Tr>::FT
 		AABB_tree<Tr>::squared_distance(const Point& query) const
 	{
+		CGAL_precondition(!empty());
 		const Point closest = this->closest_point(query);
 		return Tr().squared_distance_object()(query, closest);
 	}
@@ -728,6 +762,7 @@ public:
 	typename AABB_tree<Tr>::Point_and_primitive_id
 		AABB_tree<Tr>::closest_point_and_primitive(const Point& query) const
 	{
+		CGAL_precondition(!empty());
 		return closest_point_and_primitive(query,best_hint(query));
 	}
 
@@ -737,6 +772,7 @@ public:
 		AABB_tree<Tr>::closest_point_and_primitive(const Point& query,
 		const Point_and_primitive_id& hint) const
 	{
+		CGAL_precondition(!empty());
     using namespace CGAL::internal::AABB_tree;
     typedef typename AABB_tree<Tr>::AABB_traits AABBTraits;
 		Projection_traits<AABBTraits> projection_traits(hint.first,hint.second);
@@ -748,8 +784,8 @@ public:
 
 #endif // CGAL_AABB_TREE_H
 
-/***EMACS SETTINGS***/
-/* Local Variables: */
-/* tab-width: 2     */
-/* End:             */
-
+/***EMACS SETTINGS**    */
+/* Local Variables:     */
+/* tab-width: 2         */
+/* indent-tabs-mode: t  */
+/* End:                 */
