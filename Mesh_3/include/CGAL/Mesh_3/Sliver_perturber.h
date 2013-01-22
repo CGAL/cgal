@@ -56,6 +56,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
+# include <CGAL/tbb.h>
 # include <tbb/mutex.h>
 # include <tbb/task.h>
 #endif
@@ -362,7 +363,7 @@ protected:
     , m_worksharing_ds(bbox)
   {
     //CJTODO TEST
-    //static tbb::task_scheduler_init init(1);
+    //CGAL::TBB_configuration::set_max_number_of_threads(1);
   }
 
   LockDataStructureType *get_lock_data_structure() const

@@ -96,13 +96,13 @@ const int     TET_SHAPE                = 3;
   // Concurrency config
   // ==========================================================================
 
-#ifdef WINVER
+# ifdef WINVER
   const char * const CONFIG_FILENAME =
     "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
-#else
+# else
   const char * const CONFIG_FILENAME =
     "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
-#endif
+# endif
 
 //# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
 
@@ -141,8 +141,7 @@ const int     TET_SHAPE                = 3;
   // ==========================================================================
   // TBB
   // ==========================================================================
-
-# include <tbb/tbb.h>
+# include <CGAL/tbb.h>
 # include <tbb/compat/thread>
 # ifndef _DEBUG
     // Use TBB malloc proxy (for all new/delete/malloc/free calls)
@@ -928,13 +927,7 @@ int main()
 
 #ifdef CONCURRENT_MESH_3
   Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, true);
-
-  tbb::task_scheduler_init init(tbb::task_scheduler_init::deferred);
-  if (num_threads > 0)
-    init.initialize(num_threads);
-  else
-    init.initialize();
-
+  CGAL::TBB_configuration::set_max_number_of_threads(num_threads);
 #endif
 
   std::ifstream script_file;
@@ -956,11 +949,7 @@ int main()
 #endif
     {
 #ifdef CONCURRENT_MESH_3
-      init.terminate();
-      if (num_threads > 0)
-        init.initialize(num_threads);
-      else
-        init.initialize();
+      CGAL::TBB_configuration::set_max_number_of_threads(num_threads);
 #endif
 
       std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' found." << std::endl;
