@@ -850,13 +850,13 @@ struct mpzf {
     }
     return q;
   }
+#endif
   friend void simplify_quotient(mpzf& a, mpzf& b){
     // Avoid quotient(2^huge_a/2^huge_b)
     a.exp -= b.exp;
     b.exp = 0;
     // Simplify with gcd?
   }
-#endif
 };
 
 // Copied from Gmpzf, not sure that's the best thing to do.
