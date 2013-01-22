@@ -593,7 +593,7 @@ insert(const Point &p, Face_handle start)
   switch (lt){
 	case NOT_ON_SPHERE: 		
       return Vertex_handle();
-	  case TOO_CLOSE:{
+	case TOO_CLOSE:{
 		 if(dimension()==2)  
 	        return loc->vertex(li);
 		 return Vertex_handle();
