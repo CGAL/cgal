@@ -24,6 +24,7 @@ public:
 
   typedef typename K::Site_2           Site_2;
   typedef typename K::Point_2          Point_2;
+  typedef typename K::Direction_2      Direction_2;
   typedef typename K::RT               RT;
   typedef typename K::Boolean          Boolean;
 
@@ -137,6 +138,78 @@ public:
           CGAL_assertion(
               not (same_points(q, t.source_site()) or
                    same_points(q, t.target_site())   ) );
+
+          // here q is point
+          if ( not (t.segment().is_horizontal() or
+                t.segment().is_vertical()     ) ) {
+
+            Line_2 lt = compute_supporting_line(t);
+
+            // Linf-project point q to line lt
+
+            Point_2 projq =
+              compute_linf_projection_nonhom(lt, q.point());
+
+            Line_2 lq = compute_line_from_to(projq, q.point());
+
+            Point_2 srep;
+            if (s.is_point()) {
+              srep = s.point();
+            } else {
+              // s is segment
+              CGAL_assertion(
+                  not (s.segment().is_horizontal() or
+                       s.segment().is_vertical()     ) );
+
+              Direction_2 d (s.segment());
+              Line_2 ls = compute_supporting_line(s);
+              if (CGAL::sign(d.dx()) == CGAL::sign(d.dy())) {
+                srep = compute_horizontal_projection(
+                    ls, q.point());
+              } else {
+                srep = compute_vertical_projection(
+                    ls, q.point());
+              }
+            }
+            Oriented_side oss =
+              oriented_side_of_line(lq, srep);
+
+            Point_2 rrep;
+            if (r.is_point()) {
+              rrep = r.point();
+            } else {
+              // r is segment
+              CGAL_assertion(
+                  not (r.segment().is_horizontal() or
+                       r.segment().is_vertical()     ) );
+
+              Direction_2 d (r.segment());
+              Line_2 lr = compute_supporting_line(r);
+              if (CGAL::sign(d.dx()) == CGAL::sign(d.dy())) {
+                rrep = compute_vertical_projection(
+                    lr, q.point());
+              } else {
+                rrep = compute_horizontal_projection(
+                    lr, q.point());
+              }
+
+            }
+            Oriented_side osr =
+              oriented_side_of_line(lq, rrep);
+
+            if ((oss == ON_NEGATIVE_SIDE) and
+                (osr == ON_POSITIVE_SIDE)    ) {
+              CGAL_SDG_DEBUG(
+                  std::cout
+                  << "debug infinite-edge-int-cf tocheck (q,s,r,t,sgn)= "
+                  << q << ' ' << s << ' ' << r << ' ' << t
+                  << ' ' << sgn << " returns "
+                  << false << std::endl;);
+              return false;
+            }
+          } // case where t is neither horizontal nor vertical
+
+
 
           //CGAL_assertion(false);
 
