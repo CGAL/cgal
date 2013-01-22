@@ -828,7 +828,7 @@ This last version finds its full efficiency when used in conjunction
 with a constraint hierarchy data structure (which allows one to avoid the
 cascading of intersection computations)
 as provided in the class
-`Constrained_triangulation_plus_2`. See
+`Polyline_constrained_triangulation_2`. See
 section \ref Section_2D_Triangulations_Constrained_Plus.
 </UL>
 </UL>
@@ -999,14 +999,14 @@ Triangulation (in blue) of the domain delimited by the red polygons.
 
 \cgalExample{Triangulation_2/polygon_triangulation.cpp}
 
-\section Section_2D_Triangulations_Constrained_Plus Constrained Triangulations Plus 
+\section Section_2D_Triangulations_Constrained_Plus Polyline Constrained Triangulations 
 
-The class `Constrained_triangulation_plus_2<Tr>`
+The class `Polyline_constrained_triangulation_2<Tr>`
 provides a constrained triangulation with an additional data
 structure called the constraint hierarchy 
 that keeps track of the input constraints and of their refinement
 in the triangulation.
-The class `Constrained_triangulation_plus_2<Tr>`
+The class `Polyline_constrained_triangulation_2<Tr>`
 inherits from its template parameter Tr, which has to be instantiated
 by a constrained or constrained Delaunay triangulation.
 According to its intersection tag, the base class
@@ -1015,7 +1015,7 @@ When intersections of input constraints are supported,
 the base class constructs a triangulation of the arrangement
 of the constraints,
 introducing new vertices at each proper intersection
-points and refining the input constraints into sub-constraints
+point and refining the input constraints into sub-constraints
 which appear as edges (more precisely as constrained edges) of the
 triangulation. The data structure maintains for each 
 input constraint
@@ -1024,11 +1024,11 @@ The constraint hierarchy also allows the user to retrieve the set
 of constrained edges of the triangulation, and for each
 constrained edge, the set of input constraints that overlap it.
 
-The class `Constrained_triangulation_plus_2<Tr>`
+The class `Polyline_constrained_triangulation_2<Tr>`
 is especially useful when the base constrained triangulation class
 handles intersections of constraints and uses an exact number type,
 i.e. when its intersection tag is `Exact_intersections_tag`.
-Indeed in this case, the `Constrained_triangulation_plus_2<Tr>`
+Indeed in this case, the `Polyline_constrained_triangulation_2<Tr>`
 is specially designed to avoid cascading in the computations of
 intersection points.
 
@@ -1039,7 +1039,7 @@ into a triangulation
 and counts the number of constrained edges of the
 resulting triangulation.
 
-\cgalExample{Triangulation_2/constrained_plus.cpp}
+\cgalExample{Triangulation_2/polylines.cpp}
 
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy 
 

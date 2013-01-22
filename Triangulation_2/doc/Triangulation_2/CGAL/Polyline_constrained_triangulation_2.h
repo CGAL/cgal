@@ -90,19 +90,12 @@ constraint. The value type of this iterator is `Vertex_handle`.
 typedef Hidden_type Vertices_in_constraint_iterator; 
 
 /*! 
-This type is intended to describe 
-a constraint enclosing a sub-constraint and the position of the 
-sub-constraint in this constraint. 
-It provides three member functions `vertices_begin()`, `vertices_end()` 
-and `current()` returning 
-iterators of the type `Vertices_in_constraint_iterator` 
-on the sequence of vertices of the enclosing constraint. 
-These iterators point 
-respectively on the first vertex of the enclosing constraint, 
-past the last vertex 
-and on the first vertex of the sub-constraint. 
+This type allows to access the vertices of a constraint that passes 
+through a sub-constraint.
+
 */ 
   class Context {
+  public:
     /*!
       returns the constraint id.
      */
