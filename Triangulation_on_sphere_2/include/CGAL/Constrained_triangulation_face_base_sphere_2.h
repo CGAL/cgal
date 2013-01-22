@@ -26,7 +26,7 @@
 
 namespace CGAL { 
 
-template <class Gt, class Fb = Delaunay_triangulation_face_base_sphere_2<Gt> >
+template <class Gt, class Fb = Triangulation_face_base_sphere_2<Gt> >
 class Constrained_triangulation_face_base_sphere_2
   :  public Fb
 {

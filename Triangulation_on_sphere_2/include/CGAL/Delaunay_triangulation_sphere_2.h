@@ -4,7 +4,7 @@
 #define HOLE_APPROACH
 
 #include <CGAL/Triangulation_sphere_2.h>
-#include <CGAL/Delaunay_triangulation_face_base_sphere_2.h>
+#include <CGAL/Triangulation_face_base_sphere_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 #include <fstream>
@@ -17,7 +17,7 @@ namespace CGAL {
 template < class Gt,
            class Tds  = Triangulation_data_structure_2 <
              Triangulation_vertex_base_2<Gt>,
-		     Delaunay_triangulation_face_base_sphere_2<Gt> > >
+		     Triangulation_face_base_sphere_2<Gt> > >
 class Delaunay_triangulation_sphere_2
   : public Triangulation_sphere_2<Gt,Tds>
 {
@@ -593,8 +593,11 @@ insert(const Point &p, Face_handle start)
   switch (lt){
 	case NOT_ON_SPHERE: 		
       return Vertex_handle();
-	case TOO_CLOSE:
-	  return loc->vertex(li);
+	  case TOO_CLOSE:{
+		 if(dimension()==2)  
+	        return loc->vertex(li);
+		 return Vertex_handle();
+	  }
 	case VERTEX:{
 	 if(number_of_vertices()==1)
 		 return vertices_begin();

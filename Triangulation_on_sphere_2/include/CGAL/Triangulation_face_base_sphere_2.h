@@ -43,15 +43,23 @@ public:
     typedef typename Fb::template Rebind_TDS<TDS2>::Other  Fb2;
     typedef Triangulation_face_base_sphere_2<Gt, Fb2>             Other;
   };
+unsigned char _in_conflict_flag;
 
 public:
+  void set_in_conflict_flag(unsigned char f) { _in_conflict_flag = f; }
+  unsigned char get_in_conflict_flag() const { return _in_conflict_flag; }
+public:
   Triangulation_face_base_sphere_2()
-: Fb(),_ghost(false) {}
+: Fb(),_ghost(false) {
+ set_in_conflict_flag(0);
+}
 
   Triangulation_face_base_sphere_2(Vertex_handle v0, 
 			    Vertex_handle v1, 
 			    Vertex_handle v2)
-: Fb(v0,v1,v2),_ghost(false) {}
+: Fb(v0,v1,v2),_ghost(false) {
+ set_in_conflict_flag(0);
+}
 
   Triangulation_face_base_sphere_2(Vertex_handle v0, 
 			    Vertex_handle v1, 
@@ -59,7 +67,9 @@ public:
 			    Face_handle n0, 
 			    Face_handle n1, 
 			    Face_handle n2)
-    : Fb(v0,v1,v2,n0,n1,n2),_ghost(false) {}
+    : Fb(v0,v1,v2,n0,n1,n2),_ghost(false) {
+    set_in_conflict_flag(0);
+}
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
