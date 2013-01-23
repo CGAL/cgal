@@ -16,17 +16,18 @@ int main(int argc, char* argv[])
   //outputFile << "start writing" << endl;
   int num_of_segments = (argc == 3) ? atoi(argv[2]) : 10;
   //cout << num_of_segments << endl;
-
+  int j = 0;
   for (int i=0 ; i < num_of_segments ; i++) {
     ofs << "s ";
     // initialize random seed
     srand ( i * time(0) );
     //generate random number: 
-    int k1 = rand() % 10*(i+1) + 10*i + 1;
+    int k1 = rand() % 10 + 10*(i+1) + 10*j + 1;
     srand ( k1 * time(0) );
-    int k2 = rand() % 10*(i+1) + 10*i + 1;
+    int k2 = rand() % 10 + 10*(i+1) + 10*j + 1;
     srand ( k2 * time(0) );
-    int len = rand() % 10*(i+1);
+    int len = rand() % 10;
+    j = j+2;
     if(i % 2 == 0) {
       //horizontal segment
       //k1 is left x, k2 is y and k1+len is right x
