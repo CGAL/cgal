@@ -662,12 +662,9 @@ protected:
   void enqueue_task(tbb::task &parent_task)
   {
     parent_task.increment_ref_count();
-    // CJTODO: try "spawn" instead of enqueue (it won't change anything when
-    // the "tasks" are just tokens)
     // Warning: when using "enqueue", the system will use up to two threads
     // even if you told task_scheduler_init to use only one
     // (see http://software.intel.com/en-us/forums/showthread.php?t=101669)
-    //tbb::task::enqueue(*new(parent_task.allocate_child()) TokenTask(this));
     tbb::task::spawn(*new(parent_task.allocate_child()) TokenTask(this));
   }
 
