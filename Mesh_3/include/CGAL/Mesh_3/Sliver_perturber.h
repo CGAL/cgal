@@ -56,7 +56,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <CGAL/tbb.h>
+# include <CGAL/TBB_configuration.h>
 # include <tbb/mutex.h>
 # include <tbb/task.h>
 #endif
@@ -733,7 +733,8 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
   initialize_vertices_id();
 
 
-#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+#if defined(CGAL_MESH_3_PERTURBER_VERBOSE) \
+ || defined(MESH_3_PROFILING)
   std::cerr << "Running sliver perturbation..." << std::endl;
 #endif
 

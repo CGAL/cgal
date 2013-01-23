@@ -141,7 +141,7 @@ const int     TET_SHAPE                = 3;
   // ==========================================================================
   // TBB
   // ==========================================================================
-# include <CGAL/tbb.h>
+# include <CGAL/TBB_configuration.h>
 # include <tbb/compat/thread>
 # ifndef _DEBUG
     // Use TBB malloc proxy (for all new/delete/malloc/free calls)
