@@ -83,8 +83,6 @@ endif()
 if( TBB_FOUND )
   add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
   include_directories ( ${TBB_INCLUDE_DIRS} )
-  link_directories( ${TBB_LIBRARY_DIRS} )
-  # Note: the next 2 lines are not required under MSVC (auto-link)
   list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
 endif()
   
@@ -342,8 +340,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   polyhedron_demo_plugin(${MESH_3_PLUGIN_LIB} Mesh_3_plugin ${MESH_3_PLUGIN_SOURCE_FILES})
   if( TBB_FOUND )
     # Link with Intel TBB
-    set(TBB_LIBRARIES_ optimized ${TBB_LIBRARIES} debug ${TBB_DEBUG_LIBRARIES})
-    target_link_libraries( ${MESH_3_PLUGIN_LIB} ${TBB_LIBRARIES_} )
+    target_link_libraries( ${MESH_3_PLUGIN_LIB} ${TBB_LIBRARIES} )
   endif( TBB_FOUND )
 
 #  set(MESH_3_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_plugin") 

@@ -86,8 +86,6 @@ if ( CGAL_FOUND )
   if( TBB_FOUND )
     add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
     include_directories ( ${TBB_INCLUDE_DIRS} )
-    link_directories( ${TBB_LIBRARY_DIRS} )
-    # Note: the next 2 lines are not required under MSVC (auto-link)
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
   
