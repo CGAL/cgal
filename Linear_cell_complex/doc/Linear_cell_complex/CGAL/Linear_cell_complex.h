@@ -40,7 +40,7 @@ inherit from any model of the `CombinatorialMap` concept.
 
 */
 template< typename d, typename d2, typename LCCTraits, typename Items, typename Alloc >
-class Linear_cell_complex  : public CGAL::Combinatorial_map<d,Items,Alloc>
+class Linear_cell_complex  : public Combinatorial_map<d,Items,Alloc>
  {
 public:
 
