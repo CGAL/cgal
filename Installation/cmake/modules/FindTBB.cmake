@@ -45,11 +45,15 @@
 
 # This module defines
 # TBB_INCLUDE_DIRS, where to find task_scheduler_init.h, etc.
-# TBB_LIBRARY_DIRS, where to find libtbb, libtbbmalloc
-# TBB_DEBUG_LIBRARY_DIRS, where to find libtbb_debug, libtbbmalloc_debug
-# TBB_INSTALL_DIR, the base TBB install directory
-# TBB_LIBRARIES, the libraries to link against to use TBB.
-# TBB_DEBUG_LIBRARIES, the libraries to link against to use TBB with debug symbols.
+# TBB_LIBRARY_DIRS, where to find TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords).
+# TBB_INSTALL_DIR, the base TBB install directory.
+# TBB_LIBRARIES, all the TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords).
+# 	TBB_RELEASE_LIBRARY, the TBB release library
+# 	TBB_MALLOC_RELEASE_LIBRARY, the TBB release malloc library
+# 	TBB_MALLOCPROXY_RELEASE_LIBRARY, the TBB release malloc_proxy library
+# 	TBB_DEBUG_LIBRARY, the TBB debug library
+# 	TBB_MALLOC_DEBUG_LIBRARY, the TBB debug malloc library
+# 	TBB_MALLOCPROXY_DEBUG_LIBRARY, the TBB debug malloc_proxy library
 # TBB_FOUND, If false, don't try to use TBB.
 # TBB_INTERFACE_VERSION, as defined in tbb/tbb_stddef.h
 
@@ -58,12 +62,12 @@ if (WIN32)
     # has em64t/vc8 em64t/vc9
     # has ia32/vc7.1 ia32/vc8 ia32/vc9
     set(_TBB_DEFAULT_INSTALL_DIR "C:/Program Files/Intel/TBB" "C:/Program Files (x86)/Intel/TBB")
-    set(_TBB_LIB_NAME "tbb")
-    set(_TBB_LIB_MALLOC_NAME "${_TBB_LIB_NAME}malloc")
-    set(_TBB_LIB_MALLOCPROXY_NAME "${_TBB_LIB_NAME}malloc_proxy")
-    set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_NAME}_debug")
-    set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_NAME}_debug")
-    set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_NAME}_debug")
+    set(_TBB_LIB_RELEASE_NAME "tbb")
+    set(_TBB_LIB_MALLOC_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc")
+    set(_TBB_LIB_MALLOCPROXY_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc_proxy")
+    set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_RELEASE_NAME}_debug")
+    set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_RELEASE_NAME}_debug")
+    set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_RELEASE_NAME}_debug")
     if (MSVC71)
         set (_TBB_COMPILER "vc7.1")
     endif(MSVC71)
@@ -76,6 +80,9 @@ if (WIN32)
     if(MSVC10)
         set(_TBB_COMPILER "vc10")
     endif(MSVC10)
+    if(MSVC11)
+        set(_TBB_COMPILER "vc11")
+    endif(MSVC11)
     # Todo: add other Windows compilers such as ICL.
     set(_TBB_ARCHITECTURE ${TBB_ARCHITECTURE})
 endif (WIN32)
@@ -85,12 +92,12 @@ if (UNIX)
         # MAC
         set(_TBB_DEFAULT_INSTALL_DIR "/Library/Frameworks/Intel_TBB.framework/Versions")
         # libs: libtbb.dylib, libtbbmalloc.dylib, *_debug
-        set(_TBB_LIB_NAME "tbb")
-        set(_TBB_LIB_MALLOC_NAME "${_TBB_LIB_NAME}malloc")
-        set(_TBB_LIB_MALLOCPROXY_NAME "${_TBB_LIB_NAME}malloc_proxy")
-        set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_NAME}_debug")
-        set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_NAME}_debug")
-        set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_NAME}_debug")
+        set(_TBB_LIB_RELEASE_NAME "tbb")
+        set(_TBB_LIB_MALLOC_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc")
+        set(_TBB_LIB_MALLOCPROXY_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc_proxy")
+        set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_RELEASE_NAME}_debug")
+        set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_RELEASE_NAME}_debug")
+        set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_RELEASE_NAME}_debug")
         # default flavor on apple: ia32/cc4.0.1_os10.4.9
         # Jiri: There is no reason to presume there is only one flavor and
         #       that user's setting of variables should be ignored.
@@ -107,12 +114,12 @@ if (UNIX)
     else (APPLE)
         # LINUX
         set(_TBB_DEFAULT_INSTALL_DIR "/opt/intel/tbb" "/usr/local/include" "/usr/include")
-        set(_TBB_LIB_NAME "tbb")
-        set(_TBB_LIB_MALLOC_NAME "${_TBB_LIB_NAME}malloc")
-        set(_TBB_LIB_MALLOCPROXY_NAME "${_TBB_LIB_NAME}malloc_proxy")
-        set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_NAME}_debug")
-        set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_NAME}_debug")
-        set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_NAME}_debug")
+        set(_TBB_LIB_RELEASE_NAME "tbb")
+        set(_TBB_LIB_MALLOC_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc")
+        set(_TBB_LIB_MALLOCPROXY_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc_proxy")
+        set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_RELEASE_NAME}_debug")
+        set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_RELEASE_NAME}_debug")
+        set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_RELEASE_NAME}_debug")
         # has em64t/cc3.2.3_libc2.3.2_kernel2.4.21 em64t/cc3.3.3_libc2.3.3_kernel2.6.5 em64t/cc3.4.3_libc2.3.4_kernel2.6.9 em64t/cc4.1.0_libc2.4_kernel2.6.16.21
         # has ia32/*
         # has itanium/*
@@ -185,6 +192,7 @@ macro(TBB_CORRECT_LIB_DIR var_name)
     string(REPLACE vc8 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
     string(REPLACE vc9 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
     string(REPLACE vc10 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
+    string(REPLACE vc11 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
 endmacro(TBB_CORRECT_LIB_DIR var_content)
 
 
@@ -231,56 +239,58 @@ list(APPEND _TBB_LIBRARY_DIR ${_TBB_INSTALL_DIR}/lib)
 #       and LD_LIBRARY_PATH environment variables is now even more important
 #       that tbbvars doesn't export TBB_ARCH_PLATFORM and it facilitates
 #       the use of TBB built from sources.
-find_library(TBB_LIBRARY ${_TBB_LIB_NAME} HINTS ${_TBB_LIBRARY_DIR}
+find_library(TBB_RELEASE_LIBRARY ${_TBB_LIB_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
-find_library(TBB_MALLOC_LIBRARY ${_TBB_LIB_MALLOC_NAME} HINTS ${_TBB_LIBRARY_DIR}
+find_library(TBB_MALLOC_RELEASE_LIBRARY ${_TBB_LIB_MALLOC_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
-find_library(TBB_MALLOCPROXY_LIBRARY ${_TBB_LIB_MALLOCPROXY_NAME} HINTS ${_TBB_LIBRARY_DIR}
+find_library(TBB_MALLOCPROXY_RELEASE_LIBRARY ${_TBB_LIB_MALLOCPROXY_RELEASE_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
 
-#Extract path from TBB_LIBRARY name
-get_filename_component(TBB_LIBRARY_DIR ${TBB_LIBRARY} PATH)
+#Extract path from TBB_RELEASE_LIBRARY name
+get_filename_component(TBB_RELEASE_LIBRARY_DIR ${TBB_RELEASE_LIBRARY} PATH)
 
-#TBB_CORRECT_LIB_DIR(TBB_LIBRARY)
-#TBB_CORRECT_LIB_DIR(TBB_MALLOC_LIBRARY)
-#TBB_CORRECT_LIB_DIR(TBB_MALLOCPROXY_LIBRARY)
-mark_as_advanced(TBB_LIBRARY TBB_MALLOC_LIBRARY TBB_MALLOCPROXY_LIBRARY)
+#TBB_CORRECT_LIB_DIR(TBB_RELEASE_LIBRARY)
+#TBB_CORRECT_LIB_DIR(TBB_MALLOC_RELEASE_LIBRARY)
+#TBB_CORRECT_LIB_DIR(TBB_MALLOCPROXY_RELEASE_LIBRARY)
+mark_as_advanced(TBB_RELEASE_LIBRARY TBB_MALLOC_RELEASE_LIBRARY TBB_MALLOCPROXY_RELEASE_LIBRARY)
 
 #-- Look for debug libraries
 # Jiri: Changed the same way as for the release libraries.
-find_library(TBB_LIBRARY_DEBUG ${_TBB_LIB_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
+find_library(TBB_DEBUG_LIBRARY ${_TBB_LIB_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
-find_library(TBB_MALLOC_LIBRARY_DEBUG ${_TBB_LIB_MALLOC_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
+find_library(TBB_MALLOC_DEBUG_LIBRARY ${_TBB_LIB_MALLOC_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
-find_library(TBB_MALLOCPROXY_LIBRARY_DEBUG ${_TBB_LIB_MALLOCPROXY_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
+find_library(TBB_MALLOCPROXY_DEBUG_LIBRARY ${_TBB_LIB_MALLOCPROXY_DEBUG_NAME} HINTS ${_TBB_LIBRARY_DIR}
         PATHS ENV LIBRARY_PATH ENV LD_LIBRARY_PATH)
 
 # Jiri: Self-built TBB stores the debug libraries in a separate directory.
-#       Extract path from TBB_LIBRARY_DEBUG name
-get_filename_component(TBB_LIBRARY_DEBUG_DIR ${TBB_LIBRARY_DEBUG} PATH)
+#       Extract path from TBB_DEBUG_LIBRARY name
+get_filename_component(TBB_DEBUG_LIBRARY_DIR ${TBB_DEBUG_LIBRARY} PATH)
 
-#TBB_CORRECT_LIB_DIR(TBB_LIBRARY_DEBUG)
-#TBB_CORRECT_LIB_DIR(TBB_MALLOC_LIBRARY_DEBUG)
-#TBB_CORRECT_LIB_DIR(TBB_MALLOCPROXY_LIBRARY_DEBUG)
-mark_as_advanced(TBB_LIBRARY_DEBUG TBB_MALLOC_LIBRARY_DEBUG TBB_MALLOCPROXY_LIBRARY_DEBUG)
+#TBB_CORRECT_LIB_DIR(TBB_DEBUG_LIBRARY)
+#TBB_CORRECT_LIB_DIR(TBB_MALLOC_DEBUG_LIBRARY)
+#TBB_CORRECT_LIB_DIR(TBB_MALLOCPROXY_DEBUG_LIBRARY)
+mark_as_advanced(TBB_DEBUG_LIBRARY TBB_MALLOC_DEBUG_LIBRARY TBB_MALLOCPROXY_DEBUG_LIBRARY)
 
 
 if (TBB_INCLUDE_DIR)
-    if (TBB_LIBRARY)
+    if (TBB_RELEASE_LIBRARY)
         set (TBB_FOUND "YES")
-        set (TBB_LIBRARIES ${TBB_LIBRARY} ${TBB_MALLOC_LIBRARY} ${TBB_MALLOCPROXY_LIBRARY} ${TBB_LIBRARIES})
-        set (TBB_DEBUG_LIBRARIES ${TBB_LIBRARY_DEBUG} ${TBB_MALLOC_LIBRARY_DEBUG} ${TBB_MALLOCPROXY_LIBRARY_DEBUG} ${TBB_DEBUG_LIBRARIES})
+        set (TBB_LIBRARIES
+			optimized ${TBB_RELEASE_LIBRARY} optimized ${TBB_MALLOC_RELEASE_LIBRARY} optimized ${TBB_MALLOCPROXY_RELEASE_LIBRARY}
+			debug ${TBB_DEBUG_LIBRARY} debug ${TBB_MALLOC_DEBUG_LIBRARY} debug ${TBB_MALLOCPROXY_DEBUG_LIBRARY}
+			CACHE PATH "TBB libraries" FORCE)
         set (TBB_INCLUDE_DIRS ${TBB_INCLUDE_DIR} CACHE PATH "TBB include directory" FORCE)
-        set (TBB_LIBRARY_DIRS ${TBB_LIBRARY_DIR} CACHE PATH "TBB library directory" FORCE)
-        # Jiri: Self-built TBB stores the debug libraries in a separate directory.
-        set (TBB_DEBUG_LIBRARY_DIRS ${TBB_LIBRARY_DEBUG_DIR} CACHE PATH "TBB debug library directory" FORCE)
-        mark_as_advanced(TBB_INCLUDE_DIRS TBB_LIBRARY_DIRS TBB_DEBUG_LIBRARY_DIRS TBB_LIBRARIES TBB_DEBUG_LIBRARIES)
+        set (TBB_LIBRARY_DIRS
+			optimized ${TBB_RELEASE_LIBRARY_DIR} debug ${TBB_DEBUG_LIBRARY_DIR}
+			CACHE PATH "TBB library directories" FORCE)
+        mark_as_advanced(TBB_INCLUDE_DIRS TBB_LIBRARY_DIRS TBB_LIBRARIES)
         message(STATUS "Found Intel TBB")
-    endif (TBB_LIBRARY)
+    endif (TBB_RELEASE_LIBRARY)
 endif (TBB_INCLUDE_DIR)
 
 if (NOT TBB_FOUND)
-    message("ERROR: Intel TBB NOT found! Please define the TBBROOT and/or TBB_ARCH_PLATFORM environment variable.")
+    message("ERROR: Intel TBB NOT found! Please define the TBBROOT (or TBB_INSTALL_DIR) and/or TBB_ARCH_PLATFORM environment variables.")
     message(STATUS "Looked for Threading Building Blocks in ${_TBB_INSTALL_DIR}")
     SET(TBB_INSTALL_DIR "TBB_INSTALL_DIR_NOT_FOUND" CACHE STRING "Intel TBB install directory")
     # do only throw fatal, if this pkg is REQUIRED
