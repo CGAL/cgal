@@ -40,9 +40,7 @@ t);
 
 
 }; /* end Const_oneset_iterator */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -99,9 +97,7 @@ Counting_iterator( Iterator j, std::size_t n = 0);
 
 
 }; /* end Counting_iterator */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -182,9 +178,7 @@ template < typename... V, typename... O>
 Dispatch_or_drop_output_iterator<tuple<V...>, tuple<O...> >
 dispatch_or_drop_output(O... o);
 
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -268,9 +262,7 @@ template < typename... V, typename... O>
 Dispatch_output_iterator<tuple<V...>, tuple<O...> >
 dispatch_output(O... o);
 
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -307,9 +299,7 @@ Emptyset_iterator();
 
 
 }; /* end Emptyset_iterator */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 
@@ -376,9 +366,7 @@ Filter_iterator(Iterator e, Predicate p, Iterator c = e);
 
 
 }; /* end Filter_iterator */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 Constructs `Insert_iterator<Container>(x)`.
@@ -422,9 +410,7 @@ Insert_iterator( Container &c );
 
 
 }; /* end Insert_iterator */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -526,9 +512,7 @@ void push_back( const IC& k);
 
 
 }; /* end Inverse_index */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -593,7 +577,7 @@ Join_input_iterator_1( Iterator i);
 
 
 }; /* end Join_input_iterator_1 */
-} /* end namespace CGAL */
+
 
 /*!
 \ingroup STLIterators
@@ -645,7 +629,6 @@ Join_input_iterator_2(I1 i1,I2 i2,const Op& op=Op());
 
 
 }; /* end Join_input_iterator_2 */
-} /* end namespace CGAL */
 
 /*!
 \ingroup STLIterators
@@ -701,10 +684,8 @@ and the functor `op`.
 
 
 }; /* end Join_input_iterator_3 */
-} /* end namespace CGAL */
 
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -736,9 +717,7 @@ N_step_adaptor(const I& j);
 
 
 }; /* end N_step_adaptor */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -778,9 +757,7 @@ Oneset_iterator(T& t);
 
 
 }; /* end Oneset_iterator */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -892,9 +869,7 @@ void push_back( const IC& k);
 
 
 }; /* end Random_access_adaptor */
-} /* end namespace CGAL */
 
-namespace CGAL {
 
 /*!
 \ingroup STLIterators
@@ -934,4 +909,5 @@ T& operator[]( size_type n);
 
 
 }; /* end Random_access_value_adaptor */
+
 } /* end namespace CGAL */
