@@ -58,7 +58,7 @@ LinearCellComplex();
 /// @{
 
 /*! 
-must be \f$ >\f$1. 
+must be \f$ > \f$ 1.
 */ 
 static unsigned int ambient_dimension = d2; 
 
