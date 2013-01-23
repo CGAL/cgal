@@ -294,13 +294,14 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   initialize();
 
 #ifdef MESH_3_PROFILING
-  std::cerr << "Refining facets...";
+  std::cerr << "Refining facets..." << std::endl;
   WallClockTimer t;
 #endif
   facets_mesher_.refine(facets_visitor_);
 #ifdef MESH_3_PROFILING
   double facet_ref_time = t.elapsed();
-  std::cerr << "done in " << facet_ref_time << " seconds." << std::endl;
+  std::cerr << "==== Facet refinement: " << facet_ref_time << " seconds ===="
+            << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_time", facet_ref_time);
 # endif
@@ -325,13 +326,14 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   // Then scan volume and refine it
   cells_mesher_.scan_triangulation();
 #ifdef MESH_3_PROFILING
-  std::cerr << "Refining cells...";
+  std::cerr << "Refining cells..." << std::endl;
   t.reset();
 #endif
   cells_mesher_.refine(cells_visitor_);
 #ifdef MESH_3_PROFILING
   double cell_ref_time = t.elapsed();
-  std::cerr << "done in " << cell_ref_time << " seconds." << std::endl;
+  std::cerr << "==== Cell refinement: " << cell_ref_time << " seconds ====" 
+            << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refin_time", cell_ref_time);
 # endif

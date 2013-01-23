@@ -902,7 +902,8 @@ scan_triangulation_impl()
   {
     std::cerr << "Scanning triangulation for bad facets (in parallel) - "
       "number of finite facets = "
-      << r_c3t3_.triangulation().number_of_finite_facets() << "...";
+      << r_c3t3_.triangulation().number_of_finite_facets() << "..."
+      << std::endl;
     add_to_TLS_lists(true);
     // PARALLEL_DO
     tbb::parallel_do(r_tr_.finite_facets_begin(), r_tr_.finite_facets_end(),
@@ -920,7 +921,8 @@ scan_triangulation_impl()
   {
     std::cerr << "Scanning triangulation for bad facets (sequential) - "
       "number of finite facets = " 
-      << r_c3t3_.triangulation().number_of_finite_facets() << "...";
+      << r_c3t3_.triangulation().number_of_finite_facets() << "..."
+      << std::endl;
     for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
         facet_it != r_tr_.finite_facets_end();
         ++facet_it)
@@ -935,7 +937,8 @@ scan_triangulation_impl()
   }
 
 #ifdef MESH_3_PROFILING
-  std::cerr << "scan done in " << t.elapsed() << " seconds." << std::endl;
+  std::cerr << "==== Facet scan: " << t.elapsed() << " seconds ===="
+            << std::endl << std::endl;
 #endif
   
   std::cerr << "Number of bad facets: " << C_::size() << std::endl;

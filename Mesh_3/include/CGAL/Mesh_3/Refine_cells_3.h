@@ -588,8 +588,8 @@ scan_triangulation_impl()
   typedef typename Tr::All_cells_iterator All_cells_iterator;
 
 #ifdef MESH_3_PROFILING
-  // Refinement done
-  std::cerr << "refinement done in " << Base_ML::m_timer.elapsed() << " seconds." << std::endl;
+  // Facet refinement done
+  //std::cerr << "==== Facet refinement: " << Base_ML::m_timer.elapsed() << " seconds ====" << std::endl;
   WallClockTimer t;
 #endif
 
@@ -662,7 +662,8 @@ scan_triangulation_impl()
 
 #ifdef MESH_3_PROFILING
   double cell_scan_time = t.elapsed();
-  std::cerr << "scan done in " << cell_scan_time << " seconds." << std::endl;
+  std::cerr << "==== Cell scan: " << cell_scan_time << " seconds ====" 
+            << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_scan_time", cell_scan_time);
 # endif
