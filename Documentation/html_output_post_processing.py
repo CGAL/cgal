@@ -111,9 +111,11 @@ def is_concept_file(filename):
 def rearrange_img(i, dir_name):
     img = pq(this)
     if img.attr("src") == "ftv2cl.png":
-        links=pq(this).parent().parent()('a.el')
-        if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
-            img.attr("src","ftv2cpt.png")
+        parser=pq(this).parent().parent()
+        for link_class in ['a.el', 'a.elRef']:
+            links=parser(link_class)
+            if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
+                img.attr("src","ftv2cpt.png")
     srcpath=img.attr("src")
     img.attr("src", "../../CGAL.CGAL/html/" + srcpath.split('/')[-1])
 
@@ -176,7 +178,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
       write_out_html(d,fn)
     
-    class_files=glob.glob('./CGAL.CGAL.*/html/class*.html')
+    class_files=glob.glob('./CGAL.CGAL*/html/class*.html')
     for fn in class_files:
         d = pq(filename=fn, parser='html')
         ident = d('#CGALConcept')

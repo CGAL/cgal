@@ -292,7 +292,7 @@ bool contains( Circulator c, Circulator d, const T& value) {
 } 
 
 \endcode 
-
+\cgalConcept
 */
 class Circulator {
 public:
@@ -302,6 +302,7 @@ public:
 /*!
   \ingroup PkgHandlesAndCirculatorsConcepts
   See Subsection \ref circulatorConceptsForward in the page on Circulators.
+\cgalConcept
 */
 class ForwardCirculator {
   
@@ -310,6 +311,7 @@ class ForwardCirculator {
 /*!
   \ingroup PkgHandlesAndCirculatorsConcepts
   See Subsection \ref circulatorConceptsBidirectional in the page on Circulators.
+\cgalConcept
 */
 class BidirectionalCirculator {
   
@@ -319,6 +321,7 @@ class BidirectionalCirculator {
 /*! 
   \ingroup PkgHandlesAndCirculatorsConcepts
   See Subsection \ref sectionRandomAccessCirculatorRequ in the page on Circulators.
+\cgalConcept
 */
 class RandomAccessCirculator {
   
