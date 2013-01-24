@@ -45,7 +45,7 @@ def conceptify_nested_classes(d):
 def conceptify(d):
     # fix the title
     title = d(".title")
-    title.html(re.sub("Class( Template)? Reference", "Concept Reference", title.html()))
+    title.html(re.sub("((Class)|(Struct))( Template)? Reference", "Concept Reference", title.html()))
     # remove the include
     include_statement = d(".contents").children().eq(0)
     # should check that this is really the div we think it is
@@ -179,6 +179,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       write_out_html(d,fn)
     
     class_files=glob.glob('./CGAL.CGAL*/html/class*.html')
+    class_files.extend(glob.glob('./CGAL.CGAL*/html/struct*.html'))
     for fn in class_files:
         d = pq(filename=fn, parser='html')
         ident = d('#CGALConcept')
@@ -241,7 +242,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         d = pq(filename=fn, parser='html')
         dts=d(".textblock .reflist dt")
         # no contents() on pyquery, do it the hard way
-        dts.each(lambda i: pq(this).html(re.sub("Class ", "Concept ", pq(this).html())))
+        # Note that in the following regular expression, the Struct did not appear in doxygen version 1.8.3
+        # in hasModels.html, generalizes.html and refines.html, it is always Class. If this changes in
+        # future versions of doxygen, the regular expression will be ready
+        dts.each(lambda i: pq(this).html(re.sub("((Class )|(Struct ))", "Concept ", pq(this).html())))
         write_out_html(d, fn)
 
     # throw out nav-sync and the detailed description title
