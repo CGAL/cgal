@@ -22,7 +22,7 @@ sufficient to retrieve all the incident cells when needed.
 The four vertices of a cell are indexed with 0, 1, 2 and 3. The 
 neighbors of a cell are also indexed with 0, 1, 2, 3 
 in such a way that the neighbor indexed by \f$ i\f$ is opposite to the vertex 
-with the same index (see Figure \ref TDS3figrepres). 
+with the same index (see \cgalFigureRef{TDS3figrepres}). 
 
 Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly 
 represented: a facet is given by a cell and an index (the facet 
