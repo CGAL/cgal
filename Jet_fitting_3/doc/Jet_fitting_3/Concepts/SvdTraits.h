@@ -32,67 +32,14 @@ public:
   typedef Hidden_type FT; 
 
   /*! 
-    The vector type. 
+    The vector type, model of the concept `SvdTraits::Vector`.
   */ 
-  struct Vector {
-    /*! 
-      initialize all the elements of the vector to zero. 
-    */ 
-    Vector(size_t n); 
-    /*! 
-
-     */ 
-    size_t size(); 
-
-    /*!
-      return the \f$ i^{th}\f$ entry, \f$ i\f$ from \f$ 0\f$ to \f$ size()-1\f$. 
-    */ 
-    FT operator()(size_t i); 
-
-    /*! 
-      set the \f$ i^{th}\f$ entry to `value`. 
-    */ 
-    void set(size_t i, const FT value); 
-
-    /*! 
-      return the vector as an array. 
-    */ 
-    FT* vector(); 
-  };
-
+  typedef Hidden_type Vector;
 
   /*! 
-    The matrix type. 
+    The matrix type,  model of the concept `SvdTraits::Matrix`. 
   */ 
-  struct Matrix {
-    /*! 
-      initialize all the entries of the matrix to zero. 
-    */ 
-    Matrix(size_t n1, size_t n2); 
-
-    /*! 
-
-     */ 
-    size_t number_of_rows(); 
-
-    /*! 
-
-     */ 
-    size_t number_of_columns(); 
-
-    /*! 
-      return the entry at row \f$ i\f$ and column \f$ j\f$, \f$ i\f$ from \f$ 0\f$ to `number_of_rows - 1`, 
-      \f$ j\f$ from \f$ 0\f$ to `number_of_columns - 1`. 
-    */ 
-    FT operator()(size_t i, size_t j); 
-
-    /*! 
-      set the entry at row \f$ i\f$ and column \f$ j\f$ to \f$ value\f$. 
-    */ 
-    void set(size_t i, size_t j, const FT value); 
-
-    
-  };
+  typedef Hidden_type matrix;
   
   /// @} 
 
@@ -111,4 +58,71 @@ public:
   /// @}
 
 }; /* end SvdTraits */
+
+/*!
+\ingroup PkgJet_fitting_3Concepts
+\cgalConcept
+Concept of vector type used by the concept SvdTraits.
+*/
+class SvdTraits::Vector {
+public:
+  /*! 
+    initialize all the elements of the vector to zero. 
+  */ 
+  Vector(size_t n); 
+  /*! 
+
+   */ 
+  size_t size(); 
+
+  /*!
+    return the \f$ i^{th}\f$ entry, \f$ i\f$ from \f$ 0\f$ to \f$ size()-1\f$. 
+  */ 
+  FT operator()(size_t i); 
+
+  /*! 
+    set the \f$ i^{th}\f$ entry to `value`. 
+  */ 
+  void set(size_t i, const FT value); 
+
+  /*! 
+    return the vector as an array. 
+  */ 
+  FT* vector(); 
+};
+
+
+/*!
+\ingroup PkgJet_fitting_3Concepts
+\cgalConcept
+Concept of matrix type used by the concept SvdTraits.
+*/
+class SvdTraits::Matrix {
+public:
+  /*! 
+    initialize all the entries of the matrix to zero. 
+  */ 
+  Matrix(size_t n1, size_t n2); 
+
+  /*! 
+
+   */ 
+  size_t number_of_rows(); 
+
+  /*! 
+
+   */ 
+  size_t number_of_columns(); 
+
+  /*! 
+    return the entry at row \f$ i\f$ and column \f$ j\f$, \f$ i\f$ from \f$ 0\f$ to `number_of_rows - 1`, 
+    \f$ j\f$ from \f$ 0\f$ to `number_of_columns - 1`. 
+  */ 
+  FT operator()(size_t i, size_t j); 
+
+  /*! 
+    set the entry at row \f$ i\f$ and column \f$ j\f$ to \f$ value\f$. 
+  */ 
+  void set(size_t i, size_t j, const FT value); 
+};
 
