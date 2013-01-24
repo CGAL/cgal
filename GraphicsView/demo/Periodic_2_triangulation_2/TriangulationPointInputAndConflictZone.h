@@ -1,6 +1,6 @@
 
-#ifndef CGAL_QT_TRIANGULATION_POINT_INPUT
-#define CGAL_QT_TRIANGULATION_POINT_INPUT
+#ifndef CGAL_QT_TRIANGULATION_POINT_INPUT_AND_CONFLICT_ZONE
+#define CGAL_QT_TRIANGULATION_POINT_INPUT_AND_CONFLICT_ZONE
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
@@ -14,14 +14,14 @@ namespace CGAL {
 namespace Qt {
 
 template <typename PT>
-class TriangulationPointInput : public GraphicsViewInput
+class TriangulationPointInputAndConflictZone : public GraphicsViewInput
 {
 public:
   typedef typename PT::Geom_traits K;
   typedef typename PT::Face_handle Face_handle;
   typedef typename PT::Point Point;
 
-  TriangulationPointInput(QGraphicsScene* s, PT  * dt_, QObject* parent);
+  TriangulationPointInputAndConflictZone(QGraphicsScene* s, PT  * dt_, QObject* parent);
 
 protected:
   void localize_and_insert_point(QPointF qt_point);
@@ -41,7 +41,7 @@ protected:
 
 
 template <typename T>
-TriangulationPointInput<T>::TriangulationPointInput(QGraphicsScene* s,
+TriangulationPointInputAndConflictZone<T>::TriangulationPointInputAndConflictZone(QGraphicsScene* s,
 							T * dt_,
 							QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
@@ -52,7 +52,7 @@ TriangulationPointInput<T>::TriangulationPointInput(QGraphicsScene* s,
 
 template <typename T>
 void 
-TriangulationPointInput<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   p = convert(event->scenePos());
 
@@ -62,7 +62,7 @@ TriangulationPointInput<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 void 
-TriangulationPointInput<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+TriangulationPointInputAndConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
   if (!(event->modifiers()  & ::Qt::ShiftModifier)) {
     emit (generate(CGAL::make_object(p)));
@@ -73,7 +73,7 @@ TriangulationPointInput<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 bool 
-TriangulationPointInput<T>::eventFilter(QObject *obj, QEvent *event)
+TriangulationPointInputAndConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -93,4 +93,4 @@ TriangulationPointInput<T>::eventFilter(QObject *obj, QEvent *event)
 } // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_QT_TRIANGULATION)POINT_INPUT
+#endif // CGAL_QT_TRIANGULATION_POINT_INPUT_AND_CONFLICT_ZONE

@@ -15,11 +15,13 @@
 #include <QInputDialog>
 
 // GraphicsView items and event filters (input classes)
-#include "TriangulationPointInput.h"
+#include "TriangulationCircumcircle.h"
 #include "TriangulationMovingPoint.h"
+#include "TriangulationConflictZone.h"
 #include "TriangulationRemoveVertex.h"
-#include "PeriodicTriangulationLocate.h"
+#include "TriangulationPointInputAndConflictZone.h"
 #include <CGAL/Qt/PeriodicTriangulationGraphicsItem.h>
+#include <CGAL/Qt/PeriodicVoronoiGraphicsItem.h>
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -34,12 +36,7 @@ typedef CGAL::Periodic_2_triangulation_traits_2<EPIC>           K;
 typedef K::Point_2                                              Point_2;
 typedef K::Iso_rectangle_2                                      Iso_rectangle_2;
 
-#define NGHK_DELAUNAY
-#ifdef NGHK_DELAUNAY
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<K>            Periodic_triangulation;
-#else
-typedef CGAL::Periodic_2_triangulation_2<K>                     Periodic_triangulation;
-#endif
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<K>            Periodic_DT;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -48,15 +45,17 @@ class MainWindow :
   Q_OBJECT
   
 private:  
-  Periodic_triangulation triang; 
+  Periodic_DT triang; 
   QGraphicsScene scene;  
 
-  CGAL::Qt::PeriodicTriangulationGraphicsItem<Periodic_triangulation> * pt_gi;
+  CGAL::Qt::PeriodicTriangulationGraphicsItem<Periodic_DT> * pt_gi;
+  CGAL::Qt::PeriodicTriangulationVoronoiGraphicsItem<Periodic_DT> * vgi;
 
-  CGAL::Qt::TriangulationMovingPoint<Periodic_triangulation> * pt_mp;
-  CGAL::Qt::TriangulationRemoveVertex<Periodic_triangulation> * trv;
-  CGAL::Qt::TriangulationPointInput<Periodic_triangulation> * pt_pi;
-  CGAL::Qt::PeriodicTriangulationLocate<Periodic_triangulation> * pt_l;
+  CGAL::Qt::TriangulationMovingPoint<Periodic_DT> * pt_mp;
+  CGAL::Qt::TriangulationConflictZone<Periodic_DT> * pt_cz;
+  CGAL::Qt::TriangulationRemoveVertex<Periodic_DT> * pt_rv;
+  CGAL::Qt::TriangulationPointInputAndConflictZone<Periodic_DT> * pt_pi;
+  CGAL::Qt::TriangulationCircumcircle<Periodic_DT> *pt_cc;
 public:
   MainWindow();
 
@@ -66,12 +65,17 @@ public slots:
 
   void on_actionMovingPoint_toggled(bool checked);
 
-  void on_actionShowDelaunay_toggled(bool checked);
-
-  void on_actionInsertPoint_toggled(bool checked);
 
   void on_actionShowConflictZone_toggled(bool checked);
 
+  void on_actionCircumcenter_toggled(bool checked);
+
+  void on_actionShowDelaunay_toggled(bool checked);
+
+  void on_actionShowVoronoi_toggled(bool checked);
+
+  void on_actionInsertPoint_toggled(bool checked);
+  
   void on_actionInsertRandomPoints_triggered();
 
   void on_actionConvertTo9Cover_triggered();
@@ -86,7 +90,7 @@ public slots:
 
   void on_actionRecenter_triggered();
 
-  void open(const QString& fileName);
+  virtual void open(QString fileName);
 
 signals:
   void changed();
@@ -98,8 +102,10 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
+  this->graphicsView->setAcceptDrops(false);
+
   // Add a GraphicItem for the Periodic triangulation
-  pt_gi = new CGAL::Qt::PeriodicTriangulationGraphicsItem<Periodic_triangulation>(&triang);
+  pt_gi = new CGAL::Qt::PeriodicTriangulationGraphicsItem<Periodic_DT>(&triang);
 
   QObject::connect(this, SIGNAL(changed()),
 		   pt_gi, SLOT(modelChanged()));
@@ -107,26 +113,38 @@ MainWindow::MainWindow()
   pt_gi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pt_gi);
 
+  // Add a GraphicItem for the Voronoi diagram
+  vgi = new CGAL::Qt::PeriodicTriangulationVoronoiGraphicsItem<Periodic_DT>(&triang);
+
+  QObject::connect(this, SIGNAL(changed()),
+		   vgi, SLOT(modelChanged()));
+
+  vgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  scene.addItem(vgi);
+  vgi->hide();
+
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
-  pt_pi = new CGAL::Qt::TriangulationPointInput<Periodic_triangulation>(&scene, &triang, this );
+  pt_pi = new CGAL::Qt::TriangulationPointInputAndConflictZone<Periodic_DT>(&scene, &triang, this );
   
   QObject::connect(pt_pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
   
-  pt_mp = new CGAL::Qt::TriangulationMovingPoint<Periodic_triangulation>(&triang, this);
-  // TriangulationMovingPoint<Periodic_triangulation> emits a modelChanged() signal each
+  pt_mp = new CGAL::Qt::TriangulationMovingPoint<Periodic_DT>(&triang, this);
+  // TriangulationMovingPoint<Periodic_DT> emits a modelChanged() signal each
   // time the moving point moves.
   // The following connection is for the purpose of emitting changed().
   QObject::connect(pt_mp, SIGNAL(modelChanged()),
 		   this, SIGNAL(changed()));
 
-  trv = new CGAL::Qt::TriangulationRemoveVertex<Periodic_triangulation>(&triang, this);
-  QObject::connect(trv, SIGNAL(modelChanged()),
+  pt_rv = new CGAL::Qt::TriangulationRemoveVertex<Periodic_DT>(&triang, this);
+  QObject::connect(pt_rv, SIGNAL(modelChanged()),
 		   this, SIGNAL(changed()));
 
-  pt_l = new CGAL::Qt::PeriodicTriangulationLocate<Periodic_triangulation>(&scene, &triang, this);
+  pt_cc = new CGAL::Qt::TriangulationCircumcircle<Periodic_DT>(&scene, &triang, this);
+  QObject::connect(pt_cc, SIGNAL(modelChanged()),
+		   this, SIGNAL(changed()));
   
   // 
   // Manual handling of actions
@@ -139,6 +157,7 @@ MainWindow::MainWindow()
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
   ag->addAction(this->actionMovingPoint);
+  ag->addAction(this->actionCircumcenter);
   ag->addAction(this->actionShowConflictZone);
 
   // Check two actions 
@@ -163,6 +182,7 @@ MainWindow::MainWindow()
   this->setupStatusBar();
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Periodic_2_triangulation_2.html");
+  this->addAboutCGAL();
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
@@ -193,7 +213,7 @@ MainWindow::processInput(CGAL::Object o)
 
 /* 
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-copt_mponent.html#automatic-connections
+ *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -203,10 +223,10 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(pt_pi);
-    scene.installEventFilter(trv);
+    scene.installEventFilter(pt_rv);
   } else {
     scene.removeEventFilter(pt_pi);
-    scene.removeEventFilter(trv);
+    scene.removeEventFilter(pt_rv);
   }
 }
 
@@ -214,9 +234,9 @@ void
 MainWindow::on_actionShowConflictZone_toggled(bool checked)
 {
   if(checked) {
-    scene.installEventFilter(pt_l);
+    scene.installEventFilter(pt_cc);
   } else {
-    scene.removeEventFilter(pt_l);
+    scene.removeEventFilter(pt_cc);
   }
 }
 
@@ -233,11 +253,29 @@ MainWindow::on_actionMovingPoint_toggled(bool checked)
 }
 
 void
+MainWindow::on_actionCircumcenter_toggled(bool checked)
+{
+  if(checked){
+    scene.installEventFilter(pt_cc);
+    pt_cc->show();
+  } else {  
+    scene.removeEventFilter(pt_cc);
+    pt_cc->hide();
+  }
+}
+
+
+void
 MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
   pt_gi->setVisibleEdges(checked);
 }
 
+void
+MainWindow::on_actionShowVoronoi_toggled(bool checked)
+{
+  vgi->setVisible(checked);
+}
 
 void
 MainWindow::on_actionClear_triggered()
@@ -313,7 +351,7 @@ MainWindow::on_actionLoadPoints_triggered()
 
 
 void
-MainWindow::open(const QString& fileName)
+MainWindow::open(QString fileName)
 {
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -342,7 +380,7 @@ MainWindow::on_actionSavePoints_triggered()
 						  ".");
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Periodic_triangulation::Vertex_iterator 
+    for(Periodic_DT::Vertex_iterator 
           vit = triang.vertices_begin(),
           end = triang.vertices_end();
         vit!= end; ++vit)
@@ -362,6 +400,7 @@ MainWindow::on_actionRecenter_triggered()
 
 
 #include "Periodic_2_triangulation_2.moc"
+#include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
 {
@@ -369,26 +408,18 @@ int main(int argc, char **argv)
 
   app.setOrganizationDomain("www.nghk.nl");
   app.setOrganizationName("Nico Kruithof");
-  app.setApplicationName("Periodic_2_triangulation_2 demo");
+  app.setApplicationName("Periodic_2_Delaunay_triangulation_2 demo");
 
-  // Ipt_mport resources from libCGALQt4.
+  // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Periodic_2_triangulation_2);
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
+  CGAL_QT4_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();
-  try {
-    return app.exec();
+  QStringList args = app.arguments();
+  args.removeAt(0);
+  Q_FOREACH(QString filename, args) {
+    mainWindow.open(filename);
   }
-  catch (char const *str) {
-    std::cerr << "EXCEPTION: " << str << std::endl;
-    return -1;
-  }
-  catch (...) {
-    std::cerr << "Unknown exception!" << std::endl;
-    return -1;
-  }
+  return app.exec();
 }

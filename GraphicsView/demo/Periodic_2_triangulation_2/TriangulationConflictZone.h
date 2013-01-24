@@ -1,6 +1,6 @@
 
-#ifndef CGAL_QT_PERIODIC_TRIANGULATION_LOCATE
-#define CGAL_QT_PERIODIC_TRIANGULATION_LOCATE
+#ifndef CGAL_QT_PERIODIC_TRIANGULATION_CONFLICT_ZONE
+#define CGAL_QT_PERIODIC_TRIANGULATION_CONFLICT_ZONE
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
@@ -14,7 +14,7 @@ namespace CGAL {
 namespace Qt {
 
 template <typename PT>
-class PeriodicTriangulationLocate : public GraphicsViewInput
+class TriangulationConflictZone : public GraphicsViewInput
 {
 public:
   typedef PT                                       Periodic_triangulation;
@@ -26,7 +26,7 @@ public:
   typedef typename PT::Geom_traits::Vector_2       Vector;
   typedef typename PT::Triangle                    Triangle;
 
-  PeriodicTriangulationLocate(QGraphicsScene* s, PT  * tr_, QObject* parent);
+  TriangulationConflictZone(QGraphicsScene* s, PT  * tr_, QObject* parent);
 
 protected:
 
@@ -44,7 +44,7 @@ protected:
 
 
 template <typename T>
-PeriodicTriangulationLocate<T>::PeriodicTriangulationLocate(QGraphicsScene* s,
+TriangulationConflictZone<T>::TriangulationConflictZone(QGraphicsScene* s,
                                                             T * tr_,
                                                             QObject* parent)
   :  GraphicsViewInput(parent), m_tr(tr_), m_containing_face(Face_handle()), m_scene(s), m_triangle(NULL)
@@ -54,13 +54,13 @@ PeriodicTriangulationLocate<T>::PeriodicTriangulationLocate(QGraphicsScene* s,
 
 template <typename T>
 void 
-PeriodicTriangulationLocate<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+TriangulationConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 }
 
 template <typename T>
 void 
-PeriodicTriangulationLocate<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+TriangulationConflictZone<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if (m_triangle) {
     m_scene->removeItem(m_triangle);
@@ -90,7 +90,7 @@ PeriodicTriangulationLocate<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 void 
-PeriodicTriangulationLocate<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 }
 
@@ -98,7 +98,7 @@ PeriodicTriangulationLocate<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *even
 
 template <typename T>
 bool 
-PeriodicTriangulationLocate<T>::eventFilter(QObject *obj, QEvent *event)
+TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -122,4 +122,4 @@ PeriodicTriangulationLocate<T>::eventFilter(QObject *obj, QEvent *event)
 } // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_QT_PERIODIC_TRIANGULATION_LOCATE
+#endif // CGAL_QT_PERIODIC_TRIANGULATION_CONFLICT_ZONE

@@ -40,62 +40,67 @@ private:
 };
 
 
-template <typename T>
-TriangulationCircumcircle<T>::TriangulationCircumcircle(QGraphicsScene* s,
-                                                              T * dt_,
-                                                              QObject* parent)
+template <typename DT>
+TriangulationCircumcircle<DT>::TriangulationCircumcircle(QGraphicsScene* s,
+                                                         DT * dt_,
+                                                         QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {
-  hint = dt->infinite_vertex();
+  hint = typename DT::Vertex_handle();
   circle = new QGraphicsEllipseItem();
   circle->hide();
   scene_->addItem(circle);
 }
 
 
-template <typename T>
-TriangulationCircumcircle<T>::~TriangulationCircumcircle()
+template <typename DT>
+TriangulationCircumcircle<DT>::~TriangulationCircumcircle()
 {
 }
 
 
-template <typename T>
+template <typename DT>
 void
-TriangulationCircumcircle<T>::setPen(const QPen& pen)
+TriangulationCircumcircle<DT>::setPen(const QPen& pen)
 {
   circle->setPen(pen);
 }
 
 
-template <typename T>
+template <typename DT>
 void
-TriangulationCircumcircle<T>::show()
+TriangulationCircumcircle<DT>::show()
 {
   circle->show();
 }
 
 
-template <typename T>
+template <typename DT>
 void
-TriangulationCircumcircle<T>::hide()
+TriangulationCircumcircle<DT>::hide()
 {
   circle->hide();
 }
 
 
-template <typename T>
+template <typename DT>
 void 
-TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+TriangulationCircumcircle<DT>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->dimension() != 2){
     circle->hide();
     return;
   }
-  typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
+  typename DT::Point p = typename DT::Point(event->scenePos().x(), event->scenePos().y());
+  
+  double dx = dt->domain().xmax() - dt->domain().xmin();
+  double dy = dt->domain().ymax() - dt->domain().ymin();
+  p = typename DT::Point(p.x()- std::floor(p.x()/dx), p.y()- std::floor(p.y()/dy));
+
   fh = dt->locate(p, hint->face());
   hint = fh->vertex(0);
   if(!dt->is_infinite(fh)){
-    typename T::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
+    typename DT::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
                                         fh->vertex(1)->point(), 
                                         fh->vertex(2)->point());
     CGAL::Bbox_2 bb = c.bbox();
@@ -107,9 +112,9 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
-template <typename T>
+template <typename DT>
 bool 
-TriangulationCircumcircle<T>::eventFilter(QObject *obj, QEvent *event)
+TriangulationCircumcircle<DT>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);

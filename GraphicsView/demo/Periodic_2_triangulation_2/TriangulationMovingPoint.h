@@ -3,6 +3,7 @@
 #define CGAL_QT_TRIANGULATION_MOVING_POINT
 
 #include <CGAL/Qt/GraphicsViewInput.h>
+#include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QEvent>
 #include <list>
