@@ -12,9 +12,6 @@ some function object types for the required predicates on those primitives.
 \cgalRefines `ArrangementTraits_2`
 
 \cgalHasModel `CGAL::Snap_rounding_traits_2<Kernel>` 
-
-
-\todo check generated documentation page and in particular nested concepts
 */
 
 class SnapRoundingTraits_2 {
@@ -92,7 +89,7 @@ Models the concept `SRTraits_2::IntegerGridPoint_2`.
 typedef Hidden_type Integer_grid_point_2; 
 
 /*! 
-Models the concept `SRTraits:MinkowskiSumWithPixel_2`.
+Models the concept `SRTraits_2::MinkowskiSumWithPixel_2`.
 */ 
 typedef Hidden_type Minkowski_sum_with_pixel_2; 
 
@@ -142,21 +139,30 @@ Integer_grid_point_2 integer_grid_point_2_object();
 Minkowski_sum_with_pixel_2 minkowski_sum_with_pixel_2_object(); 
 
 
+/// @}
+
+}; /* end SnapRoundingTraits_2 */
 
 
-/*! 
+namespace SRTraits_2{
+
+/*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
   Represents an iso rectangle
   \cgalRefines `DefaultConstructible`
   \cgalRefines `CopyConstructible`
   \cgalRefines `Assignable`
-  \cgalHasModel `SRTraits_2::Iso_rectangle_2`
+  \cgalHasModel \link SnapRoundingTraits_2::Iso_rectangle_2 `Snap_rounding_traits_2::Iso_rectangle_2` \endlink
 */
 class IsoRectangle_2
 {};
   
 /*!
-\cgalRefines `AdaptableBinaryFunction`
-\cgalHasModel `SRTraits_2::Construct_vertex_2`
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
+  \cgalRefines `AdaptableBinaryFunction`
+  \cgalHasModel \link SnapRoundingTraits_2::Construct_vertex_2 `Snap_rounding_traits_2::Construct_vertex_2` \endlink
 */
 class ConstructVertex_2
 {
@@ -170,8 +176,10 @@ class ConstructVertex_2
 
 
 /*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
   \cgalRefines `AdaptableBinaryFunction`
-  \cgalHasModel `SRTraits_2::Construct_segment_2
+  \cgalHasModel \link SnapRoundingTraits_2::Construct_segment_2 `Snap_rounding_traits_2::Construct_segment_2`  \endlink
 */
 class ConstructSegment_2
 {
@@ -185,8 +193,10 @@ class ConstructSegment_2
 
 
 /*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
   \cgalRefines `AdaptableQuaternaryFunction`
-  \cgalHasModel `SRTraits_2::Construct_iso_rectangle_2`
+  \cgalHasModel \link SnapRoundingTraits_2::Construct_iso_rectangle_2 `Snap_rounding_traits_2::Construct_iso_rectangle_2` \endlink
 */
 class ConstructIsoRectangle_2
 {
@@ -204,8 +214,10 @@ class ConstructIsoRectangle_2
 
 
 /*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
   \cgalRefines `AdaptableBinaryFunction`
-  \cgalHasModel `SRTraits_2::Compare_x_2`
+  \cgalHasModel \link SnapRoundingTraits_2::Compare_x_2 `Snap_rounding_traits_2::Compare_x_2` \endlink
 */
 class CompareX_2
 {
@@ -218,8 +230,10 @@ class CompareX_2
 };
 
 /*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
   \cgalRefines `AdaptableBinaryFunction`
-  \cgalHasModel `SRTraits_2::Compare_y_2`
+  \cgalHasModel \link SnapRoundingTraits_2::Compare_y_2 `Snap_rounding_traits_2::Compare_y_2` \endlink
 */
 class CompareY_2
 {
@@ -233,8 +247,10 @@ class CompareY_2
 
 
 /*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
   \cgalRefines `AdaptableQuaternaryFunction`
-  \cgalHasModel `SRTraits_2::Snap_2`
+  \cgalHasModel \link SnapRoundingTraits_2::Snap_2 `Snap_rounding_traits_2::Snap_2` \endlink
 */
 class Snap_2
 {
@@ -250,8 +266,10 @@ class Snap_2
 };
 
 /*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
   \cgalRefines `AdaptableBinaryFunction`
-  \cgalHasModel `SRTraits_2::Integer_grid_point_2`
+  \cgalHasModel \link SnapRoundingTraits_2::Integer_grid_point_2 `Snap_rounding_traits_2::Integer_grid_point_2` \endlink
 
 */
 class IntegerGridPoint_2
@@ -269,8 +287,10 @@ class IntegerGridPoint_2
 };
 
 /*!
+  \ingroup PkgSnapRounding2Concepts
+  \cgalConcept
   \cgalRefines `AdaptableTernaryFunction`
-  \cgalHasModel `SRTraits_2::Minkowski_sum_with_pixel_2`
+  \cgalHasModel \link SnapRoundingTraits_2::Minkowski_sum_with_pixel_2 `Snap_rounding_traits_2::Minkowski_sum_with_pixel_2` \endlink
 */
 class MinkowskiSumWithPixel_2
 {
@@ -285,9 +305,4 @@ class MinkowskiSumWithPixel_2
   void operator()(std::list<Point_2>& vertices_list, Segment_2 s, NT unit_square);
 };
 
-/// @}
-
-
-
-}; /* end SnapRoundingTraits_2 */
-
+} /* end of namespace SRTraits_2 */
