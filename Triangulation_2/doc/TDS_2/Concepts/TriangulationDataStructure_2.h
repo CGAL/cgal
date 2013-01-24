@@ -30,7 +30,7 @@ is opposite to the vertex with the same index.
 Each edge has two implicit representations : the edge 
 of a face `f` which is opposed to the vertex indexed `i`, 
 can be represented as well as an edge of the `neighbor(i)` of 
-`f`. See Figure \ref fig__TDS_2D_Fig_neighbors1. 
+`f`. See \cgalFigureRef{TDS_2D_Fig_neighbors1}.
 
 The triangulation data structure 
 is responsible for the combinatorial integrity of the triangulation. 
@@ -504,7 +504,7 @@ When the link of `v = f->vertex(i)` contains all the other vertices
 of the two-dimensional triangulation data structure (\f$ \mathbb{S}^2\f$), `dim_down()` crushes the two-dimensional 
 data-structure (\f$ \mathbb{S}^2\f$) onto the one-dimensional data structure (\f$ \mathbb{S}^1\f$) formed by the link of `v` 
 augmented with the vertex `v` itself; this one is placed on the edge `(f, i)`
-(see Fig. \ref figtdsdim_down_2). 
+(see Figure \ref figtdsdim_down_2). 
 \pre `dimension()` must be equal to `2`, the degree of `f->vertex(i)` must be equal to the total number of vertices minus 1. 
 
 \anchor figtdsdim_down_2
