@@ -639,19 +639,15 @@ for a handle to the <I>i</I>-attributes (and the const version
 
 The `CombinatorialMapItems` concept defines dart and attribute types
 of a combinatorial map. It contains one inner class named
-\link CombinatorialMapItems::DartWrapper `Dart_wrapper`\endlink,
+\link CombinatorialMapItems::Dart_wrapper `Dart_wrapper`\endlink,
 having one template parameter, `CMap`, a model of
 `CombinatorialMap` concept. The
-\link CombinatorialMapItems::DartWrapper `Dart_wrapper<CMap>`\endlink
+\link CombinatorialMapItems::Dart_wrapper `Dart_wrapper<CMap>`\endlink
 class provides two local types:
-\link CombinatorialMapItems::DartWrapper::Dart `Dart`\endlink
-which must be a model of the `::Dart` concept, and
-\link CombinatorialMapItems::DartWrapper::Attributes `Attributes`\endlink
-which defines the attributes and their types.
+`%Dart` which must be a model of the `::Dart` concept, and
+`%Attributes` which defines the attributes and their types.
 
-The
-\link CombinatorialMapItems::DartWrapper::Attributes `Attributes`\endlink
-tuple must contain at most <I>d</I>+1 types (one for
+The `%Attributes` tuple must contain at most <I>d</I>+1 types (one for
 each possible cell dimension of the combinatorial map). Each type of
 the tuple must be either a model of the `CellAttribute` concept or
 `void`. The first type corresponds to 0-attributes, the second to
