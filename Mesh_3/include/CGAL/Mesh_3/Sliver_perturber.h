@@ -807,7 +807,7 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
  && defined(MESH_3_PROFILING)
   if (ret == BOUND_REACHED)
   {
-    CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", exudation_time);
+    CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", perturbation_time);
   }
   else
   {
