@@ -764,7 +764,7 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
   }
   
 #ifdef MESH_3_PROFILING
-  double exudation_time = t.elapsed();
+  double perturbation_time = t.elapsed();
 #endif
 
   running_time_.stop();
@@ -778,7 +778,7 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
 
 #ifdef MESH_3_PROFILING
   std::cerr << std::endl << "Total perturbation 'wall-clock' time: " 
-            << exudation_time << "s" << std::endl;
+            << perturbation_time << "s" << std::endl;
 #endif
 
   Mesh_optimization_return_code ret;
