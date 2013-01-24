@@ -417,7 +417,6 @@ protected:
   mutable LockDataStructureType         m_lock_ds;
   mutable Mesh_3::Auto_worksharing_ds   m_worksharing_ds;
   mutable tbb::task                    *m_empty_root_task;
-  mutable MutexType                     m_pqueue_mut;
 };
 #endif // CGAL_LINKED_WITH_TBB
 
