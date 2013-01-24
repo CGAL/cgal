@@ -783,12 +783,11 @@ public:
 
       // Push all segments labeled(0, 1, ... , i-1) into c1.
       // Instead of the following 3 lines, we use copy, as follows:
-      // unsigned int j;
-      // for (j = 0; j < i; ++j)
-      //   c1.push_back(cv[j]);
-      std::copy(&cv[0],&cv[i],c1.begin_segments());
+      unsigned int j;
+      for (j = 0; j < i; ++j)
+        c1.push_back(cv[j]);
 
-      // Check whether the split point is cv[i]'s source of target.
+      // Check whether the split point is cv[i]'s source or target.
       if (equal(max_vertex(cv[i]), p)) {
         // The entire i'th segment belongs to c1:
         c1.push_back(cv[i]);
@@ -808,18 +807,8 @@ public:
       // Push all segments labeled(i+1, i+2, ... , n-1) into cv1.
       unsigned int n = cv.number_of_segments();
 
-      // TODO: Has to be fixed!
-      // Like several line before, instead of using a loop
-      // we switch to copy. Howver, there's a problem, which has to be
-      // addressed. In particular, &cv[n] is NOT past-the-end.
-      // These are the two original lines.
-      // for (j = i+1; j < n; ++j)
-      //   c2.push_back(cv[j]);
-
-      typedef typename Curve_2::Segment_const_iterator const_seg_iterator;
-      const_seg_iterator it = cv.begin_segments();
-      std::advance(it,(i+1));
-      std::copy(it,cv.end_segments(),c2.begin_segments());
+      for (int j = i+1; j < n; ++j)
+        c2.push_back(cv[j]);
     }
   };
   friend class Split_2;
