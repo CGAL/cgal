@@ -46,22 +46,19 @@ Dart const handle type.
 */ 
 typedef Hidden_type Dart_const_handle; 
 
+/*! 
+`Attribute_handle<i>::%type` is a handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`. 
+\note It can be implemented using a nested template class.
+*/ 
+template <unsigned int i>
+using Attribute_handle = Hidden_type;
 
-template<unsigned int i> 
-struct Attribute_handle {
-  /*! 
-  Handle to <I>i</I>-attributes, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
-  */ 
-  typedef Hidden_type type;
-};
-
-template<unsigned int i> 
-struct Attribute_const_handle {
-  /*! 
-  Const handle to <I>i</I>-attributes, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>. 
-  */ 
-  typedef Hidden_type type;
-};
+/*! 
+`Attribute_const_handle<i>::%type` is a const handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`. 
+\note It can be implemented using a nested template class.
+*/ 
+template <unsigned int i>
+using Attribute_const_handle = Hidden_type;
 
 /// @} 
 
@@ -145,7 +142,7 @@ when `d0` is const.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and <I>i</I>-attributes are non void. 
 */ 
 template <unsigned int i> 
-Attribute_const_handle<i>::type attribute() const; 
+Attribute_const_handle<i>::type attribute() const;
 
 /// @}
 

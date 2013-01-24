@@ -52,12 +52,14 @@ typedef CMap::Dart_const_handle Dart_const_handle;
 /*! 
 
 */ 
-typedef CMap::Attribute_handle<i>::type Attribute_handle<i>::type; 
+template <unsigned int i>
+using Attribute_handle = CMap::Attribute_handle<i>;
 
 /*! 
 
 */ 
-typedef CMap::Attribute_const_handle<i>::type Attribute_const_handle<i>::type; 
+template <unsigned int i>
+using Attribute_const_handle = CMap::Attribute_const_handle<i>;
 
 /// @}
 

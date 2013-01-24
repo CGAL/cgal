@@ -91,9 +91,8 @@ typedef Hidden_type Attributes;
     `Attribute_type<i>::%type` is the type of <I>i</I>-attributes, a model of `CellAttribute` concept. 
     `Attribute_type<i>::%type::Dart_handle` is equal to `Dart_handle`, and 
     `Attribute_type<i>::%type::Dart_const_handle` is equal to `Dart_const_handle`. 
-    \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"
+    \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension" and <I>i</I>-attributes are non void. 
     \note It can be implemented using a nested template class.
-    and <I>i</I>-attributes are non void. 
   */ 
   template <unsigned int i>
   using Attribute_type = Hidden_type;
