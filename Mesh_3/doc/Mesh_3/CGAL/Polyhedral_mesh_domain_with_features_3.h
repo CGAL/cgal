@@ -45,7 +45,7 @@ typedef Hidden_type FT;
 /*! 
 
 Constructs a `Polyhedral_mesh_domain_with_features_3` from a `Polyhedron`. 
-The only requirement on type `Polyhedron` is that `CGAL::Mesh_polyhedron_3<IGT>::type` should 
+The only requirement on type `Polyhedron` is that `CGAL::Mesh_polyhedron_3<IGT>::%type` should 
 be constructible from `Polyhedron`. 
 No feature detection is done at this level. Note that a copy of `p` will be done. 
 */ 

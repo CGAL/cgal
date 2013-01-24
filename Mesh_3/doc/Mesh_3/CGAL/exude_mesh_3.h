@@ -25,13 +25,13 @@ Therefore, when calling the function, the parameters can be provided in any orde
 provided that the names of the parameters are used 
 (see example at the bottom of this page). 
 
-\param parameters::time_limit is used to set up, in seconds, 
+\cgalHeading{Named Parameters}
+- <b>`parameters::time_limit`</b> is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
 measured using the `Timer` class. 
 The default value is 0 and means that there is no time limit. 
 
-\param parameters::sliver_bound 
-is designed to give, in degree, a targeted 
+- <b>`parameters::sliver_bound`</b> is designed to give, in degree, a targeted 
 lower bound on dihedral angles of mesh cells. 
 The exudation process considers in turn all the mesh cells 
 that have a smallest dihedral angle less than `sliver_bound` 

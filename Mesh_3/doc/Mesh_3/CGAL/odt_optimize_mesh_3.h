@@ -38,24 +38,25 @@ Therefore, when calling the function, the parameters can be provided in any orde
 provided that the names of the parameters are used 
 (see example at the bottom of this page). 
 
+\cgalHeading{Named Parameters}
 
-\param parameters::time_limit 
+- <b>`parameters::time_limit`</b>
 is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
 measured using `Timer`. 
 The default value is 0 and means that there is no time limit. 
 
-\param parameters::max_iteration_number sets a limit on the 
+- <b>`parameters::max_iteration_number`</b> sets a limit on the 
 number of performed iterations. The default value of 0 means that there is 
 no limit on the number of performed iterations. 
 
-\param parameters::convergence is a stopping criterion based on convergence: 
+- <b>`parameters::convergence`</b> is a stopping criterion based on convergence: 
 the optimization process is stopped, when at the last iteration, 
 the displacement of any vertex is less than a given percentage of the length 
 the shortest edge incident to that vertex. 
 The parameter `convergence` gives the threshold ratio. 
 
-\param parameters::freeze_bound
+- <b>`parameters::freeze_bound`</b>
 is designed to reduce running time of each optimization iteration. 
 Any vertex that has 
 a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e. is 

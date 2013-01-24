@@ -83,25 +83,25 @@ internal types. The package defines two global
 functions for each optimization parameter 
 to generate appropriate value of this parameter. 
 
-
-\param lloyd  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
+\cgalHeading{Named Parameters}
+- <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
 trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
 `lloyd_optimize_mesh_3()` is used for this parameter. 
 
-\param odt `parameters::odt()` and `parameters::no_odt()` are designed to 
+- <b>`odt`</b> `parameters::odt()` and `parameters::no_odt()` are designed to 
 trigger or not a call to `odt_optimize_mesh_3()` function and 
 to set the parameters of this optimizer 
 If one parameter is not set, the default value of 
 `odt_optimize_mesh_3()` is used for this parameter. 
 
-\param perturb `parameters::perturb()` and `parameters::no_perturb()` are designed to 
+- <b>`perturb`</b> `parameters::perturb()` and `parameters::no_perturb()` are designed to 
 trigger or not a call to `perturb_mesh_3()` function and 
 to set the parameters of this optimizer. If one parameter is not set, the default value of 
 `perturb_mesh_3()` is used for this parameter, except for the time bound which is set to be 
 equal to the refinement CPU time. 
 
-\param exude `parameters::exude()` and `parameters::no_exude()` are designed to 
+- <b>`exude`</b> `parameters::exude()` and `parameters::no_exude()` are designed to 
 trigger or not a call to `exude_mesh_3()` function and to override to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
 `exude_mesh_3()` is used for this parameter, except for the time bound which is set to be 

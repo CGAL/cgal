@@ -32,13 +32,15 @@ Therefore, when calling the function, the parameters can be provided in any orde
 provided that the names of the parameters are used 
 (see example at the bottom of this page). 
 
-\param parameters::time_limit 
+\cgalHeading{Named Parameters}
+
+- <b>`parameters::time_limit`</b>
 is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
 measured using `Timer`. 
 The default value is 0 and means that there is no time limit. 
 
-\param parameters::sliver_bound 
+- <b>`parameters::sliver_bound`</b>
 is designed to give, in degree, a targeted 
 lower bound on dihedral angles of mesh cells. 
 The function `perturb_mesh_3()` runs as long as steps are successful 
