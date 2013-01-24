@@ -66,11 +66,11 @@ public slots:
 
   void on_actionMovingPoint_toggled(bool checked);
 
-  void on_actionShowTriangulation_toggled(bool checked);
+  void on_actionShowDelaunay_toggled(bool checked);
 
   void on_actionInsertPoint_toggled(bool checked);
 
-  void on_actionShowLocate_toggled(bool checked);
+  void on_actionShowConflictZone_toggled(bool checked);
 
   void on_actionInsertRandomPoints_triggered();
 
@@ -139,11 +139,11 @@ MainWindow::MainWindow()
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
   ag->addAction(this->actionMovingPoint);
-  ag->addAction(this->actionShowLocate);
+  ag->addAction(this->actionShowConflictZone);
 
   // Check two actions 
   this->actionInsertPoint->setChecked(true);
-  this->actionShowTriangulation->setChecked(true);
+  this->actionShowDelaunay->setChecked(true);
 
   //
   // Setup the scene and the view
@@ -211,7 +211,7 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 }
 
 void
-MainWindow::on_actionShowLocate_toggled(bool checked)
+MainWindow::on_actionShowConflictZone_toggled(bool checked)
 {
   if(checked) {
     scene.installEventFilter(pt_l);
@@ -233,7 +233,7 @@ MainWindow::on_actionMovingPoint_toggled(bool checked)
 }
 
 void
-MainWindow::on_actionShowTriangulation_toggled(bool checked)
+MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
   pt_gi->setVisibleEdges(checked);
 }
@@ -256,7 +256,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
     QInputDialog::getInteger(this, 
                              tr("Number of random points"),
                              tr("Enter number of random points"),
-			     100,
+			     250,
 			     0,
 			     std::numeric_limits<int>::max(),
 			     1,
@@ -274,10 +274,12 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   for(int i = 0; i < number_of_points; ++i){
     points.push_back(*pg++);
   }
-  triang.insert(points.begin(), points.end());
+  triang.insert(points.begin(), points.end(), true);
 
   // default cursor
   QApplication::restoreOverrideCursor();
+
+  on_actionRecenter_triggered();
   emit(changed());
 }
 
