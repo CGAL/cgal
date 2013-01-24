@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -17,7 +19,7 @@ that \f$ x= y*y\f$. In case the ring is a `UniqueFactorizationDomain`,
 
 */
 
-class AlgebraicStructureTraits::IsSquare {
+class IsSquare {
 public:
 
 /// \name Types 
@@ -59,5 +61,6 @@ result_type operator()(first_argument_type x);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::IsSquare */
+}; /* end IsSquare */
 
+} /* end of namespace AlgebraicStructureTraits_ */

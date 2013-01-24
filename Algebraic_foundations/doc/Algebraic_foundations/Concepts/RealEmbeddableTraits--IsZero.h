@@ -1,6 +1,8 @@
 
+namespace RealEmbeddableTraits_ {
+
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 `AdaptableUnaryFunction`, returns true in case the argument is 0. 
@@ -8,11 +10,11 @@
 \cgalRefines `AdaptableUnaryFunction` 
 
 \sa `RealEmbeddableTraits`
-\sa `AlgebraicStructureTraits::IsZero`
+\sa `AlgebraicStructureTraits_::IsZero`
 
 */
 
-class RealEmbeddableTraits::IsZero {
+class IsZero {
 public:
 
 /// \name Types 
@@ -41,5 +43,6 @@ result_type operator()(argument_type x);
 
 /// @}
 
-}; /* end RealEmbeddableTraits::IsZero */
+}; /* end IsZero */
 
+} /* end of namespace RealEmbeddableTraits_ */

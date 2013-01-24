@@ -72,7 +72,7 @@ All other unary (e.g., sqrt) and binary functions
 (e.g., gcd, div) must be models of the well known \stl-concepts
 `AdaptableUnaryFunction` or `AdaptableBinaryFunction`
 concept and local to the traits class 
-(e.g., `Algebraic_structure_traits<AS>::Sqrt()(x)`). 
+(e.g., \link AlgebraicStructureTraits::Sqrt `Algebraic_structure_traits<AS>::Sqrt()(x)` \endlink). 
 This design allows us to profit from all parts in the 
 \stl and its programming style and avoids the name-lookup and 
 two-pass template compilation problems experienced with the old design 

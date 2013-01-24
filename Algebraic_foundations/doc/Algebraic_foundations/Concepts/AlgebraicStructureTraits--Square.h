@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -11,7 +13,7 @@
 
 */
 
-class AlgebraicStructureTraits::Square {
+class Square {
 public:
 
 /// \name Types 
@@ -39,5 +41,6 @@ result_type operator()(argument_type x);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::Square */
+}; /* end Square */
 
+} /* end of namespace AlgebraicStructureTraits_ */

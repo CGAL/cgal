@@ -9,7 +9,7 @@ The function is defined if the argument type
 is a model of the `RealEmbeddable` concept. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::Abs` 
+\sa `RealEmbeddableTraits_::Abs` 
 
 */
 template <class NT> NT abs(const NT& x);
@@ -33,7 +33,7 @@ is a model of the `RealEmbeddable` concept.
 The `result_type` is convertible to `CGAL::Comparison_result`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::Compare` 
+\sa `RealEmbeddableTraits_::Compare` 
 */
 template <class NT1, class NT2> 
 result_type compare(const NT &x, const NT &y);
@@ -60,7 +60,7 @@ The function is defined if `result_type`
 is a model of the `EuclideanRing` concept. 
 
 \sa `EuclideanRing` 
-\sa `AlgebraicStructureTraits::Div` 
+\sa `AlgebraicStructureTraits_::Div` 
 \sa `CGAL::mod()`
 \sa `CGAL::div_mod()`
 
@@ -95,7 +95,7 @@ The function is defined if `result_type`
 is a model of the `EuclideanRing` concept. 
 
 \sa `EuclideanRing` 
-\sa `AlgebraicStructureTraits::DivMod` 
+\sa `AlgebraicStructureTraits_::DivMod`
 \sa `CGAL::mod()`
 \sa `CGAL::div()`
 
@@ -125,7 +125,7 @@ The function is defined if `result_type`
 is a model of the `UniqueFactorizationDomain` concept. 
 
 \sa `UniqueFactorizationDomain` 
-\sa `AlgebraicStructureTraits::Gcd` 
+\sa `AlgebraicStructureTraits_::Gcd` 
 
 */
 template <class NT1, class NT2> result_type 
@@ -156,7 +156,7 @@ The function is defined if `result_type`
 is a model of the `IntegralDomain` concept. 
 
 \sa `IntegralDomain` 
-\sa `AlgebraicStructureTraits::IntegralDivision` 
+\sa `AlgebraicStructureTraits_::IntegralDivision` 
 
 */
 template <class NT1, class NT2> result_type 
@@ -177,7 +177,7 @@ is a model of the `Field` concept.
 \pre \f$ x \neq0\f$.
 
 \sa `Field` 
-\sa `AlgebraicStructureTraits::Inverse` 
+\sa `AlgebraicStructureTraits_::Inverse` 
 
 */
 template <class NT> NT inverse(const NT& x);
@@ -196,7 +196,7 @@ is a model of the `RealEmbeddable` concept.
 The `result_type` is convertible to `bool`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::IsNegative` 
+\sa `RealEmbeddableTraits_::IsNegative` 
 
 */
 result_type is_negative(const NT& x);
@@ -216,7 +216,7 @@ is a model of the `IntegralDomainWithoutDivision` concept.
 The `result_type` is convertible to `bool`. 
 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::IsOne` 
+\sa `AlgebraicStructureTraits_::IsOne` 
 
 */
 template <class NT> result_type is_one(const NT& x);
@@ -235,7 +235,7 @@ is a model of the `RealEmbeddable` concept.
 The `result_type` is convertible to `bool`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::IsPositive` 
+\sa `RealEmbeddableTraits_::IsPositive` 
 
 */
 result_type is_positive(const NT& x);
@@ -258,7 +258,7 @@ The function `is_square` is available if
 The `result_type` is convertible to `bool`. 
 
 \sa `UniqueFactorizationDomain` 
-\sa `AlgebraicStructureTraits::IsSquare` 
+\sa `AlgebraicStructureTraits_::IsSquare` 
 
 */
 template <class NT> result_type is_square(const NT& x);
@@ -277,7 +277,7 @@ The function `is_square` is available if
 The `result_type` is convertible to `bool`.
 
 \sa `UniqueFactorizationDomain` 
-\sa `AlgebraicStructureTraits::IsSquare` 
+\sa `AlgebraicStructureTraits_::IsSquare` 
 
 */
 template <class NT> result_type is_square(const NT& x, NT& y);
@@ -298,9 +298,9 @@ the `IntegralDomainWithoutDivision` concept.
 The `result_type` is convertible to `bool`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::IsZero` 
+\sa `RealEmbeddableTraits_::IsZero` 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::IsZero` 
+\sa `AlgebraicStructureTraits_::IsZero` 
 */
 template <class NT> result_type is_zero(const NT& x);
 
@@ -317,7 +317,7 @@ The function is defined if the second argument type
 is a model of the `FieldWithKthRoot` concept. 
 
 \sa `FieldWithKthRoot` 
-\sa `AlgebraicStructureTraits::KthRoot` 
+\sa `AlgebraicStructureTraits_::KthRoot` 
 
 */
 template <class NT> NT kth_root(int k, const NT& x);
@@ -343,7 +343,7 @@ The function is defined if `result_type`
 is a model of the `EuclideanRing` concept. 
 
 \sa `EuclideanRing` 
-\sa `AlgebraicStructureTraits::DivMod` 
+\sa `AlgebraicStructureTraits_::DivMod` 
 \sa `CGAL::div_mod()`
 \sa `CGAL::div()`
 
@@ -372,7 +372,7 @@ of the iterator range is a model of the `FieldWithRootOf` concept.
 \pre The polynomial is square-free.
 
 \sa `FieldWithRootOf` 
-\sa `AlgebraicStructureTraits::RootOf` 
+\sa `AlgebraicStructureTraits_::RootOf` 
 
 */
 template <class InputIterator> NT 
@@ -393,7 +393,7 @@ is a model of the `RealEmbeddable` concept.
 The `result_type` is convertible to `CGAL::Sign`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::Sgn` 
+\sa `RealEmbeddableTraits_::Sgn` 
 
 */
 template <class NT> result_type sign(const NT& x);
@@ -411,7 +411,7 @@ The function is defined if the argument type
 is a model of the `IntegralDomainWithoutDivision` concept. 
 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::Simplify` 
+\sa `AlgebraicStructureTraits_::Simplify` 
 
 */
 template <class NT> void simplify(const NT& x);
@@ -429,7 +429,7 @@ The function is defined if the argument type
 is a model of the `FieldWithSqrt` concept. 
 
 \sa `FieldWithSqrt` 
-\sa `AlgebraicStructureTraits::Sqrt` 
+\sa `AlgebraicStructureTraits_::Sqrt` 
 
 */
 template <class NT> NT sqrt(const NT& x);
@@ -447,7 +447,7 @@ The function is defined if the argument type
 is a model of the `IntegralDomainWithoutDivision` concept. 
 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::Square` 
+\sa `AlgebraicStructureTraits_::Square` 
 
 */
 template <class NT> NT square(const NT& x);
@@ -466,7 +466,7 @@ is a model of the `RealEmbeddable` concept.
 Remark: In order to control the quality of approximation one has to resort to methods that are specific to NT. There are no general guarantees whatsoever. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::ToDouble` 
+\sa `RealEmbeddableTraits_::ToDouble` 
 
 */
 template <class NT> double to_double(const NT& x);
@@ -485,7 +485,7 @@ The function is defined if the argument type
 is a model of the `RealEmbeddable` concept. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::ToInterval` 
+\sa `RealEmbeddableTraits_::ToInterval` 
 
 */
 template <class NT> 
@@ -505,7 +505,7 @@ The function is defined if the argument type
 is a model of the `IntegralDomainWithoutDivision` concept. 
 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::UnitPart` 
+\sa `AlgebraicStructureTraits_::UnitPart` 
 
 */
 template <class NT> NT unit_part(const NT& x);

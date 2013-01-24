@@ -1,6 +1,8 @@
 
+namespace RealEmbeddableTraits_ {
+
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 `AdaptableUnaryFunction`, returns true in case the argument is positive. 
@@ -11,7 +13,7 @@
 
 */
 
-class RealEmbeddableTraits::IsPositive {
+class IsPositive {
 public:
 
 /// \name Types 
@@ -39,5 +41,6 @@ result_type operator()(argument_type x);
 
 /// @}
 
-}; /* end RealEmbeddableTraits::IsPositive */
+}; /* end IsPositive */
 
+} /* end of namespace RealEmbeddableTraits_ */

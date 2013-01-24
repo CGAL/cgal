@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -11,7 +13,7 @@
 
 */
 
-class AlgebraicStructureTraits::Sqrt {
+class Sqrt {
 public:
 
 /// \name Types 
@@ -39,5 +41,6 @@ result_type operator()(argument_type x) const;
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::Sqrt */
+}; /* end Sqrt */
 
+} /* end of namespace AlgebraicStructureTraits_ */

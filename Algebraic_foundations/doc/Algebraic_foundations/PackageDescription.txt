@@ -35,22 +35,22 @@
 - `FieldWithRootOf`
 
 - `AlgebraicStructureTraits`
-- `AlgebraicStructureTraits::IsZero`
-- `AlgebraicStructureTraits::IsOne`
-- `AlgebraicStructureTraits::Square`
-- `AlgebraicStructureTraits::Simplify`
-- `AlgebraicStructureTraits::UnitPart`
-- `AlgebraicStructureTraits::IntegralDivision`
-- `AlgebraicStructureTraits::Divides`
-- `AlgebraicStructureTraits::Gcd`
-- `AlgebraicStructureTraits::DivMod`
-- `AlgebraicStructureTraits::Div`
-- `AlgebraicStructureTraits::Mod`
-- `AlgebraicStructureTraits::Inverse`
-- `AlgebraicStructureTraits::Sqrt`
-- `AlgebraicStructureTraits::IsSquare`
-- `AlgebraicStructureTraits::KthRoot`
-- `AlgebraicStructureTraits::RootOf`
+- `AlgebraicStructureTraits_::IsZero`
+- `AlgebraicStructureTraits_::IsOne`
+- `AlgebraicStructureTraits_::Square`
+- `AlgebraicStructureTraits_::Simplify`
+- `AlgebraicStructureTraits_::UnitPart`
+- `AlgebraicStructureTraits_::IntegralDivision`
+- `AlgebraicStructureTraits_::Divides`
+- `AlgebraicStructureTraits_::Gcd`
+- `AlgebraicStructureTraits_::DivMod`
+- `AlgebraicStructureTraits_::Div`
+- `AlgebraicStructureTraits_::Mod`
+- `AlgebraicStructureTraits_::Inverse`
+- `AlgebraicStructureTraits_::Sqrt`
+- `AlgebraicStructureTraits_::IsSquare`
+- `AlgebraicStructureTraits_::KthRoot`
+- `AlgebraicStructureTraits_::RootOf`
 
 ### Classes ###
 
@@ -87,14 +87,14 @@
 - `RealEmbeddable`
 
 - `RealEmbeddableTraits`
-- `RealEmbeddableTraits::IsZero`
-- `RealEmbeddableTraits::Abs`
-- `RealEmbeddableTraits::Sgn`
-- `RealEmbeddableTraits::IsPositive`
-- `RealEmbeddableTraits::IsNegative`
-- `RealEmbeddableTraits::Compare`
-- `RealEmbeddableTraits::ToDouble`
-- `RealEmbeddableTraits::ToInterval`
+- `RealEmbeddableTraits_::IsZero`
+- `RealEmbeddableTraits_::Abs`
+- `RealEmbeddableTraits_::Sgn`
+- `RealEmbeddableTraits_::IsPositive`
+- `RealEmbeddableTraits_::IsNegative`
+- `RealEmbeddableTraits_::Compare`
+- `RealEmbeddableTraits_::ToDouble`
+- `RealEmbeddableTraits_::ToInterval`
 
 ### Classes ###
 
@@ -135,9 +135,9 @@
 
 - `Fraction`
 - `FractionTraits`
-- `FractionTraits::Decompose`
-- `FractionTraits::Compose`
-- `FractionTraits::CommonFactor`
+- `FractionTraits_::Decompose`
+- `FractionTraits_::Compose`
+- `FractionTraits_::CommonFactor`
 
 ### Classes ###
 

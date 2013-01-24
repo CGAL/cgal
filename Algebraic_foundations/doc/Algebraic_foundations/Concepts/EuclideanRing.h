@@ -13,9 +13,9 @@ Moreover, `CGAL::Algebraic_structure_traits< EuclideanRing >` is a model of
 `AlgebraicStructureTraits` providing: 
 
 - \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< EuclideanRing >::Algebraic_category` \endlink derived from `CGAL::Unique_factorization_domain_tag` 
-- `CGAL::Algebraic_structure_traits< EuclideanRing >::Mod` which is a model of `AlgebraicStructureTraits::Mod`
-- `CGAL::Algebraic_structure_traits< EuclideanRing >::Div` which is a model of `AlgebraicStructureTraits::Div` 
-- \link AlgebraicStructureTraits::Div_mod `CGAL::Algebraic_structure_traits< EuclideanRing >::Div_mod` \endlink which is a model of `AlgebraicStructureTraits::DivMod`
+- \link AlgebraicStructureTraits::Mod `CGAL::Algebraic_structure_traits< EuclideanRing >::Mod` \endlink which is a model of `AlgebraicStructureTraits_::Mod`
+- \link AlgebraicStructureTraits::Div `CGAL::Algebraic_structure_traits< EuclideanRing >::Div` \endlink which is a model of `AlgebraicStructureTraits_::Div` 
+- \link AlgebraicStructureTraits::Div_mod `CGAL::Algebraic_structure_traits< EuclideanRing >::Div_mod` \endlink which is a model of `AlgebraicStructureTraits_::DivMod`
 
 ### Remarks ###
 

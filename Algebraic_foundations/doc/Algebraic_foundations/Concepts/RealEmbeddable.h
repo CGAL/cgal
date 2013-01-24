@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 A model of this concepts represents numbers that are embeddable on the real 
@@ -16,21 +16,21 @@ with:
 
 and functors : 
 
-- \link RealEmbeddableTraits::Is_zero `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_zero` \endlink which is a model of `RealEmbeddableTraits::IsZero`
+- \link RealEmbeddableTraits::Is_zero `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_zero` \endlink which is a model of `RealEmbeddableTraits_::IsZero`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Abs` which is a model of `RealEmbeddableTraits::Abs`
+- \link RealEmbeddableTraits::Abs `CGAL::Real_embeddable_traits< RealEmbeddable >::Abs` \endlink which is a model of `RealEmbeddableTraits_::Abs`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Sgn` which is a model of `RealEmbeddableTraits::Sgn`
+- \link RealEmbeddableTraits::Sgn `CGAL::Real_embeddable_traits< RealEmbeddable >::Sgn` \endlink which is a model of `RealEmbeddableTraits_::Sgn`
 
-- \link RealEmbeddableTraits::Is_positive `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_positive` \endlink which is a model of `RealEmbeddableTraits::IsPositive`
+- \link RealEmbeddableTraits::Is_positive `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_positive` \endlink which is a model of `RealEmbeddableTraits_::IsPositive`
 
-- \link RealEmbeddableTraits::Is_negative `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_negative` \endlink which is a model of `RealEmbeddableTraits::IsNegative`
+- \link RealEmbeddableTraits::Is_negative `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_negative` \endlink which is a model of `RealEmbeddableTraits_::IsNegative`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Compare` which is a model of `RealEmbeddableTraits::Compare`
+- \link RealEmbeddableTraits::Compare `CGAL::Real_embeddable_traits< RealEmbeddable >::Compare` \endlink which is a model of `RealEmbeddableTraits_::Compare`
 
-- \link RealEmbeddableTraits::To_double `CGAL::Real_embeddable_traits< RealEmbeddable >::To_double` \endlink which is a model of `RealEmbeddableTraits::ToDouble`
+- \link RealEmbeddableTraits::To_double `CGAL::Real_embeddable_traits< RealEmbeddable >::To_double` \endlink which is a model of `RealEmbeddableTraits_::ToDouble`
 
-- \link RealEmbeddableTraits::To_interval `CGAL::Real_embeddable_traits< RealEmbeddable >::To_interval` \endlink which is a model of `RealEmbeddableTraits::ToInterval`
+- \link RealEmbeddableTraits::To_interval `CGAL::Real_embeddable_traits< RealEmbeddable >::To_interval` \endlink which is a model of `RealEmbeddableTraits_::ToInterval`
 
 Remark: 
 

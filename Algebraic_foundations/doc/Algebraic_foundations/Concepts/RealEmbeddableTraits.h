@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 A model of `RealEmbeddableTraits` is associated to a number type 
@@ -69,44 +69,44 @@ typedef Hidden_type Comparison_result;
 
 /*! 
 
-A model of `RealEmbeddableTraits::IsZero` 
+A model of `RealEmbeddableTraits_::IsZero` 
 In case `Type` is also model of `IntegralDomainWithoutDivision` 
-this is a model of `AlgebraicStructureTraits::IsZero`. 
+this is a model of `AlgebraicStructureTraits_::IsZero`. 
 */ 
 typedef Hidden_type Is_zero; 
 
 /*! 
-A model of `RealEmbeddableTraits::Abs` 
+A model of `RealEmbeddableTraits_::Abs` 
 */ 
 typedef Hidden_type Abs; 
 
 /*! 
-A model of `RealEmbeddableTraits::Sgn` 
+A model of `RealEmbeddableTraits_::Sgn` 
 */ 
 typedef Hidden_type Sgn; 
 
 /*! 
-A model of `RealEmbeddableTraits::IsPositive` 
+A model of `RealEmbeddableTraits_::IsPositive` 
 */ 
 typedef Hidden_type Is_positive; 
 
 /*! 
-A model of `RealEmbeddableTraits::IsNegative` 
+A model of `RealEmbeddableTraits_::IsNegative` 
 */ 
 typedef Hidden_type Is_negative; 
 
 /*! 
-A model of `RealEmbeddableTraits::Compare` 
+A model of `RealEmbeddableTraits_::Compare` 
 */ 
 typedef Hidden_type Compare; 
 
 /*! 
-A model of `RealEmbeddableTraits::ToDouble` 
+A model of `RealEmbeddableTraits_::ToDouble` 
 */ 
 typedef Hidden_type To_double; 
 
 /*! 
-A model of `RealEmbeddableTraits::ToInterval` 
+A model of `RealEmbeddableTraits_::ToInterval` 
 */ 
 typedef Hidden_type To_interval; 
 

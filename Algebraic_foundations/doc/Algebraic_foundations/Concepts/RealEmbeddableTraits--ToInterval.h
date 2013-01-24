@@ -1,6 +1,8 @@
 
+namespace RealEmbeddableTraits_ {
+
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 `AdaptableUnaryFunction` computes for a given real embeddable 
@@ -13,7 +15,7 @@ This interval is represented by `std::pair<double,double>`.
 
 */
 
-class RealEmbeddableTraits::ToInterval {
+class ToInterval {
 public:
 
 /// \name Types 
@@ -41,5 +43,6 @@ result_type operator()(argument_type x);
 
 /// @}
 
-}; /* end RealEmbeddableTraits::ToInterval */
+}; /* end ToInterval */
 
+} /* end of namespace RealEmbeddableTraits_ */

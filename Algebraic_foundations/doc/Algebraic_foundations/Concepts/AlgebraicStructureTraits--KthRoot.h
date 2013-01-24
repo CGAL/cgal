@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -12,7 +14,7 @@
 
 */
 
-class AlgebraicStructureTraits::KthRoot {
+class KthRoot {
 public:
 
 /// \name Types 
@@ -47,5 +49,6 @@ result_type operator()(int k, second_argument_type x);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::KthRoot */
+}; /* end KthRoot */
 
+} /* end of namespace AlgebraicStructureTraits_ */

@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -12,7 +14,7 @@ respect to multiplication of a `Field`.
 
 */
 
-class AlgebraicStructureTraits::Inverse {
+class Inverse {
 public:
 
 /// \name Types 
@@ -42,5 +44,6 @@ result_type operator()(argument_type x) const;
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::Inverse */
+}; /* end Inverse */
 
+} /* end of namespace AlgebraicStructureTraits_ */

@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsFractionsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 A model of `FractionTraits` is associated with a type `Type`. 
@@ -10,9 +10,9 @@ as the numerator and denominator type.
 
 \cgalHasModel `CGAL::Fraction_traits<T>`
 
-\sa `FractionTraits::Decompose` 
-\sa `FractionTraits::Compose` 
-\sa `FractionTraits::CommonFactor` 
+\sa `FractionTraits_::Decompose` 
+\sa `FractionTraits_::Compose` 
+\sa `FractionTraits_::CommonFactor` 
 
 */
 class FractionTraits {
@@ -53,17 +53,40 @@ typedef Hidden_type Denominator_type;
 /// In case `Type` is not a `Fraction` all functors are `Null_functor`.
 /// @{
 
+  /*!
+    A model of FractionTraits_::Compose.
+   */
+typedef Hidden_type Compose;
+
+
+  /*!
+    A model of FractionTraits_::Decompose.
+   */
+typedef Hidden_type Decompose;
+
+
+  /*!
+    A model of FractionTraits_::CommonFactor.
+   */
+typedef Hidden_type Common_factor;
+
+
+/// @}
+
+}; /* end FractionTraits */
+
+namespace FractionTraits_ {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFractionsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 Functor decomposing a `Fraction` into its numerator and denominator. 
 
 \sa `Fraction` 
 \sa `FractionTraits` 
-\sa `FractionTraits::Compose` 
-\sa `FractionTraits::CommonFactor` 
+\sa `FractionTraits_::Compose` 
+\sa `FractionTraits_::CommonFactor` 
 
 */
 
@@ -82,10 +105,10 @@ FractionTraits::Denominator_type & d);
 
 /// @}
 
-}; /* end FractionTraits::Decompose */
+}; /* end Decompose */
 
 /*!
-\ingroup PkgAlgebraicFoundationsFractionsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 `AdaptableBinaryFunction`, returns the fraction of its arguments. 
@@ -94,8 +117,8 @@ FractionTraits::Denominator_type & d);
 
 \sa `Fraction` 
 \sa `FractionTraits` 
-\sa `FractionTraits::Decompose` 
-\sa `FractionTraits::CommonFactor` 
+\sa `FractionTraits_::Decompose` 
+\sa `FractionTraits_::CommonFactor` 
 
 */
 
@@ -132,16 +155,16 @@ result_type operator()(first_argument_type n, second_argument_type d);
 
 /// @}
 
-}; /* end FractionTraits::Compose */
+}; /* end Compose */
 
 
 /*!
-\ingroup PkgAlgebraicFoundationsFractionsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 `AdaptableBinaryFunction`, finds great common factor of denominators. 
 
-This can be considered as a relaxed version of `AlgebraicStructureTraits::Gcd`, 
+This can be considered as a relaxed version of `AlgebraicStructureTraits_::Gcd`, 
 this is needed because it is not guaranteed that `FractionTraits::Denominator_type` is a model of 
 `UniqueFactorizationDomain`. 
 
@@ -149,9 +172,9 @@ this is needed because it is not guaranteed that `FractionTraits::Denominator_ty
 
 \sa `Fraction` 
 \sa `FractionTraits` 
-\sa `FractionTraits::Decompose` 
-\sa `FractionTraits::Compose` 
-\sa `AlgebraicStructureTraits::Gcd` 
+\sa `FractionTraits_::Decompose` 
+\sa `FractionTraits_::Compose` 
+\sa `AlgebraicStructureTraits_::Gcd` 
 
 */
 
@@ -190,26 +213,6 @@ result_type operator()(first_argument_type d1, second_argument_type d2);
 
 /// @}
 
-}; /* end FractionTraits::CommonFactor */
+}; /* end CommonFactor */
 
-  /*!
-    A model of FractionTraits::Compose.
-   */
-typedef Hidden_type Compose;
-
-
-  /*!
-    A model of FractionTraits::Decompose.
-   */
-typedef Hidden_type Decompose;
-
-
-  /*!
-    A model of FractionTraits::CommonFactor.
-   */
-typedef Hidden_type Common_factor;
-
-
-/// @}
-
-}; /* end FractionTraits */
+} /* end of namespace FractionTraits_ */
