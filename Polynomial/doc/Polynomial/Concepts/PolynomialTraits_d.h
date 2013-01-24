@@ -79,7 +79,8 @@ typedef Hidden_type Innermost_coefficient_const_iterator;
 /*! 
 This template class has to define a type `Rebind<T,d>::%Other` which is a model
 of the concept `PolynomialTraits_d`, where `d` is the number of 
-variables and `T` the `Innermost_coefficient_type`. 
+variables and `T` the `Innermost_coefficient_type`.
+\note It can be implemented using a nested template class.
 */ 
 template <typename T, int d>
 using Rebind = Hidden_type;

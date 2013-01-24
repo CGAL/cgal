@@ -71,6 +71,7 @@ This template class has to define a type `Rebind_TDS<TDS2>::%Other` which is the
 `CGAL::Triangulation_data_structure_2` is plugged in. 
 This type `Other` will be the actual base 
 of the class `CGAL::Triangulation_data_structure_2::Vertex`. 
+\note It can be implemented using a nested template class.
 */ 
 template <typename TDS2> 
 using Rebind_TDS = Hidden_type;
