@@ -66,16 +66,14 @@ public:
 /// @{
 
 /*! 
-This nested template class has to define a type `Other` which is the 
+This template class has to define a type `Rebind_TDS<TDS2>::%Other` which is the 
 <I>rebound</I> vertex base , where the actual 
 `CGAL::Triangulation_data_structure_2` is plugged in. 
 This type `Other` will be the actual base 
 of the class `CGAL::Triangulation_data_structure_2::Vertex`. 
 */ 
 template <typename TDS2> 
-struct Rebind_TDS {
-  typedef Hidden_type Other;
-};
+using Rebind_TDS = Hidden_type;
 
 /*! 
 
