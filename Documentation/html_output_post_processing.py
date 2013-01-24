@@ -111,7 +111,7 @@ def is_concept_file(filename):
 def rearrange_img(i, dir_name):
     img = pq(this)
     if img.attr("src") == "ftv2cl.png":
-        parser=pq(this).parent().parent()
+        parser=pq(this).parent()
         for link_class in ['a.el', 'a.elRef']:
             links=parser(link_class)
             if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
