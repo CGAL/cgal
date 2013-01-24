@@ -58,6 +58,12 @@ public:
   /*! Default constructor. */
   _Polyline_2() : m_segments() {}
 
+  _Polyline_2(const Segment_2 &seg) : m_segments()
+  {
+    m_segments.push_back(seg);
+  }
+
+
   /*!
    * Constructor from a range. The range can be either:
    * - Range of points, and the polyline is defined by the order of the points.
