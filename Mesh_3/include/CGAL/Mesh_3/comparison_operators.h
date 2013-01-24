@@ -25,6 +25,9 @@
 #ifndef COMPARISON_OPERATORS_H
 #define COMPARISON_OPERATORS_H
 
+#include <CGAL/array.h>
+#include <CGAL/Triangulation_utils_3.h>
+
 namespace CGAL {
   namespace Mesh_3 {
 
@@ -53,12 +56,12 @@ namespace CGAL {
       {
         if(c1 == c2)
           return false;
-        std::vector<Vertex_handle> v1;
-        std::vector<Vertex_handle> v2;
+        CGAL::cpp11::array<Vertex_handle,4> v1;
+        CGAL::cpp11::array<Vertex_handle,4> v2;
         for(int i = 0; i < 4; ++i)
         {
-          v1.push_back(c1->vertex(i));
-          v2.push_back(c2->vertex(i));
+          v1[i] = c1->vertex(i);
+          v2[i] = c2->vertex(i);
         }
         Vertex_handle_comparator<Vertex_handle> vcomp;
         std::sort(v1.begin(), v1.end(), vcomp);
@@ -87,14 +90,14 @@ namespace CGAL {
         if(f1 == f2)
           return false;
         Vertex_handle_comparator<Vertex_handle> vcomp;
-        std::vector<Vertex_handle> vf1;
-        std::vector<Vertex_handle> vf2;
-        for(int i = 0; i < 4; ++i)
+        CGAL::cpp11::array<Vertex_handle,3> vf1;
+        CGAL::cpp11::array<Vertex_handle,3> vf2;
+        for(int i = 0; i < 3; ++i)
         {
-          if(i != f1.second)
-            vf1.push_back(f1.first->vertex(i));
-          if(i != f2.second)
-            vf2.push_back(f2.first->vertex(i));
+          vf1[i] = f1.first->vertex(
+            Triangulation_utils_3::vertex_triple_index(f1.second,i));
+          vf2[i] = f2.first->vertex(
+            Triangulation_utils_3::vertex_triple_index(f2.second,i));
         }
         std::sort(vf1.begin(), vf1.end(), vcomp);
         std::sort(vf2.begin(), vf2.end(), vcomp);
@@ -123,21 +126,23 @@ namespace CGAL {
         if(pf1 == pf2)
           return false;
         //collect vertices of both facets
-        std::vector<Vertex_handle> vertices_f1;
-        std::vector<Vertex_handle> vertices_f2;
+        CGAL::cpp11::array<Vertex_handle, 3> vertices_f1;
+        CGAL::cpp11::array<Vertex_handle, 3> vertices_f2;
         Facet_he_circ begin =	pf1->facet_begin();
         Facet_he_circ end = begin;
+        std::size_t i = 0;
         do
         {
-          vertices_f1.push_back(begin->vertex()); 
+          vertices_f1[i++] = begin->vertex(); 
           ++begin;
         }while(begin != end);
 
         begin =	pf2->facet_begin();
         end = begin;
+        i = 0;
         do
         {
-          vertices_f2.push_back(begin->vertex()); 
+          vertices_f2[i++] = begin->vertex(); 
           ++begin;
         }while(begin != end);
 
@@ -172,13 +177,13 @@ namespace CGAL {
           return false;
 
         //collect vertices of both facets
-        std::vector<Vertex_handle> vertices_he1;
-        vertices_he1.push_back(he1->vertex());
-        vertices_he1.push_back(he1->opposite()->vertex());
+        CGAL::cpp11::array<Vertex_handle,2> vertices_he1;
+        vertices_he1[0] = he1->vertex();
+        vertices_he1[1] = he1->opposite()->vertex();
       
-        std::vector<Vertex_handle> vertices_he2;
-        vertices_he2.push_back(he2->vertex());
-        vertices_he2.push_back(he2->opposite()->vertex());
+        CGAL::cpp11::array<Vertex_handle,2> vertices_he2;
+        vertices_he2[0] = he2->vertex();
+        vertices_he2[1] = he2->opposite()->vertex();
 
         //compare vertices
         Vertex_handle_comparator<Vertex_handle> comparator;
