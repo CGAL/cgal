@@ -77,12 +77,12 @@ Const iterator used to iterate through all innermost coefficients of the polynom
 typedef Hidden_type Innermost_coefficient_const_iterator; 
 
 /*! 
-This nested template class has to define a type `Other` which is a model 
+This template class has to define a type `Rebind<T,d>::%Other` which is a model
 of the concept `PolynomialTraits_d`, where `d` is the number of 
 variables and `T` the `Innermost_coefficient_type`. 
 */ 
 template <typename T, int d>
-struct Rebind {};
+using Rebind = Hidden_type;
 
 /// @} 
 
