@@ -163,10 +163,10 @@ algebra.
 When you choose %Cartesian representation you have
 to declare at least the type of the coordinates. A number type used
 with the `Cartesian_d` representation class should be a <I>field
-type</I> as described above. Both `Cartesian_d<FieldNumberType>::FT`
-and `Cartesian_d<FieldNumberType>::RT` are mapped to number type
+type</I> as described above. Both `Cartesian_d<FieldNumberType>::%FT`
+and `Cartesian_d<FieldNumberType>::%RT` are mapped to number type
 `FieldNumberType`.
-`Cartesian_d<FieldNumberType,LinearAlgebra>::LA` is mapped to the
+`Cartesian_d<FieldNumberType,LinearAlgebra>::%LA` is mapped to the
 type `LinearAlgebra`. `Cartesian_d<FieldNumberType>` uses
 reference counting internally to save copying costs.
 
@@ -199,11 +199,11 @@ the number type parameter of `Homogeneous` low, the number type
 turns a ring type into a field type. It maintains numbers as
 quotients, i.e. a numerator and a denominator. Thereby, divisions are
 circumvented. With `Homogeneous_d<RingNumberType>`,
-`Homogeneous_d<RingNumberType>::FT` is equal to
+`Homogeneous_d<RingNumberType>::%FT` is equal to
 `Quotient<RingNumberType>` while
-`Homogeneous_d<RingNumberType>::RT` is equal to
+`Homogeneous_d<RingNumberType>::%RT` is equal to
 `RingNumberType`.
-`Homogeneous_d<RingNumberType,LinearAlgebra>::LA` is mapped to the
+`Homogeneous_d<RingNumberType,LinearAlgebra>::%LA` is mapped to the
 type `LinearAlgebra`.
 
 \subsection Kernel_dNamingconventions Naming conventions
