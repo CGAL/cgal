@@ -30,7 +30,7 @@ is opposite to the vertex with the same index.
 Each edge has two implicit representations : the edge 
 of a face `f` which is opposed to the vertex indexed `i`, 
 can be represented as well as an edge of the `neighbor(i)` of 
-`f`. See Figure \ref Triangulation_2D_Fig_neighbors1 
+`f`. See Figure \ref fig__TDS_2D_Fig_neighbors1. 
 
 The triangulation data structure 
 is responsible for the combinatorial integrity of the triangulation. 
