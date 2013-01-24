@@ -197,7 +197,19 @@ public: // methods
   operator()(double criterion_value_limit = SliverCriteria::default_value,
              Visitor visitor = Visitor())
   {
-    return pump_vertices<true>(criterion_value_limit, visitor);
+#ifdef MESH_3_PROFILING
+  WallClockTimer t;
+#endif
+
+    Mesh_optimization_return_code ret = 
+      pump_vertices<true>(criterion_value_limit, visitor);
+    
+#ifdef MESH_3_PROFILING
+  double exudation_time = t.elapsed();
+  std::cerr << std::endl << "==== Total exudation 'wall-clock' time: " 
+            << exudation_time << "s ====" << std::endl;
+#endif
+    return ret;
   }
   
   /// Time accessors
@@ -565,8 +577,17 @@ Slivers_exuder<C3T3,SC,V_,FT>::
 pump_vertices(double sliver_criterion_limit,
               Visitor& visitor)
 {
+#ifdef MESH_3_PROFILING
+  WallClockTimer t;
+#endif
+
   init(sliver_criterion_limit);
-  
+
+#ifdef MESH_3_PROFILING
+  std::cerr << std::endl << "==== Init time: " 
+            << t.elapsed() << "s ====" << std::endl;
+#endif
+
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE
   std::cerr << "Exuding...\n";
   std::cerr << "Legend of the following line: "
@@ -578,6 +599,10 @@ pump_vertices(double sliver_criterion_limit,
   running_time_.reset();
   running_time_.start();
   
+#ifdef MESH_3_PROFILING
+  t.reset();
+#endif
+
   while( !cells_queue_.empty() && !is_time_limit_reached() )
   {
     typename Tet_priority_queue::Reverse_entry front = *(cells_queue_.front());
@@ -620,6 +645,12 @@ pump_vertices(double sliver_criterion_limit,
   }
   
   running_time_.stop();
+  
+#ifdef MESH_3_PROFILING
+  std::cerr << std::endl << "==== Iterations time: " 
+            << t.elapsed() << "s ====" << std::endl;
+#endif
+
   
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE   
   std::cerr << std::endl;
