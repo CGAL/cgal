@@ -75,290 +75,6 @@ for faces of maximal dimension instead of faces.
 class TriangulationDataStructure_2 {
 public:
 
-/*!
-\ingroup PkgTDS2Concepts
-\cgalConcept
-
-The concept `TriangulationDataStructure_2::Vertex` describes the type used by a 
-`TriangulationDataStructure_2` to store the vertices. 
-
-Some of the requirements listed below are of geometric nature 
-and are *optional* 
-when using the triangulation data structure class alone. 
-They became required when the triangulation data structure is plugged 
-into a triangulation. 
-
-### Creation ###
-
-In order to obtain new vertices or destruct unused vertices, the user must 
-call the `create_vertex()` and `delete_vertex()` methods of the 
-triangulation data structure. 
-
-\cgalHasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>` 
-
-\sa `TriangulationDataStructure_2` 
-\sa `TriangulationDataStructure_2::Face` 
-
-*/
-class Vertex {
-public:
-
-/// \name Types 
-/// The class `TriangulationDataStructure_2::Vertex` defines the same
-/// types as the triangulation data structure except the iterators.
-/// @{
-
-/*! 
-<I>Optional for the triangulation data 
-structure used alone</I>.
-*/ 
-typedef Hidden_type Point; 
-
-/// @} 
-
-/// \name Access Functions 
-/// @{
-
-/*! 
-returns the geometric information of the vertex. 
-*/ 
-Point point() const; 
-
-/*! 
-returns a face of the triangulation having `*this` as a vertex. 
-*/ 
-Face_handle face() const; 
-
-/// @} 
-
-/// \name Setting 
-/// @{
-
-/*! 
-\cgalAdvanced sets the geometric information to `p`. 
-*/ 
-void set_point(const Point& p); 
-
-/*! 
-\cgalAdvanced sets the incident face to `f`. 
-*/ 
-void set_face(Face_handle f); 
-
-/// @} 
-
-/// \name Checking 
-/// @{
-
-/*! 
-Checks the validity of the vertex. Must check that its incident face 
-has this vertex. The validity of the base vertex is also checked. 
-
-When `verbose` is set to `true`, messages are printed to give 
-a precise indication on the kind of invalidity encountered. 
-*/ 
-bool is_valid(bool verbose = false) const; 
-
-/*! 
-Inputs the non-combinatorial information possibly stored in the vertex. 
-*/ 
-  std::istream& operator>> (std::istream& is, TriangulationDataStructure_2::Vertex & v); 
-
-/*! 
-Outputs the non combinatorial operation possibly stored in the 
-vertex. 
-*/ 
-  std::ostream& operator<< (std::ostream& os, const TriangulationDataStructure_2::Vertex & v); 
-
-/// @}
-
-}; /* end TriangulationDataStructure_2::Vertex */
-
-
-/*!
-\ingroup PkgTDS2Concepts
-\cgalConcept
-
-The concept `TriangulationDataStructure_2::Face` describes the types used to store the faces 
-face class of a 
-`TriangulationDataStructure_2`. 
-A `TriangulationDataStructure_2::Face` stores three handles to its three vertices 
-and three handles to its three neighbors. 
-The vertices are indexed 0,1, and 2 in counterclockwise order. 
-The neighbor indexed `i` lies 
-opposite to vertex `i`. 
-
-In degenerate cases, 
-when the triangulation data structure stores a 
-simplicial complex of dimension `0` and `1`, 
-the type `TriangulationDataStructure_2::Face` is used to store the faces 
-of maximal dimension of the complex, i.e., a vertex in dimension `0`, an edge in dimension `1`. 
-Only vertices and neighbors with index `0` are set in the first case, 
-only vertices and neighbors with index `0` or `1` are set in the second case. 
-
-### Types ###
-
-The class `TriangulationDataStructure_2::Face` defines the same types as 
-the triangulation data structure 
-except the iterators and the circulators. 
-
-### Creation ###
-
-The methods `create_face()` and 
-`delete_face()` 
-have to be used to 
-define new faces and to delete no longer used faces. 
-
-\cgalHasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
-
-\sa `TriangulationDataStructure_2`
-\sa `TriangulationDataStructure_2::Vertex`
-\sa `TriangulationFaceBase_2`
-
-*/
-class Face {
-public:
-
-/// \name Vertex Access Functions 
-/// @{
-
-/*! 
-returns the vertex `i` of the face. 
-\pre \f$ 0\leq i \leq2\f$. 
-*/ 
-Vertex_handle vertex(int i) const; 
-
-/*! 
-returns the index of vertex `v` in the face. \pre `v` is a vertex of the face. 
-*/ 
-int index(Vertex_handle v) const; 
-
-/*! 
-returns `true` if `v` is a vertex of the face. 
-*/ 
-bool has_vertex(Vertex_handle v) const; 
-
-/*! 
-returns `true` if `v` is a vertex of the face, and 
-computes the index `i` of `v` in the face. 
-*/ 
-bool has_vertex(Vertex_handle v, int& i) const; 
-
-/// @} 
-
-/// \name Neighbor Access Functions 
-/// The neighbor with index `i` is the neighbor which is opposite to
-/// the vertex with index `i`.
-/// @{
-
-/*! 
-returns the neighbor `i` of the face. 
-\pre \f$ 0\leq i \leq2\f$. 
-
-*/ 
-Face_handle neighbor(int i) const; 
-
-/*! 
-returns the index of face `n`. 
-\pre `n` is a neighbor of the face. 
-*/ 
-int index(Face_handle n) const; 
-
-/*! 
-returns `true` if `n` is a neighbor of the face. 
-*/ 
-bool has_neighbor(Face_handle n) const; 
-
-/*! 
-returns `true` if `n` is a neighbor of the face, and 
-compute the index `i` of `n`. 
-*/ 
-bool has_neighbor(Face_handle n, int& i) const; 
-
-/// @} 
-
-/// \name Setting 
-/// @{
-
-/*! 
-sets vertex `i` to be `v`. 
-\pre \f$ 0\leq i \leq2\f$. 
-
-*/ 
-void set_vertex(int i, Vertex_handle v); 
-
-/*! 
-sets neighbor `i` to be `n`. 
-\pre \f$ 0\leq i \leq2\f$. 
-
-*/ 
-void set_neighbor(int i, Face_handle n); 
-
-/*! 
-sets the vertex handles to `Vertex_handle()`. 
-*/ 
-void set_vertices(); 
-
-/*! 
-sets the vertex handles. 
-*/ 
-void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2); 
-
-/*! 
-sets the neighbors handles to `Face_handle()`. 
-*/ 
-void set_neighbors();
-
-/*! 
-sets the neighbors handles. 
-*/ 
-void set_neighbors(Face_handle n0, 
-Face_handle n1, 
-Face_handle n2); 
-
-/// @} 
-
-/// \name Checking 
-/// @{
-
-/*! 
-returns `true` if the function 
-`is_valid()` of the base class 
-returns `true` and if, for each index \f$ i\f$, \f$ 0 \le i < 3\f$, 
-the face is a neighbor of its neighboring face `neighbor(i)` 
-and shares with this neighbor the vertices `cw(i)` and `ccw(i)` 
-in correct reverse order. 
-*/ 
-bool is_valid() const; 
-
-/// @} 
-
-/// \name Miscellaneous 
-/// @{
-
-/*! 
-Returns \f$ i+1\f$ modulo 3, with \f$ 0\leq i \leq2\f$. 
-*/ 
-int ccw(int i) const; 
-
-/*! 
-Returns \f$ i+2\f$ modulo 3, with  \f$ 0\leq i \leq2\f$. 
-*/ 
-int cw(int i) const; 
-
-/*! 
-Inputs any non combinatorial information possibly stored in the face. 
-*/ 
-std::istream& operator>> (std::istream& is, TriangulationDataStructure_2::Face & f); 
-
-/*! 
-Outputs any non combinatorial information possibly stored in the face. 
-*/ 
-std::ostream& operator<< (std::ostream& os, const TriangulationDataStructure_2::Face & f); 
-
-/// @}
-
-}; /* end TriangulationDataStructure_2::Face */
-
 /// \name Types 
 /// @{
 
@@ -371,6 +87,16 @@ typedef Hidden_type size_type;
 Difference type (signed integral type) 
 */ 
 typedef Hidden_type difference_type; 
+
+/*! 
+The vertex type, requirements for this type are described in concept `TriangulationDataStructure_2::Vertex`.
+*/ 
+typedef Hidden_type Vertex;
+
+/*! 
+The face type, requirements for this type are described in concept `TriangulationDataStructure_2::Face`.
+*/ 
+typedef Hidden_type Face;
 
 /*! 
 Handle to a vertex.
@@ -942,3 +668,288 @@ ostream& operator<< (ostream& os, const TriangulationDataStructure_3 & tds);
 
 }; /* end TriangulationDataStructure_2 */
 
+
+
+/*!
+\ingroup PkgTDS2Concepts
+\cgalConcept
+
+The concept `TriangulationDataStructure_2::Vertex` describes the type used by a 
+`TriangulationDataStructure_2` to store the vertices. 
+
+Some of the requirements listed below are of geometric nature 
+and are *optional* 
+when using the triangulation data structure class alone. 
+They became required when the triangulation data structure is plugged 
+into a triangulation. 
+
+### Creation ###
+
+In order to obtain new vertices or destruct unused vertices, the user must 
+call the `create_vertex()` and `delete_vertex()` methods of the 
+triangulation data structure. 
+
+\cgalHasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>` 
+
+\sa `TriangulationDataStructure_2` 
+\sa `TriangulationDataStructure_2::Face` 
+
+*/
+class TriangulationDataStructure_2::Vertex {
+public:
+
+/// \name Types 
+/// The class `TriangulationDataStructure_2::Vertex` defines the same
+/// types as the triangulation data structure except the iterators.
+/// @{
+
+/*! 
+<I>Optional for the triangulation data 
+structure used alone</I>.
+*/ 
+typedef Hidden_type Point; 
+
+/// @} 
+
+/// \name Access Functions 
+/// @{
+
+/*! 
+returns the geometric information of the vertex. 
+*/ 
+Point point() const; 
+
+/*! 
+returns a face of the triangulation having `*this` as a vertex. 
+*/ 
+Face_handle face() const; 
+
+/// @} 
+
+/// \name Setting 
+/// @{
+
+/*! 
+\cgalAdvanced sets the geometric information to `p`. 
+*/ 
+void set_point(const Point& p); 
+
+/*! 
+\cgalAdvanced sets the incident face to `f`. 
+*/ 
+void set_face(Face_handle f); 
+
+/// @} 
+
+/// \name Checking 
+/// @{
+
+/*! 
+Checks the validity of the vertex. Must check that its incident face 
+has this vertex. The validity of the base vertex is also checked. 
+
+When `verbose` is set to `true`, messages are printed to give 
+a precise indication on the kind of invalidity encountered. 
+*/ 
+bool is_valid(bool verbose = false) const; 
+
+/*! 
+Inputs the non-combinatorial information possibly stored in the vertex. 
+*/ 
+  std::istream& operator>> (std::istream& is, TriangulationDataStructure_2::Vertex & v); 
+
+/*! 
+Outputs the non combinatorial operation possibly stored in the 
+vertex. 
+*/ 
+  std::ostream& operator<< (std::ostream& os, const TriangulationDataStructure_2::Vertex & v); 
+
+/// @}
+
+}; /* end TriangulationDataStructure_2::Vertex */
+
+
+/*!
+\ingroup PkgTDS2Concepts
+\cgalConcept
+
+The concept `TriangulationDataStructure_2::Face` describes the types used to store the faces 
+face class of a 
+`TriangulationDataStructure_2`. 
+A `TriangulationDataStructure_2::Face` stores three handles to its three vertices 
+and three handles to its three neighbors. 
+The vertices are indexed 0,1, and 2 in counterclockwise order. 
+The neighbor indexed `i` lies 
+opposite to vertex `i`. 
+
+In degenerate cases, 
+when the triangulation data structure stores a 
+simplicial complex of dimension `0` and `1`, 
+the type `TriangulationDataStructure_2::Face` is used to store the faces 
+of maximal dimension of the complex, i.e., a vertex in dimension `0`, an edge in dimension `1`. 
+Only vertices and neighbors with index `0` are set in the first case, 
+only vertices and neighbors with index `0` or `1` are set in the second case. 
+
+### Types ###
+
+The class `TriangulationDataStructure_2::Face` defines the same types as 
+the triangulation data structure 
+except the iterators and the circulators. 
+
+### Creation ###
+
+The methods `create_face()` and 
+`delete_face()` 
+have to be used to 
+define new faces and to delete no longer used faces. 
+
+\cgalHasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
+
+\sa `TriangulationDataStructure_2`
+\sa `TriangulationDataStructure_2::Vertex`
+\sa `TriangulationFaceBase_2`
+
+*/
+class TriangulationDataStructure_2::Face {
+public:
+
+/// \name Vertex Access Functions 
+/// @{
+
+/*! 
+returns the vertex `i` of the face. 
+\pre \f$ 0\leq i \leq2\f$. 
+*/ 
+Vertex_handle vertex(int i) const; 
+
+/*! 
+returns the index of vertex `v` in the face. \pre `v` is a vertex of the face. 
+*/ 
+int index(Vertex_handle v) const; 
+
+/*! 
+returns `true` if `v` is a vertex of the face. 
+*/ 
+bool has_vertex(Vertex_handle v) const; 
+
+/*! 
+returns `true` if `v` is a vertex of the face, and 
+computes the index `i` of `v` in the face. 
+*/ 
+bool has_vertex(Vertex_handle v, int& i) const; 
+
+/// @} 
+
+/// \name Neighbor Access Functions 
+/// The neighbor with index `i` is the neighbor which is opposite to
+/// the vertex with index `i`.
+/// @{
+
+/*! 
+returns the neighbor `i` of the face. 
+\pre \f$ 0\leq i \leq2\f$. 
+
+*/ 
+Face_handle neighbor(int i) const; 
+
+/*! 
+returns the index of face `n`. 
+\pre `n` is a neighbor of the face. 
+*/ 
+int index(Face_handle n) const; 
+
+/*! 
+returns `true` if `n` is a neighbor of the face. 
+*/ 
+bool has_neighbor(Face_handle n) const; 
+
+/*! 
+returns `true` if `n` is a neighbor of the face, and 
+compute the index `i` of `n`. 
+*/ 
+bool has_neighbor(Face_handle n, int& i) const; 
+
+/// @} 
+
+/// \name Setting 
+/// @{
+
+/*! 
+sets vertex `i` to be `v`. 
+\pre \f$ 0\leq i \leq2\f$. 
+
+*/ 
+void set_vertex(int i, Vertex_handle v); 
+
+/*! 
+sets neighbor `i` to be `n`. 
+\pre \f$ 0\leq i \leq2\f$. 
+
+*/ 
+void set_neighbor(int i, Face_handle n); 
+
+/*! 
+sets the vertex handles to `Vertex_handle()`. 
+*/ 
+void set_vertices(); 
+
+/*! 
+sets the vertex handles. 
+*/ 
+void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2); 
+
+/*! 
+sets the neighbors handles to `Face_handle()`. 
+*/ 
+void set_neighbors();
+
+/*! 
+sets the neighbors handles. 
+*/ 
+void set_neighbors(Face_handle n0, 
+Face_handle n1, 
+Face_handle n2); 
+
+/// @} 
+
+/// \name Checking 
+/// @{
+
+/*! 
+returns `true` if the function 
+`is_valid()` of the base class 
+returns `true` and if, for each index \f$ i\f$, \f$ 0 \le i < 3\f$, 
+the face is a neighbor of its neighboring face `neighbor(i)` 
+and shares with this neighbor the vertices `cw(i)` and `ccw(i)` 
+in correct reverse order. 
+*/ 
+bool is_valid() const; 
+
+/// @} 
+
+/// \name Miscellaneous 
+/// @{
+
+/*! 
+Returns \f$ i+1\f$ modulo 3, with \f$ 0\leq i \leq2\f$. 
+*/ 
+int ccw(int i) const; 
+
+/*! 
+Returns \f$ i+2\f$ modulo 3, with  \f$ 0\leq i \leq2\f$. 
+*/ 
+int cw(int i) const; 
+
+/*! 
+Inputs any non combinatorial information possibly stored in the face. 
+*/ 
+std::istream& operator>> (std::istream& is, TriangulationDataStructure_2::Face & f); 
+
+/*! 
+Outputs any non combinatorial information possibly stored in the face. 
+*/ 
+std::ostream& operator<< (std::ostream& os, const TriangulationDataStructure_2::Face & f); 
+
+/// @}
+
+}; /* end TriangulationDataStructure_2::Face */
