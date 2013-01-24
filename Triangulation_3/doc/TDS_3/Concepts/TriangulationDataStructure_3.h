@@ -347,20 +347,24 @@ typedef Hidden_type Vertex_handle;
 typedef Hidden_type Cell_handle; 
 
 /*! 
-This nested template class allows to get the type of a triangulation 
+This template class allows to get the type of a triangulation 
 data structure that only changes the vertex type. It has to define a type 
-`Other` which is a <I>rebound</I> triangulation data structure, that is, the 
-one whose `TriangulationDSVertexBase_3` will be `Vb2`. 
+`Rebind_vertex<Vb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
+one whose `TriangulationDSVertexBase_3` will be `Vb2`.
+\note It can be implemented using a nested template class.
 */ 
-template <typename Vb2> struct Rebind_vertex {};
+template <typename Vb2> 
+using Rebind_vertex = Hidden_type;
 
 /*! 
-This nested template class allows to get the type of a triangulation 
+This template class allows to get the type of a triangulation 
 data structure that only changes the cell type. It has to define a type 
-`Other` which is a <I>rebound</I> triangulation data structure, that is, the 
-one whose `TriangulationDSCellBase_3` will be `Cb2`. 
+`Rebind_cell<Cb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
+one whose `TriangulationDSCellBase_3` will be `Cb2`.
+\note It can be implemented using a nested template class.
 */ 
-template <typename Cb2> struct Rebind_cell {};
+template <typename Cb2> 
+using Rebind_cell = Hidden_type;
 
 /*! 
 `(c,i,j)` is the 
