@@ -387,7 +387,13 @@ private:
         return CGAL::get_certain( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE;
       }
       return CGAL::Uncertain<CGAL::Sign>::indeterminate();
-    } 
+    }
+    //Sandeep: Added to avoid compiler warning
+    CGAL_assertion(false);
+    CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p should not reach here "
+                   << NEGATIVE
+                   << std::endl ;);
+    return NEGATIVE;
   }
 
   //-----------------------------------------------------------------------
@@ -452,6 +458,12 @@ private:
         }
       } 
     } // end of case where neither p nor q is on t
+    //Sandeep: Added to avoid compiler warning
+    CGAL_assertion(false);
+    CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_pps should not reach here "
+                   << NEGATIVE
+                   << std::endl ;);
+    return NEGATIVE;
   } // end of incircle_pps
 
 
@@ -525,6 +537,12 @@ private:
         return POSITIVE;
       } 
     } // end of case where q is not on t
+    //Sandeep: Added to avoid compiler warning
+    CGAL_assertion(false);
+    CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_sps should not reach here "
+                   << NEGATIVE
+                   << std::endl ;);
+    return NEGATIVE;
   } // end of function incircle_sps
 
 
@@ -597,6 +615,12 @@ private:
         return POSITIVE;
       } 
     } // end of case where p is not on t
+    //Sandeep: Added to avoid compiler warning
+    CGAL_assertion(false);
+    CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_pss should not reach here "
+                   << NEGATIVE
+                   << std::endl ;);
+    return NEGATIVE;
   } // end of function incircle_pss
 
 
