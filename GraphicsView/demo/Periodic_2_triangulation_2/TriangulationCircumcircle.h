@@ -33,7 +33,6 @@ protected:
 private:
 
   DT * dt;
-  typename DT::Vertex_handle hint;
   typename DT::Face_handle fh;
   QGraphicsScene *scene_;
   QGraphicsEllipseItem* circle;
@@ -46,7 +45,6 @@ TriangulationCircumcircle<DT>::TriangulationCircumcircle(QGraphicsScene* s,
                                                          QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {
-  hint = typename DT::Vertex_handle();
   circle = new QGraphicsEllipseItem();
   circle->hide();
   scene_->addItem(circle);
@@ -87,28 +85,26 @@ template <typename DT>
 void 
 TriangulationCircumcircle<DT>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-  if(dt->dimension() != 2){
-    circle->hide();
-    return;
-  }
+    // std::cout << __PRETTY_FUNCTION__ << std::endl;
+    if(dt->dimension() != 2){
+        circle->hide();
+        return;
+    }
   typename DT::Point p = typename DT::Point(event->scenePos().x(), event->scenePos().y());
   
   double dx = dt->domain().xmax() - dt->domain().xmin();
   double dy = dt->domain().ymax() - dt->domain().ymin();
   p = typename DT::Point(p.x()- std::floor(p.x()/dx), p.y()- std::floor(p.y()/dy));
 
-  fh = dt->locate(p, hint->face());
-  hint = fh->vertex(0);
-  if(!dt->is_infinite(fh)){
-    typename DT::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
-                                        fh->vertex(1)->point(), 
-                                        fh->vertex(2)->point());
-    CGAL::Bbox_2 bb = c.bbox();
-    circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
-    circle->show();
-  } else {
-    circle->hide();
-  }
+  fh = dt->locate(p);
+
+  typename DT::Triangle triangle = dt->triangle(dt->periodic_triangle(fh));
+  typename DT::Geom_traits::Circle_2 c(triangle[0], 
+                                       triangle[1], 
+                                       triangle[2]);
+  CGAL::Bbox_2 bb = c.bbox();
+  circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
+  circle->show();
 }
 
 
