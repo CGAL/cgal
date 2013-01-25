@@ -1177,6 +1177,11 @@ public:
      * \param q The second point.
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
+     * TODO: Some how it is impossible to invoke this construction, it is
+     *       always dispatches the call to the following constructor:
+     *       Curve_2 operator()(InputIterator begin, InputIterator end)
+     *       Why?
+     * TODO: Test the function.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
@@ -1186,9 +1191,8 @@ public:
            m_seg_traits->construct_compare_xy_2_object();
          CGAL_precondition (compy_xy(p,q) != EQUAL);
          );
-      Point_2   pts[2];
-      pts[0] = p; pts[1] = q;
-      return (Curve_2(pts + 0, pts + 2));
+      Segment_2 seg = Segment_2(p,q);
+      return (Curve_2(seg));
     }
 
     /*! Construct a polyline from a range of objects.

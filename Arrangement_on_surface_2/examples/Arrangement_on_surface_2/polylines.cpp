@@ -28,9 +28,11 @@ int main ()
   Traits_2::Construct_curve_2 polyline_const =
     traits.construct_curve_2_object();
 
+  // Trying to test a construction from two points. See comment in the
+  // Traits class.
   Point_2 pt1 = Point_2(0,0);
   Point_2 pt2 = Point_2(1,0);
-  //  Polyline_2 poly = polyline_const(pt1,pt2);
+  Polyline_2 poly = polyline_const(&pt1,&pt2);
 
   Arrangement_2         arr;
 
