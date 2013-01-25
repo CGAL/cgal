@@ -558,7 +558,7 @@ namespace CGAL {
               else
               {
                 a1=(*itj)->template attribute<j>();
-                a1->set_dart(*itj);
+                // TODO a1->set_dart(*itj);
               }
 
               for ( CMap_dart_iterator_basic_of_cell<Map,j>
