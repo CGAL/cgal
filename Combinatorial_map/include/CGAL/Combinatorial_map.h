@@ -56,6 +56,9 @@ namespace CGAL {
     template<class Map, unsigned int i, unsigned int nmi>
     friend struct Remove_cell_functor;    
 
+    template<class Map, unsigned int i>
+    friend struct Contract_cell_functor;
+
     template<class Map>
     friend typename Map::Dart_handle 
     insert_cell_0_in_cell_1(Map& amap, typename Map::Dart_handle adart);

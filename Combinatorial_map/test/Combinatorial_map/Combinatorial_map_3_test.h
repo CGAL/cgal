@@ -28,6 +28,37 @@
 
 using namespace std;
 
+template<typename CMap>
+bool check_number_of_cells_3(CMap& cmap, unsigned int nbv, unsigned int nbe,
+                             unsigned int nbf, unsigned int nbvol,
+                             unsigned int nbcc)
+{
+  if ( !cmap.is_valid() )
+    {
+      std::cout<<"ERROR: the cmap is not valid."<<std::endl;
+      assert(false);
+      return false;
+    }
+
+  std::vector<unsigned int> nbc;
+  nbc=cmap.count_all_cells();
+
+  if (nbv!=nbc[0] || nbe!=nbc[1] || nbf!=nbc[2] || nbvol!=nbc[3] ||
+      nbcc!=nbc[4])
+    {
+      std::cout<<"ERROR: the number of cells is not correct. We must have "
+               <<" ("<<nbv<<", "<<nbe<<", "<<nbf<<", "<<nbvol
+               <<", "<<nbcc<<") and we have"
+               <<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "<<nbc[3]<<", "
+               <<nbc[4]<<")."
+               <<std::endl;
+      assert(false);
+      return false;
+    }
+
+  return true;
+}
+
 template<class Map>
 void drawCell3(Map& amap, typename Map::Dart_handle adart, int aorbit, int mark)
 {
@@ -286,7 +317,7 @@ private:
 };
 
 template<class Map>
-  void test3D()
+  bool test3D()
 {
   typedef typename Map::Dart_handle Dart_handle;
   Dart_handle d,dh,dh2,d1,d2,d3,d4;
@@ -1016,71 +1047,80 @@ template<class Map>
   cout << "***************************** TEST INSERT FACET 3D DONE."
        << endl;  
   
-  /*
   cout << "***************************** TEST EDGE CONTRACTION 3D:"
        << endl;
 
   d1 = map.create_dart();
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge1: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
 
   d1 = map.create_dart(); map.template sew<1>(d1, d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge2: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
 
-  d1 = make_edge(map,, );
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge3: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  d1 = make_edge(map);
+  CGAL::contract_cell<Map,1>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
 
-  d1 = make_edge(map,, );
-  map.template sew<1>(d1, d1); map.template sew<1>(d1->beta(2), d1->beta(2));
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge4: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-
-  d1 = make_edge(map,, );
+  d1 = make_edge(map);
   map.template sew<1>(d1, d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge5: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
 
-  d1 = make_triangle(map,, , );
+  d1 = make_edge(map);
+  map.template sew<1>(d1, d1); map.template sew<1>(d1->beta(2), d1->beta(2));
+  CGAL::contract_cell<Map,1>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
+
+  d1 = CGAL::make_combinatorial_polygon(map, 3);
+
   d2 = d1->beta(0); d3 = d1->beta(1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d1);
+  if ( !check_number_of_cells_3(map, 2, 2, 1, 1, 1) ||
+       !CGAL::is_face_combinatorial_polygon(map, d2, 2) )
+    return false;
 
-  cout << "contract edge6: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d2);
+  if ( !check_number_of_cells_3(map, 1, 1, 1, 1, 1) ||
+       !CGAL::is_face_combinatorial_polygon(map, d3, 1) )
+    return false;
 
-  cout << "contract edge7: " << flush; CGAL::contract_cell<Map,1>(map,d2);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d3);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
 
-  cout << "contract edge8: " << flush; CGAL::contract_cell<Map,1>(map,d3);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-
-  d1 = make_triangle(map,, , );
-  d2 = make_triangle(map,, , );
+  d1 = CGAL::make_combinatorial_polygon(map, 3);
+  d2 = CGAL::make_combinatorial_polygon(map, 3);
   map.template sew<3>(d1, d2); d2 = d1->beta(0); d3 = d1->beta(1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  cout << "contract edge9: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout)<<std::flush << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d1);
+  if ( !check_number_of_cells_3(map, 2, 2, 1, 2, 1) ||
+       !CGAL::is_face_combinatorial_polygon(map, d2, 2) )
+    return false;
 
-  cout << "contract edge10: " << flush; CGAL::contract_cell<Map,1>(map,d2);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d2);
+  if ( !check_number_of_cells_3(map, 1, 1, 1, 2, 1) ||
+       !CGAL::is_face_combinatorial_polygon(map, d3, 1) )
+    return false;
 
-  cout << "contract edge11: " << flush; CGAL::contract_cell<Map,1>(map,d3);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,1>(map,d3);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
 
-  d1 = make_triangle(map,, , );
-  d2 = make_triangle(map,, , );
+  d1 = CGAL::make_combinatorial_polygon(map, 3);
+  d2 = CGAL::make_combinatorial_polygon(map, 3);
   map.template sew<2>(d1, d2);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge12: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
+  CGAL::contract_cell<Map,1>(map,d1);
+  if ( !check_number_of_cells_3(map, 4, 4, 2, 2, 2) )
+    return false;
+
+/* TODO continue tests
   d1 = make_triangle(map,, , );
   d2 = make_triangle(map,, , );
   map.template sew<2>(d1, d2);
@@ -1308,6 +1348,7 @@ template<class Map>
   cout << "***************************** TEST VOLUME CONTRACTION 3D DONE."
        << endl;
   */
+  return true;
 }
 
 #endif // CGAL_COMBINATORIAL_MAP_3_TEST

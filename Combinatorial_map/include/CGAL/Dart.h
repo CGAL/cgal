@@ -67,6 +67,9 @@ namespace CGAL {
     template<class Map, unsigned int i, unsigned int nmi>
     friend struct Remove_cell_functor;
 
+    template<class Map, unsigned int i>
+    friend struct Contract_cell_functor;
+
     template <typename Map,unsigned int i>
     friend struct internal::link_beta_functor;
 
