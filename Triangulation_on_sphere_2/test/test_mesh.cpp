@@ -7,6 +7,7 @@
 #include<CGAL/Constrained_triangulation_face_base_sphere_2.h>
 #include<CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include<CGAL/Delaunay_mesh_sphere_traits_2.h>
+#include <CGAL/point_generators_3.h>
 #include<iostream>
 
 
@@ -14,8 +15,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          K;
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
 typedef CGAL::Delaunay_mesh_sphere_traits_2<Gt>						Mgt;
-typedef CGAL::Constrained_triangulation_face_base_sphere_2<Gt> Cfb;
-typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;
+typedef CGAL::Constrained_triangulation_face_base_sphere_2<Mgt> Cfb;
+typedef CGAL::Triangulation_vertex_base_2<Mgt> Vb;
 
 typedef CGAL::Delaunay_mesh_face_base_2<Mgt, Cfb> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
@@ -26,15 +27,22 @@ typedef CGAL::Delaunay_mesh_size_criteria_2<CDTS> Criteria;
 typedef CDTS::Vertex_handle Vertex_handle;
 typedef CDTS::Point Point;
 
-int main()
-{
+void test1(double radius){	
+	
+		
 	CDTS cdt;
-	double a = 1/sqrt(3);
-	cdt.insert(Point(0,0,1));
+	double r = radius;
+	double a = r/sqrt(3);
+	double b = r/sqrt(2);
+	cdt.set_radius(r);
+	
+	
+	
 	Vertex_handle va = cdt.insert(Point(a,a,a));
 	Vertex_handle vb = cdt.insert(Point(a,-a,a));
-	Vertex_handle vd = cdt.insert(Point(-a,a,a));
 	Vertex_handle vc= cdt.insert(Point(-a,-a,a));
+	Vertex_handle vd = cdt.insert(Point(-a,a,a));
+	
 	
 	
 	cdt.insert_constraint(va, vb);
@@ -43,170 +51,173 @@ int main()
 	cdt.insert_constraint(vd, va);
 	
 	cdt.is_valid();
-	cdt.show_all();
-	CDTS::Solid_edges_iterator seit;
-	seit = cdt.solid_edges_begin();
-	for(; seit!=cdt.solid_edges_end(); seit++)
-		cdt.show_face(seit->first);
-	
-	
-	
-	
-	CDTS::All_edges_iterator eit;
-	eit = cdt.all_edges_begin();
-	CDTS::Face_handle f = eit->first;
-	cdt.show_face(f);
-	std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
-	
-	std::cout << "Meshing the triangulation..." << std::endl;
 	CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.5),false);
-	
-	std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
+		
+	cdt.is_valid();
 }
-
-/*
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_mesher_2.h>
-#include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesh_size_criteria_2.h>
-
-#include <iostream>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds> CDT;
-typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
-
-typedef CDT::Vertex_handle Vertex_handle;
-typedef CDT::Point Point;
-
-int main()
-{
-	CDT cdt;
+void test2(double radius){	
 	
-	Vertex_handle va = cdt.insert(Point(1,-1));
-	Vertex_handle vb = cdt.insert(Point(-1,-1));
-	Vertex_handle vc = cdt.insert(Point(-1,1));
-	Vertex_handle vd = cdt.insert(Point(1,1));
-	cdt.insert(Point(0, 0));
+	
+	CDTS cdt;
+	double r = radius;
+	double a = r/sqrt(3);
+	//double a = 0.57735026918962584;
+	//double b = 0.707106781187;
+	double b = r/sqrt(2);
+	cdt.set_radius(r);
+	
+	
+	
+	Vertex_handle va = cdt.insert(Point(a,a,a));
+	Vertex_handle vb = cdt.insert(Point(a,-a,a));
+	Vertex_handle vc= cdt.insert(Point(-r/sqrt(2),-r/sqrt(2),0));
+	Vertex_handle vd = cdt.insert(Point(-a,a,a));
+	
+	
 	
 	cdt.insert_constraint(va, vb);
 	cdt.insert_constraint(vb, vc);
 	cdt.insert_constraint(vc, vd);
 	cdt.insert_constraint(vd, va);
 	
-	std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
-	
-	std::cout << "Meshing the triangulation..." << std::endl;
-	CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.5));
-	
-	std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
-}*/
-/*
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_mesher_2.h>
-#include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesh_size_criteria_2.h>
-
-#include <iostream>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds> CDT;
-typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
-
-typedef CDT::Vertex_handle Vertex_handle;
-typedef CDT::Point Point;
-
-int main()
-{
-	CDT cdt;
-	
-	Vertex_handle va = cdt.insert(Point(-4,0));
-	Vertex_handle vb = cdt.insert(Point(0,-1));
-	Vertex_handle vc = cdt.insert(Point(4,0));
-	Vertex_handle vd = cdt.insert(Point(0,1));
-	cdt.insert(Point(2, 0.6));
-	
-	cdt.insert_constraint(va, vb);
-	cdt.insert_constraint(vb, vc);
-	cdt.insert_constraint(vc, vd);
-	cdt.insert_constraint(vd, va);
-	
-	std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
-	
-	std::cout << "Meshing the triangulation..." << std::endl;
-	CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.5));
-	
-	std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
-}*/
-/*
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_mesher_2.h>
-#include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesh_size_criteria_2.h>
-
-#include <iostream>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Triangulation_vertex_base_2<K> Vb;
-typedef CGAL::Delaunay_mesh_face_base_2<K> Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb, Fb> Tds;
-typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds> CDT;
-typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
-
-typedef CDT::Vertex_handle Vertex_handle;
-typedef CDT::Point Point;
-
-int main()
-{
-	CDT cdt;
-	Vertex_handle va = cdt.insert(Point(2,0));
-	Vertex_handle vb = cdt.insert(Point(0,2));
-	Vertex_handle vc = cdt.insert(Point(-2,0));
-	Vertex_handle vd = cdt.insert(Point(0,-2));
-	
-	cdt.insert_constraint(va, vb);
-	cdt.insert_constraint(vb, vc);
-	cdt.insert_constraint(vc, vd);
-	cdt.insert_constraint(vd, va);
-	
-	va = cdt.insert(Point(3,3));
-	vb = cdt.insert(Point(-3,3));
-	vc = cdt.insert(Point(-3,-3));
-	vd = cdt.insert(Point(3,0-3));
-	
-	cdt.insert_constraint(va, vb);
-	cdt.insert_constraint(vb, vc);
-	cdt.insert_constraint(vc, vd);
-	cdt.insert_constraint(vd, va);
-	
-	std::list<Point> list_of_seeds;
-	
-	list_of_seeds.push_back(Point(0, 0));
-	
-	std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
-	
-	std::cout << "Meshing the domain..." << std::endl;
-	CGAL::refine_Delaunay_mesh_2(cdt, list_of_seeds.begin(), list_of_seeds.end(),
-								 Criteria());
-	
-	std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
-	std::cout << "Number of finite faces: " << cdt.number_of_faces() << std::endl;
-	int mesh_faces_counter = 0;
-	for(CDT::Finite_faces_iterator fit = cdt.finite_faces_begin();
-		fit != cdt.finite_faces_end(); ++fit) 
-	{
-		if(fit->is_in_domain()) ++mesh_faces_counter;
-	}
-	std::cout << "Number of faces in the mesh domain: " << mesh_faces_counter << std::endl;
+	cdt.is_valid();
+	CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.5),false);
+	std::cout<<"number of vertices:  "<<cdt.number_of_vertices()<<std::endl;
+	cdt.is_valid();
 }
-*/
+void test3(double radius){	
+	
+	
+	CDTS cdt;
+	double r = radius;
+	double a = r/sqrt(3);
+	double b = r/sqrt(2);
+	cdt.set_radius(r);
+	
+	
+	
+	Vertex_handle va = cdt.insert(Point(b,b,0));
+	Vertex_handle vb = cdt.insert(Point(b,0,b));
+	Vertex_handle vc = cdt.insert(Point(b,-b,0));
+	Vertex_handle vd = cdt.insert(Point(0,-b,b));
+	Vertex_handle ve = cdt.insert(Point(-b,-b,0));
+	Vertex_handle vf = cdt.insert(Point(-b,0,b));
+	Vertex_handle vg= cdt.insert(Point(-b,b,0));
+	Vertex_handle vh = cdt.insert(Point(0,b,b));
+	
+	
+	
+	cdt.insert_constraint(va, vb);
+	cdt.insert_constraint(vb, vc);
+	cdt.insert_constraint(vc, vd);
+	cdt.insert_constraint(vd, ve);
+	cdt.insert_constraint(ve, vf);
+	cdt.insert_constraint(vf, vg);
+	cdt.insert_constraint(vg, vh);
+	cdt.insert_constraint(vh, va);
+	
+	cdt.is_valid();
+	CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.5),false);
+	std::cout<<"number of vertices:  "<<cdt.number_of_vertices()<<std::endl;
+	cdt.is_valid();
+}
+void test4(double radius){	
+	
+	
+	CDTS cdt;
+	double r = radius;
+	double a = r/sqrt(3);
+	double b = r/sqrt(2);
+	cdt.set_radius(r);
+	
+	
+	
+	Vertex_handle va = cdt.insert(Point(b,b,0));
+	Vertex_handle vb = cdt.insert(Point(b,-b,0));
+	Vertex_handle vc =cdt.insert(Point(0,b,b));
+	
+	
+	Vertex_handle vd = cdt.insert(Point(-b,-b,0));
+	Vertex_handle ve= cdt.insert(Point(-b,b,0));
+	Vertex_handle vf = cdt.insert(Point(0,-b,b));
+	
+	
+	
+	
+	cdt.insert_constraint(va, vb);
+	cdt.insert_constraint(vb, vc);
+	cdt.insert_constraint(va, vc);
+	
+	cdt.insert_constraint(vd, ve);
+	cdt.insert_constraint(ve, vf);
+	cdt.insert_constraint(vd, vf);
+	
+	
+	cdt.is_valid();
+	CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.5),false);
+	std::cout<<"number of vertices:  "<<cdt.number_of_vertices()<<std::endl;
+	cdt.is_valid();
+}
+void test5(double radius){	
+	
+	
+	CDTS cdt;
+	double r = radius;
+	double a = r/sqrt(3);
+	double b = r/sqrt(2);
+	cdt.set_radius(r);
+	
+	
+	
+	Vertex_handle va = cdt.insert(Point(b,b,0));
+	Vertex_handle vb = cdt.insert(Point(b,-b,0));
+	Vertex_handle vc =cdt.insert(Point(0,b,b));
+	
+	
+	Vertex_handle vd = cdt.insert(Point(-b,-b,0));
+	Vertex_handle ve= cdt.insert(Point(-b,b,0));
+	Vertex_handle vf = cdt.insert(Point(0,-b,b));
+	
+	
+	
+	
+	cdt.insert_constraint(va, vb);
+	cdt.insert_constraint(vb, vc);
+	cdt.insert_constraint(va, vc);
+	
+	cdt.insert_constraint(vd, ve);
+	cdt.insert_constraint(ve, vf);
+	cdt.insert_constraint(vd, vf);
+	
+	
+	cdt.is_valid();
+	CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.5),false);
+	std::cout<<"number of vertices:  "<<cdt.number_of_vertices()<<std::endl;
+	cdt.is_valid();
+}
+	
+	
+
+int main()
+{
+	/*std::cout<<  "Meshing planar polygon with four points "<<std::endl;
+	std::cout<< " radius  : 1"<<std::endl;
+	test1(1);
+	
+	std::cout<< " radius  : 100"<<std::endl;
+	test1(100);*/
+
+	
+	std::cout<<  "Meshing easy polygon  "<<std::endl;
+	 std::cout<< " radius  : 1"<<std::endl;
+	 test2(1);
+	 
+		
+	std::cout<<"Mehsing star-shaped polygon"<< std::endl;
+	
+	std::cout<< "radius : 1<<std::endl"<<std::endl;
+	test3(1);
+	
+	std::cout<< "Meshing two polygons " <<std::endl;
+	//test4(1);
+}
