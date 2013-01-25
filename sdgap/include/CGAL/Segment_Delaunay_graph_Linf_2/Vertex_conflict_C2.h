@@ -437,14 +437,14 @@ private:
           CGAL_SDG_DEBUG(std::cout << "debug incircle_pps p is endp of t: " 
                          << "p = " << p << ", q = " << q << ", t = " << t 
                          << " o = " << o << std::endl; );
-          return (o == RIGHT_TURN) ? POSITIVE : NEGATIVE;
+          return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
         } else if ( is_q_on_t ) {
           Point_2 pt = is_q_tsrc ? t.target() : t.source();
           Orientation o = CGAL::orientation(p.point(), q.point(), pt);
           CGAL_SDG_DEBUG(std::cout << "debug incircle_pps q is endp of t: "
                          << "p = " << p << ", q = " << q << ", t = " << t 
                          << " o = " << o << std::endl; );
-          return (o == RIGHT_TURN) ? POSITIVE : NEGATIVE;
+          return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
         } else {
           // maybe here I should immediately return POSITIVE;
           // since we insert endpoints of segments first, p and q cannot
