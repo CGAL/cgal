@@ -346,7 +346,7 @@ public:
     /// Constructs an internal KD-tree containing the specified point
     /// set, to be used as the set of potential hints for accelerating
     /// the distance queries. 
-		/// \tparam `ConstPointIterator` is an iterator with
+		/// \tparam ConstPointIterator is an iterator with
     /// value type `Point_and_primitive_id`.
 		template<typename ConstPointIterator>
 		bool accelerate_distance_queries(ConstPointIterator first,
