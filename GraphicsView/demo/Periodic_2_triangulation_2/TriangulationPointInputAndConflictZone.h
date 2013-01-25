@@ -55,8 +55,24 @@ void
 TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   p = convert(event->scenePos());
+  if(dt->dimension() < 2 ||
+     event->modifiers() != 0 ||
+     event->button() != ::Qt::LeftButton) {
+    return;
+  }
+  
 
-  // Don't do anything
+  dt->get_conflicts(p, std::back_inserter(faces));
+  for(typename std::list<Face_handle>::iterator it = faces.begin();
+      it != faces.end();
+      ++it) {
+      QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->triangle(*it)));
+      QColor color(::Qt::blue);
+      color.setAlpha(150);
+      item->setBrush(color);
+      scene_->addItem(item);
+      qfaces.push_back(item);
+  }
 }
 
 
@@ -64,9 +80,15 @@ template <typename T>
 void 
 TriangulationPointInputAndConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-  if (!(event->modifiers()  & ::Qt::ShiftModifier)) {
-    emit (generate(CGAL::make_object(p)));
+  faces.clear();
+  for(std::list<QGraphicsPolygonItem*>::iterator it = qfaces.begin();
+      it != qfaces.end();
+      ++it){
+    scene_->removeItem(*it);
+    delete *it;
   }
+  qfaces.clear();
+  emit (generate(CGAL::make_object(p)));
 }
 
 
