@@ -55,6 +55,10 @@ void
 TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   p = convert(event->scenePos());
+  double dx = dt->domain().xmax() - dt->domain().xmin();
+  double dy = dt->domain().ymax() - dt->domain().ymin();
+  p = Point(p.x()- std::floor(p.x()/dx), p.y()- std::floor(p.y()/dy));
+
   if(dt->dimension() < 2 ||
      event->modifiers() != 0 ||
      event->button() != ::Qt::LeftButton) {
