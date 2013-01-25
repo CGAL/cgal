@@ -450,6 +450,8 @@ public:
    * Constructs from a range of segments.
    * This constructor is expected to be called only from the
    * traits class, after the input was verified there.
+   * TODO: Do we really have to keep this?
+   *       Couldn't it inherit from the base class?
    */
   template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,

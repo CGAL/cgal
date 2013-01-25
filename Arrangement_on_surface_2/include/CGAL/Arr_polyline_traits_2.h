@@ -1195,6 +1195,16 @@ public:
       return (Curve_2(seg));
     }
 
+    /*! Returns a polyline consists of one given segment.
+     * \param seg input segment
+     * \return A polyline with one segment, namely seg.
+     */
+    Curve_2 operator()(const Segment_2& seg) const
+    {
+      return (Curve_2(seg));
+    }
+
+
     /*! Construct a polyline from a range of objects.
      *  \param begin An iterator pointing to the first segment in the range.
      *  \param end An iterator pointing to the past-the-end segment in the range
@@ -1209,8 +1219,8 @@ public:
     }
 
     /*! Construction implementation from a range of points.
-     * When constructing from a range of points there are no tests to
-     * run and the construction is straight forward in the polyline's class.
+     * One segment is generated for every two consecutive points and the
+     * range of resulting segments is used for the actual construction
      * \pre The range contains at least two points
      * \pre Consecutive points are disjoint.
      */
@@ -1220,21 +1230,25 @@ public:
     {
       // The range must contain at least two points.
       CGAL_precondition (std::distance(begin,end)>1);
-      CGAL_precondition_code
-        (
-         typename Segment_traits_2::Equal_2 equal =
-         m_seg_traits->equal_2_object();
-         InputIterator curr = begin;
-         InputIterator next = curr;
-         ++next;
-         while (next!=end)
-           {
-             CGAL_precondition(!equal(*curr,*next));
-             ++next;
-             ++curr;
-           }
-         );
-      return Curve_2(begin,end);
+
+      typename Segment_traits_2::Equal_2 equal =
+        m_seg_traits->equal_2_object();
+
+      // The range of segments to be generated
+      std::vector<Segment_2> segments;
+
+      InputIterator curr = begin;
+      InputIterator next = curr;
+      ++next;
+      while (next!=end)
+        {
+          // Verify that no segment is degenerated
+          CGAL_precondition(!equal(*curr,*next));
+          segments.push_back(Segment_2(*curr,*next));
+          ++next;
+          ++curr;
+        }
+      return Curve_2(segments.begin(),segments.end());
     }
 
     /*! Construction implementation from a range of segments.
@@ -1298,7 +1312,8 @@ public:
      * \param q The second point.
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
-     * TODO: Efi suggests that this can be more efficient. How?
+     * TODO: Efi suggests that this can be more efficient. How? In any case,
+     *       there should be no actual construction from points.
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
@@ -1311,11 +1326,11 @@ public:
     /*! Returns an x-monotone curve consists of one given segment.
      * \param seg input segment
      * \return A polyline with one segment, namely seg.
-     * TODO: Implement this construction (as per Efi's recommendation)
      */
-    // X_monotone_curve_2 operator()(const Segment_2 seg) const
-    // {
-    // }
+    X_monotone_curve_2 operator()(const Segment_2& seg) const
+    {
+      return (X_monotone_curve_2(seg));
+    }
 
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
