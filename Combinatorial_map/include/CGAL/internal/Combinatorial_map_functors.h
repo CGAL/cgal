@@ -517,10 +517,12 @@ namespace CGAL {
                        std::deque<std::deque<typename Map::Dart_handle> >
                         *store )
       {
-        if ( i==j ) return;
-
         const int mark_for_jcells = mark_for_incident_cells
             [Map::Helper::template Dimension_index<j>::value];
+        amap->negate_mark( mark_for_jcells );
+
+        if ( i==j ) return;
+
         std::deque<std::deque<typename Map::Dart_handle> >& jcells =
             store[Map::Helper::template Dimension_index<j>::value];
 
@@ -532,8 +534,6 @@ namespace CGAL {
             a1 = NULL;
         typename Map::Helper::template Attribute_handle<j>::type
             a2=NULL;
-
-        amap->negate_mark( mark_for_jcells );
 
         for ( typename std::deque<std::deque<typename Map::Dart_handle> >::
               iterator it=jcells.begin(); it!=jcells.end(); ++it )

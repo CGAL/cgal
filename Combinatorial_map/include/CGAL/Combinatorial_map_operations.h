@@ -275,7 +275,7 @@ namespace CGAL {
           {
             if ( i==1 || d1<d2 )
               tolink.push_back(Dart_pair(d1, d2));
-	        amap.update_dart_of_all_attributes(*it, mark);
+          amap.update_dart_of_all_attributes(*it, mark);
           }
           else
           {
