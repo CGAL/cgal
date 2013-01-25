@@ -30,6 +30,34 @@
 
 namespace CGAL {
   namespace Mesh_3 {
+    
+    // http://en.wikipedia.org/wiki/Sorting_network
+    template <typename T, typename Comparator>
+    void
+    sort4(T& q0, T& q1, T& q2, T& q3, const Comparator& less)
+    {
+      if(less(q2,q0)) std::swap(q0,q2);
+      if(less(q3,q1)) std::swap(q1,q3);
+      if(less(q1,q0)) std::swap(q0,q1);
+      if(less(q3,q2)) std::swap(q2,q3);
+      if(less(q2,q1)) std::swap(q1,q2);
+    }
+
+    template <typename T, typename Comparator>
+    void
+    sort3(T& q0, T& q1, T& q2, const Comparator& less)
+    {
+      if(less(q2,q0)) std::swap(q0,q2);
+      if(less(q1,q0)) std::swap(q0,q1);
+      if(less(q2,q1)) std::swap(q1,q2);
+    }
+
+    template <typename T, typename Comparator>
+    void
+    sort2(T& q0, T& q1, const Comparator& less)
+    {
+      if(less(q1,q0)) std::swap(q0,q1);
+    }
 
     template<typename Vertex_handle>
     struct Vertex_handle_comparator 
@@ -64,8 +92,8 @@ namespace CGAL {
           v2[i] = c2->vertex(i);
         }
         Vertex_handle_comparator<Vertex_handle> vcomp;
-        std::sort(v1.begin(), v1.end(), vcomp);
-        std::sort(v2.begin(), v2.end(), vcomp);
+        sort4(v1[0], v1[1], v1[2], v1[3], vcomp);
+        sort4(v2[0], v2[1], v2[2], v2[3], vcomp);
         for(std::size_t i = 0; i < 4; ++i)
         {
           if(v1[i] == v2[i])
@@ -89,6 +117,7 @@ namespace CGAL {
       {
         if(f1 == f2)
           return false;
+        CGAL_PROFILER("Compare facets");
         Vertex_handle_comparator<Vertex_handle> vcomp;
         CGAL::cpp11::array<Vertex_handle,3> vf1;
         CGAL::cpp11::array<Vertex_handle,3> vf2;
@@ -99,8 +128,8 @@ namespace CGAL {
           vf2[i] = f2.first->vertex(
             Triangulation_utils_3::vertex_triple_index(f2.second,i));
         }
-        std::sort(vf1.begin(), vf1.end(), vcomp);
-        std::sort(vf2.begin(), vf2.end(), vcomp);
+        sort3(vf1[0], vf1[1], vf1[2], vcomp);
+        sort3(vf2[0], vf2[1], vf2[2], vcomp);
         for(std::size_t i = 0; i < 3; ++i)
         {
           if(vf1[i] == vf2[i])
@@ -126,14 +155,14 @@ namespace CGAL {
         if(pf1 == pf2)
           return false;
         //collect vertices of both facets
-        CGAL::cpp11::array<Vertex_handle, 3> vertices_f1;
-        CGAL::cpp11::array<Vertex_handle, 3> vertices_f2;
+        CGAL::cpp11::array<Vertex_handle, 3> vf1;
+        CGAL::cpp11::array<Vertex_handle, 3> vf2;
         Facet_he_circ begin =	pf1->facet_begin();
         Facet_he_circ end = begin;
         std::size_t i = 0;
         do
         {
-          vertices_f1[i++] = begin->vertex(); 
+          vf1[i++] = begin->vertex(); 
           ++begin;
         }while(begin != end);
 
@@ -142,21 +171,20 @@ namespace CGAL {
         i = 0;
         do
         {
-          vertices_f2[i++] = begin->vertex(); 
+          vf2[i++] = begin->vertex(); 
           ++begin;
         }while(begin != end);
 
         //compare vertices
-        Vertex_handle_comparator<Vertex_handle> comparator;
-        std::sort(vertices_f1.begin(), vertices_f1.end(), comparator);
-        std::sort(vertices_f2.begin(), vertices_f2.end(), comparator);
-        std::size_t nmax = std::min(vertices_f1.size(), vertices_f2.size());
-        for(std::size_t i = 0; i < nmax; i++)
+        Vertex_handle_comparator<Vertex_handle> vcomp;
+        sort3(vf1[0], vf1[1], vf1[2], vcomp);
+        sort3(vf2[0], vf2[1], vf2[2], vcomp);
+        for(std::size_t i = 0; i < 3; i++)
         {
-          if(vertices_f1[i] == vertices_f2[i])
+          if(vf1[i] == vf2[i])  
             continue;
-          else //either < or >
-            return comparator(vertices_f1[i], vertices_f2[i]);
+          else 
+            return vcomp(vf1[i], vf2[i]);
         }
         return false; //it is the same facet
       }
@@ -177,27 +205,27 @@ namespace CGAL {
           return false;
 
         //collect vertices of both facets
-        CGAL::cpp11::array<Vertex_handle,2> vertices_he1;
-        vertices_he1[0] = he1->vertex();
-        vertices_he1[1] = he1->opposite()->vertex();
+        CGAL::cpp11::array<Vertex_handle,2> vhe1;
+        vhe1[0] = he1->vertex();
+        vhe1[1] = he1->opposite()->vertex();
       
-        CGAL::cpp11::array<Vertex_handle,2> vertices_he2;
-        vertices_he2[0] = he2->vertex();
-        vertices_he2[1] = he2->opposite()->vertex();
+        CGAL::cpp11::array<Vertex_handle,2> vhe2;
+        vhe2[0] = he2->vertex();
+        vhe2[1] = he2->opposite()->vertex();
 
         //compare vertices
-        Vertex_handle_comparator<Vertex_handle> comparator;
-        std::sort(vertices_he1.begin(), vertices_he1.end(), comparator);
-        std::sort(vertices_he2.begin(), vertices_he2.end(), comparator);
+        Vertex_handle_comparator<Vertex_handle> vcomp;
+        sort2(vhe1[0], vhe1[1], vcomp);
+        sort2(vhe2[0], vhe2[1], vcomp);
 
         //we want he and he->opposite() to be both in the set, for flooding
         if(he1 == he2->opposite())
-          return comparator(he1->vertex(), he2->vertex());
+          return vcomp(he1->vertex(), he2->vertex());
       
-        if(vertices_he1[0] == vertices_he2[0])
-          return comparator(vertices_he1[1], vertices_he2[1]);
+        if(vhe1[0] == vhe2[0])
+          return vcomp(vhe1[1], vhe2[1]);
         else //either < or >
-          return comparator(vertices_he1[0], vertices_he2[0]);
+          return vcomp(vhe1[0], vhe2[0]);
       }
     };
 
