@@ -165,6 +165,12 @@ public:
       else {
         // here, the point is not endpoint of the segment
 
+        CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (s1,s2,s,p)= ("
+              << s1 << ") (" << s2 << ") ("
+              << s << ") (" << p << ") "
+              << "case of s1/s2 no endpoint relation"
+              << std::endl;);
+
         CGAL_assertion(not (s.segment().is_horizontal() or
                             s.segment().is_vertical()     ) );
 
