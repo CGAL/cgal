@@ -715,17 +715,13 @@ private:
 
           return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
         } else {
-          // maybe here I should immediately return POSITIVE;
-          // since we insert endpoints of segments first, p and q cannot
-          // be consecutive points on the convex hull if one of the
-          // endpoints of t is to the right of the line pq.
-          Point_2 pp = p.point(), qq = q.point();
-          Orientation o1 = CGAL::orientation(pp, qq, t.source());
-          Orientation o2 = CGAL::orientation(pp, qq, t.target());
-
-          if ( o1 == RIGHT_TURN || o2 == RIGHT_TURN ) {
-            return NEGATIVE;
-          }
+          // We immediately return POSITIVE here.
+          // This only works because the segment t is hor. or ver. !
+          // If t is neither hor. or ver., we have a more complicated
+          // decision procedure (see below).
+          // Since we insert endpoints of segments first, p and q cannot
+          // be consecutive points on the convex hull, because of the
+          // endpoints of t.
           return POSITIVE;
         }
       } else {
