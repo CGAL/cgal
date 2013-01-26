@@ -446,6 +446,7 @@ private:
                          << " o = " << o << std::endl; );
           return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
         } else {
+          // sandeep: (not is_p_on_t && not is_q_on_t )
           // maybe here I should immediately return POSITIVE;
           // since we insert endpoints of segments first, p and q cannot
           // be consecutive points on the convex hull if one of the
@@ -454,9 +455,9 @@ private:
           Orientation o1 = CGAL::orientation(pp, qq, t.source());
           Orientation o2 = CGAL::orientation(pp, qq, t.target());
 
-          if ( o1 == RIGHT_TURN || o2 == RIGHT_TURN ) {
-            return NEGATIVE;
-          }
+          //if ( o1 == RIGHT_TURN || o2 == RIGHT_TURN ) {
+            //return NEGATIVE;
+          //}
           return POSITIVE;
         }
       } 
