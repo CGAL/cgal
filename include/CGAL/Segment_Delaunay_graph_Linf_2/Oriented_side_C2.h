@@ -118,8 +118,11 @@ public:
     bool is_s2_segment = s2.is_segment();
 
     CGAL_assertion(
-        (is_s1_segment and same_segments(s, s1)) or 
-        (is_s2_segment and same_segments(s, s2))   );
+        (is_s1_segment and (same_segments(s, s1) or
+                            same_segments(s, s1.supporting_site())))
+        or
+        (is_s2_segment and (same_segments(s, s2) or
+                            same_segments(s, s2.supporting_site()))));
 
     if (is_s1_segment and is_s2_segment) {
       // the two segments must have a common endpoint,
