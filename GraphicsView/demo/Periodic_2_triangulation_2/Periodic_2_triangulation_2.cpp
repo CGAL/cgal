@@ -138,6 +138,10 @@ MainWindow::MainWindow()
   QObject::connect(pt_mp, SIGNAL(modelChanged()),
 		   this, SIGNAL(changed()));
 
+  pt_cz = new CGAL::Qt::TriangulationConflictZone<Periodic_DT>(&scene, &triang, this);
+  QObject::connect(pt_cz, SIGNAL(modelChanged()),
+		   this, SIGNAL(changed()));
+
   pt_rv = new CGAL::Qt::TriangulationRemoveVertex<Periodic_DT>(&triang, this);
   QObject::connect(pt_rv, SIGNAL(modelChanged()),
 		   this, SIGNAL(changed()));
@@ -233,10 +237,11 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 void
 MainWindow::on_actionShowConflictZone_toggled(bool checked)
 {
+    std::cout << __PRETTY_FUNCTION__ << std::endl;
   if(checked) {
-    scene.installEventFilter(pt_cc);
+    scene.installEventFilter(pt_cz);
   } else {
-    scene.removeEventFilter(pt_cc);
+    scene.removeEventFilter(pt_cz);
   }
 }
 
