@@ -25,7 +25,7 @@ private:
   
 public:
   // type of return value of orientation
-  typedef typename Base::OrientationLinf      OrientationLinf;
+  typedef typename CGAL::OrientationLinf      OrientationLinf;
 
 private:
   typedef typename Base::Point_2              Point_2;
