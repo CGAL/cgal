@@ -1580,20 +1580,31 @@ namespace CGAL {
       CGAL_assertion(2<=i && i<=dimension);
       CGAL_assertion( (is_sewable_for_involution<i>(adart1,adart2)) );
       
-      CMap_dart_iterator_of_involution<Self,i>     I1(*this, adart1);
-      CMap_dart_iterator_of_involution_inv<Self,i> I2(*this, adart2);
+      int mark = get_new_mark();
+      CGAL_assertion( mark!=-1 );
+
+      CMap_dart_iterator_basic_of_involution<Self,i>
+          I1(*this, adart1, mark);
+      CMap_dart_iterator_basic_of_involution_inv<Self,i>
+          I2(*this, adart2, mark);
+
       while ( I1.cont() )        
       {
         group_all_attributes_except(I1,I2,i);
         ++I1; ++I2;
       }
       
+      negate_mark( mark );
       I1.rewind(); I2.rewind();      
       while ( I1.cont() )
       {
         basic_link_beta_for_involution(I1, I2, i);
         ++I1; ++I2;
       }
+
+      negate_mark( mark );
+      CGAL_assertion( is_whole_map_unmarked(mark) );
+      free_mark(mark);
     }
 
     /** Sew by betai the two given darts plus all the required darts

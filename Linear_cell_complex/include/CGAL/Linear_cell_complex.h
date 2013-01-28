@@ -354,6 +354,17 @@ namespace CGAL {
       return res;
     }
 
+    /// Sew3 the facets having same geometry
+    /// (all the facets of the map are considered)
+    unsigned int sew3_same_facets()
+    {
+      int mark = this->get_new_mark();
+      this->negate_mark(mark);
+      unsigned int res=sew3_same_facets(mark);
+      this->free_mark(mark);
+      return res;
+    }
+
     /** Create an edge given 2 Vertex_attribute_handle.
      * @param h0 the first vertex handle.
      * @param h1 the second vertex handle.

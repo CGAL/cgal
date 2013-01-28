@@ -152,7 +152,8 @@ namespace CGAL {
       {
         if ( !adart->is_free(dim) )
         {
-          amap.link_beta_for_involution(first->beta(0)->beta(dim), n2->beta(dim), 2);
+          amap.link_beta_for_involution(first->beta(0)->beta(dim),
+                                        n2->beta(dim), 2);
         }
       }
     }
@@ -243,11 +244,7 @@ namespace CGAL {
         ++res;
       }
 
-      typedef std::pair<typename Map::Dart_handle, typename Map::Dart_handle>
-        Dart_pair;
-      std::deque<Dart_pair> tolink;
-      std::deque<typename Map::Dart_handle> tounlink;
-      std::deque<typename Map::Dart_handle> tounlinkinv;
+      typename Map::Dart_handle dg1=NULL, dg2=NULL;
 
       typename std::deque<typename Map::Dart_handle>::iterator it =
         to_erase.begin();
@@ -273,15 +270,12 @@ namespace CGAL {
         {
           if (d2 != Map::null_dart_handle)
           {
-            if ( i==1 || d1<d2 )
-              tolink.push_back(Dart_pair(d1, d2));
-	        amap.update_dart_of_all_attributes(*it, mark);
+            if ( dg1==NULL ) { dg1 = d1; dg2=d2; }
           }
           else
           {
             if ( !d1->is_free(i) )
             {
-              tounlink.push_back(d1);
               Map::Helper::template Foreach_enabled_attributes
                   <internal::Store_incident_cells<Map,i> >::
                   run(&amap, d1, mark, &mark_for_incident_cells[0],
@@ -293,7 +287,6 @@ namespace CGAL {
         {
           if ( !d2->is_free(iinv) )
           {
-            tounlinkinv.push_back(d2);
             Map::Helper::template Foreach_enabled_attributes
                 <internal::Store_incident_cells<Map,i> >::
                 run(&amap, d2, mark, &mark_for_incident_cells[0],
@@ -306,40 +299,66 @@ namespace CGAL {
           d1 = (*it)->beta(i);
           if ( !d1->is_free(iinv) )
           {
-            tounlinkinv.push_back(d1);
             Map::Helper::template Foreach_enabled_attributes
                 <internal::Store_incident_cells<Map,i> >::
                 run(&amap, d1, mark, &mark_for_incident_cells[0],
                     &incident_cells[0]);
           }
         }
+
+        amap.update_dart_of_all_attributes(*it, mark);
       }
 
       // 2) We group the two (i+1)-cells if they exist.
-      // TODO assert que dans i+1 il y a 0, 1 ou 2 cells; et appeler group
-      // que dans le cas ou il y en a 2 et que on a deux brins tq ....
-      if ( !tolink.empty() )
-      {
-        Dart_pair & p=tolink.back();
-        amap.template group_attribute<i+1>(p.first, p.second);
-      }
+      if ( dg1!=NULL )
+        amap.template group_attribute<i+1>(dg1, dg2);
 
       // 4) For each dart of the cell, we modify i-link of neighbors.
-      for ( typename std::deque<typename Map::Dart_handle>::iterator
-            it=tounlink.begin(); it!=tounlink.end(); ++it )
+      for ( it=to_erase.begin(); it != to_erase.end(); ++it)
       {
-        (*it)->unlink_beta(i);
-      }
-      for ( typename std::deque<typename Map::Dart_handle>::iterator
-            it=tounlinkinv.begin(); it!=tounlinkinv.end(); ++it )
-      {
-        (*it)->unlink_beta(iinv);
-      }
-      for ( typename std::deque<Dart_pair>::iterator
-            it=tolink.begin(); it!=tolink.end(); ++it )
-      {
-        (*it).first->basic_link_beta((*it).second, i);
-        (*it).second->basic_link_beta((*it).first, iinv);
+        d1 = (*it)->beta_inv(i);
+        while ( d1!=Map::null_dart_handle && amap.is_marked(d1, mark) )
+        {
+          d1 = d1->beta(i+1)->beta_inv(i);
+          if (d1 == (*it)->beta_inv(i)) d1 = Map::null_dart_handle;
+        }
+
+        d2 = (*it)->beta(i+1)->beta(i);
+        while ( d2!=Map::null_dart_handle && amap.is_marked(d2, mark) )
+        {
+          d2 = d2->beta(i+1)->beta(i);
+          if ( d2==(*it)->beta(i+1)->beta(i) ) d2=Map::null_dart_handle;
+        }
+
+        // TODO ? We can optimize by using map.basic_link_beta but we
+        // need to mark the second dart to not process another time...
+        if (d1 != Map::null_dart_handle)
+        {
+          if (d2 != Map::null_dart_handle)
+          {
+            d1->basic_link_beta(d2, i);
+            if ( i==1 ) d2->basic_link_beta(d1, 0);
+          }
+          else
+          {
+            if ( !d1->is_free(i) ) d1->unlink_beta(i);
+          }
+        }
+        else if (d2 != Map::null_dart_handle)
+        {
+          if ( !d2->is_free(CGAL_BETAINV(i)) )
+          {
+            d2->unlink_beta(CGAL_BETAINV(i));
+          }
+        }
+        if ((*it)->is_free(i+1) && !(*it)->is_free(i))
+        {
+          d1 = (*it)->beta(i);
+          if ( !d1->is_free(CGAL_BETAINV(i)) )
+          {
+            d1->unlink_beta(CGAL_BETAINV(i));
+          }
+        }
       }
 
       // 6) We remove all the darts of the cell.
