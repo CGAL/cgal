@@ -1039,6 +1039,23 @@ into a triangulation
 and counts the number of constrained edges of the
 resulting triangulation.
 
+ 
+
+The following code inserts two polylines into a triangulation.
+Note that if the triangulation allows intersections we can have
+arbitrary complicated overlapping polylines.  They can share
+any number of edges, and a polyline may pass several times through 
+the same edge.  
+
+For an edge we can further find out how many and which polyline
+constraints pass through it. For an edge we can obtain an iterator
+range with value type `Polyline_constrained_triangulation_2::Context`.
+From a context we can obtain the `Polyline_constrained_triangulation_2::Constraint_id`, and an iterator
+pointing to the vertex in the polyline constraint that passes 
+through the edge.
+
+
+
 \cgalExample{Triangulation_2/polylines.cpp}
 
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy 
