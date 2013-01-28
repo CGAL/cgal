@@ -551,9 +551,10 @@ conflicts_zone_impl(const Point& point,
   {
     r_tr_.find_conflicts(point,
                          zone.cell,
-                         zone.boundary_facets_inserter(),
-                         zone.cells_inserter(),
-                         zone.internal_facets_inserter());
+                         std::back_inserter(zone.boundary_facets),
+                         std::back_inserter(zone.cells),
+                         std::back_inserter(zone.internal_facets));
+    zone.sort();
   }
 
   return zone;
