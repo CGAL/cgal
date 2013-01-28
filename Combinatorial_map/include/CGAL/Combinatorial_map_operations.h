@@ -308,6 +308,7 @@ namespace CGAL {
           }
         }
 
+        // Required to process cells non consider in the cases above.
         amap.update_dart_of_all_attributes(*it, mark);
       }
 
@@ -363,13 +364,6 @@ namespace CGAL {
         }
       }
 
-      // We remove all the darts of the i-cell.
-      for (  it=to_erase.begin(); it!=to_erase.end(); ++it )
-      { amap.erase_dart(*it); }
-
-      CGAL_assertion( amap.is_whole_map_unmarked(mark) );
-      amap.free_mark(mark);
-
       // We test the split of all the incident cells for all the non
       // void attributes.
       Map::Helper::template Foreach_enabled_attributes
@@ -377,14 +371,22 @@ namespace CGAL {
                 run(&amap, &mark_for_incident_cells[0],
                     &incident_cells[0]);
 
+      // We remove all the darts of the i-cell.
+      for (  it=to_erase.begin(); it!=to_erase.end(); ++it )
+      { amap.erase_dart(*it); }
+
+      CGAL_assertion( amap.is_whole_map_unmarked(mark) );
+      amap.free_mark(mark);
+
       // We free the marks.
       for (int j=0; j<Map::Helper::nb_attribs; ++j)
       {
         CGAL_assertion( amap.is_whole_map_marked
-                        (mark_for_incident_cells [j]) );
-        amap.free_mark( mark_for_incident_cells [j] );
+                        (mark_for_incident_cells[j]) );
+        amap.free_mark( mark_for_incident_cells[j] );
       }
 
+      assert(amap.is_valid());
       CGAL_expensive_postcondition( amap.is_valid() );
 
       return res;
@@ -448,7 +450,7 @@ namespace CGAL {
               run(&amap, *it, mark, &mark_for_incident_cells[0],
                   &incident_cells[0]);
         }
-         amap.update_dart_of_all_attributes(*it, mark);
+        amap.update_dart_of_all_attributes(*it, mark);
       }
 
       // 3) We unlink all the darts of the volume for beta-d.
@@ -482,6 +484,7 @@ namespace CGAL {
         amap.free_mark( mark_for_incident_cells [j] );
       }
 
+      assert(amap.is_valid());
       CGAL_expensive_postcondition( amap.is_valid() );
 
       return res;
@@ -637,6 +640,7 @@ namespace CGAL {
         amap.free_mark( mark_for_incident_cells [j] );
       }
 
+      assert(amap.is_valid());
       CGAL_expensive_postcondition( amap.is_valid() );
 
       return res;

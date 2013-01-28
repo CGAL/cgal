@@ -112,6 +112,9 @@ namespace CGAL {
     template<typename Map>
     friend struct internal::Decrease_attribute_functor;
     
+    template<typename Map, unsigned int i, typename Enabled>
+    friend struct internal::Update_dart_of_one_attribute_functor;
+
   public:
     /// Types definition
     typedef Combinatorial_map_base<d_, Refs, Items_,Alloc_>  Self;
@@ -2333,7 +2336,12 @@ namespace CGAL {
              it(*this,adart,amark); it.cont(); ++it)
       {
         if ( it->template attribute<i>() != a )
+        {
+          std::cout<<"ERROR: an attribute of the cell is different "
+                  <<&*a<<" != "<<&*it->template attribute<i>()<<" for dart "
+                 <<&*it<<std::endl;
           valid = false; 
+        }
 
         if ( a!=NULL && it==a->dart() ) found_dart = true;
 
@@ -2342,10 +2350,20 @@ namespace CGAL {
       }
 
       if ( a!=NULL && a->get_nb_refs()!=nb )
+      {
+        std::cout<<"ERROR: the number of reference of an attribute is not correct "
+                <<nb<<" != "<<a->get_nb_refs()<<" for dart "
+               <<&*adart<<std::endl;
         valid = false;
+      }
 
       if ( a!=NULL && a->dart()!=NULL && !found_dart )
+      {
+        std::cout<<"ERROR: the dart of an attribute does not belong to the cell "
+                <<&*a->dart()<<" != NULL "<<" for dart "
+               <<&*adart<<std::endl;
         valid = false;
+      }
 
       return valid;
     }
