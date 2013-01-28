@@ -71,8 +71,9 @@ struct Triangulation_mesher_level_traits_3 :
     typedef CGAL::Mesh_3::Triangulation_finite_facets_comparator<Tr> Facet_comp;
     typedef CGAL::Mesh_3::Cell_handle_comparator<Tr> Cell_comp;
 
-    typedef std::set<Cell_handle, Cell_comp> Cells;
-    typedef std::set<Facet, Facet_comp> Facets;
+    typedef std::vector<Cell_handle> Cells;
+    typedef std::vector<Facet> Facets;
+
   public:
     typedef typename Cells::iterator Cells_iterator;
     typedef typename Facets::iterator Facets_iterator;
@@ -84,17 +85,11 @@ struct Triangulation_mesher_level_traits_3 :
     Zone() {
     }
 
-    std::insert_iterator<Facets> boundary_facets_inserter()
+    void sort()
     {
-      return std::inserter(boundary_facets, boundary_facets.end());
-    }
-    std::insert_iterator<Facets> internal_facets_inserter()
-    {
-      return std::inserter(internal_facets, internal_facets.end());
-    }
-    std::insert_iterator<Cells> cells_inserter()
-    {
-      return std::inserter(cells, cells.end());
+      std::sort(cells.begin(), cells.end(), Cell_comp());
+      std::sort(boundary_facets.begin(), boundary_facets.end(), Facet_comp());
+      std::sort(internal_facets.begin(), internal_facets.end(), Facet_comp());
     }
 
     Locate_type locate_type;
