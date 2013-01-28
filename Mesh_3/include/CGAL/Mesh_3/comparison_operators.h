@@ -152,6 +152,7 @@ namespace CGAL {
 
       bool operator()(const Facet_handle& pf1, const Facet_handle& pf2) const
       { 
+        CGAL_PROFILER("Compare polyhedron facets");
         if(pf1 == pf2)
           return false;
         //collect vertices of both facets
