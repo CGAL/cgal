@@ -33,6 +33,8 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Cartesian_converter.h>
 
+#include <CGAL/Segment_Delaunay_graph_2/Filtered_traits_base_2.h>
+
 namespace CGAL {
 
 
@@ -50,6 +52,9 @@ template<class CK_t, class CK_MTag, class EK_t, class EK_MTag,
 	 class FK_t, class FK_MTag, class C2E_t, class C2F_t,
 	 class ITag>
 class Segment_Delaunay_graph_Linf_filtered_traits_base_2
+ : public Segment_Delaunay_graph_filtered_traits_base_2
+            <CK_t, CK_MTag, EK_t, EK_MTag,
+             FK_t, FK_MTag, C2E_t, C2F_t, ITag>
 {
 private:
   typedef
@@ -58,6 +63,11 @@ private:
 						FK_t, FK_MTag,
 						C2E_t, C2F_t,
 						ITag>  Self;
+
+  typedef
+  Segment_Delaunay_graph_filtered_traits_base_2
+            <CK_t, CK_MTag, EK_t, EK_MTag,
+             FK_t, FK_MTag, C2E_t, C2F_t, ITag>  Base;
 
   typedef Segment_Delaunay_graph_Linf_traits_base_2<CK_t,CK_MTag,ITag> CK_traits;
   typedef Segment_Delaunay_graph_Linf_traits_base_2<FK_t,FK_MTag,ITag> FK_traits;
@@ -81,7 +91,7 @@ private:
   Cartesian_converter<EK, CK, To_double<typename EK::RT> >  E2C_t;
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Cartesian_converter<EK,CK,E2C_t>   E2C;
-  
+
   // Types for the construction kernel
   typedef typename CK::Point_2                CK_Point_2;
   typedef typename CK::Line_2                 CK_Line_2;
@@ -159,7 +169,7 @@ public:
 
 protected:
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Arrangement_enum
+  typename Base::Arrangement_enum
   Arrangement_enum;
 
 private:
@@ -319,13 +329,13 @@ private:
 public:
   // PREDICATES
   //-----------
-  typedef
-  Filtered_predicate<EK_Compare_x_2, FK_Compare_x_2, C2E, C2F>
-  Compare_x_2;
+  //typedef
+  //Filtered_predicate<EK_Compare_x_2, FK_Compare_x_2, C2E, C2F>
+  //Compare_x_2;
 
-  typedef
-  Filtered_predicate<EK_Compare_y_2, FK_Compare_y_2, C2E, C2F>
-  Compare_y_2;
+  //typedef
+  //Filtered_predicate<EK_Compare_y_2, FK_Compare_y_2, C2E, C2F>
+  //Compare_y_2;
 
   typedef
   Filtered_predicate<EK_Orientation_L2_2, FK_Orientation_L2_2, C2E, C2F>
@@ -339,13 +349,13 @@ public:
   Filtered_predicate<EK_Orientation_2, FK_Orientation_2, C2E, C2F>
   Orientation_2;
 
-  typedef
-  Filtered_predicate<EK_Equal_2, FK_Equal_2, C2E, C2F>
-  Equal_2;
+  //typedef
+  //Filtered_predicate<EK_Equal_2, FK_Equal_2, C2E, C2F>
+  //Equal_2;
 
-  typedef
-  Filtered_predicate<EK_Are_parallel_2,	FK_Are_parallel_2, C2E, C2F>
-  Are_parallel_2;
+  //typedef
+  //Filtered_predicate<EK_Are_parallel_2, FK_Are_parallel_2, C2E, C2F>
+  //Are_parallel_2;
 
   typedef
   Filtered_predicate<EK_Oriented_side_of_bisector_2,
@@ -367,10 +377,10 @@ public:
 		     FK_Infinite_edge_interior_conflict_2, C2E, C2F>
   Infinite_edge_interior_conflict_2;
 
-  typedef
-  Filtered_predicate<EK_Is_degenerate_edge_2,
-		     FK_Is_degenerate_edge_2, C2E, C2F>
-  Is_degenerate_edge_2;
+  //typedef
+  //Filtered_predicate<EK_Is_degenerate_edge_2,
+  //		     FK_Is_degenerate_edge_2, C2E, C2F>
+  //Is_degenerate_edge_2;
 
 private:
   typedef
@@ -431,15 +441,15 @@ public:
 
   // PREDICATES
   //-----------
-  Compare_x_2
-  compare_x_2_object() const {
-    return Compare_x_2();
-  }
+  //Compare_x_2
+  //compare_x_2_object() const {
+  //  return Compare_x_2();
+  //}
 
-  Compare_y_2
-  compare_y_2_object() const {
-    return Compare_y_2();
-  }
+  //Compare_y_2
+  //compare_y_2_object() const {
+  //  return Compare_y_2();
+  //}
 
   Orientation_L2_2
   orientation_L2_2_object() const {
@@ -456,15 +466,15 @@ public:
     return Orientation_2();
   }
 
-  Equal_2
-  equal_2_object() const {
-    return Equal_2();
-  }
+  //Equal_2
+  //equal_2_object() const {
+  //  return Equal_2();
+  //}
 
-  Are_parallel_2
-  are_parallel_2_object() const {
-    return Are_parallel_2();
-  }
+  //Are_parallel_2
+  //are_parallel_2_object() const {
+  //  return Are_parallel_2();
+  //}
 
   Oriented_side_of_bisector_2
   oriented_side_of_bisector_2_object() const {
@@ -486,15 +496,15 @@ public:
     return Infinite_edge_interior_conflict_2();
   }
 
-  Is_degenerate_edge_2
-  is_degenerate_edge_2_object() const {
-    return Is_degenerate_edge_2();
-  }
+  //Is_degenerate_edge_2
+  //is_degenerate_edge_2_object() const {
+  //  return Is_degenerate_edge_2();
+  //}
 
-  Arrangement_type_2
-  arrangement_type_2_object() const {
-    return Arrangement_type_2();
-  }
+  //Arrangement_type_2
+  //arrangement_type_2_object() const {
+  //  return Arrangement_type_2();
+  //}
 
   Oriented_side_2
   oriented_side_2_object() const {
