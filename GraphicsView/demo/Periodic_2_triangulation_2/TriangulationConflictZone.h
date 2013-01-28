@@ -1,4 +1,3 @@
-
 #ifndef CGAL_QT_PERIODIC_TRIANGULATION_CONFLICT_ZONE
 #define CGAL_QT_PERIODIC_TRIANGULATION_CONFLICT_ZONE
 
@@ -36,6 +35,7 @@ protected:
   void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
   bool eventFilter(QObject *obj, QEvent *event);
 
+  Face_handle m_hint;
   std::list<Face_handle> faces;
   std::list<QGraphicsPolygonItem*> qfaces;
   Periodic_triangulation *m_tr;
@@ -51,7 +51,7 @@ template <typename T>
 TriangulationConflictZone<T>::TriangulationConflictZone(QGraphicsScene* s,
                                                             T * tr_,
                                                             QObject* parent)
-    :  GraphicsViewInput(parent), m_tr(tr_), m_containing_face(Face_handle()), m_scene(s), m_triangle(NULL), m_animate(false)
+    :  GraphicsViewInput(parent), m_hint(NULL), m_tr(tr_), m_containing_face(Face_handle()), m_scene(s), m_triangle(NULL), m_animate(false)
 {
 }
 
@@ -60,6 +60,13 @@ void
 TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
 {
   Point p(m_convert(qt_point));
+  double dx = m_tr->domain().xmax() - m_tr->domain().xmin();
+  double dy = m_tr->domain().ymax() - m_tr->domain().ymin();
+  p = Point(p.x()- std::floor(p.x()/dx), p.y()- std::floor(p.y()/dy));
+
+  if (m_hint == NULL) {
+      m_hint = m_tr->faces_begin();
+  }
 
   faces.clear();
   for(std::list<QGraphicsPolygonItem*>::iterator it = qfaces.begin();
@@ -68,8 +75,7 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
     delete *it;
   }
   qfaces.clear();
-  Face_handle hint = m_tr->locate(p);
-  m_tr->get_conflicts(p, std::back_inserter(faces), hint);
+  m_tr->get_conflicts(p, std::back_inserter(faces), m_hint);
   for(typename std::list<Face_handle>::iterator it = faces.begin();
       it != faces.end();
       ++it){
@@ -122,6 +128,7 @@ TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
   }
   qfaces.clear();
   m_animate = false;
+  m_hint = NULL;
 }
 
 
