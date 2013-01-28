@@ -607,6 +607,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
       const FT sq_d = sq_distance(p, (*it)->point().point());
       if(minimal_weight_ != Weight() && sq_d < minimal_weight_) {
         insert_a_special_ball = true;
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
+        nearest_point = (*it)->point();
+#endif
         min_sq_d = minimal_weight_;
         if( ! is_special(*it) ) {
           ch = change_ball_size(*it, minimal_size_, true)->cell(); // special ball
