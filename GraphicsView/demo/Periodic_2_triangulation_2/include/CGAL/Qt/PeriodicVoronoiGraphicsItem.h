@@ -99,6 +99,7 @@ PeriodicTriangulationVoronoiGraphicsItem<DT>::paint(QPainter *painter, const QSt
   PainterOstream<typename DT::Geom_traits> pos(painter, rect);
   
   painter->setPen(edgesPen());
+  //dt->draw_dual(pos);
   // TODO(NGHK): Not yet implement
   // for(typename DT::Finite_edges_iterator eit = dt->finite_edges_begin();
   //     eit != dt->finite_edges_end();

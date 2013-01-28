@@ -425,6 +425,13 @@ public:
 
   /// \name Dual
   // \{
+  /// Constructs the circumcenter of the face f, respects the offset
+  /// \n NGHK: not implemented
+  Point circumcenter(Face_handle f) const {
+    return construct_circumcenter(f->vertex(0)->point(), f->vertex(1)->point(),
+        f->vertex(2)->point(), get_offset(f, 0), get_offset(f, 1), get_offset(
+            f, 2));
+  }
   /// Returns the dual of f, which is the circumcenter of f.
   /// NGHK: Not yet implemented
   Point dual (Face_handle f) const;
@@ -704,6 +711,12 @@ private:
 // end of auxilliary functions for remove
 
 
+  /// NGHK: Implemented
+  Segment construct_circumcenter(const Point &p1, const Point &p2,
+      const Point &p3, const Offset &o1, const Offset &o2, const Offset &o3) const {
+    return geom_traits().construct_segment_2_object()(p1, p2, p3, o1, o2, o3);
+  }
+
 
   /// NGHK: Not yet implemented
   Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
@@ -955,7 +968,6 @@ typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Point
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
-    NGHK_NYI;
   CGAL_triangulation_precondition (dimension()==2);
   return circumcenter(f);
 }

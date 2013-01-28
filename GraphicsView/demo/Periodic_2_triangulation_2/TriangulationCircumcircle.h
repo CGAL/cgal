@@ -85,7 +85,6 @@ template <typename DT>
 void 
 TriangulationCircumcircle<DT>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    // std::cout << __PRETTY_FUNCTION__ << std::endl;
     if(dt->dimension() != 2){
         circle->hide();
         return;

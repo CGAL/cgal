@@ -484,13 +484,6 @@ public:
         pt[0].second, pt[1].second, pt[2].second);
     return triang;
   }
-  /// Constructs the circumcenter of the face f, respects the offset
-  /// \n NGHK: not implemented
-  Point circumcenter(Face_handle f) const {
-    return construct_circumcenter(f->vertex(0)->point(), f->vertex(1)->point(),
-        f->vertex(2)->point(), get_offset(f, 0), get_offset(f, 1), get_offset(
-            f, 2));
-  }
 
   /// Constructs the segment associated with the edge (f,i), respects the offset
   Segment segment(Face_handle f, int i) const {
@@ -1191,11 +1184,6 @@ protected:
   Segment construct_segment(const Periodic_segment& seg) const {
     return construct_segment(seg[0].first, seg[1].first, seg[0].second,
         seg[1].second);
-  }
-  /// NGHK: Implemented
-  Segment construct_circumcenter(const Point &p1, const Point &p2,
-      const Point &p3, const Offset &o1, const Offset &o2, const Offset &o3) const {
-    return geom_traits().construct_segment_2_object()(p1, p2, p3, o1, o2, o3);
   }
   //\}
 
