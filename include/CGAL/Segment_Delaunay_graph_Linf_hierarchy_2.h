@@ -33,9 +33,9 @@
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_vertex_base_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_hierarchy_vertex_base_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_face_base_2.h>
+#include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
+#include <CGAL/Segment_Delaunay_graph_hierarchy_vertex_base_2.h>
+#include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 
 
 namespace CGAL {
@@ -58,12 +58,12 @@ const unsigned int sdg_hierarchy_2__maxlevel = 5;
 //--------------------------------------------------------------------
 
 template < class Gt,
-	   class ST = Segment_Delaunay_graph_Linf_storage_traits_2<Gt>,
+	   class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
 	   class STag = Tag_false,
 	   class D_S = Triangulation_data_structure_2<
-              Segment_Delaunay_graph_Linf_hierarchy_vertex_base_2<
-		Segment_Delaunay_graph_Linf_vertex_base_2<ST> >,
-              Segment_Delaunay_graph_Linf_face_base_2<Gt> >,
+              Segment_Delaunay_graph_hierarchy_vertex_base_2<
+		Segment_Delaunay_graph_vertex_base_2<ST> >,
+              Segment_Delaunay_graph_face_base_2<Gt> >,
 	   class LTag = Tag_false>
 class Segment_Delaunay_graph_Linf_hierarchy_2
   : public Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>

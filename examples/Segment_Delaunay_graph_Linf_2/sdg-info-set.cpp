@@ -175,7 +175,7 @@ struct Rep : public CGAL::Simple_cartesian<double> {};
 // typedefs for the geometric traits, storage traits and the algorithm
 #include <CGAL/Segment_Delaunay_graph_Linf_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_storage_traits_with_info_2.h>
+#include <CGAL/Segment_Delaunay_graph_storage_traits_with_info_2.h>
 
 
 typedef CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep> Gt;
@@ -190,7 +190,7 @@ typedef Info_set_merge_info<Info_item>      Merge_info;
 // define the storage traits with info
 
 typedef
-CGAL::Segment_Delaunay_graph_Linf_storage_traits_with_info_2<Gt,
+CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
                                                              Info,
                                                              Convert_info,
                                                              Merge_info>

@@ -13,14 +13,14 @@
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 
 #include <CGAL/Triangulation_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_storage_traits_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_vertex_base_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_face_base_2.h>
+#include <CGAL/Segment_Delaunay_graph_storage_traits_2.h>
+#include <CGAL/Segment_Delaunay_graph_vertex_base_2.h>
+#include <CGAL/Segment_Delaunay_graph_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/in_place_edge_list.h>
 #include <CGAL/Segment_Delaunay_graph_2/edge_list.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Traits_wrapper_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Constructions_C2.h>
 
 #include <CGAL/Iterator_project.h>
@@ -132,14 +132,14 @@ class Segment_Delaunay_graph_Linf_hierarchy_2;
 
 
 template<class Gt,
-	 class ST = Segment_Delaunay_graph_Linf_storage_traits_2<Gt>,
+	 class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
 	 class D_S = Triangulation_data_structure_2 < 
-                Segment_Delaunay_graph_Linf_vertex_base_2<ST>,
-                Segment_Delaunay_graph_Linf_face_base_2<Gt> >,
+                Segment_Delaunay_graph_vertex_base_2<ST>,
+                Segment_Delaunay_graph_face_base_2<Gt> >,
 	 class LTag = Tag_false >
 class Segment_Delaunay_graph_Linf_2
   : private Triangulation_2<
-          Segment_Delaunay_graph_Linf_traits_wrapper_2<Gt>, D_S >
+          Segment_Delaunay_graph_traits_wrapper_2<Gt>, D_S >
 {
   friend class Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,Tag_true,D_S,LTag>;
   friend class Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,Tag_false,D_S,LTag>;
@@ -148,7 +148,7 @@ protected:
   //------------
   typedef Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>       Self;
 
-  typedef Segment_Delaunay_graph_Linf_traits_wrapper_2<Gt>   Modified_traits;
+  typedef Segment_Delaunay_graph_traits_wrapper_2<Gt>   Modified_traits;
   typedef Triangulation_2<Modified_traits,D_S>           DG;
   typedef DG                                            Delaunay_graph;
 

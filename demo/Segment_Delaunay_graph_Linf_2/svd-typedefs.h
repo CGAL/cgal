@@ -8,7 +8,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
-#include <CGAL/Segment_Delaunay_graph_Linf_2.h>
+#include <CGAL/SDG_Linf_lbis_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
@@ -52,7 +52,7 @@ typedef Gt::Site_2             Site;
 
 typedef CGAL::Tag_true         STag;
 
-typedef CGAL::Segment_Delaunay_graph_Linf_storage_traits_2<Gt>       ST;
+typedef CGAL::Segment_Delaunay_graph_storage_traits_2<Gt>       ST;
 
 typedef CGAL::Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag>    SDG_2;
 //typedef CGAL::Segment_Delaunay_graph_2<Gt>          SDG_2;

@@ -24,14 +24,14 @@
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Traits_base_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Kernel_wrapper_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Cartesian_converter.h>
+#include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Cartesian_converter.h>
 
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Filtered_construction.h>
 
 #include <CGAL/number_utils_classes.h>
-#include <CGAL/Cartesian_converter_Linf.h>
+#include <CGAL/Cartesian_converter.h>
 
 namespace CGAL {
 
@@ -63,24 +63,24 @@ private:
   typedef Segment_Delaunay_graph_Linf_traits_base_2<FK_t,FK_MTag,ITag> FK_traits;
   typedef Segment_Delaunay_graph_Linf_traits_base_2<EK_t,EK_MTag,ITag> EK_traits;
 
-  typedef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Kernel_wrapper_2<CK_t,ITag>  CK;
-  typedef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Kernel_wrapper_2<FK_t,ITag>  FK;
-  typedef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Kernel_wrapper_2<EK_t,ITag>  EK;
+  typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Kernel_wrapper_2<CK_t,ITag>  CK;
+  typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Kernel_wrapper_2<FK_t,ITag>  FK;
+  typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Kernel_wrapper_2<EK_t,ITag>  EK;
 
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Cartesian_converter<CK,EK,C2E_t>   C2E;
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Cartesian_converter<CK,EK,C2E_t>   C2E;
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Cartesian_converter<CK,FK,C2F_t>   C2F;
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Cartesian_converter<CK,FK,C2F_t>   C2F;
 
   typedef
-  Cartesian_converter_Linf<FK, CK, To_double<typename FK::RT> >  F2C_t;
+  Cartesian_converter<FK, CK, To_double<typename FK::RT> >  F2C_t;
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Cartesian_converter<FK,CK,F2C_t>   F2C;
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Cartesian_converter<FK,CK,F2C_t>   F2C;
 
   typedef
-  Cartesian_converter_Linf<EK, CK, To_double<typename EK::RT> >  E2C_t;
+  Cartesian_converter<EK, CK, To_double<typename EK::RT> >  E2C_t;
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Cartesian_converter<EK,CK,E2C_t>   E2C;
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Cartesian_converter<EK,CK,E2C_t>   E2C;
   
   // Types for the construction kernel
   typedef typename CK::Point_2                CK_Point_2;
@@ -159,7 +159,7 @@ public:
 
 protected:
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Internal::Arrangement_enum
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Arrangement_enum
   Arrangement_enum;
 
 private:

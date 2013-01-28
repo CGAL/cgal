@@ -3,8 +3,8 @@
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 #include <CGAL/Polychain_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_parallel_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_parallel_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 
 namespace CGAL {
 
@@ -37,8 +37,8 @@ private:
   typedef typename K::Compare_x_2  Compare_x_2;
   typedef typename K::Compare_y_2  Compare_y_2;
 
-  typedef Are_parallel_C2<K>       Are_parallel_2;
-  typedef Are_same_points_C2<K>    Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_parallel_C2<K>       Are_parallel_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>    Are_same_points_2;
   Compare_x_2 compare_x_2;
   Compare_y_2 compare_y_2;
 

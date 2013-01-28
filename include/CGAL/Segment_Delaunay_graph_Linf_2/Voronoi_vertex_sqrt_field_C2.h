@@ -26,9 +26,9 @@
 
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_segments_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_segments_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 #include <CGAL/Side_of_oriented_square_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Bisector_Linf.h>
 
@@ -68,8 +68,8 @@ public:
   typedef typename Base::Polychainline_2     Polychainline_2;
 
 private:
-  typedef Are_same_points_C2<K>          Are_same_points_2;
-  typedef Are_same_segments_C2<K>        Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>   Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
   typedef Side_of_oriented_square_C2<K>  Side_of_oriented_square_2_Type;
   typedef Bisector_Linf<K>               Bisector_Linf_Type;
 

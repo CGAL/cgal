@@ -3,8 +3,8 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_VERTEX_CONFLICT_C2_H
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_segments_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
 #include <CGAL/Orientation_Linf_2.h>
 
@@ -55,8 +55,8 @@ private:
 
   typedef Voronoi_vertex_C2<K,Method_tag>    Voronoi_vertex_2;
 
-  typedef Are_same_points_C2<K>              Are_same_points_2;
-  typedef Are_same_segments_C2<K>            Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>   Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
 
   typedef typename K::Intersections_tag      ITag;
 

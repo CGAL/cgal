@@ -25,7 +25,7 @@
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Filtered_traits_base_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Filtered_traits_concept_check_tags.h>
+#include <CGAL/Segment_Delaunay_graph_2/Filtered_traits_concept_check_tags.h>
 
 // includes for the default parameters of the filtered traits
 #ifdef CGAL_USE_GMP
@@ -37,12 +37,12 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Interval_arithmetic.h>
-#include <CGAL/Cartesian_converter_Linf.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/number_utils_classes.h>
 
 namespace CGAL {
 
-#define SDG2_INS CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Internal
+#define SDG2_INS CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
@@ -65,9 +65,9 @@ template<class CK,
 	 class EK_MTag = Field_tag,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = Field_with_sqrt_tag,
-	 class C2E     = Cartesian_converter_Linf<CK, EK>,
+	 class C2E     = Cartesian_converter<CK, EK>,
 	 class C2F     =
-	 Cartesian_converter_Linf<CK, FK, To_interval<typename CK::RT> > >
+	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
 struct Segment_Delaunay_graph_Linf_filtered_traits_2
   : public Segment_Delaunay_graph_Linf_filtered_traits_base_2<CK, CK_MTag,
 							 EK, EK_MTag,
@@ -221,9 +221,9 @@ template<class CK,
 	 class EK_MTag = Integral_domain_without_division_tag,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = Field_with_sqrt_tag,
-	 class C2E     = Cartesian_converter_Linf<CK, EK>,
+	 class C2E     = Cartesian_converter<CK, EK>,
 	 class C2F     =
-	 Cartesian_converter_Linf<CK, FK, To_interval<typename CK::RT> > >
+	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
 struct Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2
   : public Segment_Delaunay_graph_Linf_filtered_traits_base_2<CK, CK_MTag,
 							 EK, EK_MTag,

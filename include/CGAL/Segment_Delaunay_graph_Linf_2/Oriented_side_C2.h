@@ -30,10 +30,10 @@ private:
   typedef typename Base::FT                   FT;
   typedef typename Base::RT                   RT;
 
-  typedef Are_same_points_C2<K>    Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K> Are_same_points_2;
   Are_same_points_2                same_points;
 
-  typedef Are_same_segments_C2<K>  Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
   Are_same_segments_2              same_segments;
 
   using Base::compute_supporting_line;

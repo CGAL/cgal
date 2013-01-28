@@ -5,10 +5,8 @@
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 #include <CGAL/enum.h>
-#include <CGAL/Sqrt_extension.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Sqrt_extension_2.h>
 #include <CGAL/Orientation_Linf_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 
 #include <CGAL/Polychain_2.h>
 
@@ -45,11 +43,8 @@ public:
   typedef typename K::Compare_y_2         Compare_y_2;
 
   typedef typename CGAL::Polychainline_2<K> Polychainline_2;   
-  typedef Are_same_points_C2<K>  Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>  Are_same_points_2;
 
-  typedef CGAL::Sqrt_extension<RT,RT,Tag_true>     Sqrt_1;
-  typedef CGAL::Sqrt_extension_2<RT>       Sqrt_2;
-  typedef CGAL::Sqrt_extension_2<Sqrt_1>   Sqrt_3;
 private:
     typedef typename Algebraic_structure_traits<RT>::Algebraic_category RT_Category;
     typedef typename Algebraic_structure_traits<FT>::Algebraic_category FT_Category;
@@ -118,37 +113,6 @@ public:
     FT y() const { return hy_ / hw_; }
   };
 
-public:
-  //-------------------------------------------------------------------
-  // CONVERSIONS
-  //-------------------------------------------------------------------
-
-  static FT compute_sqrt(const FT& x, const Tag_true&)
-  {
-    return CGAL::sqrt( x );
-  }
-
-  static FT compute_sqrt(const FT& x, const Tag_false&)
-  {
-    return FT(  CGAL::sqrt( CGAL::to_double(x) )  );
-  }
-
-  static
-  FT to_ft(const Sqrt_1& x)
-  {
-    FT sqrt_c = compute_sqrt( x.root(), ft_has_sqrt() );
-    return x.a0() + x.a1() * sqrt_c;
-  }
-
-  static
-  FT to_ft(const Sqrt_3& x)
-  {
-    FT sqrt_e = compute_sqrt( to_ft(x.e()), ft_has_sqrt() );
-    FT sqrt_f = compute_sqrt( to_ft(x.f()), ft_has_sqrt() );
-    FT sqrt_ef = sqrt_e * sqrt_f;
-    return to_ft(x.a()) + to_ft(x.b()) * sqrt_e
-      + to_ft(x.c()) * sqrt_f + to_ft(x.d()) * sqrt_ef;
-  }
 
 public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     //    compute_supporting_line(r.supporting_segment(), a2, b2, c2);

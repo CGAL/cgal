@@ -4,8 +4,8 @@
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Voronoi_vertex_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_segments_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -65,8 +65,8 @@ private:
   typedef typename Base::Compare_x_2          Compare_x_2_points;
   typedef typename Base::Compare_y_2          Compare_y_2_points;
 
-  typedef Are_same_points_C2<K>               Are_same_points_2;
-  typedef Are_same_segments_C2<K>             Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>   Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
 
   typedef typename K::Intersections_tag       ITag;
 

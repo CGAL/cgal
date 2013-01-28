@@ -24,8 +24,8 @@
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_ORIENTED_SIDE_OF_BISECTOR_C2_H
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_segments_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
 namespace CGAL {
 
@@ -48,8 +48,8 @@ private:
   typedef typename Base::Orientation         Orientation;
   typedef typename Base::Homogeneous_point_2 Homogeneous_point_2;
 
-  typedef Are_same_points_C2<K>             Are_same_points_2;
-  typedef Are_same_segments_C2<K>           Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>   Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
 
 private:
   Are_same_points_2    same_points;

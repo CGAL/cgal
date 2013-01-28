@@ -3,10 +3,10 @@
 
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Basic_predicates_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_points_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Are_same_segments_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Compare_x_2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Compare_y_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Compare_x_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Compare_y_2.h>
 #include <CGAL/Side_of_oriented_square_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Bisector_Linf.h>
 
@@ -49,20 +49,19 @@ public:
   using Base::compute_linf_projection_hom;
   using Base::oriented_side_of_line;
   using Base::opposite_line;
-  using Base::to_ft;
   using Base::compute_line_from_to;
   using Base::compute_horizontal_projection;
   using Base::compute_vertical_projection;
   using Base::compute_linf_perpendicular;
 
 private:
-  typedef Are_same_points_C2<K>          Are_same_points_2;
-  typedef Are_same_segments_C2<K>        Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K> Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
   typedef Side_of_oriented_square_2<K>   Side_of_oriented_square_2_Type;
   typedef Bisector_Linf<K>               Bisector_Linf_Type;
-  typedef Compare_x_2<K>                 Compare_x_2_Sites_Type;
-  typedef Compare_y_2<K>                 Compare_y_2_Sites_Type;
 
+  typedef SegmentDelaunayGraph_2::Compare_x_2<K> Compare_x_2_Sites_Type;
+  typedef SegmentDelaunayGraph_2::Compare_y_2<K> Compare_y_2_Sites_Type;
 
   typedef typename K::Intersections_tag ITag;
 

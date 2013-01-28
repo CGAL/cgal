@@ -41,8 +41,8 @@ private:
   // the orientation Linf predicate for three points 
   typedef Orientation_Linf_2<K>               Orientation_Linf_points_2;
   
-  typedef Are_same_points_C2<K>               Are_same_points_2;
-  typedef Are_same_segments_C2<K>             Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>   Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
 
   typedef typename K::Intersections_tag       ITag;
 

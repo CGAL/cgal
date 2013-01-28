@@ -22,7 +22,7 @@
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Constructions_C2.h>
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Kernel_wrapper_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>
 
 namespace CGAL {
 
@@ -67,7 +67,7 @@ public:
   //------------
   
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Kernel_wrapper_2<R,ITag>  Kernel;
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Kernel_wrapper_2<R,ITag>  Kernel;
   typedef Kernel                                              K;
   typedef R                                                   Rep;
   typedef MTag                                                Method_tag;
@@ -98,7 +98,7 @@ public:
 
 protected:
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Internal::Arrangement_enum
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Arrangement_enum
   Arrangement_enum;
 
 public:
@@ -127,15 +127,15 @@ public:
   // PREDICATES
   //-----------
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Compare_x_2<K>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Compare_x_2<K>
   Compare_x_2;
 
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Compare_y_2<K>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Compare_y_2<K>
   Compare_y_2;
 
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Orientation_L2_C2<K>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Orientation_C2<K>
   Orientation_L2_2;
 
   typedef
@@ -148,11 +148,11 @@ public:
   Orientation_2;
 
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Are_same_points_C2<K>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Are_same_points_C2<K>
   Equal_2;
 
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Are_parallel_C2<K>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Are_parallel_C2<K>
   Are_parallel_2;
 
   typedef
@@ -172,7 +172,7 @@ public:
   Infinite_edge_interior_conflict_2;
 
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Is_degenerate_edge_C2<K,MTag>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Is_degenerate_edge_C2<K,MTag>
   Is_degenerate_edge_2;
 
 #ifdef CGAL_SDG_USE_SIMPLIFIED_ARRANGEMENT_TYPE_PREDICATE
@@ -181,7 +181,7 @@ public:
   Arrangement_type_2;
 #else
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Arrangement_type_C2<K>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Arrangement_type_C2<K>
   Arrangement_type_2;
 #endif
 
