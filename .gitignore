@@ -747,6 +747,7 @@ Mesh_3/test/Mesh_3/test_meshing_3D_image
 Mesh_3/test/Mesh_3/test_meshing_implicit_function
 Mesh_3/test/Mesh_3/test_meshing_polyhedron
 Mesh_3/test/Mesh_3/test_meshing_polyhedron_with_features
+Mesh_3/test/Mesh_3/test_meshing_polylines_only
 Mesh_3/test/Mesh_3/test_off
 Mesh_3/test/Mesh_3/test_robust_weighted_circumcenter
 Minkowski_sum_3/test/Minkowski_sum_3/CMakeLists.txt
