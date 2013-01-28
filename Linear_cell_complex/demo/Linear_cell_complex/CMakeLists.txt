@@ -11,6 +11,8 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+# add_definitions("-DCGAL_CHECK_EXPENSIVE")
+
 find_package(CGAL COMPONENTS Qt4)
 include(${CGAL_USE_FILE})
 
@@ -23,7 +25,7 @@ find_package(Qt4)
 find_package(OpenGL)
 find_package(QGLViewer)
 
-if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND 
+if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND
       OPENGL_FOUND AND QGLVIEWER_FOUND) )
 
   MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL "

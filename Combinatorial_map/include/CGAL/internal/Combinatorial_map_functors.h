@@ -581,34 +581,33 @@ namespace CGAL {
           for ( typename std::deque<typename Map::Dart_handle>::iterator
                 itj=it->begin(); itj!=it->end(); ++itj )
           {
-            if ( !amap->is_marked( *itj, mark_for_jcells) )
+            if ( !amap->is_marked(*itj, mark_for_jcells) )
             {
               ++nbofjcell;
               if ( nbofjcell>1 )
               {
                 a2 = amap->template create_attribute<j>(*a1);
-                std::cout<<"A2 "<<&*a2<<"  "<<&**itj<<": ";
+                // std::cout<<"A2 "<<&*a2<<"  "<<&**itj<<": ";
                 // We call the on_split functor
               }
               else
               {
                 a1=(*itj)->template attribute<j>();
-                // TODO
                 a1->set_dart(*itj);
-                std::cout<<"A1 "<<&*a1<<"  "<<&**itj<<": ";
+                // std::cout<<"A1 "<<&*a1<<"  "<<&**itj<<": ";
               }
 
               for ( CMap_dart_iterator_basic_of_cell<Map,j>
                   itj2(*amap, *itj, mark_for_jcells);
                   itj2.cont(); ++itj2 )
               {
-                std::cout<<&*itj2<<", ";
+                // std::cout<<&*itj2<<", ";
                 if ( nbofjcell>1 )
                   amap->template set_attribute_of_dart<j>(itj2, a2);
 
                 amap->mark(itj2, mark_for_jcells);
               }
-              std::cout<<std::endl;
+              // std::cout<<std::endl;
 
               if ( nbofjcell>1 )
                 Apply_cell_functor
