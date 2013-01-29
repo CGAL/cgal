@@ -698,21 +698,23 @@ private:
           t.segment().is_vertical())     {
         // here segment is horizontal or vertical;
         // there are similarities with L2 case here
-      
+
         if ( is_p_on_t ) {
           // p is an endpoint of t
           // in this case the p,q,oo vertex is destroyed only if the
           // other endpoint of t is beyond
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_pps p is endp of t" << std::endl; );
           Point_2 pt = is_p_tsrc ? t.target() : t.source();
           Orientation o = CGAL::orientation(p.point(), q.point(), pt);
-
+          CGAL_SDG_DEBUG(std::cout << "debug incircle_pps p is endp of t: "
+                         << "p = " << p << ", q = " << q << ", t = " << t
+                         << " o = " << o << std::endl; );
           return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
         } else if ( is_q_on_t ) {
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_pps q is endp of t" << std::endl; );
           Point_2 pt = is_q_tsrc ? t.target() : t.source();
           Orientation o = CGAL::orientation(p.point(), q.point(), pt);
-
+          CGAL_SDG_DEBUG(std::cout << "debug incircle_pps q is endp of t: "
+                         << "p = " << p << ", q = " << q << ", t = " << t
+                         << " o = " << o << std::endl; );
           return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
         } else {
           // We immediately return POSITIVE here.
