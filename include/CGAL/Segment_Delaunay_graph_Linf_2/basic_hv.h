@@ -1,0 +1,9 @@
+#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_BASIC_HV_H
+#define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_BASIC_HV_H
+
+#include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
+
+#define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_HV_2_NS \
+  CGAL::SegmentDelaunayGraphLinf_2_hv
+
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_BASIC_HV_H
