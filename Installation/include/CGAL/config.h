@@ -90,7 +90,7 @@
 #if defined(BOOST_NO_INITIALIZER_LISTS)
 #define CGAL_CFG_NO_CPP0X_INITIALIZER_LISTS 1
 #endif
-#if defined(_MSC_VER) && _MSC_VER <= 1600
+#if defined(BOOST_MSVC)
 #define CGAL_CFG_NO_CPP0X_ISFINITE 1
 #endif
 #if defined(BOOST_NO_LONG_LONG)
