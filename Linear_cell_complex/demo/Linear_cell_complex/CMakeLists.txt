@@ -13,6 +13,11 @@ endif()
 
 # add_definitions("-DCGAL_CHECK_EXPENSIVE")
 
+# For profilling with gprof
+add_definitions("-pg")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+
+##################
 find_package(CGAL COMPONENTS Qt4)
 include(${CGAL_USE_FILE})
 

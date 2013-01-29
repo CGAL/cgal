@@ -281,9 +281,9 @@ subdivide_lcc_pqq (LCC & m)
       {
         CGAL_assertion( (CGAL::is_removable<LCC, 1>(m,*dit)) );
         CGAL::remove_cell<LCC, 1>(m, *dit);
-        CGAL_assertion( m.is_valid() );
       }
       remove.resize(0); 
+      CGAL_assertion( m.is_valid() );
 
     }
   }

@@ -575,6 +575,7 @@ namespace CGAL {
         typename Map::Helper::template Attribute_handle<j>::type
             a2=NULL;
 
+        int nb=0;
         for ( typename std::deque<std::deque<typename Map::Dart_handle> >::
               iterator it=jcells.begin(); it!=jcells.end(); ++it )
         {
@@ -605,7 +606,7 @@ namespace CGAL {
                 // std::cout<<&*itj2<<", ";
                 if ( nbofjcell>1 )
                   amap->template set_attribute_of_dart<j>(itj2, a2);
-
+                ++nb;
                 amap->mark(itj2, mark_for_jcells);
               }
               // std::cout<<std::endl;
@@ -618,22 +619,25 @@ namespace CGAL {
             }
           }
         }
+        //std::cout<<"number of marked darts for <"<<j<<"> : "<<amap->number_of_marked_darts(mark_for_jcells)<<std::endl;
+        //std::cout<<"number of iterated darts : "<<nb<<std::endl;
+
       }
     };
 
-    template<typename Map, unsigned int i>
+    template<typename Map, unsigned int i, unsigned int k>
     struct Test2_split_with_deque
     {
       template <unsigned int j>
       static void run( Map* amap,
                        std::deque<typename Map::Dart_handle>
-                        *modified_darts )
+                        *modified_darts,
+                       int mark_modified_darts )
       {
-        if ( i==j ) return;
+        if ( i==j || j==k ) return;
 
         CGAL_assertion( amap!=NULL );
 
-        int nbofjcell = 0;
         typename Map::Helper::template Attribute_handle<j>::type
             a1 = NULL;
         typename Map::Helper::template Attribute_handle<j>::type
@@ -643,7 +647,7 @@ namespace CGAL {
             Attribute_handle<j>::type> found_attributes;
 
         int mark = amap->get_new_mark();
-
+        int nb=0;
         for ( typename std::deque<typename Map::Dart_handle>::
               iterator it=modified_darts->begin();
               it!=modified_darts->end(); ++it )
@@ -662,6 +666,7 @@ namespace CGAL {
                   itj(*amap, *it, mark);
                   itj.cont(); ++itj )
               {
+                ++nb;
                 // std::cout<<&*itj<<", ";
                 amap->template set_attribute_of_dart<j>(itj, a2);
                 amap->mark(itj, mark);
@@ -681,6 +686,7 @@ namespace CGAL {
                   itj(*amap, *it, mark);
                   itj.cont(); ++itj )
               {
+                ++nb;
                 // std::cout<<&*itj<<", ";
                 CGAL_assertion( itj->template attribute<j>()==a1 );
                 amap->mark(itj, mark);
@@ -688,7 +694,63 @@ namespace CGAL {
             }
             // std::cout<<std::endl;
           }
+
+          if ( i!=1 && j==0 )
+          {
+            typename Map::Dart_handle od = (*it)->other_extremity();
+            if ( od!=NULL && od->template attribute<j>()!=NULL &&
+                 !amap->is_marked(od, mark) )
+            {
+              a1 = od->template attribute<j>();
+              if ( found_attributes.insert(a1).second )
+              { // Here the attribute was not in the set as we are able
+                // to insert it.
+                a2 = amap->template create_attribute<j>(*a1);
+                // std::cout<<"A2 "<<&*a2<<"  "<<&**itj<<": ";
+
+                for ( CMap_dart_iterator_basic_of_cell<Map,j>
+                    itj(*amap, od, mark);
+                    itj.cont(); ++itj )
+                {
+                  ++nb;
+                  // std::cout<<&*itj<<", ";
+                  amap->template set_attribute_of_dart<j>(itj, a2);
+                  amap->mark(itj, mark);
+                }
+
+                Apply_cell_functor
+                    <typename Map::Helper::template Attribute_type<j>::type,
+                    typename Map::Helper::template Attribute_type<j>::type::
+                    On_split>::run(*a1, *a2);
+              }
+              else
+              { // Here the attribute was already present in the set
+                a1->set_dart(od);
+                // std::cout<<"A1 "<<&*a1<<"  "<<&**itj<<": ";
+
+                for ( CMap_dart_iterator_basic_of_cell<Map,j>
+                    itj(*amap, od, mark);
+                    itj.cont(); ++itj )
+                {
+                  ++nb;
+                  // std::cout<<&*itj<<", ";
+                  CGAL_assertion( itj->template attribute<j>()==a1 );
+                  amap->mark(itj, mark);
+                }
+              }
+              // std::cout<<std::endl;
+            }
+
+          }
         }
+
+       /* std::cout<<"Size of set for dim "<<j<<": "<<found_attributes.size()<<std::endl;
+
+        std::cout<<"Size of deque for dim "<<j<<": "<<modified_darts->size()<<std::endl;
+
+        std::cout<<"number of marked darts : "<<amap->number_of_marked_darts(mark)<<std::endl;
+        std::cout<<"number of iterated darts : "<<nb<<std::endl;
+*/
 
         // Now we unmark all the marked darts.
         amap->negate_mark(mark);
@@ -697,6 +759,8 @@ namespace CGAL {
               iterator it=modified_darts->begin();
               it!=modified_darts->end(); ++it )
         {
+          amap->unmark(*it, mark_modified_darts);
+
           if ( !amap->is_marked(*it, mark) )
             for ( CMap_dart_iterator_basic_of_cell<Map,j>
                 itj(*amap, *it, mark);
@@ -704,6 +768,18 @@ namespace CGAL {
             {
               amap->mark(itj, mark);
             }
+
+          if ( i!=1 && j==0 )
+          {
+            typename Map::Dart_handle od = (*it)->other_extremity();
+            if ( od!=NULL && !amap->is_marked(od, mark) )
+              for ( CMap_dart_iterator_basic_of_cell<Map,j>
+                  itj(*amap, od, mark);
+                    itj.cont(); ++itj )
+              {
+                amap->mark(itj, mark);
+              }
+          }
         }
 
         CGAL_assertion( amap->is_whole_map_marked(mark) );
