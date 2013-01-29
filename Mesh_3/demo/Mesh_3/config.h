@@ -7,6 +7,8 @@
 
 //#define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
+//#define CGAL_MESH_3_EXUDER_VERBOSE
+//#define CGAL_MESH_3_EXUDER_HIGH_VERBOSITY
 //#define CGAL_MESH_3_VERY_VERBOSE
 #define CGAL_MESH_3_IO_VERBOSE
 
@@ -114,16 +116,6 @@
 
   // For abortion profiling, etc.
 # define CGAL_CONCURRENT_MESH_3_PROFILING
-  
-  // ==========================================================================
-  // TBB
-  // ==========================================================================
-
-  // Use TBB malloc proxy (for all new/delete/malloc/free calls)
-  // Highly recommended
-# include <tbb/tbbmalloc_proxy.h>
-
-
 
 #else // !CONCURRENT_MESH_3
 
