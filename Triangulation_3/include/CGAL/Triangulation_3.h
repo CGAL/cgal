@@ -704,6 +704,21 @@ public:
     return success;
   }
 
+  bool is_element_locked_by_this_thread(Cell_handle cell_handle) const
+  {
+    bool locked = true;
+    Mesh_3::LockDataStructureType *p_lock_ds = Base::get_lock_data_structure();
+    if (p_lock_ds)
+    {
+      for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
+      {
+        Vertex_handle vh = cell_handle->vertex(iVertex);
+        locked = p_lock_ds->is_locked_by_this_thread(vh->point());
+      }
+    }
+    return locked;
+  }
+
   Cell_handle
   inexact_locate(const Point& p,
                  Cell_handle start,
@@ -3280,6 +3295,16 @@ insert_in_conflict(const Point & p,
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
 				Emptyset_iterator()));
+
+      // CJTODO TEST LOCK
+      for (Cell_handle ch : cells) 
+      {
+          if (!is_element_locked_by_this_thread(ch))
+          {
+            std::cerr << "************************ ARGH ****************" << std::endl;
+            int i = 0;
+          }
+      }
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
