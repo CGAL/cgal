@@ -1,4 +1,62 @@
 
+-------------------------------- Release 4.2 --------------------------------
+
+Release date:
+
+
+* Installation
+
+  - This is the last release whose "UseCGAL.cmake" file (if using CGAL in a
+    CMake build environment) contains the line
+      link_libraries(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
+    as this is a deprecated CMake command. The correct way to link with CGAL's
+    libraries (as for required 3rd party libraries) is to use
+    'target_link_libraries' which specifies for each build target which
+    libraries should be linked. The following serves as example:
+      find_package(CGAL)
+      include(${CGAL_USE_FILE})
+      add_executable(myexe main.cpp)
+      target_link_libraries(myexe ${CGAL_LIBRARIES}
+                                  ${CGAL_3RD_PARTY_LIBRARIES})
+    We also expect further changes in CGAL's CMake setup (change of variable
+    names, consistency of filename and output, removing essential libraries,
+    building executables, removal of '${CGAL_3RD_PARTY_LIBRARIES}').
+
+
+* 3D Fast Intersection and Distance Computation
+
+  - Update requirements of the concepts AABBTraits and AABBGeomTraits to match
+    the implementation of the package.
+
+
+* 2D Triangulations
+
+  - Add mechanism to avoid call stack overflow in Delaunay_triangulation_2 and
+    Constrained_Delaunay_triangulation_2.
+
+
+* Generator
+
+  - Addition of the Combination_enumerator
+
+
+* Surface Reconstruction from Point Sets
+
+  - Performance improvements and addition of an option to better reconstruct
+    undersampled zones.
+
+
+* 2D Voronoi Diagram Adaptor
+
+  - Bug-fix: Add ccb() method in face type as documented.
+
+
+* 2D Triangulations
+
+  - Add a constructor for Regular_triangulation_2 and Delaunay_triangulation_2
+    from a range of points or a range of points with info.
+
+
 -------------------------------- Release 4.1 --------------------------------
 
 Release date:
@@ -87,6 +145,9 @@ following has been changed since CGAL-4.0:
 
   - Fix a bug in the Segment_3-Triangle_3 intersection function in the case the
     segment is collinear with a triangle edge.
+
+  - Fix a bug in the Projection_traits_.._3 class in the case a segment was
+    parallel to the x-axis.
 
 
 * Algebraic Kernel
