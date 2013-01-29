@@ -109,22 +109,26 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 
 <h3>Installation</h3>
 <ul>
-<li>This is the last release whose <tt>UseCGAL.cmake</tt> file (if
-  using CGAL in a CMake build environment)
-  contains the line <code>link_libraries(${CGAL_LIBRARIES_DIR}
-  ${CGAL_3RD_PARTY_LIBRARIES_DIRS})</code>, as this is a deprecated
-  CMake command. The correct way to link with CGAL's libraries (as for
-  required 3rd party libraries) is to use
-  <code>target_link_libraries</code> which specifies for each build target
-  which libraries should be linked. The following serves as example:
-  <pre>
+<li>This is the last release whose "<tt>UseCGAL.cmake</tt>" file (if
+  using CGAL in a CMake build environment) contains the line
+<pre>
+  link_libraries(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
+</pre>
+  as this is a deprecated CMake command. The correct way to link with
+  CGAL's libraries (as for required 3rd party libraries) is to use
+  '<code>target_link_libraries</code>' which specifies for each build
+  target which libraries should be linked. The following serves as example:
+<pre>
   find_package(CGAL)
   include(${CGAL_USE_FILE})
   add_executable(myexe main.cpp)
-  target_link_libraries(myexe ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})</pre>
+  target_link_libraries(myexe ${CGAL_LIBRARIES}
+                              ${CGAL_3RD_PARTY_LIBRARIES})
+</pre>
   We also expect further changes in CGAL's CMake setup (change of
   variable names, consistency of filename and output, removing
-  essential libraries, building executables, removal of <code>${CGAL_3RD_PARTY_LIBRARIES}</code>).
+  essential libraries, building executables, removal
+  of '<code>${CGAL_3RD_PARTY_LIBRARIES}</code>').
   </li>
 </ul>
 
@@ -247,7 +251,7 @@ the following has been changed since CGAL-4.0:</p>
 <h3>2D and 3D Geometry Kernel </h3>
 <ul>
   <li>Fix a bug in the <code>Segment_3-Triangle_3</code> intersection function in the case the segment is collinear with a triangle edge.</li>
-  <li>Fix a bug in the <code>Projection_traits_.._3</code>class in the case a segment was parallel to the x-axis.</li>
+  <li>Fix a bug in the <code>Projection_traits_.._3</code> class in the case a segment was parallel to the x-axis.</li>
 </ul>
 
 <h3>Algebraic Kernel</h3>
