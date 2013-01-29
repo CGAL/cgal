@@ -56,7 +56,6 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <CGAL/TBB_configuration.h>
 # include <tbb/mutex.h>
 # include <tbb/task.h>
 #endif
@@ -362,8 +361,6 @@ protected:
     : m_lock_ds(bbox, num_grid_cells_per_axis)
     , m_worksharing_ds(bbox)
   {
-    //CJTODO TEST
-    //CGAL::TBB_configuration::set_max_number_of_threads(1);
   }
 
   LockDataStructureType *get_lock_data_structure() const
@@ -431,7 +428,8 @@ template < typename C3T3,
            typename SliverCriterion,
            typename Visitor_ = Null_perturber_visitor<C3T3> >
 class Sliver_perturber
-: public Sliver_perturber_base<typename C3T3::Triangulation, typename C3T3::Concurrency_tag>
+: public Sliver_perturber_base<typename C3T3::Triangulation,
+                               typename C3T3::Concurrency_tag>
 {
   // Types
   typedef typename C3T3::Concurrency_tag Concurrency_tag;
@@ -439,8 +437,6 @@ class Sliver_perturber
   typedef Sliver_perturber<C3T3, MeshDomain, SliverCriterion, Visitor_> Self;
   typedef Sliver_perturber_base<
     typename C3T3::Triangulation, Concurrency_tag>                      Base;
-
-  using Base::get_lock_data_structure;
 
   typedef typename C3T3::Triangulation  Tr;
   typedef typename Tr::Geom_traits      Gt;
@@ -461,6 +457,8 @@ class Sliver_perturber
 
   // Helper
   typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
+
+  using Base::get_lock_data_structure;
 
   // Visitor
   // Should define
@@ -882,6 +880,9 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 # ifdef CGAL_MESH_3_PERTURBER_VERBOSE
     int iteration_nb = 0;
 # endif
+    
+    //CJTODO TEST
+    //tbb::task_scheduler_init tsi(1);
 
     this->create_root_task();
 

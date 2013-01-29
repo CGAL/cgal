@@ -49,7 +49,8 @@ namespace po = boost::program_options;
 //#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
 //#define MESH_3_BENCHMARK_EXPORT_TO_MESH
 //#define MESH_3_BENCHMARK_LLOYD
-#define MESH_3_BENCHMARK_PERTURB
+//#define MESH_3_BENCHMARK_PERTURB
+//#define MESH_3_BENCHMARK_EXUDE
 
 // ==========================================================================
 // MESH_3 GENERAL PARAMETERS
@@ -59,6 +60,8 @@ namespace po = boost::program_options;
 //#define CGAL_MESH_3_VERBOSE
 //#define CGAL_MESH_3_PERTURBER_VERBOSE
 //#define CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
+#define CGAL_MESH_3_EXUDER_VERBOSE
+#define CGAL_MESH_3_EXUDER_HIGH_VERBOSITY
 //#define CGAL_MESH_3_VERY_VERBOSE
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 //#define CGAL_MESH_3_OPTIMIZER_VERBOSE
@@ -78,7 +81,7 @@ const int     TET_SHAPE                = 3;
 #ifdef CONCURRENT_MESH_3
 
 # ifndef CGAL_LINKED_WITH_TBB
-#   Warning("CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
+#   pragma warning("CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
 # endif
 
 //# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
@@ -141,7 +144,6 @@ const int     TET_SHAPE                = 3;
   // ==========================================================================
   // TBB
   // ==========================================================================
-# include <CGAL/TBB_configuration.h>
 # include <tbb/compat/thread>
 # ifndef _DEBUG
     // Use TBB malloc proxy (for all new/delete/malloc/free calls)
@@ -647,7 +649,13 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 # else
                                      , no_perturb()
 #endif
-                                     , no_exude());
+#ifdef MESH_3_BENCHMARK_EXUDE
+                                     , exude(time_limit = timelimit, 
+                                             sliver_bound = sliverbound)
+#else
+                                     , no_exude()
+#endif
+                                     );
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -743,7 +751,13 @@ bool make_mesh_3D_images(const std::string &input_filename,
 # else
                                      , no_perturb()
 #endif
-                                     , no_exude());
+#ifdef MESH_3_BENCHMARK_EXUDE
+                                     , exude(time_limit = timelimit, 
+                                             sliver_bound = sliverbound)
+#else
+                                     , no_exude()
+#endif
+                                     );
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -870,7 +884,13 @@ bool make_mesh_implicit(double facet_approx,
 # else
                                      , no_perturb()
 #endif
-                                     , no_exude());
+#ifdef MESH_3_BENCHMARK_EXUDE
+                                     , exude(time_limit = timelimit, 
+                                             sliver_bound = sliverbound)
+#else
+                                     , no_exude()
+#endif
+                                     );
 
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
@@ -927,7 +947,8 @@ int main()
 
 #ifdef CONCURRENT_MESH_3
   Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, true);
-  CGAL::TBB_configuration::set_max_number_of_threads(num_threads);
+  tbb::task_scheduler_init init(
+    num_threads > 0 ? num_threads : tbb::task_scheduler_init::automatic);
 #endif
 
   std::ifstream script_file;
@@ -949,7 +970,8 @@ int main()
 #endif
     {
 #ifdef CONCURRENT_MESH_3
-      CGAL::TBB_configuration::set_max_number_of_threads(num_threads);
+      tbb::task_scheduler_init init(
+        num_threads > 0 ? num_threads : tbb::task_scheduler_init::automatic);
 #endif
 
       std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' found." << std::endl;
