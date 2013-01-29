@@ -1,9 +1,0 @@
-<RCC>
-  <qresource prefix="/cgal/help" >
-    <file>about_CGAL.html</file>
-  </qresource>
-  <qresource prefix="/cgal/logos">
-    <file alias="CGAL.gif" >cgal_large_FAF8E8.gif</file>
-    <file alias="cgal_icon" >cgal_logo.xpm</file>
-  </qresource>
-</RCC>
