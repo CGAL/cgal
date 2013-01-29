@@ -21,7 +21,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
 
-namespace CGAL_sdgap {
+namespace CGAL_svdlinf {
 
   typedef CGAL::Cartesian<double>                             Kernel;
   typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Kernel>  Gt;
@@ -40,10 +40,10 @@ namespace CGAL_sdgap {
     "Draw the L_inf Voronoi skeleton of axis-parallel segments in Linf",
   };
 
-  class sdgapIpelet
+  class svdlinfIpelet
     : public CGAL::Ipelet_base<Kernel,num_entries> {
       public:
-        sdgapIpelet()
+        svdlinfIpelet()
           :CGAL::Ipelet_base<Kernel,num_entries>
              ("SVDLinfAP",sublabel,helpmsg){}
         void protected_run(int);
@@ -51,7 +51,7 @@ namespace CGAL_sdgap {
     };
   // --------------------------------------------------------------------
 
-  void sdgapIpelet::protected_run(int fn)
+  void svdlinfIpelet::protected_run(int fn)
   {
     SDG2 svd;     //Voronoi for segments
 
@@ -121,8 +121,8 @@ namespace CGAL_sdgap {
       draw_skeleton_in_ipe(svd, bbox);
     }
 
-  } // end of void sdgapIpelet::protected_run(int fn)
+  } // end of void svdlinfIpelet::protected_run(int fn)
 
 }
 
-CGAL_IPELET(CGAL_sdgap::sdgapIpelet)
+CGAL_IPELET(CGAL_svdlinf::svdlinfIpelet)
