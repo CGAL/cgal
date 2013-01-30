@@ -56,7 +56,6 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/mutex.h>
 # include <tbb/task.h>
 #endif
 
@@ -408,9 +407,6 @@ protected:
 public:
 
 protected:
-
-  typedef tbb::mutex                    MutexType;
-
   mutable LockDataStructureType         m_lock_ds;
   mutable Mesh_3::Auto_worksharing_ds   m_worksharing_ds;
   mutable tbb::task                    *m_empty_root_task;
