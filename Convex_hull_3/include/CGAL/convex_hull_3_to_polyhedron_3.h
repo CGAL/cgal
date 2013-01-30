@@ -54,7 +54,6 @@ public:
   void operator()( HDS& hds) {
     // Postcondition: `hds' is a valid polyhedral surface.
     typedef typename HDS::Vertex   Vertex;
-    typedef typename Vertex::Point Point;    
     
     CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
     std::vector<typename Triangulation::Cell_handle>  ch_facets;
