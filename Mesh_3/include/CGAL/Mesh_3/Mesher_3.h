@@ -120,16 +120,30 @@ protected:
 
 template<class C3T3, class MeshCriteria, class MeshDomain>
 class Mesher_3
-: public Mesher_3_base<typename C3T3::Concurrency_tag>
+: public Mesher_3_base<
+#ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+  Sequential_tag
+#else
+  typename C3T3::Concurrency_tag
+#endif
+  >
 {
 public:
   // Self
   typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>      Self;
+#ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+  typedef Mesher_3_base<typename Sequential_tag> Base;
+#else
   typedef Mesher_3_base<typename C3T3::Concurrency_tag> Base;
+#endif
 
   using Base::get_lock_data_structure;
 
+#ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+  typedef typename Sequential_tag                   Concurrency_tag;
+#else
   typedef typename C3T3::Concurrency_tag            Concurrency_tag;
+#endif
   typedef typename C3T3::Triangulation              Triangulation;
   typedef typename Triangulation::Point             Point;
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
