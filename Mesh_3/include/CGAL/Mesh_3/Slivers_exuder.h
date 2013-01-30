@@ -27,6 +27,7 @@
 
 #include <CGAL/Double_map.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <map>
 #include <vector>
 #include <set>
@@ -43,6 +44,15 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_exuder_visitor.h>
 
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+# define CGAL_PROFILE
+# include <CGAL/Profile_counter.h>
+#endif
+
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/task.h>
+#endif
+
 
 #ifdef CGAL_MESH_3_VERBOSE
   #define CGAL_MESH_3_EXUDER_VERBOSE
@@ -57,7 +67,7 @@ namespace Mesh_3 {
     
     // That functor Second_of takes a pair as input (the value type of a
     // map), and returns the ".second" member of that pair. It is used in
-    // Sliver_exuder, to constructor a transform iterator.
+    // Slivers_exuder, to constructor a transform iterator.
     
     // It should be doable using STL bind operators, but i am not sure how
     // to use them. -- Laurent Rineau, 2007/07/27
@@ -81,7 +91,7 @@ namespace Mesh_3 {
     // That function is constructed with a vertex handle v1.
     // Then, its operator() takes an other vertex handle v2 as input, and
     // returns the distance d(v1, v2).
-    // It is used in Sliver_exuder, to constructor a transform iterator.
+    // It is used in Slivers_exuder, to constructor a transform iterator.
     template <typename Gt, typename Vertex_handle>
     class Min_distance_from_v :
     public std::unary_function<Vertex_handle, void>
@@ -116,16 +126,160 @@ namespace Mesh_3 {
   } // end namespace details
   
   
+
+/************************************************
+// Class Slivers_exuder_base
+// Two versions: sequential / parallel
+************************************************/
+
+// Sequential
+template <typename Tr, typename Concurrency_tag>
+class Slivers_exuder_base
+{
+protected:
+  typedef typename Tr::Vertex_handle                        Vertex_handle;
+  typedef typename Tr::Cell_handle                          Cell_handle;
+  typedef typename Tr::Geom_traits                          Gt;
+  typedef typename Gt::FT                                   FT;
+  typedef typename std::vector<Vertex_handle>               Bad_vertices_vector;
+
+  Slivers_exuder_base(const Bbox_3 &, int) {}
+
+  LockDataStructureType *get_lock_data_structure()  const { return 0; }
+  void unlock_all_elements()                        const {}
+  void create_root_task()                           const {}
+  bool flush_work_buffers()                         const { return true; }
+  void wait_for_all()                               const {}
+  void destroy_root_task()                          const {}
+  template <typename Func>
+  void enqueue_work(Func, double)                   const {}
+
+protected:
+  /**
+   * A functor to remove one \c Cell_handle from a priority queue
+   */
+  template <typename Tet_priority_queue>
+  class Erase_from_queue
+  {
+  public:
+    Erase_from_queue(Tet_priority_queue& queue)
+    : r_queue_(queue) { }
+    
+    void operator()(const Cell_handle& cell)
+    { r_queue_.erase(cell); }
+    
+  private:
+    Tet_priority_queue& r_queue_;
+  };
   
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Parallel
+template <typename Tr>
+class Slivers_exuder_base<Tr, Parallel_tag>
+{
+protected:
+  typedef typename Tr::Vertex_handle                        Vertex_handle;
+  typedef typename Tr::Cell_handle                          Cell_handle;
+  typedef typename Tr::Geom_traits                          Gt;
+  typedef typename Gt::FT                                   FT;
+  typedef typename tbb::concurrent_vector<Vertex_handle>    Bad_vertices_vector;
+
+  Slivers_exuder_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
+    : m_lock_ds(bbox, num_grid_cells_per_axis)
+    , m_worksharing_ds(bbox)
+  {
+  }
+
+  LockDataStructureType *get_lock_data_structure() const
+  {
+    return &m_lock_ds;
+  }
+
+  void unlock_all_elements() const
+  {
+    m_lock_ds.unlock_all_tls_locked_cells();
+  }
+
+  void create_root_task() const
+  {
+    m_empty_root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
+    m_empty_root_task->set_ref_count(1);
+  }
+
+  bool flush_work_buffers() const
+  {
+    m_empty_root_task->set_ref_count(1);
+    bool keep_flushing = m_worksharing_ds.flush_work_buffers(*m_empty_root_task);
+    wait_for_all();
+    return keep_flushing;
+  }
+
+  void wait_for_all() const
+  {
+    m_empty_root_task->wait_for_all();
+  }
+
+  void destroy_root_task() const
+  {
+    tbb::task::destroy(*m_empty_root_task);
+    m_empty_root_task = 0;
+  }
+
+  template <typename Func>
+  void enqueue_work(Func f, double value) const
+  {
+    CGAL_assertion(m_empty_root_task != 0);
+    m_worksharing_ds.enqueue_work(f, value, *m_empty_root_task);
+  }
+
+public:
+
+protected:
+  
+  /**
+   * A functor to remove one \c Cell_handle from a priority queue
+   */
+  template <typename Tet_priority_queue>
+  class Erase_from_queue
+  {
+  public:
+    Erase_from_queue(Tet_priority_queue&) {}
+    
+    void operator()(const Cell_handle& cell)
+    { cell->increment_erase_counter(); }
+  };
+  
+  mutable LockDataStructureType         m_lock_ds;
+  mutable Mesh_3::Auto_worksharing_ds   m_worksharing_ds;
+  mutable tbb::task                    *m_empty_root_task;
+};
+#endif // CGAL_LINKED_WITH_TBB
+
+
+/************************************************
+// Class Slivers_exuder
+************************************************/
+ 
 template <
   typename C3T3,
+  typename MeshDomain,
   typename SliverCriteria,
   typename Visitor_ = Null_exuder_visitor<C3T3>,
   typename FT = typename C3T3::Triangulation::Geom_traits::FT
   >
 class Slivers_exuder
+: public Slivers_exuder_base<typename C3T3::Triangulation, 
+                             typename C3T3::Concurrency_tag>
 {
   // Types
+  typedef typename C3T3::Concurrency_tag Concurrency_tag;
+  
+  typedef Slivers_exuder<C3T3, SliverCriteria, Visitor_, FT> Self;
+  typedef Slivers_exuder_base<
+    typename C3T3::Triangulation, Concurrency_tag>           Base;
+  
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Bare_point Bare_point;
@@ -173,8 +327,12 @@ class Slivers_exuder
   // Should define
   //  - after_cell_pumped(std::size_t cells_left_number)
   typedef Visitor_ Visitor;
-
   
+  // Helper
+  typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
+
+  using Base::get_lock_data_structure;
+    
 public: // methods
   
   /**
@@ -185,6 +343,7 @@ public: // methods
    * max_weight(v) < d*dist(v,nearest_vertice(v))
    */
   Slivers_exuder(C3T3& c3t3,
+                 const MeshDomain& domain,
                  const SliverCriteria& criteria = SliverCriteria(),
                  double d = 0.45);
   
@@ -200,6 +359,14 @@ public: // methods
 #ifdef MESH_3_PROFILING
   WallClockTimer t;
 #endif
+
+#ifdef CGAL_LINKED_WITH_TBB
+    //CJTODO TEST
+    //tbb::task_scheduler_init tsi(1);
+#endif
+  
+    // Reset sliver value cache
+    helper_.reset_cache();
 
     Mesh_optimization_return_code ret = 
       pump_vertices<true>(criterion_value_limit, visitor);
@@ -230,12 +397,15 @@ private:
   /**
    * Pump one vertex
    */
-  bool pump_vertex(const Vertex_handle& v);
+  template <bool pump_vertices_on_surfaces>
+  bool pump_vertex(const Vertex_handle& v,
+                   bool *p_could_lock_zone = 0);
   
   /**
    * Returns the best_weight of v
    */
-  double get_best_weight(const Vertex_handle& v) const;
+  double get_best_weight(const Vertex_handle& v,
+                         bool *p_could_lock_zone = 0) const;
   
   /**
    * Initializes pre_star and criterion_values
@@ -243,7 +413,8 @@ private:
   void
   initialize_prestar_and_criterion_values(const Vertex_handle& v,
                                           Pre_star& pre_star,
-                                          Sliver_values& criterion_values) const;
+                                          Sliver_values& criterion_values,
+                                          bool *p_could_lock_zone = 0) const;
   
   /**
    * Expand pre_star with cell_to_add
@@ -268,12 +439,15 @@ private:
   /**
    * Updates the mesh with new_point
    */
+  template <bool pump_vertices_on_surfaces>
   void update_mesh(const Weighted_point& new_point,
-                   const Vertex_handle& old_vertex);
+                   const Vertex_handle& old_vertex,
+                   bool *p_could_lock_zone = 0);
   
   /**
    * Restores cells and boundary facets of conflict zone of new_vertex in c3t3_
    */
+  template <bool pump_vertices_on_surfaces>
   void restore_cells_and_boundary_facets(
     const Boundary_facets_from_outside& boundary_facets_from_outside,
     const Vertex_handle& new_vertex);
@@ -396,27 +570,29 @@ private:
   }
   
   /**
-   * A functor to remove one \c Cell_handle from a priority queue
+   * Add a cell \c ch to \c cells_queue
    */
-  class Erase_from_queue
+  template <bool pump_vertices_on_surfaces>
+  void add_cell_to_queue(Cell_handle ch, double criterion_value)
   {
-  public:
-    Erase_from_queue(Tet_priority_queue& queue)
-    : r_queue_(queue) { }
+#ifdef CGAL_LINKED_WITH_TBB
+    // Parallel
+    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+      enqueue_task<pump_vertices_on_surfaces>(ch, criterion_value);
+    // Sequential
+    else
+#endif
+      cells_queue_.insert(ch, criterion_value);
     
-    void operator()(const Cell_handle& cell)
-    { r_queue_.erase(cell); }
-    
-  private:
-    Tet_priority_queue& r_queue_;
-  };
-  
+  }
+
   /**
    * Delete cells of \c cells from \c cells_queue
    */
   void delete_cells_from_queue(const Cell_vector& cells)
   {
-    std::for_each(cells.begin(), cells.end(), Erase_from_queue(cells_queue_));
+    std::for_each(cells.begin(), cells.end(), 
+                  Base::Erase_from_queue<Tet_priority_queue>(cells_queue_));
   }
   
   /**
@@ -472,6 +648,13 @@ private:
     return true;
   }
   
+#ifdef CGAL_LINKED_WITH_TBB
+  // For parallel version
+  template <bool pump_vertices_on_surfaces>
+  void
+  enqueue_task(Cell_handle ch, double value);
+#endif
+
 private:
   // -----------------------------------
   // Private data
@@ -488,6 +671,7 @@ private:
   bool initialized_;
   SliverCriteria sliver_criteria_;
   Tet_priority_queue cells_queue_;
+  C3T3_helpers helper_;
   
   // Timer
   double time_limit_;
@@ -552,10 +736,12 @@ private:
 
   
   
-template <typename C3T3, typename SC, typename V_, typename FT> 
-Slivers_exuder<C3T3,SC,V_,FT>::
-Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
-  : c3t3_(c3t3)
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
+Slivers_exuder(C3T3& c3t3, const Md& domain, const SC& criteria, double d)
+  : Base(c3t3.bbox(),
+         Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
+  , c3t3_(c3t3)
   , tr_(c3t3_.triangulation())
   , sq_delta_(d*d)
   , sliver_bound_(0)
@@ -564,16 +750,19 @@ Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
   , num_of_treated_vertices_(0)
   , initialized_(false)
   , sliver_criteria_(criteria)
+  , helper_(c3t3_,domain,get_lock_data_structure())
   , time_limit_(-1)
   , running_time_()
 {
+  // If we're multi-thread
+  tr_.set_lock_data_structure(get_lock_data_structure());
 }  
   
 
-template <typename C3T3, typename SC, typename V_, typename FT>  
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT>  
 template <bool pump_vertices_on_surfaces>
 Mesh_optimization_return_code
-Slivers_exuder<C3T3,SC,V_,FT>:: 
+Slivers_exuder<C3T3,Md,SC,V_,FT>:: 
 pump_vertices(double sliver_criterion_limit,
               Visitor& visitor)
 {
@@ -603,45 +792,77 @@ pump_vertices(double sliver_criterion_limit,
   t.reset();
 #endif
 
-  while( !cells_queue_.empty() && !is_time_limit_reached() )
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
-    typename Tet_priority_queue::Reverse_entry front = *(cells_queue_.front());
-    Cell_handle c = front.second;
-    
-    bool vertex_pumped = false;
-    for( int i = 0; i < 4; ++i )
-    {
-      // pump_vertices_on_surfaces is a boolean template parameter.  The
-      // following condition is pruned at compiled time, if
-      // pump_vertices_on_surfaces==false.
-      if( pump_vertices_on_surfaces || c3t3_.in_dimension(c->vertex(i)) > 2 )
-      {
-        if( pump_vertex(c->vertex(i)) )
-        {
-          vertex_pumped = true;
-          ++num_of_pumped_vertices_;
-          break;
-        }
-        else
-          ++num_of_ignored_vertices_;
-        
-        ++num_of_treated_vertices_;
-      }
-    }
-    
-    // if the tet could not be deleted
-    if ( ! vertex_pumped )
-      cells_queue_.pop_front();
+    this->create_root_task();
 
-    visitor.after_cell_pumped(cells_queue_.size());
-#ifdef CGAL_MESH_3_EXUDER_VERBOSE   
-    std::cerr << boost::format("\r             \r"
-                               "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-      % cells_queue_.size()
-      % num_of_pumped_vertices_
-      % num_of_ignored_vertices_
-      % (num_of_treated_vertices_ / running_time_.time());
-#endif // CGAL_MESH_3_EXUDER_VERBOSE
+    while (!cells_queue_.empty())
+    {
+      typename Tet_priority_queue::Reverse_entry front = *(cells_queue_.front());
+      Cell_handle c = front.second;
+      cells_queue_.pop_front();
+      enqueue_task<pump_vertices_on_surfaces>(front.second, front.first);
+    }
+
+    this->wait_for_all();
+
+    std::cerr << " Flushing";
+    bool keep_flushing = true;
+    while (keep_flushing)
+    {
+      keep_flushing = this->flush_work_buffers();
+      std::cerr << ".";
+    }
+
+    this->destroy_root_task();
+  }
+  // Sequential
+  else
+#endif // CGAL_LINKED_WITH_TBB
+  {
+    while( !cells_queue_.empty() && !is_time_limit_reached() )
+    {
+      typename Tet_priority_queue::Reverse_entry front = *(cells_queue_.front());
+      Cell_handle c = front.second;
+    
+      bool vertex_pumped = false;
+      for( int i = 0; i < 4; ++i )
+      {
+        // pump_vertices_on_surfaces is a boolean template parameter.  The
+        // following condition is pruned at compiled time, if
+        // pump_vertices_on_surfaces==false.
+        if( pump_vertices_on_surfaces || c3t3_.in_dimension(c->vertex(i)) > 2 )
+        {
+          if( pump_vertex<pump_vertices_on_surfaces>(c->vertex(i)) )
+          {
+            vertex_pumped = true;
+            ++num_of_pumped_vertices_;
+            break;
+          }
+          else
+            ++num_of_ignored_vertices_;
+        
+          ++num_of_treated_vertices_;
+        }
+      }
+    
+      // if the tet could not be deleted
+      if ( ! vertex_pumped )
+        cells_queue_.pop_front();
+
+      visitor.after_cell_pumped(cells_queue_.size());
+  #ifdef CGAL_MESH_3_EXUDER_VERBOSE   
+      std::cerr << boost::format("\r             \r"
+                                 "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+        % cells_queue_.size()
+        % num_of_pumped_vertices_
+        % num_of_ignored_vertices_
+        % (num_of_treated_vertices_ / running_time_.time());
+  #endif // CGAL_MESH_3_EXUDER_VERBOSE
+    }
   }
   
   running_time_.stop();
@@ -684,13 +905,17 @@ pump_vertices(double sliver_criterion_limit,
 } // end function pump_vertices
 
 
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT>
+template <bool pump_vertices_on_surfaces>
 bool
-Slivers_exuder<C3T3,SC,V_,FT>::
-pump_vertex(const Vertex_handle& pumped_vertex)
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
+pump_vertex(const Vertex_handle& pumped_vertex,
+            bool *p_could_lock_zone)
 {
   // Get best_weight
-  double best_weight = get_best_weight(pumped_vertex);
+  double best_weight = get_best_weight(pumped_vertex, p_could_lock_zone);
+  if (p_could_lock_zone && *p_could_lock_zone == false)
+    return false;
   
   // If best_weight < pumped_vertex weight, nothing to do
   if ( best_weight > pumped_vertex->point().weight() )
@@ -698,7 +923,7 @@ pump_vertex(const Vertex_handle& pumped_vertex)
     Weighted_point wp(pumped_vertex->point(), best_weight);
     
     // Insert weighted point into mesh
-    update_mesh(wp, pumped_vertex);
+    update_mesh<pump_vertices_on_surfaces>(wp, pumped_vertex, p_could_lock_zone);
     
     return true;
   }
@@ -707,16 +932,30 @@ pump_vertex(const Vertex_handle& pumped_vertex)
 }
   
   
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
 void
-Slivers_exuder<C3T3,SC,V_,FT>::
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
 initialize_prestar_and_criterion_values(const Vertex_handle& v,
                                         Pre_star& pre_star,
-                                        Sliver_values& criterion_values) const
+                                        Sliver_values& criterion_values,
+                                        bool *p_could_lock_zone) const
 {
   std::vector<Cell_handle> incident_cells;
   incident_cells.reserve(64);
-  tr_.incident_cells(v, std::back_inserter(incident_cells));
+  // Parallel
+  if (p_could_lock_zone)
+  {
+    if (!helper_.try_lock_and_get_incident_cells(v, incident_cells))
+    {
+      *p_could_lock_zone = false;
+      return;
+    }
+  }
+  // Sequential
+  else
+  {
+    tr_.incident_cells(v, std::back_inserter(incident_cells));
+  }
 
   for ( typename Cell_vector::const_iterator cit = incident_cells.begin() ;
        cit != incident_cells.end() ;
@@ -747,9 +986,9 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
 }
   
   
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
 bool
-Slivers_exuder<C3T3,SC,V_,FT>::
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
 expand_prestar(const Cell_handle& cell_to_add,
                const Vertex_handle& pumped_vertex,
                Pre_star& pre_star,
@@ -843,15 +1082,19 @@ expand_prestar(const Cell_handle& cell_to_add,
 }
 
   
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
 double
-Slivers_exuder<C3T3,SC,V_,FT>::
-get_best_weight(const Vertex_handle& v) const
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
+get_best_weight(const Vertex_handle& v, bool *p_could_lock_zone) const
 {
   // Get pre_star and criterion_values
   Pre_star pre_star;
   Sliver_values criterion_values;
-  initialize_prestar_and_criterion_values(v, pre_star, criterion_values);
+  initialize_prestar_and_criterion_values(
+    v, pre_star, criterion_values, p_could_lock_zone);
+
+  if (p_could_lock_zone && *p_could_lock_zone == false)
+    return 0.;
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER        
   Pre_star pre_star_copy;
@@ -917,9 +1160,9 @@ get_best_weight(const Vertex_handle& v) const
 }
   
 
-template <typename C3T3, typename SC, typename V_, typename FT> 
-typename Slivers_exuder<C3T3,SC,V_,FT>::Umbrella
-Slivers_exuder<C3T3,SC,V_,FT>::
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
+typename Slivers_exuder<C3T3,Md,SC,V_,FT>::Umbrella
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
 get_umbrella(const Facet_vector& facets,
              const Vertex_handle& v) const
 {
@@ -929,19 +1172,21 @@ get_umbrella(const Facet_vector& facets,
   typename Facet_vector::const_iterator fit = facets.begin();
   for ( ; fit != facets.end() ; ++fit )
   {
-    Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
-    
     if ( c3t3_.is_in_complex(*fit) )
+    {
+      Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
       umbrella.insert(std::make_pair(edge, c3t3_.surface_patch_index(*fit)));
+    }
   }
   
   return umbrella;
 }
 
-  
-template <typename C3T3, typename SC, typename V_, typename FT> 
+
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT>
+template <bool pump_vertices_on_surfaces>
 void
-Slivers_exuder<C3T3,SC,V_,FT>::  
+Slivers_exuder<C3T3,Md,SC,V_,FT>::  
 restore_cells_and_boundary_facets(
   const Boundary_facets_from_outside& boundary_facets_from_outside,
   const Vertex_handle& new_vertex)
@@ -949,6 +1194,16 @@ restore_cells_and_boundary_facets(
   Cell_vector new_cells;
   new_cells.reserve(64);
   tr_.incident_cells(new_vertex, std::back_inserter(new_cells));
+  
+  // CJTODO TEST LOCK
+  /*for (Cell_handle ch : new_cells) 
+  {
+      if (!tr_.is_element_locked_by_this_thread(ch))
+      {
+        std::cerr << "************************ ARGH ****************" << std::endl;
+        int i = 0;
+      }
+  }*/
   
   // Each cell must have a facet on the boundary of the conflict zone
   CGAL_assertion(boundary_facets_from_outside.size() == new_cells.size());
@@ -985,16 +1240,16 @@ restore_cells_and_boundary_facets(
       double criterion_value = sliver_criteria_(tr_.tetrahedron(*cit));
 
       if( criterion_value < sliver_bound_ )
-        cells_queue_.insert(*cit, criterion_value);
+        add_cell_to_queue<pump_vertices_on_surfaces>(*cit, criterion_value);
     }
   }  
 }
   
 
   
-template <typename C3T3, typename SC, typename V_, typename FT> 
-typename Slivers_exuder<C3T3,SC,V_,FT>::Ordered_edge
-Slivers_exuder<C3T3,SC,V_,FT>::get_opposite_ordered_edge(
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
+typename Slivers_exuder<C3T3,Md,SC,V_,FT>::Ordered_edge
+Slivers_exuder<C3T3,Md,SC,V_,FT>::get_opposite_ordered_edge(
   const Facet& facet,
   const Vertex_handle& vertex) const
 {
@@ -1022,9 +1277,9 @@ Slivers_exuder<C3T3,SC,V_,FT>::get_opposite_ordered_edge(
 }
   
   
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
 void
-Slivers_exuder<C3T3,SC,V_,FT>::  
+Slivers_exuder<C3T3,Md,SC,V_,FT>::  
 restore_internal_facets(const Umbrella& umbrella,
                         const Vertex_handle& new_vertex)
 {
@@ -1050,11 +1305,13 @@ restore_internal_facets(const Umbrella& umbrella,
 }
 
   
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT>
+template <bool pump_vertices_on_surfaces>
 void
-Slivers_exuder<C3T3,SC,V_,FT>::  
+Slivers_exuder<C3T3,Md,SC,V_,FT>::  
 update_mesh(const Weighted_point& new_point,
-            const Vertex_handle& old_vertex)
+            const Vertex_handle& old_vertex,
+            bool *p_could_lock_zone)
 {
   CGAL_assertion_code(std::size_t nb_vert = 
                       tr_.number_of_vertices());
@@ -1070,8 +1327,22 @@ update_mesh(const Weighted_point& new_point,
                      old_vertex->cell(),
                      std::back_inserter(boundary_facets),
                      std::back_inserter(deleted_cells),
-                     std::back_inserter(internal_facets));
+                     std::back_inserter(internal_facets),
+                     p_could_lock_zone);
   
+  if (p_could_lock_zone && *p_could_lock_zone == false)
+    return;
+
+  // CJTODO TEST LOCK
+  /*for (Cell_handle ch : deleted_cells)
+  {
+    if (!tr_.is_element_locked_by_this_thread(ch))
+    {
+      std::cerr << "************************ ARGH ****************" << std::endl;
+      int i = 0;
+    }
+  }*/
+
   // Get some datas to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
@@ -1090,24 +1361,93 @@ update_mesh(const Weighted_point& new_point,
   int dimension = c3t3_.in_dimension(old_vertex);
   Index vertice_index = c3t3_.index(old_vertex);
   
-  Vertex_handle new_vertex = tr_.insert(new_point);
+  Vertex_handle new_vertex = tr_.insert(new_point, old_vertex->cell());
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertice_index);
 
-  CGAL_assertion(nb_vert == tr_.number_of_vertices());
-    
+  // Only true for sequential version
+  CGAL_assertion(p_could_lock_zone || nb_vert == tr_.number_of_vertices());
+
   // Restore mesh
-  restore_cells_and_boundary_facets(boundary_facets_from_outside, new_vertex);
+  restore_cells_and_boundary_facets<pump_vertices_on_surfaces>(
+    boundary_facets_from_outside, new_vertex);
   restore_internal_facets(umbrella, new_vertex);
-  CGAL_assertion(nb_vert == tr_.number_of_vertices());
+
+  // Only true for sequential version
+  CGAL_assertion(p_could_lock_zone || nb_vert == tr_.number_of_vertices());
 }
+
+
+#ifdef CGAL_LINKED_WITH_TBB
+// For parallel version
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT>
+template <bool pump_vertices_on_surfaces>
+void
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
+enqueue_task(Cell_handle ch, double value)
+{
+  int erase_counter = ch->get_erase_counter();
+  enqueue_work(
+    [&, ch, erase_counter]()
+    {
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+      static Profile_branch_counter_3 bcounter(
+        "early withdrawals / late withdrawals / successes [Exuder]");
+#endif
+
+      for( int i = 0; i < 4; ++i )
+      {
+        bool could_lock_zone;
+        do
+        {
+          could_lock_zone = true;
+
+          if (ch->get_erase_counter() != erase_counter)
+            break;
+
+          if (!tr_.try_lock_element(ch))
+          {
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+            bcounter.increment_branch_2(); // THIS is an early withdrawal!
+#endif
+            could_lock_zone = false;
+            this->unlock_all_elements();
+            continue;
+          }
+
+          if (ch->get_erase_counter() != erase_counter)
+            break;
+
+          // pump_vertices_on_surfaces is a boolean template parameter.  The
+          // following condition is pruned at compiled time, if
+          // pump_vertices_on_surfaces==false.
+          if (pump_vertices_on_surfaces || c3t3_.in_dimension(ch->vertex(i)) > 2)
+          {
+            this->pump_vertex<pump_vertices_on_surfaces>(
+              ch->vertex(i), &could_lock_zone);
+            
+#ifdef CGAL_CONCURRENT_MESH_3_PROFILING
+            if (!could_lock_zone)
+              bcounter.increment_branch_1(); // THIS is a late withdrawal!
+            else
+              ++bcounter; // Success!
+#endif
+          }
+    
+          this->unlock_all_elements();
+        } while (!could_lock_zone);
+      }
+    },
+    value);
+}
+#endif
 
   
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER  
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
 template <class Input_facet_it>
 bool
-Slivers_exuder<C3T3,SC,V_,FT>::
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
 check_pre_star(const Pre_star& pre_star,
                Input_facet_it begin,
                Input_facet_it end,
@@ -1211,9 +1551,9 @@ check_pre_star(const Pre_star& pre_star,
 
   
 
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
 bool
-Slivers_exuder<C3T3,SC,V_,FT>::
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
 check_pre_star(const Pre_star& pre_star,
                const Weighted_point& wp,
                const Vertex_handle& vh) const
@@ -1240,9 +1580,9 @@ check_pre_star(const Pre_star& pre_star,
 }
 
   
-template <typename C3T3, typename SC, typename V_, typename FT> 
+template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
 bool
-Slivers_exuder<C3T3,SC,V_,FT>::
+Slivers_exuder<C3T3,Md,SC,V_,FT>::
 check_ratios(const Sliver_values& criterion_values,
                   const Weighted_point& wp,
                   const Vertex_handle& vh) const

@@ -62,7 +62,7 @@ struct Tester
     typedef typename C3t3::size_type size_type;
     typedef typename C3t3::Triangulation::Geom_traits Gt;
     typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt> Sliver_criterion;
-    typedef typename CGAL::Mesh_3::Slivers_exuder<C3t3, Sliver_criterion> Exuder;
+    typedef typename CGAL::Mesh_3::Slivers_exuder<C3t3, Domain, Sliver_criterion> Exuder;
 
     // Store mesh properties
     size_type v = c3t3.triangulation().number_of_vertices();
@@ -115,7 +115,7 @@ struct Tester
     // Quality should increase
     C3t3 exude_c3t3(c3t3);
     std::cerr << "Exude...\n";
-    CGAL::exude_mesh_3(exude_c3t3);
+    CGAL::exude_mesh_3(exude_c3t3, domain);
     verify_c3t3(exude_c3t3,v,v,f,f);
     verify_c3t3_quality(c3t3,exude_c3t3);
     
