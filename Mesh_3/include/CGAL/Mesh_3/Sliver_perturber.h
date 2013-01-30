@@ -914,9 +914,6 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
     int iteration_nb = 0;
 # endif
 
-    // Stores the vertices for which perturbation has failed
-    Vertex_vector bad_vertices;
-
     while ( !is_time_limit_reached() && !pqueue.empty() )
     {
       // Get pqueue head
