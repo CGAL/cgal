@@ -1,6 +1,6 @@
 // standard includes
 
-//#define CGAL_SDG_VERBOSE 
+//#define CGAL_SDG_VERBOSE
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -37,21 +37,32 @@ int main( int argc, char *argv[] ) {
   bool use_hv = false;
   int fileat = 0;
   if ( argc >= 4 ) {
-    std::cout <<"usage: "<< argv[0] <<" [filename]\n" <<
-    "[-h] option for sdg_hv" << std::endl;
+    std::cout << "usage: "<< argv[0] <<" [filename]" << std::endl
+              << "       -h: option for sdg_hv" << std::endl;
   }
-  use_hv = (argc == 1) ? false :
-  (argc == 2 and (argv[1][0] == '-' and argv[1][1] == 'h') ) ? true :
-  (argc == 3 and ( (argv[1][0] == '-' and argv[1][1] == 'h')
-                 or(argv[2][0] == '-' and argv[2][1] == 'h') )) ? true : false;
+
+  use_hv =
+    (argc == 1) ?
+      false :
+      (argc == 2 and (strnlen(argv[1],2) == 2) and
+       (argv[1][0] == '-' and argv[1][1] == 'h') ) ?
+        true :
+        (argc == 3 and
+         (((strnlen(argv[1],2) == 2) and
+            argv[1][0] == '-' and argv[1][1] == 'h') or
+          ((strnlen(argv[2],2) == 2) and
+           argv[2][0] == '-' and argv[2][1] == 'h')   )) ?
+          true :
+          false;
+
   fileat = (argc == 1) ? 0 :
-  (argc == 2) ? (use_hv == true ? 0 : 1) :
-  (argc == 3 and (argv[1][0] == '-' and argv[1][1] == 'h')) ? 2 : 1;
-  
-  std::cout << "use_hv = " << use_hv << " fileat: " << fileat << std::endl;
-  
-  ifstream ifs( (fileat == 0) ? "data/sites2.cin" :
-                (fileat == 1) ? argv[1] : argv[2] );
+    (argc == 2) ? (use_hv == true ? 0 : 1) :
+    (argc == 3 and (argv[1][0] == '-' and argv[1][1] == 'h')) ? 2 : 1;
+
+  std::cout << "use_hv = " << use_hv
+            << " fileat: " << fileat << std::endl;
+
+  ifstream ifs( (fileat == 0) ? "data/sites2.cin" : argv[fileat] );
   assert( ifs );
 
   SDG2          sdg;
@@ -59,16 +70,14 @@ int main( int argc, char *argv[] ) {
   SDG2::Site_2  site;
 
   // read the sites from the stream and insert them in the diagram
-  if( use_hv ) {
-    while ( ifs >> site ) {
+  while ( ifs >> site ) {
+    if( use_hv ) {
       sdg_hv.insert( site );
-    }
-  } else {
-    while ( ifs >> site ) {
+    } else {
       sdg.insert( site );
     }
   }
-  
+
   ifs.close();
 
 
@@ -79,14 +88,17 @@ int main( int argc, char *argv[] ) {
   //cout << endl << endl;
 
   //std::cout << "Diagram validated." << std::endl;
-  (use_hv) ?
-  std::cout << "About to print sdg_hv for input file: " << ((fileat == 0) ?
-               "data/sites2.cin" : (fileat == 1) ? argv[1] : argv[2]) << std::endl :
-  std::cout << "About to print sdg for input file: " << ((fileat == 0) ?
-               "data/sites2.cin" : (fileat == 1) ? argv[1] : argv[2]) << std::endl ;
-  (use_hv) ?
-  sdg_hv.file_output_verbose(std::cout):
-  sdg.file_output_verbose(std::cout) ;
-  
+  std::cout
+     << "About to print " << ((use_hv) ? "sdg_hv" : "sdg")
+     << " for input file: "
+     << ((fileat == 0) ? "data/sites2.cin" : argv[fileat])
+     << std::endl ;
+
+  if (use_hv) {
+    sdg_hv.file_output_verbose(std::cout);
+  } else {
+    sdg.file_output_verbose(std::cout);
+  }
+
   return 0;
 }
