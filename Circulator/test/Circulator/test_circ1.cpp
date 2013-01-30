@@ -294,7 +294,7 @@ void test_tags() {
         std::vector<int>::difference_type
     > Circulator;
     typedef Random_access_container_from_circulator<Circulator> Container;
-    // typedef Container::iterator Iterator;
+ 
     Circulator ci( v.begin(), v.end());
     Container  Co( ci);
     assert( 3 == foo( ci));
