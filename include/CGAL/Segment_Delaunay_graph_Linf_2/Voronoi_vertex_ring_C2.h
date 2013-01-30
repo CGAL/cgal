@@ -1073,6 +1073,17 @@ private:
         }
         if (retval == SMALLER) {
           return NEGATIVE;
+        } else if (retval == LARGER) {
+          return POSITIVE;
+        } else {//retval == ZERO
+          //if p and t lies on the same side of the square touching
+          //p,q,r return positive
+          if (  (CGAL::compare(pref.x() - vx, t.x() - vx) == EQUAL)
+              or(CGAL::compare(pref.y() - vy, t.y() - vy) == EQUAL) ) {
+            return POSITIVE;
+          }
+          
+          return ZERO;
         }
       }
 
@@ -1096,6 +1107,17 @@ private:
         }
         if (retval == SMALLER) {
           return NEGATIVE;
+        } else if (retval == LARGER) {
+          return POSITIVE;
+        } else {//retval == ZERO
+          //if p and t lies on the same side of the square touching
+          //p,q,r return positive
+          if (  (CGAL::compare(qref.x() - vx, t.x() - vx) == EQUAL)
+              or(CGAL::compare(qref.y() - vy, t.y() - vy) == EQUAL) ) {
+            return POSITIVE;
+          }
+          
+          return ZERO;
         }
       }
 
@@ -1119,11 +1141,19 @@ private:
         }
         if (retval == SMALLER) {
           return NEGATIVE;
+        } else if (retval == LARGER) {
+          return POSITIVE;
+        } else {//retval == ZERO
+          //if p and t lies on the same side of the square touching
+          //p,q,r return positive
+          if (  (CGAL::compare(rref.x() - vx, t.x() - vx) == EQUAL)
+              or(CGAL::compare(rref.y() - vy, t.y() - vy) == EQUAL) ) {
+            return POSITIVE;
+          }
+          
+          return ZERO;
         }
-      }
 
-      if (retval == LARGER) {
-        return POSITIVE;
       }
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
