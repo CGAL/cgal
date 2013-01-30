@@ -151,6 +151,11 @@ MainWindow::MainWindow(QWidget* parent)
     "Parallel"
 #else
     "Sequential"
+# ifdef CGAL_LINKED_WITH_TBB
+    " - With TBB"
+# else
+    " - Without TBB"
+# endif
 #endif
 #ifdef _DEBUG
     " - Debug]";
