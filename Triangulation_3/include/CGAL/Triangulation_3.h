@@ -707,6 +707,8 @@ public:
   bool is_element_locked_by_this_thread(Cell_handle cell_handle) const
   {
     bool locked = true;
+#ifdef CGAL_LINKED_WITH_TBB
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     Mesh_3::LockDataStructureType *p_lock_ds = Base::get_lock_data_structure();
     if (p_lock_ds)
     {
@@ -716,6 +718,8 @@ public:
         locked = p_lock_ds->is_locked_by_this_thread(vh->point());
       }
     }
+# endif // CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+#endif // CGAL_LINKED_WITH_TBB
     return locked;
   }
 
