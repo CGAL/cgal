@@ -84,7 +84,9 @@ int main( int argc, char *argv[] ) {
                "data/sites2.cin" : (fileat == 1) ? argv[1] : argv[2]) << std::endl :
   std::cout << "About to print sdg for input file: " << ((fileat == 0) ?
                "data/sites2.cin" : (fileat == 1) ? argv[1] : argv[2]) << std::endl ;
-  sdg.file_output_verbose(std::cout);
+  (use_hv) ?
+  sdg_hv.file_output_verbose(std::cout):
+  sdg.file_output_verbose(std::cout) ;
   
   return 0;
 }
