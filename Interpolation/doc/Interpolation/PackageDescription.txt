@@ -41,8 +41,8 @@ function gradients are known, we can exactly interpolate quadratic
 functions given barycentric coordinates. Any further properties of
 these interpolation functions depend on the properties of the
 barycentric coordinates. They are provided in this package under the
-name `CGAL::linear_interpolation()` and
-`CGAL::quadratic_interpolation()`.
+name `linear_interpolation()` and
+`quadratic_interpolation()`.
 
 ## Natural Neighbor Interpolation ##
 
