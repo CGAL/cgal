@@ -1,4 +1,5 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009-2010 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010-2013 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -441,6 +442,11 @@ private:
   void add_to_complex(const Internal_edge& edge, const Curve_segment_index& index)
   {
     CGAL_precondition(!is_in_complex(edge));
+#if CGAL_MESH_3_PROTECTION_DEBUG
+    std::cerr << "Add edge ( " << edge.left->point()
+              << " , " << edge.right->point() << " ), curve_index=" << index
+              << " to c3t3.\n";
+#endif // CGAL_MESH_3_PROTECTION_DEBUG
     std::pair<typename Edge_map::iterator, bool> it = edges_.insert(edge);
     it.first->info = index;
   }
