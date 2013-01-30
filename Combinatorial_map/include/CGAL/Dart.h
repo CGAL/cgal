@@ -80,10 +80,10 @@ namespace CGAL {
     typedef typename Refs::Dart_const_handle Dart_const_handle;
     typedef typename Refs::Helper            Helper;
     /// Typedef for attributes
-    template<int i>  
+    template<int i>
     struct Attribute_handle: public Refs::template Attribute_handle<i>
     {};
-    template<int i>  
+    template<int i>
     struct Attribute_const_handle:
       public Refs::template Attribute_const_handle<i>
     {};
@@ -139,7 +139,7 @@ namespace CGAL {
     Dart_const_handle beta_inv(unsigned int i) const
     { return beta(CGAL_BETAINV(i)); }
 
-    /** Return a dart belonging to the same edge and to the second vertex 
+    /** Return a dart belonging to the same edge and to the second vertex
      * of the current edge (NULL if such a dart does not exist).
      * @return An handle to the opposite dart.
      */
@@ -155,7 +155,7 @@ namespace CGAL {
         if (!is_free(i)) return beta(i);
       return NULL;
     }
-  
+
     /** Return a dart incident to the other extremity of the current edge,
      *  but contrary to opposite, non necessary to the same edge
      *  (NULL if such a dart does not exist).
@@ -181,15 +181,15 @@ namespace CGAL {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles); 
+        (mattribute_handles);
     }
-    template<int i> 
+    template<int i>
     typename Attribute_const_handle<i>::type attribute() const
-    { 
+    {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles); 
+        (mattribute_handles);
     }
 
   protected:
@@ -260,11 +260,11 @@ namespace CGAL {
     /// @return a handle on the i th attribute
     template<int i>
     void set_attribute( typename Attribute_handle<i>::type & ahandle )
-    { 
+    {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "set_attribute<i> called but i-attributes are disabled.");
       CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles) = ahandle; 
+        (mattribute_handles) = ahandle;
       if (ahandle!=NULL) ahandle->inc_nb_refs();
     }
 
@@ -274,16 +274,16 @@ namespace CGAL {
     {
       template <int i>
       static void run(Self* adart)
-      { 
+      {
         // TODO BUG EN 1 SEULE LIGNE ?
         typename Attribute_handle<i>::type h = NULL;
         adart->template set_attribute<i> (h); }
     };
 
   public:
-    void * for_compact_container() const 
+    void * for_compact_container() const
     { return mbeta[0].for_compact_container(); }
-    void * & for_compact_container()       
+    void * & for_compact_container()
     { return mbeta[0].for_compact_container(); }
 
   protected:
