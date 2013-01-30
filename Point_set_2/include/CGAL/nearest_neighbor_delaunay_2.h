@@ -147,7 +147,6 @@ OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, std::
 template<class Dt, class OutputIterator>  
 OutputIterator  nearest_neighbors(const Dt& delau, typename Dt::Vertex_handle v, std::size_t k, OutputIterator res)
 {  
-  typedef typename Dt::Geom_traits                    Gt;
   typedef typename Dt::size_type                      size_type;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Dt::Vertex_iterator                Vertex_iterator;
@@ -193,9 +192,7 @@ void nearest_neighbors_list(const Dt& delau, typename Dt::Vertex_handle v, std::
   typedef typename Dt::Geom_traits                    Gt;
   typedef typename Dt::size_type                      size_type;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
-  typedef typename Dt::Vertex_iterator                Vertex_iterator;
   typedef typename Dt::Vertex_circulator              Vertex_circulator;
-  typedef typename Dt::Vertex                         Vertex;
   typedef typename Dt::Point                          Point;
   typedef typename Gt::FT                             Numb_type;  // field number type ...
   typedef typename Gt::Compute_squared_distance_2     Compute_squared_distance_2;   
