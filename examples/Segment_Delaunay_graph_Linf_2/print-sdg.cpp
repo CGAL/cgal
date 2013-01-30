@@ -46,7 +46,9 @@ int main( int argc, char *argv[] ) {
                  or(argv[2][0] == '-' and argv[2][1] == 'h') )) ? true : false;
   fileat = (argc == 1) ? 0 :
   (argc == 2) ? (use_hv == true ? 0 : 1) :
-  (argc == 3 and (argv[1][0] == '-' and argv[1][1] == 'h')) ? 1 : 2;
+  (argc == 3 and (argv[1][0] == '-' and argv[1][1] == 'h')) ? 2 : 1;
+  
+  std::cout << "use_hv = " << use_hv << " fileat: " << fileat << std::endl;
   
   ifstream ifs( (fileat == 0) ? "data/sites2.cin" :
                 (fileat == 1) ? argv[1] : argv[2] );
