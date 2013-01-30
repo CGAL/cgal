@@ -7,10 +7,10 @@
 /// \defgroup PkgInterpolation2Interpolation Interpolation Functions
 /// \ingroup PkgInterpolation2
 
-/// \defgroup PkgInterpolation2NatNeighbor Natural neighbor coordinate computation
+/// \defgroup PkgInterpolation2NatNeighbor Natural Neighbor Coordinate Computation
 /// \ingroup PkgInterpolation2
 
-/// \defgroup PkgInterpolation2SurfaceNeighbor Surface neighbor and surface neighbor coordinate computation
+/// \defgroup PkgInterpolation2SurfaceNeighbor Surface Neighbor and Surface Neighbor Coordinate Computation
 /// \ingroup PkgInterpolation2
 
 

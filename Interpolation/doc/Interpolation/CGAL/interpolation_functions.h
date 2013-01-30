@@ -119,7 +119,9 @@ field number type.
 and a Boolean value. The function value type must provide a 
 multiplication and addition operation with the field number type 
 `std::iterator_traits<ForwardIterator>::%value_type::second_type` and a constructor 
-with argument `0`. A model of the functor is provided by the 
+with argument `0`. 
+
+A model of the functor is provided by the 
 struct `Data_access`. It must be instantiated accordingly with 
 an associative container (e.g. `std::map`) having the 
 point type as `key_type` and the function value type as 
@@ -212,7 +214,7 @@ the function value type and a Boolean. The function value type must
 provide a multiplication and addition operation with the type 
 `Traits::FT` as well as a constructor with argument `0`.
 
-\tparam GradFunctor must be a functor where`GradFunctor::argument_type` must be equivalent to 
+\tparam GradFunctor must be a functor where `GradFunctor::argument_type` must be equivalent to 
 `Traits::Point_d` and `Functor::result_type` is a pair of 
 the function's gradient type and a Boolean. The 
 function gradient type must provide a multiplication operation with 
