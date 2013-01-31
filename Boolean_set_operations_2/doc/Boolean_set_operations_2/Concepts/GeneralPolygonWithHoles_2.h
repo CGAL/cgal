@@ -12,8 +12,8 @@ the holes.
 
 \cgalHasModel `CGAL::General_polygon_with_holes_2<General_polygon>`
 \cgalHasModel `CGAL::Polygon_with_holes_2<Kernel,Container>`
-\cgalHasModel `CGAL::Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2`
-\cgalHasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>::Polygon_with_holes_2` 
+\cgalHasModel `CGAL::Gps_circle_segment_traits_2<Kernel>::%Polygon_with_holes_2`
+\cgalHasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>::%Polygon_with_holes_2` 
 
 */
 
