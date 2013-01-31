@@ -31,9 +31,7 @@ typedef Hidden_type FT;
 
 /*! 
 Some model of concept `RingNumberType` that 
-provides exact arithmetic, meaning that 
-`CGAL::Number_type_traits<ET>::Has_exact_ring_operations` 
-must be `CGAL::Tag_true`. In addition, `ET` must be 
+provides exact arithmetic. In addition, `ET` must be
 able to exactly represent any finite `double` value. (An 
 example for such a type is `CGAL::MP_Float`.). 
 The type 
