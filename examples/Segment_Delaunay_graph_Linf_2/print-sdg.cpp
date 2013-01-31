@@ -44,7 +44,7 @@ int main( int argc, char *argv[] ) {
   use_hv =
     (argc == 1) ?
       false :
-  (argc == 2 and (strlen(argv[1]) == 2) and
+      (argc == 2 and (strlen(argv[1]) == 2) and
        (argv[1][0] == '-' and argv[1][1] == 'h') ) ?
         true :
         (argc == 3 and
