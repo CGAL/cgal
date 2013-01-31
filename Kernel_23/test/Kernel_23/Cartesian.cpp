@@ -25,6 +25,7 @@
 #include <cassert>
 
 #include "CGAL/Precise_numbers.h"
+#include "CGAL/_test_cls_kernel.h"
 #include "CGAL/_test_io.h"
 #include "CGAL/_test_2.h"
 #include "CGAL/_test_3.h"
@@ -49,6 +50,10 @@ main()
 {
   typedef   CGAL::Cartesian<CGAL::Quotient<Precise_integer> >     Cls;
   typedef   CGAL::Cartesian<double>     Clsd;
+
+  
+  std::cout << "Testing nested types with Cartesian<double> :" << std::endl;
+  _test_kernel( Clsd() );
 
   std::cout << "Testing IO with Cartesian<double> :" << std::endl;
   _test_io( Clsd() );
