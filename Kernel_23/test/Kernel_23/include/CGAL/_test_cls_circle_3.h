@@ -41,8 +41,6 @@ void _test_bounding_box_construct(const K &k)
   typedef typename K::Plane_3                          Plane_3;
   typedef typename K::Sphere_3                         Sphere_3;
   typedef typename K::Circle_3                         Circle_3;
-  typedef typename K::Construct_bbox_3                 Construct_bbox_3;
-  typedef typename K::Intersect_3                      Intersect_3;
   typedef typename K::Construct_circle_3               Construct_circle_3;
   typedef CGAL::Bbox_3                                 Bbox_3;
 
@@ -83,7 +81,6 @@ void _test_circle_construct(const K &k) {
   typedef typename K::Equal_3                          Equal_3;
   typedef typename K::Construct_circle_3               Construct_circle_3;
   typedef typename K::Compute_squared_distance_3       Compute_squared_distance_3;
-  typedef typename K::Collinear_3                      Collinear_3;
 
   Equal_3 theEqual_3 = k.equal_3_object();
   Construct_circle_3 theConstruct_circle_3 = k.construct_circle_3_object();
@@ -245,7 +242,6 @@ void _test_circle_equal(const K &k) {
   typedef typename K::Point_3                          Point_3;
   typedef typename K::Plane_3                          Plane_3;
   typedef typename K::Circle_3                         Circle_3;
-  typedef typename K::Sphere_3                         Sphere_3;
   typedef typename K::Equal_3                          Equal_3;
   typedef typename K::Construct_circle_3               Construct_circle_3;
 
@@ -298,7 +294,6 @@ void _test_circle_equal(const K &k) {
 
 template <class K>
 void _test_has_on_predicate(const K &k) {
-  typedef typename K::FT                               FT;
   typedef typename K::Point_3                          Point_3;
   typedef typename K::Plane_3                          Plane_3;
   typedef typename K::Sphere_3                         Sphere_3;
@@ -359,7 +354,6 @@ void _test_has_on_predicate(const K &k) {
 
 template <class K>
 void _test_bounded_side(const K &k) {
-  typedef typename K::FT                               FT;
   typedef typename K::Point_3                          Point_3;
   typedef typename K::Sphere_3                         Sphere_3;
   typedef typename K::Construct_sphere_3               Construct_sphere_3;
