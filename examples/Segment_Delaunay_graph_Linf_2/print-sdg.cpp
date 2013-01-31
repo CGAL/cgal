@@ -76,7 +76,7 @@ int main( int argc, char *argv[] ) {
         if ( not( site.segment().is_horizontal() or
                   site.segment().is_vertical() ) ) {
           std::cout << "input is not axis parallel " << site << endl;
-          return 0;
+          return 1;
         }
       }
       sdg_hv.insert( site );
