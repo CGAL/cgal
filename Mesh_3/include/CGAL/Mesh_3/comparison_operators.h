@@ -36,6 +36,7 @@ namespace CGAL {
     void
     sort4(T& q0, T& q1, T& q2, T& q3, const Comparator& less)
     {
+      CGAL_PROFILER("Sort4");
       if(less(q2,q0)) std::swap(q0,q2);
       if(less(q3,q1)) std::swap(q1,q3);
       if(less(q1,q0)) std::swap(q0,q1);
@@ -47,6 +48,7 @@ namespace CGAL {
     void
     sort3(T& q0, T& q1, T& q2, const Comparator& less)
     {
+      CGAL_PROFILER("Sort3");
       if(less(q2,q0)) std::swap(q0,q2);
       if(less(q1,q0)) std::swap(q0,q1);
       if(less(q2,q1)) std::swap(q1,q2);
@@ -56,6 +58,7 @@ namespace CGAL {
     void
     sort2(T& q0, T& q1, const Comparator& less)
     {
+      CGAL_PROFILER("Sort2");
       if(less(q1,q0)) std::swap(q0,q1);
     }
 
@@ -84,6 +87,7 @@ namespace CGAL {
       {
         if(c1 == c2)
           return false;
+        CGAL_PROFILER("Compare cells");
         CGAL::cpp11::array<Vertex_handle,4> v1;
         CGAL::cpp11::array<Vertex_handle,4> v2;
         for(int i = 0; i < 4; ++i)
