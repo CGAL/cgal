@@ -69,7 +69,6 @@ public:
   result_type operator()(Delaunay_graph& dg, const Vertex_handle& v) const
   {
     typedef typename Delaunay_graph::Edge               Edge;
-    typedef typename Delaunay_graph::Face_handle        Face_handle;
     typedef typename Delaunay_graph::Face_circulator    Face_circulator;
     typedef typename Delaunay_graph::Vertex_circulator  Vertex_circulator;
 
