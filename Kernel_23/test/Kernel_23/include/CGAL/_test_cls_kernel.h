@@ -8,8 +8,7 @@ template <class R>
 bool
 _test_kernel(const R& r)
 {
-  typedef typename  R::RT RT;
-  CGAL_USE_TYPE(RT);
+  CGAL_USE_TYPE(typename R::RT);
   return true;
 }
 
