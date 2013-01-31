@@ -17,8 +17,6 @@ void test() {
   typedef typename Nef_polyhedron::Explorer Explorer;
   typedef typename Nef_polyhedron::Object_handle    Object_handle;
   typedef typename Explorer::Vertex_const_handle    Vertex_const_handle;
-  typedef typename Explorer::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename Explorer::Face_const_handle      Face_const_handle;
 
   Point p11(0,0), p12(-1,1), p13(0,2);
   Point p31(0,0), p32(0,1), p33(1,2);
