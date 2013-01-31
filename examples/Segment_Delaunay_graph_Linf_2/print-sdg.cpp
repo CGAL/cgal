@@ -8,10 +8,10 @@
 #define CGAL_SDG_DEBUG(a) { a }
 #endif
 
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <cassert>
-#include <string>
 
 // define the kernel
 #include <CGAL/Simple_cartesian.h>
@@ -37,20 +37,20 @@ int main( int argc, char *argv[] ) {
   bool use_hv = false;
   int fileat = 0;
   if ( argc >= 4 ) {
-    std::cout << "usage: "<< argv[0] <<" [filename]" << std::endl
+    std::cout << "usage: " << argv[0] << " [filename]" << std::endl
               << "       -h: option for sdg_hv" << std::endl;
   }
 
   use_hv =
     (argc == 1) ?
       false :
-      (argc == 2 and (strnlen(argv[1],2) == 2) and
+  (argc == 2 and (strlen(argv[1]) == 2) and
        (argv[1][0] == '-' and argv[1][1] == 'h') ) ?
         true :
         (argc == 3 and
-         (((strnlen(argv[1],2) == 2) and
+         (((strlen(argv[1]) == 2) and
             argv[1][0] == '-' and argv[1][1] == 'h') or
-          ((strnlen(argv[2],2) == 2) and
+          ((strlen(argv[2]) == 2) and
            argv[2][0] == '-' and argv[2][1] == 'h')   )) ?
           true :
           false;
@@ -72,6 +72,13 @@ int main( int argc, char *argv[] ) {
   // read the sites from the stream and insert them in the diagram
   while ( ifs >> site ) {
     if( use_hv ) {
+      if (site.is_segment()) {
+        if ( not( site.segment().is_horizontal() or
+                  site.segment().is_vertical() ) ) {
+          std::cout << "input is not axis parallel " << site << endl;
+          return 0;
+        }
+      }
       sdg_hv.insert( site );
     } else {
       sdg.insert( site );
