@@ -29,9 +29,7 @@ void testProjection(){
 	//legal points
 	Point p1 = Point (radius/sqrt(2), 0, radius/sqrt(2));
 	points.push_back(p1);
-	
-	
-	
+		
 	Point p2 = Point (-radius/sqrt(3), radius/sqrt(3),-radius/sqrt(3));
 	points.push_back(p2);
 		
@@ -47,9 +45,7 @@ void testProjection(){
 	//points original not on sphere
 	Point p5 = Point (radius, 0, -0.5 * radius);
 	points.push_back(p5);
-	
-	
-	
+		
 	
 	//Points too close
 	Point p6 = Point (5*radius, pow(2,-25),0);
@@ -156,10 +152,6 @@ void testDelaunay (){
 	
 	
 }
-
-
-
-
 
 int main(){
 	std::cout<<"Test inserting illegal points with Delaunay_traits"<<std::endl;

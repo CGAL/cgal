@@ -37,8 +37,7 @@ typedef CGAL::Delaunay_triangulation_3<K>         Delaunay;
 
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
 typedef CGAL::Projection_sphere_traits_3<K>							Gt2;
-typedef CGAL::Constrained_Delaunay_triangulation_sphere_2<Gt>                   CTOS;
-typedef CGAL::Constrained_Delaunay_triangulation_sphere_2<Gt2>                  CTOS2;
+typedef CGAL::Constrained_Delaunay_triangulation_sphere_2<Gt>       CTOS;
 typedef K::Point_3                                                 Point;
 typedef  CTOS::Vertex_handle								Vertex_handle;
 
@@ -50,7 +49,7 @@ int main(){
 	
 	int nu_of_pts;
 	double radius;
-	nu_of_pts =pow(2,5);
+	nu_of_pts =pow(2,15);
 	radius=sqrt(110);
 	CGAL::Timer time;
 
@@ -60,11 +59,8 @@ int main(){
 	
 	
 	std::vector<Point> points;
-	//std::vector<Point> points2(points.size()+1);
 	std::vector<Point> points2;
-	//std::vector<Vertex_handle> vertices;
-	//vertices.reserve(nu_of_pts);
-	
+		
 	points2.push_back(Point(0,0,0));
 	
 	for (int count=0; count<nu_of_pts; count++) {
@@ -93,46 +89,16 @@ int main(){
 	rtos.insert_constraint(p2,p3);
 	rtos.insert_constraint(p3,p0);
 
-	//rtos.insert_constraint(points.at(4), points.at(5));
-	//rtos.insert(points.begin(), points.end());
-	
-	
-	
-	//rtos.insert(points.begin(),points.end());
+	rtos.insert(points.begin(),points.end());
 	time.stop();
 	rtos.is_valid();
 	std::cout<<"triangulation sphere    "<< time.time()<<std::endl;
 	std::cout<<"number of vertices   "<<rtos.number_of_vertices()<<std::endl;
 	
 	
-	//assert(rtos.number_of_vertices() == nu_of_pts+4);
+	assert(rtos.number_of_vertices() == nu_of_pts+4);
 	
 	
-/*
-	Point p4 = Point(10/sqrt(2),-10/sqrt(2),0);
-	Point p5 = Point (10/sqrt(2), 10/sqrt(2),0);
-	Point p6 = Point (10/sqrt(2), 0, 10/sqrt(2));
-	Point p7 = Point (10/sqrt(2), 0, -10/sqrt(2));
-	
-	
-	
-	//cdts.insert_constraint(p6,p7);
-	
-
-	
-	cdts.insert(Point(0,0,10));
-	cdts.insert(Point(0,0,-10));
-	cdts.insert(Point(0,10,0));
-	cdts.insert(Point(0,-10,0));
-	cdts.insert(Point(10,0,0));
-	cdts.insert(Point(-10,0,0));
-	cdts.insert_constraint(p4,p5);
-	std::cout<<"number of faces   "<< cdts.number_of_faces()<<std::endl;
-	cdts.is_valid();
-	cdts.show_all();
-	
-	cdts.insert(p7);
-*/	
 	
 }
 	
