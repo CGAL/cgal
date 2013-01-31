@@ -31,5 +31,6 @@ int main(){
   EK_to_IK to_inexact;
   
   IK::Point_3 inexact_pt = to_inexact(exact_pt);
+  std::cout << inexact_pt << std::endl;
   return 0;
 }
