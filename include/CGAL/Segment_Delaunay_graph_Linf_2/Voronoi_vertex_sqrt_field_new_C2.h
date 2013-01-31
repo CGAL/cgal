@@ -1429,6 +1429,14 @@ private:
         
       if (p.is_point()) {
         pref = p.point();
+        if (v_type == PSS) {
+          //if p and t lies on the same side of the square touching
+          //p,q,r return positive
+          if (  (CGAL::compare(pref.x() - vv.x(), tt.x() - vv.x()) == EQUAL)
+              or(CGAL::compare(pref.y() - vv.y(), tt.y() - vv.y()) == EQUAL) ) {
+            return POSITIVE;
+          }
+        }
       } else {
         // tocheck and tofix
         return ZERO;
