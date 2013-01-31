@@ -32,22 +32,25 @@ _test_cls_constrained_triangulation(const Triang &)
   // typedef Triangulation                       Cls;
   typedef typename Triang::Geom_traits          Gt;
 
-
   typedef typename Triang::Point                Point;
   typedef typename Triang::Segment              Segment;
   typedef typename Triang::Triangle             Triangle;
 
-  typedef typename Triang::Vertex_handle         Vertex_handle;
-  typedef typename Triang::Face_handle           Face_handle;
-  typedef std::pair<Face_handle,int>               Edge;
+  typedef typename Triang::Vertex_handle        Vertex_handle;
+  typedef typename Triang::Face_handle          Face_handle;
+  typedef std::pair<Face_handle,int>            Edge;
 
-  typedef typename Triang::Locate_type           Locate_type;
-  typedef typename Triang::All_faces_iterator    All_faces_iterator;
+  typedef typename Triang::Locate_type          Locate_type;
+  typedef typename Triang::All_faces_iterator   All_faces_iterator;
 
-  typedef std::pair<Point,Point>                   Constraint ;
-  typedef std::list<Edge>                          List_edges;
-  typedef std::list<Constraint>                    list_constraints;
-  typedef typename list_constraints::iterator list_iterator;
+  typedef std::pair<Point,Point>                Constraint ;
+  typedef std::list<Edge>                       List_edges;
+  typedef std::list<Constraint>                 list_constraints;
+  typedef typename list_constraints::iterator   list_iterator;
+
+  CGAL_USE_TYPE(Gt);
+  CGAL_USE_TYPE(Segment);
+  CGAL_USE_TYPE(Triangle);
 
   /***********************/
   /***** SUBCLASSE ******/

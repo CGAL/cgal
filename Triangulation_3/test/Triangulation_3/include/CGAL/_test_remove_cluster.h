@@ -10,9 +10,7 @@ void _test_rc_random_1()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
 	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
 	typedef Point                                  Point_3;
 
@@ -51,9 +49,7 @@ void _test_rc_random_2()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
 	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
 	typedef Point                                  Point_3;
 		
@@ -92,11 +88,7 @@ void _test_rc_random_3()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
 	
 	std::cout << "_test_rc_random_3" << std::endl;	
 	
@@ -131,11 +123,7 @@ void _test_rc_random_4()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
 	
 	std::cout << "_test_rc_random_4" << std::endl;	
 	
@@ -170,11 +158,6 @@ void _test_rc_trivial()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
 	
 	std::cout << "_test_rc_trivial" << std::endl;	
 	
@@ -206,11 +189,6 @@ void _test_rc_specific_cases_1()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
 	
 	std::cout << "_test_rc_specific_cases_1" << std::endl;		
 	
@@ -262,11 +240,6 @@ void _test_rc_specific_cases_2()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
 	
 	std::cout << "_test_rc_specific_cases_2" << std::endl;	
 	
@@ -316,11 +289,6 @@ void _test_rc_specific_cases_3()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
 
 	std::cout << "_test_rc_specific_cases_3" << std::endl;
 	
@@ -370,11 +338,7 @@ void _test_rc_specific_cases_4()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
 	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
 	
 	std::cout << "_test_rc_specific_cases_4" << std::endl;	
 	
@@ -419,11 +383,6 @@ void _test_rc_specific_cases_5()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
 	
 	std::cout << "_test_rc_specific_cases_5" << std::endl;	
 	
@@ -491,11 +450,7 @@ void _test_rc_specific_cases_6()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
-	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
+
 	
 	std::cout << "_test_rc_specific_cases_6" << std::endl;	
 	
@@ -607,10 +562,7 @@ void _test_rc_grid_1()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
 	typedef Point                                  Point_3;
 
 	std::cout << "_test_rc_grid_1" << std::endl;
@@ -647,12 +599,8 @@ void _test_rc_grid_2()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
-
+  typedef Point                                  Point_3;
 	std::cout << "_test_rc_grid_2" << std::endl;
 	
 	CGAL::Random random;	
@@ -687,11 +635,8 @@ void _test_rc_grid_3()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Cell_handle               Cell_handle;
 	typedef typename D3::Finite_vertices_iterator  Finite_vertices_iterator;	
-	typedef typename D3::Locate_type               Locate_type;
-	typedef typename D3::Geom_traits::Sphere_3     Sphere_3;
-	typedef Point                                  Point_3;
+  typedef Point                                  Point_3;
 
 	std::cout << "_test_rc_grid_3" << std::endl;
 	
