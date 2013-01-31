@@ -230,12 +230,13 @@ and the function value type (resp. function gradient type) as
 \param first,beyond is the iterator range of the barycentric 
 coordinates for the query point `p`. 
 \param norm is the normalization factor. `norm` \f$ \neq0\f$.
+\param 	p is the point at which the interpolated function value is generated
 \param function_value is a functor that allows to access the value of the interpolated 
 function given a point. `function_value(q).second == true` for all points
 `q` of the point/coordinate pairs in the range `[first, beyond)`
 \param function_gradient is a functor that allows to access the 
 function gradient given a point. 
-
+\param traits is an instance of the traits class
 
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
