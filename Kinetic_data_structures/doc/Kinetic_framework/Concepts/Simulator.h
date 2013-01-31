@@ -372,18 +372,18 @@ public:
 
 }; /* end Kinetic::Simulator */
 
-} /*end namespace Kinetic
-
 
 /*! 
   Return a double approximation of the time value. 
   \relates Simulator::Time
 */ 
-double to_double(Time); 
+double to_double(Simulator::Time); 
 
 /*! 
   Return an interval containing the time value. 
   \relates Simulator::Time
 */ 
-std::pair<double, double> to_interval(Time); 
+std::pair<double, double> to_interval(Simulator::Time); 
+
+} /*end namespace Kinetic
 
