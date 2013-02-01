@@ -31,22 +31,45 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+#include <boost/bimap/unordered_set_of.hpp>
+#include <boost/functional/hash.hpp>
+#endif
+
 namespace CGAL {
 
-template <class _Key, class _Data, class _Direct_compare = std::less<_Key>, 
+template <class _Key, class _Data, 
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+          class _Key_hash_function = boost::hash<_Key>, 
+#else
+          class _Direct_compare = std::less<_Key>, 
+#endif
           class _Reverse_compare = std::less<_Data> >
 class Double_map
 {
 public:
   typedef _Key Key;
   typedef _Data Data;
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+  typedef _Key_hash_function Key_hash_function;
+#else
   typedef _Direct_compare Direct_compare;
+#endif
   typedef _Reverse_compare Reverse_compare;
 
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+  typedef Double_map<Key, Data, Key_hash_function, Reverse_compare> Self;
+  
+  typedef ::boost::bimap< 
+    ::boost::bimaps::unordered_set_of<Key, Key_hash_function>,
+    ::boost::bimaps::multiset_of<Data, Reverse_compare> 
+  > Boost_bimap;
+#else
   typedef Double_map<Key, Data, Direct_compare, Reverse_compare> Self;
   
   typedef ::boost::bimap< ::boost::bimaps::set_of<Key, Direct_compare>,
 				 ::boost::bimaps::multiset_of<Data, Reverse_compare> > Boost_bimap;
+#endif
 
   typedef typename Boost_bimap::left_map Direct_func;
   typedef typename Boost_bimap::right_map Reverse_func;
@@ -135,12 +158,17 @@ public :
   // Assignation
   bool insert(const Key& k, const Data& d)
     {
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+      boost_bimap.left.insert(Direct_entry(k, d));
+      //todo : check when insert should return false
+#else
       direct_iterator hint = boost_bimap.left.lower_bound(k);
 
       if(hint != boost_bimap.left.end() && hint->first == k)
-	return false;
+      	return false;
 
       boost_bimap.left.insert(hint, Direct_entry(k, d));
+#endif
       return true;
     }
 
@@ -208,10 +236,17 @@ public :
   }
 };
 
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+template <class _Key, class _Data, class _Key_hash_function, 
+  class _Reverse_compare>
+bool
+Double_map<_Key, _Data, _Key_hash_function, _Reverse_compare>::
+#else
 template <class _Key, class _Data, class _Direct_compare, 
   class _Reverse_compare>
 bool
 Double_map<_Key, _Data, _Direct_compare, _Reverse_compare>::
+#endif
 erase(const Key& k)
 {
   CGAL_assertion(is_valid());
