@@ -410,7 +410,7 @@ const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 Inserts the alpha shape `A` for the current alpha value into the Geomview stream `W`. 
 \pre The insert operator must be defined for `GT::Point` and `GT::Triangle`. 
 
-Defined in \ref CGAL/IO/Geomview_stream.h and \ref CGAL/IO/alpha_shape_geomview_ostream_3.h
+Defined in \ref CGAL/IO/Geomview_stream.h and `CGAL/IO/alpha_shape_geomview_ostream_3.h`
 
 \relates Alpha_shape_3 
 */ 
