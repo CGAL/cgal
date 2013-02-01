@@ -1,4 +1,6 @@
 /// \cgalConcept
+/// http://en.cppreference.com/w/cpp/concept/CopyAssignable
+/// http://en.cppreference.com/w/cpp/concept/CopyConstructible
 class Assignable {};
 
 /// \cgalConcept
