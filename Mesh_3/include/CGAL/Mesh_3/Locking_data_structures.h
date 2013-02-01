@@ -61,6 +61,28 @@ static bool *init_TLS_grid(int num_cells_per_axis)
 template <typename Derived>
 class Grid_locking_ds_base
 {
+
+#ifdef CGAL_DEBUG_GLOBAL_LOCK_DS
+// Just a simple way to store a global pointer to a grid locking data structure
+// for debugging purpose...
+
+private:
+  static Grid_locking_ds_base<Derived>*& debug_global_lock_ds()
+  {
+    static Grid_locking_ds_base<Derived> *p_g_lock_ds = 0;
+    return p_g_lock_ds;
+  }
+public:
+  static Grid_locking_ds_base<Derived>* get_global_lock_ds()
+  {
+    return debug_global_lock_ds();
+  }
+  static void set_global_lock_ds(Grid_locking_ds_base<Derived> *ds)
+  {
+    debug_global_lock_ds() = ds;
+  }
+#endif
+
 private:
 
 public:
@@ -93,6 +115,17 @@ public:
   bool is_locked_by_this_thread(const P3 &point)
   {
     return m_tls_grids.local()[get_grid_index(point)];
+  }
+
+  template <typename Tetrahedra>
+  bool is_tetrahedra_locked_by_this_thread(const Tetrahedra &tet)
+  {
+    bool locked = true;
+    for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
+    {
+      locked = is_locked_by_this_thread(tet.vertex(iVertex)->point());
+    }
+    return locked;
   }
 
   bool try_lock(int cell_index, bool no_spin = false)
@@ -277,7 +310,7 @@ protected:
   }
 
   template <typename P3>
-  int get_grid_index(const P3& point)
+  int get_grid_index(const P3& point) const
   {
     // Compute indices on grid
     int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
