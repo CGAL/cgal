@@ -19,6 +19,7 @@
 !include "StrRep.nsh"
 !include "WriteEnvStr.nsh"
 !include "EnvVarUpdate.nsh"
+!include "x64.nsh"
 
 ;!define DebugLog
 
@@ -44,8 +45,10 @@
   OutFile "${CGAL_SRC}-Setup.exe"
   !endif
 
-  ;Default installation folder
-  InstallDir "$PROGRAMFILES\${CGAL_SRC}"
+  ;Default installation folder: C:\Program Files\CGAL-4.2
+  ; See also .onInit
+  Installdir ""
+
 
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\${CGAL_SRC}" ""
@@ -319,6 +322,15 @@ SectionEnd
 ;--------------------------------
 
 Function .onInit
+
+  # Setup the default installation dir
+  ${If} $InstDir == "" ; /D= was not used on the command line
+    ${If} ${RunningX64}
+      StrCpy $InstDir "$PROGRAMFILES64\${CGAL_SRC}"
+    ${Else}
+      StrCpy $InstDir "$PROGRAMFILES\${CGAL_SRC}"
+    ${EndIf}
+  ${EndIf}
 
   !ifdef DebugLog
   ${LogSetFileName} "${CGAL_SRC}_install_log.txt"
