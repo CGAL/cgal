@@ -1,5 +1,8 @@
 #include <QFileInfo>
 #include <QLayout>
+#include <QDialogButtonBox>
+#include <QPushButton>
+
 #include "ui_FileLoaderDialog.h"
 
 class File_loader_dialog : public QDialog, private Ui::FileLoaderDialog
@@ -15,6 +18,7 @@ class File_loader_dialog : public QDialog, private Ui::FileLoaderDialog
     getItem(QString filename, const QStringList& item_list, bool* ok)
     {
       File_loader_dialog dialog;
+      dialog.buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
       dialog.pluginBox->addItems(item_list);
       dialog.label->setText(tr("Available loaders for %1 :").arg(filename));
       QFileInfo fileinfo(filename);
