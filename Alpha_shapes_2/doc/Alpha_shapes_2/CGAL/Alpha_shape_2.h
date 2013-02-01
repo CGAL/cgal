@@ -74,7 +74,21 @@ it has to derive from a triangulation traits class. For example `Dt::Point` is a
 typedef Hidden_type Gt; 
 
 /*! 
-the number type for computation. 
+the number type of alpha values.
+
+In case `ExactAlphaComparisonTag` is `CGAL::Tag_false`, it is Gt::FT.
+
+In case `ExactAlphaComparisonTag` is `CGAL::Tag_true`, it is a number type
+allowing filtered exact comparisons (that is, interval arithmetic is first used before
+resorting to exact arithmetic). Access to the interval containing the exact value is provided through the function
+`FT::Approximate_nt approx() const` where `FT::Approximate_nt` is `CGAL::Interval_nt<Protected>`
+with `Protected=true`. Access to the exact value is provided through the function
+`FT::Exact_nt exact() const` where `FT::Exact_nt` depends on the configuration of %CGAL
+(it is `Gmpq` if `gmp` is available and `Quotient<CGAL::MP_Float>` otherwise).
+It must be noted that an object of type `FT` is valid as long as the alpha shapes class that creates
+it is valid and has not been modified.
+For convenience, classical comparison operators are provided for the type `FT`.
+
 */ 
 typedef Gt::FT FT; 
 
