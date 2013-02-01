@@ -22,7 +22,7 @@ private:
 
   typedef Basic_predicates_C2<K>              Base;
   typedef Voronoi_vertex_C2<K,Method_tag>     Voronoi_vertex_2;
-  
+
   typedef typename Base::Point_2              Point_2;
   typedef typename Base::Segment_2            Segment_2;
   typedef typename Base::Line_2               Line_2;
@@ -52,7 +52,7 @@ public:
   // wrt the line that is passes through the point p and its direction
   // is the direction of the supporting line of s, rotated by 90
   // degrees counterclockwise.
-  Oriented_side operator()(const Site_2& q, 
+  Oriented_side operator()(const Site_2& q,
 			   const Site_2& s, const Site_2& p) const
   {
     // philaris: q might also be a segment in Linf
@@ -66,7 +66,7 @@ public:
 
     CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (qsp)= ("
               << q << ") (" << s << ") (" << p << ") "
-              << "returns " << retval 
+              << "returns " << retval
               << std::endl;);
 
     return retval;
@@ -91,7 +91,7 @@ public:
     CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (s1,s2,s3,s,p)= ("
               << s1 << ") (" << s2 << ") (" << s3 << ") ("
               << s << ") (" << p << ") "
-              << "returns " << retval 
+              << "returns " << retval
               << std::endl;);
 
     return retval;
@@ -104,10 +104,11 @@ public:
   Oriented_side operator()(const Site_2& s1, const Site_2& s2,
 			   const Site_2& s, const Site_2& p) const
   {
-    CGAL_precondition( s.is_segment() && p.is_point() );
+    CGAL_precondition( s.is_segment() and p.is_point() );
 
     Line_2 lseg = compute_supporting_line( s );
     Line_2 lp = compute_linf_perpendicular(lseg, p.point());
+    bool has_lseg_neg_slope;
 
     // Voronoi_vertex_2 v(s1, s2, inf);
     // compute linf projection of v(s1, s2, inf) on segment s;
@@ -124,7 +125,20 @@ public:
         (is_s2_segment and (same_segments(s, s2) or
                             same_segments(s, s2.supporting_site()))));
 
-    if (is_s1_segment and is_s2_segment) {
+    bool are_both_segments = is_s1_segment and is_s2_segment;
+
+    // boolean variable of:
+    // point in {s1,s2} being endpoint of the segment in {s1,s2}
+    bool are_endp_s1s2 =
+           (is_s1_segment and
+            ( same_points(s2, s1.source_site()) or
+              same_points(s2, s1.target_site())   ) )
+           or
+           (is_s2_segment and
+            ( same_points(s1, s2.source_site()) or
+              same_points(s1, s2.target_site())   ) )  ;
+
+    if (are_both_segments) {
       // the two segments must have a common endpoint,
       // which is the linf projection
 
@@ -147,16 +161,8 @@ public:
     } else {
       // here, there is a point and a segment in {s1, s2}
 
-      if ( 
-           (is_s1_segment and 
-            ( same_points(s2, s1.source_site()) or 
-              same_points(s2, s1.target_site())   ) )
-           or 
-           (is_s2_segment and 
-            ( same_points(s1, s2.source_site()) or 
-              same_points(s1, s2.target_site())   ) )
-         )
-      { // here the point in {s1,s2} 
+      if ( are_endp_s1s2 )
+      { // here the point in {s1,s2}
         // is endpoint of the segment in {s1,s2}
         if (is_s1_segment) {
           proj_of_infv = s2.point();
@@ -177,24 +183,24 @@ public:
         CGAL_assertion(not (s.segment().is_horizontal() or
                             s.segment().is_vertical()     ) );
 
-        bool has_lseg_neg_slope =
+        has_lseg_neg_slope =
           CGAL::sign(lseg.a()) == CGAL::sign(lseg.b());
 
         if (has_lseg_neg_slope) {
           if (is_s1_segment) {
-            proj_of_infv = 
+            proj_of_infv =
               compute_horizontal_projection(lseg, s2.point());
           } else {
-            proj_of_infv = 
+            proj_of_infv =
               compute_vertical_projection(lseg, s1.point());
           }
         } else {
           // here, segment has positive slope
           if (is_s1_segment) {
-            proj_of_infv = 
+            proj_of_infv =
               compute_vertical_projection(lseg, s2.point());
           } else {
-            proj_of_infv = 
+            proj_of_infv =
               compute_horizontal_projection(lseg, s1.point());
           }
         } // end of case: seg has positive slope
@@ -203,13 +209,39 @@ public:
     } // end of case: a point and a segment in {s1, s2}
 
 
-    Oriented_side retval = 
+    Oriented_side retval =
       oriented_side_of_line(lp, proj_of_infv);
 
+    bool do_invert (false);
+
+    if (retval == ON_ORIENTED_BOUNDARY) {
+      // philaris: tocheck this later
+      CGAL_assertion(not are_both_segments);
+      // philaris: tocheck this later
+      CGAL_assertion(not are_endp_s1s2);
+
+      if (has_lseg_neg_slope) {
+        if (is_s1_segment) {
+          proj_of_infv = s2.point();
+        } else {
+          proj_of_infv = s1.point();
+        }
+      } else {
+        // here, segment has positive slope
+        if (is_s1_segment) {
+          proj_of_infv = s2.point();
+        } else {
+          proj_of_infv = s1.point();
+        }
+      } // end of case: seg has positive slope
+      retval = - oriented_side_of_line(lp, proj_of_infv);
+    }
+
+
     CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (s1,s2,s,p)= ("
-              << s1 << ") (" << s2 << ") (" 
+              << s1 << ") (" << s2 << ") ("
               << s << ") (" << p << ") "
-              << "returns " << retval 
+              << "returns " << retval
               << std::endl;);
 
     return retval;
