@@ -518,17 +518,6 @@ public:
     return success;
   }
 
-  bool is_element_locked_by_this_thread(Cell_handle cell_handle) const
-  {
-    bool locked = true;
-    for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
-    {
-      Vertex_handle vh = cell_handle->vertex(iVertex);
-      locked = m_lock_ds->is_locked_by_this_thread(vh->point());
-    }
-    return locked;
-  }
-
   void unlock_all_elements() const
   {
     if (m_lock_ds)
