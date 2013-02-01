@@ -99,7 +99,6 @@ typename Dt::Vertex_handle lookup(const Dt& delau, const typename Dt::Point& p)
 template<class Dt, class OutputIterator>
 OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, std::size_t k, OutputIterator res)
 {
-  typedef typename Dt::Geom_traits                    Gt;
   typedef typename Dt::size_type                      size_type;
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Dt::Vertex_iterator                Vertex_iterator;

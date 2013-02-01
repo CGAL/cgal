@@ -23,7 +23,7 @@
 
 #include <cassert>
 #include <fstream>
-
+#include <CGAL/use.h>
 #include <CGAL/_test_cls_tds_vertex.h>
 #include <CGAL/_test_cls_tds_face.h>
 
@@ -61,6 +61,10 @@ _test_cls_tds_2( const Tds &)
   typedef typename Tds::Face_circulator   Face_circulator;
   typedef typename Tds::Edge_circulator   Edge_circulator;
 
+  CGAL_USE_TYPE(Face);
+  CGAL_USE_TYPE(Edge);
+  CGAL_USE_TYPE(Edge_iterator);
+  CGAL_USE_TYPE(Edge_circulator);
   
   // Test subclasses
   CGAL::_test_cls_tds_vertex( Tds());
@@ -372,9 +376,6 @@ _test_tds_circulators( const Tds&  tds)
   typedef typename Tds::Face_handle     Face_handle;
 
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
-  typedef typename Tds::Face_iterator     Face_iterator;
-  typedef typename Tds::Edge_iterator     Edge_iterator;
-  
   typedef typename Tds::Vertex_circulator Vertex_circulator;
   typedef typename Tds::Face_circulator   Face_circulator;
   typedef typename Tds::Edge_circulator   Edge_circulator;

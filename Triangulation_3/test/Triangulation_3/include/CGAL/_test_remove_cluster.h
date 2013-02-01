@@ -338,7 +338,6 @@ void _test_rc_specific_cases_4()
 	typedef T                                      D3;
 	typedef typename D3::Point                     Point;
 	typedef typename D3::Vertex_handle             Vertex_handle;
-	typedef typename D3::Locate_type               Locate_type;
 	
 	std::cout << "_test_rc_specific_cases_4" << std::endl;	
 	

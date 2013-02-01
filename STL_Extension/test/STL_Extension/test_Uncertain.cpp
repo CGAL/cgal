@@ -5,6 +5,7 @@
 #include <iostream>
 #include <CGAL/enum.h>
 #include <CGAL/exceptions.h>
+#include <CGAL/use.h>
 
 // The assert() macro, e.g. on Leopard, requires an int (due to the use of builtin_expect()).
 // So I cast to bool manually (needed when the automatic conversion is switched off).
@@ -300,7 +301,7 @@ void test_bool()
 	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
 	bool_assert(ok);
 	// The following must not throw.
-	try { bool b = utrue; b = ufalse; }
+	try { bool b = utrue; b = ufalse; CGAL_USE(b); }
 	catch (CGAL::Uncertain_conversion_exception) { bool_assert(false); }
 
 	// certainly, possibly

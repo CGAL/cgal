@@ -72,6 +72,7 @@ _test_cls_triangulation_short_2( const Triangul &)
   CGAL_USE_TYPE(Vertex);
   CGAL_USE_TYPE(Face);
   CGAL_USE_TYPE(Finite_vertices_iterator);
+  CGAL_USE_TYPE(Finite_faces_iterator);
   CGAL_USE_TYPE(Finite_edges_iterator);
   CGAL_USE_TYPE(Vertex_circulator);
   CGAL_USE_TYPE(Face_circulator);
