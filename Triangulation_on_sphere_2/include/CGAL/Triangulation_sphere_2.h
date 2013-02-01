@@ -91,9 +91,7 @@ class Ghost_tester
  bool operator()(const All_edges_iterator & eit) const {
 	 int dim = t->dimension();
    Face_handle f = eit->first;
-	 t->show_all();
-	 t->show_face(f);
-   bool edge1 = f->is_ghost();
+	  bool edge1 = f->is_ghost();
 	 Face_handle f2 = f->neighbor(eit->second);
 	 bool edge2b = f2->is_ghost();
    bool edge2 = (f->neighbor(eit->second))->is_ghost();
