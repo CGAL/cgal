@@ -52,6 +52,11 @@ def count_errors_and_warnings(fn):
 def update():
     subprocess.call(['git', 'pull'])
 
+def integration_test():
+  subprocess.call(['git', 'fetch'])
+  subprocess.call(['git', 'checkout','origin/integration'])
+  subprocess.call(['git', 'reset','--hard','origin/integration'])
+
 def purge_doc():
     for log in glob.glob('./log/*.*'):
         os.remove(log)
@@ -70,6 +75,15 @@ def get_version():
     date=subprocess.check_output(['git', 'log', '-n', '1', '--format=\"%ai\"', '--date=short'], universal_newlines=True)
     date=date[1:11]
     return (rev, date)
+
+def get_cgal_version(path_to_version_h):
+    f=file(path_to_version_h)
+    for line in f.readlines():
+        m = re.match('^#define CGAL_VERSION (.*)',line)
+        if m:
+          return "CGAL-"+m.group(1)
+    return "Unknown Version"
+
 
 def write_report():
     d = pq('''<html><head>
@@ -121,7 +135,9 @@ def main():
     parser.add_argument('--documentation', default='.', metavar='/path/to/cgal/Documentation', help='The path to the Documentation dir of the git checkout you would like to test.')
     parser.add_argument('--publish', metavar='/path/to/publish', help='Specify this argument if the results should be published.')
     parser.add_argument('--do-update', action="store_true", help='Specify this argument if you want to do a version control update.')
+    parser.add_argument('--test-integration', action="store_true", help='Specify this argument if you want to switch to integration and use the latest version.')
     parser.add_argument('--do-purge-rebuild', action="store_true", help='Specify this argument if you want to actually rebuild the documentation. Just write the report if not specified.')
+    parser.add_argument('--cgal-version', help='Path to a version.h file from the current release. If not specified use git hash instead.')
     
     args = parser.parse_args()
     
@@ -129,7 +145,8 @@ def main():
     if args.do_update:
         update()
 
-
+    if args.test_integration:
+      integration_test()
 
     if args.do_purge_rebuild:
         doxyassist="".join(args.doxyassist)
@@ -142,8 +159,13 @@ def main():
 
     d, sum=write_report()
     version_string,version_date=get_version()
+    if args.cgal_version:
+      version_string=get_cgal_version(args.cgal_version)
+    else:
+      version_string="Revision "+version_string
+
     title=d('#maintitle')
-    title.text(title.text() + ' for Revision ' + version_string)
+    title.text(title.text() + ' for ' + version_string)
     write_out_html(d, './log/testsuite.html')
     
     if args.publish:
