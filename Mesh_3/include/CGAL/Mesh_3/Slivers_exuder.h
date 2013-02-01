@@ -907,10 +907,11 @@ get_umbrella(const Facet_vector& facets,
   typename Facet_vector::const_iterator fit = facets.begin();
   for ( ; fit != facets.end() ; ++fit )
   {
-    Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
-    
     if ( c3t3_.is_in_complex(*fit) )
+    {
+      Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
       umbrella.insert(std::make_pair(edge, c3t3_.surface_patch_index(*fit)));
+    }
   }
   
   return umbrella;
