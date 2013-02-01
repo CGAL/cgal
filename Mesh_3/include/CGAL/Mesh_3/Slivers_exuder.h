@@ -43,6 +43,9 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_exuder_visitor.h>
 
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+#include <CGAL/Mesh_3/hash_functions.h>
+#endif
 
 #ifdef CGAL_MESH_3_VERBOSE
   #define CGAL_MESH_3_EXUDER_VERBOSE
@@ -161,13 +164,23 @@ class Slivers_exuder
    *  of Facet (viewed from cells inside the star), ordered by the
    *  critial_radius of the point with the cell that lies on the facet, at
    *  the exterior of the pre-star. */
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+  typedef CGAL::Double_map<Facet, double,
+            CGAL::Mesh_3::Hash_facet<Tr> > Pre_star;
+#else
   typedef CGAL::Double_map<Facet, double> Pre_star;
+#endif
   
   // Stores the value of facet for the sliver criterion functor
   typedef std::map<Facet, double> Sliver_values;
   
   // A priority queue ordered on Tet quality (SliverCriteria)
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+  typedef CGAL::Double_map<Cell_handle, double, 
+            CGAL::Mesh_3::Hash_cell<Tr> > Tet_priority_queue;
+#else
   typedef CGAL::Double_map<Cell_handle, double> Tet_priority_queue;
+#endif
   
   // Visitor class
   // Should define

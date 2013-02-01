@@ -29,6 +29,10 @@
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Meshes/Double_map_container.h>
 
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+#include <CGAL/Mesh_3/hash_functions.h>
+#endif
+
 #include <boost/format.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <sstream>
@@ -85,7 +89,11 @@ template<class Tr,
          class Container_ = Meshes::Double_map_container<
              typename Tr::Cell_handle,
              typename Criteria::Cell_quality,
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+             CGAL::Mesh_3::Hash_cell<Tr> > >
+#else
              CGAL::Mesh_3::Cell_handle_comparator<Tr> > >
+#endif
 class Refine_cells_3
   : public Mesher_level<Tr,
                         Refine_cells_3<Tr,

@@ -40,6 +40,9 @@
 #include <sstream>
 
 #include <CGAL/Mesh_3/comparison_operators.h>
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+#include <CGAL/Mesh_3/hash_functions.h>
+#endif
 
 namespace CGAL {
 
@@ -93,7 +96,11 @@ template<class Tr,
          class Container_ = Meshes::Double_map_container<
             typename Tr::Facet,
             typename Criteria::Facet_quality,
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+            CGAL::Mesh_3::Hash_facet<Tr> > >
+#else
             CGAL::Mesh_3::Triangulation_finite_facets_comparator<Tr> > >
+#endif
 class Refine_facets_3
 : public Mesher_level<Tr,
                       Refine_facets_3<Tr,

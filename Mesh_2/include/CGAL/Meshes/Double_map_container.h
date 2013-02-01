@@ -25,6 +25,10 @@
 #include <iostream>
 #include <CGAL/Double_map.h>
 
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS
+#include <boost/functional/hash.hpp>
+#endif
+
 // backward compatibility
 #ifdef CGAL_MESH_3_DEBUG_DOUBLE_MAP
 #  define CGAL_MESHES_DEBUG_DOUBLE_MAP CGAL_MESH_3_DEBUG_DOUBLE_MAP
@@ -34,16 +38,23 @@ namespace CGAL {
 
   namespace Meshes {
 
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS    
+    template <typename Elt, class Quality, class HashElt = boost::hash<Elt> >
+#else
     template <typename Elt, class Quality, class LessElt = std::less<Elt> >
+#endif
     class Double_map_container 
     {
     public:
       typedef Elt Element;
+#ifdef CGAL_MESH_3_USE_HASH_FUNCTIONS    
+      typedef Double_map<Element, Quality, HashElt> DoubleMap;
+#else
       typedef Double_map<Element, Quality, LessElt> DoubleMap;
+#endif
 
     protected:
       // --- protected datas ---
-//      typedef Double_map<Element, Quality, LessElt> DoubleMap;
       DoubleMap m;
 
     public:
