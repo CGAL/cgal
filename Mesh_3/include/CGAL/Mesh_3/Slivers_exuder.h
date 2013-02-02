@@ -28,6 +28,7 @@
 #include <CGAL/Double_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
+#include <CGAL/Mesh_3/Locking_data_structures.h>
 #include <map>
 #include <vector>
 #include <set>
@@ -362,6 +363,8 @@ public: // methods
 
 #ifdef CGAL_LINKED_WITH_TBB
     //CJTODO TEST
+    // Warning: this doesn't work for the becnhmark 
+    // (because the benchmark creates the scheduler instance upstream...)
     //tbb::task_scheduler_init tsi(1);
 #endif
   
@@ -676,6 +679,9 @@ private:
   // Timer
   double time_limit_;
   CGAL::Timer running_time_;
+
+  // CJTOTO: change this for a better solution
+  tbb::atomic<bool> m_lets_start_the_tasks;
   
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
   // -----------------------------------
@@ -766,6 +772,8 @@ Slivers_exuder<C3T3,Md,SC,V_,FT>::
 pump_vertices(double sliver_criterion_limit,
               Visitor& visitor)
 {
+  m_lets_start_the_tasks = false;
+
 #ifdef MESH_3_PROFILING
   WallClockTimer t;
 #endif
@@ -806,6 +814,8 @@ pump_vertices(double sliver_criterion_limit,
       cells_queue_.pop_front();
       enqueue_task<pump_vertices_on_surfaces>(front.second, front.first);
     }
+
+    m_lets_start_the_tasks = true;
 
     this->wait_for_all();
 
@@ -1103,6 +1113,7 @@ get_best_weight(const Vertex_handle& v, bool *p_could_lock_zone) const
   
   double worst_criterion_value = get_min_value(criterion_values);
   double best_weight = 0;
+  // CJTODO: this computes the incident cells again!
   double sq_d_v = get_closest_vertice_squared_distance(v);
   
   // If that boolean is set to false, it means that a facet in the complex
@@ -1121,6 +1132,12 @@ get_best_weight(const Vertex_handle& v, bool *p_could_lock_zone) const
     // expand prestar (insert opposite_cell facets in pre_star)    
     Facet link = pre_star.front()->second;
     const Cell_handle& opposite_cell = tr_.mirror_facet(link).first;
+    // CJTODO: useless?
+    if (p_could_lock_zone && !tr_.try_lock_element(opposite_cell))
+    {
+      *p_could_lock_zone = false;
+      return 0.;
+    }
     can_flip = expand_prestar(opposite_cell, v, pre_star, criterion_values);
     
     // Update best_weight if needed
@@ -1194,17 +1211,7 @@ restore_cells_and_boundary_facets(
   Cell_vector new_cells;
   new_cells.reserve(64);
   tr_.incident_cells(new_vertex, std::back_inserter(new_cells));
-  
-  // CJTODO TEST LOCK
-  /*for (Cell_handle ch : new_cells) 
-  {
-      if (!tr_.is_element_locked_by_this_thread(ch))
-      {
-        std::cerr << "************************ ARGH ****************" << std::endl;
-        int i = 0;
-      }
-  }*/
-  
+
   // Each cell must have a facet on the boundary of the conflict zone
   CGAL_assertion(boundary_facets_from_outside.size() == new_cells.size());
   
@@ -1333,16 +1340,6 @@ update_mesh(const Weighted_point& new_point,
   if (p_could_lock_zone && *p_could_lock_zone == false)
     return;
 
-  // CJTODO TEST LOCK
-  /*for (Cell_handle ch : deleted_cells)
-  {
-    if (!tr_.is_element_locked_by_this_thread(ch))
-    {
-      std::cerr << "************************ ARGH ****************" << std::endl;
-      int i = 0;
-    }
-  }*/
-
   // Get some datas to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
@@ -1394,6 +1391,8 @@ enqueue_task(Cell_handle ch, double value)
       static Profile_branch_counter_3 bcounter(
         "early withdrawals / late withdrawals / successes [Exuder]");
 #endif
+      while (!m_lets_start_the_tasks)
+        std::this_thread::yield();
 
       for( int i = 0; i < 4; ++i )
       {
@@ -1416,7 +1415,10 @@ enqueue_task(Cell_handle ch, double value)
           }
 
           if (ch->get_erase_counter() != erase_counter)
+          {
+            this->unlock_all_elements();
             break;
+          }
 
           // pump_vertices_on_surfaces is a boolean template parameter.  The
           // following condition is pruned at compiled time, if
