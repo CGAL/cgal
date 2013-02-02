@@ -1280,7 +1280,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
 	n = cur->neighbor(zz);
       }
       // Now n is outside region, cur is inside.
-
+      // CJTODO DATA RACE?
       n->tds_data().clear(); // Reset the flag for boundary cells.
 
       int jj1 = n->index(vj1);
@@ -1339,7 +1339,7 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
 	n = cur->neighbor(zz);
       }
       // Now n is outside region, cur is inside.
-
+      // CJTODO DATA RACE?
       n->tds_data().clear(); // Reset the flag for boundary cells.
 
       int jj1 = n->index(vj1);
@@ -1404,7 +1404,7 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
           n = cur->neighbor(zz);
         }
         // Now n is outside region, cur is inside.
-
+        // CJTODO DATA RACE?
         n->tds_data().clear(); // Reset the flag for boundary cells.
 
         int jj1 = n->index(vj1);

@@ -703,6 +703,22 @@ public:
 
     return success;
   }
+  
+  template <typename P3>
+  bool is_point_locked_by_this_thread(const P3 &p) const
+  {
+    bool locked = true;
+#ifdef CGAL_LINKED_WITH_TBB
+# ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+    Mesh_3::LockDataStructureType *p_lock_ds = Base::get_lock_data_structure();
+    if (p_lock_ds)
+    {
+      locked = p_lock_ds->is_locked_by_this_thread(p);
+    }
+# endif // CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
+#endif // CGAL_LINKED_WITH_TBB
+    return locked;
+  }
 
   bool is_element_locked_by_this_thread(Cell_handle cell_handle) const
   {
@@ -712,11 +728,7 @@ public:
     Mesh_3::LockDataStructureType *p_lock_ds = Base::get_lock_data_structure();
     if (p_lock_ds)
     {
-      for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
-      {
-        Vertex_handle vh = cell_handle->vertex(iVertex);
-        locked = p_lock_ds->is_locked_by_this_thread(vh->point());
-      }
+      locked = p_lock_ds->is_tetrahedra_locked_by_this_thread(*cell_handle);
     }
 # endif // CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 #endif // CGAL_LINKED_WITH_TBB
@@ -3299,16 +3311,6 @@ insert_in_conflict(const Point & p,
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
 				Emptyset_iterator()));
-
-      // CJTODO TEST LOCK
-      for (Cell_handle ch : cells) 
-      {
-          if (!is_element_locked_by_this_thread(ch))
-          {
-            std::cerr << "************************ ARGH ****************" << std::endl;
-            int i = 0;
-          }
-      }
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
