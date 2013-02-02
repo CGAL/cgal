@@ -64,50 +64,51 @@ private:
     Point_2 pq = q.point();
     //CGAL_SDG_DEBUG(std::cout << "debug bisector infinite " 
     //          << "p=" << pp << " q=" << pq << std::endl;);
-    
+
     Compare_x_2 compare_x_2;
     Compare_y_2 compare_y_2;
     Are_same_points_2 are_same_points;//the arguments are sites
     CGAL_assertion( !(are_same_points(p, q)) );
     Comparison_result cmpx = compare_x_2(pp, pq);
     Comparison_result cmpy = compare_y_2(pp, pq);
-    Comparison_result cmpabsdxy = 
-    CGAL::compare( CGAL::abs(pp.x()-pq.x()), 
-                  CGAL::abs(pp.y()-pq.y()) );
+    Comparison_result cmpabsdxy =
+      CGAL::compare( CGAL::abs(pp.x()-pq.x()),
+                     CGAL::abs(pp.y()-pq.y()) );
     unsigned int npts;
     Point_2 points[2];
-    
+
     // (final) direction of bisector d=(-cmpy, cmpx)
     // the bisector should leave p to the right and q to the left
     Direction_2 d (
-                   (cmpy == EQUAL)? 0 : 
-                   (  cmpy  == SMALLER )? +1 : -1, 
-                   (cmpx == EQUAL)? 0 : 
+                   (cmpy == EQUAL)? 0 :
+                   (  cmpy  == SMALLER )? +1 : -1,
+                   (cmpx == EQUAL)? 0 :
                    (  cmpx  == SMALLER )? -1 : +1);
-    
-    //CGAL_SDG_DEBUG(std::cout << "debug: final direction d = " << d << std::endl;) ; 
-    
+
+    //CGAL_SDG_DEBUG(std::cout << "debug: final direction d = "
+    //    << d << std::endl;) ;
+
     // midpoint m of two points p and q
     Point_2 m = midpoint(pp, pq);
-    
+
     if ((cmpabsdxy == EQUAL) or (cmpx == EQUAL) or (cmpy == EQUAL)) {
       // bisector is line going through m with direction d;
       // we will store this line as the union of two rays starting
       // at m with directions -d (incoming) and d (outgoing)
       npts = 1;
       points[0] = m;
-    } else { 
+    } else {
       // bisector consists of two rays and a middle segment;
-      
+
       npts = 2;
-      
+
       // compute length of middle segment
       FT half(0.5);
       FT seglenhalf ( half *
                      CGAL::abs(
-                               CGAL::abs(pp.x()-pq.x()) - 
+                               CGAL::abs(pp.x()-pq.x()) -
                                CGAL::abs(pp.y()-pq.y()))   );
-      
+
       // construct endpoints of middle segment of bisector
       Point_2 p1, p2;
       if (cmpabsdxy == SMALLER) {
@@ -277,12 +278,10 @@ private:
                       
         // segment with positive slope will have pfirst as phor
         // segment with negative slope will have pfirst as pver
-        pfirst = (compare_x_2(seg.source(),seg.target()) 
-                  == compare_y_2(seg.source(),seg.target())) 
-                  ? phor : pver;
-        plast = (compare_x_2(seg.source(),seg.target()) 
-                 == compare_y_2(seg.source(),seg.target())) 
-                  ? pver : phor;
+        bool has_lseg_pos_slope =
+          CGAL::sign(lseg.a()) != CGAL::sign(lseg.b());
+        pfirst = has_lseg_pos_slope ? phor : pver;
+        plast  = has_lseg_pos_slope ? pver : phor;
         
         FT half = FT(0.5);  
         Point_2 pmid_pfirst_pnt = midpoint(pfirst, pnt);
@@ -296,8 +295,7 @@ private:
                                      CGAL::abs(pnt.x()-plast.x()) - 
                                      CGAL::abs(pnt.y()-plast.y()))   );
         
-        if (compare_x_2(seg.source(),seg.target()) 
-            == compare_y_2(seg.source(),seg.target())) {
+        if (has_lseg_pos_slope) {
           //segment with positive slope
           if ( (compare_x_2(seg.source(),seg.target()) == SMALLER 
                   and lseg.has_on_positive_side(pnt))
