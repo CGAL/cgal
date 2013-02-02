@@ -7,22 +7,21 @@
 #define CGAL_SDG_DEBUG(a) { a }
 #endif
 
-//~ #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Cartesian.h>
+// Kernels
+//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+//#include <CGAL/Cartesian.h>
+
 #include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_hv_traits_2.h>
 
-
-//#include <CGAL/Polychain_2.h>
-
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/point_generators_2.h>
-
 namespace CGAL_svdlinf {
 
-  typedef CGAL::Cartesian<double>                               Kernel;
+//typedef CGAL::Cartesian<double>                               Kernel;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel;
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
   typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Kernel>    Gt;
   typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>               SDG2;
   typedef CGAL::Segment_Delaunay_graph_Linf_hv_traits_2<Kernel> Gthv;
