@@ -59,7 +59,7 @@ public:
     CGAL_precondition( q.is_point() );
     CGAL_precondition( s.is_segment() && p.is_point() );
 
-    Line_2 l = compute_supporting_line( s );
+    Line_2 l = compute_supporting_line( s.supporting_site() );
     Line_2 lp = compute_linf_perpendicular(l, p.point());
 
     Oriented_side retval = lp.oriented_side(q.point());
@@ -83,7 +83,7 @@ public:
     CGAL_precondition( s.is_segment() && p.is_point() );
 
     Voronoi_vertex_2 v(s1, s2, s3);
-    Line_2 l = compute_supporting_line( s );
+    Line_2 l = compute_supporting_line( s.supporting_site() );
     Line_2 lp = compute_linf_perpendicular(l, p.point());
 
     Oriented_side retval = v.oriented_side(lp);
@@ -106,7 +106,7 @@ public:
   {
     CGAL_precondition( s.is_segment() and p.is_point() );
 
-    Line_2 lseg = compute_supporting_line( s );
+    Line_2 lseg = compute_supporting_line( s.supporting_site() );
     Line_2 lp = compute_linf_perpendicular(lseg, p.point());
     bool has_lseg_neg_slope;
 
@@ -143,10 +143,10 @@ public:
       // which is the linf projection
 
       CGAL_assertion(
-          s1.segment().is_horizontal() or
-          s1.segment().is_vertical()   or
-          s2.segment().is_horizontal() or
-          s2.segment().is_vertical()      );
+          s1.supporting_site().segment().is_horizontal() or
+          s1.supporting_site().segment().is_vertical()   or
+          s2.supporting_site().segment().is_horizontal() or
+          s2.supporting_site().segment().is_vertical()      );
 
       if (same_points(s1.source_site(), s2.source_site()) or
           same_points(s1.source_site(), s2.target_site())   ) {
@@ -180,8 +180,9 @@ public:
               << "case of s1/s2 no endpoint relation"
               << std::endl;);
 
-        CGAL_assertion(not (s.segment().is_horizontal() or
-                            s.segment().is_vertical()     ) );
+        CGAL_assertion(
+            not (s.supporting_site().segment().is_horizontal() or
+                 s.supporting_site().segment().is_vertical()     ) );
 
         has_lseg_neg_slope =
           CGAL::sign(lseg.a()) == CGAL::sign(lseg.b());

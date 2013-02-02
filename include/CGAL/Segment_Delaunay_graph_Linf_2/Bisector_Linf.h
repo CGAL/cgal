@@ -11,7 +11,7 @@ namespace CGAL {
 namespace SegmentDelaunayGraphLinf_2 {
 
 template< class K >
-class Bisector_Linf 
+class Bisector_Linf
 {
 
 public:
@@ -28,7 +28,7 @@ private:
   typedef typename K::FT        FT;
   typedef typename K::RT        RT;
 
-  typedef typename K::Line_2                Full_Line_2;
+  typedef typename K::Line_2             Full_Line_2;
   typedef typename K::Point_2            Point_2;
   typedef typename K::Direction_2        Direction_2;
   typedef typename K::Vector_2           Vector_2;
@@ -146,19 +146,19 @@ private:
 
     CGAL_SDG_DEBUG(std::cout << "bisector_PS entering with p=" << p
               << " q=" << q << std::endl;);
-    
+
     CGAL_assertion(p.is_point() and q.is_segment());
     Point_2 pnt = p.point();
     Segment_2 seg = q.segment();
-    Full_Line_2 lseg = seg.supporting_line();
-    
+    Full_Line_2 lseg = q.supporting_site().segment().supporting_line();
+
     Are_same_points_2 same_points;
     Compare_x_2 compare_x_2;
     Compare_y_2 compare_y_2;
-    
-    if (same_points(p,q.source_site()) or 
+
+    if (same_points(p,q.source_site()) or
         same_points(p,q.target_site())) {
-      //p must be one of the end point of segment q, 
+      //p must be one of the end point of segment q,
       //and the bisector is a line passing through p
       Point_2 points[1];
       unsigned int npts = 1;
@@ -188,7 +188,7 @@ private:
       Point_2 points[3];
       unsigned int npts;
       // segment site is horizontal
-      if (seg.is_horizontal()) {
+      if (q.supporting_site().segment().is_horizontal()) {
         //pver is vertical projection from point site on to segment site
         Point_2 pver;
         pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x())); 
@@ -227,7 +227,7 @@ private:
         
         return pcl;
       }//end of horizontal segment case
-      else if(seg.is_vertical()){
+      else if(q.supporting_site().segment().is_vertical()){
         //segment site is vertical
         // phor is the projection of pnt on seg
         Point_2 phor;
@@ -393,8 +393,8 @@ private:
     Are_parallel_2 are_parallel;
 
     // compute supporting lines of segments
-    Full_Line_2 lp ( p.segment() );
-    Full_Line_2 lq ( q.segment() );
+    Full_Line_2 lp ( p.supporting_site().segment() );
+    Full_Line_2 lq ( q.supporting_site().segment() );
 
     CGAL_SDG_DEBUG(std::cout << "bisector_SS lp = "
       << lp.a() << ' ' << lp.b() << ' ' << lp.c() << std::endl;);

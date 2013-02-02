@@ -86,10 +86,10 @@ public:
           } else {
 
             // here q is point
-            if ( not (t.segment().is_horizontal() or
-                      t.segment().is_vertical()     ) ) {
+            if ( not (t.supporting_site().segment().is_horizontal() or
+                      t.supporting_site().segment().is_vertical()     ) ) {
 
-              Line_2 lt = compute_supporting_line(t);
+              Line_2 lt = compute_supporting_line(t.supporting_site());
 
               // Linf-project point q to line lt
 
@@ -140,10 +140,10 @@ public:
                    same_points(q, t.target_site())   ) );
 
           // here q is point
-          if ( not (t.segment().is_horizontal() or
-                t.segment().is_vertical()     ) ) {
+          if ( not (t.supporting_site().segment().is_horizontal() or
+                    t.supporting_site().segment().is_vertical()     ) ) {
 
-            Line_2 lt = compute_supporting_line(t);
+            Line_2 lt = compute_supporting_line(t.supporting_site());
 
             // Linf-project point q to line lt
 
@@ -158,11 +158,11 @@ public:
             } else {
               // s is segment
               CGAL_assertion(
-                  not (s.segment().is_horizontal() or
-                       s.segment().is_vertical()     ) );
+                  not (s.supporting_site().segment().is_horizontal() or
+                       s.supporting_site().segment().is_vertical()     ) );
 
-              Direction_2 d (s.segment());
-              Line_2 ls = compute_supporting_line(s);
+              Direction_2 d (s.supporting_site().segment());
+              Line_2 ls = compute_supporting_line(s.supporting_site());
               if (CGAL::sign(d.dx()) == CGAL::sign(d.dy())) {
                 srep = compute_horizontal_projection(
                     ls, q.point());
@@ -180,11 +180,11 @@ public:
             } else {
               // r is segment
               CGAL_assertion(
-                  not (r.segment().is_horizontal() or
-                       r.segment().is_vertical()     ) );
+                  not (r.supporting_site().segment().is_horizontal() or
+                       r.supporting_site().segment().is_vertical()     ) );
 
-              Direction_2 d (r.segment());
-              Line_2 lr = compute_supporting_line(r);
+              Direction_2 d (r.supporting_site().segment());
+              Line_2 lr = compute_supporting_line(r.supporting_site());
               if (CGAL::sign(d.dx()) == CGAL::sign(d.dy())) {
                 rrep = compute_vertical_projection(
                     lr, q.point());
@@ -257,7 +257,8 @@ public:
       // (this has to be checked)
       CGAL_assertion(s.is_point() and r.is_point());
 
-      if (q.segment().is_horizontal() or q.segment().is_vertical())
+      if (q.supporting_site().segment().is_horizontal() or
+          q.supporting_site().segment().is_vertical()     )
       {
         // in this case r and s must be endpoints of q
         CGAL_SDG_DEBUG(
@@ -300,7 +301,7 @@ public:
             is_conflicting_side_of_q = true;
           }
         } else {
-          l = compute_supporting_line(q);
+          l = compute_supporting_line(q.supporting_site());
           Oriented_side sidelt =
             oriented_side_of_line(l, t.point());
           if (is_s_endp_of_q) {
@@ -479,15 +480,16 @@ public:
 
         CGAL_assertion(sgn == NEGATIVE);
 
-        CGAL_assertion(not (s.segment().is_horizontal() or
-                            s.segment().is_vertical()     ));
+        CGAL_assertion(
+            not (s.supporting_site().segment().is_horizontal() or
+                 s.supporting_site().segment().is_vertical()     ));
 
         // compute infinite square with corner at q
         // and with center at infinity at
         // direction SE, NE, NW, or SW;
         // the direction goes from segment s to point q
 
-        Line_2 l = compute_supporting_line(s);
+        Line_2 l = compute_supporting_line(s.supporting_site());
 
         Point_2 phor =
           compute_horizontal_projection(l, q.point());

@@ -218,7 +218,6 @@ private:
   {
     CGAL_precondition( t.is_point() );
 
-    //    Line_2 lq = compute_supporting_line(q);
     Line_2 lq = compute_supporting_line(q.supporting_site());
 
     Comparison_result res =
@@ -878,24 +877,18 @@ public:
     CGAL_assertion( not ( p.is_segment() and q.is_segment()) );
 
     if ( p.is_segment() or q.is_segment() ) {
-      Segment_2 seg = (p.is_point())? q.segment(): p.segment();
-
-      if (seg.is_horizontal() or seg.is_vertical()) {
-        if (p.is_point()) {
-          CGAL_assertion( same_points(p, q.source_site()) or
-                          same_points(p, q.target_site())   ) ;
-        } else {
-          CGAL_assertion( same_points(q, p.source_site()) or
-                          same_points(q, p.target_site())   ) ;
-        }
-        CGAL_SDG_DEBUG(
-            std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
-            << p << ' ' << q << ' ' << t << ' '
-            << "(sgn " << sgn << " not ignored)" << " returns "
-            << false << std::endl; );
-        return false;
+      if (p.is_point()) {
+        CGAL_assertion( same_points(p, q.source_site()) or
+                        same_points(p, q.target_site())   ) ;
+      } else {
+        CGAL_assertion( same_points(q, p.source_site()) or
+                        same_points(q, p.target_site())   ) ;
       }
-
+      CGAL_SDG_DEBUG(
+          std::cout << "debug finite-edge-int-cf with (p,q,t,sgn)= "
+          << p << ' ' << q << ' ' << t << ' '
+          << "(sgn " << sgn << " not ignored)" << " returns "
+          << false << std::endl; );
       return false;
     } // end of case: any of p, q is a segment
 

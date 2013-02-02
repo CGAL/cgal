@@ -101,7 +101,7 @@ private:
       Site_2 tp = Site_2::construct_site_2(p);
 
       return (  same_points(support.source_site(), tp) ||
-		same_points(support.target_site(), tp)  );      
+		same_points(support.target_site(), tp)  );
     }
     return false;
   }
@@ -145,7 +145,7 @@ private:
       return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
     }
 
-    // here orientation Linf is degenerate 
+    // here orientation Linf is degenerate
 
     // return NEGATIVE if t is strictly inside the bounding box
     // of p and q, otherwise return POSITIVE;
@@ -235,7 +235,7 @@ private:
       return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
     }
 
-    // here orientation Linf is degenerate 
+    // here orientation Linf is degenerate
 
     // return NEGATIVE if t is strictly inside the bounding box
     // of p and q, otherwise return POSITIVE;
@@ -334,7 +334,7 @@ private:
 	return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
       }
 
-      // here orientation Linf is degenerate 
+      // here orientation Linf is degenerate
 
       // return NEGATIVE if t is strictly inside the bounding box
       // of p and q, otherwise return POSITIVE;
@@ -359,17 +359,17 @@ private:
 
     CGAL_assertion( p.is_point() || q.is_point() );
 
-    CGAL_SDG_DEBUG( std::cout << "debug incircle_p of p=" << p 
-                   << " q=" << q << " t=" << t << std::endl; ); 
+    CGAL_SDG_DEBUG( std::cout << "debug incircle_p of p=" << p
+                   << " q=" << q << " t=" << t << std::endl; );
 
     // philaris: here, for Linf there are differences from L2
 
-    if ((q.is_segment() and 
-        (q.segment().is_horizontal() or 
-         q.segment().is_vertical()))    or
-        (p.is_segment() and 
-        (p.segment().is_horizontal() or 
-         p.segment().is_vertical()))      ) {
+    if ((q.is_segment() and
+        (q.supporting_site().segment().is_horizontal() or
+         q.supporting_site().segment().is_vertical()))    or
+        (p.is_segment() and
+        (p.supporting_site().segment().is_horizontal() or
+         p.supporting_site().segment().is_vertical()))      ) {
       // the case of horizontal or vertical segment is the same
       // as in L2
       Orientation o;
@@ -385,7 +385,7 @@ private:
         o = orientation_linf(pp, q.point(), t.point());
       }
       if ( CGAL::is_certain(o == RIGHT_TURN) )  {
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_p about to return " 
+        CGAL_SDG_DEBUG(std::cout << "debug incircle_p about to return "
           << (CGAL::get_certain( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE)
                        << std::endl ;);
         return CGAL::get_certain( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE;
@@ -394,15 +394,16 @@ private:
     }
     //Sandeep: Added to avoid compiler warning
     CGAL_assertion(false);
-    CGAL_SDG_DEBUG(std::cout << "sandeep: debug incircle_p should not reach here "
-                   << NEGATIVE
-                   << std::endl ;);
+    CGAL_SDG_DEBUG(std::cout
+        << "sandeep: debug incircle_p should not reach here "
+        << NEGATIVE
+        << std::endl ;);
     return NEGATIVE;
   }
 
   //-----------------------------------------------------------------------
 
-  // philaris: here Linf is very different from L2  
+  // philaris: here Linf is very different from L2
   Sign incircle_pps(const Site_2& p, const Site_2& q,
 		    const Site_2& t) const
   {
@@ -426,8 +427,8 @@ private:
 	return NEGATIVE;
     } else {
       // here, neither p nor q is on t
-      if (t.segment().is_horizontal() or 
-          t.segment().is_vertical())     {
+      if (t.supporting_site().segment().is_horizontal() or
+          t.supporting_site().segment().is_vertical())     {
         // here segment is horizontal or vertical;
         // there are similarities with L2 case here
 
@@ -455,10 +456,10 @@ private:
           // decision procedure (see below).
           // since we insert endpoints of segments first, p and q cannot
           // be consecutive points on the convex hull, because of the
-          // endpoints of t 
+          // endpoints of t
           return POSITIVE;
         }
-      } 
+      }
     } // end of case where neither p nor q is on t
     //Sandeep: Added to avoid compiler warning
     CGAL_assertion(false);
@@ -489,7 +490,7 @@ private:
 
 
     if ( is_q_on_t and is_q_on_p) {
-      CGAL_SDG_DEBUG(std::cout << "debug incircle_sps " 
+      CGAL_SDG_DEBUG(std::cout << "debug incircle_sps "
         << "is_q_on_t and is_q_on_p" << std::endl; );
 
       Point_2 pp = same_points(q, p.source_site()) ? p.target() : p.source();
@@ -497,8 +498,8 @@ private:
 
       Orientation o = orientation_linf(pp, q.point(), pt);
 
-                     CGAL_SDG_DEBUG(std::cout << "debug incircle_sps or( " 
-        << pp << ", " << q.point() << ", " << pt << " ) = " 
+                     CGAL_SDG_DEBUG(std::cout << "debug incircle_sps or( "
+        << pp << ", " << q.point() << ", " << pt << " ) = "
         << o << std::endl; );
 
       if (o == DEGENERATE) {
@@ -534,10 +535,10 @@ private:
     } else {
       // philaris: serious difference for Linf here, related to L2
 
-      if ( p.segment().is_horizontal() or
-           p.segment().is_vertical()      ) {
+      if ( p.supporting_site().segment().is_horizontal() or
+           p.supporting_site().segment().is_vertical()      ) {
         return POSITIVE;
-      } 
+      }
     } // end of case where q is not on t
     //Sandeep: Added to avoid compiler warning
     CGAL_assertion(false);
@@ -568,7 +569,7 @@ private:
 
     if ( is_p_on_t and is_p_on_q ) {
 
-      CGAL_SDG_DEBUG(std::cout << "debug incircle_pss " 
+      CGAL_SDG_DEBUG(std::cout << "debug incircle_pss "
         << "is_p_on_t and is_p_on_q" << std::endl; );
 
       Point_2 pq = same_points(p, q.source_site()) ? q.target() : q.source();
@@ -604,18 +605,18 @@ private:
         }
       }
 
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_pss or( " 
-        << p.point() << ", " << pq << ", " << pt << " ) = " 
-        << o << std::endl; );
+        CGAL_SDG_DEBUG(std::cout << "debug incircle_pss or( "
+            << p.point() << ", " << pq << ", " << pt << " ) = "
+            << o << std::endl; );
 
       return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
     } else {
       // philaris: serious difference for Linf here, related to L2
 
-      if ( q.segment().is_horizontal() or
-           q.segment().is_vertical()      ) {
+      if ( q.supporting_site().segment().is_horizontal() or
+           q.supporting_site().segment().is_vertical()      ) {
         return POSITIVE;
-      } 
+      }
     } // end of case where p is not on t
     //Sandeep: Added to avoid compiler warning
     CGAL_assertion(false);
@@ -650,10 +651,10 @@ public:
 		  const Site_2& r, const Site_2& t) const
   {
 
-    CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict entering (pqrt)= ("
-              << p << ") (" << q << ") ("  
-              << r << ") (" << t << ")"
-              << std::endl; );
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: Vertex_conflict entering (pqrt)= ("
+        << p << ") (" << q << ") (" << r << ") (" << t << ")"
+        << std::endl; );
 
 
 #ifdef CGAL_PROFILE
@@ -701,11 +702,11 @@ public:
     Sign s_alt = v_alt.incircle(t);
 
     if ( s != s_alt ) {
-      std::cerr << "different results" << std::endl; );
-      std::cerr << p << std::endl; );
-      std::cerr << q << std::endl; );
-      std::cerr << r << std::endl; );
-      std::cerr << t << std::endl; );
+      std::cerr << "different results" << std::endl;
+      std::cerr << p << std::endl;
+      std::cerr << q << std::endl;
+      std::cerr << r << std::endl;
+      std::cerr << t << std::endl;
       CGAL_assertion( s == s_alt );
       exit(1);
     }
@@ -715,21 +716,21 @@ public:
     Voronoi_vertex_2 v(p, q, r);
 
     Point_2 temppt = v.point();
-    CGAL_SDG_DEBUG(std::cout << "debug Voronoi_vertex_2 v=" << temppt << std::endl; );
+    CGAL_SDG_DEBUG(std::cout
+        << "debug Voronoi_vertex_2 v=" << temppt << std::endl; );
 
     Sign retval = v.incircle(t);
 
-              CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqrt)= ("
-              << p << ") (" << q << ") ("  
-              << r << ") (" << t << ") returns " << retval
-              << std::endl; );
+              CGAL_SDG_DEBUG(std::cout
+                  << "debug: Vertex_conflict (pqrt)= ("
+                  << p << ") (" << q << ") ("
+                  << r << ") (" << t << ") returns " << retval
+                  << std::endl; );
 
     return retval;
 #endif // CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
   }
 
-
-  
 
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
@@ -773,7 +774,7 @@ public:
     if ( t.is_point() ) {
       //      return incircle_p(p, q, t);
       retval = incircle_p(q, p, t);
-    } else { 
+    } else {
       // MK::ERROR: do geometric filtering when orientation is called.
       //    return incircle_s(p, q, t);
       retval = incircle_s(q, p, t);

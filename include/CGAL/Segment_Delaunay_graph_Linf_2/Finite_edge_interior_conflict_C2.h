@@ -212,7 +212,6 @@ private:
   {
     CGAL_precondition( t.is_point() );
 
-    //    Line_2 lq = compute_supporting_line(q);
     Line_2 lq = compute_supporting_line(q.supporting_site());
 
     Comparison_result res =
@@ -746,8 +745,9 @@ public:
           CGAL_SDG_DEBUG( std::cout << "debug fecf p is not endpoint of q"
             << std::endl; );
 
-          CGAL_assertion( not ( q.segment().is_horizontal() or
-                                q.segment().is_vertical()     ) ) ;
+          CGAL_assertion(
+              not ( q.supporting_site().segment().is_horizontal() or
+                    q.supporting_site().segment().is_vertical()     ) ) ;
 
           Line_2 lseg = compute_supporting_line(q.supporting_site());
 
@@ -832,8 +832,9 @@ public:
               << sgn << " returns " << false << std::endl; );
           return false;
         } else { // q is not endpoint of p
-          CGAL_assertion( not ( p.segment().is_horizontal() or
-                                p.segment().is_vertical()     ) ) ;
+          CGAL_assertion(
+              not ( p.supporting_site().segment().is_horizontal() or
+                    p.supporting_site().segment().is_vertical()     ) ) ;
 
           Line_2 lseg = compute_supporting_line(p.supporting_site());
 
@@ -1021,8 +1022,10 @@ public:
 
     if ( p.is_segment() or q.is_segment() ) {
       Segment_2 seg = (p.is_point())? q.segment(): p.segment();
+      Site_2 siteseg = (p.is_point())? q: p;
 
-      if (seg.is_horizontal() or seg.is_vertical()) {
+      if (siteseg.supporting_site().segment().is_horizontal() or
+          siteseg.supporting_site().segment().is_vertical()     ) {
         if (p.is_point()) {
           CGAL_assertion( same_points(p, q.source_site()) or
                           same_points(p, q.target_site())   ) ;
@@ -1038,8 +1041,9 @@ public:
         return false;
       }
 
-      CGAL_assertion( not( seg.is_horizontal() or
-                           seg.is_vertical()     ));
+      CGAL_assertion(
+          not( siteseg.supporting_site().segment().is_horizontal() or
+               siteseg.supporting_site().segment().is_vertical()     ));
       // t is segment
       if (t.is_segment()) {
         CGAL_assertion(sgn == NEGATIVE);

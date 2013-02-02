@@ -157,17 +157,14 @@ public:
       // (this has to be checked)
       CGAL_assertion(s.is_point() and r.is_point());
 
-      if (q.segment().is_horizontal() or q.segment().is_vertical())
-      {
-        // in this case r and s must be endpoints of q
-        CGAL_SDG_DEBUG(
-            std::cout
-            << "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
-            << q << ' ' << s << ' ' << r << ' ' << t
-            << ' ' << sgn << " returns "
-            << ( sgn == NEGATIVE ) << std::endl;);
-        return ( sgn == NEGATIVE );
-      } 
+      // in this case r and s must be endpoints of q
+      CGAL_SDG_DEBUG(
+          std::cout
+          << "debug infinite-edge-int-cf with (q,s,r,t,sgn)= "
+          << q << ' ' << s << ' ' << r << ' ' << t
+          << ' ' << sgn << " returns "
+          << ( sgn == NEGATIVE ) << std::endl;);
+      return ( sgn == NEGATIVE );
     }
 
     // here and below both q and t are points

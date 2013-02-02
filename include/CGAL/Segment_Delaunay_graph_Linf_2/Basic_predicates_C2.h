@@ -642,7 +642,7 @@ public:
 
       Line_2 l = compute_line_from_to(corner, displaced);
 
-      Line_2 lseg = compute_supporting_line(s);
+      Line_2 lseg = compute_supporting_line(s.supporting_site());
 
       RT hx, hy, hw;
 
@@ -749,7 +749,7 @@ public:
 
       Line_2 l = compute_line_from_to(corner, displaced);
 
-      Line_2 lseg = compute_supporting_line(s);
+      Line_2 lseg = compute_supporting_line(s.supporting_site());
 
       RT hx, hy, hw;
 
@@ -857,7 +857,7 @@ public:
     Sign dxs = CGAL::sign(strg.x() - ssrc.x());
     Sign dys = CGAL::sign(strg.y() - ssrc.y());
 
-    Line_2 lseg = compute_supporting_line(s);
+    Line_2 lseg = compute_supporting_line(s.supporting_site());
     Oriented_side os_lseg_p = oriented_side_of_line(lseg, pp);
 
     CGAL_assertion( os_lseg_p != ON_ORIENTED_BOUNDARY );

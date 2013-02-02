@@ -259,70 +259,73 @@ public:
       
       Point_2 points[3];
       unsigned int npts;
-      
+
       Compare_x_2 compare_x_2;
       Compare_y_2 compare_y_2;
-      Equal_2     are_same_points; 
-      
+      Equal_2     are_same_points;
+
       if (are_same_points(sitep,sites.source_site())
           or are_same_points(sitep,sites.target_site())) {
-        npts = 1;	
+        npts = 1;
         points[0] = pnt;
-        Point_2 pseg = (are_same_points(sitep,sites.source_site())) ? seg.target() : seg.source();
-	  	
+        Point_2 pseg = (are_same_points(sitep,sites.source_site())) ?
+          seg.target() : seg.source();
+
         Comparison_result cmpx = compare_x_2(pnt, pseg);
         Comparison_result cmpy = compare_y_2(pnt, pseg);
-											 
+
         Direction_2 d (
-		                   (cmpy == EQUAL)? 0 : 
-                       (  cmpy  == SMALLER )? +1 : -1, 
-                       (cmpx == EQUAL)? 0 : 
+                       (cmpy == EQUAL)? 0 :
+                       (  cmpy  == SMALLER )? +1 : -1,
+                       (cmpx == EQUAL)? 0 :
                        (  cmpx  == SMALLER )? -1 : +1);
         if (q.is_point()) {
           d = -d;
         }
-											 
+
         Polychainline pcl(-d, points, points+npts, d);
         return pcl;
       } else {
         // pnt is not end point of seg
         // seg must not be horizontal or vertical
-        CGAL_assertion( not(seg.is_horizontal() or seg.is_vertical()) );
-        Line_2 lseg = seg.supporting_line();
-        Point_2 phor,pver;
+        CGAL_assertion(
+            not( sites.supporting_site().segment().is_horizontal() or
+                 sites.supporting_site().segment().is_vertical()     ) );
+        Line_2 lseg = sites.supporting_site().segment().supporting_line();
+        Point_2 phor, pver;
         phor = Point_2(lseg.x_at_y(pnt.y()), pnt.y());
-        pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x())); 
+        pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x()));
         //pfirst and plast are points on the supporting line of seg
         Point_2 pfirst, plast;
         //pcfirst and pclast are points on the bisector
         Point_2 pcfirst, pclast;
         // segment with positive slope will have pfirst as phor
         // segment with negative slope will have pfirst as pver
-        pfirst = (compare_x_2(seg.source(),seg.target()) 
-                  == compare_y_2(seg.source(),seg.target())) 
+        pfirst = (compare_x_2(seg.source(),seg.target())
+                  == compare_y_2(seg.source(),seg.target()))
                  ? phor : pver;
-        plast = (compare_x_2(seg.source(),seg.target()) 
-                 == compare_y_2(seg.source(),seg.target())) 
+        plast = (compare_x_2(seg.source(),seg.target())
+                 == compare_y_2(seg.source(),seg.target()))
                 ? pver : phor;
-        
-        FT half = FT(0.5);  
+
+        FT half = FT(0.5);
         Point_2 pmid_pfirst_pnt = midpoint(pfirst, pnt);
         Point_2 pmid_plast_pnt = midpoint(plast, pnt);
         FT seglenhalffirst ( half *
                             CGAL::abs(
-                                      CGAL::abs(pnt.x()-pfirst.x()) - 
+                                      CGAL::abs(pnt.x()-pfirst.x()) -
                                       CGAL::abs(pnt.y()-pfirst.y()))   );
         FT seglenhalflast ( half *
                            CGAL::abs(
-                                     CGAL::abs(pnt.x()-plast.x()) - 
+                                     CGAL::abs(pnt.x()-plast.x()) -
                                      CGAL::abs(pnt.y()-plast.y()))   );
-        
-        if (compare_x_2(seg.source(),seg.target()) 
+
+        if (compare_x_2(seg.source(),seg.target())
             == compare_y_2(seg.source(),seg.target())) {
           //segment with positive slope
-          if ( (compare_x_2(seg.source(),seg.target()) == SMALLER 
+          if ( (compare_x_2(seg.source(),seg.target()) == SMALLER
                 and lseg.has_on_positive_side(pnt))
-              or (compare_x_2(seg.source(),seg.target()) == LARGER 
+              or (compare_x_2(seg.source(),seg.target()) == LARGER
                   and lseg.has_on_negative_side(pnt)) ) {
                 //pcfirst is center of square , pfirst = phor, upward direction
                 //pclast is center of sqaure, plast = pver, left direction
@@ -578,13 +581,15 @@ public:
       } else {
         // pnt is not end point of seg
         // seg must not be horizontal or vertical
-        CGAL_assertion( not(seg.is_horizontal() or seg.is_vertical()) );
+        CGAL_assertion(
+            not( sites.supporting_site().segment().is_horizontal() or
+                 sites.supporting_site().segment().is_vertical()     ) );
         // bisector ray always starts with v
         points[0] = v;
-        Line_2 lseg = seg.supporting_line();
-        Point_2 phor,pver;
+        Line_2 lseg = sites.supporting_site().segment().supporting_line();
+        Point_2 phor, pver;
         phor = Point_2(lseg.x_at_y(pnt.y()), pnt.y());
-        pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x())); 
+        pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x()));
         //pfirst and plast are points on the supporting line of seg
         Point_2 pfirst, plast;
         //pcfirst and pclast are points on the bisector
@@ -790,13 +795,14 @@ public:
       points[1] = vqps;
       Polychainsegment pcs(points, points+2);
 
-      CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment is (trivial) " 
-        << pcs << std::endl; );
+      CGAL_SDG_DEBUG( std::cout
+          << "debug construct bisector segment is (trivial) "
+          << pcs << std::endl; );
       return pcs;
     }
 
-    if ( p.is_point() and q.is_point() ) { 
-      Point_2 pp = p.point(); 
+    if ( p.is_point() and q.is_point() ) {
+      Point_2 pp = p.point();
       Point_2 pq = q.point();
 
       CGAL_assertion( not (are_same_points(p, q)) );
@@ -894,10 +900,10 @@ public:
 
       //CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment is " 
       //  << pcs << std::endl; );
-      
+
       return pcs;
     } // end of two points case
-    else if ( (p.is_point() and q.is_segment()) or 
+    else if ( (p.is_point() and q.is_segment()) or
               (q.is_point() and p.is_segment()) ) {
       //one site is point and one site is segment
       unsigned int npts;
@@ -906,37 +912,39 @@ public:
       Equal_2 are_same_points;
       // check if p is point and is an endpoint of q
       // or if q is a point and is an end point of p
-      if (  (p.is_point() and 
-            (are_same_points(p, q.source_site())or
-             are_same_points(p, q.target_site()))) 
-          or(q.is_point() and
-            (are_same_points(q, p.source_site())or
-            are_same_points(q, p.target_site()))) )
+      if (   ( p.is_point() and
+              (are_same_points(p, q.source_site()) or
+               are_same_points(p, q.target_site())   ) )
+          or (q.is_point() and
+              (are_same_points(q, p.source_site()) or
+               are_same_points(q, p.target_site())   ) ) )
       {
         npts = 2;
       }
       else {
         //pnt is the point site and seg is the segment site
-        Point_2 pnt = (p.is_point()) ? p.point() : q.point();  
+        Point_2 pnt = (p.is_point()) ? p.point() : q.point();
         Segment_2 seg = (p.is_segment()) ? p.segment() : q.segment();
+        Site_2 sitepnt = (p.is_point()) ? p : q;
+        Site_2 siteseg = (p.is_point()) ? q : p;
         // lseg is the suporting line of the segment site
-        Line_2 lseg = seg.supporting_line();  
+        Line_2 lseg = siteseg.supporting_site().segment().supporting_line();
         // segment site is horizontal
-        if (seg.is_horizontal()) {
+        if (lseg.is_horizontal()) {
         //pver is vertical projection from point site on to segment site
           Point_2 pver;
-          pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x())); 
-              
+          pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x()));
+
           Point_2 m = midpoint(pnt, pver);
           FT half = FT(0.5);
           FT seglenhalf ( half * CGAL::abs(pnt.y()-pver.y()) );
-  
+
           //positive side is left-turn
           if (lseg.has_on_positive_side(pnt)) {
-            points[1]= (compare_x_2(seg.source(),seg.target())==SMALLER) 
+            points[1]= (compare_x_2(seg.source(),seg.target())==SMALLER)
                        ? Point_2(m.x() + seglenhalf, m.y())
                        : Point_2(m.x() - seglenhalf, m.y());
-            points[2]= (compare_x_2(seg.source(),seg.target())==SMALLER) 
+            points[2]= (compare_x_2(seg.source(),seg.target())==SMALLER)
                        ? Point_2(m.x() - seglenhalf, m.y())
                        : Point_2(m.x() + seglenhalf, m.y());
           } else {//pnt is on the negative side of lseg i.e right turn
@@ -981,7 +989,7 @@ public:
           CGAL_SDG_DEBUG( std::cout << "sandeep debug after cutting points,npts = "
                     << npts << std::endl; );
         }//end of horizontal segment case
-        else if(seg.is_vertical()){
+        else if (lseg.is_vertical()) {
           //segment site is vertical
           // phor is the projection of pnt on seg
           Point_2 phor;

@@ -1645,7 +1645,7 @@ private:
     // philaris: addition for Linf
 
     if (is_endpoint_of(p, q)) {
-      if (q.segment().is_horizontal()) {
+      if (q.supporting_site().segment().is_horizontal()) {
         if (scmpy(p,t) == EQUAL) {
           Site_2 other = 
             same_points(p, q.source_site()) ?
@@ -1655,7 +1655,7 @@ private:
           }
         }
       }
-      if (q.segment().is_vertical()) {
+      if (q.supporting_site().segment().is_vertical()) {
         if (scmpx(p,t) == EQUAL) {
           Site_2 other = 
             same_points(p, q.source_site()) ?
@@ -1668,7 +1668,7 @@ private:
     }
 
     if (is_endpoint_of(p, r)) {
-      if (r.segment().is_horizontal()) {
+      if (r.supporting_site().segment().is_horizontal()) {
         if (scmpy(p,t) == EQUAL) {
           Site_2 other = 
             same_points(p, r.source_site()) ?
@@ -1678,7 +1678,7 @@ private:
           }
         }
       }
-      if (r.segment().is_vertical()) {
+      if (r.supporting_site().segment().is_vertical()) {
         if (scmpx(p,t) == EQUAL) {
           Site_2 other = 
             same_points(p, r.source_site()) ?
@@ -1884,8 +1884,8 @@ private:
       << numendpts_of_t << std::endl;);
 
     if (numendpts_of_t > 0) {
-      bool is_t_horizontal = t.segment().is_horizontal();
-      bool is_t_vertical   = t.segment().is_vertical();
+      bool is_t_horizontal = t.supporting_site().segment().is_horizontal();
+      bool is_t_vertical   = t.supporting_site().segment().is_vertical();
 
       if (is_t_horizontal or is_t_vertical) {
         CGAL_assertion(numendpts_of_t == 1);
@@ -1927,8 +1927,10 @@ private:
         CGAL_assertion(numothers < 2);
 
         if (numothers == 1) {
-          bool is_other_horizontal = other.segment().is_horizontal();
-          bool is_other_vertical = other.segment().is_vertical();
+          bool is_other_horizontal =
+            other.supporting_site().segment().is_horizontal();
+          bool is_other_vertical =
+            other.supporting_site().segment().is_vertical();
 
           if ((is_t_horizontal and is_other_horizontal) or
               (is_t_vertical and is_other_vertical)       ) {
@@ -2352,33 +2354,36 @@ private:
   inline
   void
   compute_helper_two_seg(
-      const Site_2& a, const Site_2& b, 
+      const Site_2& a, const Site_2& b,
       const Site_2& common_site, Site_2& other_of_seg)
   const
   {
     CGAL_assertion(a.is_segment());
     CGAL_assertion(b.is_segment());
 
-    CGAL_SDG_DEBUG(std::cout << "debug compute_helper_two_seg entering with "
-      << a << " and " << b << " having common " 
-      << common_site << std::endl;);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug compute_helper_two_seg entering with "
+        << a << " and " << b << " having common "
+        << common_site << std::endl;);
 
-    if (a.segment().is_horizontal() or a.segment().is_vertical()) {
+    if (a.supporting_site().segment().is_horizontal() or
+        a.supporting_site().segment().is_vertical()) {
       if ( same_points(common_site, b.source_site()) ) {
         other_of_seg = b.target_site();
       } else {
         other_of_seg = b.source_site();
       }
     } else {
-      CGAL_assertion( 
-          b.segment().is_horizontal() or b.segment().is_vertical() );
+      CGAL_assertion(
+          b.supporting_site().segment().is_horizontal() or
+          b.supporting_site().segment().is_vertical() );
 
       if ( same_points(common_site, a.source_site()) ) {
         other_of_seg = a.target_site();
       } else {
         other_of_seg = a.source_site();
       }
-      
+
     }
   } // end of compute_helper_two_seg
 
