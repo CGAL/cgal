@@ -395,20 +395,11 @@ private:
                        << std::endl; );
 
         Point_2 pnt = p.point();
-        Segment_2 seg = q.segment();
-        Line_2 l = compute_supporting_line(q.supporting_site());
 
         // compute slope of segment q
-        Comparison_result cmpxsegpts =
-          cmpx(seg.target(), seg.source());
-        Comparison_result cmpysegpts =
-          cmpy(seg.target(), seg.source());
-
-        CGAL_assertion((cmpxsegpts != EQUAL) and
-                       (cmpysegpts != EQUAL));
-
-        bool is_positive_slope = (cmpxsegpts ==  cmpysegpts);
-        //bool is_negative_slope = (cmpxsegpts == -cmpysegpts);
+        Line_2 l = compute_supporting_line(q.supporting_site());
+        bool is_positive_slope =
+          CGAL::sign(l.a()) != CGAL::sign(l.b());
 
         CGAL_SDG_DEBUG(std::cout << "debug incircle_p: q has " <<
           (is_positive_slope ? "positive" : "negative") <<
@@ -435,6 +426,8 @@ private:
 
         bool is_same_qsrc_p = same_points(q.source_site(), p);
         bool is_same_qtrg_p = same_points(q.target_site(), p);
+
+        Segment_2 seg = q.segment();
 
         if (is_same_qsrc_p or is_same_qtrg_p) {
           Point_2 otherpnt;
@@ -544,21 +537,12 @@ private:
         CGAL_SDG_DEBUG(std::cout << "debug incircle_p: p segment, q point"
                   << std::endl; );
 
-        Segment_2 seg = p.segment();
-        Point_2 pnt = q.point();
-        Line_2 l = compute_supporting_line(p.supporting_site());
-
         // compute slope of segment p
-        Comparison_result cmpxsegpts =
-          cmpx(seg.target(), seg.source());
-        Comparison_result cmpysegpts =
-          cmpy(seg.target(), seg.source());
+        Line_2 l = compute_supporting_line(p.supporting_site());
+        bool is_positive_slope =
+          CGAL::sign(l.a()) != CGAL::sign(l.b());
 
-        CGAL_assertion((cmpxsegpts != EQUAL) and
-                       (cmpysegpts != EQUAL));
-
-        bool is_positive_slope = (cmpxsegpts ==  cmpysegpts);
-        //bool is_negative_slope = (cmpxsegpts == -cmpysegpts);
+        Point_2 pnt = q.point();
 
         Oriented_side side_of_pnt =
           oriented_side_of_line(l, pnt);
@@ -581,6 +565,8 @@ private:
         bool is_same_psrc_q = same_points(p.source_site(), q);
         bool is_same_ptrg_q = same_points(p.target_site(), q);
 
+        Segment_2 seg = p.segment();
+
         if (is_same_psrc_q or is_same_ptrg_q) {
           Point_2 otherpnt;
           if (is_same_psrc_q) {
@@ -593,12 +579,12 @@ private:
           }
 
           lhor = compute_horizontal_side_line(
-                   pnt, otherpnt, 
+                   pnt, otherpnt,
                    is_positive_slope ?
                     ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE );
           lver = compute_vertical_side_line(
-                   pnt, otherpnt, 
-                   is_positive_slope ? 
+                   pnt, otherpnt,
+                   is_positive_slope ?
                     ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE );
         } else {
           // here point q is not on segment p
@@ -781,7 +767,7 @@ private:
             corner = Point_2( qq.x(), pp.y() );
           }
 
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_pps corner=" 
+          CGAL_SDG_DEBUG(std::cout << "debug incircle_pps corner="
             << corner << std::endl; );
 
           if (intersects_segment_interior_inf_box(t, q, corner, p)) {
@@ -795,7 +781,7 @@ private:
         // philaris: code added to avoid warnings on some compilers
         CGAL_assertion( false );
         return ZERO;
-              
+
       } // end of case where segment is neither horizontal nor vertical
     } // end of case where neither p nor q is on t
   } // end of incircle_pps
@@ -821,7 +807,7 @@ private:
 
 
     if ( is_q_on_t and is_q_on_p) {
-      CGAL_SDG_DEBUG(std::cout << "debug incircle_sps " 
+      CGAL_SDG_DEBUG(std::cout << "debug incircle_sps "
         << "is_q_on_t and is_q_on_p" << std::endl; );
 
       Point_2 pp = same_points(q, p.source_site()) ? p.target() : p.source();
@@ -829,8 +815,8 @@ private:
 
       Orientation o = orientation_linf(pp, q.point(), pt);
 
-                     CGAL_SDG_DEBUG(std::cout << "debug incircle_sps or( " 
-        << pp << ", " << q.point() << ", " << pt << " ) = " 
+      CGAL_SDG_DEBUG(std::cout << "debug incircle_sps or( "
+        << pp << ", " << q.point() << ", " << pt << " ) = "
         << o << std::endl; );
 
       if (o == DEGENERATE) {
@@ -873,29 +859,19 @@ private:
         CGAL_assertion(not p.supporting_site().segment().is_horizontal());
         CGAL_assertion(not p.supporting_site().segment().is_vertical());
 
-        Segment_2 seg = p.segment();
+        // compute slope of segment p
+        Line_2 l = compute_supporting_line(p.supporting_site());
+        bool is_positive_slope =
+          CGAL::sign(l.a()) != CGAL::sign(l.b());
+
         Point_2 pnt = q.point();
 
-        // compute slope of segment p
-        Comparison_result cmpxsegpts =
-          cmpx(seg.target(), seg.source());
-        Comparison_result cmpysegpts =
-          cmpy(seg.target(), seg.source());
-
-        CGAL_assertion((cmpxsegpts != EQUAL) and
-                       (cmpysegpts != EQUAL));
-
-        bool is_positive_slope = (cmpxsegpts ==  cmpysegpts);
-        //bool is_negative_slope = (cmpxsegpts == -cmpysegpts);
-
-        Line_2 l = compute_supporting_line(p.supporting_site());
-
-        Oriented_side side_of_pnt = 
+        Oriented_side side_of_pnt =
           oriented_side_of_line(l, pnt);
 
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
           CGAL_assertion(same_points(p.source_site(), q) or
-                         same_points(p.target_site(), q)   ); 
+                         same_points(p.target_site(), q)   );
         }
 
         Line_2 lhor;
@@ -905,6 +881,7 @@ private:
         bool is_same_ptrg_q = same_points(p.target_site(), q);
 
         Point_2 pnt_on_seg;
+        Segment_2 seg = p.segment();
 
         if (is_same_psrc_q or is_same_ptrg_q) {
           pnt_on_seg = pnt;
@@ -919,18 +896,19 @@ private:
           }
 
           lhor = compute_horizontal_side_line(
-                   pnt, otherpnt, 
+                   pnt, otherpnt,
                    is_positive_slope ?
                     ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE );
           lver = compute_vertical_side_line(
-                   pnt, otherpnt, 
-                   is_positive_slope ? 
+                   pnt, otherpnt,
+                   is_positive_slope ?
                     ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE );
         } else {
           // here point q is not on segment p
 
-          CGAL_SDG_DEBUG(std::cout << "debug: here point q is not on segment p" 
-            << std::endl; );
+          CGAL_SDG_DEBUG(std::cout
+              << "debug: here point q is not on segment p"
+              << std::endl; );
 
           if (is_positive_slope) {
             pnt_on_seg = compute_horizontal_projection(l, pnt);
@@ -938,8 +916,9 @@ private:
             lver = compute_perpendicular(lhor, pnt_on_seg);
           } else { // is_negative_slope
             pnt_on_seg = compute_vertical_projection(l, pnt);
-            CGAL_SDG_DEBUG(std::cout << "debug: pnt_on_seg = " << pnt_on_seg 
-              << std::endl; );
+            CGAL_SDG_DEBUG(std::cout
+                << "debug: pnt_on_seg = " << pnt_on_seg
+                << std::endl; );
             lver = compute_line_from_to(pnt, pnt_on_seg);
             lhor = compute_perpendicular(lver, pnt_on_seg);
           }
@@ -949,7 +928,7 @@ private:
         // philaris: negative means conflict
         //           positive means no conflict
 
-          CGAL_SDG_DEBUG(std::cout << "debug: sps "
+        CGAL_SDG_DEBUG(std::cout << "debug: sps "
           << " lhor=" << lhor.a() << " " << lhor.b() << " " << lhor.c()
           << " lver=" << lver.a() << " " << lver.b() << " " << lver.c()
           << std::endl; );
@@ -958,11 +937,12 @@ private:
         //if (intersects_segment_positive_halfplane(t, lhor) and
         //    intersects_segment_positive_halfplane(t, lver)    )
         if (intersects_segment_positive_of_wedge(t, lhor, lver))
-        { 
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_sps about to return NEG"
-                    << std::endl; ); 
+        {
+          CGAL_SDG_DEBUG(std::cout
+              << "debug incircle_sps about to return NEG"
+              << std::endl; );
           return NEGATIVE;
-        } else { 
+        } else {
           CGAL_SDG_DEBUG(std::cout << "debug incircle_sps does not cross wedge, "
                     << "check for common endpoint of p and t"
                     << std::endl; );
@@ -1130,32 +1110,22 @@ private:
         CGAL_assertion(not q.supporting_site().segment().is_vertical());
 
         Point_2 pnt = p.point();
-        Segment_2 seg = q.segment();
 
         // compute slope of segment q
-        Comparison_result cmpxsegpts =
-          cmpx(seg.target(), seg.source());
-        Comparison_result cmpysegpts =
-          cmpy(seg.target(), seg.source());
-
-        CGAL_assertion((cmpxsegpts != EQUAL) and
-                       (cmpysegpts != EQUAL));
-
-        bool is_positive_slope = (cmpxsegpts ==  cmpysegpts);
-        //bool is_negative_slope = (cmpxsegpts == -cmpysegpts);
+        Line_2 l = compute_supporting_line(q.supporting_site());
+        bool is_positive_slope =
+          CGAL::sign(l.a()) != CGAL::sign(l.b());
 
         CGAL_SDG_DEBUG(std::cout << "debug incircle_pss: q has " <<
           (is_positive_slope ? "positive" : "negative") <<
-          " slope" << std::endl; ); 
+          " slope" << std::endl; );
 
-        Line_2 l = compute_supporting_line(q.supporting_site());
-
-        Oriented_side side_of_pnt = 
+        Oriented_side side_of_pnt =
           oriented_side_of_line(l, pnt);
 
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
           CGAL_assertion(same_points(q.source_site(), p) or
-                         same_points(q.target_site(), p)   ); 
+                         same_points(q.target_site(), p)   );
         }
 
         Line_2 lhor;
@@ -1165,6 +1135,7 @@ private:
         bool is_same_qtrg_p = same_points(q.target_site(), p);
 
         Point_2 pnt_on_seg;
+        Segment_2 seg = q.segment();
 
         if (is_same_qsrc_p or is_same_qtrg_p) {
           CGAL_SDG_DEBUG(std::cout << "debug: pss: p is endpoint of q" << std::endl; );
@@ -1180,17 +1151,18 @@ private:
           }
 
           lhor = compute_horizontal_side_line(
-                   pnt, otherpnt, 
+                   pnt, otherpnt,
                    is_positive_slope ?
                     ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE );
           lver = compute_vertical_side_line(
-                   pnt, otherpnt, 
-                   is_positive_slope ? 
+                   pnt, otherpnt,
+                   is_positive_slope ?
                    ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE);
         } else {
           // here point p is not on segment q
-         
-          CGAL_SDG_DEBUG(std::cout << "debug: pss from pt to pt on seg" << std::endl; );
+
+          CGAL_SDG_DEBUG(std::cout
+              << "debug: pss from pt to pt on seg" << std::endl; );
 
           if (is_positive_slope) {
             pnt_on_seg = compute_vertical_projection(l, pnt);
