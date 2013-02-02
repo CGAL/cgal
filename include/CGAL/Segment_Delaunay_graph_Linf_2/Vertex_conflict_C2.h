@@ -421,6 +421,13 @@ private:
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
           CGAL_assertion(same_points(q.source_site(), p) or
                          same_points(q.target_site(), p)   ); 
+        } else {
+          // here, side_of_pnt is non-zero
+          Oriented_side side_of_t = oriented_side_of_line(l, t.point());
+          if (side_of_t == - side_of_pnt) {
+            // p and t on different sides of segment q
+            return POSITIVE;
+          }
         }
 
         Line_2 lhor;
@@ -559,6 +566,13 @@ private:
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
           CGAL_assertion(same_points(p.source_site(), q) or
                          same_points(p.target_site(), q)   ); 
+        } else {
+          // here, side_of_pnt is non-zero
+          Oriented_side side_of_t = oriented_side_of_line(l, t.point());
+          if (side_of_t == - side_of_pnt) {
+            // q and t on different sides of segment p
+            return POSITIVE;
+          }
         }
 
         Line_2 lhor;
