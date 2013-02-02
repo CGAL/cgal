@@ -67,9 +67,27 @@ public:
   MainWindow();
 
 private:
-  template <typename Iterator> 
+  template <typename Iterator>
   void insert_polyline(Iterator b, Iterator e)
   {
+    //CGAL_SDG_DEBUG(std::cout << "Insert polyline" << std::endl; );
+    Iterator it1 = b;
+    ++it1;
+    if (it1 != e) {
+      //CGAL_SDG_DEBUG(std::cout << "Not single point" << std::endl; );
+      Iterator it2 = it1;
+      ++it2;
+      if (it2 == e) {
+        Segment_2 seg(*b, *it1);
+        //CGAL_SDG_DEBUG(std::cout << "Checking segment "
+        //    << seg << std::endl; );
+        if (not (seg.is_horizontal() or seg.is_vertical())) {
+          std::cerr << "Non axis-parallel segment ignored (s "
+            << seg << ")" << std::endl;
+          return;
+        }
+      }
+    }
     Point_2 p, q;
     SVD::Vertex_handle vh, wh;
     Iterator it = b;
@@ -212,13 +230,16 @@ MainWindow::processInput(CGAL::Object o)
       svd.insert(points.front());
     }
     else {
-      /*
+#ifdef CGAL_SDG_VERBOSE
       std::cout.precision(12);
-      std::cout << points.size() << std::endl;
-      for( std::list<Point_2>::iterator it =  points.begin(); it != points.end(); ++it){
-	std::cout << *it << std::endl;
+      std::cout << "#pts=" << points.size() << "  points:";
+      for(std::list<Point_2>::iterator
+          it = points.begin(); it != points.end(); ++it)
+      {
+        std::cout << "  " << *it;
       }
-      */
+      std::cout << std::endl;
+#endif
       insert_polyline(points.begin(), points.end());
     }
   }
@@ -400,11 +421,19 @@ MainWindow::loadSitesInput(QString fileName)
   SVD::Site_2 site;
   std::ifstream ifs(qPrintable(fileName));
   while (ifs >> site) {
+    if (site.is_segment()) {
+      if ( not ( site.segment().is_horizontal() or
+                 site.segment().is_vertical()     ) ) {
+        std::cerr << "Non axis-parallel segment ignored ("
+          << site << ")" << std::endl;
+        continue;
+      }
+    }
     svd.insert(site);
 
     CGAL_SDG_DEBUG( svd.file_output_verbose(std::cout); ) ;
   }
-  
+
   emit(changed());
   actionRecenter->trigger();
 }
