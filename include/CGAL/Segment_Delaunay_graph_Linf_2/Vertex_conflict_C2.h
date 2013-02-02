@@ -437,6 +437,7 @@ private:
             otherpnt = seg.source();
           } else {
             // unreachable
+            CGAL_assertion( false );
           }
 
           lhor = compute_horizontal_side_line(
@@ -574,6 +575,7 @@ private:
             otherpnt = seg.source();
           } else {
             // unreachable
+            CGAL_assertion( false );
           }
 
           lhor = compute_horizontal_side_line(
@@ -898,8 +900,8 @@ private:
           } else if (is_same_ptrg_q) {
             otherpnt = seg.source();
           } else {
-            CGAL_assertion( false );
             // unreachable
+            CGAL_assertion( false );
           }
 
           lhor = compute_horizontal_side_line(
@@ -1156,6 +1158,7 @@ private:
             otherpnt = seg.source();
           } else {
             // unreachable
+            CGAL_assertion( false );
           }
 
           lhor = compute_horizontal_side_line(
