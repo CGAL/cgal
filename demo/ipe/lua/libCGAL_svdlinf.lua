@@ -17,7 +17,7 @@ function run(model, num)
 end
 
 methods = {
-  { label="Segment VD Linf generall" },
+  { label="Segment VD Linf general" },
   { label="Segment skeleton Linf general" },
   { label="Segment VD Linf axis-parallel" },
   { label="Segment skeleton Linf axis-parallel" },
