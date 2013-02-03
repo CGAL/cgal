@@ -23,6 +23,7 @@ set( QT_USE_QTOPENGL  TRUE )
 
 
 find_package(Qt4)
+include_directories (BEFORE ../../../Segment_Delaunay_graph_Linf_2/include)
 include_directories (BEFORE ../../include)
 include_directories (BEFORE ./include)
 
