@@ -8,7 +8,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 
-#include <CGAL/SDG_Linf_lbis_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_filtered_traits_2.h>
