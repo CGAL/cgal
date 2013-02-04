@@ -33,8 +33,6 @@ _test_cls_tds_vertex( const Tds&)
   typedef typename Tds::Face_handle          Face_handle;
   typedef typename Tds::Vertex_handle        Vertex_handle;
 
-  typedef typename Tds::Vertex_circulator    Vertex_circulator;
-
   Tds tds;
   Face_handle fh1 = tds.create_face();
   

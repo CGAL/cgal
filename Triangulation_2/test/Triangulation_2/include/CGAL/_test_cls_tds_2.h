@@ -61,6 +61,7 @@ _test_cls_tds_2( const Tds &)
   typedef typename Tds::Face_circulator   Face_circulator;
   typedef typename Tds::Edge_circulator   Edge_circulator;
 
+  CGAL_USE_TYPE(Vertex);
   CGAL_USE_TYPE(Face);
   CGAL_USE_TYPE(Edge);
   CGAL_USE_TYPE(Edge_iterator);

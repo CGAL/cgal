@@ -13,7 +13,6 @@ void test() {
   typedef CGAL::Nef_polyhedron_2<Kernel> Nef_polyhedron;
   typedef typename Nef_polyhedron::Point Point;
   typedef typename Nef_polyhedron::Direction Direction;
-  typedef typename Nef_polyhedron::Line  Line;
   typedef typename Nef_polyhedron::Explorer Explorer;
   typedef typename Nef_polyhedron::Object_handle    Object_handle;
   typedef typename Explorer::Vertex_const_handle    Vertex_const_handle;

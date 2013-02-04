@@ -343,6 +343,7 @@ void test_enum_cast()
 	Us s;
 	Ub b = CGAL::enum_cast<CGAL::Bounded_side>(s);
 	Ua a = CGAL::enum_cast<CGAL::Angle>(s);
+        CGAL_USE(a);
 	s = CGAL::enum_cast<CGAL::Sign>(b);
 }
 

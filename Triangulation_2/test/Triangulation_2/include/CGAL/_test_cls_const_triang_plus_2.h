@@ -16,6 +16,7 @@ _test_cls_const_triang_plus_2( const TrP & )
   typedef typename TrP::Vertices_in_constraint Vertices_in_constraint;
 
   CGAL_USE_TYPE(Hierarchy);
+  CGAL_USE_TYPE(Context);
   std::cout << " call test of constrained triangulations" <<std::endl;
   _test_cls_const_Del_triangulation( TrP() );
 
