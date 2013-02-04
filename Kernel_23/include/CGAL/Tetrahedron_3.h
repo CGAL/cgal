@@ -78,13 +78,13 @@ public:
                          t.transform(this->vertex(3)));
   }
 
-  typename boost::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
+  typename cpp11::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  typename boost::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
+  typename cpp11::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
   operator[](int i) const
   {
     return vertex(i);
@@ -136,7 +136,7 @@ public:
     return R().has_on_unbounded_side_3_object()(*this, p);
   }
 
-  typename boost::result_of<typename R::Compute_volume_3( Tetrahedron_3)>::type
+  typename cpp11::result_of<typename R::Compute_volume_3( Tetrahedron_3)>::type
   volume() const
   {
     return R().compute_volume_3_object()(*this);

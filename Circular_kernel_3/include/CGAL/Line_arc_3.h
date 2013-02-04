@@ -123,31 +123,31 @@ namespace CGAL {
      : RLine_arc_3(a)
       {}
     
-    typename boost::result_of<typename R::Construct_circular_source_vertex_3(Line_arc_3)>::type
+    typename cpp11::result_of<typename R::Construct_circular_source_vertex_3(Line_arc_3)>::type
     source() const
     {
       return typename R::Construct_circular_source_vertex_3()(*this);
     }
 
-    typename boost::result_of<typename R::Construct_circular_target_vertex_3(Line_arc_3)>::type
+    typename cpp11::result_of<typename R::Construct_circular_target_vertex_3(Line_arc_3)>::type
     target() const
     {
       return typename R::Construct_circular_target_vertex_3()(*this);
     }
 
-    typename boost::result_of<typename R::Construct_circular_min_vertex_3(Line_arc_3)>::type
+    typename cpp11::result_of<typename R::Construct_circular_min_vertex_3(Line_arc_3)>::type
     lower_xyz_extremity() const
     {
       return typename R::Construct_circular_min_vertex_3()(*this);
     }
 
-    typename boost::result_of<typename R::Construct_circular_max_vertex_3(Line_arc_3)>::type
+    typename cpp11::result_of<typename R::Construct_circular_max_vertex_3(Line_arc_3)>::type
     higher_xyz_extremity() const
     {
       return typename R::Construct_circular_max_vertex_3()(*this);
     }
 
-    typename boost::result_of<typename R::Construct_line_3(Line_arc_3)>::type
+    typename cpp11::result_of<typename R::Construct_line_3(Line_arc_3)>::type
     supporting_line() const
     {
       return typename R::Construct_line_3()(*this);

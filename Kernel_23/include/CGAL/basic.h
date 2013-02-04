@@ -37,7 +37,7 @@
 // #if !defined(CGAL_CFG_NO_CPP0X_DECLTYPE)
 //   #define BOOST_RESULT_OF_USE_DECLTYPE
 // #endif
-#include <boost/utility/result_of.hpp>
+#include <CGAL/result_of.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
