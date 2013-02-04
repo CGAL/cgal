@@ -162,7 +162,7 @@ private:
   QTreeView* sceneView;
   Ui::MainWindow* ui;
   QVector<Polyhedron_demo_io_plugin_interface*> io_plugins;
-
+  QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work
   typedef QPair<Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
   QVector<PluginNamePair > plugins;
