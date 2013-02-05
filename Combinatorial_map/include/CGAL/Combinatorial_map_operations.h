@@ -360,7 +360,7 @@ namespace CGAL {
           {
             if (d1 != Map::null_dart_handle)
             {
-              if (d2 != Map::null_dart_handle)
+              if (d2 != Map::null_dart_handle && d1!=d2 )
               {
                 //d1->basic_link_beta(d2, i);
                 amap.template basic_link_beta<i>(d1, d2);
@@ -396,17 +396,17 @@ namespace CGAL {
                 modified_darts.push_back(d2);
               }
             }
-            if ((*it)->is_free(i+1) && !(*it)->is_free(i))
-            {
-              d1 = (*it)->beta(i);
-              if ( !d1->is_free(iinv) )
-              {
-                d1->unlink_beta(iinv);
-                CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
-                amap.mark(d1, mark_modified_darts);
-                modified_darts.push_back(d1);
-              }
-            }
+          }
+        }
+        if ( (*it)->is_free(i+1) && !(*it)->is_free(i) )
+        {
+          d1 = (*it)->beta(i);
+          if ( !d1->is_free(iinv) )
+          {
+            d1->unlink_beta(iinv);
+            CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
+            amap.mark(d1, mark_modified_darts);
+            modified_darts.push_back(d1);
           }
         }
       }
@@ -801,6 +801,135 @@ namespace CGAL {
 
       size_t res = 0;
 
+      typename Map::Dart_handle d1, d2;
+      typename Map::Dart_handle dg1=NULL, dg2=NULL;
+
+      int mark = amap.get_new_mark();
+      int mark_modified_darts = amap.get_new_mark();
+
+      std::deque<typename Map::Dart_handle> to_erase;
+
+      const int imuinv = CGAL_BETAINV(i-1);
+
+      // First we store and mark all the darts of the i-cell to contract.
+      for ( CMap_dart_iterator_basic_of_cell<Map,i> it(amap,adart,mark);
+            it.cont(); ++it )
+      {
+        to_erase.push_back(it);
+        if ( !it->is_free(i-1) && dg1==NULL )
+        { dg1=it; dg2=it->beta(i-1); }
+        amap.mark(it, mark);
+        ++res;
+      }
+
+      // We group the two (i+1)-cells incident if they exist.
+      if ( dg1!=NULL )
+        amap.template group_attribute<i-1>(dg1, dg2);
+
+      // Second we update the dart of the cell attributes on non marked darts.
+      typename std::deque<typename Map::Dart_handle>::iterator it =
+          to_erase.begin();
+      for (; it != to_erase.end(); ++it)
+        amap.update_dart_of_all_attributes(*it, mark);
+
+      std::deque<typename Map::Dart_handle> modified_darts;
+
+      // For each dart of the i-cell, we modify i-links of neighbors.
+      for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
+      {
+        d1 = (*it)->beta(i);
+        while ( d1!=Map::null_dart_handle && amap.is_marked(d1, mark) )
+        {
+          d1 = d1->beta(imuinv)->beta(i);
+          if (d1 == (*it)->beta(i)) d1 = Map::null_dart_handle;
+        }
+
+        if ( !amap.is_marked(d1, mark_modified_darts) )
+        {
+          d2 = (*it)->beta(i-1)->beta(i);
+          while ( d2!=Map::null_dart_handle && amap.is_marked(d2, mark) )
+          {
+            d2 = d2->beta(i-1)->beta(i);
+            if ( d2==(*it)->beta(i-1)->beta(i) ) d2=Map::null_dart_handle;
+          }
+
+          if ( !amap.is_marked(d2, mark_modified_darts) )
+          {
+            if (d1 != Map::null_dart_handle)
+            {
+              if (d2 != Map::null_dart_handle && d1!=d2 )
+              {
+                amap.template basic_link_beta<i>(d1, d2);
+                amap.mark(d1, mark_modified_darts);
+                amap.mark(d2, mark_modified_darts);
+                modified_darts.push_back(d1);
+                modified_darts.push_back(d2);
+              }
+              else
+              {
+                if ( !d1->is_free(i) )
+                {
+                  d1->unlink_beta(i);
+                  CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
+                  amap.mark(d1, mark_modified_darts);
+                  modified_darts.push_back(d1);
+                }
+              }
+            }
+            else if (d2 != Map::null_dart_handle)
+            {
+              if ( !d2->is_free(i) )
+              {
+                d2->unlink_beta(i);
+                CGAL_assertion( !amap.is_marked(d2, mark_modified_darts) );
+                amap.mark(d2, mark_modified_darts);
+                modified_darts.push_back(d2);
+              }
+            }
+          }
+        }
+        if ((*it)->is_free(i-1) && !(*it)->is_free(i))
+        {
+          d1 = (*it)->beta(i);
+          if ( !d1->is_free(i) )
+          {
+            d1->unlink_beta(i);
+            CGAL_assertion( !amap.is_marked(d1, mark_modified_darts) );
+            amap.mark(d1, mark_modified_darts);
+            modified_darts.push_back(d1);
+          }
+        }
+      }
+
+      // We test the split of all the incident cells for all the non
+      // void attributes.
+      Map::Helper::template Foreach_enabled_attributes
+          <internal::Test2_split_with_deque<Map,i> >::
+          run(&amap, &modified_darts, mark_modified_darts);
+
+      // We remove all the darts of the i-cell.
+      for (  it=to_erase.begin(); it!=to_erase.end(); ++it )
+      { amap.erase_dart(*it); }
+
+      CGAL_assertion( amap.is_whole_map_unmarked(mark) );
+      amap.free_mark(mark);
+
+      if ( !amap.is_whole_map_unmarked(mark_modified_darts) )
+      {
+        for ( typename std::deque<typename Map::Dart_handle>::
+              iterator it=modified_darts.begin();
+              it!=modified_darts.end(); ++it )
+          amap.unmark(*it, mark_modified_darts);
+      }
+
+      // amap.display_darts(std::cout);
+
+      CGAL_assertion ( amap.is_whole_map_unmarked(mark_modified_darts) );
+      amap.free_mark(mark_modified_darts);
+
+      CGAL_expensive_postcondition( amap.is_valid() );
+      assert( amap.is_valid() );
+
       return res;
     }
   };
@@ -903,7 +1032,7 @@ namespace CGAL {
       amap.free_mark(mark);
 
       CGAL_expensive_postcondition( amap.is_valid() );
-      assert( amap.is_valid() ); // TO REMOVEE
+      assert( amap.is_valid() ); // TO REMOVE
 
       return res;
     }

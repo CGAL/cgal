@@ -1259,11 +1259,55 @@ template<class Map>
   cout << "***************************** TEST EDGE CONTRACTION 3D DONE."
        << endl;
 
-  /*
   cout << "***************************** TEST FACET CONTRACTION 3D:"
        << endl;
 
   d1 = map.create_dart();
+  CGAL::contract_cell<Map,2>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
+
+
+  d1 = map.create_dart(); map.template sew<1>(d1, d1);
+  CGAL::contract_cell<Map,2>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
+
+  d1 = make_edge(map);
+  CGAL::contract_cell<Map,2>(map,d1);
+  if ( !check_number_of_cells_3(map, 1, 1, 1, 1, 1) )
+    return false;
+  map.clear();
+
+  d1 = make_edge(map);
+  map.template sew<1>(d1, d1);
+  CGAL::contract_cell<Map,2>(map,d1);
+  if ( !check_number_of_cells_3(map, 1, 1, 1, 1, 1) )
+    return false;
+  map.clear();
+
+  d1 = make_edge(map);
+  map.template sew<1>(d1, d1); map.template sew<1>(d1->beta(2), d1->beta(2));
+  CGAL::contract_cell<Map,2>(map,d1);
+  if ( !check_number_of_cells_3(map, 1, 1, 1, 1, 1) )
+    return false;
+  map.clear();
+
+  d1 = CGAL::make_combinatorial_polygon(map, 3);
+  d2 = CGAL::make_combinatorial_polygon(map, 3);
+  d3 = CGAL::make_combinatorial_polygon(map, 3);
+  map.template sew<2>(d1, d2);
+  map.template sew<2>(d2->beta(1), d3);
+
+  CGAL::contract_cell<Map,1>(map,d2->beta(0));
+  if ( !check_number_of_cells_3(map, 4, 6, 3, 1, 1) )
+    return false;
+  CGAL::contract_cell<Map,2>(map,d2);
+  if ( !check_number_of_cells_3(map, 4, 5, 2, 1, 1) )
+    return false;
+  map.clear();
+
+  /* TODO more tests contact 2D and 3D
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "contract facet1: " << flush; CGAL::contract_cell<Map,2>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -1448,10 +1492,11 @@ template<class Map>
   cout << "contract volume8: " << flush; CGAL::contract_cell<Map,3>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
-   
+   */
+
   cout << "***************************** TEST VOLUME CONTRACTION 3D DONE."
        << endl;
-  */
+
   return true;
 }
 
