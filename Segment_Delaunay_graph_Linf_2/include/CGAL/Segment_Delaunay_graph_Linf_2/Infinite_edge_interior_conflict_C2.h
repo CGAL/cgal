@@ -135,9 +135,29 @@ public:
             << "debug not all pts return true tocheck" << std::endl;);
 
         if (q.is_point()) {
-          CGAL_assertion(
-              not (same_points(q, t.source_site()) or
-                   same_points(q, t.target_site())   ) );
+          bool is_q_tsrc = same_points(q, t.source_site());
+          bool is_q_ttrg = same_points(q, t.target_site());
+
+          if (is_q_tsrc or is_q_ttrg) {
+            bool is_q_ssrc = same_points(q, s.source_site());
+            bool is_q_strg = same_points(q, s.target_site());
+            bool is_q_rsrc = same_points(q, r.source_site());
+            bool is_q_rtrg = same_points(q, r.target_site());
+
+            CGAL_assertion(
+                (is_q_ssrc or is_q_strg) and
+                (is_q_rsrc or is_q_rtrg)    );
+
+            CGAL_SDG_DEBUG(
+                std::cout
+                << "debug infinite-edge-int-cf tocheck com (q,s,r,t,sgn)= "
+                << q << ' ' << s << ' ' << r << ' ' << t
+                << ' ' << sgn << " returns "
+                << true << std::endl;);
+            return true;
+          }
+
+          CGAL_assertion( not (is_q_tsrc or is_q_ttrg) );
 
           // here q is point
           if ( not (t.supporting_site().segment().is_horizontal() or
