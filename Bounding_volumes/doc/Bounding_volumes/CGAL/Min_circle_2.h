@@ -50,7 +50,7 @@ two-dimensional \cgal kernel.
 \sa `CGAL::Min_circle_2_traits_2<K>` 
 \sa `MinCircle2Traits` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 We implement the incremental algorithm of Welzl, with move-to-front 
 heuristic \cite w-sedbe-91a. The whole implementation is described 
@@ -63,7 +63,7 @@ take up to linear time, but substantially less than computing the new
 smallest enclosing circle from scratch. The clear operation and the check 
 for validity each takes linear time. 
 
-### Example ###
+\cgalHeading{Example}
 
 To illustrate the creation of `Min_circle_2` and to show that 
 randomization can be useful in certain cases, we give an example. 

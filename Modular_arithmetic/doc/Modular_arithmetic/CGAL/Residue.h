@@ -48,7 +48,7 @@ public:
 /// @{
 
 /*! 
-introduces a variable `x`, which is initialized with zero.
+constructor which initializes with zero.
 */ 
 Residue(); 
 
@@ -58,12 +58,12 @@ copy constructor.
 Residue(const Residue& m); 
 
 /*! 
-introduces a variable `x`, which is initialized with \f$ i \mod p\f$.
+constructor which initializes with \f$ i\mod p\f$.
 */ 
 Residue(int i); 
 
 /*! 
-introduces a variable `x`, which is initialized with \f$ i \mod p\f$.
+constructor which initializes with \f$ i\mod p\f$.
 */ 
 Residue(long i); 
 
@@ -73,25 +73,18 @@ Residue(long i);
 /// @{
 
 /*! 
-
-Static member function which sets the current prime to the given value and returns the old prime. 
+sets the current prime to the given value and returns the old prime. 
 */ 
 static int set_current_prime(int p); 
 
 /*! 
-
-Static member function; 
-
 returns the value of the current prime. 
-
 */ 
 static int get_current_prime(); 
 
 /*! 
-
-Returns the unique representative of `x` within the range 
+returns the unique representative  within the range 
 \f$ [-p/2,p/2]\f$, where \f$ p\f$ is the current prime. 
-
 */ 
 int get_value() const; 
 

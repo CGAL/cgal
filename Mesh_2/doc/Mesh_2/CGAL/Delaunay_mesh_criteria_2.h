@@ -18,7 +18,7 @@ algorithm will terminate. The upper bound \f$ B\f$ is related to a lower bound
 \f] 
 so \f$ B=\sqrt{2}\f$ corresponds to \f$ \alpha_{min} \ge 20.7\f$ degrees. 
 
-
+\tparam CDT must be a 2D constrained Delaunay triangulation.
 
 \cgalModels `MeshingCriteria_2`
 

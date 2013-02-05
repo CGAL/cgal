@@ -32,7 +32,7 @@ be identical to the type `TriangleAccessor::Triangle_3`.
 \sa `TriangleAccessor_3` 
 \sa `IntersectionGeometricTraits_3` 
 \sa `CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>` 
-\sa `CGAL::make_mesh_3`. 
+\sa `CGAL::make_mesh_3()`. 
 
 */
 template< typename Polyhedron, typename IGT, typename TriangleAccessor >

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Mesh Generation
+\mainpage User Manual 
 \anchor Chapter_3D_Mesh_Generation
 \anchor userchaptermesh3
 \authors Pierre Alliez, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
@@ -974,7 +974,7 @@ vertices/second
 
 \section Mesh_3DesignAndImpl Design and Implementation History
 
-\subsubsection Mesh_3TheoreticalFoundations Theoretical Foundations
+\subsection Mesh_3TheoreticalFoundations Theoretical Foundations
 
 The \cgal mesh generation package implements a meshing engine based 
 on the method of Delaunay refinement introduced by Chew \cite c-gqmgc-93 and Ruppert \cite r-draq2d-95
@@ -999,7 +999,7 @@ and Tournois et al. \cite cgal:twad-iropitmg-09,
 while the exudation process is, the now famous, optimization by weighting described
 in Edelsbrunner et al. \cite cgal:cdeft-slive-00.
 
-\subsubsection Mesh_3ImplementationHistory Implementation History
+\subsection Mesh_3ImplementationHistory Implementation History
 
 Work on the package `Mesh_3` started during the PhD thesis of Laurent Rineau
 advised by Mariette Yvinec. A code prototype, together

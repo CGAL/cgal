@@ -18,8 +18,8 @@ relations between these curves and the edges they induce.
 \cgalModels `ArrangementWithHistoryInputFormatter`
 \cgalModels `ArrangementWithHistoryOutputFormatter`
 
-\sa `read` 
-\sa `write` 
+\sa `PkgArrangement2Read` 
+\sa `PkgArrangement2Write` 
 
 */
 template< typename ArrFormatter >

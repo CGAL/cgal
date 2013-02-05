@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -9,12 +11,12 @@ with remainder.
 \cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicStructureTraits`
-\sa `AlgebraicStructureTraits::Mod`
-\sa `AlgebraicStructureTraits::DivMod`
+\sa `AlgebraicStructureTraits_::Mod`
+\sa `AlgebraicStructureTraits_::DivMod`
 
 */
 
-class AlgebraicStructureTraits::Div {
+class Div {
 public:
 
 /// \name Types 
@@ -54,5 +56,6 @@ template <class NT1, class NT2> result_type operator()(NT1 x, NT2 y);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::Div */
+}; /* end Div */
 
+}

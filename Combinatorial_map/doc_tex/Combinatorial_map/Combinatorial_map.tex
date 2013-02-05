@@ -895,7 +895,7 @@ struct Example_items_3
    {
      typedef CGAL::Dart<3, CMap> Dart;
      typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
-     typedef CGAL::cpp0x::tuple<void,Edge_attrib> Attributes;
+     typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
    };
 };
 typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;

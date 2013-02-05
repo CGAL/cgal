@@ -37,7 +37,7 @@ Bounded_side opposite(const Bounded_side &o);
 
 /*!
 \ingroup kernel_enums
-\sa `CGAL::angle`
+\sa `angle_grp`
  */
 enum Angle {OBTUSE, RIGHT, ACUTE};
 
@@ -54,7 +54,7 @@ enum Comparison_result { SMALLER, EQUAL, LARGER };
 
 /*!
 \ingroup kernel_enums
-\sa CGAL::Orientation
+\sa `CGAL::Orientation`
 */
 enum  Sign { NEGATIVE, ZERO, POSITIVE };
 
@@ -139,7 +139,7 @@ const CGAL::Null_vector NULL_VECTOR;
 A symbolic constant which denotes the point at the origin.
 This constant is used in the conversion between points and vectors.
 
-### Example ###
+\cgalHeading{Example}
 
 \code
   Point_2< Cartesian<Exact_NT> >  p(1.0, 1.0), q;

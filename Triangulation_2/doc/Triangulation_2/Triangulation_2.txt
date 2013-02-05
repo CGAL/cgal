@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Triangulations
+\mainpage User Manual 
 \anchor Chapter_2D_Triangulations
 
 \cgalAutoToc
@@ -920,7 +920,7 @@ of Delaunay constrained triangulations are provided. The first version
 handle set of constraints which do not intersect except possibly
 at the endpoints. The two other versions 
 handle intersecting input constraints. One of them
-is designed to be designed to be robust
+is designed to be robust
 when used in conjunction with a geometric traits
 providing exact predicates and approximate constructions
 (such as a `Filtered_kernel` or any kernel providing
@@ -1163,7 +1163,7 @@ The new solution to resolve the template dependency
 is based on a rebind mechanism similar to the mechanism used in the 
 standard allocator class std::allocator. The rebind mechanism
 is described in Section \ref TDS_2D_default "The Default Triangulation Data Structure" 
-of Chapter \ref Chapter_2D_Triangulation_Data_Structure "Triangulation Data Structure".
+of Chapter \ref Chapter_2D_Triangulation_Data_Structure "2D Triangulation Data Structure".
 For now, we will just notice that the design
 requires
 the existence in the vertex and face base classes 

@@ -3,7 +3,7 @@ namespace CGAL { namespace Kinetic {
 /*!
 \ingroup PkgKdsTri3
 
-The concept `Kinetic::Regular_triangulation_visitor_base_3` provides a model of 
+The class `Kinetic::Regular_triangulation_visitor_base_3` provides a model of 
 `Kinetic::RegularTriangulationVisitor_3`. You can extend this class if you only 
 want to implement a few methods from `Kinetic::RegularTriangulationVisitor_3`. 
 

@@ -71,8 +71,8 @@ as parameter to
 
 \sa `Middle` 
 \sa `Hilbert_policy` 
-\sa `Hilbert_sort__median_policy` 
-\sa `Hilbert_sort__middle_policy` 
+\sa `Hilbert_sort_median_policy` 
+\sa `Hilbert_sort_middle_policy` 
 
 */
 
@@ -99,8 +99,8 @@ as parameter to
 
 \sa `Median` 
 \sa `Hilbert_policy` 
-\sa `Hilbert_sort__median_policy` 
-\sa `Hilbert_sort__middle_policy` 
+\sa `Hilbert_sort_median_policy` 
+\sa `Hilbert_sort_middle_policy` 
 
 */
 

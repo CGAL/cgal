@@ -20,6 +20,8 @@
 #ifndef CGAL_COMBINATORIAL_MAP_BASIC_OPERATIONS_H
 #define CGAL_COMBINATORIAL_MAP_BASIC_OPERATIONS_H 1
 
+#include <boost/type_traits/is_same.hpp>
+
 namespace CGAL {
 
   /** @file Combinatorial_map_basic_operations.h

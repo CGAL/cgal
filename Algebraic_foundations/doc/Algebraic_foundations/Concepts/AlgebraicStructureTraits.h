@@ -153,18 +153,18 @@ typedef Hidden_type Boolean;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::IsZero`. 
+A model of `AlgebraicStructureTraits_::IsZero`. 
 
 Required by the concept `IntegralDomainWithoutDivision`. 
 In case `Type` is also model of `RealEmbeddable` this is a 
-model of `RealEmbeddableTraits::IsZero`. 
+model of `RealEmbeddableTraits_::IsZero`. 
 
 */ 
 typedef Hidden_type Is_zero; 
 
 /*! 
 
-A model of `AlgebraicStructureTraits::IsOne`. 
+A model of `AlgebraicStructureTraits_::IsOne`. 
 
 Required by the concept `IntegralDomainWithoutDivision`. 
 
@@ -173,7 +173,7 @@ typedef Hidden_type Is_one;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::Square`. 
+A model of `AlgebraicStructureTraits_::Square`. 
 
 Required by the concept `IntegralDomainWithoutDivision`. 
 
@@ -182,7 +182,7 @@ typedef Hidden_type Square;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::Simplify`. 
+A model of `AlgebraicStructureTraits_::Simplify`. 
 
 Required by the concept `IntegralDomainWithoutDivision`. 
 
@@ -191,7 +191,7 @@ typedef Hidden_type Simplify;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::UnitPart`. 
+A model of `AlgebraicStructureTraits_::UnitPart`. 
 
 Required by the concept `IntegralDomainWithoutDivision`. 
 
@@ -200,7 +200,7 @@ typedef Hidden_type Unit_part;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::IntegralDivision`. 
+A model of `AlgebraicStructureTraits_::IntegralDivision`. 
 
 Required by the concept `IntegralDomain`. 
 
@@ -209,7 +209,7 @@ typedef Hidden_type Integral_division;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::Divides`. 
+A model of `AlgebraicStructureTraits_::Divides`. 
 
 Required by the concept `IntegralDomain`. 
 
@@ -218,7 +218,7 @@ typedef Hidden_type Divides;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::IsSquare`. 
+A model of `AlgebraicStructureTraits_::IsSquare`. 
 
 Required by the concept `IntegralDomainWithoutDivision`. 
 
@@ -227,7 +227,7 @@ typedef Hidden_type Is_square;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::Gcd`. 
+A model of `AlgebraicStructureTraits_::Gcd`. 
 
 Required by the concept `UniqueFactorizationDomain`. 
 
@@ -236,7 +236,7 @@ typedef Hidden_type Gcd;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::Mod`. 
+A model of `AlgebraicStructureTraits_::Mod`. 
 
 Required by the concept `EuclideanRing`. 
 
@@ -245,7 +245,7 @@ typedef Hidden_type Mod;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::Div`. 
+A model of `AlgebraicStructureTraits_::Div`. 
 
 Required by the concept `EuclideanRing`. 
 
@@ -254,7 +254,7 @@ typedef Hidden_type Div;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::DivMod`. 
+A model of `AlgebraicStructureTraits_::DivMod`. 
 
 Required by the concept `EuclideanRing`. 
 
@@ -263,7 +263,7 @@ typedef Hidden_type Div_mod;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::Inverse`. 
+A model of `AlgebraicStructureTraits_::Inverse`. 
 
 Required by the concept `Field`. 
 
@@ -272,7 +272,7 @@ typedef Hidden_type Inverse;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::Sqrt`. 
+A model of `AlgebraicStructureTraits_::Sqrt`. 
 
 Required by the concept `FieldWithSqrt`. 
 
@@ -281,7 +281,7 @@ typedef Hidden_type Sqrt;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::KthRoot`. 
+A model of `AlgebraicStructureTraits_::KthRoot`. 
 
 Required by the concept `FieldWithKthRoot`. 
 
@@ -290,7 +290,7 @@ typedef Hidden_type Kth_root;
 
 /*! 
 
-A model of `AlgebraicStructureTraits::RootOf`. 
+A model of `AlgebraicStructureTraits_::RootOf`. 
 
 Required by the concept `FieldWithRootOf`. 
 

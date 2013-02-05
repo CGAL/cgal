@@ -10,7 +10,7 @@ representation based on a Euclidean ring number type `RT`.
 
 \cgalModels `ExtendedKernelTraits_2`
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 To make an Euclidean ring number type 
 `RT_model` work with this class the number type must support 

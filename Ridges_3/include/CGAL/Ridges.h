@@ -29,7 +29,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
  

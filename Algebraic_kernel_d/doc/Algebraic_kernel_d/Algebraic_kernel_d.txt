@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Algebraic Kernel
+\mainpage User Manual 
 \anchor Chapter_Algebraic_Kernel
 \anchor chapteralgebraickerneld
 \cgalAutoToc

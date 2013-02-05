@@ -7,14 +7,14 @@ sequences of iso-oriented boxes. This concept defines the access
 functions to the dimension, the `id`-number, and the boundaries of 
 the boxes manipulated in these algorithms. 
 
-\cgalRefines `Assignable.` 
+\cgalRefines `Assignable` 
 
 \cgalHasModel CGAL::Box_intersection_d::Box_traits_d
 
-\sa `CGAL::box_intersection_d` 
-\sa `CGAL::box_self_intersection_d` 
-\sa `CGAL::box_intersection_all_pairs_d` 
-\sa `CGAL::box_self_intersection_all_pairs_d` 
+\sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
 
 */
 

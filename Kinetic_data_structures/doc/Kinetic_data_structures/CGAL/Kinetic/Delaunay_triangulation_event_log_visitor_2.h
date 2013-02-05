@@ -3,7 +3,7 @@ namespace CGAL { namespace Kinetic {
 /*!
 \ingroup PkgKdsTri2
 
-The concept `Kinetic::Delaunay_triangulation_event_log_visitor_2` provides a model of 
+The class `Kinetic::Delaunay_triangulation_event_log_visitor_2` provides a model of 
 `Kinetic::DelaunayTriangulationVisitor_2` and `Kinetic::EventLogVisitor` which logs edge flip events. 
 
 \cgalModels `Kinetic::DelaunayTriangulationVisitor_2`

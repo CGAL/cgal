@@ -101,7 +101,7 @@ void generator::protected_run(int fn)
   switch(fn){
     case 0:{//random point in a circle
       CGAL::Random_points_in_disc_2<Point_2,Creator> gs( size);
-      CGAL::cpp0x::copy_n( gs, nbelements, std::back_inserter(points));
+      CGAL::cpp11::copy_n( gs, nbelements, std::back_inserter(points));
       }
     break;
     
@@ -112,7 +112,7 @@ void generator::protected_run(int fn)
     case 6:
     case 2://points in a square : side =   
     {CGAL::Random_points_in_square_2<Point_2, Creator> gc (size);
-    CGAL::cpp0x::copy_n( gc, nbelements, std::back_inserter(points));
+    CGAL::cpp11::copy_n( gc, nbelements, std::back_inserter(points));
     }
     break;
     
@@ -139,7 +139,7 @@ void generator::protected_run(int fn)
     typedef CGAL::Creator_uniform_2< Point_2, Segment_2> Seg_creator;
     typedef CGAL::Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
     Seg_iterator g( p1, p2);
-    CGAL::cpp0x::copy_n( g, nbelements, std::back_inserter(segments) );
+    CGAL::cpp11::copy_n( g, nbelements, std::back_inserter(segments) );
     break;
   };
   

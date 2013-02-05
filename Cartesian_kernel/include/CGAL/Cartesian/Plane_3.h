@@ -48,7 +48,7 @@ class PlaneC3
   typedef typename R_::Construct_point_3    Construct_point_3;
   typedef typename R_::Construct_point_2    Construct_point_2;
 
-  typedef cpp0x::array<FT, 4>               Rep;
+  typedef cpp11::array<FT, 4>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

@@ -357,7 +357,7 @@ We next list the libraries and essential 3rd party software
 <B>dependencies</B>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-`CGAL` 
+`%CGAL` 
 <TD ALIGN=LEFT NOWRAP>
 <I>none</I> 
 <TD ALIGN=LEFT NOWRAP>
@@ -469,7 +469,7 @@ and the threading library (`Boost.Thread` and
 
 On Windows, as auto-linking is used, you also need the binaries of
 `Boost.Serialization` and `Boost.DateTime`, but the
-dependency is artificial and used only at link-time: the CGAL libraries do
+dependency is artificial and used only at link-time: the \cgal libraries do
 not depend on the DLL's of those two libraries.
 
 In \cgal some demos and examples depend on `Boost.Program_options`.
@@ -794,7 +794,7 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
 == Setting paths ==
-== Build CGAL from release: CGAL-4.1 ==
+== Build %CGAL from release: CGAL-4.1 ==
 -- Packagenames: CGAL-4.1
 == Setting paths (DONE) ==
 
@@ -901,7 +901,7 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- MPFR libraries: /usr/lib/libmpfr.so
 -- Configured MPFR in standard way
 -- libCGAL is configured
--- Sources for CGAL component library 'Core' detected
+-- Sources for %CGAL component library 'Core' detected
 -- Configure libCGALCore
 -- GMP include: /usr/include/
 -- GMP definitions: 
@@ -912,8 +912,8 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- MPFR libraries: /usr/lib/libmpfr.so
 -- Configured MPFR in standard way
 -- libCGALCore is configured
--- Sources for CGAL component library 'Qt3' detected
--- Sources for CGAL component library 'Qt4' detected
+-- Sources for %CGAL component library 'Qt3' detected
+-- Sources for %CGAL component library 'Qt4' detected
 -- Configure libCGALQt4
 -- Looking for Q_WS_X11
 -- Looking for Q_WS_X11 - found
@@ -954,7 +954,7 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- MPFR libraries: /usr/lib/libmpfr.so
 -- Configured MPFR in standard way
 -- libCGALQt4 is configured
--- Sources for CGAL component library 'ImageIO' detected
+-- Sources for %CGAL component library 'ImageIO' detected
 -- Configure libCGALImageIO
 -- Found OpenGL: /usr/lib/libGL.so 
 -- Found ZLIB: /usr/lib/libz.so (found version "1.2.3.4")
@@ -962,7 +962,7 @@ cmake -DWITH_examples=OFF -DWITH_demos=OFF -DCMAKE_BUILD_TYPE=Release
 -- OpenGL libraries: /usr/lib/libGLU.so;/usr/lib/libGL.so;/usr/lib/libSM.so;/usr/lib/libICE.so;/usr/lib/libX11.so;/usr/lib/libXext.so
 -- USING ZLIB_VERSION = '1.2.3.4'
 -- libCGALImageIO is configured
--- Sources for CGAL component libraries 'CGAL;Core;ImageIO;Qt3;Qt4' detected
+-- Sources for %CGAL component libraries 'CGAL;Core;ImageIO;Qt3;Qt4' detected
 == Generating build files (DONE) ==
 
 -- Configuring done
@@ -1041,7 +1041,7 @@ to indicate the location of that config file in the CMake variable
 `CGAL_DIR` makes particular sense if having multiple
 out-of-source builds of \cgal as in Section \ref seccmakeoutofsource.
 
-If you have installed CGAL, `CGAL_DIR` must afterwards be set to
+If you have installed \cgal, `CGAL_DIR` must afterwards be set to
 `$CMAKE_INSTALLED_PREFIX/lib/CGAL`. Note that \cgal is
 recommended to be installed in release mode when using it to build programs.
 
@@ -1108,9 +1108,9 @@ the variable `CGAL_USE_FILE` is set to a compilation environment CMake file. Inc
 this file within a CMake script sets up include paths and libraries to
 link with \cgal and essential third party libraries. Beyond,
 `find_package` can demand for `COMPONENTS` of \cgal,
-that is, all \cgal libraries libCGAL_Core (``Core''),
-libCGAL_ImageIO (``ImageIO'') , libCGAL_Qt3 (``Qt3'') and libCGAL_Qt4
-(``Qt4'') or optional 3rd party software such as ``MPFI'', ``RS3''.
+that is, all \cgal libraries `libCGAL_Core` (<i>Core</i>),
+libCGAL_ImageIO (<i>ImageIO</i>) , libCGAL_Qt3 (<i>Qt3</i>) and libCGAL_Qt4
+(<i>Qt4</i>) or optional 3rd party software such as <i>MPFI</i>, <i>RS3</i>.
 A user is free to create the `CMakeLists.txt`
 without calling the script (manual creation).
 

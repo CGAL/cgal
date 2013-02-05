@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Number Types
+\mainpage User Manual 
 \anchor Chapter_Number_Types
 \anchor Numbertype
 

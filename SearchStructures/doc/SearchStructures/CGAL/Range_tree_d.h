@@ -7,7 +7,7 @@ namespace CGAL {
 \brief A \f$ d\f$-dimensional range tree stores points and can be used to determine all
 points that lie inside a given \f$ d\f$-dimensional interval.
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The construction of a \f$ d\f$-dimensional range tree takes \f$ {O}(n\log n^{d-1})\f$ 
 time. The points in 

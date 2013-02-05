@@ -73,7 +73,7 @@ triangulation data structure parameter is the class
 `Triangulation_data_structure_2< CGAL::Triangulation_vertex_base_2<Gt>, Constrained_triangulation_face_base_2<Gt> >`. 
 The default intersection tag is `No_intersection_tag`. 
 
-### Types ###
+\cgalHeading{Types}
 
 
 All types used in this class are inherited from the base class 

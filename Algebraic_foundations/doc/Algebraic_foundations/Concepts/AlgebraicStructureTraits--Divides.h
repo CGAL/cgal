@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -17,11 +19,11 @@ The second operator returns \f$ c\f$ via the additional third argument.
 \cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicStructureTraits`
-\sa `AlgebraicStructureTraits::IntegralDivision`
+\sa `AlgebraicStructureTraits_::IntegralDivision`
 
 */
 
-class AlgebraicStructureTraits::Divides {
+class Divides {
 public:
 
 /// \name Types 
@@ -67,5 +69,6 @@ AlgebraicStructureTraits::Type& c);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::Divides */
+}; /* end Divides */
 
+} /* end of namespace AlgebraicStructureTraits_ */

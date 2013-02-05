@@ -10,7 +10,7 @@ and assignable.
 
 \cgalHasModel `CGAL::Implicit_surface_3<Traits, Function>` 
 
-\sa `CGAL::make_surface_mesh`
+\sa `CGAL::make_surface_mesh()`
 \sa `SurfaceMeshTraits_3` 
 \sa `CGAL::Surface_mesh_traits_generator_3<Surface>` 
 

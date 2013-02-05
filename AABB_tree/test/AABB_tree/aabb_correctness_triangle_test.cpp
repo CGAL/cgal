@@ -137,3 +137,7 @@ int main()
 
 	return EXIT_SUCCESS;
 }
+/***EMACS SETTINGS***/
+/* Local Variables: */
+/* tab-width: 2     */
+/* End:             */

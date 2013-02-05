@@ -330,6 +330,8 @@ MainWindow::open(QString fileName)
   K::Point_2 p;
   std::vector<K::Point_2> points;
   while(ifs >> p) {
+    // ignore whatever comes after x and y
+    ifs.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); 
     points.push_back(p);
   }
   dt.insert(points.begin(), points.end());

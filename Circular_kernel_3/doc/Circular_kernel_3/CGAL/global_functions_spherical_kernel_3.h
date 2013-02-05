@@ -23,15 +23,15 @@ namespace CGAL {
 Compares the \f$ \theta\f$-coordinates of `p` and `q` relatively to `sphere`.
 \pre `p` and `q` lie on `sphere`, but do not coincide with the poles of `sphere`.
 
-\sa \ref CGAL::compare_x
-\sa \ref CGAL::compare_xy
-\sa \ref CGAL::compare_xyz
-\sa \ref CGAL::compare_x_at_y
-\sa \ref CGAL::compare_y
-\sa \ref CGAL::compare_yx
-\sa \ref CGAL::compare_y_at_x
-\sa \ref CGAL::compare_z
-\sa \ref CGAL::compare_theta_z
+\sa \link compare_x_grp `CGAL::compare_x()` \endlink
+\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_x_at_y_grp `CGAL::compare_x_at_y()` \endlink
+\sa \link compare_y_grp `CGAL::compare_y()` \endlink
+\sa \link compare_yx_grp `CGAL::compare_yx()` \endlink
+\sa \link compare_y_at_x_grp `CGAL::compare_y_at_x()` \endlink
+\sa \link compare_z_grp `CGAL::compare_z()` \endlink
+\sa `CGAL::compare_theta_z()`
 */
 template <class SphericalKernel>
 Comparison_result
@@ -46,15 +46,15 @@ Compares the \f$ \theta\f$-coordinates of `p` and of the meridian defined by `m`
 in the cylindrical coordinate system relative to `sphere`.
 \pre `p` lies on `sphere`, but does not coincide with its poles. `m` \f$ \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of `m` is \f$ 0\f$.
 
-\sa \ref CGAL::compare_x
-\sa \ref CGAL::compare_xy
-\sa \ref CGAL::compare_xyz
-\sa \ref CGAL::compare_x_at_y
-\sa \ref CGAL::compare_y
-\sa \ref CGAL::compare_yx
-\sa \ref CGAL::compare_y_at_x
-\sa \ref CGAL::compare_z
-\sa \ref CGAL::compare_theta_z
+\sa \link compare_x_grp `CGAL::compare_x()` \endlink
+\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_x_at_y_grp `CGAL::compare_x_at_y()` \endlink
+\sa \link compare_y_grp `CGAL::compare_y()` \endlink
+\sa \link compare_yx_grp `CGAL::compare_yx()` \endlink
+\sa \link compare_y_at_x_grp `CGAL::compare_y_at_x()` \endlink
+\sa \link compare_z_grp `CGAL::compare_z()` \endlink
+\sa `CGAL::compare_theta_z()`
 */
 template <class SphericalKernel>
 Comparison_result
@@ -67,15 +67,14 @@ Compares the \f$ \theta\f$-coordinates of the meridian defined by `m` and  of `p
 in the cylindrical coordinate system relative to `sphere`.
 \pre `p` lies on `sphere`, but does not coincide with its poles. `m` \f$ \neq(0,0,0)\f$ and the \f$ z\f$-coordinate of `m` is \f$ 0\f$.
 
-\sa \ref CGAL::compare_x
-\sa \ref CGAL::compare_xy
-\sa \ref CGAL::compare_xyz
-\sa \ref CGAL::compare_x_at_y
-\sa \ref CGAL::compare_y
-\sa \ref CGAL::compare_yx
-\sa \ref CGAL::compare_y_at_x
-\sa \ref CGAL::compare_z
-\sa \ref CGAL::compare_theta_z
+\sa \link compare_x_grp `CGAL::compare_x()` \endlink
+\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_x_at_y_grp `CGAL::compare_x_at_y()` \endlink
+\sa \link compare_y_grp `CGAL::compare_y()` \endlink
+\sa \link compare_yx_grp `CGAL::compare_yx()` \endlink
+\sa \link compare_y_at_x_grp `CGAL::compare_y_at_x()` \endlink
+\sa \link compare_z_grp `CGAL::compare_z()` \endlink
+\sa `CGAL::compare_theta_z()`
 */
 template <class SphericalKernel>
 Comparison_result
@@ -92,15 +91,15 @@ Compares `p` and `q` according to the lexicographic ordering on \f$ \theta\f$ an
 in the cylindrical coordinate system relative to `sphere`.
 \pre `p` and `q` lie on `sphere`, but do not coincide with the poles of `sphere`.
 
-\sa \ref CGAL::compare_x
-\sa \ref CGAL::compare_xy
-\sa \ref CGAL::compare_xyz
-\sa \ref CGAL::compare_x_at_y
-\sa \ref CGAL::compare_y
-\sa \ref CGAL::compare_yx
-\sa \ref CGAL::compare_y_at_x
-\sa \ref CGAL::compare_z
-\sa \ref CGAL::compare_theta
+\sa \link compare_x_grp `CGAL::compare_x()` \endlink
+\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_xy_grp `CGAL::compare_xy()` \endlink
+\sa \link compare_x_at_y_grp `CGAL::compare_x_at_y()` \endlink
+\sa \link compare_y_grp `CGAL::compare_y()` \endlink
+\sa \link compare_yx_grp `CGAL::compare_yx()` \endlink
+\sa \link compare_y_at_x_grp `CGAL::compare_y_at_x()` \endlink
+\sa \link compare_z_grp `CGAL::compare_z()` \endlink
+\sa `CGAL::compare_theta()`
 */
 template <class SphericalKernel>
 bool

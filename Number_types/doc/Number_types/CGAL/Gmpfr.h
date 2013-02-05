@@ -26,7 +26,7 @@ This type is `ImplicitInteroperable` with `Gmpz`, <TT>long</TT>,
 \cgalModels `FieldWithKthRoot` 
 \cgalModels `RealEmbeddable` 
 
-### Comparisons ###
+\cgalHeading{Comparisons}
 
 Comparison operators `==`, `!=`, `>`, `<`, 
 `>=` and `<=` are also overloaded. A `Gmpfr` can 
@@ -36,7 +36,7 @@ be compared with other `Gmpfr`, as well as with a `Gmpz`,
 converted nor rounded before comparison. In the case where one of 
 the compared numbers is `NaN`, the `erange` flag is set. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Since the <span class="textsc">Mpfr</span> library can be compiled to be thread-safe, this interface 
 is designed to keep the thread-safety. 

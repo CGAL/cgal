@@ -10,7 +10,7 @@ by `CGAL::convex_hull_3()`.
 \cgalHasModel All models of `Kernel`
 
 \sa `ConvexHullTraits_3` 
-\sa `CGAL::is_strongly_convex_3` 
+\sa `CGAL::is_strongly_convex_3()` 
 
 */
 

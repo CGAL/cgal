@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Linear and Quadratic Programming Solver
+\mainpage User Manual 
 \anchor Chapter_Linear_and_Quadratic_Programming_Solver
 \anchor QPsolver
 \cgalAutoToc

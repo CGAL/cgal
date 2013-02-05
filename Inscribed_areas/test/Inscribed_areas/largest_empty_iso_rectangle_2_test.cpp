@@ -4,6 +4,7 @@
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
 #include <fstream>
 #include <cassert>
+#include <sstream>
 
 #define MIN_X 0
 #define MIN_Y 0

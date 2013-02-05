@@ -1,17 +1,17 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygonPartitioning2
+\ingroup PkgPolygonPartitioning2FunctionObjectClasses
 
 Function object class for testing if a sequence of points represents 
 a convex polygon or not. 
 
 \cgalModels `PolygonIsValid`
 
-\sa `CGAL::convex_partition_is_valid_2` 
+\sa `CGAL::convex_partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This test requires \f$ O(n)\f$ time for a polygon with \f$ n\f$ vertices. 
 
@@ -51,16 +51,16 @@ bool operator()(InputIterator first, InputIterator beyond);
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygonPartitioning2
+\ingroup PkgPolygonPartitioning2FunctionObjectClasses
 
 Function object class that indicates all sequences of points are valid. 
 
 \cgalModels `PolygonIsValid`
 
-\sa `CGAL::partition_is_valid_2` 
+\sa `CGAL::partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This test requires \f$ O(1)\f$ time. 
 
@@ -98,17 +98,17 @@ bool operator()(InputIterator first, InputIterator beyond);
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygonPartitioning2
+\ingroup PkgPolygonPartitioning2FunctionObjectClasses
 
 Function object class that tests whether a sequence of points represents 
 a \f$ y\f$-monotone polygon or not. 
 
 \cgalModels `PolygonIsValid`
 
-\sa `CGAL::convex_partition_is_valid_2` 
+\sa `CGAL::convex_partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This test requires \f$ O(n)\f$ time for a polygon with \f$ n\f$ vertices. 
 

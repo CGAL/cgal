@@ -15,7 +15,7 @@
 *.lua text
 *.py text
 *.xml text
-*.js txt
+*.js text
 *.hmtl text
 *.bib text
 *.sh text
@@ -30,8 +30,8 @@
 *.qhcp text
 *.qhp text
 *.pwn text
-*.poly tex
-*.rb textt
+*.poly text
+*.rb text
 *.perl text
 *.pdb text
 

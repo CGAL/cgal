@@ -164,7 +164,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Surface_mesher/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           </list>
         </doxygen>
@@ -203,7 +203,7 @@ namespace for the XML file to be processed properly.  -->
           </list>
           <list name="TAGFILES" append="true">
             <item>./tags/Surface_mesher.tag=../../CGAL.CGAL.3D-Surface-Mesh-Generation/html</item>
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>         
             <item>./tags/Miscellany.tag=../../CGAL.CGAL.Profiling-tools--Hash-Map--Union-find--Modifiers/html</item>
           </list>
@@ -255,7 +255,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
             <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
             <item>./tags/Modular_arithmetic.tag=../../CGAL.CGAL.Modular-Arithmetic/html</item>
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
             <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
             <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
           </list>
@@ -291,7 +290,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
-            <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulations/html</item>
             <item>./tags/Surface_mesh_simplification.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Simplification/html</item>
           </list>
@@ -435,7 +433,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Stream_support/doc/IOstream/</string>
           <string name="STRIP_FROM_INC_PATH">../Stream_support/doc/IOstream/</string>
           <string name="GENERATE_TAGFILE">./tags/Stream_support.tag</string>
-          <string name="EXAMPLE_PATH">../Stream_support/examples</string>
           <string name="IMAGE_PATH">../Stream_support/doc/IOstream/fig</string>
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
@@ -458,7 +455,7 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Convex_hull_2.tag=../../CGAL.CGAL.2D-Convex-Hulls-and-Extreme-Points/html</item>
             <item>./tags/Convex_hull_d.tag=../../CGAL.CGAL.dD-Convex-Hulls-and-Delaunay-Triangulations/html</item>
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface</item>
           </list>
         </doxygen>
@@ -523,7 +520,8 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Interpolation/doc/Interpolation/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>   
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
+            <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
           </list>
         </doxygen>
       </project>
@@ -570,6 +568,7 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
           </list>
         </doxygen>
       </project>
@@ -584,10 +583,11 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Circular_kernel_3/examples</string>
           <string name="IMAGE_PATH">../Circular_kernel_3/doc/Circular_kernel_3/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
-          <list name="TAGFILES" append="true">
+          <list name="TAGFILES" append="false">
             <item>./tags/Circular_kernel_2.tag=../../CGAL.CGAL.2D-Circular-Geometry-Kernel/html</item>
             <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
+            <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
           </list>
         </doxygen>
       </project>
@@ -616,7 +616,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_PATH">../Kernel_d/doc/Kernel_d/</string>
           <string name="STRIP_FROM_INC_PATH">../Kernel_d/doc/Kernel_d/</string>
           <string name="GENERATE_TAGFILE">./tags/Kernel_d.tag</string>
-          <string name="EXAMPLE_PATH">../Kernel_d/examples</string>
           <string name="IMAGE_PATH">../Kernel_d/doc/Kernel_d/fig</string>
           <bool name="SORT_GROUP_NAMES">true</bool>
           <list name="TAGFILES" append="true">
@@ -730,7 +729,7 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Polygon.tag=../../CGAL.CGAL.Polygon/html</item>
             <item>./tags/Partition_2.tag=../../CGAL.CGAL.2D-Polygon-Partitioning/html</item>
             <item>./tags/Boolean_set_operations_2.tag=../../CGAL.CGAL.2D-Regularized-Boolean-Set-Operations/html</item>
-            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
+            <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
       </project>
@@ -778,7 +777,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Geomview/doc/Geomview/fig</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           </list>
         </doxygen>
@@ -885,7 +884,6 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
             <item>./tags/Inscribed_areas.tag=../../CGAL.CGAL.Inscribed-Areas/html</item>
-            <item>./tags/Polytope_distance_d.tag=../../CGAL.CGAL.Optimal-Distances/html</item>
           </list>
         </doxygen>
       </project>
@@ -955,7 +953,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Skin_surface_3/doc/Skin_surface_3/fig</string>
           <string name="EXAMPLE_PATH">../Skin_surface_3/examples</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
           </list>
         </doxygen>
@@ -973,7 +971,6 @@ namespace for the XML file to be processed properly.  -->
           <list name="TAGFILES" append="true">
             <item>./tags/Polynomial.tag=../../CGAL.CGAL.Polynomial/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
-            <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
             </list>
         </doxygen>
       </project>
@@ -1003,10 +1000,9 @@ namespace for the XML file to be processed properly.  -->
           <string name="IMAGE_PATH">../Alpha_shapes_3/doc/Alpha_shapes_3/fig</string>
           <string name="EXAMPLE_PATH">../Alpha_shapes_3/examples</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
             <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulations/html</item>
-            <item>./tags/Geomview.tag=../../CGAL.CGAL.Geomview/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
@@ -1107,7 +1103,6 @@ namespace for the XML file to be processed properly.  -->
             <item>../Nef_S2/doc/Nef_S2/fig/complex.gif</item>
           </list>
           <list name="TAGFILES" append="true">
-            <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
           </list>
         </doxygen>
@@ -1167,7 +1162,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
             <item>./tags/Arrangement_on_surface_2.tag=../../CGAL.CGAL.2D-Arrangements/html</item>
             <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
-            <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
@@ -1205,7 +1199,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Triangulation_3/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
           </list>
         </doxygen>
       </project>
@@ -1221,7 +1215,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Triangulation_2/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/TDS_2.tag=../../CGAL.CGAL.2D-Triangulation-Data-Structure/html</item>
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Spatial_sorting.tag=../../CGAL.CGAL.Spatial-Sorting/html</item>
           </list>
         </doxygen>
@@ -1245,7 +1239,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>3D Triangulation</name>
+        <name>3D Triangulations</name>
         <input>../Triangulation_3/doc/Triangulation_3</input>
         <doxygen>
           <string name="STRIP_FROM_PATH">../Triangulation_3/doc/Triangulation_3</string>
@@ -1253,7 +1247,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="GENERATE_TAGFILE">./tags/Triangulation_3.tag</string>
           <string name="IMAGE_PATH">../Triangulation_3/doc/Triangulation_3/fig</string>
           <string name="EXAMPLE_PATH">../Triangulation_3/examples</string>
-          <bool name="BRIEF_MEMBER_DESC">false</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
             <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
@@ -1273,7 +1266,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Periodic_3_triangulation_3/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
-            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Spatial_sorting.tag=../../CGAL.CGAL.Spatial-Sorting/html</item>
             <item>./tags/Alpha_shapes_3.tag=../../CGAL.CGAL.3D-Alpha-Shapes/html</item>
           </list>
@@ -1343,9 +1336,11 @@ namespace for the XML file to be processed properly.  -->
           <string name="STRIP_FROM_INC_PATH">../Kinetic_data_structures/doc/Kinetic_data_structures</string>
           <string name="GENERATE_TAGFILE">./tags/Kinetic_data_structures.tag</string>
           <string name="IMAGE_PATH">../Kinetic_data_structures/doc/Kinetic_framework/fig</string>
-          <string name="EXAMPLE_PATH">../Kinetic_data_structures/examples/Kinetic_data_structures</string>
+          <string name="EXAMPLE_PATH">../Kinetic_data_structures/examples</string>
           <list name="TAGFILES" append="true">
             <item>./tags/Kinetic_framework.tag=../../CGAL.CGAL.Kinetic-Framework/html</item>
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
           </list>
         </doxygen>
       </project>
@@ -1381,7 +1376,6 @@ namespace for the XML file to be processed properly.  -->
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>
             <item>./tags/Nef_S2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons-Embedded-on-the-Sphere/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
-            <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
             <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           </list>
         </doxygen>
@@ -1577,7 +1571,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
           <item>./tags/Periodic_2_triangulation_2.tag=../../CGAL.CGAL.2D-Periodic-Triangulations/html</item>
           <item>./tags/TDS_3.tag=../../CGAL.CGAL.3D-Triangulation-Data-Structure/html</item>
-          <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulation/html</item>
+          <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
           <item>./tags/Periodic_3_triangulation_3.tag=../../CGAL.CGAL.3D-Periodic-Triangulations/html</item>
           <item>./tags/Ridges_3.tag=../../CGAL.CGAL.Approximation-of-Ridges-and-Umbilics-on-Triangulated-Surface-Meshes/html</item>
           <item>./tags/Property_map.tag=../../CGAL.CGAL.CGAL-and-Boost-Property-Maps/html</item>

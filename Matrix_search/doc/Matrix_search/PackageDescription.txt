@@ -23,7 +23,7 @@
 This chapter describes concepts, classes, and functions for 
 monotone and sorted matrix search.
 
-\section Matrix_searchAssertions Assertions
+## Assertions ##
 
 The optimization code uses infix `OPTIMISATION` in the assertions,
 e.g. defining the compiler flag

@@ -49,7 +49,7 @@ int main()
   // Create n+m-4 points within a disc of radius 2
   double r_d = 3;
   CGAL::Random_points_in_disc_2<Point> g(r_d );
-  CGAL::cpp0x::copy_n( g, n+m, std::back_inserter(points));
+  CGAL::cpp11::copy_n( g, n+m, std::back_inserter(points));
 
   Delaunay_triangulation T;
 

@@ -8,7 +8,7 @@ fuzzy iso box with fuzziness value \f$ \epsilon\f$ has as outer
 approximation a box dilated, and as inner approximation a box eroded 
 by a `d`-dim square with side length \f$ \epsilon\f$. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 Expects for the template argument a model of the concept 
 `SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >`. 

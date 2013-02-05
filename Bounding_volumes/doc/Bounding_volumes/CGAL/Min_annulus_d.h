@@ -36,7 +36,7 @@ two-, three-, and \f$ d\f$-dimensional \cgal kernel, respectively.
 \sa `CGAL::Optimisation_d_traits_d<K,ET,NT>` 
 \sa `OptimisationDTraits` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The problem of finding the smallest enclosing annulus of a finite point set 
 can be formulated as an optimization problem with linear constraints and a 
@@ -268,8 +268,7 @@ FT squared_outer_radius( ) const;
 returns an iterator referring to the first coordinate 
 of the center of `min_annulus`. 
 
-### Note ###
-
+\note
 The coordinates have a rational 
 representation, i.e. the first \f$ d\f$ elements of the iterator 
 range are the numerators and the \f$ (d\!+\!1)\f$-st element is the 

@@ -37,19 +37,19 @@ type from one the \cgal kernels. In this case, a default traits class
 <LI>`OutputIterator` accepts `VT` as value type. 
 </OL> 
 
-\sa `CGAL::min_rectangle_2` 
-\sa `CGAL::min_strip_2` 
+\sa `CGAL::min_rectangle_2()` 
+\sa `CGAL::min_strip_2()` 
 \sa `MinQuadrilateralTraits_2` 
 \sa `CGAL::Min_quadrilateral_default_traits_2<K>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 We use a rotating caliper 
 algorithm 
 \cite stvwe-mepa-95, \cite v-fmep-90 with worst case running time linear 
 in the number of input points. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following code generates a random convex polygon 
 `P` with 20 vertices and computes the minimum enclosing 
@@ -107,18 +107,18 @@ is `CGAL::Point_2<K>` for some kernel `K`.
 <LI>`OutputIterator` accepts `VT` as value type. 
 </OL> 
 
-\sa `CGAL::min_parallelogram_2` 
-\sa `CGAL::min_strip_2` 
+\sa `CGAL::min_parallelogram_2()` 
+\sa `CGAL::min_strip_2()` 
 \sa `MinQuadrilateralTraits_2` 
 \sa `CGAL::Min_quadrilateral_default_traits_2<K>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 We use a rotating caliper 
 algorithm \cite t-sgprc-83 
 with worst case running time linear in the number of input points. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following code generates a random convex polygon 
 `P` with 20 vertices and computes the minimum enclosing 
@@ -175,18 +175,18 @@ is `CGAL::Point_2<K>` for some kernel `K`.
 <LI>`OutputIterator` accepts `Traits::Line_2` as value type. 
 </OL> 
 
-\sa `CGAL::min_rectangle_2` 
-\sa `CGAL::min_parallelogram_2` 
+\sa `CGAL::min_rectangle_2()` 
+\sa `CGAL::min_parallelogram_2()` 
 \sa `MinQuadrilateralTraits_2` 
 \sa `CGAL::Min_quadrilateral_default_traits_2<K>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 We use a rotating caliper 
 algorithm \cite t-sgprc-83 
 with worst case running time linear in the number of input points. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following code generates a random convex polygon 
 `P` with 20 vertices and computes the minimum enclosing 

@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewInputClasses
 
 An object of type `GraphicsViewInput` can emit a signal with `CGAL::Object` as argument. 
 

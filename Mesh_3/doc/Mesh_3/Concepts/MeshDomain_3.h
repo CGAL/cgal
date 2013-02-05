@@ -35,8 +35,8 @@ and strictly outside the domain (resp. the subdomain).
 
 \sa `MeshVertexBase_3`
 \sa `MeshCellBase_3`
-\sa `CGAL::make_mesh_3`
-\sa `CGAL::refine_mesh_3`
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::refine_mesh_3()`
 
 */
 
@@ -119,13 +119,13 @@ A function object to construct
 a set of initial points on the surface of the domain. Provides the
 following operators:
 
-`template<typename OutputIterator>
+`template<typename OutputIterator>`
 <br>
-OutputIterator operator()(OutputIterator pts)`
+`OutputIterator operator()(OutputIterator pts)`
 
-`template<typename OutputIterator>
+`template<typename OutputIterator>`
 <br>
-OutputIterator operator()(int n, OutputIterator pts)`
+`OutputIterator operator()(int n, OutputIterator pts)`
 
 Those two operators output a set of (`n`) surface points to the
 output iterator `pts`, as objects of type `std::pair<Point_3,

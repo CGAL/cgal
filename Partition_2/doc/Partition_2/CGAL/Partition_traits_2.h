@@ -14,14 +14,14 @@ a representation class `R`.
 \cgalModels `YMonotonePartitionIsValidTraits_2`
 \cgalModels `YMonotonePartitionTraits_2`
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::convex_partition_is_valid_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
-\sa `CGAL::optimal_convex_partition_2` 
-\sa `CGAL::partition_is_valid_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::convex_partition_is_valid_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
+\sa `CGAL::optimal_convex_partition_2()` 
+\sa `CGAL::partition_is_valid_2()` 
 \sa `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
-\sa `CGAL::y_monotone_partition_2` 
-\sa `CGAL::y_monotone_partition_is_valid_2` 
+\sa `CGAL::y_monotone_partition_2()` 
+\sa `CGAL::y_monotone_partition_is_valid_2()` 
 
 */
 template< typename R >

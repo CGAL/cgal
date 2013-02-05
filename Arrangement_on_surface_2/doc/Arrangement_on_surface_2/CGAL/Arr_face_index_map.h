@@ -40,7 +40,7 @@ the type of the attached arrangement.
 */ 
 typedef Arrangement Arrangement_2;
 
-typedef boost::readable_property_map_tag;
+typedef boost::readable_property_map_tag category;
 
 typedef unsigned int value_type;
 

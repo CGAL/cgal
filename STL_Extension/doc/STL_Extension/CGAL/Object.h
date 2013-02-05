@@ -21,7 +21,7 @@ encapsulation mechanism requires the use of `assign` or
 
 This class is similar in spirit to `boost::any`. 
 
-### Example ###
+\cgalHeading{Example}
 
 In the following example, the object class is used as return value for the 
 intersection computation, as there are possibly different return values. 

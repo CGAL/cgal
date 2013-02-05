@@ -31,7 +31,7 @@ namespace CGAL {
 /*!
 \ingroup PkgMinkowskiSum3
 
-The function `minkowski_sum_3` computes the Minkowski sum of two 
+The function `minkowski_sum_3()` computes the Minkowski sum of two 
 given 3D Nef polyhedra \f$ N0\f$ and \f$ N1\f$. Note that the function runs in 
 \f$ O(n^3m^3)\f$ time in the worst case, where \f$ n\f$ and 
 \f$ m\f$ are the complexities of the two input polyhedra (the complexity of 
@@ -62,7 +62,7 @@ must not have holes (non-convex facets and holes are ignored).
 \post If either of the input polyhedra is non-convex, it is modified during the computation, i.e., it is decomposed into convex pieces. 
 
 \sa `CGAL::Nef_polyhedron_3<Traits>` 
-\sa \link CGAL::convex_decomposition_3 `CGAL::convex_decomposition_3`\endlink
+\sa \link CGAL::convex_decomposition_3 `CGAL::convex_decomposition_3()`\endlink
 
 */
 template<typename Nef_polyhedron_3>

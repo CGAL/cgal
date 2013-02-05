@@ -22,7 +22,7 @@ using `Filtered_predicate` and `Filtered_kernel`.
 \cgalModels `RealEmbeddable` 
 \cgalModels `Fraction`, if `NT` is a `Fraction`
 
-### Example ###
+\cgalHeading{Example}
 
 \code
 #include <CGAL/Cartesian.h> 

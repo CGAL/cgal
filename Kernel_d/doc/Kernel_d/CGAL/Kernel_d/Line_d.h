@@ -6,7 +6,7 @@ namespace CGAL {
 An instance of data type `Line_d` is an oriented line in 
 \f$ d\f$-dimensional Euclidean space. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Lines are implemented by a pair of points as an item type. All 
 operations like creation, initialization, tests, direction 

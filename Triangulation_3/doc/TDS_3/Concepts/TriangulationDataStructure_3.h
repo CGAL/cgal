@@ -22,7 +22,7 @@ sufficient to retrieve all the incident cells when needed.
 The four vertices of a cell are indexed with 0, 1, 2 and 3. The 
 neighbors of a cell are also indexed with 0, 1, 2, 3 
 in such a way that the neighbor indexed by \f$ i\f$ is opposite to the vertex 
-with the same index (see Figure \ref TDS3figrepres). 
+with the same index (see \cgalFigureRef{TDS3figrepres}). 
 
 Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly 
 represented: a facet is given by a cell and an index (the facet 
@@ -43,8 +43,7 @@ topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3
  
 
 The second template parameter of the basic triangulation class 
-(see Chapter \ref chapterTriangulation3 
-) 
+(see Chapter \ref chapterTriangulation3 "3D Triangulations") 
 `CGAL::Triangulation_3` is a triangulation data structure class. (See 
 Chapter \ref chapterTDS3.) 
 
@@ -78,254 +77,18 @@ for faces of maximal dimension instead of cells.
 class TriangulationDataStructure_3 {
 public:
 
-/*!
-\ingroup PkgTDS3Concepts
-\cgalConcept
-
-The concept `Vertex` represents the vertex class of a 3D-triangulation 
-data structure. It must define 
-the types and operations listed in this section. Some of these 
-requirements are of geometric nature, they are <I>optional</I> 
-when using the triangulation data structure class alone. They become 
-compulsory when the triangulation data structure is used as a layer 
-for the geometric triangulation class. (See Section \ref TDS3secdesign.) 
-
-### Creation ###
-
-In order to obtain new vertices or destruct unused vertices, the user must 
-call the `create_vertex()` and `delete_vertex()` methods of the 
-triangulation data structure. 
-
-\sa `TriangulationDataStructure_3::Cell`
-
-*/
-
-class Vertex {
-public:
-
 /// \name Types 
-/// The class `Vertex` defines types that are the same as some of the
-/// types defined by the triangulation data structure class
-/// `TriangulationDataStructure_3`.
 /// @{
-
-/*! 
-<I>Optional for the triangulation data structure alone</I>.
-*/ 
-typedef Hidden_type Point; 
-
-/*! 
-
-*/ 
-typedef TriangulationDataStructure_3 Triangulation_data_structure; 
-
-/*! 
-
-*/ 
-typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle; 
-
-/*! 
-
-*/ 
-typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
-
-/// @} 
-
-/// \name Access Functions 
-/// @{
-
-/*! 
-Returns a cell of the triangulation having `v` as vertex. 
-*/ 
-Cell_handle cell() const; 
-
-/*! 
-Returns the point stored in the vertex. 
-<I>Optional for the triangulation data structure alone.</I> 
-*/ 
-Point point() const; 
-
-/// @} 
-
-/// \name Setting 
-/// @{
-
-/*! 
-Sets the incident cell to `c`. 
-*/ 
-void set_cell(Cell_handle c); 
-
-/*! 
-Sets the point to `p`. <I>Optional for the 
-triangulation data structure alone.</I> 
-*/ 
-void set_point(const Point & p); 
-
-/// @} 
-
-/// \name Checking 
-/// @{
-
-/*! 
-\cgalDebug Checks the validity of the vertex. Must check that its incident cell 
-has this vertex. The validity of the base vertex is also checked. 
-
-\cgalDebug When `verbose` is set to `true`, messages are printed to give 
-a precise indication on the kind of invalidity encountered. 
-*/ 
-bool is_valid(bool verbose = false) const; 
-
-/// @}
-
-}; /* end Vertex */
 
 /*!
-\ingroup PkgTDS3Concepts
-\cgalConcept
-
-The concept `Cell` stores 
-four `Vertex_handle`s to its four vertices and four `Cell_handle`s 
-to its four neighbors. The vertices are indexed 0, 1, 2, and 3 in consistent 
-order. The neighbor indexed \f$ i\f$ lies opposite to vertex `i`. 
-
-In degenerate dimensions, cells are used to store faces of maximal 
-dimension: in dimension 2, each cell represents only one 
-facet of index 3, and 3 edges \f$ (0,1)\f$, \f$ (1,2)\f$ and \f$ (2,0)\f$; in 
-dimension 1, each cell represents one edge \f$ (0,1)\f$. (See also 
-Section \ref TDS3secintro.) 
-
-### Creation ###
-
-In order to obtain new cells or destruct unused cells, the user must call the 
-`create_cell()` and `delete_cell()` methods of the triangulation data 
-structure. 
-
-\sa `TriangulationDataStructure_3::Vertex`
-
+  %Vertex type, requirements are described in `TriangulationDataStructure_3::Vertex`.
 */
+typedef Hidden_type Vertex;
 
-class Cell {
-public:
-
-/// \name Types 
-/// @{
-
-/*! 
-
-*/ 
-typedef TriangulationDataStructure_3 Triangulation_data_structure; 
-
-/*! 
-
-*/ 
-typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle; 
-
-/*! 
-
-*/ 
-typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
-
-/// @} 
-
-/// \name Access Functions 
-/// @{
-
-/*! 
-Returns the vertex `i` of `c`. 
-\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
-*/ 
-Vertex_handle vertex(int i) const; 
-
-/*! 
-Returns the index of vertex `v` in `c`. 
-\pre `v` is a vertex of `c`. 
-*/ 
-int index(Vertex_handle v) const; 
-
-/*! 
-Returns `true` if `v` is a vertex of `c`. 
-*/ 
-bool has_vertex(Vertex_handle v) const; 
-
-/*! 
-Returns `true` if `v` is a vertex of `c`, and 
-computes its index `i` in `c`. 
-*/ 
-bool has_vertex(Vertex_handle v, int & i) const; 
-
-/*! 
-Returns the neighbor `i` of `c`. 
-\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
-*/ 
-Cell_handle neighbor(int i) const; 
-
-/*! 
-Returns the index corresponding to neighboring cell `n`. 
-\pre `n` is a neighbor of `c`. 
-*/ 
-int index(Cell_handle n) const; 
-
-/*! 
-Returns `true` if `n` is a neighbor of `c`. 
-*/ 
-bool has_neighbor(Cell_handle n) const; 
-
-/*! 
-Returns `true` if `n` is a neighbor of `c`, and 
-computes its index `i` in `c`. 
-*/ 
-bool has_neighbor(Cell_handle n, int & i) const; 
-
-/// @} 
-
-/// \name Setting 
-
-/// @{
-
-/*! 
-Sets vertex `i` to `v`. 
-\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
-*/ 
-void set_vertex(int i, Vertex_handle v); 
-
-/*! 
-Sets the vertex pointers. 
-*/ 
-void set_vertices(Vertex_handle v0, 
-Vertex_handle v1, 
-Vertex_handle v2, 
-Vertex_handle v3); 
-
-/*! 
-Sets neighbor `i` to `n`. 
-\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
-*/ 
-void set_neighbor(int i, Cell_handle n); 
-
-/*! 
-Sets the neighbors pointers. 
-*/ 
-void set_neighbors(Cell_handle n0, 
-Cell_handle n1, 
-Cell_handle n2, 
-Cell_handle n3); 
-
-/// @} 
-
-/// \name Checking 
-/// @{
-
-/*! 
-\cgalDebug User defined local validity checking function. 
-*/ 
-bool is_valid(bool verbose = false, int level = 0) const; 
-
-/// @}
-
-}; /* end Cell */
-
-/// \name Types 
-/// @{
+/*!
+  %Cell type, requirements are described in `TriangulationDataStructure_3::Cell`.
+*/
+typedef Hidden_type Cell;
 
 /*! 
 Size type (unsigned integral type) 
@@ -348,20 +111,24 @@ typedef Hidden_type Vertex_handle;
 typedef Hidden_type Cell_handle; 
 
 /*! 
-This nested template class allows to get the type of a triangulation 
+This template class allows to get the type of a triangulation 
 data structure that only changes the vertex type. It has to define a type 
-`Other` which is a <I>rebound</I> triangulation data structure, that is, the 
-one whose `TriangulationDSVertexBase_3` will be `Vb2`. 
+`Rebind_vertex<Vb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
+one whose `TriangulationDSVertexBase_3` will be `Vb2`.
+\note It can be implemented using a nested template class.
 */ 
-template <typename Vb2> struct Rebind_vertex {};
+template <typename Vb2> 
+using Rebind_vertex = Hidden_type;
 
 /*! 
-This nested template class allows to get the type of a triangulation 
+This template class allows to get the type of a triangulation 
 data structure that only changes the cell type. It has to define a type 
-`Other` which is a <I>rebound</I> triangulation data structure, that is, the 
-one whose `TriangulationDSCellBase_3` will be `Cb2`. 
+`Rebind_cell<Cb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
+one whose `TriangulationDSCellBase_3` will be `Cb2`.
+\note It can be implemented using a nested template class.
 */ 
-template <typename Cb2> struct Rebind_cell {};
+template <typename Cb2> 
+using Rebind_cell = Hidden_type;
 
 /*! 
 `(c,i,j)` is the 
@@ -1188,3 +955,247 @@ ostream& operator<< (ostream& os, const TriangulationDataStructure_3 & tds);
 
 }; /* end TriangulationDataStructure_3 */
 
+/*!
+\ingroup PkgTDS3Concepts
+\cgalConcept
+
+The concept `TriangulationDataStructure_3::Vertex` represents the vertex class of a 3D-triangulation 
+data structure. It must define 
+the types and operations listed in this section. Some of these 
+requirements are of geometric nature, they are <I>optional</I> 
+when using the triangulation data structure class alone. They become 
+compulsory when the triangulation data structure is used as a layer 
+for the geometric triangulation class. (See Section \ref TDS3secdesign.) 
+
+### Creation ###
+
+In order to obtain new vertices or destruct unused vertices, the user must 
+call the `create_vertex()` and `delete_vertex()` methods of the 
+triangulation data structure. 
+
+\sa `TriangulationDataStructure_3::Cell`
+
+*/
+class TriangulationDataStructure_3::Vertex {
+public:
+
+/// \name Types 
+/// The class `Vertex` defines types that are the same as some of the
+/// types defined by the triangulation data structure class
+/// `TriangulationDataStructure_3`.
+/// @{
+
+/*! 
+<I>Optional for the triangulation data structure alone</I>.
+*/ 
+typedef Hidden_type Point; 
+
+/*! 
+
+*/ 
+typedef TriangulationDataStructure_3 Triangulation_data_structure; 
+
+/*! 
+
+*/ 
+typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle; 
+
+/*! 
+
+*/ 
+typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
+
+/// @} 
+
+/// \name Access Functions 
+/// @{
+
+/*! 
+Returns a cell of the triangulation having `v` as vertex. 
+*/ 
+Cell_handle cell() const; 
+
+/*! 
+Returns the point stored in the vertex. 
+<I>Optional for the triangulation data structure alone.</I> 
+*/ 
+Point point() const; 
+
+/// @} 
+
+/// \name Setting 
+/// @{
+
+/*! 
+Sets the incident cell to `c`. 
+*/ 
+void set_cell(Cell_handle c); 
+
+/*! 
+Sets the point to `p`. <I>Optional for the 
+triangulation data structure alone.</I> 
+*/ 
+void set_point(const Point & p); 
+
+/// @} 
+
+/// \name Checking 
+/// @{
+
+/*! 
+\cgalDebug Checks the validity of the vertex. Must check that its incident cell 
+has this vertex. The validity of the base vertex is also checked. 
+
+\cgalDebug When `verbose` is set to `true`, messages are printed to give 
+a precise indication on the kind of invalidity encountered. 
+*/ 
+bool is_valid(bool verbose = false) const; 
+
+/// @}
+
+}; /* end Vertex */
+
+/*!
+\ingroup PkgTDS3Concepts
+\cgalConcept
+
+The concept `TriangulationDataStructure_3::Cell` stores 
+four `Vertex_handle`s to its four vertices and four `Cell_handle`s 
+to its four neighbors. The vertices are indexed 0, 1, 2, and 3 in consistent 
+order. The neighbor indexed \f$ i\f$ lies opposite to vertex `i`. 
+
+In degenerate dimensions, cells are used to store faces of maximal 
+dimension: in dimension 2, each cell represents only one 
+facet of index 3, and 3 edges \f$ (0,1)\f$, \f$ (1,2)\f$ and \f$ (2,0)\f$; in 
+dimension 1, each cell represents one edge \f$ (0,1)\f$. (See also 
+Section \ref TDS3secintro.) 
+
+### Creation ###
+
+In order to obtain new cells or destruct unused cells, the user must call the 
+`create_cell()` and `delete_cell()` methods of the triangulation data 
+structure. 
+
+\sa `TriangulationDataStructure_3::Vertex`
+
+*/
+
+class TriangulationDataStructure_3::Cell {
+public:
+
+/// \name Types 
+/// @{
+
+/*! 
+
+*/ 
+typedef TriangulationDataStructure_3 Triangulation_data_structure; 
+
+/*! 
+
+*/ 
+typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle; 
+
+/*! 
+
+*/ 
+typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
+
+/// @} 
+
+/// \name Access Functions 
+/// @{
+
+/*! 
+Returns the vertex `i` of `c`. 
+\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
+*/ 
+Vertex_handle vertex(int i) const; 
+
+/*! 
+Returns the index of vertex `v` in `c`. 
+\pre `v` is a vertex of `c`. 
+*/ 
+int index(Vertex_handle v) const; 
+
+/*! 
+Returns `true` if `v` is a vertex of `c`. 
+*/ 
+bool has_vertex(Vertex_handle v) const; 
+
+/*! 
+Returns `true` if `v` is a vertex of `c`, and 
+computes its index `i` in `c`. 
+*/ 
+bool has_vertex(Vertex_handle v, int & i) const; 
+
+/*! 
+Returns the neighbor `i` of `c`. 
+\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
+*/ 
+Cell_handle neighbor(int i) const; 
+
+/*! 
+Returns the index corresponding to neighboring cell `n`. 
+\pre `n` is a neighbor of `c`. 
+*/ 
+int index(Cell_handle n) const; 
+
+/*! 
+Returns `true` if `n` is a neighbor of `c`. 
+*/ 
+bool has_neighbor(Cell_handle n) const; 
+
+/*! 
+Returns `true` if `n` is a neighbor of `c`, and 
+computes its index `i` in `c`. 
+*/ 
+bool has_neighbor(Cell_handle n, int & i) const; 
+
+/// @} 
+
+/// \name Setting 
+
+/// @{
+
+/*! 
+Sets vertex `i` to `v`. 
+\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
+*/ 
+void set_vertex(int i, Vertex_handle v); 
+
+/*! 
+Sets the vertex pointers. 
+*/ 
+void set_vertices(Vertex_handle v0, 
+Vertex_handle v1, 
+Vertex_handle v2, 
+Vertex_handle v3); 
+
+/*! 
+Sets neighbor `i` to `n`. 
+\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
+*/ 
+void set_neighbor(int i, Cell_handle n); 
+
+/*! 
+Sets the neighbors pointers. 
+*/ 
+void set_neighbors(Cell_handle n0, 
+Cell_handle n1, 
+Cell_handle n2, 
+Cell_handle n3); 
+
+/// @} 
+
+/// \name Checking 
+/// @{
+
+/*! 
+\cgalDebug User defined local validity checking function. 
+*/ 
+bool is_valid(bool verbose = false, int level = 0) const; 
+
+/// @}
+
+}; /* end Cell */

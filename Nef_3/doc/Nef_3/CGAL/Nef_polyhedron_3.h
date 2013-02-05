@@ -24,7 +24,7 @@ namespace CGAL {
   for every item, and an incidence relation on them. Each edge and each facet 
   is represented by two halfedges or two halffacets, respectively. 
 
-  ### Template Parameters ###
+\cgalHeading{Template Parameters}
 
   The first parameter requires one of the following exact kernels: 
   `Homogeneous`, `Simple_homogeneous`, `Extended_homogeneous` 
@@ -82,7 +82,7 @@ public:
   `out_sedge` returns the first outgoing shalfedge, and `incident_sface` 
   returns the incident sface. 
 
-  ### Creation ###
+\cgalHeading{Creation}
 
   There is no need for a user to create a `Halfedge` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed halfedges internally. 
@@ -272,7 +272,7 @@ public:
   iterator range (`halffacet_cycles_begin()`/`halffacet_cycles_end()`) 
   provides an entry element for each halffacet cycle of a halffacet. 
 
-  ### Creation ###
+\cgalHeading{Creation}
 
   There is no need for a user to create a `Halffacet` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed halffacets internally. 
@@ -459,7 +459,7 @@ public:
   `SFace_cycle_const_iterator` and represent either a shalfedge, a shalfloop, 
   or a svertex. 
 
-  ### Creation ###
+\cgalHeading{Creation}
 
   There is no need for a user to create a `SFace` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed sfaces internally. 
@@ -577,7 +577,7 @@ public:
   A const circulators is provided for each of the three circular orders. 
   The circulators are bidirectional and assignable to `SHalfedge_const_handle`. 
 
-  ### Creation ###
+\cgalHeading{Creation}
 
   There is no need for a user to create a `SHalfedge` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed shalfedges internally. 
@@ -744,7 +744,7 @@ public:
   isolated on a facet. That facet is returned by the member function 
   `facet`. 
 
-  ### Creation ###
+\cgalHeading{Creation}
 
   There is no need for a user to create a `SHalfloop` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed shalfloops internally. 
@@ -828,7 +828,7 @@ public:
   structure can be accessed creating a sphere map of the vertex. 
   This is done by the member function `Nef_polyhedron_3::get_sphere_map()`. 
 
-  ### Creation ###
+\cgalHeading{Creation}
 
   There is no need for a user to create a `Vertex` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed vertices internally. 
@@ -882,7 +882,7 @@ public:
   iterator range (`shells_begin()`/`shells_end()`). A 
   `Shell_entry_iterator` is assignable to `SFace_handle`. 
 
-  ### Creation ###
+\cgalHeading{Creation}
 
   There is no need for a user to create a `Volume` explicitly. The 
   class `Nef_polyhedron_3<Traits>` manages the needed volumes internally. 

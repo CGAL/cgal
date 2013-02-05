@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -21,7 +23,7 @@ Thus, \f$ 0\f$ is divided by every element of the Ring, in particular by itself.
 
 */
 
-class AlgebraicStructureTraits::Gcd {
+class Gcd {
 public:
 
 /// \name Types 
@@ -61,5 +63,6 @@ template <class NT1, class NT2> result_type operator()(NT1 x, NT2 y);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::Gcd */
+}; /* end Gcd */
 
+} /* end of namespace AlgebraicStructureTraits_ */

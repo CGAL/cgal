@@ -23,7 +23,7 @@ all halfedge data structures and will not appear here again.
 \sa `CGAL::HalfedgeDS_items_decorator<HDS>` 
 \sa `CGAL::HalfedgeDS_const_decorator<HDS>` 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program fragment illustrates the implementation of the 
 Euler operator `split_vertex()` for a simplified polyhedron class. 
@@ -195,7 +195,10 @@ Erases the small connected components and the isolated vertices.
 Keep `nb_components_to_keep` largest connected components. 
 Returns the number of connected components erased (ignoring isolated vertices). 
 
-\cgalRequires  supports vertices, halfedges, and removal operation. */ 
+\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`,
+               `Supports_vertex_halfedge` \f$ \equiv\f$ `CGAL::Tag_true` and
+              `Supports_halfedge_vertex` \f$ \equiv\f$ `CGAL::Tag_true`
+*/
 unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 
 /// @} 

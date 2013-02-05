@@ -17,7 +17,7 @@ cyclic sequence of extreme points is cut into a linear sequence.
 
 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `InputIterator` and `OutputIterator` 
@@ -35,14 +35,14 @@ functions that return instances of these types:
 </UL> 
 </OL> 
 
-\sa `CGAL::ch_akl_toussaint` 
-\sa `CGAL::ch_bykat` 
-\sa `CGAL::ch_eddy` 
-\sa `CGAL::ch_graham_andrew` 
-\sa `CGAL::ch_jarvis` 
-\sa `CGAL::ch_melkman` 
+\sa `CGAL::ch_akl_toussaint()` 
+\sa `CGAL::ch_bykat()` 
+\sa `CGAL::ch_eddy()` 
+\sa `CGAL::ch_graham_andrew()` 
+\sa `CGAL::ch_jarvis()` 
+\sa `CGAL::ch_melkman()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 One of two algorithms is used, 
 depending on the type of iterator used to specify the input points. For 
@@ -103,7 +103,7 @@ The different treatment by `upper_hull_points_2()` of the case that
 all points are equal ensures that concatenation of lower and upper hull 
 points gives the sequence of extreme points. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `InputIterator` and `OutputIterator` 
@@ -120,11 +120,11 @@ functions that return instances of these types:
 </UL> 
 </OL> 
 
-\sa `CGAL::ch_graham_andrew` 
-\sa `CGAL::ch_graham_andrew_scan` 
-\sa `CGAL::upper_hull_points_2` 
+\sa `CGAL::ch_graham_andrew()` 
+\sa `CGAL::ch_graham_andrew_scan()` 
+\sa `CGAL::upper_hull_points_2()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function uses Andrew's variant of Graham's scan algorithm 
 \cite a-aeach-79, \cite m-mdscg-84. The algorithm has worst-case running time 
@@ -167,7 +167,7 @@ The different treatment by `lower_hull_points_2()` of the case that
 all points are equal ensures that concatenation of lower and upper hull 
 points gives the sequence of extreme points. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `InputIterator` and `OutputIterator` 
@@ -184,11 +184,11 @@ functions that return instances of these types:
 </UL> 
 </OL> 
 
-\sa `CGAL::ch_graham_andrew` 
-\sa `CGAL::ch_graham_andrew_scan` 
-\sa `CGAL::lower_hull_points_2` 
+\sa `CGAL::ch_graham_andrew()` 
+\sa `CGAL::ch_graham_andrew_scan()` 
+\sa `CGAL::lower_hull_points_2()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function uses Andrew's 
 variant of Graham's scan algorithm \cite a-aeach-79, \cite m-mdscg-84. The algorithm 

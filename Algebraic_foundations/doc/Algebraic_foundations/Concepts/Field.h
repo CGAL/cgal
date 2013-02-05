@@ -13,9 +13,8 @@ operators / and /=.
 Moreover, `CGAL::Algebraic_structure_traits< Field >` is a model of 
 `AlgebraicStructureTraits` providing: 
 
-- `CGAL::Algebraic_structure_traits< Field >::Algebraic_type` derived from `Field_tag` 
-
-- `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Inverse`  which is a model of `AlgebraicStructureTraits::Inverse`
+- \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< Field >::Algebraic_category` \endlink derived from `CGAL::Field_tag` 
+- \link AlgebraicStructureTraits::Inverse `CGAL::Algebraic_structure_traits< FieldWithSqrt >::Inverse` \endlink  which is a model of `AlgebraicStructureTraits_::Inverse`
 
 \cgalRefines `IntegralDomain` 
 

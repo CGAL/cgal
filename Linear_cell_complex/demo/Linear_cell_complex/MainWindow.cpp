@@ -439,7 +439,7 @@ void MainWindow::on_actionSubdivide_pqq_triggered ()
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to subdivide the current LCC: "
+  std::cout<<"Time to pqq-subdivide the current LCC: "
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
@@ -543,7 +543,7 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to compute Voronor 3D from "<<qPrintable(fileName)<<": "
+  std::cout<<"Time to compute Voronoi 3D from "<<qPrintable(fileName)<<": "
            <<timer.time()<<" seconds."<<std::endl;
 #endif
   
@@ -767,7 +767,7 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
-  std::cout<<"Time to unsew3merge all filled volumes: "
+  std::cout<<"Time to merge all filled volumes: "
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 

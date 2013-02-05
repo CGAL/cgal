@@ -144,8 +144,8 @@ Since parameterizing meshes requires
 efficient representation of sparse matrices and efficient iterative or
 direct linear solvers, we provide an interface to several
 sparse linear solvers:
- - <span class="textsc">Eigen</span> 3.1 (or greater) is the library recommended by CGAL solving sparse systems.
- - OpenNL (authored by Bruno Lévy) is shipped with CGAL is the default solver.
+ - <span class="textsc">Eigen</span> 3.1 (or greater) is the library recommended by %CGAL solving sparse systems.
+ - OpenNL (authored by Bruno Lévy) is shipped with %CGAL is the default solver.
   - `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
   - `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
 */

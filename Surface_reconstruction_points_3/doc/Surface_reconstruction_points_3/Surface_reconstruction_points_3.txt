@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Surface Reconstruction from Point Sets
+\mainpage User Manual 
 \anchor Chapter_Surface_Reconstruction_from_Point_Sets
 \cgalAutoToc
 
@@ -129,7 +129,7 @@ not matched.
 
 \subsection Surface_reconstruction_points_3IdealConditions Ideal Conditions
 
-The user must keep in mind that the poisson surface reconstruction
+The user must keep in mind that the Poisson surface reconstruction
 algorithm comprises two phases (computing the implicit function from
 the input point set and contouring an iso-surface of this
 function). Both require some care in terms of sampling conditions and
@@ -142,7 +142,7 @@ reconstruction method expects a dense 3D oriented point set (typically
 matching the epsilon-sampling condition \cite cgal:bo-pgsms-05) and
 sampled over a closed, smooth surface. Oriented herein means that all
 3D points must come with consistently oriented normals to the inferred
-surface. Figure \cgalFigureRef{Surface_reconstruction_points_3figbimba} and \cgalFigureRef{Surface_reconstruction_points_3figeros} 
+surface.  \cgalFigureRef{Surface_reconstruction_points_3figbimba} and \cgalFigureRef{Surface_reconstruction_points_3figeros} 
 illustrate cases where these ideal conditions are met.
 
 \cgalFigureBegin{Surface_reconstruction_points_3figbimba,bimba.jpg}
@@ -315,7 +315,7 @@ processor clocked at 2.81 GHz and with 8 GB of RAM. The software is compiled wit
 with the 03 option which maximizes speed.  All measurements were done using the \ref thirdpartyEigen "Eigen" library.
 
 
-\subsection SurfReconstPerfPIF Poisson implicit function
+\subsection SurfReconstPerfPIF Poisson Implicit Function
 
 The point set chosen for benchmarking the Poisson implicit function is the Bimba con Nastrino point set
 (1.6 million points) depicted by \cgalFigureRef{Surface_reconstruction_points_3-fig-contouring_bench}.
@@ -372,7 +372,7 @@ Poisson solve duration (in s)
 \subsection SurfReconstPerfCont Contouring
 
 The point set chosen for benchmarking the contouring stage is the Bimba con Nastrino point
-set simplified to 100k points. We measure the contouring (i.e. the call to `CGAL::make_surface_mesh()`)
+set simplified to 100k points. We measure the contouring (i.e. the call to `make_surface_mesh()`)
 duration and the reconstruction error for a range of approximation distances.
 The reconstruction error is expressed as the average distance from input points to the reconstructed surface
 in mm (the Bimba con Nastrino statue is 324 mm tall).

@@ -5,8 +5,8 @@ namespace CGAL {
 
 The class 
 `Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>` is a 
-model for concept `MinSphereOfSpheresTraits`. It uses the \cgal 
-type `Point_2` to represent circles. 
+model for concept `MinSphereOfSpheresTraits`. It uses a pair of \cgal 
+`Point_2` and `FT` to represent circles.
 
 \cgalModels `MinSphereOfSpheresTraits`
 

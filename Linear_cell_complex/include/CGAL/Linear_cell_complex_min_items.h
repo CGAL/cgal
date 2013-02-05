@@ -44,7 +44,7 @@ namespace CGAL {
       typedef CGAL::Dart<d, LCC> Dart;
 
       typedef Cell_attribute_with_point<LCC> Vertex_attrib;    
-      typedef CGAL::cpp0x::tuple<Vertex_attrib> Attributes;
+      typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
     };
   };
 

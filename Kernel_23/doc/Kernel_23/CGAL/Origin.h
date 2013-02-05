@@ -2,7 +2,6 @@
 namespace CGAL {
 
 /*!
-\internal
 \ingroup PkgKernel23
 
 \cgal defines a symbolic constant 
@@ -22,7 +21,6 @@ public:
 namespace CGAL {
 
 /*!
-\internal
 \ingroup PkgKernel23
 
 \cgal defines a symbolic constant 
@@ -47,7 +45,7 @@ public:
 A symbolic constant which denotes the point at the origin.  This
 constant is used in the conversion between points and vectors.
 
-### Example ###
+\cgalHeading{Example}
 
 \code
 Point_2< Cartesian<Exact_NT> > p(1.0, 1.0), q;

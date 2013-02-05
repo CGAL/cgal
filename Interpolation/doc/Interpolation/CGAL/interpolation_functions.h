@@ -13,14 +13,15 @@ whether the retrieval was successful.
 This class can be used to provide the values and gradients of the 
 interpolation functions. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The class 
 `Data_access` has the container type `Map` as template parameter. 
 
 */
 template< typename Map >
-class Data_access {
+struct Data_access : public std::unary_function< typename Map::key_type,
+		     std::pair< typename Map::mapped_type, bool> > {
 public:
 
 /// \name Types 
@@ -63,18 +64,18 @@ std::pair< Data_type, bool> operator()(const Key_type& p);
 
 generates the interpolated function value computed by Farin's interpolant.
 
-\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
-\pre The range \f$ \left[\right.\f$ `first`, `beyond`\f$ \left.\right)\f$ contains either one or more than three element
+\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range `[first, beyond)`.
+\pre The range `[first, beyond)` contains either one or more than three elements.
 The function `farin_c1_interpolation()` interpolates the function values and the 
 gradients that are provided by functors using the method described in \cite f-sodt-90. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The value type of `RandomAccessIterator` is a pair 
 associating a point to a (non-normalized) barycentric coordinate. See 
 `sibson_c1_interpolation()` for the other parameters. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 Same requirements as for `sibson_c1_interpolation()` only the 
 iterator must provide random access and `Traits::FT` does not need 
@@ -83,13 +84,12 @@ to provide the square root operation.
 \sa `CGAL::Data_access<Map>` 
 \sa `CGAL::linear_interpolation()` 
 \sa `CGAL::sibson_c1_interpolation()` 
-\sa `CGAL::sibson_gradient_fitting()` 
+\sa PkgInterpolationSibsonGradientFitting
 \sa `CGAL::Interpolation_traits_2<K>`
-\sa `CGAL::natural_neighbor_coordinates_2()` 
-\sa `CGAL::regular_neighbor_coordinates_2()` 
-\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 
-s. 
 */
 template < class RandomAccessIterator, class Functor,
 class GradFunctor, class Traits> typename Functor::result_type
@@ -115,10 +115,10 @@ function value and a Boolean. The Boolean indicates whether the
 function value could be retrieved correctly. This function generates
 the interpolated function value as the weighted sum of the values
 corresponding to each point of the point/coordinate pairs in the
-range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
-\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
+range `[first, beyond)`.
+\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range `[first, beyond)`.
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `ForwardIterator` is a pair of 
@@ -140,9 +140,9 @@ point type as `key_type` and the function value type as
 </OL> 
 
 \sa `CGAL::Data_access<Map>` 
-\sa `CGAL::natural_neighbor_coordinates_2()`
-\sa `CGAL::regular_neighbor_coordinates_2()`
-\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 
 */
 template < class ForwardIterator, class Functor> typename
@@ -155,22 +155,24 @@ norm, Functor function_values);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The function `quadratic_interpolation` interpolates the function values and first degree 
+The function `quadratic_interpolation()` interpolates the function values and first degree 
 functions defined from the function gradients. Both, function values and 
 gradients, must be provided by functors. 
 
 This function generates the
 interpolated function value as the weighted sum of the values plus a
 linear term in the gradient for each point of the point/coordinate
-pairs in the range \f$ \left[\right.\f$ `first`,
-`beyond`\f$ \left.\right)\f$. See also
-`sibson_c1_interpolation`. \pre `norm` \f$ \neq0\f$ `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range \f$ \left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
+pairs in the range `[first, beyond)`. See also
+`sibson_c1_interpolation()`. 
 
-### Parameters ###
+\pre `norm` \f$ \neq0\f$ `function_value(p).second == true` for all
+points `p` of the point/coordinate pairs in the range `[first, beyond)`.
 
-See `sibson_c1_interpolation`. 
+\cgalHeading{Parameters}
 
-### Requirements ###
+See `sibson_c1_interpolation()`. 
+
+\cgalHeading{Requirements}
 
 Same requirements as for 
 `sibson_c1_interpolation()` only that `Traits::FT` does not need 
@@ -179,13 +181,13 @@ to provide the square root operation.
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
 \sa `CGAL::Data_access<Map>` 
-\sa `CGAL::sibson_gradient_fitting()`
+\sa PkgInterpolationSibsonGradientFitting
 \sa `CGAL::linear_interpolation()`
 \sa `CGAL::Interpolation_traits_2<K>` 
 \sa `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
-\sa `CGAL::natural_neighbor_coordinates_2()` 
-\sa `CGAL::regular_neighbor_coordinates_2()`
-\sa `CGAL::surface_neighbor_coordinates_3()`
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 */
 template < class ForwardIterator, class Functor, class
 GradFunctor, class Traits> typename Functor::result_type
@@ -200,7 +202,7 @@ function_gradient,const Traits& traits);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The function `sibson_c1_interpolation` interpolates the function values and the 
+The function `sibson_c1_interpolation()` interpolates the function values and the 
 gradients that are provided by functors 
 following the method described in \cite s-bdnni-81. 
 
@@ -210,25 +212,25 @@ This function generates the interpolated function value at the point
 If the functor `function_gradient` cannot supply the gradient of a
 point, the function returns a pair where the Boolean is set to
 `false`. If the interpolation was successful, the pair contains the
-interpolated function value as first and `true` as second value. \pre
-`norm` \f$ \neq0\f$. `function_value(p).second == true` for all points
-`p` of the point/coordinate pairs in the range \f$\left[\right.\f$`first`, `beyond`\f$ \left.\right)\f$.
+interpolated function value as first and `true` as second value. 
+
+\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points
+`p` of the point/coordinate pairs in the range `[first, beyond)`.
 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The template parameter `Traits` is to be 
 instantiated with a model of `InterpolationTraits`. 
 The value type of `ForwardIterator` is a pair associating a point to a 
 (non-normalized) barycentric coordinate. `norm` is the 
-normalization factor. The range \f$ \left[\right.\f$ 
-`first`,`beyond`\f$ \left.\right)\f$ contains the barycentric 
+normalization factor. The range `[first, beyond)` contains the barycentric 
 coordinates for the query point `p`. The functor 
 `function_value` allows to access the value of the interpolated 
 function given a point. `function_gradient` allows to access the 
 function gradient given a point. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`Traits` is a model of the concept 
@@ -261,13 +263,13 @@ the square root operation `sqrt()`.
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 
 \sa `CGAL::Data_access<Map>` 
-\sa `CGAL::sibson_gradient_fitting()`
+\sa PkgInterpolationSibsonGradientFitting
 \sa `CGAL::linear_interpolation()`
 \sa `CGAL::Interpolation_traits_2<K>` 
 \sa `CGAL::Interpolation_gradient_fitting_traits_2<K>` 
-\sa `CGAL::natural_neighbor_coordinates_2()`
-\sa `CGAL::regular_neighbor_coordinates_2()`
-\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `PkgInterpolationNaturalNeighborCoordinates2`
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 */
 template < class ForwardIterator, class Functor, class
 GradFunctor, class Traits> std::pair< typename Functor::result_type,
@@ -282,7 +284,7 @@ traits);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The same as `sibson_interpolation()` except that no square root
+The same as `sibson_c1_interpolation()` except that no square root
 operation is needed for FT.
 */
 template < class ForwardIterator, class Functor, class

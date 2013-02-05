@@ -47,8 +47,8 @@ public:
     \cgalModels `LessThanComparable` 
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
-    \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` 
-    \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` 
+    \sa \link CGAL::Voronoi_diagram_2::Vertex `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` \endlink
+    \sa \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink
     \sa `DelaunayGraph_2` 
 
   */
@@ -89,7 +89,7 @@ public:
       A type for a bidirectional 
       circulator over the halfedges on the boundary of the face. The value 
       type of the circulator is 
-      `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge`, and is convertible 
+      \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge", and is convertible 
       to `Halfedge_handle`. 
     */ 
     typedef Hidden_type Ccb_halfedge_circulator; 
@@ -175,8 +175,8 @@ public:
     \cgalModels `LessThanComparable`
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
-    \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` 
-    \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Face` 
+    \sa \link CGAL::Voronoi_diagram_2::Vertex `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` \endlink
+    \sa \link CGAL::Voronoi_diagram_2::Face `CGAL::Voronoi_diagram_2<DG,AT,AP>::Face` \endlink
     \sa `DelaunayGraph_2` 
 
   */
@@ -217,7 +217,7 @@ public:
       A type for a bidirectional 
       circulator over the halfedges of the boundary of a 
       Voronoi face. The value type of the circulator is 
-      `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` and is convertible to 
+      \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge" and is convertible to 
       `Halfedge_handle`. 
     */ 
     typedef Hidden_type Ccb_halfedge_circulator; 
@@ -415,8 +415,8 @@ public:
     \cgalModels `LessThanComparable`
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>` 
-    \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` 
-    \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>::Face` 
+    \sa \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink
+    \sa \link CGAL::Voronoi_diagram_2::Face `CGAL::Voronoi_diagram_2<DG,AT,AP>::Face` \endlink
     \sa `DelaunayGraph_2` 
 
   */
@@ -469,7 +469,7 @@ public:
       circulator that allows to traverse all incident halfedges, i.e., all 
       halfedges that have the vertex as their target. The value 
       type of the circulator is 
-      `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` and is convertible to 
+      \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge" and is convertible to 
       `Halfedge_handle`. 
     */ 
     typedef Hidden_type Halfedge_around_vertex_circulator; 

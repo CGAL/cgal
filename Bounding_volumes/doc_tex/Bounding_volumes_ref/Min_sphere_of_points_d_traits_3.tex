@@ -5,7 +5,7 @@
 \ccDefinition
 
 The class
-\ccc{Min_sphere_of_points_d_traits_3<K,FT,UseSqrt,Algorithm>} is a
+\ccc{Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>} is a
 model for concept \ccc{MinSphereOfSpheresTraits}.  It uses the {\cgal}
 type \ccc{Point_3} to represent circles.
 
@@ -35,7 +35,7 @@ requirements of type \ccc{Use_square_roots} of concept
 \ccc{Algorithm} of concept \ccc{MinSphereOfSpheresTraits}: It must be either \ccc{Default_algorithm}, \ccc{LP_algorithm} or \ccc{Farthest_first_heuristic}.}
 
 \ccConstants
-\ccNestedType{D}{is the constant 2, i.e.\ the dimension of $\R^2$.}
+\ccNestedType{D}{is the constant 3, i.e.\ the dimension of $\R^3$.}
 
 \ccTypes
 In addition to the types required by the concept
@@ -53,7 +53,7 @@ In addition to the types required by the concept
 \ccNestedType{Point}{is a typedef to \ccc{K::Point_3}.}
 
 \ccNestedType{Sphere}{is a typedef to
-  \ccc{Point}.}
+  \ccc{std::pair<Point,Radius>}.}
 
 \ccNestedType{Cartesian_const_iterator}{is a typedef to
 \ccc{K::Cartesian_const_iterator_3}.}

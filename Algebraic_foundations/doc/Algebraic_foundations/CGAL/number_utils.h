@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The template function `abs` returns the absolute value of a number. 
 
@@ -9,7 +9,7 @@ The function is defined if the argument type
 is a model of the `RealEmbeddable` concept. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::Abs` 
+\sa `RealEmbeddableTraits_::Abs` 
 
 */
 template <class NT> NT abs(const NT& x);
@@ -19,7 +19,7 @@ template <class NT> NT abs(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The template function `compare` compares the first argument with respect to 
 the second, i.e.\ it returns `CGAL::LARGER` if \f$ x\f$ is larger then \f$ y\f$. 
@@ -33,7 +33,7 @@ is a model of the `RealEmbeddable` concept.
 The `result_type` is convertible to `CGAL::Comparison_result`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::Compare` 
+\sa `RealEmbeddableTraits_::Compare` 
 */
 template <class NT1, class NT2> 
 result_type compare(const NT &x, const NT &y);
@@ -43,7 +43,7 @@ result_type compare(const NT &x, const NT &y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `div` computes the integral quotient of division 
 with remainder. 
@@ -60,9 +60,9 @@ The function is defined if `result_type`
 is a model of the `EuclideanRing` concept. 
 
 \sa `EuclideanRing` 
-\sa `AlgebraicStructureTraits::Div` 
-\sa CGAL::mod 
-\sa CGAL::div_mod 
+\sa `AlgebraicStructureTraits_::Div` 
+\sa `CGAL::mod()`
+\sa `CGAL::div_mod()`
 
 */
 template< class NT1, class NT2> 
@@ -74,7 +74,7 @@ div(const NT1& x, const NT2& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 computes the quotient \f$ q\f$ and remainder \f$ r\f$, such that \f$ x = q*y + r\f$ 
 and \f$ r\f$ minimal with respect to the Euclidean Norm of the 
@@ -95,9 +95,9 @@ The function is defined if `result_type`
 is a model of the `EuclideanRing` concept. 
 
 \sa `EuclideanRing` 
-\sa `AlgebraicStructureTraits::DivMod` 
-\sa CGAL::mod 
-\sa CGAL::div 
+\sa `AlgebraicStructureTraits_::DivMod`
+\sa `CGAL::mod()`
+\sa `CGAL::div()`
 
 */
 template <class NT1, class NT2> 
@@ -109,7 +109,7 @@ div_mod(const NT1& x, const NT2& y, result_type& q, result_type& r);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `gcd` computes the greatest common divisor of two values. 
 
@@ -125,7 +125,7 @@ The function is defined if `result_type`
 is a model of the `UniqueFactorizationDomain` concept. 
 
 \sa `UniqueFactorizationDomain` 
-\sa `AlgebraicStructureTraits::Gcd` 
+\sa `AlgebraicStructureTraits_::Gcd` 
 
 */
 template <class NT1, class NT2> result_type 
@@ -136,7 +136,7 @@ gcd(const NT1& x, const NT2& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `integral_division` (a.k.a.\ exact division or division without remainder) 
 maps ring elements \f$ (x,y)\f$ to ring element \f$ z\f$ such that \f$ x = yz\f$ if such a \f$ z\f$ 
@@ -156,7 +156,7 @@ The function is defined if `result_type`
 is a model of the `IntegralDomain` concept. 
 
 \sa `IntegralDomain` 
-\sa `AlgebraicStructureTraits::IntegralDivision` 
+\sa `AlgebraicStructureTraits_::IntegralDivision` 
 
 */
 template <class NT1, class NT2> result_type 
@@ -167,7 +167,7 @@ integral_division(const NT1& x, const NT2& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `inverse` returns the inverse element with respect to multiplication. 
 
@@ -177,7 +177,7 @@ is a model of the `Field` concept.
 \pre \f$ x \neq0\f$.
 
 \sa `Field` 
-\sa `AlgebraicStructureTraits::Inverse` 
+\sa `AlgebraicStructureTraits_::Inverse` 
 
 */
 template <class NT> NT inverse(const NT& x);
@@ -187,7 +187,7 @@ template <class NT> NT inverse(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The template function `is_negative` determines if a value is negative or not. 
 The function is defined if the argument type 
@@ -196,7 +196,7 @@ is a model of the `RealEmbeddable` concept.
 The `result_type` is convertible to `bool`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::IsNegative` 
+\sa `RealEmbeddableTraits_::IsNegative` 
 
 */
 result_type is_negative(const NT& x);
@@ -206,7 +206,7 @@ result_type is_negative(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `is_one` determines if a value is equal to 1 or not. 
 
@@ -216,7 +216,7 @@ is a model of the `IntegralDomainWithoutDivision` concept.
 The `result_type` is convertible to `bool`. 
 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::IsOne` 
+\sa `AlgebraicStructureTraits_::IsOne` 
 
 */
 template <class NT> result_type is_one(const NT& x);
@@ -226,7 +226,7 @@ template <class NT> result_type is_one(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The template function `is_positive` determines if a value is positive or not. 
 The function is defined if the argument type 
@@ -235,7 +235,7 @@ is a model of the `RealEmbeddable` concept.
 The `result_type` is convertible to `bool`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::IsPositive` 
+\sa `RealEmbeddableTraits_::IsPositive` 
 
 */
 result_type is_positive(const NT& x);
@@ -245,7 +245,7 @@ result_type is_positive(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 An ring element \f$ x\f$ is said to be a square iff there exists a ring element 
 \f$ y\f$ such 
@@ -258,13 +258,13 @@ The function `is_square` is available if
 The `result_type` is convertible to `bool`. 
 
 \sa `UniqueFactorizationDomain` 
-\sa `AlgebraicStructureTraits::IsSquare` 
+\sa `AlgebraicStructureTraits_::IsSquare` 
 
 */
 template <class NT> result_type is_square(const NT& x);
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 An ring element \f$ x\f$ is said to be a square iff there exists a ring element 
 \f$ y\f$ such 
@@ -277,7 +277,7 @@ The function `is_square` is available if
 The `result_type` is convertible to `bool`.
 
 \sa `UniqueFactorizationDomain` 
-\sa `AlgebraicStructureTraits::IsSquare` 
+\sa `AlgebraicStructureTraits_::IsSquare` 
 
 */
 template <class NT> result_type is_square(const NT& x, NT& y);
@@ -287,7 +287,7 @@ template <class NT> result_type is_square(const NT& x, NT& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `is_zero` determines if a value is equal to 0 or not. 
 
@@ -298,9 +298,9 @@ the `IntegralDomainWithoutDivision` concept.
 The `result_type` is convertible to `bool`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::IsZero` 
+\sa `RealEmbeddableTraits_::IsZero` 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::IsZero` 
+\sa `AlgebraicStructureTraits_::IsZero` 
 */
 template <class NT> result_type is_zero(const NT& x);
 
@@ -309,7 +309,7 @@ template <class NT> result_type is_zero(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `kth_root` returns the k-th root of a value. 
 
@@ -317,7 +317,7 @@ The function is defined if the second argument type
 is a model of the `FieldWithKthRoot` concept. 
 
 \sa `FieldWithKthRoot` 
-\sa `AlgebraicStructureTraits::KthRoot` 
+\sa `AlgebraicStructureTraits_::KthRoot` 
 
 */
 template <class NT> NT kth_root(int k, const NT& x);
@@ -327,7 +327,7 @@ template <class NT> NT kth_root(int k, const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `mod` computes the remainder of division with remainder. 
 
@@ -343,9 +343,9 @@ The function is defined if `result_type`
 is a model of the `EuclideanRing` concept. 
 
 \sa `EuclideanRing` 
-\sa `AlgebraicStructureTraits::DivMod` 
-\sa CGAL::div_mod 
-\sa CGAL::div 
+\sa `AlgebraicStructureTraits_::DivMod` 
+\sa `CGAL::div_mod()`
+\sa `CGAL::div()`
 
 */
 template< class NT1, class NT2> 
@@ -357,7 +357,7 @@ mod(const NT1& x, const NT2& y);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 returns the k-th real root of the univariate polynomial, which is
 defined by the iterator range, where begin refers to the constant
@@ -372,7 +372,7 @@ of the iterator range is a model of the `FieldWithRootOf` concept.
 \pre The polynomial is square-free.
 
 \sa `FieldWithRootOf` 
-\sa `AlgebraicStructureTraits::RootOf` 
+\sa `AlgebraicStructureTraits_::RootOf` 
 
 */
 template <class InputIterator> NT 
@@ -383,7 +383,7 @@ root_of(int k, InputIterator begin, InputIterator end);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The template function `sign` returns the sign of its argument. 
 
@@ -393,7 +393,7 @@ is a model of the `RealEmbeddable` concept.
 The `result_type` is convertible to `CGAL::Sign`. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::Sgn` 
+\sa `RealEmbeddableTraits_::Sgn` 
 
 */
 template <class NT> result_type sign(const NT& x);
@@ -403,7 +403,7 @@ template <class NT> result_type sign(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `simplify` may simplify a given object. 
 
@@ -411,7 +411,7 @@ The function is defined if the argument type
 is a model of the `IntegralDomainWithoutDivision` concept. 
 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::Simplify` 
+\sa `AlgebraicStructureTraits_::Simplify` 
 
 */
 template <class NT> void simplify(const NT& x);
@@ -421,7 +421,7 @@ template <class NT> void simplify(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `sqrt` returns the square root of a value. 
 
@@ -429,7 +429,7 @@ The function is defined if the argument type
 is a model of the `FieldWithSqrt` concept. 
 
 \sa `FieldWithSqrt` 
-\sa `AlgebraicStructureTraits::Sqrt` 
+\sa `AlgebraicStructureTraits_::Sqrt` 
 
 */
 template <class NT> NT sqrt(const NT& x);
@@ -439,7 +439,7 @@ template <class NT> NT sqrt(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `square` returns the square of a number. 
 
@@ -447,7 +447,7 @@ The function is defined if the argument type
 is a model of the `IntegralDomainWithoutDivision` concept. 
 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::Square` 
+\sa `AlgebraicStructureTraits_::Square` 
 
 */
 template <class NT> NT square(const NT& x);
@@ -457,7 +457,7 @@ template <class NT> NT square(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The template function `to_double` returns an double approximation of a number. 
 The function is defined if the argument type 
@@ -466,7 +466,7 @@ is a model of the `RealEmbeddable` concept.
 Remark: In order to control the quality of approximation one has to resort to methods that are specific to NT. There are no general guarantees whatsoever. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::ToDouble` 
+\sa `RealEmbeddableTraits_::ToDouble` 
 
 */
 template <class NT> double to_double(const NT& x);
@@ -476,7 +476,7 @@ template <class NT> double to_double(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The template function `to_interval` computes for a given real embeddable 
 number \f$ x\f$ a double interval containing \f$ x\f$. 
@@ -485,7 +485,7 @@ The function is defined if the argument type
 is a model of the `RealEmbeddable` concept. 
 
 \sa `RealEmbeddable` 
-\sa `RealEmbeddableTraits::ToInterval` 
+\sa `RealEmbeddableTraits_::ToInterval` 
 
 */
 template <class NT> 
@@ -496,7 +496,7 @@ std::pair<double,double> to_interval(const NT& x);
 namespace CGAL {
 
 /*!
-\ingroup PkgAlgebraicFoundationsFunctions
+\ingroup PkgAlgebraicFoundations
 
 The function `unit_part` computes the unit part of a given ring 
 element. 
@@ -505,7 +505,7 @@ The function is defined if the argument type
 is a model of the `IntegralDomainWithoutDivision` concept. 
 
 \sa `IntegralDomainWithoutDivision` 
-\sa `AlgebraicStructureTraits::UnitPart` 
+\sa `AlgebraicStructureTraits_::UnitPart` 
 
 */
 template <class NT> NT unit_part(const NT& x);

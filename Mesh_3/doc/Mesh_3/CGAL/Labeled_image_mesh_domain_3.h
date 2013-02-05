@@ -33,7 +33,7 @@ with a model of the concept `BisectionGeometricTraits_3`.
 \cgalModels `MeshDomain_3`
 
 \sa `BisectionGeometricTraits_3` 
-\sa `CGAL::make_mesh_3`. 
+\sa `CGAL::make_mesh_3()`. 
 
 */
 template< typename Image, typename BGT >

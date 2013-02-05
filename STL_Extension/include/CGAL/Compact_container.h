@@ -550,7 +550,9 @@ private:
   // Sets the pointer part and the type of the pointee.
   static void set_type(pointer ptr, void * p, Type t)
   {
-    CGAL_precondition(0 <= t && t < 4);
+    // This out of range compare is always true and causes lots of
+    // unnecessary warnings.
+    // CGAL_precondition(0 <= t && t < 4); 
     Traits::pointer(*ptr) = (void *) ((clean_pointer((char *) p)) + (int) t);
   }
 

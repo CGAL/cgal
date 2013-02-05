@@ -29,8 +29,8 @@ is a model of the concept `MeshDomain_3`).
 
 \cgalModels `MeshComplexWithFeatures_3InTriangulation_3` 
 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 \sa `MeshComplex_3InTriangulation_3` 
 \sa `MeshComplexWithFeatures_3InTriangulation_3` 
 \sa `MeshCellBase_3`, 

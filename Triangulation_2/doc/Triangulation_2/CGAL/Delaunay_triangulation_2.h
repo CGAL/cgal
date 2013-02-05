@@ -47,11 +47,11 @@ instantiated with `Delaunay_triangulation_2`. The triangulation
 hierarchy will then offer the same functionalities but be much more
 for efficient for locations and insertions.
 
-### Types ###
+\cgalHeading{Types}
 
 Inherits all the types defined in `Triangulation_2<Traits,Tds>`. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Insertion is implemented by inserting in the triangulation, then 
 performing a sequence of Delaunay flips. The number of flips is \f$ O(d)\f$ 
@@ -94,6 +94,13 @@ copy constructor. All the vertices and faces are duplicated.
 */ 
 Delaunay_triangulation_2( 
 const Delaunay_triangulation_2<Traits,Tds> &tr); 
+
+/*!
+Equivalent to constructing an empty triangulation with the optional traits class argument and calling insert(first,last).
+*/
+template < class InputIterator >
+Delaunay_triangulation_2<Traits,Tds> dt ( InputIterator first, InputIterator last, Traits gt = Traits());
+
 
 /// @} 
 

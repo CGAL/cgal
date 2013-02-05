@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -13,7 +15,7 @@ polynomial.
 
 */
 
-class AlgebraicStructureTraits::RootOf {
+class RootOf {
 public:
 
 /// \name Types 
@@ -41,5 +43,6 @@ result_type operator() (int k, InputIterator begin, InputIterator end);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::RootOf */
+}; /* end RootOf */
 
+} /* end of namespace AlgebraicStructureTraits_ */

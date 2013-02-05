@@ -11,7 +11,7 @@
 \cgalAutoToc
 \author %CGAL Editorial Board
 
-The goal of this chapter is to get a first idea of the look and feel of a program that uses CGAL.
+The goal of this chapter is to get a first idea of the look and feel of a program that uses \cgal.
 
 We will take a closer look at four \cgal example
 programs, all of them computing the 2D convex hull of a set of points.
@@ -182,9 +182,10 @@ given by a direction, which is hardwired in the class
 
 \section intro_further Further Reading
 
-We also recommend the standard text books by
-Josuttis \cite cgal:j-csl-99, or Austern \cite cgal:a-gps-98 for the
-\stl and its notion of *concepts* and *models*.
+We also recommend the standard text books "The C++ Standard Library, A
+Tutorial and Reference" by Nicolai M. Josuttis from Addison-Wesley, or
+"Generic Programming and the STL" by Matthew H. Austern for the \stl
+and its notion of *concepts* and *models*.
 
 Other resources for \cgal are the tutorials at
 http://www.cgal.org/Tutorials/ and the user support page at

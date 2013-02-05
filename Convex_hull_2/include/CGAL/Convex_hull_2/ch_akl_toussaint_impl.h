@@ -42,7 +42,7 @@ namespace internal{
   
 template <class ForwardIterator, class Traits>
 inline
-cpp0x::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator>
+cpp11::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator>
 ch_nswe_point_with_order( ForwardIterator first, ForwardIterator last,
                           ForwardIterator& n,
                           ForwardIterator& s,
@@ -77,7 +77,7 @@ ch_nswe_point_with_order( ForwardIterator first, ForwardIterator last,
   ForwardIterator iterators[4]={w,e,n,s};
   std::sort(positions,positions+4);
   
-  return cpp0x::make_tuple( 
+  return cpp11::make_tuple( 
     iterators[positions[0].second],
     iterators[positions[1].second],
     iterators[positions[2].second],
@@ -88,7 +88,7 @@ ch_nswe_point_with_order( ForwardIterator first, ForwardIterator last,
   
 template <class RandomAccessIterator, class Traits>
 inline
-cpp0x::tuple<RandomAccessIterator,RandomAccessIterator,RandomAccessIterator,RandomAccessIterator>
+cpp11::tuple<RandomAccessIterator,RandomAccessIterator,RandomAccessIterator,RandomAccessIterator>
 ch_nswe_point_with_order( RandomAccessIterator first, RandomAccessIterator last,
                           RandomAccessIterator& n,
                           RandomAccessIterator& s,
@@ -101,7 +101,7 @@ ch_nswe_point_with_order( RandomAccessIterator first, RandomAccessIterator last,
   RandomAccessIterator iterators[4]={w,e,n,s};
   std::sort(iterators,iterators+4);
   
-  return cpp0x::make_tuple( 
+  return cpp11::make_tuple( 
     iterators[0],
     iterators[1],
     iterators[2],
@@ -113,7 +113,7 @@ ch_nswe_point_with_order( RandomAccessIterator first, RandomAccessIterator last,
 //sorted according to their positions in the range [first,last]
 template <class ForwardIterator, class Traits>
 inline
-cpp0x::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator>
+cpp11::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator>
 ch_nswe_point_with_order( ForwardIterator first, ForwardIterator last,
                           ForwardIterator& n,
                           ForwardIterator& s,
@@ -238,7 +238,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
 
   if (first == last) return result;
   ForwardIterator n, s, e, w;
-  cpp0x::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator> ranges=
+  cpp11::tuple<ForwardIterator,ForwardIterator,ForwardIterator,ForwardIterator> ranges=
     internal::ch_nswe_point_with_order( first, last, n, s, w, e, ch_traits);
   
   if (equal_points(*n, *s) )
@@ -262,32 +262,32 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
 
   CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
   
-  int duplicated_exteme_points =  (cpp0x::get<0>(ranges)==cpp0x::get<1>(ranges)?1:0) +
-                                  (cpp0x::get<1>(ranges)==cpp0x::get<2>(ranges)?1:0) +
-                                  (cpp0x::get<2>(ranges)==cpp0x::get<3>(ranges)?1:0);
+  int duplicated_exteme_points =  (cpp11::get<0>(ranges)==cpp11::get<1>(ranges)?1:0) +
+                                  (cpp11::get<1>(ranges)==cpp11::get<2>(ranges)?1:0) +
+                                  (cpp11::get<2>(ranges)==cpp11::get<3>(ranges)?1:0);
   
   //several calls to avoid filter failures when using n,s,e,w
   if (duplicated_exteme_points)
   {
-    internal::ch_akl_toussaint_assign_points_to_regions_deg(first,cpp0x::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    internal::ch_akl_toussaint_assign_points_to_regions_deg(first,cpp11::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
     
-    if ( cpp0x::get<0>(ranges)!=cpp0x::get<1>(ranges) )
-      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp0x::next(cpp0x::get<0>(ranges)),cpp0x::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    if ( cpp11::get<0>(ranges)!=cpp11::get<1>(ranges) )
+      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp11::next(cpp11::get<0>(ranges)),cpp11::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
     
-    if ( cpp0x::get<1>(ranges)!=cpp0x::get<2>(ranges) )
-      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp0x::next(cpp0x::get<1>(ranges)),cpp0x::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    if ( cpp11::get<1>(ranges)!=cpp11::get<2>(ranges) )
+      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp11::next(cpp11::get<1>(ranges)),cpp11::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
     
-    if ( cpp0x::get<2>(ranges)!=cpp0x::get<3>(ranges) )
-      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp0x::next(cpp0x::get<2>(ranges)),cpp0x::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    if ( cpp11::get<2>(ranges)!=cpp11::get<3>(ranges) )
+      internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp11::next(cpp11::get<2>(ranges)),cpp11::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
     
-    internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp0x::next(cpp0x::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
+    internal::ch_akl_toussaint_assign_points_to_regions_deg(cpp11::next(cpp11::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,duplicated_exteme_points,ch_traits);
   }
   else{
-    internal::ch_akl_toussaint_assign_points_to_regions(first,cpp0x::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-    internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<0>(ranges)),cpp0x::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-    internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<1>(ranges)),cpp0x::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-    internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<2>(ranges)),cpp0x::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
-    internal::ch_akl_toussaint_assign_points_to_regions(cpp0x::next(cpp0x::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+    internal::ch_akl_toussaint_assign_points_to_regions(first,cpp11::get<0>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+    internal::ch_akl_toussaint_assign_points_to_regions(cpp11::next(cpp11::get<0>(ranges)),cpp11::get<1>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+    internal::ch_akl_toussaint_assign_points_to_regions(cpp11::next(cpp11::get<1>(ranges)),cpp11::get<2>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+    internal::ch_akl_toussaint_assign_points_to_regions(cpp11::next(cpp11::get<2>(ranges)),cpp11::get<3>(ranges),left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
+    internal::ch_akl_toussaint_assign_points_to_regions(cpp11::next(cpp11::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
   }
   
   #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
@@ -296,13 +296,13 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   #else
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
   #endif // no postconditions ...
-  std::sort( cpp0x::next(region1.begin() ), region1.end(), 
+  std::sort( cpp11::next(region1.begin() ), region1.end(), 
              ch_traits.less_xy_2_object() );
-  std::sort( cpp0x::next(region2.begin() ), region2.end(), 
+  std::sort( cpp11::next(region2.begin() ), region2.end(), 
              ch_traits.less_xy_2_object() );
-  std::sort( cpp0x::next(region3.begin() ), region3.end(),
+  std::sort( cpp11::next(region3.begin() ), region3.end(),
              boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
-  std::sort( cpp0x::next(region4.begin() ), region4.end(), 
+  std::sort( cpp11::next(region4.begin() ), region4.end(), 
              boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
 
   if (! equal_points(*w,*s) )

@@ -23,12 +23,12 @@ implement the respective ring operations.
 Moreover, `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >` is a model of 
 `AlgebraicStructureTraits` providing: 
 
-- `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Algebraic_type` derived from `CGAL::Integral_domain_without_division_tag` 
-- `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_zero`  which is a model of `AlgebraicStructureTraits::IsZero`
-- `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_one`  which is a model of `AlgebraicStructureTraits::IsOne`
-- `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Square`  which is a model of `AlgebraicStructureTraits::Square`
-- `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Simplify`  which is a model of `AlgebraicStructureTraits::Simplify`
-- `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part`  which is a model of `AlgebraicStructureTraits::UnitPart`
+- \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Algebraic_category` \endlink derived from `CGAL::Integral_domain_without_division_tag` 
+- \link AlgebraicStructureTraits::Is_zero `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_zero` \endlink  which is a model of `AlgebraicStructureTraits_::IsZero`
+- \link AlgebraicStructureTraits::Is_one `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_one` \endlink  which is a model of `AlgebraicStructureTraits_::IsOne`
+- \link AlgebraicStructureTraits::Square `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Square` \endlink  which is a model of `AlgebraicStructureTraits_::Square`
+- \link AlgebraicStructureTraits::Simplify `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Simplify` \endlink which is a model of `AlgebraicStructureTraits_::Simplify`
+- \link AlgebraicStructureTraits::Unit_part `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part` \endlink  which is a model of `AlgebraicStructureTraits_::UnitPart`
 
 \cgalRefines `Assignable` 
 \cgalRefines `CopyConstructible` 

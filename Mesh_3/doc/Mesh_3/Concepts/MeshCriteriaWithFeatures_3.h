@@ -20,8 +20,8 @@ that describes the requirements, in terms of sizing, for the discretization of t
 \sa `MeshEdgeCriteria_3` 
 \sa `MeshFacetCriteria_3` 
 \sa `MeshCellCriteria_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 

@@ -18,7 +18,7 @@ container.
 
 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 `T1`, `T2`, `T3` and `T4` must be
 `Assignable`. Additional operations have additional requirements.
@@ -241,7 +241,7 @@ accessing the elements of a container.
 
 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 `T1`, `T2` and `T3` must be `Assignable`.
 Additional operations have additional requirements.

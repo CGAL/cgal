@@ -61,7 +61,7 @@ struct Interval_evaluate_1 : public std::binary_function
   }
   
   result_type operator()(const Polynomial_1& p,
-                         const CGAL::cpp0x::array< Bound, 2 >& b) const {
+                         const CGAL::cpp11::array< Bound, 2 >& b) const {
     
     typename CT::Cast cast;
   
@@ -78,7 +78,7 @@ struct Interval_evaluate_1 : public std::binary_function
     Coefficient_const_iterator_range range = 
       typename PT_1::Construct_coefficient_const_iterator_range()(p);
     
-    Coefficient_const_iterator it = CGAL::cpp0x::prev(range.second);
+    Coefficient_const_iterator it = CGAL::cpp11::prev(range.second);
     
     Coercion_interval res(cast(*it));
     

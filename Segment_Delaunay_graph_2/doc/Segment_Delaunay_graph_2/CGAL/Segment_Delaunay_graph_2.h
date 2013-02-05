@@ -14,7 +14,7 @@ which must be a model of `SegmentDelaunayGraphDataStructure_2`.
 The second template argument defaults to 
 `CGAL::Triangulation_data_structure_2< CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>, CGAL::Triangulation_face_base_2<Gt> >`. 
 
-### Traversal of the Segment Delaunay Graph ###
+\cgalHeading{Traversal of the Segment Delaunay Graph}
 
 A segment Delaunay graph can be seen as a container of faces and 
 vertices. Therefore the `Segment_Delaunay_graph_2` class provides several iterators 

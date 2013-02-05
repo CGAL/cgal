@@ -8,15 +8,15 @@ with a default traits class that assumes that the boxes are a model of
 this `BoxIntersectionBox_d` concept. This concept defines the access functions to 
 the dimension, the `id`-number, and the boundaries of the box. 
 
-\cgalRefines `Assignable.` 
+\cgalRefines `Assignable` 
 
 \cgalHasModel CGAL::Box_intersection_d::Box_d
 \cgalHasModel CGAL::Box_intersection_d::Box_with_handle_d
 
-\sa `CGAL::box_intersection_d` 
-\sa `CGAL::box_self_intersection_d` 
-\sa `CGAL::box_intersection_all_pairs_d` 
-\sa `CGAL::box_self_intersection_all_pairs_d` 
+\sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
+\sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
 \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
 \sa `BoxIntersectionTraits_d` 
 

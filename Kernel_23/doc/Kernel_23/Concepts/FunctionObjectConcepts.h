@@ -5,7 +5,7 @@ namespace Kernel {
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \sa `CGAL::angle` 
+  \sa `angle_grp`
 
 */
 class Angle_2 {
@@ -53,7 +53,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-\sa `CGAL::angle` 
+\sa `angle_grp`
 
 */
 class Angle_3 {
@@ -82,7 +82,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::are_ordered_along_line` 
+  \sa `are_ordered_along_line_grp`
 
 */
 class AreOrderedAlongLine_2 {
@@ -112,7 +112,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::are_ordered_along_line` 
+  \sa `are_ordered_along_line_grp`
 
 */
 class AreOrderedAlongLine_3 {
@@ -142,7 +142,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::parallel` 
+  \sa `parallel_grp`
 
 */
 class AreParallel_2 {
@@ -183,7 +183,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::parallel` 
+  \sa `parallel_grp`
 
 */
 class AreParallel_3 {
@@ -232,7 +232,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::are_strictly_ordered_along_line` 
+  \sa `are_strictly_ordered_along_line_grp`
 
 */
 class AreStrictlyOrderedAlongLine_2 {
@@ -264,7 +264,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-\sa `CGAL::are_strictly_ordered_along_line` 
+\sa `are_strictly_ordered_along_line_grp`
 
 */
 class AreStrictlyOrderedAlongLine_3 {
@@ -492,7 +492,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::collinear_are_ordered_along_line` 
+  \sa `collinear_are_ordered_along_line_grp`
 
 */
 class CollinearAreOrderedAlongLine_2 {
@@ -521,7 +521,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::collinear_are_ordered_along_line` 
+  \sa `collinear_are_ordered_along_line_grp`
 
 */
 class CollinearAreOrderedAlongLine_3 {
@@ -549,7 +549,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::collinear_are_strictly_ordered_along_line` 
+  \sa `collinear_are_strictly_ordered_along_line_grp`
 
 */
 class CollinearAreStrictlyOrderedAlongLine_2 {
@@ -578,7 +578,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::collinear_are_strictly_ordered_along_line` 
+  \sa `collinear_are_strictly_ordered_along_line_grp`
 
 */
 class CollinearAreStrictlyOrderedAlongLine_3 {
@@ -642,7 +642,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::collinear` 
+  \sa `collinear_grp`
 
 */
 class Collinear_2 {
@@ -669,7 +669,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::collinear` 
+  \sa `collinear_grp`
 
 */
 class Collinear_3 {
@@ -796,8 +796,8 @@ public:
   \cgalConcept
 
   \sa `Kernel::CompareSquaredDistance_2` 
-  \sa `CGAL::compare_distance_to_point` 
-  \sa `CGAL::compare_squared_distance` 
+  \sa `compare_distance_to_point_grp`
+  \sa `compare_squared_distance_grp`
 
   \cgalRefines `AdaptableFunctor` (with three arguments)
 
@@ -853,8 +853,8 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `Kernel::CompareSquaredDistance_3` 
-  \sa `CGAL::compare_distance_to_point` 
-  \sa `CGAL::compare_squared_distance` 
+  \sa `compare_distance_to_point_grp`
+  \sa `compare_squared_distance_grp`
 
 */
 class CompareDistance_3 {
@@ -903,7 +903,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_slopes` 
+  \sa `compare_slopes_grp`
 
 */
 class CompareSlope_2 {
@@ -936,8 +936,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::compare_distance_to_point` 
-  \sa `CGAL::compare_squared_distance` 
+  \sa `compare_distance_to_point_grp`
+  \sa `compare_squared_distance_grp`
 
 */
 class CompareSquaredDistance_2 {
@@ -973,8 +973,8 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `Kernel::CompareDistance_3` 
-  \sa `CGAL::compare_distance_to_point` 
-  \sa `CGAL::compare_squared_distance` 
+  \sa `compare_distance_to_point_grp`
+  \sa `compare_squared_distance_grp`
 
 */
 class CompareSquaredDistance_3 {
@@ -1008,7 +1008,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::compare_squared_radius` 
+  \sa `compare_squared_radius_grp`
 
 */
 class CompareSquaredRadius_3 {
@@ -1067,7 +1067,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::compare_x_at_y` 
+  \sa `compare_x_at_y_grp`
 
 */
 class CompareXAtY_2 {
@@ -1128,7 +1128,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_xyz` 
+  \sa `compare_xyz_grp`
 
 */
 class CompareXYZ_3 {
@@ -1157,7 +1157,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_xy` 
+  \sa `compare_xy_grp`
   \sa `Kernel::CompareYX_2` 
 
 */
@@ -1187,7 +1187,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_xy` 
+  \sa `compare_xy_grp`
 
 */
 class CompareXY_3 {
@@ -1220,7 +1220,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_x` 
+  \sa `compare_x_grp`
 
 */
 class CompareX_2 {
@@ -1276,7 +1276,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_x` 
+  \sa `compare_x_grp`
 
 */
 class CompareX_3 {
@@ -1307,7 +1307,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \anchor fig-compare2
-  \sa `CGAL::compare_y_at_x` 
+  \sa `compare_y_at_x_grp`
 
 */
 class CompareYAtX_2 {
@@ -1393,7 +1393,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_yx` 
+  \sa `compare_yx_grp`
   \sa `Kernel::CompareXY_2` 
 
 */
@@ -1426,7 +1426,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_y` 
+  \sa `compare_y_grp`
 
 */
 class CompareY_2 {
@@ -1485,7 +1485,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_y` 
+  \sa `compare_y_grp`
 
 */
 class CompareY_3 {
@@ -1512,7 +1512,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_z` 
+  \sa `compare_z_grp`
 
 */
 class CompareZ_3 {
@@ -1758,7 +1758,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
   \sa `CGAL::Vector_2<Kernel>` 
-  \sa `CGAL::determinant` 
+  \sa `determinant_grp`
 
 */
 class ComputeDeterminant_2 {
@@ -1785,7 +1785,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `CGAL::Vector_3<Kernel>` 
-  \sa `CGAL::determinant` 
+  \sa `determinant_grp`
 
 */
 class ComputeDeterminant_3 {
@@ -2001,7 +2001,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::squared_distance` 
+  \sa `squared_distance_grp`
 
 */
 class ComputeSquaredDistance_2 {
@@ -2035,7 +2035,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::squared_distance` 
+  \sa `squared_distance_grp`
 
 */
 class ComputeSquaredDistance_3 {
@@ -2158,7 +2158,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with one argument) 
 
   \sa `CGAL::Circle_2<Kernel>` 
-  \sa `CGAL::squared_radius` 
+  \sa `squared_radius_grp`
 
 */
 class ComputeSquaredRadius_2 {
@@ -2206,7 +2206,7 @@ public:
 
   \sa `CGAL::Sphere_3<Kernel>` 
   \sa `CGAL::Circle_3<Kernel>` 
-  \sa `CGAL::squared_radius` 
+  \sa `squared_radius_grp`
 
 */
 class ComputeSquaredRadius_3 {
@@ -2410,7 +2410,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \sa `CGAL::compare_y_at_x` 
+  \sa `compare_y_at_x_grp`
 
   \cgalRefines AdaptableFunctor
 
@@ -2569,8 +2569,8 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `Kernel::ConstructCentroid_2` 
-  \sa `CGAL::centroid` 
-  \sa `CGAL::barycenter` 
+  \sa `centroid_grp`
+  \sa `barycenter_grp`
 
 */
 class ConstructBarycenter_2 {
@@ -2646,8 +2646,8 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `Kernel::ConstructCentroid_3` 
-  \sa `CGAL::centroid` 
-  \sa `CGAL::barycenter` 
+  \sa `centroid_grp`
+  \sa `barycenter_grp`
 
 */
 class ConstructBarycenter_3 {
@@ -2861,7 +2861,7 @@ public:
 
   \cgalRefines AdaptableFunctor
 
-  \sa `CGAL::bisector` 
+  \sa `bisector_grp`
 
 */
 class ConstructBisector_2 {
@@ -2903,7 +2903,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::bisector` 
+  \sa `bisector_grp`
 
 */
 class ConstructBisector_3 {
@@ -3095,8 +3095,8 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `Kernel::ConstructBarycenter_2` 
-  \sa `CGAL::centroid` 
-  \sa `CGAL::barycenter` 
+  \sa `centroid_grp`
+  \sa `barycenter_grp`
 
 */
 class ConstructCentroid_2 {
@@ -3137,8 +3137,8 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `Kernel::ConstructBarycenter_3` 
-  \sa `CGAL::centroid` 
-  \sa `CGAL::barycenter` 
+  \sa `centroid_grp`
+  \sa `barycenter_grp`
 
 */
 class ConstructCentroid_3 {
@@ -3336,7 +3336,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::circumcenter` 
+  \sa `circumcenter_grp`
 
 */
 class ConstructCircumcenter_2 {
@@ -3376,7 +3376,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with four arguments) 
 
-  \sa `CGAL::circumcenter` 
+  \sa `circumcenter_grp`
 
 */
 class ConstructCircumcenter_3 {
@@ -3432,8 +3432,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::cross_product` 
-  \sa `CGAL::determinant` 
+  \sa `cross_product_grp`
+  \sa `determinant_grp`
 
 */
 class ConstructCrossProductVector_3 {
@@ -3646,7 +3646,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::equidistant_line` 
+  \sa `equidistant_line_grp`
 
 */
 class ConstructEquidistantLine_3 {
@@ -3988,7 +3988,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::midpoint` 
+  \sa `midpoint_grp`
 
 */
 class ConstructMidpoint_2 {
@@ -4014,7 +4014,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::midpoint` 
+  \sa `midpoint_grp`
 
 */
 class ConstructMidpoint_3 {
@@ -4111,8 +4111,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::normal` 
-  \sa `CGAL::unit_normal` 
+  \sa `normal_grp`
+  \sa `unit_normal_grp`
 
 */
 class ConstructNormal_3 {
@@ -5750,8 +5750,8 @@ public:
 
 \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-\sa `CGAL::normal` 
-\sa `CGAL::unit_normal` 
+\sa `normal_grp`
+\sa `unit_normal_grp`
 
 */
 class ConstructUnitNormal_3 {
@@ -6002,7 +6002,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with four arguments) 
 
-  \sa `CGAL::coplanar_orientation` 
+  \sa `coplanar_orientation_grp`
 
 */
 class CoplanarOrientation_3 {
@@ -6050,7 +6050,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with four arguments) 
 
-  \sa `CGAL::coplanar_side_of_bounded_circle` 
+  \sa `coplanar_side_of_bounded_circle_grp`
 
 */
 class CoplanarSideOfBoundedCircle_3 {
@@ -6080,7 +6080,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with four arguments) 
 
-  \sa `CGAL::coplanar` 
+  \sa `coplanar_grp`
 
 */
 class Coplanar_3 {
@@ -6141,7 +6141,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::do_intersect` 
+  \sa `do_intersect_grp`
 
 */
 class DoIntersect_2 {
@@ -6178,7 +6178,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::do_intersect` 
+  \sa `do_intersect_grp`
 
 */
 class DoIntersect_3 {
@@ -6220,7 +6220,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_xy` 
+  \sa `compare_xy_grp`
 
 */
 class EqualXY_3 {
@@ -6248,7 +6248,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::x_equal` 
+  \sa `x_equal_grp`
 
 */
 class EqualX_2 {
@@ -6274,7 +6274,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-\sa `CGAL::x_equal` 
+\sa `x_equal_grp`
 
 */
 class EqualX_3 {
@@ -6300,7 +6300,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::y_equal` 
+  \sa `y_equal_grp`
 
 */
 class EqualY_2 {
@@ -6326,7 +6326,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::y_equal` 
+  \sa `y_equal_grp`
 
 */
 class EqualY_3 {
@@ -6352,7 +6352,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::z_equal` 
+  \sa `z_equal_grp`
 
 */
 class EqualZ_3 {
@@ -7103,7 +7103,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::intersection` 
+  \sa `intersection_grp`
 
 */
 class Intersect_2 {
@@ -7136,7 +7136,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two or three arguments) 
 
-  \sa `CGAL::intersection` 
+  \sa `intersection_grp`
 
 */
 class Intersect_3 {
@@ -7405,7 +7405,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::left_turn` 
+  \sa `left_turn_grp`
 
 */
 class LeftTurn_2 {
@@ -7433,7 +7433,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::has_smaller_distance_to_point` 
+  \sa `has_smaller_distance_to_point_grp`
 
 */
 class LessDistanceToPoint_2 {
@@ -7462,7 +7462,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::has_smaller_distance_to_point` 
+  \sa `has_smaller_distance_to_point_grp`
 
 */
 class LessDistanceToPoint_3 {
@@ -7521,7 +7521,7 @@ public:
 
   \cgalRefines `AdaptableFunctor`` (with four arguments)
 
-  \sa `CGAL::has_smaller_signed_distance_to_line` 
+  \sa `has_smaller_signed_distance_to_line_grp`
 
 */
 class LessSignedDistanceToLine_2 {
@@ -7563,7 +7563,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::has_smaller_signed_distance_to_plane` 
+  \sa `has_smaller_signed_distance_to_plane_grp`
 
 */
 class LessSignedDistanceToPlane_3 {
@@ -7603,7 +7603,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::lexicographically_xyz_smaller` 
+  \sa `lexicographically_xyz_smaller_grp`
 
 */
 class LessXYZ_3 {
@@ -7633,7 +7633,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::lexicographically_xy_smaller` 
+  \sa `lexicographically_xy_smaller_grp`
 
 */
 class LessXY_2 {
@@ -7662,7 +7662,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_xy` 
+  \sa `compare_xy_grp`
 
 */
 class LessXY_3 {
@@ -7690,7 +7690,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_x` 
+  \sa `compare_x_grp`
 
 */
 class LessX_2 {
@@ -7718,7 +7718,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_x` 
+  \sa `compare_x_grp`
 
 */
 class LessX_3 {
@@ -7745,7 +7745,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_yx` 
+  \sa `compare_yx_grp`
 
 */
 class LessYX_2 {
@@ -7773,7 +7773,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_y` 
+  \sa `compare_y_grp`
 
 */
 class LessY_2 {
@@ -7800,7 +7800,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::compare_y` 
+  \sa `compare_y_grp`
 
 */
 class LessY_3 {
@@ -7825,7 +7825,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \sa `CGAL::compare_z` 
+  \sa `compare_z_grp`
 
 */
 class LessZ_3 {
@@ -7852,7 +7852,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
-  \sa `CGAL::orientation` 
+  \sa `orientation_grp`
 
 */
 class Orientation_2 {
@@ -7891,7 +7891,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with four arguments) 
 
-  \sa `CGAL::orientation` 
+  \sa `orientation_grp`
 
 */
 class Orientation_3 {
@@ -8031,7 +8031,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with four arguments) 
 
-  \sa `CGAL::side_of_bounded_circle` 
+  \sa `side_of_bounded_circle_grp`
 
 */
 class SideOfBoundedCircle_2 {
@@ -8071,7 +8071,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with five arguments) 
 
-  \sa `CGAL::side_of_bounded_sphere` 
+  \sa `side_of_bounded_sphere_grp`
 
 */
 class SideOfBoundedSphere_3 {
@@ -8123,7 +8123,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with four arguments) 
 
-  \sa `CGAL::side_of_oriented_circle` 
+  \sa `side_of_oriented_circle_grp`
 
 */
 class SideOfOrientedCircle_2 {
@@ -8163,7 +8163,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with five arguments) 
 
-  \sa `CGAL::side_of_oriented_sphere` 
+  \sa `side_of_oriented_sphere_grp`
 
 */
 class SideOfOrientedSphere_3 {

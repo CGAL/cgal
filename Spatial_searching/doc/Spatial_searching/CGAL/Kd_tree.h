@@ -5,7 +5,7 @@ namespace CGAL {
 
 The class `Kd_tree` defines a `k-d` tree. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 Expects for the first template argument a model of the concept 
 `SearchTraits`, for example `Search_traits_2<Simple_cartesian<double> >`. 
@@ -16,7 +16,6 @@ It defaults to `Sliding_midpoint<Traits>`.
 Expects for the third template argument `Tag_true`, if the 
 tree shall be built with extended nodes, and `Tag_false` otherwise. 
 
-\sa Tree
 \sa `CGAL::Kd_tree_node<Traits>` 
 \sa `CGAL::Search_traits_2<Kernel>` 
 \sa `CGAL::Search_traits_3<Kernel>` 
@@ -52,22 +51,22 @@ to enumerate all points in the tree.
 typedef Hidden_type iterator; 
 
 /*! 
-  \cgalAdvanced A handle with value type `Kd_tree_node<Traits,Splitter>`. 
+A handle with value type `Kd_tree_node<Traits,Splitter>`. 
 */ 
 typedef Hidden_type Node_handle; 
 
 /*! 
-  \cgalAdvanced A const handle with value type `Kd_tree_node<Traits,Splitter>`. 
+A const handle with value type `Kd_tree_node<Traits,Splitter>`. 
 */ 
 typedef Hidden_type Node_const_handle; 
 
 /*! 
-  \cgalAdvanced Random access const iterator with value type `const Point_d*`. 
+Random access const iterator with value type `const Point_d*`. 
 */ 
 typedef Hidden_type Point_d_iterator; 
 
 /*! 
-  \cgalAdvanced A type that counts the number of elements in a `k-d` tree. 
+A type that counts the number of elements in a `k-d` tree. 
 */ 
 typedef Hidden_type size_type; 
 
@@ -141,22 +140,22 @@ return the instance of the traits used to construct the tree.
 Traits traits() const; 
 
 /*! 
-  \cgalAdvanced Returns a handle to the root node of the tree. 
+Returns a handle to the root node of the tree. 
 */ 
 Node_handle root(); 
 
 /*! 
-  \cgalAdvanced Returns a const handle to the root node of the tree. 
+Returns a const handle to the root node of the tree. 
 */ 
 Node_const_handle root() const; 
 
-/*!  \cgalAdvanced returns a const reference to the bounding box of the
+/*!  Returns a const reference to the bounding box of the
 root node of the tree.
 */ 
 const Kd_tree_rectangle<FT>& bounding_box() const; 
 
 /*! 
-  \cgalAdvanced Inserts statistics of the tree into the output stream `s`. 
+Inserts statistics of the tree into the output stream `s`. 
 */ 
 std::ostream& statistics(std::ostream& s) const; 
 

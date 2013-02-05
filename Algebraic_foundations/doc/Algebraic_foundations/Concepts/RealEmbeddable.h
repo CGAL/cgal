@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 A model of this concepts represents numbers that are embeddable on the real 
@@ -12,25 +12,25 @@ Moreover, `CGAL::Real_embeddable_traits< RealEmbeddable >` is a model of
 
 with: 
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_real_embeddable` set to `Tag_true` 
+- \link RealEmbeddableTraits::Is_real_embeddable `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_real_embeddable` \endlink set to `Tag_true` 
 
 and functors : 
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_zero` which is a model of `AlgebraicStructureTraits::IsZero`
+- \link RealEmbeddableTraits::Is_zero `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_zero` \endlink which is a model of `RealEmbeddableTraits_::IsZero`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Abs` which is a model of `AlgebraicStructureTraits::Abs`
+- \link RealEmbeddableTraits::Abs `CGAL::Real_embeddable_traits< RealEmbeddable >::Abs` \endlink which is a model of `RealEmbeddableTraits_::Abs`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Sgn` which is a model of `AlgebraicStructureTraits::Sgn`
+- \link RealEmbeddableTraits::Sgn `CGAL::Real_embeddable_traits< RealEmbeddable >::Sgn` \endlink which is a model of `RealEmbeddableTraits_::Sgn`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_positive` which is a model of `AlgebraicStructureTraits::IsPositive`
+- \link RealEmbeddableTraits::Is_positive `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_positive` \endlink which is a model of `RealEmbeddableTraits_::IsPositive`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_negative` which is a model of `AlgebraicStructureTraits::IsNegative`
+- \link RealEmbeddableTraits::Is_negative `CGAL::Real_embeddable_traits< RealEmbeddable >::Is_negative` \endlink which is a model of `RealEmbeddableTraits_::IsNegative`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::Compare` which is a model of `AlgebraicStructureTraits::Compare`
+- \link RealEmbeddableTraits::Compare `CGAL::Real_embeddable_traits< RealEmbeddable >::Compare` \endlink which is a model of `RealEmbeddableTraits_::Compare`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::To_double` which is a model of `AlgebraicStructureTraits::ToDouble`
+- \link RealEmbeddableTraits::To_double `CGAL::Real_embeddable_traits< RealEmbeddable >::To_double` \endlink which is a model of `RealEmbeddableTraits_::ToDouble`
 
-- `CGAL::Real_embeddable_traits< RealEmbeddable >::To_interval` which is a model of `AlgebraicStructureTraits::ToInterval`
+- \link RealEmbeddableTraits::To_interval `CGAL::Real_embeddable_traits< RealEmbeddable >::To_interval` \endlink which is a model of `RealEmbeddableTraits_::ToInterval`
 
 Remark: 
 

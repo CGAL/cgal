@@ -379,7 +379,7 @@ private:
      */
     bool operator()(const Cell_handle& ch, const bool update = true) const
     {
-      typedef typename MeshDomain::Subdomain Subdomain;
+      typedef boost::optional<typename MeshDomain::Subdomain_index> Subdomain;
       
       if ( c3t3_.triangulation().is_infinite(ch) )
         return false;
@@ -404,7 +404,7 @@ private:
                         const Facet& facet,
                         const bool update) const
     {
-      typedef typename MeshDomain::Surface_patch Surface_patch;    
+      typedef boost::optional<typename MeshDomain::Surface_patch_index> Surface_patch;
       
       typename MeshDomain::Do_intersect_surface do_intersect_surface =
         domain_.do_intersect_surface_object();
@@ -418,7 +418,7 @@ private:
         typename MeshDomain::Construct_intersection intersection =
           domain_.construct_intersection_object();
         
-        Point_3 surface_center = CGAL::cpp0x::get<0>(intersection(dual));
+        Point_3 surface_center = CGAL::cpp11::get<0>(intersection(dual));
         facet.first->set_facet_surface_center(facet.second,surface_center);
         
         // Update status in c3t3 
@@ -1316,7 +1316,7 @@ project_on_surface_aux(const Point_3& p,
     return ref_point;
   
   if ( do_intersect(proj_segment) )
-    return CGAL::cpp0x::get<0>(intersection(proj_segment));
+    return CGAL::cpp11::get<0>(intersection(proj_segment));
   else
     return ref_point;  
 }

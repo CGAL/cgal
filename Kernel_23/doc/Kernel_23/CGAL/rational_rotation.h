@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\addtogroup rational_rotation_approximation
+\addtogroup rational_rotation_approximation_grp
 
 */
 
@@ -14,7 +14,7 @@ that `sin_num`/`denom` approximates the sine of direction
 the approximating rational is bounded by `eps_num`/`eps_den`.
 \pre `eps_num` \f$ \neq0\f$.
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The approximation is based on Farey sequences as described in 
 the rational rotation method presented by Canny and Ressler at the 

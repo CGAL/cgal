@@ -4,15 +4,7 @@ namespace Kinetic {
 \cgalConcept
 
 This concept ties together the parts needed in order to run a kinetic 
-data structure. We provide several models of this concept: 
-<UL> 
-<LI>`Kinetic::Exact_simulation_traits` 
-<LI>`Kinetic::Inexact_simulation_traits` 
-<LI>`Kinetic::Regular_triangulation_exact_simulation_traits` 
-<LI>`Kinetic::Regular_triangulation_inexact_simulation_traits` 
-</UL> 
-
-All support trajectories defined by polynomial coordinates. The 
+data structure. All support trajectories defined by polynomial coordinates. The 
 `Exact` vs `Inexect` picks whether the roots of the 
 certificate functions are compared exactly or approximated 
 numerically. The regular triangulation models have weighted points of 

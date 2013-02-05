@@ -57,7 +57,7 @@ belongs to the furthest site triangulation.
 \tparam R must be a model of the concept `DelaunayTraits_d`.
 \tparam Lifted_R must be a model of the concept `DelaunayLiftedTraits_d`.
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The data type is derived from `Convex_hull_d` via
 the lifting map. For a point `x` in `d`-dimensional space let
@@ -73,7 +73,7 @@ The space requirement is the same as for convex hulls. The time
 requirement for an insert is the time to insert the lifted point
 into the convex hull of the lifted points.
 
-### Example ###
+\cgalHeading{Example}
 
 The abstract data type `Delaunay_d` has a default instantiation by
 means of the `d`-dimensional geometric kernel.
@@ -98,7 +98,7 @@ Vertex_handle v1 = T.insert(Point_d(2,11));
 }
 \endcode
 
-### Traits Requirements ###
+\cgalHeading{Traits Requirements}
 
 `Delaunay_d< R, Lifted_R >` requires the following types from the kernel traits `Lifted_R`:
 

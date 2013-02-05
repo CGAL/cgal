@@ -45,8 +45,8 @@ namespace CGAL {
  *   was inserted into the arrangement at any given time and when there no
  *   left curves, we keep the highest halfedge that was inseted to the right.
  *
- * Inherits from Sweep_line_event.
- * \sa Sweep_line_event
+ * Inherits from `Sweep_line_event`.
+ * \sa `Sweep_line_event`
  */
 
 template<class Traits_, class Subcurve_, class Arrangement_>

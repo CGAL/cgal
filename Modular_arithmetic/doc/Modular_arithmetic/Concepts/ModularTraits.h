@@ -4,9 +4,9 @@
 \cgalConcept
 
 A model of `ModularTraits` is associated to a specific `Type`. 
-In case this associated type is `Modularizable`, this is indicated by the 
-boolean tag `Is_modularizable`. The mapping into the `Residue_type` is 
-provided by the functor `Modular_image`. 
+In case this associated type is a model of `Modularizable`, this is indicated by the 
+Boolean tag `ModularTraits::Is_modularizable`. The mapping into the `Residue_type` is 
+provided by the functor `ModularTraits::Modular_image`. 
 
 \cgalHasModel CGAL::Modular_traits<T> 
 
@@ -39,7 +39,7 @@ typedef Hidden_type Is_modularizable;
 
 The type of the modular image. 
 
-In case the type is not `Modularizable` this is undefined. 
+In case the associated type is not a model of `Modularizable` this is undefined. 
 
 */ 
 typedef Hidden_type Residue_type; 
@@ -47,7 +47,7 @@ typedef Hidden_type Residue_type;
 /// @} 
 
 /// \name Functors 
-/// In case the associated type is `Modularizable` all functors are
+/// In case the associated type is a model of `Modularizable` all functors are
 /// provided. In case a functor is not provided, it is set to
 /// `CGAL::Null_functor`.
 /// @{

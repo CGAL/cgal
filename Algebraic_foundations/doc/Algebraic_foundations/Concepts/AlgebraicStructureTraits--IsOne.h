@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -12,7 +14,7 @@ returns true in case the argument is the one of the ring.
 
 */
 
-class AlgebraicStructureTraits::IsOne {
+class IsOne {
 public:
 
 /// \name Types 
@@ -41,5 +43,6 @@ result_type operator()(argument_type x);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::IsOne */
+}; /* end IsOne */
 
+} /* end of namespace AlgebraicStructureTraits_ */

@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewInputClasses
 
 An object of type `GraphicsViewPolylineInput` creates a list of points. A new 
 vertex is inserted every time the left mouse button is pressed. 

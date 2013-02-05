@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewGraphicsItemClasses
 
 An object of type `CircularArcGraphicsItem` is a graphics item that encapsulates a circular arc. 
 

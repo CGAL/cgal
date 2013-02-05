@@ -83,25 +83,25 @@ internal types. The package defines two global
 functions for each optimization parameter 
 to generate appropriate value of this parameter. 
 
-
-\param lloyd  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
+\cgalHeading{Named Parameters}
+- <b>`lloyd`</b>  `parameters::lloyd()` and `parameters::no_lloyd()` are designed to 
 trigger or not a call to `lloyd_optimize_mesh_3()` function and to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
 `lloyd_optimize_mesh_3()` is used for this parameter. 
 
-\param odt `parameters::odt()` and `parameters::no_odt()` are designed to 
+- <b>`odt`</b> `parameters::odt()` and `parameters::no_odt()` are designed to 
 trigger or not a call to `odt_optimize_mesh_3()` function and 
 to set the parameters of this optimizer 
 If one parameter is not set, the default value of 
 `odt_optimize_mesh_3()` is used for this parameter. 
 
-\param perturb `parameters::perturb()` and `parameters::no_perturb()` are designed to 
+- <b>`perturb`</b> `parameters::perturb()` and `parameters::no_perturb()` are designed to 
 trigger or not a call to `perturb_mesh_3()` function and 
 to set the parameters of this optimizer. If one parameter is not set, the default value of 
 `perturb_mesh_3()` is used for this parameter, except for the time bound which is set to be 
 equal to the refinement CPU time. 
 
-\param exude `parameters::exude()` and `parameters::no_exude()` are designed to 
+- <b>`exude`</b> `parameters::exude()` and `parameters::no_exude()` are designed to 
 trigger or not a call to `exude_mesh_3()` function and to override to set the 
 parameters of this optimizer. If one parameter is not set, the default value of 
 `exude_mesh_3()` is used for this parameter, except for the time bound which is set to be 
@@ -125,11 +125,11 @@ is granted at the end of the Delaunay refinement, this may no longer be true aft
 some optimization processes. Also beware that the default behavior does involve some 
 optimization processes. 
 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::odt_optimize_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
 \sa `CGAL::parameters::exude` 
 \sa `CGAL::parameters::no_exude` 
 \sa `CGAL::parameters::perturb` 
@@ -162,13 +162,13 @@ The function `parameters::exude()` allows the user to trigger a call to `exude_m
 It also allows the user to pass parameters 
 to the optimization function `exude_mesh_3()` through these mesh generation functions. 
 
-### Parameters ##
+\cgalHeading{Parameters}
 
 The parameters are named parameters. They are the same (i.e. they have the same 
 name and the same default values) as the parameters of `exude_mesh_3()` 
 function. See its manual page for further details. 
 
-### Example ##
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Mesh generation with an exudation step 
@@ -182,10 +182,10 @@ refine_mesh_3(c3t3,
               parameters::exude(parameters::time_limit=10)); 
 \endcode 
 
-\sa `CGAL::no_exude` 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::no_exude()` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Exude_options exude(
@@ -205,9 +205,9 @@ Provides a `Features_options` value such that
 0 and 1-dimensional input features are taken into account 
 if domain is a model of the refined concept `MeshDomainWithFeatures_3`. 
 
-\sa `CGAL::make_mesh_3`
-\sa `CGAL::refine_mesh_3`
-\sa `CGAL::parameters::no_features`
+\sa `CGAL::make_mesh_3()`
+\sa `CGAL::refine_mesh_3()`
+\sa `CGAL::parameters::no_features()`
 
 */
 parameters::internal::Features_options features();
@@ -221,13 +221,13 @@ The function `parameters::lloyd()` allows the user to trigger a call of
 parameters to the optimization function 
 `lloyd_optimize_mesh_3()` through these mesh generation functions. 
 
-### Parameters ## 
+\cgalHeading{Parameters}
 
 The parameters are named parameters. They are the same (i.e. they have the same 
 name and the same default values) as the parameters of the `lloyd_optimize_mesh_3()` 
 function. See its manual page for further details. 
 
-### Example ## 
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Mesh generation with lloyd optimization step 
@@ -242,10 +242,10 @@ refine_mesh_3(c3t3,
 
 \endcode 
 
-\sa `CGAL::no_lloyd` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::no_lloyd()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Lloyd_options lloyd(
@@ -260,7 +260,7 @@ double parameters::freeze_bound = 0.01);
 The function `parameters::no_exude()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no exudation must be done. 
 
-### Example ##
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Mesh generation without exudation 
@@ -269,10 +269,10 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
                               parameters::no_exude()); 
 \endcode 
 
-\sa `CGAL::parameters::exude` 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::exude()` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Exude_options no_exude();
@@ -290,9 +290,9 @@ in the mesh.
 Return a `Features_options` value that prevents the mesh generator 
 to take into account 0 and 1-dimensional input features. 
 
-\sa `CGAL::make_mesh_3`, 
-\sa `CGAL::refine_mesh_3`, 
-\sa `CGAL::parameters::features`. 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
+\sa `CGAL::parameters::features()` 
 
 */
 parameters::internal::Features_options no_features();
@@ -303,7 +303,7 @@ parameters::internal::Features_options no_features();
 The function `parameters::no_lloyd()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no lloyd optimization must be done. 
 
-### Example ##
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Mesh generation without lloyd optimization 
@@ -312,10 +312,10 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
                               parameters::no_lloyd()); 
 \endcode 
 
-\sa `CGAL::parameters::lloyd` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::lloyd()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Lloyd_options no_lloyd();
@@ -326,7 +326,7 @@ parameters::internal::Lloyd_options no_lloyd();
 The function `parameters::no_odt()` allows the user to tell the mesh generation functions 
 `make_mesh_3()` and `refine_mesh_3()` that no odt optimization must be done. 
 
-### Example ##
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Mesh generation without odt optimization 
@@ -335,10 +335,10 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
                               parameters::no_odt()); 
 \endcode 
 
-\sa `CGAL::parameters::odt` 
-\sa `CGAL::odt_optimize_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::odt()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Odt_options no_odt();
@@ -349,7 +349,7 @@ parameters::internal::Odt_options no_odt();
 The function `parameters::no_perturb()` allows the user to tell mesh generation global functions 
 `make_mesh_3()` and `refine_mesh_3()` that no perturbation must be done. 
 
-### Example ##
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Mesh generation without perturbation 
@@ -358,10 +358,10 @@ C3t3 c3t3 = make_mesh_3<c3t3>(domain,
                               parameters::no_perturb()); 
 \endcode 
 
-\sa `CGAL::parameters::perturb` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::perturb()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Perturb_options no_perturb();
@@ -375,13 +375,13 @@ The function `parameters::odt()` allows the user to trigger a call to
 allows the user to pass parameters to the optimization function 
 `odt_optimize_mesh_3()` through these mesh generation functions. 
 
-### Parameters ##
+\cgalHeading{Parameters}
 
 The parameters are named parameters. They are the same (i.e. they have the same 
 name and the same default values) as the parameters of `odt_optimize_mesh_3()` 
 function. See its manual page for further details. 
 
-### Example ##
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Mesh generation with odt optimization step 
@@ -395,10 +395,10 @@ refine_mesh_3(c3t3,
               parameters::odt(parameters::time_limit=10)); 
 \endcode 
 
-\sa `CGAL::no_odt` 
-\sa `CGAL::odt_optimize_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::no_odt()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Odt_options odt(
@@ -416,13 +416,13 @@ The function `parameters::perturb()` allows the user to trigger a call to
 allows the user to pass parameters 
 to the optimization function `perturb_mesh_3()` through these mesh generation functions. 
 
-### Parameters ##
+\cgalHeading{Parameters}
 
 The parameters are named parameters. They are the same (i.e. they have the same 
 name and the same default values) as the parameters of `perturb_mesh_3()` 
 function. See its manual page for further details. 
 
-### Example ##
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Mesh generation with a perturbation step 
@@ -437,10 +437,10 @@ refine_mesh_3(c3t3,
 
 \endcode 
 
-\sa `CGAL::no_perturb` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
+\sa `CGAL::parameters::no_perturb()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
 
 */
 parameters::internal::Perturb_options perturb(

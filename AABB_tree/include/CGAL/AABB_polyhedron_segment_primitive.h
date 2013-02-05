@@ -39,14 +39,15 @@ namespace CGAL {
     /// AABB tree is built should not be deleted while the AABB tree
     /// is in use.
     ///
-    /// The template parameter \c GeomTraits provides a \c %Point_3
+    /// \tparam GeomTraits must provide a \c %Point_3
     /// type, used as \c Point, and a \c %Segment_3 type, used as \c
     /// Datum and constructible from two arguments of type \c
-    /// Point. The template parameter \c Polyhedron should be a
+    /// Point. 
+    /// \tparam Polyhedron must be a 
     /// \c CGAL::Polyhedron_3 whose points have type \c Point.
     ///
-    /// \sa \ref AABBPrimitive
-    /// \sa AABB_polyhedron_triangle_primitive
+    /// \sa `AABBPrimitive`
+    /// \sa `AABB_polyhedron_triangle_primitive`
     template<typename GeomTraits, typename Polyhedron>
     class AABB_polyhedron_segment_primitive
     {

@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Segment Delaunay Graphs
+\mainpage User Manual 
 \anchor Chapter_2D_Segment_Delaunay_Graphs
 \anchor chaptersegdel2
 \cgalAutoToc
@@ -167,7 +167,7 @@ The geometric traits for the segment Delaunay graph will be
 discussed in more detail in the next section.
 <LI>the *segment Delaunay graph data structure*. This is
 essentially the same as the Apollonius graph data structure (discussed
-in Chapter \ref secapollonius2design), augmented with some
+in Chapter \ref secapollonius2design of 2D Apollonius Graph), augmented with some
 additional operations that are specific to segment Voronoi
 diagrams. The corresponding concept is that of
 `SegmentDelaunayGraphDataStructure_2`, which in fact is a refinement
@@ -400,7 +400,7 @@ classes:
 `Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` and
 `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`.
 
-Arithmetic Filtering##
+\subsection Segment_Delaunay_graph_2ArithmeticFiltering Arithmetic Filtering
 
 As mentioned above, performing computations with exact arithmetic
 can be very costly. For this reason we have devoted considerable

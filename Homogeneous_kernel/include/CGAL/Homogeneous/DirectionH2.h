@@ -44,7 +44,7 @@ class DirectionH2
   typedef typename R_::Ray_2                Ray_2;
   typedef typename R_::Segment_2            Segment_2;
 
-  typedef cpp0x::array<RT, 3>               Rep;
+  typedef cpp11::array<RT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;

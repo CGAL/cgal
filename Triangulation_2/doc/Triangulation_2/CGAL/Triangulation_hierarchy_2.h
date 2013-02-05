@@ -34,7 +34,7 @@ However it can be used as well for other triangulations.
 
 \tparam Tr may be any of the \cgal triangulation classes. 
 
-### Types ###
+\cgalHeading{Types}
 
 The class `Triangulation_hierarchy_2` inherits the types from its base triangulation 
 class `Tr`. 

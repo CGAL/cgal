@@ -12,7 +12,7 @@ algebra for field number types `FT`.
 
 \tparam FT must be a field number type. 
 
-### Operations ###
+\cgalHeading{Operations}
 
 Fits all operation requirements of the concept. 
 

@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Skin Surface Meshing
+\mainpage User Manual 
 \anchor Chapter_3D_Skin_Surface_Meshing
 \anchor chapterSkinSurface
 \htmlonly

@@ -10,7 +10,7 @@ based on the <span class="textsc">Gmp</span> Library.
 \cgalModels `EuclideanRing` 
 \cgalModels `RealEmbeddable` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 `Gmpz`s are reference counted. 
 

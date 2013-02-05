@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Geometric %Object Generators
+\mainpage User Manual 
 \anchor Chapter_Geometric_Object_Generators
 \anchor chapterGenerators
 \cgalAutoToc

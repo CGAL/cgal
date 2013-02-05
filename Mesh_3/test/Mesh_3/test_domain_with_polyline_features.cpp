@@ -59,7 +59,7 @@ class Domain_with_polyline_tester
   
   typedef std::vector<std::pair<Ci, Point> >        Corners_vector;
   typedef std::pair<Point, Index>                   P_and_i;
-  typedef CGAL::cpp0x::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
+  typedef CGAL::cpp11::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
   typedef std::vector<Curve_tuple>                 Curves_vector;
   
 public:
@@ -159,12 +159,12 @@ private:
   
   Point get_first_point(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp0x::get<1>(tuple).first;
+    return CGAL::cpp11::get<1>(tuple).first;
   }
   
   Point get_second_point(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp0x::get<2>(tuple).first;
+    return CGAL::cpp11::get<2>(tuple).first;
   }
   
   Csi get_curve_segment_index() const
@@ -178,7 +178,7 @@ private:
   
   Csi get_curve_segment_index(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp0x::get<0>(tuple);
+    return CGAL::cpp11::get<0>(tuple);
   }
   
   bool near_equal(const double d1, const double d2) const

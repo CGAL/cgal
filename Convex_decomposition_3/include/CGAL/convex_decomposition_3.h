@@ -42,7 +42,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexDecomposition3
 
-The function `convex_decomposition_3` inserts additional facets 
+The function `convex_decomposition_3()` inserts additional facets 
 into the given `Nef_polyhedron_3` `N`, such that each bounded 
 marked volume (the outer volume is unbounded) is subdivided into convex 
 pieces. The modified polyhedron represents a decomposition into 
@@ -56,10 +56,10 @@ the polyhedron (the complexity of a `Nef_polyhedron_3` is the sum
 of its `Vertices`, `Halfedges` and `SHalfedges`) and \f$ r\f$ 
 is the number of reflex edges. 
 
-\pre The polyhedron \f$ N\f$ is bounded. Otherwise, the outer volume is ignored. 
+\pre The polyhedron `N` is bounded. Otherwise, the outer volume is ignored. 
 
-\post If the polyhedron \f$ N\f$ is non-convex, it is modified to represent the 
-convex decomposition. If \f$ N\f$ is convex, it is not modified. 
+\post If the polyhedron `N` is non-convex, it is modified to represent the 
+convex decomposition. If `N` is convex, it is not modified. 
 
 \sa `CGAL::Nef_polyhedron_3<Traits>` 
 

@@ -10,7 +10,7 @@ output stream class `Stream` and value type `T`.
 
 \cgalModels `OutputIterator`
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The `operator*()` in class `Ostream_iterator` uses a proxy class. 
 

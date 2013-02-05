@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Principal Component Analysis
+\mainpage User Manual 
 \anchor Chapter_Principal_Component_Analysis
 
 \cgalAutoToc

@@ -418,7 +418,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_true)
     // store exact version of `A_Cj' (implicit conversion)
     if ( j_ < qp_n) {                                   // original variable
 
-	CGAL::cpp0x::copy_n( *(qp_A + j_), qp_m, A_Cj_it);
+	CGAL::cpp11::copy_n( *(qp_A + j_), qp_m, A_Cj_it);
 
     } else {                                            // artificial variable
 

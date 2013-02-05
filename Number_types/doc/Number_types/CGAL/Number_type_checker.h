@@ -22,7 +22,7 @@ the two arguments.
 \cgalModels `IntegralDomainWithoutDivision` (same as `NT1`) 
 \cgalModels `RealEmbeddable` 
 
-### Operations ###
+\cgalHeading{Operations}
 
 Some operations have a particular behavior documented here. 
 

@@ -17,7 +17,7 @@ non void <I>i</I>-attribute.
 
 \tparam CMap must be a model of the `CombinatorialMap` concept. 
 
-###Complexity ###
+\cgalHeading{Complexity}
 
 Each \f$ \beta_i\f$ link is initialized to `CMap::null_dart_handle`, and each 
 attribute handle of non void <I>i</I>-attribute is initialized to `NULL` 
@@ -52,12 +52,14 @@ typedef CMap::Dart_const_handle Dart_const_handle;
 /*! 
 
 */ 
-typedef CMap::Attribute_handle<i>::type Attribute_handle<i>::type; 
+template <unsigned int i>
+using Attribute_handle = CMap::Attribute_handle<i>;
 
 /*! 
 
 */ 
-typedef CMap::Attribute_const_handle<i>::type Attribute_const_handle<i>::type; 
+template <unsigned int i>
+using Attribute_const_handle = CMap::Attribute_const_handle<i>;
 
 /// @}
 

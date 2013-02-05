@@ -9,7 +9,7 @@ two points \f$ p\f$ and \f$ q\f$. \f$ p\f$ is called the source point and \f$ q\
 called the target point of \f$ s\f$, both points are called endpoints of 
 \f$ s\f$. A segment whose endpoints are equal is called <I>degenerate</I>. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Segments are implemented by a pair of points as an item type. All 
 operations like creation, initialization, tests, the calculation of 

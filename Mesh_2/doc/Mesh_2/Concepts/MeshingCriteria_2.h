@@ -11,8 +11,8 @@ algorithm. It provides a predicate `Is_bad` that tests a triangle
 according to criteria. The return type of `Is_bad` is an enum 
 `Mesh_2::Face_badness`. 
 
-The possible values of CGAL::Mesh_2::Face_badness are CGAL::Mesh_2::NOT_BAD, 
-CGAL::Mesh_2::BAD and CGAL::Mesh_2::IMPERATIVELY_BAD. If the predicate returns `BAD`, 
+The possible values of `CGAL::Mesh_2::Face_badness` are `CGAL::Mesh_2::NOT_BAD`, 
+`CGAL::Mesh_2::BAD` and `CGAL::Mesh_2::IMPERATIVELY_BAD`. If the predicate returns `BAD`, 
 the triangle is marked as bad and the algorithm will try to destroy it. If 
 the predicates returns `CGAL::Mesh_2::IMPERATIVELY_BAD`, the algorithm will destroy 
 the triangle unconditionally during its execution. 

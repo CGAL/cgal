@@ -10,7 +10,7 @@ operator less such that simplices can be stored in a `map` or a
 `set` of simplices. The simplex is invalidated by any change in 
 the triangulation. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 It is parameterized by the triangulation it derives the simplices 
 from. 

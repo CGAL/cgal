@@ -99,7 +99,7 @@ using the `iterator_to` and `s_iterator_to` functions.
 
 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The parameter `T` is required to have a copy constructor and an 
 assignment operator. It also needs to provide access to an internal 
@@ -737,7 +737,7 @@ types `T` to make them usable with the default `Compact_container_traits`.
 
 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 `T` is any type providing the following member functions: 
 

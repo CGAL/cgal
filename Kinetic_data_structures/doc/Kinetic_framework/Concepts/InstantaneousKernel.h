@@ -4,7 +4,7 @@ namespace Kinetic {
 \cgalConcept
 
 The concept `Kinetic::InstantaneousKernel` covers models that act as adaptors allowing 
-CGAL static data structures to act on snapshots of kinetic 
+%CGAL static data structures to act on snapshots of kinetic 
 data. Different methods for evaluating predicates are used depending 
 on whether time is set using an `NT` or a `Time` 
 object. Evaluating predicates when time is the former is much cheaper. 

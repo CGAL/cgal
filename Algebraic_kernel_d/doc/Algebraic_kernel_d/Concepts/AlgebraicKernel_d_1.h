@@ -8,13 +8,13 @@ algebraic functionalities on univariate polynomials of general degree \f$ d\f$.
 
 \cgalRefines `CopyConstructible` 
 \cgalRefines `Assignable` 
-A model of \cgalRefines `AlgebraicKernel_d_1` must provide: 
 
-\cgalHasModel Algebraic_kernel_rs_gmpz_d_1 
-\cgalHasModel Algebraic_kernel_rs_gmpq_d_1 
+\cgalHasModel `CGAL::Algebraic_kernel_rs_gmpz_d_1`
+\cgalHasModel `CGAL::Algebraic_kernel_rs_gmpq_d_1`
 
 \sa `AlgebraicKernel_d_2`
 
+A model of `AlgebraicKernel_d_1` must provide: 
 */
 
 class AlgebraicKernel_d_1 {

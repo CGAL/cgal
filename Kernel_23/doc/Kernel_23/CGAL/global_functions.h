@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\defgroup angle angle
+\defgroup angle_grp CGAL::angle()
 \ingroup kernel_global_function
 */
 /// @{
@@ -50,7 +50,7 @@ const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
-/// \defgroup area area
+/// \defgroup area_grp CGAL::area()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -65,11 +65,11 @@ const CGAL::Point_2<Kernel>& r);
 
 /// @}
 
-/// \defgroup are_ordered_along_line are_ordered_along_line
+/// \defgroup are_ordered_along_line_grp CGAL::are_ordered_along_line()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::are_strictly_ordered_along_line` 
-/// \sa `CGAL::collinear_are_ordered_along_line` 
-/// \sa `CGAL::collinear_are_strictly_ordered_along_line` 
+/// \sa `are_strictly_ordered_along_line_grp`
+/// \sa `collinear_are_ordered_along_line_grp`
+/// \sa `collinear_are_strictly_ordered_along_line_grp`
 /// @{
 
 /*!
@@ -98,11 +98,11 @@ const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
-/// \defgroup are_strictly_ordered_along_line are_strictly_ordered_along_line
+/// \defgroup are_strictly_ordered_along_line_grp CGAL::are_strictly_ordered_along_line()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::are_ordered_along_line` 
-/// \sa `CGAL::collinear_are_ordered_along_line` 
-/// \sa `CGAL::collinear_are_strictly_ordered_along_line` 
+/// \sa `are_ordered_along_line_grp`
+/// \sa `collinear_are_ordered_along_line_grp`
+/// \sa `collinear_are_strictly_ordered_along_line_grp`
 /// @{
 
 /*!
@@ -129,9 +129,9 @@ const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
-/// \defgroup barycenter barycenter
+/// \defgroup barycenter_grp CGAL::barycenter()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::centroid` 
+/// \sa \link centroid `CGAL::centroid()`  \endlink
 /// @{
 
 /*!
@@ -256,7 +256,7 @@ const CGAL::Point_3<Kernel>& p4, const Kernel::FT&w4);
 
 /// @}
 
-/// \defgroup bisector bisector
+/// \defgroup bisector_grp CGAL::bisector()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -310,9 +310,9 @@ const CGAL::Plane_3<Kernel> &h2);
 
 /// @}
 
-/// \defgroup centroid centroid
+/// \defgroup centroid_grp CGAL::centroid()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::barycenter` 
+/// \sa \link barycenter `CGAL::barycenter()` \endlink
 /// @{
 
 /*!
@@ -376,7 +376,7 @@ centroid( const CGAL::Tetrahedron_3<Kernel>& t);
 
 /// @}
 
-/// \defgroup circumcenter circumcenter
+/// \defgroup circumcenter_grp CGAL::circumcenter()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -457,11 +457,11 @@ circumcenter( const CGAL::Tetrahedron_3<Kernel>& t);
 
 /// @}
 
-/// \defgroup collinear_are_ordered_along_line collinear_are_ordered_along_line
+/// \defgroup collinear_are_ordered_along_line_grp CGAL::collinear_are_ordered_along_line()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::are_ordered_along_line` 
-/// \sa `CGAL::are_strictly_ordered_along_line` 
-/// \sa `CGAL::collinear_are_strictly_ordered_along_line` 
+/// \sa `are_ordered_along_line_grp`
+/// \sa `are_strictly_ordered_along_line_grp`
+/// \sa `collinear_are_strictly_ordered_along_line_grp`
 /// @{
 
 /*!
@@ -484,11 +484,11 @@ const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
-/// \defgroup collinear_are_strictly_ordered_along_line collinear_are_strictly_ordered_along_line
+/// \defgroup collinear_are_strictly_ordered_along_line_grp CGAL::collinear_are_strictly_ordered_along_line()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::are_ordered_along_line` 
-/// \sa `CGAL::are_strictly_ordered_along_line` 
-/// \sa `CGAL::collinear_are_ordered_along_line` 
+/// \sa `are_ordered_along_line_grp`
+/// \sa `are_strictly_ordered_along_line_grp`
+/// \sa `collinear_are_ordered_along_line_grp`
 /// @{
 
 /*!
@@ -512,11 +512,11 @@ const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
-/// \defgroup collinear collinear
+/// \defgroup collinear_grp CGAL::collinear()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::left_turn` 
-/// \sa `CGAL::orientation` 
-/// \sa `CGAL::right_turn` 
+/// \sa `left_turn_grp`
+/// \sa `orientation_grp`
+/// \sa `right_turn_grp`
 /// @{
 
 /*!
@@ -539,7 +539,7 @@ const CGAL::Point_3<Kernel>&r);
 
 
 
-/// \defgroup compare_dihedral_angle compare_dihedral_angle
+/// \defgroup compare_dihedral_angle_grp CGAL::compare_dihedral_angle()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -609,17 +609,17 @@ const CGAL::Vector_3<Kernel>& w2);
 
 /// @}
 
-/// \defgroup compare_distance_to_point compare_distance_to_point
+/// \defgroup compare_distance_to_point_grp CGAL::compare_distance_to_point()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_squared_distance` 
-/// \sa `CGAL::compare_signed_distance_to_line` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_distance_to_point` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_larger_signed_distance_to_plane` 
-/// \sa `CGAL::has_smaller_distance_to_point` 
-/// \sa `CGAL::has_smaller_signed_distance_to_line` 
-/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// \sa `compare_squared_distance_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
 /// @{
 
 /*!
@@ -654,7 +654,7 @@ const CGAL::Point_3<Kernel>& r);
 
 
 
-/// \defgroup compare_lexicographically_linear compare_lexicographically
+/// \defgroup compare_lexicographically_linear_grp CGAL::compare_lexicographically()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -682,16 +682,16 @@ compare_lexicographically(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Ke
 /// @}
 
 
-/// \defgroup compare_signed_distance_to_line compare_signed_distance_to_line
+/// \defgroup compare_signed_distance_to_line_grp CGAL::compare_signed_distance_to_line()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_distance_to_point` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_distance_to_point` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_larger_signed_distance_to_plane` 
-/// \sa `CGAL::has_smaller_distance_to_point` 
-/// \sa `CGAL::has_smaller_signed_distance_to_line` 
-/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
 /// @{
 
 /*!
@@ -721,6 +721,20 @@ compare_signed_distance_to_line(const CGAL::Point_2<Kernel>& p,
 const CGAL::Point_2<Kernel>& q,
 const CGAL::Point_2<Kernel>& r,
 const CGAL::Point_2<Kernel>& s);
+
+/// @}
+
+/// \defgroup compare_signed_distance_to_plane_grp CGAL::compare_signed_distance_to_plane()
+/// \ingroup kernel_global_function
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
+/// @{
 
 /*!
 returns `CGAL::LARGER`
@@ -756,7 +770,7 @@ const CGAL::Point_3<Kernel>& t);
 
 
 
-/// \defgroup compare_slopes compare_slopes
+/// \defgroup compare_slopes_grp CGAL::compare_slopes()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -776,17 +790,17 @@ const CGAL::Segment_2<Kernel> &s2);
 
 /// @}
 
-/// \defgroup compare_squared_distance compare_squared_distance
+/// \defgroup compare_squared_distance_grp CGAL::compare_squared_distance()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_distance_to_point` 
-/// \sa `CGAL::compare_signed_distance_to_line` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_distance_to_point` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_larger_signed_distance_to_plane` 
-/// \sa `CGAL::has_smaller_distance_to_point` 
-/// \sa `CGAL::has_smaller_signed_distance_to_line` 
-/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
 /// @{
 
 /*!
@@ -811,7 +825,7 @@ const typename Kernel::FT& d2);
 
 /// @}
 
-/// \defgroup compare_squared_radius compare_squared_radius
+/// \defgroup compare_squared_radius_grp CGAL::compare_squared_radius()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -861,25 +875,25 @@ const typename Kernel::FT& sr);
 /// @}
 
 /*!
-\defgroup compare_x compare_x
+\defgroup compare_x_grp CGAL::compare_x()
 \ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used,
 different versions of this global function are available. This is
 described below.
 
-\sa `CGAL::compare_xy` 
-\sa `CGAL::compare_xyz` 
-\sa `CGAL::compare_x_at_y` 
-\sa `CGAL::compare_y` 
-\sa `CGAL::compare_yx` 
-\sa `CGAL::compare_y_at_x` 
-\sa `CGAL::compare_z` 
+\sa `compare_xy_grp`
+\sa `compare_xyz_grp`
+\sa `compare_x_at_y_grp`
+\sa `compare_y_grp`
+\sa `compare_yx_grp`
+\sa `compare_y_at_x_grp`
+\sa `compare_z_grp`
 */
 
 /*!
-\defgroup compare_x_linear compare_x (2D/3D Linear Kernel)
-\ingroup compare_x
+\defgroup compare_x_linear_grp CGAL::compare_x() (2D/3D Linear Kernel)
+\ingroup compare_x_grp
 \anchor figcompare_x
 \image html compare1.gif 
 */
@@ -931,9 +945,9 @@ Comparison_result compare_x(const CGAL::Line_2<Kernel> &l1,
 /// @}
 
 /*!
-\defgroup compare_x_circular compare_x (2D Circular Kernel)
-\ingroup compare_x
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
+\defgroup compare_x_circular_grp CGAL::compare_x() (2D Circular Kernel)
+\ingroup compare_x_grp
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel".
 
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
@@ -959,9 +973,9 @@ Comparison_result
 /// @}
 
 /*!
-\defgroup compare_x_spherical compare_x (3D Spherical Kernel)
-\ingroup compare_x
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
+\defgroup compare_x_spherical_grp CGAL::compare_x() (3D Spherical Kernel)
+\ingroup compare_x_grp
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel".
 
 \code
 #include <CGAL/global_functions_spherical_kernel_3.h>
@@ -988,26 +1002,26 @@ Comparison_result
 /// @}
 
 /*!
-\defgroup compare_xy compare_xy
+\defgroup compare_xy_grp CGAL::compare_xy()
 \ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available. 
 
-\sa `CGAL::compare_xyz` 
-\sa `CGAL::compare_x` 
-\sa `CGAL::compare_x_at_y` 
-\sa `CGAL::compare_y` 
-\sa `CGAL::compare_yx` 
-\sa `CGAL::compare_y_at_x` 
-\sa `CGAL::compare_z` 
+\sa `compare_xyz_grp`
+\sa `compare_x_grp`
+\sa `compare_x_at_y_grp`
+\sa `compare_y_grp`
+\sa `compare_yx_grp`
+\sa `compare_y_at_x_grp`
+\sa `compare_z_grp`
 
 */
 
 
 /*!
-\defgroup compare_xy_linear compare_xy (2D/3D Linear Kernel)
-\ingroup compare_xy
+\defgroup compare_xy_linear_grp CGAL::compare_xy() (2D/3D Linear Kernel)
+\ingroup compare_xy_grp
 */
 /// @{
 
@@ -1034,9 +1048,9 @@ compare_xy(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 /// @}
 
 /*!
-\defgroup compare_xy_circular compare_xy (2D Circular Kernel)
-\ingroup compare_xy
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
+\defgroup compare_xy_circular_grp CGAL::compare_xy() (2D Circular Kernel)
+\ingroup compare_xy_grp
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel".
 
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
@@ -1065,9 +1079,9 @@ compare_xy(const CGAL::Circular_arc_point_2<CircularKernel> &p,
 /// @}
 
 /*!
-\defgroup compare_xy_spherical compare_xy (3D Spherical Kernel)
-\ingroup compare_xy
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
+\defgroup compare_xy_spherical_grp CGAL::compare_xy() (3D Spherical Kernel)
+\ingroup compare_xy_grp
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel".
 
 \code
 #include <CGAL/global_functions_spherical_kernel_3.h>
@@ -1097,19 +1111,19 @@ Comparison_result
 /// @}
 
 /*!
-\defgroup compare_x_at_y compare_x_at_y
+\defgroup compare_x_at_y_grp CGAL::compare_x_at_y()
 \ingroup kernel_global_function
 
 \anchor figcomparexaty
 \image html compare_x_at_y.gif
 
-\sa `CGAL::compare_xy` 
-\sa `CGAL::compare_xyz` 
-\sa `CGAL::compare_x` 
-\sa `CGAL::compare_y` 
-\sa `CGAL::compare_yx` 
-\sa `CGAL::compare_y_at_x` 
-\sa `CGAL::compare_z` 
+\sa `compare_xy_grp`
+\sa `compare_xyz_grp`
+\sa `compare_x_grp`
+\sa `compare_y_grp`
+\sa `compare_yx_grp`
+\sa `compare_y_at_x_grp`
+\sa `compare_z_grp`
 */
 /// @{
 
@@ -1162,19 +1176,19 @@ const CGAL::Line_2<Kernel> &h2);
 /// @}
 
 /*!
-  \defgroup compare_y_at_x compare_y_at_x
+  \defgroup compare_y_at_x_grp CGAL::compare_y_at_x()
   \ingroup kernel_global_function
 
   \anchor figcompareyatx
   \image html compare2.gif
 
-  \sa `CGAL::compare_xy` 
-  \sa `CGAL::compare_xyz` 
-  \sa `CGAL::compare_x` 
-  \sa `CGAL::compare_y` 
-  \sa `CGAL::compare_yx` 
-  \sa `CGAL::compare_x_at_y` 
-  \sa `CGAL::compare_z` 
+  \sa `compare_xy_grp`
+  \sa `compare_xyz_grp`
+  \sa `compare_x_grp`
+  \sa `compare_y_grp`
+  \sa `compare_yx_grp`
+  \sa `compare_x_at_y_grp`
+  \sa `compare_z_grp`
 */
 /// @{
 
@@ -1254,7 +1268,7 @@ Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
 
 /*!
   \name With the 2D Circular Kernel
-  See \ref Chapter_2D_Circular_Geometry_Kernel.
+  See \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel".
 
   \code 
   #include <CGAL/global_functions_circular_kernel_2.h>
@@ -1281,25 +1295,25 @@ compare_y_at_x(const CGAL::Circular_arc_point_2<CircularKernel> &p,
 
 
 /*!
-\defgroup compare_y compare_y
+\defgroup compare_y_grp CGAL::compare_y()
 \ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available.
 
-\sa `CGAL::compare_xy` 
-\sa `CGAL::compare_xyz` 
-\sa `CGAL::compare_x` 
-\sa `CGAL::compare_x_at_y` 
-\sa `CGAL::compare_yx` 
-\sa `CGAL::compare_y_at_x` 
-\sa `CGAL::compare_z` 
+\sa `compare_xy_grp`
+\sa `compare_xyz_grp`
+\sa `compare_x_grp`
+\sa `compare_x_at_y_grp`
+\sa `compare_yx_grp`
+\sa `compare_y_at_x_grp`
+\sa `compare_z_grp`
 */
 
 /*!
-\defgroup compary_y_linear compare_y (2D/3D Linear Kernel)
-\ingroup compare_y
-\details See Chapter \ref chapterkernel23
+\defgroup compary_y_linear_grp CGAL::compare_y() (2D/3D Linear Kernel)
+\ingroup compare_y_grp
+\details See Chapter \ref chapterkernel23 "2D and 3D Geometry Kernel"
 
 \anchor figcompare13
 \image html compare1.gif
@@ -1352,9 +1366,9 @@ Comparison_result compare_y(const CGAL::Line_2<Kernel> &l1,
 /// @}
 
 /*!
-\defgroup compare_y_circular compare_y (2D Circular Kernel)
-\ingroup compare_y
-\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel.
+\defgroup compare_y_circular_grp CGAL::compare_y() (2D Circular Kernel)
+\ingroup compare_y_grp
+\details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel".
 
 \code
 #include <CGAL/global_functions_circular_kernel_2.h>
@@ -1379,9 +1393,9 @@ compare_y(const CGAL::Circular_arc_point_2<CircularKernel> &p,
 /// @}
 
 /*!
-\defgroup compare_y_spherical compare_y (3D Spherical Kernel)
-\ingroup compare_y
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel.
+\defgroup compare_y_spherical_grp CGAL::compare_y() (3D Spherical Kernel)
+\ingroup compare_y_grp
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel".
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
@@ -1406,25 +1420,25 @@ Comparison_result
 
 
 /*!
-\defgroup compare_xyz compare_xyz
+\defgroup compare_xyz_grp CGAL::compare_xyz()
 \ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, different versions of this
 global function are available.
 
-\sa `CGAL::compare_xy` 
-\sa `CGAL::compare_x` 
-\sa `CGAL::compare_x_at_y` 
-\sa `CGAL::compare_y` 
-\sa `CGAL::compare_yx` 
-\sa `CGAL::compare_y_at_x` 
-\sa `CGAL::compare_z` 
+\sa `compare_xy_grp`
+\sa `compare_x_grp`
+\sa `compare_x_at_y_grp`
+\sa `compare_y_grp`
+\sa `compare_yx_grp`
+\sa `compare_y_at_x_grp`
+\sa `compare_z_grp`
 
 */
 
 /*!
-\defgroup compare_xyz_linear compare_xyz (2D/3D Linear Kernel)
-\ingroup compare_xyz
+\defgroup compare_xyz_linear_grp CGAL::compare_xyz() (2D/3D Linear Kernel)
+\ingroup compare_xyz_grp
 */
 /// @{
 
@@ -1442,9 +1456,9 @@ compare_xyz(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 /// @}
 
 /*!
-\defgroup compare_xyz_spherical compare_xyz (3D Spherical Kernel)
-\ingroup compare_xyz
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
+\defgroup compare_xyz_spherical_grp CGAL::compare_xyz() (3D Spherical Kernel)
+\ingroup compare_xyz_grp
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel"
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
@@ -1471,25 +1485,25 @@ const CGAL::Point_3<SphericalKernel> &q);
 
 
 /*!
-\defgroup compare_z compare_z
+\defgroup compare_z_grp CGAL::compare_z()
 \ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, 
 different versions of this global function are available. This is 
 described below. 
 
-\sa `CGAL::compare_xy` 
-\sa `CGAL::compare_xyz` 
-\sa `CGAL::compare_x` 
-\sa `CGAL::compare_x_at_y` 
-\sa `CGAL::compare_y` 
-\sa `CGAL::compare_yx` 
-\sa `CGAL::compare_y_at_x` 
+\sa `compare_xy_grp`
+\sa `compare_xyz_grp`
+\sa `compare_x_grp`
+\sa `compare_x_at_y_grp`
+\sa `compare_y_grp`
+\sa `compare_yx_grp`
+\sa `compare_y_at_x_grp`
 */
 
 /*!
-\defgroup compare_z_linear compare_z (2D/3D Linear Kernel)
-\ingroup compare_z
+\defgroup compare_z_linear_grp CGAL::compare_z() (2D/3D Linear Kernel)
+\ingroup compare_z_grp
 */
 /// @{
 
@@ -1502,10 +1516,10 @@ Comparison_result compare_z(const CGAL::Point_3<Kernel> &p, const CGAL::Point_3<
 /// @}
 
 /*!
-\defgroup compare_z_spherical compare_z (3D Spherical Kernel)
-\ingroup compare_z
+\defgroup compare_z_spherical_grp CGAL::compare_z() (3D Spherical Kernel)
+\ingroup compare_z_grp
 
-\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel
+\details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel "3D Spherical Geometry Kernel"
 
 \code
 #include <CGAL/global_functions_circular_kernel_3.h>
@@ -1535,15 +1549,15 @@ compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Poin
 
 /// @}
 
-/// \defgroup compare_yx compare_yx
+/// \defgroup compare_yx_grp CGAL::compare_yx()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_xy` 
-/// \sa `CGAL::compare_xyz` 
-/// \sa `CGAL::compare_x` 
-/// \sa `CGAL::compare_x_at_y` 
-/// \sa `CGAL::compare_y` 
-/// \sa `CGAL::compare_y_at_x` 
-/// \sa `CGAL::compare_z` 
+/// \sa `compare_xy_grp`
+/// \sa `compare_xyz_grp`
+/// \sa `compare_x_grp`
+/// \sa `compare_x_at_y_grp`
+/// \sa `compare_y_grp`
+/// \sa `compare_y_at_x_grp`
+/// \sa `compare_z_grp`
 /// @{
 
 /*!
@@ -1559,10 +1573,10 @@ compare_yx(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Kernel>& q);
 /// @}
 
 
-/// \defgroup coplanar coplanar
+/// \defgroup coplanar_grp CGAL::coplanar()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::coplanar_orientation` 
-/// \sa `CGAL::coplanar_side_of_bounded_circle` 
+/// \sa `coplanar_orientation_grp`
+/// \sa `coplanar_side_of_bounded_circle_grp`
 /// @{
 
 /*!
@@ -1576,11 +1590,11 @@ const CGAL::Point_3<Kernel>&s);
 
 /// @}
 
-/// \defgroup coplanar_orientation coplanar_orientation
+/// \defgroup coplanar_orientation_grp CGAL::coplanar_orientation()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::coplanar` 
-/// \sa `CGAL::coplanar_side_of_bounded_circle` 
-/// \sa `CGAL::orientation` 
+/// \sa `coplanar_grp`
+/// \sa `coplanar_side_of_bounded_circle_grp`
+/// \sa `orientation_grp`
 /// @{
 
 /*!
@@ -1615,10 +1629,10 @@ const CGAL::Point_3<Kernel>& r);
 
 
 
-/// \defgroup coplanar_side_of_bounded_circle coplanar_side_of_bounded_circle
+/// \defgroup coplanar_side_of_bounded_circle_grp CGAL::coplanar_side_of_bounded_circle()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::coplanar_orientation` 
-/// \sa `CGAL::side_of_bounded_circle` 
+/// \sa `coplanar_orientation_grp`
+/// \sa `side_of_bounded_circle_grp`
 /// @{
 
 /*!
@@ -1635,7 +1649,7 @@ const CGAL::Point_3<Kernel>& s);
 /// @}
 
 
-/// \defgroup cross_product cross_product
+/// \defgroup cross_product_grp CGAL::cross_product()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -1648,12 +1662,12 @@ const CGAL::Vector_3<Kernel>& v);
 
 /// @}
 
-/// \defgroup determinant determinant
+/// \defgroup determinant_grp CGAL::determinant()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::orientation` 
-/// \sa `CGAL::collinear` 
-/// \sa `CGAL::left_turn` 
-/// \sa `CGAL::right_turn` 
+/// \sa `orientation_grp`
+/// \sa `collinear_grp`
+/// \sa `left_turn_grp`
+/// \sa `right_turn_grp`
 /// @{
 
 /*!
@@ -1676,10 +1690,16 @@ const CGAL::Vector_3<Kernel>& w);
 // This is there to keep the global functions in alphabetical order
 // instead of processing order.
 
-/// \defgroup do_intersect do_intersect
+/// \defgroup do_intersect_grp CGAL::do_intersect()
 /// \ingroup kernel_global_function
+/// \defgroup do_intersect_linear_grp CGAL::do_intersect() (2D/3D Linear Kernel)
+/// \ingroup do_intersect_grp
+/// \defgroup do_intersect_circular_grp CGAL::do_intersect() (2D Circular Kernel)
+/// \ingroup do_intersect_grp
+/// \defgroup do_intersect_spherical_grp CGAL::do_intersect() (3D Spherical Kernel)
+/// \ingroup do_intersect_grp
 
-/// \defgroup equidistant_line equidistant_line
+/// \defgroup equidistant_line_grp CGAL::equidistant_line()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -1695,16 +1715,16 @@ const CGAL::Point_3<Kernel> &r);
 
 /// @}
 
-/// \defgroup has_larger_distance_to_point has_larger_distance_to_point
+/// \defgroup has_larger_distance_to_point_grp CGAL::has_larger_distance_to_point()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_distance_to_point` 
-/// \sa `CGAL::compare_signed_distance_to_line` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_larger_signed_distance_to_plane` 
-/// \sa `CGAL::has_smaller_distance_to_point` 
-/// \sa `CGAL::has_smaller_signed_distance_to_line` 
-/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
 /// @{
 
 /*!
@@ -1731,17 +1751,17 @@ const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
-/// \defgroup has_larger_signed_distance_to_line has_larger_signed_distance_to_line
+/// \defgroup has_larger_signed_distance_to_line_grp CGAL::has_larger_signed_distance_to_line()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_distance_to_point` 
-/// \sa `CGAL::compare_signed_distance_to_line` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_distance_to_point` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_larger_signed_distance_to_plane` 
-/// \sa `CGAL::has_smaller_distance_to_point` 
-/// \sa `CGAL::has_smaller_signed_distance_to_line` 
-/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
 /// @{
 
 /*!
@@ -1771,16 +1791,16 @@ const CGAL::Point_2<Kernel>& s);
 /// @}
 
 
-/// \defgroup has_larger_signed_distance_to_plane has_larger_signed_distance_to_plane
+/// \defgroup has_larger_signed_distance_to_plane_grp CGAL::has_larger_signed_distance_to_plane()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_distance_to_point` 
-/// \sa `CGAL::compare_signed_distance_to_line` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_distance_to_point` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_smaller_distance_to_point` 
-/// \sa `CGAL::has_smaller_signed_distance_to_line` 
-/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
 /// @{
 
 /*!
@@ -1810,16 +1830,16 @@ const CGAL::Point_3<Kernel>& t);
 
 /// @}
 
-/// \defgroup has_smaller_distance_to_point has_smaller_distance_to_point
+/// \defgroup has_smaller_distance_to_point_grp CGAL::has_smaller_distance_to_point()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_distance_to_point` 
-/// \sa `CGAL::compare_signed_distance_to_line` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_distance_to_point` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_larger_signed_distance_to_plane` 
-/// \sa `CGAL::has_smaller_signed_distance_to_line` 
-/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
 /// @{
 
 /*!
@@ -1846,16 +1866,16 @@ const CGAL::Point_3<Kernel>& r);
 
 /// @}
 
-/// \defgroup has_smaller_signed_distance_to_line has_smaller_signed_distance_to_line
+/// \defgroup has_smaller_signed_distance_to_line_grp CGAL::has_smaller_signed_distance_to_line()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_distance_to_point` 
-/// \sa `CGAL::compare_signed_distance_to_line` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_distance_to_point` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_larger_signed_distance_to_plane` 
-/// \sa `CGAL::has_smaller_distance_to_point` 
-/// \sa `CGAL::has_smaller_signed_distance_to_plane` 
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_plane_grp`
 /// @{
 
 /*!
@@ -1884,16 +1904,16 @@ const CGAL::Point_2<Kernel>& s);
 
 /// @}
 
-/// \defgroup has_smaller_signed_distance_to_plane has_smaller_signed_distance_to_plane
+/// \defgroup has_smaller_signed_distance_to_plane_grp CGAL::has_smaller_signed_distance_to_plane()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_distance_to_point` 
-/// \sa `CGAL::compare_signed_distance_to_line` 
-/// \sa `CGAL::compare_signed_distance_to_plane` 
-/// \sa `CGAL::has_larger_distance_to_point` 
-/// \sa `CGAL::has_larger_signed_distance_to_line` 
-/// \sa `CGAL::has_larger_signed_distance_to_plane` 
-/// \sa `CGAL::has_smaller_distance_to_point` 
-/// \sa `CGAL::has_smaller_signed_distance_to_line` 
+/// \sa `compare_distance_to_point_grp`
+/// \sa `compare_signed_distance_to_line_grp`
+/// \sa `compare_signed_distance_to_plane_grp`
+/// \sa `has_larger_distance_to_point_grp`
+/// \sa `has_larger_signed_distance_to_line_grp`
+/// \sa `has_larger_signed_distance_to_plane_grp`
+/// \sa `has_smaller_distance_to_point_grp`
+/// \sa `has_smaller_signed_distance_to_line_grp`
 /// @{
 
 /*!
@@ -1926,14 +1946,20 @@ const CGAL::Point_3<Kernel>& t);
 
 // Same reason as in defgroup do_intersect.
 
-/// \defgroup intersection intersection
+/// \defgroup intersection_grp CGAL::intersection()
 /// \ingroup kernel_global_function
+/// \defgroup intersection_linear_grp CGAL::intersection() (2D/3D Linear Kernel)
+/// \ingroup intersection_grp
+/// \defgroup intersection_circular_grp CGAL::intersection() (2D Circular Kernel)
+/// \ingroup intersection_grp
+/// \defgroup intersection_spherical_grp CGAL::intersection() (3D Spherical Kernel)
+/// \ingroup intersection_grp
 
-/// \defgroup left_turn left_turn
+/// \defgroup left_turn_grp CGAL::left_turn()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::collinear` 
-/// \sa `CGAL::orientation` 
-/// \sa `CGAL::right_turn` 
+/// \sa `collinear_grp`
+/// \sa `orientation_grp`
+/// \sa `right_turn_grp`
 
 /// @{
 
@@ -1949,12 +1975,12 @@ const CGAL::Point_2<Kernel> &r);
 
 
 
-/// \defgroup lexicographically_xy_larger lexicographically_xy_larger
+/// \defgroup lexicographically_xy_larger_grp CGAL::lexicographically_xy_larger()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_xy` 
-/// \sa `CGAL::lexicographically_xy_larger_or_equal` 
-/// \sa `CGAL::lexicographically_xy_smaller` 
-/// \sa `CGAL::lexicographically_xy_smaller_or_equal` 
+/// \sa `compare_xy_grp`
+/// \sa `lexicographically_xy_larger_or_equal_grp`
+/// \sa `lexicographically_xy_smaller_grp`
+/// \sa `lexicographically_xy_smaller_or_equal_grp`
 /// @{
 
 /*!
@@ -1970,12 +1996,12 @@ const CGAL::Point_2<Kernel>& q);
 
 
 
-/// \defgroup lexicographically_xy_larger_or_equal lexicographically_xy_larger_or_equal
+/// \defgroup lexicographically_xy_larger_or_equal_grp CGAL::lexicographically_xy_larger_or_equal()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_xy` 
-/// \sa `CGAL::lexicographically_xy_larger` 
-/// \sa `CGAL::lexicographically_xy_smaller` 
-/// \sa `CGAL::lexicographically_xy_smaller_or_equal` 
+/// \sa `compare_xy_grp`
+/// \sa `lexicographically_xy_larger_grp`
+/// \sa `lexicographically_xy_smaller_grp`
+/// \sa `lexicographically_xy_smaller_or_equal_grp`
 
 /// @{
 
@@ -1990,12 +2016,12 @@ const CGAL::Point_2<Kernel>& q);
 
 /// @}
 
-/// \defgroup lexicographically_xy_smaller lexicographically_xy_smaller
+/// \defgroup lexicographically_xy_smaller_grp CGAL::lexicographically_xy_smaller()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_xy` 
-/// \sa `CGAL::lexicographically_xy_larger` 
-/// \sa `CGAL::lexicographically_xy_larger_or_equal` 
-/// \sa `CGAL::lexicographically_xy_smaller_or_equal` 
+/// \sa `compare_xy_grp`
+/// \sa `lexicographically_xy_larger_grp`
+/// \sa `lexicographically_xy_larger_or_equal_grp`
+/// \sa `lexicographically_xy_smaller_or_equal_grp`
 
 /// @{
 
@@ -2011,12 +2037,12 @@ const CGAL::Point_2<Kernel>& q);
 /// @}
 
 
-/// \defgroup lexicographically_xy_smaller_or_equal lexicographically_xy_smaller_or_equal
+/// \defgroup lexicographically_xy_smaller_or_equal_grp CGAL::lexicographically_xy_smaller_or_equal()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_xy` 
-/// \sa `CGAL::lexicographically_xy_larger` 
-/// \sa `CGAL::lexicographically_xy_larger_or_equal` 
-/// \sa `CGAL::lexicographically_xy_smaller` 
+/// \sa `compare_xy_grp`
+/// \sa `lexicographically_xy_larger_grp`
+/// \sa `lexicographically_xy_larger_or_equal_grp`
+/// \sa `lexicographically_xy_smaller_grp`
 
 /// @{
 
@@ -2031,10 +2057,10 @@ const CGAL::Point_2<Kernel>& q);
 
 /// @}
 
-/// \defgroup lexicographically_xyz_smaller lexicographically_xyz_smaller
+/// \defgroup lexicographically_xyz_smaller_grp CGAL::lexicographically_xyz_smaller()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_xyz` 
-/// \sa `CGAL::lexicographically_xyz_smaller_or_equal` 
+/// \sa `compare_xyz_grp`
+/// \sa `lexicographically_xyz_smaller_or_equal_grp`
 
 /// @{
 
@@ -2049,10 +2075,10 @@ const CGAL::Point_3<Kernel>& q);
 
 /// @}
 
-/// \defgroup lexicographically_xyz_smaller_or_equal lexicographically_xyz_smaller_or_equal
+/// \defgroup lexicographically_xyz_smaller_or_equal_grp CGAL::lexicographically_xyz_smaller_or_equal()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_xyz` 
-/// \sa `CGAL::lexicographically_xyz_smaller` 
+/// \sa `compare_xyz_grp`
+/// \sa `lexicographically_xyz_smaller_grp`
 
 /// @{
 
@@ -2067,7 +2093,7 @@ const CGAL::Point_3<Kernel>& q);
 
 /// @}
 
-/// \defgroup max_vertex max_vertex
+/// \defgroup max_vertex_grp CGAL::max_vertex()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -2085,7 +2111,7 @@ CGAL::Point_3<Kernel> max_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
 
 /// @}
 
-/// \defgroup midpoint midpoint
+/// \defgroup midpoint_grp CGAL::midpoint()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -2104,7 +2130,7 @@ CGAL::Point_3<Kernel> midpoint( const CGAL::Point_3<Kernel>& p, const CGAL::Poin
 
 /// @}
 
-/// \defgroup min_vertex min_vertex
+/// \defgroup min_vertex_grp CGAL::min_vertex()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -2122,7 +2148,7 @@ CGAL::Point_3<Kernel> min_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
 
 /// @}
 
-/// \defgroup normal normal
+/// \defgroup normal_grp CGAL::normal()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -2135,11 +2161,11 @@ CGAL::Vector_3<Kernel> normal( const CGAL::Point_3<Kernel>& p, const CGAL::Point
 
 /// @}
 
-/// \defgroup orientation orientation
+/// \defgroup orientation_grp CGAL::orientation()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::collinear` 
-/// \sa `CGAL::left_turn` 
-/// \sa `CGAL::right_turn` 
+/// \sa `collinear_grp`
+/// \sa `left_turn_grp`
+/// \sa `right_turn_grp`
 
 /// @{
 
@@ -2188,7 +2214,7 @@ const CGAL::Vector_3<Kernel> &w);
 
 
 
-/// \defgroup orthogonal_vector orthogonal_vector
+/// \defgroup orthogonal_vector_grp CGAL::orthogonal_vector()
 /// \ingroup kernel_global_function
 
 /// @{
@@ -2212,7 +2238,7 @@ const CGAL::Point_3<Kernel>& r );
 /// @}
 
 
-/// \defgroup parallel parallel
+/// \defgroup parallel_grp CGAL::parallel()
 /// \ingroup kernel_global_function
 
 /// @{
@@ -2277,7 +2303,7 @@ const CGAL::Segment_3<Kernel>& s2);
 
 
 
-/// \defgroup radical_line radical_line
+/// \defgroup radical_line_grp CGAL::radical_line()
 /// \ingroup kernel_global_function
 
 /// @{
@@ -2294,14 +2320,14 @@ const CGAL::Circle_2<Kernel>& c2);
 
 // Same reason as do_intersect.
 
-/// \defgroup rational_rotation_approximation rational_rotation_approximation
+/// \defgroup rational_rotation_approximation_grp CGAL::rational_rotation_approximation()
 /// \ingroup kernel_global_function
 
-/// \defgroup right_turn right_turn
+/// \defgroup right_turn_grp CGAL::right_turn()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::collinear` 
-/// \sa `CGAL::left_turn` 
-/// \sa `CGAL::orientation` 
+/// \sa `collinear_grp`
+/// \sa `left_turn_grp`
+/// \sa `orientation_grp`
 
 /// @{
 
@@ -2316,10 +2342,10 @@ const CGAL::Point_2<Kernel> &r);
 /// @}
 
 
-/// \defgroup side_of_bounded_circle side_of_bounded_circle
+/// \defgroup side_of_bounded_circle_grp CGAL::side_of_bounded_circle()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::coplanar_side_of_bounded_circle` 
-/// \sa `CGAL::side_of_oriented_circle` 
+/// \sa `coplanar_side_of_bounded_circle_grp`
+/// \sa `side_of_oriented_circle_grp`
 
 /// @{
 
@@ -2350,9 +2376,9 @@ const CGAL::Point_2<Kernel> &t);
 
 
 
-/// \defgroup side_of_bounded_sphere side_of_bounded_sphere
+/// \defgroup side_of_bounded_sphere_grp CGAL::side_of_bounded_sphere()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::side_of_oriented_sphere` 
+/// \sa `side_of_oriented_sphere_grp`
 
 /// @{
 
@@ -2394,9 +2420,9 @@ const CGAL::Point_3<Kernel> &t);
 
 /// @}
 
-/// \defgroup side_of_oriented_circle side_of_oriented_circle
+/// \defgroup side_of_oriented_circle_grp CGAL::side_of_oriented_circle()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::side_of_bounded_circle` 
+/// \sa `side_of_bounded_circle_grp`
 
 /// @{
 
@@ -2424,9 +2450,9 @@ const CGAL::Point_2<Kernel> &test);
 
 
 
-/// \defgroup side_of_oriented_sphere side_of_oriented_sphere
+/// \defgroup side_of_oriented_sphere_grp CGAL::side_of_oriented_sphere()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::side_of_bounded_sphere` 
+/// \sa `side_of_bounded_sphere_grp`
 
 /// @{
 
@@ -2453,7 +2479,7 @@ const CGAL::Point_3<Kernel> &test);
 
 /// @}
 
-/// \defgroup squared_area squared_area
+/// \defgroup squared_area_grp CGAL::squared_area()
 /// \ingroup kernel_global_function
 
 /// @{
@@ -2471,14 +2497,14 @@ const CGAL::Point_3<Kernel>& r);
 
 // The same reason as do_intersect.
 
-/// \defgroup squared_distance squared_distance
+/// \defgroup squared_distance_grp CGAL::squared_distance()
 /// \ingroup kernel_global_function
 
-/// \defgroup squared_radius squared_radius
+/// \defgroup squared_radius_grp CGAL::squared_radius()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::Circle_2<Kernel>` 
-/// \sa `CGAL::Circle_3<Kernel>` 
-/// \sa `CGAL::Sphere_3<Kernel>` 
+/// \sa `Circle_2<Kernel>_grp`
+/// \sa `Circle_3<Kernel>_grp`
+/// \sa `Sphere_3<Kernel>_grp`
 
 /// @{
 
@@ -2549,7 +2575,7 @@ squared_radius( const CGAL::Point_3<Kernel>& p);
 
 /// @}
 
-/// \defgroup unit_normal unit_normal
+/// \defgroup unit_normal_grp CGAL::unit_normal()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -2561,9 +2587,9 @@ CGAL::Vector_3<Kernel> unit_normal( const CGAL::Point_3<Kernel>& p, const CGAL::
 
 /// @}
 
-/// \defgroup volume volume
+/// \defgroup volume_grp CGAL::volume()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::Tetrahedron_3<Kernel>` 
+/// \sa `Tetrahedron_3<Kernel>_grp`
 
 /// @{
 
@@ -2579,11 +2605,11 @@ Kernel::FT volume(const CGAL::Point_3<Kernel> & p0, const CGAL::Point_3<Kernel> 
 /// @}
 
 
-/// \defgroup x_equal x_equal
+/// \defgroup x_equal_grp CGAL::x_equal()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_x` 
-/// \sa `CGAL::y_equal` 
-/// \sa `CGAL::z_equal` 
+/// \sa `compare_x_grp`
+/// \sa `y_equal_grp`
+/// \sa `z_equal_grp`
 
 /// @{
 
@@ -2607,11 +2633,11 @@ const CGAL::Point_3<Kernel> &q);
 
 
 
-/// \defgroup y_equal y_equal
+/// \defgroup y_equal_grp CGAL::y_equal()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_y` 
-/// \sa `CGAL::x_equal` 
-/// \sa `CGAL::z_equal` 
+/// \sa `compare_y_grp`
+/// \sa `x_equal_grp`
+/// \sa `z_equal_grp`
 
 /// @{
 
@@ -2634,11 +2660,11 @@ const CGAL::Point_3<Kernel> &q);
 /// @}
 
 
-/// \defgroup z_equal z_equal
+/// \defgroup z_equal_grp CGAL::z_equal()
 /// \ingroup kernel_global_function
-/// \sa `CGAL::compare_z` 
-/// \sa `CGAL::x_equal` 
-/// \sa `CGAL::y_equal` 
+/// \sa `compare_z_grp`
+/// \sa `x_equal_grp`
+/// \sa `y_equal_grp`
 
 /// @{
 

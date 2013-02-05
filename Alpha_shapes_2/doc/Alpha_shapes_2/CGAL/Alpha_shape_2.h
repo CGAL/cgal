@@ -27,7 +27,7 @@ kernel. By default the `ExactAlphaComparisonTag` is set to \link Tag_false `Tag_
 overhead. Note that since such a strategy does not make sense if used together with a traits class with exact constructions, 
 the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits::FT` is not a floating point number type. 
 
-### Inherits From ###
+\cgalHeading{Inherits From}
 
 Inherits from `Dt`.
 
@@ -36,12 +36,12 @@ This class is the underlying triangulation class.
 The modifying functions `Alpha_shape_2::insert()` and `Alpha_shape_2::remove()` will overwrite 
 the inherited functions. At the moment, only the static version is implemented. 
 
-### I/O ###
+\cgalHeading{I/O}
 
 The I/O operators are defined for `std::iostream`. The format for the iostream 
 is an internal format. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The set of intervals associated with the 
 \f$ k\f$-dimensional faces of the underlying triangulation are 
@@ -54,9 +54,9 @@ themselves.
 `Alpha_shape_2::alpha_find()` uses linear search, while 
 `Alpha_shape_2::alpha_lower_bound()` and `Alpha_shape_2::alpha_upper_bound()` 
 use binary search. 
-`Alpha_shape_2::number_of_solid_components` performs a graph traversal and takes time 
+`Alpha_shape_2::number_of_solid_components()` performs a graph traversal and takes time 
 linear in the number of faces of the underlying triangulation. 
-`Alpha_shape_2::find_optimal_alpha` uses binary search and takes time 
+`Alpha_shape_2::find_optimal_alpha()` uses binary search and takes time 
 \f$ O(n \log n)\f$, where \f$ n\f$ is the number of points. 
 
 */
@@ -108,13 +108,13 @@ typedef Hidden_type Alpha_shape_edges_iterator;
 Distinguishes the different cases for classifying a \f$ k\f$-dimensional face 
 of the underlying triangulation of the \f$ \alpha\f$-shape. 
 */ 
-  enum Classification_type {EXTERIOR, /**< if the face does not belong to the \f$ \alpha\f$-complex.  */
-                          SINGULAR,  /**< if the face belongs to the boundary of the \f$ \alpha\f$-shape, 
-but is not incident to any 2-dimensional face of the \f$ \alpha\f$-complex  */
-                          REGULAR,  /**<  if the face belongs to the boundary of the \f$ \alpha\f$-shape 
-and is incident to a 2-dimensional face of the \f$ \alpha\f$-complex  */
-                          INTERIOR /**< if the face belongs to the \f$ \alpha\f$-complex, but does 
-not belong to the boundary of the \f$ \alpha\f$-shape.  */
+  enum Classification_type {EXTERIOR, /**< if the face does not belong to the alpha-complex.  */
+                          SINGULAR,  /**< if the face belongs to the boundary of the alpha-shape, 
+                                        but is not incident to any 2-dimensional face of the alpha-complex  */
+                          REGULAR,  /**<  if the face belongs to the boundary of the alpha-shape 
+                                       and is incident to a 2-dimensional face of the alpha-complex  */
+                          INTERIOR /**< if the face belongs to the alpha-complex, but does 
+                                      not belong to the boundary of the alpha-shape.  */
 }; 
 
 /*! 
@@ -122,7 +122,8 @@ In general, an alpha shape can be disconnected and contain many singular edges
 or vertices. Its regularized version is formed by the set of regular edges 
 and their vertices. 
 */ 
-enum Mode {GENERAL, REGULARIZED}; 
+enum Mode {GENERAL,
+           REGULARIZED}; 
 
 /// @} 
 
@@ -130,7 +131,7 @@ enum Mode {GENERAL, REGULARIZED};
 /// @{
 
 /*! 
-Introduces an empty \f$ \alpha\f$-shape for a positive \f$ \alpha\f$-value 
+Introduces an empty alpha-shape for a positive \f$ \alpha\f$-value 
 `alpha`. 
 \pre `alpha` \f$ \geq~0\f$. 
 */ 
@@ -170,7 +171,7 @@ Mode m = GENERAL);
 
 /*! 
 Initialize the family of alpha-shapes with the points in the range 
-`[first,last)`. Returns the number inserted points. 
+`[first,last)`. Returns the number of inserted points. 
 
 If the function is applied to an non-empty family of alpha-shape, it is cleared 
 before initialization. 
@@ -220,7 +221,7 @@ Mode
 set_mode(Mode m = GENERAL ); 
 
 /*! 
-Returns whether the mode is general or regularized. 
+Returns the mode, that is either `GENERAL` or `REGULARIZED`. 
 */ 
 Mode 
 get_mode(void) const; 

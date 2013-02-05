@@ -32,8 +32,8 @@ template <class R_> class Sphere_triangle_rep
   typedef Sphere_circle<R_> Circle;
   typedef Sphere_triangle_rep<R_> Rep;
 
-  cpp0x::array<Point,3>  points_; 
-  cpp0x::array<Circle,3> circles_;
+  cpp11::array<Point,3>  points_; 
+  cpp11::array<Circle,3> circles_;
 
   friend class Sphere_triangle<R_>;
  

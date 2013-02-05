@@ -16,7 +16,7 @@ the kernel is only an approximation of Euclidean geometry.
 
 \cgalModels `Kernel`
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This model of a kernel uses reference counting. 
 

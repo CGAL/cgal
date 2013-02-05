@@ -20,7 +20,7 @@ and a model of concept `RealEmbeddable`.
 \cgalModels `RealEmbeddable` 
 \cgalModels `Fraction` 
 
-### Operations ###
+\cgalHeading{Operations}
 
 There are two access functions, namely to the 
 numerator and the denominator of a quotient. 

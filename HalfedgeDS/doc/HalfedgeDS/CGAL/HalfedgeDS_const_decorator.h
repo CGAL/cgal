@@ -24,7 +24,7 @@ all halfedge data structures and will not appear here again.
 \tparam HDS must be a model of `HalfedgeDS`
 
 
-### Example ###
+\cgalHeading{Example}
 
 The following program fragment illustrates the implementation of a 
 `is_valid()` member function for a simplified polyhedron class. 

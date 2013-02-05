@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -190,12 +192,12 @@ r
 \cgalRefines `AdaptableFunctor` 
 
 \sa `AlgebraicStructureTraits`
-\sa `AlgebraicStructureTraits::Mod`
-\sa `AlgebraicStructureTraits::Div`
+\sa `AlgebraicStructureTraits_::Mod`
+\sa `AlgebraicStructureTraits_::Div`
 
 */
 
-class AlgebraicStructureTraits::DivMod {
+class DivMod {
 public:
 
 /// \name Types 
@@ -251,5 +253,6 @@ operator()(NT1 x, NT2 y, third_argument_type q, fourth_argument_type r);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::DivMod */
+}; /* end DivMod */
 
+} /* end of namespace AlgebraicStructureTraits_ */

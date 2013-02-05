@@ -33,7 +33,7 @@ hierarchy into a file will lose the hierarchic structure and reading
 it from the file will result in an ordinary triangulation whose 
 efficiency will be the same as `Tr`. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The data structure is a hierarchy 
 of triangulations. The triangulation at the lowest level is 

@@ -1,6 +1,8 @@
 
+namespace RealEmbeddableTraits_ {
+
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 `AdaptableBinaryFunction` compares two real embeddable numbers. 
@@ -11,7 +13,7 @@
 
 */
 
-class RealEmbeddableTraits::Compare {
+class Compare {
 public:
 
 /// \name Types 
@@ -54,5 +56,6 @@ result_type operator()(NT1 x, NT2 y);
 
 /// @}
 
-}; /* end RealEmbeddableTraits::Compare */
+}; /* end Compare */
 
+} /* end of namespace RealEmbeddableTraits_ */

@@ -37,7 +37,7 @@ three-dimensional \cgal kernel.
 \sa `CGAL::Width_default_traits_3<K>` 
 \sa `WidthTraits_3` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Since the width of the point set \f$ \mathcal{S}\f$ and the width of the convex 
 hull of \f$ \mathcal{S}\f$ (\f$ \mathit{conv(\mathcal{S})}\f$) is the same, the 
@@ -72,7 +72,7 @@ from 0 (no output) to 1 (output available). But then it is required
 that the `operator<<()` has to been overloaded for `Point_3`, 
 `Plane_3`, `Vector_3` and `RT`. 
 
-### Example ###
+\cgalHeading{Example}
 
 \cgalExample{Polytope_distance_d/width_simplex.cpp} 
 

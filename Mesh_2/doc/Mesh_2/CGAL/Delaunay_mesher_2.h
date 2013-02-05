@@ -18,7 +18,7 @@ a model of the concept `DelaunayMeshTraits_2`.
 criteria for the triangles of the mesh. `Criteria::Face_handle` has to 
 be the same as `CDT::Face_handle`. 
 
-### Using This Class ###
+\cgalHeading{Using This Class}
 
 The constructor of the class `Delaunay_mesher_2` takes a reference to a `CDT` 
 as an argument. A call to the refinement method `refine_mesh()` will 
@@ -29,7 +29,7 @@ modified, any further call to its member methods may crash. Consider
 constructing a new `Delaunay_mesher_2` object if the triangulation has been 
 modified. 
 
-### Meshing Domain ###
+\cgalHeading{Meshing Domain}
 
 The domain to be mesh is defined by the constrained edges and a set of seed 
 points. The constrained edges divides the plane into several connected 
@@ -297,7 +297,7 @@ never meshed.
 and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
 
 \tparam Criteria must be a model of the concept `MeshingCriteria_2`. 
-\tparam InputIterator must be an input iterator with valur type `CDT::Geom_traits::Point_2`.
+\tparam InputIterator must be an input iterator with value type `CDT::Geom_traits::Point_2`.
 
 \cgalRequires The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
 \cgalRequires `CDT::Face_handle` must be the same as `Criteria::Face_handle`. 

@@ -6,7 +6,7 @@ namespace CGAL {
 
 \cgalModels `SphericalKernel::CircularArc_3`
 
-### I/O ###
+\cgalHeading{I/O}
 
 The input/output format of a circular arc consists of the supporting circle 
 represented as a `Circle_3` object followed by the source and target 

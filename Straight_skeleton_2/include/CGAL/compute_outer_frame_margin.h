@@ -54,14 +54,14 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   
   FT lMaxSDist(0.0) ;
   
-  ForwardPointIterator lLast = CGAL::cpp0x::prev(aEnd) ;
+  ForwardPointIterator lLast = CGAL::cpp11::prev(aEnd) ;
   
   bool lOverflow = false ;
 
   for ( ForwardPointIterator lCurr = aBegin ; lCurr != aEnd ; ++ lCurr )
   {
-    ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : CGAL::cpp0x::prev  (lCurr) ) ;
-    ForwardPointIterator lNext = ( lCurr == lLast  ? aBegin : CGAL::cpp0x::next  (lCurr) ) ;
+    ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : CGAL::cpp11::prev  (lCurr) ) ;
+    ForwardPointIterator lNext = ( lCurr == lLast  ? aBegin : CGAL::cpp11::next  (lCurr) ) ;
     
     if ( !equal(*lPrev,*lCurr) && !equal(*lCurr,*lNext) && !collinear(*lPrev,*lCurr,*lNext) )
     {

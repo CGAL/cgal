@@ -23,7 +23,7 @@ can be omitted if `RandomAccessIterator` refers to a point type
 from a `Kernel`. In this case, the kernel is used as default 
 traits class. 
 
-###Requires###
+\cgalHeading{Requires}
 
 <OL> 
 <LI>If `t` is specified explicitly, `Traits` is a model 
@@ -35,15 +35,15 @@ for `AllFurthestNeighborsTraits_2`.
 </OL> 
 
 \sa `AllFurthestNeighborsTraits_2` 
-\sa `CGAL::monotone_matrix_search` 
+\sa `CGAL::monotone_matrix_search()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The implementation uses monotone matrix search \cite akmsw-gamsa-87. 
 Its runtime complexity is linear in the number of
 vertices of \f$ P\f$.
 
-### Example ###
+\cgalHeading{Example}
 
 The following code generates a random convex polygon 
 `p` with ten vertices, computes all furthest neighbors and 

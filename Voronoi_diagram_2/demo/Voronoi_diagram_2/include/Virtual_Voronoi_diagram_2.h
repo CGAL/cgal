@@ -244,7 +244,7 @@ class Virtual_Voronoi_diagram_base_2
 #endif
 
     if ( Face_handle* f = boost::get<Face_handle>(lrp) ) {
-      Ccb_halfedge_circulator ccb_start = (*f)->outer_ccb();
+      Ccb_halfedge_circulator ccb_start = (*f)->ccb();
       Ccb_halfedge_circulator ccb = ccb_start;
       do {
 	draw_edge(*ccb, widget);

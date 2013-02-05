@@ -8,10 +8,10 @@ convex partition of a polygon.
 
 \cgalHasModel `CGAL::Partition_traits_2<R>` 
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
 \sa `CGAL::Is_convex_2<Traits>` 
-\sa `CGAL::optimal_convex_partition_2` 
+\sa `CGAL::optimal_convex_partition_2()` 
 
 */
 

@@ -113,7 +113,7 @@ using the \f$ d\f$-dimensional \cgal kernel; the models
 
 \sa `CGAL::Min_ellipse_2<Traits>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 We implement Khachyian's algorithm for rounding 
 polytopes \cite cgal:k-rprnm-96. Internally, we use 
@@ -122,7 +122,7 @@ Cholesky-decomposition. The algorithm's running time is
 \f$ {\cal O}(nd^2(\epsilon^{-1}+\ln d + \ln\ln(n)))\f$, where \f$ n=|P|\f$ and 
 \f$ 1+\epsilon\f$ is the desired approximation ratio. 
 
-## Example ###
+\cgalHeading{Example}
 
 To illustrate the usage of `Approximate_min_ellipsoid_d` we give two examples in 2D. The 
 first program generates a random set \f$ P\subset\E^2\f$ and outputs the 
@@ -185,7 +185,7 @@ typedef Hidden_type Axes_lengths_iterator;
 /*! 
 A model of STL concept 
 `RandomAccessIterator` with value type `double` that is used 
-to iterate over the Cartesian coordinates of the direction of a fixed 
+to iterate over the %Cartesian coordinates of the direction of a fixed 
 axis of the computed ellipsoid, see 
 `axis_direction_cartesian_begin()`. 
 */ 
@@ -348,7 +348,7 @@ Axes_lengths_iterator axes_lengths_end();
 
 /*! 
 returns an iterator 
-pointing to the first of the \f$ d\f$ Cartesian coordinates of the 
+pointing to the first of the \f$ d\f$ %Cartesian coordinates of the 
 computed ellipsoid's \f$ i\f$th axis direction (i.e., unit vector in 
 direction of the ellipsoid's \f$ i\f$th axis). The direction described 
 by this iterator is a floating-point approximation to the exact 

@@ -80,7 +80,7 @@ deletes all items. Note that these two possible versions of
 `In_place_list` are not assignable to each other to avoid 
 confusions between the different storage responsibilities. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The full class name is `In_place_list<T, bool managed = 
 false, class Alloc = CGAL_ALLOCATOR(T)>`. 
@@ -93,7 +93,7 @@ relational order require the operators `==` and `<`
 for `T` respectively. These operators must not compare the pointers 
 in `T`. 
 
-### Example ###
+\cgalHeading{Example}
 
 \cgalExample{STL_Extension/in_place_list_prog.cpp} 
 

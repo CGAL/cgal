@@ -13,12 +13,12 @@ imports a class from another namespace. By order of priority: the one in namespa
 `std::tr1` is used (provided by TR1), and finally, the fallback solution 
 is taken from Boost. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The parameter `T` is the value type. The second parameter is the
 dimension of the array. 
 
-### Extensions ###
+\cgalHeading{Extensions}
 
 \cgal provides a `make_array` function for this purpose, up to a
 certain number of arguments.

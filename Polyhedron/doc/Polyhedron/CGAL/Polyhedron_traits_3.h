@@ -14,14 +14,14 @@ it suitable for kernels with local state.
 
 \sa `CGAL::Polyhedron_traits_with_normals_3<Kernel>`
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Since the `PolyhedronTraits_3` concept is a subset of the 
 concept Kernel, this class just forwards the relevant types and access 
 member functions from its template argument. However, it is useful 
 for testing sufficiency of requirements. 
 
-### Example ###
+\cgalHeading{Example}
 
 Instantiation of a polyhedral surface with the 
 %Cartesian kernel based on double coordinates. 

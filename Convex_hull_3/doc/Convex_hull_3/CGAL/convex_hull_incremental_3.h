@@ -29,7 +29,7 @@ the representation class `R` required by
 \sa `convex_hull_3()` 
 \sa `Convex_hull_d` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function uses the `d`-dimensional convex hull incremental construction 
 algorithm \cite cms-frric-93 

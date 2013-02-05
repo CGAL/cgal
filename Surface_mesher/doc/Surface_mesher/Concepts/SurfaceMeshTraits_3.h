@@ -13,7 +13,7 @@ a small set of initial points on the surface.
 
 \cgalHasModel `CGAL::Surface_mesh_traits_generator_3::Type` 
 
-\sa `CGAL::make_surface_mesh` 
+\sa `CGAL::make_surface_mesh()` 
 
 */
 

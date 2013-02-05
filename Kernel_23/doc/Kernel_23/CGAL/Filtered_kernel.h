@@ -15,7 +15,7 @@ the global functions are those of `CK`.
 
 \cgalModels `Kernel`
 
-### Example ###
+\cgalHeading{Example}
 
 The following example shows how to produce a kernel whose geometric 
 objects and constructions are those of `Simple_cartesian<double>` 
@@ -61,7 +61,7 @@ techniques from \cite cgal:mp-fcafg-05.
 The geometric constructions are exactly those 
 of the kernel `CK`, which means that they are not necessarily exact. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The first parameter, `CK`, is the "Construction Kernel", namely the kernel 
 from which are taken the types of the geometric objects as well as the 
@@ -75,7 +75,7 @@ production use for deactivating static filters.
 
 \cgalModels `Kernel`
 
-### Example ###
+\cgalHeading{Example}
 
 The following example shows how to produce a kernel whose geometric 
 objects and constructions are those of `Simple_cartesian<double>` 
@@ -89,7 +89,7 @@ typedef CGAL::Simple_cartesian<double> CK;
 typedef CGAL::Filtered_kernel<CK> K; 
 \endcode
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The implementation uses `CGAL::Filtered_predicate<EP, FP, C2E, C2F>` over 
 each predicate of the kernel traits interface. Additionally, faster static 

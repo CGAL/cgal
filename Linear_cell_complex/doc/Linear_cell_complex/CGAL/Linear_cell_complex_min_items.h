@@ -13,7 +13,7 @@ this class, 0-attributes are enabled and associated with
 
 \tparam d the dimension of the combinatorial map.
 
-### Example ###
+\cgalHeading{Example}
 
 The following example shows one implementation of the
 `Linear_cell_complex_min_items` class.

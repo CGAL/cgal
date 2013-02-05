@@ -12,9 +12,9 @@ functions `min_rectangle_2`, `min_parallelogram_2` and
 
 \cgalModels `MinQuadrilateralTraits_2`
 
-\sa `CGAL::min_rectangle_2` 
-\sa `CGAL::min_parallelogram_2` 
-\sa `CGAL::min_strip_2` 
+\sa `CGAL::min_rectangle_2()` 
+\sa `CGAL::min_parallelogram_2()` 
+\sa `CGAL::min_strip_2()` 
 
 */
 template< typename K >

@@ -10,7 +10,7 @@ for a 3D-triangulation data structure, it is a model of the concept
 
 Note that if the triangulation data structure is used as a parameter of a 
 geometric triangulation (Section \ref TDS3secdesign and 
-Chapter \ref chapterTriangulation3), then the vertex base class has to 
+Chapter \ref chapterTriangulation3 "3D Triangulations"), then the vertex base class has to 
 fulfill additional geometric requirements, i.e. it has to be a model of the 
 concept `TriangulationVertexBase_3`. 
 

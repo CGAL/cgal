@@ -36,7 +36,7 @@ public:
 /*! 
 Computes the square-free factorization of \f$ p\f$ and returns the 
 past-the-end iterator of the written range. 
-\pre `std::iterator_traits< OutputIterator >::value_type` must be constructible from `std::pair<PolynomialTraits_d::Polynomial_d,int>`. 
+\pre `std::iterator_traits< OutputIterator >::%value_type` must be constructible from `std::pair<PolynomialTraits_d::Polynomial_d,int>`. 
 
 */ 
 template<class OutputIterator> 

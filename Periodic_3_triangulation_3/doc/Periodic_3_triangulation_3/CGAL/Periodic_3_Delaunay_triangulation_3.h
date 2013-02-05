@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Periodic_3_Delaunay_triangulation_3` represents a 
 Delaunay triangulation in three-dimensional periodic space. 
 
-### Template Parameters ###
+\cgalHeading{Template Parameters}
 
 The first template argument `PT` must be a model of the 
 `Periodic_3DelaunayTriangulationTraits_3` concept. 

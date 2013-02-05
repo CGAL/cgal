@@ -32,7 +32,7 @@ public:
     typedef CGAL::Cell_attribute_with_point<LCC, void, CGAL::Tag_true> Vertex;
     typedef CGAL::Cell_attribute<LCC, void, CGAL::Tag_true> Face;
 #endif
-    typedef CGAL::cpp0x::tuple<Vertex,void,Face> Attributes;
+    typedef CGAL::cpp11::tuple<Vertex,void,Face> Attributes;
   };
 };
 

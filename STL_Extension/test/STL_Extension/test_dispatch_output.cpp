@@ -27,12 +27,12 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
 
   typedef 
   CGAL::Dispatch_output_iterator<
-    CGAL::cpp0x::tuple<T1,T2 >,CGAL::cpp0x::tuple< T1*,std::back_insert_iterator<std::vector<T2> > > 
+    CGAL::cpp11::tuple<T1,T2 >,CGAL::cpp11::tuple< T1*,std::back_insert_iterator<std::vector<T2> > > 
   > Dispatcher;
 
   typedef 
   CGAL::Dispatch_or_drop_output_iterator<
-    CGAL::cpp0x::tuple<T1,T2 >,CGAL::cpp0x::tuple< T1*,std::back_insert_iterator<std::vector<T2> > > 
+    CGAL::cpp11::tuple<T1,T2 >,CGAL::cpp11::tuple< T1*,std::back_insert_iterator<std::vector<T2> > > 
   > Dropper;
   
   assert(data1.size()==4);
@@ -72,8 +72,8 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   
   T1* d;
 
-	CGAL::cpp0x::tie(d, bck_ins) = disp;
-	CGAL::cpp0x::tie(d, bck_ins) = drop;
+	CGAL::cpp11::tie(d, bck_ins) = disp;
+	CGAL::cpp11::tie(d, bck_ins) = drop;
 }
 
 

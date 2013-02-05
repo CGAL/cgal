@@ -112,10 +112,11 @@ class Face
 		      );
   }
 
-  Ccb_halfedge_circulator outer_ccb() const {
+  Ccb_halfedge_circulator ccb() const {
     return Ccb_halfedge_circulator( *halfedge() );
   }
 
+  Ccb_halfedge_circulator outer_ccb() const { return ccb(); }
   // PREDICATES
   //-----------
   bool is_unbounded() const {
@@ -131,7 +132,7 @@ class Face
   }
 
   bool is_halfedge_on_ccb(const Halfedge_handle& he) const {
-    Ccb_halfedge_circulator hc_start = outer_ccb();
+    Ccb_halfedge_circulator hc_start = ccb();
     Ccb_halfedge_circulator hc = hc_start;
     do {
       if ( he == *hc ) { return true; }
@@ -155,7 +156,7 @@ class Face
 
     valid = valid && !vda_->edge_rejector()(vda_->dual(), halfedge()->dual());
 
-    Ccb_halfedge_circulator hc = outer_ccb();
+    Ccb_halfedge_circulator hc = ccb();
     Ccb_halfedge_circulator hc_start = hc;
     Face_handle f_this(*this);
     do {

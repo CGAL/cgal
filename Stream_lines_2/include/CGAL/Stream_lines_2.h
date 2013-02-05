@@ -36,6 +36,7 @@
 #include <CGAL/streamlines_assertions.h>
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/random/uniform_real.hpp> // undocumented class
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 
@@ -106,6 +107,17 @@ protected:
 public:
   void set_separating_distance(FT new_value){separating_distance = new_value;}
   void set_saturation_ratio(FT new_value){ saturation_ratio = new_value;}
+
+  FT get_separating_distance() const
+  {
+    return separating_distance;
+  } 
+
+  FT get_saturation_ratio() const
+  {
+    return saturation_ratio;
+  }
+
   void update()
     {
       ir = il = 0; // initialization

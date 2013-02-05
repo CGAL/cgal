@@ -3,10 +3,10 @@ namespace CGAL {
 /*!
   \addtogroup  PkgBoxIntersectionD_box_intersection_all_pairs_d
 
-  The function `box_intersection_all_pairs_d` computes the pairwise intersecting boxes 
+  The function `box_intersection_all_pairs_d()` computes the pairwise intersecting boxes 
   between two sequences of iso-oriented boxes in arbitrary dimension. 
   It does so by comparing all possible pairs of boxes and is thus 
-  inferior to the fast `CGAL::box_intersection_d` algorithm. 
+  inferior to the fast `box_intersection_d()` algorithm. 
 
   The sequences of boxes are given with two forward iterator ranges. The 
   sequences are not modified. For each intersecting pair of boxes a 
@@ -15,7 +15,7 @@ namespace CGAL {
   sequence, the second argument a box from the second sequence. 
 
   The algorithm is interface compatible with the 
-  `CGAL::box_intersection_d` function. Similarly, we call the 
+  `box_intersection_d()` function. Similarly, we call the 
   `value_type` of the iterators the <I>box handle</I>, which is 
   either our box type or a pointer type to our box type. 
 
@@ -31,8 +31,8 @@ namespace CGAL {
   does not require a different representation of boxes, just a different 
   interpretation when comparing boxes, which is selected with the 
   `topology` parameter and its two values, 
-  `CGAL::Box_intersection_d::HALF_OPEN` and 
-  `CGAL::Box_intersection_d::CLOSED`. 
+  `Box_intersection_d::HALF_OPEN` and 
+  `Box_intersection_d::CLOSED`. 
 
   In addition, a box has an unique `id`-number. Boxes with equal 
   `id`-number are not reported since they obviously intersect trivially. 
@@ -47,16 +47,16 @@ namespace CGAL {
   self-intersections where the second box sequence is an identical copy 
   of the first sequence including the preserved `id`-number. We 
   offer a specialized implementation 
-  `CGAL::box_self_intersection_all_pairs` for this application. 
+  `box_self_intersection_all_pairs` for this application. 
 
-  \sa `CGAL::box_intersection_d` 
-  \sa `CGAL::box_self_intersection_d` 
-  \sa `CGAL::box_self_intersection_all_pairs_d` 
+  \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
   \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
 
-###   Implementation ###
+\cgalHeading{Implementation}
 
   The algorithm is trivially testing all pairs and runs therefore in time 
   \f$ O(nm)\f$ where \f$ n\f$ is the size of the first sequence and \f$ m\f$ is the 
@@ -66,7 +66,7 @@ namespace CGAL {
 /*!
   \addtogroup  PkgBoxIntersectionD_box_intersection_d
 
-  The function `box_intersection_d` computes the pairwise intersecting boxes 
+  The function `box_intersection_d()` computes the pairwise intersecting boxes 
   between two sequences of iso-oriented boxes in arbitrary dimension. 
   The sequences of boxes are given with two random-access iterator 
   ranges and will be reordered in the course of the algorithm. For each 
@@ -97,8 +97,8 @@ namespace CGAL {
   does not require a different representation of boxes, just a different 
   interpretation when comparing boxes, which is selected with the 
   `topology` parameter and its two values, 
-  `CGAL::Box_intersection_d::HALF_OPEN` and 
-  `CGAL::Box_intersection_d::CLOSED`. 
+  `Box_intersection_d::HALF_OPEN` and 
+  `Box_intersection_d::CLOSED`. 
 
   In addition, a box has an unique `id`-number. It is used to order 
   boxes consistently in each dimension even if boxes have identical 
@@ -119,7 +119,7 @@ namespace CGAL {
   the `id`-number if boxes are copied by value. To ease the use of 
   this special case we offer a simplified version of this function with 
   one iterator range only, which then creates internally the second copy 
-  of the boxes, under the name `CGAL::box_self_intersection_d`. 
+  of the boxes, under the name `box_self_intersection_d()`. 
 
   In the general case, we distinguish between the bipartite case (the 
   boxes are from different sequences) and the complete case (the boxes 
@@ -127,10 +127,10 @@ namespace CGAL {
   default is the bipartite case, since the complete case is typically 
   handled with the simplified function call mentioned above. However, 
   the general function call offers the `setting` parameter with the 
-  values `CGAL::Box_intersection_d::COMPLETE` and 
-  `CGAL::Box_intersection_d::BIPARTITE`. 
+  values `Box_intersection_d::COMPLETE` and 
+  `Box_intersection_d::BIPARTITE`. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>`RandomAccessIterator1`, and \f$ \ldots\f$ `2`, must be 
@@ -148,13 +148,13 @@ namespace CGAL {
   <LI>`BoxTraits` must be of the `BoxIntersectionTraits_d` concept. 
   </UL> 
 
-  \sa `CGAL::box_self_intersection_d` 
-  \sa `CGAL::box_intersection_all_pairs_d` 
+  \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
   \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
 
-  ### Implementation ###
+\cgalHeading{Implementation}
 
   The implemented algorithm is described in \cite cgal:ze-fsbi-02 as 
   version two. Its performance depends on a `cutoff` parameter. 
@@ -186,11 +186,11 @@ namespace CGAL {
   cutoff parameters are recommended. See also 
   Section \ref secboxintersperformance . 
 
-  ### Example ###
+\cgalHeading{Example}
 
   The box implementation provided with 
-  `CGAL::Box_intersection_d::Box_d<double,2>` has a special 
-  constructor for the \cgal bounding box type `CGAL::Bbox_2` (and 
+  `Box_intersection_d::Box_d<double,2>` has a special 
+  constructor for the \cgal bounding box type `Bbox_2` (and 
   similar for dimension 3). We use this in the example to create \f$ 3 
   \times 3\f$ `boxes` in a grid layout. Additionally we pick the 
   center box and the box in the upper-right corner as our second box 
@@ -212,7 +212,7 @@ namespace CGAL {
   \ingroup PkgBoxIntersectionD_box_intersection_all_pairs_d
 
   Invocation of box intersection with default box traits
-  `CGAL::Box_intersection_d::Box_traits_d<Box_handle>`, where
+  `Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
   `ForwardIterator1`.
 
@@ -250,7 +250,7 @@ namespace CGAL {
   \ingroup PkgBoxIntersectionD_box_intersection_d
 
   Invocation of box intersection with default box traits
-  `CGAL::Box_intersection_d::Box_traits_d<Box_handle>`, where
+  `Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
   `RandomAccessIterator1`.
 
@@ -291,10 +291,10 @@ namespace CGAL {
 
 /*!
   \addtogroup  PkgBoxIntersectionD_box_self_intersection_all_pairs_d
-  The function `box_self_intersection_all_pairs_d` computes the pairwise intersecting boxes 
+  The function `box_self_intersection_all_pairs_d()` computes the pairwise intersecting boxes 
   in a sequence of iso-oriented boxes in arbitrary dimension. 
   It does so by comparing all possible pairs of boxes and is thus 
-  inferior to the fast `CGAL::box_self_intersection_d` algorithm. 
+  inferior to the fast `box_self_intersection_d()` algorithm. 
 
   The sequence of boxes is given with a forward iterator range. The 
   sequences are not modified. For each intersecting pair of boxes a 
@@ -302,7 +302,7 @@ namespace CGAL {
   boxes as argument. 
 
   The algorithm is interface compatible with the 
-  `CGAL::box_self_intersection_d` function. Similarly, we call the 
+  `box_self_intersection_d()` function. Similarly, we call the 
   `value_type` of the iterators the <I>box handle</I>, which is 
   either our box type or a pointer type to our box type. 
 
@@ -318,8 +318,8 @@ namespace CGAL {
   does not require a different representation of boxes, just a different 
   interpretation when comparing boxes, which is selected with the 
   `topology` parameter and its two values, 
-  `CGAL::Box_intersection_d::HALF_OPEN` and 
-  `CGAL::Box_intersection_d::CLOSED`. 
+  `Box_intersection_d::HALF_OPEN` and 
+  `Box_intersection_d::CLOSED`. 
 
   The algorithm uses a traits class of the `BoxIntersectionTraits_d` 
   concept to access the boxes. A default traits class is provided that 
@@ -327,7 +327,7 @@ namespace CGAL {
   concept and that the box handle, i.e., the iterators value type, is 
   identical to the box type or a pointer to the box type. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>`ForwardIterator` must be a forward iterator. We call its 
@@ -344,14 +344,14 @@ namespace CGAL {
   <LI>`BoxTraits` must be of the `BoxIntersectionTraits_d` concept. 
   </UL> 
 
-  \sa `CGAL::box_intersection_d` 
-  \sa `CGAL::box_self_intersection_d` 
-  \sa `CGAL::box_intersection_all_pairs_d` 
+  \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_intersection_all_pairs_d `CGAL::box_intersection_all_pairs_d()` \endlink
   \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
 
-  ### Implementation ###
+\cgalHeading{Implementation}
 
   The algorithm is trivially testing all pairs and runs therefore in time 
   \f$ O(n^2)\f$ where \f$ n\f$ is the size of the input sequence. This algorithm 
@@ -363,7 +363,7 @@ namespace CGAL {
   \ingroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d
 
   Invocation of box intersection with default box traits
-  `CGAL::Box_intersection_d::Box_traits_d<Box_handle>`, where
+  `Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
   `ForwardIterator`.
 
@@ -395,7 +395,7 @@ namespace CGAL {
 
 /*!
   \addtogroup  PkgBoxIntersectionD_box_self_intersection_d 
-  The function `box_self_intersection_d` computes the pairwise intersecting boxes 
+  The function `box_self_intersection_d()` computes the pairwise intersecting boxes 
   in a sequence of iso-oriented boxes in arbitrary dimension. 
   The sequence of boxes is given with as a random-access iterator 
   range and will be reordered in the course of the algorithm. For each 
@@ -404,7 +404,7 @@ namespace CGAL {
   box from the sequence, the second argument is a copy of a box from the 
   sequence. The performance of the algorithm can be tuned with a 
   `cutoff` parameter, see the implementation section of the 
-  `CGAL::box_intersection_d` function. 
+  `box_intersection_d()` function. 
 
   The algorithm creates a second copy of the boxes and reorders the 
   boxes in the course of the algorithm. Now, depending on the size of a 
@@ -427,8 +427,8 @@ namespace CGAL {
   does not require a different representation of boxes, just a different 
   interpretation when comparing boxes, which is selected with the 
   `topology` parameter and its two values, 
-  `CGAL::Box_intersection_d::HALF_OPEN` and 
-  `CGAL::Box_intersection_d::CLOSED`. 
+  `Box_intersection_d::HALF_OPEN` and 
+  `Box_intersection_d::CLOSED`. 
 
   In addition, a box has an unique `id`-number. It is used to order 
   boxes consistently in each dimension even if boxes have identical 
@@ -447,7 +447,7 @@ namespace CGAL {
   concept and that the box handle, i.e., the iterators value type, is 
   identical to the box type or a pointer to the box type. 
 
-  ### Requirements ###
+\cgalHeading{Requirements}
 
   <UL> 
   <LI>`RandomAccessIterator` must be a mutable random-access 
@@ -464,22 +464,22 @@ namespace CGAL {
   <LI>`BoxTraits` must be of the `BoxIntersectionTraits_d` concept. 
   </UL> 
 
-  \sa `CGAL::box_intersection_d` 
-  \sa `CGAL::box_self_intersection_all_pairs_d` 
+  \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
+  \sa \link PkgBoxIntersectionD_box_self_intersection_all_pairs_d `CGAL::box_self_intersection_all_pairs_d()` \endlink
   \sa `CGAL::Box_intersection_d::Box_traits_d<BoxHandle>` 
   \sa `BoxIntersectionBox_d` 
   \sa `BoxIntersectionTraits_d` 
 
-  ### Implementation ###
+\cgalHeading{Implementation}
 
-  See the implementation section of the `CGAL::box_intersection_d` 
+  See the implementation section of the `box_intersection_d()` 
   function.
 
-  ### Example ###
+\cgalHeading{Example}
 
   The box implementation provided with 
-  `CGAL::Box_intersection_d::Box_d<double,2>` has a special 
-  constructor for the \cgal bounding box type `CGAL::Bbox_2` (and 
+  `Box_intersection_d::Box_d<double,2>` has a special 
+  constructor for the \cgal bounding box type `Bbox_2` (and 
   similar for dimension 3). We use this in the example to create \f$ 3 
   \times 3\f$ `boxes` in a grid layout. 
 
@@ -498,7 +498,7 @@ namespace CGAL {
   \ingroup PkgBoxIntersectionD_box_self_intersection_d
 
   Invocation of box intersection with default box traits
-  `CGAL::Box_intersection_d::Box_traits_d<Box_handle>`, where
+  `Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
   `RandomAccessIterator`.
 

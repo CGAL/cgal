@@ -11,10 +11,10 @@ defines the primitives used in the interpolation algorithms. The concept
 \cgalHasModel `CGAL::Interpolation_gradient_fitting_traits_2<K>`
 
 \sa `GradientFittingTraits` 
-\sa CGAL::sibson_c1_interpolation()
-\sa CGAL::sibson_gradient_fitting() 
-\sa CGAL::farin_c1_interpolation() 
-\sa CGAL::quadratic_interpolation() 
+\sa `CGAL::sibson_c1_interpolation()`
+\sa \ref PkgInterpolationSibsonGradientFitting
+\sa `CGAL::farin_c1_interpolation()`
+\sa `CGAL::quadratic_interpolation()`
 
 */
 class InterpolationTraits {

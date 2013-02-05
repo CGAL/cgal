@@ -9,7 +9,7 @@ The class `Snap_rounding_traits_2<Kernel>` is a model of the
 with the package. 
 This class should be instantiated with an exact geometric kernel that conforms 
 to the \cgal kernel-concept, such as the 
-`Cartesian<gmpq>` kernel. 
+`Exact_predicates_exact_constructions_kernel`, or `Cartesian<Gmpq>`. 
 
 This geometric kernel must provide an (arbitrary-precision) rational number type 
 (`FT`), `Point_2`, `Segment_2` and `Iso_rectangle_2`. 

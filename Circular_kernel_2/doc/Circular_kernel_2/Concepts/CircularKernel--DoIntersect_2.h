@@ -7,7 +7,7 @@ Testing whether two curves intersect.
 
 \cgalRefines `Kernel::DoIntersect_2`
 
-\sa `Kernel::do_intersect`
+\sa \link do_intersect_grp `CGAL::do_intersect()` \endlink
 
 */
 

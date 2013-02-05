@@ -197,7 +197,15 @@ public:
     : Base(Weighted_point_mapper_2<Gt>(gt)), _hidden_vertices(0) {}
 
   Regular_triangulation_2(const Regular_triangulation_2 &rt);
-  
+
+  template < class InputIterator >
+  Regular_triangulation_2(InputIterator first, InputIterator last,
+                          const Gt& gt=Gt())
+    : Base(Weighted_point_mapper_2<Gt>(gt)), _hidden_vertices(0)
+  {
+    insert(first, last);
+  }
+
   Regular_triangulation_2 & operator=(const Regular_triangulation_2 &tr);
 
   size_type number_of_vertices() const {

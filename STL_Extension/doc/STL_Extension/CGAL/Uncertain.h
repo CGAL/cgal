@@ -35,7 +35,7 @@ It can also be used in other contexts as well, as it is a general tool.
 This can be seen as support for non-deterministic programming. 
 Finally, note that this class has some common points with `boost::tribool`. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The parameter `T` can either be `bool` or one of the three-valued 
 (-1, 0, 1) enumeration types: `Sign`, `Comparison_result`, 

@@ -6,7 +6,7 @@ namespace CGAL {
 
 \cgalModels `CircularKernel`
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The first parameter of the circular kernel must be instantiated with a 
 model of the `Kernel` concept. The `Circular_kernel_2` class 

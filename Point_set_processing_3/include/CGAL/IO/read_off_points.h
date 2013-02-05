@@ -85,15 +85,17 @@ read_off_points_and_normals(
   int pointsRead = 0; // current number of points read
   int lineNumber = 0; // current line number
   std::string line;
+  std::istringstream iss;
   while(getline(stream,line))
   {
+    iss.clear();
+    iss.str(line);
     lineNumber++;
 
     // Reads file signature on first line
     if (lineNumber == 1)
     {
       std::string signature;
-      std::istringstream iss(line);
       if ( !(iss >> signature)
         || (signature != "OFF" && signature != "NOFF") )
       {
@@ -106,7 +108,6 @@ read_off_points_and_normals(
     // Reads number of points on 2nd line
     else if (lineNumber == 2)
     {
-      std::istringstream iss(line);
       if ( !(iss >> pointsCount >> facesCount >> edgesCount) )
       {
         std::cerr << "Error line " << lineNumber << " of file" << std::endl;
@@ -120,21 +121,21 @@ read_off_points_and_normals(
       // Reads position + normal...
       double x,y,z;
       double nx,ny,nz;
-      if (std::istringstream(line) >> x >> y >> z >> nx >> ny >> nz)
-      {
-        Point point(x,y,z);
-        Vector normal(nx,ny,nz);
-        Enriched_point pwn;
-        put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
-        put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
-        *output++ = pwn;
-        pointsRead++;
-      }
-      // ...or read only position...
-      else if (std::istringstream(line) >> x >> y >> z)
+      if (iss >> x >> y >> z)
       {
         Point point(x,y,z);
         Vector normal = CGAL::NULL_VECTOR;
+        // ... + normal...
+        if (iss >> nx)
+          {
+            // In case we could read one number, we expect that there are two more
+            if(iss  >> ny >> nz){
+              normal = Vector(nx,ny,nz);
+            } else {
+              std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+              return false;
+            }
+          }
         Enriched_point pwn;
         put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
         put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal

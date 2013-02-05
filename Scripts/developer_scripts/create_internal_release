@@ -25,9 +25,9 @@ sub HELP_MESSAGE() {
 sub usage() {
     print STDERR<<"EOF";
 usage:
-  $0 (-h|-r) 
+  $0 (-h|-r)
              [-n version number]
-             [-d releasedir] [-a allpackagesdir] 
+             [-d releasedir] [-a allpackagesdir]
 	     [-c candidatesdir]
              [-l lockfile]
 
@@ -160,7 +160,7 @@ sub install_packages() {
     print "\n";
     system(@command);
     move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
-    
+
 
     chdir "$RELEASEDIR/$VERSION" or die;
     my $tar = Archive::Tar->new;
@@ -220,7 +220,7 @@ sub install_packages() {
 
 sub create_version_file()
 {
-#if VERSION starts with CGAL-, we remove "CGAL-" from version   
+#if VERSION starts with CGAL-, we remove "CGAL-" from version
 #the $newver variable will store the right version
     if ($result = $VERSION =~ /CGAL-(.*)/){
         $newver = $1;
@@ -478,44 +478,44 @@ sub make_testscripts()
 
 
 #---------------------------------------------------------------#
-# Generates a CMakeLists.txt in every subdirectory 
+# Generates a CMakeLists.txt in every subdirectory
 # of the current directory if none already exists
 #---------------------------------------------------------------#
 
 sub generate_cmake_scripts
 {
   my $options = $_[0];
-  
-  foreach $DIR (glob("*")) 
+
+  foreach $DIR (glob("*"))
   {
-    if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) 
+    if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") )
     {
       chdir $DIR;
-      
-      if ( ! -f 'CMakeLists.txt' ) 
+
+      if ( ! -f 'CMakeLists.txt' )
       {
         $_ = $DIR;
-        
-        if ( -f 'cgal_create_cmake_script_options') 
+
+        if ( -f 'cgal_create_cmake_script_options')
         {
-          if (open(OPTIONS, "<cgal_create_cmake_script_options")) 
+          if (open(OPTIONS, "<cgal_create_cmake_script_options"))
           {
             $_ = <OPTIONS>;
             chomp;
-            if (/^[\w\s-]+$/) 
-            { 
+            if (/^[\w\s-]+$/)
+            {
               $options = $_;
             }
-            else 
+            else
             {
               print STDERR "Rejected cgal_create_cmake_script_options in $DIR\n";
             }
             close OPTIONS;
           }
         }
-        system("$SCRIPTSDIR/cgal_create_cmake_script $options") == 0 or die "Execution of \"$SCRIPTSDIR/cgal_create_cmake_script $options\" failed";
+        system("\"$SCRIPTSDIR/cgal_create_cmake_script\" $options") == 0 or die "Execution of \"$SCRIPTSDIR/cgal_create_cmake_script $options\" failed";
       }
-        
+
       chdir '..';
     }
   }
@@ -523,16 +523,16 @@ sub generate_cmake_scripts
 
 sub generate_cgal_test_with_cmake
 {
-  foreach $DIR (glob("*")) 
+  foreach $DIR (glob("*"))
   {
-    if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) 
+    if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") )
     {
       chdir $DIR;
-      if ( ! -f 'cgal_test_with_cmake' ) 
+      if ( ! -f 'cgal_test_with_cmake' )
       {
         $_ = $DIR;
         my $options = (/_Demo$/) ? '--no-run' : '' ;
-       
+
         system("$DEVELSCRIPTSDIR/create_cgal_test_with_cmake", $options) == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test_with_cmake $options failed in directory $DIR";
       }
       chdir '..';
@@ -547,25 +547,25 @@ sub make_testscripts_for_cmake
     $BASEDIR = cwd();
 
     chdir 'test';
-    
+
     print "Creating test scripts\n";
     generate_cgal_test_with_cmake();
-    
+
     print "Creating cmake scripts in test\n";
     generate_cmake_scripts('test');
-    
+
     chdir $BASEDIR;
     chdir 'examples';
-    
+
     print "Creating cmake scripts in examples\n";
     generate_cmake_scripts('example');
 
     chdir $BASEDIR;
     chdir 'demo';
-    
+
     print "Creating cmake scripts in demo\n";
     generate_cmake_scripts('demo');
-    
+
     chdir $BASEDIR;
 }
 
@@ -645,20 +645,20 @@ sub main(){
     exit 1;
   }
   lock;
-  
+
   list_packages($ALLPACKAGESDIR);
   if($CANDIDATESDIR) {
     list_packages($CANDIDATESDIR);
   }
   install_packages();
-  
+
   CreateDemoTestDirs();
   CreateExampleTestDirs();
   create_version_file();
   create_version_tex_file();
   #make_testscripts();
   make_testscripts_for_cmake();
-  
+
   unlock;
 }
 

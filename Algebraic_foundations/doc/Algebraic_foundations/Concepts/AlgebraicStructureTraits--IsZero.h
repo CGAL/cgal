@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -8,11 +10,11 @@
 \cgalRefines `AdaptableUnaryFunction` 
 
 \sa `AlgebraicStructureTraits`
-\sa `RealEmbeddableTraits::IsZero`
+\sa `RealEmbeddableTraits_::IsZero`
 
 */
 
-class AlgebraicStructureTraits::IsZero {
+class IsZero {
 public:
 
 /// \name Types 
@@ -41,5 +43,6 @@ result_type operator()(argument_type x) const;
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::IsZero */
+}; /* end IsZero */
 
+} /* end of namespace AlgebraicStructureTraits_ */

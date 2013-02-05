@@ -1,6 +1,8 @@
 
+namespace RealEmbeddableTraits_ {
+
 /*!
-\ingroup PkgAlgebraicFoundationsRealEmbeddableConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 `AdaptableUnaryFunction` computes the absolute value of a number. 
@@ -11,7 +13,7 @@
 
 */
 
-class RealEmbeddableTraits::Abs {
+class Abs {
 public:
 
 /// \name Types 
@@ -39,5 +41,6 @@ result_type operator()(argument_type x);
 
 /// @}
 
-}; /* end RealEmbeddableTraits::Abs */
+}; /* end Abs */
 
+} /* end of namespace RealEmbeddableTraits_ */

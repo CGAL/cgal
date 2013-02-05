@@ -19,9 +19,9 @@ divisor (gcd).
 Moreover, `CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >` 
 is a model of `AlgebraicStructureTraits` providing: 
 
-- `CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Algebraic_type` 
+- \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Algebraic_category` \endlink 
 derived from `CGAL::Unique_factorization_domain_tag` 
-- `CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Gcd`  which is a model of `AlgebraicStructureTraits::Gcd`
+- \link AlgebraicStructureTraits::Gcd `CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Gcd` \endlink  which is a model of `AlgebraicStructureTraits_::Gcd`
 
 \cgalRefines `IntegralDomain` 
 

@@ -1,0 +1,3 @@
+/*!
+\example Voronoi_diagram_2/vd_2_point_location.cpp
+*/

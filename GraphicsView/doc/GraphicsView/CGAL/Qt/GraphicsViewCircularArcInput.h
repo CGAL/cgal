@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Qt {
 /*!
-\ingroup PkgGraphicsView
+\ingroup PkgGraphicsViewInputClasses
 
 An object of type `GraphicsViewCircularArcInput` creates a circular arc, defined by three points on a circle. A new 
 vertex is inserted every time the left mouse button is released. 

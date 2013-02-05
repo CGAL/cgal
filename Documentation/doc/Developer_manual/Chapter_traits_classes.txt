@@ -3,21 +3,21 @@
 \page chaptraits_classes Traits Classes
 \author Bernd G&auml;rtner (<TT>gaertner@inf.ethz.ch</TT>)
 
-The concept of a traits class is central to CGAL. The name ``traits
-class'' comes from a standard \cpp design pattern
+The concept of a traits class is central to %CGAL. The name <i>traits
+class</i> comes from a standard \cpp design pattern
 \cite cgal:m-tnutt-95; you may have heard about iterator traits which
 follow this design pattern. 
 The traits class is used in template code to reflect properties (traits)
 of the actual template argument.
 On the lower levels, such as the number types, 
-the traits classes in CGAL indeed follow this pattern.  
+the traits classes in %CGAL indeed follow this pattern.  
 However, in higher level packages the term traits class is used in a slightly 
 different spirit. The most noticeable change is that the traits class becomes 
 the template argument. This allows to bundle several template 
 arguments and provides more flexibility as explained in the subsequent
 sections.
 
-\section secwhat_is_a_traits_class What are traits classes in CGAL? 
+\section secwhat_is_a_traits_class What are traits classes in %CGAL? 
 
 The algorithms in CGAL's basic library are implemented as function templates
 or class templates, usually having a template parameter whose name contains
@@ -27,11 +27,11 @@ define the interface between the algorithm and the geometric (or numeric)
 primitives it uses.  Any concrete class that serves as a model for this 
 concept is a traits class for the given algorithm or data structure.
 
-\section secwhy_traits_classes Why are traits classes in CGAL? 
+\section secwhy_traits_classes Why are traits classes in %CGAL? 
 
 Using traits concepts as template parameters allows for customization
 of the behavior of algorithms without changing implementations.  At
-least one model for each traits concept should be provided in CGAL 
+least one model for each traits concept should be provided in %CGAL 
 (in the simplest case, the kernel models fit; see
 Section  \ref seckernel_traits ), but often more than one are provided
 in order to supply certain customizations that users may want.  The
@@ -63,7 +63,7 @@ and then builds the convex hull incrementally by adding one point after
 another from the sorted list. To do this, it must at least know about 
 some point type, it should have some idea how to sort those points, and
 it must be able to evaluate the orientation of a triple of points. The
-signature of the Graham Scan algorithm in CGAL (actually a variation 
+signature of the Graham Scan algorithm in %CGAL (actually a variation 
 due to Andrews) is as follows:
 
 \anchor ch_grham_andrew
@@ -116,7 +116,7 @@ simply member functions of the traits class.
 there are member functions generating instances of these types, <I>i.e.</I>,
 the actual functors. Reasons for this are the following.
 <UL>
-<LI>\em CGAL is designed to have an \stl-like look-and-feel.  All
+<LI>\em %CGAL is designed to have an \stl-like look-and-feel.  All
   algorithms in the \stl that depend on computational primitives
   (like a sorting algorithm depending on a comparison operator),
   receive those primitives via parameters which are functors. (The
@@ -133,19 +133,19 @@ If you really look up the documentation of the
 <A HREF="http://www.cgal.org/Manual/doc_html/basic_lib/Convex_hull_2_ref/Concept_ConvexHullTraits_2.html">concept</A> in the manual, you will find a larger
 list of requirements. 
 A traits class fulfilling this complete list of requirements can be used
-for all of the 2-dimensional convex hull algorithms provided in CGAL. 
+for all of the 2-dimensional convex hull algorithms provided in \cgal. 
 For example, there are also
 algorithms that require a sorting of points by angle, and a traits class for
 that algorithm has to supply appropriate predicates for that. Still, to use
 the Graham Scan, a traits class meeting only the specifications listed above
 is sufficient.
 
-\subsection subseccgal_traits_classes CGAL-provided traits classes 
+\subsection subseccgal_traits_classes %CGAL-provided traits classes 
 
 As mentioned in Section  \ref secwhat_is_a_traits_class ,
 the traits class requirements define a concept. An
 actual traits class that complies with these requirements is a model for
-that concept. At least one such model must be provided for all CGAL 
+that concept. At least one such model must be provided for all %CGAL 
 algorithms.
 Often this is called the default traits class.
 Default traits classes are very
@@ -160,18 +160,18 @@ must be specified in the <A HREF="http://www.cgal.org/Manual/doc_html/basic_lib/
 The implication is that a user can call `ch_graham_andrews` with
 just three parameters, which delimit the iterator range to be handled and 
 supply the iterator for the result. The types
-and primitives used by the algorithm in this case are the ones from the CGAL 2D and 3D kernel.
+and primitives used by the algorithm in this case are the ones from the %CGAL 2D and 3D kernel.
 
-In many cases, there are more than one traits classes provided by CGAL. In the
+In many cases, there are more than one traits classes provided by %CGAL. In the
 case of convex hulls, for example, there are traits classes that interface
 the algorithms with the geometry kernel of \leda. Though the user who has
-a third-party geometric kernel will not be able to profit from the CGAL or \leda traits, he or she can still provide own traits classes, which meet
+a third-party geometric kernel will not be able to profit from the %CGAL or \leda traits, he or she can still provide own traits classes, which meet
 the specified requirements.
 
 \section seckernel_traits Kernel as traits 
 
- Most default traits classes in CGAL are written in terms of the
-types and classes provided in the CGAL kernel.  So one may wonder
+Most default traits classes in %CGAL are written in terms of the
+types and classes provided in the %CGAL kernel.  So one may wonder
 why it is not possible to plug the kernel in as a traits class
 directly.  Ideally, it provides all the primitives an algorithm needs.
 However, some algorithms and data structures require specialized

@@ -60,7 +60,7 @@ namespace CGAL {
   modifications. There is no automatic caching done for auxiliary 
   information. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
   The full template declaration of `Polyhedron_3` states four 
   template parameters: 
@@ -100,7 +100,7 @@ class Polyhedron_3;
   \sa `CGAL::Polyhedron_incremental_builder_3<HDS>` 
   \sa `CGAL::Modifier_base`. 
 
-### Example ###
+\cgalHeading{Example}
 
   This example program instantiates a polyhedron using the default 
   traits class and creates a tetrahedron. 
@@ -155,7 +155,7 @@ public:
     \sa `CGAL::Polyhedron_3::Facet` 
     \sa `CGAL::Polyhedron_3<Traits>`
 
-    ### Implementation ###
+\cgalHeading{Implementation}
 
     The member functions `Halfedge::prev()` and `Halfedge::prev_on_vertex()` work in 
     constant time if `Supports_halfedge_prev` \f$ \equiv\f$ 
@@ -1232,7 +1232,7 @@ public:
 
     \image html euler_facet.gif
 
-  */ 
+n  */ 
   Halfedge_handle join_facet( Halfedge_handle h); 
 
   /*! 
@@ -1252,8 +1252,7 @@ public:
 
     \image html euler_vertex.gif
 
-    ### Note ###
-
+\note
     A special application of the split is 
     `split_vertex(h,h->%next()->%opposite())` which is equivalent to an 
     edge split of the halfedge `h->%next()` that creates a new 

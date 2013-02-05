@@ -1,6 +1,8 @@
 
+namespace RealEmbeddableTraits_ {
+
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 `AdaptableUnaryFunction` computes a double approximation of a real 
@@ -15,7 +17,7 @@ to methods that are specific to NT. There are no general guarantees whatsoever.
 
 */
 
-class RealEmbeddableTraits::ToDouble {
+class ToDouble {
 public:
 
 /// \name Types 
@@ -43,5 +45,6 @@ result_type operator()(argument_type x);
 
 /// @}
 
-}; /* end RealEmbeddableTraits::ToDouble */
+}; /* end ToDouble */
 
+} /* end of namespace RealEmbeddableTraits_ */

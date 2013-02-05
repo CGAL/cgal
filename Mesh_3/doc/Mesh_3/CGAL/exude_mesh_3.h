@@ -25,13 +25,13 @@ Therefore, when calling the function, the parameters can be provided in any orde
 provided that the names of the parameters are used 
 (see example at the bottom of this page). 
 
-\param parameters::time_limit is used to set up, in seconds, 
+\cgalHeading{Named Parameters}
+- <b>`parameters::time_limit`</b> is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
 measured using the `Timer` class. 
 The default value is 0 and means that there is no time limit. 
 
-\param parameters::sliver_bound 
-is designed to give, in degree, a targeted 
+- <b>`parameters::sliver_bound`</b> is designed to give, in degree, a targeted 
 lower bound on dihedral angles of mesh cells. 
 The exudation process considers in turn all the mesh cells 
 that have a smallest dihedral angle less than `sliver_bound` 
@@ -44,9 +44,8 @@ it can improve the smallest dihedral angles of the set of cells
 incident to some vertices. 
 
 
-### Return Values ##
-
-The function `exude_mesh_3()` returns a value of type `Mesh_optimization_return_code` 
+\return
+The function `exude_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
 <UL> 
 <LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 
@@ -55,7 +54,7 @@ which is:
 the smallest dihedral angle of the set of cells incident to some vertex in the mesh. 
 </UL> 
 
-### Example ##
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Exude without sliver_bound, using at most 10s CPU time 
@@ -64,11 +63,11 @@ exude_mesh_3(c3t3,
 \endcode 
 
 \sa `CGAL::Mesh_optimization_return_code` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
-\sa `CGAL::perturb_mesh_3` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::odt_optimize_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
+\sa `CGAL::perturb_mesh_3()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
 
 */
 

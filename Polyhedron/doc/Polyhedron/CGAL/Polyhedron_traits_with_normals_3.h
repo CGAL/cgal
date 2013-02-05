@@ -16,7 +16,7 @@ with local state.
 
 \sa `CGAL::Polyhedron_traits_3<Kernel>`
 
-### Example ###
+\cgalHeading{Example}
 
 We use this traits class to instantiate a polyhedral surface with a 
 normal vector and no plane equation for each facet. We compute the 

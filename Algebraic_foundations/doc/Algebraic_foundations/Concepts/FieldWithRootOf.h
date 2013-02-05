@@ -8,8 +8,8 @@ construct it as the root of a univariate polynomial.
 
 Moreover, `CGAL::Algebraic_structure_traits< FieldWithRootOf >` is a model of `AlgebraicStructureTraits` providing: 
 
-- `CGAL::Algebraic_structure_traits< FieldWithRootOf >::Algebraic_type` derived from `CGAL::Field_with_kth_root_tag` 
-- `CGAL::Algebraic_structure_traits< FieldWithRootOf >::Root_of`  which is a model of `AlgebraicStructureTraits::RootOf`
+- \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< FieldWithRootOf >::Algebraic_category` \endlink derived from `CGAL::Field_with_kth_root_tag` 
+- \link AlgebraicStructureTraits::Root_of `CGAL::Algebraic_structure_traits< FieldWithRootOf >::Root_of` \endlink  which is a model of `AlgebraicStructureTraits_::RootOf`
 
 \cgalRefines `FieldWithKthRoot` 
 

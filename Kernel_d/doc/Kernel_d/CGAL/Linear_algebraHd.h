@@ -13,7 +13,7 @@ algebra for Euclidean ring number types `RT`.
 \cgalRequires To make a ring number type `RT` work with this class it has to 
 provide a division `operator/` with remainder. 
 
-### Operations ###
+\cgalHeading{Operations}
 
 Fits all operation requirements of the concept. 
 

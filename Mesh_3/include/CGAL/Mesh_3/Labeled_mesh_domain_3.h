@@ -81,7 +81,7 @@ public:
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
   typedef boost::variant<Subdomain_index, Surface_patch_index> Index;
-  typedef CGAL::cpp0x::tuple<Point_3,Index,int> Intersection;
+  typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;
 
 
   typedef typename BGT::FT FT;
@@ -531,7 +531,7 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
     Surface_patch surface = r_domain_.do_intersect_surface_object()(random_seg);
     if ( surface )
     {
-      const Point_3 intersect_pt = CGAL::cpp0x::get<0>(
+      const Point_3 intersect_pt = CGAL::cpp11::get<0>(
           r_domain_.construct_intersection_object()(random_seg));
       *pts++ = std::make_pair(intersect_pt,
                               r_domain_.index_from_surface_patch_index(*surface));

@@ -29,14 +29,13 @@ endif()
 
 if ( "${CGAL_SCM_NAME}" STREQUAL "git" )
   find_program(GIT_EXECUTABLE git DOC "git command line client")
-  EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} --git-dir=${GIT_PARENT_DIR}/.git symbolic-ref HEAD
-    OUTPUT_VARIABLE CGAL_GIT_BRANCH_OUT
+  execute_process(COMMAND ${GIT_EXECUTABLE} --git-dir=${GIT_DIR} rev-parse --symbolic --abbrev-ref HEAD
+    OUTPUT_VARIABLE CGAL_GIT_BRANCH
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  string ( REGEX REPLACE "refs/heads/" "" CGAL_GIT_BRANCH ${CGAL_GIT_BRANCH_OUT})
   set( CGAL_SCM_BRANCH_NAME "${CGAL_GIT_BRANCH}" )
 
-  EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} --git-dir=${GIT_PARENT_DIR}/.git rev-parse HEAD
+  execute_process(COMMAND ${GIT_EXECUTABLE} --git-dir=${GIT_DIR} rev-parse HEAD
     OUTPUT_VARIABLE CGAL_GIT_HASH
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 

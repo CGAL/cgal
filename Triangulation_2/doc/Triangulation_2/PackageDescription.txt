@@ -60,6 +60,6 @@ of  triangulation data
 structure acting as a container for faces and vertices
 while  taking care of the combinatorial aspects of the triangulation. 
 The concepts and models relative to the triangulation data structure
-are described in Chapter \ref PkgTDS2.
+are described in Chapter \ref PkgTDS2 "2D Triangulation Data Structure".
 */
 

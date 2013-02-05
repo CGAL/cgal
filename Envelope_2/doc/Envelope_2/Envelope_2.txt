@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Envelopes of Curves in 2D
+\mainpage User Manual 
 \anchor Chapter_Envelopes_of_Curves_in_2D
 
 \anchor chapterEnvelope2
@@ -98,8 +98,8 @@ represent empty intervals.
 
 A minimization diagram or a maximization diagram is represented by
 a model of the concept `EnvelopeDiagram_1`. This concept defines
-the structure of the subdivision of the \f$ x\f$-axis into \f$ 0\f$-dimensional
-cells called <I>vertices</I>, and \f$ 1\f$-dimensional cells called <I>edges</I>.
+the structure of the subdivision of the \f$ x\f$-axis into 0-dimensional
+cells called <I>vertices</I>, and 1-dimensional cells called <I>edges</I>.
 The important property of this subdivision is that the identity of
 the curves that induce the lower envelope (or the upper envelope)
 over each cell is fixed.

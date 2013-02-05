@@ -44,7 +44,7 @@ C.index_of_vertex_in_opposite_facet(f,i)`. Then
 
 \tparam R must be a model of the concept `ConvexHullTraits_d`.
 
-### Iteration Statements ###
+\cgalHeading{Iteration Statements}
 
 <B>forall_ch_vertices</B>(\f$ v,C\f$) \f$ \{\f$ the vertices of \f$ C\f$ are
 successively assigned to \f$ v\f$ \f$ \}\f$
@@ -55,7 +55,7 @@ successively assigned to \f$ s\f$ \f$ \}\f$
 <B>forall_ch_facets</B>(\f$ f,C\f$) \f$ \{\f$ the facets of \f$ C\f$ are
 successively assigned to \f$ f\f$ \f$ \}\f$
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The implementation of type `Convex_hull_d` is based on
 \cite cms-frric-93 and \cite bms-dgc-94. The details

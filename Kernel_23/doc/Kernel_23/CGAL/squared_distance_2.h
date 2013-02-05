@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\addtogroup squared_distance
+\addtogroup squared_distance_grp
 
 \code
 #include <squared_distance_2.h> //for 2D functions
@@ -38,15 +38,15 @@ following:
 - `Segment_3`
 - `Plane_3`
 
-\sa `CGAL::compare_distance_to_point` 
-\sa `CGAL::compare_signed_distance_to_line` 
-\sa `CGAL::compare_signed_distance_to_plane` 
-\sa `CGAL::has_larger_distance_to_point` 
-\sa `CGAL::has_larger_signed_distance_to_line` 
-\sa `CGAL::has_larger_signed_distance_to_plane` 
-\sa `CGAL::has_smaller_distance_to_point` 
-\sa `CGAL::has_smaller_signed_distance_to_line`
-\sa `CGAL::has_smaller_signed_distance_to_plane` 
+\sa `compare_distance_to_point_grp`
+\sa `compare_signed_distance_to_line_grp`
+\sa `compare_signed_distance_to_plane_grp`
+\sa `has_larger_distance_to_point_grp`
+\sa `has_larger_signed_distance_to_line_grp`
+\sa `has_larger_signed_distance_to_plane_grp`
+\sa `has_smaller_distance_to_point_grp`
+\sa `has_smaller_signed_distance_to_line_grp`
+\sa `has_smaller_signed_distance_to_plane_grp`
 */
 template <typename Kernel>
 Kernel::FT squared_distance(Type1<Kernel> obj1, Type2<Kernel> obj2);

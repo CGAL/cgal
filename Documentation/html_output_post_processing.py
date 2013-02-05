@@ -45,7 +45,7 @@ def conceptify_nested_classes(d):
 def conceptify(d):
     # fix the title
     title = d(".title")
-    title.html(re.sub("Class( Template)? Reference", "Concept Reference", title.html()))
+    title.html(re.sub("((Class)|(Struct))( Template)? Reference", "Concept Reference", title.html()))
     # remove the include
     include_statement = d(".contents").children().eq(0)
     # should check that this is really the div we think it is
@@ -102,6 +102,8 @@ def re_replace_in_file(pat, s_after, fname):
         os.rename(out_fname, fname)
 
 def is_concept_file(filename):
+  if not path.exists(filename):
+    return False;
   d = pq(filename=filename, parser='html')
   ident = d('#CGALConcept')
   return ident.size() == 1
@@ -109,9 +111,11 @@ def is_concept_file(filename):
 def rearrange_img(i, dir_name):
     img = pq(this)
     if img.attr("src") == "ftv2cl.png":
-        links=pq(this).parent().parent()('a.el')
-        if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
-            img.attr("src","ftv2cpt.png")
+        parser=pq(this).parent()
+        for link_class in ['a.el', 'a.elRef']:
+            links=parser(link_class)
+            if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
+                img.attr("src","ftv2cpt.png")
     srcpath=img.attr("src")
     img.attr("src", "../../CGAL.CGAL/html/" + srcpath.split('/')[-1])
 
@@ -150,7 +154,7 @@ def main():
         description='''This script makes adjustments to the doxygen output. 
 It replaces some text in specifically marked classes with the appropriate text for a concept, 
 removes some unneeded files, and performs minor repair on some glitches.''')
-    parser.add_argument('--output', metavar='/path/to/doxygen/output', required=True)
+    parser.add_argument('--output', metavar='/path/to/doxygen/output', default="output")
     
     args = parser.parse_args()
     resources_absdir=path.join( path.dirname(path.abspath(argv[0]) ),"resources")
@@ -174,7 +178,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
       write_out_html(d,fn)
     
-    class_files=glob.glob('./CGAL.CGAL.*/html/class*.html')
+    class_files=glob.glob('./CGAL.CGAL*/html/class*.html')
+    class_files.extend(glob.glob('./CGAL.CGAL*/html/struct*.html'))
     for fn in class_files:
         d = pq(filename=fn, parser='html')
         ident = d('#CGALConcept')
@@ -237,7 +242,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         d = pq(filename=fn, parser='html')
         dts=d(".textblock .reflist dt")
         # no contents() on pyquery, do it the hard way
-        dts.each(lambda i: pq(this).html(re.sub("Class ", "Concept ", pq(this).html())))
+        # Note that in the following regular expression, the Struct did not appear in doxygen version 1.8.3
+        # in hasModels.html, generalizes.html and refines.html, it is always Class. If this changes in
+        # future versions of doxygen, the regular expression will be ready
+        dts.each(lambda i: pq(this).html(re.sub("((Class )|(Struct ))", "Concept ", pq(this).html())))
         write_out_html(d, fn)
 
     # throw out nav-sync and the detailed description title
@@ -249,6 +257,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         # TODO count figures
         write_out_html(d, fn)
 
+    # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
+    re_replace_in_file('%CGAL','CGAL',glob.glob('./CGAL.CGAL/html/navtree.js')[0])
     clean_doc()
     
     

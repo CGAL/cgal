@@ -11,7 +11,7 @@ replacing each point with a random point from the `xeps` \f$ \times\f$
 `yeps` rectangle centered at the original point.  Two random numbers
 are needed from `rnd` for each point.
 
-### Requires ###
+\cgalHeading{Requires}
 
 - `Creator` must be a function object accepting two
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point
@@ -27,10 +27,10 @@ are needed from `rnd` for each point.
   coordinate values.
 
 
-\sa `CGAL::points_on_segment_2`
-\sa `CGAL::points_on_square_grid_2`
-\sa `CGAL::random_selection`
-\sa `CGAL::random_selection`
+\sa `CGAL::points_on_segment_2()`
+\sa `CGAL::points_on_square_grid_2()`
+\sa `CGAL::random_selection()`
+\sa `CGAL::random_selection()`
 \sa `std::random_shuffle`
 
 */
@@ -52,9 +52,9 @@ the \f$ n\f$ points.
 
 
 
-\sa `CGAL::points_on_segment_2`
-\sa `CGAL::points_on_square_grid_2`
-\sa `CGAL::random_collinear_points_2`
+\sa `CGAL::points_on_segment_2()`
+\sa `CGAL::points_on_square_grid_2()`
+\sa `CGAL::random_collinear_points_2()`
 
 */
 template <class P, class OutputIterator>
@@ -72,7 +72,7 @@ The function creates the first \f$ n\f$ points on the regular \f$ \lceil\sqrt{n}
 the \f$ n\f$ points.
 
 
-### Requires ###
+\cgalHeading{Requires}
 
 - `Creator` must be a function object accepting two
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point
@@ -85,11 +85,11 @@ the \f$ n\f$ points.
   the `value_type` in this case.
 
 
-\sa `CGAL::perturb_points_2`
-\sa `CGAL::points_on_segment_2`
-\sa `CGAL::points_on_cube_grid_3`
-\sa `CGAL::random_collinear_points_2`
-\sa `CGAL::random_selection`
+\sa `CGAL::perturb_points_2()`
+\sa `CGAL::points_on_segment_2()`
+\sa `CGAL::points_on_cube_grid_3()`
+\sa `CGAL::random_collinear_points_2()`
+\sa `CGAL::random_selection()`
 \sa `std::random_shuffle`
 
 */
@@ -108,7 +108,7 @@ in the range `[first,last)`.
 Three random numbers are needed from `rnd` for each point.
 Returns the value of `first2` after inserting the \f$ n\f$ points.
 
-### Requires ###
+\cgalHeading{Requires}
 
 - `Creator` must be a function object accepting two
   `double` values \f$ x\f$ and \f$ y\f$ and returning an initialized point
@@ -122,10 +122,10 @@ Returns the value of `first2` after inserting the \f$ n\f$ points.
   `to_double((*first).y())` must result in the respective
   coordinate values.
 
-\sa `CGAL::perturb_points_2`
-\sa `CGAL::points_on_segment_2`
-\sa `CGAL::points_on_square_grid_2`
-\sa `CGAL::random_selection`
+\sa `CGAL::perturb_points_2()`
+\sa `CGAL::points_on_segment_2()`
+\sa `CGAL::points_on_square_grid_2()`
+\sa `CGAL::random_selection()`
 \sa `std::random_shuffle`
 
 */
@@ -146,7 +146,7 @@ distributed in an open disc. The default `Creator` is
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
@@ -213,7 +213,7 @@ distributed in a half-open square. The default `Creator` is
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
@@ -284,7 +284,7 @@ rounding errors.
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
@@ -354,7 +354,7 @@ distributed on a segment. The default `Creator` is
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
@@ -423,7 +423,7 @@ distributed on the boundary of a square. The default `Creator` is
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::Points_on_segment_2<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
@@ -492,7 +492,7 @@ endpoints are specified upon construction. The points are equally spaced.
 
 \cgalModels `PointGenerator`
 
-\sa `CGAL::cpp11::copy_n`
+\sa `CGAL::cpp11::copy_n()`
 \sa `CGAL::Counting_iterator`
 \sa `CGAL::points_on_segment<Point_2>`
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
@@ -500,7 +500,7 @@ endpoints are specified upon construction. The points are equally spaced.
 \sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
 \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
-\sa `CGAL::random_selection`
+\sa `CGAL::random_selection()`
 \sa `std::random_shuffle`
 
 */

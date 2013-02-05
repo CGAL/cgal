@@ -134,7 +134,7 @@ The default intersection tag is `No_intersection_tag`.
 \sa `ConstrainedTriangulationTraits_2` 
 \sa `ConstrainedTriangulationFaceBase_2` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The insertion of a constrained edge runs in time 
 proportional to the number of triangles intersected by this edge. 

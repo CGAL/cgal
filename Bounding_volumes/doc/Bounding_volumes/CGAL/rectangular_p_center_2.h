@@ -12,7 +12,7 @@ using the function `rectangular_p_center_2`.
 
 \cgalModels `RectangularPCenterTraits_2`
 
-\sa `CGAL::rectangular_p_center_2` 
+\sa `CGAL::rectangular_p_center_2()` 
 
 */
 template< typename K >
@@ -240,9 +240,9 @@ is a model for `RectangularPCenterTraits_2`.
 
 \sa `RectangularPCenterTraits_2` 
 \sa `CGAL::Rectangular_p_center_default_traits_2<K>` 
-\sa `CGAL::sorted_matrix_search` 
+\sa `CGAL::sorted_matrix_search()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The runtime is linear for \f$ p \in \{2,\,3\}\f$ and 
 \f$ \mathcal{O}(n \cdot \log n)\f$ for \f$ p = 4\f$ where \f$ n\f$ is the number of 
@@ -252,7 +252,7 @@ algorithm uses a prune-and-search technique described in
 search \cite fj-fkppc-83, \cite fj-gsrsm-84 and fast algorithms for 
 piercing rectangles \cite sw-rpppp-96. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following code generates a random set of ten points 
 and computes its two-centers. 

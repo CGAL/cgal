@@ -9,7 +9,7 @@ using the function `CGAL::rectangular_p_center_2`.
 
 \cgalHasModel `CGAL::Rectangular_p_center_default_traits_2<K>` 
 
-\sa `CGAL::rectangular_p_center_2` 
+\sa `CGAL::rectangular_p_center_2()` 
 
 */
 

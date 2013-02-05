@@ -4,7 +4,7 @@
 
 A point set traits class has to provide some primitives that are used by the point set class. 
 The following catalog lists the involved primitives. 
-For details about these types see the Kernel traits documentation. 
+For details about these types see the %Kernel traits documentation. 
 
 */
 

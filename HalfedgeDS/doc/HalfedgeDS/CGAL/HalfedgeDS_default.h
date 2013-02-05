@@ -21,7 +21,7 @@ removal.
 \sa `CGAL::HalfedgeDS_decorator<HDS>` 
 \sa `CGAL::HalfedgeDS_const_decorator<HDS>` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Currently, `HalfedgeDS_default` is derived from `CGAL::HalfedgeDS_list<Traits>`. 
 The copy constructor and the assignment operator need \f$ O(n)\f$ time with 

@@ -13,11 +13,11 @@ matrix search.
 \cgalModels `MonotoneMatrixSearchTraits`
 \cgalModels `BasicMatrix`
 
-\sa `CGAL::monotone_matrix_search`
+\sa `CGAL::monotone_matrix_search()`
 \sa `MonotoneMatrixSearchTraits` 
 \sa `BasicMatrix` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 All operations take constant time except for 
 `extract_all_even_rows()` which needs time linear in the number 

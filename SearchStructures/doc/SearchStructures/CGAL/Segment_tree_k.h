@@ -28,7 +28,7 @@ RangeSegmentTreeTraits_d defines the requirements that segment tree traits
 classes must fulfill. This allows the advanced user to develop further 
 segment tree traits classes. 
 
-### Example ###
+\cgalHeading{Example}
 
 This example illustrates the use of the predefined segment tree 
 on 3-dimensional interval data (with no value associated). After 

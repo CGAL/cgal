@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Planar Parameterization of Triangulated Surface Meshes
+\mainpage User Manual 
 \anchor Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes
 
 \anchor chapsurface_mesh_parameterization

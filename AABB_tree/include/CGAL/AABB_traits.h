@@ -44,16 +44,15 @@ namespace CGAL {
 /// constructions are implemented. It handles points, rays, lines and
 /// segments as query types for intersection detection and
 /// computations, and it handles points as query type for distance
-/// queries. The template parameter \c GeomTraits provides the
-/// geometric types as well as the intersection tests and computations
-/// required. This type must be a model of the concept \ref AABBGeomTraits. 
-/// The template parameter \c Primitive provides the
-/// type of primitives stored in the AABB_tree. This parameter must be
-/// a model of the concept \ref AABBPrimitive.
+/// queries. 
+/// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits,
+/// snd provide the geometric types as well as the intersection tests and computations.
+/// \tparam Primitive must be a model of the concept \ref AABBPrimitive and provide the
+/// type of primitives stored in the AABB_tree.
 ///
-/// \sa \ref AABBTraits
-/// \sa AABB_tree
-/// \sa \ref AABBPrimitive
+/// \sa `AABBTraits`
+/// \sa `AABB_tree`
+/// \sa `AABBPrimitive`
 template<typename GeomTraits, typename AABB_primitive>
 class AABB_traits
 {

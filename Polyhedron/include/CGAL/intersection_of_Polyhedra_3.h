@@ -40,7 +40,7 @@
 #include <CGAL/internal/corefinement/intersection_triangle_segment_3.h>
 #include <CGAL/internal/corefinement/intersection_coplanar_triangles_3.h>
 
-#include <boost/utility.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 
 #ifdef CGAL_COREFINEMENT_DEBUG
@@ -261,7 +261,7 @@ class Node_visitor_for_polyline_split{
   //polyhedron; the two last elements describe the element of the 
   //second polyhedron (can be either a vertex, an edge of a facet)
   //involved in the intersection
-  typedef CGAL::cpp0x::tuple<internal_IOP::Intersection_type,
+  typedef CGAL::cpp11::tuple<internal_IOP::Intersection_type,
                              Halfedge_handle,
                              internal_IOP::Intersection_type,
                              Halfedge_handle>                          Info;
@@ -437,22 +437,22 @@ public:
       for (;it_info!=infos.end();++it_info)
       {
         typename Hedge_to_polyhedron_map::iterator  it_poly=
-          hedge_to_polyhedron.find(make_unique_key(CGAL::cpp0x::get<1>(*it_info)));
+          hedge_to_polyhedron.find(make_unique_key(CGAL::cpp11::get<1>(*it_info)));
         CGAL_assertion(it_poly!=hedge_to_polyhedron.end());
         //associate information to an intersection point:
         //we give which simplex of the other polyhedron intersect the simplex considered
         set_as_corner.add_info_to_node(node_id,it_poly->second,*it_info);
-        switch(CGAL::cpp0x::get<0>(*it_info))
+        switch(CGAL::cpp11::get<0>(*it_info))
         {
           case internal_IOP::EDGE:
           {
             halfedges_to_split.insert(
-              std::make_pair( std::make_pair(CGAL::cpp0x::get<1>(*it_info),&(*(it_poly->second))),std::vector<int>() )
+              std::make_pair( std::make_pair(CGAL::cpp11::get<1>(*it_info),&(*(it_poly->second))),std::vector<int>() )
             ).first->second.push_back(node_id);
           break;
           }
           case internal_IOP::VERTEX:
-            set_as_corner(CGAL::cpp0x::get<1>(*it_info)->vertex(),node_id,it_poly->second);
+            set_as_corner(CGAL::cpp11::get<1>(*it_info)->vertex(),node_id,it_poly->second);
           break;
           default:
             CGAL_assertion(false);
@@ -1031,11 +1031,11 @@ class Intersection_of_Polyhedra_3{
                     const Intersection_result& inter_res,
                     Nodes_vector& nodes)
   {
-    bool is_vertex_coplanar = CGAL::cpp0x::get<2>(inter_res);
+    bool is_vertex_coplanar = CGAL::cpp11::get<2>(inter_res);
     if (is_vertex_coplanar)
       nodes.add_new_node(edge->vertex()->point());
     else{
-      bool is_opposite_vertex_coplanar = CGAL::cpp0x::get<3>(inter_res);
+      bool is_opposite_vertex_coplanar = CGAL::cpp11::get<3>(inter_res);
       if (is_opposite_vertex_coplanar)
         nodes.add_new_node(edge->opposite()->vertex()->point());
       else
@@ -1360,24 +1360,24 @@ class Intersection_of_Polyhedra_3{
         Facet_handle facet=*fset.begin();
         
         Intersection_result res=internal_IOP::do_intersect<Polyhedron,Kernel,Use_const_polyhedron>(edge,facet);
-        internal_IOP::Intersection_type type=CGAL::cpp0x::get<0>(res);
+        internal_IOP::Intersection_type type=CGAL::cpp11::get<0>(res);
         
         //handle degenerate case: one extremity of edge below to facet
         std::vector<Halfedge_handle> all_edges;
-        if ( CGAL::cpp0x::get<2>(res) )
+        if ( CGAL::cpp11::get<2>(res) )
           get_incident_edges_to_vertex(edge,std::back_inserter(all_edges));
         else{
-          if ( CGAL::cpp0x::get<3>(res) )
+          if ( CGAL::cpp11::get<3>(res) )
             get_incident_edges_to_vertex(edge->opposite(),std::back_inserter(all_edges));
           else
             all_edges.push_back(edge);
         }
         
         CGAL_precondition(*all_edges.begin()==edge || *all_edges.begin()==edge->opposite());
-//        print_type_debug(type,CGAL::cpp0x::get<2>(res),CGAL::cpp0x::get<3>(res));
+//        print_type_debug(type,CGAL::cpp11::get<2>(res),CGAL::cpp11::get<3>(res));
        
         #ifdef USE_DETECTION_MULTIPLE_DEFINED_EDGES
-        check_coplanar_edges(boost::next(all_edges.begin()),all_edges.end(),CGAL::cpp0x::get<1>(res),type);
+        check_coplanar_edges(boost::next(all_edges.begin()),all_edges.end(),CGAL::cpp11::get<1>(res),type);
         #endif
         
         typename std::vector<Halfedge_handle>::iterator it_edge=all_edges.begin();
@@ -1398,11 +1398,11 @@ class Intersection_of_Polyhedra_3{
           case internal_IOP::FACET:
           {
             CGAL_assertion(cgal_do_intersect_debug(edge,facet));
-            CGAL_assertion(facet==CGAL::cpp0x::get<1>(res)->face());
+            CGAL_assertion(facet==CGAL::cpp11::get<1>(res)->face());
 
             int node_id=++current_node;
             add_new_node(edge,facet,res,nodes);
-            visitor->new_node_added(node_id,internal_IOP::FACET,edge,facet->halfedge(),CGAL::cpp0x::get<2>(res),CGAL::cpp0x::get<3>(res));
+            visitor->new_node_added(node_id,internal_IOP::FACET,edge,facet->halfedge(),CGAL::cpp11::get<2>(res),CGAL::cpp11::get<3>(res));
             for (;it_edge!=all_edges.end();++it_edge){
               add_intersection_point_to_facet_and_all_edge_incident_facets(facet,*it_edge,node_id);
               //erase facet from the list to test intersection with it_edge
@@ -1423,8 +1423,8 @@ class Intersection_of_Polyhedra_3{
             CGAL_assertion(cgal_do_intersect_debug(edge,facet));
             int node_id=++current_node;
             add_new_node(edge,facet,res,nodes);
-            Halfedge_handle edge_intersected=CGAL::cpp0x::get<1>(res);
-            visitor->new_node_added(node_id,internal_IOP::EDGE,edge,edge_intersected,CGAL::cpp0x::get<2>(res),CGAL::cpp0x::get<3>(res));
+            Halfedge_handle edge_intersected=CGAL::cpp11::get<1>(res);
+            visitor->new_node_added(node_id,internal_IOP::EDGE,edge,edge_intersected,CGAL::cpp11::get<2>(res),CGAL::cpp11::get<3>(res));
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_intersected_facets::iterator it_ets=edge_to_sfacet.find(*it_edge);
@@ -1441,10 +1441,10 @@ class Intersection_of_Polyhedra_3{
           {
             CGAL_assertion(cgal_do_intersect_debug(edge,facet));
             int node_id=++current_node;
-            Halfedge_handle vertex_intersected=CGAL::cpp0x::get<1>(res);
+            Halfedge_handle vertex_intersected=CGAL::cpp11::get<1>(res);
             add_new_node(vertex_intersected->vertex()->point()); //we use the original vertex to create the node
             //before it was internal_IOP::FACET but do not remember why, probably a bug...
-            visitor->new_node_added(node_id,internal_IOP::VERTEX,edge,vertex_intersected,CGAL::cpp0x::get<2>(res),CGAL::cpp0x::get<3>(res));
+            visitor->new_node_added(node_id,internal_IOP::VERTEX,edge,vertex_intersected,CGAL::cpp11::get<2>(res),CGAL::cpp11::get<3>(res));
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_intersected_facets::iterator it_ets=edge_to_sfacet.find(*it_edge);

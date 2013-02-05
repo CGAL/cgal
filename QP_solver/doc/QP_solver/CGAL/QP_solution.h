@@ -454,7 +454,7 @@ optimality_certifcate_begin() const;
 /*! 
 returns the corresponding past-the-end iterator. 
 
-\sa optimality_certifcate_begin()
+\sa `optimality_certifcate_begin()`
 */ 
 Optimality_certificate_iterator 
 optimality_certificate_end() const; 
@@ -465,7 +465,7 @@ of the optimality certificate \f$ \qplambda\f$, with respect to the
 common denominator returned by `sol`.`variables_common_denominator()`. 
 The value type is `ET`, and the valid iterator range has length \f$ m\f$. 
 
-\sa optimality_certifcate_begin()
+\sa `optimality_certifcate_begin()`
 */ 
 Optimality_certificate_numerator_iterator 
 optimality_certifcate_numerators_begin() const; 
@@ -473,7 +473,7 @@ optimality_certifcate_numerators_begin() const;
 /*! 
 returns the corresponding past-the-end iterator. 
 
-\sa optimality_certifcate_begin()
+\sa `optimality_certifcate_begin()`
 */ 
 Optimality_certificate_numerator_iterator 
 optimality_certificate_numerators_end() const; 
@@ -527,7 +527,7 @@ infeasibility_certificate_begin() const;
 /*! 
 returns the corresponding past-the-end iterator. 
 
-\sa infeasibility_certificate_begin()
+\sa `infeasibility_certificate_begin()`
 */ 
 Infeasibility_certificate_iterator 
 infeasibility_certificate_end() const; 
@@ -574,7 +574,7 @@ unboundedness_certificate_begin() const;
 /*! 
 returns the corresponding past-the-end iterator. 
 
-\sa unboundedness_certificate_begin()
+\sa `unboundedness_certificate_begin()`
 */ 
 Unboundedness_certificate_iterator 
 unboundedness_certificate_end(); 

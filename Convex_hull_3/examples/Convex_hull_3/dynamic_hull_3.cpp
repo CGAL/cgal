@@ -20,7 +20,7 @@ int main()
 
   // generate 250 points randomly on a sphere of radius 100.0
   // and insert them into the triangulation
-  CGAL::cpp0x::copy_n(gen, 250, std::back_inserter(points) );
+  CGAL::cpp11::copy_n(gen, 250, std::back_inserter(points) );
   Delaunay T;
   T.insert(points.begin(), points.end());
 

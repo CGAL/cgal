@@ -48,7 +48,7 @@ rounding mode restoration when the `Protect_FPU_rounding` object is
 destroyed. Therefore, for this configuration, some explicit code has to be 
 added. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The template parameter `Protected` is a Boolean parameter, which defaults 
 to `true`. It follows the same parameter of the `Interval_nt` class. 

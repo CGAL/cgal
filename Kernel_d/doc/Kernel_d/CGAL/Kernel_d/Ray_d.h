@@ -7,7 +7,7 @@ An instance of data type `Ray_d` is a ray in \f$ d\f$-dimensional
 Euclidean space. It starts in a point called the source of `r` and 
 it goes to infinity. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Rays are implemented by a pair of points as an item type. All 
 operations like creation, initialization, tests, direction 

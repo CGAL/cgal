@@ -1,5 +1,4 @@
 
-namespace CGAL {
 namespace CORE {
 
 /*!
@@ -21,4 +20,3 @@ requirements on number types.
 class BigInt {
 }; /* end CORE::BigInt */
 } /* end namespace CORE */
-} /* end namespace CGAL */

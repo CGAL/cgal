@@ -29,6 +29,8 @@
 #include <CGAL/array.h>
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 
+#include <boost/next_prior.hpp>
+
 namespace CGAL {
 
 template < class R_ >
@@ -43,7 +45,7 @@ class VectorH3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef cpp0x::array<RT, 4>               Rep;
+  typedef cpp11::array<RT, 4>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   typedef Rational_traits<FT>               Rat_traits;

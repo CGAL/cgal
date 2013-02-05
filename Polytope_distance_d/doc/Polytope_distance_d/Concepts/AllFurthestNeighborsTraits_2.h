@@ -12,13 +12,13 @@ convex polygon using the function `all_furthest_neighbors_2`.
 \cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>`
 \cgalHasModel `CGAL::Simple_homogeneous<RingNumberType>`
 
-\sa `CGAL::all_furthest_neighbors_2` 
+\sa `CGAL::all_furthest_neighbors_2()` 
 
 ### Notes ###
 
 <UL> 
-<LI>`AllFurthestNeighborsTraits_2``::Less_xy_2` and 
-`AllFurthestNeighborsTraits_2``::Orientation_2` are used for (expensive) 
+<LI>`AllFurthestNeighborsTraits_2::Less_xy_2` and 
+`AllFurthestNeighborsTraits_2::Orientation_2` are used for (expensive) 
 precondition checking only. Therefore, they need not to be 
 specified, in case that precondition checking is disabled. 
 </UL> 

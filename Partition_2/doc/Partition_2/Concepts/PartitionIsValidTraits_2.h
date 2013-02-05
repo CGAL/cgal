@@ -16,10 +16,10 @@ for testing for convexity and \f$ y\f$-monotonicity, respectively.
 
 \cgalHasModel `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>` 
 
-\sa `CGAL::approx_convex_partition_2` 
-\sa `CGAL::greene_approx_convex_partition_2` 
-\sa `CGAL::optimal_convex_partition_2` 
-\sa `CGAL::y_monotone_partition_2` 
+\sa `CGAL::approx_convex_partition_2()` 
+\sa `CGAL::greene_approx_convex_partition_2()` 
+\sa `CGAL::optimal_convex_partition_2()` 
+\sa `CGAL::y_monotone_partition_2()` 
 
 */
 

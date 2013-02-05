@@ -85,7 +85,7 @@ typedef Hidden_type Algebraic;
 The `Curve_2` class nested within the B&eacute;zier traits class is used 
 to represent a B&eacute;zier curve of arbitrary degree, which is defined by a 
 sequence of rational control points. In addition to the methods listed 
-below, the I/O operators `operator<<` and `operator>>` for 
+below, the I/O operators \link PkgArrangement2op_left_shift `operator<<` \endlink and \link PkgArrangement2op_right_shift `operator>>` \endlink for 
 standard output-streams are also supported. The copy constructor and 
 assignment operator are supported as well. 
 
@@ -118,7 +118,7 @@ Curve_2 (InputIterator pts_begin, InputIterator pts_end);
 /*! 
 returns the number of control points that define `B`. 
 */ 
-size_t number_of_control_point () const; 
+size_t number_of_control_points () const; 
 
 /*! 
 returns the \f$ k\f$th control point. Note that the first control point equals 

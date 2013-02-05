@@ -3,7 +3,13 @@ namespace CGAL {
 /*!
 \ingroup PkgMatrixSearch
 
-The function `sorted_matrix_search` selects the smallest entry 
+\brief returns the element `x` in one of the sorted matrices from the 
+range `[f, l)`, for which `t.is_feasible(x)` 
+is true and `t.compare(x, y)` is true for all other 
+`y` values from any matrix for which `t.is_feasible(y)` is true. 
+
+
+The function `sorted_matrix_search()` selects the smallest entry 
 in a set of sorted matrices that fulfills a certain feasibility 
 criterion. 
 
@@ -30,10 +36,6 @@ we are searching for.
 The feasibility test as well as some other parameters can (and 
 have to) be customized through a traits class. 
 
-returns the element `x` in one of the sorted matrices from the 
-range \f$ \left[ f,\, l \right)\f$, for which `t.is_feasible( x)` 
-is true and `t.compare( x, y)` is true for all other 
-`y` values from any matrix for which `t.is_feasible( y)` is true. 
 
 \pre <OL> 
 <LI>All matrices in \f$ \left[f,\, l\right)\f$ are sorted according 
@@ -46,7 +48,7 @@ true.
 \cgalRequires `Traits` is a model for `SortedMatrixSearchTraits`. 
 \cgalRequires Value type of `RandomAccessIterator` is `Traits::Matrix`. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The implementation uses an algorithm by 
 Frederickson and Johnson\cite fj-fkppc-83, \cite fj-gsrsm-84 and runs in 

@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Snap Rounding
+\mainpage User Manual 
 \anchor Chapter_2D_Snap_Rounding
 \anchor chapterSnapRounding
 \cgalAutoToc

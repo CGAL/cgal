@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Algebraic Foundations
+\mainpage User Manual 
 \anchor Chapter_Algebraic_Foundations
 
 \cgalAutoToc
@@ -59,7 +59,7 @@ The main properties of an algebraic structure are collected in the class
 `Algebraic_structure_traits`. 
 In particular the (most refined) concept each concrete model `AS` 
 fulfills is encoded in the tag 
-`Algebraic_structure_traits<AS>::Algebraic_category`.
+\link AlgebraicStructureTraits::Algebraic_category `Algebraic_structure_traits<AS>::Algebraic_category` \endlink .
 An algebraic structure is at least `Assignable`, 
 `CopyConstructible`, `DefaultConstructible` and 
 `EqualityComparable`. Moreover, we require that it is
@@ -72,7 +72,7 @@ All other unary (e.g., sqrt) and binary functions
 (e.g., gcd, div) must be models of the well known \stl-concepts
 `AdaptableUnaryFunction` or `AdaptableBinaryFunction`
 concept and local to the traits class 
-(e.g., `Algebraic_structure_traits<AS>::Sqrt()(x)`). 
+(e.g., \link AlgebraicStructureTraits::Sqrt `Algebraic_structure_traits<AS>::Sqrt()(x)` \endlink). 
 This design allows us to profit from all parts in the 
 \stl and its programming style and avoids the name-lookup and 
 two-pass template compilation problems experienced with the old design 
@@ -192,7 +192,7 @@ This level of interoperability is reflected by the concept
 `ImplicitInteroperable`. However, within template code the result type, 
 or so called coercion type, of a mixed arithmetic operation may be unclear.
 Therefore, the package introduces `Coercion_traits`
-giving access to the coercion type via `Coercion_traits<A,B>::Type`
+giving access to the coercion type via \link Coercion_traits::Type `Coercion_traits<A,B>::Type` \endlink
 for two interoperable types `A` and `B`.
 
 Some trivial example are `int` and `double` with coercion type double 
@@ -203,7 +203,7 @@ with integer coefficients that is multiplied by a rational type
 is supposed to be a polynomial with rational coefficients.
 
 `Coercion_traits` is also
-required to provide a functor `Coercion_traits<A,B>::Cast()`, that 
+required to provide a functor \link Coercion_traits::Cast `Coercion_traits<A,B>::Cast()` \endlink, that 
 converts from an input type into the coercion type. This is in fact the core
 of the more basic concept `ExplicitInteroperable`. 
 `ExplicitInteroperable` has been introduced to cover more complex cases 
@@ -244,7 +244,7 @@ denominator and a compound numerator with a simpler coefficient type
 these denominator-free multiples. In case a type is a `Fraction` 
 the relevant functionality as well as the numerator and denominator 
 type are provided by `Fraction_traits`. In particular 
-`Fraction_traits` provides a tag `Is_fraction` that can be
+`Fraction_traits` provides a tag \link FractionTraits::Is_fraction `Is_fraction` \endlink that can be
 used for dispatching.
 
 A related class is `Rational_traits` which has been kept for backward 
@@ -258,8 +258,8 @@ The following example show a simple use of `Fraction_traits`:
 
 The following example illustrates the integralization of a vector, 
 i.e., the coefficient vector of a polynomial. Note that for minimizing 
-coefficient growth `Fraction_traits<Type>::Common_factor` is used to 
-compute the 'least' common multiple of the denominators.
+coefficient growth \link FractionTraits::Common_factor `Fraction_traits<Type>::Common_factor` \endlink is used to 
+compute the <i>least</i> common multiple of the denominators.
 
 \cgalExample{Algebraic_foundations/integralize.cpp}
 

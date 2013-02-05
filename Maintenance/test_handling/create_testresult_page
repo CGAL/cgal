@@ -47,19 +47,16 @@ sub sort_releases($$)
     my $b = $_[0];
     my $a = $_[1];
 
-    my @A = ($a =~ /\d+|Ic?/g);
-    my @B = ($b =~ /\d+|Ic?/g);
+    #take only the numbers from release id, skipping I and Ic
+    my @A = ($a =~ /\d+/g);
+    my @B = ($b =~ /\d+/g);
 
     while(@A and @B) {
         my $av = shift(@A);
         my $bv = shift(@B);
-
-        if( $av =~ /^\d+$/ and $bv =~ /^\d+$/ ) {
-            if($av == $bv) { next; } 
-            else {  return $av <=> $bv; }
-        } else {
-            return $av cmp $bv
-        }
+        #$av and $bv are integers
+        if($av == $bv) { next; }
+        return $av <=> $bv;
     }
     return @A <=> @B;
 }

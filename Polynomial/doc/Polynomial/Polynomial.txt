@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Polynomial
+\mainpage User Manual 
 \anchor Chapter_Polynomial
 \anchor ChapterPolynomial
 \cgalAutoToc

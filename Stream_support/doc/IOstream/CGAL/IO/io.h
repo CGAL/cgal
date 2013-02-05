@@ -23,14 +23,14 @@ would be `PointC2(0.0, 0.0)`.  At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
 is in <span class="textsc">Ascii</span> mode.
 
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode `
-\sa `CGAL::set_pretty_mode `
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 */
 enum Mode { ASCII = 0, BINARY, PRETTY };
 
@@ -40,13 +40,13 @@ enum Mode { ASCII = 0, BINARY, PRETTY };
 returns the printing mode of the IO stream `s`.
 
 \sa `CGAL::Mode`
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 
 
 */
@@ -60,13 +60,13 @@ Returns the previous mode of `s`.
 
 
 \sa `CGAL::Mode`
-\sa `CGAL::set_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 */
 Mode set_ascii_mode(std::ios& s);
 
@@ -74,13 +74,13 @@ Mode set_ascii_mode(std::ios& s);
 \ingroup PkgIOstreams
 
 \sa `CGAL::Mode`
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 
 sets the mode of the IO stream `s` to be the `BINARY` mode.
 Returns the previous mode of `s`.
@@ -93,13 +93,13 @@ Mode set_binary_mode(std::ios& s);
 sets the printing mode of the IO stream `s`.
 
 \sa `CGAL::Mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 */
 Mode set_mode(std::ios& s, IO::Mode m);
 
@@ -110,13 +110,13 @@ sets the mode of the IO stream `s` to be the `PRETTY` mode.
 Returns the previous mode of `s`.
 
 \sa `CGAL::Mode`
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 
 */
 Mode set_pretty_mode(std::ios& s);
@@ -165,13 +165,13 @@ class Output_rep {
 checks if the IO stream `s` is in `ASCII` mode.
 
 \sa `CGAL::Mode`
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 */
 bool is_ascii(std::ios& s);
 
@@ -182,13 +182,13 @@ bool is_ascii(std::ios& s);
 checks if the IO stream `s` is in `BINARY` mode.
 
 \sa `CGAL::Mode`
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_pretty()`
 */
 bool is_binary(std::ios& s);
 
@@ -198,13 +198,13 @@ bool is_binary(std::ios& s);
 checks if the IO stream `s` is in `PRETTY` mode.
 
 \sa `CGAL::Mode`
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
 
 */
 bool is_pretty(std::ios& s);
@@ -248,14 +248,14 @@ as `cout` or `cerr`, as well as to `std::ostringstream`
 and `std::ofstream`. 
 The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well. 
 
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 \sa \ref op_right_shift "CGAL::operator>>"
 */
 ostream& operator<<(ostream& os, Class c);
@@ -272,14 +272,14 @@ The input operator is defined for all classes in the \cgal `Kernel`.
 
 
 
-\sa `CGAL::set_mode`
-\sa `CGAL::set_ascii_mode`
-\sa `CGAL::set_binary_mode`
-\sa `CGAL::set_pretty_mode`
-\sa `CGAL::get_mode`
-\sa `CGAL::is_ascii`
-\sa `CGAL::is_binary`
-\sa `CGAL::is_pretty`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
 \sa \ref PkgIOstreams_op_left_shift "CGAL::operator<<"
 */
 istream& operator>>(istream& is, Class c);

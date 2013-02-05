@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Point Set Processing
+\mainpage User Manual 
 \anchor Chapter_Point_Set_Processing
 \anchor chappoint_set_processing_3
 

@@ -9,7 +9,7 @@ Both the virtual memory size and the resident size are available (the resident
 size does not account for swapped out memory nor for the memory which is not 
 yet paged-in). 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Accessing this information requires the use of non-portable code. 
 Currently, there is support for Linux platforms, the Microsoft and Intel 

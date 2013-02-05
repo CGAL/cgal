@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Bounding Volumes
+\mainpage User Manual 
 \anchor Chapter_Bounding_Volumes
 \anchor chapBoundingVolumes
 \cgalAutoToc

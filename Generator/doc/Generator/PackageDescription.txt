@@ -29,13 +29,13 @@ random convex sets and one for simple polygons.  The \stl algorithm
 achieve random permutations for otherwise regular generators (
 <I>e.g.</I>, points on a grid or segment).
 
-\subsubsection GeneratorConcepts Concepts
+## Concepts ##
 
 - `PointGenerator`
 - `RandomConvexSetTraits_2`
 - `RandomPolygonTraits_2`
 
-\subsubsection GeneratorFunctions Functions
+## Functions ##
 
 - `CGAL::perturb_points_2()` 
 - `CGAL::points_on_segment_2()` 
@@ -47,11 +47,11 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::random_polygon_2()` 
 - `CGAL::random_selection()` 
 
-\subsubsection GeneratorVariables Variables
+## Variables ##
 
 - `CGAL::default_random` 
 
-\subsubsection GeneratorClasses Classes
+## Classes ##
 
 - `CGAL::Random` 
 - `CGAL::Points_on_segment_2<Point_2>` 
@@ -67,7 +67,7 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::Random_points_on_sphere_d<Point_d>` 
 - `CGAL::Random_points_on_square_2<Point_2, Creator>` 
 
-\subsubsection GeneratorTraitsClass Traits Class
+## Traits Class ##
 
 - `CGAL::Random_convex_set_traits_2<Kernel>` 
 

@@ -33,7 +33,7 @@
 #include <vector>
 #include <set>
 #include <map>
-#include <boost/utility.hpp> // for boost::prior and boost::next
+#include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 
 namespace CGAL {
@@ -409,7 +409,7 @@ public:
   template <typename OutputIterator>
   OutputIterator get_corners(OutputIterator out) const;
   
-  /// OutputIterator value type is CGAL::cpp0x::tuple<Curve_segment_index,
+  /// OutputIterator value type is CGAL::cpp11::tuple<Curve_segment_index,
   /// std::pair<Point_3,Index>, std::pair<Point_3,Index> >
   template <typename OutputIterator>
   OutputIterator get_curve_segments(OutputIterator out) const;
@@ -543,7 +543,7 @@ get_curve_segments(OutputIterator out) const
       q_index = p_index;
     }
     
-    *out++ = CGAL::cpp0x::make_tuple(eit->first,
+    *out++ = CGAL::cpp11::make_tuple(eit->first,
                                      std::make_pair(p,p_index),
                                      std::make_pair(q,q_index));
   }

@@ -11,7 +11,7 @@ that do not contain any point of the point set.
 
 \tparam T must be a model of the concept `LargestEmptyIsoRectangleTraits_2`.
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The algorithm is an implementation of \cite o-naler-90. The runtime of an 
 insertion or a removal is \f$ O(\log n)\f$. A query takes \f$ O(n^2)\f$ worst 
@@ -154,9 +154,9 @@ void
 push_back(const Point_2& p); 
 
 /*! 
-Inserts the points in the range `[first, last)` Returns the number of inserted points. 
+Inserts the points in the range `[first, last)`, and returns the number of inserted points. 
 
-\cgalRequires The valuetype of `first` and `last` is `Point`.
+\tparam InputIterator must be an iterator with value type `Point_2`.
 */ 
 template < class InputIterator > 
 int 

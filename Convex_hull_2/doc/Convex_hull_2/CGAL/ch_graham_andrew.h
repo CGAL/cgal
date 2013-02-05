@@ -15,7 +15,7 @@ cyclic sequence of extreme points is cut into a linear sequence.
 The default traits class `Default_traits` is the kernel in which the 
 value type of  `InputIteratore` is defined. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `InputIterator` and 
@@ -31,17 +31,17 @@ functions that return instances of these types:
 </UL> 
 </OL> 
 
-\sa `CGAL::ch_akl_toussaint` 
-\sa `CGAL::ch_bykat` 
-\sa `CGAL::ch_eddy` 
-\sa `CGAL::ch_graham_andrew_scan` 
-\sa `CGAL::ch_jarvis` 
-\sa `CGAL::ch_melkman` 
-\sa `CGAL::convex_hull_2` 
-\sa `CGAL::lower_hull_points_2` 
-\sa `CGAL::upper_hull_points_2` 
+\sa `CGAL::ch_akl_toussaint()` 
+\sa `CGAL::ch_bykat()` 
+\sa `CGAL::ch_eddy()` 
+\sa `CGAL::ch_graham_andrew_scan()` 
+\sa `CGAL::ch_jarvis()` 
+\sa `CGAL::ch_melkman()` 
+\sa `CGAL::convex_hull_2()` 
+\sa `CGAL::lower_hull_points_2()` 
+\sa `CGAL::upper_hull_points_2()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function implements Andrew's variant of the Graham 
 scan algorithm \cite a-aeach-79 and follows the presentation of Mehlhorn 
@@ -71,7 +71,7 @@ by the first and last points in this sequence.
 The default traits class `Default_traits` is the kernel in which the 
 type `BidirectionalIterator::value_type` is defined. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`BidirectionalIterator::value_type` and 
@@ -86,17 +86,17 @@ functions that return instances of these types:
 </UL> 
 </OL> 
 
-\sa `CGAL::ch_graham_andrew` 
-\sa `CGAL::lower_hull_points_2` 
-\sa `CGAL::upper_hull_points_2` 
+\sa `CGAL::ch_graham_andrew()` 
+\sa `CGAL::lower_hull_points_2()` 
+\sa `CGAL::upper_hull_points_2()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The function uses Andrew's 
 variant of the Graham scan algorithm \cite a-aeach-79. This algorithm 
 requires \f$ O(n \log n)\f$ time in the worst case for \f$ n\f$ input points. 
 
-### Example ###
+\cgalHeading{Example}
 
 In the following example `ch_graham_andrew_scan()` is used to 
 realize Anderson's variant \cite a-readc-78 of the Graham Scan 

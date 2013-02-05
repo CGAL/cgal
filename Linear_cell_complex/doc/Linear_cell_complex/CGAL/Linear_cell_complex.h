@@ -40,7 +40,7 @@ inherit from any model of the `CombinatorialMap` concept.
 
 */
 template< typename d, typename d2, typename LCCTraits, typename Items, typename Alloc >
-class Linear_cell_complex  : public CGAL::Combinatorial_map<d,Items,Alloc>
+class Linear_cell_complex  : public Combinatorial_map<d,Items,Alloc>
  {
 public:
 
@@ -58,7 +58,7 @@ LinearCellComplex();
 /// @{
 
 /*! 
-must be \f$ >\f$1. 
+must be \f$ > \f$ 1.
 */ 
 static unsigned int ambient_dimension = d2; 
 
@@ -109,32 +109,32 @@ typedef Traits::Vector Vector;
 
 /*! 
 Type of 0-attributes, a model of `CellAttributeWithPoint` concept 
-(a shortcut for `Attribute_type_d<0>::type`). 
+(a shortcut for \link CombinatorialMap::Attribute_type `Attribute_type<0>::type` \endlink). 
 */ 
 typedef Hidden_type Vertex_attribute; 
 
 /*! 
 Handle through 0-attributes 
-(a shortcut for `Attribute_handle_type_d<0>::type`). 
+(a shortcut for \link CombinatorialMap::Attribute_handle `Attribute_handle<0>::type` \endlink). 
 */ 
 typedef Hidden_type Vertex_attribute_handle; 
 
 /*! 
 Const handle through 0-attributes 
-(a shortcut for `Attribute_const_handle_type_d<0>::type`). 
+(a shortcut for \link CombinatorialMap::Attribute_handle `Attribute_const_handle<0>::type` \endlink). 
 */ 
 typedef Hidden_type Vertex_attribute_const_handle; 
 
 /*! 
 Range of all the 0-attributes, a model of the `Range` concept 
-(a shortcut for `Attribute_range_d<0>::type`). 
+(a shortcut for \link CombinatorialMap::Attribute_range `Attribute_range<0>::type` \endlink). 
 Iterator inner type is bidirectional iterator and value type is `Vertex_attribute`. 
 */ 
 typedef Hidden_type Vertex_attribute_range; 
 
 /*! 
 Const range of all the 0-attributes, a model of the `ConstRange` concept 
-a shortcut for `Attribute_const_range_d<0>::type`). 
+a shortcut for \link CombinatorialMap::Attribute_const_range `Attribute_const_range<0>::type` \endlink). 
 Iterator inner type is bidirectional iterator and value type is `Vertex_attribute`. 
 */ 
 typedef Hidden_type Vertex_attribute_const_range; 
@@ -264,7 +264,7 @@ Returns a handle on one dart of this cell.
 \pre 1\f$ \leq\f$`dimension`\f$ \leq\f$2 and `*dh`\f$ \in\f$`lcc.darts()`. 
 
 If <I>i</I>-attributes are non void, 
-`Attribute_type<i>::type::On_split`(<I>a</I>,<I>a'</I>) is called, 
+`Attribute_type<i>::%type::On_split`(<I>a</I>,<I>a'</I>) is called, 
 with <I>a</I> the original <I>i</I>-attribute associated 
 with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation. 
 
@@ -277,7 +277,7 @@ Returns a handle on one dart of this cell.
 \pre 1\f$ \leq\f$`dimension`\f$ \leq\f$2 and `*dh`\f$ \in\f$`lcc.darts()`. 
 
 If <I>i</I>-attributes are non void, 
-`Attribute_type<i>::type::On_split`(<I>a</I>,<I>a'</I>) is called, 
+`Attribute_type<i>::%type::On_split`(<I>a</I>,<I>a'</I>) is called, 
 with <I>a</I> the original <I>i</I>-attribute associated 
 with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation. 
 

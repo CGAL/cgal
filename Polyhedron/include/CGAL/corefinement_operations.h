@@ -41,7 +41,7 @@ class Import_volume_as_polyhedron : public CGAL::Modifier_base<HDS> {
   Face_handle current_face;
   std::vector< typename Vertex::Point >   points;
   std::size_t nb_edges;
-  std::vector<CGAL::cpp0x::tuple<unsigned,unsigned,unsigned> >           faces;
+  std::vector<CGAL::cpp11::tuple<unsigned,unsigned,unsigned> >           faces;
   
   typename HDS::Halfedge::Base*
   unlock_halfedge(Halfedge_handle h){
@@ -90,7 +90,7 @@ public:
       unsigned int i=vertex_map[&it->template attribute<0>()->point()];
       unsigned int j=vertex_map[&it->beta(0)->template attribute<0>()->point()];
       unsigned int k=vertex_map[&it->beta(1)->template attribute<0>()->point()];
-      faces.push_back(CGAL::cpp0x::make_tuple(i,j,k));
+      faces.push_back(CGAL::cpp11::make_tuple(i,j,k));
     }
   }
   
@@ -138,7 +138,7 @@ public:
         unsigned int i=vertex_map[&it->template attribute<0>()->point()];
         unsigned int j=vertex_map[&it->beta(0)->template attribute<0>()->point()];
         unsigned int k=vertex_map[&it->beta(1)->template attribute<0>()->point()];
-        faces.push_back(CGAL::cpp0x::make_tuple(i,j,k));
+        faces.push_back(CGAL::cpp11::make_tuple(i,j,k));
       }
     }
   }
@@ -189,7 +189,7 @@ public:
         unsigned int i=vertex_map[&it->template attribute<0>()->point()];
         unsigned int j=vertex_map[&it->beta(1)->template attribute<0>()->point()];
         unsigned int k=vertex_map[&it->beta(0)->template attribute<0>()->point()];
-        faces.push_back(CGAL::cpp0x::make_tuple(i,j,k));
+        faces.push_back(CGAL::cpp11::make_tuple(i,j,k));
       }
     }
   }
@@ -205,12 +205,12 @@ public:
       B.add_vertex(*it);
 
     //create faces
-    for (std::vector<CGAL::cpp0x::tuple<unsigned,unsigned,unsigned> >::iterator it=faces.begin();it!=faces.end();++it)
+    for (std::vector<CGAL::cpp11::tuple<unsigned,unsigned,unsigned> >::iterator it=faces.begin();it!=faces.end();++it)
     {
       B.begin_facet();
-      B.add_vertex_to_facet(CGAL::cpp0x::get<0>(*it));
-      B.add_vertex_to_facet(CGAL::cpp0x::get<1>(*it));
-      B.add_vertex_to_facet(CGAL::cpp0x::get<2>(*it));
+      B.add_vertex_to_facet(CGAL::cpp11::get<0>(*it));
+      B.add_vertex_to_facet(CGAL::cpp11::get<1>(*it));
+      B.add_vertex_to_facet(CGAL::cpp11::get<2>(*it));
       B.end_facet();
     }
     B.end_surface();    

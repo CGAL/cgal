@@ -30,6 +30,8 @@
 #include <bitset>
 #include <vector>
 
+#include <boost/type_traits/is_same.hpp>
+
 // suppress bogus warning when compiling with gcc 4.3 or 4.4
 #if (__GNUC__ == 4 && (__GNUC_MINOR__ == 3 || __GNUC_MINOR__ == 4))
 #pragma GCC diagnostic ignored "-Warray-bounds"
@@ -880,7 +882,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(args...); 
     }
 #else
@@ -890,7 +892,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(); 
     }
     template<unsigned int i, typename T1>
@@ -899,7 +901,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1);
     }
     template<unsigned int i, typename T1, typename T2>
@@ -908,7 +910,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2); 
     }
     template<unsigned int i, typename T1, typename T2, typename T3>
@@ -917,7 +919,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2, t3); 
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4>
@@ -926,7 +928,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2, t3, t4); 
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
@@ -937,7 +939,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2, t3, t4, t5); 
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
@@ -948,7 +950,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6); 
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
@@ -959,7 +961,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7); 
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
@@ -970,7 +972,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8); 
     }
     template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
@@ -982,7 +984,7 @@ namespace CGAL {
     {      
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8, t9); 
     }
 #endif
@@ -994,7 +996,7 @@ namespace CGAL {
     { 
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "erase_attribute<i> but i-attributes are disabled");
-      CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).erase(h); 
     }
 
@@ -1004,7 +1006,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "number_of_attributes<i> but i-attributes are disabled");
-      return  CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return  CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).size(); 
     }
 
@@ -1015,7 +1017,7 @@ namespace CGAL {
     { 
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
     }
     
@@ -1024,7 +1026,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers); 
     }
 
@@ -2206,7 +2208,7 @@ namespace CGAL {
 
       // We call the on_split functor
       internal::Apply_cell_functor<Type_attr,
-        typename Type_attr::On_merge>::run(*a1,*a2);
+        typename Type_attr::On_split>::run(*a1,*a2);
 
       // We set the dart of the cell a1 onto adart1.
       a1->set_dart(adart1);

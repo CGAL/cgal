@@ -11,7 +11,7 @@ number based on the <span class="textsc">Gmp</span> library.
 \cgalModels `RealEmbeddable` 
 \cgalModels `Fraction` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 `Gmpq`s are reference counted. 
 

@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 3D Alpha Shapes
+\mainpage User Manual 
 \anchor Chapter_3D_Alpha_Shapes
 \cgalAutoToc
 \authors Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec
@@ -69,7 +69,7 @@ This means in particular that the alpha complex may have
 singular faces. For \f$ 0 \leq k \leq d-1\f$,
 a \f$ k\f$-simplex of the alpha complex is said to be
 singular if it is not a facet of a \f$ (k+1)\f$-simplex of the complex.
-CGAL provides two versions of alpha shapes. In the general mode,
+%CGAL provides two versions of alpha shapes. In the general mode,
 the alpha shapes correspond strictly to the above definition.
 The regularized mode provides a regularized version of the alpha shapes.
 It corresponds to the domain covered by a regularized version
@@ -157,15 +157,13 @@ Given a value of alpha, the class `Fixed_alpha_shape_3<Dt>` represents one
 alpha shape for a given set of points.
 The class includes the underlying triangulation `Dt`
 of the set, and associates to each \f$ k\f$-face of this triangulation
-a classification type.<BR>
-
-The current implementation of this class is dynamic, that is after its construction
+a classification type. This class is dynamic, that is after its construction
 points can be inserted or removed.
 
 \subsection AlphaShape_3DClassificationAndIterators Classification and Iterators
 
 Both classes provide member functions to classify for a (given) value
-of \f$ alpha\f$ the different faces of the triangulation as
+of \f$ \alpha\f$ the different faces of the triangulation as
 `EXTERIOR`, `SINGULAR`, `REGULAR` or 
 `INTERIOR` with respect
 to the alpha shape. A \f$ k\f$-face on the boundary of the alpha complex
@@ -193,10 +191,10 @@ the vertices, edges, facets and cells of the different types
 \section AlphaShape3D_ConceptAndModels Concepts and Models
 
 We currently do not specify concepts for the underlying triangulation
-type. Models that work for a familly alpha-shapes are the instantiations
+type. Models that work for a family of alpha-shapes are the instantiations
 of the classes `Delaunay_triangulation_3` and
 `Periodic_3_Delaunay_triangulation_3` (see
-example \ref l1_SectPeriodicAS3D ). A model that works for a fixed alpha-shape are the instantiations
+example \ref AlphaShape_3DExampleForPeriodicAlphaShapes). A model that works for a fixed alpha-shape are the instantiations
 of the class `Delaunay_triangulation_3`.
 A model that works for a weighted alpha-shape is 
 the class `Regular_triangulation_3`. The triangulation needs a geometric traits class 
@@ -220,7 +218,7 @@ triangulation the vertex and cell classes need to be models to both
 `AlphaShapeVertex_3` and
 `Periodic_3TriangulationDSVertexBase_3` as well as
 `AlphaShapeCell_3` and `Periodic_3TriangulationDSCellBase_3`
-(see example \ref l1_SectPeriodicAS3D ).
+(see example \ref  AlphaShape_3DExampleForPeriodicAlphaShapes).
 
 For the class `Fixed_alpha_shape_3<Dt>`, the requirements of
 the traits class are described in the concepts `FixedAlphaShapeTraits_3`
@@ -235,7 +233,7 @@ and it must be parameterized with vertex and cell classes, which are model of th
 The package provides models `Fixed_alpha_shape_vertex_base_3<Gt>` 
 and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
-\section Alpha_shapes_3AlphaShape3OrFixedAlphaShape3 Alpha_shape_3 or Fixed_alpha_shape_3
+\section Alpha_shapes_3AlphaShape3OrFixedAlphaShape3 Alpha_shape_3 vs.\ Fixed_alpha_shape_3
 
 The class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` represents the whole family
 of alpha shapes for a given set of points while the class `Fixed_alpha_shape_3<Dt>`

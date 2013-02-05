@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -14,11 +16,11 @@ this operation is undefined. Since the ring represented is an integral domain,
 \cgalRefines `AdaptableBinaryFunction` 
 
 \sa `AlgebraicStructureTraits`
-\sa `AlgebraicStructureTraits::Divides`
+\sa `AlgebraicStructureTraits_::Divides`
 
 */
 
-class AlgebraicStructureTraits::IntegralDivision {
+class IntegralDivision {
 public:
 
 /// \name Types 
@@ -58,5 +60,8 @@ template <class NT1, class NT2> result_type operator()(NT1 x, NT2 y);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::IntegralDivision */
+}; /* end IntegralDivision */
+
+} /* end of namespace AlgebraicStructureTraits_ */
+
 

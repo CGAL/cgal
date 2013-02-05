@@ -7,14 +7,14 @@ namespace CGAL {
 The class `Triangulation_data_structure_3` stores a 3D-triangulation data 
 structure and provides the optional 
 geometric functionalities to be used as a parameter for a 
-3D-geometric triangulation (see Chapter \ref chapterTriangulation3). 
+3D-geometric triangulation (see Chapter \ref chapterTriangulation3 "3D Triangulations"). 
 
 The vertices and cells are stored in two nested containers, which are 
 implemented using `Compact_container`. The class may offer some 
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 It is parameterized by base classes for vertices and cells which have to match 
 the requirements for the concepts `TriangulationDSCellBase_3` and 

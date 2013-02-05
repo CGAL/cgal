@@ -7,7 +7,7 @@ The class `Orthogonal_k_neighbor_search` implements approximate`k`-nearest and
 `k`-furthest neighbor searching on a tree 
 using an orthogonal distance class. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 Expects for the first template argument an implementation of the concept `SearchTraits`, 
 for example `Search_traits_2<Simple_cartesian<double> >`. 
@@ -100,7 +100,7 @@ Returns the appropriate past-the-end const iterator.
 iterator end() const; 
 
 /*! 
-\cgalAdvanced Inserts statistics of the search process into the output stream `s`. 
+Inserts statistics of the search process into the output stream `s`. 
 */ 
 std::ostream& statistics(std::ostream& s); 
 

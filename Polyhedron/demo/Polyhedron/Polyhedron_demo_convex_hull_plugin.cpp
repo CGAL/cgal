@@ -74,14 +74,14 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
         std::size_t nb_points=0;
         for(std::list<std::vector<Kernel::Point_3> >::const_iterator it = lines_item->polylines.begin();
             it != lines_item->polylines.end();
-            ++it)  nb_points+=it->size()-1;
+            ++it)  nb_points+=it->size();
 
         std::vector<Kernel::Point_3> all_points;
         all_points.reserve( nb_points );
 
         for(std::list<std::vector<Kernel::Point_3> >::const_iterator it = lines_item->polylines.begin();
             it != lines_item->polylines.end();
-            ++it)  std::copy(it->begin(), CGAL::cpp11::prev(it->end()),std::back_inserter( all_points ) );
+            ++it)  std::copy(it->begin(), it->end(),std::back_inserter( all_points ) );
         
         CGAL::convex_hull_3(all_points.begin(),all_points.end(),*pConvex_hull);
       }

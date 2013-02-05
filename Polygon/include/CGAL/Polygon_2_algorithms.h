@@ -55,9 +55,9 @@ namespace CGAL {
 /// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`,
 ///
 ///
-/// \sa `CGAL::right_vertex_2`
-/// \sa `CGAL::top_vertex_2`
-/// \sa `CGAL::bottom_vertex_2`
+/// \sa `CGAL::right_vertex_2()`
+/// \sa `CGAL::top_vertex_2()`
+/// \sa `CGAL::bottom_vertex_2()`
 /// \sa `CGAL::Polygon_2`
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator left_vertex_2(ForwardIterator first,
@@ -74,9 +74,9 @@ ForwardIterator left_vertex_2(ForwardIterator first,
 /// 	  `less_xy_2_object()` are used.
 /// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
-/// \sa `CGAL::left_vertex_2`
-/// \sa `CGAL::top_vertex_2`
-/// \sa `CGAL::bottom_vertex_2`
+/// \sa `CGAL::left_vertex_2()`
+/// \sa `CGAL::top_vertex_2()`
+/// \sa `CGAL::bottom_vertex_2()`
 /// \sa `CGAL::Polygon_2`
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator right_vertex_2(ForwardIterator first,
@@ -93,9 +93,9 @@ ForwardIterator right_vertex_2(ForwardIterator first,
 /// 	  `less_yx_2_object()` are used.
 /// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
-/// \sa `CGAL::left_vertex_2`
-/// \sa `CGAL::right_vertex_2`
-/// \sa `CGAL::bottom_vertex_2`
+/// \sa `CGAL::left_vertex_2()`
+/// \sa `CGAL::right_vertex_2()`
+/// \sa `CGAL::bottom_vertex_2()`
 /// \sa `CGAL::Polygon_2`
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator top_vertex_2(ForwardIterator first,
@@ -112,9 +112,9 @@ ForwardIterator top_vertex_2(ForwardIterator first,
 /// 	  `less_yx_2_object()` are used.
 /// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
-/// \sa `CGAL::left_vertex_2`
-/// \sa `CGAL::right_vertex_2`
-/// \sa `CGAL::top_vertex_2`
+/// \sa `CGAL::left_vertex_2()`
+/// \sa `CGAL::right_vertex_2()`
+/// \sa `CGAL::top_vertex_2()`
 /// \sa `CGAL::Polygon_2`
 /// \sa `PolygonTraits_2`
 template <class ForwardIterator, class PolygonTraits>
@@ -153,9 +153,9 @@ Bbox_2 bbox_2(InputIterator first,
 ///   - `compute_area_2_object()`
 /// \cgalRequires The value type of `ForwardIterator` must be `Traits::Point_2`.
 /// 
-/// \sa `CGAL::polygon_area_2`
+/// \sa `CGAL::polygon_area_2()`
 /// \sa `PolygonTraits_2`
-/// \sa `CGAL::orientation_2`
+/// \sa `CGAL::orientation_2()`
 /// \sa `CGAL::Polygon_2`
 template <class ForwardIterator, class PolygonTraits>
 void 
@@ -193,7 +193,7 @@ area_2( ForwardIterator first, ForwardIterator last,
 /// 
 /// 
 /// \sa `PolygonTraits_2 `
-/// \sa `CGAL::orientation_2 `
+/// \sa `CGAL::orientation_2()`
 /// \sa `CGAL::Polygon_2 `
 template <class ForwardIterator, class PolygonTraits>
 typename PolygonTraits::FT 
@@ -281,8 +281,8 @@ bool is_simple_2(ForwardIterator first,
 /// \cgalRequires The value type of `ForwardIterator` must be `PolygonTraits::Point_2`,
 ///
 /// \sa `PolygonTraits_2`
-/// \sa `CGAL::bounded_side_2`
-/// \sa `CGAL::is_simple_2`
+/// \sa `CGAL::bounded_side_2()`
+/// \sa `CGAL::is_simple_2()`
 /// \sa `CGAL::Polygon_2`
 /// \sa `Oriented_side`
 template <class ForwardIterator, class Point, class Traits>
@@ -321,7 +321,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 ///
 /// 
 /// \sa `PolygonTraits_2`
-/// \sa `CGAL::oriented_side_2`
+/// \sa `CGAL::oriented_side_2()`
 /// \sa `CGAL::Polygon_2 `
 /// \sa \ref CGAL::Bounded_side
 template <class ForwardIterator, class Point, class PolygonTraits>
@@ -344,7 +344,7 @@ Bounded_side bounded_side_2(ForwardIterator first,
 /// 
 /// 
 /// \sa `PolygonTraits_2`
-/// \sa `CGAL::is_simple_2`
+/// \sa `CGAL::is_simple_2()`
 /// \sa `CGAL::Polygon_2`
 /// \sa `CGAL::Orientation`
 template <class ForwardIterator, class Traits>

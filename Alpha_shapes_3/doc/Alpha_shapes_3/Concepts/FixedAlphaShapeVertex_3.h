@@ -5,7 +5,7 @@
 
 This concept describes the requirements for the base vertex of a alpha shape with a fixed value alpha. 
 
-\cgalRefines `TriangulationVertexBase_3.` 
+\cgalRefines `TriangulationVertexBase_3` 
 
 
 \cgalHasModel `CGAL::Fixed_alpha_shape_vertex_base_3`
@@ -34,13 +34,12 @@ default constructor.
 FixedAlphaShapeVertex_3(); 
 
 /*! 
-constructor setting 
-the point associated to. 
+constructor setting the point. 
 */ 
 FixedAlphaShapeVertex_3(Point p); 
 
 /*! 
-constructor setting the point associated to and an incident cell. 
+constructor setting the point and an incident cell. 
 */ 
 FixedAlphaShapeVertex_3(Point p, const Cell_handle& c); 
 

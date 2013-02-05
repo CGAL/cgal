@@ -1,4 +1,6 @@
 
+namespace AlgebraicStructureTraits_{
+
 /*!
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
@@ -25,7 +27,8 @@ associate being one. The unit part of zero is, by convention, one.
 
 */
 
-class AlgebraicStructureTraits::UnitPart {
+
+class UnitPart {
 public:
 
 /// \name Types 
@@ -53,5 +56,6 @@ result_type operator()(argument_type x);
 
 /// @}
 
-}; /* end AlgebraicStructureTraits::UnitPart */
+}; /* end UnitPart */
 
+} /* end of namespace AlgebraicStructureTraits_ */

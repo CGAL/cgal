@@ -4,9 +4,9 @@ namespace CGAL {
 \ingroup PkgBoundingVolumes
 
 The class 
-`Min_sphere_of_points_d_traits_3<K,FT,UseSqrt,Algorithm>` is a 
-model for concept `MinSphereOfSpheresTraits`. It uses the \cgal 
-type `Point_3` to represent circles. 
+`Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>` is a 
+model for concept `MinSphereOfSpheresTraits`. It uses a pair of \cgal 
+`Point_3` and `FT` to represent spheres.
 
 \cgalModels `MinSphereOfSpheresTraits`
 
@@ -33,7 +33,7 @@ public:
 /// @{
 
 /*! 
-is the constant 2, i.e. the dimension of \f$ \R^2\f$. 
+is the constant 3, i.e. the dimension of \f$ \R^3\f$. 
 */ 
 typedef Hidden_type D; 
 
@@ -72,7 +72,7 @@ typedef Hidden_type Point;
 
 /*! 
 is a typedef to 
-`Point`. 
+`std::pair<Point,Radius>`. 
 */ 
 typedef Hidden_type Sphere; 
 

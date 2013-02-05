@@ -25,7 +25,7 @@
 #include <CGAL/Unique_hash_map.h> 
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
 #include <boost/mpl/if.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>

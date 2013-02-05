@@ -5,28 +5,38 @@ namespace CGAL {
 
 <span style="display:none">\f$ \def\A{{\cal A}} \f$ \f$ \def\S{{\cal S}} \f$</span>
 
-The first two parameters denote the first and past-the-end iterators 
-of the input segments. The third parameter is a reference to a 
-container of the output polylines. Since a polyline is composed of a 
-sequence of points, a polyline is a container itself. The fifth 
-parameter determines whether to apply ISR or SR. 
+\tparam Traits must be a model of `SnapRoundingTraits_2`.
+\tparam InputIterator must be an iterator with value type `Traits::Segment_2`.
+\tparam OutputContainer must be a container with a method `push_back(const OutputContainer::value_type& c)`, 
+where `OutputContainer::value_type` must be a container with a method `push_back(const Traits::Point_2& p)`
 
-The fourth parameter denotes the pixel size \f$ w\f$. The plane will be 
-tiled with square pixels of width \f$ w\f$ such that the origin is the 
-center of a pixel. The sixth parameter denotes the output 
-representation. If the value of the sixth parameter is <I>true</I> 
+\param begin,end The first two parameters denote the iterator range
+of the input segments. 
+
+\param output_container is a reference to a 
+container of the output polylines. Since a polyline is composed of a 
+sequence of points, a polyline is a container itself.
+
+\param do_isr The fifth parameter determines whether to apply ISR or SR. 
+
+\param pixel_size The fourth parameter denotes the pixel size `w`. The plane will be 
+tiled with square pixels of width `w` such that the origin is the 
+center of a pixel. `pixel_size` must have a positive value.
+
+\param int_output The sixth parameter denotes the output 
+representation. If the value of the sixth parameter is `true` 
 then the centers of pixels constitute the integer grid, and hence the 
 vertices of the output polylines will be integers. For example, the 
 coordinates of the center of the pixel to the right of the pixel 
-containing the origin will be \f$ (1,0)\f$ regardless of the pixel width. 
-If the value of the sixth parameter is <I>false</I>, then the centers 
+containing the origin will be `(1,0)` regardless of the pixel width. 
+If the value of the sixth parameter is `false`, then the centers 
 of hot pixels (and hence the vertices of the output polylines) will 
 bear their original coordinates, which may not necessarily be 
 integers. In the latter case, the coordinates of the center of the 
 pixel to the right of the pixel containing the origin, for example, 
-will be \f$ (w,0)\f$. 
+will be `(w,0)`. 
 
-The seventh (and last) parameter is briefly described next; for a 
+\param number_of_kd_trees The seventh parameter is briefly described later on this page; for a 
 detailed description see \cite cgal:hp-isr-02. 
 
 Snap Rounding (SR, for short) is a well known method for converting 
@@ -65,9 +75,9 @@ this is a basic requirement of SR.
 
 
 
-\pre <I>pixel_size</I> must have a positive value and <I>number_of_kd_trees</I> must be a positive integer. 
+\cgalHeading{About the Number of kd-Trees}
 
-\cgalAdvanced A basic query used in the algorithm is to report the hot pixels of 
+A basic query used in the algorithm is to report the hot pixels of 
 size \f$ w\f$ that a certain segment \f$ s\f$ intersects. An alternative way to 
 do the same is to query the hot pixels' centers contained in a 
 Minkowski sum of \f$ s\f$ with a pixel of width \f$ w\f$ centered at the origin; 
@@ -78,7 +88,7 @@ in a two-dimensional kd-tree which stores the centers of hot
 pixels. Since \f$ B(M(s))\f$ in general is larger than \f$ M(s)\f$, we still 
 need to filter out the hot pixels which do not intersect \f$ s\f$. 
 
-\cgalAdvanced While this approach is easy to implement with CGAL, it may incur 
+While this approach is easy to implement with CGAL, it may incur 
 considerable overhead since the area of \f$ B(M(s))\f$ may be much larger 
 than the area of \f$ M(s)\f$, possibly resulting in many redundant hot pixels 
 to filter out. Our heuristic solution, which we describe next, is to 
@@ -88,7 +98,7 @@ pixels, rotated by a different angle in the first quadrant of the
 plane; for our purpose, a rotation by angles outside this quadrant 
 is symmetric to a rotation by an angle in the first quadrant. 
 
-\cgalAdvanced Given a parameter \f$ c\f$, the angles of rotation are \f$ (i - 1) 
+Given a parameter \f$ c\f$, the angles of rotation are \f$ (i - 1) 
 \frac{\pi}{2c}, i=1,\ldots,c\f$, and we construct a kd-tree 
 corresponding to each of these angles. Then for a query segment \f$ s\f$, 
 we choose the kd-tree for which the area of \f$ B(M(s))\f$ is the smallest, 
@@ -102,7 +112,7 @@ than one kd-tree is far greater than the time saved by having to
 filter out less hot pixels (sparse arrangements demonstrate this 
 behavior), and there are inputs which benefit from using several 
 kd-trees. Thus, the user can control the number of kd-trees 
-with the parameter <I>number_of_kd_trees</I>. Typically, but not 
+with the parameter  `number_of_kd_trees`. Typically, but not 
 always, one kd-tree (the default) is sufficient. 
 */
 

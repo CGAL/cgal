@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `FixedWeightedAlphaShapeTraits_3` describes the requirements 
-for the geometric traits class of the underlying regular triangulation of a weighted alpha shape with fixed alpha value. 
+for the geometric traits class of the underlying Regular triangulation of a weighted alpha shape with fixed alpha value. 
 
 \cgalRefines `RegularTriangulationTraits_3` 
 

@@ -17,8 +17,8 @@ Multiplicities are not reported.
 
 \sa `RootOf_2` 
 \sa `CGAL::Root_of_traits<RT>` 
-\sa `CGAL::make_root_of_2` 
-\sa `CGAL::make_sqrt` 
+\sa `CGAL::make_root_of_2()` 
+\sa `CGAL::make_sqrt()` 
 \sa `CGAL::Sqrt_extension<NT,ROOT>`
 
 */
@@ -44,8 +44,8 @@ Returns the smallest real root of the polynomial \f$ aX^2+bX+c\f$ if
 
 \sa `RootOf_2` 
 \sa `CGAL::Root_of_traits<RT>`
-\sa `CGAL::make_sqrt` 
-\sa `CGAL::compute_roots_of_2` 
+\sa `CGAL::make_sqrt()` 
+\sa `CGAL::compute_roots_of_2()` 
 \sa `CGAL::Sqrt_extension<NT,ROOT>`
 */
 template <typename RT>
@@ -66,8 +66,8 @@ Constructs the number \f$ \alpha+ \beta\sqrt{\gamma}\f$.
 
 \sa `RootOf_2` 
 \sa `CGAL::Root_of_traits<RT>`
-\sa `CGAL::make_sqrt` 
-\sa `CGAL::compute_roots_of_2`
+\sa `CGAL::make_sqrt()` 
+\sa `CGAL::compute_roots_of_2()`
 \sa `CGAL::Sqrt_extension<NT,ROOT>`
 */
 template <typename RT>
@@ -90,7 +90,7 @@ can represent algebraic extensions of degree \f$ 2\f$.
 \pre \f$ x \leq0 \f$
 
 \sa `RootOf_2` 
-\sa `CGAL::make_root_of_2` 
+\sa `CGAL::make_root_of_2()` 
 \sa `CGAL::Root_of_traits<RT>` 
 */
 template <typename RT> Root_of_traits<RT>::Root_of_2 make_sqrt(const RT& x);
@@ -109,8 +109,8 @@ algebraic numbers of degree 2 over `RT`. Moreover, the class provides
 `Root_of_1`, which represents the quotient field of `RT`. 
 
 \sa `RootOf_2` 
-\sa `CGAL::compute_roots_of_2`
-\sa `CGAL::make_root_of_2`
+\sa `CGAL::compute_roots_of_2()`
+\sa `CGAL::make_root_of_2()`
 
 */
 template< typename RT >

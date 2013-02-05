@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3Functions
 
-The function `perturb_mesh_3` is a mesh optimizer that 
+The function `perturb_mesh_3()` is a mesh optimizer that 
 improves the quality of a Delaunay mesh 
 by changing the mesh vertices positions. 
 
@@ -32,13 +32,15 @@ Therefore, when calling the function, the parameters can be provided in any orde
 provided that the names of the parameters are used 
 (see example at the bottom of this page). 
 
-\param parameters::time_limit 
+\cgalHeading{Named Parameters}
+
+- <b>`parameters::time_limit`</b>
 is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
 measured using `Timer`. 
 The default value is 0 and means that there is no time limit. 
 
-\param parameters::sliver_bound 
+- <b>`parameters::sliver_bound`</b>
 is designed to give, in degree, a targeted 
 lower bound on dihedral angles of mesh cells. 
 The function `perturb_mesh_3()` runs as long as steps are successful 
@@ -50,9 +52,8 @@ the perturber then runs as long as
 steps are successful. 
 
 
-### Return Values ##
-
-The function `perturb_mesh_3()` returns a value of type `Mesh_optimization_return_code` 
+\return
+The function `perturb_mesh_3()` returns a value of type `CGAL::Mesh_optimization_return_code` 
 which is: 
 <UL> 
 <LI>`CGAL::BOUND_REACHED` when the targeted bound for the smallest dihedral angle in the mesh is reached. 
@@ -60,7 +61,8 @@ which is:
 <LI>`CGAL::CANT_IMPROVE_ANYMORE` when the perturbation process stops because the last step is unsuccessful. 
 </UL> 
 
-### Example ## 
+
+\cgalHeading{Example}
 
 \code{.cpp} 
 // Perturb until every dihedral angle of the mesh is >= 10 degrees 
@@ -71,11 +73,11 @@ perturb_mesh_3(c3t3,
 \endcode 
 
 \sa `CGAL::Mesh_optimization_return_code` 
-\sa `CGAL::make_mesh_3` 
-\sa `CGAL::refine_mesh_3` 
-\sa `CGAL::exude_mesh_3` 
-\sa `CGAL::lloyd_optimize_mesh_3` 
-\sa `CGAL::odt_optimize_mesh_3` 
+\sa `CGAL::make_mesh_3()` 
+\sa `CGAL::refine_mesh_3()` 
+\sa `CGAL::exude_mesh_3()` 
+\sa `CGAL::lloyd_optimize_mesh_3()` 
+\sa `CGAL::odt_optimize_mesh_3()` 
 
 */
 

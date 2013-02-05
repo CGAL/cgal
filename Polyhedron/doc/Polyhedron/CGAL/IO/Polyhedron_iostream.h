@@ -18,10 +18,10 @@ format automatically and can read both.
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
-\sa operator<<(std::ostream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)
+\sa `operator<<(std::ostream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)`
 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This operator is implemented using the modifier mechanism for 
 polyhedral surfaces and the `CGAL::Polyhedron_incremental_builder_3` 
@@ -51,7 +51,7 @@ without comments.
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_incremental_builder_3<HDS>`
-\sa operator>>(std::istream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)
+\sa `operator>>(std::istream&, CGAL::Polyhedron_3<PolyhedronTraits_3>&)`
 
 */
 template <class PolyhedronTraits_3>

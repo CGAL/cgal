@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Estimation of Local Differential Properties of Point-Sampled Surfaces
+\mainpage User Manual 
 \anchor Chapter_Estimation_of_Local_Differential_Properties_of_Point-Sampled_Surfaces
 \anchor chapJetfitting3
 \cgalAutoToc
@@ -152,9 +152,9 @@ vector may not be good. The nearer this direction to the tangent
 plane the worse the estimation.
 
 <LI>As observed in \cite cgal:cp-edqpf-05 (section 3.1), the
-interpolating problem is not <I>poised</I> if the points project,
+interpolating problem is not well posed if the points project,
 into the fitting frame, onto an algebraic curve of degree \f$ d\f$. More
-generally, the problem is ill poised if the condition number is too
+generally, the problem is ill posed if the condition number is too
 large.
 </UL>
 In these cases, even if a result is provided, the estimation may not
@@ -219,14 +219,14 @@ In addition, the class `Monge_via_jet_fitting` stores
 
 \subsection Jet_fitting_3TemplateParameters Template Parameters
 
-\subsection Jet_fitting_3TemplateparameterDataKernel Template parameter DataKernel
+\subsubsection Jet_fitting_3TemplateparameterDataKernel Template parameter DataKernel
 
 This concept provides the types for the input sample points, together
 with \f$ 3d\f$ vectors and a number type. It is used as template for the
 class `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. Typically, one can use
 `Cartesian<double>`.
 
-\subsection Jet_fitting_3TemplateparameterLocalKernel Template parameter LocalKernel
+\subsubsection Jet_fitting_3TemplateparameterLocalKernel Template parameter LocalKernel
 
 This is a parameter of the class 
 `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`. 
@@ -240,14 +240,14 @@ these types are converted back to `DataKernel` ones. Typically,
 one can use
 `Cartesian<double>` which is the default.
 
-\subsection Jet_fitting_3TemplateparameterSvdTraits Template parameter SvdTraits
+\subsubsection Jet_fitting_3TemplateparameterSvdTraits Template parameter SvdTraits
 
 This concept provides the number, vector and matrix types for algebra
 operations required by the fitting method in
 `Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>` 
 . The main method is a linear solver using a singular value decomposition.
 
-\subsection Jet_fitting_3CompatibilityRequirements Compatibility Requirements
+\subsubsection Jet_fitting_3CompatibilityRequirements Compatibility Requirements
 
 To solve the fitting problem, the sample points are first converted
 from the `DataKernel` to the `LocalKernel` (this is done using
@@ -279,7 +279,7 @@ vertices of a given mesh. The neighborhood of a given vertex is
 computed using rings on the triangulation. Results are twofold:
 <UL>
 <LI>a human readable text file featuring the `Monge_via_jet_fitting::Monge_form` and
-numerical informations on the computation : condition number and the
+numerical informations on the computation: condition number and the
 PCA basis;
 <LI>another text file that records raw data (better for a vizualization
 post-processing).
@@ -308,8 +308,8 @@ The three bases involved in the estimation.
 
 \subsection Jet_fitting_3ComputingaBasisfortheFitting Computing a Basis for the Fitting
 
-<B>Input : samples
-Output : fitting-basis</B>
+<B>Input: samples
+Output: fitting-basis</B>
 
 Performing a PCA requires diagonalizing a symmetric matrix. This
 analysis gives an orthonormal basis whose \f$ z\f$-axis is provided by the
@@ -331,8 +331,8 @@ direction.
 
 \subsection secsolving Solving the Interpolation / Approximation Problem 
 
-<B>Input : samples, fitting-basis 
-Output : coefficients \f$ A_{i,j}\f$
+<B>Input: samples, fitting-basis 
+Output: coefficients \f$ A_{i,j}\f$
 of the bivariate fitted polynomial in the fitting-basis </B>
 
 Computations are done in the fitting-basis and the origin is the point
@@ -393,7 +393,7 @@ D_r & 0_{r,\ N_d-r}\\
 \f$
 The number \f$ r\f$, which is the number of non zero singular values, is
 strictly lower than \f$ N_d\f$ if the system is under constrained. In any
-case, the unique solution which minimize \f$ ||A||_2\f$ is given by :
+case, the unique solution which minimize \f$ ||A||_2\f$ is given by:
 
 \f[
 \begin{equation}
@@ -433,10 +433,10 @@ condition number of the system. For more on these alternatives, see
 
 \subsection Jet_fitting_3PrincipalCurvatureDirections Principal Curvature / Directions
 
-<B>Input : coefficients of the fit \f$ A_{i,j}\f$, 
+<B>Input: coefficients of the fit \f$ A_{i,j}\f$, 
 fitting-basis 
 
-Output : Monge basis wrt fitting-basis and world-basis
+Output: Monge basis wrt fitting-basis and world-basis
 </B>
 
 In the fitting basis, we have determined a height function expressed
@@ -482,10 +482,10 @@ translated by \f$ p\f$, i.e. the coordinates of the origin point are
 
 \subsection Jet_fitting_3ComputingHigherOrderMongeCoefficients Computing Higher Order Monge Coefficients
 
-<B>Input : coefficients of the fit, Monge basis wrt fitting-basis (\f$ P_{F
+<B>Input: coefficients of the fit, Monge basis wrt fitting-basis (\f$ P_{F
 \rightarrow M}\f$)
 
-Output : third and fourth order coefficients of Monge</B>
+Output: third and fourth order coefficients of Monge</B>
 
 We use explicit formula. The implicit equation of the fitted
 polynomial surface in the fitting-basis with origin the point
@@ -518,7 +518,7 @@ and \f$ g\f$ by \f$ f_{i,j,k}=\frac{\partial^{i+j+k}f}{\partial^ix
 \f$ g_{0,2}=k_2\f$. The partial derivative of order \f$ n\f$ of \f$ f\f$ depends on
 the matrix \f$ P_{F\rightarrow M}\f$ and the partial derivatives of order
 at most \f$ n\f$ of \f$ J_{A,d}\f$. The third and fourth order coefficients of are
-computed with the implicit function theorem. For instance :
+computed with the implicit function theorem. For instance:
 
 \f{eqnarray*}{
 &b_0=g_{3,0}=-{\frac { f_{3,0,0} f_{0,0,1} -3\, f_{1,0,1} f_{2,0,0} }{

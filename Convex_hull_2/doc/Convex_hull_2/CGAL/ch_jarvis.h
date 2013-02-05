@@ -14,7 +14,7 @@ cyclic sequence of extreme points is cut into a linear sequence.
 The default traits class `Default_traits` is the kernel in which the 
 value type of `InputIterator` is defined. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>The value type of `InputIterator` and 
@@ -30,15 +30,15 @@ functions that return instances of these types:
 </UL> 
 </OL> 
 
-\sa `CGAL::ch_akl_toussaint` 
-\sa `CGAL::ch_bykat` 
-\sa `CGAL::ch_eddy` 
-\sa `CGAL::ch_graham_andrew` 
-\sa `CGAL::ch_jarvis_march` 
-\sa `CGAL::ch_melkman` 
-\sa `CGAL::convex_hull_2` 
+\sa `CGAL::ch_akl_toussaint()` 
+\sa `CGAL::ch_bykat()` 
+\sa `CGAL::ch_eddy()` 
+\sa `CGAL::ch_graham_andrew()` 
+\sa `CGAL::ch_jarvis_march()` 
+\sa `CGAL::ch_melkman()` 
+\sa `CGAL::convex_hull_2()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 This function uses the Jarvis march (gift-wrapping) 
 algorithm \cite j-ichfs-73. This algorithm requires \f$ O(n h)\f$ time 
@@ -66,7 +66,7 @@ points from a given set of input points that line between two input points.
 The default traits class `Default_traits` is the kernel in which the 
 type `ForwardIterator::value_type` is defined. 
 
-### Requirements ###
+\cgalHeading{Requirements}
 
 <OL> 
 <LI>`ForwardIterator::value_type` and 
@@ -82,11 +82,11 @@ functions that return instances of these types:
 </UL> 
 </OL> 
 
-\sa `CGAL::ch_jarvis` 
-\sa `CGAL::lower_hull_points_2` 
-\sa `CGAL::upper_hull_points_2` 
+\sa `CGAL::ch_jarvis()` 
+\sa `CGAL::lower_hull_points_2()` 
+\sa `CGAL::upper_hull_points_2()` 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 The function uses the Jarvis march (gift-wrapping) algorithm \cite j-ichfs-73. 
 This algorithm requires \f$ O(n h)\f$ time in the worst

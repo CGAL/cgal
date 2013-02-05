@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Intersection of Curves
+\mainpage User Manual 
 \anchor Chapter_2D_Intersection_of_Curves
 \anchor I1_ChapterSweepLine
 
@@ -32,7 +32,7 @@ vertical segments, and tangency between curves. The robustness of the
 algorithm is guaranteed if the functions are instantiated with a traits
 class that employs certified computations. This traits class must be a model
 of the `ArrangementTraits_2` concept - see the
-Chapter \ref chapterArrangement_on_surface_2 for more details.
+Chapter \ref chapterArrangement_on_surface_2 "2D Arrangements" for more details.
 
 The complexity of the sweep-line algorithm is \f$ O((n + k)\log{n})\f$ where \f$ n\f$
 is the number of the input curves and \f$ k\f$ is the number of

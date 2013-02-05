@@ -50,7 +50,7 @@ vertices when creating new facets.
 \sa `HalfedgeDS`
 \sa `CGAL::Modifier_base`
 
-### Example ###
+\cgalHeading{Example}
 
 A modifier class creates a new triangle in the halfedge data structure 
 using the incremental builder. 

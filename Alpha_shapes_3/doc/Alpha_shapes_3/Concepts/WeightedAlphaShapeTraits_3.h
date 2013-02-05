@@ -5,7 +5,7 @@
 
 The concept `WeightedAlphaShapeTraits_3` describes the requirements 
 for the geometric traits class 
-of the underlying regular triangulation of a weighted alpha shape. 
+of the underlying Regular triangulation of a weighted alpha shape. 
 
 \cgalRefines `RegularTriangulationTraits_3` 
 

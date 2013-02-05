@@ -10,9 +10,9 @@ set using the functions `min_rectangle_2`,
 
 \cgalHasModel `CGAL::Min_quadrilateral_default_traits_2<K>` 
 
-\sa `CGAL::min_rectangle_2` 
-\sa `CGAL::min_parallelogram_2` 
-\sa `CGAL::min_strip_2` 
+\sa `CGAL::min_rectangle_2()` 
+\sa `CGAL::min_parallelogram_2()` 
+\sa `CGAL::min_strip_2()` 
 
 */
 

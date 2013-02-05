@@ -16,7 +16,7 @@ the kernel is only an approximation of Euclidean geometry.
 
 \cgalModels `Kernel`
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 In contrast to `Homogeneous`, no reference counting 
 is used internally. This eases debugging, but may slow down algorithms 

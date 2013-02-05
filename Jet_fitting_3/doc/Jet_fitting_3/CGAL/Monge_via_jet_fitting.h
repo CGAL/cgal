@@ -93,7 +93,7 @@ Monge_form();
 Point on the fitted surface where 
 differential quantities are computed. 
 */ 
-Point_3 origin(); 
+Point_3 origin() const; 
 
 /// @}
 
@@ -103,17 +103,17 @@ Point_3 origin();
 /*! 
 
 */ 
-Vector_3 maximal_principal_direction(); 
+Vector_3 maximal_principal_direction() const; 
 
 /*! 
 
 */ 
-Vector_3 minimal_principal_direction(); 
+Vector_3 minimal_principal_direction() const; 
 
 /*! 
 
 */ 
-Vector_3 normal_direction(); 
+Vector_3 normal_direction() const; 
 
 /// @}
 
@@ -123,17 +123,17 @@ Vector_3 normal_direction();
 /*! 
 \f$ i=0\f$ for the maximum and \f$ i=1\f$ for the minimum. 
 */ 
-FT principal_curvatures(size_t i); 
+FT principal_curvatures(size_t i)const; 
 
 /*! 
 \f$ 0 \leq i \leq3\f$ 
 */ 
-FT third_order_coefficients(size_t i); 
+FT third_order_coefficients(size_t i) const; 
 
 /*! 
 \f$ 0 \leq i \leq4\f$ 
 */ 
-FT fourth_order_coefficients(size_t i); 
+FT fourth_order_coefficients(size_t i) const; 
 
 /// @} 
 
@@ -148,7 +148,7 @@ given_normal.monge_normal \f$ < 0\f$ then change the orientation: if
 \f$ z=g(x,y)\f$ in the basis (d1,d2,n) then in the basis (d2,d1,-n) 
 \f$ z=h(x,y)=-g(y,x)\f$. 
 */ 
-void comply_wrt_given_normal(const Vector_3 given_normal); 
+void comply_wrt_given_normal(const Vector_3& given_normal); 
 
 /// @}
 

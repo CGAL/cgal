@@ -1,6 +1,16 @@
-/// \defgroup PkgTriangulation2 2D Periodic Triangulations
-/// \defgroup PkgTriangulation2Concepts Concepts
-/// \ingroup PkgPeriodicTriangulation2
+/// \defgroup PkgPeriodic2Triangulation2 2D Periodic Triangulations Reference
+
+/// \defgroup PkgPeriodic2Triangulation2Concepts Concepts
+/// \ingroup PkgPeriodic2Triangulation2
+
+/// \defgroup PkgPeriodic2Triangulation2MainClasses Main Classes
+/// \ingroup PkgPeriodic2Triangulation2
+
+/// \defgroup PkgPeriodic2Triangulation2TraitsClasses Traits Classes
+/// \ingroup PkgPeriodic2Triangulation2
+
+/// \defgroup PkgPeriodic2Triangulation2Enums Enums
+/// \ingroup PkgPeriodic2Triangulation2
 
 /*!
 \addtogroup PkgPeriodic2Triangulation2
@@ -15,17 +25,79 @@
 \cgalPkgSummaryEnd
  
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.3}
-\cgalPkgDependsOn{\ref PkgTriangulation2, \ref PkgPeriodic3Triangulation3}
+\cgalPkgSince{3.5}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary and \ref PkgPeriodic3Triangulation3Summary}
 \cgalPkgBib{cgal:k-pt2-09}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-//\cgalPkgDemo{Periodic Delaunay Triangulation,p2t2_triangulation_2.zip}
-//\cgalPkgDemo{Regular Triangulation,regular_triangulation_2.zip}
-//\cgalPkgDemo{Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
+\cgalPkgDemo{Periodic Delaunay Triangulation,Periodic_2_Delaunay_triangulation_2.zip}
 \cgalPkgShortInfoEnd
  
 \cgalPkgDescriptionEnd
  
 */
 
+The main classes of the 2D Periodic Triangulation package are
+`Periodic_2_triangulation_2` and
+`Periodic_2_Delaunay_triangulation_2`. They contain functionality
+to access triangulations and to run queries on
+them. `Periodic_2_Delaunay_triangulation_2` can construct and
+modify Delaunay triangulations. It takes the geometric traits as well
+as the triangulation data structure as template parameters.
+
+The geometric traits class must be a model of the concept
+`Periodic_2DelaunayTriangulationTraits_2`. It contains all
+predicates and constructions that are needed by the functions in the
+triangulation classes.
+
+The package uses `Triangulation_data_structure_2` to represent the
+triangulation. The faces and vertices need to be models of the
+concepts `Periodic_2TriangulationDSFaceBase_2` and
+`TriangulationDSVertexBase_2`, respectively.
+A triangulation is stored as a collection of vertices and faces that
+are linked together through incidence and adjacency relations. Each
+face gives access to its three incident vertices and to its three
+adjacent cells. Each vertex gives access to one of its incident
+faces.
+
+The three vertices of a cell are indexed with 0, 1, and 2 in positive
+orientation, the positive orientation being defined by the orientation
+of the underlying space \f$ \mathbb T_c^3\f$. The neighbors of a face are
+also indexed with 0, 1, 2 in such a way that the neighbor indexed
+by \f$ i\f$ is opposite to the vertex with the same index. See
+Figure  \cgalFigureRef{P2Triangulation2figorient}.
+
+In order to be able to specify the triangle that contain vertices
+both inside and outside the original domain we store additional
+offset information for each vertex of a face. These offsets are models
+of the concept `Periodic_2Offset_2`.
+
+## Concepts ##
+
+- `Periodic_2DelaunayTriangulationTraits_2`
+- `TriangulationDataStructure_2`
+- `Periodic_2TriangulationDSCellBase_2`
+- `TriangulationDSVertexBase_2`
+- `Periodic_2Offset_2`
+
+## Classes ##
+
+### Main Classes ###
+
+- `CGAL::Periodic_2_triangulation_2<PT,TDS>`
+- `CGAL::Periodic_2_Delaunay_triangulation_2<PT,TDS>`
+// TODO(NGHK): - `CGAL::Periodic_2_triangulation_hierarchy_2<PTr>`
+- `CGAL::Periodic_2_triangulation_ds_cell_base_2<>`
+- `CGAL::Periodic_2_triangulation_ds_vertex_base_3<>`
+- `CGAL::Periodic_2_offset_2`
+
+### Traits Classes ###
+
+- `CGAL::Periodic_2_triangulation_traits_2<Traits,Periodic_2Offset_2>`
+
+## Enums ##
+
+- `CGAL::Periodic_2_triangulation_2::Iterator_type`
+- `CGAL::Periodic_2_triangulation_2::Locate_type`
+
+*/
 

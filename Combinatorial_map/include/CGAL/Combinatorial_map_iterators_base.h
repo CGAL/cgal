@@ -21,6 +21,8 @@
 #define CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH 1
 
 #include <queue>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 

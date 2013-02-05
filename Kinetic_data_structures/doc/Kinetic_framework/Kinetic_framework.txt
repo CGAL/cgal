@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage Kinetic Framework
+\mainpage User Manual 
 \anchor Chapter_Kinetic_Framework
 \cgalAutoToc
 
@@ -10,7 +10,7 @@ namespace CGAL {
 This chapter describes a framework for implementing kinetic data
 structures and sweepline algorithms. If you just would like to use
 existing kinetic data structures, please read
-Chapter \ref chapterkds instead. Readers wishing to brush up on
+Chapter \ref chapterkds "Kinetic Data Structures" instead. Readers wishing to brush up on
 their familiarity with kinetic data structures or better understand
 the terminology we use should read Section \ref seckds_intro of that
 chapter. A brief overview of the framework can be found in

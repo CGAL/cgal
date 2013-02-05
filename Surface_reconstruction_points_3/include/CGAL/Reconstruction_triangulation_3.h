@@ -33,7 +33,7 @@
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/centroid.h>
 
-#include <boost/random.hpp>
+#include <boost/random/random_number_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
 
 #include <vector>

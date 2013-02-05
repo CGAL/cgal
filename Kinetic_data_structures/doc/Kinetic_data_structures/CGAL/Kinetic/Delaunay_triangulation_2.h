@@ -34,7 +34,7 @@ whenever the triangulation changes.
 \sa `Kinetic::Delaunay_triangulation_default_visitor_2`
 \sa `Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>`
 \sa `Kinetic::Delaunay_triangulation_event_log_visitor_2`
-\sa `Kinetic::Qt_Delaunay_triangulation_2`
+\sa `Kinetic::Qt_triangulation_2`
 
 */
 template< typename Traits, typename Visitor, typename Triangulation >

@@ -16,7 +16,7 @@ The template parameter `T` is specified via an extended kernel
 concept. `T` must be a model of the concept 
 `ExtendedKernelTraits_2`. 
 
-### Exploration - Point location - Ray shooting ###
+\cgalHeading{Exploration - Point location - Ray shooting}
 
 As Nef polyhedra are the result of forming complements 
 and intersections starting from a set `H` of halfspaces that are 
@@ -25,7 +25,7 @@ an attributed plane map \f$ M = (V,E,F)\f$. For topological queries
 within `M` the following types and operations allow exploration 
 access to this structure. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Nef polyhedra are implemented on top of a halfedge data structure and 
 use linear space in the number of vertices, edges and facets. 
@@ -56,7 +56,7 @@ the minimum weight triangulation is conjectured to be NP hard). Thus
 we have no runtime guarantee but a strong experimental motivation for 
 its approximation. 
 
-### Example ###
+\cgalHeading{Example}
 
 Nef polyhedra are parameterized by a so-called extended geometric 
 kernel. There are three kernels, one based on a homogeneous 
@@ -693,7 +693,7 @@ topologically closed by the frame edges. No standard point can be
 placed outside the frame.
 </b></center>
 
-### Creation ###
+\cgalHeading{Creation}
 
 `Explorer` is copy constructable and assignable. An object can be 
 obtained via the `Nef_polyhedron_2::explorer()` method of 

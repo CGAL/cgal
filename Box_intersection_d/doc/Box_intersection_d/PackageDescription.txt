@@ -5,17 +5,17 @@
 /// \defgroup PkgBoxIntersectionDClasses Classes
 /// \ingroup PkgBoxIntersectionD
 
-/// \defgroup PkgBoxIntersectionD_box_intersection_d box_intersection_d
+/// \defgroup PkgBoxIntersectionD_box_intersection_d CGAL::box_intersection_d()
 /// \ingroup PkgBoxIntersectionD
 
 
-/// \defgroup PkgBoxIntersectionD_box_intersection_all_pairs_d box_intersection_all_pairs_d
+/// \defgroup PkgBoxIntersectionD_box_intersection_all_pairs_d CGAL::box_intersection_all_pairs_d()
 /// \ingroup PkgBoxIntersectionD
 
-/// \defgroup PkgBoxIntersectionD_box_self_intersection_d box_self_intersection_d
+/// \defgroup PkgBoxIntersectionD_box_self_intersection_d CGAL::box_self_intersection_d()
 /// \ingroup PkgBoxIntersectionD
 
-/// \defgroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d box_self_intersection_all_pairs_d
+/// \defgroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d CGAL::box_self_intersection_all_pairs_d()
 /// \ingroup PkgBoxIntersectionD
 /*!
 \addtogroup PkgBoxIntersectionD

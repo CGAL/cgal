@@ -8,8 +8,8 @@ by `y_monotone_partition_is_valid_2` for testing the validity of a
 
 \cgalHasModel `CGAL::Partition_traits_2<R>` 
 
-\sa `CGAL::partition_is_valid_2` 
-\sa `CGAL::y_monotone_partition_2` 
+\sa `CGAL::partition_is_valid_2()` 
+\sa `CGAL::y_monotone_partition_2()` 
 
 */
 

@@ -9,11 +9,11 @@ namespace CGAL {
 The class `Ambient_dimension` allows to retrieve the dimension of the ambient space of 
 a type `T` in a kernel `K`. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The parameter `K` has the default value `Kernel_traits<T>::Kernel>`. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following retrieves the dimension of a point type. 
 
@@ -28,7 +28,7 @@ assert(dimension == 2);
 \sa `CGAL::Feature_dimension<T, K>` 
 
 */
-template< typename T, typename K >
+template< typename T, typename K = typename Kernel_traits<T>::Kernel >
 class Ambient_dimension {
 public:
 
@@ -66,7 +66,7 @@ for dispatching functions based on the dimension of an object, as provided
 by the `dim` parameter. It is useful in cases where it is not more 
 practical to pass the dimension as a template parameter directly. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following code declares two functions constructing two points at the origin, 
 either in 2D or in 3D. 
@@ -107,7 +107,7 @@ for dispatching functions based on the dimension of an object.
 `Dynamic_dimension_tag` indicates that the dimension is not known at compile-time. 
 `Dimension_tag` is the tag class dealing with compile-time dimensions. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following code declares two functions constructing two points at the origin, 
 either in 2D or in 3D. 
@@ -138,11 +138,11 @@ public:
 The class `Feature_dimension` allows to retrieve the geometric dimension of a type `T` 
 in a kernel `K`. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The parameter `K` has the default value `Kernel_traits<T>::Kernel`. 
 
-### Example ###
+\cgalHeading{Example}
 
 The following retrieves the dimension of a point type. 
 
@@ -157,7 +157,7 @@ assert(dimension == 0);
 \sa `CGAL::Ambient_dimension<T, K>` 
 
 */
-template< typename T, typename K >
+template< typename T, typename K = typename Kernel_traits<T>::Kernel >
 class Feature_dimension {
 public:
 

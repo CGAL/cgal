@@ -10,8 +10,8 @@ used with the function `is_y_monotone_2` that tests whether a sequence of
 \cgalHasModel `CGAL::Kernel_traits_2` 
 
 \sa `CGAL::Is_y_monotone_2<Traits>` 
-\sa `CGAL::y_monotone_partition_2` 
-\sa `CGAL::y_monotone_partition_is_valid_2` 
+\sa `CGAL::y_monotone_partition_2()` 
+\sa `CGAL::y_monotone_partition_is_valid_2()` 
 
 */
 

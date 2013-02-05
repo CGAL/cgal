@@ -9,6 +9,12 @@
 /// \defgroup PkgSpatialSortingUtils Utilities
 /// \ingroup PkgSpatialSorting
 
+/// \defgroup PkgSpatialSortingFunctions Functions
+/// \ingroup PkgSpatialSorting
+
+/// \defgroup PkgSpatialSortingFunctionObjects Function Objects
+/// \ingroup PkgSpatialSorting
+
 
 /*!
 \addtogroup PkgSpatialSorting

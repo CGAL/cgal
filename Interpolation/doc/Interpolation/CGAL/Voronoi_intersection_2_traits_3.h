@@ -25,8 +25,8 @@ templated by a kernel class `K`.
 
 \sa `RegularTriangulationTraits_2` 
 \sa `CGAL::Regular_triangulation_2<Gt, Tds>` 
-\sa `CGAL::regular_neighbor_coordinates_2()` 
-\sa `CGAL::surface_neighbor_coordinates_3()` 
+\sa `PkgInterpolationRegularNeighborCoordinates2`
+\sa PkgInterpolationSurfaceNeighborCoordinates3
 
 */
 template< typename K >

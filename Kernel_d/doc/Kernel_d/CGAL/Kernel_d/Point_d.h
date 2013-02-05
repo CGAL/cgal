@@ -14,13 +14,13 @@ We call \f$ p_i\f$, \f$ 0 \leq i < d\f$ the \f$ i\f$-th %Cartesian coordinate an
 \f$ h_i\f$, \f$ 0 \le i \le d\f$, the \f$ i\f$-th homogeneous coordinate. We call \f$ d\f$ 
 the dimension of the point. 
 
-### Downward compatibility ###
+\cgalHeading{Downward compatibility}
 
 We provide operations of the lower 
 dimensional interface `x()`, `y()`, `z()`, `hx()`, 
 `hy()`, `hz()`, `hw()`. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Points are implemented by arrays of `RT` items. All operations 
 like creation, initialization, tests, point - vector arithmetic, input 

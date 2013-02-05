@@ -27,11 +27,15 @@
 
 
 #include <CGAL/number_type_basic.h>
+#include <CGAL/assertions.h>
 
 #include <boost/iterator/transform_iterator.hpp> // for Root_of functor
-#include <CGAL/assertions.h>
 #include <boost/operators.hpp>
-#include <boost/type_traits.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/utility/enable_if.hpp>
+
+#include <boost/mpl/if.hpp>
 #include <boost/mpl/logical.hpp>
 
 #include <CGAL/Interval_nt.h>

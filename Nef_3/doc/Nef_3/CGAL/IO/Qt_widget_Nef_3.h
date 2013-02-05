@@ -14,13 +14,13 @@ In addition to the functions inherited from the Qt class `OGLWidget` via,
 constructor. For the usage of `Qt_widget_Nef_3` see the example 
 below. 
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The template parameter expects an instantiation of `Nef_polyhedron_3<Traits>`. 
 
 \sa `CGAL::Nef_polyhedron_3<Traits>` 
 
-### Example ###
+\cgalHeading{Example}
 
 This example reads a 3D Nef polyhedron from standard input and displays it 
 in a Qt widget. 

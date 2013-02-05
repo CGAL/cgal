@@ -1,25 +1,41 @@
+/// \cgalConcept
 class Assignable {};
+/// \cgalConcept
 class DefaultConstructible {};
+/// \cgalConcept
 class CopyConstructible {};
+/// \cgalConcept
 class EqualityComparable {};
+/// \cgalConcept
 class LessThanComparable {};
+/// \cgalConcept
 class AdaptableFunctor {};
+/// \cgalConcept
 class AdaptableUnaryFunction {};
+/// \cgalConcept
 class AdaptableBinaryFunction {};
 
+/// \cgalConcept
 class Iterator {};
+/// \cgalConcept
 class OutputIterator {};
+/// \cgalConcept
 class InputIterator {};
+/// \cgalConcept
 class ForwardIterator {};
+/// \cgalConcept
 class RandomAccessIterator {};
+/// \cgalConcept
 class BidirectionalIterator {};
 
-
+/// \cgalConcept
 class RandomAccessContainer {};
+/// \cgalConcept
 class BackInsertionSequence {};
 
 /*!
 See http://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
+/// \cgalConcept
 */
 class LvaluePropertyMap {};
 

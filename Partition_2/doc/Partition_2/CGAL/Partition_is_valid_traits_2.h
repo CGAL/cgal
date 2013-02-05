@@ -14,7 +14,7 @@ in terms of a supplied template parameter.
 \sa `CGAL::Is_y_monotone_2<Traits>` 
 \sa `CGAL::Partition_traits_2<R>` 
 
-### Example ###
+\cgalHeading{Example}
 
 See the example presented with the function `optimal_convex_partition_2()` 
 for an illustration of the use of this traits class. 

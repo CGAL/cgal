@@ -16,13 +16,13 @@ main difference between position vectors and free vectors is their
 behavior under affine transformations, e.g., free vectors are 
 invariant under translations. 
 
-### Downward compatibility ###
+\cgalHeading{Downward compatibility}
 
 We provide all operations of the 
 lower dimensional interface `x()`, `y()`, `z()`, 
 `hx()`, `hy()`, `hz()`, `hw()`. 
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Vectors are implemented by arrays of variables of type `RT`. All 
 operations like creation, initialization, tests, vector arithmetic, 
