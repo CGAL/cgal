@@ -297,7 +297,7 @@ elementary operations on indices in a face. It uses the default
 parameter of the `Periodic_2_Delaunay_triangulation_2` class for
 the triangulation data structure.
 
-\cgalexample{simple_example.cpp}
+\cgalExample{simple_example.cpp}
 
 ## Changing the Vertex Base ##
 
@@ -313,7 +313,7 @@ the `TriangulationDataStructure_2` (e.g. a `Vertex_handle` or
 information easily in the vertices. The example below shows how to
 add a `CGAL::Color` this way.
 
-\cgalexample{colored_vertices.cpp}
+\cgalExample{colored_vertices.cpp}
 
 ## Adding Handles ##
 
@@ -322,7 +322,7 @@ If the user needs to add a type in a vertex that depends on the
 `Face_handle`), he has to derive his own vertex base class, as the
 following example shows.
 
-\cgalexample{periodic_adding_handles.cpp}
+\cgalExample{periodic_adding_handles.cpp}
 
 ## 9-sheeted Covering ##
 
@@ -337,7 +337,7 @@ the 1-sheeted covering. However, we can insert new points such that the
 point set does not have a Delaunay triangulation in the 1-sheeted
 covering anymore, so the triangulation is not <I>extensible</I>.
 
-\cgalexample{covering.cpp}
+\cgalExample{covering.cpp}
 
 ## Large Point Set ##
 
@@ -357,7 +357,7 @@ triangulation in 1-sheeted covering.
 It is recommended to run this example only when compiled in release
 mode because of the relatively large number of points.
 
-\cgalexample{large_point_set.cpp}
+\cgalExample{large_point_set.cpp}
 
 ## Geometric Access ##
 
@@ -376,7 +376,7 @@ triangle whether the offset is (0,0,0) using the
 method `is_null`. If so, we convert the periodic triangle to a
 `PK::Triangle_2`, which requires <I>exact constructions</I>.
 
-\cgalexample{geometric_access.cpp}
+\cgalExample{geometric_access.cpp}
 
 # Design and Implementation History #
 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPeriodic2Triangulation2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `Periodic_2TriangulationTraits_2` is the first template parameter of the classes 
 `Periodic_2_triangulation_2<Traits, Tds>`. This concept provides the types of 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPeriodic2Triangulation2Concepts
-\cgalconcept
+\cgalConcept
 
 At the base level (see Sections \ref P2Triangulation2secdesign 
 and \ref TDS2secdesign), a face stores handles to its four vertices 

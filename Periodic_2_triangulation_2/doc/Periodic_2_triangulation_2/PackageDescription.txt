@@ -1,16 +1,31 @@
-/// \defgroup PkgPeriodic2Triangulation2 2D Periodic Triangulations
-/// \defgroup PkgPeriodic2Triangulation2Concepts Concepts
-/// \ingroup PkgPeriodic2Triangulation2
+/// \defgroup PkgTriangulation2 2D Periodic Triangulations
+/// \defgroup PkgTriangulation2Concepts Concepts
+/// \ingroup PkgPeriodicTriangulation2
+
 /*!
 \addtogroup PkgPeriodic2Triangulation2
-\todo check generated documentation
-\PkgDescriptionBegin{2D Periodic Triangulations}
-\PkgPicture{p2Delaunay2_small.png}
-\PkgAuthor{Nico Kruithof}
-\PkgDesc{This package allows to build and handle triangulations of point sets in the two dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities.  The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
-\PkgSince{}
-\cgalbib{cgal:k-pt2-09}
-\license{}
-\PkgDescriptionEnd
+ 
+\cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodicTriangulation2Summary}
+\cgalPkgPicture{p2Delaunay2_small.png}
+ 
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Nico Kruithof}
+\cgalPkgDesc{This package allows to build and handle triangulations of point sets in the two dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities.  The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
+\cgalPkgManuals{Chapter_2D_Triangulations,PkgPeriodicTriangulation2}
+\cgalPkgSummaryEnd
+ 
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.3}
+\cgalPkgDependsOn{\ref PkgTriangulation2, \ref PkgPeriodic3Triangulation3}
+\cgalPkgBib{cgal:k-pt2-09}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+//\cgalPkgDemo{Periodic Delaunay Triangulation,p2t2_triangulation_2.zip}
+//\cgalPkgDemo{Regular Triangulation,regular_triangulation_2.zip}
+//\cgalPkgDemo{Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
+\cgalPkgShortInfoEnd
+ 
+\cgalPkgDescriptionEnd
+ 
 */
+
 

@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPeriodic2Triangulation2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `Periodic_2DelaunayTriangulationTraits_2` is the first template parameter of the class 
 `Periodic_2_Delaunay_triangulation_2`. It refines the concept 

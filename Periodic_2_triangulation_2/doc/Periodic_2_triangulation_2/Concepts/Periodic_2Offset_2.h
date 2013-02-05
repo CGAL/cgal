@@ -1,7 +1,7 @@
 
 /*!
 \ingroup PkgPeriodic2Triangulation2Concepts
-\cgalconcept
+\cgalConcept
 
 The concept `Periodic_2Offset_2` describes a two-/dimensional integer vector with some specialized access functions and operations. 
 
