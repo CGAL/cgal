@@ -810,43 +810,14 @@ private:
       CGAL_SDG_DEBUG(std::cout << "debug incircle_sps "
         << "is_q_on_t and is_q_on_p" << std::endl; );
 
-      Point_2 pp = same_points(q, p.source_site()) ? p.target() : p.source();
-      Point_2 pt = is_q_tsrc ? t.target() : t.source();
+      Point_2 pother = is_q_psrc ? p.target() : p.source();
+      Point_2 tother = is_q_tsrc ? t.target() : t.source();
 
-      Orientation o = orientation_linf(pp, q.point(), pt);
+      Orientation o = CGAL::orientation(pother, q.point(), tother);
 
       CGAL_SDG_DEBUG(std::cout << "debug incircle_sps or( "
-        << pp << ", " << q.point() << ", " << pt << " ) = "
+        << pother << ", " << q.point() << ", " << tother << " ) = "
         << o << std::endl; );
-
-      if (o == DEGENERATE) {
-
-        Line_2 lpq = compute_line_from_to(pp, q.point());
-        Line_2 lperp = compute_linf_perpendicular(lpq, q.point());
-
-        Oriented_side os = oriented_side_of_line(lperp, pt);
-
-        CGAL_assertion( os != ON_ORIENTED_BOUNDARY );
-
-        if (os == ON_NEGATIVE_SIDE) {
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_sps degen os=NEG_SIDE "
-            << "returns POS" << std::endl; );
-          return POSITIVE;
-        } else { // here os == ON_POSITIVE_SIDE
-          // here, we must make a refinement, based on turn
-          Orientation or_l2 = CGAL::orientation(pp, q.point(), pt);
-
-          CGAL_assertion( or_l2 != COLLINEAR );
-
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_sps degen os=POS_SIDE "
-            << "returns "
-            << ((or_l2 == RIGHT_TURN)? NEGATIVE : POSITIVE)
-            << std::endl; );
-
-          return (or_l2 == RIGHT_TURN)? NEGATIVE : POSITIVE;
-        }
-
-      }
 
       return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
     } else {
@@ -1057,48 +1028,19 @@ private:
     bool is_p_on_q = is_p_qsrc or is_p_qtrg;
 
     if ( is_p_on_t and is_p_on_q ) {
-
-      CGAL_SDG_DEBUG(std::cout << "debug incircle_pss " 
+      CGAL_SDG_DEBUG(std::cout << "debug incircle_pss "
         << "is_p_on_t and is_p_on_q" << std::endl; );
 
-      Point_2 pq = same_points(p, q.source_site()) ? q.target() : q.source();
-      Point_2 pt = is_p_tsrc ? t.target() : t.source();
+      Point_2 qother = is_p_qsrc ? q.target() : q.source();
+      Point_2 tother = is_p_tsrc ? t.target() : t.source();
 
-      Orientation o = orientation_linf(p.point(), pq, pt);
+      Orientation o = CGAL::orientation(qother, p.point(), tother);
 
-      if (o == DEGENERATE) {
-
-        Line_2 lpq = compute_line_from_to(pq, p.point());
-        Line_2 lperp = compute_linf_perpendicular(lpq, p.point());
-
-        Oriented_side os = oriented_side_of_line(lperp, pt);
-
-        CGAL_assertion( os != ON_ORIENTED_BOUNDARY );
-
-        if (os == ON_NEGATIVE_SIDE) {
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_pss degen os=NEG_SIDE "
-            << "returns POS" << std::endl; );
-          return POSITIVE;
-        } else { // here os == ON_POSITIVE_SIDE
-          // here, we must make a refinement, based on turn
-          Orientation or_l2 = CGAL::orientation(p.point(), pq, pt);
-
-          CGAL_assertion( or_l2 != COLLINEAR );
-
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_pss degen os=POS_SIDE "
-            << "returns "
-            << ((or_l2 == RIGHT_TURN)? NEGATIVE : POSITIVE)
-            << std::endl; );
-
-          return (or_l2 == RIGHT_TURN)? NEGATIVE : POSITIVE;
-        }
-      }
-
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_pss or( " 
-        << p.point() << ", " << pq << ", " << pt << " ) = " 
+      CGAL_SDG_DEBUG(std::cout << "debug incircle_pss or( "
+        << qother << ", " << p.point() << ", " << tother << " ) = "
         << o << std::endl; );
 
-      return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
+      return (o == LEFT_TURN) ? NEGATIVE : POSITIVE;
     } else {
       // philaris: serious difference for Linf here, related to L2
 
