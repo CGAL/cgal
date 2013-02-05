@@ -21,9 +21,6 @@ set( QT_USE_QTOPENGL  TRUE )
 find_package(Qt4)
 include_directories (BEFORE ../../../include)
 include_directories (BEFORE ./include)
-# NGHK: Remove
-include_directories (BEFORE ../../../../GraphicsView/include/)
-include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
@@ -49,18 +46,18 @@ SOURCE_GROUP("P2T2" FILES ${P2T2_headers})
 SOURCE_GROUP("QT" FILES ${QT_headers})
 
 # The executable itself.
-add_executable  ( demo_Periodic_2_triangulation_2 
+add_executable  ( Periodic_2_Delaunay_triangulation_2 
   Periodic_2_triangulation_2.cpp 
   Periodic_2_triangulation_2.moc 
   ${DT_UI_FILES} ${DT_RESOURCE_FILES} 
   ${headers} ${QT_headers} ${P2T2_headers})
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS demo_Periodic_2_triangulation_2 )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_2_Delaunay_triangulation_2 )
 
 # Link with Qt libraries
-target_link_libraries( demo_Periodic_2_triangulation_2 ${QT_LIBRARIES} )
+target_link_libraries( Periodic_2_Delaunay_triangulation_2 ${QT_LIBRARIES} )
 # Link with CGAL
-target_link_libraries( demo_Periodic_2_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries( Periodic_2_Delaunay_triangulation_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")

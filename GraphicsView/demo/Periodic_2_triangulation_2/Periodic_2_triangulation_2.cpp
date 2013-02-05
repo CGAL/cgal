@@ -399,6 +399,7 @@ MainWindow::on_actionSavePoints_triggered()
 void
 MainWindow::on_actionRecenter_triggered()
 {
+  pt_gi->modelChanged();
   this->graphicsView->setSceneRect(pt_gi->boundingRect());
   this->graphicsView->fitInView(pt_gi->boundingRect(), Qt::KeepAspectRatio);  
 }
