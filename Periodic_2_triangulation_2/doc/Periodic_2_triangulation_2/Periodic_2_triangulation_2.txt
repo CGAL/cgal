@@ -1,11 +1,11 @@
 
-\page chapterP2Triangulation2 2D Periodic Triangulations
+\page Chapter_2D_Periodic_Triangulations 2D Periodic Triangulations
 
 namespace CGAL {
 /*!
 
 \mainpage 2D Periodic Triangulations
-\anchor chapterP2Triangulation2
+\anchor Chapter_2D_Periodic_Triangulations
 
 \authors Nico Kruithof
 

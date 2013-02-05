@@ -71,6 +71,7 @@ h1 {
 
 \package_listing{Triangulation_2}
 \package_listing{Triangulation_2/TDS_2}
+\package_listing{Periodic_2_triangulation_2}
 \package_listing{Triangulation_3}
 \package_listing{Triangulation_3/TDS_3}
 \package_listing{Periodic_3_triangulation_3}
