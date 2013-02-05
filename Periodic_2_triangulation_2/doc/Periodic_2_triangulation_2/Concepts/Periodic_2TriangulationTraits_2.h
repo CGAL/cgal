@@ -35,30 +35,35 @@ public:
 /// \name Types 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 The point type. It must be a model of 
 `Kernel::Point_2`. 
 */ 
 typedef Hidden_type Point_2; 
 
+// TODO(NGHK): Check
 /*! 
 The segment type. It must be a model 
 of `Kernel::Segment_2`. 
 */ 
 typedef Hidden_type Segment_2; 
 
+// TODO(NGHK): Check
 /*! 
 The vector type. It must be a model 
 of `Kernel::Vector_2`. 
 */ 
 typedef Hidden_type Vector_2; 
 
+// TODO(NGHK): Check
 /*! 
 The triangle type. It must be a 
 model of `Kernel::Triangle_2`. 
 */ 
 typedef Hidden_type Triangle_2; 
 
+// TODO(NGHK): Check
 /*! 
 A type representing an 
 axis-aligned rectangle. It must be a model of 
@@ -66,6 +71,7 @@ axis-aligned rectangle. It must be a model of
 */ 
 typedef Hidden_type Iso_rectangle_2; 
 
+// TODO(NGHK): Check
 /*! 
 The offset type. It must 
 be a model of the concept `Periodic_2Offset_2`. 
@@ -77,6 +83,7 @@ typedef Hidden_type Periodic_2_offset_2;
 /// \name Predicate types 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 
 A predicate object that must provide the function operators 
@@ -93,6 +100,7 @@ consistent order for any two points. \pre `p`, `q` lie inside the domain.
 */ 
 typedef Hidden_type Compare_x_2; 
 
+// TODO(NGHK): Check
 /*! 
 
 A predicate object that must provide the function operators 
@@ -109,6 +117,7 @@ consistent order for any two points. \pre `p`, `q` lie inside the domain.
 */ 
 typedef Hidden_type Compare_y_2; 
 
+// TODO(NGHK): Check
 /*! 
 
 Predicate object. Provides the operators: 
@@ -125,6 +134,7 @@ of points (using Hilbert sorting) is used.
 */ 
 typedef Hidden_type Less_x_2; 
 
+// TODO(NGHK): Check
 /*! 
 Predicate object. Provides 
 the operators: 
@@ -142,6 +152,7 @@ points (using Hilbert sorting) is used.
 */ 
 typedef Hidden_type Less_y_2; 
 
+// TODO(NGHK): Check
 /*! 
 A predicate object that must provide the function operators 
 
@@ -168,6 +179,7 @@ typedef Hidden_type Orientation_2;
 /// guarantee exactness of the following construction functors.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 A constructor object for 
 `Point_2`. Provides: 
@@ -180,6 +192,7 @@ which constructs a point from a point-offset pair.
 */ 
 typedef Hidden_type Construct_point_2; 
 
+// TODO(NGHK): Check
 /*! 
 A constructor object for 
 `Segment_2`. Provides: 
@@ -195,6 +208,7 @@ which constructs a segment from the points `(p,o_p)` and `(q,o_q)`.
 */ 
 typedef Hidden_type Construct_segment_2; 
 
+// TODO(NGHK): Check
 /*! 
 A constructor object for 
 `Triangle_2`. Provides: 
@@ -218,16 +232,19 @@ typedef Hidden_type Construct_triangle_2;
 /// provided.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 default constructor. 
 */ 
 TriangulationTraits_2(); 
 
+// TODO(NGHK): Check
 /*! 
 Copy constructor 
 */ 
 TriangulationTraits_2(TriangulationTraits_2 gtr); 
 
+// TODO(NGHK): Check
 /*! 
 Assignment operator. 
 */ 
@@ -239,41 +256,49 @@ TriangulationTraits_2 operator=(TriangulationTraits_2 gtr);
 /// The following functions give access to the predicate and constructor objects.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 Compare_x_2 compare_x_2_object(); 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 Compare_y_2 compare_y_2_object(); 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 Less_x_2 less_x_2_object(); 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 Less_y_2 less_y_2_object(); 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 Orientation_2 orientation_2_object(); 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 Construct_point_2 construct_point_2_object(); 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 Construct_segment_2 construct_segment_2_object(); 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
@@ -284,6 +309,7 @@ Construct_triangle_2 construct_triangle_2_object();
 /// \name Access Functions 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Sets the 
 fundamental domain. This is necessary to evaluate predicates 
@@ -292,6 +318,7 @@ correctly.
 */ 
 void set_domain(Iso_rectangle_2 domain); 
 
+// TODO(NGHK): Check
 /*! 
 Returns the 
 fundamental domain. 

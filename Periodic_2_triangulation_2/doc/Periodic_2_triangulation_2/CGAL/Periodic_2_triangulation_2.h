@@ -89,6 +89,7 @@ template< typename Traits, typename Tds >
 class Periodic_2_triangulation_2 : public Triangulation_cw_ccw_2 {
 public:
 
+// TODO(NGHK): Check
 /// The enum Iterator_type is defined by `Periodic_2_triangulation_2` to
 /// specify the behavior of geometric iterators.
 enum Iterator_type {
@@ -110,6 +111,7 @@ enum Iterator_type {
   UNIQUE_COVER_DOMAIN
 };
 
+// TODO(NGHK): Check
 /// The enum `@` is defined by `Periodic_2_triangulation_2` to
 /// specify which case occurs when locating a point in the
 /// triangulation. If the triangulation does not contain any points
@@ -128,11 +130,13 @@ enum Locate_type {
 /// \name Types 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 the traits class. 
 */ 
 typedef Traits Geom_traits; 
 
+// TODO(NGHK): Check
 /*! 
 the triangulation data structure type. 
 */ 
@@ -140,35 +144,42 @@ typedef Tds Triangulation_data_structure;
 
 /*! 
 
+// TODO(NGHK): Check
 */ 
 typedef Geom_traits::Periodic_2_offset_2 Offset; 
 
+// TODO(NGHK): Check
 /*! 
 the iso rectangle type 
 */ 
 typedef Geom_traits::Iso_rectangle_2 Iso_rectangle; 
 
+// TODO(NGHK): Check
 /*! 
 Integer tuple to 
 store the number of sheets in each direction of space. 
 */ 
 typedef array<int, 2> Covering_sheets; 
 
+// TODO(NGHK): Check
 /*! 
 the point type 
 */ 
 typedef Geom_traits::Point_2 Point; 
 
+// TODO(NGHK): Check
 /*! 
 the segment type 
 */ 
 typedef Geom_traits::Segment_2 Segment; 
 
+// TODO(NGHK): Check
 /*! 
 the triangle type 
 */ 
 typedef Geom_traits::Triangle_2 Triangle; 
 
+// TODO(NGHK): Check
 /*! 
 Represents a point-offset pair. The point in the 
 pair lies in the original domain. 
@@ -176,38 +187,45 @@ pair lies in the original domain.
 typedef std::pair< Point, Offset > 
 Periodic_point; 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 typedef array< Periodic_point, 2> 
 Periodic_segment; 
 
+// TODO(NGHK): Check
 /*! 
 
 */ 
 typedef array< Periodic_point, 3> 
 Periodic_triangle; 
 
+// TODO(NGHK): Check
 /*! 
 the vertex type. 
 */ 
 typedef Tds::Vertex Vertex; 
 
+// TODO(NGHK): Check
 /*! 
 the face type. 
 */ 
 typedef Tds::Face Face; 
 
+// TODO(NGHK): Check
 /*! 
 the edge type. 
 */ 
 typedef Tds::Edge Edge; 
 
+// TODO(NGHK): Check
 /*! 
 Size type (an unsigned integral type) 
 */ 
 typedef Tds::size_type size_type; 
 
+// TODO(NGHK): Check
 /*! 
 Difference type (a signed integral type) 
 */ 
@@ -232,31 +250,37 @@ bidirectional and non-mutable.
 */
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 handle to a vertex 
 */ 
 typedef Tds::Vertex_handle Vertex_handle; 
 
+// TODO(NGHK): Check
 /*! 
 handle to a face 
 */ 
 typedef Tds::Face_handle Face_handle; 
 
+// TODO(NGHK): Check
 /*! 
 iterator over all faces. 
 */ 
 typedef Tds::Face_iterator Face_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 iterator over all edges 
 */ 
 typedef Tds::Edge_iterator Edge_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 iterator over all vertices 
 */ 
 typedef Tds::Vertex_iterator Vertex_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 iterator over the vertices whose 
 corresponding points lie in the original domain, i.e. for each set 
@@ -265,36 +289,43 @@ exactly one representative.
 */ 
 typedef Hidden_type Unique_vertex_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 \advanced For compatibility with `Triangulation_2`.
 */ 
 typedef Face_iterator Finite_faces_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 \advanced For compatibility with `Triangulation_2`.
 */ 
 typedef Edge_iterator Finite_edges_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 \advanced For compatibility with `Triangulation_2`.
 */ 
 typedef Vertex_iterator Finite_vertices_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 \advanced For compatibility with `Triangulation_2`.
 */ 
 typedef Face_iterator All_faces_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 circulator over all faces incident to a given vertex. 
 */ 
 typedef Hidden_type Face_circulator; 
 
+// TODO(NGHK): Check
 /*! 
 circulator over all edges incident to a given vertex. 
 */ 
 typedef Hidden_type Edge_circulator; 
 
+// TODO(NGHK): Check
 /*! 
 circulator over all vertices adjacent to a given vertex. 
 */ 
@@ -305,18 +336,21 @@ typedef Hidden_type Vertex_circulator;
 /// \name Geometric iterators: 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 iterator over the triangles 
 corresponding to faces of the triangulation. 
 */ 
 typedef Hidden_type Periodic_triangle_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 iterator over the segments 
 corresponding to edges of the triangulation. 
 */ 
 typedef Hidden_type Periodic_segment_iterator; 
 
+// TODO(NGHK): Check
 /*! 
 iterator over the points 
 corresponding to vertices of the triangulation. 
@@ -328,6 +362,7 @@ typedef Hidden_type Periodic_point_iterator;
 /// \name Creation 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Introduces an empty triangulation `t` with 
 `domain` as original domain. \pre `domain` is a square. 
@@ -336,6 +371,7 @@ Triangulation_2(const Iso_rectangle & domain =
 Iso_rectangle(0,0,1,1), const Geom_traits & traits = 
 Geom_traits()); 
 
+// TODO(NGHK): Check
 /*! 
 Copy constructor. All the vertices and faces are duplicated. 
 After the copy, `this` and `tr` 
@@ -344,6 +380,7 @@ if `tr` is modified, `this` is not.
 */ 
 Triangulation_2(const Triangulation_2& tr); 
 
+// TODO(NGHK): Check
 /*! 
 Assignment. All the vertices and faces are duplicated. 
 After the assignment, `this` and `tr` 
@@ -352,6 +389,7 @@ if `tr` is modified, `this` is not.
 */ 
 Triangulation_2 operator=(const Triangulation_2<Traits,Tds>& tr); 
 
+// TODO(NGHK): Check
 /*! 
 The triangulations `tr` and `this` are swapped. 
 `t.swap(tr)` should be preferred to `this` = `tr` or to 
@@ -359,6 +397,7 @@ The triangulations `tr` and `this` are swapped.
 */ 
 void swap(Triangulation_2& tr); 
 
+// TODO(NGHK): Check
 /*! 
 Deletes all faces and vertices 
 resulting in an empty triangulation. 
@@ -373,51 +412,60 @@ void clear();
 /// of the `tds`.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Returns a const reference to the triangulation traits object. 
 */ 
 const Geom_traits& geom_traits() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns a const reference to the triangulation data structure. 
 */ 
 const Triangulation_data_structure_2 & tds() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the original domain. 
 */ 
 Iso_rectangle domain() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the number of sheets of the covering space the triangulation is 
 currently computed in. 
 */ 
 Covering_sheets number_of_sheets() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the dimension of the convex hull. The dimension is zero if 
 the triangulation is empty and two otherwise. 
 */ 
 int dimension() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the number of vertices. Counts all vertices that are 
 representatives of the same point in \f$ \mathbb T_c^2\f$ as one vertex. 
 */ 
 size_type number_of_vertices() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the number of faces. Counts all faces that are 
 representatives of the same triangle in \f$ \mathbb T_c^2\f$ as one face. 
 */ 
 size_type number_of_faces() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the number of vertices in the data structure. This is the 
 same as the number of sheets times `number_of_vertices()`. 
 */ 
 size_type number_of_stored_vertices() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the number of faces in the data structure. This is the 
 same as the number of sheets times `number_of_faces()`. 
@@ -431,6 +479,7 @@ size_type number_of_stored_faces() const;
 /// their own triangulation algorithms.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Returns a reference to the triangulation data structure. 
 */ 
@@ -441,12 +490,14 @@ Triangulation_data_structure_2 & tds();
 /// \name Non-constant-time access functions 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Returns the number of edges. Counts all edges that are 
 representatives of the same segment in \f$ \mathbb T_c^2\f$ as one edge. 
 */ 
 size_type number_of_edges() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the number of edges in the data structure. This is the same 
 as the number of sheets times `number_of_edges()`. 
@@ -462,6 +513,7 @@ size_type number_of_stored_edges() const;
 /// triangulation later.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 The current triangulation remains a triangulation in the 1-sheeted 
 covering space even after adding points if this method returns 
@@ -473,6 +525,7 @@ criterion \cite cgal:ct-c3pt-09.)
 */ 
 bool is_extensible_triangulation_in_1_sheet_h1() const; 
 
+// TODO(NGHK): Check
 /*! 
 The same as `is_extensible_triangulation_in_1_sheet_h1()` but with 
 a more precise heuristic, i.e. it might answer `true` in cases in which 
@@ -483,12 +536,14 @@ input point set as a criterion \cite cgal:ct-c3pt-09.)
 */ 
 bool is_extensible_triangulation_in_1_sheet_h2() const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns `true` if the current triangulation would still be a 
 triangulation in the 1-sheeted covering space, returns `false` otherwise. 
 */ 
 bool is_triangulation_in_1_sheet() const; 
 
+// TODO(NGHK): Check
 /*! 
 Converts the current triangulation into the same periodic 
 triangulation in the 1-sheeted covering space. 
@@ -497,6 +552,7 @@ triangulation in the 1-sheeted covering space.
 */ 
 void convert_to_1_sheeted_covering(); 
 
+// TODO(NGHK): Check
 /*! 
 Converts the current triangulation into the same periodic 
 triangulation in the 9-sheeted covering space. 
@@ -508,6 +564,7 @@ void convert_to_9_sheeted_covering();
 /// \name Geometric access functions 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Returns the periodic point given by vertex `v`. If `this` is 
 represented in the 1-sheeted covering space, the offset is always 
@@ -516,6 +573,7 @@ zero. Otherwise `v` can correspond to a periodic copy outside the
 */ 
 Periodic_point periodic_point(const Vertex_handle v) const; 
 
+// TODO(NGHK): Check
 /*! 
 If `this` is represented in the 1-sheeted covering space, this 
 function returns the periodic point given by the \f$ i\f$-th vertex of 
@@ -527,6 +585,7 @@ offset determining the periodic copy. \pre \f$ i \in\{0,1,2\}\f$
 Periodic_point periodic_point(const Face_handle f, int i) 
 const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the periodic segment formed by the two point-offset pairs 
 corresponding to the two vertices of edge `(f,i)`. 
@@ -535,11 +594,13 @@ corresponding to the two vertices of edge `(f,i)`.
 Periodic_segment periodic_segment(const Face_handle f, int 
 i) const; 
 
+// TODO(NGHK): Check
 /*! 
 Same as the previous method for edge `e`. 
 */ 
 Periodic_segment periodic_segment(const Edge & e) const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns the periodic triangle formed by the three point-offset pairs 
 corresponding to the three vertices of facet `f`. 
@@ -555,22 +616,26 @@ Periodic_triangle periodic_triangle(const Face_handle f) const;
 /// only exact predicates).
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Converts the `Periodic_point` `pp` (point-offset pair) to the 
 corresponding `Point` in \f$ \mathbb R^3\f$. 
 */ 
 Point point(const Periodic_point & pp ) const; 
 
+// TODO(NGHK): Check
 /*! 
 Converts the `Periodic_segment` `s` to a `Segment`. 
 */ 
 Segment segment(const Periodic_segment & s) const; 
 
+// TODO(NGHK): Check
 /*! 
 Converts the `Periodic_triangle` `this` to a `Triangle`. 
 */ 
 Triangle triangle(const Periodic_triangle & t) const; 
 
+// TODO(NGHK): Check
 /*! 
 Compute the circumcenter of the face pointed to by f. This function 
 is available only if the corresponding function is provided in the 
@@ -578,29 +643,34 @@ geometric traits.
 */ 
 Point circumcenter(Face_handle f) const; 
 
+// TODO(NGHK): Check
 /*! 
 Equivalent to 
 the call `t.segment(t.periodic_segment(f,i));` 
 */ 
 Segment segment(Face_handle f, int i) const; 
 
+// TODO(NGHK): Check
 /*! 
 Equivalent to the 
 call `t.segment(t.periodic_segment(e));` 
 */ 
 Segment segment(const Edge& e) const; 
 
+// TODO(NGHK): Check
 /*! 
 Equivalent to the call `t.segment(t.periodic_segment(ec->first, ec->second));` 
 */ 
 Segment segment(const Edge_circulator& ec) const; 
 
+// TODO(NGHK): Check
 /*! 
 Equivalent to the call `t.segment(t.periodic_segment(ei->first, ei->second));` 
 */ 
 Segment 
 segment(const Edge_iterator& ei) const; 
 
+// TODO(NGHK): Check
 /*! 
 Equivalent to the call `t.triangle(t.periodic_triangle(f));` 
 */ 
@@ -614,12 +684,14 @@ Triangle triangle(Face_handle f) const;
 /// face).
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 `true` if there is an edge having `va` and `vb` as 
 vertices. 
 */ 
 bool is_edge(Vertex_handle va, Vertex_handle vb); 
 
+// TODO(NGHK): Check
 /*! 
 as above. In addition, if `true` is returned, the edge with 
 vertices `va` and `vb` is the edge `e=(fr,i)` where 
@@ -629,6 +701,7 @@ on the right side of `e` oriented from `va` to `vb`.
 bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, 
 int & i); 
 
+// TODO(NGHK): Check
 /*! 
 `true` if there is a face having `v1`, `v2` and `v3` 
 as vertices. 
@@ -636,6 +709,7 @@ as vertices.
 bool is_face(Vertex_handle v1, Vertex_handle v2, 
 Vertex_handle v3); 
 
+// TODO(NGHK): Check
 /*! 
 as above. In addition, if `true` is returned, `fr` is a 
 handle to the face with `v1`, `v2` and `v3` as 
@@ -653,6 +727,7 @@ Vertex_handle v3, Face_handle &fr);
 /// triangulation.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 If the triangulation is not empty, a face 
 that contains the query in its interior or on its 
@@ -665,6 +740,7 @@ Face_handle
 locate(const Point& query, 
 Face_handle f = Face_handle()) const; 
 
+// TODO(NGHK): Check
 /*! 
 Same as above. Additionally, the parameters `lt` 
 and `li` 
@@ -687,6 +763,7 @@ Locate_type& lt,
 int& li, 
 Face_handle h =Face_handle() ) const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns on which side of the oriented boundary of `f` 
 the point `p` lies. 
@@ -695,6 +772,7 @@ Oriented_side
 oriented_side(Face_handle f, 
 const Point& p) const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns on which side of the circumcircle of face `f` lies 
 the point `p`. The circle is assumed to be counterclockwise 
@@ -718,31 +796,37 @@ side_of_oriented_circle(Face_handle f, const Point & p);
 /// triangulation.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Starts at an arbitrary vertex 
 */ 
 Vertices_iterator vertices_begin() const; 
 
+// TODO(NGHK): Check
 /*! 
 Past-the-end iterator 
 */ 
 Vertices_iterator vertices_end() const; 
 
+// TODO(NGHK): Check
 /*! 
 Starts at an arbitrary edge 
 */ 
 Edges_iterator edges_begin() const; 
 
+// TODO(NGHK): Check
 /*! 
 Past-the-end iterator 
 */ 
 Edges_iterator edges_end() const; 
 
+// TODO(NGHK): Check
 /*! 
 Starts at an arbitrary face 
 */ 
 Faces_iterator faces_begin() const; 
 
+// TODO(NGHK): Check
 /*! 
 Past-the-end iterator 
 */ 
@@ -775,6 +859,7 @@ const;
 /// 1-sheeted covering space, and give the same result.</b></center>
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Iterates over the points of the triangulation. Its behavior is 
 defined by the `Iterator_type` `it` as described on 
@@ -783,6 +868,7 @@ defined by the `Iterator_type` `it` as described on
 Periodic_point_iterator periodic_points_begin(Iterator_type it = 
 STORED) const; 
 
+// TODO(NGHK): Check
 /*! 
 Past-the-end iterator. Note that to match another 
 `Periodic_point_iterator` both must have the same 
@@ -791,6 +877,7 @@ Past-the-end iterator. Note that to match another
 Periodic_point_iterator periodic_points_end(Iterator_type it = 
 STORED) const; 
 
+// TODO(NGHK): Check
 /*! 
 Iterates over the segments of the triangulation. Its behavior is 
 defined by the `Iterator_type` `it` as described on 
@@ -799,6 +886,7 @@ defined by the `Iterator_type` `it` as described on
 Periodic_segment_iterator periodic_segments_begin(Iterator_type it = 
 STORED) const; 
 
+// TODO(NGHK): Check
 /*! 
 Past-the-end iterator. Note that to match another 
 `Periodic_segment_iterator` both must have the same 
@@ -807,6 +895,7 @@ Past-the-end iterator. Note that to match another
 Periodic_segment_iterator periodic_segments_end(Iterator_type it = 
 STORED) const; 
 
+// TODO(NGHK): Check
 /*! 
 Iterates over the triangles of the triangulation. Its behavior is 
 defined by the `Iterator_type` `it` as described on 
@@ -815,6 +904,7 @@ defined by the `Iterator_type` `it` as described on
 Periodic_triangle_iterator periodic_triangles_begin(Iterator_type it = 
 STORED) const; 
 
+// TODO(NGHK): Check
 /*! 
 Past-the-end iterator. Note that to match another 
 `Periodic_triangle_iterator` both must have the same 
@@ -837,24 +927,28 @@ STORED) const;
 /// faces incident to the edge pointed to.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Starts at an arbitrary face incident 
 to `v`. 
 */ 
 Face_circulator incident_faces(Vertex_handle v) const; 
 
+// TODO(NGHK): Check
 /*! 
 Starts at face `f`. 
 \pre Face `f` is incident to vertex `v`. 
 */ 
 Face_circulator incident_faces(Vertex_handle v, Face_handle f) const; 
 
+// TODO(NGHK): Check
 /*! 
 Starts at an arbitrary edge incident 
 to `v`. 
 */ 
 Edge_circulator incident_edges(Vertex_handle v) const; 
 
+// TODO(NGHK): Check
 /*! 
 Starts at the first edge of `f` incident to 
 `v`, in counterclockwise order around `v`. 
@@ -862,11 +956,13 @@ Starts at the first edge of `f` incident to
 */ 
 Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const; 
 
+// TODO(NGHK): Check
 /*! 
 Starts at an arbitrary vertex adjacent to `v`. 
 */ 
 Vertex_circulator adjacent_vertices(Vertex_handle v) const; 
 
+// TODO(NGHK): Check
 /*! 
 Starts at the first vertex of `f` adjacent to `v` 
 in counterclockwise order around `v`. 
@@ -879,6 +975,7 @@ Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f) ;
 /// \name Traversal between adjacent faces 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 returns the vertex of the \f$ i^{th}\f$ neighbor of `f` that is 
 opposite to `f`. 
@@ -886,6 +983,7 @@ opposite to `f`.
 */ 
 Vertex_handle mirror_vertex(Face_handle f, int i) const; 
 
+// TODO(NGHK): Check
 /*! 
 returns the index of `f` in its \f$ i^{th}\f$ neighbor. 
 \pre $0 \leq i \leq 2$. 
@@ -899,6 +997,7 @@ int mirror_index(Face_handle f, int i) const;
 /// triangulation when they are applied on a valid triangulation.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Exchanges the edge 
 incident to `f` and `f->neighbor(i)` with the other diagonal 
@@ -909,6 +1008,7 @@ the triangulation is on the 9-sheeted cover.
 */ 
 void flip(Face_handle f, int i); 
 
+// TODO(NGHK): Check
 /*! 
 Inserts point `p` in the triangulation and returns the 
 corresponding vertex. 
@@ -931,6 +1031,7 @@ indication to the underlying locate algorithm of where to start.
 Vertex_handle insert(const Point& p, Face_handle f = 
 Face_handle()); 
 
+// TODO(NGHK): Check
 /*! 
 Same as above except that the location 
 of the point `p` to be inserted is assumed to be given by 
@@ -940,12 +1041,14 @@ above.)
 Vertex_handle insert(const Point& p, Locate_type lt, 
 Face_handle loc, int li ); 
 
+// TODO(NGHK): Check
 /*! 
 Equivalent to 
 `insert(p)`. 
 */ 
 Vertex_handle push_back(const Point& p); 
 
+// TODO(NGHK): Check
 /*! 
 Inserts the points in the range 
 \f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. Returns the 
@@ -969,6 +1072,7 @@ first, InputIterator last);
 
 
 
+// TODO(NGHK): Check
 /*! 
 Removes the vertex from the 
 triangulation. The created hole is re-triangulated, see 
@@ -987,11 +1091,13 @@ void remove(Vertex_handle v);
 /// Delaunay triangulations to perform insertions.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Inserts the first vertex. 
 */ 
 Vertex_handle insert_first(const Point& p); 
 
+// TODO(NGHK): Check
 /*! 
 Inserts vertex `v` in face 
 `f`. Face `f` is modified, 
@@ -1000,18 +1106,21 @@ two new faces are created. If the triangulation contains periodic copies, a poin
 */ 
 Vertex_handle insert_in_face(const Point& p, Face_handle f); 
 
+// TODO(NGHK): Check
 /*! 
 Inserts vertex v in edge `i` of `f`. If the triangulation contains periodic copies, a point is inserted in all periodic copies. 
 \pre The point in vertex `v` lies on the edge opposite to the vertex `i` of face `f`. 
 */ 
 Vertex_handle insert_in_edge(const Point& p, const Offset &o, Face_handle f, int i); 
 
+// TODO(NGHK): Check
 /*! 
 Removes a vertex of degree three. Two of the incident faces are 
 destroyed, the third one is modified. \pre Vertex `v` is a vertex with degree three. 
 */ 
 void remove_degree_3(Vertex_handle v); 
 
+// TODO(NGHK): Check
 /*! 
 Removes the unique vertex in the 
 triangulation. 
@@ -1019,6 +1128,7 @@ triangulation.
 void 
 remove_first(Vertex_handle v); 
 
+// TODO(NGHK): Check
 /*! 
 creates a new vertex `v` and use it to star the hole 
 whose boundary is described by the sequence of edges `[edge_begin, edge_end]`. Returns a handle to the new vertex. 
@@ -1028,6 +1138,7 @@ Vertex_handle star_hole( Point p,
 EdgeIt edge_begin, 
 EdgeIt edge_end); 
 
+// TODO(NGHK): Check
 /*! 
 same as above, except that the algorithm 
 first recycles faces in the sequence `[face_begin, face_end]` 
@@ -1040,6 +1151,7 @@ EdgeIt edge_end,
 FaceIt face_begin, 
 FaceIt face_end); 
 
+// TODO(NGHK): Check
 /*! 
 \advanced Changes the domain. Note that this function calls `clear()`,
 i.e., it erases the existing triangulation.
@@ -1051,16 +1163,19 @@ void set_domain(const Iso_rectangle dom);
 /// \name Miscellaneous 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Returns \f$ i+1\f$ modulo 3.\pre $0 \leq i \leq 2$. 
 */ 
 int ccw(int i) const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns \f$ i+2\f$ modulo 3.\pre $0 \leq i \leq 2$. 
 */ 
 int cw(int i) const; 
 
+// TODO(NGHK): Check
 /*! 
 Returns whether the 
 union of the faces `f` and `f->neighbor(i)` form a convex 
@@ -1068,6 +1183,7 @@ quadrilateral.
 */ 
 void flippable(Face_handle f, int i); 
 
+// TODO(NGHK): Check
 /*! 
 Returns the degree of the 
 vertex `v` 
@@ -1084,6 +1200,7 @@ size_t degree(Vertex_handle v);
 /// method is provided to help the debugging.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Checks the combinatorial validity of the triangulation and 
 also the validity of its geometric embedding. 
@@ -1098,6 +1215,7 @@ is_valid(bool verbose = false, int level = 0) const;
 
 }; /* end Periodic_2_triangulation_2 */
 
+// TODO(NGHK): Check
 /*! 
 Writes the 
 triangulation `t` into the stream `os`. \pre The 
@@ -1106,6 +1224,7 @@ output operator must be defined for `Point`.
 */ 
 ostream& operator<<(ostream& os, const Periodic_2_triangulation_2<Traits,Tds>& t); 
 
+// TODO(NGHK): Check
 /*! 
 Reads a triangulation from stream 
 `is` and assigns it to `t`. \pre The input operator 

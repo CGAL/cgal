@@ -52,6 +52,7 @@ public:
 /// \name Creation 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Creates an empty periodic Delaunay triangulation `dt`, with 
 `domain` as original domain and possibly specifying 
@@ -62,12 +63,14 @@ Periodic_2_Delaunay_triangulation_2(
 const Iso_rectangle & domain = Iso_rectangle(0,0,1,1), 
 const Geom_traits & traits = Geom_traits()); 
 
+// TODO(NGHK): Check
 /*! 
 Copy constructor. 
 */ 
 Periodic_2_Delaunay_triangulation_2 (const 
 Periodic_2_Delaunay_triangulation_2 & dt1); 
 
+// TODO(NGHK): Check
 /*! 
 Equivalent to constructing an empty triangulation with the optional 
 domain and traits class arguments and calling `insert(first,last)`. 
@@ -96,6 +99,7 @@ const Geom_traits & traits = Geom_traits());
 /// some `Vertex_handle`s and `Face_handle`s.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Inserts point `p` in the triangulation and returns the 
 corresponding vertex. The optional argument `start` is used as a 
@@ -104,6 +108,7 @@ starting place for the point location. \pre `p` lies in the original domain `dom
 Vertex_handle insert(const Point & p, Face_handle start = 
 Face_handle() ); 
 
+// TODO(NGHK): Check
 /*! 
 Inserts point `p` in the triangulation and returns the 
 corresponding vertex. Similar to the above `insert()` function, 
@@ -114,11 +119,13 @@ location query. See description of
 Vertex_handle insert(const Point & p, Locate_type lt, 
 Face_handle loc, int li, int lj); 
 
+// TODO(NGHK): Check
 /*! 
 Equivalent to `insert(p)`. 
 */ 
 Vertex_handle push_back(const Point& p); 
 
+// TODO(NGHK): Check
 /*! 
 Inserts the points in the iterator range `[first, last)`. 
 Returns the number of inserted points. This function uses spatial 
@@ -132,6 +139,7 @@ template < class InputIterator > std::ptrdiff_t
 insert(InputIterator first, InputIterator last, bool 
 is_large_point_set = false); 
 
+// TODO(NGHK): Check
 /*! 
 Removes the vertex from the triangulation. 
 */ 
@@ -142,6 +150,7 @@ void remove(Vertex_handle v);
 /// \name Point moving 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 if there is not already another vertex placed on `p`, the 
 triangulation is modified such that the new position of vertex 
@@ -152,6 +161,7 @@ returned. \pre `p` lies in the original domain `domain`.
 Vertex_handle move_if_no_collision(Vertex_handle v, const 
 Point & p); 
 
+// TODO(NGHK): Check
 /*! 
 Moves the point stored in `v` to `p`, while preserving the 
 Delaunay property. This performs an action semantically equivalent 
@@ -168,6 +178,7 @@ p);
 /// \name Queries 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Returns any nearest vertex to the point `p`, or the default constructed 
 handle if the triangulation is empty. The optional argument `f` is a hint 
@@ -189,6 +200,7 @@ Face_handle f = Face_handle());
 /// (`p`,`off`) is star-shaped.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 `OutputItFaces` is an output iterator with `Face_handle` as 
 value type. `OutputItBoundaryEdges` stands for an output 
@@ -208,6 +220,7 @@ std::pair<OutputItFaces,OutputItBoundaryEdges>
 get_conflicts_and_boundary(const Point &p, OutputItFaces fit, 
 OutputItBoundaryEdges eit, Face_handle start) const; 
 
+// TODO(NGHK): Check
 /*! 
 same as above except that only the faces in conflict with `p` are 
 output. The function returns the resulting output 
@@ -216,6 +229,7 @@ iterator. \pre `start` is in conflict with `p` and `p` lies in the original doma
 template <class OutputItFaces> OutputItFaces get_conflicts 
 (const Point &p, OutputItFaces fit, Face_handle start) const; 
 
+// TODO(NGHK): Check
 /*! 
 `OutputItBoundaryEdges` stands for an output iterator with 
 `Edge` as value type. This function outputs in the container 
@@ -235,27 +249,32 @@ Face_handle start) const;
 /// The following member functions provide the elements of the dual Voronoi diagram.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Returns the center of the circle circumscribed to face `f`. 
 */ 
 Point dual(const Face_handle &f) const; 
 
+// TODO(NGHK): Check
 /*! 
 returns a segment whose endpoints are the duals of both incident 
 faces. 
 */ 
 Segment dual(const Edge &e) const; 
 
+// TODO(NGHK): Check
 /*! 
 Idem 
 */ 
 Segment dual(const Edge_circulator& ec) const; 
 
+// TODO(NGHK): Check
 /*! 
 Idem 
 */ 
 Segment dual(const Edge_iterator& ei) const; 
 
+// TODO(NGHK): Check
 /*! 
 output the dual Voronoi diagram to stream `ps`. 
 */ 
@@ -266,6 +285,7 @@ template < class Stream> Stream& draw_dual(Stream & ps);
 /// \name Predicates 
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Returns the side of `(p, off)` with respect to the circle 
 circumscribing the triangle associated with `f` 
@@ -279,6 +299,7 @@ Point& p, const Offset &off = Offset(0,0) ) const;
 /// \advanced These methods are mainly a debugging help for the users of advanced features.
 /// @{
 
+// TODO(NGHK): Check
 /*! 
 Checks the combinatorial validity of the triangulation and the 
 validity of its geometric embedding (see 
@@ -291,6 +312,7 @@ invalidity encountered are printed.
 bool 
 is_valid(bool verbose = false) const; 
 
+// TODO(NGHK): Check
 /*! 
 Checks the combinatorial and geometric validity of the cell (see 
 Section \ref P2Triangulation2secintro). Also checks that the 

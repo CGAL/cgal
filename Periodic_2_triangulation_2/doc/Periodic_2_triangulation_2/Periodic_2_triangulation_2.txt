@@ -147,8 +147,7 @@ four points are co-circular. Note however that the \cgal implementation computes
 \cite cgal:dt-pvr3d-03.
 
 This implementation is fully dynamic: it supports both insertions of
-points and vertex removal (NGHK: TODO, removal of points is not
-implemented yet).
+points and vertex removal.
 
 # Triangulation Hierarchy #
 
