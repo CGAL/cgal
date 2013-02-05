@@ -173,9 +173,10 @@ public:
 
   /// Type determining how to iterate over the stored simplices in the triangulation
   enum Iterator_type {
-    STORED = 0, UNIQUE, //1
-    STORED_COVER_DOMAIN, //2
-    UNIQUE_COVER_DOMAIN
+    STORED = 0,
+    UNIQUE, // 1
+    STORED_COVER_DOMAIN, // 2
+    UNIQUE_COVER_DOMAIN // 3
   };//3
 
   /// Return type of a point location query

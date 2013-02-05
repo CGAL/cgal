@@ -34,6 +34,8 @@ void test_constructor() {
   pts.push_back(Point(0.5, 0.25));
   pts.push_back(Point(0.25, 0.25));
   T t8(pts.begin(), pts.end());
+
+  t7.swap(t8);
 }
 
 template <class T>

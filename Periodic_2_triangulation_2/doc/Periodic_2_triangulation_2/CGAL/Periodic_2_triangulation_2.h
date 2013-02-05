@@ -111,7 +111,6 @@ enum Iterator_type {
   UNIQUE_COVER_DOMAIN
 };
 
-// TODO(NGHK): Check
 /// The enum `@` is defined by `Periodic_2_triangulation_2` to
 /// specify which case occurs when locating a point in the
 /// triangulation. If the triangulation does not contain any points
@@ -130,102 +129,86 @@ enum Locate_type {
 /// \name Types 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
-the traits class. 
+The traits class. 
 */ 
 typedef Traits Geom_traits; 
 
-// TODO(NGHK): Check
 /*! 
-the triangulation data structure type. 
+The triangulation data structure type. 
 */ 
 typedef Tds Triangulation_data_structure; 
 
 /*! 
-
-// TODO(NGHK): Check
+The offset type
 */ 
 typedef Geom_traits::Periodic_2_offset_2 Offset; 
 
-// TODO(NGHK): Check
 /*! 
 the iso rectangle type 
 */ 
 typedef Geom_traits::Iso_rectangle_2 Iso_rectangle; 
 
-// TODO(NGHK): Check
 /*! 
 Integer tuple to 
 store the number of sheets in each direction of space. 
 */ 
 typedef array<int, 2> Covering_sheets; 
 
-// TODO(NGHK): Check
 /*! 
 the point type 
 */ 
 typedef Geom_traits::Point_2 Point; 
 
-// TODO(NGHK): Check
 /*! 
 the segment type 
 */ 
 typedef Geom_traits::Segment_2 Segment; 
 
-// TODO(NGHK): Check
 /*! 
 the triangle type 
 */ 
 typedef Geom_traits::Triangle_2 Triangle; 
 
-// TODO(NGHK): Check
 /*! 
 Represents a point-offset pair. The point in the 
 pair lies in the original domain. 
 */ 
-typedef std::pair< Point, Offset > 
-Periodic_point; 
+typedef std::pair< Point, Offset > Periodic_point; 
 
-// TODO(NGHK): Check
 /*! 
-
+A pair of periodic points representing a segment in the periodic
+domain.
 */ 
-typedef array< Periodic_point, 2> 
-Periodic_segment; 
+typedef array< Periodic_point, 2> Periodic_segment; 
 
-// TODO(NGHK): Check
 /*! 
-
+A triple of periodic points representing a triangle in the periodic
+domain.
 */ 
 typedef array< Periodic_point, 3> 
 Periodic_triangle; 
 
-// TODO(NGHK): Check
 /*! 
 the vertex type. 
 */ 
 typedef Tds::Vertex Vertex; 
 
-// TODO(NGHK): Check
 /*! 
 the face type. 
 */ 
 typedef Tds::Face Face; 
 
-// TODO(NGHK): Check
 /*! 
 the edge type. 
 */ 
 typedef Tds::Edge Edge; 
 
-// TODO(NGHK): Check
 /*! 
 Size type (an unsigned integral type) 
 */ 
 typedef Tds::size_type size_type; 
 
-// TODO(NGHK): Check
 /*! 
 Difference type (a signed integral type) 
 */ 
@@ -250,37 +233,31 @@ bidirectional and non-mutable.
 */
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 handle to a vertex 
 */ 
 typedef Tds::Vertex_handle Vertex_handle; 
 
-// TODO(NGHK): Check
 /*! 
 handle to a face 
 */ 
 typedef Tds::Face_handle Face_handle; 
 
-// TODO(NGHK): Check
 /*! 
 iterator over all faces. 
 */ 
 typedef Tds::Face_iterator Face_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 iterator over all edges 
 */ 
 typedef Tds::Edge_iterator Edge_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 iterator over all vertices 
 */ 
 typedef Tds::Vertex_iterator Vertex_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 iterator over the vertices whose 
 corresponding points lie in the original domain, i.e. for each set 
@@ -289,43 +266,36 @@ exactly one representative.
 */ 
 typedef Hidden_type Unique_vertex_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 \advanced For compatibility with `Triangulation_2`.
 */ 
 typedef Face_iterator Finite_faces_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 \advanced For compatibility with `Triangulation_2`.
 */ 
 typedef Edge_iterator Finite_edges_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 \advanced For compatibility with `Triangulation_2`.
 */ 
 typedef Vertex_iterator Finite_vertices_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 \advanced For compatibility with `Triangulation_2`.
 */ 
 typedef Face_iterator All_faces_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 circulator over all faces incident to a given vertex. 
 */ 
 typedef Hidden_type Face_circulator; 
 
-// TODO(NGHK): Check
 /*! 
 circulator over all edges incident to a given vertex. 
 */ 
 typedef Hidden_type Edge_circulator; 
 
-// TODO(NGHK): Check
 /*! 
 circulator over all vertices adjacent to a given vertex. 
 */ 
@@ -336,21 +306,18 @@ typedef Hidden_type Vertex_circulator;
 /// \name Geometric iterators: 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 iterator over the triangles 
 corresponding to faces of the triangulation. 
 */ 
 typedef Hidden_type Periodic_triangle_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 iterator over the segments 
 corresponding to edges of the triangulation. 
 */ 
 typedef Hidden_type Periodic_segment_iterator; 
 
-// TODO(NGHK): Check
 /*! 
 iterator over the points 
 corresponding to vertices of the triangulation. 
@@ -362,7 +329,6 @@ typedef Hidden_type Periodic_point_iterator;
 /// \name Creation 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Introduces an empty triangulation `t` with 
 `domain` as original domain. \pre `domain` is a square. 
@@ -371,7 +337,6 @@ Triangulation_2(const Iso_rectangle & domain =
 Iso_rectangle(0,0,1,1), const Geom_traits & traits = 
 Geom_traits()); 
 
-// TODO(NGHK): Check
 /*! 
 Copy constructor. All the vertices and faces are duplicated. 
 After the copy, `this` and `tr` 
@@ -380,7 +345,6 @@ if `tr` is modified, `this` is not.
 */ 
 Triangulation_2(const Triangulation_2& tr); 
 
-// TODO(NGHK): Check
 /*! 
 Assignment. All the vertices and faces are duplicated. 
 After the assignment, `this` and `tr` 
