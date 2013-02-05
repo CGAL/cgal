@@ -9,9 +9,9 @@
 #include <ctime>
 #include <algorithm>
 
-const bool pre_run = true;
+const bool pre_run = false;
 const bool do_remove = false;
-const int n_runs = 3;
+const int n_runs = 1;
 
 void load_data(const char *filename, Iso_rectangle &domain, std::vector<Point> &pts) {
   std::ifstream file (filename, std::ios::in|std::ios::binary);

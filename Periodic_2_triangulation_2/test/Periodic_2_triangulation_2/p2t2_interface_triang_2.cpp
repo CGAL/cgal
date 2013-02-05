@@ -27,6 +27,13 @@ void test_constructor() {
   t.clear();
   CGAL_assertion(t != t6);
   CGAL_assertion(t != t7);
+
+  std::vector<Point> pts;
+  pts.push_back(Point(0.5, 0.5));
+  pts.push_back(Point(0.25, 0.5));
+  pts.push_back(Point(0.5, 0.25));
+  pts.push_back(Point(0.25, 0.25));
+  T t8(pts.begin(), pts.end());
 }
 
 template <class T>
@@ -81,7 +88,7 @@ void test_geometric_access() {
   T t;
   const T &t_const = t;
 
-  t.insert(Point(0.5, 0.5));
+  t.insert(Point(0.5, 0.5), Face_handle());
   t.insert(Point(0.7, 0.5));
   t.insert(Point(0.7, 0.7));
 
@@ -139,7 +146,6 @@ void test_queries() {
   fh = t_const.locate(p0, lt, li, fh);
 
   t_const.oriented_side(fh, p0);
-  t_const.side_of_oriented_circle(fh, p0);
 }
 
 template <class T>

@@ -91,6 +91,7 @@ public:
   using Triangulation::tds;
   using Triangulation::is_infinite;
   using Triangulation::get_offset;
+  using Triangulation::int_to_off;
   using Triangulation::geom_traits;
   using Triangulation::is_1_cover;
   using Triangulation::dimension;
@@ -98,11 +99,11 @@ public:
   using Triangulation::faces_begin;
   using Triangulation::finite_edges_begin;
   using Triangulation::finite_edges_end;
-  using Triangulation::side_of_oriented_circle;
   using Triangulation::get_neighbor_offset;
   using Triangulation::combine_offsets;
   using Triangulation::locate;
   using Triangulation::number_of_sheets;
+  using Triangulation::orientation;
 #endif
 
   /// \name Constructors
@@ -350,7 +351,6 @@ public:
   }
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
-  /// NGHK: Not implemented
   void  remove(Vertex_handle v );
   // \}
 
@@ -360,7 +360,7 @@ public:
   /// NGHK: Not yet implemented
   Vertex_handle move_if_no_collision(Vertex_handle v, const Point &p);
   /// NGHK: Not yet implemented
-  Vertex_handle move(Vertex_handle v, const Point &p);
+  Vertex_handle move_point(Vertex_handle v, const Point &p);
   // \}
 
   /// \name Check - Query
@@ -436,19 +436,14 @@ public:
                                     get_offset(f, 2));
   }
   /// Returns the dual of f, which is the circumcenter of f.
-  /// NGHK: Not yet implemented
-  Point dual (Face_handle f) const;
+  Point dual(Face_handle f) const;
   /// Returns the dual of e, which is always a segment in the periodic triangulation.
-  /// NGHK: Not yet implemented
   Segment dual(const Edge &e) const ;
   /// Returns the dual of the edge pointed to by ec.
-  /// NGHK: Not yet implemented
   Segment dual(const Edge_circulator& ec) const;
   /// Returns the dual of the edge pointed to by ei.
-  /// NGHK: Not yet implemented
   Segment dual(const Edge_iterator& ei) const;
 
-  /// NGHK: Not yet implemented
   template < class Stream>
   Stream& draw_dual(Stream & ps) {
     Finite_edges_iterator eit= finite_edges_begin();
@@ -467,6 +462,25 @@ public:
   /// NGHK: Not yet implemented
   bool is_valid(Face_handle f, bool verbose = false, int level = 0) const;
   // \}
+
+  /// Determines whether the point p lies on the (un-)bounded side of
+  /// the circle through the vertices of f
+  Oriented_side
+  side_of_oriented_circle(Face_handle f,
+                          const Point & p, bool perturb = false) const;
+  /// Determines whether the point p lies on the (un-)bounded side of
+  /// the circle through the points p0, p1 and p2
+  ///\n NGHK: implemented
+  Oriented_side
+  side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
+      const Point &p, bool perturb) const;
+  /// Determines whether the point (p,o) lies on the (un-)bounded side of
+  /// the circle through the points (p0,o0), (p1,o1) and (p2,o2)
+  ///\n NGHK: implemented
+  Oriented_side
+  side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
+      const Point &p, const Offset &o0, const Offset &o1, const Offset &o2,
+      const Offset &o, bool perturb) const;
 
 
 private:
@@ -534,6 +548,13 @@ private:
   void remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
                        std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
                        std::vector<int> &i,int d);
+  /// NGHK: Implemented
+  /// Assumes that all offsets are (0,0)
+  void fill_hole_delaunay(std::list<Edge> & hole);
+  /// Fill hole over a periodic boundary
+  void fill_hole_delaunay(std::list<Edge> & hole,
+                          std::map<Vertex_handle, Offset> vertex_offsets);
+
   /// NGHK: implemented
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w,
@@ -1462,7 +1483,7 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
   std::list<Edge> hole;
   this->make_hole(v, hole);
 
-  this->fill_hole_delaunay(hole);
+  fill_hole_delaunay(hole);
 
   return;
 }
@@ -1481,7 +1502,7 @@ remove_degree_d(Vertex_handle v, std::vector<Face_handle> &,
     vertex_offsets[w[idx]] = offset_w[idx];
   }
 
-  this->fill_hole_delaunay(hole, vertex_offsets);
+  fill_hole_delaunay(hole, vertex_offsets);
 
   return;
 }
@@ -3915,9 +3936,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
 template <class Gt, class Tds >
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-move(Vertex_handle v, const Point &p) {
-    NGHK_NYI;
-  CGAL_triangulation_precondition(!is_infinite(v));
+move_point(Vertex_handle v, const Point &p) {
   if(v->point() == p) return v;
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
@@ -4136,6 +4155,447 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
         iend = faces_set.end(); ib != iend; ib++) *oif++ = *ib;
 
   return v;
+}
+
+template<class Gt, class Tds>
+void Periodic_2_Delaunay_triangulation_2<Gt, Tds>::fill_hole_delaunay(std::list<Edge> & first_hole) {
+  typename Gt::Side_of_oriented_circle_2 in_circle = geom_traits().side_of_oriented_circle_2_object();
+
+  typedef std::list<Edge> Hole;
+  typedef std::list<Hole> Hole_list;
+
+  Face_handle  f, ff, fn;
+  int i, ii, in;
+  Hole_list hole_list;
+  Hole hole;
+
+  hole_list.push_front(first_hole);
+
+  while( ! hole_list.empty())
+  {
+    hole = hole_list.front();
+    hole_list.pop_front();
+    typename Hole::iterator hit = hole.begin();
+
+    // if the hole has only three edges, create the triangle
+    if (hole.size() == 3) {
+      hit = hole.begin();
+      f = (*hit).first;        i = (*hit).second;
+      ff = (* ++hit).first;    ii = (*hit).second;
+      fn = (* ++hit).first;    in = (*hit).second;
+      Face_handle newf = create_face(f,i,ff,ii,fn,in);
+      newf->set_offsets(0,0,0);
+      
+      continue;
+    }
+
+    // else find an edge with two finite vertices
+    // on the hole boundary
+    // and the new triangle adjacent to that edge
+    //  cut the hole and push it back
+
+    // take the first neighboring face and pop it;
+    ff = (hole.front()).first;
+    ii =(hole.front()).second;
+    hole.pop_front();
+
+    Vertex_handle v0 = ff->vertex(cw(ii));
+    Vertex_handle v1 = ff->vertex(ccw(ii));
+    Vertex_handle v2 = Vertex_handle();
+    Vertex_handle v3 = Vertex_handle();
+    const Point& p0 = v0->point();
+    const Point& p1 = v1->point();
+
+    typename Hole::iterator hdone = hole.end();
+    hit =  hole.begin();
+    typename Hole::iterator cut_after(hit);
+
+    // if tested vertex is c with respect to the vertex opposite
+    // to NULL neighbor,
+    // stop at the before last face;
+    hdone--;
+    while( hit != hdone) {
+      fn = (*hit).first;
+      in = (*hit).second;
+      Vertex_handle vv = fn->vertex(ccw(in));
+
+      const Point &p = vv->point();
+      Orientation orient = orientation(p0,p1,p);
+
+      if (orient == COUNTERCLOCKWISE) {
+        if (v2 == Vertex_handle()) {
+          v2=vv;
+          v3=vv;
+          cut_after=hit;
+        } else {
+          Oriented_side side = side_of_oriented_circle(p0,p1,v3->point(),p,true);
+          if (side == ON_POSITIVE_SIDE) {
+            v2=vv;
+            v3=vv;
+            cut_after=hit;
+          }
+        }
+      }
+
+      ++hit;
+    }
+
+    // create new triangle and update adjacency relations
+    Face_handle newf;
+
+    //update the hole and push back in the Hole_List stack
+    // if v2 belongs to the neighbor following or preceding *f
+    // the hole remain a single hole
+    // otherwise it is split in two holes
+
+    fn = (hole.front()).first;
+    in = (hole.front()).second;
+    if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
+      newf = create_face(ff,ii,fn,in);
+
+      newf->set_offsets(0,0,0);
+
+      hole.pop_front();
+      hole.push_front(Edge(newf,1));
+      hole_list.push_front(hole);
+    }
+    else{
+      fn = (hole.back()).first;
+      in = (hole.back()).second;
+      if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
+        newf = create_face(fn,in,ff,ii);
+        newf->set_offsets(0,0,0);
+
+        hole.pop_back();
+        hole.push_back(Edge(newf,1));
+        hole_list.push_front(hole);
+      } else {
+        // split the hole in two holes
+        CGAL_assertion(v2 != Vertex_handle());
+        newf = create_face(ff,ii,v2);
+        newf->set_offsets(0,0,0);
+
+        Hole new_hole;
+        ++cut_after;
+        while( hole.begin() != cut_after )
+        {
+          new_hole.push_back(hole.front());
+          hole.pop_front();
+        }
+
+        hole.push_front(Edge( newf,1));
+        new_hole.push_front(Edge( newf,0));
+        hole_list.push_front(hole);
+        hole_list.push_front(new_hole);
+      }
+    }
+  }
+}
+
+template<class Gt, class Tds>
+void Periodic_2_Delaunay_triangulation_2<Gt, Tds>::fill_hole_delaunay(
+    std::list<Edge> & first_hole,
+    std::map<Vertex_handle, Offset> vertex_offsets) {
+  typename Gt::Side_of_oriented_circle_2 in_circle = geom_traits().side_of_oriented_circle_2_object();
+
+  typedef std::list<Edge> Hole;
+  typedef std::list<Hole> Hole_list;
+
+  Face_handle  f, ff, fn;
+  int i, ii, in;
+  Hole_list hole_list;
+  Hole hole;
+
+  hole_list.push_front(first_hole);
+
+  while( ! hole_list.empty())
+  {
+    hole = hole_list.front();
+    hole_list.pop_front();
+    typename Hole::iterator hit = hole.begin();
+
+    // if the hole has only three edges, create the triangle
+    if (hole.size() == 3) {
+      hit = hole.begin();
+      f = (*hit).first;        i = (*hit).second;
+      ff = (* ++hit).first;    ii = (*hit).second;
+      fn = (* ++hit).first;    in = (*hit).second;
+      Face_handle newf = create_face(f,i,ff,ii,fn,in);
+      Offset oo0(vertex_offsets[newf->vertex(0)]);
+      Offset oo1(vertex_offsets[newf->vertex(1)]);
+      Offset oo2(vertex_offsets[newf->vertex(2)]);
+      if (oo0.x() < 0 || oo1.x() < 0 || oo2.x() < 0) {
+        oo0 += Offset(number_of_sheets()[0], 0); oo1 += Offset(number_of_sheets()[0], 0); oo2 += Offset(number_of_sheets()[0], 0);
+      }
+      if (oo0.y() < 0 || oo1.y() < 0 || oo2.y() < 0) {
+        oo0 += Offset(0, number_of_sheets()[1]); oo1 += Offset(0, number_of_sheets()[1]); oo2 += Offset(0, number_of_sheets()[1]);
+      }
+      set_offsets(newf, 
+                  (oo0.x() >= number_of_sheets()[0] ? 2 : 0) + (oo0.y() >= number_of_sheets()[1] ? 1 : 0),
+                  (oo1.x() >= number_of_sheets()[0] ? 2 : 0) + (oo1.y() >= number_of_sheets()[1] ? 1 : 0),
+                  (oo2.x() >= number_of_sheets()[0] ? 2 : 0) + (oo2.y() >= number_of_sheets()[1] ? 1 : 0));
+      
+      insert_too_long_edge(newf, 0);
+      insert_too_long_edge(newf, 1);
+      insert_too_long_edge(newf, 2);
+
+      continue;
+    }
+
+    // else find an edge with two finite vertices
+    // on the hole boundary
+    // and the new triangle adjacent to that edge
+    //  cut the hole and push it back
+
+    // take the first neighboring face and pop it;
+    ff = (hole.front()).first;
+    ii =(hole.front()).second;
+    hole.pop_front();
+
+    Vertex_handle v0 = ff->vertex(cw(ii));
+    Vertex_handle v1 = ff->vertex(ccw(ii));
+    Vertex_handle v2 = Vertex_handle();
+    Vertex_handle v3 = Vertex_handle();
+    const Point& p0 = v0->point();
+    const Point& p1 = v1->point();
+    const Offset o0 = vertex_offsets[v0];
+    const Offset o1 = vertex_offsets[v1];
+    bool simplicity_criterion = (o0 == o1);
+
+    typename Hole::iterator hdone = hole.end();
+    hit =  hole.begin();
+    typename Hole::iterator cut_after(hit);
+
+    // if tested vertex is c with respect to the vertex opposite
+    // to NULL neighbor,
+    // stop at the before last face;
+    hdone--;
+    while( hit != hdone) {
+      fn = (*hit).first;
+      in = (*hit).second;
+      Vertex_handle vv = fn->vertex(ccw(in));
+
+      const Point &p = vv->point();
+      CGAL_assertion(vertex_offsets.find(vv) != vertex_offsets.end());
+      const Offset o = vertex_offsets[vv];
+      Orientation orient;
+      simplicity_criterion &= (o == o0);
+      if (simplicity_criterion)
+        orient = orientation(p0,p1,p);
+      else
+        orient = orientation(p0,p1,p, o0,o1,o);
+
+      if (orient == COUNTERCLOCKWISE) {
+        if (v2 == Vertex_handle()) {
+          v2=vv;
+          v3=vv;
+          cut_after=hit;
+        } else {
+          Offset o3 = vertex_offsets[v3];
+          Oriented_side side;
+          if (simplicity_criterion && (o3 == o0))
+            side = side_of_oriented_circle(p0,p1,v3->point(),p,
+                                           true);
+          else
+            side = side_of_oriented_circle(p0,p1,v3->point(),p,
+                                           o0,o1,o3,o,
+                                           true);
+          if (side == ON_POSITIVE_SIDE) {
+            v2=vv;
+            v3=vv;
+            cut_after=hit;
+          }
+        }
+      }
+
+      ++hit;
+    }
+
+    // create new triangle and update adjacency relations
+    Face_handle newf;
+
+    //update the hole and push back in the Hole_List stack
+    // if v2 belongs to the neighbor following or preceding *f
+    // the hole remain a single hole
+    // otherwise it is split in two holes
+
+    fn = (hole.front()).first;
+    in = (hole.front()).second;
+    if (fn->has_vertex(v2, i) && i == fn->ccw(in)) {
+      newf = create_face(ff,ii,fn,in);
+
+      Offset oo0 = o0;
+      Offset oo1 = o1;
+      Offset oo2 = vertex_offsets[v2];
+      if (oo0.x() < 0 || oo1.x() < 0 || oo2.x() < 0) {
+        oo0 += Offset(number_of_sheets()[0], 0); oo1 += Offset(number_of_sheets()[0], 0); oo2 += Offset(number_of_sheets()[0], 0);
+      }
+      if (oo0.y() < 0 || oo1.y() < 0 || oo2.y() < 0) {
+        oo0 += Offset(0, number_of_sheets()[1]); oo1 += Offset(0, number_of_sheets()[1]); oo2 += Offset(0, number_of_sheets()[1]);
+      }
+      set_offsets(newf, 
+                  (oo0.x() >= number_of_sheets()[0] ? 2 : 0) + (oo0.y() >= number_of_sheets()[1] ? 1 : 0),
+                  (oo1.x() >= number_of_sheets()[0] ? 2 : 0) + (oo1.y() >= number_of_sheets()[1] ? 1 : 0),
+                  (oo2.x() >= number_of_sheets()[0] ? 2 : 0) + (oo2.y() >= number_of_sheets()[1] ? 1 : 0));
+      // set_offsets(newf, o0, o1, o2);
+      insert_too_long_edge(newf, 0);
+      insert_too_long_edge(newf, 1);
+
+      hole.pop_front();
+      hole.push_front(Edge(newf,1));
+      hole_list.push_front(hole);
+    }
+    else{
+      fn = (hole.back()).first;
+      in = (hole.back()).second;
+      if (fn->has_vertex(v2, i) && i== fn->cw(in)) {
+        newf = create_face(fn,in,ff,ii);
+        Offset oo0 = o0;
+        Offset oo1 = o1;
+        Offset oo2 = vertex_offsets[v2];
+        if (oo0.x() < 0 || oo1.x() < 0 || oo2.x() < 0) {
+          oo0 += Offset(number_of_sheets()[0], 0); oo1 += Offset(number_of_sheets()[0], 0); oo2 += Offset(number_of_sheets()[0], 0);
+        }
+        if (oo0.y() < 0 || oo1.y() < 0 || oo2.y() < 0) {
+          oo0 += Offset(0, number_of_sheets()[1]); oo1 += Offset(0, number_of_sheets()[1]); oo2 += Offset(0, number_of_sheets()[1]);
+        }
+        set_offsets(newf,
+                    (oo2.x() >= number_of_sheets()[0] ? 2 : 0) + (oo2.y() >= number_of_sheets()[1] ? 1 : 0), 
+                    (oo0.x() >= number_of_sheets()[0] ? 2 : 0) + (oo0.y() >= number_of_sheets()[1] ? 1 : 0),
+                    (oo1.x() >= number_of_sheets()[0] ? 2 : 0) + (oo1.y() >= number_of_sheets()[1] ? 1 : 0));
+        insert_too_long_edge(newf, 1);
+        insert_too_long_edge(newf, 2);
+        hole.pop_back();
+        hole.push_back(Edge(newf,1));
+        hole_list.push_front(hole);
+      } else {
+        // split the hole in two holes
+        CGAL_assertion(v2 != Vertex_handle());
+        newf = create_face(ff,ii,v2);
+        Offset oo0 = o0;
+        Offset oo1 = o1;
+        Offset oo2 = vertex_offsets[v2];
+        if (oo0.x() < 0 || oo1.x() < 0 || oo2.x() < 0) {
+          oo0 += Offset(number_of_sheets()[0], 0); oo1 += Offset(number_of_sheets()[0], 0); oo2 += Offset(number_of_sheets()[0], 0);
+        }
+        if (oo0.y() < 0 || oo1.y() < 0 || oo2.y() < 0) {
+          oo0 += Offset(0, number_of_sheets()[1]); oo1 += Offset(0, number_of_sheets()[1]); oo2 += Offset(0, number_of_sheets()[1]);
+        }
+        set_offsets(newf, 
+                    (oo0.x() >= number_of_sheets()[0] ? 2 : 0) + (oo0.y() >= number_of_sheets()[1] ? 1 : 0),
+                    (oo1.x() >= number_of_sheets()[0] ? 2 : 0) + (oo1.y() >= number_of_sheets()[1] ? 1 : 0),
+                    (oo2.x() >= number_of_sheets()[0] ? 2 : 0) + (oo2.y() >= number_of_sheets()[1] ? 1 : 0));
+
+
+        // set_offsets(newf, o0, o1, o2);
+        insert_too_long_edge(newf, 0);
+        insert_too_long_edge(newf, 1);
+
+        Hole new_hole;
+        ++cut_after;
+        while( hole.begin() != cut_after )
+        {
+          new_hole.push_back(hole.front());
+          hole.pop_front();
+        }
+
+        hole.push_front(Edge( newf,1));
+        new_hole.push_front(Edge( newf,0));
+        hole_list.push_front(hole);
+        hole_list.push_front(new_hole);
+      }
+    }
+  }
+}
+
+template<class Gt, class Tds>
+Oriented_side Periodic_2_Delaunay_triangulation_2<Gt, Tds>::side_of_oriented_circle(
+    const Point &p0, const Point &p1, const Point &p2, const Point &p,
+    bool perturb) const {
+  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p);
+  if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
+    return os;
+
+  // We are now in a degenerate case => we do a symbolic perturbation.
+
+  // We sort the points lexicographically.
+  const Point * points[4] = { &p0, &p1, &p2, &p };
+  std::sort(points, points + 4, typename Triangulation::Perturbation_order(this));
+
+  // We successively look whether the leading monomial, then 2nd monomial
+  // of the determinant has non null coefficient.
+  // 2 iterations are enough (cf paper)
+  for (int i = 3; i > 0; --i) {
+    if (points[i] == &p)
+      return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
+    // and positively oriented
+    Orientation o;
+    if (points[i] == &p2 && (o = orientation(p0, p1, p)) != COLLINEAR)
+      return Oriented_side(o);
+    if (points[i] == &p1 && (o = orientation(p0, p, p2)) != COLLINEAR)
+      return Oriented_side(o);
+    if (points[i] == &p0 && (o = orientation(p, p1, p2)) != COLLINEAR)
+      return Oriented_side(o);
+  }
+  CGAL_triangulation_assertion(false);
+  return ON_NEGATIVE_SIDE;
+}
+
+template<class Gt, class Tds>
+Oriented_side Periodic_2_Delaunay_triangulation_2<Gt, Tds>::side_of_oriented_circle(
+    const Point &p0, const Point &p1, const Point &p2, const Point &p,
+    const Offset &o0, const Offset &o1, const Offset &o2, const Offset &o,
+    bool perturb) const {
+  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p, o0, o1, o2, o);
+  if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
+    return os;
+
+  // We are now in a degenerate case => we do a symbolic perturbation.
+  // We sort the points lexicographically.
+  Periodic_point pts[4] = { std::make_pair(p0, o0), std::make_pair(p1, o1),
+      std::make_pair(p2, o2), std::make_pair(p, o) };
+  const Periodic_point *points[4] = { &pts[0], &pts[1], &pts[2], &pts[3] };
+
+  std::sort(points, points + 4, typename Triangulation::Perturbation_order(this));
+
+  // We successively look whether the leading monomial, then 2nd monomial
+  // of the determinant has non null coefficient.
+  // 2 iterations are enough (cf paper)
+  for (int i = 3; i > 0; --i) {
+    if (points[i] == &pts[3])
+      return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
+    // and positively oriented
+    Orientation orient;
+    if ((points[i] == &pts[2]) && ((orient = orientation(p0, p1, p, o0, o1, o))
+        != COLLINEAR))
+      return Oriented_side(orient);
+    if ((points[i] == &pts[1]) && ((orient = orientation(p0, p, p2, o0, o, o2))
+        != COLLINEAR))
+      return Oriented_side(orient);
+    if ((points[i] == &pts[0]) && ((orient = orientation(p, p1, p2, o, o1, o2))
+        != COLLINEAR))
+      return Oriented_side(orient);
+  }
+  CGAL_triangulation_assertion(false);
+  return ON_NEGATIVE_SIDE;
+}
+
+template<class Gt, class Tds>
+Oriented_side Periodic_2_Delaunay_triangulation_2<Gt, Tds>::side_of_oriented_circle(
+    Face_handle f, const Point & p, bool perturb) const {
+  Oriented_side os = ON_NEGATIVE_SIDE;
+
+  int i = 0;
+  // TODO: optimize which copies to check depending on the offsets in
+  // the cell.
+  while (os == ON_NEGATIVE_SIDE && i < 4) {
+    os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p, 
+                                 get_offset(f, 0), get_offset(f, 1), get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)),
+                                 perturb);
+    i++;
+  }
+
+  return os;
 }
 
 } //namespace CGAL
