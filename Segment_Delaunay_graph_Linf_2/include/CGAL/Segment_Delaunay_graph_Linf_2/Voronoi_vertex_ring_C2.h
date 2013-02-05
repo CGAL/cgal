@@ -1305,7 +1305,7 @@ private:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
-  
+
   Sign incircle(const Line_2& l, PPP_Type) const
   {
 
@@ -1330,18 +1330,20 @@ private:
 
     // here cr == EQUAL == ZERO, so
     // we might have to refine
-    CGAL_SDG_DEBUG(std::cout << "debug refining in incircle l PPP pqr=("
-      << p_ << ", " << q_ << ", " << r_ << "), " 
-      << "hp(x,y)=" << hp.x() << ' ' << hp.y() 
-      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c() 
-      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_  
+    CGAL_SDG_DEBUG(std::cout
+      << "debug refining in incircle l PPP pqr=("
+      << p_ << ", " << q_ << ", " << r_ << "), "
+      << "hp(x,y)=" << hp.x() << ' ' << hp.y()
+      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
+      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_
       << std::endl;);
 
-    Comparison_result other = linf_refinement(hp);
+    Comparison_result other = linf_refine(l, hp);
 
     if (cr != other) {
-      CGAL_SDG_DEBUG(std::cout << "incircle l PPP instead of 0 returning " << other <<
-        std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "incircle l PPP instead of 0 returning " << other
+          << std::endl;);
     }
 
     return other;
@@ -1361,7 +1363,7 @@ private:
     RT vy = uy_ - pref.y() * uz_;
 
     RT dupref = CGAL::max(CGAL::abs(vx), CGAL::abs(vy));
-    
+
     Homogeneous_point_2 hp = compute_linf_projection_hom(l, point());
 
     RT dul = CGAL::max(
@@ -1377,17 +1379,18 @@ private:
     // here cr == EQUAL == ZERO, so
     // we might have to refine
     CGAL_SDG_DEBUG(std::cout << "debug refining in incircle l PPS pqr=("
-      << p_ << ", " << q_ << ", " << r_ << "), " 
-      << "hp(x,y)=" << hp.x() << ' ' << hp.y() 
-      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c() 
-      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_  
+      << p_ << ", " << q_ << ", " << r_ << "), "
+      << "hp(x,y)=" << hp.x() << ' ' << hp.y()
+      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
+      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_
       << std::endl;);
 
-    Comparison_result other = linf_refinement(hp);
+    Comparison_result other = linf_refine(l, hp);
 
     if (cr != other) {
-      CGAL_SDG_DEBUG(std::cout << "incircle l PPS instead of 0 returning " << other <<
-        std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "incircle l PPS instead of 0 returning " << other
+          << std::endl;);
     }
 
     return other;
@@ -1407,7 +1410,7 @@ private:
     RT vy = uy_ - (pref.y() ) * uz_;
 
     RT dupref = CGAL::max(CGAL::abs(vx), CGAL::abs(vy));
-    
+
     Homogeneous_point_2 lhp = compute_linf_projection_hom(l, point());
 
     RT dul = CGAL::max(
@@ -1429,11 +1432,12 @@ private:
       << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_
       << std::endl;);
 
-    Comparison_result other = linf_refinement(lhp);
+    Comparison_result other = linf_refine(l, lhp);
 
     if (cr != other) {
-      CGAL_SDG_DEBUG(std::cout << "incircle l PSS instead of 0 returning " << other <<
-        std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "incircle l PSS instead of 0 returning " << other
+          << std::endl;);
     }
 
     return other;
@@ -1446,7 +1450,7 @@ private:
   Sign incircle(const Line_2& l, SSS_Type) const
   {
     Line_2 lref = compute_supporting_line(p_.supporting_site());
-    Homogeneous_point_2 lrefhp = 
+    Homogeneous_point_2 lrefhp =
       compute_linf_projection_hom(lref, point());
     RT dulref = CGAL::max(
         CGAL::abs(ux_ - lrefhp.x() * uz_),
@@ -1466,17 +1470,18 @@ private:
     // here cr == EQUAL == ZERO, so
     // we might have to refine
     CGAL_SDG_DEBUG(std::cout << "debug refining in incircle l PSS pqr=("
-      << p_ << ", " << q_ << ", " << r_ << "), " 
-      << "lhp(x,y)=" << lhp.x() << ' ' << lhp.y() 
-      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c() 
-      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_  
+      << p_ << ", " << q_ << ", " << r_ << "), "
+      << "lhp(x,y)=" << lhp.x() << ' ' << lhp.y()
+      << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
+      << ", u(x,y,z)= " << ux_ << ' ' << uy_ << ' ' << uz_
       << std::endl;);
 
-    Comparison_result other = linf_refinement(lhp);
+    Comparison_result other = linf_refine(l, lhp);
 
     if (cr != other) {
-      CGAL_SDG_DEBUG(std::cout << "incircle l SSS instead of 0 returning " << other <<
-        std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "incircle l SSS instead of 0 returning " << other
+          << std::endl;);
     }
 
     return other;
@@ -2497,6 +2502,139 @@ public:
 
 
   // L_inf refinement
+  inline
+  Comparison_result
+  linf_refine( const Line_2& l, Homogeneous_point_2& lrefhp ) const
+  {
+    Point_2 vv ( ux_, uy_, uz_ );
+
+    Comparison_result compare_p(EQUAL);
+    Comparison_result compare_q(EQUAL);
+    Comparison_result compare_r(EQUAL);
+
+    FT difxvl = vv.x() - lrefhp.x();
+    FT difyvl = vv.y() - lrefhp.y();
+    FT absdifxvl = CGAL::abs(difxvl);
+    FT absdifyvl = CGAL::abs(difyvl);
+    Comparison_result cmplabsxy = CGAL::compare(absdifxvl, absdifyvl);
+    // philaris: (cmplabsxy == EQUAL) means that lref is
+    // one of the corners of the square with center vv
+
+    Oriented_side oslvv (ON_ORIENTED_BOUNDARY);
+    if (p_.is_segment() or q_.is_segment() or r_.is_segment()) {
+      oslvv = oriented_side_of_line(l, vv);
+      CGAL_assertion(oslvv != ON_ORIENTED_BOUNDARY);
+    }
+
+    if (p_.is_point()) {
+      Point_2 pp = p_.point();
+      FT difxvp = vv.x() - pp.x();
+      FT difyvp = vv.y() - pp.y();
+      FT absdifxvp = CGAL::abs(difxvp);
+      FT absdifyvp = CGAL::abs(difyvp);
+      Comparison_result cmppabsxy = CGAL::compare(absdifxvp, absdifyvp);
+      if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
+      {
+        if (CGAL::compare(difxvl, difxvp) == EQUAL) {
+          compare_p = CGAL::compare(absdifyvl, absdifyvp);
+        }
+      }
+      if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
+      {
+        if (CGAL::compare(difyvl, difyvp) == EQUAL) {
+          CGAL_assertion(compare_p == EQUAL);
+          compare_p = CGAL::compare(absdifxvl, absdifxvp);
+        }
+      }
+    } else {
+      Oriented_side oslpsrc =
+        oriented_side_of_line(l, p_.source_site().point());
+      Oriented_side oslptrg =
+        oriented_side_of_line(l, p_.target_site().point());
+      if ((oslpsrc != oslvv) and (oslptrg != oslvv)) {
+        compare_p = SMALLER;
+      }
+    }
+
+    if (q_.is_point()) {
+      Point_2 qq = q_.point();
+      FT difxvq = vv.x() - qq.x();
+      FT difyvq = vv.y() - qq.y();
+      FT absdifxvq = CGAL::abs(difxvq);
+      FT absdifyvq = CGAL::abs(difyvq);
+      Comparison_result cmpqabsxy = CGAL::compare(absdifxvq, absdifyvq);
+      if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
+      {
+        if (CGAL::compare(difxvl, difxvq) == EQUAL) {
+          compare_q = CGAL::compare(absdifyvl, absdifyvq);
+        }
+      }
+      if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
+      {
+        if (CGAL::compare(difyvl, difyvq) == EQUAL) {
+          CGAL_assertion(compare_q == EQUAL);
+          compare_q = CGAL::compare(absdifxvl, absdifxvq);
+        }
+      }
+    } else {
+      Oriented_side oslqsrc =
+        oriented_side_of_line(l, q_.source_site().point());
+      Oriented_side oslqtrg =
+        oriented_side_of_line(l, q_.target_site().point());
+      if ((oslqsrc != oslvv) and (oslqtrg != oslvv)) {
+        compare_q = SMALLER;
+      }
+    }
+
+    if (r_.is_point()) {
+      Point_2 rr = r_.point();
+      FT difxvr = vv.x() - rr.x();
+      FT difyvr = vv.y() - rr.y();
+      FT absdifxvr = CGAL::abs(difxvr);
+      FT absdifyvr = CGAL::abs(difyvr);
+      Comparison_result cmprabsxy = CGAL::compare(absdifxvr, absdifyvr);
+      if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
+      {
+        if (CGAL::compare(difxvl, difxvr) == EQUAL) {
+          compare_r = CGAL::compare(absdifyvl, absdifyvr);
+        }
+      }
+      if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
+      {
+        if (CGAL::compare(difyvl, difyvr) == EQUAL) {
+          CGAL_assertion(compare_r == EQUAL);
+          compare_r = CGAL::compare(absdifxvl, absdifxvr);
+        }
+      }
+    } else {
+      Oriented_side oslrsrc =
+        oriented_side_of_line(l, r_.source_site().point());
+      Oriented_side oslrtrg =
+        oriented_side_of_line(l, r_.target_site().point());
+      if ((oslrsrc != oslvv) and (oslrtrg != oslvv)) {
+        compare_r = SMALLER;
+      }
+    }
+
+    CGAL_SDG_DEBUG(std::cout << "debug linf_refine compare p q r = "
+      << compare_p << " " << compare_q << " " << compare_r << std::endl;);
+
+    if ((compare_p == SMALLER) or
+        (compare_q == SMALLER) or
+        (compare_r == SMALLER)   ) {
+      return SMALLER;
+    }
+    /*
+    if ((compare_p == LARGER) or
+        (compare_q == LARGER) or
+        (compare_r == LARGER)   ) {
+      // tocheck
+      return LARGER;
+    }
+    */
+    return EQUAL;
+
+  }
 
   inline
   Comparison_result
