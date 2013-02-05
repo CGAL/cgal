@@ -428,9 +428,12 @@ public:
   /// Constructs the circumcenter of the face f, respects the offset
   /// \n NGHK: not implemented
   Point circumcenter(Face_handle f) const {
-    return construct_circumcenter(f->vertex(0)->point(), f->vertex(1)->point(),
-        f->vertex(2)->point(), get_offset(f, 0), get_offset(f, 1), get_offset(
-            f, 2));
+      return construct_circumcenter(f->vertex(0)->point(), 
+                                    f->vertex(1)->point(),
+                                    f->vertex(2)->point(), 
+                                    get_offset(f, 0), 
+                                    get_offset(f, 1),
+                                    get_offset(f, 2));
   }
   /// Returns the dual of f, which is the circumcenter of f.
   /// NGHK: Not yet implemented
@@ -448,16 +451,9 @@ public:
   /// NGHK: Not yet implemented
   template < class Stream>
   Stream& draw_dual(Stream & ps) {
-    NGHK_NYI;
     Finite_edges_iterator eit= finite_edges_begin();
     for (; eit != finite_edges_end(); ++eit) {
-      Object o = dual(eit);
-	typename Geom_traits::Line_2  l;
-	typename Geom_traits::Ray_2   r;
-	Segment s;
-	if (CGAL::assign(s,o)) ps << s;
-	if (CGAL::assign(r,o)) ps << r;
-	if (CGAL::assign(l,o)) ps << l;
+      ps << dual(eit);
     }
     return ps;
   }
@@ -712,9 +708,9 @@ private:
 
 
   /// NGHK: Implemented
-  Segment construct_circumcenter(const Point &p1, const Point &p2,
+  Point construct_circumcenter(const Point &p1, const Point &p2,
       const Point &p3, const Offset &o1, const Offset &o2, const Offset &o3) const {
-    return geom_traits().construct_segment_2_object()(p1, p2, p3, o1, o2, o3);
+    return geom_traits().construct_circumcenter_2_object()(p1, p2, p3, o1, o2, o3);
   }
 
 
@@ -978,38 +974,14 @@ inline typename Gt::Segment_2
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 dual(const Edge &e) const
 {
-    NGHK_NYI;
-  typedef typename Geom_traits::Line_2        Line;
-  typedef typename Geom_traits::Ray_2         Ray;
-
-  CGAL_triangulation_precondition (!is_infinite(e));
-  if( dimension()== 1 ){
-    const Point& p = (e.first)->vertex(cw(e.second))->point();
-    const Point& q = (e.first)->vertex(ccw(e.second))->point();
-    Line l  = geom_traits().construct_bisector_2_object()(p,q);
-    return make_object(l);
-  }
-
-  // dimension==2
-  if( (!is_infinite(e.first)) &&
-      (!is_infinite(e.first->neighbor(e.second))) ) {
-    Segment s = geom_traits().construct_segment_2_object()
-                          (dual(e.first),dual(e.first->neighbor(e.second)));
+    // dimension==2
+    Face_handle nb = e.first->neighbor(e.second);
+    Point p0 = dual(e.first);
+    Point p1 = dual(nb);
+    Offset o = combine_offsets( Offset(), get_neighbor_offset(e.first, e.second));
+    Segment s = geom_traits().construct_segment_2_object()(p0, p1, o, Offset());
+    
     return s;
-  }
-//   // one of the adjacent faces is infinite
-//   Face_handle f; int i;
-//   if (is_infinite(e.first)) {
-//     f=e.first->neighbor(e.second); i=f->index(e.first);
-//   }
-//   else {
-//     f=e.first; i=e.second;
-//   }
-//   const Point& p = f->vertex(cw(i))->point();
-//   const Point& q = f->vertex(ccw(i))->point();
-//   Line l = geom_traits().construct_bisector_2_object()(p,q);
-//   Ray r = geom_traits().construct_ray_2_object()(dual(f), l);
-//   return make_object(r);
 }
 
 template < class Gt, class Tds >
@@ -1017,8 +989,13 @@ inline typename Gt::Segment_2
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 dual(const Edge_circulator& ec) const
 {
-    NGHK_NYI;
   return dual(*ec);
+}
+template < class Gt, class Tds >
+inline typename Gt::Segment_2
+Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
+dual(const Edge_iterator& ei) const {
+  return dual(*ei);
 }
 
 ///////////////////////////////////////////////////////////////
