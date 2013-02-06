@@ -251,8 +251,6 @@ Coeff resultant_modularize(
 
     typedef Polynomial_traits_d<CGAL::Polynomial<Coeff> > PT;
     typedef typename PT::Polynomial_d Polynomial;
-    typedef typename PT::Innermost_coefficient_type IC;
-    
     
     typedef Chinese_remainder_traits<Coeff> CRT;
     typedef typename CRT::Scalar_type Scalar;
@@ -260,7 +258,6 @@ Coeff resultant_modularize(
 
     typedef typename CGAL::Modular_traits<Polynomial>::Residue_type MPolynomial; 
     typedef typename CGAL::Modular_traits<Coeff>::Residue_type      MCoeff; 
-    typedef typename CGAL::Modular_traits<Scalar>::Residue_type     MScalar;  
         
     typename CRT::Chinese_remainder chinese_remainder; 
     typename CGAL::Modular_traits<Coeff>::Modular_image_representative inv_map;
@@ -370,8 +367,7 @@ Coeff resultant_decompose(
     Numerator F0; decompose(F,F0,a);
     Numerator G0; decompose(G,G0,b);
     Denominator c = CGAL::ipower(a, G.degree()) * CGAL::ipower(b, F.degree());
-    typedef Algebraic_structure_traits<RES> AST_RES;
-    typedef typename AST_RES::Algebraic_category Algebraic_category;
+
     RES res0 =  CGAL::internal::resultant_(F0, G0);
     typename Fraction_traits<Coeff>::Compose comp_frac;
     Coeff res = comp_frac(res0, c);
