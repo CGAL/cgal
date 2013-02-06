@@ -26,27 +26,27 @@ umask 022
 
 # Warn deprecated use of enviroment variables to pass on flags
 if [ -n "$TESTSUITE_CXXFLAGS" ] ; then
-  echo "\$TESTSUITE_CXXFLAGS is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS instead" ;
+  echo "\$TESTSUITE_CXXFLAGS is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS instead" >&2;
 fi
 
 if [ -n "$TESTSUITE_CXXFLAGS_RELEASE" ] ; then
-  echo "\$TESTSUITE_CXXFLAGS_RELEASE is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS_RELEASE instead" ;
+  echo "\$TESTSUITE_CXXFLAGS_RELEASE is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS_RELEASE instead" >&2;
 fi
 
 if [ -n "$TESTSUITE_CXXFLAGS_DEBUG" ] ; then
-  echo "\$TESTSUITE_CXXFLAGS_DEBUG is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS_DEBUG instead" ;
+  echo "\$TESTSUITE_CXXFLAGS_DEBUG is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS_DEBUG instead" >&2;
 fi
 
 if [ -n "$TESTSUITE_LDFLAGS" ] ; then
-  echo "\$TESTSUITE_LDFLAGS is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS instead" ;
+  echo "\$TESTSUITE_LDFLAGS is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS instead" >&2;
 fi
 
 if [ -n "$TESTSUITE_LDFLAGS_RELEASE" ] ; then
-  echo "\$TESTSUITE_LDFLAGS_RELEASE is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS_RELEASE instead" ;
+  echo "\$TESTSUITE_LDFLAGS_RELEASE is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS_RELEASE instead" >&2;
 fi
 
 if [ -n "$TESTSUITE_LDFLAGS_DEBUG" ] ; then
-  echo "\$TESTSUITE_LDFLAGS_DEBUG is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS_DEBUG instead" ;
+  echo "\$TESTSUITE_LDFLAGS_DEBUG is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_(MODULE|SHARED|EXE)_LINKER_FLAGS_DEBUG instead" >&2;
 fi
 
 # We want english warning and error messages!!
@@ -133,7 +133,7 @@ datestr()
 error()
 {
   if [ -n "${CONSOLE_OUTPUT}" ]; then
-      printf "\nERROR: ${*}, exiting.\n"
+      printf "\nERROR: ${*}, exiting.\n" >&2
   fi
   printf "\nERROR: ${*}, exiting.\n" >> "${ACTUAL_LOGFILE}"
   ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}"
@@ -781,7 +781,7 @@ put_on_web()
 {
   log "${ACTUAL_LOGFILE}" "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
 
-  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}" 2>&1
+  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
 }
 
 
@@ -827,7 +827,7 @@ else
   if [ -f "$HOME/.autocgalrc" ]; then
     . "$HOME/.autocgalrc"
   else
-    echo "CONFIGURATION FILE .autocgal_with_cmake_rc or .autocgalrc NOT FOUND";
+    echo "CONFIGURATION FILE .autocgal_with_cmake_rc or .autocgalrc NOT FOUND" >&2;
     exit 1
   fi
 fi
