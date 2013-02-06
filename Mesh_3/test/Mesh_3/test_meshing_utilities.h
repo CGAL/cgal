@@ -60,7 +60,6 @@ struct Tester
               const std::size_t max_cells_expected = STD_SIZE_T_MAX ) const
   {
     typedef typename C3t3::size_type size_type;
-    typedef typename C3t3::Triangulation::Geom_traits Gt;
 
     // Store mesh properties
     size_type v = c3t3.triangulation().number_of_vertices();
