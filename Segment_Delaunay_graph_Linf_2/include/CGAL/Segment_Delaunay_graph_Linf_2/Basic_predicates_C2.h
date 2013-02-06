@@ -936,6 +936,25 @@ public:
          and intersects_segment_interior_inf_box(s, p, corner1, q);
     }
   } // end of intersects_segment_interior_bbox
+
+  // returns true if and only if
+  // the non-horizontal/non-vertical segment at site s
+  // has positive slope
+  static
+  Boolean
+  has_positive_slope(const Site_2 & s)
+  {
+    CGAL_precondition(s.is_segment());
+    CGAL_precondition(not (
+          s.supporting_site().segment().is_horizontal() or
+          s.supporting_site().segment().is_vertical()     ) );
+    Compare_x_2 cmpx;
+    Compare_y_2 cmpy;
+    Point_2 src = s.supporting_site().source();
+    Point_2 trg = s.supporting_site().target();
+    return cmpx(src, trg) == cmpy(trg, src);
+  }
+
 };
 
 
