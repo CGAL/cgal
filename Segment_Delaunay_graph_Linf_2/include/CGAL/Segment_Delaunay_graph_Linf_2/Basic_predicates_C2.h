@@ -952,7 +952,7 @@ public:
     Compare_y_2 cmpy;
     Point_2 src = s.supporting_site().source();
     Point_2 trg = s.supporting_site().target();
-    return cmpx(src, trg) == cmpy(trg, src);
+    return cmpx(src, trg) == cmpy(src, trg);
   }
 
 };
