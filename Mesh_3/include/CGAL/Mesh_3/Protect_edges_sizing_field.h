@@ -375,6 +375,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index)
 {
   typedef typename Tr::size_type size_type;
+  CGAL_USE_TYPE(size_type);
   
   // Insert point
   CGAL_assertion_code(size_type nb_vertices_before = c3t3_.triangulation().number_of_vertices());
