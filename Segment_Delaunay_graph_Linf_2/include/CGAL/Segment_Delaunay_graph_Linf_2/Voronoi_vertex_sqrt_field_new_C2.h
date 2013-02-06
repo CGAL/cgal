@@ -33,6 +33,7 @@ public:
   using Base::compute_line_from_to;
   using Base::compute_horizontal_projection;
   using Base::compute_vertical_projection;
+  using Base::has_positive_slope;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -71,12 +72,17 @@ private:
 
   typedef typename K::Intersections_tag ITag;
 
+  typedef typename K::Compare_x_2 Compare_x_2_Points_Type;
+  typedef typename K::Compare_y_2 Compare_y_2_Points_Type;
+
   Are_same_points_2     same_points;
   Are_same_segments_2   same_segments;
   Side_of_oriented_square_2_Type   side_of_oriented_square;
   Side_of_bounded_square_2_Type    side_of_bounded_square;
   Compare_x_2_Sites_Type           scmpx;
   Compare_y_2_Sites_Type           scmpy;
+  Compare_x_2_Points_Type          cmpx;
+  Compare_y_2_Points_Type          cmpy;
   Orientation_Linf_points_2 or_linf;
   Bisector_Linf_Type bisector_linf;
 
@@ -2721,6 +2727,8 @@ private:
       return ZERO;
     }
 
+    // here, voronoi circle does not degenerate to a point
+
     // philaris: remove
     /*
 #ifndef CGAL_DISABLE_M_CODE
@@ -2741,17 +2749,85 @@ private:
 #endif // CGAL_DISABLE_M_CODE
     */
 
-    // philaris: remove and tocheck
-    /*
+    // philaris: with assertions
     // check if t has the same support as either q or r
     if ( same_segments(q.supporting_site(), t.supporting_site()) ) {
+      CGAL_SDG_DEBUG(std::cout
+          << "debug q=" << q << " t=" << t << std::endl; );
+      CGAL_assertion(is_p_endp_of_q and is_p_endp_of_t);
+      return POSITIVE;
+    }
+    if ( same_segments(r.supporting_site(), t.supporting_site()) ) {
+      CGAL_SDG_DEBUG(std::cout
+          << "debug r=" << q << " t=" << t << std::endl; );
+      CGAL_assertion(is_p_endp_of_r and is_p_endp_of_t);
       return POSITIVE;
     }
 
-    if ( same_segments(r.supporting_site(), t.supporting_site()) ) {
-      return POSITIVE;
-    }
-    */
+    if ( is_p_endp_of_q and is_p_endp_of_t ) {
+      CGAL_SDG_DEBUG(std::cout << "debug incircle_s orientation"
+        << " is_p_endp_of_q and is_p_endp_of_t"
+        << std::endl;);
+      Point_2 qother =
+        same_points(p, q.source_site()) ? q.target() : q.source();
+      Point_2 tother =
+        same_points(p, t.source_site()) ? t.target() : t.source();
+      Orientation o = CGAL::orientation(qother, p.point(), tother);
+
+      if (o != RIGHT_TURN) {
+        return POSITIVE;
+      } else {
+        if (q.supporting_site().segment().is_horizontal() or
+            q.supporting_site().segment().is_vertical() or
+            t.supporting_site().segment().is_horizontal() or
+            t.supporting_site().segment().is_vertical()
+           ) {
+          return NEGATIVE;
+        } else {
+          bool has_q_pos_slope = has_positive_slope(q);
+          if (has_q_pos_slope) {
+            return cmpy(qother, p.point()) == cmpy(tother, p.point()) ?
+                   NEGATIVE : POSITIVE;
+          } else {
+            return cmpx(qother, p.point()) == cmpx(tother, p.point()) ?
+                   NEGATIVE : POSITIVE;
+          }
+        }
+      }
+      //return (o == RIGHT_TURN)? NEGATIVE : POSITIVE;
+    } // end of case (is_p_endp_of_q and is_p_endp_of_t) {
+
+    if ( is_p_endp_of_r and is_p_endp_of_t ) {
+      CGAL_SDG_DEBUG(std::cout << "debug incircle_s orientation"
+        << " is_p_endp_of_r and is_p_endp_of_t"
+        << std::endl;);
+      Point_2 rother =
+        same_points(p, r.source_site()) ? r.target() : r.source();
+      Point_2 tother =
+        same_points(p, t.source_site()) ? t.target() : t.source();
+      Orientation o = CGAL::orientation(rother, p.point(), tother);
+
+      if (o != LEFT_TURN) {
+        return POSITIVE;
+      } else {
+        if (r.supporting_site().segment().is_horizontal() or
+            r.supporting_site().segment().is_vertical() or
+            t.supporting_site().segment().is_horizontal() or
+            t.supporting_site().segment().is_vertical()
+           ) {
+          return NEGATIVE;
+        } else {
+          bool has_r_pos_slope = has_positive_slope(r);
+          if (has_r_pos_slope) {
+            return cmpx(rother, p.point()) == cmpx(tother, p.point()) ?
+                   NEGATIVE : POSITIVE;
+          } else {
+            return cmpy(rother, p.point()) == cmpy(tother, p.point()) ?
+                   NEGATIVE : POSITIVE;
+          }
+        }
+      }
+    } // end of case (is_p_endp_of_r and is_p_endp_of_t)
 
     // easy degeneracies --- end
 
