@@ -60,7 +60,7 @@ private:
 
   typedef typename K::Intersections_tag      ITag;
 
-  // the orientation Linf predicate for three points 
+  // the orientation Linf predicate for three points
   typedef Orientation_Linf_2<K>              Orientation_Linf_points_2;
 
   typedef typename K::Compare_x_2 Compare_x_2;
@@ -97,7 +97,7 @@ private:
       Site_2 tp = Site_2::construct_site_2(p);
 
       return (  same_points(support.source_site(), tp) ||
-		same_points(support.target_site(), tp)  );      
+		same_points(support.target_site(), tp)  );
     }
     return false;
   }
@@ -141,7 +141,7 @@ private:
       return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
     }
 
-    // here orientation Linf is degenerate 
+    // here orientation Linf is degenerate
 
     // return NEGATIVE if t is strictly inside the bounding box
     // of p and q, otherwise return POSITIVE;
@@ -231,7 +231,7 @@ private:
       return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
     }
 
-    // here orientation Linf is degenerate 
+    // here orientation Linf is degenerate
 
     // return NEGATIVE if t is strictly inside the bounding box
     // of p and q, otherwise return POSITIVE;
@@ -330,7 +330,7 @@ private:
 	return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
       }
 
-      // here orientation Linf is degenerate 
+      // here orientation Linf is degenerate
 
       // return NEGATIVE if t is strictly inside the bounding box
       // of p and q, otherwise return POSITIVE;
@@ -353,7 +353,7 @@ private:
 
     // here the pair of p, q contains a point and a segment
 
-    CGAL_assertion( p.is_point() || q.is_point() );
+    CGAL_assertion( p.is_point() or q.is_point() );
 
     CGAL_SDG_DEBUG( std::cout << "debug incircle_p of p=" << p
                    << " q=" << q << " t=" << t << std::endl; );
@@ -372,16 +372,18 @@ private:
       if ( p.is_point() && q.is_segment() ) {
         CGAL_assertion( same_points(p, q.source_site()) or
             same_points(p, q.target_site()) );
-        Point_2 pq = same_points(p, q.source_site()) ? q.target() : q.source();
+        Point_2 pq =
+          same_points(p, q.source_site()) ? q.target() : q.source();
         o = orientation_linf(p.point(), pq, t.point());
       } else { // p is a segment and q is a point
         CGAL_assertion( same_points(q, p.source_site()) or
             same_points(q, p.target_site()) );
-        Point_2 pp = same_points(q, p.source_site()) ? p.target() : p.source();
+        Point_2 pp =
+          same_points(q, p.source_site()) ? p.target() : p.source();
         o = orientation_linf(pp, q.point(), t.point());
       }
       if ( CGAL::is_certain(o == RIGHT_TURN) )  {
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_p about to return " 
+        CGAL_SDG_DEBUG(std::cout << "debug incircle_p about to return "
           << (CGAL::get_certain( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE)
                        << std::endl ;);
         return CGAL::get_certain( o == RIGHT_TURN ) ? NEGATIVE : POSITIVE;
@@ -391,8 +393,8 @@ private:
       // here the segment is neither horizontal nor vertical
       if ( p.is_point() && q.is_segment() ) {
 
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_p: p point, q segment"
-                       << std::endl; );
+        CGAL_SDG_DEBUG(std::cout
+            << "debug incircle_p: p point, q segment" << std::endl; );
 
         Point_2 pnt = p.point();
 
@@ -401,9 +403,9 @@ private:
         bool is_positive_slope =
           CGAL::sign(l.a()) != CGAL::sign(l.b());
 
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_p: q has " <<
-          (is_positive_slope ? "positive" : "negative") <<
-          " slope" << std::endl; );
+        CGAL_SDG_DEBUG(std::cout << "debug incircle_p: q has "
+          << (is_positive_slope ? "positive" : "negative")
+          << " slope" << std::endl; );
 
 
         Oriented_side side_of_pnt =
@@ -534,8 +536,8 @@ private:
 
       } else { // p is a segment and q is a point
 
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_p: p segment, q point"
-                  << std::endl; );
+        CGAL_SDG_DEBUG(std::cout
+            << "debug incircle_p: p segment, q point" << std::endl; );
 
         // compute slope of segment p
         Line_2 l = compute_supporting_line(p.supporting_site());
@@ -589,7 +591,8 @@ private:
         } else {
           // here point q is not on segment p
 
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_p q not on p" << std::endl; );
+          CGAL_SDG_DEBUG(std::cout
+              << "debug incircle_p q not on p" << std::endl; );
 
           Point_2 pnt_on_seg;
           if (is_positive_slope) {
@@ -618,7 +621,7 @@ private:
             pnt_on_seg = compute_vertical_projection(l, pnt);
             lver = compute_line_from_to(pnt, pnt_on_seg);
             lhor = compute_perpendicular(lver, pnt_on_seg);
-            
+
             if ( cmpx(pnt, t.point()) == EQUAL ) {
               Comparison_result cytprj = cmpy(t.point(), pnt_on_seg);
 
@@ -643,26 +646,28 @@ private:
         // philaris: negative means conflict
         //           positive means no conflict
 
-        Oriented_side osh = 
+        Oriented_side osh =
           oriented_side_of_line(lhor, t.point());
 
-        Oriented_side osv = 
+        Oriented_side osv =
           oriented_side_of_line(lver, t.point());
 
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_p osh=" << osh 
-          << " osv=" << osv << std::endl; );
+        CGAL_SDG_DEBUG(std::cout << "debug incircle_p osh=" << osh
+            << " osv=" << osv << std::endl; );
 
-        if ((osh != 
+        if ((osh !=
              ON_NEGATIVE_SIDE) and
-            (osv != 
-             ON_NEGATIVE_SIDE))  
+            (osv !=
+             ON_NEGATIVE_SIDE))
         {
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_p about to return NEG"
-                    << std::endl; ); 
+          CGAL_SDG_DEBUG(std::cout
+              << "debug incircle_p about to return NEG"
+              << std::endl; );
           return NEGATIVE;
-        } else { 
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_p about to return POS"
-                    << std::endl; ); 
+        } else {
+          CGAL_SDG_DEBUG(std::cout
+              << "debug incircle_p about to return POS"
+              << std::endl; );
           return POSITIVE;
         }
 
@@ -672,7 +677,7 @@ private:
 
   //-----------------------------------------------------------------------
 
-  // philaris: here Linf is very different from L2  
+  // philaris: here Linf is very different from L2
   Sign incircle_pps(const Site_2& p, const Site_2& q,
 		    const Site_2& t) const
   {
@@ -744,17 +749,17 @@ private:
         if ((cmpxpq == EQUAL) or (cmpypq == EQUAL)) {
           // consider line from p to q
           Line_2 lpq = compute_line_from_to(pp, qq);
-          Oriented_side os1 = 
+          Oriented_side os1 =
             oriented_side_of_line(lpq, t.segment().source());
-          Oriented_side os2 = 
+          Oriented_side os2 =
             oriented_side_of_line(lpq, t.segment().target());
 
-          if ((os1 == ON_NEGATIVE_SIDE) or 
+          if ((os1 == ON_NEGATIVE_SIDE) or
               (os2 == ON_NEGATIVE_SIDE)   )  {
             return NEGATIVE;
           } else {
             return POSITIVE;
-          } 
+          }
 
         } else {
           // here, p and q do not have any same coordinate
@@ -914,9 +919,10 @@ private:
               << std::endl; );
           return NEGATIVE;
         } else {
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_sps does not cross wedge, "
-                    << "check for common endpoint of p and t"
-                    << std::endl; );
+          CGAL_SDG_DEBUG(std::cout
+              << "debug incircle_sps does not cross wedge, "
+              << "check for common endpoint of p and t"
+              << std::endl; );
 
           bool is_psrc_tsrc =
             same_points(p.source_site(), t.source_site());
@@ -964,19 +970,20 @@ private:
             testp = t.target_site().point();
             otherp = t.source_site().point();
           } else {
-            CGAL_SDG_DEBUG(std::cout << "debug incircle_sps fail endp, return POS"
-              << std::endl; );
+            CGAL_SDG_DEBUG(std::cout
+                << "debug incircle_sps fail endp, return POS"
+                << std::endl; );
             return POSITIVE;
           }
 
           // here p and t have common endpoint testp
 
-            CGAL_SDG_DEBUG(std::cout << "debug testp=" << testp << " pnt="
+          CGAL_SDG_DEBUG(std::cout << "debug testp=" << testp << " pnt="
             << pnt << " pnt_on_seg=" << pnt_on_seg << std::endl; );
 
           // check if testp equals pnt_on_seg
 
-          if ((cmpx(testp, pnt_on_seg) == EQUAL ) and 
+          if ((cmpx(testp, pnt_on_seg) == EQUAL ) and
               (cmpy(testp, pnt_on_seg) == EQUAL )   ) {
 
             // here testp is the same as pnt_on_seg
@@ -986,18 +993,21 @@ private:
             CGAL_assertion(osq != ON_ORIENTED_BOUNDARY);
 
             if (osq == ost) {
-              CGAL_SDG_DEBUG(std::cout << "debug incircle_sps sameside return NEG"
-                << std::endl; ); 
+              CGAL_SDG_DEBUG(std::cout
+                  << "debug incircle_sps sameside return NEG"
+                  << std::endl; );
               return NEGATIVE;
             } else {
-              CGAL_SDG_DEBUG(std::cout << "debug incircle_sps diffside return POS"
-                << std::endl; ); 
+              CGAL_SDG_DEBUG(std::cout
+                  << "debug incircle_sps diffside return POS"
+                  << std::endl; );
               return POSITIVE;
             }
           } else {
             // here, testp is not the same as pnt_on_seg
-            CGAL_SDG_DEBUG(std::cout << "debug incircle_sps diffpnts return POS"
-              << std::endl; ); 
+            CGAL_SDG_DEBUG(std::cout
+                << "debug incircle_sps diffpnts return POS"
+                << std::endl; );
             return POSITIVE;
           }
 
@@ -1014,8 +1024,8 @@ private:
   {
     CGAL_precondition( p.is_point() && q.is_segment() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_pss (pqt) = (" <<
-      p << ") (" << q << ") (" << t << ")" << std::endl; );
+    CGAL_SDG_DEBUG(std::cout << "debug incircle_pss (pqt) = ("
+        << p << ") (" << q << ") (" << t << ")" << std::endl; );
 
     bool is_p_tsrc = same_points(p, t.source_site());
     bool is_p_ttrg = same_points(p, t.target_site());
@@ -1080,7 +1090,8 @@ private:
         Segment_2 seg = q.segment();
 
         if (is_same_qsrc_p or is_same_qtrg_p) {
-          CGAL_SDG_DEBUG(std::cout << "debug: pss: p is endpoint of q" << std::endl; );
+          CGAL_SDG_DEBUG(std::cout
+              << "debug: pss: p is endpoint of q" << std::endl; );
           pnt_on_seg = pnt;
           Point_2 otherpnt;
           if (is_same_qsrc_p) {
@@ -1121,9 +1132,9 @@ private:
         // philaris: negative means conflict
         //           positive means no conflict
 
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_pss lhor=(" 
+        CGAL_SDG_DEBUG(std::cout << "debug incircle_pss lhor=("
           << lhor.a() << " " << lhor.b() << " " << lhor.c()
-          << ") lver=(" 
+          << ") lver=("
           << lver.a() << " " << lver.b() << " " << lver.c()
           << ")" << std::endl; );
 
@@ -1131,22 +1142,23 @@ private:
         //if (intersects_segment_negative_halfplane(t, lhor) and
         //    intersects_segment_negative_halfplane(t, lver)    )
         if (intersects_segment_negative_of_wedge(t, lhor, lver))
-        { 
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_pss about to return NEG"
-                    << std::endl; ); 
+        {
+          CGAL_SDG_DEBUG(std::cout
+              << "debug incircle_pss about to return NEG" << std::endl; );
           return NEGATIVE;
-        } else { 
-          CGAL_SDG_DEBUG(std::cout << "debug incircle_pss does not cross wedge, "
-                    << "check for common endpoint of q and t"
-                    << std::endl; ); 
+        } else {
+          CGAL_SDG_DEBUG(std::cout
+              << "debug incircle_pss does not cross wedge, "
+              << "check for common endpoint of q and t"
+              << std::endl; );
 
-          bool is_qsrc_tsrc = 
-            same_points(q.source_site(), t.source_site());  
-          bool is_qsrc_ttrg = 
-            same_points(q.source_site(), t.target_site());  
-          bool is_qtrg_tsrc = 
-            same_points(q.target_site(), t.source_site());  
-          bool is_qtrg_ttrg = 
+          bool is_qsrc_tsrc =
+            same_points(q.source_site(), t.source_site());
+          bool is_qsrc_ttrg =
+            same_points(q.source_site(), t.target_site());
+          bool is_qtrg_tsrc =
+            same_points(q.target_site(), t.source_site());
+          bool is_qtrg_ttrg =
             same_points(q.target_site(), t.target_site());
 
           Point_2 testt, othert;
@@ -1207,18 +1219,21 @@ private:
             CGAL_assertion(osp != ON_ORIENTED_BOUNDARY);
 
             if (osp == ost) {
-              CGAL_SDG_DEBUG(std::cout << "debug incircle_pss sameside return NEG"
-                << std::endl; ); 
+              CGAL_SDG_DEBUG(std::cout
+                  << "debug incircle_pss sameside return NEG"
+                  << std::endl; );
               return NEGATIVE;
             } else {
-              CGAL_SDG_DEBUG(std::cout << "debug incircle_pss diffside return POS"
-                << std::endl; ); 
+              CGAL_SDG_DEBUG(std::cout
+                  << "debug incircle_pss diffside return POS"
+                  << std::endl; );
               return POSITIVE;
             }
           } else {
             // here, testt is not the same as pnt_on_seg
-            CGAL_SDG_DEBUG(std::cout << "debug incircle_pss diffpnts return POS"
-              << std::endl; ); 
+            CGAL_SDG_DEBUG(std::cout
+                << "debug incircle_pss diffpnts return POS"
+                << std::endl; );
             return POSITIVE;
           }
 
@@ -1254,10 +1269,10 @@ public:
 		  const Site_2& r, const Site_2& t) const
   {
 
-    CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict entering (pqrt)= ("
-              << p << ") (" << q << ") ("  
-              << r << ") (" << t << ")"
-              << std::endl; );
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: Vertex_conflict entering (pqrt)= ("
+        << p << ") (" << q << ") (" << r << ") (" << t << ")"
+        << std::endl; );
 
 
 #ifdef CGAL_PROFILE
@@ -1282,11 +1297,11 @@ public:
       fname += suffix;
       std::ofstream ofs(fname.c_str(), std::ios_base::app);
       ofs.precision(16);
-      ofs << p << std::endl; );
-      ofs << q << std::endl; );
-      ofs << r << std::endl; );
-      ofs << t << std::endl; );
-      ofs << "=======" << std::endl; );
+      ofs << p << std::endl;
+      ofs << q << std::endl;
+      ofs << r << std::endl;
+      ofs << t << std::endl;
+      ofs << "=======" << std::endl;
       ofs.close();
     }
 #endif
@@ -1305,11 +1320,11 @@ public:
     Sign s_alt = v_alt.incircle(t);
 
     if ( s != s_alt ) {
-      std::cerr << "different results" << std::endl; );
-      std::cerr << p << std::endl; );
-      std::cerr << q << std::endl; );
-      std::cerr << r << std::endl; );
-      std::cerr << t << std::endl; );
+      std::cerr << "different results" << std::endl;
+      std::cerr << p << std::endl;
+      std::cerr << q << std::endl;
+      std::cerr << r << std::endl;
+      std::cerr << t << std::endl;
       CGAL_assertion( s == s_alt );
       exit(1);
     }
@@ -1319,28 +1334,28 @@ public:
     Voronoi_vertex_2 v(p, q, r);
 
     Point_2 temppt = v.point();
-    CGAL_SDG_DEBUG(std::cout << "debug Voronoi_vertex_2 v=" << temppt << std::endl; );
+    CGAL_SDG_DEBUG(std::cout
+        << "debug Voronoi_vertex_2 v=" << temppt << std::endl; );
 
     Sign retval = v.incircle(t);
 
-              CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqrt)= ("
-              << p << ") (" << q << ") ("  
-              << r << ") (" << t << ") returns " << retval
-              << std::endl; );
+    CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqrt)= ("
+        << p << ") (" << q << ") ("  << r << ") (" << t << ") returns "
+        << retval << std::endl; );
 
     return retval;
 #endif // CGAL_SDG_CHECK_INCIRCLE_CONSISTENCY
   }
 
 
-  
+
 
   Sign operator()(const Site_2& p, const Site_2& q,
 		  const Site_2& t) const
   {
     CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqt)= ("
-              << p << ") (" << q << ") (" << t << ")"
-              << std::endl; );
+        << p << ") (" << q << ") (" << t << ")"
+        << std::endl; );
 
 #ifdef CGAL_PROFILE
     // In case CGAL profile is called then output the sites in case of
@@ -1348,10 +1363,10 @@ public:
     if ( Algebraic_structure_traits<FT>::Is_exact::value ) {
       std::ofstream ofs("failure-log.cin", std::ios_base::app);
       ofs.precision(16);
-      ofs << p << std::endl; );
-      ofs << q << std::endl; );
-      ofs << t << std::endl; );
-      ofs << "=======" << std::endl; );
+      ofs << p << std::endl;
+      ofs << q << std::endl;
+      ofs << t << std::endl;
+      ofs << "=======" << std::endl;
       ofs.close();
     }
 #endif
@@ -1377,15 +1392,15 @@ public:
     if ( t.is_point() ) {
       //      return incircle_p(p, q, t);
       retval = incircle_p(q, p, t);
-    } else { 
+    } else {
       // MK::ERROR: do geometric filtering when orientation is called.
       //    return incircle_s(p, q, t);
       retval = incircle_s(q, p, t);
     }
 
-              CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqt)= ("
-              << p << ") (" << q << ") (" << t << ")"
-              << " returns " << retval << std::endl; );
+    CGAL_SDG_DEBUG(std::cout << "debug: Vertex_conflict (pqt)= ("
+        << p << ") (" << q << ") (" << t << ")"
+        << " returns " << retval << std::endl; );
     return retval;
   }
 
