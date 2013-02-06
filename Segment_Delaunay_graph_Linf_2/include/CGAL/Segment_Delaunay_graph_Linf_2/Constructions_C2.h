@@ -726,6 +726,8 @@ public:
     }
 
     if (p.is_segment() and q.is_segment()) {
+      // philaris: this code should never be executed
+      CGAL_assertion(not (p.is_segment() and q.is_segment()));
       CGAL_SDG_DEBUG(std::cout
           << "debug construct bisector ray: p, q are segments"
           << std::endl ; ) ;
