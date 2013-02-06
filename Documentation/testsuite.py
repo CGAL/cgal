@@ -193,7 +193,7 @@ def main():
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1><table id="revisions"><tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th></tr></table></body></html>''')
 
-        d=pq(filename=publish_dir + 'index.html')
+        d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
         new_row='<tr><td><a href="log{revision}/testsuite.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td></tr>'.format(
             revision=version_string, date=version_date, warnings=sum[0], errors=sum[1])
