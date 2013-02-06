@@ -68,7 +68,7 @@ def purge_doc():
         shutil.rmtree(output)
 
 def run_doxyassist(doxyassist, doxygen):
-    subprocess.call([doxyassist, '--debug', '--doxygen', doxygen, 'doxyassist.xml'])
+    subprocess.call([sys.executable,doxyassist, '--debug', '--doxygen', doxygen, 'doxyassist.xml'])
     
 def get_version():
     rev=subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True)
@@ -155,7 +155,7 @@ def main():
         # two runs are required, one to build the tags, the next to actually use them
         run_doxyassist(doxyassist, doxygen)
         run_doxyassist(doxyassist, doxygen)
-        subprocess.call(['./html_output_post_processing.py', '--output', './output'])
+        subprocess.call([sys.executable,'./html_output_post_processing.py', '--output', './output'])
 
     d, sum=write_report()
     version_string,version_date=get_version()
