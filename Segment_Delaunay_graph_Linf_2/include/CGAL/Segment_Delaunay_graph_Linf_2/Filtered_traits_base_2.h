@@ -98,6 +98,7 @@ private:
   typedef typename CK::Segment_2              CK_Segment_2;
   typedef typename CK::Ray_2                  CK_Ray_2;
   typedef typename CK::Direction_2            CK_Direction_2;
+  typedef typename CK::Vector_2               CK_Vector_2;
 
   typedef typename CK::Site_2                 CK_Site_2;
 
@@ -110,6 +111,7 @@ private:
   typedef typename EK::Segment_2              EK_Segment_2;
   typedef typename EK::Ray_2                  EK_Ray_2;
   typedef typename EK::Direction_2            EK_Direction_2;
+  typedef typename EK::Vector_2               EK_Vector_2;
 
   typedef typename EK::Site_2                 EK_Site_2;
 
@@ -122,6 +124,7 @@ private:
   typedef typename FK::Segment_2              FK_Segment_2;
   typedef typename FK::Ray_2                  FK_Ray_2;
   typedef typename FK::Direction_2            FK_Direction_2;
+  typedef typename FK::Vector_2               FK_Vector_2;
 
   typedef typename FK::Site_2                 FK_Site_2;
 
@@ -156,7 +159,10 @@ public:
   typedef typename CK::Segment_2        Segment_2;
   typedef typename CK::Ray_2            Ray_2;
   typedef typename CK::Direction_2      Direction_2;
+  typedef typename CK::Vector_2         Vector_2;
   typedef typename CK::Comparison_result      Comparison_result;
+  typedef typename CK::Sign             Sign;
+  typedef typename CK::Boolean          Boolean;
   //  typedef typename CK::Circle_2         Circle_2;
   typedef typename CK::Site_2           Site_2;
 

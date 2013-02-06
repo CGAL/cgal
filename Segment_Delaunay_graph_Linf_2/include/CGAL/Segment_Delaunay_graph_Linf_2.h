@@ -163,6 +163,7 @@ public:
   typedef ST                                     Storage_traits;
   typedef typename Gt::Site_2                    Site_2;
   typedef typename Gt::Point_2                   Point_2;
+  typedef typename Gt::Vector_2                  Vector_2;
   //typedef typename Gt::Polygonal_chain_Linf_2    Polygonal_chain_Linf_2;
 
   typedef typename D_S::Edge                      Edge;
