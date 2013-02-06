@@ -1393,13 +1393,9 @@ public:
   
   void new_input_polyhedron(Polyhedron& P)
   {
-    #ifndef NDEBUG
-    std::pair<typename Poly_to_map_node::iterator,bool> res = 
-    #endif
+    CGAL_assertion_code((std::pair<typename Poly_to_map_node::iterator,bool>) res = )
       polyhedron_to_map_node_to_polyhedron_vertex.insert(std::make_pair( &P,Node_to_polyhedron_vertex_map() ));
-    #ifndef NDEBUG
     CGAL_assertion(res.second == true);
-    #endif    
   }
   
   //1) split_halfedges and retriangulate faces with no intersection point interior to the facet
