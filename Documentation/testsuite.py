@@ -166,7 +166,7 @@ def main():
 
     title=d('#maintitle')
     title.text(title.text() + ' for ' + version_string)
-    write_out_html(d, './log/testsuite.html')
+    write_out_html(d, './log/index.html')
     
     if args.publish:
         if args.publish.endswith('/'):
@@ -190,8 +190,14 @@ def main():
             print('No index.html in the publish directory found. Writing a skeleton.')
             with open(publish_dir + 'index.html', 'w') as f:
                 f.write('''<!DOCTYPE html>
+<style type="text/css">
+.rev-table th {text-align: center;}
+.rev-table td {text-align: center;}
+table {margin-left:40px;}
+body {background-image:url("images/back40.gif");}
+</style>
 <html><head><title>Manual Testsuite Overview</title></head>
-<body><h1>Overviewpage of the Doxygen Manual Testsuite</h1><table id="revisions"><tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th></tr></table></body></html>''')
+<body><h1>Overviewpage of the Doxygen Manual Testsuite</h1><table id="revisions" class="rev-table"><tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th></tr></table></body></html>''')
 
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
@@ -199,7 +205,7 @@ def main():
             revision=version_string, date=version_date, warnings=sum[0], errors=sum[1])
         revs.eq(0).after(new_row)
         write_out_html(d, publish_dir + 'index.html')
-        shutil.copytree('./log', publish_dir + 'log' + version_string)
+        shutil.copytree('./log', publish_dir + 'log-' + version_string)
         
 if __name__ == "__main__":
     main()
