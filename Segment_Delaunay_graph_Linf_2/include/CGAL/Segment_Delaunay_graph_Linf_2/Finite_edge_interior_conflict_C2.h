@@ -938,6 +938,7 @@ public:
         bool result;
 
         if (p.is_point()) {
+          CGAL_assertion(q.is_segment());
           //p may be end point of t
           if ( same_points(p,t.source_site())
                or same_points(p,t.target_site()) ) {
@@ -949,21 +950,36 @@ public:
                 << sgn << " returns " << true << std::endl; );
             return true;
           } else {
-            result = intersects_segment_interior_inf_wedge_sp(q,p,t);
+            if (same_points(q.source_site(), t.source_site()) or
+                same_points(q.source_site(), t.target_site()) or
+                same_points(q.target_site(), t.source_site()) or
+                same_points(q.target_site(), t.target_site())   ) {
+              result = true;
+            } else {
+              result = intersects_segment_interior_inf_wedge_sp(q,p,t);
+            }
           }
         } else { // p is segment and q is point
+          CGAL_assertion(q.is_point());
           //q may be endpoint of t
-            if ( same_points(q,t.source_site())
-                 or same_points(q,t.target_site())) {
-              CGAL_SDG_DEBUG( std::cout
-                  << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
-                  << p << ") (" << q << ") (" << r <<  ") ("
-                  << t << ")  "
-                  << sgn << " returns " << true << std::endl; );
-              return true;
+          if (   same_points(q,t.source_site())
+              or same_points(q,t.target_site())) {
+            CGAL_SDG_DEBUG( std::cout
+                << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+                << p << ") (" << q << ") (" << r <<  ") ("
+                << t << ")  "
+                << sgn << " returns " << true << std::endl; );
+            return true;
+          } else {
+            if (same_points(p.source_site(), t.source_site()) or
+                same_points(p.source_site(), t.target_site()) or
+                same_points(p.target_site(), t.source_site()) or
+                same_points(p.target_site(), t.target_site())   ) {
+              result = true;
             } else {
               result = intersects_segment_interior_inf_wedge_sp(p,q,t);
             }
+          }
         }
 
         if (result == false) {
