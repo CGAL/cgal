@@ -28,6 +28,7 @@
 
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
+#include <CGAL/use.h>
 
 template <class Tds>
 void
@@ -48,6 +49,10 @@ _test_cls_tds_3( const Tds &)
   typedef typename Tds::Cell_handle       Cell_handle;
   typedef typename Tds::Cell_iterator     Cell_iterator;
 
+  CGAL_USE_TYPE(Facet);
+  CGAL_USE_TYPE(Facet_iterator);
+  CGAL_USE_TYPE(Edge_iterator);
+
   // test rebinds :
   typedef CGAL::Triangulation_cell_base_with_info_3<double, Cell> New_cell_base;
   // I can't rebind the vertex that easily as the with_info needs a Point... :(
@@ -56,6 +61,8 @@ _test_cls_tds_3( const Tds &)
 
   typedef typename Tds::template Rebind_vertex<Vertex>::Other             New_TDS_1;
   typedef typename New_TDS_1::template Rebind_cell<New_cell_base>::Other  New_TDS;
+
+  CGAL_USE_TYPE(New_TDS);
 
   // test Vertex and cell :
   std::cout << "    Test Vertex " << std::endl;

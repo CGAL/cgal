@@ -20,6 +20,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <CGAL/use.h>
 
 template <class Triangulation>
 void
@@ -55,6 +56,15 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
   typedef typename Cls::Finite_facets_iterator      Finite_facets_iterator;
   typedef typename Cls::Finite_cells_iterator       Finite_cells_iterator;
 
+  CGAL_USE_TYPE(Cell);
+  CGAL_USE_TYPE(size_type);
+  CGAL_USE_TYPE(difference_type);
+  CGAL_USE_TYPE(Cell_circulator);
+  CGAL_USE_TYPE(Facet_circulator);
+  CGAL_USE_TYPE(Cell_iterator);
+  CGAL_USE_TYPE(Facet_iterator);
+  CGAL_USE_TYPE(Edge_iterator);
+  CGAL_USE_TYPE(Vertex_iterator);
   //########################################################################
   Cls t;
 
