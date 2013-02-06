@@ -23,10 +23,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
-#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX)
-# include <tbb/atomic.h>
-#endif
-
 namespace CGAL {
 
 
@@ -85,9 +81,6 @@ public:
   Triangulation_ds_vertex_base_3()
     : _c()
   {
-#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
-    m_grid_index_cache = -1;
-#endif
   }
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
@@ -110,17 +103,6 @@ public:
   {
     return cell() != Cell_handle();
   }
-  
-#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
-  void set_grid_index_cache (int index)
-  {
-    m_grid_index_cache = index;
-  }
-  int get_grid_index_cache()
-  {
-    return m_grid_index_cache;
-  }
-#endif
 
   // For use by the Compact_container.
   void *   for_compact_container() const
@@ -129,10 +111,6 @@ public:
   { return _c.for_compact_container(); }
 
 private:
-
-#ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
-  tbb::atomic<int> m_grid_index_cache;
-#endif
   Cell_handle _c;
 };
 

@@ -593,27 +593,7 @@ public:
       Mesh_3::LockDataStructureType *p_lock_ds = Base::get_lock_data_structure();
       if (p_lock_ds)
       {
-# ifdef CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX
-        int grid_index = vh->get_grid_index_cache();
-        if (grid_index >= 0)
-        {
-          if (p_lock_ds->try_lock(grid_index, lock_radius))
-          {
-            // Has the cached valeu changed in the meantime?
-            if (vh->get_grid_index_cache() == grid_index)
-              return true;
-          }
-          return false;
-        }
-        else
-        {
-          std::pair<bool, int> r = p_lock_ds->try_lock(vh->point(), lock_radius);
-          vh->set_grid_index_cache(r.second);
-          return r.first;
-        }
-# else
         return p_lock_ds->try_lock(vh->point(), lock_radius).first;
-# endif
       }
     }
 #endif // CGAL_LINKED_WITH_TBB
@@ -726,7 +706,8 @@ public:
   Cell_handle
   locate(const Point & p,
 	 Locate_type & lt, int & li, int & lj,
-	 Cell_handle start = Cell_handle()) const;
+	 Cell_handle start = Cell_handle(),
+   bool *p_could_lock_zone = 0) const;
 #else // no CGAL_NO_STRUCTURAL_FILTERING
 #  ifndef CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 #    define CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
