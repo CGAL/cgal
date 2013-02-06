@@ -99,9 +99,6 @@ class Compact_mesh_cell_base_3_base<Parallel_tag>
 {
 protected:
   Compact_mesh_cell_base_3_base()
-# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-    : m_localization_id(0)
-# endif
   {
     bits_ = 0;
   }
@@ -150,24 +147,10 @@ public:
     return ( (bits_ & (1 << facet)) != 0 );
   }
 
-# ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-  int get_localization_id() const
-  {
-    return m_localization_id;
-  }
-  void set_localization_id(int id)
-  {
-    m_localization_id = id;
-  }
-# endif
-
 protected:
   typedef tbb::atomic<unsigned int> Erase_counter_type;
 
   Erase_counter_type                m_erase_counter;
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-  int                               m_localization_id;
-#endif
 
 private:
   /// Stores visited facets (4 first bits)

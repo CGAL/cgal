@@ -1254,9 +1254,6 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
 				   c->vertex(2),
 				   c->vertex(3));
     cnew->set_vertex(li, v);
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-    cnew->set_localization_id(c->get_localization_id());
-#endif
     Cell_handle c_li = c->neighbor(li);
     set_adjacency(cnew, li, c_li, c_li->index(c));
 
@@ -1375,9 +1372,6 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
 				   c->vertex(2),
 				   c->vertex(3));
     cnew->set_vertex(li, v);
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-    cnew->set_localization_id(c->get_localization_id());
-#endif
     Cell_handle c_li = c->neighbor(li);
     set_adjacency(cnew, li, c_li, c_li->index(c));
     
@@ -1422,9 +1416,6 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
           CGAL_triangulation_precondition( c->tds_data().is_in_conflict() );
           CGAL_triangulation_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
           cnew = create_cell(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3));
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-          cnew->set_localization_id(c->get_localization_id());
-#endif
           cnew->set_vertex(li, v);
           c_li = c->neighbor(li);
           set_adjacency(cnew, li, c_li, c_li->index(c));          

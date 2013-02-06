@@ -47,30 +47,10 @@ protected:
 template <>
 class Triangulation_lazy_ds_cell_base_3_base<Parallel_tag>
 {
-public:
-
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-  Triangulation_lazy_ds_cell_base_3_base()
-  : m_localization_id(0)
-  {}
-
-  int get_localization_id() const
-  {
-    return m_localization_id;
-  }
-  void set_localization_id(int id)
-  {
-    m_localization_id = id;
-  }
-#endif
-
 protected:
   typedef tbb::atomic<unsigned int> Erase_counter_type;
 
   Erase_counter_type                m_erase_counter;
-#ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-  int                               m_localization_id;
-#endif
 };
 #endif // CGAL_LINKED_WITH_TBB
 
