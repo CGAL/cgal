@@ -777,7 +777,7 @@ public:
   result_type operator()(const Site_2& p, const Site_2& q,
                          const Site_2& r, const Site_2& s) const
   {
-    CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment " 
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment "
         << "p=" << p << " q=" << q << " r=" << r << " s=" << s
         << std::endl; );
 
@@ -785,7 +785,7 @@ public:
     Point_2 vpqr = circumcenter(p, q, r);
     Point_2 vqps = circumcenter(q, p, s);
 
-    CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment " 
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment "
         << "p=" << p << " q=" << q << " r=" << r << " s=" << s
         << " has v(pqr)=" << vpqr << " v(qps)=" << vqps << std::endl; );
 
@@ -942,6 +942,9 @@ public:
         npts = 2;
       }
       else {
+        CGAL_SDG_DEBUG(std::cout
+            << "debug bisector segment "
+            << "p=" << p << " q=" << q << std::endl; );
         //pnt is the point site and seg is the segment site
         Point_2 pnt = (p.is_point()) ? p.point() : q.point();
         Segment_2 seg = (p.is_segment()) ? p.segment() : q.segment();
@@ -968,10 +971,10 @@ public:
                        ? Point_2(m.x() - seglenhalf, m.y())
                        : Point_2(m.x() + seglenhalf, m.y());
           } else {//pnt is on the negative side of lseg i.e right turn
-            points[1]= (compare_x_2(seg.source(),seg.target())==SMALLER) 
+            points[1]= (compare_x_2(seg.source(),seg.target())==SMALLER)
                        ? Point_2(m.x() - seglenhalf, m.y())
                        : Point_2(m.x() + seglenhalf, m.y());
-            points[2]= (compare_x_2(seg.source(),seg.target())==SMALLER) 
+            points[2]= (compare_x_2(seg.source(),seg.target())==SMALLER)
                        ? Point_2(m.x() + seglenhalf, m.y())
                        : Point_2(m.x() - seglenhalf, m.y());
           }
@@ -980,7 +983,7 @@ public:
           }
           // oriented line from p1 to p2
           Line_2 l(points[1], points[2]);
-            
+
           if (l.perpendicular(points[1]).has_on_positive_side(vpqr)) {
             npts = 4;
             //points[1] = p1;
@@ -991,13 +994,17 @@ public:
           } else {
             npts = 2;
           }
-            
+
+          CGAL_SDG_DEBUG(std::cout
+              << "debug construct bisector segment npts="
+              << npts << std::endl; );
+
           CGAL_assertion((l.perpendicular(vpqr).
                          has_on_negative_side(vqps)) or
                          ((compare_x_2(vpqr, vqps) == EQUAL) and
                           (compare_y_2(vpqr, vqps) == EQUAL))
                          );
-              
+
           while (npts > 2) {
             if (l.perpendicular(points[npts-2]).
                 has_on_negative_side(vqps)) {
@@ -1006,8 +1013,9 @@ public:
               npts = npts - 1;
             }
           }
-          CGAL_SDG_DEBUG( std::cout << "sandeep debug after cutting points,npts = "
-                    << npts << std::endl; );
+          CGAL_SDG_DEBUG( std::cout
+              << "debug bisector segment after cutting points, npts="
+              << npts << std::endl; );
         }//end of horizontal segment case
         else if (lseg.is_vertical()) {
           //segment site is vertical
