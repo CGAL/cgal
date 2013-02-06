@@ -138,7 +138,11 @@ public:
           bool is_q_tsrc = same_points(q, t.source_site());
           bool is_q_ttrg = same_points(q, t.target_site());
 
+          CGAL_assertion(not (is_q_tsrc or is_q_ttrg));
+
           if (is_q_tsrc or is_q_ttrg) {
+            // philaris: this code should never be executed
+
             bool is_q_ssrc = same_points(q, s.source_site());
             bool is_q_strg = same_points(q, s.target_site());
             bool is_q_rsrc = same_points(q, r.source_site());
