@@ -10,6 +10,8 @@
 #include <CGAL/Polychain_2.h>
 #include <CGAL/intersections.h>
 
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Bisector_Linf.h>
+
 
 namespace CGAL {
 
@@ -108,7 +110,7 @@ public:
 };
 
 
-    
+
 //-----------------------------------------------------------------------
 //                  Segment Delaunay graph Voronoi circle
 //-----------------------------------------------------------------------
@@ -415,10 +417,13 @@ public:
   typedef typename Gt::Point_2                 Point_2;
   typedef typename Gt::Direction_2             Direction_2;
   typedef typename Gt::Line_2                  Line_2;
-  typedef typename Gt::Segment_2              Segment_2;
+  typedef typename Gt::Segment_2               Segment_2;
   typedef typename Gt::Construct_svd_vertex_2  Construct_svd_vertex_2;
+  typedef CGAL::Polychainline_2<Gt>            Polychainline;
   typedef CGAL::Polychainray_2<Gt>             Polychainray;
   typedef Polychainray                         result_type;
+
+  typedef Bisector_Linf<Gt>                    Bisector_Linf_Type;
 
   typedef typename Gt::Compare_x_2       Compare_x_2;
   typedef typename Gt::Compare_y_2       Compare_y_2;
@@ -434,21 +439,20 @@ public:
     CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray "
               << "p=" << p << " q=" << q << " r=" << r << std::endl; );
 
-    CGAL_assertion( !(p.is_segment() && q.is_segment()) );
-
     // compute pqr vertex
     Point_2 v = Construct_svd_vertex_2()(p, q, r);
 
-    CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray " 
-              << "p=" << p << " q=" << q << " r=" << r 
+    CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray "
+              << "p=" << p << " q=" << q << " r=" << r
               << " has v(pqr)=" << v << std::endl; );
 
-    //CGAL_SDG_DEBUG( std::cout << "debug in ray computing bisector" << std::endl; );
+    //CGAL_SDG_DEBUG( std::cout
+    //    << "debug in ray computing bisector" << std::endl; );
 
     // compute oriented bisector between p and q
- 
-    if ( p.is_point() and q.is_point() ) { 
-      Point_2 pp = p.point(); 
+
+    if ( p.is_point() and q.is_point() ) {
+      Point_2 pp = p.point();
       Point_2 pq = q.point();
 
       Compare_x_2 compare_x_2;
@@ -530,14 +534,15 @@ public:
 
       Polychainray pcr(points, points+npts, d);
 
-      CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
-      
+      CGAL_SDG_DEBUG( std::cout
+          << "debug construct bisector ray is " << pcr << std::endl; );
+
       return pcr;
-    } 
-    
+    }
+
     if ( (p.is_point() and q.is_segment())
         or (p.is_segment() and q.is_point()) ) {
-      
+
       Point_2 pnt = (p.is_point()) ? p.point() : q.point();
       Segment_2 seg = (p.is_segment()) ? p.segment() : q.segment();
       
@@ -710,22 +715,35 @@ public:
             npts = 1;
           }
         }
-        
+
         Polychainray pcr(points, points+npts, d);
-        CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is " << pcr << std::endl; );
+        CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is "
+            << pcr << std::endl; );
         return pcr;
-        
+
       }
-      
+
     }
 
-    // this part should never be reached
+    if (p.is_segment() and q.is_segment()) {
+      CGAL_SDG_DEBUG(std::cout
+          << "debug construct bisector ray: p, q are segments"
+          << std::endl ; ) ;
+      Bisector_Linf_Type bisector_linf;
+      Polychainline full_bisec = bisector_linf(p,q);
+      Point_2 points[1];
+      points[0] = v;
+      Polychainray pcr(points, points+1, full_bisec.get_outgoing());
+      CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is "
+          << pcr << std::endl; );
+      return pcr;
+    }
 
-    CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray error " << std::endl; );
-
+    // the following code should never be executed
+    CGAL_SDG_DEBUG( std::cout
+        << "debug construct bisector ray error " << std::endl; );
+    CGAL_assertion(false);
     return Polychainray();
-    
-    
   }
 };
 
