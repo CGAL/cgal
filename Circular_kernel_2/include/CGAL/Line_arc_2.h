@@ -93,25 +93,25 @@ public:
      : RLine_arc_2(a)
    {}
 
-  typename boost::result_of< typename R::Construct_circular_source_vertex_2(Line_arc_2)>::type
+  typename cpp11::result_of< typename R::Construct_circular_source_vertex_2(Line_arc_2)>::type
     source() const
   {
         return typename R::Construct_circular_source_vertex_2()(*this);
   }
 
-  typename boost::result_of< typename R::Construct_circular_target_vertex_2(Line_arc_2)>::type
+  typename cpp11::result_of< typename R::Construct_circular_target_vertex_2(Line_arc_2)>::type
     target() const
   {
         return typename R::Construct_circular_target_vertex_2()(*this);
   }
 
-  typename boost::result_of< typename R::Construct_circular_min_vertex_2(Line_arc_2)>::type
+  typename cpp11::result_of< typename R::Construct_circular_min_vertex_2(Line_arc_2)>::type
   left() const
   {
         return typename R::Construct_circular_min_vertex_2()(*this);
   }
 
-  typename boost::result_of< typename R::Construct_circular_max_vertex_2(Line_arc_2)>::type
+  typename cpp11::result_of< typename R::Construct_circular_max_vertex_2(Line_arc_2)>::type
   right() const
   {
         return typename R::Construct_circular_max_vertex_2()(*this);

@@ -809,21 +809,21 @@ struct Lazy_construction_nt {
     BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, T)                                   \
     typedef Lazy_exact_nt<                                              \
       typename boost::remove_cv< typename boost::remove_reference <     \
-      typename boost::result_of<EC( BOOST_PP_ENUM_PARAMS(n, E) )>::type >::type >::type > type; \
+      typename cpp11::result_of<EC( BOOST_PP_ENUM_PARAMS(n, E) )>::type >::type >::type > type; \
   };
 
   BOOST_PP_REPEAT_FROM_TO(1, 6, CGAL_RESULT_NT, _)
 
 #define CGAL_NT_OPERATOR(z, n, d)                                            \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
-  typename boost::result_of<Lazy_construction_nt(BOOST_PP_ENUM_PARAMS(n, L))>::type \
+  typename cpp11::result_of<Lazy_construction_nt(BOOST_PP_ENUM_PARAMS(n, L))>::type \
   operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) const {                      \
     BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, L)                                     \
     BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, L)                                     \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
-                                        typename boost::result_of< EC(BOOST_PP_ENUM_PARAMS(n, E)) >::type >::type >::type ET; \
+                                        typename cpp11::result_of< EC(BOOST_PP_ENUM_PARAMS(n, E)) >::type >::type >::type ET; \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
-                                        typename boost::result_of< AC(BOOST_PP_ENUM_PARAMS(n, A)) >::type >::type >::type AT; \
+                                        typename cpp11::result_of< AC(BOOST_PP_ENUM_PARAMS(n, A)) >::type >::type >::type AT; \
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
     Protect_FPU_rounding<Protection> P;                                 \
     try {                                                               \
@@ -1424,23 +1424,23 @@ struct Lazy_construction<LK, AC, EC, E2A_, false>
 template< typename F, BOOST_PP_ENUM_PARAMS(n, class T) > \
 struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
   BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, T)                                     \
-  typedef typename Type_mapper< typename boost::result_of<AC( BOOST_PP_ENUM_PARAMS(n, A) )>::type, AK, LK>::type type; \
+  typedef typename Type_mapper< typename cpp11::result_of<AC( BOOST_PP_ENUM_PARAMS(n, A) )>::type, AK, LK>::type type; \
 };
 
   BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_RESULT, _)
 
 #define CGAL_CONSTRUCTION_OPERATOR(z, n, d)                                      \
   template<BOOST_PP_ENUM_PARAMS(n, class L)>                            \
-  typename boost::result_of<Lazy_construction(BOOST_PP_ENUM_PARAMS(n, L))>::type \
+  typename cpp11::result_of<Lazy_construction(BOOST_PP_ENUM_PARAMS(n, L))>::type \
   operator()( BOOST_PP_ENUM(n, CGAL_LARGS, _) ) {                            \
     BOOST_PP_REPEAT(n, CGAL_TYPEMAP_EC, L)                                     \
     BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, L)                                     \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
-                                        typename boost::result_of< EC(BOOST_PP_ENUM_PARAMS(n, E)) >::type >::type >::type ET; \
+                                        typename cpp11::result_of< EC(BOOST_PP_ENUM_PARAMS(n, E)) >::type >::type >::type ET; \
     typedef typename boost::remove_cv< typename boost::remove_reference < \
-                                        typename boost::result_of< AC(BOOST_PP_ENUM_PARAMS(n, A)) >::type >::type >::type AT; \
+                                        typename cpp11::result_of< AC(BOOST_PP_ENUM_PARAMS(n, A)) >::type >::type >::type AT; \
     typedef Lazy< AT, ET, EFT, E2A> Handle; \
-    typedef typename boost::result_of<Lazy_construction(BOOST_PP_ENUM_PARAMS(n, L))>::type result_type; \
+    typedef typename cpp11::result_of<Lazy_construction(BOOST_PP_ENUM_PARAMS(n, L))>::type result_type; \
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
     Protect_FPU_rounding<Protection> P;                                   \
     try {                                                                 \
@@ -1456,13 +1456,13 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
   BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_CONSTRUCTION_OPERATOR, _)
 
   // nullary
-  typename Type_mapper< typename boost::result_of<AC()>::type ,AK, LK>::type
+  typename Type_mapper< typename cpp11::result_of<AC()>::type ,AK, LK>::type
   operator()() const
   {
-    typedef typename boost::result_of<AC()>::type AT;
-    typedef typename boost::result_of<EC()>::type ET;
+    typedef typename cpp11::result_of<AC()>::type AT;
+    typedef typename cpp11::result_of<EC()>::type ET;
     typedef Lazy<AT, ET, EFT, E2A> Handle;
-    typedef typename Type_mapper< typename boost::result_of<AC()>::type ,AK, LK>::type result_type;
+    typedef typename Type_mapper< typename cpp11::result_of<AC()>::type ,AK, LK>::type result_type;
 
     return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>()) );
   }

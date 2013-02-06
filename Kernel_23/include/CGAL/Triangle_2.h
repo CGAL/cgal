@@ -107,13 +107,13 @@ public:
     return !(*this == t);
   }
 
-  typename boost::result_of<typename R::Construct_vertex_2( Triangle_2, int)>::type
+  typename cpp11::result_of<typename R::Construct_vertex_2( Triangle_2, int)>::type
   vertex(int i) const
   {
     return R().construct_vertex_2_object()(*this,i);
   }
 
-  typename boost::result_of<typename R::Construct_vertex_2( Triangle_2, int)>::type
+  typename cpp11::result_of<typename R::Construct_vertex_2( Triangle_2, int)>::type
   operator[](int i) const
   {
     return vertex(i);
