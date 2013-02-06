@@ -2799,6 +2799,11 @@ private:
         same_points(p, t.source_site()) ? t.target() : t.source();
       Orientation o = CGAL::orientation(qother, p.point(), tother);
 
+      CGAL_SDG_DEBUG(std::cout << "debug vsqrt "
+          << "q^ = " << qother << ", p = " << p.point()
+          << ", t^ = " << tother
+          << " o = " << o << std::endl; );
+
       if (o != RIGHT_TURN) {
         return POSITIVE;
       } else {
@@ -2811,9 +2816,14 @@ private:
         } else {
           bool has_q_pos_slope = has_positive_slope(q);
           if (has_q_pos_slope) {
+            CGAL_SDG_DEBUG(std::cout << "debug vsqrt "
+                << "q has positive slope" << std::endl; );
+
             return cmpy(qother, p.point()) == cmpy(tother, p.point()) ?
                    NEGATIVE : POSITIVE;
           } else {
+            CGAL_SDG_DEBUG(std::cout << "debug vsqrt "
+                << "q has has negative slope" << std::endl; );
             return cmpx(qother, p.point()) == cmpx(tother, p.point()) ?
                    NEGATIVE : POSITIVE;
           }
