@@ -2674,14 +2674,19 @@ private:
 
     // easy degeneracies --- start
 
+    bool is_p_endp_of_q = is_endpoint_of(p, q);
+    bool is_p_endp_of_r = is_endpoint_of(p, r);
+    bool is_p_endp_of_t = is_endpoint_of(p, t);
+
     // check if p is a common endpoint of q and r, in which case the
     // Voronoi circle degenerates to p
-    if ( is_endpoint_of(p, q) && is_endpoint_of(p, r) ) {
-      CGAL_SDG_DEBUG(std::cout << "debug incircle_s voronoi circle degenerates to p="
-        << p << std::endl;);
+    if ( is_p_endp_of_q and is_p_endp_of_r ) {
+      CGAL_SDG_DEBUG(std::cout
+          << "debug incircle_s voronoi circle degenerates to p="
+          << p << std::endl;);
       // case 1: the new segment is not adjacent to the center of the
       //         degenerate Voronoi circle, i.e., not adjacent to p
-      if ( !is_endpoint_of(p, t) ) { return POSITIVE; }
+      if ( not is_p_endp_of_t ) { return POSITIVE; }
 
       // check if t has the same support as either q or r
       if ( same_segments(q.supporting_site(), t.supporting_site()) ) {
@@ -2692,8 +2697,9 @@ private:
 	return ZERO;
       }
 
-      CGAL_SDG_DEBUG(std::cout << "debug incircle_s q, r, t have p as endpoint"
-        << std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug incircle_s q, r, t have p as endpoint"
+          << std::endl;);
 
       Point_2 r_ = r.source(), q_ = q.source(), t_ = t.source();
 
@@ -2944,14 +2950,16 @@ public:
   inline Sign incircle(const Site_2& t) const
   {
 
-    CGAL_SDG_DEBUG(std::cout << "debug field_new incircle t=" << t << std::endl;);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug field_new incircle t=" << t << std::endl;);
 
     if ( t.is_point() ) {
       return incircle_p(p_, q_, r_, t);
     }
-    CGAL_SDG_DEBUG(std::cout << "debug about to run incircle_s (pqrt) ="
-      << "(" << p_ << ") (" << q_ << ") (" << r_ << ") "
-      << "(" << t << ")" << std::endl;);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug about to run incircle_s (pqrt) ="
+        << "(" << p_ << ") (" << q_ << ") (" << r_ << ") "
+        << "(" << t << ")" << std::endl;);
     return incircle_s(p_, q_, r_, t);
   }
 
