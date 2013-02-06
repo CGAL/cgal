@@ -582,46 +582,6 @@ public:
   bool is_infinite(const Edge & e) const
     { return is_infinite(e.first,e.second,e.third); }
 
-
-  //QUERIES
-
-  bool is_vertex(const Point & p, Vertex_handle & v) const;
-
-  bool is_vertex(Vertex_handle v) const;
-  bool is_edge(Vertex_handle u, Vertex_handle v,
-	       Cell_handle & c, int & i, int & j) const;
-  bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
-		Cell_handle & c, int & i, int & j, int & k) const;
-  bool is_cell(Cell_handle c) const;
-  bool is_cell(Vertex_handle u, Vertex_handle v,
-	       Vertex_handle w, Vertex_handle t,
-	       Cell_handle & c, int & i, int & j, int & k, int & l) const;
-  bool is_cell(Vertex_handle u, Vertex_handle v,
-	       Vertex_handle w, Vertex_handle t,
-	       Cell_handle & c) const;
-
-  bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;
-  bool has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const;
-  bool has_vertex(const Facet & f, Vertex_handle v) const;
-  bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;
-
-  bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const;
-  bool are_equal(const Facet & f, const Facet & g) const;
-  bool are_equal(const Facet & f, Cell_handle n, int j) const;
-
-#ifdef CGAL_NO_STRUCTURAL_FILTERING
-  Cell_handle
-  locate(const Point & p,
-	 Locate_type & lt, int & li, int & lj,
-	 Cell_handle start = Cell_handle()) const;
-// CJTODO: attention, ce #else va loin => j'ai mis try_lock_vertex, etc à l'intérieur => BUG ?
-#else // no CGAL_NO_STRUCTURAL_FILTERING
-#  ifndef CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
-#    define CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
-#  endif // no CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
-
-
-public:
   // LOCKS (CONCURRENCY)
 
   bool try_lock_vertex(Vertex_handle vh, int lock_radius = 0) const
@@ -735,6 +695,45 @@ public:
     return locked;
   }
 
+
+  //QUERIES
+
+  bool is_vertex(const Point & p, Vertex_handle & v) const;
+
+  bool is_vertex(Vertex_handle v) const;
+  bool is_edge(Vertex_handle u, Vertex_handle v,
+	       Cell_handle & c, int & i, int & j) const;
+  bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
+		Cell_handle & c, int & i, int & j, int & k) const;
+  bool is_cell(Cell_handle c) const;
+  bool is_cell(Vertex_handle u, Vertex_handle v,
+	       Vertex_handle w, Vertex_handle t,
+	       Cell_handle & c, int & i, int & j, int & k, int & l) const;
+  bool is_cell(Vertex_handle u, Vertex_handle v,
+	       Vertex_handle w, Vertex_handle t,
+	       Cell_handle & c) const;
+
+  bool has_vertex(const Facet & f, Vertex_handle v, int & j) const;
+  bool has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const;
+  bool has_vertex(const Facet & f, Vertex_handle v) const;
+  bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;
+
+  bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const;
+  bool are_equal(const Facet & f, const Facet & g) const;
+  bool are_equal(const Facet & f, Cell_handle n, int j) const;
+
+#ifdef CGAL_NO_STRUCTURAL_FILTERING
+  Cell_handle
+  locate(const Point & p,
+	 Locate_type & lt, int & li, int & lj,
+	 Cell_handle start = Cell_handle()) const;
+#else // no CGAL_NO_STRUCTURAL_FILTERING
+#  ifndef CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
+#    define CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
+#  endif // no CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
+
+
+public:
   Cell_handle
   inexact_locate(const Point& p,
                  Cell_handle start,
@@ -1103,7 +1102,6 @@ protected:
     if (p_could_lock_zone)
       *p_could_lock_zone = true;
 
-    std::stack<Cell_handle> cell_stack;
 
     // CJTODO: useless?
     if (p_could_lock_zone)
@@ -1116,9 +1114,8 @@ protected:
     }
 
     // To store the boundary cells, in case we need to rollback
-    // CJTODO: make it static TLS (for performance)
-    // CJTODO: useless car déjà fait dans Regular_tri_3::find_conflicts?
-
+    // CJTODO: useless because it's already done in Regular_tri_3::find_conflicts?
+    std::stack<Cell_handle> cell_stack;
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
 
