@@ -41,6 +41,7 @@ private:
   using Base::intersects_segment_interior_inf_box;
   using Base::intersects_segment_positive_of_wedge;
   using Base::intersects_segment_negative_of_wedge;
+  using Base::has_positive_slope;
 
   typedef typename Base::Line_2              Line_2;
 
@@ -824,7 +825,26 @@ private:
         << pother << ", " << q.point() << ", " << tother << " ) = "
         << o << std::endl; );
 
-      return (o == RIGHT_TURN) ? NEGATIVE : POSITIVE;
+      if (o != RIGHT_TURN) {
+        return POSITIVE;
+      } else {
+        if (p.supporting_site().segment().is_horizontal() or
+            p.supporting_site().segment().is_vertical() or
+            t.supporting_site().segment().is_horizontal() or
+            t.supporting_site().segment().is_vertical()
+           ) {
+          return NEGATIVE;
+        } else {
+          bool has_p_pos_slope = has_positive_slope(p);
+          if (has_p_pos_slope) {
+            return cmpy(pother, q.point()) == cmpy(tother, q.point()) ?
+                   NEGATIVE : POSITIVE;
+          } else {
+            return cmpx(pother, q.point()) == cmpx(tother, q.point()) ?
+                   NEGATIVE : POSITIVE;
+          }
+        }
+      }
     } else {
       // philaris: serious difference for Linf here, related to L2
 
@@ -1049,6 +1069,27 @@ private:
       CGAL_SDG_DEBUG(std::cout << "debug incircle_pss or( "
         << qother << ", " << p.point() << ", " << tother << " ) = "
         << o << std::endl; );
+
+      if (o != LEFT_TURN) {
+        return POSITIVE;
+      } else {
+        if (q.supporting_site().segment().is_horizontal() or
+            q.supporting_site().segment().is_vertical() or
+            t.supporting_site().segment().is_horizontal() or
+            t.supporting_site().segment().is_vertical()
+           ) {
+          return NEGATIVE;
+        } else {
+          bool has_q_pos_slope = has_positive_slope(q);
+          if (has_q_pos_slope) {
+            return cmpx(qother, p.point()) == cmpx(tother, p.point()) ?
+                   NEGATIVE : POSITIVE;
+          } else {
+            return cmpy(qother, p.point()) == cmpy(tother, p.point()) ?
+                   NEGATIVE : POSITIVE;
+          }
+        }
+      }
 
       return (o == LEFT_TURN) ? NEGATIVE : POSITIVE;
     } else {
