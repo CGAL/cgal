@@ -90,8 +90,8 @@ def get_cgal_version(path_to_version_h):
     return "Unknown Version"
 
 
-def write_report():
-    d = pq('''<html><head>
+def write_report(args):
+    page_header='''<html><head>
 <title>CGAL Doxygen Manual Results</title>
 <style type="text/css">
 .test-results th {text-align: center;}
@@ -104,13 +104,20 @@ p {margin-left:20px;}
 body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </style>
 </head><body>
-<h1 id="maintitle">Doxygen Manual Results</h1><table class="test-results">
+<h1 id="maintitle">Doxygen Manual Results</h1>'''
+    page_footer='''<table class="test-results">
 <tr>
 <th>Package Name</th>
 <th>Warnings</th>
 <th>Errors</th>
 </tr>
-</table></body></html>''')
+</table></body></html>'''
+    
+    if args.publish and args.do_copy_results:
+      link="\nLink to this <a href=CGAL.CGAL/html/index.html>documentation</a>\n"
+      d = pq(page_header+link+page_footer)
+    else:
+      d = pq(page_header+page_footer)
     logs=sorted(glob.glob('./log/CGAL.CGAL*-error.log'))
     err_war_sum=(0,0)
     for log in logs:
@@ -165,7 +172,7 @@ def main():
         run_doxyassist(doxyassist, doxygen)
         subprocess.call([sys.executable,'./html_output_post_processing.py', '--output', './output'])
 
-    d, sum=write_report()
+    d, sum=write_report(args)
     if args.cgal_version:
       version_string=get_cgal_version(args.cgal_version)
       version_date=datetime.datetime.now().strftime("%Y-%m-%d")
