@@ -400,7 +400,7 @@ private:
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
-    int n = number_of_vertices();
+    size_type n = number_of_vertices();
     std::vector<std::ptrdiff_t> indices;
     std::vector<Weighted_point> points;
     std::vector<typename Triangulation_data_structure::Vertex::Info> infos;
