@@ -24,6 +24,7 @@
 #include <cassert>
 
 #include <CGAL/basic.h>
+#include <CGAL/use.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/ipower.h>
@@ -47,7 +48,10 @@ static CGAL::Random my_rnd(346); // some seed
   typedef typename PT::Innermost_coefficient_type ICoeff;            \
   typedef CGAL::Polynomial_traits_d<Coeff> PTC;                 \
   typedef CGAL::Exponent_vector Exponent_vector;                \
-  typedef std::pair< CGAL::Exponent_vector , ICoeff > Monom;    
+  typedef std::pair< CGAL::Exponent_vector , ICoeff > Monom;\
+ CGAL_USE_TYPE(PTC);\
+  CGAL_USE_TYPE(Exponent_vector);\
+  CGAL_USE_TYPE(Monom) 
 
 
 #define ASSERT_IS_NULL_FUNCTOR(T)                                       \
@@ -102,7 +106,15 @@ generate_sparse_random_polynomial(int max_degree = 10){
 }
 
 template <class Polynomial_traits_d> class Construct_test_polynomial {
-  CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d)
+
+  typedef Polynomial_traits_d PT;                                               
+  typedef typename PT::Polynomial_d          Polynomial_d;
+  typedef typename PT::Coefficient_type           Coeff;
+  typedef typename PT::Innermost_coefficient_type ICoeff;
+  typedef CGAL::Polynomial_traits_d<Coeff> PTC;
+  typedef CGAL::Exponent_vector Exponent_vector;
+  typedef std::pair< CGAL::Exponent_vector , ICoeff > Monom;
+
   typedef typename PT::Construct_polynomial Constructor;
 	
 public:

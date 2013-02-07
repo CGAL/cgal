@@ -70,7 +70,6 @@ void Scene::load_points(const QString& fileName) {
   std::back_inserter(points));
   std::random_shuffle(points.begin(), points.end());
   p3dt.insert(points.begin(), points.end());
-  Vertex_iterator vit = p3dt.vertices_begin();
 
   make_draw_list();
 
