@@ -1393,7 +1393,9 @@ public:
   
   void new_input_polyhedron(Polyhedron& P)
   {
-    CGAL_assertion_code((std::pair<typename Poly_to_map_node::iterator,bool>) res = )
+    typedef std::pair<typename Poly_to_map_node::iterator,bool> Res;
+    CGAL_USE_TYPE(Res);
+    CGAL_assertion_code(Res res = )
       polyhedron_to_map_node_to_polyhedron_vertex.insert(std::make_pair( &P,Node_to_polyhedron_vertex_map() ));
     CGAL_assertion(res.second == true);
   }
