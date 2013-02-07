@@ -68,7 +68,7 @@ public:
 // Public operations
 public:
 
-   Eigen_solver_traits(): m_solver_sptr(new EigenSolverT)
+   Eigen_solver_traits():m_mat(NULL), m_solver_sptr(new EigenSolverT)
    {
    }
    
@@ -93,8 +93,25 @@ public:
 
       return m_solver_sptr->info() == Eigen::Success;
    }
+
+  bool pre_factor (const Matrix& A, NT& D)
+  {
+    D = 1;
+    
+    m_mat = &A.eigen_object();
+    solver().compute(*m_mat);
+    return solver().info() == Eigen::Success;
+  }
+	
+  bool linear_solver(const Vector& B, Vector& X)
+  {
+    CGAL_precondition(m_mat!=NULL); //pre_factor should have been called first
+    X = solver().solve(B);
+    return solver().info() == Eigen::Success;
+  }
 protected:
   boost::shared_ptr<EigenSolverT> m_solver_sptr;
+  const typename Matrix::EigenType* m_mat;
 
 };
 

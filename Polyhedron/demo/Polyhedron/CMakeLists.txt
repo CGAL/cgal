@@ -91,6 +91,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
     message(STATUS "NOTICE: Eigen 3.1 (or greater) and TAUCS is not found. parametrization will not be available.")
   endif(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
+  
+  if(EIGEN3_FOUND)
+    find_package(SuperLU)
+    if(SUPERLU_FOUND)
+      include( ${SUPERLU_USE_FILE} )
+    else()
+      message(STATUS "NOTICE: SuperLU is not found, Surface deformation plugin will not be available.")
+    endif()
+  endif()
 
   # Curvature estimation needs Eigen3 or LAPACK
   if(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
@@ -104,6 +113,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
+  qt4_wrap_ui( editionUI_FILES Deform_mesh.ui )
 
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
@@ -394,8 +404,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
-  polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin)
-  target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+  if(TAUCS_FOUND OR ( EIGEN3_FOUND AND SUPERLU_FOUND ) )
+    polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin ${editionUI_FILES})
+    target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+  endif()
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
