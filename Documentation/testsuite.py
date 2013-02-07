@@ -27,6 +27,7 @@ import os
 import glob
 import re
 import operator
+import datetime
 from xml.dom.minidom import parseString
 from pyquery import PyQuery as pq
 
@@ -165,10 +166,11 @@ def main():
         subprocess.call([sys.executable,'./html_output_post_processing.py', '--output', './output'])
 
     d, sum=write_report()
-    version_string,version_date=get_version()
     if args.cgal_version:
       version_string=get_cgal_version(args.cgal_version)
+      version_date=datetime.datetime.now().strftime("%Y-%m-%d")
     else:
+      version_string,version_date=get_version()
       version_string="Revision-"+version_string
 
     title=d('#maintitle')
