@@ -72,9 +72,9 @@ def run_doxyassist(doxyassist, doxygen):
     
 def get_version():
     proc=subprocess.Popen(['git', 'rev-parse', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-    rev,err=proc.communicate()
+    rev=proc.communicate()[0].strip()
     proc=subprocess.Popen(['git', 'log', '-n', '1', '--format=\"%ai\"', '--date=short'], stdout=subprocess.PIPE,stderr=subprocess.PIPE, universal_newlines=True)
-    date,err=proc.communicate()
+    date=proc.communicate()[0]
     #rev=subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True)
     #date=subprocess.check_output(['git', 'log', '-n', '1', '--format=\"%ai\"', '--date=short'], universal_newlines=True)
     date=date[1:11]
