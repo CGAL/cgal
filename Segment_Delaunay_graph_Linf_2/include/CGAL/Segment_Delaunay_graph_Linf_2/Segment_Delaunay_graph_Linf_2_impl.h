@@ -2950,8 +2950,9 @@ is_valid(bool verbose, int level) const
 #ifdef DEBUGVALIDSDG
       if (not expected) {
         std::cout << "debug valid PROBLEM" << std::endl;
-        std::cout << "incircle(f, v->site()) == NEGATIVE which is not expected, where v-site() is: " <<
-                      v->site() << std::endl;
+        std::cout << "incircle(f, v->site()) == NEGATIVE "
+                  << "which is not expected, where v-site() is: "
+                  << v->site() << std::endl;
       }
 #endif
       result = result && expected;
@@ -2965,6 +2966,9 @@ is_valid(bool verbose, int level) const
 #ifdef DEBUGVALIDSDG
       if (not expected) {
         std::cout << "debug valid PROBLEM" << std::endl;
+        std::cout << "incircle(f, v->site()) == NEGATIVE "
+                  << "which is not expected, where v-site() is: "
+                  << v->site() << std::endl;
       }
 #endif
       result = result && expected;
