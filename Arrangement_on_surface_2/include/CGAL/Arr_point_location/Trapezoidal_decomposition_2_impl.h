@@ -28,6 +28,9 @@
 
 #include <algorithm>
 
+#include <CGAL/assertions.h>
+#include <CGAL/use.h>
+
 namespace CGAL {
 
 //-----------------------------------------------------------------------------
@@ -651,6 +654,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                (Curve_end(he,ARR_MAX_END), p);
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
+          CGAL_USE(is_equal_to_he_max);
 
           curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
           continue;
@@ -733,6 +737,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                        Curve_end(he_cv,ARR_MAX_END));
 
           CGAL_warning (is_min_equal || is_max_equal);
+          CGAL_USE(is_max_equal);
           
           Comparison_result res = 
              is_min_equal ? 
@@ -1093,6 +1098,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                (Curve_end(*p_cv,ARR_MAX_END), ce);
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
+          CGAL_USE(is_equal_to_he_max);
 
           curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
           
@@ -1182,6 +1188,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                        Curve_end(he_cv,ARR_MAX_END));
 
             CGAL_warning (is_min_equal || is_max_equal);
+            CGAL_USE(is_max_equal);
 
             //the underlying point of ce
             const Point& p = (ce.ce() == ARR_MIN_END) ?
@@ -1319,6 +1326,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                (Curve_end(*p_cv,ARR_MAX_END), p);
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
+          CGAL_USE(is_equal_to_he_max);
 
           curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
           
@@ -1402,6 +1410,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                      Curve_end(he_cv,ARR_MAX_END));
 
           CGAL_warning (is_min_equal || is_max_equal);
+          CGAL_USE(is_max_equal);
 
           res = is_min_equal ? 
                   traits->compare_cw_around_point_2_object()

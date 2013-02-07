@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -140,6 +141,7 @@ Object line_under_linear_constraint(const typename K::Line_2& l1,
   }
  
   // the two lines overlap
+  CGAL_USE_TYPE(Line_2);
   CGAL_assertion_code(Line_2 dummy;);
   CGAL_assertion_code(bool b =  assign(dummy, obj););
   CGAL_assertion(b);
