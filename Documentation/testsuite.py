@@ -142,6 +142,8 @@ def main():
     parser.add_argument('--test-integration', action="store_true", help='Specify this argument if you want to switch to integration and use the latest version.')
     parser.add_argument('--do-purge-rebuild', action="store_true", help='Specify this argument if you want to actually rebuild the documentation. Just write the report if not specified.')
     parser.add_argument('--cgal-version', help='Path to a version.h file from the current release. If not specified use git hash instead.')
+    parser.add_argument('--version-to-keep', help='indicates the number of release testsuites that should be kept at the publishing location.')
+    parser.add_argument('--do-copy-results', action="store_true", help='Specify this argument if you want to copy the generated documentation into the publishing location.')
     
     args = parser.parse_args()
     
@@ -207,11 +209,33 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
-        new_row='<tr><td><a href="log-{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td></tr>'.format(
+        new_row='<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td></tr>'.format(
             revision=version_string, date=version_date, warnings=sum[0], errors=sum[1])
         revs.eq(0).after(new_row)
+        if args.version_to_keep:
+          nb_items=len(revs)
+          for k in range(int(args.version_to_keep),nb_items):
+            dir_to_remove=revs.eq(k).text().split()[0]
+            shutil.rmtree(publish_dir + dir_to_remove)
+            revs.eq(k).remove()
         write_out_html(d, publish_dir + 'index.html')
-        shutil.copytree('./log', publish_dir + 'log-' + version_string)
+        log_target=publish_dir + version_string
+        try:
+          shutil.copytree('./log', log_target)
+          try:
+            if args.do_copy_results:
+              for dir in os.listdir('output'):
+                  src = os.path.join('output', dir)
+                  tgt = os.path.join(log_target, dir)
+                  if os.path.islink(src):
+                    link_target=os.readlink(src)
+                    os.symlink(link_target, tgt)
+                  else:
+                    shutil.copytree(src, tgt,symlinks=True)
+          except:
+            sys.stderr.write("Error while copying documentation\n")  
+        except:
+          sys.stderr.write("Error while writing to "+log_target+". Does it already exists?\n")
         
 if __name__ == "__main__":
     main()
