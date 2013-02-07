@@ -33,7 +33,7 @@ bool test_aux ( Graph& aG )
   typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iterator ;
 
   CGAL_USE_TYPE(typename graph_traits<Graph const>::vertex_descriptor);
-  typedef typename graph_traits<Graph const>::edge_descriptor   edge_const_descriptor ;
+  CGAL_USE_TYPE(typename graph_traits<Graph const>::edge_descriptor);
   
   typedef typename halfedge_graph_traits<Graph>::undirected_edge_iterator undirected_edge_iterator;
   
