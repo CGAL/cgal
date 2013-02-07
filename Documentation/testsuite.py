@@ -166,7 +166,7 @@ def main():
     if args.cgal_version:
       version_string=get_cgal_version(args.cgal_version)
     else:
-      version_string="Revision "+version_string
+      version_string="Revision-"+version_string
 
     title=d('#maintitle')
     title.text(title.text() + ' for ' + version_string)
@@ -207,7 +207,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
-        new_row='<tr><td><a href="log{revision}/testsuite.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td></tr>'.format(
+        new_row='<tr><td><a href="log-{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td></tr>'.format(
             revision=version_string, date=version_date, warnings=sum[0], errors=sum[1])
         revs.eq(0).after(new_row)
         write_out_html(d, publish_dir + 'index.html')
