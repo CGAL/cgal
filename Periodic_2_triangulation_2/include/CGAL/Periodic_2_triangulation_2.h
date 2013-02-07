@@ -309,12 +309,12 @@ public:
   }
   /// Returns the datastructure storing the triangulation.
   /// NGHK: Implemented
-  const Tds & tds() const {
+  const Triangulation_data_structure & tds() const {
     return _tds;
   }
   /// Returns the datastructure storing the triangulation.
   /// NGHK: Implemented
-  Tds & tds() {
+  Triangulation_data_structure & tds() {
     return _tds;
   }
   /// Returns the domain of the 1-sheeted cover.
@@ -331,7 +331,7 @@ public:
   /// Returns the dimension of the triangulation.
   /// NGHK: Implemented
   int dimension() const {
-    return _tds.dimension();
+    return _tds.dimension() == 2 ? 2 : 0;
   }
 
   //\}
@@ -868,7 +868,7 @@ public:
   }
   //\}
 
-  /// \name Predicates
+  /// \name Predicates and Constructions
   //\{
   /// Returns the oriented side of the point p with respect to the
   /// triangle (p0,p1,p2)
@@ -935,6 +935,43 @@ public:
   /// Returns the orientation of (p1,o1), (p2,o2), (p3,o3)
   Orientation orientation(const Point& p1, const Point& p2, const Point& p3,
                           const Offset& o1, const Offset& o2, const Offset& o3) const;
+
+  /// Determines whether the point p lies on the (un-)bounded side of
+  /// the circle through the vertices of f
+  Oriented_side
+  side_of_oriented_circle(Face_handle f,
+                          const Point & p, bool perturb = false) const;
+  /// Determines whether the point p lies on the (un-)bounded side of
+  /// the circle through the points p0, p1 and p2
+  ///\n NGHK: implemented
+  Oriented_side
+  side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
+      const Point &p, bool perturb) const;
+  /// Determines whether the point (p,o) lies on the (un-)bounded side of
+  /// the circle through the points (p0,o0), (p1,o1) and (p2,o2)
+  ///\n NGHK: implemented
+  Oriented_side
+  side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
+      const Point &p, const Offset &o0, const Offset &o1, const Offset &o2,
+      const Offset &o, bool perturb) const;
+
+
+
+  /// Constructs the circumcenter of the face f, respects the offset
+  /// \n NGHK: not implemented
+  Point circumcenter(Face_handle f) const {
+      return construct_circumcenter(f->vertex(0)->point(), 
+                                    f->vertex(1)->point(),
+                                    f->vertex(2)->point(), 
+                                    get_offset(f, 0), 
+                                    get_offset(f, 1),
+                                    get_offset(f, 2));
+  }
+  /// NGHK: Implemented
+    Point construct_circumcenter(const Point &p1, const Point &p2, const Point &p3,
+                                 const Offset &o1, const Offset &o2, const Offset &o3) const {
+    return geom_traits().construct_circumcenter_2_object()(p1, p2, p3, o1, o2, o3);
+  }
   //\}
 
 
@@ -1644,6 +1681,16 @@ void Periodic_2_triangulation_2<Gt, Tds>::swap(Periodic_2_triangulation_2 &tr) {
   Geom_traits t = geom_traits();
   _gt = tr.geom_traits();
   tr._gt = t;
+
+  std::swap(tr._cover,_cover);
+  std::swap(tr._domain,_domain);
+
+  std::swap(tr._edge_length_threshold,_edge_length_threshold);
+  std::swap(tr._too_long_edges,_too_long_edges);
+  std::swap(tr._too_long_edge_counter,_too_long_edge_counter);
+
+  std::swap(tr._virtual_vertices, _virtual_vertices);
+  std::swap(tr._virtual_vertices_reverse, _virtual_vertices_reverse);
 }
 
 template<class Gt, class Tds>
@@ -3780,6 +3827,98 @@ inline Orientation Periodic_2_triangulation_2<Gt, Tds>::orientation(
     const Offset& o1, const Offset& o2) const {
   return geom_traits().orientation_2_object()(p0, p1, p2, o0, o1, o2);
 }
+
+
+template<class Gt, class Tds>
+Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
+    const Point &p0, const Point &p1, const Point &p2, const Point &p,
+    bool perturb) const {
+  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p);
+  if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
+    return os;
+
+  // We are now in a degenerate case => we do a symbolic perturbation.
+
+  // We sort the points lexicographically.
+  const Point * points[4] = { &p0, &p1, &p2, &p };
+  std::sort(points, points + 4, Perturbation_order(this));
+
+  // We successively look whether the leading monomial, then 2nd monomial
+  // of the determinant has non null coefficient.
+  // 2 iterations are enough (cf paper)
+  for (int i = 3; i > 0; --i) {
+    if (points[i] == &p)
+      return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
+    // and positively oriented
+    Orientation o;
+    if (points[i] == &p2 && (o = orientation(p0, p1, p)) != COLLINEAR)
+      return Oriented_side(o);
+    if (points[i] == &p1 && (o = orientation(p0, p, p2)) != COLLINEAR)
+      return Oriented_side(o);
+    if (points[i] == &p0 && (o = orientation(p, p1, p2)) != COLLINEAR)
+      return Oriented_side(o);
+  }
+  CGAL_triangulation_assertion(false);
+  return ON_NEGATIVE_SIDE;
+}
+
+template<class Gt, class Tds>
+Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
+    const Point &p0, const Point &p1, const Point &p2, const Point &p,
+    const Offset &o0, const Offset &o1, const Offset &o2, const Offset &o,
+    bool perturb) const {
+  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p, o0, o1, o2, o);
+  if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
+    return os;
+
+  // We are now in a degenerate case => we do a symbolic perturbation.
+  // We sort the points lexicographically.
+  Periodic_point pts[4] = { std::make_pair(p0, o0), std::make_pair(p1, o1),
+      std::make_pair(p2, o2), std::make_pair(p, o) };
+  const Periodic_point *points[4] = { &pts[0], &pts[1], &pts[2], &pts[3] };
+
+  std::sort(points, points + 4, Perturbation_order(this));
+
+  // We successively look whether the leading monomial, then 2nd monomial
+  // of the determinant has non null coefficient.
+  // 2 iterations are enough (cf paper)
+  for (int i = 3; i > 0; --i) {
+    if (points[i] == &pts[3])
+      return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
+    // and positively oriented
+    Orientation orient;
+    if ((points[i] == &pts[2]) && ((orient = orientation(p0, p1, p, o0, o1, o))
+        != COLLINEAR))
+      return Oriented_side(orient);
+    if ((points[i] == &pts[1]) && ((orient = orientation(p0, p, p2, o0, o, o2))
+        != COLLINEAR))
+      return Oriented_side(orient);
+    if ((points[i] == &pts[0]) && ((orient = orientation(p, p1, p2, o, o1, o2))
+        != COLLINEAR))
+      return Oriented_side(orient);
+  }
+  CGAL_triangulation_assertion(false);
+  return ON_NEGATIVE_SIDE;
+}
+
+template<class Gt, class Tds>
+Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
+    Face_handle f, const Point & p, bool perturb) const {
+  Oriented_side os = ON_NEGATIVE_SIDE;
+
+  int i = 0;
+  // TODO: optimize which copies to check depending on the offsets in
+  // the cell.
+  while (os == ON_NEGATIVE_SIDE && i < 4) {
+    os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p, 
+                                 get_offset(f, 0), get_offset(f, 1), get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)),
+                                 perturb);
+    i++;
+  }
+
+  return os;
+}
+
 
 template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::insert_too_long_edges_in_star(
