@@ -136,6 +136,7 @@ def main():
     description='This script updates a checkout of cgal, purges the documentation, rebuilds it, creates an HTML summary of the resulting log files, and publishes the created files and logs.')
     parser.add_argument('--doxyassist', default='/usr/bin/doxyassist.py', metavar='/path/to/doxyassist.py')
     parser.add_argument('--doxygen', default='/usr/bin/doxygen', metavar='/path/to/doxygenbinary', help='the doxygen binary', )
+    parser.add_argument('--mathjax', metavar='/path/to/MathJaxCheckout', help='path to MathJax checkout', )
     parser.add_argument('--documentation', default='.', metavar='/path/to/cgal/Documentation', help='The path to the Documentation dir of the git checkout you would like to test.')
     parser.add_argument('--publish', metavar='/path/to/publish', help='Specify this argument if the results should be published.')
     parser.add_argument('--do-update', action="store_true", help='Specify this argument if you want to do a version control update.')
@@ -221,8 +222,10 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         write_out_html(d, publish_dir + 'index.html')
         log_target=publish_dir + version_string
         try:
+          #copy log files
           shutil.copytree('./log', log_target)
           try:
+            #copy documentation
             if args.do_copy_results:
               for dir in os.listdir('output'):
                   src = os.path.join('output', dir)
@@ -233,7 +236,12 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
                   else:
                     shutil.copytree(src, tgt,symlinks=True)
           except:
-            sys.stderr.write("Error while copying documentation\n")  
+            sys.stderr.write("Error while copying documentation\n")
+          #create symbolic link to MathJax for the output
+          if args.mathjax:
+            mathjax_link=os.path.join(log_target,"MathJax")
+            if not os.path.exists(mathjax_link):
+              os.symlink(args.mathjax, mathjax_link)
         except:
           sys.stderr.write("Error while writing to "+log_target+". Does it already exists?\n")
         
