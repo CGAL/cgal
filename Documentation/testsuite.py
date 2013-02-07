@@ -100,7 +100,7 @@ def write_report():
 .test-results .package-good {background-color: #80FF80;}
 .test-results .package-warnings {background-color: #FFFF80;}
 p {margin-left:20px;}
-body {background-image:url("images/back40.gif");}
+body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </style>
 </head><body>
 <h1 id="maintitle">Doxygen Manual Results</h1><table class="test-results">
@@ -198,10 +198,12 @@ def main():
 .rev-table th {text-align: center;}
 .rev-table td {text-align: center;}
 table {margin-left:40px;}
-body {background-image:url("images/back40.gif");}
+body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </style>
 <html><head><title>Manual Testsuite Overview</title></head>
-<body><h1>Overviewpage of the Doxygen Manual Testsuite</h1><table id="revisions" class="rev-table"><tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th></tr></table></body></html>''')
+<body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
+<table  border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
+<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th></tr></table></body></html>''')
 
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
