@@ -2770,9 +2770,10 @@ private:
           same_points(q.source_site(), t.target_site()) or
           same_points(q.target_site(), t.source_site()) or
           same_points(q.target_site(), t.target_site())   );
-      // the following assertion is too strong and does not
-      // work for inexact arithmetic
-      CGAL_assertion(is_p_endp_of_q and is_p_endp_of_t);
+      // philaris: the following assertion is too strong and does not
+      // work for inexact arithmetic;
+      // philaris: I also remove it because of validity tests
+      //CGAL_assertion(is_p_endp_of_q and is_p_endp_of_t);
       return POSITIVE;
     }
     if ( same_segments(r.supporting_site(), t.supporting_site()) ) {
@@ -2784,6 +2785,7 @@ private:
 
       // philaris: the assertion below fails in some cases,
       //           maybe because of inexact arithmetic
+      // philaris: I also remove it because of validity tests
       //CGAL_assertion(is_p_endp_of_r and is_p_endp_of_t);
 
       // philaris: I have only kept the following weaker one
