@@ -290,6 +290,7 @@ if [ -n "$DO_PUBLIC" ]; then
     rm -rf bench* Bench* test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
     rm -f examples/*/cgal_test* demo/*/cgal_test*
     find . -name .scm-urls -exec rm '{}' '+'
+    rm -f .scm-branch
 
     # Modify the version numbers in <CGAL/version.h>
     sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
