@@ -130,19 +130,19 @@ Similarly, assigning smaller values to smoothness parameter results in high numb
 
 \section Surface_mesh_segmentationAPI API
 This package provides three functions:
-	- CGAL::compute_sdf_values : computes SDF values as described in the original paper.
-	- CGAL::segment_from_sdf_values : computes the mesh segmentation from SDF values.
-	- CGAL::compute_sdf_values_and_segment : computes SDF values and mesh segmentation in one go (i.e. combines two functions listed above).	
+	- `CGAL::compute_sdf_values` : computes SDF values as described in the original paper.
+	- `CGAL::segment_from_sdf_values` : computes the mesh segmentation from SDF values.
+	- `CGAL::compute_sdf_values_and_segment` : computes SDF values and mesh segmentation in one go (i.e. combines two functions listed above).	
 
-These functions expects a manifold, normal oriented, and triangulated polyhedron without boundary as input. Note that the current implementation is running fine on
-polyhedral surfaces with boundaries, but considering how the SDF value are computed, using a polyhedron with large holes is likely to result in
+These functions expects a manifold, normal oriented, and triangulated polyhedron without boundary as input. Note that the current implementation is running fine on polyhedral surfaces with boundaries,
+but considering how the SDF value are computed, using a polyhedron with large holes is likely to result in 
 meaningless SDF values, and therefore unreliable segmentation.
 
 The current implementation of the computation of the SDF values relies on the AABB_tree package. 
-This operation is reliable when the AABBTraits model provided has exact predicates.
+This operation is reliable when the `AABBTraits` model provided has exact predicates.
 	
 \subsection Surface_mesh_segmentationTheSDFComputation The SDF Computation
-The function CGAL::compute_sdf_values provides an implementation of the SDF computation for a given `CGAL Polyhedron`. 
+The function `CGAL::compute_sdf_values` provides an implementation of the SDF computation for a given \cgal Polyhedron. 
 
 After computation, the following post-processing steps are applied:
   - Facets with no SDF values (i.e. zero) are assigned to average SDF value of its neighbors. If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it. Note that this step is not inherited from the paper.
@@ -155,7 +155,7 @@ The outputs are a property map which associates every facet with its SDF value, 
 \include Surface_mesh_segmentation/compute_sdf_values_example.cpp
 
 \subsection Surface_mesh_segmentationSurfaceMeshSegmentation Surface Mesh Segmentation
-The function CGAL::segment_from_sdf_values computes a segmentation of the mesh using provided SDF values. 
+The function `CGAL::segment_from_sdf_values` computes a segmentation of the mesh using provided SDF values. 
 Note that these SDF values can be any set of scalar value associated with each facet as long as they are linearly normalized between [0, 1]. 
 This function also gives opportunity to use same SDF values multiple times with different parameters in segmentation stage.
 
@@ -165,9 +165,9 @@ Formally, a segment is a set of connected facets which are placed under same clu
 \subsubsection Surface_mesh_segmentationExample_1 Example
 \include Surface_mesh_segmentation/segment_from_sdf_values_example.cpp
 
-The function CGAL::compute_sdf_values_and_segment combines the two aforementioned functions. 
+The function `CGAL::compute_sdf_values_and_segment` combines the two aforementioned functions. 
 Note that for segmenting the mesh several times with different parameters (i.e. number of levels, and smoothing lambda), 
-it is wise to first compute the SDF values using CGAL::compute_sdf_values. Then, computed SDF values can be used several times when calling CGAL::segment_from_sdf_values with different parameters (i.e. number of levels, and smoothing lambda).
+it is wise to first compute the SDF values using `CGAL::compute_sdf_values`. Then, computed SDF values can be used several times when calling `CGAL::segment_from_sdf_values` with different parameters (i.e. number of levels, and smoothing lambda).
 
 \subsubsection Surface_mesh_segmentationExample_2 Example
 \include Surface_mesh_segmentation/compute_sdf_values_and_segment_example.cpp
