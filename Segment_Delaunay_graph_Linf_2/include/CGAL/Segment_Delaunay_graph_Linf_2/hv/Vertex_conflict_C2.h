@@ -41,6 +41,7 @@ private:
   using Base::intersects_segment_interior_inf_box;
   using Base::intersects_segment_positive_of_wedge;
   using Base::intersects_segment_negative_of_wedge;
+  using Base::is_site_h_or_v;
 
   typedef typename Base::Line_2              Line_2;
 
@@ -364,12 +365,8 @@ private:
 
     // philaris: here, for Linf there are differences from L2
 
-    if ((q.is_segment() and
-        (q.supporting_site().segment().is_horizontal() or
-         q.supporting_site().segment().is_vertical()))    or
-        (p.is_segment() and
-        (p.supporting_site().segment().is_horizontal() or
-         p.supporting_site().segment().is_vertical()))      ) {
+    if ((q.is_segment() and is_site_h_or_v(q)) or
+        (p.is_segment() and is_site_h_or_v(p))   ) {
       // the case of horizontal or vertical segment is the same
       // as in L2
       Orientation o;
@@ -427,8 +424,7 @@ private:
 	return NEGATIVE;
     } else {
       // here, neither p nor q is on t
-      if (t.supporting_site().segment().is_horizontal() or
-          t.supporting_site().segment().is_vertical())     {
+      if (is_site_h_or_v(t)) {
         // here segment is horizontal or vertical;
         // there are similarities with L2 case here
 
@@ -535,8 +531,7 @@ private:
     } else {
       // philaris: serious difference for Linf here, related to L2
 
-      if ( p.supporting_site().segment().is_horizontal() or
-           p.supporting_site().segment().is_vertical()      ) {
+      if ( is_site_h_or_v(p) ) {
         return POSITIVE;
       }
     } // end of case where q is not on t
@@ -613,8 +608,7 @@ private:
     } else {
       // philaris: serious difference for Linf here, related to L2
 
-      if ( q.supporting_site().segment().is_horizontal() or
-           q.supporting_site().segment().is_vertical()      ) {
+      if ( is_site_h_or_v(q) ) {
         return POSITIVE;
       }
     } // end of case where p is not on t

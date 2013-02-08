@@ -55,6 +55,7 @@ private:
   using Base::compute_vertical_projection;
   using Base::compute_horizontal_projection;
   using Base::compute_linf_projection_nonhom;
+  using Base::is_site_h_or_v;
 
   typedef typename Base::Line_2        Line_2;
 
@@ -86,8 +87,7 @@ public:
           } else {
 
             // here q is point
-            if ( not (t.supporting_site().segment().is_horizontal() or
-                      t.supporting_site().segment().is_vertical()     ) ) {
+            if ( not is_site_h_or_v(t) ) {
 
               Line_2 lt = compute_supporting_line(t.supporting_site());
 
@@ -164,8 +164,7 @@ public:
           CGAL_assertion( not (is_q_tsrc or is_q_ttrg) );
 
           // here q is point
-          if ( not (t.supporting_site().segment().is_horizontal() or
-                    t.supporting_site().segment().is_vertical()     ) ) {
+          if ( not is_site_h_or_v(t) ) {
 
             Line_2 lt = compute_supporting_line(t.supporting_site());
 
@@ -181,9 +180,7 @@ public:
               srep = s.point();
             } else {
               // s is segment
-              CGAL_assertion(
-                  not (s.supporting_site().segment().is_horizontal() or
-                       s.supporting_site().segment().is_vertical()     ) );
+              CGAL_assertion( not is_site_h_or_v(s) ) ;
 
               Direction_2 d (s.supporting_site().segment());
               Line_2 ls = compute_supporting_line(s.supporting_site());
@@ -203,9 +200,7 @@ public:
               rrep = r.point();
             } else {
               // r is segment
-              CGAL_assertion(
-                  not (r.supporting_site().segment().is_horizontal() or
-                       r.supporting_site().segment().is_vertical()     ) );
+              CGAL_assertion( not is_site_h_or_v(r) ) ;
 
               Direction_2 d (r.supporting_site().segment());
               Line_2 lr = compute_supporting_line(r.supporting_site());
@@ -281,8 +276,7 @@ public:
       // (this has to be checked)
       CGAL_assertion(s.is_point() and r.is_point());
 
-      if (q.supporting_site().segment().is_horizontal() or
-          q.supporting_site().segment().is_vertical()     )
+      if ( is_site_h_or_v(q) )
       {
         // in this case r and s must be endpoints of q
         CGAL_SDG_DEBUG(
@@ -504,9 +498,7 @@ public:
 
         CGAL_assertion(sgn == NEGATIVE);
 
-        CGAL_assertion(
-            not (s.supporting_site().segment().is_horizontal() or
-                 s.supporting_site().segment().is_vertical()     ));
+        CGAL_assertion(not is_site_h_or_v(s));
 
         // compute infinite square with corner at q
         // and with center at infinity at

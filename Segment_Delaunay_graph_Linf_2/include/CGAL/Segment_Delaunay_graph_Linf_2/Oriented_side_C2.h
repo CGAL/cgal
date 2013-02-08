@@ -41,6 +41,7 @@ private:
   using Base::oriented_side_of_line;
   using Base::compute_vertical_projection;
   using Base::compute_horizontal_projection;
+  using Base::is_site_h_or_v;
 
 public:
   typedef typename Base::Oriented_side        Oriented_side;
@@ -142,11 +143,7 @@ public:
       // the two segments must have a common endpoint,
       // which is the linf projection
 
-      CGAL_assertion(
-          s1.supporting_site().segment().is_horizontal() or
-          s1.supporting_site().segment().is_vertical()   or
-          s2.supporting_site().segment().is_horizontal() or
-          s2.supporting_site().segment().is_vertical()      );
+      CGAL_assertion( is_site_h_or_v(s1) or is_site_h_or_v(s2) );
 
       if (same_points(s1.source_site(), s2.source_site()) or
           same_points(s1.source_site(), s2.target_site())   ) {
@@ -180,9 +177,7 @@ public:
               << "case of s1/s2 no endpoint relation"
               << std::endl;);
 
-        CGAL_assertion(
-            not (s.supporting_site().segment().is_horizontal() or
-                 s.supporting_site().segment().is_vertical()     ) );
+        CGAL_assertion( not is_site_h_or_v(s) );
 
         has_lseg_neg_slope =
           CGAL::sign(lseg.a()) == CGAL::sign(lseg.b());

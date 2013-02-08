@@ -844,8 +844,7 @@ public:
   {
     CGAL_assertion( t.is_segment() );
     CGAL_assertion( s.is_segment() );
-    CGAL_assertion(not s.supporting_site().segment().is_horizontal());
-    CGAL_assertion(not s.supporting_site().segment().is_vertical());
+    CGAL_assertion(not is_site_h_or_v(s));
 
     Segment_2 seg = s.segment();
 
@@ -945,14 +944,35 @@ public:
   has_positive_slope(const Site_2 & s)
   {
     CGAL_precondition(s.is_segment());
-    CGAL_precondition(not (
-          s.supporting_site().segment().is_horizontal() or
-          s.supporting_site().segment().is_vertical()     ) );
+    CGAL_precondition(not is_site_h_or_v(s));
     Compare_x_2 cmpx;
     Compare_y_2 cmpy;
     Point_2 src = s.supporting_site().source();
     Point_2 trg = s.supporting_site().target();
     return cmpx(src, trg) == cmpy(src, trg);
+  }
+
+  static
+  Boolean
+  is_site_h_or_v(const Site_2 & s)
+  {
+    return is_site_horizontal(s) or is_site_vertical(s);
+  }
+
+  static
+  Boolean
+  is_site_horizontal(const Site_2 & s)
+  {
+    CGAL_assertion(s.is_segment());
+    return s.supporting_site().segment().is_horizontal();
+  }
+
+  static
+  Boolean
+  is_site_vertical(const Site_2 & s)
+  {
+    CGAL_assertion(s.is_segment());
+    return s.supporting_site().segment().is_vertical();
   }
 
 };

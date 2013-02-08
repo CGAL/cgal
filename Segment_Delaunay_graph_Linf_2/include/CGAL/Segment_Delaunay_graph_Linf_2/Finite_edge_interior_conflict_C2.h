@@ -59,6 +59,7 @@ public:
   using Base::intersects_segment_negative_of_wedge;
   using Base::intersects_segment_interior_inf_box;
   using Base::intersects_segment_interior_inf_wedge_sp;
+  using Base::is_site_h_or_v;
 
 
 private:
@@ -745,9 +746,7 @@ public:
           CGAL_SDG_DEBUG( std::cout << "debug fecf p is not endpoint of q"
             << std::endl; );
 
-          CGAL_assertion(
-              not ( q.supporting_site().segment().is_horizontal() or
-                    q.supporting_site().segment().is_vertical()     ) ) ;
+          CGAL_assertion( not is_site_h_or_v(q) ) ;
 
           Line_2 lseg = compute_supporting_line(q.supporting_site());
 
@@ -832,9 +831,7 @@ public:
               << sgn << " returns " << false << std::endl; );
           return false;
         } else { // q is not endpoint of p
-          CGAL_assertion(
-              not ( p.supporting_site().segment().is_horizontal() or
-                    p.supporting_site().segment().is_vertical()     ) ) ;
+          CGAL_assertion( not is_site_h_or_v(p) );
 
           Line_2 lseg = compute_supporting_line(p.supporting_site());
 
@@ -1040,8 +1037,7 @@ public:
       Segment_2 seg = (p.is_point())? q.segment(): p.segment();
       Site_2 siteseg = (p.is_point())? q: p;
 
-      if (siteseg.supporting_site().segment().is_horizontal() or
-          siteseg.supporting_site().segment().is_vertical()     ) {
+      if ( is_site_h_or_v(siteseg) ) {
         if (p.is_point()) {
           CGAL_assertion( same_points(p, q.source_site()) or
                           same_points(p, q.target_site())   ) ;
@@ -1057,9 +1053,7 @@ public:
         return false;
       }
 
-      CGAL_assertion(
-          not( siteseg.supporting_site().segment().is_horizontal() or
-               siteseg.supporting_site().segment().is_vertical()     ));
+      CGAL_assertion(not is_site_h_or_v(siteseg));
       // t is segment
       if (t.is_segment()) {
         CGAL_assertion(sgn == NEGATIVE);

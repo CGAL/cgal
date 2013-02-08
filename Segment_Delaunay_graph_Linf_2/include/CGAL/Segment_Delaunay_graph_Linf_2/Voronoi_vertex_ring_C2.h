@@ -53,6 +53,9 @@ public:
   using Base::compute_horizontal_projection;
   using Base::compute_vertical_projection;
   using Base::compute_linf_perpendicular;
+  using Base::is_site_horizontal;
+  using Base::is_site_vertical;
+  using Base::is_site_h_or_v;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -1717,8 +1720,8 @@ private:
       << numendpts_of_t << std::endl;);
 
     if (numendpts_of_t > 0) {
-      bool is_t_horizontal = t.supporting_site().segment().is_horizontal();
-      bool is_t_vertical   = t.supporting_site().segment().is_vertical();
+      bool is_t_horizontal = is_site_horizontal(t);
+      bool is_t_vertical   = is_site_vertical(t);
 
       if (is_t_horizontal or is_t_vertical) {
         CGAL_assertion(numendpts_of_t == 1);
@@ -1761,10 +1764,8 @@ private:
         CGAL_assertion(numothers < 2);
 
         if (numothers == 1) {
-          bool is_other_horizontal =
-            other.supporting_site().segment().is_horizontal();
-          bool is_other_vertical =
-            other.supporting_site().segment().is_vertical();
+          bool is_other_horizontal = is_site_horizontal(other);
+          bool is_other_vertical = is_site_vertical(other);
 
           if ((is_t_horizontal and is_other_horizontal) or
               (is_t_vertical and is_other_vertical)       ) {
@@ -2165,17 +2166,14 @@ private:
         << a << " and " << b << " having common "
         << common_site << std::endl;);
 
-    if (a.supporting_site().segment().is_horizontal() or
-        a.supporting_site().segment().is_vertical()) {
+    if (is_site_h_or_v(a)) {
       if ( same_points(common_site, b.source_site()) ) {
         other_of_seg = b.target_site();
       } else {
         other_of_seg = b.source_site();
       }
     } else {
-      CGAL_assertion(
-          b.supporting_site().segment().is_horizontal() or
-          b.supporting_site().segment().is_vertical() );
+      CGAL_assertion(is_site_h_or_v(b));
 
       if ( same_points(common_site, a.source_site()) ) {
         other_of_seg = a.target_site();

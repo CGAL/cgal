@@ -34,6 +34,9 @@ public:
   using Base::compute_horizontal_projection;
   using Base::compute_vertical_projection;
   using Base::has_positive_slope;
+  using Base::is_site_horizontal;
+  using Base::is_site_vertical;
+  using Base::is_site_h_or_v;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -1826,7 +1829,7 @@ private:
     // philaris: addition for Linf
 
     if (is_endpoint_of(p, q)) {
-      if (q.supporting_site().segment().is_horizontal()) {
+      if (is_site_horizontal(q)) {
         if (scmpy(p,t) == EQUAL) {
           Site_2 other =
             same_points(p, q.source_site()) ?
@@ -1836,7 +1839,7 @@ private:
           }
         }
       }
-      if (q.supporting_site().segment().is_vertical()) {
+      if (is_site_vertical(q)) {
         if (scmpx(p,t) == EQUAL) {
           Site_2 other =
             same_points(p, q.source_site()) ?
@@ -1849,7 +1852,7 @@ private:
     }
 
     if (is_endpoint_of(p, r)) {
-      if (r.supporting_site().segment().is_horizontal()) {
+      if (is_site_horizontal(r)) {
         if (scmpy(p,t) == EQUAL) {
           Site_2 other =
             same_points(p, r.source_site()) ?
@@ -1859,7 +1862,7 @@ private:
           }
         }
       }
-      if (r.supporting_site().segment().is_vertical()) {
+      if (is_site_vertical(r)) {
         if (scmpx(p,t) == EQUAL) {
           Site_2 other =
             same_points(p, r.source_site()) ?
@@ -2067,8 +2070,8 @@ private:
       << numendpts_of_t << std::endl;);
 
     if (numendpts_of_t > 0) {
-      bool is_t_horizontal = t.supporting_site().segment().is_horizontal();
-      bool is_t_vertical   = t.supporting_site().segment().is_vertical();
+      bool is_t_horizontal = is_site_horizontal(t);
+      bool is_t_vertical   = is_site_vertical(t);
 
       if (is_t_horizontal or is_t_vertical) {
         CGAL_assertion(numendpts_of_t == 1);
@@ -2110,10 +2113,8 @@ private:
         CGAL_assertion(numothers < 2);
 
         if (numothers == 1) {
-          bool is_other_horizontal =
-            other.supporting_site().segment().is_horizontal();
-          bool is_other_vertical =
-            other.supporting_site().segment().is_vertical();
+          bool is_other_horizontal = is_site_horizontal(other);
+          bool is_other_vertical = is_site_vertical(other);
 
           if ((is_t_horizontal and is_other_horizontal) or
               (is_t_vertical and is_other_vertical)       ) {
@@ -2559,17 +2560,14 @@ private:
         << a << " and " << b << " having common "
         << common_site << std::endl;);
 
-    if (a.supporting_site().segment().is_horizontal() or
-        a.supporting_site().segment().is_vertical()) {
+    if (is_site_h_or_v(a)) {
       if ( same_points(common_site, b.source_site()) ) {
         other_of_seg = b.target_site();
       } else {
         other_of_seg = b.source_site();
       }
     } else {
-      CGAL_assertion(
-          b.supporting_site().segment().is_horizontal() or
-          b.supporting_site().segment().is_vertical() );
+      CGAL_assertion(is_site_h_or_v(b));
 
       if ( same_points(common_site, a.source_site()) ) {
         other_of_seg = a.target_site();
@@ -2839,11 +2837,7 @@ private:
       if (o != RIGHT_TURN) {
         return POSITIVE;
       } else {
-        if (q.supporting_site().segment().is_horizontal() or
-            q.supporting_site().segment().is_vertical() or
-            t.supporting_site().segment().is_horizontal() or
-            t.supporting_site().segment().is_vertical()
-           ) {
+        if (is_site_h_or_v(q) or is_site_h_or_v(t)) {
           return NEGATIVE;
         } else {
           bool has_q_pos_slope = has_positive_slope(q);
@@ -2877,11 +2871,7 @@ private:
       if (o != LEFT_TURN) {
         return POSITIVE;
       } else {
-        if (r.supporting_site().segment().is_horizontal() or
-            r.supporting_site().segment().is_vertical() or
-            t.supporting_site().segment().is_horizontal() or
-            t.supporting_site().segment().is_vertical()
-           ) {
+        if (is_site_h_or_v(r) or is_site_h_or_v(t)) {
           return NEGATIVE;
         } else {
           bool has_r_pos_slope = has_positive_slope(r);
