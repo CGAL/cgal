@@ -627,6 +627,33 @@ bool test_LCC_3()
     return false;
   lcc.clear();
 
+  dh1 = lcc.
+    make_hexahedron(Point(0,0,0),Point(1,0,0),Point(1,1,0),Point(0,1,0),
+                    Point(0,1,1),Point(0,0,1),Point(1,0,1),Point(1,1,1));
+  dh2 = lcc.
+    make_hexahedron(Point(0,3,0),Point(1,3,0),Point(1,4,0),Point(0,4,0),
+                    Point(0,4,1),Point(0,3,1),Point(1,3,1),Point(1,4,1));
+  dh3 = lcc.
+    make_hexahedron(Point(0,6,0),Point(1,6,0),Point(1,7,0),Point(0,7,0),
+                    Point(0,7,1),Point(0,6,1),Point(1,6,1),Point(1,7,1));
+  dh3 = lcc.beta(dh3, 2,1,1,2);
+  lcc.template sew<3>(dh2,dh3);
+  dh2 = lcc.beta(dh2, 2,1,1,2);
+  lcc.template sew<3>(dh1,dh2);
+
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,2,1));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,2,0));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,1,1,2,0));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,1,1,2,1));
+
+  if ( !check_number_of_cells_3(lcc, 12, 24, 16, 3, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,2,1));
+  if ( !check_number_of_cells_3(lcc, 10, 16, 10, 2, 2 ) )
+    return false;
+  lcc.clear();
+
   /*
 
   dh1 = make_triangle(lcc,, , );
