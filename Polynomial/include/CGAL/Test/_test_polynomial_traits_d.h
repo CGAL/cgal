@@ -188,6 +188,7 @@ void test_construct_polynomial(const Polynomial_traits_d&){
     typedef typename Constructor::result_type result_type;
     CGAL_static_assertion(
         (boost::is_same< result_type , Polynomial_d >::value));
+    CGAL_USE_TYPE(result_type);
     typedef typename PT::Shift Shift;
     typedef typename PT::Evaluate Evaluate;
     Shift shift = Shift();
@@ -1866,6 +1867,8 @@ void test_rebind(const PT& /*traits*/){
   const int dimension = 4;
   typedef typename PT:: template Rebind<Integer,4>::Other PT_Integer_4;
   typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
+  CGAL_USE_TYPE(PT_Integer_4);
+  CGAL_USE_TYPE(PT_Rational_4);
   CGAL_static_assertion((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
           Integer>::value));
   CGAL_static_assertion((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 
@@ -1878,6 +1881,8 @@ void test_rebind(const PT& /*traits*/){
   const int dimension = 4;
   typedef typename PT:: template Rebind<int,4>::Other PT_Integer_4;
   typedef typename PT:: template Rebind<double,4>::Other PT_Rational_4;
+  CGAL_USE_TYPE(PT_Integer_4);
+  CGAL_USE_TYPE(PT_Rational_4);
   CGAL_static_assertion((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
           int>::value));
   CGAL_static_assertion((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 

@@ -1,5 +1,6 @@
 #include <CGAL/basic.h>
 #include <iostream>
+#include <cassert>
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2_dispatching.h>
 

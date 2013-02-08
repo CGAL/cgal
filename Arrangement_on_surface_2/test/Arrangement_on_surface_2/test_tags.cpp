@@ -1,4 +1,5 @@
 #include <CGAL/basic.h>
+#include <cassert>
 #include <iostream>
 
 #include <CGAL/Arr_tags.h>
