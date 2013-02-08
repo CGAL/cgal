@@ -990,7 +990,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_bot()
     iter2,iter3,first_iter,
     beyond = Point_data_list.end();
   int points_removed = 0, 
-      size = Point_data_list.size();
+    size = static_cast<int>(Point_data_list.size());
 
   get_next_for_bot(iter1,beyond);
   first_iter = iter1;
@@ -1039,7 +1039,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_top()
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
   int points_removed = 0,
-    size = Point_data_list.size();
+    size = static_cast<int>(Point_data_list.size());
 
   get_next_for_top(iter1,beyond);
   iter2 = iter1;
@@ -1085,7 +1085,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_left()
     iter2, iter3, first_iter,
     beyond = Point_data_list.end();
   int points_removed = 0,
-      size = Point_data_list.size();
+    size = static_cast<int>(Point_data_list.size());
 
   get_next_for_left(iter1,beyond);
   first_iter = iter1;
@@ -1130,7 +1130,7 @@ Largest_empty_iso_rectangle_2<T>::phase_2_on_right()
   typename std::list<Point_data *>::iterator iter1 = Point_data_list.begin(),
     iter2, iter3, first_iter, 
     beyond = Point_data_list.end();
-  int points_removed = 0,size = Point_data_list.size();
+  int points_removed = 0,size = static_cast<int>(Point_data_list.size());
 
   get_next_for_right(iter1,beyond);
   first_iter = iter1;
