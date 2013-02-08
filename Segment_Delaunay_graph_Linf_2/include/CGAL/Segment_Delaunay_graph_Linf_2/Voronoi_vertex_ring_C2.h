@@ -2551,7 +2551,9 @@ public:
         oriented_side_of_line(l, p_.source_site().point());
       Oriented_side oslptrg =
         oriented_side_of_line(l, p_.target_site().point());
-      if ((oslpsrc != oslvv) and (oslptrg != oslvv)) {
+      if (((oslpsrc != oslvv) and (oslptrg != oslvv)) and
+          ((oslpsrc != ON_ORIENTED_BOUNDARY) or
+           (oslptrg != ON_ORIENTED_BOUNDARY)   )         ) {
         compare_p = SMALLER;
       }
     }
@@ -2581,7 +2583,9 @@ public:
         oriented_side_of_line(l, q_.source_site().point());
       Oriented_side oslqtrg =
         oriented_side_of_line(l, q_.target_site().point());
-      if ((oslqsrc != oslvv) and (oslqtrg != oslvv)) {
+      if (((oslqsrc != oslvv) and (oslqtrg != oslvv)) and
+          ((oslqsrc != ON_ORIENTED_BOUNDARY) or
+           (oslqtrg != ON_ORIENTED_BOUNDARY)   )         ) {
         compare_q = SMALLER;
       }
     }
@@ -2611,7 +2615,9 @@ public:
         oriented_side_of_line(l, r_.source_site().point());
       Oriented_side oslrtrg =
         oriented_side_of_line(l, r_.target_site().point());
-      if ((oslrsrc != oslvv) and (oslrtrg != oslvv)) {
+      if (((oslrsrc != oslvv) and (oslrtrg != oslvv)) and
+          ((oslrsrc != ON_ORIENTED_BOUNDARY) or
+           (oslrtrg != ON_ORIENTED_BOUNDARY)   )         ) {
         compare_r = SMALLER;
       }
     }
