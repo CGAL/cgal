@@ -55,8 +55,10 @@ public:
   using Base::compute_linf_perpendicular;
 
 private:
-  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K> Are_same_points_2;
-  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
+          Are_same_points_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K>
+          Are_same_segments_2;
   typedef Side_of_oriented_square_2<K>   Side_of_oriented_square_2_Type;
   typedef Bisector_Linf<K>               Bisector_Linf_Type;
 
@@ -81,7 +83,8 @@ private:
     CGAL_precondition( sp.is_point() && sq.is_point() &&
 		       sr.is_point() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug vring entering compute_ppp" << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug vring entering compute_ppp"
+        << std::endl;);
 
     Point_2 p = sp.point(), q = sq.point(), r = sr.point();
 
@@ -113,7 +116,7 @@ private:
       y_center = half * (p.y() + q.y());
       is_set_y_center = true;
 
-      CGAL_SDG_DEBUG(std::cout << "debug set y_center=" << 
+      CGAL_SDG_DEBUG(std::cout << "debug set y_center=" <<
         y_center << std::endl;);
 
       Comparison_result cmpxrothers = CGAL::compare(r.x(), p.x());
@@ -128,15 +131,15 @@ private:
           if (cmpyrp == LARGER) {
             y_min = two*y_center - r.y();
             is_set_y_min = true;
-            CGAL_SDG_DEBUG(std::cout << "debug set y_min=" << 
+            CGAL_SDG_DEBUG(std::cout << "debug set y_min=" <<
               y_min << std::endl;);
           } else {
             y_max = two*y_center - r.y();
             is_set_y_max = true;
-            CGAL_SDG_DEBUG(std::cout << "debug set y_max=" << 
+            CGAL_SDG_DEBUG(std::cout << "debug set y_max=" <<
               y_max << std::endl;);
           }
-        } 
+        }
       } else if (cmpxrothers == LARGER) {
         CGAL_SDG_DEBUG(std::cout << "debug r is right of p, q" << std::endl;);
         Comparison_result cmpyrp = CGAL::compare(r.y(), p.y());
@@ -148,15 +151,15 @@ private:
           if (cmpyrp == LARGER) {
             y_min = two*y_center - r.y();
             is_set_y_min = true;
-            CGAL_SDG_DEBUG(std::cout << "debug set y_min=" << 
+            CGAL_SDG_DEBUG(std::cout << "debug set y_min=" <<
               y_min << std::endl;);
           } else {
             y_max = two*y_center - r.y();
             is_set_y_max = true;
-            CGAL_SDG_DEBUG(std::cout << "debug set y_max=" << 
+            CGAL_SDG_DEBUG(std::cout << "debug set y_max=" <<
               y_max << std::endl;);
           }
-        } 
+        }
       } else {
         // not possible
       }
@@ -203,7 +206,7 @@ private:
             x_max = two*x_center - r.x();
             is_set_x_max = true;
           }
-        } 
+        }
       } else if (cmpyrothers == LARGER) {
         Comparison_result cmpxrp = CGAL::compare(r.x(), p.x());
         Comparison_result cmpxrq = CGAL::compare(r.x(), q.x());
@@ -218,7 +221,7 @@ private:
             x_max = two*x_center - r.x();
             is_set_x_max = true;
           }
-        } 
+        }
       } else {
         // not possible
       }
@@ -227,7 +230,7 @@ private:
 
     Comparison_result cmpxrmin = CGAL::compare(r.x(), x_min);
     Comparison_result cmpxrmax = CGAL::compare(r.x(), x_max);
-    if (cmpxrmin == SMALLER) { 
+    if (cmpxrmin == SMALLER) {
 	// here r.x() < x_min <= x_max
         if (not is_set_x_min) {
           x_min = r.x();
@@ -290,7 +293,7 @@ private:
           y_max = two*y_center - q.y();
           is_set_y_max = true;
         }
-      } else { 
+      } else {
         // r.x() = q.x()
         CGAL_SDG_DEBUG(std::cout << "debug r.x = q.x" << std::endl;);
         y_center = half * (q.y() + r.y());
@@ -312,16 +315,16 @@ private:
 
     Comparison_result cmpyrmin = CGAL::compare(r.y(), y_min);
     Comparison_result cmpyrmax = CGAL::compare(r.y(), y_max);
-    if (cmpyrmin == SMALLER) { 
+    if (cmpyrmin == SMALLER) {
       // here r.y() < y_min <= y_max
-      if (not is_set_y_min) { 
+      if (not is_set_y_min) {
         y_min = r.y();
       }
     } else if (cmpyrmin == LARGER) {
       // here r.y() > y_min
       if (cmpyrmax == LARGER) {
         // here y_min <= y_max < r.y()
-        if (not is_set_y_max) { 
+        if (not is_set_y_max) {
           y_max = r.y();
         }
       } else if (cmpyrmax == SMALLER) {
@@ -387,41 +390,44 @@ private:
       is_set_x_center = true;
     }
 
-    Comparison_result cmpsides = 
+    Comparison_result cmpsides =
 	CGAL::compare(x_max - x_min, y_max - y_min);
 
-    // if bounding box is non-square and points are not 
+    // if bounding box is non-square and points are not
     // on corners of it, then grow it to become square
     switch(cmpsides) {
       case SMALLER:
-        CGAL_SDG_DEBUG(std::cout << "rectangle has to be made fatter" << std::endl;);
+        CGAL_SDG_DEBUG(std::cout
+            << "debug vring rectangle has to be made fatter" << std::endl;);
         // make rectangle fatter
         if (is_set_x_center) {
-          CGAL_SDG_DEBUG(std::cout << "x_center already set" << std::endl;);
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring x_center already set" << std::endl;);
           // grow in both sides
           break;
         }
         // grow only if any point is inside vertical sides
 	if (((CGAL::compare(p.x(), x_min) == EQUAL)   and
 	     (CGAL::compare(p.y(), y_max) == SMALLER) and
-	     (CGAL::compare(p.y(), y_min) == LARGER)     ) or 
+	     (CGAL::compare(p.y(), y_min) == LARGER)     ) or
 	    ((CGAL::compare(q.x(), x_min) == EQUAL)   and
 	     (CGAL::compare(q.y(), y_max) == SMALLER) and
-	     (CGAL::compare(q.y(), y_min) == LARGER)     ) or 
+	     (CGAL::compare(q.y(), y_min) == LARGER)     ) or
 	    ((CGAL::compare(r.x(), x_min) == EQUAL)   and
 	     (CGAL::compare(r.y(), y_max) == SMALLER) and
 	     (CGAL::compare(r.y(), y_min) == LARGER)     )   )
         { // grow rectangle to the right
           CGAL_SDG_DEBUG(std::cout << "debug vring grow right" << std::endl;);
           x_max = x_min + y_max - y_min;
-        } else 
+        } else
         { // grow rectangle to the left
           CGAL_SDG_DEBUG(std::cout << "debug vring grow left" << std::endl;);
           x_min = x_max - y_max + y_min;
         }
         break;
       case LARGER:
-        CGAL_SDG_DEBUG(std::cout << "rectangle has to be made taller" << std::endl;);
+        CGAL_SDG_DEBUG(std::cout
+            << "debug vring rectangle has to be made taller" << std::endl;);
         // make rectangle taller
         if (is_set_y_center) {
           // grow in both sides
@@ -431,19 +437,21 @@ private:
         // grow only if any point is inside horizontal sides
 	if (((CGAL::compare(p.y(), y_min) == EQUAL)   and
 	     (CGAL::compare(p.x(), x_max) == SMALLER) and
-	     (CGAL::compare(p.x(), x_min) == LARGER)     ) or 
+	     (CGAL::compare(p.x(), x_min) == LARGER)     ) or
 	    ((CGAL::compare(q.y(), y_min) == EQUAL)   and
 	     (CGAL::compare(q.x(), x_max) == SMALLER) and
-	     (CGAL::compare(q.x(), x_min) == LARGER)     ) or 
+	     (CGAL::compare(q.x(), x_min) == LARGER)     ) or
 	    ((CGAL::compare(r.y(), y_min) == EQUAL)   and
 	     (CGAL::compare(r.x(), x_max) == SMALLER) and
 	     (CGAL::compare(r.x(), x_min) == LARGER)     )   )
         { // grow rectangle upwards
-          CGAL_SDG_DEBUG(std::cout << "debug vring grow upwards" << std::endl;);
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring grow upwards" << std::endl;);
           y_max = y_min + x_max - x_min;
-        } else 
+        } else
         { // grow rectangle downwards
-          CGAL_SDG_DEBUG(std::cout << "debug vring grow downwards" << std::endl;);
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring grow downwards" << std::endl;);
           y_min = y_max - x_max + x_min;
         }
         break;
@@ -465,7 +473,7 @@ private:
     CGAL_precondition( p.is_point() && q.is_segment() &&
 		       r.is_segment() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug: compute_pss entering p=" << p 
+    CGAL_SDG_DEBUG(std::cout << "debug: compute_pss entering p=" << p
        << " q=" << q << " r=" << r << std::endl;);
 
     v_type = PSS;
@@ -489,20 +497,27 @@ private:
     Polychainline_2 goodbisector;
     if (pq) {
       goodbisector = bisector_linf(p, q);
-      CGAL_SDG_DEBUG(std::cout << "debug: compute_pss bpq p=" << p << " q=" << q << std::endl;);
-      CGAL_SDG_DEBUG(std::cout << "debug: compute_pss bpq =" << goodbisector << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring compute_pss bpq p=" << p
+          << " q=" << q << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring compute_pss bpq ="
+          << goodbisector << std::endl;);
     } else {
       goodbisector = bisector_linf(r, p);
-      CGAL_SDG_DEBUG(std::cout << "debug: compute_pss brp r=" << r << " p=" << p << std::endl;);
-      CGAL_SDG_DEBUG(std::cout << "debug: compute_pss brp =" << goodbisector << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring compute_pss brp r=" << r
+          << " p=" << p << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring compute_pss brp ="
+          << goodbisector << std::endl;);
     }
 
     Polychainline_2 bqr = bisector_linf(q, r);
-    CGAL_SDG_DEBUG(std::cout << "debug: compute_pss bqr q=" << q << " r=" << r << std::endl;);
-    CGAL_SDG_DEBUG(std::cout << "debug: compute_pss bqr =" << bqr << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug: vring compute_pss bqr q=" << q
+        << " r=" << r << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug: vring compute_pss bqr ="
+        << bqr << std::endl;);
 
-    Point_2 vv = goodbisector.first_intersection_point_with(bqr); 
-    CGAL_SDG_DEBUG(std::cout << "debug: compute_pss vv=" << vv << std::endl;);
+    Point_2 vv = goodbisector.first_intersection_point_with(bqr);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vring compute_pss vv=" << vv << std::endl;);
 
     ux_ = vv.x();
     uy_ = vv.y();
@@ -521,8 +536,9 @@ private:
     CGAL_precondition( p.is_point() && q.is_point() &&
 		       r.is_segment() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug: compute_pps entering p=" << p 
-      << " q=" << q << " r=" << r << std::endl;);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: vring compute_pps entering p=" << p
+        << " q=" << q << " r=" << r << std::endl;);
 
     v_type = PPS;
 
@@ -530,7 +546,8 @@ private:
     bool q_endp_r = is_endpoint_of(q, r);
 
     Polychainline_2 bpq = bisector_linf(p, q);
-    CGAL_SDG_DEBUG(std::cout << "debug: bpq p=" << p << " q=" << q << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug: bpq p="
+        << p << " q=" << q << std::endl;);
     CGAL_SDG_DEBUG(std::cout << "debug: bpq =" << bpq << std::endl;);
 
     CGAL_assertion(not (p_endp_r and q_endp_r));
@@ -543,14 +560,19 @@ private:
     Polychainline_2 goodbisector;
     if (p_endp_r) {
       goodbisector = bisector_linf(r, p);
-      CGAL_SDG_DEBUG(std::cout << "debug: brp r=" << r << " p=" << p << std::endl;);
-      CGAL_SDG_DEBUG(std::cout << "debug: brp res=" << goodbisector << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring brp r="
+          << r << " p=" << p << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring brp res="
+          << goodbisector << std::endl;);
     } else if (q_endp_r) {
       goodbisector = bisector_linf(q, r);
-      CGAL_SDG_DEBUG(std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;);
-      CGAL_SDG_DEBUG(std::cout << "debug: bqr res=" << goodbisector << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring bqr q="
+          << q << " r=" << r << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring bqr res="
+          << goodbisector << std::endl;);
     } else if (samecoordpq) {
-      CGAL_SDG_DEBUG(std::cout << "debug PPS samecoordpq" << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug vring PPS samecoordpq"
+          << std::endl;);
 
       // check which of points p, q is closer to segment r
 
@@ -558,7 +580,7 @@ private:
 
       Line_2 l = compute_supporting_line(r.supporting_site());
 
-      if (((CGAL::sign(l.a()) == ZERO) and sameypq) or 
+      if (((CGAL::sign(l.a()) == ZERO) and sameypq) or
           ((CGAL::sign(l.b()) == ZERO) and samexpq)   )  {
         // here l is horizontal or vertical and parallel to pq;
         // bqr or brp are equally good
@@ -596,23 +618,30 @@ private:
 
       if (use_bqr) {
         goodbisector = bisector_linf(q, r);
-        CGAL_SDG_DEBUG(std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;);
-        CGAL_SDG_DEBUG(std::cout << "debug: bqr res=" << goodbisector << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug: vring bqr q="
+            << q << " r=" << r << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug: vring bqr res="
+            << goodbisector << std::endl;);
       } else {
         goodbisector = bisector_linf(r, p);
-        CGAL_SDG_DEBUG(std::cout << "debug: brp r=" << r << " p=" << p << std::endl;);
-        CGAL_SDG_DEBUG(std::cout << "debug: brp res=" << goodbisector << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug: vring brp r="
+            << r << " p=" << p << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug: vring brp res="
+            << goodbisector << std::endl;);
       }
     } else {
       goodbisector = bisector_linf(q, r);
-      CGAL_SDG_DEBUG(std::cout << "debug: bqr q=" << q << " r=" << r << std::endl;);
-      CGAL_SDG_DEBUG(std::cout << "debug: bqr res=" << goodbisector << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring bqr q="
+          << q << " r=" << r << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug: vring bqr res="
+          << goodbisector << std::endl;);
     }
 
 
     Point_2 vv = bpq.first_intersection_point_with(goodbisector);
 
-    CGAL_SDG_DEBUG(std::cout << "debug: PPS returns with vv=" << vv << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug: PPS returns with vv="
+        << vv << std::endl;);
 
     ux_ = vv.x();
     uy_ = vv.y();
@@ -688,7 +717,7 @@ private:
     Polychainline_2 bpq = bisector_linf(p, q);
     Polychainline_2 bqr = bisector_linf(q, r);
 
-    Point_2 vv = bpq.first_intersection_point_with(bqr); 
+    Point_2 vv = bpq.first_intersection_point_with(bqr);
 
     ux_ = vv.x();
     uy_ = vv.y();
@@ -754,7 +783,7 @@ private:
     return s_uz * s_l;
   }
 
-  
+
   //--------------------------------------------------------------------------
 
   Orientation
@@ -809,7 +838,7 @@ private:
     // philaris: following might have to be changed
     // philaris: I remove the following line to be on the safe side
     /*
-    if (  ( p_.is_segment() && is_endpoint_of(t, p_) ) || 
+    if (  ( p_.is_segment() && is_endpoint_of(t, p_) ) ||
 	  ( q_.is_segment() && is_endpoint_of(t, q_) ) ||
 	  ( r_.is_segment() && is_endpoint_of(t, r_) )  ) {
       use_result = true;
@@ -841,7 +870,7 @@ private:
   //--------------------------------------------------------------------------
 
   template<class Type>
-  inline  
+  inline
   Sign incircle_p(const Site_2& st, Type type) const
   {
     CGAL_precondition( st.is_point() );
@@ -861,7 +890,7 @@ private:
 
     Point_2 t = st.point();
 
-    Oriented_side os = 
+    Oriented_side os =
       side_of_oriented_square(p_.point(), q_.point(), r_.point(), t);
     return - os;
   }
@@ -872,27 +901,28 @@ private:
   {
     CGAL_precondition( st.is_point() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_p_no_easy PPS p=" 
-      << p_ << " q=" << q_  << " r=" << r_ << " t=" << st 
+    CGAL_SDG_DEBUG(std::cout << "debug vring incircle_p_no_easy PPS p="
+      << p_ << " q=" << q_  << " r=" << r_ << " t=" << st
       << std::endl;);
 
     Point_2 t = st.point();
 
     Point_2 pointref = p_ref().point();
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_p_no_easy PPS pointref=" 
-      << pointref << std::endl;);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug vring incircle_p_no_easy PPS pointref="
+        << pointref << std::endl;);
 
     RT vx = ux_ - pointref.x() * uz_;
     RT vy = uy_ - pointref.y() * uz_;
 
     RT Rs =
-      CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) ); 
+      CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) );
 
     RT scalediffdvtx = ux_ - t.x() * uz_;
     RT scalediffdvty = uy_ - t.y() * uz_;
 
-    RT Rs1 = 
+    RT Rs1 =
       CGAL::max(
         CGAL::abs(scalediffdvtx),
         CGAL::abs(scalediffdvty) );
@@ -903,10 +933,11 @@ private:
     if (crude != ZERO) {
       return crude;
     } else {
-      CGAL_SDG_DEBUG(std::cout << "debug refining in incircle_p_no_easy PPS pqr=("
-        << p_ << ", " << q_ << ", " << r_ << "), " 
-        << "t=" << t
-        << std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug refining in incircle_p_no_easy PPS pqr=("
+          << p_ << ", " << q_ << ", " << r_ << "), "
+          << "t=" << t
+          << std::endl;);
       // here crude == ZERO, so
       // we might have to refine
 
@@ -914,7 +945,7 @@ private:
 
       Sign retval = ZERO;
 
-      RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx), 
+      RT d_fine = CGAL::min(CGAL::abs(scalediffdvtx),
                             CGAL::abs(scalediffdvty));
 
       unsigned int num_same_quadrant_as_t = 0;
@@ -999,7 +1030,7 @@ private:
 
       //return CGAL::compare(d_fine, radius_fine);
 
-    } 
+    }
 
   }
 
@@ -1018,8 +1049,8 @@ private:
     RT vx = ux_ - xref * uz_;
     RT vy = uy_ - yref * uz_;
 
-    RT Rs = 
-      CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) ); 
+    RT Rs =
+      CGAL::max ( CGAL::abs(vx), CGAL::abs(vy) );
 
     RT tx = t.x() ;
     RT ty = t.y() ;
@@ -1037,10 +1068,11 @@ private:
     if (s_Q != ZERO) {
       return s_Q;
     } else {
-      CGAL_SDG_DEBUG(std::cout << "debug refining in incircle_p_no_easy PSS pqr=("
-        << p_ << ", " << q_ << ", " << r_ << "), "
-        << "t=" << t
-        << std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug refining in incircle_p_no_easy PSS pqr=("
+          << p_ << ", " << q_ << ", " << r_ << "), "
+          << "t=" << t
+          << std::endl;);
       // here crude == ZERO, so
       // we might have to refine
 
@@ -1082,7 +1114,7 @@ private:
               or(CGAL::compare(pref.y() - vy, t.y() - vy) == EQUAL) ) {
             return POSITIVE;
           }
-          
+
           return ZERO;
         }
       }
@@ -1116,7 +1148,7 @@ private:
               or(CGAL::compare(qref.y() - vy, t.y() - vy) == EQUAL) ) {
             return POSITIVE;
           }
-          
+
           return ZERO;
         }
       }
@@ -1150,7 +1182,7 @@ private:
               or(CGAL::compare(rref.y() - vy, t.y() - vy) == EQUAL) ) {
             return POSITIVE;
           }
-          
+
           return ZERO;
         }
 
@@ -1173,11 +1205,11 @@ private:
     Line_2 l = compute_supporting_line(p_.supporting_site());
     Homogeneous_point_2 hp = compute_linf_projection_hom(l, point());
 
-    RT dup = 
+    RT dup =
       CGAL::max(CGAL::abs(ux_ - hp.x() * uz_),
                 CGAL::abs(uy_ - hp.y() * uz_));
 
-    RT dut = 
+    RT dut =
       CGAL::max(CGAL::abs(ux_ - t.x() * uz_),
                 CGAL::abs(uy_ - t.y() * uz_));
 
@@ -1189,10 +1221,10 @@ private:
   //--------------------------------------------------------------------------
   //--------------------------------------------------------------------------
 
-  Sign incircle_p(const Site_2& t) const 
+  Sign incircle_p(const Site_2& t) const
   {
     CGAL_SDG_DEBUG(std::cout << "debug: entering vring incircle_p p="
-      << p_ << " q=" << q_ << " r=" << r_ << " t=" << t 
+      << p_ << " q=" << q_ << " r=" << r_ << " t=" << t
       << std::endl;);
 
     if ( is_degenerate_Voronoi_circle() ) {
@@ -1218,7 +1250,7 @@ private:
     return s;
   }
 
-  Sign incircle_p_no_easy(const Site_2& t) const 
+  Sign incircle_p_no_easy(const Site_2& t) const
   {
     Sign s(ZERO);
     switch ( v_type ) {
@@ -1287,7 +1319,7 @@ private:
   }
 
 
-  // philaris: 
+  // philaris:
   template<class Type>
   Oriented_side
   oriented_side_linf(const Line_2& l, const Point_2& p, Type) const
@@ -1532,8 +1564,9 @@ private:
 
     Sign retval = incircle_s_no_easy(t, type);
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_s: about to return retval of"
-      << " incircle_s_no_easy = " << retval << std::endl;);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug vring incircle_s: about to return retval of"
+        << " incircle_s_no_easy = " << retval << std::endl;);
 
     return retval;
   }
@@ -1542,8 +1575,9 @@ private:
   Sign incircle_s_no_easy(const Site_2& t, Type type) const
   {
 
-    CGAL_SDG_DEBUG(std::cout << "debug fn incircle_s_no_easy pqrt= (" << p_ << ") ("
-      << q_ << ") (" << r_ << ") (" << t << ")" << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug vring fn incircle_s_no_easy pqrt= ("
+        << p_ << ") (" << q_ << ") (" << r_ << ") (" << t << ")"
+        << std::endl;);
 
     bool is_p_point = p_.is_point();
     bool is_q_point = q_.is_point();
@@ -1614,7 +1648,8 @@ private:
     }
     if ( d1 == NEGATIVE ) { return NEGATIVE; }
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy d1=" << d1 << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy d1="
+        << d1 << std::endl;);
 
     bool is_p_ttrg(false);
     bool has_p_endp_ttrg(false);
@@ -1673,7 +1708,8 @@ private:
     }
     if ( d2 == NEGATIVE ) { return NEGATIVE; }
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy d2=" << d2 << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy d2="
+        << d2 << std::endl;);
 
     CGAL_assertion(numendpts_of_t < 2);
 
@@ -1738,12 +1774,12 @@ private:
           CGAL_assertion(numothers == 0);
           Point_2 vv(ux_, uy_,uz_);
 
-          Comparison_result ptcmpxve = 
+          Comparison_result ptcmpxve =
             CGAL::compare(vv.x(), endp.point().x());
-          Comparison_result ptcmpyve = 
+          Comparison_result ptcmpyve =
             CGAL::compare(vv.y(), endp.point().y());
 
-          CGAL_SDG_DEBUG(std::cout << "debug vv = " << vv << std::endl;); 
+          CGAL_SDG_DEBUG(std::cout << "debug vv = " << vv << std::endl;);
 
           if ( ( (ptcmpxve == EQUAL) and is_t_horizontal ) or
                ( (ptcmpyve == EQUAL) and is_t_vertical   )    ) {
@@ -1758,21 +1794,23 @@ private:
     Line_2 l = compute_supporting_line(t.supporting_site());
     Sign sl = incircle(l, type);
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy: incircle l returned "
-      << sl << std::endl;);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug vring incircle_s_no_easy: incircle l returned "
+        << sl << std::endl;);
 
     if ( sl == POSITIVE ) { return sl; }
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy sl=" << sl << 
+    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy sl=" << sl <<
       " d1=" << d1 << " d2=" << d2 << std::endl;);
 
-    CGAL_SDG_DEBUG(std::cout << "debug numpts_in_pqr=" << numpts_in_pqr << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug vring numpts_in_pqr="
+        << numpts_in_pqr << std::endl;);
 
     // philaris: here we have a serious change related to L2
-    if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) { 
+    if ( sl == ZERO && (d1 == ZERO || d2 == ZERO) ) {
 
       // if some site in {p,q,r} is a point and it is also:
-      // an endpoint of t and an endpoint of another site in {p,q,r} 
+      // an endpoint of t and an endpoint of another site in {p,q,r}
 
       Site_2 sqpnt, other_t, other_seg;
 
@@ -1784,30 +1822,31 @@ private:
 
         Point_2 vv (ux_, uy_, uz_);
 
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy compute_helper true, "
-          << "  vv=" << vv << "  sqpnt= " << sqpnt 
-          << "  other_t=" << other_t 
-          << "  other_seg=" << other_seg  
-          << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug vring incircle_s_no_easy "
+            << "compute_helper true, "
+            << "  vv=" << vv << "  sqpnt= " << sqpnt
+            << "  other_t=" << other_t
+            << "  other_seg=" << other_seg
+            << std::endl;);
 
-        Line_2 lvs = 
+        Line_2 lvs =
           compute_line_from_to(vv, sqpnt.point());
 
-        Oriented_side os_t = 
+        Oriented_side os_t =
           oriented_side_of_line(lvs, other_t.point());
-        Oriented_side os_s = 
+        Oriented_side os_s =
           oriented_side_of_line(lvs, other_seg.point());
 
         CGAL_assertion(os_s != ON_ORIENTED_BOUNDARY);
 
         if (os_t == os_s) {
-          Line_2 lseg = 
+          Line_2 lseg =
             compute_line_from_to(sqpnt.point(), other_seg.point());
 
           Oriented_side os_seg_vv =
-           oriented_side_of_line(lseg, vv); 
+           oriented_side_of_line(lseg, vv);
           Oriented_side os_seg_t =
-           oriented_side_of_line(lseg, other_t.point()); 
+           oriented_side_of_line(lseg, other_t.point());
 
           if (os_seg_t == os_seg_vv) {
             return NEGATIVE;
@@ -1819,16 +1858,17 @@ private:
             }
           }
         } // end of case: os_t == os_s
-      } // end of case where 
+      } // end of case where
 
-      return ZERO; 
+      return ZERO;
     }
 
     Oriented_side os1 = oriented_side_linf(l, t.source(), type);
     Oriented_side os2 = oriented_side_linf(l, t.target(), type);
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy: os1=" << os1 << " os2="
-      << os2 << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug vring incircle_s_no_easy: os1="
+        << os1 << " os2="
+        << os2 << std::endl;);
 
     if ( sl == ZERO ) {
       if (os1 == ON_ORIENTED_BOUNDARY || os2 == ON_ORIENTED_BOUNDARY) {
@@ -1837,7 +1877,7 @@ private:
       return ( os1 == os2 ) ? POSITIVE : ZERO;
     }
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy non-zero sl: os1=" 
+    CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy non-zero sl: os1="
       << os1 << " os2=" << os2 << std::endl;);
 
     return (os1 == os2) ? POSITIVE : NEGATIVE;
@@ -1845,8 +1885,8 @@ private:
 
   inline
   bool
-  compute_helper(const Site_2& p, const Site_2& q, const Site_2& r, 
-      const Site_2& t, 
+  compute_helper(const Site_2& p, const Site_2& q, const Site_2& r,
+      const Site_2& t,
       Site_2& sqpnt, Site_2& other_of_t, Site_2& other_of_seg)
   const
   {
@@ -1856,12 +1896,13 @@ private:
     bool is_q_point = q.is_point();
     bool is_r_point = r.is_point();
 
-    unsigned int numpts = 
-      ((is_p_point)? 1 : 0) + 
+    unsigned int numpts =
+      ((is_p_point)? 1 : 0) +
       ((is_q_point)? 1 : 0) +
       ((is_r_point)? 1 : 0)  ;
 
-    CGAL_SDG_DEBUG(std::cout << "debug compute_helper #pts=" << numpts << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug vring compute_helper #pts="
+        << numpts << std::endl;);
 
     if (numpts == 3) {
       return false;
@@ -1910,12 +1951,12 @@ private:
       }
     }
 
-    unsigned int numendpts_of_t = 
-      ((is_p_endp_of_t)? 1 : 0) + 
+    unsigned int numendpts_of_t =
+      ((is_p_endp_of_t)? 1 : 0) +
       ((is_q_endp_of_t)? 1 : 0) +
-      ((is_r_endp_of_t)? 1 : 0)  ; 
+      ((is_r_endp_of_t)? 1 : 0)  ;
 
-    CGAL_SDG_DEBUG(std::cout << "debug compute_helper #endpts_of_t=" << 
+    CGAL_SDG_DEBUG(std::cout << "debug compute_helper #endpts_of_t=" <<
       numendpts_of_t << std::endl;);
 
     if (numendpts_of_t == 0) {
@@ -1977,12 +2018,12 @@ private:
         have_common_r_t = have_common_r_tsrc or have_common_r_ttrg;
       }
 
-      unsigned int numcommon = 
-      ((have_common_p_t)? 1 : 0) + 
+      unsigned int numcommon =
+      ((have_common_p_t)? 1 : 0) +
       ((have_common_q_t)? 1 : 0) +
-      ((have_common_r_t)? 1 : 0)  ; 
- 
-      CGAL_SDG_DEBUG(std::cout << "debug compute_helper #numcommon=" << 
+      ((have_common_r_t)? 1 : 0)  ;
+
+      CGAL_SDG_DEBUG(std::cout << "debug compute_helper #numcommon=" <<
         numcommon << std::endl;);
 
       CGAL_assertion(numcommon < 3);
@@ -1993,15 +2034,15 @@ private:
 
       // here, numcommon == 2
 
-      unsigned int numcommon_tsrc = 
-      ((have_common_p_tsrc)? 1 : 0) + 
+      unsigned int numcommon_tsrc =
+      ((have_common_p_tsrc)? 1 : 0) +
       ((have_common_q_tsrc)? 1 : 0) +
-      ((have_common_r_tsrc)? 1 : 0)  ; 
+      ((have_common_r_tsrc)? 1 : 0)  ;
 
-      unsigned int numcommon_ttrg = 
-      ((have_common_p_ttrg)? 1 : 0) + 
+      unsigned int numcommon_ttrg =
+      ((have_common_p_ttrg)? 1 : 0) +
       ((have_common_q_ttrg)? 1 : 0) +
-      ((have_common_r_ttrg)? 1 : 0)  ; 
+      ((have_common_r_ttrg)? 1 : 0)  ;
 
       CGAL_assertion( numcommon_tsrc + numcommon_ttrg == 2 );
 
@@ -2022,11 +2063,11 @@ private:
       }
 
       if (have_common_p_t and have_common_q_t) {
-        compute_helper_two_seg(p, q, sqpnt, other_of_seg); 
+        compute_helper_two_seg(p, q, sqpnt, other_of_seg);
       } else if (have_common_q_t and have_common_r_t) {
-        compute_helper_two_seg(q, r, sqpnt, other_of_seg); 
+        compute_helper_two_seg(q, r, sqpnt, other_of_seg);
       } else if (have_common_r_t and have_common_p_t) {
-        compute_helper_two_seg(r, p, sqpnt, other_of_seg); 
+        compute_helper_two_seg(r, p, sqpnt, other_of_seg);
       } else {
         CGAL_assertion(false);
       }
@@ -2034,7 +2075,7 @@ private:
       return true;
     }
 
-    // philaris: tocheck 
+    // philaris: tocheck
     CGAL_assertion( numendpts_of_t == 1 );
 
     if (is_p_tsrc or is_q_tsrc or is_r_tsrc) {
@@ -2295,19 +2336,21 @@ private:
 
 
     if ( v_type == PPS ) {
-      //CGAL_SDG_DEBUG(std::cout << "debug p_ref pps_idx=" << pps_idx << std::endl;);
+      //CGAL_SDG_DEBUG(std::cout << "debug p_ref pps_idx="
+      //    << pps_idx << std::endl;);
 
-      if ( pps_idx == 0 ) { 
+      if ( pps_idx == 0 ) {
         CGAL_assertion( p_.is_point());
-        return p_; 
+        return p_;
       }
 
-      if ( pps_idx == 1 ) { 
+      if ( pps_idx == 1 ) {
         CGAL_assertion( q_.is_point());
-        return q_; 
+        return q_;
       }
 
-      //CGAL_SDG_DEBUG(std::cout << "debug p_ref about to return r=" << r_ << std::endl;);
+      //CGAL_SDG_DEBUG(std::cout << "debug p_ref about to return r="
+      //    << r_ << std::endl;);
 
       CGAL_assertion( r_.is_point());
       return r_;
@@ -2382,7 +2425,7 @@ public:
 	Point_2 pref = p_ref().point();
 	//FT absdx = CGAL::abs(x() - pref.x());
 	//FT absdy = CGAL::abs(y() - pref.y());
-        return CGAL::max( CGAL::abs(x() - pref.x()), 
+        return CGAL::max( CGAL::abs(x() - pref.x()),
 		          CGAL::abs(y() - pref.y()) );
       }
       break;
@@ -2438,7 +2481,7 @@ public:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle(const Site_2& t) const 
+  Sign incircle(const Site_2& t) const
   {
     Sign s;
 
@@ -2447,7 +2490,7 @@ public:
     if ( t.is_point() ) {
       s = incircle_p(t);
     } else {
-      CGAL_SDG_DEBUG(std::cout << "debug about to run incircle_s with t=" 
+      CGAL_SDG_DEBUG(std::cout << "debug about to run incircle_s with t="
         << t << std::endl;);
       s = incircle_s(t);
     }
@@ -2455,7 +2498,7 @@ public:
     return s;
   }
 
-  Sign incircle_no_easy(const Site_2& t) const 
+  Sign incircle_no_easy(const Site_2& t) const
   {
     Sign s;
 
@@ -2471,7 +2514,7 @@ public:
   //--------------------------------------------------------------------------
 
 
-  Orientation orientation(const Line_2& l) const 
+  Orientation orientation(const Line_2& l) const
   {
     Orientation o(COLLINEAR);
     switch ( v_type ) {
@@ -2727,16 +2770,16 @@ public:
       }
     }
 
-    CGAL_SDG_DEBUG(std::cout << "debug compare p q r = " 
+    CGAL_SDG_DEBUG(std::cout << "debug compare p q r = "
       << compare_p << " " << compare_q << " " << compare_r << std::endl;);
 
-    if ((compare_p == SMALLER) or 
+    if ((compare_p == SMALLER) or
         (compare_q == SMALLER) or
         (compare_r == SMALLER)   ) {
       return SMALLER;
     }
     /*
-    if ((compare_p == LARGER) or 
+    if ((compare_p == LARGER) or
         (compare_q == LARGER) or
         (compare_r == LARGER)   ) {
       // tocheck
@@ -2747,7 +2790,7 @@ public:
 
   }
 
-  
+
 
   //--------------------------------------------------------------------------
 
