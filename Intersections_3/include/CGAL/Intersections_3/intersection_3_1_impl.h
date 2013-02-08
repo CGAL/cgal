@@ -35,7 +35,7 @@ template <class K>
 Object
 intersection(const typename K::Plane_3  &plane, 
 	     const typename K::Line_3 &line, 
-	     const K&)
+	     const K& k)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -57,7 +57,7 @@ intersection(const typename K::Plane_3  &plane,
             return Object();
         }
     }
-    return make_object(Point_3(
+    return make_object(k.construct_plane_3_object()(
         den*line_pt.hx()-num*line_dir.dx(),
         den*line_pt.hy()-num*line_dir.dy(),
         den*line_pt.hz()-num*line_dir.dz(),
