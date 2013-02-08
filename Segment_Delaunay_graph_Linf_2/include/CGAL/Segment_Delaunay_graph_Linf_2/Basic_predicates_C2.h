@@ -844,8 +844,8 @@ public:
   {
     CGAL_assertion( t.is_segment() );
     CGAL_assertion( s.is_segment() );
-    CGAL_assertion(not s.segment().is_horizontal());
-    CGAL_assertion(not s.segment().is_vertical());
+    CGAL_assertion(not s.supporting_site().segment().is_horizontal());
+    CGAL_assertion(not s.supporting_site().segment().is_vertical());
 
     Segment_2 seg = s.segment();
 
