@@ -3,9 +3,6 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_3/Polygon_constructor.h>
-#include <CGAL/Testsuite/vc_debug_hook.h>
-
-static CGAL_DebugHook hook;
 
 typedef CGAL::Gmpz NT;
 typedef CGAL::Homogeneous<NT> Kernel;
