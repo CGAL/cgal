@@ -1536,7 +1536,9 @@ private:
   {
     CGAL_precondition( t.is_point() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_p vv known entering" << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug incircle_p entering pqr = ("
+        << p << ", " << q << ", " << r << "), " << "t=" << t
+        << " with known vv=" << vv << std::endl;);
 
     CGAL_assertion(r.is_segment()); // the PPP case is handled elsewhere
 
@@ -1575,24 +1577,31 @@ private:
 
       FT d_fine = CGAL::min(absdvtx, absdvty);
 
-      CGAL_SDG_DEBUG(std::cout << "debug d=" << d << " d_fine=" << d_fine << std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug d=" << d << " d_fine=" << d_fine << std::endl;);
 
       unsigned int num_same_quadrant_as_t = 0;
 
       Point_2 pref;
 
+      FT diffdvpx = vv.x() - pref.x();
+      FT diffdvpy = vv.y() - pref.y();
+
       if (p.is_point()) {
         pref = p.point();
         if (v_type == PSS) {
-          //if p and t lies on the same side of the square touching
-          //p,q,r return positive
-          if (  (CGAL::compare(pref.x() - vv.x(), tt.x() - vv.x()) == EQUAL)
-              or(CGAL::compare(pref.y() - vv.y(), tt.y() - vv.y()) == EQUAL) ) {
+          // check if p and t lie on the same side of the Linf-square
+          if (  (CGAL::compare(diffdvpx, diffdvtx) == EQUAL)
+              or(CGAL::compare(diffdvpy, diffdvty) == EQUAL) ) {
+            CGAL_SDG_DEBUG(std::cout << "debug on same side "
+                << " p=" << p << " t=" << t << std::endl;);
             return POSITIVE;
           }
         }
       } else {
         // tocheck and tofix
+        CGAL_assertion(
+            p.is_segment() and q.is_segment() and r.is_segment());
         return ZERO;
       }
 
@@ -1610,8 +1619,6 @@ private:
           false;
 
 
-      FT diffdvpx = vv.x() - pref.x();
-      FT diffdvpy = vv.y() - pref.y();
 
       CGAL_SDG_DEBUG(std::cout << "debug diffdvpx=" << diffdvpx
         << " diffdvpy=" << diffdvpy << std::endl;);
