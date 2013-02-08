@@ -20,6 +20,8 @@
 #ifndef CGAL_COMBINATORIAL_MAP_CONSTRUCTORS_H
 #define CGAL_COMBINATORIAL_MAP_CONSTRUCTORS_H 1
 
+#include <CGAL/Combinatorial_map_basic_operations.h>
+
 namespace CGAL {
 
   /** @file Combinatorial_map_constructors.h
