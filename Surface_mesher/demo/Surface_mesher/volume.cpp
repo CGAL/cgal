@@ -92,7 +92,7 @@ public:
     }
     result_type result = 0;
 //     std::cerr << "isovalues: ";
-    for(int i = 1, end = isovalues->size(); i <= end; ++i)
+    for(int i = 1, end = static_cast<int>(isovalues->size()); i <= end; ++i)
     {
 //       std::cerr << (*isovalues)[i-1] << ", ";
       if(value >= (*isovalues)[i-1].first &&
