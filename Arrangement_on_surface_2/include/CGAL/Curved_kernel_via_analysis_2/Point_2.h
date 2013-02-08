@@ -496,7 +496,7 @@ public:
         CGAL_precondition(q.ptr()->_m_xy);
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_x_2, compare_x_2)
-        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this) != NULL);
         return compare_x_2(*dynamic_cast< const Kernel_point_2* >(this), q);
     }
 
@@ -518,7 +518,7 @@ public:
         CGAL_precondition(q.ptr()->_m_xy);
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, compare_xy_2)
-        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this) != NULL);
         return compare_xy_2(
                 *dynamic_cast< const Kernel_point_2* >(this), q, equal_x
         );
@@ -537,7 +537,7 @@ public:
         CGAL_precondition(this->ptr()->_m_xy);
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, is_on_2)
-        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this) != NULL);
         return is_on_2(*dynamic_cast< const Kernel_point_2* >(this), curve);
     }
 

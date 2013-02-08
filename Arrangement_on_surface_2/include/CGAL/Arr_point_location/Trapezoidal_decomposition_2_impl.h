@@ -1973,7 +1973,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   int num_of_new_nodes = 0;
   Dag_node tmp = 
     container2dag(new_array, last_index[!inc_btm ? 0 : 1], 
-                  new_array.size()-1, num_of_new_nodes);
+                  static_cast<int>(new_array.size())-1, num_of_new_nodes);
 
   deactivate_trapezoid( *(tr.dag_node()), &tmp);  //it->remove(&tmp);
   //tmp is the root of a sub graph. 
