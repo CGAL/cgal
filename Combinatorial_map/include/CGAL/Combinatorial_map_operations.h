@@ -779,7 +779,7 @@ namespace CGAL {
     for (CMap_dart_const_iterator_of_cell<Map,i> it(amap, adart);
          res && it.cont(); ++it)
     {
-      if (it->beta(i-2)->beta(i-1) != it->beta_inv(i-2)->beta(i-1) )
+      if ( it->beta(i-2)->beta(i-1)!=it->beta(i-1)->beta_inv(i-2) )
         res = false;
     }
     return res;
@@ -979,28 +979,26 @@ namespace CGAL {
       if ( dg1!=NULL )
         amap.template group_attribute<0>(dg1, dg2);
 
-      // 3) We modify the darts of the cells incident to the edge
-      //    when they are marked to remove.
-      for (it=to_erase.begin(); it!=to_erase.end(); ++it)
-      { amap.update_dart_of_all_attributes(*it, mark); }
-
       // 4) For each dart of the cell, we modify link of neighbors.
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
       {
         if ( !(*it)->is_free(0) )
         {
-          if ( !(*it)->is_free(1) && (*it)->beta(0)!=(*it) )
+          if ( !(*it)->is_free(1) )
           {
-            amap.template basic_link_beta<1>((*it)->beta(0), (*it)->beta(1));
-            modified_darts.push_back((*it)->beta(0));
-            modified_darts.push_back((*it)->beta(1));
-
+            if ( (*it)->beta(1)!=*it )
+            {
+              /* modified_darts.push_back((*it)->beta(0));
+              if ( (*it)->beta(0)!=(*it)->beta(1) )*/
+              modified_darts.push_back((*it)->beta(1));
+              amap.template basic_link_beta<1>((*it)->beta(0), (*it)->beta(1));
+            }
           }
           else
           {
             // TODO todegroup.push(Dart_pair((*it)->beta(0), *it));
-            (*it)->beta(0)->unlink_beta(1);
             modified_darts.push_back((*it)->beta(0));
+            (*it)->beta(0)->unlink_beta(1);
           }
         }
         else
@@ -1008,8 +1006,8 @@ namespace CGAL {
           if ( !(*it)->is_free(1) )
           {
             // TODO todegroup.push(Dart_pair((*it)->beta(1), *it));
-            (*it)->beta(1)->unlink_beta(0);
             modified_darts.push_back((*it)->beta(1));
+            (*it)->beta(1)->unlink_beta(0);
           }
         }
       }
@@ -1017,7 +1015,7 @@ namespace CGAL {
       // We test the split of all the incident cells for all the non
       // void attributes.
       Map::Helper::template Foreach_enabled_attributes
-          <internal::Test2_split_with_deque<Map,0> >::
+          <internal::Test2_split_with_deque<Map,1> >::
                // <internal::Test_split_with_deque<Map,0> >::
                 run(&amap,
                     &modified_darts, -1); //mark_modified_darts);
