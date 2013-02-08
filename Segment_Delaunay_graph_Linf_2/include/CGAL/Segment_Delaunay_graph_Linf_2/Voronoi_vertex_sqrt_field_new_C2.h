@@ -1583,20 +1583,37 @@ private:
       unsigned int num_same_quadrant_as_t = 0;
 
       Point_2 pref;
-
-      FT diffdvpx = vv.x() - pref.x();
-      FT diffdvpy = vv.y() - pref.y();
+      FT diffdvpx;
+      FT diffdvpy;
 
       if (p.is_point()) {
         pref = p.point();
+        diffdvpx = vv.x() - pref.x();
+        diffdvpy = vv.y() - pref.y();
         if (v_type == PSS) {
+          Comparison_result test (EQUAL);
           // check if p and t lie on the same side of the Linf-square
-          if (  (CGAL::compare(diffdvpx, diffdvtx) == EQUAL)
-              or(CGAL::compare(diffdvpy, diffdvty) == EQUAL) ) {
-            CGAL_SDG_DEBUG(std::cout << "debug on same side "
+          if (  (CGAL::compare(diffdvpx, diffdvtx) == EQUAL) ) {
+            CGAL_SDG_DEBUG(std::cout << "debug on same vertical side "
                 << " p=" << p << " t=" << t << std::endl;);
+            FT absdvpy = CGAL::abs(diffdvpy);
+            CGAL_SDG_DEBUG(std::cout << "debug absdvpy=" << absdvpy
+                << " absdvty=" << absdvty << std::endl;);
+            test = CGAL::compare(absdvty, absdvpy);
+          } else if (CGAL::compare(diffdvpy, diffdvty) == EQUAL) {
+            CGAL_SDG_DEBUG(std::cout << "debug on same horizontal side "
+                << " p=" << p << " t=" << t << std::endl;);
+            FT absdvpx = CGAL::abs(diffdvpx);
+            test = CGAL::compare(absdvtx, absdvpx);
+          }
+          CGAL_SDG_DEBUG(std::cout << "debug test=" << test << std::endl;);
+
+          if (test == SMALLER) {
+            return NEGATIVE;
+          } else if (test == LARGER) {
             return POSITIVE;
           }
+
         }
       } else {
         // tocheck and tofix
