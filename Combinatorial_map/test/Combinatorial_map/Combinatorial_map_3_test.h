@@ -1401,135 +1401,39 @@ template<class Map>
     return false;
   map.clear();
 
-
-  /* TODO more tests contact 2D and 3D
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet1: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-
-  d1 = map.create_dart(); map.template sew<1>(d1, d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet2: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-
-  d1 = make_edge(map,, );
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet3: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-   
-  d1 = make_edge(map,, );
-  map.template sew<1>(d1, d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet4: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-   
-  d1 = make_edge(map,, );
-  map.template sew<1>(d1, d1);map.template sew<1>(d1->beta(2), d1->beta(2));
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet5: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-   
-  d1 = make_triangle(map,, , );
-  d2 = d1->beta(0);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge6: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet6: " << flush; CGAL::contract_cell<Map,2>(map,d2);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-   
-  d1 = make_triangle(map,, , );
-  d2 = make_triangle(map,, , );
-  map.template sew<3>(d1, d2); d2 = d1->beta(0); d3 = d1->beta(1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge7: " << flush; CGAL::contract_cell<Map,1>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet7: " << flush; CGAL::contract_cell<Map,2>(map,d2);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-   
-  d1 = make_triangle(map,, , );
-  d2 = make_triangle(map,, , );
-  map.template sew<2>(d1,d2); d3=d1->beta(0);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge8: " << flush; CGAL::contract_cell<Map,1>(map,d3);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet8: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-   
-  d1 = make_triangle(map,, , );
-  d2 = make_triangle(map,, , );
-  d3 = make_triangle(map,, , );
-  map.template sew<2>(d1,d2); map.template sew<2>(d1->beta(0),d3);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge9: " << flush; CGAL::contract_cell<Map,1>(map,d1->beta(1));
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet9: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-   
-  d1 = make_triangle(map,, , );
-  d2 = make_triangle(map,, , );
-  d3 = make_triangle(map,, , );
-  d4 = make_triangle(map,, , );
-  map.template sew<2>(d1,d2); map.template sew<2>(d3,d4); map.template sew<3>(d1,d3); map.template sew<3>(d2,d4); 
-  d3=d1->beta(0);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge10: " << flush; CGAL::contract_cell<Map,1>(map,d3);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet10: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-   
-  d1 = make_triangle(map,, , );
-  d4 = make_triangle(map,, , );
-  map.template sew<3>(d1,d4);
-  d2 = make_triangle(map,, , );
-  d4 = make_triangle(map,, , );
-  map.template sew<3>(d2,d4);   
-  d3 = make_triangle(map,, , );
-  d4 = make_triangle(map,, , );
-  map.template sew<3>(d3,d4);
-  map.template sew<2>(d1,d2);          map.template sew<2>(d1->beta(3),d2->beta(3));  
-  map.template sew<2>(d1->beta(0),d3); map.template sew<2>(d1->beta(0,3),d3->beta(3));
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract edge11: " << flush; CGAL::contract_cell<Map,1>(map,d1->beta(1));
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract facet11: " << flush; CGAL::contract_cell<Map,2>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-     
-  cout << "***************************** TEST FACET CONTRACTION 3D DONE."
-       << endl;
-
   cout << "***************************** TEST VOLUME CONTRACTION 3D:"
        << endl;
 
   d1 = map.create_dart();
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract volume1: " << flush; CGAL::contract_cell<Map,3>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,3>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
 
   d1 = map.create_dart(); map.template sew<1>(d1, d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract volume2: " << flush; CGAL::contract_cell<Map,3>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  CGAL::contract_cell<Map,3>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
 
-  d1 = make_edge(map,, );
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract volume3: " << flush; CGAL::contract_cell<Map,3>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  d1 = make_edge(map);
+  CGAL::contract_cell<Map,3>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
+
+  d1 = make_edge(map);
+  map.template sew<1>(d1, d1);
+  CGAL::contract_cell<Map,3>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
   map.clear();
-   
-  d1 = make_edge(map,, );
-  map.template sew<1>(d1, d1);map.template sew<1>(d1->beta(2), d1->beta(2));
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "contract volume4: " << flush; CGAL::contract_cell<Map,3>(map,d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+
+  d1 = make_edge(map);
+  map.template sew<1>(d1, d1); map.template sew<1>(d1->beta(2), d1->beta(2));
+  CGAL::contract_cell<Map,3>(map,d1);
+  if ( !check_number_of_cells_3(map, 0, 0, 0, 0, 0) )
+    return false;
   map.clear();
+
+  /*
    
   d1 = make_triangle(map,, , );
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
