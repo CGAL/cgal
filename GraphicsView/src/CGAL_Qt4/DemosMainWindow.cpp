@@ -217,7 +217,8 @@ DemosMainWindow::popupAboutBox(QString title, QString html_resource_name)
   if(cgal_version.contains(QRegExp("-Ic?-"))) {
     about_CGAL_txt.replace("<!--CGAL_VERSION-->",
                            QString(" (version %1, svn r%2)")
-                           .arg(cgal_version).arg(CGAL_SVN_REVISION));
+                           .arg(cgal_version).arg(0// CGAL_SVN_REVISION
+						  ));
   } else {
     about_CGAL_txt.replace("<!--CGAL_VERSION-->",
                            QString(" (version %1)")

@@ -899,16 +899,30 @@ void
 Mesh_domain_with_polyline_features_3<MD_>::
 compute_corners_incidences()
 {
-  for(typename Corners::const_iterator 
+  for(typename Corners::iterator 
         cit = corners_.begin(), end = corners_.end();
-      cit != end; ++cit)
+      cit != end; /* the loop variable is incremented in the  body */)
   {
     const Corner_index id = cit->second;
+
+    const typename Corners_tmp_incidences::mapped_type&
+      corner_tmp_incidences = corners_tmp_incidences_[id];
+
+    // If the corner is incident to only one curve, and that curve is a
+    // cycle, then remove the corner from the set.
+    if(corner_tmp_incidences.size() == 1 &&
+       is_cycle(Point_3(), *corner_tmp_incidences.begin()))
+    {
+      typename Corners::iterator to_erase = cit;
+      ++cit;
+      corners_.erase(to_erase);
+      continue;
+    }
 
     Surface_patch_index_set& incidences = corners_incidences_[id];
     // That should be an empty set.
 
-    BOOST_FOREACH(Curve_segment_index curve_index, corners_tmp_incidences_[id])
+    BOOST_FOREACH(Curve_segment_index curve_index, corner_tmp_incidences)
     {
       get_incidences(curve_index, 
                      std::inserter(incidences,
@@ -917,6 +931,9 @@ compute_corners_incidences()
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
     display_corner_incidences(std::cerr, id);
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
+
+    // increment the loop variable
+    ++cit;
   }
 }
 
@@ -963,9 +980,14 @@ insert_edge(InputIterator first, InputIterator last)
   const Curve_segment_index curve_index = current_curve_index_++;
   
   // Fill corners
+  //
+  // For a cycle, the "first" point of the cycle is registered as a
+  // corner. If at the end, during the call to
+  // 'compute_corners_incidences()', that corner is incident only to a
+  // cycle, then it will be removed from the set of corners.
+  register_corner(*first, curve_index);
   if ( *first != *boost::prior(last) )
   {
-    register_corner(*first, curve_index);
     register_corner(*boost::prior(last), curve_index);
   }
   

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 INRIA Sophia-Antipolis (France).
-// Copyright (c) 2010-2011 GeometryFactory Sarl (France)
+// Copyright (c) 2010-2013 GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -609,6 +609,9 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
       const FT sq_d = sq_distance(p, (*it)->point().point());
       if(minimal_weight_ != Weight() && sq_d < minimal_weight_) {
         insert_a_special_ball = true;
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
+        nearest_point = (*it)->point();
+#endif
         min_sq_d = minimal_weight_;
         if( ! is_special(*it) ) {
           ch = change_ball_size(*it, minimal_size_, true)->cell(); // special ball
@@ -758,7 +761,16 @@ insert_balls_on_edges()
       }
       else
       {
-        vp = insert_curve_point(p,p_index);
+        // Even if the curve is a cycle, it can intersect other curves at
+        // its first point (here 'p'). In that case, 'p' is a corner, even
+        // if the curve is a cycle.
+        if(!c3t3_.triangulation().is_vertex(Weighted_point(p), vp))
+        {
+          // if 'p' is not a corner
+          vp = insert_curve_point(p,p_index);
+        }
+        // No 'else' because in that case 'is_vertex(..)' already filled
+        // the variable 'vp'.
         vq = vp;
       }
       

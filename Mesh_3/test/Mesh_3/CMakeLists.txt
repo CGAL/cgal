@@ -37,6 +37,7 @@ if ( CGAL_FOUND )
   endif()
   create_single_source_cgal_program( "test_meshing_implicit_function.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedron.cpp" )
+  create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
   create_single_source_cgal_program( "test_robust_weighted_circumcenter.cpp" )
 
