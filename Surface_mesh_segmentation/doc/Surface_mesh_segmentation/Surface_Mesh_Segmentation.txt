@@ -134,8 +134,8 @@ This package provides three functions:
 	- CGAL::segment_from_sdf_values : computes the mesh segmentation from SDF values.
 	- CGAL::compute_sdf_values_and_segment : computes SDF values and mesh segmentation in one go (i.e. combines two functions listed above).	
 
-These functions expects a manifold, normal oriented, and triangulated polyhedron without boundary as input. Note that the current implementation is working with
-polyhedron with boundaries, but considering how the SDF value are computed, using a polyhedron with large holes is likely to result in 
+These functions expects a manifold, normal oriented, and triangulated polyhedron without boundary as input. Note that the current implementation is running fine on
+polyhedral surfaces with boundaries, but considering how the SDF value are computed, using a polyhedron with large holes is likely to result in
 meaningless SDF values, and therefore unreliable segmentation.
 
 The current implementation of the computation of the SDF values relies on the AABB_tree package. 
