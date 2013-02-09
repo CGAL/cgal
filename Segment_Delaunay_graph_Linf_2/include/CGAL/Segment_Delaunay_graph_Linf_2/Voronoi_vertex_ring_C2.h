@@ -715,13 +715,21 @@ private:
   {
     CGAL_precondition( p.is_segment() && q.is_segment() &&
 		       r.is_segment() );
-
     v_type = SSS;
+    Point_2 vv;
 
-    Polychainline_2 bpq = bisector_linf(p, q);
-    Polychainline_2 bqr = bisector_linf(q, r);
-
-    Point_2 vv = bpq.first_intersection_point_with(bqr);
+    if (is_endpoint_of(p.source_site(), q) and
+        is_endpoint_of(p.source_site(), r)    ) {
+      vv = p.source();
+    } else if (is_endpoint_of(p.target_site(), q) and
+               is_endpoint_of(p.target_site(), r)    ) {
+      vv = p.target();
+    } else {
+      // here, not all segments have a common point
+      Polychainline_2 bpq = bisector_linf(p, q);
+      Polychainline_2 bqr = bisector_linf(q, r);
+      vv = bpq.first_intersection_point_with(bqr);
+    }
 
     ux_ = vv.x();
     uy_ = vv.y();
