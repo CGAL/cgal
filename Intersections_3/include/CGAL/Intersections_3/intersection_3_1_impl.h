@@ -57,7 +57,7 @@ intersection(const typename K::Plane_3  &plane,
             return Object();
         }
     }
-    return make_object(k.construct_plane_3_object()(
+    return make_object(k.construct_point_3_object()(
         den*line_pt.hx()-num*line_dir.dx(),
         den*line_pt.hy()-num*line_dir.dy(),
         den*line_pt.hz()-num*line_dir.dz(),
