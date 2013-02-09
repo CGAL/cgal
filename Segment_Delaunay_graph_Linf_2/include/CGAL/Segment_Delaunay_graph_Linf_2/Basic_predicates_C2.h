@@ -975,6 +975,13 @@ public:
     return s.supporting_site().segment().is_vertical();
   }
 
+  static
+  Boolean
+  is_line_h_or_v(const Line_2 & l)
+  {
+    return (CGAL::sign(l.a()) == ZERO) or (CGAL::sign(l.b()) == ZERO);
+  }
+
 };
 
 
