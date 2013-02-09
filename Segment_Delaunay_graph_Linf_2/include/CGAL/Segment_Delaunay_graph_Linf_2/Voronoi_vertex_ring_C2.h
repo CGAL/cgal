@@ -56,6 +56,7 @@ public:
   using Base::is_site_horizontal;
   using Base::is_site_vertical;
   using Base::is_site_h_or_v;
+  using Base::is_line_h_or_v;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -2549,6 +2550,8 @@ public:
   {
     Point_2 vv ( ux_, uy_, uz_ );
 
+    bool is_l_h_or_v = is_line_h_or_v(l);
+
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
     Comparison_result compare_r(EQUAL);
@@ -2558,11 +2561,17 @@ public:
     FT absdifxvl = CGAL::abs(difxvl);
     FT absdifyvl = CGAL::abs(difyvl);
     Comparison_result cmplabsxy = CGAL::compare(absdifxvl, absdifyvl);
+
     // philaris: (cmplabsxy == EQUAL) means that lref is
     // one of the corners of the square with center vv
 
+    if ((cmplabsxy == EQUAL) and is_l_h_or_v) {
+      return POSITIVE;
+    }
+
     Oriented_side oslvv (ON_ORIENTED_BOUNDARY);
-    if (p_.is_segment() or q_.is_segment() or r_.is_segment()) {
+    if ((p_.is_segment() or q_.is_segment() or r_.is_segment()) and
+        is_l_h_or_v) {
       oslvv = oriented_side_of_line(l, vv);
       CGAL_assertion(oslvv != ON_ORIENTED_BOUNDARY);
     }
@@ -2588,14 +2597,16 @@ public:
         }
       }
     } else {
-      Oriented_side oslpsrc =
-        oriented_side_of_line(l, p_.source_site().point());
-      Oriented_side oslptrg =
-        oriented_side_of_line(l, p_.target_site().point());
-      if (((oslpsrc != oslvv) and (oslptrg != oslvv)) and
-          ((oslpsrc != ON_ORIENTED_BOUNDARY) or
-           (oslptrg != ON_ORIENTED_BOUNDARY)   )         ) {
-        compare_p = SMALLER;
+      if (is_l_h_or_v) {
+        Oriented_side oslpsrc =
+          oriented_side_of_line(l, p_.source_site().point());
+        Oriented_side oslptrg =
+          oriented_side_of_line(l, p_.target_site().point());
+        if (((oslpsrc != oslvv) and (oslptrg != oslvv)) and
+            ((oslpsrc != ON_ORIENTED_BOUNDARY) or
+             (oslptrg != ON_ORIENTED_BOUNDARY)   )         ) {
+          compare_p = SMALLER;
+        }
       }
     }
 
@@ -2620,14 +2631,16 @@ public:
         }
       }
     } else {
-      Oriented_side oslqsrc =
-        oriented_side_of_line(l, q_.source_site().point());
-      Oriented_side oslqtrg =
-        oriented_side_of_line(l, q_.target_site().point());
-      if (((oslqsrc != oslvv) and (oslqtrg != oslvv)) and
-          ((oslqsrc != ON_ORIENTED_BOUNDARY) or
-           (oslqtrg != ON_ORIENTED_BOUNDARY)   )         ) {
-        compare_q = SMALLER;
+      if (is_l_h_or_v) {
+        Oriented_side oslqsrc =
+          oriented_side_of_line(l, q_.source_site().point());
+        Oriented_side oslqtrg =
+          oriented_side_of_line(l, q_.target_site().point());
+        if (((oslqsrc != oslvv) and (oslqtrg != oslvv)) and
+            ((oslqsrc != ON_ORIENTED_BOUNDARY) or
+             (oslqtrg != ON_ORIENTED_BOUNDARY)   )         ) {
+          compare_q = SMALLER;
+        }
       }
     }
 
@@ -2652,14 +2665,16 @@ public:
         }
       }
     } else {
-      Oriented_side oslrsrc =
-        oriented_side_of_line(l, r_.source_site().point());
-      Oriented_side oslrtrg =
-        oriented_side_of_line(l, r_.target_site().point());
-      if (((oslrsrc != oslvv) and (oslrtrg != oslvv)) and
-          ((oslrsrc != ON_ORIENTED_BOUNDARY) or
-           (oslrtrg != ON_ORIENTED_BOUNDARY)   )         ) {
-        compare_r = SMALLER;
+      if (is_l_h_or_v) {
+        Oriented_side oslrsrc =
+          oriented_side_of_line(l, r_.source_site().point());
+        Oriented_side oslrtrg =
+          oriented_side_of_line(l, r_.target_site().point());
+        if (((oslrsrc != oslvv) and (oslrtrg != oslvv)) and
+            ((oslrsrc != ON_ORIENTED_BOUNDARY) or
+             (oslrtrg != ON_ORIENTED_BOUNDARY)   )         ) {
+          compare_r = SMALLER;
+        }
       }
     }
 
