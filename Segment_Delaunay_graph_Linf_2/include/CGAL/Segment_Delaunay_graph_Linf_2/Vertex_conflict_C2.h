@@ -993,25 +993,37 @@ private:
 
           if ((cmpx(testp, pnt_on_seg) == EQUAL ) and
               (cmpy(testp, pnt_on_seg) == EQUAL )   ) {
-
             // here testp is the same as pnt_on_seg
-            Oriented_side osq = oriented_side_of_line(l, q.point());
-            Oriented_side ost = oriented_side_of_line(l, otherp);
 
-            CGAL_assertion(osq != ON_ORIENTED_BOUNDARY);
+            Oriented_side oscandidate =
+              oriented_side_of_line(is_positive_slope? lhor : lver,
+                                    otherp);
 
-            CGAL_SDG_DEBUG(std::cout << "debug p=" << p << " q=" << q
-                << " t=" << t << " osq="<< osq
-                << " ost=" << ost << std::endl;);
+            if (oscandidate == ON_POSITIVE_SIDE) {
 
-            if (osq == ost) {
-              CGAL_SDG_DEBUG(std::cout
-                  << "debug incircle_sps sameside return NEG"
-                  << std::endl; );
-              return NEGATIVE;
+              Oriented_side osq = oriented_side_of_line(l, q.point());
+              Oriented_side ost = oriented_side_of_line(l, otherp);
+
+              CGAL_assertion(osq != ON_ORIENTED_BOUNDARY);
+
+              CGAL_SDG_DEBUG(std::cout << "debug p=" << p << " q=" << q
+                  << " t=" << t << " osq="<< osq
+                  << " ost=" << ost << std::endl;);
+
+              if (osq == ost) {
+                CGAL_SDG_DEBUG(std::cout
+                    << "debug incircle_sps sameside return NEG"
+                    << std::endl; );
+                return NEGATIVE;
+              } else {
+                CGAL_SDG_DEBUG(std::cout
+                    << "debug incircle_sps diffside return POS"
+                    << std::endl; );
+                return POSITIVE;
+              }
             } else {
               CGAL_SDG_DEBUG(std::cout
-                  << "debug incircle_sps diffside return POS"
+                  << "debug incircle_sps NOT othert on POS return POS"
                   << std::endl; );
               return POSITIVE;
             }
@@ -1236,8 +1248,11 @@ private:
 
           if ((cmpx(testt, pnt_on_seg) == EQUAL ) and
               (cmpy(testt, pnt_on_seg) == EQUAL )   ) {
-
             // here testt is the same as pnt_on_seg
+
+            CGAL_SDG_DEBUG(std::cout << "debug vc other=" << othert
+                << " pnt_on_seg=" << pnt_on_seg << std::endl; );
+
             Oriented_side osp = oriented_side_of_line(l, p.point());
             Oriented_side ost = oriented_side_of_line(l, othert);
 
