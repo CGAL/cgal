@@ -63,7 +63,7 @@ public:
   : _t(NULL), _it(it), _off(0) {}
   
   Periodic_2_triangulation_triangle_iterator_2(const T * t,
-                                                  Iterator_type it = T::STORED)
+                                               Iterator_type it = T::STORED)
   : _t(t), pos(_t->faces_begin()), _it(it), _off(0) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
       while (pos != _t->faces_end() && !is_canonical() )
@@ -165,7 +165,7 @@ private:
   // always be true.
   bool is_canonical() {
     // fetch all offsets
-    Offset off0, off1, off2, off3;
+    Offset off0, off1, off2;
     get_edge_offsets(off0, off1, off2);
     
     if (_t->number_of_sheets() != make_array(1,1)) {
@@ -183,8 +183,8 @@ private:
     // If there is one direction of space for which all offsets are
     // non-zero then the edge is not canonical because we can
     // take the copy closer towards the origin in that direction.
-    int offx = off0.x() & off1.x() & off2.x() & off3.x();
-    int offy = off0.y() & off1.y() & off2.y() & off3.y();
+    int offx = off0.x() & off1.x() & off2.x();
+    int offy = off0.y() & off1.y() & off2.y();
     
     return (offx == 0 && offy == 0);
   }
