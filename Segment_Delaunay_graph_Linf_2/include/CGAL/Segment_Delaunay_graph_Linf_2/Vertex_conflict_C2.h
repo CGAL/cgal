@@ -1000,6 +1000,10 @@ private:
 
             CGAL_assertion(osq != ON_ORIENTED_BOUNDARY);
 
+            CGAL_SDG_DEBUG(std::cout << "debug p=" << p << " q=" << q
+                << " t=" << t << " osq="<< osq
+                << " ost=" << ost << std::endl;);
+
             if (osq == ost) {
               CGAL_SDG_DEBUG(std::cout
                   << "debug incircle_sps sameside return NEG"
@@ -1238,6 +1242,10 @@ private:
             Oriented_side ost = oriented_side_of_line(l, othert);
 
             CGAL_assertion(osp != ON_ORIENTED_BOUNDARY);
+
+            CGAL_SDG_DEBUG(std::cout << "debug p=" << p << " q=" << q
+                << " t=" << t << " osp="<< osp
+                << " ost=" << ost << std::endl;);
 
             if (osp == ost) {
               CGAL_SDG_DEBUG(std::cout
