@@ -773,17 +773,30 @@ private:
     if ( is_vv_computed ) { return; }
     is_vv_computed = true;
 
-    Polychainline_2 bpq = bisector_linf(sp, sq);
-    CGAL_SDG_DEBUG(std::cout << "debug: bpq p=" << sp << " q=" << sq << std::endl;);
-    CGAL_SDG_DEBUG(std::cout << "debug: bpq =" << bpq << std::endl;);
+    if (is_endpoint_of(sp.source_site(), sq) and
+        is_endpoint_of(sp.source_site(), sr)    ) {
+      vv = sp.source();
+    } else if (is_endpoint_of(sp.target_site(), sq) and
+               is_endpoint_of(sp.target_site(), sr)    ) {
+      vv = sp.target();
+    } else {
+      // here, not all segments have a common point
+      Polychainline_2 bpq = bisector_linf(sp, sq);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug: vsqr bpq p=" << sp << " q=" << sq << std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug: vsqr bpq =" << bpq << std::endl;);
 
-    Polychainline_2 bqr = bisector_linf(sq, sr);
-    CGAL_SDG_DEBUG(std::cout << "debug: bqr q=" << sq << " r=" << sr << std::endl;);
-    CGAL_SDG_DEBUG(std::cout << "debug: bqr =" << bqr << std::endl;);
+      Polychainline_2 bqr = bisector_linf(sq, sr);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug: vsqr bqr q=" << sq << " r=" << sr << std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug: vsqr bqr =" << bqr << std::endl;);
 
-    vv = bpq.first_intersection_point_with(bqr);
-    CGAL_SDG_DEBUG(std::cout << "debug: SSS vv=" << vv << std::endl;);
-
+      vv = bpq.first_intersection_point_with(bqr);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug: vsqr SSS vv=" << vv << std::endl;);
+    }
   }
 
 
@@ -1613,8 +1626,10 @@ private:
             CGAL_SDG_DEBUG(std::cout << "debug on same vertical side "
                 << " p=" << p << " t=" << t << std::endl;);
             FT absdvpy = CGAL::abs(diffdvpy);
-            CGAL_SDG_DEBUG(std::cout << "debug absdvpy=" << absdvpy
-                << " absdvty=" << absdvty << std::endl;);
+            CGAL_SDG_DEBUG(std::cout << "debug vsqr absdvty=" << absdvty
+                << " absdvpy=" << absdvpy << std::endl;);
+            CGAL_SDG_DEBUG(std::cout << "debug vsqr abs diff ty py ="
+                << absdvty - absdvpy << std::endl;);
             test = CGAL::compare(absdvty, absdvpy);
           } else if (CGAL::compare(diffdvpy, diffdvty) == EQUAL) {
             CGAL_SDG_DEBUG(std::cout << "debug on same horizontal side "
