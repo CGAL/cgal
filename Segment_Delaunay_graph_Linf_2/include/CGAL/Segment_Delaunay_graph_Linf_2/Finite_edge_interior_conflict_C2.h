@@ -408,7 +408,7 @@ private:
 				const Site_2& r, const Site_2& s,
 				const Site_2& t, Method_tag tag) const
   {
-    // checks if interior of voronoi edge is in conflict if both extrema 
+    // checks if interior of voronoi edge is in conflict if both extrema
     // of the voronoi edge touch the corresponding circles.
     // return true if interior is in conflict; false otherwise
     if ( t.is_segment() ) { return false; }
@@ -421,6 +421,8 @@ private:
 
     if ( vpqr.incircle_no_easy(s) == ZERO &&
 	 vqps.incircle_no_easy(r) == ZERO ) {
+      CGAL_SDG_DEBUG(std::cout << "debug is_interior_in_conflict_touch"
+          << " about to return false with both ZERO" << std::endl; );
       return false;
     }
 
@@ -437,13 +439,15 @@ private:
 
     if ( p.is_point() && q.is_segment() ) {
       Line_2 lq = compute_supporting_line(q.supporting_site());
-    
+
       Comparison_result res =
 	compare_linf_distances_to_line(lq, p.point(), t.point());
 
       return (res != SMALLER);
     }
 
+    CGAL_SDG_DEBUG(std::cout << "debug is_interior_in_conflict_touch"
+        << " shuffle and recursion" << std::endl; );
     return is_interior_in_conflict_touch(q, p, s, r, t, tag);
   }
 
