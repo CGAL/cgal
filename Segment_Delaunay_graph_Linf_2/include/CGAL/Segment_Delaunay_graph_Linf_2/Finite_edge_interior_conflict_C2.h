@@ -416,12 +416,18 @@ private:
 #if 1
     CGAL_assertion( p.is_segment() || q.is_segment() );
 
-    bool are_same_sites_rs =
-      (r.is_point() and s.is_point()) ?
-        same_points(r, s) :
-        ((r.is_segment() and s.is_segment()) ?
-          same_segments(r, s) :
-          false );
+    bool are_same_sites_rs (false);
+    if (r.is_point() and s.is_point()) {
+      if (same_points(r, s)) {
+        are_same_sites_rs = true;
+      }
+    } else {
+      if (r.is_segment() and s.is_segment()) {
+        if (same_segments(r, s)) {
+          are_same_sites_rs = true;
+        }
+      }
+    }
 
     if (are_same_sites_rs) {
       // philaris: the text would give false
