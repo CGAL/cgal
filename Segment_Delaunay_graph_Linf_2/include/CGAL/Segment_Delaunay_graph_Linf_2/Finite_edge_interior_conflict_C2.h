@@ -416,14 +416,31 @@ private:
 #if 1
     CGAL_assertion( p.is_segment() || q.is_segment() );
 
-    Voronoi_vertex_2 vpqr(p, q, r);
-    Voronoi_vertex_2 vqps(q, p, s);
+    bool are_same_sites_rs =
+      (r.is_point() and s.is_point()) ?
+        same_points(r, s) :
+        ((r.is_segment() and s.is_segment()) ?
+          same_segments(r, s) :
+          false );
 
-    if ( vpqr.incircle_no_easy(s) == ZERO &&
-	 vqps.incircle_no_easy(r) == ZERO ) {
-      CGAL_SDG_DEBUG(std::cout << "debug is_interior_in_conflict_touch"
-          << " about to return false with both ZERO" << std::endl; );
-      return false;
+    if (are_same_sites_rs) {
+      // philaris: the text would give false
+      // philaris: for segments, we have to refine later
+      if (r.is_point() and s.is_point()) {
+        CGAL_SDG_DEBUG(std::cout << "debug is_interior_in_conflict_touch"
+            << " about to return false with same points" << std::endl; );
+        return false;
+      }
+    } else {
+      Voronoi_vertex_2 vpqr(p, q, r);
+      Voronoi_vertex_2 vqps(q, p, s);
+
+      if ( vpqr.incircle_no_easy(s) == ZERO &&
+          vqps.incircle_no_easy(r) == ZERO ) {
+        CGAL_SDG_DEBUG(std::cout << "debug is_interior_in_conflict_touch"
+            << " about to return false with both ZERO" << std::endl; );
+        return false;
+      }
     }
 
     if ( p.is_segment() && q.is_segment() ) {
