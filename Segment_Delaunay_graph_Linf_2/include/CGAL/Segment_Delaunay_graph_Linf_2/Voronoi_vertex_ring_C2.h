@@ -57,6 +57,7 @@ public:
   using Base::is_site_vertical;
   using Base::is_site_h_or_v;
   using Base::is_line_h_or_v;
+  using Base::test_star;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -1800,6 +1801,62 @@ private:
       }  // endif (is_t_horizontal or is_t_vertical)
     } // endif ((numendpts_of_t > 0) and (numpts_in_pqr < 3))
 
+    bool is_tsrc_endp_of_p (false);
+    bool is_tsrc_endp_of_q (false);
+    bool is_tsrc_endp_of_r (false);
+    bool is_ttrg_endp_of_p (false);
+    bool is_ttrg_endp_of_q (false);
+    bool is_ttrg_endp_of_r (false);
+
+    if (not is_p_point) {
+      is_tsrc_endp_of_p = same_points(t.source_site(), p_.source_site())
+                       or same_points(t.source_site(), p_.target_site());
+      is_ttrg_endp_of_p = same_points(t.target_site(), p_.source_site())
+                       or same_points(t.target_site(), p_.target_site());
+    }
+    if (not is_q_point) {
+      is_tsrc_endp_of_q = same_points(t.source_site(), q_.source_site())
+                       or same_points(t.source_site(), q_.target_site());
+      is_ttrg_endp_of_q = same_points(t.target_site(), q_.source_site())
+                       or same_points(t.target_site(), q_.target_site());
+    }
+    if (not is_r_point) {
+      is_tsrc_endp_of_r = same_points(t.source_site(), r_.source_site())
+                       or same_points(t.source_site(), r_.target_site());
+      is_ttrg_endp_of_r = same_points(t.target_site(), r_.source_site())
+                       or same_points(t.target_site(), r_.target_site());
+    }
+
+    if (is_tsrc_endp_of_p and is_tsrc_endp_of_q) {
+      if (test_star(t.source_site(), p_, q_, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_ttrg_endp_of_p and is_ttrg_endp_of_q) {
+      if (test_star(t.target_site(), p_, q_, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_tsrc_endp_of_q and is_tsrc_endp_of_r) {
+      if (test_star(t.source_site(), q_, r_, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_ttrg_endp_of_q and is_ttrg_endp_of_r) {
+      if (test_star(t.target_site(), q_, r_, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_tsrc_endp_of_r and is_tsrc_endp_of_p) {
+      if (test_star(t.source_site(), r_, p_, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_ttrg_endp_of_r and is_ttrg_endp_of_p) {
+      if (test_star(t.target_site(), r_, p_, t)) {
+        return NEGATIVE;
+      }
+    }
 
     Line_2 l = compute_supporting_line(t.supporting_site());
     Sign sl = incircle(l, type);
