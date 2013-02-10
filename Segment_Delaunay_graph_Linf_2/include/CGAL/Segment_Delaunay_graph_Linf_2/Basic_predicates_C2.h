@@ -982,6 +982,34 @@ public:
     return (CGAL::sign(l.a()) == ZERO) or (CGAL::sign(l.b()) == ZERO);
   }
 
+  inline
+  static
+  Boolean
+  test_star(const Site_2 & p, const Site_2 & u,
+            const Site_2 & v, const Site_2 & t) {
+    CGAL_precondition(p.is_point());
+    CGAL_precondition(u.is_segment());
+    CGAL_precondition(v.is_segment());
+    CGAL_precondition(t.is_segment());
+
+    Are_same_points_2 same_points;
+
+    Point_2 pu =
+      (same_points(p, u.source_site()) ? u.target_site() : u.source_site())
+       .point();
+    Point_2 pv =
+      (same_points(p, v.source_site()) ? v.target_site() : v.source_site())
+       .point();
+    Point_2 pt =
+      (same_points(p, t.source_site()) ? t.target_site() : t.source_site())
+       .point();
+
+    Orientation oupt = CGAL::orientation(pu, p.point(), pt);
+    Orientation otpv = CGAL::orientation(pt, p.point(), pv);
+
+    return (oupt == LEFT_TURN) and (otpv == LEFT_TURN);
+  }
+
 };
 
 
