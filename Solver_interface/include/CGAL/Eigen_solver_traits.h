@@ -110,8 +110,8 @@ public:
     return solver().info() == Eigen::Success;
   }
 protected:
-  boost::shared_ptr<EigenSolverT> m_solver_sptr;
   const typename Matrix::EigenType* m_mat;
+  boost::shared_ptr<EigenSolverT> m_solver_sptr;
 
 };
 
