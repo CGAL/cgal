@@ -38,6 +38,7 @@ public:
   using Base::is_site_vertical;
   using Base::is_site_h_or_v;
   using Base::is_line_h_or_v;
+  using Base::test_star;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -773,27 +774,84 @@ private:
     if ( is_vv_computed ) { return; }
     is_vv_computed = true;
 
-    if (is_endpoint_of(sp.source_site(), sq) and
-        is_endpoint_of(sp.source_site(), sr)    ) {
+    bool is_psrc_q = is_endpoint_of(sp.source_site(), sq);
+    bool is_psrc_r = is_endpoint_of(sp.source_site(), sr);
+    bool is_ptrg_q = is_endpoint_of(sp.target_site(), sq);
+    bool is_ptrg_r = is_endpoint_of(sp.target_site(), sr);
+
+    if (is_psrc_q and is_psrc_r) {
       vv = sp.source();
-    } else if (is_endpoint_of(sp.target_site(), sq) and
-               is_endpoint_of(sp.target_site(), sr)    ) {
+    } else if (is_ptrg_q and is_ptrg_r) {
       vv = sp.target();
     } else {
       // here, not all segments have a common point
-      Polychainline_2 bpq = bisector_linf(sp, sq);
-      CGAL_SDG_DEBUG(std::cout
-          << "debug: vsqr bpq p=" << sp << " q=" << sq << std::endl;);
-      CGAL_SDG_DEBUG(std::cout
-          << "debug: vsqr bpq =" << bpq << std::endl;);
 
-      Polychainline_2 bqr = bisector_linf(sq, sr);
-      CGAL_SDG_DEBUG(std::cout
-          << "debug: vsqr bqr q=" << sq << " r=" << sr << std::endl;);
-      CGAL_SDG_DEBUG(std::cout
-          << "debug: vsqr bqr =" << bqr << std::endl;);
+      bool is_qsrc_r = is_endpoint_of(sq.source_site(), sr);
+      bool is_qtrg_r = is_endpoint_of(sq.target_site(), sr);
+      bool have_common_pq = is_psrc_q or is_ptrg_q;
+      bool have_common_qr = is_qsrc_r or is_qtrg_r;
+      bool have_common_rp = is_psrc_r or is_ptrg_r;
 
-      vv = bpq.first_intersection_point_with(bqr);
+      unsigned int num_common =
+        ((have_common_pq) ? 1 : 0) +
+        ((have_common_qr) ? 1 : 0) +
+        ((have_common_rp) ? 1 : 0)  ;
+
+      bool is_p_hv = is_site_h_or_v(sp);
+      bool is_q_hv = is_site_h_or_v(sq);
+      bool is_r_hv = is_site_h_or_v(sr);
+
+      unsigned int num_hv =
+        ((is_p_hv) ? 1 : 0) +
+        ((is_q_hv) ? 1 : 0) +
+        ((is_r_hv) ? 1 : 0)  ;
+
+      bool bpqset(false);
+      bool bqrset(false);
+      bool brpset(false);
+
+      Polychainline_2 bpq;
+      if ((is_p_hv and is_q_hv and have_common_pq) ) {
+        bpq = bisector_linf(sp, sq);
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr bpq p=" << sp << " q=" << sq << std::endl;);
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr bpq =" << bpq << std::endl;);
+        bpqset = true;
+      }
+
+
+      Polychainline_2 bqr;
+      if ((not bpqset) or (is_q_hv and is_r_hv) or
+          (not have_common_rp)) {
+        bqr = bisector_linf(sq, sr);
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr bqr q=" << sq << " r=" << sr << std::endl;);
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr bqr =" << bqr << std::endl;);
+        bqrset = true;
+      }
+
+      Polychainline_2 brp;
+      if ((not (bpqset and bqrset))) {
+        brp = bisector_linf(sr, sp);
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr bqr r=" << sr << " p=" << sp << std::endl;);
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr brp =" << brp << std::endl;);
+        brpset = true;
+      }
+
+      CGAL_assertion((bpqset and bqrset) or (bqrset and brpset)
+          or (brpset and bpqset));
+
+      if (bpqset and bqrset) {
+        vv = bpq.first_intersection_point_with(bqr);
+      } else if (bqrset and brpset) {
+        vv = bqr.first_intersection_point_with(brp);
+      } else {
+        vv = brp.first_intersection_point_with(bpq);
+      }
       CGAL_SDG_DEBUG(std::cout
           << "debug: vsqr SSS vv=" << vv << std::endl;);
     }
@@ -1096,12 +1154,14 @@ private:
         (compare_r == SMALLER)   ) {
       return SMALLER;
     }
+    /*
     if ((compare_p == LARGER) or
         (compare_q == LARGER) or
         (compare_r == LARGER)   ) {
       // tocheck
       return LARGER;
     }
+    */
     return EQUAL;
 
   }
@@ -1565,18 +1625,78 @@ private:
   {
     CGAL_precondition( t.is_point() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug incircle_p entering pqr = ("
+    CGAL_SDG_DEBUG(std::cout
+        << "debug vsqr incircle_p entering pqr = ("
         << p << ", " << q << ", " << r << "), " << "t=" << t
         << " with known vv=" << vv << std::endl;);
 
     CGAL_assertion(r.is_segment()); // the PPP case is handled elsewhere
 
-    FT radius = linf_radius(vv, p, q, r, type);
+    Sign retval (ZERO);
+
+    bool is_p_hor (false);
+    bool is_p_ver (false);
+    bool is_q_hor (false);
+    bool is_q_ver (false);
+    bool is_r_hor (false);
+    bool is_r_ver (false);
+    bool is_t_endp_of_q (false);
+    bool is_t_endp_of_r (false);
+    bool is_p_endp_of_q (false);
+    bool is_p_endp_of_r (false);
+    bool is_t_endp_of_p (false);
+
+    if (p.is_segment()) {
+      is_p_hor = is_site_horizontal(p);
+      is_p_ver = is_site_vertical(p);
+      is_t_endp_of_p = is_endpoint_of(t,p);
+    }
+    if (q.is_segment()) {
+      is_q_hor = is_site_horizontal(q);
+      is_q_ver = is_site_vertical(q);
+      is_t_endp_of_q = is_endpoint_of(t,q);
+      if (p.is_point()) {
+        is_p_endp_of_q = is_endpoint_of(p,q);
+      }
+    }
+    if (r.is_segment()) {
+      // r is segment anyway
+      is_r_hor = is_site_horizontal(r);
+      is_r_ver = is_site_vertical(r);
+      is_t_endp_of_r = is_endpoint_of(t,r);
+      if (p.is_point()) {
+        is_p_endp_of_r = is_endpoint_of(p,r);
+      }
+    }
 
     Point_2 tt = t.point();
 
     FT diffdvtx = vv.x() - tt.x();
     FT diffdvty = vv.y() - tt.y();
+
+    if (is_t_endp_of_p and (is_p_hor or is_p_ver)) {
+      retval = (CGAL::sign(is_p_hor ? diffdvtx : diffdvty) != ZERO ) ?
+        POSITIVE : ZERO;
+      CGAL_SDG_DEBUG(std::cout << "debug vsqr t on p hor/ver retval="
+          << retval << std::endl;);
+      return retval;
+    }
+    if (is_t_endp_of_q and (is_q_hor or is_q_ver)) {
+      retval = (CGAL::sign(is_q_hor ? diffdvtx : diffdvty) != ZERO ) ?
+        POSITIVE : ZERO;
+      CGAL_SDG_DEBUG(std::cout << "debug vsqr t on q hor/ver retval="
+          << retval << std::endl;);
+      return retval;
+    }
+    if (is_t_endp_of_r and (is_r_hor or is_r_ver)) {
+      retval = (CGAL::sign(is_r_hor ? diffdvtx : diffdvty) != ZERO ) ?
+        POSITIVE : ZERO;
+      CGAL_SDG_DEBUG(std::cout << "debug vsqr t on r hor/ver retval="
+          << retval << std::endl;);
+      return retval;
+    }
+
+    FT radius = linf_radius(vv, p, q, r, type);
 
     CGAL_SDG_DEBUG(std::cout << "debug diffdvtx=" << diffdvtx
       << " diffdvty=" << diffdvty << std::endl;);
@@ -1602,8 +1722,6 @@ private:
       // here crude == ZERO, so
       // we might have to refine
 
-      Sign retval = ZERO;
-
       FT d_fine = CGAL::min(absdvtx, absdvty);
 
       CGAL_SDG_DEBUG(std::cout
@@ -1611,9 +1729,158 @@ private:
 
       unsigned int num_same_quadrant_as_t = 0;
 
-      Point_2 pref;
+      Point_2 pref, qref, rref;
+
       FT diffdvpx;
       FT diffdvpy;
+      FT diffdvqx;
+      FT diffdvqy;
+      FT diffdvrx;
+      FT diffdvry;
+
+
+      bool is_psrc_q (false);
+      bool is_ptrg_q (false);
+      bool is_qsrc_r (false);
+      bool is_qtrg_r (false);
+      bool is_rsrc_p (false);
+      bool is_rtrg_p (false);
+
+      bool is_p_hv = is_p_hor or is_p_ver;
+      bool is_q_hv = is_q_hor or is_q_ver;
+      bool is_r_hv = is_r_hor or is_r_ver;
+
+      if (p.is_segment() and q.is_segment()) {
+        is_psrc_q = is_endpoint_of(p.source_site(), q);
+        is_ptrg_q = is_endpoint_of(p.target_site(), q);
+        if (is_psrc_q or is_ptrg_q) {
+          if ((is_p_hv and (not is_q_hv)) or
+              (is_q_hv and (not is_p_hv))   ) {
+            CGAL_SDG_DEBUG(std::cout << "debug vsqr "
+                << "p, q candidates" << std::endl; );
+            if (is_p_hor or is_q_hor) {
+              if (scmpx(is_psrc_q? p.source_site(): p.target_site(), t)
+                  == EQUAL)
+              {
+                // return NEGATIVE or ZERO
+                pref = (is_psrc_q?
+                          p.source_site(): p.target_site()).point();
+                diffdvpy = vv.y() - pref.y();
+                Comparison_result test =
+                  CGAL::compare(absdvty, CGAL::abs(diffdvpy));
+                return (test == SMALLER) ? NEGATIVE : ZERO;
+
+              }
+            } else { // one of p, q is vertical
+              if (scmpy(is_psrc_q? p.source_site(): p.target_site(), t)
+                  == EQUAL)
+              {
+                // return NEGATIVE or ZERO
+                pref = (is_psrc_q?
+                          p.source_site(): p.target_site()).point();
+                diffdvpx = vv.x() - pref.x();
+                CGAL_SDG_DEBUG(std::cout << "debug vsqr "
+                    << "diffdvpx=" << diffdvpx
+                    << " absdvtx=" << absdvtx << std::endl; );
+                Comparison_result test =
+                  CGAL::compare(absdvtx, CGAL::abs(diffdvpx));
+                return (test == SMALLER) ? NEGATIVE : ZERO;
+
+              }
+            }
+          }
+        }
+      }
+
+      if (q.is_segment() and r.is_segment()) {
+        is_qsrc_r = is_endpoint_of(q.source_site(), r);
+        is_qtrg_r = is_endpoint_of(q.target_site(), r);
+        if (is_qsrc_r or is_qtrg_r) {
+          if ((is_site_h_or_v(q) and (not is_site_h_or_v(r))) or
+              (is_site_h_or_v(r) and (not is_site_h_or_v(q)))   ) {
+            CGAL_SDG_DEBUG(std::cout << "debug vsqr "
+                << "q, r candidates" << std::endl; );
+            if (is_q_hor or is_r_hor) {
+              if (scmpx(is_qsrc_r? q.source_site(): q.target_site(), t)
+                  == EQUAL)
+              {
+                // return NEGATIVE or ZERO
+                qref = (is_qsrc_r?
+                          q.source_site(): q.target_site()).point();
+                diffdvqy = vv.y() - qref.y();
+                Comparison_result test =
+                  CGAL::compare(absdvty, CGAL::abs(diffdvqy));
+                return (test == SMALLER) ? NEGATIVE : ZERO;
+              }
+            } else { // one of q, r is vertical
+              if (scmpy(is_qsrc_r? q.source_site(): q.target_site(), t)
+                  == EQUAL)
+              {
+                // return NEGATIVE or ZERO
+                CGAL_SDG_DEBUG(std::cout << "debug vsqr "
+                    << "vertical case" << std::endl; );
+                qref = (is_qsrc_r?
+                          q.source_site(): q.target_site()).point();
+                diffdvqx = vv.x() - qref.x();
+                CGAL_SDG_DEBUG(std::cout << "debug vsqr "
+                    << "diffdvqx=" << diffdvqx
+                    << " absdvtx=" << absdvtx << std::endl; );
+                Comparison_result test =
+                  CGAL::compare(absdvtx, CGAL::abs(diffdvqx));
+                return (test == SMALLER) ? NEGATIVE : ZERO;
+              }
+            }
+          }
+        }
+      }
+
+      if (r.is_segment() and p.is_segment()) {
+        is_rsrc_p = is_endpoint_of(r.source_site(), p);
+        is_rtrg_p = is_endpoint_of(r.target_site(), p);
+        if (is_rsrc_p or is_rtrg_p) {
+          if ((is_site_h_or_v(r) and (not is_site_h_or_v(p))) or
+              (is_site_h_or_v(p) and (not is_site_h_or_v(r)))   ) {
+            CGAL_SDG_DEBUG(std::cout << "debug vsqr "
+                << "r, p candidates" << std::endl; );
+            if (is_r_hor or is_p_hor) {
+              if (scmpx(is_rsrc_p? r.source_site(): r.target_site(), t)
+                  == EQUAL)
+              {
+                // return NEGATIVE or ZERO
+                rref = (is_rsrc_p?
+                          r.source_site(): r.target_site()).point();
+                diffdvry = vv.y() - rref.y();
+                Comparison_result test =
+                  CGAL::compare(absdvty, CGAL::abs(diffdvry));
+                return (test == SMALLER) ? NEGATIVE : ZERO;
+              }
+            } else { // one of r, p is vertical
+              if (scmpy(is_rsrc_p? r.source_site(): r.target_site(), t)
+                  == EQUAL)
+              {
+                // return NEGATIVE or ZERO
+                CGAL_SDG_DEBUG(std::cout << "debug vsqr "
+                    << "vertical case" << std::endl; );
+                rref = (is_rsrc_p?
+                          r.source_site(): r.target_site()).point();
+                diffdvrx = vv.x() - rref.x();
+                CGAL_SDG_DEBUG(std::cout << "debug vsqr "
+                    << "diffdvrx=" << diffdvrx
+                    << " absdvtx=" << absdvtx << std::endl; );
+                Comparison_result test =
+                  CGAL::compare(absdvtx, CGAL::abs(diffdvrx));
+                return (test == SMALLER) ? NEGATIVE : ZERO;
+              }
+            }
+          }
+        }
+      }
+
+      // check if p, t are endpoints of different segments
+      // among q, r
+      bool pt_endps_of_diff_qr =
+        (is_t_endp_of_q and is_p_endp_of_r) or
+        (is_t_endp_of_r and is_p_endp_of_q)   ;
 
       if (p.is_point()) {
         pref = p.point();
@@ -1630,12 +1897,20 @@ private:
                 << " absdvpy=" << absdvpy << std::endl;);
             CGAL_SDG_DEBUG(std::cout << "debug vsqr abs diff ty py ="
                 << absdvty - absdvpy << std::endl;);
-            test = CGAL::compare(absdvty, absdvpy);
+            if (pt_endps_of_diff_qr) {
+              test = EQUAL;
+            } else {
+              test = CGAL::compare(absdvty, absdvpy);
+            }
           } else if (CGAL::compare(diffdvpy, diffdvty) == EQUAL) {
             CGAL_SDG_DEBUG(std::cout << "debug on same horizontal side "
                 << " p=" << p << " t=" << t << std::endl;);
             FT absdvpx = CGAL::abs(diffdvpx);
-            test = CGAL::compare(absdvtx, absdvpx);
+            if (pt_endps_of_diff_qr) {
+              test = EQUAL;
+            } else {
+              test = CGAL::compare(absdvtx, absdvpx);
+            }
           }
           CGAL_SDG_DEBUG(std::cout << "debug test=" << test << std::endl;);
 
@@ -1652,20 +1927,6 @@ private:
             p.is_segment() and q.is_segment() and r.is_segment());
         return ZERO;
       }
-
-      // check if p, t are endpoints of different segments
-      // among q, r
-      bool pt_endps_of_diff_qr =
-        (q.is_segment() and r.is_segment()) ?
-          (((is_endpoint_of(p, q) and is_endpoint_of(t, r)) or
-            (is_endpoint_of(p, r) and is_endpoint_of(t, q))   ) ?
-            true
-            :
-            false
-          )
-          :
-          false;
-
 
 
       CGAL_SDG_DEBUG(std::cout << "debug diffdvpx=" << diffdvpx
@@ -1699,8 +1960,6 @@ private:
         return NEGATIVE;
       }
 
-      Point_2 qref;
-
       if (q.is_point()) {
         qref = q.point();
       } else {
@@ -1708,8 +1967,8 @@ private:
         return ZERO;
       }
 
-      FT diffdvqx = vv.x() - qref.x();
-      FT diffdvqy = vv.y() - qref.y();
+      diffdvqx = vv.x() - qref.x();
+      diffdvqy = vv.y() - qref.y();
 
       CGAL_SDG_DEBUG(std::cout << "debug diffdvqx=" << diffdvqx
         << " diffdvqy=" << diffdvqy << std::endl;);
@@ -2026,8 +2285,9 @@ private:
   {
     CGAL_precondition( t.is_segment() );
 
-    CGAL_SDG_DEBUG(std::cout << "debug fn incircle_xxxs pqrt= (" << p << ") ("
-      << q << ") (" << r << ") (" << t << ")" << std::endl;);
+    CGAL_SDG_DEBUG(std::cout << "debug fn incircle_xxxs pqrt= ("
+        << p << ") ("
+        << q << ") (" << r << ") (" << t << ")" << std::endl;);
 
     bool is_p_point = p.is_point();
     bool is_q_point = q.is_point();
@@ -2167,6 +2427,63 @@ private:
         } // end of case numothers == 0
       }  // endif (is_t_horizontal or is_t_vertical)
     } // endif ((numendpts_of_t > 0)
+
+    bool is_tsrc_endp_of_p (false);
+    bool is_tsrc_endp_of_q (false);
+    bool is_tsrc_endp_of_r (false);
+    bool is_ttrg_endp_of_p (false);
+    bool is_ttrg_endp_of_q (false);
+    bool is_ttrg_endp_of_r (false);
+
+    if (not is_p_point) {
+      is_tsrc_endp_of_p = same_points(t.source_site(), p.source_site())
+                       or same_points(t.source_site(), p.target_site());
+      is_ttrg_endp_of_p = same_points(t.target_site(), p.source_site())
+                       or same_points(t.target_site(), p.target_site());
+    }
+    if (not is_q_point) {
+      is_tsrc_endp_of_q = same_points(t.source_site(), q.source_site())
+                       or same_points(t.source_site(), q.target_site());
+      is_ttrg_endp_of_q = same_points(t.target_site(), q.source_site())
+                       or same_points(t.target_site(), q.target_site());
+    }
+    if (not is_r_point) {
+      is_tsrc_endp_of_r = same_points(t.source_site(), r.source_site())
+                       or same_points(t.source_site(), r.target_site());
+      is_ttrg_endp_of_r = same_points(t.target_site(), r.source_site())
+                       or same_points(t.target_site(), r.target_site());
+    }
+
+    if (is_tsrc_endp_of_p and is_tsrc_endp_of_q) {
+      if (test_star(t.source_site(), p, q, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_ttrg_endp_of_p and is_ttrg_endp_of_q) {
+      if (test_star(t.target_site(), p, q, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_tsrc_endp_of_q and is_tsrc_endp_of_r) {
+      if (test_star(t.source_site(), q, r, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_ttrg_endp_of_q and is_ttrg_endp_of_r) {
+      if (test_star(t.target_site(), q, r, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_tsrc_endp_of_r and is_tsrc_endp_of_p) {
+      if (test_star(t.source_site(), r, p, t)) {
+        return NEGATIVE;
+      }
+    }
+    if (is_ttrg_endp_of_r and is_ttrg_endp_of_p) {
+      if (test_star(t.target_site(), r, p, t)) {
+        return NEGATIVE;
+      }
+    }
 
     Line_2 l = compute_supporting_line(t.supporting_site());
     compute_vv(p, q, r, type);
@@ -2572,6 +2889,9 @@ private:
     return false;
 
   }
+
+
+
 
   inline
   void
