@@ -7,8 +7,8 @@
 // will be placed under Eigen_solver_traits.h //
 namespace CGAL {
 namespace internal {
-	template <class FT, class EigenMatrix>
-  struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, Eigen::COLAMDOrdering<int> >, FT> {
+	template <class FT, class EigenMatrix, class EigenOrdering>
+  struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
     typedef Eigen_sparse_matrix<FT, ::Eigen::ColMajor> type;
   };
 } // internal
