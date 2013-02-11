@@ -221,7 +221,7 @@ public:
     // initialize the indices of ros vertices 
     ros_id.clear();
     // we use the max number representable using std::size_t to refer to a new element
-    ros_id.resize(boost::num_vertices(polyhedron), std::numeric_limits<std::size_t>::max());
+    ros_id.resize(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)());
     std::size_t ros_idx;
     for ( ros_idx = 0; ros_idx < ros.size(); ros_idx++)
     {
@@ -236,7 +236,7 @@ public:
       {
         vertex_descriptor vt = boost::source(*e, polyhedron);
         std::size_t idx = get(vertex_index_map, vt);
-        if ( !is_roi[idx] && ros_id[idx] == std::numeric_limits<std::size_t>::max() )    // neighboring vertices outside roi && not visited
+        if ( !is_roi[idx] && ros_id[idx] == (std::numeric_limits<std::size_t>::max)() )    // neighboring vertices outside roi && not visited
         {
           ros.push_back(vt);
           ros_id[idx] = ros_idx++;
