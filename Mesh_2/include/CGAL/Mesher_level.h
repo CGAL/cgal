@@ -1289,8 +1289,7 @@ public:
     {
       // Lock the element area on the grid
       Element element = derivd.extract_element_from_container_value(ce);
-      bool locked = triangulation().try_lock_element(element,
-                                                     FIRST_GRID_LOCK_RADIUS);
+      bool locked = derivd.try_lock_element(element, FIRST_GRID_LOCK_RADIUS);
 
       if( locked )
       {

@@ -679,9 +679,11 @@ private:
   // Timer
   double time_limit_;
   CGAL::Timer running_time_;
-
+  
+#ifdef CGAL_LINKED_WITH_TBB
   // CJTOTO: change this for a better solution
   tbb::atomic<bool> m_lets_start_the_tasks;
+#endif
   
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
   // -----------------------------------
@@ -772,8 +774,6 @@ Slivers_exuder<C3T3,Md,SC,V_,FT>::
 pump_vertices(double sliver_criterion_limit,
               Visitor& visitor)
 {
-  m_lets_start_the_tasks = false;
-
 #ifdef MESH_3_PROFILING
   WallClockTimer t;
 #endif
@@ -805,8 +805,9 @@ pump_vertices(double sliver_criterion_limit,
   // Parallel
   if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
+    m_lets_start_the_tasks = false;
     this->create_root_task();
-
+    
     while (!cells_queue_.empty())
     {
       typename Tet_priority_queue::Reverse_entry front = *(cells_queue_.front());
@@ -1133,7 +1134,7 @@ get_best_weight(const Vertex_handle& v, bool *p_could_lock_zone) const
     Facet link = pre_star.front()->second;
     const Cell_handle& opposite_cell = tr_.mirror_facet(link).first;
     // CJTODO: useless?
-    if (p_could_lock_zone && !tr_.try_lock_element(opposite_cell))
+    if (p_could_lock_zone && !tr_.try_lock_cell(opposite_cell))
     {
       *p_could_lock_zone = false;
       return 0.;
@@ -1404,7 +1405,7 @@ enqueue_task(Cell_handle ch, double value)
           if (ch->get_erase_counter() != erase_counter)
             break;
 
-          if (!tr_.try_lock_element(ch))
+          if (!tr_.try_lock_cell(ch))
           {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
             bcounter.increment_branch_2(); // THIS is an early withdrawal!

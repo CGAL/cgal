@@ -440,6 +440,11 @@ public:
   /// Handle cells contained in \c zone (before their destruction by insertion)
   void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
 
+  bool try_lock_element(const Cell_handle &ch, int lock_radius = 0) const
+  {
+    return triangulation().try_lock_cell(ch, lock_radius);
+  }
+
   /// debug info: class name
   std::string debug_info_class_name_impl() const
   {

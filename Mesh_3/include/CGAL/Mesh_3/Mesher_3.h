@@ -50,7 +50,11 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/compat/thread>
+#  if TBB_IMPLEMENT_CPP0X
+#   include <tbb/compat/thread>
+#  else
+#   include <thread>
+#  endif
 #endif
 
 #include <boost/format.hpp>

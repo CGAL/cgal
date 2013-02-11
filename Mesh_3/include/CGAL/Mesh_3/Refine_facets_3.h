@@ -565,6 +565,11 @@ public:
 
   /// Restore restricted Delaunay ; may be call by Cells_mesher visitor
   void restore_restricted_Delaunay(const Vertex_handle& v);
+  
+  bool try_lock_element(const Facet &f, int lock_radius = 0) const
+  {
+    return triangulation().try_lock_facet(f, lock_radius);
+  }
 
   /// debug info: class name
   std::string debug_info_class_name_impl() const

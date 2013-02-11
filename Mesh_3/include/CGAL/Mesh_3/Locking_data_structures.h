@@ -22,14 +22,11 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 
-#include <CGAL/Mesh_3/Concurrent_mesher_config.h>
-
 #include <CGAL/Bbox_3.h>
 
 #include <boost/bind.hpp>
 
 #include <tbb/atomic.h>
-
 #if TBB_IMPLEMENT_CPP0X
 # include <tbb/compat/thread>
 #else
@@ -44,7 +41,7 @@ namespace CGAL {
 namespace Mesh_3 {
 
 //******************************************************************************
-// class Grid_locking_ds_base
+// class Grid_locking_ds_base_3
 // (Uses Curiously recurring template pattern)
 //******************************************************************************
 
@@ -59,7 +56,7 @@ static bool *init_TLS_grid(int num_cells_per_axis)
 }
 
 template <typename Derived>
-class Grid_locking_ds_base
+class Grid_locking_ds_base_3
 {
 
 #ifdef CGAL_DEBUG_GLOBAL_LOCK_DS
@@ -67,17 +64,17 @@ class Grid_locking_ds_base
 // for debugging purpose...
 
 private:
-  static Grid_locking_ds_base<Derived>*& debug_global_lock_ds()
+  static Grid_locking_ds_base_3<Derived>*& debug_global_lock_ds()
   {
-    static Grid_locking_ds_base<Derived> *p_g_lock_ds = 0;
+    static Grid_locking_ds_base_3<Derived> *p_g_lock_ds = 0;
     return p_g_lock_ds;
   }
 public:
-  static Grid_locking_ds_base<Derived>* get_global_lock_ds()
+  static Grid_locking_ds_base_3<Derived>* get_global_lock_ds()
   {
     return debug_global_lock_ds();
   }
-  static void set_global_lock_ds(Grid_locking_ds_base<Derived> *ds)
+  static void set_global_lock_ds(Grid_locking_ds_base_3<Derived> *ds)
   {
     debug_global_lock_ds() = ds;
   }
@@ -116,18 +113,7 @@ public:
   {
     return m_tls_grids.local()[get_grid_index(point)];
   }
-
-  template <typename Tetrahedra>
-  bool is_tetrahedra_locked_by_this_thread(const Tetrahedra &tet)
-  {
-    bool locked = true;
-    for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
-    {
-      locked = is_locked_by_this_thread(tet.vertex(iVertex)->point());
-    }
-    return locked;
-  }
-
+  
   bool try_lock(int cell_index, bool no_spin = false)
   {
     return m_tls_grids.local()[cell_index]
@@ -290,7 +276,7 @@ public:
 protected:
 
   // Constructor
-  Grid_locking_ds_base(const Bbox_3 &bbox,
+  Grid_locking_ds_base_3(const Bbox_3 &bbox,
                        int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
       m_tls_grids(boost::bind(init_TLS_grid, num_grid_cells_per_axis))
@@ -299,7 +285,7 @@ protected:
   }
 
   /// Destructor
-  virtual ~Grid_locking_ds_base()
+  virtual ~Grid_locking_ds_base_3()
   {
     for( TLS_grid::iterator it_grid = m_tls_grids.begin() ;
              it_grid != m_tls_grids.end() ;
@@ -358,17 +344,17 @@ protected:
 
 
 //******************************************************************************
-// class Simple_grid_locking_ds
+// class Simple_grid_locking_ds_3
 //******************************************************************************
 
-class Simple_grid_locking_ds
-  : public Grid_locking_ds_base<Simple_grid_locking_ds>
+class Simple_grid_locking_ds_3
+  : public Grid_locking_ds_base_3<Simple_grid_locking_ds_3>
 {
 public:
-  typedef Grid_locking_ds_base<Simple_grid_locking_ds> Base;
+  typedef Grid_locking_ds_base_3<Simple_grid_locking_ds_3> Base;
 
   // Constructors
-  Simple_grid_locking_ds(const Bbox_3 &bbox,
+  Simple_grid_locking_ds_3(const Bbox_3 &bbox,
                          int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis)
   {
@@ -381,7 +367,7 @@ public:
       m_grid[i] = false;
   }
 
-  virtual ~Simple_grid_locking_ds()
+  virtual ~Simple_grid_locking_ds_3()
   {
     delete [] m_grid;
   }
@@ -409,7 +395,7 @@ protected:
 
 
 //******************************************************************************
-// class Simple_grid_locking_ds_with_thread_ids
+// class Simple_grid_locking_ds_with_thread_ids_3
 //******************************************************************************
 
 static unsigned int init_TLS_thread_ids()
@@ -420,15 +406,15 @@ static unsigned int init_TLS_thread_ids()
   return (1 + id%(std::numeric_limits<unsigned int>::max()));
 }
 
-class Simple_grid_locking_ds_with_thread_ids
-  : public Grid_locking_ds_base<Simple_grid_locking_ds_with_thread_ids>
+class Simple_grid_locking_ds_with_thread_ids_3
+  : public Grid_locking_ds_base_3<Simple_grid_locking_ds_with_thread_ids_3>
 {
 public:
-  typedef Grid_locking_ds_base<Simple_grid_locking_ds_with_thread_ids> Base;
+  typedef Grid_locking_ds_base_3<Simple_grid_locking_ds_with_thread_ids_3> Base;
 
   // Constructors
 
-  Simple_grid_locking_ds_with_thread_ids(const Bbox_3 &bbox,
+  Simple_grid_locking_ds_with_thread_ids_3(const Bbox_3 &bbox,
                                          int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
     m_tls_thread_ids(init_TLS_thread_ids)
@@ -442,7 +428,7 @@ public:
   }
 
   /// Destructor
-  virtual ~Simple_grid_locking_ds_with_thread_ids()
+  virtual ~Simple_grid_locking_ds_with_thread_ids_3()
   {
     delete [] m_grid;
   }
@@ -508,17 +494,17 @@ protected:
 };
 
 //******************************************************************************
-// class Simple_grid_locking_ds_with_mutex
+// class Simple_grid_locking_ds_with_mutex_3
 //******************************************************************************
 
-class Simple_grid_locking_ds_with_mutex
-  : public Grid_locking_ds_base<Simple_grid_locking_ds_with_mutex>
+class Simple_grid_locking_ds_with_mutex_3
+  : public Grid_locking_ds_base_3<Simple_grid_locking_ds_with_mutex_3>
 {
 public:
-  typedef Grid_locking_ds_base<Simple_grid_locking_ds_with_mutex> Base;
+  typedef Grid_locking_ds_base_3<Simple_grid_locking_ds_with_mutex_3> Base;
 
   // Constructors
-  Simple_grid_locking_ds_with_mutex(const Bbox_3 &bbox,
+  Simple_grid_locking_ds_with_mutex_3(const Bbox_3 &bbox,
                                     int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis)
   {
@@ -528,7 +514,7 @@ public:
   }
 
   /// Destructor
-  virtual ~Simple_grid_locking_ds_with_mutex()
+  virtual ~Simple_grid_locking_ds_with_mutex_3()
   {
     delete [] m_grid;
   }
@@ -557,9 +543,9 @@ protected:
 };
 
 
-//typedef Simple_grid_locking_ds LockDataStructureType;
-//typedef Simple_grid_locking_ds_with_mutex LockDataStructureType;
-typedef Simple_grid_locking_ds_with_thread_ids LockDataStructureType;
+//typedef Simple_grid_locking_ds_3 LockDataStructureType;
+//typedef Simple_grid_locking_ds_with_mutex_3 LockDataStructureType;
+typedef Simple_grid_locking_ds_with_thread_ids_3 LockDataStructureType;
 
 } } //namespace CGAL::Mesh_3
 

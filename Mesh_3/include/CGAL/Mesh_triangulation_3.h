@@ -32,6 +32,8 @@
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
 
+#include <CGAL/Mesh_3/Locking_data_structures.h>
+
 #ifdef CGAL_COMPACT_MESH_VERTEX_CELL
 #include <CGAL/Compact_mesh_vertex_base_3.h>
 #include <CGAL/Compact_mesh_cell_base_3.h>
@@ -123,7 +125,8 @@ private:
 
   typedef Triangulation_data_structure_3<
                             Vertex_base, Cell_base, true>       Tds;
-  typedef Regular_triangulation_3<Geom_traits, Tds, true>       Triangulation;
+  typedef Regular_triangulation_3<
+    Geom_traits, Tds, Mesh_3::LockDataStructureType>            Triangulation;
 
 #else // !CGAL_LINKED_WITH_TBB
 

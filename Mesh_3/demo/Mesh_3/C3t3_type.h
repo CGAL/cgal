@@ -10,7 +10,9 @@
 
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
-#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SHARP_FEATURES_IN_POLYHEDRAL_DOMAIN
+# include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
+#endif
 #include <CGAL/Labeled_image_mesh_domain_3.h>
 #include <CGAL/tags.h>
 
