@@ -11,7 +11,7 @@
 \cgalPkgPicture{segmentation_ico.png}
  
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Ilker O. Yaz}
+\cgalPkgAuthor{Ilker %O. Yaz and Sébastien Loriot}
 \cgalPkgDesc{This package provides methods to generate automatic segmentation of triangulated surface mesh.}
 \cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceSegmentation}
 \cgalPkgSummaryEnd
