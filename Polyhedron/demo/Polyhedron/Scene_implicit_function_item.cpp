@@ -10,6 +10,12 @@
 #include "Color_ramp.h"
 #include <Viewer_interface.h>
 
+#include <CGAL/double.h>
+inline
+bool is_nan(double d)
+{
+  return !CGAL::Is_valid<double>()( d );
+}
 
 Scene_implicit_function_item::
 Scene_implicit_function_item(Implicit_function_interface* f)
@@ -202,7 +208,7 @@ draw_grid_vertex(const Point_value& pv,
   const Point& p = pv.first;
   double v = pv.second;
 
-  if(std::isnan(v)) {
+  if(is_nan(v)) {
     ::glColor3f(0.2f, 0.2f, 0.2f);
   } else 
   // determines grey level
@@ -289,7 +295,7 @@ compute_min_max()
         double z = b.zmin + double(k) * (b.zmax - b.zmin) / probes_nb;
         
         double v = (*function_)(x,y,z);
-        if(std::isnan(v)) continue;
+        if(is_nan(v)) continue;
         max_value_ = (std::max)(v,max_value_);
         min_value_ = (std::min)(v,min_value_);
       }
