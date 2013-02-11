@@ -32,6 +32,8 @@ private:
   //using Base::opposite_line;
   using Base::compute_linf_perpendicular;
   using Base::compute_line_from_to;
+  using Base::compute_horizontal_line_from_to;
+  using Base::compute_vertical_line_from_to;
   using Base::compute_horizontal_side_line;
   using Base::compute_vertical_side_line;
   using Base::compute_perpendicular;
@@ -595,7 +597,7 @@ private:
           Point_2 pnt_on_seg;
           if (is_positive_slope) {
             pnt_on_seg = compute_horizontal_projection(l, pnt);
-            lhor = compute_line_from_to(pnt, pnt_on_seg);
+            lhor = compute_horizontal_line_from_to(pnt, pnt_on_seg);
             lver = compute_perpendicular(lhor, pnt_on_seg);
 
             if ( cmpy(pnt, t.point()) == EQUAL ) {
@@ -617,7 +619,7 @@ private:
 
           } else { // is_negative_slope
             pnt_on_seg = compute_vertical_projection(l, pnt);
-            lver = compute_line_from_to(pnt, pnt_on_seg);
+            lver = compute_vertical_line_from_to(pnt, pnt_on_seg);
             lhor = compute_perpendicular(lver, pnt_on_seg);
 
             if ( cmpx(pnt, t.point()) == EQUAL ) {
@@ -644,13 +646,20 @@ private:
         // philaris: negative means conflict
         //           positive means no conflict
 
+        CGAL_SDG_DEBUG(std::cout
+            << "CGAL_SDG_DEBUG: debug vc incircle_p lhor=("
+            << lhor.a() << " " << lhor.b() << " " << lhor.c()
+            << ") lver=("
+            << lver.a() << " " << lver.b() << " " << lver.c()
+                       << ")" << std::endl ;);
+
         Oriented_side osh =
           oriented_side_of_line(lhor, t.point());
 
         Oriented_side osv =
           oriented_side_of_line(lver, t.point());
 
-        CGAL_SDG_DEBUG(std::cout << "debug incircle_p osh=" << osh
+        CGAL_SDG_DEBUG(std::cout << "debug vc incircle_p osh=" << osh
             << " osv=" << osv << std::endl; );
 
         if ((osh !=
@@ -898,14 +907,14 @@ private:
 
           if (is_positive_slope) {
             pnt_on_seg = compute_horizontal_projection(l, pnt);
-            lhor = compute_line_from_to(pnt, pnt_on_seg);
+            lhor = compute_horizontal_line_from_to(pnt, pnt_on_seg);
             lver = compute_perpendicular(lhor, pnt_on_seg);
           } else { // is_negative_slope
             pnt_on_seg = compute_vertical_projection(l, pnt);
             CGAL_SDG_DEBUG(std::cout
                 << "debug: pnt_on_seg = " << pnt_on_seg
                 << std::endl; );
-            lver = compute_line_from_to(pnt, pnt_on_seg);
+            lver = compute_vertical_line_from_to(pnt, pnt_on_seg);
             lhor = compute_perpendicular(lver, pnt_on_seg);
           }
         } // end of else of if (is_same_psrc_q or is_same_ptrg_q)
@@ -1158,11 +1167,11 @@ private:
 
           if (is_positive_slope) {
             pnt_on_seg = compute_vertical_projection(l, pnt);
-            lver = compute_line_from_to(pnt, pnt_on_seg);
+            lver = compute_vertical_line_from_to(pnt, pnt_on_seg);
             lhor = compute_cw_perpendicular(lver, pnt_on_seg);
           } else { // is_negative_slope
             pnt_on_seg = compute_horizontal_projection(l, pnt);
-            lhor = compute_line_from_to(pnt, pnt_on_seg);
+            lhor = compute_horizontal_line_from_to(pnt, pnt_on_seg);
             lver = compute_cw_perpendicular(lhor, pnt_on_seg);
           }
         } // end of else of if (is_same_qsrc_p or is_same_qtrg_p)
