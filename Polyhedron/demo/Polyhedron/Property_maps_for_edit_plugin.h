@@ -65,14 +65,14 @@ namespace boost {
 
   template<class P>
   std::size_t
-    get(  Polyhedron_edge_deformation_index_map<P> pmap, typename P::Halfedge_handle eh)
+    get(  Polyhedron_edge_deformation_index_map<P> /* pmap */, typename P::Halfedge_handle eh)
   {
     return eh->id();
   }
 
   template<class P>
   void
-    put(  Polyhedron_edge_deformation_index_map<P>& pmap, typename P::Halfedge_handle eh, std::size_t s)
+    put(  Polyhedron_edge_deformation_index_map<P>& /* pmap */, typename P::Halfedge_handle eh, std::size_t s)
   {
     eh->id() = s;
   }
