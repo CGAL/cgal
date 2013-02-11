@@ -45,6 +45,8 @@ typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type
 #include <sstream>
 #include <CGAL/Polynomial/misc.h>
 
+#include <CGAL/use.h>
+
 #ifdef CGAL_HAS_THREADS
 #  include <boost/thread/tss.hpp>
 #endif
@@ -900,6 +902,7 @@ public:
         //   the terms of q and hence in NT.
         Polynomial<NT> q, r;
         Polynomial<NT>::euclidean_division(p1, p2, q, r);
+        CGAL_USE_TYPE(AST);
         CGAL_postcondition( !AST::Is_exact::value || p2 * q == p1);
         return (*this) = q;
       }
@@ -1159,6 +1162,7 @@ void Polynomial<NT>::pseudo_division(
   if (delta < 0 || A.is_zero()) {
     Q = Polynomial<NT>(NT(0)); R = A; D = NT(1);
        
+    CGAL_USE_TYPE(AST);
     CGAL_postcondition( !AST::Is_exact::value || Polynomial<NT>(D)*A == Q*B + R);
     return;
   }

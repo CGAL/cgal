@@ -25,6 +25,7 @@
 #include "test_meshing_utilities.h"
 #include <CGAL/Image_3.h>
 #include <CGAL/Labeled_image_mesh_domain_3.h>
+#include <CGAL/use.h>
 
 template <typename K>
 struct Image_tester : public Tester<K>
@@ -42,7 +43,7 @@ public:
     typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
     typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
     
-    typedef typename Mesh_domain::Surface_patch_index Surface_patch_index;
+    CGAL_USE_TYPE(typename Mesh_domain::Surface_patch_index);
     
     //-------------------------------------------------------
     // Data generation

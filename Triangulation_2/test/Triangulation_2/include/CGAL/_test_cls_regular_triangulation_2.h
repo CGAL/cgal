@@ -86,6 +86,17 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   typedef typename Cls::Locate_type          Locate_type;
   typedef typename Cls::size_type            size_type;
 
+  CGAL_USE_TYPE(Gt);
+  CGAL_USE_TYPE(Point);
+  CGAL_USE_TYPE(Vertex);
+  CGAL_USE_TYPE(Face);
+  CGAL_USE_TYPE(Finite_vertices_iterator);
+  CGAL_USE_TYPE(Finite_faces_iterator);
+  CGAL_USE_TYPE(Finite_edges_iterator);
+  CGAL_USE_TYPE(Vertex_circulator);
+  CGAL_USE_TYPE(Face_circulator);
+  CGAL_USE_TYPE(Edge_circulator);
+  CGAL_USE_TYPE(Line_face_circulator);
   // activate verbose will print the number of vertices and hidden
   // vertices
   // in each triangulation tested by is_valid(verbose);
@@ -835,7 +846,6 @@ void
 _test_regular_duality( const Del &T )
 {
   typedef typename Del::Geom_traits          Gt;
-  typedef typename Del::Finite_faces_iterator        Face_iterator;
   typedef typename Del::Finite_edges_iterator        Edge_iterator;
   typedef typename Del::Edge_circulator              Edge_circulator;
 

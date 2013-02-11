@@ -32,6 +32,7 @@
 //#include <CGAL/Real_embeddable_traits.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/tags.h>
 #include <cassert>
@@ -49,6 +50,7 @@ template <typename AdaptableFunctor, typename ResultType>
 void check_result_type(AdaptableFunctor, ResultType){
   typedef typename AdaptableFunctor::result_type result_type;
   CGAL_static_assertion((::boost::is_same<result_type,ResultType>::value));
+  CGAL_USE_TYPE(result_type);
 }
 // check nothing for CGAL::Null_functor
 template <typename ResultType>
@@ -69,7 +71,22 @@ void check_result_type(CGAL::Null_functor, ResultType){}
   typedef typename Traits::Is_one Is_one;                         \
   typedef typename Traits::Sqrt Sqrt;                             \
   typedef typename Traits::Kth_root Kth_root;                     \
-  typedef typename Traits::Root_of Root_of;
+  typedef typename Traits::Root_of Root_of;                       \
+  CGAL_USE_TYPE(Simplify) ;                                       \
+  CGAL_USE_TYPE(Unit_part);                                       \
+  CGAL_USE_TYPE(Integral_division);                               \
+  CGAL_USE_TYPE(Divides);                                         \
+  CGAL_USE_TYPE(Is_square);                                       \
+  CGAL_USE_TYPE(Gcd);                                             \
+  CGAL_USE_TYPE(Div_mod);                                         \
+  CGAL_USE_TYPE(Div);                                             \
+  CGAL_USE_TYPE(Mod);                                             \
+  CGAL_USE_TYPE(Square);                                          \
+  CGAL_USE_TYPE(Is_zero);                                         \
+  CGAL_USE_TYPE(Is_one);                                          \
+  CGAL_USE_TYPE(Sqrt);                                            \
+  CGAL_USE_TYPE(Kth_root);                                        \
+  CGAL_USE_TYPE(Root_of);
 
 namespace CGAL {
 	
@@ -921,6 +938,7 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
     typedef typename AST::Is_numerical_sensitive Is_numerical_sensitive;
     CGAL_static_assertion(
             !(::boost::is_same<Is_numerical_sensitive, CGAL::Null_tag>::value));
+    CGAL_USE_TYPE(Is_numerical_sensitive);
 }
   
 } //namespace CGAL

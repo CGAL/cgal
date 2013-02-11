@@ -17,7 +17,7 @@
 #include <CGAL/Cache.h>
 #include <CGAL/Handle_with_policy.h>
 #include <CGAL/function_objects.h>
-
+#include <CGAL/use.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 
@@ -89,10 +89,10 @@ int main(){
             assert(cache.size()==3);
 
             typedef Cache::Iterator Iterator;
-            typedef Cache::Const_iterator Const_iterator;
-            typedef Cache::Reverse_iterator Reverse_iterator;
-            typedef Cache::Const_reverse_iterator Const_reverse_iterator;
-            typedef Cache::Size_type Size_type;
+            CGAL_USE_TYPE(Cache::Const_iterator);
+            CGAL_USE_TYPE(Cache::Reverse_iterator);
+            CGAL_USE_TYPE(Cache::Const_reverse_iterator);
+            CGAL_USE_TYPE(Cache::Size_type);
 
             Iterator it;
             d=0;

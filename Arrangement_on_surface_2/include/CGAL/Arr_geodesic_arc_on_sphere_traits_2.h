@@ -1731,11 +1731,8 @@ public:
       CGAL_precondition(!xc2.is_degenerate());
 
       typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
-      typedef typename Kernel::Equal_2                          Equal_2;
       typedef typename Kernel::Counterclockwise_in_between_2
         Counterclockwise_in_between_2;
-      typedef typename Traits::Clockwise_in_between_2
-        Clockwise_in_between_2;
       typedef typename Kernel::Equal_3                          Equal_3;
         
       typedef std::pair<Point_2,Multiplicity>         Point_2_pair;
@@ -2480,9 +2477,6 @@ public:
     m_is_degenerate(false),
     m_is_empty(false)
   {
-    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
-    typedef typename Kernel::FT                         FT;
-    
     CGAL_precondition(z_sign(normal) != ZERO);
 
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)    
@@ -2490,6 +2484,9 @@ public:
       Direction_3(-(normal.dz()), 0, normal.dx()) :
       Direction_3(normal.dz(), 0, -(normal.dx()));
 #else
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef typename Kernel::FT                         FT;
+
     const Direction_2& xy = Traits::identification_xy();
     FT x = xy.dx();
     FT y = xy.dy();
@@ -2543,8 +2540,6 @@ public:
     m_is_degenerate(false),
     m_is_empty(false)
   {
-    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
-
     CGAL_precondition(has_on(source));
     CGAL_precondition(has_on(target));
 

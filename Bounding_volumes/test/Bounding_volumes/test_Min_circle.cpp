@@ -32,6 +32,7 @@
 #include <CGAL/Min_circle_2/Min_circle_2_adapterC2.h>
 #include <CGAL/Min_circle_2/Min_circle_2_adapterH2.h>
 #include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/use.h>
 #include <cassert>
 #include <cstring>
 #include <fstream>
@@ -61,7 +62,7 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
 
     typedef  CGAL::Min_circle_2< Traits >  Min_circle;
     typedef  typename Min_circle::Point    Point;
-    typedef  typename Min_circle::Circle   Circle;
+    CGAL_USE_TYPE(typename Min_circle::Circle);
 
     CGAL::Verbose_ostream verr( verbose);
 
@@ -441,7 +442,6 @@ main( int argc, char* argv[])
     
         typedef  CGAL::Min_circle_2< TraitsH >  Min_circle;
         typedef  Min_circle::Point              Point;
-        typedef  Min_circle::Circle             Circle;
     
         CGAL::Verbose_ostream verr( verbose);
     

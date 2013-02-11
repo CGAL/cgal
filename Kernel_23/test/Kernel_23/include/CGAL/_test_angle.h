@@ -27,14 +27,12 @@ bool
 _test_angle(const R&)
 {
   typedef typename R::RT    RT;
-  typedef typename R::FT    FT;
   const RT RT0(0);
   const RT RT1(1);
   typedef CGAL::Point_2<R>  Point_2;
   typedef CGAL::Point_3<R>  Point_3;
 
   typedef CGAL::Vector_2<R> Vector_2;
-  typedef CGAL::Vector_3<R> Vector_3;
 
   Point_2 p(RT(2),RT(1));
   Point_2 q(RT(5),RT(4));

@@ -25,6 +25,12 @@
 #include <CGAL/Constraint_hierarchy_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355)
+//warning C4355: 'this' : used in base member initializer list
+#endif
+
 namespace CGAL {
 
 // Comparison functor that compares two Vertex_handle.
@@ -682,5 +688,9 @@ vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb)
 }
 
 } //namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif //CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H

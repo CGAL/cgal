@@ -29,6 +29,7 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 template <class Triangulation, class Container>
 bool check_all_are_finite(Triangulation* tr, const Container& cont) 
@@ -115,6 +116,11 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::Finite_facets_iterator      Finite_facets_iterator;
   typedef typename Cls::Finite_cells_iterator       Finite_cells_iterator;
 
+  CGAL_USE_TYPE(Vertex);
+  CGAL_USE_TYPE(Cell);
+  CGAL_USE_TYPE(difference_type);
+  CGAL_USE_TYPE(Vertex_iterator);
+  CGAL_USE_TYPE(Cell_iterator);
 
   // +++ We define now some points for building triangulations +++++//
 

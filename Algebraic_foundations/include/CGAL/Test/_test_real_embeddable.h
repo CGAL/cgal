@@ -58,8 +58,10 @@ namespace CGAL {
         void operator() (const ToDouble& to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
-            CGAL_static_assertion(( ::boost::is_same<Type, Argument_type>::value));  
+            CGAL_static_assertion(( ::boost::is_same<Type, Argument_type>::value));
+            CGAL_USE_TYPE(Argument_type);
             CGAL_static_assertion(( ::boost::is_same<double, Result_type>::value));
+            CGAL_USE_TYPE(Result_type);
             assert(42.0 == to_double(Type(42)));
         }
     };
@@ -80,7 +82,9 @@ namespace CGAL {
             typedef typename To_interval::result_type   Result_type;
             typedef std::pair<double,double>  Interval_type;
             CGAL_static_assertion(( ::boost::is_same<Type, Argument_type>::value));
+            CGAL_USE_TYPE(Argument_type);
             CGAL_static_assertion(( ::boost::is_same<Interval_type, Result_type>::value));
+            CGAL_USE_TYPE(Result_type); CGAL_USE_TYPE(Interval_type);
 
 //            assert(NiX::in(42.0,to_Interval(Type(42))));
             // Instead of 'NiX::in':
@@ -146,6 +150,7 @@ void test_real_embeddable() {
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_true;
     CGAL_static_assertion(( ::boost::is_same< Is_real_embeddable, Tag_true>::value));
+    CGAL_USE_TYPE(Is_real_embeddable);
 
     typedef typename RET::Boolean Boolean;
     typedef typename RET::Sign Sign;
@@ -252,6 +257,7 @@ void test_not_real_embeddable() {
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_false;
     CGAL_static_assertion(( ::boost::is_same< Is_real_embeddable, Tag_false>::value));
+    CGAL_USE_TYPE(Is_real_embeddable);
 }
 
 

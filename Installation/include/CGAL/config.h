@@ -292,13 +292,19 @@ using std::max;
 #endif
 
 
-// Macro to specify a noreturn attribute.
+// Macro to specify a 'noreturn' attribute.
 #ifdef __GNUG__
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #else
 #  define CGAL_NORETURN
 #endif
 
+// Macro to specify a 'unused' attribute.
+#ifdef __GNUG__
+#  define CGAL_UNUSED  __attribute__ ((__unused__))
+#else
+#  define CGAL_UNUSED
+#endif
 
 // If CGAL_HAS_THREADS is not defined, then CGAL code assumes
 // it can do any thread-unsafe things (like using static variables).

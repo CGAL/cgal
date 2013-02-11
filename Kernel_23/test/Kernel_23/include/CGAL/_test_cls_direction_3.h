@@ -30,7 +30,6 @@ _test_cls_direction_3(const R& )
  std::cout << "Testing class Direction_3" ;
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    FT;
 
  typename R::Direction_3  id;
 

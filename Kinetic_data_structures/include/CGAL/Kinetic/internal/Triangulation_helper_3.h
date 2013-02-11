@@ -202,7 +202,7 @@ public:
   {
     //hi_there<Edge>(f);
     //hi_there(f);
-    typedef typename Edge::first_type::value_type::Vertex_handle Q;
+    //typedef typename Edge::first_type::value_type::Vertex_handle Q;
     //Q q;
     return vertex_of_edge(f, i);
   }

@@ -25,7 +25,6 @@ void
 _test_line_face_circulator( const Tri & )
 {
   //typedef Triangul                  Tri;
- typedef typename Tri::Geom_traits          Gt;
  typedef typename Tri::Point                Point;
 
  typedef typename Tri::Vertex_handle        Vertex_handle;

@@ -1061,7 +1061,7 @@ protected:
     {
       left.merge_trapezoid(right);
       //set the depth to be the max of the two merged nodes
-      left.dag_node()->depth() = std::max ( left.dag_node()->depth(),
+      left.dag_node()->depth() = (std::max)(left.dag_node()->depth(),
                                             right.dag_node()->depth());
       CGAL_postcondition(
         left.is_on_right_boundary() == right.is_on_right_boundary());

@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <vector>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 
 namespace CGAL {
@@ -63,6 +64,7 @@ public:
   Exponent_vector(InputIterator begin , InputIterator end)
     :v(begin,end){
     typedef typename std::iterator_traits<InputIterator>::value_type value_type;
+    CGAL_USE_TYPE(value_type);
     CGAL_static_assertion(( ::boost::is_same<value_type, int>::value));
   }
 

@@ -25,6 +25,7 @@
 
 #include <CGAL/Random.h>
 #include <cassert>
+#include <CGAL/use.h>
 
 //#define typename 
 template <class CK>
@@ -46,6 +47,10 @@ void _test_circle_construct(CK ck)
   typedef typename CK::Get_equation                Get_equation;
   typedef typename CK::Compare_xy_2                Compare_xy_2;
   typedef typename CK::Do_intersect_2              Do_intersect_2;
+
+  //fix warnings with g++-4.8 [-Wunused-local-typedefs]
+  CGAL_USE_TYPE(Construct_circle_2);
+  CGAL_USE_TYPE(Get_equation);
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);

@@ -954,7 +954,8 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_at_limit_2,
                                             compare_x_at_limit_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        // compare with NULL, in order to avoid a performance warning with VC++
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return compare_x_at_limit_2(
                 p, *dynamic_cast< const Kernel_arc_2* >(this), ce
         );
@@ -981,7 +982,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_at_limit_2,
                                             compare_x_at_limit_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return compare_x_at_limit_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), ce1, cv2, ce2
         );
@@ -1007,7 +1008,7 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_limit_2,
                                             compare_x_near_limit_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return compare_x_near_limit_2(
                 p, *dynamic_cast< const Kernel_arc_2* >(this), ce
         );
@@ -1032,7 +1033,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_limit_2,
                                             compare_x_near_limit_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return compare_x_near_limit_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2, ce);
     }   
   
@@ -1056,7 +1057,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_near_boundary_2,
                                             compare_y_near_boundary_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return compare_y_near_boundary_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2, ce
         );
@@ -1077,7 +1078,7 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_2,
                                             compare_y_at_x_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return compare_y_at_x_2(p, *dynamic_cast< const Kernel_arc_2* >(this));
     }
 
@@ -1102,7 +1103,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_left_2,
                                             compare_y_at_x_left_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return compare_y_at_x_left_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2, p
         );
@@ -1129,7 +1130,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_right_2,
                                             compare_y_at_x_right_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return compare_y_at_x_right_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2, p
         );
@@ -1230,7 +1231,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Equal_2, 
                                             equal_2)
         
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return equal_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2);
     }
 
@@ -1245,7 +1246,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Do_overlap_2, 
                                             do_overlap_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return do_overlap_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2);
     }
 
@@ -1327,7 +1328,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Intersect_2, 
                                             intersect_2)
         
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return intersect_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2, oi
         );
@@ -1430,7 +1431,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Trim_2, trim_2)
 
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return trim_2(*dynamic_cast< const Kernel_arc_2* >(this), p, q);
     }
 
@@ -1447,7 +1448,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Split_2, 
                                             split_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         split_2(*dynamic_cast< const Kernel_arc_2* >(this), p, s1, s2);
     }
 
@@ -1462,7 +1463,7 @@ public:
     
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Are_mergeable_2, 
                                             are_mergeable_2)
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         return are_mergeable_2(
                 *dynamic_cast< const Kernel_arc_2* >(this), cv2
         );
@@ -1481,7 +1482,7 @@ public:
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Merge_2, merge_2)
         Kernel_arc_2 tmp;
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
         merge_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2, tmp);
         return tmp;
     }
@@ -1630,7 +1631,7 @@ public:
     bool trim_by_arc(const Kernel_arc_2& cv2, Kernel_arc_2& trimmed1,
                      Kernel_arc_2& trimmed2) const {
 
-        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this) != NULL);
 
         const Kernel_arc_2& cv1 = static_cast< const Kernel_arc_2& >(*this);
 
@@ -1929,7 +1930,7 @@ protected:
             CGAL::Sign perturb = CGAL::ZERO) const {
 
         CGAL_precondition(!is_on_bottom_top(where));
-        CGAL_assertion(dynamic_cast< const Kernel_arc_2*>(this));
+        CGAL_assertion(dynamic_cast< const Kernel_arc_2*>(this) != NULL);
         Kernel_arc_2::simplify(*dynamic_cast< const Kernel_arc_2*>(this), cv2);
         if(curve().is_identical(cv2.curve())) 
             return CGAL::sign(arcno() - cv2.arcno());

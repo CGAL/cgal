@@ -23,6 +23,7 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 239
 #include <CGAL/Nef_2/debug.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -144,6 +145,7 @@ int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
     result |= 2;
   
   typedef typename SNC_structure::Sphere_segment Sphere_segment;
+  CGAL_USE_TYPE(Sphere_segment);
   if(os1 == ON_POSITIVE_SIDE && 
      se2->twin()->source()->point() == dir)
     CGAL_assertion(Sphere_segment(se2->source()->point(), se2->twin()->source()->point(), se2->circle()).is_long());

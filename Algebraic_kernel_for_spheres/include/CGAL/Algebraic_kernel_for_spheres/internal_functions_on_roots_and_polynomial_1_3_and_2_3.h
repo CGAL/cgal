@@ -29,6 +29,10 @@
 #define CGAL_ALGEBRAIC_KERNEL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_3_AND_2_3_H
 
 #include <vector>
+#include <iterator> // for std::back_inserter
+#include <utility>  // for std::pair and std::make_pair
+#include <CGAL/enum.h> // for CGAL::Sign
+#include <CGAL/use.h>  // for CGAL_USE_TYPE()
 
 namespace CGAL {
   namespace AlgebraicSphereFunctors {
@@ -59,6 +63,7 @@ namespace CGAL {
                  const typename AK::Polynomial_1_3 & p2) {
     typedef typename AK::RT RT;
 
+    CGAL_USE_TYPE(RT);
     CGAL_kernel_precondition(!(same_solutions<RT>(p1,p2)));
 
     if(p1.empty_space()) return false;

@@ -25,6 +25,7 @@ int main()
   Triangulation::Finite_cells_iterator cit=tr.finite_cells_begin();
   for(; cit != tr.finite_cells_end(); ++cit) {
     Point circum = tr.dual(cit);
+    CGAL_USE(circum);
   }
   return 0;
 }

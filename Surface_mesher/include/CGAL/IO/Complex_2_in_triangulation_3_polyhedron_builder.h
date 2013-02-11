@@ -63,11 +63,9 @@ public:
 
   void operator()(HDS& hds) {
     typedef typename Tr::Vertex_handle Vertex_handle;
-    typedef typename Tr::Point Point;
     typedef typename Tr::Geom_traits::Vector_3 Vector;
     typedef typename Tr::Edge Edge;
     typedef typename Tr::Facet Facet;
-    typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
     typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
 
     const Tr& tr = c2t3.triangulation();

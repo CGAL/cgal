@@ -25,6 +25,7 @@
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/Minkowski_sum_2/Labels.h>
 #include <CGAL/Minkowski_sum_2/Arr_labeled_traits_2.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -210,6 +211,7 @@ protected:
           {
             assign_success = CGAL::assign (xarc, *xobj_it);
             CGAL_assertion (assign_success);
+            CGAL_USE(assign_success);
 
             *oi = Labeled_curve_2 (xarc,
                                    X_curve_label (xarc.is_directed_right(),
@@ -269,6 +271,7 @@ protected:
       {
         assign_success = CGAL::assign (xarc, *xobj_it);
         CGAL_assertion (assign_success);
+        CGAL_USE(assign_success);
         
         ++xobj_it;
         is_last = (xobj_it == xobjs.end());
