@@ -296,7 +296,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
     qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  Polyhedron* polyhedron = edit_item->polyhedron();
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it != deform_map.end())
   {
@@ -384,8 +383,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess(Scene_edit_polyhedron_it
 // Complete deformation, adaptive with usage_scenario_2
 void Polyhedron_demo_edit_polyhedron_plugin::complete_deform(Scene_edit_polyhedron_item* edit_item) {
 
-  Polyhedron* polyhedron = edit_item->polyhedron();
-
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end()) return;
 
@@ -410,8 +407,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::complete_deform(Scene_edit_polyhedr
 // classic ROI + single handle paradigm
 void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_0(Scene_edit_polyhedron_item* edit_item) {
 
-  Polyhedron* polyhedron = edit_item->polyhedron();
- 
   const Point& orig = edit_item->original_position();
   const Vector translation_origin = edit_item->current_position() - orig;
   const Point& last = edit_item->last_position();
@@ -453,10 +448,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_0(Scene_edit_polyhed
 
 // point-based multiple handle manipulation
 void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhedron_item* edit_item) {
-
-  Polyhedron* polyhedron = edit_item->polyhedron();
-
-
 
   const Point& orig = edit_item->original_position();
 
