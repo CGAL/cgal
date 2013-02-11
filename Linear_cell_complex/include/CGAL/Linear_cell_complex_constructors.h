@@ -104,7 +104,7 @@ namespace CGAL {
 
       d1 = alcc.create_dart(initVertices[v1]);
       d2 = alcc.create_dart(initVertices[v2]);
-      alcc.link_beta(d1, d2, 2);
+      alcc.template link_beta<2>(d1, d2);
 
       testVertices[v1].push_back(d1);
       testVertices[v2].push_back(d2);
@@ -418,7 +418,7 @@ namespace CGAL {
         else firstFacet = d;
         it = TC.find(j->opposite());
         if (it != TC.end())
-          alcc.link_beta(d, it->second, 2);
+          alcc.template link_beta<2>(d, it->second);
         prev = d;
       }
       while (++j != i->facet_begin());

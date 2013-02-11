@@ -920,6 +920,154 @@ struct Conditionnal_run<Functor,n,Void>
                   const T6&,const T7&,const T8&,const T9&){}
 };
 //------------------------------------------------------------------------------
+template <class Functor,int j,int n,class Type>
+struct Conditionnal_run_except{
+  static void run()
+  {
+    Functor:: template run<n>();
+  }
+
+  template<class T1>
+  static void run(const T1& t1)
+  {
+    Functor:: template run<n>(t1);
+  }
+
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2)
+  {
+    Functor:: template run<n>(t1,t2);
+  }
+
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3)
+  {
+    Functor:: template run<n>(t1,t2,t3);
+  }
+
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4)
+  {
+    Functor:: template run<n>(t1,t2,t3,t4);
+  }
+
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5)
+  {
+    Functor:: template run<n>(t1,t2,t3,t4,t5);
+  }
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6)
+  {
+    Functor:: template run<n>(t1,t2,t3,t4,t5,t6);
+  }
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7)
+  {
+    Functor:: template run<n>(t1,t2,t3,t4,t5,t6,t7);
+  }
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8)
+  {
+    Functor:: template run<n>(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9)
+  {
+    Functor:: template run<n>(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,int n>
+struct Conditionnal_run_except<Functor,j,n,Void>
+{
+  static void run(){}
+
+  template<class T1>
+  static void run(const T1&){}
+
+  template<class T1,class T2>
+  static void run(const T1&,const T2&){}
+
+  template<class T1,class T2,class T3>
+  static void run(const T1&,const T2&,const T3&){}
+
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1&,const T2&,const T3&,const T4&){}
+
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&,const T8&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&,const T8&,const T9&){}
+};
+//------------------------------------------------------------------------------
+template <class Functor,int n,class Type>
+struct Conditionnal_run_except<Functor,n,n,Type>
+{
+  static void run(){}
+
+  template<class T1>
+  static void run(const T1&){}
+
+  template<class T1,class T2>
+  static void run(const T1&,const T2&){}
+
+  template<class T1,class T2,class T3>
+  static void run(const T1&,const T2&,const T3&){}
+
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1&,const T2&,const T3&,const T4&){}
+
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&,const T8&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&,const T8&,const T9&){}
+};
+//------------------------------------------------------------------------------
 template <class Functor,class T,int n=0>
 struct Foreach_static_restricted;
 
@@ -1634,7 +1782,7 @@ struct Foreach_static_restricted<Functor,CGAL::cpp11::tuple<>,n>{
   static void run(const T1&,const T2&,const T3&,const T4&,const T5&,const T6&,
                   const T7&,const T8&,const T9&){}
 };
-
+//------------------------------------------------------------------------------
 template<typename Dart_handle>
 struct Beta_functor
 {
@@ -1700,8 +1848,830 @@ struct Beta_functor
     return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5)->
       beta(B6)->beta(B7)->beta(B8)->beta(B9);
   }
-};
 
+  template<int B1>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>();
+  }
+
+  template<int B1, int B2>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>()->template beta<B2>();
+  }
+
+  template<int B1, int B2, int B3>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>()->template beta<B2>()
+        ->template beta<B3>();
+  }
+
+  template<int B1, int B2, int B3, int B4>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>()->template beta<B2>()
+        ->template beta<B3>()->template beta<B4>();
+  }
+
+  template<int B1, int B2, int B3, int B4, int B5>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>()->template beta<B2>()
+        ->template beta<B3>()->template beta<B4>()->template beta<B5>();
+  }
+
+  template<int B1, int B2, int B3, int B4, int B5, int B6>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>()->template beta<B2>()
+        ->template beta<B3>()->template beta<B4>()->template beta<B5>()
+        ->template beta<B6>();
+  }
+
+  template<int B1, int B2, int B3, int B4, int B5, int B6,
+           int B7>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>()->template beta<B2>()
+        ->template beta<B3>()->template beta<B4>()->template beta<B5>()
+        ->template beta<B6>()->template beta<B7>();
+  }
+
+  template<int B1, int B2, int B3, int B4, int B5, int B6,
+           int B7, int B8>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>()->template beta<B2>()
+        ->template beta<B3>()->template beta<B4>()->template beta<B5>()
+        ->template beta<B6>()->template beta<B7>()->template beta<B8>();
+  }
+
+  template<int B1, int B2, int B3, int B4, int B5, int B6,
+           int B7, int B8, int B9>
+  static Dart_handle run(Dart_handle ADart)
+  {
+    CGAL_assertion( ADart!=NULL );
+    return ADart->template beta<B1>()->template beta<B2>()
+        ->template beta<B3>()->template beta<B4>()->template beta<B5>()
+        ->template beta<B6>()->template beta<B7>()->template beta<B8>()
+        ->template beta<B9>();
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class T,int n=0>
+struct Foreach_static_restricted_except;
+
+template <class Functor,int j,class TT1,int n>
+struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT1>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::run();
+  }
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+        run(t1);
+  }
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+        run(t1,t2);
+  }
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+        run(t1,t2,t3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+      run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+      run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+      run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class TT1,class TT2,int n>
+struct Foreach_static_restricted_except<Functor,j,
+    CGAL::cpp11::tuple<TT1,TT2>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+        run();
+  }
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+        run(t1);
+  }
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+        run(t1,t2);
+  }
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+      run(t1,t2,t3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+      run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+      run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+      run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class TT1,class TT2,class TT3,int n>
+struct Foreach_static_restricted_except<Functor,j,
+    CGAL::cpp11::tuple<TT1,TT2,TT3>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run();
+  }
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1);
+  }
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1,t2);
+  }
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1,t2,t3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class TT1,class TT2,class TT3,class TT4,int n>
+struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+                                 <TT1,TT2,TT3,TT4>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run();
+  }
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1);
+  }
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1,t2);
+  }
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1,t2,t3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<TT2,TT3,TT4>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class TT1,class TT2,class TT3,class TT4,
+          class TT5,int n>
+struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+                                 <TT1,TT2,TT3,TT4,TT5>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run();
+  }
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1);
+  }
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1,t2);
+  }
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1,t2,t3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class TT1,class TT2,class TT3,class TT4,class TT5,
+          class TT6,int n>
+struct Foreach_static_restricted_except
+<Functor,j,CGAL::cpp11::tuple<TT1,TT2,TT3,TT4,TT5,TT6>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run();
+  }
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1);
+  }
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1,t2);
+  }
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1,t2,t3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,
+        CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class TT1,class TT2,class TT3,class TT4,class TT5,
+          class TT6,class TT7,int n>
+struct Foreach_static_restricted_except
+<Functor,j,CGAL::cpp11::tuple<TT1,TT2,TT3,TT4,TT5,TT6,TT7>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run();
+  }
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1);
+  }
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2);
+  }
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2,t3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,n+1>::run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,
+      CGAL::cpp11::tuple<TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7>,
+      n+1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class TT1,class TT2,class TT3,class TT4,class TT5,
+          class TT6,class TT7,class TT8,int n>
+struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+                                 <TT1,TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run();
+  }
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1);
+  }
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1,t2);
+  }
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::run(t1,t2,t3);
+  }
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,class TT1,class TT2,class TT3,class TT4,class TT5,
+          class TT6,class TT7,class TT8,class TT9,int n>
+struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+                                 <TT1,TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n>
+{
+  static void run(){
+    Conditionnal_run_except<Functor,j,n,TT1>::run();
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::run();
+  }
+
+  template<class T1>
+  static void run(const T1& t1){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::run(t1);
+  }
+
+  template<class T1,class T2>
+  static void run(const T1& t1,const T2& t2){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      run(t1,t2);
+  }
+
+  template<class T1,class T2,class T3>
+  static void run(const T1& t1,const T2& t2,const T3& t3){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      run(t1,t2,t3);
+  }
+
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      run(t1,t2,t3,t4);
+  }
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      run(t1,t2,t3,t4,t5);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      run(t1,t2,t3,t4,t5,t6);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+      <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7,t8);
+  }
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                  const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                  const T9& t9){
+    Conditionnal_run_except<Functor,j,n,TT1>::run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+    Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple
+                              <TT2,TT3,TT4,TT5,TT6,TT7,TT8,TT9>,n+1>::
+      run(t1,t2,t3,t4,t5,t6,t7,t8,t9);
+  }
+};
+//------------------------------------------------------------------------------
+template <class Functor,int j,int n>
+struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n>{
+  static void run(){}
+
+  template<class T1>
+  static void run(const T1&){}
+
+  template<class T1,class T2>
+  static void run(const T1&,const T2&){}
+
+  template<class T1,class T2,class T3>
+  static void run(const T1&,const T2&,const T3&){}
+
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1&,const T2&,const T3&,const T4&){}
+
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,const T6&)
+  {}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6, class T7>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,const T6&,
+                  const T7&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6, class T7,
+           class T8>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,const T6&,
+                  const T7&,const T8&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6, class T7,
+           class T8, class T9>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,const T6&,
+                  const T7&,const T8&,const T9&){}
+};
+//------------------------------------------------------------------------------
 
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 

@@ -328,6 +328,14 @@ namespace CGAL {
     Dart_const_handle beta(Dart_const_handle ADart, Betas... betas) const
     { return internal::Beta_functor<Dart_const_handle, Betas ...>::
         run(ADart, betas...); }
+    template<typename ... Betas>
+    Dart_handle beta(Dart_handle ADart) const
+    { return internal::Beta_functor_static<Dart_handle, Betas ...>::
+        run(ADart); }
+    template<typename ... Betas>
+    Dart_const_handle beta(Dart_const_handle ADart, Betas... betas) const
+    { return internal::Beta_functor_static<Dart_const_handle, Betas ...>::
+        run(ADart); }
 #else
     Dart_handle beta(Dart_handle ADart, int B1)
     { return internal::Beta_functor<Dart_handle>::run(ADart, B1); }
@@ -1080,7 +1088,7 @@ namespace CGAL {
     template<unsigned int i>
     void basic_link_beta_for_involution(Dart_handle adart1, Dart_handle adart2)
     {
-      CGAL_static_assertion( i>=2 && i<=dimension );
+      CGAL_assertion( i>=2 && i<=dimension );
       CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
       adart1->template basic_link_beta<i>(adart2);
@@ -1132,9 +1140,9 @@ namespace CGAL {
     {
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      Helper::template Foreach_enabled_attributes
-        <internal::Group_attribute_functor_of_dart<Self> >::
-        run(this,adart1,adart2,0);
+      Helper::template Foreach_enabled_attributes_except
+        <internal::Group_attribute_functor_of_dart<Self>, 1>::
+        run(this,adart1,adart2);
       adart1->basic_link_beta<0>(adart2);
       adart2->basic_link_beta<1>(adart1);
     }
@@ -1152,9 +1160,9 @@ namespace CGAL {
     {
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      Helper::template Foreach_enabled_attributes
-        <internal::Group_attribute_functor_of_dart<Self> >::
-        run(this,adart1,adart2,1);
+      Helper::template Foreach_enabled_attributes_except
+        <internal::Group_attribute_functor_of_dart<Self>, 1>::
+        run(this,adart1,adart2);
       adart1->basic_link_beta<1>(adart2);
       adart2->basic_link_beta<0>(adart1);
     }
@@ -1182,19 +1190,6 @@ namespace CGAL {
       adart1->template basic_link_beta<i>(adart2);
       adart2->template basic_link_beta<i>(adart1);
     }
-    // TODO remove ?
-    void link_beta_for_involution(Dart_handle adart1, Dart_handle adart2,
-                                  unsigned int i)
-    {
-      CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
-      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      CGAL_assertion( 2<=i && i<=dimension );
-      Helper::template Foreach_enabled_attributes
-        <internal::Group_attribute_functor_of_dart<Self> >::
-        run(this,adart1,adart2,i);
-      adart1->basic_link_beta(adart2, i);
-      adart2->basic_link_beta(adart1, i);
-    }
 
     /** Double link two darts, and update the NULL attributes.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
@@ -1211,13 +1206,6 @@ namespace CGAL {
       if ( i==0 ) link_beta_0(adart1, adart2);
       else if ( i==1 ) link_beta_1(adart1, adart2);
       else link_beta_for_involution<i>(adart1, adart2);
-    }
-    // TODO remove ?
-    void link_beta(Dart_handle adart1, Dart_handle adart2, unsigned int i)
-    {
-      if ( i==0 ) link_beta_0(adart1, adart2);
-      else if ( i==1 ) link_beta_1(adart1, adart2);
-      else link_beta_for_involution(adart1, adart2, i);
     }
 
     /** Double link a dart with betai to a second dart.
@@ -1246,9 +1234,9 @@ namespace CGAL {
      */
     void unlink_beta_0(Dart_handle adart)
     {
-      CGAL_assertion(adart!=NULL && !adart->is_free<0>());
-      adart->beta<0>()->unlink_beta<1();
-      adart->unlink_beta<0>();
+      CGAL_assertion(adart!=NULL && !adart->template is_free<0>());
+      adart->template beta<0>()->template unlink_beta<1>();
+      adart->template unlink_beta<0>();
     }
 
     /** Double unlink a dart with beta 1.
@@ -1260,9 +1248,9 @@ namespace CGAL {
      */
     void unlink_beta_1(Dart_handle adart)
     {
-      CGAL_assertion(adart!=NULL && !adart->is_free<1>());
-      adart->beta<1>()->unlink_beta<0>();
-      adart->unlink_beta<1>();
+      CGAL_assertion(adart!=NULL && !adart->template is_free<1>());
+      adart->template beta<1>()->template unlink_beta<0>();
+      adart->template unlink_beta<1>();
     }
 
     /** Double unlink a dart with beta i, for i>=2.
@@ -1277,10 +1265,10 @@ namespace CGAL {
     void unlink_beta_for_involution(Dart_handle adart)
     {
       CGAL_assertion(adart!=NULL && adart!=null_dart_handle &&
-                     !adart->is_free<i>());
+                     !adart->template is_free<i>());
       CGAL_assertion(2<=i && i<=dimension);
-      adart->beta<i>()->unlink_beta<i>();
-      adart->unlink_beta<i>();
+      adart->template beta<i>()->template unlink_beta<i>();
+      adart->template unlink_beta<i>();
     }
     void unlink_beta_for_involution(Dart_handle adart, unsigned int i)
     {

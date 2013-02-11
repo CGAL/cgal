@@ -48,98 +48,160 @@ namespace CGAL {
    */
 
   // **************************************************************************
-  /// Functor used for link_beta to update the attributes of
-  /// adart2 on the attributes of this dart.
-  template<typename CMap, unsigned int i, typename T=
+  /// Functor used for link_beta to update the i-attributes of
+  /// adart2 on the attributes of this dart, except if i=j.
+  /// Only attributes of dh1 or dh2 can be modified.
+  template<typename CMap, unsigned int i, unsigned int j=CMap::dimension+1,
+           typename T=
            typename CMap::Helper::template Attribute_handle<i>::type>
   struct Group_attribute_functor_of_dart_run
   {
-    static void run(CMap* amap,
+    /// Group the i-attribute of dh1 and dh2.
+    /// @return true if the two attributes are grouped, false otherwise.
+    static bool run(CMap* amap,
                     typename CMap::Dart_handle dh1,
                     typename CMap::Dart_handle dh2)
     {
       CGAL_static_assertion(i<=CMap::dimension);
+      CGAL_static_assertion(i!=j);
       CGAL_static_assertion_msg(CMap::Helper::template
                                 Dimension_index<i>::value>=0,
                                 "Group_attribute_functor_of_dart_run<i> but "
                                 "i-attributes are disabled");
       CGAL_assertion( dh1!=NULL && dh2!=NULL );
-      CGAL_assertion( dh1!=CMap::null_dart_handle &&
-          dh2!=CMap::null_dart_handle );
 
       T a1=dh1->template attribute<i>();
       T a2=dh2->template attribute<i>();
 
       // If the two attributes are equal, nothing to do.
-      if ( a1 == a2 ) return false;
+      if ( a1==a2 ) return false;
 
-      if ( a1==NULL ) amap->set_attribute_of_dart<i>(dh1, a2);
-      else            amap->set_attribute_of_dart<i>(dh2, a1);
+      if ( a1==NULL ) amap->template set_attribute_of_dart<i>(dh1, a2);
+      else            amap->template set_attribute_of_dart<i>(dh2, a1);
+
+      return true;
+    }
+  };
+  template<typename CMap, unsigned int j, typename T>
+  struct Group_attribute_functor_of_dart_run<CMap, 0, j, T>
+  {
+    static bool run(CMap* amap,
+                    typename CMap::Dart_handle dh1,
+                    typename CMap::Dart_handle dh2)
+    {
+      CGAL_static_assertion(j!=0 && j!=1);
+      bool res = false;
+      T a1=NULL, a2=NULL;
+
+      // First extremity
+      typename CMap::Dart_handle od = dh2->other_extremity();
+      if ( od!=NULL )
+      {
+        a1=dh1->template attribute<0>();
+        a2=od->template attribute<0>();
+
+        if ( a1==NULL && a2!=NULL )
+        {
+          amap->template set_attribute_of_dart<0>(dh1, a2);
+          res = true;
+        }
+      }
+
+      // Second extremity
+      od = dh1->other_extremity();
+      if ( od!=NULL )
+      {
+        a1=od->template attribute<0>();
+        a2=dh2->template attribute<0>();
+
+        if ( a1!=NULL )
+        {
+          amap->template set_attribute_of_dart<0>(dh2, a1);
+          res = true;
+        }
+      }
+      return res;
     }
   };
   template<typename CMap, typename T>
-  struct Group_attribute_functor_of_dart_run<CMap, 0, T>
+  struct Group_attribute_functor_of_dart_run<CMap, 0, 0, T>
   {
-    static void run(CMap* amap,
+    static bool run(CMap* amap,
                     typename CMap::Dart_handle dh1,
-                    typename CMap::Dart_handle dh2,
-                    int adim)
+                    typename CMap::Dart_handle dh2)
     {
-      CGAL_assertion( adim==-1 ||
-                      (0<=adim && (unsigned int)adim<=CMap::dimension) );
-      // todo ASSERT (1<=adim && ...) ???
-      if ( adim!=0 )
+      typename CMap::Dart_handle od = dh2->other_extremity();
+      if ( od!=NULL )
       {
-        typename CMap::Dart_handle od = dh1->other_extremity();
-        if ( od!=NULL )
+        T a1=dh1->template attribute<0>();
+        T a2=od->template attribute<0>();
+
+        if ( a1==NULL && a2!=NULL )
         {
-          typename CMap::Helper::template  Attribute_handle<0>::type
-              a1=od->template attribute<0>();
-          if ( a1!=NULL && a1!=dh2->template attribute<0>() )
-            amap->template set_attribute_of_dart<0>(dh2, a1);
+          amap->template set_attribute_of_dart<0>(dh1, a2);
+          return true;
         }
       }
 
-      if ( adim!=1 )
-      {
-        typename CMap::Dart_handle od = dh2->other_extremity();
-        if ( od!=NULL && dh1->template attribute<0>()==NULL )
-        {
-          typename CMap::Helper::template Attribute_handle<0>::type
-              a2=od->template attribute<0>();
-          if ( a2!=NULL )
-            amap->template set_attribute_of_dart<0>(dh1, a2);
-        }
-      }
+      return false;
     }
   };
-  template<typename CMap, unsigned int i>
-  struct Group_attribute_functor_of_dart_run<CMap,i,Void>
+  template<typename CMap, typename T>
+  struct Group_attribute_functor_of_dart_run<CMap, 0, 1, T>
+  {
+    static bool run(CMap* amap,
+                    typename CMap::Dart_handle dh1,
+                    typename CMap::Dart_handle dh2)
+    {
+      typename CMap::Dart_handle od = dh1->other_extremity();
+      if ( od!=NULL )
+      {
+        T a1=od->template attribute<0>();
+        T a2=dh2->template attribute<0>();
+
+        if ( a1!=NULL )
+        {
+          amap->template set_attribute_of_dart<0>(dh2, a1);
+          return true;
+        }
+      }
+
+      return false;
+    }
+  };
+  template<typename CMap, unsigned int i, unsigned int j>
+  struct Group_attribute_functor_of_dart_run<CMap,i,j,Void>
   {
     static void run(CMap*,
                     typename CMap::Dart_handle,
+                    typename CMap::Dart_handle)
+    {}
+  };
+  template<typename CMap, unsigned int i, typename T>
+  struct Group_attribute_functor_of_dart_run<CMap,i,i,T>
+  {
+    static void run(CMap*,
                     typename CMap::Dart_handle,
-                    int)
-    {
-    }
+                    typename CMap::Dart_handle)
+    {}
   };
 
   /// Functor used for link_beta to update the attributes of
-  /// adart2 on the attributes of this dart, except for adim-attributes.
+  /// adart2 on the attributes of this dart, except for j-attributes.
   /// We define run<i> to allows to use this functor with
   /// Foreach_enabled_attributes.
-  template<typename CMap>
+  ///   If you know i at compiling time, use directly
+  ///   Group_attribute_functor_of_dart_run.
+  template<typename CMap, unsigned int j=CMap::dimension+1>
   struct Group_attribute_functor_of_dart
   {
     template <unsigned int i>
-    static void run(CMap* amap,
+    static bool run(CMap* amap,
                     typename CMap::Dart_handle adart1,
-                    typename CMap::Dart_handle adart2, int adim)
+                    typename CMap::Dart_handle adart2)
     {
-      CGAL_assertion( adim==-1 ||
-                      (0<=adim && (unsigned int)adim<=CMap::dimension) );
-      Group_attribute_functor_of_dart_run<CMap,i>::
-          run(amap,adart1,adart2,adim);
+      return Group_attribute_functor_of_dart_run<CMap,i,j>::
+          run(amap,adart1,adart2);
     }
   };
 
@@ -525,6 +587,27 @@ namespace CGAL {
       {
         CGAL_assertion( ADart!=NULL );
         return ADart->beta(B);
+      }
+    };
+
+    template<typename Dart_handle, typename ... Betas>
+    struct Beta_functor_static;
+
+    template<typename Dart_handle, int B, typename ... Betas>
+    struct Beta_functor_static<Dart_handle, B, Betas...>
+    {
+      static Dart_handle run(Dart_handle ADart)
+      { return Beta_functor_static<Dart_handle, Betas...>::
+            run(ADart->beta<B>()); }
+    };
+
+    template<typename Dart_handle, int B>
+    struct Beta_functor_static<Dart_handle, B>
+    {
+      static Dart_handle run(Dart_handle ADart)
+      {
+        CGAL_assertion( ADart!=NULL );
+        return ADart->beta<B>();
       }
     };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES

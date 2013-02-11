@@ -266,14 +266,14 @@ namespace CGAL
     };
 
     template <class Functor,int n,int j>
-    struct Conditionnal_run<Functor,n,j,Void>
+    struct Conditionnal_run_except<Functor,n,j,Void>
     {
       template <class ... T>
       static void run(T...){}
     };
 
     template <class Functor,int n>
-    struct Conditionnal_run<Functor,n,n,Void>
+    struct Conditionnal_run_except<Functor,n,n,Void>
     {
       template <class ... T>
       static void run(T...){}
@@ -526,8 +526,8 @@ namespace CGAL
     struct Attribute_const_range<d,Void>
     { typedef Void type; };
 
-    // To iterate onto each enabled attributes
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+    // To iterate onto each enabled attributes
     template <class Functor>
     struct Foreach_enabled_attributes
     {
@@ -535,13 +535,22 @@ namespace CGAL
       static void run(const Ts& ... t)
       { Foreach_static_restricted<Functor,Attributes >::run(t...); }
     };
+    // To iterate onto each enabled attributes, except j-attributes
+    template <class Functor, unsigned int j>
+    struct Foreach_enabled_attributes_except
+    {
+      template <class ...Ts>
+      static void run(const Ts& ... t)
+      { Foreach_static_restricted_except<Functor,Attributes,j>::run(t...); }
+    };
 #else
     // This one cannot be moved in Combinatorial_map_utility_novariadic.h
     // because this is an inner struct which uses inner type Attributes.
     template <class Functor>
     struct Foreach_enabled_attributes
     {
-      static void run() {Foreach_static_restricted<Functor,Attributes >::run();}
+      static void run()
+      {Foreach_static_restricted<Functor,Attributes >::run();}
     
       template <class T1>
       static void run(const T1& t1)
@@ -588,6 +597,61 @@ namespace CGAL
                       const T5& t5,const T6& t6,const T7& t7,const T8& t8,
                       const T9& t9)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,
+                                                           t5,t6,t7,t8,t9);}
+    };
+    // This one cannot be moved in Combinatorial_map_utility_novariadic.h
+    // because this is an inner struct which uses inner type Attributes.
+    template <class Functor, unsigned int j>
+    struct Foreach_enabled_attributes_except
+    {
+      static void run()
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run();}
+
+      template <class T1>
+      static void run(const T1& t1)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1);}
+
+      template <class T1,class T2>
+      static void run(const T1& t1,const T2& t2)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2);}
+
+      template <class T1,class T2,class T3>
+      static void run(const T1& t1,const T2& t2,const T3& t3)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3);}
+
+      template <class T1,class T2,class T3,class T4>
+      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4);}
+
+      template <class T1,class T2,class T3,class T4,class T5>
+      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                      const T5& t5)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5);}
+
+      template <class T1,class T2,class T3,class T4,class T5,class T6>
+      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                      const T5& t5,const T6& t6)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,t6);}
+
+      template <class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                      const T5& t5,const T6& t6,const T7& t7)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,
+                                                           t6,t7);}
+
+      template <class T1,class T2,class T3,class T4,class T5,class T6,
+                class T7,class T8>
+      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                      const T5& t5,const T6& t6,const T7& t7,const T8& t8)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,t6,
+                                                           t7,t8);}
+
+      template <class T1,class T2,class T3,class T4,class T5,class T6,
+                class T7,class T8,class T9>
+      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
+                      const T5& t5,const T6& t6,const T7& t7,const T8& t8,
+                      const T9& t9)
+      {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,
                                                            t5,t6,t7,t8,t9);}
     };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES

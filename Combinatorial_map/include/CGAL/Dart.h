@@ -101,7 +101,7 @@ namespace CGAL {
     template<unsigned int i>
     bool is_free() const
     {
-      CGAL_static_assertion(i <= dimension);
+      CGAL_assertion(i <= dimension);
       return mbeta[i] == Refs::null_dart_handle;
     }
     bool is_free(unsigned int i) const
@@ -128,7 +128,7 @@ namespace CGAL {
     template<unsigned int i>
     Dart_handle beta()
     {
-      CGAL_static_assertion(i <= dimension);
+      CGAL_assertion(i <= dimension);
       return mbeta[i];
     }
     Dart_handle beta(unsigned int i)
@@ -139,7 +139,7 @@ namespace CGAL {
     template<unsigned int i>
     Dart_const_handle beta() const
     {
-      CGAL_static_assertion(i <= dimension);
+      CGAL_assertion(i <= dimension);
       return mbeta[i];
     }
     Dart_const_handle beta(unsigned int i) const
@@ -268,7 +268,7 @@ namespace CGAL {
     template<unsigned int i>
     void basic_link_beta(Dart_handle adart)
     {
-      CGAL_static_assertion(i <= dimension);
+      CGAL_assertion(i <= dimension);
       CGAL_assertion(this!=&*Refs::null_dart_handle);
       mbeta[i] = adart;
     }
@@ -285,7 +285,7 @@ namespace CGAL {
     template<unsigned int i>
     void unlink_beta()
     {
-      CGAL_static_assertion(i <= dimension);
+      CGAL_assertion(i <= dimension);
       mbeta[i] = Refs::null_dart_handle;
     }
     void unlink_beta(unsigned int i)

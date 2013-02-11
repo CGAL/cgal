@@ -36,6 +36,8 @@ namespace CGAL {
    * @param adart a dart of the facet to triangulate.
    * @return A dart incident to the new vertex.
    */
+// TODO revoir toute la gestion des attributs
+// (utilisation correcte des link avec/sans la maj)
   template < class Map >
   typename Map::Dart_handle
   insert_cell_0_in_cell_2(Map& amap, typename Map::Dart_handle adart)
@@ -73,16 +75,17 @@ namespace CGAL {
 
       if ( cur!=first )
       {
-        if ( amap.template degroup_attribute_of_dart<2>(first, cur) )
+        // TODO
+        //if ( amap.template degroup_attribute_of_dart<2>(first, cur) )
         {
           // TODO Functor takiing a range, an attrib_handle, and that set
           // all the darts of the range to this handle
-          for (typename Map::template Dart_of_involution_range<1>::iterator
+         /* for (typename Map::template Dart_of_involution_range<1>::iterator
                it=template darts_of_involution<1>(dh2).begin(),
                itend=template darts_of_involution<1>(dh2).end(); it!=itend;
                ++it)
           {
-          }
+          }*/
           tosplit.push(internal::Couple_dart_and_dim
                        <typename Map::Dart_handle>
                        (first,cur,2));
@@ -107,7 +110,7 @@ namespace CGAL {
         amap.link_beta_0(n1, n2);
 
       if (n1 != NULL && prev != NULL)
-        amap.link_beta_for_involution(prev, n1, 2);
+        amap.template link_beta_for_involution<2>(prev, n1);
 
       for (unsigned int dim=3; dim<=Map::dimension; ++dim)
       {
@@ -119,7 +122,7 @@ namespace CGAL {
             {
               nn1=amap.create_dart();
               amap.link_beta_1(cur->beta(dim), nn1);
-              amap.link_beta_for_involution(n1, nn1, dim);
+              amap.basic_link_beta_for_involution(n1, nn1, dim);
             }
             else nn1=NULL;
 
@@ -127,7 +130,7 @@ namespace CGAL {
             {
               nn2=amap.create_dart();
               amap.link_beta_0(cur->beta(dim), nn2);
-              amap.link_beta_for_involution(n2, nn2, dim);
+              amap.basic_link_beta_for_involution(n2, nn2, dim);
             }
             else nn2=NULL;
 
@@ -135,7 +138,7 @@ namespace CGAL {
               amap.basic_link_beta_1(nn1, nn2);
 
             if (nn1 != NULL && prev != NULL)
-              amap.link_beta_for_involution(nn1, prev->beta(dim), 2);
+              amap.basic_link_beta_for_involution(nn1, prev->beta(dim), 2);
 
             amap.mark(cur->beta(dim), treated);
             tounmark.push(cur->beta(dim));
@@ -143,9 +146,9 @@ namespace CGAL {
           else
           {
             if ( n1!=NULL )
-              amap.link_beta_for_involution(n1, cur->beta(dim)->beta(1), dim);
+              amap.basic_link_beta_for_involution(n1, cur->beta(dim)->beta(1), dim);
             if ( n2!=NULL )
-              amap.link_beta_for_involution(n2, cur->beta(dim)->beta(0), dim);
+              amap.basic_link_beta_for_involution(n2, cur->beta(dim)->beta(0), dim);
           }
         }
       }
@@ -155,13 +158,13 @@ namespace CGAL {
 
     if (n2 != NULL)
     {
-      amap.link_beta_for_involution(first->beta(0), n2, 2);
+      amap.template link_beta_for_involution<2>(first->beta(0), n2);
       for (unsigned int dim=3; dim<=Map::dimension; ++dim)
       {
         if ( !adart->is_free(dim) )
         {
-          amap.link_beta_for_involution(first->beta(0)->beta(dim),
-                                        n2->beta(dim), 2);
+          amap.basic_link_beta_for_involution(first->beta(0)->beta(dim),
+                                              n2->beta(dim), 2);
         }
       }
     }
@@ -209,7 +212,8 @@ namespace CGAL {
     for (CMap_dart_const_iterator_of_cell<Map,i> it(amap, adart);
          res && it.cont(); ++it)
     {
-      if (it->beta(i+2)->beta(i+1) != it->beta_inv(i+1)->beta(i+2) )
+      if (it->template beta<i+2>()->template beta<i+1>()!=
+          it->template beta_inv<i+1>()->template beta<i+2>() )
         res = false;
     }
     return res;
@@ -257,8 +261,8 @@ namespace CGAL {
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !it->is_free(i+1) && dg1==NULL )
-        { dg1=it; dg2=it->beta(i+1); }
+        if ( !it->template is_free<i+1>() && dg1==NULL )
+        { dg1=it; dg2=it->template beta<i+1>(); }
         amap.mark(it, mark);
         ++res;
       }
@@ -1143,7 +1147,7 @@ namespace CGAL {
 
       amap.template basic_link_beta<1>(*it, d1);
       // TODO remove this group, and use link_beta instead ?
-      amap.group_all_dart_attributes_except(*it, d1, 1);
+      //amap.group_all_dart_attributes_except(*it, d1, 1);
 
       amap.mark(*it, mark);
     }
@@ -1215,7 +1219,7 @@ namespace CGAL {
         amap.template basic_link_beta<1>(d1,d2);
       }
 
-      amap.link_beta_for_involution(d1, d2, 2);
+      amap.template link_beta_for_involution<2>(d1, d2);
 
       for ( unsigned int dim=3; dim<=Map::dimension; ++dim)
       {
