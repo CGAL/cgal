@@ -318,6 +318,33 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     return Line_2(a, b, c);
   }
 
+  /* use point p for y coordinate of line */
+  static
+  Line_2 compute_horizontal_line_from_to(const Point_2& p, const Point_2&q)
+  {
+    RT b, c;
+    Compare_x_2 cmpx;
+    Comparison_result cmpxqp = cmpx(q,p);
+    CGAL_assertion(cmpxqp != EQUAL);
+    b = (cmpxqp == SMALLER) ? RT(-1) : RT(1);
+    c = (cmpxqp == SMALLER) ? p.y() : -p.y();
+    return Line_2(RT(0), b, c);
+  }
+
+  /* use point p for x coordinate of line */
+  static
+  Line_2 compute_vertical_line_from_to(const Point_2& p, const Point_2&q)
+  {
+    RT a, c;
+    Compare_y_2 cmpy;
+    Comparison_result cmpypq = cmpy(p,q);
+    CGAL_assertion(cmpypq != EQUAL);
+    a = (cmpypq == SMALLER) ? RT(-1) : RT(1);
+    //a = RT(CGAL::sign(p.y() - q.y()));
+    c = (cmpypq == SMALLER) ? p.x() : -p.x();
+    return Line_2(a, RT(0), c);
+  }
+
   static
   RT compute_linf_distance(const Point_2& p, const Point_2& q)
   {
