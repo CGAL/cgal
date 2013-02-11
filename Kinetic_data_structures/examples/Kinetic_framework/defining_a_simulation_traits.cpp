@@ -107,8 +107,6 @@ protected:
 
 int main()
 {
-  typedef My_simulation_traits::Kinetic_kernel::Point_2 Moving_point_2;
-  
   typedef CGAL::Kinetic::Delaunay_triangulation_2<My_simulation_traits> KDel;
   
   My_simulation_traits tr(0, 10000);

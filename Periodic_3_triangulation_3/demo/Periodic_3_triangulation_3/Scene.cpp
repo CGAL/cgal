@@ -70,12 +70,11 @@ void Scene::load_points(const QString& fileName) {
   std::back_inserter(points));
   std::random_shuffle(points.begin(), points.end());
   p3dt.insert(points.begin(), points.end());
-  Vertex_iterator vit = p3dt.vertices_begin();
 
   make_draw_list();
 
   QString snv;
-  int nv = p3dt.number_of_vertices();
+  int nv = static_cast<int>(p3dt.number_of_vertices());
   snv.setNum(nv);
   emit message(QString("|V| = ") + snv, 0);
 

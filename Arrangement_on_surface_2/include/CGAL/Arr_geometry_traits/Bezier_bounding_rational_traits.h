@@ -120,17 +120,17 @@ struct _Bez_point_bbox
   /*! Add two bounding boxes, and obtain a box bounding them both. */
   Self operator+ (const Self& other) const
   {
-    return (Self (std::min(min_x, other.min_x), std::max(max_x, other.max_x),
-                  std::min(min_y, other.min_y), std::max(max_y, other.max_y)));
+    return (Self ((std::min)(min_x, other.min_x), (std::max)(max_x, other.max_x),
+                  (std::min)(min_y, other.min_y), (std::max)(max_y, other.max_y)));
   }
 
   /*! Addition and assignment. */
   void operator+= (const Self& other)
   {
-    min_x = std::min(min_x, other.min_x);
-    max_x = std::max(max_x, other.max_x);
-    min_y = std::min(min_y, other.min_y);
-    max_y = std::max(max_y, other.max_y);
+    min_x = (std::min)(min_x, other.min_x);
+    max_x = (std::max)(max_x, other.max_x);
+    min_y = (std::min)(min_y, other.min_y);
+    max_y = (std::max)(max_y, other.max_y);
     return;
   }
 

@@ -163,8 +163,6 @@ bool output_surface_facets_to_off (std::ostream& os,
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Point Point;
-  typedef typename Tr::Geom_traits Gt;
 
   // Header.
   const Tr& tr = c2t3.triangulation();

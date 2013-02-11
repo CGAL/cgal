@@ -779,18 +779,9 @@ class Gaussian_map :
 	      typename CGAL::Nef_polyhedron_3<NK, Items>::Volume_const_iterator c) : Base(new Sphere_map) {
 
     typedef CGAL::Nef_polyhedron_3<NK, Items> Nef_polyhedron_3;
-    typedef typename Nef_polyhedron_3::Vertex_const_iterator 
-      Vertex_const_iterator;
-    typedef typename Nef_polyhedron_3::Halffacet_const_iterator
-      Halffacet_const_iterator;
-    typedef typename Nef_polyhedron_3::Halffacet_cycle_const_iterator
-      Halffacet_cycle_const_iterator;
-    typedef typename Nef_polyhedron_3::SHalfedge_around_facet_const_circulator
-      SHalfedge_around_facet_const_circulator;
+
     typedef typename Nef_polyhedron_3::Vertex_const_handle
-      Vertex_const_handle;
-    typedef typename Nef_polyhedron_3::Volume_const_handle
-      Volume_const_handle;
+      Vertex_const_handle;   
     typedef typename Nef_polyhedron_3::Halfedge_const_handle
       Halfedge_const_handle;
     typedef typename Nef_polyhedron_3::Halffacet_const_handle

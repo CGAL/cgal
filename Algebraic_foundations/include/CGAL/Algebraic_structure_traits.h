@@ -29,6 +29,7 @@
 #include <CGAL/type_traits.h>
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -263,6 +264,7 @@ class Algebraic_structure_traits_base< Type_,
                 const Type& y) const { 
             typedef Algebraic_structure_traits<Type> AST; 
             typedef typename AST::Is_exact Is_exact;
+            CGAL_USE_TYPE(Is_exact);
             typename AST::Div actual_div;
             
             CGAL_precondition_msg( 
@@ -358,6 +360,7 @@ class Algebraic_structure_traits_base< Type_,
                 Type& r ) const {
             typedef Coercion_traits< NT1, NT2 > CT;
             typedef typename CT::Type Type; 
+            CGAL_USE_TYPE(Type);
             CGAL_static_assertion(( 
               ::boost::is_same<Type , Type >::value));
             
@@ -459,6 +462,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
                                         const Type& y) const { 
             typedef Algebraic_structure_traits<Type> AST; 
             typedef typename AST::Is_exact Is_exact;
+            CGAL_USE_TYPE(Is_exact);
 	    CGAL_precondition_code( bool ie = Is_exact::value; )
             CGAL_precondition_msg( !ie || (x / y) * y  == x,
                     "'x' must be divisible by 'y' in "

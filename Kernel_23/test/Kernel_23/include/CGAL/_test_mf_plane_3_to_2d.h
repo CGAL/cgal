@@ -30,7 +30,6 @@ _test_mf_plane_3_to_2d(const R& )
  std::cout << "Testing member function Plane_3::to_2d" ;
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    FT;
  typedef CGAL::Plane_3< R>   Plane_3;
  typedef CGAL::Point_3< R>   Point_3;
  typedef CGAL::Point_2< R>   Point_2;

@@ -22,6 +22,8 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_IMPL_H
 #define CGAL_APOLLONIUS_GRAPH_2_IMPL_H
 
+#include <CGAL/use.h>
+
 // class implementation continued
 //=================================
 
@@ -1824,6 +1826,7 @@ remove_degree_d_vertex(Vertex_handle v)
     } while ( ec != ec_start );
 
     CGAL_assertion( found );
+    CGAL_USE(found);
   }
   CGAL_triangulation_precondition( degree(v) == 3 );
 

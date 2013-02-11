@@ -314,7 +314,6 @@ Scene_polyhedron_item::select(double orig_x,
   if(facet_picking_m) {
     typedef Input_facets_AABB_tree Tree;
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
-    typedef Tree::Primitive_id Primitive_id;
 
     Tree* aabb_tree = get_aabb_tree(this);
     if(aabb_tree) {

@@ -23,16 +23,13 @@
 #define CGAL_TEST_UTILITIES_H
 
 #include <CGAL/basic.h>
+#include <CGAL/use.h>
 #include <cassert>
 #include <iostream>
 #include <sstream> 
 #include <cassert>
 
 namespace CGAL {
-
-// Used to shut down some warnings about unused variables.
-template < class T >
-void use(const T&) {}
 
 template < class NT, class Sqrt>
 bool
@@ -123,7 +120,7 @@ test_basic_operators(const NT&)
   d = a==b;
   d = a!=b;
 
-  use(a); use(b); use(d);
+  CGAL_USE(a); CGAL_USE(b); CGAL_USE(d);
 
   return true;
 }

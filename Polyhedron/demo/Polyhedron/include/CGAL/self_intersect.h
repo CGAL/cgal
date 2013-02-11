@@ -119,12 +119,6 @@ template <class Polyhedron, class Kernel, class OutputIterator>
 void self_intersect(const Polyhedron& polyhedron,
 		    OutputIterator out)
 {
-  typedef CGAL::Bbox_3                  Bbox; // always double
-  typedef typename Kernel::Point_3      Point;
-  typedef typename Kernel::Vector_3     Vector;
-  typedef typename Kernel::Triangle_3   Triangle;
-  typedef typename Kernel::Segment_3    Segment;
-  typedef typename Polyhedron::Halfedge_const_handle    Halfedge_const_handle;
   typedef typename Polyhedron::Facet_const_iterator     Facet_const_iterator;
   typedef typename Polyhedron::Facet_const_handle       Facet_const_handle;
   typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_const_handle> Box;

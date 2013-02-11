@@ -115,18 +115,18 @@ inline bool possibly(Uncertain<bool> c);
 #  if defined(CGAL_NO_ASSERTIONS)
 
 #    define CGAL_static_assertion(EX) \
-     BOOST_STATIC_ASSERT(true)
+     BOOST_STATIC_ASSERT(true) CGAL_UNUSED
   
 #    define CGAL_static_assertion_msg(EX,MSG) \
-     BOOST_STATIC_ASSERT(true)
+     BOOST_STATIC_ASSERT(true) CGAL_UNUSED
 
 #  else // no CGAL_NO_ASSERTIONS
 
 #    define CGAL_static_assertion(EX) \
-     BOOST_STATIC_ASSERT(EX)
+     BOOST_STATIC_ASSERT(EX) CGAL_UNUSED
   
 #    define CGAL_static_assertion_msg(EX,MSG) \
-     BOOST_STATIC_ASSERT(EX)
+     BOOST_STATIC_ASSERT(EX) CGAL_UNUSED
 
 #  endif // no CGAL_NO_ASSERTIONS
 

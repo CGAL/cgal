@@ -96,8 +96,8 @@ public:
     begin_row_( begin_row),
     begin_col_( begin_col),
     begin_value_( begin_value),
-    n_rows( iterator_distance( begin_row, end_row)),
-    n_cols( iterator_distance( begin_col, end_col))
+    n_rows( static_cast<int>(iterator_distance( begin_row, end_row))),
+    n_cols( static_cast<int>(iterator_distance( begin_col, end_col)))
   {
     CGAL_optimisation_precondition(
       iterator_distance( begin_value, end_value) == n_cols);
@@ -190,7 +190,8 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
   // check preconditions:
   CGAL_optimisation_precondition( k >= t.min_k());
   int number_of_points(
-    iterator_distance( points_begin, points_end));
+                       static_cast<int>(iterator_distance( points_begin, 
+                                                           points_end)));
   CGAL_optimisation_precondition( number_of_points > k);
 
   typedef std::vector< int > Index_cont;
@@ -294,10 +295,10 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
   int i;
 
   // compute size of ranges:
-  int number_of_points(
-    iterator_distance( points_begin, points_end));
-  int size_of_gon(
-    iterator_distance( right_c_begin, right_c_end));
+  int number_of_points = static_cast<int>(iterator_distance( points_begin, 
+                                                             points_end));
+  int size_of_gon = static_cast<int>(iterator_distance( right_c_begin,
+                                                        right_c_end));
 
   // check preconditions:
   CGAL_optimisation_precondition( number_of_points > t.min_k());
@@ -370,10 +371,10 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
   
   // find maximum in last range:
   int maxi =
-    iterator_distance(
+    static_cast<int>(iterator_distance(
       area.begin(),
       max_element( area.begin() + left_c_begin[size_of_gon - 1],
-                   area.begin() + right_c_begin[size_of_gon - 1] + 1));
+                   area.begin() + right_c_begin[size_of_gon - 1] + 1)));
   // set max_area:
   max_area = area[maxi];
   
@@ -436,7 +437,8 @@ extremal_polygon_2(
   // check preconditions:
   CGAL_optimisation_precondition_code(
     int number_of_points(
-      iterator_distance( points_begin, points_end));)
+                         static_cast<int>(iterator_distance( points_begin, 
+                                                             points_end)));)
   CGAL_optimisation_precondition( number_of_points >= t.min_k());
   CGAL_optimisation_expensive_precondition(
     is_convex_2( points_begin, points_end, t));
@@ -500,7 +502,8 @@ CGAL_maximum_inscribed_k_gon_2(
   // check preconditions:
   CGAL_optimisation_precondition( k >= t.min_k());
   int number_of_points(
-    iterator_distance( points_begin, points_end));
+                       static_cast<int>(iterator_distance( points_begin, 
+                                                           points_end)));
   CGAL_optimisation_precondition( number_of_points > 0);
 
   using std::copy;
@@ -642,7 +645,8 @@ CGAL_maximum_inscribed_k_gon_2(
   CGAL_optimisation_precondition( right_index >= 0);
   CGAL_optimisation_precondition_code(
     int number_of_points(
-      iterator_distance( points_begin, points_end));)
+                         static_cast<int>(iterator_distance( points_begin, 
+                                                             points_end)));)
   CGAL_optimisation_precondition( left_index < number_of_points);
   CGAL_optimisation_precondition( right_index < number_of_points);
   CGAL_optimisation_precondition(

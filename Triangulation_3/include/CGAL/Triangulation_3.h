@@ -5090,8 +5090,8 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
     if(inf){
       for(All_cells_iterator it = remover.tmp.all_cells_begin(),
             end = remover.tmp.all_cells_end(); it != end; ++it){
-        for(i=0; i < 4; i++) {
-          Facet f = std::pair<Cell_handle,int>(it,i);
+        for(int index=0; index < 4; index++) {
+          Facet f = std::pair<Cell_handle,int>(it,index);
           Vertex_triple vt_aux = this->make_vertex_triple(f);
           Vertex_triple vt(vmap[vt_aux.first],vmap[vt_aux.third],vmap[vt_aux.second]);
           this->make_canonical(vt);
@@ -5101,8 +5101,8 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
     } else {
       for(Finite_cells_iterator it = remover.tmp.finite_cells_begin(),
             end = remover.tmp.finite_cells_end(); it != end; ++it){
-        for(i=0; i < 4; i++){
-          Facet f = std::pair<Cell_handle,int>(it,i);
+        for(int index=0; index < 4; index++){
+          Facet f = std::pair<Cell_handle,int>(it,index);
           Vertex_triple vt_aux = this->make_vertex_triple(f);
           Vertex_triple vt(vmap[vt_aux.first],vmap[vt_aux.third],vmap[vt_aux.second]);
           this->make_canonical(vt);
@@ -5140,13 +5140,13 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
 
       o_ch->set_neighbor(o_i,new_ch);
       new_ch->set_neighbor(i_i, o_ch);
-
-      for(i=0;i<4;i++) new_ch->vertex(i)->set_cell(new_ch);
-
+      
+      for(int j=0;j<4;j++) new_ch->vertex(j)->set_cell(new_ch);
+      
       // for the other faces check, if they can also be glued
-      for(i = 0; i < 4; i++){
-        if(i != i_i){
-          Facet f = std::pair<Cell_handle,int>(new_ch,i);
+      for(int index = 0; index < 4; index++){
+        if(index != i_i){
+          Facet f = std::pair<Cell_handle,int>(new_ch,index);
           Vertex_triple vt = this->make_vertex_triple(f);
           this->make_canonical(vt);
           std::swap(vt.second,vt.third);
@@ -5160,7 +5160,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
             Cell_handle o_ch2 = o_vt_f_pair2.second.first;
             int o_i2 = o_vt_f_pair2.second.second;
             o_ch2->set_neighbor(o_i2,new_ch);
-            new_ch->set_neighbor(i, o_ch2);
+            new_ch->set_neighbor(index, o_ch2);
             outer_map.erase(oit2);
           }
         }

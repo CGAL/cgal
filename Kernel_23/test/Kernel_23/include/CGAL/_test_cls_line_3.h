@@ -30,7 +30,6 @@ _test_cls_line_3(const R& )
  std::cout << "Testing class Line_3" ;
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    FT;
 
  typename R::Line_3 il;
  CGAL::Line_3<R> l0( il );

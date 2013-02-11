@@ -93,7 +93,6 @@ void all_cases_collinear(typename K::Point_3 pts[4]){
 template <class K>
 void _test_intersection_construct(K)
 {
-  typedef typename K::FT                               FT;
   typedef typename K::Point_3                          Point_3;
   typedef typename K::Segment_3                        Segment_3;
 

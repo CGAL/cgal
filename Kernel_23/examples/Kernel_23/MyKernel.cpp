@@ -50,6 +50,7 @@ int main()
 
   Point mp = construct_midpoint_2(p,q);
 
+  std::cout << "midpoint(" << p << " , " << q << ") == " << mp << std::endl;
   assert(s1.source().color() == RED);
 
 

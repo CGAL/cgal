@@ -20,8 +20,6 @@ ostream& operator<<(ostream& os, const C&) { return os; }
 istream& operator>>(istream& is, const D&) { return is; }
 
 int main() {
-  typedef std::vector<int>::const_iterator vector_it;
-  typedef int* int_p;
   using CGAL::is_streamable;
 
   CGAL_static_assertion(!is_streamable<A>::value);

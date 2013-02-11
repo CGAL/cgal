@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/enum.h>
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 #include <CGAL/Vector_2.h> // this is done in order to avoid error
 // when the  Segment_2_Segment_2_intersection.h file is included from
@@ -129,6 +129,12 @@ bool test_traits_base(const Traits& = Traits())
   typedef typename Traits::Is_degenerate_edge_2
     Is_degenerate_edge_2;
 
+  CGAL_USE_TYPE(FT);
+  CGAL_USE_TYPE(RT);
+  CGAL_USE_TYPE(Object_2);
+  CGAL_USE_TYPE(Line_2);
+  CGAL_USE_TYPE(Ray_2);
+  CGAL_USE_TYPE(Segment_2);
 
   // testing constructors
   //--------------------------------------------------------------------
@@ -503,6 +509,9 @@ bool test_algo_generic(InputStream& is)
 
   typedef typename Apollonius_graph::size_type      size_type;
 
+  CGAL_USE_TYPE(Data_structure);
+  CGAL_USE_TYPE(Point_2);
+  CGAL_USE_TYPE(Edge);
 
   Null_output_stream   nos;
 

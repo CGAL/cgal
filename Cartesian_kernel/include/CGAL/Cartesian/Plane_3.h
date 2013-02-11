@@ -60,27 +60,27 @@ public:
   PlaneC3() {}
 
   PlaneC3(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-  { *this = plane_from_points(p, q, r); }
+  { *this = plane_from_points<R>(p, q, r); }
 
   PlaneC3(const Point_3 &p, const Direction_3 &d)
-  { *this = plane_from_point_direction(p, d); }
+  { *this = plane_from_point_direction<R>(p, d); }
 
   PlaneC3(const Point_3 &p, const Vector_3 &v)
-  { *this = plane_from_point_direction(p, v.direction()); }
+  { *this = plane_from_point_direction<R>(p, v.direction()); }
 
   PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
     : base(CGAL::make_array(a, b, c, d)) {}
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
-  { *this = plane_from_points(l.point(),
+  { *this = plane_from_points<R>(l.point(),
 	                      l.point()+l.direction().to_vector(),
 			      p); }
 
   PlaneC3(const Segment_3 &s, const Point_3 &p)
-  { *this = plane_from_points(s.start(), s.end(), p); }
+  { *this = plane_from_points<R>(s.start(), s.end(), p); }
 
   PlaneC3(const Ray_3 &r, const Point_3 &p)
-  { *this = plane_from_points(r.start(), r.second_point(), p); }
+  { *this = plane_from_points<R>(r.start(), r.second_point(), p); }
 
   typename R::Boolean   operator==(const PlaneC3 &p) const;
   typename R::Boolean   operator!=(const PlaneC3 &p) const;

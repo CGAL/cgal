@@ -60,9 +60,6 @@ struct Tester
               const std::size_t max_cells_expected = STD_SIZE_T_MAX ) const
   {
     typedef typename C3t3::size_type size_type;
-    typedef typename C3t3::Triangulation::Geom_traits Gt;
-    typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt> Sliver_criterion;
-    typedef typename CGAL::Mesh_3::Slivers_exuder<C3t3, Sliver_criterion> Exuder;
 
     // Store mesh properties
     size_type v = c3t3.triangulation().number_of_vertices();

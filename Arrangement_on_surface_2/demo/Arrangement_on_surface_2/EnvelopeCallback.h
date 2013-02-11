@@ -277,7 +277,6 @@ void EnvelopeCallback< Arr_, Traits >::
 updateEnvelope(bool lower,
                CGAL::Arr_circular_arc_traits_2< CircularKernel > /* traits */)
 {
-  typedef Kernel_point_2 Non_arc_point_2;
   typedef typename Traits::Point_2 Arc_point_2;
   CGAL::Qt::CurveGraphicsItem< Traits >* envelopeToUpdate;
   if ( lower )

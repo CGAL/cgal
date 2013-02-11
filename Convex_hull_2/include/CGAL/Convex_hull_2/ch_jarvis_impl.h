@@ -45,7 +45,6 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
 
   if (first == last) return result;
   typedef   typename Traits::Less_rotate_ccw_2     Less_rotate_ccw;
-  typedef   typename Traits::Point_2               Point_2;
   typedef   typename Traits::Equal_2               Equal_2; 
   
   Equal_2     equal_points = ch_traits.equal_2_object();     
@@ -54,6 +53,7 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
     || defined(NDEBUG)
   OutputIterator  res(result);
   #else
+  typedef   typename Traits::Point_2               Point_2;
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
   #endif // no postconditions ...
   CGAL_ch_assertion_code( \

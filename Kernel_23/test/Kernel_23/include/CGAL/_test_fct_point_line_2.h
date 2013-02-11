@@ -30,7 +30,6 @@ _test_fct_point_line_2(const R& )
  std::cout << "Testing functions Point_2 Line_2" ;
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    FT;
 
  RT n0 =  0;
  RT n1 =  1;

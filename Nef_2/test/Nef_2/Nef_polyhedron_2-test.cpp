@@ -49,9 +49,6 @@ int main()
   typedef  Explorer::Halfedge_const_handle Halfedge_const_handle;
   typedef  Explorer::Face_const_handle Face_const_handle;
   typedef  Explorer::Vertex_const_iterator Vertex_const_iterator;
-  typedef  Explorer::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef  Explorer::Face_const_iterator Face_const_iterator;
-
   typedef  Explorer::Ray Ray;
 
   Point p1(0,0), p2(0,1), p3(1,0), p4(-1,-1), p5(0,-1), p6(-1,0), p7(1,1);
@@ -175,9 +172,6 @@ int main()
   typedef  Explorer::Halfedge_const_handle Halfedge_const_handle;
   typedef  Explorer::Face_const_handle Face_const_handle;
   typedef  Explorer::Vertex_const_iterator Vertex_const_iterator;
-  typedef  Explorer::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef  Explorer::Face_const_iterator Face_const_iterator;
-
   typedef  Explorer::Ray Ray;
 
   Point p1(0,0), p2(0,1), p3(1,0), p4(-1,-1), p5(0,-1), p6(-1,0), p7(1,1);
@@ -302,9 +296,6 @@ int main()
   typedef  Explorer::Halfedge_const_handle Halfedge_const_handle;
   typedef  Explorer::Face_const_handle Face_const_handle;
   typedef  Explorer::Vertex_const_iterator Vertex_const_iterator;
-  typedef  Explorer::Halfedge_const_iterator Halfedge_const_iterator;
-  typedef  Explorer::Face_const_iterator Face_const_iterator;
-
   typedef  Explorer::Ray Ray;
 
   Point p1(0,0), p2(0,1), p3(1,0), p4(-1,-1), p5(0,-1), p6(-1,0), p7(1,1);

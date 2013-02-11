@@ -272,7 +272,6 @@ void speed(const std::string& name)
 {
   // types
   typedef typename CGAL::Kernel_traits<T>::Kernel K;
-  typedef typename K::FT FT;
   typedef typename K::Point_3 Point;
   
   // speed

@@ -338,7 +338,6 @@ namespace CGAL {
      typename Polynomial_traits_d::Polynomial_d Q,
      OutputIterator out) {
     
-    typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Leading_coefficient lcoeff;
     typename Polynomial_traits_d::Degree degree;

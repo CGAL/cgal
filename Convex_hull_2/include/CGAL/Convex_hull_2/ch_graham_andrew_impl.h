@@ -41,7 +41,6 @@ ch_graham_andrew_scan( BidirectionalIterator first,
                        OutputIterator        result,
                        const Traits&         ch_traits)
 {
-  typedef  typename Traits::Point_2     Point_2;
   typedef  typename Traits::Left_turn_2  Left_turn;
 
   std::vector< BidirectionalIterator >    S;
@@ -100,6 +99,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
     || defined(NDEBUG)
   OutputIterator  res(result);
   #else
+  typedef  typename Traits::Point_2     Point_2;
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
   #endif // no postconditions ...
   for ( ++stack_iter;  stack_iter != S.end(); ++stack_iter)
