@@ -4,6 +4,8 @@
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties.h>
 #include <iostream>
 
 #include <vector>
@@ -13,6 +15,12 @@
 
 class QMenu;
 struct Scene_edit_polyhedron_item_priv;
+
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor		  edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
+typedef boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
@@ -35,6 +43,11 @@ public:
   // Function for displaying meta-data of the item
   QString toolTip() const;
 
+  void setColor(QColor c);
+  void setName(QString n);
+  void setVisible(bool b);
+  void setRenderingMode(RenderingMode m);
+
   // // Function to override the context menu
   // QMenu* contextMenu();
   
@@ -53,8 +66,31 @@ public:
   // Functions related to the edition
   Kernel::Point_3 original_position() const;
   Kernel::Point_3 current_position() const;
+  Kernel::Point_3 last_position() const;
   Polyhedron::Vertex_handle selected_vertex() const;
-  QList<Polyhedron::Vertex_handle> selected_vertices() const;
+
+  QList<Polyhedron::Vertex_handle> selected_handles() const;
+  QList<Polyhedron::Vertex_handle> non_selected_handles() const;
+  QList<Polyhedron::Vertex_handle> selected_roi() const;
+  QList<Polyhedron::Vertex_handle> non_selected_roi() const;
+  std::pair<Kernel::Point_3, Kernel::Point_3> selected_vector() const;
+  void clear_selected_roi();
+  void clear_non_selected_roi();
+  void clear_selected_handles();
+  void clear_non_selected_handles();
+  void clear_selected_vectors();
+  void clear_non_selected_vectors();
+  int usage_scenario();
+  void setSelectedVertexChanged(bool status);
+  void setSelectedHandlesMoved(bool status);
+  void setSelectedVector(Kernel::Vector_3 translation_last);
+  double dihedral_angle(edge_descriptor e);
+  void find_sharp_vertices();
+  void find_sharp_vertices_1();
+
+  /// @deprecated
+  QList<Polyhedron::Vertex_handle> selected_vertices() 
+  { return selected_handles(); }
 
   /// Returns a Scene_polyhedron_item from the edit polyhedron item, and
   /// transfer the ownership of the polyhedron to it.
@@ -74,8 +110,14 @@ public slots:
               double dir_x,
               double dir_y,
               double dir_z);
-  void setZoneSize(int i);
+  void setZoneSize(int i) { setHandlesRegionSize(i); } /// @deprecated
+  void setHandlesRegionSize(int i);
+  void setInterestRegionSize(int i);
+  void setGeodesicCircle(bool status);
+  void setSharpFeature(bool status);
+  void setUsageScenario(int i);
   void vertex_has_been_selected(void* vertex_handle);
+  void vertex_has_been_selected_2(void* vertex_handle);
 
 signals:
   void begin_edit();
