@@ -899,19 +899,22 @@ test_dim_down(Vertex_handle v)
     return dim1;
   }
  
-  Face_circulator fc=incident_faces(v,v->face());
-  Face_circulator done(fc);
-  
-  do{					     
-     if(orientation(fc->vertex(0)->point(),
-		   fc->vertex(1)->point(),
-		   fc->vertex(2)->point())
-       !=COLLINEAR)
-      dim1=false;
-  }while(++fc!=done && dim1);
-  
-  return dim1;
-		
+	std::vector<Point> points;
+	All_vertices_iterator it = vertices_begin();
+	for(; it!=vertices_end();it ++)
+		if (it != v)
+			points.push_back(it->point());
+	
+	for(int i=0; i<points.size()-4; i++){
+		Orientation s = power_test(points.at(i), points.at(i+1),points.at(i+2),points.at(i+3));
+		dim1 = dim1 && s == ON_ORIENTED_BOUNDARY ;
+		if (!dim1)
+			return dim1;
+	}return true;
+	
+	
+	
+  		
 	
 }
 	
