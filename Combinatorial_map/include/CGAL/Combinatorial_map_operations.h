@@ -200,14 +200,13 @@ namespace CGAL {
   template < class CMap, unsigned int i >
   bool is_removable(const CMap& amap, typename CMap::Dart_const_handle adart)
   {
-    CGAL_assertion(adart != NULL);
-    CGAL_static_assertion(0<=i && i<=CMap::dimension);
+    CGAL_assertion( adart!=NULL );
+    CGAL_static_assertion( 0<=i && i<=CMap::dimension );
 
     if ( i==CMap::dimension   ) return true;
     if ( i==CMap::dimension-1 ) return true;
 
-    // TODO ? Optimisation for dim-2, and to not test all
-    // the darts of the cell ?
+    // TODO? Optimisation for dim-2, and to not test all the darts of the cell?
     bool res = true;
     for (CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
          res && it.cont(); ++it)
@@ -787,13 +786,13 @@ namespace CGAL {
     if ( i==0 ) return false;
     if ( i==1 ) return true;
 
-    // TODO ? Optimisation possible to not test all
-    // the darts of the cell ?
+    // TODO ? Optimisation possible to not test all the darts of the cell ?
     bool res = true;
     for (CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
          res && it.cont(); ++it)
     {
-      if ( it->beta(i-2)->beta(i-1)!=it->beta(i-1)->beta_inv(i-2) )
+      if ( it->template beta<i-2>()->template beta<i-1>()!=
+           it->template beta<i-1>()->template beta_inv<i-2>() )
         res = false;
     }
     return res;

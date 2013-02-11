@@ -30,6 +30,12 @@
  * attributes are stored in tuple, thus all the access must be done at
  * compiling time.
  *
+ * Call_split_functor<CMap,i> to call the OnSplit functors on two given
+ *    i-attributes.
+ *
+ * Call_merge_functor<CMap,i> to call the OnMerge functors on two given
+ *    i-attributes.
+ *
  * Group_attribute_functor_of_dart<CMap> to group the <i>-attributes of two
  *    given darts (except for j-dim). Only the attributes of the two given
  *    darts are possibly modified.
@@ -43,11 +49,6 @@
  *    non NULL, we overide all the i-attribute of the second i-cell to the
  *    first i-attribute.
  *
- * Call_split_functor<CMap,i> to call the OnSplit functor on two given
- *    i-attributes.
- *
- ** Call_merge_functor<CMap,i> to call the OnMerge functor on two given
- *    i-attributes.
  */
 
 namespace CGAL
@@ -77,80 +78,176 @@ namespace CGAL
     {}
   };
 
+  // **************************************************************************
   // Functor used to call the On_split functor between the two given darts.
-  template<typename Map,unsigned int i,
-           typename Enabled=typename Map::Helper::
+  template<typename CMap,unsigned int i,
+           typename Enabled=typename CMap::Helper::
          #ifndef CGAL_CFG_TEMPLATE_IN_DEFAULT_PARAMETER_BUG
            template
          #endif
            Attribute_type<i>::type>
   struct Call_split_functor
   {
-    static void run(typename Map::Dart_handle adart1,
-                    typename Map::Dart_handle adart2)
+    static void run(typename CMap::Dart_handle adart1,
+                    typename CMap::Dart_handle adart2)
     {
       Apply_cell_functor
-          <typename Map::Helper::template Attribute_type<i>::type,
-          typename Map::Helper::template Attribute_type<i>::type::On_split>::
+          <typename CMap::Helper::template Attribute_type<i>::type,
+          typename CMap::Helper::
+          template Attribute_type<i>::type::On_split>::
           run(*(adart1->template attribute<i>()),
               *(adart2->template attribute<i>()));
     }
     static void
-    run(typename Map::Helper::template Attribute_handle<i>::type a1,
-        typename Map::Helper::template Attribute_handle<i>::type a2)
+    run(typename CMap::Helper::template Attribute_handle<i>::type a1,
+        typename CMap::Helper::template Attribute_handle<i>::type a2)
     {
       Apply_cell_functor
-          <typename Map::Helper::template Attribute_type<i>::type,
-          typename Map::Helper::template Attribute_type<i>::type::On_split>::
+          <typename CMap::Helper::template Attribute_type<i>::type,
+          typename CMap::Helper::
+          template Attribute_type<i>::type::On_split>::
           run(*a1, *a2);
     }
   };
 
   // Specialization for disabled attributes.
-  template<typename Map,unsigned int i>
-  struct Call_split_functor<Map,i,CGAL::Void>
+  template<typename CMap,unsigned int i>
+  struct Call_split_functor<CMap,i,CGAL::Void>
   {
-    static void run(typename Map::Dart_handle,
-                    typename Map::Dart_handle)
+    static void run(typename CMap::Dart_handle,
+                    typename CMap::Dart_handle)
     {}
   };
 
+  // **************************************************************************
   // Functor used to call the On_merge functor between the two given darts.
-  template<typename Map,unsigned int i,
-           typename Enabled=typename Map::Helper::
+  template<typename CMap,unsigned int i,
+           typename Enabled=typename CMap::Helper::
          #ifndef CGAL_CFG_TEMPLATE_IN_DEFAULT_PARAMETER_BUG
            template
          #endif
            Attribute_type<i>::type>
   struct Call_merge_functor
   {
-    static void run(typename Map::Dart_handle adart1,
-                    typename Map::Dart_handle adart2)
+    static void run(typename CMap::Dart_handle adart1,
+                    typename CMap::Dart_handle adart2)
     {
       Apply_cell_functor
-          <typename Map::Helper::template Attribute_type<i>::type,
-          typename Map::Helper::template Attribute_type<i>::type::On_merge>::
+          <typename CMap::Helper::template Attribute_type<i>::type,
+          typename CMap::Helper::template Attribute_type<i>::type::On_merge>::
           run(*(adart1->template attribute<i>()),
               *(adart2->template attribute<i>()));
     }
     static void
-    run(typename Map::Helper::template Attribute_handle<i>::type a1,
-        typename Map::Helper::template Attribute_handle<i>::type a2)
+    run(typename CMap::Helper::template Attribute_handle<i>::type a1,
+        typename CMap::Helper::template Attribute_handle<i>::type a2)
     {
       Apply_cell_functor
-          <typename Map::Helper::template Attribute_type<i>::type,
-          typename Map::Helper::template Attribute_type<i>::type::On_merge>::
+          <typename CMap::Helper::template Attribute_type<i>::type,
+          typename CMap::Helper::template Attribute_type<i>::type::On_merge>::
           run(*a1, *a2);
     }
   };
 
   // Specialization for disabled attributes.
-  template<typename Map,unsigned int i>
-  struct Call_merge_functor<Map,i,CGAL::Void>
+  template<typename CMap,unsigned int i>
+  struct Call_merge_functor<CMap,i,CGAL::Void>
   {
-    static void run(typename Map::Dart_handle,
-                    typename Map::Dart_handle)
+    static void run(typename CMap::Dart_handle,
+                    typename CMap::Dart_handle)
     {}
+  };
+
+  // **************************************************************************
+  /// Functor used to reserve one mark for each enabled attribute.
+  template<typename CMap>
+  struct Reserve_mark_functor
+  {
+    template <unsigned int i>
+    static void run(const CMap* amap, std::vector<int>* marks)
+    { (*marks)[i] = amap->get_new_mark(); }
+  };
+
+  // **************************************************************************
+  /// Functor used to test if a cell is valid
+  template<typename CMap>
+  struct Test_is_valid_attribute_functor
+  {
+    template <unsigned int i>
+    static void run(const CMap* amap,
+                    typename CMap::Dart_const_handle adart,
+                    std::vector<int>* marks, bool *ares)
+    {
+      if (!amap->template is_valid_attribute<i>(adart,(*marks)[i]) )
+      {
+        (*ares)=false;
+        std::cerr << "CMap not valid: a "<<i<<"-cell is not correctly "
+          "associated with an attribute for " << &(*adart)<< std::endl;
+      }
+    }
+  };
+
+  // **************************************************************************
+  /// Functor for counting i-cell
+  template<typename CMap>
+  struct Count_cell_functor
+  {
+    template <unsigned int i>
+    static void run( const CMap* amap,
+                     typename CMap::Dart_const_handle adart,
+                     std::vector<int>* amarks,
+                     std::vector<unsigned int>* ares )
+    {
+      if ( (*amarks)[i]!=-1 && !amap->is_marked(adart, (*amarks)[i]) )
+      {
+        ++ (*ares)[i];
+        mark_cell<CMap,i>(*amap, adart, (*amarks)[i]);
+      }
+    }
+  };
+
+  // **************************************************************************
+  /// Functor for counting the memory occupation of attributes
+  /// Be careful not reentrant !!! TODO a  Foreach_enabled_attributes
+  /// taking an instance of a functor as argument allowing to compute
+  /// and return values.
+  template<typename CMap>
+  struct Count_bytes_one_attribute_functor
+  {
+    template <unsigned int i>
+    static void run( const CMap* amap )
+    {
+      res += amap->template attributes<i>().capacity()*
+        sizeof(typename CMap::template Attribute_type<i>::type);
+    }
+
+    static typename CMap::size_type res;
+  };
+  template<typename CMap>
+  typename CMap::size_type Count_bytes_one_attribute_functor<CMap>::res = 0;
+
+  template<typename CMap>
+  struct Count_bytes_all_attributes_functor
+  {
+    static typename CMap::size_type run( const CMap& amap )
+    {
+      Count_bytes_one_attribute_functor<CMap>::res = 0;
+      CMap::Helper::template Foreach_enabled_attributes
+        <Count_bytes_one_attribute_functor<CMap> >::run(&amap);
+      return Count_bytes_one_attribute_functor<CMap>::res;
+    }
+  };
+
+  // **************************************************************************
+  /// Functor used to call decrease_attribute_ref_counting<i>
+  /// on each i-cell attribute enabled
+  template<typename CMap>
+  struct Decrease_attribute_functor
+  {
+    template <unsigned int i>
+    static void run(CMap* amap, typename CMap::Dart_handle adart)
+    { amap->template
+        decrease_attribute_ref_counting<i>(adart/*,Tag_true()*/); }
   };
 
   // **************************************************************************
@@ -544,6 +641,7 @@ namespace CGAL
     }
   };
 
+  // **************************************************************************
   // Functor used to degroup the two n-attributes of the two darts, except the
   // attribute of adim
   template<typename CMap,unsigned int i>
@@ -590,14 +688,14 @@ namespace CGAL
       }
     }
   };
-  template<typename Map>
+  template<typename CMap>
   struct Degroup_attribute_functor
   {
     template <unsigned int i>
-    static void run(Map* amap,typename Map::Dart_handle adart1,
-                    typename Map::Dart_handle adart2, int adim)
+    static void run(CMap* amap,typename CMap::Dart_handle adart1,
+                    typename CMap::Dart_handle adart2, int adim)
     {
-      Degroup_attribute_functor_run<Map,i>::run(amap,adart1,adart2,adim);
+      Degroup_attribute_functor_run<CMap,i>::run(amap,adart1,adart2,adim);
     }
   };
 
@@ -637,144 +735,32 @@ namespace CGAL
       { return false; }
     };
 
-/*    // Functor used to degroup one attribute of one dart
-    template <typename CMap, unsigned int i, typename Type_attr, typename Range>
-    struct Degroup_one_attribute_of_dart_functor
-    {
-      static bool run(CMap* amap,
-                      typename CMap::Dart_handle adart1,
-                      typename CMap::Dart_handle adart2)
-      {
-        CGAL_assertion(amap!=NULL);
-        return amap->template degroup_enabled_attribute_of_dart
-          <i, Type_attr, Range>(adart1,adart2);
-      }
-    };
-
-    // Specialization for i-attributes disabled.
-    template <typename CMap, unsigned int i, typename Range>
-    struct Degroup_one_attribute_of_dart_functor<CMap, i, CGAL::Void, Range>
-    {
-      static bool run(CMap*,
-                      typename CMap::Dart_handle,
-                      typename CMap::Dart_handle)
-      { return false; }
-    };*/
-
-    /// Functor used to call decrease_attribute_ref_counting<i>
-    /// on each i-cell attribute enabled
-    template<typename Map>
-    struct Decrease_attribute_functor
-    {
-      template <unsigned int i>
-      static void run(Map* amap, typename Map::Dart_handle adart)
-      { amap->template
-          decrease_attribute_ref_counting<i>(adart/*,Tag_true()*/); }
-    };
-
     /// Functor used to call update_dart_of_attribute<i>
     /// on each i-cell attribute enabled
-    template<typename Map>
+    template<typename CMap>
     struct Update_dart_of_attribute_functor
     {
       template <unsigned int i>
-      static void run(Map* amap, typename Map::Dart_handle ah, int amark)
+      static void run(CMap* amap, typename CMap::Dart_handle ah, int amark)
       { amap->template update_dart_of_attribute<i>(ah,amark); }
     };
 
-    template<typename Map, unsigned int i, typename Enabled=
-             typename Map::Helper::
+    template<typename CMap, unsigned int i, typename Enabled=
+             typename CMap::Helper::
          #ifndef CGAL_CFG_TEMPLATE_IN_DEFAULT_PARAMETER_BUG
              template
          #endif
              Attribute_type<i>::type>
     struct Update_dart_of_one_attribute_functor
     {
-      static void run(Map* amap, typename Map::Dart_handle ah, int amark)
+      static void run(CMap* amap, typename CMap::Dart_handle ah, int amark)
       { amap->template update_dart_of_attribute<i>(ah,amark); }
     };
-    template<typename Map, unsigned int i>
-    struct Update_dart_of_one_attribute_functor<Map, i, CGAL::Void>
+    template<typename CMap, unsigned int i>
+    struct Update_dart_of_one_attribute_functor<CMap, i, CGAL::Void>
     {
-      static void run(Map*, typename Map::Dart_handle, int)
+      static void run(CMap*, typename CMap::Dart_handle, int)
       {}
-    };
-
-    /// Functor used to reserve one mark for each enabled attribute.
-    template<typename Map>
-    struct Reserve_mark_functor
-    {
-      template <unsigned int i>
-      static void run(const Map* amap, std::vector<int>* marks)
-      { (*marks)[i] = amap->get_new_mark(); }
-    };
-
-    /// Functor used to test if a cell is valid
-    template<typename Map>
-    struct Test_is_valid_attribute_functor
-    {
-      template <unsigned int i>
-      static void run(const Map* amap,
-                      typename Map::Dart_const_handle adart,
-                      std::vector<int>* marks, bool *ares)
-      {
-        if (!amap->template is_valid_attribute<i>(adart,(*marks)[i]) )
-        {
-          (*ares)=false;
-          std::cerr << "Map not valid: a "<<i<<"-cell is not correctly "
-            "associated with an attribute for " << &(*adart)<< std::endl;
-        }
-      }
-    };
-
-    /// Functor for counting i-cell
-    template<typename Map>
-    struct Count_cell_functor
-    {
-      template <unsigned int i>
-      static void run( const Map* amap,
-                       typename Map::Dart_const_handle adart,
-                       std::vector<int>* amarks,
-                       std::vector<unsigned int>* ares )
-      {
-        if ( (*amarks)[i]!=-1 && !amap->is_marked(adart, (*amarks)[i]) )
-        {
-          ++ (*ares)[i];
-          mark_cell<Map,i>(*amap, adart, (*amarks)[i]);
-        }
-      }
-    };
-
-
-    /// Functor for counting the memory occupation of attributes
-    /// Be careful not reentrant !!! TODO a  Foreach_enabled_attributes
-    /// taking an instance of a functor as argument allowing to compute
-    /// and return values.
-    template<typename Map>
-    struct Count_bytes_one_attribute_functor
-    {
-      template <unsigned int i>
-      static void run( const Map* amap )
-      {
-        res += amap->template attributes<i>().capacity()*
-          sizeof(typename Map::template Attribute_type<i>::type);
-      }
-
-      static typename Map::size_type res;
-    };
-    template<typename Map>
-    typename Map::size_type Count_bytes_one_attribute_functor<Map>::res = 0;
-
-    template<typename Map>
-    struct Count_bytes_all_attributes_functor
-    {
-      static typename Map::size_type run( const Map& amap )
-      {
-        Count_bytes_one_attribute_functor<Map>::res = 0;
-        Map::Helper::template Foreach_enabled_attributes
-          <Count_bytes_one_attribute_functor<Map> >::run(&amap);
-        return Count_bytes_one_attribute_functor<Map>::res;
-      }
     };
 
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
@@ -821,23 +807,23 @@ namespace CGAL
     };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
-    template<typename Map, unsigned int i>
+    template<typename CMap, unsigned int i>
     struct Store_incident_cells
     {
       template <unsigned int j>
-      static void run( Map* amap, typename Map::Dart_handle adart,
+      static void run( CMap* amap, typename CMap::Dart_handle adart,
                        int  mark_for_icell,
                        int* mark_for_incident_cells,
-                       std::deque<std::deque<typename Map::Dart_handle> >
+                       std::deque<std::deque<typename CMap::Dart_handle> >
                         *store )
       {
         if ( i==j ) return;
 
         const int mark_for_jcells = mark_for_incident_cells
-            [Map::Helper::template Dimension_index<j>::value];
+            [CMap::Helper::template Dimension_index<j>::value];
 
-        std::deque<std::deque<typename Map::Dart_handle> >& jcells =
-            store[Map::Helper::template Dimension_index<j>::value];
+        std::deque<std::deque<typename CMap::Dart_handle> >& jcells =
+            store[CMap::Helper::template Dimension_index<j>::value];
 
         CGAL_assertion( amap!=NULL );
         CGAL_assertion( adart!=NULL );
@@ -847,8 +833,8 @@ namespace CGAL
         if ( !amap->is_marked(adart, mark_for_jcells) &&
              adart->template attribute<j>()!=NULL )
         {
-          jcells.push_back(std::deque<typename Map::Dart_handle>());
-          for ( CMap_dart_iterator_basic_of_cell<Map,j>
+          jcells.push_back(std::deque<typename CMap::Dart_handle>());
+          for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                 itj(*amap, adart, mark_for_jcells); itj.cont(); ++itj )
           {
             if ( !amap->is_marked(itj, mark_for_icell) )
@@ -862,13 +848,13 @@ namespace CGAL
 
         if ( i!=1 && j==0 )
         {
-          typename Map::Dart_handle od = adart->other_extremity();
+          typename CMap::Dart_handle od = adart->other_extremity();
 
           if ( od!=NULL && !amap->is_marked(od, mark_for_jcells) &&
                od->template attribute<j>()!=NULL )
           {
-            jcells.push_back(std::deque<typename Map::Dart_handle>());
-            for ( CMap_dart_iterator_basic_of_cell<Map,j>
+            jcells.push_back(std::deque<typename CMap::Dart_handle>());
+            for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                   itj(*amap, od, mark_for_jcells); itj.cont(); ++itj )
             {
               if ( !amap->is_marked(itj, mark_for_icell) )
@@ -883,39 +869,39 @@ namespace CGAL
       }
     };
 
-    template<typename Map, unsigned int i>
+    template<typename CMap, unsigned int i>
     struct Test_split_with_deque
     {
       template <unsigned int j>
-      static void run( Map* amap,
+      static void run( CMap* amap,
                        int* mark_for_incident_cells,
-                       std::deque<std::deque<typename Map::Dart_handle> >
+                       std::deque<std::deque<typename CMap::Dart_handle> >
                         *store )
       {
         const int mark_for_jcells = mark_for_incident_cells
-            [Map::Helper::template Dimension_index<j>::value];
+            [CMap::Helper::template Dimension_index<j>::value];
         amap->negate_mark( mark_for_jcells );
 
         if ( i==j ) return;
 
-        std::deque<std::deque<typename Map::Dart_handle> >& jcells =
-            store[Map::Helper::template Dimension_index<j>::value];
+        std::deque<std::deque<typename CMap::Dart_handle> >& jcells =
+            store[CMap::Helper::template Dimension_index<j>::value];
 
         CGAL_assertion( amap!=NULL );
         CGAL_assertion( amap->is_reserved(mark_for_jcells) );
 
         int nbofjcell = 0;
-        typename Map::Helper::template Attribute_handle<j>::type
+        typename CMap::Helper::template Attribute_handle<j>::type
             a1 = NULL;
-        typename Map::Helper::template Attribute_handle<j>::type
+        typename CMap::Helper::template Attribute_handle<j>::type
             a2=NULL;
 
         int nb=0;
-        for ( typename std::deque<std::deque<typename Map::Dart_handle> >::
+        for ( typename std::deque<std::deque<typename CMap::Dart_handle> >::
               iterator it=jcells.begin(); it!=jcells.end(); ++it )
         {
           nbofjcell = 0;
-          for ( typename std::deque<typename Map::Dart_handle>::iterator
+          for ( typename std::deque<typename CMap::Dart_handle>::iterator
                 itj=it->begin(); itj!=it->end(); ++itj )
           {
             if ( !amap->is_marked(*itj, mark_for_jcells) )
@@ -934,7 +920,7 @@ namespace CGAL
                 // std::cout<<"A1 "<<&*a1<<"  "<<&**itj<<": ";
               }
 
-              for ( CMap_dart_iterator_basic_of_cell<Map,j>
+              for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                   itj2(*amap, *itj, mark_for_jcells);
                   itj2.cont(); ++itj2 )
               {
@@ -948,8 +934,8 @@ namespace CGAL
 
               if ( nbofjcell>1 )
                 Apply_cell_functor
-                    <typename Map::Helper::template Attribute_type<j>::type,
-                    typename Map::Helper::template Attribute_type<j>::type::
+                    <typename CMap::Helper::template Attribute_type<j>::type,
+                    typename CMap::Helper::template Attribute_type<j>::type::
                     On_split>::run(*a1, *a2);
             }
           }
@@ -960,28 +946,28 @@ namespace CGAL
       }
     };
 
-    template<typename Map, unsigned int i>
+    template<typename CMap, unsigned int i>
     struct Test2_split_with_deque
     {
       template<unsigned int j>
-      static void test_one_dart( Map* amap,
-                                 typename Map::Dart_handle adart,
-                                 std::set<typename Map::Helper::template
+      static void test_one_dart( CMap* amap,
+                                 typename CMap::Dart_handle adart,
+                                 std::set<typename CMap::Helper::template
                                  Attribute_handle<j>::type>& found_attributes,
                                  int mark)
       {
         if ( adart->template attribute<j>()!=NULL &&
              !amap->is_marked(adart, mark) )
         {
-          typename Map::Helper::template Attribute_handle<j>::type
+          typename CMap::Helper::template Attribute_handle<j>::type
               a1 = adart->template attribute<j>();
           if ( !found_attributes.insert(a1).second )
           {  // Here the attribute was already present in the set
-            typename Map::Helper::template Attribute_handle<j>::type
+            typename CMap::Helper::template Attribute_handle<j>::type
                 a2 = amap->template create_attribute<j>(*a1);
             // std::cout<<"A2 "<<&*a2<<"  "<<&**itj<<": ";
 
-            for ( CMap_dart_iterator_basic_of_cell<Map,j>
+            for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                   itj(*amap, adart, mark);
                   itj.cont(); ++itj )
             {
@@ -991,8 +977,8 @@ namespace CGAL
             }
 
             Apply_cell_functor
-                <typename Map::Helper::template Attribute_type<j>::type,
-                typename Map::Helper::template Attribute_type<j>::type::
+                <typename CMap::Helper::template Attribute_type<j>::type,
+                typename CMap::Helper::template Attribute_type<j>::type::
                 On_split>::run(*a1, *a2);
           }
           else
@@ -1002,7 +988,7 @@ namespace CGAL
             a1->set_dart(adart);
             // std::cout<<"A1 "<<&*a1<<"  "<<&**itj<<": ";
 
-            for ( CMap_dart_iterator_basic_of_cell<Map,j>
+            for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                   itj(*amap, adart, mark);
                   itj.cont(); ++itj )
             {
@@ -1016,24 +1002,24 @@ namespace CGAL
       }
 
       template <unsigned int j>
-      static void run( Map* amap,
-                       std::deque<typename Map::Dart_handle>
+      static void run( CMap* amap,
+                       std::deque<typename CMap::Dart_handle>
                         *modified_darts,
                        int mark_modified_darts
                        /*,
-                       std::deque<typename Map::Dart_handle>
+                       std::deque<typename CMap::Dart_handle>
                         *modified_darts2*/)
       {
         if ( i==j ) return;
 
         CGAL_assertion( amap!=NULL );
 
-        std::set<typename Map::Helper::template
+        std::set<typename CMap::Helper::template
             Attribute_handle<j>::type> found_attributes;
 
         int mark = amap->get_new_mark();
         int nb=0;
-        for ( typename std::deque<typename Map::Dart_handle>::
+        for ( typename std::deque<typename CMap::Dart_handle>::
               iterator it=modified_darts->begin();
               it!=modified_darts->end(); ++it )
         {
@@ -1041,7 +1027,7 @@ namespace CGAL
 
           if ( i!=1 && j==0 )
           {
-            typename Map::Dart_handle od = (*it)->other_extremity();
+            typename CMap::Dart_handle od = (*it)->other_extremity();
             if ( od!=NULL )
               test_one_dart<j>(amap, od, found_attributes, mark);
           }
@@ -1049,7 +1035,7 @@ namespace CGAL
 
 /*        if ( i+1==j )
         {
-          for ( typename std::deque<typename Map::Dart_handle>::
+          for ( typename std::deque<typename CMap::Dart_handle>::
                 iterator it=modified_darts2->begin();
                 it!=modified_darts2->end(); ++it )
           {
@@ -1057,7 +1043,7 @@ namespace CGAL
 
             if ( i!=1 && j==0 )
             {
-              typename Map::Dart_handle od = (*it)->other_extremity();
+              typename CMap::Dart_handle od = (*it)->other_extremity();
               if ( od!=NULL )
                 test_one_dart<j>(amap, od, found_attributes, mark);
             }
@@ -1071,7 +1057,7 @@ namespace CGAL
         // Now we unmark all the marked darts.
         amap->negate_mark(mark);
 
-        for ( typename std::deque<typename Map::Dart_handle>::
+        for ( typename std::deque<typename CMap::Dart_handle>::
               iterator it=modified_darts->begin();
               it!=modified_darts->end(); ++it )
         {
@@ -1079,7 +1065,7 @@ namespace CGAL
             amap->unmark(*it, mark_modified_darts);
 
           if ( !amap->is_marked(*it, mark) )
-            for ( CMap_dart_iterator_basic_of_cell<Map,j>
+            for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                 itj(*amap, *it, mark);
                 itj.cont(); ++itj )
             {
@@ -1088,9 +1074,9 @@ namespace CGAL
 
           if ( i!=1 && j==0 )
           {
-            typename Map::Dart_handle od = (*it)->other_extremity();
+            typename CMap::Dart_handle od = (*it)->other_extremity();
             if ( od!=NULL && !amap->is_marked(od, mark) )
-              for ( CMap_dart_iterator_basic_of_cell<Map,j>
+              for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                   itj(*amap, od, mark);
                     itj.cont(); ++itj )
               {
@@ -1101,7 +1087,7 @@ namespace CGAL
 
  /*       if ( i+1==j )
         {
-          for ( typename std::deque<typename Map::Dart_handle>::
+          for ( typename std::deque<typename CMap::Dart_handle>::
                 iterator it=modified_darts2->begin();
                 it!=modified_darts2->end(); ++it )
           {
@@ -1109,7 +1095,7 @@ namespace CGAL
               amap->unmark(*it, mark_modified_darts);
 
             if ( !amap->is_marked(*it, mark) )
-              for ( CMap_dart_iterator_basic_of_cell<Map,j>
+              for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                   itj(*amap, *it, mark);
                   itj.cont(); ++itj )
               {
@@ -1118,9 +1104,9 @@ namespace CGAL
 
             if ( i!=1 && j==0 )
             {
-              typename Map::Dart_handle od = (*it)->other_extremity();
+              typename CMap::Dart_handle od = (*it)->other_extremity();
               if ( od!=NULL && !amap->is_marked(od, mark) )
-                for ( CMap_dart_iterator_basic_of_cell<Map,j>
+                for ( CMap_dart_iterator_basic_of_cell<CMap,j>
                     itj(*amap, od, mark);
                       itj.cont(); ++itj )
                 {
