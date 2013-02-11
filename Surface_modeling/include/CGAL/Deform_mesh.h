@@ -293,12 +293,6 @@ public:
   /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
   void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
-    // initialize the Laplacian matrix
-    for (int i = 0; i < ros.size(); i++)
-      {
-        A.set_coef(i, i, 1.0, true);     
-      }
-
     /// assign cotangent Laplacian to ros vertices
     for(std::size_t i = 0; i < ros.size(); i++)
       {
@@ -317,8 +311,10 @@ public:
                 diagonal += wij;  
               }
             // diagonal coefficient
-            A.set_coef(i, i, diagonal);
-          } 
+            A.set_coef(i, i, diagonal, true);
+          }
+        else
+          A.set_coef(i, i, 1.0, true);
       }
 
   }
