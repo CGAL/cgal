@@ -73,12 +73,20 @@ namespace CGAL {
 
       if ( cur!=first )
       {
-        if ( amap.template degroup_attribute_of_dart<2,
-             typename Map::template Dart_of_involution_range<1> >
-             (first, cur) )
+        if ( amap.template degroup_attribute_of_dart<2>(first, cur) )
+        {
+          // TODO Functor takiing a range, an attrib_handle, and that set
+          // all the darts of the range to this handle
+          for (typename Map::template Dart_of_involution_range<1>::iterator
+               it=template darts_of_involution<1>(dh2).begin(),
+               itend=template darts_of_involution<1>(dh2).end(); it!=itend;
+               ++it)
+          {
+          }
           tosplit.push(internal::Couple_dart_and_dim
                        <typename Map::Dart_handle>
                        (first,cur,2));
+        }
       }
 
       if (!cur->is_free(0))
@@ -1134,6 +1142,7 @@ namespace CGAL {
       }
 
       amap.template basic_link_beta<1>(*it, d1);
+      // TODO remove this group, and use link_beta instead ?
       amap.group_all_dart_attributes_except(*it, d1, 1);
 
       amap.mark(*it, mark);

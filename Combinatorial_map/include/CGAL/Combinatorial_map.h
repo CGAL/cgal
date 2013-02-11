@@ -85,8 +85,8 @@ namespace CGAL {
     typename Map::Dart_handle 
     insert_cell_0_in_cell_2(Map& amap, typename Map::Dart_handle adart);
 
-    template<typename CMap, unsigned int i, typename Type_attr, typename Range>
-    friend struct internal::Degroup_one_attribute_of_dart_functor;
+    /*template<typename CMap, unsigned int i, typename Type_attr, typename Range>
+    friend struct internal::Degroup_one_attribute_of_dart_functor;*/
 
     template <typename CMap, unsigned int i, typename Type_attr>
     friend struct internal::Degroup_one_attribute_functor;
@@ -94,7 +94,7 @@ namespace CGAL {
     template<typename Map>
     friend struct internal::Test_is_valid_attribute_functor;
 
-    template<typename CMap, unsigned int i>
+    template<typename CMap, unsigned int i, typename T>
     friend struct internal::Group_attribute_functor_of_dart_run;
 
     template<typename Map,unsigned int i>
@@ -2077,6 +2077,48 @@ namespace CGAL {
         <internal::Update_dart_of_attribute_functor<Self> >::run(this,ah,amark);
     }  
 
+    /** Group the i-cell-attributes of the two given darts, if required.
+     * If the two i-cell-attributes of \em adart1 and \em adart2 are different,
+     * we set the i-cell-attribute of adart2 onto the attribute of adart1.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @return true iff the two attributes are merged.
+     */
+    template<unsigned int i>
+    bool group_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
+    {
+    }
+
+    /** Degroup the i-cell attribute of the two given darts, if required.
+     * We create a new attribute and link dart2 onto this new attribute.
+     * The new attribute is initialized by copying the old one.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @return true iff the attribute is split.
+     */
+    template<unsigned int i>
+    bool degroup_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
+    {
+      CGAL_static_assertion(i<=dimension);
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "group_enabled_attribute_of_dart<i> but "
+                                "i-attributes are disabled");
+      CGAL_assertion( dh1!=NULL && dh2!=NULL );
+      CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
+
+      typename Attribute_handle<i>::type a1=dh1->template attribute<i>();
+      typename Attribute_handle<i>::type a2=dh2->template attribute<i>();
+
+      // If the two attributes are different, nothing to do.
+      if ( a1==NULL || a1 != a2 ) return false;
+
+      a2 = create_attribute<i>(*a1);
+
+      // We set the attribute of dh2 to a2.
+      set_attribute_of_dart<i>(dh2, a2);
+      return true;
+    }
+
     /** Group the i cell-attributes of two darts.
      * If the two i cell-attribute of \em adart1 and \em adart2 are different,
      * we set the i cell-attribute of each dart belonging to the i-cell orbit
@@ -2120,7 +2162,55 @@ namespace CGAL {
       set_attribute<i>(toSet, a1);
     }
 
-    /** Group all the attributes of adart1 and adart2. If both dart have a 
+    /** Degroup the i-cell attribute of the two given darts, if required.
+     * If the two darts are incident to the same attribute and do not belong to
+     * the same i-cell, we create a new attibute and link each dart
+     * belonging to the i-cell of adart2 onto this new attribute.
+     * The new attribute is initialized by copying the old one then by using
+     * the functor On_split from the original attribute.
+     * @param adart1 the first dart.
+     * @param adart2 the second dart.
+     * @return true iff the attribute is split.
+     */
+    template<unsigned int i, class Type_attr>
+    bool degroup_enabled_attribute(Dart_handle adart1, Dart_handle adart2)
+    {
+      CGAL_static_assertion(i<=dimension);
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "degroup_enabled_attribute<i> but "
+                                "i-attributes are disabled");
+      CGAL_assertion(adart1 != NULL && adart2 != NULL);
+      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
+
+      typename Attribute_handle<i>::type a1=adart1->template attribute<i>();
+      typename Attribute_handle<i>::type a2=NULL;
+
+      // If the two attributes are not equal, nothing to do.
+      if ( a1 != adart2->template attribute<i>() || a1 == NULL) return false;
+
+      // TODO improve this step: use basic iterator to iterate through cell<i>(adart2)
+      // If the two darts belong to the same cell, nothing to do.
+      if ( belong_to_same_cell<Self,i,dimension>(*this, adart1, adart2) )
+        return false;
+
+      // Here we create a new attribute
+      a2 = create_attribute<i>(*a1);
+
+      // We call the on_split functor
+      internal::Apply_cell_functor<Type_attr,
+        typename Type_attr::On_split>::run(*a1,*a2);
+
+      // We set the dart of the cell a1 onto adart1.
+      a1->set_dart(adart1);
+
+      // and reuse the basic iterator here to unmark.
+      // And we set all the dart of the cell of adart2 to v1.
+      set_attribute<i>(adart2, a2);
+
+      return true;
+    }
+
+    /** Group all the attributes of adart1 and adart2. If both dart have a
      * i-attribute, the attribute associated to adart1 is kept.
      * @param adart1 the first dart.
      * @param adart1 the second dart.
@@ -2130,32 +2220,6 @@ namespace CGAL {
     {
       internal::Group_one_attribute_functor<Self,i,
         typename Attribute_type<i>::type>::run(this,adart1,adart2);
-    }
-
-    /** Group the i cell-attributes of two darts.
-     * If the two i cell-attribute of \em adart1 and \em adart2 are different,
-     * we set the i cell-attribute of adart2 onto the attribute of adart1.
-     * @param adart1 the first dart.
-     * @param adart2 the second dart.
-     */
-    template<unsigned int i, class Type_attr>
-    void group_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
-    {
-      CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                                "group_enabled_attribute_of_dart<i> but "
-                                "i-attributes are disabled");
-      CGAL_assertion( dh1!=NULL && dh2!=NULL );
-      CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
-
-      typename Attribute_handle<i>::type a1=dh1->template attribute<i>();
-      typename Attribute_handle<i>::type a2=dh2->template attribute<i>();
-
-      // If the two attributes are equal, nothing to do.
-      if ( a1 == a2 ) return;
-
-      if ( a1==NULL ) set_attribute_of_dart<i>(dh1, a2);
-      else            set_attribute_of_dart<i>(dh2, a1);
     }
 
     /** Group all the dart attributes of adart1 and adart2, except the
@@ -2183,57 +2247,11 @@ namespace CGAL {
      */
     void group_all_attributes_except(Dart_handle adart1, Dart_handle adart2,
                                      int adim)
-    { 
+    {
       CGAL_assertion( adim==-1 || (1<=adim && (unsigned int)adim<=dimension) );
       Helper::template Foreach_enabled_attributes
         <internal::Group_attribute_functor<Self> >::
         run(this,adart1,adart2,adim);
-    }
-  
-    /** Degroup the i-cell attribute of the two given darts, if required.
-     * If the two darts are incident to the same attribute and do not belong to
-     * the same i-cell, we create a new attibute and link each dart
-     * belonging to the i-cell of adart2 onto this new attribute.
-     * The new attribute is initialized by copying the old one then by using
-     * the functor On_split from the original attribute.
-     * @param adart1 the first dart.
-     * @param adart2 the second dart.
-     * @return true iff the attribute is split.
-     */
-    template<unsigned int i, class Type_attr>
-    bool degroup_enabled_attribute(Dart_handle adart1, Dart_handle adart2)
-    {
-      CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                                "degroup_enabled_attribute<i> but "
-                                "i-attributes are disabled");
-      CGAL_assertion(adart1 != NULL && adart2 != NULL);
-      CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-
-      typename Attribute_handle<i>::type a1=adart1->template attribute<i>();
-      typename Attribute_handle<i>::type a2=NULL;
-
-      // If the two attributes are not equal, nothing to do.
-      if ( a1 != adart2->template attribute<i>() || a1 == NULL) return false;
-
-      // If the two darts belong to the same cell, nothing to do.
-      if ( belong_to_same_cell<Self,i,dimension>(*this, adart1, adart2) )
-        return false;
-
-      // Here we create a new attribute
-      a2 = create_attribute<i>(*a1);
-
-      // We call the on_split functor
-      internal::Apply_cell_functor<Type_attr,
-        typename Type_attr::On_split>::run(*a1,*a2);
-
-      // We set the dart of the cell a1 onto adart1.
-      a1->set_dart(adart1);
-
-      // And we set all the dart of the cell of adart2 to v1.
-      set_attribute<i>(adart2, a2);
-
-      return true;
     }
 
     template<unsigned int i>
@@ -2265,51 +2283,12 @@ namespace CGAL {
     void degroup_all_attributes(Dart_handle adart1, Dart_handle adart2)
     { degroup_all_attributes_except(adart1, adart2, -1); }
   
-    /** Degroup the i-cell attribute of the two given darts, if required.
-     * We create a new attibute and link dart2 onto this new attribute.
-     * The new attribute is initialized by copying the old one then by using
-     * the functor On_split from the original attribute.
-     * @param adart1 the first dart.
-     * @param adart2 the second dart.
-     * @return true iff the attribute is split.
-     */
-    template<unsigned int i, class Type_attr, typename Range>
-    bool degroup_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
-    {
-      CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                                "group_enabled_attribute_of_dart<i> but "
-                                "i-attributes are disabled");
-      CGAL_assertion( dh1!=NULL && dh2!=NULL );
-      CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
-
-      typename Attribute_handle<i>::type a1=dh1->template attribute<i>();
-      typename Attribute_handle<i>::type a2=dh2->template attribute<i>();
-
-      // If the two attributes are equal, nothing to do.
-      if ( a1==NULL || a1 != a2 ) return false;
-      
-      a2 = create_attribute<i>(*a1);
-
-      // We call the on_split functor
-      //      internal::Apply_cell_functor<Type_attr,
-      //        typename Type_attr::On_split>::run(*a1,*a2);
-
-      // We set the attribute of dh2 to a2.
-      for (typename Range::iterator it=Range(*this,dh2).begin(), 
-             itend=Range(*this,dh2).end(); it!=itend; ++it)
-      {
-        set_attribute_of_dart<i>(it, a2);
-      }
-      return true;
-    }
-
-    template<unsigned int i,typename Range>
+ /*   template<unsigned int i>
     bool degroup_attribute_of_dart(Dart_handle adart1, Dart_handle adart2)
     {
-      return internal::Degroup_one_attribute_of_dart_functor<Self,i,
-        typename Attribute_type<i>::type, Range>::run(this,adart1,adart2);
-    }
+      return internal::Degroup_one_attribute_of_dart_functor<Self,i>::
+          run(this,adart1,adart2);
+    }*/
 
     /** Test the validity of a i-cell-attribute.
      * ie all the darts belonging to a i-cell are linked to the same attribute.
@@ -2408,11 +2387,11 @@ namespace CGAL {
                                 "set_attribute_of_dart<i> but "
                                 "i-attributes are disabled");
       CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
-      if ( adart->template attribute<i>()==ah ) return;
+      CGAL_assertion( adart->template attribute<i>()!=ah );
 
       decrease_attribute_ref_counting<i>(adart);
-
       adart->template set_attribute<i>(ah);
+      // TODO  remove the set_dart ?
       ah->set_dart(adart);
     }
 

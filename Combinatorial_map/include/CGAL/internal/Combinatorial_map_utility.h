@@ -255,6 +255,30 @@ namespace CGAL
       static void run(T...){}
     };
 
+    //Helper function that is calling
+    //Functor if TAG is different from Void and n!=j
+    template <class Functor,int n,int j,class Type>
+    struct Conditionnal_run_except{
+      template <class ... T>
+      static void run(const T& ... t){
+        Functor:: template run<n>(t...);
+      }
+    };
+
+    template <class Functor,int n,int j>
+    struct Conditionnal_run<Functor,n,j,Void>
+    {
+      template <class ... T>
+      static void run(T...){}
+    };
+
+    template <class Functor,int n>
+    struct Conditionnal_run<Functor,n,n,Void>
+    {
+      template <class ... T>
+      static void run(T...){}
+    };
+
     //Same as Foreach_static excepted that Functor
     //is called for case k only if the k'th type in the tuple
     //is different from Void. Note that to the converse of Foreach_static
@@ -276,6 +300,31 @@ namespace CGAL
     
     template <class Functor,int n>
     struct Foreach_static_restricted<Functor,CGAL::cpp11::tuple<>,n>{
+      template <class  ... T>
+      static void run(const T& ... ){}
+    };
+
+    //Same as Foreach_static_restricted excepted that Functor
+    //is called for case k only if the k'th type in the tuple
+    //is different from Void and k!=j.
+    template <class Functor,int j,class T,int n=0>
+    struct Foreach_static_restricted_except;
+
+    template <class Functor,int j,class Head, class ... Items,int n>
+    struct Foreach_static_restricted_except<Functor, j,
+        CGAL::cpp11::tuple<Head,Items...>,n>
+    {
+      template <class  ... T>
+      static void run(const T& ... t){
+        Conditionnal_run_except<Functor,n,j,Head>::run(t...);
+        Foreach_static_restricted_except
+          <Functor,j,CGAL::cpp11::tuple<Items...>,n+1>::run(t...);
+      }
+    };
+
+    template <class Functor,int j,int n>
+    struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n>
+    {
       template <class  ... T>
       static void run(const T& ... ){}
     };
