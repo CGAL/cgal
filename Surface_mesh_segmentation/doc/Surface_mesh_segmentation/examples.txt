@@ -1,0 +1,4 @@
+/// \example Surface_mesh_segmentation/compute_sdf_values_example.cpp
+/// \example Surface_mesh_segmentation/segment_from_sdf_values_example.cpp
+/// \example Surface_mesh_segmentation/compute_sdf_values_and_segment_example.cpp
+/// \example Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp
