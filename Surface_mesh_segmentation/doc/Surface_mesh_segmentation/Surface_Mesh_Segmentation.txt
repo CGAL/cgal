@@ -13,6 +13,7 @@ namespace CGAL {
 \section Surface_mesh_segmentationIntroduction Introduction
 Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. The application domain is wide and includes,
 but is not limited to modeling, rigging, texturing, shape-retrieval, and deformation. See a detailed survey on mesh segmentation techniques \cite Shamir2008SegmentationSurvey for more details.
+\todo put here the definition of segment vs. cluster
 
 This package provides an implementation of the algorithm relying on the Shape Diameter Function \cite Shapira2008Consistent (SDF).
 The SDF provides an estimate of the local volume diameter for each facet of the mesh (the SDF values). Given a surface mesh and its SDF values, the segmentation algorithm first applies soft clustering on
@@ -24,6 +25,8 @@ Also same SDF values can be used multiple times as a parameter for the segmentat
 
 Since the mesh segmentation problem is ill-posed, we also evaluate results of our implementation by using data set and evaluation software \cite Chen2009SegmentationBenchmark, 
 and provide detailed results at the end of the manual.
+
+\todo where is the benchmark result?
 
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
 The segmentation algorithm consists of three major parts: Shape Diameter Function (SDF), soft clustering, and graph-cut for hard clustering.
