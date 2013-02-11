@@ -6,9 +6,10 @@ namespace CGAL {
 \cgalAutoToc
 \author Ilker %O. Yaz and Sébastien Loriot
 
-\anchor Figure-1
+\cgalFigureBegin{Segmentation_Elephant_main,elephant_sdf_partition.png}
+Elephant model with SDF values & Segmentation.
+\cgalFigureEnd
 \image latex elephant_sdf_partition.png "Elephant model with SDF values & Segmentation." width=12cm
-\image html elephant_sdf_partition.png "Figure 1: Elephant model with SDF values & Segmentation."
 
 \section Surface_mesh_segmentationIntroduction Introduction
 Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. The application domain is wide and includes,
@@ -35,23 +36,24 @@ The segmentation algorithm consists of three major parts: Shape Diameter Functio
 The Shape Diameter Function provides a connection between the surface and its volume. 
 More precisely, the SDF is a scalar-valued function defined on facets of the surface which measures the corresponding local volume diameter.
 The main handiness of the SDF is being able to distinguish thick and thin parts of the mesh by bringing in a volume-based feature to the surface.
-Another key feature of the SDF is its pose-invariant nature, which means that SDF values remain largely unaffected after changes of pose (see \ref Figure-3 for an example).
+Another key feature of the SDF is its pose-invariant nature, which means that SDF values remain largely unaffected after changes of pose (see \cgalFigureRef{Segmentation_pose_changes} for an example).
 
 The SDF over a surface is computed by processing each facet one by one. For a given facet, the SDF value computation begins with casting
 several rays sampled from a cone which is constructed using the centroid of the facet as apex and inward-normal of the facet as axis. 
 Using these casted rays (which intuitively correspond to a local volume sampling), 
 the SDF value is calculated by first applying outlier removal and then taking average of ray lengths.
 
-\anchor Figure-2
+\cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
+Comparison of biased-to-center and uniform disk sampling for 64 rays.
+\cgalFigureEnd
 \image latex vogel_uniform_biased.png "Comparison of biased-to-center and uniform disk sampling for 64 rays." width=12cm
-\image html vogel_uniform_biased.png "Figure 2: Comparison of biased-to-center and uniform disk sampling for 64 rays."
 
 \todo check biased to center
 
 We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays. 
 The sampling method is biased to center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
 As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles. 
-A comparison with biased and uniform sampling of points can be seen in \ref Figure-2. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into one Median Absolute Deviation (MAD) from the median of all lengths.  
+A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into one Median Absolute Deviation (MAD) from the median of all lengths.  
 
 After having calculated the SDF value for each facet, bilateral smoothing \cite Tomasi1998Bilateral (an edge-preserving filtering technique) is applied. 
 The purpose of edge-preserving smoothing is removing noise while keeping fast changes on SDF values in-place without smoothing,
@@ -61,9 +63,10 @@ since they are natural candidates for segment boundaries. The bilateral smoothin
 -\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the spatial parameter set for each facet \f$ f_i \f$
 \todo add hint on parameters influence?
 
-\anchor Figure-3
+\cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
+Effect of pose changes on segmentation and SDF values.
+\cgalFigureEnd
 \image latex pose_changes_sdf_low_3.png "Effect of pose changes on segmentation and SDF values." width=12cm
-\image html pose_changes_sdf_low_3.png "Figure 3: Effect of pose changes on segmentation and SDF values."
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
 Given a number of intial clusters, the soft clustering applied on the SDF values computed first groups facets using k-means clustering algorithm. It is initialized with k-means++,
@@ -73,14 +76,15 @@ cluster error and use it to initialize expectation maximization algorithm for fi
 Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the number of segments (i.e. disconnected components / surface patches). 
 Intuitively, the number of clusters represents the number of levels of a segmentation by clustering facets which have close SDF values
 without considering their connectivity.  However, a large number of clusters is likely to result in detailed segmentation of the mesh 
-with a large number of segments \ref Figure-4.
+with a large number of segments, see \cgalFigureRef{Segmentation_levels}.
 
 The output of this step is a matrix that contains probability values for each facet to belong to each cluster. 
 These probability values are used as input in the graph-cut step that follows.
 
-\anchor Figure-4
+\cgalFigureBegin{Segmentation_levels,effect_of_levels.png}
+Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively.
+\cgalFigureEnd
 \image latex effect_of_levels.png "Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively." width=16cm
-\image html effect_of_levels.png "Figure 4: Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively."
 
 \subsection Surface_mesh_segmentationGraphCut Graph-Cut
 The final hard clustering, which gives the final partitioning of the mesh, is obtained by minimizing an energy function. 
@@ -126,11 +130,13 @@ The smoothness parameter makes this geometric criteria more or less prevalent.
 Basically, assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets which are placed under different clusters is less expensive than separating them and creating boundaries.
 On the contrary, assigning smaller values to smoothness parameter results in ahigh number of segments, by getting closer to the result of soft clustering 
-(notice that setting the smoothness parameter to zero directly returns the result of the soft clustering). The effect of different smoothness parameters is illustrated on \ref Figure-5.
+(notice that setting the smoothness parameter to zero directly returns the result of the soft clustering). The effect of different smoothness parameters is illustrated on \cgalFigureRef{Segmentation_lambdas}.
 
-\anchor Figure-5
+\cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
+Effect of different smoothness parameters on the segmentation (using 10 clusters). The smoothness parameter was set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively.
+\cgalFigureEnd
 \image latex dino_different_lambda_small.png "Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively." width=16cm
-\image html dino_different_lambda_small.png "Figure 5: Effect of different smoothness parameters on the segmentation (using 10 clusters). The smoothness parameter was set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively."
+
 
 
 \section Surface_mesh_segmentationAPI API
@@ -184,7 +190,7 @@ The main advantage is to decrease the complexity of accessing associated data wi
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
 
 
-\section Surface_mesh_segmentationImplementationhistory Implementation history
+\section Surface_mesh_segmentationImplementationhistory Implementation History
 The initial implementation of this package is the result of the work of Ilker during the 2012 season
 of the Google Summer of Code. He has been mentored by Sebastien Loriot who also contributed to the documentation
 and the API.
