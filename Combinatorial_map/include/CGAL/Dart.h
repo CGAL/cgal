@@ -98,6 +98,12 @@ namespace CGAL {
      * @param i the dimension.
      * @return true iff the dart is linked with NULL for \em adimension.
      */
+    template<unsigned int i>
+    bool is_free() const
+    {
+      CGAL_static_assertion(i <= dimension);
+      return mbeta[i] == Refs::null_dart_handle;
+    }
     bool is_free(unsigned int i) const
     {
       CGAL_assertion(i <= dimension);
@@ -119,9 +125,21 @@ namespace CGAL {
      * @param i the dimension.
      * @return beta(\em i).
      */
+    template<unsigned int i>
+    Dart_handle beta()
+    {
+      CGAL_static_assertion(i <= dimension);
+      return mbeta[i];
+    }
     Dart_handle beta(unsigned int i)
     {
       CGAL_assertion(i <= dimension);
+      return mbeta[i];
+    }
+    template<unsigned int i>
+    Dart_const_handle beta() const
+    {
+      CGAL_static_assertion(i <= dimension);
       return mbeta[i];
     }
     Dart_const_handle beta(unsigned int i) const
@@ -134,8 +152,14 @@ namespace CGAL {
      * @param i the dimension.
      * @return beta^{-1}(\em i).
      */
+    template<unsigned int i>
+    Dart_handle beta_inv()
+    { return beta<CGAL_BETAINV(i)>(); }
     Dart_handle beta_inv(unsigned int i)
     { return beta(CGAL_BETAINV(i)); }
+    template<unsigned int i>
+    Dart_const_handle beta_inv() const
+    { return beta<CGAL_BETAINV(i)>(); }
     Dart_const_handle beta_inv(unsigned int i) const
     { return beta(CGAL_BETAINV(i)); }
 
@@ -241,6 +265,13 @@ namespace CGAL {
      * @param adart the dart to link with.
      * @param i the dimension.
      */
+    template<unsigned int i>
+    void basic_link_beta(Dart_handle adart)
+    {
+      CGAL_static_assertion(i <= dimension);
+      CGAL_assertion(this!=&*Refs::null_dart_handle);
+      mbeta[i] = adart;
+    }
     void basic_link_beta(Dart_handle adart, unsigned int i)
     {
       CGAL_assertion(i <= dimension);
@@ -251,15 +282,21 @@ namespace CGAL {
     /** Unlink this dart for a given dimension.
      * @param i the dimension.
      */
+    template<unsigned int i>
+    void unlink_beta()
+    {
+      CGAL_static_assertion(i <= dimension);
+      mbeta[i] = Refs::null_dart_handle;
+    }
     void unlink_beta(unsigned int i)
     {
       CGAL_assertion(i <= dimension);
       mbeta[i] = Refs::null_dart_handle;
     }
 
-    /// @return a handle on the i th attribute
+    /// Set the handle on the i th attribute
     template<int i>
-    void set_attribute( typename Attribute_handle<i>::type & ahandle )
+    void set_attribute( typename Attribute_handle<i>::type ahandle )
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                      "set_attribute<i> called but i-attributes are disabled.");
@@ -274,10 +311,7 @@ namespace CGAL {
     {
       template <int i>
       static void run(Self* adart)
-      {
-        // TODO BUG EN 1 SEULE LIGNE ?
-        typename Attribute_handle<i>::type h = NULL;
-        adart->template set_attribute<i> (h); }
+      { adart->template set_attribute<i>(NULL); }
     };
 
   public:
