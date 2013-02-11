@@ -38,16 +38,16 @@ namespace CGAL {
    */
 // TODO revoir toute la gestion des attributs
 // (utilisation correcte des link avec/sans la maj)
-  template < class Map >
-  typename Map::Dart_handle
-  insert_cell_0_in_cell_2(Map& amap, typename Map::Dart_handle adart)
+  template < class CMap >
+  typename CMap::Dart_handle
+  insert_cell_0_in_cell_2(CMap& amap, typename CMap::Dart_handle adart)
   {
-    CGAL_assertion(adart != NULL && adart!=Map::null_dart_handle);
+    CGAL_assertion(adart != NULL && adart!=CMap::null_dart_handle);
 
-    typename Map::Dart_handle first = adart, prev = NULL, cur = NULL;
-    typename Map::Dart_handle n1 = NULL, n2 = NULL;
+    typename CMap::Dart_handle first = adart, prev = NULL, cur = NULL;
+    typename CMap::Dart_handle n1 = NULL, n2 = NULL;
 
-    typename Map::Dart_handle nn1 = NULL, nn2 = NULL;
+    typename CMap::Dart_handle nn1 = NULL, nn2 = NULL;
 
     // If the facet is open, we search the dart 0-free
     while (!first->is_free(0) && first->beta(0) != adart)
@@ -55,17 +55,17 @@ namespace CGAL {
 
     // Stack of couple of dart and dimension for which
     // we must call on_split functor
-    std::stack<internal::Couple_dart_and_dim<typename Map::Dart_handle> >
+    std::stack<internal::Couple_dart_and_dim<typename CMap::Dart_handle> >
       tosplit;
 
     // Mark used to mark darts already treated.
     int treated = amap.get_new_mark();
 
     // Stack of marked darts
-    std::stack<typename Map::Dart_handle> tounmark;
+    std::stack<typename CMap::Dart_handle> tounmark;
 
     // Now we run through the facet
-    for (CGAL::CMap_dart_iterator_basic_of_orbit<Map,1> it(amap,first);
+    for (CGAL::CMap_dart_iterator_basic_of_orbit<CMap,1> it(amap,first);
          it.cont();)
     {
       cur = it;
@@ -80,14 +80,14 @@ namespace CGAL {
         {
           // TODO Functor takiing a range, an attrib_handle, and that set
           // all the darts of the range to this handle
-         /* for (typename Map::template Dart_of_involution_range<1>::iterator
+         /* for (typename CMap::template Dart_of_involution_range<1>::iterator
                it=template darts_of_involution<1>(dh2).begin(),
                itend=template darts_of_involution<1>(dh2).end(); it!=itend;
                ++it)
           {
           }*/
           tosplit.push(internal::Couple_dart_and_dim
-                       <typename Map::Dart_handle>
+                       <typename CMap::Dart_handle>
                        (first,cur,2));
         }
       }
@@ -112,7 +112,7 @@ namespace CGAL {
       if (n1 != NULL && prev != NULL)
         amap.template link_beta_for_involution<2>(prev, n1);
 
-      for (unsigned int dim=3; dim<=Map::dimension; ++dim)
+      for (unsigned int dim=3; dim<=CMap::dimension; ++dim)
       {
         if ( !adart->is_free(dim) )
         {
@@ -159,7 +159,7 @@ namespace CGAL {
     if (n2 != NULL)
     {
       amap.template link_beta_for_involution<2>(first->beta(0), n2);
-      for (unsigned int dim=3; dim<=Map::dimension; ++dim)
+      for (unsigned int dim=3; dim<=CMap::dimension; ++dim)
       {
         if ( !adart->is_free(dim) )
         {
@@ -181,9 +181,9 @@ namespace CGAL {
 
     while ( !tosplit.empty() )
     {
-      internal::Couple_dart_and_dim<typename Map::Dart_handle> c=tosplit.top();
+      internal::Couple_dart_and_dim<typename CMap::Dart_handle> c=tosplit.top();
       tosplit.pop();
-      internal::Call_split_functor<Map, 2>::run(c.d1, c.d2);
+      internal::Call_split_functor<CMap, 2>::run(c.d1, c.d2);
     }
 
     CGAL_expensive_postcondition( amap.is_valid() );
@@ -192,24 +192,24 @@ namespace CGAL {
   }
 
   /** Test if an i-cell can be removed.
-   *  An i-cell can be removed if i==Map::dimension or i==Map::dimension-1,
+   *  An i-cell can be removed if i==CMap::dimension or i==CMap::dimension-1,
    *     or if there are at most two (i+1)-cell incident to it.
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be removed.
    */
-  template < class Map, unsigned int i >
-  bool is_removable(const Map& amap, typename Map::Dart_const_handle adart)
+  template < class CMap, unsigned int i >
+  bool is_removable(const CMap& amap, typename CMap::Dart_const_handle adart)
   {
     CGAL_assertion(adart != NULL);
-    CGAL_static_assertion(0<=i && i<=Map::dimension);
+    CGAL_static_assertion(0<=i && i<=CMap::dimension);
 
-    if ( i==Map::dimension   ) return true;
-    if ( i==Map::dimension-1 ) return true;
+    if ( i==CMap::dimension   ) return true;
+    if ( i==CMap::dimension-1 ) return true;
 
     // TODO ? Optimisation for dim-2, and to not test all
     // the darts of the cell ?
     bool res = true;
-    for (CMap_dart_const_iterator_of_cell<Map,i> it(amap, adart);
+    for (CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
          res && it.cont(); ++it)
     {
       if (it->template beta<i+2>()->template beta<i+1>()!=
@@ -225,39 +225,39 @@ namespace CGAL {
    *  @param adart a dart of the i-cell to remove.
    *  @return the number of deleted darts.
    */
-  template<class Map, unsigned int i, unsigned int nmi>
+  template<class CMap, unsigned int i, unsigned int nmi>
   struct Remove_cell_functor
   {
-    static size_t run(Map& amap, typename Map::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
     {
-      CGAL_static_assertion ( 1<=i && i<Map::dimension );
-      CGAL_assertion( (is_removable<Map,i>(amap, adart)) );
+      CGAL_static_assertion ( 1<=i && i<CMap::dimension );
+      CGAL_assertion( (is_removable<CMap,i>(amap, adart)) );
 
       size_t res = 0;
 
-      typename Map::Dart_handle d1, d2;
-      typename Map::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle d1, d2;
+      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
 
       int mark = amap.get_new_mark();
       int mark_modified_darts = amap.get_new_mark();
 
-      std::deque<typename Map::Dart_handle> to_erase;
+      std::deque<typename CMap::Dart_handle> to_erase;
 
       const int iinv = CGAL_BETAINV(i);
 
-      /*int mark_for_incident_cells[Map::Helper::nb_attribs];
-      std::deque<std::deque<typename Map::Dart_handle> >
-          incident_cells[Map::Helper::nb_attribs];
+      /*int mark_for_incident_cells[CMap::Helper::nb_attribs];
+      std::deque<std::deque<typename CMap::Dart_handle> >
+          incident_cells[CMap::Helper::nb_attribs];
 
       // Marks used to mark all the incident cells.
-      for (int j=0; j<Map::Helper::nb_attribs; ++j)
+      for (int j=0; j<CMap::Helper::nb_attribs; ++j)
       {
         mark_for_incident_cells [j] = amap.get_new_mark();
         CGAL_assertion( mark_for_incident_cells[j]!=-1 );
       }*/
 
       // First we store and mark all the darts of the i-cell to remove.
-      for ( CMap_dart_iterator_basic_of_cell<Map,i> it(amap,adart,mark);
+      for ( CMap_dart_iterator_basic_of_cell<CMap,i> it(amap,adart,mark);
             it.cont(); ++it )
       {
         to_erase.push_back(it);
@@ -269,35 +269,35 @@ namespace CGAL {
 
       // Second we store all the incident cells that can be split by
       // the operation.
-      typename std::deque<typename Map::Dart_handle>::iterator it =
+      typename std::deque<typename CMap::Dart_handle>::iterator it =
         to_erase.begin();
       /*for (; it != to_erase.end(); ++it)
       {
         d1 = (*it)->beta(iinv);
-        while ( d1!=Map::null_dart_handle && amap.is_marked(d1, mark) )
+        while ( d1!=CMap::null_dart_handle && amap.is_marked(d1, mark) )
         {
           d1 = d1->beta(i+1)->beta(iinv);
-          if (d1 == (*it)->beta(iinv)) d1 = Map::null_dart_handle;
+          if (d1 == (*it)->beta(iinv)) d1 = CMap::null_dart_handle;
         }
 
         d2 = (*it)->beta(i+1)->beta(i);
-        while ( d2!=Map::null_dart_handle && amap.is_marked(d2, mark) )
+        while ( d2!=CMap::null_dart_handle && amap.is_marked(d2, mark) )
         {
           d2 = d2->beta(i+1)->beta(i);
-          if ( d2==(*it)->beta(i+1)->beta(i) ) d2=Map::null_dart_handle;
+          if ( d2==(*it)->beta(i+1)->beta(i) ) d2=CMap::null_dart_handle;
         }
 
-        if (d1 != Map::null_dart_handle)
+        if (d1 != CMap::null_dart_handle)
         {
-          if (d2 != Map::null_dart_handle)
+          if (d2 != CMap::null_dart_handle)
           {
             if ( dg1==NULL ) { dg1 = d1; dg2=d2; }
-            Map::Helper::template Foreach_enabled_attributes
-                <internal::Store_incident_cells<Map,i> >::
+            CMap::Helper::template Foreach_enabled_attributes
+                <internal::Store_incident_cells<CMap,i> >::
                 run(&amap, d1, mark, &mark_for_incident_cells[0],
                     &incident_cells[0]);
-            Map::Helper::template Foreach_enabled_attributes
-                <internal::Store_incident_cells<Map,i> >::
+            CMap::Helper::template Foreach_enabled_attributes
+                <internal::Store_incident_cells<CMap,i> >::
                 run(&amap, d2, mark, &mark_for_incident_cells[0],
                     &incident_cells[0]);
           }
@@ -305,19 +305,19 @@ namespace CGAL {
           {
             if ( !d1->is_free(i) )
             {
-              Map::Helper::template Foreach_enabled_attributes
-                  <internal::Store_incident_cells<Map,i> >::
+              CMap::Helper::template Foreach_enabled_attributes
+                  <internal::Store_incident_cells<CMap,i> >::
                   run(&amap, d1->beta(i), mark, &mark_for_incident_cells[0],
                       &incident_cells[0]);
             }
           }
         }
-        else if (d2 != Map::null_dart_handle)
+        else if (d2 != CMap::null_dart_handle)
         {
           if ( !d2->is_free(iinv) )
           {
-            Map::Helper::template Foreach_enabled_attributes
-                <internal::Store_incident_cells<Map,i> >::
+            CMap::Helper::template Foreach_enabled_attributes
+                <internal::Store_incident_cells<CMap,i> >::
                 run(&amap, d2, mark, &mark_for_incident_cells[0],
                     &incident_cells[0]);
           }
@@ -328,8 +328,8 @@ namespace CGAL {
           d1 = (*it)->beta(i);
           if ( !d1->is_free(iinv) )
           {
-            Map::Helper::template Foreach_enabled_attributes
-                <internal::Store_incident_cells<Map,i> >::
+            CMap::Helper::template Foreach_enabled_attributes
+                <internal::Store_incident_cells<CMap,i> >::
                 run(&amap, d1, mark, &mark_for_incident_cells[0],
                     &incident_cells[0]);
           }
@@ -344,35 +344,36 @@ namespace CGAL {
 
       // We group the two (i+1)-cells incident if they exist.
       if ( dg1!=NULL )
-        amap.template group_attribute<i+1>(dg1, dg2);
+        internal::Group_attribute_functor_run<CMap, i+1>::
+            run(&amap, dg1, dg2);
 
-      std::deque<typename Map::Dart_handle> modified_darts;
-      // std::deque<typename Map::Dart_handle> modified_darts2;
+      std::deque<typename CMap::Dart_handle> modified_darts;
+      // std::deque<typename CMap::Dart_handle> modified_darts2;
 
       // For each dart of the i-cell, we modify i-links of neighbors.
       for ( it=to_erase.begin(); it != to_erase.end(); ++it)
       {
-        d1 = (*it)->beta(iinv);
-        while ( d1!=Map::null_dart_handle && amap.is_marked(d1, mark) )
+        d1=(*it)->beta(iinv);
+        while ( d1!=CMap::null_dart_handle && amap.is_marked(d1, mark) )
         {
-          d1 = d1->beta(i+1)->beta(iinv);
-          if (d1 == (*it)->beta(iinv)) d1 = Map::null_dart_handle;
+          d1=d1->beta(i+1)->beta(iinv);
+          if ( d1==(*it)->beta(iinv) ) d1=CMap::null_dart_handle;
         }
 
         if ( !amap.is_marked(d1, mark_modified_darts) )
         {
-          d2 = (*it)->beta(i+1)->beta(i);
-          while ( d2!=Map::null_dart_handle && amap.is_marked(d2, mark) )
+          d2=(*it)->beta(i+1)->beta(i);
+          while ( d2!=CMap::null_dart_handle && amap.is_marked(d2, mark) )
           {
-            d2 = d2->beta(i+1)->beta(i);
-            if ( d2==(*it)->beta(i+1)->beta(i) ) d2=Map::null_dart_handle;
+            d2=d2->beta(i+1)->beta(i);
+            if ( d2==(*it)->beta(i+1)->beta(i) ) d2=CMap::null_dart_handle;
           }
 
           if ( !amap.is_marked(d2, mark_modified_darts) )
           {
-            if (d1 != Map::null_dart_handle)
+            if ( d1!=CMap::null_dart_handle )
             {
-              if (d2 != Map::null_dart_handle && d1!=d2 )
+              if ( d2!=CMap::null_dart_handle && d1!=d2 )
               {
                 //d1->basic_link_beta(d2, i);
                 amap.template basic_link_beta<i>(d1, d2);
@@ -398,7 +399,7 @@ namespace CGAL {
                 }
               }
             }
-            else if (d2 != Map::null_dart_handle)
+            else if ( d2!=CMap::null_dart_handle )
             {
               if ( !d2->is_free(iinv) )
               {
@@ -425,9 +426,9 @@ namespace CGAL {
 
       // We test the split of all the incident cells for all the non
       // void attributes.
-      Map::Helper::template Foreach_enabled_attributes
-          <internal::Test2_split_with_deque<Map,i> >::
-          //      <internal::Test_split_with_deque<Map,i> >::
+      CMap::Helper::template Foreach_enabled_attributes
+          <internal::Test2_split_with_deque<CMap,i> >::
+          //      <internal::Test_split_with_deque<CMap,i> >::
                 run(&amap, &modified_darts, mark_modified_darts);
                     //&modified_darts2);
                     //&mark_for_incident_cells[0], &incident_cells[0]);
@@ -441,11 +442,11 @@ namespace CGAL {
 
       if ( !amap.is_whole_map_unmarked(mark_modified_darts) )
       {
-        for ( typename std::deque<typename Map::Dart_handle>::
+        for ( typename std::deque<typename CMap::Dart_handle>::
               iterator it=modified_darts.begin();
               it!=modified_darts.end(); ++it )
           amap.unmark(*it, mark_modified_darts);
-        /*for ( typename std::deque<typename Map::Dart_handle>::
+        /*for ( typename std::deque<typename CMap::Dart_handle>::
               iterator it=modified_darts2.begin();
               it!=modified_darts2.end(); ++it )
           amap.unmark(*it, mark_modified_darts);*/
@@ -455,7 +456,7 @@ namespace CGAL {
       amap.free_mark(mark_modified_darts);
 
       // We free the marks.
-      /*for (int j=0; j<Map::Helper::nb_attribs; ++j)
+      /*for (int j=0; j<CMap::Helper::nb_attribs; ++j)
       {
         CGAL_assertion( amap.is_whole_map_marked
                         (mark_for_incident_cells[j]) );
@@ -474,25 +475,25 @@ namespace CGAL {
    *  @param adart a dart of the volume to remove.
    *  @return the number of deleted darts.
    */
-  template<class Map,unsigned int i>
-  struct Remove_cell_functor<Map,i,0>
+  template<class CMap,unsigned int i>
+  struct Remove_cell_functor<CMap,i,0>
   {
-    static size_t run(Map& amap, typename Map::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
     {
       CGAL_assertion( adart!=NULL );
 
       int mark = amap.get_new_mark();
-      std::deque<typename Map::Dart_handle> to_erase;
+      std::deque<typename CMap::Dart_handle> to_erase;
       size_t res = 0;
 
-      std::deque<typename Map::Dart_handle> modified_darts;
+      std::deque<typename CMap::Dart_handle> modified_darts;
 
-/*      int mark_for_incident_cells[Map::Helper::nb_attribs];
-      std::deque<std::deque<typename Map::Dart_handle> >
-          incident_cells[Map::Helper::nb_attribs];
+/*      int mark_for_incident_cells[CMap::Helper::nb_attribs];
+      std::deque<std::deque<typename CMap::Dart_handle> >
+          incident_cells[CMap::Helper::nb_attribs];
 
       // Marks used to mark all the incident cells.
-      for (int j=0; j<Map::Helper::nb_attribs; ++j)
+      for (int j=0; j<CMap::Helper::nb_attribs; ++j)
       {
         mark_for_incident_cells[j] = amap.get_new_mark();
         CGAL_assertion( mark_for_incident_cells[j]!=-1 );
@@ -500,7 +501,7 @@ namespace CGAL {
 */
 
       // 1) We mark all the darts of the d-cell.
-      for (CMap_dart_iterator_basic_of_cell<Map,Map::dimension>
+      for (CMap_dart_iterator_basic_of_cell<CMap,CMap::dimension>
            it(amap,adart,mark); it.cont(); ++it)
       {
         to_erase.push_back(it);
@@ -508,17 +509,17 @@ namespace CGAL {
         ++res;
       }
 
-      typename std::deque<typename Map::Dart_handle>::iterator
+      typename std::deque<typename CMap::Dart_handle>::iterator
         it = to_erase.begin();
 
       // 2) We store all the incident cells that can be split by the operation,
       // and we update the dart of the cells incident to the remove volume.
 /*      for ( ; it != to_erase.end(); ++it )
       {
-        if ( !(*it)->is_free(Map::dimension) )
+        if ( !(*it)->is_free(CMap::dimension) )
         {
-          Map::Helper::template Foreach_enabled_attributes
-              <internal::Store_incident_cells<Map,i> >::
+          CMap::Helper::template Foreach_enabled_attributes
+              <internal::Store_incident_cells<CMap,i> >::
               run(&amap, *it, mark, &mark_for_incident_cells[0],
                   &incident_cells[0]);
         }
@@ -529,19 +530,19 @@ namespace CGAL {
       // 3) We unlink all the darts of the volume for beta-d.
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
       {
-        if ( !(*it)->is_free(Map::dimension) &&
-             !amap.is_marked((*it)->beta(Map::dimension), mark) )
+        if ( !(*it)->is_free(CMap::dimension) &&
+             !amap.is_marked((*it)->beta(CMap::dimension), mark) )
         {
-          modified_darts.push_back((*it)->beta(Map::dimension));
-          //(*it)->beta(Map::dimension)->unlink_beta(Map::dimension);
-          amap.template unlink_beta_for_involution(*it, Map::dimension);
+          modified_darts.push_back((*it)->beta(CMap::dimension));
+          //(*it)->beta(CMap::dimension)->unlink_beta(CMap::dimension);
+          amap.template unlink_beta_for_involution<CMap::dimension>(*it);
         }
       }
 
       // 4) We test the split of all the incident cells for all the non
       // void attributes.
-      Map::Helper::template Foreach_enabled_attributes
-                <internal::Test2_split_with_deque<Map,i> >::
+      CMap::Helper::template Foreach_enabled_attributes
+                <internal::Test2_split_with_deque<CMap,i> >::
                 run(&amap, &modified_darts, -1); //, modified_darts2);
                     //&mark_for_incident_cells[0],
                     //&incident_cells[0]);
@@ -554,7 +555,7 @@ namespace CGAL {
       amap.free_mark(mark);
 
       // We free the marks.
-/*      for (int j=0; j<Map::Helper::nb_attribs; ++j)
+/*      for (int j=0; j<CMap::Helper::nb_attribs; ++j)
       {
         CGAL_assertion( amap.is_whole_map_marked
                         (mark_for_incident_cells [j]) );
@@ -573,31 +574,31 @@ namespace CGAL {
    * @param adart a dart of the vertex to remove.
    * @return the number of deleted darts.
    */
-  template<class Map,unsigned int nmi>
-  struct Remove_cell_functor<Map,0,nmi>
+  template<class CMap,unsigned int nmi>
+  struct Remove_cell_functor<CMap,0,nmi>
   {
-    static size_t run(Map& amap, typename Map::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
     {
-      CGAL_assertion( (is_removable<Map,0>(amap,adart)) );
+      CGAL_assertion( (is_removable<CMap,0>(amap,adart)) );
 
       size_t res = 0;
 
-      typename Map::Dart_handle d1, d2;
-      typename Map::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle d1, d2;
+      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
 
       int mark = amap.get_new_mark();
 //      int mark_modified_darts = amap.get_new_mark();
 
-      std::deque<typename Map::Dart_handle> to_erase;
+      std::deque<typename CMap::Dart_handle> to_erase;
 
-      std::deque<typename Map::Dart_handle> modified_darts;
+      std::deque<typename CMap::Dart_handle> modified_darts;
 
-/*      int mark_for_incident_cells[Map::Helper::nb_attribs];
-      std::deque<std::deque<typename Map::Dart_handle> >
-          incident_cells[Map::Helper::nb_attribs];
+/*      int mark_for_incident_cells[CMap::Helper::nb_attribs];
+      std::deque<std::deque<typename CMap::Dart_handle> >
+          incident_cells[CMap::Helper::nb_attribs];
 
       // Marks used to mark all the incident cells.
-      for (int j=0; j<Map::Helper::nb_attribs; ++j)
+      for (int j=0; j<CMap::Helper::nb_attribs; ++j)
       {
         mark_for_incident_cells [j] = amap.get_new_mark();
         CGAL_assertion( mark_for_incident_cells [j]!=-1 );
@@ -605,7 +606,7 @@ namespace CGAL {
 */
 
       // First we store and mark all the darts of the 0-cell to remove.
-      for ( CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart,mark);
+      for ( CMap_dart_iterator_basic_of_cell<CMap,0> it(amap,adart,mark);
             it.cont(); ++it )
       {
         to_erase.push_back(it);
@@ -617,7 +618,7 @@ namespace CGAL {
 
       // Second we store all the incident cells that can be split by
       // the operation.
-      typename std::deque<typename Map::Dart_handle>::iterator it =
+      typename std::deque<typename CMap::Dart_handle>::iterator it =
         to_erase.begin();
 /*      for (; it != to_erase.end(); ++it)
       {
@@ -626,15 +627,15 @@ namespace CGAL {
           if ( !(*it)->is_free(1) && (*it)->beta(0)!=(*it) )
           {
             if ( dg1==NULL ) { dg1=(*it)->beta(0); dg2=(*it)->beta(1); }
-            Map::Helper::template Foreach_enabled_attributes
-                <internal::Store_incident_cells<Map,0> >::
+            CMap::Helper::template Foreach_enabled_attributes
+                <internal::Store_incident_cells<CMap,0> >::
                 run(&amap, *it, mark, &mark_for_incident_cells[0],
                     &incident_cells[0]);
           }
           else
           {
-            Map::Helper::template Foreach_enabled_attributes
-                <internal::Store_incident_cells<Map,0> >::
+            CMap::Helper::template Foreach_enabled_attributes
+                <internal::Store_incident_cells<CMap,0> >::
                 run(&amap, *it, mark, &mark_for_incident_cells[0],
                     &incident_cells[0]);
           }
@@ -643,8 +644,8 @@ namespace CGAL {
         {
           if ( !(*it)->is_free(1) )
           {
-            Map::Helper::template Foreach_enabled_attributes
-                <internal::Store_incident_cells<Map,0> >::
+            CMap::Helper::template Foreach_enabled_attributes
+                <internal::Store_incident_cells<CMap,0> >::
                 run(&amap, (*it)->beta(1), mark, &mark_for_incident_cells[0],
                     &incident_cells[0]);
           }
@@ -657,7 +658,8 @@ namespace CGAL {
 
       // We group the two edges incident if they exist.
       if ( dg1!=NULL )
-        amap.template group_attribute<1>(dg1, dg2);
+        internal::Group_attribute_functor_run<CMap, 1>::
+            run(&amap, dg1, dg2);
 
       // For each dart of the vertex, we modify 0 and 1-links of neighbors.
       for ( it=to_erase.begin(); it != to_erase.end(); ++it)
@@ -676,7 +678,7 @@ namespace CGAL {
             modified_darts.push_back((*it)->beta(0));
           }
 
-          for ( unsigned int j=2; j<=Map::dimension; ++j )
+          for ( unsigned int j=2; j<=CMap::dimension; ++j )
           {
             if ( !(*it)->is_free(j) )
             {
@@ -695,7 +697,7 @@ namespace CGAL {
             modified_darts.push_back((*it)->beta(1));
           }
 
-          for ( unsigned int j=2; j<=Map::dimension; ++j )
+          for ( unsigned int j=2; j<=CMap::dimension; ++j )
           {
             if ( !(*it)->is_free(j) )
             {
@@ -709,9 +711,9 @@ namespace CGAL {
 
       // We test the split of all the incident cells for all the non
       // void attributes.
-      Map::Helper::template Foreach_enabled_attributes
-          <internal::Test2_split_with_deque<Map,0> >::
-               // <internal::Test_split_with_deque<Map,0> >::
+      CMap::Helper::template Foreach_enabled_attributes
+          <internal::Test2_split_with_deque<CMap,0> >::
+               // <internal::Test_split_with_deque<CMap,0> >::
                 run(&amap,
                     &modified_darts, -1); //mark_modified_darts);
                     //&mark_for_incident_cells[0],
@@ -725,7 +727,7 @@ namespace CGAL {
       amap.free_mark(mark);
 
       // We free the marks.
- /*     for (int j=0; j<Map::Helper::nb_attribs; ++j)
+ /*     for (int j=0; j<CMap::Helper::nb_attribs; ++j)
       {
         CGAL_assertion( amap.is_whole_map_marked
                         (mark_for_incident_cells [j]) );
@@ -745,9 +747,9 @@ namespace CGAL {
    * @param adart a dart of the i-cell to remove.
    * @return the number of deleted darts.
    */
-  template < class Map, unsigned int i >
-  size_t remove_cell(Map& amap, typename Map::Dart_handle adart)
-  { return Remove_cell_functor<Map,i,Map::dimension-i>::run(amap,adart); }
+  template < class CMap, unsigned int i >
+  size_t remove_cell(CMap& amap, typename CMap::Dart_handle adart)
+  { return Remove_cell_functor<CMap,i,CMap::dimension-i>::run(amap,adart); }
 
   /** Test if an edge can be inserted onto a 2-cell between two given darts.
    * @param amap the used combinatorial map.
@@ -755,14 +757,14 @@ namespace CGAL {
    * @param adart2 a second dart.
    * @return true iff an edge can be inserted between adart1 and adart2.
    */
-  template < class Map >
-  bool is_insertable_cell_1_in_cell_2(const Map& amap,
-                                      typename Map::Dart_const_handle adart1,
-                                      typename Map::Dart_const_handle adart2)
+  template < class CMap >
+  bool is_insertable_cell_1_in_cell_2(const CMap& amap,
+                                      typename CMap::Dart_const_handle adart1,
+                                      typename CMap::Dart_const_handle adart2)
   {
     CGAL_assertion(adart1 != NULL && adart2 != NULL);
     if ( adart1==adart2 ) return false;
-    for ( CMap_dart_const_iterator_of_orbit<Map,1> it(amap,adart1);
+    for ( CMap_dart_const_iterator_of_orbit<CMap,1> it(amap,adart1);
           it.cont(); ++it )
     {
       if ( it==adart2 )  return true;
@@ -776,11 +778,11 @@ namespace CGAL {
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be contracted.
    */
-  template < class Map, unsigned int i >
-  bool is_contractible(const Map& amap, typename Map::Dart_const_handle adart)
+  template < class CMap, unsigned int i >
+  bool is_contractible(const CMap& amap, typename CMap::Dart_const_handle adart)
   {
     CGAL_assertion(adart != NULL);
-    CGAL_static_assertion(0<=i && i<=Map::dimension);
+    CGAL_static_assertion(0<=i && i<=CMap::dimension);
 
     if ( i==0 ) return false;
     if ( i==1 ) return true;
@@ -788,7 +790,7 @@ namespace CGAL {
     // TODO ? Optimisation possible to not test all
     // the darts of the cell ?
     bool res = true;
-    for (CMap_dart_const_iterator_of_cell<Map,i> it(amap, adart);
+    for (CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
          res && it.cont(); ++it)
     {
       if ( it->beta(i-2)->beta(i-1)!=it->beta(i-1)->beta_inv(i-2) )
@@ -803,28 +805,28 @@ namespace CGAL {
    * @param adart a dart of the i-cell to contract.
    * @return the number of deleted darts.
    */
-  template<class Map, unsigned int i>
+  template<class CMap, unsigned int i>
   struct Contract_cell_functor
   {
-    static size_t run(Map& amap, typename Map::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
     {
-      CGAL_static_assertion ( 2<=i && i<=Map::dimension );
-      CGAL_assertion( (is_contractible<Map,i>(amap, adart)) );
+      CGAL_static_assertion ( 2<=i && i<=CMap::dimension );
+      CGAL_assertion( (is_contractible<CMap,i>(amap, adart)) );
 
       size_t res = 0;
 
-      typename Map::Dart_handle d1, d2;
-      typename Map::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle d1, d2;
+      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
 
       int mark = amap.get_new_mark();
       int mark_modified_darts = amap.get_new_mark();
 
-      std::deque<typename Map::Dart_handle> to_erase;
+      std::deque<typename CMap::Dart_handle> to_erase;
 
       const int imuinv = CGAL_BETAINV(i-1);
 
       // First we store and mark all the darts of the i-cell to contract.
-      for ( CMap_dart_iterator_basic_of_cell<Map,i> it(amap,adart,mark);
+      for ( CMap_dart_iterator_basic_of_cell<CMap,i> it(amap,adart,mark);
             it.cont(); ++it )
       {
         to_erase.push_back(it);
@@ -836,40 +838,41 @@ namespace CGAL {
 
       // We group the two (i+1)-cells incident if they exist.
       if ( dg1!=NULL )
-        amap.template group_attribute<i-1>(dg1, dg2);
+         internal::Group_attribute_functor_run<CMap,i-1>::
+             run(&amap, dg1, dg2);
 
       // Second we update the dart of the cell attributes on non marked darts.
-      typename std::deque<typename Map::Dart_handle>::iterator it =
+      typename std::deque<typename CMap::Dart_handle>::iterator it =
           to_erase.begin();
       for (; it != to_erase.end(); ++it)
         amap.update_dart_of_all_attributes(*it, mark);
 
-      std::deque<typename Map::Dart_handle> modified_darts;
+      std::deque<typename CMap::Dart_handle> modified_darts;
 
       // For each dart of the i-cell, we modify i-links of neighbors.
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
       {
         d1 = (*it)->beta(i);
-        while ( d1!=Map::null_dart_handle && amap.is_marked(d1, mark) )
+        while ( d1!=CMap::null_dart_handle && amap.is_marked(d1, mark) )
         {
           d1 = d1->beta(imuinv)->beta(i);
-          if (d1 == (*it)->beta(i)) d1 = Map::null_dart_handle;
+          if (d1 == (*it)->beta(i)) d1 = CMap::null_dart_handle;
         }
 
         if ( !amap.is_marked(d1, mark_modified_darts) )
         {
           d2 = (*it)->beta(i-1)->beta(i);
-          while ( d2!=Map::null_dart_handle && amap.is_marked(d2, mark) )
+          while ( d2!=CMap::null_dart_handle && amap.is_marked(d2, mark) )
           {
             d2 = d2->beta(i-1)->beta(i);
-            if ( d2==(*it)->beta(i-1)->beta(i) ) d2=Map::null_dart_handle;
+            if ( d2==(*it)->beta(i-1)->beta(i) ) d2=CMap::null_dart_handle;
           }
 
           if ( !amap.is_marked(d2, mark_modified_darts) )
           {
-            if (d1 != Map::null_dart_handle)
+            if (d1 != CMap::null_dart_handle)
             {
-              if (d2 != Map::null_dart_handle && d1!=d2 )
+              if (d2 != CMap::null_dart_handle && d1!=d2 )
               {
                 amap.template basic_link_beta<i>(d1, d2);
                 amap.mark(d1, mark_modified_darts);
@@ -888,7 +891,7 @@ namespace CGAL {
                 }
               }
             }
-            else if (d2 != Map::null_dart_handle)
+            else if (d2 != CMap::null_dart_handle)
             {
               if ( !d2->is_free(i) )
               {
@@ -915,8 +918,8 @@ namespace CGAL {
 
       // We test the split of all the incident cells for all the non
       // void attributes.
-      Map::Helper::template Foreach_enabled_attributes
-          <internal::Test2_split_with_deque<Map,i> >::
+      CMap::Helper::template Foreach_enabled_attributes
+          <internal::Test2_split_with_deque<CMap,i> >::
           run(&amap, &modified_darts, mark_modified_darts);
 
       // We remove all the darts of the i-cell.
@@ -928,7 +931,7 @@ namespace CGAL {
 
       if ( !amap.is_whole_map_unmarked(mark_modified_darts) )
       {
-        for ( typename std::deque<typename Map::Dart_handle>::
+        for ( typename std::deque<typename CMap::Dart_handle>::
               iterator it=modified_darts.begin();
               it!=modified_darts.end(); ++it )
           amap.unmark(*it, mark_modified_darts);
@@ -951,27 +954,27 @@ namespace CGAL {
    * @param adart a dart of the edge to contract.
    * @return the number of deleted darts.
    */
-  template<class Map>
-  struct Contract_cell_functor<Map,1>
+  template<class CMap>
+  struct Contract_cell_functor<CMap,1>
   {
-    static size_t run(Map& amap, typename Map::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
     {
-      CGAL_assertion( (is_contractible<Map,1>(amap,adart)) );
+      CGAL_assertion( (is_contractible<CMap,1>(amap,adart)) );
 
       size_t res = 0;
 
-      typename Map::Dart_handle d1, d2;
-      typename Map::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle d1, d2;
+      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
 
       int mark = amap.get_new_mark();
 //      int mark_modified_darts = amap.get_new_mark();
 
-      std::deque<typename Map::Dart_handle> to_erase;
+      std::deque<typename CMap::Dart_handle> to_erase;
 
-      std::deque<typename Map::Dart_handle> modified_darts;
+      std::deque<typename CMap::Dart_handle> modified_darts;
 
       // First we store and mark all the darts of the 1-cell to contract.
-      for ( CMap_dart_iterator_basic_of_cell<Map,1> it(amap,adart,mark);
+      for ( CMap_dart_iterator_basic_of_cell<CMap,1> it(amap,adart,mark);
             it.cont(); ++it )
       {
         to_erase.push_back(it);
@@ -981,7 +984,7 @@ namespace CGAL {
         ++res;
       }
 
-      typename std::deque<typename Map::Dart_handle>::iterator it =
+      typename std::deque<typename CMap::Dart_handle>::iterator it =
         to_erase.begin();
 
       for (; it != to_erase.end(); ++it)
@@ -989,7 +992,8 @@ namespace CGAL {
 
       // We group the two vertices incident if they exist.
       if ( dg1!=NULL )
-        amap.template group_attribute<0>(dg1, dg2);
+         internal::Group_attribute_functor_run<CMap, 0>::
+             run(&amap, dg1, dg2);
 
       // 4) For each dart of the cell, we modify link of neighbors.
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
@@ -1026,9 +1030,9 @@ namespace CGAL {
 
       // We test the split of all the incident cells for all the non
       // void attributes.
-      Map::Helper::template Foreach_enabled_attributes
-          <internal::Test2_split_with_deque<Map,1> >::
-               // <internal::Test_split_with_deque<Map,0> >::
+      CMap::Helper::template Foreach_enabled_attributes
+          <internal::Test2_split_with_deque<CMap,1> >::
+               // <internal::Test_split_with_deque<CMap,0> >::
                 run(&amap,
                     &modified_darts, -1); //mark_modified_darts);
                     //&mark_for_incident_cells[0],
@@ -1053,9 +1057,9 @@ namespace CGAL {
    * @param adart a dart of the i-cell to remove.
    * @return the number of deleted darts.
    */
-  template < class Map, unsigned int i >
-  size_t contract_cell(Map& amap, typename Map::Dart_handle adart)
-  { return Contract_cell_functor<Map,i>::run(amap,adart); }
+  template < class CMap, unsigned int i >
+  size_t contract_cell(CMap& amap, typename CMap::Dart_handle adart)
+  { return Contract_cell_functor<CMap,i>::run(amap,adart); }
 
   /** Test if a 2-cell can be inserted onto a given 3-cell along
    * a path of edges.
@@ -1064,32 +1068,32 @@ namespace CGAL {
    * @param alast  iterator on the end of the path.
    * @return true iff a 2-cell can be inserted along the path.
    */
-  template <class Map, class InputIterator>
-  bool is_insertable_cell_2_in_cell_3(const Map& amap,
+  template <class CMap, class InputIterator>
+  bool is_insertable_cell_2_in_cell_3(const CMap& amap,
                                       InputIterator afirst,
                                       InputIterator alast)
   {
-    CGAL_static_assertion( Map::dimension>= 3 );
+    CGAL_static_assertion( CMap::dimension>= 3 );
 
     // The path must have at least one dart.
     if (afirst==alast) return false;
-    typename Map::Dart_const_handle prec = NULL;
-    typename Map::Dart_const_handle od = NULL;
+    typename CMap::Dart_const_handle prec = NULL;
+    typename CMap::Dart_const_handle od = NULL;
 
     for (InputIterator it(afirst); it!=alast; ++it)
     {
       // The path must contain only non empty darts.
-      if (*it == NULL || *it==Map::null_dart_handle) return false;
+      if (*it == NULL || *it==CMap::null_dart_handle) return false;
 
       // Two consecutive darts of the path must belong to two edges
       // incident to the same vertex of the same volume.
       if (prec != NULL)
       {
         od = prec->other_extremity();
-        if ( od==Map::null_dart_handle ) return false;
+        if ( od==CMap::null_dart_handle ) return false;
 
         // of and *it must belong to the same vertex of the same volume
-        if ( !belong_to_same_cell<Map, 0, 2>(amap, od, *it) )
+        if ( !belong_to_same_cell<CMap, 0, 2>(amap, od, *it) )
           return false;
       }
       prec = *it;
@@ -1097,9 +1101,9 @@ namespace CGAL {
 
     // The path must be closed.
     od = prec->other_extremity();
-    if ( od==Map::null_dart_handle ) return false;
+    if ( od==CMap::null_dart_handle ) return false;
 
-    if (!belong_to_same_cell<Map, 0, 2>(amap, od, *afirst))
+    if (!belong_to_same_cell<CMap, 0, 2>(amap, od, *afirst))
       return false;
 
     return true;
@@ -1110,25 +1114,25 @@ namespace CGAL {
    * @param adart a dart of the edge (!=NULL && !=null_dart_handle).
    * @return a dart of the new vertex.
    */
-  template<class Map>
-  typename Map::Dart_handle
-  insert_cell_0_in_cell_1(Map& amap, typename Map::Dart_handle adart)
+  template<class CMap>
+  typename CMap::Dart_handle
+  insert_cell_0_in_cell_1(CMap& amap, typename CMap::Dart_handle adart)
   {
-    CGAL_assertion(adart != NULL && adart!=Map::null_dart_handle);
+    CGAL_assertion(adart != NULL && adart!=CMap::null_dart_handle);
 
-    typename Map::Dart_handle d1, d2;
+    typename CMap::Dart_handle d1, d2;
     int mark = amap.get_new_mark();
 
-    std::vector<typename Map::Dart_handle> vect;
+    std::vector<typename CMap::Dart_handle> vect;
     {
-      for (typename Map::template Dart_of_cell_range<1>::iterator it=
+      for (typename CMap::template Dart_of_cell_range<1>::iterator it=
              amap.template darts_of_cell<1>(adart).begin();
            it != amap.template darts_of_cell<1>(adart).end(); ++it)
         vect.push_back(it);
     }
 
     // 3) For each dart of the cell, we modify link of neighbors.
-    typename std::vector<typename Map::Dart_handle>::iterator it = vect.begin();
+    typename std::vector<typename CMap::Dart_handle>::iterator it = vect.begin();
     for (; it != vect.end(); ++it)
     {
       d1 = amap.create_dart();
@@ -1136,7 +1140,7 @@ namespace CGAL {
       if (!(*it)->is_free(1))
       { amap.template basic_link_beta<1>(d1, (*it)->beta(1)); }
 
-      for ( unsigned int dim = 2; dim<=Map::dimension; ++dim )
+      for ( unsigned int dim = 2; dim<=CMap::dimension; ++dim )
       {
         if (!(*it)->is_free(dim) && amap.is_marked((*it)->beta(dim), mark))
         {
@@ -1157,7 +1161,7 @@ namespace CGAL {
 
     amap.free_mark(mark);
 
-    amap.template degroup_attribute<1>(adart, adart->beta(1));
+   // TODO  amap.template degroup_attribute<1>(adart, adart->beta(1));
 
     // CGAL_expensive_postcondition( amap.is_valid() );
 
@@ -1169,16 +1173,16 @@ namespace CGAL {
    * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
    * @return a dart of the new edge, not incident to the vertex of adart1.
    */
-  template<class Map>
-  typename Map::Dart_handle
-  insert_dangling_cell_1_in_cell_2(Map& amap, typename Map::Dart_handle adart1)
+  template<class CMap>
+  typename CMap::Dart_handle
+  insert_dangling_cell_1_in_cell_2(CMap& amap, typename CMap::Dart_handle adart1)
   {
-    CGAL_assertion(adart1!=NULL && adart1!=Map::null_dart_handle);
+    CGAL_assertion(adart1!=NULL && adart1!=CMap::null_dart_handle);
 
     int mark1 = amap.get_new_mark();
-    std::vector<typename Map::Dart_handle> to_unmark;
+    std::vector<typename CMap::Dart_handle> to_unmark;
     {
-      for ( CMap_dart_iterator_basic_of_cell<Map,0> it(amap,adart1,mark1);
+      for ( CMap_dart_iterator_basic_of_cell<CMap,0> it(amap,adart1,mark1);
             it.cont(); ++it )
       {
         to_unmark.push_back(it);
@@ -1186,13 +1190,13 @@ namespace CGAL {
       }
     }
 
-    typename Map::Dart_handle d1 = NULL;
-    typename Map::Dart_handle d2 = NULL;
+    typename CMap::Dart_handle d1 = NULL;
+    typename CMap::Dart_handle d2 = NULL;
     unsigned int s1 = 0;
 
     int treated = amap.get_new_mark();
 
-    CGAL::CMap_dart_iterator_of_involution<Map,1> it1(amap,adart1);
+    CGAL::CMap_dart_iterator_of_involution<CMap,1> it1(amap,adart1);
 
     for ( ; it1.cont(); ++it1)
     {
@@ -1221,7 +1225,7 @@ namespace CGAL {
 
       amap.template link_beta_for_involution<2>(d1, d2);
 
-      for ( unsigned int dim=3; dim<=Map::dimension; ++dim)
+      for ( unsigned int dim=3; dim<=CMap::dimension; ++dim)
       {
         if ( !it1->is_free(dim) &&
              amap.is_marked(it1->beta(dim), treated) )
@@ -1246,7 +1250,7 @@ namespace CGAL {
     CGAL_assertion( amap.is_whole_map_unmarked(treated) );
     amap.free_mark(treated);
 
-    typename std::vector<typename Map::Dart_handle>::iterator it =
+    typename std::vector<typename CMap::Dart_handle>::iterator it =
       to_unmark.begin();
     for (; it != to_unmark.end(); ++it)
     { amap.unmark(*it, mark1); }
@@ -1348,7 +1352,7 @@ namespace CGAL {
     }
 
     //    amap.template degroup_attribute<1>(adart1, adart1->beta(0));
-    amap.template degroup_attribute<2>(d1, d2);
+    // TODO amap.template degroup_attribute<2>(d1, d2);
 
     amap.negate_mark(m1);
     amap.negate_mark(m2);
@@ -1386,13 +1390,13 @@ namespace CGAL {
    * @param alast  iterator on the end of the path.
    * @return a dart of the new 2-cell.
    */
-  template<class Map, class InputIterator>
-  typename Map::Dart_handle
-  insert_cell_2_in_cell_3(Map& amap, InputIterator afirst, InputIterator alast)
+  template<class CMap, class InputIterator>
+  typename CMap::Dart_handle
+  insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
   {
     CGAL_assertion(is_insertable_cell_2_in_cell_3(amap,afirst,alast));
 
-    typename Map::Dart_handle prec = NULL, d = NULL, dd = NULL, first = NULL;
+    typename CMap::Dart_handle prec = NULL, d = NULL, dd = NULL, first = NULL;
     bool withBeta3 = false;
 
     {
@@ -1435,13 +1439,13 @@ namespace CGAL {
     }
 
     // Make copies of the new facet for dimension >=4
-    for ( unsigned int dim=4; dim<=Map::dimension; ++dim )
+    for ( unsigned int dim=4; dim<=CMap::dimension; ++dim )
     {
       if ( !first->is_free(dim) )
       {
-        typename Map::Dart_handle first2 = NULL;
+        typename CMap::Dart_handle first2 = NULL;
         prec = NULL;
-        for ( CMap_dart_iterator_of_orbit<Map,1> it(amap, first);
+        for ( CMap_dart_iterator_of_orbit<CMap,1> it(amap, first);
               it.cont(); ++it )
         {
           d = amap.create_dart();
@@ -1462,7 +1466,7 @@ namespace CGAL {
           }
           else first2 = prec;
 
-          for ( unsigned dim2=2; dim2<=Map::dimension; ++dim2 )
+          for ( unsigned dim2=2; dim2<=CMap::dimension; ++dim2 )
           {
             if ( dim2+1!=dim && dim2!=dim && dim2!=dim+1 )
             {
@@ -1487,9 +1491,9 @@ namespace CGAL {
     }
 
     // Degroup the attributes
-    if ( withBeta3 )
+    /* TODO if ( withBeta3 )
       amap.template degroup_attribute<3>( first, first->beta(3) );
-
+*/
     // CGAL_expensive_postcondition( amap.is_valid() );
 
     return first;
