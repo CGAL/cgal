@@ -1406,6 +1406,8 @@ namespace for the XML file to be processed properly.  -->
           <bool name="SHOW_INCLUDE_FILES">true</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/AABB_tree.tag=../../CGAL.CGAL.3D-Fast-Intersection-and-Distance-Computation/html</item>
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/BGL.tag=../../CGAL.CGAL.CGAL-and-the-Boost-Graph-Library/html</item>
           </list>
         </doxygen>
       </project>
