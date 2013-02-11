@@ -24,7 +24,7 @@ namespace CGAL
  *  - Linearly normalized between [0,1].
  *
  * @pre @a polyhedron.is_pure_triangle()
- * @tparam Polyhedron a CGAL polyhedron
+ * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
@@ -63,7 +63,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * and number of segments. However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
  *
  * @pre @a polyhedron.is_pure_triangle()
- * @tparam Polyhedron a CGAL polyhedron
+ * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">`ReadablePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @tparam SegmentPropertyMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
@@ -111,7 +111,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values.
  *
  * @pre @a polyhedron.is_pure_triangle()
- * @tparam Polyhedron a CGAL polyhedron
+ * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SegmentPropertyMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
