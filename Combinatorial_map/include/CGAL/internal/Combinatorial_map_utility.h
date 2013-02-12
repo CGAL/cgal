@@ -26,6 +26,13 @@
 
 #include <boost/type_traits/is_same.hpp>
 
+/** Some utilities allowing to manage attributes. Indeed, as they as stores
+ *  in tuples, we need to define functors with variadic templated arguments
+ *  to deal with these attributes.
+ *
+ *  The class Combinatorial_map_helper<CMap> defines:
+ *
+ */
 namespace CGAL 
 {
   namespace internal
@@ -659,6 +666,6 @@ namespace CGAL
 
 } //namespace internal
 
-  } //namespace CGAL
+} //namespace CGAL
 
 #endif //CGAL_INTERNAL_COMBINATORIAL_MAP_UTILITY_H
