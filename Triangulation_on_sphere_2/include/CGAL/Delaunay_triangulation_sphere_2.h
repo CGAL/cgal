@@ -636,7 +636,7 @@ insert_cocircular(const Point &p, Locate_type lt, Face_handle loc)
 		this->_tds.set_adjacency(f2,0,loc->neighbor(0),1);
 		
 		
-		delete_face(loc);
+		this->delete_face(loc);
 		
 	   update_ghost_faces(v);
 		return v;
@@ -723,7 +723,7 @@ insert_outside_affine_hull_regular(const Point& p)
 	Vertex_handle nv;
 			
 	//orientation is given by the 2 first points
-	if( collinear_between(v->point(),u->point(),p) || orientation(u->point(),v->point(),p) == LEFT_TURN ) 
+	if( this->collinear_between(v->point(),u->point(),p) || orientation(u->point(),v->point(),p) == LEFT_TURN ) 
 		nv=Base::tds().insert_dim_up(v,false);
 	else 
 		nv=Base::tds().insert_dim_up(v,true); 
@@ -784,7 +784,7 @@ update_ghost_faces(Vertex_handle v, bool first)
         Face_handle f=eit->first;
         Face_handle fn=f->neighbor(0);
         Point q=fn->vertex(1)->point();
-		 if(collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
+		 if(this->collinear_between(f->vertex(0)->point(),f->vertex(1)->point(),q)){
 	        f->ghost()=true;
 		    neg_found = true;
 		 } 
@@ -807,7 +807,7 @@ update_ghost_faces(Vertex_handle v, bool first)
 	}
 			  
 	else { //not first
-	  Face_circulator fc=incident_faces(v,v->face());
+	  Face_circulator fc=this->incident_faces(v,v->face());
 	  Face_circulator done(fc);
        do{
 		if(orientation(fc)!=POSITIVE){
