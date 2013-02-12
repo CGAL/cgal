@@ -111,12 +111,12 @@ public:
 
     Md_point_location pl(result);
 
-    int number_of_surfaces = surfaces.size();
+    std::size_t number_of_surfaces = surfaces.size();
     int j;
     
     std::list<X_monotone_curve_2> curves_col;
     std::list<Point_2> points_col;
-    for(int i=0; i<number_of_surfaces; ++i)
+    for(std::size_t i=0; i<number_of_surfaces; ++i)
     {
       Xy_monotone_surface_3 &cur_surface = surfaces[i];
       // first insert all the projected curves of the boundary of the current surface
@@ -153,7 +153,7 @@ public:
         // we collect all intersections and use sweep to insert them
         Point_2 point;
         Intersection_curve curve;
-        for(unsigned int k=0; k<inter_objs.size(); ++k)
+        for(std::size_t k=0; k<inter_objs.size(); ++k)
         {
           cur_obj = inter_objs[k];
           CGAL_assertion(!cur_obj.is_empty());
@@ -207,7 +207,7 @@ public:
       // first we find the surfaces that are defined over the vertex
       std::list<Xy_monotone_surface_3> defined_surfaces;
       typename Traits::Is_defined_over is_defined_over = traits.is_defined_over_object();      
-      for(int i=0; i<number_of_surfaces; ++i)
+      for(std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_defined_over(vh->point(), surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
 
@@ -222,7 +222,7 @@ public:
       Halfedge_handle hh = hi;
       // first we find the surfaces that are defined over the egde
       std::list<Xy_monotone_surface_3> defined_surfaces;
-      for(int i=0; i<number_of_surfaces; ++i)
+      for(std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_surface_defined_over_edge(hh, surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
 
@@ -241,7 +241,7 @@ public:
       Face_handle fh = fi;
       // first we find the surfaces that are defined over the face
       std::list<Xy_monotone_surface_3> defined_surfaces;
-      for(int i=0; i<number_of_surfaces; ++i)
+      for(std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_surface_defined_over_face(fh, surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
       
