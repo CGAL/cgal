@@ -47,13 +47,14 @@ typedef Polyhedron_vertex_deformation_index_map<Polyhedron> Vertex_index_map;
 typedef Polyhedron_edge_deformation_index_map<Polyhedron> Edge_index_map;
 
 #if defined(CGAL_EIGEN3_ENABLED)
-	#if defined(CGAL_SUPERLU_ENABLED)
-		typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
-	#else
-		typedef CGAL::Eigen_solver_traits< Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType
-																										  , Eigen::COLAMDOrdering<int> >
-																	   > DefaultSolver;
-	#endif
+  #if defined(CGAL_SUPERLU_ENABLED)
+    typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
+  #else
+    typedef CGAL::Eigen_solver_traits<
+                Eigen::SparseLU<
+                  CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
+                  Eigen::COLAMDOrdering<int> >  > DefaultSolver;
+  #endif
 #elif defined(CGAL_TAUCS_ENABLED)
   #include <CGAL/Taucs_solver_traits.h>
   typedef CGAL::Taucs_solver_traits<double> DefaultSolver;
