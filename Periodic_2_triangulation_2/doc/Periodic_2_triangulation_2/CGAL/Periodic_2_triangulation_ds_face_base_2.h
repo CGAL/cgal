@@ -20,7 +20,7 @@ the offset corresponding to vertex \f$ i\f$.
 The implementation of `has_zero_offsets()` results in checking 
 whether all offsets are zero. 
 
-\models ::Periodic_2TriangulationDSFaceBase_2 
+\cgalModels ::Periodic_2TriangulationDSFaceBase_2 
 
 \sa `CGAL::Triangulation_face_base_2` 
 \sa `CGAL::Triangulation_face_base_with_info_2` 

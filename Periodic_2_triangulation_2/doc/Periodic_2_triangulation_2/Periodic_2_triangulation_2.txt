@@ -188,8 +188,7 @@ which stores their combinatorial structure. This separation between
 the geometry and the combinatorics is reflected in the software design
 by the fact that the triangulation classes take two template
 parameters: 
-<UL>
-<LI> the <B>geometric traits</B> class, which provides the type
+- the <B>geometric traits</B> class, which provides the type
 of points to use as well as the elementary operations on them
 (predicates and constructions). Furthermore it contains the offset
 type. The concept for this parameter is described in more detail in
@@ -200,15 +199,13 @@ be refined are `Periodic_2TriangulationTraits_2` (for
 `Periodic_2_Delaunay_triangulation_2`) in the reference
 manual and
 .
-
-<LI> the <B>triangulation data structure</B> class, which stores
+- the <B>triangulation data structure</B> class, which stores
 the combinatorial structure, described in
 Section \ref P2Triangulation2sectds and in more detail in
 Chapter \ref Chapter_2D_Triangulation_Data_Structure. The
-triangulation data structure needs models of the concepts
+triangulation data structure needs alModels of the concepts
 `Periodic_2TriangulationDSFaceBase_2` and
 `Periodic_2TriangulationDSVertexBase_2` as template parameters.
-</UL>
 
 \subsection P2Triangulation2secTraits The Geometric Traits Parameter 
 
@@ -236,7 +233,7 @@ is also a model for the concept `TriangulationTraits_2`.
 
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as models for
+`Filtered_kernel` can all be used as alModels for
 `Traits`. `Periodic_2_triangulation_traits_2` provides exact
 predicates and exact constructions if `Traits` does. It provides
 exact predicates but not exact constructions if
@@ -296,7 +293,7 @@ elementary operations on indices in a face. It uses the default
 parameter of the `Periodic_2_Delaunay_triangulation_2` class for
 the triangulation data structure.
 
-\cgalExample{simple_example.cpp}
+\cgalExample{Periodic_2_triangulation_2/p2t2_simple_example.cpp}
 
 ## Changing the Vertex Base ##
 
@@ -312,7 +309,7 @@ the `TriangulationDataStructure_2` (e.g. a `Vertex_handle` or
 information easily in the vertices. The example below shows how to
 add a `CGAL::Color` this way.
 
-\cgalExample{colored_vertices.cpp}
+\cgalExample{Periodic_2_triangulation_2/p2t2_colored_vertices.cpp}
 
 ## Adding Handles ##
 
@@ -321,7 +318,7 @@ If the user needs to add a type in a vertex that depends on the
 `Face_handle`), he has to derive his own vertex base class, as the
 following example shows.
 
-\cgalExample{periodic_adding_handles.cpp}
+\cgalExample{Periodic_2_triangulation_2/p2t2_periodic_adding_handles.cpp}
 
 ## 9-sheeted Covering ##
 
@@ -336,7 +333,7 @@ the 1-sheeted covering. However, we can insert new points such that the
 point set does not have a Delaunay triangulation in the 1-sheeted
 covering anymore, so the triangulation is not <I>extensible</I>.
 
-\cgalExample{covering.cpp}
+\cgalExample{Periodic_2_triangulation_2/p2t2_covering.cpp}
 
 ## Large Point Set ##
 
@@ -356,7 +353,7 @@ triangulation in 1-sheeted covering.
 It is recommended to run this example only when compiled in release
 mode because of the relatively large number of points.
 
-\cgalExample{large_point_set.cpp}
+\cgalExample{Periodic_2_triangulation_2/p2t2_large_point_set.cpp}
 
 ## Geometric Access ##
 
@@ -375,7 +372,7 @@ triangle whether the offset is (0,0,0) using the
 method `is_null`. If so, we convert the periodic triangle to a
 `PK::Triangle_2`, which requires <I>exact constructions</I>.
 
-\cgalExample{geometric_access.cpp}
+\cgalExample{Periodic_2_triangulation_2/p2t2_geometric_access.cpp}
 
 # Design and Implementation History #
 

@@ -50,7 +50,7 @@ predicates and constructions that are needed by the functions in the
 triangulation classes.
 
 The package uses `Triangulation_data_structure_2` to represent the
-triangulation. The faces and vertices need to be models of the
+triangulation. The faces and vertices need to be alModels of the
 concepts `Periodic_2TriangulationDSFaceBase_2` and
 `TriangulationDSVertexBase_2`, respectively.
 A triangulation is stored as a collection of vertices and faces that
@@ -68,36 +68,7 @@ Figure  \cgalFigureRef{P2Triangulation2figorient}.
 
 In order to be able to specify the triangle that contain vertices
 both inside and outside the original domain we store additional
-offset information for each vertex of a face. These offsets are models
+offset information for each vertex of a face. These offsets are alModels
 of the concept `Periodic_2Offset_2`.
-
-## Concepts ##
-
-- `Periodic_2DelaunayTriangulationTraits_2`
-- `TriangulationDataStructure_2`
-- `Periodic_2TriangulationDSCellBase_2`
-- `TriangulationDSVertexBase_2`
-- `Periodic_2Offset_2`
-
-## Classes ##
-
-### Main Classes ###
-
-- `CGAL::Periodic_2_triangulation_2<PT,TDS>`
-- `CGAL::Periodic_2_Delaunay_triangulation_2<PT,TDS>`
-// TODO(NGHK): - `CGAL::Periodic_2_triangulation_hierarchy_2<PTr>`
-- `CGAL::Periodic_2_triangulation_ds_cell_base_2<>`
-- `CGAL::Periodic_2_triangulation_ds_vertex_base_3<>`
-- `CGAL::Periodic_2_offset_2`
-
-### Traits Classes ###
-
-- `CGAL::Periodic_2_triangulation_traits_2<Traits,Periodic_2Offset_2>`
-
-## Enums ##
-
-- `CGAL::Periodic_2_triangulation_2::Iterator_type`
-- `CGAL::Periodic_2_triangulation_2::Locate_type`
-
 */
 

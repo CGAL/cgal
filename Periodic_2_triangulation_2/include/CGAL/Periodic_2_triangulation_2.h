@@ -198,11 +198,6 @@ public:
   /// Functor that returns the point given a vertex
   /// \n NGHK: implemented
   typedef Project_point<Vertex> Proj_point;
-  /// Iterator over the points in the triangulation
-  /// \n NGHK: implemented
-  typedef Iterator_project<Vertex_iterator, Proj_point, const Point&,
-      const Point*, std::ptrdiff_t, std::bidirectional_iterator_tag>
-      Point_iterator;
 
   /// \name STL types
   // \{
@@ -448,8 +443,8 @@ public:
   Periodic_segment periodic_segment(const Face_handle &f, int i) const {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= 2);
-    return make_array(periodic_point(f, (i + 1) % 3),
-                      periodic_point(f, (i + 2) % 3));
+    return make_array(periodic_point(f, ccw(i) % 3),
+                      periodic_point(f, cw(i) % 3));
   }
 
   /// Same as the previous method for edge e.
@@ -471,6 +466,9 @@ public:
   /// NGHK: Implemented
   Point point(const Periodic_point & pp) const {
     return construct_point(pp.first, pp.second);
+  }
+  Point point(const Vertex_handle &v) const {
+    return point(periodic_point(v));
   }
   /// Converts the Periodic_segment ps to a Segment in \f$R^2\f$.
   /// NGHK: Implemented
@@ -511,6 +509,19 @@ public:
     return triangle(periodic_triangle(f));
   }
   //\}
+
+  Point move_in_domain(const Point &p) {
+    typename Gt::FT x = p.x();
+    typename Gt::FT y = p.y();
+    
+    while (x < _domain.xmin()) x += _domain.xmax()-_domain.xmin();
+    while (x >= _domain.xmax()) x -= _domain.xmax()-_domain.xmin();
+
+    while (y < _domain.ymin()) y += _domain.ymax()-_domain.ymin();
+    while (y >= _domain.ymax()) y -= _domain.ymax()-_domain.ymin();
+
+    return Point(x,y);
+  }
 
   /// \name Queries on simplices
   // \{
@@ -553,7 +564,6 @@ public:
 
   /// Returns the oriented side of the point p with respect to the
   /// triangle defined by the face f
-  /// \n NGHK: Not yet implemented
   Oriented_side oriented_side(Face_handle f, const Point& p) const {
     return oriented_side(f, p, Offset());
   }
@@ -795,7 +805,6 @@ public:
   //\{
 
   /// Insert the first vertex in the triangulation and creates the 9-cover.
-  /// NGHK: updates the too long edge list.
   Vertex_handle insert_first(const Point& p);
   /// Inserts p in the face f and sets the offsets of the newly created faces
   /// Insert periodic copies in all periodic copies of the domain
@@ -807,11 +816,9 @@ public:
   Vertex_handle insert_in_edge(const Point& p, Face_handle f, int i);
 
   /// Remove a degree 3 vertex from a 2D triangulation
-  /// \n NGHK: not implemented
   void remove_degree_3(Vertex_handle v);
 
   /// Remove a vertex from a 2D triangulation with number_of_vertices() == 1
-  /// \n NGHK: implemented
   void remove_first(Vertex_handle v);
   /// Remove a vertex from a 2D triangulation with more than one vertex
   /// \n NGHK: not implemented
@@ -820,12 +827,14 @@ public:
   /// creates a new vertex v and use it to star the hole whose
   /// boundary is described by the sequence of edges [edge_begin,
   /// edge_end). Returns a handle to the new vertex.
+  /// \n NGHK: not implemented
   template<class EdgeIt>
   Vertex_handle star_hole(Point p, EdgeIt edge_begin, EdgeIt edge_end);
 
   /// same as above, except that the algorithm first recycles faces in
   /// the sequence [face_begin, face_end) and create new ones
   /// only when the sequence is exhausted.  
+  /// \n NGHK: not implemented
   template<class EdgeIt, class FaceIt>
   Vertex_handle star_hole(Point p, EdgeIt edge_begin, EdgeIt edge_end,
       FaceIt face_begin, FaceIt face_end);

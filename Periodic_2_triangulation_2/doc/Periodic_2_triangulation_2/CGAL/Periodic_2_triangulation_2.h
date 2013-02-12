@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic2Triangulation2
+\ingroup PkgPeriodic2Triangulation2MainClasses
 
 The class `Periodic_2_triangulation_2` represents a 2-dimensional 
 triangulation of a point set in \f$ \mathbb T_c^2\f$. 
@@ -218,7 +218,7 @@ typedef Tds::difference_type difference_type;
 \name Handles, Iterators and Circulators
 
 The vertices and faces of the triangulations are accessed through
-`handles`, `iterators` and `circulators`. The handles are models of
+`handles`, `iterators` and `circulators`. The handles are alModels of
 the concept `Handle` which basically offers the two dereference
 operators and `->`. The iterators and circulators are all
 bidirectional and non-mutable. The circulators and iterators are
@@ -266,22 +266,22 @@ exactly one representative.
 typedef Hidden_type Unique_vertex_iterator; 
 
 /*! 
-\advanced For compatibility with `Triangulation_2`.
+\cgalAdvanced For compatibility with `Triangulation_2`.
 */ 
 typedef Face_iterator Finite_faces_iterator; 
 
 /*! 
-\advanced For compatibility with `Triangulation_2`.
+\cgalAdvanced For compatibility with `Triangulation_2`.
 */ 
 typedef Edge_iterator Finite_edges_iterator; 
 
 /*! 
-\advanced For compatibility with `Triangulation_2`.
+\cgalAdvanced For compatibility with `Triangulation_2`.
 */ 
 typedef Vertex_iterator Finite_vertices_iterator; 
 
 /*! 
-\advanced For compatibility with `Triangulation_2`.
+\cgalAdvanced For compatibility with `Triangulation_2`.
 */ 
 typedef Face_iterator All_faces_iterator; 
 
@@ -427,7 +427,7 @@ size_type number_of_stored_faces() const;
 /// @} 
 
 /// \name Non const access 
-/// \advanced This method is mainly a help for users implementing
+/// \cgalAdvanced This method is mainly a help for users implementing
 /// their own triangulation algorithms.
 /// @{
 
@@ -456,7 +456,7 @@ size_type number_of_stored_edges() const;
 /// @} 
 
 /// \name Non-constant-time queries and conversions 
-/// \advanced It is not recommended to interfere with the built-in
+/// \cgalAdvanced It is not recommended to interfere with the built-in
 /// covering management. Especially a premature conversion to the
 /// 1-sheeted covering space might lead to problems when modifying the
 /// triangulation later.
@@ -690,7 +690,6 @@ Locate_type& lt,
 int& li, 
 Face_handle h =Face_handle() ) const; 
 
-// TODO(NGHK): Check
 /*! 
 Returns on which side of the oriented boundary of `f` 
 the point `p` lies. 
@@ -772,7 +771,7 @@ const;
 /// \image html it_STORED_small.png 
 /// \image html it_STORED_COVER_DOMAIN_small.jpg
 /// \image html it_UNIQUE_small.png
-/// \iamge html it_UNIQUE_COVER_DOMAIN_small.jpg
+/// \image html it_UNIQUE_COVER_DOMAIN_small.jpg
 /// <center><b>NGHK: Change images. The four different modes of the
 /// geometric iterators: `STORED`, `STORED_COVER_DOMAIN`, `UNIQUE`,
 /// `UNIQUE_COVER_DOMAIN`. Note that in case of computing in the
@@ -886,14 +885,13 @@ Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f) ;
 /*! 
 returns the vertex of the \f$ i^{th}\f$ neighbor of `f` that is 
 opposite to `f`. 
-\pre $0 \leq i \leq 2$. 
+\pre $0 \\leqle i \\leqle 2$. 
 */ 
 Vertex_handle mirror_vertex(Face_handle f, int i) const; 
 
-// TODO(NGHK): Check
 /*! 
 returns the index of `f` in its \f$ i^{th}\f$ neighbor. 
-\pre $0 \leq i \leq 2$. 
+\pre $0 \\leqle i \\leqle 2$. 
 */ 
 int mirror_index(Face_handle f, int i) const; 
 
@@ -904,7 +902,6 @@ int mirror_index(Face_handle f, int i) const;
 /// triangulation when they are applied on a valid triangulation.
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Exchanges the edge 
 incident to `f` and `f->neighbor(i)` with the other diagonal 
@@ -915,7 +912,6 @@ the triangulation is on the 9-sheeted cover.
 */ 
 void flip(Face_handle f, int i); 
 
-// TODO(NGHK): Check
 /*! 
 Inserts point `p` in the triangulation and returns the 
 corresponding vertex. 
@@ -938,7 +934,6 @@ indication to the underlying locate algorithm of where to start.
 Vertex_handle insert(const Point& p, Face_handle f = 
 Face_handle()); 
 
-// TODO(NGHK): Check
 /*! 
 Same as above except that the location 
 of the point `p` to be inserted is assumed to be given by 
@@ -948,14 +943,12 @@ above.)
 Vertex_handle insert(const Point& p, Locate_type lt, 
 Face_handle loc, int li ); 
 
-// TODO(NGHK): Check
 /*! 
 Equivalent to 
 `insert(p)`. 
 */ 
 Vertex_handle push_back(const Point& p); 
 
-// TODO(NGHK): Check
 /*! 
 Inserts the points in the range 
 \f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. Returns the 
@@ -990,7 +983,7 @@ void remove(Vertex_handle v);
 /// @}
 
 /// \name 
-/// \advanced The following member functions offer more specialized
+/// \cgalAdvanced The following member functions offer more specialized
 /// versions of the insertion or removal operations to be used when
 /// one knows to be in the corresponding case. The following functions
 /// are mainly intended to be used in conjunction with the
@@ -998,13 +991,11 @@ void remove(Vertex_handle v);
 /// Delaunay triangulations to perform insertions.
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Inserts the first vertex. 
 */ 
 Vertex_handle insert_first(const Point& p); 
 
-// TODO(NGHK): Check
 /*! 
 Inserts vertex `v` in face 
 `f`. Face `f` is modified, 
@@ -1013,21 +1004,18 @@ two new faces are created. If the triangulation contains periodic copies, a poin
 */ 
 Vertex_handle insert_in_face(const Point& p, Face_handle f); 
 
-// TODO(NGHK): Check
 /*! 
 Inserts vertex v in edge `i` of `f`. If the triangulation contains periodic copies, a point is inserted in all periodic copies. 
 \pre The point in vertex `v` lies on the edge opposite to the vertex `i` of face `f`. 
 */ 
 Vertex_handle insert_in_edge(const Point& p, const Offset &o, Face_handle f, int i); 
 
-// TODO(NGHK): Check
 /*! 
 Removes a vertex of degree three. Two of the incident faces are 
 destroyed, the third one is modified. \pre Vertex `v` is a vertex with degree three. 
 */ 
 void remove_degree_3(Vertex_handle v); 
 
-// TODO(NGHK): Check
 /*! 
 Removes the unique vertex in the 
 triangulation. 
@@ -1058,9 +1046,8 @@ EdgeIt edge_end,
 FaceIt face_begin, 
 FaceIt face_end); 
 
-// TODO(NGHK): Check
 /*! 
-\advanced Changes the domain. Note that this function calls `clear()`,
+\cgalAdvanced Changes the domain. Note that this function calls `clear()`,
 i.e., it erases the existing triangulation.
 */ 
 void set_domain(const Iso_rectangle dom); 
@@ -1070,19 +1057,16 @@ void set_domain(const Iso_rectangle dom);
 /// \name Miscellaneous 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
-Returns \f$ i+1\f$ modulo 3.\pre $0 \leq i \leq 2$. 
+Returns \f$ i+1\f$ modulo 3.\pre $0 \\leqle i \\leqle 2$. 
 */ 
 int ccw(int i) const; 
 
-// TODO(NGHK): Check
 /*! 
-Returns \f$ i+2\f$ modulo 3.\pre $0 \leq i \leq 2$. 
+Returns \f$ i+2\f$ modulo 3.\pre $0 \\leqle i \\leqle 2$. 
 */ 
 int cw(int i) const; 
 
-// TODO(NGHK): Check
 /*! 
 Returns whether the 
 union of the faces `f` and `f->neighbor(i)` form a convex 
@@ -1090,7 +1074,6 @@ quadrilateral.
 */ 
 void flippable(Face_handle f, int i); 
 
-// TODO(NGHK): Check
 /*! 
 Returns the degree of the 
 vertex `v` 
@@ -1100,14 +1083,13 @@ size_t degree(Vertex_handle v);
 /// @} 
 
 /// \name Checking 
-/// \advanced The responsibility of keeping a valid triangulation
+/// \cgalAdvanced The responsibility of keeping a valid triangulation
 /// belongs to the users if advanced operations are used. Obviously
 /// the advanced user, who implements higher levels operations may
 /// have to make a triangulation invalid at some times. The following
 /// method is provided to help the debugging.
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Checks the combinatorial validity of the triangulation and 
 also the validity of its geometric embedding. 

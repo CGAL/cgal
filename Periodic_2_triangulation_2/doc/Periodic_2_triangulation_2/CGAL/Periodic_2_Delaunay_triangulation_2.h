@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic2Triangulation2
+\ingroup PkgPeriodic2Triangulation2MainClasses
 
 The class `Periodic_2_Delaunay_triangulation_2` represents a 
 Delaunay triangulation in two-dimensional periodic space. 
@@ -280,7 +280,7 @@ Point& p, bool perturb ) const;
 /// @} 
 
 /// \name Checking 
-/// \advanced These methods are mainly a debugging help for the users of advanced features.
+/// \cgalAdvanced These methods are mainly a debugging help for the users of advanced features.
 /// @{
 
 /*! 

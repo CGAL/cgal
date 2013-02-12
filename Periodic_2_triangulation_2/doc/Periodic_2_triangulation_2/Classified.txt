@@ -31,7 +31,7 @@ Figure  \ref P2Triangulation2figorient.
 
 In order to be able to specify the triangle that contain vertices both
 inside and outside the original domain we store offsets for each
-vertex of a face within the face. These offsets are models of the
+vertex of a face within the face. These offsets are alModels of the
 concept `Periodic_2Offset_2`.
 
 # Classified Reference Pages #

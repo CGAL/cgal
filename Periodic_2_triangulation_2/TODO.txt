@@ -10,6 +10,7 @@ DOC:
 TODO:
  * Hierarchy
  * loading / saving a triangulation
+ * all_vertices_iterator / vertices_iterator give the same vertices
 
  * Documentation
    * obvious things (that Nico is certainly aware of) still TODOs left, and NGHKs

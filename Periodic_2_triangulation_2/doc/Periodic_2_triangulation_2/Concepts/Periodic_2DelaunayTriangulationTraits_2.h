@@ -13,7 +13,7 @@ predicates from `DelaunayTriangulationTraits_2` can be used
 directly. For efficiency reasons we maintain for each functor the 
 version without offsets. 
 
-\refines ::DelaunayTriangulationTraits_2 and ::Periodic_2TriangulationTraits_2 
+\cgalRefines ::DelaunayTriangulationTraits_2 and ::Periodic_2TriangulationTraits_2 
 
 In addition to the requirements of the concept 
 ::Periodic_2TriangulationTraits_2, the concept ::Periodic_2DelaunayTriangulationTraits_2 provides a predicate to check the empty circle property. The 
@@ -25,8 +25,8 @@ dual functions are called. The additional predicate type
 ::Compare_distance_2 is required if calls to 
 ::nearest_vertex(..) are issued. 
 
-\hasModel `CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>`
-\hasModel `CGAL::Periodic_2_triangulation_traits_2<Traits, Offset>`, which  implements 
+\cgalHasModel `CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>`
+\cgalHasModel `CGAL::Periodic_2_triangulation_traits_2<Traits, Offset>`, which  implements 
 additional the Delaunay predicates as well if the template parameter Traits is a model of `DelaunayTriangulationTraits_2`. 
 
 \sa `DelaunayTriangulationTraits_2` 

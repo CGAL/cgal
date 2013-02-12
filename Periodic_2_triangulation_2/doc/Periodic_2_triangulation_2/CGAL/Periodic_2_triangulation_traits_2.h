@@ -2,9 +2,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPeriodic2Triangulation2
+\ingroup PkgPeriodic2Triangulation2TraitsClasses
 
-The class `Periodic_2_triangulation_traits_2`is designed as a default
+The class `Periodic_2_triangulation_traits_2` is designed as a default
 traits class for the class
 `Periodic_2_triangulation_2<Periodic_2TriangulationTraits_2,TriangulationDataStructure_2>`.
 
@@ -19,8 +19,8 @@ predicates. This holds implicitly for
 `CGAL::Exact_predicates_inexact_constructions_kernel`, as it is an 
 instantiation of `CGAL::Filtered_kernel`. 
 
-\models `Periodic_2TriangulationTraits_2` and 
-\models `Periodic_2DelaunayTriangulationTraits_2` if the template parameter `Traits` is a model of the 
+\alModels `Periodic_2TriangulationTraits_2` and 
+\alModels `Periodic_2DelaunayTriangulationTraits_2` if the template parameter `Traits` is a model of the 
 `DelaunayTriangulationTraits_2` concept. 
 
 */
