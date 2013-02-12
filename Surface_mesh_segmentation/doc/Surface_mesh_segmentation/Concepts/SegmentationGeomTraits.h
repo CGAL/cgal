@@ -14,14 +14,6 @@ of the geometric traits needed by the segmentation fonctions.
 class SegmentationGeomTraits {
 public:
 
-/// \name Number type
-/// @{
-/*! 
-A number type model of FieldWithSqrt (double or float is recommended)
-*/ 
-typedef Hidden_type NT;
-/// @}
-
 /// \name Geometric Types 
 /// @{
 
