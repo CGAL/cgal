@@ -2277,7 +2277,7 @@ protected:
         
         // TODO do we mean location of is_finite?
         bool inf1_x = (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY);
-        int curve_idx;  
+        bool curve_idx;  
         if(!inf1_x) {
             x0 = _minpoint().x(); 
             cpv_line = cpa_2.status_line_for_x(x0, CGAL::POSITIVE);
@@ -2300,7 +2300,7 @@ protected:
             CGAL_assertion(!(ipair.first != -1&&ipair.second != -1));
             this->ptr()->_m_arcno = (ipair.first != -1 ? ipair.first :
                 ipair.second);
-            curve_idx = (ipair.first != -1 ? 0 : 1);
+            curve_idx = (ipair.first == -1);
             this->ptr()->_m_support = cpa_2.curve_analysis(curve_idx);
         }
         // search for source arcno
@@ -2315,8 +2315,8 @@ protected:
             ipair = cpv_line.curves_at_event(this->ptr()->_m_arcno_min);
             if(ipair.first != -1 && ipair.second != -1) 
                 // choose simpler supporting curve
-                this->ptr()->_m_arcno_min = (curve_idx == 0 ?
-                    ipair.first : ipair.second);
+              this->ptr()->_m_arcno_min = ((curve_idx) ?
+                                           ipair.second : ipair.first);
             else {
                 CGAL_assertion(ipair.first != -1||ipair.second != -1);
                 this->ptr()->_m_arcno_min = (ipair.first != -1 ?
@@ -2340,8 +2340,8 @@ protected:
             if(ipair.first != -1 && ipair.second != -1) 
                 // choose simpler supporting curve (the one which matches
                 //  interior arcno)
-                this->ptr()->_m_arcno_max = (curve_idx == 0 ?
-                    ipair.first : ipair.second);
+                this->ptr()->_m_arcno_max = (curve_idx ?
+                    ipair.second : ipair.first);
             else {
                 CGAL_assertion(ipair.first != -1||ipair.second != -1);
                 this->ptr()->_m_arcno_max = (ipair.first != -1 ?
