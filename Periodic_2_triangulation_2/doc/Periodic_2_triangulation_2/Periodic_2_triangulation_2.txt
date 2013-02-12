@@ -318,7 +318,7 @@ If the user needs to add a type in a vertex that depends on the
 `Face_handle`), he has to derive his own vertex base class, as the
 following example shows.
 
-\cgalExample{Periodic_2_triangulation_2/p2t2_periodic_adding_handles.cpp}
+\cgalExample{Periodic_2_triangulation_2/p2t2_adding_handles.cpp}
 
 ## 9-sheeted Covering ##
 
