@@ -7,6 +7,8 @@
 #define NB_PTS_SM 10
 #define PTS_WIDTH  0.01f
 
+#include <GL/glu.h>
+
 template <class Kernel>
 struct drawing_tools{
   typedef typename Kernel::Point_3 Point_3;
