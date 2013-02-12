@@ -59,7 +59,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * This function fills a property map which associates a segment-id (between [0, number of segments -1]) to each facet.
  * Formally, a segment is a set of connected facets which are placed under same cluster.
  *
- * Note that there is no direct relation between the parameter @a number_of_levels
+ * \note There is no direct relation between the parameter @a number_of_levels
  * and number of segments. However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
  *
  * @pre @a polyhedron.is_pure_triangle()
@@ -106,7 +106,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * Basically this function combines CGAL::sdf_values_computation and
  * CGAL::surface_mesh_segmentation_from_sdf_values functions by computing SDF values and segmenting the mesh in one go.
  *
- * Note that for segmenting the mesh several times with different parameters (i.e. number of levels, and smoothing lambda),
+ * \note For segmenting a mesh several times with different parameters (i.e. number of levels, and smoothing lambda),
  * it is wise to first compute SDF values using CGAL::sdf_values_computation,
  * and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values.
  *
