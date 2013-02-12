@@ -1693,6 +1693,7 @@ namespace CGAL {
       int m=get_new_mark();
       std::deque<Dart_handle> dartv;
       std::deque<Dart_handle> modified_darts;
+      std::deque<Dart_handle> modified_darts2;
 
       for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this, adart, m);
            it.cont(); ++it)
@@ -1707,12 +1708,12 @@ namespace CGAL {
         if ( is_marked(it, m) )
         {
           modified_darts.push_back(it);
-          modified_darts.push_back(it->template beta<0>());
+          modified_darts2.push_back(it->template beta<0>());
           unlink_beta_0(it);
         }
         else
         {
-          modified_darts.push_back(it);
+          modified_darts2.push_back(it);
           modified_darts.push_back(it->template beta<1>());
           unlink_beta_1(it);
         }
@@ -1725,12 +1726,11 @@ namespace CGAL {
       CGAL_assertion( is_whole_map_unmarked(m) );
       free_mark(m);
 
-      // TODO pass the mark m to know which dart is modified by b0 of b1
       // We test the split of all the incident cells for all the non
       // void attributes.
       Helper::template Foreach_enabled_attributes_except
           <internal::Test_split_attribute_functor<Self,0>, 1>::
-          run(this, &modified_darts);
+          run(this, modified_darts, modified_darts2);
     }
 
     /** Unsew by beta1 the given dart plus all the required darts
@@ -1748,6 +1748,7 @@ namespace CGAL {
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
       std::deque<Dart_handle> modified_darts;
+      std::deque<Dart_handle> modified_darts2;
 
       for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
            it.cont(); ++it)
@@ -1761,14 +1762,14 @@ namespace CGAL {
       {
         if ( is_marked(it, m) )
         {
-          modified_darts.push_back(it);
+          modified_darts2.push_back(it);
           modified_darts.push_back(it->template beta<1>());
           unlink_beta_1(it);
         }
         else
         {
           modified_darts.push_back(it);
-          modified_darts.push_back(it->template beta<0>());
+          modified_darts2.push_back(it->template beta<0>());
           unlink_beta_0(it);
         }
       }
@@ -1784,7 +1785,7 @@ namespace CGAL {
       // void attributes.
       Helper::template Foreach_enabled_attributes_except
           <internal::Test_split_attribute_functor<Self,1>, 1>::
-          run(this, &modified_darts);
+          run(this, modified_darts, modified_darts2);
     }
 
     /** Unsew by betai the given dart plus all the required darts
@@ -1816,7 +1817,7 @@ namespace CGAL {
       // void attributes.
       Helper::template Foreach_enabled_attributes_except
           <internal::Test_split_attribute_functor<Self,i>, i>::
-          run(this, &modified_darts);
+          run(this, modified_darts);
     }
 
     /** Unsew by betai the given dart plus all the required darts

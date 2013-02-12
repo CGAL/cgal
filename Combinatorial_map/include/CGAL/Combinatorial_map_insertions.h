@@ -48,7 +48,7 @@ insert_cell_0_in_cell_1(CMap& amap, typename CMap::Dart_handle adart)
       }
     }
 
-    amap.template link_beta_1(*it, d1);
+    amap.link_beta_1(*it, d1);
     // TODO remove this group, and use link_beta instead ?
     //amap.group_all_dart_attributes_except(*it, d1, 1);
 
