@@ -487,7 +487,7 @@ namespace CGAL {
     if(solutions.size() == 0) return res;
     if(solutions.size() == 1) {
       if(sign_at<AK>(s2, solutions[0].first) == ZERO) {
-        *res++ = solutions[0]; 
+        *res++ = static_cast<int>(solutions[0]); 
       } return res;
     }
 
@@ -495,18 +495,18 @@ namespace CGAL {
     bool k1 = (sign_at<AK>(s2, solutions[0].first) == ZERO),
          k2 = (sign_at<AK>(s2, solutions[1].first) == ZERO);
     if(k1 && k2) {
-      *res++ = solutions[0];
-      *res++ = solutions[1];
+      *res++ = static_cast<int>(solutions[0]);
+      *res++ = static_cast<int>(solutions[1]);
       return res;
     }
     if(k1) {
       solutions[0].second = 2u;
-      *res++ = solutions[0];
+      *res++ = static_cast<int>(solutions[0]);
       return res;
     }
     if(k2) {
       solutions[1].second = 2u;
-      *res++ = solutions[1];
+      *res++ = static_cast<int>(solutions[1]);
       return res;
     }
     return res;
@@ -541,7 +541,7 @@ template < class AK, class OutputIterator >
     if(solutions.size() == 0) return res;
     if(solutions.size() == 1) {
       if(sign_at<AK>(p1, solutions[0].first) == ZERO) {
-        *res++ = solutions[0]; 
+        *res++ = static_cast<int>(solutions[0]); 
       } return res;
     }
 
@@ -549,18 +549,18 @@ template < class AK, class OutputIterator >
     bool k1 = (sign_at<AK>(p1, solutions[0].first) == ZERO),
          k2 = (sign_at<AK>(p1, solutions[1].first) == ZERO);
     if(k1 && k2) {
-      *res++ = solutions[0];
-      *res++ = solutions[1];
+      *res++ = static_cast<int>(solutions[0]);
+      *res++ = static_cast<int>(solutions[1]);
       return res;
     }
     if(k1) {
       solutions[0].second = 2u;
-      *res++ = solutions[0];
+      *res++ = static_cast<int>(solutions[0]);
       return res;
     }
     if(k2) {
       solutions[1].second = 2u;
-      *res++ = solutions[1];
+      *res++ = static_cast<int>(solutions[1]);
       return res;
     }
     return res;
