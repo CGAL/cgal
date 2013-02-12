@@ -2,21 +2,23 @@
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
-#include <Eigen/SparseLU> // will be re-placed
-///////////////////////////////////////////////// 
-// will be placed under Eigen_solver_traits.h //
-namespace CGAL {
-namespace internal {
-	template <class FT, class EigenMatrix, class EigenOrdering>
-  struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
-    typedef Eigen_sparse_matrix<FT, ::Eigen::ColMajor> type;
-  };
-} // internal
-} // CGAL
-///////////////////////////////////////////////// 
-#ifdef CGAL_SUPERLU_ENABLED
-#include <Eigen/SuperLUSupport>
-#endif
+
+	#ifdef CGAL_SUPERLU_ENABLED
+		#include <Eigen/SuperLUSupport>
+	#else
+		#include <Eigen/SparseLU>
+		///////////////////////////////////////////////// 
+		namespace CGAL {
+		namespace internal {
+			template <class FT, class EigenMatrix, class EigenOrdering>
+			struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
+				typedef Eigen_sparse_matrix<FT, ::Eigen::ColMajor> type;
+			};
+		} // internal
+		} // CGAL
+		///////////////////////////////////////////////// 
+	#endif
+
 #endif
 
 #include "Polyhedron_demo_plugin_helper.h"
@@ -44,11 +46,14 @@ namespace internal {
 typedef Polyhedron_vertex_deformation_index_map<Polyhedron> Vertex_index_map;
 typedef Polyhedron_edge_deformation_index_map<Polyhedron> Edge_index_map;
 
-#if defined(CGAL_EIGEN3_ENABLED) && defined(CGAL_SUPERLU_ENABLED)
-   // typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
-	 typedef CGAL::Eigen_solver_traits< Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType
-																										 , Eigen::COLAMDOrdering<int> >
-																	  > DefaultSolver; // will be re-placed somewhere meaningful
+#if defined(CGAL_EIGEN3_ENABLED)
+	#if defined(CGAL_SUPERLU_ENABLED)
+		typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
+	#else
+		typedef CGAL::Eigen_solver_traits< Eigen::SparseLU< CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType
+																										  , Eigen::COLAMDOrdering<int> >
+																	   > DefaultSolver;
+	#endif
 #elif defined(CGAL_TAUCS_ENABLED)
   #include <CGAL/Taucs_solver_traits.h>
   typedef CGAL::Taucs_solver_traits<double> DefaultSolver;

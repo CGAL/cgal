@@ -92,12 +92,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message(STATUS "NOTICE: Eigen 3.1 (or greater) and TAUCS is not found. parametrization will not be available.")
   endif(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
   
+  option (USE_SUPERLU "Use SuperLU solver for Surface deformation plugin." OFF) 
+  
   if(EIGEN3_FOUND)
     find_package(SuperLU)
-    if(SUPERLU_FOUND)
+    if(SUPERLU_FOUND AND USE_SUPERLU)
       include( ${SUPERLU_USE_FILE} )
-    else()
-      message(STATUS "NOTICE: SuperLU is not found, Surface deformation plugin will not be available.")
+    #else()
+    #  message(STATUS "NOTICE: SuperLU is not found, Surface deformation plugin will not be available.")
     endif()
   endif()
 
