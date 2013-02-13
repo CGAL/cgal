@@ -1,8 +1,6 @@
 #ifndef PROPERTY_MAPS_FOR_EDIT_PLUGIN
 #define PROPERTY_MAPS_FOR_EDIT_PLUGIN
 
-#include "Polyhedron_type.h"
-
 template<class P>
 class Polyhedron_vertex_deformation_index_map
 {
@@ -125,11 +123,9 @@ namespace boost {
  * actual initialization. 
  * It just stores ids for ROS vertices/edges and when any other vertex/edge is queried, 0 will be returned.
  */
-template<class P, class Key>
+template<class Key>
 class Polyhedron_zero_default_index_map
 {
-private:
-  typedef P Polyhedron ;
 public:
   typedef boost::read_write_property_map_tag  category;
   typedef std::size_t                         value_type;
@@ -144,21 +140,21 @@ public:
 
 namespace boost {
 
-  template<class P, class Key> std::size_t get( Polyhedron_zero_default_index_map<P, Key>& pmap
-                                   , typename Key vh)
+  template<class Key> std::size_t get( Polyhedron_zero_default_index_map<Key>& pmap
+                                   , typename Key k)
   {
-    std::map<Key, size_t>::iterator found = pmap.internal_map->find(vh);
+    std::map<Key, size_t>::iterator found = pmap.internal_map->find(k);
     // if the key doesn't exist in the map, then retun 0 to simulate zero initialization
     if(found == pmap.internal_map->end()) { return 0; }
     return found->second;
   }
 
-  template<class P,  class Key> void put( Polyhedron_zero_default_index_map<P, Key>& pmap
-                            , typename Key vh, std::size_t s)
+  template<class Key> void put( Polyhedron_zero_default_index_map<Key>& pmap
+                            , typename Key k, std::size_t s)
   {
     // also provide cleaning facility (it will be useful when ROS is cleaned and another ROS is added to the system)
-    if(s == 0) { pmap.internal_map->erase(vh); }
-    else       { pmap.internal_map->operator[](vh) = s; }
+    if(s == 0) { pmap.internal_map->erase(k); }
+    else       { pmap.internal_map->operator[](k) = s; }
   }
 }
 
