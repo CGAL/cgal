@@ -19,7 +19,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/mo
 include_directories (BEFORE . include ../../include)
 
 # Find CGAL
-find_package(CGAL QUIET COMPONENTS Core Eigen3 MPFI )
+find_package(CGAL QUIET COMPONENTS Eigen3)
 
 if ( CGAL_FOUND )
 
