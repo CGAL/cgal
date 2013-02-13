@@ -241,7 +241,7 @@ namespace CGAL {
         Root_for_spheres_2_3(Root_of_2(p.a1() * alpha + p.b1()),
                              Root_of_2(p.a2() * alpha + p.b2()),
                              Root_of_2(p.a3() * alpha + p.b3())), 
-        static_cast<unsigned>(2)); 
+        2); 
       return res;
     }
 
@@ -263,23 +263,23 @@ namespace CGAL {
         Root_for_spheres_2_3(p.a1() * t1 + p.b1(),
                              p.a2() * t1 + p.b2(),
                              p.a3() * t1 + p.b3()), 
-        static_cast<unsigned>(1)); 
+        1); 
       *res++ = std::make_pair(
         Root_for_spheres_2_3(p.a1() * t2 + p.b1(),
                              p.a2() * t2 + p.b2(),
                              p.a3() * t2 + p.b3()), 
-        static_cast<unsigned>(1));
+        1);
     } else {
       *res++ = std::make_pair(
         Root_for_spheres_2_3(p.a1() * t2 + p.b1(),
                              p.a2() * t2 + p.b2(),
                              p.a3() * t2 + p.b3()), 
-        static_cast<unsigned>(1)); 
+        1); 
       *res++ = std::make_pair(
         Root_for_spheres_2_3(p.a1() * t1 + p.b1(),
                              p.a2() * t1 + p.b2(),
                              p.a3() * t1 + p.b3()), 
-        static_cast<unsigned>(1));
+        1);
     } 
 
     return res;
@@ -321,7 +321,7 @@ namespace CGAL {
         Root_for_spheres_2_3(Root_of_2(p.a() * t + s.a()),
                              Root_of_2(p.b() * t + s.b()),
                              Root_of_2(p.c() * t + s.c())), 
-        static_cast<unsigned>(2)); 
+        2); 
 
       return res;
     }
@@ -481,13 +481,13 @@ namespace CGAL {
       return solve<AK>(s1, s2, p1, res);
     }
 
-    typedef std::vector< std::pair<Root_for_spheres_2_3, size_t> > solutions_container;
+    typedef std::vector< std::pair<Root_for_spheres_2_3, int> > solutions_container;
     solutions_container solutions;
     solve<AK>(p1, p2, s1, std::back_inserter(solutions));
     if(solutions.size() == 0) return res;
     if(solutions.size() == 1) {
       if(sign_at<AK>(s2, solutions[0].first) == ZERO) {
-        *res++ = static_cast<int>(solutions[0]); 
+        *res++ = solutions[0]; 
       } return res;
     }
 
@@ -495,18 +495,18 @@ namespace CGAL {
     bool k1 = (sign_at<AK>(s2, solutions[0].first) == ZERO),
          k2 = (sign_at<AK>(s2, solutions[1].first) == ZERO);
     if(k1 && k2) {
-      *res++ = static_cast<int>(solutions[0]);
-      *res++ = static_cast<int>(solutions[1]);
+      *res++ = solutions[0];
+      *res++ = solutions[1];
       return res;
     }
     if(k1) {
       solutions[0].second = 2u;
-      *res++ = static_cast<int>(solutions[0]);
+      *res++ = solutions[0];
       return res;
     }
     if(k2) {
       solutions[1].second = 2u;
-      *res++ = static_cast<int>(solutions[1]);
+      *res++ = solutions[1];
       return res;
     }
     return res;
@@ -535,13 +535,13 @@ template < class AK, class OutputIterator >
       return solve<AK>(s1, l, res);
     }
 
-    typedef std::vector< std::pair<Root_for_spheres_2_3, size_t> > solutions_container;
+    typedef std::vector< std::pair<Root_for_spheres_2_3, int> > solutions_container;
     solutions_container solutions;
     solve<AK>(s1, l, std::back_inserter(solutions));
     if(solutions.size() == 0) return res;
     if(solutions.size() == 1) {
       if(sign_at<AK>(p1, solutions[0].first) == ZERO) {
-        *res++ = static_cast<int>(solutions[0]); 
+        *res++ = solutions[0]; 
       } return res;
     }
 
@@ -549,18 +549,18 @@ template < class AK, class OutputIterator >
     bool k1 = (sign_at<AK>(p1, solutions[0].first) == ZERO),
          k2 = (sign_at<AK>(p1, solutions[1].first) == ZERO);
     if(k1 && k2) {
-      *res++ = static_cast<int>(solutions[0]);
-      *res++ = static_cast<int>(solutions[1]);
+      *res++ = solutions[0];
+      *res++ = solutions[1];
       return res;
     }
     if(k1) {
       solutions[0].second = 2u;
-      *res++ = static_cast<int>(solutions[0]);
+      *res++ = solutions[0];
       return res;
     }
     if(k2) {
       solutions[1].second = 2u;
-      *res++ = static_cast<int>(solutions[1]);
+      *res++ = solutions[1];
       return res;
     }
     return res;
