@@ -1068,6 +1068,45 @@ struct Conditionnal_run_except<Functor,n,n,Type>
                   const T6&,const T7&,const T8&,const T9&){}
 };
 //------------------------------------------------------------------------------
+template <class Functor,int n>
+struct Conditionnal_run_except<Functor,n,n,CGAL::Void>
+{
+  static void run(){}
+
+  template<class T1>
+  static void run(const T1&){}
+
+  template<class T1,class T2>
+  static void run(const T1&,const T2&){}
+
+  template<class T1,class T2,class T3>
+  static void run(const T1&,const T2&,const T3&){}
+
+  template<class T1,class T2,class T3,class T4>
+  static void run(const T1&,const T2&,const T3&,const T4&){}
+
+  template<class T1,class T2,class T3,class T4,class T5>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&,const T8&){}
+
+  template<class T1,class T2,class T3,class T4,class T5,class T6,class T7,
+           class T8,class T9>
+  static void run(const T1&,const T2&,const T3&,const T4&,const T5&,
+                  const T6&,const T7&,const T8&,const T9&){}
+};
+//------------------------------------------------------------------------------
 template <class Functor,class T,int n=0>
 struct Foreach_static_restricted;
 

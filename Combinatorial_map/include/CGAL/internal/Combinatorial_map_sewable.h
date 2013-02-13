@@ -126,6 +126,16 @@ struct Is_sewable_functor<CMap, 0, dim>
   }
 };
 
+// Specialization for i=1 and 3<dim.
+template<typename CMap, unsigned int dim>
+struct Is_sewable_functor<CMap, 1, dim>
+{
+  static bool run( const CMap* amap,
+                   typename CMap::Dart_const_handle adart1,
+                   typename CMap::Dart_const_handle adart2 )
+  { return Is_sewable_functor<CMap,0>::run(amap, adart2, adart1); }
+};
+
 // Specialization for i=0 and dim=1.
 template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 1>

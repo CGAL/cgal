@@ -160,7 +160,7 @@ namespace CGAL {
     Dart_handle create_dart(Vertex_attribute_handle ahandle)
     {
       Dart_handle res = create_dart();
-      this->template set_attribute_of_dart<0>(res,ahandle);
+      set_vertex_attribute_of_dart(res,ahandle);
       return res;
     }
 
@@ -183,7 +183,10 @@ namespace CGAL {
      */
     void set_vertex_attribute_of_dart(Dart_handle adart, 
                                       Vertex_attribute_handle ah)
-    { return Base::template set_attribute_of_dart<0>(adart,ah); }
+    {
+      return internal::Set_i_attribute_of_dart_functor<Self, 0>::
+          run(this, adart,ah);
+    }
 
     /** Set the vertex attribute of all the darts of the vertex.
      * @param adart a dart of the vertex.
@@ -191,7 +194,7 @@ namespace CGAL {
      */
     void set_vertex_attribute(Dart_handle adart, 
                               Vertex_attribute_handle ah)
-    { return Base::template set_attribute<0>(adart,ah); }
+    { return internal::Set_i_attribute_functor<Self, 0>::run(this, adart,ah); }
 
     /// @return the Vertex_attribute_range for all vertex_attributes.
     Vertex_attribute_range& vertex_attributes()
@@ -631,10 +634,8 @@ namespace CGAL {
      */
     Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p)
     { 
-      Vertex_attribute_handle v=create_vertex_attribute(p);
-      Dart_handle res = CGAL::insert_cell_0_in_cell_1(*this, dh);
-      set_vertex_attribute(res, v);
-      return res;
+      return CGAL::insert_cell_0_in_cell_1(*this, dh,
+                                           create_vertex_attribute(p));
     }
 
     /** Insert a point in a given 2-cell.
@@ -646,12 +647,12 @@ namespace CGAL {
     { 
       Vertex_attribute_handle v = create_vertex_attribute(p);
 
-      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh);
+      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v);
 
-      if (first != NULL) // If the triangulated facet was not made of one dart
-        set_vertex_attribute(first, v);
-      else
+      if ( first== NULL ) // If the triangulated facet was made of one dart
         erase_vertex_attribute(v);
+
+      CGAL_assertion( is_valid() );
 
       return first;
     }
@@ -676,10 +677,8 @@ namespace CGAL {
      */
     Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh, const Point& p)
     {
-      Vertex_attribute_handle v = create_vertex_attribute(p);
-      Dart_handle res = CGAL::insert_dangling_cell_1_in_cell_2(*this, dh);
-      set_vertex_attribute(res, v);
-      return res;
+      return CGAL::insert_dangling_cell_1_in_cell_2
+          (*this, dh, create_vertex_attribute(p));
     }
 
     /** Insert a point in a given i-cell.

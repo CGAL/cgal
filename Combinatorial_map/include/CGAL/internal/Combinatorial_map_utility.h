@@ -279,6 +279,13 @@ namespace CGAL
       static void run(T...){}
     };
 
+    template <class Functor,int n,class Type>
+    struct Conditionnal_run_except<Functor,n,n,Type>
+    {
+      template <class ... T>
+      static void run(T...){}
+    };
+
     template <class Functor,int n>
     struct Conditionnal_run_except<Functor,n,n,Void>
     {
@@ -377,7 +384,6 @@ namespace CGAL
     template <class CMap>
     struct Combinatorial_map_helper
     {
-  
       // defines as type Compact_container<T>
       template <class T>
       struct Add_compact_container{
@@ -418,19 +424,19 @@ namespace CGAL
 
       // Number of enabled attributes
       static const unsigned int nb_attribs = 
-        Number_of_different_type_in_tuple<Void,Enabled_attributes>::value;
+          Number_of_different_type_in_tuple<Void,Enabled_attributes>::value;
       
       // Given a dimension of the cell, return the index of
       // corresponding attribute
       template <int d>
       struct Dimension_index
       { static const int value=
-          Nb_type_different_in_tuple_up_to_k<Void,d,Attributes>::value; };  
+            Nb_type_different_in_tuple_up_to_k<Void,d,Attributes>::value; };
 
       // All these type contains as many entries than the number of
       // enabled attributes
       typedef typename Tuple_converter
-      < Add_compact_container, Enabled_attributes >::type Attribute_containers; 
+      < Add_compact_container, Enabled_attributes >::type Attribute_containers;
 
       typedef typename Tuple_converter< Add_compact_container_iterator,
                                         Enabled_attributes >::type
@@ -450,106 +456,99 @@ namespace CGAL
       struct Attribute_type
       { typedef typename CGAL::cpp11::tuple_element<d,Attributes>::type type; };
 
-    template<int d>
-    struct Attribute_type<d,0>
-    { typedef Void type; };
+      template<int d>
+      struct Attribute_type<d,0>
+      { typedef Void type; };
 
-    // Helper class allowing to retreive the d-cell-handle attribute
-    template<int d, class Type=typename
-             CGAL::cpp11::tuple_element<d,Attributes>::type>
-    struct Attribute_handle
-    {
-      typedef typename CGAL::cpp11::tuple_element
-      <Dimension_index<d>::value,Attribute_handles>::type type;
-    };
+      // Helper class allowing to retreive the d-cell-handle attribute
+      template<int d, class Type=typename Attribute_type<d>::type>
+      struct Attribute_handle
+      {
+         typedef typename CGAL::cpp11::tuple_element
+               <Dimension_index<d>::value,Attribute_handles>::type type;
+      };
   
-    template<int d>
-    struct Attribute_handle<d,Void>
-    { typedef Void type; };
+      template<int d>
+      struct Attribute_handle<d, CGAL::Void>
+      { typedef CGAL::Void* type; };
 
-    // Helper class allowing to retreive the d-cell-const handle attribute
-    template<int d,
-             class Type=typename CGAL::cpp11::tuple_element<d,Attributes>::type>
-    struct Attribute_const_handle
-    {
-      typedef typename CGAL::cpp11::tuple_element
-      <Dimension_index<d>::value, Attribute_const_handles>::type type;
-    };
+      // Helper class allowing to retreive the d-cell-const handle attribute
+      template<int d, class Type=typename Attribute_type<d>::type>
+      struct Attribute_const_handle
+      {
+        typedef typename CGAL::cpp11::tuple_element
+          <Dimension_index<d>::value, Attribute_const_handles>::type type;
+      };
   
-    template<int d>
-    struct Attribute_const_handle<d,Void>
-    { typedef Void type; };
+      template<int d>
+      struct Attribute_const_handle<d, CGAL::Void>
+      { typedef CGAL::Void* type; };
 
-    // Helper class allowing to retreive the d-cell-iterator attribute
-    template<int d,
-             class Type=typename CGAL::cpp11::tuple_element<d,Attributes>::type>
-    struct Attribute_iterator
-    {
-      typedef typename CGAL::cpp11::tuple_element<Dimension_index<d>::value,
-                                                  Attribute_iterators>::type 
-      type;
-    };
+      // Helper class allowing to retreive the d-cell-iterator attribute
+      template<int d, class Type=typename Attribute_type<d>::type>
+      struct Attribute_iterator
+      {
+        typedef typename CGAL::cpp11::tuple_element
+           <Dimension_index<d>::value, Attribute_iterators>::type type;
+      };
   
-    template<int d>
-    struct Attribute_iterator<d,Void>
-    { typedef Void type; };
+      template<int d>
+      struct Attribute_iterator<d, CGAL::Void>
+      { typedef CGAL::Void* type; };
 
-    // Helper class allowing to retreive the d-cell-const handle attribute
-    template<int d,
-             class Type=typename CGAL::cpp11::tuple_element<d,Attributes>::type>
-    struct Attribute_const_iterator
-    {
-      typedef typename CGAL::cpp11::tuple_element
-      <Dimension_index<d>::value, Attribute_const_iterators>::type type;
-    };
+      // Helper class allowing to retreive the d-cell-const handle attribute
+      template<int d, class Type=typename Attribute_type<d>::type>
+      struct Attribute_const_iterator
+      {
+        typedef typename CGAL::cpp11::tuple_element
+           <Dimension_index<d>::value, Attribute_const_iterators>::type type;
+      };
   
-    template<int d>
-    struct Attribute_const_iterator<d,Void>
-    { typedef Void type; };
+      template<int d>
+      struct Attribute_const_iterator<d, CGAL::Void>
+      { typedef CGAL::Void* type; };
 
-    // Helper class allowing to retreive the d-cell-attribute range
-    template<int d, class Type=
-             typename CGAL::cpp11::tuple_element<d,Attributes>::type>
-    struct Attribute_range
-    {
-      typedef typename CGAL::cpp11::tuple_element<Dimension_index<d>::value,
-                                                  Attribute_ranges>::type type;
-    };
+      // Helper class allowing to retreive the d-cell-attribute range
+      template<int d, class Type=typename Attribute_type<d>::type>
+      struct Attribute_range
+      {
+        typedef typename CGAL::cpp11::tuple_element
+             <Dimension_index<d>::value, Attribute_ranges>::type type;
+      };
   
-    template<int d>
-    struct Attribute_range<d,Void>
-    { typedef Void type; };
+      template<int d>
+      struct Attribute_range<d, CGAL::Void>
+      { typedef CGAL::Void type; };
 
-    // Helper class allowing to retreive the d-cell-attribute range
-    template<int d,
-             class Type=typename CGAL::cpp11::tuple_element<d,Attributes>::type>
-    struct Attribute_const_range
-    {
-      typedef const typename CGAL::cpp11::tuple_element
-      <Dimension_index<d>::value, Attribute_ranges >::type type;
-    };
+      // Helper class allowing to retreive the d-cell-attribute const range
+      template<int d, class Type=typename Attribute_type<d>::type>
+      struct Attribute_const_range
+      {
+        typedef const typename CGAL::cpp11::tuple_element
+             <Dimension_index<d>::value, Attribute_ranges >::type type;
+      };
   
-    template<int d>
-    struct Attribute_const_range<d,Void>
-    { typedef Void type; };
+      template<int d>
+      struct Attribute_const_range<d, CGAL::Void>
+      { typedef CGAL::Void type; };
 
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-    // To iterate onto each enabled attributes
-    template <class Functor>
-    struct Foreach_enabled_attributes
-    {
-      template <class ...Ts>
-      static void run(const Ts& ... t)
-      { Foreach_static_restricted<Functor,Attributes >::run(t...); }
-    };
-    // To iterate onto each enabled attributes, except j-attributes
-    template <class Functor, unsigned int j>
-    struct Foreach_enabled_attributes_except
-    {
-      template <class ...Ts>
-      static void run(const Ts& ... t)
-      { Foreach_static_restricted_except<Functor,Attributes,j>::run(t...); }
-    };
+      // To iterate onto each enabled attributes
+      template <class Functor>
+      struct Foreach_enabled_attributes
+      {
+        template <class ...Ts>
+        static void run(const Ts& ... t)
+        { Foreach_static_restricted<Functor,Attributes >::run(t...); }
+      };
+      // To iterate onto each enabled attributes, except j-attributes
+      template <class Functor, unsigned int j>
+      struct Foreach_enabled_attributes_except
+      {
+        template <class ...Ts>
+        static void run(const Ts& ... t)
+        { Foreach_static_restricted_except<Functor,Attributes,j>::run(t...); }
+      };
 #else
     // This one cannot be moved in Combinatorial_map_utility_novariadic.h
     // because this is an inner struct which uses inner type Attributes.

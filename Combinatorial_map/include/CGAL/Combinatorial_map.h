@@ -644,7 +644,7 @@ namespace CGAL {
      */
     unsigned int close(unsigned int i)
     {
-      CGAL_assertion(2<=i && i<=dimension);
+      CGAL_assertion( 2<=i && i<=dimension );
       unsigned int res = 0;
       Dart_handle d, d2;
 
@@ -655,20 +655,30 @@ namespace CGAL {
         {
           d = create_dart();
           ++res;
-          link_beta(it, d, i);
+
+          // Here we cannot use link_beta as i is not a constant
+          // TODO something to solve this problem ?
+          basic_link_beta_for_involution(it, d, i);
+          // we copy all the non void attribute
+          Helper::template Foreach_enabled_attributes_except
+            <internal::Group_attribute_functor_of_dart<Self, dimension+1>,
+              dimension+1>:: run(this,it,d);
+          // we need to remove i-attrib, how to do that ?
 
           // Special cases for 0 and 1
-          if ( !it->is_free(1) && !it->beta(1)->is_free(i) )
+          if ( !it->template is_free<1>() &&
+               !it->template beta<1>()->is_free(i) )
             link_beta<1>(it->beta(1)->beta(i),d);
-          if ( !it->is_free(0) && !it->beta(0)->is_free(i) )
-            link_beta<0>(it->beta(0)->beta(i),d);
+          if ( !it->template is_free<0>() &&
+               !it->template beta<0>()->is_free(i) )
+            link_beta<0>(it->template beta<0>()->beta(i),d);
           // General case for 2...dimension
           for ( unsigned int j=2; j<=dimension; ++j)
           {
             if ( j+1!=i && j!=i && j!=i+1 &&
                  !it->is_free(j) && !it->beta(j)->is_free(i) )
             {
-              link_beta(it->beta(j)->beta(i), d, j);
+              basic_link_beta_for_involution(it->beta(j)->beta(i), d, j);
             }
           }
 
@@ -677,8 +687,8 @@ namespace CGAL {
           { d2 = d2->beta(i-1)->beta(i); }
           if (d2 != null_dart_handle)
           {
-            if (i==2) link_beta<1>(d2, d);
-            else link_beta(d2, d, i-1);
+            if (i==2) basic_link_beta<1>(d2, d);
+            else basic_link_beta_for_involution(d2, d, i-1);
           }
         }
       }
@@ -806,7 +816,7 @@ namespace CGAL {
      * @param os the ostream.
      * @return the ostream.
      */
-    std::ostream& display_darts(std::ostream & os) const
+    std::ostream& display_darts(std::ostream & os, bool attribs=false) const
     {
       unsigned int nb = 0;
       for ( typename Dart_range::const_iterator it=darts().begin();
@@ -816,7 +826,12 @@ namespace CGAL {
         for ( unsigned int i=0; i<=dimension; ++i)
         {
           os << &(*it->beta(i)) << ",\t";
-          if (it->is_free(i))os << "\t";
+          if (it->is_free(i)) os << "\t";
+        }
+        if ( attribs )
+        {
+          Helper::template Foreach_enabled_attributes
+              <internal::Display_attribute_functor<Self> >::run(this, it);
         }
         os << std::endl;
         ++nb;
@@ -1131,6 +1146,8 @@ namespace CGAL {
      * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
      * with \em adart1. The NULL attributes of \em adart1 are updated to
      * non NULL attributes associated to \em adart2, and vice-versa.
+     * If both darts have an attribute, the attribute of adart1 is
+     * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
      * and having different attributes.
      * @param adart1 a first dart.
@@ -1140,17 +1157,19 @@ namespace CGAL {
     {
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      adart1->basic_link_beta<0>(adart2);
-      adart2->basic_link_beta<1>(adart1);
       Helper::template Foreach_enabled_attributes_except
         <internal::Group_attribute_functor_of_dart<Self, 0>, 1>::
         run(this,adart1,adart2);
+      adart1->basic_link_beta<0>(adart2);
+      adart2->basic_link_beta<1>(adart1);
     }
 
     /** Double link two darts, and update the NULL attributes.
      * \em adart1 is 1-linked to \em adart2 and \em adart2 is 0-linked
      * with \em adart1. The NULL attributes of \em adart1 are updated to
      * non NULL attributes associated to \em adart2, and vice-versa.
+     * If both darts have an attribute, the attribute of adart1 is
+     * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
      * and having different attributes.
      * @param adart1 a first dart.
@@ -1160,17 +1179,19 @@ namespace CGAL {
     {
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
-      adart1->basic_link_beta<1>(adart2);
-      adart2->basic_link_beta<0>(adart1);
       Helper::template Foreach_enabled_attributes_except
         <internal::Group_attribute_functor_of_dart<Self, 1>, 1>::
         run(this,adart1,adart2);
+      adart1->basic_link_beta<1>(adart2);
+      adart2->basic_link_beta<0>(adart1);
     }
 
     /** Double link two darts, and update the NULL attributes.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
      * with \em adart1. The NULL attributes of \em adart1 are updated to
      * non NULL attributes associated to \em adart2, and vice-versa.
+     * If both darts have an attribute, the attribute of adart1 is
+     * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
      * and having different attributes.
      * @param adart1 a first dart.
@@ -1184,17 +1205,19 @@ namespace CGAL {
       CGAL_assertion(adart1 != NULL && adart2 != NULL && adart1!=adart2 );
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
       CGAL_assertion( 2<=i && i<=dimension );
+      Helper::template Foreach_enabled_attributes_except
+        <internal::Group_attribute_functor_of_dart<Self, i>, i>::
+        run(this,adart1,adart2);
       adart1->template basic_link_beta<i>(adart2);
       adart2->template basic_link_beta<i>(adart1);
-      Helper::template Foreach_enabled_attributes_except
-        <internal::Group_attribute_functor_of_dart<Self>, i>::
-        run(this,adart1,adart2);
     }
 
     /** Double link two darts, and update the NULL attributes.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
      * with \em adart1. The NULL attributes of \em adart1 are updated to
      * non NULL attributes associated to \em adart2, and vice-versa.
+     * If both darts have an attribute, the attribute of adart1 is
+     * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
      * and having different attributes.
      * @param adart1 a first dart.
@@ -1211,8 +1234,9 @@ namespace CGAL {
     /** Double link a dart with betai to a second dart.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
      * with \em adart1. The NULL attributes of \em adart1 are updated to
-     * non NULL attributes associated to \em adart2, and vice-versa, only .
-     * if update_attributes==true.
+     * non NULL attributes associated to \em adart2, and vice-versa,
+     * if both darts have an attribute, the attribute of adart1 is
+     * associated to adart2 (only if update_attributes==true).
      * @param adart1 a first dart.
      * @param adart2 a second dart.
      * @param update_attributes a boolean to update the enabled attributes.
@@ -1324,28 +1348,39 @@ namespace CGAL {
     {
       CGAL_assertion( (is_sewable<1>(adart1,adart2)) );
 
-      int m = get_new_mark();
-      std::deque<Dart_handle> dartv;
-      for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
-           it.cont(); ++it)
+      if ( adart1==adart2 )
       {
-        mark(it,m);
-        dartv.push_back(it);
+        for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart1);
+              it.cont(); ++it )
+        {
+          basic_link_beta_1(it, it);
+        }
       }
-
-      CMap_dart_iterator_of_involution<Self,1>     I1(*this, adart1);
-      CMap_dart_iterator_of_involution_inv<Self,1> I2(*this, adart2);
-      for ( ; I1.cont(); ++I1, ++I2 )
+      else
       {
-        if ( is_marked(I1,m) ) basic_link_beta_1(I1, I2);
-        else                   basic_link_beta_0(I1, I2);
-      }
+        int m = get_new_mark();
+        std::deque<Dart_handle> dartv;
+        for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
+              it.cont(); ++it)
+        {
+          mark(it,m);
+          dartv.push_back(it);
+        }
 
-      for ( typename std::deque<Dart_handle>::iterator it=dartv.begin();
-           it!=dartv.end(); ++it)
-      { unmark(*it,m); }
-      CGAL_assertion( is_whole_map_unmarked(m) );
-      free_mark(m);
+        CMap_dart_iterator_of_involution<Self,1>     I1(*this, adart1);
+        CMap_dart_iterator_of_involution_inv<Self,1> I2(*this, adart2);
+        for ( ; I1.cont(); ++I1, ++I2 )
+        {
+          if ( is_marked(I1,m) ) basic_link_beta_1(I1, I2);
+          else                   basic_link_beta_0(I1, I2);
+        }
+
+        for ( typename std::deque<Dart_handle>::iterator it=dartv.begin();
+              it!=dartv.end(); ++it)
+        { unmark(*it,m); }
+        CGAL_assertion( is_whole_map_unmarked(m) );
+        free_mark(m);
+      }
     }
 
     /** Topological sew by beta0 two given darts plus all the required darts
@@ -1406,6 +1441,16 @@ namespace CGAL {
     void sew_0(Dart_handle adart1, Dart_handle adart2)
     {
       CGAL_assertion( (is_sewable<0>(adart1,adart2)) );
+
+      if ( adart1==adart2 )
+      {
+        for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart1);
+              it.cont(); ++it )
+        {
+          basic_link_beta_1(it, it);
+        }
+        return;
+      }
 
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
@@ -1474,6 +1519,17 @@ namespace CGAL {
     void sew_1(Dart_handle adart1, Dart_handle adart2)
     {
       CGAL_assertion( (is_sewable<1>(adart1,adart2)) );
+
+      if ( adart1==adart2 )
+      {
+        for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart1);
+              it.cont(); ++it )
+        {
+          basic_link_beta_1(it, it);
+        }
+        return;
+      }
+
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
       for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
@@ -1495,6 +1551,7 @@ namespace CGAL {
       // (by calling when required the onmerge functors).
       for ( ; I1.cont(); ++I1, ++I2 )
       {
+        CGAL_assertion( I2.cont() );
         if ( is_marked(I1,m) )
           Helper::template Foreach_enabled_attributes_except
               <internal::Group_attribute_functor<Self, 1>, 1>::
@@ -1553,7 +1610,7 @@ namespace CGAL {
       for ( ; I1.cont(); ++I1, ++I2 )
       {
         Helper::template Foreach_enabled_attributes_except
-            <internal::Group_attribute_functor<Self>, i>::
+            <internal::Group_attribute_functor<Self, i>, i>::
             run(this, I1, I2);
         // TODO avant group_all_attributes_except(I1,I2,i);
       }
@@ -1810,7 +1867,6 @@ namespace CGAL {
         modified_darts.push_back(it);
         modified_darts.push_back(it->template beta<i>());
         unlink_beta_for_involution<i>(it);
-        ++it;
       }
 
       // We test the split of all the incident cells for all the non
@@ -1987,24 +2043,8 @@ namespace CGAL {
       return mmask_marks[(size_type)amark];
     }
 
-    /* Decrease the cell attribute reference counting of the given dart.
-     * The cell is removed if there is no more darts linked with it.
-     */
-    template<unsigned int i>
-    void decrease_attribute_ref_counting(Dart_handle adart)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                                "decrease_attribute_ref_counting<i> but "
-                                "i-attributes are disabled");
-      if ( adart->template attribute<i>()!=NULL )
-      {
-        adart->template attribute<i>()->dec_nb_refs();
-        if ( adart->template attribute<i>()->get_nb_refs()==0 )
-          erase_attribute<i>(adart->template attribute<i>());
-      }
-    }
-
   public:
+    // TODO REMOVE ?
     /** Update the dart of the given i-cell attribute onto a non marked dart.
      * @param ah the attribute to update.
      * @param amark the mark.
@@ -2085,8 +2125,8 @@ namespace CGAL {
 
       if ( a!=NULL && a->get_nb_refs()!=nb )
       {
-        std::cout<<"ERROR: the number of reference of an attribute is not correct "
-                <<nb<<" != "<<a->get_nb_refs()<<" for dart "
+        std::cout<<"ERROR: the number of reference of an attribute is not correct. "
+                <<"Count: "<<nb<<" != Store in the attribute:"<<a->get_nb_refs()<<" for dart "
                <<&*adart<<std::endl;
         valid = false;
       }
@@ -2955,75 +2995,7 @@ namespace CGAL {
     { return one_dart_per_cell<i,Self::dimension>(); }
     //--------------------------------------------------------------------------
 
-    /** Set the i th attribute of the given dart.
-     * @param adart a dart.
-     * @param ah the attribute to set.
-     */
-    template<unsigned int i>
-    void set_attribute_of_dart(Dart_handle adart,
-                               typename Attribute_handle<i>::type ah)
-    {
-      CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                                "set_attribute_of_dart<i> but "
-                                "i-attributes are disabled");
-      CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
-
-      if ( adart->template attribute<i>()==ah ) return;
-
-      decrease_attribute_ref_counting<i>(adart);
-      adart->template set_attribute<i>(ah);
-      // TODO  remove the set_dart ?
-      // ah->set_dart(adart);
-    }
-
   public:
-
-    /** Set the i-attribute of all the darts of a given i-cell.
-     * @param adart a starting dart.
-     * @param ah an handle to the i-attribute to set.
-     */
-    template<unsigned int i>
-    void set_attribute(Dart_handle adart,
-                       typename Attribute_handle<i>::type ah)
-    {
-      CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "set_attribute<i> but i-attributes are disabled");
-      CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
-      for ( typename Dart_of_cell_range<i>::iterator it(*this, adart);
-           it.cont(); ++it)
-      {
-        if ( it->template attribute<i>()!=ah )
-        {
-          decrease_attribute_ref_counting<i>(it);
-          it->template set_attribute<i>(ah);
-        }
-      }
-      ah->set_dart(adart);
-    }
-    /** Set the i-attribute of all the darts of a given range.
-     * @param adart a starting dart.
-     * @param ah an handle to the i-attribute to set.
-     */
-    template<unsigned int i, typename Range>
-    void set_attribute(Dart_handle adart,
-                       typename Attribute_handle<i>::type ah)
-    {
-      CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "set_attribute<i> but i-attributes are disabled");
-      CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
-      for ( typename Range::iterator it(*this, adart); it.cont(); ++it)
-      {
-        if ( it->template attribute<i>()!=ah )
-        {
-          decrease_attribute_ref_counting<i>(it);
-          it->template set_attribute<i>(ah);
-        }
-      }
-      ah->set_dart(adart);
-    }
 
     /** Compute the dual of a Combinatorial_map.
      * @param amap the cmap in which we build the dual of this map.
@@ -3038,7 +3010,7 @@ namespace CGAL {
     {
       CGAL_assertion( is_without_boundary(dimension) );
 
-      std::map< Dart_handle, Dart_handle > dual;
+      CGAL::Unique_hash_map< Dart_handle, Dart_handle > dual;
       Dart_handle d, d2, res = NULL;
 
       // We clear amap. TODO return a new amap ? (but we need to make
@@ -3058,29 +3030,31 @@ namespace CGAL {
       //    dual(G)=(B, b(n-1)obn, b(n-2)obn,...,b1obn, bn)
       // We suppose darts are run in the same order for both maps.
       typename Dart_range::iterator it2=amap.darts().begin();
-      for ( typename Dart_range::iterator it=darts().begin(); it!=darts().end();
-           ++it, ++it2)
+      for ( typename Dart_range::iterator it=darts().begin();
+            it!=darts().end(); ++it, ++it2)
       {
         d = it2; // The supposition on the order allows to avoid d=dual[it];
-        CGAL_assertion(it2 == dual[it]);
+        CGAL_assertion( it2==dual[it] );
 
         // First case outside the loop since we need to use link_beta1
-        if ( d->is_free(1) &&
-             it->beta(dimension)->beta(dimension-1)!=null_dart_handle )
-          amap.link_beta<1>(d,
-                            dual[it->beta(dimension)->beta(dimension-1)]);
+        if ( d->template is_free<1>() && it->template beta<dimension>()->
+             template beta<dimension-1>()!=null_dart_handle )
+          amap.basic_link_beta_1(d, dual[it->template beta<dimension>()->
+                                 template beta<dimension-1>()]);
 
         // and during the loop we use link_beta(d1,d2,i)
         for ( unsigned int i=dimension-2; i>=1; --i)
         {
           if ( d->is_free(dimension-i) &&
-               it->beta(dimension)->beta(i)!=null_dart_handle )
-            amap.link_beta(d, dual[it->beta(dimension)->beta(i)], dimension-i);
+               it->template beta<dimension>()->beta(i)!=null_dart_handle )
+            amap.basic_link_beta(d, dual[it->template beta<dimension>()->
+                                 beta(i)], dimension-i);
         }
-        if ( d->is_free(dimension) )
+        if ( d->template is_free<dimension>() )
         {
-          CGAL_assertion ( !it->is_free(dimension) );
-          amap.link_beta(d, dual[it->beta(dimension)],dimension);
+          CGAL_assertion ( !it->template is_free<dimension>() );
+          amap.basic_link_beta(d, dual[it->template beta<dimension>()],
+                               dimension);
         }
       }
 

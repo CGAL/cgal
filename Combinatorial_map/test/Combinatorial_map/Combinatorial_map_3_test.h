@@ -309,7 +309,7 @@ struct InsertVertex
     std::cout<<"Before: ";
     map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
     std::cout<<"After insert_vertex "<<nb++<<" : "<<std::flush;
-    insert_cell_0_in_cell_1(map,d);
+    CGAL::insert_cell_0_in_cell_1(map,d);
     map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   }
 private:
@@ -317,7 +317,7 @@ private:
 };
 
 template<class Map>
-  bool test3D()
+bool test3D()
 {
   typedef typename Map::Dart_handle Dart_handle;
   Dart_handle d,dh,dh2,d1,d2,d3,d4;
@@ -397,7 +397,7 @@ template<class Map>
 
   cout << "Before insert_cell_0_in_cell_2: "; ;
 
-  insert_cell_0_in_cell_2(map,d1);
+  CGAL::insert_cell_0_in_cell_2(map,d1);
 
   cout << "After insert_cell_0_in_cell_2: "; ;
 
@@ -422,7 +422,7 @@ template<class Map>
   cout << "Before insert_cell_0_in_cell_2: "; ;
 
   // Triangulate the facet between the two tetrahedra
-  insert_cell_0_in_cell_2(map,d1);
+  CGAL::insert_cell_0_in_cell_2(map,d1);
 
   cout << "map valid: " << map.is_valid() << endl;
   cout << "After insert_cell_0_in_cell_2: "; ;
@@ -689,7 +689,7 @@ template<class Map>
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  d3 = insert_cell_0_in_cell_2(map,d1);
+  d3 = CGAL::insert_cell_0_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   {
@@ -776,7 +776,7 @@ template<class Map>
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  d3 = insert_cell_0_in_cell_2(map,d1);
+  d3 = CGAL::insert_cell_0_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   {
@@ -815,44 +815,44 @@ template<class Map>
   std::cout<<"************************* Test different cases *************************"<<std::endl;
   d1 = map.create_dart();
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex1: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex1: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = map.create_dart(); map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex2: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex2: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_edge(map);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex3: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex3: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_edge(map);
   map.template sew<1>(d1, d1); map.template sew<1>(d1->beta(2), d1->beta(2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex4: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex4: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_edge(map);
   map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex5: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex5: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_combinatorial_polygon(map,3);
   d2 = d1->beta(0); d3 = d1->beta(1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex6: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex6: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex7: " << flush; insert_cell_0_in_cell_1(map,d2);
+  cout << "insert vertex7: " << flush; CGAL::insert_cell_0_in_cell_1(map,d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex8: " << flush; insert_cell_0_in_cell_1(map,d3);
+  cout << "insert vertex8: " << flush; CGAL::insert_cell_0_in_cell_1(map,d3);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -860,19 +860,11 @@ template<class Map>
   d2 = make_combinatorial_polygon(map,3);
   map.template sew<3>(d1, d2); d2 = d1->beta(0); d3 = d1->beta(1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex9: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex9: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex10: " << flush; insert_cell_0_in_cell_1(map,d2);
+  cout << "insert vertex10: " << flush; CGAL::insert_cell_0_in_cell_1(map,d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex11: " << flush; insert_cell_0_in_cell_1(map,d3);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();
-
-  d1 = make_combinatorial_polygon(map,3);
-  d2 = make_combinatorial_polygon(map,3);
-  map.template sew<2>(d1, d2);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex12: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex11: " << flush; CGAL::insert_cell_0_in_cell_1(map,d3);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -880,9 +872,17 @@ template<class Map>
   d2 = make_combinatorial_polygon(map,3);
   map.template sew<2>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex13: " << flush; insert_cell_0_in_cell_1(map,d1->beta(1));
+  cout << "insert vertex12: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex14: " << flush; insert_cell_0_in_cell_1(map,d1);
+  map.clear();
+
+  d1 = make_combinatorial_polygon(map,3);
+  d2 = make_combinatorial_polygon(map,3);
+  map.template sew<2>(d1, d2);
+  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  cout << "insert vertex13: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1->beta(1));
+  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+  cout << "insert vertex14: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -891,13 +891,13 @@ template<class Map>
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  cout << "insert vertex15: " << flush; insert_cell_0_in_cell_1(map,d1->beta(1)->beta(1));
+  cout << "insert vertex15: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1->beta(1)->beta(1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex16: " << flush; insert_cell_0_in_cell_1(map,d1->beta(1));
+  cout << "insert vertex16: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1->beta(1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex17: " << flush; insert_cell_0_in_cell_1(map,d1->beta(0));
+  cout << "insert vertex17: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1->beta(0));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex18: " << flush; insert_cell_0_in_cell_1(map,d1);
+  cout << "insert vertex18: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
     
@@ -910,28 +910,30 @@ template<class Map>
   /*  d1 = map.create_dart();
   d2 = map.create_dart();
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge1: " << flush; insert_cell_1_in_cell_2(map,d1, d2);
+  cout << "insert edge1: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();*/
 
   /*  d1 = make_edge(map,, );
   map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge2: " << flush; insert_cell_1_in_cell_2(map,d1, d1->beta(2));
+  cout << "insert edge2: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1->beta(2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();*/
 
   d1 = make_edge(map);
   d2 = make_edge(map);
-  map.template sew<3>(d1, d2); map.template sew<3>(d1->beta(2), d2->beta(2)); map.template sew<1>(d1, d1);
+  map.template sew<3>(d1, d2);
+  map.template sew<3>(d1->beta(2), d2->beta(2));
+  map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  /*  cout << "insert edge3: " << flush; insert_cell_1_in_cell_2(map,d1, d1);
+  /*  cout << "insert edge3: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1);
       map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;*/
   map.clear();
 
   d1 = make_combinatorial_polygon(map,4 );
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge4: " << flush; insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
+  cout << "insert edge4: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -939,7 +941,7 @@ template<class Map>
   d2 = make_combinatorial_polygon(map,4);
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge5: " << flush; insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
+  cout << "insert edge5: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -947,7 +949,7 @@ template<class Map>
   d2 = make_combinatorial_polygon(map,4);
   map.template sew<2>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge6: " << flush; insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
+  cout << "insert edge6: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
   map.clear();
@@ -960,14 +962,14 @@ template<class Map>
 
   d1 = map.create_dart();
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge1: " << flush; insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge1: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_edge(map);
   map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge2: " << flush; insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge2: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -975,13 +977,13 @@ template<class Map>
   d2 = make_edge(map);
   map.template sew<3>(d1, d2); map.template sew<3>(d1->beta(2), d2->beta(2)); map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge3: " << flush; insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge3: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_combinatorial_polygon(map,4);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge4: " << flush; insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge4: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -989,7 +991,7 @@ template<class Map>
   d2 = make_combinatorial_polygon(map,4);
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge5: " << flush; insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge5: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -1005,7 +1007,7 @@ template<class Map>
   v.push_back(d1); v.push_back(v[0]->beta(1));
   v.push_back(v[1]->beta(1)); v.push_back(v[2]->beta(1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert facet1: " << flush; insert_cell_2_in_cell_3(map,v.begin(),v.end());
+  cout << "insert facet1: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();
 
@@ -1014,7 +1016,7 @@ template<class Map>
   map.template sew<2>(d1, d2);
   v.push_back(d1); v.push_back(v[0]->beta(1)); v.push_back(v[1]->beta(1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert facet2: " << flush; insert_cell_2_in_cell_3(map,v.begin(),v.end());
+  cout << "insert facet2: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();
 
@@ -1025,7 +1027,7 @@ template<class Map>
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   v.push_back(d2); v.push_back(v[0]->beta(1)->beta(2)->beta(1)); 
   v.push_back(v[1]->beta(1)->beta(2)->beta(1)); v.push_back(v[2]->beta(1)->beta(2)->beta(1));
-  cout << "insert facet3: " << flush; insert_cell_2_in_cell_3(map,v.begin(),v.end());
+  cout << "insert facet3: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();
     
@@ -1040,7 +1042,7 @@ template<class Map>
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   v.push_back(d3); v.push_back(v[0]->beta(1)->beta(2)->beta(1)); 
   v.push_back(v[1]->beta(1)->beta(2)->beta(1)); v.push_back(v[2]->beta(1)->beta(2)->beta(1));
-  cout << "insert facet4: " << flush; insert_cell_2_in_cell_3(map,v.begin(),v.end());
+  cout << "insert facet4: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();    
     

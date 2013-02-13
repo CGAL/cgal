@@ -216,51 +216,6 @@ namespace CGAL {
         (mattribute_handles);
     }
 
-  protected:
-    /** Default constructor: initialise marks and beta of this dart.
-     * @param amarks the marks.
-     */
-    Dart(const std::bitset<NB_MARKS>& amarks) : mmarks(amarks)
-    {
-      for (unsigned int i = 0; i <= dimension; ++i)
-        mbeta[i] = Refs::null_dart_handle;
-
-      Helper::template Foreach_enabled_attributes<Init_attribute_functor>::
-        run(this);
-    }
-
-    /** Return the mark value of a given mark number.
-     * @param amark the mark number.
-     * @return the value for this number.
-     */
-    bool get_mark(int amark) const
-    {
-      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
-      return mmarks[(size_type)amark];
-    }
-
-    /** Set the mark of a given mark number to a given value.
-     * @param amark the mark number.
-     * @param AValue the value.
-     */
-    void set_mark(int amark, bool avalue) const
-    {
-      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
-      mmarks.set((size_type)amark, avalue);
-    }
-
-    /** Return all the marks of this dart.
-     * @return the marks.
-     */
-    std::bitset<NB_MARKS> get_marks() const
-    { return mmarks; }
-
-    /** Set simultaneously all the marks of this dart to a given value.
-     * @param amarks the value of the marks.
-     */
-    void set_marks(const std::bitset<NB_MARKS>& amarks) const
-    { mmarks = amarks; }
-
     /** Link this dart with a given dart for a given dimension.
      * @param adart the dart to link with.
      * @param i the dimension.
@@ -306,6 +261,50 @@ namespace CGAL {
     }
 
   protected:
+    /** Default constructor: initialise marks and beta of this dart.
+     * @param amarks the marks.
+     */
+    Dart(const std::bitset<NB_MARKS>& amarks) : mmarks(amarks)
+    {
+      for (unsigned int i = 0; i <= dimension; ++i)
+        mbeta[i] = Refs::null_dart_handle;
+
+      Helper::template Foreach_enabled_attributes<Init_attribute_functor>::
+        run(this);
+    }
+
+    /** Return the mark value of a given mark number.
+     * @param amark the mark number.
+     * @return the value for this number.
+     */
+    bool get_mark(int amark) const
+    {
+      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
+      return mmarks[(size_type)amark];
+    }
+
+    /** Set the mark of a given mark number to a given value.
+     * @param amark the mark number.
+     * @param AValue the value.
+     */
+    void set_mark(int amark, bool avalue) const
+    {
+      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
+      mmarks.set((size_type)amark, avalue);
+    }
+
+    /** Return all the marks of this dart.
+     * @return the marks.
+     */
+    std::bitset<NB_MARKS> get_marks() const
+    { return mmarks; }
+
+    /** Set simultaneously all the marks of this dart to a given value.
+     * @param amarks the value of the marks.
+     */
+    void set_marks(const std::bitset<NB_MARKS>& amarks) const
+    { mmarks = amarks; }
+
     /// Functor used to initialize all attributes to NULL.
     struct Init_attribute_functor
     {

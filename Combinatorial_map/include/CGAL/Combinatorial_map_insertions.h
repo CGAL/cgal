@@ -13,19 +13,21 @@ namespace CGAL {
  */
 template<class CMap>
 typename CMap::Dart_handle
-insert_cell_0_in_cell_1(CMap& amap, typename CMap::Dart_handle adart)
+insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
+                         typename CMap::template
+                         Attribute_handle<0>::type ah=NULL )
 {
   CGAL_assertion(adart != NULL && adart!=CMap::null_dart_handle);
-
   typename CMap::Dart_handle d1, d2;
-  int mark = amap.get_new_mark();
+  int mark=amap.get_new_mark();
 
   // 1) We store all the darts of the edge.
   std::deque<typename CMap::Dart_handle> vect;
+  int m=amap.get_new_mark();
   {
-    for ( typename CMap::template Dart_of_cell_range<1>::iterator it=
-          amap.template darts_of_cell<1>(adart).begin();
-          it != amap.template darts_of_cell<1>(adart).end(); ++it )
+    for ( typename CMap::template Dart_of_cell_basic_range<1>::iterator
+          it=amap.template darts_of_cell_basic<1>(adart, m).begin();
+          it != amap.template darts_of_cell_basic<1>(adart, m).end(); ++it )
       vect.push_back(it);
   }
 
@@ -49,21 +51,23 @@ insert_cell_0_in_cell_1(CMap& amap, typename CMap::Dart_handle adart)
     }
 
     amap.link_beta_1(*it, d1);
-    // TODO remove this group, and use link_beta instead ?
-    //amap.group_all_dart_attributes_except(*it, d1, 1);
-
+    internal::Set_i_attribute_of_dart_functor<CMap, 0>::run(&amap, d1, ah);
     amap.mark(*it, mark);
   }
 
   for (it = vect.begin(); it != vect.end(); ++it)
-  {  amap.unmark(*it, mark); }
+  {
+    amap.unmark(*it, m);
+    amap.unmark(*it, mark);
+  }
 
+  amap.free_mark(m);
   amap.free_mark(mark);
 
   internal::Degroup_attribute_functor_run<CMap, 1>::
       run(&amap, adart, adart->beta(1));
 
-  // CGAL_expensive_postcondition( amap.is_valid() );
+  CGAL_assertion( amap.is_valid() );
 
   return adart->beta(1);
 }
@@ -74,22 +78,21 @@ insert_cell_0_in_cell_1(CMap& amap, typename CMap::Dart_handle adart)
  * @param adart a dart of the facet to triangulate.
  * @return A dart incident to the new vertex.
  */
-// TODO revoir toute la gestion des attributs
-// (utilisation correcte des link avec/sans la maj)
 template < class CMap >
 typename CMap::Dart_handle
-insert_cell_0_in_cell_2(CMap& amap, typename CMap::Dart_handle adart)
+insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
+                         typename CMap::Helper::template
+                         Attribute_handle<0>::type ah=NULL )
 {
   CGAL_assertion(adart != NULL && adart!=CMap::null_dart_handle);
-
   typename CMap::Dart_handle first = adart, prev = NULL, cur = NULL;
   typename CMap::Dart_handle n1 = NULL, n2 = NULL;
 
   typename CMap::Dart_handle nn1 = NULL, nn2 = NULL;
 
   // If the facet is open, we search the dart 0-free
-  while (!first->is_free(0) && first->beta(0) != adart)
-    first = first->beta(0);
+  while ( !first->template is_free<0>() && first->template beta<0>()!=adart )
+    first = first->template beta<0>();
 
   // Stack of couple of dart and dimension for which
   // we must call on_split functor
@@ -102,52 +105,38 @@ insert_cell_0_in_cell_2(CMap& amap, typename CMap::Dart_handle adart)
   std::stack<typename CMap::Dart_handle> tounmark;
 
   // Now we run through the facet
-  for (CGAL::CMap_dart_iterator_basic_of_orbit<CMap,1> it(amap,first);
-       it.cont();)
+  for ( CGAL::CMap_dart_iterator_basic_of_orbit<CMap,1> it(amap, first);
+        it.cont(); )
   {
     cur = it;
     ++it;
     amap.mark(cur, treated);
     tounmark.push(cur);
 
-    if ( cur!=first )
+    if (!cur->template is_free<0>())
     {
-      // TODO
-      //if ( amap.template degroup_attribute_of_dart<2>(first, cur) )
-      {
-        // TODO Functor takiing a range, an attrib_handle, and that set
-        // all the darts of the range to this handle
-       /* for (typename CMap::template Dart_of_involution_range<1>::iterator
-             it=template darts_of_involution<1>(dh2).begin(),
-             itend=template darts_of_involution<1>(dh2).end(); it!=itend;
-             ++it)
-        {
-        }
-        tosplit.push(internal::Couple_dart_and_dim
-                     <typename CMap::Dart_handle>
-                     (first,cur,2));*/
-      }
-    }
-
-    if (!cur->is_free(0))
-    {
-      n1  = amap.create_dart();
+      n1=amap.create_dart();
       amap.link_beta_0(cur, n1);
     }
     else n1 = NULL;
 
-    if (!cur->is_free(1))
+    if (!cur->template is_free<1>())
     {
       n2 = amap.create_dart();
       amap.link_beta_1(cur, n2);
     }
     else n2 = NULL;
 
-    if (n1 != NULL && n2 != NULL)
-      amap.link_beta_0(n1, n2);
+    if ( n1!=NULL )
+    {
+      if ( n2!=NULL )
+        amap.basic_link_beta_0(n1, n2);
 
-    if (n1 != NULL && prev != NULL)
-      amap.template link_beta_for_involution<2>(prev, n1);
+      if ( prev!=NULL )
+        amap.template basic_link_beta_for_involution<2>(prev, n1);
+
+      internal::Set_i_attribute_of_dart_functor<CMap, 0>::run(&amap, n1, ah);
+    }
 
     for (unsigned int dim=3; dim<=CMap::dimension; ++dim)
     {
@@ -168,6 +157,8 @@ insert_cell_0_in_cell_2(CMap& amap, typename CMap::Dart_handle adart)
             nn2=amap.create_dart();
             amap.link_beta_0(cur->beta(dim), nn2);
             amap.basic_link_beta_for_involution(n2, nn2, dim);
+            internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+                run(&amap, nn2, ah);
           }
           else nn2=NULL;
 
@@ -175,7 +166,8 @@ insert_cell_0_in_cell_2(CMap& amap, typename CMap::Dart_handle adart)
             amap.basic_link_beta_1(nn1, nn2);
 
           if (nn1 != NULL && prev != NULL)
-            amap.basic_link_beta_for_involution(nn1, prev->beta(dim), 2);
+            amap.template basic_link_beta_for_involution<2>
+                (nn1, prev->beta(dim));
 
           amap.mark(cur->beta(dim), treated);
           tounmark.push(cur->beta(dim));
@@ -183,9 +175,11 @@ insert_cell_0_in_cell_2(CMap& amap, typename CMap::Dart_handle adart)
         else
         {
           if ( n1!=NULL )
-            amap.basic_link_beta_for_involution(n1, cur->beta(dim)->beta(1), dim);
+            amap.basic_link_beta_for_involution
+                (n1, cur->beta(dim)->template beta<1>(), dim);
           if ( n2!=NULL )
-            amap.basic_link_beta_for_involution(n2, cur->beta(dim)->beta(0), dim);
+            amap.basic_link_beta_for_involution
+                (n2, cur->beta(dim)->template beta<0>(), dim);
         }
       }
     }
@@ -195,35 +189,35 @@ insert_cell_0_in_cell_2(CMap& amap, typename CMap::Dart_handle adart)
 
   if (n2 != NULL)
   {
-    amap.template link_beta_for_involution<2>(first->beta(0), n2);
+    amap.template basic_link_beta_for_involution<2>(first->template beta<0>(),
+                                                    n2);
     for (unsigned int dim=3; dim<=CMap::dimension; ++dim)
     {
       if ( !adart->is_free(dim) )
       {
-        amap.basic_link_beta_for_involution(first->beta(0)->beta(dim),
-                                            n2->beta(dim), 2);
+        amap.template basic_link_beta_for_involution<2>
+            (first->template beta<0>()->beta(dim), n2->beta(dim));
       }
     }
   }
 
-  // Now we unmark all marked darts
+  // Now we unmark all marked darts, and we degroup the new faces with the
+  // initial one (if 2-attributes are non void).
   while ( !tounmark.empty() )
   {
     amap.unmark(tounmark.top(), treated);
+
+    if ( tounmark.top()!=adart )
+      internal::Degroup_attribute_functor_run<CMap, 2>::
+          run(&amap, adart, tounmark.top());
+
     tounmark.pop();
   }
 
   CGAL_assertion(amap.is_whole_map_unmarked(treated));
   amap.free_mark(treated);
 
-  /* TODO while ( !tosplit.empty() )
-  {
-    internal::Couple_dart_and_dim<typename CMap::Dart_handle> c=tosplit.top();
-    tosplit.pop();
-    internal::Call_split_functor<CMap, 2>::run(c.d1, c.d2);
-  } */
-
-  CGAL_expensive_postcondition( amap.is_valid() );
+  CGAL_assertion( amap.is_valid() );
 
   return n1;
 }
@@ -234,7 +228,10 @@ insert_cell_0_in_cell_2(CMap& amap, typename CMap::Dart_handle adart)
  */
 template<class CMap>
 typename CMap::Dart_handle
-insert_dangling_cell_1_in_cell_2(CMap& amap, typename CMap::Dart_handle adart1)
+insert_dangling_cell_1_in_cell_2( CMap& amap,
+                                  typename CMap::Dart_handle adart1,
+                                  typename CMap::Helper::template
+                                  Attribute_handle<0>::type ah=NULL )
 {
   CGAL_assertion(adart1!=NULL && adart1!=CMap::null_dart_handle);
 
@@ -255,7 +252,7 @@ insert_dangling_cell_1_in_cell_2(CMap& amap, typename CMap::Dart_handle adart1)
 
   int treated = amap.get_new_mark();
 
-  CGAL::CMap_dart_iterator_of_involution<CMap,1> it1(amap,adart1);
+  CGAL::CMap_dart_iterator_of_involution<CMap,1> it1(amap, adart1);
 
   for ( ; it1.cont(); ++it1)
   {
@@ -267,22 +264,24 @@ insert_dangling_cell_1_in_cell_2(CMap& amap, typename CMap::Dart_handle adart1)
 
     if ( !it1->is_free(s1) )
     {
-      if ( s1==0 ) amap.template link_beta<1>(it1->template beta<0>(), d2);
-      else amap.template link_beta<0>(it1->template beta<1>(), d2);
+      if ( s1==0 )
+        amap.template link_beta_1(it1->template beta<0>(), d2);
+      else
+        amap.template link_beta_0(it1->template beta<1>(), d2);
     }
 
     if (s1==0)
     {
-      amap.template link_beta<0>(it1, d1);
-      amap.template link_beta<0>(d1,d2);
+      amap.link_beta_0(it1, d1);
+      amap.link_beta_0(d1, d2);
     }
     else
     {
-      amap.template link_beta<1>(it1, d1);
-      amap.template link_beta<1>(d1,d2);
+      amap.link_beta_1(it1, d1);
+      amap.link_beta_1(d1, d2);
     }
 
-    amap.template link_beta_for_involution<2>(d1, d2);
+    amap.template basic_link_beta_for_involution<2>(d1, d2);
 
     for ( unsigned int dim=3; dim<=CMap::dimension; ++dim)
     {
@@ -295,7 +294,7 @@ insert_dangling_cell_1_in_cell_2(CMap& amap, typename CMap::Dart_handle adart1)
           (it1->beta(dim)->beta_inv(s1)->beta(2), d2, dim);
       }
     }
-
+    internal::Set_i_attribute_of_dart_functor<CMap, 0>::run(&amap, d1, ah);
     amap.mark(it1,treated);
   }
 
@@ -311,9 +310,9 @@ insert_dangling_cell_1_in_cell_2(CMap& amap, typename CMap::Dart_handle adart1)
   CGAL_assertion( amap.is_whole_map_unmarked(mark1) );
   amap.free_mark(mark1);
 
-  // CGAL_expensive_postcondition( amap.is_valid() );
+  CGAL_assertion( amap.is_valid() );
 
-  return adart1->beta(0);
+  return adart1->template beta<0>();
 }
 
 /** Test if an edge can be inserted onto a 2-cell between two given darts.
@@ -390,13 +389,13 @@ insert_cell_1_in_cell_2(CMap& amap,
     if ( !it1->is_free(s1) )
     {
       if ( s1==0 ) amap.basic_link_beta_1(it1->template beta<0>(), d2);
-      else amap.link_beta_0(it1->template beta<1>(), d2);
+      else amap.basic_link_beta_0(it1->template beta<1>(), d2);
     }
 
     if ( !it2->is_free(s1) )
     {
       if ( s1==0 ) amap.basic_link_beta_1(it2->template beta<0>(), d1);
-      else amap.link_beta_0(it2->template beta<1>(), d1);
+      else amap.basic_link_beta_0(it2->template beta<1>(), d1);
     }
 
     if ( s1==0 )
@@ -406,10 +405,10 @@ insert_cell_1_in_cell_2(CMap& amap,
     }
     else
     {
-      amap.basic_link_beta_1(it1, d1);
-      amap.basic_link_beta_1(it2, d2);
+      amap.link_beta_1(it1, d1);
+      amap.link_beta_1(it2, d2);
     }
-    amap.link_beta_for_involution(d2, d1, 2);
+    amap.template basic_link_beta_for_involution<2>(d2, d1);
 
     for ( unsigned int dim=3; dim<=CMap::dimension; ++dim)
     {
@@ -454,7 +453,7 @@ insert_cell_1_in_cell_2(CMap& amap,
   CGAL_assertion( amap.is_whole_map_unmarked(mark1) );
   amap.free_mark(mark1);
 
-  // CGAL_expensive_postcondition( amap.is_valid() );
+  CGAL_assertion( amap.is_valid() );
 
   return adart1->template beta<0>();
 }
@@ -471,7 +470,7 @@ bool is_insertable_cell_2_in_cell_3(const CMap& amap,
                                     InputIterator afirst,
                                     InputIterator alast)
 {
-  CGAL_static_assertion( CMap::dimension>= 3 );
+  CGAL_assertion( CMap::dimension>= 3 );
 
   // The path must have at least one dart.
   if (afirst==alast) return false;
@@ -523,9 +522,9 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
   bool withBeta3 = false;
 
   {
-    for (InputIterator it(afirst); it!=alast; ++it)
+    for (InputIterator it(afirst); !withBeta3 && it!=alast; ++it)
     {
-      if (!(*it)->is_free(2)) withBeta3 = true;
+      if (!(*it)->template is_free<2>()) withBeta3 = true;
     }
   }
 
@@ -533,35 +532,34 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
     for (InputIterator it(afirst); it!=alast; ++it)
     {
       d = amap.create_dart();
-      if (withBeta3)
-      {
+      if ( withBeta3 )
         dd = amap.create_dart();
-        amap.template basic_link_beta_for_involution<3>(d, dd);
-      }
 
       if (prec != NULL)
       {
-        amap.template link_beta<0>(prec, d);
+        amap.basic_link_beta_0(prec, d);
         if (withBeta3)
-          amap.template link_beta<1>(prec->template beta<3>(), dd);
+          amap.basic_link_beta_1(prec->template beta<3>(), dd);
       }
       else first = d;
 
-      if (!(*it)->is_free(2))
-        amap.template link_beta_for_involution<2>
+      if ( !(*it)->template is_free<2>() )
+        amap.template basic_link_beta_for_involution<2>
             ((*it)->template beta<2>(), dd);
 
       amap.template link_beta_for_involution<2>(*it, d);
+      if ( withBeta3 )
+        amap.template link_beta_for_involution<3>(d, dd);
 
       prec = d;
     }
   }
 
-  amap.template link_beta<0>(prec, first);
-  if (withBeta3)
+  amap.basic_link_beta_0(prec, first);
+  if ( withBeta3 )
   {
-    amap.template link_beta<1>(prec->template beta<3>(),
-                               first->template beta<3>());
+    amap.basic_link_beta_1(prec->template beta<3>(),
+                           first->template beta<3>());
   }
 
   // Make copies of the new facet for dimension >=4
@@ -575,11 +573,11 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
             it.cont(); ++it )
       {
         d = amap.create_dart();
-        amap.link_beta_for_involution(it->template beta<2>(), d, dim);
+        amap.basic_link_beta_for_involution(it->template beta<2>(), d, dim);
         if ( withBeta3 )
         {
           dd = amap.create_dart();
-          amap.link_beta_for_involution
+          amap.basic_link_beta_for_involution
               (it->template beta<2>()->template beta<3>(), dd, dim);
           amap.template basic_link_beta_for_involution<3>(d, dd);
         }
@@ -588,20 +586,31 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
           amap.link_beta_0(prec, d);
           if ( withBeta3 )
           {
-            amap.link_beta_1(prec->template beta<3>(), dd);
+            amap.basic_link_beta_1(prec->template beta<3>(), dd);
           }
         }
         else first2 = prec;
 
-        for ( unsigned dim2=2; dim2<=CMap::dimension; ++dim2 )
+        // We consider dim2=2 out of the loop to use link_beta instead of
+        // basic _link_beta (to modify non void attributes only once).
+        if ( !it->template is_free<2>() &&
+             it->template beta<2>()->is_free(dim) )
+          amap.template link_beta_for_involution<2>
+              (it->template beta<2>()->beta(dim), d);
+        if ( withBeta3 &&
+             !it->template beta<3>()->template is_free<2>() &&
+             it->template beta<3>()->template beta<2>()->is_free(dim) )
+          amap.template link_beta_for_involution<2>
+            (it->template beta<3>()->template beta<2>()->beta(dim), dd);
+
+        for ( unsigned dim2=3; dim2<=CMap::dimension; ++dim2 )
         {
           if ( dim2+1!=dim && dim2!=dim && dim2!=dim+1 )
           {
-            if ( !it->is_free(dim2) &&
-                 it->beta(dim2)->is_free(dim) )
+            if ( !it->is_free(dim2) && it->beta(dim2)->is_free(dim) )
               amap.basic_link_beta_for_involution(it->beta(dim2)->beta(dim),
                                                   d, dim2);
-            if ( withBeta3 && !it->beta(3)->is_free(dim2) &&
+            if ( withBeta3 && !it->template beta<3>()->is_free(dim2) &&
                  it->template beta<3>()->beta(dim2)->is_free(dim) )
               amap.basic_link_beta_for_involution
                 (it->template beta<3>()->beta(dim2)->beta(dim), dd, dim2);
@@ -609,21 +618,24 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
         }
         prec = d;
       }
-      amap.template link_beta<0>( prec, first2 );
+      amap.basic_link_beta_0( prec, first2 );
       if ( withBeta3 )
       {
-        amap.template link_beta<1>( prec->template beta<3>(),
-                                    first2->template beta<3>() );
+        amap.basic_link_beta_1( prec->template beta<3>(),
+                                first2->template beta<3>() );
       }
     }
   }
 
   // Degroup the attributes
   if ( withBeta3 )
+  { // Here we cannot use Degroup_attribute_functor_run as new darts do not
+    // have their 3-attribute
     internal::Degroup_attribute_functor_run<CMap, 3>::
         run(&amap, first, first->template beta<3>());
+  }
 
-  // CGAL_expensive_postcondition( amap.is_valid() );
+  CGAL_assertion( amap.is_valid() );
 
   return first;
 }

@@ -74,19 +74,31 @@ int main()
 {
   typedef CGAL::Combinatorial_map<2,
     CGAL::Combinatorial_map_min_items<2> > Map1;
-  test2D<Map1>();
-  
+  if ( !test2D<Map1>() )
+  {
+    std::cout<<"ERROR during test2D<Map1>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
   typedef CGAL::Combinatorial_map<2, Map_2_dart_max_items_3 > Map2;
-  test2D<Map2>();
+  if ( !test2D<Map2>() )
+  {
+    std::cout<<"ERROR during test2D<Map2>."<<std::endl;
+    return EXIT_FAILURE;
+  }
 
   typedef CGAL::Combinatorial_map<2, Map_2_dart_max_items_3> Map3;
-  test2D<Map3>();
+  if ( !test2D<Map3>() )
+  {
+    std::cout<<"ERROR during test2D<Map3>."<<std::endl;
+    return EXIT_FAILURE;
+  }
 
   typedef CGAL::Combinatorial_map<3,
     CGAL::Combinatorial_map_min_items<3> > Map4;
   if ( !test3D<Map4>() )
   {
-    std::cout<<"ERROR during Test_LCC_4<LCC4b>."<<std::endl;
+    std::cout<<"ERROR during test3D<Map4>."<<std::endl;
     return EXIT_FAILURE;
   }
 

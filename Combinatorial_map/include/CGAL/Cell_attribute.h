@@ -86,6 +86,9 @@ namespace CGAL {
     template <class T, class Alloc_>
     friend class Compact_container;
 
+    template<typename CMap, unsigned int i, typename T>
+    friend struct internal::Decrease_attribute_functor_run;
+
   public:
     typedef Tag_false                            Supports_cell_dart;
 
@@ -181,6 +184,9 @@ namespace CGAL {
 
     template <class T, class Alloc_>
     friend class Compact_container;
+
+    template<typename CMap, unsigned int i, typename T>
+    friend struct internal::Decrease_attribute_functor_run;
 
   public:
     typedef Tag_true                             Supports_cell_dart;
