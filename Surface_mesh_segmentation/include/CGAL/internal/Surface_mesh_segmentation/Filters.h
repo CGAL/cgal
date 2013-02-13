@@ -95,7 +95,7 @@ public:
     }
   }
 private:
-  /** Gauissian function for weighting. */
+  /** Gaussian function for weighting. */
   double gaussian_function(double value, double deviation) const {
     return exp(-0.5 * (std::pow(value / deviation, 2)));
   }
@@ -154,6 +154,18 @@ public:
         ++facet_it) {
       values[facet_it] = *smoothed_value_it;
     }
+  }
+};
+
+/** @brief A dummy filter to use as template parameter of `Surface_mesh_segmentation` class that does nothing. */
+struct No_filtering {
+  /**
+   * empty implementation of required operator.
+   */
+  template<class Polyhedron,class ValuePropertyMap>
+  void operator()(const Polyhedron& /* mesh */,
+                  int /* window_size */,
+                  ValuePropertyMap /* values */) const {
   }
 };
 
