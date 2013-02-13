@@ -322,8 +322,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
   {
     Polyhedron_deformation_data& data = deform_map[edit_item];
     Deform_mesh* deform = data.deform_mesh;
-    deform->clear_handles();
-    deform->clear_roi();
+    deform->clear();
     data.preprocessed = false;
   }
   edit_item->clear_selected_handles();
@@ -379,12 +378,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess(Scene_edit_polyhedron_it
     new_data.deform_mesh = new_deform;
     new_data.preprocessed = false;
 
-    new_deform->clear_handles();
+    new_deform->clear();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
       new_deform->insert_handle(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
       new_deform->insert_handle(vh);
-    new_deform->clear_roi();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       new_deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
@@ -437,12 +435,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_0(Scene_edit_polyhed
   Deform_mesh* deform = data.deform_mesh;
   if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // vertex selection: reset deform class
   { 
-    deform->clear_handles();
+    deform->clear();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
       deform->insert_handle(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
       deform->insert_handle(vh);
-    deform->clear_roi();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
@@ -482,12 +479,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
   if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // handle selection
   { 
     std::cerr << "reset something" << std::endl;
-    deform->clear_handles();
+    deform->clear();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
       deform->insert_handle(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
       deform->insert_handle(vh);
-    deform->clear_roi();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
@@ -555,12 +551,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
     new_data.deform_mesh = new_deform;
     new_data.preprocessed = false;
 
-    new_deform->clear_handles();
+    new_deform->clear();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
       new_deform->insert_handle(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
       new_deform->insert_handle(vh);
-    new_deform->clear_roi();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       new_deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())

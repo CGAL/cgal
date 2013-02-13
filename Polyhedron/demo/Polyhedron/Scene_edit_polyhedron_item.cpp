@@ -75,7 +75,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   int idx = 0;
   for ( Vertex_handle vh = poly_item->polyhedron()->vertices_begin(); vh != poly_item->polyhedron()->vertices_end(); vh++ )
   {
-    put(*d->vertex_index_map, vh, idx++);
+    boost::put(*d->vertex_index_map, vh, idx++);
   }
   std::vector<double> lengths(poly_item->polyhedron()->size_of_halfedges(),0);
   Edge_length_map edge_length_map(*poly_item->polyhedron(),lengths);
@@ -394,7 +394,7 @@ Scene_edit_polyhedron_item::find_sharp_vertices()
     }
     if (var > 0.2)
     {
-      d->is_sharp_vertices[ get(*d->vertex_index_map, *vb) ] = true ;
+      d->is_sharp_vertices[ boost::get(*d->vertex_index_map, *vb) ] = true ;
     }
     
   }
@@ -416,7 +416,7 @@ Scene_edit_polyhedron_item::find_sharp_vertices_1()
       double angle = dihedral_angle(*eb);
       if (angle < PI*3.0/4.0)
       {
-        d->is_sharp_vertices[ get(*d->vertex_index_map, *vb) ] = true;
+        d->is_sharp_vertices[ boost::get(*d->vertex_index_map, *vb) ] = true;
         break;
       }
     }
@@ -538,7 +538,7 @@ Selected_vertices extend_sharp_edge(Selected_vertices selected_vertices, std::ve
       if(he_it != 0) {
         do {
           const Vertex_handle other_v = he_it->opposite()->vertex();
-          int idx = get(vertex_index_map, other_v);
+          int idx = boost::get(vertex_index_map, other_v);
           if( !is_sharp_vertices[idx] )
           {
             std::vector<Vertex_handle>::iterator it = std::find(selected_vertices_vector.begin(), selected_vertices_vector.end(), other_v);
