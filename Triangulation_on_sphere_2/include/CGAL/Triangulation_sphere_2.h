@@ -27,6 +27,7 @@
 #include <boost/type_traits.hpp>
 #include <boost/type_traits/integral_constant.hpp>
 
+// this class just provides some basic methods and can not be used independently. No insertion or remove implemented.
 
 namespace CGAL {
 
@@ -78,7 +79,7 @@ public:
   typedef typename Tds::Vertex_iterator         All_vertices_iterator;
 
 	
-	// This class is used to generate the Solid*_iterators.
+// This class is used to generate the Solid*_iterators.
 class Ghost_tester
 {
   const Triangulation_sphere_2 *t;
@@ -132,8 +133,8 @@ class Solid_faces_iterator
 };
 	
 	
-typedef Filter_iterator<All_edges_iterator, Ghost_tester> 	Solid_edges_iterator;
-typedef Filter_iterator<All_edges_iterator, Contour_tester> Contour_edges_iterator;
+typedef Filter_iterator<All_edges_iterator, Ghost_tester> 	Solid_edges_iterator;  //Solid edges : both adjacent faces are solid
+typedef Filter_iterator<All_edges_iterator, Contour_tester> Contour_edges_iterator; //one solid and one ghost face adjacent to this face
 	
   enum Locate_type {VERTEX=0, 
 		    EDGE, //1
@@ -151,9 +152,9 @@ protected:
   Tds _tds;
  Face_handle _ghost;
  double _minDistSquared;   //minimal distance of two points to each other
-  double _minRadiusSquared;//minimal distance of a point from center
- double _maxRadiusSquared; //maximal distance of a point from center
- mutable Random rng;  
+  double _minRadiusSquared;//minimal distance of a point from center of the sphere
+ double _maxRadiusSquared; //maximal distance of a point from center of the sphere
+ mutable Random rng;		//used to decide how tostart the march_locate
   
 
 
@@ -169,6 +170,12 @@ private:
 	void init(double radius);
 	
 public:
+	
+//setting function for the radius of the sphere. Attention: the triangulation is cleared in this step!	
+void set_radius(double radius){
+		clear();
+		init(radius);
+	}
 
   //Assignement
   Triangulation_sphere_2 &operator=(const Triangulation_sphere_2 &tr);
@@ -356,8 +363,8 @@ Edge mirror_edge(const Edge e) const
        delete_face(*fit);    
  }
 	
-	
-	
+//is_on_sphere test whether a given point lies close enough to the sphere. Whether a test is necessary or not is defined in the traits (requires test)	
+//additional test needed	
 private:
 void
 is_on_sphere(boost::true_type, const Point &p, Locate_type &lt) const {
@@ -367,16 +374,12 @@ is_on_sphere(boost::true_type, const Point &p, Locate_type &lt) const {
 			lt = NOT_ON_SPHERE;		
 }
 			
-
+// no test needed -> empty function
 void
 is_on_sphere(boost::false_type, const Point &p, Locate_type &lt) const{
 }
 			
-public:
-void set_radius(double radius){
- clear();
- init(radius);
-}
+
 	
 };
 	
@@ -395,7 +398,7 @@ Triangulation_sphere_2(const Point& sphere)
  { init(1);}	
 	
 	
-
+//initializes the requiered data to proof the preconditons for the lemma about hidden vertices. By default radius ==1;
 template <class Gt, class Tds >
 void
 Triangulation_sphere_2<Gt, Tds>::
@@ -426,7 +429,7 @@ clear()
   _tds.clear(); 
  
 }
-  // Helping functions
+  
   
 template <class Gt, class Tds >
 void
@@ -461,7 +464,9 @@ swap(Triangulation_sphere_2 &tr)
   tr._gt = t; 
 }
 
-//CHECKING
+//--------------------------CHECKING---------------------------
+
+	
 
 template <class Gt, class Tds >
 bool
@@ -496,11 +501,7 @@ is_valid(bool verbose, int level) const
   return result;
 }
 	
-template<class Gt, class Tds>
-double
-Triangulation_sphere_2<Gt, Tds> ::
-squared_distance(const Point& p, const Point& q)const
-	{return geom_traits().compute_squared_distance_3_object()(p,q);}
+
 
 
 //TESTS
@@ -538,7 +539,7 @@ is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,Face_handle &fr) co
 }
 
 //---------------------------------------------------------------------------/POINT LOCATION---------------------------------------//
-	
+// tests whether the two points p and q are too close according to the lemma about hidden vertices.	
 template<class Gt, class Tds>
 inline bool
 Triangulation_sphere_2<Gt, Tds> ::
@@ -546,6 +547,11 @@ is_too_close(const Point& p, const Point& q)const{
 	 return squared_distance(p,q)<=_minDistSquared;
 }
 
+/*location for degenerated cases: locates the conflicting edge in a 1 dimensional triangulation.
+ This methode is used, when the new point is coplanar with the existing 	vertices.
+	bool plane defines if the points are also coplanar with the center of the sphere (true) or not (false).
+ */
+	
 template <class Gt, class Tds>
 typename Triangulation_sphere_2<Gt, Tds> ::Face_handle
 Triangulation_sphere_2<Gt, Tds>::
@@ -589,7 +595,11 @@ locate_edge(const Point& p, Locate_type& lt, int& li, bool plane)const
   }//end else
 }
 	
-	
+/*
+ calls too_close for possible conflicts.
+ If the point p is too close to an existing vertex, this vertex is returned.
+ should be replaced by a nearest neighbor search.
+ */
 template <class Gt, class Tds > 
 inline
 void Triangulation_sphere_2<Gt, Tds>::
@@ -1012,7 +1022,7 @@ compare_xyz(const Point &p, const Point &q) const
 		return geom_traits().compare_xyz_3_object()(p, q);
 }
 
-	
+/*check whether two points are equal*/	
 template <class Gt, class Tds >	
 bool
 Triangulation_sphere_2<Gt, Tds>::
@@ -1311,6 +1321,8 @@ create_face(Face_handle fh)
 }
 	
 //----------------CONSTRUCTION-----------------------------------
+	
+
 template<class Gt, class Tds>
 inline
 typename Triangulation_sphere_2<Gt,Tds>::Point
@@ -1332,6 +1344,11 @@ circumcenter(Face_handle  f) const
 							(f->vertex(2))->point());
 }
 	
+template<class Gt, class Tds>
+double
+Triangulation_sphere_2<Gt, Tds> ::
+squared_distance(const Point& p, const Point& q)const
+{return geom_traits().compute_squared_distance_3_object()(p,q);}
 	
 
 //----------------------------------------------------------------I/O----------------------------------------------------------------//
