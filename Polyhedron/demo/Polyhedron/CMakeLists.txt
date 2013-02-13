@@ -278,7 +278,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Camera_positions_list.moc
     ${cameraUI_FILES})
 
-  target_link_libraries( camera_positions_plugin ${QGLVIEWER_LIBRARIES} )
+  target_link_libraries( camera_positions_plugin ${QGLVIEWER_LIBRARIES} demo_framework)
 
   if ( Boost_VERSION GREATER 103400 )
     qt4_generate_moc( "Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Scene_c3t3_item.moc" )
