@@ -82,6 +82,12 @@ Erase the point.
 */ 
 void erase(Vertex_handle k); 
 
+/*!
+Swap the pair of objects with `vh` as the first element.  The old
+solver `s` is used to compute the next root between the two points
+being swapped. This method is called by an Event object.*/
+void swap(Vertex_handle vh, typename Traits::Kinetic_kernel::Compare_x_1::result_type& s);
+
 /*! 
 Begin iterating through the ordered `Vertex_handle`s (the iterator is convertible to `Vertex_handle`. 
 */ 
