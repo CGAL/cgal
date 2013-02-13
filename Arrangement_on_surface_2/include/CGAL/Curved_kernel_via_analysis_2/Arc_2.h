@@ -2315,6 +2315,7 @@ protected:
             ipair = cpv_line.curves_at_event(this->ptr()->_m_arcno_min);
             if(ipair.first != -1 && ipair.second != -1) 
                 // choose simpler supporting curve
+
               this->ptr()->_m_arcno_min = ((curve_idx) ?
                                            ipair.second : ipair.first);
             else {
