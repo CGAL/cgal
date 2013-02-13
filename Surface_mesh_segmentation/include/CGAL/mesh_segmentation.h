@@ -108,7 +108,8 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  *
  * \note For segmenting a mesh several times with different parameters (i.e. number of levels, and smoothing lambda),
  * it is wise to first compute SDF values using CGAL::sdf_values_computation,
- * and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values.
+ * and then call CGAL::surface_mesh_segmentation_from_sdf_values with the same SDF values. The current implementation uses a map to
+ * associate to each facet a sdf value.
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Polyhedron a %CGAL polyhedron
