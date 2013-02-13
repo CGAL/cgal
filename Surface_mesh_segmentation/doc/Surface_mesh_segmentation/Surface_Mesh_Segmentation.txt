@@ -67,6 +67,7 @@ since they are natural candidates for segment boundaries. The bilateral smoothin
 -\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the spatial parameter set for each facet \f$ f_i \f$
 \todo add hint on parameters influence?
 
+\todo in the implementation the integral part only of the window size is taken
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
 Effect of pose changes on segmentation and SDF values.
 \cgalFigureEnd
