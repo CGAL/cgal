@@ -112,6 +112,7 @@ public:
   bool is_valid_face(Face_handle fh,bool verbose = false, int level = 0 ) const;
   bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
   bool is_plane() const;
+//checks whether neighboring faces are linked correctly to each other.
   void check_neighboring()
   {
     All_faces_iterator eit;
@@ -300,7 +301,7 @@ Stream &write_edges_to_off(Stream &out,FaceIt face_begin, FaceIt face_end)
 
   return out;
 }
-
+//insert points in a given range using spacial sorting
 template < class InputIterator >
 int insert(InputIterator first, InputIterator last)
 {
@@ -314,7 +315,7 @@ int insert(InputIterator first, InputIterator last)
 	Vertex_handle v;
 	for (typename std::vector<Point>::const_iterator p = points.begin(),end = points.end(); p != end; ++p){
 		v = insert (*p, hint);
-		if( v != Vertex_handle())
+		if( v != Vertex_handle())//could happen if the point is not on the sphere
 			hint = v->face();
 	}
 		
@@ -386,7 +387,9 @@ power_test(const Face_handle& f, int i, const Point &p) const
 		
 	return  power_test(f->vertex(ccw(i))->point(), f->vertex( cw(i))->point(), p);
 }
-	
+//computes the power-test of 4 points. perturb defines whether a symbolic perturbation
+//is used (by default : perturb == false)
+	//in the perturbation the smalest vertex is in conflict with the others
 template < class Gt, class Tds >
 inline
 Oriented_side
@@ -454,6 +457,7 @@ power_test(const Point &p, const Point &q, const Point &r) const
 	return geom_traits().power_test_2_object()(p,q,r);
 }
 //----------------------------------------------------------------------CHECK---------------------------------------------------------------//
+//checks whether a given triangulation is plane (all points are coplanar)
 template <class Gt, class Tds>
 bool
 Delaunay_triangulation_sphere_2<Gt, Tds>::
@@ -572,6 +576,8 @@ is_valid_face(Face_handle fh, bool verbose, int level) const
   return result;
 }
 
+	
+	//tests whether there is a conflict between p and the face fh
 template < class Gt, class Tds >
 inline bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -582,6 +588,7 @@ test_conflict(const Point  &p, Face_handle fh) const
 
 
 //----------------------------------------------------------------------INSERTION-------------------------------------------------------------//
+
 template < class Gt, class Tds >
 typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -608,7 +615,7 @@ insert(const Point &p, Face_handle start)
   }
 }
 
-	
+//inserts a new point to a 1d triangulation, the new point is also coplanar with the existing points.	
 template < class Gt, class Tds>
 typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_sphere_2<Gt, Tds>::
@@ -666,7 +673,8 @@ insert_second(const Point& p)
 }
 	
 
-
+//inserts a point which location is known. Calls the corresponding insert-function
+	//e.g. insert_first
 template < class Gt, class Tds >
 typename Delaunay_triangulation_sphere_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -711,7 +719,9 @@ insert(const Point &p, Locate_type lt, Face_handle loc, int li)
 	CGAL_assertion(false);
 	return v;
 }	
+
 	
+//inserts a new point which lies outside the affine hull of the other points
 template <class Gt, class Tds >
 typename Triangulation_sphere_2<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -753,7 +763,7 @@ insert_outside_affine_hull_regular(const Point& p)
 	if(orient2==POSITIVE)
 	  conform =true;
 				
-	//find smalest vertex
+	//find smalest vertex this step garanties a unique triangulation
 	Vertex_handle w=vertices_begin();
 	 All_vertices_iterator vi;
 	for( vi = vertices_begin(); vi != vertices_end(); vi++){
@@ -771,7 +781,11 @@ insert_outside_affine_hull_regular(const Point& p)
   }
 }
 	
+
 	
+/*method to marc faces incident to v as ghost-faces or solid-faces.
+ If first == true all faces are updated. 
+ */
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -888,6 +902,9 @@ remove_2D(Vertex_handle v)
   return;   
 }
 
+	
+	
+//tests whether the dimension will decrease when removing v from the triangulation.	
 template <class Gt, class Tds >
 bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -917,7 +934,9 @@ test_dim_down(Vertex_handle v)
   		
 	
 }
+
 	
+//tests whether the dimension will increase when adding p to the triangulation.	
 template <class Gt, class Tds >
 bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -933,7 +952,7 @@ test_dim_up(const Point &p) const
 		
 }
 	
-	
+//fill the hole in a triangulation after vertex removal.	
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_sphere_2<Gt,Tds>::
@@ -1084,6 +1103,8 @@ fill_hole_regular(std::list<Edge> & first_hole)
 }
 
 //-----------------dual------------------------	
+	
+	//Following methods are used to compute the Voronoi-Diagram
 template<class Gt, class Tds>
 inline
 typename Delaunay_triangulation_sphere_2<Gt, Tds>::	Point
