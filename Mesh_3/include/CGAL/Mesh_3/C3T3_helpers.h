@@ -2571,7 +2571,7 @@ move_point(const Vertex_handle& old_vertex,
     moving_vertices.insert(new_vertex);
     this->unlock_moving_vertices();
 
-    // Don't "unlock_all_elements" here, the caller may need it to do it itself
+    // Don't "unlock_all_elements" here, the caller may need it to do it himself
     return new_vertex;
   }
 }

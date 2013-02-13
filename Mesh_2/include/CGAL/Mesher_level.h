@@ -867,9 +867,7 @@ public:
   {
     if (m_lock_ds)
     {
-#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
       m_lock_ds->unlock_all_tls_locked_cells();
-#endif
     }
   }
 
