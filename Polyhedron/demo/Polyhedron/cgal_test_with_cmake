@@ -104,7 +104,6 @@ else
       corefinement_plugin \
       cut_plugin \
       demo_framework \
-      edit_cache \
       edit_polyhedron_plugin \
       gocad_plugin \
       inside_out_plugin \
