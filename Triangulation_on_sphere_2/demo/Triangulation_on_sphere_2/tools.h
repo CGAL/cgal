@@ -7,7 +7,7 @@
 #define NB_PTS_SM 10
 #define PTS_WIDTH  0.01f
 
-#include <GL/glu.h>
+#include <CGAL/glu.h>
 
 template <class Kernel>
 struct drawing_tools{
