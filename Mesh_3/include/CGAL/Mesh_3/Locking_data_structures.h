@@ -64,17 +64,17 @@ class Grid_locking_ds_base_3
 // for debugging purpose...
 
 private:
-  static Grid_locking_ds_base_3<Derived>*& debug_global_lock_ds()
+  static Derived*& debug_global_lock_ds()
   {
-    static Grid_locking_ds_base_3<Derived> *p_g_lock_ds = 0;
+    static Derived *p_g_lock_ds = 0;
     return p_g_lock_ds;
   }
 public:
-  static Grid_locking_ds_base_3<Derived>* get_global_lock_ds()
+  static Derived* get_global_lock_ds()
   {
     return debug_global_lock_ds();
   }
-  static void set_global_lock_ds(Grid_locking_ds_base_3<Derived> *ds)
+  static void set_global_lock_ds(Derived *ds)
   {
     debug_global_lock_ds() = ds;
   }
@@ -251,6 +251,35 @@ public:
         unlock(cell_index);
     }
     tls_locked_cells.clear();
+  }
+  
+  void unlock_all_tls_locked_cells_but_one(int cell_index_to_keep_locked)
+  {
+    std::vector<int> &tls_locked_cells = m_tls_locked_cells.local();
+    std::vector<int>::const_iterator it = tls_locked_cells.begin();
+    std::vector<int>::const_iterator it_end = tls_locked_cells.end();
+    bool cell_to_keep_found = false;
+    for( ; it != it_end ; ++it)
+    {
+      // If we still own the lock
+      int cell_index = *it;
+      if (m_tls_grids.local()[cell_index] == true)
+      {
+        if (cell_index == cell_index_to_keep_locked)
+          cell_to_keep_found = true;
+        else
+          unlock(cell_index);
+      }
+    }
+    tls_locked_cells.clear();
+    if (cell_to_keep_found)
+      tls_locked_cells.push_back(cell_index_to_keep_locked);
+  }
+  
+  template <typename P3>
+  void unlock_all_tls_locked_cells_but_one_point(const P3 &point)
+  {
+    unlock_all_tls_locked_cells_but_one(get_grid_index(point));
   }
 
   bool check_if_all_cells_are_unlocked()
