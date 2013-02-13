@@ -220,7 +220,7 @@ int main(){
   ss>>z;
   _TEST("to_integer_exp e>0",(test_to_integer_exp(NT(std::make_pair(z,-50))));)
   z=CGAL::Gmpz(2147483647)*CGAL::Gmpz(2145338339);
-  NT::Precision_type zsize=mpz_sizeinbase(z.mpz(),2);
+  size_t zsize=mpz_sizeinbase(z.mpz(),2);
   _TEST("to_integer_exp e==0",(test_to_integer_exp(NT(z,zsize)));)
   _TEST("to_integer_exp e<0",(test_to_integer_exp(NT(std::make_pair(z,-97))));)
 
