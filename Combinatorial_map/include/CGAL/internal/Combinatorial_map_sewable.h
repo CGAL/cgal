@@ -20,6 +20,8 @@
 #ifndef CGAL_COMBINATORIAL_MAP_SEWABLE_H
 #define CGAL_COMBINATORIAL_MAP_SEWABLE_H
 
+#include <CGAL/Dart_const_iterators.h>
+
 /* Definition of functor used to test if two darts are i-sewable
  * (we use functors as there are different specializations).
  */

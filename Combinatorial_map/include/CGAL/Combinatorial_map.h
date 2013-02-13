@@ -22,12 +22,13 @@
 
 #include <CGAL/Compact_container.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
-#include <CGAL/internal/Combinatorial_map_functors.h>
 #include <CGAL/internal/Combinatorial_map_sewable.h>
+#include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/Combinatorial_map_min_items.h>
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/Combinatorial_map_functors.h>
 #include <bitset>
 #include <vector>
 #include <deque>
@@ -55,6 +56,7 @@ namespace CGAL {
              class Alloc_=CGAL_ALLOCATOR(int) >
   class Combinatorial_map_base
   {
+   /*
     template<class Map, unsigned int i, unsigned int nmi>
     friend struct Remove_cell_functor;
 
@@ -87,7 +89,7 @@ namespace CGAL {
     typename Map::Dart_handle
     insert_cell_0_in_cell_2(Map& amap, typename Map::Dart_handle adart);
 
-    /*template<typename CMap, unsigned int i, typename Type_attr, typename Range>
+    template<typename CMap, unsigned int i, typename Type_attr, typename Range>
     friend struct internal::Degroup_one_attribute_of_dart_functor;
 
     template<typename CMap, unsigned int i, typename T>
@@ -101,10 +103,9 @@ namespace CGAL {
 
     template <typename CMap, unsigned int i, typename Type_attr>
     friend struct internal::Degroup_one_attribute_functor;
-    */
+
     template<typename Map>
     friend struct internal::Test_is_valid_attribute_functor;
-
 
     template<typename Map>
     friend struct internal::Update_dart_of_attribute_functor;
@@ -114,7 +115,7 @@ namespace CGAL {
 
     template<typename Map, unsigned int i, typename Enabled>
     friend struct internal::Update_dart_of_one_attribute_functor;
-
+*/
   public:
     /// Types definition
     typedef Combinatorial_map_base<d_, Refs, Items_,Alloc_>  Self;
@@ -328,12 +329,12 @@ namespace CGAL {
     Dart_const_handle beta(Dart_const_handle ADart, Betas... betas) const
     { return internal::Beta_functor<Dart_const_handle, Betas ...>::
         run(ADart, betas...); }
-    template<typename ... Betas>
+    template<int ... Betas>
     Dart_handle beta(Dart_handle ADart) const
     { return internal::Beta_functor_static<Dart_handle, Betas ...>::
         run(ADart); }
-    template<typename ... Betas>
-    Dart_const_handle beta(Dart_const_handle ADart, Betas... betas) const
+    template<int ... Betas>
+    Dart_const_handle beta(Dart_const_handle ADart) const
     { return internal::Beta_functor_static<Dart_const_handle, Betas ...>::
         run(ADart); }
 #else
@@ -707,8 +708,8 @@ namespace CGAL {
         marks[i] = -1;
 
       Helper::template
-        Foreach_enabled_attributes<internal::Reserve_mark_functor<Self> >::
-        run(this,&marks);
+        Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
+          run(this,&marks);
 
       for ( typename Dart_range::const_iterator it(darts().begin()),
              itend(darts().end()); it!=itend; ++it)
@@ -831,7 +832,7 @@ namespace CGAL {
         if ( attribs )
         {
           Helper::template Foreach_enabled_attributes
-              <internal::Display_attribute_functor<Self> >::run(this, it);
+              <Display_attribute_functor<Self> >::run(this, it);
         }
         os << std::endl;
         ++nb;

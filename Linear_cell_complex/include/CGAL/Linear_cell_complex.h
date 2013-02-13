@@ -56,10 +56,10 @@ namespace CGAL {
     typedef Traits_ Traits;
     typedef Items_  Items;
     typedef Alloc_  Alloc;
-    
+
     static const unsigned int ambient_dimension = ambient_dim;
     static const unsigned int dimension = Base::dimension;
-    
+
     typedef typename Base::Dart_handle       Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Helper            Helper;
@@ -70,16 +70,16 @@ namespace CGAL {
 
     typedef typename Base::Dart_range Dart_range;
 
-    typedef typename Helper::template Attribute_type<0>::type 
+    typedef typename Helper::template Attribute_type<0>::type
     Vertex_attribute;
-    typedef typename Helper::template Attribute_handle<0>::type 
+    typedef typename Helper::template Attribute_handle<0>::type
     Vertex_attribute_handle;
-    typedef typename Helper::template Attribute_const_handle<0>::type 
+    typedef typename Helper::template Attribute_const_handle<0>::type
     Vertex_attribute_const_handle;
 
-    typedef typename Helper::template Attribute_range<0>::type 
+    typedef typename Helper::template Attribute_range<0>::type
     Vertex_attribute_range;
-    typedef typename Helper::template Attribute_const_range<0>::type 
+    typedef typename Helper::template Attribute_const_range<0>::type
     Vertex_attribute_const_range;
 
     /// To use previous definition of create_dart methods.
@@ -150,7 +150,7 @@ namespace CGAL {
      const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8, const T9 &t9)
     { return Base::template create_attribute<0>(t1, t2, t3, t4, t5, t6, t7,
                                                 t8, t9); }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES    
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
     /**
      * Create a new dart associated with an handle through an attribute.
@@ -176,12 +176,12 @@ namespace CGAL {
      */
     void erase_vertex_attribute(Vertex_attribute_handle ahandle)
     { Base::template erase_attribute<0>(ahandle); }
-    
+
     /** Set the vertex attribute of the given dart.
      * @param adart a dart.
      * @param ah the attribute to set.
      */
-    void set_vertex_attribute_of_dart(Dart_handle adart, 
+    void set_vertex_attribute_of_dart(Dart_handle adart,
                                       Vertex_attribute_handle ah)
     {
       return internal::Set_i_attribute_of_dart_functor<Self, 0>::
@@ -192,9 +192,9 @@ namespace CGAL {
      * @param adart a dart of the vertex.
      * @param ah the attribute to set.
      */
-    void set_vertex_attribute(Dart_handle adart, 
+    void set_vertex_attribute(Dart_handle adart,
                               Vertex_attribute_handle ah)
-    { return internal::Set_i_attribute_functor<Self, 0>::run(this, adart,ah); }
+    { return Set_i_attribute_functor<Self, 0>::run(this, adart,ah); }
 
     /// @return the Vertex_attribute_range for all vertex_attributes.
     Vertex_attribute_range& vertex_attributes()
@@ -212,7 +212,7 @@ namespace CGAL {
     /// @param a dart
     /// @return the vertex_attribute.
     static Vertex_attribute_handle vertex_attribute(Dart_handle adart)
-    { 
+    {
       CGAL_assertion(adart!=NULL);
       return adart->template attribute<0>();
     }
@@ -222,7 +222,7 @@ namespace CGAL {
     /// @return the vertex_const_attribute.
     static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle
                                                           adart)
-    { 
+    {
       CGAL_assertion(adart!=NULL);
       return adart->template attribute<0>();
     }
@@ -231,7 +231,7 @@ namespace CGAL {
     /// @param a dart
     /// @return the point.
     static Point& point(Dart_handle adart)
-    { 
+    {
       CGAL_assertion(adart!=NULL && adart->template attribute<0>()!=NULL );
       return adart->template attribute<0>()->point();
     }
@@ -240,7 +240,7 @@ namespace CGAL {
     /// @param a dart
     /// @return the point.
     static const Point& point(Dart_const_handle adart)
-    { 
+    {
       CGAL_assertion(adart!=NULL && adart->template attribute<0>()!=NULL );
       return adart->template attribute<0>()->point();
     }
@@ -253,7 +253,7 @@ namespace CGAL {
     bool is_valid() const
     {
       bool valid = Base::is_valid();
-      for (typename Dart_range::const_iterator it(this->darts().begin()), 
+      for (typename Dart_range::const_iterator it(this->darts().begin()),
              itend(this->darts().end()); valid && it != itend; ++it)
       {
         if ( vertex_attribute(it) == NULL )
@@ -269,17 +269,17 @@ namespace CGAL {
     /** test if the two given facets have the same geometry
      * @return true iff the two facets have the same geometry.
      */
-    bool are_facets_same_geometry(Dart_const_handle d1, 
+    bool are_facets_same_geometry(Dart_const_handle d1,
                                   Dart_const_handle d2) const
     {
-      typename Base::template Dart_of_orbit_range<1>::const_iterator 
+      typename Base::template Dart_of_orbit_range<1>::const_iterator
         it1(*this,d1);
-      typename Base::template Dart_of_orbit_range<0>::const_iterator 
+      typename Base::template Dart_of_orbit_range<0>::const_iterator
         it2(*this,d2);
       bool samegeometry = true;
       for ( ; samegeometry && it1.cont() && it2.cont(); ++it1, ++it2)
       {
-        if ( it2->other_extremity()!=NULL && 
+        if ( it2->other_extremity()!=NULL &&
              point(it1)!=point(it2->other_extremity()) )
           samegeometry = false;
       }
@@ -299,7 +299,7 @@ namespace CGAL {
 
       // First we fill the std::map by one dart per facet, and by using
       // the minimal point as index.
-      for (typename Dart_range::iterator it(this->darts().begin()), 
+      for (typename Dart_range::iterator it(this->darts().begin()),
              itend(this->darts().end()); it!=itend; ++it )
       {
         if ( !this->is_marked(it, mymark) && this->is_marked(it, AMark) )
@@ -309,7 +309,7 @@ namespace CGAL {
           this->mark(it, mymark);
           typename Base::template
             Dart_of_orbit_range<1>::iterator it2(*this,it);
-          ++it2;      
+          ++it2;
           for ( ; it2.cont(); ++it2 )
           {
             Point cur_point=point(it2);
@@ -331,7 +331,7 @@ namespace CGAL {
       typename std::map<Point, std::vector<Dart_handle> >::iterator
         itmap=one_dart_per_facet.begin(),
         itmapend=one_dart_per_facet.end();
-      
+
       for ( ; itmap!=itmapend; ++itmap )
       {
         for ( typename std::vector<Dart_handle>::iterator
@@ -342,7 +342,7 @@ namespace CGAL {
           for ( ++it2; it2!= it1end; ++it2 )
           {
             if ( *it1!=*it2 && (*it1)->is_free(3) &&
-                 (*it2)->is_free(3) && 
+                 (*it2)->is_free(3) &&
                  are_facets_same_geometry(*it1,(*it2)->beta(0)) )
             {
               ++res;
@@ -379,7 +379,7 @@ namespace CGAL {
       Dart_handle d1 = make_edge(*this);
       set_vertex_attribute_of_dart(d1,h0);
       set_vertex_attribute_of_dart(d1->beta(2),h1);
-      
+
       return d1;
     }
 
@@ -405,11 +405,11 @@ namespace CGAL {
                               Vertex_attribute_handle h2)
     {
       Dart_handle d1 = make_combinatorial_polygon(*this,3);
-  
+
       set_vertex_attribute_of_dart(d1,h0);
       set_vertex_attribute_of_dart(d1->beta(1),h1);
       set_vertex_attribute_of_dart(d1->beta(0),h2);
-  
+
       return d1;
     }
 
@@ -446,7 +446,7 @@ namespace CGAL {
       set_vertex_attribute_of_dart(d1->beta(1),h1);
       set_vertex_attribute_of_dart(d1->beta(1)->beta(1),h2);
       set_vertex_attribute_of_dart(d1->beta(0),h3);
-      
+
       return d1;
     }
 
@@ -486,7 +486,7 @@ namespace CGAL {
       Dart_handle d2 = make_triangle(h1, h0, h3);
       Dart_handle d3 = make_triangle(h1, h3, h2);
       Dart_handle d4 = make_triangle(h3, h0, h2);
-      
+
       return make_combinatorial_tetrahedron(*this, d1, d2, d3, d4);
     }
 
@@ -545,7 +545,7 @@ namespace CGAL {
       Dart_handle d4 = make_quadrangle(h3, h4, h5, h0);
       Dart_handle d5 = make_quadrangle(h0, h1, h2, h3);
       Dart_handle d6 = make_quadrangle(h5, h4, h7, h6);
-      
+
       return make_combinatorial_hexahedron(*this, d1, d2, d3, d4, d5, d6);
     }
 
@@ -603,11 +603,11 @@ namespace CGAL {
       if (i==1)
       {
         Dart_const_handle d2=adart->other_extremity();
-        if (d2==NULL) return point(adart);          
+        if (d2==NULL) return point(adart);
         return typename Traits::Construct_midpoint() (point(adart),
                                                       point(d2));
       }
-      
+
       // General case, 1<i<=dimension
       Vector vec(typename Traits::Construct_vector()(CGAL::ORIGIN,
                                                      point(adart)));
@@ -615,7 +615,7 @@ namespace CGAL {
 
       // TODO: test if we can optimize by using <Self,0,i,i+1> ?
       CMap_one_dart_per_incident_cell_const_iterator<Self,0,i> it(*this,
-                                                                  adart); 
+                                                                  adart);
       for ( ++it; it.cont(); ++it)
       {
         vec = typename Traits::Construct_sum_of_vectors()
@@ -633,7 +633,7 @@ namespace CGAL {
      * @return a dart handle to the new vertex containing p.
      */
     Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p)
-    { 
+    {
       return CGAL::insert_cell_0_in_cell_1(*this, dh,
                                            create_vertex_attribute(p));
     }
@@ -644,7 +644,7 @@ namespace CGAL {
      * @return a dart handle to the new vertex containing p.
      */
     Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p)
-    { 
+    {
       Vertex_attribute_handle v = create_vertex_attribute(p);
 
       Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v);
@@ -669,7 +669,7 @@ namespace CGAL {
       if (i==1) return insert_point_in_cell_1(dh, p);
       return insert_point_in_cell_2(dh, p);
     }
-    
+
     /** Insert a dangling edge in a given facet.
      * @param dh a dart of the facet (!=NULL).
      * @param p the coordinates of the new vertex.
@@ -701,8 +701,8 @@ namespace CGAL {
      */
     Dart_handle dual_points_at_barycenter(Self & alcc, Dart_handle adart=NULL)
     {
-      Dart_handle res = Base::dual(alcc, adart);  
-  
+      Dart_handle res = Base::dual(alcc, adart);
+
       // Now the lcc alcc is topologically correct, we just need to add
       // its geometry to each vertex (the barycenter of the corresponding
       // dim-cell in the initial map).

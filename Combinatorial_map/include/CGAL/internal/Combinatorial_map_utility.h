@@ -33,25 +33,25 @@
  *  The class Combinatorial_map_helper<CMap> defines:
  *
  */
-namespace CGAL 
+namespace CGAL
 {
   namespace internal
-  {    
+  {
     // There is a problem on windows to handle tuple containing void.
     // To solve this, we transform such a tuple in tuple containing Disabled.
     template<typename T>
     struct Convert_void
     { typedef T type; };
-    
+
     template<>
     struct Convert_void<void>
     { typedef CGAL::Void type; };
-    
+
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     // Convert a tuple in a same tuple where each void type was replaced into
     // CGAL::Void.
     template<typename ... Items>
-    struct Convert_tuple_with_void;    
+    struct Convert_tuple_with_void;
     template<typename ... Items>
     struct Convert_tuple_with_void<CGAL::cpp11::tuple<Items...> >
     {
@@ -60,12 +60,12 @@ namespace CGAL
 
     // Length of a variadic template
     template<typename ... T>
-    struct My_length;    
+    struct My_length;
     template<typename T1, typename ... T>
     struct My_length<CGAL::cpp11::tuple<T1, T...> >
     {
       static const int value = My_length<CGAL::cpp11::tuple<T...> >::value + 1;
-    };    
+    };
     template<>
     struct My_length<CGAL::cpp11::tuple<> >
     {
@@ -74,7 +74,7 @@ namespace CGAL
 
     //count the number of time a given type is present in a tuple
     template<class Type,class Tuple>
-    struct Number_of_type_in_tuple;    
+    struct Number_of_type_in_tuple;
     template<class Type,typename ... Items>
     struct Number_of_type_in_tuple<Type,CGAL::cpp11::tuple<Type,Items...> >{
       static const int value=Number_of_type_in_tuple
@@ -92,7 +92,7 @@ namespace CGAL
 
     //count the number of different types from Type is present in a tuple
     template<class Type, class Tuple>
-    struct Number_of_different_type_in_tuple;    
+    struct Number_of_different_type_in_tuple;
     template<class Type, typename Other, typename ... Items>
     struct Number_of_different_type_in_tuple<Type,CGAL::cpp11::tuple
                                              <Other, Items...> >
@@ -119,13 +119,13 @@ namespace CGAL
     template <class Type,int k,class T,
               int dim=CGAL::internal::My_length<T>::value-1>
     struct Nb_type_in_tuple_up_to_k;
-    
+
     template <class Type,int dim,int k,class T1,class ... T>
     struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp11::tuple<T1,T...>,dim>
     {
       static const int pos= Nb_type_in_tuple_up_to_k
         <Type,k,CGAL::cpp11::tuple<T...>,dim>::pos - 1;
-      
+
       static const int value =
         ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? 0:-dim-1 )
         :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 1:0 )
@@ -135,7 +135,7 @@ namespace CGAL
              :0
              );
     };
-    
+
     template <class Type,int dim,int k,class T1>
     struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp11::tuple<T1>,dim >
     {
@@ -151,14 +151,14 @@ namespace CGAL
     template <class Type, int k,class T,
               int dim=CGAL::internal::My_length<T>::value-1>
     struct Nb_type_different_in_tuple_up_to_k;
-    
+
     template <class Type,int dim,int k,class T1,class ... T>
     struct Nb_type_different_in_tuple_up_to_k<Type,k,
                                               CGAL::cpp11::tuple<T1,T...>,dim>
     {
       static const int pos = Nb_type_different_in_tuple_up_to_k
         <Type,k,CGAL::cpp11::tuple<T...>,dim >::pos - 1;
-      
+
       static const int value =
         ( pos==k  ) ?  ( boost::is_same<T1,Type>::value ? -dim-1 : 0 )
         :  ( ( pos<k ) ? ( ( boost::is_same<T1,Type>::value ? 0:1 )
@@ -190,7 +190,7 @@ namespace CGAL
     // to build the tuple Attribute_type.
     template <class Type,class Res, class Tuple=CGAL::cpp11::tuple<> >
     struct Keep_type_different_of;
-    
+
     template < class Type,class ... Res >
     struct Keep_type_different_of<Type,CGAL::cpp11::tuple<>,
                                   CGAL::cpp11::tuple<Res...> >
@@ -208,7 +208,7 @@ namespace CGAL
     };
 
     template < class Type, class Other, class ... T, class ... Res >
-    struct Keep_type_different_of<Type,CGAL::cpp11::tuple<Other,T...>, 
+    struct Keep_type_different_of<Type,CGAL::cpp11::tuple<Other,T...>,
                                   CGAL::cpp11::tuple<Res...> >
     {
       typedef typename Keep_type_different_of
@@ -224,7 +224,7 @@ namespace CGAL
     //   template <int n>
     //   static void run(){std::cout << n << std::endl;}
     // };
-    // 
+    //
     // Foreach_static<Functor,5>::run();
     //
     template <class Functor,int n>
@@ -235,7 +235,7 @@ namespace CGAL
         Foreach_static<Functor,n-1>::run(t...);
       }
     };
-    
+
     template <class Functor>
     struct Foreach_static<Functor,0>{
       template <class  ... T>
@@ -254,7 +254,7 @@ namespace CGAL
         Functor:: template run<n>(t...);
       }
     };
-    
+
     template <class Functor,int n>
     struct Conditionnal_run<Functor,n,Void>
     {
@@ -299,7 +299,7 @@ namespace CGAL
     //Functor are called from n =0 to k
     template <class Functor,class T,int n=0>
     struct Foreach_static_restricted;
-    
+
     template <class Functor,class Head, class ... Items,int n>
     struct Foreach_static_restricted<Functor,
                                      CGAL::cpp11::tuple<Head,Items...>,n>
@@ -311,7 +311,7 @@ namespace CGAL
           <Functor,CGAL::cpp11::tuple<Items...>,n+1>::run(t...);
       }
     };
-    
+
     template <class Functor,int n>
     struct Foreach_static_restricted<Functor,CGAL::cpp11::tuple<>,n>{
       template <class  ... T>
@@ -357,28 +357,28 @@ namespace CGAL
         Apply_functor_to_each_tuple_element<Functor,Tuple,pos-1>::run(t);
       }
     };
-    
+
     template<class Functor,class Tuple>
     struct Apply_functor_to_each_tuple_element<Functor,Tuple,-1>
     {
       static void run(Tuple&){}
     };
-    
+
     struct Clear_functor
     {
       template<class T>
       void operator()(T&t)
       { t.clear(); }
     };
-    
+
     struct Clear_all
     {
       template<class Tuple>
       static void run(Tuple& t)
       {
-        Apply_functor_to_each_tuple_element<Clear_functor,Tuple>::run(t);    
+        Apply_functor_to_each_tuple_element<Clear_functor,Tuple>::run(t);
       }
-    };    
+    };
 
     // Helper class, templated by a given combinatorial map.
     template <class CMap>
@@ -390,7 +390,7 @@ namespace CGAL
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
         typedef CGAL::Compact_container<T,Attr_allocator> type;
       };
-  
+
       // defines as type Compact_container<T>::iterator
       template <class T>
       struct Add_compact_container_iterator{
@@ -398,7 +398,7 @@ namespace CGAL
         typedef typename CGAL::Compact_container<T,Attr_allocator>::iterator
         type;
       };
-  
+
       // defines as type Compact_container<T>::const_iterator
       template <class T>
       struct Add_compact_container_const_iterator{
@@ -419,13 +419,13 @@ namespace CGAL
 
       // Number of all attributes
       /*  Does not compile on windows !!
-          static const unsigned int number_of_attributes = 
+          static const unsigned int number_of_attributes =
           CGAL::internal::My_length<Attributes>::value; */
 
       // Number of enabled attributes
-      static const unsigned int nb_attribs = 
+      static const unsigned int nb_attribs =
           Number_of_different_type_in_tuple<Void,Enabled_attributes>::value;
-      
+
       // Given a dimension of the cell, return the index of
       // corresponding attribute
       template <int d>
@@ -440,12 +440,12 @@ namespace CGAL
 
       typedef typename Tuple_converter< Add_compact_container_iterator,
                                         Enabled_attributes >::type
-      Attribute_iterators; 
+      Attribute_iterators;
       typedef typename Tuple_converter< Add_compact_container_const_iterator,
                                         Enabled_attributes >::type
-      Attribute_const_iterators; 
+      Attribute_const_iterators;
 
-      typedef Attribute_containers      Attribute_ranges; 
+      typedef Attribute_containers      Attribute_ranges;
       typedef Attribute_iterators       Attribute_handles;
       typedef Attribute_const_iterators Attribute_const_handles;
 
@@ -467,7 +467,7 @@ namespace CGAL
          typedef typename CGAL::cpp11::tuple_element
                <Dimension_index<d>::value,Attribute_handles>::type type;
       };
-  
+
       template<int d>
       struct Attribute_handle<d, CGAL::Void>
       { typedef CGAL::Void* type; };
@@ -479,7 +479,7 @@ namespace CGAL
         typedef typename CGAL::cpp11::tuple_element
           <Dimension_index<d>::value, Attribute_const_handles>::type type;
       };
-  
+
       template<int d>
       struct Attribute_const_handle<d, CGAL::Void>
       { typedef CGAL::Void* type; };
@@ -491,7 +491,7 @@ namespace CGAL
         typedef typename CGAL::cpp11::tuple_element
            <Dimension_index<d>::value, Attribute_iterators>::type type;
       };
-  
+
       template<int d>
       struct Attribute_iterator<d, CGAL::Void>
       { typedef CGAL::Void* type; };
@@ -503,7 +503,7 @@ namespace CGAL
         typedef typename CGAL::cpp11::tuple_element
            <Dimension_index<d>::value, Attribute_const_iterators>::type type;
       };
-  
+
       template<int d>
       struct Attribute_const_iterator<d, CGAL::Void>
       { typedef CGAL::Void* type; };
@@ -515,7 +515,7 @@ namespace CGAL
         typedef typename CGAL::cpp11::tuple_element
              <Dimension_index<d>::value, Attribute_ranges>::type type;
       };
-  
+
       template<int d>
       struct Attribute_range<d, CGAL::Void>
       { typedef CGAL::Void type; };
@@ -527,7 +527,7 @@ namespace CGAL
         typedef const typename CGAL::cpp11::tuple_element
              <Dimension_index<d>::value, Attribute_ranges >::type type;
       };
-  
+
       template<int d>
       struct Attribute_const_range<d, CGAL::Void>
       { typedef CGAL::Void type; };
@@ -539,7 +539,7 @@ namespace CGAL
       {
         template <class ...Ts>
         static void run(const Ts& ... t)
-        { Foreach_static_restricted<Functor,Attributes >::run(t...); }
+        { Foreach_static_restricted<Functor, Attributes>::run(t...); }
       };
       // To iterate onto each enabled attributes, except j-attributes
       template <class Functor, unsigned int j>
@@ -547,7 +547,7 @@ namespace CGAL
       {
         template <class ...Ts>
         static void run(const Ts& ... t)
-        { Foreach_static_restricted_except<Functor,Attributes,j>::run(t...); }
+        { Foreach_static_restricted_except<Functor, j, Attributes>::run(t...); }
       };
 #else
     // This one cannot be moved in Combinatorial_map_utility_novariadic.h
@@ -557,7 +557,7 @@ namespace CGAL
     {
       static void run()
       {Foreach_static_restricted<Functor,Attributes >::run();}
-    
+
       template <class T1>
       static void run(const T1& t1)
       {Foreach_static_restricted<Functor,Attributes >::run(t1);}

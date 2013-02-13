@@ -168,7 +168,8 @@ void MainWindow::clear_all()
 void MainWindow::on_new_volume(Dart_handle adart)
 {
   assert( adart->attribute<3>()==NULL);
-  scene.lcc->set_attribute<3>(adart,scene.lcc->create_attribute<3>());
+  CGAL::Set_i_attribute_functor<LCC, 3>::
+      run(scene.lcc, adart, scene.lcc->create_attribute<3>());
   update_volume_list_add(adart->attribute<3>());
 }
 
