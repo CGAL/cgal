@@ -28,8 +28,10 @@ and provide detailed results at the end of the manual.
 
 \todo where is the benchmark result?
 
-\note In this chapter, a segment refers to a connected component of facets of a mesh. A cluster is a set of facets, not necessarily connected.
-      One or several cluster can be merged to form a segment. Clustering refers to the action of gathering facets into the same segment or cluster.
+\note The goal of this package is to associate each facet of a mesh to a <i>segment</i>. In this chapter, a <i>segment</i> refers to a connected component of facets.
+      In the internal of the algorithm, facets are first gathered into <i>clusters</i>. A <i>cluster</i> is a set of facets (not necessarily connected) verifying the same criterium.
+      While running the algorithm, clusters might be merged or split in order to give the final segmentation.
+
 
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
 The segmentation algorithm consists of three major parts: Shape Diameter Function (SDF), soft clustering, and graph-cut for hard clustering.
