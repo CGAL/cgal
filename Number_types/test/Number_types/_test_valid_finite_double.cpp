@@ -25,6 +25,10 @@
 #include <cmath>
 #include <CGAL/IEEE_754_unions.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4723)
+#endif
+
 bool
 _test_valid_finite( const double& )
 {
