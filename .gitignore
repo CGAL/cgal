@@ -1211,6 +1211,8 @@ Makefile
 *.vcproj
 *.sln
 *.depends
+*.vcxproj
+*.vcxproj.filters
 
 # The rest: "various" things that I do not know how to classify
 # -- Laurent Rineau, 2013/01/11
