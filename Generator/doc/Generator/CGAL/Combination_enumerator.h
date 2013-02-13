@@ -40,7 +40,7 @@ Combination_enumerator(const Combination_enumerator & combi);
 
 /// @}
 
-/// \name Access to the current combination
+/// \name Access to the Current Combination
 /// @{
 
 /*!
@@ -52,7 +52,7 @@ const CombinationElement & operator[](int i);
 /// @}
 
 
-/// \name Access to the enumeration
+/// \name Access to the Enumeration
 ///@{
 
 /*!
@@ -82,7 +82,7 @@ bool finished();
 /// @}
 
 
-/// /name Operations
+/// \name Operations
 /// @{
 
 /*!
