@@ -21,15 +21,17 @@
 #define CGAL_COMBINATORIAL_MAP_SEWABLE_H
 
 #include <CGAL/Dart_const_iterators.h>
+#include <CGAL/Unique_hash_map.h>
 
 /* Definition of functor used to test if two darts are i-sewable
  * (we use functors as there are different specializations).
  */
 namespace CGAL
 {
+#define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
 namespace internal
 {
-// Generic case for 2<=i<=dimension, and 3<dim.
+// Generic case for 1<=i<=dimension, and 3<dim.
 template<typename CMap, unsigned int i, unsigned int dim=CMap::dimension>
 struct Is_sewable_functor
 {
@@ -37,45 +39,109 @@ struct Is_sewable_functor
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion( 2<=i && i<=CMap::dimension );
+    CGAL_assertion( 1<=i && i<=CMap::dimension );
     CGAL_assertion( 3<dim );
-    CGAL_assertion(adart1!=NULL && adart2!=NULL);
-    CGAL_assertion(adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle);
+    CGAL_assertion( adart1!=NULL && adart2!=NULL );
+    CGAL_assertion( adart1!=CMap::null_dart_handle &&
+        adart2!=CMap::null_dart_handle );
 
     if ( !adart1->template is_free<i>() ||
-         !adart2->template is_free<i>() || adart1==adart2 )
+         !adart2->template is_free<CGAL_BETAINV(i)>() )
       return false;
 
-    // TODO use a map (of hashtable) to build the isomorphism and to test
-    // it during the while loop
-    CGAL::CMap_dart_const_iterator_of_involution<CMap,i>     I1(*amap, adart1);
-    CGAL::CMap_dart_const_iterator_of_involution_inv<CMap,i> I2(*amap, adart2);
-    bool res = true;
-    while (res && I1.cont() && I2.cont())
+    if ( adart1==adart2 )
     {
+      if ( i==1 ) return true;
+      return false;
+    }
+
+    // hash map to build the isomorphism between the two i-cells.
+    CGAL::Unique_hash_map<typename CMap::Dart_const_handle,
+        typename CMap::Dart_const_handle> bijection;
+
+    int m1 = amap->get_new_mark();
+    int m2 = amap->get_new_mark();
+    CGAL::CMap_dart_const_iterator_basic_of_involution<CMap,i>
+        I1(*amap, adart1, m1);
+    CGAL::CMap_dart_const_iterator_basic_of_involution_inv<CMap,i>
+        I2(*amap, adart2, m2);
+    bool res = true;
+
+    bijection[adart1]=adart2;
+
+    while ( res && I1.cont() && I2.cont() )
+    {
+      amap->mark(I1, m1);
+      amap->mark(I2, m2);
+
+      bijection[I1]=I2;
+
+      CGAL_assertion( I1->template is_free<i>() );
+      CGAL_assertion( I2->template is_free<CGAL_BETAINV(i)>() );
+
       // We can remove this constraint which is not required for
       // combinatorial map definition, but which is quite "normal"
-      if ( I1==adart2 || I2==adart1 ) res=false;
+      // Indeed in this case we try to i-sew an i-cell with itself (case
+      // of folded cells).
+      if ( i>1 && (I1==adart2 || I2==adart1) ) res=false;
 
-      // Special case to consider beta0 and beta1
-      if ( i>2 )
+      if ( i>2)
       {
-        if ( I1->is_free(0)!=I2->is_free(1) )      res = false;
-        else if ( I1->is_free(1)!=I2->is_free(0) ) res = false;
+        if ( I1->template is_free<1>() )
+        {
+          if ( !I2->template is_free<0>() ) res=false;
+        }
+        else
+        {
+          if ( I2->template is_free<0>() ) res=false;
+          else if ( amap->is_marked(I1->template beta<1>(), m1) )
+          {
+            if ( !amap->is_marked(I2->template beta<0>(), m2) ) res=false;
+            else
+              if ( bijection[I1->template beta<1>()]!=I2->template beta<0>() )
+                res=false;
+          }
+        }
       }
 
-      // General case
-      for (unsigned int j=2;res && j<=CMap::dimension; ++j)
+      for ( unsigned int j=2; res && j<=CMap::dimension; ++j )
       {
-        if ( j+1!=i && j!=i && j!=i+1 &&
-             I1->is_free(j)!=I2->is_free(j) )
-        { res = false; }
+        if ( j+1!=i && j!=i && j!=i+1 )
+        {
+          if ( I1->is_free(j) )
+          {
+            if ( !I2->is_free(j) ) res=false;
+          }
+          else
+          {
+            if ( I2->is_free(j) ) res=false;
+            else if ( amap->is_marked(I1->beta(j), m1) )
+            {
+              if ( !amap->is_marked(I2->beta(j), m2) ) res=false;
+              else if ( bijection[I1->beta(j)]!=I2->beta(j) ) res=false;
+            }
+          }
+        }
       }
       ++I1; ++I2;
     }
-    if (I1.cont() != I2.cont())
+    if ( I1.cont()!=I2.cont() )
       res = false;
+
+    amap->negate_mark(m1);
+    amap->negate_mark(m2);
+    I1.rewind(); I2.rewind();
+    while ( amap->number_of_unmarked_darts(m1)>0 )
+    {
+      amap->mark(I1, m1);
+      amap->mark(I2, m2);
+      ++I1; ++I2;
+    }
+
+    CGAL_assertion( amap->is_whole_map_marked(m1) );
+    CGAL_assertion( amap->is_whole_map_marked(m2) );
+    amap->free_mark(m1);
+    amap->free_mark(m2);
 
     return res;
   }
@@ -88,54 +154,7 @@ struct Is_sewable_functor<CMap, 0, dim>
   static bool run( const CMap* amap,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
-  {
-    CGAL_assertion( 3<dim );
-    CGAL_assertion( adart1!=NULL && adart2!=NULL);
-    CGAL_assertion( adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle );
-
-    if ( !adart1->template is_free<0>() ||
-         !adart2->template is_free<1>() )
-      return false;
-
-    if ( adart1==adart2 ) return true;
-
-    // TODO use a map (of hashtable) to build the isomorphism and to test
-    // it during the while loop
-    CGAL::CMap_dart_const_iterator_of_involution    <CMap,1> I1(*amap, adart1);
-    CGAL::CMap_dart_const_iterator_of_involution_inv<CMap,1> I2(*amap, adart2);
-    bool res = true;
-    while (res && I1.cont() && I2.cont())
-    {
-      // We can remove this constraint which is not required for
-      // combinatorial map definition, but which imposes quite "normal"
-      // configurations
-      if ( I1==adart2 || I2==adart1 ) res=false;
-
-      for (unsigned int j=3;res && j<=CMap::dimension; ++j)
-      {
-        if ( I1->is_free(j)!=I2->is_free(j) )
-        {
-          res = false;
-        }
-      }
-      ++I1; ++I2;
-    }
-    if (I1.cont() != I2.cont())
-      res = false;
-
-    return res;
-  }
-};
-
-// Specialization for i=1 and 3<dim.
-template<typename CMap, unsigned int dim>
-struct Is_sewable_functor<CMap, 1, dim>
-{
-  static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
-  { return Is_sewable_functor<CMap,0>::run(amap, adart2, adart1); }
+  { return Is_sewable_functor<CMap,1, dim>::run(amap, adart2, adart1); }
 };
 
 // Specialization for i=0 and dim=1.
