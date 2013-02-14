@@ -26,6 +26,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Kernel/Same_uncertainty.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Coercion_traits.h>
 #include <boost/type_traits/is_same.hpp>
 
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
@@ -147,7 +148,8 @@ namespace internal {
     // -----------------------------------
     // treat x coord
     // -----------------------------------
-    FT dmin, tmin, tmax, dmax;
+    typedef typename Coercion_traits<double,FT>::Type CFT;
+    CFT dmin, tmin, tmax, dmax;
     if ( qx >= px )
     {
       if(bounded_0 && px > bxmax) return false; // segment on the right of bbox
@@ -181,7 +183,7 @@ namespace internal {
       dmin = px - qx;
     }
 
-    if(bounded_0) tmin = (CGAL::max)(FT(0), tmin);
+    if(bounded_0) tmin = (CGAL::max)(CFT(0), tmin);
 
     // If the query is vertical for x, then check its x-coordinate is in
     // the x-slab.
@@ -208,7 +210,7 @@ namespace internal {
     // -----------------------------------
     // treat y coord
     // -----------------------------------
-    FT dymin, tymin, tymax, dymax;
+    CFT dymin, tymin, tymax, dymax;
     if ( qy >= py )
     {
       if(bounded_0 && py > bymax) return false; // segment on the right of bbox
@@ -242,7 +244,7 @@ namespace internal {
       dymin = py - qy;
     }
 
-    if(bounded_0) tymin = (CGAL::max)(FT(0), tymin);
+    if(bounded_0) tymin = (CGAL::max)(CFT(0), tymin);
 
     // If the query is vertical for y, then check its y-coordinate is in
     // the y-slab.
@@ -267,7 +269,7 @@ namespace internal {
     // -----------------------------------
     // treat z coord
     // -----------------------------------
-    FT dzmin, tzmin, tzmax, dzmax;
+    CFT dzmin, tzmin, tzmax, dzmax;
     if ( qz >= pz )
     {
       if(bounded_0 && pz > bzmax) return false; // segment on the right of bbox
@@ -301,7 +303,7 @@ namespace internal {
       dzmin = pz - qz;
     }
 
-    if(bounded_0) tzmin = (CGAL::max)(FT(0), tzmin);
+    if(bounded_0) tzmin = (CGAL::max)(CFT(0), tzmin);
 
     // If the query is vertical for z, then check its z-coordinate is in
     // the z-slab.
