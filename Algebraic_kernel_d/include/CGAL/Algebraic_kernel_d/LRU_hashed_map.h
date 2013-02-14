@@ -80,13 +80,17 @@ public:
     //! hashed map data type
     typedef std::pair<Key_type, Value_type> Data_type;
 
-    // try boost::identity ?
+
+    // We don't use BOOST_MULTI_INDEX_MEMBER but ::boost::multi_index::member_offset
+    // because VC10 had a problem with it
+    //
+    // An independent remark: try boost::identity ?
     typedef boost::multi_index::multi_index_container<
         Data_type,
         boost::multi_index::indexed_by<
             boost::multi_index::sequenced<>,
             boost::multi_index::hashed_unique<
-                BOOST_MULTI_INDEX_MEMBER(Data_type, Key_type, first),
+                  ::boost::multi_index::member_offset<Data_type,Key_type,offsetof(Data_type,first)>,
                     Hash, Pred > > > Hashed_map;
     
 

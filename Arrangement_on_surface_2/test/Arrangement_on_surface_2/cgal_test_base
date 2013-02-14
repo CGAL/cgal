@@ -167,6 +167,12 @@ run_test()
     rm -f $OUTPUTFILE
     COMMAND="./$1"
     echo "Executing $1 $5 $6 ... "
+    echo $COMMAND
+    echo $2
+    echo $3
+    echo $4
+    echo $5
+    echo $6
     if eval $COMMAND $2 $3 $4 $5 $6 > $OUTPUTFILE 2>&1 ; then
 	echo "   successful execution of $5 $6" >> $ERRORFILE
     else
