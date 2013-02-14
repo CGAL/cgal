@@ -142,6 +142,7 @@ Effect of different smoothness parameters on the segmentation (using 10 clusters
 \cgalFigureEnd
 \image latex dino_different_lambda_small.png "Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively." width=16cm
 
+\todo this is the effect on the clustering not the segmentation? (same color for different connected components)
 
 
 \section Surface_mesh_segmentationAPI API
