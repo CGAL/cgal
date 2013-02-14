@@ -37,26 +37,46 @@ namespace CGAL
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be removed.
    */
+  template <class CMap, unsigned int i, unsigned int nmi=CMap::dimension-i>
+  struct Is_removable_functor
+  {
+    static bool run(const CMap& amap, typename CMap::Dart_const_handle adart)
+    {
+      // TODO? Optimisation for dim-2, and to not test all the darts of the cell?
+      bool res = true;
+      for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
+            res && it.cont(); ++it )
+      {
+        if (it->template beta<i+2>()->template beta<i+1>()!=
+            it->template beta_inv<i+1>()->template beta<i+2>() )
+          res = false;
+      }
+      return res;
+    }
+  };
+  // Specialization for i=CMap::dimension
+  template <class CMap, unsigned int i>
+  struct Is_removable_functor<CMap, i, 0>
+  {
+    static bool run(const CMap&, typename CMap::Dart_const_handle)
+    { return true; }
+  };
+  // Specialization for i=CMap::dimension-1
+  template <class CMap, unsigned int i>
+  struct Is_removable_functor<CMap, i, 1>
+  {
+    static bool run(const CMap&, typename CMap::Dart_const_handle)
+    { return true; }
+  };
+  /** Test if an i-cell can be removed.
+   *  An i-cell can be removed if i==CMap::dimension or i==CMap::dimension-1,
+   *     or if there are at most two (i+1)-cell incident to it.
+   * @param adart a dart of the i-cell.
+   * @return true iff the i-cell can be removed.
+   */
   template < class CMap, unsigned int i >
   bool is_removable(const CMap& amap, typename CMap::Dart_const_handle adart)
-  {
-    CGAL_assertion( adart!=NULL );
-    CGAL_static_assertion( 0<=i && i<=CMap::dimension );
-
-    if ( i==CMap::dimension   ) return true;
-    if ( i==CMap::dimension-1 ) return true;
-
-    // TODO? Optimisation for dim-2, and to not test all the darts of the cell?
-    bool res = true;
-    for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
-          res && it.cont(); ++it )
-    {
-      if (it->template beta<i+2>()->template beta<i+1>()!=
-          it->template beta_inv<i+1>()->template beta<i+2>() )
-        res = false;
-    }
-    return res;
-  }
+  { return CGAL::Is_removable_functor<CMap, i>::run(amap,adart); }
 
   /** Remove an i-cell, 0<i<dimension, and merge eventually both incident
    *  (i+1)-cells.
@@ -431,26 +451,46 @@ namespace CGAL
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be contracted.
    */
+  template <class CMap, unsigned int i>
+  struct Is_contractible_functor
+  {
+    static bool run(const CMap& amap, typename CMap::Dart_const_handle adart)
+    {
+      // TODO ? Optimisation possible to not test all the darts of the cell ?
+      bool res = true;
+      for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
+            res && it.cont(); ++it )
+      {
+        if ( it->template beta<i-2>()->template beta<i-1>()!=
+             it->template beta<i-1>()->template beta_inv<i-2>() )
+          res = false;
+      }
+      return res;
+    }
+  };
+  // Specialization for i=0
+  template <class CMap>
+  struct Is_contractible_functor<CMap, 0>
+  {
+    static bool run(const CMap&, typename CMap::Dart_const_handle)
+    { return false; }
+  };
+  // Specialization for i=1
+  template <class CMap>
+  struct Is_contractible_functor<CMap, 1>
+  {
+    static bool run(const CMap&, typename CMap::Dart_const_handle)
+    { return true; }
+  };
+  /** Test if an i-cell can be contracted.
+   *  An i-cell can be contracted if i==1
+   *     or if there are at most two (i-1)-cell incident to it.
+   * @param adart a dart of the i-cell.
+   * @return true iff the i-cell can be contracted.
+   */
   template < class CMap, unsigned int i >
   bool is_contractible(const CMap& amap, typename CMap::Dart_const_handle adart)
-  {
-    CGAL_assertion(adart != NULL);
-    CGAL_static_assertion(0<=i && i<=CMap::dimension);
-
-    if ( i==0 ) return false;
-    if ( i==1 ) return true;
-
-    // TODO ? Optimisation possible to not test all the darts of the cell ?
-    bool res = true;
-    for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
-          res && it.cont(); ++it )
-    {
-      if ( it->template beta<i-2>()->template beta<i-1>()!=
-           it->template beta<i-1>()->template beta_inv<i-2>() )
-        res = false;
-    }
-    return res;
-  }
+  { return CGAL::Is_contractible_functor<CMap, i>::run(amap,adart); }
 
   /** Contract an i-cell, 1<i<=dimension, and merge eventually both incident
    *  (i-1)-cells.

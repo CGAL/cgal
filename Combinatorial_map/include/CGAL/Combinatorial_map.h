@@ -985,6 +985,20 @@ namespace CGAL {
         (mattribute_containers).size();
     }
 
+    /** Set the i th attribute of all the darts of a given i-cell.
+     * @param adart a dart of the i-cell.
+     * @param ah the vertex to set.
+     */
+    template<unsigned int i>
+    void set_attribute(Dart_handle adart,
+                       typename Attribute_handle<i>::type ah)
+    {
+      CGAL_static_assertion(i<=dimension);
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                  "set_attribute<i> but i-attributes are disabled");
+      Set_i_attribute_functor<Self,i>::run(this, adart, ah);
+    }
+
     /// @return a Attributes_range<i> (range through all the
     /// attributes<i> of the map).
     template<unsigned int i>

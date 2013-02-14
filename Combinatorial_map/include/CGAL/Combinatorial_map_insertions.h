@@ -126,10 +126,6 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
   while ( !first->template is_free<0>() && first->template beta<0>()!=adart )
     first = first->template beta<0>();
 
-  // Stack of couple of dart and dimension for which
-  // we must call on_split functor
-  std::deque<typename CMap::Dart_handle> modified_darts;
-
   // Mark used to mark darts already treated.
   int treated = amap.get_new_mark();
 
@@ -203,7 +199,6 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
                 (nn1, prev->beta(dim));
 
           amap.mark(cur->beta(dim), treated);
-          tounmark.push_back(cur->beta(dim));
         }
         else
         {
@@ -240,7 +235,11 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
         itd=tounmark.begin(); itd!=tounmark.end(); ++itd )
   {
     amap.unmark(*itd, treated);
-
+    for (unsigned int dim=3; dim<=CMap::dimension; ++dim)
+    {
+      if ( !(*itd)->is_free(dim) )
+        amap.unmark((*itd)->beta(dim), treated);
+    }
     if ( *itd!=adart )
       CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::
           run(&amap, adart, *itd);
@@ -300,9 +299,9 @@ insert_dangling_cell_1_in_cell_2( CMap& amap,
     if ( !it1->is_free(s1) )
     {
       if ( s1==0 )
-        amap.template link_beta_1(it1->template beta<0>(), d2);
+        amap.link_beta_1(it1->template beta<0>(), d2);
       else
-        amap.template link_beta_0(it1->template beta<1>(), d2);
+        amap.link_beta_0(it1->template beta<1>(), d2);
     }
 
     if (s1==0)
