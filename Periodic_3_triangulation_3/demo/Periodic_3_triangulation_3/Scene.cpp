@@ -5,7 +5,8 @@ void Scene::init() {
   glDisable(GL_COLOR_MATERIAL);
 
   // camera
-  ui->viewer->camera()->setPosition(Vec(0.5,0.5,2.7));
+  // only 2.7 gets an 'f' as VC++ warns if we don't
+  ui->viewer->camera()->setPosition(Vec(0.5,0.5,2.7f));
   ui->viewer->camera()->lookAt(Vec(0.5,0.5,0.5));
 
   // scene inits
