@@ -22,13 +22,14 @@
 
 #include <CGAL/Compact_container.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
+#include <CGAL/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/internal/Combinatorial_map_group_functors.h>
 #include <CGAL/internal/Combinatorial_map_sewable.h>
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/Combinatorial_map_min_items.h>
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
-#include <CGAL/Combinatorial_map_functors.h>
 #include <bitset>
 #include <vector>
 #include <deque>
@@ -56,66 +57,6 @@ namespace CGAL {
              class Alloc_=CGAL_ALLOCATOR(int) >
   class Combinatorial_map_base
   {
-   /*
-    template<class Map, unsigned int i, unsigned int nmi>
-    friend struct Remove_cell_functor;
-
-    template<class Map, unsigned int i>
-    friend struct Contract_cell_functor;
-
-    template<class Map>
-    friend typename Map::Dart_handle
-    insert_cell_0_in_cell_1(Map& amap, typename Map::Dart_handle adart);
-
-    template<class CMap>
-    friend typename CMap::Dart_handle
-    insert_cell_1_in_cell_2(CMap& amap, typename CMap::Dart_handle adart1);
-
-    template<class CMap>
-    friend
-    typename CMap::Dart_handle
-    insert_cell_1_in_cell_2(CMap& amap,
-                            typename CMap::Dart_handle adart1,
-                            typename CMap::Dart_handle adart2);
-
-    template<class Map, class InputIterator>
-    friend
-    typename Map::Dart_handle
-    insert_cell_2_in_cell_3(Map& amap, InputIterator afirst,
-                            InputIterator alast);
-
-    template < class Map >
-    friend
-    typename Map::Dart_handle
-    insert_cell_0_in_cell_2(Map& amap, typename Map::Dart_handle adart);
-
-    template<typename CMap, unsigned int i, typename Type_attr, typename Range>
-    friend struct internal::Degroup_one_attribute_of_dart_functor;
-
-    template<typename CMap, unsigned int i, typename T>
-    friend struct internal::Group_attribute_functor_of_dart_run;
-
-    template<typename Map,unsigned int i>
-    friend struct internal::Group_attribute_functor_run;
-
-    template<typename Map,unsigned int i>
-    friend struct internal::Degroup_attribute_functor_run;
-
-    template <typename CMap, unsigned int i, typename Type_attr>
-    friend struct internal::Degroup_one_attribute_functor;
-
-    template<typename Map>
-    friend struct internal::Test_is_valid_attribute_functor;
-
-    template<typename Map>
-    friend struct internal::Update_dart_of_attribute_functor;
-
-    template<typename Map>
-    friend struct internal::Decrease_attribute_functor;
-
-    template<typename Map, unsigned int i, typename Enabled>
-    friend struct internal::Update_dart_of_one_attribute_functor;
-*/
   public:
     /// Types definition
     typedef Combinatorial_map_base<d_, Refs, Items_,Alloc_>  Self;
@@ -245,32 +186,35 @@ namespace CGAL {
     Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3)
     { return mdarts.emplace(mmask_marks, t1, t2, t3); }
     template < typename T1, typename T2, typename T3, typename T4 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
+                            const T4 &t4)
     { return mdarts.emplace(mmask_marks, t1, t2, t3, t4); }
     template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                            const T5 &t5)
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
+                            const T4 &t4, const T5 &t5)
     { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5); }
     template < typename T1, typename T2, typename T3, typename T4, typename T5,
                typename T6 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                            const T5 &t5, const T6 &t6)
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
+                            const T4 &t4, const T5 &t5, const T6 &t6)
     { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6); }
     template < typename T1, typename T2, typename T3, typename T4, typename T5,
                typename T6, typename T7 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                            const T5 &t5, const T6 &t6, const T7 &t7)
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
+                            const T4 &t4, const T5 &t5, const T6 &t6,
+                            const T7 &t7)
     { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6, t7); }
     template < typename T1, typename T2, typename T3, typename T4, typename T5,
                typename T6, typename T7, typename T8 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                            const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
+                            const T4 &t4, const T5 &t5, const T6 &t6,
+                            const T7 &t7, const T8 &t8)
     { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6, t7, t8); }
     template < typename T1, typename T2, typename T3, typename T4, typename T5,
                typename T6, typename T7, typename T8, typename T9 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                            const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8,
-                            const T9 &t9)
+    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
+                            const T4 &t4, const T5 &t5, const T6 &t6,
+                            const T7 &t7, const T8 &t8, const T9 &t9)
     { return mdarts.emplace(mmask_marks, t1, t2, t3, t4, t5, t6, t7, t8, t9); }
 #endif
 
@@ -321,50 +265,52 @@ namespace CGAL {
     /// @return the betas of ADart (beta are used in the same order than
     ///         they are given as parameters)
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-    template<typename ... Betas>
+    template<typename ...Betas>
     Dart_handle beta(Dart_handle ADart, Betas... betas) const
-    { return internal::Beta_functor<Dart_handle, Betas ...>::
+    { return CGAL::internal::Beta_functor<Dart_handle, Betas...>::
         run(ADart, betas...); }
-    template<typename ... Betas>
+    template<typename ...Betas>
     Dart_const_handle beta(Dart_const_handle ADart, Betas... betas) const
-    { return internal::Beta_functor<Dart_const_handle, Betas ...>::
+    { return CGAL::internal::Beta_functor<Dart_const_handle, Betas...>::
         run(ADart, betas...); }
-    template<int ... Betas>
+    template<int... Betas>
     Dart_handle beta(Dart_handle ADart) const
-    { return internal::Beta_functor_static<Dart_handle, Betas ...>::
+    { return CGAL::internal::Beta_functor_static<Dart_handle, Betas...>::
         run(ADart); }
-    template<int ... Betas>
+    template<int... Betas>
     Dart_const_handle beta(Dart_const_handle ADart) const
-    { return internal::Beta_functor_static<Dart_const_handle, Betas ...>::
+    { return CGAL::internal::Beta_functor_static<Dart_const_handle, Betas...>::
         run(ADart); }
 #else
     Dart_handle beta(Dart_handle ADart, int B1)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::run(ADart, B1); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::run(ADart, B1, B2); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+          run(ADart, B1, B2, B3); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+          run(ADart, B1, B2, B3, B4); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4,
-                                                      B5); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+          run(ADart, B1, B2, B3, B4, B5); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5,
                      int B6)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4, B5,
-                                                      B6); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+          run(ADart, B1, B2, B3, B4, B5, B6); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5,
                      int B6, int B7)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4, B5,
-                                                      B6, B7); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+          run(ADart, B1, B2, B3, B4, B5, B6, B7); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5,
                      int B6, int B7, int B8)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4, B5,
-                                                      B6, B7, B8); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+          run(ADart, B1, B2, B3, B4, B5, B6, B7, B8); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5,
                      int B6, int B7, int B8, int B9)
-    { return internal::Beta_functor<Dart_handle>::run(ADart, B1, B2, B3, B4, B5,
-                                                      B6, B7, B8, B9); }
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+          run(ADart, B1, B2, B3, B4, B5, B6, B7, B8, B9); }
 #endif
 
     /** Count the number of used marks.
@@ -567,20 +513,18 @@ namespace CGAL {
     {
       CGAL_assertion( is_reserved(amark) );
 
-      if (is_whole_map_unmarked(amark)) return;
-
-      if (is_whole_map_marked(amark))
+      if ( is_whole_map_marked(amark) )
       {
         negate_mark(amark);
       }
-      else
+      else if ( !is_whole_map_unmarked(amark) )
       {
-        unmark_null_dart(amark);
         for ( typename Dart_range::const_iterator it(darts().begin()),
                itend(darts().end()); it!=itend; ++it)
           unmark(it, amark);
       }
       CGAL_assertion(is_whole_map_unmarked(amark));
+      unmark_null_dart(amark);
     }
 
     /** Free a given mark, previously calling unmark_all_darts.
@@ -642,6 +586,7 @@ namespace CGAL {
      *  @param i the dimension to close
      *  @return the number of new darts.
      *  @pre 2<=i<=n (TODO case i==1)
+     *  @TODO move into Combinatorial_map_operations ?
      */
     unsigned int close(unsigned int i)
     {
@@ -662,8 +607,8 @@ namespace CGAL {
           basic_link_beta_for_involution(it, d, i);
           // we copy all the non void attribute
           Helper::template Foreach_enabled_attributes_except
-            <internal::Group_attribute_functor_of_dart<Self, dimension+1>,
-              dimension+1>:: run(this,it,d);
+              <CGAL::internal::Group_attribute_functor_of_dart
+              <Self, dimension+1>, dimension+1>:: run(this,it,d);
           // we need to remove i-attrib, how to do that ?
 
           // Special cases for 0 and 1
@@ -907,7 +852,7 @@ namespace CGAL {
     /// Create a new attribute.
     /// @return a handle on the new attribute.
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-    template<unsigned int i, typename... Args>
+    template<unsigned int i, typename ...Args>
     typename Attribute_handle<i>::type create_attribute(const Args&... args)
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
@@ -1351,7 +1296,7 @@ namespace CGAL {
 
       if ( adart1==adart2 )
       {
-        for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart1);
+        for ( CGAL::CMap_dart_iterator_of_involution<Self,1> it(*this, adart1);
               it.cont(); ++it )
         {
           basic_link_beta_1(it, it);
@@ -1361,15 +1306,15 @@ namespace CGAL {
       {
         int m = get_new_mark();
         std::deque<Dart_handle> dartv;
-        for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
-              it.cont(); ++it)
+        for ( CGAL::CMap_dart_iterator_basic_of_cell<Self,0>
+              it(*this, adart1, m); it.cont(); ++it )
         {
           mark(it,m);
           dartv.push_back(it);
         }
 
-        CMap_dart_iterator_of_involution<Self,1>     I1(*this, adart1);
-        CMap_dart_iterator_of_involution_inv<Self,1> I2(*this, adart2);
+        CGAL::CMap_dart_iterator_of_involution<Self,1>     I1(*this, adart1);
+        CGAL::CMap_dart_iterator_of_involution_inv<Self,1> I2(*this, adart2);
         for ( ; I1.cont(); ++I1, ++I2 )
         {
           if ( is_marked(I1,m) ) basic_link_beta_1(I1, I2);
@@ -1408,8 +1353,8 @@ namespace CGAL {
       CGAL_assertion( 2<=i && i<=Self::dimension );
       CGAL_assertion( (is_sewable<i>(adart1,adart2)) );
 
-      CMap_dart_iterator_of_involution<Self,i>    I1(*this, adart1);
-      CMap_dart_iterator_of_involution_inv<Self,i> I2(*this, adart2);
+      CGAL::CMap_dart_iterator_of_involution<Self,i>     I1(*this, adart1);
+      CGAL::CMap_dart_iterator_of_involution_inv<Self,i> I2(*this, adart2);
       for ( ; I1.cont();  ++I1, ++I2 )
       {
         basic_link_beta_for_involution<i>(I1, I2);
@@ -1445,7 +1390,7 @@ namespace CGAL {
 
       if ( adart1==adart2 )
       {
-        for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart1);
+        for ( CGAL::CMap_dart_iterator_of_involution<Self,1> it(*this, adart1);
               it.cont(); ++it )
         {
           basic_link_beta_1(it, it);
@@ -1455,8 +1400,8 @@ namespace CGAL {
 
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
-      for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
-           it.cont(); ++it)
+      for ( CGAL::CMap_dart_iterator_basic_of_cell<Self, 0>
+            it(*this, adart1, m); it.cont(); ++it )
       {
         mark(it,m);
         dartv.push_back(it);
@@ -1465,9 +1410,9 @@ namespace CGAL {
       int mark = get_new_mark();
       CGAL_assertion( mark!=-1 );
 
-      CMap_dart_iterator_basic_of_involution<Self,1>
+      CGAL::CMap_dart_iterator_basic_of_involution<Self, 1>
           I1(*this, adart1, mark);
-      CMap_dart_iterator_basic_of_involution_inv<Self,1>
+      CGAL::CMap_dart_iterator_basic_of_involution_inv<Self, 1>
           I2(*this, adart2, mark);
 
       // This first loop do not modify the map, but only the attributes
@@ -1476,18 +1421,12 @@ namespace CGAL {
       {
         if ( is_marked(I1,m) )
           Helper::template Foreach_enabled_attributes_except
-              <internal::Group_attribute_functor<Self, 0>, 1>::
+              <CGAL::internal::Group_attribute_functor<Self, 0>, 1>::
               run(this, I1, I2);
         else
           Helper::template Foreach_enabled_attributes_except
-              <internal::Group_attribute_functor<Self, 1>, 1>::
+              <CGAL::internal::Group_attribute_functor<Self, 1>, 1>::
               run(this, I1, I2);
-
-          /*  TODO check AVANT     Dart_handle od1=I1->other_extremity();
-        Dart_handle od2=I2->other_extremity();
-        if (od1!=NULL && od2!=NULL)
-        run(this,adart1,adart2);
-          group_all_attributes_except(od1, od2, 1);*/
       }
 
       // Now we update the beta links.
@@ -1523,8 +1462,8 @@ namespace CGAL {
 
       if ( adart1==adart2 )
       {
-        for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart1);
-              it.cont(); ++it )
+        for ( CGAL::CMap_dart_iterator_of_involution<Self, 1>
+              it(*this, adart1); it.cont(); ++it )
         {
           basic_link_beta_1(it, it);
         }
@@ -1533,8 +1472,8 @@ namespace CGAL {
 
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
-      for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,m);
-            it.cont(); ++it )
+      for ( CGAL::CMap_dart_iterator_basic_of_cell<Self, 0>
+            it(*this, adart1, m); it.cont(); ++it )
       {
         mark(it,m);
         dartv.push_back(it);
@@ -1543,9 +1482,9 @@ namespace CGAL {
       int mark = get_new_mark();
       CGAL_assertion( mark!=-1 );
 
-      CMap_dart_iterator_basic_of_involution<Self,1>
+      CGAL::CMap_dart_iterator_basic_of_involution<Self, 1>
           I1(*this, adart1, mark);
-      CMap_dart_iterator_basic_of_involution_inv<Self,1>
+      CGAL::CMap_dart_iterator_basic_of_involution_inv<Self, 1>
           I2(*this, adart2, mark);
 
       // This first loop do not modify the map, but only the attributes
@@ -1561,7 +1500,6 @@ namespace CGAL {
           Helper::template Foreach_enabled_attributes_except
               <internal::Group_attribute_functor<Self, 0>, 1>::
               run(this, I1, I2);
-        // TODO check avant group_all_attributes_except(I1,I2,1);
       }
 
       // Now we update the beta links.
@@ -1573,7 +1511,7 @@ namespace CGAL {
       }
 
       for ( typename std::deque<Dart_handle>::iterator it=dartv.begin();
-           it!=dartv.end(); ++it )
+            it!=dartv.end(); ++it )
       { unmark(*it,m); }
       CGAL_assertion( is_whole_map_unmarked(m) );
       free_mark(m);
@@ -1598,12 +1536,12 @@ namespace CGAL {
       CGAL_assertion( 2<=i && i<=dimension );
       CGAL_assertion( (is_sewable<i>(adart1,adart2)) );
 
-      int mark = get_new_mark();
+      int mark=get_new_mark();
       CGAL_assertion( mark!=-1 );
 
-      CMap_dart_iterator_basic_of_involution<Self,i>
+      CGAL::CMap_dart_iterator_basic_of_involution<Self, i>
           I1(*this, adart1, mark);
-      CMap_dart_iterator_basic_of_involution_inv<Self,i>
+      CGAL::CMap_dart_iterator_basic_of_involution_inv<Self, i>
           I2(*this, adart2, mark);
 
       // This first loop do not modify the map, but only the attributes
@@ -1611,9 +1549,8 @@ namespace CGAL {
       for ( ; I1.cont(); ++I1, ++I2 )
       {
         Helper::template Foreach_enabled_attributes_except
-            <internal::Group_attribute_functor<Self, i>, i>::
+            <CGAL::internal::Group_attribute_functor<Self, i>, i>::
             run(this, I1, I2);
-        // TODO avant group_all_attributes_except(I1,I2,i);
       }
 
       // Now we update the beta links.
@@ -1671,14 +1608,14 @@ namespace CGAL {
 
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
-      for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
-           it.cont(); ++it)
+      for ( CGAL::CMap_dart_iterator_basic_of_cell<Self,0> it(*this, adart, m);
+            it.cont(); ++it )
       {
         mark(*it,m);
         dartv.push_back(*it);
       }
 
-      for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+      for ( CGAL::CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
             it.cont(); ++it )
       {
         if ( is_marked(*it,m) ) unlink_beta_1(*it);
@@ -1717,7 +1654,7 @@ namespace CGAL {
       CGAL_assertion( adart!=NULL && !adart->template is_free<i>() );
       CGAL_assertion( 2<=i && i<=Self::dimension );
 
-      for ( CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
+      for ( CGAL::CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
             it.cont(); ++it )
       { unlink_beta<i>(*it); }
     }
@@ -1753,14 +1690,14 @@ namespace CGAL {
       std::deque<Dart_handle> modified_darts;
       std::deque<Dart_handle> modified_darts2;
 
-      for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this, adart, m);
-           it.cont(); ++it)
+      for ( CGAL::CMap_dart_iterator_basic_of_cell<Self,0> it(*this, adart, m);
+            it.cont(); ++it )
       {
         mark(it, m);
         dartv.push_back(it);
       }
 
-      for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+      for ( CGAL::CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
             it.cont(); ++it )
       {
         if ( is_marked(it, m) )
@@ -1787,7 +1724,7 @@ namespace CGAL {
       // We test the split of all the incident cells for all the non
       // void attributes.
       Helper::template Foreach_enabled_attributes_except
-          <internal::Test_split_attribute_functor<Self,0>, 1>::
+          <CGAL::internal::Test_split_attribute_functor<Self,0>, 1>::
           run(this, modified_darts, modified_darts2);
     }
 
@@ -1808,14 +1745,14 @@ namespace CGAL {
       std::deque<Dart_handle> modified_darts;
       std::deque<Dart_handle> modified_darts2;
 
-      for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart,m);
-           it.cont(); ++it)
+      for ( CGAL::CMap_dart_iterator_basic_of_cell<Self,0>
+            it(*this, adart, m); it.cont(); ++it)
       {
-        mark(it,m);
+        mark(it, m);
         dartv.push_back(it);
       }
 
-      for ( CMap_dart_iterator_of_involution<Self,1> it(*this, adart);
+      for ( CGAL::CMap_dart_iterator_of_involution<Self, 1> it(*this, adart);
             it.cont(); ++it )
       {
         if ( is_marked(it, m) )
@@ -1834,15 +1771,14 @@ namespace CGAL {
 
       for ( typename std::deque<Dart_handle>::iterator
              it=dartv.begin(); it!=dartv.end(); ++it)
-      { unmark(*it,m); }
+      { unmark(*it, m); }
       CGAL_assertion( is_whole_map_unmarked(m) );
       free_mark(m);
 
-      // TODO pass the mark m to know which dart is modified by b0 of b1
       // We test the split of all the incident cells for all the non
       // void attributes.
       Helper::template Foreach_enabled_attributes_except
-          <internal::Test_split_attribute_functor<Self,1>, 1>::
+          <CGAL::internal::Test_split_attribute_functor<Self,1>, 1>::
           run(this, modified_darts, modified_darts2);
     }
 
@@ -1862,7 +1798,7 @@ namespace CGAL {
 
       std::deque<Dart_handle> modified_darts;
 
-      for ( CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
+      for ( CGAL::CMap_dart_iterator_of_involution<Self, i> it(*this, adart);
             it.cont(); ++it )
       {
         modified_darts.push_back(it);
@@ -1873,7 +1809,7 @@ namespace CGAL {
       // We test the split of all the incident cells for all the non
       // void attributes.
       Helper::template Foreach_enabled_attributes_except
-          <internal::Test_split_attribute_functor<Self,i>, i>::
+          <CGAL::internal::Test_split_attribute_functor<Self, i>, i>::
           run(this, modified_darts);
     }
 
@@ -1940,8 +1876,8 @@ namespace CGAL {
       {
         if ( is_marked(it, amark) )
         {
-          internal::Foreach_static
-            <internal::Count_cell_functor<Self>,dimension+1>::
+          CGAL::internal::Foreach_static
+            <CGAL::internal::Count_cell_functor<Self>,dimension+1>::
             run(this, it, &marks, &res);
         }
       }
@@ -1971,7 +1907,6 @@ namespace CGAL {
         }
         for ( unsigned int i=0; i<tounmark.size(); ++i)
         {
-          unmark(null_dart_handle, tounmark[i]);
           CGAL_assertion(is_whole_map_unmarked(tounmark[i]));
           free_mark(tounmark[i]);
         }
@@ -1991,7 +1926,7 @@ namespace CGAL {
       int m = get_new_mark();
       negate_mark(m); // We mark all the cells.
 
-      res = count_marked_cells(m,acells);
+      res = count_marked_cells(m, acells);
 
       negate_mark(m); // We unmark the cells
       free_mark(m);
@@ -2045,104 +1980,6 @@ namespace CGAL {
     }
 
   public:
-    // TODO REMOVE ?
-    /** Update the dart of the given i-cell attribute onto a non marked dart.
-     * @param ah the attribute to update.
-     * @param amark the mark.
-     */
-    template<unsigned int i>
-    void update_dart_of_attribute(Dart_handle ah, int amark)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                                "update_dart_of_attribute<i> but "
-                                "i-attributes are disabled");
-      CGAL_assertion(ah!=NULL && ah!=null_dart_handle);
-
-      if ( ah->template attribute<i>()==NULL ||
-           ah->template attribute<i>()->dart()==NULL ||
-           !is_marked(ah->template attribute<i>()->dart(),amark) )
-        return;
-
-      for ( CMap_dart_iterator_of_cell<Self,i> it(*this, ah); it.cont(); ++it)
-      {
-        if (!is_marked(it,amark))
-        {
-          ah->template attribute<i>()->set_dart(it);
-          return;
-        }
-      }
-      ah->template attribute<i>()->set_dart(NULL);
-    }
-
-    /** Update the dart of all the cell-attributes incident to ah onto a non
-     *  marked dart. This method is used before to remove a cell (which is
-     *  marked), to put all the darts of the enabled cells onto surviving dart.
-     * @param ah the dart to update.
-     * @param amark the mark.
-     */
-    void update_dart_of_all_attributes(Dart_handle ah, int amark)
-    {
-      Helper::template Foreach_enabled_attributes
-        <internal::Update_dart_of_attribute_functor<Self> >::run(this,ah,amark);
-    }
-
-    /** Test the validity of a i-cell-attribute.
-     * ie all the darts belonging to a i-cell are linked to the same attribute.
-     * @param adart a dart.
-     * @param amark a mark used to mark darts of the i-cell.
-     * @return true iff all the darts of the i-cell link to the same attribute.
-     */
-    template<unsigned int i>
-    bool is_valid_attribute(Dart_const_handle adart,
-                            unsigned int amark) const
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                                "is_valid_attribute<i> but i-attributes"
-                                " are disabled");
-      if ( is_marked(adart, amark) ) return true;
-      bool valid = true;
-      bool found_dart = false;
-
-      typename Attribute_const_handle<i>::type
-        a=adart->template attribute<i>();
-
-      unsigned int nb = 0;
-      for ( CMap_dart_const_iterator_basic_of_cell<Self,i>
-             it(*this,adart,amark); it.cont(); ++it)
-      {
-        if ( it->template attribute<i>() != a )
-        {
-          std::cout<<"ERROR: an attribute of the cell is different "
-                  <<&*a<<" != "<<&*it->template attribute<i>()<<" for dart "
-                 <<&*it<<std::endl;
-          valid = false;
-        }
-
-        if ( a!=NULL && it==a->dart() ) found_dart = true;
-
-        mark(it, amark);
-        ++nb;
-      }
-
-      if ( a!=NULL && a->get_nb_refs()!=nb )
-      {
-        std::cout<<"ERROR: the number of reference of an attribute is not correct. "
-                <<"Count: "<<nb<<" != Store in the attribute:"<<a->get_nb_refs()<<" for dart "
-               <<&*adart<<std::endl;
-        valid = false;
-      }
-
-      if ( a!=NULL && a->dart()!=NULL && !found_dart )
-      {
-        std::cout<<"ERROR: the dart of an attribute does not belong to the cell "
-                <<&*a->dart()<<" != NULL "<<" for dart "
-               <<&*adart<<std::endl;
-        valid = false;
-      }
-
-      return valid;
-    }
-
     /** Erase marked darts from the map.
      * Marked darts are unlinked before to be removed, thus surviving darts
      * are correctly linked, but the map is not necessarily valid depending
@@ -2173,13 +2010,13 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_orbit_basic_range
     template<unsigned int ... Beta>
-    struct Dart_of_orbit_basic_range : public CMap_range
-    <Self, CMap_dart_iterator_basic_of_orbit<Self,Beta...>,
-     CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> >
+    struct Dart_of_orbit_basic_range : public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_basic_of_orbit<Self,Beta...>,
+     CGAL::CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_basic_of_orbit<Self,Beta...>,
-       CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> > Base;
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_basic_of_orbit<Self,Beta...>,
+       CGAL::CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> > Base;
 
       Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int amark=-1):
         Base(amap, adart, amark)
@@ -2188,27 +2025,28 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_orbit_basic_const_range
     template<unsigned int ... Beta>
-    struct Dart_of_orbit_basic_const_range : public CMap_const_range
-    <Self, CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> >
+    struct Dart_of_orbit_basic_const_range : public CGAL::CMap_const_range
+    <Self, CGAL::CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> >
     {
-      typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> > Base;
+      typedef CGAL::CMap_const_range
+      <Self, CGAL::CMap_dart_const_iterator_basic_of_orbit<Self,Beta...> >
+      Base;
 
-      Dart_of_orbit_basic_const_range(const Self &amap, Dart_const_handle adart,
-                                      int amark=-1):
+      Dart_of_orbit_basic_const_range(const Self &amap, Dart_const_handle
+                                      adart, int amark=-1):
         Base(amap, adart, amark)
       {}
     };
     //**************************************************************************
     // Dart_of_orbit_range
     template<unsigned int ... Beta>
-    struct Dart_of_orbit_range : public CMap_range
-    <Self, CMap_dart_iterator_of_orbit<Self,Beta...>,
-     CMap_dart_const_iterator_of_orbit<Self,Beta...> >
+    struct Dart_of_orbit_range : public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_of_orbit<Self,Beta...>,
+     CGAL::CMap_dart_const_iterator_of_orbit<Self,Beta...> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_of_orbit<Self,Beta...>,
-       CMap_dart_const_iterator_of_orbit<Self,Beta...> > Base;
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_of_orbit<Self,Beta...>,
+       CGAL::CMap_dart_const_iterator_of_orbit<Self,Beta...> > Base;
 
       Dart_of_orbit_range(Self &amap, Dart_handle adart) : Base(amap,adart)
       {}
@@ -2216,11 +2054,11 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_orbit_const_range
     template<unsigned int ... Beta>
-    struct Dart_of_orbit_const_range : public CMap_const_range
-    <Self, CMap_dart_const_iterator_of_orbit<Self,Beta...> >
+    struct Dart_of_orbit_const_range : public CGAL::CMap_const_range
+    <Self, CGAL::CMap_dart_const_iterator_of_orbit<Self,Beta...> >
     {
-      typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_of_orbit<Self,Beta...> > Base;
+      typedef CGAL::CMap_const_range
+      <Self, CGAL::CMap_dart_const_iterator_of_orbit<Self,Beta...> > Base;
 
       Dart_of_orbit_const_range(const Self &amap, Dart_const_handle adart):
         Base(amap,adart)
@@ -2252,16 +2090,20 @@ namespace CGAL {
     // Dart_of_orbit_basic_range
     template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
              int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-    struct Dart_of_orbit_basic_range: public CMap_range
-    <Self, CMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
-     CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+    struct Dart_of_orbit_basic_range: public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
+        B8,B9>,
+     CGAL::CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
+        B8,B9> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
-       CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
+      B8,B9>,
+       CGAL::CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,
                                                B6,B7,B8,B9> > Base;
 
-      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart, int /*amark*/=-1):
+      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart,
+                                int /*amark*/=-1):
         Base(amap, adart)
       {}
     };
@@ -2271,14 +2113,15 @@ namespace CGAL {
              int B6=-1,int B7=-1,int B8=-1,int B9=-1>
     struct Dart_of_orbit_basic_const_range: public CMap_const_range
     <Self,
-     CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+     CGAL::CMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
+        B8,B9> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_basic_of_orbit
+      <Self, CGAL::CMap_dart_const_iterator_basic_of_orbit
        <Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> > Base;
 
-      Dart_of_orbit_basic_const_range(const Self &amap, Dart_const_handle adart,
-                                      int amark=-1):
+      Dart_of_orbit_basic_const_range(const Self &amap,
+                                      Dart_const_handle adart, int amark=-1):
         Base(amap, adart, amark)
       {}
     };
@@ -2286,13 +2129,15 @@ namespace CGAL {
     // Dart_of_orbit_range
     template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
              int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-    struct Dart_of_orbit_range: public CMap_range
-    <Self, CMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
-     CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+    struct Dart_of_orbit_range: public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
+     CGAL::CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
-       CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
+      B8,B9>,
+       CGAL::CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
+      B8,B9> >
       Base;
 
       Dart_of_orbit_range(Self &amap, Dart_handle adart):
@@ -2304,10 +2149,11 @@ namespace CGAL {
     template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
              int B6=-1,int B7=-1,int B8=-1,int B9=-1>
     struct Dart_of_orbit_const_range: public CMap_const_range
-    <Self, CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
+    <Self, CGAL::CMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
+        B8,B9> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_of_orbit
+      <Self, CGAL::CMap_dart_const_iterator_of_orbit
        <Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> > Base;
 
       Dart_of_orbit_const_range(const Self &amap, Dart_const_handle adart):
@@ -2542,13 +2388,13 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_cell_basic_range
     template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_cell_basic_range: public CMap_range
-    <Self, CMap_dart_iterator_basic_of_cell<Self,i,dim>,
-     CMap_dart_const_iterator_basic_of_cell<Self,i,dim> >
+    struct Dart_of_cell_basic_range: public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_basic_of_cell<Self,i,dim>,
+     CGAL::CMap_dart_const_iterator_basic_of_cell<Self,i,dim> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_basic_of_cell<Self,i,dim>,
-       CMap_dart_const_iterator_basic_of_cell<Self,i,dim> > Base;
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_basic_of_cell<Self,i,dim>,
+       CGAL::CMap_dart_const_iterator_basic_of_cell<Self,i,dim> > Base;
 
       Dart_of_cell_basic_range(Self &amap, Dart_handle adart, int amark=-1) :
         Base(amap, adart, amark)
@@ -2558,10 +2404,10 @@ namespace CGAL {
     // Dart_of_cell_basic_const_range
     template<unsigned int i,int dim=Self::dimension>
     struct Dart_of_cell_basic_const_range: public CMap_const_range
-    <Self, CMap_dart_const_iterator_basic_of_cell<Self,i,dim> >
+    <Self, CGAL::CMap_dart_const_iterator_basic_of_cell<Self,i,dim> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_basic_of_cell<Self,i,dim> > Base;
+      <Self, CGAL::CMap_dart_const_iterator_basic_of_cell<Self,i,dim> > Base;
 
       Dart_of_cell_basic_const_range(const Self &amap, Dart_const_handle adart,
                                      int amark=-1) :
@@ -2571,13 +2417,13 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_cell_range
     template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_cell_range: public CMap_range
+    struct Dart_of_cell_range: public CGAL::CMap_range
     <Self,CMap_dart_iterator_of_cell<Self,i,dim>,
-     CMap_dart_const_iterator_of_cell<Self,i,dim> >
+     CGAL::CMap_dart_const_iterator_of_cell<Self,i,dim> >
     {
-      typedef CMap_range
+      typedef CGAL::CMap_range
       <Self,CMap_dart_iterator_of_cell<Self,i,dim>,
-       CMap_dart_const_iterator_of_cell<Self,i,dim> > Base;
+       CGAL::CMap_dart_const_iterator_of_cell<Self,i,dim> > Base;
 
       Dart_of_cell_range(Self &amap, Dart_handle adart) :
         Base(amap, adart)
@@ -2587,10 +2433,10 @@ namespace CGAL {
     // Dart_of_cell_const_range
     template<unsigned int i,int dim=Self::dimension>
     struct Dart_of_cell_const_range: public CMap_const_range
-    <Self, CMap_dart_const_iterator_of_cell<Self,i,dim> >
+    <Self, CGAL::CMap_dart_const_iterator_of_cell<Self,i,dim> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_of_cell<Self,i,dim> > Base;
+      <Self, CGAL::CMap_dart_const_iterator_of_cell<Self,i,dim> > Base;
 
       Dart_of_cell_const_range(const Self &amap, Dart_const_handle adart) :
         Base(amap, adart)
@@ -2637,13 +2483,13 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_involution_basic_range
     template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_involution_basic_range: public CMap_range
-    <Self, CMap_dart_iterator_basic_of_involution<Self,i,dim>,
-     CMap_dart_const_iterator_basic_of_involution<Self,i,dim> >
+    struct Dart_of_involution_basic_range: public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_basic_of_involution<Self,i,dim>,
+     CGAL::CMap_dart_const_iterator_basic_of_involution<Self,i,dim> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_basic_of_involution<Self,i,dim>,
-       CMap_dart_const_iterator_basic_of_involution<Self,i,dim> > Base;
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_basic_of_involution<Self,i,dim>,
+       CGAL::CMap_dart_const_iterator_basic_of_involution<Self,i,dim> > Base;
 
       Dart_of_involution_basic_range(Self &amap, Dart_handle adart,
                                      int amark=-1):
@@ -2654,10 +2500,11 @@ namespace CGAL {
     // Dart_of_involution_basic_const_range
     template<unsigned int i,int dim=Self::dimension>
     struct Dart_of_involution_basic_const_range: public CMap_const_range
-    <Self, CMap_dart_const_iterator_basic_of_involution<Self,i,dim> >
+    <Self, CGAL::CMap_dart_const_iterator_basic_of_involution<Self,i,dim> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_basic_of_involution<Self,i,dim> > Base;
+      <Self, CGAL::CMap_dart_const_iterator_basic_of_involution<Self,i,dim> >
+      Base;
 
       Dart_of_involution_basic_const_range(const Self &amap,
                                            Dart_const_handle adart,
@@ -2690,13 +2537,14 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_involution_inv_basic_range
     template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_involution_inv_basic_range: public CMap_range
-    <Self, CMap_dart_iterator_basic_of_involution_inv<Self,i,dim>,
-     CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
+    struct Dart_of_involution_inv_basic_range: public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_basic_of_involution_inv<Self,i,dim>,
+     CGAL::CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_basic_of_involution_inv<Self,i,dim>,
-       CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> > Base;
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_basic_of_involution_inv<Self,i,dim>,
+       CGAL::CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
+      Base;
 
       Dart_of_involution_inv_basic_range(Self &amap, Dart_handle adart,
                                          int amark=-1):
@@ -2707,10 +2555,11 @@ namespace CGAL {
     // Dart_of_involution_inv_basic_const_range
     template<unsigned int i,int dim=Self::dimension>
     struct Dart_of_involution_inv_basic_const_range: public CMap_const_range
-    <Self, CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
+    <Self, CGAL::CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_basic_of_involution_inv<Self,i,dim> >
+      <Self, CGAL::CMap_dart_const_iterator_basic_of_involution_inv
+      <Self,i,dim> >
       Base;
 
       Dart_of_involution_inv_basic_const_range(const Self &amap,
@@ -2745,13 +2594,13 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_involution_range
     template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_involution_range: public CMap_range
-    <Self, CMap_dart_iterator_of_involution<Self,i,dim>,
-     CMap_dart_const_iterator_of_involution<Self,i,dim> >
+    struct Dart_of_involution_range: public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_of_involution<Self,i,dim>,
+     CGAL::CMap_dart_const_iterator_of_involution<Self,i,dim> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_of_involution<Self,i,dim>,
-       CMap_dart_const_iterator_of_involution<Self,i,dim> > Base;
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_of_involution<Self,i,dim>,
+       CGAL::CMap_dart_const_iterator_of_involution<Self,i,dim> > Base;
 
       Dart_of_involution_range(Self &amap, Dart_handle adart) :
         Base(amap, adart)
@@ -2761,12 +2610,13 @@ namespace CGAL {
     // Dart_of_involution_const_range
     template<unsigned int i,int dim=Self::dimension>
     struct Dart_of_involution_const_range: public CMap_const_range
-    <Self, CMap_dart_const_iterator_of_involution<Self,i,dim> >
+    <Self, CGAL::CMap_dart_const_iterator_of_involution<Self,i,dim> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_of_involution<Self,i,dim> > Base;
+      <Self, CGAL::CMap_dart_const_iterator_of_involution<Self,i,dim> > Base;
 
-      Dart_of_involution_const_range(const Self &amap, Dart_const_handle adart):
+      Dart_of_involution_const_range(const Self &amap,
+                                     Dart_const_handle adart):
         Base(amap, adart)
       {}
     };
@@ -2793,13 +2643,13 @@ namespace CGAL {
     //**************************************************************************
     // Dart_of_involution_inv_range
     template<unsigned int i,int dim=Self::dimension>
-    struct Dart_of_involution_inv_range: public CMap_range
-    <Self, CMap_dart_iterator_of_involution_inv<Self,i,dim>,
-     CMap_dart_const_iterator_of_involution_inv<Self,i,dim> >
+    struct Dart_of_involution_inv_range: public CGAL::CMap_range
+    <Self, CGAL::CMap_dart_iterator_of_involution_inv<Self,i,dim>,
+     CGAL::CMap_dart_const_iterator_of_involution_inv<Self,i,dim> >
     {
-      typedef CMap_range
-      <Self, CMap_dart_iterator_of_involution_inv<Self,i,dim>,
-       CMap_dart_const_iterator_of_involution_inv<Self,i,dim> > Base;
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_dart_iterator_of_involution_inv<Self,i,dim>,
+       CGAL::CMap_dart_const_iterator_of_involution_inv<Self,i,dim> > Base;
 
       Dart_of_involution_inv_range(Self &amap, Dart_handle adart) :
         Base(amap, adart)
@@ -2809,10 +2659,11 @@ namespace CGAL {
     // Dart_of_involution_inv_const_range
     template<unsigned int i,int dim=Self::dimension>
     struct Dart_of_involution_inv_const_range: public CMap_const_range
-    <Self, CMap_dart_const_iterator_of_involution_inv<Self,i,dim> >
+    <Self, CGAL::CMap_dart_const_iterator_of_involution_inv<Self,i,dim> >
     {
       typedef CMap_const_range
-      <Self, CMap_dart_const_iterator_of_involution_inv<Self,i,dim> > Base;
+      <Self, CGAL::CMap_dart_const_iterator_of_involution_inv<Self,i,dim> >
+      Base;
 
       Dart_of_involution_inv_const_range(const Self &amap,
                                          Dart_const_handle adart):
@@ -2843,8 +2694,8 @@ namespace CGAL {
     //**************************************************************************
     // Dart_basic_range
     struct Dart_basic_range {
-      typedef CMap_dart_iterator_basic_of_all<Self> iterator;
-      typedef CMap_dart_const_iterator_basic_of_all<Self> const_iterator;
+      typedef CGAL::CMap_dart_iterator_basic_of_all<Self> iterator;
+      typedef CGAL::CMap_dart_const_iterator_basic_of_all<Self> const_iterator;
       Dart_basic_range(Self &amap) : mmap(amap)
       {}
       iterator begin() { return iterator(mmap); }
@@ -2861,7 +2712,7 @@ namespace CGAL {
     //**************************************************************************
     // Dart_basic_const_range
     struct Dart_basic_const_range {
-      typedef CMap_dart_const_iterator_basic_of_all<Self> const_iterator;
+      typedef CGAL::CMap_dart_const_iterator_basic_of_all<Self> const_iterator;
       Dart_basic_const_range(Self &amap) : mmap(amap)
       {}
       const_iterator begin() const { return const_iterator(mmap); }
@@ -2882,13 +2733,14 @@ namespace CGAL {
     //**************************************************************************
     // One_dart_per_incident_cell_range
     template<unsigned int i,unsigned int j,int dim=Self::dimension>
-    struct One_dart_per_incident_cell_range: public CMap_range
-    <Self, CMap_one_dart_per_incident_cell_iterator<Self,i,j,dim>,
-     CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
+    struct One_dart_per_incident_cell_range: public CGAL::CMap_range
+    <Self, CGAL::CMap_one_dart_per_incident_cell_iterator<Self,i,j,dim>,
+     CGAL::CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
     {
-      typedef CMap_range
-      <Self, CMap_one_dart_per_incident_cell_iterator<Self,i,j,dim>,
-       CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> > Base;
+      typedef CGAL::CMap_range
+      <Self, CGAL::CMap_one_dart_per_incident_cell_iterator<Self,i,j,dim>,
+       CGAL::CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
+      Base;
 
       One_dart_per_incident_cell_range(Self &amap, Dart_handle adart):
         Base(amap, adart)
@@ -2898,11 +2750,11 @@ namespace CGAL {
     // One_dart_per_incident_cell_const_range
     template<unsigned int i,unsigned int j,int dim=Self::dimension>
     struct One_dart_per_incident_cell_const_range: public CMap_const_range
-    <Self, CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
+    <Self, CGAL::CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
     {
       typedef CMap_const_range
-      <Self, CMap_one_dart_per_incident_cell_const_iterator<Self,i,j,dim> >
-      Base;
+      <Self, CGAL::CMap_one_dart_per_incident_cell_const_iterator
+      <Self,i,j,dim> > Base;
 
       One_dart_per_incident_cell_const_range(const Self &amap,
                                              Dart_const_handle adart) :
@@ -2913,8 +2765,9 @@ namespace CGAL {
     // One_dart_per_cell_range
     template<unsigned int i,int dim=Self::dimension>
     struct One_dart_per_cell_range {
-      typedef CMap_one_dart_per_cell_iterator<Self,i,dim> iterator;
-      typedef CMap_one_dart_per_cell_const_iterator<Self,i,dim> const_iterator;
+      typedef CGAL::CMap_one_dart_per_cell_iterator<Self,i,dim> iterator;
+      typedef CGAL::CMap_one_dart_per_cell_const_iterator<Self,i,dim>
+      const_iterator;
       One_dart_per_cell_range(Self &amap) : mmap(amap), msize(0)
       {}
       iterator begin() { return iterator(mmap); }
@@ -2938,7 +2791,8 @@ namespace CGAL {
     // One_dart_per_cell_const_range
     template<unsigned int i,int dim=Self::dimension>
     struct One_dart_per_cell_const_range {
-      typedef CMap_one_dart_per_cell_const_iterator<Self,i,dim> const_iterator;
+      typedef CGAL::CMap_one_dart_per_cell_const_iterator<Self,i,dim>
+      const_iterator;
       One_dart_per_cell_const_range(const Self &amap) : mmap(amap), msize(0)
       {}
       const_iterator begin() const { return const_iterator(mmap); }
@@ -3019,8 +2873,8 @@ namespace CGAL {
       amap.clear();
 
       // We create a copy of all the dart of the map.
-      for ( typename Dart_range::iterator it=darts().begin(); it!=darts().end();
-           ++it)
+      for ( typename Dart_range::iterator it=darts().begin();
+            it!=darts().end(); ++it)
       {
         dual[it] = amap.create_dart();
         if ( it==adart && res==NULL ) res = dual[it];

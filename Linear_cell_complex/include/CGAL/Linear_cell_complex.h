@@ -70,16 +70,15 @@ namespace CGAL {
 
     typedef typename Base::Dart_range Dart_range;
 
-    typedef typename Helper::template Attribute_type<0>::type
-    Vertex_attribute;
-    typedef typename Helper::template Attribute_handle<0>::type
+    typedef typename Base::template Attribute_type<0>::type Vertex_attribute;
+    typedef typename Base::template Attribute_handle<0>::type
     Vertex_attribute_handle;
-    typedef typename Helper::template Attribute_const_handle<0>::type
+    typedef typename Base::template Attribute_const_handle<0>::type
     Vertex_attribute_const_handle;
 
-    typedef typename Helper::template Attribute_range<0>::type
+    typedef typename Base::template Attribute_range<0>::type
     Vertex_attribute_range;
-    typedef typename Helper::template Attribute_const_range<0>::type
+    typedef typename Base::template Attribute_const_range<0>::type
     Vertex_attribute_const_range;
 
     /// To use previous definition of create_dart methods.
@@ -89,7 +88,7 @@ namespace CGAL {
      * @return an handle on the new attribute.
      */
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-    template<typename... Args>
+    template<typename ...Args>
     Vertex_attribute_handle create_vertex_attribute(const Args&... args)
     { return Base::template create_attribute<0>(args...); }
 #else
@@ -184,7 +183,7 @@ namespace CGAL {
     void set_vertex_attribute_of_dart(Dart_handle adart,
                                       Vertex_attribute_handle ah)
     {
-      return internal::Set_i_attribute_of_dart_functor<Self, 0>::
+      return CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
           run(this, adart,ah);
     }
 
@@ -194,7 +193,7 @@ namespace CGAL {
      */
     void set_vertex_attribute(Dart_handle adart,
                               Vertex_attribute_handle ah)
-    { return Set_i_attribute_functor<Self, 0>::run(this, adart,ah); }
+    { return CGAL::Set_i_attribute_functor<Self, 0>::run(this, adart,ah); }
 
     /// @return the Vertex_attribute_range for all vertex_attributes.
     Vertex_attribute_range& vertex_attributes()
@@ -614,8 +613,8 @@ namespace CGAL {
       unsigned int nb = 1;
 
       // TODO: test if we can optimize by using <Self,0,i,i+1> ?
-      CMap_one_dart_per_incident_cell_const_iterator<Self,0,i> it(*this,
-                                                                  adart);
+      CGAL::CMap_one_dart_per_incident_cell_const_iterator<Self,0,i>
+          it(*this, adart);
       for ( ++it; it.cont(); ++it)
       {
         vec = typename Traits::Construct_sum_of_vectors()
@@ -675,7 +674,8 @@ namespace CGAL {
      * @param p the coordinates of the new vertex.
      * @return a dart of the new edge, incident to the new vertex.
      */
-    Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh, const Point& p)
+    Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh,
+                                                 const Point& p)
     {
       return CGAL::insert_dangling_cell_1_in_cell_2
           (*this, dh, create_vertex_attribute(p));

@@ -114,6 +114,11 @@ namespace CGAL {
     /// Set the dart associated with the cell.
     void set_dart(Dart_handle) {}
 
+    /// Test if the cell is valid.
+    /// For cell without dart, return always true.
+    bool is_valid() const
+    { return true; }
+
   protected:
     /// Contructor without parameter.
     Cell_attribute_without_info(): mrefcounting(0)
@@ -123,11 +128,6 @@ namespace CGAL {
     Cell_attribute_without_info(const Cell_attribute_without_info&):
       mrefcounting(0)
     {}
-
-    /// Test if the cell is valid.
-    /// For cell without dart, return always true.
-    bool is_valid() const
-    { return true; }
 
     /// Increment the reference counting.
     void inc_nb_refs()
@@ -216,6 +216,11 @@ namespace CGAL {
     /// Set the dart associated with the cell.
     void set_dart(Dart_handle adart) { mdart = adart; }
 
+    /// Test if the cell is valid.
+    /// A cell is valid if its dart is not NULL.
+    bool is_valid() const
+    { return mdart!=NULL; }
+
   protected:
     /// Contructor without parameter.
     Cell_attribute_without_info() : mdart(NULL),
@@ -228,11 +233,6 @@ namespace CGAL {
       mrefcounting(0)
     {}
 
-    /// Test if the cell is valid.
-    /// A cell is valid if its dart is not NULL.
-    bool is_valid() const
-    { return mdart!=NULL; }
-
     /// Increment the reference counting.
     void inc_nb_refs()
     { ++mrefcounting; }
@@ -244,12 +244,12 @@ namespace CGAL {
       --mrefcounting; 
     }
 
+  public:
     /// Get the reference counting.
     unsigned int get_nb_refs() const
     { return mrefcounting; }
 
-  public:
-    void * for_compact_container() const 
+    void * for_compact_container() const
     { return mdart.for_compact_container(); }
     void * & for_compact_container()       
     { return mdart.for_compact_container(); }

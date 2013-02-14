@@ -49,8 +49,8 @@ struct Is_sewable_functor
 
     // TODO use a map (of hashtable) to build the isomorphism and to test
     // it during the while loop
-    CMap_dart_const_iterator_of_involution<CMap,i>     I1(*amap, adart1);
-    CMap_dart_const_iterator_of_involution_inv<CMap,i> I2(*amap, adart2);
+    CGAL::CMap_dart_const_iterator_of_involution<CMap,i>     I1(*amap, adart1);
+    CGAL::CMap_dart_const_iterator_of_involution_inv<CMap,i> I2(*amap, adart2);
     bool res = true;
     while (res && I1.cont() && I2.cont())
     {
@@ -102,8 +102,8 @@ struct Is_sewable_functor<CMap, 0, dim>
 
     // TODO use a map (of hashtable) to build the isomorphism and to test
     // it during the while loop
-    CMap_dart_const_iterator_of_involution    <CMap,1> I1(*amap, adart1);
-    CMap_dart_const_iterator_of_involution_inv<CMap,1> I2(*amap, adart2);
+    CGAL::CMap_dart_const_iterator_of_involution    <CMap,1> I1(*amap, adart1);
+    CGAL::CMap_dart_const_iterator_of_involution_inv<CMap,1> I2(*amap, adart2);
     bool res = true;
     while (res && I1.cont() && I2.cont())
     {
@@ -324,8 +324,8 @@ struct Is_sewable_functor<CMap, 3, 3>
          !adart2->template is_free<3>() )
       return false;
 
-    CMap_dart_const_iterator_basic_of_orbit<CMap,1> I1(*amap, adart1);
-    CMap_dart_const_iterator_basic_of_orbit<CMap,0> I2(*amap, adart2);
+    CGAL::CMap_dart_const_iterator_basic_of_orbit<CMap,1> I1(*amap, adart1);
+    CGAL::CMap_dart_const_iterator_basic_of_orbit<CMap,0> I2(*amap, adart2);
     bool res=true;
     while (res && I1.cont() && I2.cont())
     {

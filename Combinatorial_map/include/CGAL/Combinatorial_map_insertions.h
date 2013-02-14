@@ -1,7 +1,27 @@
+// Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//
 #ifndef CGAL_COMBINATORIAL_MAP_INSERTIONS_H
 #define CGAL_COMBINATORIAL_MAP_INSERTIONS_H
 
-namespace CGAL {
+namespace CGAL
+{
 /** @file Combinatorial_map_insertions.h
  * Insertion operations on combinatorial map.
  */
@@ -54,10 +74,11 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
 
     // We copy all the attributes except for dim=0
     CMap::Helper::template Foreach_enabled_attributes_except
-      <internal::Group_attribute_functor_of_dart<CMap>, 0>::
+      <CGAL::internal::Group_attribute_functor_of_dart<CMap>, 0>::
       run(&amap,*it,d1);
     // We initialise the 0-atttrib to ah
-    internal::Set_i_attribute_of_dart_functor<CMap, 0>::run(&amap, d1, ah);
+    CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+        run(&amap, d1, ah);
     amap.mark(*it, mark);
   }
 
@@ -73,10 +94,12 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
   amap.free_mark(m);
   amap.free_mark(mark);
 
-  internal::Degroup_attribute_functor_run<CMap, 1>::
+  CGAL::internal::Degroup_attribute_functor_run<CMap, 1>::
       run(&amap, adart, adart->beta(1));
 
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
   CGAL_assertion( amap.is_valid() );
+#endif
 
   return adart->beta(1);
 }
@@ -90,7 +113,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
 template < class CMap >
 typename CMap::Dart_handle
 insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
-                         typename CMap::Helper::template
+                         typename CMap::template
                          Attribute_handle<0>::type ah=NULL )
 {
   CGAL_assertion(adart != NULL && adart!=CMap::null_dart_handle);
@@ -144,7 +167,8 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
       if ( prev!=NULL )
         amap.template basic_link_beta_for_involution<2>(prev, n1);
 
-      internal::Set_i_attribute_of_dart_functor<CMap, 0>::run(&amap, n1, ah);
+      CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+          run(&amap, n1, ah);
     }
 
     for (unsigned int dim=3; dim<=CMap::dimension; ++dim)
@@ -166,7 +190,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
             nn2=amap.create_dart();
             amap.link_beta_0(cur->beta(dim), nn2);
             amap.basic_link_beta_for_involution(n2, nn2, dim);
-            internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+            CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
                 run(&amap, nn2, ah);
           }
           else nn2=NULL;
@@ -218,14 +242,16 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
     amap.unmark(*itd, treated);
 
     if ( *itd!=adart )
-      internal::Degroup_attribute_functor_run<CMap, 2>::
+      CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::
           run(&amap, adart, *itd);
   }
 
   CGAL_assertion(amap.is_whole_map_unmarked(treated));
   amap.free_mark(treated);
 
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
   CGAL_assertion( amap.is_valid() );
+#endif
 
   return n1;
 }
@@ -238,7 +264,7 @@ template<class CMap>
 typename CMap::Dart_handle
 insert_dangling_cell_1_in_cell_2( CMap& amap,
                                   typename CMap::Dart_handle adart1,
-                                  typename CMap::Helper::template
+                                  typename CMap::template
                                   Attribute_handle<0>::type ah=NULL )
 {
   CGAL_assertion(adart1!=NULL && adart1!=CMap::null_dart_handle);
@@ -303,7 +329,8 @@ insert_dangling_cell_1_in_cell_2( CMap& amap,
           (it1->beta(dim)->beta_inv(s1)->beta(2), d2, dim);
       }
     }
-    internal::Set_i_attribute_of_dart_functor<CMap, 0>::run(&amap, d1, ah);
+    CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+        run(&amap, d1, ah);
     amap.mark(it1, treated);
   }
 
@@ -321,7 +348,9 @@ insert_dangling_cell_1_in_cell_2( CMap& amap,
   CGAL_assertion( amap.is_whole_map_unmarked(mark1) );
   amap.free_mark(mark1);
 
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
   CGAL_assertion( amap.is_valid() );
+#endif
 
   return adart1->template beta<0>();
 }
@@ -339,7 +368,7 @@ bool is_insertable_cell_1_in_cell_2(const CMap& amap,
 {
   CGAL_assertion(adart1 != NULL && adart2 != NULL);
   if ( adart1==adart2 ) return false;
-  for ( CMap_dart_const_iterator_of_orbit<CMap,1> it(amap,adart1);
+  for ( CGAL::CMap_dart_const_iterator_of_orbit<CMap,1> it(amap,adart1);
         it.cont(); ++it )
   {
     if ( it==adart2 )  return true;
@@ -365,17 +394,15 @@ insert_cell_1_in_cell_2(CMap& amap,
   CGAL_assertion(is_insertable_cell_1_in_cell_2<CMap>(amap, adart1, adart2));
 
   int m1=amap.get_new_mark();
-  CMap_dart_iterator_basic_of_involution<CMap,1>
-    it1 = CMap_dart_iterator_basic_of_involution<CMap,1>(amap, adart1, m1);
+  CGAL::CMap_dart_iterator_basic_of_involution<CMap,1> it1(amap, adart1, m1);
 
   int m2=amap.get_new_mark();
-  CMap_dart_iterator_basic_of_involution<CMap,1>
-    it2 = CMap_dart_iterator_basic_of_involution<CMap,1>(amap, adart2, m2);
+  CGAL::CMap_dart_iterator_basic_of_involution<CMap,1> it2(amap, adart2, m2);
 
   int mark1=amap.get_new_mark();
   std::deque<typename CMap::Dart_handle> to_unmark;
   {
-    for ( CMap_dart_iterator_basic_of_cell<CMap,0> it(amap,adart1,mark1);
+    for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,0> it(amap,adart1,mark1);
           it.cont(); ++it )
     {
       to_unmark.push_back(it);
@@ -437,8 +464,7 @@ insert_cell_1_in_cell_2(CMap& amap,
     amap.mark(it1,treated);
   }
 
-  internal::Degroup_attribute_functor_run<CMap, 2>::
-      run(&amap, d1, d2);
+  CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::run(&amap, d1, d2);
 
   amap.negate_mark(m1);
   amap.negate_mark(m2);
@@ -465,7 +491,9 @@ insert_cell_1_in_cell_2(CMap& amap,
   CGAL_assertion( amap.is_whole_map_unmarked(mark1) );
   amap.free_mark(mark1);
 
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
   CGAL_assertion( amap.is_valid() );
+#endif
 
   return adart1->template beta<0>();
 }
@@ -502,7 +530,7 @@ bool is_insertable_cell_2_in_cell_3(const CMap& amap,
       if ( od==CMap::null_dart_handle ) return false;
 
       // of and *it must belong to the same vertex of the same volume
-      if ( !belong_to_same_cell<CMap, 0, 2>(amap, od, *it) )
+      if ( !CGAL::belong_to_same_cell<CMap, 0, 2>(amap, od, *it) )
         return false;
     }
     prec = *it;
@@ -512,7 +540,7 @@ bool is_insertable_cell_2_in_cell_3(const CMap& amap,
   od = prec->other_extremity();
   if ( od==CMap::null_dart_handle ) return false;
 
-  if (!belong_to_same_cell<CMap, 0, 2>(amap, od, *afirst))
+  if (!CGAL::belong_to_same_cell<CMap, 0, 2>(amap, od, *afirst))
     return false;
 
   return true;
@@ -581,7 +609,7 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
     {
       typename CMap::Dart_handle first2 = NULL;
       prec = NULL;
-      for ( CMap_dart_iterator_of_orbit<CMap,1> it(amap, first);
+      for ( CMap_dart_iterator_basic_of_orbit<CMap, 1> it(amap, first);
             it.cont(); ++it )
       {
         d = amap.create_dart();
@@ -643,11 +671,13 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
   if ( withBeta3 )
   { // Here we cannot use Degroup_attribute_functor_run as new darts do not
     // have their 3-attribute
-    internal::Degroup_attribute_functor_run<CMap, 3>::
+    CGAL::internal::Degroup_attribute_functor_run<CMap, 3>::
         run(&amap, first, first->template beta<3>());
   }
 
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
   CGAL_assertion( amap.is_valid() );
+#endif
 
   return first;
 }

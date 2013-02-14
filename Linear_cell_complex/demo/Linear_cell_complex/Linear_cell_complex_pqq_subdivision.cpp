@@ -18,6 +18,7 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr> 
 //		   Jérémy Girerd-Rey <jeremy.girerd-rey@etu.univ-lyon1.fr>
 //
+
 #include "typedefs.h"
 
 // Smooth a vertex depending on the vertices of its incidents facets.
@@ -283,8 +284,7 @@ subdivide_lcc_pqq (LCC & m)
         CGAL::remove_cell<LCC, 1>(m, *dit);
       }
       remove.resize(0); 
-      CGAL_assertion( m.is_valid() );
-
+      // CGAL_assertion( m.is_valid() );
     }
   }
 
