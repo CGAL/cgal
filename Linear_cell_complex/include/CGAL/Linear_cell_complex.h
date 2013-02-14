@@ -39,7 +39,7 @@ namespace CGAL {
    * an nD combinatorial map with point associated to each vertex.
    */
   template < unsigned int d_, unsigned int ambient_dim = d_,
-             class Traits_ = Linear_cell_complex_traits<d_>,
+             class Traits_ = Linear_cell_complex_traits<ambient_dim>,
              class Items_ = Linear_cell_complex_min_items<d_>,
              class Alloc_ = CGAL_ALLOCATOR(int),
              template<unsigned int,class,class,class>
