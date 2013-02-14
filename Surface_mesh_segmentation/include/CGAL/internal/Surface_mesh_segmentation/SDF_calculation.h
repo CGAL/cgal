@@ -25,7 +25,7 @@ namespace internal
  *
  * @tparam Polyhedron a CGAL polyhedron
  * @tparam GeomTraits a model of SegmentationGeomTraits
- * @tparam DiskSampling chosen sampling method from Disk_samplers.h
+ * @tparam DiskSampling class responsible for the sampling points in a disk. It is used for generating rays in the cones. For different example see Disk_samplers.h
  */
 template <
 class Polyhedron,
