@@ -4124,7 +4124,7 @@ public:
 
 
   /*! 
-    computes the normal of the vectors`q-p` and `r-p`. 
+    computes the normal of the vectors `q-p` and `r-p`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Point_3& p, 
                               const Kernel::Point_3& q, 
