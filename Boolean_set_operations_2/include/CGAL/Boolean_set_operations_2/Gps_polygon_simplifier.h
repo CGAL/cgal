@@ -117,7 +117,7 @@ public:
       Curve_data cv_data(1, 0, index);
       curves_list.push_back(Meta_X_monotone_curve_2(*itr, cv_data));
     }
-    m_traits->set_polygon_size(curves_list.size());
+    m_traits->set_polygon_size(static_cast<unsigned int>(curves_list.size()));
    
     m_sweep_line.sweep(curves_list.begin(), curves_list.end());
 

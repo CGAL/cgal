@@ -630,7 +630,7 @@ bool Point_location_test<T_Traits>::perform()
     ob_iter[pl_index] = objs[pl_index].begin();
 
   // get size of objects
-  unsigned int size = objs[0].size();
+  unsigned int size = static_cast<unsigned int>(objs[0].size());
   std::cout << "size is " << size << std::endl;
 
   for (pl_index = 0; pl_index < pls_num; ++pl_index) {
