@@ -13,6 +13,7 @@ endif()
 find_package(CGAL  COMPONENTS Qt4)
 include(${CGAL_USE_FILE})
 
+
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
@@ -41,6 +42,10 @@ if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   # moc files (meta object compiler files, run moc preprocessor on the files with Widget defs)
   qt4_automoc( MainWindow.cpp Viewer.cpp PreferenceDlg.cpp )
+
+  include( CGAL_CreateSingleSourceCGALProgram )
+
+ create_single_source_cgal_program( "spat.cpp" )
 
   # cpp files
   add_executable  ( T3_demo T3_demo.cpp

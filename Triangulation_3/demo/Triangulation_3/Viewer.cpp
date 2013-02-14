@@ -1,5 +1,15 @@
+#include <boost/config.hpp>
+
+#if defined(BOOST_MSVC)
+ // Avoid warning concerning spatial_sort(QList::begin(), QList.end() QT "bug" 
+#  pragma warning(disable: 4267 )
+#  pragma warning(disable: 4244 )
+#endif
+
 #include "Viewer.h"
 #include <CGAL/glu.h>
+
+
 
 using namespace std;
 
