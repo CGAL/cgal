@@ -34,6 +34,8 @@
   \sa `CGAL::Feature_dimension`
   \sa `CGAL::Kernel_traits`
 
+  \todo `Kernel::ConstructUnitNormal_3` as no model in the concept
+  \todo `Kernel::CompareSquaredRadius_3` as no model in the concept
 */
 class Kernel {
 public:
@@ -228,6 +230,21 @@ public:
   */ 
   typedef Hidden_type Construct_scaled_vector_2; 
 
+  /*!
+    a model of `Kernel::ConstructDifferenceOfVectors_2`
+  */
+  typedef Hidden_type Construct_difference_of_vectors_2;
+
+  /*!
+    a model of `Kernel::ConstructSumOfVectors_2`
+  */
+  typedef Hidden_type Construct_sum_of_vectors_2;
+
+  /*!
+    a model of `Kernel::ConstructDividedVector_2`
+  */
+  typedef Hidden_type Construct_divided_vector_2;
+
   /*! 
     a model of `Kernel::ConstructTranslatedPoint_2` 
   */ 
@@ -247,6 +264,12 @@ public:
     a model of `Kernel::ConstructProjectedXYPoint_2` 
   */ 
   typedef Hidden_type Construct_projected_xy_point_2; 
+
+  /*!
+    a model of `Kernel::ConstructSecondPoint_2`
+    \todo This is used in CGAL::Ray_2<K>::second_point() but is not documented
+  */
+  typedef Hidden_type Construct_second_point_2;
 
   /*! 
     a model of `Kernel::ConstructCartesianConstIterator_2` 
@@ -308,6 +331,11 @@ public:
   */ 
   typedef Hidden_type Construct_centroid_2; 
 
+  /*!
+    a model of `Kernel::ConstructBarycenter_2`
+  */
+  typedef Hidden_type Construct_barycenter_2;
+
   /*! 
     a model of `Kernel::ConstructCircumcenter_2` 
   */ 
@@ -317,6 +345,11 @@ public:
     a model of `Kernel::ConstructBisector_2` 
   */ 
   typedef Hidden_type Construct_bisector_2; 
+
+  /*!
+    a model of `Kernel::ConstructRadicalLine_2`
+  */
+  typedef Hidden_type Construct_radical_line_2;
 
   /*! 
     a model of `Kernel::ConstructOppositeDirection_2` 
@@ -353,6 +386,26 @@ public:
   */ 
   typedef Hidden_type Construct_opposite_vector_2; 
 
+  /*!
+    a model of `Kernel::ConstructSource_2`
+  */
+  typedef Hidden_type  Construct_source_2;
+
+  /*!
+    a model of `Kernel::ConstructTarget_2`
+  */
+  typedef Hidden_type  Construct_target_2;
+
+  /*!
+    a model of `Kernel::ConstructMaxVertex_2`
+  */
+  typedef Hidden_type  Construct_max_vertex_2;
+
+  /*!
+    a model of `Kernel::ConstructMinVertex_2`
+  */
+  typedef Hidden_type  Construct_min_vertex_2;
+
   /*! 
     a model of `Kernel::Intersect_2` 
   */ 
@@ -362,6 +415,81 @@ public:
   a model of `Kernel::Assign_2` 
   */ 
   typedef Hidden_type Assign_2; 
+
+  /*!
+    a model of `Kernel::ComputeX_2`
+  */
+  typedef Hidden_type Compute_x_2;
+
+  /*!
+    a model of `Kernel::ComputeY_2`
+  */
+  typedef Hidden_type Compute_y_2;
+
+  /*!
+    a model of `Kernel::ComputeA_2`
+  */
+  typedef Hidden_type  Compute_a_2;
+
+  /*!
+    a model of `Kernel::ComputeB_2`
+  */
+  typedef Hidden_type  Compute_b_2;
+
+  /*!
+    a model of `Kernel::ComputeC_2`
+  */
+  typedef Hidden_type  ComputeC_2;
+
+  /*!
+    a model of `Kernel::ComputeDx_2`
+  */
+  typedef Hidden_type  Compute_dx_2;
+
+  /*!
+    a model of `Kernel::ComputeDy_2`
+  */
+  typedef Hidden_type  Compute_dy_2;
+
+  /*!
+    a model of `Kernel::ComputeHx_2`
+  */
+  typedef Hidden_type  Compute_hx_2;
+
+  /*!
+    a model of `Kernel::ComputeHy_2`
+  */
+  typedef Hidden_type  Compute_hy_2;
+
+  /*!
+    a model of `Kernel::ComputeHw_2`
+  */
+  typedef Hidden_type  Compute_hw_2;
+
+  /*!
+    a model of `Kernel::ComputeXmax_2`
+  */
+  typedef Hidden_type  Compute_xmax_2;
+
+  /*!
+    a model of `Kernel::ComputeXmin_2`
+  */
+  typedef Hidden_type  Compute_xmin_2;
+
+  /*!
+    a model of `Kernel::ComputeYmax_2`
+  */
+  typedef Hidden_type  Compute_ymax_2;
+
+  /*!
+    a model of `Kernel::ComputeYmin_2`
+  */
+  typedef Hidden_type  Compute_ymin_2;
+
+  /*!
+    a model of `Kernel::ComputeYAtX_2`
+  */
+  typedef Hidden_type  Compute_y_at_x_2;
 
   /*! 
     a model of `Kernel::ComputeSquaredDistance_2` 
@@ -387,6 +515,11 @@ public:
     a model of `Kernel::ComputeDeterminant_2` 
   */ 
   typedef Hidden_type Compute_determinant_2; 
+
+  /*!
+    a model of `Kernel::ComputeScalarProduct_2`
+  */
+  typedef Hidden_type Compute_scalar_product_2;
 
   /// @} 
 
@@ -467,6 +600,11 @@ public:
     a model of `Kernel::CompareDistance_2` 
   */ 
   typedef Hidden_type Compare_distance_2; 
+
+  /*!
+    a model of `Kernel::CompareSquaredDistance_2`
+  */
+  typedef Hidden_type Compare_square_distance_2;
 
   /*! 
     a model of `Kernel::CompareAngleWithXAxis_2` 
@@ -753,6 +891,11 @@ public:
   */ 
   typedef Hidden_type Construct_tetrahedron_3; 
 
+  /*!
+    a model of `Kernel::ConstructCircle_3`
+  */
+  typedef Hidden_type Construct_circle_3;
+
   /*! 
     a model of `Kernel::ConstructObject_3` 
   */ 
@@ -793,6 +936,26 @@ public:
   */ 
   typedef Hidden_type Construct_vertex_3; 
 
+  /*!
+    a model of `Kernel::ConstructSource_3`
+  */
+  typedef Hidden_type  Construct_source_3;
+
+  /*!
+    a model of `Kernel::ConstructTarget_3`
+  */
+  typedef Hidden_type  Construct_target_3;
+
+  /*!
+    a model of `Kernel::ConstructMaxVertex_3`
+  */
+  typedef Hidden_type  Construct_max_vertex_3;
+
+  /*!
+    a model of `Kernel::ConstructMinVertex_3`
+  */
+  typedef Hidden_type  Construct_min_vertex_3;
+
   /*! 
     a model of `Kernel::ConstructBbox_3` 
   */ 
@@ -812,6 +975,26 @@ public:
     a model of `Kernel::ConstructBaseVector_3` 
   */ 
   typedef Hidden_type Construct_base_vector_3; 
+
+  /*!
+    a model of `Kernel::ConstructDifferenceOfVectors_3`
+  */
+  typedef Hidden_type Construct_difference_of_vectors_3;
+
+  /*!
+    a model of `Kernel::ConstructSumOfVectors_3`
+  */
+  typedef Hidden_type Construct_sum_of_vectors_3;
+
+  /*!
+    a model of `Kernel::ConstructDividedVector_3`
+  */
+  typedef Hidden_type Construct_divided_vector_3;
+
+  /*!
+    a model of `Kernel::ConstructNormal_3`
+  */
+  typedef Hidden_type Construct_normal_3;
 
   /*! 
     a model of `Kernel::ConstructPerpendicularPlane_3` 
@@ -858,6 +1041,17 @@ public:
   */ 
   typedef Hidden_type Construct_cross_product_vector_3; 
 
+  /*!
+    a model of `Kernel::ConstructBarycenter_3`
+  */
+  typedef Hidden_type Construct_barycenter_3;
+
+  /*!
+    a model of `Kernel::ConstructSecondPoint_3`
+    \todo This is used in CGAL::Ray_2<K>::second_point() but is not documented
+  */
+  typedef Hidden_type Construct_second_point_3;
+
   /*! 
     a model of `Kernel::ConstructOppositeDirection_3` 
   */ 
@@ -903,6 +1097,106 @@ public:
   */ 
   typedef Hidden_type Assign_3; 
 
+  /*!
+    a model of `Kernel::ComputeX_3`
+  */
+  typedef Hidden_type Compute_x_3;
+
+  /*!
+    a model of `Kernel::ComputeY_3`
+  */
+  typedef Hidden_type Compute_y_3;
+
+  /*!
+    a model of `Kernel::ComputeZ_3`
+  */
+  typedef Hidden_type Compute_z_3;
+
+  /*!
+    a model of `Kernel::ComputeA_3`
+  */
+  typedef Hidden_type  Compute_a_3;
+
+  /*!
+    a model of `Kernel::ComputeB_3`
+  */
+  typedef Hidden_type  Compute_b_3;
+
+  /*!
+    a model of `Kernel::ComputeC_3`
+  */
+  typedef Hidden_type  Compute_c_3;
+
+  /*!
+    a model of `Kernel::ComputeD_3`
+  */
+  typedef Hidden_type  Compute_d_3;
+
+  /*!
+    a model of `Kernel::ComputeHx_3`
+  */
+  typedef Hidden_type  Compute_hx_3;
+
+  /*!
+    a model of `Kernel::ComputeHy_3`
+  */
+  typedef Hidden_type  Compute_hy_3;
+
+  /*!
+    a model of `Kernel::ComputeHz_3`
+  */
+  typedef Hidden_type  Compute_hz_3;
+
+  /*!
+    a model of `Kernel::ComputeHw_3`
+  */
+  typedef Hidden_type  Compute_hw_3;
+
+  /*!
+    a model of `Kernel::ComputeDx_3`
+  */
+  typedef Hidden_type  Compute_dx_3;
+
+  /*!
+    a model of `Kernel::ComputeDy_3`
+  */
+  typedef Hidden_type  Compute_dy_3  ;
+
+  /*!
+    a model of `Kernel::ComputeDz_3`
+  */
+  typedef Hidden_type  Compute_dz_3;
+
+  /*!
+    a model of `Kernel::ComputeXmax_3`
+  */
+  typedef Hidden_type  Compute_xmax_3;
+
+  /*!
+    a model of `Kernel::ComputeXmin_3`
+  */
+  typedef Hidden_type  Compute_xmin_3;
+
+  /*!
+    a model of `Kernel::ComputeYmax_3`
+  */
+  typedef Hidden_type  Compute_ymax_3;
+
+  /*!
+    a model of `Kernel::ComputeYmin_3`
+  */
+  typedef Hidden_type  Compute_ymin_3;
+
+  /*!
+    a model of `Kernel::ComputeZmax_3`
+  */
+  typedef Hidden_type  Compute_zmax_3;
+
+  /*!
+    a model of `Kernel::ComputeZmin_3`
+  */
+  typedef Hidden_type  Compute_zmin_3;
+
   /*! 
     a model of `Kernel::ComputeArea_3` 
   */ 
@@ -927,6 +1221,11 @@ public:
     a model of `Kernel::ComputeDeterminant_3` 
   */ 
   typedef Hidden_type Compute_determinant_3; 
+
+  /*!
+    a model of `Kernel::ComputeScalarProduct_3`
+  */
+  typedef Hidden_type Compute_scalar_product_3;
 
   /*! 
     a model of `Kernel::ComputeSquaredDistance_3` 
@@ -1042,6 +1341,11 @@ public:
     a model of `Kernel::CompareXYZ_3` 
   */ 
   typedef Hidden_type Compare_xyz_3; 
+
+  /*!
+    a model of `Kernel::CompareSquaredDistance_3`
+  */
+  typedef Hidden_type Compare_squared_distance_3;
 
   /*! 
     a model of `Kernel::LessSignedDistanceToPlane_3` 
