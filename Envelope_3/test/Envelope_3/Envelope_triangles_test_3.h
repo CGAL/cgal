@@ -37,113 +37,105 @@
 
 //#define CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
 
-// this is a very trivial and not efficient algorithm for computing the lower
-// envelope of triangles in 3d, used for testing.
-// The algorithm projects the surfaces on the plane, and projects all the
-// intersections between surfaces, to get an arrangement that is a partition
-// of the real envelope.
-// Then it computes for each part in the arragement the surfaces on the
-// envelope over it by comparing them all.
+// this is a very trivial and not efficient algorithm for computing the lower envelope
+// of triangles in 3d, used for testing.
+// The algorithm projects the surfaces on the plane, and projects all the intersections
+// between surfaces, to get an arrangement that is a partition of the real envelope.
+// Then it computes for each part in the arragement the surfaces on the envelope over it
+// by comparing them all.
 
 namespace CGAL {
 
 template <class EnvelopeTraits_3, class MinimizationDiagram_2>
-class Envelope_triangles_test_3 {
+class Envelope_triangles_test_3
+{
 public:
-  typedef EnvelopeTraits_3                              Traits;
-  typedef typename Traits::Surface_3                    Surface_3;
-  typedef typename Traits::Xy_monotone_surface_3        Xy_monotone_surface_3;
+  typedef EnvelopeTraits_3                                           Traits;
+  typedef typename Traits::Surface_3                                 Surface_3;
+  typedef typename Traits::Xy_monotone_surface_3                     Xy_monotone_surface_3;
 
-  typedef MinimizationDiagram_2                         Minimization_diagram_2;
-  typedef typename Minimization_diagram_2::Point_2      Point_2;
-  typedef typename Minimization_diagram_2::X_monotone_curve_2
-                                                        X_monotone_curve_2;
-  typedef typename Traits::Curve_2                      Curve_2;
+  typedef MinimizationDiagram_2                                      Minimization_diagram_2;
+  typedef typename Minimization_diagram_2::Point_2                   Point_2;
+  typedef typename Minimization_diagram_2::X_monotone_curve_2        X_monotone_curve_2;
+  typedef typename Traits::Curve_2                                   Curve_2;
 
 protected:
-  typedef Envelope_test_overlay_functor<Minimization_diagram_2>
-                                                        Overlay_functor;
-  typedef Envelope_overlay_2<Minimization_diagram_2, Overlay_functor>
-                                                        Overlay_2;
+
+  typedef Envelope_test_overlay_functor<Minimization_diagram_2>       Overlay_functor;
+  typedef Envelope_overlay_2<Minimization_diagram_2, Overlay_functor> Overlay_2;
   
-  typedef Arr_walk_along_line_point_location<Minimization_diagram_2>
-                                                        Md_point_location;
+  typedef Arr_walk_along_line_point_location<Minimization_diagram_2> Md_point_location;
 
-  typedef typename Minimization_diagram_2::Halfedge_const_iterator
-                                                        Halfedge_const_iterator;
-  typedef typename Minimization_diagram_2::Halfedge_const_handle
-                                                        Halfedge_const_handle;
-  typedef typename Minimization_diagram_2::Halfedge_handle
-                                                        Halfedge_handle;
-  typedef typename Minimization_diagram_2::Halfedge_iterator
-                                                        Halfedge_iterator;
-  typedef typename Minimization_diagram_2::Vertex_const_handle
-                                                        Vertex_const_handle;
-  typedef typename Minimization_diagram_2::Vertex_handle
-                                                        Vertex_handle;
-  typedef typename Minimization_diagram_2::Vertex_iterator
-                                                        Vertex_iterator;
-  typedef typename Minimization_diagram_2::Face_handle  Face_handle;
-  typedef typename Minimization_diagram_2::Face_const_iterator
-                                                        Face_const_iterator;
-  typedef typename Minimization_diagram_2::Face_const_handle
-                                                        Face_const_handle;
-  typedef typename Minimization_diagram_2::Face_iterator
-                                                        Face_iterator;
-  typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
-                                                        Ccb_halfedge_circulator;
-  typedef typename Minimization_diagram_2::Inner_ccb_iterator
-                                                        Hole_iterator;
+  typedef typename Minimization_diagram_2::Halfedge_const_iterator   Halfedge_const_iterator;
+  typedef typename Minimization_diagram_2::Halfedge_const_handle     Halfedge_const_handle;
+  typedef typename Minimization_diagram_2::Halfedge_handle           Halfedge_handle;
+  typedef typename Minimization_diagram_2::Halfedge_iterator         Halfedge_iterator;
+  typedef typename Minimization_diagram_2::Vertex_const_handle       Vertex_const_handle;
+  typedef typename Minimization_diagram_2::Vertex_handle             Vertex_handle;
+  typedef typename Minimization_diagram_2::Vertex_iterator           Vertex_iterator;
+  typedef typename Minimization_diagram_2::Face_handle               Face_handle;
+  typedef typename Minimization_diagram_2::Face_const_iterator       Face_const_iterator;
+  typedef typename Minimization_diagram_2::Face_const_handle         Face_const_handle;
+  typedef typename Minimization_diagram_2::Face_iterator             Face_iterator;
+  typedef typename Minimization_diagram_2::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
+  typedef typename Minimization_diagram_2::Inner_ccb_iterator        Hole_iterator;
 
-  typedef typename Minimization_diagram_2::Dcel::Face_data_iterator
-                                                        Face_data_iterator;
+  typedef typename Minimization_diagram_2::Dcel::Face_data_iterator  Face_data_iterator;
 
-  typedef std::pair<X_monotone_curve_2, typename EnvelopeTraits_3::Multiplicity>
-                                                        Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, 
+    typename EnvelopeTraits_3::Multiplicity>                         Intersection_curve;
 
 public:
   // c'tor
-  Envelope_triangles_test_3() { }
+  Envelope_triangles_test_3()
+  {    
+  }
 
   // virtual destructor.
-  virtual ~Envelope_triangles_test_3() { }
+  virtual ~Envelope_triangles_test_3(){}
   
   template <class SurfaceIterator>
-  void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
-                             Minimization_diagram_2 &result)
+  void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end, Minimization_diagram_2 &result)
   {
     if (begin == end)
+    {
       return; // result is empty
+    }
 
     std::vector<Xy_monotone_surface_3> surfaces;
     SurfaceIterator si = begin;
-    for (; si != end; ++si)
+    for(; si != end; ++si)
+    {
       surfaces.push_back(*si);
+    }
 
     Md_point_location pl(result);
 
     int number_of_surfaces = surfaces.size();
+    int j;
     
     std::list<X_monotone_curve_2> curves_col;
     std::list<Point_2> points_col;
-    for (int i = 0; i < number_of_surfaces; ++i) {
+    for(int i=0; i<number_of_surfaces; ++i)
+    {
       Xy_monotone_surface_3 &cur_surface = surfaces[i];
-      // first insert all the projected curves of the boundary of the current
-      // surface
+      // first insert all the projected curves of the boundary of the current surface
 
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
+      #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
         std::cout << "insert projected boundary of surface " << i << std::endl;
         std::cout << cur_surface << std::endl;
-#endif
+      #endif
 
       // collect the curve in this list, and use sweepline at the end
       std::list<Object> boundary_list;
       typedef std::pair<X_monotone_curve_2, Oriented_side>     Boundary_xcurve;
-      traits.construct_projected_boundary_2_object()
-        (cur_surface, std::back_inserter(boundary_list));
-      std::list<Object>::const_iterator bit;
-      for (bit = boundary_list.begin(); bit != boundary_list.end(); ++bit) {
-        const Object& obj = *bit;
+      traits.construct_projected_boundary_2_object()(cur_surface, std::back_inserter(boundary_list));
+      typedef std::list<Object>::const_iterator Boundary_iterator;
+      for(Boundary_iterator boundary_it = boundary_list.begin();
+          boundary_it != boundary_list.end();
+          ++boundary_it)
+      {
+        const Object& obj = *boundary_it;
         Boundary_xcurve boundary_cv;
         CGAL_assertion(assign(boundary_cv, obj));
         assign(boundary_cv, obj);
@@ -151,32 +143,33 @@ public:
       }
       // second, intersect it with all surfaces before it
       Object cur_obj;
-      for (unsigned int j = 0; j < i; ++j) {
+      for(j=0; j<i; ++j)
+      {
         Xy_monotone_surface_3& prev_surface = surfaces[j];
 
         std::vector<Object> inter_objs;
-        traits.construct_projected_intersections_2_object()
-          (cur_surface, prev_surface, std::back_inserter(inter_objs));
+        traits.construct_projected_intersections_2_object()(cur_surface, prev_surface, std::back_inserter(inter_objs));
 
         // we collect all intersections and use sweep to insert them
         Point_2 point;
         Intersection_curve curve;
-        for (unsigned int k = 0; k < inter_objs.size(); ++k) {
+        for(unsigned int k=0; k<inter_objs.size(); ++k)
+        {
           cur_obj = inter_objs[k];
           CGAL_assertion(!cur_obj.is_empty());
-          if (CGAL::assign(point, cur_obj)) {
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
-              std::cout << "intersection between surfaces is a point: "
-                        << point << std::endl;
-#endif
+          if (CGAL::assign(point, cur_obj))
+          {
+            #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
+              std::cout << "intersection between surfaces is a point: " << point << std::endl;
+            #endif
             //insert_vertex(result, point, pl);
             points_col.push_back(point);
           }
-          else if (CGAL::assign(curve, cur_obj)) {
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
-              std::cout << "intersection between surfaces is a curve: "
-                        << curve.first << std::endl;
-#endif
+          else if (CGAL::assign(curve, cur_obj))
+          {
+            #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
+              std::cout << "intersection between surfaces is a curve: " << curve.first << std::endl;
+            #endif
             curves_col.push_back(curve.first);
             //insert(result, curve.first, pl);
           }
@@ -188,45 +181,44 @@ public:
       }
     }
 
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
-    std::cout << "inserting the curves: " << std::endl;
-    typename std::list<Curve_2>::iterator curves_it = curves_col.begin();
-    for(; curves_it != curves_col.end(); ++curves_it)
-      std::cout << *curves_it << std::endl;
-#endif
+    #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
+      std::cout << "inserting the curves: " << std::endl;
+      typename std::list<Curve_2>::iterator curves_it = curves_col.begin();
+      for(; curves_it != curves_col.end(); ++curves_it)
+        std::cout << *curves_it << std::endl;
+    #endif
     
     // insert the curves
     insert(result, curves_col.begin(), curves_col.end());
     // insert the points
     typename std::list<Point_2>::iterator pit = points_col.begin();
-    for (; pit != points_col.end(); ++pit)
+    for(; pit != points_col.end(); ++pit)
       insert_point(result, *pit, pl);
       
     m_result = &result;
 
-    // now, foreach vertex, edge and face, we should determine which surfaces
-    // are minimal over it.
+    // now, foreach vertex, edge and face, we should determine which surfaces are minimal over it.
 
     // update vertices' data
     Vertex_iterator vi = result.vertices_begin();
-    for (; vi != result.vertices_end(); ++vi) {
+    for(; vi != result.vertices_end(); ++vi)
+    {
       Vertex_handle vh = vi;
       // first we find the surfaces that are defined over the vertex
       std::list<Xy_monotone_surface_3> defined_surfaces;
-      typename Traits::Is_defined_over is_defined_over =
-        traits.is_defined_over_object();      
-      for (int i = 0; i < number_of_surfaces; ++i)
+      typename Traits::Is_defined_over is_defined_over = traits.is_defined_over_object();      
+      for(int i=0; i<number_of_surfaces; ++i)
         if (is_defined_over(vh->point(), surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
 
       // now compare them over the vertex
-      set_minimum_over_vertex(vh, defined_surfaces.begin(),
-                              defined_surfaces.end());
+      set_minimum_over_vertex(vh, defined_surfaces.begin(), defined_surfaces.end());
     }
     
     // update edges' data
     Halfedge_iterator hi = result.halfedges_begin();
-    for (; hi != result.halfedges_end(); ++hi, ++hi) {
+    for(; hi != result.halfedges_end(); ++hi, ++hi)
+    {
       Halfedge_handle hh = hi;
       // first we find the surfaces that are defined over the egde
       std::list<Xy_monotone_surface_3> defined_surfaces;
@@ -235,8 +227,7 @@ public:
           defined_surfaces.push_back(surfaces[i]);
 
       // now compare them over the edge
-      set_minimum_over_edge(hh, defined_surfaces.begin(),
-                            defined_surfaces.end());
+      set_minimum_over_edge(hh, defined_surfaces.begin(), defined_surfaces.end());
     }
     
     // update faces' data
@@ -245,25 +236,24 @@ public:
     current_face = Face_handle();
 
     Face_iterator fi;
-    for (fi = result.faces_begin(); fi != result.faces_end(); ++fi) {
+    for (fi = result.faces_begin(); fi != result.faces_end(); ++fi)
+    {
       Face_handle fh = fi;
       // first we find the surfaces that are defined over the face
       std::list<Xy_monotone_surface_3> defined_surfaces;
-      for (int i = 0; i < number_of_surfaces; ++i)
+      for(int i=0; i<number_of_surfaces; ++i)
         if (is_surface_defined_over_face(fh, surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
       
       // now compare them over the face
-      set_minimum_over_face(fh, defined_surfaces.begin(),
-                            defined_surfaces.end());
+      set_minimum_over_face(fh, defined_surfaces.begin(), defined_surfaces.end());
     }
   }
 
   // test1
   // compare the 2 envelopes by computing a point inside each face of test_env
   // locating it in env, and comparing the above surfaces
-  bool compare_lu_envelopes_test1(Minimization_diagram_2 &test_env,
-                                  Minimization_diagram_2 &env)
+  bool compare_lu_envelopes_test1(Minimization_diagram_2 &test_env, Minimization_diagram_2 &env)
   {
     // foreach face in the test envelope, compute a point inside the face,
     // locate it in the other envelope and compare the surfaces over the 2 faces
@@ -273,9 +263,11 @@ public:
     
     Face_iterator fi = test_env.faces_begin();
     bool eq, result = true;
-    for (; fi != test_env.faces_end(); ++fi) {
+    for (; fi != test_env.faces_end(); ++fi)
+    {
       Face_handle fh = fi;
-      if (!fh->is_unbounded()) {
+      if (!fh->is_unbounded())
+      {
         Point_2 inside_test = compute_point_inside_face(test_env, fh);
         pl_obj = pl.locate(inside_test);
         // faces of env must contain the faces of test
@@ -308,19 +300,19 @@ protected:
   // fill the vertex with the surface on the envelope
   // all the surfaces are known to be defined over the vertex' point
   template <class SurfaceIterator>
-  void set_minimum_over_vertex(Vertex_handle v, SurfaceIterator begin,
-                               SurfaceIterator end)
+  void set_minimum_over_vertex(Vertex_handle v, SurfaceIterator begin, SurfaceIterator end)
   {
     if (begin == end)
       v->set_no_data();
-    else {
+    else
+    {
       SurfaceIterator si = begin;
       // we set the first surface as the minimum, and then compare all the others
       v->set_data(*si);
       ++si;
-      for (; si != end; ++si) {
-        Comparison_result cr =
-          traits.compare_z_at_xy_3_object()(v->point(), v->get_data(), *si);
+      for(; si != end; ++si)
+      {
+        Comparison_result cr = traits.compare_z_at_xy_3_object()(v->point(), v->get_data(), *si);
         if (cr == EQUAL)
           v->add_data(*si);
         else if (cr == LARGER)
@@ -333,12 +325,12 @@ protected:
   // fill the edge with the surface on the envelope
   // all the surfaces are known to be defined over the edge's curve
   template <class SurfaceIterator>
-  void set_minimum_over_edge(const Halfedge_handle& h, SurfaceIterator begin,
-                             SurfaceIterator end)
+  void set_minimum_over_edge(const Halfedge_handle& h, SurfaceIterator begin, SurfaceIterator end)
   {
     if (begin == end)
       h->set_no_data();
-    else {
+    else
+    {
       if (h != current_edge)
         compute_point_in_current_edge(h);
       
@@ -346,10 +338,10 @@ protected:
       // we set the first surface as the minimum, and then compare all the others
       h->set_data(*si);
       ++si;
-      for (; si != end; ++si) {
-        Comparison_result cr =
-          traits.compare_z_at_xy_3_object()(current_point_inside_edge,
-                                            h->get_data(), *si);
+      for(; si != end; ++si)
+      {
+        Comparison_result cr = traits.compare_z_at_xy_3_object()(current_point_inside_edge,
+                                                                              h->get_data(), *si);
         if (cr == EQUAL)
           h->add_data(*si);
         else if (cr == LARGER)
@@ -364,23 +356,22 @@ protected:
   // the surfaces are known to not intersect inside the face
   // (but might intersect on its edges)
   template <class SurfaceIterator>
-  void set_minimum_over_face(Face_handle face, SurfaceIterator begin,
-                             SurfaceIterator end)
+  void set_minimum_over_face(Face_handle face, SurfaceIterator begin, SurfaceIterator end)
   {
-    if (face->is_unbounded() || begin == end) {
-      // a special case - no surface over the unbounded face, and when there
-      // are no surfaces at all
+    if (face->is_unbounded() || begin == end)
+    {
+      // a special case - no surface over the unbounded face, and when there are no surfaces at all
       face->set_no_data();
     }
-    else {
+    else
+    {
       SurfaceIterator si = begin;
-      // we set the first surface as the minimum, and then compare all the
-      // others
+      // we set the first surface as the minimum, and then compare all the others
       face->set_data(*si);
       ++si;
-      for (; si != end; ++si) {
-        Comparison_result cr =
-          compare_surfaces_over_face(face, face->get_data(), *si);
+      for(; si != end; ++si)
+      {
+        Comparison_result cr = compare_surfaces_over_face(face, face->get_data(), *si);
         if (cr == EQUAL)
           face->add_data(*si);
         else if (cr == LARGER)
@@ -394,24 +385,20 @@ protected:
   // return SMALLER if the first surface is closer to the envelope
   //        LARGER if the second surface is closer to the envelope
   //        EQUAL otherwise
-  Comparison_result
-  compare_surfaces_over_face(Face_handle face,
-                             const Xy_monotone_surface_3& surf1,
-                             const Xy_monotone_surface_3& surf2)
+  Comparison_result compare_surfaces_over_face(Face_handle face,
+                                               const Xy_monotone_surface_3& surf1,
+                                               const Xy_monotone_surface_3& surf2)
   {
-    Comparison_result result2 =
-      compare_surfaces_over_face_v2(face, surf1, surf2);
+    Comparison_result result2 = compare_surfaces_over_face_v2(face, surf1, surf2);
 
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3 
+    #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3 
       // use the 2 vertions and compare the results
-      Comparison_result result1 =
-        compare_surfaces_over_face_v1(face, surf1, surf2);
+      Comparison_result result1 = compare_surfaces_over_face_v1(face, surf1, surf2);
 
-      std::cout << "result1 = " << result1 << " and result2 = " << result2
-                << std::endl;
+      std::cout << "result1 = " << result1 << " and result2 = " << result2 << std::endl;
 
       CGAL_assertion(result1 == result2);
-#endif
+    #endif
 
     return result2;
   }
@@ -422,18 +409,16 @@ protected:
   //        EQUAL otherwise
   // this is version 1 which compares the surfaces over the vertices of
   // the face (and works only for linear surfaces)
-  Comparison_result
-  compare_surfaces_over_face_v1(const Face_handle& face,
-                                const Xy_monotone_surface_3& surf1,
-                                const Xy_monotone_surface_3& surf2)
+  Comparison_result compare_surfaces_over_face_v1(const Face_handle& face,
+                                                  const Xy_monotone_surface_3 &surf1,
+                                                  const Xy_monotone_surface_3& surf2)
   {
 
     // TODO: this works for triangles, but not for general surfaces
-    // in the general case, should use surface_compare_on_right and
-    // surface_compare_on_left or calculate a point inside the face
-    // we iterate over the vertices of the face, and look for one that the
-    // surfaces are not equal above it. (if doesn't exist, then the surfaces
-    // overlap)
+    // in the general case, should use surface_compare_on_right and surface_compare_on_left
+    // or calculate a point inside the face
+    // we iterate over the vertices of the face, and look for one that the surfaces are  
+    // not equal above it. (if doesn't exist, then the surfaces overlap)
     CGAL_assertion(!face->is_unbounded());
     Comparison_result cur_res;
     Ccb_halfedge_circulator hec = face->outer_ccb();
@@ -443,17 +428,15 @@ protected:
       Point_2 target_2 = hec->target()->point();
       cur_res = traits.compare_z_at_xy_3_object()(target_2,surf1,surf2);
       
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3 
-        std::cout << "for comparison on vertices, current result = "
-                  << cur_res << std::endl;
-#endif
+      #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3 
+        std::cout << "for comparison on vertices, current result = " << cur_res << std::endl;
+      #endif
 
       if (cur_res != EQUAL)
         found_not_equal = true;
       hec++;
     } while(hec != hec_begin && !found_not_equal);
-    //  std::cout << "for comparison on vertices, result = " << cur_res
-    //            << std::endl;
+//  std::cout << "for comparison on vertices, result = " << cur_res << std::endl;
 
     return cur_res;
   }
@@ -464,10 +447,9 @@ protected:
   //        EQUAL otherwise
   // this is version 2 which uses a calculated point inside the face
   // this version also works only for linear surfaces
-  Comparison_result
-  compare_surfaces_over_face_v2(const Face_handle& face,
-                                const Xy_monotone_surface_3 &surf1,
-                                const Xy_monotone_surface_3& surf2)
+  Comparison_result compare_surfaces_over_face_v2(const Face_handle& face,
+                                                  const Xy_monotone_surface_3 &surf1,
+                                                  const Xy_monotone_surface_3& surf2)
   {
     CGAL_assertion(!face->is_unbounded());
     Comparison_result cur_res;
@@ -476,30 +458,26 @@ protected:
 
     cur_res = traits.compare_z_at_xy_3_object()(current_point,surf1,surf2);
     
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
-      std::cout << "for comparison inside face, current result = "
-                << cur_res << std::endl;
-#endif
+    #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
+      std::cout << "for comparison inside face, current result = " << cur_res << std::endl;
+    #endif
 
     return cur_res;
   }
 
   // check if the surface is defines over the edge
-  bool is_surface_defined_over_edge(const Halfedge_handle& h,
-                                    Xy_monotone_surface_3 &surf)
+  bool is_surface_defined_over_edge(const Halfedge_handle& h, Xy_monotone_surface_3 &surf)
   {
     // check it over a point inside the edge's curve
     if (h != current_edge)
       compute_point_in_current_edge(h);
 
-    bool result =
-      traits.is_defined_over_object()(current_point_inside_edge, surf);
+    bool result = traits.is_defined_over_object()(current_point_inside_edge, surf);
     return result;
   }
   
   // check if the surface is defines over the face
-  bool is_surface_defined_over_face(const Face_handle& face,
-                                    Xy_monotone_surface_3 &surf)
+  bool is_surface_defined_over_face(const Face_handle& face, Xy_monotone_surface_3 &surf)
   {
     // we always have bounded surfaces
     if (face->is_unbounded())
@@ -507,32 +485,30 @@ protected:
 
     bool result2 = is_surface_defined_over_face_v2(face, surf);
     
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
+    #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
       // use the 2 versions and compare the results
       bool result1 = is_surface_defined_over_face_v1(face, surf);
 
-      std::cout << "result1 = " << result1 << " and result2 = " << result2
-                << std::endl;
+      std::cout << "result1 = " << result1 << " and result2 = " << result2 << std::endl;
 
       CGAL_assertion(result1 == result2);      
-#endif
+    #endif
 
     return result2;
   }
 
   // check if the surface is defines over the face
   // this is version 1 which check all the vertices of the face
-  bool is_surface_defined_over_face_v1(const Face_handle& face,
-                                       Xy_monotone_surface_3 &surf)
+  bool is_surface_defined_over_face_v1(const Face_handle& face, Xy_monotone_surface_3 &surf)
   {
     // for now, we go over all the vertices of the face
 
-    typename Traits::Is_defined_over is_defined_over =
-      traits.is_defined_over_object();
+    typename Traits::Is_defined_over is_defined_over = traits.is_defined_over_object();
 
     // check vertices on the outer ccb
     bool result = true;
-    if (!face->is_unbounded()) {
+    if (!face->is_unbounded())
+    {
       Ccb_halfedge_circulator hec = face->outer_ccb();
       Ccb_halfedge_circulator hec_begin = hec;
       do {
@@ -553,7 +529,8 @@ protected:
       
     // check vertices on holes boundary
     Hole_iterator hi;
-    for (hi = face->holes_begin(); hi != face->holes_end(); ++hi) {
+    for (hi = face->holes_begin(); hi != face->holes_end(); ++hi)
+    {
       Ccb_halfedge_circulator hec = (*hi);
       Ccb_halfedge_circulator hec_begin = hec;
       do {
@@ -572,12 +549,12 @@ protected:
     }
 
     return result;
+    
   }
 
   // check if the surface is defines over the face
   // this is version 2 which check the point inside the face
-  bool is_surface_defined_over_face_v2(const Face_handle& face,
-                                       Xy_monotone_surface_3 &surf)
+  bool is_surface_defined_over_face_v2(const Face_handle& face, Xy_monotone_surface_3 &surf)
   {
     if (face != current_face)
       compute_point_in_current_face(face);
@@ -588,8 +565,7 @@ protected:
   }
 
   // compute a point inside the face of the arranegement
-  Point_2 compute_point_inside_face(Minimization_diagram_2 &env,
-                                    Face_handle face)
+  Point_2 compute_point_inside_face(Minimization_diagram_2 &env, Face_handle face)
   {
     CGAL_assertion(!face->is_unbounded());
     
@@ -602,12 +578,13 @@ protected:
     Ccb_halfedge_circulator hec_begin = hec;
     bool found = false;
     do {
-      if (!traits.is_vertical_2_object()(hec->curve())) {
+      if (!traits.is_vertical_2_object()(hec->curve()))
+      {
         found = true;
         continue;
       }
       hec++;
-    } while (hec != hec_begin && !found);
+    } while(hec != hec_begin && !found);
     CGAL_assertion(found);
 
     Halfedge_handle found_hh = hec;
@@ -625,8 +602,7 @@ protected:
 //    if (traits.compare_x(found_hh->source()->point(), found_hh->target()->point()) == LARGER)
 //      shoot_up = false;
     if (traits.equal_2_object()(found_hh->source()->point(),
-                                traits.construct_max_vertex_2_object()
-                                  (found_hh->curve())))
+                              traits.construct_max_vertex_2_object()(found_hh->curve())))
       shoot_up = false;
 
     Md_point_location pl(env);
@@ -641,20 +617,20 @@ protected:
     else
       shoot_obj = pl.ray_shoot_down(shoot_source);
 
-    if (assign(shoot_hh, shoot_obj)) {
-      shoot_target =
-        traits.vertical_ray_shoot_2(shoot_source, shoot_hh->curve());
+    if (assign(shoot_hh, shoot_obj))
+    {
+      shoot_target = traits.vertical_ray_shoot_2(shoot_source, shoot_hh->curve());
     }
-    else if (assign(shoot_vh, shoot_obj)) {
+    else if (assign(shoot_vh, shoot_obj))
+    {
       shoot_target = (env.non_const_handle(shoot_vh))->point();
     }
     else
       CGAL_error(); // it cannot be the unbounded face
     
-    Point_2 res_point =
-      traits.construct_middle_point(shoot_source, shoot_target);
+    Point_2 res_point = traits.construct_middle_point(shoot_source, shoot_target);
 
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
+    #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
       std::cout << "finished computing point in face" << std::endl;
 
       // just for checking, locate res_point in env to find face
@@ -662,7 +638,8 @@ protected:
       Face_const_handle test_fh;
       CGAL_assertion(assign(test_fh, test_pl_obj));
       CGAL_assertion(test_fh == face);
-#endif
+    #endif
+
 
     return res_point;
   }
@@ -685,15 +662,15 @@ protected:
   }
 
 protected:
-  Overlay_2 overlay;
-  Traits traits;
-  Minimization_diagram_2* m_result;
+  Overlay_2              overlay;
+  Traits                 traits;
+  Minimization_diagram_2 *m_result;
 
-  Face_handle current_face;
-  Point_2 current_point;
+  Face_handle        current_face;
+  Point_2            current_point;
 
-  Halfedge_handle current_edge;
-  Point_2 current_point_inside_edge;
+  Halfedge_handle    current_edge;
+  Point_2            current_point_inside_edge;
 };
 
 } //namespace CGAL
