@@ -128,19 +128,40 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
   OrientationLinf o =
     geom_traits().orientation_Linf_2_object()(s1, s2, s3);
 
-  //std::cout << "debug insert_third o = " << o << std::endl;
+  CGAL_SDG_DEBUG(std::cout <<
+      "debug insert_third s1=" << s1 <<
+      " s2=" << s2 << " s3=" << s3 << std::endl;);
+  CGAL_SDG_DEBUG(std::cout <<
+      "debug insert_third o = " << o << std::endl;);
+
+  Sign s12i3 = geom_traits().vertex_conflict_2_object()(s1, s2, s3);
+  Sign s21i3 = geom_traits().vertex_conflict_2_object()(s2, s1, s3);
+  CGAL_SDG_DEBUG(std::cout <<
+      "debug insert_third s12i3=" << s12i3 <<
+      " s21i3=" << s21i3 << std::endl;);
+
+  CGAL_assertion(s12i3 != ZERO);
+  CGAL_assertion(s21i3 != ZERO);
 
   if ( o != DEGENERATE ) {
     //std::cout << "debug insert_third not degenerate" << std::endl;
     if ( o == RIGHT_TURN ) {
-      //std::cout << "debug insert_third reorienting" << std::endl;
+      CGAL_SDG_DEBUG(std::cout <<
+          "debug insert_third nondegenerate reorient " <<
+          " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
       f->reorient();
       for (int i = 0; i < 3; i++) {
         f->neighbor(i)->reorient();
       }
+    } else {
+      CGAL_SDG_DEBUG(std::cout <<
+          "debug insert_third nondegenerate keep " <<
+          " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
     }
   } else {
-    //std::cout << "debug insert_third degenerate" << std::endl;
+    CGAL_SDG_DEBUG(std::cout <<
+        "debug insert_third degenerate case " <<
+        " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
     typename Geom_traits::Compare_x_2 compare_x =
       geom_traits().compare_x_2_object();
 
