@@ -78,7 +78,7 @@ public:
         double spatial_weight = gaussian_function(it->second, range_parameter);
         double range_weight = gaussian_function(values[it->first] - current_sdf_value,
                                                 1.5 * deviation);
-        // we can use just spatial_weight for Gauissian filtering
+        // we can use just spatial_weight for Gaussian filtering
         double weight = spatial_weight * range_weight;
 
         total_sdf_value += values[it->first] * weight;
@@ -166,6 +166,21 @@ struct No_filtering {
   void operator()(const Polyhedron& /* mesh */,
                   int /* window_size */,
                   ValuePropertyMap /* values */) const {
+  }
+};
+
+/** @brief A filter that applies the filter passed as template parameter several times. */
+template <class Filter, int nb_iterations = 5>
+struct Iterative_filter : public Filter {
+  /**
+   * empty implementation of required operator.
+   */
+  template<class Polyhedron,class ValuePropertyMap>
+  void operator()(const Polyhedron&  mesh ,
+                  int  window_size ,
+                  ValuePropertyMap  values ) const {
+    for (int i=0; i<nb_iterations; ++i)
+      Filter::operator()(mesh, window_size, values);
   }
 };
 
