@@ -123,7 +123,6 @@ public:
     Md_point_location pl(result);
 
     std::size_t number_of_surfaces = surfaces.size();
-    int j;
     
     std::list<X_monotone_curve_2> curves_col;
     std::list<Point_2> points_col;
