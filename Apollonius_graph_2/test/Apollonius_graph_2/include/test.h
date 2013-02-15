@@ -165,14 +165,19 @@ bool test_traits_base(const Traits& = Traits())
   // testing access to constructor objects
   //--------------------------------------------------------------------
   Assign_2 assign_2 = tr.assign_2_object();
+  CGAL_USE(assign_2);
+
   Construct_object_2 construct_object_2 =
     tr.construct_object_2_object();
+  CGAL_USE(construct_object_2);
 
   Construct_Apollonius_vertex_2 apollonius_vertex =
     tr.construct_Apollonius_vertex_2_object();
+  CGAL_USE(apollonius_vertex);
+
   Construct_Apollonius_site_2 apollonius_site =
     tr.construct_Apollonius_site_2_object();
-
+  CGAL_USE(apollonius_site);
 
   // testing correctness of predicates;
   //--------------------------------------------------------------------
