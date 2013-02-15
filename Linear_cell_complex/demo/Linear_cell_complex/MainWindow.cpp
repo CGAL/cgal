@@ -167,7 +167,7 @@ void MainWindow::clear_all()
 
 void MainWindow::on_new_volume(Dart_handle adart)
 {
-  assert( adart->attribute<3>()==NULL);
+  CGAL_assertion( adart->attribute<3>()==NULL);
   CGAL::Set_i_attribute_functor<LCC, 3>::
       run(scene.lcc, adart, scene.lcc->create_attribute<3>());
   update_volume_list_add(adart->attribute<3>());
@@ -795,7 +795,7 @@ bool MainWindow::is_volume_in_list(LCC::Attribute_handle<3>::type ah)
 
 void MainWindow::update_volume_list_add(LCC::Attribute_handle<3>::type ah)
 {
-  assert( !is_volume_in_list(ah) );
+  CGAL_assertion( !is_volume_in_list(ah) );
 
   volumeList->disconnect(this);
 
@@ -831,7 +831,7 @@ void MainWindow::update_volume_list_add(LCC::Attribute_handle<3>::type ah)
 
 void MainWindow::update_volume_list_remove(int i)
 {
-  assert(i<volumeList->rowCount());
+  CGAL_assertion(i<volumeList->rowCount());
   volumeList->removeRow(i);
 }
 
@@ -1099,7 +1099,7 @@ void MainWindow::on_actionCreate_Menger_Sponge_triggered ()
 
   dialogmenger.mengerLevel->setValue(0);
   mengerLevel=0;
-  assert( mengerVolumes.empty() );
+  CGAL_assertion( mengerVolumes.empty() );
   mengerVolumes.push_back(on_actionCreate_cube_triggered());
   update_operations_entries(false);
 
@@ -1154,7 +1154,7 @@ void MainWindow::onMengerInc()
   for(std::vector<Dart_handle>::iterator itvol=mengerVolumes.begin();
         itvol!=mengerVolumes.end(); ++itvol)
   {
-    assert( !(scene.lcc)->is_marked(*itvol, markVols) );
+    CGAL_assertion( !(scene.lcc)->is_marked(*itvol, markVols) );
     for (LCC::Dart_of_cell_basic_range<3>::iterator
          it=(scene.lcc)->darts_of_cell_basic<3>(*itvol, markVols).begin(),
          itend=(scene.lcc)->darts_of_cell_basic<3>(*itvol, markVols).end();
@@ -1188,9 +1188,9 @@ void MainWindow::onMengerInc()
   }
 
   (scene.lcc)->negate_mark(markVols);
-  assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
-  assert( (scene.lcc)->is_whole_map_unmarked(markFaces) );
-  assert( (scene.lcc)->is_whole_map_unmarked(markEdges) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVols) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markFaces) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markEdges) );
 
   (scene.lcc)->free_mark(markEdges);
   (scene.lcc)->free_mark(markFaces);
@@ -1220,7 +1220,7 @@ void MainWindow::onMengerInc()
            <<timer.time()<<" seconds."<<std::endl;
 #endif
 
-  assert( (scene.lcc)->is_valid() );
+  CGAL_assertion( (scene.lcc)->is_valid() );
 
   emit(sceneChanged());
 }
@@ -1277,7 +1277,7 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
     edges1.push_back(curd);
     curd=curd->beta(1)->beta(2)->beta(1);
   }
-  assert( curd==dh->beta(2)->beta(1)->beta(1)->beta(2) );
+  CGAL_assertion( curd==dh->beta(2)->beta(1)->beta(1)->beta(2) );
 
   curd = curd->beta(1)->beta(1)->beta(2);
   for (unsigned int i=0;i<4;++i)
@@ -1285,7 +1285,7 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
     edges2.push_back(curd);
     curd=curd->beta(1)->beta(2)->beta(1);
   }
-  assert( curd==
+  CGAL_assertion( curd==
           dh->beta(2)->beta(1)->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
 
   Dart_handle f1=
@@ -1327,7 +1327,7 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
     edges1.push_back(curd);
     curd=curd->beta(1)->beta(2)->beta(1);
   }
-  assert( curd==dh->beta(1)->beta(2) );
+  CGAL_assertion( curd==dh->beta(1)->beta(2) );
 
   curd = curd->beta(1)->beta(1)->beta(2);
   for (unsigned int i=0;i<8;++i)
@@ -1335,7 +1335,7 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
     edges2.push_back(curd);
     curd=curd->beta(1)->beta(2)->beta(1);
   }
-  assert( curd==dh->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
+  CGAL_assertion( curd==dh->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
 
   Dart_handle f1=
       insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
@@ -1384,7 +1384,7 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
     edges1.push_back(curd);
     curd=curd->beta(1)->beta(2)->beta(1);
   }
-  assert( curd==dh->beta(1)->beta(1)->beta(2) );
+  CGAL_assertion( curd==dh->beta(1)->beta(1)->beta(2) );
 
   curd = curd->beta(1)->beta(1)->beta(2);
   for (unsigned int i=0;i<12;++i)
@@ -1392,7 +1392,7 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
     edges2.push_back(curd);
     curd=curd->beta(1)->beta(2)->beta(1);
   }
-  assert( curd==dh->beta(1)->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
+  CGAL_assertion( curd==dh->beta(1)->beta(1)->beta(2)->beta(1)->beta(1)->beta(2) );
 
   Dart_handle f1=
       insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
@@ -1492,7 +1492,7 @@ void MainWindow::process_inter_slice(Dart_handle init,
 
   for (unsigned int j=0; j<24; ++j)
   {
-    assert( d[j]!=LCC::null_dart_handle );
+    CGAL_assertion( d[j]!=LCC::null_dart_handle );
     if ( !(scene.lcc)->is_marked(d[j], markVols) )
     {
       CGAL::mark_cell<LCC,3>(*(scene.lcc), d[j], markVols);
@@ -1560,7 +1560,7 @@ void MainWindow::onMengerDec()
     }
   }
 
-  assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVols) );
 
   for(unsigned int i = 0; i < edges.size(); i++)
   {
@@ -1605,8 +1605,8 @@ void MainWindow::onMengerDec()
   }
 
   (scene.lcc)->negate_mark(markVols);
-  assert( (scene.lcc)->is_whole_map_unmarked(markVols) );
-  assert( (scene.lcc)->is_whole_map_unmarked(markVertices) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVols) );
+  CGAL_assertion( (scene.lcc)->is_whole_map_unmarked(markVertices) );
 
   for(unsigned int i = 0; i < vertices.size(); i++)
   {

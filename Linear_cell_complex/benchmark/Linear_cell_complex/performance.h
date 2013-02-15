@@ -8,7 +8,6 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <assert.h>
 #include <sys/resource.h>
 
 #include "Stop_watch.h"
@@ -37,7 +36,7 @@ public:
        for (int i=0; i<100; ++i)
            c = circulator_test();
        timer.stop();
-       assert(c==0);
+       CGAL_assertion(c==0);
        std::cout << "Circulator  : " << timer << std::endl;
 
        timer.start();

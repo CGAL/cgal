@@ -66,14 +66,11 @@ struct Is_sewable_functor
     CGAL::CMap_dart_const_iterator_basic_of_involution_inv<CMap,i>
         I2(*amap, adart2, m2);
     bool res = true;
-
-    bijection[adart1]=adart2;
+    int mbijection = amap->get_new_mark();
 
     while ( res && I1.cont() && I2.cont() )
     {
-      amap->mark(I1, m1);
-      amap->mark(I2, m2);
-
+      amap->mark(I1, mbijection);
       bijection[I1]=I2;
 
       CGAL_assertion( I1->template is_free<i>() );
@@ -94,12 +91,10 @@ struct Is_sewable_functor
         else
         {
           if ( I2->template is_free<0>() ) res=false;
-          else if ( amap->is_marked(I1->template beta<1>(), m1) )
+          else if ( amap->is_marked(I1->template beta<1>(), mbijection) )
           {
-            if ( !amap->is_marked(I2->template beta<0>(), m2) ) res=false;
-            else
-              if ( bijection[I1->template beta<1>()]!=I2->template beta<0>() )
-                res=false;
+            if ( bijection[I1->template beta<1>()]!=I2->template beta<0>() )
+              res=false;
           }
         }
       }
@@ -115,10 +110,9 @@ struct Is_sewable_functor
           else
           {
             if ( I2->is_free(j) ) res=false;
-            else if ( amap->is_marked(I1->beta(j), m1) )
+            else if ( amap->is_marked(I1->beta(j), mbijection) )
             {
-              if ( !amap->is_marked(I2->beta(j), m2) ) res=false;
-              else if ( bijection[I1->beta(j)]!=I2->beta(j) ) res=false;
+              if ( bijection[I1->beta(j)]!=I2->beta(j) ) res=false;
             }
           }
         }
@@ -131,17 +125,18 @@ struct Is_sewable_functor
     amap->negate_mark(m1);
     amap->negate_mark(m2);
     I1.rewind(); I2.rewind();
-    while ( amap->number_of_unmarked_darts(m1)>0 )
+    while ( amap->number_of_marked_darts(mbijection)>0 )
     {
-      amap->mark(I1, m1);
-      amap->mark(I2, m2);
+      amap->unmark(I1, mbijection);
       ++I1; ++I2;
     }
 
     CGAL_assertion( amap->is_whole_map_marked(m1) );
     CGAL_assertion( amap->is_whole_map_marked(m2) );
+    CGAL_assertion( amap->is_whole_map_unmarked(mbijection) );
     amap->free_mark(m1);
     amap->free_mark(m2);
+    amap->free_mark(mbijection);
 
     return res;
   }

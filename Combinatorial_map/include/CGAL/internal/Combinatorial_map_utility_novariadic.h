@@ -1830,32 +1830,27 @@ struct Beta_functor
     CGAL_assertion( ADart!=NULL );
     return ADart->beta(B);
   }
-
   static Dart_handle run(Dart_handle ADart, int B1, int B2)
   {
     CGAL_assertion( ADart!=NULL );
     return ADart->beta(B1)->beta(B2);
   }
-
   static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3)
   {
     CGAL_assertion( ADart!=NULL );
     return ADart->beta(B1)->beta(B2)->beta(B3);
   }
-
   static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4)
   {
     CGAL_assertion( ADart!=NULL );
     return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4);
   }
-
   static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4,
                          int B5)
   {
     CGAL_assertion( ADart!=NULL );
     return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5);
   }
-
   static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4,
                          int B5, int B6)
   {
@@ -1863,7 +1858,6 @@ struct Beta_functor
     return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5)->
       beta(B6);
   }
-
   static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4,
                          int B5, int B6, int B7)
   {
@@ -1871,7 +1865,6 @@ struct Beta_functor
     return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5)->
       beta(B6)->beta(B7);
   }
-
   static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4,
                          int B5, int B6, int B7, int B8)
   {
@@ -1879,7 +1872,6 @@ struct Beta_functor
     return ADart->beta(B1)->beta(B2)->beta(B3)->beta(B4)->beta(B5)->
       beta(B6)->beta(B7)->beta(B8);
   }
-
   static Dart_handle run(Dart_handle ADart, int B1, int B2, int B3, int B4, int B5, int B6,
                          int B7, int B8, int B9)
   {
@@ -1894,14 +1886,12 @@ struct Beta_functor
     CGAL_assertion( ADart!=NULL );
     return ADart->template beta<B1>();
   }
-
   template<int B1, int B2>
   static Dart_handle run(Dart_handle ADart)
   {
     CGAL_assertion( ADart!=NULL );
     return ADart->template beta<B1>()->template beta<B2>();
   }
-
   template<int B1, int B2, int B3>
   static Dart_handle run(Dart_handle ADart)
   {
@@ -1909,7 +1899,6 @@ struct Beta_functor
     return ADart->template beta<B1>()->template beta<B2>()
         ->template beta<B3>();
   }
-
   template<int B1, int B2, int B3, int B4>
   static Dart_handle run(Dart_handle ADart)
   {
@@ -1917,7 +1906,6 @@ struct Beta_functor
     return ADart->template beta<B1>()->template beta<B2>()
         ->template beta<B3>()->template beta<B4>();
   }
-
   template<int B1, int B2, int B3, int B4, int B5>
   static Dart_handle run(Dart_handle ADart)
   {
@@ -1925,7 +1913,6 @@ struct Beta_functor
     return ADart->template beta<B1>()->template beta<B2>()
         ->template beta<B3>()->template beta<B4>()->template beta<B5>();
   }
-
   template<int B1, int B2, int B3, int B4, int B5, int B6>
   static Dart_handle run(Dart_handle ADart)
   {
@@ -1934,7 +1921,6 @@ struct Beta_functor
         ->template beta<B3>()->template beta<B4>()->template beta<B5>()
         ->template beta<B6>();
   }
-
   template<int B1, int B2, int B3, int B4, int B5, int B6,
            int B7>
   static Dart_handle run(Dart_handle ADart)
@@ -1944,7 +1930,6 @@ struct Beta_functor
         ->template beta<B3>()->template beta<B4>()->template beta<B5>()
         ->template beta<B6>()->template beta<B7>();
   }
-
   template<int B1, int B2, int B3, int B4, int B5, int B6,
            int B7, int B8>
   static Dart_handle run(Dart_handle ADart)
@@ -1954,7 +1939,6 @@ struct Beta_functor
         ->template beta<B3>()->template beta<B4>()->template beta<B5>()
         ->template beta<B6>()->template beta<B7>()->template beta<B8>();
   }
-
   template<int B1, int B2, int B3, int B4, int B5, int B6,
            int B7, int B8, int B9>
   static Dart_handle run(Dart_handle ADart)

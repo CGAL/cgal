@@ -311,6 +311,119 @@ namespace CGAL {
                      int B6, int B7, int B8, int B9)
     { return CGAL::internal::Beta_functor<Dart_handle>::
           run(ADart, B1, B2, B3, B4, B5, B6, B7, B8, B9); }
+
+    template<int B1>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1>(ADart); }
+    template<int B1, int B2>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1, B2>(ADart); }
+    template<int B1, int B2, int B3>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1, B2, B3>(ADart); }
+    template<int B1, int B2, int B3, int B4>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1, B2, B3, B4>(ADart); }
+    template<int B1, int B2, int B3, int B4, int B5>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1, B2, B3, B4, B5>(ADart); }
+    template<int B1, int B2, int B3, int B4, int B5, int B6>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1, B2, B3, B4, B5, B6>(ADart); }
+    template<int B1, int B2, int B3, int B4, int B5, int B6,
+             int B7>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1, B2, B3, B4, B5, B6, B7>(ADart); }
+    template<int B1, int B2, int B3, int B4, int B5, int B6,
+             int B7, int B8>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1, B2, B3, B4, B5, B6, B7, B8>(ADart); }
+    template<int B1, int B2, int B3, int B4, int B5, int B6,
+             int B7, int B8, int B9>
+     Dart_handle beta(Dart_handle ADart)
+    { return CGAL::internal::Beta_functor<Dart_handle>::
+           template run<B1, B2, B3, B4, B5, B6, B7, B8, B9>(ADart); }
+
+     Dart_const_handle beta(Dart_const_handle ADart, int B1)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::run(ADart, B1); }
+     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+           run(ADart, B1, B2); }
+     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+           run(ADart, B1, B2, B3); }
+     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+                            int B4)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+           run(ADart, B1, B2, B3, B4); }
+     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+                            int B4, int B5)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+           run(ADart, B1, B2, B3, B4, B5); }
+     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+                            int B4, int B5, int B6)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+           run(ADart, B1, B2, B3, B4, B5, B6); }
+     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+                            int B4, int B5, int B6, int B7)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+           run(ADart, B1, B2, B3, B4, B5, B6, B7); }
+     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+                            int B4, int B5, int B6, int B7, int B8)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+           run(ADart, B1, B2, B3, B4, B5, B6, B7, B8); }
+     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+                            int B4, int B5, int B6, int B7, int B8, int B9)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+           run(ADart, B1, B2, B3, B4, B5, B6, B7, B8, B9); }
+
+     template<int B1>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1>(ADart); }
+     template<int B1, int B2>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1, B2>(ADart); }
+     template<int B1, int B2, int B3>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1, B2, B3>(ADart); }
+     template<int B1, int B2, int B3, int B4>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1, B2, B3, B4>(ADart); }
+     template<int B1, int B2, int B3, int B4, int B5>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1, B2, B3, B4, B5>(ADart); }
+     template<int B1, int B2, int B3, int B4, int B5, int B6>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1, B2, B3, B4, B5, B6>(ADart); }
+     template<int B1, int B2, int B3, int B4, int B5, int B6,
+              int B7>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1, B2, B3, B4, B5, B6, B7>(ADart); }
+     template<int B1, int B2, int B3, int B4, int B5, int B6,
+              int B7, int B8>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1, B2, B3, B4, B5, B6, B7, B8>(ADart); }
+     template<int B1, int B2, int B3, int B4, int B5, int B6,
+              int B7, int B8, int B9>
+      Dart_const_handle beta(Dart_const_handle ADart)
+     { return CGAL::internal::Beta_functor<Dart_const_handle>::
+            template run<B1, B2, B3, B4, B5, B6, B7, B8, B9>(ADart); }
 #endif
 
     /** Count the number of used marks.

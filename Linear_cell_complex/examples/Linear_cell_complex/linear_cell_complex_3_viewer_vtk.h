@@ -199,8 +199,8 @@ public:
       polydata->SetPolys(polygons);
     }
 
-    assert(lcc.is_whole_map_marked(vertextreated));
-    assert(lcc.is_whole_map_marked(facettreated));
+    CGAL_assertion(lcc.is_whole_map_marked(vertextreated));
+    CGAL_assertion(lcc.is_whole_map_marked(facettreated));
   
     lcc.free_mark(vertextreated);
     lcc.free_mark(facettreated);  
