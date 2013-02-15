@@ -143,9 +143,10 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
   CGAL_assertion(s12i3 != ZERO);
   CGAL_assertion(s21i3 != ZERO);
 
-  if ( o != DEGENERATE ) {
-    //std::cout << "debug insert_third not degenerate" << std::endl;
-    if ( o == RIGHT_TURN ) {
+  if ( s12i3 != s21i3 ) {
+    CGAL_assertion(o != DEGENERATE);
+    if ( s21i3 == NEGATIVE ) {
+      CGAL_assertion(o == RIGHT_TURN);
       CGAL_SDG_DEBUG(std::cout <<
           "debug insert_third nondegenerate reorient " <<
           " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
@@ -159,6 +160,7 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
           " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
     }
   } else {
+    CGAL_assertion(o == DEGENERATE);
     CGAL_SDG_DEBUG(std::cout <<
         "debug insert_third degenerate case " <<
         " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
