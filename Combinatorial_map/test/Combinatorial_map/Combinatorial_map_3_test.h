@@ -36,7 +36,7 @@ bool check_number_of_cells_3(CMap& cmap, unsigned int nbv, unsigned int nbe,
   if ( !cmap.is_valid() )
     {
       std::cout<<"ERROR: the cmap is not valid."<<std::endl;
-      assert(false);
+      CGAL_assertion(false);
       return false;
     }
 
@@ -52,7 +52,7 @@ bool check_number_of_cells_3(CMap& cmap, unsigned int nbv, unsigned int nbe,
                <<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "<<nbc[3]<<", "
                <<nbc[4]<<")."
                <<std::endl;
-      assert(false);
+      CGAL_assertion(false);
       return false;
     }
 

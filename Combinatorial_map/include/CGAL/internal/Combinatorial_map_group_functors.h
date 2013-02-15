@@ -576,7 +576,6 @@ void test_split_attribute_functor_one_dart
                             "Test_split_attribute_functor_one_dart<i> but "
                             "i-attributes are disabled");
 
-  typedef typename CMap::Dart_handle Dart_handle;
   typedef typename CMap::template Attribute_handle<i>::type
       Attribute_handle_i;
 
