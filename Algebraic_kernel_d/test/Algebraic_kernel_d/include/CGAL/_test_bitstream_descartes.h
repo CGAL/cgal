@@ -253,7 +253,7 @@ void test_bitstream_descartes() {
     try {
       Poly_int1 sq_f = descartes.square_free_part();
       assert(false);
-    } catch (CGAL::internal::Virtual_method_exception ex) {
+    } catch (const CGAL::internal::Virtual_method_exception&) {
       // Expected
     }
 

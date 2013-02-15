@@ -1629,7 +1629,7 @@ public:
   //  locate call may change the class
   Td_map_item& locate( Vertex_const_handle v, Locate_type& lt) const
   {
-    CGAL_precondition(traits);
+    CGAL_precondition(traits != NULL);
     return locate(traits->vtx_to_ce(v), lt);
   }
 
