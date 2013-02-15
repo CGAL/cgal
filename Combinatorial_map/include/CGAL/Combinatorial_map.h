@@ -1697,7 +1697,6 @@ namespace CGAL {
     void unsew_0(Dart_handle adart)
     {
       CGAL_assertion( adart!=NULL && !adart->template is_free<0>() );
-      Dart_handle d2=NULL;
 
       int m=get_new_mark();
       std::deque<Dart_handle> dartv;
@@ -1752,7 +1751,6 @@ namespace CGAL {
     void unsew_1(Dart_handle adart)
     {
       CGAL_assertion( adart!=NULL && !adart->is_free(1) );
-      Dart_handle d2 = NULL;
 
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
