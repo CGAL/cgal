@@ -1120,8 +1120,8 @@ namespace CGAL {
       Helper::template Foreach_enabled_attributes_except
         <internal::Group_attribute_functor_of_dart<Self, 0>, 1>::
         run(this,adart1,adart2);
-      adart1->basic_link_beta<0>(adart2);
-      adart2->basic_link_beta<1>(adart1);
+      adart1->template basic_link_beta<0>(adart2);
+      adart2->template basic_link_beta<1>(adart1);
     }
 
     /** Double link two darts, and update the NULL attributes.
@@ -1142,8 +1142,8 @@ namespace CGAL {
       Helper::template Foreach_enabled_attributes_except
         <internal::Group_attribute_functor_of_dart<Self, 1>, 1>::
         run(this,adart1,adart2);
-      adart1->basic_link_beta<1>(adart2);
-      adart2->basic_link_beta<0>(adart1);
+      adart1->template basic_link_beta<1>(adart2);
+      adart2->template basic_link_beta<0>(adart1);
     }
 
     /** Double link two darts, and update the NULL attributes.
