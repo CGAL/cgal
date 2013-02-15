@@ -16,12 +16,6 @@
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
-
-
-
-
-
-
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
 typedef CGAL::Projection_sphere_traits_3<K>							Gt2;
 typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                   RTOS;
@@ -46,12 +40,10 @@ void test1(){
 	RTOS::Vertex_handle v3 = rtos.insert(c);
 	RTOS::Vertex_handle v4 = rtos.insert(d);
 	RTOS::Vertex_handle v5 = rtos.insert(e);
-	int test = rtos.number_of_ghost_faces();
 	assert(rtos.number_of_ghost_faces()==2);
 	assert(rtos.dimension()==2);
 	
   	rtos.remove(v1);
-	int test2 = rtos.dimension();
 	assert(rtos.dimension()==1);
 	rtos.remove(v2);
 	assert(rtos.dimension()==1);

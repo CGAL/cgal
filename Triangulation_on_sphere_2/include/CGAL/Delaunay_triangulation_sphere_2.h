@@ -5,7 +5,7 @@
 
 #include <CGAL/Triangulation_sphere_2.h>
 #include <CGAL/Triangulation_face_base_sphere_2.h>
-#include <CGAL/Regular_triangulation_vertex_base_2.h>
+#include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 #include <fstream>
 
@@ -46,8 +46,7 @@ public:
   typedef typename Base::Solid_faces_iterator     Solid_faces_iterator;
   typedef typename Base::Solid_edges_iterator     Solid_edges_iterator;
   typedef typename Base::Contour_edges_iterator Contour_edges_iterator;
-	  //typedef typename Base::Vertex_list        Vertex_list;
-  //typedef typename Vertex_list::iterator          Vertex_list_iterator;
+	
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Base::cw;
@@ -88,7 +87,8 @@ public:
 	
  #endif
 	
-	
+//class for sorting points lexicographically.
+//This sorting is used for the perturbation in power_test
 class Perturbation_order {
   const Self *t;
   public:
@@ -610,7 +610,7 @@ insert(const Point &p, Face_handle start)
 		 return vertices_begin();
 	 return (loc->vertex(li));
    }
-	default:
+	default: //point can be inserted
      return insert(p, lt, loc, li);
   }
 }
@@ -783,7 +783,9 @@ insert_outside_affine_hull_regular(const Point& p)
 	
 
 	
-/*method to marc faces incident to v as ghost-faces or solid-faces.
+/*method to mark faces incident to v as ghost-faces or solid-faces.
+ bool first defines whether dimension of the triangulation increased
+ from one to two by inserting v
  If first == true all faces are updated. 
  */
 template < class Gt, class Tds >
@@ -791,6 +793,9 @@ bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
 update_ghost_faces(Vertex_handle v, bool first)
 {
+	if (number_of_vertices()<3)
+		return false;
+	
   bool neg_found=false;
   if(dimension()==1){
 	 All_edges_iterator eit=all_edges_begin();
@@ -890,9 +895,9 @@ remove_2D(Vertex_handle v)
 {
 	CGAL_triangulation_precondition(dimension()==2);
 	
-  if (test_dim_down(v)) { 
+  if (test_dim_down(v)) { //resulting triangulation has dim 1
     this->_tds.remove_dim_down(v);
-	update_ghost_faces();
+	update_ghost_faces(); //1d triangulation, no vertex needed to update ghost-faces
   }
   else {
     std::list<Edge> hole;
@@ -922,16 +927,12 @@ test_dim_down(Vertex_handle v)
 		if (it != v)
 			points.push_back(it->point());
 	
-	for(int i=0; i<points.size()-4; i++){
+	for(int i=0; i<(int)points.size()-4; i++){
 		Orientation s = power_test(points.at(i), points.at(i+1),points.at(i+2),points.at(i+3));
 		dim1 = dim1 && s == ON_ORIENTED_BOUNDARY ;
 		if (!dim1)
 			return dim1;
 	}return true;
-	
-	
-	
-  		
 	
 }
 
@@ -941,7 +942,8 @@ template <class Gt, class Tds >
 bool
 Delaunay_triangulation_sphere_2<Gt,Tds>::
 test_dim_up(const Point &p) const
-{
+	{ 
+	CGAL_triangulation_precondition(dimension()!=2);
 	Face_handle f=all_edges_begin()->first;
 	Vertex_handle v1=f->vertex(0);
 	Vertex_handle v2=f->vertex(1);

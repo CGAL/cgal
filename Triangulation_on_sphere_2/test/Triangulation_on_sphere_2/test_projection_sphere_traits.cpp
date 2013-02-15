@@ -24,16 +24,7 @@ int main()
 	
 	Gt::Construct_projected_point_3 cst =
     traits.construct_projected_point_3_object();
-	
-	
-	//make_transform_iterator(points.begin(), cst),
-				//boost::make_transform_iterator(points.end(), cst)
-				
-	
-	
-  //Gt traits=Gt();
-// Operations	
-	Power_test_2 power_test = traits.power_test_2_object();
+		Power_test_2 power_test = traits.power_test_2_object();
 	Orientation_2 orientation = traits.orientation_2_object();
 	Coradial_sphere_2 coradial = traits.coradial_sphere_2_object();
 	Inside_cone_2 inside_cone = traits.inside_cone_2_object();

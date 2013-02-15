@@ -13,9 +13,7 @@
 
 
 //convex Hull
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_3.h>
@@ -66,11 +64,8 @@ int main(){
 	
 	
 	std::vector<Point> points;
-	//std::vector<Point> points2(points.size()+1);
 	std::vector<Point> points2;
-	//std::vector<Vertex_handle> vertices;
-	//vertices.reserve(nu_of_pts);
-	
+		
 	points2.push_back(Point(0,0,0));
 	
 	for (int count=0; count<nu_of_pts; count++) {

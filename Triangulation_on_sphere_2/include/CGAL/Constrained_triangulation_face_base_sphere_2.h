@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Claudia Werner
+// Author(s)     : Claudia Werner, Mariette Yvinec
 
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_SPHERE_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_SPHERE_2_H
@@ -156,4 +156,4 @@ cw_permute()
   
 } //namespace CGAL 
   
-#endif //CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_2_H
+#endif //CGAL_CONSTRAINED_TRIANGULATION_FACE_BASE_SPHERE_2_H

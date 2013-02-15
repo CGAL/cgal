@@ -1,7 +1,6 @@
 #ifndef CGAL_TRIANGULATION_SPHERE_2_H
 #define CGAL_TRIANGULATION_SPHERE_2_H
 
-//#define HALF_SPHERE
 
 #include <list>
 #include <vector>
@@ -90,11 +89,11 @@ class Ghost_tester
    return fit->is_ghost();
   }
  bool operator()(const All_edges_iterator & eit) const {
-	 int dim = t->dimension();
+	 //int dim = t->dimension();
    Face_handle f = eit->first;
 	  bool edge1 = f->is_ghost();
 	 Face_handle f2 = f->neighbor(eit->second);
-	 bool edge2b = f2->is_ghost();
+	 //bool edge2b = f2->is_ghost();
    bool edge2 = (f->neighbor(eit->second))->is_ghost();
    bool result = edge1&&edge2;
    return !result;
@@ -150,7 +149,7 @@ protected:
 
   Gt  _gt;
   Tds _tds;
- Face_handle _ghost;
+ Face_handle _ghost;		//stores an arbitary ghost-face
  double _minDistSquared;   //minimal distance of two points to each other
   double _minRadiusSquared;//minimal distance of a point from center of the sphere
  double _maxRadiusSquared; //maximal distance of a point from center of the sphere
@@ -175,7 +174,7 @@ public:
 void set_radius(double radius){
 		clear();
 		init(radius);
-	}
+}
 
   //Assignement
   Triangulation_sphere_2 &operator=(const Triangulation_sphere_2 &tr);
@@ -204,7 +203,7 @@ void set_radius(double radius){
  
   int dimension() const { return _tds.dimension();}
   size_type number_of_vertices() const {return _tds.number_of_vertices();}
-size_type number_of_faces() const{return _tds.number_of_faces();}
+size_type number_of_faces() const{return _tds.number_of_faces();}//total number of faces (solid + ghost)
 		
   int number_of_ghost_faces();
   
@@ -227,7 +226,7 @@ size_type number_of_faces() const{return _tds.number_of_faces();}
   Oriented_side oriented_side(Face_handle f, const Point &p) const;
   bool xy_equal(const Point& p, const Point& q) const;
   bool collinear_between(const Point& p, const Point& q, const Point& r) const;
-  Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r ) const;
+  //Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r ) const;
 Orientation coplanar_orientation(const Point& p, const Point& q,const Point& r, const Point& s ) const;
   //------------------------------------------------------------------DEBUG---------------------------------------------------
   void show_all() const;
@@ -280,7 +279,7 @@ return CGAL::filter_iterator( all_faces_end(),
 	
 Solid_faces_iterator solid_faces_end() const {
 	return CGAL::filter_iterator(  all_faces_end(),
-     							 Ghost_tester(this)   );;
+     							 Ghost_tester(this)   );
 }
 	
 Solid_edges_iterator solid_edges_begin() const {
@@ -466,7 +465,8 @@ swap(Triangulation_sphere_2 &tr)
 
 //--------------------------CHECKING---------------------------
 
-	
+//is_valid is used by in the instream method, Delaunay_tri...
+	//has its own is_valid
 
 template <class Gt, class Tds >
 bool
@@ -549,7 +549,7 @@ is_too_close(const Point& p, const Point& q)const{
 
 /*location for degenerated cases: locates the conflicting edge in a 1 dimensional triangulation.
  This methode is used, when the new point is coplanar with the existing 	vertices.
-	bool plane defines if the points are also coplanar with the center of the sphere (true) or not (false).
+	bool plane defines whether the points are also coplanar with the center of the sphere (true) or not (false).
  */
 	
 template <class Gt, class Tds>
@@ -1022,7 +1022,7 @@ compare_xyz(const Point &p, const Point &q) const
 		return geom_traits().compare_xyz_3_object()(p, q);
 }
 
-/*check whether two points are equal*/	
+	
 template <class Gt, class Tds >	
 bool
 Triangulation_sphere_2<Gt, Tds>::
@@ -1078,7 +1078,7 @@ orientation(const Point&p, const Point &q, const Point &r, const Point & s)const
 	return geom_traits().orientation_2_object()(p,q,r,s);
 }
 	
-		
+//returns true if p,q, and O (center of the sphere) are aligned and if p (q) is located in the segment Oq (Op)		
 template <class Gt, class Tds >
 bool
 Triangulation_sphere_2<Gt, Tds>::
@@ -1087,11 +1087,12 @@ xy_equal(const Point& p, const Point& q) const
   return geom_traits().coradial_sphere_2_object()(p,q);
 }
 
+// return true if r lies inside the cone defined by trait.sphere, p and q
 template <class Gt, class Tds >
 bool
 Triangulation_sphere_2<Gt, Tds>::
 collinear_between(const Point& p, const Point& q, const Point& r) const
-{  // return true if r lies inside the cone defined by trait.sphere, p and q
+{  
   return geom_traits().inside_cone_2_object()(p,q,r);
 }
 //------------------------------------------------------------------------------DEBUG-------------------------------------------------
@@ -1140,7 +1141,7 @@ show_all() const
   return;
 }
 	
-
+//returns the number of ghost_faces
 template <class Gt, class Tds >
 int
 Triangulation_sphere_2<Gt, Tds>::

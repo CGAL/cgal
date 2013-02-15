@@ -43,8 +43,11 @@ private:
   }
 		
 };
-
+//the following two different adaptors are necessary because the Predicates don not need _sphere
+	//compared to Predicates from Delaunay_sphere_traits
 	
+	
+//adaptor for calling the Predicate_ with the points projected on the sphere	
 template < class K, class P, class Predicate_ >
 class Traits_with_projection_adaptor {
 public:
@@ -82,7 +85,7 @@ private:
  }
 };
 
-	
+//adaptor for calling the Predicate_ with the points projected on the sphere for predicates from the Kernel		
 template < class K, class P, class Predicate_ >
 class Traits_with_projection_adaptorKernel {
 public:
@@ -194,12 +197,10 @@ struct Construct_projected_point_3
 {
   const Base_point& sphere_center;
 
-  Point_2 operator()(const Base_point& pt) const
-  {
-    return Point_2(pt, sphere_center);
-  }
+Point_2 operator()(const Base_point& pt) const
+  {  return Point_2(pt, sphere_center); }
 
-  Construct_projected_point_3(const Base_point& sc)
+Construct_projected_point_3(const Base_point& sc)
     :sphere_center(sc) {}
 };
 
@@ -217,7 +218,7 @@ protected :
 template < class R >
 Projection_sphere_traits_3<R> ::
 Projection_sphere_traits_3(const Base_point& sphere, double radius)
-: _sphere(sphere), _radius(radius)
+:  _radius(radius), _sphere(sphere)
 {}
 	
 	

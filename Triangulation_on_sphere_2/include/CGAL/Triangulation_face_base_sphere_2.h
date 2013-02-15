@@ -15,7 +15,7 @@
 // $Id: Triangulation_face_base_sphere_2.h 28567 2006-02-16 14:30:13Z lsaboret $
 // 
 //
-// Author(s)     : Mariette Yvinec
+// Author(s)     : Mariette Yvinec, Claudia Werner
 
 #ifndef CGAL_TRIANGULATION_FACE_BASE_SPHERE_2_H
 #define CGAL_TRIANGULATION_FACE_BASE_SPHERE_2_H

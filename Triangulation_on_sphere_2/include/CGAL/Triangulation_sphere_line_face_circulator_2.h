@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Claudia Werner
+// Author(s)     : Claudia Werner,  Mariette Yvinec
 
 #ifndef CGAL_TRIANGULATION_SPHERE_LINE_FACE_CIRCULATOR_2_H
 #define CGAL_TRIANGULATION_SPHERE_LINE_FACE_CIRCULATOR_2_H
@@ -137,7 +137,7 @@ private:
 		Face_circulator done(fc);
 		int ic = fc->index(v);
 		Vertex_handle  vt= fc->vertex(cw(ic));
-		Orientation o = _tr->orientation(p, q, vt->point());
+		//Orientation o = _tr->orientation(p, q, vt->point());
 		while(  _tr->orientation(p, q, vt->point()) != LEFT_TURN) {
 			   ++fc;
 			   ic = fc->index(v);
