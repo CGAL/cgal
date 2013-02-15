@@ -326,7 +326,7 @@ namespace internal {
 
 
     typedef Do_intersect_bbox_segment_aux_is_greater
-      <FT,
+      <CFT,
        bounded_0,
        use_static_filters
        > Is_greater;
