@@ -451,7 +451,7 @@ public:
                   const MeshDomain& oracle,
                   Previous_level_& previous,
                   C3T3& c3t3,
-                  Mesh_3::LockDataStructureType *p_lock_ds,
+                  Default_lock_data_structure *p_lock_ds,
                   Mesh_3::WorksharingDataStructureType *p_worksharing_ds);
 
   /// Destructor
@@ -866,7 +866,7 @@ Refine_facets_3(Tr& triangulation,
                 const MD& oracle,
                 P_& previous,
                 C3T3& c3t3,
-                Mesh_3::LockDataStructureType *p_lock_ds,
+                Default_lock_data_structure *p_lock_ds,
                 Mesh_3::WorksharingDataStructureType *p_worksharing_ds)
   : Mesher_level<Tr, Self, Facet, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)

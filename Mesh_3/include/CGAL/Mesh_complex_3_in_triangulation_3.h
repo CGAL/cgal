@@ -45,32 +45,11 @@ template <typename Tr,
           typename CornerIndex = int,
           typename CurveSegmentIndex = int>
 class Mesh_complex_3_in_triangulation_3 :
-  public Mesh_3::Mesh_complex_3_in_triangulation_3_base
-  <
-    Tr,
-#ifdef CGAL_LINKED_WITH_TBB
-    typename boost::mpl::if_c
-    <
-      Tr::Is_for_parallel_mesh_3,
-      Parallel_tag,
-      Sequential_tag
-    >::type
-#else
-    Sequential_tag
-#endif // CGAL_LINKED_WITH_TBB
-  >
+  public Mesh_3::Mesh_complex_3_in_triangulation_3_base<
+    Tr, typename Tr::Concurrency_tag>
 {
 public:
-#ifdef CGAL_LINKED_WITH_TBB
-  typedef typename boost::mpl::if_c
-  <
-    Tr::Is_for_parallel_mesh_3,
-    Parallel_tag,
-    Sequential_tag
-  >::type                                                         Concurrency_tag;
-#else
-  typedef Sequential_tag                                          Concurrency_tag;
-#endif // CGAL_LINKED_WITH_TBB
+  typedef typename typename Tr::Concurrency_tag                   Concurrency_tag;
 
 private:
   typedef Mesh_complex_3_in_triangulation_3<

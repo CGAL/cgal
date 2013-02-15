@@ -382,9 +382,9 @@ protected:
   typedef typename Tr::Cell_handle      Cell_handle;
   typedef typename Tr::Facet            Facet;
 
-  C3T3_helpers_base(LockDataStructureType *) {}
+  C3T3_helpers_base(Default_lock_data_structure *) {}
 
-  LockDataStructureType *get_lock_data_structure() const
+  Default_lock_data_structure *get_lock_data_structure() const
   {
     return 0;
   }
@@ -444,14 +444,14 @@ protected:
   typedef typename Tr::Cell_handle      Cell_handle;
   typedef typename Tr::Facet            Facet;
 
-  C3T3_helpers_base(LockDataStructureType *p_lock_ds)
+  C3T3_helpers_base(Default_lock_data_structure *p_lock_ds)
     : m_lock_ds(p_lock_ds) {}
 
 
 public:
   // LOCKS (CONCURRENCY)
 
-  /*Mesh_3::LockDataStructureType *get_lock_data_structure() const
+  /*Default_lock_data_structure *get_lock_data_structure() const
   {
     return m_lock_ds;
   }*/
@@ -554,7 +554,7 @@ public:
   }
 
 protected:
-  Mesh_3::LockDataStructureType *m_lock_ds;
+  Default_lock_data_structure *m_lock_ds;
 
   typedef tbb::mutex  Mutex_type;
   mutable Mutex_type  m_mut_outdated_cells;
@@ -640,7 +640,7 @@ public:
    * Constructor
    */
   C3T3_helpers(C3T3& c3t3, const MeshDomain& domain,
-               LockDataStructureType *p_lock_ds = 0)
+               Default_lock_data_structure *p_lock_ds = 0)
     : Base(p_lock_ds)
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())

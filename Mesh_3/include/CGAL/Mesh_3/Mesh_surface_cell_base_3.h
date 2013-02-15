@@ -138,10 +138,10 @@ protected:
  */
 template <class GT,
           class MT,
-          class Cb,
-          typename Concurrency_tag>
+          class Cb>
 class Mesh_surface_cell_base_3
-: public Mesh_surface_cell_base_3_base<Concurrency_tag>
+: public Mesh_surface_cell_base_3_base<
+    typename Cb::Triangulation_data_structure::Concurrency_tag>
 , public Cb
 {
 public:
@@ -154,13 +154,13 @@ public:
   typedef typename Tds::Vertex_handle                 Vertex_handle;
   typedef typename Tds::Cell_handle                   Cell_handle;
   typedef typename GT::Point_3                        Point;
-
+  
   // To get correct cell type in TDS
   template < class TDS3 >
   struct Rebind_TDS
   {
     typedef typename Cb::template Rebind_TDS<TDS3>::Other Cb3;
-    typedef Mesh_surface_cell_base_3 <GT, MT, Cb3, Concurrency_tag> Other;
+    typedef Mesh_surface_cell_base_3 <GT, MT, Cb3> Other;
   };
 
   /// Constructors
@@ -279,12 +279,12 @@ private:
 #  pragma warning(default:4351)
 #endif
 
-template < class GT, class MT, class Cb, typename Ct >
+template < class GT, class MT, class Cb >
 inline
 std::istream&
-operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb, Ct> &c)
+operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb> &c)
 {
-  typename Mesh_surface_cell_base_3<GT, MT, Cb, Ct>::Surface_patch_index index;
+  typename Mesh_surface_cell_base_3<GT, MT, Cb>::Surface_patch_index index;
   is >> static_cast<Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
@@ -299,11 +299,11 @@ operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb, Ct> &c)
   return is;
 }
 
-template < class GT, class MT, class Cb, typename Ct >
+template < class GT, class MT, class Cb >
 inline
 std::ostream&
 operator<<(std::ostream &os,
-           const Mesh_surface_cell_base_3<GT, MT, Cb, Ct> &c)
+           const Mesh_surface_cell_base_3<GT, MT, Cb> &c)
 {
   os << static_cast<const Cb&>(c);
   for(int i = 0; i < 4; ++i)

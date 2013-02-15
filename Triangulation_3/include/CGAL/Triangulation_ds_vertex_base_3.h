@@ -26,8 +26,8 @@
 namespace CGAL {
 
 
-// Sequential
-template <bool used_by_parallel_mesh_3>
+// Without erase counter
+template <bool Use_erase_counter>
 class Triangulation_ds_vertex_base_3_base
 {
 public:
@@ -38,7 +38,7 @@ public:
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
-// Specialized version (Parallel)
+// Specialized version (with erase counter)
 template <>
 class Triangulation_ds_vertex_base_3_base<true>
 {
@@ -65,9 +65,12 @@ protected:
 };
 #endif // CGAL_LINKED_WITH_TBB
 
+
+
 template < typename TDS = void >
 class Triangulation_ds_vertex_base_3
-: public Triangulation_ds_vertex_base_3_base<TDS::Is_for_parallel_mesh_3>
+: public Triangulation_ds_vertex_base_3_base<
+    TDS::Vertex_container_strategy::Uses_erase_counter>
 {
 public:
   typedef TDS                          Triangulation_data_structure;

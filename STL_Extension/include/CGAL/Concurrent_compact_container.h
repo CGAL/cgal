@@ -24,6 +24,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>
+#include <CGAL/Compact_container_strategies.h>
 
 #include <iterator>
 #include <algorithm>
@@ -55,39 +56,6 @@ namespace internal {
   class CCC_iterator;
 }
 
-// A basic "do nothing" CCC_strategy_base
-// One can inheritate from it for partial specialisation
-template <typename Element>
-class CCC_strategy_base {
-public:
-  // Do nothing
-  static unsigned int get_erase_counter(const Element &) { return 0; }
-  static void set_erase_counter(Element &, unsigned int) {}
-  static void increment_erase_counter(Element &) {}
-};
-
-
-// A CCC_strategy managing an internal counter
-template <typename Element>
-class CCC_strategy_with_counter
-{
-public:
-  static unsigned int get_erase_counter(const Element &e)
-  {
-    return e.get_erase_counter();
-  }
-
-  static void set_erase_counter(Element &e, unsigned int c)
-  {
-    e.set_erase_counter(c);
-  }
-
-  static void increment_erase_counter(Element &e)
-  {
-    e.increment_erase_counter();
-  }
-};
-
 // Free list (head and size)
 template< typename pointer, typename size_type  >
 class Free_list {
@@ -111,7 +79,8 @@ protected:
 // Safe concurrent "insert" and "erase".
 // Do not parse the container while others are modifying it.
 // Strategy_ is a functor which provides several functions
-// See CCC_strategy_base and CCC_strategy_with_counter above, and/or documentation
+// See Compact_container_strategy_base and 
+// Compact_container_strategy_with_counter, and/or documentation
 //
 template < class T, class Allocator_ = Default, class Strategy_ = Default >
 class Concurrent_compact_container
@@ -119,7 +88,8 @@ class Concurrent_compact_container
   typedef Allocator_                                                Al;
   typedef Strategy_                                                 Strat;
   typedef typename Default::Get<Al, CGAL_ALLOCATOR(T) >::type       Allocator;
-  typedef typename Default::Get<Strat, CCC_strategy_base<T> >::type Strategy;
+  typedef typename Default::Get<
+    Strat, Compact_container_strategy_base >::type                  Strategy;
   typedef Concurrent_compact_container <T, Al, Strat>               Self;
   typedef Concurrent_compact_container_traits <T>                   Traits;
 

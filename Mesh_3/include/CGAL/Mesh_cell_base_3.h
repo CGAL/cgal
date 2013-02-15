@@ -37,16 +37,16 @@ namespace CGAL {
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
           class MD,
-          class Cb,
-          typename Concurrency_tag = Sequential_tag>
+          class Cb = CGAL::Regular_triangulation_cell_base_3<
+              GT, CGAL::Triangulation_cell_base_with_circumcenter_3<GT> > >
 class Mesh_cell_base_3
-: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb, Concurrency_tag>
+: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>
 {
   typedef typename GT::FT FT;
   
 public:
   // Base
-  typedef Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb, Concurrency_tag> Base;
+  typedef Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb> Base;
   // Index Type
   typedef typename MD::Subdomain_index      Subdomain_index;
   typedef typename MD::Surface_patch_index  Surface_patch_index;
@@ -66,7 +66,7 @@ public:
   struct Rebind_TDS
   {
     typedef typename Cb::template Rebind_TDS<TDS3>::Other Cb3;
-    typedef Mesh_cell_base_3 <GT, MD, Cb3, Concurrency_tag> Other;
+    typedef Mesh_cell_base_3 <GT, MD, Cb3> Other;
   };
   
   // Constructors
@@ -163,32 +163,32 @@ private:
 
 
 
-template < class GT, class MT, class Cb, typename Ct >
+template < class GT, class MT, class Cb >
 std::istream&
 operator>>(std::istream &is,
-           Mesh_cell_base_3<GT, MT, Cb, Ct> &c)
+           Mesh_cell_base_3<GT, MT, Cb> &c)
 {
-  typename Mesh_cell_base_3<GT, MT, Cb, Ct>::Subdomain_index index;
+  typename Mesh_cell_base_3<GT, MT, Cb>::Subdomain_index index;
   if(is_ascii(is))
     is >> index;
   else
     read(is, index);
-  typedef typename Mesh_cell_base_3<GT, MT, Cb, Ct>::Base Cell_base;
+  typedef typename Mesh_cell_base_3<GT, MT, Cb>::Base Cell_base;
   is >> static_cast<Cell_base&>(c);
   if(is) c.set_subdomain_index(index);
   return is;
 }
 
-template < class GT, class MT, class Cb, typename Ct >
+template < class GT, class MT, class Cb >
 std::ostream&
 operator<<(std::ostream &os,
-           const Mesh_cell_base_3<GT, MT, Cb, Ct> &c)
+           const Mesh_cell_base_3<GT, MT, Cb> &c)
 {
   if(is_ascii(os))
      os << c.subdomain_index();
   else
     write(os, c.subdomain_index());
-  typedef typename Mesh_cell_base_3<GT, MT, Cb, Ct>::Base Cell_base;
+  typedef typename Mesh_cell_base_3<GT, MT, Cb>::Base Cell_base;
   return os << static_cast<const Cell_base&>(c);
 }
 

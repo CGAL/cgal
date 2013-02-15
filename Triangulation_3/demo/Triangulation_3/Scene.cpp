@@ -36,6 +36,15 @@ void Scene::generatePoints(int num)
   /* Insert the points to build a Delaunay triangulation */
   /* Note: this function returns the number of inserted points;
       it is not guaranteed to insert the points following the order of iteraror. */
+#ifdef CONCURRENT_TRIANGULATION_3
+  CGAL::Default_lock_data_structure locking_ds(
+    CGAL::Bbox_3(-1.,-1.,-1.,1,1,1), 50);
+  m_dt.set_lock_data_structure(&locking_ds);
+  // CJTODO TEMP
+# ifdef CGAL_DEBUG_GLOBAL_LOCK_DS
+  CGAL::Default_lock_data_structure::set_global_lock_ds(&locking_ds);
+# endif
+#endif
   m_dt.insert( pts.begin(), pts.end() );
   /* Check the combinatorial validity of the triangulation */
   /* Note: when it is set to be true,

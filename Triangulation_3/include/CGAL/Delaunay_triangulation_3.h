@@ -31,6 +31,7 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Location_policy.h>
+#include <CGAL/Mesh_3/Profiling_tools.h> // CJTODO TEMP
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -40,6 +41,11 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/parallel_for.h>
+# include <tbb/enumerable_thread_specific.h>
+#endif
 
 #ifdef CGAL_DELAUNAY_3_OLD_REMOVE
 #  error "The old remove() code has been removed.  Please report any issue you may have with the current one."
@@ -51,7 +57,8 @@ namespace CGAL {
 // having a default value. There is no definition of that class template.
 template < class Gt,
            class Tds_ = Default,
-           class Location_policy = Default >
+           class Location_policy = Default,
+           class Lock_data_structure_ = Default >
 class Delaunay_triangulation_3;
 
 // There is a specialization Delaunay_triangulation_3<Gt, Tds, Fast_location>
@@ -59,12 +66,14 @@ class Delaunay_triangulation_3;
 
 // Here is the specialization Delaunay_triangulation_3<Gt, Tds>, with two
 // arguments, that is if Location_policy being the default value 'Default'.
-template < class Gt, class Tds_ >
-class Delaunay_triangulation_3<Gt, Tds_>
-  : public Triangulation_3<Gt, Tds_>
+template < class Gt, class Tds_,
+           class Lock_data_structure_ >
+class Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_>
+  : public Triangulation_3<Gt, Tds_, Lock_data_structure_>
 {
-  typedef Delaunay_triangulation_3<Gt, Tds_> Self;
-  typedef Triangulation_3<Gt,Tds_>           Tr_Base;
+  typedef Delaunay_triangulation_3<Gt, Tds_, Default, 
+                                   Lock_data_structure_> Self;
+  typedef Triangulation_3<Gt,Tds_,Lock_data_structure_>  Tr_Base;
 
 public:
 
@@ -240,10 +249,146 @@ public:
     std::vector<Point> points (first, last);
     spatial_sort (points.begin(), points.end(), geom_traits());
 
-    Vertex_handle hint;
-    for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
-            p != end; ++p)
-        hint = insert(*p, hint);
+    WallClockTimer t; // CJTODO TEMP
+
+    // Parallel
+#ifdef CGAL_LINKED_WITH_TBB
+    if (is_parallel())
+    {
+      size_t num_points = points.size();
+      int i = 0;
+      // Sequential until dim = 3 (or more)
+      Vertex_handle hint;
+      size_t num_points_seq = (std::min)(num_points, (size_t)500); // CJTODO: 100, 1000... ?
+      while (dimension() < 3 || i < num_points_seq)
+      {
+        hint = insert(points[i], hint);
+        ++i;
+      }
+
+      tbb::task_scheduler_init init(10); // CJTODO TEMP
+      //tbb::enumerable_thread_specific<Vertex_handle> tls_hint(
+      //  [&]()
+      //  {
+      //    static tbb::atomic<size_t> i_hints;
+      //    return hints[(++i_hints) - 1];
+      //  });
+      tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint);
+      // CJTODO: lambda functions OK?
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>( i, num_points ),
+        [&] (const tbb::blocked_range<size_t>& r)
+        {
+          for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
+          {
+            //std::stringstream sstr;
+            //sstr << i_point << " ";
+            //std::cerr << sstr.str() << std::endl;
+            bool success = false;
+            while(!success)
+            {
+              if (try_lock_vertex(tls_hint.local()) && try_lock_point(points[i_point]))
+              {
+                bool could_lock_zone;
+                Vertex_handle new_hint = insert(
+                  points[i_point], tls_hint.local(), &could_lock_zone);
+                
+                if (could_lock_zone)
+                {
+                  tls_hint.local() = new_hint;
+                  success = true;
+                }
+              }
+              else
+              {
+                //std::this_thread::yield();
+                //if (i_point != (r.end() - 1))
+                //  std::swap(points[i_point], points[i_point+1]);
+              }
+
+              unlock_all_elements();
+            }
+
+            //std::cerr << i_point << " done." << std::endl;
+
+          }
+        }
+      );
+      
+      /*size_t num_points = points.size();
+
+      // Sequential until dim = 3 (or more)
+      Vertex_handle hint;
+      size_t num_points_seq = 1000;
+      std::vector<Vertex_handle> hints(num_points_seq);
+      size_t i = 0;
+      while (i < num_points_seq)
+      {
+        hint = insert(points[i*num_points/num_points_seq], hint);
+        hints[i] = hint;
+        ++i;
+      }
+
+      tbb::task_scheduler_init init(10); // CJTODO TEMP
+      // CJTODO: lambda functions OK?
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>( 0, num_points_seq, 1 ),
+        [&] (const tbb::blocked_range<size_t>& r)
+        {
+          for( size_t i_range = r.begin() ; i_range != r.end() ; ++i_range)
+          {
+            Vertex_handle hint = hints[i_range];
+            for (size_t i_point = i_range*num_points/num_points_seq + 1 ; 
+                 i_point != (i_range+1)*num_points/num_points_seq ; 
+                 ++i_point)
+            {
+              //std::stringstream sstr;
+              //sstr << i_point << " ";
+              //std::cerr << sstr.str() << std::endl;
+              bool success = false;
+              while(!success)
+              {
+                if (try_lock_vertex(hint) && try_lock_point(points[i_point]))
+                {
+                  bool could_lock_zone;
+                  Vertex_handle new_hint = insert(
+                    points[i_point], hint, &could_lock_zone);
+                
+                  if (could_lock_zone)
+                  {
+                    hint = new_hint;
+                    success = true;
+                  }
+                }
+                else
+                {
+                  //std::this_thread::yield();
+                  //if (i_point != (r.end() - 1))
+                  //  std::swap(points[i_point], points[i_point+1]);
+                }
+
+                unlock_all_elements();
+              }
+            }
+
+            //std::cerr << i_point << " done." << std::endl;
+
+          }
+        }
+      );*/
+    }
+    // Sequential
+    else
+#endif // CGAL_LINKED_WITH_TBB
+    {
+      Vertex_handle hint;
+      for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
+              p != end; ++p)
+          hint = insert(*p, hint);
+    }
+
+    std::cerr << "Triangulation computed in " << t.elapsed() << " seconds." << std::endl;
+
 
     return number_of_vertices() - n;
   }
@@ -323,15 +468,19 @@ public:
   }
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   
-  Vertex_handle insert(const Point & p, Vertex_handle hint)
+  Vertex_handle insert(const Point & p, Vertex_handle hint,
+                       bool *p_could_lock_zone = 0)
   {
-    return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
+    return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell(),
+                  p_could_lock_zone);
   }
 
-  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
+  Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle(),
+                       bool *p_could_lock_zone = 0);
 
   Vertex_handle insert(const Point & p, Locate_type lt,
-	               Cell_handle c, int li, int);
+	               Cell_handle c, int li, int,
+                 bool *p_could_lock_zone = 0);
 	
 public: // internal methods
 	
@@ -675,35 +824,51 @@ protected:
   Hidden_point_visitor hidden_point_visitor;
 };
 
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
-insert(const Point & p, Cell_handle start)
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
+insert(const Point & p, Cell_handle start, bool *p_could_lock_zone)
 {
-    Locate_type lt;
-    int li, lj;
+  Locate_type lt;
+  int li, lj;
+  
+  // Parallel
+  if (p_could_lock_zone)
+  {
+    Cell_handle c = locate(p, lt, li, lj, start, p_could_lock_zone);
+    if (*p_could_lock_zone)
+      return insert(p, lt, c, li, lj, p_could_lock_zone);
+    else
+      return Vertex_handle();
+  }
+  // Sequential
+  else
+  {
     Cell_handle c = locate(p, lt, li, lj, start);
     return insert(p, lt, c, li, lj);
+  }
+  
 }
 
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
-insert(const Point & p, Locate_type lt, Cell_handle c, int li, int lj)
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
+insert(const Point & p, Locate_type lt, Cell_handle c, int li, int lj,
+       bool *p_could_lock_zone)
 {
   switch (dimension()) {
   case 3:
     {
       Conflict_tester_3 tester(p, this);
       Vertex_handle v = insert_in_conflict(p, lt, c, li, lj,
-					   tester, hidden_point_visitor);
+					   tester, hidden_point_visitor, p_could_lock_zone);
       return v;
     }// dim 3
   case 2:
     {
       Conflict_tester_2 tester(p, this);
       return insert_in_conflict(p, lt, c, li, lj,
-				tester, hidden_point_visitor);
+				tester, hidden_point_visitor, p_could_lock_zone);
     }//dim 2
   default :
     // dimension <= 1
@@ -712,10 +877,10 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int lj)
   }
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle 
-Delaunay_triangulation_3<Gt,Tds>::
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle 
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert_and_give_new_cells(const Point  &p, 
                           OutputItCells fit,
                           Cell_handle start)
@@ -742,10 +907,10 @@ insert_and_give_new_cells(const Point  &p,
   return v;		
 }
 
-template < class Gt, class Tds >	
+template < class Gt, class Tds, class Lds >	
 template <class OutputItCells>
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle 
-Delaunay_triangulation_3<Gt,Tds>::
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle 
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert_and_give_new_cells(const Point& p,
                           OutputItCells fit,
                           Vertex_handle hint)
@@ -772,10 +937,10 @@ insert_and_give_new_cells(const Point& p,
   return v;
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle 
-Delaunay_triangulation_3<Gt,Tds>::
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle 
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert_and_give_new_cells(const Point& p,
                           Locate_type lt,
                           Cell_handle c, int li, int lj, 
@@ -804,9 +969,9 @@ insert_and_give_new_cells(const Point& p,
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 move_point(Vertex_handle v, const Point & p)
 {
     CGAL_triangulation_precondition(! is_infinite(v));
@@ -828,9 +993,9 @@ move_point(Vertex_handle v, const Point & p)
 }
 #endif
 
-template <class Gt, class Tds >
+template <class Gt, class Tds, class Lds >
 template <class DelaunayTriangulation_3>
-class Delaunay_triangulation_3<Gt, Tds>::Vertex_remover {
+class Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_remover {
   typedef DelaunayTriangulation_3 Delaunay;
 public:
   typedef Nullptr_t Hidden_points_iterator;
@@ -849,9 +1014,9 @@ public:
   }
 };
 
-template <class Gt, class Tds >
+template <class Gt, class Tds, class Lds >
 template <class DelaunayTriangulation_3>
-class Delaunay_triangulation_3<Gt, Tds>::Vertex_inserter {
+class Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_inserter {
   typedef DelaunayTriangulation_3 Delaunay;
 public:
   typedef Nullptr_t Hidden_points_iterator;
@@ -878,9 +1043,9 @@ public:
   }
 };
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 void
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 remove(Vertex_handle v)
 {
   Self tmp;
@@ -890,9 +1055,9 @@ remove(Vertex_handle v)
   CGAL_triangulation_expensive_postcondition(is_valid());
 }
 
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 move_if_no_collision(Vertex_handle v, const Point &p)
 {
   Self tmp;
@@ -904,9 +1069,9 @@ move_if_no_collision(Vertex_handle v, const Point &p)
 	return res;
 }
 
-template <class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
+template <class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 move(Vertex_handle v, const Point &p) {
   CGAL_triangulation_precondition(!is_infinite(v));
   if(v->point() == p) return v;
@@ -916,10 +1081,10 @@ move(Vertex_handle v, const Point &p) {
 	return Tr_Base::move(v,p,remover,inserter);
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
 void
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 remove_and_give_new_cells(Vertex_handle v, OutputItCells fit)
 {
   Self tmp;
@@ -929,10 +1094,10 @@ remove_and_give_new_cells(Vertex_handle v, OutputItCells fit)
   CGAL_triangulation_expensive_postcondition(is_valid());
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
   OutputItCells fit)
 {
@@ -947,9 +1112,9 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
 	return res;
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 Oriented_side
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
 	                const Point &p3, const Point &p, bool perturb) const
 {
@@ -989,9 +1154,9 @@ side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
     return ON_NEGATIVE_SIDE;
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 Bounded_side
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 coplanar_side_of_bounded_circle(const Point &p0, const Point &p1,
 	       const Point &p2, const Point &p, bool perturb) const
 {
@@ -1042,9 +1207,9 @@ coplanar_side_of_bounded_circle(const Point &p0, const Point &p1,
     return Bounded_side(-local); //ON_UNBOUNDED_SIDE;
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 Bounded_side
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 side_of_sphere(Vertex_handle v0, Vertex_handle v1,
 	       Vertex_handle v2, Vertex_handle v3,
 	       const Point &p, bool perturb) const
@@ -1082,9 +1247,9 @@ side_of_sphere(Vertex_handle v0, Vertex_handle v1,
     return (Bounded_side) side_of_oriented_sphere(v0->point(), v1->point(), v2->point(), v3->point(), p, perturb);
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 Bounded_side
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 side_of_circle(Cell_handle c, int i,
 	       const Point & p, bool perturb) const
   // precondition : dimension >=2
@@ -1174,9 +1339,9 @@ side_of_circle(Cell_handle c, int i,
 			  lt, i_e );
 }
 
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 nearest_vertex_in_cell(const Point& p, Cell_handle c) const
 // Returns the finite vertex of the cell c which is the closest to p.
 {
@@ -1191,9 +1356,9 @@ nearest_vertex_in_cell(const Point& p, Cell_handle c) const
     return nearest;
 }
 
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
-Delaunay_triangulation_3<Gt,Tds>::
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 nearest_vertex(const Point& p, Cell_handle start) const
 {
     if (number_of_vertices() == 0)
@@ -1243,9 +1408,9 @@ nearest_vertex(const Point& p, Cell_handle start) const
 // Also the visitor in TDS could be more clever.
 // The Delaunay triangulation which filters displacements
 // will do these optimizations. 
-template <class Gt, class Tds >
+template <class Gt, class Tds, class Lds >
 bool 
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
 {
   CGAL_triangulation_precondition(!this->is_infinite(v));	
@@ -1306,17 +1471,17 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
   return true;
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 bool
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_Gabriel(const Facet& f) const
 {
   return is_Gabriel(f.first, f.second);
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 bool
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_Gabriel(Cell_handle c, int i) const
 {
   CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
@@ -1343,17 +1508,17 @@ is_Gabriel(Cell_handle c, int i) const
   return true;
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 bool
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_Gabriel(const Edge& e) const
 {
   return is_Gabriel(e.first, e.second, e.third);
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 bool
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_Gabriel(Cell_handle c, int i, int j) const
 {
   CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
@@ -1379,9 +1544,9 @@ is_Gabriel(Cell_handle c, int i, int j) const
   return true;
 }
 
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Point
-Delaunay_triangulation_3<Gt,Tds>::
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Point
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 dual(Cell_handle c) const
 {
   CGAL_triangulation_precondition(dimension()==3);
@@ -1390,9 +1555,9 @@ dual(Cell_handle c) const
 }
 
 
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Object
-Delaunay_triangulation_3<Gt,Tds>::
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Object
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 dual(Cell_handle c, int i) const
 {
   CGAL_triangulation_precondition(dimension()>=2);
@@ -1436,9 +1601,9 @@ dual(Cell_handle c, int i) const
 
 
 
-template < class Gt, class Tds >
-typename Delaunay_triangulation_3<Gt,Tds>::Line
-Delaunay_triangulation_3<Gt,Tds>::
+template < class Gt, class Tds, class Lds >
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Line
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 dual_support(Cell_handle c, int i) const
 {
   CGAL_triangulation_precondition(dimension()>=2);
@@ -1457,9 +1622,9 @@ dual_support(Cell_handle c, int i) const
 }
 
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 bool
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_valid(bool verbose, int level) const
 {
   if ( ! tds().is_valid(verbose,level) ) {
@@ -1533,9 +1698,9 @@ is_valid(bool verbose, int level) const
   return true;
 }
 
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Lds >
 bool
-Delaunay_triangulation_3<Gt,Tds>::
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
   if ( ! Tr_Base::is_valid(c,verbose,level) ) {

@@ -100,7 +100,7 @@ protected:
     big_moves_.clear();
   }
 
-  LockDataStructureType *get_lock_data_structure() { return 0; }
+  Default_lock_data_structure *get_lock_data_structure() { return 0; }
   void unlock_all_elements() {}
 
 protected:
@@ -170,7 +170,7 @@ protected:
     big_moves_.clear();
   }
 
-  LockDataStructureType *get_lock_data_structure()
+  Default_lock_data_structure *get_lock_data_structure()
   {
     return &m_lock_ds;
   }
@@ -189,7 +189,7 @@ protected:
   std::multiset<FT>         big_moves_;
 
   /// Lock data structure
-  LockDataStructureType m_lock_ds;
+  Default_lock_data_structure m_lock_ds;
 };
 #endif // CGAL_LINKED_WITH_TBB
 

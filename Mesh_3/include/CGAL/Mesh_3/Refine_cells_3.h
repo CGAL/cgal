@@ -351,7 +351,7 @@ public:
                  const MeshDomain& oracle,
                  Previous_& previous,
                  C3T3& c3t3,
-                 Mesh_3::LockDataStructureType *p_lock_ds,
+                 Default_lock_data_structure *p_lock_ds,
                  Mesh_3::WorksharingDataStructureType *p_worksharing_ds);
 
   // Destructor
@@ -568,7 +568,7 @@ Refine_cells_3(Tr& triangulation,
                const MD& oracle,
                P_& previous,
                C3T3& c3t3,
-               Mesh_3::LockDataStructureType *p_lock_ds,
+               Default_lock_data_structure *p_lock_ds,
                Mesh_3::WorksharingDataStructureType *p_worksharing_ds)
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous, p_lock_ds, p_worksharing_ds)

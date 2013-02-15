@@ -77,7 +77,7 @@ class Mesher_3_base
 protected:
   Mesher_3_base(const Bbox_3 &, int) {}
 
-  LockDataStructureType *get_lock_data_structure() { return 0; }
+  Default_lock_data_structure *get_lock_data_structure() { return 0; }
   WorksharingDataStructureType *get_worksharing_data_structure() { return 0; }
   void set_bbox(const Bbox_3 &) {}
 };
@@ -93,7 +93,7 @@ protected:
     m_worksharing_ds(bbox)
   {}
 
-  LockDataStructureType *get_lock_data_structure()
+  Default_lock_data_structure *get_lock_data_structure()
   {
     return &m_lock_ds;
   }
@@ -109,7 +109,7 @@ protected:
   }
 
   /// Lock data structure
-  LockDataStructureType m_lock_ds;
+  Default_lock_data_structure m_lock_ds;
   /// Worksharing data structure
   WorksharingDataStructureType m_worksharing_ds;
 };

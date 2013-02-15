@@ -27,30 +27,103 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/atomic.h>
+#endif
+
 namespace CGAL {
+  
+// Without erase counter
+template <bool Use_erase_counter, typename Concurrency_tag>
+class Triangulation_ds_cell_base_3_base
+{
+public:
+  // Dummy
+  unsigned int get_erase_counter() const { return 0; }
+  void set_erase_counter(unsigned int) {}
+  void increment_erase_counter() {}
+};
+
+
+
+// Specialized version (with erase counter)
+template <typename Concurrency_tag>
+class Triangulation_ds_cell_base_3_base<true, Concurrency_tag>
+{
+public:
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+	  this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  typedef typename boost::mpl::if_c<
+    boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
+    tbb::atomic<unsigned int>,
+    unsigned int>::type             Erase_counter_type;
+#else
+  typedef unsigned int              Erase_counter_type;
+#endif
+  Erase_counter_type                m_erase_counter;
+
+};
+
+
 
 template < typename TDS = void >
 class Triangulation_ds_cell_base_3
+: public Triangulation_ds_cell_base_3_base<
+    TDS::Cell_container_strategy::Uses_erase_counter,
+    typename TDS::Concurrency_tag>
 {
 public:
-  typedef TDS                          Triangulation_data_structure;
-  typedef typename TDS::Vertex_handle  Vertex_handle;
-  typedef typename TDS::Cell_handle    Cell_handle;
-  typedef typename TDS::Vertex         Vertex;
-  typedef typename TDS::Cell           Cell;
-  typedef typename TDS::Cell_data      TDS_data;
+  typedef TDS                           Triangulation_data_structure;
+  typedef typename TDS::Vertex_handle   Vertex_handle;
+  typedef typename TDS::Cell_handle     Cell_handle;
+  typedef typename TDS::Vertex          Vertex;
+  typedef typename TDS::Cell            Cell;
+  typedef typename TDS::Cell_data       TDS_data;
 
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
 
-  Triangulation_ds_cell_base_3() {}
+  Triangulation_ds_cell_base_3() 
+  {
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                                Vertex_handle v2, Vertex_handle v3)
 #ifndef CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG
-    : V((Vertex_handle[4]) {v0, v1, v2, v3} ) {}
+    : V((Vertex_handle[4]) {v0, v1, v2, v3} ) 
+  {
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 #else
-  { set_vertices(v0, v1, v2, v3); }
+  {
+    set_vertices(v0, v1, v2, v3);
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
+  }
 #endif
 
   Triangulation_ds_cell_base_3(Vertex_handle v0, Vertex_handle v1,
@@ -63,6 +136,10 @@ public:
   {
     set_neighbors(n0, n1, n2, n3);
     set_vertices(v0, v1, v2, v3);
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+    mark = -1;
+    mark2 = -1;
+#endif
   }
 #endif
 
@@ -201,6 +278,11 @@ public:
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
+  
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+  int mark;
+  int mark2;
+#endif
 
 private:
 

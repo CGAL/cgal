@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>
+#include <CGAL/Compact_container_strategies.h>
 
 #include <iterator>
 #include <algorithm>
@@ -112,43 +113,11 @@ namespace internal {
   class CC_iterator;
 }
 
-// A basic "do nothing" CC_strategy_base
-// One can inheritate from it for partial specialisation
-template <typename Element>
-class CC_strategy_base {
-public:
-  // Do nothing
-  static unsigned int get_erase_counter(const Element &) { return 0; }
-  static void set_erase_counter(Element &, unsigned int) {}
-  static void increment_erase_counter(Element &) {}
-};
-
-
-// A CC_strategy managing an internal counter
-template <typename Element>
-class CC_strategy_with_counter
-{
-public:    
-  static unsigned int get_erase_counter(const Element &e) 
-  {
-    return e.get_erase_counter(); 
-  }
-
-  static void set_erase_counter(Element &e, unsigned int c) 
-  {
-    e.set_erase_counter(c);
-  }
-
-  static void increment_erase_counter(Element &e) 
-  {
-    e.increment_erase_counter();
-  }
-};
-
 // Class Compact_container
 //
 // Strategy_ is a functor which provides several functions
-// See CC_strategy_base and CCC_strategy_with_counter above, and/or documentation
+// See Compact_container_strategy_base and 
+// Compact_container_strategy_with_counter, and/or documentation
 //
 template < class T, class Allocator_ = Default, class Strategy_ = Default >
 class Compact_container
@@ -156,7 +125,8 @@ class Compact_container
   typedef Allocator_                                Al;
   typedef Strategy_                                 Strat;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  typedef typename Default::Get< Strat, CC_strategy_base<T> >::type Strategy;
+  typedef typename Default::Get<
+    Strat, Compact_container_strategy_base >::type  Strategy;
   typedef Compact_container <T, Al, Strat>          Self;
   typedef Compact_container_traits <T>              Traits;
 public:

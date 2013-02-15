@@ -333,7 +333,7 @@ protected:
 
   Sliver_perturber_base(const Bbox_3 &, int) {}
 
-  LockDataStructureType *get_lock_data_structure()  const { return 0; }
+  Default_lock_data_structure *get_lock_data_structure()  const { return 0; }
   void unlock_all_elements()                        const {}
   void create_root_task()                           const {}
   bool flush_work_buffers()                         const { return true; }
@@ -362,7 +362,7 @@ protected:
   {
   }
 
-  LockDataStructureType *get_lock_data_structure() const
+  Default_lock_data_structure *get_lock_data_structure() const
   {
     return &m_lock_ds;
   }
@@ -407,7 +407,7 @@ protected:
 public:
 
 protected:
-  mutable LockDataStructureType         m_lock_ds;
+  mutable Default_lock_data_structure         m_lock_ds;
   mutable Mesh_3::Auto_worksharing_ds   m_worksharing_ds;
   mutable tbb::task                    *m_empty_root_task;
 };

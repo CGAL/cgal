@@ -39,7 +39,7 @@ namespace Mesh_3
  * @class Mesh_sizing_field_base
  */
 // Sequential
-template <typename Cell_handle, bool used_by_parallel_mesh_3>
+template <typename Cell_handle, typename Concurrency_tag>
 class Mesh_sizing_field_base
 {
 protected:
@@ -63,7 +63,7 @@ protected:
  */
 // Parallel
 template <typename Cell_handle>
-class Mesh_sizing_field_base<Cell_handle, true>
+class Mesh_sizing_field_base<Cell_handle, Parallel_tag>
 {
 protected:
   Cell_handle get_last_cell() const
@@ -87,7 +87,7 @@ protected:
 template <typename Tr, bool Need_vertex_update = true>
 class Mesh_sizing_field
   : public Mesh_sizing_field_base<typename Tr::Cell_handle,
-                                  Tr::Is_for_parallel_mesh_3>
+                                  typename Tr::Concurrency_tag>
 {
   // Types
   typedef typename Tr::Geom_traits   Gt;

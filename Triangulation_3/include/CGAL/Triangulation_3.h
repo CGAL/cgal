@@ -46,6 +46,8 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Default.h>
 
+#include <CGAL/Mesh_3/Locking_data_structures.h>
+
 #include <boost/bind.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
@@ -60,7 +62,7 @@
 namespace CGAL {
 
 template < class GT, class Tds = Default,
-           class Locking_data_structure = void >
+           class Lock_data_structure = Default >
 class Triangulation_3;
 
 template < class GT, class Tds, class Lds > std::istream& operator>>
@@ -90,27 +92,98 @@ struct Structural_filtering_selector_3<true> {
 
 /************************************************
 // Class Triangulation_3_base
-// Two versions: with locking / without locking
+// Two versions: Sequential (no locking) / Parallel (with locking)
 ************************************************/
 
-// With locking
-template <class Locking_data_structure>
+// Sequential (without locking)
+template <typename Concurrency_tag, typename Lock_data_structure_>
 class Triangulation_3_base
 {
+protected:
+  Triangulation_3_base()  {}
+
+  Triangulation_3_base(Lock_data_structure_ *) {}
+  void swap(Triangulation_3_base<Concurrency_tag,Lock_data_structure_> &tr){}
+  
+public:
+  bool is_parallel()
+  {
+    return false;
+  }
+
+  // LOCKS (no-op functions)
+  template <typename Vertex_handle>
+  bool try_lock_vertex(const Vertex_handle &, int = 0) const
+  { return true; }
+  
+  template <typename Cell_handle>
+  bool try_lock_cell(const Cell_handle &, int = 0) const
+  { return true; }
+  
+  template <typename Facet>
+  bool try_lock_facet(const Facet &, int = 0) const
+  { return true; }
+  
+  template <typename P3>
+  bool is_point_locked_by_this_thread(const P3 &) const
+  { return false; }
+  
+  template <typename Cell_handle>
+  bool is_cell_locked_by_this_thread(const Cell_handle &) const
+  { return false; }
+
+  void *get_lock_data_structure() const
+  {
+    return 0;
+  }
+
+  void set_lock_data_structure(void *) const
+  {
+  }
+
+  void unlock_all_elements() {}
+  template <typename P3> void unlock_all_elements_but_one_point(const P3 &) {}
+};
+
+// Parallel (with locking)
+template <typename Lock_data_structure_>
+class Triangulation_3_base<Parallel_tag, Lock_data_structure_>
+{
+  // If Lock_data_structure_ = Default => use Default_lock_data_structure
+  typedef typename Default::Get<
+    Lock_data_structure_, Default_lock_data_structure>::type Lock_data_structure;
+
 protected:
   Triangulation_3_base()
     : m_lock_ds(0) {}
 
-  Triangulation_3_base(Locking_data_structure *p_lock_ds)
+  Triangulation_3_base(Lock_data_structure *p_lock_ds)
     : m_lock_ds(p_lock_ds) {}
 
-  void swap(Triangulation_3_base<Locking_data_structure> &tr)
+  void swap(Triangulation_3_base<Parallel_tag, Lock_data_structure_> &tr)
   {
     std::swap(tr.m_lock_ds, m_lock_ds);
   }
   
 public:
+
+  bool is_parallel()
+  {
+    return m_lock_ds != 0;
+  }
+
   // LOCKS
+  template <typename Point_3>
+  bool try_lock_point(const Point_3 &p, int lock_radius = 0) const
+  {
+    bool locked = true;
+    if (m_lock_ds)
+    {
+      locked = m_lock_ds->try_lock(p, lock_radius).first;
+    }
+    return locked;
+  }
+
   template <typename Vertex_handle>
   bool try_lock_vertex(const Vertex_handle &vh, int lock_radius = 0) const
   {
@@ -175,12 +248,12 @@ public:
     return locked;
   }
   
-  Locking_data_structure *get_lock_data_structure() const
+  Lock_data_structure *get_lock_data_structure() const
   {
     return m_lock_ds;
   }
 
-  void set_lock_data_structure(Locking_data_structure *p_lock_ds)
+  void set_lock_data_structure(Lock_data_structure *p_lock_ds)
   {
     m_lock_ds = p_lock_ds;
   }
@@ -188,57 +261,18 @@ public:
   void unlock_all_elements()
   {
     if (m_lock_ds)
-    {
       m_lock_ds->unlock_all_tls_locked_cells();
-    }
   }
 
-protected:
-  Locking_data_structure *m_lock_ds;
-};
-
-// Without locking
-template <>
-class Triangulation_3_base<void>
-{
-protected:
-  Triangulation_3_base()  {}
-
-  Triangulation_3_base(void *) {}
-  void swap(Triangulation_3_base<void> &tr) {}
-  
-public:
-  // LOCKS (no-op functions)
-  template <typename Vertex_handle>
-  bool try_lock_vertex(const Vertex_handle &, int = 0) const
-  { return true; }
-  
-  template <typename Cell_handle>
-  bool try_lock_cell(const Cell_handle &, int = 0) const
-  { return true; }
-  
-  template <typename Facet>
-  bool try_lock_facet(const Facet &, int = 0) const
-  { return true; }
-  
   template <typename P3>
-  bool is_point_locked_by_this_thread(const P3 &) const
-  { return false; }
-  
-  template <typename Cell_handle>
-  bool is_cell_locked_by_this_thread(const Cell_handle &) const
-  { return false; }
-
-  void *get_lock_data_structure() const
+  void unlock_all_elements_but_one_point(const P3 &point)
   {
-    return 0;
+    if (m_lock_ds)
+      m_lock_ds->unlock_all_tls_locked_cells_but_one_point(point);
   }
 
-  void set_lock_data_structure(void *) const
-  {
-  }
-
-  void unlock_all_elements() {}
+protected:
+  Lock_data_structure *m_lock_ds;
 };
 
 /************************************************
@@ -247,48 +281,33 @@ public:
  *
  ************************************************/
 
-template < class GT, class Tds_, class Locking_data_structure >
+template < class GT, class Tds_, class Lock_data_structure_ >
 class Triangulation_3
-  : public Triangulation_3_base<Locking_data_structure>
+  : public Triangulation_3_base<
+      // Get Concurrency_tag from TDS
+      typename Default::Get< Tds_, 
+                             Triangulation_data_structure_3 
+                             <
+                               Triangulation_vertex_base_3<GT>,
+	                             Triangulation_cell_base_3<GT> 
+                             >
+                           >::type::Concurrency_tag, 
+      Lock_data_structure_>
   , public Triangulation_utils_3
 {
   friend std::istream& operator>> <>
-  (std::istream& is, Triangulation_3<GT,Tds_,Locking_data_structure> &tr);
-
-  typedef Triangulation_3<GT, Tds_, Locking_data_structure> Self;
-  typedef Triangulation_3_base<Locking_data_structure> Base;
+  (std::istream& is, Triangulation_3<GT,Tds_,Lock_data_structure_> &tr);
   
   typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
                                           Triangulation_vertex_base_3<GT>,
 	                                  Triangulation_cell_base_3<GT> > >::type Tds;
-/*
-  // Useless: the user is responsible for providing a good TDS
-  typedef typename Default::Get
-          <
-            Tds_,
-            Triangulation_data_structure_3
-            <
-              Triangulation_vertex_base_3<GT>,
-              Triangulation_cell_base_3
-              <
-                GT
-// Force lazy cells if used by parallel Mesh_3
-#if defined(CGAL_LINKED_WITH_TBB) \
- && !defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
- && !defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-                ,typename boost::mpl::if_c
-                <
-                  boost::is_same<Locking_data_structure, void>,
-                  Triangulation_ds_cell_base_3<>,
-                  Triangulation_lazy_ds_cell_base_3<>
-                >::type
-#endif
-              >
-            >
-          >::type                              Tds;*/
+
+  typedef Triangulation_3<GT, Tds_, Lock_data_structure_> Self;
+  typedef Triangulation_3_base<
+    typename Tds::Concurrency_tag, Lock_data_structure_>  Base;
 
 public:
-
+  
   typedef Tds                                  Triangulation_data_structure;
   typedef GT                                   Geom_traits;
 
@@ -296,6 +315,8 @@ public:
   typedef typename GT::Segment_3               Segment;
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
+  
+  typedef typename Tds::Concurrency_tag        Concurrency_tag;
 
   typedef typename Tds::Vertex                 Vertex;
   typedef typename Tds::Cell                   Cell;
@@ -948,7 +969,8 @@ public:
 					  Locate_type lt,
 					  Cell_handle c, int li, int lj,
 					  const Conflict_tester &tester,
-					  Hidden_points_visitor &hider);
+					  Hidden_points_visitor &hider,
+            bool *p_could_lock_zone = 0);
 
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -1068,7 +1090,6 @@ protected:
      ) const
   {
     CGAL_triangulation_precondition( dimension()>=2 );
-    CGAL_triangulation_precondition( tester(d) );
 
     if (p_the_facet_is_not_in_its_cz)
       *p_the_facet_is_not_in_its_cz = true;
@@ -1084,6 +1105,8 @@ protected:
         return it;
       }
     }
+
+    CGAL_triangulation_precondition( tester(d) );
 
     // To store the boundary cells, in case we need to rollback
     std::stack<Cell_handle> cell_stack;
@@ -1103,6 +1126,7 @@ protected:
         // "test" is either in the conflict zone,
         // either facet-adjacent to the CZ
         // IF WE WANT TO LOCK ADJACENT CELLS
+        // CJTODO: remove this #ifdef?
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
         if (p_could_lock_zone)
         {
@@ -1134,6 +1158,7 @@ protected:
 
             // "test" is in the conflict zone
             // IF WE DO NOT WANT TO LOCK ADJACENT CELLS
+            // CJTODO: remove this #ifdef?
 #if !defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
             if (p_could_lock_zone)
             {
@@ -2222,7 +2247,6 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
     Cell_handle previous = Cell_handle();
     Cell_handle c = start;
 
-#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (p_could_lock_zone)
     {
       if (!try_lock_cell(c))
@@ -2231,7 +2255,6 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
         return Cell_handle();
       }
     }
-#endif
 
     // Stores the results of the 4 orientation tests.  It will be used
     // at the end to decide if p lies on a face/edge/vertex/interior.
@@ -2290,19 +2313,16 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 	          }
 	          previous = c;
 	          c = next;
-#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
             if (p_could_lock_zone)
             {
               //previous->unlock(); // DON'T do that, "c" may be in
                                     // the same locking cell as "previous"
-              //c->lock(); // WARNING: not atomic! => DEADLOCKS?
               if (!try_lock_cell(c))
               {
                 *p_could_lock_zone = false;
                 return Cell_handle();
               }
             }
-#endif
             try_next_cell = true;
           }
         }
@@ -2530,6 +2550,16 @@ inexact_locate(const Point & t, Cell_handle start,
   // Make sure we continue from here with a finite cell.
   if ( start == Cell_handle() )
     start = infinite_cell();
+  
+  // CTODO: useless?
+  if (p_could_lock_zone)
+  {
+    if (!try_lock_cell(start))
+    {
+      *p_could_lock_zone = false;
+      return Cell_handle();
+    }
+  }
 
   int ind_inf;
   if( start->has_vertex(infinite, ind_inf) )
@@ -2545,16 +2575,14 @@ inexact_locate(const Point & t, Cell_handle start,
   Cell_handle previous = Cell_handle();
   Cell_handle c = start;
 
-#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-    if (p_could_lock_zone)
+  if (p_could_lock_zone)
+  {
+    if (!try_lock_cell(c))
     {
-      if (!try_lock_cell(c))
-      {
-        *p_could_lock_zone = false;
-        return Cell_handle();
-      }
+      *p_could_lock_zone = false;
+      return Cell_handle();
     }
-#endif
+  }
 
   // Now treat the cell c.
   try_next_cell:
@@ -2588,19 +2616,16 @@ inexact_locate(const Point & t, Cell_handle start,
     }
     previous = c;
     c = next;
-#ifdef CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
     if (p_could_lock_zone)
     {
       //previous->unlock(); // DON'T do that, "c" may be in
                             // the same locking cell as "previous"
-      //c->lock(); // WARNING: not atomic! => DEADLOCKS?
       if (!try_lock_cell(c))
       {
         *p_could_lock_zone = false;
         return Cell_handle();
       }
     }
-#endif
     if(n_of_turns) goto try_next_cell;
   }
 
@@ -3250,8 +3275,12 @@ Triangulation_3<GT,Tds,Lds>::
 insert_in_conflict(const Point & p,
 	   Locate_type lt, Cell_handle c, int li, int /*lj*/,
 		   const Conflict_tester &tester,
-		   Hidden_points_visitor &hider)
+		   Hidden_points_visitor &hider,
+       bool *p_could_lock_zone)
 {
+  if (p_could_lock_zone)
+    *p_could_lock_zone = true;
+
   switch (dimension()) {
   case 3:
     {
@@ -3271,10 +3300,53 @@ insert_in_conflict(const Point & p,
       Facet facet;
 
       cells.reserve(32);
-      find_conflicts
-	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-				std::back_inserter(cells),
-				Emptyset_iterator()));
+
+      // Parallel
+      if (p_could_lock_zone)
+      {
+        std::vector<Facet> facets;
+        facets.reserve(32);
+
+        find_conflicts(
+          c, 
+          tester, 
+          make_triple(
+            std::back_inserter(facets),
+				    std::back_inserter(cells), 
+            Emptyset_iterator()),
+          p_could_lock_zone);
+
+        if (*p_could_lock_zone == false)
+        {
+          BOOST_FOREACH(Cell_handle& ch,
+            std::make_pair(cells.begin(), cells.end()))
+          {
+            ch->tds_data().clear();
+          }
+        
+          BOOST_FOREACH(Facet& f,
+            std::make_pair(facets.begin(), facets.end()))
+          {
+            f.first->neighbor(f.second)->tds_data().clear();
+          }
+          return Vertex_handle();
+        }
+        
+        facet = facets.back();
+      }
+      // Sequential
+      else
+      {
+        cells.reserve(32);
+        find_conflicts(
+          c, 
+          tester, 
+          make_triple(
+            Oneset_iterator<Facet>(facet),
+				    std::back_inserter(cells),
+				    Emptyset_iterator()));
+      }
+      
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.

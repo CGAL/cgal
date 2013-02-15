@@ -38,7 +38,6 @@
 #include <algorithm>
 
 namespace CGAL {
-namespace Mesh_3 {
 
 //******************************************************************************
 // class Grid_locking_ds_base_3
@@ -572,17 +571,17 @@ protected:
 };
 
 
-//typedef Simple_grid_locking_ds_3 LockDataStructureType;
-//typedef Simple_grid_locking_ds_with_mutex_3 LockDataStructureType;
-typedef Simple_grid_locking_ds_with_thread_ids_3 LockDataStructureType;
+//typedef Simple_grid_locking_ds_3 Default_lock_data_structure;
+//typedef Simple_grid_locking_ds_with_mutex_3 Default_lock_data_structure;
+typedef Simple_grid_locking_ds_with_thread_ids_3 Default_lock_data_structure;
 
-} } //namespace CGAL::Mesh_3
+} //namespace CGAL
 
 #else // !CGAL_LINKED_WITH_TBB
 
-namespace CGAL { namespace Mesh_3 {
-  typedef void LockDataStructureType;
-} } //namespace CGAL::Mesh_3
+namespace CGAL {
+  typedef void Default_lock_data_structure;
+}
 
 #endif // CGAL_LINKED_WITH_TBB
 

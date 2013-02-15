@@ -29,12 +29,7 @@
 
 namespace CGAL {
 
-#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
- || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-template < typename GT, typename Cb = Triangulation_lazy_ds_cell_base_3<> >
-#else
 template < typename GT, typename Cb = Triangulation_ds_cell_base_3<> >
-#endif
 class Triangulation_cell_base_3
   : public Cb
 {

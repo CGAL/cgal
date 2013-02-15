@@ -60,29 +60,29 @@ namespace CGAL {
   
 // Struct Mesh_triangulation_3
 //
-template< class MD,
-          class K=typename Kernel_traits<MD>::Kernel,
-          class GT = typename details::Mesh_geom_traits_generator<K>::type,
-          class Cb = CGAL::Regular_triangulation_cell_base_3
-          <
-            GT, 
-            CGAL::Triangulation_cell_base_with_circumcenter_3<GT> 
-          >
-        >
+template<class MD, class K=typename Kernel_traits<MD>::Kernel>
 struct Mesh_triangulation_3
 {
 private:
-  typedef GT                                                    Geom_traits;
+  typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
 #ifdef CGAL_COMPACT_MESH_VERTEX_CELL
   typedef Compact_mesh_vertex_base_3<Geom_traits, MD>           Vertex_base;
   typedef Compact_mesh_cell_base_3<Geom_traits, MD>             Cell_base;
 #else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
   typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
-  typedef Mesh_cell_base_3<Geom_traits, MD, Cb>                 Cell_base;
+  typedef Mesh_cell_base_3<Geom_traits, MD>                     Cell_base;
 #endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
 
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)\
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+  typedef Triangulation_data_structure_3<
+    Vertex_base, Cell_base,
+    Compact_container_strategy_with_counter, 
+    Compact_container_strategy_with_counter>                    Tds;
+#else
   typedef Triangulation_data_structure_3<Vertex_base,Cell_base> Tds;
+#endif
   typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
 
 public:
@@ -92,26 +92,11 @@ public:
 
 // Struct Parallel_mesh_triangulation_3
 //
-template< class MD,
-          class K=typename Kernel_traits<MD>::Kernel,
-          class GT = typename details::Mesh_geom_traits_generator<K>::type,
-          class Cb = CGAL::Regular_triangulation_cell_base_3
-          <
-            GT, 
-            CGAL::Triangulation_cell_base_with_circumcenter_3
-            <
-              GT
-#ifdef CGAL_LINKED_WITH_TBB
-              // Force lazy-enabled cell
-              , Triangulation_lazy_ds_cell_base_3<Parallel_tag>
-#endif // CGAL_LINKED_WITH_TBB
-            >
-          > 
-        >
+template<class MD, class K=typename Kernel_traits<MD>::Kernel>
 struct Parallel_mesh_triangulation_3
 {
 private:
-  typedef GT                                                    Geom_traits;
+  typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
 #ifdef CGAL_LINKED_WITH_TBB
 
@@ -120,13 +105,16 @@ private:
   typedef Compact_mesh_cell_base_3<Geom_traits,MD,Parallel_tag> Cell_base;
 # else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
   typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
-  typedef Mesh_cell_base_3<Geom_traits, MD, Cb, Parallel_tag>   Cell_base;
+  typedef Mesh_cell_base_3<Geom_traits, MD>                     Cell_base;
 # endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
 
   typedef Triangulation_data_structure_3<
-                            Vertex_base, Cell_base, true>       Tds;
+    Vertex_base, Cell_base, 
+    Compact_container_strategy_with_counter, 
+    Compact_container_strategy_with_counter,
+    Parallel_tag>                                               Tds;
   typedef Regular_triangulation_3<
-    Geom_traits, Tds, Mesh_3::LockDataStructureType>            Triangulation;
+    Geom_traits, Tds, Default_lock_data_structure>            Triangulation;
 
 #else // !CGAL_LINKED_WITH_TBB
 
@@ -135,7 +123,7 @@ private:
   typedef Compact_mesh_cell_base_3<Geom_traits, MD>             Cell_base;
 # else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
   typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
-  typedef Mesh_cell_base_3<Geom_traits, MD, Cb>                 Cell_base;
+  typedef Mesh_cell_base_3<Geom_traits, MD>                     Cell_base;
 # endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
 
   typedef Triangulation_data_structure_3<

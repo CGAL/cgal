@@ -33,7 +33,6 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <boost/bind.hpp>
-#include <boost/type_traits/is_base_of.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -57,30 +56,29 @@ namespace CGAL {
    *
    ************************************************/
 
-  template < class Gt, class Tds_ = Default, class Locking_data_structure = void >
+  template < class Gt, class Tds_ = Default, class Lock_data_structure_ = Default >
   class Regular_triangulation_3
   : public Triangulation_3<
       Gt,
       typename Default::Get<Tds_, Triangulation_data_structure_3 <
         Triangulation_vertex_base_3<Gt>,
         Regular_triangulation_cell_base_3<Gt> > >::type,
-      Locking_data_structure>
+      Lock_data_structure_>
   {
-    typedef Regular_triangulation_3<Gt, Tds_, Locking_data_structure> Self;
+    typedef Regular_triangulation_3<Gt, Tds_, Lock_data_structure_> Self;
 
     typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
       Triangulation_vertex_base_3<Gt>,
       Regular_triangulation_cell_base_3<Gt> > >::type Tds;
 
-    typedef Triangulation_3<Gt,Tds,Locking_data_structure> Tr_Base;
+    typedef Triangulation_3<Gt,Tds,Lock_data_structure_> Tr_Base;
 
   public:
-
-    static const bool Is_for_parallel_mesh_3 = 
-      !boost::is_same<Locking_data_structure, void>::value; // CJTODO: remove this Mesh_3 thing
-
+    
     typedef Tds                                   Triangulation_data_structure;
     typedef Gt                                    Geom_traits;
+    
+    typedef typename Tr_Base::Concurrency_tag     Concurrency_tag;
 
     typedef typename Tr_Base::Vertex_handle       Vertex_handle;
     typedef typename Tr_Base::Cell_handle         Cell_handle;
@@ -845,7 +843,7 @@ namespace CGAL {
     // Sequential version
     // "dummy" is here to allow the specialization (see below)
     // See http://groups.google.com/group/comp.lang.c++.moderated/browse_thread/thread/285ab1eec49e1cb6
-    template<bool used_by_parallel_mesh_3_, typename dummy = void>
+    template<typename Concurrency_tag_, typename dummy = void>
     class Hidden_point_visitor
     {
       Self *t;
@@ -907,9 +905,9 @@ namespace CGAL {
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel version specialization
     template<typename dummy>
-    class Hidden_point_visitor<true, dummy>
+    class Hidden_point_visitor<Parallel_tag, dummy>
     {
-      typedef Hidden_point_visitor<true> HPV;
+      typedef Hidden_point_visitor<Parallel_tag> HPV;
 
       Self *t;
       mutable tbb::enumerable_thread_specific<std::vector<Vertex_handle> >  vertices;
@@ -968,7 +966,7 @@ namespace CGAL {
     };
 #endif // CGAL_LINKED_WITH_TBB
 
-    Hidden_point_visitor<Is_for_parallel_mesh_3> &get_hidden_point_visitor() // CJTODO: remove this Mesh_3 thing
+    Hidden_point_visitor<Concurrency_tag> &get_hidden_point_visitor()
     {
       return hidden_point_visitor;
     }
@@ -979,7 +977,7 @@ namespace CGAL {
     template < class RegularTriangulation_3 >
     class Vertex_inserter;
 
-    Hidden_point_visitor<Is_for_parallel_mesh_3> hidden_point_visitor; // CJTODO: remove this Mesh_3 thing
+    Hidden_point_visitor<Concurrency_tag> hidden_point_visitor;
   };
 
 
@@ -1478,7 +1476,7 @@ namespace CGAL {
     int li, lj;
 
     // Sequential
-    if (boost::is_same<Lds, void>::value)
+    if (!is_parallel())
     {
       Cell_handle c = locate(p, lt, li, lj, start);
       return insert(p, lt, c, li, lj);

@@ -146,7 +146,7 @@ protected:
 
   Slivers_exuder_base(const Bbox_3 &, int) {}
 
-  LockDataStructureType *get_lock_data_structure()  const { return 0; }
+  Default_lock_data_structure *get_lock_data_structure()  const { return 0; }
   void unlock_all_elements()                        const {}
   void create_root_task()                           const {}
   bool flush_work_buffers()                         const { return true; }
@@ -193,7 +193,7 @@ protected:
   {
   }
 
-  LockDataStructureType *get_lock_data_structure() const
+  Default_lock_data_structure *get_lock_data_structure() const
   {
     return &m_lock_ds;
   }
@@ -252,7 +252,7 @@ protected:
     { cell->increment_erase_counter(); }
   };
   
-  mutable LockDataStructureType         m_lock_ds;
+  mutable Default_lock_data_structure         m_lock_ds;
   mutable Mesh_3::Auto_worksharing_ds   m_worksharing_ds;
   mutable tbb::task                    *m_empty_root_task;
 };
@@ -363,7 +363,7 @@ public: // methods
 
 #ifdef CGAL_LINKED_WITH_TBB
     //CJTODO TEST
-    // Warning: this doesn't work for the becnhmark 
+    // Warning: this doesn't work for the benchmark 
     // (because the benchmark creates the scheduler instance upstream...)
     //tbb::task_scheduler_init tsi(1);
 #endif
