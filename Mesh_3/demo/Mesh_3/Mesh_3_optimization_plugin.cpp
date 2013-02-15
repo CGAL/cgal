@@ -1,3 +1,8 @@
+#include <boost/config.hpp>
+#if defined(BOOST_MSVC)
+#  pragma warning( once : 4503)
+#endif
+
 #include "config.h"
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL_demo/Plugin_helper.h>
