@@ -125,6 +125,9 @@ handles |SVertex_handle|, |SHalfedge_handle|, or
 |SHalfloop_handle|.}*/
 
 protected: 
+  // don't change this into a shared_ptr even if it seems sensible.
+  // minkowski_sum_3 already has a fix in place that deletes the
+  // object psm_ points to.
   Map* psm_;
 
 public:

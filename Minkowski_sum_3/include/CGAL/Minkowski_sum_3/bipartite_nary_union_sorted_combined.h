@@ -220,6 +220,16 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     Ntmp.delegate(Convertor, true);
     CGAL_assertion(Ntmp.is_valid());
     nary_union.add_polyhedron(Ntmp);
+    delete GcG.sphere_map();
+  }
+
+  // clean up the spherical_mapS
+  for(GM_iterator it = GM0.begin(); it != GM0.end(); ++it) {
+    delete it->first.sphere_map();
+  }
+
+  for(GM_iterator it = GM1.begin(); it != GM1.end(); ++it) {
+    delete it->first.sphere_map();
   }
   
   return nary_union.get_union();

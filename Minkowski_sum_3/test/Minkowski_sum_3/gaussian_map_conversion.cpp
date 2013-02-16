@@ -40,6 +40,7 @@ void test_convex_parts(Nef_polyhedron_3& N)
 
       CGAL_assertion(tmp1.is_valid());      
       CGAL_assertion(tmp1.closure().symmetric_difference(tmp0).is_empty());
+      delete G.sphere_map();
     }
   }
 
@@ -60,6 +61,9 @@ void test_convex_parts(Nef_polyhedron_3& N)
       CGAL_assertion(tmp.vertices_begin()->mark());
       CGAL_assertion(!tmp.volumes_begin()->mark());
       CGAL_assertion(tmp.vertices_begin()->point() == vi->point());
+
+      delete G.sphere_map();
+
       std::cerr << "single vertex " << std::endl;
     }
   }
@@ -85,6 +89,8 @@ void test_convex_parts(Nef_polyhedron_3& N)
 		   eci->source()->point() ||
 		   tmp.vertices_begin()->point() ==
 		   eci->twin()->source()->point());
+    delete G.sphere_map();
+
     std::cerr << "single edge " << std::endl;
   }
   
@@ -106,6 +112,8 @@ void test_convex_parts(Nef_polyhedron_3& N)
     CGAL_assertion(!tmp.volumes_begin()->mark());
     CGAL_assertion(tmp.halffacets_begin()->plane() == fci->plane() ||
 		   tmp.halffacets_begin()->plane() == fci->twin()->plane());
+    delete G.sphere_map();
+
     std::cerr << "single facet " << std::endl;
   }
 }
