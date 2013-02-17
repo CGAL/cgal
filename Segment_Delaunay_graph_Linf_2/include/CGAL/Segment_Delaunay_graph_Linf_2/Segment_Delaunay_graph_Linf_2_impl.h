@@ -125,14 +125,9 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
   Site_2 s2 = f->vertex(1)->site();
   Site_2 s3 = f->vertex(2)->site();
 
-  OrientationLinf o =
-    geom_traits().orientation_Linf_2_object()(s1, s2, s3);
-
   CGAL_SDG_DEBUG(std::cout <<
       "debug insert_third s1=" << s1 <<
       " s2=" << s2 << " s3=" << s3 << std::endl;);
-  CGAL_SDG_DEBUG(std::cout <<
-      "debug insert_third o = " << o << std::endl;);
 
   Sign s12i3 = geom_traits().vertex_conflict_2_object()(s1, s2, s3);
   Sign s21i3 = geom_traits().vertex_conflict_2_object()(s2, s1, s3);
@@ -144,9 +139,7 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
   CGAL_assertion(s21i3 != ZERO);
 
   if ( s12i3 != s21i3 ) {
-    CGAL_assertion(o != DEGENERATE);
     if ( s21i3 == NEGATIVE ) {
-      CGAL_assertion(o == RIGHT_TURN);
       CGAL_SDG_DEBUG(std::cout <<
           "debug insert_third nondegenerate reorient " <<
           " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
@@ -160,7 +153,6 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
           " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
     }
   } else {
-    CGAL_assertion(o == DEGENERATE);
     CGAL_SDG_DEBUG(std::cout <<
         "debug insert_third degenerate case " <<
         " s12i3="<< s12i3 << " s21i3=" << s21i3 << std::endl;);
