@@ -293,7 +293,7 @@ struct Group_attribute_functor_run
       toSet = adart2;
       if (a2 != NULL)
       {
-        CGAL::internal::Call_merge_functor<CMap, i>::run(a1, a2);
+        CGAL::internal::Call_merge_functor<CMap, i>::run(amap, a1, a2);
       }
     }
     CGAL::Set_i_attribute_functor<CMap, i>::run(amap, toSet, a1);
@@ -334,7 +334,7 @@ struct Group_attribute_functor_run<CMap, 0, j, T>
           toSet=od;
           if ( a2!=NULL )
           {
-            CGAL::internal::Call_merge_functor<CMap, 0>::run(a1, a2);
+            CGAL::internal::Call_merge_functor<CMap, 0>::run(amap, a1, a2);
           }
         }
         CGAL::Set_i_attribute_functor<CMap, 0>::run(amap, toSet, a1);
@@ -355,7 +355,7 @@ struct Group_attribute_functor_run<CMap, 0, j, T>
           toSet=dh2;
           if ( a2!=NULL )
           {
-            CGAL::internal::Call_merge_functor<CMap, 0>::run(a1, a2);
+            CGAL::internal::Call_merge_functor<CMap, 0>::run(amap, a1, a2);
           }
         }
         CGAL::Set_i_attribute_functor<CMap, 0>::run(amap, toSet, a1);
@@ -396,7 +396,7 @@ struct Group_attribute_functor_run<CMap, 0, 0, T>
           toSet=od;
           if ( a2!=NULL )
           {
-            CGAL::internal::Call_merge_functor<CMap, 0>::run(a1, a2);
+            CGAL::internal::Call_merge_functor<CMap, 0>::run(amap, a1, a2);
           }
         }
         CGAL::Set_i_attribute_functor<CMap, 0>::run(amap, toSet, a1);
@@ -437,7 +437,7 @@ struct Group_attribute_functor_run<CMap, 0, 1, T>
           toSet=dh2;
           if ( a2!=NULL )
           {
-            CGAL::internal::Call_merge_functor<CMap, 0>::run(a1, a2);
+            CGAL::internal::Call_merge_functor<CMap, 0>::run(amap, a1, a2);
           }
         }
         CGAL::Set_i_attribute_functor<CMap, 0>::run(amap, toSet, a1);
@@ -534,7 +534,7 @@ struct Degroup_attribute_functor_run
         a2 = amap->template create_attribute<i>(*a1);
 
     CGAL::Set_i_attribute_functor<CMap, i>::run(amap, adart2, a2);
-    CGAL::internal::Call_split_functor<CMap, i>::run(a1, a2);
+    CGAL::internal::Call_split_functor<CMap, i>::run(amap, a1, a2);
   }
 };
 // Specialization for void attributes.
@@ -597,7 +597,7 @@ void test_split_attribute_functor_one_dart
           run(amap, itj, a2);
       amap->mark(itj, mark);
     }
-    CGAL::internal::Call_split_functor<CMap, i>::run(a1, a2);
+    CGAL::internal::Call_split_functor<CMap, i>::run(amap, a1, a2);
   }
   else
   {

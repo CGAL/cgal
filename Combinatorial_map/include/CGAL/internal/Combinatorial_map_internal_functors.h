@@ -65,20 +65,63 @@ namespace CGAL
 // ****************************************************************************
 namespace internal
 {
+// Struct to test if the given class has a functor without a map as first
+// parameter.
+template <typename CMap, typename Attribute, typename Functor>
+struct FuctorWithoutMap
+{
+  template <typename T, T> struct TypeCheck;
+
+  typedef char Yes;
+  struct No{ char c[2]; };
+
+  template <typename T> struct Fct
+  {
+    // The function we want to test.
+    typedef void (T::*fptr)(Attribute&,Attribute&);
+  };
+
+  template <typename T>
+  static Yes
+  HasFunctorWithoutMap(TypeCheck< typename Fct<T>::fptr, &T::operator() >*);
+
+  template <typename T> static No  HasFunctorWithoutMap(...);
+
+public:
+    static bool const
+    value=(sizeof(HasFunctorWithoutMap<Functor>(0))==sizeof(Yes));
+};
+
 // Functor which call Functor::operator() on the two given cell_attributes
-template<typename Cell_attribute, typename Functor>
+template<typename CMap, typename Cell_attribute, typename Functor,
+         bool FunctorWitouthMap>
 struct Apply_cell_functor
 {
-  static void run(Cell_attribute& acell1, Cell_attribute& acell2)
+  static void run(CMap*, Cell_attribute& acell1, Cell_attribute& acell2)
   {
     Functor() (acell1,acell2);
   }
 };
-//...except for Null_functor.
-template<typename Cell_attribute>
-struct Apply_cell_functor<Cell_attribute,Null_functor>
+template<typename CMap, typename Cell_attribute, typename Functor>
+struct Apply_cell_functor<CMap, Cell_attribute, Functor, false>
 {
-  static void run(Cell_attribute&, Cell_attribute&)
+  static void run(CMap* amap, Cell_attribute& acell1, Cell_attribute& acell2)
+  {
+    Functor() (amap, acell1,acell2);
+  }
+};
+//...except for Null_functor.
+template<typename CMap, typename Cell_attribute, bool FunctorWithoutMap>
+struct Apply_cell_functor<CMap, Cell_attribute,Null_functor,FunctorWithoutMap>
+{
+  static void run(CMap*, Cell_attribute&, Cell_attribute&)
+  {}
+};
+//...even with false.
+template<typename CMap, typename Cell_attribute>
+struct Apply_cell_functor<CMap, Cell_attribute,Null_functor,false>
+{
+  static void run(CMap*, Cell_attribute&, Cell_attribute&)
   {}
 };
 // ****************************************************************************
@@ -91,23 +134,26 @@ template<typename CMap, unsigned int i,
          Attribute_type<i>::type>
 struct Call_split_functor
 {
-  static void run(typename CMap::Dart_handle adart1,
+  typedef typename CMap::template Attribute_type<i>::type Attribute;
+  typedef typename Attribute::On_split On_split;
+
+  static void run(CMap* amap, typename CMap::Dart_handle adart1,
                   typename CMap::Dart_handle adart2)
   {
     CGAL::internal::Apply_cell_functor
-        <typename CMap::template Attribute_type<i>::type,
-        typename CMap::template Attribute_type<i>::type::On_split>::
-        run(*(adart1->template attribute<i>()),
+        <CMap, Attribute, On_split,
+        FuctorWithoutMap<CMap, Attribute, On_split>::value>::
+        run(amap, *(adart1->template attribute<i>()),
             *(adart2->template attribute<i>()));
   }
   static void
-  run(typename CMap::template Attribute_handle<i>::type a1,
+  run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
       typename CMap::template Attribute_handle<i>::type a2)
   {
     CGAL::internal::Apply_cell_functor
-        <typename CMap::template Attribute_type<i>::type,
-        typename CMap::template Attribute_type<i>::type::On_split>::
-        run(*a1, *a2);
+         <CMap, Attribute, On_split,
+        FuctorWithoutMap<CMap, Attribute, On_split>::value>::
+        run(amap, *a1, *a2);
   }
 };
 // Specialization for disabled attributes.
@@ -128,30 +174,33 @@ template<typename CMap,unsigned int i,
          Attribute_type<i>::type>
 struct Call_merge_functor
 {
-  static void run(typename CMap::Dart_handle adart1,
+  typedef typename CMap::template Attribute_type<i>::type Attribute;
+  typedef typename Attribute::On_merge On_merge;
+
+  static void run(CMap* amap, typename CMap::Dart_handle adart1,
                   typename CMap::Dart_handle adart2)
   {
     CGAL::internal::Apply_cell_functor
-        <typename CMap::template Attribute_type<i>::type,
-        typename CMap::template Attribute_type<i>::type::On_merge>::
-        run(*(adart1->template attribute<i>()),
+        <CMap, Attribute, On_merge,
+        FuctorWithoutMap<CMap, Attribute, On_merge>::value>::
+        run(amap, *(adart1->template attribute<i>()),
             *(adart2->template attribute<i>()));
   }
   static void
-  run(typename CMap::template Attribute_handle<i>::type a1,
+  run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
       typename CMap::template Attribute_handle<i>::type a2)
   {
     CGAL::internal::Apply_cell_functor
-        <typename CMap::template Attribute_type<i>::type,
-        typename CMap::template Attribute_type<i>::type::On_merge>::
-        run(*a1, *a2);
+        <CMap, Attribute, On_merge,
+        FuctorWithoutMap<CMap, Attribute, On_merge>::value>::
+        run(amap, *a1, *a2);
   }
 };
 // Specialization for disabled attributes.
 template<typename CMap,unsigned int i>
 struct Call_merge_functor<CMap, i, CGAL::Void>
 {
-  static void run(typename CMap::Dart_handle,
+  static void run(CMap*, typename CMap::Dart_handle,
                   typename CMap::Dart_handle)
   {}
 };
