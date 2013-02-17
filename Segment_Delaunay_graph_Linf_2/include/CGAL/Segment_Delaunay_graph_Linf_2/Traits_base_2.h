@@ -53,10 +53,6 @@ public:
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Orientation_C2<K>
   Orientation_L2_2;
 
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Orientation_Linf_C2<K>
-  Orientation_Linf_2;
-
   // used by triangulation 
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Orientation_Linf_C2<K>
@@ -104,11 +100,6 @@ public:
   Orientation_L2_2
   orientation_L2_2_object() const {
     return Orientation_L2_2();
-  }
-
-  Orientation_Linf_2
-  orientation_Linf_2_object() const {
-    return Orientation_Linf_2();
   }
 
   Orientation_2
