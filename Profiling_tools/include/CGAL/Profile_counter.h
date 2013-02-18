@@ -61,6 +61,11 @@
 # ifndef CGAL_CONCURRENT_PROFILE
 #   define CGAL_CONCURRENT_PROFILE
 # endif
+#else
+// Automatically UNdefine CGAL_CONCURRENT_PROFILE if we're NOT linked with TBB
+# ifdef CGAL_CONCURRENT_PROFILE
+#   undef CGAL_CONCURRENT_PROFILE
+# endif
 #endif
 
 #ifdef CGAL_CONCURRENT_PROFILE

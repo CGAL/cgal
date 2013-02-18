@@ -32,41 +32,29 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
-  
-// Class Mesh_cell_base_3_base
-// Base for Compact_mesh_cell_base_3, with specialization for Parallel_tag
 
-// Sequential
+// Class Mesh_cell_base_3_base
+// Base for Compact_mesh_cell_base_3, with specializations 
+// for different walues of Parallel_tag and Use_erase_counter
+template <bool Use_erase_counter, typename Concurrency_tag>
+class Compact_mesh_cell_base_3_base;
+
+// Class Mesh_cell_base_3_base
+// Specialization for sequential - no erase counter
 template <typename Concurrency_tag>
-class Compact_mesh_cell_base_3_base
+class Compact_mesh_cell_base_3_base<false, Concurrency_tag>
 {
-protected:
+  protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0) {}
 
-#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)\
- || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-public:  
-  // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
-  {
-    return this->m_erase_counter;
-  }
-  void set_erase_counter(unsigned int c)
-  {
-	  this->m_erase_counter = c;
-  }
-  void increment_erase_counter()
-  {
-    ++this->m_erase_counter;
-  }
-
-protected:
-  typedef unsigned int              Erase_counter_type;
-  Erase_counter_type                m_erase_counter;
-#endif
-
 public:
+  // Erase counter (cf. Compact_container)
+  // Dummy functions
+  unsigned int get_erase_counter() const { return 0; }
+  void set_erase_counter(unsigned int c) {}
+  void increment_erase_counter() {}
+  
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
   {
@@ -92,10 +80,67 @@ private:
   char bits_;
 };
 
+
+
+// Class Mesh_cell_base_3_base
+// Specialization for sequential - WITH erase counter
+template <typename Concurrency_tag>
+class Compact_mesh_cell_base_3_base<true, Concurrency_tag>
+{
+protected:
+  Compact_mesh_cell_base_3_base()
+    : bits_(0) {}
+
+public:  
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+	  this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet <4);
+    bits_ |= (1 << facet);
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    bits_ &= (15 & ~(1 << facet));
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (bits_ & (1 << facet)) != 0 );
+  }
+
+private:
+  typedef unsigned int              Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+  /// Stores visited facets (4 first bits)
+  char                              bits_;
+};
+
+
+
 #ifdef CGAL_LINKED_WITH_TBB
-// Specialized version (Parallel)
+// Class Mesh_cell_base_3_base
+// Specialization for parallel - WITH erase counter
 template <>
-class Compact_mesh_cell_base_3_base<Parallel_tag>
+class Compact_mesh_cell_base_3_base<true, Parallel_tag>
 {
 protected:
   Compact_mesh_cell_base_3_base()
@@ -146,17 +191,16 @@ public:
     CGAL_precondition(facet>=0 && facet<4);
     return ( (bits_ & (1 << facet)) != 0 );
   }
-
-protected:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
-
-  Erase_counter_type                m_erase_counter;
-
+  
 private:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
   /// Stores visited facets (4 first bits)
   tbb::atomic<char> bits_;
 };
+
 #endif // CGAL_LINKED_WITH_TBB
+
 
 
 // Class Mesh_cell_base_3
@@ -164,10 +208,11 @@ private:
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
           class MD,
-          typename Concurrency_tag = Sequential_tag,
           class TDS = void > 
 class Compact_mesh_cell_base_3
-  : public Compact_mesh_cell_base_3_base<Concurrency_tag>
+  : public Compact_mesh_cell_base_3_base<
+      TDS::Cell_container_strategy::Uses_erase_counter,
+      typename TDS::Concurrency_tag>
 {
   typedef typename GT::FT FT;
   
@@ -182,7 +227,7 @@ public:
 
   template <typename TDS2>
   struct Rebind_TDS { 
-    typedef Compact_mesh_cell_base_3<GT, MD, Concurrency_tag, TDS2> Other;
+    typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other;
   };
 
 
@@ -598,12 +643,12 @@ private:
 
 
 
-template < class GT, class MT, class CT, class Cb >
+template < class GT, class MT, class Cb >
 std::istream&
 operator>>(std::istream &is,
-           Compact_mesh_cell_base_3<GT, MT, CT, Cb> &c)
+           Compact_mesh_cell_base_3<GT, MT, Cb> &c)
 {
-  typename Compact_mesh_cell_base_3<GT, MT, CT, Cb>::Subdomain_index index;
+  typename Compact_mesh_cell_base_3<GT, MT, Cb>::Subdomain_index index;
   if(is_ascii(is))
     is >> index;
   else
@@ -612,7 +657,7 @@ operator>>(std::istream &is,
     c.set_subdomain_index(index);
     for(int i = 0; i < 4; ++i)
     {
-      typename Compact_mesh_cell_base_3<GT, MT, CT, Cb>::Surface_patch_index i2;
+      typename Compact_mesh_cell_base_3<GT, MT, Cb>::Surface_patch_index i2;
       if(is_ascii(is))
         is >> i2;
       else
@@ -625,10 +670,10 @@ operator>>(std::istream &is,
   return is;
 }
 
-template < class GT, class MT, class CT, class Cb >
+template < class GT, class MT, class Cb >
 std::ostream&
 operator<<(std::ostream &os,
-           const Compact_mesh_cell_base_3<GT, MT, CT, Cb> &c)
+           const Compact_mesh_cell_base_3<GT, MT, Cb> &c)
 {
   if(is_ascii(os))
      os << c.subdomain_index();
@@ -646,15 +691,15 @@ operator<<(std::ostream &os,
 
 
 // Specialization for void.
-template <typename GT, typename MD, typename CT>
-class Compact_mesh_cell_base_3<GT, MD, CT, void>
+template <typename GT, typename MD>
+class Compact_mesh_cell_base_3<GT, MD, void>
 {
 public:
   typedef internal::Dummy_tds_3                         Triangulation_data_structure;
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>
-  struct Rebind_TDS { typedef Compact_mesh_cell_base_3<GT, MD, CT, TDS2> Other; };
+  struct Rebind_TDS { typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other; };
 };
 
 }  // end namespace CGAL

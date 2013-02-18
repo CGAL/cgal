@@ -32,8 +32,6 @@
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
 
-#include <CGAL/Spatial_grid_lock_data_structure_3.h>
-
 #ifdef CGAL_COMPACT_MESH_VERTEX_CELL
 #include <CGAL/Compact_mesh_vertex_base_3.h>
 #include <CGAL/Compact_mesh_cell_base_3.h>
@@ -102,7 +100,7 @@ private:
 
 # ifdef CGAL_COMPACT_MESH_VERTEX_CELL
   typedef Compact_mesh_vertex_base_3<Geom_traits, MD>           Vertex_base;
-  typedef Compact_mesh_cell_base_3<Geom_traits,MD,Parallel_tag> Cell_base;
+  typedef Compact_mesh_cell_base_3<Geom_traits,MD>              Cell_base;
 # else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
   typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
   typedef Mesh_cell_base_3<Geom_traits, MD>                     Cell_base;
@@ -113,10 +111,7 @@ private:
     Compact_container_strategy_with_counter, 
     Compact_container_strategy_with_counter,
     Parallel_tag>                                               Tds;
-  typedef Regular_triangulation_3<
-    Geom_traits, Tds,
-    Spatial_grid_lock_data_structure_3<
-      Tag_priority_blocking_with_atomics> >                     Triangulation;
+  typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
 
 #else // !CGAL_LINKED_WITH_TBB
 
@@ -128,9 +123,17 @@ private:
   typedef Mesh_cell_base_3<Geom_traits, MD>                     Cell_base;
 # endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
 
+# if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)\
+  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
   typedef Triangulation_data_structure_3<
-                            Vertex_base, Cell_base>             Tds;
+    Vertex_base, Cell_base,
+    Compact_container_strategy_with_counter, 
+    Compact_container_strategy_with_counter>                    Tds;
+# else
+  typedef Triangulation_data_structure_3<Vertex_base,Cell_base> Tds;
+# endif
   typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
+
 #endif // CGAL_LINKED_WITH_TBB
 
 public:
