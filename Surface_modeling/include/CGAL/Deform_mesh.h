@@ -32,7 +32,7 @@
 
 #include <limits>
 
-#define CGAL_DEFORM_SPOKES_AND_RIMS
+//#define CGAL_DEFORM_SPOKES_AND_RIMS
 
 namespace CGAL {
 
@@ -198,7 +198,7 @@ public:
   void compute_edge_weight_arap()
   {
     // iterate over ros vertices and calculate weights for edges which are incident to ros
-    size_t next_edge_id = 0;
+    size_t next_edge_id = 1;
     for (std::size_t i = 0; i < ros.size(); i++)
     {
       vertex_descriptor vi = ros[i];
@@ -384,7 +384,7 @@ public:
 
     
     region_of_solution();
-    compute_edge_weight_spokes_and_rims(); // compute_edge_weight() has to come later then region_of_solution()
+    compute_edge_weight(); // compute_edge_weight() has to come later then region_of_solution()
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
@@ -423,10 +423,12 @@ public:
             for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
               {
                 vertex_descriptor vj = boost::source(*e, polyhedron);
-                double wij = edge_weight[ boost::get(edge_index_map, *e) ];  // cotangent Laplacian weights
+                double wij = edge_weight[ boost::get(edge_index_map, *e) -1];  // cotangent Laplacian weights
+                double wji = edge_weight[boost::get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))-1];
+                double total_weight = wij + wji;
                 std::size_t vj_index = boost::get(vertex_index_map, vj) - 1;
-                A.set_coef(i, vj_index, -wij, true);	// off-diagonal coefficient
-                diagonal += wij;  
+                A.set_coef(i, vj_index, -total_weight, true);	// off-diagonal coefficient
+                diagonal += total_weight;  
               }
             // diagonal coefficient
             A.set_coef(i, i, diagonal, true);
@@ -484,7 +486,7 @@ public:
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
     double sin_angle = std::sqrt(1-cos_angle*cos_angle);
 
-    return (cos_angle/sin_angle);
+    return (cos_angle/sin_angle) / std::sqrt(squared_area(v0->point(), v1->point(), v2->point()));
 
   }
 
@@ -592,9 +594,9 @@ public:
   void optimal_rotations_svd()
   {
   #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
-    optimal_rotations_svd_arap();
-  #else
     optimal_rotations_svd_spokes_and_rims();
+  #else
+    optimal_rotations_svd_arap();
   #endif
   }
 
@@ -624,7 +626,7 @@ public:
         Vector pij = original[i] - original[vj_index -1];
         Vector qij = solution[i] - solution[vj_index -1];
 
-        double wij = edge_weight[boost::get(edge_index_map, *e)];
+        double wij = edge_weight[boost::get(edge_index_map, *e) -1];
         for (int j = 0; j < 3; j++)
         {
           for (int k = 0; k < 3; k++)
@@ -703,7 +705,7 @@ public:
         Vector pij = original[v1_index-1] - original[v2_index-1];
         Vector qij = solution[v1_index-1] - solution[v2_index-1];
 
-        double wij = edge_weight[boost::get(edge_index_map, active_edge)];
+        double wij = edge_weight[boost::get(edge_index_map, active_edge) -1];
         for (int j = 0; j < 3; j++)
         {
           for (int k = 0; k < 3; k++)
@@ -964,19 +966,17 @@ public:
           vertex_descriptor vj = boost::source(*e, polyhedron);
           std::size_t vj_index = boost::get(vertex_index_map, vj) -1; 
           Vector pij =  pi - original[boost::get(vertex_index_map, vj) -1];
-          double wij = edge_weight[boost::get(edge_index_map, *e)];
-          Vector rot_p(0, 0, 0);                  // vector ( r_i + r_j )*p_ij
+          double wij = edge_weight[boost::get(edge_index_map, *e) -1];
+          double wji = edge_weight[boost::get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))-1];
+          double x, y, z;
+          x = y = z = 0.0;
           for (int j = 0; j < 3; j++)
           {
-            double x = ( rot_mtr[i](0, j) + rot_mtr[vj_index](0, j) ) * pij[j];
-            double y = ( rot_mtr[i](1, j) + rot_mtr[vj_index](1, j) ) * pij[j];
-            double z = ( rot_mtr[i](2, j) + rot_mtr[vj_index](2, j) ) * pij[j];
-            
-            rot_p = rot_p + Vector(x, y, z);
+            x += ( rot_mtr[i](0, j)*wij + rot_mtr[vj_index](0, j)*wji ) * pij[j];
+            y += ( rot_mtr[i](1, j)*wij + rot_mtr[vj_index](1, j)*wji ) * pij[j];
+            z += ( rot_mtr[i](2, j)*wij + rot_mtr[vj_index](2, j)*wji ) * pij[j];
           }
-          
-          Vector vec = wij*rot_p/2.0;
-          Bx[i] += vec.x(); By[i] += vec.y(); Bz[i] += vec.z(); 
+          Bx[i] += x; By[i] += y; Bz[i] += z; 
         }
       }
     }
@@ -1018,7 +1018,7 @@ public:
            vj_solution = solution[vj_index -1];
         }
         Vector pij = original[i] - vj_original;
-        double wij = edge_weight[boost::get(edge_index_map, *e)];
+        double wij = edge_weight[boost::get(edge_index_map, *e) -1];
         Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
         for (int j = 0; j < 3; j++)
         {
@@ -1049,15 +1049,16 @@ public:
 #ifdef CGAL_DEFORM_EXPERIMENTAL
       optimal_rotations_polar();    // polar decomposition for optimal rotations, faster than SVD but unstable 
 #else
-      optimal_rotations_svd_spokes_and_rims();
+      optimal_rotations_svd();
 #endif
-      energy_last = energy_this;
-      energy_this = energy();
-      CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
-      if ( abs((energy_last-energy_this)/energy_this) < tolerance )
-      {
-        break;
-      }
+      // for now close energy based termination.
+      // energy_last = energy_this;
+      // energy_this = energy();
+      //CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
+      //if ( abs((energy_last-energy_this)/energy_this) < tolerance )
+      //{
+      //  break;
+      //}
     }
 
     CGAL_TRACE_STREAM << "iteration end!\n";
