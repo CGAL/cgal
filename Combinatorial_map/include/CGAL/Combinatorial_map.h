@@ -1149,7 +1149,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
           (m_onsplit_functors);
     }
 
@@ -1165,7 +1165,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
           (m_onmerge_functors);
     }
 
