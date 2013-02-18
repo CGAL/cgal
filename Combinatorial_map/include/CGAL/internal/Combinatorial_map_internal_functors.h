@@ -88,10 +88,10 @@ struct FuctorWithoutMap
   template <typename T> static No  HasFunctorWithoutMap(...);
 
 public:
-    static bool const
+  static bool const
     value=(sizeof(HasFunctorWithoutMap<Functor>(0))==sizeof(Yes));
 };
-
+// ****************************************************************************
 // Functor which call Functor::operator() on the two given cell_attributes
 template<typename CMap, typename Cell_attribute, typename Functor,
          bool FunctorWitouthMap>
@@ -112,14 +112,15 @@ struct Apply_cell_functor<CMap, Cell_attribute, Functor, false>
 };
 //...except for Null_functor.
 template<typename CMap, typename Cell_attribute, bool FunctorWithoutMap>
-struct Apply_cell_functor<CMap, Cell_attribute,Null_functor,FunctorWithoutMap>
+struct Apply_cell_functor<CMap, Cell_attribute, CGAL::Null_functor,
+    FunctorWithoutMap>
 {
   static void run(CMap*, Cell_attribute&, Cell_attribute&)
   {}
 };
 //...even with false.
 template<typename CMap, typename Cell_attribute>
-struct Apply_cell_functor<CMap, Cell_attribute,Null_functor,false>
+struct Apply_cell_functor<CMap, Cell_attribute, CGAL::Null_functor, false>
 {
   static void run(CMap*, Cell_attribute&, Cell_attribute&)
   {}
@@ -140,20 +141,32 @@ struct Call_split_functor
   static void run(CMap* amap, typename CMap::Dart_handle adart1,
                   typename CMap::Dart_handle adart2)
   {
-    CGAL::internal::Apply_cell_functor
-        <CMap, Attribute, On_split,
+    // Static version
+    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split,
         FuctorWithoutMap<CMap, Attribute, On_split>::value>::
         run(amap, *(adart1->template attribute<i>()),
             *(adart2->template attribute<i>()));
+    // Dynamic version
+    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+         (amap->m_onsplit_functors) )
+      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+          (amap->m_onsplit_functors)
+          (*(adart1->template attribute<i>()),
+           *(adart2->template attribute<i>()));
   }
   static void
   run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
       typename CMap::template Attribute_handle<i>::type a2)
   {
-    CGAL::internal::Apply_cell_functor
-         <CMap, Attribute, On_split,
+    // Static version
+    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split,
         FuctorWithoutMap<CMap, Attribute, On_split>::value>::
         run(amap, *a1, *a2);
+    // Dynamic version
+    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+         (amap->m_onsplit_functors) )
+      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+          (amap->m_onsplit_functors)(*a1, *a2);
   }
 };
 // Specialization for disabled attributes.
@@ -180,20 +193,32 @@ struct Call_merge_functor
   static void run(CMap* amap, typename CMap::Dart_handle adart1,
                   typename CMap::Dart_handle adart2)
   {
-    CGAL::internal::Apply_cell_functor
-        <CMap, Attribute, On_merge,
+    // Static version
+    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge,
         FuctorWithoutMap<CMap, Attribute, On_merge>::value>::
         run(amap, *(adart1->template attribute<i>()),
             *(adart2->template attribute<i>()));
+    // Dynamic version
+    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+         (amap->m_onmerge_functors) )
+      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+          (amap->m_onmerge_functors)
+          (*(adart1->template attribute<i>()),
+           *(adart2->template attribute<i>()));
   }
   static void
   run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
       typename CMap::template Attribute_handle<i>::type a2)
   {
-    CGAL::internal::Apply_cell_functor
-        <CMap, Attribute, On_merge,
+    // Static version
+    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge,
         FuctorWithoutMap<CMap, Attribute, On_merge>::value>::
         run(amap, *a1, *a2);
+    // Dynamic version
+    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+         (amap->m_onmerge_functors) )
+      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+          (amap->m_onmerge_functors)(*a1, *a2);
   }
 };
 // Specialization for disabled attributes.

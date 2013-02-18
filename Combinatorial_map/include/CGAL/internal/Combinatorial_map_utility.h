@@ -25,6 +25,7 @@
 #include <iostream>
 
 #include <boost/type_traits/is_same.hpp>
+#include <boost/function.hpp>
 
 /** Some utilities allowing to manage attributes. Indeed, as they as stores
  *  in tuples, we need to define functors with variadic templated arguments
@@ -411,7 +412,11 @@ namespace CGAL
       typedef typename CGAL::internal::Convert_tuple_with_void
       <typename CMap::Attributes>::type Attributes;
 
-      // typedef typename CMap::Attributes Attributes;
+      // defines as type Cell_attribute_binary_functor<T>
+      template <class T>
+      struct Define_cell_attribute_binary_functor{
+        typedef typename boost::function<void(T&, T&)> type;
+      };
 
       // Enabled attributes (without CGAL::Void)
       typedef typename CGAL::internal::Keep_type_different_of
@@ -448,6 +453,13 @@ namespace CGAL
       typedef Attribute_containers      Attribute_ranges;
       typedef Attribute_iterators       Attribute_handles;
       typedef Attribute_const_iterators Attribute_const_handles;
+
+      typedef typename Tuple_converter< Define_cell_attribute_binary_functor,
+                                        Enabled_attributes >::type
+      Merge_functors;
+      typedef typename Tuple_converter< Define_cell_attribute_binary_functor,
+                                        Enabled_attributes >::type
+      Split_functors;
 
       //Helper class allowing to retrieve the type of the
       // attribute of dimension d

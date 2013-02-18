@@ -57,6 +57,11 @@ namespace CGAL {
              class Alloc_=CGAL_ALLOCATOR(int) >
   class Combinatorial_map_base
   {
+    template<typename CMap,unsigned int i,typename Enabled>
+    friend struct CGAL::internal::Call_merge_functor;
+    template<typename CMap,unsigned int i,typename Enabled>
+    friend struct CGAL::internal::Call_split_functor;
+
   public:
     /// Types definition
     typedef Combinatorial_map_base<d_, Refs, Items_,Alloc_>  Self;
@@ -1131,6 +1136,39 @@ namespace CGAL {
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
     }
+
+    // Get the ith dynamic onsplit functor (by reference so that we can
+    // modify it directly).
+    template<int i>
+    boost::function<void(typename Attribute_type<i>::type&,
+                         typename Attribute_type<i>::type&)>&
+    onsplit_functor()
+    {
+      CGAL_static_assertion_msg
+          (Helper::template Dimension_index<i>::value>=0,
+           "onsplit_functor<i> but "
+           "i-attributes are disabled");
+
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+          (m_onsplit_functors);
+    }
+
+    // Get the ith dynamic onmerge functor (by reference so that we can
+    // modify it directly).
+    template<int i>
+    boost::function<void(typename Attribute_type<i>::type&,
+                         typename Attribute_type<i>::type&)>&
+    onmerge_functor()
+    {
+      CGAL_static_assertion_msg
+          (Helper::template Dimension_index<i>::value>=0,
+           "onsplit_functor<i> but "
+           "i-attributes are disabled");
+
+      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
+          (m_onmerge_functors);
+    }
+
 
     /** Double link a dart with beta 0 to a second dart.
      * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
@@ -3077,6 +3115,10 @@ namespace CGAL {
 
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
+
+    /// Tuple of unary and binary functors (for all non void attributes).
+    typename Helper::Split_functors m_onsplit_functors;
+    typename Helper::Merge_functors m_onmerge_functors;
   };
 
   /// Allocation of static data members
