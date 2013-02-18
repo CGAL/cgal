@@ -17,8 +17,8 @@
 //
 // Author(s)     : Clement Jamin
 
-#ifndef CGAL_MESH_3_LOCKING_DATA_STRUCTURES_H
-#define CGAL_MESH_3_LOCKING_DATA_STRUCTURES_H
+#ifndef CGAL_MESH_3_LOCK_DATA_STRUCTURES_H
+#define CGAL_MESH_3_LOCK_DATA_STRUCTURES_H
 
 #ifdef CGAL_LINKED_WITH_TBB
 
@@ -39,23 +39,18 @@
 
 namespace CGAL {
 
-//******************************************************************************
-// class Grid_locking_ds_base_3
-// (Uses Curiously recurring template pattern)
-//******************************************************************************
+struct Tag_no_lock {};
+struct Tag_non_blocking_with_atomics {};
+struct Tag_non_blocking_with_mutexes {};
+struct Tag_priority_blocking_with_atomics {};
 
-static bool *init_TLS_grid(int num_cells_per_axis)
-{
-  int num_cells = num_cells_per_axis*
-    num_cells_per_axis*num_cells_per_axis;
-  bool *local_grid = new bool[num_cells];
-  for (int i = 0 ; i < num_cells ; ++i)
-    local_grid[i] = false;
-  return local_grid;
-}
+//*****************************************************************************
+// class Spatial_grid_lock_data_structure_base_3
+// (Uses Curiously recurring template pattern)
+//*****************************************************************************
 
 template <typename Derived>
-class Grid_locking_ds_base_3
+class Spatial_grid_lock_data_structure_base_3
 {
 
 #ifdef CGAL_DEBUG_GLOBAL_LOCK_DS
@@ -80,6 +75,16 @@ public:
 #endif
 
 private:
+  
+  static bool *init_TLS_grid(int num_cells_per_axis)
+  {
+    int num_cells = num_cells_per_axis*
+      num_cells_per_axis*num_cells_per_axis;
+    bool *local_grid = new bool[num_cells];
+    for (int i = 0 ; i < num_cells ; ++i)
+      local_grid[i] = false;
+    return local_grid;
+  }
 
 public:
   void set_bbox(const Bbox_3 &bbox)
@@ -304,7 +309,7 @@ public:
 protected:
 
   // Constructor
-  Grid_locking_ds_base_3(const Bbox_3 &bbox,
+  Spatial_grid_lock_data_structure_base_3(const Bbox_3 &bbox,
                        int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
       m_tls_grids(boost::bind(init_TLS_grid, num_grid_cells_per_axis))
@@ -313,7 +318,7 @@ protected:
   }
 
   /// Destructor
-  virtual ~Grid_locking_ds_base_3()
+  virtual ~Spatial_grid_lock_data_structure_base_3()
   {
     for( TLS_grid::iterator it_grid = m_tls_grids.begin() ;
              it_grid != m_tls_grids.end() ;
@@ -371,18 +376,27 @@ protected:
 
 
 
-//******************************************************************************
-// class Simple_grid_locking_ds_3
-//******************************************************************************
+//*****************************************************************************
+// class Spatial_grid_lock_data_structure_3
+//*****************************************************************************
+template <typename Grid_lock_tag = Tag_priority_blocking_with_atomics>
+class Spatial_grid_lock_data_structure_3;
 
-class Simple_grid_locking_ds_3
-  : public Grid_locking_ds_base_3<Simple_grid_locking_ds_3>
+      
+//*****************************************************************************
+// class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics>
+//*****************************************************************************
+template <>
+class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics>
+  : public Spatial_grid_lock_data_structure_base_3<
+      Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics> >
 {
 public:
-  typedef Grid_locking_ds_base_3<Simple_grid_locking_ds_3> Base;
+  typedef Spatial_grid_lock_data_structure_base_3<
+    Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics> > Base;
 
   // Constructors
-  Simple_grid_locking_ds_3(const Bbox_3 &bbox,
+  Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
                          int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis)
   {
@@ -395,7 +409,7 @@ public:
       m_grid[i] = false;
   }
 
-  virtual ~Simple_grid_locking_ds_3()
+  virtual ~Spatial_grid_lock_data_structure_3()
   {
     delete [] m_grid;
   }
@@ -422,27 +436,22 @@ protected:
 };
 
 
-//******************************************************************************
-// class Simple_grid_locking_ds_with_thread_ids_3
-//******************************************************************************
+//*****************************************************************************
+// class Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>
+//*****************************************************************************
 
-static unsigned int init_TLS_thread_ids()
-{
-  static tbb::atomic<unsigned int> last_id;
-  unsigned int id = ++last_id;
-  // Ensure it is > 0
-  return (1 + id%(std::numeric_limits<unsigned int>::max()));
-}
-
-class Simple_grid_locking_ds_with_thread_ids_3
-  : public Grid_locking_ds_base_3<Simple_grid_locking_ds_with_thread_ids_3>
+template <>
+class Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>
+  : public Spatial_grid_lock_data_structure_base_3<
+      Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics> >
 {
 public:
-  typedef Grid_locking_ds_base_3<Simple_grid_locking_ds_with_thread_ids_3> Base;
+  typedef Spatial_grid_lock_data_structure_base_3<
+      Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics> > Base;
 
   // Constructors
 
-  Simple_grid_locking_ds_with_thread_ids_3(const Bbox_3 &bbox,
+  Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
                                          int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
     m_tls_thread_ids(init_TLS_thread_ids)
@@ -456,7 +465,7 @@ public:
   }
 
   /// Destructor
-  virtual ~Simple_grid_locking_ds_with_thread_ids_3()
+  virtual ~Spatial_grid_lock_data_structure_3()
   {
     delete [] m_grid;
   }
@@ -513,26 +522,39 @@ public:
   {
     m_grid[cell_index] = 0;
   }
+  
+private:  
+  static unsigned int init_TLS_thread_ids()
+  {
+    static tbb::atomic<unsigned int> last_id;
+    unsigned int id = ++last_id;
+    // Ensure it is > 0
+    return (1 + id%(std::numeric_limits<unsigned int>::max()));
+  }
 
 protected:
+  
   tbb::atomic<unsigned int> *                           m_grid;
 
   typedef tbb::enumerable_thread_specific<unsigned int> TLS_thread_uint_ids;
   TLS_thread_uint_ids                                   m_tls_thread_ids;
 };
 
-//******************************************************************************
-// class Simple_grid_locking_ds_with_mutex_3
-//******************************************************************************
+//*****************************************************************************
+// class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes>
+//*****************************************************************************
 
-class Simple_grid_locking_ds_with_mutex_3
-  : public Grid_locking_ds_base_3<Simple_grid_locking_ds_with_mutex_3>
+template <>
+class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes>
+  : public Spatial_grid_lock_data_structure_base_3<
+      Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes> >
 {
 public:
-  typedef Grid_locking_ds_base_3<Simple_grid_locking_ds_with_mutex_3> Base;
+  typedef Spatial_grid_lock_data_structure_base_3<
+    Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes> > Base;
 
   // Constructors
-  Simple_grid_locking_ds_with_mutex_3(const Bbox_3 &bbox,
+  Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
                                     int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis)
   {
@@ -542,7 +564,7 @@ public:
   }
 
   /// Destructor
-  virtual ~Simple_grid_locking_ds_with_mutex_3()
+  virtual ~Spatial_grid_lock_data_structure_3()
   {
     delete [] m_grid;
   }
@@ -570,19 +592,19 @@ protected:
   tbb::recursive_mutex *                          m_grid;
 };
 
-
-//typedef Simple_grid_locking_ds_3 Default_lock_data_structure;
-//typedef Simple_grid_locking_ds_with_mutex_3 Default_lock_data_structure;
-typedef Simple_grid_locking_ds_with_thread_ids_3 Default_lock_data_structure;
-
 } //namespace CGAL
 
 #else // !CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
-  typedef void Default_lock_data_structure;
+  
+template <typename Grid_lock_tag = void>
+class Spatial_grid_lock_data_structure_3
+{
+};
+
 }
 
 #endif // CGAL_LINKED_WITH_TBB
 
-#endif // CGAL_MESH_3_LOCKING_DATA_STRUCTURES_H
+#endif // CGAL_MESH_3_LOCK_DATA_STRUCTURES_H

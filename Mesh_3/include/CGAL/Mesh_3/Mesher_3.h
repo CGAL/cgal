@@ -41,7 +41,6 @@
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
 #endif
 
-#include <CGAL/Mesh_3/Locking_data_structures.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Timer.h>
 
@@ -71,29 +70,33 @@ namespace Mesh_3 {
 ************************************************/
 
 // Sequential
-template <typename Concurrency_tag>
+template <typename Tr, typename Concurrency_tag>
 class Mesher_3_base
 {
 protected:
+  typedef typename Tr::Lock_data_structure Lock_data_structure;
+
   Mesher_3_base(const Bbox_3 &, int) {}
 
-  Default_lock_data_structure *get_lock_data_structure() { return 0; }
+  Lock_data_structure *get_lock_data_structure() { return 0; }
   WorksharingDataStructureType *get_worksharing_data_structure() { return 0; }
   void set_bbox(const Bbox_3 &) {}
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
 // Parallel
-template <>
-class Mesher_3_base<Parallel_tag>
+template <typename Tr>
+class Mesher_3_base<Tr, Parallel_tag>
 {
 protected:
+  typedef typename Tr::Lock_data_structure Lock_data_structure;
+
   Mesher_3_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
   : m_lock_ds(bbox, num_grid_cells_per_axis),
     m_worksharing_ds(bbox)
   {}
 
-  Default_lock_data_structure *get_lock_data_structure()
+  Lock_data_structure *get_lock_data_structure()
   {
     return &m_lock_ds;
   }
@@ -109,7 +112,7 @@ protected:
   }
 
   /// Lock data structure
-  Default_lock_data_structure m_lock_ds;
+  Lock_data_structure m_lock_ds;
   /// Worksharing data structure
   WorksharingDataStructureType m_worksharing_ds;
 };
@@ -125,24 +128,15 @@ protected:
 template<class C3T3, class MeshCriteria, class MeshDomain>
 class Mesher_3
 : public Mesher_3_base<
+    typename C3T3::Triangulation,
 #ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  Sequential_tag
+    Sequential_tag
 #else
-  typename C3T3::Concurrency_tag
+    typename C3T3::Concurrency_tag
 #endif
   >
 {
 public:
-  // Self
-  typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>      Self;
-#ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  typedef Mesher_3_base<typename Sequential_tag> Base;
-#else
-  typedef Mesher_3_base<typename C3T3::Concurrency_tag> Base;
-#endif
-
-  using Base::get_lock_data_structure;
-
 #ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
   typedef typename Sequential_tag                   Concurrency_tag;
 #else
@@ -153,6 +147,16 @@ public:
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
   typedef typename Kernel::Vector_3                 Vector;
   typedef typename MeshDomain::Index                Index;
+  
+  // Self
+  typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>      Self;
+#ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+  typedef Mesher_3_base<Triangulation, typename Sequential_tag> Base;
+#else
+  typedef Mesher_3_base<Triangulation, typename C3T3::Concurrency_tag> Base;
+#endif
+  
+  using Base::get_lock_data_structure;
 
   //-------------------------------------------------------
   // Mesher_levels

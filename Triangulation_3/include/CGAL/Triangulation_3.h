@@ -46,7 +46,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Default.h>
 
-#include <CGAL/Mesh_3/Locking_data_structures.h>
+#include <CGAL/Mesh_3/Spatial_grid_lock_data_structure_3.h>
 
 #include <boost/bind.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -99,11 +99,16 @@ struct Structural_filtering_selector_3<true> {
 template <typename Concurrency_tag, typename Lock_data_structure_>
 class Triangulation_3_base
 {
+public:
+  // If Lock_data_structure_ = Default => void
+  typedef typename Default::Get<
+    Lock_data_structure_, void>::type Lock_data_structure;
+
 protected:
   Triangulation_3_base()  {}
 
-  Triangulation_3_base(Lock_data_structure_ *) {}
-  void swap(Triangulation_3_base<Concurrency_tag,Lock_data_structure_> &tr){}
+  Triangulation_3_base(Lock_data_structure *) {}
+  void swap(Triangulation_3_base<Concurrency_tag,Lock_data_structure> &tr){}
   
 public:
   bool is_parallel()
@@ -145,13 +150,17 @@ public:
   template <typename P3> void unlock_all_elements_but_one_point(const P3 &) {}
 };
 
+#ifdef CGAL_LINKED_WITH_TBB
 // Parallel (with locking)
 template <typename Lock_data_structure_>
 class Triangulation_3_base<Parallel_tag, Lock_data_structure_>
 {
-  // If Lock_data_structure_ = Default => use Default_lock_data_structure
+public:
+  // If Lock_data_structure_ = Default => use Spatial_grid_lock_data_structure_3
   typedef typename Default::Get<
-    Lock_data_structure_, Default_lock_data_structure>::type Lock_data_structure;
+    Lock_data_structure_, 
+    Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics> >
+    ::type Lock_data_structure;
 
 protected:
   Triangulation_3_base()
@@ -274,6 +283,7 @@ public:
 protected:
   Lock_data_structure *m_lock_ds;
 };
+#endif // CGAL_LINKED_WITH_TBB
 
 /************************************************
  *

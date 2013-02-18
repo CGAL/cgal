@@ -32,7 +32,7 @@
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
 
-#include <CGAL/Mesh_3/Locking_data_structures.h>
+#include <CGAL/Mesh_3/Spatial_grid_lock_data_structure_3.h>
 
 #ifdef CGAL_COMPACT_MESH_VERTEX_CELL
 #include <CGAL/Compact_mesh_vertex_base_3.h>
@@ -114,7 +114,9 @@ private:
     Compact_container_strategy_with_counter,
     Parallel_tag>                                               Tds;
   typedef Regular_triangulation_3<
-    Geom_traits, Tds, Default_lock_data_structure>            Triangulation;
+    Geom_traits, Tds,
+    Spatial_grid_lock_data_structure_3<
+      Tag_priority_blocking_with_atomics> >                     Triangulation;
 
 #else // !CGAL_LINKED_WITH_TBB
 

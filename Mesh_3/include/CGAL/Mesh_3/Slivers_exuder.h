@@ -28,7 +28,6 @@
 #include <CGAL/Double_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
-#include <CGAL/Mesh_3/Locking_data_structures.h>
 #include <map>
 #include <vector>
 #include <set>
@@ -143,10 +142,11 @@ protected:
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
   typedef typename std::vector<Vertex_handle>               Bad_vertices_vector;
+  typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
   Slivers_exuder_base(const Bbox_3 &, int) {}
 
-  Default_lock_data_structure *get_lock_data_structure()  const { return 0; }
+  Lock_data_structure * get_lock_data_structure()   const { return 0; }
   void unlock_all_elements()                        const {}
   void create_root_task()                           const {}
   bool flush_work_buffers()                         const { return true; }
@@ -186,6 +186,7 @@ protected:
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
   typedef typename tbb::concurrent_vector<Vertex_handle>    Bad_vertices_vector;
+  typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
   Slivers_exuder_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
     : m_lock_ds(bbox, num_grid_cells_per_axis)
@@ -193,7 +194,7 @@ protected:
   {
   }
 
-  Default_lock_data_structure *get_lock_data_structure() const
+  Lock_data_structure *get_lock_data_structure() const
   {
     return &m_lock_ds;
   }
@@ -252,9 +253,9 @@ protected:
     { cell->increment_erase_counter(); }
   };
   
-  mutable Default_lock_data_structure         m_lock_ds;
-  mutable Mesh_3::Auto_worksharing_ds   m_worksharing_ds;
-  mutable tbb::task                    *m_empty_root_task;
+  mutable Lock_data_structure                 m_lock_ds;
+  mutable Mesh_3::Auto_worksharing_ds         m_worksharing_ds;
+  mutable tbb::task                          *m_empty_root_task;
 };
 #endif // CGAL_LINKED_WITH_TBB
 

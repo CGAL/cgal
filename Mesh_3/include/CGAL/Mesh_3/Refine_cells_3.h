@@ -293,6 +293,7 @@ class Refine_cells_3
 private:
   // Internal types
   typedef typename Tr::Facet Facet;
+  typedef typename Tr::Lock_data_structure Lock_data_structure;
   typedef typename MeshDomain::Subdomain_index  Subdomain_index;
   typedef typename MeshDomain::Index  Index;
   typedef typename Get_Is_cell_bad<Criteria>::Type Is_cell_bad;
@@ -351,7 +352,7 @@ public:
                  const MeshDomain& oracle,
                  Previous_& previous,
                  C3T3& c3t3,
-                 Default_lock_data_structure *p_lock_ds,
+                 Lock_data_structure *p_lock_ds,
                  Mesh_3::WorksharingDataStructureType *p_worksharing_ds);
 
   // Destructor
@@ -568,7 +569,7 @@ Refine_cells_3(Tr& triangulation,
                const MD& oracle,
                P_& previous,
                C3T3& c3t3,
-               Default_lock_data_structure *p_lock_ds,
+               Lock_data_structure *p_lock_ds,
                Mesh_3::WorksharingDataStructureType *p_worksharing_ds)
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous, p_lock_ds, p_worksharing_ds)

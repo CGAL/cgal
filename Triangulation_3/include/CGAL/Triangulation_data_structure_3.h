@@ -43,8 +43,7 @@
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Compact_container.h>
 
-# include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
-# include <CGAL/Triangulation_ds_cell_base_3.h>
+#include <CGAL/Triangulation_ds_cell_base_3.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
@@ -506,7 +505,9 @@ public:
   template <typename Cell_handle>
   bool is_cell_locked_by_this_thread(const Cell_handle &cell_handle) const
   {
-    CGAL::Default_lock_data_structure *p_lock_ds = CGAL::Default_lock_data_structure::get_global_lock_ds();
+    CGAL::Spatial_grid_lock_data_structure_3<
+      Tag_priority_blocking_with_atomics> *p_lock_ds = 
+      CGAL::Spatial_grid_lock_data_structure_3::get_global_lock_ds();
     bool locked = true;
     if (p_lock_ds)
     {

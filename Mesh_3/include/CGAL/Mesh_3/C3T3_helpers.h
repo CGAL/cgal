@@ -33,8 +33,6 @@
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 
-#include <CGAL/Mesh_3/Locking_data_structures.h>
-
 #ifdef MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
@@ -376,15 +374,16 @@ template <typename Tr, typename Concurrency_tag>
 class C3T3_helpers_base
 {
 protected:
-  typedef typename Tr::Geom_traits      Gt;
-  typedef typename Gt::Point_3          Point_3;
-  typedef typename Tr::Vertex_handle    Vertex_handle;
-  typedef typename Tr::Cell_handle      Cell_handle;
-  typedef typename Tr::Facet            Facet;
+  typedef typename Tr::Geom_traits          Gt;
+  typedef typename Gt::Point_3              Point_3;
+  typedef typename Tr::Vertex_handle        Vertex_handle;
+  typedef typename Tr::Cell_handle          Cell_handle;
+  typedef typename Tr::Facet                Facet;
+  typedef typename Tr::Lock_data_structure  Lock_data_structure;
 
-  C3T3_helpers_base(Default_lock_data_structure *) {}
+  C3T3_helpers_base(Lock_data_structure *) {}
 
-  Default_lock_data_structure *get_lock_data_structure() const
+  Lock_data_structure *get_lock_data_structure() const
   {
     return 0;
   }
@@ -438,20 +437,21 @@ template <typename Tr>
 class C3T3_helpers_base<Tr, Parallel_tag>
 {
 protected:
-  typedef typename Tr::Geom_traits      Gt;
-  typedef typename Gt::Point_3          Point_3;
-  typedef typename Tr::Vertex_handle    Vertex_handle;
-  typedef typename Tr::Cell_handle      Cell_handle;
-  typedef typename Tr::Facet            Facet;
+  typedef typename Tr::Geom_traits          Gt;
+  typedef typename Gt::Point_3              Point_3;
+  typedef typename Tr::Vertex_handle        Vertex_handle;
+  typedef typename Tr::Cell_handle          Cell_handle;
+  typedef typename Tr::Facet                Facet;
+  typedef typename Tr::Lock_data_structure  Lock_data_structure;
 
-  C3T3_helpers_base(Default_lock_data_structure *p_lock_ds)
+  C3T3_helpers_base(Lock_data_structure *p_lock_ds)
     : m_lock_ds(p_lock_ds) {}
 
 
 public:
   // LOCKS (CONCURRENCY)
 
-  /*Default_lock_data_structure *get_lock_data_structure() const
+  /*Lock_data_structure *get_lock_data_structure() const
   {
     return m_lock_ds;
   }*/
@@ -554,7 +554,7 @@ public:
   }
 
 protected:
-  Default_lock_data_structure *m_lock_ds;
+  Lock_data_structure *m_lock_ds;
 
   typedef tbb::mutex  Mutex_type;
   mutable Mutex_type  m_mut_outdated_cells;
@@ -640,7 +640,7 @@ public:
    * Constructor
    */
   C3T3_helpers(C3T3& c3t3, const MeshDomain& domain,
-               Default_lock_data_structure *p_lock_ds = 0)
+               Lock_data_structure *p_lock_ds = 0)
     : Base(p_lock_ds)
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())

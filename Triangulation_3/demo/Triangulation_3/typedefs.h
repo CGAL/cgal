@@ -7,9 +7,6 @@
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
-#ifdef CONCURRENT_TRIANGULATION_3
-# include <CGAL/Mesh_3/Locking_data_structures.h>
-#endif
 
 // Added for T3 demo
 #include <CGAL/Delaunay_triangulation_3.h>

@@ -36,7 +36,6 @@
 #include <CGAL/tuple.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
-#include <CGAL/Mesh_3/Locking_data_structures.h>
 
 #ifdef MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
@@ -72,6 +71,7 @@ class Mesh_global_optimizer_base
 protected:
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
+  typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
   typedef std::vector<cpp11::tuple<
     typename Tr::Vertex_handle, typename Tr::Point, FT> >   Moves_vector;
@@ -100,7 +100,7 @@ protected:
     big_moves_.clear();
   }
 
-  Default_lock_data_structure *get_lock_data_structure() { return 0; }
+  Lock_data_structure *get_lock_data_structure() { return 0; }
   void unlock_all_elements() {}
 
 protected:
@@ -116,6 +116,7 @@ class Mesh_global_optimizer_base<Tr, Parallel_tag>
 protected:
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
+  typedef typename Tr::Lock_data_structure                  Lock_data_structure;
   typedef tbb::concurrent_vector<cpp11::tuple<
     typename Tr::Vertex_handle, typename Tr::Point, FT> >   Moves_vector;
   typedef tbb::atomic<unsigned int>                         Nb_frozen_points_type ;
@@ -170,7 +171,7 @@ protected:
     big_moves_.clear();
   }
 
-  Default_lock_data_structure *get_lock_data_structure()
+  Lock_data_structure *get_lock_data_structure()
   {
     return &m_lock_ds;
   }
@@ -189,7 +190,7 @@ protected:
   std::multiset<FT>         big_moves_;
 
   /// Lock data structure
-  Default_lock_data_structure m_lock_ds;
+  Lock_data_structure m_lock_ds;
 };
 #endif // CGAL_LINKED_WITH_TBB
 

@@ -29,7 +29,6 @@
 
 //# include <CGAL/hilbert_sort.h> //CJTODO: remove?
 //# include <CGAL/spatial_sort.h> //CJTODO: remove?
-#include <CGAL/Mesh_3/Locking_data_structures.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
 #include <CGAL/Bbox_3.h>
 
@@ -156,6 +155,8 @@ public:
   /** Type of vertex handles that are returns by insertions into the
       triangulation. */
   typedef typename Triangulation::Vertex_handle Vertex_handle;
+  /** Type of lock data structure for concurrency */
+  typedef typename Triangulation::Lock_data_structure Lock_data_structure;
   /** Type of facet & cell handles */
   typedef typename Triangulation::Cell_handle Cell_handle;
   typedef typename Cell_handle::value_type Cell;
@@ -684,7 +685,7 @@ public:
   }
 
   // Useless here
-  void set_lock_ds(Default_lock_data_structure *) {}
+  void set_lock_ds(Lock_data_structure *) {}
   void set_worksharing_ds(Mesh_3::WorksharingDataStructureType *) {}
 
 protected:
@@ -1379,7 +1380,7 @@ public:
     return ! is_algorithm_done();
   }
 
-  void set_lock_ds(Default_lock_data_structure *p)
+  void set_lock_ds(Lock_data_structure *p)
   {
     m_lock_ds = p;
   }
@@ -1395,7 +1396,7 @@ protected:
   const int FIRST_GRID_LOCK_RADIUS;
   const int MESH_3_REFINEMENT_GRAINSIZE;
   const int REFINEMENT_BATCH_SIZE;
-  Default_lock_data_structure *m_lock_ds;
+  Lock_data_structure *m_lock_ds;
   Mesh_3::WorksharingDataStructureType *m_worksharing_ds;
 
 #ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
