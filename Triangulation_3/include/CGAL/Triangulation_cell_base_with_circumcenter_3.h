@@ -26,7 +26,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-# include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
 # include <CGAL/Triangulation_ds_cell_base_3.h>
 
 namespace CGAL {

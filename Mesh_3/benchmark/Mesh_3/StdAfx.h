@@ -227,7 +227,6 @@
 //#include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 //#include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
 //#include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
-//#include <CGAL/Mesh_3/Triangulation_lazy_ds_cell_base_3.h>
 //#include <CGAL/Mesh_3/utilities.h>
 //#include <CGAL/Mesh_cell_base_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
