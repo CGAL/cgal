@@ -43,8 +43,7 @@
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Compact_container.h>
 
-# include <CGAL/Triangulation_lazy_ds_cell_base_3.h>
-# include <CGAL/Triangulation_ds_cell_base_3.h>
+#include <CGAL/Triangulation_ds_cell_base_3.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
