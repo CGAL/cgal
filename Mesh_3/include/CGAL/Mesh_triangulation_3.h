@@ -32,7 +32,7 @@
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
 
-#include <CGAL/Mesh_3/Spatial_grid_lock_data_structure_3.h>
+#include <CGAL/Spatial_grid_lock_data_structure_3.h>
 
 #ifdef CGAL_COMPACT_MESH_VERTEX_CELL
 #include <CGAL/Compact_mesh_vertex_base_3.h>

@@ -46,7 +46,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Default.h>
 
-#include <CGAL/Mesh_3/Spatial_grid_lock_data_structure_3.h>
+#include <CGAL/Spatial_grid_lock_data_structure_3.h>
 
 #include <boost/bind.hpp>
 #include <boost/random/linear_congruential.hpp>
