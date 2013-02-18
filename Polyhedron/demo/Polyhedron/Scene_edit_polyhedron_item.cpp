@@ -20,9 +20,6 @@
 #include <QGLViewer/manipulatedFrame.h>
 
 
-
-
-
 typedef Polyhedron::Vertex_handle Vertex_handle;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef std::set<Vertex_handle> Selected_vertices;
@@ -59,12 +56,58 @@ struct Scene_edit_polyhedron_item_priv {
   std::vector<bool> is_sharp_vertices;
 }; // end struct Scene_edit_polyhedron_item_priv
 
+#include <QTimer>
+
+namespace qglviewer {
+  class CustomManipulatedFrame : public ManipulatedFrame
+  {
+    Q_OBJECT
+  public:
+    CustomManipulatedFrame() : isHoldingMouse(false)
+    {
+      std::cerr << "-----------------------------------------" << std::endl;
+      std::cerr << "Construct" << std::endl;
+      std::cerr << "-----------------------------------------" << std::endl;
+      timer = new QTimer(this);
+      connect(timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
+      timer->start(1000);
+    }
+  protected:
+    virtual void mousePressEvent(QMouseEvent* const event, Camera* const camera)
+    { 
+      std::cerr << "-----------------------------------------" << std::endl;
+      std::cerr << "Holding TRUE" << std::endl;
+      std::cerr << "-----------------------------------------" << std::endl;
+      isHoldingMouse = true; 
+      ManipulatedFrame::mousePressEvent(event, camera);
+    }
+    virtual void mouseReleaseEvent(QMouseEvent* const event, Camera* const camera)
+    { 
+      std::cerr << "-----------------------------------------" << std::endl;
+      std::cerr << "Holding FALSE" << std::endl;
+      std::cerr << "-----------------------------------------" << std::endl;
+      isHoldingMouse = false;
+      ManipulatedFrame::mouseReleaseEvent(event, camera);
+    }
+  public slots:
+    void timerUpdate()
+    {
+      std::cerr << "Timer UPDATE "<<isHoldingMouse << std::endl;
+      if(isHoldingMouse)
+        Q_EMIT manipulated();
+    }
+  private:
+    bool isHoldingMouse; 
+    QTimer* timer;
+  };
+}
+
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item)
   : d(new Scene_edit_polyhedron_item_priv)
 {
   d->poly_item = poly_item;
   d->handlesRegionSize = 0;
-  d->frame = new ManipulatedFrame();
+  d->frame = new qglviewer::CustomManipulatedFrame();
   d->frame->setProperty("item", QVariant::fromValue<QObject*>(this));
   if(!connect(poly_item, SIGNAL(selected_vertex(void*)),
               this, SLOT(vertex_has_been_selected(void*))))
