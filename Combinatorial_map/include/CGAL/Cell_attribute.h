@@ -316,6 +316,7 @@ namespace CGAL {
     typedef typename Refs::Alloc             Alloc;
     typedef OnMerge                          On_merge;
     typedef OnSplit                          On_split;
+    typedef Info_                            Info;
 
   protected:
     /// Default contructor.
