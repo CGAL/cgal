@@ -32,8 +32,6 @@
 
 #include <limits>
 
-//#define CGAL_DEFORM_SPOKES_AND_RIMS
-
 namespace CGAL {
 
 template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
@@ -135,23 +133,7 @@ public:
     // handled in region_of_solution().
 
     //clear edges
-#ifdef CGAL_DEFORM_SPOKES_AND_RIMS
-    edge_weight.clear();
-    for (std::size_t i = 0; i < ros.size(); i++)
-    {
-      bool rim = false;
-      out_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::out_edges(ros[i], polyhedron); e != e_end;)
-      {
-        edge_descriptor active_edge = rim ? (*e)->next(): *e;
-        boost::put(edge_index_map, active_edge, 0);
-        edge_descriptor e_oppo = CGAL::opposite_edge(active_edge, polyhedron);
-        boost::put(edge_index_map, e_oppo, 0);
-        if(rim) { ++e; }
-        rim = !rim;
-      }
-    }
-  #else
+
     edge_weight.clear();
     for (std::size_t i = 0; i < ros.size(); i++)
     {
@@ -163,7 +145,6 @@ public:
         boost::put(edge_index_map, e_oppo, 0);
       }
     }
-  #endif
   }
 
   void insert_roi(vertex_descriptor vd)   
@@ -187,15 +168,6 @@ public:
  
 
   void compute_edge_weight()
-  {
-  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
-    compute_edge_weight_spokes_and_rims();
-  #else
-    compute_edge_weight_arap();
-  #endif
-  }
-
-  void compute_edge_weight_arap()
   {
     // iterate over ros vertices and calculate weights for edges which are incident to ros
     size_t next_edge_id = 1;
@@ -236,57 +208,6 @@ public:
             edge_weight.push_back(weight);            
           }
         }
-      }// end of edge loop
-    }// end of ros loop
-  }
-
-  void compute_edge_weight_spokes_and_rims()
-  {
-    // iterate over ros vertices and calculate weights for edges which are incident to ros
-    size_t next_edge_id = 0;
-    for (std::size_t i = 0; i < ros.size(); i++)
-    {       
-      vertex_descriptor vi = ros[i];
-      bool rim = false;
-      out_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; )
-      {
-        edge_descriptor active_edge = rim ? (*e)->next() : *e;
-
-        std::size_t e_idx = boost::get(edge_index_map, active_edge);
-        if( e_idx == 0)  // we haven't assigned an id yet, which means we haven't calculted the weight
-        {
-          boost::put(edge_index_map, active_edge, next_edge_id++);
-          double weight = cot_weight(active_edge);
-          // replace cotangent weight by mean-value coordinate
-          if ( weight < 0 )
-          {
-            weight = mean_value(active_edge);
-            edge_weight.push_back(weight);
-            // assign the weights to opposite edges
-            edge_descriptor e_oppo = CGAL::opposite_edge(active_edge, polyhedron);   
-            std::size_t e_oppo_idx = boost::get(edge_index_map, e_oppo);
-            if(e_oppo_idx == 0)
-            {
-              boost::put(edge_index_map, e_oppo, next_edge_id++);
-              edge_weight.push_back(mean_value(e_oppo));            
-            }
-          }
-          else
-          {
-            edge_weight.push_back(weight);
-            // assign the weights to opposite edges
-            edge_descriptor e_oppo = CGAL::opposite_edge(active_edge, polyhedron);   
-            std::size_t e_oppo_idx = boost::get(edge_index_map, e_oppo);
-            if(e_oppo_idx == 0)
-            {
-              boost::put(edge_index_map, e_oppo, next_edge_id++);
-              edge_weight.push_back(weight);            
-            }
-          }
-        }//end of if id == 0
-        if(rim) { ++e; }
-        rim = !rim;
       }// end of edge loop
     }// end of ros loop
   }
@@ -590,20 +511,10 @@ public:
     solution[idx] = p;
   }
 #endif // CGAL_DEFORM_ROTATION
-
+  // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
   {
-  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
-    optimal_rotations_svd_spokes_and_rims();
-  #else
-    optimal_rotations_svd_arap();
-  #endif
-  }
-
-  // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
-  void optimal_rotations_svd_arap()
-  {
-    Eigen::Matrix3d u, v;           // orthogonal matrices 
+  Eigen::Matrix3d u, v;           // orthogonal matrices 
     Eigen::Vector3d w;              // singular values
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
@@ -670,89 +581,6 @@ public:
     }
 
     CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
-
-  }
-    // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
-  void optimal_rotations_svd_spokes_and_rims()
-  {
-    Eigen::Matrix3d u, v;           // orthogonal matrices 
-    Eigen::Vector3d w;              // singular values
-    Eigen::Matrix3d cov;            // covariance matrix
-    Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
-    Eigen::Matrix3d r;
-    int num_neg = 0;
-
-    // only accumulate ros vertices
-    for ( std::size_t i = 0; i < ros.size(); i++ )
-    {
-      vertex_descriptor vi = ros[i];
-      // compute covariance matrix
-      cov.setZero();
-
-      // spoke + rim edges
-      bool rim = false;
-      out_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; )
-      {
-        edge_descriptor active_edge = rim ? (*e)->next() : *e;
-
-        vertex_descriptor v1 = boost::source(active_edge, polyhedron);
-        vertex_descriptor v2 = boost::target(active_edge, polyhedron);
-        
-        size_t v1_index = boost::get(vertex_index_map, v1);
-        size_t v2_index = boost::get(vertex_index_map, v2);
-        
-        Vector pij = original[v1_index-1] - original[v2_index-1];
-        Vector qij = solution[v1_index-1] - solution[v2_index-1];
-
-        double wij = edge_weight[boost::get(edge_index_map, active_edge) -1];
-        for (int j = 0; j < 3; j++)
-        {
-          for (int k = 0; k < 3; k++)
-          {
-            cov(j, k) += wij*pij[j]*qij[k]; 
-          }
-        }
-        // loop through one spoke then one rim edges
-        if(rim) { ++e; }
-        rim = !rim;
-      }
-  
-      // svd decomposition
-      svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      u = svd.matrixU(); v = svd.matrixV();
-
-      // extract rotation matrix
-      r = v*u.transpose();
-
-      // checking negative determinant of r
-      if ( r.determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
-      {
-        num_neg++; 
-        w = svd.singularValues();
-        for (int j = 0; j < 3; j++)
-        {
-          int j0 = j;
-          int j1 = (j+1)%3;
-          int j2 = (j1+1)%3;
-          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
-          {
-            u(0, j0) = - u(0, j0);
-            u(1, j0) = - u(1, j0);
-            u(2, j0) = - u(2, j0);
-            break;
-          }
-        }
-
-        // re-extract rotation matrix
-        r = v*u.transpose();
-      }
-      
-      rot_mtr[i] = r;
-    }
-
-    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
-
   }
 
 
