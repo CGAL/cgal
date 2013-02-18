@@ -155,6 +155,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_points_with_normal_item.cpp
               )
   qt4_automoc( Scene_implicit_function_item.cpp )
+  qt4_automoc( Custom_manipulated_frame.cpp )
 
 
   # AUXILIARY LIBRARIES
@@ -212,6 +213,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   # special
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
+
+  add_item(Custom_manipulated_frame Custom_manipulated_frame.cpp Custom_manipulated_frame.moc)
 
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
@@ -411,7 +414,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if(TAUCS_FOUND OR EIGEN3_FOUND )
     polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin ${editionUI_FILES})
-    target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+    target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item Custom_manipulated_frame)
   endif()
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
