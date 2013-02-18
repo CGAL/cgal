@@ -4,39 +4,26 @@
 template<class P>
 class Polyhedron_vertex_deformation_index_map
 {
-private:
-
   typedef P Polyhedron ;
-
-
 public:
-
   typedef boost::read_write_property_map_tag                                  category;
   typedef std::size_t                                                       value_type;
   typedef std::size_t                                                       reference;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
-
-  Polyhedron_vertex_deformation_index_map()
-  {    
-  }
- 
-
 };
-namespace boost {
 
-  template<class P>
-  std::size_t
-  get(  Polyhedron_vertex_deformation_index_map<P>, typename P::Vertex_handle vh)
-  {
-    return vh->id();
-  }
+template<class P>
+std::size_t
+get(  Polyhedron_vertex_deformation_index_map<P>, typename P::Vertex_handle vh)
+{
+  return vh->id();
+}
 
-  template<class P>
-  void
-  put(  Polyhedron_vertex_deformation_index_map<P>&, typename P::Vertex_handle vh, std::size_t s)
-  {
-    vh->id() = s;
-  }
+template<class P>
+void
+put(  Polyhedron_vertex_deformation_index_map<P>&, typename P::Vertex_handle vh, std::size_t s)
+{
+  vh->id() = s;
 }
 
 
@@ -61,21 +48,19 @@ public:
   
 };
 
-namespace boost {
 
-  template<class P>
-  std::size_t
-    get(  Polyhedron_edge_deformation_index_map<P> /* pmap */, typename P::Halfedge_handle eh)
-  {
-    return eh->id();
-  }
+template<class P>
+std::size_t
+  get(  Polyhedron_edge_deformation_index_map<P> /* pmap */, typename P::Halfedge_handle eh)
+{
+  return eh->id();
+}
 
-  template<class P>
-  void
-    put(  Polyhedron_edge_deformation_index_map<P>& /* pmap */, typename P::Halfedge_handle eh, std::size_t s)
-  {
-    eh->id() = s;
-  }
+template<class P>
+void
+  put(  Polyhedron_edge_deformation_index_map<P>& /* pmap */, typename P::Halfedge_handle eh, std::size_t s)
+{
+  eh->id() = s;
 }
 
 template<class P>
@@ -98,8 +83,6 @@ public:
     : m_lengths(lengths) {}
 };
 
-namespace boost {
-
   template<class P>
   double
     get(  Polyhedron_edge_deformation_length_map<P> pmap, typename P::Halfedge_handle eh)
@@ -115,7 +98,6 @@ namespace boost {
     CGAL_assertion( pmap.m_lengths.size() > eh->id() );
     pmap.m_lengths[eh->id()] = s;
   }
-}
 
 /**
  * A custom property map for deformation which behaves like zero initialized pmap.
@@ -138,24 +120,21 @@ public:
   std::map<key_type, size_t>* internal_map;
 };
 
-namespace boost {
+template<class Key> std::size_t get( Polyhedron_zero_default_index_map<Key>& pmap
+                                 ,   Key k)
+{
+  typename std::map<Key, size_t>::iterator found = pmap.internal_map->find(k);
+  // if the key doesn't exist in the map, then retun 0 to simulate zero initialization
+  if(found == pmap.internal_map->end()) { return 0; }
+  return found->second;
+}
 
-  template<class Key> std::size_t get( Polyhedron_zero_default_index_map<Key>& pmap
-                                   , typename Key k)
-  {
-    std::map<Key, size_t>::iterator found = pmap.internal_map->find(k);
-    // if the key doesn't exist in the map, then retun 0 to simulate zero initialization
-    if(found == pmap.internal_map->end()) { return 0; }
-    return found->second;
-  }
-
-  template<class Key> void put( Polyhedron_zero_default_index_map<Key>& pmap
-                            , typename Key k, std::size_t s)
-  {
-    // also provide cleaning facility (it will be useful when ROS is cleaned and another ROS is added to the system)
-    if(s == 0) { pmap.internal_map->erase(k); }
-    else       { pmap.internal_map->operator[](k) = s; }
-  }
+template<class Key> void put( Polyhedron_zero_default_index_map<Key>& pmap
+                          ,   Key k, std::size_t s)
+{
+  // also provide cleaning facility (it will be useful when ROS is cleaned and another ROS is added to the system)
+  if(s == 0) { pmap.internal_map->erase(k); }
+  else       { pmap.internal_map->operator[](k) = s; }
 }
 
 #endif //PROPERTY_MAPS_FOR_EDIT_PLUGIN
