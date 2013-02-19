@@ -651,7 +651,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
         CGAL_assertion(  !is_infinite( ff1->vertex(ccw_v) )  );
         // philaris: the following assertion is not relevant
         // any more in Linf
-        //CGAL_assertion( ff1->vertex(ccw_v)->site().is_point() );
+        CGAL_assertion( ff1->vertex(ccw_v)->site().is_point() );
         sv_ep = ff1->vertex(ccw_v)->site();
         CGAL_SDG_DEBUG( std::cout <<
             "debug sv_ep = " << sv_ep << std::endl;
@@ -661,7 +661,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
         CGAL_assertion(  !is_infinite( ff1->vertex( cw_v) )  );
         // philaris: the following assertion is not relevant
         // any more in Linf
-        //CGAL_assertion( ff1->vertex( cw_v)->site().is_point() );
+        CGAL_assertion( ff1->vertex( cw_v)->site().is_point() );
         sv_ep = ff1->vertex( cw_v)->site();
         CGAL_SDG_DEBUG( std::cout <<
             "debug sv_ep = " << sv_ep << std::endl;
@@ -688,14 +688,14 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
         CGAL_assertion(  !is_infinite( ff2->vertex(ccw_v) )  );
         // philaris: the following assertion is not relevant
         // any more in Linf
-        //CGAL_assertion( ff2->vertex(ccw_v)->site().is_point() );
+        CGAL_assertion( ff2->vertex(ccw_v)->site().is_point() );
         sv_ep = ff2->vertex(ccw_v)->site();
         os2 = oriented_side(sitev, sv_ep, sitev_supp, t);
       } else {
         CGAL_assertion(  !is_infinite( ff2->vertex( cw_v) )  );
         // philaris: the following assertion is not relevant
         // any more in Linf
-        //CGAL_assertion( ff2->vertex( cw_v)->site().is_point() );
+        CGAL_assertion( ff2->vertex( cw_v)->site().is_point() );
         sv_ep = ff2->vertex( cw_v)->site();
         os2 = oriented_side(sv_ep, sitev, sitev_supp, t);
       }
@@ -1629,10 +1629,10 @@ is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
       s_end[1] = tt[2].source_site();
     }
 
-    typename Geom_traits::Orientation_L2_2 orientation_L2 =
-      geom_traits().orientation_L2_2_object();
+    typename Geom_traits::Orientation_2 orientation =
+      geom_traits().orientation_2_object();
 
-    return orientation_L2(s_end[0], s_end[1], tt[1]) == COLLINEAR;
+    return orientation(s_end[0], s_end[1], tt[1]) == COLLINEAR;
   }
   return false;
 }
@@ -2823,25 +2823,13 @@ Object
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 primal(const Edge e) const
 {
-  typedef typename Gt::Line_2           Line_2;
-  typedef CGAL::Polychainline_2<Gt>     Polychainline;
-  typedef CGAL::Polychainray_2<Gt>      Polychainray;
-  typedef CGAL::Polychainsegment_2<Gt>  Polychainsegment;
-
   CGAL_precondition( !is_infinite(e) );
 
   if ( this->dimension() == 1 ) {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
 
-    Polychainline pcl = construct_sdg_bisector_2_object()(p,q);
-
-    //std::cout << "debug primal pcl type= " 
-    //          << typeid(pcl).name() << std::endl;
-    //std::cout << "debug primal pcl at " << &pcl << std::endl;
-    //std::cout << "debug primal pcl=" << pcl << std::endl;
-
-    return make_object(pcl);
+    return make_object(construct_sdg_bisector_2_object()(p,q));
   }
 
   // dimension == 2
@@ -2852,15 +2840,8 @@ primal(const Edge e) const
     Site_2 q = (e.first)->vertex(  cw(e.second) )->site();
     Site_2 r = (e.first)->vertex(     e.second  )->site();
     Site_2 s = this->_tds.mirror_vertex(e.first, e.second)->site();
-    Polychainsegment pcs = 
-	construct_sdg_bisector_segment_2_object()(p,q,r,s);
+    return construct_sdg_bisector_segment_2_object()(p,q,r,s);
 
-    //std::cout << "debug primal pcs type= " 
-    //          << typeid(pcs).name() << std::endl;
-    //std::cout << "debug primal pcs at " << &pcs << std::endl;
-    //std::cout << "debug primal pcs=" << pcs << std::endl;
-
-    return make_object(pcs);
   }
 
   // both of the adjacent faces are infinite
@@ -2868,15 +2849,7 @@ primal(const Edge e) const
        is_infinite(e.first->neighbor(e.second)) )  {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
-    Polychainline pcl = 
-	construct_sdg_bisector_2_object()(p,q);
-
-    //std::cout << "debug primal pcl type= " 
-    //          << typeid(pcl).name() << std::endl;
-    //std::cout << "debug primal pcl at " << &pcl << std::endl;
-    //std::cout << "debug primal pcl=" << pcl << std::endl;
-    
-    return make_object(pcl);
+    return make_object(construct_sdg_bisector_2_object()(p,q));
   }
 
   // only one of the adjacent faces is infinite
@@ -2900,14 +2873,7 @@ primal(const Edge e) const
   Site_2 q = ee.first->vertex(  cw(ee.second) )->site();
   Site_2 r = ee.first->vertex(     ee.second  )->site();
 
-  Polychainray pcr = construct_sdg_bisector_ray_2_object()(p,q,r);
-
-  //std::cout << "debug primal pcr type= " 
-  //          << typeid(pcr).name() << std::endl;
-  //std::cout << "debug primal pcr at " << &pcr << std::endl;
-  //std::cout << "debug primal pcr=" << pcr << std::endl;
-    
-  return make_object(pcr);
+  return make_object(construct_sdg_bisector_ray_2_object()(p,q,r));
 }
 
 //--------------------------------------------------------------------
