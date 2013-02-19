@@ -766,7 +766,9 @@ public:
   typedef typename Gt::Segment_2                Segment_2;
   typedef typename Gt::Construct_svd_vertex_2   Construct_svd_vertex_2;
   typedef CGAL::Polychainsegment_2<Gt>          Polychainsegment;
-  typedef Polychainsegment                      result_type;
+
+  typedef CGAL::Object                          Object_2;
+  typedef Object_2                              result_type;
 
   typedef typename Gt::Compare_x_2       Compare_x_2;
   typedef typename Gt::Compare_y_2       Compare_y_2;
@@ -776,6 +778,12 @@ public:
 
   result_type operator()(const Site_2& p, const Site_2& q,
                          const Site_2& r, const Site_2& s) const
+  {
+    return CGAL::make_object(pcsbis(p, q, r, s));
+  }
+
+  Polychainsegment pcsbis(const Site_2& p, const Site_2& q,
+                          const Site_2& r, const Site_2& s) const
   {
     CGAL_SDG_DEBUG( std::cout << "debug construct bisector segment "
         << "p=" << p << " q=" << q << " r=" << r << " s=" << s
