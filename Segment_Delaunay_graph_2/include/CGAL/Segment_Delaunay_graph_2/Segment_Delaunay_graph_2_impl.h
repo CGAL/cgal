@@ -502,7 +502,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
       if ( is_infinite(fc) ) { n_inf++; }
       fc++;
     } while ( fc != fc_start );
-    CGAL_assertion( n_inf == 0 || n_inf == 2 || n_inf == 4 );
+    CGAL_assertion( n_inf % 2 == 0 );
   }
 #endif
 
