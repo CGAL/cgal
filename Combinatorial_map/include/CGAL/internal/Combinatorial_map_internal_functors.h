@@ -65,10 +65,10 @@ namespace CGAL
 // ****************************************************************************
 namespace internal
 {
-// Struct to test if the given class has a functor without a map as first
+// Struct to test if the given class has a functor with a map as first
 // parameter.
 template <typename CMap, typename Attribute, typename Functor>
-struct FuctorWithoutMap
+struct FuctorWithMap
 {
   template <typename T, T> struct TypeCheck;
 
@@ -78,23 +78,23 @@ struct FuctorWithoutMap
   template <typename T> struct Fct
   {
     // The function we want to test.
-    typedef void (T::*fptr)(Attribute&,Attribute&);
+    typedef void (T::*fptr)(CMap*, Attribute&, Attribute&);
   };
 
   template <typename T>
   static Yes
-  HasFunctorWithoutMap(TypeCheck< typename Fct<T>::fptr, &T::operator() >*);
-
-  template <typename T> static No  HasFunctorWithoutMap(...);
+  HasFunctorWithMap(TypeCheck< typename Fct<T>::fptr, &T::operator() >*);
+  template <typename T> static No  HasFunctorWithMap(...);
 
 public:
   static bool const
-    value=(sizeof(HasFunctorWithoutMap<Functor>(0))==sizeof(Yes));
+  value=(sizeof(HasFunctorWithMap<Functor>(0))==sizeof(Yes));
 };
 // ****************************************************************************
 // Functor which call Functor::operator() on the two given cell_attributes
 template<typename CMap, typename Cell_attribute, typename Functor,
-         bool FunctorWitouthMap>
+         bool FunctorWithMap=
+         FuctorWithMap<CMap, Cell_attribute, Functor>::value>
 struct Apply_cell_functor
 {
   static void run(CMap*, Cell_attribute& acell1, Cell_attribute& acell2)
@@ -103,24 +103,24 @@ struct Apply_cell_functor
   }
 };
 template<typename CMap, typename Cell_attribute, typename Functor>
-struct Apply_cell_functor<CMap, Cell_attribute, Functor, false>
+struct Apply_cell_functor<CMap, Cell_attribute, Functor, true>
 {
   static void run(CMap* amap, Cell_attribute& acell1, Cell_attribute& acell2)
   {
-    Functor() (amap, acell1,acell2);
+    Functor() (amap, acell1, acell2);
   }
 };
 //...except for Null_functor.
-template<typename CMap, typename Cell_attribute, bool FunctorWithoutMap>
+template<typename CMap, typename Cell_attribute, bool FunctorWithMap>
 struct Apply_cell_functor<CMap, Cell_attribute, CGAL::Null_functor,
-    FunctorWithoutMap>
+    FunctorWithMap>
 {
   static void run(CMap*, Cell_attribute&, Cell_attribute&)
   {}
 };
-//...even with false.
+//...even with true.
 template<typename CMap, typename Cell_attribute>
-struct Apply_cell_functor<CMap, Cell_attribute, CGAL::Null_functor, false>
+struct Apply_cell_functor<CMap, Cell_attribute, CGAL::Null_functor, true>
 {
   static void run(CMap*, Cell_attribute&, Cell_attribute&)
   {}
@@ -142,10 +142,9 @@ struct Call_split_functor
                   typename CMap::Dart_handle adart2)
   {
     // Static version
-    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split,
-        FuctorWithoutMap<CMap, Attribute, On_split>::value>::
+    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split>::
         run(amap, *(adart1->template attribute<i>()),
-            *(adart2->template attribute<i>()));
+          *(adart2->template attribute<i>()));
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
          (amap->m_onsplit_functors) )
@@ -159,8 +158,7 @@ struct Call_split_functor
       typename CMap::template Attribute_handle<i>::type a2)
   {
     // Static version
-    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split,
-        FuctorWithoutMap<CMap, Attribute, On_split>::value>::
+    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split>::
         run(amap, *a1, *a2);
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
@@ -194,8 +192,7 @@ struct Call_merge_functor
                   typename CMap::Dart_handle adart2)
   {
     // Static version
-    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge,
-        FuctorWithoutMap<CMap, Attribute, On_merge>::value>::
+    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge>::
         run(amap, *(adart1->template attribute<i>()),
             *(adart2->template attribute<i>()));
     // Dynamic version
@@ -211,8 +208,7 @@ struct Call_merge_functor
       typename CMap::template Attribute_handle<i>::type a2)
   {
     // Static version
-    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge,
-        FuctorWithoutMap<CMap, Attribute, On_merge>::value>::
+    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge>::
         run(amap, *a1, *a2);
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
