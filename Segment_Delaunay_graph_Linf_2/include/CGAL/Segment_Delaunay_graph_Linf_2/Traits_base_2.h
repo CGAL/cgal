@@ -49,14 +49,11 @@ public:
 
   // PREDICATES
   //-----------
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Orientation_C2<K>
-  Orientation_L2_2;
 
   // used by triangulation 
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Orientation_Linf_C2<K>
-  Orientation_2;
+  //typedef
+  //CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Orientation_Linf_C2<K>
+  //Orientation_2;
 
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Oriented_side_of_bisector_C2<K,MTag>
@@ -97,15 +94,11 @@ public:
 
   // PREDICATES
   //-----------
-  Orientation_L2_2
-  orientation_L2_2_object() const {
-    return Orientation_L2_2();
-  }
 
-  Orientation_2
-  orientation_2_object() const {
-    return Orientation_2();
-  }
+  //Orientation_2
+  //orientation_2_object() const {
+  //  return Orientation_2();
+  //}
 
   Oriented_side_of_bisector_2
   oriented_side_of_bisector_2_object() const {

@@ -207,7 +207,6 @@ private:
   // Predicates for the filtering kernel
   typedef typename FK_traits::Compare_x_2        FK_Compare_x_2;
   typedef typename FK_traits::Compare_y_2        FK_Compare_y_2;
-  typedef typename FK_traits::Orientation_L2_2   FK_Orientation_L2_2;
   typedef typename FK_traits::Orientation_2      FK_Orientation_2;
   typedef typename FK_traits::Equal_2            FK_Equal_2;
   typedef typename FK_traits::Are_parallel_2     FK_Are_parallel_2;
@@ -232,7 +231,6 @@ private:
   // Predicates for the exact kernel
   typedef typename EK_traits::Compare_x_2        EK_Compare_x_2;
   typedef typename EK_traits::Compare_y_2        EK_Compare_y_2;
-  typedef typename EK_traits::Orientation_L2_2   EK_Orientation_L2_2;
   typedef typename EK_traits::Orientation_2      EK_Orientation_2;
   typedef typename EK_traits::Equal_2            EK_Equal_2;
   typedef typename EK_traits::Are_parallel_2     EK_Are_parallel_2;
@@ -258,7 +256,6 @@ private:
   // Predicates for the filtering kernel
   typedef Sdg_compare_x_2<FK>                    FK_Compare_x_2;
   typedef Sdg_compare_y_2<FK>                    FK_Compare_y_2;
-  typedef Sdg_orientation_L2_C2<FK>              FK_Orientation_L2_2;
   typedef Sdg_orientation_C2<FK>                 FK_Orientation_2;
   typedef Sdg_are_same_points_C2<FK>             FK_Equal_2;
   typedef Sdg_are_parallel_C2<FK>                FK_Are_parallel_2;
@@ -281,7 +278,6 @@ private:
   // Predicates for the exact kernel
   typedef Sdg_compare_x_2<EK>                    EK_Compare_x_2;
   typedef Sdg_compare_y_2<EK>                    EK_Compare_y_2;
-  typedef Sdg_orientation_L2_C2<EK>              EK_Orientation_L2_2;
   typedef Sdg_orientation_C2<EK>                 EK_Orientation_2;
   typedef Sdg_are_same_points_C2<EK>             EK_Equal_2;
   typedef Sdg_are_parallel_C2<EK>                EK_Are_parallel_2;
@@ -313,13 +309,9 @@ public:
   //Filtered_predicate<EK_Compare_y_2, FK_Compare_y_2, C2E, C2F>
   //Compare_y_2;
 
-  typedef
-  Filtered_predicate<EK_Orientation_L2_2, FK_Orientation_L2_2, C2E, C2F>
-  Orientation_L2_2;
-
-  typedef
-  Filtered_predicate<EK_Orientation_2, FK_Orientation_2, C2E, C2F>
-  Orientation_2;
+  //typedef
+  //Filtered_predicate<EK_Orientation_2, FK_Orientation_2, C2E, C2F>
+  //Orientation_2;
 
   //typedef
   //Filtered_predicate<EK_Equal_2, FK_Equal_2, C2E, C2F>
@@ -423,15 +415,10 @@ public:
   //  return Compare_y_2();
   //}
 
-  Orientation_L2_2
-  orientation_L2_2_object() const {
-    return Orientation_L2_2();
-  }
-
-  Orientation_2
-  orientation_2_object() const {
-    return Orientation_2();
-  }
+  //Orientation_2
+  //orientation_2_object() const {
+  //  return Orientation_2();
+  //}
 
   //Equal_2
   //equal_2_object() const {
