@@ -2567,17 +2567,13 @@ Object
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 primal(const Edge e) const
 {
-  typedef typename Gt::Line_2   Line_2;
-  typedef typename Gt::Ray_2    Ray_2;
-
   CGAL_precondition( !is_infinite(e) );
 
   if ( this->dimension() == 1 ) {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
 
-    Line_2 l = construct_sdg_bisector_2_object()(p,q);
-    return make_object(l);
+    return make_object(construct_sdg_bisector_2_object()(p,q));
   }
 
   // dimension == 2
@@ -2596,8 +2592,7 @@ primal(const Edge e) const
        is_infinite(e.first->neighbor(e.second)) )  {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
-    Line_2 l = construct_sdg_bisector_2_object()(p,q);
-    return make_object(l);
+    return make_object(construct_sdg_bisector_2_object()(p,q));
   }
 
   // only one of the adjacent faces is infinite
@@ -2621,8 +2616,7 @@ primal(const Edge e) const
   Site_2 q = ee.first->vertex(  cw(ee.second) )->site();
   Site_2 r = ee.first->vertex(     ee.second  )->site();
 
-  Ray_2 ray = construct_sdg_bisector_ray_2_object()(p,q,r);
-  return make_object(ray);
+  return make_object(construct_sdg_bisector_ray_2_object()(p,q,r));
 }
 
 //--------------------------------------------------------------------
