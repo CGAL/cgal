@@ -174,7 +174,7 @@ struct Is_sewable_functor<CMap, 0, 1>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 1>
 {
-  static bool run( const CMap* amap,
+  static bool run( const CMap* /*amap*/,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
@@ -193,7 +193,7 @@ struct Is_sewable_functor<CMap, 1, 1>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 2>
 {
-  static bool run( const CMap* amap,
+  static bool run( const CMap* /*amap*/,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
@@ -211,7 +211,7 @@ struct Is_sewable_functor<CMap, 0, 2>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 2>
 {
-  static bool run( const CMap* amap,
+  static bool run( const CMap* /*amap*/,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
@@ -229,7 +229,7 @@ struct Is_sewable_functor<CMap, 1, 2>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 2, 2>
 {
-  static bool run( const CMap* amap,
+  static bool run( const CMap* /*amap*/,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
@@ -248,7 +248,7 @@ struct Is_sewable_functor<CMap, 2, 2>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 3>
 {
-  static bool run( const CMap* amap,
+  static bool run( const CMap* /*amap*/,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
@@ -278,7 +278,7 @@ struct Is_sewable_functor<CMap, 0, 3>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 1, 3>
 {
-  static bool run( const CMap* amap,
+  static bool run( const CMap* /*amap*/,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {
@@ -308,7 +308,7 @@ struct Is_sewable_functor<CMap, 1, 3>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 2, 3>
 {
-  static bool run( const CMap* amap,
+  static bool run( const CMap* /*amap*/,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {

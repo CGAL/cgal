@@ -73,7 +73,7 @@ namespace CGAL {
  * @return true iff the face containing adart is a polygon of length alg.
  */
 template < class Map >
-bool is_face_combinatorial_polygon(const Map& amap,
+bool is_face_combinatorial_polygon(const Map& /*amap*/,
                                    typename Map::Dart_const_handle adart,
                                    unsigned int alg)
 {
