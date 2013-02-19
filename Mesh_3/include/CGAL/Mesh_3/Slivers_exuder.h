@@ -139,11 +139,17 @@ class Slivers_exuder_base
 protected:
   typedef typename Tr::Vertex_handle                        Vertex_handle;
   typedef typename Tr::Cell_handle                          Cell_handle;
+  typedef std::vector<Cell_handle>                          Cell_vector;
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
   typedef typename std::vector<Vertex_handle>               Bad_vertices_vector;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
-
+  
+  // A priority queue ordered on Tet quality (SliverCriteria)
+  typedef CGAL::Double_map<Cell_handle, double>             Tet_priority_queue;
+  typedef typename Tet_priority_queue::reverse_iterator     Queue_iterator;
+  typedef typename Tet_priority_queue::Reverse_entry        Queue_value_type;
+  
   Slivers_exuder_base(const Bbox_3 &, int) {}
 
   Lock_data_structure * get_lock_data_structure()   const { return 0; }
@@ -156,10 +162,33 @@ protected:
   void enqueue_work(Func, double)                   const {}
 
 protected:
+  Cell_handle extract_cell_handle_from_queue_value(const Queue_value_type &qv) const
+  {
+    return qv.second;
+  }
+  double extract_cell_quality_from_queue_value(const Queue_value_type &qv) const
+  {
+    return qv.first;
+  }
+  unsigned int extract_erase_counter_from_queue_value(const Queue_value_type &qv) const
+  {
+    return 0;
+  }
+
+  std::size_t cells_queue_size() const { return cells_queue_.size(); }
+  bool cells_queue_empty()       const { return cells_queue_.empty(); }
+  typename Queue_iterator
+    cells_queue_front()                { return cells_queue_.front(); }
+  void cells_queue_pop_front()         { cells_queue_.pop_front(); }
+  void cells_queue_clear()             { cells_queue_.clear(); }
+  void cells_queue_insert(const Cell_handle &ch, double quality_value)
+  {
+    cells_queue_.insert(ch, quality_value); 
+  }
+
   /**
    * A functor to remove one \c Cell_handle from a priority queue
    */
-  template <typename Tet_priority_queue>
   class Erase_from_queue
   {
   public:
@@ -173,6 +202,18 @@ protected:
     Tet_priority_queue& r_queue_;
   };
   
+  /**
+   * Delete cells of \c cells from \c cells_queue
+   */
+  void delete_cells_from_queue(const Cell_vector& cells)
+  {
+    std::for_each(cells.begin(), cells.end(), 
+                  Erase_from_queue(cells_queue_));
+  }
+
+private:
+  
+  Tet_priority_queue cells_queue_;
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -183,11 +224,18 @@ class Slivers_exuder_base<Tr, Parallel_tag>
 protected:
   typedef typename Tr::Vertex_handle                        Vertex_handle;
   typedef typename Tr::Cell_handle                          Cell_handle;
+  typedef std::vector<Cell_handle>                          Cell_vector;
   typedef typename Tr::Geom_traits                          Gt;
   typedef typename Gt::FT                                   FT;
   typedef typename tbb::concurrent_vector<Vertex_handle>    Bad_vertices_vector;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
-
+  
+  // A priority queue ordered on Tet quality (SliverCriteria)
+  typedef std::multimap<
+    double, std::pair<Cell_handle, unsigned int> >          Tet_priority_queue;
+  typedef typename Tet_priority_queue::iterator             Queue_iterator;
+  typedef typename Tet_priority_queue::value_type           Queue_value_type;
+  
   Slivers_exuder_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
     : m_lock_ds(bbox, num_grid_cells_per_axis)
     , m_worksharing_ds(bbox)
@@ -239,11 +287,35 @@ protected:
 public:
 
 protected:
+  Cell_handle extract_cell_handle_from_queue_value(const Queue_value_type &qv) const
+  {
+    return qv.second.first;
+  }
+  double extract_cell_quality_from_queue_value(const Queue_value_type &qv) const
+  {
+    return qv.first;
+  }
+  unsigned int extract_erase_counter_from_queue_value(const Queue_value_type &qv) const
+  {
+    return qv.second.second;
+  }
+
+  std::size_t cells_queue_size() const { return cells_queue_.size(); }
+  bool cells_queue_empty()       const { return cells_queue_.empty(); }
+  typename Queue_iterator
+    cells_queue_front()                { return cells_queue_.begin(); }
+  void cells_queue_pop_front()         { cells_queue_.erase(cells_queue_front()); }
+  void cells_queue_clear()             { cells_queue_.clear(); }
+  void cells_queue_insert(const Cell_handle &ch, double quality_value)
+  {
+    cells_queue_.insert(std::make_pair(
+      quality_value,
+      std::make_pair(ch, ch->get_erase_counter()))); 
+  }
   
   /**
    * A functor to remove one \c Cell_handle from a priority queue
    */
-  template <typename Tet_priority_queue>
   class Erase_from_queue
   {
   public:
@@ -253,9 +325,22 @@ protected:
     { cell->increment_erase_counter(); }
   };
   
+  /**
+   * Delete cells of \c cells from \c cells_queue
+   */
+  void delete_cells_from_queue(const Cell_vector& cells)
+  {
+    std::for_each(cells.begin(), cells.end(), 
+                  Erase_from_queue(cells_queue_));
+  }
+  
   mutable Lock_data_structure                 m_lock_ds;
   mutable Mesh_3::Auto_worksharing_ds         m_worksharing_ds;
   mutable tbb::task                          *m_empty_root_task;
+
+private:
+  
+  Tet_priority_queue cells_queue_;
 };
 #endif // CGAL_LINKED_WITH_TBB
 
@@ -294,7 +379,6 @@ class Slivers_exuder
   typedef typename Geom_traits::Tetrahedron_3 Tetrahedron_3;
   
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
-  typedef std::vector<Cell_handle> Cell_vector;
   typedef std::vector<Facet> Facet_vector;
   
   typedef typename C3T3::Surface_patch_index Surface_patch_index;
@@ -321,10 +405,7 @@ class Slivers_exuder
   
   // Stores the value of facet for the sliver criterion functor
   typedef std::map<Facet, double> Sliver_values;
-  
-  // A priority queue ordered on Tet quality (SliverCriteria)
-  typedef CGAL::Double_map<Cell_handle, double> Tet_priority_queue;
-  
+
   // Visitor class
   // Should define
   //  - after_cell_pumped(std::size_t cells_left_number)
@@ -483,7 +564,7 @@ private:
     else
       sliver_bound_ = SliverCriteria::max_value;
       
-    cells_queue_.clear();
+    cells_queue_clear();
     initialize_cells_priority_queue();
     initialized_ = true;
   }
@@ -500,7 +581,7 @@ private:
       const double value = sliver_criteria_(tr_.tetrahedron(cit));
       
       if( value < sliver_bound_ )
-        cells_queue_.insert(cit, value);
+        cells_queue_insert(cit, value);
     }
   }
   
@@ -582,23 +663,15 @@ private:
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
     if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
-      enqueue_task<pump_vertices_on_surfaces>(ch, criterion_value);
+      enqueue_task<pump_vertices_on_surfaces>(
+        ch, ch->get_erase_counter(), criterion_value);
     // Sequential
     else
 #endif
-      cells_queue_.insert(ch, criterion_value);
+      cells_queue_insert(ch, criterion_value);
     
   }
-
-  /**
-   * Delete cells of \c cells from \c cells_queue
-   */
-  void delete_cells_from_queue(const Cell_vector& cells)
-  {
-    std::for_each(cells.begin(), cells.end(), 
-                  Base::Erase_from_queue<Tet_priority_queue>(cells_queue_));
-  }
-  
+    
   /**
    * A functor to remove one handle (Cell_handle/Facet_handle) from complex
    */
@@ -656,7 +729,7 @@ private:
   // For parallel version
   template <bool pump_vertices_on_surfaces>
   void
-  enqueue_task(Cell_handle ch, double value);
+  enqueue_task(Cell_handle ch, unsigned int erase_counter, double value);
 #endif
 
 private:
@@ -674,18 +747,12 @@ private:
   
   bool initialized_;
   SliverCriteria sliver_criteria_;
-  Tet_priority_queue cells_queue_;
   C3T3_helpers helper_;
   
   // Timer
   double time_limit_;
   CGAL::Timer running_time_;
-  
-#ifdef CGAL_LINKED_WITH_TBB
-  // CJTOTO: change this for a better solution
-  tbb::atomic<bool> m_lets_start_the_tasks;
-#endif
-  
+    
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
   // -----------------------------------
   // Debug Helpers
@@ -791,7 +858,7 @@ pump_vertices(double sliver_criterion_limit,
   std::cerr << "Legend of the following line: "
             << "(#cells left,#vertices pumped,#vertices ignored)" << std::endl;
 
-  std::cerr << "(" << cells_queue_.size() << ",0,0)";
+  std::cerr << "(" << cells_queue_size() << ",0,0)";
 #endif // CGAL_MESH_3_EXUDER_VERBOSE
   
   running_time_.reset();
@@ -806,19 +873,19 @@ pump_vertices(double sliver_criterion_limit,
   // Parallel
   if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
   {
-    m_lets_start_the_tasks = false;
     this->create_root_task();
     
-    while (!cells_queue_.empty())
+    while (!cells_queue_empty())
     {
-      typename Tet_priority_queue::Reverse_entry front = *(cells_queue_.front());
-      Cell_handle c = front.second;
-      cells_queue_.pop_front();
-      enqueue_task<pump_vertices_on_surfaces>(front.second, front.first);
+      Queue_value_type front = *(cells_queue_front());
+      cells_queue_pop_front();
+      Cell_handle c = extract_cell_handle_from_queue_value(front);
+      double q = extract_cell_quality_from_queue_value(front);
+      unsigned int ec = extract_erase_counter_from_queue_value(front);
+      // Low quality first (i.e. low value of q)
+      enqueue_task<pump_vertices_on_surfaces>(c, ec, q);
     }
-
-    m_lets_start_the_tasks = true;
-
+    
     this->wait_for_all();
 
     std::cerr << " Flushing";
@@ -835,11 +902,12 @@ pump_vertices(double sliver_criterion_limit,
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    while( !cells_queue_.empty() && !is_time_limit_reached() )
+    while( !cells_queue_empty() && !is_time_limit_reached() )
     {
-      typename Tet_priority_queue::Reverse_entry front = *(cells_queue_.front());
-      Cell_handle c = front.second;
+      Queue_value_type front = *(cells_queue_front());
+      Cell_handle c = extract_cell_handle_from_queue_value(front);
     
+      // Low quality first (i.e. low value of cell quality)
       bool vertex_pumped = false;
       for( int i = 0; i < 4; ++i )
       {
@@ -863,13 +931,13 @@ pump_vertices(double sliver_criterion_limit,
     
       // if the tet could not be deleted
       if ( ! vertex_pumped )
-        cells_queue_.pop_front();
+        cells_queue_pop_front();
 
-      visitor.after_cell_pumped(cells_queue_.size());
+      visitor.after_cell_pumped(cells_queue_size());
   #ifdef CGAL_MESH_3_EXUDER_VERBOSE   
       std::cerr << boost::format("\r             \r"
                                  "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-        % cells_queue_.size()
+        % cells_queue_size()
         % num_of_pumped_vertices_
         % num_of_ignored_vertices_
         % (num_of_treated_vertices_ / running_time_.time());
@@ -1383,9 +1451,8 @@ template <typename C3T3, typename Md, typename SC, typename V_, typename FT>
 template <bool pump_vertices_on_surfaces>
 void
 Slivers_exuder<C3T3,Md,SC,V_,FT>::
-enqueue_task(Cell_handle ch, double value)
+enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
 {
-  int erase_counter = ch->get_erase_counter();
   enqueue_work(
     [&, ch, erase_counter]()
     {
@@ -1393,8 +1460,6 @@ enqueue_task(Cell_handle ch, double value)
       static Profile_branch_counter_3 bcounter(
         "early withdrawals / late withdrawals / successes [Exuder]");
 #endif
-      while (!m_lets_start_the_tasks)
-        std::this_thread::yield();
 
       for( int i = 0; i < 4; ++i )
       {
