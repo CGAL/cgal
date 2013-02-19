@@ -649,8 +649,6 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
       Site_2 sv_ep;
       if ( is_infinite( ff1->vertex(cw_v) ) ) {
         CGAL_assertion(  !is_infinite( ff1->vertex(ccw_v) )  );
-        // philaris: the following assertion is not relevant
-        // any more in Linf
         CGAL_assertion( ff1->vertex(ccw_v)->site().is_point() );
         sv_ep = ff1->vertex(ccw_v)->site();
         CGAL_SDG_DEBUG( std::cout <<
@@ -659,8 +657,6 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
         os1 = oriented_side(sitev, sv_ep, sitev_supp, t);
       } else {
         CGAL_assertion(  !is_infinite( ff1->vertex( cw_v) )  );
-        // philaris: the following assertion is not relevant
-        // any more in Linf
         CGAL_assertion( ff1->vertex( cw_v)->site().is_point() );
         sv_ep = ff1->vertex( cw_v)->site();
         CGAL_SDG_DEBUG( std::cout <<
@@ -686,15 +682,11 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
       Site_2 sv_ep;
       if ( is_infinite( ff2->vertex(cw_v) ) ) {
         CGAL_assertion(  !is_infinite( ff2->vertex(ccw_v) )  );
-        // philaris: the following assertion is not relevant
-        // any more in Linf
         CGAL_assertion( ff2->vertex(ccw_v)->site().is_point() );
         sv_ep = ff2->vertex(ccw_v)->site();
         os2 = oriented_side(sitev, sv_ep, sitev_supp, t);
       } else {
         CGAL_assertion(  !is_infinite( ff2->vertex( cw_v) )  );
-        // philaris: the following assertion is not relevant
-        // any more in Linf
         CGAL_assertion( ff2->vertex( cw_v)->site().is_point() );
         sv_ep = ff2->vertex( cw_v)->site();
         os2 = oriented_side(sv_ep, sitev, sitev_supp, t);
