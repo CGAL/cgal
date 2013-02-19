@@ -139,11 +139,14 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
   Site_2 s2 = f->vertex(1)->site();
   Site_2 s3 = f->vertex(2)->site();
 
-  Orientation o =
-    geom_traits().orientation_2_object()(s1, s2, s3);
+  Sign s12i3 = geom_traits().vertex_conflict_2_object()(s1, s2, s3);
+  Sign s21i3 = geom_traits().vertex_conflict_2_object()(s2, s1, s3);
 
-  if ( o != COLLINEAR ) {
-    if ( o == RIGHT_TURN ) {
+  CGAL_assertion(s12i3 != ZERO);
+  CGAL_assertion(s21i3 != ZERO);
+
+  if ( s12i3 != s21i3 ) {
+    if ( s21i3 == NEGATIVE ) {
       f->reorient();
       for (int i = 0; i < 3; i++) {
 	f->neighbor(i)->reorient();
