@@ -1,3 +1,4 @@
+// Copyright (c) 2012  GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).

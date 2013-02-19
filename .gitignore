@@ -1228,3 +1228,4 @@ gmon.*
 
 # TODO:
 #   remove everything about /doc_tex once LaTeX is not longer supported
+/Point_set_processing_3/test/Point_set_processing_3/read_test
