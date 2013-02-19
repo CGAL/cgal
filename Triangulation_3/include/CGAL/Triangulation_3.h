@@ -557,8 +557,14 @@ protected:
 public:
 
   // CONSTRUCTORS
-  Triangulation_3(const GT & gt = GT())
-    : _tds(), _gt(gt)
+  Triangulation_3(const GT & gt = GT(), Lock_data_structure *p_lock_ds = 0)
+    : Base(p_lock_ds), _tds(), _gt(gt)
+    {
+      init_tds();
+    }
+
+  Triangulation_3(Lock_data_structure *p_lock_ds, const GT & gt = GT())
+    : Base(p_lock_ds), _tds(), _gt(gt)
     {
       init_tds();
     }
@@ -574,8 +580,8 @@ public:
 
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
-                  const GT & gt = GT())
-    : _gt(gt)
+                  const GT & gt = GT(), Lock_data_structure *p_lock_ds = 0)
+    : Base(p_lock_ds), _gt(gt)
   {
       init_tds();
       insert(first, last);
@@ -1301,7 +1307,8 @@ protected:
 
   // REMOVAL
   template < class VertexRemover >
-  void remove(Vertex_handle v, VertexRemover &remover);
+  void remove(Vertex_handle v, VertexRemover &remover,
+              bool *p_could_lock_zone = 0);
 
   template < class VertexRemover, class OutputItCells >
   void remove_and_give_new_cells(Vertex_handle v, VertexRemover &remover,
@@ -4410,7 +4417,8 @@ template <class Gt, class Tds, class Lds>
 template < class VertexRemover >
 void
 Triangulation_3<Gt, Tds, Lds>::
-remove(Vertex_handle v, VertexRemover &remover) {
+remove(Vertex_handle v, VertexRemover &remover,
+       bool *p_could_lock_zone) { // CJTODO HERE
   CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !is_infinite(v));
   CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );

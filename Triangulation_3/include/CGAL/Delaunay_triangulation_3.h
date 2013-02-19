@@ -209,8 +209,12 @@ protected:
 
 public:
 
-  Delaunay_triangulation_3(const Gt& gt = Gt())
-    : Tr_Base(gt)
+  Delaunay_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *p_lock_ds = 0)
+    : Tr_Base(gt, p_lock_ds)
+  {}
+  
+  Delaunay_triangulation_3(Lock_data_structure *p_lock_ds, const Gt& gt = Gt())
+    : Tr_Base(p_lock_ds, gt)
   {}
 
   // copy constructor duplicates vertices and cells
@@ -222,8 +226,8 @@ public:
 
   template < typename InputIterator >
   Delaunay_triangulation_3(InputIterator first, InputIterator last,
-                           const Gt& gt = Gt())
-    : Tr_Base(gt)
+                           const Gt& gt = Gt(), Lock_data_structure *p_lock_ds = 0)
+    : Tr_Base(gt, p_lock_ds)
   {
       insert(first, last);
   }
