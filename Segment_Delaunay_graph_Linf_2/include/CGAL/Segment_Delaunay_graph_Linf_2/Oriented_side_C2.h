@@ -48,31 +48,6 @@ public:
   typedef Oriented_side                       result_type;
   typedef Site_2                              argument_type;
 
-  // philaris: not used in Linf
-  // computes the oriented side of the point q
-  // wrt the line that is passes through the point p and its direction
-  // is the direction of the supporting line of s, rotated by 90
-  // degrees counterclockwise.
-  Oriented_side operator()(const Site_2& q,
-			   const Site_2& s, const Site_2& p) const
-  {
-    // philaris: q might also be a segment in Linf
-    CGAL_precondition( q.is_point() );
-    CGAL_precondition( s.is_segment() && p.is_point() );
-
-    Line_2 l = compute_supporting_line( s.supporting_site() );
-    Line_2 lp = compute_linf_perpendicular(l, p.point());
-
-    Oriented_side retval = lp.oriented_side(q.point());
-
-    CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (qsp)= ("
-              << q << ") (" << s << ") (" << p << ") "
-              << "returns " << retval
-              << std::endl;);
-
-    return retval;
-  }
-
   // computes the oriented side of the Voronoi vertex of s1, s2, s3
   // wrt the line that passes through the point p and its direction
   // is the direction of the supporting line of s, rotated by 90
