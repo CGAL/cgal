@@ -188,9 +188,10 @@ private:
 
       Point_2 points[3];
       unsigned int npts;
-      // segment site is horizontal
       if (q.supporting_site().segment().is_horizontal()) {
-        //pver is vertical projection from point site on to segment site
+        // segment site is horizontal
+        // pver is vertical projection from point site on to segment site
+        npts = 2;
         Point_2 pver;
         pver = Point_2(pnt.x(), lseg.y_at_x(pnt.x()));
 
@@ -198,36 +199,29 @@ private:
         FT half = FT(0.5);
         FT seglenhalf ( half * CGAL::abs(pnt.y()-pver.y()) );
 
-        //positive side is left-turn
-        if (lseg.has_on_positive_side(pnt)) {
-          points[0]= (compare_x_2(seg.source(),seg.target())==SMALLER)
-          ? Point_2(m.x() + seglenhalf, m.y())
-          : Point_2(m.x() - seglenhalf, m.y());
-          points[1]= (compare_x_2(seg.source(),seg.target())==SMALLER)
-          ? Point_2(m.x() - seglenhalf, m.y())
-          : Point_2(m.x() + seglenhalf, m.y());
-        }else {//pnt is on the negative side of lseg i.e right turn
-          points[0]= (compare_x_2(seg.source(),seg.target())==SMALLER)
-          ? Point_2(m.x() - seglenhalf, m.y())
-          : Point_2(m.x() + seglenhalf, m.y());
-          points[1]= (compare_x_2(seg.source(),seg.target())==SMALLER)
-          ? Point_2(m.x() + seglenhalf, m.y())
-          : Point_2(m.x() - seglenhalf, m.y());
+        Direction_2 dinc, dout;
+
+        Comparison_result cmp = compare_y_2(pnt, pver);
+        if (cmp == LARGER) {
+          points[0] = Point_2(m.x() + seglenhalf, m.y());
+          points[1] = Point_2(m.x() - seglenhalf, m.y());
+          dinc = Direction_2 ( +1, +1 );
+          dout = Direction_2 ( -1, +1 );
+        } else {
+          CGAL_assertion(cmp == SMALLER);
+          points[0] = Point_2(m.x() - seglenhalf, m.y());
+          points[1] = Point_2(m.x() + seglenhalf, m.y());
+          dinc = Direction_2 ( -1, -1 );
+          dout = Direction_2 ( +1, -1 );
         }
-        //Compute Direction
-        npts = 2;
-        Full_Line_2 l1(pnt,points[0]);
-        Full_Line_2 l2(points[1],pnt);
-        Direction_2 d1(l1.perpendicular(points[0]));
-        Direction_2 d2(l2.perpendicular(points[1]));
 
-        Polychainline pcl(d1, points, points+npts, d2);
-
+        Polychainline pcl(dinc, points, points+npts, dout);
         return pcl;
       }//end of horizontal segment case
-      else if(q.supporting_site().segment().is_vertical()){
+      else if(q.supporting_site().segment().is_vertical()) {
         //segment site is vertical
         // phor is the projection of pnt on seg
+        npts = 2;
         Point_2 phor;
         phor = Point_2(lseg.x_at_y(pnt.y()), pnt.y());
 
@@ -235,30 +229,22 @@ private:
         FT half = FT(0.5);
         FT seglenhalf ( half * CGAL::abs(pnt.x()-phor.x()) );
 
-        if (lseg.has_on_positive_side(pnt)) {
-          points[0]= (compare_y_2(seg.source(),seg.target())==SMALLER)
-          ? Point_2(m.x(), m.y() + seglenhalf)
-          : Point_2(m.x(), m.y() - seglenhalf);
-          points[1]= (compare_y_2(seg.source(),seg.target())==SMALLER)
-          ? Point_2(m.x(), m.y() - seglenhalf)
-          : Point_2(m.x(), m.y() + seglenhalf);
-        }else {//q is on the negative side of lseg i.e right turn
-          points[0]= (compare_y_2(seg.source(),seg.target())==SMALLER)
-          ? Point_2(m.x(), m.y() - seglenhalf)
-          : Point_2(m.x(), m.y() + seglenhalf);
-          points[1]= (compare_y_2(seg.source(),seg.target())==SMALLER)
-          ? Point_2(m.x(), m.y() + seglenhalf)
-          : Point_2(m.x(), m.y() - seglenhalf);
+        Direction_2 dinc, dout;
+
+        Comparison_result cmp = compare_x_2(pnt, phor);
+        if (cmp == LARGER) {
+          points[0] = Point_2(m.x(), m.y() - seglenhalf);
+          points[1] = Point_2(m.x(), m.y() + seglenhalf);
+          dinc = Direction_2 ( +1, -1 );
+          dout = Direction_2 ( +1, +1 );
+        } else {
+          points[0] = Point_2(m.x(), m.y() + seglenhalf);
+          points[1] = Point_2(m.x(), m.y() - seglenhalf);
+          dinc = Direction_2 ( -1, +1 );
+          dout = Direction_2 ( -1, -1 );
         }
-        //Compute Direction
-        npts = 2;
-        Full_Line_2 l1(pnt,points[0]);
-        Full_Line_2 l2(points[1],pnt);
-        Direction_2 d1(l1.perpendicular(points[0]));
-        Direction_2 d2(l2.perpendicular(points[1]));
 
-        Polychainline pcl(d1, points, points+npts, d2);
-
+        Polychainline pcl(dinc, points, points+npts, dout);
         return pcl;
       }// end of the vertical segment case
       else {//the segment is neither horizontal nor vertical
