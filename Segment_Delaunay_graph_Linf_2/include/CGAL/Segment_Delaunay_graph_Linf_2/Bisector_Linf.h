@@ -322,18 +322,6 @@ private:
           }
         }//end of pcfirst and pclast
 
-        //compute pmid and then pcmid = mid point of pmid and pnt
-        Full_Line_2 lmid(pnt,pcfirst);
-        Full_Line_2 lmidp = lmid.perpendicular(pnt);
-        CGAL::Object pmidobject = intersection(lmidp, lseg);
-        Point_2 pmid;
-        if(CGAL::assign(pmid, pmidobject)){
-          points[1] = midpoint(pmid, pnt);
-        }
-        npts = 3;
-        points[0]=pcfirst;
-        points[2]=pclast;
-
         // compute direction
         Direction_2 d (
             ( CGAL::sign(lseg.a()) == NEGATIVE ? +1 : -1 ) ,
@@ -341,6 +329,20 @@ private:
         if (side == ON_POSITIVE_SIDE) {
           d = -d;
         }
+
+        //compute pmid and then pcmid = mid point of pmid and pnt
+        Full_Line_2 lmidp (pnt, d);
+        CGAL::Object pmidobject = intersection(lmidp, lseg);
+        Point_2 pmid;
+        if(CGAL::assign(pmid, pmidobject)){
+          points[1] = midpoint(pmid, pnt);
+        } else {
+          CGAL_assertion(false);
+          CGAL_error();
+        }
+        npts = 3;
+        points[0]=pcfirst;
+        points[2]=pclast;
 
         Polychainline pcl(d, points, points+npts, d);
 
