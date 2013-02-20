@@ -20,6 +20,8 @@
 #ifndef CGAL_COMBINATORIAL_MAP_CONSTRUCTORS_H
 #define CGAL_COMBINATORIAL_MAP_CONSTRUCTORS_H 1
 
+#include <CGAL/Combinatorial_map_basic_operations.h>
+
 namespace CGAL {
 
   /** @file Combinatorial_map_constructors.h
@@ -64,6 +66,32 @@ namespace CGAL {
     return start;
   }
 
+/** Test if a face is a combinatorial polygon of length alg
+ *  (a cycle of alg darts beta1 links together).
+ * @param amap the used combinatorial map.
+ * @param adart an intial dart
+ * @return true iff the face containing adart is a polygon of length alg.
+ */
+template < class Map >
+bool is_face_combinatorial_polygon(const Map& /*amap*/,
+                                   typename Map::Dart_const_handle adart,
+                                   unsigned int alg)
+{
+  CGAL_assertion(alg>0);
+  CGAL_assertion(adart!=NULL);
+
+  unsigned int nb = 0;
+  typename Map::Dart_const_handle cur = adart;
+  do
+  {
+    ++nb;
+    if ( cur==Map::null_dart_handle ) return false; // Open face
+    cur = cur->beta(1);
+  }
+  while( cur!=adart );
+  return (nb==alg);
+}
+
   /** Create a combinatorial tetrahedron from 4 triangles.
    * @param amap the used combinatorial map.
    * @param d1 a dart onto a first triangle.
@@ -89,6 +117,45 @@ namespace CGAL {
 
     return d1;
   }
+
+/** Test if a volume is a combinatorial tetrahedron.
+ * @param amap the used combinatorial map.
+ * @param adart an intial dart
+ * @return true iff the volume containing adart is a combinatorial tetrahedron.
+ */
+template < class Map >
+bool is_volume_combinatorial_tetrahedron(const Map& amap,
+                                         typename Map::Dart_const_handle d1)
+{
+  CGAL_assertion(d1!=NULL);
+
+  typename Map::Dart_const_handle d2 = d1->beta(2);
+  typename Map::Dart_const_handle d3 = d2->beta(0)->beta(2);
+  typename Map::Dart_const_handle d4 = d2->beta(1)->beta(2);
+
+  if ( d1==Map::null_dart_handle || d2==Map::null_dart_handle ||
+       d3==Map::null_dart_handle || d4==Map::null_dart_handle ) return false;
+
+  if ( !is_face_combinatorial_polygon(amap, d1, 3) ||
+       !is_face_combinatorial_polygon(amap, d2, 3) ||
+       !is_face_combinatorial_polygon(amap, d3, 3) ||
+       !is_face_combinatorial_polygon(amap, d4, 3) ) return false;
+
+  // TODO do better with marks (?).
+  if ( belong_to_same_cell<Map,2,1>(amap, d1, d2) ||
+       belong_to_same_cell<Map,2,1>(amap, d1, d3) ||
+       belong_to_same_cell<Map,2,1>(amap, d1, d4) ||
+       belong_to_same_cell<Map,2,1>(amap, d2, d3) ||
+       belong_to_same_cell<Map,2,1>(amap, d2, d4) ||
+       belong_to_same_cell<Map,2,1>(amap, d3, d4) ) return false;
+
+  if ( amap.beta(d1,1,2)!=amap.beta(d3,0) ||
+       amap.beta(d4,0,2)!=amap.beta(d3,1) ||
+       amap.beta(d4,1,2)!=amap.beta(d1,0) ) return false;
+
+  return true;
+}
+
 
   /** Create a new combinatorial tetrahedron.
    * @param amap the used combinatorial map.
@@ -155,6 +222,63 @@ namespace CGAL {
 
     return d1;
   }
+
+/** Test if a volume is a combinatorial hexahedron.
+ * @param amap the used combinatorial map.
+ * @param adart an intial dart
+ * @return true iff the volume containing adart is a combinatorial hexahedron.
+ */
+template < class Map >
+bool is_volume_combinatorial_hexahedron(const Map& amap,
+                                        typename Map::Dart_const_handle d1)
+{
+  CGAL_assertion(d1!=NULL);
+
+  typename Map::Dart_const_handle d2 = d1->beta(1)->beta(1)->beta(2);
+  typename Map::Dart_const_handle d3 = d2->beta(1)->beta(1)->beta(2);
+  typename Map::Dart_const_handle d4 = d3->beta(1)->beta(1)->beta(2);
+  typename Map::Dart_const_handle d5 = d1->beta(0)->beta(2);
+  typename Map::Dart_const_handle d6 = d4->beta(1)->beta(2);
+
+  if ( d1==Map::null_dart_handle || d2==Map::null_dart_handle ||
+       d3==Map::null_dart_handle || d4==Map::null_dart_handle ||
+       d5==Map::null_dart_handle || d6==Map::null_dart_handle ) return false;
+
+  if (!is_face_combinatorial_polygon(amap, d1, 4) ||
+      !is_face_combinatorial_polygon(amap, d2, 4) ||
+      !is_face_combinatorial_polygon(amap, d3, 4) ||
+      !is_face_combinatorial_polygon(amap, d4, 4) ||
+      !is_face_combinatorial_polygon(amap, d5, 4) ||
+      !is_face_combinatorial_polygon(amap, d6, 4) ) return false;
+
+  // TODO do better with marks.
+  if ( belong_to_same_cell<Map,2,1>(amap, d1, d2) ||
+       belong_to_same_cell<Map,2,1>(amap, d1, d3) ||
+       belong_to_same_cell<Map,2,1>(amap, d1, d4) ||
+       belong_to_same_cell<Map,2,1>(amap, d1, d5) ||
+       belong_to_same_cell<Map,2,1>(amap, d1, d6) ||
+       belong_to_same_cell<Map,2,1>(amap, d2, d3) ||
+       belong_to_same_cell<Map,2,1>(amap, d2, d4) ||
+       belong_to_same_cell<Map,2,1>(amap, d2, d5) ||
+       belong_to_same_cell<Map,2,1>(amap, d2, d6) ||
+       belong_to_same_cell<Map,2,1>(amap, d3, d4) ||
+       belong_to_same_cell<Map,2,1>(amap, d3, d5) ||
+       belong_to_same_cell<Map,2,1>(amap, d3, d6) ||
+       belong_to_same_cell<Map,2,1>(amap, d4, d5) ||
+       belong_to_same_cell<Map,2,1>(amap, d4, d6) ||
+       belong_to_same_cell<Map,2,1>(amap, d5, d6) )
+    return false;
+
+  if ( amap.beta(d1,2)    !=amap.beta(d4,1,1) ||
+       amap.beta(d1,1,2)  !=amap.beta(d6,0)   ||
+       amap.beta(d3,1,2)  !=amap.beta(d6,1)   ||
+       amap.beta(d3,0,2)  !=amap.beta(d5,1,1) ||
+       amap.beta(d6,1,1,2)!=amap.beta(d2,1)   ||
+       amap.beta(d5,0,2)  !=amap.beta(d4,0)   ||
+       amap.beta(d5,1,2)  !=amap.beta(d2,0) ) return false;
+
+  return true;
+}
 
   /** Create a new combinatorial hexahedron.
    * @param amap the used combinatorial map.
