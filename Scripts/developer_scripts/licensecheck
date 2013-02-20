@@ -411,7 +411,7 @@ EOF
 
 sub version {
     print <<"EOF";
-This is $progname, from the Debian devscripts package, version 2.13.0
+This is $progname, from the Debian devscripts package, version (2.13.1) UNRELEASED
 Copyright (C) 2007, 2008 by Adam D. Barratt <adam\@adam-barratt.org.uk>; based
 on a script of the same name from the KDE SDK by <dfaure\@kde.org>.
 
