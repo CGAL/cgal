@@ -618,7 +618,7 @@ public:
   }
 
   // REMOVE
-  void remove(Vertex_handle v);
+  void remove(Vertex_handle v, bool *p_could_lock_zone = 0);
 
   // return new cells (internal)
   template <class OutputItCells>
@@ -630,10 +630,49 @@ public:
   {
     CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
     size_type n = number_of_vertices();
-    while (first != beyond) {
-      remove(*first);
-      ++first;
+
+    WallClockTimer t; // CJTODO TEMP
+    
+    // Parallel
+#ifdef CGAL_LINKED_WITH_TBB
+    if (is_parallel())
+    {
+      std::vector<Vertex_handle> vertices(first, beyond);
+
+      // CJTODO: lambda functions OK?
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>( 0, vertices.size()),
+        [&] (const tbb::blocked_range<size_t>& r)
+        {
+          for( size_t i_vertex = r.begin() ; i_vertex != r.end() ; ++i_vertex)
+          {
+            bool could_lock_zone;
+            do
+            {
+              remove(vertices[i_vertex], &could_lock_zone);
+              this->unlock_all_elements();
+              /*if (!could_lock_zone)
+              {
+                if (r.end() - i_vertex > 2)
+                  std::swap(vertices[i_vertex], vertices[i_vertex + 1 + (std::rand()%(r.end() - i_vertex - 2))]);
+                else if (i_vertex != r.end()-1)
+                  std::swap(vertices[i_vertex], vertices[i_vertex + 1]);
+              }*/
+            } while (!could_lock_zone);
+          }
+        });
     }
+    // Sequential
+    else
+#endif // CGAL_LINKED_WITH_TBB
+    {
+      while (first != beyond) {
+        remove(*first);
+        ++first;
+      }
+    }
+
+    std::cerr << "Points removed in " << t.elapsed() << " seconds." << std::endl;
     return n - number_of_vertices();
   }
 	
@@ -1050,11 +1089,11 @@ public:
 template < class Gt, class Tds, class Lds >
 void
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
-remove(Vertex_handle v)
+remove(Vertex_handle v, bool *p_could_lock_zone)
 {
   Self tmp;
   Vertex_remover<Self> remover (tmp);
-  Tr_Base::remove(v,remover);
+  Tr_Base::remove(v, remover, p_could_lock_zone);
 
   CGAL_triangulation_expensive_postcondition(is_valid());
 }

@@ -111,7 +111,7 @@ protected:
   void swap(Triangulation_3_base<Concurrency_tag,Lock_data_structure> &tr){}
   
 public:
-  bool is_parallel()
+  bool is_parallel() const
   {
     return false;
   }
@@ -146,8 +146,8 @@ public:
   {
   }
 
-  void unlock_all_elements() {}
-  template <typename P3> void unlock_all_elements_but_one_point(const P3 &) {}
+  void unlock_all_elements() const {}
+  template <typename P3> void unlock_all_elements_but_one_point(const P3 &) const {}
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -176,7 +176,7 @@ protected:
   
 public:
 
-  bool is_parallel()
+  bool is_parallel() const
   {
     return m_lock_ds != 0;
   }
@@ -262,26 +262,26 @@ public:
     return m_lock_ds;
   }
 
-  void set_lock_data_structure(Lock_data_structure *p_lock_ds)
+  void set_lock_data_structure(Lock_data_structure *p_lock_ds) const
   {
     m_lock_ds = p_lock_ds;
   }
 
-  void unlock_all_elements()
+  void unlock_all_elements() const
   {
     if (m_lock_ds)
       m_lock_ds->unlock_all_tls_locked_cells();
   }
 
   template <typename P3>
-  void unlock_all_elements_but_one_point(const P3 &point)
+  void unlock_all_elements_but_one_point(const P3 &point) const
   {
     if (m_lock_ds)
       m_lock_ds->unlock_all_tls_locked_cells_but_one_point(point);
   }
 
 protected:
-  Lock_data_structure *m_lock_ds;
+  mutable Lock_data_structure *m_lock_ds;
 };
 #endif // CGAL_LINKED_WITH_TBB
 
@@ -1443,6 +1443,9 @@ private:
 
   void make_hole_3D( Vertex_handle v, std::map<Vertex_triple,Facet>& outer_map,
       std::vector<Cell_handle> & hole);
+  // For parallel code
+  void make_hole_3D( Vertex_handle v, std::map<Vertex_triple,Facet>& outer_map,
+      std::vector<Cell_handle> & hole, bool *p_could_lock_zone);
 
   template < class VertexRemover >
   VertexRemover& remove_dim_down(Vertex_handle v, VertexRemover &remover);
@@ -1451,7 +1454,8 @@ private:
   template < class VertexRemover >
   VertexRemover& remove_2D(Vertex_handle v, VertexRemover &remover);
   template < class VertexRemover >
-  VertexRemover& remove_3D(Vertex_handle v, VertexRemover &remover);
+  VertexRemover& remove_3D(Vertex_handle v, VertexRemover &remover, 
+                           bool *p_could_lock_zone = 0);
 
   template < class VertexRemover, class OutputItCells  >
   VertexRemover& remove_dim_down(Vertex_handle v, VertexRemover &remover,
@@ -1733,6 +1737,55 @@ public:
   {
     return _tds.incident_cells(v, cells);
   }
+  
+  bool
+  try_lock_and_get_incident_cells(Vertex_handle v,
+                                  std::vector<Cell_handle>& cells) const
+  {
+    Cell_handle d = v->cell();
+    if (!try_lock_cell(d)) // LOCK
+    {
+      this->unlock_all_elements();
+      return false;
+    }
+    cells.push_back(d);
+    d->tds_data().mark_in_conflict();
+    int head=0;
+    int tail=1;
+    do {
+      Cell_handle c = cells[head];
+
+      for (int i=0; i<4; ++i) {
+        if (c->vertex(i) == v)
+          continue;
+        Cell_handle next = c->neighbor(i);
+
+        if (!try_lock_cell(next)) // LOCK
+        {
+          BOOST_FOREACH(Cell_handle& ch,
+            std::make_pair(cells.begin(), cells.end()))
+          {
+            ch->tds_data().clear();
+          }
+          cells.clear();
+          this->unlock_all_elements();
+          return false;
+        }
+        if (! next->tds_data().is_clear())
+          continue;
+        cells.push_back(next);
+        ++tail;
+        next->tds_data().mark_in_conflict();
+      }
+      ++head;
+    } while(head != tail);
+    BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
+    {
+      ch->tds_data().clear();
+    }
+    return true;
+  }
+
 
   template <class OutputIterator>
   OutputIterator
@@ -4212,6 +4265,38 @@ make_hole_3D( Vertex_handle v,
 }
 
 template <class Gt, class Tds, class Lds>
+void
+Triangulation_3<Gt,Tds,Lds>::
+make_hole_3D( Vertex_handle v,
+	      std::map<Vertex_triple,Facet>& outer_map,
+	      std::vector<Cell_handle> & hole,
+        bool *p_could_lock_zone)
+{
+  CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
+
+  if (!try_lock_and_get_incident_cells(v, hole))
+  {
+    *p_could_lock_zone = false;
+    return;
+  }
+
+  for (typename std::vector<Cell_handle>::iterator cit = hole.begin(),
+       end = hole.end(); cit != end; ++cit) {
+    int indv = (*cit)->index(v);
+    Cell_handle opp_cit = (*cit)->neighbor( indv );
+    Facet f(opp_cit, opp_cit->index(*cit));
+    Vertex_triple vt = make_vertex_triple(f);
+    make_canonical(vt);
+    outer_map[vt] = f;
+    for (int i=0; i<4; i++)
+      if ( i != indv )
+	(*cit)->vertex(i)->set_cell(opp_cit);
+  }
+
+  *p_could_lock_zone = true;
+}
+
+template <class Gt, class Tds, class Lds>
 template < class VertexRemover >
 VertexRemover&
 Triangulation_3<Gt,Tds,Lds>::
@@ -4274,7 +4359,7 @@ template <class Gt, class Tds, class Lds>
 template < class VertexRemover >
 VertexRemover&
 Triangulation_3<Gt,Tds,Lds>::
-remove_3D(Vertex_handle v, VertexRemover &remover)
+remove_3D(Vertex_handle v, VertexRemover &remover, bool *p_could_lock_zone)
 {
   std::vector<Cell_handle> hole;
   hole.reserve(64);
@@ -4285,7 +4370,16 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
   Vertex_triple_Facet_map outer_map;
   Vertex_triple_Facet_map inner_map;
 
-  make_hole_3D(v, outer_map, hole);
+  if (p_could_lock_zone)
+  {
+    make_hole_3D(v, outer_map, hole, p_could_lock_zone);
+    if (*p_could_lock_zone == false)
+      return remover;
+  }
+  else
+  {
+    make_hole_3D(v, outer_map, hole);
+  }
   CGAL_assertion(remover.hidden_points_begin() ==
       remover.hidden_points_end() );
 
@@ -4418,10 +4512,16 @@ template < class VertexRemover >
 void
 Triangulation_3<Gt, Tds, Lds>::
 remove(Vertex_handle v, VertexRemover &remover,
-       bool *p_could_lock_zone) { // CJTODO HERE
+       bool *p_could_lock_zone) {
   CGAL_triangulation_precondition( v != Vertex_handle());
   CGAL_triangulation_precondition( !is_infinite(v));
   CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );
+  
+  if (p_could_lock_zone && !try_lock_vertex(v))
+  {
+    p_could_lock_zone = false;
+    return;
+  }
 
   if (test_dim_down (v)) {
     remove_dim_down (v, remover);
@@ -4430,7 +4530,7 @@ remove(Vertex_handle v, VertexRemover &remover,
     switch (dimension()) {
     case 1: remove_1D (v, remover); break;
     case 2: remove_2D (v, remover); break;
-    case 3: remove_3D (v, remover); break;
+    case 3: remove_3D (v, remover, p_could_lock_zone); break;
     default:
       CGAL_triangulation_assertion (false);
     }
