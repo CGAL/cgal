@@ -894,9 +894,13 @@ public:
     if (dimension() == 1) {
       CGAL_triangulation_assertion( number_of_vertices() >= 3);
       Cell_handle n0 = v->cell();
-      Cell_handle n1 = n0->neighbor(1-n0->index(v));
-      if(!f(n0->vertex(1-n0->index(v)))) *edges++ = Edge(n0, n0->index(v), 1-n0->index(v));
-      if(!f(n1->vertex(1-n1->index(v)))) *edges++ = Edge(n1, n1->index(v), 1-n1->index(v));
+      const int index_v_in_n0 = n0->index(v);
+      CGAL_assume(index_v_in_n0 <= 1);
+      Cell_handle n1 = n0->neighbor(1-index_v_in_n0);
+      const int index_v_in_n1 = n1->index(v);
+      CGAL_assume(index_v_in_n1 <= 1);
+      if(!f(n0->vertex(1-index_v_in_n0))) *edges++ = Edge(n0, n0->index(v), 1-index_v_in_n0);
+      if(!f(n1->vertex(1-index_v_in_n1))) *edges++ = Edge(n1, n1->index(v), 1-index_v_in_n1);
       return edges;
     }
     return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
@@ -931,9 +935,13 @@ public:
     if (dimension() == 1) {
       CGAL_triangulation_assertion( number_of_vertices() >= 3);
       Cell_handle n0 = v->cell();
-      Cell_handle n1 = n0->neighbor(1-n0->index(v));
-      Vertex_handle v1 = n0->vertex(1-n0->index(v));
-      Vertex_handle v2 = n1->vertex(1-n1->index(v));
+      const int index_v_in_n0 = n0->index(v);
+      CGAL_assume(index_v_in_n0 <= 1);
+      Cell_handle n1 = n0->neighbor(1-index_v_in_n0);
+      const int index_v_in_n1 = n1->index(v);
+      CGAL_assume(index_v_in_n1 <= 1);
+      Vertex_handle v1 = n0->vertex(1-index_v_in_n0);
+      Vertex_handle v2 = n1->vertex(1-index_v_in_n1);
       if(!f(v1)) *vertices++ = v1;
       if(!f(v2)) *vertices++ = v2;
       return vertices;
@@ -2412,6 +2420,7 @@ insert_increase_dimension(Vertex_handle star)
     {
       Cell_handle c = star->cell();
       int i = c->index(star); // i== 0 or 1
+      CGAL_assume(i<=1);
       int j = (1-i);
       Cell_handle d = c->neighbor(j);
 	
@@ -2610,6 +2619,7 @@ remove_degree_2(Vertex_handle v)
 
     c0 = v->cell();
     i0 = c0->index(v);
+    CGAL_assume(i0<=1);
     c1 = c0->neighbor(1-i0);
     i1 = c1->index(v);
 
