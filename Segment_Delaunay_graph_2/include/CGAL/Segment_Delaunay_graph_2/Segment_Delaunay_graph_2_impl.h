@@ -527,13 +527,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 	CGAL_assertion(  !is_infinite( ff1->vertex(ccw_v) )  );
 	CGAL_assertion( ff1->vertex(ccw_v)->site().is_point() );
 	sv_ep = ff1->vertex(ccw_v)->site();
+        os1 = oriented_side(v->site(), sv_ep, sitev_supp, t);
       } else {
 	CGAL_assertion(  !is_infinite( ff1->vertex( cw_v) )  );
 	CGAL_assertion( ff1->vertex( cw_v)->site().is_point() );
 	sv_ep = ff1->vertex( cw_v)->site();
+        os1 = oriented_side(sv_ep, v->site(), sitev_supp, t);
       }
-
-      os1 = oriented_side(sv_ep, sitev_supp, t);
     } else {
       os1 = oriented_side(fc1->vertex(0)->site(),
 			  fc1->vertex(1)->site(),
@@ -551,13 +551,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 	CGAL_assertion(  !is_infinite( ff2->vertex(ccw_v) )  );
 	CGAL_assertion( ff2->vertex(ccw_v)->site().is_point() );
 	sv_ep = ff2->vertex(ccw_v)->site();
+        os2 = oriented_side(v->site(), sv_ep, sitev_supp, t);
       } else {
 	CGAL_assertion(  !is_infinite( ff2->vertex( cw_v) )  );
 	CGAL_assertion( ff2->vertex( cw_v)->site().is_point() );
 	sv_ep = ff2->vertex( cw_v)->site();
+        os2 = oriented_side(sv_ep, v->site(), sitev_supp, t);
       }
-
-      os2 = oriented_side(sv_ep, sitev_supp, t);
     } else {
       os2 = oriented_side(fc2->vertex(0)->site(),
 			  fc2->vertex(1)->site(),

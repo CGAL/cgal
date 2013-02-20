@@ -1657,12 +1657,14 @@ protected:
   }
 
   inline Oriented_side
-  oriented_side(const Storage_site_2& q, const Storage_site_2& supp,
+  oriented_side(const Storage_site_2& s1, const Storage_site_2& s2,
+                const Storage_site_2& supp,
 		const Storage_site_2& p) const
   {
-    CGAL_precondition( q.is_point() && supp.is_segment() && p.is_point() );
+    CGAL_precondition( supp.is_segment() && p.is_point() );
     return
-      geom_traits().oriented_side_2_object()(q.site(), supp.site(), p.site());
+      geom_traits().oriented_side_2_object()(
+          s1.site(), s2.site(), supp.site(), p.site());
   }
 
   inline Oriented_side
@@ -1869,10 +1871,11 @@ protected:
   }
 
   inline Oriented_side
-  oriented_side(const Site_2& q, const Site_2& supp, const Site_2& p) const
+  oriented_side(const Site_2& s1, const Site_2&s2,
+                const Site_2& supp, const Site_2& p) const
   {
-    CGAL_precondition( q.is_point() && supp.is_segment() && p.is_point() );
-    return geom_traits().oriented_side_2_object()(q, supp, p);
+    CGAL_precondition( supp.is_segment() && p.is_point() );
+    return geom_traits().oriented_side_2_object()(s1, s2, supp, p);
   }
 
   inline Oriented_side
