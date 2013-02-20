@@ -44,8 +44,6 @@ private:
 
 private:
   result_type bisector(const Site_2& p, const Site_2& q) const {
-    //CGAL_precondition( p.is_segment() && q.is_segment() );
-
     if (p.is_point() and q.is_point()) {
       return bisector_PP(p, q);
     } else if (p.is_point() and q.is_segment()) {
@@ -216,9 +214,6 @@ private:
           ? Point_2(m.x() + seglenhalf, m.y())
           : Point_2(m.x() - seglenhalf, m.y());
         }
-       // if (p.is_segment()) {
-        //  std::swap(points[1], points[2]);
-        //}
         //Compute Direction
         npts = 2;
         Full_Line_2 l1(pnt,points[0]);
@@ -255,9 +250,6 @@ private:
           ? Point_2(m.x(), m.y() + seglenhalf)
           : Point_2(m.x(), m.y() - seglenhalf);
         }
-        //if (p.is_segment()) {
-        //  std::swap(points[1], points[2]);
-        //}
         //Compute Direction
         npts = 2;
         Full_Line_2 l1(pnt,points[0]);
@@ -355,9 +347,6 @@ private:
         npts = 3;
         points[0]=pcfirst;
         points[2]=pclast;
-        //if (p.is_segment()) {
-        //  std::swap(points[1], points[3]);
-        //}
 
         // compute direction
         Direction_2 d (
