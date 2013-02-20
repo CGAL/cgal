@@ -1381,6 +1381,28 @@ namespace for the XML file to be processed properly.  -->
           </list>
         </doxygen>
       </project>
+
+      <project>
+        <name>Triangulated Surface Mesh Deformation</name>
+        <input>../Surface_modeling/doc/Surface_modeling</input>
+        <input>../Surface_modeling/include</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Surface_modeling/include</string>
+          <string name="STRIP_FROM_INC_PATH">../Surface_modeling/include/</string>
+          <string name="GENERATE_TAGFILE">./tags/Surface_modeling.tag</string>
+          <string name="IMAGE_PATH">../Surface_modeling/doc/Surface_modeling/fig</string>
+          <string name="EXAMPLE_PATH">../Surface_modeling/examples</string>
+          <bool name="EXTRACT_ALL">false</bool>
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <bool name="WARN_IF_UNDOCUMENTED">false</bool>
+          <bool name="SHOW_INCLUDE_FILES">true</bool>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/BGL.tag=../../CGAL.CGAL.CGAL-and-the-Boost-Graph-Library/html</item>
+          </list>
+        </doxygen>
+      </project>
+
       <!-- subprojects end -->
     </project>
     
@@ -1491,6 +1513,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig</item>
           <item>../Stream_lines_2/doc/Stream_lines_2/fig</item>
           <item>../Stream_support/doc/IOstream/fig</item>
+          <item>../Surface_modeling/doc/Surface_modeling/fig</item>
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
@@ -1572,6 +1595,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes/html</item>
           <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGAL.Surface-Reconstruction-from-Point-Sets/html</item>
+          <item>./tags/Surface_modeling.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Deformation/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>

@@ -34,6 +34,8 @@
 
 namespace CGAL {
 
+/// \ingroup PkgSurfaceModeling
+/// The deformation class
 template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
           class VertexIndexMap, class EdgeIndexMap>
 class Deform_mesh
@@ -291,9 +293,6 @@ public:
   }
 
   // Before we can model we have to do some precomputation
-  ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Definite positive sparse linear solver.
   void preprocess()
   {
     CGAL_TRACE_STREAM << "Calls preprocess()\n";
@@ -327,9 +326,6 @@ public:
 
 
   // Assemble Laplacian matrix A of linear system A*X=B
-  ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
   void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
     /// assign cotangent Laplacian to ros vertices

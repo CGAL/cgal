@@ -1,0 +1,29 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_SurfaceModeling
+
+\cgalAutoToc
+\author TODO
+
+\section Surface_Modeling_Intro Introduction
+The introduction
+
+\section Surface_Modeling_Overview Overview 
+The manual overview
+
+\section Surface_Modeling_API API
+API description with examples
+
+\section Surface_Modeling_Demo How to use the demo
+Explain how to use the demo
+
+\section Surface_Modeling_History Implementation History
+Initial version during gsoc11 with Yin Xu with Andreas Fabri and Olga Sorkine as mentor.
+Ilker &O. Yaz took over the finalization of the package.
+
+*/
+
+} /* namespace CGAL */
+
