@@ -187,5 +187,5 @@ bool Polyhedron_demo_gocad_plugin::save(const Scene_item*, QFileInfo)
 }
 
 #include <QtPlugin>
-Q_EXPORT_PLUGIN2(Polyhedron_demo_gocad_plugin, Polyhedron_demo_gocad_plugin);
+Q_EXPORT_PLUGIN2(Polyhedron_demo_gocad_plugin, Polyhedron_demo_gocad_plugin)
 #include "Polyhedron_demo_gocad_plugin.moc"
