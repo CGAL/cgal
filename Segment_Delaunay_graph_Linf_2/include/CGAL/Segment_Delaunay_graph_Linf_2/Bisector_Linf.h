@@ -183,8 +183,10 @@ private:
       
     }
     else {
+      Oriented_side side = lseg.oriented_side(pnt);
+
       // point pp sould not lie on the supporting line of q
-      CGAL_assertion(not lseg.has_on(pnt));
+      CGAL_assertion(not (side == ON_ORIENTED_BOUNDARY));
       
       Point_2 points[3];
       unsigned int npts;
@@ -358,10 +360,13 @@ private:
         //CGAL_SDG_DEBUG(std::cout << "SANDEEP: point1 = " << points[0] << 
         //" point2 = " << points[1] << " point3 = " << points[2] << std::endl;);
 
-        //Compute Direction
-        Full_Line_2 ld(pnt,pcfirst);
-       
-        Direction_2 d(ld.perpendicular(pcfirst));
+        // compute direction
+        Direction_2 d (
+            ( CGAL::sign(lseg.a()) == NEGATIVE ? +1 : -1 ) ,
+            ( CGAL::sign(lseg.b()) == NEGATIVE ? +1 : -1 )  ) ;
+        if (side == ON_POSITIVE_SIDE) {
+          d = -d;
+        }
                
         Polychainline pcl(d, points, points+npts, d);
        
