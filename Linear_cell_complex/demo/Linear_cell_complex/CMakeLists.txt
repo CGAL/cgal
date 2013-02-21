@@ -19,9 +19,9 @@ endif()
 # SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
 ## To add an is_valid test after each operation (only in debug mode)
-add_definitions("-DCGAL_CMAP_TEST_VALID_REMOVALS")
-add_definitions("-DCGAL_CMAP_TEST_VALID_CONTRACTIONS")
-#add_definitions("-DCGAL_CMAP_TEST_VALID_INSERTIONS")
+# add_definitions("-DCGAL_CMAP_TEST_VALID_REMOVALS")
+# add_definitions("-DCGAL_CMAP_TEST_VALID_CONTRACTIONS")
+# add_definitions("-DCGAL_CMAP_TEST_VALID_INSERTIONS")
 
 # Option allowing to profile each operation of the demo (cout times on stdout).
 add_definitions(-DCGAL_PROFILE_LCC_DEMO)
