@@ -31,7 +31,7 @@
 
 #if defined(CGAL_NO_DEPRECATED_CODE)
 // No deprecated code.
-CGAL_static_assertion_msg(false, "A deprecated header has been and included and CGAL_NO_DEPRECATED_CODE is defined.");
+CGAL_static_assertion_msg(false, "A deprecated header has been included and CGAL_NO_DEPRECATED_CODE is defined.");
 #endif // CGAL_NO_DEPRECATED_CODE
 
 // Build the message
