@@ -725,22 +725,6 @@ public:
 
     }
 
-    if (p.is_segment() and q.is_segment()) {
-      // philaris: this code should never be executed
-      CGAL_assertion(not (p.is_segment() and q.is_segment()));
-      CGAL_SDG_DEBUG(std::cout
-          << "debug construct bisector ray: p, q are segments"
-          << std::endl ; ) ;
-      Bisector_Linf_Type bisector_linf;
-      Polychainline full_bisec = bisector_linf(p,q);
-      Point_2 points[1];
-      points[0] = v;
-      Polychainray pcr(points, points+1, full_bisec.get_outgoing());
-      CGAL_SDG_DEBUG( std::cout << "debug construct bisector ray is "
-          << pcr << std::endl; );
-      return pcr;
-    }
-
     // the following code should never be executed
     CGAL_SDG_DEBUG( std::cout
         << "debug construct bisector ray error " << std::endl; );
