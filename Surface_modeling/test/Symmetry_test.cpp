@@ -1,5 +1,3 @@
-#include "StdAfx.h"
-
 #include <vector>
 #include <iostream>
 #include <fstream>
