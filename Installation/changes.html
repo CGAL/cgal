@@ -142,6 +142,18 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <li> Update requirements of the concepts <code>AABBTraits</code> and <code>AABBGeomTraits</code> to match the implementation of the package.
 </ul>
 
+<h3>2D Arrangements</h3>
+<ul>
+<li> Enhanced the 2D-arrangements demonstration program and ported it
+  to Qt4. The new demonstration program makes use of the CGAL Graphics
+  View framework, in which the 2D primitives are individually
+  represented as objects in a scene. (The implementations of several
+  demos in CGAL already make use of this framework.) This project was
+  carried out as part of the 2012 Google Summer of Code program.</li>
+<li>Fixed a bug in the Walk-Along-A-Line point location strategy for
+  arrangements induced by unbounded curves.</li>
+</ul>
+
 <h3>2D Triangulations</h3>
 <ul>
 <li> Add mechanism to avoid call stack overflow in <code>Delaunay_triangulation_2</code> and <code>Constrained_Delaunay_triangulation_2</code>.
