@@ -10,8 +10,6 @@
 #include <CGAL/Polychain_2.h>
 #include <CGAL/intersections.h>
 
-#include <CGAL/Segment_Delaunay_graph_Linf_2/Bisector_Linf.h>
-
 
 namespace CGAL {
 
@@ -422,8 +420,6 @@ public:
   typedef CGAL::Polychainline_2<Gt>            Polychainline;
   typedef CGAL::Polychainray_2<Gt>             Polychainray;
   typedef Polychainray                         result_type;
-
-  typedef Bisector_Linf<Gt>                    Bisector_Linf_Type;
 
   typedef typename Gt::Compare_x_2       Compare_x_2;
   typedef typename Gt::Compare_y_2       Compare_y_2;
