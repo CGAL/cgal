@@ -20,6 +20,8 @@
 #ifndef CGAL_DEFORM_MESH_H
 #define CGAL_DEFORM_MESH_H
 
+#include <CGAL/internal/Surface_modeling/Weights.h>
+
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
@@ -36,8 +38,14 @@ namespace CGAL {
 
 /// \ingroup PkgSurfaceModeling
 /// The deformation class
-template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
-          class VertexIndexMap, class EdgeIndexMap>
+template <
+  class Polyhedron, 
+  class SparseLinearAlgebraTraits_d, 
+  class VertexIndexMap, 
+  class EdgeIndexMap,
+  class PrimaryWeightCalculator = Cotangent_weight<Polyhedron, Cotangent_value_area_weighted<Polyhedron> >,
+  class SecondaryWeightCalculator = Mean_value_weight<Polyhedron>
+  >
 class Deform_mesh
 {
 // Public types
@@ -81,12 +89,15 @@ public:
   unsigned int iterations;                            // number of maximal iterations
   double tolerance;                                   // tolerance of convergence 
 
+  PrimaryWeightCalculator   primary_weight_calculator;
+  SecondaryWeightCalculator secondary_weight_calculator; // will be used when primary returns negative weights
   // Public methods
 public:
 
   // The constructor gets the polyhedron that we will model
   Deform_mesh(Polyhedron& P, const VertexIndexMap& vertex_index_map_, const EdgeIndexMap& edge_index_map_)
-    :polyhedron(P), vertex_index_map(vertex_index_map_), edge_index_map(edge_index_map_)
+    :polyhedron(P), vertex_index_map(vertex_index_map_), edge_index_map(edge_index_map_),
+    primary_weight_calculator(P), secondary_weight_calculator(P)
   {
 
     /////////////////////////////////////////////////////////////////
@@ -167,8 +178,6 @@ public:
   }
 
   // compute cotangent weights of all edges 
- 
-
   void compute_edge_weight()
   {
     // iterate over ros vertices and calculate weights for edges which are incident to ros
@@ -183,11 +192,11 @@ public:
         if( e_idx != 0) { continue; } // we have assigned an id already, which means we also calculted the weight
         
         put(edge_index_map, *e, next_edge_id++);
-        double weight = cot_weight(*e);
+        double weight = primary_weight_calculator(*e);
         // replace cotangent weight by mean-value coordinate
         if ( weight < 0 )
         {
-          weight = mean_value(*e);
+          weight = secondary_weight_calculator(*e);
           edge_weight.push_back(weight);
           // assign the weights to opposite edges
           edge_descriptor e_oppo = CGAL::opposite_edge(*e, polyhedron);   
@@ -195,7 +204,7 @@ public:
           if(e_oppo_idx == 0)
           {
             put(edge_index_map, e_oppo, next_edge_id++);
-            edge_weight.push_back(mean_value(e_oppo));            
+            edge_weight.push_back(secondary_weight_calculator(e_oppo));            
           }
         }
         else
@@ -324,7 +333,6 @@ public:
 
   }
 
-
   // Assemble Laplacian matrix A of linear system A*X=B
   void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
@@ -353,112 +361,6 @@ public:
         else
           A.set_coef(i, i, 1.0, true);
       }
-  }
-
-  
-  // Returns the cotangent weight of specified edge_descriptor
-  double cot_weight(edge_descriptor e)
-  {
-     vertex_descriptor v0 = boost::target(e, polyhedron);
-     vertex_descriptor v1 = boost::source(e, polyhedron);
-     // Only one triangle for border edges
-     if (boost::get(CGAL::edge_is_border, polyhedron, e) ||
-         boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e, polyhedron)))
-     {
-       
-       edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
-       vertex_descriptor v2 = boost::source(e_cw, polyhedron);
-       if (boost::get(CGAL::edge_is_border, polyhedron, e_cw) ||
-           boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e_cw, polyhedron)) )
-       {
-          edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
-          v2 = boost::source(e_ccw, polyhedron);
-       }
-      
-       return ( cot_value(v0, v2, v1)/2.0 );
-     }
-     else
-     {
-        edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
-        vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
-        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
-        vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
-
-        return ( cot_value(v0, v2, v1)/2.0 + cot_value(v0, v3, v1)/2.0 );
-     }
-  }
-
-  // Returns the cotangent value of angle v0_v1_v2
-  double cot_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
-  {
-    
-    Vector vec0 = v1->point() - v2->point();
-    Vector vec1 = v2->point() - v0->point();
-    Vector vec2 = v0->point() - v1->point();
-    double e0_square = vec0.squared_length();
-    double e1_square = vec1.squared_length();
-    double e2_square = vec2.squared_length();
-    double e0 = std::sqrt(e0_square); 
-    double e2 = std::sqrt(e2_square);
-    double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
-    double sin_angle = std::sqrt(1-cos_angle*cos_angle);
-
-    return (cos_angle/sin_angle) / std::sqrt(squared_area(v0->point(), v1->point(), v2->point()));
-
-  }
-
-  // Returns the tangent value of half angle v0_v1_v2/2
-  double half_tan_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
-  {
-
-    Vector vec0 = v1->point() - v2->point();
-    Vector vec1 = v2->point() - v0->point();
-    Vector vec2 = v0->point() - v1->point();
-    double e0_square = vec0.squared_length();
-    double e1_square = vec1.squared_length();
-    double e2_square = vec2.squared_length();
-    double e0 = std::sqrt(e0_square); 
-    double e2 = std::sqrt(e2_square);
-    double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
-    double angle = acos(cos_angle);
-
-    return ( tan(angle/2.0) );
-
-  }
-
-  // Returns the mean-value coordinate of specified edge_descriptor
-  double mean_value(edge_descriptor e)
-  {
-    vertex_descriptor v0 = boost::target(e, polyhedron);
-    vertex_descriptor v1 = boost::source(e, polyhedron);
-    Vector vec = v0->point() - v1->point();
-    double norm = std::sqrt( vec.squared_length() );
-
-    // Only one triangle for border edges
-    if (boost::get(CGAL::edge_is_border, polyhedron, e) ||
-        boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e, polyhedron)))
-    {
-
-      edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
-      vertex_descriptor v2 = boost::source(e_cw, polyhedron);
-      if (boost::get(CGAL::edge_is_border, polyhedron, e_cw) || 
-          boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(e_cw, polyhedron)) )
-      {
-        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
-        v2 = boost::source(e_ccw, polyhedron);
-      }
-
-      return ( half_tan_value(v1, v0, v2)/norm );
-    }
-    else
-    {
-      edge_descriptor e_cw = CGAL::next_edge_cw(e, polyhedron);
-      vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
-      edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
-      vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
-
-      return ( half_tan_value(v1, v0, v2)/norm + half_tan_value(v1, v0, v3)/norm );
-    }
   }
 
   // Set the number of iterations made in operator()
@@ -510,7 +412,7 @@ public:
   // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
   {
-  Eigen::Matrix3d u, v;           // orthogonal matrices 
+    Eigen::Matrix3d u, v;           // orthogonal matrices 
     Eigen::Vector3d w;              // singular values
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
@@ -875,7 +777,8 @@ public:
 #else
       optimal_rotations_svd();
 #endif
-      // for now close energy based termination.
+      /* For now close energy based termination */
+
       // energy_last = energy_this;
       // energy_this = energy();
       //CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
