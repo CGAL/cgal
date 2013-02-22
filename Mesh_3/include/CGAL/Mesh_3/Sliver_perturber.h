@@ -1574,6 +1574,9 @@ enqueue_task(const PVertex &pv,
         this->unlock_all_elements();
         //std::this_thread::yield(); // CJTODO: A TESTER
       } while (!could_lock_zone);
+
+      if ( is_time_limit_reached() )
+        tbb::task::self().cancel_group_execution();
     },
     pv);
 }

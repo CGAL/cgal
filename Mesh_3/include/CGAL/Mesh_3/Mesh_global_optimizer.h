@@ -610,10 +610,8 @@ compute_moves(Moving_vertices_set& moving_vertices)
         }
       }
 
-      // CJTODO TEMP : à remettre (comment ?)
-      // Stop if time_limit_ is reached
-      //if ( is_time_limit_reached() )
-      //  break;
+      if ( is_time_limit_reached() )
+        tbb::task::self().cancel_group_execution();
     });
 
     typename tbb::concurrent_vector<Vertex_handle>::const_iterator it
@@ -782,11 +780,13 @@ update_mesh(const Moves_vector& moves,
 
         this->unlock_all_elements();
 
-        // CJTODO : à remettre (comment ?)
         // Stop if time_limit_ is reached, here we can't return without rebuilding
         // restricted delaunay
-        /*if ( is_time_limit_reached() )
-          break;*/
+        if ( is_time_limit_reached() )
+        {
+          tbb::task::self().cancel_group_execution();
+          break;
+        }
       }
     });
   }

@@ -1506,6 +1506,9 @@ enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
           this->unlock_all_elements();
         } while (!could_lock_zone);
       }
+      
+      if ( is_time_limit_reached() )
+        tbb::task::self().cancel_group_execution();
     },
     value);
 }
