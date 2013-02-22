@@ -945,22 +945,16 @@ public:
           FT half = FT(0.5);
           FT seglenhalf ( half * CGAL::abs(pnt.y()-pver.y()) );
 
-          //positive side is left-turn
-          if (lseg.has_on_positive_side(pnt)) {
-            points[1]= (compare_x_2(seg.source(),seg.target())==SMALLER)
-                       ? Point_2(m.x() + seglenhalf, m.y())
-                       : Point_2(m.x() - seglenhalf, m.y());
-            points[2]= (compare_x_2(seg.source(),seg.target())==SMALLER)
-                       ? Point_2(m.x() - seglenhalf, m.y())
-                       : Point_2(m.x() + seglenhalf, m.y());
-          } else {//pnt is on the negative side of lseg i.e right turn
-            points[1]= (compare_x_2(seg.source(),seg.target())==SMALLER)
-                       ? Point_2(m.x() - seglenhalf, m.y())
-                       : Point_2(m.x() + seglenhalf, m.y());
-            points[2]= (compare_x_2(seg.source(),seg.target())==SMALLER)
-                       ? Point_2(m.x() + seglenhalf, m.y())
-                       : Point_2(m.x() - seglenhalf, m.y());
+          Comparison_result cmp = compare_y_2(pnt, pver);
+          if (cmp == LARGER) {
+            points[1] = Point_2(m.x() + seglenhalf, m.y());
+            points[2] = Point_2(m.x() - seglenhalf, m.y());
+          } else {
+            CGAL_assertion(cmp == SMALLER);
+            points[1] = Point_2(m.x() - seglenhalf, m.y());
+            points[2] = Point_2(m.x() + seglenhalf, m.y());
           }
+
           if (p.is_segment()) {
             std::swap(points[1], points[2]);
           }
@@ -1012,7 +1006,6 @@ public:
           FT seglenhalf ( half * CGAL::abs(pnt.x()-phor.x()) );
 
           npts = 4;
-          Compare_y_2 compare_y_2;
 
           if (lseg.has_on_positive_side(pnt)) {
             points[1]= (compare_y_2(seg.source(),seg.target())==SMALLER)
