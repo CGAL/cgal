@@ -69,7 +69,7 @@ int main ()
 
   // Go over all arrangement vertices and set their colors.
   Arrangement_2::Vertex_iterator            vit;
-  unsigned int                              degree;
+  std::size_t                               degree;
 
   for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
   {

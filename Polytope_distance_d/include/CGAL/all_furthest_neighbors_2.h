@@ -98,7 +98,7 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
 
  // check preconditions:
   int number_of_points(
-    iterator_distance( points_begin, points_end));
+                       static_cast<int>(iterator_distance( points_begin, points_end)));
   CGAL_optimisation_precondition( number_of_points > 0);
   CGAL_optimisation_expensive_precondition(
     is_convex_2( points_begin, points_end, t));
@@ -140,7 +140,7 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
 
   // check preconditions:
   int number_of_points(
-    iterator_distance( points_begin, points_end));
+                       static_cast<int>(iterator_distance( points_begin, points_end)));
   CGAL_optimisation_precondition( number_of_points > 0);
   CGAL_optimisation_expensive_precondition(
     is_convex_2( points_begin, points_end, t));

@@ -211,7 +211,6 @@ RegularTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
         it != t->finite_vertices_end();
         it++){
       QPointF point = matrix.map(convert(it->point().point()));
-      typedef typename Kernel_traits<typename T::Bare_point>::Kernel K;
       painter->drawPoint(point);
     }
   }

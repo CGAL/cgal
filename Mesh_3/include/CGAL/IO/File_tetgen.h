@@ -92,7 +92,7 @@ output_to_tetgen(std::string filename,
 
   const Tr& tr = c3t3.triangulation();
 
-  std::map<Vertex_handle, int> V;
+  std::map<Vertex_handle, std::size_t> V;
 
   //-------------------------------------------------------
   // File output

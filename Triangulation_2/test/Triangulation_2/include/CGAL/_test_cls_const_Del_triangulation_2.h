@@ -33,7 +33,6 @@ _test_cls_const_Del_triangulation(const Triangul&)
   //typedef Triangulation                      Cls;
   typedef typename Triangul::Geom_traits          Gt;
 
-
   typedef typename Triangul::Point                Point;
   typedef typename Triangul::Segment              Segment;
   typedef typename Triangul::Triangle             Triangle;
@@ -46,7 +45,11 @@ _test_cls_const_Del_triangulation(const Triangul&)
 
   typedef std::pair<Point,Point>              Constraint ;
   typedef std::list<Constraint>               list_constraints;
-  typedef typename list_constraints::iterator list_iterator;
+
+  CGAL_USE_TYPE(Gt);
+  CGAL_USE_TYPE(Segment);
+  CGAL_USE_TYPE(Triangle);
+  CGAL_USE_TYPE(Locate_type);
 
   /***********************/
   /***** SUBCLASS ******/

@@ -292,13 +292,32 @@ using std::max;
 #endif
 
 
-// Macro to specify a noreturn attribute.
+// Macro to specify a 'noreturn' attribute.
 #ifdef __GNUG__
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #else
 #  define CGAL_NORETURN
 #endif
 
+// Macro to specify a 'unused' attribute.
+#ifdef __GNUG__
+#  define CGAL_UNUSED  __attribute__ ((__unused__))
+#else
+#  define CGAL_UNUSED
+#endif
+
+// Macro CGAL_ASSUME
+// Call a builtin of the compiler to pass a hint to the compiler
+#if defined(__clang__) || __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)
+// From g++ 4.5, there exists a __builtin_unreachable()
+// Also in LLVM/clang
+#  define CGAL_ASSUME(EX) if(!EX) { __builtin_unreachable(); }
+#elif defined(_MSC_VER)
+// MSVC has __assume
+#  define CGAL_ASSUME(EX) __assume(EX)
+#endif
+// If CGAL_ASSUME is not defined, then CGAL_assume and CGAL_assume_code are
+// defined differently, in <CGAL/assertions.h>
 
 // If CGAL_HAS_THREADS is not defined, then CGAL code assumes
 // it can do any thread-unsafe things (like using static variables).

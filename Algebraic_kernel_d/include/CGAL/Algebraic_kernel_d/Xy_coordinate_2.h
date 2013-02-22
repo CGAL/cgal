@@ -539,7 +539,7 @@ public:
         CGAL_precondition(cpv_line.number_of_events() == 
             cv_line.number_of_events());
 
-        int cid = 0;
+        bool cid = false;
         std::pair<int, int> p = cpv_line.curves_at_event(arcno());
         if(p.first != -1 && p.second != -1) {
             // both curves involved: choose simpler one
@@ -551,9 +551,9 @@ public:
             Polynomial_2 ff = cpa_2.curve_analysis(0).polynomial_2(),
 	                 gg = cpa_2.curve_analysis(1).polynomial_2();
             if(total_degree(ff) > total_degree(gg)) 
-                cid = 1;
+                cid = true;
         } else 
-            cid = (p.first != -1 ? 0 : 1);
+          cid = (p.first == -1);
         // overwrite data
         this->ptr()->_m_curve = cpa_2.curve_analysis(cid);
         this->ptr()->_m_arcno = (cid == 0 ? p.first : p.second);

@@ -32,15 +32,7 @@ void _test_circle_bbox(CK ck)
   typedef typename CK::Circle_2                    Circle_2;
   typedef typename CK::Circular_arc_2              Circular_arc_2;
   typedef typename CK::Point_2                     Point_2;
-  typedef typename CK::Line_2                      Line_2;
-  typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
-  typedef typename CK::Construct_circle_2          Construct_circle_2;
   typedef typename CK::Intersect_2   Intersect_2;
-  typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-  typedef typename CK::Split_2                     Split_2;  
-  typedef typename CK::Get_equation                Get_equation;
-  //typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
-  typedef typename CK::Compare_xy_2                Compare_xy_2;
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -93,14 +85,6 @@ void _test_circle_bbox(CK ck)
     typedef typename CK::Circular_arc_2              Circular_arc_2;
     typedef typename CK::Point_2                     Point_2;
     typedef typename CK::Line_2                      Line_2;
-    typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
-    typedef typename CK::Construct_circle_2          Construct_circle_2;
-    typedef typename CK::Intersect_2   Intersect_2;
-    typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-    typedef typename CK::Split_2                     Split_2;  
-    typedef typename CK::Get_equation                Get_equation;
-    //typedef typename CK::Polynomial_for_circles_2_2  Polynomial_for_circles_2_2;
-    typedef typename CK::Compare_xy_2                Compare_xy_2;
 
     CGAL::Random generatorOfgenerator;
     int random_seed = generatorOfgenerator.get_int(0, 123456);

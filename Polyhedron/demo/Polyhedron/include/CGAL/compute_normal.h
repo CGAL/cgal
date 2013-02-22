@@ -24,7 +24,6 @@ typename Kernel::Vector_3 compute_facet_normal(const Facet& f)
 template <class Vertex, class Kernel>
 typename Kernel::Vector_3 compute_vertex_normal(const Vertex& v)
 {
-  typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Vertex::Halfedge_around_vertex_const_circulator HV_circulator;
   typedef typename Vertex::Facet Facet;

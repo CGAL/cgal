@@ -37,6 +37,9 @@ _test_circulators( const Tr &T )
   typedef typename Tr::Vertex_circulator Vertex_circulator;
   typedef typename Tr::Edge_circulator   Edge_circulator;
 
+  CGAL_USE_TYPE(All_faces_iterator);
+  CGAL_USE_TYPE(All_edges_iterator);
+
   typename Tr::size_type nvi = 0;
   typename Tr::size_type nvi_r = 0;
   All_vertices_iterator vit;

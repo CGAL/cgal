@@ -476,8 +476,8 @@ protected:
       return 0;
     visit_node();
     if (is_inner_node())
-      return std::max(left_child().rec_max_depth(), 
-                      right_child().rec_max_depth());
+      return (std::max)(left_child().rec_max_depth(), 
+                        right_child().rec_max_depth());
     else
       return depth();
   }

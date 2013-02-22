@@ -6,7 +6,7 @@
 #include <cassert>
 
 #include <CGAL/Concatenate_iterator.h>
-
+#include <CGAL/use.h>
 
 template<class C1, class C2>
 class Concatenate_container
@@ -115,11 +115,11 @@ int test(A a, B b)
   typedef typename AA_container::Iterator   AA_iterator;
   typedef typename BA_container::Iterator   BA_iterator;
 
-  typedef typename AB_iterator::reference          reference;
-  typedef typename AB_iterator::pointer            pointer;
+  CGAL_USE_TYPE(typename AB_iterator::reference);
+  CGAL_USE_TYPE(typename AB_iterator::pointer);
   typedef typename AB_iterator::value_type         value_type;
-  typedef typename AB_iterator::difference_type    difference_type;
-  typedef typename AB_iterator::iterator_category  iterator_category;
+  CGAL_USE_TYPE(typename AB_iterator::difference_type);
+  CGAL_USE_TYPE(typename AB_iterator::iterator_category);
 
   std::vector<value_type>  c;
 
@@ -179,9 +179,7 @@ std::ostream& operator<<(std::ostream& os, const Integer& i)
 
 int main()
 {
-  typedef int            Data;
-  typedef std::vector<Data>   Vector;
-  typedef std::list<Data>     List;
+  typedef int Data;
 
   std::vector<Data> v1;
   std::vector<Data> v2;

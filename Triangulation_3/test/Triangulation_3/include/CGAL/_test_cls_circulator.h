@@ -23,6 +23,7 @@
 #define CGAL_TEST_CLS_CIRCULATOR_C
 
 #include <cassert>
+#include <CGAL/use.h>
 
 template < class Triangulation >
 int
@@ -38,6 +39,10 @@ _test_circulator( const Triangulation &T )
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
   typedef typename Triangulation::Cell_handle      Cell_handle;
   typedef typename Triangulation::Facet            Facet;
+
+  CGAL_USE_TYPE(Vertex_iterator);
+  CGAL_USE_TYPE(Cell);
+  CGAL_USE_TYPE(Vertex);
 
   int n = 0;
   Cell_circulator cc, cc0;

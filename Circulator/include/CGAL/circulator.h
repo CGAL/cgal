@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/circulator_bases.h>
+#include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
 #include <cstddef>
@@ -34,7 +35,6 @@
 #include <iterator>
 
 #include <boost/type_traits/is_convertible.hpp>
-#include <boost/static_assert.hpp>
 
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
@@ -199,39 +199,46 @@ query_circulator_or_iterator( const C&) {
 template <class C> inline
 void Assert_circulator( const C &) {
     typedef typename Circulator_traits<C>::category category;
-    BOOST_STATIC_ASSERT((boost::is_convertible<category, Circulator_tag>::value));
+    CGAL_USE_TYPE(category);
+    CGAL_static_assertion((boost::is_convertible<category, Circulator_tag>::value));
 }
 
 template <class I> inline
 void Assert_iterator( const I &) {
     typedef typename Circulator_traits<I>::category category;
-    BOOST_STATIC_ASSERT((boost::is_convertible<category, Iterator_tag>::value));
+    CGAL_USE_TYPE(category);
+    CGAL_static_assertion((boost::is_convertible<category, Iterator_tag>::value));
 }
 template <class I> inline
 void Assert_input_category( const I &/*i*/) {
     typedef typename std::iterator_traits<I>::iterator_category category;
-    BOOST_STATIC_ASSERT((boost::is_convertible<category, std::input_iterator_tag>::value));
+    CGAL_USE_TYPE(category);
+    CGAL_static_assertion((boost::is_convertible<category, std::input_iterator_tag>::value));
 }
 
 template <class I> inline
 void Assert_output_category( const I &/*i*/) {
   typedef typename std::iterator_traits<I>::iterator_category category;
-  BOOST_STATIC_ASSERT((boost::is_convertible<category, std::output_iterator_tag>::value));
+  CGAL_USE_TYPE(category);
+  CGAL_static_assertion((boost::is_convertible<category, std::output_iterator_tag>::value));
 }
 template <class IC> inline
 void Assert_forward_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
-  BOOST_STATIC_ASSERT((boost::is_convertible<category, std::forward_iterator_tag>::value));
+  CGAL_USE_TYPE(category);
+  CGAL_static_assertion((boost::is_convertible<category, std::forward_iterator_tag>::value));
 }
 template <class IC> inline
 void Assert_bidirectional_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
-  BOOST_STATIC_ASSERT((boost::is_convertible<category, std::bidirectional_iterator_tag>::value));
+  CGAL_USE_TYPE(category);
+  CGAL_static_assertion((boost::is_convertible<category, std::bidirectional_iterator_tag>::value));
 }
 template <class IC> inline
 void Assert_random_access_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
-  BOOST_STATIC_ASSERT((boost::is_convertible<category, std::random_access_iterator_tag>::value));
+  CGAL_USE_TYPE(category);
+  CGAL_static_assertion((boost::is_convertible<category, std::random_access_iterator_tag>::value));
 }
 // The assert at-least-category functions use the following
 // functions to resolve properly. Note the proper order of the

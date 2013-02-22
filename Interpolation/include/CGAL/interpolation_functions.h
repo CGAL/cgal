@@ -23,6 +23,7 @@
 
 #include <utility>
 #include <CGAL/double.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -139,6 +140,7 @@ sibson_c1_interpolation(ForwardIterator first, ForwardIterator beyond,
 
     if(squared_dist ==0){
       ForwardIterator it = first;
+      CGAL_USE(it);
       CGAL_assertion(++it==beyond);
       return std::make_pair(f.first, true);
     }
@@ -212,6 +214,7 @@ sibson_c1_interpolation_square(ForwardIterator first, ForwardIterator
 
     if(squared_dist ==0){
       ForwardIterator it = first;
+      CGAL_USE(it);
       CGAL_assertion(++it==beyond);
       return std::make_pair(f.first,true);
     }

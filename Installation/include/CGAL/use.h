@@ -25,10 +25,15 @@ namespace CGAL { namespace internal {
 template < typename T > inline
 void use(const T&) {}
 
+template<typename> void use_type() {}
+
 } }
 
-// CGAL_USE() is a macro which aims at removing "variable is unused" warnings.
-
+/// CGAL_USE() is a macro which aims at removing "variable is unused" warnings.
 #define CGAL_USE(x) ::CGAL::internal::use(x)
+
+/// CGAL_USE_TYPE() is a macro which aims at removing "typedef locally
+/// defined but not used" warnings.
+#define CGAL_USE_TYPE(T) ::CGAL::internal::use_type<T>()
 
 #endif // CGAL_USE_H

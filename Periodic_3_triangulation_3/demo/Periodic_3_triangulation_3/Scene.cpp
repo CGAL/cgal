@@ -5,7 +5,8 @@ void Scene::init() {
   glDisable(GL_COLOR_MATERIAL);
 
   // camera
-  ui->viewer->camera()->setPosition(Vec(0.5,0.5,2.7));
+  // only 2.7 gets an 'f' as VC++ warns if we don't
+  ui->viewer->camera()->setPosition(Vec(0.5,0.5,2.7f));
   ui->viewer->camera()->lookAt(Vec(0.5,0.5,0.5));
 
   // scene inits
@@ -70,12 +71,11 @@ void Scene::load_points(const QString& fileName) {
   std::back_inserter(points));
   std::random_shuffle(points.begin(), points.end());
   p3dt.insert(points.begin(), points.end());
-  Vertex_iterator vit = p3dt.vertices_begin();
 
   make_draw_list();
 
   QString snv;
-  int nv = p3dt.number_of_vertices();
+  int nv = static_cast<int>(p3dt.number_of_vertices());
   snv.setNum(nv);
   emit message(QString("|V| = ") + snv, 0);
 

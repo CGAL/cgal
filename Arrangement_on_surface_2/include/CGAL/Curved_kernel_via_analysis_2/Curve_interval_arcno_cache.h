@@ -192,7 +192,7 @@ struct Curve_interval_arcno_cache {
         
         CGAL_precondition(left_i == static_cast<int>(vpair.first.size()));
         CGAL_precondition(right_i == static_cast<int>(vpair.second.size()));
-        _m_last_interval_map.insert(std::make_pair(cv_line.x().id(), vpair));
+        _m_last_interval_map.insert(std::make_pair(static_cast<int>(cv_line.x().id()), vpair));
         CGAL_precondition(interval_arcno < static_cast<int>(side == 1 ?
                 vpair.first.size() : vpair.second.size()));
         return (side == 1 ? vpair.first[interval_arcno] :

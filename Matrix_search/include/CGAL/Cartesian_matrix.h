@@ -39,8 +39,8 @@ public:
                    RandomAccessIC_column c_l)
   : row_vec(r_f),
     column_vec(c_f),
-    n_rows(r_l - r_f),
-    n_columns(c_l - c_f)
+    n_rows(static_cast<int>(r_l - r_f)),
+    n_columns(static_cast<int>(c_l - c_f))
   {}
 
   Cartesian_matrix(RandomAccessIC_row r_f,
@@ -50,8 +50,8 @@ public:
                    const Operation& o)
   : row_vec(r_f),
     column_vec(c_f),
-    n_rows(r_l - r_f),
-    n_columns(c_l - c_f),
+    n_rows(static_cast<int>(r_l - r_f)),
+    n_columns(static_cast<int>(c_l - c_f)),
     op(o)
   {}
 

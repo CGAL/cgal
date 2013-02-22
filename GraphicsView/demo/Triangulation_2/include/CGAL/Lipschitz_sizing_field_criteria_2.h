@@ -98,8 +98,6 @@ public:
       typedef typename CDT::Geom_traits Geom_traits;
       typedef typename Geom_traits::Compute_area_2 Compute_area_2;
       typedef typename Geom_traits::Compute_squared_distance_2 Compute_squared_distance_2;
-      typedef typename Geom_traits::Construct_triangle_2 Construct_triangle_2;
-      typedef typename Geom_traits::FT FT;
 	    
       Geom_traits traits; /** @warning traits with data!! */
 	    

@@ -22,7 +22,7 @@ int main ()
 {
   Arrangement_2   arr;
   Segment_2       segs[N_SEGMENTS];
-  long            zone_expected_comp[N_SEGMENTS];
+  std::size_t     zone_expected_comp[N_SEGMENTS];
   int             k;
 
   segs[0] = Segment_2 (Point_2 (-2, -2), Point_2 (-1, -1));
@@ -42,7 +42,7 @@ int main ()
   {
     std::list<CGAL::Object> zone_elems;
     zone(arr, segs[k], std::back_inserter(zone_elems));
-    int zone_actual_comp = zone_elems.size();
+    std::size_t zone_actual_comp = zone_elems.size();
     
     std::cout << "Segment: " << segs[k];
     std::cout << "        Expected: " << zone_expected_comp[k];

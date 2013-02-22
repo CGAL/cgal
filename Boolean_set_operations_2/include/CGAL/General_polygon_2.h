@@ -72,7 +72,7 @@ public:
 
   unsigned int size() const
   {
-    return m_xcurves.size();
+    return static_cast<unsigned int>(m_xcurves.size());
   }
 
   Curve_iterator curves_begin()

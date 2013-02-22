@@ -18,8 +18,6 @@ void test_2D()
 	typedef typename Kernel::FT FT;
 	typedef typename Kernel::Line_2 Line_2;
 	typedef typename Kernel::Point_2 Point_2;
-	typedef typename Kernel::Vector_2 Vector_2;
-	typedef typename Kernel::Triangle_2 Triangle_2;
 
   std::vector<Point_2> points;
   points.push_back(Point_2(FT(0),FT(0)));
@@ -52,8 +50,6 @@ void test_2D_point_set(const unsigned int nb_points)
 	typedef typename Kernel::FT FT;
 	typedef typename Kernel::Line_2 Line_2;
 	typedef typename Kernel::Point_2 Point_2;
-	typedef typename Kernel::Vector_2 Vector_2;
-	typedef typename Kernel::Triangle_2 Triangle_2;
 
   // create points on a horizontal segment
   Point_2 p(FT(0.0),FT(0.5));

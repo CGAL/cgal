@@ -636,7 +636,7 @@ public:
 
     Join_merge<Aos_2> join_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, join_merge);
   
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -660,7 +660,7 @@ public:
 
     Join_merge<Aos_2> join_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, join_merge);
 
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -693,7 +693,7 @@ public:
 
     Join_merge<Aos_2> join_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, join_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, join_merge);
 
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -733,7 +733,7 @@ public:
     
     Intersection_merge<Aos_2> intersection_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, intersection_merge);
     
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -758,7 +758,7 @@ public:
     
     Intersection_merge<Aos_2> intersection_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, intersection_merge);
     
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -792,7 +792,7 @@ public:
     
     Intersection_merge<Aos_2> intersection_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, intersection_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, intersection_merge);
     
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -834,7 +834,7 @@ public:
     
     Xor_merge<Aos_2> xor_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, xor_merge);
     
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -859,7 +859,7 @@ public:
     
     Xor_merge<Aos_2> xor_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, xor_merge);
     
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -893,7 +893,7 @@ public:
     
     Xor_merge<Aos_2> xor_merge;
     _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, arr_vec.size()-1, arr_vec, k, xor_merge);
+    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, xor_merge);
     
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
