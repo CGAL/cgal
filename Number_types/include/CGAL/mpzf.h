@@ -62,17 +62,18 @@
 #define CGAL_CAN_USE_CXX11_THREAD_LOCAL
 #endif
 
-#ifdef CGAL_MPZF_NO_USE_CACHE
-# ifdef CGAL_MPZF_USE_CACHE
-#  undef CGAL_MPZF_USE_CACHE
-# endif
-#else
-# if !defined(CGAL_MPZF_USE_CACHE) \
-     && defined(CGAL_HAS_THREADS) \
-     && !defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
-#  define CGAL_MPZF_USE_CACHE
-# endif
-#endif
+//#ifdef CGAL_MPZF_NO_USE_CACHE
+//# ifdef CGAL_MPZF_USE_CACHE
+//#  undef CGAL_MPZF_USE_CACHE
+//# endif
+//#else
+//# if !defined(CGAL_MPZF_USE_CACHE) \
+//     && defined(CGAL_HAS_THREADS) \
+//     && !defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
+//#  define CGAL_MPZF_USE_CACHE 1
+//# endif
+//#endif
+#define CGAL_MPZF_USE_CACHE 1
 // FIXME:
 // this code is experimental. It assumes there is an int64_t type which is used
 // as mp_limb_t by gmp, it may assume little endianness, etc.
@@ -160,7 +161,7 @@ template <class T, class = void> struct pool3 {
 #endif
 
 // No caching
-template <class T, class = void> struct pool4 {
+template <class T, class = void> struct no_pool {
   static T pop() { throw "Shouldn't be here!"; }
   static void push(T t) { delete (t - (extra+1)); }
   static bool empty() { return true; }
@@ -205,13 +206,13 @@ struct mpzf {
   // more complicated to handle.
   static const unsigned int cache_size = 9;
 #endif
-#if !defined(CGAL_HAS_THREADS) || defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
-  typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
-#elif defined(CGAL_CAN_USE_CXX11_THREAD_LOCAL)
-  typedef mpzf_impl::pool3<mp_limb_t*,mpzf> pool;
-#else
-  typedef mpzf_impl::pool4<mp_limb_t*,mpzf> pool;
-#endif
+//#if !defined(CGAL_HAS_THREADS) || defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
+//  typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
+//#elif defined(CGAL_CAN_USE_CXX11_THREAD_LOCAL)
+//  typedef mpzf_impl::pool3<mp_limb_t*,mpzf> pool;
+//#else
+  typedef mpzf_impl::no_pool<mp_limb_t*,mpzf> pool;
+//#endif
 
   mp_limb_t* data_;
   inline mp_limb_t*& data() { return data_; };
