@@ -76,6 +76,7 @@
 
 - `mpz_class`
 - `mpq_class`
+- `CGAL::mpzf`
 - `CGAL::Gmpz`
 - `CGAL::Gmpq`
 - `CGAL::Gmpzf`
