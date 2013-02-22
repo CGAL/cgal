@@ -318,7 +318,7 @@ protected:
   }
 
   /// Destructor
-  virtual ~Spatial_grid_lock_data_structure_base_3()
+  ~Spatial_grid_lock_data_structure_base_3()
   {
     for( TLS_grid::iterator it_grid = m_tls_grids.begin() ;
              it_grid != m_tls_grids.end() ;
@@ -409,7 +409,7 @@ public:
       m_grid[i] = false;
   }
 
-  virtual ~Spatial_grid_lock_data_structure_3()
+  ~Spatial_grid_lock_data_structure_3()
   {
     delete [] m_grid;
   }
@@ -422,7 +422,13 @@ public:
   bool try_lock_cell_impl(int cell_index, bool no_spin = false)
   {
     bool old_value = m_grid[cell_index].compare_and_swap(true, false);
-    return (old_value == false);
+    if (old_value == false)
+    {
+      m_tls_grids.local()[cell_index] = true;
+      m_tls_locked_cells.local().push_back(cell_index);
+      return true;
+    }
+    return false;
   }
 
   void unlock_cell_impl(int cell_index)
@@ -465,7 +471,7 @@ public:
   }
 
   /// Destructor
-  virtual ~Spatial_grid_lock_data_structure_3()
+  ~Spatial_grid_lock_data_structure_3()
   {
     delete [] m_grid;
   }
@@ -478,12 +484,12 @@ public:
   bool try_lock_cell_impl(int cell_index, bool no_spin = false)
   {
     unsigned int this_thread_id = m_tls_thread_ids.local();
-    unsigned int old_value;
 
     // NO SPIN
     if (no_spin)
     {
-      old_value = m_grid[cell_index].compare_and_swap(this_thread_id, 0);
+      unsigned int old_value = 
+        m_grid[cell_index].compare_and_swap(this_thread_id, 0);
       if (old_value == 0)
       {
         m_tls_grids.local()[cell_index] = true;
@@ -496,7 +502,8 @@ public:
     {
       for(;;)
       {
-        old_value = m_grid[cell_index].compare_and_swap(this_thread_id, 0);
+        unsigned int old_value = 
+          m_grid[cell_index].compare_and_swap(this_thread_id, 0);
         if (old_value == 0)
         {
           m_tls_grids.local()[cell_index] = true;
@@ -564,7 +571,7 @@ public:
   }
 
   /// Destructor
-  virtual ~Spatial_grid_lock_data_structure_3()
+  ~Spatial_grid_lock_data_structure_3()
   {
     delete [] m_grid;
   }
@@ -579,7 +586,13 @@ public:
 
   bool try_lock_cell_impl(int cell_index, bool no_spin = false)
   {
-    return m_grid[cell_index].try_lock();
+    bool success = m_grid[cell_index].try_lock();
+    if (success)
+    {
+      m_tls_grids.local()[cell_index] = true;
+      m_tls_locked_cells.local().push_back(cell_index);
+    }
+    return success;
   }
 
   void unlock_cell_impl(int cell_index)
