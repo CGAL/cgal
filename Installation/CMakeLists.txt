@@ -872,8 +872,9 @@ if ( NOT RUNNING_CGAL_AUTO_TEST )
 
   add_programs(examples examples OFF )
   add_programs(demo     demos    OFF )
-  add_programs(test     tests    OFF )
-  
+  if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test")
+    add_programs(test     tests    OFF )
+  endif()
 endif()
 
 #--------------------------------------------------------------------------------------------------
