@@ -478,7 +478,7 @@ public:
   {
     if (m_lock_ds)
     {
-      return m_lock_ds->try_lock(p, lock_radius, true).first;
+      return m_lock_ds->try_lock<true>(p, lock_radius).first;
     }
     return true;
   }
