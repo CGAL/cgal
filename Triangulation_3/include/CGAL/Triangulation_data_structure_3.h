@@ -2420,8 +2420,8 @@ insert_increase_dimension(Vertex_handle star)
     {
       Cell_handle c = star->cell();
       int i = c->index(star); // i== 0 or 1
-      CGAL_assume(i<=1);
-      int j = (1-i);
+      CGAL_assertion(i==0 || i==1);
+      int j = (i == 0) ? 1 : 0;
       Cell_handle d = c->neighbor(j);
 	
       c->set_vertex(2,v);
@@ -2619,8 +2619,7 @@ remove_degree_2(Vertex_handle v)
 
     c0 = v->cell();
     i0 = c0->index(v);
-    CGAL_assume(i0<=1);
-    c1 = c0->neighbor(1-i0);
+    c1 = c0->neighbor((i0 == 0) ? 1 : 0);
     i1 = c1->index(v);
 
     // New cell : we copy the content of c0, so we keep the orientation.
