@@ -1007,21 +1007,15 @@ public:
 
           npts = 4;
 
-          if (lseg.has_on_positive_side(pnt)) {
-            points[1]= (compare_y_2(seg.source(),seg.target())==SMALLER)
-                        ? Point_2(m.x(), m.y() + seglenhalf)
-                        : Point_2(m.x(), m.y() - seglenhalf);
-            points[2]= (compare_y_2(seg.source(),seg.target())==SMALLER)
-                        ? Point_2(m.x(), m.y() - seglenhalf)
-                        : Point_2(m.x(), m.y() + seglenhalf);
-          } else {//q is on the negative side of lseg i.e right turn
-            points[1]= (compare_y_2(seg.source(),seg.target())==SMALLER)
-                        ? Point_2(m.x(), m.y() - seglenhalf)
-                        : Point_2(m.x(), m.y() + seglenhalf);
-            points[2]= (compare_y_2(seg.source(),seg.target())==SMALLER)
-                        ? Point_2(m.x(), m.y() + seglenhalf)
-                        : Point_2(m.x(), m.y() - seglenhalf);
+          Comparison_result cmp = compare_x_2(pnt, phor);
+          if (cmp == LARGER) {
+            points[1] = Point_2(m.x(), m.y() - seglenhalf);
+            points[2] = Point_2(m.x(), m.y() + seglenhalf);
+          } else {
+            points[1] = Point_2(m.x(), m.y() + seglenhalf);
+            points[2] = Point_2(m.x(), m.y() - seglenhalf);
           }
+
           if (p.is_segment()) {
             std::swap(points[1], points[2]);
           }
