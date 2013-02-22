@@ -11,7 +11,7 @@ is of type `int`. This type can be considered exact, even if the
 exponent is not a multiple-precision number. This number type offers 
 functionality very similar to `MP_Float` and `Gmpzf` but is faster. 
 
-\cgalModels `EuclideanRing` 
+\cgalModels `IntegralDomainWithoutDivision` 
 \cgalModels `RealEmbeddable` 
 
 \cgalHeading{Implementation}
