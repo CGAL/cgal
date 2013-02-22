@@ -16,8 +16,10 @@ functionality very similar to `MP_Float` and `Gmpzf` but is faster.
 
 \cgalHeading{Implementation}
 
-\todo need to add something
-
+This class is only available on platforms on which <span class="textsc">Gmp</span> uses 64 bits limbs. If this is true, the macro `CGAL_HAS_MPZF` is defined.
+\todo need to add more details
+\todo requires little endianess (can make a version slower if not having it)
+\todo requires ieee double (can make a version slower if not having it)
 */
 
 class mpzf {
