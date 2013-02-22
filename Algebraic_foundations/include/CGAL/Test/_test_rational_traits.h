@@ -44,6 +44,9 @@ void test_rational_traits(){
     assert( Rational_traits().denominator(x) == RT(2));
     assert( Rational_traits().make_rational(RT(7),RT(2)) == x);
     assert( Rational_traits().make_rational(x,x) == Rational(1));
+    assert( Rational_traits().make_rational(x) == x);
+    assert( Rational_traits().make_rational(std::make_pair(x,x)) == Rational(1));
+    assert( Rational_traits().make_rational(std::make_pair(7,RT(2))) == x);
 
     // gloabal function to_rational 
     x = CGAL::to_rational<Rational>(3.5);
