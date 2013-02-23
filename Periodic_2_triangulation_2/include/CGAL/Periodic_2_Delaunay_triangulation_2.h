@@ -524,7 +524,7 @@ private:
   void fill_hole_delaunay(std::list<Edge> & hole);
   /// Fill hole over a periodic boundary
   void fill_hole_delaunay(std::list<Edge> & hole,
-                          std::map<Vertex_handle, Offset> vertex_offsets);
+                          std::map<Vertex_handle, Offset> &vertex_offsets);
 
   /// NGHK: implemented
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
@@ -4261,7 +4261,7 @@ void Periodic_2_Delaunay_triangulation_2<Gt, Tds>::fill_hole_delaunay(std::list<
 template<class Gt, class Tds>
 void Periodic_2_Delaunay_triangulation_2<Gt, Tds>::fill_hole_delaunay(
     std::list<Edge> & first_hole,
-    std::map<Vertex_handle, Offset> vertex_offsets) {
+    std::map<Vertex_handle, Offset> &vertex_offsets) {
   typename Gt::Side_of_oriented_circle_2 in_circle = geom_traits().side_of_oriented_circle_2_object();
 
   typedef std::list<Edge> Hole;

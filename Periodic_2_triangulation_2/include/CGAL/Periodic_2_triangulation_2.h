@@ -1226,7 +1226,7 @@ protected:
   }
 
   /// NGHK: Not yet implemented
-  void fill_hole(Vertex_handle v, std::list<Edge> & hole);
+  void fill_hole(Vertex_handle v, std::list<Edge> & hole, std::map<Vertex_handle, Offset> &vertex_offsets);
 
   /// NGHK: Not yet implemented
   void make_hole(Vertex_handle v, std::list<Edge> & hole);
@@ -2500,8 +2500,13 @@ void Periodic_2_triangulation_2<Gt, Tds>::remove_2D(Vertex_handle v) {
 
   std::list<Edge> hole;
   make_hole(v, hole);
-  fill_hole(v, hole);
+
+  std::map<Vertex_handle, Offset> vertex_offsets;
+  NGHK_NYI; // Fill vertex offsets
+
+  fill_hole(v, hole, vertex_offsets);
   delete_vertex(v);
+
   return;
 }
 
@@ -2516,8 +2521,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::remove(Vertex_handle v) {
 }
 
 template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::make_hole(Vertex_handle v, std::list<
-    Edge> & hole) {
+void Periodic_2_triangulation_2<Gt, Tds>::make_hole(Vertex_handle v, std::list<Edge> & hole) {
   remove_too_long_edges_in_star(v);
 
   std::list<Face_handle> to_delete;
@@ -2553,9 +2557,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::make_hole(Vertex_handle v, std::list<
 }
 
 template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::fill_hole(Vertex_handle v, std::list<
-    Edge> & hole) {
-  CGAL_assertion(false && "NGHK: NYI");
+void Periodic_2_triangulation_2<Gt, Tds>::fill_hole(Vertex_handle v, std::list<Edge> & hole, std::map<Vertex_handle, Offset> &vertex_offsets) {
+  NGHK_NYI;
   // uses the fact that the hole is starshaped
   // with repect to v->point()
   typedef std::list<Edge> Hole;

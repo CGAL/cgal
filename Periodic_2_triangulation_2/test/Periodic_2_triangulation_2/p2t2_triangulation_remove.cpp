@@ -7,14 +7,29 @@ int main() {
 
   Vector midpoint(0.5, 0.5);
 
-  // Vertex_handle vh = t.nearest_vertex(Point(0,0) + midpoint);
-  // CGAL_assertion(vh == Vertex_handle());
+  Face_handle fh;
+  Triangulation::Locate_type lt;
+  int i;
+  fh = t.locate(Point(0,0) + midpoint, lt, i);
+  CGAL_assertion(lt == Triangulation::EMPTY);
 
   Vertex_handle vh_midpoint = t.insert(Point(0,0) + midpoint);
-  // vh = t.nearest_vertex(Point(0,0) + midpoint);
-  // CGAL_assertion(vh == vh_midpoint);
+  fh = t.locate(Point(0,0) + midpoint, lt, i);
+  CGAL_assertion(lt == Triangulation::VERTEX && fh->vertex(i) == vh_midpoint);
   t.remove(vh_midpoint);
   CGAL_assertion(t.empty());
+
+  // High degree vertex
+  for (int n=3; n<8; ++n) {
+    vh_midpoint = t.insert(Point(0,0) + midpoint);
+    for (int i=0; i<n; ++i) {
+      t.insert(Point(0.3*sin(i*1.0/n*2*M_PI), 0.3*cos(i*1.0/n*2*M_PI)) + midpoint);
+    }
+    t.remove(vh_midpoint);
+    while (!t.empty()) {
+      t.remove(t.vertices_begin());
+    }
+  }
 
   Random random(1284141159);
   std::cout << "Seed: " << random.get_seed () << std::endl;
