@@ -1715,7 +1715,7 @@ private:
     if (crude != ZERO) {
       return crude;
     } else {
-      CGAL_SDG_DEBUG(std::cout << "debug refining in incircle_p pqr=("
+      CGAL_SDG_DEBUG(std::cout << "debug vsqr refining in incircle_p pqr=("
         << p << ", " << q << ", " << r << "), "
         << "t=" << t
         << std::endl;);
@@ -2220,7 +2220,7 @@ private:
     if (crude != ZERO) {
       return crude;
     } else {
-      CGAL_SDG_DEBUG(std::cout << "debug refining in xxxl pqr=("
+      CGAL_SDG_DEBUG(std::cout << "debug vsqr refining in xxxl pqr=("
         << p << ", " << q << ", " << r << "), "
         << "lref=" << lref.x() << ' ' << lref.y()
         << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
@@ -3477,7 +3477,7 @@ private:
     if (crude != ZERO) {
       return crude;
     } else {
-      CGAL_SDG_DEBUG(std::cout << "debug refining in noeasy pqr=("
+      CGAL_SDG_DEBUG(std::cout << "debug vsqr refining in noeasy pqr=("
         << p << ", " << q << ", " << r << "), "
         << "t=" << t
         << std::endl;);

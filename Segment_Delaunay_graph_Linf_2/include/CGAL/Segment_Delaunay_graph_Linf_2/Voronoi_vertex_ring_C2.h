@@ -947,7 +947,7 @@ private:
       return crude;
     } else {
       CGAL_SDG_DEBUG(std::cout
-          << "debug refining in incircle_p_no_easy PPS pqr=("
+          << "debug vring refining in incircle_p_no_easy PPS pqr=("
           << p_ << ", " << q_ << ", " << r_ << "), "
           << "t=" << t
           << std::endl;);
@@ -1082,7 +1082,7 @@ private:
       return s_Q;
     } else {
       CGAL_SDG_DEBUG(std::cout
-          << "debug refining in incircle_p_no_easy PSS pqr=("
+          << "debug vring refining in incircle_p_no_easy PSS pqr=("
           << p_ << ", " << q_ << ", " << r_ << "), "
           << "t=" << t
           << std::endl;);
@@ -1376,7 +1376,7 @@ private:
     // here cr == EQUAL == ZERO, so
     // we might have to refine
     CGAL_SDG_DEBUG(std::cout
-      << "debug refining in incircle l PPP pqr=("
+      << "debug vring refining in incircle l PPP pqr=("
       << p_ << ", " << q_ << ", " << r_ << "), "
       << "hp(x,y)=" << hp.x() << ' ' << hp.y()
       << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
@@ -1423,7 +1423,8 @@ private:
 
     // here cr == EQUAL == ZERO, so
     // we might have to refine
-    CGAL_SDG_DEBUG(std::cout << "debug refining in incircle l PPS pqr=("
+    CGAL_SDG_DEBUG(std::cout
+      << "debug vring refining in incircle l PPS pqr=("
       << p_ << ", " << q_ << ", " << r_ << "), "
       << "hp(x,y)=" << hp.x() << ' ' << hp.y()
       << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
@@ -1470,7 +1471,8 @@ private:
 
     // here cr == EQUAL == ZERO, so
     // we might have to refine
-    CGAL_SDG_DEBUG(std::cout << "debug refining in incircle l PSS pqr=("
+    CGAL_SDG_DEBUG(std::cout
+      << "debug vring refining in incircle l PSS pqr=("
       << p_ << ", " << q_ << ", " << r_ << "), "
       << "hp(x,y)=" << lhp.x() << ' ' << lhp.y()
       << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
@@ -1514,7 +1516,8 @@ private:
 
     // here cr == EQUAL == ZERO, so
     // we might have to refine
-    CGAL_SDG_DEBUG(std::cout << "debug refining in incircle l PSS pqr=("
+    CGAL_SDG_DEBUG(std::cout
+      << "debug vring refining in incircle l PSS pqr=("
       << p_ << ", " << q_ << ", " << r_ << "), "
       << "lhp(x,y)=" << lhp.x() << ' ' << lhp.y()
       << ", l: " << l.a() << ' ' << l.b() << ' ' <<  l.c()
