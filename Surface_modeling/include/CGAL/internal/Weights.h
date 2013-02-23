@@ -1,7 +1,12 @@
+#ifndef CGAL_SURFACE_MODELING_WEIGHTS_H
+#define CGAL_SURFACE_MODELING_WEIGHTS_H
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
-
+namespace CGAL {
+namespace internal {
+/////////////////////////////////////////////////////////////////////////////////////////
 // Returns the cotangent value of half angle v0 v1 v2
 template<class Polyhedron>
 class Cotangent_value
@@ -26,24 +31,52 @@ public:
     return (cos_angle/sin_angle);
   }
 };
-// Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
+
+// Returns the cotangent value of half angle v0 v1 v2
+// using formula in -[Meyer02] Discrete Differential-Geometry Operators for- page 19
+// The potential problem with previous one (Cotangent_value) is that it does not produce symmetric results
+// (i.e. for pair of halfedges returned cot weights can be slightly different)
 template<class Polyhedron>
-class Cotangent_value_area_weighted
-  : Cotangent_value<Polyhedron>
+class Cotangent_value_Meyer
 {
 public:
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename Polyhedron::Traits::Vector_3  Vector;
+
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    return Cotangent_value<Polyhedron>::operator()(v0, v1, v2)
-      / std::sqrt(squared_area(v0->point(), v1->point(), v2->point()));
+    Vector a = v0->point() - v1->point();
+    Vector b = v2->point() - v1->point();
+    double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+    double dot_aa = a.squared_length();
+    double dot_bb = b.squared_length();
+    return dot_ab / std::sqrt( dot_aa * dot_bb - dot_ab * dot_ab );
   }
 };
 
+// Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
+// as suggested by -[Mullen08] Spectral Conformal Parameterization-
+template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+class Cotangent_value_area_weighted : CotangentValue
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  {
+    return CotangentValue::operator()(v0, v1, v2)
+      / std::sqrt(squared_area(v0->point(), v1->point(), v2->point()));
+  }
+};
+/////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////// Edge Weight Calculators ///////////////////////////////////
 // Cotangent weight calculator 
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class Polyhedron, class CotangentValue>
-class Cotangent_weight
+template<class Polyhedron, 
+         class CotangentValue = Cotangent_value_area_weighted<Polyhedron> >
+class Cotangent_weight : CotangentValue
 {
 public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
@@ -56,6 +89,7 @@ public:
   { }
 
   // Returns the cotangent weight of specified edge_descriptor
+  // Edge orientation is trivial
   double operator()(edge_descriptor e)
   {
      vertex_descriptor v0 = boost::target(e, polyhedron);
@@ -72,7 +106,7 @@ public:
           edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
           v2 = boost::source(e_ccw, polyhedron);
        }
-       return ( cotangent_value(v0, v2, v1)/2.0 );
+       return ( CotangentValue::operator()(v0, v2, v1)/2.0 );
      }
      else
      {
@@ -80,14 +114,12 @@ public:
         vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
         edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
         vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
-
-        return ( cotangent_value(v0, v2, v1)/2.0 + cotangent_value(v0, v3, v1)/2.0 );
+        return ( CotangentValue::operator()(v0, v2, v1)/2.0 + CotangentValue::operator()(v0, v3, v1)/2.0 );
      }
   }
 
 private:
   Polyhedron& polyhedron;	
-  CotangentValue cotangent_value;
 };
 
 
@@ -104,7 +136,9 @@ public:
 
   Mean_value_weight(Polyhedron& polyhedron) : polyhedron(polyhedron)
   { }
+
   // Returns the mean-value coordinate of specified edge_descriptor
+  // Returns different value for different edge orientation (which is a normal behaivour according to formula)
   double operator()(edge_descriptor e)
   {
     vertex_descriptor v0 = boost::target(e, polyhedron);
@@ -151,10 +185,50 @@ private:
     double e0 = std::sqrt(e0_square); 
     double e2 = std::sqrt(e2_square);
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
+    cos_angle = (std::max)(-1, (std::min)(1, cos_angle)) ; // clamp into [-1, 1]
     double angle = acos(cos_angle);
-
+    
     return ( tan(angle/2.0) );
+  }
+
+  // My deviation built on Meyer_02
+  double half_tan_value_2(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  {
+    Vector a = v0->point() - v1->point();
+    Vector b = v2->point() - v1->point();
+    double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+    double dot_aa = a.squared_length();
+    double dot_bb = b.squared_length();
+    double dot_aa_bb = dot_aa * dot_bb;
+
+    double cos_rep = dot_ab;
+    double sin_rep = std::sqrt(dot_aa_bb  - dot_ab * dot_ab);
+    double normalizer = std::sqrt(dot_aa_bb); // |a|*|b|
+
+    return (normalizer - cos_rep) / sin_rep; // formula from [Floater04] page 4
+                                             // tan(Q/2) = (1 - cos(Q)) / sin(Q)
   }
 
   Polyhedron& polyhedron;	
 };
+
+template< class Polyhedron, 
+          class PrimaryWeight = Cotangent_weight<Polyhedron>,
+          class SecondaryWeight = Mean_value_weight<Polyhedron> >
+class Hybrid_weight : public PrimaryWeight, SecondaryWeight
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
+
+  Hybrid_weight(Polyhedron& polyhedron) : PrimaryWeight(polyhedron), SecondaryWeight(polyhedron)
+  { }
+
+  double operator()(edge_descriptor e)
+  {
+    double weight = PrimaryWeight::operator()(e);
+    return (weight >= 0) ? weight : SecondaryWeight::operator()(e);
+  }
+};
+}//namespace internal
+}//namespace CGAL
+#endif //CGAL_SURFACE_MODELING_WEIGHTS_H

@@ -34,6 +34,8 @@
 
 #include <limits>
 
+// #define CGAL_DEFORM_SPOKES_AND_RIMS
+
 namespace CGAL {
 
 /// \ingroup PkgSurfaceModeling
@@ -43,8 +45,7 @@ template <
   class SparseLinearAlgebraTraits_d, 
   class VertexIndexMap, 
   class EdgeIndexMap,
-  class PrimaryWeightCalculator = Cotangent_weight<Polyhedron, Cotangent_value_area_weighted<Polyhedron> >,
-  class SecondaryWeightCalculator = Mean_value_weight<Polyhedron>
+  class WeightCalculator = internal::Cotangent_weight<Polyhedron> 
   >
 class Deform_mesh
 {
@@ -89,17 +90,15 @@ public:
   unsigned int iterations;                            // number of maximal iterations
   double tolerance;                                   // tolerance of convergence 
 
-  PrimaryWeightCalculator   primary_weight_calculator;
-  SecondaryWeightCalculator secondary_weight_calculator; // will be used when primary returns negative weights
+  WeightCalculator weight_calculator;
   // Public methods
 public:
 
   // The constructor gets the polyhedron that we will model
   Deform_mesh(Polyhedron& P, const VertexIndexMap& vertex_index_map_, const EdgeIndexMap& edge_index_map_)
     :polyhedron(P), vertex_index_map(vertex_index_map_), edge_index_map(edge_index_map_),
-    primary_weight_calculator(P), secondary_weight_calculator(P)
+    weight_calculator(P)
   {
-
     /////////////////////////////////////////////////////////////////
     // this part should be removed since it iterates over all vertices,
     // we can achieve that by a requiring that supplied vertex_index_map, and 
@@ -146,18 +145,35 @@ public:
     // handled in region_of_solution().
 
     //clear edges
-
+  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
     edge_weight.clear();
     for (std::size_t i = 0; i < ros.size(); i++)
     {
-      in_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::in_edges(ros[i], polyhedron); e != e_end; e++)
+      bool rim = false;
+      out_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::out_edges(ros[i], polyhedron); e != e_end;)
       {
-        put(edge_index_map, *e, 0);
-        edge_descriptor e_oppo = CGAL::opposite_edge(*e, polyhedron);
-        put(edge_index_map, e_oppo, 0);
+        edge_descriptor active_edge = rim ? (*e)->next(): *e;
+        boost::put(edge_index_map, active_edge, 0);
+        edge_descriptor e_oppo = CGAL::opposite_edge(active_edge, polyhedron);
+        boost::put(edge_index_map, e_oppo, 0);
+        if(rim) { ++e; }
+        rim = !rim;
       }
     }
+  #else
+    edge_weight.clear();
+    for (std::size_t i = 0; i < ros.size(); i++)
+    {
+      out_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::out_edges(ros[i], polyhedron); e != e_end; e++)
+      {
+        boost::put(edge_index_map, *e, 0);
+        edge_descriptor e_oppo = CGAL::opposite_edge(*e, polyhedron);
+        boost::put(edge_index_map, e_oppo, 0);
+      }
+    }
+  #endif
   }
 
   void insert_roi(vertex_descriptor vd)   
@@ -177,8 +193,16 @@ public:
     hdl.push_back(vd);
   }
 
-  // compute cotangent weights of all edges 
   void compute_edge_weight()
+  {
+  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
+    compute_edge_weight_spokes_and_rims();
+  #else
+    compute_edge_weight_arap();
+  #endif
+  }
+  // compute cotangent weights of all edges 
+  void compute_edge_weight_arap()
   {
     // iterate over ros vertices and calculate weights for edges which are incident to ros
     size_t next_edge_id = 1;
@@ -192,37 +216,49 @@ public:
         if( e_idx != 0) { continue; } // we have assigned an id already, which means we also calculted the weight
         
         put(edge_index_map, *e, next_edge_id++);
-        double weight = primary_weight_calculator(*e);
-        // replace cotangent weight by mean-value coordinate
-        if ( weight < 0 )
-        {
-          weight = secondary_weight_calculator(*e);
-          edge_weight.push_back(weight);
-          // assign the weights to opposite edges
-          edge_descriptor e_oppo = CGAL::opposite_edge(*e, polyhedron);   
-          std::size_t e_oppo_idx = get(edge_index_map, e_oppo);
-          if(e_oppo_idx == 0)
-          {
-            put(edge_index_map, e_oppo, next_edge_id++);
-            edge_weight.push_back(secondary_weight_calculator(e_oppo));            
-          }
-        }
-        else
-        {
-          edge_weight.push_back(weight);
-          // assign the weights to opposite edges
-          edge_descriptor e_oppo = CGAL::opposite_edge(*e, polyhedron);   
-          std::size_t e_oppo_idx = get(edge_index_map, e_oppo);
-          if(e_oppo_idx == 0)
-          {
-            put(edge_index_map, e_oppo, next_edge_id++);
-            edge_weight.push_back(weight);            
-          }
-        }
+        double weight = weight_calculator(*e);
+        edge_weight.push_back(weight);
       }// end of edge loop
     }// end of ros loop
   }
 
+  void compute_edge_weight_spokes_and_rims()
+  {
+    // iterate over ros vertices and calculate weights for edges which are incident to ros
+    size_t next_edge_id = 1;
+    for (std::size_t i = 0; i < ros.size(); i++)
+    {       
+      vertex_descriptor vi = ros[i];
+      bool is_current_rim = false;
+      out_edge_iterator e, e_end;
+      boost::tie(e,e_end) = boost::out_edges(ros[i], polyhedron);
+      edge_descriptor active_edge = *e;
+
+      while ( e != e_end )
+      {
+        std::size_t e_idx = get(edge_index_map, active_edge);
+        if( e_idx == 0)  // we haven't assigned an id yet, which means we haven't calculted the weight
+        {
+          put(edge_index_map, active_edge, next_edge_id++);
+          double weight = weight_calculator(active_edge);
+          edge_weight.push_back(weight);
+        }
+
+        // loop through one spoke then one rim edge
+        if(!is_current_rim && !boost::get(CGAL::edge_is_border, polyhedron, *e)) // it is rim edge's turn
+        {
+          is_current_rim = true;
+          active_edge = (*e)->next();
+        }
+        else // if current edge is rim OR there is no rim edge (current spoke edge is boudary)
+        {    // then iterate to next spoke edge
+          is_current_rim = false;
+          ++e;
+          active_edge = *e;
+        }
+      }// end of edge loop
+    }// end of ros loop
+  }
   // assigns id to one rign neighbor of vd, and also push them into push_vector
   void assign_id_to_one_ring(vertex_descriptor vd, std::size_t& next_id, std::vector<vertex_descriptor>& push_vector)
   {
@@ -409,8 +445,17 @@ public:
     solution[idx] = p;
   }
 #endif // CGAL_DEFORM_ROTATION
-  // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
+
   void optimal_rotations_svd()
+  {
+  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
+    optimal_rotations_svd_spokes_and_rims();
+  #else
+    optimal_rotations_svd_arap();
+  #endif
+  }
+  // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
+  void optimal_rotations_svd_arap()
   {
     Eigen::Matrix3d u, v;           // orthogonal matrices 
     Eigen::Vector3d w;              // singular values
@@ -481,6 +526,98 @@ public:
     CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
   }
 
+  void optimal_rotations_svd_spokes_and_rims()
+  {
+    Eigen::Matrix3d u, v;           // orthogonal matrices 
+    Eigen::Vector3d w;              // singular values
+    Eigen::Matrix3d cov;            // covariance matrix
+    Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
+    Eigen::Matrix3d r;
+    int num_neg = 0;
+
+    // only accumulate ros vertices
+    for ( std::size_t i = 0; i < ros.size(); i++ )
+    {
+      vertex_descriptor vi = ros[i];
+      // compute covariance matrix
+      cov.setZero();
+
+      // spoke + rim edges
+      bool is_current_rim = false;
+      out_edge_iterator e, e_end;
+      boost::tie(e,e_end) = boost::out_edges(vi, polyhedron);
+      edge_descriptor active_edge = *e;
+
+      while ( e != e_end )
+      {
+        vertex_descriptor v1 = boost::source(active_edge, polyhedron);
+        vertex_descriptor v2 = boost::target(active_edge, polyhedron);
+        
+        size_t v1_index = get(vertex_index_map, v1);
+        size_t v2_index = get(vertex_index_map, v2);
+        
+        Vector pij = original[v1_index-1] - original[v2_index-1];
+        Vector qij = solution[v1_index-1] - solution[v2_index-1];
+
+        double wij = edge_weight[get(edge_index_map, active_edge)-1];
+        for (int j = 0; j < 3; j++)
+        {
+          for (int k = 0; k < 3; k++)
+          {
+            cov(j, k) += wij*pij[j]*qij[k]; 
+          }
+        }
+
+        // loop through one spoke then one rim edge
+        if(!is_current_rim && !boost::get(CGAL::edge_is_border, polyhedron, *e)) // it is rim edge's turn
+        {
+          is_current_rim = true;
+          active_edge = (*e)->next();
+        }
+        else // if current edge is rim OR there is no rim edge (current spoke edge is boudary)
+        {    // then iterate to next spoke edge
+          is_current_rim = false;
+          ++e;
+          active_edge = *e;
+        }
+      }
+  
+      // svd decomposition
+      svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+      u = svd.matrixU(); v = svd.matrixV();
+
+      // extract rotation matrix
+      r = v*u.transpose();
+
+      // checking negative determinant of r
+      if ( r.determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
+      {
+        num_neg++; 
+        w = svd.singularValues();
+        for (int j = 0; j < 3; j++)
+        {
+          int j0 = j;
+          int j1 = (j+1)%3;
+          int j2 = (j1+1)%3;
+          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
+          {
+            u(0, j0) = - u(0, j0);
+            u(1, j0) = - u(1, j0);
+            u(2, j0) = - u(2, j0);
+            break;
+          }
+        }
+
+        // re-extract rotation matrix
+        r = v*u.transpose();
+      }
+      
+      rot_mtr[i] = r;
+    }
+
+    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
+
+  }
 
 #ifdef CGAL_DEFORM_EXPERIMENTAL      // Experimental stuff, needs further testing
 
@@ -694,6 +831,7 @@ public:
           Vector pij =  pi - original[get(vertex_index_map, vj) -1];
           double wij = edge_weight[get(edge_index_map, *e) -1];
           double wji = edge_weight[get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))-1];
+
           double x, y, z;
           x = y = z = 0.0;
           for (int j = 0; j < 3; j++)
