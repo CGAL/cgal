@@ -62,17 +62,19 @@
 #define CGAL_CAN_USE_CXX11_THREAD_LOCAL
 #endif
 
-//#ifdef CGAL_MPZF_NO_USE_CACHE
-//# ifdef CGAL_MPZF_USE_CACHE
-//#  undef CGAL_MPZF_USE_CACHE
-//# endif
-//#else
-//# if !defined(CGAL_MPZF_USE_CACHE) \
-//     && defined(CGAL_HAS_THREADS) \
-//     && !defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
-//#  define CGAL_MPZF_USE_CACHE 1
-//# endif
-//#endif
+/*
+#ifdef CGAL_MPZF_NO_USE_CACHE
+# ifdef CGAL_MPZF_USE_CACHE
+#  undef CGAL_MPZF_USE_CACHE
+# endif
+#else
+# if !defined(CGAL_MPZF_USE_CACHE) \
+     && defined(CGAL_HAS_THREADS) \
+     && !defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
+#  define CGAL_MPZF_USE_CACHE 1
+# endif
+#endif
+*/
 #define CGAL_MPZF_USE_CACHE 1
 // FIXME:
 // this code is experimental. It assumes there is an int64_t type which is used
