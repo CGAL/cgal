@@ -15,6 +15,11 @@
   procedures in the kernel. There are also function objects replacing operators, 
   especially for equality testing. 
 
+  \cgalHeading{Naming convention of constructions}
+  All constructions which result type is a geometric object are prefixed by
+  `Construct_`. If the result type is a number type, the name is prefixed by `Compute_`.
+  When the result type is not determined, no prefix is used.
+
   \cgalHasModel `CGAL::Cartesian<FieldNumberType>` 
   \cgalHasModel `CGAL::Homogeneous<RingNumberType>`
   \cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>` 
@@ -25,6 +30,9 @@
   \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel`
 
   \sa `Kernel_d` 
+  \sa `CGAL::Ambient_dimension`
+  \sa `CGAL::Feature_dimension`
+  \sa `CGAL::Kernel_traits`
 
 */
 class Kernel {
@@ -97,7 +105,7 @@ public:
 
   /// @} 
 
-  /// \name Coordinate Access 
+  /// \name Two-dimensional Coordinate Access
   /// @{
 
   /*! 
@@ -107,7 +115,7 @@ public:
 
   /// @} 
 
-  /// \name Geometric Objects 
+  /// \name Two-dimensional Geometric Objects
   /// @{
 
   /*! 
@@ -162,7 +170,7 @@ public:
 
   /// @} 
 
-  /// \name Constructions 
+  /// \name Two-dimensional Constructions
   /// @{
 
   /*! 
@@ -382,7 +390,7 @@ public:
 
   /// @} 
 
-  /// \name Generalized Predicates 
+  /// \name Two-dimensional Generalized Predicates
   /// @{
 
   /*! 
@@ -607,7 +615,7 @@ public:
 
   /// @} 
 
-  /// \name Coordinate Access 
+  /// \name Three-dimensional Coordinate Access
   /// @{
 
   /*! 
@@ -617,7 +625,7 @@ public:
 
   /// @} 
 
-  /// \name Geometric Objects 
+  /// \name Three-dimensional Geometric Objects
   /// @{
 
   /*! 
@@ -687,7 +695,7 @@ public:
 
   /// @} 
 
-  /// \name Constructions 
+  /// \name Three-dimensional Constructions
   /// @{
 
   /*! 
@@ -952,7 +960,7 @@ public:
 
   /// @} 
 
-  /// \name Generalized Predicates 
+  /// \name Three-dimensional Generalized Predicates
   /// @{
 
   /*! 

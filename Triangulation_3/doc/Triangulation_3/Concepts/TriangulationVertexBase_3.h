@@ -63,6 +63,11 @@ Sets the point.
 */ 
 void set_point(Point p); 
 
+/// @}
+
+/// \name I/O
+/// @{
+
 /*! 
 Inputs the non-combinatorial information given by the vertex: 
 the point and other possible information. 

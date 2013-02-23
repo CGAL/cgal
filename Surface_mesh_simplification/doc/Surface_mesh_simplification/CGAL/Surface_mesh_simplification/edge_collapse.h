@@ -49,9 +49,9 @@ in the range `[0,num_vertices(surface))`.
 `VertexIndexMap` must be a 
 <A HREF="http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</A> 
 whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableMesh const>::vertex_descriptor` 
+`boost::graph_traits<EdgeCollapsableMesh const>::%vertex_descriptor` 
 and whose `value_type` is 
-`boost::graph_traits<EdgeCollapsableMesh>::size_type`, 
+`boost::graph_traits<EdgeCollapsableMesh>::%size_type`, 
 
 <B>%Default</B>: the property map obtained by calling `get(vertex_index,surface)`, 
 which requires the surface vertices to have an `id()` member properly initialized to the 
@@ -70,9 +70,9 @@ in the range `[0,num_edges(surface))`.
 `EdgeIndexMap` must be a 
 <A HREF="http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</A> 
 whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor` 
+`boost::graph_traits<EdgeCollapsableMesh const>::%edge_descriptor` 
 and whose `value_type` is 
-`boost::graph_traits<EdgeCollapsableMesh>::size_type` 
+`boost::graph_traits<EdgeCollapsableMesh>::%size_type` 
 
 <B>%Default</B>: the property map obtained by calling `get(edge_index,surface)`, 
 which requires the surface edges to have an `id()` member properly initialized to the 
@@ -91,7 +91,7 @@ which indicates if the edge belongs to the boundary of the surface
 `EdgeIsBorderMap` must be a 
 <A HREF="http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</A> 
 whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor` 
+`boost::graph_traits<EdgeCollapsableMesh const>::%edge_descriptor` 
 and whose `value_type` is `bool`. 
 
 <B>%Default</B>: the property map obtained by calling `get(edge_is_border,surface)`. 

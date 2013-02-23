@@ -23,7 +23,7 @@ public:
 /*! 
 
 A bivariate polynomial that is a model of `Polynomial_d`, 
-where `CGAL::Polynomial_traits_d<Polynomial_2>::Innermost_coefficient` 
+where \link PolynomialTraits_d::Innermost_coefficient_type `CGAL::Polynomial_traits_d<Polynomial_2>::Innermost_coefficient_type` \endlink
 is `AlgebraicKernel_d_1::Coefficient`. 
 
 */ 

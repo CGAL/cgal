@@ -86,13 +86,13 @@ public:
     : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, l)) {}
 
 
-  typename boost::result_of<typename R_::Construct_source_2( Ray_2)>::type
+  typename cpp11::result_of<typename R_::Construct_source_2( Ray_2)>::type
   source() const
   {
     return R().construct_source_2_object()(*this);
   }
 
-  typename boost::result_of<typename R_::Construct_second_point_2( Ray_2)>::type
+  typename cpp11::result_of<typename R_::Construct_second_point_2( Ray_2)>::type
   second_point() const
   {
     return R().construct_second_point_2_object()(*this);
@@ -116,7 +116,7 @@ public:
   }
 
 
-  typename boost::result_of<typename R_::Construct_source_2( Ray_2 )>::type
+  typename cpp11::result_of<typename R_::Construct_source_2( Ray_2 )>::type
   start() const
   {
     return source();

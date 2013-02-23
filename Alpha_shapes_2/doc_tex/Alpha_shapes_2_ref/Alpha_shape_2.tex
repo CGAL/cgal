@@ -95,7 +95,21 @@ the inherited functions. At the moment, only the static version is implemented.
 it has to derive from a  triangulation traits class.  
 For example \ccc{Dt::Point} is a Point class. 
 
-\ccTypedef{typedef Gt::FT FT;}{the number type for computation.}
+\ccNestedType{FT}{the number type of alpha values. \\
+In case \ccc{ExactAlphaComparisonTag} is \ccc{CGAL::Tag_false}, it is {Gt::FT}.\\
+In case \ccc{ExactAlphaComparisonTag} is \ccc{CGAL::Tag_true}, it is a number type
+allowing filtered exact comparisons (that is, interval arithmetic is first used before
+resorting to exact arithmetic).\\
+Access to the interval containing the exact value is provided through the function
+\ccc{FT::Approximate_nt approx() const} where \ccc{FT::Approximate_nt} is \ccc{Interval_nt<Protected>}
+with \ccc{Protected=true}.\\
+Access to the exact value is provided through the function 
+\ccc{FT::Exact_nt exact() const} where \ccc{FT::Exact_nt} depends on the configuration of CGAL 
+(it is \ccc{CGAL::Gmpq} if \ccc{gmp} is available and \ccc{CGAL::Quotient<CGAL::MP_Float>} otherwise).\\
+It must be noted that an object of type \ccc{FT} is valid as long as the alpha shapes class that creates
+it is valid and has not been modified.
+For convenience, classical comparison operators are provided for the type \ccc{FT}.
+}
 
 \ccNestedType{size_type}{The size type.}
 

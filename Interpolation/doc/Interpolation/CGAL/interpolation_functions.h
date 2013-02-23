@@ -108,36 +108,35 @@ Traits& traits);
 The function `linear_interpolation()` computes the weighted sum of the function 
 values which must be provided via a functor. 
 
-The value type of `ForwardIterator` is a pair associating a point to a (non-normalized) barycentric
-coordinate. `norm` is the normalization factor. Given a point,
-the functor `function_values` allows to access a pair of a
-function value and a Boolean. The Boolean indicates whether the
-function value could be retrieved correctly. This function generates
-the interpolated function value as the weighted sum of the values
-corresponding to each point of the point/coordinate pairs in the
-range `[first, beyond)`.
-\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range `[first, beyond)`.
-
-\cgalHeading{Requirements}
-
-<OL> 
-<LI>The value type of `ForwardIterator` is a pair of 
-point/coordinate value, thus 
+\tparam  ForwardIterator must have as value type a pair associating a point to a 
+(non-normalized) barycentric coordinate, that is
 `std::iterator_traits<ForwardIterator>::%value_type::first_type` is equivalent to a 
 point and `std::iterator_traits<ForwardIterator>::%value_type::second_type` is a 
 field number type. 
-<LI>`Functor::argument_type` must be equivalent to 
+\tparam Functor The type `Functor::argument_type` must be equivalent to 
 `std::iterator_traits<ForwardIterator>::%value_type::first_type` and 
 `Functor::result_type` is a pair of the function value type 
 and a Boolean value. The function value type must provide a 
 multiplication and addition operation with the field number type 
 `std::iterator_traits<ForwardIterator>::%value_type::second_type` and a constructor 
-with argument \f$ 0\f$. A model of the functor is provided by the 
+with argument `0`. 
+
+A model of the functor is provided by the 
 struct `Data_access`. It must be instantiated accordingly with 
 an associative container (e.g. `std::map`) having the 
 point type as `key_type` and the function value type as 
-`mapped_type`. 
-</OL> 
+`mapped_type`.
+
+\param first,beyond are the iterator range for the weighted input points.
+\param norm is the normalization factor. `norm` \f$ \neq0\f$.
+\param function_values  is a functor that allows to access a pair of a
+function value and a Boolean for a given point. The Boolean indicates whether the
+function value could be retrieved correctly. This function generates
+the interpolated function value as the weighted sum of the values
+corresponding to each point of the point/coordinate pairs in the
+range `[first, beyond)`. 
+ `function_value(q).second == true` for all points `q` of the point/coordinate pairs in the range `[first, beyond)`.
+
 
 \sa `CGAL::Data_access<Map>` 
 \sa `PkgInterpolationNaturalNeighborCoordinates2`
@@ -155,27 +154,14 @@ norm, Functor function_values);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The function `quadratic_interpolation()` interpolates the function values and first degree 
-functions defined from the function gradients. Both, function values and 
-gradients, must be provided by functors. 
-
-This function generates the
+The function `quadratic_interpolation()` generates the
 interpolated function value as the weighted sum of the values plus a
 linear term in the gradient for each point of the point/coordinate
-pairs in the range `[first, beyond)`. See also
-`sibson_c1_interpolation()`. 
+pairs in the range `[first, beyond)`. 
 
-\pre `norm` \f$ \neq0\f$ `function_value(p).second == true` for all
-points `p` of the point/coordinate pairs in the range `[first, beyond)`.
+\cgalHeading{Parameters and Template Parameters}
 
-\cgalHeading{Parameters}
-
-See `sibson_c1_interpolation()`. 
-
-\cgalHeading{Requirements}
-
-Same requirements as for 
-`sibson_c1_interpolation()` only that `Traits::FT` does not need 
+The same as for `sibson_c1_interpolation()` only that `Traits::FT` does not need 
 to provide the square root operation. 
 
 \sa `InterpolationTraits` 
@@ -202,63 +188,55 @@ function_gradient,const Traits& traits);
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The function `sibson_c1_interpolation()` interpolates the function values and the 
-gradients that are provided by functors 
-following the method described in \cite s-bdnni-81. 
-
-This function generates the interpolated function value at the point
-`p` using Sibson's \f$ Z^1\f$ interpolant \cite s-bdnni-81.
+The function `sibson_c1_interpolation()` generates the interpolated
+function value at the point `p`, using functors for the function values 
+and the gradients, by applying Sibson's \f$ Z^1\f$ interpolant. 
 
 If the functor `function_gradient` cannot supply the gradient of a
 point, the function returns a pair where the Boolean is set to
 `false`. If the interpolation was successful, the pair contains the
 interpolated function value as first and `true` as second value. 
 
-\pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points
-`p` of the point/coordinate pairs in the range `[first, beyond)`.
 
-
-\cgalHeading{Parameters}
-
-The template parameter `Traits` is to be 
-instantiated with a model of `InterpolationTraits`. 
-The value type of `ForwardIterator` is a pair associating a point to a 
-(non-normalized) barycentric coordinate. `norm` is the 
-normalization factor. The range `[first, beyond)` contains the barycentric 
-coordinates for the query point `p`. The functor 
-`function_value` allows to access the value of the interpolated 
-function given a point. `function_gradient` allows to access the 
-function gradient given a point. 
-
-\cgalHeading{Requirements}
-
-<OL> 
-<LI>`Traits` is a model of the concept 
-`InterpolationTraits`. 
-<LI>The value type of `ForwardIterator` is a point/coordinate pair. 
-Precisely `std::iterator_traits<ForwardIterator>::%value_type::first_type` is 
+\tparam Traits must be a model of `InterpolationTraits`. 
+The number type `FT` provided by `Traits` must support 
+the square root operation `sqrt()`. 
+\tparam ForwardIterator must have as value type a pair associating a point to a 
+(non-normalized) barycentric coordinate.
+More precisely, `std::iterator_traits<ForwardIterator>::%value_type::first_type` is 
 equivalent to `Traits::Point_d` and 
 `std::iterator_traits<ForwardIterator>::%value_type::second_type` is equivalent to 
 `Traits::FT`. 
-<LI>`Functor::argument_type` must be equivalent to 
+ 
+\tparam Functor must be a functor where `Functor::argument_type` must be equivalent to 
 `Traits::Point_d` and `Functor::result_type` is a pair of 
 the function value type and a Boolean. The function value type must 
 provide a multiplication and addition operation with the type 
-`Traits::FT` as well as a constructor with argument \f$ 0\f$. 
-<LI>`GradFunctor::argument_type` must be equivalent to 
+`Traits::FT` as well as a constructor with argument `0`.
+
+\tparam GradFunctor must be a functor where `GradFunctor::argument_type` must be equivalent to 
 `Traits::Point_d` and `Functor::result_type` is a pair of 
 the function's gradient type and a Boolean. The 
 function gradient type must provide a multiplication operation with 
 `Traits::Vector_d`. 
-<LI>A model of the functor types `Functor` (resp. 
+
+A model of the functor types `Functor` (resp. 
 `GradFunctor`) is provided by the struct `Data_access`. It 
 must be instantiated accordingly with an associative container 
-(e.g. \stl `std::map`) having the point type as `key_type` 
+(e.g. `std::map`) having the point type as `key_type` 
 and the function value type (resp. function gradient type) as 
 `mapped_type`. 
-<LI>The number type `FT` provided by `Traits` must support 
-the square root operation `sqrt()`. 
-</OL> 
+
+\param first,beyond is the iterator range of the barycentric 
+coordinates for the query point `p`. 
+\param norm is the normalization factor. `norm` \f$ \neq0\f$.
+\param 	p is the point at which the interpolated function value is generated
+\param function_value is a functor that allows to access the value of the interpolated 
+function given a point. `function_value(q).second == true` for all points
+`q` of the point/coordinate pairs in the range `[first, beyond)`
+\param function_gradient is a functor that allows to access the 
+function gradient given a point. 
+\param traits is an instance of the traits class
 
 \sa `InterpolationTraits` 
 \sa `GradientFittingTraits` 

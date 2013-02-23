@@ -94,7 +94,7 @@ public:
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 
-  typename boost::result_of<typename R::Construct_center_3( Sphere_3)>::type
+  typename cpp11::result_of<typename R::Construct_center_3( Sphere_3)>::type
   center() const
   {
     return R().construct_center_3_object()(*this);

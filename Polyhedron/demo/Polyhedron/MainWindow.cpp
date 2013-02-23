@@ -43,6 +43,7 @@
 #include "ui_Preferences.h"
 
 #include "Show_point_dialog.h"
+#include "File_loader_dialog.h"
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
@@ -713,57 +714,70 @@ void MainWindow::open(QString filename)
     return;
   }
 
-  //match all filters between ()
-  QRegExp all_filters_rx("\\((.*)\\)");
-  
-  // collect all io_plugins and offer them to load if the file extension match one name filter
-  // also collect all available plugin in case of a no extension match
+
   QStringList selected_items;
   QStringList all_items;
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
-    all_items << io_plugin->name();
-    QStringList split_filters = io_plugin->nameFilters().split(";;");
-    bool stop=false;
-    Q_FOREACH(const QString& filter, split_filters) {
-      //extract filters
-      if ( all_filters_rx.indexIn(filter)!=-1 ){
-        Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
-          QRegExp rx(pattern);
-          rx.setPatternSyntax(QRegExp::Wildcard);
-          if ( rx.exactMatch(filename_striped) ){
-            selected_items << io_plugin->name();
-            stop=true;
-            break;
+
+  QMap<QString,QString>::iterator dfs_it = 
+    default_plugin_selection.find( fileinfo.completeSuffix() );
+  
+  if ( dfs_it==default_plugin_selection.end() )
+  {
+    //match all filters between ()
+    QRegExp all_filters_rx("\\((.*)\\)");
+    // collect all io_plugins and offer them to load if the file extension match one name filter
+    // also collect all available plugin in case of a no extension match
+    Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
+      all_items << io_plugin->name();
+      QStringList split_filters = io_plugin->nameFilters().split(";;");
+      bool stop=false;
+      Q_FOREACH(const QString& filter, split_filters) {
+        //extract filters
+        if ( all_filters_rx.indexIn(filter)!=-1 ){
+          Q_FOREACH(const QString& pattern,all_filters_rx.cap(1).split(' ')){
+            QRegExp rx(pattern);
+            rx.setPatternSyntax(QRegExp::Wildcard);
+            if ( rx.exactMatch(filename_striped) ){
+              selected_items << io_plugin->name();
+              stop=true;
+              break;
+            }
           }
+          if (stop) break;
         }
-        if (stop) break;
       }
     }
   }
+  else
+    selected_items << *dfs_it;
   
   bool ok;
-  QString loader_name;
-
+  std::pair<QString, bool> load_pair;
+  
   switch( selected_items.size() )
   {
     case 1:
-      loader_name=selected_items.first();
+      load_pair = std::make_pair(selected_items.first(), false);
       ok=true;
       break;
     case 0:
-      loader_name=QInputDialog::getItem(this, tr("Select a loader"), tr("Available loaders for %1 :").arg(fileinfo.fileName()), all_items, 0, false, &ok);
+      load_pair = File_loader_dialog::getItem(fileinfo.fileName(), all_items, &ok);
       break;
     default:
-      loader_name=QInputDialog::getItem(this, tr("Select a loader"), tr("Available loaders for %1 :").arg(fileinfo.fileName()), selected_items, 0, false, &ok);
+      load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
   }
   
-  if(!ok || loader_name.isEmpty()) { return; }
+  if(!ok || load_pair.first.isEmpty()) { return; }
+  
+  if (load_pair.second)
+     default_plugin_selection[fileinfo.completeSuffix()]=load_pair.first;
+  
   
   QSettings settings;
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
 
-  Scene_item* scene_item = load_item(fileinfo, find_loader(loader_name));
+  Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
   selectSceneItem(scene->addItem(scene_item));
 }
 

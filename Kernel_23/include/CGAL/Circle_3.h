@@ -101,7 +101,7 @@ public:
   Circle_3(const Rep& r)
     : Rep(r) {}
 
-  typename boost::result_of
+  typename cpp11::result_of
   <typename R::Construct_sphere_3( Circle_3)>::type
   diametral_sphere() const
   {
@@ -118,7 +118,7 @@ public:
     return typename R::Construct_sphere_3()(*this).squared_radius();
   }
 
-  typename boost::result_of
+  typename cpp11::result_of
   <typename R::Construct_plane_3( Circle_3)>::type
   supporting_plane() const
   {

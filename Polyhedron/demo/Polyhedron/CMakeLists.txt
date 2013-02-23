@@ -98,6 +98,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
 
   qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
+  qt4_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
@@ -107,7 +108,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
+  qt4_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
   add_file_dependencies( MainWindow_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h" )
+  add_file_dependencies( File_loader_dialog_moc_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/File_loader_dialog.h" )
 
   qt4_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
@@ -227,8 +230,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #      Scene.cpp
 #      MainWindow_curvature_estimation.cpp
       MainWindow_moc.cpp
+      File_loader_dialog_moc.cpp
 #      Viewer_moc.cpp
-      ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
+       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     if(EIGEN3_FOUND OR TAUCS_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
@@ -236,6 +240,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #  else(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
 #    add_file_dependencies( Polyhedron_3.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
 #                                            "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp"
+#                                            "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp"
 #					    "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
 #    add_executable  ( Polyhedron_3 Polyhedron_3.cpp ${UI_FILES} ${RESOURCE_FILES} )
 #  endif(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)

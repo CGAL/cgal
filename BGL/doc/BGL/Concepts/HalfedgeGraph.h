@@ -39,7 +39,7 @@ additional notion of an <I>undirected edge</I>
 for a pair of opposite directed edges. The number of undirected
 edges is exactly half the number of directed edges. Note that the
 notion of directed and undirected edges does not imply the
-existence of two different types. The type `edge_descriptor` is
+existence of two different types. The type `%edge_descriptor` is
 used for both. An undirected edge must be implicitly handled, and
 there is no requirement on which of the directed edges of the
 undirected edge must be used to represent it.
@@ -48,7 +48,7 @@ undirected edge must be used to represent it.
 Associated Type | Explanation
 ----------------|------------- 
 halfedge_graph_traits<HalfedgeGraph>::Point; | The type of the geometric location of a vertex. 
-halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator; | An iterator that iterates over one and only one of the directed edges in each pair of opposite directed edges. The value type of the iterator is `boost::graph_traits<HalfedgeGraph>::edge_descriptor`. 
+halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator; | An iterator that iterates over one and only one of the directed edges in each pair of opposite directed edges. The value type of the iterator is `boost::graph_traits<HalfedgeGraph>::%edge_descriptor`. 
 
 
 

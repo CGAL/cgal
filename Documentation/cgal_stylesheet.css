@@ -207,6 +207,7 @@ div.groupText {
 /* the header. this is necessary because anchors are not adjusted by the */
 /* height of the position: fixed top div. */
 #doc-content a.anchor {
+    position: absolute; 
     padding-top: 91px; 
     margin-top: -91px;
 }

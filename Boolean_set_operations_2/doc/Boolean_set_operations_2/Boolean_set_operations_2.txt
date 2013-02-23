@@ -23,7 +23,7 @@ intersection predicates, and point containment predicates.
 
 Ordinary Boolean set-operations, which distinguish between the
 interior and the boundary of a polygon, are not implemented within this
-package. The Chapter \ref chapnef_2 "2D Nef Polygons" supports these operations for (linear)
+package. The Chapter \ref PkgNef2Summary supports these operations for (linear)
 polygons.
 
 In the rest of this chapter we use, unless otherwise stated, the
@@ -580,8 +580,8 @@ you intend to obtain the underlying internal arrangement and process it further.
 
 An instantiated
 `General_polygon_set_2` class defines the nested types 
-`General_polygon_set_2<Traits,Dcel>::Polygon_2` and
-`General_polygon_set_2<Traits,Dcel>::Polygon_with_holes_2`, which model
+`General_polygon_set_2<Traits,Dcel>::%Polygon_2` and
+`General_polygon_set_2<Traits,Dcel>::%Polygon_with_holes_2`, which model
 the concepts `GeneralPolygon_2` and
 `GeneralPolygonWithHoles_2` respectively.
 

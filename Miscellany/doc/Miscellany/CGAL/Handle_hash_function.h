@@ -17,7 +17,7 @@ return a unique address.
 \cgalHeading{Implementation}
 
 Plain type cast of `&*key` to `std::size_t` and devided 
-by the size of the `std::iterator_traits<Handle>::value_type` to 
+by the size of the `std::iterator_traits<Handle>::%value_type` to 
 avoid correlations with the internal table size, which is a power of 
 two. 
 
@@ -45,7 +45,7 @@ Returns unique hash value for any `Handle`
 type for which `&*key` gives a unique address. 
 
 \cgalRequires The type 
-`std::iterator_traits<Handle>::value_type` has to be defined 
+`std::iterator_traits<Handle>::%value_type` has to be defined 
 (which it is already for pointers, handles, iterators, and 
 circulators). 
 */ 

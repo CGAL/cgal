@@ -197,15 +197,15 @@ public:
 
       
       
-  typename boost::result_of<typename R::Compute_circular_x_3(Circular_arc_point_3)>::type
+  typename cpp11::result_of<typename R::Compute_circular_x_3(Circular_arc_point_3)>::type
   x() const
   { return typename R::Compute_circular_x_3()(*this);}
 
-  typename boost::result_of<typename R::Compute_circular_y_3(Circular_arc_point_3)>::type
+  typename cpp11::result_of<typename R::Compute_circular_y_3(Circular_arc_point_3)>::type
   y() const
   { return typename R::Compute_circular_y_3()(*this);}
 
-  typename boost::result_of<typename R::Compute_circular_z_3(Circular_arc_point_3)>::type
+  typename cpp11::result_of<typename R::Compute_circular_z_3(Circular_arc_point_3)>::type
   z() const
   { return typename R::Compute_circular_z_3()(*this);}
 

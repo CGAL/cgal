@@ -37,7 +37,7 @@ public:
 
 /*! 
 The dimension value as a compile-time 
-integral constant. It is implemented as \link Dimension_tag::value K::Ambient_dimension<T>::type::value \endlink. 
+integral constant. It is implemented as `K::Ambient_dimension<T>::%type::%value`.
 It exists only when the dimension is a compile-time constant. 
 */ 
 static const int value; 
@@ -50,7 +50,7 @@ static const int value;
 /*! 
 Either `Dimension_tag<dim>` if the dimension is a 
 compile-time constant of value `dim`, or `Dynamic_dimension_tag` 
-otherwise. It is implemented as \link Kernel::Ambient_dimension::type K::Ambient_dimension<T>::type \endlink. 
+otherwise. It is implemented as `K::Ambient_dimension<T>::%type`.
 */ 
 typedef Hidden_type type; 
 
@@ -166,7 +166,7 @@ public:
 
 /*! 
 The dimension value as a compile-time 
-integral constant. It is implemented as \link Dimension_tag::value K::Feature_dimension<T>::type::value \endlink. 
+integral constant. It is implemented as `K::Feature_dimension<T>::%type::%value`. 
 It exists only when the dimension is a compile-time constant. 
 */ 
 static const int value; 
@@ -179,7 +179,7 @@ static const int value;
 /*! 
 Either `Dimension_tag<dim>` if the dimension is a 
 compile-time constant of value `dim`, or `Dynamic_dimension_tag` 
-otherwise. It is implemented as \link Kernel::Feature_dimension::type K::Feature_dimension<T>::type \endlink. 
+otherwise. It is implemented as `K::Feature_dimension<T>::%type`. 
 */ 
 typedef Hidden_type type; 
 

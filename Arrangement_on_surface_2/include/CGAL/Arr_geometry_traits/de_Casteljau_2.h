@@ -24,7 +24,7 @@
 
 /*! \file
  * Template functions for performing generic operations based on the
- * de Casteljau algorith,.
+ * de Casteljau algorithm.
  */
 
 #include <vector>
@@ -32,33 +32,35 @@
 namespace CGAL {
 
 /*!
- * Bisect the control polygon of a given Bezier curves into the left and
- * a right control polygon.
- * \param ctrl_pts_begin The control points of the curve.
- * \param ctrl_pts_end A past-the-end iterator of the control points.
- * \param left_ctrl_pts Output: The control points of the left polygon.
- * \param right_ctrl_pts Output: The control points of the left polygon.
+ * Bisect the control polygon of a given Bezier curve into the left and right
+ * control polygons.
+ * \param ctrl_pts_begin The beginning iterator of the control points of the
+ *        curve.
+ * \param ctrl_pts_end The past-the-end iterator of the control points.
+ * \param left_ctrl_pts (out) The control points of the left polygon.
+ * \param right_ctrl_pts (out) The control points of the right polygon.
  * Note: Typically you should call this function as follows:
- *       bisect_control_polygon_2 (ctrl_pts.begin(), ctrl_pts.end(),
- *                                 std::back_inserter(left_pts),
- *                                 std::front_inserter(right_pts));
+ *       bisect_control_polygon_2(ctrl_pts.begin(), ctrl_pts.end(),
+ *                                std::back_inserter(left_pts),
+ *                                std::front_inserter(right_pts));
  */
 template <class InputIterator,
           class OutputIterLeft, class OutputIterRight>
 void
-bisect_control_polygon_2
-    (InputIterator ctrl_pts_begin, InputIterator ctrl_pts_end,
-     OutputIterLeft left_ctrl_pts, OutputIterRight right_ctrl_pts)
+bisect_control_polygon_2(InputIterator ctrl_pts_begin,
+                         InputIterator ctrl_pts_end,
+                         OutputIterLeft left_ctrl_pts,
+                         OutputIterRight right_ctrl_pts)
 {
   typedef typename InputIterator::value_type        _Point_2;
   typedef typename Kernel_traits<_Point_2>::Kernel  _Kernel;
   typedef typename _Kernel::Construct_midpoint_2    _Construct_midpoint_2;
 
   // Grab a local copy of the control points.
-  const unsigned int    n_pts = std::distance (ctrl_pts_begin, ctrl_pts_end);
-  CGAL_precondition (n_pts != 0);
+  const unsigned int    n_pts = std::distance(ctrl_pts_begin, ctrl_pts_end);
+  CGAL_precondition(n_pts != 0);
 
-  std::vector<_Point_2>  vec (n_pts);
+  std::vector<_Point_2>  vec(n_pts);
   InputIterator          iter;
   unsigned int           i;
 
@@ -82,7 +84,7 @@ bisect_control_polygon_2
     // Construct (m - 1) control points from the m point we currently have,
     // where the new i'th point is the midpoint between p[i]  and p[i + 1].
     for (i = 0; i < last_index; ++i)
-      vec[i] = midpoint (vec[i], vec[i + 1]);
+      vec[i] = midpoint(vec[i], vec[i + 1]);
 
     --last_index;
 
@@ -99,29 +101,30 @@ bisect_control_polygon_2
 }
 
 /*!
- * Evaluate a point on a pameteric Bezier curve B(t) using de Casteljau's
+ * Evaluate a point on a parametric Bezier curve B(t) using de Casteljau's
  * algorithm.
- * \param ctrl_pts_begin The control points of the curve.
- * \param ctrl_pts_end A past-the-end iterator of the control points.
+ * \param ctrl_pts_begin The beginning iterator of the control points of the
+ *        curve.
+ * \param ctrl_pts_end The past-the-end iterator of the control points.
  * \param t0 The parameter value at the requested point.
  * \return The point B(t0).
  */
 template <class InputIterator>
-typename InputIterator::value_type
-point_on_Bezier_curve_2
-    (InputIterator ctrl_pts_begin, InputIterator ctrl_pts_end,
-     const typename Kernel_traits<typename 
-                                  InputIterator::value_type>::Kernel::FT& t0)
+typename InputIterator::value_type point_on_Bezier_curve_2
+(InputIterator ctrl_pts_begin,
+ InputIterator ctrl_pts_end,
+ const typename Kernel_traits<typename InputIterator::value_type>::Kernel::FT&
+ t0)
 {
   typedef typename InputIterator::value_type        _Point_2;
   typedef typename Kernel_traits<_Point_2>::Kernel  _Kernel;
   typedef typename _Kernel::FT                      _NT;
 
   // Grab a local copy of the control points.
-  const unsigned int     n_pts = std::distance (ctrl_pts_begin, ctrl_pts_end);
-  CGAL_precondition (n_pts != 0);
+  const unsigned int     n_pts = std::distance(ctrl_pts_begin, ctrl_pts_end);
+  CGAL_precondition(n_pts != 0);
 
-  std::vector<_Point_2>  vec (n_pts);
+  std::vector<_Point_2>  vec(n_pts);
   InputIterator          iter;
   unsigned int           i;
 
@@ -139,8 +142,8 @@ point_on_Bezier_curve_2
     // where the new i'th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
     for (i = 0; i < last_index; ++i)
     {
-      vec[i] = _Point_2 (comp_t0*vec[i].x() + t0*vec[i + 1].x(),
-                         comp_t0*vec[i].y() + t0*vec[i + 1].y());
+      vec[i] = _Point_2(comp_t0*vec[i].x() + t0*vec[i + 1].x(),
+                        comp_t0*vec[i].y() + t0*vec[i + 1].y());
     }
 
     --last_index;
@@ -152,33 +155,33 @@ point_on_Bezier_curve_2
 }
 
 /*!
- * Evaluate a point on a pameteric Bezier curve B(t) using de Casteljau's
+ * Evaluate a point on a parametric Bezier curve B(t) using de Casteljau's
  * algorithm, and also bisect the control polygon of B at this point.
- * \param ctrl_pts_begin The control points of the curve.
- * \param ctrl_pts_end A past-the-end iterator of the control points.
+ * \param ctrl_pts_begin The beginning iterator of the control points of the
+ *        curve.
+ * \param ctrl_pts_end The past-the-end iterator of the control points.
  * \param t0 The parameter value at the requested point.
- * \param left_ctrl_pts Output: The control points of the left polygon.
- * \param right_ctrl_pts Output: The control points of the left polygon.
+ * \param left_ctrl_pts (out) The control points of the left polygon.
+ * \param right_ctrl_pts (out) The control points of the right polygon.
  * \return The point B(t0).
  */
 template <class InputIterator,
           class OutputIterLeft, class OutputIterRight>
-typename InputIterator::value_type
-de_Casteljau_2
-    (InputIterator ctrl_pts_begin, InputIterator ctrl_pts_end,
-     const typename Kernel_traits<typename
-                                  InputIterator::value_type>::Kernel::FT& t0,
-     OutputIterLeft left_ctrl_pts, OutputIterRight right_ctrl_pts)
+typename InputIterator::value_type de_Casteljau_2
+(InputIterator ctrl_pts_begin, InputIterator ctrl_pts_end,
+ const typename Kernel_traits<typename InputIterator::value_type>::Kernel::FT&
+ t0,
+ OutputIterLeft left_ctrl_pts, OutputIterRight right_ctrl_pts)
 {
   typedef typename InputIterator::value_type        _Point_2;
   typedef typename Kernel_traits<_Point_2>::Kernel  _Kernel;
   typedef typename _Kernel::FT                      _NT;
 
   // Grab a local copy of the control points.
-  const unsigned int     n_pts = std::distance (ctrl_pts_begin, ctrl_pts_end);
-  CGAL_precondition (n_pts != 0);
+  const unsigned int     n_pts = std::distance(ctrl_pts_begin, ctrl_pts_end);
+  CGAL_precondition(n_pts != 0);
 
-  std::vector<_Point_2>  vec (n_pts);
+  std::vector<_Point_2>  vec(n_pts);
   InputIterator          iter;
   unsigned int           i;
 
@@ -202,8 +205,8 @@ de_Casteljau_2
     // where the new i'th point is given by: (1 - t0)*p[i] + t0*p[i + 1].
     for (i = 0; i < last_index; ++i)
     {
-      vec[i] = _Point_2 (comp_t0*vec[i].x() + t0*vec[i + 1].x(),
-                         comp_t0*vec[i].y() + t0*vec[i + 1].y());
+      vec[i] = _Point_2(comp_t0*vec[i].x() + t0*vec[i + 1].x(),
+                        comp_t0*vec[i].y() + t0*vec[i + 1].y());
     }
     --last_index;
 
