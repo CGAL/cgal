@@ -470,6 +470,9 @@ public:
   Point point(const Vertex_handle &v) const {
     return point(periodic_point(v));
   }
+  Point point(const Face_handle &fh, int i) const {
+    return point(periodic_point(fh, i));
+  }
   /// Converts the Periodic_segment ps to a Segment in \f$R^2\f$.
   /// NGHK: Implemented
   Segment segment(const Periodic_segment &ps) const {
