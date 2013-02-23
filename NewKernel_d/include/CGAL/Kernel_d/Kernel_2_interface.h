@@ -22,7 +22,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
         typedef typename Get_type<Base, Angle_tag>::type Angle;
 	typedef typename Get_type<Base, Point_tag>::type  Point_2;
 	typedef typename Get_type<Base, Vector_tag>::type Vector_2;
-	struct Segment_2 {};
+	typedef typename Get_type<Base, Segment_tag>::type Segment_2;
 	typedef cpp0x::tuple<Point_2,Point_2,Point_2> Triangle_2; // triangulation insists...
 	template <class T,int i> struct Help_2p_i {
 		typedef typename Get_functor<Base, T>::type LT;
@@ -61,11 +61,11 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 
 		}
 	};
-	struct Side_of_oriented_sphere_2 {
+	struct Side_of_oriented_circle_2 {
 		typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type SOS;
 		typedef typename SOS::result_type result_type;
 		SOS sos;
-		Side_of_oriented_sphere_2(Kernel const&k):sos(k){}
+		Side_of_oriented_circle_2(Kernel const&k):sos(k){}
 		result_type operator()(Point_2 const&a, Point_2 const&b, Point_2 const&c, Point_2 const&d) {
 			//return sos(a,b,c,d);
 			Point_2 const* t[4]={&a,&b,&c,&d};
@@ -78,7 +78,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
 	Compare_y_2 compare_y_2_object()const{ return Compare_y_2(*this); }
 	Compare_distance_2 compare_distance_2_object()const{ return Compare_distance_2(*this); }
 	Orientation_2 orientation_2_object()const{ return Orientation_2(*this); }
-	Side_of_oriented_sphere_2 side_of_oriented_sphere_2_object()const{ return Side_of_oriented_sphere_2(*this); }
+	Side_of_oriented_circle_2 side_of_oriented_circle_2_object()const{ return Side_of_oriented_circle_2(*this); }
 };
 }
 
