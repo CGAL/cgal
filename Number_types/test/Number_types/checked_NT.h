@@ -83,28 +83,25 @@ template<class NT1,class NT2> struct Algebraic_structure_traits<checked_NT<NT1,N
   struct Div
     : public std::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
-	Type a=CGAL::div(x.x1,y.x1);
-	Type b=CGAL::div(x.x2,y.x2);
-	assert(a==b);
-	return a;
+	return Type(typename Type::pieces(),
+	    CGAL::div(x.x1,y.x1),
+	    CGAL::div(x.x2,y.x2));
       }
     };
   struct Mod
     : public std::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
-	Type a=CGAL::mod(x.x1,y.x1);
-	Type b=CGAL::mod(x.x2,y.x2);
-	assert(a==b);
-	return a;
+	return Type(typename Type::pieces(),
+	    CGAL::mod(x.x1,y.x1),
+	    CGAL::mod(x.x2,y.x2));
       }
     };
   struct Integral_division
     : public std::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
-	Type a=CGAL::integral_division(x.x1,y.x1);
-	Type b=CGAL::integral_division(x.x2,y.x2);
-	assert(a==b);
-	return a;
+	return Type(typename Type::pieces(),
+	    CGAL::integral_division(x.x1,y.x1),
+	    CGAL::integral_division(x.x2,y.x2));
       }
     };
 };
