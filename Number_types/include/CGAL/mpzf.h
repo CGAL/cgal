@@ -41,7 +41,7 @@
 // The following is currently assumed in several places. I hope I am not
 // making too many other assumptions.
 // * limbs are 64 bits
-// * uint64_t and stdint.h exist
+// * uint64_t exists (via boost)
 // * mpn_neg(_n) exists
 // * IEEE double
 // * not too fancy endianness
@@ -59,7 +59,7 @@
 #define mpn_copyi(dst, src, siz) std::copy((src), (src)+(siz), (dst))
 #endif
 
-#include <stdint.h>
+#include <boost/cstdint.hpp>
 
 #ifdef _MSC_VER
 #include <intrin.h>
@@ -179,7 +179,7 @@ template <class T, class = void> struct no_pool {
 };
 
 // Only used with an argument known not to be 0.
-inline int ctz (uint64_t x) {
+inline int ctz (boost::uint64_t x) {
 #ifdef _MSC_VER
   unsigned long ret;
   _BitScanForward64(&ret, x);
@@ -189,7 +189,7 @@ inline int ctz (uint64_t x) {
   return __builtin_ctzll (x);
 #endif
 }
-inline int clz (uint64_t x) {
+inline int clz (boost::uint64_t x) {
 #ifdef _MSC_VER
   unsigned long ret;
   _BitScanReverse64(&ret, x);
@@ -358,6 +358,7 @@ struct mpzf {
   }
   mpzf(double d){
     init();
+    using boost::uint64_t;
     union {
 #ifdef BOOST_LITTLE_ENDIAN
       struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
