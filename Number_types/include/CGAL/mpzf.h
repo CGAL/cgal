@@ -26,9 +26,15 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
-#include <gmp.h>
+#ifdef CGAL_USE_GMPXX
+# include <CGAL/gmpxx.h>
+#else
+# include <CGAL/gmp.h>
+#endif
 #include <CGAL/enum.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
 
 // The following is currently assumed in several places. I hope I am not
 // making too many other assumptions.
@@ -408,6 +414,22 @@ struct mpzf {
 #endif
     if(u.s.sig) size=-size;
   }
+
+#ifdef CGAL_USE_GMPXX
+  mpzf(mpz_class const&z){
+    init_from_mpz_t(z.get_mpz_t());
+  }
+#endif
+  mpzf(Gmpz const&z){
+    init_from_mpz_t(z.mpz());
+  }
+  void init_from_mpz_t(mpz_t const z){
+    exp=mpz_scan1(z,0)/GMP_NUMB_BITS;
+    size=mpz_size(z)-exp;
+    init(size);
+    mpn_copyi(data(),z->_mp_d+exp,size);
+  }
+
   // For debug purposes only
   void print()const{
     //std::cout << "size: " << size << std::endl;
@@ -843,11 +865,22 @@ struct mpzf {
   }
 
 #ifdef CGAL_USE_GMPXX
-  // For testing purposes
   operator mpq_class () const {
     mpq_class q;
+    export_to_mpq_t(q.get_mpq_t());
+    return q;
+  }
+#endif
+  operator Gmpq () const {
+    Gmpq q;
+    export_to_mpq_t(q.mpq());
+    return q;
+  }
+  void export_to_mpq_t(mpq_t q) const {
+    /* q must be 0/1 before this call */
+    CGAL_precondition(mpq_cmp_ui(q,0,1)==0);
     if (size != 0) {
-      mpz_import (mpq_numref (q.get_mpq_t()),
+      mpz_import (mpq_numref (q),
 		  std::abs(size),
 		  -1, // data()[0] is the least significant part
 		  sizeof(mp_limb_t),
@@ -855,16 +888,15 @@ struct mpzf {
 		  GMP_NAIL_BITS, // should be 0
 		  data());
       if (exp > 0)
-	q <<= (sizeof(mp_limb_t) * CHAR_BIT *  exp);
+	mpq_mul_2exp(q, q, (sizeof(mp_limb_t) * CHAR_BIT *  exp));
       else if (exp < 0)
-	q >>= (sizeof(mp_limb_t) * CHAR_BIT * -exp);
+	mpq_div_2exp(q, q, (sizeof(mp_limb_t) * CHAR_BIT * -exp));
 
       if (size < 0)
-	q = -q;
+	mpq_neg(q,q);
     }
-    return q;
   }
-#endif
+
   friend void simplify_quotient(mpzf& a, mpzf& b){
     // Avoid quotient(2^huge_a/2^huge_b)
     a.exp -= b.exp;
