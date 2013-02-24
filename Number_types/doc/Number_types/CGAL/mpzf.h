@@ -18,11 +18,16 @@ similar to `MP_Float` and `Gmpzf` but is faster.
 \cgalHeading{Implementation}
 
 This class is only available on platforms on which <span
-class="textsc">Gmp</span> uses 64 bits limbs. If this is true, the macro
-`CGAL_HAS_MPZF` is defined.
-\todo need to add more details
-\todo requires little endianess (can make a version slower if not having it)
-\todo requires ieee double (can make a version slower if not having it)
+class="textsc">Gmp</span> uses 64 bits limbs and the endianness is
+either big-endian or little-endian.  If this is true, the macro
+`CGAL_HAS_MPZF` is defined.  This class makes the assumption that the
+representation of a `double` in memory follows IEEE 754.
+
+Currently, an `mpzf` contains an array of a few limbs, in which it
+stores the data as long as it fits. If it does not fit, it dynamically
+allocates memory with new, and de-allocates it when it is done. Code to
+recycle the allocated memory (per thread) is included but disabled at
+the moment.
 */
 
 class mpzf {
@@ -63,7 +68,7 @@ mpzf(double d);
 
 /// @}
 
-/// \name Creation
+/// \name Conversion
 /// @{
 
 /*!
