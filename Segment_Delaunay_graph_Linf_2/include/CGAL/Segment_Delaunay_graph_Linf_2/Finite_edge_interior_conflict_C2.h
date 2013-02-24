@@ -989,6 +989,9 @@ public:
                 same_points(q.target_site(), t.target_site())   ) {
               result = true;
             } else {
+              CGAL_SDG_DEBUG( std::cout
+                 << "debug fecf call intersects( " << q << ", "
+                 << p << ", " << t << ")" << std::endl; ) ;
               result = intersects_segment_interior_inf_wedge_sp(q,p,t);
             }
           }
@@ -1010,6 +1013,9 @@ public:
                 same_points(p.target_site(), t.target_site())   ) {
               result = true;
             } else {
+              CGAL_SDG_DEBUG( std::cout
+                 << "debug fecf call intersects( " << p << ", "
+                 << q << ", " << t << ")" << std::endl; ) ;
               result = intersects_segment_interior_inf_wedge_sp(p,q,t);
             }
           }
