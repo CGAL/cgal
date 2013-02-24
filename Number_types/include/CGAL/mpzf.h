@@ -35,14 +35,19 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+/* Boost refuses to document this :-( */
+#include <boost/detail/endian.hpp>
 
 // The following is currently assumed in several places. I hope I am not
 // making too many other assumptions.
 // * limbs are 64 bits
 // * uint64_t and stdint.h exist
 // * mpn_neg(_n) exists
+// * IEEE double
+// * not too fancy endianness
 #if __GNU_MP_VERSION * 10 + __GNU_MP_VERSION_MINOR >= 43 \
-    && GMP_NUMB_BITS == 64 && defined BOOST_HAS_STDINT_H
+    && GMP_NUMB_BITS == 64 && defined BOOST_HAS_STDINT_H \
+    && (defined BOOST_LITTLE_ENDIAN || defined BOOST_BIG_ENDIAN)
 #define CGAL_HAS_MPZF 1
 
 // GMP-4.3.* has a different name for mpn_neg.
@@ -82,9 +87,6 @@
 #endif
 */
 #define CGAL_MPZF_USE_CACHE 1
-// FIXME:
-// this code is experimental. It assumes there is an int64_t type which is used
-// as mp_limb_t by gmp, it may assume little endianness, etc.
 
 // On a dataset provided by Andreas, replacing Gmpq with this type in
 // Epick reduced the running time of the construction of a Delaunay
@@ -357,7 +359,12 @@ struct mpzf {
   mpzf(double d){
     init();
     union {
+#ifdef BOOST_LITTLE_ENDIAN
       struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
+#else /* BOOST_BIG_ENDIAN */
+      //WARNING: untested!
+      struct { uint64_t sig:1; uint64_t exp:11; uint64_t man:52; } s;
+#endif
       double d;
     } u;
     u.d = d;
