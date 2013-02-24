@@ -821,6 +821,12 @@ public:
   /// Remove a degree 3 vertex from a 2D triangulation
   void remove_degree_3(Vertex_handle v);
 
+  /// NGHK: implemented
+  bool remove_degree_init(Vertex_handle v, const Offset &v_o,
+                          std::vector<Face_handle> &f,
+                          std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
+                          std::vector<int> &i, int &d, int &maxd, bool &simplicity_criterion);
+
   /// Remove a vertex from a 2D triangulation with number_of_vertices() == 1
   void remove_first(Vertex_handle v);
   /// Remove a vertex from a 2D triangulation with more than one vertex
@@ -2492,6 +2498,49 @@ inline void Periodic_2_triangulation_2<Gt, Tds>::remove_first(Vertex_handle) {
   CGAL_assertion(number_of_vertices() == 1);
   clear();
   return;
+}
+
+
+template < class Gt, class Tds >
+bool
+Periodic_2_triangulation_2<Gt,Tds>::
+remove_degree_init(Vertex_handle v, const Offset &v_o,
+                   std::vector<Face_handle> &f,
+		   std::vector<Vertex_handle> &w,
+		   std::vector<Offset> &offset_w,
+                   std::vector<int> &i,
+		   int &d, int &maxd,
+                   bool &simplicity_criterion)
+{
+  Bbox_2 bbox = v->point().bbox();
+  simplicity_criterion = is_1_cover();
+
+  f[0] = v->face();d=0;
+
+  do{
+    i[d] = f[d]->index(v);
+    w[d] = f[d]->vertex( ccw(i[d]) );
+    offset_w[d] = get_offset(f[d], ccw(i[d])) - get_offset(f[d], i[d]) + v_o;
+    w[d]->set_face( f[d]->neighbor(i[d])); // do no longer bother about set_face
+    simplicity_criterion &= (offset_w[d] == offset_w[0]);
+
+    bbox = bbox + this->construct_point(w[d]->point(), offset_w[d]).bbox();
+
+    ++d;
+    if ( d==maxd) {
+      maxd *=2;
+      f.resize(maxd);
+      w.resize(maxd);
+      offset_w.resize(maxd);
+      i.resize(maxd);
+    }
+
+    f[d] = f[d-1]->neighbor( ccw(i[d-1]) );
+
+  } while(f[d]!=f[0]);
+
+  return is_1_cover() &&
+      this->edge_is_too_long(Point(bbox.xmin(), bbox.ymin()), Point(bbox.xmax(), bbox.ymax()));
 }
 
 template<class Gt, class Tds>

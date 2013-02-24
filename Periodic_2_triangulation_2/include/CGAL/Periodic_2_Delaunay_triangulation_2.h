@@ -105,6 +105,7 @@ public:
   using Triangulation::number_of_sheets;
   using Triangulation::orientation;
   using Triangulation::side_of_oriented_circle;
+  using Triangulation::remove_degree_init;
 #endif
 
   /// \name Constructors
@@ -501,11 +502,6 @@ private:
   // auxilliary functions for remove
   // returns false if we first need to convert to a 9-cover before the vertex can be removed
   bool remove_single_vertex(Vertex_handle v, const Offset &v_o);
-  /// NGHK: implemented
-  bool remove_degree_init(Vertex_handle v, const Offset &v_o,
-                          std::vector<Face_handle> &f,
-                          std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
-                          std::vector<int> &i, int &d, int &maxd, bool &simplicity_criterion);
   /// NGHK: implemented
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w,
@@ -1341,49 +1337,6 @@ remove_single_vertex(Vertex_handle v, const Offset &v_o) {
 
   return true;
 }
-
-template < class Gt, class Tds >
-bool
-Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-remove_degree_init(Vertex_handle v, const Offset &v_o,
-                   std::vector<Face_handle> &f,
-		   std::vector<Vertex_handle> &w,
-		   std::vector<Offset> &offset_w,
-                   std::vector<int> &i,
-		   int &d, int &maxd,
-                   bool &simplicity_criterion)
-{
-  Bbox_2 bbox = v->point().bbox();
-  simplicity_criterion = is_1_cover();
-
-  f[0] = v->face();d=0;
-
-  do{
-    i[d] = f[d]->index(v);
-    w[d] = f[d]->vertex( ccw(i[d]) );
-    offset_w[d] = get_offset(f[d], ccw(i[d])) - get_offset(f[d], i[d]) + v_o;
-    w[d]->set_face( f[d]->neighbor(i[d])); // do no longer bother about set_face
-    simplicity_criterion &= (offset_w[d] == offset_w[0]);
-
-    bbox = bbox + this->construct_point(w[d]->point(), offset_w[d]).bbox();
-
-    ++d;
-    if ( d==maxd) {
-      maxd *=2;
-      f.resize(maxd);
-      w.resize(maxd);
-      offset_w.resize(maxd);
-      i.resize(maxd);
-    }
-
-    f[d] = f[d-1]->neighbor( ccw(i[d-1]) );
-
-  } while(f[d]!=f[0]);
-
-  return is_1_cover() &&
-      this->edge_is_too_long(Point(bbox.xmin(), bbox.ymin()), Point(bbox.xmax(), bbox.ymax()));
-}
-
 
 
 template < class Gt, class Tds >
