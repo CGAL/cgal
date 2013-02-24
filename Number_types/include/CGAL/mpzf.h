@@ -821,6 +821,14 @@ struct mpzf {
     return true;
   }
 
+  bool is_zero () const {
+    return size==0;
+  }
+
+  bool is_one () const {
+    return exp==0 && size==1 && data()[0]==1;
+  }
+
   CGAL::Sign sign () const { return CGAL::sign(size); }
 
   double to_double () const {
@@ -955,14 +963,14 @@ std::istream& operator>> (std::istream& is, mpzf& a)
       struct Is_zero
 	: public std::unary_function< Type, bool > {
 	  bool operator()( const Type& x ) const {
-	    return x.sign() == 0;
+	    return x.is_zero();
 	  }
 	};
 
       struct Is_one
 	: public std::unary_function< Type, bool > {
 	  bool operator()( const Type& x ) const {
-	    return x == 1;
+	    return x.is_one();
 	  }
 	};
 
