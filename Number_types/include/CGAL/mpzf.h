@@ -35,6 +35,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+//#include <CGAL/Gmpzf.h>
 /* Boost refuses to document this :-( */
 #include <boost/detail/endian.hpp>
 
@@ -403,7 +404,9 @@ struct mpzf {
     }
 #else
     mp_limb_t d0 = (m << e2) & GMP_NUMB_MASK;
-    mp_limb_t d1 = m >> (GMP_NUMB_BITS - e2);
+    mp_limb_t d1 = 0;
+    if (e2 != 0) // shifting by 64 is UB
+      d1 = m >> (GMP_NUMB_BITS - e2);
     if (d0 == 0) {
       data()[0] = d1;
       size = 1;
@@ -421,6 +424,7 @@ struct mpzf {
     }
 #endif
     if(u.s.sig) size=-size;
+    assert(to_double()==IA_force_to_double(d));
   }
 
 #ifdef CGAL_USE_GMPXX
@@ -904,6 +908,18 @@ struct mpzf {
 	mpq_neg(q,q);
     }
   }
+#if 0
+// This makes mpzf==int ambiguous
+  operator Gmpzf () const {
+    mpz_t z;
+    z->_mp_d=const_cast<mp_limb_t*>(data());
+    z->_mp_size=size;
+    Gmpzf m(z);
+// Only works for a very limited range of exponents
+    Gmpzf e(std::ldexp(1.,GMP_NUMB_BITS*exp));
+    return m*e;
+  }
+#endif
 
   friend void simplify_quotient(mpzf& a, mpzf& b){
     // Avoid quotient(2^huge_a/2^huge_b)

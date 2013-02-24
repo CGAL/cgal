@@ -13,6 +13,7 @@ void test1(){
   NT c=2*(a+b)+-a*5;
   assert(CGAL::sign(c)==0);
   NT d=b/a;
+  NT e=.0003;
   assert(CGAL::to_double(b) == 4.5);
   std::pair<double,double> p=CGAL::to_interval(b);
   assert(p.first<=4.5 && p.second >= 4.5);
@@ -25,6 +26,7 @@ void test1(){
   assert(CGAL::is_square(a+1));
   assert(!CGAL::is_square(a-1));
   assert(!CGAL::is_square(b));
+  assert(e-e==0);
 }
 template<class NT>
 void test2(){
