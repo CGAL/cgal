@@ -9,14 +9,15 @@
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4800) // complaint about performance where we can't do anything
+#  pragma warning(disable:4800)
+// complaint about performance where we can't do anything
 #endif
 
 namespace CGAL {
 
 namespace SegmentDelaunayGraphLinf_2 {
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 template<class K, class Method_tag>
 class Finite_edge_interior_conflict_C2
@@ -26,7 +27,7 @@ public:
 
   typedef Basic_predicates_C2<K>              Base;
   typedef Voronoi_vertex_C2<K,Method_tag>     Voronoi_vertex_2;
-  
+
   typedef typename Base::Point_2              Point_2;
   typedef typename Base::Segment_2            Segment_2;
   typedef typename Base::Line_2               Line_2;
@@ -43,7 +44,7 @@ public:
   typedef typename Base::Homogeneous_point_2  Homogeneous_point_2;
 
 
-  using Base::opposite_line;  
+  using Base::opposite_line;
   using Base::compute_supporting_line;
   using Base::oriented_side_of_line;
   using Base::compare_linf_distances_to_line;
@@ -67,7 +68,8 @@ private:
   typedef typename Base::Compare_y_2          Compare_y_2_points;
 
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>   Are_same_points_2;
-  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K> Are_same_segments_2;
+  typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K>
+          Are_same_segments_2;
 
   typedef typename K::Intersections_tag       ITag;
 
@@ -141,7 +143,7 @@ private:
     } else {
       oq = oriented_side_of_line(lt, q);
     }
-    
+
 
     if ((op == ON_POSITIVE_SIDE && oq == ON_NEGATIVE_SIDE) ||
 	(op == ON_NEGATIVE_SIDE && oq == ON_POSITIVE_SIDE) ||
@@ -157,7 +159,7 @@ private:
     Voronoi_vertex_2 vpqr(sp, sq, r);
     Voronoi_vertex_2 vqps(sq, sp, s);
 
-    
+
     Line_2 lperp;
     if ( res == SMALLER ) {
       // p is closer to lt than q
@@ -196,7 +198,7 @@ private:
     if ( same_points(p, q.source_site()) ||
 	 same_points(p, q.target_site()) ) {
       return false;
-    }   
+    }
 
     if ( t.is_point() ) {
       return is_interior_in_conflict_both_ps_p(p, q, r, s, t, tag);
@@ -220,13 +222,15 @@ private:
 
     //if ( res != SMALLER ) { return true; }
     if (certainly( res != SMALLER ) ) { return true; }
-    if (! is_certain( res != SMALLER ) ) { return indeterminate<Boolean>(); }
+    if (! is_certain( res != SMALLER ) ) {
+      return indeterminate<Boolean>();
+    }
 
     Voronoi_vertex_2 vpqr(p, q, r);
     Voronoi_vertex_2 vqps(q, p, s);
 
     Line_2 lperp = compute_linf_perpendicular(lq, p.point());
-      
+
     Oriented_side opqr = vpqr.oriented_side(lperp);
     Oriented_side oqps = vqps.oriented_side(lperp);
 
@@ -257,7 +261,7 @@ private:
     Line_2 lq = compute_supporting_line(sq.supporting_site());
 
     if ( oriented_side_of_line(lq, p) == ON_NEGATIVE_SIDE ) {
-      lq = opposite_line(lq); 
+      lq = opposite_line(lq);
     }
 
     if ( same_points(sp, st.source_site()) ||
@@ -271,14 +275,17 @@ private:
       Oriented_side opqr = vpqr.oriented_side(lqperp);
       Oriented_side oqps = vqps.oriented_side(lqperp);
 
-      CGAL_SDG_DEBUG( std::cout << "debug endpt case computing ondifparabarcs" << std::endl; );
+      CGAL_SDG_DEBUG( std::cout
+          << "debug endpt case computing ondifparabarcs" << std::endl; );
       Boolean   on_different_parabola_arcs =
 	 ((opqr == ON_NEGATIVE_SIDE) & (oqps == ON_POSITIVE_SIDE)) |
 	 ((opqr == ON_POSITIVE_SIDE) & (oqps == ON_NEGATIVE_SIDE));
 
       //if ( !on_different_parabola_arcs ) { return true; }
       if (certainly( !on_different_parabola_arcs ) ) { return true; }
-      if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Boolean>(); }
+      if (! is_certain( !on_different_parabola_arcs ) ) {
+        return indeterminate<Boolean>();
+      }
 
       Site_2 t1;
       if ( same_points(sp, st.source_site()) ) {
@@ -305,7 +312,7 @@ private:
       if ( o_t1 == ON_NEGATIVE_SIDE ) {
 	return true;
       }
-	     
+
       Comparison_result res =
 	compare_linf_distances_to_line(lq, p, t1.point());
 
@@ -321,7 +328,7 @@ private:
     Comparison_result res =
       CGAL::compare(lt.a() * lq.b(), lt.b() * lq.a());
     bool are_parallel = (res == EQUAL);
-      
+
     if ( are_parallel ) {
       Sign sgn = CGAL::sign(lt.a() * lq.a() + lt.b() * lq.b());
       bool have_opposite_directions = (sgn == NEGATIVE);
@@ -332,7 +339,7 @@ private:
       }
 
       if ( have_opposite_directions ) {
-	lq = opposite_line(lq); 	  
+	lq = opposite_line(lq);
       }
     }
 
@@ -360,14 +367,16 @@ private:
     Oriented_side opqr = vpqr.oriented_side(lqperp);
     Oriented_side oqps = vqps.oriented_side(lqperp);
 
-    CGAL_SDG_DEBUG( std::cout << "debug computing ondifparabarcs" << std::endl; );
+    CGAL_SDG_DEBUG( std::cout
+        << "debug computing ondifparabarcs" << std::endl; );
 
     Boolean   on_different_parabola_arcs = (opqr == -oqps) & (opqr != ZERO);
 
     // if ( !on_different_parabola_arcs ) { return true; }
     if (certainly( !on_different_parabola_arcs ) ) { return true; }
-    if (! is_certain( !on_different_parabola_arcs ) ) { return indeterminate<Boolean>(); }
-      
+    if (! is_certain( !on_different_parabola_arcs ) ) {
+      return indeterminate<Boolean>(); }
+
     Homogeneous_point_2 pv = compute_linf_projection_hom(lq, p);
     Homogeneous_point_2 hp(p);
 
@@ -379,7 +388,7 @@ private:
 
     CGAL_assertion( o_l_pqr != ON_ORIENTED_BOUNDARY ||
 		    o_l_qps != ON_ORIENTED_BOUNDARY );
-    
+
     if ( o_l_pqr == ON_ORIENTED_BOUNDARY ) {
       return ( o_l_qps == o_l_pv );
     } else {
@@ -455,7 +464,7 @@ private:
 #else
     // OLD CODE: buggy if the edge is degenerate
     if ( (p.is_point() && q.is_point()) ||
-	 (p.is_segment() && q.is_segment()) ) { 
+	 (p.is_segment() && q.is_segment()) ) {
       return true;
     }
 #endif
@@ -526,7 +535,7 @@ private:
 	 same_points(sp, sq.target_site()) ) {
       return false;
     }
-   
+
     Line_2 lq = compute_supporting_line(sq.supporting_site());
 
     Voronoi_vertex_2 vpqr(sp, sq, r);
@@ -672,7 +681,7 @@ private:
     bool on_different_side =
       (opqr_perp == ON_POSITIVE_SIDE &&
        oqps_perp == ON_NEGATIVE_SIDE) ||
-      (opqr_perp == ON_NEGATIVE_SIDE && 
+      (opqr_perp == ON_NEGATIVE_SIDE &&
        oqps_perp == ON_POSITIVE_SIDE);
 
     return ( on_different_side );
@@ -1217,7 +1226,7 @@ public:
 
       CGAL_assertion( s1 != ZERO );
 
-      CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf (p,q,t)= " 
+      CGAL_SDG_DEBUG( std::cout << "debug finite-edge-int-cf (p,q,t)= "
         << p << ' ' << q << ' ' << t
         << "  s1= " << s1 << std::endl; );
 
@@ -1263,7 +1272,7 @@ public:
 };
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------
 
 } //namespace SegmentDelaunayGraphLinf_2
 
