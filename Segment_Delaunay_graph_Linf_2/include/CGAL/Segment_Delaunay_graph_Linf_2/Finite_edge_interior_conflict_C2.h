@@ -989,6 +989,31 @@ public:
                 same_points(q.target_site(), t.target_site())   ) {
               result = true;
             } else {
+              Point_2 pp = p.point();
+              Line_2 lq = compute_supporting_line(q.supporting_site());
+              if ( oriented_side_of_line(lq, pp)
+                   == ON_NEGATIVE_SIDE ) {
+                lq = opposite_line(lq);
+              }
+              Line_2 lqperp = compute_linf_perpendicular(lq, pp);
+              Voronoi_vertex_2 vpqr(p, q, r);
+              Oriented_side opqr = vpqr.oriented_side(lqperp);
+              Boolean on_different_parabola_arcs =
+                (opqr == ON_NEGATIVE_SIDE);
+
+              //if ( !on_different_parabola_arcs ) { return true; }
+              if (certainly( not on_different_parabola_arcs ) ) {
+                return true;
+              }
+              if (not is_certain( not on_different_parabola_arcs ) ) {
+                return indeterminate<Boolean>();
+              }
+
+              // here, we are on different parabola arcs
+
+              CGAL_SDG_DEBUG( std::cout
+                  << "debug fecf pqrt on diff parab arcs" << std::endl; );
+
               CGAL_SDG_DEBUG( std::cout
                  << "debug fecf call intersects( " << q << ", "
                  << p << ", " << t << ")" << std::endl; ) ;
