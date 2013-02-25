@@ -745,6 +745,74 @@ public:
     }
 
     if (t.is_point() and (sgn == NEGATIVE)) {
+      bool is_p_pnt = p.is_point();
+      bool is_q_pnt = q.is_point();
+      bool parabola_case = (is_p_pnt and (not is_q_pnt)) or
+                           (is_q_pnt and (not is_p_pnt))   ;
+      if (parabola_case) {
+        if (is_p_pnt) {
+          Point_2 pp = p.point();
+          Line_2 lq = compute_supporting_line(q.supporting_site());
+          if ( oriented_side_of_line(lq, pp)
+              == ON_NEGATIVE_SIDE ) {
+            lq = opposite_line(lq);
+          }
+          Voronoi_vertex_2 vpqr(p, q, r);
+          Line_2 lqperp = compute_linf_perpendicular(lq, p.point());
+          Oriented_side opqr = vpqr.oriented_side(lqperp);
+          Boolean on_different_parabola_arcs = (opqr == ON_NEGATIVE_SIDE);
+
+          //if ( !on_different_parabola_arcs ) { return true; }
+          if (certainly( not on_different_parabola_arcs ) ) {
+            CGAL_SDG_DEBUG( std::cout
+                << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+                << p << ") (" << q << ") (" << r <<  ") ("
+                << t << ")  "
+                << sgn << " returns " << true << std::endl; );
+            return true;
+          }
+          if (not is_certain( not on_different_parabola_arcs ) ) {
+            return indeterminate<Boolean>();
+          }
+          CGAL_assertion((cmpx(pp, t.point()) == EQUAL) or
+                         (cmpy(pp, t.point()) == EQUAL)   );
+        }
+        if (is_q_pnt) {
+          Point_2 qq = q.point();
+          Line_2 lp = compute_supporting_line(p.supporting_site());
+          if ( oriented_side_of_line(lp, qq)
+              == ON_NEGATIVE_SIDE ) {
+            lp = opposite_line(lp);
+          }
+          Line_2 lpperp = compute_linf_perpendicular(lp, qq);
+          Voronoi_vertex_2 vpqr(p, q, r);
+          Oriented_side opqr = vpqr.oriented_side(lpperp);
+          Boolean on_different_parabola_arcs =
+            (opqr == ON_POSITIVE_SIDE);
+
+          //if ( !on_different_parabola_arcs ) { return true; }
+          if (certainly( not on_different_parabola_arcs ) ) {
+            CGAL_SDG_DEBUG( std::cout
+                << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+                << p << ") (" << q << ") (" << r <<  ") ("
+                << t << ")  "
+                << sgn << " returns " << true << std::endl; );
+            return true;
+          }
+          if (not is_certain( not on_different_parabola_arcs ) ) {
+            return indeterminate<Boolean>();
+          }
+          CGAL_assertion((cmpx(qq, t.point()) == EQUAL) or
+                         (cmpy(qq, t.point()) == EQUAL)   );
+        }
+        CGAL_SDG_DEBUG( std::cout <<
+            "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
+            << p << ") (" << q << ") (" << r <<  ") ("
+            << t << ")  "
+            << sgn << " returns " << false << std::endl; );
+        return false;
+      }
+
       CGAL_SDG_DEBUG( std::cout <<
           "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
           << p << ") (" << q << ") (" << r <<  ") ("
@@ -1003,6 +1071,12 @@ public:
 
               //if ( !on_different_parabola_arcs ) { return true; }
               if (certainly( not on_different_parabola_arcs ) ) {
+                CGAL_SDG_DEBUG(
+                    std::cout
+                    << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+                    << p << ") (" << q << ") (" << r <<  ") ("
+                    << t << ")  "
+                    << sgn << " returns " << true << std::endl; );
                 return true;
               }
               if (not is_certain( not on_different_parabola_arcs ) ) {
@@ -1052,6 +1126,12 @@ public:
 
               //if ( !on_different_parabola_arcs ) { return true; }
               if (certainly( not on_different_parabola_arcs ) ) {
+                CGAL_SDG_DEBUG(
+                    std::cout
+                    << "debug finite-edge-int-cf tocheck (p,q,r,t,sgn)= ("
+                    << p << ") (" << q << ") (" << r <<  ") ("
+                    << t << ")  "
+                    << sgn << " returns " << true << std::endl; );
                 return true;
               }
               if (not is_certain( not on_different_parabola_arcs ) ) {
