@@ -1,0 +1,3 @@
+Package Conforming_triangulation_3 :
+conforming triangulation data structure
+this can be wrapped around any CGAL::Triangulation_3, usually CGAL::Delaunay_triangulation_3
