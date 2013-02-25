@@ -1,16 +1,28 @@
 #!/bin/sh
 
+set -e
+BOOST_DIR=$HOME/CGAL/boost
+
 OPTS="-j4 --layout=tagged link=shared variant=release threading=multi"
 OPTS="$OPTS --without-python --without-test --without-mpi --without-wave --without-graph_parallel"
 
-BJAM=./bjam
+if [ -x ./b2 ]; then
+    BJAM=./b2
+else
+    BJAM=./bjam
+fi
 if [ ! -x $BJAM ]; then
     BJAM=bjam
 fi
 
-"$BJAM" --stagedir=stage-4.1 $OPTS toolset=gcc-4.1
-"$BJAM" $OPTS toolset=gcc-4.5.4
-"$BJAM" --stagedir=stage-cxxdebug $OPTS toolset=gcc-cxxdebug
+"$BJAM" --prefix="$BOOST_DIR/1_54" --libdir="$BOOST_DIR/1_54-gcc41/lib" --stagedir=stage-4.1 $OPTS toolset=gcc-4.1 install
+ln -sf ../1_54/include "$BOOST_DIR/1_54-gcc41/"
 
-source ~/infrastructure/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.6.2_F16/setup 
-"$BJAM" --stagedir=stage-intel $OPTS toolset=intel cxxflags="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8"
+"$BJAM" --prefix="$BOOST_DIR/1_54" $OPTS toolset=gcc-4.5.4 install
+
+"$BJAM" --prefix="$BOOST_DIR/1_54" --libdir="$BOOST_DIR/1_54-gcc-cxxdebug/lib" --stagedir=stage-cxxdebug $OPTS toolset=gcc-cxxdebug install
+ln -sf ../1_54/include "$BOOST_DIR/1_54-gcc-cxxdebug/"
+
+source ~/infrastructure/reference-platforms/x86-64_Linux-Fedora16_IntelCompiler-12.0-with-g++-4.6.2/setup 
+"$BJAM" --prefix="$BOOST_DIR/1_54" --libdir="$BOOST_DIR/1_54-intel/lib" --stagedir=stage-intel $OPTS toolset=intel cxxflags="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8" install
+ln -sf ../1_54/include "$BOOST_DIR/1_54-intel/"
