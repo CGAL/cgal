@@ -30,7 +30,6 @@ _test_cls_ray_2(const R& )
  std::cout << "Testing class Ray_2";
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    FT;
 
  typename R::Ray_2  ir;
  CGAL::Ray_2<R> r0;

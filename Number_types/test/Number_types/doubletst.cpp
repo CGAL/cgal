@@ -2,6 +2,10 @@
 #include <cassert>
 #include <CGAL/double.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4723)
+#endif
+
 void test_is_integer()
 {
   std::cout << "Testing is_integer(double)" << std::endl;

@@ -19,6 +19,7 @@
 #define TEST_NAME    "Polyhedron's Graph Traits"
 #define TEST_PROGRAM "halfedge_graph_traits_Polyhedron_3"
 
+#include <CGAL/use.h>
 #include "test_prefix_Polyhedron_3.cpp"
 
 template<class Graph>
@@ -31,10 +32,10 @@ bool test_aux ( Graph& aG )
   typedef typename graph_traits<Graph>::in_edge_iterator  in_edge_iterator ;
   typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iterator ;
 
-  typedef typename graph_traits<Graph const>::vertex_descriptor vertex_const_descriptor ;
-  typedef typename graph_traits<Graph const>::edge_descriptor   edge_const_descriptor ;
+  CGAL_USE_TYPE(typename graph_traits<Graph const>::vertex_descriptor);
+  CGAL_USE_TYPE(typename graph_traits<Graph const>::edge_descriptor);
   
-  typedef typename halfedge_graph_traits<Graph>::undirected_edge_iterator undirected_edge_iterator ;
+  typedef typename halfedge_graph_traits<Graph>::undirected_edge_iterator undirected_edge_iterator;
   
   bool result = false ;
   

@@ -44,7 +44,7 @@ int main ()
   // Locate the vertex with maximal degree.
   Arrangement_2::Vertex_const_iterator  vit;
   Arrangement_2::Vertex_const_handle    v_max;
-  unsigned int                          max_degree = 0;
+  std::size_t                           max_degree = 0;
 
   for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
     if (vit->degree() > max_degree) {

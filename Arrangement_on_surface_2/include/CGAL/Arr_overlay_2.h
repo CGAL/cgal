@@ -155,8 +155,8 @@ void overlay (const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
 
   // In case both arrangement do not contain isolated vertices, go on and
   // overlay them.
-  const unsigned int  total_iso_verts = arr1.number_of_isolated_vertices() +
-                                        arr2.number_of_isolated_vertices();
+  const std::size_t  total_iso_verts = arr1.number_of_isolated_vertices() +
+                                       arr2.number_of_isolated_vertices();
 
   if (total_iso_verts == 0) {
     // Clear the result arrangement and perform the sweep to construct it.

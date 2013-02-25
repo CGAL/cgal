@@ -129,7 +129,7 @@ protected:
     // Create N random landmarks. If N was not given to the constructor,
     // set it to be the number of vertices in the arrangement.
     if (num_landmarks == 0)
-      num_landmarks = arr->number_of_vertices();
+      num_landmarks = static_cast<unsigned int>(arr->number_of_vertices());
 
     CGAL::Random random;
     for (unsigned int i = 0; i < num_landmarks; ++i) {

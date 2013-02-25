@@ -222,7 +222,6 @@ Scene_points_with_normal_item::bbox() const
 void Scene_points_with_normal_item::computes_local_spacing(int k)
 {
   typedef Kernel Geom_traits;
-  typedef Geom_traits::FT FT;
   typedef CGAL::Search_traits_3<Geom_traits> TreeTraits;
   typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
   typedef Neighbor_search::Tree Tree;

@@ -32,8 +32,6 @@ void _test_construct_radical_line(const K &k) {
   typedef typename K::Point_2                          Point_2;
   typedef typename K::Line_2                           Line_2;
   typedef typename K::Circle_2                         Circle_2;
-  typedef typename K::Has_on_2                         Has_on_2;
-  typedef typename K::Intersect_2                      Intersect_2;
   typedef typename K::Construct_circle_2               Construct_circle_2;
   typedef typename K::Construct_radical_line_2         Construct_radical_line_2;
 

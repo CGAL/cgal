@@ -1,9 +1,10 @@
 // Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -27,6 +28,9 @@
 */
 
 #include <algorithm>
+
+#include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -125,7 +129,7 @@ Trapezoidal_decomposition_2<Td_traits>
   //need to define the boundaries flag before creating the trapezoid
   Td_map_item vtx_item (build_vertex_map_item(v, he, &split_node));
   split_node.replace( vtx_item, left_node, right_node); //nodes depth are updated here
-  update_largest_leaf_depth( std::max(left_node.depth(), right_node.depth()) );
+  update_largest_leaf_depth( (std::max)(left_node.depth(), right_node.depth()) );
   m_number_of_dag_nodes += 2;
   
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
@@ -340,7 +344,7 @@ Trapezoidal_decomposition_2<Td_traits>
     rt.set_lt(top_node.get_data());
   }
   split_node.replace(sep,bottom_node,top_node); //nodes depth are updated here
-  update_largest_leaf_depth( std::max(bottom_node.depth(), top_node.depth()) );
+  update_largest_leaf_depth( (std::max)(bottom_node.depth(), top_node.depth()) );
   m_number_of_dag_nodes += 2; //two new nodes were added to the DAG
   
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
@@ -651,6 +655,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                (Curve_end(he,ARR_MAX_END), p);
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
+          CGAL_USE(is_equal_to_he_max);
 
           curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
           continue;
@@ -733,6 +738,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                        Curve_end(he_cv,ARR_MAX_END));
 
           CGAL_warning (is_min_equal || is_max_equal);
+          CGAL_USE(is_max_equal);
           
           Comparison_result res = 
              is_min_equal ? 
@@ -1093,6 +1099,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                (Curve_end(*p_cv,ARR_MAX_END), ce);
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
+          CGAL_USE(is_equal_to_he_max);
 
           curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
           
@@ -1182,6 +1189,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                        Curve_end(he_cv,ARR_MAX_END));
 
             CGAL_warning (is_min_equal || is_max_equal);
+            CGAL_USE(is_max_equal);
 
             //the underlying point of ce
             const Point& p = (ce.ce() == ARR_MIN_END) ?
@@ -1319,6 +1327,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                (Curve_end(*p_cv,ARR_MAX_END), p);
           
           CGAL_assertion( is_equal_to_he_min || is_equal_to_he_max );
+          CGAL_USE(is_equal_to_he_max);
 
           curr_node = is_equal_to_he_min ? curr_node.right_child() : curr_node.left_child();
           
@@ -1402,6 +1411,7 @@ Trapezoidal_decomposition_2<Td_traits>
                                      Curve_end(he_cv,ARR_MAX_END));
 
           CGAL_warning (is_min_equal || is_max_equal);
+          CGAL_USE(is_max_equal);
 
           res = is_min_equal ? 
                   traits->compare_cw_around_point_2_object()
@@ -1836,7 +1846,7 @@ void Trapezoidal_decomposition_2<Td_traits>
       pair(sz,
            Dag_node(Td_active_trapezoid(left_v, right_v, 
                                         btm_it_tr.bottom(),top_it_tr.top()),
-                     std::max(btm_it_tr.dag_node()->depth(),
+                    (std::max)(btm_it_tr.dag_node()->depth(),
                               top_it_tr.dag_node()->depth())));
     new_array.insert(pair);
     //copy trapezoid data from btm and top trapezoids
@@ -1964,7 +1974,7 @@ void Trapezoidal_decomposition_2<Td_traits>
   int num_of_new_nodes = 0;
   Dag_node tmp = 
     container2dag(new_array, last_index[!inc_btm ? 0 : 1], 
-                  new_array.size()-1, num_of_new_nodes);
+                  static_cast<int>(new_array.size())-1, num_of_new_nodes);
 
   deactivate_trapezoid( *(tr.dag_node()), &tmp);  //it->remove(&tmp);
   //tmp is the root of a sub graph. 
@@ -2895,8 +2905,8 @@ void Trapezoidal_decomposition_2<Td_traits>
   Dag_node* below_cv_right_node (boost::apply_visitor(dag_node_visitor(),below_cv_right));
   Dag_node* below_cv_left_node  (boost::apply_visitor(dag_node_visitor(),below_cv_left));
   deactivate_trapezoid( *below_cv_right_node, below_cv_left_node); //below_cv_right->remove(below_cv_left->dag_node());
-  update_largest_leaf_depth(std::max(above_cv_left_node->depth(),
-                                     below_cv_left_node->depth()));
+  update_largest_leaf_depth((std::max)(above_cv_left_node->depth(),
+                                       below_cv_left_node->depth()));
   //no need to update m_number_of_dag_nodes because the number of nodes did not change.
 
 
@@ -3013,7 +3023,7 @@ Trapezoidal_decomposition_2<Td_traits>
   
   //if node represents a curve
   if (!traits->is_td_vertex(node.get_data()) )
-    return (1 + std::max(
+    return (1 + (std::max)(
                   longest_query_path_length_rec(minus_inf, min_node,
                                                 plus_inf, max_node,
                                                 node.left_child()) ,
@@ -3083,7 +3093,7 @@ Trapezoidal_decomposition_2<Td_traits>
     }
   }
   //o/w continue with updated parameters
-  return (1 + std::max(
+  return (1 + (std::max)(
                   longest_query_path_length_rec(minus_inf, min_node,
                                                 false, new_max_node,
                                                 node.left_child()) ,

@@ -28,6 +28,7 @@
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/Minkowski_sum_2/Labels.h>
 #include <CGAL/Minkowski_sum_2/Arr_labeled_traits_2.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -462,6 +463,7 @@ protected:
         
           assign_success = CGAL::assign (mid_p, obj);
           CGAL_assertion (assign_success);
+          CGAL_USE(assign_success);
 
           // Andreas's assertions:
           CGAL_assertion( right_turn(*curr, *next, op2) );
@@ -523,6 +525,7 @@ protected:
           for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it) {
             assign_success = CGAL::assign (xarc, *xobj_it);
             CGAL_assertion (assign_success);
+            CGAL_USE(assign_success);
             *oi++ = Labeled_curve_2 (xarc,
                                      X_curve_label (xarc.is_directed_right(),
                                                     cycle_id, curve_index++));
@@ -578,6 +581,7 @@ protected:
     {
       assign_success = CGAL::assign (xarc, *xobj_it);
       CGAL_assertion (assign_success);
+      CGAL_USE(assign_success);
       
       ++xobj_it;
       bool is_last = (xobj_it == xobjs.end());

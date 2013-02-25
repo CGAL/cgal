@@ -140,7 +140,7 @@ int main(int narg, char** argv)
   
   std::istream_iterator<Point> begin(iFile), end;
   T.insert(begin, end);
-  assert(T.is_valid(false));
+  CGAL_assertion(T.is_valid(false));
  
   // 2) Convert the triangulation into a 3D lcc.
   LCC_3 lcc;

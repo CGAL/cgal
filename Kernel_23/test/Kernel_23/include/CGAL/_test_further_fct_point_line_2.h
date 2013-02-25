@@ -30,7 +30,6 @@ _test_further_fct_point_line_2(const R& )
  std::cout << "Testing further functions Point_2 Line_2" ;
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    FT;
 
  CGAL::Point_2<R> p1( RT(18), RT(12), RT(3) );  // ( 6, 4)
  CGAL::Point_2<R> p2( RT(18), RT(15), RT(3) );  // ( 6, 5)

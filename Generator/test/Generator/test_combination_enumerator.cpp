@@ -1,8 +1,7 @@
-#include "CGAL/Combination_enumerator.h"
+#include <CGAL/Combination_enumerator.h>
 #include <iostream>
 #include <vector>
-#include <cstdlib>
-#include <ctime>
+
 
 using namespace std;
 
@@ -31,7 +30,7 @@ void test(const int K, const T & first, const T & beyond)
         ++n;
         ++combi;
     }
-    long nelem = beyond - first;
+    long nelem = static_cast<long>(beyond - first);
     long num = fac(nelem - K + 1, nelem) / fac(2, K);
     cout << endl << "Enumerated " << n << " combinations. Should be " << num;
     CGAL_assertion(n == num);
@@ -39,7 +38,6 @@ void test(const int K, const T & first, const T & beyond)
 
 int main()
 {
-    srand(time(NULL));
     test(3,  10, 21); // triples in [10,20]
     test(1, -10, 21); // singletons in [-10,20]
     test(4,   3,  7); // the unique set {3,4,5,6}

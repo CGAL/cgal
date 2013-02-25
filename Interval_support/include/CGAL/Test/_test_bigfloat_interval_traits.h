@@ -29,6 +29,7 @@
 
 #include <cassert>
 #include <CGAL/tags.h>
+#include <CGAL/use.h>
 
 #include <CGAL/Bigfloat_interval_traits.h> 
 
@@ -42,7 +43,7 @@ void test_bigfloat_interval_traits() {
 
   typedef typename CGAL::Bigfloat_interval_traits<Bigfloat_interval_>::Self BFIT;
   typedef typename BFIT::Type                                               BFI; 
-  typedef typename BFIT::Bound                                              BF;
+  CGAL_USE_TYPE(typename BFIT::Bound);
 
   typedef typename BFIT::Is_bigfloat_interval Is_bigfloat_interval;
   // using CGAL::Tag_true;

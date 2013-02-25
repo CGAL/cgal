@@ -176,9 +176,9 @@ public:
     std::vector<Vertex_handle> vo(first, beyond), vc;
     int l=0;
     while(1) {
-      int n = vo.size();
-      if(!n) break;
-      for(int i=0; i<n; i++) {
+      size_type n = vo.size();
+      if(n == 0) break;
+      for(size_type i=0; i<n; i++) {
         if(vo[i]->up() != Vertex_handle()) vc.push_back(vo[i]->up());
       }
       hierarchy[l++]->remove_cluster(vo.begin(), vo.end());

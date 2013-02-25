@@ -56,7 +56,7 @@ public:
 
   int
   number_of_columns() const
-  { return column_indices.size(); }
+  { return static_cast<int>(column_indices.size()); }
 
   Value
   operator()( int r, int c) const

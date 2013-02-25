@@ -129,9 +129,9 @@ namespace Mesh_2 {
     {
       Face_handle fh;
       int i;
-      CGAL_assertion_code( bool should_be_true = )
+      CGAL_assume_code( bool should_be_true = )
       tr.is_edge(va, vb, fh, i);
-      CGAL_assertion( should_be_true == true );
+      CGAL_assume( should_be_true == true );
       
       return this->operator()(tr, fh, i);
     }
@@ -209,9 +209,9 @@ namespace Mesh_2 {
     {
       Face_handle fh;
       int i;
-      CGAL_assertion_code( bool test = )
+      CGAL_assume_code( bool test = )
         tr.is_edge(va, vb, fh, i);
-      CGAL_assertion( test == true );
+      CGAL_assume( test == true );
 
       Vertex_handle vi;
       Vertex_handle mvi;
@@ -583,16 +583,16 @@ public:
     Face_handle fh;
     int index;
 
-    CGAL_assertion_code(bool is_edge = )
+    CGAL_assume_code(bool is_edge = )
     tr.is_edge(va, v, fh, index);
-    CGAL_assertion(is_edge == true);
+    CGAL_assume(is_edge == true);
 
     fh->set_constraint(index, true);
     fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
 
-    CGAL_assertion_code( is_edge = )
+    CGAL_assume_code( is_edge = )
     tr.is_edge(vb, v, fh, index);
-    CGAL_assertion(is_edge == true);
+    CGAL_assume(is_edge == true);
 
     fh->set_constraint(index, true);
     fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
@@ -639,7 +639,9 @@ private: /** \name DEBUGGING TYPES AND DATAS */
     {
       Face_handle fh;
       int index;
-      tr.is_edge(edge.first, edge.second, fh, index);
+      CGAL_assume_code(bool sure =)
+        tr.is_edge(edge.first, edge.second, fh, index);
+      CGAL_assume(sure == true);
       return Edge(fh, index);
     }
   }; // end From_pair_of_vertex_to_edge

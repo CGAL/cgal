@@ -26,6 +26,7 @@
 #include <CGAL/In_place_list.h>
 #include <functional>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 #include <iostream>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/internal/infinity_or_max.h>
@@ -517,6 +518,7 @@ public:
 	}
       }
       CGAL_postcondition(found);
+      CGAL_USE(found);
 #endif
       unmake_event(oi);
       return Key(ni);

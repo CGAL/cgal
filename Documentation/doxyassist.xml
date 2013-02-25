@@ -56,7 +56,7 @@ namespace for the XML file to be processed properly.  -->
       </project>
 
       <project>
-        <name>3D Fast Intersection and Distance Computation</name>
+        <name>3D Fast Intersection and Distance Computation (AABB Tree)</name>
         <input>../AABB_tree/doc</input>
         <input>../AABB_tree/include</input>
         <doxygen>

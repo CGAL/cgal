@@ -58,7 +58,7 @@ afn_brute_force(RandomAccessIC b, RandomAccessIC e, OutputIterator o)
       if (squared_distance(*i1, *i2) > squared_distance(*i1, *i))
         i = i2;
     } while (++i2 != e);
-    *o++ = iterator_distance(b, i);
+    *o++ = static_cast<int>(iterator_distance(b, i));
   } while (++i1 != e);
   return o;
 } // afn_brute_force(b, e, o)

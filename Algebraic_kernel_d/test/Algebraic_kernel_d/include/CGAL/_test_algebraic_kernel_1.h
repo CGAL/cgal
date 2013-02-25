@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
+#include <CGAL/use.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_coercion_traits.h>
@@ -37,6 +38,7 @@ namespace CGAL{
 template <class AlgebraicKernel_d_1>
 void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
   typedef AlgebraicKernel_d_1 Algebraic_kernel_d_1;
+  CGAL_USE_TYPE(Algebraic_kernel_d_1);
 
   typedef typename AlgebraicKernel_d_1::Coefficient Coefficient;
   typedef typename AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;
