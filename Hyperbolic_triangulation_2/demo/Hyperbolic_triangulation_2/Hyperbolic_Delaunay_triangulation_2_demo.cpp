@@ -185,6 +185,13 @@ MainWindow::MainWindow()
   this->graphicsView->setScene(&scene);
   this->graphicsView->setMouseTracking(true);
   
+  // we want to adjust the coordinates of QGraphicsView to the coordinates of QGraphicsScene
+  // the following line must do this:
+  //   this->graphicsView->fitInView( scene.sceneRect(), Qt::KeepAspectRatio);
+  // It does not do this sufficiently well.
+  // Current solution:
+  this->graphicsView->shear(230, 230);
+  
   // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
                                                       
