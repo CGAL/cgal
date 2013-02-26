@@ -20,6 +20,7 @@ use Date::Format;
 my $server_url="https://cgal.geometryfactory.com/";
 my $cgal_members="${server_url}CGAL/Members/";
 my $manual_test_url="${cgal_members}Manual_test/";
+my $doxygen_manual_test_url="${cgal_members}Manual_doxygen_test/";
 my $releases_url="${cgal_members}Releases/";
 my $test_results_url="${cgal_members}testsuite/";
 
@@ -597,6 +598,9 @@ Downloading internal releases</a></li>
 The documentation of this release</a>
 (and the <a href="${manual_test_url}LAST/">last one</a>
 directly)</li>
+<li><a href="${doxygen_manual_test_url}${release_name}/" style="color: red">
+The doxygen documentation testpage</a>
+(and the <a href="${manual_test_url}">overview page</a>)</li>
 EOF
     if ( -r "announce.html" ) {
 	print OUTPUT<<"EOF";
