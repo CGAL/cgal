@@ -35,7 +35,8 @@ public:
 // Returns the cotangent value of half angle v0 v1 v2
 // using formula in -[Meyer02] Discrete Differential-Geometry Operators for- page 19
 // The potential problem with previous one (Cotangent_value) is that it does not produce symmetric results
-// (i.e. for pair of halfedges returned cot weights can be slightly different)
+// (i.e. for v0, v1, v2 and v2, v1, v0 returned cot weights can be slightly different)
+// This one provides stable results.
 template<class Polyhedron>
 class Cotangent_value_Meyer
 {
@@ -54,9 +55,27 @@ public:
   }
 };
 
+// Returns the cotangent value of half angle v0 v1 v2 by clamping between [1, 89] degrees
+// as suggested by -[Friedel] Unconstrained Spherical Parameterization-
+template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+class Cotangent_value_clamped : CotangentValue
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  {
+    const double cot_1 = 57.289962;
+    const double cot_89 = 0.017455;
+    double value = CotangentValue::operator()(v0, v1, v2);
+    return (std::max)(cot_89, (std::min)(value, cot_1));
+  }
+};
+
 // Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
 // as suggested by -[Mullen08] Spectral Conformal Parameterization-
-template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+template<class Polyhedron, 
+         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Cotangent_value_area_weighted : CotangentValue
 {
 public:
@@ -75,7 +94,7 @@ public:
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
 template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_area_weighted<Polyhedron> >
+         class CotangentValue = Cotangent_value_clamped<Polyhedron> >
 class Cotangent_weight : CotangentValue
 {
 public:
@@ -159,7 +178,7 @@ public:
         v2 = boost::source(e_ccw, polyhedron);
       }
 
-      return ( half_tan_value(v1, v0, v2)/norm );
+      return ( half_tan_value_2(v1, v0, v2)/norm);
     }
     else
     {
@@ -168,7 +187,7 @@ public:
       edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
       vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
 
-      return ( half_tan_value(v1, v0, v2)/norm + half_tan_value(v1, v0, v3)/norm );
+      return ( half_tan_value_2(v1, v0, v2)/norm + half_tan_value_2(v1, v0, v3)/norm);
     }
   }
 
@@ -185,7 +204,7 @@ private:
     double e0 = std::sqrt(e0_square); 
     double e2 = std::sqrt(e2_square);
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
-    cos_angle = (std::max)(-1, (std::min)(1, cos_angle)) ; // clamp into [-1, 1]
+    cos_angle = (std::max)(-1.0, (std::min)(1.0, cos_angle)); // clamp into [-1, 1]
     double angle = acos(cos_angle);
     
     return ( tan(angle/2.0) );
@@ -226,9 +245,24 @@ public:
   double operator()(edge_descriptor e)
   {
     double weight = PrimaryWeight::operator()(e);
+    //if(weight < 0) { std::cout << "Negative weight" << std::endl; }
     return (weight >= 0) ? weight : SecondaryWeight::operator()(e);
   }
 };
+
+// Trivial uniform weights (created for test purposes)
+template<class Polyhedron>
+class Uniform_weight
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
+
+  Uniform_weight(Polyhedron& /*polyhedron*/ ) { } 
+
+  double operator()(edge_descriptor e)
+  { return 1.0; }
+};
+
 }//namespace internal
 }//namespace CGAL
 #endif //CGAL_SURFACE_MODELING_WEIGHTS_H

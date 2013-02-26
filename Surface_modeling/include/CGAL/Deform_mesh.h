@@ -34,7 +34,7 @@
 
 #include <limits>
 
-// #define CGAL_DEFORM_SPOKES_AND_RIMS
+//#define CGAL_DEFORM_SPOKES_AND_RIMS
 
 namespace CGAL {
 
@@ -45,7 +45,7 @@ template <
   class SparseLinearAlgebraTraits_d, 
   class VertexIndexMap, 
   class EdgeIndexMap,
-  class WeightCalculator = internal::Cotangent_weight<Polyhedron> 
+  class WeightCalculator = internal::Cotangent_weight<Polyhedron >
   >
 class Deform_mesh
 {
@@ -91,6 +91,7 @@ public:
   double tolerance;                                   // tolerance of convergence 
 
   WeightCalculator weight_calculator;
+
   // Public methods
 public:
 
@@ -153,10 +154,10 @@ public:
       out_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::out_edges(ros[i], polyhedron); e != e_end;)
       {
-        edge_descriptor active_edge = rim ? (*e)->next(): *e;
-        boost::put(edge_index_map, active_edge, 0);
+        edge_descriptor active_edge = rim ? CGAL::next_edge(*e, polyhedron): *e;
+        put(edge_index_map, active_edge, 0);
         edge_descriptor e_oppo = CGAL::opposite_edge(active_edge, polyhedron);
-        boost::put(edge_index_map, e_oppo, 0);
+        put(edge_index_map, e_oppo, 0);
         if(rim) { ++e; }
         rim = !rim;
       }
@@ -168,9 +169,9 @@ public:
       out_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::out_edges(ros[i], polyhedron); e != e_end; e++)
       {
-        boost::put(edge_index_map, *e, 0);
+        put(edge_index_map, *e, 0);
         edge_descriptor e_oppo = CGAL::opposite_edge(*e, polyhedron);
-        boost::put(edge_index_map, e_oppo, 0);
+        put(edge_index_map, e_oppo, 0);
       }
     }
   #endif
@@ -248,7 +249,7 @@ public:
         if(!is_current_rim && !boost::get(CGAL::edge_is_border, polyhedron, *e)) // it is rim edge's turn
         {
           is_current_rim = true;
-          active_edge = (*e)->next();
+          active_edge = CGAL::next_edge(*e, polyhedron);
         }
         else // if current edge is rim OR there is no rim edge (current spoke edge is boudary)
         {    // then iterate to next spoke edge
@@ -369,8 +370,56 @@ public:
 
   }
 
-  // Assemble Laplacian matrix A of linear system A*X=B
   void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
+  {
+  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
+    assemble_laplacian_spokes_and_rims(A);
+  #else
+    assemble_laplacian_arap(A);
+  #endif
+  }
+  void assemble_laplacian_spokes_and_rims(typename SparseLinearAlgebraTraits_d::Matrix& A)
+  {
+     /// assign cotangent Laplacian to ros vertices
+    for(std::size_t i = 0; i < ros.size(); i++)
+      {
+        vertex_descriptor vi = ros[i];
+        std::size_t vertex_idx_i = get(vertex_index_map, vi) -1;
+        if ( is_roi[vertex_idx_i] && !is_hdl[vertex_idx_i] )          // vertices of ( roi - hdl )
+          {
+            double diagonal = 0;
+            in_edge_iterator e, e_end;
+            for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
+              {
+                vertex_descriptor vj = boost::source(*e, polyhedron);
+                double wij = edge_weight[ get(edge_index_map, *e) -1];  // edge weights
+                double wji = edge_weight[get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))-1];
+
+                double total_weight = (wij + wji);
+
+                if (boost::get(CGAL::edge_is_border, polyhedron, *e) ||
+                  boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(*e, polyhedron)))
+                {
+                    total_weight *= 1.5;
+                }
+                else
+                {
+                  total_weight *= 2;
+                }
+
+                std::size_t vj_index = get(vertex_index_map, vj) - 1;
+                A.set_coef(i, vj_index, -total_weight, true);	// off-diagonal coefficient
+                diagonal += total_weight;  
+              }
+            // diagonal coefficient
+            A.set_coef(i, i, diagonal, true);
+          }
+        else
+          A.set_coef(i, i, 1.0, true);
+      }
+  }
+  // Assemble Laplacian matrix A of linear system A*X=B
+  void assemble_laplacian_arap(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
     /// assign cotangent Laplacian to ros vertices
     for(std::size_t i = 0; i < ros.size(); i++)
@@ -384,9 +433,10 @@ public:
             for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
               {
                 vertex_descriptor vj = boost::source(*e, polyhedron);
-                double wij = edge_weight[ get(edge_index_map, *e) -1];  // cotangent Laplacian weights
+                double wij = edge_weight[ get(edge_index_map, *e) -1];  // edge weights
                 double wji = edge_weight[get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))-1];
                 double total_weight = wij + wji;
+
                 std::size_t vj_index = get(vertex_index_map, vj) - 1;
                 A.set_coef(i, vj_index, -total_weight, true);	// off-diagonal coefficient
                 diagonal += total_weight;  
@@ -572,7 +622,7 @@ public:
         if(!is_current_rim && !boost::get(CGAL::edge_is_border, polyhedron, *e)) // it is rim edge's turn
         {
           is_current_rim = true;
-          active_edge = (*e)->next();
+          active_edge = CGAL::next_edge(*e, polyhedron);
         }
         else // if current edge is rim OR there is no rim edge (current spoke edge is boudary)
         {    // then iterate to next spoke edge
@@ -802,9 +852,106 @@ public:
 
 #endif
 
-
-  // Global step of iterations, updating solution
   void update_solution()
+  {
+  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
+    update_solution_spokes_and_rims();
+  #else
+    update_solution_arap();
+  #endif
+  }
+  void update_solution_spokes_and_rims()
+  {
+    typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
+    typename SparseLinearAlgebraTraits_d::Vector Y(ros.size()), By(ros.size());
+    typename SparseLinearAlgebraTraits_d::Vector Z(ros.size()), Bz(ros.size());
+
+    // assemble right columns of linear system
+    for ( std::size_t i = 0; i < ros.size(); i++ )
+    {
+      vertex_descriptor vi = ros[i];
+      std::size_t vertex_idx_i = get(vertex_index_map, vi)-1;
+      if ( !is_roi[vertex_idx_i] || is_hdl[vertex_idx_i] )   // hard constraints or handle vertices
+      {
+        Bx[i] = solution[vertex_idx_i].x(); By[i] = solution[vertex_idx_i].y(); Bz[i] = solution[vertex_idx_i].z();
+      }
+      else  // ( roi - handle ) vertices
+      {
+        Bx[i] = 0; By[i] = 0; Bz[i] = 0;
+        in_edge_iterator e, e_end;
+        Point& pi = original[get(vertex_index_map, vi)-1];
+        for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
+        {
+          vertex_descriptor vj = boost::source(*e, polyhedron);
+          std::size_t vj_index = get(vertex_index_map, vj) -1; 
+          Vector pij =  pi - original[get(vertex_index_map, vj) -1];
+
+          double wij = edge_weight[get(edge_index_map, *e) -1];
+          double wji = edge_weight[get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))-1];
+
+          bool is_e_border = boost::get(CGAL::edge_is_border, polyhedron, *e);
+          bool is_opp_of_e_border = boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(*e, polyhedron));
+          double x, y, z;
+          x = y = z = 0.0;
+          if (is_e_border || is_opp_of_e_border)
+          {  
+            edge_descriptor next_of_not_border_edge = is_e_border ? CGAL::next_edge(CGAL::opposite_edge(*e, polyhedron), polyhedron)
+              : CGAL::next_edge(*e, polyhedron);
+            std::size_t vk_index = get(vertex_index_map, boost::target(next_of_not_border_edge, polyhedron))-1;
+
+            double wk = is_e_border ? wji : wij;
+
+            for (int j = 0; j < 3; j++)
+            {
+              x += ( rot_mtr[i](0, j)*wij + rot_mtr[vj_index](0, j)*wji +
+                     rot_mtr[vk_index](0, j)*wk  ) * pij[j];
+
+              y += ( rot_mtr[i](1, j)*wij + rot_mtr[vj_index](1, j)*wji +
+                     rot_mtr[vk_index](1, j)*wk ) * pij[j];
+
+              z += ( rot_mtr[i](2, j)*wij + rot_mtr[vj_index](2, j)*wji +
+                     rot_mtr[vk_index](2, j)*wk ) * pij[j];
+            }
+          }
+          else
+          {
+            edge_descriptor next_e = CGAL::next_edge(*e, polyhedron);
+            vertex_descriptor next_e_target = boost::target(next_e, polyhedron);
+            std::size_t vk_index = get(vertex_index_map, next_e_target) -1;
+
+            edge_descriptor next_opp_e = CGAL::next_edge(CGAL::opposite_edge(*e, polyhedron), polyhedron);
+            vertex_descriptor next_opp_e_target = boost::target(next_opp_e, polyhedron);
+            std::size_t vm_index = get(vertex_index_map, next_opp_e_target) -1;
+
+            for (int j = 0; j < 3; j++)
+            {
+              x += ( rot_mtr[i](0, j)*wij + rot_mtr[vj_index](0, j)*wji +
+                     rot_mtr[vk_index](0, j)*wij + rot_mtr[vm_index](0, j)*wji) * pij[j];
+
+              y += ( rot_mtr[i](1, j)*wij + rot_mtr[vj_index](1, j)*wji +
+                     rot_mtr[vk_index](1, j)*wij + rot_mtr[vm_index](1, j)*wji) * pij[j];
+
+              z += ( rot_mtr[i](2, j)*wij + rot_mtr[vj_index](2, j)*wji +
+                     rot_mtr[vk_index](2, j)*wij + rot_mtr[vm_index](2, j)*wji) * pij[j];
+            }
+          }
+
+          Bx[i] += x; By[i] += y; Bz[i] += z; 
+        }
+      }
+    }
+    // solve "A*X = B".
+    m_solver.linear_solver(Bx, X); m_solver.linear_solver(By, Y); m_solver.linear_solver(Bz, Z);
+
+    // copy to solution
+    for (std::size_t i = 0; i < ros.size(); i++)
+    {
+      Point p(X[i], Y[i], Z[i]);
+      solution[get(vertex_index_map, ros[i])-1] = p;
+    }
+  }
+  // Global step of iterations, updating solution
+  void update_solution_arap()
   {
     typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
     typename SparseLinearAlgebraTraits_d::Vector Y(ros.size()), By(ros.size());
