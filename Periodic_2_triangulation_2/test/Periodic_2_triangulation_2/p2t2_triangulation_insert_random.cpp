@@ -14,28 +14,14 @@ int main() {
   Random_points_on_circle g(0.495, random);
   Vector midpoint(0.5, 0.5);
 
-  int iterations = 0;
-  while (iterations < 100) {
-    for (int i = 0; i < N_PTS; ++i) {
-      t.insert(*(++g) + midpoint);
-    }
-      
-    std::vector<Vertex_handle> vhs;
-    for (Triangulation::Unique_vertex_iterator it = t.unique_vertices_begin();
-         it != t.unique_vertices_end(); ++it) {
-      vhs.push_back(it);
-    }
-      
-    std::random_shuffle(vhs.begin(), vhs.end());
-    if (iterations%2 == 0) {
-      vhs.resize(vhs.size()/2);
-    }
-      
-    if (!t.is_valid(true)) {
-      std::cout << "l:" << __LINE__ << std::endl;
-      std::exit(1);
-    }
-    std::cout << "iteration: " << iterations++ << std::endl;
+  for (int i = 0; i < N_PTS; ++i) {
+    t.insert(*(++g) + midpoint);
   }
+      
+  if (!t.is_valid(true)) {
+    std::cout << "l:" << __LINE__ << std::endl;
+    std::exit(1);
+  }
+
   return 0;
 }

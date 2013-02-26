@@ -1536,18 +1536,8 @@ Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
 
 // copy constructor duplicates vertices and faces
 template<class Gt, class Tds>
-Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
-    const Periodic_2_triangulation_2 &tr)
-  : _gt(tr._gt)
-  , _cover(tr._cover)
-  , _domain(tr._domain)
-  , _edge_length_threshold(tr._edge_length_threshold) {
-  if (is_1_cover()) {
-    _tds = tr.tds();
-  } else {
-    copy_multiple_covering(tr);
-  }
-  CGAL_triangulation_expensive_postcondition(*this == tr);
+Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(const Periodic_2_triangulation_2 &tr) {
+  copy_triangulation(tr);
 }
 
 //Assignment
@@ -1555,7 +1545,6 @@ template<class Gt, class Tds>
 Periodic_2_triangulation_2<Gt, Tds> &
 Periodic_2_triangulation_2<Gt, Tds>::operator=(
     const Periodic_2_triangulation_2 &tr) {
-  CGAL_assertion(false && "NGHK: NYI");
   copy_triangulation(tr);
   return *this;
 }
@@ -1661,15 +1650,21 @@ copy_multiple_covering(const Periodic_2_triangulation_2<GT,TDS> & tr) {
 template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::copy_triangulation(
     const Periodic_2_triangulation_2 &tr) {
-  CGAL_assertion(false && "NGHK: NYI");
   _tds.clear();
   _gt = tr._gt;
-  _tds.copy_tds(tr._tds);
+  _cover = tr._cover;
+  _domain = tr._domain;
+  _edge_length_threshold = tr._edge_length_threshold;
+  if (tr.is_1_cover()) {
+    _tds = tr.tds();
+  } else {
+    copy_multiple_covering(tr);
+  }
+  CGAL_triangulation_expensive_postcondition(*this == tr);
 }
 
 template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::swap(Periodic_2_triangulation_2 &tr) {
-  CGAL_assertion(false && "NGHK: NYI");
   _tds.swap(tr._tds);
 
   Geom_traits t = geom_traits();
