@@ -1,6 +1,7 @@
 -- ipe2cin.lua
--- convert points and segments in ipe file to cin format
--- (only for first page of ipe file)
+-- convert points and segments in ipe file to cin format,
+-- only for first page and its first view of ipe file
+-- and only for visible layers in the first view
 
 if #argv ~= 1 then
   io.stderr:write("Usage: ipescript ipe2cin <file>\n")
@@ -15,11 +16,11 @@ doc = assert(ipe.Document(fname))
 
 p = assert(doc[1])
 
+-- print("# of views=", p:countViews())
+
 -- print ("# of objects in p1 =", #p)
 
--- iterate over objects of page:
-for i, obj, sel, layer in p:objects() do
-  --print(i, obj, sel, layer)
+function process_object(obj)
   if obj:type() == "reference" then
     if ((obj:get("markshape")):find("mark")) then
       print ("p", obj:position().x, obj:position().y)
@@ -56,3 +57,9 @@ for i, obj, sel, layer in p:objects() do
   end
 end
 
+for i, obj, sel, layer in p:objects() do
+  --print(i, obj, sel, layer)
+  if p:visible(1, layer) then
+    process_object(obj)
+  end
+end
