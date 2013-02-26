@@ -1964,14 +1964,56 @@ private:
         qref = q.point();
       } else {
         // tocheck and tofix
-        // here q and r are segments
-        if (is_q_hv and not is_r_hv) {
-          CGAL_SDG_DEBUG(std::cout << "debug q:ap r:non-ap"
-              << std::endl;);
-        }
-        if (is_r_hv and not is_q_hv) {
-          CGAL_SDG_DEBUG(std::cout << "debug q:non-ap r:ap"
-              << std::endl;);
+        // here q and r are segments and p is point
+        CGAL_assertion(p.is_point());
+        if ((is_q_hv and not is_r_hv) or
+            (is_r_hv and not is_q_hv)   ) {
+          Line_2 lnap;
+          Homogeneous_point_2 sref;
+          bool samex;
+          if (is_q_hv and not is_r_hv) {
+            CGAL_SDG_DEBUG(std::cout << "debug q:ap r:non-ap"
+                << std::endl;);
+            if (is_p_endp_of_q) {
+              samex = is_q_ver ? true : false;
+              lnap = compute_supporting_line(r.supporting_site());
+            } else {
+              return ZERO;
+            }
+          } else
+          { // here, we have: (is_r_hv and not is_q_hv)
+            CGAL_SDG_DEBUG(std::cout << "debug q:non-ap r:ap"
+                << std::endl;);
+            if (is_p_endp_of_r) {
+              samex = is_r_ver ? true : false;
+              lnap = compute_supporting_line(q.supporting_site());
+            } else {
+              return ZERO;
+            }
+          }
+          sref = compute_linf_projection_hom(lnap, vv);
+          CGAL_SDG_DEBUG(std::cout << "debug sref ="
+               << sref.x() << ' ' << sref.y() << std::endl;);
+          if (samex) {
+            CGAL_SDG_DEBUG(std::cout << "debug samex case" << std::endl;);
+            FT diffdvsy = vv.y() - sref.y();
+            if (CGAL::sign(diffdvsy) == CGAL::sign(diffdvty)) {
+              if (CGAL::compare(CGAL::abs(diffdvtx),
+                                CGAL::abs(diffdvty)) == SMALLER) {
+                return NEGATIVE;
+              }
+            }
+          } // end of samex case
+          else { // samey case
+            CGAL_SDG_DEBUG(std::cout << "debug samey case" << std::endl;);
+            FT diffdvsx = vv.x() - sref.x();
+            if (CGAL::sign(diffdvsx) == CGAL::sign(diffdvtx)) {
+              if (CGAL::compare(CGAL::abs(diffdvty),
+                                CGAL::abs(diffdvtx)) == SMALLER) {
+                return NEGATIVE;
+              }
+            }
+          } // end of samey case
         }
         return ZERO;
       }
