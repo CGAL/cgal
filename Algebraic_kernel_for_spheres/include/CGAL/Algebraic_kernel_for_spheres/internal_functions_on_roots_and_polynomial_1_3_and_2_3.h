@@ -410,7 +410,7 @@ namespace CGAL {
   {
     return solve<AK>(e1.first,e1.second,e2,res);
   }
-
+#if 0
   template < class AK, class OutputIterator >
   inline 
   OutputIterator
@@ -420,7 +420,7 @@ namespace CGAL {
   {
     return solve<AK>(e2,e1);
   }
-
+#endif
   template < class AK, class OutputIterator >
   inline 
   OutputIterator
@@ -430,7 +430,7 @@ namespace CGAL {
   {
     return solve<AK>(e1.first, e2, e1.second,res);
   }
-
+#if 0
   template < class AK, class OutputIterator >
   inline 
   OutputIterator
@@ -440,7 +440,7 @@ namespace CGAL {
   {
     return solve<AK>(e2,e1);
   }
-
+#endif
   template < class AK, class OutputIterator >
   inline 
   OutputIterator
