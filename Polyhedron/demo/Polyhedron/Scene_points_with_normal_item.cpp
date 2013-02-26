@@ -81,7 +81,7 @@ void Scene_points_with_normal_item::deleteSelection()
   // Delete selected points
   m_points->delete_selection();
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
