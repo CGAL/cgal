@@ -1964,6 +1964,15 @@ private:
         qref = q.point();
       } else {
         // tocheck and tofix
+        // here q and r are segments
+        if (is_q_hv and not is_r_hv) {
+          CGAL_SDG_DEBUG(std::cout << "debug q:ap r:non-ap"
+              << std::endl;);
+        }
+        if (is_r_hv and not is_q_hv) {
+          CGAL_SDG_DEBUG(std::cout << "debug q:non-ap r:ap"
+              << std::endl;);
+        }
         return ZERO;
       }
 
@@ -1995,6 +2004,19 @@ private:
 
       if (retval == LARGER) {
         return POSITIVE;
+      }
+
+      if (r.is_segment() and (not (is_r_hor or is_r_ver))) {
+        CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
+            << std::endl;);
+        if (CGAL::compare(diffdvpx, diffdvqx) == EQUAL) {
+          CGAL_SDG_DEBUG(std::cout << "debug p, q on same vertical side"
+              << std::endl;);
+        }
+        if (CGAL::compare(diffdvpy, diffdvqy) == EQUAL) {
+          CGAL_SDG_DEBUG(std::cout << "debug p, q on same horizontal side"
+              << std::endl;);
+        }
       }
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
