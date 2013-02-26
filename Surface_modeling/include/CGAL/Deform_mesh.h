@@ -91,14 +91,14 @@ public:
   double tolerance;                                   // tolerance of convergence 
 
   WeightCalculator weight_calculator;
-
+  bool need_preprocess;
   // Public methods
 public:
 
   // The constructor gets the polyhedron that we will model
   Deform_mesh(Polyhedron& P, const VertexIndexMap& vertex_index_map_, const EdgeIndexMap& edge_index_map_)
     :polyhedron(P), vertex_index_map(vertex_index_map_), edge_index_map(edge_index_map_),
-    weight_calculator(P)
+    weight_calculator(P), need_preprocess(true)
   {
     /////////////////////////////////////////////////////////////////
     // this part should be removed since it iterates over all vertices,
@@ -131,6 +131,7 @@ public:
 
   void clear()
   {
+    need_preprocess = true;
     //clear vertices
     roi.clear(); 
     hdl.clear();
@@ -179,18 +180,21 @@ public:
 
   void insert_roi(vertex_descriptor vd)   
   {
+    need_preprocess = true;
     roi.push_back(vd);
   }
 
   // Re-assign handles from begin to end
   void assign_handles(vertex_iterator begin, vertex_iterator end)
   {
+    need_preprocess = true;
     hdl.clear();
     hdl.insert(hdl.end(), begin, end);
   }
 
   void insert_handle(vertex_descriptor vd)  
   {
+    need_preprocess = true;
     hdl.push_back(vd);
   }
 
@@ -341,6 +345,8 @@ public:
   // Before we can model we have to do some precomputation
   void preprocess()
   {
+    need_preprocess = false;
+
     CGAL_TRACE_STREAM << "Calls preprocess()\n";
 
     Timer task_timer; task_timer.start();
@@ -465,6 +471,8 @@ public:
   // assign translation vector to all handles
   void operator()(const Vector& translation)
   {
+    CGAL_precondition(!need_preprocess); // preprocess should be called first
+
     for (std::size_t idx = 0; idx < hdl.size(); idx++)
       {
         vertex_descriptor vd = hdl[idx];
@@ -477,6 +485,8 @@ public:
   // assign translation vector to specific handle
   void operator()(vertex_descriptor vd, const Vector& translation)
   {
+    CGAL_precondition(!need_preprocess); // preprocess should be called first
+
     std::size_t idx = get(vertex_index_map, vd);
     solution[idx-1] = original[idx-1] + translation;
   }
@@ -1049,6 +1059,8 @@ public:
   // Deformation on roi vertices
   void deform()
   {
+    CGAL_precondition(!need_preprocess); // preprocess should be called first
+
     double energy_this = 0;
     double energy_last;
     // iterations
