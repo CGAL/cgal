@@ -799,9 +799,6 @@ public:
     return number_of_vertices() - n;
   }
 
-  /// Remove a vertex from a 2D triangulation
-  /// \n NGHK: not implemented (not tested)
-  void remove(Vertex_handle v);
   // \}
 
   /// \name Advanced modifiers
@@ -829,24 +826,6 @@ public:
 
   /// Remove a vertex from a 2D triangulation with number_of_vertices() == 1
   void remove_first(Vertex_handle v);
-  /// Remove a vertex from a 2D triangulation with more than one vertex
-  /// \n NGHK: not implemented
-  void remove_2D(Vertex_handle v);
-
-  /// creates a new vertex v and use it to star the hole whose
-  /// boundary is described by the sequence of edges [edge_begin,
-  /// edge_end). Returns a handle to the new vertex.
-  /// \n NGHK: not implemented
-  template<class EdgeIt>
-  Vertex_handle star_hole(Point p, EdgeIt edge_begin, EdgeIt edge_end);
-
-  /// same as above, except that the algorithm first recycles faces in
-  /// the sequence [face_begin, face_end) and create new ones
-  /// only when the sequence is exhausted.  
-  /// \n NGHK: not implemented
-  template<class EdgeIt, class FaceIt>
-  Vertex_handle star_hole(Point p, EdgeIt edge_begin, EdgeIt edge_end,
-      FaceIt face_begin, FaceIt face_end);
 
   /// Changes the domain. Note that this function calls clear(), i.e.,
   /// it erases the existing triangulation.
@@ -1099,7 +1078,6 @@ public:
   }
 
   // \}
-protected:
   // Protected functions of Periodic_2_triangulation_2
   /// Const accessor to the virtual vertices reverse map, 
   /// used to optimize point location for periodic copies.
@@ -1119,6 +1097,7 @@ protected:
       return vh;
   }
 
+protected:
   /// NGHK: implemented
   std::vector<Vertex_handle> insert_dummy_points();
 
@@ -1230,12 +1209,9 @@ protected:
     //upon removing of vertex v
     return number_of_vertices() == 1;
   }
-
-  /// NGHK: Not yet implemented
-  void fill_hole(Vertex_handle v, std::list<Edge> & hole, std::map<Vertex_handle, Offset> &vertex_offsets);
-
-  /// NGHK: Not yet implemented
+  /// NGHK: Implemented
   void make_hole(Vertex_handle v, std::list<Edge> & hole);
+
 
   /// NGHK: Not yet implemented
   Face_handle create_face(Face_handle f1, int i1, Face_handle f2, int i2,
@@ -1930,9 +1906,13 @@ bool Periodic_2_triangulation_2<Gt, Tds>::flippable(Face_handle f, int i) {
   p[3] = &f->vertex(cw(i))->point();  // cw
 
   if (is_1_cover() && f->has_zero_offsets() && nb->has_zero_offsets()) {
-    if (orientation(*p[0], *p[1], *p[2]) != RIGHT_TURN)
+    // if (orientation(*p[0], *p[1], *p[2]) != RIGHT_TURN)
+    //   return false;
+    // if (orientation(*p[0], *p[1], *p[3]) != LEFT_TURN)
+    //   return false;
+    if (orientation(*p[0], *p[1], *p[2]) == LEFT_TURN)
       return false;
-    if (orientation(*p[0], *p[1], *p[3]) != LEFT_TURN)
+    if (orientation(*p[0], *p[1], *p[3]) == RIGHT_TURN)
       return false;
   } else {
     Offset off[4];
@@ -1941,9 +1921,13 @@ bool Periodic_2_triangulation_2<Gt, Tds>::flippable(Face_handle f, int i) {
     off[2] = get_offset(f, ccw(i));
     off[3] = get_offset(f, cw(i));
     
-    if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) != RIGHT_TURN)
+    // if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) != RIGHT_TURN)
+    //   return false;
+    // if (orientation(*p[0], *p[1], *p[3], off[0], off[1], off[3]) != LEFT_TURN)
+    //   return false;
+    if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) == LEFT_TURN)
       return false;
-    if (orientation(*p[0], *p[1], *p[3], off[0], off[1], off[3]) != LEFT_TURN)
+    if (orientation(*p[0], *p[1], *p[3], off[0], off[1], off[3]) == RIGHT_TURN)
       return false;
   }
 
@@ -2487,10 +2471,33 @@ inline void Periodic_2_triangulation_2<Gt, Tds>::remove_degree_3(Vertex_handle v
 template<class Gt, class Tds>
 inline void Periodic_2_triangulation_2<Gt, Tds>::remove_degree_3_single_copy(Vertex_handle vh)
 {
-  NGHK_NYI;
-  /// TODO(NGHK): Need to update the offsets
+  Face_handle f = vh->face();
+  int i = ccw(f->index(vh));
+  Vertex_handle v0 = f->vertex(i);
+  Face_handle f2 = f->neighbor(i);
+  int j = f2->index(f);
+  // Get the offsets in ccw order
+  Offset off[3];
+  off[i]      = get_offset(f, i);
+  off[ccw(i)] = get_offset(f, ccw(i));
+  off[cw(i)]  = combine_offsets(get_offset(f2, j), get_neighbor_offset(f2, j, f, i));
+  if (off[0].x() < 0 || off[1].x() < 0 || off[2].x() < 0) {
+    Offset o(number_of_sheets()[0], 0);
+    off[0] += o; off[1] += o; off[2] += o;
+  }
+  if (off[0].y() < 0 || off[1].y() < 0 || off[2].y() < 0) {
+    Offset o(0, number_of_sheets()[1]);
+    off[0] += o; off[1] += o; off[2] += o;
+  }
 
-  _tds.remove_degree_3(vh);
+  // Remove the vertex, keep face f
+  _tds.remove_degree_3(vh, f);
+
+  // Reset the offsets
+  set_offsets(f,
+              (off[0].x() >= number_of_sheets()[0] ? 2 : 0) + (off[0].y() >= number_of_sheets()[1] ? 1 : 0),
+              (off[1].x() >= number_of_sheets()[0] ? 2 : 0) + (off[1].y() >= number_of_sheets()[1] ? 1 : 0),
+              (off[2].x() >= number_of_sheets()[0] ? 2 : 0) + (off[2].y() >= number_of_sheets()[1] ? 1 : 0));
 }
 
 template<class Gt, class Tds>
@@ -2544,32 +2551,6 @@ remove_degree_init(Vertex_handle v, const Offset &v_o,
 }
 
 template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::remove_2D(Vertex_handle v) {
-  CGAL_triangulation_precondition(number_of_vertices() > 0);
-
-  std::list<Edge> hole;
-  make_hole(v, hole);
-
-  std::map<Vertex_handle, Offset> vertex_offsets;
-  NGHK_NYI; // Fill vertex offsets
-
-  fill_hole(v, hole, vertex_offsets);
-  delete_vertex(v);
-
-  return;
-}
-
-template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::remove(Vertex_handle v) {
-  CGAL_triangulation_precondition( v != Vertex_handle());
-
-  if (number_of_vertices() == 1)
-    remove_first(v);
-  else
-    remove_2D(v);
-}
-
-template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::make_hole(Vertex_handle v, std::list<Edge> & hole) {
   remove_too_long_edges_in_star(v);
 
@@ -2604,128 +2585,6 @@ void Periodic_2_triangulation_2<Gt, Tds>::make_hole(Vertex_handle v, std::list<E
   }
   return;
 }
-
-template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::fill_hole(Vertex_handle v, std::list<Edge> & hole, std::map<Vertex_handle, Offset> &vertex_offsets) {
-  NGHK_NYI;
-  // uses the fact that the hole is starshaped
-  // with repect to v->point()
-  typedef std::list<Edge> Hole;
-
-  Face_handle ff, fn;
-  int ii, in;
-  Vertex_handle v0, v1, v2;
-  Bounded_side side;
-
-  //stack algorithm to create faces
-  // create face v0,v1,v2
-  //if v0,v1,v2 are finite vertices
-  // and form a left_turn
-  // and triangle v0v1v2 does not contain v->point()
-  if (hole.size() != 3) {
-    typename Hole::iterator hit = hole.begin();
-    typename Hole::iterator next = hit;
-    while (hit != hole.end() && hole.size() != 3) {
-      ff = (*hit).first;
-      ii = (*hit).second;
-      v0 = ff->vertex(cw(ii));
-      v1 = ff->vertex(ccw(ii));
-      next = hit;
-      next++;
-      if (next == hole.end())
-        next = hole.begin();
-      fn = (*next).first;
-      in = (*next).second;
-      v2 = fn->vertex(ccw(in));
-      if (orientation(v0->point(), v1->point(), v2->point()) == LEFT_TURN) {
-        side = bounded_side(v0->point(), v1->point(), v2->point(), v->point());
-
-        if (side == ON_UNBOUNDED_SIDE || (side == ON_BOUNDARY && orientation(
-            v0->point(), v->point(), v2->point()) == COLLINEAR
-            && collinear_between(v0->point(), v->point(), v2->point()))) {
-          //create face
-          Face_handle newf = create_face(ff, ii, fn, in);
-          typename Hole::iterator tempo = hit;
-          hit = hole.insert(hit, Edge(newf, 1)); //push newf
-          hole.erase(tempo); //erase ff
-          hole.erase(next); //erase fn
-          if (hit != hole.begin())
-            --hit;
-          continue;
-        }
-      }
-      ++hit;
-    }
-  }
-
-  // either the hole has only three edges
-  // or all its finite vertices are reflex or flat
-  // except may be one vertex whose corresponding ear 
-  // includes the vertex being removed
-
-  // deal with the last left_turn if any
-  if (hole.size() != 3) {
-    typename Hole::iterator hit = hole.begin();
-    while (hit != hole.end()) {
-      ff = (*hit).first;
-      ii = (*hit).second;
-      hit++;
-      if (hit != hole.end()) {
-        fn = (*hit).first;
-        in = (*hit).second;
-      } else {
-        fn = ((hole.front()).first);
-        in = (hole.front()).second;
-      }
-      if (orientation(ff->vertex(cw(ii))->point(), fn->vertex(cw(in))->point(),
-          fn->vertex(ccw(in))->point()) == LEFT_TURN) {
-        create_face(ff, ii, fn, in);
-        break;
-      }
-    }
-  }
-
-  // deal with a reflex chain of convex hull edges
-  if (hole.size() != 3) {
-    // look for infinite vertex
-    ff = (hole.front()).first;
-    ii = (hole.front()).second;
-    // NGHK: TODO
-    //    while ( ! is_infinite(ff->vertex(cw(ii)))){
-    //      hole.push_back(hole.front());
-    //      hole.pop_front();
-    //      ff = (hole.front()).first;
-    //      ii = (hole.front()).second;
-    //    }
-    //create faces
-    while (hole.size() != 3) {
-      ff = (hole.front()).first;
-      ii = (hole.front()).second;
-      hole.pop_front();
-      fn = (hole.front()).first;
-      in = (hole.front()).second;
-      hole.pop_front();
-      Face_handle newf = create_face(ff, ii, fn, in);
-      hole.push_front(Edge(newf, 1));
-    }
-  }
-
-  // now hole has three edges
-  typename Hole::iterator hit;
-  hit = hole.begin();
-  //  I don't know why the following yields a segmentation fault
-  //    create_face( (*hit).first, (*hit).second,
-  // 	     (* ++hit).first, (*hit).second,
-  // 	     (* ++hit).first, (*hit).second);
-  ff = (*hit).first;
-  ii = (*hit).second;
-  fn = (*++hit).first;
-  in = (*hit).second;
-  Face_handle f3 = (*++hit).first;
-  int i3 = (*hit).second;
-  create_face(ff, ii, fn, in, f3, i3);
-}
-
 
 template<class Gt, class Tds>
 inline typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_triangulation_2<

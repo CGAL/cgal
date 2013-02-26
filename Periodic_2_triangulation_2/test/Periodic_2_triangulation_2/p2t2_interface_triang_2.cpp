@@ -301,7 +301,13 @@ void test_modifiers() {
 
   t.clear();
   vh0 = t.insert(p0);
-  t.remove(vh0);
+  t.remove_first(vh0);
+
+  t.clear();
+  vh0 = t.insert_first(p0);
+  vh1 = t.insert_first(p1);
+  CGAL_assertion(t.degree(vh1) == 3);
+  t.remove_degree_3(vh1);
 
   t.clear();
   vh0 = t.insert_first(p0);

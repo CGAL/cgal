@@ -66,10 +66,12 @@ Insertion of a point is done by locating a face that contains the
 point, and then splitting this face. Apart from the location, 
 insertion takes a time \f$ O(1)\f$. 
 
-Removal of a vertex is done by removing all adjacent triangles, and 
-re-triangulating the hole. Removal takes time \f$ O(d^2)\f$ in the worst 
-case, if \f$ d\f$ is the degree of the removed vertex, which is \f$ O(1)\f$ for 
-a random vertex. 
+Removal of a vertex is more difficult than in the Euclidean space,
+since the star of a vertex may not be disjoint from the star of a
+virtual copy of that vertex. Therefore generic removal of vertices is
+not implemented. Several more constrained cases are implemented: the
+removal of the last vertex in the triangulation and the removal of a
+vertex of degree 3.
 
 The face, edge, and vertex iterators on features are derived from 
 their counterparts visiting all (non-virtual and virtual) features 
@@ -966,19 +968,9 @@ first, InputIterator last);
 /// \image html insert1.gif "Insertion of a point on an edge." 
 /// \anchor Triangulation_ref_Fig_insert2
 /// \image html insert2.gif "Insertion in a face."
-/// \anchor Triangulation_ref_Fig_remove
-/// \image html ./remove.gif "Removal"  
 /// @{
 
 
-
-// TODO(NGHK): Check
-/*! 
-Removes the vertex from the 
-triangulation. The created hole is re-triangulated, see 
-Figure \ref Triangulation_ref_Fig_remove. 
-*/ 
-void remove(Vertex_handle v); 
 
 /// @}
 

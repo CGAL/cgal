@@ -1286,7 +1286,7 @@ remove(Vertex_handle v)
 
   if ( this->number_of_vertices() == 1) {
     // Last vertex
-    Triangulation::remove(v);
+    Triangulation::remove_first(v);
     return;
   }
 
@@ -1472,14 +1472,12 @@ remove_degree3(Vertex_handle, std::vector<Face_handle> &f,
   oo[ccw(i[0])] = o[0];
 
   if (oo[0].x() < 0 || oo[1].x() < 0 || oo[2].x() < 0) {
-    oo[0] += Offset(number_of_sheets()[0], 0);
-    oo[1] += Offset(number_of_sheets()[0], 0);
-    oo[2] += Offset(number_of_sheets()[0], 0);
+    Offset o(number_of_sheets()[0], 0);
+    oo[0] += o; oo[1] += o; oo[2] += o;
   }
   if (oo[0].y() < 0 || oo[1].y() < 0 || oo[2].y() < 0) {
-    oo[0] += Offset(0, number_of_sheets()[1]);
-    oo[1] += Offset(0, number_of_sheets()[1]);
-    oo[2] += Offset(0, number_of_sheets()[1]);
+    Offset o(0, number_of_sheets()[1]);
+    oo[0] += o; oo[1] += o; oo[2] += o;
   }
   this->set_offsets(f[0], 
                     (oo[0].x() >= number_of_sheets()[0] ? 2 : 0) + (oo[0].y() >= number_of_sheets()[1] ? 1 : 0),

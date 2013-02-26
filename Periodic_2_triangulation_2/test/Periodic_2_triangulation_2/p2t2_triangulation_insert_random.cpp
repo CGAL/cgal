@@ -15,7 +15,7 @@ int main() {
   Vector midpoint(0.5, 0.5);
 
   int iterations = 0;
-  while (1) {
+  while (iterations < 100) {
     for (int i = 0; i < N_PTS; ++i) {
       t.insert(*(++g) + midpoint);
     }
@@ -31,10 +31,6 @@ int main() {
       vhs.resize(vhs.size()/2);
     }
       
-    for (size_t i=0; i<vhs.size(); ++i) {
-      t.remove(vhs[i]); 
-    }
-
     if (!t.is_valid(true)) {
       std::cout << "l:" << __LINE__ << std::endl;
       std::exit(1);
