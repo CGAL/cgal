@@ -2009,14 +2009,42 @@ private:
       if (r.is_segment() and (not (is_r_hor or is_r_ver))) {
         CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
             << std::endl;);
-        if (CGAL::compare(diffdvpx, diffdvqx) == EQUAL) {
+        CGAL_SDG_DEBUG(std::cout << "debug d=" << d <<
+            " d_fine=" << d_fine << std::endl;);
+        bool pqsamex = CGAL::compare(diffdvpx, diffdvqx) == EQUAL;
+        bool pqsamey (false);
+        if (pqsamex) {
           CGAL_SDG_DEBUG(std::cout << "debug p, q on same vertical side"
               << std::endl;);
+        } else {
+          pqsamey = CGAL::compare(diffdvpy, diffdvqy) == EQUAL;
+          if (pqsamey) {
+            CGAL_SDG_DEBUG(std::cout << "debug p, q on "
+                << "same horizontal side" << std::endl;);
+          }
         }
-        if (CGAL::compare(diffdvpy, diffdvqy) == EQUAL) {
-          CGAL_SDG_DEBUG(std::cout << "debug p, q on same horizontal side"
-              << std::endl;);
-        }
+        if (pqsamex or pqsamey) {
+          Line_2 lr = compute_supporting_line(r.supporting_site());
+          Homogeneous_point_2 rref = compute_linf_projection_hom(lr, vv);
+          if (pqsamex) {
+            FT diffdvry = vv.y() - rref.y();
+            if (CGAL::sign(diffdvry) == CGAL::sign(diffdvty)) {
+              if (CGAL::compare(CGAL::abs(diffdvtx),
+                                CGAL::abs(diffdvty)) == SMALLER) {
+                return NEGATIVE;
+              }
+            }
+          } // end of pqsamex case
+          if (pqsamey) {
+            FT diffdvrx = vv.x() - rref.x();
+            if (CGAL::sign(diffdvrx) == CGAL::sign(diffdvtx)) {
+              if (CGAL::compare(CGAL::abs(diffdvty),
+                                CGAL::abs(diffdvtx)) == SMALLER) {
+                return NEGATIVE;
+              }
+            }
+          } // end of pqsamey case
+        } // end of case: pqsamex or pqsamey
       }
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
