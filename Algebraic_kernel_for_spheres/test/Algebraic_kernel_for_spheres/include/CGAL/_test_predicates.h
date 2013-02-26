@@ -515,9 +515,9 @@ void _test_solve(AK ak)
       Polynomial_for_spheres_2_3;
    typedef typename AK::Polynomial_1_3
       Polynomial_1_3;
-   typedef std::pair<
-      Polynomial_for_spheres_2_3,
-      Polynomial_1_3>       Equation_Circle;
+
+
+
    typedef typename AK::Polynomials_for_line_3 Polynomials_for_line_3;
 
   // only Polynomial_1_3
@@ -841,7 +841,7 @@ void _test_critical_points_circle( const std::pair<
       typename AK::Polynomial_for_spheres_2_3,
       typename AK::Polynomial_1_3> &c) {
   typedef typename AK::FT FT;
-  typedef typename AK::Root_of_2 Root_of_2;
+
   typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
   typename AK::X_critical_points theX_critical_points =
     AK().x_critical_points_object();
@@ -854,9 +854,9 @@ void _test_critical_points_circle( const std::pair<
       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3
       Polynomial_1_3;
-  typedef std::pair<
-      Polynomial_for_spheres_2_3,
-      Polynomial_1_3>       Equation_Circle;
+
+
+
   typename AK::Sign_at theSigh_at =
     AK().sign_at_object();
 
