@@ -32,6 +32,7 @@
 #  include <CGAL/Gmpq.h>
 #endif
 
+
 typedef CGAL::Simple_cartesian<double> K;
 typedef  K::Point_2 Point_2;
 

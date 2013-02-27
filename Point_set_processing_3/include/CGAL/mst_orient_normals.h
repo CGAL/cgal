@@ -294,7 +294,7 @@ create_riemannian_graph(
     // Number of input points
     const std::size_t num_input_points = distance(first, beyond);
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates KD-tree\n");
 
     // Instanciate a KD-tree search.
@@ -312,7 +312,7 @@ create_riemannian_graph(
     // Recover RAM
     kd_tree_points.clear();
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates Riemannian Graph\n");
 
     // Iterates over input points and creates Riemannian Graph:
@@ -432,7 +432,7 @@ create_mst_graph(
     // Number of input points
     const std::size_t num_input_points = boost::num_vertices(riemannian_graph);
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Calls boost::prim_minimum_spanning_tree()\n");
 
     // Computes Minimum Spanning Tree.
@@ -444,7 +444,7 @@ create_mst_graph(
                                       weight_map( riemannian_graph_weight_map )
                                      .root_vertex( boost::vertex(source_point_index, riemannian_graph) ));
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates MST Graph\n");
 
     // Converts predecessor map to a MST graph:
@@ -544,7 +544,7 @@ mst_orient_normals(
     // Precondition: at least 2 nearest neighbors
     CGAL_point_set_processing_precondition(k >= 2);
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Create Index_property_map\n");
 
     // Create a property map Iterator -> index.
@@ -579,7 +579,7 @@ mst_orient_normals(
                                            riemannian_graph,
                                            source_point);
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Calls boost::breadth_first_search()\n");
 
     // Traverse the point set along the MST to propagate source_point's orientation
@@ -609,7 +609,7 @@ mst_orient_normals(
     // At this stage, we have typically 0 unoriented normals if k is large enough
     CGAL_TRACE("  => %u normals are unoriented\n", unoriented_points.size());
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("End of mst_orient_normals()\n");
 
     return first_unoriented_point;

@@ -819,7 +819,7 @@ private:
       if(v->type() == Triangulation::INPUT)
         values.push_back(v->f());
 
-    int size = values.size();
+    std::size_t size = values.size();
     if(size == 0)
     {
       std::cerr << "Contouring: no input points\n";
@@ -827,7 +827,7 @@ private:
     }
 
     std::sort(values.begin(),values.end());
-    int index = size/2;
+    std::size_t index = size/2;
     // return values[size/2];
     return 0.5 * (values[index] + values[index+1]); // avoids singular cases
   }

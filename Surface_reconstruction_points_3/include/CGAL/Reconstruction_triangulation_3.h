@@ -386,7 +386,7 @@ public:
         Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
         points.push_back(pwn);
     }
-    int n = points.size();
+    std::size_t n = points.size();
 
     initialize_bounding_sphere();
 
