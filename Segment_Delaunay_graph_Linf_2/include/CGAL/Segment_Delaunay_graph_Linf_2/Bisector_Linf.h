@@ -439,10 +439,30 @@ private:
       // here p and q are not parallel
 
       // compute intersection point of two lines
+      Point_2 mid;
+      Are_same_points_2 are_same_points;
 
-      Point_2 mid ( - lp.c() * lq.b() + lq.c() * lp.b(),
-                    - lp.a() * lq.c() + lq.a() * lp.c(),
-                    + lp.a() * lq.b() - lq.a() * lp.b() );
+      bool is_psrc_qsrc =
+        are_same_points(p.source_site(), q.source_site());
+      bool is_psrc_qtrg =
+        are_same_points(p.source_site(), q.target_site());
+      bool is_mid_psrc = is_psrc_qsrc or is_psrc_qtrg;
+      bool is_ptrg_qsrc =
+        are_same_points(p.target_site(), q.source_site());
+      bool is_ptrg_qtrg =
+        are_same_points(p.target_site(), q.target_site());
+      bool is_mid_ptrg = is_ptrg_qsrc or is_ptrg_qtrg;
+
+      if (is_mid_psrc) {
+        mid = p.source();
+      } else if (is_mid_ptrg) {
+        mid = p.target();
+      } else {
+        // really compute intersection point of two lines
+        mid = Point_2 ( - lp.c() * lq.b() + lq.c() * lp.b(),
+                        - lp.a() * lq.c() + lq.a() * lp.c(),
+                        + lp.a() * lq.b() - lq.a() * lp.b() );
+      }
 
       points[0] = mid;
 
