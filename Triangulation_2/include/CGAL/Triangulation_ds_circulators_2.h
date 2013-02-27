@@ -225,7 +225,7 @@ private:
 
 public:
   Triangulation_ds_edge_circulator_2()
-    : _v(), pos()
+    : _ri(0), _v(), pos()
   {}
             
   Triangulation_ds_edge_circulator_2( Vertex_handle v, 
@@ -506,7 +506,7 @@ Triangulation_ds_edge_circulator_2(Vertex_handle v, Face_handle f)
   else if (pos==Face_handle()) {pos = v->face();}
  
   if (pos == Face_handle() || pos->dimension() < 1){
-    _v = Vertex_handle(); pos = Face_handle();return;}
+    _ri = 0; _v = Vertex_handle(); pos = Face_handle();return;}
   int i = pos->index(_v);
   if (pos->dimension() == 2) {_ri = ccw(i);}
   else {_ri = 2;}
