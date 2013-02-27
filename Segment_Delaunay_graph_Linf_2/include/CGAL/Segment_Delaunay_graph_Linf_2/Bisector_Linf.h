@@ -459,6 +459,10 @@ private:
         mid = p.target();
       } else {
         // really compute intersection point of two lines
+        CGAL_SDG_DEBUG(std::cout << "debug bisector_SS lp=" <<
+            lp.a() << ' ' << lp.b() << ' ' << lp.c() << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug bisector_SS lq=" <<
+            lq.a() << ' ' << lq.b() << ' ' << lq.c() << std::endl;);
         mid = Point_2 ( - lp.c() * lq.b() + lq.c() * lp.b(),
                         - lp.a() * lq.c() + lq.a() * lp.c(),
                         + lp.a() * lq.b() - lq.a() * lp.b() );
@@ -466,10 +470,6 @@ private:
 
       points[0] = mid;
 
-      CGAL_SDG_DEBUG(std::cout << "debug bisector_SS lp=" <<
-          lp.a() << ' ' << lp.b() << ' ' << lp.c() << std::endl;);
-      CGAL_SDG_DEBUG(std::cout << "debug bisector_SS lq=" <<
-          lq.a() << ' ' << lq.b() << ' ' << lq.c() << std::endl;);
       CGAL_SDG_DEBUG(std::cout << "debug bisector_SS mid=" <<
           mid << std::endl;);
 
