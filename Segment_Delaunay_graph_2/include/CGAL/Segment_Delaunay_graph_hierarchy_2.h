@@ -459,11 +459,11 @@ protected:
   }
 
   Vertex_handle
-  vertex_at_level(const Vertex_handle& v, int k) const
+  vertex_at_level(const Vertex_handle& v, unsigned int k) const
   {
     CGAL_precondition( k <= sdg_hierarchy_2__maxlevel );
 
-    int level = 0;
+    unsigned int level = 0;
     Vertex_handle v_at_level = v;
     while ( level < k ) {
       v_at_level = v_at_level->up();
