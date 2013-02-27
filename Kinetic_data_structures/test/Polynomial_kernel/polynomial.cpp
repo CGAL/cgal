@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
   //std::cout << /*pi << " " <<*/ ep << std::endl;
 
   if ( argc > 1 ) {
-    for_maple = atoi(argv[1]);
+    for_maple = (atoi(argv[1]) != 0);
   }
 
   /*
