@@ -491,18 +491,9 @@ private:
         // take any endpoint of q not the same as mid
         Point_2 qrep = ( mid == qsrc) ? qtrg : qsrc;
 
-        //Vector_2 vecmq ( mid, qrep );
-        //Direction_2 dirq ( vecmq );
-        Direction_2 dirq ( qrep.x() - mid.x(),
-                           qrep.y() - mid.y() );
-        //Vector_2 vecmpsrc ( mid, psrc );
-        //Direction_2 dirpsrc =  ( vecmpsrc );
-        Direction_2 dirpsrc ( psrc.x() - mid.x(),
-                              psrc.y() - mid.y() );
-        //Vector_2 vecmptrg ( mid, ptrg );
-        //Direction_2 dirptrg =  ( vecmptrg );
-        Direction_2 dirptrg ( ptrg.x() - mid.x(),
-                              ptrg.y() - mid.y() );
+        Direction_2 dirq    ( Vector_2(mid, qrep) );
+        Direction_2 dirpsrc ( Vector_2(mid, psrc) );
+        Direction_2 dirptrg ( Vector_2(mid, ptrg) );
 
         CGAL_SDG_DEBUG(std::cout << "debug bisector_SS psrc=" << psrc
          << " ptrg=" <<  ptrg << std::endl;);
@@ -537,18 +528,9 @@ private:
         // take any endpoint of p not the same as mid
         Point_2 prep = ( mid == psrc ) ? ptrg : psrc;
 
-        //Vector_2 vecmp ( mid, prep );
-        //Direction_2 dirp ( vecmp );
-        Direction_2 dirp( prep.x() - mid.x(),
-                          prep.y() - mid.y() );
-        //Vector_2 vecmqsrc ( mid, qsrc );
-        //Direction_2 dirqsrc =  ( vecmqsrc );
-        Direction_2 dirqsrc ( qsrc.x() - mid.x(),
-                              qsrc.y() - mid.y() );
-        //Vector_2 vecmqtrg ( mid, qtrg );
-        //Direction_2 dirqtrg =  ( vecmqtrg );
-        Direction_2 dirqtrg ( qtrg.x() - mid.x(),
-                              qtrg.y() - mid.y() );
+        Direction_2 dirp    ( Vector_2(mid, prep) );
+        Direction_2 dirqsrc ( Vector_2(mid, qsrc) );
+        Direction_2 dirqtrg ( Vector_2(mid, qtrg) );
 
         if (dirp.counterclockwise_in_between(dirqsrc, dirqtrg))
         {
@@ -580,12 +562,8 @@ private:
         // take any endpoint of q not the same as mid
         Point_2 qrep = ( mid == qsrc) ? qtrg : qsrc;
 
-        //Direction_2 dirp ( Vector_2(mid, prep) );
-        Direction_2 dirp ( prep.x() - mid.x(),
-                           prep.y() - mid.y() );
-        //Direction_2 dirq ( Vector_2(mid, qrep) );
-        Direction_2 dirq ( qrep.x() - mid.x(),
-                           qrep.y() - mid.y() );
+        Direction_2 dirp ( Vector_2(mid, prep) );
+        Direction_2 dirq ( Vector_2(mid, qrep) );
 
         Direction_2 d =
           dirq.counterclockwise_in_between(dirp, -dirp) ?
