@@ -172,6 +172,9 @@ enum Trisegment_collinearity
   , TRISEGMENT_COLLINEARITY_ALL
 } ;
 
+/*
+// Unused function.
+// In a comment as clang warns that it is unused
 static char const* trisegment_collinearity_to_string( Trisegment_collinearity c )
 {
   switch ( c )
@@ -185,6 +188,8 @@ static char const* trisegment_collinearity_to_string( Trisegment_collinearity c 
   
   return "!!UNKNOWN COLLINEARITY!!" ;
 }
+*/
+
 namespace internal 
 {
 
