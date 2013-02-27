@@ -3227,11 +3227,12 @@ private:
     if ( same_segments(q.supporting_site(), t.supporting_site()) ) {
       CGAL_SDG_DEBUG(std::cout
           << "debug q=" << q << " t=" << t << std::endl; );
-      CGAL_assertion(
-          same_points(q.source_site(), t.source_site()) or
-          same_points(q.source_site(), t.target_site()) or
-          same_points(q.target_site(), t.source_site()) or
-          same_points(q.target_site(), t.target_site())   );
+      // philaris: the following assertion is too strong
+      //CGAL_assertion(
+      //    same_points(q.source_site(), t.source_site()) or
+      //    same_points(q.source_site(), t.target_site()) or
+      //    same_points(q.target_site(), t.source_site()) or
+      //    same_points(q.target_site(), t.target_site())   );
       // philaris: the following assertion is too strong and does not
       // work for inexact arithmetic;
       // philaris: I also remove it because of validity tests
