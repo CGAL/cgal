@@ -600,7 +600,7 @@ The documentation of this release</a>
 directly)</li>
 <li><a href="${doxygen_manual_test_url}${release_name}/" style="color: red">
 The doxygen documentation testpage</a>
-(and the <a href="${manual_test_url}">overview page</a>)</li>
+(and the <a href="${doxygen_manual_test_url}">overview page</a>)</li>
 EOF
     if ( -r "announce.html" ) {
 	print OUTPUT<<"EOF";
