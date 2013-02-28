@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Combinatorial_Maps
 \anchor ChapterCombinatorialMap
 
@@ -395,7 +395,7 @@ is {10}\f$ \neq\f$\f$ \emptyset\f$. Finally, facets <I>f1</I> and
 We can consider <I>i</I>-cells in a dimension <I>d'</I> with
 <I>i</I>\f$ \leq\f$<I>d'</I>\f$ \leq\f$ <I>d</I>. The idea is to
 consider the <I>i</I>-cells as if the combinatorial map was in
-<I>d'</I> dimension. For that, we only take into account the 
+<I>d'</I> dimension. For that, we only take into account the
 \f$ \beta_j \f$s for <I>j</I>\f$ \leq\f$<I>d'</I>. The <I>i</I>-cell
 containing <I>d0</I> in dimension <I>d'</I> is the orbit \f$
 \langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_{i-1}\f$,\f$
@@ -454,7 +454,7 @@ combinatorial map has 2-attributes containing a color in RGB format.
 Example of combinatorial maps with attributes. Attributes
 are represented by black rectangles containing an information, and
 association between darts and attributes are represented by small
-lines. Left: A 2D combinatorial map with 1-attributes
+red lines. Left: A 2D combinatorial map with 1-attributes
 containing a double, for example corresponding to the length of the
 1-cell, and 2-attributes containing a color in RGB format. Only three
 edges of the combinatorial map, among the nine, are associated to a
@@ -549,7 +549,7 @@ this example, all the darts of the 2-cell between the cube and the
 pyramid are linked together by \f$ \beta_3\f$. However, this
 configuration does not correspond to an orientable 3D
 quasi-manifold. Indeed, the operation of gluing two <I>d</I>-cells
-along one <I>(d-1)</I>-cell must preserve the initial
+along one <I>(d-1)</I>-cell must preserve the structure of the initial
 <I>(d-1)</I>-cell.
 
 To avoid these two kinds of configurations, conditions are added on
@@ -633,8 +633,6 @@ for a handle to the <I>i</I>-attributes (and the const version
 \link CombinatorialMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the
 <I>i</I>-attributes.
 
-\todo Add links to the corresponding types in CombinatorialMap concept asap the types were defined correctly in the concept.
-
 \subsection ssecitem Combinatorial Map Items
 
 The `CombinatorialMapItems` concept defines dart and attribute types
@@ -697,7 +695,7 @@ the `CellAttribute` concept, represents an attribute associated with a
 cell of a combinatorial map. The  template parameter `CMap` must be a
 model of the `CombinatorialMap` concept. The attribute stores a handle
 to one dart of its associated cell when the template parameter `Tag`
-is `Tag_true`.  `Info_` is the type of information stored in the
+is \link CGAL::Tag_true `Tag_true` \endlink.  `Info_` is the type of information stored in the
 attribute. It may be `void`. `OnMerge` and `OnSplit` must be either
 `Null_functor`, or models of the `Binary Function` concept having two
 references to a model of `CellAttribute` as type of both parameters
@@ -856,8 +854,6 @@ Additionally, there is a range over non void <I>i</I>-attributes:
 having a bidirectional iterator with value
 type \link CombinatorialMap::Attribute_type Attribute_type<i>::type`\endlink.
 
-\todo Correct the links to CombinatorialMap::Attribute_type asap the doc of CMap concept is ok.
-
 For each range, there is an associated const range, a model of the
 `ConstRange` concept. You can find some examples of ranges in Section
 \ref ssecexample3DCM "A 3D Combinatorial Map".
@@ -891,7 +887,7 @@ two.
 
 \subsection ssecadvmarks Boolean Marks
 
-\cgalAdvanced It is often necessary to mark darts, for example to retrieve
+It is often necessary to mark darts, for example to retrieve
 in <I>O(1)</I> if a given dart was already processed during a specific
 algorithm, for example,  iteration over a given range. Users can also
 mark specific parts of a combinatorial map (for example mark all the
@@ -1027,8 +1023,8 @@ condition discussed in Section
 satisfied after the operation. This condition can be tested by using
 the method \ref CombinatorialMap::is_sewable "is_sewable<i>(dh1,dh2)".
 For example, the function
-\ref CombinatorialMap::is_sewable "is_sewable<i>" would return `false` if
-we tried to sew a triangular
+\ref CombinatorialMap::is_sewable "is_sewable<3>" would return `false` if
+we tried to 3-sew a triangular
 facet with a quad facet. Note that given two darts <I>d1</I> and
 <I>d2</I>, if there is such a bijection, it is uniquely defined. So
 giving the two darts as arguments of the \ref CombinatorialMap::sew "sew<i>"
@@ -1047,7 +1043,7 @@ of <I>j</I>-cells <I>c1</I> and <I>c2</I> that are merged into one
 attributes <I>attr1</I> and <I>attr2</I>. If both are NULL, there is
 nothing to do. If one is NULL and the other not, we only associate the
 non NULL attribute to all the darts of the resulting cell. When the
-two attributes are non NULL, we first apply functor `On_merge` on the
+two attributes are non NULL, we first apply functor \ref CellAttribute::On_merge "On_merge" on the
 two attributes <I>attr1</I> and <I>attr2</I> (see Section
 \ref ssecattributes "Cell Attributes"). Then, we associate the
 attribute <I>attr1</I> to all
@@ -1058,7 +1054,7 @@ Note that when the two attributes are non NULL, the first one is
 kept. But user can customize this behavior in order to update the
 information contained in the attributes according to its needs. For
 that, we can define a specific functor, and use it as template
-argument for `OnMerge` parameter of the `Cell_attribute`
+argument for \ref CellAttribute::On_merge "On_merge" parameter of the `Cell_attribute`
 definition. This functor can for example copy the information of the
 second attribute in the information of the first one to make as if the
 second attribute is kept.
@@ -1086,7 +1082,7 @@ two different <I>j</I>-attributes. If the unsew operation splits a
 and if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>,
 then this attribute is duplicated into <I>attr2</I>, and all the darts
 belonging to <I>c2</I> are associated with this new
-attribute. Finally, we call the functor `On_split` on the two
+attribute. Finally, we call the functor \ref CellAttribute::On_split "On_split" on the two
 attributes <I>attr1</I> and <I>attr2</I> (see Section \ref
 ssecattributes "Cell Attributes").
 
@@ -1120,8 +1116,8 @@ associated with two different attributes. We can also use the
 between darts and attributes are only modified for darts `d1` and
 `d2`, and similarly as for \ref CombinatorialMap::sew "sew<i>", this updating can be avoided by
 passing `false` as last argument of
-`link_beta<i>(dh1,dh2,update_attributes)`. Lastly, we can use
-`unlink_beta<i>(dh0)` to unlink `d0` for \f$ \beta_i\f$. In this last
+\ref CombinatorialMap::link_beta "link_beta<i>(dh1,dh2,update_attributes)". Lastly, we can use
+\ref CombinatorialMap::unlink_beta "unlink_beta<i>(dh0)" to unlink `d0` for \f$ \beta_i\f$. In this last
 case, there is no modification of association between darts and
 attributes.  In \cgalFigureRef{figexemplesew} (Left), if we call
 \ref CombinatorialMap::link_beta "link_beta<3>(1,5)", in the resulting combinatorial map we have now
@@ -1143,7 +1139,7 @@ possible  if <I>i</I>=<I>d</I> or if the given <I>i</I>-cell is
 incident to at most two <I>(i+1)</I>-cells which can be tested thanks
 to `::is_removable<CMap,i>(cm,dh0)`. If the removed <I>i</I>-cell was
 incident to two different <I>(i+1)</I>-cells, these two cells are
-merged into one <I>(i+1)</I>-cell. In this case, the `On_merge`
+merged into one <I>(i+1)</I>-cell. In this case, the \ref CellAttribute::On_merge "On_merge"
 functor is called if two <I>(i+1)</I>-attributes are associated to the
 two <I>(i+1)</I>-cells. If the <I>i</I>-cell is associated with a non
 void attribute, it is removed from the combinatorial map (see three
@@ -1236,9 +1232,9 @@ combinatorial tetrahedra are created, then the numbers of cells of the
 combinatorial map are displayed, and the validity of the combinatorial
 map is checked. Then, we illustrate the use of ranges to iterate over
 specific darts. The first loop enumerates all the darts of the first
-tetrahedron by using the range `Dart_of_orbit_range<1,2>`, and the
+tetrahedron by using the range \ref CombinatorialMap::Dart_of_orbit_range "Dart_of_orbit_range<1,2>", and the
 second loop enumerates all the darts of the facet containing dart
-`dh2` by using the range `Dart_of_orbit_range<1>`.
+`dh2` by using the range \ref CombinatorialMap::Dart_of_orbit_range "Dart_of_orbit_range<1>".
 
 \cgalExample{Combinatorial_map/map_3_simple_example.cpp}
 
@@ -1256,9 +1252,9 @@ is made up of 12 darts because there are 3 darts per facet and there
 are 4 facets).
 
 Note the creation in the for loops of the two instances of
-`Dart_of_orbit_range::const_iterator`: `it` is the current iterator,
+\ref CombinatorialMap::Dart_of_orbit_range "Dart_of_orbit_range"::`const_iterator`: `it` is the current iterator,
 and `itend` an iterator to the end of the range. Having `itend` avoids
-calling `cm.darts_of_orbit<1,2>(dh1).end()` again and again as in the
+calling \ref CombinatorialMap::darts_of_orbit "cm.darts_of_orbit<1,2>(dh1)"`.end()` again and again as in the
 following example (which is a bad solution):
 
 \code{.cpp}
@@ -1328,7 +1324,7 @@ numbers of cells of the combinatorial map are displayed, and its
 validity is checked.
 
 By looking at these numbers of cells, we can see that the 4D
-combinatorial map contains only one 3-cell. Indeed, the `sew<4>`
+combinatorial map contains only one 3-cell. Indeed, the \ref CombinatorialMap::sew "sew<4>"
 operation has identified by pairs all the darts of the two 3-cells by
 definition of the sew operation (see Section
 \ref sseclinkdarts "Sewing Orbits and Linking Darts")
@@ -1337,7 +1333,7 @@ which, in 4D, links by \f$ \beta_3\f$ all the darts in \f$
 and in  \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \beta_2\f$\f$
 \rangle{}\f$(<I>d2</I>). The situation is similar (but in higher
 dimension) to the configuration where we have two triangles in a 3D
-combinatorial map, and you use `sew<3>` between these two
+combinatorial map, and you use  \ref CombinatorialMap::sew "sew<3>" between these two
 triangles. The two triangles are identified since all their darts are
 linked by \f$ \beta_3\f$, thus we obtain a 3D combinatorial map
 containing only one 3-cell. Note that this 3-cell is unbounded since
@@ -1387,14 +1383,14 @@ The output is:
 #Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
 \endverbatim
 
-Before the `cm.sew<3>`, each 2-cell of the first cube is associated
+Before the  \ref CombinatorialMap::sew "cm.sew<3>", each 2-cell of the first cube is associated
 with an attribute having 7 as value, and each 2-cell of the second
-cube with an attribute having 13 as value. During the `cm.sew<3>`, two
+cube with an attribute having 13 as value. During the  \ref CombinatorialMap::sew "cm.sew<3>", two
 2-cells are merged, thus the functor `Sum_functor` is called on the
 two associated 2-attributes, and the value of the new 2-cell is the
 sum of the two previous one: 20.
 
-Then we call `insert_cell_0_in_cell_2()` on a dart which belong to
+Then we call `::insert_cell_0_in_cell_2` on a dart which belong to
 this 2-cell. This method splits the existing 2-cell in <I>k</I>
 2-cells, <I>k</I> being the number of 1-cells of the initial 2-cell (4
 in this example). These splits are made consecutively, thus for the
@@ -1417,14 +1413,14 @@ represent  objects with boundaries, based on the notions of partial
 permutations  and partial involutions.
 
 Intuitively, a <I>partial permutation</I> on a finite set <I>E</I> is
-a mapping from <I>E</I>\f$ \cup\f${\f$ \varnothing\f$} to <I>E</I>\f$
-\cup\f${\f$ \varnothing\f$} which is injective on the subset of the
-domain that does not map to \f$ \varnothing\f$. More precisely, a
-mapping <I>p</I>: <I>E</I>\f$ \cup\f${\f$ \varnothing\f$} \f$
-\rightarrow\f$ <I>E</I>\f$ \cup\f${\f$ \varnothing\f$} is a <I>partial
+a mapping from <I>E</I>\f$ \cup\{\varnothing\}\f$ to <I>E</I>\f$
+\cup\{\varnothing\}\f$ which is injective on the subset of the
+domain that does not map to \f$\varnothing\f$. More precisely, a
+mapping <I>p</I>: <I>E</I>\f$ \cup\{\varnothing\}
+\rightarrow\f$ <I>E</I>\f$ \cup\{\varnothing\}\f$ is a <I>partial
 permutation</I> defined on <I>E</I> if:
 <OL>
-<LI><I>p</I>(\f$ \varnothing\f$)=\f$ \varnothing\f$;
+<LI><I>p</I>\f$(\varnothing)=\varnothing\f$;
 <LI>\f$ \forall\f$<I>e1</I>\f$ \in\f$<I>E</I>, \f$ \forall\f$<I>e2</I>\f$ \in\f$<I>E</I>,
 <I>p</I>(<I>e1</I>)=<I>p</I>(<I>e2</I>)\f$ \neq\f$\f$ \varnothing\f$ \f$ \Rightarrow\f$ <I>e1</I>=<I>e2</I>.
 </OL>
@@ -1432,10 +1428,10 @@ permutation</I> defined on <I>E</I> if:
 The inverse \f$ p^{-1}\f$ of this partial permutation is also a
 partial permutation and is defined by:
 <OL>
-<LI>\f$ p^{-1}\f$(\f$ \varnothing\f$)=\f$ \varnothing\f$;
+<LI>\f$ p^{-1}(\varnothing)=\varnothing\f$;
 <LI>\f$ \forall\f$<I>e</I>\f$ \in\f$<I>E</I>, if it exists <I>a</I>\f$ \in\f$<I>E</I> such that
 <I>p</I>(<I>a</I>)=<I>e</I>,
-then \f$ p^{-1}\f$(<I>e</I>)=a, otherwise \f$ p^{-1}\f$(<I>e</I>)=\f$ \varnothing\f$.
+then \f$ p^{-1}\f$(<I>e</I>)=a, otherwise \f$ p^{-1}\f$(<I>e</I>)\f$= \varnothing\f$.
 </OL>
 
 Let <I>E</I> be a set, and <I>p</I> a partial permutation on
@@ -1469,18 +1465,17 @@ the fact that it is a quasi-manifold. This definition allows us to
 verify the validity of a given combinatorial map by checking if each
 item of the definition is satisfied.
 
-Given a set of partial permutations  <I>S</I>={\f$ f_1\f$,...,
-\f$ f_k\f$},  we denote by \f$ \langle{}\f$<I>S</I>\f$
-\rangle{}\f$ the <I>permutation group</I> generated by {\f$ f_1\f$,...,
-\f$ f_k\f$}  and whose group operation is the composition of
+Given a set of partial permutations  <I>S</I>=\f$\{f_1\f$,...,
+\f$ f_k\}\f$,  we denote by \f$ \langle{}\f$ <I>S</I> \f$
+\rangle{}\f$ the <I>permutation group</I> generated by \f$\{f_1\f$,...,
+\f$ f_k\}\f$  and whose group operation is the composition of
 partial permutations.  The orbit \f$ \langle{}\f$\f$ f_1\f$,...,
 \f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)  is the set of darts
 which can be obtained from <I>a</I> by elements of \f$
-\langle{}\f$<I>S</I>\f$ \rangle{}\f$: \f$ \langle{}\f$\f$ f_1\f$,...,
-\f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)={\f$
+\langle{}\f$ <I>S</I> \f$ \rangle{}\f$: \f$ \langle{}\f$\f$ f_1\f$,...,
+\f$ f_k\f$\f$ \rangle{}\f$(<I>a</I>)=\f$\{
 \phi\f$(<I>a</I>)\f$ |\f$\f$ \phi\f$\f$ \in\f$\f$
-\langle{}\f$<I>S</I>\f$ \rangle{}\f$}\f$ \setminus\f${\f$
-\varnothing\f$}.
+\langle{}\f$<I>S</I>\f$ \rangle{}\}\setminus\{\varnothing\}\f$.
 
 Let <I>d0</I>\f$ \in\f$<I>D</I> be a dart. Given <I>i</I>, 1\f$
 \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>, the <I>i</I>-cell containing

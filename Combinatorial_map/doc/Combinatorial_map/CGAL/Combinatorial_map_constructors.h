@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsConstructions
 
-Creates a combinatorial hexahedron (six combinatorial quadrangles linked 
-together by \f$ \beta_2\f$), and adds it in `cm`. 
+Creates a combinatorial hexahedron (six combinatorial quadrangles linked
+together by \f$ \beta_2\f$), and adds it in `cm`.
 Returns a handle on one dart of this combinatorial hexahedron.
 \pre `CMap::dimension` \f$\geq\f$ 2.
 
@@ -23,8 +23,8 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsConstructions
 
-Creates a combinatorial polygon of length `lg` (`lg` darts 
-linked by \f$ \beta_1\f$), and adds it in `cm`. 
+Creates a combinatorial polygon of length `lg` (`lg` darts
+linked by \f$ \beta_1\f$), and adds it in `cm`.
 Returns a handle on one dart of this combinatorial polygon.
 \pre `CMap::dimension`\f$ \geq\f$ 1 and `lg`\f$ >\f$ 0.
 
@@ -43,8 +43,8 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsConstructions
 
-Creates a combinatorial tetrahedron (four combinatorial triangles linked 
-together by \f$ \beta_2\f$), and adds it in `cm`. 
+Creates a combinatorial tetrahedron (four combinatorial triangles linked
+together by \f$ \beta_2\f$), and adds it in `cm`.
 Returns a handle on one dart of this combinatorial tetrahedron.
 \pre `CMap::dimension`\f$ \geq\f$2.
 
