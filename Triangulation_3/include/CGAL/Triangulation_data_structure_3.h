@@ -259,47 +259,11 @@ public:
 
   Vertex_handle create_vertex(const Vertex &v)
   {
-    // CJTODO TEMP STATS
-    /*if (number_of_vertices()%1000 == 0)
-    {
-      static bool first_time = true;
-      static clock_t last_clock;
-      clock_t c = clock();
-      if (first_time)
-      {
-        first_time = false;
-      }
-      else
-      {
-        std::cerr << "Speed = " << 1000/(c - last_clock)*CLOCKS_PER_SEC << "#v/s" << std::endl;
-      }
-      last_clock = c;
-    }*/
-
-
       return vertices().insert(v);
   }
 
   Vertex_handle create_vertex()
   {
-      // CJTODO TEMP STATS
-    /*if (number_of_vertices()%100000 == 0)
-    {
-      static bool first_time = true;
-      static clock_t last_clock;
-      clock_t c = clock();
-      if (first_time)
-      {
-        first_time = false;
-      }
-      else
-      {
-        std::cerr << "Speed = " << 1000./(c - last_clock)*CLOCKS_PER_SEC << "#v/s" << std::endl;
-      }
-      last_clock = c;
-    }*/
-
-
       return vertices().emplace();
   }
 

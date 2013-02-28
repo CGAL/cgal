@@ -444,10 +444,9 @@ public: // methods
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-    //CJTODO TEST
     // Warning: this doesn't work for the benchmark 
     // (because the benchmark creates the scheduler instance upstream...)
-    //tbb::task_scheduler_init tsi(1);
+    //tbb::task_scheduler_init tsi(1); //CJTODO TEST
 #endif
   
     // Reset sliver value cache

@@ -880,8 +880,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
     int iteration_nb = 0;
 # endif
     
-    //CJTODO TEST
-    //tbb::task_scheduler_init tsi(1);
+    //tbb::task_scheduler_init tsi(1); //CJTODO TEST
 
     this->create_root_task();
 
@@ -1572,7 +1571,6 @@ enqueue_task(const PVertex &pv,
       {
         this->perturb_vertex(pv, sliver_bound, visitor, bad_vertices, &could_lock_zone);
         this->unlock_all_elements();
-        //std::this_thread::yield(); // CJTODO: A TESTER
       } while (!could_lock_zone);
 
       if ( is_time_limit_reached() )

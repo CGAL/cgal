@@ -645,9 +645,9 @@ compute_moves(Moving_vertices_set& moving_vertices)
   	  else // CGAL::NULL_VECTOR == move
       {
         if(do_freeze_)
-          moving_vertices.erase(oldv); // CJTODO: si non-intrusive,
-                                       //on peut optimiser en passant l'itérateur,
-                                       // et il faut faire "vit = mv.erase(vit)" au lieu de ++vit
+          moving_vertices.erase(oldv); // CJTODO: if non-intrusive,
+                                       // we can optimize since we have the iterator,
+                                       // don't forget to do "vit = mv.erase(vit)" instead ++vit
       }
 
       // Stop if time_limit_ is reached

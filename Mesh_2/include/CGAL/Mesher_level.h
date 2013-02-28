@@ -413,9 +413,6 @@ public:
     const Mesher_level_conflict_status result
       = derived().try_to_refine_element(e, visitor);
 
-    // CJTODO : replace by this?
-    /*if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
-      && result != THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE)*/
     if(result == CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED)
     {
       pop_next_element();
@@ -976,7 +973,6 @@ public:
 
     // CJTODO: lambda functions OK?
     // Parallel?
-    // CJTODO: test it
     if (iElt > 20)
     {
       previous_level.add_to_TLS_lists(true);
@@ -1010,12 +1006,6 @@ public:
                   indices[i+1] = indices[i];
                   indices[i] = tmp;
                 }
-
-                // CJTODO: TEST THAT
-                // Swap indices[i] and indices[last]
-                /*ptrdiff_t tmp = indices[r.end() - 1];
-                indices[r.end() - 1] = indices[i];
-                indices[i] = tmp;*/
                 break;
               }
 
