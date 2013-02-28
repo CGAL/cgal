@@ -73,6 +73,8 @@ struct Polyhedron_deformation_data {
   bool preprocessed;                            // specify whether preprocessed or not
   std::map<Vertex_handle, Vector> handle_vectors;  // record transform vectors of all handles, 
                                                    // only for multiple handle region scenario 
+  Deform_mesh::Handle_group active_handle_group;
+  std::vector<Deform_mesh::Handle_group> handle_groups;
 };
 
 class Polyhedron_demo_edit_polyhedron_plugin : 
@@ -436,14 +438,17 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_0(Scene_edit_polyhed
   if ( translation_origin == Vector(0, 0, 0) && translation_last == Vector(0, 0, 0) )  // vertex selection: reset deform class
   { 
     deform->clear();
+    Deform_mesh::Handle_group handle_group = deform->create_handle_group();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      deform->insert_handle(vh);
+      deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      deform->insert_handle(vh);
+      deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
       deform->insert_roi(vh);
+
+    data.active_handle_group = handle_group;
     data.preprocessed = false;
   }
   else                  // moving frame: actual deformation
@@ -457,7 +462,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_0(Scene_edit_polyhed
 
     // -- ACTUAL DEFORMATION --
 
-    (*deform)(translation_origin);
+    deform->translate(data.active_handle_group, translation_origin);
     deform->deform();
 
     // -- END OF ACTUAL DEFORMATION --

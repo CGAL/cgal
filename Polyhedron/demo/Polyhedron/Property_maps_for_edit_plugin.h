@@ -114,14 +114,17 @@ public:
   typedef std::size_t                         reference;
   typedef Key                                 key_type;
 
+  Polyhedron_zero_default_index_map()
+    : internal_map(NULL) { }
+
   Polyhedron_zero_default_index_map(std::map<key_type, size_t>& internal_map)
   : internal_map(&internal_map) { }
 
   std::map<key_type, size_t>* internal_map;
 };
 
-template<class Key> std::size_t get( Polyhedron_zero_default_index_map<Key>& pmap
-                                 ,   Key k)
+template<class Key> std::size_t get( Polyhedron_zero_default_index_map<Key>& pmap,
+                                     Key k)
 {
   typename std::map<Key, size_t>::iterator found = pmap.internal_map->find(k);
   // if the key doesn't exist in the map, then retun 0 to simulate zero initialization
@@ -129,8 +132,8 @@ template<class Key> std::size_t get( Polyhedron_zero_default_index_map<Key>& pma
   return found->second;
 }
 
-template<class Key> void put( Polyhedron_zero_default_index_map<Key>& pmap
-                          ,   Key k, std::size_t s)
+template<class Key> void put( Polyhedron_zero_default_index_map<Key>& pmap,
+                              Key k, std::size_t s)
 {
   // also provide cleaning facility (it will be useful when ROS is cleaned and another ROS is added to the system)
   if(s == 0) { pmap.internal_map->erase(k); }
