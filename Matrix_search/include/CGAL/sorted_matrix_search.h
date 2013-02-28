@@ -208,7 +208,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
       // (should typically result in a segfault)
       // active_cells.reserve( 4 * active_cells.size());
   
-      for ( int j = active_cells.size() - 1 ; j >= 0 ; -- j )
+      for ( int j = static_cast<int>(active_cells.size()) - 1 ; j >= 0 ; -- j )
       {
       //for ( Cell_reverse_iterator j( active_cells.rbegin());
       //      j != active_cells.rend();
@@ -252,8 +252,8 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     // compute medians of smallest and largest elements:
     
     
-    int lower_median_rank = (active_cells.size() - 1) >> 1;
-    int upper_median_rank = (active_cells.size() >> 1);
+    int lower_median_rank = static_cast<int>((active_cells.size() - 1) >> 1);
+    int upper_median_rank = static_cast<int>(active_cells.size() >> 1);
     
 
     // compute upper median of cell's minima:
