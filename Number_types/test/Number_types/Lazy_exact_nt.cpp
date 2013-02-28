@@ -1,6 +1,7 @@
 // Test program for Lazy_exact_nt<>.
 
 #include <CGAL/Cartesian.h>
+#include <CGAL/use.h>
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
@@ -192,23 +193,25 @@ int main ()
   q>q; q>r; r>q; q>1; 1>q;
   q<=q; q<=r; r<=q; q<=1; 1<=q;
   q>=q; q>=r; r>=q; q>=1; 1>=q;
-  q==q; q==r; r==q; q==1; 1==q;
-  q!=q; q!=r; r!=q; q!=1; 1!=q;
+  bool b = q==q; b = q==r; b = r==q; b = q==1; b = 1==q;
+  b = q!=q; b = q!=r; b = r!=q; b = q!=1; b = 1!=q;
 
   // Test comparisons with double.
   two<1.0; 1.0<two;
   two>1.0; 1.0>two;
   two<=1.0; 1.0<=two;
   two>=1.0; 1.0>=two;
-  two!=1.0; 1.0!=two;
-  two==1.0; 1.0==two;
+  b = two!=1.0; b = 1.0!=two;
+  b = two==1.0; b = 1.0==two;
 
   zwei<1.0; 1.0<zwei;
   zwei>1.0; 1.0>zwei;
   zwei<=1.0; 1.0<=zwei;
   zwei>=1.0; 1.0>=zwei;
-  zwei!=1.0; 1.0!=zwei;
-  zwei==1.0; 1.0==zwei;
+  b = zwei!=1.0; b = 1.0!=zwei;
+  b = zwei==1.0; b = 1.0==zwei;
+
+  CGAL_USE(b);
 
   return 0;
 }
