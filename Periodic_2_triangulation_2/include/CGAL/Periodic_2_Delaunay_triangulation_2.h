@@ -699,8 +699,6 @@ private:
 
   /// NGHK: Not yet implemented
   Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
-  /// NGHK: Not yet implemented
-  Vertex_handle nearest_vertex_1D(const Point& p) const;
 
   /// NGHK: Not yet implemented
   void  look_nearest_neighbor(const Point& p,
@@ -895,25 +893,6 @@ nearest_vertex_2D(const Point& p, Face_handle f) const
   look_nearest_neighbor(p,f,1,nn);
   look_nearest_neighbor(p,f,2,nn);
 
-  return nn;
-}
-
-template < class Gt, class Tds >
-typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
-Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
-nearest_vertex_1D(const Point& p) const
-{
-    NGHK_NYI;
-  typename Geom_traits::Compare_distance_2
-    compare_distance =  geom_traits().compare_distance_2_object();
-  Vertex_handle nn;
-
-  Finite_vertices_iterator vit=this->finite_vertices_begin();
-  nn = vit;
-  for ( ; vit != this->finite_vertices_end(); ++vit){
-    if (compare_distance(p, vit->point(), nn->point()) == SMALLER)
-      nn = vit;
-  }
   return nn;
 }
 
@@ -4076,8 +4055,6 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
 
 template<class Gt, class Tds>
 void Periodic_2_Delaunay_triangulation_2<Gt, Tds>::fill_hole_delaunay(std::list<Edge> & first_hole) {
-  typename Gt::Side_of_oriented_circle_2 in_circle = geom_traits().side_of_oriented_circle_2_object();
-
   typedef std::list<Edge> Hole;
   typedef std::list<Hole> Hole_list;
 
@@ -4213,8 +4190,6 @@ template<class Gt, class Tds>
 void Periodic_2_Delaunay_triangulation_2<Gt, Tds>::fill_hole_delaunay(
     std::list<Edge> & first_hole,
     std::map<Vertex_handle, Offset> &vertex_offsets) {
-  typename Gt::Side_of_oriented_circle_2 in_circle = geom_traits().side_of_oriented_circle_2_object();
-
   typedef std::list<Edge> Hole;
   typedef std::list<Hole> Hole_list;
 

@@ -169,7 +169,6 @@ p);
 /// \name Queries 
 /// @{
 
-// TODO(NGHK): Not yet implemented
 /*! 
 Returns any nearest vertex to the point `p`, or the default constructed 
 handle if the triangulation is empty. The optional argument `f` is a hint 

@@ -386,12 +386,40 @@ void test() {
   test_miscellaneous<T>();
 }
 
+
+template <class T>
+void test_nearest() {
+  typedef typename T::Vertex_handle   Vertex_handle;
+
+  Point p0(0.5, 0.5);
+  Point p1(0.8, 0.6);
+  Point p2(0.7, 0.7);
+  Vertex_handle vh0, vh1, vh2;
+
+  T t;
+  CGAL_assertion(t.nearest_vertex(p0) == Vertex_handle());
+
+  vh0 = t.insert(p0);
+  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p0)) == vh0);
+  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p1)) == vh0);
+  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p2)) == vh0);
+
+  vh1 = t.insert(p1);
+  vh2 = t.insert(p2);
+  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p0)) == vh0);
+  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p1)) == vh1);
+  CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p2)) == vh2);
+  
+}
+
 int main() {
   typedef Periodic_2_triangulation_2<Gt>              P2T2;
   typedef Periodic_2_Delaunay_triangulation_2<Gt>     DP2T2;
 
   test<P2T2>();
   test<DP2T2>();
+
+  test_nearest<DP2T2>();
 
   return 0;
 }

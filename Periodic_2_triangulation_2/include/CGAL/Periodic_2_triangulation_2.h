@@ -2212,8 +2212,8 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_edge(const Point& p, const Offset
   // Backup of the neighbor and its relative offset
   Face_handle nb = f->neighbor(i);
   int j = nb->index(f);
-  CGAL_triangulation_assertion_code(Offset current_off = get_location_offset(f, p, o));
-  CGAL_triangulation_exactness_precondition
+  CGAL_triangulation_assertion_code(Offset current_offset = get_location_offset(f, p, o));
+  CGAL_triangulation_assertion
   (orientation(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
           get_offset(f,cw(i)), combine_offsets(o, current_offset), get_offset(f, ccw(i))) == COLLINEAR &&
       collinear_between(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
@@ -2465,7 +2465,6 @@ inline void Periodic_2_triangulation_2<Gt, Tds>::remove_degree_3_single_copy(Ver
 {
   Face_handle f = vh->face();
   int i = ccw(f->index(vh));
-  Vertex_handle v0 = f->vertex(i);
   Face_handle f2 = f->neighbor(i);
   int j = f2->index(f);
   // Get the offsets in ccw order
@@ -4176,9 +4175,6 @@ operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
   typedef typename Periodic_2_triangulation_2<GT,TDS1>::Offset     Offset;
   typedef typename Periodic_2_triangulation_2<GT,TDS1>
       ::Geom_traits::Compare_xy_2                       Compare_xy_2;
-  
-  Compare_xy_2 cmp1 = t1.geom_traits().compare_xy_2_object();
-  Compare_xy_2 cmp2 = t2.geom_traits().compare_xy_2_object();
   
   // Some quick checks.
   if (   t1.domain()           != t2.domain()
