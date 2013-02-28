@@ -116,9 +116,8 @@ class Two_list_event_queue_item:
 
   typedef Two_list_event_queue_item<Priority> This;
 
-  Two_list_event_queue_item(const Two_list_event_queue_item &o){}
-  void operator=(const Two_list_event_queue_item &o) {
-  }
+  Two_list_event_queue_item(const Two_list_event_queue_item &) {}
+  void operator=(const Two_list_event_queue_item &) {}
 public:
   typedef Two_list_pointer_event_queue_key<This> Key;
   Two_list_event_queue_item() { /*++two_list_remaining;*/}
