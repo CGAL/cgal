@@ -581,7 +581,7 @@ protected:
   //! return true if the this is uninitialized
   bool is_null() const
   {
-    return (type_&INVALID)!= NULL;
+    return (type_&INVALID)!= 0;
   }
 
   mutable std::pair<NT, NT> ii_;
