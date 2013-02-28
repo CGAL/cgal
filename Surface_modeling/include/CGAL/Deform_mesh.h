@@ -76,7 +76,7 @@ private:
   typedef std::vector<vertex_descriptor>            Handle_container;
   typedef std::list<Handle_container>               Handle_group_container;
 public:
-  /** The type for returned handle group reference from insert_handle(vertex_descriptor vd), insert_handle(InputIterator begin, InputIterator end) */
+  /** The type for returned handle group representative from insert_handle(vertex_descriptor vd), insert_handle(InputIterator begin, InputIterator end) */
   typedef typename Handle_group_container::iterator Handle_group;  
                                                                       
 // Data members.
@@ -208,7 +208,7 @@ public:
 ////////////// Handle insertion and deletion //////////////
   /**
    * Create a new empty handle group for inserting handles
-   * @return created handle group reference (returned reference is valid until erase_handle(Handle_group handle_group) is called [or copy constructor what to do about it?])
+   * @return created handle group representative (returned representative is valid until erase_handle(Handle_group handle_group) is called [or copy constructor what to do about it?])
    * @see insert_handle(vertex_descriptor vd), insert_handle(InputIterator begin, InputIterator end)
    */
   Handle_group create_handle_group()
@@ -220,7 +220,7 @@ public:
 
   /**
    * Create a new empty handle group and insert vd in it.
-   * @return created handle group reference
+   * @return created handle group representative
    * @see insert_handle(Handle_group handle_group, vertex_descriptor vd), 
    * insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
    * for inserting more vertices into a handle group
@@ -303,7 +303,7 @@ public:
 
   /** 
    * Necessary precomputation work before beginning deformation
-   * Need to be called before Deform_mesh::translate, Deform_mesh::deform
+   * Need to be called before translate(Handle_group handle_group, const Vector& translation), deform
    */
   bool preprocess()
   {
@@ -321,19 +321,28 @@ public:
     return m_solver.pre_factor(A, D);
   }
 
-  // Set the number of iterations made in operator()
+  /**
+   * Set the number of iterations used in deform()
+   */
   void set_iterations(unsigned int iterations)
   {
     this->iterations = iterations;
   }
 
-  // Set the tolerance of convergence made in operator()
+  /**
+   * Set the tolerance of convergence used in deform()
+   */
   void set_tolerance(double tolerance)
   {
     this->tolerance = tolerance;
   }
   
-
+  /**
+   * Translate the handle group by translation,
+   * in other words every handle vertex in the handle_group is translated from its original position
+   * @param handle_group representative of the handle group which is subject to translation
+   * @param translation translation vector 
+   */
   void translate(Handle_group handle_group, const Vector& translation)
   {
     for(typename Handle_container::iterator it = handle_group->begin();
