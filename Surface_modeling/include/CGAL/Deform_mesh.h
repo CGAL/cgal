@@ -274,7 +274,7 @@ public:
   void erase_handle(Handle_group handle_group, vertex_descriptor vd)
   {
      need_preprocess = true;
-     Handle_container::iterator it 
+     typename Handle_container::iterator it 
        = std::find(handle_group->begin(), handle_group->end(), vd);
      if(vd != handle_group->end())
      {
@@ -336,7 +336,7 @@ public:
 
   void translate(Handle_group handle_group, const Vector& translation)
   {
-    for(Handle_container::iterator it = handle_group->begin();
+    for(typename Handle_container::iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
     {
         size_t v_index = get(vertex_index_map, *it) -1;
@@ -554,10 +554,10 @@ private:
       size_t v_index = get(vertex_index_map, roi[i]);
       is_roi[v_index-1] = true;
     }
-    for(Handle_group_container::iterator it_group = handle_groups.begin(); 
+    for(typename Handle_group_container::iterator it_group = handle_groups.begin(); 
       it_group != handle_groups.end(); ++it_group)
     {
-      for(Handle_container::iterator it_vertex = it_group->begin(); 
+      for(typename Handle_container::iterator it_vertex = it_group->begin(); 
         it_vertex != it_group->end(); ++it_vertex)
       {
         size_t v_index = get(vertex_index_map, *it_vertex);
