@@ -4,7 +4,7 @@ LC_ALL=POSIX;
 export LC_ALL
 
 if [ -d "$1/.git" ]; then
-    pushd $1
+    pushd "$1"
     branch=`git rev-parse --abbrev-ref HEAD`
     echo "Git repository, in branch '$branch'"
     git fetch
