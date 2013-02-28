@@ -1,6 +1,7 @@
 //#undef CGAL_LINKED_WITH_TBB
 
 //#define CHECK_MEMORY_LEAKS_ON_MSVC
+//#define CGAL_DEBUG_GLOBAL_LOCK_DS // CJTODO TEMP
 
 #if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
   //#include <vld.h> // CJTODO: test it
@@ -49,7 +50,7 @@ namespace po = boost::program_options;
 //#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
 //#define MESH_3_BENCHMARK_EXPORT_TO_MESH
 //#define MESH_3_BENCHMARK_LLOYD
-//#define MESH_3_BENCHMARK_PERTURB
+#define MESH_3_BENCHMARK_PERTURB
 //#define MESH_3_BENCHMARK_EXUDE
 
 // ==========================================================================
@@ -61,7 +62,7 @@ namespace po = boost::program_options;
 //#define CGAL_MESH_3_PERTURBER_VERBOSE
 //#define CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
 #define CGAL_MESH_3_EXUDER_VERBOSE
-#define CGAL_MESH_3_EXUDER_HIGH_VERBOSITY
+//#define CGAL_MESH_3_EXUDER_HIGH_VERBOSITY
 //#define CGAL_MESH_3_VERY_VERBOSE
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 //#define CGAL_MESH_3_OPTIMIZER_VERBOSE
@@ -81,10 +82,10 @@ const int     TET_SHAPE                = 3;
 #ifdef CONCURRENT_MESH_3
 
 # ifndef CGAL_LINKED_WITH_TBB
-#   pragma warning("CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
+#   pragma message(" : Warning: CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
 # endif
 
-//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE // default behavior
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
@@ -107,15 +108,13 @@ const int     TET_SHAPE                = 3;
     "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
 # endif
 
-//# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
-
   // =================
   // Locking strategy
   // =================
 
 # define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 
-//# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
+//# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // CJTODO: USELESS, FOR TESTS ONLY
 
   // =====================
   // Worksharing strategy
@@ -125,10 +124,6 @@ const int     TET_SHAPE                = 3;
 //# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 # define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 # ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-//#   define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-//#   ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-//#     define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED // optional
-//#   endif
 //#   define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 //#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
 #   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT // better performance?
@@ -144,7 +139,12 @@ const int     TET_SHAPE                = 3;
   // ==========================================================================
   // TBB
   // ==========================================================================
+#if TBB_IMPLEMENT_CPP0X
 # include <tbb/compat/thread>
+#else
+# include <thread>
+#endif
+
 # ifndef _DEBUG
     // Use TBB malloc proxy (for all new/delete/malloc/free calls)
     // Highly recommended
@@ -474,8 +474,6 @@ std::string get_technique()
     tech += ", sorted batches with std::sort";
 #   elif defined(CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET)
     tech += ", sorted batches with multiset";
-#   elif defined(CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS)
-    tech += ", with localization ids";
 #   elif defined(CGAL_MESH_3_LOAD_BASED_WORKSHARING)
     tech += ", load-based worksharing";
 #endif
@@ -574,7 +572,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef CGAL::Parallel_mesh_triangulation_3<Mesh_domain>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Parallel_tag>::type Tr;
 #else
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
@@ -632,7 +630,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   double sliverbound = 4;
 #else
   double timelimit = 0;
-  double sliverbound = 7;
+  double sliverbound = 4;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
@@ -689,7 +687,7 @@ bool make_mesh_3D_images(const std::string &input_filename,
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef CGAL::Parallel_mesh_triangulation_3<Mesh_domain>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Parallel_tag>::type Tr;
 #else
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
@@ -796,7 +794,7 @@ bool make_mesh_implicit(double facet_approx,
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef typename CGAL::Parallel_mesh_triangulation_3<Mesh_domain>::type Tr;
+  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Parallel_tag>::type Tr;
 #else
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
@@ -947,8 +945,6 @@ int main()
 
 #ifdef CONCURRENT_MESH_3
   Concurrent_mesher_config::load_config_file(CONFIG_FILENAME, true);
-  tbb::task_scheduler_init init(
-    num_threads > 0 ? num_threads : tbb::task_scheduler_init::automatic);
 #endif
 
   std::ifstream script_file;
@@ -963,7 +959,7 @@ int main()
   {
     int i = 1;
 #ifdef CONCURRENT_MESH_3
-    //for(num_threads = 8 ; num_threads <= 12 ; ++num_threads)
+    for(num_threads = 2 ; num_threads <= 12 ; ++num_threads) // CJTODO for test
     /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ;
       Concurrent_mesher_config::get().num_work_items_per_batch < 100 ;
       Concurrent_mesher_config::get().num_work_items_per_batch += 5)*/
