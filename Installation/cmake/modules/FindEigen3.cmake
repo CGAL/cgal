@@ -15,6 +15,8 @@
 # Copyright (c) 2009 Benoit Jacob <jacob.benoit.1@gmail.com>
 # Redistribution and use is allowed according to the terms of the 2-clause BSD license.
 
+include(FindPackageHandleStandardArgs)
+
 if(NOT Eigen3_FIND_VERSION)
   if(NOT Eigen3_FIND_VERSION_MAJOR)
     set(Eigen3_FIND_VERSION_MAJOR 2)
@@ -29,7 +31,7 @@ if(NOT Eigen3_FIND_VERSION)
   set(Eigen3_FIND_VERSION "${Eigen3_FIND_VERSION_MAJOR}.${Eigen3_FIND_VERSION_MINOR}.${Eigen3_FIND_VERSION_PATCH}")
 endif(NOT Eigen3_FIND_VERSION)
 
-macro(_eigen3_check_version)
+macro(_eigen3_get_version)
   file(READ "${EIGEN3_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h" _eigen3_version_header)
 
   string(REGEX MATCH "define[ \t]+EIGEN_WORLD_VERSION[ \t]+([0-9]+)" _eigen3_world_version_match "${_eigen3_version_header}")
@@ -40,18 +42,7 @@ macro(_eigen3_check_version)
   set(EIGEN3_MINOR_VERSION "${CMAKE_MATCH_1}")
 
   set(EIGEN3_VERSION ${EIGEN3_WORLD_VERSION}.${EIGEN3_MAJOR_VERSION}.${EIGEN3_MINOR_VERSION})
-  if(${EIGEN3_VERSION} VERSION_LESS ${Eigen3_FIND_VERSION})
-    set(EIGEN3_VERSION_OK FALSE)
-  else(${EIGEN3_VERSION} VERSION_LESS ${Eigen3_FIND_VERSION})
-    set(EIGEN3_VERSION_OK TRUE)
-  endif(${EIGEN3_VERSION} VERSION_LESS ${Eigen3_FIND_VERSION})
-
-  if(NOT EIGEN3_VERSION_OK)
-
-    message(STATUS "Eigen3 version ${EIGEN3_VERSION} found in ${EIGEN3_INCLUDE_DIR}, "
-                   "but at least version ${Eigen3_FIND_VERSION} is required")
-  endif(NOT EIGEN3_VERSION_OK)
-endmacro(_eigen3_check_version)
+endmacro(_eigen3_get_version)
 
 set(EIGEN3_USE_FILE "UseEigen3")
 
@@ -59,8 +50,13 @@ if (EIGEN3_INCLUDE_DIR)
 
   if (EXISTS ${EIGEN3_INCLUDE_DIR}/signature_of_eigen3_matrix_library)
     # in cache already and valid
-    _eigen3_check_version()
+    _eigen3_get_version()
     set(EIGEN3_FOUND ${EIGEN3_VERSION_OK})
+
+    find_package_handle_standard_args(Eigen3 
+      REQUIRED_VARS EIGEN3_INCLUDE_DIR
+      VERSION_VAR EIGEN3_VERSION)
+
   else()
     message(STATUS "Eigen3 path specified in cmake variable EIGEN3_INCLUDE_DIR is "
                     "set to ${EIGEN3_INCLUDE_DIR}, but that path does not contains the file "
@@ -76,21 +72,17 @@ else (EIGEN3_INCLUDE_DIR)
             ENV EIGEN3_DIR
       PATHS ${KDE4_INCLUDE_DIR}
       PATH_SUFFIXES include eigen3 eigen
+      DOC "Directory containing the Eigen3 header files"
     )
 
   if(EIGEN3_INCLUDE_DIR)
-    _eigen3_check_version()
+    _eigen3_get_version()
   endif(EIGEN3_INCLUDE_DIR)
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Eigen3 DEFAULT_MSG EIGEN3_INCLUDE_DIR EIGEN3_VERSION_OK)
+  find_package_handle_standard_args(Eigen3 
+    REQUIRED_VARS EIGEN3_INCLUDE_DIR
+    VERSION_VAR EIGEN3_VERSION)
 
   mark_as_advanced(EIGEN3_INCLUDE_DIR)
 
-  # Add variables to cache
-  set( EIGEN3_INCLUDE_DIR   "${EIGEN3_INCLUDE_DIR}"
-         CACHE PATH "Directories	containing the Eigen3 header files" FORCE )
-
-
 endif(EIGEN3_INCLUDE_DIR)
-
