@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCombinatorialMaps
+\ingroup PkgCombinatorialMapsClasses
 
 The class `Cell_attribute` represents an attribute containing (or not) an information.
 

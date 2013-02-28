@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCombinatorialMaps
+\ingroup PkgCombinatorialMapsClasses
 
 The class `Dart` represents a <I>d</I>D dart.
 

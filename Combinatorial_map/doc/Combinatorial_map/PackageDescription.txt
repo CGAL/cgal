@@ -3,6 +3,9 @@
 /// \defgroup PkgCombinatorialMapsConcepts Concepts
 /// \ingroup PkgCombinatorialMaps
 
+/// \defgroup PkgCombinatorialMapsClasses Classes
+/// \ingroup PkgCombinatorialMaps
+
 /// \defgroup PkgCombinatorialMapsConstructions Constructions
 /// \ingroup PkgCombinatorialMaps
 
@@ -12,7 +15,6 @@
 
 /*!
 \addtogroup PkgCombinatorialMaps
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Combinatorial Maps,PkgCombinatorialMapsSummary}
 \cgalPkgPicture{logo-cmap-small-v2.png}
 \cgalPkgSummaryBegin

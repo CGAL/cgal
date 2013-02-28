@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCombinatorialMaps
+\ingroup PkgCombinatorialMapsClasses
 
 The class `Combinatorial_map` represents a <I>d</I>D combinatorial map.
 

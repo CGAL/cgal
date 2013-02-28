@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgCombinatorialMaps
+\ingroup PkgCombinatorialMapsClasses
 
 The class `Combinatorial_map_min_items` is a model of the `CombinatorialMapItems`
 concept. It defines the type of darts which is a
