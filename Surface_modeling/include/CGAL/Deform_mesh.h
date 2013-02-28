@@ -291,8 +291,8 @@ public:
     for(typename Handle_container::iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
     {
-        size_t v_index = get(vertex_index_map, *it);
-        solution[v_index] = original[v_index] + translation;
+      size_t v_index = get(vertex_index_map, *it);
+      solution[v_index] = original[v_index] + translation;
     }
   }
 
@@ -384,7 +384,7 @@ private:
   
   void compute_edge_weight_arap()
   {
-    std::set<edge_descriptor> reached; // edges which has assigned ids (and also weights are calculated)
+    std::set<edge_descriptor> have_id; // edges which has assigned ids (and also weights are calculated)
 
     // iterate over ros vertices and calculate weights for edges which are incident to ros
     size_t next_edge_id = 0;
@@ -394,18 +394,21 @@ private:
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
       {
-        typename std::set<edge_descriptor>::iterator it = reached.find(*e);
-        if(it != reached.end()) { continue; } // we have assigned an id already, which means we also calculted the weight
+        typename std::set<edge_descriptor>::iterator it = have_id.find(*e);
+        if(it != have_id.end()) { continue; } // we have assigned an id already, which means we also calculted the weight
         
         put(edge_index_map, *e, next_edge_id++);
+        have_id.insert(*e);
+
         double weight = weight_calculator(*e);
         edge_weight.push_back(weight);
+        
       }// end of edge loop
     }// end of ros loop
   }
   void compute_edge_weight_spokes_and_rims()
   {
-    std::set<edge_descriptor> reached; // edges which has assigned ids (and also weights are calculated)
+    std::set<edge_descriptor> have_id; // edges which has assigned ids (and also weights are calculated)
 
     // iterate over ros vertices and calculate weights for edges which are incident to ros
     size_t next_edge_id = 0;
@@ -419,13 +422,15 @@ private:
 
       while ( e != e_end )
       {
-        typename std::set<edge_descriptor>::iterator it = reached.find(*e);
-        if(it != reached.end()) { continue; } // we have assigned an id already, which means we also calculted the weight
+        typename std::set<edge_descriptor>::iterator it = have_id.find(*e);
+        if(it == have_id.end()) // we have not assigned an id yet
+        {  
+          put(edge_index_map, active_edge, next_edge_id++);
+          have_id.insert(active_edge);
 
-        put(edge_index_map, active_edge, next_edge_id++);
-        double weight = weight_calculator(active_edge);
-        edge_weight.push_back(weight);
-        
+          double weight = weight_calculator(active_edge);
+          edge_weight.push_back(weight);
+        }
         // loop through one spoke then one rim edge
         if(!is_current_rim && !boost::get(CGAL::edge_is_border, polyhedron, *e)) // it is rim edge's turn
         {
@@ -446,18 +451,18 @@ private:
   void assign_id_to_one_ring(vertex_descriptor vd, 
                              std::size_t& next_id, 
                              std::vector<vertex_descriptor>& push_vector,
-                             std::set<vertex_descriptor>& reached)
+                             std::set<vertex_descriptor>& have_id)
   {
     in_edge_iterator e, e_end;
     for (boost::tie(e,e_end) = boost::in_edges(vd, polyhedron); e != e_end; e++)
     {
       vertex_descriptor vt = boost::source(*e, polyhedron);
-      typename std::set<vertex_descriptor>::iterator it = reached.find(vt);
-      if( it == reached.end() )  // neighboring vertex whic is outside of roi and not visited previously (i.e. need an id)
+      typename std::set<vertex_descriptor>::iterator it = have_id.find(vt);
+      if( it == have_id.end() )  // neighboring vertex which is outside of roi and not visited previously (i.e. need an id)
       {
-        reached.insert(vt);
-        push_vector.push_back(vt);
         put(vertex_index_map, vt, next_id++);
+        have_id.insert(vt);
+        push_vector.push_back(vt);        
       }
     }
   }
@@ -475,26 +480,26 @@ private:
     // assign id to vertices inside: roi, boundary of roi (roi + boundary of roi = ros),
     //                               and boundary of ros
 
-    std::set<vertex_descriptor> reached;         // keep vertices which are assigned an id
-
-    reached.insert(roi.begin(), roi.end());      // mark roi vertices as reached
+    std::set<vertex_descriptor> have_id;         // keep vertices which are assigned an id
+    
     for(std::size_t i = 0; i < roi.size(); i++)  // assign id to all roi vertices
     {
       put(vertex_index_map, roi[i], i);
     }
+    have_id.insert(roi.begin(), roi.end());      // mark roi vertices since they have ids now
 
     // now assign an id to vertices on boundary of roi
     std::size_t next_ros_index = roi.size();
     for(std::size_t i = 0; i < roi.size(); i++)
     {
-      assign_id_to_one_ring(roi[i], next_ros_index, ros, reached);
+      assign_id_to_one_ring(roi[i], next_ros_index, ros, have_id);
     }
 
     // boundary of ros also must have ids because in SVD calculation,
     // one-ring neighbor of ROS vertices are reached. 
     for(std::size_t i = roi.size(); i < ros.size(); i++)
     {
-      assign_id_to_one_ring(ros[i], next_ros_index, outside_ros, reached);
+      assign_id_to_one_ring(ros[i], next_ros_index, outside_ros, have_id);
     }
     //////////////////////////////////////////////
 
