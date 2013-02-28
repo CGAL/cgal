@@ -237,7 +237,6 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 void
 MainWindow::on_actionShowConflictZone_toggled(bool checked)
 {
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
   if(checked) {
     scene.installEventFilter(pt_cz);
   } else {
