@@ -1,0 +1,5 @@
+export CGAL_DIR='/cygdrive/c/CGAL/reference_platforms/x64_Cygwin-Windows8_MSVC2010-Release-64bits'
+export VC_VERSION="10"
+export ARCH="64"
+export PLATFORM_REFERENCE="/cygdrive/c/CGAL/reference_platforms"
+source "${PLATFORM_REFERENCE}/setup_common"
