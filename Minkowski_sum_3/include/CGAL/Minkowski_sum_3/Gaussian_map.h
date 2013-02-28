@@ -102,12 +102,12 @@ class Gaussian_map :
     SVertex_creator2(Sphere_map* smap, Facet2SVertex_hash& F2SV)
       : SM(smap), Facet2SVertex(F2SV) {}
 
-    void visit(Vertex_const_handle v) {}
-    void visit(Halfedge_const_handle e) {}
-    void visit(SHalfedge_const_handle se) {}
-    void visit(SHalfloop_const_handle sl) {}
-    void visit(SFace_const_handle sf) {}
-    void visit(Halffacet_const_handle f) {
+    void visit(Vertex_const_handle) {}
+    void visit(Halfedge_const_handle) {}
+    void visit(SHalfedge_const_handle) {}
+    void visit(SHalfloop_const_handle) {}
+    void visit(SFace_const_handle) {}
+    void visit(Halffacet_const_handle) {
 
       CGAL_NEF_TRACEN( "SVertex_creator2 " << f->twin()->plane() );
       SVertex_handle sv
@@ -273,11 +273,11 @@ class Gaussian_map :
       : SM(smap), Edge2SEdge(E2SE), Facet2SVertex(F2SV) {}
       
   public:
-    void visit(Vertex_const_handle v) {}
-    void visit(Halfedge_const_handle e) {}
-    void visit(SHalfedge_const_handle se) {}
-    void visit(SHalfloop_const_handle sl) {}
-    void visit(SFace_const_handle sf) {}
+    void visit(Vertex_const_handle) {}
+    void visit(Halfedge_const_handle) {}
+    void visit(SHalfedge_const_handle) {}
+    void visit(SHalfloop_const_handle) {}
+    void visit(SFace_const_handle) {}
     
     void visit(Halffacet_const_handle f) {
       
