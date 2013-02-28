@@ -37,7 +37,6 @@ public:
 /// \name Types 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Predicate object. Must 
 provide the operators 
@@ -61,7 +60,6 @@ This type is required only if the function
 */ 
 typedef Hidden_type Side_of_oriented_circle_2; 
 
-// TODO(NGHK): Check
 /*! 
 Constructor 
 object. Provides the operators: 
@@ -79,7 +77,6 @@ This type is required only if the function `Point circumcenter(Face_handle f)`is
 */ 
 typedef Hidden_type Construct_circumcenter_2; 
 
-// TODO(NGHK): Check
 /*! 
 Predicate type. Provides 
 the operators: 
@@ -104,7 +101,6 @@ typedef Hidden_type Compare_distance_2;
 /// \name Predicate functions 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Required only 
 if `side_of_oriented_circle` is called 
@@ -113,13 +109,11 @@ called.
 Side_of_oriented_circle_2 
 side_of_oriented_circle_2_object(); 
 
-// TODO(NGHK): Check
 /*! 
 Required only if `circumcenter` is called. 
 */ 
 Construct_circumcenter_2 construct_circumcenter_2_object(); 
 
-// TODO(NGHK): Check
 /*! 
 Required only if `compare_distance` is called. 
 */ 

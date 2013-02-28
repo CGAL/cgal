@@ -268,7 +268,6 @@ template < class Stream> Stream& draw_dual(Stream & ps);
 /// \name Predicates 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Returns the side of `p` with respect to the circle circumscribing the
 triangle associated with `f`. Periodic copies are checked if

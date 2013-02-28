@@ -464,7 +464,6 @@ size_type number_of_stored_edges() const;
 /// triangulation later.
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 The current triangulation remains a triangulation in the 1-sheeted 
 covering space even after adding points if this method returns 
@@ -476,7 +475,6 @@ criterion \cite cgal:ct-c3pt-09.)
 */ 
 bool is_extensible_triangulation_in_1_sheet_h1() const; 
 
-// TODO(NGHK): Check
 /*! 
 The same as `is_extensible_triangulation_in_1_sheet_h1()` but with 
 a more precise heuristic, i.e. it might answer `true` in cases in which 
@@ -487,7 +485,6 @@ input point set as a criterion \cite cgal:ct-c3pt-09.)
 */ 
 bool is_extensible_triangulation_in_1_sheet_h2() const; 
 
-// TODO(NGHK): Check
 /*! 
 Returns `true` if the current triangulation would still be a 
 triangulation in the 1-sheeted covering space, returns `false` otherwise. 
@@ -1015,21 +1012,25 @@ triangulation.
 void 
 remove_first(Vertex_handle v); 
 
-// TODO(NGHK): Check
+
 /*! 
 creates a new vertex `v` and use it to star the hole 
 whose boundary is described by the sequence of edges `[edge_begin, edge_end]`. Returns a handle to the new vertex. 
+
+\pre The triangulation is a triangulation of 1 sheet
+
 */ 
 template<class EdgeIt> 
 Vertex_handle star_hole( Point p, 
 EdgeIt edge_begin, 
 EdgeIt edge_end); 
 
-// TODO(NGHK): Check
 /*! 
 same as above, except that the algorithm 
 first recycles faces in the sequence `[face_begin, face_end]` 
 and create new ones only when the sequence is exhausted. 
+
+\pre The triangulation is a triangulation of 1 sheet
 */ 
 template<class EdgeIt, class FaceIt> 
 Vertex_handle star_hole( Point p, 
@@ -1096,7 +1097,7 @@ is_valid(bool verbose = false, int level = 0) const;
 
 }; /* end Periodic_2_triangulation_2 */
 
-// TODO(NGHK): Check
+// TODO(NGHK): TODO
 /*! 
 Writes the 
 triangulation `t` into the stream `os`. \pre The 
@@ -1105,7 +1106,7 @@ output operator must be defined for `Point`.
 */ 
 ostream& operator<<(ostream& os, const Periodic_2_triangulation_2<Traits,Tds>& t); 
 
-// TODO(NGHK): Check
+// TODO(NGHK): TODO
 /*! 
 Reads a triangulation from stream 
 `is` and assigns it to `t`. \pre The input operator 

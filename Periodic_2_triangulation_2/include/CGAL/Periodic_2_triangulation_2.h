@@ -390,16 +390,13 @@ public:
 
   /// Checks whether the triangulation is a valid simplicial complex in the one cover.
   /// Uses an edge-length-criterion.
-  /// \n NGHK: todo: check test
   bool is_extensible_triangulation_in_1_sheet_h1() const;
 
   /// Checks whether the triangulation is a valid simplicial complex in the one cover.
   /// Uses a criterion based on the maximal radius of the circumscribing circle.
-  /// \n NGHK: todo: check test
   bool is_extensible_triangulation_in_1_sheet_h2() const;
 
   /// Checks whether the triangulation is a valid simplicial complex in the one cover.
-  /// \n NGHK: todo: check test
   bool is_triangulation_in_1_sheet() const;
 
   /// Convert a 9 sheeted cover (used for sparse triangulations) to a single sheeted cover.
@@ -1286,7 +1283,6 @@ protected:
   /// NGHK: Not yet implemented
   template<class EdgeIt>
   Vertex_handle star_hole(const Point& p, EdgeIt edge_begin, EdgeIt edge_end) {
-    NGHK_NYI;
     std::list<Face_handle> empty_list;
     return star_hole(p, edge_begin, edge_end, empty_list.begin(),
         empty_list.end());
@@ -1296,7 +1292,8 @@ protected:
   template<class EdgeIt, class FaceIt>
   Vertex_handle star_hole(const Point& p, EdgeIt edge_begin, EdgeIt edge_end,
       FaceIt face_begin, FaceIt face_end) {
-    NGHK_NYI;
+    CGAL_assertion(is_1_cover());
+
     typedef typename Triangulation_data_structure::Edge Tds_Edge;
     typedef typename Triangulation_data_structure::Face Tds_Face;
     Vertex_handle v =

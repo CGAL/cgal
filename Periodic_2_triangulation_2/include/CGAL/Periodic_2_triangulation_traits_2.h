@@ -199,7 +199,6 @@ public:
   Orientation_2
   orientation_2_object() const { return Orientation_2(&_domain); }
   
-  // NGHK: Remove
   Side_of_oriented_circle_2
   side_of_oriented_circle_2_object() const
   {return Side_of_oriented_circle_2(&_domain);}
@@ -208,14 +207,14 @@ public:
   construct_circumcenter_2_object() const
   { return Construct_circumcenter_2(&_domain);}
   
+  Compare_distance_2
+  compare_distance_2_object() const
+  {return Compare_distance_2(&_domain);}
+  
   // NGHK: Remove
   Construct_bisector_2
   construct_bisector_2_object() const
   {return Construct_bisector_2(&_domain);}
-  
-  Compare_distance_2
-  compare_distance_2_object() const
-  {return Compare_distance_2(&_domain);}
   
   Construct_point_2  construct_point_2_object() const
   {return Construct_point_2(_domain);}

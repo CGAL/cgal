@@ -25,14 +25,12 @@ public:
 /// \name Access Functions 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Returns the offset of vertex `i`. 
 \pre \f$ i \in\{0, 1, 2\}\f$. 
 */ 
 int offset(int i) const; 
 
-// TODO(NGHK): Check
 /*! 
 Returns true if the offset of vertex `i` is zero for \f$ i \in\{0, 1, 2\}\f$. 
 */ 
@@ -43,7 +41,6 @@ bool has_zero_offsets() const;
 /// \name Setting 
 /// @{
 
-// TODO(NGHK): Check
 /*! 
 Sets the vertex offsets according to `off0` to `off2`. 
 */ 
