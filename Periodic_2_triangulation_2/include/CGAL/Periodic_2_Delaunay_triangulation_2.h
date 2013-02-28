@@ -948,7 +948,7 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
   CGAL_triangulation_precondition (dimension()==2);
-  return circumcenter(f);
+  return Triangulation::circumcenter(f);
 }
 
 
