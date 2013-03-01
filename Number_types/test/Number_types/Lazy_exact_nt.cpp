@@ -193,7 +193,9 @@ int main ()
   q>q; q>r; r>q; q>1; 1>q;
   q<=q; q<=r; r<=q; q<=1; 1<=q;
   q>=q; q>=r; r>=q; q>=1; 1>=q;
-  bool b = q==q; b = q==r; b = r==q; b = q==1; b = 1==q;
+
+  bool b; // avoid clang warning: equality comparison result unused [-Wunused-comparison]
+  b = q==q; b = q==r; b = r==q; b = q==1; b = 1==q;
   b = q!=q; b = q!=r; b = r!=q; b = q!=1; b = 1!=q;
 
   // Test comparisons with double.
