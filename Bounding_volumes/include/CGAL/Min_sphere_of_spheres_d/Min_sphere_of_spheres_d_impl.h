@@ -97,7 +97,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const FT dist = inner_product_n<D>(ss.begin(),
-        t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
+                                         t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
         Subtract_and_square<FT>());
   
       // compute excess:
@@ -381,7 +381,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     
     // check coefficients:
     for (int i=0; i<e; ++i)
-      if (is_neg_or_zero(lambda[i])) {
+      if (is_neg_or_zero(lambda[i],ss.disc())) {
         cerr << "Min_sphere_of_spheres_d: center of miniball not in" << endl
              << "interior of convex hull of support centers." << endl
              << "Please contact the author <kf@iaeth.ch>." << endl;
