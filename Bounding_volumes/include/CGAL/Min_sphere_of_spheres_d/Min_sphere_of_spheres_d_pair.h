@@ -234,7 +234,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
   }
   
   template<typename FT>
-  inline bool is_neg_or_zero(const FT& p,const FT& d) {
+  inline bool is_neg_or_zero(const FT& p,const FT& ) {
     return p <= 0;
   }
   
