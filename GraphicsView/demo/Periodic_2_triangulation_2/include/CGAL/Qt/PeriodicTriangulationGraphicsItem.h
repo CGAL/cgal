@@ -232,8 +232,8 @@ namespace CGAL {
     template <typename T>
     void 
     PeriodicTriangulationGraphicsItem<T>::paint(QPainter *painter, 
-                                                const QStyleOptionGraphicsItem *option,
-                                                QWidget * widget)
+                                                const QStyleOptionGraphicsItem *,
+                                                QWidget *)
     {
       painter->setPen(this->domainPen());
       //painter->drawRect(boundingRect());

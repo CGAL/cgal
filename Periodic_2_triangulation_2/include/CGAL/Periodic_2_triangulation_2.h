@@ -1455,7 +1455,7 @@ protected:
 
   /// NGHK: Remove, avoid errors, no infinite simplices in the periodic triangulation
   template <class T>
-  inline bool is_infinite(T t) const { return false; }
+  inline bool is_infinite(T) const { return false; }
 
 private:
   /// Inserts (p,o) in the face f and sets the offsets of the newly created faces
