@@ -182,7 +182,7 @@ CMAKE_CXX_COMPILER:FILEPATH=/usr/local/packages/gcc-trunk/bin/g++
 CMAKE_CXX_FLAGS:STRING= -I/home/lrineau/trunk/Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-Fedora16_g++-trunk_CXX0X/patch-qt-4.8 -frounding-math -std=c++11
 
 //Flags used by the compiler during debug builds.
-CMAKE_CXX_FLAGS_DEBUG:STRING=-g
+CMAKE_CXX_FLAGS_DEBUG:STRING=
 
 //Flags used by the compiler during release minsize builds.
 CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG

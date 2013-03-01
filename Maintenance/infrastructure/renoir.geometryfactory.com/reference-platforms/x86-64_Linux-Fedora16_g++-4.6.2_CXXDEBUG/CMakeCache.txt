@@ -172,7 +172,7 @@ CMAKE_CXX_COMPILER:FILEPATH=/usr/lib64/ccache/c++
 CMAKE_CXX_FLAGS:STRING= -frounding-math -Wall -D_GLIBCXX_DEBUG -DGLIBCXX_DEBUG_MESSAGE_LENGTH=100
 
 //Flags used by the compiler during debug builds.
-CMAKE_CXX_FLAGS_DEBUG:STRING=-g
+CMAKE_CXX_FLAGS_DEBUG:STRING=
 
 //Flags used by the compiler during release minsize builds.
 CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
