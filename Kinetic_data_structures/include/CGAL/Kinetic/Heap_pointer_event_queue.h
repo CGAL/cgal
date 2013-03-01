@@ -294,9 +294,9 @@ public:
   template <class E>
   Key insert(const Priority &t, const E & e) {
     if (!is_after_end(t)) {
-      Item_handle k= new internal::Heap_pointer_event_queue_item_rep<Priority, E>(t, e, queue_.size());
+      Item_handle k= new internal::Heap_pointer_event_queue_item_rep<Priority, E>(t, e, static_cast<unsigned int>(queue_.size()));
       queue_.push_back(k);
-      bubble_up(queue_.size()-1);
+      bubble_up(static_cast<unsigned int>(queue_.size()-1));
       //std::push_heap(queue_.begin(), queue_.end());
       CGAL_expensive_postcondition(is_valid());
       CGAL_postcondition(k->bin() != -1);
@@ -316,7 +316,7 @@ public:
     CGAL_precondition(static_cast<unsigned int> (bin) < queue_.size() && bin >= 0);
 
     // this is a bit more work than strictly necessary
-    swap(queue_.size()-1, bin);
+    swap(static_cast<unsigned int>(queue_.size()-1), bin);
     queue_.pop_back();
     if (static_cast<unsigned int>(bin) < queue_.size()) {
       bubble(bin);
@@ -583,7 +583,7 @@ protected:
   void pop_front() {
     CGAL_expensive_precondition(!empty());
     Item_handle item= queue_.front();
-    swap(0, queue_.size()-1);
+    swap(0, static_cast<unsigned int>(queue_.size()-1));
     queue_.back()->set_bin(-1);
     queue_.pop_back();
     if (!queue_.empty()) bubble_down(0);
