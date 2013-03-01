@@ -17,13 +17,13 @@ version without offsets.
 
 In addition to the requirements of the concept 
 ::Periodic_2TriangulationTraits_2, the concept ::Periodic_2DelaunayTriangulationTraits_2 provides a predicate to check the empty circle property. The 
-corresponding predicate type is called type ::Side_of_oriented_circle_2. 
+corresponding predicate type is called type ::Periodic_2DelaunayTriangulationTraits_2::Side_of_oriented_circle_2. 
 
-The additional constructor object ::Construct_circumcenter_2 is 
+The additional constructor object ::Periodic_2DelaunayTriangulationTraits_2::Construct_circumcenter_2 is 
 used to build the dual Voronoi diagram and are required only if the 
 dual functions are called. The additional predicate type 
-::Compare_distance_2 is required if calls to 
-::nearest_vertex(..) are issued. 
+::Periodic_2DelaunayTriangulationTraits_2::Compare_distance_2 is required if calls to 
+nearest_vertex(..) are issued. 
 
 \cgalHasModel `CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>`
 \cgalHasModel `CGAL::Periodic_2_triangulation_traits_2<Traits, Offset>`, which  implements 

@@ -177,7 +177,7 @@ functionality and are responsible for the geometric validity.
 `Periodic_2_Delaunay_triangulation_2` contains all the
 functionality that is special to Delaunay triangulations, such as
 point insertion and vertex removal, the side-of-circle test, finding
-the conflicting region of a given point (NGHK: check), dual functions etc.
+the conflicting region of a given point, dual functions etc.
 `Periodic_2_triangulation_2` contains all the functionality
 that is common to triangulations in general, such as location of a
 point in the triangulation \cite cgal:dpt-wt-02, access functions,
@@ -188,24 +188,22 @@ which stores their combinatorial structure. This separation between
 the geometry and the combinatorics is reflected in the software design
 by the fact that the triangulation classes take two template
 parameters: 
-- the <B>geometric traits</B> class, which provides the type
-of points to use as well as the elementary operations on them
-(predicates and constructions). Furthermore it contains the offset
-type. The concept for this parameter is described in more detail in
-Section \ref P2Triangulation2secTraits. The concepts that should
-be refined are `Periodic_2TriangulationTraits_2` (for
-`Periodic_2_triangulation_2`) and
-`Periodic_2DelaunayTriangulationTraits_2` (for
-`Periodic_2_Delaunay_triangulation_2`) in the reference
-manual and
+- the <B>geometric traits</B> class, which provides the type of points
+  to use as well as the elementary operations on them (predicates and
+  constructions). Furthermore it contains the offset type. The concept
+  for this parameter is described in more detail in Section \ref
+  P2Triangulation2secTraits. The concepts that should be refined are
+  `Periodic_2TriangulationTraits_2` (for `Periodic_2_triangulation_2`)
+  and `Periodic_2DelaunayTriangulationTraits_2` (for
+  `Periodic_2_Delaunay_triangulation_2`) in the reference manual and
 .
-- the <B>triangulation data structure</B> class, which stores
-the combinatorial structure, described in
-Section \ref P2Triangulation2sectds and in more detail in
-Chapter \ref Chapter_2D_Triangulation_Data_Structure. The
-triangulation data structure needs alModels of the concepts
-`Periodic_2TriangulationDSFaceBase_2` and
-`Periodic_2TriangulationDSVertexBase_2` as template parameters.
+- the <B>triangulation data structure</B> class, which stores the
+  combinatorial structure, described in Section \ref
+  P2Triangulation2sectds and in more detail in Chapter \ref
+  Chapter_2D_Triangulation_Data_Structure. The triangulation data
+  structure needs alModels of the concepts
+  `Periodic_2TriangulationDSFaceBase_2` and
+  `Periodic_2TriangulationDSVertexBase_2` as template parameters.
 
 \subsection P2Triangulation2secTraits The Geometric Traits Parameter 
 
@@ -218,7 +216,7 @@ geometric traits class, described by the concept
 `Periodic_2DelaunayTriangulationTraits_2`. These concepts are
 different from the `TriangulationTraits_2` and
 `DelaunayTriangulationTraits_2` (see
-chapter \ref Triangulation2secTraits) in that they also implement
+chapter \ref Triangulation_2TheGeometricTraits) in that they also implement
 all objects, predicates and constructions with using offsets.
 
 The class
