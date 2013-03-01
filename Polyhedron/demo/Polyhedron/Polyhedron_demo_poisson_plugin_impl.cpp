@@ -58,8 +58,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // Checks requirements
     //***************************************
 
-    int nb_points = points.size();
-    if (nb_points == 0)
+    if (points.size() == 0)
     {
       std::cerr << "Error: empty point set" << std::endl;
       return NULL;

@@ -398,7 +398,7 @@ public:
     fractions.clear();
     fractions.push_back(1.0);
     
-    double m = n;
+    double m = static_cast<double>(n);
     
     while(m > 500){
       m /= 2;
