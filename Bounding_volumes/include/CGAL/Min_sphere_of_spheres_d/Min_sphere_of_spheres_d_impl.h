@@ -381,7 +381,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     
     // check coefficients:
     for (int i=0; i<e; ++i)
-      if (is_neg_or_zero(lambda[i],ss.disc())) {
+      if (is_neg_or_zero(lambda[i])) {
         cerr << "Min_sphere_of_spheres_d: center of miniball not in" << endl
              << "interior of convex hull of support centers." << endl
              << "Please contact the author <kf@iaeth.ch>." << endl;
