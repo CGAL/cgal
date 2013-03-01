@@ -1165,13 +1165,13 @@ because parameters are different depending on `i` and `j`.
 
 `::insert_cell_0_in_cell_1<CMap>(cm,dh0)` adds a 0-cell in the 1-cell
 containing dart `d0`. The 1-cell is split in two. This operation is
-possible if `d0`\f$ \in\f$`cm.darts()` (see example on
+possible if `d0`\f$ \in\f$\ref CombinatorialMap::darts "cm.darts()" (see example on
 \cgalFigureRef{figinsertvertex}).
 
 `::insert_cell_0_in_cell_2<CMap>(cm,dh0)` adds a 0-cell in the 2-cell
 containing dart `d0`. The 2-cell is split in triangles, one for each
 initial edge of the facet. This operation is possible if `d0`\f$
-\in\f$`cm.darts()` (see example on \cgalFigureRef{figtriangulate}).
+\in\f$\ref CombinatorialMap::darts "cm.darts()" (see example on \cgalFigureRef{figtriangulate}).
 
 \cgalFigureBegin{figtriangulate,triangulation.png}
 Example of `::insert_cell_0_in_cell_2` operation.
@@ -1201,7 +1201,7 @@ map.
 `::insert_dangling_cell_1_in_cell_2<CMap>(cm,dh0)` adds a 1-cell in the
 2-cell containing dart `d0`, the 1-cell being attached by only one of
 its vertex to the 0-cell containing dart `d0`.  This operation is
-possible if `d0`\f$ \in\f$`cm.darts()`.
+possible if `d0`\f$ \in\f$\ref CombinatorialMap::darts "cm.darts()".
 
 `::insert_cell_2_in_cell_3<CMap>(cm,itbegin,itend)` adds a 2-cell in the
 3-cell containing all the darts between `itbegin` and `itend`, along

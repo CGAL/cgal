@@ -325,7 +325,6 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Combinatorial_map/examples</string>
           <string name="IMAGE_PATH">../Combinatorial_map/doc/Combinatorial_map/fig</string>
           <list name="TAGFILES" append="true">
-            <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
             <item>./tags/Linear_cell_complex.tag=../../CGAL.CGAL.Linear-Cell-Complex/html</item>
           </list>
@@ -342,8 +341,12 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Linear_cell_complex/examples</string>
           <string name="IMAGE_PATH">../Linear_cell_complex/doc/Linear_cell_complex/fig</string>
           <list name="TAGFILES" append="true">
+            <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html</item>
             <item>./tags/Combinatorial_map.tag=../../CGAL.CGAL.Combinatorial-Maps/html</item>
+            <item>./tags/Kernel_23.tag=../../CGAL.CGAL.2D-and-3D-Linear-Geometry-Kernel/html</item>
+            <item>./tags/Kernel_d.tag=../../CGAL.CGAL.dD-Geometry-Kernel/html</item>
           </list>
         </doxygen>
       </project>
