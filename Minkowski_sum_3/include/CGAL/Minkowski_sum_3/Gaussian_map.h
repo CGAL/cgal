@@ -107,7 +107,7 @@ class Gaussian_map :
     void visit(SHalfedge_const_handle) {}
     void visit(SHalfloop_const_handle) {}
     void visit(SFace_const_handle) {}
-    void visit(Halffacet_const_handle) {
+    void visit(Halffacet_const_handle f) {
 
       CGAL_NEF_TRACEN( "SVertex_creator2 " << f->twin()->plane() );
       SVertex_handle sv
