@@ -18,7 +18,6 @@ its attribute handles initialized to `NULL`, for each non `void` attribute.
 
 \cgalHasModel \ref CGAL::Dart "CGAL::Dart<d,CMap>"
 
-@todo remove the link with the examples
 */
 
 class Dart {

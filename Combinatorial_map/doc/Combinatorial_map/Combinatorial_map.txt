@@ -758,8 +758,6 @@ typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
 \endcode
 
-\todo Remove link for Dart typedef in the code (here % does not work).
-
 \section Combinatorial_mapIteration Iteration and Creation Operations
 
 An important operation in combinatorial maps consists in iterating

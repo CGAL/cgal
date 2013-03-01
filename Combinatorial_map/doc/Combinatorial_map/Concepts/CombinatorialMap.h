@@ -15,7 +15,7 @@ public:
 /// @{
 
 /*!
-Default constructor creating an empty combinatorial map.
+%Default constructor creating an empty combinatorial map.
 */
 CombinatorialMap();
 
