@@ -914,7 +914,6 @@ void create_face_objects_pl(const Below_info& D) const
           p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
       CGAL_NEF_TRACEN("  creating new face object");
-      Halfedge_around_face_circulator hfc(e),hend(hfc);
       Face_handle f = this->new_face();
       link_as_outer_face_cycle(f,e);
     }
