@@ -4,7 +4,7 @@
 
 The concept `CombinatorialMap` defines a <I>d</I>-dimensional combinatorial map.
 
-\cgalHasModel `CGAL::Combinatorial_map<d,Items,Alloc>`
+\cgalHasModel \ref  CGAL::Combinatorial_map "CGAL::Combinatorial_map<d,Items,Alloc>"
 
 */
  //@{

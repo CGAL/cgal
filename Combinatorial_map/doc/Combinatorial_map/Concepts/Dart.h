@@ -16,7 +16,7 @@ within a combinatorial map `cm` by using the method
 \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and having all
 its attribute handles initialized to `NULL`, for each non `void` attribute.
 
-\cgalHasModel `CGAL::Dart<d,CMap>`
+\cgalHasModel \ref CGAL::Dart "CGAL::Dart<d,CMap>"
 
 @todo remove the link with the examples
 */

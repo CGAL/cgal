@@ -9,13 +9,11 @@ attributes. For that, it defines an inner class template named
 of the `CombinatorialMap` concept. This inner class must define
 two types: `%Dart` and `%Attributes`.
 
-\cgalHasModel `CGAL::Combinatorial_map_min_items<d>`
+\cgalHasModel \ref CGAL::Combinatorial_map_min_items "CGAL::Combinatorial_map_min_items<d>"
 
 \sa `CombinatorialMap`
 \sa `Dart`
-*/
 
-  /*!
   \cgalHeading{Example}
 
   The following examples show two possible models of the
@@ -46,11 +44,7 @@ two types: `%Dart` and `%Attributes`.
     };
   };
   \endcode
-
-
-  */
-
-
+*/
 class CombinatorialMapItems {
 public:
 
@@ -60,7 +54,7 @@ public:
 
   - `%Dart_wrapper<CMap>::%Dart`, the type of dart, a model of the `Dart` concept.
   - `%Dart_wrapper<CMap>::%Attributes` The tuple of attributes, containing at most
-    <I>dimension+1</I> types (one for each possible cell of the combinatorial
+    \ref CombinatorialMap::dimension "CMap::dimension+1" types (one for each possible cell of the combinatorial
     map). Each type of the tuple must be either a model of the
     `CellAttribute` concept or `void`.
     The first type corresponds to 0-attributes,
@@ -68,8 +62,8 @@ public:
     If the \f$ i^{\mbox{th}}\f$ type in the tuple is `void`,
     (<I>i</I>-1)-attributes are disabled. Otherwise, (<I>i</I>-1)-attributes are enabled and
     have the given type. If the size of the tuple is <I>k</I>,
-    with <I>k</I><<I>dimension+1</I>,
-    \f$ \forall\f$<I>i</I>: <I>k</I>\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>,
+    with <I>k</I><\ref CombinatorialMap::dimension "CMap::dimension+1",
+    \f$ \forall\f$<I>i</I>: <I>k</I>\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "CMap::dimension",
     <I>i</I>-attributes are disabled.
 
   \note It can be implemented using a nested template class.

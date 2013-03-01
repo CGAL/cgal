@@ -6,9 +6,15 @@
 /// \defgroup PkgCombinatorialMapsClasses Classes
 /// \ingroup PkgCombinatorialMaps
 
+/*! Basic constructions.
+  #include <CGAL/Combinatorial_map_constructors.h>
+*/
 /// \defgroup PkgCombinatorialMapsConstructions Constructions
 /// \ingroup PkgCombinatorialMaps
 
+/*! High-level operations.
+  #include <CGAL/Combinatorial_map_operations.h>
+*/
 /// \defgroup PkgCombinatorialMapsOperations Operations
 /// \ingroup PkgCombinatorialMaps
 
