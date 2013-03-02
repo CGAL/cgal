@@ -438,6 +438,17 @@ void test_io() {
 
   t.insert(Point(0.5, 0.5));
   test_io(t);
+
+  t.insert(Point(0.6, 0.8));
+  t.insert(Point(0.2, 0.6));
+  test_io(t);
+
+  // One cover for the Delaunay triangulation
+  t.clear();
+  for (int x=0; x<5; ++x)
+    for (int y=0; y<5; ++y)
+      t.insert(Point(x/5.0, y/5.0));
+  test_io(t);
 }
 
 template <class T>
