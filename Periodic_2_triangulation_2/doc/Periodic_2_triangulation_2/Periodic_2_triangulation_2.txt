@@ -377,12 +377,11 @@ method `is_null`. If so, we convert the periodic triangle to a
 The periodic 2D-triangulation is based on the 2D triangulation package
 developed by Mariette Yvinec and the periodic 3D-triangulation package
 developed by Manuel Caroli and Monique Teillaud. The periodic
-3D-triangulation package is described in Manuel's PhD thesis
-\cite cgal:c-tpsos-10.
+3D-triangulation package is described in Manuel's PhD thesis \cite
+cgal:c-tpsos-10 Triangulating Point Sets in Orbit Spaces.
 
-Triangulating Point Sets in Orbit Spaces In 2009, Nico Kruithof
-started implementation of the `Periodic_2_triangulation_2`
-package.
+In 2009, Nico Kruithof started implementation of the
+`Periodic_2_triangulation_2` package.
 
 # Performance #
 

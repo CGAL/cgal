@@ -142,7 +142,6 @@ void remove(Vertex_handle v);
 /// \name Point moving 
 /// @{
 
-// TODO(NGHK): Not yet implemented
 /*! 
 if there is not already another vertex placed on `p`, the 
 triangulation is modified such that the new position of vertex 

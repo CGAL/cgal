@@ -3705,128 +3705,16 @@ template <class Gt, class Tds >
 typename Periodic_2_Delaunay_triangulation_2<Gt,Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt,Tds>::
 move_if_no_collision(Vertex_handle v, const Point &p) {
-    NGHK_NYI;
-  CGAL_triangulation_precondition(!is_infinite(v));
-  if(v->point() == p) return v;
-  const int dim = dimension();
-
-  if(dim == 2) {
-    Point ant = v->point();
-    v->set_point(p);
-    // This option optimizes only when most of the
-    // displacements would not break the orientation
-    // of the faces.. we will consider this as an a priori,
-    // because otherwise it is pointless to just do
-    // not rebuild from scratch.
-    if(this->well_oriented(v)) {
-      restore_edges(v);
-      return v;
-    }
-    v->set_point(ant);
-  }
-
   Locate_type lt;
   int li;
   Vertex_handle inserted;
   Face_handle loc = locate(p, lt, li, v->face());
 
-  if(lt == Periodic_2_triangulation_2<Gt,Tds>::VERTEX) return loc->vertex(li);
-
-  if(dim == 0) {
-    v->point() = p;
+  if (lt == VERTEX)
     return v;
-  }
-
-  size_type n_vertices = tds().number_of_vertices();
-
-  if((lt == Triangulation::EMPTY) &&
-     (dim == 1) && (n_vertices == 3)) {
-    v->point() = p;
-    return v;
-  }
-
-  if((lt != Triangulation::EMPTY) && (dim == 1)) {
-    if(loc->has_vertex(v)) {
-      v->point() = p;
-    } else {
-      inserted = insert(p, lt, loc, li);
-      Face_handle f = v->face();
-      int i = f->index(v);
-      if (i==0) {f = f->neighbor(1);}
-      CGAL_triangulation_assertion(f->index(v) == 1);
-      Face_handle g= f->neighbor(0);
-      f->set_vertex(1, g->vertex(1));
-      f->set_neighbor(0,g->neighbor(0));
-      g->neighbor(0)->set_neighbor(1,f);
-      g->vertex(1)->set_face(f);
-      this->delete_face(g);
-      Face_handle f_ins = inserted->face();
-      i = f_ins->index(inserted);
-      if (i==0) {f_ins = f_ins->neighbor(1);}
-      CGAL_triangulation_assertion(f_ins->index(inserted) == 1);
-      Face_handle g_ins = f_ins->neighbor(0);
-      f_ins->set_vertex(1, v);
-      g_ins->set_vertex(0, v);
-    	v->set_point(p);
-      v->set_face(inserted->face());
-      this->delete_vertex(inserted);
-    }
-    return v;
-  }
-
-  if((lt != Triangulation::EMPTY) && this->test_dim_down(v)) {
-    // verify if p and two static vertices are collinear in this case
-    int iinf = 0;
-    Face_circulator finf = this->incident_faces(this->infinite_vertex()),
-      fdone(finf);
-    do {
-      if(!finf->has_vertex(v))
-      {
-        iinf = ~(finf->index(this->infinite_vertex()));
-        break;
-      }
-    } while(++finf != fdone);
-    if(this->orientation(finf->vertex(iinf&1)->point(),
-                         finf->vertex(iinf&2)->point(),
-                         p) == COLLINEAR)
-    {
-      v->point() = p;
-      tds().dim_down(loc, loc->index(v));
-      return v;
-    }
-  }
-
-  inserted = insert(p, lt, loc, li);
-
-  {
-    int d;
-    static int maxd=30;
-    static std::vector<Face_handle> f(maxd);
-    static std::vector<int> i(maxd);
-    static std::vector<Vertex_handle> w(maxd);
-    remove_degree_init(v,f,w,i,d,maxd);
-    remove_degree_triangulate(v,f,w,i,d);
-  }
-
-  // fixing pointer
-  Face_circulator fc = this->incident_faces(inserted), done(fc);
-  std::vector<Face_handle> faces_pt;
-  faces_pt.reserve(16);
-  do { faces_pt.push_back(fc); } while(++fc != done);
-  std::size_t ss = faces_pt.size();
-  for(std::size_t k=0; k<ss; k++)
-    {
-      Face_handle f = faces_pt[k];
-      int i = f->index(inserted);
-      f->set_vertex(i, v);
-    }
-
-  v->set_point(p);
-  v->set_face(inserted->face());
-
-  this->delete_vertex(inserted);
-
-  return v;
+  else 
+    /// This can be optimized by checking whether we can move v->point() to p
+    return insert(p, lt, loc, li);
 }
 
 template <class Gt, class Tds >
