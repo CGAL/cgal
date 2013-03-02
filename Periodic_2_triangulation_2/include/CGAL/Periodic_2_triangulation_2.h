@@ -52,15 +52,6 @@
 
 namespace CGAL {
 
-template<class Gt, class Tds>
-class Periodic_2_triangulation_2;
-template<class Gt, class Tds>
-std::ostream& operator<<(std::ostream& os, const Periodic_2_triangulation_2<Gt,
-    Tds> &tr);
-template<class Gt, class Tds>
-std::istream& operator>>(std::istream& is,
-    Periodic_2_triangulation_2<Gt, Tds> &tr);
-
 /// Periodic triangulation class.
 /// Its main functionality is:
 /// - Insertion of points
@@ -71,12 +62,6 @@ template<class Gt, class Tds = Triangulation_data_structure_2<
                      Triangulation_face_base_2<Gt, 
                        Periodic_2_triangulation_ds_face_base_2<> > > >
 class Periodic_2_triangulation_2: public Triangulation_cw_ccw_2 {
-  friend std::ostream& operator<<<> (std::ostream& os,
-      const Periodic_2_triangulation_2<Gt, Tds> &tr);
-
-  friend std::istream& operator>><> (std::istream& is,
-      Periodic_2_triangulation_2 &tr);
-
   typedef Periodic_2_triangulation_2<Gt, Tds> Self;
 
 public:
@@ -292,6 +277,13 @@ public:
   /// Clear the triangulation
   /// \n NGHK: not implemented
   void clear();
+
+  /// Serialize the triangulation to an output stream
+  std::ostream& save(std::ostream& os) const;
+
+  /// Deserialize the triangulation from an input stream
+  std::istream& load(std::istream& is);
+
   //\}
 
   /// \name Access functions
@@ -1009,9 +1001,9 @@ public:
   }
   /// [Undoc] Returns the offset of nb==ch->neighbor(i) with respect to ch.
   /// Get the offset between the origins of the internal offset coordinate
-  /// systems of two neighboring cells with respect from ch to nb.
+  /// systems of two neighboring faces with respect from ch to nb.
   ///
-  /// - Find two corresponding vertices from each cell
+  /// - Find two corresponding vertices from each face
   /// - Return the difference of their offsets.
   ///
   /// NGHK: implemented
@@ -1021,9 +1013,9 @@ public:
   }
   /// [Undoc] Returns the offset of nb==ch->neighbor(i) with respect to ch.
   /// Get the offset between the origins of the internal offset coordinate
-  /// systems of two neighboring cells with respect from ch to nb.
+  /// systems of two neighboring faces with respect from ch to nb.
   ///
-  /// - Find two corresponding vertices from each cell
+  /// - Find two corresponding vertices from each face
   /// - Return the difference of their offsets.
   ///
   /// NGHK: implemented
@@ -1306,7 +1298,7 @@ protected:
   //\{
 
   /// These functions give the pair (vertex, offset) that corresponds
-  /// to the i-th vertex of cell ch. The vertex returned is not a virtual copy.
+  /// to the i-th vertex of face f. The vertex returned is not a virtual copy.
   /// NGHK: implemented
   void get_vertex(Face_handle f, int i, Vertex_handle &vh, Offset &off) const;
   /// These functions give the pair (vertex, offset) that corresponds
@@ -1326,7 +1318,7 @@ protected:
   Offset get_location_offset(Face_handle f, const Point &p, const Offset &o) const {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
-    if (f->has_zero_offsets()) {
+    if (is_1_cover() && f->has_zero_offsets()) {
       // default case:
       return Offset();
     } else {
@@ -1350,7 +1342,7 @@ protected:
         }
       }
     }
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return Offset();
   }
 
@@ -1420,7 +1412,7 @@ protected:
   bool is_valid_too_long_edges(bool verbose = false, int level = 0) const;
 
   /** @name Checking helpers */ //@{
-  /// calls has_self_edges for every cell of the triangulation
+  /// calls has_self_edges for every face of the triangulation
   bool has_self_edges() const {
     Face_iterator it;
     for ( it = all_faces_begin(); it != all_faces_end(); ++it )
@@ -2112,7 +2104,7 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle Periodic_2_triangula
     }
   }
 
-  // Create cells:
+  // Create faces:
   for (int i = 0; i < _cover[0]; i++) {
     for (int j = 0; j < _cover[1]; j++) {
       for (int f = 0; f < 2; f++) {
@@ -2123,11 +2115,11 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle Periodic_2_triangula
   }
 
   // table containing the vertex information
-  // index to the right vertex: [number of cells][vertex][offset]
+  // index to the right vertex: [number of faces][vertex][offset]
   int vertex_ind[2][3][2] = { { { 0, 0 }, { 1, 1 }, { 0, 1 } }, { { 0, 0 }, {
       1, 0 }, { 1, 1 } } };
   // Table containing the neighbor information
-  // [number of cells][neighbor][offset,cell]
+  // [number of faces][neighbor][offset,face]
   int neighb_ind[2][3][3] = { { { 0, 1, 1 }, { -1, 0, 1 }, { 0, 0, 1 } }, { {
       1, 0, 0 }, { 0, 0, 0 }, { 0, -1, 0 } } };
   for (int i = 0; i < _cover[0]; i++) {
@@ -2155,7 +2147,7 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Vertex_handle Periodic_2_triangula
       }
     }
   }
-  // set pointers from the vertices to incident cells.
+  // set pointers from the vertices to incident faces.
   for (int i = 0; i < _cover[0]; i++) {
     for (int j = 0; j < _cover[1]; j++) {
       vir_vertices[i][j]->set_face(faces[i][j][0]);
@@ -2214,11 +2206,11 @@ Periodic_2_triangulation_2<Gt, Tds>::insert_in_edge(const Point& p, const Offset
   int j = nb->index(f);
   CGAL_triangulation_assertion_code(Offset current_offset = get_location_offset(f, p, o));
   CGAL_triangulation_assertion
-  (orientation(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
-          get_offset(f,cw(i)), combine_offsets(o, current_offset), get_offset(f, ccw(i))) == COLLINEAR &&
-      collinear_between(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
-          get_offset(f,cw(i)), combine_offsets(o, current_offset), get_offset(f, ccw(i))) );
-
+    (orientation(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
+                 get_offset(f,cw(i)), combine_offsets(o, current_offset), get_offset(f, ccw(i))) == COLLINEAR &&
+     collinear_between(f->vertex(cw(i))->point(), p, f->vertex(ccw(i))->point(),
+                       get_offset(f,cw(i)), combine_offsets(o, current_offset), get_offset(f, ccw(i))) );
+  
   /// Insert in the face and flip an edge
   Vertex_handle v = insert_in_face(p, o, f, vh);
   flip_single_edge(nb, j);
@@ -2866,10 +2858,10 @@ typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_triangulati
   return march_locate_2D(start, p, o, lt, li);
 }
 
-/** Delete each redundant cell and the not anymore needed data
+/** Delete each redundant face and the not anymore needed data
  *  structures.
  * 
- *  This function consists of four iterations over all cells and one
+ *  This function consists of four iterations over all faces and one
  *  iteration over all vertices:
  *  -# Face iteration: mark all faces that are to delete
  *  -# Face iteration: redirect neighbors of remaining faces
@@ -3822,7 +3814,7 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
 
   int i = 0;
   // TODO: optimize which copies to check depending on the offsets in
-  // the cell.
+  // the face.
   while (os == ON_NEGATIVE_SIDE && i < 4) {
     os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p, 
                                  get_offset(f, 0), get_offset(f, 1), get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)),
@@ -4056,18 +4048,276 @@ void Periodic_2_triangulation_2<Gt, Tds>::file_input(std::istream& is) {
 
 template<class Gt, class Tds>
 std::ostream&
-operator<<(std::ostream& os, const Periodic_2_triangulation_2<Gt, Tds> &tr) {
-  CGAL_assertion(false && "NGHK: NYI");
-  tr.file_output(os);
+Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const {
+  // writes :
+  // the number of vertices
+  // the domain as four coordinates: xmin ymin ymax zmax
+  // the current covering that guarantees the triangulation to be a
+  //     simplicial complex
+  // the non combinatorial information on vertices (points in case of 1-sheeted
+  //     covering, point-offset pairs otherwise)
+  //     ALL PERIODIC COPIES OF ONE VERTEX MUST BE STORED CONSECUTIVELY
+  // the number of faces
+  // the faces by the indices of their vertices in the preceding list
+  // of vertices, plus the non combinatorial information on each face
+  // the neighbors of each face by their index in the preceding list of faces
+
+  // outputs dimension, domain and number of vertices
+  Covering_sheets cover = number_of_sheets();
+  size_type n = number_of_vertices();
+
+
+  if (is_ascii(os))
+    os << domain() << std::endl
+       << cover[0] << " " << cover[1] << std::endl
+       << n*cover[0]*cover[1] << std::endl;       
+  else {
+    os << domain();
+    write(os,cover[0]);
+    write(os,cover[1]);
+    write(os,n*cover[0]*cover[1]);
+  }
+
+  if (n == 0)
+    return os;
+ 
+  // write the vertices
+  Unique_hash_map<Vertex_handle, std::size_t > V;
+  std::size_t i=0;
+  if (is_1_cover()) {
+    for (Vertex_iterator it=vertices_begin(); it!=vertices_end(); ++it) {
+      V[it] = i++;
+      os << it->point();
+      if (is_ascii(os))
+        os << std::endl;
+    }
+  } else {
+    Virtual_vertex_map_it vit, vvit;
+    std::vector<Vertex_handle> vv;
+    for (Vertex_iterator it=vertices_begin(); it!=vertices_end(); ++it) {
+      vit = _virtual_vertices.find(it);
+      if (vit != _virtual_vertices.end()) continue;
+      V[it]=i++;
+      if (is_ascii(os))
+        os << it->point() << std::endl
+           << Offset(0,0) << std::endl;
+      else
+        os << it->point() << Offset(0,0);
+      CGAL_triangulation_assertion(_virtual_vertices_reverse.find(it)
+                                   != _virtual_vertices_reverse.end());
+      vv = _virtual_vertices_reverse.find(it)->second;
+      CGAL_triangulation_assertion(vv.size() == 8);
+      for (std::size_t j=0; j<vv.size(); j++) {
+        vvit = _virtual_vertices.find(vv[j]);
+        CGAL_triangulation_assertion(vvit != _virtual_vertices.end());
+        V[vv[j]] = i++;
+        if (is_ascii(os))
+          os << vv[j]->point() << std::endl
+             << vvit->second.second << std::endl;
+        else os << vv[j]->point() << vvit->second.second;
+      }
+    }
+  }
+  CGAL_triangulation_postcondition(i==_cover[0]*_cover[1]*n);
+
+  Unique_hash_map<Face_handle,std::size_t> F;
+  int inum = 0;
+  // asks the tds for the combinatorial information
+  // vertices of the faces
+  size_type m = _tds.number_of_faces();
+  if (is_ascii(os)) os << std::endl << m << std::endl;
+  else write(os, m);
+
+  for( Face_iterator ib = faces_begin();
+       ib != faces_end(); ++ib) {
+    F[ib] = inum++;
+    for(int j = 0; j < 3 ; ++j) {
+      if(is_ascii(os)) os << V[ib->vertex(j)] << " ";
+      else write(os, V[ib->vertex(j)]);
+    }
+    os << *ib ;
+    if(is_ascii(os)) os << "\n";
+  }
+  if(is_ascii(os)) os << "\n";
+    
+  // neighbor pointers of the  faces
+  for( Face_iterator it = faces_begin();
+       it != faces_end(); ++it) {
+    for(int j = 0; j < 3; ++j){
+      if(is_ascii(os))  os << F[it->neighbor(j)] << " ";
+      else write(os, F[it->neighbor(j)]);
+    }
+    if(is_ascii(os)) os << "\n";
+  }
+  
+  // write offsets
+  //for (unsigned int i=0 ; i<number_of_faces() ; i++) {
+  for (Face_iterator it=faces_begin(); it!=faces_end(); ++it) {
+    //Face_handle ch = std::find(faces_begin(), faces_end(), i);
+    Face_handle ch(it);
+    for (int j=0; j<3; j++) {
+      if(is_ascii(os)) {
+        os << ch->offset(j);
+        if ( j==3 )
+          os << std::endl;
+        else
+          os << ' ';
+      }
+      else write(os,ch->offset(j));
+    }
+  }
+  
+  // write the non combinatorial information on the faces
+  // using the << operator of Face
+  // works because the iterator of the tds traverses the faces in the
+  // same order as the iterator of the triangulation
+  if(number_of_vertices() != 0) {
+    for(Face_iterator it=faces_begin(); it != faces_end(); ++it) {
+      os << *it; // other information
+      if(is_ascii(os))
+        os << std::endl;
+    }
+  }
+
   return os;
 }
 
 template<class Gt, class Tds>
 std::istream&
-operator>>(std::istream& is, Periodic_2_triangulation_2<Gt, Tds> &tr) {
-  CGAL_assertion(false && "NGHK: NYI");
-  tr.file_input(is);
-  CGAL_triangulation_assertion(tr.is_valid());
+Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is) {
+  // reads
+  // the current covering that guarantees the triangulation to be a
+  //     simplicial complex
+  // the number of vertices
+  // the non combinatorial information on vertices (points in case of 1-sheeted
+  //     covering, point-offset pairs otherwise)
+  //     ALL PERIODIC COPIES OF ONE VERTEX MUST BE STORED CONSECUTIVELY
+  // the number of faces
+  // the faces by the indices of their vertices in the preceding list
+  // of vertices, plus the non combinatorial information on each face
+  // the neighbors of each face by their index in the preceding list of face
+  CGAL_triangulation_precondition(is.good());
+
+  clear();
+
+  Iso_rectangle domain(0,0,1,1);
+  int cx=0, cy=0;
+  size_type n=0;
+
+  if (is_ascii(is)) {
+    is >> domain;
+    is >> cx >> cy;
+    is >> n;
+  }
+  else {
+    is >> domain;
+    read(is,cx);
+    read(is,cy);
+    read(is,n);
+  }
+ 
+  CGAL_triangulation_assertion((n/(cx*cy))*cx*cy == n);
+
+  tds().set_dimension((n==0?-2:2));
+  _domain = domain;
+  _gt.set_domain(domain);
+  _cover = make_array(cx,cy);
+
+  if ( n==0 ) return is;
+
+  std::map< std::size_t, Vertex_handle > V;
+
+  if (cx==1 && cy==1) {
+    for (std::size_t i=0; i < n; i++) {
+      V[i] = tds().create_vertex();
+      is >> *V[i];
+    }
+  } else {
+    Vertex_handle v,w;
+    std::vector<Vertex_handle> vv;
+    Offset off;
+    for (std::size_t i=0; i < n; i++) {
+      v = tds().create_vertex();
+      V[i] = v;
+      is >> *V[i] >> off;
+      vv.clear();
+      for (int j=1; j<cx*cy; j++) {
+        i++;
+        w = tds().create_vertex();
+        V[i] = w;
+        is >> *V[i] >> off;
+        vv.push_back(w);
+        _virtual_vertices[w]=std::make_pair(v,off);
+      }
+      _virtual_vertices_reverse[v]=vv;
+    }
+  }
+  
+  // Creation of the faces
+  std::size_t index;
+  size_type m; 
+  if (is_ascii(is)) is >> m;
+  else read(is, m);
+  std::vector<Face_handle> F(m);
+  {
+    for(size_t i = 0; i < m; ++i) {
+      F[i] = _tds.create_face() ;
+      for(int j = 0; j < 3 ; ++j){
+	if (is_ascii(is)) is >> index;
+        else read(is, index);
+        CGAL_assertion(index < V.size());
+	F[i]->set_vertex(j, V[index]);
+	// The face pointer of vertices is set too often,
+	// but otherwise we had to use one more map
+	V[index]->set_face(F[i]);
+      }
+      // read in non combinatorial info of the face
+      is >> *(F[i]) ;
+    }
+  }
+
+  // Setting the neighbor pointers 
+  {
+    for(size_t i = 0; i < m; ++i) {
+      for(int j = 0; j < 3; ++j){
+	if (is_ascii(is)) is >> index;
+        else read(is, index);
+        CGAL_assertion(i < F.size());
+        CGAL_assertion(index < F.size());
+	F[i]->set_neighbor(j, F[index]);
+      }
+    }
+  }
+
+  // read offsets
+  int off[3] = {0,0,0};
+  for (std::size_t j=0 ; j < m; j++) {
+    if (is_ascii(is))
+      is >> off[0] >> off[1] >> off[2];
+    else {
+      read(is,off[0]);
+      read(is,off[1]);
+      read(is,off[2]);
+    }
+    set_offsets(F[j],off[0],off[1],off[2]);
+  }
+  
+  // read potential other information
+  for (std::size_t j=0 ; j < m; j++)
+    is >> *(F[j]);
+
+  int i=0;
+  for (Vertex_iterator vi = vertices_begin();
+      vi != vertices_end(); ++vi) {
+    _too_long_edges[vi]=std::list<Vertex_handle>();
+    ++i;
+  }
+
+  _edge_length_threshold = FT(0.166) * (_domain.xmax()-_domain.xmin())
+                                       * (_domain.xmax()-_domain.xmin());
+  _too_long_edge_counter = find_too_long_edges(_too_long_edges);
+
+  CGAL_triangulation_expensive_assertion( is_valid() );
   return is;
 }
 
@@ -4153,6 +4403,17 @@ namespace internal {
 } // namespace internal
 
 
+template<class Gt, class Tds>
+std::istream&
+operator>>(std::istream& is, Periodic_2_triangulation_2<Gt, Tds> &tr) {
+  return tr.load(is);
+}
+template<class Gt, class Tds>
+std::ostream&
+operator<<(std::ostream& os, Periodic_2_triangulation_2<Gt, Tds> &tr) {
+  return tr.save(os);
+}
+
 template < class GT, class TDS1, class TDS2  >
 bool
 operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
@@ -4190,7 +4451,7 @@ operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
     return true;
 
   // We will store the mapping between the 2 triangulations vertices and
-  // cells in 2 maps.
+  // faces in 2 maps.
   std::map<Vertex_handle1, Vertex_handle2> Vmap;
   std::map<Face_handle1, Face_handle2> Cmap;
 
@@ -4209,8 +4470,8 @@ operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
     return false;
   Vmap.insert(std::make_pair(v1, iv2));
 
-  // We pick one cell of t1, and try to match it against the
-  // cells of t2.
+  // We pick one face of t1, and try to match it against the
+  // faces of t2.
   Face_handle1 c = v1->face();
   Vertex_handle1 v2 = c->vertex(t1.cw(c->index(v1)));
   Vertex_handle1 v3 = c->vertex(t1.ccw(c->index(v1)));
@@ -4223,21 +4484,21 @@ operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
   do {
     int inf = fc->index(iv2);
 
-    if (t1.compare_xy(p2, fc->vertex((inf+1)%4)->point(),
-                      o2, t2.get_offset(fc->vertex((inf+1)%4))) == EQUAL)
-      Vmap.insert(std::make_pair(v2, fc->vertex((inf+1)%4)));
-    else if (t1.compare_xy(p2, fc->vertex((inf+2)%4)->point(),
-                           o2, t2.get_offset(fc->vertex((inf+2)%4))) == EQUAL)
-      Vmap.insert(std::make_pair(v2, fc->vertex((inf+2)%4)));
+    if (t1.compare_xy(p2, fc->vertex((inf+1)%3)->point(),
+                      o2, t2.get_offset(fc->vertex((inf+1)%3))) == EQUAL)
+      Vmap.insert(std::make_pair(v2, fc->vertex((inf+1)%3)));
+    else if (t1.compare_xy(p2, fc->vertex((inf+2)%3)->point(),
+                           o2, t2.get_offset(fc->vertex((inf+2)%3))) == EQUAL)
+      Vmap.insert(std::make_pair(v2, fc->vertex((inf+2)%3)));
     else
       continue; // None matched v2.
 
-    if (t1.compare_xy(p3, fc->vertex((inf+1)%4)->point(),
-                      o3, t2.get_offset(fc->vertex((inf+1)%4))) == EQUAL)
-      Vmap.insert(std::make_pair(v3, fc->vertex((inf+1)%4)));
-    else if (t1.compare_xy(p3, fc->vertex((inf+2)%4)->point(),
-                           o3, t2.get_offset(fc->vertex((inf+2)%4))) == EQUAL)
-      Vmap.insert(std::make_pair(v3, fc->vertex((inf+2)%4)));
+    if (t1.compare_xy(p3, fc->vertex((inf+1)%3)->point(),
+                      o3, t2.get_offset(fc->vertex((inf+1)%3))) == EQUAL)
+      Vmap.insert(std::make_pair(v3, fc->vertex((inf+1)%3)));
+    else if (t1.compare_xy(p3, fc->vertex((inf+2)%3)->point(),
+                           o3, t2.get_offset(fc->vertex((inf+2)%3))) == EQUAL)
+      Vmap.insert(std::make_pair(v3, fc->vertex((inf+2)%3)));
     else
       continue; // None matched v3.
 
@@ -4249,7 +4510,7 @@ operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
   if (Cmap.size() == 0)
     return false;
 
-  // We now have one cell, we need to propagate recursively.
+  // We now have one face, we need to propagate recursively.
   return internal::test_next(t1, t2,
       Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
 }

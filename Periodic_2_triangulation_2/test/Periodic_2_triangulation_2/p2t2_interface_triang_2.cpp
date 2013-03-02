@@ -337,7 +337,7 @@ void test_modifiers() {
   t.insert_in_face(p1, fh);
   fh = t_const.locate(p2, lt, li);
   CGAL_assertion(lt == T::EDGE);
-  t.insert_in_edge(p2, fh, 0);
+  t.insert_in_edge(p2, fh, li);
 
   t.clear();
   t.insert(pts.begin(), pts.end());
@@ -392,66 +392,52 @@ void test_miscellaneous() {
 }
 
 template <class T>
-void test_io(T &pt1, T &pt3) {
+void test_io(T &pt1) {
   bool ex = false; // Exact predicates
 
   std::cout << "I/O" << std::endl;
   std::cout << "  ascii" << std::endl;
   
   std::stringstream ss1;
-  std::stringstream ss3;
   ss1 << pt1;
-  ss3 << pt3;
 
-  T pt1r, pt3r;
+  T pt1r;
   ss1 >> pt1r;
-  ss3 >> pt3r;
  
   assert(CGAL::is_ascii(ss1));
-  assert(CGAL::is_ascii(ss3));
   if (!ex) assert(pt1 == pt1r);
-  if (!ex) assert(pt3 == pt3r);
 
   std::cout << "  binary" << std::endl;
   pt1r.clear();
-  pt3r.clear();
   // There are problems with the IO of exact number types in binary mode.
   if (!ex) {
     std::stringstream ss1b;
-    std::stringstream ss3b;
     CGAL::set_binary_mode(ss1b);
-    CGAL::set_binary_mode(ss3b);
     ss1b << pt1;
-    ss3b << pt3;
     
     ss1b >> pt1r;
-    ss3b >> pt3r;
     assert(CGAL::is_binary(ss1b));
-    assert(CGAL::is_binary(ss3b));
 
     assert(pt1 == pt1r);
-    assert(pt3 == pt3r);
   }
 
   std::cout << "  pretty" << std::endl;
   
   pt1r.clear();
-  pt3r.clear();
   std::stringstream ss1p;
-  std::stringstream ss3p;
   CGAL::set_pretty_mode(ss1p);
-  CGAL::set_pretty_mode(ss3p);
   ss1p << pt1;
-  ss3p << pt3;
 
   assert(CGAL::is_pretty(ss1p));
-  assert(CGAL::is_pretty(ss3p));
 }
 
 template <class T>
 void test_io() {
-  T pt1, pt2;
-  test_io(pt1, pt2);
+  T t;
+  test_io(t);
+
+  t.insert(Point(0.5, 0.5));
+  test_io(t);
 }
 
 template <class T>
@@ -465,7 +451,7 @@ void test() {
   test_circulators<T>();
   test_modifiers<T>();
   test_miscellaneous<T>();
-  //test_io<T>();
+  test_io<T>();
 }
 
 

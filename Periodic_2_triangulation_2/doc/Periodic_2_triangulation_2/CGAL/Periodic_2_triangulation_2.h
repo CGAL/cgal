@@ -1097,7 +1097,6 @@ is_valid(bool verbose = false, int level = 0) const;
 
 }; /* end Periodic_2_triangulation_2 */
 
-// TODO(NGHK): TODO
 /*! 
 Writes the 
 triangulation `t` into the stream `os`. \pre The 
@@ -1106,7 +1105,6 @@ output operator must be defined for `Point`.
 */ 
 ostream& operator<<(ostream& os, const Periodic_2_triangulation_2<Traits,Tds>& t); 
 
-// TODO(NGHK): TODO
 /*! 
 Reads a triangulation from stream 
 `is` and assigns it to `t`. \pre The input operator 
