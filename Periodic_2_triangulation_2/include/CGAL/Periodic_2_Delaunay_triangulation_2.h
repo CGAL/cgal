@@ -3710,7 +3710,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   Vertex_handle inserted;
   Face_handle loc = locate(p, lt, li, v->face());
 
-  if (lt == VERTEX)
+  if (lt == Triangulation::VERTEX)
     return v;
   else 
     /// This can be optimized by checking whether we can move v->point() to p
