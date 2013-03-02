@@ -99,13 +99,20 @@ void test_geometric_access() {
 
   Periodic_point pp0 = t_const.periodic_point(vit);
   Periodic_point pp1 = t_const.periodic_point(fit, 0);
+  CGAL_USE(pp1);
   Periodic_segment ps0 = t_const.periodic_segment(fit, 0);
+  CGAL_USE(ps0);
   Periodic_segment ps1 = t_const.periodic_segment(*t.edges_begin());
+  CGAL_USE(ps1);
   Periodic_triangle pt0 = t_const.periodic_triangle(fit);
+  CGAL_USE(pt0);
 
   Point p0 = t_const.point(pp0);
+  CGAL_USE(p0);
   Segment s0 = t_const.segment(ps0);
+  CGAL_USE(s0);
   Triangle t0 = t_const.triangle(pt0);
+  CGAL_USE(t0);
 }
 
 template <class T>
@@ -134,11 +141,15 @@ void test_queries() {
 
   T t;
   const T &t_const = t;
+  CGAL_USE(t_const);
 
   Point p0(0.5, 0.5);
   Vertex_handle vh0 = t.insert(p0);
+  CGAL_USE(vh0);
   Vertex_handle vh1 = t.insert(Point(0.7, 0.5));
+  CGAL_USE(vh1);
   Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
+  CGAL_USE(vh2);
 
   Face_handle fh = t_const.locate(p0);
   fh = t_const.locate(Point(0.5, 0.5), fh);
@@ -160,8 +171,11 @@ void test_iterators() {
 
   Point p0(0.5, 0.5);
   Vertex_handle vh0 = t.insert(p0);
+  CGAL_USE(vh0);
   Vertex_handle vh1 = t.insert(Point(0.7, 0.5));
+  CGAL_USE(vh1);
   Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
+  CGAL_USE(vh2);
 
   for (typename T::Vertex_iterator vit = t_const.vertices_begin();
        vit != t_const.vertices_end(); ++vit) {
@@ -245,8 +259,11 @@ void test_circulators() {
 
   Point p0(0.5, 0.5);
   Vertex_handle vh0 = t.insert(p0);
+  CGAL_USE(vh0);
   Vertex_handle vh1 = t.insert(Point(0.7, 0.5));
+  CGAL_USE(vh1);
   Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
+  CGAL_USE(vh2);
 
   typename T::Face_circulator fcir = t_const.incident_faces(vh0);
   fcir = t_const.incident_faces(vh0, fcir);
@@ -258,6 +275,7 @@ void test_circulators() {
   vcir = t_const.adjacent_vertices(vh0, fcir);
 
   Vertex_handle v_mirror = t_const.mirror_vertex(fcir, 0);
+  CGAL_USE(v_mirror);
   t_const.mirror_index(fcir, 0);
 }
 
@@ -374,6 +392,69 @@ void test_miscellaneous() {
 }
 
 template <class T>
+void test_io(T &pt1, T &pt3) {
+  bool ex = false; // Exact predicates
+
+  std::cout << "I/O" << std::endl;
+  std::cout << "  ascii" << std::endl;
+  
+  std::stringstream ss1;
+  std::stringstream ss3;
+  ss1 << pt1;
+  ss3 << pt3;
+
+  T pt1r, pt3r;
+  ss1 >> pt1r;
+  ss3 >> pt3r;
+ 
+  assert(CGAL::is_ascii(ss1));
+  assert(CGAL::is_ascii(ss3));
+  if (!ex) assert(pt1 == pt1r);
+  if (!ex) assert(pt3 == pt3r);
+
+  std::cout << "  binary" << std::endl;
+  pt1r.clear();
+  pt3r.clear();
+  // There are problems with the IO of exact number types in binary mode.
+  if (!ex) {
+    std::stringstream ss1b;
+    std::stringstream ss3b;
+    CGAL::set_binary_mode(ss1b);
+    CGAL::set_binary_mode(ss3b);
+    ss1b << pt1;
+    ss3b << pt3;
+    
+    ss1b >> pt1r;
+    ss3b >> pt3r;
+    assert(CGAL::is_binary(ss1b));
+    assert(CGAL::is_binary(ss3b));
+
+    assert(pt1 == pt1r);
+    assert(pt3 == pt3r);
+  }
+
+  std::cout << "  pretty" << std::endl;
+  
+  pt1r.clear();
+  pt3r.clear();
+  std::stringstream ss1p;
+  std::stringstream ss3p;
+  CGAL::set_pretty_mode(ss1p);
+  CGAL::set_pretty_mode(ss3p);
+  ss1p << pt1;
+  ss3p << pt3;
+
+  assert(CGAL::is_pretty(ss1p));
+  assert(CGAL::is_pretty(ss3p));
+}
+
+template <class T>
+void test_io() {
+  T pt1, pt2;
+  test_io(pt1, pt2);
+}
+
+template <class T>
 void test() {
   test_constructor<T>();
   test_global_access<T>();
@@ -384,6 +465,7 @@ void test() {
   test_circulators<T>();
   test_modifiers<T>();
   test_miscellaneous<T>();
+  //test_io<T>();
 }
 
 
