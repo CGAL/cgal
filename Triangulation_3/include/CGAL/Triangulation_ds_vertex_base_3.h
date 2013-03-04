@@ -25,8 +25,52 @@
 
 namespace CGAL {
 
+
+// Without erase counter
+template <bool Use_erase_counter>
+class Triangulation_ds_vertex_base_3_base
+{
+public:
+  // Dummy
+  unsigned int get_erase_counter() const { return 0; }
+  void set_erase_counter(unsigned int) {}
+  void increment_erase_counter() {}
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Specialized version (with erase counter)
+template <>
+class Triangulation_ds_vertex_base_3_base<true>
+{
+public:
+  
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+	  this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+
+};
+#endif // CGAL_LINKED_WITH_TBB
+
+
+
 template < typename TDS = void >
 class Triangulation_ds_vertex_base_3
+: public Triangulation_ds_vertex_base_3_base<
+    TDS::Vertex_container_strategy::Uses_erase_counter>
 {
 public:
   typedef TDS                          Triangulation_data_structure;
@@ -36,17 +80,24 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_vertex_base_3<TDS2> Other; };
 
+  
   Triangulation_ds_vertex_base_3()
-    : _c() {}
+    : _c()
+  {
+  }
 
   Triangulation_ds_vertex_base_3(Cell_handle c)
-    : _c(c) {}
+    : _c(c) 
+  {
+  }
 
-  Cell_handle cell() const
-  { return _c; }
+  Cell_handle cell() const 
+  { return _c; }  
 
   void set_cell(Cell_handle c)
-  { _c = c; }
+  {
+    _c = c;
+  }
 
   // the following trivial is_valid allows
   // the user of derived cell base classes

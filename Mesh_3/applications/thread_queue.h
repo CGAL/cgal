@@ -121,7 +121,7 @@ std::string format(std::string input, bool remove_template)
   std::size_t pos = input.find('\074');
   while ( remove_template && pos != std::string::npos )
   {
-    unsigned int init = pos;
+    size_t init = pos;
     int nb_open=1;
     int nb_close=0;
 
@@ -144,7 +144,7 @@ std::string format(std::string input, bool remove_template)
     input.push_back('\n');
 
   // Add "  ! " at the begining of each line
-  unsigned int prev = 0;
+  size_t prev = 0;
   pos = input.find("\n");
   while ( pos != std::string::npos )
   {

@@ -31,6 +31,10 @@
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
+#ifdef CGAL_MESH_3_PERTURBER_VERBOSE
+  #include <CGAL/Timer.h>
+#endif
+
 #include <boost/optional.hpp>
 #include <boost/random/lagged_fibonacci.hpp>
 #include <boost/random/uniform_real.hpp>
@@ -224,18 +228,19 @@ public:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
 #ifndef CGAL_MESH_3_PERTURBER_VERBOSE
     return do_perturb(v, slivers, c3t3, domain, criterion,
-                      sliver_bound, modified_vertices);
+                      sliver_bound, modified_vertices, p_could_lock_zone);
 #else
     timer_.start();
     
     // Virtual call
     std::pair<bool,Vertex_handle> perturb =
       do_perturb(v, slivers, c3t3, domain, criterion,
-                 sliver_bound, modified_vertices);
+                 sliver_bound, modified_vertices, p_could_lock_zone);
     
     if ( perturb.first )
       ++counter_;
@@ -300,7 +305,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const = 0;
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const = 0;
   
   
   /**
@@ -390,7 +396,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const = 0;
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const = 0;
   
 protected:
   // -----------------------------------
@@ -407,7 +414,8 @@ protected:
                      C3T3& c3t3,
                      const MeshDomain& domain,
                      const SliverCriterion& criterion,
-                     std::vector<Vertex_handle>& modified_vertices) const
+                     std::vector<Vertex_handle>& modified_vertices,
+                     bool *p_could_lock_zone = 0) const
   {
     typedef typename C3T3::Triangulation::Geom_traits Gt;
     typedef typename Gt::FT       FT;
@@ -434,26 +442,52 @@ protected:
 
     // as long as no topological change takes place
     unsigned int i = 0;
-    while( Th().no_topological_change(c3t3.triangulation(), v, final_loc) 
-          && (++i <= max_step_nb_) )
+    // Concurrent-safe version
+    if (p_could_lock_zone)
     {
-      new_loc = new_loc + step_length * gradient_vector;
+      while(Th().no_topological_change__without_set_point(c3t3.triangulation(), 
+                                                          v, final_loc) 
+            && (++i <= max_step_nb_) )
+      {
+        new_loc = new_loc + step_length * gradient_vector;
       
-      if ( c3t3.in_dimension(v) == 3 )
-        final_loc = new_loc;
-      else 
-        final_loc = helper.project_on_surface(new_loc, v);
+        if ( c3t3.in_dimension(v) == 3 )
+          final_loc = new_loc;
+        else 
+          final_loc = helper.project_on_surface(new_loc, v);
+      }
+    }
+    else
+    {
+      while( Th().no_topological_change(c3t3.triangulation(), v, final_loc) 
+            && (++i <= max_step_nb_) )
+      {
+        new_loc = new_loc + step_length * gradient_vector;
+      
+        if ( c3t3.in_dimension(v) == 3 )
+          final_loc = new_loc;
+        else 
+          final_loc = helper.project_on_surface(new_loc, v);
+      }
     }
     
     // Topology could not change moving this vertex
     if ( i > max_step_nb_ )
       return std::make_pair(false,v);
-    
+
+    // CJTODO TEST
+    if (p_could_lock_zone && !helper.try_lock_point(final_loc))
+    {
+      *p_could_lock_zone = false;
+      return std::make_pair(false,v);
+    }
+       
     // we know that there will be a combinatorial change
     return helper.update_mesh_topo_change(final_loc,
                                           v,
                                           criterion,
-                                          std::back_inserter(modified_vertices));
+                                          std::back_inserter(modified_vertices),
+                                          p_could_lock_zone);
   }
   
   
@@ -514,7 +548,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT&,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
     CGAL_precondition(!slivers.empty());
     
@@ -529,7 +564,8 @@ protected:
                                     c3t3,
                                     domain,
                                     criterion,
-                                    modified_vertices);
+                                    modified_vertices,
+                                    p_could_lock_zone);
   }
   
 private:
@@ -670,7 +706,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT&,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
     CGAL_precondition(!slivers.empty());
     
@@ -685,7 +722,8 @@ protected:
                                     c3t3,
                                     domain,
                                     criterion,
-                                    modified_vertices);
+                                    modified_vertices,
+                                    p_could_lock_zone);
   }
   
 private:
@@ -809,7 +847,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT&,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
     CGAL_precondition(!slivers.empty());
     
@@ -824,7 +863,8 @@ protected:
                                     c3t3,
                                     domain,
                                     criterion,
-                                    modified_vertices);
+                                    modified_vertices,
+                                    p_could_lock_zone);
   }
   
 private:
@@ -1008,7 +1048,8 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const = 0;
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const = 0;
   
 protected:
   // -----------------------------------
@@ -1139,12 +1180,14 @@ protected:
              const MeshDomain& domain,
              const SliverCriterion& criterion,
              const FT& sliver_bound,
-             std::vector<Vertex_handle>& modified_vertices) const
+             std::vector<Vertex_handle>& modified_vertices,
+             bool *p_could_lock_zone = 0) const
   {
     CGAL_precondition(!slivers.empty());
     
     return apply_perturbation(v, slivers, c3t3, domain, criterion,
-                              sliver_bound, modified_vertices);
+                              sliver_bound, modified_vertices, 
+                              p_could_lock_zone);
   }
   
 private:
@@ -1162,7 +1205,8 @@ private:
                      const MeshDomain& domain,
                      const SliverCriterion& criterion,
                      const FT& sliver_bound,
-                     std::vector<Vertex_handle>& modified_vertices) const
+                     std::vector<Vertex_handle>& modified_vertices,
+                     bool *p_could_lock_zone = 0) const
   {
     modified_vertices.clear();
 
@@ -1192,14 +1236,25 @@ private:
       if ( c3t3.in_dimension(moving_vertex) < 3 )
         new_location = helper.project_on_surface(new_location, moving_vertex);
       
+      // CJTODO TEST
+      if (p_could_lock_zone && !helper.try_lock_point(new_location))
+      {
+        *p_could_lock_zone = false;
+        return std::make_pair(false,v);
+      }
+
       // try to move vertex
       std::vector<Vertex_handle> tmp_mod_vertices;
       std::pair<bool,Vertex_handle> update =
         helper.update_mesh(new_location,
                            moving_vertex,
                            criterion,
-                           std::back_inserter(tmp_mod_vertices));
+                           std::back_inserter(tmp_mod_vertices),
+                           p_could_lock_zone);
 
+      if (p_could_lock_zone && *p_could_lock_zone == false)
+        return std::make_pair(false, Vertex_handle());
+      
       // get new vertex
       moving_vertex = update.second;
       

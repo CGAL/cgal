@@ -48,6 +48,10 @@
 #include <boost/variant.hpp>
 #include <boost/math/special_functions/round.hpp>
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/enumerable_thread_specific.h>
+#endif
+
 namespace CGAL {
 
 namespace Mesh_3 {
@@ -200,8 +204,8 @@ public:
   /// Default constructor
   Polyhedral_mesh_domain_3()
     : tree_()
-    , bounding_tree_(&tree_) 
-    , has_cache(false) {}
+    , bounding_tree_(&tree_)
+  {}
   
   /**
    * @brief Constructor. Contruction from a polyhedral surface
@@ -209,9 +213,8 @@ public:
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p)
     : tree_(TriangleAccessor().triangles_begin(p),
-            TriangleAccessor().triangles_end(p)),
-      bounding_tree_(&tree_) // the bounding tree is tree_
-    , has_cache(false)
+            TriangleAccessor().triangles_end(p))
+    , bounding_tree_(&tree_) // the bounding tree is tree_
   { 
     if(!p.is_pure_triangle()) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
@@ -225,7 +228,6 @@ public:
             TriangleAccessor().triangles_end(p))
     , bounding_tree_(new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
                                     TriangleAccessor().triangles_end(bounding_polyhedron)))
-    , has_cache(false)
   { 
     tree_.insert(TriangleAccessor().triangles_begin(bounding_polyhedron),
                  TriangleAccessor().triangles_end(bounding_polyhedron));
@@ -249,7 +251,6 @@ public:
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
                            const Polyhedron& bounding_polyhedron)
-    : has_cache(false) 
   {
     if(begin != end) { 
       for(; begin != end; ++begin) {
@@ -285,7 +286,6 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end)
-    : has_cache(false) 
   {
     if(begin != end) {
       for(; begin != end; ++begin) {
@@ -424,18 +424,19 @@ public:
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       if(r_domain_.query_is_cached(q))
       {
-        const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id;
+        const AABB_primitive_id primitive_id = r_domain_.get_cached_primitive_id();
         Object o = IGT().intersect_3_object()(Primitive(primitive_id).datum(),
                                               q);
         intersection = AABB_intersection(std::make_pair(o, primitive_id));
-      } else 
+      } else
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-     CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
+        CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
-      intersection = r_domain_.tree_.any_intersection(q);
+      
+        intersection = r_domain_.tree_.any_intersection(q);
       }
       if ( intersection )
       {
@@ -618,11 +619,20 @@ private:
 
   AABB_tree_* bounding_tree_;
 
-    // cache queries and intersected primitive
+  // cache queries and intersected primitive
   typedef typename boost::make_variant_over<Allowed_query_types>::type Cached_query;
-  mutable bool has_cache;
-  mutable Cached_query cached_query;
-  mutable AABB_primitive_id cached_primitive_id;
+  struct Query_cache
+  {
+    Query_cache() : has_cache(false) {}
+    bool has_cache;
+    Cached_query cached_query;
+    AABB_primitive_id cached_primitive_id;
+  };
+#ifdef CGAL_LINKED_WITH_TBB
+  mutable tbb::enumerable_thread_specific<Query_cache> query_cache;
+#else
+  mutable Query_cache query_cache;
+#endif
 
 public:
 
@@ -636,14 +646,35 @@ public:
   void cache_primitive(const Query& q, 
                        const AABB_primitive_id id) const
   {
-    cached_query = Cached_query(q);
-    has_cache = true;
-    cached_primitive_id = id;
+#ifdef CGAL_LINKED_WITH_TBB
+    Query_cache &qc = query_cache.local();
+    qc.cached_query = Cached_query(q);
+    qc.has_cache = true;
+    qc.cached_primitive_id = id;
+#else
+    query_cache.cached_query = Cached_query(q);
+    query_cache.has_cache = true;
+    query_cache.cached_primitive_id = id;
+#endif
   }
 
   template <typename Query>
   bool query_is_cached(const Query& q) const {
-    return has_cache && (cached_query == Cached_query(q));
+#ifdef CGAL_LINKED_WITH_TBB
+    Query_cache &qc = query_cache.local();
+    return qc.has_cache && (qc.cached_query == Cached_query(q));
+#else
+    return query_cache.has_cache 
+      && (query_cache.cached_query == Cached_query(q));
+#endif
+  }
+
+  AABB_primitive_id get_cached_primitive_id() const {
+#ifdef CGAL_LINKED_WITH_TBB
+    return query_cache.local().cached_primitive_id;
+#else
+    return query_cache.cached_primitive_id;
+#endif
   }
 
 private:
@@ -676,9 +707,9 @@ Construct_initial_points::operator()(OutputIterator pts,
   Random_points_on_sphere_3<Point_3> random_point(1.);
 
   int i = n;
-#ifdef CGAL_MESH_3_VERBOSE
+# ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "construct initial points:" << std::endl;
-#endif
+# endif
   // Point construction by ray shooting from the center of the enclosing bbox
   while ( i > 0 )
   {
@@ -695,17 +726,23 @@ Construct_initial_points::operator()(OutputIterator pts,
                               CGAL::cpp0x::get<1>(intersection));
         
       --i;
+
+      /*std::cerr << "points_on_sphere_3.push_back(Point_3(" 
+        << random_point->x() << ", " 
+        << random_point->y() << ", " 
+        << random_point->z()
+        <<  "));" << std::endl;*/
         
-#ifdef CGAL_MESH_3_VERBOSE
+# ifdef CGAL_MESH_3_VERBOSE
       std::cerr << boost::format("\r             \r"
                                  "%1%/%2% initial point(s) found...")
         % (n - i)
         % n;
-#endif
+# endif
     }
     ++random_point;
   }
-  
+
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << std::endl;
 #endif

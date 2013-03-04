@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Scene_c3t3_item.h"
 
 #include <CGAL_demo/Io_plugin_interface.h>
@@ -17,14 +19,15 @@ public:
   virtual Scene_item* load(QFileInfo) { return NULL; }
 
   virtual bool canSave(const Scene_item*);
-  virtual bool save(const Scene_item*, QFileInfo fileinfo);
+  virtual bool save(const Scene_item*, QFileInfo, QString);
 };
 
 
 QStringList
 Io_c3t3_plugin::nameFilters() const
 { 
-  return QStringList() << "Mesh (*.mesh)";
+  return QStringList() << "Mesh (*.mesh)" 
+    << "Maya - surface only (*.ma)" << "Maya - cells (*.ma)";
 }
 
 
@@ -36,7 +39,7 @@ Io_c3t3_plugin::canSave(const Scene_item* item)
 }
 
 bool
-Io_c3t3_plugin::save(const Scene_item* item, QFileInfo fileInfo)
+Io_c3t3_plugin::save(const Scene_item* item, QFileInfo fileInfo, QString selectedFilter)
 {
   const Scene_c3t3_item* c3t3_item = qobject_cast<const Scene_c3t3_item*>(item);
   if ( NULL == c3t3_item )
@@ -45,8 +48,17 @@ Io_c3t3_plugin::save(const Scene_item* item, QFileInfo fileInfo)
   }
   
   QString path = fileInfo.absoluteFilePath();
-  std::ofstream medit_file (qPrintable(path));
-  c3t3_item->c3t3().output_to_medit(medit_file,true,true);
+  if (fileInfo.suffix() == "mesh")
+  {
+    std::ofstream medit_file (qPrintable(path));
+    c3t3_item->c3t3().output_to_medit(medit_file,true,true);
+  }
+  else if (fileInfo.suffix() == "ma")
+  {
+    std::ofstream maya_file (qPrintable(path));
+    c3t3_item->c3t3().output_to_maya(
+      maya_file, selectedFilter == "Maya - surface only (*.ma)");
+  }
   
   return true;
 }

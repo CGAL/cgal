@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_ds_cell_base_3.h>
+# include <CGAL/Triangulation_ds_cell_base_3.h>
 
 namespace CGAL {
 
@@ -37,7 +37,7 @@ class Triangulation_cell_base_with_circumcenter_3
   typedef typename GT::Point_3                         Point_3;
 
   mutable Point_3 * circumcenter_;
-
+  
 public:
   void invalidate_circumcenter()
   {
@@ -47,7 +47,6 @@ public:
       }
   }
 
-public:
   typedef typename Cb::Vertex_handle                   Vertex_handle;
   typedef typename Cb::Cell_handle                     Cell_handle;
 

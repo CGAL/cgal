@@ -22,6 +22,8 @@
 // File Description : 
 //******************************************************************************
 
+#include "config.h"
+
 #include <QTime>
 #include <QTimer>
 #include "Optimizer_thread.h"

@@ -455,6 +455,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
       exude_time_limit = exude.time_limit();
     
     exude_mesh_3(c3t3,
+                 domain,
                  parameters::time_limit = exude_time_limit,
                  parameters::sliver_bound = exude.bound());
   }

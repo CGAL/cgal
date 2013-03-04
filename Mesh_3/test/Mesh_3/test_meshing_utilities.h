@@ -91,15 +91,16 @@ struct Tester
     int n = 0;
     while ( c3t3.triangulation().number_of_vertices() != v && ++n < 11 )
     {
+      v = c3t3.triangulation().number_of_vertices();
+
       refine_mesh_3(c3t3,domain,criteria,
                     CGAL::parameters::no_exude(),
                     CGAL::parameters::no_perturb(),
                     CGAL::parameters::no_reset_c3t3());
-      
-      v = c3t3.triangulation().number_of_vertices();
-      f = c3t3.number_of_facets_in_complex();
-      c = c3t3.number_of_cells_in_complex();      
     }
+
+    f = c3t3.number_of_facets_in_complex();
+    c = c3t3.number_of_cells_in_complex(); 
     assert ( n < 11 );
 #endif
     
@@ -111,7 +112,7 @@ struct Tester
     // Quality should increase
     C3t3 exude_c3t3(c3t3);
     std::cerr << "Exude...\n";
-    CGAL::exude_mesh_3(exude_c3t3);
+    CGAL::exude_mesh_3(exude_c3t3, domain);
     verify_c3t3(exude_c3t3,v,v,f,f);
     verify_c3t3_quality(c3t3,exude_c3t3);
     

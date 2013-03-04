@@ -32,7 +32,177 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
+
+// Class Mesh_cell_base_3_base
+// Base for Compact_mesh_cell_base_3, with specializations 
+// for different walues of Parallel_tag and Use_erase_counter
+template <bool Use_erase_counter, typename Concurrency_tag>
+class Compact_mesh_cell_base_3_base;
+
+// Class Mesh_cell_base_3_base
+// Specialization for sequential - no erase counter
+template <typename Concurrency_tag>
+class Compact_mesh_cell_base_3_base<false, Concurrency_tag>
+{
+  protected:
+  Compact_mesh_cell_base_3_base()
+    : bits_(0) {}
+
+public:
+  // Erase counter (cf. Compact_container)
+  // Dummy functions
+  unsigned int get_erase_counter() const { return 0; }
+  void set_erase_counter(unsigned int c) {}
+  void increment_erase_counter() {}
   
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet <4);
+    bits_ |= (1 << facet);
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    bits_ &= (15 & ~(1 << facet));
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (bits_ & (1 << facet)) != 0 );
+  }
+
+private:
+  char bits_;
+};
+
+
+
+// Class Mesh_cell_base_3_base
+// Specialization for sequential - WITH erase counter
+template <typename Concurrency_tag>
+class Compact_mesh_cell_base_3_base<true, Concurrency_tag>
+{
+protected:
+  Compact_mesh_cell_base_3_base()
+    : bits_(0) {}
+
+public:  
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+	  this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet <4);
+    bits_ |= (1 << facet);
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    bits_ &= (15 & ~(1 << facet));
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (bits_ & (1 << facet)) != 0 );
+  }
+
+private:
+  typedef unsigned int              Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+  /// Stores visited facets (4 first bits)
+  char                              bits_;
+};
+
+
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Class Mesh_cell_base_3_base
+// Specialization for parallel - WITH erase counter
+template <>
+class Compact_mesh_cell_base_3_base<true, Parallel_tag>
+{
+protected:
+  Compact_mesh_cell_base_3_base()
+  {
+    bits_ = 0;
+  }
+
+public: 
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+	  this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+  /// Marks \c facet as visited
+  void set_facet_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    char current_bits = bits_;
+    while (bits_.compare_and_swap(current_bits | (1 << facet), current_bits) != current_bits)
+    {
+      current_bits = bits_;
+    }
+  }
+
+  /// Marks \c facet as not visited
+  void reset_visited (const int facet)
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    char current_bits = bits_;
+    while (bits_.compare_and_swap(current_bits & (15 & ~(1 << facet)), current_bits) != current_bits)
+    {
+      current_bits = bits_;
+    }
+  }
+
+  /// Returns \c true if \c facet is marked as visited
+  bool is_facet_visited (const int facet) const
+  {
+    CGAL_precondition(facet>=0 && facet<4);
+    return ( (bits_ & (1 << facet)) != 0 );
+  }
+  
+private:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+  /// Stores visited facets (4 first bits)
+  tbb::atomic<char> bits_;
+};
+
+#endif // CGAL_LINKED_WITH_TBB
+
+
+
 // Class Mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
@@ -40,6 +210,9 @@ template< class GT,
           class MD,
           class TDS = void > 
 class Compact_mesh_cell_base_3
+  : public Compact_mesh_cell_base_3_base<
+      TDS::Cell_container_strategy::Uses_erase_counter,
+      typename TDS::Concurrency_tag>
 {
   typedef typename GT::FT FT;
   
@@ -53,7 +226,9 @@ public:
 
 
   template <typename TDS2>
-  struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
+  struct Rebind_TDS { 
+    typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other;
+  };
 
 
   // Index Type
@@ -89,7 +264,6 @@ public:
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
-    , bits_(0)
     , sliver_cache_validity_(false)
   {
   }
@@ -98,7 +272,6 @@ public:
     : circumcenter_(NULL)
     , sliver_value_(rhs.sliver_value_)
     , subdomain_index_(rhs.subdomain_index_) 
-    , bits_(0) 
     , sliver_cache_validity_(false)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
@@ -125,8 +298,7 @@ public:
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_() 
-    , bits_(0) 
+    , subdomain_index_()
     , sliver_cache_validity_(false)
   {
     set_vertices(v0, v1, v2, v3);
@@ -354,27 +526,6 @@ public:
     return surface_index_table_[facet];
   }
 
-  /// Marks \c facet as visited
-  void set_facet_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet <4);
-    bits_ |= (1 << facet);
-  }
-
-  /// Marks \c facet as not visited
-  void reset_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    bits_ &= (15 & ~(1 << facet));
-  }
-
-  /// Returns \c true if \c facet is marked as visited
-  bool is_facet_visited (const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return ( (bits_ & (1 << facet)) != 0 );
-  }
-
   /// Sets surface center of \c facet to \c point
   void set_facet_surface_center(const int facet, const Point& point)
   {
@@ -475,7 +626,6 @@ private:
   Subdomain_index subdomain_index_;
 
   TDS_data      _tds_data;
-  char bits_;
   mutable bool sliver_cache_validity_;
 
 
