@@ -509,6 +509,14 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
 		if( !c3t3.is_in_complex(cit))
 			continue;
 		
+#ifdef CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
+    if (c3t3.in_dimension(cit->vertex(0)) <= 1
+     || c3t3.in_dimension(cit->vertex(1)) <= 1
+     || c3t3.in_dimension(cit->vertex(2)) <= 1
+     || c3t3.in_dimension(cit->vertex(3)) <= 1)
+      continue;
+#endif //CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
+		
 		const Point_3& p0 = cit->vertex(0)->point();
 		const Point_3& p1 = cit->vertex(1)->point();
 		const Point_3& p2 = cit->vertex(2)->point();
