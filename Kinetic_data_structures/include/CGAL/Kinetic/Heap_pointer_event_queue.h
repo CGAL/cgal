@@ -625,14 +625,15 @@ protected:
   //! debugging
   bool is_valid() const
   {
+#ifndef CGAL_NO_ASSERTIONS
     for (unsigned int i=0; i< queue_.size(); ++i) {
-      //int bin= i;
       int back= queue_[i]->bin();
       CGAL_assertion(static_cast<unsigned int>(back)==i || write(std::cerr));
       CGAL_assertion(!less_than_parent(i) || write(std::cerr));
       //CGAL_assertion(less_than_child(i, FIRST));
       //CGAL_assertion(less_than_child(i, SECOND));
     }
+#endif
     return true;
   }
 
