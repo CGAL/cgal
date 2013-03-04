@@ -4,6 +4,8 @@
 #include <CGAL/Periodic_2_triangulation_traits_2.h>
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_triangulation_hierarchy_2.h>
+// #include <CGAL/Periodic_2_triangulation_hierarchy_vertex_base_2.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
@@ -41,7 +43,14 @@ typedef Triangulation::Periodic_triangle_iterator   Periodic_triangle_iterator;
 
 typedef Periodic_2_Delaunay_triangulation_2<Gt>     Delaunay_triangulation;
 
-typedef CGAL::Creator_uniform_2<double,Point>             Creator;
-typedef CGAL::Random_points_in_square_2<Point, Creator>   Random_points_in_square;
-typedef CGAL::Random_points_on_circle_2<Point, Creator>   Random_points_on_circle;
+typedef Periodic_2_triangulation_vertex_base_2<Gt>             PTH_Vbb;
+typedef Triangulation_hierarchy_vertex_base_2<PTH_Vbb>         PTH_Vb;
+typedef Periodic_2_triangulation_face_base_2<Gt>               PTH_Fb;
+typedef Triangulation_data_structure_2<PTH_Vb, PTH_Fb>         PTH_Tds;
+typedef Periodic_2_Delaunay_triangulation_2<Gt, PTH_Tds>       PTH_Dt;
+typedef Periodic_2_triangulation_hierarchy_2<PTH_Dt>           Delaunay_triangulation_hierarchy;
+
+typedef Creator_uniform_2<double,Point>             Creator;
+typedef Random_points_in_square_2<Point, Creator>   Random_points_in_square;
+typedef Random_points_on_circle_2<Point, Creator>   Random_points_on_circle;
 #endif // P2T2_UNIT_TEST_TYPES_H

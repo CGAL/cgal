@@ -155,14 +155,14 @@ The class `Periodic_2_triangulation_hierarchy_2` is the adaptation
 of the hierarchical structure described in
 Chapter \ref Chapter_2D_Triangulations,
 Section \ref Section_2D_Triangulations_Hierarchy to the periodic
-case. (NGHK: TODO, hierarchy is not implemented yet)
+case.
 
-The class `Triangulation_hierarchy_2<Tr>` inherits from the
-triangulation type passed as template parameter `Tr`. 
-The `insert`, `move`, and `remove` member functions
-are overwritten to update the data structure at each operation.
-The locate queries are also overwritten to take advantage of the data
-structure for a fast processing.
+The class `Periodic_2_triangulation_hierarchy_2<Tr>` inherits from the
+triangulation type passed as template parameter `Tr`. The `insert`,
+`move`, and `remove` member functions are overwritten to update the
+data structure at each operation. The locate queries are also
+overwritten to take advantage of the data structure for a fast
+processing.
 
 \section P2Triangulation2secdesign Software Design 
 
@@ -201,9 +201,9 @@ parameters:
   combinatorial structure, described in Section \ref
   P2Triangulation2sectds and in more detail in Chapter \ref
   Chapter_2D_Triangulation_Data_Structure. The triangulation data
-  structure needs alModels of the concepts
-  `Periodic_2TriangulationDSFaceBase_2` and
-  `Periodic_2TriangulationDSVertexBase_2` as template parameters.
+  structure needs Models of the concepts
+  `Periodic_2TriangulationFaceBase_2` and
+  `Periodic_2TriangulationVertexBase_2` as template parameters.
 
 \subsection P2Triangulation2secTraits The Geometric Traits Parameter 
 
@@ -263,8 +263,8 @@ possibility to customize the vertices and cells used by the triangulation data
 structure, and hence by the geometric triangulation using it.
 To represent periodic triangulations the cell base and vertex base
 classes need to meet the concepts
-`Periodic_2TriangulationDSFaceBase_2` and
-`Periodic_2TriangulationDSVertexBase_2`.
+`Periodic_2TriangulationFaceBase_2` and
+`Periodic_2TriangulationVertexBase_2`.
 
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it does not need to be specified by

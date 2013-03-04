@@ -9,12 +9,12 @@ typedef CGAL::Periodic_2_triangulation_filtered_traits_2<K> GT;
 
 typedef CGAL::Triangulation_vertex_base_2<GT> Vb;
 
-typedef CGAL::Periodic_2_triangulation_ds_face_base_2<> FbDS;
+typedef CGAL::Periodic_2_triangulation_face_base_2<> FbDS;
 typedef CGAL::Triangulation_face_base_2<GT,FbDS> Fb;
 
 typedef CGAL::Triangulation_vertex_base_with_info_2<CGAL::Color, GT, Vb> VbInfo;
-typedef CGAL::Triangulation_data_structure_2<VbInfo, Fb>    TDS;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT, TDS>  PDT;
+typedef CGAL::Triangulation_data_structure_2<VbInfo, Fb>    Tds;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT, Tds>  PDT;
 
 typedef PDT::Point   Point;
 

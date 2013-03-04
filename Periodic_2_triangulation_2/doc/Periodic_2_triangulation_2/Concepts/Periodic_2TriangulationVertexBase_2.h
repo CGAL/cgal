@@ -3,7 +3,7 @@
 \ingroup PkgPeriodic2Triangulation2Concepts
 \cgalConcept
 
-A refinement of the concept `TriangulationDSVertexBase_2` 
+A refinement of the concept `TriangulationVertexBase_2` 
 which adds an API for offset.
 
 At the base level of 2D-triangulations (see Section \ref
@@ -12,19 +12,19 @@ to one of its incident faces through a handle.
 
 The storage of the offset is only needed when a triangulation is copied.
 
-\cgalRefines `TriangulationDSVertexBase_2` 
+\cgalRefines `TriangulationVertexBase_2` 
 
  
 
-\cgalHasModel CGAL::Periodic_2_triangulation_ds_vertex_base_2 
+\cgalHasModel CGAL::Periodic_2_triangulation_vertex_base_2 
 
 \sa `TriangulationDataStructure_2` 
-\sa `TriangulationDSVertexBase_2` 
-\sa `Periodic_2TriangulationDSFaceBase_2` 
+\sa `TriangulationVertexBase_2` 
+\sa `Periodic_2TriangulationFaceBase_2` 
 
 */
 
-class Periodic_2TriangulationDSVertexBase_2 {
+class Periodic_2TriangulationVertexBase_2 {
 public:
 
 /// \name Types 
@@ -63,5 +63,5 @@ void clear_offset();
 
 /// @}
 
-}; /* end Periodic_2TriangulationDSVertexBase_2 */
+}; /* end Periodic_2TriangulationVertexBase_2 */
 

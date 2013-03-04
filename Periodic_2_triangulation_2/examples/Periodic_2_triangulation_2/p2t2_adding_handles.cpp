@@ -13,9 +13,9 @@ public:
   typedef typename Vb::Face_handle    Face_handle;
   typedef typename Vb::Point          Point;
 
-  template < class TDS2 >
-  struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+  template < class Tds2 >
+  struct Rebind_Tds {
+    typedef typename Vb::template Rebind_Tds<Tds2>::Other  Vb2;
     typedef My_vertex_base<GT, Vb2>                        Other;
   };
 
@@ -35,12 +35,12 @@ public:
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Periodic_2_triangulation_filtered_traits_2<K> GT;
 
-typedef CGAL::Triangulation_ds_vertex_base_2<> VbDS;
-typedef CGAL::Periodic_2_triangulation_ds_face_base_2<> FbDS;
+typedef CGAL::Triangulation_vertex_base_2<> VbDS;
+typedef CGAL::Periodic_2_triangulation_face_base_2<> FbDS;
 typedef CGAL::Triangulation_face_base_2<GT,FbDS> Fb;
 
-typedef CGAL::Triangulation_data_structure_2<My_vertex_base<GT,VbDS>, Fb> TDS;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT,TDS> PDT;
+typedef CGAL::Triangulation_data_structure_2<My_vertex_base<GT,VbDS>, Fb> Tds;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT,Tds> PDT;
 
 typedef PDT::Vertex_handle    Vertex_handle;
 typedef PDT::Point            Point;

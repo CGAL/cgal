@@ -37,9 +37,8 @@ namespace CGAL {
 template <
   class Gt, 
   class Tds = Triangulation_data_structure_2<
-                     Periodic_2_triangulation_ds_vertex_base_2<Gt>,
-                     Triangulation_face_base_2<Gt, 
-                       Periodic_2_triangulation_ds_face_base_2<> > > >
+    Periodic_2_triangulation_vertex_base_2<Gt>,
+    Periodic_2_triangulation_face_base_2<Gt> > >
 class Periodic_2_Delaunay_triangulation_2 : public Periodic_2_triangulation_2<Gt,Tds>
 {
   typedef Periodic_2_Delaunay_triangulation_2<Gt,Tds>          Self;

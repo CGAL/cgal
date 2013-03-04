@@ -9,17 +9,17 @@ its four vertices and to its four neighbor faces. The vertices and
 neighbors are indexed 0, 1 and 2. Neighbor \f$ i\f$ lies opposite to
 vertex \f$ i\f$.
 
-\cgalRefines ::TriangulationDSFaceBase_2 
+\cgalRefines ::TriangulationFaceBase_2 
 
-\cgalHasModel CGAL::Periodic_2_triangulation_ds_face_base_2 
+\cgalHasModel CGAL::Periodic_2_triangulation_face_base_2 
 
 \sa `TriangulationDataStructure_2` 
-\sa `TriangulationDSFaceBase_2` 
-\sa `Periodic_2TriangulationDSVertexBase_2` 
+\sa `TriangulationFaceBase_2` 
+\sa `Periodic_2TriangulationVertexBase_2` 
 
 */
 
-class Periodic_2TriangulationDSFaceBase_2 {
+class Periodic_2TriangulationFaceBase_2 {
 public:
 
 /// \name Access Functions 
@@ -48,5 +48,5 @@ void set_offsets(int off0, int off1, int off2);
 
 /// @}
 
-}; /* end Periodic_2TriangulationDSFaceBase_2 */
+}; /* end Periodic_2TriangulationFaceBase_2 */
 

@@ -51,8 +51,8 @@ triangulation classes.
 
 The package uses `Triangulation_data_structure_2` to represent the
 triangulation. The faces and vertices need to be alModels of the
-concepts `Periodic_2TriangulationDSFaceBase_2` and
-`TriangulationDSVertexBase_2`, respectively.
+concepts `Periodic_2TriangulationFaceBase_2` and
+`TriangulationVertexBase_2`, respectively.
 A triangulation is stored as a collection of vertices and faces that
 are linked together through incidence and adjacency relations. Each
 face gives access to its three incident vertices and to its three

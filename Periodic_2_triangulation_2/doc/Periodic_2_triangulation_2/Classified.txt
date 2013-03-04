@@ -14,9 +14,9 @@ functions in the triangulation classes.
 
 The package uses the `Triangulation_data_structure_2` to represent
 the triangulation. The faces need to be a model of the concept
-`Periodic_2TriangulationDSFaceBase_2` and the vertices can be a
+`Periodic_2TriangulationFaceBase_2` and the vertices can be a
 model of the Euclidean vertex concept
-`TriangulationDSVertexBase_2`.  A triangulation is stored as a
+`TriangulationVertexBase_2`.  A triangulation is stored as a
 collection of vertices and faces that are linked together through
 incidence and adjacency relations. Each face gives access to its three
 incident vertices and to its three adjacent faces. Each vertex gives
@@ -44,7 +44,7 @@ concept `Periodic_2Offset_2`.
 
 `TriangulationDataStructure_2`
 
-`Periodic_2TriangulationDSFaceBase_2`
+`Periodic_2TriangulationFaceBase_2`
 
 `TriangulationVertexBase_2`
 
@@ -60,7 +60,7 @@ concept `Periodic_2Offset_2`.
 
 \ref ::CGAL::Periodic_2_triangulation_hierarchy_2<PTr>
 
-\ref ::CGAL::Periodic_2_triangulation_ds_face_base_2<>
+\ref ::CGAL::Periodic_2_triangulation_face_base_2<>
 
 \ref ::CGAL::Periodic_2_offset_2
 

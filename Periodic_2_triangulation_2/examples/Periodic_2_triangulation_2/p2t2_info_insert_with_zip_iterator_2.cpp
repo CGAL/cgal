@@ -7,7 +7,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Periodic_2_triangulation_traits_2<K>                  Gt;
 typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned, Gt>   Vb;
-typedef CGAL::Periodic_2_triangulation_ds_face_base_2<> FbDS;
+typedef CGAL::Periodic_2_triangulation_face_base_2<> FbDS;
 typedef CGAL::Triangulation_face_base_2<Gt,FbDS> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                 Tds;
 typedef CGAL::Periodic_2_Delaunay_triangulation_2<Gt, Tds>          Delaunay;

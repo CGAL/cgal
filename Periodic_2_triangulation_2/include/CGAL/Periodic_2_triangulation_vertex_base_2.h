@@ -11,16 +11,16 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://nicokruithof@scm.gforge.inria.fr/svnroot/cgal/trunk/Periodic_2_triangulation_2/include/CGAL/Periodic_2_triangulation_ds_vertex_base_2.h $
-// $Id: Periodic_2_triangulation_ds_vertex_base_2.h 56667 2010-06-09 07:37:13Z sloriot $
+// $URL: svn+ssh://nicokruithof@scm.gforge.inria.fr/svnroot/cgal/trunk/Periodic_2_triangulation_2/include/CGAL/Periodic_2_triangulation_vertex_base_2.h $
+// $Id: Periodic_2_triangulation_vertex_base_2.h 56667 2010-06-09 07:37:13Z sloriot $
 // 
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 //                 Nico Kruithof <Nico@nghk.nl>
 
-#ifndef CGAL_PERIODIC_2_TRIANGULATION_DS_VERTEX_BASE_2_H
-#define CGAL_PERIODIC_2_TRIANGULATION_DS_VERTEX_BASE_2_H
+#ifndef CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H
+#define CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
@@ -29,31 +29,34 @@
 namespace CGAL {
 
 
-/* A vertex class with an additionnal handle */
 template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
-class Periodic_2_triangulation_ds_vertex_base_2
-  : public  Vb
+class Periodic_2_triangulation_vertex_base_2
+  : public Vb
 {
-  typedef Vb                              Base;
+  typedef Vb                                           Base;
+  typedef typename Vb::Triangulation_data_structure    Tds;
 public:
-  typedef typename Vb::Vertex_handle      Vertex_handle;
-  typedef typename Vb::Face_handle        Face_handle;
-  typedef typename Vb::Point              Point;
-  typedef Periodic_2_offset_2       Offset;
+  typedef Gt                                    Geom_traits;
+  typedef typename Gt::Point_2                  Point;
+  typedef Tds                                   Triangulation_data_structure;
+  typedef typename Tds::Face_handle             Face_handle;
+  typedef typename Tds::Vertex_handle           Vertex_handle;
 
-  template < typename TDS2 >
+  typedef Periodic_2_offset_2                   Offset;
+
+  template < typename Tds2 >
   struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS2>::Other     Vb2;
-    typedef Periodic_2_triangulation_ds_vertex_base_2<Gt,Vb2> Other;
+    typedef typename Vb::template Rebind_TDS<Tds2>::Other     Vb2;
+    typedef Periodic_2_triangulation_vertex_base_2<Gt,Vb2>    Other;
   };
 
 public:
-  Periodic_2_triangulation_ds_vertex_base_2() : Base() {}
-  Periodic_2_triangulation_ds_vertex_base_2(const Point & p)
+  Periodic_2_triangulation_vertex_base_2() : Base() {}
+  Periodic_2_triangulation_vertex_base_2(const Point & p)
     : Base(p), _off(), _offset_flag(false) {}
-  Periodic_2_triangulation_ds_vertex_base_2(const Point & p, Face_handle f)
+  Periodic_2_triangulation_vertex_base_2(const Point & p, Face_handle f)
     : Base(f,p), _off(), _offset_flag(false) {}
-  Periodic_2_triangulation_ds_vertex_base_2(Face_handle f)
+  Periodic_2_triangulation_vertex_base_2(Face_handle f)
     : Base(f), _off(), _offset_flag(false) {}
 
   const Offset& offset() const {
@@ -83,35 +86,22 @@ private:
   Offset _off;
   /// The flag is used to test whether _off has been set.
   bool _offset_flag;
-
-
-  // // For use by the Compact_container.
-  // void *   for_compact_container() const
-  // { return _c.for_compact_container(); }
-  // void * & for_compact_container()
-  // { return _c.for_compact_container(); }
-
-// private:
-//   Face_handle _c;
-//   Offset _off;
-//   int _index;
-//   bool _offset_flag;
 };
 
-template < class TDS >
+template < class Tds >
 inline
 std::istream&
-operator>>(std::istream &is, Periodic_2_triangulation_ds_vertex_base_2<TDS> &)
+operator>>(std::istream &is, Periodic_2_triangulation_vertex_base_2<Tds> &)
   // no combinatorial information.
 {
   return is;
 }
 
-template < class TDS >
+template < class Tds >
 inline
 std::ostream&
 operator<<(std::ostream &os,
-    const Periodic_2_triangulation_ds_vertex_base_2<TDS> &)
+    const Periodic_2_triangulation_vertex_base_2<Tds> &)
   // no combinatorial information.
 {
   return os;
@@ -119,18 +109,18 @@ operator<<(std::ostream &os,
 
 // Specialization for void.
 template <>
-class Periodic_2_triangulation_ds_vertex_base_2<void>
+class Periodic_2_triangulation_vertex_base_2<void>
 {
 public:
   typedef Dummy_tds_2                                   Triangulation_data_structure;
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Face_handle     Face_handle;
-  template <typename TDS2>
-  struct Rebind_TDS {
-    typedef Periodic_2_triangulation_ds_vertex_base_2<TDS2> Other;
+  template <typename Tds2>
+  struct Rebind_Tds {
+    typedef Periodic_2_triangulation_vertex_base_2<Tds2> Other;
   };
 };
 
 } //namespace CGAL
 
-#endif // CGAL_PERIODIC_2_TRIANGULATION_DS_VERTEX_BASE_2_H
+#endif // CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H

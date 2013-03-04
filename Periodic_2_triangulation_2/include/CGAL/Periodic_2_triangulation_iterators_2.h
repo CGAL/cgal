@@ -29,7 +29,7 @@ template < class T >
 class Periodic_2_triangulation_triangle_iterator_2 {
   // Iterates over the primitives in a periodic triangulation.
   // Options:
-  // - STORED: output each primitive from the TDS exactly once
+  // - STORED: output each primitive from the Tds exactly once
   // - UNIQUE: output exactly one periodic copy of each primitive, no matter
   //     whether the current tds stores a n-sheeted covering for n!=1.
   // - STORED_COVER_DOMAIN: output each primitive whose intersection with the
@@ -304,7 +304,7 @@ template < class T >
 class Periodic_2_triangulation_segment_iterator_2 {
   // Iterates over the primitives in a periodic triangulation.
   // Options:
-  // - STORED: output each primitive from the TDS exactly once
+  // - STORED: output each primitive from the Tds exactly once
   // - UNIQUE: output exactly one periodic copy of each primitive, no matter
   //     whether the current tds stores a n-sheeted covering for n!=1.
   // - STORED_COVER_DOMAIN: output each primitive whose intersection with the
@@ -558,7 +558,7 @@ template < class T >
 class Periodic_2_triangulation_point_iterator_2 {
   // Iterates over the primitives in a periodic triangulation.
   // Options:
-  // - STORED: output each primitive from the TDS exactly once
+  // - STORED: output each primitive from the Tds exactly once
   // - UNIQUE: output exactly one periodic copy of each primitive, no matter
   //     whether the current tds stores a n-sheeted covering for n!=1.
   // - STORED_COVER_DOMAIN: output each primitive whose intersection with the

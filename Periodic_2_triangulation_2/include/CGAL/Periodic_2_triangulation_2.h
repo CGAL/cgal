@@ -39,8 +39,8 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Periodic_2_triangulation_ds_face_base_2.h>
-#include <CGAL/Periodic_2_triangulation_ds_vertex_base_2.h>
+#include <CGAL/Periodic_2_triangulation_face_base_2.h>
+#include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
 #include <CGAL/Periodic_2_triangulation_iterators_2.h>
 #include <CGAL/spatial_sort.h>
 
@@ -57,10 +57,10 @@ namespace CGAL {
 /// - Insertion of points
 /// - Deletion of points
 /// - Point location
-template<class Gt, class Tds = Triangulation_data_structure_2<
-                     Periodic_2_triangulation_ds_vertex_base_2<Gt>,
-                     Triangulation_face_base_2<Gt, 
-                       Periodic_2_triangulation_ds_face_base_2<> > > >
+template<class Gt,
+         class Tds = Triangulation_data_structure_2<
+           Periodic_2_triangulation_vertex_base_2<Gt>,
+           Periodic_2_triangulation_face_base_2<Gt> > >
 class Periodic_2_triangulation_2: public Triangulation_cw_ccw_2 {
   typedef Periodic_2_triangulation_2<Gt, Tds> Self;
 
@@ -1539,8 +1539,8 @@ Periodic_2_triangulation_2<Gt, Tds>::operator=(
 }
 
 // Helping functions
-template < class GT, class TDS >
-class Periodic_2_triangulation_2<GT,TDS>::Finder {
+template < class GT, class Tds >
+class Periodic_2_triangulation_2<GT,Tds>::Finder {
   const Self* _t;
   const Point & _p;
 public:
@@ -1550,10 +1550,10 @@ public:
   }
 };
 
-template < class GT, class TDS >
+template < class GT, class Tds >
 inline void
-Periodic_2_triangulation_2<GT,TDS>::
-copy_multiple_covering(const Periodic_2_triangulation_2<GT,TDS> & tr) {  
+Periodic_2_triangulation_2<GT,Tds>::
+copy_multiple_covering(const Periodic_2_triangulation_2<GT,Tds> & tr) {  
   // Write the respective offsets in the vertices to make them
   // automatically copy with the tds.
   for (Vertex_iterator vit = tr.vertices_begin() ;
@@ -3308,8 +3308,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering() {
 
 // iterate over all edges and store the ones that are longer than
 // edge_length_threshold in edges. Return the number of too long edges.
-template<class GT, class TDS>
-inline int Periodic_2_triangulation_2<GT, TDS>::find_too_long_edges(std::map<
+template<class GT, class Tds>
+inline int Periodic_2_triangulation_2<GT, Tds>::find_too_long_edges(std::map<
     Vertex_handle, std::list<Vertex_handle> >& edges) const {
   Point p1, p2;
   int counter = 0;
@@ -3343,8 +3343,8 @@ inline int Periodic_2_triangulation_2<GT, TDS>::find_too_long_edges(std::map<
  *   So if we are working in 3-cover we translate it to the neighboring
  *   3-cover and not only to the neighboring domain.
  */
-template<class GT, class TDS>
-inline void Periodic_2_triangulation_2<GT, TDS>::get_vertex(Face_handle fh,
+template<class GT, class Tds>
+inline void Periodic_2_triangulation_2<GT, Tds>::get_vertex(Face_handle fh,
     int i, Vertex_handle &vh, Offset &off) const {
   off = combine_offsets(Offset(), int_to_off(fh->offset(i)));
   vh = fh->vertex(i);
@@ -3356,8 +3356,8 @@ inline void Periodic_2_triangulation_2<GT, TDS>::get_vertex(Face_handle fh,
   return;
 }
 
-template<class GT, class TDS>
-inline void Periodic_2_triangulation_2<GT, TDS>::get_vertex(Vertex_handle vh_i,
+template<class GT, class Tds>
+inline void Periodic_2_triangulation_2<GT, Tds>::get_vertex(Vertex_handle vh_i,
     Vertex_handle &vh, Offset &off) const {
   Virtual_vertex_map_it it = _virtual_vertices.find(vh_i);
 
@@ -3382,9 +3382,9 @@ inline void Periodic_2_triangulation_2<GT, TDS>::get_vertex(Vertex_handle vh_i,
  *  Iterates over all faces and compare the three vertices of each face
  *  with the three vertices in vh.
  */
-template<class GT, class TDS>
-inline typename Periodic_2_triangulation_2<GT, TDS>::Face_handle Periodic_2_triangulation_2<
-    GT, TDS>::get_face(const Vertex_handle* vh) const {
+template<class GT, class Tds>
+inline typename Periodic_2_triangulation_2<GT, Tds>::Face_handle Periodic_2_triangulation_2<
+    GT, Tds>::get_face(const Vertex_handle* vh) const {
   bool contains_v[2];
   Face_circulator fc = incident_faces(vh[2]);
   Face_circulator done(fc);
@@ -3970,8 +3970,8 @@ bool Periodic_2_triangulation_2<Gt, Tds>::edge_is_too_long(const Point &p1,
   return squared_distance(p1, p2) > _edge_length_threshold;
 }
 
-template<class GT, class TDS>
-inline bool Periodic_2_triangulation_2<GT, TDS>::is_extensible_triangulation_in_1_sheet_h1() const {
+template<class GT, class Tds>
+inline bool Periodic_2_triangulation_2<GT, Tds>::is_extensible_triangulation_in_1_sheet_h1() const {
   if (!is_1_cover()) {
     if (_too_long_edge_counter == 0)
       return true;
@@ -3990,8 +3990,8 @@ inline bool Periodic_2_triangulation_2<GT, TDS>::is_extensible_triangulation_in_
   }
 }
 
-template<class GT, class TDS>
-inline bool Periodic_2_triangulation_2<GT, TDS>::is_extensible_triangulation_in_1_sheet_h2() const {
+template<class GT, class Tds>
+inline bool Periodic_2_triangulation_2<GT, Tds>::is_extensible_triangulation_in_1_sheet_h2() const {
   typedef typename Geom_traits::Construct_circumcenter_2 Construct_circumcenter;
   typedef typename Geom_traits::FT FT;
   Construct_circumcenter construct_circumcenter =
@@ -4009,8 +4009,8 @@ inline bool Periodic_2_triangulation_2<GT, TDS>::is_extensible_triangulation_in_
   return true;
 }
 
-template<class GT, class TDS>
-inline bool Periodic_2_triangulation_2<GT, TDS>::is_triangulation_in_1_sheet() const {
+template<class GT, class Tds>
+inline bool Periodic_2_triangulation_2<GT, Tds>::is_triangulation_in_1_sheet() const {
   if (is_1_cover())
     return true;
   for (Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit) {
@@ -4326,16 +4326,16 @@ namespace internal {
 
   /// Internal function used by operator==.
   //TODO: introduce offsets
-  template <class GT, class TDS1, class TDS2>
+  template <class GT, class Tds1, class Tds2>
   bool
-  test_next(const Periodic_2_triangulation_2<GT, TDS1> &t1,
-            const Periodic_2_triangulation_2<GT, TDS2> &t2,
-            typename Periodic_2_triangulation_2<GT, TDS1>::Face_handle c1,
-            typename Periodic_2_triangulation_2<GT, TDS2>::Face_handle c2,
-            std::map<typename Periodic_2_triangulation_2<GT, TDS1>::Face_handle,
-            typename Periodic_2_triangulation_2<GT, TDS2>::Face_handle> &Cmap,
-            std::map<typename Periodic_2_triangulation_2<GT, TDS1>::Vertex_handle,
-            typename Periodic_2_triangulation_2<GT, TDS2>::Vertex_handle> &Vmap)
+  test_next(const Periodic_2_triangulation_2<GT, Tds1> &t1,
+            const Periodic_2_triangulation_2<GT, Tds2> &t2,
+            typename Periodic_2_triangulation_2<GT, Tds1>::Face_handle c1,
+            typename Periodic_2_triangulation_2<GT, Tds2>::Face_handle c2,
+            std::map<typename Periodic_2_triangulation_2<GT, Tds1>::Face_handle,
+            typename Periodic_2_triangulation_2<GT, Tds2>::Face_handle> &Cmap,
+            std::map<typename Periodic_2_triangulation_2<GT, Tds1>::Vertex_handle,
+            typename Periodic_2_triangulation_2<GT, Tds2>::Vertex_handle> &Vmap)
   {
     // This function tests and registers the 4 neighbors of c1/c2,
     // and recursively calls itself over them.
@@ -4348,8 +4348,8 @@ namespace internal {
     CGAL_triangulation_precondition(Vmap.find(c1->vertex(1)) != Vmap.end());
     CGAL_triangulation_precondition(Vmap.find(c1->vertex(2)) != Vmap.end());
 
-    typedef Periodic_2_triangulation_2<GT, TDS1> Tr1;
-    typedef Periodic_2_triangulation_2<GT, TDS2> Tr2;
+    typedef Periodic_2_triangulation_2<GT, Tds1> Tr1;
+    typedef Periodic_2_triangulation_2<GT, Tds2> Tr2;
     typedef typename Tr1::Vertex_handle  Vertex_handle1;
     typedef typename Tr1::Face_handle    Face_handle1;
     typedef typename Tr2::Vertex_handle  Vertex_handle2;
@@ -4414,27 +4414,27 @@ operator<<(std::ostream& os, Periodic_2_triangulation_2<Gt, Tds> &tr) {
   return tr.save(os);
 }
 
-template < class GT, class TDS1, class TDS2  >
+template < class GT, class Tds1, class Tds2  >
 bool
-operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
-     const Periodic_2_triangulation_2<GT,TDS2> &t2)
+operator==(const Periodic_2_triangulation_2<GT,Tds1> &t1,
+     const Periodic_2_triangulation_2<GT,Tds2> &t2)
 {
-  typedef typename Periodic_2_triangulation_2<GT,TDS1>::Vertex_handle
+  typedef typename Periodic_2_triangulation_2<GT,Tds1>::Vertex_handle
       Vertex_handle1;
-  typedef typename Periodic_2_triangulation_2<GT,TDS1>::Face_handle  
+  typedef typename Periodic_2_triangulation_2<GT,Tds1>::Face_handle  
       Face_handle1;
-  typedef typename Periodic_2_triangulation_2<GT,TDS2>::Vertex_handle
+  typedef typename Periodic_2_triangulation_2<GT,Tds2>::Vertex_handle
       Vertex_handle2;
-  typedef typename Periodic_2_triangulation_2<GT,TDS2>::Vertex_handle
+  typedef typename Periodic_2_triangulation_2<GT,Tds2>::Vertex_handle
       Vertex_iterator2;
-  typedef typename Periodic_2_triangulation_2<GT,TDS2>::Face_handle
+  typedef typename Periodic_2_triangulation_2<GT,Tds2>::Face_handle
       Face_handle2;
-  typedef typename Periodic_2_triangulation_2<GT,TDS2>::Face_circulator
+  typedef typename Periodic_2_triangulation_2<GT,Tds2>::Face_circulator
       Face_circulator2;
   
-  typedef typename Periodic_2_triangulation_2<GT,TDS1>::Point      Point;
-  typedef typename Periodic_2_triangulation_2<GT,TDS1>::Offset     Offset;
-  typedef typename Periodic_2_triangulation_2<GT,TDS1>
+  typedef typename Periodic_2_triangulation_2<GT,Tds1>::Point      Point;
+  typedef typename Periodic_2_triangulation_2<GT,Tds1>::Offset     Offset;
+  typedef typename Periodic_2_triangulation_2<GT,Tds1>
       ::Geom_traits::Compare_xy_2                       Compare_xy_2;
   
   // Some quick checks.
@@ -4515,11 +4515,11 @@ operator==(const Periodic_2_triangulation_2<GT,TDS1> &t1,
       Cmap.begin()->first, Cmap.begin()->second, Cmap, Vmap);
 }
 
-template < class GT, class TDS1, class TDS2 >
+template < class GT, class Tds1, class Tds2 >
 inline
 bool
-operator!=(const Periodic_2_triangulation_2<GT,TDS1> &t1,
-    const Periodic_2_triangulation_2<GT,TDS2> &t2)
+operator!=(const Periodic_2_triangulation_2<GT,Tds1> &t1,
+    const Periodic_2_triangulation_2<GT,Tds2> &t2)
 {
   return ! (t1 == t2);
 }

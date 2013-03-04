@@ -18,7 +18,7 @@ instantiated by a model of the concept
 `TriangulationDataStructure_2` with some additional functionality 
 in faces. By default, the triangulation data structure is instantiated 
 by 
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_ds_vertex_base_2<Gt>, CGAL::Periodic_2_triangulation_ds_face_base_2<Gt> > >`. 
+`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`. 
 
 ### Implementation ###
 
@@ -42,7 +42,7 @@ vertices distributed uniformly at random and any query point.
 \sa `CGAL::Delaunay_triangulation_2<Traits,Tds>`
 \sa `TriangulationDataStructure_2`
 \sa `Periodic_2DelaunayTriangulationTraits_2`
-\sa `CGAL::Triangulation_hierarchy_2<Tr>`
+\sa `CGAL::Periodic_2_triangulation_hierarchy_2<Tr>`
 
 */
 template< typename Traits, typename Tds >
