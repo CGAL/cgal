@@ -11,6 +11,7 @@
 //#define CGAL_MESH_3_EXUDER_HIGH_VERBOSITY
 //#define CGAL_MESH_3_VERY_VERBOSE
 #define CGAL_MESH_3_IO_VERBOSE
+#define CGAL_DEBUG_GLOBAL_LOCK_DS // CJTODO TEMP
 
 //#define SHOW_REMAINING_BAD_ELEMENT_IN_RED
 
@@ -26,7 +27,7 @@
 #  define CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #endif
 
-//#define CGAL_MESH_3_DEMO_BIGGER_HISTOGRAM_WITH_WHITE_BACKGROUNG
+#define CGAL_MESH_3_DEMO_BIGGER_HISTOGRAM_WITH_WHITE_BACKGROUNG
 
 // If you define this, implicit function and segmented images won't be available
 //#define CGAL_MESH_3_DEMO_ACTIVATE_SHARP_FEATURES_IN_POLYHEDRAL_DOMAIN
@@ -35,8 +36,10 @@
 # define CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #endif
 
+//#define CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
+
 // Debugging
-#define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+//#define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
 
 // Optimizers
 //#define CGAL_MESH_3_DEMO_DISABLE_ODT
@@ -55,17 +58,20 @@
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
 
 // ==========================================================================
-// CONCURRENCY
+// ==========================================================================
+// CONCURRENT MESH_3?
+// ==========================================================================
 // ==========================================================================
 
 #ifdef CONCURRENT_MESH_3
 
 # ifndef CGAL_LINKED_WITH_TBB
-#   pragma error("CGAL_LINKED_WITH_TBB not defined.")
+#   pragma message(" : Warning: CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
 # endif
 
-# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE // default behavior
 //# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
+# define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 # include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
   // ==========================================================================
@@ -81,9 +87,7 @@
 
   const char * const CONFIG_FILENAME = 
     "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
-
-//# define CGAL_MESH_3_ACTIVATE_GRID_INDEX_CACHE_IN_VERTEX // DOES NOT WORK YET
-    
+  
   // =================
   // Locking strategy
   // =================
@@ -100,10 +104,6 @@
 //# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
 # define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
 # ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-//#   define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-//#   ifdef CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS
-//#     define CGAL_MESH_3_TASK_SCHEDULER_WITH_LOCALIZATION_IDS_SHARED // optional
-//#   endif
 //#   define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 #   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
 //#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
@@ -120,9 +120,16 @@
   // For abortion profiling, etc.
 # define CGAL_CONCURRENT_MESH_3_PROFILING
 
+
+// ==========================================================================
+// ==========================================================================
+// SEQUENTIAL MESH_3?
+// ==========================================================================
+// ==========================================================================
+
 #else // !CONCURRENT_MESH_3
 
-# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
+//# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE
 //# define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 

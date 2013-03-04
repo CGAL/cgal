@@ -50,8 +50,8 @@ namespace po = boost::program_options;
 //#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
 //#define MESH_3_BENCHMARK_EXPORT_TO_MESH
 //#define MESH_3_BENCHMARK_LLOYD
-#define MESH_3_BENCHMARK_PERTURB
-//#define MESH_3_BENCHMARK_EXUDE
+//#define MESH_3_BENCHMARK_PERTURB
+#define MESH_3_BENCHMARK_EXUDE
 
 // ==========================================================================
 // MESH_3 GENERAL PARAMETERS

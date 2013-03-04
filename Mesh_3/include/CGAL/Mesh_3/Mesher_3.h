@@ -303,6 +303,10 @@ template<class C3T3, class MC, class MD>
 double
 Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 {
+#ifdef CGAL_LINKED_WITH_TBB
+  tbb::task_scheduler_init init(10); // CJTODO TEMP
+#endif
+
   CGAL::Timer timer;
   timer.start();
   double elapsed_time = 0.;
