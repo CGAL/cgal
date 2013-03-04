@@ -270,8 +270,6 @@ public:
   WorkItem() {}
   // Derived class defines the actual work.
   virtual void run() const = 0;
-  virtual void set_index(int) = 0;
-  virtual int get_index() const = 0;
   virtual bool less_than(const WorkItem &) const = 0;
 };
 
@@ -295,7 +293,7 @@ class MeshRefinementWorkItem
 {
 public:
   MeshRefinementWorkItem(const Func& func, const Quality &quality)
-    : m_func(func), m_index(-1), m_quality(quality)
+    : m_func(func), m_quality(quality)
   {}
 
   void run() const
@@ -303,17 +301,7 @@ public:
     m_func();
     delete this;
   }
-
-  void set_index(int index)
-  {
-    m_index = index;
-  }
-
-  int get_index() const
-  {
-    return m_index;
-  }
-
+  
   bool less_than (const WorkItem &other) const
   {
     /*try
@@ -331,7 +319,6 @@ public:
 
 private:
   Func      m_func;
-  int       m_index; // CJTODO: USELESS?
   Quality   m_quality;
 };
 
@@ -360,8 +347,6 @@ public:
   }
   
   // Irrelevant here
-  void set_index(int) {}
-  int get_index() const { return 0; }
   bool less_than (const WorkItem &other) const 
   { 
     // Just compare addresses
@@ -564,7 +549,6 @@ public:
   {
     WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
     int index = m_stats.compute_index(point);
-    p_item->set_index(index);
     WorkBatch &wb = m_tls_work_buffers[index].local();
     wb.add_work_item(p_item);
     if (wb.size() >= NUM_WORK_ITEMS_PER_BATCH)
@@ -606,7 +590,7 @@ public:
     int index = m_stats.get_laziest_cell_index();
     bool popped = m_work_batches[index].try_pop(wb);
 
-    // If queue is empty CJTODO: do something better
+    // If queue is empty // CJTODO: do something better
     if (!popped)
     {
       // Look for an non-empty queue
