@@ -68,7 +68,7 @@ private:
   CGAL::Qt::PolygonGraphicsItem<Polygon_2> * min_parallelogram_gi;
   QGraphicsEllipseItem *cgi, *egi;
 
-  const std::size_t P;
+  const int P;
   QGraphicsRectItem *p_center[3];
   Iso_rectangle_2 p_center_iso_rectangle[3];
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
@@ -133,7 +133,7 @@ MainWindow::MainWindow()
   egi->hide();
   scene.addItem(egi);
   
-  for(std::size_t i =0; i < P; i++){
+  for(int i =0; i < P; i++){
     p_center[i] = new QGraphicsRectItem;
     p_center[i]->setPen(QPen(Qt::cyan, 0, Qt::SolidLine));
     p_center[i]->hide(); 
@@ -244,7 +244,7 @@ MainWindow::update()
   CGAL::Qt::Converter<K> convert;  
 
   if(this->actionShowPCenter->isChecked() && convex_hull.size()>=3){
-    for(std::size_t i=0; i< P; i++){
+    for(int i=0; i< P; i++){
       p_center[i]->setRect(convert(p_center_iso_rectangle[i]));
       p_center[i]->show();
     }
@@ -405,7 +405,7 @@ MainWindow::on_actionShowConvexHull_toggled(bool checked)
 void
 MainWindow::on_actionShowPCenter_toggled(bool checked)
 {
-  for(std::size_t i =0; i < P; i++){
+  for(int i =0; i < P; i++){
     p_center[i]->setVisible(checked);
   }
   emit (changed());
@@ -420,7 +420,7 @@ MainWindow::on_actionClear_triggered()
   convex_hull.clear();
   min_rectangle.clear();
   min_parallelogram.clear();
-  for(std::size_t i=0; i < P;i++){
+  for(int i=0; i < P;i++){
     p_center[i]->hide();
   }
   emit(changed());
