@@ -12,7 +12,6 @@ int main() {
   boost::function_requires< boost::EqualityComparableConcept<T> >();
   boost::function_requires< boost::ComparableConcept<T> >();
   boost::function_requires< boost::RandomAccessContainerConcept<T> >();
-  boost::function_requires< boost::BackInsertionSequenceConcept<T> >();
 
   CGAL::Exponent_vector ev1,ev2;
   assert(ev1.size()==0);
