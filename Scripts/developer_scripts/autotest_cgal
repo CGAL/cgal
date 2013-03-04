@@ -78,9 +78,7 @@ MAIL_ADDRESS="must_be_set_in_.autocgalrc"
 MYSHELL=""
 REFERENCE_PLATFORMS_DIR="must_be_set_in_.autocgalrc"
 ACTUAL_DIR=`pwd`
-LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 RSH="rsh"
-LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
 NICE_OPTIONS="-19"
 CMAKE_GENERATOR=""
 USE_TARGZ="n"
@@ -89,7 +87,6 @@ PLATFORMS=""
 PLATFORM=""
 USE_REFERENCE_PLATFORMS=""
 SHOW_PROGRESS=""
-LIST_TEST_PACKAGES="${CGAL_ROOT}/list_test_packages"
 
 # ----------------------------------------------------------------------------------------
 # write to logfile
@@ -831,6 +828,10 @@ else
     exit 1
   fi
 fi
+
+LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
+LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
+LIST_TEST_PACKAGES="${CGAL_ROOT}/list_test_packages"
 
 # Setup logfile
 ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
