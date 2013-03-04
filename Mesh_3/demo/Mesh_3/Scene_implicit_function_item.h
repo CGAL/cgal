@@ -60,7 +60,6 @@ private:
   Implicit_function_interface* function_;
   ManipulatedFrame* frame_;
   
-  bool initialized_;
   int grid_size_;
   double max_value_;
   double min_value_;
