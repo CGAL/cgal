@@ -23,6 +23,8 @@
 #  pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
+#include <CGAL/use.h>
+
 template <class Traits>
 void _test_for_given_domain(const Traits & traits,
     typename Traits::Point_3 * p)
@@ -276,41 +278,44 @@ void _test_for_given_domain(const Traits & traits,
 
   // Test Construct_point_3
   Point p0 = construct_point(p[0],o[0]);
-  Point p1 = construct_point(p[1],o[1]);
-  Point p2 = construct_point(p[2],o[2]);
-  Point p3 = construct_point(p[3],o[3]);
-
+  p0 = construct_point(p[1],o[1]);
+  p0 = construct_point(p[2],o[2]);
+  p0 = construct_point(p[3],o[3]);
+  CGAL_USE(p0);
   // Test Construct_segment_3
   Segment s01 = construct_segment(p[0],p[1]);
-  Segment s02 = construct_segment(p[0],p[2]);
-  Segment s03 = construct_segment(p[0],p[3]);
-  Segment s12 = construct_segment(p[1],p[2]);
-  Segment s13 = construct_segment(p[1],p[3]);
-  Segment s23 = construct_segment(p[2],p[3]);
+  s01 = construct_segment(p[0],p[2]);
+  s01 = construct_segment(p[0],p[3]);
+  s01 = construct_segment(p[1],p[2]);
+  s01 = construct_segment(p[1],p[3]);
+  s01 = construct_segment(p[2],p[3]);
 
-  Segment s01o = construct_segment(p[0],p[1],o[0],o[1]);
-  Segment s02o = construct_segment(p[0],p[2],o[0],o[2]);
-  Segment s03o = construct_segment(p[0],p[3],o[0],o[3]);
-  Segment s12o = construct_segment(p[1],p[2],o[1],o[2]);
-  Segment s13o = construct_segment(p[1],p[3],o[1],o[3]);
-  Segment s23o = construct_segment(p[2],p[3],o[2],o[3]);
- 
+  s01 = construct_segment(p[0],p[1],o[0],o[1]);
+  s01 = construct_segment(p[0],p[2],o[0],o[2]);
+  s01 = construct_segment(p[0],p[3],o[0],o[3]);
+  s01 = construct_segment(p[1],p[2],o[1],o[2]);
+  s01 = construct_segment(p[1],p[3],o[1],o[3]);
+  s01 = construct_segment(p[2],p[3],o[2],o[3]);
+  CGAL_USE(s01);
+
   // Test Construct_triangle_3
   Triangle t0 = construct_triangle(p[1],p[2],p[3]);
-  Triangle t1 = construct_triangle(p[0],p[2],p[3]);
-  Triangle t2 = construct_triangle(p[0],p[1],p[3]);
-  Triangle t3 = construct_triangle(p[0],p[1],p[2]);
+  t0 = construct_triangle(p[0],p[2],p[3]);
+  t0 = construct_triangle(p[0],p[1],p[3]);
+  t0 = construct_triangle(p[0],p[1],p[2]);
 
-  Triangle t0o = construct_triangle(p[1],p[2],p[3],o[1],o[2],o[3]);
-  Triangle t1o = construct_triangle(p[0],p[2],p[3],o[0],o[2],o[3]);
-  Triangle t2o = construct_triangle(p[0],p[1],p[3],o[0],o[1],o[3]);
-  Triangle t3o = construct_triangle(p[0],p[1],p[2],o[0],o[1],o[2]);
- 
+  t0 = construct_triangle(p[1],p[2],p[3],o[1],o[2],o[3]);
+  t0 = construct_triangle(p[0],p[2],p[3],o[0],o[2],o[3]);
+  t0 = construct_triangle(p[0],p[1],p[3],o[0],o[1],o[3]);
+  t0 = construct_triangle(p[0],p[1],p[2],o[0],o[1],o[2]);
+  CGAL_USE(t0);
+
   // Test Construct_triangle_3
   Tetrahedron t = construct_tetrahedron(p[0],p[1],p[2],p[3]);
-  Tetrahedron to = construct_tetrahedron(p[0],p[1],p[2],p[3],
+  t = construct_tetrahedron(p[0],p[1],p[2],p[3],
       o[0],o[1],o[2],o[3]);
- 
+  CGAL_USE(t);
+
   // Test of Construct_circumcenter_3
   Point c = construct_circumcenter(p[0],p[1],p[2],p[3]);
   assert(compare_distance(c,p[0],p[1]) == CGAL::EQUAL);

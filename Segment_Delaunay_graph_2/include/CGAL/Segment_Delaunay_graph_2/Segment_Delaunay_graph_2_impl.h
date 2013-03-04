@@ -642,8 +642,6 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   Storage_site_2 ssitev = v->storage_site();
   Storage_site_2 ssx = st_.construct_storage_site_2_object()(ss, ssitev);
 
-  Site_2 sitev = ssitev.site();
-
   Face_pair fpair = find_faces_to_split(v, ssx.site());
 
   boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
@@ -659,8 +657,6 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   Storage_site_2 ssv2 =
     st_.construct_storage_site_2_object()(ssitev, ss, false);
 
-  Site_2 sv1 = ssv1.site();
-  Site_2 sv2 = ssv2.site();
   v1->set_site( ssv1 );
   v2->set_site( ssv2 );
 
