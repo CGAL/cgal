@@ -3,16 +3,28 @@
 /// \defgroup PkgCombinatorialMapsConcepts Concepts
 /// \ingroup PkgCombinatorialMaps
 
+/// \defgroup PkgCombinatorialMapsClasses Classes
+/// \ingroup PkgCombinatorialMaps
+
+/*! Basic constructions.
+  \code
+  #include <CGAL/Combinatorial_map_constructors.h>
+  \endcode
+*/
 /// \defgroup PkgCombinatorialMapsConstructions Constructions
 /// \ingroup PkgCombinatorialMaps
 
+/*! High-level operations.
+  \code
+  #include <CGAL/Combinatorial_map_operations.h>
+  \endcode
+*/
 /// \defgroup PkgCombinatorialMapsOperations Operations
 /// \ingroup PkgCombinatorialMaps
 
 
 /*!
 \addtogroup PkgCombinatorialMaps
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Combinatorial Maps,PkgCombinatorialMapsSummary}
 \cgalPkgPicture{logo-cmap-small-v2.png}
 \cgalPkgSummaryBegin

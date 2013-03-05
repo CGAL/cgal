@@ -301,13 +301,13 @@ void test_Polyhedron() {
 
     typedef Polyhedron::HDS                     HDS;
     typedef PolyhedronI::HDS                    HDSI;
-    typedef PolyhedronK::HDS                    HDSK;
+
     typedef PolyhedronV::HDS                    HDSV;
     typedef PolyhedronL::HDS                    HDSL;
 
     typedef Polyhedron::Vertex                  Vertex;
-    typedef Polyhedron::Halfedge                Halfedge;
-    typedef Polyhedron::Facet                   Facet;
+    CGAL_USE_TYPE(Polyhedron::Halfedge);
+    CGAL_USE_TYPE(Polyhedron::Facet);
 
     typedef Polyhedron::Vertex_iterator         Vertex_iterator;
     typedef Polyhedron::Facet_iterator          Facet_iterator;
@@ -1116,33 +1116,29 @@ void test_Polyhedron() {
 void test_min_Polyhedron() {
     typedef CGAL::Cartesian<double>                     Kernel;
     typedef CGAL::Point_3<Kernel>                       Point;
-    typedef CGAL::Plane_3<Kernel>                       Plane;
     typedef CGAL::Polyhedron_traits_3<Kernel>           Traits;
     typedef CGAL::Polyhedron_3<Traits,
                 CGAL::Polyhedron_min_items_3>           Polyhedron;
 
     typedef Polyhedron::HDS                     HDS;
-    typedef Polyhedron::Vertex                  Vertex;
-    typedef Polyhedron::Halfedge                Halfedge;
-    typedef Polyhedron::Facet                   Facet;
+    CGAL_USE_TYPE(Polyhedron::Vertex);
+    CGAL_USE_TYPE(Polyhedron::Halfedge);
+    CGAL_USE_TYPE(Polyhedron::Facet);
 
-    typedef Polyhedron::Vertex_iterator         Vertex_iterator;
-    typedef Polyhedron::Facet_iterator          Facet_iterator;
+    CGAL_USE_TYPE( Polyhedron::Vertex_iterator);
+    CGAL_USE_TYPE(Polyhedron::Facet_iterator);
     typedef Polyhedron::Halfedge_handle         Halfedge_handle;
     typedef Polyhedron::Halfedge_iterator       Halfedge_iterator;
-    typedef Polyhedron::Edge_iterator           Edge_iterator;
-    typedef Polyhedron::Halfedge_const_handle   Halfedge_const_handle;
-    typedef Polyhedron::Halfedge_const_iterator Halfedge_const_iterator;
-    typedef Polyhedron::Edge_const_iterator     Edge_const_iterator;
+    CGAL_USE_TYPE(Polyhedron::Edge_iterator);
+    CGAL_USE_TYPE(Polyhedron::Halfedge_const_handle);
+    CGAL_USE_TYPE(Polyhedron::Halfedge_const_iterator);
+    CGAL_USE_TYPE(Polyhedron::Edge_const_iterator);
 
-    typedef Polyhedron::Halfedge_around_vertex_circulator
-                                   Halfedge_around_vertex_circulator;
-    typedef Polyhedron::Halfedge_around_vertex_const_circulator
-                                   Halfedge_around_vertex_const_circulator;
-    typedef Polyhedron::Halfedge_around_facet_circulator
-                                   Halfedge_around_facet_circulator;
-    typedef Polyhedron::Halfedge_around_facet_const_circulator
-                                   Halfedge_around_facet_const_circulator;
+    CGAL_USE_TYPE(Polyhedron::Halfedge_around_vertex_circulator);
+
+    CGAL_USE_TYPE(Polyhedron::Halfedge_around_vertex_const_circulator);
+    CGAL_USE_TYPE(Polyhedron::Halfedge_around_facet_circulator);
+    CGAL_USE_TYPE(Polyhedron::Halfedge_around_facet_const_circulator);
 
     {
         // The first check that the polyhedron and its normalization works.

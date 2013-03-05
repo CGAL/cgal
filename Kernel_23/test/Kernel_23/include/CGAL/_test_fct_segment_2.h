@@ -30,7 +30,7 @@ _test_fct_segment_2(const R& )
  std::cout << "Testing functions Segment_2" ;
 
  typedef typename  R::RT          RT;
- typedef typename  R::FT          FT;
+
  typedef typename  R::Point_2     Point_2;
  typedef typename  R::Segment_2   Segment_2;
 

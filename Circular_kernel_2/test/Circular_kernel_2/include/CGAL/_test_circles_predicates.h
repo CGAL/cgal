@@ -29,7 +29,6 @@
 template <class CK>
 void _test_circle_predicat(CK ck)
 {
-  typedef typename CK::FT                      FT;
   typedef CGAL::Circle_2<CK>                   Circle_2;
   typedef CGAL::Circular_arc_2<CK>             Circular_arc_2;
   typedef CGAL::Point_2<CK>                    Point_2;

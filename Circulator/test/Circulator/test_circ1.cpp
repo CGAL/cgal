@@ -197,7 +197,7 @@ int foo3( T t,  Random_access_circulator_tag) {
 }
 
 template< class T> inline
-int foo3( T t) { return -1; }  // never used
+int foo3( T /*t*/) { return -1; }  // never used
 
 template< class T> inline
 int foo2( T t, Circulator_tag) {
@@ -214,7 +214,7 @@ int foo2( T t, Iterator_tag) {
 }
 
 template< class T> inline
-int foo2( T t) { return -1; }  // never used
+int foo2( T /*t*/) { return -1; }  // never used
 
 template< class T> inline
 int foo( T t) {     
@@ -294,7 +294,7 @@ void test_tags() {
         std::vector<int>::difference_type
     > Circulator;
     typedef Random_access_container_from_circulator<Circulator> Container;
-    typedef Container::iterator Iterator;
+ 
     Circulator ci( v.begin(), v.end());
     Container  Co( ci);
     assert( 3 == foo( ci));

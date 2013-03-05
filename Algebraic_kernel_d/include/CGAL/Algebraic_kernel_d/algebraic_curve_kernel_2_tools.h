@@ -194,10 +194,9 @@ template<typename AlgebraicKernel_1,
 					  InputIterator start,
 					  InputIterator end,
 					  OutputIterator output) {
-    typedef typename AlgebraicKernel_1::Algebraic_real_1 Alg_real;
     CGAL_static_assertion
       ((::boost::is_same
-	<Alg_real,
+	<typename AlgebraicKernel_1::Algebraic_real_1,
 	typename std::iterator_traits<InputIterator>::value_type >::value));
     
     typedef typename AlgebraicKernel_1::Bound Bound;

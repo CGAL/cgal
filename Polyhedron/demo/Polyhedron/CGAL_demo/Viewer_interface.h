@@ -11,7 +11,9 @@ class Scene_draw_interface;
 class QMouseEvent;
 class QKeyEvent;
 
-class Viewer_interface : public QGLViewer {
+#include "../Viewer_config.h" // for VIEWER_EXPORT
+
+class VIEWER_EXPORT Viewer_interface : public QGLViewer {
 
   Q_OBJECT
 

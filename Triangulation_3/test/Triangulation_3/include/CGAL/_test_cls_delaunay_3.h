@@ -201,7 +201,14 @@ _test_cls_delaunay_3(const Triangulation &)
   typedef typename Cls::Finite_vertices_iterator      Finite_vertices_iterator;
   typedef typename Cls::Finite_cells_iterator        Finite_cells_iterator;
 
-
+  CGAL_USE_TYPE(Location_policy);
+  CGAL_USE_TYPE(Segment);
+  CGAL_USE_TYPE(Triangle);
+  CGAL_USE_TYPE(Tetrahedron);
+  CGAL_USE_TYPE(Vertex);
+  CGAL_USE_TYPE(Cell);
+  CGAL_USE_TYPE(Vertex_iterator);
+  CGAL_USE_TYPE(Cell_iterator);
   // +++ We define now some points for building triangulations +++++//
 
 // list of Points for T1_0 , T1_1, T1_2 :

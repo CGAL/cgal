@@ -79,7 +79,6 @@ OutputIterator connect_holes(const Polygon_with_holes_2<Kernel,
                              OutputIterator oi)
 {
   typedef Polygon_2<Kernel,Container>              Polygon_2;
-  typedef Polygon_with_holes_2<Kernel,Container>   Polygon_with_holes_2;
   typedef Arr_segment_traits_2<Kernel>             Traits_2;
   typedef typename Kernel::Point_2                 Point_2;
   typedef typename Traits_2::X_monotone_curve_2    Segment_2;

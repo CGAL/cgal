@@ -29,6 +29,7 @@
 
 // includes
 #  include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/use.h>
 #include <cassert>
 
 namespace CGAL {
@@ -48,7 +49,7 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
     using namespace std;
 
     typedef  CGAL::Polytope_distance_d< Traits >  Poly_dist;
-    typedef  typename Traits::Point_d             Point;
+    CGAL_USE_TYPE(typename Traits::Point_d);
 
     CGAL::Verbose_ostream verr ( verbose >= 0);
     CGAL::Verbose_ostream verr0( verbose == 0);

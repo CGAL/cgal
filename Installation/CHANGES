@@ -1,10 +1,19 @@
 
 -------------------------------- Release 4.2 --------------------------------
 
-Release date:
+Release date: March 2013
 
 
 * Installation
+
+  - Additional supported platforms:
+
+      - The Microsoft Windows Visual C++ compiler 2012 (VC11) is now supported.
+
+
+  - With Microsoft Visual C++ (all supported versions), the compiler flags /
+    bigobj and /wd4503 are added by CGAL CMake scripts.
+
 
   - This is the last release whose "UseCGAL.cmake" file (if using CGAL in a
     CMake build environment) contains the line
@@ -23,10 +32,28 @@ Release date:
     building executables, removal of '${CGAL_3RD_PARTY_LIBRARIES}').
 
 
+* 3D Minkowski Sum of Polyhedra
+
+  - Fix a memory leak.
+
+
 * 3D Fast Intersection and Distance Computation
 
   - Update requirements of the concepts AABBTraits and AABBGeomTraits to match
     the implementation of the package.
+
+
+* 2D Arrangements
+
+  - Enhanced the 2D-arrangements demonstration program and ported it to Qt4.
+    The new demonstration program makes use of the CGAL Graphics View
+    framework, in which the 2D primitives are individually represented as
+    objects in a scene. (The implementations of several demos in CGAL already
+    make use of this framework.) This project was carried out as part of the
+    2012 Google Summer of Code program.
+
+  - Fixed a bug in the Walk-Along-A-Line point location strategy for
+    arrangements induced by unbounded curves.
 
 
 * 2D Triangulations
@@ -38,6 +65,14 @@ Release date:
 * Generator
 
   - Addition of the Combination_enumerator
+
+
+* STL Extensions
+
+  - Introduction of CGAL::cpp11::result_of as an alias to the tr1
+    implementation from boost of the result_of mechanism. When all compilers
+    supported by CGAL will have a Standard compliant implemention of the C++11
+    decltype feature, it will become an alias to std::result_of.
 
 
 * Surface Reconstruction from Point Sets
@@ -59,7 +94,7 @@ Release date:
 
 -------------------------------- Release 4.1 --------------------------------
 
-Release date:
+Release date: October 2012
 
 
 * Installation

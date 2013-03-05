@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgLinearCellComplexClasses
 
 The class `Linear_cell_complex_min_items` defines the type of darts, which is a
-`Dart_wrapper::Dart<d,LCC>`, and the traits class used. In
+\ref CombinatorialMapItems::Dart_wrapper "Dart_wrapper::Dart<d,LCC>", and the traits class used. In
 this class, 0-attributes are enabled and associated with
 `Cell_attribute_with_point`.
 
@@ -23,14 +23,13 @@ The following example shows one implementation of the
 template <unsigned int d>
 struct Linear_cell_complex_min_items
 {
-template <class LCC>
-struct Dart_wrapper
-{
-typedef CGAL::Dart<d, LCC> Dart;
-
-typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
-typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
-};
+  template <class LCC>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Dart<d, LCC> Dart;
+    typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
+    typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+  };
 };
 
 \endcode

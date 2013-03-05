@@ -51,7 +51,7 @@ void drawAllPoints( Map&amap )
 }
 
 template<class Map>
-void test2D()
+bool test2D()
 {
   typedef typename Map::Dart_handle Dart_handle;
 
@@ -137,7 +137,7 @@ void test2D()
     drawAllPoints(map);
 
     // Triangulate the facet between the two triangles
-    insert_cell_0_in_cell_2( map, d1 );
+    CGAL::insert_cell_0_in_cell_2( map, d1 );
 
     cout << "Parcours all after insert_cell_0_in_cell_2: ";
     drawAllPoints(map);
@@ -426,7 +426,7 @@ void test2D()
     d1 = make_combinatorial_hexahedron ( map );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    insert_cell_0_in_cell_2 ( map, d1 );
+    CGAL::insert_cell_0_in_cell_2 ( map, d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     std::vector<Dart_handle> V;
@@ -459,7 +459,7 @@ void test2D()
     d2 = map.create_dart ( Point ( 1, 0, 0 ) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "insert edge1: " << flush;
-    insert_edge ( map, d1, d2 );
+    CGAL::insertedge ( map, d1, d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     map.clear();*/
 
@@ -467,14 +467,14 @@ void test2D()
     map.template sew<1> ( d1, d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "insert edge2: " << flush;
-    insert_edge ( map, d1, d1->beta ( 2 ) );
+    CGAL::insertedge ( map, d1, d1->beta ( 2 ) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     map.clear();*/
 
     d1 = make_combinatorial_polygon ( map,4 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "insert edge3: " << flush;
-    insert_cell_1_in_cell_2 ( map, d1, d1->beta(1)->beta(1) );
+    CGAL::insert_cell_1_in_cell_2 ( map, d1, d1->beta(1)->beta(1) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     map.clear();
 
@@ -485,7 +485,7 @@ void test2D()
 				  << endl;
     cout << "insert edge4: "
          << flush;
-    insert_cell_1_in_cell_2 ( map, d1, d1->beta(1)->beta(1) );
+    CGAL::insert_cell_1_in_cell_2 ( map, d1, d1->beta(1)->beta(1) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     map.clear();
 
@@ -496,12 +496,14 @@ void test2D()
     map.template sew<2> ( d1, d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "insert edge5: " << flush;
-    insert_cell_1_in_cell_2 ( map, d1, d2 );
+    CGAL::insert_cell_1_in_cell_2 ( map, d1, d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     map.clear();*/
 
     cout << "***************************** TEST INSERT EDGE 2D DONE."
          << endl;
+
+    return true;
 }
 
 #endif // CGAL_COMBINATORIAL_MAP_2_TEST

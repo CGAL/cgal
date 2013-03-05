@@ -38,6 +38,7 @@
 #include <boost/random/variate_generator.hpp>
 
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/use.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
@@ -217,6 +218,7 @@ public:
     _gt.set_domain(_domain);
     typedef typename internal::Exact_type_selector<FT>::Type EFT;
     typedef NT_converter<FT,EFT> NTC;
+    CGAL_USE_TYPE(NTC);
     CGAL_triangulation_assertion_code( NTC ntc; )
     CGAL_triangulation_precondition(ntc(_domain.xmax())-ntc(_domain.xmin())
 	== ntc(_domain.ymax())-ntc(_domain.ymin()));

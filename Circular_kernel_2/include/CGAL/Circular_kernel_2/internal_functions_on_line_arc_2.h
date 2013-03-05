@@ -554,12 +554,10 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &c,
 	       OutputIterator res )
   {
-    typedef typename CK::Circular_arc_2 Circular_arc_2;
-    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-    typedef typename CK::Line_arc_2 Line_arc_2;
     typedef std::vector<CGAL::Object > solutions_container;
 
 #ifdef CGAL_CK_EXPLOIT_IDENTITY
+    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     bool ls_cs = l.source().equal_ref(c.source());
     bool ls_ct = l.source().equal_ref(c.target());
     bool lt_cs = l.target().equal_ref(c.source());
@@ -659,6 +657,7 @@ namespace CircularFunctors {
     solutions_container solutions;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
+    typedef typename CK::Line_arc_2 Line_arc_2;
       if(!Line_arc_2::template 
          find_intersection_circle_line< solutions_container > 
          (c,l,solutions)) {
@@ -752,9 +751,7 @@ namespace CircularFunctors {
 	       OutputIterator res )
   {
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
-    typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Point_2                  Point_2;
-    typedef typename CK::Line_2                   Line_2;
 
     if(LinearFunctors::non_oriented_equal<CK>(l, la.supporting_line())) {
       *res++ = make_object(la);
@@ -778,7 +775,6 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &c,
 	       OutputIterator res )
   {
-    typedef typename CK::Circular_arc_2 Circular_arc_2;
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
     typedef std::vector<CGAL::Object > solutions_container;
 
@@ -790,9 +786,9 @@ namespace CircularFunctors {
 
     for (typename solutions_container::iterator it = solutions.begin();
 	 it != solutions.end(); ++it) {
-      const std::pair<typename CK::Circular_arc_point_2, unsigned>
+      const std::pair<Circular_arc_point_2, unsigned>
         *result = CGAL::object_cast
-	  <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+	  <std::pair<Circular_arc_point_2, unsigned> > (&(*it));
       if (has_on<CK>(c,result->first,true)) {
 	*res++ = *it;
       }

@@ -115,8 +115,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
-  qt4_generate_moc( "Polyhedron_demo_remeshing_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Polyhedron_demo_remeshing_plugin_cgal_code.moc" )
-
   include( ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_demo_macros.cmake )
 
   qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
@@ -136,6 +134,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
               Show_point_dialog.cpp
+              Mesher_base.cpp
               Camera_positions_list.cpp
               Scene_points_with_normal_item.cpp
               )
@@ -269,7 +268,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   ###########
   remove_definitions(-DQT_STATICPLUGIN)
 
-  polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Polyhedron_demo_remeshing_plugin_cgal_code.moc ${remeshingUI_FILES})
+  polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Mesher_base.cpp ${remeshingUI_FILES})
   target_link_libraries(remeshing_plugin scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)
 
   polyhedron_demo_plugin(camera_positions_plugin 

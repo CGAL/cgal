@@ -91,7 +91,8 @@ public:
     if (has_certificates_ != tf) {
       has_certificates_=tf;
       if (has_certificates_) {
-	bool ev= event_.is_valid();
+	CGAL_assertion_code(bool ev=)
+          event_.is_valid();
 	CGAL_assertion(!ev);
 	Time t= CGAL::to_interval(sp->current_time()).second+1;
 	event_= sp->new_event(t, Event(objects_.begin(),

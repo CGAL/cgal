@@ -24,7 +24,6 @@ _test_compare_dihedral_angle_3(const R& rep)
 {
   typedef typename R::Point_3 Point_3;
   typedef typename R::Vector_3 Vector_3;
-  typedef typename R::RT RT;
   typedef typename R::FT FT;
   typename R::Compare_dihedral_angle_3 compare_dih_angle
     = rep.compare_dihedral_angle_3_object();

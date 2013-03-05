@@ -1,6 +1,10 @@
 #include <CGAL/basic.h>
 #include <CGAL/Interval_nt.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4723)
+#endif
+
 int main()
 {
     long double zero = 0.0;

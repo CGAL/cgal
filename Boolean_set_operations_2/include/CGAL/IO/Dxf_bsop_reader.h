@@ -134,8 +134,8 @@ public:
     typename Dxf_polygon_2::iterator      curr, next;
     Point_2                               ps, pt;
     Circle_2                              supp_circ;
-    int                                   n_subarcs;
-    int                                   i;
+    std::size_t                           n_subarcs;
+    std::size_t                           i;
 
     for (pgn_it = polygons.begin(); pgn_it != polygons.end(); ++pgn_it)
     {

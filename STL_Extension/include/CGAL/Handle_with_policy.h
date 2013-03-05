@@ -27,6 +27,8 @@
 #include <CGAL/type_traits.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
+
 #include <boost/mpl/if.hpp>
 
 #include <cstddef>
@@ -364,6 +366,7 @@ namespace Intern {
             typedef typename T::Allocator Alloc;
             typedef ::CGAL::Reference_counted_hierarchy_with_union<Alloc> 
                 Reference_counted_hierarchy_with_union;
+            CGAL_USE_TYPE(Reference_counted_hierarchy_with_union);
             CGAL_static_assertion((
               ::CGAL::is_same_or_derived< Reference_counted_hierarchy_with_union, T >::value ));
         }

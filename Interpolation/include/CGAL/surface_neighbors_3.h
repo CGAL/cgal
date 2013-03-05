@@ -215,7 +215,6 @@ surface_neighbors_3(const Dt& dt,
 		    typename Dt::Cell_handle start
 		    = typename Dt::Cell_handle())
 {
-  typedef typename ITraits::FT            Coord_type;
   typedef typename ITraits::Point_2       Point_3;
 
   typedef typename Dt::Cell_handle        Cell_handle;

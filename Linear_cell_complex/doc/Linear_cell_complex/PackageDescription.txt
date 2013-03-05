@@ -1,20 +1,30 @@
 /// \defgroup PkgLinearCellComplex Linear Cell Complex Reference
+
 /// \defgroup PkgLinearCellComplexConcepts Concepts
 /// \ingroup PkgLinearCellComplex
 
 /// \defgroup PkgLinearCellComplexClasses Classes
 /// \ingroup PkgLinearCellComplex
 
+/*! Basic constructions.
+  \code
+  #include <CGAL/Linear_cell_complex_constructors.h>
+  \endcode
+*/
 /// \defgroup PkgLinearCellComplexConstructions Constructions for Linear Cell Complex
 /// \ingroup PkgLinearCellComplex
 
+/*! High-level operations.
+  \code
+   #include <CGAL/Linear_cell_complex_operations.h>
+   \endcode
+*/
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplex
 
 
 /*!
 \addtogroup PkgLinearCellComplex
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Linear Cell Complex,PkgLinearCellComplexSummary}
 \cgalPkgPicture{logo-lcc-small.png}
 \cgalPkgSummaryBegin

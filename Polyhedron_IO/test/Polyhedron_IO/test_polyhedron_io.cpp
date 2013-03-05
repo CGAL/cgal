@@ -67,8 +67,6 @@ const char* tetra =    "OFF\n"
 
 void test_file_IO_OFF() {
     typedef Cartesian<double>     Kernel;
-    typedef Kernel::Point_3       Point;
-    typedef Kernel::Plane_3       Plane;
     typedef Polyhedron_3<Kernel>  Polyhedron;
     {
         Polyhedron P;

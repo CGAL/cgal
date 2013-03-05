@@ -51,7 +51,6 @@ void test_speed_for_query(const Tree& tree,
                           const char *query_name,
                           const double duration)
 {
-    typedef typename K::FT FT;
     typedef typename K::Ray_3 Ray;
     typedef typename K::Line_3 Line;
     typedef typename K::Point_3 Point;

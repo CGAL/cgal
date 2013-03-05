@@ -35,6 +35,7 @@
 #include <CGAL/Residue.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/primes.h>
+#include <CGAL/use.h>
 
 #include <cassert>
 
@@ -81,7 +82,7 @@ void test_CR_for(const NT& f){
   CGAL::Set_ieee_double_precision pfr;
   
     typedef CGAL::Modular_traits<NT> MT;
-    typedef typename CGAL::Modular_traits<NT>::Residue_type MNT;
+    CGAL_USE_TYPE(typename CGAL::Modular_traits<NT>::Residue_type);
     typename MT::Modular_image modular_image;
     typename MT::Modular_image_representative modular_image_representative; 
     

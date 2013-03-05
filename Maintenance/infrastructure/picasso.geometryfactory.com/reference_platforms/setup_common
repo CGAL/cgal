@@ -1,0 +1,25 @@
+#import Visual specific variables
+source "${PLATFORM_REFERENCE}/setup_VC${VC_VERSION}-${ARCH}"
+
+export CMAKE_GENERATOR='-GNMake Makefiles'
+export MAKE_CMD='/cygdrive/c/bin/jom/jom.exe'
+export PATH=$PATH:'/cygdrive/c/CGAL/CGAL-I/scripts:/cygdrive/c/CGAL/CGAL-I/developer_scripts'
+
+#Header only libraries
+export BOOST_INCLUDEDIR="C:\3rdPartyLibs\boost_1_53_0"
+export EIGEN3_DIR="C:\3rdPartyLibs\Eigen-3.1.2"
+export ESBTL_DIR="C:\3rdPartyLibs\esbtl"
+
+#paths depending on the architecture
+export BOOST_LIBRARYDIR="C:\3rdPartyLibs\boost_1_53_0\lib${ARCH}"
+export GMP_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
+export GMP_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
+export MPFR_INC_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\include"
+export MPFR_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
+
+#paths depending on the compiler and the architecture
+export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.3.17"
+export QTDIR="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\QT-4.8.4"
+
+export PATH=$PATH:"`cygpath $CGAL_DIR`/bin:`cygpath $GMP_LIB_DIR`:`cygpath $QTDIR`/bin:`cygpath $BOOST_LIBRARYDIR`:`cygpath $QGLVIEWERROOT`/QGLViewer/debug:`cygpath $QGLVIEWERROOT`/QGLViewer/release:/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib"
+

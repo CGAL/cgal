@@ -278,8 +278,9 @@ void test_HalfedgeDS_decorator3() {
     // Simple instantiation of the default halfedge data structure.
     typedef CGAL::HalfedgeDS_default<Dummy_traits_2>  HDS;
     typedef CGAL::HalfedgeDS_decorator<HDS>          Decorator;
-    typedef HDS::Halfedge_handle                     Halfedge_handle;
-    typedef HDS::Face_handle                         Face_handle;
+
+    CGAL_USE_TYPE(HDS::Halfedge_handle);
+    CGAL_USE_TYPE(HDS::Face_handle);
 
     HDS hds;
 

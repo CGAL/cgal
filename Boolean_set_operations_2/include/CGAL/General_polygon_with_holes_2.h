@@ -108,7 +108,7 @@ public:
 
   Size number_of_holes() const
   {
-    return m_holes.size();
+    return static_cast<Size>(m_holes.size());
   }
 
   void clear()

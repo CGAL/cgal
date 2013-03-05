@@ -1241,14 +1241,14 @@ class Intersection_of_Polyhedra_3{
       case internal_IOP::VERTEX: v1=(void*)( &(*(ipt.info_1->vertex()))     );  break;
       case internal_IOP::EDGE  : v1=(void*)( &(*smaller_handle(ipt.info_1)) );  break;
       case internal_IOP::FACET : v1=(void*)( &(*(ipt.info_1->facet()))      );  break;
-      default: CGAL_assertion(!"Should not get there!");
+      default: CGAL_error_msg("Should not get there!");
     }
 
     switch(ipt.type_2){
       case internal_IOP::VERTEX: v2=(void*)( &(*(ipt.info_2->vertex()))     );  break;
       case internal_IOP::EDGE  : v2=(void*)( &(*smaller_handle(ipt.info_2)) );  break;
       case internal_IOP::FACET : v2=(void*)( &(*(ipt.info_2->facet()))      );  break;
-      default: CGAL_assertion(!"Should not get there!");
+      default: CGAL_error_msg("Should not get there!");
     }
 
     std::pair<void*,void*> key=make_sorted_void_pair(v1,v2);
@@ -1297,7 +1297,7 @@ class Intersection_of_Polyhedra_3{
               case internal_IOP::VERTEX: handle_coplanar_case_VERTEX_VERTEX(iti->info_1,iti->info_2,node_id); break;
               case internal_IOP::EDGE  : handle_coplanar_case_VERTEX_EDGE(iti->info_1,iti->info_2,node_id);   break;
               case internal_IOP::FACET : handle_coplanar_case_VERTEX_FACET(iti->info_1,iti->info_2,node_id);  break;
-              default: CGAL_assertion(!"Should not get there!");
+              default: CGAL_error_msg("Should not get there!");
             }
           }
           break;
@@ -1312,7 +1312,7 @@ class Intersection_of_Polyhedra_3{
                 cip_handle_case_edge(node_id,fset,iti->info_1,iti->info_2);                
               }
               break;
-              default: CGAL_assertion(!"Should not get there!");
+              default: CGAL_error_msg("Should not get there!");
             }
           }            
           break;
@@ -1324,7 +1324,7 @@ class Intersection_of_Polyhedra_3{
           }
           break;
           
-          default: CGAL_assertion(!"Should not get there!");
+          default: CGAL_error_msg("Should not get there!");
         }
       }
       switch (nb_pts){

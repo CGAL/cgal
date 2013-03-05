@@ -311,10 +311,13 @@ endif()
 #   CGAL-3.8   : 7.0.0 (At least CGAL::Random has changed its member fields.)
 #   CGAL-3.9   : 8.0.0 (No way to check the binary compatibility.)
 #   CGAL-4.0   : 9.0.0 (No way to check the binary compatibility.)
-#   CGAL-4.1: : 10.0.0 (No way to check the binary compatibility.)
+#   CGAL-4.1   : 10.0.0 (No way to check the binary compatibility.)
+#   CGAL-4.2   : 10.0.1 (Nothing different in CGAL compiled libraries¹.)
+
+# ¹) According to abi-http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION "10" )
-set( CGAL_SOVERSION      "10.0.0" )
+set( CGAL_SOVERSION      "10.0.1" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -395,6 +398,8 @@ if( MSVC )
   uniquely_add_flags ( CGAL_CXX_FLAGS "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS" )
   uniquely_add_flags ( CGAL_CXX_FLAGS "/fp:strict" )
   uniquely_add_flags ( CGAL_CXX_FLAGS "/fp:except-" )
+  uniquely_add_flags ( CGAL_CXX_FLAGS "/wd4503" ) # Suppress warnings C4503 about "decorated name length exceeded"
+  uniquely_add_flags ( CGAL_CXX_FLAGS "/bigobj" ) # Use /bigobj by default
 
   if ( RUNNING_CGAL_AUTO_TEST )
     set(CMAKE_CXX_WARNING_LEVEL 2 CACHE STRING "MSVC C++ compiler warning level" FORCE)
@@ -872,8 +877,9 @@ if ( NOT RUNNING_CGAL_AUTO_TEST )
 
   add_programs(examples examples OFF )
   add_programs(demo     demos    OFF )
-  add_programs(test     tests    OFF )
-  
+  if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test")
+    add_programs(test     tests    OFF )
+  endif()
 endif()
 
 #--------------------------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
   if ( !lcc.is_valid() )
     {
       std::cout<<"ERROR: the lcc is not valid."<<std::endl;
-      assert(false);
+      CGAL_assertion(false);
       return false;
     }
   
@@ -46,7 +46,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<", "<<nbcc<<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "
                <<nbc[2]<<", "<<nbc[3]<<", "<<nbc[4]<<", "<<nbc[5]<<")."
                <<std::endl;
-      assert(false);
+      CGAL_assertion(false);
       return false;
     }
 
@@ -56,7 +56,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<"the number of vertex attributes ("
                <<lcc.number_of_vertex_attributes()<<")"<<std::endl;
 
-      assert(false);
+      CGAL_assertion(false);
       return false;
     }
   
@@ -256,6 +256,33 @@ bool test_LCC_4()
   CGAL::remove_cell<LCC,1>(lcc, dh3);  
   if ( !check_number_of_cells_4(lcc, 0, 0, 0, 0, 0, 0) )
     return false;
+
+  dh1 = lcc.make_tetrahedron(apoint<LCC>(-1, 0, 0,0),apoint<LCC>(0, 2, 0,0),
+                             apoint<LCC>(1, 0, 0,0),apoint<LCC>(1, 1, 2,0));
+  dh2 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -1,0),apoint<LCC>(-1, 0, -1,0),
+                             apoint<LCC>(1, 0, -1,0),apoint<LCC>(1, 1, -3,0));
+
+  if ( !lcc.template is_sewable<4>(dh1, dh2) )
+  {
+    std::cout<<"ERROR: the two 3-cells are not sewable."<<std::endl;
+    CGAL_assertion(false);
+    return false;
+  }
+
+  dh3 = dh1->beta(2);
+  dh5 = lcc.template beta<1, 2>(dh1);
+
+  lcc.template unsew<2>(dh3);
+  lcc.template unsew<2>(dh5);
+  lcc.template sew<2>(dh1, dh5);
+  lcc.template sew<2>(dh1->beta(1), dh3);
+
+  if ( lcc.template is_sewable<4>(dh1, dh2) )
+  {
+    std::cout<<"ERROR: the two 3-cells are sewable."<<std::endl;
+    CGAL_assertion(false);
+    return false;
+  }
 
   /*    import_from_polyhedron<LCC>(lcc,ap);
 

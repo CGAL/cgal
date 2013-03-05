@@ -227,8 +227,7 @@ void test_dynamic_insert(const std::list<Weighted_point >& lst)
 
 void test_dynamic_remove(const std::list<Weighted_point >& lst)
 {
-  typedef std::list<Weighted_point >::const_iterator Iterator;
-  WFixed_AS dynamic_as(lst.begin(),lst.end());
+   WFixed_AS dynamic_as(lst.begin(),lst.end());
   
 //  int k=0;
   while (dynamic_as.dimension() == 3)

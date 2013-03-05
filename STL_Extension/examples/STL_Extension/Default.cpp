@@ -1,7 +1,10 @@
 #include <CGAL/Default.h>
+#include <CGAL/use.h>
 
 // A is a concrete type
 struct A {};
+
+void use_a(A) {}
 
 // B is the template class which has 2 template parameters
 // with default arguments : A and int.
@@ -25,5 +28,5 @@ int main ()
 {
     B<CGAL::Default, double> b;
 
-    A a = b.a1; //  It is really of type A.
+    use_a(b.a1); //  It is really of type A.
 }

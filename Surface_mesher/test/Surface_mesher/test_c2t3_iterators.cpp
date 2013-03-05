@@ -3,6 +3,8 @@
 // c2t3
 #include <CGAL/Complex_2_in_triangulation_3.h>
 
+#include <CGAL/use.h>
+
 #include <iostream>  // std::cerr
 #include <algorithm> // std::distance
 
@@ -65,5 +67,6 @@ int main(int , char**)
   // check the cast from C2t3::Vertex_iterator to Vertex_handle, at compile
   // time.
   Tr::Vertex_handle v3 = c2t3.vertices_begin();
+  CGAL_USE(v3);
   c2t3.is_regular_or_boundary_for_vertices(c2t3.vertices_begin());
 }

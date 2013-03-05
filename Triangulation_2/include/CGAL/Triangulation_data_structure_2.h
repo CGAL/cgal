@@ -223,7 +223,10 @@ public:
     CGAL_triangulation_precondition (f->neighbor(i) != Face_handle() &&
 				     f->dimension() >= 1);
     if (f->dimension() == 1) {
-      return 1 - (f->neighbor(i)->index(f->vertex(1-i)));
+      CGAL_assume(i<=1);
+      const int j = f->neighbor(i)->index(f->vertex(1-i));
+      CGAL_assume(j<=1);
+      return 1 - j;
     }
     return ccw( f->neighbor(i)->index(f->vertex(ccw(i))));
   }

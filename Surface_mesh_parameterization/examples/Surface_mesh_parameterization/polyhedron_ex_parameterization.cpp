@@ -97,7 +97,6 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
     // Helper class to compute genus or extract borders
     typedef CGAL::Parameterization_mesh_feature_extractor<Parameterization_polyhedron_adaptor_ex>
                                             Mesh_feature_extractor;
-    typedef Mesh_feature_extractor::Border  Border;
     typedef Mesh_cutter::Backbone           Backbone;
 
     Seam seam;              // returned list

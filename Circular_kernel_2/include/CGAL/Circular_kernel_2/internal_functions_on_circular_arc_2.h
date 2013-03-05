@@ -543,8 +543,8 @@ namespace CircularFunctors {
 	       OutputIterator res )
   {
     typedef std::vector<CGAL::Object> solutions_container; 
-    typedef typename CK::Circular_arc_2 Circular_arc_2; 
-    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2; 
+    typedef typename CK::Circular_arc_2 Circular_arc_2;
+
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     // same curve
@@ -566,6 +566,7 @@ namespace CircularFunctors {
 #endif
 
 #ifdef  CGAL_CK_EXPLOIT_IDENTITY
+    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2; 
     bool a1s_a2s = a1.source().equal_ref(a2.source());
     bool a1s_a2t = a1.source().equal_ref(a2.target());
     bool a1t_a2s = a1.target().equal_ref(a2.source());

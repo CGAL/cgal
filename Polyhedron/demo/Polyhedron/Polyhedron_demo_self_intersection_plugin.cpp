@@ -52,7 +52,6 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
 
     // compute self-intersections
     typedef std::list<Triangle>::iterator Iterator;
-    typedef CGAL::Box_intersection_d::Box_with_handle_d<double,3,Iterator> Box;
     std::list<Triangle> triangles; // intersecting triangles
     typedef std::back_insert_iterator<std::list<Triangle> > OutputIterator;
     std::cout << "Self-intersect...";

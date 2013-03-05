@@ -248,7 +248,7 @@ protected:
     // set it to be the number of vertices V in the arrangement (actually
     // we generate ceiling(sqrt(V))^2 landmarks to obtain a square grid).
     if (!fixed_number_of_lm)
-      num_landmarks = arr->number_of_vertices();
+      num_landmarks = static_cast<unsigned int>(arr->number_of_vertices());
 
     sqrt_n = static_cast<unsigned int>
       (std::sqrt(static_cast<double> (num_landmarks)) + 0.99999);

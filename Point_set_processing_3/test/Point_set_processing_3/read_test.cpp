@@ -15,7 +15,7 @@ typedef std::pair<Point_3, Vector_3> PointVectorPair;
 
 bool read(std::string s)
 {
-  std::ifstream fs(s);
+  std::ifstream fs(s.c_str());
   std::vector<PointVectorPair> pv_pairs;
   return CGAL::read_xyz_points_and_normals(fs, 
                                            back_inserter(pv_pairs), 
@@ -28,7 +28,7 @@ bool read(std::string s)
 bool read(std::string s,
           std::vector<PointVectorPair>& pv_pairs)
 {
-  std::ifstream fs(s);
+  std::ifstream fs(s.c_str());
 
   return CGAL::read_xyz_points_and_normals(fs, 
                                            back_inserter(pv_pairs), 
@@ -39,7 +39,7 @@ bool read(std::string s,
 bool read_off(std::string s,
               std::vector<PointVectorPair>& pv_pairs)
 {
-  std::ifstream fs(s);
+  std::ifstream fs(s.c_str());
 
   return CGAL::read_off_points_and_normals(fs, 
                                            back_inserter(pv_pairs), 
@@ -50,16 +50,19 @@ bool read_off(std::string s,
 
 int main()
 {
-  assert(! read("data/bug_1.xyz"));
-  assert(! read("data/bug_2.xyz"));
-  assert(! read("data/bug_3.xyz"));
-  assert(read("data/ok_1.xyz"));
-  assert(read("data/ok_2.xyz"));
-  assert(read("data/ok_3.xyz"));
+  std::cerr << "### There should be three errors following this line...\n";
+  assert(! read("data/read_test/bug_1.xyz"));
+  assert(! read("data/read_test/bug_2.xyz"));
+  assert(! read("data/read_test/bug_3.xyz"));
+  std::cerr << "### ... Done. Now, there should not be any error.\n";
+
+  assert(read("data/read_test/ok_1.xyz"));
+  assert(read("data/read_test/ok_2.xyz"));
+  assert(read("data/read_test/ok_3.xyz"));
 
   std::vector<PointVectorPair> pv_pairs;
 
-  read("data/ok_2.xyz", pv_pairs);
+  read("data/read_test/ok_2.xyz", pv_pairs);
   assert(pv_pairs.size() == 4);
   assert(pv_pairs[0] == std::make_pair(Point_3(2,3,4), Vector_3(4,4,2)));
   assert(pv_pairs[1] == std::make_pair(Point_3(3,4,6), Vector_3(0,0,0))); 
@@ -68,7 +71,7 @@ int main()
 
   pv_pairs.clear();
 
-  assert(read_off("data/ok_1.off", pv_pairs));
+  assert(read_off("data/read_test/ok_1.off", pv_pairs));
   assert(pv_pairs.size() == 4);
   assert(pv_pairs[0] == std::make_pair(Point_3(3,2,0), Vector_3(1,2,3)));
   assert(pv_pairs[1] == std::make_pair(Point_3(1,2,3), Vector_3(0,0,0))); 

@@ -105,19 +105,32 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 
 <h2 id="release4.2">Release 4.2 </h2>
 <div>
-<p> Release date: </p>
+  <p> Release date: March 2013 </p>
 
-<h3>Installation</h3>
-<ul>
-<li>This is the last release whose "<tt>UseCGAL.cmake</tt>" file (if
-  using CGAL in a CMake build environment) contains the line
+  <h3>Installation</h3>
+  <ul>
+    <li>Additional supported platforms:
+      <ul>
+        <li>The Microsoft Windows Visual C++ compiler 2012 (VC11) is now
+        supported.</li>
+      </ul>
+    </li>
+    <li>With Microsoft Visual C++ (all supported versions), the compiler
+      flags <code>/bigobj</code> and <code>/wd4503</code> are added by CGAL
+      CMake scripts.
+    </li>
+  </ul>
+  <ul>
+    <li>This is the last release whose "<tt>UseCGAL.cmake</tt>" file (if
+      using CGAL in a CMake build environment) contains the line
 <pre>
   link_libraries(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
 </pre>
-  as this is a deprecated CMake command. The correct way to link with
-  CGAL's libraries (as for required 3rd party libraries) is to use
-  '<code>target_link_libraries</code>' which specifies for each build
-  target which libraries should be linked. The following serves as example:
+      as this is a deprecated CMake command. The correct way to link with
+      CGAL's libraries (as for required 3rd party libraries) is to use
+      '<code>target_link_libraries</code>' which specifies for each build
+      target which libraries should be linked. The following serves as
+      example:
 <pre>
   find_package(CGAL)
   include(${CGAL_USE_FILE})
@@ -125,104 +138,131 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
   target_link_libraries(myexe ${CGAL_LIBRARIES}
                               ${CGAL_3RD_PARTY_LIBRARIES})
 </pre>
-  We also expect further changes in CGAL's CMake setup (change of
-  variable names, consistency of filename and output, removing
-  essential libraries, building executables, removal
-  of '<code>${CGAL_3RD_PARTY_LIBRARIES}</code>').
-  </li>
-</ul>
+      We also expect further changes in CGAL's CMake setup (change of
+      variable names, consistency of filename and output, removing
+      essential libraries, building executables, removal of
+      '<code>${CGAL_3RD_PARTY_LIBRARIES}</code>').
+    </li>
+  </ul>
 
-<h3>3D Fast Intersection and Distance Computation</h3>
-<ul>
-<li> Update requirements of the concepts <code>AABBTraits</code> and <code>AABBGeomTraits</code> to match the implementation of the package.
-</ul>
+  <h3>3D Minkowski Sum of Polyhedra</h3>
+  <ul>
+    <li> Fix a memory leak.
+  </ul>
 
-<h3>2D Triangulations</h3>
-<ul>
-<li> Add mechanism to avoid call stack overflow in <code>Delaunay_triangulation_2</code> and <code>Constrained_Delaunay_triangulation_2</code>.
-</ul>
+  <h3>3D Fast Intersection and Distance Computation</h3>
+  <ul>
+    <li> Update requirements of the concepts <code>AABBTraits</code>
+    and <code>AABBGeomTraits</code> to match the implementation of the
+    package.
+  </ul>
 
-<h3>Generator</h3>
-<ul>
-<li> Addition of the <code>Combination_enumerator</code>
-</ul>
+  <h3>2D Arrangements</h3>
+  <ul>
+    <li> Enhanced the 2D-arrangements demonstration program and ported it
+      to Qt4. The new demonstration program makes use of the CGAL Graphics
+      View framework, in which the 2D primitives are individually
+      represented as objects in a scene. (The implementations of several
+      demos in CGAL already make use of this framework.) This project was
+      carried out as part of the 2012 Google Summer of Code program.</li>
+    <li>Fixed a bug in the Walk-Along-A-Line point location strategy for
+      arrangements induced by unbounded curves.</li>
+  </ul>
 
-<h3>STL Extensions</h3>
-<ul>
-<li>Introduction of <code>CGAL::cpp11::result_of</code> as an alias to the tr1 implementation from boost of the <code>result_of</code> mechanism.
-When all compilers supported by CGAL will have a Standard compliant implemention of the C++11 <code>decltype</code> feature, it will become an alias to
-<code>std::result_of</code>.
-</li>
-</ul>
+  <h3>2D Triangulations</h3>
+  <ul>
+    <li> Add mechanism to avoid call stack overflow
+    in <code>Delaunay_triangulation_2</code>
+    and <code>Constrained_Delaunay_triangulation_2</code>.
+  </ul>
 
-<h3>Surface Reconstruction from Point Sets</h3>
-<ul>
-<li> Performance improvements and addition of an option to better reconstruct undersampled zones.
-</ul>
+  <h3>Generator</h3>
+  <ul>
+    <li> Addition of the <code>Combination_enumerator</code>
+  </ul>
 
-<h3>2D Voronoi Diagram Adaptor</h3>
-<ul>
-<li> Bug-fix: Add ccb() method in face type as documented.
-</ul>
+  <h3>STL Extensions</h3>
+  <ul>
+    <li>Introduction of <code>CGAL::cpp11::result_of</code> as an alias to
+      the tr1 implementation from boost of the <code>result_of</code>
+      mechanism.  When all compilers supported by CGAL will have a Standard
+      compliant implemention of the C++11 <code>decltype</code> feature, it
+      will become an alias to
+      <code>std::result_of</code>.
+    </li>
+  </ul>
 
-<h3>2D Triangulations</h3>
-<ul>
-<li> Add a constructor for <code>Regular_triangulation_2</code> and <code>Delaunay_triangulation_2</code> from a range of points or a range of points with info.
-</ul>
+  <h3>Surface Reconstruction from Point Sets</h3>
+  <ul>
+    <li> Performance improvements and addition of an option to better
+    reconstruct undersampled zones.
+  </ul>
+
+  <h3>2D Voronoi Diagram Adaptor</h3>
+  <ul>
+    <li> Bug-fix: Add ccb() method in face type as documented.
+  </ul>
+
+  <h3>2D Triangulations</h3>
+  <ul>
+    <li> Add a constructor for <code>Regular_triangulation_2</code>
+    and <code>Delaunay_triangulation_2</code> from a range of points or a
+    range of points with info.
+  </ul>
 </div>
 
 
 <h2 id="release4.1">Release 4.1 </h2>
 <div>
-<p> Release date: </p>
+  <p> Release date: October 2012</p>
 
-<h3>Installation</h3>
-<ul>
-<li>Additional supported platforms:
+  <h3>Installation</h3>
   <ul>
-    <li>The Apple Clang compiler versions 3.1 and 3.2 are now supported on
-      Mac OS X.</li>
+    <li>Additional supported platforms:
+      <ul>
+        <li>The Apple Clang compiler versions 3.1 and 3.2 are now supported on
+          Mac OS X.</li>
+      </ul>
+    </li>
+    <li>Improved configuration for essential and optional external third party software</li>
+    <li>Added more general script to create CMakeLists.txt files: <tt>cgal_create_CMakeLists</tt></li>
+    <li>Availability tests for C++11 features are now performed with the help of <a href="http://www.boost.org/libs/config">Boost.Config</a>. A Boost version of 1.40.0 or higher is needed to use C++11 features.</li>
   </ul>
-</li>
-<li>Improved configuration for essential and optional external third party software</li>
-<li>Added more general script to create CMakeLists.txt files: <tt>cgal_create_CMakeLists</tt></li>
-<li>Availability tests for C++11 features are now performed with the help of <a href="http://www.boost.org/libs/config">Boost.Config</a>. A Boost version of 1.40.0 or higher is needed to use C++11 features.</li>
-</ul>
 
-<h3>2D Arrangement</h3>
-<ul>
-<li>Improved the implementation of the incremental randomized
-  trapezoidal decomposition point-location strategy. The new
-  implementation enables point location in unbounded arrangements. It
-  constructs a search structure of guaranteed linear size with
-  guaranteed logarithmic query time.
-</li>
-</ul>
+  <h3>2D Arrangement</h3>
+  <ul>
+    <li>Improved the implementation of the incremental randomized
+      trapezoidal decomposition point-location strategy. The new
+      implementation enables point location in unbounded arrangements. It
+      constructs a search structure of guaranteed linear size with
+      guaranteed logarithmic query time.
+    </li>
+  </ul>
 
-<h3>2D Convex Hulls and Extreme Points </h3>
-<ul>
-<li>Speed up the preprocessing stage of the Akl-Toussaint implementation (used by the free function <code>convex_hull_2</code> when forward iterators are provided as input).</li>
-</ul>
+  <h3>2D Convex Hulls and Extreme Points </h3>
+  <ul>
+    <li>Speed up the preprocessing stage of the Akl-Toussaint implementation (used by the free function <code>convex_hull_2</code> when forward iterators are provided as input).</li>
+  </ul>
 
-<h3>Combinatorial Maps</h3>
-<ul>
-<li>Minor bugfix; replace some functors by methods.</li>
-</ul>
+  <h3>Combinatorial Maps</h3>
+  <ul>
+    <li>Minor bugfix; replace some functors by methods.</li>
+  </ul>
 
-<h3>Linear Cell Complex</h3>
-<ul>
-<li>Improve the demo: add a widget showing all the volumes and an operation to create a Menger sponge.</li>
-</ul>
+  <h3>Linear Cell Complex</h3>
+  <ul>
+    <li>Improve the demo: add a widget showing all the volumes and an operation to create a Menger sponge.</li>
+  </ul>
 
-<h3>Kernels</h3>
-<ul>
-<li>All Kernel functors now support the result_of protocol.</li>
-</ul>
+  <h3>Kernels</h3>
+  <ul>
+    <li>All Kernel functors now support the result_of protocol.</li>
+  </ul>
 
-<h3>STL_Extensions for CGAL</h3>
-<ul>
-<li>The namespace <code>cpp0x</code> has been renamed <code>cpp11</code>. The old name is still available for backward compatibility.</li>
-</ul>
+  <h3>STL_Extensions for CGAL</h3>
+  <ul>
+    <li>The namespace <code>cpp0x</code> has been renamed <code>cpp11</code>. The old name is still available for backward compatibility.</li>
+  </ul>
 
 </div>
 

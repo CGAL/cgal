@@ -130,7 +130,7 @@ int main()
   // Perform Dijkstra's algorithm from the vertex v0.
   Edge_length_func                                      edge_length;
   
-  boost::vector_property_map<double, boost::Arr_vertex_index_map_boost<Arrangement_2> > dist_map(arr.number_of_vertices(), index_map);
+  boost::vector_property_map<double, boost::Arr_vertex_index_map_boost<Arrangement_2> > dist_map(static_cast<unsigned int>(arr.number_of_vertices()), index_map);
   boost::dijkstra_shortest_paths(arr, v0,
                                  boost::vertex_index_map(index_map).
                                  weight_map(edge_length).

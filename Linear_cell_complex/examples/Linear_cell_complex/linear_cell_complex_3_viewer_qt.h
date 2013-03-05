@@ -227,11 +227,11 @@ protected :
       }
     }
 
-    assert(lcc.is_whole_map_marked(facettreated));
+    CGAL_assertion(lcc.is_whole_map_marked(facettreated));
 
     if ( vertices)
     {
-      assert(lcc.is_whole_map_marked(vertextreated));
+      CGAL_assertion(lcc.is_whole_map_marked(vertextreated));
       lcc.free_mark(vertextreated);
     }
     
