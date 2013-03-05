@@ -313,7 +313,7 @@ public:
       // Now construct vertical rays. Two or four rays. If it is only two rays,
       // then the multiplicity of all the curves is 1.
       CGAL::Sign s_d = CGAL::sign(CGAL::abs(delta_y) - CGAL::abs(delta_x));
-      std::size_t mult = (s_d == CGAL::ZERO) ? 0 : 1;
+      int mult = (s_d == CGAL::ZERO) ? 0 : 1;
 
       if (s_d != CGAL::POSITIVE) {
         // horizontal rectangle or square = vertical rays.
