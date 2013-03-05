@@ -282,7 +282,7 @@ void test_vda(const VDA& vda)
   CGAL_USE_TYPE(typename VDA::Delaunay_geom_traits);
   CGAL_USE_TYPE(typename VDA::Delaunay_edge);
   CGAL_USE_TYPE(typename VDA::Delaunay_face_handle);
-  typedef typename VDA::Delaunay_vertex_handle        Delaunay_vertex_handle;
+  CGAL_USE_TYPE(typename VDA::Delaunay_vertex_handle);
 
   CGAL_USE_TYPE(typename VDA::Edge_iterator);
   typedef typename VDA::Halfedge_iterator             Halfedge_iterator;
