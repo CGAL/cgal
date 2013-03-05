@@ -1,4 +1,6 @@
 #define  CGAL_DEFORM_ROTATION
+#define CGAL_SUPERLU_ENABLED
+//#undef CGAL_SUPERLU_ENABLED
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
@@ -339,9 +341,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::clear_handles() {
 
   // signal to the scene that the item needs to be redrawn.
   scene->itemChanged(edit_item);
-
-
-  
 }
 
 
@@ -381,14 +380,17 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess(Scene_edit_polyhedron_it
     new_data.preprocessed = false;
 
     new_deform->clear();
+    Deform_mesh::Handle_group handle_group = new_deform->create_handle_group();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      new_deform->insert_handle(vh);
+      new_deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      new_deform->insert_handle(vh);
+      new_deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       new_deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
       new_deform->insert_roi(vh);
+
+    new_data.active_handle_group = handle_group;
   }
 
   Polyhedron_deformation_data& data = deform_map[edit_item];
@@ -551,20 +553,25 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end())  // First time. Need to create the Deform_mesh object.
   {
+      std::cout << "-------------------------" << std::endl;
+  std::cout << "edition inside" << std::endl;
+  std::cout << "-------------------------" << std::endl;
     Polyhedron_deformation_data& new_data = deform_map[edit_item];
     Deform_mesh* new_deform = new Deform_mesh(*polyhedron, Vertex_index_map(), Edge_index_map());
     new_data.deform_mesh = new_deform;
     new_data.preprocessed = false;
-
     new_deform->clear();
+
+    Deform_mesh::Handle_group handle_group = new_deform->create_handle_group();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      new_deform->insert_handle(vh);
+      new_deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      new_deform->insert_handle(vh);
+      new_deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       new_deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
       new_deform->insert_roi(vh);
+    new_data.active_handle_group = handle_group;
   }
 
   if ( edit_item->usage_scenario() == 0 )
