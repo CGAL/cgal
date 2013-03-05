@@ -2159,7 +2159,7 @@ void _test_bbox(const typename SK::Circle_3 &c)
 
 
 
-  typedef typename SK::Algebraic_kernel                 AK;
+
 
 
 

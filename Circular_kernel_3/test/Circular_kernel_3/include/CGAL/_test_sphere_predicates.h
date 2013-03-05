@@ -32,7 +32,7 @@ void _test_circular_arc_point_equal(SK sk) {
   typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
   typedef typename SK::Point_3                          Point_3;
 
-  typedef typename SK::Algebraic_kernel                 AK;
+
   typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
 
   typedef typename SK::Equal_3                          Equal_3;
@@ -684,7 +684,7 @@ void _test_lexico_operations(SK sk) {
   typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
   typedef typename SK::Point_3                          Point_3;
 
-  typedef typename SK::Algebraic_kernel                 AK;
+
 
 
 
