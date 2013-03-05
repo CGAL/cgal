@@ -32,15 +32,15 @@ void _test_for_given_domain(const Traits & traits,
   typedef typename Traits::Point_3                   Point;
   typedef typename Traits::Vector_3                  Vector;
   typedef typename Traits::Periodic_3_offset_3       Offset;
-  typedef typename Traits::Iso_cuboid_3              Iso_cuboid;
+  CGAL_USE_TYPE(typename Traits::Iso_cuboid_3);
   typedef typename Traits::Segment_3                 Segment;
   typedef typename Traits::Triangle_3                Triangle;
   typedef typename Traits::Tetrahedron_3             Tetrahedron;
 
-  typedef typename Traits::Comparison_result         Comparison_result;
-  typedef typename Traits::Orientation               Orientation;
-  typedef typename Traits::Oriented_side             Oriented_side;
-  typedef typename Traits::Bounded_side              Bounded_side;
+  CGAL_USE_TYPE(typename Traits::Comparison_result);
+  CGAL_USE_TYPE(typename Traits::Orientation);
+  CGAL_USE_TYPE(typename Traits::Oriented_side);
+  CGAL_USE_TYPE(typename Traits::Bounded_side);
 
   typedef typename Traits::Compare_xyz_3             Compare_xyz_3;
   typedef typename Traits::Orientation_3             Orientation_3;
