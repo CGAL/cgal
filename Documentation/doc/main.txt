@@ -2,9 +2,19 @@
 
 \mainpage
 
-\attention PRELIMINARY 
+This is the beta version of the %CGAL Manual generated with doxygen.
+As it was generated semi-automatically from LaTeX sources of an
+inhouse documentation tool, followed by months of postprocessing
+we are happy about user feedback how we might improve things and
+where we have documentation bugs.
 
-\attention See something? Fix it! Follow instructions at: https://cgal.geometryfactory.com/CGAL/Members/wiki/Staging_Area/Doxygen
+For that we have set up a [tracker](https://gforge.inria.fr/tracker/?atid=13845&group_id=52&func=browse) where you can submit documentation bugs.
+
+During beta we only provide the manual online, so that we can
+publish fixes quickly.
+
+About CGAL
+==========
 
 The goal of the \cgal Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
