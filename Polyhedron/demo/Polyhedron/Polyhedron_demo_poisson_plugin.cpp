@@ -19,7 +19,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                                 Kernel::FT sm_angle, // Min triangle angle (degrees). 
                                 Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing. 
                                 Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
-                                const QString& solver); // solver name
+                                const QString& solver, // solver name
+                                bool use_two_passes);
 
 class Polyhedron_demo_poisson_plugin :
   public QObject,
@@ -73,6 +74,7 @@ class Polyhedron_demo_poisson_plugin_dialog : public QDialog, private Ui::Poisso
     double triangleAngle() const { return m_inputAngle->value(); }
     double triangleRadius() const { return m_inputRadius->value(); }
     double triangleError() const { return m_inputDistance->value(); }
+    bool use_two_passes() const { return m_inputTwoPasses->isChecked(); }
     QString solver() const { return m_inputSolver->currentText(); }
 };
 
@@ -97,11 +99,12 @@ void Polyhedron_demo_poisson_plugin::on_actionPoissonReconstruction_triggered()
     const double sm_radius    = dialog.triangleRadius();
     const double sm_distance  = dialog.triangleError();
     const QString sm_solver   = dialog.solver();
+    bool use_two_passes = dialog.use_two_passes();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // Reconstruct point set as a polyhedron
-    Polyhedron* pRemesh = poisson_reconstruct(*points, sm_angle, sm_radius, sm_distance, sm_solver);
+    Polyhedron* pRemesh = poisson_reconstruct(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes);
     if(pRemesh)
     {
       // Add polyhedron to scene
