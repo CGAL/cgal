@@ -35,6 +35,10 @@
 *.perl text
 *.pdb text
 
+# Declare files that will always have LF line endings on checkout.
+Documentation/Doxyfile text eol=lf
+Documentation/pkglist_filter text eol=lf
+
 # Declare files that will always have CRLF line endings on checkout.
 *.sln text eol=crlf
 *.bat text eol=crlf
