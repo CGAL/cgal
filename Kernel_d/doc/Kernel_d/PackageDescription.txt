@@ -22,7 +22,7 @@
 /*!
 \addtogroup PkgKernelD
 \todo check generated documentation
-\cgalPkgDescriptionBegin{dD Geometry Kernel,PkgKernelDSumamry}
+\cgalPkgDescriptionBegin{dD Geometry Kernel,PkgKernelDSummary}
 \cgalPkgPicture{hypercube.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Seel}
