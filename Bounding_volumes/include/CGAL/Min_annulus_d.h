@@ -345,8 +345,8 @@ public:
 						   std::bind2nd( std::divides<int>(), 2)));
   }
     
-  int  number_of_inner_support_points() const { return inner_indices.size();}
-  int  number_of_outer_support_points() const { return outer_indices.size();}
+  int  number_of_inner_support_points() const { return static_cast<int>(inner_indices.size());}
+  int  number_of_outer_support_points() const { return static_cast<int>(outer_indices.size());}
     
   Inner_support_point_iterator
   inner_support_points_begin() const
