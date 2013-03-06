@@ -8,10 +8,124 @@ namespace CGAL {
 \author TODO
 
 \section Surface_Modeling_Intro Introduction
-The introduction
+Surface modeling is 
+
+In this package, we implement the algorithm described in \cite Sorkine2007AsRigidAs, 
+where a nonlinear deformation energy is minimized under modeling constraints to preserve rigidity as much as possible. 
+The proposed energy function is minimized by applying two-step optimization procedure iteratively, 
+which makes the algorithm suitable for interactive applications since the... (IOY move this sentence somewhere else).
+  
 
 \section Surface_Modeling_Overview Overview 
-The manual overview
+Although it is not directly related to this package, 
+
+\subsection Surface_Modeling_Overview_Laplacian Laplacian Representation 
+Laplacian coordinates are a way of representing the mesh differentially, which use the local coordinate of a vertex 
+with respect to its one-ring neighbors (i.e. cell), rather than its global position. The Laplacian coordinate of a vertex is:
+
+\f[
+\begin{equation}
+L(\mathbf{v}_i) = \mathbf{v}_i - \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij} \mathbf{v}_j,
+  \label{eq:lap_open}
+\end{equation}
+\f]
+
+where \f$\mathbf{v}_i\f$ is the current vertex, \f$N(\mathbf{v}_i)\f$ is the set of one-ring neighbor vertices 
+of \f$\mathbf{v}_i\f$, and \f$w_{ij}\f$ is a weight between \f$\mathbf{v}_i\f$ and neighbor \f$\mathbf{v}_j\f$. 
+A simple choice for weighting schema can be uniform weights where each neighbour vertex is weighted 
+by \f$1/|N(\mathbf{v}_i)|\f$, which actually corresponds to calculating the average of neighbour vertices and 
+subtracting the result from the current vertex (\cgalFigureRef{Simple_laplacian}). We use cotangent weights \cite Pinkall1993Cotangent
+to eliminate the effect of non-uniform discretization of the mesh model.
+
+\cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
+A simple mesh structure. Red square is the average of neighbours of the yellow vertex. Blue vector represents Laplacian coordinate of the yellow vertex.
+\cgalFigureEnd
+
+Considering the mesh as a whole, it is possible to generate a linear system which results in Laplacian coordinates of all vertices:
+
+\f[
+\begin{equation}
+\mathbf{L}\mathbf{V} = \delta,
+  \label{eq:lap_system}
+\end{equation}
+\f]
+
+where \f$n\f$ is number of vertices in the mesh, \f$\mathbf{L}\f$ is an \f$n \times n\f$ matrix, called Laplacian matrix, 
+in which each row is filled according to Eq.\f$\eqref{eq:lap_open}\f$ , \f$\mathbf{V}\f$ is an \f$n \times 1\f$ vector consisting of 
+global positions of vertices; and \f$\delta\f$ represents Laplacian coordinates of the mesh. 
+ 
+\subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
+A simple deformation system can be provided by allowing the user to select a few vertices on the mesh (i.e. handles) 
+and providing target positions as deformation constrains.
+
+The main idea behind Laplacian deformation is preservation of Laplacian coordinates under deformation constraints. 
+In other words, Laplacian coordinates are treated as a representative form for the shape, and deformation
+process should satisfy given constraints while causing as little distortion as possible on Laplacian coordinates.
+
+There are different ways to incorporate deformation constraints into the system \cite Botsch2008OnLinearVariational.
+We provide support for hard constraints, which means constrained positions of handles are --Missing part--...
+
+\subsection Surface_Modeling_Overview_ARAP As-Rigid-As Possible Deformation
+
+The proposed energy function by \cite Sorkine2007AsRigidAs to be minimized under modeling constrains is:
+
+\f[
+\begin{equation}
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}
+\left\| (\mathbf{v}'_i - \mathbf{v}'_j) - \mathbf{R}_i(\mathbf{v}_i - \mathbf{v}_j) \right\|^2, 
+  \label{eq:arap_energy}
+\end{equation}
+\f]
+
+where \f$N(\mathbf{v}_i)\f$ is one-ring neighbours of vertex \f$\mathbf{v}_i\f$, and \f$w_{ij}\f$ is the weight of the edge between \f$\mathbf{v}_i\f$ and \f$\mathbf{v}_j\f$
+
+The intuitive idea behind the proposed energy function is allowing cells to
+have individual rotations, and at the same time using overlapping nature of the
+cells to prevent sharing \cgalFigureRef{Overlapping_cells}.
+ 
+\cgalFigureBegin{Overlapping_cells,overlapping_cells.png}
+Illustration of overlapping cells
+\cgalFigureEnd
+
+Minimization of the energy function in Eq.\f$\eqref{eq:arap_energy}\f$ for every vertex under deformation constraints provides
+as-rigid-as possible deformation. In the equation, there are two unknowns: the new positions of vertices (\f$\mathbf{v}'\f$) 
+and rotation matrices (\f$\mathbf{R}_i\f$). This minimization problem is solved by developing a two-step optimization approach (also called local-global approach).
+In the first step, the method fixes vertex positions and treat \f$\mathbf{R}_i\f$ as only unknown.
+
+Given covariance matrix \f$S_i\f$:
+\f[
+\begin{equation}
+\mathbf{S}_i = \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij} (\mathbf{v}_i - \mathbf{v}_j)(\mathbf{v}'_i - \mathbf{v}'_j)^T,
+	\label{eq:cov_matrix}
+\end{equation}
+\f]
+
+\f$\mathbf{R}_i\f$ which minimizes Eq.\f$\eqref{eq:arap_energy}\f$ can be found using SVD of \f$\mathbf{S}_i\f$ \cite Sorkine2009LeastSquaresRigid.
+
+\f[
+\begin{equation}
+\mathbf{R}_i = \mathbf{V}_i \mathbf{U}_i^T \:where\: \mathbf{S}_i = \mathbf{U}_i\Sigma_i \mathbf{V}_i^T.
+	\label{eq:optimal_rot}
+\end{equation}
+\f]
+
+In the second step, the computed rotation matrices are placed into the partial derivative of Eq.\f$\eqref{eq:arap_energy}\f$ 
+with respect to \f$\mathbf{v}'\f$, by treating rotation matrices as constants. In order to find \f$\mathbf{v}'\f$ 
+which minimizes deformation energy, setting the derivative to zero results in an equation of:
+
+\f[
+\begin{equation}
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}'_i - \mathbf{v}'_j) =
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij} \frac{(\mathbf{R}_i + \mathbf{R}_j)}{2} (\mathbf{v}_i - \mathbf{v}_j).
+	\label{eq:lap_ber}
+\end{equation}
+\f]
+
+One can see that the left-hand side of this equation corresponds to Eq.\f$\eqref{eq:lap_open}\f$,
+so that we can fill \f$\delta\f$ using right-hand side of the equation which is all known in our system. 
+After that, --Missing part will be filled according to 2.2 Naive Laplacian Deformation-- can be solved in order to find \f$\mathbf{V}'\f$. 
+Two-step optimization can be pursued for further refinement by altering steps.
+
 
 \section Surface_Modeling_API API
 API description with examples
@@ -20,9 +134,8 @@ API description with examples
 Explain how to use the demo
 
 \section Surface_Modeling_History Implementation History
-Initial version during gsoc11 with Yin Xu with Andreas Fabri and Olga Sorkine as mentor.
-Ilker &O. Yaz took over the finalization of the package.
-
+Initial version of this package is implemented during Google Summer of Code 2011 by Yin Xu with Andreas Fabri and Olga Sorkine as mentor.
+Ilker O. Yaz took over the finalization of the package.
 */
 
 } /* namespace CGAL */
