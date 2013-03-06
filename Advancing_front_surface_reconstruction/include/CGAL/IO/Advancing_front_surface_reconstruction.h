@@ -59,9 +59,9 @@ write_to_file_medit(char* foutput, const Surface& S)
   CGAL::set_ascii_mode(os_faces);
 
   // af: what is the relationship to _vh_number in Extract_surface
-  int _vh_number = std::count_if(T.finite_vertices_begin(), 
-				 T.finite_vertices_end(), 
-				 Is_not_exterior<Vertex>());
+  std::size_t _vh_number = std::count_if(T.finite_vertices_begin(), 
+                                         T.finite_vertices_end(), 
+                                         Is_not_exterior<Vertex>());
 
   os_points << _vh_number << std::endl;
 
@@ -147,9 +147,9 @@ write_to_file_gv(char* foutput, const Surface& S)
 
   CGAL::set_ascii_mode(os);
 
-  int _vh_number = std::count_if(T.finite_vertices_begin(), 
-			     T.finite_vertices_end(), 
-			     Is_not_exterior<Vertex>());
+  std::size_t _vh_number = std::count_if(T.finite_vertices_begin(), 
+                                         T.finite_vertices_end(), 
+                                         Is_not_exterior<Vertex>());
   // Header.
   os << "OFF" << std::endl
      << _vh_number << " " << S.number_of_facets() << " " << 0 << std::endl;
@@ -186,10 +186,7 @@ write_to_file_gv(char* foutput, const Surface& S)
 	  os << 3 << " ";
 	  os << vertex_index_map[c->vertex(i1)] << " ";
 	  os << vertex_index_map[c->vertex(i2)] << " ";
-	  os << vertex_index_map[c->vertex(i3)] << " ";
-	  os << 0 << std::endl; // without color.
-	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
-	  // color
+	  os << vertex_index_map[c->vertex(i3)] << "\n";
 	}
 
        if (n->is_selected_facet(ni))
@@ -200,10 +197,7 @@ write_to_file_gv(char* foutput, const Surface& S)
 	  os << 3 << " ";
 	  os << vertex_index_map[n->vertex(i1)] << " ";
 	  os << vertex_index_map[n->vertex(i2)] << " ";
-	  os << vertex_index_map[n->vertex(i3)] << " ";
-	  os << 0 << std::endl; // without color.
-	  // os << 4 << drand48() << drand48() << drand48() << 1.0; // random
-	  // color 
+	  os << vertex_index_map[n->vertex(i3)] << "\n";
 	}
     }
 

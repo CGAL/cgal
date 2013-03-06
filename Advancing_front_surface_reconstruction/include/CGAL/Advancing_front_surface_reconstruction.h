@@ -238,7 +238,7 @@ public:
     : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
-    NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), _vh_number(T.number_of_vertices()), _facet_number(0),
+      NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
     _postprocessing_counter(0), _size_before_postprocessing(0), area(opt.area), perimeter(opt.perimeter), 
     abs_area(opt.abs_area), abs_perimeter(opt.abs_perimeter), 
     total_area(0), total_perimeter(0), _number_of_connected_components(0)
@@ -321,7 +321,7 @@ public:
 
   int number_of_outliers() const
   {
-    return outliers.size();
+    return static_cast<int>(outliers.size());
   }
 
   typedef typename std::list<Point>::const_iterator Outlier_iterator;
@@ -1060,7 +1060,7 @@ public:
   void
   ordered_map_erase(const criteria& value, const IO_edge_type* pkey)
   {
-    int number_of_conflict = _ordered_border.count(value);  
+    std::size_t number_of_conflict = _ordered_border.count(value);  
     if (number_of_conflict == 1)
       {
 	_ordered_border.erase(_ordered_border.find(value));
@@ -1073,7 +1073,7 @@ public:
 	  _ordered_border.find(value);
 	// si ca foire jamais on peut s'areter des que l'elt 
 	// est trouve!!! 
-	for(int jj=0; (jj<number_of_conflict); jj++)
+	for(std::size_t jj=0; (jj<number_of_conflict); jj++)
 	  {	  
 	    if (((long) elt_it->second) == ((long) pkey))
 	      {
@@ -1908,7 +1908,7 @@ public:
 	  L_v.push_back(v_it);
       }
 
-    unsigned int itmp, L_v_size_mem;
+    std::size_t itmp, L_v_size_mem;
     L_v_size_mem = L_v.size();
     if ((vh_on_border_inserted != 0)&& // pour ne post-traiter que les bords
 	(L_v.size() < .1 * _size_before_postprocessing))

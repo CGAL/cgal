@@ -179,12 +179,12 @@ facet_number(int i)
 
   inline bool is_selected_facet(const int& i)
     {
-      return selected_facet & (1 << i);
+      return (selected_facet & (1 << i)) != 0;
     }
 
   inline bool has_facet_on_surface(const int& i)
     {
-      return selected_facet & (1 << i);
+      return (selected_facet & (1 << i)) != 0;
     }
  
 #ifdef AFSR_LAZY

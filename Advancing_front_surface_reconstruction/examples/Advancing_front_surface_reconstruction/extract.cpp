@@ -60,7 +60,7 @@ bool
 file_input(const Options& opt, std::vector<Point>& points)
 {
   const char* finput = opt.finname;
-  int number_of_points =  opt.number_of_points;
+  std::size_t number_of_points =  opt.number_of_points;
   bool xyz = opt.xyz;
   
   std::ios::openmode mode = (opt.binary) ? std::ios::binary : std::ios::in;
@@ -78,17 +78,19 @@ file_input(const Options& opt, std::vector<Point>& points)
   else
     std::cout << "Input from file : " << finput << std::endl;
 
-  int n;
+  std::size_t n;
   if(! xyz){
     is >> n;
     std::cout << "   reading " << n << " points" << std::endl;
     points.reserve(n);
-    CGAL::copy_n(std::istream_iterator<Point>(is), n, std::back_inserter(points));
+     CGAL::cpp11::copy_n(std::istream_iterator<Point>(is), n, std::back_inserter(points));
   } else {
     // we do not know beforehand how many points we will read
     std::istream_iterator<Point> it(is), eof;
+    char ignore[256];
     while(it!= eof){
       points.push_back(*it);
+      is.getline(ignore,256);
       it++;
     }
     n = points.size();
@@ -478,7 +480,8 @@ int main(int argc,  char* argv[])
   
 
   std::cout << "Total time: " << timer.time() << " sec." << std::endl; 
-  write_to_file_vrml2(opt.foutname, S, opt.contour, opt.red, opt.green, opt.blue, opt.no_header);
+  //  write_to_file_vrml2(opt.foutname, S, opt.contour, opt.red, opt.green, opt.blue, opt.no_header);
+  write_to_file(opt.foutname, S, opt.contour, opt.out_format, opt.red, opt.green, opt.blue, opt.no_header);
 
 
   std::cout << "   "  << S.number_of_outliers()
