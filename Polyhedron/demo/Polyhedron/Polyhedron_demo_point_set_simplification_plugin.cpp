@@ -131,8 +131,8 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     if (nb_points_to_remove > 0)
     {
       QMessageBox::information(NULL,
-                               tr("Points selected from removal"),
-                               tr("%1 point(s) are selected for removal.\nYou may remove them with the \"Delete selection\" menu item.")
+                               tr("Points selected for removal"),
+                               tr("%1 point(s) are selected for removal.\nYou may delete or reset the selection using the item context menu.")
                                .arg(nb_points_to_remove));
     }
   }
