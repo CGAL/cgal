@@ -301,7 +301,9 @@ public:
 			  Face_handle f1, 
 			  Face_handle f2, 
 			  Face_handle f3);
+
   void set_adjacency(Face_handle f0, int i0, Face_handle f1, int i1) const;
+
   void delete_face(Face_handle);
   void delete_vertex(Vertex_handle);
 
@@ -342,10 +344,12 @@ public:
   // HELPING
 private:
   typedef std::pair<Vertex_handle,Vertex_handle> Vh_pair;
+public:
   void  set_adjacency(Face_handle fh, 
 		      int ih, 
 		      std::map< Vh_pair, Edge>& edge_map);
   void reorient_faces();
+private:
   bool dim_down_precondition(Face_handle f, int i);
 
 public:
