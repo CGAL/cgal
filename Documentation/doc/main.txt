@@ -13,7 +13,7 @@ For that we have set up a [tracker](https://gforge.inria.fr/tracker/?atid=13845&
 During beta we only provide the manual online, so that we can
 publish fixes quickly.
 
-About CGAL
+About %CGAL
 ==========
 
 The goal of the \cgal Open Source Project is to provide easy access to
