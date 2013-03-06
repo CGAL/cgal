@@ -325,6 +325,7 @@ namespace for the XML file to be processed properly.  -->
           <string name="EXAMPLE_PATH">../Combinatorial_map/examples</string>
           <string name="IMAGE_PATH">../Combinatorial_map/doc/Combinatorial_map/fig</string>
           <list name="TAGFILES" append="true">
+            <item>./tags/HalfedgeDS.tag=../../CGAL.CGAL.Halfedge-Data-Structures/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
             <item>./tags/Linear_cell_complex.tag=../../CGAL.CGAL.Linear-Cell-Complex/html</item>
           </list>
