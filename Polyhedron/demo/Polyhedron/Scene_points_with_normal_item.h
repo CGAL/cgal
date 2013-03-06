@@ -14,6 +14,8 @@
 typedef Point_set_3<Kernel> Point_set;
 typedef Point_set::UI_point UI_point; // type of points in Point_set_3
 
+class QMenu;
+class QAction;
 
 // This class represents a point set in the OpenGL scene
 class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
@@ -30,10 +32,9 @@ public:
 
   // Is selection empty?
   virtual bool isSelectionEmpty() const;
-  // Delete selection
-  virtual void deleteSelection();
-  // Reset selection mark
-  void resetSelection();
+
+  // Function to override the context menu
+  QMenu* contextMenu();
 
   // IO
   bool read_off_point_set(std::istream& in);
@@ -66,10 +67,17 @@ public:
   // computes the local point spacing (aka radius) of each point
   void computes_local_spacing(int k);
 
+public slots:
+  // Delete selection
+  virtual void deleteSelection();
+  // Reset selection mark
+  void resetSelection();
+
 // Data
 private:
   Point_set* m_points;
-
+  QAction* actionDeleteSelection;
+  QAction* actionResetSelection;
 }; // end class Scene_points_with_normal_item
 
 
