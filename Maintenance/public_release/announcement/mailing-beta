@@ -10,12 +10,13 @@ release of the final version of CGAL 4.2 mid-March.
 
 
 Besides fixes to existing packages, the following has changed since
-CGAL 4.2:
+CGAL 4.1:
 
  o New compiler support
 
-     The Apple Clang compiler versions 3.1 and 3.2 are now supported on
-     Mac OS X.
+     Microsoft VC11 (Visual Studio 2012)
+
+ o A beta version of the manual generated with doxygen: http://doc.cgal.org/4.2
 
 
 See http://www.cgal.org/releases.html for a complete list of changes.
