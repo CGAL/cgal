@@ -50,7 +50,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                                 Kernel::FT sm_angle, // Min triangle angle (degrees).
                                 Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
                                 Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
-                                const QString& solver_name) // solver name
+                                const QString& solver_name,
+                                bool use_two_passes) // solver name
 {
     CGAL::Timer task_timer; task_timer.start();
 
@@ -107,7 +108,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
       unlink("taucs-ooc.0"); // make sure TAUCS ooc file does not exist
       CGAL::Taucs_symmetric_solver_traits<double> solver(OOC_SUPERNODAL_CHOLESKY_FACTORIZATION);
       
-      ok = function.compute_implicit_function(solver);
+      ok = function.compute_implicit_function(solver, use_two_passes);
     }
     #endif
     
@@ -115,14 +116,14 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     if(solver_name=="Eigen - built-in simplicial LDLt")
     {
       CGAL::Eigen_solver_traits<Eigen::SimplicialCholesky<CGAL::Eigen_sparse_matrix<double>::EigenType> > solver;
-      ok = function.compute_implicit_function(solver);
+      ok = function.compute_implicit_function(solver, use_two_passes);
     }
     if(solver_name=="Eigen - built-in CG")
     {
       CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_matrix<double>::EigenType> > solver;
       solver.solver().setTolerance(1e-6);
       solver.solver().setMaxIterations(1000);
-      ok = function.compute_implicit_function(solver);
+      ok = function.compute_implicit_function(solver, use_two_passes);
     }
     #endif
 
