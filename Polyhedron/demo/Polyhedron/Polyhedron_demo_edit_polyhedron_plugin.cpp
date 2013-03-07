@@ -1,5 +1,4 @@
 #define  CGAL_DEFORM_ROTATION
-#define CGAL_SUPERLU_ENABLED
 //#undef CGAL_SUPERLU_ENABLED
 
 #ifdef CGAL_EIGEN3_ENABLED
@@ -73,8 +72,9 @@ typedef Polyhedron::Vertex_handle Vertex_handle;
 struct Polyhedron_deformation_data {
   Deform_mesh* deform_mesh;
   bool preprocessed;                            // specify whether preprocessed or not
-  std::map<Vertex_handle, Vector> handle_vectors;  // record transform vectors of all handles, 
+  //std::map<Deform_mesh::Handle_group, Vector> handle_vectors;  // record transform vectors of all handles, 
                                                    // only for multiple handle region scenario 
+  Vector handle_vectors_active;
   Deform_mesh::Handle_group active_handle_group;
   std::vector<Deform_mesh::Handle_group> handle_groups;
 };
@@ -464,7 +464,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_0(Scene_edit_polyhed
 
     // -- ACTUAL DEFORMATION --
 
-    deform->translate(data.active_handle_group, translation_origin);
+    deform->translate(data.active_handle_group, translation_last);
     deform->deform();
 
     // -- END OF ACTUAL DEFORMATION --
@@ -487,14 +487,17 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
   { 
     std::cerr << "reset something" << std::endl;
     deform->clear();
+    Deform_mesh::Handle_group handle_group = deform->create_handle_group();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      deform->insert_handle(vh);
+      deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      deform->insert_handle(vh);
+      deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
       deform->insert_roi(vh);
+
+    data.active_handle_group = handle_group;
     data.preprocessed = false;
   }
   else                  // moving frame: move new handles
@@ -504,32 +507,30 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
       edit_item->setSelectedVector(translation_last);
       edit_item->setSelectedHandlesMoved(true);
 
-      Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-        data.handle_vectors[vh] = translation_origin;
+      data.handle_vectors_active = translation_origin;
+
+      //Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
+      //  data.handle_vectors[vh] = translation_origin;
     }
     else
     {
       // AF: for the rotation+ translation, we have to translate handles by  ORIGIN-poi
       //     make the rotation, translate back, and apply the additional translation.
       Vector vec = edit_item->selected_vector().second - edit_item->selected_vector().first;
+
       poi =  edit_item->selected_vector().first;
       double scalar = translation_origin*vec / vec.squared_length() /3.0;
       if (scalar > 1) scalar = 1;
       if (scalar < 0) scalar = 0;
    
-      std::map<Vertex_handle, Vector>::iterator it = data.handle_vectors.begin();
-      while ( it != data.handle_vectors.end() )   // apply scalar factor to each handle region
-      {
-        qglviewer::Quaternion quat(qglviewer::Vec(scalar * it->second.x(),
-                                                  scalar * it->second.y(), 
-                                                  scalar * it->second.z()), scalar * 3.14);
+      Vector data_vec = data.handle_vectors_active;
+      qglviewer::Quaternion quat(qglviewer::Vec(scalar * data_vec.x(),
+                                          scalar * data_vec.y(), 
+                                          scalar * data_vec.z()), scalar * 3.14);
 
-        qglviewer::Vec disp(scalar * it->second.x(), scalar * it->second.y(), scalar *  it->second.z());   
+      qglviewer::Vec disp(scalar * data_vec.x(), scalar * data_vec.y(), scalar *  data_vec.z());  
+      (*deform)(data.active_handle_group, poi, quat, disp);// 0 for the match
 
-        (*deform)( it->first, poi, quat, disp);// 0 for the match
-        //        (*deform)( it->first, scalar*(it->second) );
-        it++;
-      }
       deform->deform();
     }
   }
@@ -553,9 +554,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end())  // First time. Need to create the Deform_mesh object.
   {
-      std::cout << "-------------------------" << std::endl;
-  std::cout << "edition inside" << std::endl;
-  std::cout << "-------------------------" << std::endl;
     Polyhedron_deformation_data& new_data = deform_map[edit_item];
     Deform_mesh* new_deform = new Deform_mesh(*polyhedron, Vertex_index_map(), Edge_index_map());
     new_data.deform_mesh = new_deform;
