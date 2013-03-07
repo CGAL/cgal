@@ -46,7 +46,7 @@ namespace CGAL {
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Polyhedron a model of HalfedgeGraph
- * @tparam SparseLinearAlgebraTraitsWithPreFactor_d sparse linear solver for square symmetric sparse linear systems
+ * @tparam SparseLinearAlgebraTraitsWithPreFactor_d sparse linear solver for square sparse linear systems
  * @tparam VertexIndexMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type
  * @tparam EdgeIndexMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type
  * @tparam WeightCalculator how to document this (should I provide a concept, like in SegmentationGeomTraits ?) */
@@ -218,7 +218,7 @@ public:
     // or 
     Handle_group handle_group = insert_handle(begin, end);
     \endcode
-   * @tparam InputIterator is a input iterator type which points to vertex descriptors
+   * @tparam InputIterator input iterator type which points to vertex descriptors
    * @param begin iterators spesifying the range of vertices i.e. [begin, end) 
    * @param end iterators spesifying the range of vertices i.e. [begin, end) 
    * It simply corresponds to: 
@@ -235,7 +235,7 @@ public:
 
   /**
    * Insert vertices in the range to provided handle group
-   * @tparam InputIterator is a input iterator type which points to vertex descriptors
+   * @tparam InputIterator input iterator type which points to vertex descriptors
    * @param handle_group group to be inserted in
    * @param begin iterators spesifying the range of vertices [begin, end) 
    * @param end iterators spesifying the range of vertices [begin, end) 
@@ -279,7 +279,7 @@ public:
 
   /**
    * Insert vertices in the range to region of interest
-   * @tparam InputIterator is a input iterator type which points to vertex descriptors
+   * @tparam InputIterator input iterator type which points to vertex descriptors
    * @param begin iterators spesifying the range of vertices [begin, end) 
    * @param end iterators spesifying the range of vertices [begin, end) 
    */
@@ -337,9 +337,8 @@ public:
     }
   }
 
-//#ifdef CGAL_DEFORM_ROTATION
   template <typename Quaternion, typename Vect>
-  void operator()(Handle_group handle_group, const Quaternion& quat)
+  void rotate(Handle_group handle_group, const Quaternion& quat)
   {
     Point rotation_center;
     for(typename Handle_container::iterator it = handle_group->begin();
@@ -361,26 +360,46 @@ public:
     }
   }
 
+  /**
+   * Rotate the handle group around rotation center by quaternion
+   * @tparam Quaternion quaternion type which defines a multiplication operator with Vect as quad * vector
+   * @tparam Vect vector type 3 param constructable and has operator[] ...
+   */
   template <typename Quaternion, typename Vect>
-  void operator()(Handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
+  void rotate(Handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
   {
     for(typename Handle_container::iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
     {
       size_t v_index = get(vertex_index_map, *it);
-      std::cout << "----------------------------------------------" << std::endl;
-      std::cout << "center: " << rotation_center << std::endl;
-      std::cout << "original: " << original[v_index] << std::endl;
+
       Point p = CGAL::ORIGIN + ( original[v_index] - rotation_center);
-      std::cout << "not rot: " << p << std::endl;
       Vect v = quat * Vect(p.x(),p.y(),p.z());
       p = Point(v[0], v[1], v[2]) + ( rotation_center - CGAL::ORIGIN);
-      std::cout << "not rot: " << p << std::endl;
       p = p + Vector(translation[0],translation[1],translation[2]);
+
       solution[v_index] = p;
     }
   }
-//#endif // CGAL_DEFORM_ROTATION
+  
+  /**
+   * Assign positions in the range as target positions for the vertices in the handle group
+   * @tparam InputIterator input iterator type which points to Polyhedron::Traits::Point_3
+   * @param handle_group group of target vertices
+   * @param begin iterators spesifying the range of positions [begin, end) 
+   * @param end iterators spesifying the range of positions [begin, end) 
+   */
+  template<class InputIterator>
+  void assign(Handle_group handle_group, InputIterator begin, InputIterator end)
+  {
+    for(typename Handle_container::iterator it = handle_group->begin(); 
+        (it != handle_group->end()) && (begin != end); 
+        ++it, ++begin)
+    {
+      size_t v_index = get(vertex_index_map, *it);
+      solution[v_index] = *begin;
+    }
+  }
 
   /**
    * Reset position of deformed vertices to their original positions (i.e. positions at the time of last preprocess() call)
