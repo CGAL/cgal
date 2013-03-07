@@ -92,7 +92,7 @@ public:
   typedef typename QP_solution_detail::Value_by_index<ET> Value_by_index;
 
   typedef typename boost::transform_iterator
-  <Value_by_index, boost::counting_iterator<int,boost::use_default,int> >
+  <Value_by_index, boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t> >
   Variable_numerator_iterator;
 
   typedef boost::transform_iterator
@@ -103,14 +103,14 @@ public:
   Unbounded_direction_by_index;
 
   typedef boost::transform_iterator
-  <Unbounded_direction_by_index, boost::counting_iterator<int,boost::use_default,int> >
+  <Unbounded_direction_by_index, boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t> >
   Unbounded_direction_iterator;
 
   typedef typename QP_solution_detail::Lambda_by_index<ET> 
   Lambda_by_index;
   
   typedef boost::transform_iterator
-  <Lambda_by_index, boost::counting_iterator<int,boost::use_default,int> >
+  <Lambda_by_index, boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t> >
   Lambda_numerator_iterator;
 
   typedef boost::transform_iterator
@@ -151,14 +151,14 @@ public:
   Variable_numerator_iterator
   original_variables_numerator_begin( ) const
   { return Variable_numerator_iterator 
-      (boost::counting_iterator<int,boost::use_default,int>(0), 
+      (boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t>(0), 
        Value_by_index(this));}
 				  
     
   Variable_numerator_iterator
   original_variables_numerator_end  ( ) const
   { return Variable_numerator_iterator 
-      (boost::counting_iterator<int,boost::use_default,int>(number_of_variables()) , 
+      (boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t>(number_of_variables()) , 
        Value_by_index(this));} 
 
   // value type Quotient<ET>   
@@ -201,14 +201,14 @@ public:
 
   Unbounded_direction_iterator unbounded_direction_begin() const 
   { return Unbounded_direction_iterator 
-      (boost::counting_iterator<int,boost::use_default,int>(0), 
+      (boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t>(0), 
        Unbounded_direction_by_index(this));}
 
   // Returns the past-the-end iterator corresponding to
   // unbounded_direction_begin().
   Unbounded_direction_iterator unbounded_direction_end() const
   { return Unbounded_direction_iterator 
-      (boost::counting_iterator<int,boost::use_default,int>(number_of_variables()), 
+      (boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t>(number_of_variables()), 
        Unbounded_direction_by_index(this));}
 
 
@@ -221,13 +221,13 @@ public:
   Lambda_numerator_iterator 
   lambda_numerator_begin() const 
   { return Lambda_numerator_iterator 
-      (boost::counting_iterator<int,boost::use_default,int>(0), 
+      (boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t>(0), 
        Lambda_by_index(this));}
 
   Lambda_numerator_iterator 
   lambda_numerator_end() const
   { return Lambda_numerator_iterator 
-      (boost::counting_iterator<int,boost::use_default,int>(number_of_constraints()), 
+      (boost::counting_iterator<std::size_t,boost::use_default,std::ptrdiff_t>(number_of_constraints()), 
        Lambda_by_index(this));}
 
   // value type Quotient<ET>
@@ -768,7 +768,7 @@ namespace QP_solution_detail {
   // Value_by_index
   // --------------
   template < typename ET>
-  class Value_by_index : public std::unary_function< int, ET>
+  class Value_by_index : public std::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
@@ -779,9 +779,9 @@ namespace QP_solution_detail {
     {}
 
     // returns value * denominator 
-    result_type operator () ( int i) const
+    result_type operator () ( std::size_t i) const
     {
-      return s->variable_numerator_value(i);
+      return s->variable_numerator_value(static_cast<int>(i));
     }
     
     const QP* s;
@@ -790,7 +790,7 @@ namespace QP_solution_detail {
   // Unbounded_direction_by_index
   // ----------------------------
   template < typename ET>
-  class Unbounded_direction_by_index : public std::unary_function< int, ET>
+  class Unbounded_direction_by_index : public std::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
@@ -800,9 +800,9 @@ namespace QP_solution_detail {
       : s (solver)
     {}
 
-    result_type operator () ( int i) const
+    result_type operator () ( std::size_t i) const
     {
-      return s->unbounded_direction_value(i);
+      return s->unbounded_direction_value(static_cast<int>(i));
     }
       
     const QP* s;
@@ -811,7 +811,7 @@ namespace QP_solution_detail {
   // Lambda_by_index
   // ---------------
   template < typename ET>
-  class Lambda_by_index : public std::unary_function< int, ET>
+  class Lambda_by_index : public std::unary_function< std::size_t, ET>
   {
   public:
     typedef QP_solver_base<ET> QP;
@@ -821,9 +821,9 @@ namespace QP_solution_detail {
       : s (solver)
     {}
 
-    result_type operator () ( int i) const
+    result_type operator () ( std::size_t i) const
     {
-      return s->lambda_numerator(i);
+      return s->lambda_numerator(static_cast<int>(i));
     }
       
     const QP* s;

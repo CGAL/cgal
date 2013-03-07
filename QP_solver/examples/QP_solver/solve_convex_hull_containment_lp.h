@@ -41,7 +41,7 @@ solve_convex_hull_containment_lp (const Point_d& p,
     Program;
 
   // ok, we are prepared now: construct program and solve it
-  Program lp (end-begin,        // number of variables
+  Program lp (static_cast<int>(end-begin),        // number of variables
 	      p.dimension()+1,  // number of constraints
 	      A_it (begin), B_it (p.homogeneous_begin()),
 	      R_it (CGAL::EQUAL), C_it (0));
