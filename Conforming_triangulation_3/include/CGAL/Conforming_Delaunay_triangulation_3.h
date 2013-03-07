@@ -263,7 +263,9 @@ protected:
 	Point construct_split_point(Vertex_handle va, Vertex_handle vb, const Point& ref);
 	
 protected:
-	// Conform an edge to important encroaching points.
+	// Conform an edge to important encroaching points. 
+        // The boolean indicates whether the edge should be made conforming Gabriel
+        template <bool make_gabriel>
 	void conform_segment(Vertex_handle va, Vertex_handle vb, Points_iterator encr_begin, Points_iterator encr_end);
 
 	// Mark a segment that it is assumed to already be in the triangulation.
@@ -294,7 +296,9 @@ public:
 
 	// Insert a conforming segment.
 	void insert_conforming(Vertex_handle va, Vertex_handle vb) {
-		Point_list encr; conform_segment(va, vb, encr.begin(), encr.end());}
+		Point_list encr; conform_segment<false>(va, vb, encr.begin(), encr.end());}
+        void insert_conforming_Gabriel(Vertex_handle va, Vertex_handle vb) {
+		Point_list encr; conform_segment<true>(va, vb, encr.begin(), encr.end());}
 	void insert_conforming(const Bi_vertex& c) {
 		insert_conforming(c.first, c.second);}
 	void insert_conforming(const Point& a, const Point& b, Cell_handle hint = Cell_handle());
@@ -533,6 +537,7 @@ construct_split_point(Vertex_handle va, Vertex_handle vb, const Point& ref) {
 }
 
 template < class Gt, class Tds, class Itag >
+template <bool make_gabriel>
 void Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
 conform_segment(Vertex_handle va, Vertex_handle vb, Points_iterator encr_begin, Points_iterator encr_end) {
 	CGAL_triangulation_precondition(va != vb);
@@ -547,7 +552,7 @@ conform_segment(Vertex_handle va, Vertex_handle vb, Points_iterator encr_begin, 
 	Vertex_handle vi;
 	Cell_handle c;
 	int li, lj;
-	while (includes_edge(va, vb, vi, c, li, lj)) {
+	while (includes_edge(va, vb, vi, c, li, lj) && (!make_gabriel || this->is_Gabriel(c, li, lj) ) ) { 
 		set_conforming(c, li, lj, true);
 		va = vi;
 		if (va == vb)
@@ -569,9 +574,9 @@ conform_segment(Vertex_handle va, Vertex_handle vb, Points_iterator encr_begin, 
 		}
 
 		// Insert ai, and if needed ib.
-		conform_segment(va, vi, encroaching.begin(), encroaching.end());
+		conform_segment<make_gabriel>(va, vi, encroaching.begin(), encroaching.end());
 		if (vi != vb) {
-			conform_segment(vi, vb, encr_begin, encr_end);
+			conform_segment<make_gabriel>(vi, vb, encr_begin, encr_end);
 		}
 		return;
 	}
@@ -600,8 +605,8 @@ conform_segment(Vertex_handle va, Vertex_handle vb, Points_iterator encr_begin, 
 	Points_iterator after_sb = sort_encroaching(after_as, encr_end, vs->point(), vb->point());
 
 	// Insert the segments on both sides of s as constraints.
-	conform_segment(va, vs, encr_begin, after_as);
-	conform_segment(vs, vb, after_as, after_sb);
+	conform_segment<make_gabriel>(va, vs, encr_begin, after_as);
+	conform_segment<make_gabriel>(vs, vb, after_as, after_sb);
 }
 
 template < class Gt, class Tds, class Itag >
