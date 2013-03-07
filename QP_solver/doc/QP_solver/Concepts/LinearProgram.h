@@ -138,7 +138,7 @@ int get_m() const;
 /*! 
 returns an iterator over the columns 
 of \f$ A\f$. The corresponding past-the-end iterator is `get_a()+get_n()`. 
-For \f$ j=0,\ldots,n-1\f$, \f$ \ccc{*(get_a()+j)}\f$ is a random access 
+For \f$ j=0,\ldots,n-1\f$, `*(get_a()+j)` is a random access 
 iterator for column \f$ j\f$. 
 */ 
 A_iterator get_a() const; 
@@ -174,7 +174,7 @@ returns an iterator over the
 entries of \f$ \qpl\f$. 
 The corresponding past-the-end iterator is `get_l()+get_n()`. 
 If `*(get_fl()+j)` has value \f$ false\f$, the value 
-`*(get_l()+j)` is not accessed. \pre if both `*(get_fl()+j)` and `*(get_fu()+j)` have value \f$ true\f$, then \f$ \ccc{*(get_l()+j)}\leq\ccc{*(get_u()+j)}\f$. 
+`*(get_l()+j)` is not accessed. \pre if both `*(get_fl()+j)` and `*(get_fu()+j)` have value \f$ true\f$, then `*(get_l()+j) <= *(get_u()+j)`.
 */ 
 L_iterator get_l() const; 
 
@@ -192,7 +192,7 @@ returns an iterator over the
 entries of \f$ \qpu\f$. 
 The corresponding past-the-end iterator is `get_u()+get_n()`. 
 If `*(get_fu()+j)` has value \f$ false\f$, the value 
-`*(get_u()+j)` is not accessed. \pre if both `*(get_fl()+j)` and `*(get_fu()+j)` have value \f$ true\f$, then \f$ \ccc{*(get_l()+j)}\leq\ccc{*(get_u()+j)}\f$. 
+`*(get_u()+j)` is not accessed. \pre if both `*(get_fl()+j)` and `*(get_fu()+j)` have value \f$ true\f$, then `*(get_l()+j) <= *(get_u()+j)`. 
 */ 
 L_iterator get_u() const; 
 
