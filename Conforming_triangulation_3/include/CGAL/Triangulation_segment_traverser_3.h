@@ -25,7 +25,7 @@
 
 #include <CGAL/Random.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Gt, class Tds>
 class Delaunay_triangulation_utils_3;
@@ -690,6 +690,6 @@ void Triangulation_segment_traverser_3<Gt,Tds>::increment() {
 	}
 }
 
-CGAL_END_NAMESPACE
+} //end of CGAL namespace
 
 #endif // CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H

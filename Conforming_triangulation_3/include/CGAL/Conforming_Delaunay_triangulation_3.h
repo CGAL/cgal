@@ -33,7 +33,7 @@
 #include "Conforming_triangulation_vertex_base_3.h"
 #include "Encroaching_collecter_3.h"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Tr > class Natural_neighbors_3;
 
@@ -1263,6 +1263,6 @@ sort_encroaching(Points_iterator begin, Points_iterator end, const Point& a, con
 	return middle;
 }
 
-CGAL_END_NAMESPACE
+} //end of CGAL namespace
 
 #endif // CGAL_CONFORMING_DELAUNAY_TRIANGULATION_3_H

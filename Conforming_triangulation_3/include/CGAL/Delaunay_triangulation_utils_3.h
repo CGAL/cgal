@@ -31,7 +31,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class DT > class Natural_neighbors_3;
 
@@ -401,6 +401,6 @@ Delaunay_triangulation_utils_3<Gt,Tds>::move_point(Vertex_handle v, const Point&
 	return insert(p, old_neighbor->cell());
 }
 
-CGAL_END_NAMESPACE
+} //end of CGAL namespace
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_3_UTILS_H

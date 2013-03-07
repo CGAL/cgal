@@ -34,7 +34,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename Gt, typename Cb = Triangulation_cell_base_3<Gt> >
 class Conforming_triangulation_cell_base_3: public Cb {
@@ -174,6 +174,6 @@ std::ostream& Conforming_triangulation_cell_base_3<Gt, Cb>::write_cell(std::ostr
 	return os;
 }
 
-CGAL_END_NAMESPACE
+} //end of CGAL namespace
 
 #endif // CGAL_CONFORMING_TRIANGULATION_CELL_BASE_3_H

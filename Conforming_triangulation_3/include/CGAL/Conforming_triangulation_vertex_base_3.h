@@ -21,7 +21,7 @@
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < typename GT, typename Vb = Triangulation_vertex_base_3<GT> >
 class Conforming_triangulation_vertex_base_3: public Vb {
@@ -64,6 +64,6 @@ operator<<(std::ostream &os, const Conforming_triangulation_vertex_base_3<GT, Vb
 	return os << v.steiner();
 }
 
-CGAL_END_NAMESPACE
+} //end of CGAL namespace
 
 #endif // CGAL_CONFORMING_TRIANGULATION_VERTEX_BASE_3_H

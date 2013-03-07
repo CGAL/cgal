@@ -24,7 +24,7 @@
 
 #include "Triangulation_segment_traverser_3.h"
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
 /// \todo factorize with CDT2
@@ -130,6 +130,6 @@ void Encroaching_collecter_3<Gt,Tds,Itag,Out>::increment() {
 	}
 }
 
-CGAL_END_NAMESPACE
+} //end of CGAL namespace
 
 #endif // CGAL_ENCROACHING_COLLECTER_3_H
