@@ -11,7 +11,7 @@ namespace CGAL {
 
 The class `Compact_container_base` can be used as a base class for 
 your own type `T`, so that `T` can be used directly within 
-`Compact_container<T, Allocator>`. This class stores a `void *` 
+`Compact_container<T, Allocator, Strategy>`. This class stores a `void *` 
 pointer only for this purpose, so it may not be the most memory efficient 
 way to achieve this goal. The other ways are to provide in `T` the 
 necessary member functions so that the template 
@@ -112,8 +112,12 @@ The parameter `Allocator` has to match the standard allocator
 requirements, with value type `T`. This parameter has the default 
 value `CGAL_ALLOCATOR(T)`. 
 
+The parameter `Strategy` allows the user to specify a static class which has
+to match the requirements of the concept `CompactContainerStrategy`. This 
+parameter has the default value `CC_strategy_base<T>`.
+
 */
-template< typename T, typename Allocator >
+template< typename T, typename Allocator, typename Strategy >
 class Compact_container {
 public:
 
@@ -259,7 +263,7 @@ const Allocator &a = Allocator());
 copy constructor. Each item in `cc2` is copied. The allocator 
 is copied. The iterator order is preserved. 
 */ 
-Compact_container(const Compact_container<T, Allocator> &cc2); 
+Compact_container(const Compact_container<T, Allocator, Strategy> &cc2); 
 
 
 
@@ -272,8 +276,8 @@ Compact_container(const Compact_container<T, Allocator> &cc2);
 assignment. Each item in `cc2` is copied. The allocator is copied. 
 Each item in `c` is deleted. The iterator order is preserved. 
 */ 
-Compact_container<T, Allocator> & operator=(const 
-Compact_container<T, Allocator> &cc2); 
+Compact_container<T, Allocator, Strategy> & operator=(const 
+Compact_container<T, Allocator, Strategy> &cc2); 
 
 
 
@@ -286,7 +290,7 @@ Compact_container<T, Allocator> &cc2);
 swaps the contents of `cc` and `cc2` in constant time 
 complexity. No exception is thrown. 
 */ 
-void swap(Compact_container<T, Allocator> &cc2); 
+void swap(Compact_container<T, Allocator, Strategy> &cc2); 
 
 
 
@@ -632,7 +636,7 @@ adds the items of `cc2` to the end of `cc` and `cc2` becomes empty.
 The time complexity is O(`cc`.`capacity()`-`cc`.`size()`). 
 \pre `cc2` must not be the same as `cc`, and the allocators of `cc` and `cc2` must be compatible: `cc.get_allocator() == cc2.get_allocator()`. 
 */ 
-void merge(Compact_container<T, Allocator> &cc); 
+void merge(Compact_container<T, Allocator, Strategy> &cc); 
 
 
 
@@ -645,7 +649,7 @@ void merge(Compact_container<T, Allocator> &cc);
 test for equality: Two containers are equal, iff they have the 
 same size and if their corresponding elements are equal. 
 */ 
-bool operator==(const Compact_container<T, Allocator> &cc) const; 
+bool operator==(const Compact_container<T, Allocator, Strategy> &cc) const; 
 
 
 
@@ -657,7 +661,7 @@ bool operator==(const Compact_container<T, Allocator> &cc) const;
 /*! 
 test for inequality: returns `!(c == cc)`. 
 */ 
-bool operator!=(const Compact_container<T, Allocator> &cc) const; 
+bool operator!=(const Compact_container<T, Allocator, Strategy> &cc) const; 
 
 
 
@@ -669,7 +673,7 @@ bool operator!=(const Compact_container<T, Allocator> &cc) const;
 /*! 
 compares in lexicographical order. 
 */ 
-bool operator<(const Compact_container<T, Allocator> &cc2) const; 
+bool operator<(const Compact_container<T, Allocator, Strategy> &cc2) const; 
 
 
 
@@ -681,7 +685,7 @@ bool operator<(const Compact_container<T, Allocator> &cc2) const;
 /*! 
 returns `cc2 <cc`. 
 */ 
-bool operator>(const Compact_container<T, Allocator> &cc2) const; 
+bool operator>(const Compact_container<T, Allocator, Strategy> &cc2) const; 
 
 
 
@@ -693,7 +697,7 @@ bool operator>(const Compact_container<T, Allocator> &cc2) const;
 /*! 
   returns `!(cc > cc2)`. 
 */ 
-bool operator<=(const Compact_container<T, Allocator> &cc2) const; 
+bool operator<=(const Compact_container<T, Allocator, Strategy> &cc2) const; 
 
 
 
@@ -705,7 +709,7 @@ bool operator<=(const Compact_container<T, Allocator> &cc2) const;
 /*! 
 returns `!(cc < cc2)`. 
 */ 
-bool operator>=(const Compact_container<T, Allocator> &cc2) const; 
+bool operator>=(const Compact_container<T, Allocator, Strategy> &cc2) const; 
 
 
 
@@ -725,7 +729,7 @@ namespace CGAL {
 
 The traits class `Compact_container_traits` provides 
 the way to access the internal pointer required for `T` to be 
-used in a `Compact_container<T, Allocator>`. Note that this 
+used in a `Compact_container<T, Allocator, Strategy>`. Note that this 
 pointer needs to be accessible even when the object is not constructed, 
 which means it has to reside in the same memory place as `T`. 
 
