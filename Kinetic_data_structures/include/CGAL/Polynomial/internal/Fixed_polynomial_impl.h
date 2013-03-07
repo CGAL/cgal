@@ -94,7 +94,7 @@ public:
   template <class Iterator>
   Fixed_polynomial_impl(Iterator first, Iterator beyond) {
     std::copy(first, beyond, coefs_);
-    for (unsigned int i=std::distance(first, beyond); i<= D; ++i){
+    for (unsigned int i=static_cast<unsigned int>(std::distance(first, beyond)); i<= D; ++i){
       coefs_[i]=0;
     }
   }

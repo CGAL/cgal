@@ -181,7 +181,7 @@ public:
     
     int number_of_points() const
     {
-        return points.size();
+        return static_cast<int>(points.size());
     }
     
     int number_of_support_points() const

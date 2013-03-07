@@ -52,7 +52,6 @@ class MainWindow :
 private:  
   ArcContainer arcs;
   ArcContainer intersections;
-  CircularKernel ck; 
   QGraphicsScene scene;  
 
   ArcsGraphicsItem * agi;

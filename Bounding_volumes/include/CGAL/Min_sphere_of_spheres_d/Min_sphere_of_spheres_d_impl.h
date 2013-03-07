@@ -97,7 +97,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const FT dist = inner_product_n<D>(ss.begin(),
-        t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
+                                         t.center_cartesian_begin(*l[k]),FT(0),std::plus<FT>(),
         Subtract_and_square<FT>());
   
       // compute excess:
@@ -170,7 +170,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     for (int k=from; k<to; ++k) {
       // compute the (squared) distance from c1 to c2:
       const FT dist = inner_product_n<D>(ss.begin(),
-        t.center_cartesian_begin(*l[k]),0.0,std::plus<FT>(),
+                                         t.center_cartesian_begin(*l[k]),FT(0),std::plus<FT>(),
         Subtract_and_square<FT>());
   
       if (compare(max,maxp,t.radius(*l[k]),dist)) {
@@ -254,20 +254,20 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     // check size of support set:
     if (e > static_cast<int>(l.size()) || e > (D+1)) {
-      cerr << "Min_sphere_of_spheres_d: support set too large." << endl
-           << "Please contact the author <kf@iaeth.ch>." << endl;
+      cerr << "BUG: Min_sphere_of_spheres_d: support set too large." << endl
+           << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html" << endl;
       return false;
     } else if (l.size() > 0 && e<=0) {
-      cerr << "Min_sphere_of_spheres_d: support set too small." << endl
-           << "Please contact the author <kf@iaeth.ch>." << endl;
+      cerr << "BUG: Min_sphere_of_spheres_d: support set too small." << endl
+           << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html" << endl;
       return false;
     }
   
     // check case of no balls:
     if (l.size() <= 0) {
       if (!is_empty()) {
-        cerr << "Min_sphere_of_spheres_d: miniball of {} non-empty." << endl
-             << "Please contact the author <kf@iaeth.ch>." << endl;
+        cerr << "BUG: Min_sphere_of_spheres_d: miniball of {} non-empty." << endl
+             << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html" << endl;
         return false;
       } else
         return true;
@@ -305,8 +305,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
         isSupporting = false;
     }
     if (!isSupporting) {
-      cerr << "Min_sphere_of_spheres_d: support not on boundary." << endl
-           << "Please contact the author <kf@iaeth.ch>." << endl;
+      cerr << "BUG: Min_sphere_of_spheres_d: support not on boundary." << endl
+           << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html" << endl;
       return false;
     }
     
@@ -331,8 +331,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
         while (i<D+1 && m[j][i]==FT(0))
           ++i;
         if (i >= D+1) {
-          cerr << "Min_sphere_of_spheres_d: supp. centers aff. dep." << endl
-               << "Please contact the author <kf@iaeth.ch>." << endl;
+          cerr << "BUG: Min_sphere_of_spheres_d: supp. centers aff. dep." << endl
+               << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html" << endl;
           return false;
         }
     
@@ -364,9 +364,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // check solvability:
     for (int i=e; i<D+1; ++i)
       if (!is_zero(rhs[i],ss.disc())) {
-        cerr << "Min_sphere_of_spheres_d: center of the miniball" << endl
-             << "not in the span of the support centers." << endl
-             << "Please contact the author <kf@iaeth.ch>." << endl;
+        cerr << "BUG: Min_sphere_of_spheres_d: center of the miniball" << endl
+             << "     not in the span of the support centers." << endl
+             << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html" << endl;
         return false;
       }
     
@@ -382,9 +382,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // check coefficients:
     for (int i=0; i<e; ++i)
       if (is_neg_or_zero(lambda[i],ss.disc())) {
-        cerr << "Min_sphere_of_spheres_d: center of miniball not in" << endl
-             << "interior of convex hull of support centers." << endl
-             << "Please contact the author <kf@iaeth.ch>." << endl;
+        cerr << "BUG: Min_sphere_of_spheres_d: center of miniball not in" << endl
+             << "     interior of convex hull of support centers." << endl
+             << "Refer to the bug-reporting instructions at http://www.cgal.org/bug_report.html" << endl;
         return false;
       }
     

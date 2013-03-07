@@ -22,7 +22,6 @@ This reflects the fact that the last entry corresponds to the
 outermost variable of a multivariate polynomial. 
 
 \cgalModels `RandomAccessContainer`
-\cgalModels `BackInsertionSequence`
 \cgalModels `DefaultConstructible`
 \cgalModels `Assignable`
 \cgalModels `CopyConstructible`

@@ -17,12 +17,11 @@ typedef Kernel::Point_3 Point_3;
 
 class Shell_explorer {
   bool first;
-  const Nef_polyhedron& N;
   Vertex_const_handle v_min;
 
 public:
-  Shell_explorer(const Nef_polyhedron& N_)
-    : first(true), N(N_) {}
+  Shell_explorer()
+    : first(true) {}
 
   void visit(Vertex_const_handle v) {
     if(first || CGAL::lexicographically_xyz_smaller(v->point(),v_min->point())) {
@@ -47,7 +46,7 @@ int main() {
 
   int ic = 0;
   Volume_const_iterator c;
-  Shell_explorer SE(N);
+  Shell_explorer SE;
   CGAL_forall_volumes(c,N) {
     std::cout << "Volume " << ic++ << std::endl;
     int is = 0;

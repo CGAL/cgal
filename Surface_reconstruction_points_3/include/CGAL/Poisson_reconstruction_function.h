@@ -730,7 +730,7 @@ private:
     // get #variables
     constrain_one_vertex_on_convex_hull();
     m_tr->index_unconstrained_vertices();
-    unsigned int nb_variables = m_tr->number_of_vertices()-1;
+    unsigned int nb_variables = static_cast<unsigned int>(m_tr->number_of_vertices()-1);
 
     CGAL_TRACE("  Number of variables: %ld\n", (long)(nb_variables));
 
@@ -819,7 +819,7 @@ private:
       if(v->type() == Triangulation::INPUT)
         values.push_back(v->f());
 
-    int size = values.size();
+    std::size_t size = values.size();
     if(size == 0)
     {
       std::cerr << "Contouring: no input points\n";
@@ -827,7 +827,7 @@ private:
     }
 
     std::sort(values.begin(),values.end());
-    int index = size/2;
+    std::size_t index = size/2;
     // return values[size/2];
     return 0.5 * (values[index] + values[index+1]); // avoids singular cases
   }
@@ -1074,8 +1074,8 @@ private:
     // sum up areas
     FT area = 0.0;
     const Point& a = voronoi_points[0];
-    unsigned int nb_triangles = voronoi_points.size() - 1;
-    for(unsigned int i=1;i<nb_triangles;i++)
+    std::size_t nb_triangles = voronoi_points.size() - 1;
+    for(std::size_t i=1;i<nb_triangles;i++)
     {
       const Point& b = voronoi_points[i];
       const Point& c = voronoi_points[i+1];

@@ -321,6 +321,7 @@ public:
         return make_object(SFace_handle(v_res->incident_sface()));
       default: CGAL_error_msg("missing solution.");
     }
+    CGAL_error();
     return Object_handle(); // never reached!
   }
 
@@ -659,6 +660,8 @@ marks_of_halfspheres(Mark& lower, Mark& upper, int axis) {
       if ( collinear ) lower = e->twin()->incident_sface()->mark();
       else lower = e->incident_sface()->mark();
     }
+  } else {
+    CGAL_error();
   }
 }
 

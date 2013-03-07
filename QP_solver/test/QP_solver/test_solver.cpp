@@ -413,7 +413,6 @@ bool process(const std::string& filename,
     return false;
   }
 
-  typedef CGAL::QP_solver_impl::QP_tags<Is_linear,Is_nonnegative> Tags;
 
   // now comes the actual, output-generating run 
   // make options

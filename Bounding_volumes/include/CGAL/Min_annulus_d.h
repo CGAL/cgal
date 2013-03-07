@@ -311,7 +311,7 @@ public:
   // access to point set
   int  ambient_dimension( ) const { return d; }
     
-  int  number_of_points( ) const { return points.size(); }
+  int  number_of_points( ) const { return static_cast<int>(points.size()); }
     
   Point_iterator  points_begin( ) const { return points.begin(); }
   Point_iterator  points_end  ( ) const { return points.end  (); }
@@ -345,8 +345,8 @@ public:
 						   std::bind2nd( std::divides<int>(), 2)));
   }
     
-  int  number_of_inner_support_points() const { return inner_indices.size();}
-  int  number_of_outer_support_points() const { return outer_indices.size();}
+  int  number_of_inner_support_points() const { return static_cast<int>(inner_indices.size());}
+  int  number_of_outer_support_points() const { return static_cast<int>(outer_indices.size());}
     
   Inner_support_point_iterator
   inner_support_points_begin() const
@@ -637,7 +637,7 @@ private:
       c_vector[ 2*j+1] = -sum;
     }
         
-    LP lp (2*points.size(), d+2, 
+    LP lp (2*static_cast<int>(points.size()), d+2, 
 	   A_iterator ( boost::counting_iterator<int>(0), 
 			A_matrix (d, da_coord, points.begin())),
 	   B_iterator ( boost::counting_iterator<int>(0), 

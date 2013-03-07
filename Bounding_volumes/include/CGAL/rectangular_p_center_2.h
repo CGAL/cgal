@@ -225,7 +225,7 @@ rectangular_p_center_2_matrix_search(
   const Traits& t,
   const MatrixOperator& mop)
 {
-  int number_of_points( iterator_distance( f, l));
+  std::size_t number_of_points( iterator_distance( f, l));
   CGAL_optimisation_precondition( number_of_points > 0);
 
   using std::minus;

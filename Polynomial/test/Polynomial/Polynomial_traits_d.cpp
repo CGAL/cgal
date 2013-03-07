@@ -53,28 +53,6 @@ void test_AK_2(){
 }
 
 
-template < typename AK> 
-void test_AK_3(){
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
-
-  typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
-  
-
-  typedef CGAL::Polynomial< CGAL::Sqrt_extension< Integer, Integer > > Poly;
-  typedef CGAL::Polynomial_traits_d<Poly> PT;  
-  std::cerr << std::endl;
-  std::cerr << "Test for coefficient type Sqrt_extension< Integer, Integer >" 
-            << std::endl;
-  std::cerr << 
-    "----------------------------------------------------------------------"
-            << std::endl;    
-  CGAL::Test_Pol::test_multiple_dimensions(PT());    
-
-
-}
-
 
 template < typename AK> 
 void test_AK_4(){
@@ -154,7 +132,6 @@ int main(){
     typedef CGAL::Arithmetic_kernel AK; 
     test_AK_1<AK>();
     test_AK_2<AK>();
-    test_AK_3<AK>();
     test_AK_4<AK>();
     test_AK_5<AK>();
     test_AK_6<AK>();

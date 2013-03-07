@@ -158,7 +158,7 @@ jet_estimate_normals(
   // precondition: at least 2 nearest neighbors
   CGAL_point_set_processing_precondition(k >= 2);
 
-  long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Creates KD-tree\n");
 
   InputIterator it;
@@ -173,7 +173,7 @@ jet_estimate_normals(
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
-  /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Computes normals\n");
 
   // iterate over input points, compute and output normal
@@ -184,7 +184,7 @@ jet_estimate_normals(
     put(normal_pmap, it, normal); // normal_pmap[it] = normal
   }
 
-  /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of jet_estimate_normals()\n");
 }
 

@@ -1,3 +1,8 @@
+#include <boost/config.hpp>
+#if defined(BOOST_MSVC)
+#  pragma warning( disable : 4503)
+#endif
+
 #include <CGAL_demo/Viewer.h>
 #include <CGAL_demo/Plugin_interface.h>
 #include <CGAL_demo/Plugin_helper.h>
@@ -431,7 +436,7 @@ C3t3_rib_exporter_plugin::init_maps(const C3t3& c3t3, const QColor& color)
   }
   
   // Fill value of maps
-  int nb_colors = subdomain_map_.size(); // + surface_map_.size();
+  int nb_colors = static_cast<int>(subdomain_map_.size()); // + surface_map_.size();
   
   // Starting hue
   double c = color.hueF();

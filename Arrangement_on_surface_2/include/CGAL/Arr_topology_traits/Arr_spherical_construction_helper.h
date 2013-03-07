@@ -238,7 +238,7 @@ public:
   }
 
   /*! A notification invoked when a new subcurve is created. */
-  virtual void add_subcurve(Halfedge_handle he, Subcurve* sc) { return; }
+  virtual void add_subcurve(Halfedge_handle , Subcurve* ) { return; }
 
   /*! Collect a subcurve index that does not see any status-line from below.
    */
@@ -246,7 +246,7 @@ public:
   { m_subcurves_at_nf.push_back(index); }
 
   /*! A notification invoked before the given event it deallocated. */
-  void before_deallocate_event(Event* event) { return; }
+  void before_deallocate_event(Event* ) { return; }
   //@} 
   
   /*! Set the map that maps each halfedge to the list of subcurve indices

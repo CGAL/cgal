@@ -269,10 +269,10 @@ public:
     { CGAL_assertion(base() != Base_iterator());
       tf = (z == NEAREST ? lower_hull : upper_hull); 
       bool cocirc = const_cast<Delaunay*>(DT)->is_S_cocircular();
-      while ( base() != DT->simplices_end() &&
-              !( cocirc && DT->is_bounded_simplex(base()) ||
-                 !cocirc && DT->is_unbounded_simplex(base()) && 
-                 DT->type_of(base()) == tf ) ) {
+      while ( (base() != DT->simplices_end()) &&
+              !( (cocirc && DT->is_bounded_simplex(base())) ||
+                 (!cocirc && DT->is_unbounded_simplex(base()) && 
+                  DT->type_of(base()) == tf ) ) ) {
          Base_iterator::operator++();
       }
     }
@@ -287,10 +287,10 @@ public:
       bool cocirc = const_cast<Delaunay*>(DT)->is_S_cocircular();
       do {
         Base_iterator::operator++();
-      } while ( base() != DT->simplices_end() &&
-                !( cocirc && DT->is_bounded_simplex(base()) ||
-                   !cocirc && DT->is_unbounded_simplex(base()) && 
-                   DT->type_of(base()) == tf ) ); 
+      } while ( (base() != DT->simplices_end()) &&
+                !( (cocirc && DT->is_bounded_simplex(base())) ||
+                   (!cocirc && DT->is_unbounded_simplex(base()) && 
+                    DT->type_of(base()) == tf ) ) ); 
       return *this; 
     }
     Simplex_const_iterator  operator++(int) 

@@ -36,8 +36,10 @@
 
 #include <boost/type_traits/is_same.hpp>
 
-// suppress bogus warning when compiling with gcc 4.3 or 4.4
-#if (__GNUC__ == 4 && (__GNUC_MINOR__ == 3 || __GNUC_MINOR__ == 4))
+#include <CGAL/config.h>
+
+// suppress bogus warning when compiling with gcc>=4.3
+#if CGAL_GCC_VERSION >= 40300
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
 

@@ -102,11 +102,11 @@ class Gaussian_map :
     SVertex_creator2(Sphere_map* smap, Facet2SVertex_hash& F2SV)
       : SM(smap), Facet2SVertex(F2SV) {}
 
-    void visit(Vertex_const_handle v) {}
-    void visit(Halfedge_const_handle e) {}
-    void visit(SHalfedge_const_handle se) {}
-    void visit(SHalfloop_const_handle sl) {}
-    void visit(SFace_const_handle sf) {}
+    void visit(Vertex_const_handle) {}
+    void visit(Halfedge_const_handle) {}
+    void visit(SHalfedge_const_handle) {}
+    void visit(SHalfloop_const_handle) {}
+    void visit(SFace_const_handle) {}
     void visit(Halffacet_const_handle f) {
 
       CGAL_NEF_TRACEN( "SVertex_creator2 " << f->twin()->plane() );
@@ -273,11 +273,11 @@ class Gaussian_map :
       : SM(smap), Edge2SEdge(E2SE), Facet2SVertex(F2SV) {}
       
   public:
-    void visit(Vertex_const_handle v) {}
-    void visit(Halfedge_const_handle e) {}
-    void visit(SHalfedge_const_handle se) {}
-    void visit(SHalfloop_const_handle sl) {}
-    void visit(SFace_const_handle sf) {}
+    void visit(Vertex_const_handle) {}
+    void visit(Halfedge_const_handle) {}
+    void visit(SHalfedge_const_handle) {}
+    void visit(SHalfloop_const_handle) {}
+    void visit(SFace_const_handle) {}
     
     void visit(Halffacet_const_handle f) {
       
@@ -518,11 +518,11 @@ class Gaussian_map :
     SM_decorator SM;
     Edge2SEdge_hash& Edge2SEdge;
     Vertex2bool_hash& omit_vertex;
-    SFace2bool_hash& Shell;
+    /* SFace2bool_hash& Shell; */
 
   public:
-    SFace_creator(const Nef_polyhedron_3& N, Sphere_map* smap, Edge2SEdge_hash& E2SE, Vertex2bool_hash& V2b, SFace2bool_hash SHELL) : 
-      N3(N), SM(smap), Edge2SEdge(E2SE), omit_vertex(V2b), Shell(SHELL) {}
+    SFace_creator(const Nef_polyhedron_3& N, Sphere_map* smap, Edge2SEdge_hash& E2SE, Vertex2bool_hash& V2b /*, SFace2bool_hash& SHELL*/) : 
+      N3(N), SM(smap), Edge2SEdge(E2SE), omit_vertex(V2b)/* , Shell(SHELL)*/ {}
 
       void visit(Halfedge_const_handle ) {}
       void visit(SHalfedge_const_handle ) {}
@@ -803,7 +803,7 @@ class Gaussian_map :
 
     SVertex_creator<Nef_polyhedron_3> create_svertices(this->sphere_map(), Facet2SVertex, Facet2bool, SEdge2SEdge, Vertex2bool, Edge2bool, Shell);
     SEdge_creator<Nef_polyhedron_3>   create_sedges(this->sphere_map(), Edge2SEdge, Facet2SVertex, SEdge2SEdge, Facet2bool, Edge2bool);
-    SFace_creator<Nef_polyhedron_3>   create_sfaces(N3, this->sphere_map(), Edge2SEdge, Vertex2bool, Shell);
+    SFace_creator<Nef_polyhedron_3>   create_sfaces(N3, this->sphere_map(), Edge2SEdge, Vertex2bool /*, Shell */);
 
     N3.visit_shell_objects(sf, create_svertices);
     N3.visit_shell_objects(sf, create_sedges);

@@ -129,13 +129,15 @@ public:
     return clusters.number_of_clusters_at_vertex(vh);
   }
 
-  // returns the sequence of vertices bellonging to the n-th cluster of vh
+#if 0
+  // returns the sequence of vertices belonging to the n-th cluster of vh
   std::pair<Vertices_in_cluster_iterator, Vertices_in_cluster_iterator>
   vertices_in_cluster_sequence(const Vertex_handle& vh,
                                const unsigned int n)
   {
     return clusters.vertices_in_cluster_sequence();
   }
+#endif
 
 public:
   /** \name CHECKING METHODS */

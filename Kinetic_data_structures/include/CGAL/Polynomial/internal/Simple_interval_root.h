@@ -210,7 +210,7 @@ public:
   //! Return true if the root is +/- infinity.
   bool is_infinite() const
   {
-    return type_&INF;
+    return ((type_&INF)!= 0);
   }
  
   
@@ -581,7 +581,7 @@ protected:
   //! return true if the this is uninitialized
   bool is_null() const
   {
-    return (type_&INVALID);
+    return (type_&INVALID)!= 0;
   }
 
   mutable std::pair<NT, NT> ii_;
