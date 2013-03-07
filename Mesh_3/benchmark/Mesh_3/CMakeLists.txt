@@ -24,6 +24,9 @@ option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   ON)
   
 # Macro to add precompiled headers for MSVC
+# This function does two things:
+# 1. Enable precompiled headers on each file which is listed in "SourcesVar".
+# 2. Add the content of "PrecompiledSource" (e.g. "StdAfx.cpp") to "SourcesVar".
 MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
   IF(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
     GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)

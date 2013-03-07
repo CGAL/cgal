@@ -20,6 +20,9 @@ option(ACTIVATE_MSVC_PRECOMPILED_HEADERS
   ON)
 
 # Macro to add precompiled headers for MSVC
+# This function does two things:
+# 1. Enable precompiled headers on each file which is listed in "SourcesVar".
+# 2. Add the content of "PrecompiledSource" (e.g. "StdAfx.cpp") to "SourcesVar".
 MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
   IF(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
     GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
@@ -357,12 +360,15 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
                         ${OPENGL_glu_LIBRARY}
 						${TBB_LIBRARIES})
 
-  set(MESH_3_OPTIMIZATION_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_optimization_plugin") 
-  polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin 
-                         Mesh_3_optimization_plugin_cgal_code.cpp
-                         Optimizer_thread.cpp
-                         Scene_c3t3_item.moc
-                         ${optimUI_FILES})
+  set(MESH_3_OPTIMIZATION_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_optimization_plugin")
+  set(MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES
+    Mesh_3_optimization_plugin.cpp
+    Mesh_3_optimization_plugin_cgal_code.cpp
+	Optimizer_thread.cpp)
+  ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES)
+  LIST(REMOVE_AT MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES 0) # Remove Mesh_3_optimization_plugin.cpp since it's added by polyhedron_demo_plugin
+  LIST(APPEND MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES "Scene_c3t3_item.moc" ${optimUI_FILES})
+  polyhedron_demo_plugin(${MESH_3_OPTIMIZATION_PLUGIN_LIB} Mesh_3_optimization_plugin ${MESH_3_OPTIMIZATION_PLUGIN_SOURCE_FILES})
 
   target_link_libraries(${MESH_3_OPTIMIZATION_PLUGIN_LIB}
                         ${SCENE_C3T3_ITEM_LIB}
