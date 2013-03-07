@@ -1,6 +1,5 @@
 // example: function to check whether a point is in the convex 
 // hull of other points; this version uses a maker
-#include <boost/config.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/QP_models.h>
