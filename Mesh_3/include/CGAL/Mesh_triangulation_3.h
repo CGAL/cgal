@@ -60,13 +60,13 @@ namespace CGAL {
   
 // Struct Mesh_triangulation_3
 //
-template<class MD, 
-         class Concurrency_tag = Sequential_tag,
-         class K=typename Kernel_traits<MD>::Kernel>
+template<class MD,
+         class K=typename Kernel_traits<MD>::Kernel,
+         class Concurrency_tag = Sequential_tag>
 struct Mesh_triangulation_3;
 
 // Sequential version (default)
-template<class MD, class Concurrency_tag, class K>
+template<class MD, class K, class Concurrency_tag>
 struct Mesh_triangulation_3
 {
 private:
@@ -100,7 +100,7 @@ public:
 // Parallel version (specialization)
 //
 template<class MD, class K>
-struct Mesh_triangulation_3<MD, Parallel_tag, K>
+struct Mesh_triangulation_3<MD, K, Parallel_tag>
 {
 private:
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;

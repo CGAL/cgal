@@ -45,6 +45,7 @@ namespace po = boost::program_options;
 // BENCHMARK GENERAL PARAMETERS
 // ==========================================================================
 
+//#define BENCHMARK_WITH_1_TO_MAX_THREADS
 //#define MESH_3_POLYHEDRON_WITH_FEATURES
 //#define MESH_3_IMPLICIT_WITH_FEATURES
 //#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
@@ -572,7 +573,10 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Parallel_tag>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<
+    Mesh_domain, 
+    CGAL::Kernel_traits<Mesh_domain>::Kernel,
+    CGAL::Parallel_tag>::type Tr;
 #else
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
@@ -687,7 +691,10 @@ bool make_mesh_3D_images(const std::string &input_filename,
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Parallel_tag>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<
+    Mesh_domain, 
+    CGAL::Kernel_traits<Mesh_domain>::Kernel,
+    CGAL::Parallel_tag>::type Tr;
 #else
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
@@ -732,7 +739,7 @@ bool make_mesh_3D_images(const std::string &input_filename,
   double sliverbound = 4;
 #else
   double timelimit = 0;
-  double sliverbound = 7;
+  double sliverbound = 4;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
@@ -794,9 +801,12 @@ bool make_mesh_implicit(double facet_approx,
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Parallel_tag>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<
+    Mesh_domain, 
+    CGAL::Kernel_traits<Mesh_domain>::Kernel,
+    CGAL::Parallel_tag>::type Tr;
 #else
-  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
   // C3t3
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
@@ -865,7 +875,7 @@ bool make_mesh_implicit(double facet_approx,
   double sliverbound = 4;
 #else
   double timelimit = 0;
-  double sliverbound = 7;
+  double sliverbound = 4;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
@@ -959,7 +969,11 @@ int main()
   {
     int i = 1;
 #ifdef CONCURRENT_MESH_3
-    for(num_threads = 2 ; num_threads <= 12 ; ++num_threads) // CJTODO for test
+# ifdef BENCHMARK_WITH_1_TO_MAX_THREADS
+    for(num_threads = 1 ; 
+          num_threads <= task_scheduler_init::default_num_threads() ; 
+          ++num_threads)
+# endif
     /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ;
       Concurrent_mesher_config::get().num_work_items_per_batch < 100 ;
       Concurrent_mesher_config::get().num_work_items_per_batch += 5)*/

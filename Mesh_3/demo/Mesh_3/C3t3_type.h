@@ -81,7 +81,9 @@ typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel>              RKernel;
 
 // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain, CGAL::Parallel_tag>::type Tr;
+  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain, 
+                                     CGAL::Kernel_traits<Polyhedral_mesh_domain>::Kernel,
+                                     CGAL::Parallel_tag>::type Tr;
 #else
   typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain>::type Tr;
 #endif
