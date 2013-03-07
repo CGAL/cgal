@@ -486,7 +486,7 @@ public:
   template < class InputIterator >
   void
   insert( InputIterator first, InputIterator last)
-  { CGAL_optimisation_precondition_code( int old_n = points.size());
+  { CGAL_optimisation_precondition_code( std::size_t old_n = points.size());
   points.insert( points.end(), first, last);
   set_dimension();
   CGAL_optimisation_precondition_msg( check_dimension( old_n),
@@ -587,7 +587,7 @@ private:
     
   // check dimension of input points
   bool
-  check_dimension( unsigned int  offset = 0)
+  check_dimension( std::size_t  offset = 0)
   { return ( std::find_if( points.begin()+offset, points.end(),
 			   CGAL::compose1_1( std::bind2nd(
 							  std::not_equal_to<int>(), d),
