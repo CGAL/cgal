@@ -320,11 +320,11 @@ specifies which case occurs when locating a point in the triangulation.
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
 */ 
-enum Locate_type { VERTEX=0, //! when the located point coincides with a vertex of the triangulation
-                   EDGE, //! when the point is in the relative interior of an edge
-                   FACE, //! when the point is in the interior of a facet
-                   OUTSIDE_CONVEX_HULL, //! when the point is outside the convex hull but in the affine hull of the current triangulation
-                   OUTSIDE_AFFINE_HULL //!when the point is outside the affine hull of the current triangulation. 
+  enum Locate_type { VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
+                     EDGE, /*!< when the point is in the relative interior of an edge */
+                     FACE, /*!< when the point is in the interior of a facet */
+                     OUTSIDE_CONVEX_HULL, /*!< when the point is outside the convex hull but in the affine hull of the current triangulation */
+                     OUTSIDE_AFFINE_HULL /*!< when the point is outside the affine hull of the current triangulation. */
 }; 
 
 /// @} 
