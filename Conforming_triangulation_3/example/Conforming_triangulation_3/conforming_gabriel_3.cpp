@@ -77,14 +77,27 @@ int main()
 
   std::cout << cdt3.number_of_vertices() << std::endl;
   
+  std::cout << "Making Delaunay conform" << std::endl;
   for (std::vector< std::pair<int,int> >::iterator cst_it=constraints.begin(),
                                                   cst_end=constraints.end();
        cst_it!=cst_end; ++cst_it)
   {
     cdt3.insert_conforming( std::make_pair(vertices[cst_it->first], vertices[cst_it->second]) );
   }
-  
-  
+
+
+  for(CDT3::Finite_edges_iterator it=cdt3.finite_edges_begin(); it!=cdt3.finite_edges_end(); ++it)
+    if ( it->first->vertex(it->second)->steiner() || it->first->vertex(it->third)->steiner() )
+      std::cout << "edge with steiner endpoint" << std::endl;
+
+  std::cout << "Making Gabriel conform" << std::endl;
+  for (std::vector< std::pair<int,int> >::iterator cst_it=constraints.begin(),
+                                                  cst_end=constraints.end();
+       cst_it!=cst_end; ++cst_it)
+  {
+    cdt3.insert_conforming_Gabriel( vertices[cst_it->first], vertices[cst_it->second] );
+  }
+
   for(CDT3::Finite_edges_iterator it=cdt3.finite_edges_begin(); it!=cdt3.finite_edges_end(); ++it)
     if ( it->first->vertex(it->second)->steiner() || it->first->vertex(it->third)->steiner() )
       std::cout << "edge with steiner endpoint" << std::endl;
