@@ -29,7 +29,7 @@
 #include <vector>
 
 #include <CGAL/Delaunay_triangulation_3.h>
-#include "CCDT/Triangulation_segment_traverser_3.h"
+#include <CGAL/Triangulation_segment_traverser_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,7 +40,7 @@ template < class Gt, class Tds > class Triangulation_cell_traverser_3;
 template < class Gt,
            class Tds = Triangulation_data_structure_3 < Triangulation_vertex_base_3<Gt>, Triangulation_cell_base_3<Gt> > >
 class Delaunay_triangulation_utils_3: public Delaunay_triangulation_3<Gt, Tds> {
-	typedef Triangulation_data_structure						Tds;
+	//typedef Triangulation_data_structure						Tds;
 
 	typedef Delaunay_triangulation_utils_3<Gt, Tds>				Self;
 	typedef Delaunay_triangulation_3<Gt, Tds>					DT;
@@ -121,6 +121,10 @@ public:
 	using DT::side_of_segment;
 	using DT::tds;
 	using DT::vertex_triple_index;
+	using DT::locate;
+	using DT::insert_in_conflict;
+	using DT::is_infinite;
+    using DT::insert;
 #endif
 
 protected:
@@ -279,7 +283,7 @@ public:
 		spatial_sort(points.begin(), points.end(), geom_traits());
 
 		Cell_handle hint;
-		for (std::vector<Point>::const_iterator it = points.begin(), end = points.end(); it != end; ++it)
+		for (typename std::vector<Point>::const_iterator it = points.begin(), end = points.end(); it != end; ++it)
 			hint = insert(*it, hint)->cell();
 
 		return number_of_vertices() - n;

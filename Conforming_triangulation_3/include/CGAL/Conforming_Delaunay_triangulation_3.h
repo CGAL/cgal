@@ -35,12 +35,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
-struct No_intersection_tag{};
-struct Exact_intersections_tag{}; // To be used with an exact number type.
-struct Exact_predicates_tag{}; // To be used with filtered exact number type.
-#endif
-
 template < class Tr > class Natural_neighbors_3;
 
 template < class Gt,
@@ -48,14 +42,14 @@ template < class Gt,
 														Conforming_triangulation_cell_base_3<Gt> >,
 		   class Itag = No_intersection_tag >
 class Conforming_Delaunay_triangulation_3: public Delaunay_triangulation_utils_3<Gt,Tds> {
-	typedef Triangulation_data_structure						Tds;
+	//typedef Triangulation_data_structure						Tds;
 
 	typedef Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>	cDT;
 	typedef Delaunay_triangulation_utils_3<Gt,Tds>				DT;
 	typedef Triangulation_3<Gt,Tds>								Tr;
 
 	friend class Natural_neighbors_3<cDT>;
-
+        typedef typename Gt::Line_3 Line;
 public:
 	typedef Tds													Triangulation_data_structure;
 	typedef Gt													Geom_traits;
@@ -132,6 +126,11 @@ public:
 	using DT::coplanar;
 	using DT::coplanar_orientation;
 	using DT::orientation;
+	using DT::is_infinite;
+	using DT::finite_incident_edges;
+	using DT::incident_cells;
+	using DT::insert_in_conflict;
+	using DT::is_valid_finite;
 #endif
 
 protected:
@@ -200,7 +199,7 @@ protected:
 
 	friend class Conflict_tester_3;
 	friend class Conflict_tester_2;
-	friend class Encroaching_collecter;
+	friend class Encroaching_collecter_3<Gt,Tds,Itag,Points_output>;
 
 	Conforming_visitor<cDT> conforming_visitor;
 
@@ -229,7 +228,7 @@ public:
 	template < class InputIterator >
 	Conforming_Delaunay_triangulation_3(InputIterator begin, InputIterator end, const Gt& gt = Gt()):
 	DT(gt), conforming_visitor(this) {
-		insert_conforming(first, last);
+		insert_conforming(begin, end);
 		CGAL_triangulation_postcondition(is_valid());
 	}
 
@@ -246,7 +245,7 @@ protected:
 
 	// Compute the intersection of ab with either a line (edge) or plane (facet).
 	bool compute_intersection(Locate_type lt, Cell_handle c, int li, int lj, Vertex_handle va, Vertex_handle vb, Point& p) const {
-		if (lt == EDGE)
+		if (lt == DT::EDGE)
 			return compute_intersection(Line(va->point(), vb->point()),
 										Line(c->vertex(li)->point(), c->vertex(lj)->point()), p);
 		else
@@ -368,7 +367,7 @@ private:
 template < class Gt, class Tds, class Itag >
 typename Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::Vertex_handle
 Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
-intersect(Cell_handle c, Locate_type lt, int li, int lj, Vertex_handle va, Vertex_handle vb, No_intersection_tag) {
+intersect(Cell_handle /* c */, Locate_type /* lt */, int /* li */, int /* lj */, Vertex_handle /* va */, Vertex_handle /* vb */, No_intersection_tag) {
 	std::cerr << " sorry, this triangulation does not deal with" << std::endl
 			  << " intersecting conforming edges" << std::endl;
 	CGAL_triangulation_assertion(false);
@@ -407,7 +406,7 @@ intersect(Cell_handle c, Locate_type lt, int li, int lj, Vertex_handle va, Verte
 	// Return the vertex closest to the intersection.
 	Vertex_handle closest;
 	switch (lt) {
-		case EDGE: {
+		case DT::EDGE: {
 			Line ab(va->point(), vb->point());
 			Line ij(c->vertex(li)->point(), c->vertex(lj)->point());
 			FT dist2 = squared_distance(va->point(), ij);
@@ -419,7 +418,7 @@ intersect(Cell_handle c, Locate_type lt, int li, int lj, Vertex_handle va, Verte
 			if (di < dist2) {dist2 = di; closest = c->vertex(li);}
 			if (dj < dist2) {dist2 = dj; closest = c->vertex(lj);}
 		}
-		case FACET: {
+		case DT::FACET: {
 			Line ab(va->point(), vb->point());
 			Plane p = plane(c, li);
 			FT dist2 = squared_distance(va->point(), p);
@@ -632,7 +631,7 @@ insert_marked(Vertex_handle va, Vertex_handle vb) {
 }
 
 template < class Gt, class Tds, class Itag >
-void typename Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
+void Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
 set_conforming(Cell_handle c, int li, int lj, bool C) {
 	// The cell is already in the triangulation, so the edge is already Delaunay.
 	Vertex_handle vi = c->vertex(li), vj = c->vertex(lj);
@@ -660,7 +659,7 @@ set_conforming(Cell_handle c, int li, int lj, bool C) {
 }
 
 template < class Gt, class Tds, class Itag >
-void typename Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
+void Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
 mark_edge(Cell_handle c, int li, int lj) {
 	// The cell is already in the triangulation, so the edge is already Delaunay.
 	Vertex_handle vi = c->vertex(li), vj = c->vertex(lj);
@@ -689,14 +688,14 @@ mark_edge(Cell_handle c, int li, int lj) {
 
 template < class Gt, class Tds, class Itag >
 template < class InputIterator >
-int typename Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
+int Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
 insert_conforming_loop(InputIterator begin, InputIterator end, Cell_handle hint) {
 	// Insert the points in the loop.
 	std::list<Bi_vertex> segments;
 	insert_loop_points(begin, end, std::back_inserter(segments), hint);
 
 	// Insert the segments in the loop.
-	for (std::list<Bi_vertex>::iterator it = segments.begin(); it != segments.end(); ++it)
+	for (typename std::list<Bi_vertex>::iterator it = segments.begin(); it != segments.end(); ++it)
 		insert_conforming(*it);
 
 	return segments.size();
@@ -704,14 +703,14 @@ insert_conforming_loop(InputIterator begin, InputIterator end, Cell_handle hint)
 
 template < class Gt, class Tds, class Itag >
 template < class InputIterator >
-int typename Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
+int Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
 insert_marked_loop(InputIterator begin, InputIterator end, Cell_handle hint) {
 	// Insert the points in the loop.
 	std::list<Bi_vertex> segments;
 	insert_loop_points(begin, end, std::back_inserter(segments), hint);
 
 	// Insert the segments in the loop.
-	for (std::list<Bi_vertex>::iterator it = segments.begin(); it != segments.end(); ++it)
+	for (typename std::list<Bi_vertex>::iterator it = segments.begin(); it != segments.end(); ++it)
 		insert_marked(*it);
 
 	return segments.size();
@@ -719,14 +718,14 @@ insert_marked_loop(InputIterator begin, InputIterator end, Cell_handle hint) {
 
 template < class Gt, class Tds, class Itag >
 template < class InputIterator >
-int typename Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
+int Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
 remove_conforming_loop(InputIterator begin, InputIterator end, Cell_handle hint) {
 	// Insert the points in the loop.
 	std::list<Bi_vertex> segments;
 	insert_loop_points(begin, end, std::back_inserter(segments), hint);
 
 	// Insert the segments in the loop.
-	for (std::list<Bi_vertex>::iterator it = segments.begin(); it != segments.end(); ++it)
+	for (typename std::list<Bi_vertex>::iterator it = segments.begin(); it != segments.end(); ++it)
 		remove_conforming(*it);
 
 	return segments.size();
@@ -734,7 +733,7 @@ remove_conforming_loop(InputIterator begin, InputIterator end, Cell_handle hint)
 
 template < class Gt, class Tds, class Itag >
 template < class InputIterator, class OutputIterator >
-void typename Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
+void Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
 insert_loop_points(InputIterator begin, InputIterator end, OutputIterator out, Cell_handle hint) {
 	if (begin == end)
 		return;
@@ -778,12 +777,12 @@ Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>::
 insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj) {
 	switch (dimension()) {
 		case 3: {
-			Conflict_tester_3 tester(p, this);
+			typename DT::Conflict_tester_3 tester(p, this);
 			Vertex_handle v = insert_in_conflict(p, lt, c, li, lj, tester, conforming_visitor);
 			return v;
 		} // dim 3
 		case 2: {
-			Conflict_tester_2 tester(p, this);
+			typename DT::Conflict_tester_2 tester(p, this);
 			Vertex_handle v = insert_in_conflict(p, lt, c, li, lj, tester, conforming_visitor);
 			return v;
 		} // dim 2
@@ -821,10 +820,10 @@ insert_conforming(InputIterator begin, InputIterator end, Cell_handle hint) {
 	}
 
 	// Insert the segments
-	for (std::list<Bi_vertex>::iterator it = segment.begin(); it != segments.end(); ++it)
+	for (typename std::list<Bi_vertex>::iterator it = segments.begin(); it != segments.end(); ++it)
 		insert_conforming(*it);
 
-	return segment.size();
+	return segments.size();
 }
 
 template < class Gt, class Tds, class Itag >
@@ -839,7 +838,7 @@ remove(Vertex_handle v) {
 	incident_cells(v, std::back_inserter(cells));
 	std::vector<Facet> boundary; boundary.reserve(cells.size());
 
-	for (std::vector<Cell_handle>::const_iterator it = cells.begin(); it != cells.end(); ++it) {
+	for (typename std::vector<Cell_handle>::const_iterator it = cells.begin(); it != cells.end(); ++it) {
 		Cell_handle n = (*it)->neighbor((*it)->index(v));
 		boundary.push_back(Facet(n, n->index(*it)));
 	}
@@ -852,14 +851,14 @@ remove(Vertex_handle v) {
 	} else {
 #endif
 	cDT tmp;
-	Vertex_remover<cDT> remover(tmp);
+	typename DT::Vertex_remover remover(tmp);
 	Tr::remove(v, remover);
 #ifdef CGAL_DELAUNAY_3_OLD_REMOVE
 	}
 #endif
 
 	// Reinsert any conforming edges on the boundary of the retriangulated region.
-	for (std::vector<Facet>::iterator it = boundary.begin(); it != boundary.end(); ++it) {
+	for (typename std::vector<Facet>::iterator it = boundary.begin(); it != boundary.end(); ++it) {
 		restore_conforming(mirror_facet(*it));
 	}
 
@@ -911,7 +910,7 @@ are_there_incident_conforming(Vertex_handle v) const {
 		std::vector<Edge> edges;
 		edges.reserve(32);
 		finite_incident_edges(v, std::back_inserter(edges));
-		for (std::vector<Edge>::iterator it = edges.begin(); it != edges.end(); ++it)
+		for (typename std::vector<Edge>::iterator it = edges.begin(); it != edges.end(); ++it)
 			if (is_conforming(*it))
 				return true;
 	}
@@ -931,7 +930,7 @@ includes_edge(Vertex_handle va, Vertex_handle vb, Vertex_handle& vc, Cell_handle
 	Vertex_handle v;
 	std::vector<Edge> edges; edges.reserve(64);
 	finite_incident_edges(va, std::back_inserter(edges));
-	for (std::vector<Edge>::const_iterator it = edges.begin(); it != edges.end(); ++it) {
+	for (typename std::vector<Edge>::const_iterator it = edges.begin(); it != edges.end(); ++it) {
 		// Find the other vertex of the edge.
 		v = it->first->vertex(it->second);
 		if (v == va) v = it->first->vertex(it->third);
@@ -982,7 +981,7 @@ is_valid(bool verbose, int level) const {
 	Vertex_handle v1, v2;
 	switch (dimension()) {
 		case 3: {
-			for (All_cells_iterator it = all_cells_begin(); it != all_cells_end(); ++it) {
+			for (All_cells_iterator it = this->all_cells_begin(); it != this->all_cells_end(); ++it) {
 				for (int i = 0; i < 4; ++i) {
 					if (!it->neighbor(i)->has_neighbor(it)) {
 						if (verbose)
@@ -1008,7 +1007,7 @@ is_valid(bool verbose, int level) const {
 					for (int i = 0; i < 4; ++i) {
 						n = it->neighbor(i);
 						if (!is_infinite(n->vertex(n->index(it)))) {
-							if (side_of_sphere(it, n->vertex(n->index(it))->point()) == ON_BOUNDED_SIDE) {
+							if (this->side_of_sphere(it, n->vertex(n->index(it))->point()) == ON_BOUNDED_SIDE) {
 								if (verbose)
 									std::cerr << "non-empty sphere " << std::endl;
 								CGAL_triangulation_assertion(false);
@@ -1044,7 +1043,7 @@ is_valid(bool verbose, int level) const {
 			break;
 		}
 		case 2: {
-			for (All_facets_iterator it = all_facets_begin(); it != all_facets_end(); ++it) {
+			for (typename DT::All_facets_iterator it = this->all_facets_begin(); it != this->all_facets_end(); ++it) {
 				for (int i = 0; i < 3; ++i) {
 					if (!it->first->neighbor(i)->has_neighbor(it->first)) {
 						if (verbose)
@@ -1070,7 +1069,7 @@ is_valid(bool verbose, int level) const {
 					for (int i = 0; i < 3; ++i) {
 						n = it->first->neighbor(i);
 						if(!is_infinite(n->vertex(n->index(it->first)))) {
-							if (side_of_circle(it->first, 3, n->vertex(n->index(it->first))->point()) == ON_BOUNDED_SIDE) {
+							if (this->side_of_circle(it->first, 3, n->vertex(n->index(it->first))->point()) == ON_BOUNDED_SIDE) {
 								if (verbose)
 									std::cerr << "non-empty circle " << std::endl;
 								CGAL_triangulation_assertion(false);
@@ -1078,7 +1077,7 @@ is_valid(bool verbose, int level) const {
 							}
 						}
 
-						Edge o = opposite_edge(it->first, i, 3);
+						Edge o = this->opposite_edge(it->first, i, 3);
 						if (o.first->is_marked(o.second, o.third)) {
 							if (verbose)
 								std::cerr << "marked edge " << std::endl;
@@ -1217,7 +1216,7 @@ collect_encroaching(Vertex_handle va, Vertex_handle vb, OutputIterator encroachi
 		cit.traversed(lt, li, lj);
 
 		// Stop when either a new vertex is reached, or a barrier (a conforming edge) is encountered.
-		if (lt == VERTEX) {
+		if (lt == DT::VERTEX) {
 			vc = cit->vertex(li);
 			if (va == vc)
 				continue;

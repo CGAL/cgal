@@ -23,14 +23,20 @@
 #define CGAL_ENCROACHING_COLLECTER_3_H
 
 #include "Triangulation_segment_traverser_3.h"
-//#include "Conforming_Delaunay_triangulation_3.h"
 
 CGAL_BEGIN_NAMESPACE
+
+#ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
+/// \todo factorize with CDT2
+struct No_intersection_tag{};
+struct Exact_intersections_tag{}; // To be used with an exact number type.
+struct Exact_predicates_tag{}; // To be used with filtered exact number type.
+#endif
 
 template < class Gt, class Tds, class Itag >
 class Conforming_Delaunay_triangulation_3;
 
-template < class Gt, class Tds, class Itag = No_intersection_tag, class Out = std::back_insert_iterator<std::list<Point_3<Gt>>>>
+template < class Gt, class Tds, class Itag = No_intersection_tag, class Out = std::back_insert_iterator<std::list<Point_3<Gt> > > >
 class Encroaching_collecter_3: public Triangulation_segment_traverser_3<Gt,Tds> {
 	typedef Encroaching_collecter_3<Gt,Tds,Itag,Out>			Self;
 	typedef Triangulation_segment_traverser_3<Gt,Tds>			Base;
@@ -54,7 +60,13 @@ public:
 	typedef typename Gt::Point_3								Point;
 	typedef typename CDT::Locate_type							Locate_type;
 	typedef typename CDT::Bi_vertex								Bi_vertex;
-
+	using Base::_lt;
+	using Base::_tr;
+	using Base::_pos;
+	using Base::_li;
+	using Base::_lj;
+	using Base::_source;
+	using Base::_target;
 protected:
 	Out	_out;
 

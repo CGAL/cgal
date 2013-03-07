@@ -380,7 +380,7 @@ void Triangulation_segment_traverser_3<Gt,Tds>::increment() {
 
 				// Check if the target is inside the pyramid.
 				int lj = rng.template get_bits<2>();
-				int or = 0;
+				int Or = 0;
 				for (int l = 0; l < 4; ++l, lj = (lj+1)&3) {
 					if (li == lj)
 						continue;
@@ -396,7 +396,7 @@ void Triangulation_segment_traverser_3<Gt,Tds>::increment() {
 						calc[oij] = true;
 					}
 
-					or -= o[oij];
+					Or -= o[oij];
 					if (o[oij] == POSITIVE) {
 						// The target is not inside the pyramid.
 						// Invert the planes.
@@ -408,12 +408,12 @@ void Triangulation_segment_traverser_3<Gt,Tds>::increment() {
 							int oij = 5 - edgeIndex(li, j);
 							o[oij] = -o[oij];
 						}
-						or = 0;
+						Or = 0;
 						break;
 					}
 				}
 
-				if (or == 0) {
+				if (Or == 0) {
 					// Either the target is not inside the pyramid,
 					// or the pyramid is degenerate.
 					pts[li] = backup;
@@ -424,7 +424,7 @@ void Triangulation_segment_traverser_3<Gt,Tds>::increment() {
 				_prev = _pos;
 				_pos = next;
 
-				switch (or) {
+				switch (Or) {
 					case 3:
 						_lt = Tr::FACET;
 						_li = _pos->index(_prev);
