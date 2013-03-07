@@ -1368,7 +1368,7 @@ public:
 		      {
 			ear1_valid = test_merge(ear1_e, result_ear1, v1,
 						get_smallest_radius_delaunay_sphere(ear1_c, 
-										    ear1.second));
+										    ear1.second)) != 0;
 		      }
 		  
 		    if (is_border_ear2&&(e2.first < STANDBY_CANDIDATE)&&
@@ -1377,7 +1377,7 @@ public:
 		      {
 			ear2_valid = test_merge(ear2_e, result_ear2, v2,
 						get_smallest_radius_delaunay_sphere(ear2_c, 
-										    ear2.second));
+										    ear2.second)) != 0;
 		      } 
 
 		    if ((!ear1_valid)&&(!ear2_valid)) 

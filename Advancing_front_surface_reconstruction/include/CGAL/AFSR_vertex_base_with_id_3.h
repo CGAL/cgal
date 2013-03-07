@@ -63,6 +63,8 @@ public:
   
   //-------------------- DATA MEMBERS ---------------------------------
 
+  typedef int Info;  // so that we are a model of TriangulationVertexBaseWithInfo_3
+
 private:
   int _id;
   int _mark;
@@ -232,6 +234,15 @@ public:
     return _id;
   }
 
+  int& info()
+  {
+    return _id;
+  }
+
+  const int& info() const
+  {
+    return _id;
+  }
   inline void re_init()
     {
       if (_incident_border != NULL)
