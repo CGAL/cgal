@@ -24,7 +24,7 @@
 
 #include <map>
 
-#include <boost/random.hpp>
+#include <boost/random/random_number_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
