@@ -1,12 +1,12 @@
-Subject: CGAL 4.1 Beta 1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.2 Beta 1 Released, Computational Geometry Algorithms Library
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.1 Beta 1
+The CGAL Open Source Project is pleased to announce the release 4.2 Beta 1
 of CGAL, the Computational Geometry Algorithms Library.
 
-CGAL version 4.1 Beta 1 is a public testing release. It should provide
+CGAL version 4.2 Beta 1 is a public testing release. It should provide
 a solid ground to report bugs that need to be tackled before the
-release of the final version of CGAL 4.1 mid-September.
+release of the final version of CGAL 4.2 at the end of March.
 
 
 Besides fixes to existing packages, the following has changed since
@@ -14,12 +14,21 @@ CGAL 4.1:
 
  o New compiler support
 
-     The Apple Clang compiler versions 3.1 and 3.2 are now supported on
-     Mac OS X.
+   Microsoft Windows Visual C++ compiler 2012 (VC11) is now supported.
+
+
+ o The CGAL Manual generated with Doxygen
+
+   The CGAL project publishes a beta version of the CGAL manual generated
+   with Doxygen: http://doc.cgal.org/4.2/
+
+   In future versions of CGAL, the manual generated with Doxygen is planned
+   to replace the manual that is currently published at
+   http://www.cgal.org/Manual/latest/
 
 
 See http://www.cgal.org/releases.html for a complete list of changes.
-
+ 
 
 The CGAL project is a collaborative effort to develop a robust,
 easy-to-use, and efficient C++ software library of geometric data
