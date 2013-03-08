@@ -1,27 +1,45 @@
-Subject: CGAL 3.7 Released, Computational Geometry Algorithms Library
+Subject: CGAL 3.8 Released, Computational Geometry Algorithms Library
 Body:
 
-The CGAL Open Source Project is pleased to announce the Release 3.7
+The CGAL Open Source Project is pleased to announce the Release 3.8 
 of CGAL, the Computational Geometry Algorithms Library.
 
+Besides fixes to existing packages major features where added
+in the following packages.
 
-CGAL-3.7 provides improvements and fixes to existing packages, and support
-for new compilers.
+ o 3D Mesh Generation
+
+    This package now can handle sharp features: the 3D Mesh
+    generation package now offers the possibility to get in the 
+    final mesh an accurate representation of 1-dimensional 
+    sharp features present in the description of the input domain.
+
+ o 2D and 3D Triangulations
+    
+    Add a way to efficiently insert a range of points with information 
+    into a Delaunay and Regular triangulation.
+
+ o 3D Alpha Shapes
+
+    The new class Fixed_alpha_shape_3 provides a robust and
+    faster way to compute one alpha shape (with a fixed value of alpha).
+
+
 See http://www.cgal.org/releases.html for a complete list of changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,
 easy-to-use, and efficient C++ software library of geometric data
 structures and algorithms, like
-- triangulations (2D constrained triangulations, Delaunay triangulations in
-  2D and 3D, periodic Delaunay triangulations in 3D),
+- triangulations (2D constrained triangulations and Delaunay
+  triangulations in 2D and 3D),
 - Voronoi diagrams (for 2D and 3D points, 2D additively weighted
   Voronoi diagrams, and segment Voronoi diagrams),
 - Boolean operations on polygons and polyhedra,
 - Regularized Boolean operations on polygons with curved arcs
 - arrangements of curves,
-- mesh generation (2D, 3D and surface mesh generations)
-  and processing (surface mesh subdivision and parametrization),
+- mesh algorithms (2D Delaunay mesh generation and 3D surface mesh
+  generation, surface mesh subdivision and parameterization),
 - alpha shapes (in 2D and 3D),
 - convex hull algorithms (in 2D, 3D and dD),
 - operations on polygons (straight skeleton and offset polygon),
