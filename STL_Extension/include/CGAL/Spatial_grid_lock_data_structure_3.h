@@ -337,7 +337,7 @@ protected:
 
   // Constructor
   Spatial_grid_lock_data_structure_base_3(const Bbox_3 &bbox,
-                       int num_grid_cells_per_axis)
+                                          int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
       m_tls_grids(boost::bind(init_TLS_grid, num_grid_cells_per_axis))
   {
@@ -425,13 +425,13 @@ class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics>
   : public Spatial_grid_lock_data_structure_base_3<
       Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics> >
 {
-public:
   typedef Spatial_grid_lock_data_structure_base_3<
     Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics> > Base;
 
+public:
   // Constructors
   Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
-                         int num_grid_cells_per_axis)
+                                     int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis)
   {
     int num_cells =
@@ -486,14 +486,14 @@ class Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>
   : public Spatial_grid_lock_data_structure_base_3<
       Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics> >
 {
-public:
   typedef Spatial_grid_lock_data_structure_base_3<
       Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics> > Base;
 
+public:
   // Constructors
 
   Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
-                                         int num_grid_cells_per_axis)
+                                     int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
     m_tls_thread_ids(init_TLS_thread_ids)
   {
@@ -592,13 +592,13 @@ class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes>
   : public Spatial_grid_lock_data_structure_base_3<
       Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes> >
 {
-public:
   typedef Spatial_grid_lock_data_structure_base_3<
     Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes> > Base;
 
+public:
   // Constructors
   Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
-                                    int num_grid_cells_per_axis)
+                                     int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis)
   {
     int num_cells =
