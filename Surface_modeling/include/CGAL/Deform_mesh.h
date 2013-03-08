@@ -144,7 +144,7 @@ public:
               unsigned int iterations = 5,
               double tolerance = 1e-4)
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      weight_calculator(polyhedron), need_preprocess(true), iterations(iterations), tolerance(tolerance)
+      iterations(iterations), tolerance(tolerance), need_preprocess(true), weight_calculator(polyhedron)
   {
     CGAL_precondition(polyhedron.is_pure_triangle());   
   }

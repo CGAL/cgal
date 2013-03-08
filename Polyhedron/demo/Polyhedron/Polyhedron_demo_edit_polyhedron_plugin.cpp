@@ -529,7 +529,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
                                           scalar * data_vec.z()), scalar * 3.14);
 
       qglviewer::Vec disp(scalar * data_vec.x(), scalar * data_vec.y(), scalar *  data_vec.z());  
-      (*deform)(data.active_handle_group, poi, quat, disp);// 0 for the match
+      deform->rotate(data.active_handle_group, poi, quat, disp);// 0 for the match
 
       deform->deform();
     }
