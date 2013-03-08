@@ -64,6 +64,12 @@ namespace Qt {
         const Point_2& source = arc->get<1>();
         const Point_2& target = arc->get<2>();
         
+        if (circle.squared_radius() > 10) {
+          const Line_segment_2 seg(source,target);
+          operator << (seg);
+          return *this;
+        }
+        
         double asource = std::atan2( -to_double(source.y() - center.y()),
                                     to_double(source.x() - center.x())); 
         double atarget = std::atan2( -to_double(target.y() - center.y()),
