@@ -188,7 +188,7 @@ public:
     bool locked = true;
     if (m_lock_ds)
     {
-      locked = m_lock_ds->try_lock(p, lock_radius).first;
+      locked = m_lock_ds->try_lock(p, lock_radius);
     }
     return locked;
   }
@@ -199,7 +199,7 @@ public:
     bool locked = true;
     if (m_lock_ds)
     {
-      locked = m_lock_ds->try_lock(vh->point(), lock_radius).first;
+      locked = m_lock_ds->try_lock(vh->point(), lock_radius);
     }
     return locked;
   }

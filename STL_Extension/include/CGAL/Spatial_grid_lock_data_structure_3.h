@@ -219,17 +219,15 @@ public:
   }
 
   /// P3 must provide .x(), .y(), .z()
-  /// Returns a pair "success or not + index of the grid cell"
   template <typename P3>
-  std::pair<bool, int> try_lock(const P3 &point, int lock_radius = 0)
+  bool try_lock(const P3 &point, int lock_radius = 0)
   {
     return try_lock<false, P3>(point, lock_radius);
   }
 
   /// P3 must provide .x(), .y(), .z()
-  /// Returns a pair "success or not + index of the grid cell"
   template <bool no_spin, typename P3>
-  std::pair<bool, int> try_lock(const P3 &point, int lock_radius = 0)
+  bool try_lock(const P3 &point, int lock_radius = 0)
   {
     // Compute indices on grid
     int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
@@ -246,13 +244,11 @@ public:
 
     if (lock_radius == 0)
     {
-      return std::make_pair(try_lock<no_spin>(index), index);
+      return try_lock<no_spin>(index);
     }
     else
     {
-      return std::make_pair(
-        try_lock<no_spin>(index_x, index_y, index_z, lock_radius),
-        index);
+      return try_lock<no_spin>(index_x, index_y, index_z, lock_radius);
     }
   }
 
