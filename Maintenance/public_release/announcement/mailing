@@ -1,20 +1,20 @@
-Subject: CGAL 2.3, Computational Geometry Algorithms Library
+Subject: CGAL 2.4, Computational Geometry Algorithms Library
 Body: 
-We are pleased to announce release 2.3 of CGAL, the Computational 
+We are pleased to announce release 2.4 of CGAL, the Computational 
 Geometry Algorithms Library.
 
 Major additions in this release include:
 
-o Realization of a new kernel concept that provides more flexibility
-  while being completely compatable with the previous design
-o d-dimensional kernel, convex hull and Delaunay triangulations
-o Redesign of the halfedge data structure to provide better 
-  extensibility
-o Improvements and additions in 2d and 3d triangulations and 2d 
-  planar maps and arrangements.
-o Boolean operations on polygons are provided via 2D Nef polyhedra 
-o Dependencies on the LEDA library have been removed, except in the
-  case of the PostScript stream.
+o Support for Visual C++ 7.0, SunPro 5.3, and g++ 3.1
+
+o A sweep-line algorithm to compute arrangements of curves
+o Quicker insertion functions for planar maps
+o 2D constrained triangulations with intersecting constraints
+o running time improvements for 3D triangulations
+o Polyhedral surface design introduced with release 2.3 is now supported on
+  Visual C++ 7.0
+o A widget for visualization of 2D CGAL objects based on Trolltech's Qtwidget.
+o Microsoft Visual Studio project files for the library, examples, and demos.
 
 See http://www.cgal.org/releases_frame.html for a complete list of
 changes.
@@ -28,7 +28,7 @@ o Basic geometric primitives such as points, vectors, lines, predicates
 o A collection of standard data structures and geometric algorithms, 
   such as convex hull, (Delaunay) triangulation, planar map, polyhedron, 
   smallest enclosing sphere, and multidimensional query structures.
-o Interfaces to other packages, e.g. for visualisation, and I/O, and 
+o Interfaces to other packages, e.g. for visualization, and I/O, and 
   other support facilities. 
 
 For further information and for downloading the library and its 
@@ -36,10 +36,5 @@ documentation, please visit the CGAL web page:
 
    http://www.cgal.org/
 
-For information about services supporting and complementing CGAL, 
-please visit:
-
-   http://www.geometryfactory.com
- 
 Should you have any questions or comments, please send a message to 
 contact@cgal.org
