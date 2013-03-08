@@ -70,6 +70,18 @@ struct Null_functor {
 
 /*!
 \ingroup PkgStlExtensionUtilities
+Tag to indicate that a class or a function IS NOT concurrency-safe.
+*/
+struct Sequential_tag {};
+
+/*!
+\ingroup PkgStlExtensionUtilities
+Tag to indicate that a class or a function IS concurrency-safe.
+*/
+struct Parallel_tag {};
+
+/*!
+\ingroup PkgStlExtensionUtilities
 
 General tag indicating that non of any other possible tags is valid. 
 
