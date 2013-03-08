@@ -1,29 +1,27 @@
-Subject: CGAL 3.8 Released, Computational Geometry Algorithms Library
+Subject: CGAL 3.9 Released, Computational Geometry Algorithms Library
 Body:
 
-The CGAL Open Source Project is pleased to announce the Release 3.8 
+The CGAL Open Source Project is pleased to announce the Release 3.9 
 of CGAL, the Computational Geometry Algorithms Library.
 
 Besides fixes to existing packages major features where added
 in the following packages.
 
- o 3D Mesh Generation
+ o Combinatorial Maps (new package)
 
-    This package now can handle sharp features: the 3D Mesh
-    generation package now offers the possibility to get in the 
-    final mesh an accurate representation of 1-dimensional 
-    sharp features present in the description of the input domain.
+    This package provides a new combinatorial data structure allowing to
+    describe any orientable subdivided object whatever its dimension.
 
- o 2D and 3D Triangulations
-    
-    Add a way to efficiently insert a range of points with information 
-    into a Delaunay and Regular triangulation.
+ o 3D Convex Hull
 
- o 3D Alpha Shapes
+    The quickhull implementation of CGAL (CGAL::convex_hull_3) has been worked
+    out to provide much better performances
 
-    The new class Fixed_alpha_shape_3 provides a robust and
-    faster way to compute one alpha shape (with a fixed value of alpha).
+ o 2D Arrangements
 
+    A new geometry-traits class that handles rational arcs has been
+    introduced. It replaced an old traits class, which handled the same
+    family of curves, but it was less efficient.
 
 See http://www.cgal.org/releases.html for a complete list of changes.
 
@@ -32,14 +30,14 @@ The CGAL project is a collaborative effort to develop a robust,
 easy-to-use, and efficient C++ software library of geometric data
 structures and algorithms, like
 - triangulations (2D constrained triangulations and Delaunay
-  triangulations in 2D and 3D),
+  triangulations in 2D and 3D, periodic triangulations),
 - Voronoi diagrams (for 2D and 3D points, 2D additively weighted
   Voronoi diagrams, and segment Voronoi diagrams),
 - Boolean operations on polygons and polyhedra,
-- Regularized Boolean operations on polygons with curved arcs
+- regularized Boolean operations on polygons with curved arcs
 - arrangements of curves,
-- mesh algorithms (2D Delaunay mesh generation and 3D surface mesh
-  generation, surface mesh subdivision and parameterization),
+- mesh generation (2D, 3D and surface mesh generation,
+  surface mesh subdivision and parametrization),
 - alpha shapes (in 2D and 3D),
 - convex hull algorithms (in 2D, 3D and dD),
 - operations on polygons (straight skeleton and offset polygon),
