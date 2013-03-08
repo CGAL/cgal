@@ -156,7 +156,7 @@ computation not the width itself is stored, but the <I>squared</I>
 width as a fraction: The numerator in `width_num` and the 
 denominator in `width_denom`. The width of the point set 
 \f$ \mathcal{S}\f$ is 
-\f$ \sqrt{\frac{\ccc{width\_num}}{\ccc{width\_denom}}}\f$. 
+\f$ \sqrt{\frac{width\_num}{width\_denom}}\f$. 
 */ 
 void get_squared_width ( RT& width_num, RT& 
 width_denom ); 

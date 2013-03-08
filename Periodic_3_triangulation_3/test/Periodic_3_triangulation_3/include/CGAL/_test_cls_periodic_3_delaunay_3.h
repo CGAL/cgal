@@ -39,31 +39,31 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   // actually, any traits is good if it has been tested
 
   typedef typename P3T3::Geometric_traits              GT;
-  typedef typename P3T3::Triangulation_data_structure  TDS;
+  CGAL_USE_TYPE(typename P3T3::Triangulation_data_structure);
 
   typedef typename GT::FT                              FT;
 
   typedef typename P3T3::Offset               Offset;
-  typedef typename P3T3::Covering_sheets      Covering_sheets;
+  CGAL_USE_TYPE(typename P3T3::Covering_sheets);
   typedef typename P3T3::Iso_cuboid           Iso_cuboid;
 
   typedef typename P3T3::Point                Point;
   typedef typename P3T3::Segment              Segment;
-  typedef typename P3T3::Triangle             Triangle;
-  typedef typename P3T3::Tetrahedron          Tetrahedron;
+  CGAL_USE_TYPE(typename P3T3::Triangle);
+  CGAL_USE_TYPE(typename P3T3::Tetrahedron);
 
   typedef typename P3T3::Periodic_point       Periodic_point;
-  typedef typename P3T3::Periodic_segment     Periodic_segment;
-  typedef typename P3T3::Periodic_triangle    Periodic_triangle;
-  typedef typename P3T3::Periodic_tetrahedron Periodic_tetrahedron;
+  CGAL_USE_TYPE(typename P3T3::Periodic_segment);
+  CGAL_USE_TYPE(typename P3T3::Periodic_triangle);
+  CGAL_USE_TYPE(typename P3T3::Periodic_tetrahedron);
 
-  typedef typename P3T3::Vertex               Vertex;
-  typedef typename P3T3::Cell                 Cell;
+  CGAL_USE_TYPE(typename P3T3::Vertex);
+  CGAL_USE_TYPE(typename P3T3::Cell);
   typedef typename P3T3::Facet                Facet;
-  typedef typename P3T3::Edge                 Edge;
+  CGAL_USE_TYPE(typename P3T3::Edge);
 
-  typedef typename P3T3::size_type            size_type;
-  typedef typename P3T3::difference_type      difference_type;
+  CGAL_USE_TYPE(typename P3T3::size_type);
+  CGAL_USE_TYPE(typename P3T3::difference_type);
 
   typedef typename P3T3::Vertex_handle        Vertex_handle;
   typedef typename P3T3::Cell_handle          Cell_handle; 
@@ -77,10 +77,10 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
 
   typedef typename P3T3::Unique_vertex_iterator Unique_vertex_iterator;
   typedef typename P3T3::Periodic_point_iterator Periodic_point_iterator;
-  typedef typename P3T3::Periodic_segment_iterator Periodic_segment_iterator;
+  CGAL_USE_TYPE(typename P3T3::Periodic_segment_iterator);
 
   typedef typename P3T3::Locate_type          Locate_type;
-  typedef typename P3T3::Iterator_type        Iterator_type;
+  CGAL_USE_TYPE(typename P3T3::Iterator_type);
 
 
   // Create point sets

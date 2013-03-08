@@ -293,7 +293,7 @@ is_subconstrained_edge(T va, T vb) const
   return( sc_to_c_map.find(make_edge(va, vb)) != sc_to_c_map.end() );
 }
 
-
+#if 0
 template <class T, class Compare, class Data> 
 bool Constraint_hierarchy_2<T,Compare,Data>::
 vertices_in_constraint(H_constraint hc, 
@@ -306,6 +306,7 @@ vertices_in_constraint(H_constraint hc,
   v_first = (*sc_iter).second;
   return true;
 }
+#endif
 
 template <class T, class Compare, class Data>
 bool Constraint_hierarchy_2<T,Compare,Data>::

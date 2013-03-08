@@ -127,7 +127,7 @@ create_partial_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 //
 template<class OutPolygon, class FT, class Skeleton, class K>
 std::vector< boost::shared_ptr<OutPolygon> > 
-create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& k, Tag_false )
+create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& , Tag_false )
 {
   typedef boost::shared_ptr<OutPolygon> OutPolygonPtr ; 
   typedef std::vector<OutPolygonPtr>    OutPolygonPtrVector ;

@@ -19,6 +19,14 @@
 #ifndef CGAL_EIGEN_SVD_H
 #define CGAL_EIGEN_SVD_H
 
+#include <boost/config.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4244)
+#endif
+
+
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <Eigen/SVD>
@@ -43,4 +51,10 @@ public:
 };
 
 }//namespace CGAL
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif // CGAL_EIGEN_SVD_H

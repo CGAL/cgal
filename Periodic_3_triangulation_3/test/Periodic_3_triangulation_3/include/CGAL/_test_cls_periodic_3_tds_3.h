@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <CGAL/use.h>
 #include "_test_cls_periodic_3_tds_vertex.h"
 #include "_test_cls_periodic_3_tds_cell.h"
 
@@ -36,12 +37,12 @@ _test_cls_periodic_3_tds_3( const Tds &)
   typedef typename Tds::Vertex            Vertex;
   typedef typename Tds::Cell              Cell;
   typedef typename Tds::Edge              Edge;
-  typedef typename Tds::Facet             Facet;
+  CGAL_USE_TYPE(typename Tds::Facet);
 
   typedef typename Tds::Vertex_handle     Vertex_handle;
   typedef typename Tds::Vertex_iterator   Vertex_iterator;
-  typedef typename Tds::Facet_iterator    Facet_iterator;
-  typedef typename Tds::Edge_iterator     Edge_iterator;
+  CGAL_USE_TYPE(typename Tds::Facet_iterator);
+  CGAL_USE_TYPE(typename Tds::Edge_iterator);
   typedef typename Tds::Cell_handle       Cell_handle;
   typedef typename Tds::Cell_iterator     Cell_iterator;
 

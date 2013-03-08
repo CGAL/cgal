@@ -180,7 +180,7 @@ private:
         while (add_border(tag_free,tag_done)) {}
 
         // #borders
-        m_nb_borders = m_skeleton.size();
+        m_nb_borders = static_cast<int>(m_skeleton.size());
 
         // put longest border first
         if (m_nb_borders>1)
@@ -249,7 +249,7 @@ private:
         double max = 0.0;
 
         // #borders
-        int nb = m_skeleton.size();
+        int nb = static_cast<int>(m_skeleton.size());
 
         for(int i=0;i<nb;i++)
         {

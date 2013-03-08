@@ -27,7 +27,7 @@ public:
   { return Rep(x, y, w); }
 
   Point_2
-  operator()(CGAL::Origin o) const
+  operator()(const CGAL::Origin&) const
   { return MyPointC2(0, 0, 0); }
 
   Point_2

@@ -279,11 +279,31 @@ using std::max;
 // with sunpro, this requires -features=extensions
 #endif
 
+// Macro to detect GCC versions.
+// It evaluates to 0 if the compiler is not GCC. Be careful that the Intel
+// compilers on Linux, and the LLVM/clang compiler both define GCC version
+// macros.
+#define CGAL_GCC_VERSION (__GNUC__ * 10000       \
+                          + __GNUC_MINOR__ * 100 \
+                          + __GNUC_PATCHLEVEL__)
+
+// Macros to detect features of clang. We define them for the other
+// compilers.
+// See http://clang.llvm.org/docs/LanguageExtensions.html
+#ifndef __has_feature
+  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#endif
+#ifndef __has_extension
+  #define __has_extension __has_feature // Compatibility with pre-3.0 compilers.
+#endif
+#ifndef __has_builtin
+  #define __has_builtin(x) 0  // Compatibility with non-clang compilers.
+#endif
 
 // Macro to trigger deprecation warnings
 #ifdef CGAL_NO_DEPRECATION_WARNINGS
 #  define CGAL_DEPRECATED
-#elif defined (__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#elif defined(__GNUC__)
 #  define CGAL_DEPRECATED __attribute__((__deprecated__))
 #elif defined (_MSC_VER) && (_MSC_VER > 1300)
 #  define CGAL_DEPRECATED __declspec(deprecated)
@@ -308,7 +328,7 @@ using std::max;
 
 // Macro CGAL_ASSUME
 // Call a builtin of the compiler to pass a hint to the compiler
-#if defined(__clang__) || __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5)
+#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION >= 40500)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!EX) { __builtin_unreachable(); }

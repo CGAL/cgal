@@ -1,3 +1,9 @@
+#include <boost/config.hpp>
+
+#if defined(BOOST_MSVC)
+// avoid: warning C4996: 'CGAL::copy_n': was declared deprecated
+#  pragma warning(disable:4996)
+#endif
 #include <CGAL/array.h>
 #include <CGAL/tuple.h>
 #include <CGAL/algorithm.h>

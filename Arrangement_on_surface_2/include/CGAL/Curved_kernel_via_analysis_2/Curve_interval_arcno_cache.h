@@ -192,7 +192,7 @@ struct Curve_interval_arcno_cache {
         
         CGAL_precondition(left_i == static_cast<int>(vpair.first.size()));
         CGAL_precondition(right_i == static_cast<int>(vpair.second.size()));
-        _m_last_interval_map.insert(std::make_pair(static_cast<int>(cv_line.x().id()), vpair));
+        _m_last_interval_map.insert(std::make_pair(cv_line.x().id(), vpair));
         CGAL_precondition(interval_arcno < static_cast<int>(side == 1 ?
                 vpair.first.size() : vpair.second.size()));
         return (side == 1 ? vpair.first[interval_arcno] :
@@ -212,7 +212,8 @@ private:
     //! maps from \c Status_line_1 id to a container of interval ->
     //! event arcnos 
     // TODO: use hash instead ?? cache status lines by x-coordinate ? (Pavel)
-    typedef std::map<int, Arcno_vector_pair> Interval_arcno_map;
+  typedef typename Status_line_1::Algebraic_real_1::Id_type Id_type;
+    typedef std::map<Id_type, Arcno_vector_pair> Interval_arcno_map;
     
     //! maps from \c Curve_2 id to \c Interval_arcno_map
     typedef std::map<int, Interval_arcno_map> Curve_to_interval_arcno_map;

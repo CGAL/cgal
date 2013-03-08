@@ -42,7 +42,7 @@ typedef Hidden_type Distance;
 void set();
 
 /** 
- * sets `circle` to the circle containing exactly \f$ \{\mbox{\ccc{p}}\}\f$.
+ * sets `circle` to the circle containing exactly \f$ \{\mbox{`p` }\}\f$.
  */
 void  set( const Point& p);
 

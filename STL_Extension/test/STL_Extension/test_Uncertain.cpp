@@ -11,9 +11,7 @@
 // So I cast to bool manually (needed when the automatic conversion is switched off).
 #define bool_assert(X) assert(bool(X))
 
-// "unused variable" warning killer
-template <typename T>
-void use(T) {}
+
 
 // generic test, for both enums and bool
 template < typename T >
@@ -36,6 +34,7 @@ void test()
 	const U v = t0;
 	U w = U (T(), T());
 	U v2 = u;
+        CGAL_USE(v2);
 	w = (w = t0);
 
 	// Various functions
@@ -53,6 +52,7 @@ void test()
 #endif
 
 	U indet = U::indeterminate();
+        CGAL_USE(indet);
 
 	t = CGAL::inf(u);
 	t = CGAL::sup(u);
@@ -80,7 +80,7 @@ void test()
 	  CGAL::make_certain(u);
 #ifndef CGAL_NO_UNCERTAIN_CONVERSION_OPERATOR
 	  T t = u;
-	  use(t);
+	  CGAL_USE(t);
 #endif
 	}
 	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
@@ -88,6 +88,8 @@ void test()
 
 	U u2 = CGAL::make_uncertain(u);
 	U u3 = CGAL::make_uncertain(T());
+        CGAL_USE(u2);
+        CGAL_USE(u3);
 
 	// Operators
 	bool_assert( v == v );
@@ -97,8 +99,8 @@ void test()
 	bool_assert( ! (v != t0) );
 	bool_assert( ! (t0 != v) );
 
-	use(t);
-	use(t2);
+	CGAL_USE(t);
+	CGAL_USE(t2);
 }
 
 
@@ -292,7 +294,7 @@ void test_bool()
 
 	// Test exceptions
 	bool ok = false;
-	try { bool b = indet; use(b); }
+	try { bool b = indet; CGAL_USE(b); }
 	catch (CGAL::Uncertain_conversion_exception) { ok = true; }
 	bool_assert(ok);
 	// The following must throw.

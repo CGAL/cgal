@@ -386,7 +386,7 @@ public:
         Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
         points.push_back(pwn);
     }
-    int n = points.size();
+    std::size_t n = points.size();
 
     initialize_bounding_sphere();
 
@@ -398,7 +398,7 @@ public:
     fractions.clear();
     fractions.push_back(1.0);
     
-    double m = n;
+    double m = static_cast<double>(n);
     
     while(m > 500){
       m /= 2;

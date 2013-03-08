@@ -583,18 +583,6 @@ public:
     change_in_complex_status<true, false>(c, i);
   }
 
-  void add_to_complex(const Edge& e) {
-    add_to_complex(e.first, e.second, e.third);
-  }
-
-  void add_to_complex(const Cell_handle& c,
-		      const int& i,
-		      const int& j) {
-    // Search for e in edge_facet_counter.
-    // That search creates the entry if the search result is negative.
-    edge_facet_counter[this->make_ordered_pair(c->vertex(j))];
-  }
-
   // backward compatibility with implementation of CGAL-3.2
   void set_in_complex (const Facet& f) {
     add_to_complex(f);
@@ -684,18 +672,6 @@ public:
     }
   }
 
-  void remove_from_complex(const Edge& e) {
-    remove_from_complex(e.first, e.second, e.third);
-  }
-
-  void remove_from_complex(const Cell_handle& c,
-			   const int& i,
-			   const int& j) {
-      Pair_of_vertices pair = this->make_ordered_pair(c->vertex(i),
-						      c->vertex(j));
-      this->marked_edges.erase(pair);
-      edge_facet_counter.erase(pair);
-  }
  
   void remove_from_complex (const Facet& f) {
     remove_from_complex (f.first, f.second);

@@ -418,7 +418,7 @@ namespace CGAL {
           const std::pair<typename AK::Polynomial_for_spheres_2_3, typename AK::Polynomial_1_3 > & e2,
 	  OutputIterator res )
   {
-    return solve<AK>(e2,e1);
+    return solve<AK>(e2,e1,res);
   }
 
   template < class AK, class OutputIterator >
@@ -438,7 +438,7 @@ namespace CGAL {
           const std::pair<typename AK::Polynomial_for_spheres_2_3, typename AK::Polynomial_1_3 > & e2,
 	  OutputIterator res )
   {
-    return solve<AK>(e2,e1);
+    return solve<AK>(e2,e1, res);
   }
 
   template < class AK, class OutputIterator >

@@ -172,7 +172,8 @@ enum Trisegment_collinearity
   , TRISEGMENT_COLLINEARITY_ALL
 } ;
 
-static char const* trisegment_collinearity_to_string( Trisegment_collinearity c )
+
+inline char const* trisegment_collinearity_to_string( Trisegment_collinearity c )
 {
   switch ( c )
   {
@@ -185,6 +186,8 @@ static char const* trisegment_collinearity_to_string( Trisegment_collinearity c 
   
   return "!!UNKNOWN COLLINEARITY!!" ;
 }
+
+
 namespace internal 
 {
 

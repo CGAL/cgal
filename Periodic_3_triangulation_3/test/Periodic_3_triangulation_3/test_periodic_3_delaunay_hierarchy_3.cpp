@@ -76,7 +76,7 @@ int main()
   // this takes too much time for the test suite.
   //_test_cls_periodic_3_delaunay_3( P3T3_2() );
 
-  typedef CGAL::Periodic_3_triangulation_hierarchy_3< PDT3 > P3T3_3;
+  // typedef CGAL::Periodic_3_triangulation_hierarchy_3< PDT3 > P3T3_3;
   // this takes too much time for the test suite.
   //_test_cls_periodic_3_delaunay_3( P3T3_3(), true );
 

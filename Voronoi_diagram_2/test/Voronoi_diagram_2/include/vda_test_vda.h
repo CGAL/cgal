@@ -22,6 +22,7 @@
 #define VDA_TEST_VDA_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/use.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 #include <cassert>
 #include "helper_functions.h"
@@ -37,13 +38,13 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
   typedef typename VDA::Face                 Face;
 
   // types  
-  typedef typename Face::Halfedge            Halfedge;
-  typedef typename Face::Vertex              Vertex;
+  CGAL_USE_TYPE(typename Face::Halfedge);
+  CGAL_USE_TYPE(typename Face::Vertex);
   typedef typename Face::Halfedge_handle     Halfedge_handle;
-  typedef typename Face::Vertex_handle       Vertex_handle;
-  typedef typename Face::Face_handle         Face_handle;
+  CGAL_USE_TYPE(typename Face::Vertex_handle);
+  CGAL_USE_TYPE(typename Face::Face_handle);
 
-  typedef typename Face::Delaunay_graph          Delaunay_graph;
+  CGAL_USE_TYPE(typename Face::Delaunay_graph);
   typedef typename Face::Delaunay_vertex_handle  Delaunay_vertex_handle;
 
   typedef typename Face::Ccb_halfedge_circulator CCBHC;
@@ -84,16 +85,16 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
   typedef typename VDA::Vertex              Vertex;
 
   // types  
-  typedef typename Vertex::Halfedge         Halfedge;
-  typedef typename Vertex::Face             Face;
+  CGAL_USE_TYPE(typename Vertex::Halfedge);
+  CGAL_USE_TYPE(typename Vertex::Face);
   typedef typename Vertex::Halfedge_handle  Halfedge_handle;
-  typedef typename Vertex::Vertex_handle    Vertex_handle;
-  typedef typename Vertex::Face_handle      Face_handle;
+  CGAL_USE_TYPE(typename Vertex::Vertex_handle);
+  CGAL_USE_TYPE(typename Vertex::Face_handle);
 
   typedef typename Vertex::size_type        size_type;
   typedef typename Vertex::Point_2          Point_2;
 
-  typedef typename Vertex::Delaunay_graph         Delaunay_graph;
+  CGAL_USE_TYPE(typename Vertex::Delaunay_graph);
   typedef typename Vertex::Delaunay_face_handle   Delaunay_face_handle;
   typedef typename Vertex::Delaunay_vertex_handle Delaunay_vertex_handle;
 
@@ -150,7 +151,7 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   typedef typename Halfedge::Vertex_handle    Vertex_handle;
   typedef typename Halfedge::Face_handle      Face_handle;
 
-  typedef typename Halfedge::Delaunay_graph   Delaunay_graph;
+  CGAL_USE_TYPE(typename Halfedge::Delaunay_graph);
   typedef typename Halfedge::Delaunay_edge    Delaunay_edge;
 
   typedef typename Halfedge::Delaunay_vertex_handle    Delaunay_vertex_handle;
@@ -256,7 +257,7 @@ void test_vdqr_concept(const VDA& vda)
 template<class VDA>
 void test_vda(const VDA& vda)
 {
-  typedef typename VDA::Accessor                      Accessor;
+  CGAL_USE_TYPE(typename VDA::Accessor);
 
   // testing types
   //--------------
@@ -266,9 +267,9 @@ void test_vda(const VDA& vda)
 
   typedef typename VDA::size_type                     size_type;
 
-  typedef typename VDA::Point_2                       Point_2;
-  typedef typename VDA::Site_2                        Site_2;
-  typedef typename VDA::Locate_result                 Locate_result;
+  CGAL_USE_TYPE(typename VDA::Point_2);
+  CGAL_USE_TYPE(typename VDA::Site_2);
+  CGAL_USE_TYPE(typename VDA::Locate_result);
 
   typedef typename VDA::Halfedge                      Halfedge;
   typedef typename VDA::Face                          Face;
@@ -278,12 +279,12 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Face_handle                   Face_handle;
   typedef typename VDA::Vertex_handle                 Vertex_handle;
 
-  typedef typename VDA::Delaunay_geom_traits          Delaunay_geom_traits;
-  typedef typename VDA::Delaunay_edge                 Delaunay_edge;
-  typedef typename VDA::Delaunay_face_handle          Delaunay_face_handle;
-  typedef typename VDA::Delaunay_vertex_handle        Delaunay_vertex_handle;
+  CGAL_USE_TYPE(typename VDA::Delaunay_geom_traits);
+  CGAL_USE_TYPE(typename VDA::Delaunay_edge);
+  CGAL_USE_TYPE(typename VDA::Delaunay_face_handle);
+  CGAL_USE_TYPE(typename VDA::Delaunay_vertex_handle);
 
-  typedef typename VDA::Edge_iterator                 Edge_iterator;
+  CGAL_USE_TYPE(typename VDA::Edge_iterator);
   typedef typename VDA::Halfedge_iterator             Halfedge_iterator;
   typedef typename VDA::Face_iterator                 Face_iterator;
   typedef typename VDA::Vertex_iterator               Vertex_iterator;

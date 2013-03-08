@@ -1,6 +1,6 @@
 #include <boost/config.hpp>
 #if defined(BOOST_MSVC)
-#  pragma warning( once : 4503)
+#  pragma warning( disable : 4503)
 #endif
 
 #include "config.h"

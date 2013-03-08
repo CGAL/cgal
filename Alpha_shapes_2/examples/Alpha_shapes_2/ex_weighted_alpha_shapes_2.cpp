@@ -69,11 +69,15 @@ file_input(std::list<Point>& L)
   int n;
   is >> n;
   std::cout << "Reading " << n << " points" << std::endl;
-  Point_base p;
   for( ; n>0 ; n--)
     {
+      Point_base p;
       is >> p;
-      L.push_back(Point (p, FT(10)));
+      if(is) {
+        L.push_back(Point (p, FT(10)));
+      } else {
+        return false;
+      }
     }
   std::cout << "Points inserted" << std::endl;
   return true;

@@ -29,11 +29,11 @@ int
 _test_circulator( const Triangulation &T )
 {
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
-  typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
+
   typedef typename Triangulation::Facet_circulator Facet_circulator;
   typedef typename Triangulation::Cell_circulator  Cell_circulator;
-  typedef typename Triangulation::Cell             Cell;
-  typedef typename Triangulation::Vertex           Vertex;
+
+
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
   typedef typename Triangulation::Cell_handle      Cell_handle;
   typedef typename Triangulation::Facet            Facet;
