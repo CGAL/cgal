@@ -1,118 +1,84 @@
-Subject: CGAL 3.3 Released, Computational Geometry Algorithms Library
+Subject: CGAL 3.3.1 Released, Computational Geometry Algorithms Library
 Body:
 
-The CGAL Open Source Project is pleased to announce the release 3.3 of
+The CGAL Open Source Project is pleased to announce the release 3.3.1 of
 CGAL, the Computational Geometry Algorithms Library.
 
+Version 3.3.1 is a bug-fix release for version 3.3. No new features have 
+been added in 3.3.1.    The following corrections have been made:
 
-Besides improvements to existing packages, this release offers
-the following new algorithms and data structures.
+General
 
-
- o Surface Mesh Simplification
-
-  This package provides a mesh simplification framework using edge collapse
-  operations, and provides the Turk/Lindstrom simplification algorithm.
-
-
- o Estimation of Local Differential Properties
-
-  This package allows to compute local differential quantities of a surface
-  from a point sample.
+- Intel C++ 9 was wrongly recognized as unsupported by install_cgal.
+- Added autolink (for Visual C++) for the CGALImageIO and CGALPDB libraries.
+- Fixed bug in Memory_sizer when using more than 4GB of memory (64bit).
 
 
- o Approximation of Ridges and Umbilics on Triangulated Surface Meshes
-
-  This package enables the approximation of differential features on
-  triangulated surface meshes. Such curvature related features are
-  lines: ridges or crests, and points: umbilics.
+Number Types
+- Fixed bug in FPU rounding mode macros (affected only the alpha architecture).
+- Fixed bug in MP_Float constructor from double for some particular values.
 
 
- o Envelopes of Curves in 2D
-
-  This package contains two sets of functions that construct the lower and
-  upper envelope diagram for a given set of bounded or unbounded curves.
+Kernel
+- Fixed forgotten derivation in Circular_kernel_2::Has_on_2
 
 
- o Envelopes of Surfaces in 3D
-
-  This package contains two sets of functions that construct the lower and
-  upper envelope diagram for a given set of bounded or unbounded surfaces.
-  The envelope diagram is realized as a 2D arrangement.
-
-
- o Minkowski Sums in 2D
-
-  This package contains functions for computing planar Minkowski sums of two
-  closed polygons, and for a polygon and a disc (an operation also known as
-  offsetting or dilating a polygon).
-  The package also contains an efficient approximation algorithm for the offset
-  computation, which provides a guaranteed approximation bound while
-  significantly expediting the running times w.r.t. the exact computation
-  procedure.
+Skin Surface Meshing
+- The new Skin Surface Meshing package had been forgotten in the list of
+  changes and the release announcement of CGAL 3.3:
+    This package allows to build a triangular mesh of a skin surface.
+    Skin surfaces are used for modeling large molecules in biological 
+    computing.
 
 
- o CGAL and the Boost Graph Library
+Arrangements
+- Fixed a bug in the Arrangement_2 package in dual arrangement representation   
+  for Boost graphs when reporting all halfedges of a face.
+- Fixed a bug in the Arrangement sweep-line when using a specific polyline
+  configuration.
+- Fixed bug in Arrangement_2 in walk along a line point location for 
+  unbounded curves.
+- Fixed bug in aggregated insertion to Arrangement_2.
+- Fixed bug in Arrangment_2 class when inserting an unbounded curve from 
+  an existing vertex.
+- Fixed bug when dealing with a degenerate conic arc in Arr_conic_traits_2 
+  of the Arrangment package, meaning a line segment which is part of a 
+  degenerate parabola/hyperbola.
+- Fixed bug in the Bezier traits-class:
+    properly handle line segments.
+    properly handle comparison near a vertical tangency.
 
-  This package provides the glue layer for several CGAL data structures such
-  that they become models of the BGL graph concept and thus can interoperate
-  with the graph algorithms of Boost.
+
+2D Polygon 
+- Fixed bug in degenerate case of Polygon_2::is_convex() for equal points.
 
 
- o Spatial Sorting
-
-  This package allows to sort points and other objects along a Hilbert curve
-  which can improve the performance of algorithms like triangulations.
-  It is used by the constructors of the triangulation classes which have
-  an iterator range of points as argument.
+2D Triangulations
+- Fixed bug in Regular_triangulation_2.
 
 
- o Linear and Quadratic Programming Solver
+Interpolation
+- Fixed bug in Interpolation 3D about the normalization coefficient 
+  initialization.
 
-  This package contains algorithms for minimizing linear and convex quadratic
-  functions over polyhedral domains, described by linear equations and
-  inequalities.
+
+3D Boolean Operations on Nef Polyhedra
+- Fixed bug in construction of Nef_polyhedron_3 from off-file. 
+  Now, always the inner volume is selected.
+- Fixed bug in conversion from Nef_polyhedron_3 to Polyhedron_3. 
+  Polyhedron_3 was not cleared at the beginning.
+- Fixed bug in Nef_polyhedron_3 in update of indexes for construction of 
+  external structure.
+
+
+Third Party Libraries Shipped with CGAL
+- TAUCS supports now 64 bits platforms.
+- CAUTION: Since version 3.3.1, CGAL is no longer compatible with the official
+           release of TAUCS (currently 2.2). Make sure to use the version
+           modified by the CGAL project and available from the download 
+           section of http://www.cgal.org.
 
 
 See http://www.cgal.org/releases.html for a complete list of changes.
 
 
-
-The CGAL project is a collaborative effort to develop a robust,
-easy-to-use, and efficient C++ software library of geometric data
-structures and algorithms, like
-- triangulations (2D constrained triangulations and Delaunay
-  triangulations in 2D and 3D),
-- Voronoi diagrams (for 2D and 3D points, 2D additively weighted
-  Voronoi diagrams, and segment Voronoi diagrams),
-- Boolean operations on polygons and polyhedra,
-- Regularized Boolean operations on polygons with curved arcs
-- arrangements of curves,
-- mesh algorithms (2D Delaunay mesh generation and 3D surface mesh
-  generation, surface mesh subdivision and parameterization),
-- alpha shapes (in 2D and 3D),
-- convex hull algorithms (in 2D, 3D and dD),
-- operations on polygons (straight skeleton and offset polygon),
-- search structures (kd trees for nearest neighbor search, and
-  range and segment trees),
-- interpolation (natural neighbor interpolation and placement of
-  streamlines),
-- optimisation algorithms (smallest enclosing sphere of points or
-  spheres, smallest enclosing ellipsoid of points, principal
-  component analysis),
-- kinetic data structures
-
-
-
-
-Some modules are distributed under the terms of the LGPL Open Source
-license (GNU Lesser General Public License v2.1).
-Most modules are distributed under the terms of the QPL Open Source
-license (Q Public License v1.0).
-If your intended usage does not meet the criteria of the
-aforementioned licenses, a commercial license can be purchased from
-GeometryFactory (http://www.geometryfactory.com/).
-
-
-For further information and for downloading the library and its
-documentation, please visit the CGAL web site: http://www.cgal.org/
