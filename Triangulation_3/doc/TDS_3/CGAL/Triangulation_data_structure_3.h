@@ -23,6 +23,15 @@ the requirements for the concepts `TriangulationDSCellBase_3` and
 They have the default values `Triangulation_ds_vertex_base_3<>` and 
 `Triangulation_ds_cell_base_3<>` respectively. 
 
+The `Vertex_container_strategy` and `Cell_container_strategy` parameters are the 
+strategies used by the `Compact_container` (or `Concurrent_compact_container` 
+if the TDS is concurrency-safe) storing the vertices and cells. The default values are both
+`Compact_container_strategy_base`.
+
+The `Concurrency_tag` parameter allows to ask for a concurrency-safe TDS (with regard to
+insertion and deletion of elements). Possible values are `CGAL::Sequential_tag` (the default) and
+`CGAL::Parallel_tag`.
+
 \cgalModels `TriangulationDataStructure_3`
 
 The base class `Triangulation_utils_3` defines basic computations on
@@ -36,7 +45,11 @@ specified by the concept.
 \sa `CGAL::Triangulation_vertex_base_with_info_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 */
-template< typename TriangulationDSVertexBase_3, typename TriangulationDSCellBase_3 >
+template< typename TriangulationDSVertexBase_3, 
+          typename TriangulationDSCellBase_3,
+          typename Vertex_container_strategy,
+          typename Cell_container_strategy,
+          typename Concurrency_tag >
 class Triangulation_data_structure_3 : public CGAL::Triangulation_utils_3 {
 public:
 
@@ -44,14 +57,16 @@ public:
 /// @{
 
 /*! 
-Vertex container type. 
+Vertex container type. If Concurrency_tag is Parallel_tag, a
+`Concurrent_compact_container` is used instead of a `Compact_container`.
 */ 
-typedef Compact_container<Vertex> Vertex_range; 
+typedef Compact_container<Vertex, Default, Vertex_container_strategy> Vertex_range; 
 
 /*! 
-Cell container type. 
+Cell container type. If Concurrency_tag is Parallel_tag, a
+`Concurrent_compact_container` is used instead of a `Compact_container`.
 */ 
-typedef Compact_container<Cell> Cell_range; 
+typedef Compact_container<Cell, Default, Cell_container_strategy> Cell_range; 
 
 /// @} 
 

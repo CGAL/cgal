@@ -111,6 +111,24 @@ typedef Hidden_type Vertex_handle;
 typedef Hidden_type Cell_handle; 
 
 /*! 
+Strategy used by the `CGAL::Compact_container` (or `CGAL::Concurrent_compact_container` if the TDS
+is concurrency-safe) storing the vertices.
+*/ 
+typedef Hidden_type Vertex_container_strategy;
+
+/*! 
+Strategy used by the `CGAL::Compact_container` (or `CGAL::Concurrent_compact_container` if the TDS
+is concurrency-safe) storing the cells.
+*/ 
+typedef Hidden_type Cell_container_strategy;
+
+/*! 
+Indicate if the TDS is concurrency-safe (i.e.\ if one can add/remove vertices concurrently). 
+Can be `Sequential_tag` or `Parallel_tag`.
+*/
+typedef Hidden_type Concurrency_tag;
+
+/*! 
 This template class allows to get the type of a triangulation 
 data structure that only changes the vertex type. It has to define a type 
 `Rebind_vertex<Vb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
