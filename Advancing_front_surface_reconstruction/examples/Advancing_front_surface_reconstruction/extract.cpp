@@ -15,7 +15,7 @@
 
 // Kernel
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
+#include <CGAL/compute_average_spacing.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
@@ -382,7 +382,9 @@ int main(int argc,  char* argv[])
   std::vector<Point> points;
 
   file_input(opt, points);
-
+  double avgsp = CGAL::compute_average_spacing(points.begin(), points.end(), 5);
+  std::cerr << "average spacing " << avgsp << std::endl;
+ 
   std::cerr << "Time for reading "  << timer.time() << " sec." << std::endl;
 
   std::cerr << "Compute Delaunay Tetrahedrization " << std::endl; 
@@ -405,6 +407,9 @@ int main(int argc,  char* argv[])
 
   {
   Surface S(dt, opt);
+
+
+#if 0
 
   const Surface::TDS_2&  tds_2 = S.tds_2();
   int count = 0;
@@ -444,6 +449,8 @@ int main(int argc,  char* argv[])
   }
   
   std::cerr << "count = " << count << std::endl;
+#endif
+
 
   std::cerr << "Total time: " << timer.time() << " sec." << std::endl; 
   //  write_to_file_vrml2(opt.foutname, S, opt.contour, opt.red, opt.green, opt.blue, opt.no_header);
