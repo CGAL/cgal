@@ -78,7 +78,8 @@ Release date: March 2013
 * Surface Reconstruction from Point Sets
 
   - Performance improvements and addition of an option to better reconstruct
-    undersampled zones.
+    undersampled zones. The poisson reconstruction plugin of the Polyhedron
+    demo has an option to switch it on.
 
 
 * 2D Voronoi Diagram Adaptor
