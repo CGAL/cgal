@@ -36,7 +36,7 @@
 #include <vector>
 #include <list>
 
-//#define CGAL_DEFORM_SPOKES_AND_RIMS
+#define CGAL_DEFORM_SPOKES_AND_RIMS
 
 namespace CGAL {
 
@@ -109,7 +109,6 @@ private:
   VertexIndexMap vertex_index_map;										// storing indices of ros vertices
   EdgeIndexMap   edge_index_map;										  // storing indices of ros related edges
 
-  // std::vector<vertex_descriptor> roi;                 // region of interest, including both free and haldle vertices
   std::vector<vertex_descriptor> ros;									// region of solution, including roi and hard constraints on boundary of roi
   std::vector<bool> is_roi;                           // (size: ros)
   std::vector<bool> is_hdl;                           // (size: ros)
@@ -183,6 +182,13 @@ public:
   }
 
   /**
+   * -- I think this function can be removed, since combination of other functions simply accomplish the same task.
+   \code
+    Handle_group handle_group = create_handle_group();
+    insert_handle(handle_group, vd);
+    // or 
+    Handle_group handle_group = insert_handle(vd);
+    \endcode
    * Create a new empty handle group and insert vd in it.
    * @param vd vertex to be inserted
    * @return created handle group representative
@@ -211,13 +217,15 @@ public:
   }
 
   /**
-   * Create a new handle group and insert vertices in the range.
-    \code
+   * -- I think this function can be removed, since combination of other functions simply accomplish the same task.
+   \code
     Handle_group handle_group = create_handle_group();
     insert_handle(handle_group, begin, end);
     // or 
     Handle_group handle_group = insert_handle(begin, end);
     \endcode
+   * Create a new handle group and insert vertices in the range.
+
    * @tparam InputIterator input iterator type which points to vertex descriptors
    * @param begin iterators spesifying the range of vertices i.e. [begin, end) 
    * @param end iterators spesifying the range of vertices i.e. [begin, end) 
@@ -267,14 +275,14 @@ public:
    */
   void erase_handle(Handle_group handle_group, vertex_descriptor vd)
   {
-     need_preprocess = true;
-     typename Handle_container::iterator it 
-       = std::find(handle_group->begin(), handle_group->end(), vd);
-     if(vd != handle_group->end())
-     {
-       handle_group->erase(vd);
-       // Although the handle group might get empty, we do not delete it from handle_groups
-     }
+    need_preprocess = true;
+    typename Handle_container::iterator it 
+      = std::find(handle_group->begin(), handle_group->end(), vd);
+    if(vd != handle_group->end())
+    {
+      handle_group->erase(it);
+      // Although the handle group might get empty, we do not delete it from handle_groups
+    }
   }
 
   /**
@@ -295,6 +303,7 @@ public:
 
   /**
    * Insert a vertex to region of interest
+   * @param vd vertex to be inserted
    */
   void insert_roi(vertex_descriptor vd)   
   {
@@ -302,6 +311,19 @@ public:
     ros.push_back(vd);
   }
 
+  /**
+   * Erease a vertex from ROI
+   * @param vd vertex to be erased
+   */
+  void erase_roi(vertex_descriptor vd)   
+  {
+    need_preprocess = true;
+    std::vector<vertex_descriptor>::iterator it = std::find(ros.begin(), ros.end(), vd);
+    if(vd != ros.end())
+    {
+      ros.erase(it);
+    }
+  }
 //////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Other utilities ///////////////////////////////////////////
 
@@ -402,6 +424,16 @@ public:
   }
 
   /**
+   * Assign the target position for the handle vertes 
+   * @param vd handle vertex to be assigned target position
+   * @param target_position constrained position
+   */
+  void assign(vertex_descriptor vd, typename Polyhedron::Traits::Point_3 target_position)
+  {
+    size_t v_index = get(vertex_index_map, vd);
+    solution[v_index] = target_position;
+  }
+  /**
    * Reset position of deformed vertices to their original positions (i.e. positions at the time of last preprocess() call)
    */
   void undo()
@@ -450,7 +482,7 @@ public:
    */
   void deform(unsigned int iterations, double tolerance)
   {
-    CGAL_precondition(!need_preprocess); // preprocess should be called first
+    CGAL_precondition(!need_preprocess, "preprocess() need to be called before deforming!");
 
     double energy_this = 0;
     double energy_last;
@@ -483,6 +515,8 @@ private:
   }
   void compute_edge_weight_arap()
   {
+    std::ofstream out("edge_weights.txt");
+
     std::set<edge_descriptor> have_id; // edges which has assigned ids (and also weights are calculated)
 
     // iterate over ros vertices and calculate weights for edges which are incident to ros
@@ -500,10 +534,13 @@ private:
         have_id.insert(*e);
 
         double weight = weight_calculator(*e);
+        out << weight << std::endl;
         edge_weight.push_back(weight);
         
       }// end of edge loop
     }// end of ros loop
+
+    out.close();
   }
   void compute_edge_weight_spokes_and_rims()
   {
@@ -560,8 +597,8 @@ private:
   {
     // Important: at this point ros contains the roi vertices only.
     // copy roi vertices to roi vector
-    std::vector<vertex_descriptor> roi;	
-    roi.insert(roi.end(), ros.begin(), ros.end());
+    std::vector<vertex_descriptor> roi;	// we can remove this temp, but I keep to simplify things below
+    roi.insert(roi.end(), ros.begin(), ros.end()); 
 
     ////////////////////////////////////////////////////////////////
     // assign id to vertices inside: roi, boundary of roi (roi + boundary of roi = ros),
@@ -600,7 +637,7 @@ private:
     
     // initialize solution and original (size: ros + boundary_of_ros)
 
-    // for simplifying coding afford, I also put boundary of ros into solution and original
+    // for simplifying coding effort, I also put boundary of ros into solution and original
     // because boundary of ros vertices are reached in optimal_rotations_svd() and energy()
     solution.resize(ros.size() + outside_ros.size());
     original.resize(ros.size() + outside_ros.size());
