@@ -532,13 +532,9 @@ private:
         have_id.insert(*e);
 
         double weight = weight_calculator(*e);
-        out << weight << std::endl;
         edge_weight.push_back(weight);
-        
       }// end of edge loop
     }// end of ros loop
-
-    out.close();
   }
   void compute_edge_weight_spokes_and_rims()
   {
