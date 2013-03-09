@@ -318,7 +318,7 @@ public:
   void erase_roi(vertex_descriptor vd)   
   {
     need_preprocess = true;
-    std::vector<vertex_descriptor>::iterator it = std::find(ros.begin(), ros.end(), vd);
+    typename std::vector<vertex_descriptor>::iterator it = std::find(ros.begin(), ros.end(), vd);
     if(vd != ros.end())
     {
       ros.erase(it);
@@ -482,7 +482,7 @@ public:
    */
   void deform(unsigned int iterations, double tolerance)
   {
-    CGAL_precondition(!need_preprocess, "preprocess() need to be called before deforming!");
+    CGAL_precondition(!need_preprocess || !"preprocess() need to be called before deforming!");
 
     double energy_this = 0;
     double energy_last;
