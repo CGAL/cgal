@@ -515,8 +515,6 @@ private:
   }
   void compute_edge_weight_arap()
   {
-    std::ofstream out("edge_weights.txt");
-
     std::set<edge_descriptor> have_id; // edges which has assigned ids (and also weights are calculated)
 
     // iterate over ros vertices and calculate weights for edges which are incident to ros
