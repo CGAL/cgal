@@ -32,7 +32,11 @@
  * The header file for the Arrangement_on_surface_2<Traits,Dcel> class.
  */
 
+#include <map>
+#include <vector>
+#include <algorithm>
 #include <boost/mpl/assert.hpp>
+
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/HalfedgeDS_iterator.h>
@@ -45,9 +49,6 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
-#include <map>
-#include <vector>
-#include <algorithm>
 
 namespace CGAL {
 
@@ -274,21 +275,21 @@ public:
   // Definition of the halfedge data-structure itereators and circulators:
   typedef I_Filtered_iterator<DVertex_iter, _Is_concrete_vertex,
                               Vertex, DDifference, DIterator_category>
-  Vertex_iterator;
+    Vertex_iterator;
   
   typedef I_Filtered_const_iterator<DVertex_const_iter, _Is_concrete_vertex,
                                     DVertex_iter, Vertex, DDifference,
                                     DIterator_category>
-  Vertex_const_iterator;
+    Vertex_const_iterator;
   
   typedef I_Filtered_iterator<DHalfedge_iter, _Is_valid_halfedge, 
                               Halfedge, DDifference, DIterator_category>
-  Halfedge_iterator;
+    Halfedge_iterator;
   
   typedef I_Filtered_const_iterator<DHalfedge_const_iter, _Is_valid_halfedge,
                                     DHalfedge_iter, Halfedge, DDifference,
                                     DIterator_category>
-  Halfedge_const_iterator;
+    Halfedge_const_iterator;
 
   /*! \class
    * Edges iterator - defined as a derived class to make it assignable
@@ -359,23 +360,23 @@ public:
   typedef I_Filtered_const_iterator<DFace_const_iter, _Is_valid_face, 
                                     DFace_iter, Face,
                                     DDifference, DIterator_category>
-  Face_const_iterator;
+    Face_const_iterator;
 
   typedef _HalfedgeDS_vertex_circ<Halfedge, Halfedge_iterator,
                                   Bidirectional_circulator_tag>
-  Halfedge_around_vertex_circulator;
+    Halfedge_around_vertex_circulator;
 
   typedef _HalfedgeDS_vertex_const_circ<Halfedge, Halfedge_const_iterator,
                                         Bidirectional_circulator_tag>
-  Halfedge_around_vertex_const_circulator;
+    Halfedge_around_vertex_const_circulator;
 
   typedef _HalfedgeDS_facet_circ<Halfedge, Halfedge_iterator,
                                  Bidirectional_circulator_tag>
-  Ccb_halfedge_circulator;
+    Ccb_halfedge_circulator;
 
   typedef _HalfedgeDS_facet_const_circ<Halfedge, Halfedge_const_iterator,
                                        Bidirectional_circulator_tag>
-  Ccb_halfedge_const_circulator;
+    Ccb_halfedge_const_circulator;
 
   /*! \class
    * Unbounded faces iterator - defined as a derived class to make it
@@ -1965,12 +1966,14 @@ protected:
    * \param he_to The reference halfedge pointing to the insertion vertex
    * \param cv the given curve.
    * \param cv_dir the direction of the curve
-   * \param he_away The reference halfedge for the second vertex.
-   * \param res The comparison result of the points associated with prev1's
+   * \param he_away the reference halfedge for the second vertex.
+   * \param res the comparison result of the points associated with prev1's
    *            target vertex and prev2's target vertex.
-   * \param new_face Output - whether a new face has been created.
-   * \param swapped_predecessors Output - whether roles of prev1 and prev2 have been switched
-   * \param allow_swap_of_predecessors - set to false if no swapping should take place at all
+   * \param new_face (Output) indicates whether a new face has been created.
+   * \param swapped_predecessors (Output) indicates whether roles of prev1 and
+   *                                      prev2 have been switched
+   * \param allow_swap_of_predecessors set to false if no swapping should
+   *                                   take place at all
    * \return A pointer to one of the halfedges corresponding to the inserted
    *         curve directed from prev1's target to prev2's target.
    *         In case a new face has been created, it is given as the incident
@@ -2026,7 +2029,8 @@ protected:
    * Check if the given vertex represents one of the ends of a given curve.
    * \param v The vertex.
    * \param cv The curve.
-   * \param ind Whether we refer to the minimal or maximal end of cv.
+   * \param ind Indicates whether the minimal or the maximal end of cv is
+   *            refereed to.
    * \return Whether v represents the left (or right) end of cv.
    */
   bool _are_equal(const DVertex* v,
