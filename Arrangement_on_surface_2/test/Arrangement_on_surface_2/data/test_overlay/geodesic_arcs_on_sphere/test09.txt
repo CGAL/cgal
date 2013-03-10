@@ -1,0 +1,45 @@
+1
+-1 0 0 0 1 0 0
+0
+1
+-1 0 0 0 -1 0 0
+0
+# BEGIN ARRANGEMENT
+# number_of_vertices
+3
+# number_of_edges
+2
+# number_of_faces
+1
+# BEGIN VERTICES
+0 4 1 -1 0 0
+3
+4 4 1 0 -1 0
+4
+4 4 1 0 1 0
+5
+# END VERTICES
+# BEGIN EDGES
+1 0 1 1 -1 0 0 0 -1 0 0
+5
+5
+2 0 0 1 -1 0 0 0 1 0 0
+5
+5
+# END EDGES
+# BEGIN FACES
+# BEGIN FACE
+0 1 
+# number_of_outer_ccbs
+0
+# number_of_inner_ccbs
+1
+# halfedges_on_inner_ccb
+4
+1 0 3 2 
+# number_of_isolated_vertices
+0
+6
+# END FACE
+# END FACES
+# END ARRANGEMENT
