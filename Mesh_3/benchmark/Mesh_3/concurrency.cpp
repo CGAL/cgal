@@ -339,9 +339,9 @@ struct Klein_function
 
   FT operator()(const Point& query) const
   {
-	  const FT x = query.x();
-	  const FT y = query.y();
-	  const FT z = query.z();
+    const FT x = query.x();
+    const FT y = query.y();
+    const FT z = query.z();
 
     return   (x*x+y*y+z*z+2*y-1)
            * ( (x*x+y*y+z*z-2*y-1) *(x*x+y*y+z*z-2*y-1)-8*z*z)
@@ -356,9 +356,9 @@ struct Tanglecube_function
 
   FT operator()(const Point& query) const
   {
-	  const FT x = query.x();
-	  const FT y = query.y();
-	  const FT z = query.z();
+    const FT x = query.x();
+    const FT y = query.y();
+    const FT z = query.z();
 
     double x2=x*x, y2=y*y, z2=z*z;
     double x4=x2*x2, y4=y2*y2, z4=z2*z2;
@@ -377,9 +377,9 @@ struct Sphere_function
 
   FT operator()(const Point& query) const
   {
-	  const FT x = query.x();
-	  const FT y = query.y();
-	  const FT z = query.z();
+    const FT x = query.x();
+    const FT y = query.y();
+    const FT z = query.z();
 
     return (x*x + y*y + z*z - m_squared_radius);
   }
@@ -398,9 +398,9 @@ struct Pancake_function
 
   FT operator()(const Point& query) const
   {
-	  const FT x = query.x();
-	  const FT y = query.y();
-	  const FT z = query.z();
+    const FT x = query.x();
+    const FT y = query.y();
+    const FT z = query.z();
 
     if (z > 0.5*PANCAKE_HEIGHT)
       return z - 0.5*PANCAKE_HEIGHT;
@@ -422,9 +422,9 @@ struct Thin_cylinder_function
 
   FT operator()(const Point& query) const
   {
-	  const FT x = query.x();
-	  const FT y = query.y();
-	  const FT z = query.z();
+    const FT x = query.x();
+    const FT y = query.y();
+    const FT z = query.z();
 
     if (z > 0.5*THIN_CYLINDER_HEIGHT)
       return z - 0.5*THIN_CYLINDER_HEIGHT;
@@ -446,9 +446,9 @@ struct Cylinder_function
 
   FT operator()(const Point& query) const
   {
-	  const FT x = query.x();
-	  const FT y = query.y();
-	  const FT z = query.z();
+    const FT x = query.x();
+    const FT y = query.y();
+    const FT z = query.z();
 
     if (z > 0.5*m_height)
       return z - 0.5*m_height;
@@ -546,13 +546,13 @@ void display_info(int num_threads)
 typedef std::vector<Point> Crease;
 typedef std::list<Crease> Creases;
 void add_crease(const Point& a,
-	const Point& b,
-	Creases& creases)
+  const Point& b,
+  Creases& creases)
 {
   Crease crease;
-	crease.push_back(a);
-	crease.push_back(b);
-	creases.push_back(crease);
+  crease.push_back(a);
+  crease.push_back(b);
+  creases.push_back(crease);
 }
 
 bool make_mesh_polyhedron(const std::string &input_filename,
@@ -814,37 +814,37 @@ bool make_mesh_implicit(double facet_approx,
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
   // Create domain
-	Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
+  Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
   Mesh_domain domain(func, bounding_sphere/*, 1e-7*/);
 
 #ifdef MESH_3_IMPLICIT_WITH_FEATURES
-	// Add 12 feature creases
-	Creases creases;
-	Point p1(-1.0, -1.0, -1.0);
-	Point p2(-1.0, -1.0,  1.0);
-	Point p3(-1.0,  1.0,  1.0);
-	Point p4(-1.0,  1.0, -1.0);
-	Point p5( 1.0, -1.0, -1.0);
-	Point p6( 1.0, -1.0,  1.0);
-	Point p7( 1.0,  1.0,  1.0);
-	Point p8( 1.0,  1.0, -1.0);
+  // Add 12 feature creases
+  Creases creases;
+  Point p1(-1.0, -1.0, -1.0);
+  Point p2(-1.0, -1.0,  1.0);
+  Point p3(-1.0,  1.0,  1.0);
+  Point p4(-1.0,  1.0, -1.0);
+  Point p5( 1.0, -1.0, -1.0);
+  Point p6( 1.0, -1.0,  1.0);
+  Point p7( 1.0,  1.0,  1.0);
+  Point p8( 1.0,  1.0, -1.0);
 
-	add_crease(p1, p2, creases);
-	add_crease(p2, p3, creases);
-	add_crease(p3, p4, creases);
-	add_crease(p4, p1, creases);
+  add_crease(p1, p2, creases);
+  add_crease(p2, p3, creases);
+  add_crease(p3, p4, creases);
+  add_crease(p4, p1, creases);
 
-	add_crease(p5, p6, creases);
-	add_crease(p6, p7, creases);
-	add_crease(p7, p8, creases);
-	add_crease(p8, p5, creases);
+  add_crease(p5, p6, creases);
+  add_crease(p6, p7, creases);
+  add_crease(p7, p8, creases);
+  add_crease(p8, p5, creases);
 
-	add_crease(p5, p1, creases);
-	add_crease(p6, p2, creases);
-	add_crease(p7, p3, creases);
-	add_crease(p8, p4, creases);
+  add_crease(p5, p1, creases);
+  add_crease(p6, p2, creases);
+  add_crease(p7, p3, creases);
+  add_crease(p8, p4, creases);
 
-	domain.add_features(creases.begin(), creases.end());
+  domain.add_features(creases.begin(), creases.end());
 #endif
 
   Mesh_parameters params;
