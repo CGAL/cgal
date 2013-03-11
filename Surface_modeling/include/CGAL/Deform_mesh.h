@@ -560,8 +560,14 @@ private:
         {  
           put(edge_index_map, active_edge, next_edge_id++);
           have_id.insert(active_edge);
-
           double weight = weight_calculator(active_edge);
+          edge_weight.push_back(weight);
+
+          edge_descriptor opp = CGAL::opposite_edge(active_edge, polyhedron);
+
+          put(edge_index_map, opp, next_edge_id++);
+          have_id.insert(opp);
+          weight = weight_calculator(opp);
           edge_weight.push_back(weight);
         }
       }// end of edge loop
