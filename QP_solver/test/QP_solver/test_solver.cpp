@@ -546,6 +546,9 @@ int main(const int ac,const char **av) {
   using CGAL::Tag_true;
   using CGAL::Tag_false;
 
+  std::cerr.precision(17);
+  std::cout.precision(17);
+
   // determine in which mode we run:
   const bool readFromStdIn = ac == 1;
   std::stringstream args;
