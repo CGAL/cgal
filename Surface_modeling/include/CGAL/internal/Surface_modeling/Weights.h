@@ -94,7 +94,7 @@ public:
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
 template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_clamped<Polyhedron> >
+         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Cotangent_weight : CotangentValue
 {
 public:
@@ -133,6 +133,7 @@ public:
         vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
         edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
         vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
+
         return ( CotangentValue::operator()(v0, v2, v1)/2.0 + CotangentValue::operator()(v0, v3, v1)/2.0 );
      }
   }
@@ -141,6 +142,37 @@ private:
   Polyhedron& polyhedron;	
 };
 
+// Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
+template<class Polyhedron, 
+         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+class Single_cotangent_weight : CotangentValue
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  typedef typename Polyhedron::Traits::Vector_3  Vector;
+  typedef typename Polyhedron::Traits::Point_3   Point;
+
+  Single_cotangent_weight(Polyhedron& polyhedron) : polyhedron(polyhedron)
+  { }
+
+  // Returns the cotangent of the opposite angle of the edge
+  // 0 for border edges (which does not have an opposite angle)
+  double operator()(edge_descriptor e)
+  {
+     if(boost::get(CGAL::edge_is_border, polyhedron, e)) { return 0.0;}
+     
+     vertex_descriptor v0 = boost::target(e, polyhedron);
+     vertex_descriptor v1 = boost::source(e, polyhedron);
+
+     vertex_descriptor v_op = boost::target(CGAL::next_edge(e, polyhedron), polyhedron);
+     return CotangentValue::operator()(v0, v_op, v1);
+  }
+
+private:
+  Polyhedron& polyhedron;	
+};
 
 // Mean value calculator described in -[Floater04] Mean Value Coordinates-
 template<class Polyhedron>
