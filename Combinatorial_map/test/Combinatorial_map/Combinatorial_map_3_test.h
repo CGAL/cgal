@@ -59,18 +59,6 @@ bool check_number_of_cells_3(CMap& cmap, unsigned int nbv, unsigned int nbe,
   return true;
 }
 
-template<class Map>
-void drawCell3(Map& amap, typename Map::Dart_handle adart, int aorbit, int mark)
-{
-  cout << "Orbite " << Map::ORBIT_NAME[aorbit] << " (";
-  /*  CGAL::CMap_dart_iterator_basic_of_orbit_3<Map> it2(amap, adart, aorbit, mark);
-  for (;it2.cont(); ++it2)
-    {
-      cout << (*it2)->vertex()->point() << ", ";
-      }*/
-  cout << ")" << flush;
-}
-
 template<class Map, class Functor>
 void createAllBasicCases1()
 {

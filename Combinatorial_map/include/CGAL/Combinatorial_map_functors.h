@@ -65,7 +65,7 @@ template<typename CMap>
 struct Display_attribute_functor
 {
   template <unsigned int i>
-  static void run(const CMap* amap,
+  static void run(const CMap* /*amap*/,
                   typename CMap::Dart_const_handle adart)
   {
     if ( adart->template attribute<i>()==NULL )
