@@ -65,13 +65,14 @@ public:
 
 
   /*!
-   * Constructor from a range. The range can be either:
-   * - Range of points, and the polyline is defined by the order of the points.
-   * - Range of linear object. The polyline is the sequence of linear objects.
-   * \param begin An iterator pointing to the first point in the range.
-   * \param end An iterator pointing after the last point in the range.
-   * \pre Depends on the range's content. See the implementations for further
-   *      details.
+   * Constructor from a range of segments.
+   * \param begin An iterator pointing to the first element in the range.
+   * \param end An iterator pointing after the last element in the range.
+   * \pre A polyline consisting of the segments in the range and ordered
+   *      with the same order.
+   * TODO: Originally (in the original implementation), a constructor with
+   *       the same signature expected a range of POINTS and at least 2 points.
+   *       How to handle backwards compatibility in this case?
    */
   template <typename InputIterator>
   _Polyline_2(InputIterator begin, InputIterator end) :
@@ -109,10 +110,7 @@ public:
   }
 
   /*!
-   * TODO: (for UNBOUNDED case) Code has to be changed for unbounded case
-   * Create a bounding-box for the polyline. And should be moved to the traits.
-   * Look for bbox in other traits, and see what is done there? If nothing is
-   * found, just leave it...
+   * Create a bounding-box for the polyline.
    * \return The bounding-box.
    */
   Bbox_2 bbox() const
@@ -135,8 +133,7 @@ public:
 
   class const_iterator;
   friend class const_iterator;
-  typedef std::reverse_iterator<const_iterator>
-     const_reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
   /*! An iterator for the polyline points. */
   CGAL_DEPRECATED class const_iterator
@@ -289,13 +286,19 @@ public:
     return (const_reverse_iterator (begin()));
   }
 
-  // TODO: This was added to handle the Split_2. Understand whether
-  // also a reverse version should be implemented?
+  /*
+   * Non-constant iterator over the segments of the polyline
+   * Only begin is implemented, as this is only used by the Split_2
+   * functor.
+   */
   typedef typename Segments_container::iterator Segment_iterator;
 
   Segment_iterator begin_segments()
   { return m_segments.begin(); }
 
+  /*
+   * Constant forward and reversed iterators over the segments of the poyline
+   */
   typedef typename Segments_container::const_iterator
     Segment_const_iterator;
   typedef typename std::reverse_iterator<Segment_const_iterator>
@@ -382,7 +385,9 @@ public:
   /*! Constructor */
   /*
    * As there are no tests to be done here, we can simply use the
-   * constructor of the standard polyline.
+   * constructor of base.
+   * TODO: In the original implementation, the input was a range of points.
+   *       Should this be addressed for backwards compatibility?
    */
   template <typename InputIterator>
   _X_monotone_polyline_2(InputIterator begin, InputIterator end) :

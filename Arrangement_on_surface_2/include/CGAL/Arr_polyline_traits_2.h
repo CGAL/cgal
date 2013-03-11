@@ -1312,15 +1312,16 @@ public:
      * \param q The second point.
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
-     * TODO: Efi suggests that this can be more efficient. How? In any case,
-     *       there should be no actual construction from points.
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
-      // Construct a polyline containing just two points:
-      Point_2   pts[2];
-      pts[0] = p; pts[1] = q;
-      return (X_monotone_curve_2(pts + 0, pts + 2));
+      typename Segment_traits_2::Compare_xy_2 comp_xy =
+        m_seg_traits->compare_xy_2_object();
+
+      if (comp_xy(*p,*q) == LARGER)
+        return X_monotone_curve_2(Segment_2(q,p));
+      else
+        return X_monotone_curve_2(Segment_2(p,q));
     }
 
     /*! Returns an x-monotone curve consists of one given segment.
