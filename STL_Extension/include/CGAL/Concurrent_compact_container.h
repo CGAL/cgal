@@ -352,7 +352,8 @@ public:
 
   // Merge the content of d into *this.  d gets cleared.
   // The complexity is O(size(free list = capacity-size)).
-  void merge(Self &d);
+  // CJTODO?
+  //void merge(Self &d);
 
   // Do not call this function while others are inserting/erasing elements
   size_type size() const
@@ -431,8 +432,9 @@ public:
   /** Reserve method to ensure that the capacity of the Concurrent_compact_container be
    * greater or equal than a given value n.
    */
-  void reserve(size_type n)
-  {
+  // CJTODO?
+  //void reserve(size_type n)
+  //{
     // Does it really make sense: it will reserve size for the current
     // thread only!
     /*Mutex::scoped_lock lock;
@@ -442,7 +444,7 @@ public:
     m_block_size = (std::max)( n - m_capacity, m_block_size );
     allocate_new_block(free_list());
     m_block_size = tmp + CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;*/
-  }
+  //}
 
 private:
 
