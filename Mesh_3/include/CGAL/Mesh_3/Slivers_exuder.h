@@ -249,7 +249,7 @@ protected:
 
   void unlock_all_elements() const
   {
-    m_lock_ds.unlock_all_tls_locked_cells();
+    m_lock_ds.unlock_all_tls_locked_locations();
   }
 
   void create_root_task() const
@@ -456,10 +456,24 @@ public: // methods
       pump_vertices<true>(criterion_value_limit, visitor);
     
 #ifdef MESH_3_PROFILING
-  double exudation_time = t.elapsed();
-  std::cerr << std::endl << "==== Total exudation 'wall-clock' time: " 
-            << exudation_time << "s ====" << std::endl;
+    double exudation_time = t.elapsed();
+    std::cerr << std::endl << "==== Total exudation 'wall-clock' time: " 
+              << exudation_time << "s ====" << std::endl;
 #endif
+  
+#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+    if (ret == BOUND_REACHED)
+    {
+      CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", exudation_time);
+    }
+    else
+    {
+      CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time",
+        (ret == CANT_IMPROVE_ANYMORE ?
+        "CANT_IMPROVE_ANYMORE" : "TIME_LIMIT_REACHED"));
+    }
+#endif
+
     return ret;
   }
   
@@ -958,10 +972,6 @@ pump_vertices(double sliver_criterion_limit,
   std::cerr << std::endl;
 #endif // CGAL_MESH_3_EXUDER_VERBOSE  
   
-#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", running_time_.time());
-#endif
-
   if ( is_time_limit_reached() ) {
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE
     std::cerr << "Exuding return code: TIME_LIMIT_REACHED\n\n";

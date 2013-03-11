@@ -29,6 +29,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/atomic.h>
+# include <boost/type_traits/is_base_of.hpp>
 #endif
 
 namespace CGAL {

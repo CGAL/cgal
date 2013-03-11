@@ -522,7 +522,7 @@ public:
   {
     if (m_lock_ds)
     {
-      m_lock_ds->unlock_all_tls_locked_cells();
+      m_lock_ds->unlock_all_tls_locked_locations();
     }
   }
 

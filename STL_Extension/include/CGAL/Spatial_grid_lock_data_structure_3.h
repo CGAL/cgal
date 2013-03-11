@@ -265,7 +265,7 @@ public:
     m_tls_grids.local()[cell_index] = false;
   }
 
-  void unlock_all_tls_locked_cells()
+  void unlock_all_tls_locked_locations()
   {
     std::vector<int> &tls_locked_cells = m_tls_locked_cells.local();
     std::vector<int>::const_iterator it = tls_locked_cells.begin();
@@ -304,7 +304,7 @@ public:
   }
   
   template <typename P3>
-  void unlock_all_tls_locked_cells_but_one_point(const P3 &point)
+  void unlock_all_tls_locked_locations_but_one_point(const P3 &point)
   {
     unlock_all_tls_locked_cells_but_one(get_grid_index(point));
   }

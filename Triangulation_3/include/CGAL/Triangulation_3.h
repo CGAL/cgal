@@ -108,7 +108,7 @@ protected:
   Triangulation_3_base()  {}
 
   Triangulation_3_base(Lock_data_structure *) {}
-  void swap(Triangulation_3_base<Concurrency_tag,Lock_data_structure> &tr){}
+  void swap(Triangulation_3_base<Concurrency_tag, Lock_data_structure_> &tr){}
   
 public:
   bool is_parallel() const
@@ -270,14 +270,14 @@ public:
   void unlock_all_elements() const
   {
     if (m_lock_ds)
-      m_lock_ds->unlock_all_tls_locked_cells();
+      m_lock_ds->unlock_all_tls_locked_locations();
   }
 
   template <typename P3>
   void unlock_all_elements_but_one_point(const P3 &point) const
   {
     if (m_lock_ds)
-      m_lock_ds->unlock_all_tls_locked_cells_but_one_point(point);
+      m_lock_ds->unlock_all_tls_locked_locations_but_one_point(point);
   }
 
 protected:
@@ -748,8 +748,8 @@ public:
   Cell_handle
   inexact_locate(const Point& p,
                  Cell_handle start,
-                 bool *p_could_lock_zone = 0,
-                 int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
+                 int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS,
+                 bool *p_could_lock_zone = 0) const;
 protected:
   Cell_handle
   exact_locate(const Point& p,
@@ -767,7 +767,8 @@ protected:
                  internal::Structural_filtering_3_tag,
                  bool *p_could_lock_zone = 0) const
   {
-    Cell_handle ch = inexact_locate(p, start, p_could_lock_zone);
+    Cell_handle ch = inexact_locate(
+      p, start, CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS, p_could_lock_zone);
     if (p_could_lock_zone && *p_could_lock_zone == false)
       return ch; // = Cell_handle() here
     else
@@ -2607,8 +2608,8 @@ template <class Gt, class Tds, class Lds>
 inline
 typename Triangulation_3<Gt, Tds, Lds>::Cell_handle
 Triangulation_3<Gt, Tds, Lds>::
-inexact_locate(const Point & t, Cell_handle start,
-               bool *p_could_lock_zone, int n_of_turns) const
+inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
+               bool *p_could_lock_zone) const
 {
   CGAL_triangulation_expensive_assertion(start == Cell_handle() || tds().is_simplex(start) );
 
