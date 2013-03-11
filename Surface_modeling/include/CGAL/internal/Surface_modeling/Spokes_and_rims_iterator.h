@@ -25,7 +25,7 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		edge_descriptor; 
 
   Spokes_and_rims_iterator(out_edge_iterator edge_iterator, Polyhedron& polyhedron)
-    : iterator(edge_iterator), descriptor(*edge_iterator), polyhedron(polyhedron), is_current_rim(false)
+    : is_current_rim(false), iterator(edge_iterator), descriptor(*edge_iterator), polyhedron(polyhedron)
   { }
 
   /// descriptor will be assigned to next valid edge, note that iterator might not change

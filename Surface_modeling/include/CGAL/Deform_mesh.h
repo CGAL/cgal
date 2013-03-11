@@ -321,7 +321,7 @@ public:
   void erase_roi(vertex_descriptor vd)   
   {
     need_preprocess = true;
-    std::vector<vertex_descriptor>::iterator it = std::find(ros.begin(), ros.end(), vd);
+    typename std::vector<vertex_descriptor>::iterator it = std::find(ros.begin(), ros.end(), vd);
     if(vd != ros.end())
     {
       ros.erase(it);
@@ -463,7 +463,7 @@ public:
    */
   void deform(unsigned int iterations, double tolerance)
   {
-    CGAL_precondition(!need_preprocess, "preprocess() need to be called before deforming!");
+    CGAL_precondition(!need_preprocess || !"preprocess() need to be called before deforming!");
 
     // Note: no energy based termination occurs at first iteration
     // because comparing energy of original model (before deformation) and deformed model (deformed_1_iteration)
