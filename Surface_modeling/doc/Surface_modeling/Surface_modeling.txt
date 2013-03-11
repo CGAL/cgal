@@ -155,6 +155,15 @@ so that we can fill \f$\delta\f$ using right-hand side of the equation which is 
 After that, linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ can be solved in order to find \f$\mathbf{V}'\f$. 
 Two-step optimization can be pursued for further refinement by altering steps.
 
+\note For supporting asymmetric edge weights, we slightly changed the Eq. \f$\eqref{eq:lap_ber}\f$ to:
+\f[
+\begin{equation}
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij} + w_{ji})(\mathbf{v}'_i - \mathbf{v}'_j) =
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij}\mathbf{R}_i + w_{ji}\mathbf{R}_j)(\mathbf{v}_i - \mathbf{v}_j).
+	\label{eq:lap_ber_asym}
+\end{equation}
+\f]
+
 \subsection Surface_Modeling_Overview_ARAP_Rims Spokes and Rims Version
 \todo we should ask Olga to check this
 
@@ -233,13 +242,25 @@ and also there is no handle vertices (i.e. inserting whole mesh as ROI and inser
 \subsection Deform
 \todo better section name
 
-Before deforming the mesh, one need to provide target position for handle vertices. A direct way to accomplish this is:
-  - `Deform_mesh::assign(vertex_descriptor vd, typename Polyhedron::Traits::Point_3 target_position)` assign the target position for the handle vertex
+Before deforming the mesh, target positions should be provided for handle vertices. A direct way to accomplish this is:
+  - `Deform_mesh::assign(vertex_descriptor vd, const Point& target_position)` assign the target position for the handle vertex
   
-If you do not need to or want to use provided functinality for rotating and translating vertices as a group, 
-then inserting vertices into a handle group (can be different handle groups)
+If the target positions for the handles are planned to provide directly, then hanldles can be simply inserted into one group (also any grouping would be still valid)
+and `Deform_mesh::assign` can be used for direct assignment of target positions. 
 
 \anchor rot
+The API also includes functionality for translating and rotating handle vertices. 
+  - `Deform_mesh::translate(Handle_group handle_group, const Vector& translation)` translate the vertices under handle group by translation
+  - 
+
+Note that changing target positions of handle vertices has no immediate effect on actual positions.
+
+The last action required is invoking deformation algorithm.
+  - `Deform_mesh::deform()` deform mesh using iterations and tolerance provided in constructor or using `Deform_mesh::set_iterations`, `Deform_mesh::set_tolerance`. 
+  In case of tolerance is smaller than or equal to zero, no energy based termination occurs.
+  - `Deform_mesh::deform(unsigned int iterations, double tolerance)`
+
+
 
 
 
