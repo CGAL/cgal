@@ -36,7 +36,7 @@
 #include <vector>
 #include <list>
 
-#define CGAL_DEFORM_SPOKES_AND_RIMS
+// #define CGAL_DEFORM_SPOKES_AND_RIMS
 
 namespace CGAL {
 
@@ -761,7 +761,6 @@ private:
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
     Eigen::Matrix3d r;
-    int num_neg = 0;
 
     // only accumulate ros vertices
     for ( std::size_t i = 0; i < ros.size(); i++ )
@@ -799,30 +798,12 @@ private:
       // checking negative determinant of r
       if ( r.determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
       {
-        num_neg++; 
-        w = svd.singularValues();
-        for (int j = 0; j < 3; j++)
-        {
-          int j0 = j;
-          int j1 = (j+1)%3;
-          int j2 = (j1+1)%3;
-          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
-          {
-            u(0, j0) = - u(0, j0);
-            u(1, j0) = - u(1, j0);
-            u(2, j0) = - u(2, j0);
-            break;
-          }
-        }
-
-        // re-extract rotation matrix
-        r = v*u.transpose();
+        u.col(2) *= -1;      // singular values are always sorted in decresing order so use column 2
+        r = v*u.transpose(); // re-extract rotation matrix
       }
       
       rot_mtr[i] = r;
     }
-
-    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
   }
   void optimal_rotations_svd_spokes_and_rims()
   {
@@ -831,7 +812,6 @@ private:
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
     Eigen::Matrix3d r;
-    int num_neg = 0;
 
     // only accumulate ros vertices
     for ( std::size_t i = 0; i < ros.size(); i++ )
@@ -878,33 +858,14 @@ private:
       // checking negative determinant of r
       if ( r.determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
       {
-        num_neg++; 
-        w = svd.singularValues();
-        for (int j = 0; j < 3; j++)
-        {
-          int j0 = j;
-          int j1 = (j+1)%3;
-          int j2 = (j1+1)%3;
-          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
-          {
-            u(0, j0) = - u(0, j0);
-            u(1, j0) = - u(1, j0);
-            u(2, j0) = - u(2, j0);
-            break;
-          }
-        }
-
-        // re-extract rotation matrix
-        r = v*u.transpose();
+        u.col(2) *= -1;      // singular values are always sorted in decresing order so use column 2
+        r = v*u.transpose(); // re-extract rotation matrix
       }
       
       rot_mtr[i] = r;
     }
-
-    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
-
   }
-
+ 
   /// Global step of iterations, updating solution
   void update_solution()
   {
