@@ -3,7 +3,7 @@
 \ingroup PkgStlExtensionConcepts
 \cgalConcept
 
-The concept `SpatialLockDataStructure3` is intended to be used by concurrent
+The concept `SpatialLockDataStructure_3` is intended to be used by concurrent
 algorithms. It allows to lock point coordinates (x, y, z) in a 3D domain.
 Each templated type called `P3` below must provide x(), y() and z() functions
 returning doubles.
@@ -11,7 +11,7 @@ returning doubles.
 \cgalHasModel `CGAL::Spatial_grid_lock_data_structure_3`
 
 */
-class SpatialLockDataStructure3 {
+class SpatialLockDataStructure_3 {
 public:
   
 /// \name Operations 
