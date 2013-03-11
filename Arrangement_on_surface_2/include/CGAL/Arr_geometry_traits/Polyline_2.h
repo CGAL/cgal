@@ -77,66 +77,7 @@ public:
   _Polyline_2(InputIterator begin, InputIterator end) :
     m_segments()
   {
-    // TODO: Get rid of *begin, by using the trick from the traits.
-    // TODO: add a big excuse for duplicating the dispatching.
-
-    construct_polyline(begin, end, *begin);
-  }
-
-  /*!
-   * Construct a polyline from a range of segments.
-   * \param begin An iterator pointing to the first segment in the range.
-   * \param end An iterator pointing after the past-the-end segment
-   *        in the range.
-   * \pre The end of segment n should be the beginning of segment n+1.
-   *
-   * TODO: After we remove the next followin function
-   * this following one will become private.
-   * TODO: once this become private the traits has to become a friend.
-   *
-   */
-  template <typename InputIterator>
-  void construct_polyline(InputIterator begin, InputIterator end,
-                          const Segment_2&)
-  {
-    m_segments.assign(begin, end);
-  }
-
-  /*!
-   * Construct a polyline from a range of points.
-   * \param begin An iterator pointing to the first point in the range.
-   * \param end An iterator pointing after the last point in the range.
-   * \pre There are at least 2 points in the range.
-   *      In other cases, an empty polyline will be created.
-   */
-  template <typename InputIterator>
-  CGAL_DEPRECATED void construct_polyline
-    (InputIterator begin, InputIterator end, const Point_2&)
-  {
-    // Check if there are no points in the range:
-    InputIterator  ps = begin;
-
-    if (ps == end)
-      return;
-
-    InputIterator pt = ps;
-    ++pt;
-
-    // The range contains only one point. A degenerated polyline is constructed.
-    // With one degenerated segment, where source=target.
-    if (pt == end)
-      {
-        m_segments.push_back(Segment_2(*ps,*ps));
-        return;
-      }
-
-    // Construct a segment from each to adjacent points.
-    // The container has to contain at least two points.
-    while (pt != end) {
-      m_segments.push_back(Segment_2(*ps, *pt));
-      ++ps;
-      ++pt;
-    }
+    m_segments.assign(begin,end);
   }
 
   /*!
@@ -439,92 +380,14 @@ public:
   _X_monotone_polyline_2() : Base () {}
 
   /*! Constructor */
+  /*
+   * As there are no tests to be done here, we can simply use the
+   * constructor of the standard polyline.
+   */
   template <typename InputIterator>
   _X_monotone_polyline_2(InputIterator begin, InputIterator end) :
     Base(begin, end)
-  {
-    construct_x_monotone_polyline(begin, end, *begin);
-  }
-
-  /*!
-   * Constructs from a range of segments.
-   * This constructor is expected to be called only from the
-   * traits class, after the input was verified there.
-   * TODO: Do we really have to keep this?
-   *       Couldn't it inherit from the base class?
-   */
-  template <typename InputIterator>
-  void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
-                                     const Segment_2& /* */)
   { }
-
-  /*!
-   * Constructs from a range of points, defining the endpoints of the
-   * polyline segments.
-   */
-  template <typename InputIterator>
-  CGAL_DEPRECATED void construct_x_monotone_polyline
-    (InputIterator begin, InputIterator end,
-     const Point_2& /* */)
-  {
-    // Make sure the range of points contains at least two points.
-    Segment_traits_2 seg_traits;
-    InputIterator ps = begin;
-    CGAL_precondition (ps != end);
-    InputIterator pt = ps;
-    ++pt;
-    CGAL_precondition (pt != end);
-
-    CGAL_precondition_code(
-      typename Segment_traits_2::Compare_x_2 compare_x =
-        seg_traits.compare_x_2_object();
-      );
-    CGAL_precondition_code(
-      typename Segment_traits_2::Compare_xy_2 compare_xy =
-        seg_traits.compare_xy_2_object();
-      );
-
-
-    // Make sure there is no change of directions as we traverse the polyline.
-    CGAL_precondition_code (
-      const Comparison_result cmp_x_res = compare_x(*ps, *pt);
-    );
-    const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
-    CGAL_precondition (cmp_xy_res != EQUAL);
-    ++ps; ++pt;
-    while (pt != end) {
-      CGAL_precondition (compare_xy(*ps, *pt) == cmp_xy_res);
-      CGAL_precondition (compare_x(*ps, *pt) == cmp_x_res);
-      ++ps; ++pt;
-    }
-
-    // Reverse the polyline so it always directed from left to right.
-    if (cmp_xy_res == LARGER)
-      _reverse();
-  }
-
-private:
-  /*! Reverse the polyline. */
-  void _reverse()
-  {
-    typename Base::const_reverse_iterator  ps = this->rbegin();
-    typename Base::const_reverse_iterator  pt = ps;
-    ++pt;
-
-    std::vector<Segment_2>  rev_segs (this->number_of_segments());
-    unsigned int            i = 0;
-
-    while (pt != this->rend())
-    {
-      rev_segs[i] = Segment_2 (*ps, *pt);
-      ++ps; ++pt;
-      i++;
-    }
-
-    this->m_segments = rev_segs;
-    return;
-  }
-
 };
 
   /*! Output operator for a polyline. */
