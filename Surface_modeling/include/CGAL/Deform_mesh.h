@@ -79,11 +79,12 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		edge_descriptor;   /**< The type for edge representative objects */
 
+  typedef typename Polyhedron::Traits::Vector_3           Vector; /**<The type for Vector_3 from Polyhedron traits */
+  typedef typename Polyhedron::Traits::Point_3            Point;  /**<The type for Point_3 from Polyhedron traits */
+
 private:
   // Geometric types              
   typedef typename Polyhedron::Traits         Kernel;
-  typedef typename Kernel::Vector_3           Vector;
-  typedef typename Kernel::Point_3            Point;
 
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
@@ -91,6 +92,8 @@ private:
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
   
+  typedef Spokes_and_rims_iterator<Polyhedron> Rims_iterator;
+
   // Handle container types
   typedef std::vector<vertex_descriptor>            Handle_container;
   typedef std::list<Handle_container>               Handle_group_container;
@@ -337,6 +340,7 @@ public:
 
   /**
    * Set the tolerance of convergence used in deform()
+   * Set to zero if energy based termination is not required.
    */
   void set_tolerance(double tolerance)
   {
@@ -359,31 +363,8 @@ public:
     }
   }
 
-  template <typename Quaternion, typename Vect>
-  void rotate(Handle_group handle_group, const Quaternion& quat)
-  {
-    Point rotation_center;
-    for(typename Handle_container::iterator it = handle_group->begin();
-      it != handle_group->end(); ++it)
-    {
-      size_t v_index = get(vertex_index_map, *it);
-      rotation_center += solution[v_index];
-    }
-    rotation_center /= handle_group->size();
-
-    for(typename Handle_container::iterator it = handle_group->begin();
-      it != handle_group->end(); ++it)
-    {
-      size_t v_index = get(vertex_index_map, *it);
-      Point p = CGAL::ORIGIN + ( original[v_index] - rotation_center);
-      Vect v = quat * Vect(p.x(),p.y(),p.z());
-      p = Point(v[0], v[1], v[2]) + ( rotation_center - CGAL::ORIGIN);
-      solution[v_index] = p;
-    }
-  }
-
   /**
-   * Rotate the handle group around rotation center by quaternion
+   * Rotate the handle group around rotation center by quaternion then translate it by translation
    * @tparam Quaternion quaternion type which defines a multiplication operator with Vect as quad * vector
    * @tparam Vect vector type 3 param constructable and has operator[] ...
    */
@@ -428,7 +409,7 @@ public:
    * @param vd handle vertex to be assigned target position
    * @param target_position constrained position
    */
-  void assign(vertex_descriptor vd, typename Polyhedron::Traits::Point_3 target_position)
+  void assign(vertex_descriptor vd, const Point& target_position)
   {
     size_t v_index = get(vertex_index_map, vd);
     solution[v_index] = target_position;
@@ -484,19 +465,36 @@ public:
   {
     CGAL_precondition(!need_preprocess, "preprocess() need to be called before deforming!");
 
-    double energy_this = 0;
+    // Note: no energy based termination occurs at first iteration
+    // because comparing energy of original model (before deformation) and deformed model (deformed_1_iteration)
+    // simply does not make sense, comparison is meaningful between deformed_(i)_iteration & deformed_(i+1)_iteration
+
+    double energy_this = 0; // initial value is not important, because we skip first iteration
     double energy_last;
+
     // iterations
     for ( unsigned int ite = 0; ite < iterations; ++ite)
     {
-      update_solution();
-      optimal_rotations_svd();
+      // main steps of optimization
+      optimal_rotations_svd(); 
+      update_solution();       
 
-      energy_last = energy_this;
-      energy_this = energy();
-      //std::cout << ite << " iterations: energy = " << energy_this << "\n";
-      double energy_dif = std::abs((energy_last - energy_this) / energy_this);
-      if ( energy_dif < tolerance ) { break; }
+      // energy based termination
+      if(tolerance > 0.0 && (ite + 1) < iterations) // if tolerance <= 0 then don't compute energy 
+      {                                             // also no need compute energy if this iteration is the last iteration
+        energy_last = energy_this;
+        energy_this = energy();
+        if(energy_this < 0)
+        {
+          // std::cout << "Negative energy" << std::endl;
+        }
+
+        if(ite != 0) // skip first iteration
+        {
+          double energy_dif = std::abs((energy_last - energy_this) / energy_this);
+          if ( energy_dif < tolerance ) { break; }
+        }
+      }
     }
     // copy solution to target mesh
     assign_solution();
@@ -547,9 +545,8 @@ private:
       vertex_descriptor vi = ros[i];
       out_edge_iterator e_begin, e_end;
       boost::tie(e_begin, e_end) = boost::out_edges(vi, polyhedron);
-      Spokes_and_rims_iterator<Polyhedron> rims_it(e_begin, polyhedron);
 
-      for ( ; rims_it.get_iterator() != e_end; ++rims_it )
+      for (Rims_iterator rims_it(e_begin, polyhedron); rims_it.get_iterator() != e_end; ++rims_it )
       {
         edge_descriptor active_edge = rims_it.get_descriptor();
 
@@ -846,9 +843,8 @@ private:
       // spoke + rim edges
       out_edge_iterator e_begin, e_end;
       boost::tie(e_begin, e_end) = boost::out_edges(vi, polyhedron);
-      Spokes_and_rims_iterator<Polyhedron> rims_it(e_begin, polyhedron);
 
-      for ( ; rims_it.get_iterator() != e_end; ++rims_it )
+      for (Rims_iterator rims_it(e_begin, polyhedron); rims_it.get_iterator() != e_end; ++rims_it )
       { 
         edge_descriptor active_edge = rims_it.get_descriptor();
 
@@ -1122,9 +1118,8 @@ private:
       // spoke + rim edges
       out_edge_iterator e_begin, e_end;
       boost::tie(e_begin, e_end) = boost::out_edges(ros[i], polyhedron);
-      Spokes_and_rims_iterator<Polyhedron> rims_it(e_begin, polyhedron);
 
-      for ( ; rims_it.get_iterator() != e_end; ++rims_it )
+      for (Rims_iterator rims_it(e_begin, polyhedron); rims_it.get_iterator() != e_end; ++rims_it )
       { 
         edge_descriptor active_edge = rims_it.get_descriptor();
 
