@@ -201,15 +201,25 @@ Direction_3<Kernel> direction() const;
 /// \name Operators 
 /// @{
 
+/// \ingroup Kernel_operator_plus
+///@{
+
 /*! 
 Addition. 
 */ 
 Vector_3<Kernel> operator+(const Vector_3<Kernel> &w) const; 
 
+/// @}
+
+/// \ingroup Kernel_operator_minus
+///@{
+
 /*! 
 Subtraction. 
 */ 
 Vector_3<Kernel> operator-(const Vector_3<Kernel> &w) const; 
+
+/// @}
 
 /*! 
 Returns the opposite vector. 
@@ -226,14 +236,17 @@ returns the squared length of `v`.
 */ 
 Kernel::FT squared_length() const; 
 
+/*! 
+returns the scalar product (= inner product) of the two vectors. 
+*/ 
+Kernel::FT operator*(const Vector_3<Kernel> &w) const;
+
 /// @}
 
 }; /* end Vector_3 */
 
-/*! 
-returns the scalar product (= inner product) of the two vectors. 
-*/ 
-Kernel::FT operator*(const Vector_3<Kernel> &w) const; 
+/// \ingroup Kernel_operator_prod
+///@{
 
 /*! 
 Multiplication with a scalar from the right. 
@@ -262,5 +275,7 @@ Multiplication with a scalar from the left.
 */ 
 Vector_3<Kernel> 
 operator*(const Kernel::FT &s, const Vector_3<Kernel> &v); 
+
+/// @}
 
 } /* end namespace CGAL */

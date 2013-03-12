@@ -35,5 +35,91 @@
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Linear Algebra Concepts and Classes ##
+- `LinearAlgebraTraits_d`
+- `Vector`
+- `Matrix`
+- `CGAL::Linear_algebraCd<FT>`
+- `CGAL::Linear_algebraHd<RT>`
+
+## Kernels ##
+- `CGAL::Cartesian_d<FieldNumberType>`
+- `CGAL::Homogeneous<RingNumberType>`
+
+## %Kernel Objects ##
+- `CGAL::Point_d<Kernel>`
+- `CGAL::Vector_d<Kernel>`
+- `CGAL::Direction_d<Kernel>`
+- `CGAL::Line_d<Kernel>`
+- `CGAL::Ray_d<Kernel>`
+- `CGAL::Segment_d<Kernel>`
+- `CGAL::Hyperplane_d<Kernel>`
+- `CGAL::Sphere_d<Kernel>`
+- `CGAL::Iso_box_d<Kernel>`
+- `CGAL::Aff_transformation_d<Kernel>`
+
+## Global %Kernel Functions ##
+- `CGAL::affinely_independent()`
+- `CGAL::affine_rank()`
+- `CGAL::center_of_sphere()`
+- `CGAL::compare_lexicographically()`
+- `CGAL::contained_in_affine_hull()`
+- `CGAL::contained_in_linear_hull()`
+- `CGAL::contained_in_simplex()`
+- `CGAL::do_intersect()`
+- `CGAL::intersection()`
+- `CGAL::lexicographically_smaller()`
+- `CGAL::lexicographically_smaller_or_equal()`
+- `CGAL::lift_to_paraboloid()`
+- `CGAL::linearly_independent()`
+- `CGAL::linear_base()`
+- `CGAL::linear_rank()`
+- `CGAL::midpoint()`
+- `CGAL::orientation()`
+- `CGAL::project_along_d_axis()`
+- `CGAL::side_of_bounded_sphere()`
+- `CGAL::side_of_oriented_sphere()`
+- `CGAL::squared_distance`
+
+## %Kernel Concept ##
+- `Kernel_d`
+- `Kernel_d::Affinely_independent_d`
+- `Kernel_d::Affine_rank_d`
+- `Kernel_d::CartesianConstIterator_d`
+- `Kernel_d::Center_of_sphere_d`
+- `Kernel_d::Compare_lexicographically_d`
+- `Kernel_d::Component_accessor_d`
+- `Kernel_d::Compute_coordinate_d`
+- `Kernel_d::ConstructCartesianConstIterator_d`
+- `Kernel_d::Contained_in_affine_hull_d`
+- `Kernel_d::Contained_in_linear_hull_d`
+- `Kernel_d::Contained_in_simplex_d`
+- `Kernel_d::Equal_d`
+- `Kernel_d::Has_on_positive_side_d`
+- `Kernel_d::Intersect_d`
+- `Kernel_d::Less_lexicographically_d`
+- `Kernel_d::Less_or_equal_lexicographically_d`
+- `Kernel_d::Less_coordinate_d`
+- `Kernel_d::Lift_to_paraboloid_d`
+- `Kernel_d::Linearly_independent_d`
+- `Kernel_d::Linear_base_d`
+- `Kernel_d::Linear_rank_d`
+- `Kernel_d::Midpoint_d`
+- `Kernel_d::Orientation_d`
+- `Kernel_d::Oriented_side_d`
+- `Kernel_d::Orthogonal_vector_d`
+- `Kernel_d::Point_dimension_d`
+- `Kernel_d::Point_of_sphere_d`
+- `Kernel_d::Point_to_vector_d`
+- `Kernel_d::Project_along_d_axis_d`
+- `Kernel_d::Side_of_bounded_sphere_d`
+- `Kernel_d::Side_of_oriented_sphere_d`
+- `Kernel_d::Squared_distance_d`
+- `Kernel_d::Value_at_d`
+- `Kernel_d::Vector_to_point_d`
+
 */
 

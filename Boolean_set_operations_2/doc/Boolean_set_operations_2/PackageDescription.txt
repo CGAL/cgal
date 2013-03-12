@@ -63,8 +63,8 @@ containment predicates.
 - `CGAL::symmetric_difference`
 - `CGAL::oriented_side`
 - `CGAL::connect_holes`
-- `CGAL::operator<< (go there)`
-- `CGAL::operator>> (go there)`
+- `operator<<` for `CGAL::Polygon_with_holes_2`, `CGAL::General_polygon_2` and `CGAL::General_polygon_with_holes_2`
+- `operator>>()` for `CGAL::Polygon_with_holes_2`, `CGAL::General_polygon_2` and `CGAL::General_polygon_with_holes_2`
 
 
 */

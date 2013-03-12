@@ -1,12 +1,7 @@
 namespace CGAL {
 
 /*!
-\addtogroup rational_rotation_approximation_grp
-
-*/
-
-/*!
-\ingroup rational_rotation_approximation
+\ingroup rational_rotation_approximation_grp
 
 computes integers `sin_num`, `cos_num` and `denom`, such
 that `sin_num`/`denom` approximates the sine of direction 

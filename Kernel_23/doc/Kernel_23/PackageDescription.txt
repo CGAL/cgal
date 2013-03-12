@@ -12,13 +12,13 @@
 /// \defgroup kernel_predef Predefined Kernels
 /// \ingroup PkgKernel23
 
-/// \defgroup kernel_classes2 2D Kernel Objects 
+/// \defgroup kernel_classes2 2D Kernel Objects
 /// \ingroup PkgKernel23
 
-/// \defgroup kernel_classes3 3D Kernel Objects 
+/// \defgroup kernel_classes3 3D Kernel Objects
 /// \ingroup PkgKernel23
 
-/// \defgroup kernel_classes Kernel Classes 
+/// \defgroup kernel_classes Kernel Classes
 /// \ingroup PkgKernel23
 
 /// \defgroup kernel_global_function Global Kernel Functions
@@ -48,6 +48,433 @@
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `Kernel`
+
+## %Kernel Classes and Operations ##
+
+- `CGAL::Cartesian<FieldNumberType>`
+- `CGAL::Cartesian_converter<K1, K2, NTConverter>`
+- `CGAL::cartesian_to_homogeneous`
+- `CGAL::Filtered_kernel<CK>`
+- `CGAL::Filtered_kernel_adaptor<CK>`
+- `CGAL::Filtered_predicate<EP, FP, C2E, C2F>`
+- `CGAL::Homogeneous<RingNumberType>`
+- `CGAL::Homogeneous_converter<K1, K2, RTConverter, FTConverter>`
+- `CGAL::homogeneous_to_cartesian`
+- `CGAL::homogeneous_to_quotient_cartesian`
+- `CGAL::Kernel_traits<T>`
+- `CGAL::Simple_cartesian<FieldNumberType>`
+- `CGAL::Simple_homogeneous<RingNumberType>`
+- `CGAL::Projection_traits_xy_3<K>`
+
+## Predefined Kernels ##
+
+- `CGAL::Exact_predicates_exact_constructions_kernel`
+- `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`
+- `CGAL::Exact_predicates_inexact_constructions_kernel`
+
+## %Kernel Objects ##
+
+### Two-dimensional Objects ###
+
+- `CGAL::Aff_transformation_2<Kernel>`
+- `CGAL::Bbox_2`
+- `CGAL::Circle_2<Kernel>`
+- `CGAL::Direction_2<Kernel>`
+- `CGAL::Iso_rectangle_2<Kernel>`
+- `CGAL::Line_2<Kernel>`
+- `CGAL::Point_2<Kernel>`
+- `CGAL::Ray_2<Kernel>`
+- `CGAL::Segment_2<Kernel>`
+- `CGAL::Triangle_2<Kernel>`
+- `CGAL::Vector_2<Kernel>`
+
+### Three-dimensional Objects ###
+
+- `CGAL::Bbox_3`
+- `CGAL::Aff_transformation_3<Kernel>`
+- `CGAL::Direction_3<Kernel>`
+- `CGAL::Iso_cuboid_3<Kernel>`
+- `CGAL::Line_3<Kernel>`
+- `CGAL::Plane_3<Kernel>`
+- `CGAL::Point_3<Kernel>`
+- `CGAL::Ray_3<Kernel>`
+- `CGAL::Segment_3<Kernel>`
+- `CGAL::Circle_3<Kernel>`
+- `CGAL::Sphere_3<Kernel>`
+- `CGAL::Tetrahedron_3<Kernel>`
+- `CGAL::Triangle_3<Kernel>`
+- `CGAL::Vector_3<Kernel>`
+
+## Constants and Enumerations ##
+
+- `CGAL::Angle`
+- `CGAL::Bounded_side`
+- `CGAL::Comparison_result`
+- `CGAL::Sign`
+- `CGAL::Orientation`
+- `CGAL::Oriented_side`
+- `CGAL::CLOCKWISE`
+- `CGAL::COUNTERCLOCKWISE`
+- `CGAL::COLLINEAR`
+- `CGAL::LEFT_TURN`
+- `CGAL::RIGHT_TURN`
+- `CGAL::COPLANAR`
+- `CGAL::DEGENERATE`
+- `CGAL::Null_vector`
+- `CGAL::NULL_VECTOR`
+- `CGAL::Origin`
+- `CGAL::ORIGIN`
+- `CGAL::Identity_transformation`
+- `CGAL::Reflection`
+- `CGAL::Rotation`
+- `CGAL::Scaling`
+- `CGAL::Translation`
+
+## Global Functions ##
+
+- \link angle_grp `CGAL::angle()` \endlink
+- \link are_ordered_along_line_grp `CGAL::are_ordered_along_line()` \endlink
+- \link are_strictly_ordered_along_line_grp `CGAL::are_strictly_ordered_along_line()` \endlink
+- \link area_grp `CGAL::area()` \endlink
+- \link barycenter_grp `CGAL::barycenter()` \endlink
+- \link bisector_grp `CGAL::bisector()` \endlink
+- \link centroid_grp `CGAL::centroid()` \endlink
+- \link circumcenter_grp `CGAL::circumcenter()` \endlink
+- \link collinear_grp `CGAL::collinear()` \endlink
+- \link collinear_are_ordered_along_line_grp `CGAL::collinear_are_ordered_along_line()` \endlink
+- \link collinear_are_strictly_ordered_along_line_grp `CGAL::collinear_are_strictly_ordered_along_line()` \endlink
+- \link compare_distance_to_point_grp `CGAL::compare_distance_to_point()` \endlink
+- \link compare_lexicographically_linear_grp `CGAL::compare_lexicographically()` \endlink
+- \link compare_signed_distance_to_line_grp `CGAL::compare_signed_distance_to_line()` \endlink
+- \link compare_signed_distance_to_plane_grp `CGAL::compare_signed_distance_to_plane()` \endlink
+- \link compare_slopes_grp `CGAL::compare_slopes()` \endlink
+- \link compare_dihedral_angle_grp `CGAL::compare_dihedral_angle()` \endlink
+- \link compare_squared_distance_grp `CGAL::compare_squared_distance()` \endlink
+- \link compare_squared_radius_grp `CGAL::compare_squared_radius()` \endlink
+- \link compare_x_grp `CGAL::compare_x()` \endlink
+- \link compare_xy_grp `CGAL::compare_xy()` \endlink
+- \link compare_xyz_grp `CGAL::compare_xyz()` \endlink
+- \link compare_x_at_y_grp `CGAL::compare_x_at_y()` \endlink
+- \link compare_y_grp `CGAL::compare_y()` \endlink
+- \link compare_y_at_x_grp `CGAL::compare_y_at_x()` \endlink
+- \link compare_yx_grp `CGAL::compare_yx()` \endlink
+- \link compare_z_grp `CGAL::compare_z()` \endlink
+- \link coplanar_grp `CGAL::coplanar()` \endlink
+- \link coplanar_orientation_grp `CGAL::coplanar_orientation()` \endlink
+- \link coplanar_side_of_bounded_circle_grp `CGAL::coplanar_side_of_bounded_circle()` \endlink
+- \link cross_product_grp `CGAL::cross_product()` \endlink
+- \link determinant_grp `CGAL::determinant()` \endlink
+- \link do_intersect_grp `CGAL::do_intersect()` \endlink
+- \link do_overlap_grp `CGAL::do_overlap()` \endlink
+- `CGAL::enum_cast()`
+- \link equidistant_line_grp `CGAL::equidistant_line()` \endlink
+- \link has_larger_distance_to_point_grp `CGAL::has_larger_distance_to_point()` \endlink
+- \link has_larger_signed_distance_to_line_grp `CGAL::has_larger_signed_distance_to_line()` \endlink
+- \link has_larger_signed_distance_to_plane_grp `CGAL::has_larger_signed_distance_to_plane()` \endlink
+- \link has_smaller_distance_to_point_grp `CGAL::has_smaller_distance_to_point()` \endlink
+- \link has_smaller_signed_distance_to_line_grp `CGAL::has_smaller_signed_distance_to_line()` \endlink
+- \link has_smaller_signed_distance_to_plane_grp `CGAL::has_smaller_signed_distance_to_plane()` \endlink
+- \link intersection_grp `CGAL::intersection()` \endlink
+- \link left_turn_grp `CGAL::left_turn()` \endlink
+- \link lexicographically_xyz_smaller_grp `CGAL::lexicographically_xyz_smaller()` \endlink
+- \link lexicographically_xyz_smaller_or_equal_grp `CGAL::lexicographically_xyz_smaller_or_equal()` \endlink
+- \link lexicographically_xy_larger_grp `CGAL::lexicographically_xy_larger()` \endlink
+- \link lexicographically_xy_larger_or_equal_grp `CGAL::lexicographically_xy_larger_or_equal()` \endlink
+- \link lexicographically_xy_smaller_grp `CGAL::lexicographically_xy_smaller()` \endlink
+- \link lexicographically_xy_smaller_or_equal_grp `CGAL::lexicographically_xy_smaller_or_equal()` \endlink
+- \link max_vertex_grp `CGAL::max_vertex()` \endlink
+- \link midpoint_grp `CGAL::midpoint()` \endlink
+- \link normal_grp `CGAL::normal()` \endlink
+- \link min_vertex_grp `CGAL::min_vertex()` \endlink
+- \link Kernel_operator_plus `CGAL::operator+()` \endlink
+- \link Kernel_operator_minus `CGAL::operator-()` \endlink
+- \link Kernel_operator_prod `CGAL::operator*()` \endlink
+- `CGAL::opposite()`
+- \link orthogonal_vector_grp `CGAL::orthogonal_vector()` \endlink
+- \link orientation_grp `CGAL::orientation()` \endlink
+- \link parallel_grp `CGAL::parallel()` \endlink
+- `CGAL::quotient_cartesian_to_homogeneous()`
+- \link radical_plane_grp `CGAL::radical_plane()` \endlink
+- \link radical_line_grp `CGAL::radical_line()` \endlink
+- \link rational_rotation_approximation_grp `CGAL::rational_rotation_approximation()` \endlink
+- \link right_turn_grp `CGAL::right_turn()` \endlink
+- \link side_of_bounded_circle_grp `CGAL::side_of_bounded_circle()` \endlink
+- \link side_of_bounded_sphere_grp `CGAL::side_of_bounded_sphere()` \endlink
+- \link side_of_oriented_circle_grp `CGAL::side_of_oriented_circle()` \endlink
+- \link side_of_oriented_sphere_grp `CGAL::side_of_oriented_sphere()` \endlink
+- \link squared_area_grp `CGAL::squared_area()` \endlink
+- \link squared_distance_grp `CGAL::squared_distance()` \endlink
+- \link squared_radius_grp `CGAL::squared_radius()` \endlink
+- \link unit_normal_grp `CGAL::unit_normal()` \endlink
+- \link volume_grp `CGAL::volume()` \endlink
+- \link x_equal_grp `CGAL::x_equal()` \endlink
+- \link y_equal_grp `CGAL::y_equal()` \endlink
+- \link z_equal_grp `CGAL::z_equal()` \endlink
+
+## %Kernel Geometric Object Concepts ##
+
+- `Kernel::Circle_2`
+- `Kernel::Circle_3`
+- `Kernel::Direction_2`
+- `Kernel::Direction_3`
+- `Kernel::IsoCuboid_3`
+- `Kernel::IsoRectangle_2`
+- `Kernel::Line_2`
+- `Kernel::Line_3`
+- `Kernel::Object_2`
+- `Kernel::Object_3`
+- `Kernel::Plane_3`
+- `Kernel::Point_2`
+- `Kernel::Point_3`
+- `Kernel::Ray_2`
+- `Kernel::Ray_3`
+- `Kernel::Segment_2`
+- `Kernel::Segment_3`
+- `Kernel::Sphere_3`
+- `Kernel::Tetrahedron_3`
+- `Kernel::Triangle_2`
+- `Kernel::Triangle_3`
+- `Kernel::Vector_2`
+- `Kernel::Vector_3`
+
+## %Kernel Function Object Concepts ##
+
+- `Kernel::Angle_2`
+- `Kernel::Angle_3`
+- `Kernel::AreOrderedAlongLine_2`
+- `Kernel::AreOrderedAlongLine_3`
+- `Kernel::AreParallel_2`
+- `Kernel::AreParallel_3`
+- `Kernel::AreStrictlyOrderedAlongLine_2`
+- `Kernel::AreStrictlyOrderedAlongLine_3`
+- `Kernel::Assign_2`
+- `Kernel::Assign_3`
+- `Kernel::BoundedSide_2`
+- `Kernel::BoundedSide_3`
+- `Kernel::CollinearAreOrderedAlongLine_2`
+- `Kernel::CollinearAreOrderedAlongLine_3`
+- `Kernel::CollinearAreStrictlyOrderedAlongLine_2`
+- `Kernel::CollinearAreStrictlyOrderedAlongLine_3`
+- `Kernel::CollinearHasOn_2`
+- `Kernel::Collinear_2`
+- `Kernel::Collinear_3`
+- `Kernel::CompareAngleWithXAxis_2`
+- `Kernel::CompareDihedralAngle_3`
+- `Kernel::CompareDistance_2`
+- `Kernel::CompareDistance_3`
+- `Kernel::CompareSlope_2`
+- `Kernel::CompareSquaredDistance_2`
+- `Kernel::CompareSquaredDistance_3`
+- `Kernel::CompareSquaredRadius_3`
+- `Kernel::CompareXAtY_2`
+- `Kernel::CompareXYZ_3`
+- `Kernel::CompareXY_2`
+- `Kernel::CompareXY_3`
+- `Kernel::CompareX_2`
+- `Kernel::CompareX_3`
+- `Kernel::CompareYAtX_2`
+- `Kernel::CompareY_2`
+- `Kernel::CompareY_3`
+- `Kernel::CompareYX_2`
+- `Kernel::CompareZ_3`
+- `Kernel::ComputeA_2`
+- `Kernel::ComputeB_2`
+- `Kernel::ComputeC_2`
+- `Kernel::ComputeApproximateArea_3`
+- `Kernel::ComputeApproximateSquaredLength_3`
+- `Kernel::ComputeArea_2`
+- `Kernel::ComputeArea_3`
+- `Kernel::ComputeAreaDividedByPi_3`
+- `Kernel::ComputeDeterminant_2`
+- `Kernel::ComputeDeterminant_3`
+- `Kernel::ComputeDx_2`
+- `Kernel::ComputeDy_2`
+- `Kernel::ComputeHx_2`
+- `Kernel::ComputeHy_2`
+- `Kernel::ComputeScalarProduct_2`
+- `Kernel::ComputeScalarProduct_3`
+- `Kernel::ComputeSquaredArea_3`
+- `Kernel::ComputeSquaredDistance_2`
+- `Kernel::ComputeSquaredDistance_3`
+- `Kernel::ComputeSquaredLength_2`
+- `Kernel::ComputeSquaredLength_3`
+- `Kernel::ComputeSquaredLengthDividedByPiSquare_3`
+- `Kernel::ComputeSquaredRadius_2`
+- `Kernel::ComputeSquaredRadius_3`
+- `Kernel::ComputeVolume_3`
+- `Kernel::ComputeX_2`
+- `Kernel::ComputeX_3`
+- `Kernel::ComputeY_2`
+- `Kernel::ComputeY_3`
+- `Kernel::ComputeZ_3`
+- `Kernel::ComputeXmin_2`
+- `Kernel::ComputeYmin_2`
+- `Kernel::ComputeXmax_2`
+- `Kernel::ComputeYmax_2`
+- `Kernel::ComputeYAtX_2`
+- `Kernel::ConstructBarycenter_2`
+- `Kernel::ConstructBarycenter_3`
+- `Kernel::ConstructBaseVector_3`
+- `Kernel::ConstructBbox_2`
+- `Kernel::ConstructBbox_3`
+- `Kernel::ConstructBisector_2`
+- `Kernel::ConstructBisector_3`
+- `Kernel::ConstructCartesianConstIterator_2`
+- `Kernel::ConstructCartesianConstIterator_3`
+- `Kernel::ConstructCenter_2`
+- `Kernel::ConstructCenter_3`
+- `Kernel::ConstructCentroid_2`
+- `Kernel::ConstructCentroid_3`
+- `Kernel::ConstructCircle_2`
+- `Kernel::ConstructCircle_3`
+- `Kernel::ConstructCircumcenter_2`
+- `Kernel::ConstructCircumcenter_3`
+- `Kernel::ConstructCrossProductVector_3`
+- `Kernel::ConstructDifferenceOfVectors_2`
+- `Kernel::ConstructDifferenceOfVectors_3`
+- `Kernel::ConstructDirection_2`
+- `Kernel::ConstructDirection_3`
+- `Kernel::ConstructDividedVector_2`
+- `Kernel::ConstructDividedVector_3`
+- `Kernel::ConstructEquidistantLine_3`
+- `Kernel::ConstructIsoCuboid_3`
+- `Kernel::ConstructIsoRectangle_2`
+- `Kernel::ConstructLiftedPoint_3`
+- `Kernel::ConstructLine_2`
+- `Kernel::ConstructLine_3`
+- `Kernel::ConstructMaxVertex_2`
+- `Kernel::ConstructMaxVertex_3`
+- `Kernel::ConstructMidpoint_2`
+- `Kernel::ConstructMidpoint_3`
+- `Kernel::ConstructMinVertex_2`
+- `Kernel::ConstructMinVertex_3`
+- `Kernel::ConstructNormal_3`
+- `Kernel::ConstructObject_2`
+- `Kernel::ConstructObject_3`
+- `Kernel::ConstructOppositeCircle_2`
+- `Kernel::ConstructOppositeDirection_2`
+- `Kernel::ConstructOppositeDirection_3`
+- `Kernel::ConstructOppositeLine_2`
+- `Kernel::ConstructOppositeLine_3`
+- `Kernel::ConstructOppositePlane_3`
+- `Kernel::ConstructOppositeRay_2`
+- `Kernel::ConstructOppositeRay_3`
+- `Kernel::ConstructOppositeSegment_2`
+- `Kernel::ConstructOppositeSegment_3`
+- `Kernel::ConstructOppositeSphere_3`
+- `Kernel::ConstructOppositeTriangle_2`
+- `Kernel::ConstructOppositeVector_2`
+- `Kernel::ConstructOppositeVector_3`
+- `Kernel::ConstructOrthogonalVector_3`
+- `Kernel::ConstructPerpendicularDirection_2`
+- `Kernel::ConstructPerpendicularLine_2`
+- `Kernel::ConstructPerpendicularLine_3`
+- `Kernel::ConstructPerpendicularPlane_3`
+- `Kernel::ConstructPerpendicularVector_2`
+- `Kernel::ConstructPlane_3`
+- `Kernel::ConstructPointOn_2`
+- `Kernel::ConstructPointOn_3`
+- `Kernel::ConstructPoint_2`
+- `Kernel::ConstructPoint_3`
+- `Kernel::ConstructProjectedPoint_2`
+- `Kernel::ConstructProjectedPoint_3`
+- `Kernel::ConstructProjectedXYPoint_2`
+- `Kernel::ConstructRadicalLine_2`
+- `Kernel::ConstructRadicalPlane_3`
+- `Kernel::ConstructRay_2`
+- `Kernel::ConstructRay_3`
+- `Kernel::ConstructScaledVector_2`
+- `Kernel::ConstructScaledVector_3`
+- `Kernel::ConstructSecondPoint_2`
+- `Kernel::ConstructSegment_2`
+- `Kernel::ConstructSegment_3`
+- `Kernel::ConstructSource_2`
+- `Kernel::ConstructSphere_3`
+- `Kernel::ConstructSumOfVectors_2`
+- `Kernel::ConstructSumOfVectors_3`
+- `Kernel::ConstructSupportingPlane_3`
+- `Kernel::ConstructTarget_2`
+- `Kernel::ConstructTetrahedron_3`
+- `Kernel::ConstructTranslatedPoint_2`
+- `Kernel::ConstructTranslatedPoint_3`
+- `Kernel::ConstructTriangle_2`
+- `Kernel::ConstructTriangle_3`
+- `Kernel::ConstructUnitNormal_3`
+- `Kernel::ConstructVector_2`
+- `Kernel::ConstructVector_3`
+- `Kernel::ConstructVertex_2`
+- `Kernel::ConstructVertex_3`
+- `Kernel::CartesianConstIterator_2`
+- `Kernel::CartesianConstIterator_3`
+- `Kernel::CoplanarOrientation_3`
+- `Kernel::CoplanarSideOfBoundedCircle_3`
+- `Kernel::Coplanar_3`
+- `Kernel::CounterclockwiseInBetween_2`
+- `Kernel::DoIntersect_2`
+- `Kernel::DoIntersect_3`
+- `Kernel::EqualXY_3`
+- `Kernel::EqualX_2`
+- `Kernel::EqualX_3`
+- `Kernel::EqualY_2`
+- `Kernel::EqualY_3`
+- `Kernel::EqualZ_3`
+- `Kernel::Equal_2`
+- `Kernel::Equal_3`
+- `Kernel::HasOnBoundary_2`
+- `Kernel::HasOnBoundary_3`
+- `Kernel::HasOnBoundedSide_2`
+- `Kernel::HasOnBoundedSide_3`
+- `Kernel::HasOnNegativeSide_2`
+- `Kernel::HasOnNegativeSide_3`
+- `Kernel::HasOnPositiveSide_2`
+- `Kernel::HasOnPositiveSide_3`
+- `Kernel::HasOnUnboundedSide_2`
+- `Kernel::HasOnUnboundedSide_3`
+- `Kernel::HasOn_2`
+- `Kernel::HasOn_3`
+- `Kernel::Intersect_2`
+- `Kernel::Intersect_3`
+- `Kernel::IsDegenerate_2`
+- `Kernel::IsDegenerate_3`
+- `Kernel::IsHorizontal_2`
+- `Kernel::IsVertical_2`
+- `Kernel::LeftTurn_2`
+- `Kernel::LessDistanceToPoint_2`
+- `Kernel::LessDistanceToPoint_3`
+- `Kernel::LessRotateCCW_2`
+- `Kernel::LessSignedDistanceToLine_2`
+- `Kernel::LessSignedDistanceToPlane_3`
+- `Kernel::LessXYZ_3`
+- `Kernel::LessXY_2`
+- `Kernel::LessXY_3`
+- `Kernel::LessX_2`
+- `Kernel::LessX_3`
+- `Kernel::LessYX_2`
+- `Kernel::LessY_2`
+- `Kernel::LessY_3`
+- `Kernel::LessZ_3`
+- `Kernel::Orientation_2`
+- `Kernel::Orientation_3`
+- `Kernel::OrientedSide_2`
+- `Kernel::OrientedSide_3`
+- `Kernel::SideOfBoundedCircle_2`
+- `Kernel::SideOfBoundedSphere_3`
+- `Kernel::SideOfOrientedCircle_2`
+- `Kernel::SideOfOrientedSphere_3`
+
+## Dimension handling tools ##
+
+- `CGAL::Ambient_dimension<T, K>`
+- `CGAL::Feature_dimension<T, K>`
+- `CGAL::Dimension_tag<int dim>`
+- `CGAL::Dynamic_dimension_tag`
+
 */
 
 /// \cgalConceptNamespace
