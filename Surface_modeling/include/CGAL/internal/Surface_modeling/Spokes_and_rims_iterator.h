@@ -1,7 +1,11 @@
+#ifndef CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H
+#define CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
-
+namespace CGAL {
+namespace internal {
 /** 
  * Provide simple functionality for iterating over spoke and rim edges
  *   - use get_descriptor() to obtain active edge
@@ -55,3 +59,7 @@ private:
   edge_descriptor descriptor; ///< current active edge descriptor for looping
   Polyhedron& polyhedron;
 };
+
+}//namespace internal
+}//namespace CGAL
+#endif //CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H

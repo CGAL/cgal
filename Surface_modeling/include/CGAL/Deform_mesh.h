@@ -95,7 +95,7 @@ private:
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
   
-  typedef Spokes_and_rims_iterator<Polyhedron> Rims_iterator;
+  typedef internal::Spokes_and_rims_iterator<Polyhedron> Rims_iterator;
 
   // Handle container types
   typedef std::vector<vertex_descriptor>            Handle_container;
