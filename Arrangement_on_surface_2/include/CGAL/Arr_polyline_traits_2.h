@@ -1205,7 +1205,7 @@ public:
     {
       typedef typename std::iterator_traits<InputIterator>::value_type VT;
       typedef typename boost::is_same<VT,Point_2>::type Is_point;
-      return contructor_impl(begin, end, Is_point());
+      return constructor_impl(begin, end, Is_point());
     }
 
     /*! Construction implementation from a range of points.
@@ -1215,7 +1215,7 @@ public:
      * \pre Consecutive points are disjoint.
      */
     template <typename InputIterator>
-    Curve_2 contructor_impl (InputIterator begin, InputIterator end,
+    Curve_2 constructor_impl (InputIterator begin, InputIterator end,
                              boost::true_type) const
     {
       // The range must contain at least two points.
@@ -1242,7 +1242,7 @@ public:
      *       is the start of the (i+1)-th segment.
      */
     template <typename InputIterator>
-    Curve_2 contructor_impl (InputIterator begin, InputIterator end,
+    Curve_2 constructor_impl (InputIterator begin, InputIterator end,
                              boost::false_type) const
     {
       CGAL_precondition(begin != end);
@@ -1322,15 +1322,65 @@ public:
     {
       typedef typename std::iterator_traits<InputIterator>::value_type VT;
       typedef typename boost::is_same<VT,Point_2>::type Is_point;
-      return contructor_impl(begin, end, Is_point());
+      return constructor_impl(begin, end, Is_point());
     }
 
     template <typename InputIterator>
-    X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
+    X_monotone_curve_2 constructor_impl(InputIterator begin, InputIterator end,
                                        boost::true_type) const
     {
-      // TODO: Implement tests of the validity of the input.
-      return X_monotone_curve_2(begin, end);
+      // Vector of the segments to be constructed from the range of points
+      std::vector<Segment_2> segs;
+
+      // Make sure the range of points contains at least two points.
+      InputIterator ps = begin;
+      CGAL_precondition (ps != end);
+      InputIterator pt = ps;
+      ++pt;
+      CGAL_precondition (pt != end);
+
+      // Initialize two comparison functors
+      CGAL_precondition_code(typename Segment_traits_2::Compare_x_2 compare_x=
+                             m_seg_traits->compare_x_2_object(););
+      CGAL_precondition_code(typename Segment_traits_2::Compare_xy_2 compare_xy=
+                             m_seg_traits->compare_xy_2_object(););
+
+      // Make sure there is no change of directions as we traverse the polyline.
+      // Save the comp_x between the first two points
+      CGAL_precondition_code (const Comparison_result cmp_x_res =
+                              compare_x(*ps, *pt););
+      // Save the comp_xy between the first two points
+      const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
+
+      // Assure that the first two points are not the same
+      CGAL_precondition (cmp_xy_res != EQUAL);
+
+      if (cmp_xy_res == LARGER)
+        // Add a segment of a reversed order
+        segs.push_back(Segment_2(*pt,*ps));
+      else
+        // Add a segment
+        segs.push_back(Segment_2(*ps,*pt));
+
+      ++ps; ++pt;
+      while (pt != end) {
+        CGAL_precondition (compare_xy(*ps, *pt) == cmp_xy_res);
+        CGAL_precondition (compare_x(*ps, *pt) == cmp_x_res);
+        cmp_xy_res == LARGER ?
+          segs.push_back(Segment_2(*pt,*ps)) :
+          segs.push_back(Segment_2(*ps,*pt));
+        ++ps; ++pt;
+      }
+
+      // Reverse the polyline so it always directed from left to right.
+      if (cmp_xy_res == LARGER)
+        {
+          // The constructed polyline has to be reversed.
+          return X_monotone_curve_2(segs.rbegin(),segs.rend());
+        }
+      else
+        // No need to reverse. Returning the polyline
+        return X_monotone_curve_2(segs.begin(), segs.end());
     }
 
     /*! Returns an x-monotone polyline from a range of segments.
@@ -1347,7 +1397,7 @@ public:
      * \return An x-monotone polyline directed from left to right.
      */
     template <typename InputIterator>
-    X_monotone_curve_2 contructor_impl(InputIterator begin, InputIterator end,
+    X_monotone_curve_2 constructor_impl(InputIterator begin, InputIterator end,
                                        boost::false_type) const
     {
       CGAL_precondition(begin != end);
