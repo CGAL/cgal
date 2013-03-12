@@ -24,6 +24,8 @@ if ( CGAL_FOUND )
   include_directories (BEFORE "../../include")
 
   create_single_source_cgal_program( "sdg-count-sites.cpp" )
+  create_single_source_cgal_program( "sdg-creation-time-hv.cpp" )
+  create_single_source_cgal_program( "sdg-creation-time.cpp" )
   create_single_source_cgal_program( "sdg-filtered-traits.cpp" )
   create_single_source_cgal_program( "sdg-info-set.cpp" )
   create_single_source_cgal_program( "sdg-red-blue-info.cpp" )
