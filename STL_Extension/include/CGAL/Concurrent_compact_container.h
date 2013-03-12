@@ -57,17 +57,42 @@ namespace internal {
 }
 
 // Free list (head and size)
-template< typename pointer, typename size_type  >
+template< typename pointer, typename size_type, typename CCC >
 class Free_list {
 public:
   Free_list() : m_head(NULL), m_size(0) {}
 
+  void init()                { m_head = NULL; m_size = 0; }
   pointer head() const       { return m_head; }
   void set_head(pointer p)   { m_head = p; }
   size_type size() const     { return m_size; }
   void set_size(size_type s) { m_size = s; }
   void inc_size()            { ++m_size; }
   void dec_size()            { --m_size; }
+  bool empty()               { return size() == 0; }
+  // Warning: copy the pointer, not the data!
+  Free_list& operator= (const Free_list& other)
+  {
+    m_head = other.m_head;
+    m_size = other.m_size;
+    return *this;
+  }
+  
+  void merge(Free_list &other)
+  {
+    if (m_head == NULL) {
+      *this = other;
+    } 
+    else if (!other.empty()) 
+    {
+      pointer p = m_head;
+      while (CCC::clean_pointee(p) != NULL)
+        p = CCC::clean_pointee(p);
+      CCC::set_type(p, other.m_head, CCC::FREE);
+      m_size += other.m_size;
+    }
+    other.init(); // clear other
+  }
 
 protected:
   pointer   m_head;  // the free list head pointer
@@ -108,8 +133,11 @@ public:
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
 private:
-  typedef Free_list<pointer, size_type>             FreeList;
+  typedef Free_list<pointer, size_type, Self>       FreeList;
   typedef tbb::enumerable_thread_specific<FreeList> Free_lists;
+  
+  // FreeList can access our private function (clean_pointee...)
+  friend class FreeList;
 
 public:
   friend class internal::CCC_iterator<Self, false>;
@@ -352,8 +380,7 @@ public:
 
   // Merge the content of d into *this.  d gets cleared.
   // The complexity is O(size(free list = capacity-size)).
-  // CJTODO?
-  //void merge(Self &d);
+  void merge(Self &d);
 
   // Do not call this function while others are inserting/erasing elements
   size_type size() const
@@ -572,22 +599,35 @@ private:
   mutable Mutex     m_mutex;
 };
 
-/*CJTODO template < class T, class Allocator, class Strategy >
+template < class T, class Allocator, class Strategy >
 void Concurrent_compact_container<T, Allocator, Strategy>::merge(Self &d)
 {
   CGAL_precondition(&d != this);
 
   // Allocators must be "compatible" :
   CGAL_precondition(get_allocator() == d.get_allocator());
+  
+  // Concatenate the free_lists.
+  // Iterates over TLS free lists of "d". Note that the number of TLS freelists
+  // may be different.
+  typename Free_lists::iterator it_free_list = m_free_lists.begin();
+  if (it_free_list == m_free_lists.end())
+  {
+    // No free list at all? Create our local one... empty.
+    get_free_list()->set_head(0);
+    get_free_list()->set_size(0);
+    // Now there is one TLS free list: ours!
+    it_free_list = m_free_lists.begin();
+  }
+  for( typename Free_lists::iterator it_free_list_d = d.m_free_lists.begin() ;
+       it_free_list_d != d.m_free_lists.end() ;
+       ++it_free_list_d, ++it_free_list )
+  {
+    // If we run out of TLS free lists in *this, let's start again from "begin"
+    if (it_free_list == m_free_lists.end())
+      it_free_list = m_free_lists.begin();
 
-  // Concatenate the m_free_lists.
-  if (free_list == NULL) {
-    free_list = d.free_list;
-  } else if (d.free_list != NULL) {
-    pointer p = free_list;
-    while (clean_pointee(p) != NULL)
-      p = clean_pointee(p);
-    set_type(p, d.free_list, FREE);
+    it_free_list->merge(*it_free_list_d);
   }
   // Concatenate the blocks.
   if (m_last_item == NULL) { // empty...
@@ -604,7 +644,7 @@ void Concurrent_compact_container<T, Allocator, Strategy>::merge(Self &d)
   m_block_size = (std::max)(m_block_size, d.m_block_size);
   // Clear d.
   d.init();
-}*/
+}
 
 template < class T, class Allocator, class Strategy >
 void Concurrent_compact_container<T, Allocator, Strategy>::clear()
