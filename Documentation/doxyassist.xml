@@ -1498,7 +1498,7 @@ namespace for the XML file to be processed properly.  -->
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
-          <item>./tags/AABB_tree.tag=../../CGAL.CGAL.3D-Fast-Intersection-and-Distance-Computation/html</item>
+          <item>./tags/AABB_tree.tag=../../CGAL.CGAL.3D-Fast-Intersection-and-Distance-Computation--AABB-Tree-/html</item>
           <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
           <item>./tags/Number_types.tag=../../CGAL.CGAL.Number-Types/html</item>
           <item>./tags/Alpha_shapes_2.tag=../../CGAL.CGAL.2D-Alpha-Shapes/html</item>
