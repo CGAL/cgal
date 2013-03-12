@@ -24,9 +24,6 @@
  * Next is a list of tasks that should be implemented:
  * TODO: Add a tag HAS_SOURCE_TARGET and dispatch calls in
  *       Push_back_2 accordingly.
- * TODO: In Number_of_points_2. In general, for example in the unbounded case,
- *       the number of vertices of a polyline cannot be read-off from the
- *       number of segments. Thus, this has to be changed.
  */
 
 // TODO: Complete the documentation of the changes derived from the cleaning
@@ -1179,18 +1176,19 @@ public:
      * \return A segment connecting p and q.
      * TODO: Some how it is impossible to invoke this construction, it is
      *       always dispatches the call to the following constructor:
-     *       Curve_2 operator()(InputIterator begin, InputIterator end)
-     *       Why?
+     *       "Curve_2 operator()(InputIterator begin, InputIterator end)"
+     *       This can be corrected by adding a "const" at the end of the
+     *       signature of following functor.
      * TODO: Test the function.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
-      CGAL_precondition_code
-        (
-         typename Segment_traits_2::Compare_xy_2 comp_xy =
-           m_seg_traits->construct_compare_xy_2_object();
-         CGAL_precondition (compy_xy(p,q) != EQUAL);
-         );
+      // CGAL_precondition_code
+      //   (
+      //    typename Segment_traits_2::Compare_xy_2 comp_xy =
+      //      m_seg_traits->construct_compare_xy_2_object();
+      //    CGAL_precondition (compy_xy(p,q) != EQUAL);
+      //    );
       Segment_2 seg = Segment_2(p,q);
       return (Curve_2(seg));
     }
@@ -1201,7 +1199,7 @@ public:
      *  \return A polyline using the corresponding construction implementation.
      */
     template <typename InputIterator>
-    Curve_2 operator()(InputIterator begin, InputIterator end)
+    Curve_2 operator()(InputIterator begin, InputIterator end) const
     {
       typedef typename std::iterator_traits<InputIterator>::value_type VT;
       typedef typename boost::is_same<VT,Point_2>::type Is_point;
@@ -1218,23 +1216,28 @@ public:
     Curve_2 constructor_impl (InputIterator begin, InputIterator end,
                              boost::true_type) const
     {
+      //TODO: Proofread the implementation and test it
+      std::vector<Segment_2> segments;
       // The range must contain at least two points.
-      CGAL_precondition (std::distance(begin,end)>1);
+      CGAL_precondition_msg (std::distance(begin,end)>1,
+                             "Cannot construct a polyline from one point");
       CGAL_precondition_code
         (
          typename Segment_traits_2::Equal_2 equal =
          m_seg_traits->equal_2_object();
-         InputIterator curr = begin;
-         InputIterator next = curr;
-         ++next;
-         while (next!=end)
-           {
-             CGAL_precondition(!equal(*curr,*next));
-             ++next;
-             ++curr;
-           }
          );
-      return Curve_2(begin,end);
+      InputIterator curr = begin;
+      InputIterator next = curr;
+      ++next;
+      while (next!=end)
+        {
+          CGAL_precondition_code(!equal(*curr,*next));
+          segments.push_back(Segment_2(*curr,*next));
+          ++next;
+          ++curr;
+        }
+
+      return Curve_2(segments.begin(),segments.end());
     }
 
     /*! Construction implementation from a range of segments.
@@ -1293,29 +1296,35 @@ public:
     {}
 
 
-    /*! Returns an x-monotone curve connecting the two given endpoints.
+    /*! Returns an x-monotone polyline connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
      * \pre p and q must not be the same.
      * \return A segment connecting p and q.
-     * TODO: Efi suggests that this can be more efficient. How?
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
-      // Construct a polyline containing just two points:
-      Point_2   pts[2];
-      pts[0] = p; pts[1] = q;
-      return (X_monotone_curve_2(pts + 0, pts + 2));
+      CGAL_precondition_code(
+                             typename Segment_traits_2::Equal_2 equal =
+                             m_seg_traits->equal_2_object();
+                             bool degen_seg = equal(p,q);
+                             );
+      CGAL_precondition_msg(degen_seg!=true,
+                       "Cannot construct a degenerated segment as a polyline");
+      // TODO: In principal, the construction of the segment itself tests the
+      //       validity of the input. Is it enough to relay on this test?
+      Segment_2 seg = Segment_2(p,q);
+      return X_monotone_curve_2(seg);
     }
 
     /*! Returns an x-monotone curve consists of one given segment.
      * \param seg input segment
      * \return A polyline with one segment, namely seg.
-     * TODO: Implement this construction (as per Efi's recommendation)
      */
-    // X_monotone_curve_2 operator()(const Segment_2 seg) const
-    // {
-    // }
+    X_monotone_curve_2 operator()(const Segment_2& seg) const
+    {
+      return X_monotone_curve_2(seg);
+    }
 
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
@@ -1325,6 +1334,13 @@ public:
       return constructor_impl(begin, end, Is_point());
     }
 
+    /*
+     * Construct a polyline from a range of points.
+     * \pre no two consecutive points are the same
+     * \pre The points form an x-monotone polyline
+     * \post The constructed polyline is x-monotone and
+     *       oriented from left to right.
+     */
     template <typename InputIterator>
     X_monotone_curve_2 constructor_impl(InputIterator begin, InputIterator end,
                                        boost::true_type) const
@@ -1342,8 +1358,8 @@ public:
       // Initialize two comparison functors
       CGAL_precondition_code(typename Segment_traits_2::Compare_x_2 compare_x=
                              m_seg_traits->compare_x_2_object(););
-      CGAL_precondition_code(typename Segment_traits_2::Compare_xy_2 compare_xy=
-                             m_seg_traits->compare_xy_2_object(););
+      typename Segment_traits_2::Compare_xy_2 compare_xy =
+        m_seg_traits->compare_xy_2_object();
 
       // Make sure there is no change of directions as we traverse the polyline.
       // Save the comp_x between the first two points
@@ -1355,14 +1371,6 @@ public:
       // Assure that the first two points are not the same
       CGAL_precondition (cmp_xy_res != EQUAL);
 
-      if (cmp_xy_res == LARGER)
-        // Add a segment of a reversed order
-        segs.push_back(Segment_2(*pt,*ps));
-      else
-        // Add a segment
-        segs.push_back(Segment_2(*ps,*pt));
-
-      ++ps; ++pt;
       while (pt != end) {
         CGAL_precondition (compare_xy(*ps, *pt) == cmp_xy_res);
         CGAL_precondition (compare_x(*ps, *pt) == cmp_x_res);
@@ -1458,6 +1466,8 @@ public:
       if (std::distance(begin, end) >= 2) {
         InputIterator second = begin;
         ++second;
+        // TODO: This causes problems when compiled in RELEASE mode.
+        //       Might be related to the return value of CGAL::Equal_2
         rev = equal(min_v(*begin), max_v(*second));
       }
       // The following statement assumes that the begin (and end) iterators

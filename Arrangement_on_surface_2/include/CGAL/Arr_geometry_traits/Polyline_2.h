@@ -438,6 +438,8 @@ public:
   /*! Default constructor. */
   _X_monotone_polyline_2() : Base () {}
 
+  _X_monotone_polyline_2(Segment_2 seg) : Base(seg){ }
+
   /*! Constructor */
   template <typename InputIterator>
   _X_monotone_polyline_2(InputIterator begin, InputIterator end) :
