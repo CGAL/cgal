@@ -56,5 +56,35 @@ between circulators and iterators, base classes to ease the implementation
 of circulators, and support for generic algorithms that work with
 circulators as well as with iterators.
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `Handle`
+- `Range`
+- `ConstRange`
+- `Circulator`
+- `ForwardCirculator`
+- `BidirectionalCirculator`
+- `RandomAccessCirculator`
+
+## Classes ##
+- `CGAL::Container_from_circulator<C>`
+- `CGAL::Circulator_from_iterator<I>`
+- `CGAL::Circulator_from_container<C>`
+- \link CGAL::Circulator_from_container `CGAL::Const_circulator_from_container<C>` \endlink
+
+- `CGAL::Circulator_tag`
+- `CGAL::Iterator_tag`
+- `CGAL::Forward_circulator_tag`
+- `CGAL::Bidirectional_circulator_tag`
+- `CGAL::Random_access_circulator_tag`
+
+- `CGAL::Circulator_base`
+- `CGAL::Forward_circulator_base`
+- `CGAL::Bidirectional_circulator_base`
+- `CGAL::Random_access_circulator_base`
+
+- `CGAL::Circulator_traits<C>`
+
 */
 

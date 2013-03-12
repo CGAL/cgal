@@ -19,4 +19,16 @@
 \cgalPkgDemo{AABB Tree,AABB_demo.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `AABBPrimitive`
+- `AABBTraits`
+- `AABBGeomTraits`
+
+## Classes ##
+- `CGAL::AABB_traits<GeomTraits,Primitive>`
+- `CGAL::AABB_tree<AT>`
+
 */

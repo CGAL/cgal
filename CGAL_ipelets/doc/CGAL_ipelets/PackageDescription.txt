@@ -16,5 +16,11 @@
 \cgalPkgLicense{\ref licensesLGPL  "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Classes ##
+- `CGAL::Ipelet_base<Kernel,int nbf>`
+
 */
 

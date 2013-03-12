@@ -81,5 +81,27 @@ The regularized mode provides a regularized version of the alpha shapes
 corresponding to the domain covered by a regularized version
 of the alpha complex where singular faces are removed.
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `AlphaShapeTraits_3`
+- `WeightedAlphaShapeTraits_3`
+- `AlphaShapeCell_3`
+- `AlphaShapeVertex_3`
+- `FixedAlphaShapeTraits_3`
+- `FixedWeightedAlphaShapeTraits_3`
+- `FixedAlphaShapeCell_3`
+- `FixedAlphaShapeVertex_3`
+
+## Classes ##
+- `CGAL::Alpha_status<NT>`
+- `CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>`
+- `CGAL::Alpha_shape_vertex_base_3<Traits,Vb>`
+- `CGAL::Alpha_shape_cell_base_3<Traits,Fb>`
+
+- `CGAL::Fixed_alpha_shape_3<Dt>`
+- `CGAL::Fixed_alpha_shape_vertex_base_3<Traits,Vb>`
+- `CGAL::Fixed_alpha_shape_cell_base_3<Traits,Fb>`
+
 */
 

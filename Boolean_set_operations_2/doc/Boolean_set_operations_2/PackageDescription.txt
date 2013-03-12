@@ -30,5 +30,42 @@ on point sets bounded by \f$x\f$-monotone curves in 2-dimensional
 Euclidean space. In particular, it contains the implementation of
 regularized Boolean set-operations, intersection predicates, and point
 containment predicates.
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `GpsTraitsGeneralPolygon_2`
+- `GpsTraitsGeneralPolygonWithHoles_2`
+- `GeneralPolygon_2`
+- `GeneralPolygonWithHoles_2`
+- `ArrangementDirectionalXMonotoneTraits_2`
+- `GeneralPolygonSetTraits_2`
+- `GeneralPolygonSetDcel`
+- `GeneralPolygonSetDcelFace`
+
+## Classes ##
+- `CGAL::Polygon_with_holes_2<Kernel,Container>`
+- `CGAL::Polygon_set_2<Kernel,Container,Dcel>`
+- `CGAL::General_polygon_set_2<Traits,Dcel>`
+- `CGAL::General_polygon_2<ArrTraits>`
+- `CGAL::General_polygon_with_holes_2<Polygon>`
+- `CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>`
+- `CGAL::Gps_circle_segment_traits_2<Kernel>`
+- `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>`
+- `CGAL::Gps_default_dcel<Traits>`
+
+## Functions ##
+- `CGAL::complement`
+- `CGAL::do_intersect`
+- `CGAL::intersection`
+- `CGAL::join`
+- `CGAL::difference`
+- `CGAL::symmetric_difference`
+- `CGAL::oriented_side`
+- `CGAL::connect_holes`
+- `CGAL::operator<< (go there)`
+- `CGAL::operator>> (go there)`
+
+
 */
 
