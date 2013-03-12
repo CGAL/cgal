@@ -32,6 +32,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef Kernel::Point_3  Point;
+typedef Kernel::Vector_3  Vector;
 
 typedef CGAL::AFSR_vertex_base_with_id_3<Kernel> LVb;
 
@@ -412,6 +413,7 @@ int main(int argc,  char* argv[])
 
   file_input(opt, points);
  
+#if 0
   std::cerr << "Time for reading "  << timer.time() << " sec." << std::endl;
   std::vector<CGAL::Triple<int,int,int> > triples;
   reconstruction_test(points.begin(), points.end(), std::back_inserter(triples));
@@ -422,9 +424,8 @@ int main(int argc,  char* argv[])
     std::cout << "3 " << triples[i].first << " " << triples[i].second << " " << triples[i].third << " " << std::endl;
   }
 
+#else
 
-
-#if 0
   std::cerr << "Compute Delaunay Tetrahedrization " << std::endl; 
   CGAL::Timer t1;
   t1.start();
@@ -446,13 +447,9 @@ int main(int argc,  char* argv[])
   
   Surface S(dt, opt);
 
-
   std::cerr << "Total time: " << timer.time() << " sec." << std::endl; 
   //  write_to_file_vrml2(opt.foutname, S, opt.contour, opt.red, opt.green, opt.blue, opt.no_header);
-  //  write_to_file(opt.foutname, S, opt.contour, opt.out_format, opt.red, opt.green, opt.blue, opt.no_header);
-  std::vector<CGAL::Triple<int,int,int> > triples;
-  write_triple_indices(std::back_inserter(triples), S);
-  std::cerr << triples.size() << std::endl;
+  write_to_file(opt.foutname, S, opt.contour, opt.out_format, opt.red, opt.green, opt.blue, opt.no_header);
 
   std::cerr << "   "  << S.number_of_outliers()
 	    << " outliers." << std::endl; 
