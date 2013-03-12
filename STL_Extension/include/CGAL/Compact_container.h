@@ -319,7 +319,7 @@ public:
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
   iterator
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-	  const T5 &t5)
+    const T5 &t5)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -815,9 +815,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+   "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
-	 "Incrementing end() ?");
+   "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do {
@@ -835,9 +835,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+   "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
-	 "Decrementing begin() ?");
+   "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do {
@@ -856,7 +856,7 @@ namespace internal {
     Self & operator++()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+   "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
                          "Incrementing an invalid iterator.");
       increment();
@@ -866,9 +866,9 @@ namespace internal {
     Self & operator--()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+   "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
-		      || DSC::type(m_ptr.p) == DSC::START_END,
+          || DSC::type(m_ptr.p) == DSC::START_END,
                          "Decrementing an invalid iterator.");
       decrement();
       return *this;
@@ -936,7 +936,7 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-		  Nullptr_t CGAL_assertion_code(n))
+      Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
