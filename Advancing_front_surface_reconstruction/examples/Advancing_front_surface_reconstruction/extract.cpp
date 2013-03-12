@@ -378,8 +378,19 @@ void reconstruction_test(PointIterator point_begin, PointIterator
 	    <<  dt.number_of_cells() << " cells computed in "
 	    << t1.time() << " sec." << std::endl;
 
+  t1.reset();
+  t1.start();
   Surface S(dt, opt);
-
+  t1.stop();
+  std::cerr << "Reconstruction takes " << t1.time() << " sec.\n";
+  std::cerr << "   "  << S.number_of_outliers() << " outliers.\n"; 
+  std::cerr << "   Reconstructed surface: " << S.number_of_facets() << 
+    " facets, " << S.number_of_vertices() << " vertices.\n";
+  std::cerr << "   "  << S.number_of_border_edges() << 
+    " border edges.\n";
+  std::cerr << "   number of connected components <= " 
+	    << (std::max)(1, S.number_of_connected_components()-1)
+	     << std::endl;
   write_triple_indices(out, S);
 }
 
@@ -404,7 +415,15 @@ int main(int argc,  char* argv[])
   std::cerr << "Time for reading "  << timer.time() << " sec." << std::endl;
   std::vector<CGAL::Triple<int,int,int> > triples;
   reconstruction_test(points.begin(), points.end(), std::back_inserter(triples));
-  std::cerr << triples.size() << std::endl;
+
+
+  std::cout << triples.size() << std::endl;  
+  for(int i = 0; i < triples.size(); ++i){
+    std::cout << "3 " << triples[i].first << " " << triples[i].second << " " << triples[i].third << " " << std::endl;
+  }
+
+
+
 #if 0
   std::cerr << "Compute Delaunay Tetrahedrization " << std::endl; 
   CGAL::Timer t1;
