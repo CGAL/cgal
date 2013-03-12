@@ -285,6 +285,18 @@ complexity. No exception is thrown.
   /// returns whether `pos` is in the range `[ccc.begin(), ccc`.end())` (`ccc.end()` excluded). 
   bool owns_dereferencable(const_iterator pos); 
   
+/// @} 
+
+/// \name Merging 
+/// @{ 
+/*! 
+adds the items of `ccc2` to the end of `ccc` and `ccc2` becomes empty. 
+The time complexity is O(`ccc`.`capacity()`-`ccc`.`size()`). 
+\pre `ccc2` must not be the same as `ccc`, and the allocators of `ccc` and `ccc2` must be compatible: `ccc.get_allocator() == ccc2.get_allocator()`. 
+*/ 
+void merge(Concurrent_compact_container<T, Allocator, Strategy> &ccc2); 
+
+/// @}
   
 /// \name Comparison Operations 
 /// @{ 
