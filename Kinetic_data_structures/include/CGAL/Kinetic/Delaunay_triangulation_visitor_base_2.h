@@ -68,11 +68,11 @@ struct Delaunay_triangulation_visitor_base_2
     }
 
   template <class P>
-  bool filter_certificate(P a, P b, P c) const {
+  bool filter_certificate(P , P , P ) const {
     return true;
   }
   template <class P>
-  bool filter_certificate(P a, P b, P c, P d) const {
+  bool filter_certificate(P , P , P , P ) const {
     return true;
   }
 };

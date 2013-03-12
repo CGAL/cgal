@@ -26,7 +26,7 @@ void test_erase(AOT &aot, CGAL::Tag_true) {
 }
 
 template <class AOT>
-void test_erase(AOT &aot, CGAL::Tag_false) {
+void test_erase(AOT &, CGAL::Tag_false) {
   
 }
 
