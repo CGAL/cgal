@@ -1228,3 +1228,4 @@ gmon.*
 
 # TODO:
 #   remove everything about /doc_tex once LaTeX is not longer supported
+/Arrangement_on_surface_2/examples/Arrangement_on_surface_2/polylines-WIP-dror
