@@ -204,6 +204,54 @@ write_to_file_gv(char* foutput, const Surface& S)
   std::cout << "-- oogl result written." << std::endl;
 }
 
+
+template <class OutputIterator, class Surface>
+OutputIterator
+write_triple_indices(OutputIterator out, const Surface& S)
+{ 
+  typedef typename Surface::Triangulation_3 Triangulation_3;
+  typedef typename Surface::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Surface::Finite_facets_iterator Finite_facets_iterator;
+  typedef typename Surface::Vertex_handle Vertex_handle;
+  typedef typename Surface::Vertex Vertex;
+  typedef typename Surface::Cell_handle Cell_handle;
+  Triangulation_3& T = S.triangulation();
+
+ 
+  for(Finite_facets_iterator f_it = T.finite_facets_begin(); 
+      f_it != T.finite_facets_end(); 
+      f_it++)
+    {
+      Cell_handle n, c = (*f_it).first;
+      int ni, ci = (*f_it).second;
+      n = c->neighbor(ci);
+      ni = n->index(c);
+      int i1, i2 ,i3;
+
+      if (c->is_selected_facet(ci))
+	{
+	  i1 = (ci+1) & 3;
+	  i2 = (ci+2) & 3;
+	  i3 = (ci+3) & 3;
+	  *out++ = CGAL::Triple<int,int,int>(c->vertex(i1)->id(),
+                                             c->vertex(i2)->id(),
+                                             c->vertex(i3)->id());
+	}
+
+       if (n->is_selected_facet(ni))
+	{
+	  i1 = (ni+1) & 3;
+	  i2 = (ni+2) & 3;
+	  i3 = (ni+3) & 3;
+
+	  *out++ = CGAL::Triple<int,int,int>(n->vertex(i1)->id(),
+                                             n->vertex(i2)->id(),
+                                             n->vertex(i3)->id());
+	}
+    }
+  return out;
+}
+
 //---------------------------------------------------------------------
 template <class Surface>
 void

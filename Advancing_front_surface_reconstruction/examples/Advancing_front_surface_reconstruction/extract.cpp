@@ -15,7 +15,6 @@
 
 // Kernel
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/compute_average_spacing.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
@@ -382,8 +381,6 @@ int main(int argc,  char* argv[])
   std::vector<Point> points;
 
   file_input(opt, points);
-  double avgsp = CGAL::compute_average_spacing(points.begin(), points.end(), 5);
-  std::cerr << "average spacing " << avgsp << std::endl;
  
   std::cerr << "Time for reading "  << timer.time() << " sec." << std::endl;
 
@@ -454,8 +451,10 @@ int main(int argc,  char* argv[])
 
   std::cerr << "Total time: " << timer.time() << " sec." << std::endl; 
   //  write_to_file_vrml2(opt.foutname, S, opt.contour, opt.red, opt.green, opt.blue, opt.no_header);
-  write_to_file(opt.foutname, S, opt.contour, opt.out_format, opt.red, opt.green, opt.blue, opt.no_header);
-
+  //  write_to_file(opt.foutname, S, opt.contour, opt.out_format, opt.red, opt.green, opt.blue, opt.no_header);
+  std::vector<CGAL::Triple<int,int,int> > triples;
+  write_triple_indices(std::back_inserter(triples), S);
+  std::cerr << triples.size() << std::endl;
 
   std::cerr << "   "  << S.number_of_outliers()
 	    << " outliers." << std::endl; 
