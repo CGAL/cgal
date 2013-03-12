@@ -81,6 +81,8 @@ with a variety of algorithms that operate on planar arrangement,
 such as point-location queries and overlay computations, which are
 implemented as peripheral classes or as free (global) functions.
 
+\cgalClassifedRefPages
+
 ## Enumerations ##
 
 - `CGAL::Arr_parameter_space`

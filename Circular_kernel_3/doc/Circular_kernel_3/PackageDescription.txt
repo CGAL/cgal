@@ -34,6 +34,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
 ## Geometric Concepts ##
 
 - `SphericalKernel`

@@ -21,6 +21,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
 ## Algebraic Structures ##
 
 ### Concepts ###

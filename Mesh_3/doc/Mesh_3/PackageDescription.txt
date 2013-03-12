@@ -49,6 +49,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 
 Here are the main concepts of this package:

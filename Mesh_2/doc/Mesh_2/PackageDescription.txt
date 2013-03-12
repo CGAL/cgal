@@ -20,6 +20,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 - `ConformingDelaunayTriangulationTraits_2`
 - `DelaunayMeshTraits_2`

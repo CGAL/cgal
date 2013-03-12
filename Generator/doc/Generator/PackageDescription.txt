@@ -29,6 +29,8 @@ random convex sets and one for simple polygons.  The \stl algorithm
 achieve random permutations for otherwise regular generators (
 <I>e.g.</I>, points on a grid or segment).
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 
 - `PointGenerator`

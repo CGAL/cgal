@@ -55,6 +55,8 @@ The third template parameter corresponds to the chosen adaptation
 policy and provides the necessary types and functors needed for
 performing this adaptation.
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 
 - `DelaunayGraph_2`

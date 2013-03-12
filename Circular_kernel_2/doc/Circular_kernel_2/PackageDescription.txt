@@ -38,6 +38,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
 ## Geometric Concepts ##
 
 - `CircularKernel`
