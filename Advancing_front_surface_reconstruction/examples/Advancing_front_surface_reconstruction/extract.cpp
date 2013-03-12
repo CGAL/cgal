@@ -32,8 +32,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef Kernel::Point_3  Point;
-typedef Kernel::Vector_3 Vector;
-typedef Kernel::Point_2  Point_2;
 
 typedef CGAL::AFSR_vertex_base_with_id_3<Kernel> LVb;
 
@@ -41,8 +39,6 @@ typedef CGAL::Triangulation_cell_base_3<Kernel> Cb;
 typedef CGAL::AFSR_cell_base_3<Cb> LCb;
 
 typedef CGAL::Triangulation_data_structure_3<LVb,LCb> Tds;
-
-
 typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
 typedef Triangulation_3::Vertex_handle Vertex_handle;
@@ -364,6 +360,29 @@ parse(int argc, char* argv[], Options &opt)
   return true;
 }
 
+template <class PointIterator, class TripleOutputIterator>
+void reconstruction_test(PointIterator point_begin, PointIterator
+                         point_end, TripleOutputIterator out,  bool filter_input_points=false,
+                         double perimeter=0) 
+{
+  Options opt;
+  opt.abs_perimeter = perimeter;
+  std::cerr << "Compute Delaunay Tetrahedrization " << std::endl; 
+  CGAL::Timer t1;
+  t1.start();
+  
+  Triangulation_3 dt( boost::make_transform_iterator(point_begin, Auto_count()),
+                      boost::make_transform_iterator(point_end, Auto_count() )  );
+  t1.stop();
+  std::cerr << "   Inserted " << dt.number_of_vertices() << " points, "
+	    <<  dt.number_of_cells() << " cells computed in "
+	    << t1.time() << " sec." << std::endl;
+
+  Surface S(dt, opt);
+
+  write_triple_indices(out, S);
+}
+
 
 //___________________________________________
 int main(int argc,  char* argv[])
@@ -383,7 +402,10 @@ int main(int argc,  char* argv[])
   file_input(opt, points);
  
   std::cerr << "Time for reading "  << timer.time() << " sec." << std::endl;
-
+  std::vector<CGAL::Triple<int,int,int> > triples;
+  reconstruction_test(points.begin(), points.end(), std::back_inserter(triples));
+  std::cerr << triples.size() << std::endl;
+#if 0
   std::cerr << "Compute Delaunay Tetrahedrization " << std::endl; 
   CGAL::Timer t1;
   t1.start();
@@ -402,51 +424,8 @@ int main(int argc,  char* argv[])
   
   points.clear();
 
-  {
-  Surface S(dt, opt);
-
-
-#if 0
-
-  const Surface::TDS_2&  tds_2 = S.tds_2();
-  int count = 0;
-  for(Surface::TDS_2::Face_iterator fit = tds_2.faces_begin(); fit != tds_2.faces_end(); ++fit){
-
-    if( fit->is_on_surface()){
-      count++;
-      Surface::Facet facet = fit->facet();
-      Surface::Cell_handle ch = facet.first;
-      int fi = facet.second;
-      int i,j,k;
-      Surface::Vertex_handle vh3 = ch->vertex(Triangulation_3::vertex_triple_index(fi,0));
-      for(i=0; i<3 ; i++){
-	if(fit->vertex(i)->vertex_3()== vh3){
-	  break;
-	}
-      }
-      vh3 = ch->vertex(Triangulation_3::vertex_triple_index(fi,1));
-      for(j=0; j<3; j++){
-	if(fit->vertex(j)->vertex_3()== vh3){
-	  break;
-	}
-      }
-	    vh3 = ch->vertex(Triangulation_3::vertex_triple_index(fi,2));
-      for(k=0; k<3 ; k++){
-	if (fit->vertex(k)->vertex_3()== vh3){
-	  break;
-	}      
-      }
-      
-      if((i+j+k) != 3){
-	std::cerr << "i = " << i << "; j = " << j << "; k = " << k << std::endl; 
-      }
-      
-    }
-    
-  }
   
-  std::cerr << "count = " << count << std::endl;
-#endif
+  Surface S(dt, opt);
 
 
   std::cerr << "Total time: " << timer.time() << " sec." << std::endl; 
@@ -465,7 +444,8 @@ int main(int argc,  char* argv[])
   std::cerr << "   number of connected components <= " 
 	    << (std::max)(1, S.number_of_connected_components()-1)
 	    << std::endl << std::endl;
-  }
+  
+#endif
   total.stop();
   std::cerr << "Total = " << total.time() << " sec." << std::endl;
   return 0;
