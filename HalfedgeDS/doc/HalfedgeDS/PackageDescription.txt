@@ -58,6 +58,34 @@ overview and comparison of these different data structures together
 with a thorough description of the design implemented here can be
 found in \cite k-ugpdd-99.
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `HalfedgeDS<Traits,Items,Alloc>`
+- `HalfedgeDSItems`
+- `HalfedgeDSVertex`
+- `HalfedgeDSHalfedge`
+- `HalfedgeDSFace`
+
+## Classes ##
+- `CGAL::HalfedgeDS_default<Traits,HalfedgeDSItems,Alloc>`
+- `CGAL::HalfedgeDS_list<Traits,HalfedgeDSItems,Alloc>`
+- `CGAL::HalfedgeDS_vector<Traits,HalfedgeDSItems,Alloc>`
+
+- `CGAL::HalfedgeDS_min_items`
+- `CGAL::HalfedgeDS_items_2`
+
+- `CGAL::HalfedgeDS_vertex_base<Refs>`
+- `CGAL::HalfedgeDS_halfedge_base<Refs>`
+- `CGAL::HalfedgeDS_face_base<Refs>`
+
+- `CGAL::HalfedgeDS_vertex_min_base<Refs>`
+- `CGAL::HalfedgeDS_halfedge_min_base<Refs>`
+- `CGAL::HalfedgeDS_face_min_base<Refs>`
+
+- `CGAL::HalfedgeDS_items_decorator<HDS>`
+- `CGAL::HalfedgeDS_decorator<HDS>`
+- `CGAL::HalfedgeDS_const_decorator<HDS>`
 
 */
 

@@ -17,5 +17,11 @@
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Classes ##
+- `CGAL::Geomview_stream`
+
 */
 

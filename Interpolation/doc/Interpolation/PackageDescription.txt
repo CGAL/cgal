@@ -73,6 +73,30 @@ approximately barycentric, see \cite bf-lcss-02.
 
 For a more thorough introduction see the user manual.
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `InterpolationTraits`
+- `GradientFittingTraits`
+
+## Interpolation Functions ##
+- `CGAL::linear_interpolation`
+- `CGAL::sibson_c1_interpolation`
+- `CGAL::farin_c1_interpolation`
+- `CGAL::quadratic_interpolation`
+- `CGAL::sibson_gradient_fitting`
+
+- `CGAL::Interpolation_traits_2<K>`
+- `CGAL::Interpolation_gradient_fitting_traits_2<K>`
+
+## Natural neighbor coordinate computation ##
+- `CGAL::natural_neighbor_coordinates_2`
+- `CGAL::regular_neighbor_coordinates_2`
+
+## Surface neighbor and surface neighbor coordinate computation ##
+- `CGAL::Voronoi_intersection_2_traits_3<K>`
+- `CGAL::surface_neighbor_coordinates_3`
+- `CGAL::surface_neighbors_3`
 
 */
 

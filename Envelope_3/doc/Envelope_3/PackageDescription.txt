@@ -27,5 +27,24 @@ represented as an 2D envelope diagram  -  a planar subdivision such
 that the identity of the surfaces that induce the envelope over each
 diagram cell is unique.
 
+\cgalClassifedRefPages
+
+## Functions ##
+- `CGAL::lower_envelope_3`
+- `CGAL::upper_envelope_3`
+- `CGAL::lower_envelope_xy_monotone_3`
+- `CGAL::upper_envelope_xy_monotone_3`
+
+## Concepts ##
+- `EnvelopeTraits_3`
+
+## Classes ##
+- `CGAL::Envelope_diagram_2<EnvTraits>`
+
+- `CGAL::Env_triangle_traits_3<Kernel>`
+- `CGAL::Env_sphere_traits_3<ConicTraits>`
+- `CGAL::Env_plane_traits_3<Kernel>`
+- `CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>`
+
 */
 

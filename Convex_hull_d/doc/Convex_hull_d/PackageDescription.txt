@@ -32,5 +32,18 @@ and arbitrary dimensions as well as functions for testing if a given set of
 points in is strongly convex or not. This chapter describes the class
 available for arbitrary dimensions and its companion class for 
 computing the nearest and furthest site Delaunay triangulation.
+
+\cgalClassifedRefPages
+
+## Concepts #
+- `ConvexHullTraits_d`
+- `DelaunayLiftedTraits_d`
+- `DelaunayTraits_d`
+
+## Classes ##
+- `CGAL::Convex_hull_d_traits_3<R>`
+- `CGAL::Convex_hull_d<R>`
+- `CGAL::Delaunay_d< R, Lifted_R > `
+
 */
 
