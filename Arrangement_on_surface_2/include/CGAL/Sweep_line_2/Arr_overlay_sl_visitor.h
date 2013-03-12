@@ -488,12 +488,6 @@ update_event(Event* e,
 
   // Update the red and blue objects associated with the point as necessary. 
   Point_2& pt = e->point();
-  std::cout << "update_event: " << pt
-            << ", " << is_new
-            << ", is_red_cell_empty: " << pt.is_red_cell_empty()
-            << ", pt.is_blue_cell_empty: " << pt.is_blue_cell_empty()
-            << std::endl;
-  
   if (pt.is_red_cell_empty()) pt.set_red_cell(end_point.red_cell());
   else if (pt.is_blue_cell_empty()) pt.set_blue_cell(end_point.blue_cell());
 }
