@@ -35,12 +35,18 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
   GLint shading;
   ::glGetIntegerv(GL_SHADE_MODEL, &shading);
 
+  int patch_id = 0;
+
   Facet_iterator f;
   for(f = polyhedron.facets_begin();
     f != polyhedron.facets_end();
     f++)
   {
-    CGALglcolor(colors[f->patch_id()]);
+    const int this_patch_id = f->patch_id();
+    if(patch_id != this_patch_id) {
+      CGALglcolor(colors[this_patch_id]);
+      patch_id = this_patch_id;
+    }
     ::glBegin(GL_POLYGON);
 
     // If Flat shading: 1 normal per polygon
