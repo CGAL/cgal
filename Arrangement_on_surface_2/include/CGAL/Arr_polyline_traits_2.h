@@ -1206,18 +1206,19 @@ public:
       return constructor_impl(begin, end, Is_point());
     }
 
-    /*! Construction implementation from a range of points.
-     * When constructing from a range of points there are no tests to
-     * run and the construction is straight forward in the polyline's class.
+    /*! Construction of a polyline from a range of points.
      * \pre The range contains at least two points
      * \pre Consecutive points are disjoint.
+     * \return Polyline connecting the points in the input using the same
+     *         order in which they were given.
      */
     template <typename InputIterator>
     Curve_2 constructor_impl (InputIterator begin, InputIterator end,
                              boost::true_type) const
     {
-      //TODO: Proofread the implementation and test it
-      std::vector<Segment_2> segments;
+      // Container of the segments to be created.
+      std::vector<Segment_2> segs;
+
       // The range must contain at least two points.
       CGAL_precondition_msg (std::distance(begin,end)>1,
                              "Cannot construct a polyline from one point");
@@ -1231,13 +1232,14 @@ public:
       ++next;
       while (next!=end)
         {
-          CGAL_precondition_code(!equal(*curr,*next));
-          segments.push_back(Segment_2(*curr,*next));
+          CGAL_precondition_msg(!equal(*curr,*next),
+                                "Cannot construct a degenerated segment");
+          segs.push_back(Segment_2(*curr,*next));
           ++next;
           ++curr;
         }
 
-      return Curve_2(segments.begin(),segments.end());
+      return Curve_2(segs.begin(),segs.end());
     }
 
     /*! Construction implementation from a range of segments.
