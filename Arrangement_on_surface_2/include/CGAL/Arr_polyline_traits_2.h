@@ -1190,8 +1190,16 @@ public:
          );
       CGAL_precondition_msg (!equal(p,q),
                              "Cannot construct a degenerated segment");
-      Segment_2 seg = Segment_2(p,q);
-      return (Curve_2(seg));
+      return Curve_2(Segment_2(p,q));
+    }
+
+    /*! Returns an polyline consists of one given segment.
+     * \param seg input segment
+     * \return A polyline with one segment, namely seg.
+     */
+    Curve_2 operator()(const Segment_2& seg) const
+    {
+      return Curve_2(seg);
     }
 
     /*! Construct a polyline from a range of objects.
@@ -1322,9 +1330,9 @@ public:
         return X_monotone_curve_2(Segment_2(q,p));
     }
 
-    /*! Returns an x-monotone curve consists of one given segment.
+    /*! Returns an x-monotone polyline consists of one given segment.
      * \param seg input segment
-     * \return A polyline with one segment, namely seg.
+     * \return An x-monotone polyline with one segment, namely seg.
      */
     X_monotone_curve_2 operator()(const Segment_2& seg) const
     {
