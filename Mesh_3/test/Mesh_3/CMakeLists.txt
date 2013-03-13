@@ -11,6 +11,15 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+if(MSVC)
+  # Disable warning 4503 in MSVC ("The decorated name was longer than the 
+  # compiler limit and was truncated")
+  add_definitions( "/wd4503" )
+  # Add /bigobj to the compiler options
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
+endif()
+
 find_package(CGAL QUIET COMPONENTS Core ImageIO)
 
 # Add specific Find.cmake modules
@@ -27,7 +36,7 @@ if ( CGAL_FOUND )
     
   # And add -DCONCURRENT_MESH_3 if that option is ON
   if( ACTIVATE_CONCURRENT_MESH_3 )
-    add_definitions( -DCONCURRENT_MESH_3 )
+    add_definitions( -DCGAL_CONCURRENT_MESH_3 )
     find_package( TBB REQUIRED )
   else( ACTIVATE_CONCURRENT_MESH_3 )
     option( LINK_WITH_TBB
@@ -41,9 +50,9 @@ if ( CGAL_FOUND )
   if( TBB_FOUND )
     add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
     include_directories ( ${TBB_INCLUDE_DIRS} )
-    link_directories( ${TBB_LIBRARY_DIRS} )
-  endif( TBB_FOUND )
-  
+	list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
+
   include( ${CGAL_USE_FILE} )
 
   include( CGAL_CreateSingleSourceCGALProgram )

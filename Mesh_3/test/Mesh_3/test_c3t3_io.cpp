@@ -250,6 +250,9 @@ struct Test_c3t3_io {
       typename Tr::Cell_handle c2 = fit2->first;
       int i1 = fit1->second;
       int i2 = fit2->second;
+      // CJ: this cause an assertion because the 2 C3T3s have facets in different orders
+      // The Compact_container doesn't guarantee any order, so this is not a
+      // real error
       assert(i1 == i2);
       if( c1->surface_patch_index(i1) != 
           c2->surface_patch_index(i2) )
