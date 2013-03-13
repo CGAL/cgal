@@ -2894,7 +2894,8 @@ is_valid(bool verbose, int level) const
   bool result = data_structure().is_valid(verbose, level);
 
 #ifdef DEBUGVALIDSDG
-  std::cout << "debug valid tds check=" << result << std::endl;
+  CGAL_SDG_DEBUG( std::cout << "debug valid tds check="
+      << result << std::endl; );
 #endif
 
   if ( result && verbose ) {
@@ -2904,7 +2905,8 @@ is_valid(bool verbose, int level) const
   if (level == 0) { return result; }
 
 #ifdef DEBUGVALIDSDG
-  std::cout << "debug valid level=" << level << std::endl;
+  CGAL_SDG_DEBUG( std::cout << "debug valid level="
+      << level << std::endl; );
 #endif
 
   // level 1 test: do the incircle tests
@@ -2921,12 +2923,14 @@ is_valid(bool verbose, int level) const
     if ( !is_infinite(v) ) {
       bool expected = ( incircle(f, v->site()) != NEGATIVE );
 #ifdef DEBUGVALIDSDG
+#ifdef CGAL_SDG_VERBOSE
       if (not expected) {
         std::cout << "debug valid PROBLEM" << std::endl;
         std::cout << "incircle(f, v->site()) == NEGATIVE "
                   << "which is not expected, where v-site() is: "
                   << v->site() << std::endl;
       }
+#endif
 #endif
       result = result && expected;
     }
@@ -2937,12 +2941,14 @@ is_valid(bool verbose, int level) const
     if ( !is_infinite(v) ) {
       bool expected = ( incircle(f, v->site()) != NEGATIVE );
 #ifdef DEBUGVALIDSDG
+#ifdef CGAL_SDG_VERBOSE
       if (not expected) {
         std::cout << "debug valid PROBLEM" << std::endl;
         std::cout << "incircle(f, v->site()) == NEGATIVE "
                   << "which is not expected, where v-site() is: "
                   << v->site() << std::endl;
       }
+#endif
 #endif
       result = result && expected;
     }
@@ -2956,7 +2962,9 @@ is_valid(bool verbose, int level) const
   }
 
 #ifdef DEBUGVALIDSDG
+#ifdef CGAL_SDG_VERBOSE
   std::cout << "debug valid about to return " << result << std::endl;
+#endif
 #endif
   return result;
 }
