@@ -1172,7 +1172,7 @@ public:
     /*! Returns an polyline connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
-     * \pre p and q must not be the same.
+     * \pre p and q are distinct.
      * \return A segment connecting p and q.
      * TODO: Some how it is impossible to invoke this construction, it is
      *       always dispatches the call to the following constructor:
@@ -1183,12 +1183,13 @@ public:
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
-      // CGAL_precondition_code
-      //   (
-      //    typename Segment_traits_2::Compare_xy_2 comp_xy =
-      //      m_seg_traits->construct_compare_xy_2_object();
-      //    CGAL_precondition (compy_xy(p,q) != EQUAL);
-      //    );
+      CGAL_precondition_code
+        (
+         typename Segment_traits_2::Equal_2 equal =
+         m_seg_traits->equal_2_object();
+         );
+      CGAL_precondition_msg (!equal(p,q),
+                             "Cannot construct a degenerated segment");
       Segment_2 seg = Segment_2(p,q);
       return (Curve_2(seg));
     }
@@ -1309,14 +1310,16 @@ public:
       CGAL_precondition_code(
                              typename Segment_traits_2::Equal_2 equal =
                              m_seg_traits->equal_2_object();
-                             bool degen_seg = equal(p,q);
                              );
-      CGAL_precondition_msg(degen_seg!=true,
+      CGAL_precondition_msg(!equal(p,q),
                        "Cannot construct a degenerated segment as a polyline");
-      // TODO: In principal, the construction of the segment itself tests the
-      //       validity of the input. Is it enough to relay on this test?
-      Segment_2 seg = Segment_2(p,q);
-      return X_monotone_curve_2(seg);
+      typename Segment_traits_2::Compare_xy_2 comp_xy =
+        m_seg_traits->compare_xy_2_object();
+
+      if (comp_xy(p,q) == SMALLER)
+        return X_monotone_curve_2(Segment_2(p,q));
+      else
+        return X_monotone_curve_2(Segment_2(q,p));
     }
 
     /*! Returns an x-monotone curve consists of one given segment.
