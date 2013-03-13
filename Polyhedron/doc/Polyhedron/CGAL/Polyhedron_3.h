@@ -1038,7 +1038,7 @@ public:
   size_type size_of_vertices() const; 
 
   /*! 
-    number of halfedges (incl. border halfedges). 
+    number of halfedges (incl.\ border halfedges). 
   */ 
   size_type size_of_halfedges() const; 
 
@@ -1535,7 +1535,7 @@ n  */
   /// @{
 
   /*! 
-    reverses facet orientations (incl. plane equations if supported). 
+    reverses facet orientations (incl.\ plane equations if supported). 
   */ 
   void inside_out(); 
 

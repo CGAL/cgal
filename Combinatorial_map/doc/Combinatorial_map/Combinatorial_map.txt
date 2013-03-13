@@ -324,7 +324,7 @@ equal to the set of all the darts of the combinatorial map.
 
 A last important property of cells is that for all dimensions <I>i</I>
 the set of <I>i</I>-cells forms a partition of the set of darts
-<I>D</I>, i.e. for any <I>i</I>, the union of the sets of darts of all
+<I>D</I>, i.e.\ for any <I>i</I>, the union of the sets of darts of all
 the <I>i</I>-cells is equal to <I>D</I>, and the sets of darts of two
 different <I>i</I>-cells are disjoint.
 
@@ -722,9 +722,9 @@ Similarly, the functor `OnSplit` is called
 when one attribute is split in two, because its corresponding cell is
 split in two during some operation, unless it is equal to
 `Null_functor`. In any high level operation, `OnMerge` is called
-before to start the operation (i.e. before modifying the combinatorial
+before to start the operation (i.e.\ before modifying the combinatorial
 map), and `OnSplit` is called when the operation is finished
-(i.e. after all the modifications were made).
+(i.e.\ after all the modifications were made).
 
 What we said for the dart also holds for the cell attribute. The
 combinatorial map can be used with any user defined model of the

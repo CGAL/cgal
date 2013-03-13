@@ -35,5 +35,13 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-*/
+\cgalClassifedRefPages
 
+## Functions ##
+- `CGAL::barycenter()`
+- `CGAL::bounding_box()`
+- `CGAL::centroid()`
+- `CGAL::linear_least_squares_fitting_2()`
+- `CGAL::linear_least_squares_fitting_3()`
+
+*/

@@ -58,12 +58,12 @@ Halfedge_const_handle defining_contour_edge() const;
 /// @{
 
 /*! 
-Returns `true` iff this is a bisector (or skeleton) halfedge (i.e. is not a contour halfedge). 
+Returns `true` iff this is a bisector (or skeleton) halfedge (i.e.\ is not a contour halfedge). 
 */ 
 bool is_bisector() const; 
 
 /*! 
-Returns `true` iff this is a bisector and is inner (i.e. is not incident upon a contour vertex). 
+Returns `true` iff this is a bisector and is inner (i.e.\ is not incident upon a contour vertex). 
 */ 
 bool is_inner_bisector() const; 
 

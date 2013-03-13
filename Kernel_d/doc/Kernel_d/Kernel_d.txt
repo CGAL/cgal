@@ -197,7 +197,7 @@ operations, for example computing squared distances or returning a
 the number type parameter of `Homogeneous` low, the number type
 `Quotient<RingNumberType>` is used instead. This number type
 turns a ring type into a field type. It maintains numbers as
-quotients, i.e. a numerator and a denominator. Thereby, divisions are
+quotients, i.e.\ a numerator and a denominator. Thereby, divisions are
 circumvented. With `Homogeneous_d<RingNumberType>`,
 `Homogeneous_d<RingNumberType>::%FT` is equal to
 `Quotient<RingNumberType>` while

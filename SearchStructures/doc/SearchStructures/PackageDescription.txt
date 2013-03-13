@@ -33,6 +33,8 @@ However, the range tree as implemented in \cgal is more flexible than the
 \f$ Kd\f$-tree implementation, in that it enables to layer together range trees
 and segment trees in the same data structure.
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 
 - `RangeSegmentTreeTraits_k`

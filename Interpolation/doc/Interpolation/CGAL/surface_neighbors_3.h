@@ -18,7 +18,7 @@ surface at `p`.
 The functions \c surface_neighbors_certified_3() also return, in
 addition, a Boolean value that certifies whether or not, the Voronoi
 cell of `p` can be affected by points that lie outside the input
-range, i.e. outside the ball centered on `p` passing through the
+range, i.e.\ outside the ball centered on `p` passing through the
 furthest sample point from `p` in the range `[first, beyond)`. If the sample
 points are collected by a k-nearest neighbor or a range search
 query, this permits to verify that a large enough neighborhood has
@@ -30,7 +30,7 @@ been considered.
 <LI>`Dt` is equivalent to the class 
 `Delaunay_triangulation_3`. 
 <LI>`OutputIterator::value_type` is equivalent to 
-`Dt::Point_3`, i.e. a point type. 
+`Dt::Point_3`, i.e.\ a point type. 
 <LI>`ITraits` is equivalent to the class `Voronoi_intersection_2_traits_3<K>`. 
 </OL> 
 

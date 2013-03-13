@@ -20,7 +20,7 @@ public:
 /// @{
 
 /*! 
-creates a color with rgb-value `(0,0,0)`, i.e. black. 
+creates a color with rgb-value `(0,0,0)`, i.e.\ black. 
 */ 
 Color(); 
 

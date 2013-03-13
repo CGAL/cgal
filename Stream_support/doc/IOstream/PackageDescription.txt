@@ -20,5 +20,33 @@ IO streams.
 \cgal provides three different printing mode, defined in the enum
 `Mode`, as well as different functions to set and get
 the printing mode.
+
+\cgalClassifedRefPages
+
+## Enum ##
+- `CGAL::Mode`
+
+## Functions ##
+- `CGAL::get_mode()`
+- `CGAL::is_ascii()`
+- `CGAL::is_binary()`
+- `CGAL::is_pretty()`
+- `CGAL::set_mode()`
+- `CGAL::set_ascii_mode()`
+- `CGAL::set_binary_mode()`
+- `CGAL::set_pretty_mode()`
+- \link PkgIOstreams_op_right_shift `CGAL::operator>>()` \endlink
+- \link PkgIOstreams_op_left_shift `CGAL::operator<<()` \endlink
+- `CGAL::iformat()`
+- `CGAL::oformat()`
+
+## Classes ##
+- `CGAL::Color`
+- `CGAL::Istream_iterator<T,Stream>`
+- `CGAL::Ostream_iterator<T,Stream>`
+- `CGAL::Verbose_ostream`
+- `CGAL::Input_rep<T,F>`
+- `CGAL::Output_rep<T,F>`
+
 */
 

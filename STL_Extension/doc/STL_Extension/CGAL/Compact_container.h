@@ -70,7 +70,7 @@ the halfedge data structures.
 
 It supports bidirectional iterators and allows a constant time amortized 
 `insert()` operation. You cannot specify where to insert new objects 
-(i.e. you don't know where they will end up in the iterator sequence, 
+(i.e.\ you don't know where they will end up in the iterator sequence, 
 although `insert()` returns an iterator pointing to the newly inserted 
 object). You can erase any element with a constant time complexity. 
 
@@ -79,7 +79,7 @@ memory since it doesn't store two additional pointers for the iterator needs.
 It doesn't deallocate elements until the destruction or `clear()` of the 
 container. The iterator does not have constant amortized time complexity for 
 the increment and decrement operations in all cases, only when not too many 
-elements have not been freed (i.e. when the `size()` is close to the 
+elements have not been freed (i.e.\ when the `size()` is close to the 
 `capacity()`). Iterating from `begin()` to `end()` takes 
 `O(capacity())` time, not `size()`. In the case where the container 
 has a small `size()` compared to its `capacity()`, we advise to 

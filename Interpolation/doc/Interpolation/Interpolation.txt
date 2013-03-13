@@ -25,7 +25,7 @@ to interpolate this function on an arbitrary query point.
 More formally, let \f$ \mathcal{P}=\{\mathbf{p_1},\ldots ,\mathbf{p_n}\}\f$ be a set of
 \f$ n\f$ points in \f$ \mathbb{R}^2\f$ or \f$ \mathbb{R}^3\f$ and \f$ \Phi\f$ be a scalar
 function defined on the convex hull of \f$ \mathcal{P}\f$. We assume that
-the function values are known at the points of \f$ \mathcal{P}\f$, i.e. to
+the function values are known at the points of \f$ \mathcal{P}\f$, i.e.\ to
 each \f$ \mathbf{p_i} \in \mathcal{P}\f$, we associate \f$ z_i =
 \Phi(\mathbf{p_i})\f$. Sometimes, the gradient of \f$ \Phi\f$ is also known
 at \f$ \mathbf{p_i}\f$. It is denoted \f$ \mathbf{g_i}= \nabla
@@ -93,7 +93,7 @@ continuously differentiable except on the data points \f$ \mathcal{P}\f$.<BR>
 The interpolation package of \cgal provides functions to compute
 natural neighbor coordinates for \f$ 2D\f$ and \f$ 3D\f$ points with respect
 to Voronoi diagrams as well as with respect to power diagrams (only
-\f$ 2D\f$), i.e. for weighted points. Refer to the reference pages
+\f$ 2D\f$), i.e.\ for weighted points. Refer to the reference pages
 `natural_neighbor_coordinates_2()`,
 `sibson_natural_neighbor_coordinates_3()`
 `laplace_natural_neighbor_coordinates_3()` and
@@ -151,7 +151,7 @@ plane \f$ \mathcal{T}_x\f$ of the surface \f$ \mathcal{S}\f$ at the point
 \f$ \mathbf{x} \in \mathcal{S}\f$ approximates \f$ \mathcal{S}\f$ in the
 neighborhood of \f$ \mathbf{x}\f$. It has been shown in \cite bf-lcss-02
 that, if the surface \f$ \mathcal{S}\f$ is well sampled with respect to the
-curvature and the local thickness of \f$ \mathcal{S}\f$, i.e. it is an \f$ \epsilon\f$-sample, the intersection
+curvature and the local thickness of \f$ \mathcal{S}\f$, i.e.\ it is an \f$ \epsilon\f$-sample, the intersection
 of the tangent plane \f$ \mathcal{T}_x\f$ with the Voronoi cell of
 \f$ \mathbf{x}\f$ in the Voronoi diagram of \f$ \mathcal{P} \cup
 \{\mathbf{x}\}\f$ has a small diameter. Consequently, inside this
@@ -211,7 +211,7 @@ neighbors are necessarily a subset of the natural neighbors of the
 query point in this triangulation. \cgal provides a function that
 encapsulates the filtering based on the \f$ 3D\f$ Delaunay triangulation.
 For input points filtered by distance, functions are provided that
-indicate whether or not points that lie outside the input range (i.e. 
+indicate whether or not points that lie outside the input range (i.e.\ 
 points that are further from \f$ \mathbf{x}\f$ than the furthest input
 point) can still influence the result. This allows to iteratively
 enlarge the set of input points until the range is sufficient to
@@ -332,7 +332,7 @@ of \f$ \mathbf{p_i}\f$ with respect to \f$ \mathbf{p_i}\f$ associated to
 
 \cgal provides functions to approximate the gradients of all data
 points that are inside the convex hull. There is one function for each
-type of natural neighbor coordinate (i.e. `natural_neighbor_coordinates_2()`, `regular_neighbor_coordinates_2()`).
+type of natural neighbor coordinate (i.e.\ `natural_neighbor_coordinates_2()`, `regular_neighbor_coordinates_2()`).
 
 \subsection subsecinterpol_examples Example for Linear Interpolation 
 

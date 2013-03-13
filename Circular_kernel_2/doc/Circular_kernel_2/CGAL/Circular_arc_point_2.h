@@ -65,27 +65,27 @@ Test for nonequality.
 bool operator!=(const Circular_arc_point_2<CircularKernel> &p, const Circular_arc_point_2<CircularKernel> &q); 
 
 /*! 
-Returns true iff`p` is lexicographically smaller than `q`, i.e. either if `p.x() < q.x()` 
+Returns true iff `p` is lexicographically smaller than `q`, i.e.\ either if `p.x() < q.x()` 
 or if `p.x() == q.x()` and `p.y() < q.y()`. 
 \relates Circular_arc_point_2 
 */ 
 bool operator<(const Circular_arc_point_2<CircularKernel> &p, const Circular_arc_point_2<CircularKernel> &q); 
 
 /*! 
-Returns true iff`p` is lexicographically greater than `q`. \relates Circular_arc_point_2 
+Returns true iff `p` is lexicographically greater than `q`. \relates Circular_arc_point_2 
 */ 
 bool operator>(const Circular_arc_point_2<CircularKernel> &p, 
 const Circular_arc_point_2<CircularKernel> &q); 
 
 /*! 
-Returns true iff`p` is lexicographically smaller than or equal to `q`. 
+Returns true iff `p` is lexicographically smaller than or equal to `q`. 
 \relates Circular_arc_point_2 
 */ 
 bool operator<=(const Circular_arc_point_2<CircularKernel> &p, 
 const Circular_arc_point_2<CircularKernel> &q); 
 
 /*! 
-Returns true iff`p` is lexicographically greater than or equal to `q`. 
+Returns true iff `p` is lexicographically greater than or equal to `q`. 
 \relates Circular_arc_point_2 
 */ 
 bool operator>=(const Circular_arc_point_2<CircularKernel> &p, 

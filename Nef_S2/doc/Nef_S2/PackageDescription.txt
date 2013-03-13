@@ -47,5 +47,7 @@ items are denoted as \em svertex, \em shalfedge and \em sface,
 analogous to their counterparts in `CGAL::Nef_polyhedron_2`. Additionally,
 there is the <I>shalfloop</I> representing the great circles.
 
+\cgalClassifedRefPages
+
 */
 

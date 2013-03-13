@@ -1,6 +1,11 @@
 /// \defgroup PkgNef3 3D Boolean Operations on  Nef Polyhedra Reference
 /// \defgroup PkgNef3Concepts Concepts
 /// \ingroup PkgNef3
+///
+/// \defgroup PkgNef3IOFunctions I/O Functions
+/// \ingroup PkgNef3
+
+
 /*!
 \addtogroup PkgNef3
 \todo check generated documentation
@@ -40,5 +45,24 @@ elements and their connectivity. We provide affine (rigid)
 tranformations and a point location query operation. We have a custom
 file format for storing and reading Nef polyhedra from files. We offer
 a simple OpenGL visualization for debugging and illustrations.
+
+\cgalClassifedRefPages
+
+## Classes ##
+- `CGAL::Nef_polyhedron_3<Traits>`
+- \link CGAL::Nef_polyhedron_3::Vertex `CGAL::Nef_polyhedron_3<Traits>::Vertex` \endlink
+- \link CGAL::Nef_polyhedron_3::Halfedge `CGAL::Nef_polyhedron_3<Traits>::Halfedge` \endlink
+- \link CGAL::Nef_polyhedron_3::Halffacet `CGAL::Nef_polyhedron_3<Traits>::Halffacet` \endlink
+- \link CGAL::Nef_polyhedron_3::Volume `CGAL::Nef_polyhedron_3<Traits>::Volume` \endlink
+- \link CGAL::Nef_polyhedron_3::SHalfedge `CGAL::Nef_polyhedron_3<Traits>::SHalfedge` \endlink
+- \link CGAL::Nef_polyhedron_3::SHalfloop `CGAL::Nef_polyhedron_3<Traits>::SHalfloop` \endlink
+- \link CGAL::Nef_polyhedron_3::SFace `CGAL::Nef_polyhedron_3<Traits>::SFace` \endlink
+- \link CGAL::Nef_polyhedron_3::SFace_cycle_iterator `CGAL::Nef_polyhedron_3<Traits>::SFace_cycle_iterator` \endlink
+
+## Functions ##
+- `CGAL::OFF_to_nef_3()`
+- \link PkgNef3IOFunctions `CGAL::operator<<()` \endlink
+- \link PkgNef3IOFunctions `CGAL::operator>>()` \endlink
+
 */
 

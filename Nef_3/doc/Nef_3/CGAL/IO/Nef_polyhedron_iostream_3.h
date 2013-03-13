@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgNef3
+\ingroup PkgNef3IOFunctions
 
 This operator reads a Nef polyhedron, which is given in the proprietary file 
 format written by the input operator <I>in</I> and assigns it to <I>N</I>. It includes the 
@@ -25,7 +25,7 @@ istream& operator>>( std::istream& in, CGAL::Nef_polyhedron_3<Traits>& N);
 
 /*!
 
-\ingroup PkgNef3
+\ingroup PkgNef3IOFunctions
 
 This operator writes the Nef polyhedron `N` to the output stream `out`
 using a proprietary file format. It includes the complete incidence

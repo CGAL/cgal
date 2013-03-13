@@ -170,8 +170,8 @@ namespace CGAL {
 Computes the lower envelope of a set of surfaces in \f$ \mathbb{R}^3\f$,
 as given by the range `[begin, end)`. The lower envelope is
 represented using the output minimization diagram `diag`.
-\tparam Traits must be a model of `EnvelopeTraits_3.
-\tparam InputIterator must be an input iterator with value type `Traits::Surface_3`.
+\tparam Traits must be a model of `EnvelopeTraits_3`.
+InputIterator must be an input iterator with value type `Traits::Surface_3`.
 */
 template<class InputIterator, class Traits>
 void lower_envelope_3 (InputIterator begin, InputIterator end,
@@ -187,8 +187,8 @@ namespace CGAL {
 Computes the lower envelope of a set of \f$ xy\f$-monotone surfaces in
 \f$ \mathbb{R}^3\f$, as given by the range `[begin, end)`. The lower 
 envelope is represented using the output minimization diagram `diag`.
-\tparam Traits must be a model of `EnvelopeTraits_3.
-\tparam InputIterator must be an input iterator with value type `Traits::Xy_monotone_surface_3`.
+\tparam Traits must be a model of `EnvelopeTraits_3`.
+InputIterator must be an input iterator with value type `Traits::Xy_monotone_surface_3`.
 */
 template<class InputIterator, class Traits>
 void lower_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,
@@ -204,8 +204,8 @@ namespace CGAL {
 Computes the upper envelope of a set of surfaces in \f$ \mathbb{R}^3\f$,
 as given by the range `[begin, end)`. The upper envelope is
 represented using the output maximization diagram `diag`.
-\tparam Traits must be a model of `EnvelopeTraits_3.
-\tparam InputIterator must be an input iterator with value type `Traits::Surface_3`.
+\tparam Traits must be a model of `EnvelopeTraits_3`.
+InputIterator must be an input iterator with value type `Traits::Surface_3`.
 */
 template<class InputIterator, class Traits>
 void upper_envelope_3 (InputIterator begin, InputIterator end,
@@ -221,8 +221,8 @@ namespace CGAL {
 Computes the upper envelope of a set of \f$ xy\f$-monotone surfaces in 
 \f$ \mathbb{R}^3\f$, as given by the range `[begin, end)`. The lower 
 envelope is represented using the output maximization diagram `diag`.
-\tparam Traits must be a model of `EnvelopeTraits_3.
-\tparam InputIterator must be an input iterator with value type `Traits::Xy_monotone_surface_3`.
+\tparam Traits must be a model of `EnvelopeTraits_3`.
+InputIterator must be an input iterator with value type `Traits::Xy_monotone_surface_3`.
 */
 template<class InputIterator, class Traits>
 void upper_envelope_xy_monotone_3 (InputIterator begin, InputIterator end,

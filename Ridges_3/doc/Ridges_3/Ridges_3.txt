@@ -61,10 +61,10 @@ gradients of the principal curvatures. Ridges, illustrated in
 A non umbilical point is called
 <UL>
 <LI>a max ridge point, if the <I>extremality coefficient</I> \f$ b_0=\langle
-dk_1,d_1 \rangle\f$ vanishes, i.e. \f$ b_0=0\f$.
+dk_1,d_1 \rangle\f$ vanishes, i.e.\ \f$ b_0=0\f$.
 
 <LI>a min ridge point, if the <I>extremality coefficient</I>
-\f$ b_3=\langle dk_2,d_2 \rangle\f$ vanishes, i.e. \f$ b_3=0\f$
+\f$ b_3=\langle dk_2,d_2 \rangle\f$ vanishes, i.e.\ \f$ b_3=0\f$
 \cgalFootnote{Notations \f$ b_0, b_3\f$ comes from Equation \ref eqmonge }.
 </UL>
 </EM>

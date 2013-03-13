@@ -13,8 +13,7 @@ i.e.\ commutative ring with 0, 1, +, * and unity free of zero divisors.
 It refines `Assignable`, `CopyConstructible`, `DefaultConstructible` 
 and `FromIntConstructible`. 
 
-It refines `EqualityComparable`, where equality is defined w.r.t. 
-the ring element being represented. 
+It refines `EqualityComparable`, where equality is defined w.r.t.\ the ring element being represented. 
 
 The operators unary and binary plus +, unary and binary minus -, 
 multiplication * and their compound forms +=, -=, *= are required and 

@@ -110,7 +110,7 @@ Constructor object for
 `Aff_transformation_d`. Provides : 
 
 `Aff_transformation_d operator()(Vector v)` which returns the 
-outer product, i.e. the quadratic matrix `v`\f$ ^t\f$`v`. 
+outer product, i.e.\ the quadratic matrix `v`\f$ ^t\f$`v`. 
 */ 
 typedef Hidden_type Construct_outer_product_d; 
 

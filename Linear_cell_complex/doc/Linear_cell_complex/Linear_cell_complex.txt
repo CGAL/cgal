@@ -99,7 +99,7 @@ the traits, items, and for the allocator classes, and by default
 
 A linear cell complex is valid, if it is a valid combinatorial map
 where each dart is associated with an attribute containing a point
-(i.e. an instance of a model of the `CellAttributeWithPoint`
+(i.e.\ an instance of a model of the `CellAttributeWithPoint`
 concept). Note that there are no validity constraints on the geometry
 (test on self intersection, planarity of 2-cells...).
 We can see two examples of `Linear_cell_complex` in

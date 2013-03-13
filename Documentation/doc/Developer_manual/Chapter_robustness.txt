@@ -45,7 +45,7 @@ returning a Boolean value, but also primitives returning a value of
 some enumeration type, e.g. `CGAL::Sign`. So the value computed
 by a predicate does not involve any numerical data. Basic constructions 
 construct new primitive geometric objects that may involve newly computed
-numerical data, i.e. that is not part of the input to the constructions. 
+numerical data, i.e.\ that is not part of the input to the constructions. 
 An example of such a basic constructions is computing the midpoint of
 the straight line segment between two given points.
 A special kind of constructions is selections. For selections, all the data

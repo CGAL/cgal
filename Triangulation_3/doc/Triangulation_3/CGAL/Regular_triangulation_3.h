@@ -226,11 +226,11 @@ between `p` and the power circle of the <I>finite</I> facet of `c`
 is greater than \f$ \pi/2\f$. 
 
 - `ON_BOUNDARY` if p is orthogonal to the power sphere of `c` 
-i.e. \f$ \Pi({p}^{(w)}-{z(c)}^{(w)})=0\f$. For an infinite cell this means 
+i.e.\ \f$ \Pi({p}^{(w)}-{z(c)}^{(w)})=0\f$. For an infinite cell this means 
 that `p` is orthogonal to the power circle of its <I>finite</I> facet. 
 
 - `ON_UNBOUNDED_SIDE` if \f$ \Pi({p}^{(w)}-{z(c)}^{(w)})>0\f$ 
-i.e. the angle between the weighted point `p` and the power sphere 
+i.e.\ the angle between the weighted point `p` and the power sphere 
 of `c` is less than \f$ \pi/2\f$ or if these two spheres do not 
 intersect. For an 
 infinite cell this means that `p` does not satisfy either of the 

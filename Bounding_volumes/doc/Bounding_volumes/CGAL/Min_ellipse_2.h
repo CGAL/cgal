@@ -9,7 +9,7 @@ enclosing a finite (multi)set of points in two-dimensional euclidean
 space \f$ \E^2\f$. For a point set \f$ P\f$ we denote by \f$ me(P)\f$ the smallest 
 ellipse that contains all points of \f$ P\f$. Note that \f$ me(P)\f$ can be 
 degenerate, 
-i.e. \f$ me(P)=\emptyset\f$ if 
+i.e.\ \f$ me(P)=\emptyset\f$ if 
 \f$ P=\emptyset\f$, \f$ me(P)=\{p\}\f$ if \f$ P=\{p\}\f$, 
 and <span class="mbox">\f$ me(P) = \{ (1-\lambda)p + \lambda q \mid 0 \leq \lambda \leq 1 \}\f$</span> if \f$ P=\{p,q\}\f$. 
 
@@ -186,13 +186,13 @@ const Traits& traits = Traits());
 
 /*! 
 
-returns the number of points of `min_ellipse`, i.e. \f$ |P|\f$. 
+returns the number of points of `min_ellipse`, i.e.\ \f$ |P|\f$. 
 */ 
 int number_of_points( ) const; 
 
 /*! 
 
-returns the number of support points of `min_ellipse`, i.e. \f$ |S|\f$. 
+returns the number of support points of `min_ellipse`, i.e.\ \f$ |S|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
@@ -240,7 +240,7 @@ const Ellipse& ellipse( ) const;
 
 /// \name Predicates 
 /// By definition, an empty `Min_ellipse_2` has no boundary and no
-/// bounded side, i.e. its unbounded side equals the whole space \f$
+/// bounded side, i.e.\ its unbounded side equals the whole space \f$
 /// \E^2\f$.
 /// @{
 
@@ -283,7 +283,7 @@ bool is_empty( ) const;
 /*! 
 
 returns `true`, iff `min_ellipse` is degenerate, 
-i.e. if `min_ellipse` is empty, equal to a single point or equal to a 
+i.e.\ if `min_ellipse` is empty, equal to a single point or equal to a 
 segment, equivalently if the number of support points is less 
 than 3. 
 */ 
@@ -331,7 +331,7 @@ void clear( );
 /// An object `min_ellipse` is valid, iff <UL> <LI>`min_ellipse`
 /// contains all points of its defining set \f$ P\f$,
 /// <LI>`min_ellipse` is the smallest ellipse spanned by its support
-/// set \f$ S\f$, and <LI>\f$ S\f$ is minimal, i.e. no support point
+/// set \f$ S\f$, and <LI>\f$ S\f$ is minimal, i.e.\ no support point
 /// is redundant. </UL> <I>Note:</I> In this release only the first
 /// item is considered by the validity check.
 /// @{

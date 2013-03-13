@@ -50,13 +50,13 @@ void set_vertex_seaming(Vertex_handle vertex, int seaming);
 
 /*! 
 
-%Get oriented edge's seaming flag, i.e. position of the oriented edge w.r.t. to the UNIQUE main border. 
+%Get oriented edge's seaming flag, i.e.\ position of the oriented edge w.r.t.\ to the UNIQUE main border. 
 
 */ 
 int get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const; 
 
 /*! 
-Set oriented edge's seaming flag, i.e. position of the oriented edge w.r.t. to the UNIQUE main border. 
+Set oriented edge's seaming flag, i.e.\ position of the oriented edge w.r.t.\ to the UNIQUE main border. 
 */ 
 void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming); 
 

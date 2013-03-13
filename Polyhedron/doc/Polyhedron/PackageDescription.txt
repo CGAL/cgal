@@ -1,6 +1,9 @@
 /// \defgroup PkgPolyhedron 3D Polyhedral Surface  Reference
 /// \defgroup PkgPolyhedronConcepts Concepts
 /// \ingroup PkgPolyhedron
+
+/// \defgroup PkgPolyhedronIOFunc I/O Functions
+/// \ingroup PkgPolyhedron
 /*!
 \addtogroup PkgPolyhedron
 \todo check generated documentation
@@ -37,5 +40,26 @@ design of the halfedge data structure, see the reference for
 or \cite k-ugpdd-99, but the default instantiation of the polyhedral
 surface can be used without knowing the halfedge data structure.
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `PolyhedronTraits_3`
+- `PolyhedronItems_3`
+
+## Classes ##
+- `CGAL::Polyhedron_3<Traits>`
+- \link CGAL::Polyhedron_3::Vertex `CGAL::Polyhedron_3<Traits>::Vertex` \endlink
+- \link CGAL::Polyhedron_3::Halfedge `CGAL::Polyhedron_3<Traits>::Halfedge` \endlink
+- \link CGAL::Polyhedron_3::Facet `CGAL::Polyhedron_3<Traits>::Facet` \endlink
+- `CGAL::Polyhedron_traits_3<Kernel>`
+- `CGAL::Polyhedron_traits_with_normals_3<Kernel>`
+- `CGAL::Polyhedron_items_3`
+- `CGAL::Polyhedron_min_items_3`
+- `CGAL::Polyhedron_incremental_builder_3<HDS>`
+
+## Functions ##
+- \link PkgPolyhedronIOFunc `CGAL::operator<<()` \endlink
+- \link PkgPolyhedronIOFunc `CGAL::operator>>()` \endlink
+                
 */
 

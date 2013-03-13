@@ -171,7 +171,7 @@ To some extend, the user may tune the Delaunay refinement
 to a prescribed trade-off
 between mesh quality and mesh density. 
 The mesh density refers to the number of mesh vertices and cells,
-i.e. to the complexity of the mesh.
+i.e.\ to the complexity of the mesh.
 The mesh quality referred to here is measured by the radius edge
 ratio of surface facets end mesh cells, where the radius edge ratio of
 a simplex (triangle or tetrahedron) is the
@@ -375,7 +375,7 @@ The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type.
 <UL>
 <LI>`parameters::features(domain)` sets `features` according to the domain,
-i.e. 0 and 1-dimensional features are taken into account if `domain` is a
+i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
 `MeshDomainWithFeatures_3` 
 <LI>`parameters::no_features()` prevents the representation 
 of 0 and 1-dimensional features in the mesh. This is useful to get a smooth and rough approximation

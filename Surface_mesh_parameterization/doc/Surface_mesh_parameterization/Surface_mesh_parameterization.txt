@@ -548,7 +548,7 @@ To support this duplication,
 `Parameterization_polyhedron_adaptor_3<Polyhedron_3_>` stores
 the result in the \f$ (u,v)\f$ fields of the input mesh halfedges.
 A \f$ (u,v)\f$ pair is computed for
-each inner vertex (i.e. its halfedges share the same \f$ (u,v)\f$ pair),
+each inner vertex (i.e.\ its halfedges share the same \f$ (u,v)\f$ pair),
 while a \f$ (u,v)\f$ pair is computed for each border halfedge.
 The user has to iterate over the mesh halfedges to get the result.
 Note that \f$ (u,v)\f$ fields do not exist in `Polyhedron_3<Traits>`,
@@ -768,7 +768,7 @@ superclass of all surface parameterization classes.
 \subsection Surface_mesh_parameterizationFixedborderparameterizer3 Fixed_border_parameterizer_3 Class
 
 Linear fixed border parameterization algorithms are very close. They mainly
-differ by the energy that they try to minimize, i.e. by the value of the \f$ w_{ij}\f$
+differ by the energy that they try to minimize, i.e.\ by the value of the \f$ w_{ij}\f$
 coefficient of the \f$ A\f$ matrix, for \f$ v_i\f$ and \f$ v_j\f$ neighbor vertices of the mesh
 \cite cgal:fh-survey-05. One consequence is that most of the code of the fixed border methods is factorized in the
 `Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` class.

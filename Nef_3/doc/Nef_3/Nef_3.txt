@@ -159,7 +159,7 @@ The local pyramids of each vertex are represented by
 conceptually intersecting the local neighborhood with a small
 \f$ \varepsilon\f$-sphere. This intersection forms a planar map on the
 sphere (see next two figures), which together with the set-selection
-mark for each item (i.e. vertices, edges, loops and faces)
+mark for each item (i.e.\ vertices, edges, loops and faces)
 forms a two-dimensional Nef polyhedron embedded in
 the sphere. We add the set-selection mark for the vertex and call the
 resulting structure the <I>sphere map</I> of the vertex. 

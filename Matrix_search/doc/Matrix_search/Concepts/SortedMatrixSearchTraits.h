@@ -71,8 +71,8 @@ const;
 /*! 
 The 
 predicate to determine whether an element `a` is feasible. 
-It has to be monotone in the sense that `compare( a, b)` and 
-`is_feasible( a)` imply `is_feasible( b)`. 
+It has to be monotone in the sense that `compare(a, b)` and 
+`is_feasible(a)` imply `is_feasible(b)`. 
 */ 
 bool is_feasible( const Value& a); 
 

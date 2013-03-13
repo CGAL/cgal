@@ -19,5 +19,18 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `ExtendedKernelTraits_2`
+
+## Classes ##
+- `CGAL::Extended_cartesian<FT>`
+- `CGAL::Extended_homogeneous<RT>`
+- `CGAL::Filtered_extended_homogeneous<RT>`
+- `CGAL::Nef_polyhedron_2<T>`
+- \link CGAL::Nef_polyhedron_2::Explorer `CGAL::Nef_polyhedron_2<T>::Explorer` \endlink
+- \link CGAL::Nef_polyhedron_2::Topological_explorer `CGAL::Nef_polyhedron_2<T>::Topological_explorer` \endlink
+
 */
 

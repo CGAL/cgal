@@ -30,5 +30,39 @@
 \cgalPkgDemo{Operations on Polygons,polygon.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `StraightSkeletonVertex_2`
+- `StraightSkeletonHalfedge_2`
+- `StraightSkeletonFace_2`
+- `StraightSkeleton_2`
+- `StraightSkeletonBuilder_2_Visitor`
+- `StraightSkeletonBuilderTraits_2`
+- `StraightSkeletonItemsConverter_2`
+- `PolygonOffsetBuilderTraits_2`
+- `VertexContainer_2`
+
+## Classes ##
+- `CGAL::Straight_skeleton_vertex_base_2<Refs,Point,FT>`
+- `CGAL::Straight_skeleton_halfedge_base_2<Refs>`
+- `CGAL::Straight_skeleton_face_base_2<Refs>`
+- `CGAL::Straight_skeleton_2<Traits,Items,Alloc>`
+- `CGAL::create_interior_straight_skeleton_2`
+- `CGAL::create_exterior_straight_skeleton_2`
+- `CGAL::Straight_skeleton_builder_traits_2<Kernel>`
+- `CGAL::Straight_skeleton_builder_2<Gt,Ss,Visitor>`
+- `CGAL::Straight_skeleton_items_converter_2<SrcSs, TgtSs, NTConverter>`
+- `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>`
+- `CGAL::convert_straight_skeleton_2<TgtSs,SrcSs,ItemsCvt>`
+- `CGAL::create_offset_polygons_2`
+- `CGAL::arrange_offset_polygons_2`
+- `CGAL::create_interior_skeleton_and_offset_polygons_2`
+- `CGAL::create_exterior_skeleton_and_offset_polygons_2`
+- `CGAL::Polygon_offset_builder_traits_2<Kernel>`
+- `CGAL::Polygon_offset_builder_2<Ss,Gt,Container>`
+- `CGAL::Dummy_straight_skeleton_builder_2_visitor<Ss>`
+
 */
 

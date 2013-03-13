@@ -177,7 +177,7 @@ Segment_d<Kernel> operator+(const Vector_d<Kernel>& v) ;
 
 /*! 
 returns true if `s` is 
-degenerate i.e. `s.source()=s.target()`. 
+degenerate i.e.\ `s.source()=s.target()`. 
 */ 
 bool is_degenerate() ; 
 

@@ -58,7 +58,7 @@ quality of the decomposition.
 Let us denote the vertices of the input polygons by
 \f$ P = \left( p_0, \ldots, p_{m-1} \right)\f$ and
 \f$ Q = \left( q_0, \ldots, q_{n-1} \right)\f$. We assume that both \f$ P\f$ and \f$ Q\f$
-have positive orientations (i.e. their boundaries wind in a counterclockwise
+have positive orientations (i.e.\ their boundaries wind in a counterclockwise
 order around their interiors) and compute the convolution of the two polygon
 boundaries. The <I>convolution</I> of these two polygons \cite grs-kfcg-83,
 denoted \f$ P * Q\f$, is a collection of line segments of the form
