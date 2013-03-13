@@ -38,12 +38,8 @@ namespace CGAL {
 
         Point_2 px_min, px_max, py_min, py_max;
 
-        //should be added as CGAL precondition
-        if (orientation_Linf(p,q,r) == DEGENERATE) {
-          CGAL_SDG_DEBUG(std::cout << "debug: error: p,q,r are monotone!" << std::endl;);
-          exit(0);
-        }
-        
+        CGAL_assertion(orientation_Linf(p,q,r) != DEGENERATE);
+
         Comparison_result cmpxpq = compare_x_2(p, q);
         Comparison_result cmpypq = compare_y_2(p, q);
         Comparison_result cmpxpr = compare_x_2(p, r);
