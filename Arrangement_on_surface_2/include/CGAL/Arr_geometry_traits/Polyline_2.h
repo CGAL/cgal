@@ -66,6 +66,17 @@ public:
 
   /*!
    * Constructor from a range. The range can be either:
+   *
+   * For the sake of backwards compatibility we have to keep the possibility
+   * of construction from a range of points. Therefore, we have to test the
+   * type of the elements of the range again.
+   * Since ultimately the construction from points will be deprecated, the
+   * actual constructor that we implemented which handles a range of point
+   * is already deprecated and SHOULD NOT BE USED.
+   *
+   * If you want to construct a polyline from a range of points, use the
+   * construction functors from the traits class.
+   *
    * - Range of points, and the polyline is defined by the order of the points.
    * - Range of linear object. The polyline is the sequence of linear objects.
    * \param begin An iterator pointing to the first point in the range.
@@ -77,10 +88,9 @@ public:
   _Polyline_2(InputIterator begin, InputIterator end) :
     m_segments()
   {
-    // TODO: Get rid of *begin, by using the trick from the traits.
-    // TODO: add a big excuse for duplicating the dispatching.
-
-    construct_polyline(begin, end, *begin);
+    typedef typename std::iterator_traits<InputIterator>::value_type VT;
+    typedef typename boost::is_same<VT,Point_2>::type Is_point;
+    construct_polyline(begin, end, Is_point());
   }
 
   /*!
@@ -90,14 +100,16 @@ public:
    *        in the range.
    * \pre The end of segment n should be the beginning of segment n+1.
    *
-   * TODO: After we remove the next followin function
-   * this following one will become private.
-   * TODO: once this become private the traits has to become a friend.
-   *
+   * TODO: Ultimately, we want to construct polylines only from segments.
+   *       Furthermore, we do not want the user to construct polyline directly,
+   *       but only using the traits class. Therefore:
+   *       - constructions from points should be deprecated and finally removed.
+   *       - Constructions from ranges of segments should be private.
+   *       - The traits class has to become a friend.
    */
   template <typename InputIterator>
   void construct_polyline(InputIterator begin, InputIterator end,
-                          const Segment_2&)
+                          boost::false_type)
   {
     m_segments.assign(begin, end);
   }
@@ -111,7 +123,7 @@ public:
    */
   template <typename InputIterator>
   CGAL_DEPRECATED void construct_polyline
-    (InputIterator begin, InputIterator end, const Point_2&)
+  (InputIterator begin, InputIterator end, boost::true_type)
   {
     // Check if there are no points in the range:
     InputIterator  ps = begin;
@@ -168,10 +180,6 @@ public:
   }
 
   /*!
-   * TODO: (for UNBOUNDED case) Code has to be changed for unbounded case
-   * Create a bounding-box for the polyline. And should be moved to the traits.
-   * Look for bbox in other traits, and see what is done there? If nothing is
-   * found, just leave it...
    * \return The bounding-box.
    */
   Bbox_2 bbox() const
@@ -440,12 +448,19 @@ public:
 
   _X_monotone_polyline_2(Segment_2 seg) : Base(seg){ }
 
-  /*! Constructor */
+  /*! Constructor
+   * Similar to the constructor of a general polyline.
+   * Like in the case of general polyline, for the sake of backwards
+   * compatibility we have to keep an implementation of construction
+   * from a range of points. DO NOT USE THIS CONSTRUCTION.
+   */
   template <typename InputIterator>
   _X_monotone_polyline_2(InputIterator begin, InputIterator end) :
     Base(begin, end)
   {
-    construct_x_monotone_polyline(begin, end, *begin);
+    typedef typename std::iterator_traits<InputIterator>::value_type VT;
+    typedef typename boost::is_same<VT,Point_2>::type Is_point;
+    construct_x_monotone_polyline(begin, end, Is_point());
   }
 
   /*!
@@ -455,7 +470,7 @@ public:
    */
   template <typename InputIterator>
   void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
-                                     const Segment_2& /* */)
+                                     boost::false_type)
   { }
 
   /*!
@@ -463,9 +478,10 @@ public:
    * polyline segments.
    */
   template <typename InputIterator>
-  CGAL_DEPRECATED void construct_x_monotone_polyline
-    (InputIterator begin, InputIterator end,
-     const Point_2& /* */)
+  CGAL_DEPRECATED void construct_x_monotone_polyline (
+                                                      InputIterator begin,
+                                                      InputIterator end,
+                                                      boost::true_type)
   {
     // Make sure the range of points contains at least two points.
     Segment_traits_2 seg_traits;
