@@ -24,6 +24,20 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `PQQMask_3`
+- `PTQMask_3`
+- `DQQMask_3`
+- `Sqrt3Mask_3`
+
+## Classes ##
+- `CGAL::Subdivision_method_3`
+- `CGAL::CatmullClark_mask_3<Polyhedron_3>`
+- `CGAL::Loop_mask_3<Polyhedron_3>`
+- `CGAL::DooSabin_mask_3<Polyhedron_3>`
+- `CGAL::Sqrt3_mask_3<Polyhedron_3>`
 
 */
 

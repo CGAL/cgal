@@ -256,14 +256,14 @@ The output operator is defined for all classes in the \cgal `Kernel` and for the
 \sa `CGAL::is_ascii()`
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
-\sa \ref op_right_shift "CGAL::operator>>"
+\sa \ref PkgIOstreams_op_right_shift "CGAL::operator>>"
 */
 ostream& operator<<(ostream& os, Class c);
 
 /*!
 \ingroup PkgIOstreams
 
-\anchor op_right_shift
+\anchor PkgIOstreams_op_right_shift
 
 \brief \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams

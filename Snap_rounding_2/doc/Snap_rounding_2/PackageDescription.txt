@@ -19,5 +19,6 @@
 \cgalPkgDemo{2D Snap Rounding,snap_rounding_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
 */
 

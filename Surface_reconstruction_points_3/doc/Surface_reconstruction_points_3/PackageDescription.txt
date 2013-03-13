@@ -17,8 +17,9 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-
-
+\cgalClassifedRefPages
+## Classes ##
+- `CGAL::Poisson_reconstruction_function<GeomTraits>`
 
 */
 

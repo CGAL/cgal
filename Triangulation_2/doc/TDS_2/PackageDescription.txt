@@ -47,5 +47,22 @@ class, the parameters have to be instantiated by models of different
 refining concepts according to the actual type of the triangulation.
 These refining concepts and their models are described in Chapter 
 \ref Chapter_2D_Triangulations "2D Triangulations".
-*/
 
+\cgalClassifedRefPages
+## Concepts ##
+- `TriangulationDataStructure_2`
+- `TriangulationDataStructure_2::Face`
+- `TriangulationDataStructure_2::Vertex`
+
+- `TriangulationDSFaceBase_2`
+- `TriangulationDSVertexBase_2`
+
+## Classes ##
+- `CGAL::Triangulation_data_structure_2<Vb,Fb>`
+- `CGAL::Triangulation_ds_face_base_2<Tds>`
+- `CGAL::Triangulation_ds_vertex_base_2<Tds>`
+
+- `CGAL::Triangulation_cw_ccw_2`
+
+
+*/

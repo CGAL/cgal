@@ -87,6 +87,8 @@ Programs can be written to an output stream in MPSFormat, using one of the follo
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 - `QuadraticProgram` (for quadratic programs with variable bounds l <= x <= u)
 - `LinearProgram` (for linear programs with variable bounds l <= x <= u)
