@@ -34,10 +34,10 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const;
   Bbox bbox() const;
-
-  void new_vertex(const double&, const double&, const double&);
-  void new_triangle(const std::size_t, const std::size_t, const std::size_t);
-
+  
+  void new_vertex(double, double, double);
+  void new_triangle(std::size_t, std::size_t, std::size_t);
+                           
 public slots:
   void shuffle_orientations();
   bool orient();
