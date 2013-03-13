@@ -26,6 +26,8 @@
  * Definition of the global Arr_overlay_2() function.
  */
 
+#include <boost/optional/optional.hpp>
+
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Arr_default_overlay_traits_base.h>
