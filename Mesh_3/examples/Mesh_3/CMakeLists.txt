@@ -18,11 +18,14 @@ include_directories(../../../AABB_tree/include)
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
-# Disable warning 4503 in MSVC ("The decorated name was longer than the 
-# compiler limit and was truncated")
 if(MSVC)
+  # Disable warning 4503 in MSVC ("The decorated name was longer than the 
+  # compiler limit and was truncated")
   add_definitions( "/wd4503" )
- endif()
+  # Add /bigobj to the compiler options
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
+endif()
 
 # Add specific Find.cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules/ )
@@ -42,7 +45,7 @@ if ( CGAL_FOUND )
     
   # And add -DCONCURRENT_MESH_3 if that option is ON
   if( ACTIVATE_CONCURRENT_MESH_3 )
-    add_definitions( -DCONCURRENT_MESH_3 )
+    add_definitions( -DCGAL_CONCURRENT_MESH_3 )
     find_package( TBB REQUIRED )
   else( ACTIVATE_CONCURRENT_MESH_3 )
     option( LINK_WITH_TBB
@@ -56,8 +59,8 @@ if ( CGAL_FOUND )
   if( TBB_FOUND )
     add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
     include_directories ( ${TBB_INCLUDE_DIRS} )
-    link_directories( ${TBB_LIBRARY_DIRS} )
-  endif( TBB_FOUND )
+	list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
   
   include( ${CGAL_USE_FILE} )
   find_package(Boost)
@@ -70,7 +73,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "mesh_implicit_sphere_variable_size.cpp" )
     create_single_source_cgal_program( "mesh_two_implicit_spheres_with_balls.cpp" )
 #    create_single_source_cgal_program( "mesh_implicit_domains.cpp" "implicit_functions.cpp" )
-   create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+    create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     if( WITH_CGAL_ImageIO )
       create_single_source_cgal_program( "mesh_optimization_example.cpp" )
