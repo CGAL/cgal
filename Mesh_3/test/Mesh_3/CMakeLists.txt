@@ -69,7 +69,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
   create_single_source_cgal_program( "test_robust_weighted_circumcenter.cpp" )
-  create_single_source_cgal_program( "test_concurrent_compact_container.cpp" )
 
 else()
   
