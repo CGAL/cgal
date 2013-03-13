@@ -1348,6 +1348,8 @@ public:
 
     /*
      * Construct a polyline from a range of points.
+     * As the input is a range of points it is natural to orient the
+     * resulting polyline from left to right.
      * \pre no two consecutive points are the same
      * \pre The points form an x-monotone polyline
      * \post The constructed polyline is x-monotone and
