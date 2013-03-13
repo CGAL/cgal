@@ -1,5 +1,6 @@
 #ifndef CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H
 #define CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H
+/// @cond CGAL_DOCUMENT_INTERNAL
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -61,5 +62,6 @@ private:
 };
 
 }//namespace internal
+/// @endcond
 }//namespace CGAL
 #endif //CGAL_SURFACE_MODELING_SPOKES_AND_RIMS_ITERATOR_H

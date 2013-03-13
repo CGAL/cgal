@@ -1,5 +1,6 @@
 #ifndef CGAL_SURFACE_MODELING_WEIGHTS_H
 #define CGAL_SURFACE_MODELING_WEIGHTS_H
+/// @cond CGAL_DOCUMENT_INTERNAL
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -94,7 +95,7 @@ public:
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
 template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+         class CotangentValue = Cotangent_value_clamped<Polyhedron> >
 class Cotangent_weight : CotangentValue
 {
 public:
@@ -296,5 +297,6 @@ public:
 };
 
 }//namespace internal
+/// @endcond
 }//namespace CGAL
 #endif //CGAL_SURFACE_MODELING_WEIGHTS_H
