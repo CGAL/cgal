@@ -21,13 +21,12 @@
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
 /*
- * Next is a list of tasks that should be implemented:
  * TODO: Add a tag HAS_SOURCE_TARGET and dispatch calls in
  *       Push_back_2 accordingly.
+ * TODO: Complete the documentation of the changes derived from the cleaning
+ * TODO: What to do with an isolated point? How to construct it? Should we
+ *       support it?
  */
-
-// TODO: Complete the documentation of the changes derived from the cleaning
-
 
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
 #define CGAL_ARR_POLYLINE_TRAITS_2_H

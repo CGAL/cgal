@@ -21,9 +21,6 @@ typedef Traits_2::X_monotone_curve_2                    X_polyline_2;
 
 int main ()
 {
-  // TODO: Add test with isolated points.
-  // TODO: Test with long chains of sub-polylines
-
   Traits_2 traits;
   Traits_2::Construct_curve_2 polyline_const =
     traits.construct_curve_2_object();
@@ -37,9 +34,10 @@ int main ()
   // Containers of points and segments
   std::vector<Point_2> pts;
 
-  // Construction from two points
-  Point_2 p2 = Point_2(-10,-10);
-  Point_2 p1 = Point_2(0,0);
+  std::cout << "Starting a construction of a polyline from two points..."
+            << std::endl;
+  Point_2 p1 = Point_2(1,1);
+  Point_2 p2 = Point_2(0,0);
   poly = polyline_const(p1,p2);
   x_poly = x_polyline_const(p1,p2);
   std::cout << "The constructed polyline is:" << std::endl;
@@ -47,16 +45,19 @@ int main ()
   std::cout << "x-mono    : " << x_poly << std::endl;
   std::cout << "----====----"<< std::endl;
 
-  // Construction of x-mono from range of points
-  // std::cout << "Starting a construction of x-monotone from a range of point"
-  //           << std::endl;
-  // pts.push_back(Point_2(2,-11));
-  // pts.push_back(Point_2(1,0));
-  // pts.push_back(Point_2(0,-1));
-  // x_poly = x_polyline_const(pts.begin(),pts.end());
-  // std::cout << "The constructed polyline is:" << std::endl;
-  // std::cout << x_poly << std::endl;
-  // std::cout << "----====----"<< std::endl;
+  std::cout << "Starting a construction of a polyline from a range of point..."
+            << std::endl;
+  pts.push_back(Point_2(2,-11));
+  pts.push_back(Point_2(1,0));
+  pts.push_back(Point_2(0,-1));
+  pts.push_back(Point_2(0,1));
+  pts.push_back(Point_2(-1,-1));
+  pts.push_back(Point_2(0,1));
+  poly = polyline_const(pts.begin(),pts.end());
+  pts.clear();
+  std::cout << "The constructed polyline is:" << std::endl;
+  std::cout << poly << std::endl;
+  std::cout << "----====----"<< std::endl;
 
   // Construction of polyline from range of points
   // std::cout << "Starting a construction of polyline from a range of point"
