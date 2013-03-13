@@ -147,7 +147,7 @@ public:
       is_pt_max = (res == SMALLER);
 
       CGAL_precondition_msg (! is_degen,
-                             "Cannot contruct a degenerate segment.");
+                             "Cannot construct a degenerate segment.");
 
       l = kernel.construct_line_2_object()(source, target);
       is_vert = kernel.is_vertical_2_object()(l);
