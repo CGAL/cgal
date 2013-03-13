@@ -114,19 +114,19 @@ enum Mode {GENERAL, /**< the alpha complex can have singular faces,
 Enum to classify the faces of the underlying 
 triangulation with respect to the alpha shape. 
 
-In GENERAL mode, for \f$ k=(0,1,2)\f$, 
+In `GENERAL` mode, for \f$ k=(0,1,2)\f$, 
 each k-dimensional simplex of the triangulation 
-can be classified as EXTERIOR, SINGULAR, REGULAR 
-or INTERIOR. 
-In GENERAL mode a \f$ k\f$ simplex is REGULAR if it is on the boundary 
+can be classified as `EXTERIOR`, `SINGULAR`, `REGULAR` 
+or `INTERIOR`. 
+In `GENERAL` mode a \f$ k\f$ simplex is `REGULAR` if it is on the boundary 
 f the alpha complex and belongs to a \f$ k+1\f$ simplex in this complex 
-and it is SINGULAR if it is a boundary simplex that is not included in a \f$ k+1\f$ simplex of the complex. 
+and it is `SINGULAR` if it is a boundary simplex that is not included in a \f$ k+1\f$ simplex of the complex. 
 
-In REGULARIZED mode, for \f$ k=(0,1,2)\f$ 
+In `REGULARIZED` mode, for \f$ k=(0,1,2)\f$ 
 each k-dimensional simplex of the triangulation 
-can be classified as EXTERIOR, REGULAR or INTERIOR, i.e.\ 
+can be classified as `EXTERIOR`, `REGULAR` or `INTERIOR`, i.e.\ 
 there is no singular faces. 
-A \f$ k\f$ simplex is REGULAR if it is on the boundary of alpha complex 
+A \f$ k\f$ simplex is `REGULAR` if it is on the boundary of alpha complex 
 and belongs to a tetrahedral cell of the complex. 
 */ 
 enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR}; 
