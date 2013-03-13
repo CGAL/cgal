@@ -93,11 +93,6 @@ void Viewer::initializeGL()
   setBackgroundColor(::Qt::white);
   d->scene->initializeGL();
 
-  const GLfloat ambient_light[4] = { 0.6f, 0.6f, 0.6f, 1.0f };
-  const GLfloat diffuse_light[4] = { 0.6f, 0.6f, 0.6f, 1.0f };
-
-  ::glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
-  ::glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light);
   // ::glFogf(GL_FOG_DENSITY, 0.05f);
   // ::glHint(GL_FOG_HINT, GL_NICEST);
   // ::glFogi(GL_FOG_MODE, GL_LINEAR);
