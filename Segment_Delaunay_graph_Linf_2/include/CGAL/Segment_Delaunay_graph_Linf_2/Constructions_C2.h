@@ -977,11 +977,11 @@ public:
               << "debug construct bisector segment npts="
               << npts << std::endl; );
 
-          CGAL_assertion((l.perpendicular(vpqr).
+          /*CGAL_assertion((l.perpendicular(vpqr).
                          has_on_negative_side(vqps)) or
                          ((compare_x_2(vpqr, vqps) == EQUAL) and
                           (compare_y_2(vpqr, vqps) == EQUAL))
-                         );
+                         );*/
 
           while (npts > 2) {
             if (l.perpendicular(points[npts-2]).
