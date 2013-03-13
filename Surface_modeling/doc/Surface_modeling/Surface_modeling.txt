@@ -117,7 +117,7 @@ Illustration of overlapping cells
 
 Minimization of the energy function in Eq.\f$\eqref{eq:arap_energy}\f$ for every vertex under deformation constraints provides
 as-rigid-as possible deformation. In the equation, there are two unknowns: the new positions of vertices (\f$\mathbf{v}'_i\f$) 
-and rotation matrices (\f$\mathbf{R}_i\f$). This minimization problem is solved by developing a two-step optimization approach (also called local-global approach).
+and rotation matrices (\f$\mathbf{R}_i\f$). This minimization problem is solved by using a two-step optimization approach (also called local-global approach).
 
 In the first step, the method fixes vertex positions and treat \f$\mathbf{R}_i\f$ as only unknown. Given covariance matrix \f$S_i\f$:
 \f[
@@ -165,9 +165,12 @@ Two-step optimization can be pursued for further refinement by altering steps.
 \f]
 
 \subsection Surface_Modeling_Overview_ARAP_Rims Spokes and Rims Version
-\todo we should ask Olga to check this
 
-Modified energy function proposed by \cite Chao2010SimpleGeomModel includes also the rim edges along with spoke edges. So that the energy function becomes:
+\cgalFigureBegin{Spoke_and_rim_edges, spoke_and_rim_edges.png}
+Considered edges \f$E(\mathbf{v}_i)\f$ in energy function for a vertex \f$\mathbf{v}_i\f$. 
+\cgalFigureEnd
+
+Modified energy function proposed by \cite Chao2010SimpleGeomModel includes all edges around facets incident to a vertex. So that the energy function becomes:
 
 \f[
 \begin{equation}
@@ -178,14 +181,14 @@ Modified energy function proposed by \cite Chao2010SimpleGeomModel includes also
 \end{equation}
 \f]
 
-where \f$E(\mathbf{v}_i)\f$ is set of edges consisting spoke and rim edges of \f$\mathbf{v}_i\f$. 
+where \f$E(\mathbf{v}_i)\f$ is set of edges around facets incident to \f$\mathbf{v}_i\f$ \cgalFigureRef{Spoke_and_rim_edges}. 
 For the first step, corresponding Eq. \f$\eqref{eq:cov_matrix}\f$ is simply modified to include all edges in \f$E(\mathbf{v}_i)\f$. 
 For the second step, setting partial derivative of Eq. \f$\eqref{eq:arap_energy_rims}\f$ zero with respect to \f$\mathbf{v}_i\f$ results in:
 
 \f[
 \begin{equation}
-\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}'_i - \mathbf{v}'_j) =
-\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij} \frac{(\mathbf{R}_i + \mathbf{R}_j + \mathbf{R}_m + \mathbf{R}_n)}{4} (\mathbf{v}_i - \mathbf{v}_j).
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij} + w_{ji})(\mathbf{v}'_i - \mathbf{v}'_j) =
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} \frac{w_{ij}(\mathbf{R}_i + \mathbf{R}_j + \mathbf{R}_m) + w_{ji}(\mathbf{R}_i + \mathbf{R}_j + \mathbf{R}_n)}{3} (\mathbf{v}_i - \mathbf{v}_j).
 	\label{eq:lap_ber_rims}
 \end{equation}
 \f]
@@ -199,8 +202,7 @@ where \f$\mathbf{R}_m\f$ and \f$\mathbf{R}_n\f$ are rotation matrices of \f$\mat
 Usage flow of API. 
 \cgalFigureEnd
 
-\subsection Preprocess
-\todo better section name
+\subsection Preprocess_section Preprocess Section
 
 While introducing the API, we would like to consider user point of view by following main steps in a deformation session \cgalFigureRef{Flow_of_API}. 
 The usage of the API begins with constructing a deformation object.
@@ -239,8 +241,7 @@ Preprocess function returns true if factorization of the linear system in Eq. \f
 One common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for ROI 
 and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices). 
 
-\subsection Deform
-\todo better section name
+\subsection Deform_section Deform Section
 
 Before deforming the mesh, target positions should be provided for handle vertices. A direct way to accomplish this is:
   - `Deform_mesh::assign(vertex_descriptor vd, const Point& target_position)` assign the target position for the handle vertex
