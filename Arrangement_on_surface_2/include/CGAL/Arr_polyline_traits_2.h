@@ -1179,7 +1179,6 @@ public:
      *       "Curve_2 operator()(InputIterator begin, InputIterator end)"
      *       This can be corrected by adding a "const" at the end of the
      *       signature of following functor.
-     * TODO: Test the function.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
