@@ -65,20 +65,78 @@ public:
 
 
   /*!
-   * Constructor from a range of segments.
-   * \param begin An iterator pointing to the first element in the range.
-   * \param end An iterator pointing after the last element in the range.
-   * \pre A polyline consisting of the segments in the range and ordered
-   *      with the same order.
-   * TODO: Originally (in the original implementation), a constructor with
-   *       the same signature expected a range of POINTS and at least 2 points.
-   *       How to handle backwards compatibility in this case?
+   * Constructor from a range. The range can be either:
+   * - Range of points, and the polyline is defined by the order of the points.
+   * - Range of linear object. The polyline is the sequence of linear objects.
+   * \param begin An iterator pointing to the first point in the range.
+   * \param end An iterator pointing after the last point in the range.
+   * \pre Depends on the range's content. See the implementations for further
+   *      details.
    */
   template <typename InputIterator>
   _Polyline_2(InputIterator begin, InputIterator end) :
     m_segments()
   {
-    m_segments.assign(begin,end);
+    // TODO: Get rid of *begin, by using the trick from the traits.
+    // TODO: add a big excuse for duplicating the dispatching.
+
+    construct_polyline(begin, end, *begin);
+  }
+
+  /*!
+   * Construct a polyline from a range of segments.
+   * \param begin An iterator pointing to the first segment in the range.
+   * \param end An iterator pointing after the past-the-end segment
+   *        in the range.
+   * \pre The end of segment n should be the beginning of segment n+1.
+   *
+   * TODO: After we remove the next followin function
+   * this following one will become private.
+   * TODO: once this become private the traits has to become a friend.
+   *
+   */
+  template <typename InputIterator>
+  void construct_polyline(InputIterator begin, InputIterator end,
+                          const Segment_2&)
+  {
+    m_segments.assign(begin, end);
+  }
+
+  /*!
+   * Construct a polyline from a range of points.
+   * \param begin An iterator pointing to the first point in the range.
+   * \param end An iterator pointing after the last point in the range.
+   * \pre There are at least 2 points in the range.
+   *      In other cases, an empty polyline will be created.
+   */
+  template <typename InputIterator>
+  CGAL_DEPRECATED void construct_polyline
+    (InputIterator begin, InputIterator end, const Point_2&)
+  {
+    // Check if there are no points in the range:
+    InputIterator  ps = begin;
+
+    if (ps == end)
+      return;
+
+    InputIterator pt = ps;
+    ++pt;
+
+    // The range contains only one point. A degenerated polyline is constructed.
+    // With one degenerated segment, where source=target.
+    if (pt == end)
+      {
+        m_segments.push_back(Segment_2(*ps,*ps));
+        return;
+      }
+
+    // Construct a segment from each to adjacent points.
+    // The container has to contain at least two points.
+    while (pt != end) {
+      m_segments.push_back(Segment_2(*ps, *pt));
+      ++ps;
+      ++pt;
+    }
   }
 
   /*!
@@ -110,7 +168,10 @@ public:
   }
 
   /*!
-   * Create a bounding-box for the polyline.
+   * TODO: (for UNBOUNDED case) Code has to be changed for unbounded case
+   * Create a bounding-box for the polyline. And should be moved to the traits.
+   * Look for bbox in other traits, and see what is done there? If nothing is
+   * found, just leave it...
    * \return The bounding-box.
    */
   Bbox_2 bbox() const
@@ -133,7 +194,8 @@ public:
 
   class const_iterator;
   friend class const_iterator;
-  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  typedef std::reverse_iterator<const_iterator>
+     const_reverse_iterator;
 
   /*! An iterator for the polyline points. */
   CGAL_DEPRECATED class const_iterator
@@ -286,19 +348,13 @@ public:
     return (const_reverse_iterator (begin()));
   }
 
-  /*
-   * Non-constant iterator over the segments of the polyline
-   * Only begin is implemented, as this is only used by the Split_2
-   * functor.
-   */
+  // TODO: This was added to handle the Split_2. Understand whether
+  // also a reverse version should be implemented?
   typedef typename Segments_container::iterator Segment_iterator;
 
   Segment_iterator begin_segments()
   { return m_segments.begin(); }
 
-  /*
-   * Constant forward and reversed iterators over the segments of the poyline
-   */
   typedef typename Segments_container::const_iterator
     Segment_const_iterator;
   typedef typename std::reverse_iterator<Segment_const_iterator>
@@ -382,17 +438,93 @@ public:
   /*! Default constructor. */
   _X_monotone_polyline_2() : Base () {}
 
+  _X_monotone_polyline_2(Segment_2 seg) : Base(seg){ }
+
   /*! Constructor */
-  /*
-   * As there are no tests to be done here, we can simply use the
-   * constructor of base.
-   * TODO: In the original implementation, the input was a range of points.
-   *       Should this be addressed for backwards compatibility?
-   */
   template <typename InputIterator>
   _X_monotone_polyline_2(InputIterator begin, InputIterator end) :
     Base(begin, end)
+  {
+    construct_x_monotone_polyline(begin, end, *begin);
+  }
+
+  /*!
+   * Constructs from a range of segments.
+   * This constructor is expected to be called only from the
+   * traits class, after the input was verified there.
+   */
+  template <typename InputIterator>
+  void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
+                                     const Segment_2& /* */)
   { }
+
+  /*!
+   * Constructs from a range of points, defining the endpoints of the
+   * polyline segments.
+   */
+  template <typename InputIterator>
+  CGAL_DEPRECATED void construct_x_monotone_polyline
+    (InputIterator begin, InputIterator end,
+     const Point_2& /* */)
+  {
+    // Make sure the range of points contains at least two points.
+    Segment_traits_2 seg_traits;
+    InputIterator ps = begin;
+    CGAL_precondition (ps != end);
+    InputIterator pt = ps;
+    ++pt;
+    CGAL_precondition (pt != end);
+
+    CGAL_precondition_code(
+      typename Segment_traits_2::Compare_x_2 compare_x =
+        seg_traits.compare_x_2_object();
+      );
+    CGAL_precondition_code(
+      typename Segment_traits_2::Compare_xy_2 compare_xy =
+        seg_traits.compare_xy_2_object();
+      );
+
+
+    // Make sure there is no change of directions as we traverse the polyline.
+    CGAL_precondition_code (
+      const Comparison_result cmp_x_res = compare_x(*ps, *pt);
+    );
+    const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
+    CGAL_precondition (cmp_xy_res != EQUAL);
+    ++ps; ++pt;
+    while (pt != end) {
+      CGAL_precondition (compare_xy(*ps, *pt) == cmp_xy_res);
+      CGAL_precondition (compare_x(*ps, *pt) == cmp_x_res);
+      ++ps; ++pt;
+    }
+
+    // Reverse the polyline so it always directed from left to right.
+    if (cmp_xy_res == LARGER)
+      _reverse();
+  }
+
+private:
+  /*! Reverse the polyline. */
+  void _reverse()
+  {
+    typename Base::const_reverse_iterator  ps = this->rbegin();
+    typename Base::const_reverse_iterator  pt = ps;
+    ++pt;
+
+    std::vector<Segment_2>  rev_segs (this->number_of_segments());
+    unsigned int            i = 0;
+
+    while (pt != this->rend())
+    {
+      rev_segs[i] = Segment_2 (*ps, *pt);
+      ++ps; ++pt;
+      i++;
+    }
+
+    this->m_segments = rev_segs;
+    return;
+  }
+
 };
 
   /*! Output operator for a polyline. */
