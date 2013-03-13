@@ -4,9 +4,9 @@
 
 An object of the class `Circle` is a circle in two-dimensional
 Euclidean plane \f$ \E^2\f$. Its boundary splits the plane into a bounded
-and an unbounded side. By definition, an empty `#1` has no
+and an unbounded side. By definition, an empty `Circle` has no
 boundary and no bounded side, i.e.\ its unbounded side equals the
-whole plane \f$ \E^2\f$. A `#1` containing exactly one point \f$ p\f$
+whole plane \f$ \E^2\f$. A `Circle` containing exactly one point \f$ p\f$
 has no bounded side, its boundary is \f$ \{p\}\f$, and its unbounded side
 equals \f$ \E^2 \setminus \{p\}\f$.
 

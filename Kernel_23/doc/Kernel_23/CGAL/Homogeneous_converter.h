@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_conversion
 
-`Homogeneous_converter`converts objects from the kernel traits `K1` to 
+`Homogeneous_converter` converts objects from the kernel traits `K1` to 
 the kernel traits `K2`. Those traits must be of the form 
 `Homogeneous<RT1>` and `Homogeneous<RT2>` (or the equivalent with 
 `Simple_homogeneous`). It then provides the following operators to 
