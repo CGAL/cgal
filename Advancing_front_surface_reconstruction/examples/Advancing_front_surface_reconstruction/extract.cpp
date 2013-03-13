@@ -2,14 +2,10 @@
 #define BLIND
 
 
-#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include <strstream>
-#include <cassert>
 #include <vector>
-#include <list>
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -415,7 +411,7 @@ int main(int argc,  char* argv[])
  
 #if 0
   std::cerr << "Time for reading "  << timer.time() << " sec." << std::endl;
-  std::vector<CGAL::Triple<int,int,int> > triples;
+  std::vector<CGAL::Triple<std::size_t,std::size_t,std::size_t> > triples;
   reconstruction_test(points.begin(), points.end(), std::back_inserter(triples));
 
 

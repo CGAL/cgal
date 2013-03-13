@@ -233,9 +233,9 @@ write_triple_indices(OutputIterator out, const Surface& S)
 	  i1 = (ci+1) & 3;
 	  i2 = (ci+2) & 3;
 	  i3 = (ci+3) & 3;
-	  *out++ = CGAL::Triple<int,int,int>(c->vertex(i1)->id(),
-                                             c->vertex(i2)->id(),
-                                             c->vertex(i3)->id());
+	  *out++ = CGAL::Triple<std::size_t,std::size_t,std::size_t>(c->vertex(i1)->id(),
+                                                                     c->vertex(i2)->id(),
+                                                                     c->vertex(i3)->id());
 	}
 
        if (n->is_selected_facet(ni))
@@ -244,9 +244,9 @@ write_triple_indices(OutputIterator out, const Surface& S)
 	  i2 = (ni+2) & 3;
 	  i3 = (ni+3) & 3;
 
-	  *out++ = CGAL::Triple<int,int,int>(n->vertex(i1)->id(),
-                                             n->vertex(i2)->id(),
-                                             n->vertex(i3)->id());
+	  *out++ = CGAL::Triple<std::size_t,std::size_t,std::size_t>(n->vertex(i1)->id(),
+                                                                     n->vertex(i2)->id(),
+                                                                     n->vertex(i3)->id());
 	}
     }
   return out;
