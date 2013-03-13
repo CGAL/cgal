@@ -93,7 +93,7 @@ Data at(Key key) const;
 /*! 
 Set the editing state of 
 the object. A notification is sent when the editing state is set to 
-false after it has been true, i.e. the editing session is finished. 
+false after it has been true, i.e.\ the editing session is finished. 
 This allows changes to be batched together. 
 */ 
 void set_is_editing(bool is_editing); 

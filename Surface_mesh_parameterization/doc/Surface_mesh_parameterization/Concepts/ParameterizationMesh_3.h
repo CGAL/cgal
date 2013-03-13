@@ -7,7 +7,7 @@
 
 A `ParameterizationMesh_3` surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested. Vertices represent points in 3d-space. Facets are planar polygons without holes defined by the circular sequence of vertices along their border. The surface itself can have holes. The vertices along the border of a hole are called <I>border vertices</I>. A surface is <I>closed</I> if it contains no border vertices. 
 
-The surface must be an oriented 2-manifold with border vertices, i.e. the neighborhood of each point on the surface is either homeomorphic to a disc or to a half disc, except for vertices where many holes and surfaces with border can join. 
+The surface must be an oriented 2-manifold with border vertices, i.e.\ the neighborhood of each point on the surface is either homeomorphic to a disc or to a half disc, except for vertices where many holes and surfaces with border can join. 
 
 `ParameterizationMesh_3` defines the types, data and methods that a mesh must implement to allow surface parameterization. Among other things, this concept defines accessors to fields specific to parameterizations methods: index, `u`, `v`, `is_parameterized`. 
 
@@ -35,7 +35,7 @@ class ParameterizationMesh_3 {
 public:
 
 /// \name Types 
-/// The following mutable handles, iterators, and circulators have appropriate non-mutable counterparts, i.e. `const_handle`, `const_iterator`, and `const_circulator`. The mutable types are assignable to their non-mutable counterparts. Both circulators are assignable to the `Vertex_iterator`. The iterators are assignable to the respective handle types. Wherever the handles appear in function parameter lists, the corresponding iterators can be used as well.
+/// The following mutable handles, iterators, and circulators have appropriate non-mutable counterparts, i.e.\ `const_handle`, `const_iterator`, and `const_circulator`. The mutable types are assignable to their non-mutable counterparts. Both circulators are assignable to the `Vertex_iterator`. The iterators are assignable to the respective handle types. Wherever the handles appear in function parameter lists, the corresponding iterators can be used as well.
 /// @{
 
 /*! 
@@ -174,7 +174,7 @@ typedef Hidden_type Vertex_around_vertex_const_circulator;
 /// @} 
 
 /// \name Operations 
-/// The following mutable methods returning a handle, iterator, or circulator have appropriate non-mutable counterpart methods, i.e. `const`, returning a `const_handle`, `const_iterator`, or `const_circulator`.
+/// The following mutable methods returning a handle, iterator, or circulator have appropriate non-mutable counterpart methods, i.e.\ `const`, returning a `const_handle`, `const_iterator`, or `const_circulator`.
 /// @{
 
 /*! 

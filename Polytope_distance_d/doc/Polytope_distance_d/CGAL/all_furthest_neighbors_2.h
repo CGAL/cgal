@@ -11,7 +11,7 @@ written to o]`} and returns the past-the-end iterator of this
 sequence.
 
 The function `all_furthest_neighbors_2()` computes all furthest 
-neighbors for the vertices of a convex polygon \f$ P\f$, i.e. for each 
+neighbors for the vertices of a convex polygon \f$ P\f$, i.e.\ for each 
 vertex \f$ v\f$ of \f$ P\f$ a vertex \f$ f_v\f$ of \f$ P\f$ such that the distance 
 between \f$ v\f$ and \f$ f_v\f$ is maximized. 
 

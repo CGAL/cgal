@@ -7,7 +7,7 @@ The class `Mesh_constant_domain_field_3` is a model of concept `MeshDomainField_
 a constant field accessible using queries on 3D-points. 
 
 The class `Mesh_constant_domain_field_3` can also be customized through `set_size()` operations to become 
-a piecewise constant field, i.e. a sizing field with a constant size on each subpart 
+a piecewise constant field, i.e.\ a sizing field with a constant size on each subpart 
 of the domain. 
 
 \tparam Gt is the geometric traits class. It must match the type `Triangulation::Geom_traits`, 

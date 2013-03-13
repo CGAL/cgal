@@ -385,7 +385,7 @@ introduced by Arya and Mount \cite am-afvq-93. This technique
 works only for neighbor queries with query items represented as points
 and with a quadratic form distance, defined by \f$ d_A(x,y)=
 (x-y)A(x-y)^T\f$, where the matrix \f$ A\f$ is positive definite,
-i.e. \f$ d_A(x,y) \geq 0\f$. An important class of quadratic form
+i.e.\ \f$ d_A(x,y) \geq 0\f$. An important class of quadratic form
 distances are weighted Minkowski distances. Given a parameter \f$ p>0\f$
 and parameters \f$ w_i \geq 0, 0 < i \leq d\f$, the weighted Minkowski
 distance is defined by \f$ l_p(w)(r,q)= ({\Sigma_{i=1}^{i=d} \,

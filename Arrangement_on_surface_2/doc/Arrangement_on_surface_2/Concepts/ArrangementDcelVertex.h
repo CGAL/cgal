@@ -82,7 +82,7 @@ returns the isolated vertex-information record.
 Isolated_vertex* isolated_vertex(); 
 
 /*! 
-returns whether the vertex is not associated with a valid point (i.e. it 
+returns whether the vertex is not associated with a valid point (i.e.\ it 
 lies at infinity). 
 */ 
 bool has_null_point () const; 

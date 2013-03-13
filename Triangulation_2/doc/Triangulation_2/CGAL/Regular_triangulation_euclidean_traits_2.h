@@ -13,7 +13,7 @@ derived from the type `K::Point_2`.
 
 Note that this template class is specialized for 
 `Exact_predicates_inexact_constructions_kernel`, so that it is as if 
-`Regular_triangulation_filtered_traits_2` was used, i.e. you get 
+`Regular_triangulation_filtered_traits_2` was used, i.e.\ you get 
 filtered predicates automatically. 
 
 \cgalModels `RegularTriangulationTraits_2`

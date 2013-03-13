@@ -17,7 +17,7 @@ the sample points onto the tangent plane at `p`.
 The functions `surface_neighbor_coordinates_certified_3()` return, in
 addition, a second Boolean value (the fourth value of the quadruple)
 that certifies whether or not, the Voronoi cell of `p` can be affected
-by points that lie outside the input range, i.e. outside the ball
+by points that lie outside the input range, i.e.\ outside the ball
 centered on `p` passing through the furthest sample point from `p` in
 the range `[first, beyond)`. If the sample points are collected by a
 `k`-nearest neighbor or a range search query, this permits to check
@@ -29,7 +29,7 @@ whether the neighborhood which has been considered is large enough.
 <LI>`Dt` is equivalent to the class 
 `Delaunay_triangulation_3`. 
 <LI>The value type of `OutputIterator` is equivalent to 
-`std::pair<Dt::Point_3, Dt::Geom_traits::FT>`, i.e. a pair 
+`std::pair<Dt::Point_3, Dt::Geom_traits::FT>`, i.e.\ a pair 
 associating a point and its natural neighbor coordinate. 
 <LI>`ITraits` is equivalent to the class `Voronoi_intersection_2_traits_3<K>`. 
 </OL> 
@@ -68,7 +68,7 @@ starting at `out`. The function returns a triple with an
 iterator that is placed past-the-end of the resulting sequence of
 point/coordinate pairs, the normalization factor of the coordinates
 and a Boolean value which is set to true iff the coordinate
-computation was successful, i.e. if `p` lies inside the convex
+computation was successful, i.e.\ if `p` lies inside the convex
 hull of the projection of the points \f$ \mathcal{P}\f$ onto the tangent
 plane.
 */

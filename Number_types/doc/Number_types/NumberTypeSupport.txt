@@ -131,7 +131,7 @@ computation as long as all intermediate results are rational. For the
 same kind of problems, Cartesian representation with number type
 `leda_rational` leads to exact computation as well.
 The number type `leda_bigfloat` in \leda is a variable precision
-floating-point type. Rounding mode and precision (i.e. mantissa length) of
+floating-point type. Rounding mode and precision (i.e.\ mantissa length) of
 `leda_bigfloat` can be set.
 
 The most sophisticated number type in \leda is the number type called

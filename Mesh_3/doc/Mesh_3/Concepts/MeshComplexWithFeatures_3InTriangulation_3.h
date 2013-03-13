@@ -8,7 +8,7 @@ The concept `MeshComplexWithFeatures_3InTriangulation_3` refines the minimal con
 `MeshComplex_3InTriangulation_3`, designed to represent 
 3D complexes having only faces with dimension 2 and 3. 
 Therefore, the concept `MeshComplexWithFeatures_3InTriangulation_3` may represent embedded complexes 
-including <I>features</I>, i.e. faces with dimension \f$ 0\f$ and \f$ 1\f$. 
+including <I>features</I>, i.e.\ faces with dimension \f$ 0\f$ and \f$ 1\f$. 
 
 The data structure includes a 3D triangulation which is itself a 3D complex. 
 To distinguish the faces of the embedded 3D complex from the 

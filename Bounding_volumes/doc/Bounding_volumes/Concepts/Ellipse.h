@@ -5,7 +5,7 @@
 An object `ellipse` of the class `Ellipse` is an ellipse in two-dimensional
 Euclidean plane \f$ \E^2\f$. Its boundary splits the plane into a bounded
 and an unbounded side. By definition, an empty `ellipse` has no
-boundary and no bounded side, i.e. its unbounded side equals the
+boundary and no bounded side, i.e.\ its unbounded side equals the
 whole plane \f$ \E^2\f$.
 */
 class Ellipse {

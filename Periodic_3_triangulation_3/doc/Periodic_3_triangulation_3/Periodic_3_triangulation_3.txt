@@ -14,7 +14,7 @@ namespace CGAL {
 The periodic 3D-triangulation class of \cgal is designed to
 represent the triangulations of a set of points in the
 three-dimensional flat torus. The triangulation forms a partition of
-the space it is computed in. It is a simplicial complex, i.e. it
+the space it is computed in. It is a simplicial complex, i.e.\ it
 contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex and two
 \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face,
 \f$ j<k\f$. The occurring simplices of dimension up to three are called

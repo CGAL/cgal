@@ -120,7 +120,7 @@ The package provides an interface with `CGAL::Polyhedron_3<Traits>`:
 
 ## Output ##
 
-A `(u,v)` pair is computed for each inner vertex (i.e. its halfedges share the same `(u,v)` pair), while a `(u,v)` pair is computed for each border halfedge. The user must iterate over the mesh halfedges to get the result. 
+A `(u,v)` pair is computed for each inner vertex (i.e.\ its halfedges share the same `(u,v)` pair), while a `(u,v)` pair is computed for each border halfedge. The user must iterate over the mesh halfedges to get the result. 
 
 ## Sparse Linear Algebra ##
 

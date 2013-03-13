@@ -71,7 +71,7 @@ Test for nonequality.
 bool operator!=(const Circular_arc_point_3<SphericalKernel> &p, const Circular_arc_point_3<SphericalKernel> &q); 
 
 /*! 
-Returns true iff `p` is lexicographically smaller than `q`, i.e. either 
+Returns true iff `p` is lexicographically smaller than `q`, i.e.\ either 
 if `p.x() < q.x()` or if `p.x() == q.x()` and `p.y() < q.y()`
 or if `p.x() == q.x()` and `p.y() == q.y()` and `p.z() < q.z()`. 
 \relates Circular_arc_point_3 

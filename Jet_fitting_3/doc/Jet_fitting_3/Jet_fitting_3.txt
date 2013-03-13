@@ -198,7 +198,7 @@ of the fitting basis.
 direct, and the maximal, minimal curvatures are defined wrt this
 basis. If the user has a predefined normal \f$ n_0\f$ (e.g. the sample
 points come from an oriented mesh) then if \f$ n_0 . n >0\f$ then max-min
-is correct; if not, i.e. \f$ n_0 . n <0\f$, the user should switch to the
+is correct; if not, i.e.\ \f$ n_0 . n <0\f$, the user should switch to the
 orthonormal direct basis \f$ (d_1',d_2',n')=(d_2,d_1,-n)\f$ with the
 maximal curvature \f$ k_1'=-k_2\f$ and the minimal curvature
 \f$ k_2'=-k_1\f$. If \f$ n_0 . n =0\f$ or is small, the orientation of the
@@ -366,7 +366,7 @@ given by
 \f}
 
 The equations for interpolation become \f$ MA=Z\f$. For approximation, the
-system \f$ MA=Z\f$ is solved in the least square sense, i.e. one seeks the
+system \f$ MA=Z\f$ is solved in the least square sense, i.e.\ one seeks the
 vector \f$ A\f$ such that \f$ A = \arg \min_A ||MA-Z||_2\f$.
 
 In any case, there is a preconditioning of the matrix \f$ M\f$ so as to
@@ -476,7 +476,7 @@ M}^{-1}=P_{F \rightarrow M}^T\f$. The Monge basis expressed in the
 world-basis is obtained by multiplying the coordinates of
 \f$ (d_1,d_2,n)\f$ in the fitting-basis by \f$ P_{W\rightarrow F}^{-1}\f$,
 (the same holds for the origin point which has in addition to be
-translated by \f$ p\f$, i.e. the coordinates of the origin point are
+translated by \f$ p\f$, i.e.\ the coordinates of the origin point are
 \f$ P_{W\rightarrow F}^{-1} (0,0,A_{0,0}) +p\f$.
 </UL>
 

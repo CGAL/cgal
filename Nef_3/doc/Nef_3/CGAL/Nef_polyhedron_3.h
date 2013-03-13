@@ -877,7 +877,7 @@ public:
   \ingroup PkgNef3
 
   A volume is a full-dimensional connected point set in \f$ \mathbb{R}^3\f$. It is 
-  bounded by several shells, i.e. a connected part of the boundary incident 
+  bounded by several shells, i.e.\ a connected part of the boundary incident 
   to a single volume. An entry element to each shell is provided by the 
   iterator range (`shells_begin()`/`shells_end()`). A 
   `Shell_entry_iterator` is assignable to `SFace_handle`. 
@@ -1369,7 +1369,7 @@ public:
   Nef_polyhedron_3<Traits> closure() const; 
 
 /*! 
-  returns the regularization, i.e. the closure of the interior, of `N` . 
+  returns the regularization, i.e.\ the closure of the interior, of `N` . 
 */ 
   Nef_polyhedron_3<Traits> regularization() const; 
 

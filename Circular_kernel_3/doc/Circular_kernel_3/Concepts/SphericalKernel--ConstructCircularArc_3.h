@@ -10,7 +10,7 @@ seen from the side of the plane of the circle pointed by its <I>positive</I> nor
 vectors. 
 
 In this definition, we say that a normal vector \f$ (a,b,c)\f$  is <I>positive</I> if 
-\f$ (a,b,c)>(0,0,0)\f$ (i.e. \f$ (a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)\f$). 
+\f$ (a,b,c)>(0,0,0)\f$ (i.e.\ \f$ (a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)\f$). 
 
 */
 

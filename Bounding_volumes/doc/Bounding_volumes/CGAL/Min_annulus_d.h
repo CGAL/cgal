@@ -10,7 +10,7 @@ finite set of points in \f$ d\f$-dimensional Euclidean space \f$ \E^d\f$, where 
 difference \f$ R^2-r^2\f$ is minimal. For a point set \f$ P\f$ we denote by \f$ ma(P)\f$ 
 the smallest annulus that contains all points of \f$ P\f$. Note that \f$ ma(P)\f$ 
 can be degenerate, 
-i.e. \f$ ma(P)=\emptyset\f$ if 
+i.e.\ \f$ ma(P)=\emptyset\f$ if 
 \f$ P=\emptyset\f$ and \f$ ma(P)=\{p\}\f$ if 
 \f$ P=\{p\}\f$. 
 
@@ -159,13 +159,13 @@ int ambient_dimension( ) const;
 
 /*! 
 
-returns the number of points of `min_annulus`, i.e. \f$ |P|\f$. 
+returns the number of points of `min_annulus`, i.e.\ \f$ |P|\f$. 
 */ 
 int number_of_points( ) const; 
 
 /*! 
 
-returns the number of support points of `min_annulus`, i.e. \f$ |S|\f$. 
+returns the number of support points of `min_annulus`, i.e.\ \f$ |S|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
@@ -270,7 +270,7 @@ of the center of `min_annulus`.
 
 \note
 The coordinates have a rational 
-representation, i.e. the first \f$ d\f$ elements of the iterator 
+representation, i.e.\ the first \f$ d\f$ elements of the iterator 
 range are the numerators and the \f$ (d\!+\!1)\f$-st element is the 
 common denominator. 
 */ 
@@ -308,7 +308,7 @@ ET squared_radii_denominator( ) const;
 /// The bounded area of the smallest enclosing annulus lies between
 /// the inner and the outer sphere. The boundary is the union of both
 /// spheres. By definition, an empty annulus has no boundary and no
-/// bounded side, i.e. its unbounded side equals the whole space \f$
+/// bounded side, i.e.\ its unbounded side equals the whole space \f$
 /// \E^d\f$.
 /// @{
 
@@ -353,7 +353,7 @@ bool is_empty( ) const;
 
 /*! 
 
-returns `true`, iff `min_annulus` is degenerate, i.e. if `min_annulus` is empty or equal to a single point. 
+returns `true`, iff `min_annulus` is degenerate, i.e.\ if `min_annulus` is empty or equal to a single point. 
 */ 
 bool is_degenerate( ) const; 
 
@@ -403,7 +403,7 @@ InputIterator last );
 /// An object `min_annulus` is valid, iff <UL> <LI>`min_annulus`
 /// contains all points of its defining set \f$ P\f$,
 /// <LI>`min_annulus` is the smallest annulus containing its support
-/// set \f$ S\f$, and <LI>\f$ S\f$ is minimal, i.e. no support point
+/// set \f$ S\f$, and <LI>\f$ S\f$ is minimal, i.e.\ no support point
 /// is redundant. </UL> <I>Note:</I> In this release only the first
 /// item is considered by the validity check.
 /// @{

@@ -131,7 +131,7 @@ bool is_y_monotone();
 
 /*! 
 Test for equality. Two arcs are equal, iff their non-oriented 
-supporting circles are equal (i.e. they have same center and same 
+supporting circles are equal (i.e.\ they have same center and same 
 squared radius) and their endpoints are equal. 
 \relates Circular_arc_2 
 */ 

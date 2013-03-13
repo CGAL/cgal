@@ -21,7 +21,7 @@ either <I>running</I> or it is <I>stopped</I>. The state of an object
 with `t.start()` and `t.stop()`. The timer counts the
 time elapsed since its creation or last reset. It counts only the time
 where it is in the running state. The time information is given in seconds.
-The timer counts also the number of intervals it was running, i.e. it 
+The timer counts also the number of intervals it was running, i.e.\ it 
 counts the number of calls of the `start()` member function since the 
 last reset. If the reset occurs while the timer is running it counts as the
 first interval.

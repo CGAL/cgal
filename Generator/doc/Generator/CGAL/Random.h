@@ -7,7 +7,7 @@ It can be used as the random number generating function object in the
 \stl algorithm `std::random_shuffle`. 
 
 Instances of `Random` can be seen as input streams. Different 
-streams are <I>independent</I> of each other, i.e. the sequence of 
+streams are <I>independent</I> of each other, i.e.\ the sequence of 
 numbers from one stream does <I>not</I> depend upon how many numbers 
 were extracted from the other streams. At each time, an instance has 
 a <I>state</I> that uniquely determines the subsequent numbers being 
