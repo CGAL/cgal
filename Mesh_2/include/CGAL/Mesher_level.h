@@ -40,9 +40,7 @@
 #include <algorithm>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-#   include <tbb/task.h>
-# endif
+# include <tbb/task.h>
 # include <tbb/tbb.h>
 #endif
 
@@ -745,9 +743,7 @@ public:
     Concurrent_mesher_config::get().refinement_batch_size)
     , m_lock_ds(0)
     , m_worksharing_ds(0)
-# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
     , m_empty_root_task(0)
-# endif
   {
   }
 
@@ -869,7 +865,6 @@ public:
     }
   }
 
-#ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
   template <typename Container_element, typename Quality, typename Mesh_visitor>
   void enqueue_task(
     const Container_element &ce, const Quality &quality, Mesh_visitor visitor)
@@ -913,7 +908,6 @@ public:
       //, circumcenter_of_element(derived().extract_element_from_container_value(ce))
     );
   }
-#endif
 
   /**
     * This function takes N elements from the queue, and try to refine
@@ -926,221 +920,9 @@ public:
     typedef typename Derived::Container::Element Container_element;
     typedef typename Derived::Container::Quality Container_quality;
 
-  //=======================================================
-  //================= PARALLEL_FOR?
-  //=======================================================
-
-#ifdef CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
-    /*std::pair<Container_quality, Container_element>
-      raw_elements[REFINEMENT_BATCH_SIZE];*/
-    std::vector<Container_element> container_elements;
-    container_elements.reserve(REFINEMENT_BATCH_SIZE);
-    std::vector<Point> circumcenters;
-    circumcenters.reserve(REFINEMENT_BATCH_SIZE);
-    std::vector<std::ptrdiff_t> indices;
-    indices.reserve(REFINEMENT_BATCH_SIZE);
-
-    /*int batch_size = REFINEMENT_BATCH_SIZE;
-    if (debug_info_class_name() == "Refine_facets_3")
-      batch_size = 1;*/
-
-    size_t iElt = 0;
-    for( ;
-          iElt < REFINEMENT_BATCH_SIZE && !no_longer_element_to_refine() ;
-          ++iElt )
-    {
-      //raw_elements[iElt] = derived().get_next_raw_element_impl();
-      //container_elements[iElt] = derived().get_next_raw_element_impl().second;
-      Container_element ce = derived().get_next_raw_element_impl().second;
-      pop_next_element();
-      container_elements.push_back(ce);
-      Point cc = circumcenter_of_element( derived().extract_element_from_container_value(ce) );
-      circumcenters.push_back(cc);
-      indices.push_back(iElt);
-    }
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
-    std::cerr << "Refining a batch of " << iElt << " elements...";
-# endif
-
-    // Doesn't help much
-    //typedef Spatial_sort_traits_adapter_3<Tr::Geom_traits, Point*> Search_traits;
-    //spatial_sort( indices.begin(), indices.end(),
-    //              Search_traits(&(circumcenters[0])) );
-    //hilbert_sort( indices.begin(), indices.end(), Hilbert_sort_median_policy(),
-    //              Search_traits(&(circumcenters[0])) );
-    //std::random_shuffle(indices.begin(), indices.end());
-
-    // CJTODO: lambda functions OK?
-    // Parallel?
-    if (iElt > 20)
-    {
-      previous_level.add_to_TLS_lists(true);
-      add_to_TLS_lists(true);
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>( 0, iElt, MESH_3_REFINEMENT_GRAINSIZE ),
-        [&] (const tbb::blocked_range<size_t>& r)
-        {
-          for( size_t i = r.begin() ; i != r.end() ; )
-          {
-            std::ptrdiff_t index = indices[i];
-            Container_element ce = container_elements[index];
-
-            const Mesher_level_conflict_status status =
-              this->try_lock_and_refine_element(ce, visitor);
-
-            switch (status)
-            {
-              case NO_CONFLICT:
-              case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
-              case ELEMENT_WAS_A_ZOMBIE:
-                ++i;
-                break;
-
-              case COULD_NOT_LOCK_ZONE:
-              {
-                // Swap indices[i] and indices[i+1]
-                if (i+1 != r.end())
-                {
-                  ptrdiff_t tmp = indices[i+1];
-                  indices[i+1] = indices[i];
-                  indices[i] = tmp;
-                }
-                break;
-              }
-
-              default:
-                break;
-            }
-
-            this->before_next_element_refinement(visitor);
-          }
-        }
-      );
-      splice_local_lists();
-      //previous_level.splice_local_lists(); // useless
-      previous_level.add_to_TLS_lists(false);
-      add_to_TLS_lists(false);
-    }
-    // Go sequential
-    else
-    {
-      for (int i = 0 ; i < iElt ; )
-      {
-        std::ptrdiff_t index = indices[i];
-
-        Derived &derivd = derived();
-        //Container_element ce = raw_elements[index].second;
-        Container_element ce = container_elements[index];
-        if( !derivd.is_zombie(ce) )
-        {
-          // Lock the element area on the grid
-          Element element = derivd.extract_element_from_container_value(ce);
-
-          const Mesher_level_conflict_status result
-            = try_to_refine_element(element, visitor);
-
-          if (result != CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
-            && result != THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE)
-          {
-            ++i;
-          }
-        }
-        else
-        {
-          ++i;
-        }
-        // Unlock
-        unlock_all_thread_local_elements();
-      }
-    }
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
-    std::cerr << " batch done." << std::endl;
-# endif
-
-  //=======================================================
-  //================= PARALLEL_DO?
-  //=======================================================
-
-#elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
-    std::vector<Container_element> container_elements;
-    container_elements.reserve(REFINEMENT_BATCH_SIZE);
-
-    while(!no_longer_element_to_refine())
-    {
-      Container_element ce = derived().get_next_raw_element_impl().second;
-      pop_next_element();
-      container_elements.push_back(ce);
-    }
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+#ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Refining elements...";
-# endif
-
-    // CJTODO: lambda functions OK?
-
-    previous_level.add_to_TLS_lists(true);
-    add_to_TLS_lists(true);
-    tbb::parallel_do(
-      container_elements.begin(), container_elements.end(),
-      [&] (Container_element& ce, tbb::parallel_do_feeder<Container_element>& feeder)
-      {
-        Mesher_level_conflict_status status;
-        do
-        {
-          status = this->try_lock_and_refine_element(ce, visitor);
-        }
-        while (status == COULD_NOT_LOCK_ELEMENT
-          || status == THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE);
-
-        switch (status)
-        {
-          case NO_CONFLICT:
-          case CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED:
-          case ELEMENT_WAS_A_ZOMBIE:
-            break;
-
-          default:
-            feeder.add(ce);
-            break;
-        }
-
-        this->before_next_element_refinement(visitor);
-
-        // Finally we add the new local bad_elements to the feeder
-        while (this->no_longer_local_element_to_refine() == false)
-        {
-          //typedef typename Derived::Container::Element Container_element;
-          Container_element ce = this->derived().get_next_local_raw_element_impl().second;
-          this->pop_next_local_element();
-
-          feeder.add(ce);
-        }
-      }
-    );
-    // CJTODO: USELESS?
-    splice_local_lists();
-    CGAL_assertion(no_longer_element_to_refine());
-    previous_level.splice_local_lists(); // useless
-    CGAL_assertion(previous_level.is_algorithm_done());
-
-    previous_level.add_to_TLS_lists(false);
-    add_to_TLS_lists(false);
-
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << " done." << std::endl;
-# endif
-  //=======================================================
-  //================= TASK-SCHEDULER?
-  //=======================================================
-
-#elif defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
-
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "Refining elements...";
-# endif
+#endif
 
     previous_level.add_to_TLS_lists(true);
     add_to_TLS_lists(true);
@@ -1175,14 +957,9 @@ public:
     previous_level.add_to_TLS_lists(false);
     add_to_TLS_lists(false);
 
-# ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
+#ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << " done." << std::endl;
-# endif
-
 #endif
-  //=======================================================
-  //================= / WORKSHARING STRATEGY
-  //=======================================================
 
   }
 
@@ -1389,9 +1166,7 @@ protected:
   Lock_data_structure *m_lock_ds;
   Mesh_3::WorksharingDataStructureType *m_worksharing_ds;
 
-#ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
   tbb::task *m_empty_root_task;
-#endif
 };
 #endif // CGAL_LINKED_WITH_TBB
 

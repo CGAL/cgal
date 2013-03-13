@@ -113,22 +113,15 @@ const int     TET_SHAPE                = 3;
   // Locking strategy
   // =================
 
-# define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
-
 //# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // CJTODO: USELESS, FOR TESTS ONLY
 
   // =====================
   // Worksharing strategy
   // =====================
 
-//# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
-//# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
-# define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-//#   define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
-//#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT // better performance?
-# endif
+//# define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
+//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
+//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT // default
 
   // ==========================================================================
   // Profiling
@@ -469,24 +462,15 @@ std::string get_technique()
   std::string tech;
 #ifdef CONCURRENT_MESH_3
 
-# if defined(CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER)
   tech += "Task-scheduler (auto";
-#   ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
-    tech += ", sorted batches with std::sort";
-#   elif defined(CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET)
+# if defined(CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET)
     tech += ", sorted batches with multiset";
-#   elif defined(CGAL_MESH_3_LOAD_BASED_WORKSHARING)
+# elif defined(CGAL_MESH_3_LOAD_BASED_WORKSHARING)
     tech += ", load-based worksharing";
-#endif
-  tech += ")";
-
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR)
-  tech += "Parallel_for";
-# elif defined(CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO)
-  tech += "Parallel_do";
-# else
-  tech += "Unknown parallel technique";
+# else // CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
+    tech += ", sorted batches with std::sort";
 # endif
+  tech += ")";
 
 #else // !CONCURRENT_MESH_3
 

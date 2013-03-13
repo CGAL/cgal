@@ -91,8 +91,6 @@
   // =================
   // Locking strategy
   // =================
-    
-# define CGAL_MESH_3_LOCKING_STRATEGY_SIMPLE_GRID_LOCKING
 
 //# define CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS // USELESS, FOR TESTS ONLY
 
@@ -100,18 +98,9 @@
   // Worksharing strategy
   // =====================
       
-//# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
-//# define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
-# define CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-# ifdef CGAL_MESH_3_WORKSHARING_USES_TASK_SCHEDULER
-//#   define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
-#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-//#   define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
-# endif
-
-
-//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_FOR
-//#   define CGAL_MESH_3_WORKSHARING_USES_PARALLEL_DO
+//# define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
+//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
+//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT // default
 
   // ==========================================================================
   // Profiling
