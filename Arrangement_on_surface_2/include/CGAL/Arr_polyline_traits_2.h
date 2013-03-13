@@ -1480,7 +1480,9 @@ public:
         InputIterator second = begin;
         ++second;
         // TODO: This causes problems when compiled in RELEASE mode.
-        //       Might be related to the return value of CGAL::Equal_2
+        //       The problem seems to come from the fact that "equal" is
+        //       instantiated in a CGAL_precondition_code() block! Thus,
+        //       when compiled in Release mode the magic doesn't work.
         rev = equal(min_v(*begin), max_v(*second));
       }
       // The following statement assumes that the begin (and end) iterators
