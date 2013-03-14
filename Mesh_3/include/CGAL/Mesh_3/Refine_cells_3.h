@@ -604,7 +604,9 @@ scan_triangulation_impl()
   // Parallel
   if (boost::is_base_of<Parallel_tag, Ct>::value)
   {
+# if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad cells (in parallel)";
+# endif
     add_to_TLS_lists(true);
 
     // WITH PARALLEL_FOR
@@ -621,8 +623,10 @@ scan_triangulation_impl()
 
     //std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
     //t2.reset();
-
+    
+# if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << " - Num cells to scan = " << cells.size() << "..." << std::endl;
+# endif
     tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size(), 1000),
       [&]( const tbb::blocked_range<size_t>& r ) { // CJTODO: lambdas ok?
         for( size_t i = r.begin() ; i != r.end() ; ++i)
@@ -653,7 +657,9 @@ scan_triangulation_impl()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad cells (sequential)... ";
+#endif
 
     int count = 0;
     for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
@@ -663,8 +669,14 @@ scan_triangulation_impl()
       treat_new_cell(cell_it);
       ++count;
     }
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << count << " cells scanned, ";
+#endif
   }
+  
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
+  std::cerr << "done." << std::endl;
+#endif
 
 #ifdef MESH_3_PROFILING
   double cell_scan_time = t.elapsed();
@@ -674,11 +686,11 @@ scan_triangulation_impl()
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_scan_time", cell_scan_time);
 # endif
   std::cerr << "Refining... ";
-#else
-  std::cerr << "done." << std::endl;
 #endif
-
+  
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "Number of bad cells: " << C_::size() << std::endl;
+#endif
 }
 
 
@@ -691,9 +703,11 @@ get_number_of_bad_elements_impl()
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
 
   int count = 0;
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "Scanning triangulation for bad cells - "
     "number of finite cells = " 
     << r_c3t3_.triangulation().number_of_finite_cells() << "...";
+#endif
   for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
       cell_it != r_tr_.finite_cells_end();
       ++cell_it)
@@ -707,7 +721,9 @@ get_number_of_bad_elements_impl()
         ++count;
     }
   }
+# if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "done." << std::endl;
+# endif
 
   return count;
 }

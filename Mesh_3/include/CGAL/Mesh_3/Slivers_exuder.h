@@ -900,13 +900,17 @@ pump_vertices(double sliver_criterion_limit,
     }
     
     this->wait_for_all();
-
+    
+# if defined(CGAL_MESH_3_EXUDER_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << " Flushing";
+# endif
     bool keep_flushing = true;
     while (keep_flushing)
     {
       keep_flushing = this->flush_work_buffers();
+# if defined(CGAL_MESH_3_EXUDER_VERBOSE) || defined(MESH_3_PROFILING)
       std::cerr << ".";
+# endif
     }
 
     this->destroy_root_task();

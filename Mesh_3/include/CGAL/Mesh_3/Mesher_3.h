@@ -61,6 +61,76 @@
 
 namespace CGAL {
 
+//====== CJTODO TEMP
+#include <set>
+
+class Tag_facet{};
+class Tag_cell{};
+
+class Explicit_simplex
+{
+public:
+
+  template<typename Facet>
+  Explicit_simplex(const Facet &f, Tag_facet)
+  {
+    for (int i = 0, j = 0; i < 4; ++i)
+    {
+      if (i != f.second)
+      {
+        points.insert(f.first->vertex(i)->point().x());
+        points.insert(f.first->vertex(i)->point().y());
+        points.insert(f.first->vertex(i)->point().z());
+      }
+    }
+  }
+
+  template<typename Cell>
+  Explicit_simplex(const Cell &c, Tag_cell)
+  {
+    for (int i = 0, j = 0; i < 4; ++i)
+    {
+      points.insert(c.vertex(i)->point().x());
+      points.insert(c.vertex(i)->point().y());
+      points.insert(c.vertex(i)->point().z());
+    }
+  }
+
+  std::multiset<double> points;
+  
+  bool operator<(const Explicit_simplex& other) const
+  {
+    if (points.size() != other.points.size())
+    {
+      std::cerr << "************************ ERROR: points.size() != other.points.size() ************" << std::endl;
+      return true;
+    }
+
+    for (std::multiset<double>::const_iterator it = points.begin(), it_other = other.points.begin() ;
+      it != points.end() ; ++it)
+    {
+      if (*it > *it_other)
+        return false;
+      if (*it < *it_other)
+        return true;
+    }
+    return false;
+  }
+};
+
+std::ostream & operator<< (std::ostream &os, const Explicit_simplex &f)
+{
+  for (std::multiset<double>::const_iterator it = f.points.begin() ;
+    it != f.points.end() ; ++it)
+  {
+    os << *it << "; ";
+  }
+  return os;
+}
+
+//====== /CJTODO TEMP
+
+
 namespace Mesh_3 {
 
 
@@ -365,10 +435,12 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 # endif
 #endif
   
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr
     << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
     << "Facets  : " << r_c3t3_.number_of_facets_in_complex() << std::endl
     << "Tets    : " << r_c3t3_.number_of_cells_in_complex() << std::endl;
+#endif
 
 #else // ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Start surface scan...";

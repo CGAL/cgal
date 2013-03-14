@@ -69,49 +69,6 @@ namespace Mesh_3 {
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Is_facet_bad, Is_facet_bad, true)
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Facet_badness, Facet_badness, false)
 
-//====== CJTODO TEMP
-template <typename Facet>
-class ExplicitFacet
-{
-public:
-  ExplicitFacet(const Facet &f)
-  {
-    for (int i = 0, j = 0; i < 4; ++i)
-    {
-      if (i != f.second)
-      {
-        points.insert(f.first->vertex(i)->point().x());
-        points.insert(f.first->vertex(i)->point().y());
-        points.insert(f.first->vertex(i)->point().z());
-      }
-    }
-  }
-
-  std::multiset<double> points;
-  
-  bool operator<(const ExplicitFacet& other) const
-  {
-    if (points.size() != other.points.size())
-    {
-      std::cerr << "************************ ERROR: points.size() != other.points.size() ************" << std::endl;
-      return true;
-    }
-
-    for (std::multiset<double>::const_iterator it = points.begin(), it_other = other.points.begin() ;
-      it != points.end() ; ++it)
-    {
-      if (*it > *it_other)
-        return false;
-      if (*it < *it_other)
-        return true;
-    }
-    return false;
-  }
-};
-#include <set>
-//====== /CJTODO TEMP
-
-
 // template class, used when use_facet_badness = false
 template <typename Facet_criteria,
           bool use_facet_badness = (!Has_Is_facet_bad<Facet_criteria>::value) &&
@@ -907,10 +864,12 @@ scan_triangulation_impl()
   // Parallel
   if (boost::is_base_of<Parallel_tag, Ct>::value)
   {
+# if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad facets (in parallel) - "
       "number of finite facets = "
       << r_c3t3_.triangulation().number_of_finite_facets() << "..."
       << std::endl;
+# endif
     add_to_TLS_lists(true);
     // PARALLEL_DO
     tbb::parallel_do(r_tr_.finite_facets_begin(), r_tr_.finite_facets_end(),
@@ -926,10 +885,12 @@ scan_triangulation_impl()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad facets (sequential) - "
       "number of finite facets = " 
       << r_c3t3_.triangulation().number_of_finite_facets() << "..."
       << std::endl;
+#endif
     for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
         facet_it != r_tr_.finite_facets_end();
         ++facet_it)
@@ -948,7 +909,9 @@ scan_triangulation_impl()
             << std::endl << std::endl;
 #endif
   
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "Number of bad facets: " << C_::size() << std::endl;
+#endif
   
 #ifdef MESH_3_PROFILING
   std::cerr << "Refining... ";
@@ -967,9 +930,11 @@ get_number_of_bad_elements_impl()
 
   int count = 0, count_num_bad_surface_facets = 0;
   int num_internal_facets_that_should_be_on_surface = 0;
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "Scanning triangulation for bad facets - "
     "number of finite facets = " 
     << r_c3t3_.triangulation().number_of_finite_facets() << "...";
+#endif
   int num_tested_facets = 0;
   for(Finite_facet_iterator facet_it = r_tr_.finite_facets_begin();
       facet_it != r_tr_.finite_facets_end();

@@ -938,15 +938,19 @@ public:
     }
 
     m_empty_root_task->wait_for_all();
-
+    
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << " Flushing";
+#endif
     bool keep_flushing = true;
     while (keep_flushing)
     {
       m_empty_root_task->set_ref_count(1);
       keep_flushing = m_worksharing_ds->flush_work_buffers(*m_empty_root_task);
       m_empty_root_task->wait_for_all();
+#if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
       std::cerr << ".";
+#endif
     }
 
     tbb::task::destroy(*m_empty_root_task);
