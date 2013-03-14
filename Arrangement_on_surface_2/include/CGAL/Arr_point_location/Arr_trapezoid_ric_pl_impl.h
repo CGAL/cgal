@@ -81,16 +81,9 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
       //p is interior so it should fall on Td_active_vertex
       Td_active_vertex& v (boost::get<Td_active_vertex>(tr));
       CGAL_TRAP_PRINT_DEBUG("POINT");
-     if (m_traits->equal_2_object()(h->target()->point(), p)) {
-       Vertex_const_handle vh = h->target();
-       return result_return(vh);
-     }
-     if (m_traits->equal_2_object()(h->source()->point(), p)) {
-       Vertex_const_handle vh = h->source();
-       return result_return(vh);
-     }
-     else
-       CGAL_error();
+      CGAL_assertion(!v.vertex()->is_at_open_boundary());
+      return result_return(v.vertex());
+    }
     break;
 
   case TD::CURVE:
@@ -98,13 +91,14 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
       Td_active_edge& e (boost::get<Td_active_edge>(tr));
       Halfedge_const_handle h = e.halfedge();
       CGAL_TRAP_PRINT_DEBUG("CURVE");
-      if ( m_traits->is_in_x_range_2_object()(cv,p) && 
-           m_traits->compare_y_at_x_2_object()(p,cv) == EQUAL)
+      if ( m_traits->is_in_x_range_2_object()(h->curve(),p) && 
+           m_traits->compare_y_at_x_2_object()(p,h->curve()) == EQUAL)
         return result_return(h);
       else {
         //ixx
-        std::cerr << "curve is: "<< cv <<" point is: "<< p <<std::endl; 
+        std::cerr << "curve is: "<< h->curve() <<" point is: "<< p <<std::endl; 
         CGAL_error();
+      }
     }
     break;
 
@@ -275,20 +269,14 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
     return (_check_isolated_for_vertical_ray_shoot(invalid_he, p, shoot_up, item));
   }
 
-  Halfedge_const_handle h = cv.get_parent();
-
-  switch (td_lt) {
-   case TD::POINT:
-    if (m_traits->equal_2_object()(h->target()->point(), p)) {
-      Vertex_const_handle vh = h->target();
-      return result_return(vh);
+  switch(td_lt)
+  {
+  case TD::POINT:
+    {
+      //p fell on Td_active_vertex
+      Td_active_vertex& v (boost::get<Td_active_vertex>(item));
+      return (result_return(v.vertex()));
     }
-    if (m_traits->equal_2_object()(h->source()->point(), p)) {
-      Vertex_const_handle vh = h->source();
-      return result_return(vh);
-    }
-    else
-      CGAL_error();
     break;
  case TD::CURVE:
     {

@@ -25,16 +25,16 @@ int main ()
   construct_segments_arr(arr);
 
   // Perform some point-location queries using the naive strategy.
-  locate_point(naive_pl, Point_2(1, 4));        // q1
-  locate_point(naive_pl, Point_2(4, 3));        // q2
-  locate_point(naive_pl, Point_2(6, 3));        // q3
+  point_location_query (naive_pl, Point_2(1, 4));        // q1
+  point_location_query (naive_pl, Point_2(4, 3));        // q2
+  point_location_query (naive_pl, Point_2(6, 3));        // q3
 
   // Attach the landmarks object to the arrangement and perform queries.
   Landmarks_pl landmarks_pl;
   landmarks_pl.attach(arr);
-  locate_point(landmarks_pl, Point_2(3, 2));    // q4
-  locate_point(landmarks_pl, Point_2(5, 2));    // q5
-  locate_point(landmarks_pl, Point_2(1, 0));    // q6
+  point_location_query (landmarks_pl, Point_2(3, 2));    // q4
+  point_location_query (landmarks_pl, Point_2(5, 2));    // q5
+  point_location_query (landmarks_pl, Point_2(1, 0));    // q6
   
   return 0;
 }

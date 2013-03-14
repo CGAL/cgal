@@ -17,6 +17,17 @@ typedef Random_points_on_circle_2<Point,Pt_creator>  P2;
 typedef Creator_uniform_2< Point, Segment>           Seg_creator;
 typedef Join_input_iterator_2< P1, P2, Seg_creator>  Seg_iterator;
 
+//This is weird
+namespace boost{
+  namespace _bi{
+  
+template<>
+struct result_traits<unspecified, K::Intersect_2>
+{
+    typedef typename  CGAL::cpp11::result_of<K::Intersect_2(Segment,Segment)>::type type;
+};
+
+} }
 
 int main()
 {
@@ -30,7 +41,7 @@ int main()
   
   // Create segments.
   Seg_iterator g( p1, p2);
-  std::copy_n( g, 200, std::back_inserter(input));
+  CGAL::copy_n( g, 200, std::back_inserter(input));
   
 
   // splitting results with Dispatch_output_iterator

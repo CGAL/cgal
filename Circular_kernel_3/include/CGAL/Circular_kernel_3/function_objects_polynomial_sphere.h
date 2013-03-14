@@ -40,6 +40,8 @@
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h>
 
+#include <boost/type_traits/decay.hpp>
+
 namespace CGAL {
 	
 namespace SphericalFunctors {

@@ -58,7 +58,7 @@ void vertical_ray_shooting_query(const VerticalRayShoot& vrs,
                                  const typename
                                  VerticalRayShoot::Arrangement_2::Point_2& q)
 {
-  typedef RayShoot                                      Vertical_ray_shooting;
+  typedef VerticalRayShoot                                      Vertical_ray_shooting;
 
   // Perform the point-location query.
   typename Vertical_ray_shooting::result_type obj = vrs.ray_shoot_up(q);

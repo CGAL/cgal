@@ -443,7 +443,7 @@ public:
     typedef typename Base::Event                                    Event;
     typedef typename Base::Subcurve                                 Subcurve;
 
-    Sweep_line_bacthed_point_location_visitor(const Arr* arr,
+    Sweep_line_batched_point_location_visitor(const Arr* arr,
                                               Output_iterator& oi) :
       Base(arr, oi)
     {}

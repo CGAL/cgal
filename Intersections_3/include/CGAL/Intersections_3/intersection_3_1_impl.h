@@ -158,7 +158,7 @@ template <class K>
 typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
 intersection(const typename K::Plane_3  &plane, 
 	     const typename K::Line_3 &line, 
-	     const K& k)
+	     const K& /*k*/)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
