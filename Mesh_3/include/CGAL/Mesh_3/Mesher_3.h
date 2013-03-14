@@ -117,7 +117,7 @@ public:
   }
 };
 
-std::ostream & operator<< (std::ostream &os, const Explicit_simplex &f)
+static std::ostream & operator<< (std::ostream &os, const Explicit_simplex &f)
 {
   for (Explicit_simplex::Point_container::const_iterator it = f.points.begin() ;
     it != f.points.end() ; ++it)
