@@ -122,17 +122,17 @@ Sets point `p` as the surface center of `facet(i)`.
 */ 
 void set_facet_surface_center (int i, Point p); 
 
-/// Used by the parallel algoritms.
+/// Only required by the parallel algoritms.
 /// Get the erase counter value. See `CompactContainerStrategy`
 /// for more details.
 unsigned int get_erase_counter() const;
 
-/// Used by the parallel algoritms.
+/// Only required by the parallel algoritms.
 /// Set the erase counter value. See `CompactContainerStrategy`
 /// for more details.
 void set_erase_counter(unsigned int c);
 
-/// Used by the parallel algoritms.
+/// Only required by the parallel algoritms.
 /// Increment the erase counter value. See `CompactContainerStrategy`
 /// for more details.
 void increment_erase_counter();
