@@ -32,7 +32,7 @@ static unsigned int next_around_edge(unsigned int i, unsigned int j);
 In dimension 3, index of the `j`'th vertex in counterclockwise order on the face opposite to vertex with `i` of the cell.  
 \pre `( i < 4 ) && ( j < 3 ) && ( i != j )`. 
 */ 
-static int vertex_triple_index(const int i, const int j)
+  static int vertex_triple_index(const int i, const int j);
 
 /*! 
 Has a meaning only in dimension 2. 
