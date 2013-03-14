@@ -25,7 +25,7 @@ namespace CGAL
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SDFPropertyMap  a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
+ * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] sdf_values the sdf value of each facet
@@ -64,8 +64,8 @@ compute_sdf_values(const Polyhedron& polyhedron,
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SDFPropertyMap  a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">`ReadablePropertyMap`</a>  with `Polyhedron::Facet_const_handle` as key and `double` as value type
- * @tparam SegmentPropertyMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
+ * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+ * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
  * @param sdf_values sdf_values the sdf value of each facet
@@ -113,7 +113,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SegmentPropertyMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a> with `Polyhedron::Facet_const_handle` as key and `int` as value type
+ * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] segment_ids the segment id of each facet
