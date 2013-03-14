@@ -283,11 +283,11 @@ public:
 
     \tparam InputIterator iterator over input points. 
 
-    \tparam PointPMap is a model of `boost::ReadablePropertyMap` with
+    \tparam PointPMap is a model of `ReadablePropertyMap` with
       a `value_type = Point`.  It can be omitted if `InputIterator`
       `value_type` is convertible to `Point`. 
     
-    \tparam NormalPMap is a model of `boost::ReadablePropertyMap`
+    \tparam NormalPMap is a model of `ReadablePropertyMap`
       with a `value_type = Vector`.
   */ 
   template <typename InputIterator,

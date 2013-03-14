@@ -46,8 +46,8 @@ function designates which formal argument it is.
 Maps each vertex in the surface into an unsigned integer number 
 in the range `[0,num_vertices(surface))`. 
 
-`VertexIndexMap` must be a 
-<A HREF="http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</A> 
+`VertexIndexMap` must be a model of
+`ReadablePropertyMap` 
 whose `key_type` is 
 `boost::graph_traits<EdgeCollapsableMesh const>::vertex_descriptor` 
 and whose `value_type` is 
@@ -67,10 +67,10 @@ a property map which non-intrusively associates a proper id with each vertex.
 Maps each <I>directed</I> edge in the surface into an unsigned integer number 
 in the range `[0,num_edges(surface))`. 
 
-`EdgeIndexMap` must be a 
-<A HREF="http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</A> 
-whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor` 
+`EdgeIndexMap` must be a model of
+`ReadablePropertyMap` whose `key_type` is 
+`boost::graph_traits<EdgeCollapsableMesh const>::%edge_descriptor` 
+
 and whose `value_type` is 
 `boost::graph_traits<EdgeCollapsableMesh>::size_type` 
 
@@ -88,10 +88,10 @@ a property map which non-intrusively associates a proper id with each edge.
 Maps each <I>directed</I> edge in the surface into a Boolean value 
 which indicates if the edge belongs to the boundary of the surface 
 (facing the outside). 
-`EdgeIsBorderMap` must be a 
-<A HREF="http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</A> 
-whose `key_type` is 
-`boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor` 
+`EdgeIsBorderMap` must be a model
+`ReadablePropertyMap` whose `key_type` is 
+`boost::graph_traits<EdgeCollapsableMesh const>::%edge_descriptor` 
+
 and whose `value_type` is `bool`. 
 
 <B>%Default</B>: the property map obtained by calling `get(edge_is_border,surface)`. 

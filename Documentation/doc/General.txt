@@ -24,6 +24,24 @@ See http://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
 class LvaluePropertyMap {};
 
 /*!
+See http://www.boost.org/libs/property_map/doc/ReadWritePropertyMap.html
+/// \cgalConcept
+*/
+class ReadWritePropertyMap {};
+
+/*!
+See http://www.boost.org/libs/property_map/doc/WritablePropertyMap.html
+/// \cgalConcept
+*/
+class WritablePropertyMap {};
+
+/*!
+See http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html
+/// \cgalConcept
+*/
+class ReadablePropertyMap {};
+
+/*!
 This specifies that the actual type exposed through a `typedef` is
 implementation specific. It can only be treated through the concepts
 it is said to model.
