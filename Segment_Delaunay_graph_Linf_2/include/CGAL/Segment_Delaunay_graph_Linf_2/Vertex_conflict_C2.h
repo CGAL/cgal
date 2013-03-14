@@ -1386,9 +1386,10 @@ public:
 #else
     Voronoi_vertex_2 v(p, q, r);
 
-    Point_2 temppt = v.point();
-    CGAL_SDG_DEBUG(std::cout
-        << "debug Voronoi_vertex_2 v=" << temppt << std::endl; );
+    CGAL_SDG_DEBUG(
+        Point_2 temppt = v.point();
+        std::cout
+          << "debug Voronoi_vertex_2 v=" << temppt << std::endl; );
 
     Sign retval = v.incircle(t);
 
