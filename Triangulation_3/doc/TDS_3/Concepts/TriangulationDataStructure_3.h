@@ -123,7 +123,7 @@ is concurrency-safe) storing the cells.
 typedef Hidden_type Cell_container_strategy;
 
 /*! 
-Indicate if the TDS is concurrency-safe (i.e.\ if one can add/remove vertices concurrently). 
+Indicate if the TDS is concurrency-safe (i.e.\ if one can add/remove vertices and cells concurrently). 
 Can be `Sequential_tag` or `Parallel_tag`.
 */
 typedef Hidden_type Concurrency_tag;
