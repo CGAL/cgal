@@ -15,6 +15,9 @@ to an integer representing the dimension of the lowest dimensional face
 of the input 3D complex on which the vertex lies, 
 and to an index characteristic of this face. 
 
+The parallel algorithms require an erase counter in 
+each cell (see below).
+
 \cgalRefines `TriangulationVertexBase_3` 
 \cgalRefines `SurfaceMeshVertexBase_3`
 
@@ -85,6 +88,15 @@ FT meshing_info() const;
 */ 
 void set_meshing_info(FT); 
 
+/// Get the erase counter value. See `CompactContainerStrategy`
+/// for more details.
+unsigned int get_erase_counter() const;
+/// Set the erase counter value. See `CompactContainerStrategy`
+/// for more details.
+void set_erase_counter(unsigned int c);
+/// Increment the erase counter value. See `CompactContainerStrategy`
+/// for more details.
+void increment_erase_counter();
 /// @}
 
 }; /* end MeshVertexBase_3 */
