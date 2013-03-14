@@ -1,0 +1,26 @@
+\begin{ccRefMacro}{CGAL_ARR_POINT_LOCATION_VERSION}
+
+\ccDefinition
+%============
+The macro \ccc{CGAL_ARR_POINT_LOCATION_VERSION} can be used to configure
+the point-location query API. In particular, it determines which version
+of the result type of the point-location and vertical ray-shooting queries
+should be used by models of the concepts \ccc{ArrangementPointLocation_2}
+and \ccc{ArrangementVerticalRayShoot_2}, and by the free function
+\ccc{locate}. The \ccRefName{} should be defined before any \cgal{} header
+is included.
+
+\ccc{CGAL_ARR_POINT_LOCATION_VERSION} == 1, the result type is set to be
+  \ccc{CGAL::Object}.\\
+\ccc{CGAL_ARR_POINT_LOCATION_VERSION} == 2, the result type is set to be
+\ccc{boost::variant<Vertex_const_handle,Halfedge_const_handle,Face_const_handle>}, where \ccc{Vertex_const_handle}, \ccc{Halfedge_const_handle}, and
+\ccc{Face_const_handle} are the corresponding nested types in an
+\ccc{Arrangement_2} instance.
+
+\ccSeeAlso
+%============
+\ccRefConceptPage{ArrangementPointLocation_2}\\
+\ccRefConceptPage{ArrangementVerticalRayShoot_2}\\
+\ccRefIdfierPage{CGAL::Arr_point_location_result<Arrangement>}
+
+\end{ccRefMacro}

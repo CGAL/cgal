@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Contained_in_linear_hull_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 determines whether \f$ v\f$ is contained in the 
 linear hull of the vectors in `A = tuple [first,last)`. 
@@ -22,8 +19,6 @@ linear hull of the vectors in `A = tuple [first,last)`.
 template <class ForwardIterator> Bounded_side 
 operator()( ForwardIterator first, ForwardIterator last, const 
 Kernel_d::Vector_d& v); 
-
-/// @}
 
 }; /* end Kernel_d::Contained_in_linear_hull_d */
 

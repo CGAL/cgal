@@ -27,7 +27,6 @@
 #define CGAL_BBOX_INTERSECTION_3_H
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 
@@ -36,19 +35,36 @@ namespace CGAL {
 // But it must be a template function since the original kernel must be 
 // taken into account. (Michael.Hemmer@sophia.inria.fr)
 template <class K> 
-Object
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
+typename boost::optional< boost::variant< 
+                            typename K::Segment_3, 
+                            typename K::Point_3 > >
+#endif
 intersection_bl(const Bbox_3 &box,
         double lpx, double lpy, double lpz,
         double ldx, double ldy, double ldz,
         bool min_infinite, bool max_infinite)
 {
+  typedef 
+#if CGAL_INTERSECTION_VERSION < 2
+    CGAL::Object
+#else
+    typename 
+    boost::optional< 
+      boost::variant< typename K::Segment_3, 
+                      typename K::Point_3 > >
+#endif
+    result_type;
+
   double seg_min = 0.0, seg_max = 1.0;
   // first on x value
   if (ldx == 0.0) { 
     if (lpx < box.xmin())
-      return Object();
+      return result_type();
     if (lpx > box.xmax())
-      return Object();
+      return result_type();
   } else {
     double newmin, newmax;
     if (ldx > 0.0) {
@@ -73,14 +89,14 @@ intersection_bl(const Bbox_3 &box,
         seg_max = newmax;
     }
     if (seg_max < seg_min)
-      return Object();
+      return result_type();
   }
 // now on y value
   if (ldy == 0.0) {
     if (lpy < box.ymin())
-      return Object();
+      return result_type();
     if (lpy > box.ymax())
-      return Object();
+      return result_type();
   } else {
     double newmin, newmax;
     if (ldy > 0.0) {
@@ -105,14 +121,14 @@ intersection_bl(const Bbox_3 &box,
         seg_max = newmax;
     }
     if (seg_max < seg_min)
-      return Object();
+      return result_type();
   }
 // now on z value
   if (ldz == 0.0) {
     if (lpz < box.zmin())
-      return Object();
+      return result_type();
     if (lpz > box.zmax())
-      return Object();
+      return result_type();
   } else {
     double newmin, newmax;
     if (ldz > 0.0) {
@@ -137,7 +153,7 @@ intersection_bl(const Bbox_3 &box,
         seg_max = newmax;
     }
     if (seg_max < seg_min)
-      return Object();
+      return result_type();
   }
   if (min_infinite || max_infinite) {
     seg_max = 0.0;
@@ -153,10 +169,20 @@ intersection_bl(const Bbox_3 &box,
   Point_3 ref_point = Point_3( FT(lpx), FT(lpy), FT(lpz));
   Vector_3 dir = Vector_3( FT(ldx), FT(ldy), FT(ldz));
   
-  if (seg_max == seg_min)
+  if (seg_max == seg_min) {
+#if CGAL_INTERSECTION_VERSION < 2
     return make_object(ref_point + dir * FT(seg_max));
+#else
+    return result_type(ref_point + dir * FT(seg_max));
+#endif
+  } 
+#if CGAL_INTERSECTION_VERSION < 2
   return make_object(
-      Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max))); 
+      Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max)));
+#else
+  return result_type(
+      Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max)));
+#endif
 }
 
 

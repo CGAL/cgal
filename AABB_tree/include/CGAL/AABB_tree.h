@@ -84,8 +84,22 @@ namespace CGAL {
 		typedef typename AABBTraits::Bounding_box Bounding_box;
     /// 
 		typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
-    /// 
+    /// \deprecated 
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+
+    /*!  
+\todo Fill in the types in the std::pair.
+A nested type to aquire the  return type of intersections
+with an object of type `Query` through the member typedef
+`Type` equal to `std::pair< >`
+    */
+
+    template<typename Query>
+    struct Intersection_and_primitive_id {
+      typedef typename AABBTraits::template Intersection_and_primitive_id<Query>::Type Type;
+      typedef Type type;
+    };
+
     
     ///@}
 
@@ -228,24 +242,29 @@ public:
     /// \name Intersections
     ///@{
 
-    /// Outputs to the iterator the list of all intersections between
-    /// the query and input data, as objects of type
-    /// `Object_and_primitive_id`. \tparam Query must be a type
-    /// for which `do_intersect` predicates
-    /// and intersections are defined in the traits class `AABBTraits`.
+    /// Outputs the list of all intersections, as objects of
+    /// `Intersection_and_primitive_id<Query>::Type`,
+    /// between the query and the input data to
+    /// the iterator. `do_intersect()`
+    /// predicates and intersections must be defined for Query`
+    /// in the `AABBTraits` class.
 		template<typename Query, typename OutputIterator>
 		OutputIterator all_intersections(const Query& query, OutputIterator out) const;
 
 
-    /// Returns the first encountered intersection, iff the query
-    /// intersects at least one of the input primitives. No particular
-    /// order is guaranteed over the tree traversal, such that, e.g,
-    /// the primitive returned is not necessarily the closest from the
-    /// source point of a ray query. \tparam Query must be a type
+    /// Returns the first encountered intersection. No particular
+    /// order is guaranteed over the tree traversal, e.g, the
+    /// primitive returned is not necessarily the closest from the
+    /// source point of a ray query. Type `Query` must be a type
     /// for which `do_intersect` predicates
     /// and intersections are defined in the traits class AABBTraits.
 		template <typename Query>
-		boost::optional<Object_and_primitive_id> any_intersection(const Query& query) const;
+    #if CGAL_INTERSECTION_VERSION < 2
+		boost::optional<Object_and_primitive_id> 
+    #else
+    typename Intersection_and_primitive_id<Query>::Type
+    #endif
+    any_intersection(const Query& query) const;
 
     ///@}
 
@@ -681,9 +700,14 @@ public:
 		return out;
 	}
 
+
 	template <typename Tr>
 	template <typename Query>
+  #if CGAL_INTERSECTION_VERSION < 2
 	boost::optional<typename AABB_tree<Tr>::Object_and_primitive_id>
+  #else
+  typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type
+  #endif
 		AABB_tree<Tr>::any_intersection(const Query& query) const
 	{
     using namespace CGAL::internal::AABB_tree;

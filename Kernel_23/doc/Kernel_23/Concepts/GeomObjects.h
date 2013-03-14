@@ -239,6 +239,8 @@ public:
 
   A type representing different types of objects in two dimensions. 
 
+  \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
+
   \cgalRefines CopyConstructible
   \cgalRefines Assignable
   \cgalRefines DefaultConstructible
@@ -258,6 +260,8 @@ public:
   \cgalConcept
 
   A type representing different types of objects in three dimensions. 
+
+  \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
 
   \cgalRefines CopyConstructible
   \cgalRefines Assignable

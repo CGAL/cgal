@@ -34,10 +34,7 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Straight_2.h>
-
-
-
-#include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -146,26 +143,29 @@ intersection_segment() const
 
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Ray_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Ray_2 &ray, 
 	     const typename K::Triangle_2&tr,
 	     const K&)
 {
+
     typedef Ray_2_Triangle_2_pair<K> is_t;
     is_t ispair(&ray, &tr);
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+        return intersection_return<typename K::Intersect_2, typename K::Ray_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return make_object(ispair.intersection_segment());
+        return intersection_return<typename K::Intersect_2, typename K::Ray_2, typename K::Triangle_2>(ispair.intersection_segment());
     case is_t::SEGMENT:
-        return make_object(ispair.intersection_segment());
+        return intersection_return<typename K::Intersect_2, typename K::Ray_2, typename K::Triangle_2>(ispair.intersection_segment());
     }
 }
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Ray_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Triangle_2&tr,
 	     const typename K::Ray_2 &ray, 
 	     const K& k)
@@ -200,38 +200,9 @@ inline bool do_intersect(
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION(Ray_2, Triangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Ray_2, Triangle_2, 2)
 
-template <class K>
-inline bool do_intersect(const Triangle_2<K> &tr,
-			 const Ray_2<K> &ray)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(ray, tr);
-}
-
-template <class K>
-inline bool do_intersect(const Ray_2<K> &ray,
-			 const Triangle_2<K> &tr)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(ray, tr);
-}
-
-template <class K>
-inline Object
-intersection(const Ray_2<K> &ray, const Triangle_2<K> &tr)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(ray, tr);
-}
-
-template <class K>
-inline Object
-intersection(const Triangle_2<K> &tr, const Ray_2<K> &ray)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(ray, tr);
-}
 
 } //namespace CGAL
 

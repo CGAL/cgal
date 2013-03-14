@@ -302,15 +302,14 @@ public:
     public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
-    typedef Arr_batched_pl_sl_visitor<BplHelper,
-                                      Output_iterator>        Base;
 
+    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator>   Base;
     typedef typename Base::Traits_2                           Traits_2;
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;
 
     Sweep_line_batched_point_location_visitor (const Arr *arr,
-                                               Output_iterator *oi) :
+                                              Output_iterator& oi) :
       Base (arr, oi)
     {}
   };
@@ -320,9 +319,8 @@ public:
     public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
-    typedef Arr_vert_decomp_sl_visitor<VdHelper,
-                                       Output_iterator>       Base;
 
+    typedef Arr_vert_decomp_sl_visitor<VdHelper, Output_iterator>   Base;
     typedef typename Base::Traits_2                           Traits_2;
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;

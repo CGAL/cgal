@@ -26,6 +26,7 @@
 #define CGAL_SPHERICAL_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_SPHERE_H
 
 #include <CGAL/kernel_basic.h>
+#include <CGAL/is_iterator.h>
 
 #include <CGAL/Spherical_kernel_intersections.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_point_3.h>
@@ -38,8 +39,6 @@
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h>
-#include <CGAL/Object.h>
-
 
 namespace CGAL {
 	
@@ -1098,26 +1097,26 @@ template < class SK > \
     typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
+    typedef typename SK::Circle_3                 Circular_arc_point_3;
   
   public:
-
-	  typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
+    typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
   
     using SK::Linear_kernel::Do_intersect_3::operator();
 
-#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B) \
-  result_type \
-  operator()(const A & c1, const B & c2) const \
-  { std::vector< Object > res; \
-    typename SK::Intersect_3()(c1,c2,std::back_inserter(res)); \
-	  return res.size() != 0; }
+#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B)            \
+    result_type                                                         \
+    operator()(const A & c1, const B & c2) const                        \
+    { std::vector< typename boost::result_of<typename SK::Intersect_3(A, B)>::type > res; \
+      typename SK::Intersect_3()(c1,c2,std::back_inserter(res));        \
+      return !res.empty(); }
 	
-#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C) \
-  result_type \
-  operator()(const A & c1, const B & c2, const C & c3) const \
-  { std::vector< Object > res; \
-    typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res)); \
-	  return res.size() != 0; }
+#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C)          \
+    result_type                                                         \
+    operator()(const A & c1, const B & c2, const C & c3) const          \
+    { std::vector< typename boost::result_of<typename SK::Intersect_3(A, B, C)>::type > res; \
+      typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res));     \
+      return !res.empty(); }
 
 	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_3)
 	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Sphere_3)
@@ -1158,34 +1157,152 @@ template < class SK > \
 
   template < class SK >
   class Intersect_3
-    : public SK::Linear_kernel::Intersect_3
   {
-  
     typedef typename SK::Sphere_3                 Sphere_3;
     typedef typename SK::Line_3                   Line_3;
     typedef typename SK::Line_arc_3               Line_arc_3;
     typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
-    
-    public:
+    typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
 
-		typedef typename SK::Linear_kernel::Intersect_3::result_type result_type;
-                                
-    typedef typename SK::Object_3 Object_3;
-    
-    using SK::Linear_kernel::Intersect_3::operator();
+  public:
 
+#if CGAL_INTERSECTION_VERSION < 2
+    // this is horribly wrong, nothing here returns Object
+    typedef typename SK::Linear_kernel::Intersect_3::result_type result_type; 
+#else
+  private:
+    // helper to minimize result implementation
+    template <typename A, typename B, typename C, 
+              bool is_iterator = CGAL::is_iterator<typename boost::decay<C>::type>::value>
+    struct result_impl 
+    { typedef typename boost::result_of<typename SK::Linear_kernel::Intersect_3(A, B, C)>::type
+      type; };
+
+    template <typename A, typename B, typename C>
+    struct result_impl<A, B, C, true>
+    { typedef C type; };
+    
+  public:
+    template <typename>
+    struct result;
+
+    // the binary overload always goes to Linear::Intersect_3
+    template <typename F, typename A, typename B>
+    struct result<F(A, B)>
+    { typedef typename boost::result_of<typename SK::Linear_kernel::Intersect_3(A, B)>::type type; };
+
+    // we match the ternary case if the last argument is an iterator,
+    // otherwise Linear::Intersect_3 wins
+    template <typename F, typename A, typename B, typename C>
+    struct result<F(A, B, C)> : result_impl<A, B, C> {};
+
+    // there is no quaternary form of Linear::Intersect_3
+    template <typename F, typename A, typename B, typename C, typename OutputIterator>
+    struct result<F(A, B, C, OutputIterator)> 
+    { typedef OutputIterator type; };
+
+    // The problem: the results specified here are not the true
+    // result. The true result is OutputIterator. This will break in
+    // awful ways with a decltype based result_of implementation. The
+    // fix is to add dummy function calls with the correct return
+    // type.
+    // TODO: turn this into macros and also generate the dummy
+    // function calls.
+    template <typename F>
+    struct result<F(Sphere_3, Line_3)>
+    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int > > type; };
+
+    template <typename F>
+    struct result<F(Line_3, Sphere_3)> : result<F(Sphere_3, Line_3)> {};
+
+    template <typename F>
+    struct result<F(Circle_3, Plane_3)>
+    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int >, Circle_3 > type; };
+
+    template <typename F>
+    struct result<F(Plane_3, Circle_3)> : result<F(Circle_3, Plane_3)> {};
+
+    template <typename F>
+    struct result<F(Circle_3, Sphere_3)>
+    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int >, Circle_3 > type;};
+
+    template <typename F>
+    struct result<F(Sphere_3, Circle_3)> : result<F(Circle_3, Sphere_3)> {};
+
+    template <typename F>
+    struct result<F(Circle_3, Circle_3)>
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >, Circle_3 > type; };
+
+    template <typename F>
+    struct result<F(Circle_3, Line_3)>
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int > > type; };
+
+    template <typename F>
+    struct result<F(Line_3, Circle_3)> : result<F(Circle_3, Line_3)> {};
+
+    template <typename F>
+    struct result<F(Circular_arc_3, Circular_arc_3)>
+    { typedef boost::variant< Circle_3, std::pair <Circular_arc_point_3, unsigned int >,
+                                Circular_arc_3 > type;};
+
+    template <typename F>
+    struct result<F(Circular_arc_3, Plane_3)>
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >,
+                              Circular_arc_3 > type;  };
+
+    template <typename F>
+    struct result<F(Plane_3, Circular_arc_3)> : result<F(Circular_arc_3, Plane_3)> {};
+
+    template <typename F>
+    struct result<F(Line_arc_3, Line_arc_3)>
+    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >,
+                              Line_arc_3 > type; };
+
+  private:
+    struct intersect_ternary { 
+      typedef boost::variant< Circle_3, Plane_3, Sphere_3, 
+                              std::pair< Circular_arc_point_3, unsigned > 
+                              > type; 
+    };
+  public:
+
+    // the ternary intersection
+    template <typename F>
+    struct result<F(Sphere_3, Sphere_3, Sphere_3)> : intersect_ternary {};
+    template <typename F>
+    struct result<F(Sphere_3, Sphere_3, Plane_3)>  : intersect_ternary {};
+    template <typename F>
+    struct result<F(Plane_3, Sphere_3, Sphere_3)>  : intersect_ternary {};
+    template <typename F>
+    struct result<F(Plane_3, Plane_3, Sphere_3)>   : intersect_ternary {};
+    template <typename F>
+    struct result<F(Sphere_3, Plane_3, Plane_3)>   : intersect_ternary {};
+#endif
+    
+    // forward the intersection functions from the linear kernel
+    template <typename A, typename B>
+    typename boost::result_of<typename SK::Intersect_3(A, B)>::type
+    operator()(const A& a, const B& b) 
+    { return typename SK::Linear_kernel().intersect_3_object()(a, b); }
+
+    template <typename A, typename B, typename C>
+    typename boost::result_of<typename SK::Intersect_3(A, B, C)>::type
+    operator()(const A& a, const B& b, const C& c,
+               typename boost::enable_if_c<!(CGAL::is_iterator<typename boost::decay<C>::type>::value)>::type* = 0)
+    { return typename SK::Linear_kernel().intersect_3_object()(a, b, c); }
+    
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Line_3 & l, 
 	       OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,l,res); }
     
-     template < class OutputIterator >
+    template < class OutputIterator >
     OutputIterator
-      operator()(const Line_3 & l,const Sphere_3 & s, 
-	       OutputIterator res) const
+    operator()(const Line_3 & l,const Sphere_3 & s, 
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >

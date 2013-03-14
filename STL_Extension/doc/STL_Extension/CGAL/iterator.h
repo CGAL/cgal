@@ -105,17 +105,22 @@ Counting_iterator( Iterator j, std::size_t n = 0);
 
 
 The class `Dispatch_or_drop_output_iterator` defines an
-`OutputIterator` that contains a tuple of output iterators, and dispatches
-among those based on the type of the value type which is put in it.
-Other types are also accepted, and the object is simply discarded in this case.
-It also inherits from `O`, which makes it easy to treat like a tuple.
+`OutputIterator` that contains a tuple of output iterators, and
+dispatches among those based on the type of the value type which is
+put in it. Besides defining assignment for all parameters of `V` it is
+also defined for the types `boost::variant<T...>` and
+`boost::optional<boost::variant<T...>>`, where `T...`
+must be a subset of the parameters of `V`. Should the
+`boost::optional` be empty, it will be discarded.
 
 \cgalHeading{Parameters}
 
-`V` must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
-`O` must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
+\tparam V must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
+\tparam O must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
 
 \cgalModels `OutputIterator`
+
+cgalExample{STL_Extension/Dispatch_output_iterator.cpp}
 
 \sa `CGAL::Dispatch_output_iterator<V,O>`
 */
@@ -186,14 +191,22 @@ dispatch_or_drop_output(O... o);
 
 
 The class `Dispatch_output_iterator` defines an
-`OutputIterator` that contains a tuple of output iterators, and dispatches
-among those based on the type of the value type which is put in it.
-It also inherits from `O`, which makes it easy to treat like a tuple.
+`OutputIterator` that contains a tuple of output iterators, and
+dispatches among those based on the type of the value type which is
+put in it. Other types are also accepted, and the object is 
+discarded in this case. Besides defining assignment for all
+parameters of V it is also defined for the types
+`boost::variant<T...` and
+`boost::optional<boost::variant<T...>`, where `T...`
+can be a list of arbitrary types.
+
+  It also inherits from `O, which makes it easy to treat like a
+  tuple.
 
 \cgalHeading{Parameters}
 
-`V` must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
-`O` must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
+\tparam V must be a `CGAL::cpp11::tuple<...>` of the types of values to be accepted and dispatched.
+\tparam O must be a `CGAL::cpp11::tuple<...>` of the types of corresponding output iterators.
 
 \cgalModels `OutputIterator`
 

@@ -27,7 +27,6 @@
 #define CGAL_CIRCLE_2_CIRCLE_2_INTERSECTION_H
 
 #include <CGAL/Circle_2.h>
-#include <CGAL/Object.h>
 #include <CGAL/squared_distance_2_1.h>
 
 namespace CGAL {

@@ -65,7 +65,6 @@ struct Filtered_bbox_circular_kernel_base_ref_count : public CircularKernel
   #define CGAL_Filtered_Bbox_Circular_Kernel_cons(Y,Z) CGAL_Filtered_Bbox_Circular_Kernel_pred(Y,Z)
 
   #include <CGAL/Filtered_bbox_circular_kernel_2/interface_macros.h>
-
 };
 
 } // namespace internal

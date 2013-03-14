@@ -22,29 +22,20 @@ int main ()
 {
   // Construct the arrangement.
   Arrangement_2    arr;
-  Walk_pl          walk_pl (arr);
-  Trap_pl          trap_pl;
-
-  construct_segments_arr (arr);
+  Walk_pl          walk_pl(arr);
+  construct_segments_arr(arr);
 
   // Perform some vertical ray-shooting queries using the walk strategy.
-  Point_2          q1 (1, 4);
-  Point_2          q2 (4, 3);
-  Point_2          q3 (6, 3);
-
-  vertical_ray_shooting_query (walk_pl, q1);
-  vertical_ray_shooting_query (walk_pl, q2);
-  vertical_ray_shooting_query (walk_pl, q3);
+  shoot_vertical_ray(walk_pl, Point_2(1, 4));        // q1
+  shoot_vertical_ray(walk_pl, Point_2(4, 3));        // q2
+  shoot_vertical_ray(walk_pl, Point_2(6, 3));        // q3
 
   // Attach the trapezoid-RIC object to the arrangement and perform queries.
-  Point_2          q4 (3, 2);
-  Point_2          q5 (5, 2);
-  Point_2          q6 (1, 0);
-
+  Trap_pl          trap_pl;
   trap_pl.attach (arr);
-  vertical_ray_shooting_query (trap_pl, q4);
-  vertical_ray_shooting_query (trap_pl, q5);
-  vertical_ray_shooting_query (trap_pl, q6);
+  shoot_vertical_ray(trap_pl, Point_2(3, 2));        // q4
+  shoot_vertical_ray(trap_pl, Point_2(5, 2));        // q5
+  shoot_vertical_ray(trap_pl, Point_2(1, 0));        // q6
 
   return 0;
 }

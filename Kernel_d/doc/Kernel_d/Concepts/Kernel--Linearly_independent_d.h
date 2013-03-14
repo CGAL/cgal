@@ -10,9 +10,6 @@ A model for this must provide:
 class Kernel_d::Linearly_independent_d {
 public:
 
-/// \name See Also 
-/// @{
-
 /*! 
 decides 
 whether the vectors in `A = tuple [first,last)` are linearly 
@@ -23,8 +20,6 @@ independent.
 */ 
 template <class ForwardIterator> bool 
 operator()(ForwardIterator first, ForwardIterator last); 
-
-/// @}
 
 }; /* end Kernel_d::Linearly_independent_d */
 

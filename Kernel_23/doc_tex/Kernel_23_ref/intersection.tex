@@ -4,6 +4,17 @@ Depending on which \cgal\ \ccHtmlNoLinksFrom{kernel} is used,
 different versions of this global function are available. This is
 described below.
 
+\paragraph{Notes on backward compatibility}
+
+The \ccStyle{intersection} function used to return a
+\ccStyle{CGAL::Object}, but starting with {\cgal} VERSION HERE the
+return type is determined by a metafunction defined by the kernel. To
+preserve backward compatibility \ccStyle{CGAL::Object} can be
+constructed from the new return types implicitly, but switching to the
+new style is recommended. To enable the old style without any overhead,
+the macro \ccc{CGAL_INTERSECTION_VERSION} must be defined to
+\ccStyle{1} before any {\cgal} header is included.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{With the basic 2D and 3D Kernel} (see Chapter~\ref{chapter-kernel-23})
 
@@ -11,7 +22,7 @@ described below.
 
 \ccUnchecked{
 \ccRefLabel{Kernel::intersection}
-\ccFunction{Object intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);}
+\ccFunction{boost::result_of<Intersect_23(Type1, Type2)>::type intersection(Type1 obj1, Type2 obj2);}
 {Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
 \ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
 The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
@@ -20,12 +31,17 @@ Note that for objects like triangles and polygons that enclose a
 bounded region, this region is considered part of the object.
 If a segment lies completely inside a triangle, then those two objects
 intersect and the \ccHtmlNoLinksFrom{intersection} region is the complete segment.
+Here, \ccStyle{Intersect_23} means either \ccStyle{Intersect_2} or \ccStyle{Intersect_3}, depending on the arguments.
 }}
 
-The possible value for types \ccStyle{Type1} and \ccStyle{Type2} and the
-possible return values wrapped in \ccc{Object} are the
-following:
+The same functionality is also available through the functors
+\ccc{Kernel::Intersect_2} and \ccc{Kernel::Intersect_3}.
 
+The possible values for types \ccStyle{Type1} and \ccStyle{Type2} and
+the value for T\ldots in \ccStyle{boost::optional< boost::variant<
+  T\ldots > >} are the following and can be obtained through
+\ccStyle{boost::result_of(Intersect_2(A, B)>::type} or
+\ccStyle{boost::result_of(Intersect_3(A, B)>::type}.
 
 \begin{ccTexOnly}
 \begin{longtable}[c]{|l|l|l|}
@@ -114,6 +130,15 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
     \\ \ccStyle{Segment_2}
     \\ \ccStyle{Triangle_2}
     \\ \ccStyle{std::vector<Point_2>}
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Triangle_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+    \\ \ccStyle{Triangle_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Iso_rectangle_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Iso_rectangle_2}
   \vspace{1 mm}} \\
 \hline
 {\ccStyle{Line_3}} & {\ccStyle{Line_3}} & \parbox{4 cm}{\vspace{1 mm}
@@ -488,7 +513,8 @@ type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
 
 There is also an intersection function between 3 planes.
 
-\ccFunction{Object intersection(const Plane_3<Kernel>& pl1,
+\ccFunction{boost::optional< boost::variant< Point_3, Line_3, Plane_3 > >   
+  intersection(const Plane_3<Kernel>& pl1,
                                 const Plane_3<Kernel>& pl2,
                                 const Plane_3<Kernel>& pl3);}
 {returns the intersection of 3 planes, which can be either a point, a line,
@@ -503,19 +529,23 @@ If this kernel is used, in addition to the function and the
 combination of 2D types described above, another version of the function
 is provided.
 
-Since both the number of intersections, if any, and their type,
-depend on the arguments, the function returns an output
-iterator on \ccc{Object}'s, as presented below. 
+The iterator versions of those functions can be used in conjunction
+with \ccc{CGAL::Dispatch_output_iterator<V,O>}.
+
+Since both the number of intersections, if any, and their type, depend
+on the arguments, the function expects an output iterator on
+\ccStyle{boost::result_of<K::Intersect_2(Type1, Type2)>::type}, as
+presented below.
 
 \ccFunction{template < class OutputIterator >
 OutputIterator
 intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
-{Copies in the output iterator the intersection elements between the
-two objects. \ccc{intersections} iterates on
-elements of type \ccc{CGAL::Object}, in lexicographic order,}
+{Constructs the intersection elements between the
+two objects and stores them in the OutputIterator in
+lexicographic order,}
 
-where \ccStyle{Type1} and \ccStyle{Type2} can both be either
+where both \ccStyle{Type1} and \ccStyle{Type2} can be either
 \begin{itemize}
 \item {} \ccStyle{Line_2<CircularKernel>} or
 \item {} \ccStyle{Line_arc_2<CircularKernel>} or
@@ -547,9 +577,13 @@ If this kernel is used, in addition to the function and the
 combination of 3D types described above, two other versions of the function
 are provided.
 
-Since both the number of intersections, if any, and their type,
-depend on the arguments, the functions return an output
-iterator on \ccStyle{Object}'s, as presented below. 
+The iterator versions of those functions can be used in conjunction
+with \ccc{CGAL::Dispatch_output_iterator<V,O>}.
+
+Since both the number of intersections, if any, and their type, depend
+on the arguments, the functions expects an output iterator on
+\ccStyle{boost::result_of<Kernel::Intersect_3(Type1, Type2)>::type},
+as presented below.
 
 The \textbf{first function} is:
 
@@ -558,11 +592,11 @@ OutputIterator
 intersection(const  Type1 &obj1, const Type2 &obj2,
 		OutputIterator intersections);}
 {Copies in the output iterator the intersection elements between the
-two objects. \ccc{intersections} iterates on
-elements of type \ccStyle{CGAL::Object}, in lexicographic order,
+two objects. \ccc{intersections} iterates over
+elements of type \ccStyle{result_of< Intersect_23(A, B) >}, in lexicographic order,
 when this ordering is defined on the computed objects,}
 
-where \ccStyle{Type1} and \ccStyle{Type2} can both be either:
+where both \ccStyle{Type1} and \ccStyle{Type2} can be either:
 \begin{itemize}
 \item {} \ccStyle{Sphere_3<SphericalKernel>},
 \item {} \ccStyle{Plane_3<SphericalKernel>},
@@ -573,7 +607,7 @@ where \ccStyle{Type1} and \ccStyle{Type2} can both be either:
 \end{itemize} 
 
 and depending on the types \ccStyle{Type1} and \ccStyle{Type2}, the computed 
-\ccStyle{CGAL::Object}s can be assigned to 
+type can be:
 \begin{itemize}
 \item {} \ccStyle{std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>},
 where the unsigned integer is the multiplicity of the corresponding
@@ -596,10 +630,10 @@ The \textbf{second function} is:
 OutputIterator
 intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
 	OutputIterator intersections);}
-{Copies in the output iterator the intersection elements between the
-three objects. \ccc{intersections} iterates on
-elements of type \ccStyle{CGAL::Object}, in lexicographic order 
-when this ordering is defined on the computed objects}
+{Copies to the output iterator the intersection elements between the
+three objects. \ccc{intersections} iterates over
+elements of type \ccStyle{boost::variant< Circle_3, Plane_3, Sphere_3, std::pair< Circular_arc_point_3, unsigned > >}
+, in lexicographic order.}
 
 where \ccStyle{Type1}, \ccStyle{Type2} and \ccStyle{Type3}
 can be either
@@ -608,8 +642,7 @@ can be either
 \item {} \ccStyle{Plane_3<SphericalKernel>}
 \end{itemize}
 
-and depending of these types, the computed \ccStyle{CGAL::Object}s can be 
-assigned to 
+and depending of these types, the computed return value
 \begin{itemize}
 \item {} \ccStyle{std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>},
 where the unsigned integer is the multiplicity of the corresponding
@@ -625,34 +658,39 @@ and \ccc{obj3} are equal.
 
 The following example demonstrates the most common use of 
 \ccc{intersection} routines with the basic 2D and 3D Kernels.
+\ccHtmlLinksOff%
 \begin{verbatim}
 #include <CGAL/intersections.h>
 
-void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
+template<typename R>
+struct Intersection_visitor {
+  typedef result_type void;
+  void operator()(const Point_2<R>& p) const { /* handle point */ }
+  void operator()(const Segment_2<R>& s) const { /* handle segment */ }
+};
+
+template <class R>
+void foo(const Segment_2<R>& seg, const Line_2<R>& lin)
 {
-    CGAL::Object result = CGAL::intersection(seg, line);
-    if (const CGAL::Point_2<Kernel> *ipoint = CGAL::object_cast<CGAL::Point_2<Kernel> >(&result)) {
-\end{verbatim}%
-\ccHtmlLinksOff%
-\begin{verbatim}
-        // handle the point intersection case with *ipoint.
-\end{verbatim}%
-\ccHtmlLinksOn%
-\begin{verbatim}
-    } else
-        if (const CGAL::Segment_2<Kernel> *iseg = CGAL::object_cast<CGAL::Segment_2<Kernel> >(&result)) {
-\end{verbatim}%
-\ccHtmlLinksOff%
-\begin{verbatim}
-            // handle the segment intersection case with *iseg.
-\end{verbatim}%
-\ccHtmlLinksOn%
-\begin{verbatim}
+  // with C++11 support
+  auto result = intersection(seg, lin);
+
+  // without C++11
+  // boost::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type 
+  //   result = intersection(seg, lin);
+
+  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
+  else { /* no intersection */ }
+
+  // alternatively:
+  if(result) {
+    if(const Segment_2<R>* s = boost::get<Segment_2>(&*result)) {
+      // handle segment
+    } else if(const Point_2<R>* p = boost::get<Point_2>(&*result)) {
+      // handle point
+    }
         } else {
-\end{verbatim}%
-\ccHtmlLinksOff%
-\begin{verbatim}
-            // handle the no intersection case.
+    // no intersection
         }
 }
 \end{verbatim}%
@@ -663,9 +701,63 @@ Circular Kernel and the 3D Spherical Kernel are presented respectively
 in Chapters~\ref{chapter-circular-kernel}
 and~\ref{chapter-spherical-kernel}.
 
+\paragraph{Upgrading code from CGAL::Object to boost::variant}
+
+Code can be upgraded by using either \ccStyle{boost::get} or the
+\ccStyle{boost::static_visitor<T>}.
+
+\ccHtmlLinksOff%
+\begin{verbatim}
+#include <CGAL/intersections.h>
+
+template<typename R>
+struct Intersection_visitor : public boost::static_visitor<> {
+  void operator()(const Point_2& p) const { /* Point_2 */ }
+  void operator()(const Segment_2& s) const { /* Segment_2 */ }
+};
+
+template <class R>
+void foo(Segment_2<R> seg, Line_2<R> lin)
+{
+  CGAL::Object obj = intersection(seg1, seg2);
+  if(const Point_2* foo = object_cast<Point_2>(&obj)) {
+    /* Point_2 */
+  } else if(const Segment_2* foo = object_cast<Segment_2>(&obj)) {
+    /* Segment_2 */
+  } else {
+    /* empty */
+  }
+
+  // becomes
+  auto result = intersection(seg, lin);
+  if(result) {
+    if(const Point_2* foo = boost::get<Point_2>(&*obj)) {
+      /* Point_2 */
+    } else if(const Segment_2* foo = boost::get<Segment_2>(&*obj)) {
+      /* Segment_2 */
+    }
+  } else {
+    /* empty */
+  }
+
+  // or with boost::static_visitor<T>
+  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
+  else { /* empty */ }
+}
+\end{verbatim}%
+\ccHtmlLinksOn%
+
+\ccExample
+
+An example showing the use of the intersection function as a plain function call and with \ccc{CGAL::Dispatch_output_iterator} combined with a standard library algorithm.
+
+\ccIncludeExampleCode{Kernel_23/intersections.cpp}
+
 \ccSeeAlso
-% \ccRefIdfierPage{CGAL::assign} \\
-\ccRefIdfierPage{CGAL::do_intersect} \\ 
-\ccRefIdfierPage{CGAL::Object} \\
+\ccRefIdfierPage{CGAL::do_intersect}, \\
+\ccRefIdfierPage{CGAL_INTERSECTION_VERSION}, \\
+\ccAnchor{http://www.boost.org/doc/libs/release/libs/optional/index.html}{boost::optional}, \\
+\ccAnchor{http://www.boost.org/doc/html/variant.html}{boost::variant}, \\
+\ccAnchor{http://www.boost.org/libs/utility/utility.htm#result_of}{boost::result\_of}
 
 \end{ccRefFunction}

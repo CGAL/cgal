@@ -63,8 +63,11 @@ class Epeck
 class Epeck
   : public internal::Static_filters<
       Type_equality_wrapper<
-             Lazy_kernel_base< Simple_cartesian<Epeck_ft>, Simple_cartesian<Interval_nt_advanced>,
-	                       Cartesian_converter< Simple_cartesian<Epeck_ft>, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
+             Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
+                               Simple_cartesian<Interval_nt_advanced>,
+	                       Cartesian_converter< Simple_cartesian<Epeck_ft>,
+                                                    Simple_cartesian<Interval_nt_advanced> >,
+                               Epeck>,
              Epeck >, false>
 {};
 
@@ -72,8 +75,11 @@ class Epeck
 
 class Epeck
   : public Type_equality_wrapper<
-             Lazy_kernel_base< Simple_cartesian<Epeck_ft>, Simple_cartesian<Interval_nt_advanced>,
-	                       Cartesian_converter< Simple_cartesian<Epeck_ft>, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
+             Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
+                               Simple_cartesian<Interval_nt_advanced>,
+	                       Cartesian_converter< Simple_cartesian<Epeck_ft>,
+                                                    Simple_cartesian<Interval_nt_advanced> >,
+                               Epeck>,
              Epeck >
 {};
 #endif // no CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT

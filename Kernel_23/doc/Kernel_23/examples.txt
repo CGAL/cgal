@@ -7,4 +7,5 @@
 \example Kernel_23/MyKernel.cpp
 \example Filtered_kernel/Filtered_predicate.cpp
 \example Kernel_23/cartesian_converter.cpp
+\example Kernel_23/intersections.cpp
 */

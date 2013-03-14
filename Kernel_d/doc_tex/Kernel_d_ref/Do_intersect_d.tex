@@ -1,0 +1,13 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Do_intersect_d}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{template <class Kernel_object> bool
+  operator()(const Kernel_object& p, const Kernel_object& q);}
+{returns true if $p$ and $q$ intersect. \ccc{Kernel_object} may be any of
+  \ccc{Kernel::Segment_d}, \ccc{Kernel::Ray_d}, \ccc{Kernel::Line_d},
+  \ccc{Kernel::Hyperplane_d}.  \ccPrecond \ccc{p} and \ccc{q} have the
+  same dimension.}
+
+\end{ccRefFunctionObjectConcept}

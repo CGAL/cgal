@@ -39,8 +39,13 @@ namespace CGAL {
  * \param points_end A past-the-end iterator for the range of query points.
  * \param oi Output: An output iterator for the query results.
  * \pre The value-type of PointsIterator is Arrangement::Point_2,
- *      and the value-type of OutputIterator is pair<Point_2,Object>, where
- *      the Object represents the arrangement feature containing the points.
+ *      and the value-type of OutputIterator is is pair<Point_2, Result>, 
+ *      where Result is either
+ *       (i) Object or
+ *      (ii) boost::optional<boost::variant<Vertex_const_handle,
+ *                                          Halfedge_const_handle,
+ *                                          Face_const_handle> >.
+ *      It represents the arrangement feature containing the point.
  */
 template<typename GeomTraits, typename TopTraits,
          typename PointsIterator, typename OutputIterator> 
@@ -111,18 +116,16 @@ locate(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
     ex_traits(*geom_traits);
 
   // Define the sweep-line visitor and perform the sweep.
-  Bpl_visitor   visitor(&arr, &oi);
-  Basic_sweep_line_2<typename Bpl_visitor::Traits_2,
-                     Bpl_visitor,
+  Bpl_visitor   visitor(&arr, oi);
+  Basic_sweep_line_2<typename Bpl_visitor::Traits_2, Bpl_visitor,
                      typename Bpl_visitor::Subcurve,
                      typename Bpl_visitor::Event>
     sweep_line(&ex_traits, &visitor);
-
   sweep_line.sweep(xcurves_vec.begin(), xcurves_vec.end(), // Curves.
                    iso_pts_vec.begin(), iso_pts_vec.end(), // Action points.
                    points_begin, points_end);              // Query points.
 
-  return (oi);
+  return oi;
 }
 
 } //namespace CGAL
