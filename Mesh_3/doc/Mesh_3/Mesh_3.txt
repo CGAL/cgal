@@ -548,21 +548,22 @@ those processes have themselves parameters (see details in reference pages) to t
 
 Enabling parallel meshing and optimization algorithms can be done in several ways:
 <UL>
-<LI>Using the `Mesh_triangulation_3` class: set the third template parameter to `Parallel_tag`. This
-    is the easiest way to go.</LI>
-<LI>If the user is defining its own triangulation using the provided `Triangulation_data_structure_3`: 
+<LI>Using the `Mesh_triangulation_3` class: set the third template parameter to `Parallel_tag`.</LI>
+<LI>If the user provides its own triangulation using the CGAL's `Triangulation_data_structure_3`: 
     the template parameter Vertex_container_strategy must be set to `Compact_container_strategy_with_counter`,
     the template parameter Cell_container_strategy must be set to `Compact_container_strategy_with_counter`,
     and the template parameter Concurrency_tag must be set to `Parallel_tag`. In addition, 
 	the user should check the `MeshVertexBase_3` and `MeshCellBase_3` concepts for requirements 
 	on the vertex and cell classes.</LI>
-<LI>If the user wants to provide its own TDS: it must be a concurrency-safe TDS with regard to
+<LI>If the user provide its own triangulation and TDS: it must be a concurrency-safe TDS with regard to
     insertion and deletion of elements. In addition, the user should check the `MeshVertexBase_3` and 
     `MeshCellBase_3` concepts for requirements on the vertex and cell classes.</LI>
 </UL>
 
-Parallel algorithms require that CGAL is linked against the Intel TBB library.
+Parallel algorithms require the program to be linked against the Intel TBB library.
 We <b>strongly suggest</b> the user to use the TBB malloc proxy by including <tbb/tbbmalloc_proxy.h> in his source code.
+To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+See TBB documentation for more details.
 
 \section Mesh_3_section_examples Examples
 
