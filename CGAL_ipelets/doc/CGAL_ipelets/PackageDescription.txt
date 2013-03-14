@@ -1,6 +1,4 @@
 /// \defgroup PkgCGALIpelets CGAL Ipelets Reference
-/// \defgroup PkgCGALIpeletsConcepts Concepts
-/// \ingroup PkgCGALIpelets
 /*!
 \addtogroup PkgCGALIpelets
 \cgalPkgDescriptionBegin{CGAL Ipelets,PkgCGALIpeletsSummary}

@@ -1,6 +1,4 @@
 /// \defgroup PkgNefS2 2D Boolean Operations on Nef Polygons Embedded on the Sphere Reference
-/// \defgroup PkgNefS2Concepts Concepts
-/// \ingroup PkgNefS2
 /*!
 \addtogroup PkgNefS2
 

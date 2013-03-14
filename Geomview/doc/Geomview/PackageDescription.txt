@@ -1,6 +1,4 @@
 /// \defgroup PkgGeomview Geomview Reference
-/// \defgroup PkgGeomviewConcepts Concepts
-/// \ingroup PkgGeomview
 /*!
 \addtogroup PkgGeomview
 \todo check generated documentation
