@@ -77,18 +77,18 @@ struct Get_Is_cell_bad<Cell_criteria, true> {
   typedef Type type;
 };
 
-  // Predicate to know if a cell in a refinement queue is a zombie
-  template<typename Cell_handle>
-  class Cell_to_refine_is_not_zombie
-  {
-  public:
-    Cell_to_refine_is_not_zombie() {}
+// Predicate to know if a cell in a refinement queue is a zombie
+template<typename Cell_handle>
+class Cell_to_refine_is_not_zombie
+{
+public:
+  Cell_to_refine_is_not_zombie() {}
 
-    bool operator()(const std::pair<Cell_handle, unsigned int> &c) const
-    {
-      return (c.first->get_erase_counter() == c.second);
-    }
-  };
+  bool operator()(const std::pair<Cell_handle, unsigned int> &c) const
+  {
+    return (c.first->get_erase_counter() == c.second);
+  }
+};
 
 /************************************************
 // Class Refine_cells_3_base
