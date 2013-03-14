@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage User Manual 
 \anchor Chapter_3D_Mesh_Generation
 \anchor userchaptermesh3
-\authors Pierre Alliez, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
+\authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
 \cgalAutoToc
 
 \cgalFigureBegin{figuremultilabel_mesher,multilabel_mesher.jpg}
@@ -54,6 +54,9 @@ whatever may be the input geometry, in particular whatever small angles
 the boundary and subdivision surface patches may form \cite cgal:cdl-pdma-07, \cite cgal:cdr-drpsc-07.
 The Delaunay refinement is followed by a mesh optimization phase
 to remove slivers and provide a good quality mesh.
+
+Optionnally, the meshing and optimizations algorithms support multi-core shared-memory 
+architectures to take advantage of available parallelism.
 
 \subsection Mesh_3InputDomain Input Domain
 
@@ -338,6 +341,7 @@ embedding the mesh.
 This triangulation is required to be a `Regular_triangulation_3`.
 with vertex and cell base classes that are respectively models of the
 concepts `MeshVertexBase_3` and `MeshCellBase_3`.
+The `Mesh_triangulation_3` class provides an easy way to define such a triangulation (see examples below).
 
 \subsection Mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
 
@@ -539,6 +543,26 @@ Mesh_optimization_return_code exude_mesh_3(C3T3& c3t3);
 
 Note that the global functions activating the optimization processes or launching
 those processes have themselves parameters (see details in reference pages) to tune the optimization process.
+
+\subsection Mesh_3ParallelAlgorithms Parallel algorithms
+
+Enabling parallel meshing and optimization algorithms can be done in several ways:
+<UL>
+<LI>Using the `Mesh_triangulation_3` class: set the third template parameter to `Parallel_tag`. This
+    is the easiest way to go.</LI>
+<LI>If the user is defining its own triangulation using the provided `Triangulation_data_structure_3`: 
+    the template parameter Vertex_container_strategy must be set to `Compact_container_strategy_with_counter`,
+    the template parameter Cell_container_strategy must be set to `Compact_container_strategy_with_counter`,
+    and the template parameter Concurrency_tag must be set to `Parallel_tag`. In addition, 
+	the user should check the `MeshVertexBase_3` and `MeshCellBase_3` concepts for requirements 
+	on the vertex and cell classes.</LI>
+<LI>If the user wants to provide its own TDS: it must be a concurrency-safe TDS with regard to
+    insertion and deletion of elements. In addition, the user should check the `MeshVertexBase_3` and 
+    `MeshCellBase_3` concepts for requirements on the vertex and cell classes.</LI>
+</UL>
+
+Parallel algorithms require that CGAL is linked against the Intel TBB library.
+We <b>strongly suggest</b> the user to use the TBB malloc proxy by including <tbb/tbbmalloc_proxy.h> in his source code.
 
 \section Mesh_3_section_examples Examples
 
