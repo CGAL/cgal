@@ -1,6 +1,8 @@
-/// \cgalConcept
-/// http://en.cppreference.com/w/cpp/concept/CopyAssignable
-/// http://en.cppreference.com/w/cpp/concept/CopyConstructible
+///This concept refers to the one described at http://www.sgi.com/tech/stl/Assignable.html.
+///
+///Using the latest concepts of the \cpp standard, a type that is a model of this concept
+///is both <a href="http://en.cppreference.com/w/cpp/concept/CopyAssignable"><tt>CopyAssignable</tt></a>
+///and <a href="http://en.cppreference.com/w/cpp/concept/CopyConstructible"><tt>CopyConstructible</tt></a>.
 class Assignable {};
 
 /// \cgalConcept
@@ -24,10 +26,15 @@ class EqualityComparable {};
 class LessThanComparable {};
 
 /// \cgalConcept
+/// The concept AdaptableFunctor defines an adaptable functor, that is, a functor that can be
+/// used with function object adaptors such as binders and composers.
+///
 class AdaptableFunctor {};
 /// \cgalConcept
+///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableUnaryFunction.html.
 class AdaptableUnaryFunction {};
 /// \cgalConcept
+///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableBinaryFunction.html.
 class AdaptableBinaryFunction {};
 
 /// \cgalConcept
@@ -37,6 +44,7 @@ class Iterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/OutputIterator
 class OutputIterator {};
 
 /// \cgalConcept
@@ -60,8 +68,18 @@ class RandomAccessIterator {};
 class BidirectionalIterator {};
 
 /// \cgalConcept
+/// This concept refers to the one described at http://www.sgi.com/tech/stl/RandomAccessContainer.html.
+///
+/// It is a container that is a model of
+/// <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer"><tt>ReversibleContainer</tt></a> and whose iterator type is a model of
+/// <a href="http://en.cppreference.com/w/cpp/concept/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
 class RandomAccessContainer {};
 /// \cgalConcept
+/// This concepts refers to the one described at http://www.sgi.com/tech/stl/BackInsertionSequence.html.
+///
+/// It is a container that is a model of
+/// <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a>
+/// that has the ability to append elements at the end of the sequence and to access the last element, both in amortized constant time.
 class BackInsertionSequence {};
 
 /*!
