@@ -8,9 +8,9 @@
 #include <CGAL/enum.h>
 
 namespace CGAL {
-  
+
     template<class K>
-    class Side_of_oriented_square_2  
+    class Side_of_oriented_square_2
     {
     private:
       typedef typename K::Point_2               Point_2;
@@ -19,13 +19,13 @@ namespace CGAL {
       typedef typename K::Compare_x_2           Compare_x_2;
       typedef typename K::Compare_y_2           Compare_y_2;
       typedef typename K::Comparison_result     Comparison_result;
-      
+
       Compare_x_2 compare_x_2;
       Compare_y_2 compare_y_2;
-      
+
       Side_of_bounded_square_2_Type side_of_bounded_square_2;
       Orientation_Linf_2_Type orientation_Linf;
-      
+
       Oriented_side predicate(const Point_2 &p, const Point_2 &q,
                  const Point_2 &r, const Point_2 &t) const
       {
@@ -35,13 +35,13 @@ namespace CGAL {
 
         Oriented_side orlpqr = orientation_Linf(p, q, r);
 
-        if (orlpqr == DEGENERATE) {  
+        if (orlpqr == DEGENERATE) {
           // here p,q,r are monotone
           CGAL_SDG_DEBUG(std::cout << "debug side_of_os pqr are monotone" << std::endl;);
 
           bool is_degenerate_pqt = (orientation_Linf(p,q,t) == DEGENERATE);
           bool is_degenerate_qrt = (orientation_Linf(q,r,t) == DEGENERATE);
-           
+
           if (is_degenerate_pqt and is_degenerate_qrt) {
             //p,q,r,t are all collinear
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs pqrt all collin" << std::endl;);
@@ -57,7 +57,7 @@ namespace CGAL {
             //CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs rqt not monotone" << std::endl;);
             return predicate(r,q,t,p);
           }
-          
+
         }
         else { // p,q,r are not monotone
           //CGAL_SDG_DEBUG(std::cout << "side_of_os pqr not monotone" << std::endl;);
@@ -70,8 +70,8 @@ namespace CGAL {
           Comparison_result cytr = compare_y_2(t,r);
 
           // if t equals any one of p,q,r return zero
-	  if (((cxtp == EQUAL) and (cytp == EQUAL)) or 
-              ((cxtq == EQUAL) and (cytq == EQUAL)) or 
+	  if (((cxtp == EQUAL) and (cytp == EQUAL)) or
+              ((cxtq == EQUAL) and (cytq == EQUAL)) or
               ((cxtr == EQUAL) and (cytr == EQUAL))   )
           {
             return ON_ORIENTED_BOUNDARY;
@@ -88,8 +88,8 @@ namespace CGAL {
           {
             CGAL_SDG_DEBUG(std::cout << "debug side_of_os query point in segment"
               << std::endl;);
-            return (Oriented_side) 
-              (( (int) orlpqr ) * 
+            return (Oriented_side)
+              (( (int) orlpqr ) *
                ( (int) ON_POSITIVE_SIDE ) ) ;
           }
 
@@ -99,44 +99,44 @@ namespace CGAL {
             << bspqrt << std::endl;);
 
           if (bspqrt == ON_BOUNDARY) {
-            
+
             if ((cxtp != EQUAL) and (cytp != EQUAL)
                 and (not (orientation_Linf(r,q,t)==DEGENERATE))) {
                // r q t p
-               return (Oriented_side) 
-                 (((int) orientation_Linf(r,q,t)) * 
+               return (Oriented_side)
+                 (((int) orientation_Linf(r,q,t)) *
                   ((int) side_of_bounded_square_2(r,q,t,p)) ) ;
-	    } 
+	    }
             if ((cxtq != EQUAL) and (cytq != EQUAL)
                 and (not (orientation_Linf(p,r,t)==DEGENERATE))) {
                // p r t q
-               return (Oriented_side) 
-                 (((int) orientation_Linf(p,r,t)) * 
+               return (Oriented_side)
+                 (((int) orientation_Linf(p,r,t)) *
                   ((int) side_of_bounded_square_2(p,r,t,q)) ) ;
-	    } 
+	    }
             if ((cxtr != EQUAL) and (cytr != EQUAL)
                 and (not (orientation_Linf(q,p,t)==DEGENERATE))) {
                // q p t r
-               return (Oriented_side) 
-                 (((int) orientation_Linf(q,p,t)) * 
+               return (Oriented_side)
+                 (((int) orientation_Linf(q,p,t)) *
                   ((int) side_of_bounded_square_2(q,p,t,r)) ) ;
-	    } 
+	    }
             CGAL_SDG_DEBUG(std::cout << "debug side_of_os about to return "
               << "ON_ORIENTED_BOUNDARY" << std::endl;);
             return ON_ORIENTED_BOUNDARY;
           }
           else if ( bspqrt == ON_BOUNDED_SIDE ) {
-            return (orlpqr == LEFT_TURN) ? 
-                    ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE  ;            
+            return (orlpqr == LEFT_TURN) ?
+                    ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE  ;
           }
           else {
             // ( Side_of_bounded_square_2(p,q,r,t) == ON_UNBOUNDED_SIDE )
             CGAL_assertion(bspqrt == ON_UNBOUNDED_SIDE);
-            return (orlpqr == LEFT_TURN) ? 
+            return (orlpqr == LEFT_TURN) ?
                     ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE ;
           }
         }
-        CGAL_SDG_DEBUG(std::cout << "should not reach here" << std::endl;); 
+        CGAL_SDG_DEBUG(std::cout << "should not reach here" << std::endl;);
 
         CGAL_assertion(false);
 
@@ -144,7 +144,7 @@ namespace CGAL {
         return ON_ORIENTED_BOUNDARY;
 
       } // end of def of Oriented_side predicate(p, q, r)
-        
+
     public:
 
       Oriented_side operator()(const Point_2 &p, const Point_2 &q,
