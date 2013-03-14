@@ -1039,6 +1039,7 @@ namespace for the XML file to be processed properly.  -->
           </list>
           <list name="TAGFILES" append="true">
             <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
+          </list>
         </doxygen>
       </project>
 
