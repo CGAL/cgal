@@ -38,14 +38,7 @@ namespace CGAL {
 template <bool Use_erase_counter, typename Concurrency_tag>
 class Triangulation_ds_cell_base_3_base
 {
-public:
-  // Dummy
-  unsigned int get_erase_counter() const { return 0; }
-  void set_erase_counter(unsigned int) {}
-  void increment_erase_counter() {}
 };
-
-
 
 // Specialized version (with erase counter)
 template <typename Concurrency_tag>

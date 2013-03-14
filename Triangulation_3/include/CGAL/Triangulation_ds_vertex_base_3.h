@@ -30,11 +30,6 @@ namespace CGAL {
 template <bool Use_erase_counter>
 class Triangulation_ds_vertex_base_3_base
 {
-public:
-  // Dummy
-  unsigned int get_erase_counter() const { return 0; }
-  void set_erase_counter(unsigned int) {}
-  void increment_erase_counter() {}
 };
 
 #ifdef CGAL_LINKED_WITH_TBB

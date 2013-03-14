@@ -343,8 +343,8 @@ protected:
   void destroy_root_task()                          const {}
   template <typename Func, typename PVertex>
   void enqueue_work(Func, const PVertex &)          const {}
-
-protected:
+  
+  void increment_erase_counter(const Vertex_handle &vh) const {}
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -405,6 +405,11 @@ protected:
   {
     CGAL_assertion(m_empty_root_task != 0);
     m_worksharing_ds.enqueue_work(f, pv, *m_empty_root_task);
+  }
+  
+  void increment_erase_counter(const Vertex_handle &vh) const
+  {
+    vh->increment_erase_counter();
   }
 
 public:
@@ -1296,7 +1301,7 @@ perturb_vertex( PVertex pv
       // may be in other threads' queues
       else
       {
-        pv.vertex()->increment_erase_counter();
+        increment_erase_counter(pv.vertex());
       }
 
       // If v has been moved

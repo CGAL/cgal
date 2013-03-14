@@ -174,6 +174,9 @@ protected:
   {
     return 0;
   }
+  
+  // Dummy
+  unsigned int get_erase_counter(const Cell_handle &ch) const { return 0;}
 
   std::size_t cells_queue_size() const { return cells_queue_.size(); }
   bool cells_queue_empty()       const { return cells_queue_.empty(); }
@@ -298,6 +301,11 @@ protected:
   unsigned int extract_erase_counter_from_queue_value(const Queue_value_type &qv) const
   {
     return qv.second.second;
+  }
+  
+  unsigned int get_erase_counter(const Cell_handle &ch) const
+  {
+    return ch->get_erase_counter();
   }
 
   std::size_t cells_queue_size() const { return cells_queue_.size(); }
@@ -677,7 +685,7 @@ private:
     // Parallel
     if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
       enqueue_task<pump_vertices_on_surfaces>(
-        ch, ch->get_erase_counter(), criterion_value);
+        ch, get_erase_counter(ch), criterion_value);
     // Sequential
     else
 #endif
@@ -1481,7 +1489,7 @@ enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
         {
           could_lock_zone = true;
 
-          if (ch->get_erase_counter() != erase_counter)
+          if (get_erase_counter(ch) != erase_counter)
             break;
 
           if (!tr_.try_lock_cell(ch))
@@ -1494,7 +1502,7 @@ enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
             continue;
           }
 
-          if (ch->get_erase_counter() != erase_counter)
+          if (get_erase_counter(ch) != erase_counter)
           {
             this->unlock_all_elements();
             break;
