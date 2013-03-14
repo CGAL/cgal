@@ -319,7 +319,7 @@ The point type of the search traits is `std::size_t`.
 
 \subsection Spatial_searchingUsingaModelofLvalueProperty Using a Model of L-value Property Map Concept
 
-This example programs uses a <span class="textsc">Boost</span> <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/LvaluePropertyMap.html">LvaluePropertyMap</A>.
+This example programs uses a model of `LvaluePropertyMap`.
 Points are read from a `std::map`. The search tree stores integers of type `std::size_t`. The value type of the iterator of the neighbor searching algorithm is `std::size_t`.
 
 \cgalExample{Spatial_searching/searching_with_point_with_info_pmap.cpp}

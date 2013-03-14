@@ -357,9 +357,9 @@ public:
   ///
   /// @commentheading Template Parameters:
   /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3.
+  /// @param PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3.
   ///        It can be omitted if InputIterator value_type is convertible to Point_3.
-  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3.
+  /// @param NormalPMap is a model of `ReadablePropertyMap` with a value_type = Vector_3.
   ///
   /// @return the number of inserted points.
 
