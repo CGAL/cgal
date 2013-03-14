@@ -48,7 +48,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Line_d </TD> 
 <TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Line_d</TD></TR> 
 </TABLE></TD> 
@@ -56,7 +56,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
 <TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 </TABLE></TD> 
@@ -64,7 +64,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 </TABLE></TD> 
@@ -72,7 +72,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
 <TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Ray_d</TD></TR> 
 </TABLE></TD> 
@@ -80,7 +80,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 </TABLE></TD> 
@@ -88,7 +88,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 <TR><TD>Ray_d</TD></TR> 
@@ -97,7 +97,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Hyperplane_d </TD> 
 <TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Line_d</TD></TR> 
 </TABLE></TD> 
@@ -105,7 +105,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Hyperplane_d </TD> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Ray_d</TD></TR> 
 </TABLE></TD> 
@@ -113,7 +113,7 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR> 
 <TD VALIGN="CENTER" > Hyperplane_d </TD> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 </TABLE></TD> 
