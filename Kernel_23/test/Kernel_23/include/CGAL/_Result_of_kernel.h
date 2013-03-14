@@ -46,7 +46,7 @@
 
 
 // Unfortunately this test is only an approximation. At this point
-// boost::result_of behaves as C++11 result_of and we cannot force it
+// cpp11::result_of behaves as C++11 result_of and we cannot force it
 // back into an old mode thanks to the include guards. We instead use
 // a TR1 implementation of result_of to compare the types. This is the
 // best we can go for.
@@ -82,7 +82,7 @@ namespace CGAL {
 
   // This functor can wrap any DefaultConstructible functor. Iff there
   // is a result_type typedef it needs to be forwarded. In all other
-  // cases boost::result_of is necessary to determine the return type.
+  // cases cpp11::result_of is necessary to determine the return type.
   template<typename F, bool result_type = result_of_kernel::has_result_type<F>::value >
   struct AnyFunctor;
 
@@ -98,7 +98,7 @@ namespace CGAL {
       typedef typename F::result_type c03_return_type;
 
       static_assert((result_of_kernel::Rep_equal<c11_return_type, c03_return_type>::value), 
-                    "Type difference between actual return type and boost::result_of<>::type");
+                    "Type difference between actual return type and cpp11::result_of<>::type");
       
       return f(std::forward<Args>(args)...);
     }
@@ -111,7 +111,7 @@ namespace CGAL {
     
     template<typename Func, typename... Args>
     struct result<Func(Args...)> {
-      typedef typename boost::result_of<F(Args...)>::type type;
+      typedef typename cpp11::result_of<F(Args...)>::type type;
     };
 
     // same as above
@@ -130,7 +130,7 @@ namespace CGAL {
         )>::type c03_return_type;
 
       static_assert((result_of_kernel::Rep_equal<c11_return_type, c03_return_type>::value), 
-                    "Type difference between actual return type and boost::result_of<>::type");
+                    "Type difference between actual return type and cpp11::result_of<>::type");
 
       return f(std::forward<Args>(args)...);
     }

@@ -381,7 +381,7 @@ namespace CircularFunctors {
 	       const typename CK::Circle_2 & c,
 	       OutputIterator res )
   {
-    typedef typename boost::result_of<typename CK::Intersect_2(typename CK::Line_2, typename CK::Circle_2)>
+    typedef typename cpp11::result_of<typename CK::Intersect_2(typename CK::Line_2, typename CK::Circle_2)>
       ::type result_type;
     typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_1_2              Equation_line;
@@ -416,7 +416,7 @@ namespace CircularFunctors {
 	       const typename CK::Line_arc_2 &a2,
 	       OutputIterator res )
   {
-    typedef typename boost::result_of<typename CK::Intersect_2(typename CK::Line_arc_2, typename CK::Line_arc_2)>
+    typedef typename cpp11::result_of<typename CK::Intersect_2(typename CK::Line_arc_2, typename CK::Line_arc_2)>
       ::type result_type;
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Line_arc_2               Line_arc_2;
@@ -482,7 +482,7 @@ namespace CircularFunctors {
       }
     }
     
-    typename boost::result_of<typename CK::Intersect_2(typename CK::Line_2, typename CK::Line_2)>::type
+    typename cpp11::result_of<typename CK::Intersect_2(typename CK::Line_2, typename CK::Line_2)>::type
       v = CGAL::internal::intersection(a1.supporting_line(), a2.supporting_line(), CK());
     if(!v) return res;
 
@@ -515,7 +515,7 @@ namespace CircularFunctors {
 	       const typename CK::Circle_2 &c,
 	       OutputIterator res )
   { 
-    typedef std::vector<typename boost::result_of<typename CK::Intersect_2(typename CK::Line_2, typename CK::Circle_2)>::type> 
+    typedef std::vector<typename cpp11::result_of<typename CK::Intersect_2(typename CK::Line_2, typename CK::Circle_2)>::type> 
       solutions_container;
     solutions_container solutions;
 
@@ -557,7 +557,7 @@ namespace CircularFunctors {
 	       OutputIterator res )
   {
     typedef std::vector<CGAL::Object > solutions_container;
-    typedef typename boost::result_of<typename CK::Intersect_2(typename CK::Line_arc_2, typename CK::Circular_arc_2 )>
+    typedef typename cpp11::result_of<typename CK::Intersect_2(typename CK::Line_arc_2, typename CK::Circular_arc_2 )>
       ::type result_type;
     typedef typename CK::Circular_arc_2 Circular_arc_2;
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
@@ -639,7 +639,7 @@ namespace CircularFunctors {
 	*res++ = result_type(std::make_pair(q,1u));
 	return res;
       } else { //Case 4b
-        typedef std::vector<typename boost::result_of<typename CK::Intersect_2(typename CK::Line_2, typename CK::Circle_2)>::type> 
+        typedef std::vector<typename cpp11::result_of<typename CK::Intersect_2(typename CK::Line_2, typename CK::Circle_2)>::type> 
           container;
         container solutions;
 	CGAL::CircularFunctors::intersect_2<CK>( l.supporting_line(), c.supporting_circle(),
@@ -763,7 +763,7 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Point_2                  Point_2;
     typedef typename CK::Line_2                   Line_2;
-    typedef typename boost::result_of<typename CK::Intersect_2(Line_2, Line_arc_2)>::type result_type;
+    typedef typename cpp11::result_of<typename CK::Intersect_2(Line_2, Line_arc_2)>::type result_type;
 
     if(LinearFunctors::non_oriented_equal<CK>(l, la.supporting_line())) {
       *res++ = result_type(la);
@@ -794,7 +794,7 @@ namespace CircularFunctors {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
 
     typedef typename CK::Line_2 Line_2;
-    typedef std::vector< typename boost::result_of<typename CK::Intersect_2(Line_2, typename CK::Circle_2 )>::type> 
+    typedef std::vector< typename cpp11::result_of<typename CK::Intersect_2(Line_2, typename CK::Circle_2 )>::type> 
       solutions_container;
 
     solutions_container solutions;

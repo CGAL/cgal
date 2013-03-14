@@ -1477,13 +1477,13 @@ struct Lazy_construction_variant {
   typedef typename LK::E2A E2A;
 
   template <typename L1, typename L2>
-  typename boost::result_of<Lazy_construction_variant(L1, L2)>::type
+  typename cpp11::result_of<Lazy_construction_variant(L1, L2)>::type
   operator()(const L1& l1, const L2& l2) const {
-    typedef typename boost::result_of<Lazy_construction_variant(L1, L2)>::type result_type;
+    typedef typename cpp11::result_of<Lazy_construction_variant(L1, L2)>::type result_type;
     
-    typedef typename boost::result_of<AC(typename Type_mapper<L1, LK, AK>::type, 
+    typedef typename cpp11::result_of<AC(typename Type_mapper<L1, LK, AK>::type, 
                                          typename Type_mapper<L2, LK, AK>::type)>::type AT;
-    typedef typename boost::result_of<EC(typename Type_mapper<L1, LK, EK>::type, 
+    typedef typename cpp11::result_of<EC(typename Type_mapper<L1, LK, EK>::type, 
                                          typename Type_mapper<L2, LK, EK>::type)>::type ET;
     
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
@@ -1525,14 +1525,14 @@ struct Lazy_construction_variant {
   }
 
   template <typename L1, typename L2, typename L3>
-  typename boost::result_of<Lazy_construction_variant(L1, L2, L3)>::type
+  typename cpp11::result_of<Lazy_construction_variant(L1, L2, L3)>::type
   operator()(const L1& l1, const L2& l2, const L3& l3) const {
-    typedef typename boost::result_of<Lazy_construction_variant(L1, L2, L3)>::type result_type;
+    typedef typename cpp11::result_of<Lazy_construction_variant(L1, L2, L3)>::type result_type;
     
-    typedef typename boost::result_of<AC(typename Type_mapper<L1, LK, AK>::type, 
+    typedef typename cpp11::result_of<AC(typename Type_mapper<L1, LK, AK>::type, 
                                          typename Type_mapper<L2, LK, AK>::type,
                                          typename Type_mapper<L3, LK, AK>::type)>::type AT;
-    typedef typename boost::result_of<EC(typename Type_mapper<L1, LK, EK>::type, 
+    typedef typename cpp11::result_of<EC(typename Type_mapper<L1, LK, EK>::type, 
                                          typename Type_mapper<L2, LK, EK>::type,
                                          typename Type_mapper<L3, LK, EK>::type)>::type ET;
 
@@ -1582,7 +1582,7 @@ struct Lazy_construction_variant {
     struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> {                    \
       BOOST_PP_REPEAT(n, CGAL_TYPEMAP_AC, T)                            \
       typedef typename Type_mapper<                                     \
-        typename boost::result_of<AC( BOOST_PP_ENUM_PARAMS(n, A) )>::type, AK, LK>::type type; \
+        typename cpp11::result_of<AC( BOOST_PP_ENUM_PARAMS(n, A) )>::type, AK, LK>::type type; \
     };
   
   BOOST_PP_REPEAT_FROM_TO(1, 9, CGAL_RESULT, _)

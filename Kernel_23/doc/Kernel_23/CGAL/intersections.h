@@ -133,8 +133,8 @@ depending on the arguments.
 The following table gives the possible values for `Type1` and `Type2`
 and the resulting return types `T...` in `boost::optional< boost::variant< T... > >`. 
 The resulting return type can be obtained through
-`boost::result_of<Kernel::Intersect_2(A, B)>::%type` or
-`boost::result_of<Kernel::Intersect_3(A, B)>::%type`.
+`cpp11::result_of<Kernel::Intersect_2(A, B)>::%type` or
+`cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
@@ -340,7 +340,7 @@ void foo(const Segment_2<R>& seg, const Line_2<R>& lin)
   // auto result = intersection(seg, lin);
 
   // without C++11
-  boost::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type 
+  cpp11::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type 
     result = intersection(seg, lin);
 
   if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
@@ -368,7 +368,7 @@ a standard library algorithm.
 
 */
 template <typename Kernel>
-boost::result_of<Kernel::Intersect_23(Type1, Type2)>::type
+cpp11::result_of<Kernel::Intersect_23(Type1, Type2)>::type
 intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);
 
 /*!

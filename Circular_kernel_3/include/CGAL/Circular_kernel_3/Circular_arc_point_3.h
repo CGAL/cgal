@@ -74,7 +74,7 @@ public:
                        const Sphere_3 &s2,
                        const Sphere_3 &s3,
                        const bool less_xyz = true) {
-    std::vector<typename boost::result_of<typename SK::Intersect_3(Sphere_3, Sphere_3, Sphere_3)>::type> sols;
+    std::vector<typename cpp11::result_of<typename SK::Intersect_3(Sphere_3, Sphere_3, Sphere_3)>::type> sols;
     SK().intersect_3_object()(s1, s2, s3, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
@@ -97,7 +97,7 @@ public:
                        const Sphere_3 &s1,
                        const Sphere_3 &s2,
                        const bool less_xyz = true) {
-    std::vector<typename boost::result_of<typename SK::Intersect_3(Plane_3, Sphere_3, Sphere_3)>::type> sols;
+    std::vector<typename cpp11::result_of<typename SK::Intersect_3(Plane_3, Sphere_3, Sphere_3)>::type> sols;
     SK().intersect_3_object()(p, s1, s2, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
@@ -120,7 +120,7 @@ public:
                        const Plane_3 &p2,
                        const Sphere_3 &s,
                        const bool less_xyz = true) {
-    std::vector<typename boost::result_of<typename SK::Intersect_3(Plane_3, Plane_3, Sphere_3)>::type> sols;
+    std::vector<typename cpp11::result_of<typename SK::Intersect_3(Plane_3, Plane_3, Sphere_3)>::type> sols;
     SK().intersect_3_object()(p1, p2, s, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
@@ -142,7 +142,7 @@ public:
   Circular_arc_point_3(const Line_3 &l,
                        const Sphere_3 &s,
                        const bool less_xyz = true) {
-    std::vector<typename boost::result_of<typename SK::Intersect_3(Line_3, Sphere_3)>::type> sols;
+    std::vector<typename cpp11::result_of<typename SK::Intersect_3(Line_3, Sphere_3)>::type> sols;
     SK().intersect_3_object()(l, s, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
@@ -164,7 +164,7 @@ public:
   Circular_arc_point_3(const Circle_3 &c,
                        const Plane_3 &p,
                        const bool less_xyz = true) {
-    std::vector<typename boost::result_of<typename SK::Intersect_3(Circle_3, Plane_3)>::type> sols;
+    std::vector<typename cpp11::result_of<typename SK::Intersect_3(Circle_3, Plane_3)>::type> sols;
     SK().intersect_3_object()(c, p, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);
@@ -186,7 +186,7 @@ public:
   Circular_arc_point_3(const Circle_3 &c,
                        const Sphere_3 &s,
                        const bool less_xyz = true) {
-    std::vector<typename boost::result_of<typename SK::Intersect_3(Circle_3, Sphere_3)>::type> sols;
+    std::vector<typename cpp11::result_of<typename SK::Intersect_3(Circle_3, Sphere_3)>::type> sols;
     SK().intersect_3_object()(c, s, std::back_inserter(sols));
     // s1,s2,s3 must intersect
     CGAL_kernel_precondition(sols.size() != 0);

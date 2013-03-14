@@ -201,7 +201,7 @@ public:
     template<typename Query>
     Surface_patch clip_to_segment(const Query& query) const
     {
-      typename boost::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
+      typename cpp11::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
         clipped = CGAL::intersection(query, r_domain_.bbox_);
 
       if(clipped)
@@ -324,7 +324,7 @@ public:
     template<typename Query>
     Intersection clip_to_segment(const Query& query) const
     {
-      typename boost::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
+      typename cpp11::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
         clipped = CGAL::intersection(query, r_domain_.bbox_);
 
       if(clipped)

@@ -1107,14 +1107,14 @@ template < class SK > \
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B)            \
     result_type                                                         \
     operator()(const A & c1, const B & c2) const                        \
-    { std::vector< typename boost::result_of<typename SK::Intersect_3(A, B)>::type > res; \
+    { std::vector< typename cpp11::result_of<typename SK::Intersect_3(A, B)>::type > res; \
       typename SK::Intersect_3()(c1,c2,std::back_inserter(res));        \
       return !res.empty(); }
 	
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C)          \
     result_type                                                         \
     operator()(const A & c1, const B & c2, const C & c3) const          \
-    { std::vector< typename boost::result_of<typename SK::Intersect_3(A, B, C)>::type > res; \
+    { std::vector< typename cpp11::result_of<typename SK::Intersect_3(A, B, C)>::type > res; \
       typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res));     \
       return !res.empty(); }
 
@@ -1177,7 +1177,7 @@ template < class SK > \
     template <typename A, typename B, typename C, 
               bool is_iterator = CGAL::is_iterator<typename boost::decay<C>::type>::value>
     struct result_impl 
-    { typedef typename boost::result_of<typename SK::Linear_kernel::Intersect_3(A, B, C)>::type
+    { typedef typename cpp11::result_of<typename SK::Linear_kernel::Intersect_3(A, B, C)>::type
       type; };
 
     template <typename A, typename B, typename C>
@@ -1191,7 +1191,7 @@ template < class SK > \
     // the binary overload always goes to Linear::Intersect_3
     template <typename F, typename A, typename B>
     struct result<F(A, B)>
-    { typedef typename boost::result_of<typename SK::Linear_kernel::Intersect_3(A, B)>::type type; };
+    { typedef typename cpp11::result_of<typename SK::Linear_kernel::Intersect_3(A, B)>::type type; };
 
     // we match the ternary case if the last argument is an iterator,
     // otherwise Linear::Intersect_3 wins
@@ -1283,12 +1283,12 @@ template < class SK > \
     
     // forward the intersection functions from the linear kernel
     template <typename A, typename B>
-    typename boost::result_of<typename SK::Intersect_3(A, B)>::type
+    typename cpp11::result_of<typename SK::Intersect_3(A, B)>::type
     operator()(const A& a, const B& b) 
     { return typename SK::Linear_kernel().intersect_3_object()(a, b); }
 
     template <typename A, typename B, typename C>
-    typename boost::result_of<typename SK::Intersect_3(A, B, C)>::type
+    typename cpp11::result_of<typename SK::Intersect_3(A, B, C)>::type
     operator()(const A& a, const B& b, const C& c,
                typename boost::enable_if_c<!(CGAL::is_iterator<typename boost::decay<C>::type>::value)>::type* = 0)
     { return typename SK::Linear_kernel().intersect_3_object()(a, b, c); }

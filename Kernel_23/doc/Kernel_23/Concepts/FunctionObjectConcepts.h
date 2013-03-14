@@ -7639,7 +7639,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
   \sa `CGAL::intersection`
-  \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`boost::result_of`</A>
+  \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</A>
 
 */
 class Intersect_2 {
@@ -7654,7 +7654,7 @@ public:
     `Type1` and `Type2`, for all pairs `Type1` and `Type2`.
     For details see the reference manual page for `intersection()`.
   */ 
-  boost::result_of<Kernel::Intersect_2(Type1, Type2)>::type
+  cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>::type
   operator()(Type1 obj1, Type2 obj2); 
 
   /// @}
@@ -7668,7 +7668,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with two or three arguments) 
 
   \sa `CGAL::intersection` 
-  \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`boost::result_of`</A>
+  \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</A>
 
 */
 class Intersect_3 {
@@ -7683,7 +7683,7 @@ public:
     objects of type `Type1` and `Type2`. 
     For details see the reference manual page for `intersection()`.
   */ 
-  boost::result_of<Kernel::Intersect_3(Type1, Type2)>::type 
+  cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>::type 
  operator()(Type1 obj1, Type2 obj2); 
 
  

@@ -26,9 +26,9 @@ typedef CGAL::Bbox_3                Bbox_3;
 
 template<class A, class B>
 void call_intersection_global(const A& a, const B& b) {
-  typename boost::result_of<K::Intersect_3(A, B)>::type x = CGAL::intersection(a, b);
-  typename boost::result_of<K::Intersect_3(A, B)>::type y = CGAL::intersection(b, a);
-  typename boost::result_of<K::Intersect_3(B, A)>::type z = CGAL::intersection(b, a);
+  typename cpp11::result_of<K::Intersect_3(A, B)>::type x = CGAL::intersection(a, b);
+  typename cpp11::result_of<K::Intersect_3(A, B)>::type y = CGAL::intersection(b, a);
+  typename cpp11::result_of<K::Intersect_3(B, A)>::type z = CGAL::intersection(b, a);
   CGAL_USE(x);
   CGAL_USE(y);
   CGAL_USE(z);
@@ -43,8 +43,8 @@ void call_do_intersect_global(const A& a, const B& b) {
 template<class A, class B, class K>
 void call_intersection_with_kernel(const A& a, const B& b, const K&) {
   typedef typename K::Intersect_3 Intersect;
-  typename boost::result_of<Intersect(A, B)>::type x = Intersect()(a, b);
-  typename boost::result_of<Intersect(A, B)>::type y = Intersect()(b, a);
+  typename cpp11::result_of<Intersect(A, B)>::type x = Intersect()(a, b);
+  typename cpp11::result_of<Intersect(A, B)>::type y = Intersect()(b, a);
 }
 
 template<class A, class B, class K>
@@ -80,7 +80,7 @@ int main()
     // call_intersection_global(Pl(), Cub());
 
     // special
-    boost::result_of<K::Intersect_3(Pl, Pl, Pl)>::type plplpl = CGAL::intersection(Pl(), Pl(), Pl());
+    cpp11::result_of<K::Intersect_3(Pl, Pl, Pl)>::type plplpl = CGAL::intersection(Pl(), Pl(), Pl());
     
     call_intersection_global(Tr(), S());
     call_intersection_global(Tr(), L());

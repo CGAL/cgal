@@ -50,7 +50,7 @@ public:
   
   template <typename F, typename A, typename B>
   struct result<F(A, B)> {
-    typedef typename boost::result_of<typename K_::Intersect_3(A, B)>::type type;
+    typedef typename cpp11::result_of<typename K_::Intersect_3(A, B)>::type type;
   };
 
   typedef Exact_predicates_exact_constructions_kernel   EK;
@@ -58,7 +58,7 @@ public:
   typedef Cartesian_converter<EK, typename K_::Kernel>    Back_from_exact;
   
   template<class T1, class T2>
-  typename boost::result_of<typename K_::Intersect_3(T1, T2)>::type
+  typename cpp11::result_of<typename K_::Intersect_3(T1, T2)>::type
   operator() (const T1& t, const T2& s) const
   {
     // Switch to exact
@@ -67,7 +67,7 @@ public:
     EK::Intersect_3 exact_intersection = EK().intersect_3_object();
     
     // Cartesian converters have an undocumented, optional< variant > operator
-    return typename boost::result_of<typename K_::Intersect_3(T1, T2)>::type
+    return typename cpp11::result_of<typename K_::Intersect_3(T1, T2)>::type
       (back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
   }
 };

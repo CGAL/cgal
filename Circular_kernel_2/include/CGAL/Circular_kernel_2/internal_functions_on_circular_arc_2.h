@@ -542,7 +542,7 @@ namespace CircularFunctors {
 	       const typename CK::Circular_arc_2 &a2,
 	       OutputIterator res )
   {
-    typedef typename boost::result_of<typename CK::Intersect_2(typename CK::Circular_arc_2,
+    typedef typename cpp11::result_of<typename CK::Intersect_2(typename CK::Circular_arc_2,
                                                                typename CK::Circular_arc_2)>::type result_type;
 
     typedef std::vector<CGAL::Object> solutions_container; 

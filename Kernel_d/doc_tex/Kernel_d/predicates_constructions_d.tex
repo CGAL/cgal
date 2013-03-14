@@ -68,7 +68,7 @@ returns a \ccStyle{boost::optional< boost::variant< T \ldots\ > >}
 were T\textellipsis\ is a list of all possible resulting geometric objects.
 
 The exact result type of an intersection can be determined by using
-\ccStyle{boost::result_of<Kernel::Intersect_d(Type1, Type2)>::type}
+\ccStyle{cpp11::result_of<Kernel::Intersect_d(Type1, Type2)>::type}
 where \ccStyle{Type1} and \ccStyle{Type2} are the types of the objects
 used in the intersection query. See
 \ccAnchor{http://www.boost.org/libs/utility/utility.htm#result_of}{boost::result\_of}
@@ -83,7 +83,7 @@ for more information about this mechanism.
   Segment s1, s2;
   std::cin >> s1 >> s2;
 
-  boost::result_of<K::Intersect_d(Segment, Segment)>::type
+  cpp11::result_of<K::Intersect_d(Segment, Segment)>::type
     v = intersection(s1, s2);
   if(v) {
     /* not empty */

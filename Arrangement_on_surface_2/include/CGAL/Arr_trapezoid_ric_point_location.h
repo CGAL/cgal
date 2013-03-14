@@ -112,7 +112,7 @@ protected:
   typedef typename Result::Type                           Result_type;
 
 public:
-  // Support boost::result_of
+  // Support cpp11::result_of
   typedef Result_type                                     result_type;
 
 protected:

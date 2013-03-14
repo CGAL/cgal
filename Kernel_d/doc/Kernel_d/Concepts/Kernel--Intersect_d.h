@@ -21,7 +21,7 @@ For a list of the possible return types, see `CGAL::intersection()`.
 \pre `p` and `q` have the same dimension. 
 */ 
 template <class Type1, class Type2>
-boost::result_of<Kernel::Intersect_d(Type1, Type2)>::type
+cpp11::result_of<Kernel::Intersect_d(Type1, Type2)>::type
 operator()(const Type1& p, const Type2& q); 
 
 

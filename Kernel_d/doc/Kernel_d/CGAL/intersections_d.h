@@ -36,7 +36,7 @@ The following table gives the possible values for `Type1` and `Type2`
 and the resulting return types `T...` in `boost::optional< boost::variant< T... > >`.
 
 The resulting return type can be obtained through
-`boost::result_of(Kernel::Intersect_d(A, B)>::type`.
+`cpp11::result_of(Kernel::Intersect_d(A, B)>::type`.
 
 <DIV ALIGN="CENTER"> 
 <TABLE CELLPADDING=3 BORDER="1"> 
@@ -146,7 +146,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
   // auto result = intersection(seg, lin);
 
   // without C++11 support
-  typename boost::result_of<R::Intersect_d(Segment_d<R>, Line_d<R>)>::type
+  typename cpp11::result_of<R::Intersect_d(Segment_d<R>, Line_d<R>)>::type
     result = intersection(seg, lin);
 
   if(result) { boost::apply_visitor(Intersection_visitor<R>(), *result); } 
@@ -160,7 +160,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 \sa CGAL_INTERSECTION_VERSION
 \sa <a HREF="http://www.boost.org/doc/libs/release/libs/optional/index.html">`boost::optional`</a>
 \sa <a HREF="http://www.boost.org/doc/html/variant.html">`boost::variant`</a>
-\sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`boost::result_of`</a>
+\sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</a>
 
 */
 Object intersection(Type1<R> f1, Type2<R> f2);

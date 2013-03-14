@@ -106,7 +106,7 @@ public:
   typedef Arr_point_location_result<Arrangement_2>       Result;
   typedef typename Result::Type                          Result_type;
 
-  // Support boost::result_of
+  // Support cpp11::result_of
   typedef Result_type                                    result_type;
 
 protected:

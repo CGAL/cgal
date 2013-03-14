@@ -439,10 +439,10 @@ returns a `boost::optional< boost::variant< T... > >`
 where `T...` is a list of all possible resulting geometric objects.
 
 The exact result type of an intersection can be determined by using
-`boost::result_of<Kernel::Intersect_d(Type1, Type2)>::type`
+`cpp11::result_of<Kernel::Intersect_d(Type1, Type2)>::type`
 `where `Type1` and `Type2` are the types of the objects
 used in the intersection query. See
-<A HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`boost::result_of`</A>
+<A HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</A>
 for more information about this mechanism.
 
 
@@ -459,7 +459,7 @@ typedef Segment_d<K> Segment;
 Segment s1, s2;
 std::cin >> s1 >> s2;
 
-boost::result_of<K::Intersect_d(Segment, Segment)>::type
+cpp11::result_of<K::Intersect_d(Segment, Segment)>::type
   v = intersection(s1, s2);
 if(v) {
   // not empty

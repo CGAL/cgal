@@ -86,9 +86,9 @@ namespace CGAL {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Line_3 Line_3;
       typedef typename SK::Line_arc_3 Line_arc_3;
-      typedef typename boost::result_of<typename SK::Intersect_3(Line_arc_3, Line_arc_3)>::type result_type;
+      typedef typename cpp11::result_of<typename SK::Intersect_3(Line_arc_3, Line_arc_3)>::type result_type;
 
-      typename boost::result_of<typename SK::Intersect_3(Line_3, Line_3)>::type o = 
+      typename cpp11::result_of<typename SK::Intersect_3(Line_3, Line_3)>::type o = 
         SK().intersect_3_object()(l1.supporting_line(),
         l2.supporting_line());
 
@@ -153,9 +153,9 @@ namespace CGAL {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Line_3 Line_3;
       typedef typename SK::Line_arc_3 Line_arc_3;
-      typedef typename boost::result_of<typename SK::Intersect_3(Line_3, Line_arc_3)>::type result_type;
+      typedef typename cpp11::result_of<typename SK::Intersect_3(Line_3, Line_arc_3)>::type result_type;
 
-      typename boost::result_of<typename SK::Intersect_3(Line_3, Line_3)>::type o = 
+      typename cpp11::result_of<typename SK::Intersect_3(Line_3, Line_3)>::type o = 
         SK().intersect_3_object()(l, la.supporting_line());
 
       if(!o)
@@ -180,10 +180,10 @@ namespace CGAL {
     { 
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef std::vector<
-        typename boost::result_of<typename SK::Intersect_3(typename SK::Line_3, typename SK::Circle_3)
+        typename cpp11::result_of<typename SK::Intersect_3(typename SK::Line_3, typename SK::Circle_3)
                                   >::type> solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
-      typedef typename boost::result_of<
+      typedef typename cpp11::result_of<
         typename SK::Intersect_3(typename SK::Circle_3, typename SK::Line_arc_3)>::type result_type;
 
       solutions_container solutions;
@@ -213,7 +213,7 @@ namespace CGAL {
 	       OutputIterator res)
     {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-      typedef std::vector<typename boost::result_of<
+      typedef std::vector<typename cpp11::result_of<
         typename SK::Intersect_3(typename SK::Line_3, 
                                  typename SK::Sphere_3)>::type > solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
@@ -248,7 +248,7 @@ namespace CGAL {
         *res++ = result_type(l);
       }
       const Point_3* sol;
-      typename boost::result_of<typename SK::Intersect_3(typename SK::Plane_3, typename SK::Line_3)>
+      typename cpp11::result_of<typename SK::Intersect_3(typename SK::Plane_3, typename SK::Line_3)>
         ::type o = SK().intersect_3_object()(p,l.supporting_line());
 
       if(!o)

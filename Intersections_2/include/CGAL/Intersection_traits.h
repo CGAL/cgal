@@ -69,13 +69,13 @@
 #define CGAL_INTERSECTION_FUNCTION(A, B, DIM)                           \
   template<typename K>                                                  \
   inline                                                                \
-  typename boost::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::B)>::type \
+  typename cpp11::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::B)>::type \
   intersection(const A<K>& a, const B<K>& b) {                          \
     return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
   }                                                                     \
   template<typename K>                                                  \
   inline                                                                \
-  typename boost::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::B)>::type \
+  typename cpp11::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::B)>::type \
   intersection(const B<K>& a, const A<K>& b) {                          \
     return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
   }
@@ -83,7 +83,7 @@
 #define CGAL_INTERSECTION_FUNCTION_SELF(A, DIM)                         \
   template<typename K>                                                  \
   inline                                                                \
-  typename boost::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::A)>::type \
+  typename cpp11::result_of<BOOST_PP_CAT(typename K::Intersect_, DIM)(typename K::A, typename K::A)>::type \
   intersection(const A<K> & a, const A<K> & b) {                          \
     return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
   }
@@ -167,16 +167,16 @@ namespace internal {
 #else
   #if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template<typename F, typename A, typename B, typename T>
-    inline typename boost::result_of<F(A, B)>::type
-    intersection_return(const T& t) { return typename boost::result_of<F(A, B)>::type(t); }
+    inline typename cpp11::result_of<F(A, B)>::type
+    intersection_return(const T& t) { return typename cpp11::result_of<F(A, B)>::type(t); }
   #else
     template<typename F, typename A, typename B, typename T>
-    inline typename boost::result_of<F(A, B)>::type
-    intersection_return(T&& t) { return typename boost::result_of<F(A, B)>::type(std::forward<T>(t)); }
+    inline typename cpp11::result_of<F(A, B)>::type
+    intersection_return(T&& t) { return typename cpp11::result_of<F(A, B)>::type(std::forward<T>(t)); }
   #endif // CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
   template<typename F, typename A, typename B>
-  inline typename boost::result_of<F(A, B)>::type
-  intersection_return() { return typename boost::result_of<F(A, B)>::type(); }
+  inline typename cpp11::result_of<F(A, B)>::type
+  intersection_return() { return typename cpp11::result_of<F(A, B)>::type(); }
 #endif // CGAL_INTERSECTION_VERSION < 2
 
 // Something similar to wrap around boost::get and object_cast to
@@ -203,14 +203,14 @@ const T* intersect_get(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(U)> & v) {
 }
 
 template<typename A, typename B>
-typename boost::result_of<typename CGAL::Kernel_traits<A>::Kernel::Intersect_2(A, B)>::type
+typename cpp11::result_of<typename CGAL::Kernel_traits<A>::Kernel::Intersect_2(A, B)>::type
 intersection_impl(const A& a, const B& b, CGAL::Dimension_tag<2>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().intersect_2_object()(a, b);
 }
 
 template<typename A, typename B>
-typename boost::result_of<typename CGAL::Kernel_traits<A>::Kernel::Intersect_3(A, B)>::type
+typename cpp11::result_of<typename CGAL::Kernel_traits<A>::Kernel::Intersect_3(A, B)>::type
 intersection_impl(const A& a, const B& b, Dimension_tag<3>) {
   typedef typename CGAL::Kernel_traits<A>::Kernel Kernel;
   return Kernel().intersect_3_object()(a, b);
