@@ -1037,6 +1037,8 @@ namespace for the XML file to be processed properly.  -->
             <item>../CGAL_ipelets/examples</item>
             <item>../CGAL_ipelets/demo</item>
           </list>
+          <list name="TAGFILES" append="true">
+            <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
         </doxygen>
       </project>
 
