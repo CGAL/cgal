@@ -110,44 +110,40 @@ public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last, bool /* is_large_point_set */ = false)
   {
-    NGHK_NYI;
     std::ptrdiff_t n = this->number_of_vertices();
 
-      std::vector<Point> points (first, last);
-      CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
-
-      // hints[i] is the face of the previously inserted point in level i.
-      // Thanks to spatial sort, they are better hints than what the hierarchy
-      // would give us.
-      Face_handle hints[maxlevel];
-      for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
-              p != end; ++p)
-      {
-          int vertex_level = random_level();
-
-          Vertex_handle v = hierarchy[0]->insert (*p, hints[0]);
-          hints[0] = v->face();
-
-          Vertex_handle prev = v;
-
-          for (int level = 1; level <= vertex_level; ++level) {
-              v = hierarchy[level]->insert (*p, hints[level]);
-              hints[level] = v->face();
-
-              v->set_down (prev);
-              // NGHK: Added
-              // if (hierarchy[level]->number_of_sheets()[0] != 1) {
-              //   std::vector<Vertex_handle> vtc 
-              //     = hierarchy[level]->periodic_copies(v);
-              //   for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(prev);
-              // }
-
-              prev->set_up (v);
-              prev = v;
-          }
+    std::vector<Point> points (first, last);
+    CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
+    
+    // hints[i] is the face of the previously inserted point in level i.
+    // Thanks to spatial sort, they are better hints than what the hierarchy
+    // would give us.
+    Face_handle hints[maxlevel];
+    for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
+         p != end; ++p) {
+      int vertex_level = random_level();
+      
+      Vertex_handle v = hierarchy[0]->insert (*p, hints[0]);
+      hints[0] = v->face();
+      
+      Vertex_handle prev = v;
+      
+      for (int level = 1; level <= vertex_level; ++level) {
+        v = hierarchy[level]->insert (*p, hints[level]);
+        hints[level] = v->face();
+        
+        v->set_down (prev);
+        if (hierarchy[level]->number_of_sheets()[0] != 1) {
+          std::vector<Vertex_handle> vtc = hierarchy[level]->periodic_copies(v);
+          for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(prev);
+        }
+        
+        prev->set_up (v);
+        prev = v;
       }
-      std::ptrdiff_t m = this->number_of_vertices();
-      return m - n;
+    }
+    std::ptrdiff_t m = this->number_of_vertices();
+    return m - n;
   }
 
   void remove(Vertex_handle  v);
@@ -169,7 +165,7 @@ public:
 	 Face_handle start = Face_handle()) const;
 
   Vertex_handle
-  nearest_vertex(const Point& p, Face_handle start = Face_handle()) const
+  nearest_vertex(const Point& /*p*/, Face_handle /*start = Face_handle()*/) const
   {
     NGHK_NYI; // TODO
     return Vertex_handle();
@@ -218,7 +214,6 @@ Periodic_2_triangulation_hierarchy_2<PTr> &
 Periodic_2_triangulation_hierarchy_2<PTr>::
 operator=(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
 {
-    NGHK_NYI;
   Periodic_2_triangulation_hierarchy_2 tmp(tr);
   swap(tmp);
   return *this;
@@ -292,14 +287,9 @@ void
 Periodic_2_triangulation_hierarchy_2<PTr>:: 
 swap(Periodic_2_triangulation_hierarchy_2<PTr> &tr)
 {
-    NGHK_NYI;
-  PTr_Base* temp;
   PTr_Base::swap(tr);
-  for(int i= 1; i<maxlevel; ++i){
-    temp = hierarchy[i];
-    hierarchy[i] = tr.hierarchy[i];
-    tr.hierarchy[i]= temp;
-  }
+  for(int i=1; i<maxlevel; ++i)
+      std::swap(hierarchy[i], tr.hierarchy[i]);
 }
 
 template <class PTr>
@@ -396,7 +386,6 @@ insert(const Point& p,
        Face_handle loc, 
        int li )
 {
-    NGHK_NYI;
   int vertex_level = random_level();
   //insert at level 0
   Vertex_handle vertex=hierarchy[0]->PTr_Base::insert(p,lt,loc,li);
@@ -414,6 +403,10 @@ insert(const Point& p,
     while (level <= vertex_level ){
       vertex=hierarchy[level]->PTr_Base::insert(p,positions[level]);
       vertex->set_down(previous);// link with level above
+      if (hierarchy[level]->number_of_sheets()[0] != 1) {
+	std::vector<Vertex_handle> vtc = hierarchy[level]->periodic_copies(vertex);
+	for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(previous);
+      }
       previous->set_up(vertex);
       previous=vertex;
       level++;
@@ -436,7 +429,6 @@ void
 Periodic_2_triangulation_hierarchy_2<PTr>::
 remove(Vertex_handle v )
 {
-    NGHK_NYI;
   Vertex_handle u=v->up();
   int l = 0 ;
   while(1){
@@ -461,7 +453,6 @@ inline void
 Periodic_2_triangulation_hierarchy_2<PTr>::
 remove_first(Vertex_handle v )
 {
-    NGHK_NYI;
   remove(v);
 }
 
@@ -501,7 +492,6 @@ typename Periodic_2_triangulation_hierarchy_2<PTr>::Face_handle
 Periodic_2_triangulation_hierarchy_2<PTr>::
 locate(const Point& p, Locate_type& lt, int& li, Face_handle loc) const
 {
-    NGHK_NYI;
   Face_handle positions[maxlevel];
   locate_in_all(p,lt,li,loc,positions);
   return positions[0];
@@ -512,7 +502,7 @@ typename Periodic_2_triangulation_hierarchy_2<PTr>::Face_handle
 Periodic_2_triangulation_hierarchy_2<PTr>::
 locate(const Point& p, Face_handle loc ) const
 {
-    NGHK_NYI;
+  if (loc != Face_handle ()) return PTr_Base::locate (p, loc);
   Locate_type lt;
   int li;
   return locate(p, lt, li, loc);
