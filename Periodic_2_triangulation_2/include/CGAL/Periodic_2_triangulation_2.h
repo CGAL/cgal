@@ -1094,6 +1094,13 @@ public:
       return false;
     return (_virtual_vertices.find(v) != _virtual_vertices.end());
   }
+
+  const std::vector<Vertex_handle>& periodic_copies(const Vertex_handle v) const {
+    CGAL_triangulation_precondition(number_of_sheets() != make_array(1,1) );
+    CGAL_triangulation_precondition(_virtual_vertices.find(v) == _virtual_vertices.end());
+    CGAL_triangulation_assertion(_virtual_vertices_reverse.find(v) != _virtual_vertices_reverse.end());
+    return _virtual_vertices_reverse.find(v)->second;
+  }
 protected:
   /// NGHK: implemented
   std::vector<Vertex_handle> insert_dummy_points();

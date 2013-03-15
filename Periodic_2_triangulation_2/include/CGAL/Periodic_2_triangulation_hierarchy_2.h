@@ -318,9 +318,8 @@ void
 Periodic_2_triangulation_hierarchy_2<PTr>:: 
 clear()
 {
-    NGHK_NYI;
-        for(int i=0;i<maxlevel;++i)
-	hierarchy[i]->clear();
+  for(int i=0;i<maxlevel;++i)
+    hierarchy[i]->clear();
 }
 
 
@@ -380,6 +379,11 @@ insert(const Point &p, Face_handle loc)
   while (level <= vertex_level ){
     vertex=hierarchy[level]->PTr_Base::insert(p,positions[level]);
     vertex->set_down(previous);// link with level above
+    if (hierarchy[level]->number_of_sheets()[0] != 1) {
+      std::vector<Vertex_handle> vtc 
+	= hierarchy[level]->periodic_copies(vertex);
+      for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(previous);
+    }
     previous->set_up(vertex);
     previous=vertex;
     level++;
