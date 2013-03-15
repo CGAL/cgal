@@ -807,25 +807,17 @@ namespace CircularFunctors {
 
     for (typename solutions_container::const_iterator it = solutions.begin();
 	 it != solutions.end(); ++it) {
-      const std::pair<Circular_arc_point_2, unsigned>
-        *result = CGAL::object_cast
-	  <std::pair<Circular_arc_point_2, unsigned> > (&(*it));
-      if (has_on<CK>(c,result->first,true)) {
         #if CGAL_INTERSECTION_VERSION < 2
-        if( const std::pair<Circular_arc_point_2, unsigned>* p =
-            object_cast<std::pair<Circular_arc_point_2, unsigned> >(& (*it)) ) {
-          Has_on_visitor<CK, Circular_arc_2> vis(&c);
-          if(vis(*p)) {
-            *res++ = *it;
-          }
-        }
+        const std::pair<Circular_arc_point_2, unsigned>* p =
+            object_cast<std::pair<Circular_arc_point_2, unsigned> >(& (*it)) )
+        Has_on_visitor<CK, Circular_arc_2> vis(&c);
+        if(vis(*p)) *res++ = *it;
         #else
         if(boost::apply_visitor(Has_on_visitor<CK, Circular_arc_2>(&c), *it))
           *res++ = *it;
         #endif
-      }
-      return res;
     }
+    return res;
   }
 
   template< class CK, class OutputIterator>
