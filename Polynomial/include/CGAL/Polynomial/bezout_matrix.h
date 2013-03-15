@@ -593,11 +593,12 @@ polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
 
     NT divisor = ipower(lcoeff(f),n-m); 
 
+    int bit_mask = swapped ? 1 : 0;
     // Divide through the divisor and set the correct sign
     for(int i=0;i<m;i++) {
       for(int j = i;j<m;j++) {
 	int negate = ((n-m+i+1) & 2)>>1; // (n-m+i+1)==2 or 3 mod 4
-	negate^=(swapped & ((n-m+i+1)*(i+1)));
+	negate^=(bit_mask & ((n-m+i+1)*(i+1)));
 	//...XOR (swapped AND (n-m+i+1)* (i+1) is odd) 
 	Ret[i][j] = idiv(Ret[i][j],  negate>0 ? -divisor : divisor);
       }
