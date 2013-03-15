@@ -215,7 +215,7 @@ public:
 #endif
 
   template <class T1, class T2>
-  typename cpp11::result_of<Intersect(T1, T2)>::type
+  typename result<Intersect(T1,T2)>::type
   operator()(const T1& t1, const T2& t2) const
   { return internal::intersection(t1, t2, R()); }
 };
