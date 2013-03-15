@@ -137,11 +137,11 @@ public:
 
               v->set_down (prev);
               // NGHK: Added
-              if (hierarchy[level]->number_of_sheets()[0] != 1) {
-                std::vector<Vertex_handle> vtc 
-                  = hierarchy[level]->periodic_copies(v);
-                for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(prev);
-              }
+              // if (hierarchy[level]->number_of_sheets()[0] != 1) {
+              //   std::vector<Vertex_handle> vtc 
+              //     = hierarchy[level]->periodic_copies(v);
+              //   for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(prev);
+              // }
 
               prev->set_up (v);
               prev = v;
@@ -205,7 +205,6 @@ Periodic_2_triangulation_hierarchy_2<PTr>::
 Periodic_2_triangulation_hierarchy_2(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
     : PTr_Base()
 { 
-    NGHK_NYI;
   // create an empty triangulation to be able to delete it !
   hierarchy[0] = this; 
   for(int i=1;i<maxlevel;++i)
@@ -232,7 +231,6 @@ void
 Periodic_2_triangulation_hierarchy_2<PTr>::   
 copy_triangulation(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
 {
-    NGHK_NYI;
   {
     for(int i=0;i<maxlevel;++i)
     hierarchy[i]->copy_triangulation(*tr.hierarchy[i]);
@@ -243,8 +241,8 @@ copy_triangulation(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
   // compute a map at lower level
   std::map<Vertex_handle, Vertex_handle > V;
   {
-    for( Finite_vertices_iterator it=hierarchy[0]->finite_vertices_begin(); 
-	 it != hierarchy[0]->finite_vertices_end(); ++it) {
+    for(Finite_vertices_iterator it=hierarchy[0]->finite_vertices_begin(); 
+        it != hierarchy[0]->finite_vertices_end(); ++it) {
       if (it->up() != Vertex_handle()) V[ it->up()->down() ] = it;
     }
   }
@@ -253,13 +251,15 @@ copy_triangulation(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
     for(int i=1;i<maxlevel;++i) {
       for( Finite_vertices_iterator it=hierarchy[i]->finite_vertices_begin(); 
 	   it != hierarchy[i]->finite_vertices_end(); ++it) {
-	// down pointer goes in original instead in copied triangulation
-	it->set_down(V[it->down()]);
-	// make reverse link
-	it->down()->set_up(it);
-	// I think the next line is unnecessary (my)
-	// make map for next level
-	if (it->up()!=  Vertex_handle() ) V[ it->up()->down() ] = it;
+        if (hierarchy[i]->is_virtual(it)) {
+          // down pointer goes in original instead in copied triangulation
+          it->set_down(V[it->down()]);
+          // make reverse link
+          it->down()->set_up(it);
+          // I think the next line is unnecessary (my)
+          // make map for next level
+          if (it->up()!=  Vertex_handle() ) V[ it->up()->down() ] = it;
+        }
       }
     }
   }

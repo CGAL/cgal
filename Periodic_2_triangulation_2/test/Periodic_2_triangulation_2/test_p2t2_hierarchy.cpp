@@ -26,6 +26,8 @@
 #include <CGAL/Periodic_2_triangulation_hierarchy_2.h>
 #include <CGAL/Periodic_2_triangulation_traits_2.h>
 
+#include "interface_test.h"
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          K1;
 typedef CGAL::Periodic_2_triangulation_traits_2<K1>                  PTT1;
@@ -69,16 +71,17 @@ int main()
 {
   // TODO(NGHK): Re-enable
 
-  typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT1 > P3T3_1;
-  //_test_cls_periodic_2_delaunay_2( P3T3_1() );
+  typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT1 > P2T2_1;
+  test<P2T2_1>();
+  //_test_cls_periodic_2_delaunay_2( P2T2_1() );
 
-  // typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT2 > P3T3_2;
+  // typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT2 > P2T2_2;
   // // this takes too much time for the test suite.
-  // //_test_cls_periodic_2_delaunay_2( P3T3_2() );
+  // //_test_cls_periodic_2_delaunay_2( P2T2_2() );
 
-  // typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT3 > P3T3_3;
+  // typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT3 > P2T2_3;
   // // this takes too much time for the test suite.
-  // //_test_cls_periodic_2_delaunay_2( P3T3_3(), true );
+  // //_test_cls_periodic_2_delaunay_2( P2T2_3(), true );
 
   return 0;
 }

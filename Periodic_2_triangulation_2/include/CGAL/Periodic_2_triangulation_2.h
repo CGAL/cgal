@@ -1086,6 +1086,14 @@ public:
       return vh;
   }
 
+
+  /// Tests whether a vertex is a periodic copy of a vertex in the 3-cover.
+  /// NGHK: implemented
+  bool is_virtual(Vertex_handle v) {
+    if (is_1_cover())
+      return false;
+    return (_virtual_vertices.find(v) != _virtual_vertices.end());
+  }
 protected:
   /// NGHK: implemented
   std::vector<Vertex_handle> insert_dummy_points();
@@ -1344,14 +1352,6 @@ protected:
     }
     CGAL_assertion(false);
     return Offset();
-  }
-
-  /// Tests whether a vertex is a periodic copy of a vertex in the 3-cover.
-  /// NGHK: implemented
-  bool is_virtual(Vertex_handle v) {
-    if (is_1_cover())
-      return false;
-    return (_virtual_vertices.find(v) != _virtual_vertices.end());
   }
 
   /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
