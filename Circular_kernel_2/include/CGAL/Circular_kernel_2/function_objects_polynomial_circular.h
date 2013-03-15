@@ -521,9 +521,6 @@ namespace CircularFunctors {
 
     using CK::Linear_kernel::Intersect_2::operator();
 
-#if CGAL_INTERSECTION_VERSION < 2
-    typedef typename CK::Linear_kernel::Intersect_2::result_type result_type; 
-#else
     template<typename>
     struct result;
     
@@ -531,12 +528,11 @@ namespace CircularFunctors {
     struct result<F(A,B)> {
       typedef typename Intersection_traits<CK, A, B>::result_type type;
     };
-
-    template<typename F, typename A, typename B, typename O>
-    struct result<F(A,B,O)> {
-      typedef O type;
+    //need a specialization for the case of 3 object in CK
+    template<typename F, typename A, typename B, typename OutputIterator>
+    struct result<F(A,B,OutputIterator)> {
+      typedef OutputIterator type;
     };
-#endif
 
     template < class OutputIterator >
     OutputIterator
