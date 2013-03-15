@@ -39,8 +39,7 @@
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h>
-
-#include <boost/type_traits/decay.hpp>
+#include <CGAL/Circular_kernel_3/Intersection_traits.h>
 
 namespace CGAL {
 	
@@ -1109,14 +1108,14 @@ template < class SK > \
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B)            \
     result_type                                                         \
     operator()(const A & c1, const B & c2) const                        \
-    { std::vector< typename cpp11::result_of<typename SK::Intersect_3(A, B)>::type > res; \
+    { std::vector< typename SK3_Intersection_traits<SK, A, B>::type > res; \
       typename SK::Intersect_3()(c1,c2,std::back_inserter(res));        \
       return !res.empty(); }
 	
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C)          \
     result_type                                                         \
     operator()(const A & c1, const B & c2, const C & c3) const          \
-    { std::vector< typename cpp11::result_of<typename SK::Intersect_3(A, B, C)>::type > res; \
+    { std::vector< typename SK3_Intersection_traits<SK, A, B, C>::type > res; \
       typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res));     \
       return !res.empty(); }
 
@@ -1159,141 +1158,51 @@ template < class SK > \
 
   template < class SK >
   class Intersect_3
+    : public SK::Linear_kernel::Intersect_3
   {
     typedef typename SK::Sphere_3                 Sphere_3;
     typedef typename SK::Line_3                   Line_3;
     typedef typename SK::Line_arc_3               Line_arc_3;
     typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
+    typedef typename SK::Point_3                  Point_3;
     typedef typename SK::Circle_3                 Circle_3;
     typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
 
   public:
 
-#if CGAL_INTERSECTION_VERSION < 2
-    // this is horribly wrong, nothing here returns Object
-    typedef typename SK::Linear_kernel::Intersect_3::result_type result_type; 
-#else
-  private:
-    // helper to minimize result implementation
-    template <typename A, typename B, typename C, 
-              bool is_iterator = CGAL::is_iterator<typename boost::decay<C>::type>::value>
-    struct result_impl 
-    { typedef typename cpp11::result_of<typename SK::Linear_kernel::Intersect_3(A, B, C)>::type
-      type; };
-
-    template <typename A, typename B, typename C>
-    struct result_impl<A, B, C, true>
-    { typedef C type; };
-    
-  public:
     template <typename>
     struct result;
 
     // the binary overload always goes to Linear::Intersect_3
     template <typename F, typename A, typename B>
     struct result<F(A, B)>
-    { typedef typename cpp11::result_of<typename SK::Linear_kernel::Intersect_3(A, B)>::type type; };
+    { typedef typename Intersection_traits<SK, A, B>::result_type type; };
 
-    // we match the ternary case if the last argument is an iterator,
-    // otherwise Linear::Intersect_3 wins
-    template <typename F, typename A, typename B, typename C>
-    struct result<F(A, B, C)> : result_impl<A, B, C> {};
+    // This one is only for the spherical kernel, O is an output iterator
+    template <typename F, typename A, typename B, typename OutputIterator>
+    struct result<F(A, B, OutputIterator)>
+    { typedef OutputIterator type;};
 
-    // there is no quaternary form of Linear::Intersect_3
+    // there is no quaternary form in the linear Kernel
     template <typename F, typename A, typename B, typename C, typename OutputIterator>
-    struct result<F(A, B, C, OutputIterator)> 
+    struct result<F(A, B, C, OutputIterator)>
     { typedef OutputIterator type; };
 
-    // The problem: the results specified here are not the true
-    // result. The true result is OutputIterator. This will break in
-    // awful ways with a decltype based result_of implementation. The
-    // fix is to add dummy function calls with the correct return
-    // type.
-    // TODO: turn this into macros and also generate the dummy
-    // function calls.
-    template <typename F>
-    struct result<F(Sphere_3, Line_3)>
-    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int > > type; };
-
-    template <typename F>
-    struct result<F(Line_3, Sphere_3)> : result<F(Sphere_3, Line_3)> {};
-
-    template <typename F>
-    struct result<F(Circle_3, Plane_3)>
-    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int >, Circle_3 > type; };
-
-    template <typename F>
-    struct result<F(Plane_3, Circle_3)> : result<F(Circle_3, Plane_3)> {};
-
-    template <typename F>
-    struct result<F(Circle_3, Sphere_3)>
-    { typedef boost::variant< std::pair< Circular_arc_point_3, unsigned int >, Circle_3 > type;};
-
-    template <typename F>
-    struct result<F(Sphere_3, Circle_3)> : result<F(Circle_3, Sphere_3)> {};
-
-    template <typename F>
-    struct result<F(Circle_3, Circle_3)>
-    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >, Circle_3 > type; };
-
-    template <typename F>
-    struct result<F(Circle_3, Line_3)>
-    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int > > type; };
-
-    template <typename F>
-    struct result<F(Line_3, Circle_3)> : result<F(Circle_3, Line_3)> {};
-
-    template <typename F>
-    struct result<F(Circular_arc_3, Circular_arc_3)>
-    { typedef boost::variant< Circle_3, std::pair <Circular_arc_point_3, unsigned int >,
-                                Circular_arc_3 > type;};
-
-    template <typename F>
-    struct result<F(Circular_arc_3, Plane_3)>
-    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >,
-                              Circular_arc_3 > type;  };
-
-    template <typename F>
-    struct result<F(Plane_3, Circular_arc_3)> : result<F(Circular_arc_3, Plane_3)> {};
-
-    template <typename F>
-    struct result<F(Line_arc_3, Line_arc_3)>
-    { typedef boost::variant< std::pair <Circular_arc_point_3, unsigned int >,
-                              Line_arc_3 > type; };
-
-  private:
-    struct intersect_ternary { 
-      typedef boost::variant< Circle_3, Plane_3, Sphere_3, 
-                              std::pair< Circular_arc_point_3, unsigned > 
-                              > type; 
+    //only ternary from the linear kernel
+    template<typename F>
+    struct result<F(Plane_3, Plane_3, Plane_3)> {
+      #if CGAL_INTERSECTION_VERSION < 2
+      typedef CGAL::Object type;
+      #else
+      typedef boost::optional< 
+        boost::variant< Point_3, 
+                        Line_3, 
+                        Plane_3 > > type;
+      #endif
     };
-  public:
-
-    // the ternary intersection
-    template <typename F>
-    struct result<F(Sphere_3, Sphere_3, Sphere_3)> : intersect_ternary {};
-    template <typename F>
-    struct result<F(Sphere_3, Sphere_3, Plane_3)>  : intersect_ternary {};
-    template <typename F>
-    struct result<F(Plane_3, Sphere_3, Sphere_3)>  : intersect_ternary {};
-    template <typename F>
-    struct result<F(Plane_3, Plane_3, Sphere_3)>   : intersect_ternary {};
-    template <typename F>
-    struct result<F(Sphere_3, Plane_3, Plane_3)>   : intersect_ternary {};
-#endif
     
-    // forward the intersection functions from the linear kernel
-    template <typename A, typename B>
-    typename cpp11::result_of<typename SK::Intersect_3(A, B)>::type
-    operator()(const A& a, const B& b) 
-    { return typename SK::Linear_kernel().intersect_3_object()(a, b); }
-
-    template <typename A, typename B, typename C>
-    typename cpp11::result_of<typename SK::Intersect_3(A, B, C)>::type
-    operator()(const A& a, const B& b, const C& c,
-               typename boost::enable_if_c<!(CGAL::is_iterator<typename boost::decay<C>::type>::value)>::type* = 0)
-    { return typename SK::Linear_kernel().intersect_3_object()(a, b, c); }
+    using SK::Linear_kernel::Intersect_3::operator();
     
     template < class OutputIterator >
     OutputIterator

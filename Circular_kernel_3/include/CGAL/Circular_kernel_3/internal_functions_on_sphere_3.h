@@ -24,6 +24,8 @@
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_ON_SPHERE_3_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_ON_SPHERE_3_H
 
+#include <CGAL/Circular_kernel_3/Intersection_traits.h>
+
 namespace CGAL {
   namespace SphericalFunctors {
 
@@ -244,7 +246,7 @@ namespace CGAL {
                 const typename SK::Line_3 & l, 
 	        OutputIterator res)
     {
-      typedef typename cpp11::result_of<typename SK::Intersect_3(typename SK::Sphere_3, typename SK::Line_3)>
+      typedef typename SK3_Intersection_traits<SK, typename SK::Sphere_3, typename SK::Line_3>
         ::type result_type;
       typedef typename SK::Algebraic_kernel                          Algebraic_kernel;
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere; 
@@ -280,9 +282,7 @@ namespace CGAL {
        typedef typename SK::Sphere_3  Sphere_3;
        typedef typename SK::Plane_3  Plane_3;
        typedef typename SK::Algebraic_kernel  Algebraic_kernel;
-       typedef typename cpp11::result_of<
-         typename SK::Intersect_3(Sphere_3, Sphere_3, Sphere_3)
-         >::type result_type;
+       typedef typename SK3_Intersection_traits<SK, Sphere_3, Sphere_3, Sphere_3>::type result_type;
 
        CGAL_kernel_precondition(!s1.is_degenerate());
        CGAL_kernel_precondition(!s2.is_degenerate());
@@ -296,7 +296,7 @@ namespace CGAL {
          return res;
        }
        if(non_oriented_equal<SK>(s1,s2)) {
-         if(typename cpp11::result_of<typename SK::Intersect_3(Sphere_3, Sphere_3)>::type v = 
+         if(typename Intersection_traits<SK, Sphere_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(s1, s3)) {
            #if CGAL_INTERSECTION_VERSION < 2
            if( const Point_3* p = object_cast<Point_3>(&v) )
@@ -312,7 +312,7 @@ namespace CGAL {
          return res;
        }
        if(non_oriented_equal<SK>(s1,s3) || non_oriented_equal<SK>(s2,s3)) {
-         if(typename cpp11::result_of<typename SK::Intersect_3(Sphere_3, Sphere_3)>::type v = 
+         if(typename Intersection_traits<SK, Sphere_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(s1, s2)) {
            #if CGAL_INTERSECTION_VERSION < 2
            if( const Point_3* p = object_cast<Point_3>(&v) )
@@ -329,7 +329,7 @@ namespace CGAL {
          return res;
        }
        if(SK().collinear_3_object()(s1.center(),s2.center(),s3.center())) {
-         typename cpp11::result_of<typename SK::Intersect_3(Sphere_3, Sphere_3)>::type v = 
+         typename Intersection_traits<SK, Sphere_3, Sphere_3>::result_type v = 
            SK().intersect_3_object()(s1, s2);
          if(!v) return res;
          if(const Point_3* p = CGAL::internal::intersect_get<Point_3>(v)) {
@@ -385,7 +385,7 @@ namespace CGAL {
       CGAL_kernel_precondition(!s1.is_degenerate());
       CGAL_kernel_precondition(!s2.is_degenerate());
       if(non_oriented_equal<SK>(s1,s2)) {
-        if(typename cpp11::result_of<typename SK::Intersect_3(Plane_3, Sphere_3)>::type v = 
+        if(typename Intersection_traits<SK, Plane_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(p, s1)) {
            #if CGAL_INTERSECTION_VERSION < 2
            if( const typename SK::Point_3* p = CGAL::object_cast<typename SK::Point_3>(&v) )
@@ -403,7 +403,7 @@ namespace CGAL {
       }
       Plane_3 radical_p = SK().construct_radical_plane_3_object()(s1,s2);
       if(non_oriented_equal<SK>(p,radical_p)) {
-        if(typename cpp11::result_of<typename SK::Intersect_3(Plane_3, Sphere_3)>::type v = 
+        if(typename Intersection_traits<SK, Plane_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(p, s1)) {
            #if CGAL_INTERSECTION_VERSION < 2
            if( const typename SK::Point_3* p = CGAL::object_cast<typename SK::Point_3>(&v) )
@@ -449,7 +449,7 @@ namespace CGAL {
       CGAL_kernel_precondition(!p2.is_degenerate());
       CGAL_kernel_precondition(!s.is_degenerate());      
       if(non_oriented_equal<SK>(p1,p2)) {
-        if(typename cpp11::result_of<typename SK::Intersect_3(Plane_3, Sphere_3)>::type v = 
+        if(typename Intersection_traits<SK, Plane_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(p1, s)) {
            #if CGAL_INTERSECTION_VERSION < 2
            if( const typename SK::Point_3* p = CGAL::object_cast<typename SK::Point_3>(&v) )
@@ -505,11 +505,11 @@ namespace CGAL {
       typedef typename SK::Algebraic_kernel         Algebraic_kernel;
       typedef typename SK::Circle_3                 Circle_3;
 
-      typedef typename cpp11::result_of<typename SK::Intersect_3(Circle_3, Circle_3)>
+      typedef typename SK3_Intersection_traits<SK, Circle_3, Circle_3>
         ::type result_type;
 
       if(non_oriented_equal<SK>(c1,c2)) {
-         *res++ = CGAL::internal::intersection_return<typename SK::Intersect_3, Circle_3, Circle_3>(c1);
+         *res++ = CGAL::internal::sk3_intersection_return<result_type>(c1);
          return res;
       }
       Equation_circle e1 = get_equation<SK>(c1);
@@ -533,7 +533,7 @@ namespace CGAL {
       typedef typename SK::Polynomials_for_line_3   Equation_line;
       typedef typename SK::Circle_3                 Circle_3;
 
-      typedef typename cpp11::result_of<typename SK::Intersect_3(Circle_3, typename SK::Line_3)>
+      typedef typename SK3_Intersection_traits<SK, Circle_3, typename SK::Line_3>
         ::type result_type;
 
       typedef typename SK::Algebraic_kernel  Algebraic_kernel;

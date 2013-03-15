@@ -28,6 +28,7 @@
 #include <CGAL/Circle_type.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_plane_3.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_point_3.h>
+#include <CGAL/Circular_kernel_3/Intersection_traits.h>
 #include <CGAL/Root_of_traits.h>
 
 namespace CGAL {
@@ -120,8 +121,7 @@ namespace CGAL {
       typename SK::FT z_coord=extremal_points_z_coordinate<SK>(circle,sphere);
       
       typename SK::Plane_3 plane(0,0,1,-z_coord);
-      std::vector<typename cpp11::result_of<
-        typename SK::Intersect_3(typename SK::Circle_3, typename SK::Plane_3)>::type > inters;
+      std::vector<typename SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Plane_3>::type > inters;
       
       intersect_3<SK>(circle,plane,std::back_inserter(inters));      
       CGAL_kernel_precondition(inters.size()==2);
