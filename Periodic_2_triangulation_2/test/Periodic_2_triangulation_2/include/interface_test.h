@@ -5,6 +5,7 @@ template <class T>
 void test_constructor() {
   typedef typename T::Iso_rectangle Iso_rectangle;
   typedef typename T::Geom_traits   Geom_traits;
+  typedef typename T::Point         Point;
 
   T t;
   T t2(t);
@@ -86,6 +87,7 @@ void test_geometric_access() {
   typedef typename T::Periodic_triangle Periodic_triangle;
   typedef typename T::Vertex_iterator   Vertex_iterator;
   typedef typename T::Face_iterator     Face_iterator;
+  typedef typename T::Face_handle       Face_handle;
 
   T t;
   const T &t_const = t;
@@ -119,6 +121,7 @@ template <class T>
 void test_predicates() {
   typedef typename T::Vertex_handle   Vertex_handle;
   typedef typename T::Face_handle     Face_handle;
+  typedef typename T::Point             Point;
 
   T t;
 
@@ -138,6 +141,7 @@ template <class T>
 void test_queries() {
   typedef typename T::Vertex_handle   Vertex_handle;
   typedef typename T::Face_handle     Face_handle;
+  typedef typename T::Point             Point;
 
   T t;
   const T &t_const = t;
@@ -163,8 +167,9 @@ void test_queries() {
 
 template <class T>
 void test_iterators() {
-  typedef typename T::Vertex_handle   Vertex_handle;
-  typedef typename T::Face_handle     Face_handle;
+  typedef typename T::Vertex_handle     Vertex_handle;
+  typedef typename T::Face_handle       Face_handle;
+  typedef typename T::Point             Point;
 
   T t;
   const T &t_const = t;
@@ -251,8 +256,9 @@ void test_iterators() {
 
 template <class T>
 void test_circulators() {
-  typedef typename T::Vertex_handle   Vertex_handle;
-  typedef typename T::Face_handle     Face_handle;
+  typedef typename T::Vertex_handle     Vertex_handle;
+  typedef typename T::Face_handle       Face_handle;
+  typedef typename T::Point             Point;
 
   T t;
   const T &t_const = t;
@@ -281,8 +287,9 @@ void test_circulators() {
 
 template <class T>
 void test_modifiers() {
-  typedef typename T::Vertex_handle   Vertex_handle;
-  typedef typename T::Face_handle     Face_handle;
+  typedef typename T::Vertex_handle     Vertex_handle;
+  typedef typename T::Face_handle       Face_handle;
+  typedef typename T::Point             Point;
 
   T t;
   const T &t_const = t;
@@ -358,8 +365,9 @@ void test_modifiers() {
 
 template <class T>
 void test_miscellaneous() {
-  typedef typename T::Vertex_handle   Vertex_handle;
-  typedef typename T::Face_handle     Face_handle;
+  typedef typename T::Vertex_handle     Vertex_handle;
+  typedef typename T::Face_handle       Face_handle;
+  typedef typename T::Point             Point;
 
   T t;
 
@@ -433,6 +441,8 @@ void test_io(T &pt1) {
 
 template <class T>
 void test_io() {
+  typedef typename T::Point             Point;
+
   T t;
   test_io(t);
 
@@ -468,7 +478,8 @@ void test() {
 
 template <class T>
 void test_nearest() {
-  typedef typename T::Vertex_handle   Vertex_handle;
+  typedef typename T::Vertex_handle     Vertex_handle;
+  typedef typename T::Point             Point;
 
   Point p0(0.5, 0.5);
   Point p1(0.8, 0.6);
