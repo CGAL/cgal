@@ -83,10 +83,10 @@ public:
     : PTr_Base(domain,traits), level_mult_cover(0)
   {
     NGHK_NYI;
-      hierarchy[0] = this; 
-      for(int i=1; i<maxlevel; ++i)
-	hierarchy[i] = new PTr_Base(domain,traits);
-      insert(first, last);
+    hierarchy[0] = this; 
+    for(int i=1; i<maxlevel; ++i)
+      hierarchy[i] = new PTr_Base(domain,traits);
+    insert(first, last);
   }
 
   Periodic_2_triangulation_hierarchy_2 &operator=(const Periodic_2_triangulation_hierarchy_2& tr);
@@ -136,6 +136,13 @@ public:
               hints[level] = v->face();
 
               v->set_down (prev);
+              // NGHK: Added
+              if (hierarchy[level]->number_of_sheets()[0] != 1) {
+                std::vector<Vertex_handle> vtc 
+                  = hierarchy[level]->periodic_copies(v);
+                for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(prev);
+              }
+
               prev->set_up (v);
               prev = v;
           }
@@ -202,7 +209,7 @@ Periodic_2_triangulation_hierarchy_2(const Periodic_2_triangulation_hierarchy_2<
   // create an empty triangulation to be able to delete it !
   hierarchy[0] = this; 
   for(int i=1;i<maxlevel;++i)
-    hierarchy[i] = new PTr_Base(tr.geom_traits());
+    hierarchy[i] = new PTr_Base(tr.domain(), tr.geom_traits());
   copy_triangulation(tr);
 } 
  
@@ -241,8 +248,6 @@ copy_triangulation(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
       if (it->up() != Vertex_handle()) V[ it->up()->down() ] = it;
     }
   }
-
-  add_hidden_vertices_into_map(Weighted_tag(), V);
 
   {
     for(int i=1;i<maxlevel;++i) {
