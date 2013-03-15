@@ -44,6 +44,11 @@ namespace internal {
   struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>,FT>{
     typedef Eigen_sparse_symmetric_matrix<FT> type;
   };
+
+  template <class FT, class EigenMatrix, class EigenOrdering>
+  struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
+    typedef Eigen_sparse_matrix<FT, ::Eigen::ColMajor> type;
+  };
 } //internal 
   
 /// The class Eigen_solver_traits
