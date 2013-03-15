@@ -47,7 +47,7 @@ namespace internal { \
   bool \
   do_intersect(const typename K::A &c1, const typename K::B &c2, const K&) \
   { \
-    std::vector< typename cpp11::result_of<typename K::Intersect_2(typename K::A, typename K::B)>::type > res; \
+    std::vector< typename CK2_Intersection_traits<K, typename K::A, typename K::B>::type > res; \
     typename K::Intersect_2()(c1,c2,std::back_inserter(res)); \
 		return !res.empty(); \
   } \

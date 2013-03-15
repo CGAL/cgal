@@ -24,7 +24,7 @@ double prob_2() {
     if(CGAL::orientation(p4, p5, p6) != CGAL::COUNTERCLOCKWISE) std::swap(p4, p6);
     T o2 = T(p4, p5, p6);
 
-    typedef typename CGAL::cpp11::result_of<Circular_k::Intersect_2(T, T)>::type 
+    typedef typename CGAL::CK2_Intersection_traits<Circular_k, T, T>::type 
       Intersection_result;
     std::vector<Intersection_result> res;
     CGAL::intersection(o1, o2, std::back_inserter(res));

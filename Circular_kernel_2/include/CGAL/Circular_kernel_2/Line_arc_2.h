@@ -27,12 +27,13 @@
 #define CGAL_CIRCULAR_KERNEL_LINE_ARC_2_H
 
 #include <CGAL/global_functions_circular_kernel_2.h>
-#include <CGAL/intersections.h>
 #include <CGAL/Algebraic_kernel_for_circles/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
+
 
 namespace CGAL {
 namespace internal {
@@ -75,7 +76,7 @@ public:
   intersect(const Line_2 & l, const Circle_2 & c, const bool b)
   {
       
-    typedef std::vector<typename cpp11::result_of<typename CK::Intersect_2(Line_2, Circle_2)>::type>
+    typedef std::vector<typename CK2_Intersection_traits<CK, Line_2, Circle_2>::type>
       solutions_container;
       
     solutions_container solutions;
@@ -130,7 +131,7 @@ public:
     CGAL_kernel_precondition(do_intersect(support, l1));
     CGAL_kernel_precondition(do_intersect(support, l2));
     //typedef typename Root_of_2::RT RT_2;
-    typename cpp11::result_of<typename CK::Intersect_2(Line_2, Line_2)>::type 
+    typename Intersection_traits<CK, Line_2, Line_2>::result_type 
       v = CGAL::internal::intersection(support, l1, CK());
     CGAL_assertion(v);
 
