@@ -82,7 +82,6 @@ public:
       const Geom_traits& traits = Geom_traits())
     : PTr_Base(domain,traits), level_mult_cover(0)
   {
-    NGHK_NYI;
     hierarchy[0] = this; 
     for(int i=1; i<maxlevel; ++i)
       hierarchy[i] = new PTr_Base(domain,traits);
@@ -364,7 +363,6 @@ typename Periodic_2_triangulation_hierarchy_2<PTr>::Vertex_handle
 Periodic_2_triangulation_hierarchy_2<PTr>::
 insert(const Point &p, Face_handle loc)
 {
-    NGHK_NYI;
   int vertex_level = random_level();
   Locate_type lt;
   int i;
@@ -380,8 +378,7 @@ insert(const Point &p, Face_handle loc)
     vertex=hierarchy[level]->PTr_Base::insert(p,positions[level]);
     vertex->set_down(previous);// link with level above
     if (hierarchy[level]->number_of_sheets()[0] != 1) {
-      std::vector<Vertex_handle> vtc 
-	= hierarchy[level]->periodic_copies(vertex);
+      std::vector<Vertex_handle> vtc = hierarchy[level]->periodic_copies(vertex);
       for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(previous);
     }
     previous->set_up(vertex);
@@ -530,7 +527,6 @@ locate_in_all(const Point& p,
     Face_handle loc,
     Face_handle pos[maxlevel]) const
 {
-    NGHK_NYI;
   Face_handle position;
   Vertex_handle nearest;
   int level  = maxlevel;
@@ -588,7 +584,6 @@ int
 Periodic_2_triangulation_hierarchy_2<PTr>::
 random_level()
 {
-    NGHK_NYI;
   if ( level_mult_cover < maxlevel
        && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1) )
     ++level_mult_cover;
