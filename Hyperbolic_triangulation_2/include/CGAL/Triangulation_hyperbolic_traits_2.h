@@ -40,7 +40,7 @@ class Triangulation_hyperbolic_traits_2 {
 public:
   typedef Triangulation_hyperbolic_traits_2<R> Self;
   
-  typedef R Triangulation_euclidean_traits_2;
+  typedef R Kernel;
   
   typedef R Rep;
   typedef typename R::RT          RT;
