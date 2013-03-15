@@ -37,7 +37,7 @@
 
 namespace CGAL {
 
-// Epeck_ft is either Gmpq of Quotient<MP_float>
+// Epeck_ft is either Gmpq, or leda_rational, or Quotient<MP_float>
 typedef internal::Exact_type_selector<double>::Type Epeck_ft;
 
 // The following are redefined kernels instead of simple typedefs in order to shorten
