@@ -289,12 +289,14 @@ Maintenance/infrastructure/*/reference-platforms/*/CMakeCache.txt.backup
 Maintenance/infrastructure/*/reference-platforms/*/cmake_install.cmake
 Maintenance/infrastructure/*/reference-platforms/*/config
 Maintenance/infrastructure/*/reference-platforms/*/include
+Maintenance/infrastructure/*/reference-platforms/*/Installation
 Maintenance/infrastructure/*/reference-platforms/*/lib
 Maintenance/infrastructure/*/reference-platforms/*/localbuildscript
 Maintenance/infrastructure/*/reference-platforms/*/localtestscript
 Maintenance/infrastructure/*/reference-platforms/*/localtestscript-redo-results-collection
 Maintenance/infrastructure/*/reference-platforms/*/Makefile
 Maintenance/infrastructure/*/reference-platforms/*/src
+Maintenance/infrastructure/*/reference-platforms/*/VERSION
 Manual_tools/doc_tex/cc_manual.pdf
 Manual_tools/doc_tex/cc_manual.ps.gz
 Manual_tools/doc_tex/cc_manual_index.pdf
