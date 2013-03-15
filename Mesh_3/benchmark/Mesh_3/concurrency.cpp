@@ -68,7 +68,6 @@ namespace po = boost::program_options;
 //#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 //#define CGAL_MESH_3_OPTIMIZER_VERBOSE
 #define CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
-#define CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
 #define MESH_3_PROFILING
 //#define CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END
@@ -89,6 +88,7 @@ const int     TET_SHAPE                = 3;
 //# define CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE // default behavior
 # define CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE // CJTODO: TEST performance avec et sans
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
+//#define CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE // not recommended
 
   // ==========================================================================
   // Concurrency activation
@@ -487,7 +487,7 @@ std::string get_technique()
   tech += "(NOT LAZY, sorted";
 # endif
 
-#ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+#ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
   tech += ", points on far sphere)";
 #else
   tech += ")";
@@ -615,10 +615,10 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   // Mesh generation
 #ifdef _DEBUG
   double timelimit = 10;
-  double sliverbound = 4;
+  double sliverbound = 2;
 #else
   double timelimit = 0;
-  double sliverbound = 4;
+  double sliverbound = 2;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
@@ -720,10 +720,10 @@ bool make_mesh_3D_images(const std::string &input_filename,
   // Mesh generation
 #ifdef _DEBUG
   double timelimit = 10;
-  double sliverbound = 4;
+  double sliverbound = 2;
 #else
   double timelimit = 0;
-  double sliverbound = 4;
+  double sliverbound = 2;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
@@ -856,10 +856,10 @@ bool make_mesh_implicit(double facet_approx,
   // Mesh generation
 #ifdef _DEBUG
   double timelimit = 10;
-  double sliverbound = 4;
+  double sliverbound = 2;
 #else
   double timelimit = 0;
-  double sliverbound = 4;
+  double sliverbound = 2;
 #endif
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
