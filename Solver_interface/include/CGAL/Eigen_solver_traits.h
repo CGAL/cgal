@@ -22,6 +22,7 @@
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
 #include <Eigen/Sparse>
+#include <Eigen/SparseLU>
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <boost/shared_ptr.hpp>
