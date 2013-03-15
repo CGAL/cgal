@@ -114,8 +114,6 @@ public:
   typedef typename Geom_traits::Point_2       Point;
   typedef typename Geom_traits::Segment_2     Segment;
   
-  typedef typename Geom_traits::Triangulation_euclidean_traits_2 Euclidean_geom_traits;
-  
   /*
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Triangulation::side_of_oriented_circle;
