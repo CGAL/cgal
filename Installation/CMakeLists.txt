@@ -523,7 +523,7 @@ set_special_prefix(QGLViewer QGLVIEWER)
 set_special_prefix(Coin3D COIN3D)
 
 # some libraries are essential (stl and Boost.Thread are treated in another way) 
-if(CGAL_DISABLE_GMP)
+if("$ENV{CGAL_DISABLE_GMP}" OR CGAL_DISABLE_GMP)
   list(REMOVE_ITEM CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
   unset(CGAL_CONFIGURED_LIBRARIES)
   unset(CGAL_CONFIGURED_LIBRARIES CACHE)
