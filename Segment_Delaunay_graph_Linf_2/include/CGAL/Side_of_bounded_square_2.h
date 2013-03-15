@@ -228,17 +228,21 @@ namespace CGAL {
                   << " pmax=" << pmax << " t=" << t << std::endl;);
 
         //Now we answer the predicate bounded side of square
-        if( compare_x_2(pmin, t) == SMALLER &&
-            compare_x_2(t, pmax) == SMALLER &&
-            compare_y_2(pmin, t) == SMALLER &&
-            compare_y_2(t, pmax) == SMALLER   ) {
+        Comparison_result cxmint = compare_x_2(pmin, t);
+        Comparison_result cxtmax = compare_x_2(t, pmax);
+        Comparison_result cymint = compare_y_2(pmin, t);
+        Comparison_result cytmax = compare_y_2(t, pmax);
+        if( cxmint == SMALLER and
+            cxtmax == SMALLER and
+            cymint == SMALLER and
+            cytmax == SMALLER   ) {
           CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs return ON_BOUNDED_SIDE" << std::endl;);
           return ON_BOUNDED_SIDE;
         }
-        else if (compare_x_2(pmin, t) == LARGER ||
-                 compare_x_2(t, pmax) == LARGER ||
-                 compare_y_2(pmin, t) == LARGER ||
-                 compare_y_2(t, pmax) == LARGER   ) {
+        else if (cxmint == LARGER or
+                 cxtmax == LARGER or
+                 cymint == LARGER or
+                 cytmax == LARGER   ) {
           CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs return ON_UNBOUNDED_SIDE" << std::endl;);
           return ON_UNBOUNDED_SIDE;
         }
