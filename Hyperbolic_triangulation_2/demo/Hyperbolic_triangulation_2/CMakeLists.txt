@@ -76,6 +76,23 @@ target_link_libraries( Hyperbolic_translations_2_demo ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Hyperbolic_translations_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
+#--------------------------------
+# The "Periodic Delaunay hyperbolic " demo:
+#--------------------------------
+
+# use the Qt MOC preprocessor on classes that derives from QObject
+qt4_generate_moc( "Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.moc" )
+
+# The executable itself.
+add_executable  ( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.cpp  Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_2_Delaunay_hyperbolic_triangulation_2_demo )
+
+# Link with Qt libraries
+target_link_libraries( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo ${QT_LIBRARIES} )
+# Link with CGAL
+target_link_libraries( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt4, and will not be compiled.")
