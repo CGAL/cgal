@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Philipp Möller and Sebastien Loriot
 
@@ -35,124 +35,124 @@ struct CK2_Intersection_traits
 {};
 
 // Intersection_traits for the circular kernel
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Circle_2, typename K::Circle_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>
 {
-  typedef typename 
-  boost::variant< typename K::Polynomial_for_circles_2_2,
-                  typename K::Circle_2,
-                  typename std::pair< typename K::Circular_arc_point_2, 
-                                      unsigned int > > 
+  typedef typename
+  boost::variant< typename CK::Polynomial_for_circles_2_2,
+                  typename CK::Circle_2,
+                  typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int > >
   type;
-};  
+};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Circular_arc_2, typename K::Circular_arc_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Circular_arc_2>
 {
-  typedef typename 
-  boost::variant< typename K::Circular_arc_2,
-                  typename std::pair< typename K::Circular_arc_point_2, 
-                                      unsigned int > > 
+  typedef typename
+  boost::variant< typename CK::Circular_arc_2,
+                  typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int > >
   type;
-};  
+};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Line_arc_2, typename K::Line_arc_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
 {
-  typedef typename 
-  boost::variant< typename K::Line_arc_2,
-                  typename std::pair< typename K::Circular_arc_point_2, 
-                                      unsigned int > > 
+  typedef typename
+  boost::variant< typename CK::Line_arc_2,
+                  typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int > >
   type;
-};  
+};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Line_arc_2, typename K::Circle_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Circle_2>
 {
-  typedef typename 
-  boost::variant< typename std::pair< typename K::Circular_arc_point_2, 
-                                      unsigned int > > 
+  typedef typename
+  boost::variant< typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int > >
   type;
-};  
+};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Circle_2, typename K::Line_arc_2>
-  : public CK2_Intersection_traits<K, typename K::Line_arc_2, typename K::Circle_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Line_arc_2>
+  : public CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Circle_2>
 {};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Line_arc_2, typename K::Circular_arc_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Circular_arc_2>
 {
-  typedef typename 
-  boost::variant< typename std::pair< typename K::Circular_arc_point_2, 
-                                      unsigned int > > 
+  typedef typename
+  boost::variant< typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int > >
   type;
-};  
+};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Circular_arc_2, typename K::Line_arc_2>
-  : public CK2_Intersection_traits<K, typename K::Line_arc_2, typename K::Circular_arc_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Line_arc_2>
+  : public CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Circular_arc_2>
 {};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Line_arc_2, typename K::Line_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_2>
 {
-  typedef typename 
-  boost::variant< typename K::Line_arc_2,
-                  typename std::pair< typename K::Circular_arc_point_2, 
-                                      unsigned int > > 
+  typedef typename
+  boost::variant< typename CK::Line_arc_2,
+                  typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int > >
   type;
-};  
+};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Line_2, typename K::Line_arc_2>
-  : public CK2_Intersection_traits<K, typename K::Line_arc_2, typename K::Line_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Line_arc_2>
+  : public CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_2>
 {};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Line_2, typename K::Circular_arc_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circular_arc_2>
 {
-  typedef typename 
-  boost::variant< typename std::pair< typename K::Circular_arc_point_2, 
-                                      unsigned int > > 
+  typedef typename
+  boost::variant< typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int > >
   type;
-};  
+};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Circular_arc_2, typename K::Line_2>
-  : public CK2_Intersection_traits<K, typename K::Line_2, typename K::Circular_arc_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Line_2>
+  : public CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circular_arc_2>
 {};
 
 // Circular_arc_2 Circle_2 simply aliases
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Circular_arc_2, typename K::Circle_2>
-  : public CK2_Intersection_traits<K, typename K::Circular_arc_2, typename K::Circular_arc_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Circle_2>
+  : public CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Circular_arc_2>
 {};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Circle_2, typename K::Circular_arc_2>
-  : public CK2_Intersection_traits<K, typename K::Circular_arc_2, typename K::Circular_arc_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circular_arc_2>
+  : public CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Circular_arc_2>
 {};
 
 // !!! undocumented !!! //
 
 // Line_2 Circle_2
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Line_2, typename K::Circle_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>
 {
-  typedef typename 
-  boost::variant< typename std::pair< typename K::Circular_arc_point_2, 
-                                      unsigned int > > 
+  typedef typename
+  boost::variant< typename std::pair< typename CK::Circular_arc_point_2,
+                                      unsigned int > >
   type;
-};  
+};
 
-template<typename K>
-struct CK2_Intersection_traits<K, typename K::Circle_2, typename K::Line_2> : 
-    public CK2_Intersection_traits<K, typename K::Line_2, typename K::Circle_2>
+template<typename CK>
+struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Line_2> :
+    public CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>
 {};
 
 } //end of namespace CGAL
-  
+
 #else
 
 #include <CGAL/Object.h>
@@ -204,5 +204,5 @@ namespace internal{
 
 } } //end of namespace CGAL::internal
 
-  
+
 #endif // CGAL_CIRCULAR_KERNEL_2_INTERSECTION_TRAITS_H
