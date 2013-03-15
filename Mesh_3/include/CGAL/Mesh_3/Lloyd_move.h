@@ -88,8 +88,8 @@ public:
       case 0:
       case -1: 
         // Don't move edge or corner vertices
-        // N.B.: dimension = -1 is possible when
-        //       CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE is defined
+        // N.B.: dimension = -1 is possible if we added points on a far sphere
+        //       during initialization
         return CGAL::NULL_VECTOR;
         break;
       default:

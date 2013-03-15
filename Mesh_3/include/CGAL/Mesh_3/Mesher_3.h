@@ -568,7 +568,7 @@ initialize()
     // we're not multi-thread, yet
     r_c3t3_.triangulation().set_lock_data_structure(0);
 
-# ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+# ifndef CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
    const Bbox_3 &bbox = estimated_bbox;
 
@@ -597,7 +597,7 @@ initialize()
    std::cerr << "done." << std::endl;
 #  endif
 
-# endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+# endif // CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
     
 #ifdef MESH_3_PROFILING
     double init_time = t.elapsed();
@@ -614,7 +614,7 @@ initialize()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-#ifdef CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+#ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
     
     /*std::cerr << "A little bit of refinement... ";
 
@@ -654,7 +654,7 @@ initialize()
     std::cerr << "done." << std::endl;
 # endif
 
-#endif // CGAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+#endif // CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
     
 #ifdef MESH_3_PROFILING
     double init_time = t.elapsed();

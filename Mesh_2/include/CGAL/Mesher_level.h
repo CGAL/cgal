@@ -27,8 +27,6 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-//# include <CGAL/hilbert_sort.h> //CJTODO: remove?
-//# include <CGAL/spatial_sort.h> //CJTODO: remove?
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
 #include <CGAL/Bbox_3.h>
 

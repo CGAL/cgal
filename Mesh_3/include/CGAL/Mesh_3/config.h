@@ -38,6 +38,8 @@
 
 //experimental
 #  define CGAL_FASTER_BUILD_QUEUE
+#  define CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+//#define CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE // slower / not recommended
 
 // to disable new features :
 //#  define CGAL_TDS_3_NOT_JUST_INCIDENT_CELLS
