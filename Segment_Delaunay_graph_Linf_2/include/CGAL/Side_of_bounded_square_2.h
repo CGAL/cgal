@@ -165,12 +165,15 @@ namespace CGAL {
         Point_2 pmin, pmax;
         //pmin and pmax define the bounded square by p,q,r
 
-        if (px_max.x() - px_min.x() == py_max.y() - py_min.y())
+        Comparison_result cmpsides =
+          CGAL::compare(px_max.x() - px_min.x(), py_max.y() - py_min.y());
+
+        if (cmpsides == EQUAL)
         { //diff x == diff y forms a square
           pmin = Point_2(px_min.x(), py_min.y());
           pmax = Point_2(px_max.x(), py_max.y());
         }
-        else if (px_max.x() - px_min.x() > py_max.y() - py_min.y())
+        else if (cmpsides == LARGER)
         { //diff x > diff y forms a rectangle
           //need to find the movable side of rectangle
           if (compare_x_2(px_min,py_max)==SMALLER &&
