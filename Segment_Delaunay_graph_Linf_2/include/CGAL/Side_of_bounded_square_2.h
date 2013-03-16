@@ -258,6 +258,10 @@ namespace CGAL {
           return ON_UNBOUNDED_SIDE;
         }
         else {
+          CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs on boundary, "
+              << "left=" << cxmint << " right=" << cxtmax
+              << " bot=" << cymint << " top  =" << cytmax
+              << std::endl; );
           CGAL_SDG_DEBUG(std::cout
               << "debug Side_of_bs return ON_BOUNDARY" << std::endl;);
           return ON_BOUNDARY;
