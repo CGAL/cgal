@@ -28,7 +28,7 @@ namespace CGAL {
       Orientation_Linf_2_Type orientation_Linf;
 
 
-      Bounded_side predicate(const Point_2 &p, const Point_2 &q,
+      inline Bounded_side predicate(const Point_2 &p, const Point_2 &q,
                   const Point_2 &r, const Point_2 &t) const
       {
         CGAL_SDG_DEBUG(std::cout
@@ -270,7 +270,7 @@ namespace CGAL {
 
     public:
 
-      Bounded_side operator()(const Point_2 &p, const Point_2 &q,
+      inline Bounded_side operator()(const Point_2 &p, const Point_2 &q,
                    const Point_2 &r, const Point_2 &t) const
       {
         return predicate(p, q, r, t);
