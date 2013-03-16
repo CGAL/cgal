@@ -167,6 +167,8 @@ namespace CGAL {
         Point_2 pmin, pmax;
         //pmin and pmax define the bounded square by p,q,r
 
+        const FT half(0.5);
+
         Comparison_result cmpsides =
           CGAL::compare(px_max.x() - px_min.x(), py_max.y() - py_min.y());
 
@@ -196,10 +198,10 @@ namespace CGAL {
                 << std::endl;);
             pmin = Point_2(
                 px_min.x(),
-               (py_max.y() + py_min.y() - px_max.x() + px_min.x())*FT(0.5));
+               (py_max.y() + py_min.y() - px_max.x() + px_min.x())*half);
             pmax = Point_2(
                 px_max.x(),
-               (py_max.y() + py_min.y() + px_max.x() - px_min.x())*FT(0.5));
+               (py_max.y() + py_min.y() + px_max.x() - px_min.x())*half);
           }
         }
         else
@@ -223,10 +225,10 @@ namespace CGAL {
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs move both sides"
                 << std::endl;);
             pmin = Point_2(
-                (px_min.x() + px_max.x() - py_max.y() + py_min.y())*FT(0.5),
+                (px_min.x() + px_max.x() - py_max.y() + py_min.y())*half,
                  py_min.y() );
             pmax = Point_2(
-                (px_min.x() + px_max.x() + py_max.y() - py_min.y())*FT(0.5),
+                (px_min.x() + px_max.x() + py_max.y() - py_min.y())*half,
                  py_max.y() );
           }
         }
