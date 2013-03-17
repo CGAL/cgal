@@ -1,6 +1,4 @@
 /// \defgroup PkgNef3 3D Boolean Operations on  Nef Polyhedra Reference
-/// \defgroup PkgNef3Concepts Concepts
-/// \ingroup PkgNef3
 ///
 /// \defgroup PkgNef3IOFunctions I/O Functions
 /// \ingroup PkgNef3

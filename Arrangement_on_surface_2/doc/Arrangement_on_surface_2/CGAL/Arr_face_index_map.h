@@ -5,7 +5,7 @@ namespace CGAL {
 
 `Arr_face_index_map` maintains a mapping of face handles of an
 attached arrangement object to indices (of type `unsigned int`).
-This class template is a model of the `boost` concept
+This class template is a model of the concept
 `ReadablePropertyMap`. A mapping between face handles and indices
 enables convenient usage of property-map classes supplied by `boost`.
 For example, the property-map class templates
@@ -22,7 +22,7 @@ to dynamically maintain the mapping of face handles to indices.
 \cgalModels DefaultConstructible
 \cgalModels CopyConstructible
 \cgalModels Assignable
-\cgalModels `boost::ReadablePropertyMap`
+\cgalModels `ReadablePropertyMap`
 
 \sa `Arr_observer<Arrangement>`
 \sa `Arr_vertex_index_map<Arrangement>`

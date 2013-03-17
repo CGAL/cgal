@@ -47,9 +47,9 @@ namespace CGAL {
 /// Empty lines and comments starting by # character are allowed.
 ///
 /// @tparam OutputIterator iterator over output points.
-/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/WritablePropertyMap.html">boost::WritablePropertyMap</a> with a value_type = Point_3<Kernel>.
+/// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/WritablePropertyMap.html">boost::WritablePropertyMap</a> with a value_type = Vector_3<Kernel>.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
@@ -199,7 +199,7 @@ read_xyz_points_and_normals(
 /// Empty lines and comments starting by # character are allowed.
 ///
 /// @tparam OutputIterator iterator over output points.
-/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/WritablePropertyMap.html">boost::WritablePropertyMap</a> with a value_type = Point_3<Kernel>.
+/// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.

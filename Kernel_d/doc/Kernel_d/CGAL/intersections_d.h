@@ -45,7 +45,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Line_d </TD> 
 <TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Line_d</TD></TR> 
 </TABLE></TD> 
@@ -53,7 +53,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
 <TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 </TABLE></TD> 
@@ -61,7 +61,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 </TABLE></TD> 
@@ -69,7 +69,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
 <TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Ray_d</TD></TR> 
 </TABLE></TD> 
@@ -77,7 +77,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 </TABLE></TD> 
@@ -85,7 +85,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 <TR><TD>Ray_d</TD></TR> 
@@ -94,7 +94,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Hyperplane_d </TD> 
 <TD VALIGN="CENTER" > Line_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Line_d</TD></TR> 
 </TABLE></TD> 
@@ -102,7 +102,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Hyperplane_d </TD> 
 <TD VALIGN="CENTER" > Ray_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Ray_d</TD></TR> 
 </TABLE></TD> 
@@ -110,7 +110,7 @@ the possible return values wrapped in `Object` are the following:
 <TR> 
 <TD VALIGN="CENTER" > Hyperplane_d </TD> 
 <TD VALIGN="CENTER" > Segment_d </TD> 
-<TD><TABLE> 
+<TD><TABLE BORDER="0"> 
 <TR><TD>Point_d</TD></TR> 
 <TR><TD>Segment_d</TD></TR> 
 </TABLE></TD> 

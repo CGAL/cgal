@@ -2,9 +2,6 @@
 /*!
 \ingroup PkgKernelDKernelConcept
 \cgalConcept
-
-A model for this must provide: 
-
 */
 
 class Kernel_d::Affinely_independent_d {
