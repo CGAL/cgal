@@ -19,7 +19,7 @@ give a brief overview of related topics.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation 
 Laplacian coordinates are a way of representing the mesh differentially, using the local coordinate of a vertex 
-with respect to its one-ring neighbors (i.e. cell) rather than its global position. The Laplacian coordinate of a vertex \f$ v_i \f$ is:
+with respect to its one-ring neighbors (i.e. cell) rather than its global position. The Laplacian coordinate of a vertex \f$ \mathbf{v}_i \f$ is:
 
 \f[
 \begin{equation}
@@ -28,19 +28,41 @@ L(\mathbf{v}_i) = \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}_i - 
 \end{equation}
 \f]
 
-where the set of vertices \f$N(\mathbf{v}_i)\f$ is the one-ring neighbor vertices 
-of \f$\mathbf{v}_i\f$, and \f$w_{ij}\f$ is the weight between \f$\mathbf{v}_i\f$ and the neighbor \f$\mathbf{v}_j\f$. 
+where \f$N(\mathbf{v}_i)\f$ is the one-ring neighbor vertices of \f$\mathbf{v}_i\f$, and \f$w_{ij}\f$ is the weight between \f$\mathbf{v}_i\f$ and the neighbor \f$\mathbf{v}_j\f$. 
+  
 The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each vertex 
-\f$\mathbf{v}_j\f$ in the one-ring neighborhood, which actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}) (<b>SL</b>: I don't understand what you mean here).
-We use cotangent weights \cite Pinkall1993Cotangent to eliminate the effect of non-uniform discretization of the mesh model (<b>SL</b>: same here, I don't get what you mean).
+\f$\mathbf{v}_j\f$ in the one-ring neighborhood, which actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}) 
 
-\todo we should not have \f$ \sum w_{ij} == 1 \f$, right?
+(<b>SL</b>: I don't understand what you mean here. <b>IOY</b> since weights are uniform( \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$) 
+\f[
+\begin{equation}
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij}\mathbf{v}_j = mass - center - of - neighbors.
+  \label{eq:1}
+\end{equation}
+\f]
+will be equal to mass center of neighbors (i.e. "the average of neighbor vertices"), and since they sum up to one in uniform example
+\f[
+\begin{equation}
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij}\mathbf{v}_i = \mathbf{v}_i.
+  \label{eq:2}
+\end{equation}
+\f]
+
+So ...which actually corresponds to subtracting the average of neighbor vertices ( Eq.\f$\eqref{eq:1}\f$ ) from the current vertex (Eq.\f$\eqref{eq:2}\f$). 
+
+
+We use cotangent weights \cite Pinkall1993Cotangent to eliminate the effect of non-uniform discretization of the mesh model 
+
+(<b>SL</b>: same here, I don't get what you mean. <b>IOY</b> Uniform weights would be fine if all triangles are equilateral, cotangent weights are way to eliminate biased meshing).
+
+\todo we should not have \f$ \sum w_{ij} == 1 \f$, right? <b>IOY</b> No, weights' do not have to sum up to one. Although in uniform case they do. 
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
-A simple mesh structure. Red square is the average of neighbors of the yellow vertex. Blue vector represents Laplacian coordinate of the yellow vertex.
+A simple mesh structure. Red square is the average of neighbors of the yellow vertex. Blue vector represents Laplacian coordinate of the yellow vertex under uniform weights.
 \cgalFigureEnd
 
-\todo you must explicitly say that the yellow vertex is the one obtain with constructing vertex with the weights
+\todo you must explicitly say that the yellow vertex is the one obtain with constructing vertex with the weights 
+<b>IOY</b> don't understand, what I want to show here is laplacian of the yellow vertex (using uniform weights)
 
 Considering the mesh as a whole, it is possible to generate a linear system which results in Laplacian coordinates of all vertices:
 
@@ -54,7 +76,11 @@ Considering the mesh as a whole, it is possible to generate a linear system whic
 where 
 - \f$n\f$ is number of vertices in the mesh;
 - \f$\mathbf{L}\f$ is an \f$n \times n\f$ matrix, called the <i>Laplacian matrix</i>,
-in which each row is filled according to Eq.\f$\eqref{eq:lap_open}\f$, that is the element \f$ m_{ij} \f$ of \f$ L \f$ is equal to \f$ w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v}) \f$, and \f$ 0 \f$ otherwise. Thus \f$ L \f$ is a not necessarily symmetric sparse matrix.
+in which each row is filled according to Eq.\f$\eqref{eq:lap_open}\f$, that is the element \f$ m_{ij} \f$ of \f$ L \f$ is equal to \f$ -w_{ij} \f$ 
+if \f$ \mathbf{v}_j \in N(\mathbf{v}) \f$, \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$ and \f$ 0 \f$ otherwise. 
+(Thus \f$ L \f$ is a not necessarily symmetric sparse matrix
+ <b>IOY</b> No need to discuss this, we can construct symmetric matrix with symmetric weights but when we integrate constraints we are going to break symmetry anyway.)
+ 
 - \f$\mathbf{V}\f$ is an \f$n \times 1\f$ vector consisting of 
 global positions of vertices; and \f$\delta\f$ represents Laplacian coordinates of the mesh. 
 
@@ -83,7 +109,7 @@ We provide support for hard constraints, which means constrained positions of ha
 \left[
 \begin{array}{ccc}
 {\delta}' \\
-\mathbf{C}_j
+\mathbf{V}_c
 \end{array}
 \right],
 	\label{eq:lap_energy_system}
@@ -92,7 +118,7 @@ We provide support for hard constraints, which means constrained positions of ha
 
 where \f$\mathbf{L}'\f$ is Laplacian matrix of free (i.e. not constrained) vertices, \f$\mathbf{I}_c\f$ contains a row for each constrained vertex 
 with one in corresponding position of the vertex and zeros elsewhere, \f${\delta}'\f$ is Laplacian coordinates of free vertices, 
-and \f$\mathbf{C}_j\f$ holds the target positions of constrained vertices. Solving the system under deformation constraints 
+and \f$\mathbf{V}_c\f$ holds the target positions of constrained vertices. Solving the system under deformation constraints 
 preserves Laplacians of free vertices (upper side of the system) while satisfying the constraints (lower side of the system).
 
 \subsection Surface_Modeling_Overview_ARAP As-Rigid-As Possible Deformation
@@ -108,14 +134,12 @@ The energy function proposed to be minimized in \cite Sorkine2007AsRigidAs under
 \end{equation}
 \f]
 
-where 
-- \f$N(\mathbf{v}_i)\f$ is one-ring neighbors of vertex \f$\mathbf{v}_i\f$;
-- \f$w_{ij}\f$ is the weight of the edge between \f$\mathbf{v}_i\f$ and \f$\mathbf{v}_j\f$
-- \f$\mathbf{R}_i\f$ is rotation matrix for \f$\mathbf{v}_i\f$.
+where \f$\mathbf{R}_i\f$ is rotation matrix for \f$\mathbf{v}_i\f$, and \f$\mathbf{v}'_i\f$ is deformed version of \f$\mathbf{v}_i\f$.
 
 The intuitive idea behind this energy function is to allow cells to
 have individual rotations, and at the same time using overlapping nature of the
-cells to prevent sharing \cgalFigureRef{Overlapping_cells}. (<b>SL</b>: this is not clear to me)
+cells to prevent sharing \cgalFigureRef{Overlapping_cells}. (<b>SL</b>: this is not clear to me 
+<b>IOY</b> it is a brief explanation, I guess one need to read the paper and also think about the algorithm to make it clear.)
  
 \cgalFigureBegin{Overlapping_cells,overlapping_cells.png}
 Illustration of overlapping cells
@@ -159,7 +183,8 @@ which minimizes the deformation energy, setting the derivative to zero results i
 The left-hand side of this equation corresponds to Eq.\f$\eqref{eq:lap_open}\f$,
 so that we can fill \f$\delta\f$ using the right-hand side of the equation which consists only of known values in our system. 
 Then,  the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ can be solved in order to find \f$\mathbf{V}'\f$. 
-Two-step optimization can be pursued for further refinement by altering steps. (<b>SL</b>: what do you mean? can apply several iterations?)
+Two-step optimization can be pursued for further refinement by altering steps. (<b>SL</b>: what do you mean? can apply several iterations? 
+<b>IOY</b> yes, these two steps are considered to be one iteration. I also stated that for 'iterations' parameter in the API section of the manual.)
 
 \note In order to have asymmetric edge weights, we slightly changed the Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \f[
@@ -170,11 +195,11 @@ Two-step optimization can be pursued for further refinement by altering steps. (
 \end{equation}
 \f]
 
-\todo add motivation for having symmetric weights
+\todo add motivation for having symmetric weights <b>IOY</b> don't understand
 
 \subsection Surface_Modeling_Overview_ARAP_Rims Spokes and Rims Version
 
-\cgalFigureBegin{Spoke_and_rim_edges, spoke_and_rim_edges.png}
+\cgalFigureBegin{Spoke_and_rim_edges, spoke_and_rim_edges_2.png}
 Considered edges \f$E(\mathbf{v}_i)\f$ in energy function for a vertex \f$\mathbf{v}_i\f$. (<b>SL</b>: vi should appear on the figure)
 \cgalFigureEnd
 
@@ -190,6 +215,7 @@ The modified energy function proposed by \cite Chao2010SimpleGeomModel take into
 \f]
 
 where \f$E(\mathbf{v}_i)\f$ is set of edges around facets incident to \f$\mathbf{v}_i\f$ (see \cgalFigureRef{Spoke_and_rim_edges}).
+While constructing the solution, we can follow same approach (i.e. two-step optimization) explained in \ref Surface_Modeling_Overview_ARAP.
 For the first step, corresponding Eq. \f$\eqref{eq:cov_matrix}\f$ is simply modified to include all edges in \f$E(\mathbf{v}_i)\f$. 
 For the second step, setting partial derivative of Eq. \f$\eqref{eq:arap_energy_rims}\f$ zero with respect to \f$\mathbf{v}_i\f$ results in:
 
@@ -223,13 +249,13 @@ The deformation is handled thanks to a function object that must be initialized:
 
 \todo The ROI is first mentionned here. It should be mentionned yearlier. That is that not all vertices in the mesh are considered.
 Then, the region that the algorithm operates on (i.e. region of interest -ROI) 
-should be determined. The API is convenient enough for either using the whole mesh or a set of predefined vertices as region of interest. (<b>SL</b>: when I read predefined, I think about the k-ring around the handles. you meant particular?)
+should be determined. The API is convenient enough for either using the whole mesh or a set of given (or particular or concreate) vertices as region of interest. (<b>SL</b>: when I read predefined, I think about the k-ring around the handles. you meant particular?)
   - `Deform_mesh::insert_roi(vertex_descriptor vd)` insert vertices one by one
   - `Deform_mesh::insert_roi(InputIterator begin, InputIterator end)` insert vertices in a range
 
 The ROI should be a connected component and should also include the handle vertices \cgalFigureRef{Simple_roi}.
-Note that the algorithm automatically finds the boundary of the ROI and fix those vertices while deforming.
-(<b>SL</b>: the first time I read <i>boundary</i>, it made me think that the boundary is part of the ROI but it's not the case right?)
+Note that the algorithm automatically finds the exterior-boundary of the ROI and fix those vertices while deforming.
+(<b>SL</b>: the first time I read <i>boundary</i>, it made me think that the boundary is part of the ROI but it's not the case right? <b>IOY</b> yes, what about exterior-boundary)
 
 \cgalFigureBegin{Simple_roi, roi_example.png}
 Red vertices represent handles, and yellow vertices together with red vertices represent ROI. 
@@ -291,12 +317,12 @@ The steps in \ref Deform_section can be repeated for further deformations.
 
 \subsection Surface_modeling_examples Examples
 
-\todo rename examples, the name should be unique accross packages since they are cmake targets. Rename also in examples.txt
+\todo rename examples, the name should be unique accross packages since they are cmake targets <b>IOY</b> done. Rename also in examples.txt <b>IOY</b> what is examples.txt ?
 
 \subsubsection Example_1 Example 1
-The whole mesh is used as ROI and a few vertices are added as handles. `Deform_mesh::assign()` is used for constraining handle vertices.
+In this example, the whole mesh is used as ROI and a few vertices are added as handles. `Deform_mesh::assign()` is used for constraining handle vertices.
 
-\cgalExample{Surface_modeling/example_1.cpp}
+\cgalExample{Surface_modeling/all_roi_assign_example.cpp}
 
 \cgalFigureBegin{Example_1_results, example_1_results.png}
 Deformation results from example, deform_1.off and deform_2.off. 
@@ -306,7 +332,7 @@ Deformation results from example, deform_1.off and deform_2.off.
 In this example, we use handle grouping feature of the API together with `Deform_mesh::translate()` and `Deform_mesh::rotate()`. 
 \todo we need to implement small quaternion class to demonstrate `Deform_mesh::rotate()`.<b>SL</b> Is there anything in eigen or shall we use qglviewer?
 
-\cgalExample{Surface_modeling/example_2.cpp}
+\cgalExample{Surface_modeling/k_ring_roi_translate_rotate_example.cpp}
 
 \cgalFigureBegin{Example_2_results, example_2_results.png}
 Deformation results from example, deform_1.off and deform_2.off. 
@@ -316,7 +342,7 @@ Deformation results from example, deform_1.off and deform_2.off.
 In this example, we use an enriched polyhedron whose edges and vertices support an id field to store indexes.
 The main advantage is to decrease the complexity of accessing associated indexes with edges and vertices from logarithmic to constant.
 
-\cgalExample{Surface_modeling/example_3.cpp}
+\cgalExample{Surface_modeling/enriched_polyhedron_with_custom_pmap_example.cpp}
 
 \subsubsection Example_4 Example 4
 Using your own weights for edges is also possible via providing a model for SurfaceModelingWeightCalculator. 
@@ -324,7 +350,7 @@ In this example, we assume having precomputed weights for each edge and use an i
 
 You can also check the code example in SurfaceModelingWeightCalculator for direct computation.
 
-\cgalExample{Surface_modeling/example_4.cpp}
+\cgalExample{Surface_modeling/custom_weight_for_edges_example.cpp}
 
 \section Surface_Modeling_Demo How to use the demo
 Explain how to use the demo
