@@ -145,7 +145,6 @@ public:
 
   bool read(const char* file)
   {
-    std::cerr << "read((const char* file)\n";
     return private_read(::_readImage(file));
   }
 

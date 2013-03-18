@@ -137,7 +137,6 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
 */
 size_t ImageIO_read(const _image *im, void *buf, size_t len) 
 {
-  fprintf(stderr,"Entering ImageIO_read\n");
   size_t to_be_read = len;
   int l = -1;
   char *b = (char*)buf;
@@ -147,9 +146,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
   case OM_CLOSE :
     return 0;
   case OM_STD :
-    fprintf(stderr,"OM_STD\n");
 #ifdef CGAL_USE_ZLIB
-    fprintf(stderr,"OM_STD: in #ifdef CGAL_USE_ZLIB\n");
     while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, to_be_read)) > 0) ) {
       to_be_read -= l;
       b += l;
@@ -162,9 +159,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
 #endif
     return ( len - to_be_read );
 #ifdef CGAL_USE_ZLIB
-    fprintf(stderr,"#ifdef CGAL_USE_ZLIB\n");
   case OM_GZ :
-    fprintf(stderr,"OM_GZ\n");
     while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, to_be_read)) > 0) ) {
       to_be_read -= l;
       b += l;
@@ -176,7 +171,6 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     }
     return ( len - to_be_read );
 #else
-  fprintf(stderr,"in #else\n)";
   case OM_FILE :
     while ( (to_be_read > 0) && ((l = fread( b, 1, to_be_read, im->fd )) > 0) ) {
       to_be_read -= l;
@@ -448,7 +442,6 @@ ENDIANNESS _getEndianness()
 _image *_initImage() {
   _image *im;
 
-  fprintf(stderr, "in _initImage\n");
   im = (_image *) ImageIO_alloc(sizeof(_image));
   if ( im == NULL ) return( im );
 
@@ -602,7 +595,6 @@ void _freeImage(_image *im) {
 _image* _readImage(const char *name) {
   _image *im;
 
-  fprintf(stderr, " _readimage\n");
 
   /* read header */
   im = _readImageHeader( name );
@@ -920,7 +912,6 @@ _image *_readImageHeader( const char *name ) {
 
 _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
 {
-  fprintf(stderr, "_readImageHeaderAndGetError\n");
   _image *im;
   char magic[5];
   char *name = NULL;
@@ -940,7 +931,7 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
     name = strdup( name_to_be_read );
   }
 
-  fprintf(stderr, "_readImageHeaderAndGetError\n");
+
   _openReadImage(im, name);	
 
   if(!im->fd) {
