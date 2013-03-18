@@ -48,17 +48,12 @@ namespace CGAL {
  * @tparam SparseLinearAlgebraTraitsWithPreFactor_d_ sparse linear solver for square sparse linear systems
  * @tparam VertexIndexMap_ a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type
  * @tparam EdgeIndexMap_ a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type
- * @tparam WeightCalculator_ a model of SurfaceModelingWeightCalculator*/
+ */
 template <
   class Polyhedron_, 
   class SparseLinearAlgebraTraits_d_, 
   class VertexIndexMap_, 
-  class EdgeIndexMap_,
-  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
-    class WeightCalculator_ = internal::Single_cotangent_weight<Polyhedron >
-  #else
-    class WeightCalculator_ = internal::Cotangent_weight<Polyhedron >
-  #endif
+  class EdgeIndexMap_
   >
 class Deform_mesh
 {
@@ -72,14 +67,13 @@ public:
   typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d; /**< sparse linear solver for square sparse linear systems */
   typedef VertexIndexMap_ VertexIndexMap; /**< a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type */
   typedef EdgeIndexMap_ EdgeIndexMap; /**< a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type */
-  typedef WeightCalculator_ WeightCalculator; /**< a model of SurfaceModelingWeightCalculator */
   /// @}
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		edge_descriptor;   /**< The type for edge representative objects */
 
-  typedef typename Polyhedron::Traits::Vector_3           Vector; /**<The type for Vector_3 from Polyhedron traits */
-  typedef typename Polyhedron::Traits::Point_3            Point;  /**<The type for Point_3 from Polyhedron traits */
+  typedef typename Polyhedron::Traits::Vector_3  Vector; /**<The type for Vector_3 from Polyhedron traits */
+  typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
   // Repeat Polyhedron types
@@ -122,8 +116,6 @@ private:
   bool need_preprocess;                               // is there any need to call preprocess() function
   Handle_group_container handle_groups;               // user specified handles
 
-  WeightCalculator weight_calculator;                 // calculate weight for an edge
-
 // Public methods
 public:
 /// \name Preprocess Section
@@ -137,16 +129,14 @@ public:
    * @param edge_index_map edge index map for associating ids with region of interest edges
    * @param iterations see explanations set_iterations(unsigned int iterations)
    * @param tolerance  see explanations set_tolerance(double tolerance)
-   * @param weight_calculator a function object or pointer for calculating weights
    */
   Deform_mesh(Polyhedron& polyhedron, 
               VertexIndexMap vertex_index_map, 
               EdgeIndexMap edge_index_map,
               unsigned int iterations = 5,
-              double tolerance = 1e-4, //// a doxygen problem, it does not create autolink to WeightCalculator below: solution is 0.0001
-              WeightCalculator weight_calculator = WeightCalculator())
+              double tolerance = 1e-4)
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      iterations(iterations), tolerance(tolerance), need_preprocess(true), weight_calculator(weight_calculator)
+      iterations(iterations), tolerance(tolerance), need_preprocess(true)
   {
     // CGAL_precondition(polyhedron.is_pure_triangle());   
   }
@@ -272,20 +262,35 @@ public:
       ros.erase(it);
     }
   }
-
+  /**
+   * Overloaded version of Deform_mesh::preprocess(WeightCalculator weight_calculator).
+   * Cotangent weights are used by default.
+   */
+  bool preprocess()
+  {
+  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
+    internal::Single_cotangent_weight<Polyhedron > calculator;
+  #else
+    internal::Cotangent_weight<Polyhedron > calculator;
+  #endif
+    return preprocess(calculator);
+  }
   /** 
    * Necessary precomputation work before beginning deformation.
    * It needs to be called after insertion of vertices as handles or roi is done.
+   * @tparam a model of SurfaceModelingWeightCalculator
+   * @param a function object or pointer for weight calculation
    * @return true if Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for ROI 
-   * and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices)
+   * and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices).
    */
-  bool preprocess()
+  template<class WeightCalculator>
+  bool preprocess(WeightCalculator weight_calculator)
   {
     need_preprocess = false;
 
     region_of_solution();
-    compute_edge_weight(); // compute_edge_weight() should be called after region_of_solution()
+    compute_edge_weight(weight_calculator); // compute_edge_weight() should be called after region_of_solution()
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
@@ -431,16 +436,18 @@ public:
 
 private:
 
-  /// Compute cotangent weights of all edges 
-  void compute_edge_weight()
+  /// Compute cotangent weights of all edges
+  template<class WeightCalculator>
+  void compute_edge_weight(WeightCalculator weight_calculator)
   {
   #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
-    compute_edge_weight_spokes_and_rims();
+    compute_edge_weight_spokes_and_rims(weight_calculator);
   #else
-    compute_edge_weight_arap();
+    compute_edge_weight_arap(weight_calculator);
   #endif
   }
-  void compute_edge_weight_arap()
+  template<class WeightCalculator>
+  void compute_edge_weight_arap(WeightCalculator weight_calculator)
   {
     std::set<edge_descriptor> have_id; // edges which has assigned ids (and also weights are calculated)
 
@@ -463,7 +470,8 @@ private:
       }// end of edge loop
     }// end of ros loop
   }
-  void compute_edge_weight_spokes_and_rims()
+  template<class WeightCalculator>
+  void compute_edge_weight_spokes_and_rims(WeightCalculator weight_calculator)
   {
     std::set<edge_descriptor> have_id; // edges which has assigned ids (and also weights are calculated)
 
@@ -803,6 +811,7 @@ private:
     update_solution_arap();
   #endif
   }
+  // calculate right-hand side of eq:lap_ber in user manual and solve the system
   void update_solution_arap()
   {
     typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
@@ -850,6 +859,7 @@ private:
       solution[v_id] = p;
     }
   }
+  // calculate right-hand side of eq:lap_ber_rims in user manual and solve the system
   void update_solution_spokes_and_rims()
   {
     typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
