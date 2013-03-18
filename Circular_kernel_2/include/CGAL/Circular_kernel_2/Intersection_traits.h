@@ -39,8 +39,7 @@ template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>
 {
   typedef typename
-  boost::variant< typename CK::Polynomial_for_circles_2_2,
-                  typename CK::Circle_2,
+  boost::variant< typename CK::Circle_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
                                       unsigned int > >
   type;
