@@ -37,9 +37,9 @@ class Periodic_2_triangulation_hierarchy_2
   : public PTr
 {
   // parameterization of the  hierarchy
-  static const int ratio    = 30;
-  static const int minsize  = 20;
-  static const int maxlevel = 5;
+  static const int m_ratio    = 30;
+  static const int m_minsize  = 20;
+  static const int m_maxlevel = 5;
   // maximal number of points is 30^5 = 24 millions !
 
 
@@ -64,7 +64,7 @@ class Periodic_2_triangulation_hierarchy_2
 
  private:
   // here is the stack of triangulations which form the hierarchy
-  PTr_Base*   hierarchy[maxlevel];
+  PTr_Base*   hierarchy[m_maxlevel];
   boost::rand48  random;
   int level_mult_cover;
 
@@ -83,7 +83,7 @@ public:
     : PTr_Base(domain,traits), level_mult_cover(0)
   {
     hierarchy[0] = this; 
-    for(int i=1; i<maxlevel; ++i)
+    for(int i=1; i<m_maxlevel; ++i)
       hierarchy[i] = new PTr_Base(domain,traits);
     insert(first, last);
   }
@@ -118,7 +118,7 @@ public:
     // hints[i] is the face of the previously inserted point in level i.
     // Thanks to spatial sort, they are better hints than what the hierarchy
     // would give us.
-    Face_handle hints[maxlevel];
+    Face_handle hints[m_maxlevel];
     for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end();
          p != end; ++p) {
       int vertex_level = random_level();
@@ -177,7 +177,7 @@ private:
 		      Locate_type& lt,
 		      int& li,
 		      Face_handle loc,
-		      Face_handle pos[maxlevel]) const;
+		      Face_handle pos[m_maxlevel]) const;
   int random_level();
 };
 
@@ -188,8 +188,9 @@ Periodic_2_triangulation_hierarchy_2<PTr>::
 Periodic_2_triangulation_hierarchy_2(const Iso_rectangle& domain, const Geom_traits& traits)
   : PTr_Base(domain, traits)
 { 
+  level_mult_cover = 0;
   hierarchy[0] = this; 
-  for(int i=1;i<maxlevel;++i)
+  for(int i=1;i<m_maxlevel;++i)
     hierarchy[i] = new PTr_Base(domain, traits);
 }
 
@@ -202,7 +203,7 @@ Periodic_2_triangulation_hierarchy_2(const Periodic_2_triangulation_hierarchy_2<
 { 
   // create an empty triangulation to be able to delete it !
   hierarchy[0] = this; 
-  for(int i=1;i<maxlevel;++i)
+  for(int i=1;i<m_maxlevel;++i)
     hierarchy[i] = new PTr_Base(tr.domain(), tr.geom_traits());
   copy_triangulation(tr);
 } 
@@ -226,7 +227,7 @@ Periodic_2_triangulation_hierarchy_2<PTr>::
 copy_triangulation(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
 {
   {
-    for(int i=0;i<maxlevel;++i)
+    for(int i=0;i<m_maxlevel;++i)
     hierarchy[i]->copy_triangulation(*tr.hierarchy[i]);
   }
    
@@ -242,7 +243,7 @@ copy_triangulation(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
   }
 
   {
-    for(int i=1;i<maxlevel;++i) {
+    for(int i=1;i<m_maxlevel;++i) {
       for( Finite_vertices_iterator it=hierarchy[i]->finite_vertices_begin(); 
 	   it != hierarchy[i]->finite_vertices_end(); ++it) {
         if (hierarchy[i]->is_virtual(it)) {
@@ -288,7 +289,7 @@ Periodic_2_triangulation_hierarchy_2<PTr>::
 swap(Periodic_2_triangulation_hierarchy_2<PTr> &tr)
 {
   PTr_Base::swap(tr);
-  for(int i=1; i<maxlevel; ++i)
+  for(int i=1; i<m_maxlevel; ++i)
       std::swap(hierarchy[i], tr.hierarchy[i]);
 }
 
@@ -297,7 +298,7 @@ Periodic_2_triangulation_hierarchy_2<PTr>::
 ~Periodic_2_triangulation_hierarchy_2()
 {
   clear();
-  for(int i= 1; i<maxlevel; ++i){ 
+  for(int i= 1; i<m_maxlevel; ++i){ 
     delete hierarchy[i];
   }
 }
@@ -307,7 +308,7 @@ void
 Periodic_2_triangulation_hierarchy_2<PTr>:: 
 clear()
 {
-  for(int i=0;i<maxlevel;++i)
+  for(int i=0;i<m_maxlevel;++i)
     hierarchy[i]->clear();
 }
 
@@ -317,13 +318,12 @@ bool
 Periodic_2_triangulation_hierarchy_2<PTr>:: 
 is_valid(bool verbose, int level) const
 {
-    NGHK_NYI;
   bool result = true;
   int i;
   Finite_vertices_iterator it;
   //verify correctness of triangulation at all levels
-  for(i=0;i<maxlevel;++i) {
-    if(verbose) // pirnt  number of vertices at each level
+  for(i=0;i<m_maxlevel;++i) {
+    if(verbose) // print  number of vertices at each level
       std::cout << "number_of_vertices " 
 		<<  hierarchy[i]->number_of_vertices() << std::endl;
     result = result && hierarchy[i]->is_valid(verbose,level);
@@ -331,19 +331,23 @@ is_valid(bool verbose, int level) const
     //verify that lower level has no down pointers
   for( it = hierarchy[0]->finite_vertices_begin(); 
        it != hierarchy[0]->finite_vertices_end(); ++it) 
-    result = result && ( it->down() ==   Vertex_handle());
+    if (!hierarchy[0]->is_virtual(it))
+      result = result && (it->down() == Vertex_handle());
+
   //verify that other levels have down pointer and reciprocal link is fine
-  for(i=1;i<maxlevel;++i)
+  for(i=1;i<m_maxlevel;++i)
     for( it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->finite_vertices_end(); ++it) 
-      result = result && 
-	       ( &*(it->down()->up())  ==  &*(it) );
+      if (!hierarchy[i]->is_virtual(it))
+        result = result && (&*(it->down()->up()) == &*(it));
+
   //verify that levels have up pointer and reciprocal link is fine
-  for(i=0;i<maxlevel-1;++i)
+  for(i=0;i<m_maxlevel-1;++i)
     for( it = hierarchy[i]->finite_vertices_begin(); 
 	 it != hierarchy[i]->finite_vertices_end(); ++it) 
-      result = result && ( it->up() ==  Vertex_handle() ||
-	        &*it == &*(it->up())->down() );
+      if (!hierarchy[i]->is_virtual(it))
+        result = result && ( it->up() == Vertex_handle() || &*it == &*(it->up())->down() );
+
   return result;
 }
 
@@ -357,7 +361,7 @@ insert(const Point &p, Face_handle loc)
   Locate_type lt;
   int i;
   // locate using hierarchy
-  Face_handle positions[maxlevel];
+  Face_handle positions[m_maxlevel];
   locate_in_all(p,lt,i,loc,positions);
   Vertex_handle vertex=hierarchy[0]->PTr_Base::insert(p,lt,positions[0],i);
   Vertex_handle previous=vertex;
@@ -396,7 +400,7 @@ insert(const Point& p,
     // locate using hierarchy
     Locate_type ltt;
     int lii;
-    Face_handle positions[maxlevel];
+    Face_handle positions[m_maxlevel];
     locate_in_all(p,ltt,lii,loc,positions);
     //insert in higher levels
     int level  = 1;
@@ -434,7 +438,7 @@ remove(Vertex_handle v )
   while(1){
     hierarchy[l++]->remove(v);
     if (u == Vertex_handle()) break; 
-    if (l >= maxlevel) break;
+    if (l >= m_maxlevel) break;
     v=u; u=v->up();
   }
 }
@@ -467,7 +471,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
     Vertex_handle w = hierarchy[l++]->move_if_no_collision(v, p);
     if(w != v) return w;
     if (u == Vertex_handle()) break; 
-    if (l >= maxlevel) break;
+    if (l >= m_maxlevel) break;
     v=u; u=v->up();
   }
   return norm;
@@ -492,7 +496,7 @@ typename Periodic_2_triangulation_hierarchy_2<PTr>::Face_handle
 Periodic_2_triangulation_hierarchy_2<PTr>::
 locate(const Point& p, Locate_type& lt, int& li, Face_handle loc) const
 {
-  Face_handle positions[maxlevel];
+  Face_handle positions[m_maxlevel];
   locate_in_all(p,lt,li,loc,positions);
   return positions[0];
 }
@@ -515,17 +519,17 @@ locate_in_all(const Point& p,
     Locate_type& lt,
     int& li,
     Face_handle loc,
-    Face_handle pos[maxlevel]) const
+    Face_handle pos[m_maxlevel]) const
 {
   Face_handle position;
   Vertex_handle nearest;
-  int level  = maxlevel;
+  int level  = m_maxlevel;
   typename Geom_traits::Compare_distance_2 
     closer = this->geom_traits().compare_distance_2_object();
 
   // find the highest level with enough vertices that is at the same time 2D
   while ( (hierarchy[--level]->number_of_vertices() 
-	   < static_cast<size_type> (minsize ))
+	   < static_cast<size_type> (m_minsize ))
 	  || (hierarchy[level]->dimension()<2) ){
     if ( ! level) break;  // do not go below 0
   }
@@ -533,7 +537,7 @@ locate_in_all(const Point& p,
     level--;
   }
 
-  for (int i=level+1; i<maxlevel;++i) pos[i]=0;
+  for (int i=level+1; i<m_maxlevel;++i) pos[i]=0;
   while(level > 0) {
     pos[level]=position=hierarchy[level]->locate(p,position);  
     // locate at that level from "position"
@@ -574,11 +578,11 @@ int
 Periodic_2_triangulation_hierarchy_2<PTr>::
 random_level()
 {
-  if ( level_mult_cover < maxlevel
+  if ( level_mult_cover < m_maxlevel
        && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1,1) )
     ++level_mult_cover;
   
-  boost::geometric_distribution<> proba(1.0/ratio);
+  boost::geometric_distribution<> proba(1.0/m_ratio);
   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> >
     die(random, proba);
   return (std::min)(die()-1, level_mult_cover);
