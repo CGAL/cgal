@@ -487,7 +487,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_0(Scene_edit_polyhed
 
     // -- ACTUAL DEFORMATION --
 
-    deform->translate(data.active_handle_group, translation_last);
+    deform->translate(data.active_handle_group, translation_origin);
     deform->deform();
 
     // -- END OF ACTUAL DEFORMATION --
