@@ -73,6 +73,7 @@ int main()
 
   typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT1 > P2T2_1;
   test<P2T2_1>();
+  test_nearest<P2T2_1>();
   //_test_cls_periodic_2_delaunay_2( P2T2_1() );
 
   // typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT2 > P2T2_2;

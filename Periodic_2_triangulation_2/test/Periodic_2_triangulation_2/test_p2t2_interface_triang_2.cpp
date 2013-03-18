@@ -8,11 +8,12 @@ int main() {
 
   test<P2T2>();
   test<DP2T2>();
-  // test<PTH_Dt>();
-  // test<Delaunay_triangulation_hierarchy>();
+  test<PTH_Dt>();
+  test<Delaunay_triangulation_hierarchy>();
 
   test_nearest<DP2T2>();
-  // test_nearest<Delaunay_triangulation_hierarchy>();
+  test_nearest<PTH_Dt>();
+  test_nearest<Delaunay_triangulation_hierarchy>();
 
   return 0;
 }

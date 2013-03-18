@@ -165,11 +165,9 @@ public:
 	 Face_handle start = Face_handle()) const;
 
   Vertex_handle
-  nearest_vertex(const Point& /*p*/, Face_handle /*start = Face_handle()*/) const
+  nearest_vertex(const Point& p, Face_handle start = Face_handle()) const
   {
-    NGHK_NYI; // TODO
-    return Vertex_handle();
-    // return nearest_vertex_dispatch<Tr>(p, start, Weighted_tag());
+    return PTr_Base::nearest_vertex(p, start != Face_handle() ? start : locate(p));
   }
 
 private:
@@ -448,7 +446,6 @@ inline void
 Periodic_2_triangulation_hierarchy_2<PTr>::
 remove_degree_3(Vertex_handle v )
 {
-    NGHK_NYI;
   remove(v);
 }
 
