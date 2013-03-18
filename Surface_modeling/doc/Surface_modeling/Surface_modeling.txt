@@ -8,18 +8,18 @@ namespace CGAL {
 \author TODO
 
 \section Surface_Modeling_Intro Introduction
-Surface mesh deformation is the process of transforming the shape of the surface mesh under control constraints without requiring any additional structure other than surface itself. 
+Surface mesh deformation is the process of transforming the shape of the surface mesh under control constraints without requiring any additional structure other than the surface itself. 
 
 In this package, we implement the algorithm described in \cite Sorkine2007AsRigidAs, 
 where a nonlinear deformation energy is minimized under constraints to preserve rigidity as much as possible. 
 
 \section Surface_Modeling_Overview Overview 
-Since there is a close relationship between differential representations and as-rigid-as possible deformation, we would like to 
-start with a brief overview of related topics.
+Since there is a close relationship between differential representations and as-rigid-as possible deformation, we first 
+give a brief overview of related topics.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation 
-Laplacian coordinates are a way of representing the mesh differentially, which use the local coordinate of a vertex 
-with respect to its one-ring neighbors (i.e. cell), rather than its global position. The Laplacian coordinate of a vertex is:
+Laplacian coordinates are a way of representing the mesh differentially, using the local coordinate of a vertex 
+with respect to its one-ring neighbors (i.e. cell) rather than its global position. The Laplacian coordinate of a vertex \f$ v_i \f$ is:
 
 \f[
 \begin{equation}
@@ -28,15 +28,19 @@ L(\mathbf{v}_i) = \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}_i - 
 \end{equation}
 \f]
 
-where \f$\mathbf{v}_i\f$ is the current vertex, \f$N(\mathbf{v}_i)\f$ is the set of one-ring neighbor vertices 
-of \f$\mathbf{v}_i\f$, and \f$w_{ij}\f$ is a weight between \f$\mathbf{v}_i\f$ and neighbor \f$\mathbf{v}_j\f$. 
-A simple choice for weighting schema can be uniform weights where each neighbor vertex is weighted 
-by \f$1/|N(\mathbf{v}_i)|\f$, which actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}).
-We use cotangent weights \cite Pinkall1993Cotangent to eliminate the effect of non-uniform discretization of the mesh model.
+where the set of vertices \f$N(\mathbf{v}_i)\f$ is the one-ring neighbor vertices 
+of \f$\mathbf{v}_i\f$, and \f$w_{ij}\f$ is the weight between \f$\mathbf{v}_i\f$ and the neighbor \f$\mathbf{v}_j\f$. 
+The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each vertex 
+\f$\mathbf{v}_j\f$ in the one-ring neighborhood, which actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}) (<b>SL</b>: I don't understand what you mean here).
+We use cotangent weights \cite Pinkall1993Cotangent to eliminate the effect of non-uniform discretization of the mesh model (<b>SL</b>: same here, I don't get what you mean).
+
+\todo we should not have \f$ \sum w_{ij} == 1 \f$, right?
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
 A simple mesh structure. Red square is the average of neighbors of the yellow vertex. Blue vector represents Laplacian coordinate of the yellow vertex.
 \cgalFigureEnd
+
+\todo you must explicitly say that the yellow vertex is the one obtain with constructing vertex with the weights
 
 Considering the mesh as a whole, it is possible to generate a linear system which results in Laplacian coordinates of all vertices:
 
@@ -47,20 +51,25 @@ Considering the mesh as a whole, it is possible to generate a linear system whic
 \end{equation}
 \f]
 
-where \f$n\f$ is number of vertices in the mesh, \f$\mathbf{L}\f$ is an \f$n \times n\f$ matrix, called Laplacian matrix, 
-in which each row is filled according to Eq.\f$\eqref{eq:lap_open}\f$ , \f$\mathbf{V}\f$ is an \f$n \times 1\f$ vector consisting of 
+where 
+- \f$n\f$ is number of vertices in the mesh;
+- \f$\mathbf{L}\f$ is an \f$n \times n\f$ matrix, called the <i>Laplacian matrix</i>,
+in which each row is filled according to Eq.\f$\eqref{eq:lap_open}\f$, that is the element \f$ m_{ij} \f$ of \f$ L \f$ is equal to \f$ w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v}) \f$, and \f$ 0 \f$ otherwise. Thus \f$ L \f$ is a not necessarily symmetric sparse matrix.
+- \f$\mathbf{V}\f$ is an \f$n \times 1\f$ vector consisting of 
 global positions of vertices; and \f$\delta\f$ represents Laplacian coordinates of the mesh. 
- 
-\subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
-A simple deformation system can consist of a few selected vertices from the mesh as handles (control vertices) 
-and target positions to handles as deformation constrains.
 
-The main idea behind Laplacian deformation is preservation of Laplacian coordinates under deformation constraints. 
-In other words, Laplacian coordinates are treated as a representative form for the shape, and deformation
-process should satisfy given constraints while causing as little distortion as possible on Laplacian coordinates.
+\todo: I added that the weight are not necessarily symmetric, is that true? in the case of this package, the weight are symmetric, right?
+
+\subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
+A simple mesh deformation system consists of a mesh, a few selected control vertices, the <i>handles</i> 
+and target positions of the handles as deformation constraints.
+
+The main idea behind Laplacian deformation is to preserve the Laplacian coordinates under deformation constraints. 
+In other words, Laplacian coordinates are treated as a representative form for the shape, and the deformation
+process must follow the deformation constraints while preserving as much as possible the Laplacian coordinates.
 
 There are different ways to incorporate deformation constraints into the system \cite Botsch2008OnLinearVariational.
-We provide support for hard constraints, which means constrained positions of handles are preserved as is after deformation. 
+We provide support for hard constraints, which means constrained positions of handles are preserved as is after deformation.
 
 \f[
 \begin{equation}
@@ -83,12 +92,12 @@ We provide support for hard constraints, which means constrained positions of ha
 
 where \f$\mathbf{L}'\f$ is Laplacian matrix of free (i.e. not constrained) vertices, \f$\mathbf{I}_c\f$ contains a row for each constrained vertex 
 with one in corresponding position of the vertex and zeros elsewhere, \f${\delta}'\f$ is Laplacian coordinates of free vertices, 
-and \f$\mathbf{C}_j\f$ holds the target positions of constrained vertices. Solving mentioned system under deformation constraints, 
+and \f$\mathbf{C}_j\f$ holds the target positions of constrained vertices. Solving the system under deformation constraints 
 preserves Laplacians of free vertices (upper side of the system) while satisfying the constraints (lower side of the system).
 
 \subsection Surface_Modeling_Overview_ARAP As-Rigid-As Possible Deformation
 
-The proposed energy function by \cite Sorkine2007AsRigidAs to be minimized under modeling constrains is:
+The energy function proposed to be minimized in \cite Sorkine2007AsRigidAs under modeling constraints for a mesh structure \f$M\f$ is:
 
 \f[
 \begin{equation}
@@ -99,22 +108,25 @@ The proposed energy function by \cite Sorkine2007AsRigidAs to be minimized under
 \end{equation}
 \f]
 
-where \f$M\f$ is mesh structure, \f$N(\mathbf{v}_i)\f$ is one-ring neighbors of vertex \f$\mathbf{v}_i\f$, and \f$w_{ij}\f$ is 
-the weight of the edge between \f$\mathbf{v}_i\f$ and \f$\mathbf{v}_j\f$, and \f$\mathbf{R}_i\f$ is rotation matrix for \f$\mathbf{v}_i\f$.
+where 
+- \f$N(\mathbf{v}_i)\f$ is one-ring neighbors of vertex \f$\mathbf{v}_i\f$;
+- \f$w_{ij}\f$ is the weight of the edge between \f$\mathbf{v}_i\f$ and \f$\mathbf{v}_j\f$
+- \f$\mathbf{R}_i\f$ is rotation matrix for \f$\mathbf{v}_i\f$.
 
-The intuitive idea behind the proposed energy function is allowing cells to
+The intuitive idea behind this energy function is to allow cells to
 have individual rotations, and at the same time using overlapping nature of the
-cells to prevent sharing \cgalFigureRef{Overlapping_cells}.
+cells to prevent sharing \cgalFigureRef{Overlapping_cells}. (<b>SL</b>: this is not clear to me)
  
 \cgalFigureBegin{Overlapping_cells,overlapping_cells.png}
 Illustration of overlapping cells
 \cgalFigureEnd
 
-Minimization of the energy function in Eq.\f$\eqref{eq:arap_energy}\f$ for every vertex under deformation constraints provides
+Minimization of the energy function in Eq.\f$\eqref{eq:arap_energy}\f$ for every vertex under deformation constraints provides a
 as-rigid-as possible deformation. In the equation, there are two unknowns: the new positions of vertices (\f$\mathbf{v}'_i\f$) 
-and rotation matrices (\f$\mathbf{R}_i\f$). The problem is solved by using a two-step optimization approach (also called local-global approach).
+and the rotation matrices (\f$\mathbf{R}_i\f$). The problem is solved by using a two-step optimization approach (also called local-global approach).
 
-In the first step, the method fixes vertex positions and treat \f$\mathbf{R}_i\f$ as only unknown. Given covariance matrix \f$S_i\f$:
+In the first step, the positions of the vertices are considered as fixed so that \f$\mathbf{R}_i\f$ is the only unknown. 
+Given the covariance matrix \f$S_i\f$:
 \f[
 \begin{equation}
 \mathbf{S}_i = \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij} (\mathbf{v}_i - \mathbf{v}_j)(\mathbf{v}'_i - \mathbf{v}'_j)^T,
@@ -122,9 +134,8 @@ In the first step, the method fixes vertex positions and treat \f$\mathbf{R}_i\f
 \end{equation}
 \f]
 
-\f$\mathbf{R}_i\f$ which minimizes Eq.\f$\eqref{eq:arap_energy}\f$ can be found using SVD of \f$\mathbf{S}_i\f$ 
-by also guaranteeing \f$det(\mathbf{R}_i)\f$ is positive by changing the sign of eigenvector in \f$\mathbf{U}_i\f$ which corresponds 
-to smallest eigenvalue \cite Sorkine2009LeastSquaresRigid.
+\f$\mathbf{R}_i\f$ matrices minimizing Eq.\f$\eqref{eq:arap_energy}\f$ can be found using a singular value decomposition (SVD ) of \f$\mathbf{S}_i\f$ 
+and by also guaranteeing \f$det(\mathbf{R}_i)\f$ to be positive by changing the sign of the eigen vector in \f$\mathbf{U}_i\f$ which corresponds to smallest eigen value \cite Sorkine2009LeastSquaresRigid.
 
 \f[
 \begin{equation}
@@ -133,9 +144,9 @@ to smallest eigenvalue \cite Sorkine2009LeastSquaresRigid.
 \end{equation}
 \f]
 
-In the second step, the computed rotation matrices are placed into the partial derivative of Eq.\f$\eqref{eq:arap_energy}\f$ 
+In the second step, the computed rotation matrices are replaced into the partial derivative of Eq.\f$\eqref{eq:arap_energy}\f$ 
 with respect to \f$\mathbf{v}'_i\f$. In order to find \f$\mathbf{v}'_i\f$ 
-which minimizes deformation energy, setting the derivative to zero results in an equation of:
+which minimizes the deformation energy, setting the derivative to zero results in the following equation:
 
 \f[
 \begin{equation}
@@ -145,12 +156,12 @@ which minimizes deformation energy, setting the derivative to zero results in an
 \end{equation}
 \f]
 
-One can see that the left-hand side of this equation corresponds to Eq.\f$\eqref{eq:lap_open}\f$,
-so that we can fill \f$\delta\f$ using right-hand side of the equation which is all known in our system. 
-After that, linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ can be solved in order to find \f$\mathbf{V}'\f$. 
-Two-step optimization can be pursued for further refinement by altering steps.
+The left-hand side of this equation corresponds to Eq.\f$\eqref{eq:lap_open}\f$,
+so that we can fill \f$\delta\f$ using the right-hand side of the equation which consists only of known values in our system. 
+Then,  the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ can be solved in order to find \f$\mathbf{V}'\f$. 
+Two-step optimization can be pursued for further refinement by altering steps. (<b>SL</b>: what do you mean? can apply several iterations?)
 
-\note For supporting asymmetric edge weights, we slightly changed the Eq. \f$\eqref{eq:lap_ber}\f$ to:
+\note In order to have asymmetric edge weights, we slightly changed the Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \f[
 \begin{equation}
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij} + w_{ji})(\mathbf{v}'_i - \mathbf{v}'_j) =
@@ -159,13 +170,15 @@ Two-step optimization can be pursued for further refinement by altering steps.
 \end{equation}
 \f]
 
+\todo add motivation for having symmetric weights
+
 \subsection Surface_Modeling_Overview_ARAP_Rims Spokes and Rims Version
 
 \cgalFigureBegin{Spoke_and_rim_edges, spoke_and_rim_edges.png}
-Considered edges \f$E(\mathbf{v}_i)\f$ in energy function for a vertex \f$\mathbf{v}_i\f$. 
+Considered edges \f$E(\mathbf{v}_i)\f$ in energy function for a vertex \f$\mathbf{v}_i\f$. (<b>SL</b>: vi should appear on the figure)
 \cgalFigureEnd
 
-Modified energy function proposed by \cite Chao2010SimpleGeomModel includes all edges around facets incident to a vertex. So that the energy function becomes:
+The modified energy function proposed by \cite Chao2010SimpleGeomModel take into account all edges around the facets incident to a vertex. The energy function becomes:
 
 \f[
 \begin{equation}
@@ -176,9 +189,11 @@ Modified energy function proposed by \cite Chao2010SimpleGeomModel includes all 
 \end{equation}
 \f]
 
-where \f$E(\mathbf{v}_i)\f$ is set of edges around facets incident to \f$\mathbf{v}_i\f$ \cgalFigureRef{Spoke_and_rim_edges}. 
+where \f$E(\mathbf{v}_i)\f$ is set of edges around facets incident to \f$\mathbf{v}_i\f$ (see \cgalFigureRef{Spoke_and_rim_edges}).
 For the first step, corresponding Eq. \f$\eqref{eq:cov_matrix}\f$ is simply modified to include all edges in \f$E(\mathbf{v}_i)\f$. 
 For the second step, setting partial derivative of Eq. \f$\eqref{eq:arap_energy_rims}\f$ zero with respect to \f$\mathbf{v}_i\f$ results in:
+
+(<b>SL</b>: the two sentenses above are not clear. I guess it's the steps during the solving and you explain how the method explain above must be adapted).
 
 \f[
 \begin{equation}
@@ -194,83 +209,92 @@ where \f$\mathbf{R}_m\f$ and \f$\mathbf{R}_n\f$ are rotation matrices of \f$\mat
 \section Surface_Modeling_API API
 
 \cgalFigureBegin{Flow_of_API, usage_flow_of_API.png}
-Usage flow of API. 
+The deformation workflow.  (<b>SL</b>: what is the meaning of the different box style? what software did you use? are the source inside the git repo? Not sure that it is obvious that <i>clear</i> is optional.)
 \cgalFigureEnd
 
 \subsection Preprocess_section Preprocess Section
 
-While introducing the API, we would like to consider user point of view by following main steps in a deformation session \cgalFigureRef{Flow_of_API}. 
-The usage of the API begins with constructing a deformation object.
-  - `Deform_mesh::Deform_mesh(Polyhedron& polyhedron, VertexIndexMap vertex_index_map, EdgeIndexMap edge_index_map, unsigned int iterations = 5, double tolerance = 1e-4)`
-		- Provided vertex_index_map and edge_index_map will be used for assigning indexes to required vertices and edges. 
-		- Information about iterations and tolerance parameters is provided in \ref Deform_section. 
+We present the API by considering the user point of view during a deformation session (see \cgalFigureRef{Flow_of_API} for an illustration).
 
+The deformation is handled thanks to a function object that must be initialized:
+  - `Deform_mesh deform = Deform_mesh(Polyhedron& polyhedron, VertexIndexMap vertex_index_map, EdgeIndexMap edge_index_map, unsigned int iterations = 5, double tolerance = 1e-4)`
+		- vertex_index_map and edge_index_map are property maps used for assigning indexes to required vertices and edges. 
+		- For details on `iterations` and `tolerance` parameters see the \ref deform_method "deform method". 
+
+\todo The ROI is first mentionned here. It should be mentionned yearlier. That is that not all vertices in the mesh are considered.
 Then, the region that the algorithm operates on (i.e. region of interest -ROI) 
-should be determined. The API is convenient enough for either using whole mesh or set of predefined vertices as region of interest. 
+should be determined. The API is convenient enough for either using the whole mesh or a set of predefined vertices as region of interest. (<b>SL</b>: when I read predefined, I think about the k-ring around the handles. you meant particular?)
   - `Deform_mesh::insert_roi(vertex_descriptor vd)` insert vertices one by one
   - `Deform_mesh::insert_roi(InputIterator begin, InputIterator end)` insert vertices in a range
 
 The ROI should be a connected component and should also include the handle vertices \cgalFigureRef{Simple_roi}.
 Note that the algorithm automatically finds the boundary of the ROI and fix those vertices while deforming.
+(<b>SL</b>: the first time I read <i>boundary</i>, it made me think that the boundary is part of the ROI but it's not the case right?)
 
 \cgalFigureBegin{Simple_roi, roi_example.png}
 Red vertices represent handles, and yellow vertices together with red vertices represent ROI. 
 \cgalFigureEnd
 
-Similarly, handle vertices which will constrain deformation should be added. 
+Similarly, the handle vertices which will constrain the deformation should be added. 
 At this point vertices should be grouped that are expected to translate or rotate together.
-  - `Deform_mesh::create_handle_group()` create an empty group for vertices and return representative `Deform_mesh::Handle_group` of the group
-  - `Deform_mesh::insert_handle(Handle_group handle_group, vertex_descriptor vd)` insert the vertex to the handle group
-  - `Deform_mesh::insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)` insert vertices in a range to the handle group
+  - `Deform_mesh::create_handle_group()` create an empty group for vertices and return a representative `Deform_mesh::Handle_group` of the group
+  - `Deform_mesh::insert_handle(Handle_group handle_group, vertex_descriptor vd)` insert a vertex to a handle group
+  - `Deform_mesh::insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)` insert a set of vertices to ae handle group
 
-Grouped vertices can be connected or disconnected. Previously mentioned, only reason to group handle vertices is having ability to translate and rotate them together. 
+Vertices in the same group can be connected or disconnected. The reason why vertices are gathered in groups is to be able to apply the same translate and rotation to the vertices of a group. 
 
-Inserted vertices can also be released from being handle or roi.
+The status of a vertex (roi or handle) can be reinitialized :
   - `Deform_mesh::erase_roi(vertex_descriptor vd)` erase the vertex from ROI
   - `Deform_mesh::erase_handle(Handle_group handle_group)` erase the whole group
   - `Deform_mesh::erase_handle(Handle_group handle_group, vertex_descriptor vd)` erase the vertex which is inside given group
 
-After finishing ROI and handle insertion, preprocess function needs to be called.
+After having set the ROI and the handle groups, a preprocess function needs to be called.
   - `Deform_mesh::preprocess()` preprocess ROI and handles, make internal stuff ready for deformation
   
 Preprocess function returns true if factorization of the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ is successful. 
-One common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for ROI 
-and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices).
+One common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for the ROI, or if there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices).
 Another reason can be zero weights for edges (if you are using custom weights).
+
+\todo Shall we mention that the preproccessing can be automatically done during the first call to deform()? Also we could have a check that the handle set is non-empty and that we have no 0 weights.
+
+\todo side note: shall the weighted scheme be a parameter of the deformation process?
 
 \subsection Deform_section Deform Section
 
-Before deforming the mesh, target positions should be provided for handle vertices. A direct way to accomplish this is:
-  - `Deform_mesh::assign(vertex_descriptor vd, const Point& target_position)` assign the target position for the handle vertex
+In order to deform the mesh, the final position of handle vertices must be provided. A first method provided is
+  - `Deform_mesh::assign(vertex_descriptor vd, const Point& target_position)` that directly assigns the target position a handle vertex
   
-If the target positions for the handles are planned to provide directly, then handles can be simply inserted into one group (also any grouping would be still valid)
+If the target positions for the handles are provided directly, then handles can be simply gathered into a single group 
 and `Deform_mesh::assign` can be used for direct assignment of target positions. 
 
 \anchor rot
-The API also includes functionality for translating and rotating handle vertices. 
-  - `Deform_mesh::translate(Handle_group handle_group, const Vector& translation)` translate the vertices under handle group by translation
+The second possibility offered by the API is to set translation and rotation for vertex handle groups. 
+  - `Deform_mesh::translate(Handle_group handle_group, const Vector& translation)` translate the vertices in `handle_group` by `translation`
   - `Deform_mesh::rotate(Handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)` 
-  rotate the handle group around rotation center by quaternion then translate it by translation
+  rotate the `handle_group` around `rotation_center` using the quaternion `quat` and then translate it by `translation`
 
-Rotate and translate operate on original positions (i.e. positions of vertices at the time of the call Deform_mesh::preprocess()) of handle vertices. 
+`rotate` and `translate` operate on original positions (i.e. positions of vertices at the time of the call Deform_mesh::preprocess()) of handle vertices. 
 
 Note that changing target positions of handle vertices has no immediate effect on actual positions.
 Also unconstrained handles will be constrained to their last target positions.
 
-The last action required is invoking deformation algorithm.
-  - `Deform_mesh::deform(unsigned int iterations, double tolerance)` deform mesh with instant parameters. 
-  Note that if the intention is using permanent parameters, use the functions explained below
+\anchor deform_method
+The final action is invoking the deformation algorithm:
+  - `Deform_mesh::deform(unsigned int iterations, double tolerance)` deform mesh with one-time parameters. 
     - Each iteration consists two steps of optimization procedure explained in \ref Surface_Modeling_Overview_ARAP
     - In case of tolerance is smaller than or equal to zero, no energy based termination occurs. 
 	Otherwise it is compared against \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ where \f$m_i\f$ is the resulting surface mesh at iteration \f$i\f$.  
-  - `Deform_mesh::deform()` deform mesh using iterations and tolerance provided in constructor or using `Deform_mesh::set_iterations`, and `Deform_mesh::set_tolerance`
+  - `Deform_mesh::deform()` deform the mesh using global iterations and tolerance provided in constructor or using `Deform_mesh::set_iterations`, and `Deform_mesh::set_tolerance`
 
 After deformation handle vertices will be placed to their target positions and free vertices will be deformed accordingly. 
 The steps in \ref Deform_section can be repeated for further deformations.
 
 \subsection Surface_modeling_examples Examples
+
+\todo rename examples, the name should be unique accross packages since they are cmake targets. Rename also in examples.txt
+
 \subsubsection Example_1 Example 1
-In our first example, we use whole mesh as ROI and add a few vertices as handles. `Deform_mesh::assign()` is used for constraining handle vertices.
+The whole mesh is used as ROI and a few vertices are added as handles. `Deform_mesh::assign()` is used for constraining handle vertices.
 
 \cgalExample{Surface_modeling/example_1.cpp}
 
@@ -280,7 +304,7 @@ Deformation results from example, deform_1.off and deform_2.off.
 
 \subsubsection Example_2 Example 2
 In this example, we use handle grouping feature of the API together with `Deform_mesh::translate()` and `Deform_mesh::rotate()`. 
-\todo we need to implement small quaternion class to demonstrate `Deform_mesh::rotate()`.
+\todo we need to implement small quaternion class to demonstrate `Deform_mesh::rotate()`.<b>SL</b> Is there anything in eigen or shall we use qglviewer?
 
 \cgalExample{Surface_modeling/example_2.cpp}
 
@@ -306,8 +330,7 @@ You can also check the code example in SurfaceModelingWeightCalculator for direc
 Explain how to use the demo
 
 \section Surface_Modeling_History Implementation History
-Initial version of this package is implemented during Google Summer of Code 2011 by Yin Xu with Andreas Fabri and Olga Sorkine as mentor.
-Ilker O. Yaz took over the finalization of the package.
+The initial version of this package has been implemented during the 2011 Google Summer of Code by Yin Xu under the guidance of Olga Sorkine and Andreas Fabri. Ilker O. Yaz took over the finalization of the package.
 */
 
 } /* namespace CGAL */
