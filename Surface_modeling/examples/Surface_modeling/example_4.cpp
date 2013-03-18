@@ -27,6 +27,8 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
+typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map> Deform_mesh;
+
 // a model for SurfaceModelingWeightCalculator, use precomputed weights stored in a map
 struct Weights_from_map
 {
@@ -37,8 +39,6 @@ struct Weights_from_map
   }
   std::map<edge_descriptor, double>* weight_map;
 };
-
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, Weights_from_map> Deform_mesh;
 
 int main()
 {
@@ -57,7 +57,11 @@ int main()
   
   Internal_vertex_map vertex_index_map;
   Internal_edge_map   edge_index_map;
-  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map),
-    5, 1e-4, Weights_from_map(&weight_map)); 
+  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map)); 
+
+  // Insert handles as you wish
+
+  deform_mesh.preprocess(Weights_from_map(&weight_map)); // preprocess with custom model
+
   // Deform mesh as you wish
 }
