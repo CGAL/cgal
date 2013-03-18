@@ -169,6 +169,10 @@ namespace CGAL {
 
         const FT half(0.5);
 
+        CGAL_SDG_DEBUG( std::cout << "debug bs " << "px_min=" << px_min
+            << "  px_max=" << px_max << "  py_min=" << py_min << " "
+            << "py_max=" << py_max << std::endl ; );
+
         Comparison_result cmpsides =
           CGAL::compare(px_max.x() - px_min.x(), py_max.y() - py_min.y());
 
