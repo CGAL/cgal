@@ -287,6 +287,17 @@ In this example, we use handle grouping feature of the API together with `Deform
 Deformation results from example, deform_1.off and deform_2.off. 
 \cgalFigureEnd
 
+\subsubsection Example_3 Example 3
+In this example, we use an enriched polyhedron whose edges and vertices support an id field to store indexes. 
+\cgalExample{Surface_modeling/example_3.cpp}
+
+\subsubsection Example_4 Example 4
+Using your own weights for edges is also possible via providing a model for SurfaceModelingWeightCalculator. 
+In this example, we assume that you have precomputed weights for each edge and use an internal map for store them in custom weight calculator.
+
+You can also check the code example in SurfaceModelingWeightCalculator for direct computation.
+\cgalExample{Surface_modeling/example_4.cpp}
+
 \section Surface_Modeling_Demo How to use the demo
 Explain how to use the demo
 

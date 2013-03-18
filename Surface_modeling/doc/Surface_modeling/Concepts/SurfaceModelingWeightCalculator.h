@@ -10,11 +10,7 @@
  /// class Uniform_weight
  /// {
  /// public:
- ///   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
- ///
- ///   Uniform_weight(Polyhedron& /*polyhedron*/) { } 
- ///
- ///   double operator()(edge_descriptor e)
+ ///   double operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor  /*e*/, Polyhedron& /*polyhedron*/)
  ///   { return 1.0; }
  /// };
  /// \endcode
@@ -22,12 +18,8 @@ template<class Polyhedron>
 class SurfaceModelingWeightCalculator
 {
 public:
-  /// The edge type 
-  typedef Hidden_type edge_descriptor;
-  /// Constructor accepting polyhedron as parameter
-  SurfaceModelingWeightCalculator(Polyhedron& polyhedron);
-  /// Function for computing edge weight for edge e
-  double operator()(edge_descriptor e);
+  /// Function computing edge weight for edge e
+  double operator()(edge_descriptor  e, Polyhedron& polyhedron);
 };
 
 
