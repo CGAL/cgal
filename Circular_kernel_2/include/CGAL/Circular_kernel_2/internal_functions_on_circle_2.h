@@ -133,7 +133,7 @@ namespace CircularFunctors {
     Equation e2 = CircularFunctors::get_equation<CK>(c2);
     
     if (e1 == e2) {
-      *res++ = CGAL::internal::ck2_intersection_return<result_type>(e1);
+      *res++ = CGAL::internal::ck2_intersection_return<result_type>(c1);
       return res;
     }
 
