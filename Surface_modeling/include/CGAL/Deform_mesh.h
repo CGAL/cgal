@@ -44,11 +44,11 @@ namespace CGAL {
 /**
  * @brief Class providing the functionalities for deforming a triangulated surface mesh
  *
- * @tparam Polyhedron a model of HalfedgeGraph
- * @tparam SparseLinearAlgebraTraitsWithPreFactor_d sparse linear solver for square sparse linear systems
- * @tparam VertexIndexMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type
- * @tparam EdgeIndexMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type
- * @tparam WeightCalculator a model of SurfaceModelingWeightCalculator*/
+ * @tparam Polyhedron_ a model of HalfedgeGraph
+ * @tparam SparseLinearAlgebraTraitsWithPreFactor_d_ sparse linear solver for square sparse linear systems
+ * @tparam VertexIndexMap_ a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type
+ * @tparam EdgeIndexMap_ a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type
+ * @tparam WeightCalculator_ a model of SurfaceModelingWeightCalculator*/
 template <
   class Polyhedron_, 
   class SparseLinearAlgebraTraits_d_, 
@@ -84,9 +84,9 @@ public:
 private:
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator    in_edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator   out_edge_iterator;
   
   typedef internal::Spokes_and_rims_iterator<Polyhedron> Rims_iterator;
 
@@ -137,14 +137,16 @@ public:
    * @param edge_index_map edge index map for associating ids with region of interest edges
    * @param iterations see explanations set_iterations(unsigned int iterations)
    * @param tolerance  see explanations set_tolerance(double tolerance)
+   * @param weight_calculator a function object or pointer for calculating weights
    */
   Deform_mesh(Polyhedron& polyhedron, 
               VertexIndexMap vertex_index_map, 
               EdgeIndexMap edge_index_map,
               unsigned int iterations = 5,
-              double tolerance = 1e-4)
+              double tolerance = 1e-4, //// a doxygen problem, it does not create autolink to WeightCalculator below: solution is 0.0001
+              WeightCalculator weight_calculator = WeightCalculator())
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      iterations(iterations), tolerance(tolerance), need_preprocess(true), weight_calculator(polyhedron)
+      iterations(iterations), tolerance(tolerance), need_preprocess(true), weight_calculator(weight_calculator)
   {
     // CGAL_precondition(polyhedron.is_pure_triangle());   
   }
@@ -456,7 +458,7 @@ private:
         put(edge_index_map, *e, next_edge_id++);
         have_id.insert(*e);
 
-        double weight = weight_calculator(*e);
+        double weight = weight_calculator(*e, polyhedron);
         edge_weight.push_back(weight);
       }// end of edge loop
     }// end of ros loop
@@ -482,14 +484,14 @@ private:
         {  
           put(edge_index_map, active_edge, next_edge_id++);
           have_id.insert(active_edge);
-          double wji = weight_calculator(active_edge); // edge(pj - pi)
+          double wji = weight_calculator(active_edge, polyhedron); // edge(pj - pi)
           edge_weight.push_back(wji);
 
           edge_descriptor opp = CGAL::opposite_edge(active_edge, polyhedron);
 
           put(edge_index_map, opp, next_edge_id++);
           have_id.insert(opp);
-          double wij = weight_calculator(opp); // edge(pi - pj)
+          double wij = weight_calculator(opp, polyhedron); // edge(pi - pj)
           edge_weight.push_back(wij);
         }
       }// end of edge loop
