@@ -44,42 +44,37 @@ namespace CGAL {
 /**
  * @brief Class providing the functionalities for deforming a triangulated surface mesh
  *
- * @pre @a polyhedron.is_pure_triangle()
  * @tparam Polyhedron a model of HalfedgeGraph
  * @tparam SparseLinearAlgebraTraitsWithPreFactor_d sparse linear solver for square sparse linear systems
  * @tparam VertexIndexMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type
  * @tparam EdgeIndexMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type
- * @tparam WeightCalculator how to document this (should I provide a concept, like in SegmentationGeomTraits ?) */
- /// \code
- /// // a simple model to WeightCalculator concept, which provides uniform weights
- /// template<class Polyhedron>
- /// class Uniform_weight
- /// {
- /// public:
- ///   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
- ///
- ///   Uniform_weight(Polyhedron& /*polyhedron*/) { } 
- ///
- ///   double operator()(edge_descriptor e)
- ///   { return 1.0; }
- /// };
- /// \endcode
- 
+ * @tparam WeightCalculator a model of SurfaceModelingWeightCalculator*/
 template <
-  class Polyhedron, 
-  class SparseLinearAlgebraTraits_d, 
-  class VertexIndexMap, 
-  class EdgeIndexMap,
+  class Polyhedron_, 
+  class SparseLinearAlgebraTraits_d_, 
+  class VertexIndexMap_, 
+  class EdgeIndexMap_,
   #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
-    class WeightCalculator = internal::Single_cotangent_weight<Polyhedron >
+    class WeightCalculator_ = internal::Single_cotangent_weight<Polyhedron >
   #else
-    class WeightCalculator = internal::Cotangent_weight<Polyhedron >
+    class WeightCalculator_ = internal::Cotangent_weight<Polyhedron >
   #endif
   >
 class Deform_mesh
 {
 //Typedefs
 public:
+
+  /// \name Types from template parameters
+  /// @{
+  // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
+  typedef Polyhedron_ Polyhedron; /**< a model of HalfedgeGraph */
+  typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d; /**< sparse linear solver for square sparse linear systems */
+  typedef VertexIndexMap_ VertexIndexMap; /**< a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type */
+  typedef EdgeIndexMap_ EdgeIndexMap; /**< a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type */
+  typedef WeightCalculator_ WeightCalculator; /**< a model of SurfaceModelingWeightCalculator */
+  /// @}
+
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		edge_descriptor;   /**< The type for edge representative objects */
 
@@ -87,11 +82,8 @@ public:
   typedef typename Polyhedron::Traits::Point_3            Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
-  // Geometric types              
-  typedef typename Polyhedron::Traits         Kernel;
-
   // Repeat Polyhedron types
-  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
@@ -102,7 +94,7 @@ private:
   typedef std::vector<vertex_descriptor>            Handle_container;
   typedef std::list<Handle_container>               Handle_group_container;
 public:
-  /** The type for returned handle group representative from insert_handle(vertex_descriptor vd), insert_handle(InputIterator begin, InputIterator end) */
+  /** The type for returned handle group representative from Deform_mesh::create_handle_group()*/
   typedef typename Handle_group_container::iterator Handle_group;  
                                                                       
 // Data members.
@@ -113,10 +105,10 @@ private:
   std::vector<Point> original;                        // original positions of roi (size: ros + boundary_of_ros)
   std::vector<Point> solution;                        // storing position of ros vertices during iterations (size: ros + boundary_of_ros)
 
-  VertexIndexMap vertex_index_map;										// storing indices of ros vertices
-  EdgeIndexMap   edge_index_map;										  // storing indices of ros related edges
+  VertexIndexMap vertex_index_map;                    // storing indices of ros vertices
+  EdgeIndexMap   edge_index_map;                      // storing indices of ros related edges
 
-  std::vector<vertex_descriptor> ros;									// region of solution, including roi and hard constraints on boundary of roi
+  std::vector<vertex_descriptor> ros;                 // region of solution, including roi and hard constraints on boundary of roi
   std::vector<bool> is_roi;                           // (size: ros)
   std::vector<bool> is_hdl;                           // (size: ros)
 
@@ -134,15 +126,17 @@ private:
 
 // Public methods
 public:
+/// \name Preprocess Section
+/// @{
   /**
    * The constructor for deformation object
    *
-   * @pre @a polyhedron.is_pure_triangle()
+   * @pre is there anyway to add @a polyhedron.is_pure_triangle() in halfedgegraph
    * @param polyhedron a triangulated surface mesh for modeling
-   * @param vertex_index_map_ vertex index map for associating ids with region of interest vertices
-   * @param edge_index_map_  edge index map for associating ids with region of interest edges
-   * @param iterations number of iterations for each call to deform()
-   * @param tolerance ...
+   * @param vertex_index_map vertex index map for associating ids with region of interest vertices
+   * @param edge_index_map edge index map for associating ids with region of interest edges
+   * @param iterations see explanations set_iterations(unsigned int iterations)
+   * @param tolerance  see explanations set_tolerance(double tolerance)
    */
   Deform_mesh(Polyhedron& polyhedron, 
               VertexIndexMap vertex_index_map, 
@@ -152,11 +146,8 @@ public:
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
       iterations(iterations), tolerance(tolerance), need_preprocess(true), weight_calculator(polyhedron)
   {
-    CGAL_precondition(polyhedron.is_pure_triangle());   
+    // CGAL_precondition(polyhedron.is_pure_triangle());   
   }
-
-///////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// Vertex insertion deletion //////////////////////////////////
 
   /**
    * Clear the internal state of the object, after cleanup the object can be treated as if it is just constructed
@@ -165,7 +156,6 @@ public:
   {
     need_preprocess = true;
     // clear vertices
-    //roi.clear(); 
     ros.clear();
     handle_groups.clear();
     // no need to clear vertex index map (or edge) since they are going to be reassigned 
@@ -176,10 +166,8 @@ public:
    * Create a new empty handle group for inserting handles.
    * insert_handle(Handle_group handle_group, vertex_descriptor vd) or insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
    * can be used for populating a group.
-   * After inserting vertices, one can use translate(Handle_group handle_group, const Vector& translation) or rotate(...)
-   * to apply transformations on all vertices inside the group. 
+   * After inserting vertices, translate() or rotate() can be used for applying transformations on all vertices inside the group. 
    * @return created handle group representative (returned representative is valid until erase_handle(Handle_group handle_group) is called [or copy constructor what to do about it?])
-   * @see insert_handle(vertex_descriptor vd), insert_handle(InputIterator begin, InputIterator end)
    */
   Handle_group create_handle_group()
   {
@@ -187,33 +175,9 @@ public:
     handle_groups.push_back(Handle_container());
     return --handle_groups.end();
   }
-
-  /**
-   * -- I think this function can be removed, since combination of other functions simply accomplish the same task.
-   \code
-    Handle_group handle_group = create_handle_group();
-    insert_handle(handle_group, vd);
-    // or 
-    Handle_group handle_group = insert_handle(vd);
-    \endcode
-   * Create a new empty handle group and insert vd in it.
-   * @param vd vertex to be inserted
-   * @return created handle group representative
-   * @see insert_handle(Handle_group handle_group, vertex_descriptor vd), 
-   * insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
-   * for inserting more vertices into a handle group
-   */ 
-  Handle_group insert_handle(vertex_descriptor vd)
-  {
-    need_preprocess = true;
-    Handle_group handle_group = create_handle_group();
-
-    insert_handle(handle_group, vd);
-    return handle_group;
-  }
   
   /**
-   * Insert a vertex into a handle group
+   * Insert the vertex into the handle group
    * @param handle_group group to be inserted into
    * @param vd vertex to be inserted
    */
@@ -224,36 +188,11 @@ public:
   }
 
   /**
-   * -- I think this function can be removed, since combination of other functions simply accomplish the same task.
-   \code
-    Handle_group handle_group = create_handle_group();
-    insert_handle(handle_group, begin, end);
-    // or 
-    Handle_group handle_group = insert_handle(begin, end);
-    \endcode
-   * Create a new handle group and insert vertices in the range.
-
-   * @tparam InputIterator input iterator type which points to vertex descriptors
-   * @param begin iterators spesifying the range of vertices i.e. [begin, end) 
-   * @param end iterators spesifying the range of vertices i.e. [begin, end) 
-   * It simply corresponds to: 
-   */ 
-  template<class InputIterator>
-  Handle_group insert_handle(InputIterator begin, InputIterator end)
-  {
-    need_preprocess = true;
-    Handle_group handle_group = create_handle_group();
-
-    insert_handle(handle_group, begin, end);
-    return handle_group; 
-  }
-
-  /**
-   * Insert vertices in the range to provided handle group
+   * Insert vertices in the range to the handle group
    * @tparam InputIterator input iterator type which points to vertex descriptors
    * @param handle_group group to be inserted in
-   * @param begin iterators spesifying the range of vertices [begin, end) 
-   * @param end iterators spesifying the range of vertices [begin, end) 
+   * @param begin iterators specifying the range of vertices [begin, end) 
+   * @param end iterators specifying the range of vertices [begin, end) 
    */
   template<class InputIterator>
   void insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
@@ -266,7 +205,7 @@ public:
   }
 
   /**
-   * Erase handle group, and invalidate the representative so that it should not be used anymore.
+   * Erase the handle group, and invalidate the representative so that it should not be used anymore.
    * @param handle_group group to be erased
    */
   void erase_handle(Handle_group handle_group)
@@ -276,7 +215,7 @@ public:
   }
 
   /**
-   * Erase a vertex from a handle group, note that handle group is not erased even if it becomes empty.
+   * Erase the vertex from the handle group, note that the handle group is not erased even if it becomes empty.
    * @param handle_group group to be erased from
    * @param vd vertex to be erased
    */
@@ -295,8 +234,8 @@ public:
   /**
    * Insert vertices in the range to region of interest
    * @tparam InputIterator input iterator type which points to vertex descriptors
-   * @param begin iterators spesifying the range of vertices [begin, end) 
-   * @param end iterators spesifying the range of vertices [begin, end) 
+   * @param begin iterators specifying the range of vertices [begin, end) 
+   * @param end iterators specifying the range of vertices [begin, end) 
    */
   template<class InputIterator>
   void insert_roi(InputIterator begin, InputIterator end)
@@ -309,7 +248,7 @@ public:
   }
 
   /**
-   * Insert a vertex to region of interest
+   * Insert the vertex to region of interest
    * @param vd vertex to be inserted
    */
   void insert_roi(vertex_descriptor vd)   
@@ -319,7 +258,7 @@ public:
   }
 
   /**
-   * Erease a vertex from ROI
+   * Erease the vertex from region of interest
    * @param vd vertex to be erased
    */
   void erase_roi(vertex_descriptor vd)   
@@ -331,9 +270,33 @@ public:
       ros.erase(it);
     }
   }
-//////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// Other utilities ///////////////////////////////////////////
 
+  /** 
+   * Necessary precomputation work before beginning deformation.
+   * It needs to be called after insertion of vertices as handles or roi is done.
+   * @return true if Laplacian matrix factorization is successful.
+   * A common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for ROI 
+   * and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices)
+   */
+  bool preprocess()
+  {
+    need_preprocess = false;
+
+    region_of_solution();
+    compute_edge_weight(); // compute_edge_weight() should be called after region_of_solution()
+
+    // Assemble linear system A*X=B
+    typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
+    assemble_laplacian(A);		
+
+    // Pre-factorizing the linear system A*X=B
+    double D;
+    return m_solver.pre_factor(A, D);
+  }
+/// @} Preprocess Section
+
+/// \name Utilities
+/// @{
   /**
    * Set the number of iterations used in deform()
    */
@@ -342,18 +305,23 @@ public:
     this->iterations = iterations;
   }
 
-  /**
-   * Set the tolerance of convergence used in deform()
-   * Set to zero if energy based termination is not required.
-   */
+  
+   /// @brief Set the tolerance of convergence used in deform().
+   /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
+   ///
+   /// tolerance > \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ will be used as a termination criterium.
   void set_tolerance(double tolerance)
   {
     this->tolerance = tolerance;
   }
-  
+/// @} Utilities
+
+/// \name Deform Section
+/// @{  
   /**
    * Translate the handle group by translation,
    * in other words every handle vertex in the handle_group is translated from its original position
+   * (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
    * @param handle_group representative of the handle group which is subject to translation
    * @param translation translation vector 
    */
@@ -363,14 +331,19 @@ public:
       it != handle_group->end(); ++it)
     {
       std::size_t v_id = id(*it);
-      solution[v_id] = solution[v_id] + translation;
+      solution[v_id] = original[v_id] + translation;
     }
   }
 
   /**
-   * Rotate the handle group around rotation center by quaternion then translate it by translation
-   * @tparam Quaternion quaternion type which defines a multiplication operator with Vect as quad * vector
-   * @tparam Vect vector type 3 param constructable and has operator[] ...
+   * Rotate the handle group around rotation center by quaternion then translate it by translation 
+   * from its original position (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
+   * @tparam Quaternion a model of SurfaceModelingQuaternion
+   * @tparam Vect a model of SurfaceModelingVect
+   * @param handle_group representative of the handle group which is subject to rotation
+   * @param rotation_center center of rotation
+   * @param quat rotation holder quaternion
+   * @param translation post translation vector
    */
   template <typename Quaternion, typename Vect>
   void rotate(Handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
@@ -382,33 +355,15 @@ public:
 
       Point p = CGAL::ORIGIN + ( original[v_id] - rotation_center);
       Vect v = quat * Vect(p.x(),p.y(),p.z());
-      p = Point(v[0], v[1], v[2]) + ( rotation_center - CGAL::ORIGIN);
+      p = Point(v[0], v[1], v[2]) + (rotation_center - CGAL::ORIGIN);
       p = p + Vector(translation[0],translation[1],translation[2]);
 
       solution[v_id] = p;
     }
   }
-  
-  /**
-   * Assign positions in the range as target positions for the vertices in the handle group
-   * @tparam InputIterator input iterator type which points to Polyhedron::Traits::Point_3
-   * @param handle_group group of target vertices
-   * @param begin iterators spesifying the range of positions [begin, end) 
-   * @param end iterators spesifying the range of positions [begin, end) 
-   */
-  template<class InputIterator>
-  void assign(Handle_group handle_group, InputIterator begin, InputIterator end)
-  {
-    for(typename Handle_container::iterator it = handle_group->begin(); 
-        (it != handle_group->end()) && (begin != end); 
-        ++it, ++begin)
-    {
-      solution[id(*it)] = *begin;
-    }
-  }
 
   /**
-   * Assign the target position for the handle vertes 
+   * Assign the target position for the handle vertex 
    * @param vd handle vertex to be assigned target position
    * @param target_position constrained position
    */
@@ -416,43 +371,9 @@ public:
   {
     solution[id(vd)] = target_position;
   }
-  /**
-   * Reset position of deformed vertices to their original positions (i.e. positions at the time of last preprocess() call)
-   */
-  void undo()
-  {
-    for(std::size_t i = 0; i < ros.size(); ++i)
-    {
-      ros[i]->point() = original[id(ros[i])];
-    }
-  }
-
-///////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// Deformation Core ///////////////////////////////////////////
-
-  /** 
-   * Necessary precomputation work before beginning deformation.
-   * It needs to be called after insertion of vertices as handles or roi is done.
-   * @return true if Laplacian matrix factorization is successful
-   */
-  bool preprocess()
-  {
-    need_preprocess = false;
-
-    region_of_solution();
-    compute_edge_weight(); // compute_edge_weight() has to come later then region_of_solution()
-
-    // Assemble linear system A*X=B
-    typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
-    assemble_laplacian(A);		
-
-    // Pre-factorizing the linear system A*X=B
-    double D;
-    return m_solver.pre_factor(A, D);
-  }
 
   /**
-   * Deformation on roi vertices. Default iteration and tolerance values are used.
+   * Deformation on roi vertices.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
   void deform()
@@ -461,7 +382,10 @@ public:
   }
 
   /**
-   * Deformation on roi vertices, 
+   * Deformation on roi vertices. Instant values for iterations and tolerance can be used as parameters.
+   * These parameters are temprorary.
+   * @param iterations number of iterations for optimization procedure
+   * @param tolerance tolerance of convergence (see explanations set_tolerance(double tolerance))
    */
   void deform(unsigned int iterations, double tolerance)
   {
@@ -501,6 +425,7 @@ public:
     // copy solution to target mesh
     assign_solution();
   }
+/// @} Deform Section
 
 private:
 
@@ -1263,6 +1188,9 @@ private:
 
 #endif
 };
+
+
 } //namespace CGAL
+
 #endif  // CGAL_DEFORM_MESH_H
 
