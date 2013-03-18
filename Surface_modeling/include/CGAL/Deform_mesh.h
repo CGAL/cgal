@@ -278,8 +278,8 @@ public:
   /** 
    * Necessary precomputation work before beginning deformation.
    * It needs to be called after insertion of vertices as handles or roi is done.
-   * @tparam a model of SurfaceModelingWeightCalculator
-   * @param a function object or pointer for weight calculation
+   * @tparam WeightCalculator a model of SurfaceModelingWeightCalculator
+   * @param weight_calculator a function object or pointer for weight calculation
    * @return true if Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for ROI 
    * and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices).
