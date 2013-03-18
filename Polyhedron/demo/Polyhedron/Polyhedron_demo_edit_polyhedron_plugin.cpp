@@ -3,23 +3,11 @@
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
-
-	#ifdef CGAL_SUPERLU_ENABLED
-		#include <Eigen/SuperLUSupport>
-	#else
-		#include <Eigen/SparseLU>
-		///////////////////////////////////////////////// 
-		namespace CGAL {
-		namespace internal {
-			template <class FT, class EigenMatrix, class EigenOrdering>
-			struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
-				typedef Eigen_sparse_matrix<FT, ::Eigen::ColMajor> type;
-			};
-		} // internal
-		} // CGAL
-		///////////////////////////////////////////////// 
-	#endif
-
+#ifdef CGAL_SUPERLU_ENABLED
+        #include <Eigen/SuperLUSupport>
+#else
+        #include <Eigen/SparseLU>
+#endif
 #endif
 
 #include "Polyhedron_demo_plugin_helper.h"
