@@ -1,26 +1,13 @@
 #define  CGAL_DEFORM_ROTATION
-#define CGAL_SUPERLU_ENABLED
 //#undef CGAL_SUPERLU_ENABLED
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
-
-	#ifdef CGAL_SUPERLU_ENABLED
-		#include <Eigen/SuperLUSupport>
-	#else
-		#include <Eigen/SparseLU>
-		///////////////////////////////////////////////// 
-		namespace CGAL {
-		namespace internal {
-			template <class FT, class EigenMatrix, class EigenOrdering>
-			struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
-				typedef Eigen_sparse_matrix<FT, ::Eigen::ColMajor> type;
-			};
-		} // internal
-		} // CGAL
-		///////////////////////////////////////////////// 
-	#endif
-
+#ifdef CGAL_SUPERLU_ENABLED
+        #include <Eigen/SuperLUSupport>
+#else
+        #include <Eigen/SparseLU>
+#endif
 #endif
 
 #include "Polyhedron_demo_plugin_helper.h"
@@ -73,8 +60,9 @@ typedef Polyhedron::Vertex_handle Vertex_handle;
 struct Polyhedron_deformation_data {
   Deform_mesh* deform_mesh;
   bool preprocessed;                            // specify whether preprocessed or not
-  std::map<Vertex_handle, Vector> handle_vectors;  // record transform vectors of all handles, 
+  //std::map<Deform_mesh::Handle_group, Vector> handle_vectors;  // record transform vectors of all handles, 
                                                    // only for multiple handle region scenario 
+  Vector handle_vectors_active;
   Deform_mesh::Handle_group active_handle_group;
   std::vector<Deform_mesh::Handle_group> handle_groups;
 };
@@ -88,7 +76,8 @@ class Polyhedron_demo_edit_polyhedron_plugin :
 
 public:
   Polyhedron_demo_edit_polyhedron_plugin() 
-    : Polyhedron_demo_plugin_helper(), size(0), edit_mode(false)
+    : Polyhedron_demo_plugin_helper(), size(0), edit_mode(false),
+      dock_widget(NULL), ui_widget(NULL)
   {}
 
   ~Polyhedron_demo_edit_polyhedron_plugin();
@@ -96,7 +85,8 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionToggleEdit;
+    return QList<QAction*>() << actionDeformation;
+    //return QList<QAction*>() << actionToggleEdit;
   }
 
   //! Applicable if any of the currently selected items is either a Polyhedron or an Edit polyhedron
@@ -110,6 +100,8 @@ public:
     return false;
   }
 public slots:
+  void on_actionDeformation_triggered();
+
   void on_actionToggleEdit_triggered(bool);
   void start_deform();
   void clear_handles();
@@ -123,15 +115,15 @@ public slots:
   void new_item_created(int item_id);
 
   void update_handlesRegionSize(int interestRegionSizeValue) {
-    if(deform_mesh_widget.handlesRegionSize->value() > interestRegionSizeValue)
+    if(ui_widget->handlesRegionSize->value() > interestRegionSizeValue)
     {
-      deform_mesh_widget.handlesRegionSize->setValue(interestRegionSizeValue);
+      ui_widget->handlesRegionSize->setValue(interestRegionSizeValue);
     }
   }
   void update_interestRegionSize(int handlesRegionSizeValue) {
-    if(deform_mesh_widget.interestRegionSize->value() < handlesRegionSizeValue)
+    if(ui_widget->interestRegionSize->value() < handlesRegionSizeValue)
     {
-      deform_mesh_widget.interestRegionSize->setValue(handlesRegionSizeValue);
+      ui_widget->interestRegionSize->setValue(handlesRegionSizeValue);
     }
   }
 
@@ -147,10 +139,11 @@ private:
   typedef std::map<QObject*, Polyhedron_deformation_data> Deform_map;
   Deform_map deform_map;
 
-  Ui::DeformMesh deform_mesh_widget;
-  QDockWidget* widget;
+  Ui::DeformMesh* ui_widget;
+  QDockWidget* dock_widget;
 
   QAction* actionToggleEdit;
+  QAction* actionDeformation;
   int size;
   bool edit_mode;
 }; // end Polyhedron_demo_edit_polyhedron_plugin
@@ -158,40 +151,29 @@ private:
 Polyhedron_demo_edit_polyhedron_plugin::
 ~Polyhedron_demo_edit_polyhedron_plugin()
 {
-  QSettings settings;
-  settings.beginGroup("Polyhedron edition");
-  settings.setValue("Deform_mesh widget area", 
-                    this->mw->dockWidgetArea(widget));
-  settings.endGroup();
+  // IOY: note sure what it is doing but it constantly throw ex when I close the window
+
+  //QSettings settings;
+  //settings.beginGroup("Polyhedron edition");
+  //settings.setValue("Deform_mesh widget area", 
+  //                  this->mw->dockWidgetArea(widget));
+  //settings.endGroup();
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, 
                                                   Scene_interface* scene_interface)
 {
+
+  this->mw = mainWindow;
+  actionDeformation = new QAction("Surface Mesh Deformation", mw);
+  if(actionDeformation) {
+      connect(actionDeformation, SIGNAL(triggered()),this, SLOT(on_actionDeformation_triggered()));
+  }
+
   actionToggleEdit = new QAction(tr("Toggle &edition of item(s)"), mainWindow);
   actionToggleEdit->setObjectName("actionToggleEdit");
   actionToggleEdit->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
   actionToggleEdit->setCheckable(true);
-  
-  QSettings settings;
-  settings.beginGroup("Polyhedron edition");
-  int i = settings.value("Deform_mesh widget area", 
-                         Qt::LeftDockWidgetArea).toInt();
-  Qt::DockWidgetArea area = static_cast<Qt::DockWidgetArea>(i);
-  settings.endGroup();
-  widget = new QDockWidget();
-  deform_mesh_widget.setupUi(widget);
-  mainWindow->addDockWidget(area, widget);
-
-  // bind states of actionToggleEdit and editModeCb
-  connect(actionToggleEdit, SIGNAL(triggered(bool)),
-          deform_mesh_widget.editModeCb, SLOT(setChecked(bool)));
-  connect(deform_mesh_widget.editModeCb, SIGNAL(clicked(bool)),
-          actionToggleEdit, SLOT(setChecked(bool)));
-
-  // make editModeCb actually trigger the slot
-  connect(deform_mesh_widget.editModeCb, SIGNAL(clicked(bool)),
-          this, SLOT(on_actionToggleEdit_triggered(bool)));
 
   // Connect Scene::newItem so that, if edit_mode==true, convert
   // automatically polyhedron items to "edit polyhedron" items.
@@ -204,20 +186,49 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
               << " cannot convert scene_interface to scene!\n"; 
   }
 
-  // Make sure handlesRegionSize->value() is always smaller than 
+  ////////////////// Construct widget /////////////////////////////
+  // First time, construct docking window
+  dock_widget = new QDockWidget("Mesh Deformation", mw);
+  dock_widget->setVisible(false); // do not show at the beginning
+  ui_widget = new Ui::DeformMesh();
+
+  ui_widget->setupUi(dock_widget); 
+  mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+    
+  // bind states of actionToggleEdit and editModeCb
+  connect(actionToggleEdit, SIGNAL(triggered(bool)),
+          ui_widget->editModeCb, SLOT(setChecked(bool)));
+  connect(ui_widget->editModeCb, SIGNAL(clicked(bool)),
+          actionToggleEdit, SLOT(setChecked(bool)));
+
+  // make editModeCb actually trigger the slot
+  connect(ui_widget->editModeCb, SIGNAL(clicked(bool)),
+          this, SLOT(on_actionToggleEdit_triggered(bool)));
+
+    // Make sure handlesRegionSize->value() is always smaller than 
   // interestRegionSize->value()
-  connect(deform_mesh_widget.handlesRegionSize, SIGNAL(valueChanged(int)),
+  connect(ui_widget->handlesRegionSize, SIGNAL(valueChanged(int)),
           this, SLOT(update_interestRegionSize(int)));
-  connect(deform_mesh_widget.interestRegionSize, SIGNAL(valueChanged(int)),
+  connect(ui_widget->interestRegionSize, SIGNAL(valueChanged(int)),
           this, SLOT(update_handlesRegionSize(int)));
-  connect(deform_mesh_widget.startDeformPb, SIGNAL(clicked(bool)),
+  connect(ui_widget->startDeformPb, SIGNAL(clicked(bool)),
           this, SLOT(start_deform()));
-  connect(deform_mesh_widget.clearHandlesPb, SIGNAL(clicked(bool)),
+  connect(ui_widget->clearHandlesPb, SIGNAL(clicked(bool)),
           this, SLOT(clear_handles()));
-  connect(deform_mesh_widget.usageScenarioCb, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(clear_handles()));
+  connect(ui_widget->usageScenarioCb, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(clear_handles()));  
+  ///////////////////////////////////////////////////////////////////
 
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+}
+
+void Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered()
+{  
+  // dock widget should be constructed in init()
+  if(dock_widget != NULL)
+  {
+    dock_widget->show();
+  }
 }
 
 void
@@ -247,26 +258,26 @@ convert_to_edit_polyhedron(Item_id i,
                                       // name of edit_poly is changed.
 
   edit_poly->setVisible(poly_item->visible());
-  edit_poly->setHandlesRegionSize(deform_mesh_widget.handlesRegionSize->value());
-  edit_poly->setInterestRegionSize(deform_mesh_widget.interestRegionSize->value());
-  edit_poly->setGeodesicCircle(deform_mesh_widget.geodesicCircleCb->isChecked());
-  edit_poly->setSharpFeature(deform_mesh_widget.sharpFeatureCb->isChecked());
-  edit_poly->setUsageScenario(deform_mesh_widget.usageScenarioCb->currentIndex());
+  edit_poly->setHandlesRegionSize(ui_widget->handlesRegionSize->value());
+  edit_poly->setInterestRegionSize(ui_widget->interestRegionSize->value());
+  edit_poly->setGeodesicCircle(ui_widget->geodesicCircleCb->isChecked());
+  edit_poly->setSharpFeature(ui_widget->sharpFeatureCb->isChecked());
+  edit_poly->setUsageScenario(ui_widget->usageScenarioCb->currentIndex());
   edit_poly->setSelectedHandlesMoved(false);
   edit_poly->setSelectedVertexChanged(false);
   connect(edit_poly, SIGNAL(modified()),
           this, SLOT(edition()));
   connect(edit_poly, SIGNAL(destroyed()),
           this, SLOT(item_destroyed()));
-  connect(deform_mesh_widget.handlesRegionSize, SIGNAL(valueChanged(int)),
+  connect(ui_widget->handlesRegionSize, SIGNAL(valueChanged(int)),
           edit_poly, SLOT(setHandlesRegionSize(int)));
-  connect(deform_mesh_widget.interestRegionSize, SIGNAL(valueChanged(int)),
+  connect(ui_widget->interestRegionSize, SIGNAL(valueChanged(int)),
           edit_poly, SLOT(setInterestRegionSize(int)));
-  connect(deform_mesh_widget.geodesicCircleCb, SIGNAL(clicked(bool)),
+  connect(ui_widget->geodesicCircleCb, SIGNAL(clicked(bool)),
           edit_poly, SLOT(setGeodesicCircle(bool)));
-  connect(deform_mesh_widget.sharpFeatureCb, SIGNAL(clicked(bool)),
+  connect(ui_widget->sharpFeatureCb, SIGNAL(clicked(bool)),
           edit_poly, SLOT(setSharpFeature(bool)));
-  connect(deform_mesh_widget.usageScenarioCb, SIGNAL(currentIndexChanged(int)),
+  connect(ui_widget->usageScenarioCb, SIGNAL(currentIndexChanged(int)),
           edit_poly, SLOT(setUsageScenario(int)));
   scene->replaceItem(i, edit_poly);
   return edit_poly;
@@ -487,14 +498,17 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
   { 
     std::cerr << "reset something" << std::endl;
     deform->clear();
+    Deform_mesh::Handle_group handle_group = deform->create_handle_group();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-      deform->insert_handle(vh);
+      deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_handles())
-      deform->insert_handle(vh);
+      deform->insert_handle(handle_group, vh);
     Q_FOREACH(Vertex_handle vh, edit_item->selected_roi())
       deform->insert_roi(vh);
     Q_FOREACH(Vertex_handle vh, edit_item->non_selected_roi())
       deform->insert_roi(vh);
+
+    data.active_handle_group = handle_group;
     data.preprocessed = false;
   }
   else                  // moving frame: move new handles
@@ -504,32 +518,30 @@ void Polyhedron_demo_edit_polyhedron_plugin::usage_scenario_1(Scene_edit_polyhed
       edit_item->setSelectedVector(translation_last);
       edit_item->setSelectedHandlesMoved(true);
 
-      Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
-        data.handle_vectors[vh] = translation_origin;
+      data.handle_vectors_active = translation_origin;
+
+      //Q_FOREACH(Vertex_handle vh, edit_item->selected_handles())
+      //  data.handle_vectors[vh] = translation_origin;
     }
     else
     {
       // AF: for the rotation+ translation, we have to translate handles by  ORIGIN-poi
       //     make the rotation, translate back, and apply the additional translation.
       Vector vec = edit_item->selected_vector().second - edit_item->selected_vector().first;
+
       poi =  edit_item->selected_vector().first;
       double scalar = translation_origin*vec / vec.squared_length() /3.0;
       if (scalar > 1) scalar = 1;
       if (scalar < 0) scalar = 0;
    
-      std::map<Vertex_handle, Vector>::iterator it = data.handle_vectors.begin();
-      while ( it != data.handle_vectors.end() )   // apply scalar factor to each handle region
-      {
-        qglviewer::Quaternion quat(qglviewer::Vec(scalar * it->second.x(),
-                                                  scalar * it->second.y(), 
-                                                  scalar * it->second.z()), scalar * 3.14);
+      Vector data_vec = data.handle_vectors_active;
+      qglviewer::Quaternion quat(qglviewer::Vec(scalar * data_vec.x(),
+                                          scalar * data_vec.y(), 
+                                          scalar * data_vec.z()), scalar * 3.14);
 
-        qglviewer::Vec disp(scalar * it->second.x(), scalar * it->second.y(), scalar *  it->second.z());   
+      qglviewer::Vec disp(scalar * data_vec.x(), scalar * data_vec.y(), scalar *  data_vec.z());  
+      deform->rotate(data.active_handle_group, poi, quat, disp);// 0 for the match
 
-        (*deform)( it->first, poi, quat, disp);// 0 for the match
-        //        (*deform)( it->first, scalar*(it->second) );
-        it++;
-      }
       deform->deform();
     }
   }
@@ -553,9 +565,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end())  // First time. Need to create the Deform_mesh object.
   {
-      std::cout << "-------------------------" << std::endl;
-  std::cout << "edition inside" << std::endl;
-  std::cout << "-------------------------" << std::endl;
     Polyhedron_deformation_data& new_data = deform_map[edit_item];
     Deform_mesh* new_deform = new Deform_mesh(*polyhedron, Vertex_index_map(), Edge_index_map());
     new_data.deform_mesh = new_deform;

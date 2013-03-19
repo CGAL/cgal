@@ -20,6 +20,7 @@
 #define CGAL_DEFORM_MESH_H
 
 #include <CGAL/internal/Surface_modeling/Weights.h>
+#include <CGAL/internal/Surface_modeling/Spokes_and_rims_iterator.h>
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -35,74 +36,78 @@
 #include <vector>
 #include <list>
 
-#define CGAL_DEFORM_SPOKES_AND_RIMS
-
+#define CGAL_DEFORM_SPOKES_AND_RIMS  // it uses all edges in facets around a vertex
+                                      
 namespace CGAL {
 
 /// \ingroup PkgSurfaceModeling
 /**
  * @brief Class providing the functionalities for deforming a triangulated surface mesh
  *
- * @pre @a polyhedron.is_pure_triangle()
- * @tparam Polyhedron a model of HalfedgeGraph
- * @tparam SparseLinearAlgebraTraitsWithPreFactor_d sparse linear solver for square symmetric sparse linear systems
- * @tparam VertexIndexMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with ::vertex_descriptor as key and `unsigned int` as value type
- * @tparam EdgeIndexMap a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with ::edge_descriptor as key and `unsigned int` as value type
- * @tparam WeightCalculator how to document this (should I provide a concept, like in SegmentationGeomTraits ?)
+ * @tparam Polyhedron_ a model of HalfedgeGraph
+ * @tparam SparseLinearAlgebraTraitsWithPreFactor_d_ sparse linear solver for square sparse linear systems
+ * @tparam VertexIndexMap_ a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type
+ * @tparam EdgeIndexMap_ a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type
  */
 template <
-  class Polyhedron, 
-  class SparseLinearAlgebraTraits_d, 
-  class VertexIndexMap, 
-  class EdgeIndexMap,
-  class WeightCalculator = internal::Cotangent_weight<Polyhedron >
+  class Polyhedron_, 
+  class SparseLinearAlgebraTraits_d_, 
+  class VertexIndexMap_, 
+  class EdgeIndexMap_
   >
 class Deform_mesh
 {
 //Typedefs
 public:
+
+  /// \name Types from template parameters
+  /// @{
+  // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
+  typedef Polyhedron_ Polyhedron; /**< a model of HalfedgeGraph */
+  typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d; /**< sparse linear solver for square sparse linear systems */
+  typedef VertexIndexMap_ VertexIndexMap; /**< a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type */
+  typedef EdgeIndexMap_ EdgeIndexMap; /**< a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type */
+  /// @}
+
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		edge_descriptor;   /**< The type for edge representative objects */
 
-private:
-  // Geometric types              
-  typedef typename Polyhedron::Traits         Kernel;
-  typedef typename Kernel::Vector_3           Vector;
-  typedef typename Kernel::Point_3            Point;
+  typedef typename Polyhedron::Traits::Vector_3  Vector; /**<The type for Vector_3 from Polyhedron traits */
+  typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
+private:
   // Repeat Polyhedron types
-  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator    in_edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator   out_edge_iterator;
   
+  typedef internal::Spokes_and_rims_iterator<Polyhedron> Rims_iterator;
+
   // Handle container types
   typedef std::vector<vertex_descriptor>            Handle_container;
   typedef std::list<Handle_container>               Handle_group_container;
 public:
-  /** The type for returned handle group representative from insert_handle(vertex_descriptor vd), insert_handle(InputIterator begin, InputIterator end) */
+  /** The type for returned handle group representative from Deform_mesh::create_handle_group()*/
   typedef typename Handle_group_container::iterator Handle_group;  
                                                                       
 // Data members.
 public:
   Polyhedron& polyhedron;															/**< Source triangulated surface mesh for modeling */
-  std::vector<Point> original;                        // original positions of roi
 
 private:
-  VertexIndexMap vertex_index_map;										// storing indices of ros vertices, others should be 0
-  EdgeIndexMap   edge_index_map;										  // storing indices of ros related edges, others should be 0							
+  std::vector<Point> original;                        // original positions of roi (size: ros + boundary_of_ros)
+  std::vector<Point> solution;                        // storing position of ros vertices during iterations (size: ros + boundary_of_ros)
 
-  std::vector<vertex_descriptor> roi;                 // region of interest, including both free and haldle vertices
-  std::vector<vertex_descriptor> ros;									// region of solution, including roi and hard constraints on boundary of roi
-  std::vector<vertex_descriptor> outside_ros;         // boundary of ros, for clearing purpose
+  VertexIndexMap vertex_index_map;                    // storing indices of ros vertices
+  EdgeIndexMap   edge_index_map;                      // storing indices of ros related edges
 
-  // properties per ros vertex, indexed by vertex_index_map[vertex_descriptor] -1
-  std::vector<bool> is_roi;                            
-  std::vector<bool> is_hdl;                       
-  std::vector<Eigen::Matrix3d> rot_mtr;               // rotation matrices of ros vertices
-  std::vector<Point> solution;                        // storing position of ros vertices during iterations
+  std::vector<vertex_descriptor> ros;                 // region of solution, including roi and hard constraints on boundary of roi
+  std::vector<bool> is_roi;                           // (size: ros)
+  std::vector<bool> is_hdl;                           // (size: ros)
 
   std::vector<double> edge_weight;                    // weight of edges only those who are incident to ros 
+  std::vector<Eigen::Matrix3d> rot_mtr;               // rotation matrices of ros vertices (size: ros)
 
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
   unsigned int iterations;                            // number of maximal iterations
@@ -111,28 +116,29 @@ private:
   bool need_preprocess;                               // is there any need to call preprocess() function
   Handle_group_container handle_groups;               // user specified handles
 
-  WeightCalculator weight_calculator;                 // calculate weight for an edge
-  // Public methods
+// Public methods
 public:
+/// \name Preprocess Section
+/// @{
   /**
    * The constructor for deformation object
    *
-   * @pre @a polyhedron.is_pure_triangle()
+   * @pre is there anyway to add @a polyhedron.is_pure_triangle() in halfedgegraph
    * @param polyhedron a triangulated surface mesh for modeling
-   * @param vertex_index_map_ vertex index map for associating ids with region of interest vertices
-   * @param edge_index_map_  edge index map for associating ids with region of interest edges
-   * @param iterations number of iterations for each call to deform()
-   * @param tolerance ...
+   * @param vertex_index_map vertex index map for associating ids with region of interest vertices
+   * @param edge_index_map edge index map for associating ids with region of interest edges
+   * @param iterations see explanations set_iterations(unsigned int iterations)
+   * @param tolerance  see explanations set_tolerance(double tolerance)
    */
   Deform_mesh(Polyhedron& polyhedron, 
-              const VertexIndexMap& vertex_index_map_, 
-              const EdgeIndexMap& edge_index_map_,
+              VertexIndexMap vertex_index_map, 
+              EdgeIndexMap edge_index_map,
               unsigned int iterations = 5,
               double tolerance = 1e-4)
-    : polyhedron(polyhedron), vertex_index_map(vertex_index_map_), edge_index_map(edge_index_map_),
-      weight_calculator(polyhedron), need_preprocess(true), iterations(iterations), tolerance(tolerance)
+    : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
+      iterations(iterations), tolerance(tolerance), need_preprocess(true)
   {
-    CGAL_precondition(polyhedron.is_pure_triangle());   
+    // CGAL_precondition(polyhedron.is_pure_triangle());   
   }
 
   /**
@@ -142,17 +148,18 @@ public:
   {
     need_preprocess = true;
     // clear vertices
-    roi.clear(); 
+    ros.clear();
     handle_groups.clear();
     // no need to clear vertex index map (or edge) since they are going to be reassigned 
     // (at least the useful parts will be reassigned)
   }
 
-////////////// Handle insertion and deletion //////////////
   /**
-   * Create a new empty handle group for inserting handles
+   * Create a new empty handle group for inserting handles.
+   * insert_handle(Handle_group handle_group, vertex_descriptor vd) or insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
+   * can be used for populating a group.
+   * After inserting vertices, translate() or rotate() can be used for applying transformations on all vertices inside the group. 
    * @return created handle group representative (returned representative is valid until erase_handle(Handle_group handle_group) is called [or copy constructor what to do about it?])
-   * @see insert_handle(vertex_descriptor vd), insert_handle(InputIterator begin, InputIterator end)
    */
   Handle_group create_handle_group()
   {
@@ -160,26 +167,11 @@ public:
     handle_groups.push_back(Handle_container());
     return --handle_groups.end();
   }
-
-  /**
-   * Create a new empty handle group and insert vd in it.
-   * @return created handle group representative
-   * @see insert_handle(Handle_group handle_group, vertex_descriptor vd), 
-   * insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
-   * for inserting more vertices into a handle group
-   */ 
-  Handle_group insert_handle(vertex_descriptor vd)
-  {
-    need_preprocess = true;
-    handle_groups.push_back(Handle_container());
-    Handle_group handle_group = --handle_groups.end();
-
-    insert_handle(handle_group, vd);
-    return handle_group;
-  }
   
   /**
-   * Insert vd to provided handle_group
+   * Insert the vertex into the handle group
+   * @param handle_group group to be inserted into
+   * @param vd vertex to be inserted
    */
   void insert_handle(Handle_group handle_group, vertex_descriptor vd)
   {
@@ -187,17 +179,13 @@ public:
     handle_group->push_back(vd);
   }
 
-  template<class InputIterator>
-  Handle_group insert_handle(InputIterator begin, InputIterator end)
-  {
-    need_preprocess = true;
-    handle_groups.push_back(Handle_container());
-    Handle_group handle_group = --handle_groups.end();
-
-    insert_handle(handle_group, begin, end);
-    return handle_group; 
-  }
-
+  /**
+   * Insert vertices in the range to the handle group
+   * @tparam InputIterator input iterator type which points to vertex descriptors
+   * @param handle_group group to be inserted in
+   * @param begin iterators specifying the range of vertices [begin, end) 
+   * @param end iterators specifying the range of vertices [begin, end) 
+   */
   template<class InputIterator>
   void insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
   {
@@ -208,24 +196,39 @@ public:
     }
   }
 
+  /**
+   * Erase the handle group, and invalidate the representative so that it should not be used anymore.
+   * @param handle_group group to be erased
+   */
   void erase_handle(Handle_group handle_group)
   {
     need_preprocess = true;
     handle_groups.erase(handle_group);
   }
 
+  /**
+   * Erase the vertex from the handle group, note that the handle group is not erased even if it becomes empty.
+   * @param handle_group group to be erased from
+   * @param vd vertex to be erased
+   */
   void erase_handle(Handle_group handle_group, vertex_descriptor vd)
   {
-     need_preprocess = true;
-     typename Handle_container::iterator it 
-       = std::find(handle_group->begin(), handle_group->end(), vd);
-     if(vd != handle_group->end())
-     {
-       handle_group->erase(vd);
-       // Although the handle group might get empty, we do not delete it from handle_groups
-     }
+    need_preprocess = true;
+    typename Handle_container::iterator it 
+      = std::find(handle_group->begin(), handle_group->end(), vd);
+    if(vd != handle_group->end())
+    {
+      handle_group->erase(it);
+      // Although the handle group might get empty, we do not delete it from handle_groups
+    }
   }
 
+  /**
+   * Insert vertices in the range to region of interest
+   * @tparam InputIterator input iterator type which points to vertex descriptors
+   * @param begin iterators specifying the range of vertices [begin, end) 
+   * @param end iterators specifying the range of vertices [begin, end) 
+   */
   template<class InputIterator>
   void insert_roi(InputIterator begin, InputIterator end)
   {
@@ -236,24 +239,58 @@ public:
     }
   }
 
+  /**
+   * Insert the vertex to region of interest
+   * @param vd vertex to be inserted
+   */
   void insert_roi(vertex_descriptor vd)   
   {
     need_preprocess = true;
-    roi.push_back(vd);
+    ros.push_back(vd);
   }
-    
-////////////////////////////////////////////////////////////
 
-  /** 
-   * Necessary precomputation work before beginning deformation
-   * Need to be called before translate(Handle_group handle_group, const Vector& translation), deform
+  /**
+   * Erease the vertex from region of interest
+   * @param vd vertex to be erased
+   */
+  void erase_roi(vertex_descriptor vd)   
+  {
+    need_preprocess = true;
+    typename std::vector<vertex_descriptor>::iterator it = std::find(ros.begin(), ros.end(), vd);
+    if(vd != ros.end())
+    {
+      ros.erase(it);
+    }
+  }
+  /**
+   * Overloaded version of Deform_mesh::preprocess(WeightCalculator weight_calculator).
+   * Cotangent weights are used by default.
    */
   bool preprocess()
+  {
+  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
+    internal::Single_cotangent_weight<Polyhedron > calculator;
+  #else
+    internal::Cotangent_weight<Polyhedron > calculator;
+  #endif
+    return preprocess(calculator);
+  }
+  /** 
+   * Necessary precomputation work before beginning deformation.
+   * It needs to be called after insertion of vertices as handles or roi is done.
+   * @tparam WeightCalculator a model of SurfaceModelingWeightCalculator
+   * @param weight_calculator a function object or pointer for weight calculation
+   * @return true if Laplacian matrix factorization is successful.
+   * A common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for ROI 
+   * and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices).
+   */
+  template<class WeightCalculator>
+  bool preprocess(WeightCalculator weight_calculator)
   {
     need_preprocess = false;
 
     region_of_solution();
-    compute_edge_weight(); // compute_edge_weight() has to come later then region_of_solution()
+    compute_edge_weight(weight_calculator); // compute_edge_weight() should be called after region_of_solution()
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
@@ -263,7 +300,10 @@ public:
     double D;
     return m_solver.pre_factor(A, D);
   }
+/// @} Preprocess Section
 
+/// \name Utilities
+/// @{
   /**
    * Set the number of iterations used in deform()
    */
@@ -272,17 +312,23 @@ public:
     this->iterations = iterations;
   }
 
-  /**
-   * Set the tolerance of convergence used in deform()
-   */
+  
+   /// @brief Set the tolerance of convergence used in deform().
+   /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
+   ///
+   /// tolerance > \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ will be used as a termination criterium.
   void set_tolerance(double tolerance)
   {
     this->tolerance = tolerance;
   }
-  
+/// @} Utilities
+
+/// \name Deform Section
+/// @{  
   /**
    * Translate the handle group by translation,
    * in other words every handle vertex in the handle_group is translated from its original position
+   * (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
    * @param handle_group representative of the handle group which is subject to translation
    * @param translation translation vector 
    */
@@ -291,103 +337,122 @@ public:
     for(typename Handle_container::iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
     {
-      size_t v_index = get(vertex_index_map, *it);
-      solution[v_index] = original[v_index] + translation;
+      std::size_t v_id = id(*it);
+      solution[v_id] = original[v_id] + translation;
     }
   }
 
-#ifdef CGAL_DEFORM_ROTATION
-
+  /**
+   * Rotate the handle group around rotation center by quaternion then translate it by translation 
+   * from its original position (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
+   * @tparam Quaternion a model of SurfaceModelingQuaternion
+   * @tparam Vect a model of SurfaceModelingVect
+   * @param handle_group representative of the handle group which is subject to rotation
+   * @param rotation_center center of rotation
+   * @param quat rotation holder quaternion
+   * @param translation post translation vector
+   */
   template <typename Quaternion, typename Vect>
-  void operator()(vertex_descriptor vd, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
+  void rotate(Handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
   {
-    std::size_t idx = get(vertex_index_map, vd);
-    Point p = CGAL::ORIGIN + ( original[idx] - rotation_center);
-    Vect v = quat * Vect(p.x(),p.y(),p.z());
-    p = Point(v[0], v[1], v[2]) + ( rotation_center - CGAL::ORIGIN); 
-    p = p + Vector(translation[0],translation[1],translation[2]);
-   
-    solution[idx] = p;
+    for(typename Handle_container::iterator it = handle_group->begin();
+      it != handle_group->end(); ++it)
+    {
+      std::size_t v_id = id(*it);
+
+      Point p = CGAL::ORIGIN + ( original[v_id] - rotation_center);
+      Vect v = quat * Vect(p.x(),p.y(),p.z());
+      p = Point(v[0], v[1], v[2]) + (rotation_center - CGAL::ORIGIN);
+      p = p + Vector(translation[0],translation[1],translation[2]);
+
+      solution[v_id] = p;
+    }
   }
-#endif // CGAL_DEFORM_ROTATION
 
   /**
-   * Deformation on roi vertices
-   * Use member variables for determining iterations and tolerance
+   * Assign the target position for the handle vertex 
+   * @param vd handle vertex to be assigned target position
+   * @param target_position constrained position
+   */
+  void assign(vertex_descriptor vd, const Point& target_position)
+  {
+    solution[id(vd)] = target_position;
+  }
+
+  /**
+   * Deformation on roi vertices.
+   * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
   void deform()
   {
     deform(iterations, tolerance);
   }
+
   /**
-   * Deformation on roi vertices
+   * Deformation on roi vertices. Instant values for iterations and tolerance can be used as parameters.
+   * These parameters are temprorary.
+   * @param iterations number of iterations for optimization procedure
+   * @param tolerance tolerance of convergence (see explanations set_tolerance(double tolerance))
    */
   void deform(unsigned int iterations, double tolerance)
   {
-    CGAL_precondition(!need_preprocess); // preprocess should be called first
+    CGAL_precondition(!need_preprocess || !"preprocess() need to be called before deforming!");
 
-    double energy_this = 0;
+    // Note: no energy based termination occurs at first iteration
+    // because comparing energy of original model (before deformation) and deformed model (deformed_1_iteration)
+    // simply does not make sense, comparison is meaningful between deformed_(i)_iteration & deformed_(i+1)_iteration
+
+    double energy_this = 0; // initial value is not important, because we skip first iteration
     double energy_last;
+
     // iterations
-    CGAL_TRACE_STREAM << "iteration started...\n";
-    for ( unsigned int ite = 0; ite < iterations; ite ++)
+    for ( unsigned int ite = 0; ite < iterations; ++ite)
     {
-      update_solution();
+      // main steps of optimization
+      update_solution();       
+      optimal_rotations_svd(); 
 
-#ifdef CGAL_DEFORM_EXPERIMENTAL
-      optimal_rotations_polar();    // polar decomposition for optimal rotations, faster than SVD but unstable 
-#else
-      optimal_rotations_svd();
-#endif
-      /* For now close energy based termination */
+      // energy based termination
+      if(tolerance > 0.0 && (ite + 1) < iterations) // if tolerance <= 0 then don't compute energy 
+      {                                             // also no need compute energy if this iteration is the last iteration
+        energy_last = energy_this;
+        energy_this = energy();
+        if(energy_this < 0)
+        {
+           std::cout << "Negative energy" << std::endl;
+        }
 
-      // energy_last = energy_this;
-      // energy_this = energy();
-      //CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
-      //if ( abs((energy_last-energy_this)/energy_this) < tolerance )
-      //{
-      //  break;
-      //}
+        if(ite != 0) // skip first iteration
+        {
+          double energy_dif = std::abs((energy_last - energy_this) / energy_this);
+          if ( energy_dif < tolerance ) { break; }
+        }
+      }
     }
-
-    CGAL_TRACE_STREAM << "iteration end!\n";
-
     // copy solution to target mesh
     assign_solution();
   }
+/// @} Deform Section
 
-  /**
-   * Reset position of deformed vertices to their original positions (i.e. positions at the time of last Deform_mesh::preprocess call)
-   */
-  void undo()
-  {
-    for(size_t i = 0; i < ros.size(); ++i)
-    {
-      ros[i]->point() = original[i];
-    }
-  }
-
-//////////////////////// private functions ////////////////////////
 private:
-  /**
-   *
-   */
-  void compute_edge_weight()
+
+  /// Compute cotangent weights of all edges
+  template<class WeightCalculator>
+  void compute_edge_weight(WeightCalculator weight_calculator)
   {
-  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
-    compute_edge_weight_spokes_and_rims();
+  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
+    compute_edge_weight_spokes_and_rims(weight_calculator);
   #else
-    compute_edge_weight_arap();
+    compute_edge_weight_arap(weight_calculator);
   #endif
   }
-  // compute cotangent weights of all edges 
-  
-  void compute_edge_weight_arap()
+  template<class WeightCalculator>
+  void compute_edge_weight_arap(WeightCalculator weight_calculator)
   {
     std::set<edge_descriptor> have_id; // edges which has assigned ids (and also weights are calculated)
 
     // iterate over ros vertices and calculate weights for edges which are incident to ros
-    size_t next_edge_id = 0;
+    std::size_t next_edge_id = 0;
     for (std::size_t i = 0; i < ros.size(); i++)
     {
       vertex_descriptor vi = ros[i];
@@ -400,54 +465,48 @@ private:
         put(edge_index_map, *e, next_edge_id++);
         have_id.insert(*e);
 
-        double weight = weight_calculator(*e);
+        double weight = weight_calculator(*e, polyhedron);
         edge_weight.push_back(weight);
-        
       }// end of edge loop
     }// end of ros loop
   }
-  void compute_edge_weight_spokes_and_rims()
+  template<class WeightCalculator>
+  void compute_edge_weight_spokes_and_rims(WeightCalculator weight_calculator)
   {
     std::set<edge_descriptor> have_id; // edges which has assigned ids (and also weights are calculated)
 
     // iterate over ros vertices and calculate weights for edges which are incident to ros
-    size_t next_edge_id = 0;
+    std::size_t next_edge_id = 0;
     for (std::size_t i = 0; i < ros.size(); i++)
     {       
       vertex_descriptor vi = ros[i];
-      bool is_current_rim = false;
-      out_edge_iterator e, e_end;
-      boost::tie(e,e_end) = boost::out_edges(ros[i], polyhedron);
-      edge_descriptor active_edge = *e;
+      out_edge_iterator e_begin, e_end;
+      boost::tie(e_begin, e_end) = boost::out_edges(vi, polyhedron);
 
-      while ( e != e_end )
+      for (Rims_iterator rims_it(e_begin, polyhedron); rims_it.get_iterator() != e_end; ++rims_it )
       {
-        typename std::set<edge_descriptor>::iterator it = have_id.find(*e);
+        edge_descriptor active_edge = rims_it.get_descriptor();
+
+        typename std::set<edge_descriptor>::iterator it = have_id.find(active_edge);
         if(it == have_id.end()) // we have not assigned an id yet
         {  
           put(edge_index_map, active_edge, next_edge_id++);
           have_id.insert(active_edge);
+          double wji = weight_calculator(active_edge, polyhedron); // edge(pj - pi)
+          edge_weight.push_back(wji);
 
-          double weight = weight_calculator(active_edge);
-          edge_weight.push_back(weight);
-        }
-        // loop through one spoke then one rim edge
-        if(!is_current_rim && !boost::get(CGAL::edge_is_border, polyhedron, *e)) // it is rim edge's turn
-        {
-          is_current_rim = true;
-          active_edge = CGAL::next_edge(*e, polyhedron);
-        }
-        else // if current edge is rim OR there is no rim edge (current spoke edge is boudary)
-        {    // then iterate to next spoke edge
-          is_current_rim = false;
-          ++e;
-          active_edge = *e;
+          edge_descriptor opp = CGAL::opposite_edge(active_edge, polyhedron);
+
+          put(edge_index_map, opp, next_edge_id++);
+          have_id.insert(opp);
+          double wij = weight_calculator(opp, polyhedron); // edge(pi - pj)
+          edge_weight.push_back(wij);
         }
       }// end of edge loop
     }// end of ros loop
   }
 
-  // assigns id to one rign neighbor of vd, and also push them into push_vector
+  /// Assigns id to one rign neighbor of vd, and also push them into push_vector
   void assign_id_to_one_ring(vertex_descriptor vd, 
                              std::size_t& next_id, 
                              std::vector<vertex_descriptor>& push_vector,
@@ -466,19 +525,19 @@ private:
       }
     }
   }
-  /**
-   * find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
-   *   - clear ros container
-   *   - assign id's to 
-   */
+  
+  /// Find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
   void region_of_solution()
   {
-    outside_ros.clear();
-    ros.clear();
-    ros.insert(ros.end(), roi.begin(), roi.end());
+    // Important: at this point ros contains the roi vertices only.
+    // copy roi vertices to roi vector
+    std::vector<vertex_descriptor> roi;	// we can remove this temp, but I try to simplify things below
+    roi.insert(roi.end(), ros.begin(), ros.end()); 
 
+    ////////////////////////////////////////////////////////////////
     // assign id to vertices inside: roi, boundary of roi (roi + boundary of roi = ros),
     //                               and boundary of ros
+    // keep in mind that id order does not have to be compatible with ros order
 
     std::set<vertex_descriptor> have_id;         // keep vertices which are assigned an id
     
@@ -486,6 +545,7 @@ private:
     {
       put(vertex_index_map, roi[i], i);
     }
+
     have_id.insert(roi.begin(), roi.end());      // mark roi vertices since they have ids now
 
     // now assign an id to vertices on boundary of roi
@@ -495,33 +555,40 @@ private:
       assign_id_to_one_ring(roi[i], next_ros_index, ros, have_id);
     }
 
+    std::vector<vertex_descriptor> outside_ros;
     // boundary of ros also must have ids because in SVD calculation,
     // one-ring neighbor of ROS vertices are reached. 
     for(std::size_t i = roi.size(); i < ros.size(); i++)
     {
       assign_id_to_one_ring(ros[i], next_ros_index, outside_ros, have_id);
     }
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
-    // initialize the rotation matrices with the same size of ROS
+    // initialize the rotation matrices (size: ros)
     rot_mtr.resize(ros.size());
     for(std::size_t i = 0; i < rot_mtr.size(); i++)
     {
       rot_mtr[i].setIdentity();
     }
     
+    // initialize solution and original (size: ros + boundary_of_ros)
+
+    // for simplifying coding effort, I also put boundary of ros into solution and original
+    // because boundary of ros vertices are reached in optimal_rotations_svd() and energy()
     solution.resize(ros.size() + outside_ros.size());
     original.resize(ros.size() + outside_ros.size());
-    // initialize solution
+    
     for(std::size_t i = 0; i < ros.size(); i++)
     {
-      solution[i] = ros[i]->point();
-      original[i] = ros[i]->point();
+      std::size_t v_id = id(ros[i]);
+      solution[v_id] = ros[i]->point();
+      original[v_id] = ros[i]->point();
     }
     for(std::size_t i = 0; i < outside_ros.size(); ++i)
     {
-      original[ros.size() + i] = outside_ros[i]->point();
-      solution[ros.size() + i] = outside_ros[i]->point();
+      std::size_t v_id = id(outside_ros[i]);
+      original[v_id] = outside_ros[i]->point();
+      solution[v_id] = outside_ros[i]->point();
     }
 
     // initialize flag vectors of roi, handle, ros 
@@ -529,8 +596,8 @@ private:
     is_hdl.assign(ros.size(), false);
     for(std::size_t i = 0; i < roi.size(); i++)
     {
-      size_t v_index = get(vertex_index_map, roi[i]);
-      is_roi[v_index] = true;
+      std::size_t v_id = id(roi[i]);
+      is_roi[v_id] = true;
     }
     for(typename Handle_group_container::iterator it_group = handle_groups.begin(); 
       it_group != handle_groups.end(); ++it_group)
@@ -538,361 +605,213 @@ private:
       for(typename Handle_container::iterator it_vertex = it_group->begin(); 
         it_vertex != it_group->end(); ++it_vertex)
       {
-        size_t v_index = get(vertex_index_map, *it_vertex);
-        is_hdl[v_index] = true;
+        std::size_t v_id = id(*it_vertex);
+        is_hdl[v_id] = true;
       }
     }
   }
+
+  /// Assemble Laplacian matrix A of linear system A*X=B
   void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
-  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
+  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
     assemble_laplacian_spokes_and_rims(A);
   #else
     assemble_laplacian_arap(A);
   #endif
   }
-  void assemble_laplacian_spokes_and_rims(typename SparseLinearAlgebraTraits_d::Matrix& A)
-  {
-     /// assign cotangent Laplacian to ros vertices
-    for(std::size_t i = 0; i < ros.size(); i++)
-      {
-        vertex_descriptor vi = ros[i];
-        std::size_t vertex_idx_i = get(vertex_index_map, vi);
-        if ( is_roi[vertex_idx_i] && !is_hdl[vertex_idx_i] )          // vertices of ( roi - hdl )
-          {
-            double diagonal = 0;
-            in_edge_iterator e, e_end;
-            for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
-              {
-                vertex_descriptor vj = boost::source(*e, polyhedron);
-                double wij = edge_weight[ get(edge_index_map, *e)];  // edge weights
-                double wji = edge_weight[get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))];
-
-                double total_weight = (wij + wji);
-
-                if (boost::get(CGAL::edge_is_border, polyhedron, *e) ||
-                  boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(*e, polyhedron)))
-                {
-                    total_weight *= 1.5;
-                }
-                else
-                {
-                  total_weight *= 2;
-                }
-
-                std::size_t vj_index = get(vertex_index_map, vj);
-                A.set_coef(i, vj_index, -total_weight, true);	// off-diagonal coefficient
-                diagonal += total_weight;  
-              }
-            // diagonal coefficient
-            A.set_coef(i, i, diagonal, true);
-          }
-        else
-          A.set_coef(i, i, 1.0, true);
-      }
-  }
-  // Assemble Laplacian matrix A of linear system A*X=B
+  /// Construct matrix that corresponds to left-hand side of eq:lap_ber in user manual
+  /// Also constraints are integrated as eq:lap_energy_system in user manual
   void assemble_laplacian_arap(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
     /// assign cotangent Laplacian to ros vertices
-    for(std::size_t i = 0; i < ros.size(); i++)
+    for(std::size_t k = 0; k < ros.size(); k++)
+    {
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = id(vi);
+      if ( is_roi[vi_id] && !is_hdl[vi_id] )          // vertices of ( roi - hdl )
       {
-        vertex_descriptor vi = ros[i];
-        std::size_t vertex_idx_i = get(vertex_index_map, vi);
-        if ( is_roi[vertex_idx_i] && !is_hdl[vertex_idx_i] )          // vertices of ( roi - hdl )
-          {
-            double diagonal = 0;
-            in_edge_iterator e, e_end;
-            for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
-              {
-                vertex_descriptor vj = boost::source(*e, polyhedron);
-                double wij = edge_weight[ get(edge_index_map, *e)];  // edge weights
-                double wji = edge_weight[get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))];
-                double total_weight = wij + wji;
+        double diagonal = 0;
+        in_edge_iterator e, e_end;
+        for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
+        {
+          vertex_descriptor vj = boost::source(*e, polyhedron);
+          double wij = edge_weight[id(*e)];  // edge(pi - pj)
+          double wji = edge_weight[id(CGAL::opposite_edge(*e, polyhedron))]; // edge(pi - pj)
+          double total_weight = wij + wji;
 
-                std::size_t vj_index = get(vertex_index_map, vj);
-                A.set_coef(i, vj_index, -total_weight, true);	// off-diagonal coefficient
-                diagonal += total_weight;  
-              }
-            // diagonal coefficient
-            A.set_coef(i, i, diagonal, true);
-          }
-        else
-          A.set_coef(i, i, 1.0, true);
+          A.set_coef(vi_id, id(vj), -total_weight, true);	// off-diagonal coefficient
+          diagonal += total_weight;  
+        }
+        // diagonal coefficient
+        A.set_coef(vi_id, vi_id, diagonal, true);
       }
+      else
+      {
+        A.set_coef(vi_id, vi_id, 1.0, true);
+      }
+    }
+  }
+  /// Construct matrix that corresponds to left-hand side of eq:lap_ber_rims in user manual
+  /// Also constraints are integrated as eq:lap_energy_system in user manual
+  void assemble_laplacian_spokes_and_rims(typename SparseLinearAlgebraTraits_d::Matrix& A)
+  {
+    /// assign cotangent Laplacian to ros vertices    
+    for(std::size_t k = 0; k < ros.size(); k++)
+    {
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = id(vi);
+      if ( is_roi[vi_id] && !is_hdl[vi_id] ) // vertices of ( roi - hdl ): free vertices
+      {
+        double diagonal = 0;
+        out_edge_iterator e, e_end;
+        for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; e++)
+        {
+          double total_weight = 0;
+          // an edge contribute to energy only if it is part of an incident triangle 
+          // (i.e it should not be a border edge)
+          if(!boost::get(CGAL::edge_is_border, polyhedron, *e)) 
+          {
+            double wji = edge_weight[id(*e)]; // edge(pj - pi)
+            total_weight += wji; 
+          }
+
+          edge_descriptor opp = CGAL::opposite_edge(*e, polyhedron);
+          if(!boost::get(CGAL::edge_is_border, polyhedron, opp))
+          {
+            double wij = edge_weight[id(opp)]; // edge(pi - pj)
+            total_weight += wij;
+          }
+
+          // place coefficient to matrix
+          vertex_descriptor vj = boost::target(*e, polyhedron);
+          A.set_coef(vi_id, id(vj), -total_weight, true);	// off-diagonal coefficient
+          diagonal += total_weight; 
+        }
+        // diagonal coefficient
+        A.set_coef(vi_id, vi_id, diagonal, true);
+      }
+      else // constrained vertex
+      {
+        A.set_coef(vi_id, vi_id, 1.0, true); 
+      }
+    }
   }
 
+  /// Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
   {
-  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
+  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
     optimal_rotations_svd_spokes_and_rims();
   #else
     optimal_rotations_svd_arap();
   #endif
   }
-  // Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd_arap()
   {
-    Eigen::Matrix3d u, v;           // orthogonal matrices 
-    Eigen::Vector3d w;              // singular values
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
-    Eigen::Matrix3d r;
-    int num_neg = 0;
 
     // only accumulate ros vertices
-    for ( std::size_t i = 0; i < ros.size(); i++ )
+    for ( std::size_t k = 0; k < ros.size(); k++ )
     {
-      vertex_descriptor vi = ros[i];
-      // compute covariance matrix
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = id(vi);
+      // compute covariance matrix (user manual eq:cov_matrix)
       cov.setZero();
 
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
       {
         vertex_descriptor vj = boost::source(*e, polyhedron);
-        size_t vj_index = get(vertex_index_map, vj);
+        std::size_t vj_id = id(vj);
 
-        Vector pij = original[i] - original[vj_index];
-        Vector qij = solution[i] - solution[vj_index];
+        Eigen::Vector3d    pij = sub_to_col(original[vi_id], original[vj_id]);
+        Eigen::RowVector3d qij = sub_to_row(solution[vi_id], solution[vj_id]);
+        double wij = edge_weight[id(*e)];
 
-        double wij = edge_weight[get(edge_index_map, *e)];
-        for (int j = 0; j < 3; j++)
-        {
-          for (int k = 0; k < 3; k++)
-          {
-            cov(j, k) += wij*pij[j]*qij[k]; 
-          }
-        }
+        cov += wij * (pij * qij);
       }
-  
       // svd decomposition
       svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      u = svd.matrixU(); v = svd.matrixV();
+      const Eigen::Matrix3d& u = svd.matrixU();
+      const Eigen::Matrix3d& v = svd.matrixV();
 
       // extract rotation matrix
-      r = v*u.transpose();
+      rot_mtr[vi_id] = v*u.transpose();
 
       // checking negative determinant of r
-      if ( r.determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
+      if ( rot_mtr[vi_id].determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
       {
-        num_neg++; 
-        w = svd.singularValues();
-        for (int j = 0; j < 3; j++)
-        {
-          int j0 = j;
-          int j1 = (j+1)%3;
-          int j2 = (j1+1)%3;
-          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
-          {
-            u(0, j0) = - u(0, j0);
-            u(1, j0) = - u(1, j0);
-            u(2, j0) = - u(2, j0);
-            break;
-          }
-        }
-
-        // re-extract rotation matrix
-        r = v*u.transpose();
+        Eigen::Matrix3d u_m = u;
+        u_m.col(2) *= -1;      // singular values are always sorted in decresing order so use column 2
+        rot_mtr[vi_id] = v*u_m.transpose(); // re-extract rotation matrix
       }
-      
-      rot_mtr[i] = r;
     }
-
-    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
   }
   void optimal_rotations_svd_spokes_and_rims()
-  {
-    Eigen::Matrix3d u, v;           // orthogonal matrices 
-    Eigen::Vector3d w;              // singular values
+  {    
     Eigen::Matrix3d cov;            // covariance matrix
     Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
-    Eigen::Matrix3d r;
-    int num_neg = 0;
 
     // only accumulate ros vertices
-    for ( std::size_t i = 0; i < ros.size(); i++ )
+    for ( std::size_t k = 0; k < ros.size(); k++ )
     {
-      vertex_descriptor vi = ros[i];
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = id(vi);
       // compute covariance matrix
       cov.setZero();
-
-      // spoke + rim edges
-      bool is_current_rim = false;
+      //iterate through all triangles 
       out_edge_iterator e, e_end;
-      boost::tie(e,e_end) = boost::out_edges(vi, polyhedron);
-      edge_descriptor active_edge = *e;
-
-      while ( e != e_end )
+      for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; e++)
       {
-        vertex_descriptor v1 = boost::source(active_edge, polyhedron);
-        vertex_descriptor v2 = boost::target(active_edge, polyhedron);
-        
-        size_t v1_index = get(vertex_index_map, v1);
-        size_t v2_index = get(vertex_index_map, v2);
-        
-        Vector pij = original[v1_index] - original[v2_index];
-        Vector qij = solution[v1_index] - solution[v2_index];
-
-        double wij = edge_weight[get(edge_index_map, active_edge)];
-        for (int j = 0; j < 3; j++)
+        if(boost::get(CGAL::edge_is_border, polyhedron, *e)) { continue; } // no facet 
+        // iterate edges around facet
+        edge_descriptor edge_around_facet = *e;
+        do
         {
-          for (int k = 0; k < 3; k++)
-          {
-            cov(j, k) += wij*pij[j]*qij[k]; 
-          }
-        }
+          vertex_descriptor v1 = boost::target(edge_around_facet, polyhedron);
+          vertex_descriptor v2 = boost::source(edge_around_facet, polyhedron);
 
-        // loop through one spoke then one rim edge
-        if(!is_current_rim && !boost::get(CGAL::edge_is_border, polyhedron, *e)) // it is rim edge's turn
-        {
-          is_current_rim = true;
-          active_edge = CGAL::next_edge(*e, polyhedron);
-        }
-        else // if current edge is rim OR there is no rim edge (current spoke edge is boudary)
-        {    // then iterate to next spoke edge
-          is_current_rim = false;
-          ++e;
-          active_edge = *e;
-        }
+          std::size_t v1_id = id(v1); std::size_t v2_id = id(v2);
+        
+          Eigen::Vector3d    p12 = sub_to_col(original[v1_id], original[v2_id]);
+          Eigen::RowVector3d q12 = sub_to_row(solution[v1_id], solution[v2_id]);
+
+          double w12 = edge_weight[id(edge_around_facet)];
+
+          cov += w12 * (p12 * q12);
+        } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, polyhedron)) != *e);
       }
   
       // svd decomposition
       svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      u = svd.matrixU(); v = svd.matrixV();
+      const Eigen::Matrix3d& u = svd.matrixU();
+      const Eigen::Matrix3d& v = svd.matrixV();
 
       // extract rotation matrix
-      r = v*u.transpose();
+      rot_mtr[vi_id] = v*u.transpose();
 
       // checking negative determinant of r
-      if ( r.determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
+      if ( rot_mtr[vi_id].determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
       {
-        num_neg++; 
-        w = svd.singularValues();
-        for (int j = 0; j < 3; j++)
-        {
-          int j0 = j;
-          int j1 = (j+1)%3;
-          int j2 = (j1+1)%3;
-          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
-          {
-            u(0, j0) = - u(0, j0);
-            u(1, j0) = - u(1, j0);
-            u(2, j0) = - u(2, j0);
-            break;
-          }
-        }
-
-        // re-extract rotation matrix
-        r = v*u.transpose();
+        Eigen::Matrix3d u_m = u;
+        u_m.col(2) *= -1;      // singular values are always sorted in decresing order so use column 2
+        rot_mtr[vi_id] = v*u_m.transpose(); // re-extract rotation matrix
       }
-      
-      rot_mtr[i] = r;
     }
-
-    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
-
   }
 
+  /// Global step of iterations, updating solution
   void update_solution()
   {
-  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
+  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
     update_solution_spokes_and_rims();
   #else
     update_solution_arap();
   #endif
   }
-  void update_solution_spokes_and_rims()
-  {
-    typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
-    typename SparseLinearAlgebraTraits_d::Vector Y(ros.size()), By(ros.size());
-    typename SparseLinearAlgebraTraits_d::Vector Z(ros.size()), Bz(ros.size());
-
-    // assemble right columns of linear system
-    for ( std::size_t i = 0; i < ros.size(); i++ )
-    {
-      vertex_descriptor vi = ros[i];
-      std::size_t vertex_idx_i = get(vertex_index_map, vi);
-      if ( !is_roi[vertex_idx_i] || is_hdl[vertex_idx_i] )   // hard constraints or handle vertices
-      {
-        Bx[i] = solution[vertex_idx_i].x(); By[i] = solution[vertex_idx_i].y(); Bz[i] = solution[vertex_idx_i].z();
-      }
-      else  // ( roi - handle ) vertices
-      {
-        Bx[i] = 0; By[i] = 0; Bz[i] = 0;
-        in_edge_iterator e, e_end;
-        Point& pi = original[get(vertex_index_map, vi)];
-        for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
-        {
-          vertex_descriptor vj = boost::source(*e, polyhedron);
-          std::size_t vj_index = get(vertex_index_map, vj); 
-          Vector pij =  pi - original[get(vertex_index_map, vj)];
-
-          double wij = edge_weight[get(edge_index_map, *e)];
-          double wji = edge_weight[get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))];
-
-          bool is_e_border = boost::get(CGAL::edge_is_border, polyhedron, *e);
-          bool is_opp_of_e_border = boost::get(CGAL::edge_is_border, polyhedron, CGAL::opposite_edge(*e, polyhedron));
-          double x, y, z;
-          x = y = z = 0.0;
-          if (is_e_border || is_opp_of_e_border)
-          {  
-            edge_descriptor next_of_not_border_edge = is_e_border ? CGAL::next_edge(CGAL::opposite_edge(*e, polyhedron), polyhedron)
-              : CGAL::next_edge(*e, polyhedron);
-            std::size_t vk_index = get(vertex_index_map, boost::target(next_of_not_border_edge, polyhedron));
-
-            double wk = is_e_border ? wji : wij;
-
-            for (int j = 0; j < 3; j++)
-            {
-              x += ( rot_mtr[i](0, j)*wij + rot_mtr[vj_index](0, j)*wji +
-                     rot_mtr[vk_index](0, j)*wk  ) * pij[j];
-
-              y += ( rot_mtr[i](1, j)*wij + rot_mtr[vj_index](1, j)*wji +
-                     rot_mtr[vk_index](1, j)*wk ) * pij[j];
-
-              z += ( rot_mtr[i](2, j)*wij + rot_mtr[vj_index](2, j)*wji +
-                     rot_mtr[vk_index](2, j)*wk ) * pij[j];
-            }
-          }
-          else
-          {
-            edge_descriptor next_e = CGAL::next_edge(*e, polyhedron);
-            vertex_descriptor next_e_target = boost::target(next_e, polyhedron);
-            std::size_t vk_index = get(vertex_index_map, next_e_target) ;
-
-            edge_descriptor next_opp_e = CGAL::next_edge(CGAL::opposite_edge(*e, polyhedron), polyhedron);
-            vertex_descriptor next_opp_e_target = boost::target(next_opp_e, polyhedron);
-            std::size_t vm_index = get(vertex_index_map, next_opp_e_target) ;
-
-            for (int j = 0; j < 3; j++)
-            {
-              x += ( rot_mtr[i](0, j)*wij + rot_mtr[vj_index](0, j)*wji +
-                     rot_mtr[vk_index](0, j)*wij + rot_mtr[vm_index](0, j)*wji) * pij[j];
-
-              y += ( rot_mtr[i](1, j)*wij + rot_mtr[vj_index](1, j)*wji +
-                     rot_mtr[vk_index](1, j)*wij + rot_mtr[vm_index](1, j)*wji) * pij[j];
-
-              z += ( rot_mtr[i](2, j)*wij + rot_mtr[vj_index](2, j)*wji +
-                     rot_mtr[vk_index](2, j)*wij + rot_mtr[vm_index](2, j)*wji) * pij[j];
-            }
-          }
-
-          Bx[i] += x; By[i] += y; Bz[i] += z; 
-        }
-      }
-    }
-    // solve "A*X = B".
-    m_solver.linear_solver(Bx, X); m_solver.linear_solver(By, Y); m_solver.linear_solver(Bz, Z);
-
-    // copy to solution
-    for (std::size_t i = 0; i < ros.size(); i++)
-    {
-      Point p(X[i], Y[i], Z[i]);
-      solution[get(vertex_index_map, ros[i])] = p;
-    }
-  }
-  // Global step of iterations, updating solution
+  // calculate right-hand side of eq:lap_ber in user manual and solve the system
   void update_solution_arap()
   {
     typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
@@ -900,37 +819,32 @@ private:
     typename SparseLinearAlgebraTraits_d::Vector Z(ros.size()), Bz(ros.size());
 
     // assemble right columns of linear system
-    for ( std::size_t i = 0; i < ros.size(); i++ )
+    for ( std::size_t k = 0; k < ros.size(); k++ )
     {
-      vertex_descriptor vi = ros[i];
-      std::size_t vertex_idx_i = get(vertex_index_map, vi);
-      if ( !is_roi[vertex_idx_i] || is_hdl[vertex_idx_i] )   // hard constraints or handle vertices
-      {
-        Bx[i] = solution[vertex_idx_i].x(); By[i] = solution[vertex_idx_i].y(); Bz[i] = solution[vertex_idx_i].z();
-      }
-      else  // ( roi - handle ) vertices
-      {
-        Bx[i] = 0; By[i] = 0; Bz[i] = 0;
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = id(vi);
+
+      if ( is_roi[vi_id] && !is_hdl[vi_id] ) 
+      {// free vertices
+        Eigen::Vector3d xyz; xyz.setZero(); // sum of right-hand side of eq:lap_ber in user manual
+
         in_edge_iterator e, e_end;
-        Point& pi = original[get(vertex_index_map, vi)];
         for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, polyhedron);
-          std::size_t vj_index = get(vertex_index_map, vj) ; 
-          Vector pij =  pi - original[get(vertex_index_map, vj) ];
-          double wij = edge_weight[get(edge_index_map, *e) ];
-          double wji = edge_weight[get(edge_index_map, CGAL::opposite_edge(*e, polyhedron))];
+          std::size_t vj_id = id(vj); 
+          
+          Eigen::Vector3d pij = sub_to_col(original[vi_id], original[vj_id]);
+          double wij = edge_weight[id(*e)];
+          double wji = edge_weight[id(CGAL::opposite_edge(*e, polyhedron))];
 
-          double x, y, z;
-          x = y = z = 0.0;
-          for (int j = 0; j < 3; j++)
-          {
-            x += ( rot_mtr[i](0, j)*wij + rot_mtr[vj_index](0, j)*wji ) * pij[j];
-            y += ( rot_mtr[i](1, j)*wij + rot_mtr[vj_index](1, j)*wji ) * pij[j];
-            z += ( rot_mtr[i](2, j)*wij + rot_mtr[vj_index](2, j)*wji ) * pij[j];
-          }
-          Bx[i] += x; By[i] += y; Bz[i] += z; 
+          xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij; 
         }
+        Bx[vi_id] = xyz(0,0); By[vi_id] = xyz(1,0); Bz[vi_id] = xyz(2,0);
+      }
+      else 
+      {// constrained vertex
+        Bx[vi_id] = solution[vi_id].x(); By[vi_id] = solution[vi_id].y(); Bz[vi_id] = solution[vi_id].z();
       }
     }
 
@@ -940,58 +854,167 @@ private:
     // copy to solution
     for (std::size_t i = 0; i < ros.size(); i++)
     {
-      Point p(X[i], Y[i], Z[i]);
-      solution[get(vertex_index_map, ros[i])] = p;
+      std::size_t v_id = id(ros[i]);
+      Point p(X[v_id], Y[v_id], Z[v_id]);
+      solution[v_id] = p;
     }
-
   }
-  // Assign solution to target mesh
+  // calculate right-hand side of eq:lap_ber_rims in user manual and solve the system
+  void update_solution_spokes_and_rims()
+  {
+    typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
+    typename SparseLinearAlgebraTraits_d::Vector Y(ros.size()), By(ros.size());
+    typename SparseLinearAlgebraTraits_d::Vector Z(ros.size()), Bz(ros.size());
+
+    // assemble right columns of linear system
+    for ( std::size_t k = 0; k < ros.size(); k++ )
+    {
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = id(vi);
+
+      if ( is_roi[vi_id] && !is_hdl[vi_id] ) 
+      {// free vertices
+        Eigen::Vector3d xyz;  xyz.setZero(); // sum of right-hand side of eq:lap_ber_rims in user manual
+
+        out_edge_iterator e, e_end;
+        for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; e++)
+        {
+          vertex_descriptor vj = boost::target(*e, polyhedron);
+          std::size_t vj_id = id(vj); 
+
+          Eigen::Vector3d pij = sub_to_col(original[vi_id], original[vj_id]);
+          
+          if(!boost::get(CGAL::edge_is_border, polyhedron, *e))
+          {
+            vertex_descriptor vn = boost::target(CGAL::next_edge(*e, polyhedron), polyhedron); // opp vertex of e_ij
+            double wji = edge_weight[id(*e)] / 3.0;  // edge(pj - pi)
+            xyz += wji*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[id(vn)])*pij;
+          }
+
+          edge_descriptor opp = CGAL::opposite_edge(*e, polyhedron);
+          if(!boost::get(CGAL::edge_is_border, polyhedron, opp))
+          {
+            vertex_descriptor vm = boost::target(CGAL::next_edge(opp, polyhedron), polyhedron); // other opp vertex of e_ij
+            double wij = edge_weight[id(opp)] / 3.0;  // edge(pi - pj)
+            xyz += wij*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[id(vm)])*pij;
+          }
+        }
+        Bx[vi_id] = xyz(0,0); By[vi_id] = xyz(1,0); Bz[vi_id] = xyz(2,0); 
+      }
+      else 
+      {// constrained vertices
+        Bx[vi_id] = solution[vi_id].x(); By[vi_id] = solution[vi_id].y(); Bz[vi_id] = solution[vi_id].z();
+      }
+    }
+    // solve "A*X = B".
+    m_solver.linear_solver(Bx, X); m_solver.linear_solver(By, Y); m_solver.linear_solver(Bz, Z);
+
+    // copy to solution
+    for (std::size_t i = 0; i < ros.size(); i++)
+    {
+      std::size_t v_id = id(ros[i]);
+      Point p(X[v_id], Y[v_id], Z[v_id]);
+      solution[v_id] = p;
+    }
+  }
+
+  /// Assign solution to target mesh
   void assign_solution()
   {
-    for(std::size_t i = 0; i < roi.size(); ++i){
-      roi[i]->point() = solution[get(vertex_index_map, roi[i])];
+    for(std::size_t i = 0; i < ros.size(); ++i){
+      std::size_t v_id = id(ros[i]);
+      if(is_roi[v_id])
+      {
+        ros[i]->point() = solution[v_id];
+      }
     }
   }
-  // Compute modeling energy
+
+  /// Compute modeling energy
   double energy()
+  {
+  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
+    return energy_spokes_and_rims();
+  #else
+    return energy_arap();
+  #endif
+  }
+  double energy_arap()
   {
     double sum_of_energy = 0;
     // only accumulate ros vertices
-    for( std::size_t i = 0; i < ros.size(); i++ )
+    for( std::size_t k = 0; k < ros.size(); k++ )
     {
-      vertex_descriptor vi = ros[i];
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = id(vi);
+
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
       {
         vertex_descriptor vj = boost::source(*e, polyhedron);
-        Point vj_original, vj_solution;
-        size_t vj_index = get(vertex_index_map, vj);
-        if(vj_index == 0) // outside of ROS, just take current position (since it never changes)
-        {
-          vj_original = vj->point();
-          vj_solution = vj->point();
-        }
-        else
-        {
-           vj_original = original[vj_index ];
-           vj_solution = solution[vj_index ];
-        }
-        Vector pij = original[i] - vj_original;
-        double wij = edge_weight[get(edge_index_map, *e) ];
-        Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
-        for (int j = 0; j < 3; j++)
-        {
-          double x = rot_mtr[i](0, j) * pij[j];
-          double y = rot_mtr[i](1, j) * pij[j];
-          double z = rot_mtr[i](2, j) * pij[j];
-          Vector v(x, y, z);
-          rot_p = rot_p + v;
-        }
-        Vector qij = solution[i] - vj_solution;
-        sum_of_energy += wij*(qij - rot_p).squared_length();
+        std::size_t vj_id = id(vj);
+
+        Eigen::Vector3d pij = sub_to_col(original[vi_id], original[vj_id]);
+        Eigen::Vector3d qij = sub_to_col(solution[vi_id], solution[vj_id]);
+        double wij = edge_weight[id(*e)];
+
+        sum_of_energy += wij * (qij - rot_mtr[vi_id]*pij).squaredNorm();
       }
     }
     return sum_of_energy;
+  }
+  double energy_spokes_and_rims()
+  {
+    double sum_of_energy = 0;
+    // only accumulate ros vertices
+    for( std::size_t k = 0; k < ros.size(); k++ )
+    {
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = id(vi);
+      //iterate through all triangles 
+      out_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; e++)
+      {
+        if(boost::get(CGAL::edge_is_border, polyhedron, *e)) { continue; } // no facet 
+        // iterate edges around facet
+        edge_descriptor edge_around_facet = *e;
+        do
+        {
+          vertex_descriptor v1 = boost::target(edge_around_facet, polyhedron);
+          vertex_descriptor v2 = boost::source(edge_around_facet, polyhedron);
+          std::size_t v1_id = id(v1); std::size_t v2_id = id(v2);
+
+          Eigen::Vector3d p12 = sub_to_col(original[v1_id], original[v2_id]);
+          Eigen::Vector3d q12 = sub_to_col(solution[v1_id], solution[v2_id]);
+          double w12 = edge_weight[id(edge_around_facet)];
+         
+          sum_of_energy += w12 * (q12 - rot_mtr[vi_id]*p12).squaredNorm();
+
+        } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, polyhedron)) != *e);
+      }
+    }
+    return sum_of_energy;
+  }
+
+  /// p1 - p2, return Eigen Column Vector
+  Eigen::Vector3d sub_to_col(const Point& p1, const Point& p2)
+  {
+    return Eigen::Vector3d(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+  }
+  /// p1 - p2, return Eigen Row Vector
+  Eigen::RowVector3d sub_to_row(const Point& p1, const Point& p2)
+  {
+    return Eigen::RowVector3d(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+  }
+  /// shorthand of get(vertex_index_map, v)
+  std::size_t id(vertex_descriptor v)
+  {
+    return get(vertex_index_map, v);
+  }
+  /// shorthand of get(edge_index_map, e)
+  std::size_t id(edge_descriptor e)
+  {
+    return get(edge_index_map, e);
   }
 
   #ifdef CGAL_DEFORM_EXPERIMENTAL      // Experimental stuff, needs further testing

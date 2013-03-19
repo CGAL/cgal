@@ -22,6 +22,7 @@
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
 #include <Eigen/Sparse>
+#include <Eigen/SparseLU>
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <boost/shared_ptr.hpp>
@@ -43,6 +44,11 @@ namespace internal {
   template <class FT,class EigenMatrix>
   struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>,FT>{
     typedef Eigen_sparse_symmetric_matrix<FT> type;
+  };
+
+  template <class FT, class EigenMatrix, class EigenOrdering>
+  struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
+    typedef Eigen_sparse_matrix<FT, ::Eigen::ColMajor> type;
   };
 } //internal 
   

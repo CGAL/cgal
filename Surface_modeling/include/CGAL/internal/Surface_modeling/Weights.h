@@ -1,5 +1,6 @@
 #ifndef CGAL_SURFACE_MODELING_WEIGHTS_H
 #define CGAL_SURFACE_MODELING_WEIGHTS_H
+/// @cond CGAL_DOCUMENT_INTERNAL
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -104,12 +105,9 @@ public:
   typedef typename Polyhedron::Traits::Vector_3  Vector;
   typedef typename Polyhedron::Traits::Point_3   Point;
 
-  Cotangent_weight(Polyhedron& polyhedron) : polyhedron(polyhedron)
-  { }
-
   // Returns the cotangent weight of specified edge_descriptor
   // Edge orientation is trivial
-  double operator()(edge_descriptor e)
+  double operator()(edge_descriptor e, Polyhedron& polyhedron)
   {
      vertex_descriptor v0 = boost::target(e, polyhedron);
      vertex_descriptor v1 = boost::source(e, polyhedron);
@@ -133,14 +131,37 @@ public:
         vertex_descriptor v2 = boost::source(e_cw, polyhedron);     
         edge_descriptor e_ccw = CGAL::next_edge_ccw(e, polyhedron);
         vertex_descriptor v3 = boost::source(e_ccw, polyhedron);
+
         return ( CotangentValue::operator()(v0, v2, v1)/2.0 + CotangentValue::operator()(v0, v3, v1)/2.0 );
      }
   }
-
-private:
-  Polyhedron& polyhedron;	
 };
 
+// Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
+template<class Polyhedron, 
+         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+class Single_cotangent_weight : CotangentValue
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  typedef typename Polyhedron::Traits::Vector_3  Vector;
+  typedef typename Polyhedron::Traits::Point_3   Point;
+
+  // Returns the cotangent of the opposite angle of the edge
+  // 0 for border edges (which does not have an opposite angle)
+  double operator()(edge_descriptor e, Polyhedron& polyhedron)
+  {
+     if(boost::get(CGAL::edge_is_border, polyhedron, e)) { return 0.0;}
+     
+     vertex_descriptor v0 = boost::target(e, polyhedron);
+     vertex_descriptor v1 = boost::source(e, polyhedron);
+
+     vertex_descriptor v_op = boost::target(CGAL::next_edge(e, polyhedron), polyhedron);
+     return CotangentValue::operator()(v0, v_op, v1);
+  }
+};
 
 // Mean value calculator described in -[Floater04] Mean Value Coordinates-
 template<class Polyhedron>
@@ -153,12 +174,9 @@ public:
   typedef typename Polyhedron::Traits::Vector_3  Vector;
   typedef typename Polyhedron::Traits::Point_3   Point;
 
-  Mean_value_weight(Polyhedron& polyhedron) : polyhedron(polyhedron)
-  { }
-
   // Returns the mean-value coordinate of specified edge_descriptor
   // Returns different value for different edge orientation (which is a normal behaivour according to formula)
-  double operator()(edge_descriptor e)
+  double operator()(edge_descriptor e, Polyhedron& polyhedron)
   {
     vertex_descriptor v0 = boost::target(e, polyhedron);
     vertex_descriptor v1 = boost::source(e, polyhedron);
@@ -227,8 +245,6 @@ private:
     return (normalizer - cos_rep) / sin_rep; // formula from [Floater04] page 4
                                              // tan(Q/2) = (1 - cos(Q)) / sin(Q)
   }
-
-  Polyhedron& polyhedron;	
 };
 
 template< class Polyhedron, 
@@ -239,14 +255,11 @@ class Hybrid_weight : public PrimaryWeight, SecondaryWeight
 public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
 
-  Hybrid_weight(Polyhedron& polyhedron) : PrimaryWeight(polyhedron), SecondaryWeight(polyhedron)
-  { }
-
-  double operator()(edge_descriptor e)
+  double operator()(edge_descriptor e, Polyhedron& polyhedron)
   {
-    double weight = PrimaryWeight::operator()(e);
+    double weight = PrimaryWeight::operator()(e, polyhedron);
     //if(weight < 0) { std::cout << "Negative weight" << std::endl; }
-    return (weight >= 0) ? weight : SecondaryWeight::operator()(e);
+    return (weight >= 0) ? weight : SecondaryWeight::operator()(e, polyhedron);
   }
 };
 
@@ -257,12 +270,11 @@ class Uniform_weight
 public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
 
-  Uniform_weight(Polyhedron& /*polyhedron*/ ) { } 
-
-  double operator()(edge_descriptor e)
+  double operator()(edge_descriptor /*e*/, Polyhedron& /*polyhedron*/)
   { return 1.0; }
 };
 
 }//namespace internal
+/// @endcond
 }//namespace CGAL
 #endif //CGAL_SURFACE_MODELING_WEIGHTS_H
