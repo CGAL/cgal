@@ -76,6 +76,7 @@ public:
   typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
+  typedef Deform_mesh<Polyhedron, SparseLinearAlgebraTraits_d, VertexIndexMap, EdgeIndexMap> Self;
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
@@ -115,6 +116,9 @@ private:
 
   bool need_preprocess;                               // is there any need to call preprocess() function
   Handle_group_container handle_groups;               // user specified handles
+
+private:
+  Deform_mesh(const Self& s) { } 
 
 // Public methods
 public:
@@ -163,7 +167,7 @@ public:
    */
   Handle_group create_handle_group()
   {
-    need_preprocess = true;
+    // no need to need_preprocess = true;
     handle_groups.push_back(Handle_container());
     return --handle_groups.end();
   }
@@ -278,8 +282,8 @@ public:
   /** 
    * Necessary precomputation work before beginning deformation.
    * It needs to be called after insertion of vertices as handles or roi is done.
-   * @tparam WeightCalculator a model of SurfaceModelingWeightCalculator
-   * @param weight_calculator a function object or pointer for weight calculation
+   * @tparam a model of SurfaceModelingWeightCalculator
+   * @param a function object or pointer for weight calculation
    * @return true if Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for ROI 
    * and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices).
@@ -334,6 +338,8 @@ public:
    */
   void translate(Handle_group handle_group, const Vector& translation)
   {
+    if(need_preprocess) { preprocess(); }
+
     for(typename Handle_container::iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
     {
@@ -355,6 +361,8 @@ public:
   template <typename Quaternion, typename Vect>
   void rotate(Handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
   {
+    if(need_preprocess) { preprocess(); }
+
     for(typename Handle_container::iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
     {
@@ -370,12 +378,38 @@ public:
   }
 
   /**
+   * Rotate the handle group around center of original positions of handles in the group by quaternion then translate it by translation 
+   * from its original position (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
+   * @tparam Quaternion a model of SurfaceModelingQuaternion
+   * @tparam Vect a model of SurfaceModelingVect
+   * @param handle_group representative of the handle group which is subject to rotation
+   * @param quat rotation holder quaternion
+   * @param translation post translation vector
+   */
+
+  //template <typename Quaternion, typename Vect>
+  //void rotate(Handle_group handle_group, const Quaternion& quat, const Vect& translation)
+  //{
+  //  Point center_acc(0, 0, 0);
+  //  for(typename Handle_container::iterator it = handle_group->begin();
+  //    it != handle_group->end(); ++it)
+  //  {
+  //    center_acc = center_acc + (original[id(*it)] - CGAL::ORIGIN);
+  //  }
+  //  std::size_t handles_size = handle_group->size();
+  //  Point center(center_acc.x() / handles_size, center_acc.y() / handles_size, center_acc.z() / handles_size);
+  //  rotate(handle_group, center, quat, translation);
+  //}
+
+  /**
    * Assign the target position for the handle vertex 
    * @param vd handle vertex to be assigned target position
    * @param target_position constrained position
    */
   void assign(vertex_descriptor vd, const Point& target_position)
   {
+    if(need_preprocess) { preprocess(); }
+
     solution[id(vd)] = target_position;
   }
 
@@ -389,14 +423,16 @@ public:
   }
 
   /**
-   * Deformation on roi vertices. Instant values for iterations and tolerance can be used as parameters.
+   * Deformation on roi vertices.
+   * Instant values for iterations and tolerance can be used as parameters.
    * These parameters are temprorary.
    * @param iterations number of iterations for optimization procedure
    * @param tolerance tolerance of convergence (see explanations set_tolerance(double tolerance))
    */
   void deform(unsigned int iterations, double tolerance)
   {
-    CGAL_precondition(!need_preprocess || !"preprocess() need to be called before deforming!");
+    // CGAL_precondition(!need_preprocess || !"preprocess() need to be called before deforming!");
+    if(need_preprocess) { preprocess(); }
 
     // Note: no energy based termination occurs at first iteration
     // because comparing energy of original model (before deformation) and deformed model (deformed_1_iteration)
@@ -459,14 +495,13 @@ private:
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
       {
-        typename std::set<edge_descriptor>::iterator it = have_id.find(*e);
-        if(it != have_id.end()) { continue; } // we have assigned an id already, which means we also calculted the weight
-        
-        put(edge_index_map, *e, next_edge_id++);
-        have_id.insert(*e);
+        if(have_id.insert(*e).second) 
+        { // we haven't assigned an id yet, also no weights calculated
+          put(edge_index_map, *e, next_edge_id++);
 
-        double weight = weight_calculator(*e, polyhedron);
-        edge_weight.push_back(weight);
+          double wij = weight_calculator(*e, polyhedron); // edge(pi - pj)
+          edge_weight.push_back(wij);
+        }
       }// end of edge loop
     }// end of ros loop
   }
@@ -487,11 +522,9 @@ private:
       {
         edge_descriptor active_edge = rims_it.get_descriptor();
 
-        typename std::set<edge_descriptor>::iterator it = have_id.find(active_edge);
-        if(it == have_id.end()) // we have not assigned an id yet
-        {  
+        if(have_id.insert(active_edge).second) 
+        {  // we haven't assigned an id yet, also no weights calculated
           put(edge_index_map, active_edge, next_edge_id++);
-          have_id.insert(active_edge);
           double wji = weight_calculator(active_edge, polyhedron); // edge(pj - pi)
           edge_weight.push_back(wji);
 
@@ -516,11 +549,9 @@ private:
     for (boost::tie(e,e_end) = boost::in_edges(vd, polyhedron); e != e_end; e++)
     {
       vertex_descriptor vt = boost::source(*e, polyhedron);
-      typename std::set<vertex_descriptor>::iterator it = have_id.find(vt);
-      if( it == have_id.end() )  // neighboring vertex which is outside of roi and not visited previously (i.e. need an id)
+      if(have_id.insert(vt).second)  // neighboring vertex which is outside of roi and not visited previously (i.e. need an id)
       {
         put(vertex_index_map, vt, next_id++);
-        have_id.insert(vt);
         push_vector.push_back(vt);        
       }
     }
