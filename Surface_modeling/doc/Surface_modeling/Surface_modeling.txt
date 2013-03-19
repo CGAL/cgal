@@ -305,7 +305,6 @@ Deformation results from example, deform_1.off and deform_2.off.
 
 \subsubsection Example_2 Example 2
 In this example, we use handle grouping feature of the API together with `Deform_mesh::translate()` and `Deform_mesh::rotate()`. 
-\todo we need to implement small quaternion class to demonstrate `Deform_mesh::rotate()`.<b>SL</b> Is there anything in eigen or shall we use qglviewer?
 
 \cgalExample{Surface_modeling/k_ring_roi_translate_rotate_example.cpp}
 
