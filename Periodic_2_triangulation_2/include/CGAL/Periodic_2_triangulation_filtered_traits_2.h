@@ -191,8 +191,8 @@ template < typename K, typename Off = typename CGAL::Periodic_2_offset_2, bool H
 class Periodic_2_triangulation_filtered_traits_2;
 
 template < typename K, typename Off, bool Has_static_filters >  
-class Periodic_2_triangulation_filtered_traits_2:
-  Periodic_2_triangulation_filtered_traits_base_2<K, Off> {};
+class Periodic_2_triangulation_filtered_traits_2
+  : public Periodic_2_triangulation_filtered_traits_base_2<K, Off> {};
   
 template < typename K, typename Off >
 class Periodic_2_triangulation_filtered_traits_2<K,Off,true>
