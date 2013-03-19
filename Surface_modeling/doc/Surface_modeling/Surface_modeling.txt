@@ -33,9 +33,10 @@ where:
 -\f$w_{ij}\f$ is the weight between \f$\mathbf{v}_i\f$ and the neighbor \f$\mathbf{v}_j\f$. 
   
 The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each vertex 
-\f$\mathbf{v}_j\f$ in the one-ring neighborhood. For the computation of the Laplacien, this actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}) 
+\f$\mathbf{v}_j\f$ in the one-ring neighborhood. For the computation of the Laplacien, 
+this actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}).
 
-We use cotangent weights \cite Pinkall1993Cotangent to eliminate the effect of non-uniform discretization of the mesh model 
+We use cotangent weights \cite Pinkall1993Cotangent to eliminate the effect of non-uniform discretization of the mesh model.
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
 Laplacien with uniform weights: the red square vertex is the average position of the neighbors vertices of the yellow circle vertex. Blue vector represents the Laplacian coordinate of the yellow vertex under uniform weights.
@@ -51,20 +52,16 @@ Considering the mesh as a whole, it is possible to generate a linear system whic
 \f]
 
 where 
-- \f$n\f$ is the number of vertices in the mesh;
+- \f$n\f$ is the number of vertices in the mesh,
 - \f$\mathbf{L}\f$ is an \f$n \times n\f$ matrix, called the <i>Laplacian matrix</i>,
 in which each row is filled according to Eq.\f$\eqref{eq:lap_open}\f$, that is the element \f$ m_{ij} \f$ of \f$ L \f$ is equal to \f$ -w_{ij} \f$ 
-if \f$ \mathbf{v}_j \in N(\mathbf{v}) \f$, \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$ and \f$ 0 \f$ otherwise. 
-(Thus \f$ L \f$ is a not necessarily symmetric sparse matrix
- <b>IOY</b> No need to discuss this, we can construct symmetric matrix with symmetric weights but when we integrate constraints we are going to break symmetry anyway.)
- 
+if \f$ \mathbf{v}_j \in N(\mathbf{v}) \f$, \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$ and \f$ 0 \f$ otherwise,
 - \f$\mathbf{V}\f$ is an \f$n \times 1\f$ vector consisting of 
 global positions of vertices; and \f$\delta\f$ represents Laplacian coordinates of the mesh. 
 
-\todo: I added that the weight are not necessarily symmetric, is that true? in the case of this package, the weight are symmetric, right?
 
 \subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
-A simple mesh deformation system consists of a mesh, a few selected control vertices, the <i>handles</i> 
+A simple mesh deformation system consists of a mesh, a few selected control vertices (i.e. <i>handles</i>)
 and target positions of the handles as deformation constraints.
 
 The main idea behind Laplacian deformation is to preserve the Laplacian coordinates under deformation constraints. 
@@ -96,7 +93,9 @@ We provide support for hard constraints, which means constrained positions of ha
 where \f$\mathbf{L}'\f$ is Laplacian matrix of free (i.e. not constrained) vertices, \f$\mathbf{I}_c\f$ contains a row for each constrained vertex 
 with one in corresponding position of the vertex and zeros elsewhere, \f${\delta}'\f$ is Laplacian coordinates of free vertices, 
 and \f$\mathbf{V}_c\f$ holds the target positions of constrained vertices. Solving the system under deformation constraints 
-preserves Laplacians of free vertices (upper side of the system) while satisfying the constraints (lower side of the system).
+preserves Laplacians of free vertices (upper side of the system) while satisfying the constraints (lower side of the system). 
+
+The constructed matrix in Eq.\f$\eqref{eq:lap_energy_system}\f$ is square nonsymmetric sparse matrix and an appropriate solver should be used.
 
 \subsection Surface_Modeling_Overview_ARAP As-Rigid-As Possible Deformation
 
@@ -115,8 +114,7 @@ where \f$\mathbf{R}_i\f$ is rotation matrix for \f$\mathbf{v}_i\f$, and \f$\math
 
 The intuitive idea behind this energy function is to allow cells to
 have individual rotations, and at the same time using overlapping nature of the
-cells to prevent sharing \cgalFigureRef{Overlapping_cells}. (<b>SL</b>: this is not clear to me 
-<b>IOY</b> it is a brief explanation, I guess one need to read the paper and also think about the algorithm to make it clear.)
+cells to prevent sharing \cgalFigureRef{Overlapping_cells}.
  
 \cgalFigureBegin{Overlapping_cells,overlapping_cells.png}
 Illustration of overlapping cells
@@ -162,7 +160,12 @@ so that we can fill \f$\delta\f$ using the right-hand side of the equation which
 Then,  the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ can be solved in order to find \f$\mathbf{V}'\f$. 
 This two-step optimization can be applied iteratively several time to obtain a better result.
 
-\note In order to have asymmetric edge weights, we slightly changed the Eq. \f$\eqref{eq:lap_ber}\f$ to:
+An important observation is the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ only depents on the initial mesh structure and which vertices are handle vertices. 
+So that, once handle vertices are determined, we can use a direct solver to factorize sparse matrix in Eq. \f$\eqref{eq:lap_energy_system}\f$, and use this factorization
+in each iteration of the optimization procedure with the cost of back-substitution.
+
+\note The original algorithm in \cite Sorkine2007AsRigidAs assumes that weights are symmetric (i.e. \f$w_{ij} = w_{ji}\f$) while deriving the Eq. \f$\eqref{eq:lap_ber}\f$.
+In our implementation, in order to support asymmetric weights, we slightly changed the Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \f[
 \begin{equation}
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij} + w_{ji})(\mathbf{v}'_i - \mathbf{v}'_j) =
@@ -171,12 +174,10 @@ This two-step optimization can be applied iteratively several time to obtain a b
 \end{equation}
 \f]
 
-\todo add motivation for having symmetric weights <b>IOY</b> don't understand
-
 \subsection Surface_Modeling_Overview_ARAP_Rims Spokes and Rims Version
 
 \cgalFigureBegin{Spoke_and_rim_edges, spoke_and_rim_edges_2.png}
-Considered edges \f$E(\mathbf{v}_i)\f$ in energy function for a vertex \f$\mathbf{v}_i\f$. (<b>SL</b>: vi should appear on the figure)
+Considered edges \f$E(\mathbf{v}_i)\f$ in energy function for a vertex \f$\mathbf{v}_i\f$.
 \cgalFigureEnd
 
 The modified energy function proposed by \cite Chao2010SimpleGeomModel take into account all edges around the facets incident to a vertex. The energy function becomes:
@@ -191,11 +192,9 @@ The modified energy function proposed by \cite Chao2010SimpleGeomModel take into
 \f]
 
 where \f$E(\mathbf{v}_i)\f$ is set of edges around facets incident to \f$\mathbf{v}_i\f$ (see \cgalFigureRef{Spoke_and_rim_edges}).
-While constructing the solution, we can follow same approach (i.e. two-step optimization) explained in \ref Surface_Modeling_Overview_ARAP.
+While constructing the solution, we can follow the same approach (i.e. two-step optimization) explained in \ref Surface_Modeling_Overview_ARAP.
 For the first step, corresponding Eq. \f$\eqref{eq:cov_matrix}\f$ is simply modified to include all edges in \f$E(\mathbf{v}_i)\f$. 
 For the second step, setting partial derivative of Eq. \f$\eqref{eq:arap_energy_rims}\f$ zero with respect to \f$\mathbf{v}_i\f$ results in:
-
-(<b>SL</b>: the two sentenses above are not clear. I guess it's the steps during the solving and you explain how the method explain above must be adapted).
 
 \f[
 \begin{equation}
@@ -220,19 +219,18 @@ We present the API by considering the user point of view during a deformation se
 
 The deformation is handled thanks to a function object that must be initialized:
   - `Deform_mesh deform = Deform_mesh(Polyhedron& polyhedron, VertexIndexMap vertex_index_map, EdgeIndexMap edge_index_map, unsigned int iterations = 5, double tolerance = 1e-4)`
-		- vertex_index_map and edge_index_map are property maps used for assigning indexes to required vertices and edges. 
+		- `vertex_index_map` and `edge_index_map` are property maps used for assigning indexes to required vertices and edges. 
 		- For details on `iterations` and `tolerance` parameters see the \ref deform_method "deform method". 
 
 \todo The ROI is first mentionned here. It should be mentionned yearlier. That is that not all vertices in the mesh are considered.
 
 Then, the region that the algorithm operates on (i.e. region of interest -ROI) 
-should be determined. The API is convenient enough for either using the whole mesh or a set of given (or particular or concreate) vertices as region of interest. (<b>SL</b>: when I read predefined, I think about the k-ring around the handles. you meant particular?)
+should be determined. The API is convenient enough for either using a subset or the whole mesh as region of interest.
   - `Deform_mesh::insert_roi(vertex_descriptor vd)` insert vertices one by one
   - `Deform_mesh::insert_roi(InputIterator begin, InputIterator end)` insert vertices in a range
 
 The ROI should be a connected component and should also include the handle vertices \cgalFigureRef{Simple_roi}.
-Note that the algorithm automatically finds the exterior-boundary of the ROI and fix those vertices while deforming.
-(<b>SL</b>: the first time I read <i>boundary</i>, it made me think that the boundary is part of the ROI but it's not the case right? <b>IOY</b> yes, what about exterior-boundary)
+Note that the algorithm automatically finds the exterior-boundary of the ROI and treat them as <b>fixed handles</b>.
 
 \cgalFigureBegin{Simple_roi, roi_example.png}
 Red vertices represent handles, and yellow vertices together with red vertices represent ROI. 
@@ -244,7 +242,7 @@ At this point vertices should be grouped that are expected to translate or rotat
   - `Deform_mesh::insert_handle(Handle_group handle_group, vertex_descriptor vd)` insert a vertex to a handle group
   - `Deform_mesh::insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)` insert a set of vertices to ae handle group
 
-Vertices in the same group can be connected or disconnected. The reason why vertices are gathered in groups is to be able to apply the same translate and rotation to the vertices of a group. 
+Vertices in the same group can be connected or disconnected. The reason why vertices are gathered in groups is to be able to apply the same translation and rotation to the vertices of a group. 
 
 The status of a vertex (roi or handle) can be reinitialized :
   - `Deform_mesh::erase_roi(vertex_descriptor vd)` erase the vertex from ROI
@@ -253,14 +251,17 @@ The status of a vertex (roi or handle) can be reinitialized :
 
 After having set the ROI and the handle groups, a preprocess function needs to be called.
   - `Deform_mesh::preprocess()` preprocess ROI and handles, make internal stuff ready for deformation
+  - `Deform_mesh::preprocess(WeightCalculator weight_calculator)` preprocess with providing custom weights for edges (see \ref Example_4)
   
-Preprocess function returns true if factorization of the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ is successful. 
-One common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for the ROI, or if there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices).
-Another reason can be zero weights for edges (if you are using custom weights).
+Preprocess function returns true if factorization of the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ is successful, false in case of a failure. 
 
-\todo Shall we mention that the preproccessing can be automatically done during the first call to deform()? Also we could have a check that the handle set is non-empty and that we have no 0 weights.
-
-\todo side note: shall the weighted scheme be a parameter of the deformation process?
+Rank deficiency is the main reason for the failure, which happens if there is no path between a free vertex and a handle vertex (i.e. both fixed and user-inserted). 
+Some cases for such failure:
+	- Inserting whole mesh as ROI and inserting no handle vertices,
+	- Using custom weights which includes too many zero weights, so that the connectivity is broken.
+	
+Calling preprocess function is optional, which means it is called by functions in \ref Deform_section, if there is any need to. 
+Of course, it might create a delay for the first time call causing by factorization. 
 
 \subsection Deform_section Deform Section
 
