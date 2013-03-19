@@ -28,41 +28,18 @@ L(\mathbf{v}_i) = \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}_i - 
 \end{equation}
 \f]
 
-where \f$N(\mathbf{v}_i)\f$ is the one-ring neighbor vertices of \f$\mathbf{v}_i\f$, and \f$w_{ij}\f$ is the weight between \f$\mathbf{v}_i\f$ and the neighbor \f$\mathbf{v}_j\f$. 
+where:
+- \f$N(\mathbf{v}_i)\f$ is the one-ring neighbor vertices of \f$\mathbf{v}_i\f$;
+-\f$w_{ij}\f$ is the weight between \f$\mathbf{v}_i\f$ and the neighbor \f$\mathbf{v}_j\f$. 
   
 The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each vertex 
-\f$\mathbf{v}_j\f$ in the one-ring neighborhood, which actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}) 
-
-(<b>SL</b>: I don't understand what you mean here. <b>IOY</b> since weights are uniform( \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$) 
-\f[
-\begin{equation}
-\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij}\mathbf{v}_j = mass - center - of - neighbors.
-  \label{eq:1}
-\end{equation}
-\f]
-will be equal to mass center of neighbors (i.e. "the average of neighbor vertices"), and since they sum up to one in uniform example
-\f[
-\begin{equation}
-\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij}\mathbf{v}_i = \mathbf{v}_i.
-  \label{eq:2}
-\end{equation}
-\f]
-
-So ...which actually corresponds to subtracting the average of neighbor vertices ( Eq.\f$\eqref{eq:1}\f$ ) from the current vertex (Eq.\f$\eqref{eq:2}\f$). 
-
+\f$\mathbf{v}_j\f$ in the one-ring neighborhood. For the computation of the Laplacien, this actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}) 
 
 We use cotangent weights \cite Pinkall1993Cotangent to eliminate the effect of non-uniform discretization of the mesh model 
 
-(<b>SL</b>: same here, I don't get what you mean. <b>IOY</b> Uniform weights would be fine if all triangles are equilateral, cotangent weights are way to eliminate biased meshing).
-
-\todo we should not have \f$ \sum w_{ij} == 1 \f$, right? <b>IOY</b> No, weights' do not have to sum up to one. Although in uniform case they do. 
-
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
-A simple mesh structure. Red square is the average of neighbors of the yellow vertex. Blue vector represents Laplacian coordinate of the yellow vertex under uniform weights.
+Laplacien with uniform weights: the red square vertex is the average position of the neighbors vertices of the yellow circle vertex. Blue vector represents the Laplacian coordinate of the yellow vertex under uniform weights.
 \cgalFigureEnd
-
-\todo you must explicitly say that the yellow vertex is the one obtain with constructing vertex with the weights 
-<b>IOY</b> don't understand, what I want to show here is laplacian of the yellow vertex (using uniform weights)
 
 Considering the mesh as a whole, it is possible to generate a linear system which results in Laplacian coordinates of all vertices:
 
@@ -74,7 +51,7 @@ Considering the mesh as a whole, it is possible to generate a linear system whic
 \f]
 
 where 
-- \f$n\f$ is number of vertices in the mesh;
+- \f$n\f$ is the number of vertices in the mesh;
 - \f$\mathbf{L}\f$ is an \f$n \times n\f$ matrix, called the <i>Laplacian matrix</i>,
 in which each row is filled according to Eq.\f$\eqref{eq:lap_open}\f$, that is the element \f$ m_{ij} \f$ of \f$ L \f$ is equal to \f$ -w_{ij} \f$ 
 if \f$ \mathbf{v}_j \in N(\mathbf{v}) \f$, \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$ and \f$ 0 \f$ otherwise. 
@@ -183,8 +160,7 @@ which minimizes the deformation energy, setting the derivative to zero results i
 The left-hand side of this equation corresponds to Eq.\f$\eqref{eq:lap_open}\f$,
 so that we can fill \f$\delta\f$ using the right-hand side of the equation which consists only of known values in our system. 
 Then,  the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ can be solved in order to find \f$\mathbf{V}'\f$. 
-Two-step optimization can be pursued for further refinement by altering steps. (<b>SL</b>: what do you mean? can apply several iterations? 
-<b>IOY</b> yes, these two steps are considered to be one iteration. I also stated that for 'iterations' parameter in the API section of the manual.)
+This two-step optimization can be applied iteratively several time to obtain a better result.
 
 \note In order to have asymmetric edge weights, we slightly changed the Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \f[
@@ -248,6 +224,7 @@ The deformation is handled thanks to a function object that must be initialized:
 		- For details on `iterations` and `tolerance` parameters see the \ref deform_method "deform method". 
 
 \todo The ROI is first mentionned here. It should be mentionned yearlier. That is that not all vertices in the mesh are considered.
+
 Then, the region that the algorithm operates on (i.e. region of interest -ROI) 
 should be determined. The API is convenient enough for either using the whole mesh or a set of given (or particular or concreate) vertices as region of interest. (<b>SL</b>: when I read predefined, I think about the k-ring around the handles. you meant particular?)
   - `Deform_mesh::insert_roi(vertex_descriptor vd)` insert vertices one by one
@@ -316,8 +293,6 @@ After deformation handle vertices will be placed to their target positions and f
 The steps in \ref Deform_section can be repeated for further deformations.
 
 \subsection Surface_modeling_examples Examples
-
-\todo rename examples, the name should be unique accross packages since they are cmake targets <b>IOY</b> done. Rename also in examples.txt <b>IOY</b> what is examples.txt ?
 
 \subsubsection Example_1 Example 1
 In this example, the whole mesh is used as ROI and a few vertices are added as handles. `Deform_mesh::assign()` is used for constraining handle vertices.
