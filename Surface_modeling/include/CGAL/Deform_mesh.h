@@ -36,24 +36,33 @@
 #include <vector>
 #include <list>
 
-#define CGAL_DEFORM_SPOKES_AND_RIMS  // it uses all edges in facets around a vertex
                                       
 namespace CGAL {
 
-/// \ingroup PkgSurfaceModeling
+/// \ingroup PkgSurfaceModeling,
+///@brief Deformation algorithm type
+enum Deformation_type
+{ 
+  ORIGINAL_ARAP,  /**< use original as-rigid-as possible algorithm */
+  SPOKES_AND_RIMS /**< use spokes and rims version of as-rigid-as possible algorithm */
+};
+
 /**
+ * \ingroup PkgSurfaceModeling
  * @brief Class providing the functionalities for deforming a triangulated surface mesh
  *
- * @tparam Polyhedron_ a model of HalfedgeGraph
- * @tparam SparseLinearAlgebraTraitsWithPreFactor_d_ sparse linear solver for square sparse linear systems
- * @tparam VertexIndexMap_ a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type
- * @tparam EdgeIndexMap_ a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type
+ * @tparam Polyhedron_ model of HalfedgeGraph
+ * @tparam SparseLinearAlgebraTraitsWithPreFactor_d_ sparse linear solver for square sparse linear systems (link to concept?)
+ * @tparam VertexIndexMap_ model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
+ * @tparam EdgeIndexMap_ model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
+ * @tparam deformation_type non-type template parameter from ::Deformation_type for selecting deformation algorithm
  */
 template <
   class Polyhedron_, 
   class SparseLinearAlgebraTraits_d_, 
   class VertexIndexMap_, 
-  class EdgeIndexMap_
+  class EdgeIndexMap_,
+  Deformation_type deformation_type = SPOKES_AND_RIMS
   >
 class Deform_mesh
 {
@@ -63,10 +72,10 @@ public:
   /// \name Types from template parameters
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
-  typedef Polyhedron_ Polyhedron; /**< a model of HalfedgeGraph */
+  typedef Polyhedron_ Polyhedron; /**< model of HalfedgeGraph */
   typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d; /**< sparse linear solver for square sparse linear systems */
-  typedef VertexIndexMap_ VertexIndexMap; /**< a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with vertex_descriptor as key and `unsigned int` as value type */
-  typedef EdgeIndexMap_ EdgeIndexMap; /**< a <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with edge_descriptor as key and `unsigned int` as value type */
+  typedef VertexIndexMap_ VertexIndexMap; /**< model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
+  typedef EdgeIndexMap_ EdgeIndexMap; /**< model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
   /// @}
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
@@ -76,7 +85,7 @@ public:
   typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
-  typedef Deform_mesh<Polyhedron, SparseLinearAlgebraTraits_d, VertexIndexMap, EdgeIndexMap> Self;
+  typedef Deform_mesh<Polyhedron, SparseLinearAlgebraTraits_d, VertexIndexMap, EdgeIndexMap, deformation_type> Self;
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
@@ -128,7 +137,7 @@ public:
    * The constructor for deformation object
    *
    * @pre is there anyway to add @a polyhedron.is_pure_triangle() in halfedgegraph
-   * @param polyhedron a triangulated surface mesh for modeling
+   * @param polyhedron triangulated surface mesh for modeling
    * @param vertex_index_map vertex index map for associating ids with region of interest vertices
    * @param edge_index_map edge index map for associating ids with region of interest edges
    * @param iterations see explanations set_iterations(unsigned int iterations)
@@ -163,7 +172,7 @@ public:
    * insert_handle(Handle_group handle_group, vertex_descriptor vd) or insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
    * can be used for populating a group.
    * After inserting vertices, translate() or rotate() can be used for applying transformations on all vertices inside the group. 
-   * @return created handle group representative (returned representative is valid until erase_handle(Handle_group handle_group) is called [or copy constructor what to do about it?])
+   * @return created handle group representative (returned representative is valid until erase_handle(Handle_group handle_group) is called)
    */
   Handle_group create_handle_group()
   {
@@ -267,26 +276,30 @@ public:
     }
   }
   /**
-   * Overloaded version of Deform_mesh::preprocess(WeightCalculator weight_calculator).
-   * Cotangent weights are used by default.
+   * Necessary precomputation work before beginning deformation.
+   * It needs to be called after insertion of vertices as handles or roi is done.
+   * For edge weights cotangent weights are used by default.
+   * @return true if Laplacian matrix factorization is successful.
+   * A common reason for failure is that the system is rank deficient, 
+   * which happens if there is no path between a free vertex and a handle vertex (i.e. both fixed and user-inserted).
+   * @see Deform_mesh::preprocess(WeightCalculator weight_calculator) for using custom weights
    */
   bool preprocess()
   {
-  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
-    internal::Single_cotangent_weight<Polyhedron > calculator;
-  #else
-    internal::Cotangent_weight<Polyhedron > calculator;
-  #endif
-    return preprocess(calculator);
+    if(deformation_type == SPOKES_AND_RIMS) 
+    {
+      return preprocess(internal::Single_cotangent_weight<Polyhedron>());
+    }
+    else
+    {
+      return preprocess(internal::Cotangent_weight<Polyhedron>());
+    }
   }
   /** 
-   * Necessary precomputation work before beginning deformation.
-   * It needs to be called after insertion of vertices as handles or roi is done.
-   * @tparam a model of SurfaceModelingWeightCalculator
-   * @param a function object or pointer for weight calculation
-   * @return true if Laplacian matrix factorization is successful.
-   * A common reason for failure is that the system is rank deficient, which happens if there is no boundary vertices for ROI 
-   * and also there is no handle vertices (i.e. inserting whole mesh as ROI and inserting no handle vertices).
+   * see explanations in preprocess()
+   * @tparam WeightCalculator model of SurfaceModelingWeightCalculator
+   * @param weight_calculator function object or pointer for weight calculation
+   * @return true if Laplacian matrix factorization is successful
    */
   template<class WeightCalculator>
   bool preprocess(WeightCalculator weight_calculator)
@@ -351,8 +364,8 @@ public:
   /**
    * Rotate the handle group around rotation center by quaternion then translate it by translation 
    * from its original position (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
-   * @tparam Quaternion a model of SurfaceModelingQuaternion
-   * @tparam Vect a model of SurfaceModelingVect
+   * @tparam Quaternion model of SurfaceModelingQuaternion
+   * @tparam Vect model of SurfaceModelingVect
    * @param handle_group representative of the handle group which is subject to rotation
    * @param rotation_center center of rotation
    * @param quat rotation holder quaternion
@@ -377,11 +390,11 @@ public:
     }
   }
 
-  /**
+  /*
    * Rotate the handle group around center of original positions of handles in the group by quaternion then translate it by translation 
    * from its original position (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
-   * @tparam Quaternion a model of SurfaceModelingQuaternion
-   * @tparam Vect a model of SurfaceModelingVect
+   * @tparam Quaternion model of SurfaceModelingQuaternion
+   * @tparam Vect model of SurfaceModelingVect
    * @param handle_group representative of the handle group which is subject to rotation
    * @param quat rotation holder quaternion
    * @param translation post translation vector
@@ -424,8 +437,7 @@ public:
 
   /**
    * Deformation on roi vertices.
-   * Instant values for iterations and tolerance can be used as parameters.
-   * These parameters are temprorary.
+   * Instant values for iterations and tolerance can be used as one-time parameters.
    * @param iterations number of iterations for optimization procedure
    * @param tolerance tolerance of convergence (see explanations set_tolerance(double tolerance))
    */
@@ -476,11 +488,14 @@ private:
   template<class WeightCalculator>
   void compute_edge_weight(WeightCalculator weight_calculator)
   {
-  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
-    compute_edge_weight_spokes_and_rims(weight_calculator);
-  #else
-    compute_edge_weight_arap(weight_calculator);
-  #endif
+    if(deformation_type == SPOKES_AND_RIMS) 
+    {
+      compute_edge_weight_spokes_and_rims(weight_calculator);
+    }
+    else
+    {
+      compute_edge_weight_arap(weight_calculator);
+    }
   }
   template<class WeightCalculator>
   void compute_edge_weight_arap(WeightCalculator weight_calculator)
@@ -645,11 +660,14 @@ private:
   /// Assemble Laplacian matrix A of linear system A*X=B
   void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
-  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
-    assemble_laplacian_spokes_and_rims(A);
-  #else
-    assemble_laplacian_arap(A);
-  #endif
+    if(deformation_type == SPOKES_AND_RIMS) 
+    {
+      assemble_laplacian_spokes_and_rims(A);
+    }
+    else
+    {
+      assemble_laplacian_arap(A);
+    }
   }
   /// Construct matrix that corresponds to left-hand side of eq:lap_ber in user manual
   /// Also constraints are integrated as eq:lap_energy_system in user manual
@@ -732,11 +750,14 @@ private:
   /// Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
   {
-  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
-    optimal_rotations_svd_spokes_and_rims();
-  #else
-    optimal_rotations_svd_arap();
-  #endif
+    if(deformation_type == SPOKES_AND_RIMS) 
+    {
+      optimal_rotations_svd_spokes_and_rims();
+    }
+    else
+    {
+      optimal_rotations_svd_arap();
+    }
   }
   void optimal_rotations_svd_arap()
   {
@@ -836,11 +857,14 @@ private:
   /// Global step of iterations, updating solution
   void update_solution()
   {
-  #if defined(CGAL_DEFORM_SPOKES_AND_RIMS)
-    update_solution_spokes_and_rims();
-  #else
-    update_solution_arap();
-  #endif
+    if(deformation_type == SPOKES_AND_RIMS) 
+    {
+      update_solution_spokes_and_rims();
+    }
+    else
+    {
+      update_solution_arap();
+    }
   }
   // calculate right-hand side of eq:lap_ber in user manual and solve the system
   void update_solution_arap()
@@ -964,11 +988,14 @@ private:
   /// Compute modeling energy
   double energy()
   {
-  #ifdef CGAL_DEFORM_SPOKES_AND_RIMS
-    return energy_spokes_and_rims();
-  #else
-    return energy_arap();
-  #endif
+    if(deformation_type == SPOKES_AND_RIMS) 
+    {
+      return energy_spokes_and_rims();
+    }
+    else
+    {
+      return energy_arap();
+    }
   }
   double energy_arap()
   {
@@ -1231,9 +1258,6 @@ private:
 
 #endif
 };
-
-
 } //namespace CGAL
-
 #endif  // CGAL_DEFORM_MESH_H
 
