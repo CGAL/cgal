@@ -36,7 +36,8 @@
 #include <vector>
 #include <list>
 
-                                      
+#include "boost/tuple/tuple.hpp"
+
 namespace CGAL {
 
 /// \ingroup PkgSurfaceModeling,
@@ -99,8 +100,13 @@ private:
   typedef std::list<Handle_container>               Handle_group_container;
 public:
   /** The type for returned handle group representative from Deform_mesh::create_handle_group()*/
-  typedef typename Handle_group_container::iterator Handle_group;  
-                                                                      
+  typedef typename Handle_group_container::iterator       Handle_group;
+  /** Const version of Handle_group*/
+  typedef typename Handle_group_container::const_iterator Const_handle_group;
+  /** The type for iterating over handles */
+  typedef typename Handle_container::iterator             Handle_iterator;
+   /** Const version of Handle_iterator*/
+  typedef typename Handle_container::const_iterator       Const_handle_iterator;
 // Data members.
 public:
   Polyhedron& polyhedron;															/**< Source triangulated surface mesh for modeling */
@@ -124,7 +130,7 @@ private:
   double tolerance;                                   // tolerance of convergence 
 
   bool need_preprocess;                               // is there any need to call preprocess() function
-  Handle_group_container handle_groups;               // user specified handles
+  Handle_group_container handle_group_list;               // user specified handles
 
 private:
   Deform_mesh(const Self& s) { } 
@@ -162,7 +168,7 @@ public:
     need_preprocess = true;
     // clear vertices
     ros.clear();
-    handle_groups.clear();
+    handle_group_list.clear();
     // no need to clear vertex index map (or edge) since they are going to be reassigned 
     // (at least the useful parts will be reassigned)
   }
@@ -177,8 +183,8 @@ public:
   Handle_group create_handle_group()
   {
     // no need to need_preprocess = true;
-    handle_groups.push_back(Handle_container());
-    return --handle_groups.end();
+    handle_group_list.push_back(Handle_container());
+    return --handle_group_list.end();
   }
   
   /**
@@ -216,7 +222,7 @@ public:
   void erase_handle(Handle_group handle_group)
   {
     need_preprocess = true;
-    handle_groups.erase(handle_group);
+    handle_group_list.erase(handle_group);
   }
 
   /**
@@ -229,11 +235,66 @@ public:
     need_preprocess = true;
     typename Handle_container::iterator it 
       = std::find(handle_group->begin(), handle_group->end(), vd);
-    if(vd != handle_group->end())
+    if(it != handle_group->end())
     {
       handle_group->erase(it);
-      // Although the handle group might get empty, we do not delete it from handle_groups
+      // Although the handle group might get empty, we do not delete it from handle_group
     }
+  }
+
+  /** 
+   * Return iterator [begin, end) for handle groups
+   * @return tuple of [begin, end) as Handle_group
+   * Note that the returned types are handle group representatives, so there is no need to use
+   * dereference operator over iterators to obtain representatives.
+   */
+  boost::tuple<Handle_group, Handle_group> handle_groups()
+  {
+    return boost::make_tuple(handle_group_list.begin(), handle_group_list.end());
+  }
+
+  /** 
+   * Return iterator [begin, end) for handle groups
+   * @return tuple of [begin, end) as Const_handle_group
+   * Note that the returned types are handle group representatives, so there is no need to use
+   * dereference operator over iterators to obtain representatives.
+   */
+  boost::tuple<Const_handle_group, Const_handle_group> handle_groups() const
+  {
+    return boost::make_tuple(handle_group_list.begin(), handle_group_list.end());
+  }
+
+  /** 
+   * Return iterator [begin, end) for handles inside the group
+   * @param handle_group group containing the requested handles
+   * @return tuple of [begin, end) as Handle_iterator
+   * Use dereference operator to reach vertex_descriptors.
+   */
+  boost::tuple<Handle_iterator, Handle_iterator> handles(Handle_group handle_group)
+  {
+    return boost::make_tuple(handle_group->begin(), handle_group->end());
+  }
+
+  /** 
+   * Return iterator [begin, end) for handles inside the group
+   * @param handle_group group containing the requested handles
+   * @return tuple of [begin, end) as Const_handle_iterator
+   * Use dereference operator to reach vertex_descriptors.
+   */
+  boost::tuple<Const_handle_iterator, Const_handle_iterator> handles(Handle_group handle_group) const
+  {
+    return boost::make_tuple(handle_group->begin(), handle_group->end());
+  }
+
+  /** 
+   * Return iterator [begin, end) for handles inside the group
+   * @param handle_group group containing the requested handles
+   * @return tuple of [begin, end) as Const_handle_iterator
+   * Use dereference operator to reach vertex_descriptors.
+   */
+  boost::tuple<Const_handle_iterator, Const_handle_iterator> handles(Const_handle_group handle_group) const
+  {
+    return boost::make_tuple(handle_group->begin(), handle_group->end());
   }
 
   /**
@@ -270,7 +331,7 @@ public:
   {
     need_preprocess = true;
     typename std::vector<vertex_descriptor>::iterator it = std::find(ros.begin(), ros.end(), vd);
-    if(vd != ros.end())
+    if(it != ros.end())
     {
       ros.erase(it);
     }
@@ -645,8 +706,8 @@ private:
       std::size_t v_id = id(roi[i]);
       is_roi[v_id] = true;
     }
-    for(typename Handle_group_container::iterator it_group = handle_groups.begin(); 
-      it_group != handle_groups.end(); ++it_group)
+    for(typename Handle_group_container::iterator it_group = handle_group_list.begin(); 
+      it_group != handle_group_list.end(); ++it_group)
     {
       for(typename Handle_container::iterator it_vertex = it_group->begin(); 
         it_vertex != it_group->end(); ++it_vertex)
@@ -986,7 +1047,7 @@ private:
   }
 
   /// Compute modeling energy
-  double energy()
+  double energy() const 
   {
     if(deformation_type == SPOKES_AND_RIMS) 
     {
@@ -997,7 +1058,7 @@ private:
       return energy_arap();
     }
   }
-  double energy_arap()
+  double energy_arap() const
   {
     double sum_of_energy = 0;
     // only accumulate ros vertices
@@ -1021,7 +1082,7 @@ private:
     }
     return sum_of_energy;
   }
-  double energy_spokes_and_rims()
+  double energy_spokes_and_rims() const
   {
     double sum_of_energy = 0;
     // only accumulate ros vertices
@@ -1055,22 +1116,22 @@ private:
   }
 
   /// p1 - p2, return Eigen Column Vector
-  Eigen::Vector3d sub_to_col(const Point& p1, const Point& p2)
+  Eigen::Vector3d sub_to_col(const Point& p1, const Point& p2) const
   {
     return Eigen::Vector3d(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
   }
   /// p1 - p2, return Eigen Row Vector
-  Eigen::RowVector3d sub_to_row(const Point& p1, const Point& p2)
+  Eigen::RowVector3d sub_to_row(const Point& p1, const Point& p2) const
   {
     return Eigen::RowVector3d(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
   }
   /// shorthand of get(vertex_index_map, v)
-  std::size_t id(vertex_descriptor v)
+  std::size_t id(vertex_descriptor v) const
   {
     return get(vertex_index_map, v);
   }
   /// shorthand of get(edge_index_map, e)
-  std::size_t id(edge_descriptor e)
+  std::size_t id(edge_descriptor e) const
   {
     return get(edge_index_map, e);
   }
