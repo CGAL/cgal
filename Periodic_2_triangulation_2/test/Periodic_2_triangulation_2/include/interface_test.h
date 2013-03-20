@@ -182,16 +182,55 @@ void test_iterators() {
   Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
   CGAL_USE(vh2);
 
+  // vertices
+  size_t size = 0;
   for (typename T::Vertex_iterator vit = t_const.vertices_begin();
        vit != t_const.vertices_end(); ++vit) {
+    ++size;
   }
+  CGAL_assertion(size == t_const.number_of_stored_vertices());
+  size = 0;
+  for (typename T::Unique_vertex_iterator uvit = t_const.unique_vertices_begin();
+       uvit != t_const.unique_vertices_end(); ++uvit) {
+    ++size;
+  }
+  CGAL_assertion(size == t_const.number_of_vertices());
+  size = 0;
+  for (typename T::Vertex_iterator vit = t_const.all_vertices_begin();
+       vit != t_const.all_vertices_end(); ++vit) {
+    ++size;
+  }
+  CGAL_assertion(size == t_const.number_of_stored_vertices());
+
+  // edges
+  size = 0;
   for (typename T::Edge_iterator eit = t_const.edges_begin();
        eit != t_const.edges_end(); ++eit) {
+    ++size;
   }
+  CGAL_assertion(size == t_const.number_of_stored_edges());
+  size = 0;
+  for (typename T::Edge_iterator eit = t_const.all_edges_begin();
+       eit != t_const.all_edges_end(); ++eit) {
+    ++size;
+  }
+  CGAL_assertion(size == t_const.number_of_stored_edges());
+
+  // faces
+  size = 0;
   for (typename T::Face_iterator fit = t_const.faces_begin();
        fit != t_const.faces_end(); ++fit) {
+    ++size;
   }
+  CGAL_assertion(size == t_const.number_of_stored_faces());
+  size = 0;
+  for (typename T::All_faces_iterator fit = t_const.all_faces_begin();
+       fit != t_const.all_faces_end(); ++fit) {
+    ++size;
+  }
+  CGAL_assertion(size == t_const.number_of_stored_faces());
 
+  /// Geometric iterators
   for (typename T::Periodic_point_iterator ppit = t_const.periodic_points_begin();
        ppit != t_const.periodic_points_end(); ++ppit) {
   }
@@ -403,8 +442,8 @@ template <class T>
 void test_io(T &pt1) {
   bool ex = false; // Exact predicates
 
-  std::cout << "I/O" << std::endl;
-  std::cout << "  ascii" << std::endl;
+  // std::cout << "I/O" << std::endl;
+  // std::cout << "  ascii" << std::endl;
   
   std::stringstream ss1;
   ss1 << pt1;
@@ -415,7 +454,7 @@ void test_io(T &pt1) {
   assert(CGAL::is_ascii(ss1));
   if (!ex) assert(pt1 == pt1r);
 
-  std::cout << "  binary" << std::endl;
+  // std::cout << "  binary" << std::endl;
   pt1r.clear();
   // There are problems with the IO of exact number types in binary mode.
   if (!ex) {
@@ -429,7 +468,7 @@ void test_io(T &pt1) {
     assert(pt1 == pt1r);
   }
 
-  std::cout << "  pretty" << std::endl;
+  // std::cout << "  pretty" << std::endl;
   
   pt1r.clear();
   std::stringstream ss1p;
