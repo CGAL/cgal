@@ -1208,7 +1208,7 @@ protected:
 
   /// Test whether removing vertex v decreases the dimension of the triangulation.
   /// NGHK: Implemented
-  bool test_dim_down(Vertex_handle v) {
+  bool test_dim_down(Vertex_handle /*v*/) const {
     //test the dimensionality of the resulting triangulation
     //upon removing of vertex v
     return number_of_vertices() == 1;
@@ -1257,10 +1257,9 @@ protected:
   }
 
   /// NGHK: Not yet implemented
-  bool well_oriented(Vertex_handle v) {
+  bool well_oriented(Vertex_handle v) const {
     NGHK_NYI;
     typedef typename Geom_traits::Orientation_2 Orientation_2;
-    Orientation_2 orientation_2 = geom_traits().orientation_2_object();
     Face_circulator fc = incident_faces(v), done(fc);
     do {
       if (!is_infinite(fc)) {
