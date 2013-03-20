@@ -158,7 +158,7 @@ symmetric_bezout_matrix
     typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Degree degree;
-    typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
+    CGAL_assertion_code(typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;)
     typename Polynomial_traits_d::Get_coefficient coeff;
 
     typedef typename internal::Simple_matrix<NT> Matrix;
