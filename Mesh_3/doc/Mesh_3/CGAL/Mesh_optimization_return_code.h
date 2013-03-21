@@ -19,7 +19,8 @@ BOUND_REACHED = 0, ///< The given lower bound on mesh quality is reached.
 TIME_LIMIT_REACHED, ///< The given time limit is reached.
 CANT_IMPROVE_ANYMORE, ///< Mesh could not be improved anymore.
 CONVERGENCE_REACHED, ///< The given convergence bound is reached.
-MAX_ITERATION_NUMBER_REACHED ///< The given maximum iteration number is reached.
+MAX_ITERATION_NUMBER_REACHED, ///< The given maximum iteration number is reached.
+ALL_VERTICES_FROZEN ///< All vertices have been frozen.
 };
 
 }

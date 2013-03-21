@@ -70,9 +70,11 @@ The function `lloyd_optimize_mesh_3()` returns a value of type `CGAL::Mesh_optim
 which is: 
 <UL> 
 <LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached. 
-<LI>`CGAL::MAX_ITERATION_NUMBER_REACHED` when `lloyd_optimize_mesh_3` stops because it has performed `max_iteration_number` iterations. 
+<LI>`CGAL::MAX_ITERATION_NUMBER_REACHED` when `lloyd_optimize_mesh_3()` stops because it has performed `max_iteration_number` iterations. 
 <LI>`CGAL::CONVERGENCE_REACHED` when `lloyd_optimize_mesh_3()` stops because the convergence criterion 
 is achieved. 
+<LI>`CGAL::ALL_VERTICES_FROZEN` when `lloyd_optimize_mesh_3()` all vertices have been frozen, when the 
+`do_freeze` parameter is set to true.
 </UL> 
 
 \cgalHeading{Example}
