@@ -3,13 +3,13 @@ $Date$
 
 === TODO - Manual
 
+ * Check the template arguments for the vertex and face classes
 
 DOC:
  * circumcenter moved to Delaunay triangulation instead of triangulation
+ * Interface check whether the function is called move or move_point
 
 TODO:
- * Hierarchy
- * loading / saving a triangulation
  * all_vertices_iterator / finite_vertices_iterator / vertices_iterator give the same vertices
    unique_vertex_iterator gives only one copy
    Check the edges and faces iterators as well to make everything consistent.

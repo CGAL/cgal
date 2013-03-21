@@ -3,20 +3,18 @@
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 
-template < class GT, class VbDS,
-	   class Vb = CGAL::Triangulation_vertex_base_2<GT,VbDS> >
-class My_vertex_base
-  : public Vb
+template < class GT, class Vb >
+class My_vertex_base : public Vb
 {
 public:
   typedef typename Vb::Vertex_handle  Vertex_handle;
   typedef typename Vb::Face_handle    Face_handle;
   typedef typename Vb::Point          Point;
 
-  template < class Tds2 >
-  struct Rebind_Tds {
-    typedef typename Vb::template Rebind_Tds<Tds2>::Other  Vb2;
-    typedef My_vertex_base<GT, Vb2>                        Other;
+  template < typename Tds2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<Tds2>::Other     Vb2;
+    typedef My_vertex_base<GT, Vb2>                           Other;
   };
 
   My_vertex_base() {}
@@ -35,15 +33,15 @@ public:
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Periodic_2_triangulation_filtered_traits_2<K> GT;
 
-typedef CGAL::Triangulation_vertex_base_2<> VbDS;
-typedef CGAL::Periodic_2_triangulation_face_base_2<> FbDS;
-typedef CGAL::Triangulation_face_base_2<GT,FbDS> Fb;
+typedef CGAL::Periodic_2_triangulation_vertex_base_2<GT>    VbDS;
+typedef My_vertex_base<GT,VbDS>                             Vb;
+typedef CGAL::Periodic_2_triangulation_face_base_2<GT>      Fb;
 
-typedef CGAL::Triangulation_data_structure_2<My_vertex_base<GT,VbDS>, Fb> Tds;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT,Tds> PDT;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb>        Tds;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<GT,Tds>   PDT;
 
-typedef PDT::Vertex_handle    Vertex_handle;
-typedef PDT::Point            Point;
+typedef PDT::Vertex_handle                                  Vertex_handle;
+typedef PDT::Point                                          Point;
 
 int main()
 {

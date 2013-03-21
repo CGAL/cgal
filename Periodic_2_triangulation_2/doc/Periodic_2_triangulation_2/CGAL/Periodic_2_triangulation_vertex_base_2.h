@@ -9,6 +9,13 @@ of the concept `Periodic_2TriangulationVertexBase_2` to be used by
 `Triangulation_data_structure_2` to represent vertices of a 
 periodic triangulation. 
 
+The first one `Traits` is the geometric traits, it is to be
+instantiated by a model of the concept
+`Periodic_2TriangulationTraits_2`. The second argument is the base
+class to which the additional information for the periodic vertex is
+added and should be a model of `TriangulationDSVertexBase_2`
+
+
 \cgalModels `Periodic_2TriangulationVertexBase_2`
 
 \sa `CGAL::Periodic_2_triangulation_face_base_2` 
