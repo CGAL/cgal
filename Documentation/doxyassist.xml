@@ -93,6 +93,28 @@ namespace for the XML file to be processed properly.  -->
         </doxygen>
       </project>
 
+
+      <project>
+        <name>2D Polyline Simplification</name>
+        <input>../Polyline_simplification_2/doc</input>
+        <input>../Polyline_simplification_2/include</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Polyline_simplification_2/include</string>
+          <string name="STRIP_FROM_INC_PATH">../Polyline_simplification_2/include</string>
+          <string name="GENERATE_TAGFILE">./tags/Polyline_simplification_2.tag</string>
+          <string name="IMAGE_PATH">../Polyline_simplification_2/doc/Polyline_simplification_2/fig</string>
+          <string name="EXAMPLE_PATH">../Polyline_simplification_2/examples</string>
+          <bool name="EXTRACT_ALL">false</bool>
+          <bool name="HIDE_UNDOC_MEMBERS">true</bool>
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <bool name="SHOW_INCLUDE_FILES">true</bool>
+
+          <list name="TAGFILES" append="true">
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+          </list>
+        </doxygen>
+      </project>
+
       <project>
         <name>Planar Parameterization of Triangulated Surface Meshes</name>
         <input>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</input>
