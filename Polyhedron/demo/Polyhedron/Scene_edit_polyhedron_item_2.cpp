@@ -1,7 +1,6 @@
 #include "Scene_edit_polyhedron_item_2.h"
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
-#include "Custom_manipulated_frame.h"
 
 #include <boost/foreach.hpp>
 #include <algorithm>
@@ -17,19 +16,21 @@
 #include <QAction>
 #include <CGAL/gl_render.h>
 
+#include <QGLViewer/qglviewer.h>
+
 #include "ui_Deform_mesh_2.h"
 
 Scene_edit_polyhedron_item_2::Scene_edit_polyhedron_item_2(Scene_polyhedron_item* poly_item)
   : poly_item(poly_item), deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map())
-  , active_group(deform_mesh.create_handle_group())
+  , show_roi(true)
 {
-  frame = new CustomManipulatedFrame();
+  frame = new qglviewer::ManipulatedFrame();
   frame->setProperty("item", QVariant::fromValue<QObject*>(this));
 
   connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
   poly_item->enable_facets_picking(true);
 
-  connect(frame, SIGNAL(modified()), this, SIGNAL(modified()));    
+  //connect(frame, SIGNAL(modified()), this, SIGNAL(modified())); 
 }
 
 Scene_edit_polyhedron_item_2::~Scene_edit_polyhedron_item_2()
@@ -44,15 +45,37 @@ struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
   }
 };
 
-void Scene_edit_polyhedron_item_2::vertex_has_been_selected(void* void_ptr) {
-  Polyhedron* poly = poly_item->polyhedron();
+void Scene_edit_polyhedron_item_2::deform()
+{
+  if(handles.empty()) { return; }
 
+  Deform_mesh::Handle_group hgb, hge;
+  for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb)
+  {
+    Handle_group_data& hd = get_data(hgb);
+    qglviewer::ManipulatedFrame* hgb_frame = hd.frame;
+    qglviewer::Vec translation = hgb_frame->position() - hd.initial_center;
+
+    deform_mesh.rotate(hgb, 
+      Point(hd.initial_center.x, hd.initial_center.y, hd.initial_center.z),
+      hgb_frame->orientation(),
+      translation);
+  }
+  deform_mesh.deform();
+
+  emit mesh_deformed(this);
+  //draw();
+}
+
+void Scene_edit_polyhedron_item_2::vertex_has_been_selected(void* void_ptr) {
+
+  Polyhedron* poly = poly_item->polyhedron();
+  // get vertex descriptor
   Get_vertex_handle get_vertex_handle;  
   get_vertex_handle.vertex_ptr = static_cast<Polyhedron::Vertex*>(void_ptr);
-
   poly->delegate(get_vertex_handle);
   vertex_descriptor clicked_vertex = get_vertex_handle.vh;
-
+  // use clicked_vertex, do what you want 
   bool is_roi = ui_widget->ROIRadioButton->isChecked();
   bool is_insert = ui_widget->InsertRadioButton->isChecked();
   int k_ring = ui_widget->BrushSpinBox->value();
@@ -64,17 +87,19 @@ void Scene_edit_polyhedron_item_2::draw() const {
   poly_item->direct_draw();
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
   CGAL::GL::Color color; color.set_rgb_color(0, 1.f, 0);
-  // draw ROI
-  ::glBegin(GL_POINTS);
-  for(std::set<vertex_descriptor>::const_iterator it = roi.begin(); it != roi.end(); ++it)
-  {
-    if(handles.find(*it) == handles.end())
+  if(show_roi) {
+    // draw ROI
+    ::glBegin(GL_POINTS);
+    for(std::set<vertex_descriptor>::const_iterator it = roi.begin(); it != roi.end(); ++it)
     {
-      const Kernel::Point_3& p = (*it)->point();
-      ::glVertex3d(p.x(), p.y(), p.z());
+      if(handles.find(*it) == handles.end())
+      {
+        const Kernel::Point_3& p = (*it)->point();
+        ::glVertex3d(p.x(), p.y(), p.z());
+      }
     }
+    ::glEnd();
   }
-  ::glEnd();
   // draw handles
   Deform_mesh::Const_handle_group hgb, hge;
   for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb)
@@ -84,11 +109,16 @@ void Scene_edit_polyhedron_item_2::draw() const {
     ::glBegin(GL_POINTS);
     Deform_mesh::Const_handle_iterator hb, he;
     for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb)
-    {      
+    {           
       const Kernel::Point_3& p = (*hb)->point();
       ::glVertex3d(p.x(), p.y(), p.z());
     }
+    // draw axis using manipulated frame assoc with handle_group
     ::glEnd();
+    ::glPushMatrix();
+      ::glMultMatrixd(get_data(hgb).frame->matrix());
+      QGLViewer::drawAxis(0.1f);
+    ::glPopMatrix();
   }
 }
 
@@ -99,14 +129,22 @@ void Scene_edit_polyhedron_item_2::changed()
 //  last_pos = current_position();
 }
 
+//bool Scene_edit_polyhedron_item_2::keyPressEvent(QKeyEvent* key_event)
+//{
+//  if(event->key() == Qt::Key_Escape
+//}
+
 Scene_polyhedron_item* Scene_edit_polyhedron_item_2::to_polyhedron_item() const {
   return poly_item;
 }
-
 qglviewer::ManipulatedFrame* Scene_edit_polyhedron_item_2::manipulatedFrame() {
   return frame;
 }
 
+Polyhedron* Scene_edit_polyhedron_item_2::polyhedron()       
+{ return poly_item->polyhedron(); }
+const Polyhedron* Scene_edit_polyhedron_item_2::polyhedron() const 
+{ return poly_item->polyhedron(); }
 QString Scene_edit_polyhedron_item_2::toolTip() const
 {
   if(!poly_item->polyhedron())
@@ -123,16 +161,13 @@ QString Scene_edit_polyhedron_item_2::toolTip() const
     .arg(this->renderingModeName())
     .arg(this->color().name());
 }
-Polyhedron* Scene_edit_polyhedron_item_2::polyhedron()       
-{ return poly_item->polyhedron(); }
-const Polyhedron* Scene_edit_polyhedron_item_2::polyhedron() const 
-{ return poly_item->polyhedron(); }
 bool Scene_edit_polyhedron_item_2::isEmpty() const {
   return poly_item->isEmpty();
 }
 Scene_edit_polyhedron_item_2::Bbox Scene_edit_polyhedron_item_2::bbox() const {
   return poly_item->bbox();
 }
+
 void Scene_edit_polyhedron_item_2::setVisible(bool b) {
   poly_item->setVisible(b);
   Scene_item::setVisible(b);

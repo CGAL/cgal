@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>379</width>
-    <height>269</height>
+    <width>272</width>
+    <height>359</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,25 +16,40 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QCheckBox" name="editModeCb">
-      <property name="text">
-       <string>&amp;Edit mode</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="SelectionGroupBox">
       <property name="title">
-       <string>Deform</string>
+       <string>Selection</string>
       </property>
-      <layout class="QFormLayout" name="formLayout_2">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Type</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="2" column="1" rowspan="2" colspan="3">
+        <layout class="QVBoxLayout" name="RingLayout">
+         <item>
+          <widget class="QLabel" name="BrushLabel">
+           <property name="text">
+            <string>Brush Size</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="BrushSpinBox"/>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="0" colspan="5">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="SelectAllVerticesPushButton">
+           <property name="text">
+            <string>Set all vertices as ROI</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0" rowspan="2">
+        <widget class="QGroupBox" name="verticalGroupBox">
+         <layout class="QVBoxLayout" name="HandleRoiLayout">
+          <item>
            <widget class="QRadioButton" name="ROIRadioButton">
             <property name="text">
              <string>ROI</string>
@@ -44,81 +59,33 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item>
            <widget class="QRadioButton" name="HandleRadioButton">
             <property name="text">
              <string>Handle</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QSpinBox" name="BrushSpinBox"/>
-          </item>
          </layout>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="title">
-          <string>Action</string>
-         </property>
-         <layout class="QFormLayout" name="formLayout">
-          <item row="0" column="0">
+       <item row="2" column="4" rowspan="2">
+        <widget class="QGroupBox" name="verticalGroupBox_3">
+         <layout class="QVBoxLayout" name="InsertRemoveLayout">
+          <item>
            <widget class="QRadioButton" name="InsertRadioButton">
             <property name="text">
-             <string>Insert</string>
+             <string>Insertion</string>
             </property>
             <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item>
            <widget class="QRadioButton" name="EraseRadioButton">
             <property name="text">
-             <string>Erase</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Handle Navigation</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="1">
-           <widget class="QPushButton" name="PrevHandlePushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>&lt;&lt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="NextHandlePushButton">
-            <property name="text">
-             <string>&gt;&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" colspan="2">
-           <widget class="QPushButton" name="AddHandlePushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Add</string>
+             <string>Removal</string>
             </property>
            </widget>
           </item>
@@ -126,6 +93,74 @@
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="HandleGroupNavigationGroupBox">
+      <property name="title">
+       <string>Handle Group Navigation</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="PrevHandlePushButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>&lt;&lt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="NextHandlePushButton">
+           <property name="text">
+            <string>&gt;&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="AddHandlePushButton">
+           <property name="text">
+            <string>Create new</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="DeleteHandlePushButton">
+           <property name="text">
+            <string>Delete </string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="ShowROICheckBox">
+      <property name="text">
+       <string>Show ROI</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="MessageTextEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>

@@ -34,6 +34,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   setKeyDescription(Qt::Key_M,
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
+
+  setMouseTracking(true); // how to make it parameter ?
 }
 
 Viewer::~Viewer()
