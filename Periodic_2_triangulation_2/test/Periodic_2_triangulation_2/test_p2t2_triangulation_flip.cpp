@@ -17,11 +17,15 @@ void greedy_flip_long_edges(Triangulation &t) {
     }
   }
   
+  bool is_1_cover = t.is_1_cover();
   for (Edge_map::reverse_iterator it = edge_map.rbegin(); it != edge_map.rend(); ++it) {
     double sqr_length_orig = it->first;
     if (t.is_edge(it->second.first, it->second.second, f, i)) {
       if (t.flippable(f, i)) {
         t.flip(f, i);
+        // We flipped enough long edges, when we go to the 1-cover all faces are invalidated
+        if (is_1_cover != t.is_1_cover())
+          return;
         double sqr_length_new = t.segment(f, t.ccw(i)).squared_length();
         if (sqr_length_orig < sqr_length_new) {
           std::cout << sqr_length_orig << std::endl;

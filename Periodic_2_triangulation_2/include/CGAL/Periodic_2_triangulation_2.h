@@ -432,8 +432,8 @@ public:
   Periodic_segment periodic_segment(const Face_handle &f, int i) const {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= 2);
-    return make_array(periodic_point(f, ccw(i) % 3),
-                      periodic_point(f, cw(i) % 3));
+    return make_array(periodic_point(f, ccw(i)),
+                      periodic_point(f, cw(i)));
   }
 
   /// Same as the previous method for edge e.
