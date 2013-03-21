@@ -110,7 +110,7 @@ namespace for the XML file to be processed properly.  -->
           <bool name="SHOW_INCLUDE_FILES">true</bool>
 
           <list name="TAGFILES" append="true">
-            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Polyline_simplification_2.tag=../../CGAL.CGAL.2D-Polyline-Simplification/html</item>
           </list>
         </doxygen>
       </project>
@@ -1520,6 +1520,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig</item>
           <item>../Stream_lines_2/doc/Stream_lines_2/fig</item>
           <item>../Stream_support/doc/IOstream/fig</item>
+          <item>../Polyline_simplification_2/doc/Polyline_simplification_2/fig</item>
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
@@ -1601,6 +1602,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes/html</item>
           <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGAL.Surface-Reconstruction-from-Point-Sets/html</item>
+          <item>./tags/Polyline_simplification_2.tag=../../CGAL.CGAL.2D-Polyline-Simplification/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>
