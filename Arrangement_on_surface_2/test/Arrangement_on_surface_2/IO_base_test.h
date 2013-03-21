@@ -898,7 +898,7 @@ bool IO_base_test<Traits>::read_point(stream& is, Point_2& p) {
      is >> x;
      Traits::X_monotone_curve_2 xcv;
      CGAL::swallow(is,'(');
-     CGAL_assertion_code(bool check=)
+     bool check=
        read_xcurve(is, xcv);
      CGAL_assertion(check);
     
@@ -910,7 +910,7 @@ bool IO_base_test<Traits>::read_point(stream& is, Point_2& p) {
      Traits::Algebraic_real_1 x;
      is >> x;
      Traits::Curve_2 c;
-     CGAL_assertion_code(bool check = )
+     bool check = 
        read_curve(is,c);
      CGAL_assertion(check);
      int arcno=0;
@@ -941,16 +941,16 @@ bool IO_base_test<Traits>::read_xcurve(stream& is,
    case '1': {
      Curve_2 cv;
      Point_2 end_left,end_right;
-     CGAL_assertion_code(bool check=)
+     bool check=
      read_curve(is,cv);
      CGAL_assertion(check);
      CGAL::swallow(is,'(');
-     CGAL_assertion_code(check=)
+     check=
      read_point(is,end_left);
      CGAL_assertion(check);
      CGAL::swallow(is,')');
      CGAL::swallow(is,'(');
-     CGAL_assertion_code(check=)
+     check=
      read_point(is,end_right);
      CGAL_assertion(check);
      CGAL::swallow(is,')');
@@ -963,11 +963,11 @@ bool IO_base_test<Traits>::read_xcurve(stream& is,
    case '2': {
      Curve_2 cv;
      Point_2 p;
-     CGAL_assertion_code(bool check=)
+     bool check=
      read_curve(is,cv);
      CGAL_assertion(check);
      CGAL::swallow(is,'(');
-     CGAL_assertion_code(check=)
+     check=
      read_point(is,p);
      CGAL_assertion(check);
      CGAL::swallow(is,')');

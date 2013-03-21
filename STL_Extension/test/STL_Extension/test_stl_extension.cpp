@@ -282,7 +282,7 @@ void test_Circulator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -302,7 +302,7 @@ void test_Circulator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -374,7 +374,7 @@ void test_Circulator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -394,7 +394,7 @@ void test_Circulator_identity() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -412,7 +412,7 @@ void test_Circulator_identity() {
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -461,9 +461,9 @@ void test_Circulator_identity() {
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        CGAL_assertion_code( Circulator::size_type s = 5;)
+        Circulator::size_type s = 5;
         CGAL_assertion( s == 5);
-        CGAL_assertion_code(Circulator::difference_type d = -5;)
+        Circulator::difference_type d = -5;
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
@@ -539,7 +539,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            CGAL_assertion_code( C_Circulator j =) ++i;
+            C_Circulator j = ++i;
             CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key);
@@ -559,7 +559,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            CGAL_assertion_code( C_Circulator j =) i++;
+            C_Circulator j = i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key + 1);
@@ -577,7 +577,7 @@ Assert_bidirectional_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        CGAL_assertion_code(C_Circulator j =) --i;
+        C_Circulator j = --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i).key == (*j).key);
         CGAL_assertion( k == (*i).key);
@@ -626,9 +626,9 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( k1.key == 6);
     CGAL_assertion( k2.key == 6);
     CGAL_assertion( (*p1).key == 6);
-    CGAL_assertion_code( C_Circulator::size_type s = 5;)
+    C_Circulator::size_type s = 5;
     CGAL_assertion( s == 5);
-    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
+    C_Circulator::difference_type d = -5;
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
@@ -711,7 +711,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -731,7 +731,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -803,7 +803,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -823,7 +823,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -841,7 +841,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -898,7 +898,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -918,7 +918,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -936,7 +936,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -1048,9 +1048,9 @@ l2.destroy();
         CGAL_assertion( k1 == 6);
         CGAL_assertion( k2 == 6);
         CGAL_assertion( (*p1) == 6);
-        CGAL_assertion_code( Circulator::size_type s = 5;)
+        Circulator::size_type s = 5;
         CGAL_assertion( s == 5);
-        CGAL_assertion_code(Circulator::difference_type d = -5;)
+        Circulator::difference_type d = -5;
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
@@ -1149,7 +1149,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            CGAL_assertion_code( C_Circulator j =) ++i;
+            C_Circulator j = ++i;
             CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j));
@@ -1169,7 +1169,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            CGAL_assertion_code( C_Circulator j =) i++;
+            C_Circulator j = i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j) + 1);
@@ -1187,7 +1187,7 @@ Assert_random_access_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        CGAL_assertion_code(C_Circulator j =) --i;
+        C_Circulator j = --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i) == (*j));
         CGAL_assertion( k == (*i));
@@ -1279,9 +1279,9 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( k1 == 6);
     CGAL_assertion( k2 == 6);
     CGAL_assertion( (*p1) == 6);
-    CGAL_assertion_code( C_Circulator::size_type s = 5;)
+    C_Circulator::size_type s = 5;
     CGAL_assertion( s == 5);
-    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
+    C_Circulator::difference_type d = -5;
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
@@ -1391,7 +1391,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -1411,7 +1411,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1484,7 +1484,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -1504,7 +1504,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1522,7 +1522,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -1592,7 +1592,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) ++i;
+                C_Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -1612,7 +1612,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) i++;
+                C_Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1630,7 +1630,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(C_Iterator j =) --i;
+            C_Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -1716,7 +1716,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -1736,7 +1736,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1809,7 +1809,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -1829,7 +1829,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1847,7 +1847,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -1919,7 +1919,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) ++i;
+                C_Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -1939,7 +1939,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) i++;
+                C_Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -1957,7 +1957,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(C_Iterator j =) --i;
+            C_Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -2044,7 +2044,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
@@ -2064,7 +2064,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -2138,7 +2138,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
@@ -2158,7 +2158,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -2176,7 +2176,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -2234,7 +2234,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
@@ -2254,7 +2254,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -2272,7 +2272,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -2431,7 +2431,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) ++i;
+                C_Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j));
@@ -2451,7 +2451,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) i++;
+                C_Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -2469,7 +2469,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(C_Iterator j =) --i;
+            C_Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -2620,7 +2620,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i)->key);
                 su += (*i)->key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i)->key == (*j)->key);
@@ -2640,7 +2640,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i)->key);
                 su += (*i)->key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i)->key == (*j)->key + 1);
@@ -2713,7 +2713,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i)->key);
                 su += (*i)->key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i)->key == (*j)->key);
@@ -2733,7 +2733,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i)->key);
                 su += (*i)->key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i)->key == (*j)->key + 1);
@@ -2751,7 +2751,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i)->key == (*j)->key);
             CGAL_assertion( k == (*i)->key);
@@ -2820,7 +2820,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i)->key);
                 su += (*i)->key;
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) ++i;
+                C_Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i)->key == (*j)->key);
@@ -2840,7 +2840,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i)->key);
                 su += (*i)->key;
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) i++;
+                C_Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i)->key == (*j)->key + 1);
@@ -2858,7 +2858,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(C_Iterator j =) --i;
+            C_Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i)->key == (*j)->key);
             CGAL_assertion( k == (*i)->key);
@@ -2942,7 +2942,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).get_key());
                 su += (*i).get_key();
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).get_key() == (*j).get_key());
@@ -2962,7 +2962,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).get_key());
                 su += (*i).get_key();
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).get_key() == (*j).get_key() + 1);
@@ -3035,7 +3035,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).get_key());
                 su += (*i).get_key();
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).get_key() == (*j).get_key());
@@ -3055,7 +3055,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).get_key());
                 su += (*i).get_key();
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).get_key() == (*j).get_key() + 1);
@@ -3073,7 +3073,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).get_key() == (*j).get_key());
             CGAL_assertion( k == (*i).get_key());
@@ -3145,7 +3145,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).get_key());
                 su += (*i).get_key();
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) ++i;
+                C_Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).get_key() == (*j).get_key());
@@ -3165,7 +3165,7 @@ void test_Iterator_project()
                 CGAL_assertion( k == (*i).get_key());
                 su += (*i).get_key();
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) i++;
+                C_Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).get_key() == (*j).get_key() + 1);
@@ -3183,7 +3183,7 @@ void test_Iterator_project()
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(C_Iterator j =) --i;
+            C_Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).get_key() == (*j).get_key());
             CGAL_assertion( k == (*i).get_key());
@@ -3394,7 +3394,7 @@ void test_Circulator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -3414,7 +3414,7 @@ void test_Circulator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3486,7 +3486,7 @@ void test_Circulator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -3506,7 +3506,7 @@ void test_Circulator_project() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3524,7 +3524,7 @@ void test_Circulator_project() {
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -3573,9 +3573,9 @@ void test_Circulator_project() {
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        CGAL_assertion_code( Circulator::size_type s = 5;)
+        Circulator::size_type s = 5;
         CGAL_assertion( s == 5);
-        CGAL_assertion_code(Circulator::difference_type d = -5;)
+        Circulator::difference_type d = -5;
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
@@ -3651,7 +3651,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            CGAL_assertion_code( C_Circulator j =) ++i;
+            C_Circulator j = ++i;
             CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key);
@@ -3671,7 +3671,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            CGAL_assertion_code( C_Circulator j =) i++;
+            C_Circulator j = i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3689,7 +3689,7 @@ Assert_bidirectional_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        CGAL_assertion_code(C_Circulator j =) --i;
+        C_Circulator j = --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i).key == (*j).key);
         CGAL_assertion( k == (*i).key);
@@ -3738,9 +3738,9 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( k1.key == 6);
     CGAL_assertion( k2.key == 6);
     CGAL_assertion( (*p1).key == 6);
-    CGAL_assertion_code( C_Circulator::size_type s = 5;)
+    C_Circulator::size_type s = 5;
     CGAL_assertion( s == 5);
-    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
+    C_Circulator::difference_type d = -5;
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
@@ -3825,7 +3825,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -3845,7 +3845,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3917,7 +3917,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -3937,7 +3937,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -3955,7 +3955,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -4004,9 +4004,9 @@ l2.destroy();
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        CGAL_assertion_code( Circulator::size_type s = 5;)
+        Circulator::size_type s = 5;
         CGAL_assertion( s == 5);
-        CGAL_assertion_code(Circulator::difference_type d = -5;)
+        Circulator::difference_type d = -5;
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
@@ -4082,7 +4082,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            CGAL_assertion_code( C_Circulator j =) ++i;
+            C_Circulator j = ++i;
             CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key);
@@ -4102,7 +4102,7 @@ Assert_bidirectional_category(c_begin);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            CGAL_assertion_code( C_Circulator j =) i++;
+            C_Circulator j = i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i).key == (*j).key + 1);
@@ -4120,7 +4120,7 @@ Assert_bidirectional_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        CGAL_assertion_code(C_Circulator j =) --i;
+        C_Circulator j = --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i).key == (*j).key);
         CGAL_assertion( k == (*i).key);
@@ -4169,9 +4169,9 @@ Assert_bidirectional_category(c_begin);
     CGAL_assertion( k1.key == 6);
     CGAL_assertion( k2.key == 6);
     CGAL_assertion( (*p1).key == 6);
-    CGAL_assertion_code( C_Circulator::size_type s = 5;)
+    C_Circulator::size_type s = 5;
     CGAL_assertion( s == 5);
-    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
+    C_Circulator::difference_type d = -5;
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
@@ -4256,7 +4256,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -4276,7 +4276,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -4348,7 +4348,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -4368,7 +4368,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -4386,7 +4386,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -4443,7 +4443,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -4463,7 +4463,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -4481,7 +4481,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -4593,9 +4593,9 @@ l2.destroy();
         CGAL_assertion( k1 == 6);
         CGAL_assertion( k2 == 6);
         CGAL_assertion( (*p1) == 6);
-        CGAL_assertion_code( Circulator::size_type s = 5;)
+        Circulator::size_type s = 5;
         CGAL_assertion( s == 5);
-        CGAL_assertion_code(Circulator::difference_type d = -5;)
+        Circulator::difference_type d = -5;
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
@@ -4694,7 +4694,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            CGAL_assertion_code( C_Circulator j =) ++i;
+            C_Circulator j = ++i;
             CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j));
@@ -4714,7 +4714,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            CGAL_assertion_code( C_Circulator j =) i++;
+            C_Circulator j = i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j) + 1);
@@ -4732,7 +4732,7 @@ Assert_random_access_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        CGAL_assertion_code(C_Circulator j =) --i;
+        C_Circulator j = --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i) == (*j));
         CGAL_assertion( k == (*i));
@@ -4824,9 +4824,9 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( k1 == 6);
     CGAL_assertion( k2 == 6);
     CGAL_assertion( (*p1) == 6);
-    CGAL_assertion_code( C_Circulator::size_type s = 5;)
+    C_Circulator::size_type s = 5;
     CGAL_assertion( s == 5);
-    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
+    C_Circulator::difference_type d = -5;
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
@@ -4943,7 +4943,7 @@ void test_Circulator_on_node() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -4963,7 +4963,7 @@ void test_Circulator_on_node() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5027,9 +5027,9 @@ void test_Circulator_on_node() {
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        CGAL_assertion_code( Circulator::size_type s = 5;)
+        Circulator::size_type s = 5;
         CGAL_assertion( s == 5);
-        CGAL_assertion_code(Circulator::difference_type d = -5;)
+        Circulator::difference_type d = -5;
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
@@ -5091,7 +5091,7 @@ void test_Circulator_on_node() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( C_Circulator j =) ++i;
+                C_Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_begin) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -5111,7 +5111,7 @@ void test_Circulator_on_node() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( C_Circulator j =) i++;
+                C_Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_begin) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5142,9 +5142,9 @@ void test_Circulator_on_node() {
         CGAL_assertion( k1.key == 6);
         CGAL_assertion( k2.key == 6);
         CGAL_assertion( (*p1).key == 6);
-        CGAL_assertion_code( C_Circulator::size_type s = 5;)
+        C_Circulator::size_type s = 5;
         CGAL_assertion( s == 5);
-        CGAL_assertion_code(C_Circulator::difference_type d = -5;)
+        C_Circulator::difference_type d = -5;
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
@@ -5225,7 +5225,7 @@ void test_N_step_adaptor() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -5245,7 +5245,7 @@ void test_N_step_adaptor() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5318,7 +5318,7 @@ void test_N_step_adaptor() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -5338,7 +5338,7 @@ void test_N_step_adaptor() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5356,7 +5356,7 @@ void test_N_step_adaptor() {
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -5425,7 +5425,7 @@ Assert_bidirectional_category(c_end);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            CGAL_assertion_code( C_Iterator j =) ++i;
+            C_Iterator j = ++i;
             CGAL_assertion( i ==  j);
             if ( i != c_end) {
                 CGAL_assertion( (*i).key == (*j).key);
@@ -5445,7 +5445,7 @@ Assert_bidirectional_category(c_end);
             CGAL_assertion( k == (*i).key);
             su += (*i).key;
             ++k;
-            CGAL_assertion_code( C_Iterator j =) i++;
+            C_Iterator j = i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_end) {
                 CGAL_assertion( (*i).key == (*j).key + 1);
@@ -5463,7 +5463,7 @@ Assert_bidirectional_category(c_end);
     int su = 0;
     int k  = 5;
     do {
-        CGAL_assertion_code(C_Iterator j =) --i;
+        C_Iterator j = --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i).key == (*j).key);
         CGAL_assertion( k == (*i).key);
@@ -5546,7 +5546,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
@@ -5566,7 +5566,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -5639,7 +5639,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
@@ -5659,7 +5659,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -5677,7 +5677,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -5735,7 +5735,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j));
@@ -5755,7 +5755,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -5773,7 +5773,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -5929,7 +5929,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) ++i;
+                C_Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j));
@@ -5949,7 +5949,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( C_Iterator j =) i++;
+                C_Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -5967,7 +5967,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(C_Iterator j =) --i;
+            C_Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -6114,7 +6114,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -6134,7 +6134,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -6206,7 +6206,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -6226,7 +6226,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -6244,7 +6244,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -6301,7 +6301,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) ++i;
+                Circulator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j));
@@ -6321,7 +6321,7 @@ l2.destroy();
                 CGAL_assertion( k == (*i));
                 su += (*i);
                 ++k;
-                CGAL_assertion_code( Circulator j =) i++;
+                Circulator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != begin) {
                     CGAL_assertion( (*i) == (*j) + 1);
@@ -6339,7 +6339,7 @@ l2.destroy();
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Circulator j =) --i;
+            Circulator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i) == (*j));
             CGAL_assertion( k == (*i));
@@ -6451,9 +6451,9 @@ l2.destroy();
         CGAL_assertion( k1 == 6);
         CGAL_assertion( k2 == 6);
         CGAL_assertion( (*p1) == 6);
-        CGAL_assertion_code( Circulator::size_type s = 5;)
+        Circulator::size_type s = 5;
         CGAL_assertion( s == 5);
-        CGAL_assertion_code(Circulator::difference_type d = -5;)
+        Circulator::difference_type d = -5;
         CGAL_assertion( d == -5);
     
         // Check tests for empty data structures.
@@ -6551,7 +6551,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            CGAL_assertion_code( C_Circulator j =) ++i;
+            C_Circulator j = ++i;
             CGAL_assertion( i ==  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j));
@@ -6571,7 +6571,7 @@ Assert_random_access_category(c_begin);
             CGAL_assertion( k == (*i));
             su += (*i);
             ++k;
-            CGAL_assertion_code( C_Circulator j =) i++;
+            C_Circulator j = i++;
             CGAL_assertion(  i !=  j);
             if ( i != c_begin) {
                 CGAL_assertion( (*i) == (*j) + 1);
@@ -6589,7 +6589,7 @@ Assert_random_access_category(c_begin);
     int su = 0;
     int k  = 5;
     do {
-        CGAL_assertion_code(C_Circulator j =) --i;
+        C_Circulator j = --i;
         CGAL_assertion(  i ==  j);
         CGAL_assertion( (*i) == (*j));
         CGAL_assertion( k == (*i));
@@ -6681,9 +6681,9 @@ Assert_random_access_category(c_begin);
     CGAL_assertion( k1 == 6);
     CGAL_assertion( k2 == 6);
     CGAL_assertion( (*p1) == 6);
-    CGAL_assertion_code( C_Circulator::size_type s = 5;)
+    C_Circulator::size_type s = 5;
     CGAL_assertion( s == 5);
-    CGAL_assertion_code(C_Circulator::difference_type d = -5;)
+    C_Circulator::difference_type d = -5;
     CGAL_assertion( d == -5);
 
     // Check tests for empty data structures.
@@ -6795,7 +6795,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    CGAL_assertion_code( Iterator j =) ++i;
+                    Iterator j = ++i;
                     CGAL_assertion( i ==  j);
                     if ( i != end) {
                         CGAL_assertion( (*i).key == (*j).key);
@@ -6815,7 +6815,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    CGAL_assertion_code( Iterator j =) i++;
+                    Iterator j = i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != end) {
                         CGAL_assertion( (*i).key == (*j).key + 1);
@@ -6888,7 +6888,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    CGAL_assertion_code( Iterator j =) ++i;
+                    Iterator j = ++i;
                     CGAL_assertion( i ==  j);
                     if ( i != end) {
                         CGAL_assertion( (*i).key == (*j).key);
@@ -6908,7 +6908,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    CGAL_assertion_code( Iterator j =) i++;
+                    Iterator j = i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != end) {
                         CGAL_assertion( (*i).key == (*j).key + 1);
@@ -6926,7 +6926,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                CGAL_assertion_code(Iterator j =) --i;
+                Iterator j = --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i).key == (*j).key);
                 CGAL_assertion( k == (*i).key);
@@ -6995,7 +6995,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    CGAL_assertion_code( C_Iterator j =) ++i;
+                    C_Iterator j = ++i;
                     CGAL_assertion( i ==  j);
                     if ( i != c_end) {
                         CGAL_assertion( (*i).key == (*j).key);
@@ -7015,7 +7015,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i).key);
                     su += (*i).key;
                     ++k;
-                    CGAL_assertion_code( C_Iterator j =) i++;
+                    C_Iterator j = i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != c_end) {
                         CGAL_assertion( (*i).key == (*j).key + 1);
@@ -7033,7 +7033,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                CGAL_assertion_code(C_Iterator j =) --i;
+                C_Iterator j = --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i).key == (*j).key);
                 CGAL_assertion( k == (*i).key);
@@ -7115,7 +7115,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    CGAL_assertion_code( Circulator j =) ++i;
+                    Circulator j = ++i;
                     CGAL_assertion( i ==  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j));
@@ -7135,7 +7135,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    CGAL_assertion_code( Circulator j =) i++;
+                    Circulator j = i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j) + 1);
@@ -7207,7 +7207,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    CGAL_assertion_code( Circulator j =) ++i;
+                    Circulator j = ++i;
                     CGAL_assertion( i ==  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j));
@@ -7227,7 +7227,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    CGAL_assertion_code( Circulator j =) i++;
+                    Circulator j = i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j) + 1);
@@ -7245,7 +7245,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                CGAL_assertion_code(Circulator j =) --i;
+                Circulator j = --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i) == (*j));
                 CGAL_assertion( k == (*i));
@@ -7302,7 +7302,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    CGAL_assertion_code( Circulator j =) ++i;
+                    Circulator j = ++i;
                     CGAL_assertion( i ==  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j));
@@ -7322,7 +7322,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    CGAL_assertion_code( Circulator j =) i++;
+                    Circulator j = i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != begin) {
                         CGAL_assertion( (*i) == (*j) + 1);
@@ -7340,7 +7340,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                CGAL_assertion_code(Circulator j =) --i;
+                Circulator j = --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i) == (*j));
                 CGAL_assertion( k == (*i));
@@ -7452,9 +7452,9 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( k1 == 6);
             CGAL_assertion( k2 == 6);
             CGAL_assertion( (*p1) == 6);
-            CGAL_assertion_code( Circulator::size_type s = 5;)
+            Circulator::size_type s = 5;
             CGAL_assertion( s == 5);
-            CGAL_assertion_code(Circulator::difference_type d = -5;)
+            Circulator::difference_type d = -5;
             CGAL_assertion( d == -5);
         
             // Check tests for empty data structures.
@@ -7552,7 +7552,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    CGAL_assertion_code( C_Circulator j =) ++i;
+                    C_Circulator j = ++i;
                     CGAL_assertion( i ==  j);
                     if ( i != c_begin) {
                         CGAL_assertion( (*i) == (*j));
@@ -7572,7 +7572,7 @@ void test_N_step_adaptor_derived() {
                     CGAL_assertion( k == (*i));
                     su += (*i);
                     ++k;
-                    CGAL_assertion_code( C_Circulator j =) i++;
+                    C_Circulator j = i++;
                     CGAL_assertion(  i !=  j);
                     if ( i != c_begin) {
                         CGAL_assertion( (*i) == (*j) + 1);
@@ -7590,7 +7590,7 @@ void test_N_step_adaptor_derived() {
             int su = 0;
             int k  = 5;
             do {
-                CGAL_assertion_code(C_Circulator j =) --i;
+                C_Circulator j = --i;
                 CGAL_assertion(  i ==  j);
                 CGAL_assertion( (*i) == (*j));
                 CGAL_assertion( k == (*i));
@@ -7682,9 +7682,9 @@ void test_N_step_adaptor_derived() {
             CGAL_assertion( k1 == 6);
             CGAL_assertion( k2 == 6);
             CGAL_assertion( (*p1) == 6);
-            CGAL_assertion_code( C_Circulator::size_type s = 5;)
+            C_Circulator::size_type s = 5;
             CGAL_assertion( s == 5);
-            CGAL_assertion_code(C_Circulator::difference_type d = -5;)
+            C_Circulator::difference_type d = -5;
             CGAL_assertion( d == -5);
         
             // Check tests for empty data structures.

@@ -263,7 +263,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -283,7 +283,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -356,7 +356,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -376,7 +376,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -394,7 +394,7 @@ void test_In_place_list() {
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -461,7 +461,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Const_iterator j =) ++i;
+                Const_iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -481,7 +481,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Const_iterator j =) i++;
+                Const_iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -499,7 +499,7 @@ void test_In_place_list() {
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Const_iterator j =) --i;
+            Const_iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -593,7 +593,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -613,7 +613,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -686,7 +686,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) ++i;
+                Iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -706,7 +706,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Iterator j =) i++;
+                Iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -724,7 +724,7 @@ void test_In_place_list() {
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Iterator j =) --i;
+            Iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);
@@ -790,7 +790,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Const_iterator j =) ++i;
+                Const_iterator j = ++i;
                 CGAL_assertion( i ==  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key);
@@ -810,7 +810,7 @@ void test_In_place_list() {
                 CGAL_assertion( k == (*i).key);
                 su += (*i).key;
                 ++k;
-                CGAL_assertion_code( Const_iterator j =) i++;
+                Const_iterator j = i++;
                 CGAL_assertion(  i !=  j);
                 if ( i != c_end) {
                     CGAL_assertion( (*i).key == (*j).key + 1);
@@ -828,7 +828,7 @@ void test_In_place_list() {
         int su = 0;
         int k  = 5;
         do {
-            CGAL_assertion_code(Const_iterator j =) --i;
+            Const_iterator j = --i;
             CGAL_assertion(  i ==  j);
             CGAL_assertion( (*i).key == (*j).key);
             CGAL_assertion( k == (*i).key);

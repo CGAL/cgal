@@ -71,7 +71,7 @@ void test()
 
 	// Exceptions
 	bool ok = true;
-	CGAL_assertion_code( ok = false );
+	ok = false ;
 	try { CGAL::get_certain(u); }
 	catch (CGAL::Assertion_exception) { ok = true; }
 	bool_assert(ok);

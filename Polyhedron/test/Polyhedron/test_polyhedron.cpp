@@ -1091,7 +1091,7 @@ void test_Polyhedron() {
     {
         // Check use of kernel as traits class.
         PolyhedronN P;
-        CGAL_assertion_code( HalfedgeN_handle h =) P.make_triangle();
+        HalfedgeN_handle h = P.make_triangle();
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_triangle( h));
         CGAL_assertion( ! P.is_tetrahedron( h));
