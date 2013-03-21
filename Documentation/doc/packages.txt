@@ -76,6 +76,7 @@ h1 {
 \package_listing{Periodic_3_triangulation_3}
 \package_listing{Alpha_shapes_2}
 \package_listing{Alpha_shapes_3}
+\package_listing{Polyline_simplification_2}
 
 \section PartVoronoiDiagrams Voronoi Diagrams
 
