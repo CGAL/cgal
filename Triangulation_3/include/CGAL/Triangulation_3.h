@@ -71,7 +71,11 @@ struct No_structural_filtering_3_tag {};
 
 template <bool filter>
 struct Structural_filtering_selector_3 {
+#ifdef FORCE_STRUCTURAL_FILTERING
+  typedef Structural_filtering_3_tag  Tag;
+#else
   typedef No_structural_filtering_3_tag  Tag;
+#endif
 };
 
 template <>
@@ -512,12 +516,12 @@ public:
 #  endif // no CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 
 
-protected:
+public:
   Cell_handle
   inexact_locate(const Point& p,
                  Cell_handle start, 
                  int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
-
+protected:
   Cell_handle
   exact_locate(const Point& p,
                Locate_type& lt,
@@ -542,6 +546,7 @@ protected:
     return exact_locate(p, lt, li, lj, start);
   }	
 
+public:
   Orientation
   inexact_orientation(const Point &p, const Point &q,
                       const Point &r, const Point &s) const

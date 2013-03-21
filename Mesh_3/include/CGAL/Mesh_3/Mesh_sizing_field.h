@@ -146,7 +146,15 @@ typename Mesh_sizing_field<Tr,B>::FT
 Mesh_sizing_field<Tr,B>::
 operator()(const Point_3& p, const Cell_handle& c) const  
 {  
+#ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE  
+  //use the inexact locate (much faster than locate) to get a hint
+  //and then use locate to check whether p is really inside hint
+  // if not, an exact locate will be performed
+  Cell_handle hint = tr_.inexact_locate(p,c);
+  const Cell_handle cell = tr_.locate(p, hint);
+#else
   const Cell_handle cell = tr_.locate(p,c);
+#endif
   last_cell_ = cell;
   
   if ( !tr_.is_infinite(cell) )

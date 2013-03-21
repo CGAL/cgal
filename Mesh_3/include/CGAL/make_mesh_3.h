@@ -29,16 +29,11 @@
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
+#include <CGAL/Mesh_3/Has_features.h>
 
 #include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
-
-namespace internal {
-namespace Mesh_3 {
-  // A type to check if type 'Has_features' is a nested type of any class
-   BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_features)
-}} // end namespace internal::Mesh_3
   
 namespace parameters {
   namespace internal {
@@ -131,7 +126,7 @@ namespace Mesh_3 {
 
 template < typename C3T3, typename MeshDomain, typename MeshCriteria >
 void
-init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria)
+init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&)
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
@@ -363,13 +358,15 @@ BOOST_PARAMETER_FUNCTION(
       (perturb_param, (parameters::internal::Perturb_options), parameters::perturb())
       (odt_param, (parameters::internal::Odt_options), parameters::no_odt())
       (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
+      (mesh_options_param, (parameters::internal::Mesh_3_options), 
+                           parameters::internal::Mesh_3_options())
     )
   )
 )
 {
   make_mesh_3_impl(c3t3, domain, criteria,
                    exude_param, perturb_param, odt_param, lloyd_param,
-                   features_param.features());
+                   features_param.features(), mesh_options_param);
 }
   
 
@@ -392,7 +389,9 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Perturb_options& perturb,
                       const parameters::internal::Odt_options& odt,
                       const parameters::internal::Lloyd_options& lloyd,
-                      const bool with_features)
+                      const bool with_features,
+                      const parameters::internal::Mesh_3_options& 
+                        mesh_options = parameters::internal::Mesh_3_options())
 {
   // Initialize c3t3
   internal::Mesh_3::C3t3_initializer< 
@@ -415,7 +414,7 @@ void make_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   // Don't reset c3t3 as we just created it
   refine_mesh_3(c3t3, domain, criteria,
-                exude, perturb, odt, lloyd, parameters::no_reset_c3t3());
+                exude, perturb, odt, lloyd, parameters::no_reset_c3t3(), mesh_options);
 }
 
 

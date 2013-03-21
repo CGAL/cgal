@@ -52,7 +52,7 @@ public:
   typedef typename BGT::Point_3   Point_3;
 
   /// Constructor
-  Implicit_to_labeled_function_wrapper(Function_& f)
+  Implicit_to_labeled_function_wrapper(const Function_& f)
     : r_f_(f) {}
 
   // Default copy constructor and assignment operator are ok
@@ -68,7 +68,7 @@ public:
 
 private:
   /// Function to wrap
-  Function_& r_f_;
+  const Function_& r_f_;
 
 };  // end class Implicit_to_labeled_function_wrapper
 

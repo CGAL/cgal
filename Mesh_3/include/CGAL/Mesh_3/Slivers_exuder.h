@@ -23,6 +23,8 @@
 #ifndef CGAL_MESH_3_SLIVERS_EXUDER_H
 #define CGAL_MESH_3_SLIVERS_EXUDER_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Double_map.h>
 #include <CGAL/iterator.h>
 #include <map>
@@ -81,19 +83,22 @@ namespace Mesh_3 {
     // returns the distance d(v1, v2).
     // It is used in Sliver_exuder, to constructor a transform iterator.
     template <typename Gt, typename Vertex_handle>
-    class Distance_from_v :
-    public std::unary_function<Vertex_handle, typename Gt::RT>
+    class Min_distance_from_v :
+    public std::unary_function<Vertex_handle, void>
     {
       const Vertex_handle * v;
       Gt gt;
+      double & dist;
+
     public:
-      Distance_from_v(const Vertex_handle& vh,
-                      Gt geom_traits = Gt())
-      : v(&vh), gt(geom_traits)
+      Min_distance_from_v(const Vertex_handle& vh,
+                          double& dist,
+                          Gt geom_traits = Gt())
+        : v(&vh), gt(geom_traits), dist(dist)
       {
       }
       
-      typename Gt::RT
+      void
       operator()(const Vertex_handle& vh) const
       {
         typedef typename Gt::Compute_squared_distance_3
@@ -101,9 +106,12 @@ namespace Mesh_3 {
         Compute_squared_distance_3 distance =
         gt.compute_squared_distance_3_object();
         
-        return distance((*v)->point(), vh->point());
+        const double d = CGAL::to_double(distance((*v)->point(), vh->point()));
+        if(d < dist){
+          dist = d;
+        }
       }
-    }; // end class Distance_from_v
+    }; // end class Min_distance_from_v
     
   } // end namespace details
   
@@ -330,20 +338,14 @@ private:
    */
   double get_closest_vertice_squared_distance(const Vertex_handle& vh) const
   {
-    using boost::make_transform_iterator;
+
+    double dist = (std::numeric_limits<double>::max)();
+    details::Min_distance_from_v<Geom_traits, Vertex_handle>
+      min_distance_from_v(vh, dist);
+
+    tr_.adjacent_vertices(vh, boost::make_function_output_iterator(min_distance_from_v));
     
-    std::vector<Vertex_handle> adjacent_vertices;
-    adjacent_vertices.reserve(128);
-    tr_.adjacent_vertices(vh, std::back_inserter(adjacent_vertices));
-    
-    details::Distance_from_v<Geom_traits, Vertex_handle>
-      distance_from_v(vh, Geom_traits());
-    
-    return *(std::min_element(make_transform_iterator(adjacent_vertices.begin(),
-                                                      distance_from_v),
-                              make_transform_iterator(adjacent_vertices.end(),
-                                                      distance_from_v)));
-    
+    return dist;
   }
   
   /** 
@@ -622,15 +624,26 @@ pump_vertices(double sliver_criterion_limit,
 #ifdef CGAL_MESH_3_EXUDER_VERBOSE   
   std::cerr << std::endl;
   std::cerr << "Total exuding time: " << running_time_.time() << "s";
-  std::cerr << std::endl << std::endl;
+  std::cerr << std::endl;
 #endif // CGAL_MESH_3_EXUDER_VERBOSE  
   
-  if ( is_time_limit_reached() )
+  if ( is_time_limit_reached() ) {
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
+    std::cerr << "Exuding return code: TIME_LIMIT_REACHED\n\n";
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
     return TIME_LIMIT_REACHED;
-
-  if ( check_sliver_bound() )
+  }
+  
+  if ( check_sliver_bound() ) {
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
+    std::cerr << "Exuding return code: BOUND_REACHED\n\n";
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
     return BOUND_REACHED;
-    
+  }
+  
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
+    std::cerr << "Exuding return code: CANT_IMPROVE_ANYMORE\n\n";
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
   return CANT_IMPROVE_ANYMORE;
   
 } // end function pump_vertices
@@ -881,10 +894,11 @@ get_umbrella(const Facet_vector& facets,
   typename Facet_vector::const_iterator fit = facets.begin();
   for ( ; fit != facets.end() ; ++fit )
   {
-    Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
-    
     if ( c3t3_.is_in_complex(*fit) )
+    {
+      Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
       umbrella.insert(std::make_pair(edge, c3t3_.surface_patch_index(*fit)));
+    }
   }
   
   return umbrella;
@@ -910,6 +924,7 @@ restore_cells_and_boundary_facets(
       cit != new_cells.end();
       ++cit)
   {
+    (*cit)->invalidate_circumcenter();
     const int index = (*cit)->index(new_vertex);
     const Facet new_facet = std::make_pair(*cit, index);
     const Facet new_facet_from_outside = tr_.mirror_facet(new_facet);
@@ -1007,6 +1022,8 @@ Slivers_exuder<C3T3,SC,V_,FT>::
 update_mesh(const Weighted_point& new_point,
             const Vertex_handle& old_vertex)
 {
+  CGAL_assertion_code(std::size_t nb_vert = 
+                      tr_.number_of_vertices());
   Cell_vector deleted_cells;
   Facet_vector internal_facets;
   Facet_vector boundary_facets;
@@ -1042,10 +1059,13 @@ update_mesh(const Weighted_point& new_point,
   Vertex_handle new_vertex = tr_.insert(new_point);
   c3t3_.set_dimension(new_vertex,dimension);
   c3t3_.set_index(new_vertex,vertice_index);
-  
+
+  CGAL_assertion(nb_vert == tr_.number_of_vertices());
+    
   // Restore mesh
   restore_cells_and_boundary_facets(boundary_facets_from_outside, new_vertex);
   restore_internal_facets(umbrella, new_vertex);
+  CGAL_assertion(nb_vert == tr_.number_of_vertices());
 }
 
   
