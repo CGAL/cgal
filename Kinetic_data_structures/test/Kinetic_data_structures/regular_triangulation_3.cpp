@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
 		std::cerr << "ERROR Missing event: " << expected[i] << std::endl;
 		++error_count;
 	      }
-	      CGAL_assertion(*it == expected[found_line]);
+	      assert(*it == expected[found_line]);
 	      std::cerr << "Matched Event: " << *it << std::endl;
 	      line=found_line+1; 
 	    } else {

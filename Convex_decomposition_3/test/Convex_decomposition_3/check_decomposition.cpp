@@ -34,14 +34,14 @@ void check_decomposition(Nef_polyhedron_3& N)
     pi1 = pi0;
     for(++pi1; pi1 != convex_parts.end(); ++pi1) {
       Nef_polyhedron_3 tmp = pi0->intersection(*pi1).interior();
-      CGAL_assertion(tmp.is_empty());
+      assert(tmp.is_empty());
     }
   }
 
   Nary_union nu;
   for(pi0 = convex_parts.begin(); pi0 != convex_parts.end(); ++pi0)
     nu.add_polyhedron(*pi0);
-  CGAL_assertion(nu.get_union().symmetric_difference(N).is_empty());
+  assert(nu.get_union().symmetric_difference(N).is_empty());
 }
 
 int main()

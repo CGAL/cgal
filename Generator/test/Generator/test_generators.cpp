@@ -99,13 +99,13 @@ void test_point_generators_2() {
     // Create a random permutation.
     std::random_shuffle( points.begin(), points.end(), default_random);
 
-    CGAL_assertion( points.size() == 1000);
+    assert( points.size() == 1000);
     for ( std::vector<Point_2>::iterator i = points.begin();
           i != points.end(); i++){
-        CGAL_assertion( i->x() <=  100);
-        CGAL_assertion( i->x() >= -100);
-        CGAL_assertion( i->y() <=  100);
-        CGAL_assertion( i->y() >= -100);
+        assert( i->x() <=  100);
+        assert( i->x() >= -100);
+        assert( i->y() <=  100);
+        assert( i->y() >= -100);
     }
 }
 
@@ -133,15 +133,15 @@ void test_point_generators_3() {
     random_selection( points.begin(), points.end(), 100,
                       std::back_inserter(points));
 
-    CGAL_assertion( points.size() == 500);
+    assert( points.size() == 500);
     for ( std::vector<Point_3>::iterator i = points.begin();
           i != points.end(); i++){
-        CGAL_assertion( i->x() <=  100);
-        CGAL_assertion( i->x() >= -100);
-        CGAL_assertion( i->y() <=  100);
-        CGAL_assertion( i->y() >= -100);
-        CGAL_assertion( i->z() <=  100);
-        CGAL_assertion( i->z() >= -100);
+        assert( i->x() <=  100);
+        assert( i->x() >= -100);
+        assert( i->y() <=  100);
+        assert( i->y() >= -100);
+        assert( i->z() <=  100);
+        assert( i->z() >= -100);
     }
 }
 
@@ -172,7 +172,7 @@ void test_point_generators_d()
       CGAL::cpp11::copy_n( gen, 100, std::back_inserter(points));
       std::cout<<" done"<<std::flush;
       for(ii=i+100; i<ii; ++i)
-	CGAL_assertion( CGAL::squared_distance(o4,points[i]) <= 10000.0);
+	assert( CGAL::squared_distance(o4,points[i]) <= 10000.0);
       std::cout<<" checked"<<std::endl;
     }
     {
@@ -184,11 +184,11 @@ void test_point_generators_d()
       CGAL::cpp11::copy_n( gen, nb_g, std::back_inserter(points));
       std::cout<<" done"<<std::flush;
       for(ii=i+nb_g; i<ii; ++i){
-	CGAL_assertion( CGAL::squared_distance(o3,points[i]) <= 1.0);
+	assert( CGAL::squared_distance(o3,points[i]) <= 1.0);
 	if (points[i][0] >0) 
 	  g = g + (points[i] - o3);
       }
-      CGAL_assertion( std::fabs( g[0]/nb_g - 3.0/16.0) < 0.01 );
+      assert( std::fabs( g[0]/nb_g - 3.0/16.0) < 0.01 );
       std::cout<<" center of mass 3/16~="<<g[0]/nb_g<<" checked"<<std::endl;
     }
     {
@@ -199,7 +199,7 @@ void test_point_generators_d()
       CGAL::cpp11::copy_n( gen, 100, std::back_inserter(points));
       std::cout<<" done"<<std::flush;
       for(ii=i+100; i<ii; ++i) {
-	CGAL_assertion( CGAL::squared_distance(o26,points[i]) - 1.0 <= 0.1);
+	assert( CGAL::squared_distance(o26,points[i]) - 1.0 <= 0.1);
       }
       std::cout<<" checked"<<std::endl;
     }

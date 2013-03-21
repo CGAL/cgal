@@ -126,7 +126,7 @@ main( int argc, char* argv[])
     // generate two vectors a and b to build the cartesian
     // matrix from
     Vector a, b;
-    CGAL_assertion( a.size() == 0 && b.size() == 0);
+    assert( a.size() == 0 && b.size() == 0);
   
     // fill a and b with random values and sort them:
     for ( int i = 0; i < dim; ++i) {

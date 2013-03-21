@@ -44,8 +44,8 @@ int main()
   //testing min-heap
   typedef CGAL::Modifiable_priority_queue<Type*,Less,First_of_pair> Queue;
   Queue q(45,Queue::Compare(),Queue::ID());
-  CGAL_assertion( queue_size(q,45) == 0 );
-  CGAL_assertion( q.empty() );
+  assert( queue_size(q,45) == 0 );
+  assert( q.empty() );
   
   std::vector<Type> data;
   
@@ -61,69 +61,69 @@ int main()
   q.push(&data[0]+2);
   q.push(&data[0]+3);
   
-  CGAL_assertion( q.top()->first == 0 );
-  CGAL_assertion( queue_size(q,45) == 4 );
+  assert( q.top()->first == 0 );
+  assert( queue_size(q,45) == 4 );
   
   q.pop();
-  CGAL_assertion( q.top()->first == 1 );
-  CGAL_assertion( queue_size(q,45) == 3 );
+  assert( q.top()->first == 1 );
+  assert( queue_size(q,45) == 3 );
   
   q.push(&data[0]+4);
-  CGAL_assertion( q.top()->first == 4 );
-  CGAL_assertion( queue_size(q,45) == 4 );
+  assert( q.top()->first == 4 );
+  assert( queue_size(q,45) == 4 );
   
   q.erase(&data[0]+4,false);
-  CGAL_assertion( q.top()->first == 1 );
-  CGAL_assertion( queue_size(q,45) == 3 ); 
+  assert( q.top()->first == 1 );
+  assert( queue_size(q,45) == 3 ); 
   
   q.push(&data[0]+5);
-  CGAL_assertion( q.top()->first == 5 );
-  CGAL_assertion( queue_size(q,45) == 4 );
+  assert( q.top()->first == 5 );
+  assert( queue_size(q,45) == 4 );
   
   data[5].second=43;
   q.update(&data[0]+5,true);
-  CGAL_assertion( q.top()->first == 1 );
-  CGAL_assertion( queue_size(q,45) == 4 );  
+  assert( q.top()->first == 1 );
+  assert( queue_size(q,45) == 4 );  
   
   q.pop();
-  CGAL_assertion( q.top()->first == 2 );
-  CGAL_assertion( queue_size(q,45) == 3 );  
+  assert( q.top()->first == 2 );
+  assert( queue_size(q,45) == 3 );  
 
   q.pop();
-  CGAL_assertion( q.top()->first == 3 );
-  CGAL_assertion( queue_size(q,45) == 2 );  
+  assert( q.top()->first == 3 );
+  assert( queue_size(q,45) == 2 );  
 
   q.pop();
-  CGAL_assertion( q.top()->first == 5 );
-  CGAL_assertion( queue_size(q,45) == 1 );  
+  assert( q.top()->first == 5 );
+  assert( queue_size(q,45) == 1 );  
   
   q.pop();
-  CGAL_assertion( queue_size(q,45) == 0 );
-  CGAL_assertion( q.empty() );
+  assert( queue_size(q,45) == 0 );
+  assert( q.empty() );
   
   q.push(&data[0]);
   q.push(&data[0]+1);
   q.push(&data[0]+2);
   q.push(&data[0]+3);
   
-  CGAL_assertion( q.top()->first == 0 );
-  CGAL_assertion( queue_size(q,45) == 4 );
+  assert( q.top()->first == 0 );
+  assert( queue_size(q,45) == 4 );
   
   q.erase(&data[0]+1,true);
-  CGAL_assertion( q.top()->first == 0 );
-  CGAL_assertion( queue_size(q,45) == 3 );
+  assert( q.top()->first == 0 );
+  assert( queue_size(q,45) == 3 );
 
   q.erase(&data[0]+2,true);
-  CGAL_assertion( q.top()->first == 0 );
-  CGAL_assertion( queue_size(q,45) == 2 );
+  assert( q.top()->first == 0 );
+  assert( queue_size(q,45) == 2 );
 
   q.erase(&data[0],true);
-  CGAL_assertion( q.top()->first == 3 );
-  CGAL_assertion( queue_size(q,45) == 1 );
+  assert( q.top()->first == 3 );
+  assert( queue_size(q,45) == 1 );
   
   q.erase(&data[0]+3,true);
-  CGAL_assertion( queue_size(q,45) == 0 );
-  CGAL_assertion( q.empty() );  
+  assert( queue_size(q,45) == 0 );
+  assert( q.empty() );  
 
 //testing correctness of the order
   int array[10] = {0,1,2,3,4,5,6,7,8,9};
@@ -136,10 +136,10 @@ int main()
   }
   
   for (int i=0;i<10;++i){
-    CGAL_assertion(q.top()->second==i);
+    assert(q.top()->second==i);
     q.pop();
   }
-  CGAL_assertion( q.empty() );
+  assert( q.empty() );
   
 //testing update (increase key)
   data.clear();
@@ -152,13 +152,13 @@ int main()
   for (unsigned int i=0;i<10;++i){
     data[i].second=9-i;
     q.update(&data[0]+i,true);
-    CGAL_assertion(q.top()->first==i);
+    assert(q.top()->first==i);
   }
 
 //testing contains
   for (int i=0;i<10;++i){
     q.erase(&data[0]+i,true);
-    CGAL_assertion(queue_size(q,45)==9-i);
+    assert(queue_size(q,45)==9-i);
   }
   
 //testing update (decrease key of top)
@@ -172,21 +172,21 @@ int main()
   for (unsigned int i=0;i<9;++i){
     data[i].second=10+i;
     q.update(&data[0]+i,true);
-    CGAL_assertion(q.top()->first==i+1);
+    assert(q.top()->first==i+1);
   }
   
 //revert order
   for (unsigned int i=0;i<10;++i){
     data[9-i].second=i;
     q.update(&data[0]+9-i,true);
-    CGAL_assertion(q.top()->first==9);
+    assert(q.top()->first==9);
   }  
 //testing remove (emulate pop)  
   for (std::size_t i=0;i<10;++i){
-    CGAL_assertion(q.top()->first==9-i);
+    assert(q.top()->first==9-i);
     q.erase(&data[0]-i+9,true);
   }
-  CGAL_assertion( q.empty() );
+  assert( q.empty() );
   
   //testing remove+contains
   data.clear();
@@ -197,14 +197,14 @@ int main()
   }
   
   for (std::size_t i=0;i<10;++i){
-    CGAL_assertion(q.top()->first==0);
+    assert(q.top()->first==0);
     q.erase(&data[0]-i+9,true);
     for (std::size_t k=0;k<9-i;++k)
-      CGAL_assertion(q.contains(&data[0]+k)==true);
+      assert(q.contains(&data[0]+k)==true);
     for (std::size_t k=0;k<i+1;++k)
-      CGAL_assertion(q.contains(&data[0]+9-k)==false);
+      assert(q.contains(&data[0]+9-k)==false);
   }
-  CGAL_assertion( q.empty() );
+  assert( q.empty() );
   
   std::cout << "OK" << std::endl;
  

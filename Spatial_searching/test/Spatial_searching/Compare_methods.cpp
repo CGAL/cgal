@@ -72,11 +72,11 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     for (int j=0; (j < NB_NEIGH-1)&&(ok_it!=ok_end); ++j,++ok_it) {}
     time.stop(); ok_time=time.time(); std::cout << ok_time << " "; time.reset();
     if (NB_INPUT_POINTS!=0){
-      CGAL_assertion(ok_it!=ok_end);
+      assert(ok_it!=ok_end);
       ok_pt=(*ok_it).first;
     }
     else
-      CGAL_assertion(ok_it==ok_end);
+      assert(ok_it==ok_end);
     
     ok_mem=(m.virtual_size()+m.resident_size())-mem_points; 
     std::cout << ok_mem << std::endl;
@@ -92,11 +92,11 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     for (int j=0; (j < NB_NEIGH-1)&&(k_it!=k_end); ++j,++k_it) {}
     time.stop(); k_time=time.time(); std::cout << k_time << " "; time.reset();
     if (NB_INPUT_POINTS!=0){
-      CGAL_assertion(k_it!=k_end);
+      assert(k_it!=k_end);
       k_pt=(*k_it).first;
     }
     else
-      CGAL_assertion(k_it==k_end);
+      assert(k_it==k_end);
     k_mem=(m.virtual_size()+m.resident_size())-mem_points; 
     std::cout << k_mem << std::endl;
   }
@@ -110,11 +110,11 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     for (int j=0; (j < NB_NEIGH-1)&&(oi_it!=oi_end); ++j,++oi_it) {}
     time.stop(); oi_time=time.time(); std::cout << oi_time << " "; time.reset();
     if (NB_INPUT_POINTS!=0){
-      CGAL_assertion(oi_it!=oi_end);
+      assert(oi_it!=oi_end);
       oi_pt=(*oi_it).first;
     }
     else
-      CGAL_assertion(oi_it==oi_end);
+      assert(oi_it==oi_end);
     oi_mem=(m.virtual_size()+m.resident_size())-mem_points; 
     std::cout << oi_mem << std::endl;
   }
@@ -128,11 +128,11 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     for (int j=0; (j < NB_NEIGH-1)&&(i_it!=i_end); ++j,++i_it) {}
     time.stop(); i_time=time.time(); std::cout << i_time << " "; time.reset();
     if (NB_INPUT_POINTS!=0){
-      CGAL_assertion(i_it!=i_end);
+      assert(i_it!=i_end);
       i_pt=(*i_it).first;
     }
     else
-      CGAL_assertion(i_it==i_end);
+      assert(i_it==i_end);
     i_mem=(m.virtual_size()+m.resident_size())-mem_points; 
     std::cout << i_mem << std::endl;
   }
@@ -141,9 +141,9 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
   if ( ok_pt != oi_pt ) std::cout << "OI different\n";
   if ( ok_pt != i_pt ) std::cout << "I different\n";
   
-  CGAL_assertion (ok_pt == k_pt);
-  CGAL_assertion (ok_pt == oi_pt);
-  CGAL_assertion (ok_pt == i_pt);
+  assert (ok_pt == k_pt);
+  assert (ok_pt == oi_pt);
+  assert (ok_pt == i_pt);
   
   std::cerr << NB_INPUT_POINTS << " " << VALUE_OF_K << " " << NB_NEIGH << " ";
   std::cerr << ok_time  << " "  << ok_mem  << " ";

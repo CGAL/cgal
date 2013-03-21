@@ -134,7 +134,7 @@ public:
       {
         const Object& obj = *boundary_it;
         Boundary_xcurve boundary_cv;
-        CGAL_assertion(assign(boundary_cv, obj));
+        assert(assign(boundary_cv, obj));
         assign(boundary_cv, obj);
         curves_col.push_back(boundary_cv.first);
       }
@@ -154,7 +154,7 @@ public:
         for(unsigned int k=0; k<inter_objs.size(); ++k)
         {
           cur_obj = inter_objs[k];
-          CGAL_assertion(!cur_obj.is_empty());
+          assert(!cur_obj.is_empty());
           if (CGAL::assign(point, cur_obj))
           {
             #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
@@ -175,7 +175,7 @@ public:
             for(itr = objs.begin(); itr != objs.end(); ++itr)
             {
               X_monotone_curve_2 curr_cv;
-              CGAL_assertion(assign(curr_cv, *itr));
+              assert(assign(curr_cv, *itr));
               assign(curr_cv, *itr);
               curves_col.push_back(curr_cv);
             }*/
@@ -183,7 +183,7 @@ public:
           }
           else
           {
-            CGAL_assertion_msg(false, "wrong intersection type");
+            assert_msg(false, "wrong intersection type");
           }
         }
       }
@@ -369,7 +369,7 @@ protected:
                                                const Xy_monotone_surface_3 &surf1,
                                                const Xy_monotone_surface_3& surf2)
   {
-    CGAL_assertion(!face->is_unbounded());
+    assert(!face->is_unbounded());
     Comparison_result cur_res;
     if (face != current_face)
     compute_point_in_current_face(face);
@@ -414,7 +414,7 @@ protected:
   // compute a point inside the face of the arranegement
   Point_2 compute_point_inside_face(Minimization_diagram_2 &env, Face_handle face)
   {
-    CGAL_assertion(!face->is_unbounded());
+    assert(!face->is_unbounded());
     
     #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
       std::cout << "in compute point inside face" << std::endl;
@@ -432,7 +432,7 @@ protected:
       }
       hec++;
     } while(hec != hec_begin && !found);
-    CGAL_assertion(found);
+    assert(found);
 
     Halfedge_handle found_hh = hec;
     
@@ -483,8 +483,8 @@ protected:
       // just for checking, locate res_point in env to find face
       Object test_pl_obj = pl.locate(res_point);
       Face_const_handle test_fh;
-      CGAL_assertion(assign(test_fh, test_pl_obj));
-      CGAL_assertion(test_fh == face);
+      assert(assign(test_fh, test_pl_obj));
+      assert(test_fh == face);
     #endif
 
 

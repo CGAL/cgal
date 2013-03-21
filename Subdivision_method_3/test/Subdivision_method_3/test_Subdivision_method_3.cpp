@@ -58,7 +58,7 @@ void test_Subdivision_surface_3() {
     mesh >> P;
 
     Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
-    CGAL_assertion(P.is_valid());
+    assert(P.is_valid());
   }
 
   // test Catmull-Clark subdivision on 'opened' quad mesh
@@ -69,7 +69,7 @@ void test_Subdivision_surface_3() {
     mesh >> P;
 
     Subdivision_method_3::CatmullClark_subdivision(P,TEST_DEPTH);
-    CGAL_assertion(P.is_valid());
+    assert(P.is_valid());
   }
 
 
@@ -81,7 +81,7 @@ void test_Subdivision_surface_3() {
     mesh >> P;
 
     Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
-    CGAL_assertion(P.is_valid());
+    assert(P.is_valid());
   }
 
   // test Loop subdivision on 'opened' tri mesh
@@ -92,7 +92,7 @@ void test_Subdivision_surface_3() {
     mesh >> P;
 
     Subdivision_method_3::Loop_subdivision(P,TEST_DEPTH);
-    CGAL_assertion(P.is_valid());
+    assert(P.is_valid());
   }
 
   // test Doo-Sabin subdivision on general mesh
@@ -103,7 +103,7 @@ void test_Subdivision_surface_3() {
     mesh >> P;
 
     Subdivision_method_3::DooSabin_subdivision(P,TEST_DEPTH);
-    CGAL_assertion(P.is_valid());
+    assert(P.is_valid());
   }
 
   // test Sqrt-3 subdivision on tri mesh
@@ -114,7 +114,7 @@ void test_Subdivision_surface_3() {
     mesh >> P;
 
     Subdivision_method_3::Sqrt3_subdivision(P,TEST_DEPTH);
-    CGAL_assertion(P.is_valid());
+    assert(P.is_valid());
   }
 }
 

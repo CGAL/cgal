@@ -59,10 +59,10 @@ int main(int , char**)
             << "\n";
 
   // Excepted results:
-  CGAL_assertion( number_of_vertices == 4 );  
-  CGAL_assertion( number_of_boundary_edges == 4 );
-  CGAL_assertion( number_of_edges == 5 );
-  CGAL_assertion( number_of_facets == 2 );  
+  assert( number_of_vertices == 4 );  
+  assert( number_of_boundary_edges == 4 );
+  assert( number_of_edges == 5 );
+  assert( number_of_facets == 2 );  
 
   // check the cast from C2t3::Vertex_iterator to Vertex_handle, at compile
   // time.

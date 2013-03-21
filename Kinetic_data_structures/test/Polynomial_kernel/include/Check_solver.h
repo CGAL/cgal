@@ -95,7 +95,7 @@ public:
 	    std::cerr << "NUMERIC ISSUE last root was " << last_root << " and current root is "
 		      << s.top() << std::endl;
 	  }
-	  CGAL_assertion(last_root<= s.top());
+	  assert(last_root<= s.top());
 	  last_root=s.top();
 	  //Rt cur= s.top();
 	  //if (cur != std::numeric_limits<Rt>::infinity()) {
@@ -368,21 +368,21 @@ public:
   }
 
   void roots() {
-    CGAL_assertion(std::numeric_limits<Rt>::has_infinity);
+    assert(std::numeric_limits<Rt>::has_infinity);
     Rt inf= std::numeric_limits<Rt>::infinity();
     Rt minf= -std::numeric_limits<Rt>::infinity();
     Rt big(100000);
     Rt small_rt(-1000000);
     Rt z(0);
-    CGAL_assertion(big < inf);
-    CGAL_assertion(big > minf);
-    CGAL_assertion(small_rt < big);
-    CGAL_assertion(z > small_rt);
-    CGAL_assertion(-big < big);
-    CGAL_assertion(small_rt < inf);
-    CGAL_assertion(small_rt > minf);
-    CGAL_assertion(z > minf);
-    CGAL_assertion(z < inf);
+    assert(big < inf);
+    assert(big > minf);
+    assert(small_rt < big);
+    assert(z > small_rt);
+    assert(-big < big);
+    assert(small_rt < inf);
+    assert(small_rt > minf);
+    assert(z > minf);
+    assert(z < inf);
   }
 
   void all() {

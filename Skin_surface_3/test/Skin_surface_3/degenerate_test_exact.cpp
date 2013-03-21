@@ -29,7 +29,7 @@ public:
 
     std::list<Weighted_point> l;
     std::ifstream in(filename.c_str());
-    CGAL_assertion(in.is_open());
+    assert(in.is_open());
     Weighted_point wp;
     while (in >> wp) l.push_front(wp);
     
@@ -38,7 +38,7 @@ public:
     Polyhedron p;
     CGAL::mesh_skin_surface_3(skin_surface, p);
     
-    CGAL_assertion(p.is_valid() && p.is_closed());
+    assert(p.is_valid() && p.is_closed());
 
     //std::cout << p << std::endl;
   }
