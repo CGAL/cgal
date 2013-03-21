@@ -1,0 +1,13 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_2D_Polyline_simplification
+
+\cgalAutoToc
+\author Andreas Fabri
+
+\image html simplification.png
+
+This chapter describes the polyline simplification algorithm
+of \cgal. 

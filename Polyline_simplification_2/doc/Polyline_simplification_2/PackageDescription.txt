@@ -1,0 +1,41 @@
+/// \defgroup PkgPolylineSimplification2 2D PolylineSimplification Reference
+/// \defgroup PkgPolylineSimplification2Concepts Concepts
+/// \ingroup PkgPolylineSimplification2
+
+/// \defgroup PkgPolylineSimplification2PolylineSimplificationClasses PolylineSimplification Classes
+/// \ingroup PkgPolylineSimplification2
+
+
+
+
+/*!
+\addtogroup PkgPolylineSimplification2
+\cgalPkgDescriptionBegin{2D Polyline Simplification,PkgPolylineSimplification2Summary}
+\cgalPkgPicture{PolylineSimplification-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Andreas Fabri}
+\cgalPkgDesc{This package  allows to simplify polylines with the guarantee that the topolgy of the polylines does not change.}
+\cgalPkgManuals{Chapter_2D_PolylineSimplifications,PkgPolylineSimplification2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.2}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgBib{cgal:fc-ps2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polygong Demo, polygon_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+
+## Classes ##
+
+- `CGAL::Polyline_simplification_2<Traits>`
+
+
+*/
+
