@@ -579,8 +579,8 @@ public:
   /// Iterator over all stored edges. Starts at an arbitrary edge. 
   /// Returns edges_end() if t.number_of_vertices()=0.
   /// \n NGHK: Implemented
+  // NGHK: Iterates over all edges, not the ones in the unique cover
   Edge_iterator edges_begin() const {
-    // NGHK: Iterates over all edges, not the ones in the unique cover
     return _tds.edges_begin();
   }
   /// Past the end Edge_iterator.
