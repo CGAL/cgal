@@ -972,12 +972,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        CGAL_assertion_code(
-          int su = begin[0]
-                 + begin[1]
-                 + begin[2]
-                 + begin[3]
-                 + begin[4];)
+
+        int su = begin[0]
+               + begin[1]
+               + begin[2]
+               + begin[3]
+               + begin[4];
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -1223,12 +1223,12 @@ Assert_random_access_category(c_begin);
     for( k = 0; k < 5; k++) {
         CGAL_assertion( 1+k == c_begin[k]);
     }
-    CGAL_assertion_code(
+
       int su = c_begin[0]
              + c_begin[1]
              + c_begin[2]
              + c_begin[3]
-             + c_begin[4];)
+             + c_begin[4];
     CGAL_assertion( su == 15);
 
     // Jump around.
@@ -2308,12 +2308,12 @@ void test_Iterator_project()
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        CGAL_assertion_code(
+
           int su = begin[0]
                  + begin[1]
                  + begin[2]
                  + begin[3]
-                 + begin[4];)
+                 + begin[4];
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -2505,12 +2505,12 @@ void test_Iterator_project()
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == c_begin[k]);
         }
-        CGAL_assertion_code(
+
           int su = c_begin[0]
                  + c_begin[1]
                  + c_begin[2]
                  + c_begin[3]
-                 + c_begin[4];)
+                 + c_begin[4];
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -4517,12 +4517,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        CGAL_assertion_code(
+
           int su = begin[0]
                  + begin[1]
                  + begin[2]
                  + begin[3]
-                 + begin[4];)
+                 + begin[4];
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -4768,12 +4768,12 @@ Assert_random_access_category(c_begin);
     for( k = 0; k < 5; k++) {
         CGAL_assertion( 1+k == c_begin[k]);
     }
-    CGAL_assertion_code(
+
       int su = c_begin[0]
              + c_begin[1]
              + c_begin[2]
              + c_begin[3]
-             + c_begin[4];)
+             + c_begin[4];
     CGAL_assertion( su == 15);
 
     // Jump around.
@@ -5809,12 +5809,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        CGAL_assertion_code(
+
           int su = begin[0]
                  + begin[1]
                  + begin[2]
                  + begin[3]
-                 + begin[4];)
+                 + begin[4];
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -6003,12 +6003,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == c_begin[k]);
         }
-        CGAL_assertion_code(
+
           int su = c_begin[0]
                  + c_begin[1]
                  + c_begin[2]
                  + c_begin[3]
-                 + c_begin[4];)
+                 + c_begin[4];
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -6375,12 +6375,12 @@ l2.destroy();
         for( k = 0; k < 5; k++) {
             CGAL_assertion( 1+k == begin[k]);
         }
-        CGAL_assertion_code(
+
           int su = begin[0]
                  + begin[1]
                  + begin[2]
                  + begin[3]
-                 + begin[4];)
+                 + begin[4];
         CGAL_assertion( su == 15);
     
         // Jump around.
@@ -6625,12 +6625,12 @@ Assert_random_access_category(c_begin);
     for( k = 0; k < 5; k++) {
         CGAL_assertion( 1+k == c_begin[k]);
     }
-    CGAL_assertion_code(
+
       int su = c_begin[0]
              + c_begin[1]
              + c_begin[2]
              + c_begin[3]
-             + c_begin[4];)
+             + c_begin[4];
     CGAL_assertion( su == 15);
 
     // Jump around.
@@ -7376,12 +7376,12 @@ void test_N_step_adaptor_derived() {
             for( k = 0; k < 5; k++) {
                 CGAL_assertion( 1+k == begin[k]);
             }
-            CGAL_assertion_code(
+
               int su = begin[0]
                      + begin[1]
                      + begin[2]
                      + begin[3]
-                     + begin[4];)
+                     + begin[4];
             CGAL_assertion( su == 15);
         
             // Jump around.
@@ -7626,12 +7626,12 @@ void test_N_step_adaptor_derived() {
             for( k = 0; k < 5; k++) {
                 CGAL_assertion( 1+k == c_begin[k]);
             }
-            CGAL_assertion_code(
+
               int su = c_begin[0]
                      + c_begin[1]
                      + c_begin[2]
                      + c_begin[3]
-                     + c_begin[4];)
+                     + c_begin[4];
             CGAL_assertion( su == 15);
         
             // Jump around.

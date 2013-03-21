@@ -106,7 +106,7 @@ int main()
   e7->set_twin(t7);
   t7->set_twin(e7);
 
-  CGAL_assertion_code(std::less<Point_3> Less);
+  std::less<Point_3> Less;
   SplitTest st;
   Report_new_vertex<LEdge, LVertex> rnv;
   GesSM gesSM;

@@ -191,7 +191,7 @@ Build_tetrahedron_3<HDS>:: operator()( HDS& target) {
     std::size_t t5[] = { 2, 4, 5}; // non-manifold at vertex
     (void)t5; // suppress warning about unused t5
     CGAL_assertion( ! B.test_facet( t5, t5+3));
-    CGAL_assertion_code( bool removed = B.remove_unconnected_vertices();)
+    bool removed = B.remove_unconnected_vertices();
     CGAL_assertion( removed);
     B.end_surface();
 }
@@ -357,7 +357,7 @@ void test_Polyhedron() {
         Polyhedron P;
 
         Halfedge_handle  hh = P.make_triangle();  // Check handle.
-        CGAL_assertion_code( Halfedge_const_handle  hch(hh);)
+        Halfedge_const_handle  hch(hh);
         CGAL_assertion( P.is_triangle( hh));
         CGAL_assertion( P.is_triangle( hch));
         CGAL_assertion( P.is_triangle( HDS::halfedge_handle(&*hh)));
@@ -368,22 +368,22 @@ void test_Polyhedron() {
 
         Halfedge_iterator  hi(hh);          // Check Iterator.
         CGAL_assertion( P.is_triangle( hi));
-        CGAL_assertion_code( Halfedge_const_iterator  hci(hh);)
+        Halfedge_const_iterator  hci(hh);
         CGAL_assertion( P.is_triangle( hci));
 
-        CGAL_assertion_code( Edge_iterator ei(hh);) // Check Edge Iterator.
+        Edge_iterator ei(hh); // Check Edge Iterator.
         CGAL_assertion( P.is_triangle( ei));
-        CGAL_assertion_code( Edge_const_iterator eci(hh);)
+        Edge_const_iterator eci(hh);
         CGAL_assertion( P.is_triangle( eci));
 
         Halfedge_around_facet_circulator  hfc(hh);  // Check circulator 1.
         CGAL_assertion( P.is_triangle( hfc));
-        CGAL_assertion_code( Halfedge_around_facet_const_circulator hfcc(hh);)
+        Halfedge_around_facet_const_circulator hfcc(hh);
         CGAL_assertion( P.is_triangle( hfcc));
 
         Halfedge_around_vertex_circulator  hvc(hh);  // Check circulator 2.
         CGAL_assertion( P.is_triangle( hvc));
-        CGAL_assertion_code( Halfedge_around_vertex_const_circulator hvcc(hh);)
+        Halfedge_around_vertex_const_circulator hvcc(hh);
         CGAL_assertion( P.is_triangle( hvcc));
 
 
@@ -401,33 +401,33 @@ void test_Polyhedron() {
         PolyhedronV P;
 
         // Check handle.
-        CGAL_assertion_code( HalfedgeV_handle  hh = P.make_triangle();)
-        CGAL_assertion_code( HalfedgeV_const_handle  hch(hh);)
+        HalfedgeV_handle  hh = P.make_triangle();
+        HalfedgeV_const_handle  hch(hh);
         CGAL_assertion( P.is_triangle( hh));
         CGAL_assertion( P.is_triangle( hch));
         CGAL_assertion( P.is_triangle( HDSV::halfedge_handle(&*hh)));
         CGAL_assertion( P.is_triangle( HDSV::halfedge_handle(&*hch)));
 
-        CGAL_assertion_code( HalfedgeV_iterator  hi(hh);)  // Check Iterator.
+        HalfedgeV_iterator  hi(hh);  // Check Iterator.
         CGAL_assertion( P.is_triangle( hi));
-        CGAL_assertion_code( HalfedgeV_const_iterator  hci(hh);)
+        HalfedgeV_const_iterator  hci(hh);
         CGAL_assertion( P.is_triangle( hci));
 
-        CGAL_assertion_code( EdgeV_iterator  ei(hh);) // Check Edge Iterator.
+        EdgeV_iterator  ei(hh); // Check Edge Iterator.
         CGAL_assertion( P.is_triangle( ei));
-        CGAL_assertion_code( EdgeV_const_iterator  eci(hh);)
+        EdgeV_const_iterator  eci(hh);
         CGAL_assertion( P.is_triangle( eci));
 
         // Check circulator 1.
-        CGAL_assertion_code( HalfedgeV_around_facet_circulator hfc(hh);)
+        HalfedgeV_around_facet_circulator hfc(hh);
         CGAL_assertion( P.is_triangle( hfc));
-        CGAL_assertion_code( HalfedgeV_around_facet_const_circulator hfcc(hh);)
+        HalfedgeV_around_facet_const_circulator hfcc(hh);
         CGAL_assertion( P.is_triangle( hfcc));
 
         // Check circulator 2.
-        CGAL_assertion_code( HalfedgeV_around_vertex_circulator  hvc(hh);)
+        HalfedgeV_around_vertex_circulator  hvc(hh);
         CGAL_assertion( P.is_triangle( hvc));
-        CGAL_assertion_code(HalfedgeV_around_vertex_const_circulator hvcc(hh);)
+        HalfedgeV_around_vertex_const_circulator hvcc(hh);
         CGAL_assertion( P.is_triangle( hvcc));
     }
     {
@@ -475,7 +475,7 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_pure_triangle());
         CGAL_assertion( 2 == halfedgeds_connected_components(P,
                                                 CGAL::Emptyset_iterator()));
-        CGAL_assertion_code( const Polyhedron& Pq(P);)
+        const Polyhedron& Pq(P);
         CGAL_assertion( 2 == halfedgeds_connected_components(Pq,
                                                 CGAL::Emptyset_iterator()));
         P.normalize_border();
@@ -528,9 +528,9 @@ void test_Polyhedron() {
     {
         // Check the predefined point iterator
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron(
+        Halfedge_handle h = P.make_tetrahedron(
                                Point( 1.0, 0.0, 0.0), Point( 0.0, 1.0, 0.0),
-                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));)
+                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         CGAL_assertion( P.is_pure_trivalent());
@@ -549,9 +549,9 @@ void test_Polyhedron() {
     {
         // Check the predefined point const_iterator
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron(
+        Halfedge_handle h = P.make_tetrahedron(
                                Point( 1.0, 0.0, 0.0), Point( 0.0, 1.0, 0.0),
-                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));)
+                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         typedef Polyhedron::Point_const_iterator Point_const_iterator;
@@ -590,7 +590,7 @@ void test_Polyhedron() {
     {
         // Check the predefined plane const_iterator
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron();)
+        Halfedge_handle h = P.make_tetrahedron();
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         typedef Polyhedron::Plane_iterator Plane_iterator;
@@ -614,9 +614,9 @@ void test_Polyhedron() {
     {
         // Check the easy creation of a point iterator.
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_tetrahedron(
+        Halfedge_handle h = P.make_tetrahedron(
                                Point( 1.0, 0.0, 0.0), Point( 0.0, 1.0, 0.0),
-                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));)
+                               Point( 0.0, 0.0, 1.0), Point( 0.0, 0.0, 0.0));
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
 
@@ -638,22 +638,22 @@ void test_Polyhedron() {
     {
         // Check border facet generation.
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_triangle();)
+        Halfedge_handle h = P.make_triangle();
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_triangle( h));
 
-        CGAL_assertion_code( Halfedge_handle g =
+        Halfedge_handle g =
                              P.add_vertex_and_facet_to_border(
                                 h->next()->opposite(),
-                                h->opposite());)
+                                h->opposite());
         CGAL_assertion( P.is_valid());
         CGAL_assertion( h->next()->next()->next() == h);
         CGAL_assertion( g->next()->next()->next() == g);
         CGAL_assertion( h->opposite()->next() == g);
 
-        CGAL_assertion_code( Halfedge_handle gg = P.add_facet_to_border(
+        Halfedge_handle gg = P.add_facet_to_border(
                                  h->next()->next()->opposite(),
-                                 g->next()->opposite());)
+                                 g->next()->opposite());
         CGAL_assertion( P.is_valid());
         CGAL_assertion(  h->next()->next()->next() == h);
         CGAL_assertion(  g->next()->next()->next() == g);
@@ -830,7 +830,7 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         g = P.make_tetrahedron();
-        CGAL_assertion_code( Halfedge_handle gg = g->opposite()->next();)
+        Halfedge_handle gg = g->opposite()->next();
         CGAL_assertion( P.size_of_vertices()  == 8);
         CGAL_assertion( P.size_of_halfedges() == 24);
         CGAL_assertion( P.size_of_facets()    == 8);
@@ -955,7 +955,7 @@ void test_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         g = P.make_tetrahedron();
-        CGAL_assertion_code( HalfedgeL_handle gg = g->opposite()->next();)
+        HalfedgeL_handle gg = g->opposite()->next();
         CGAL_assertion( P.size_of_vertices()  == 8);
         CGAL_assertion( P.size_of_halfedges() == 24);
         CGAL_assertion( P.size_of_facets()    == 8);
@@ -1220,22 +1220,22 @@ void test_min_Polyhedron() {
     {
         // Check border facet generation.
         Polyhedron P;
-        CGAL_assertion_code( Halfedge_handle h = P.make_triangle();)
+        Halfedge_handle h = P.make_triangle();
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_triangle( h));
 
-        CGAL_assertion_code( Halfedge_handle g =
+        Halfedge_handle g =
                              P.add_vertex_and_facet_to_border(
                                 h->next()->opposite(),
-                                h->opposite());)
+                                h->opposite());
         CGAL_assertion( P.is_valid());
         CGAL_assertion( h->next()->next()->next() == h);
         CGAL_assertion( g->next()->next()->next() == g);
         CGAL_assertion( h->opposite()->next() == g);
 
-        CGAL_assertion_code( Halfedge_handle gg = P.add_facet_to_border(
+        Halfedge_handle gg = P.add_facet_to_border(
                                  h->next()->next()->opposite(),
-                                 g->next()->opposite());)
+                                 g->next()->opposite());
         CGAL_assertion( P.is_valid());
         CGAL_assertion(  h->next()->next()->next() == h);
         CGAL_assertion(  g->next()->next()->next() == g);
@@ -1352,7 +1352,7 @@ void test_min_Polyhedron() {
         CGAL_assertion( P.is_valid());
         CGAL_assertion( P.is_tetrahedron( h));
         g = P.make_tetrahedron();
-        CGAL_assertion_code( Halfedge_handle gg = g->opposite()->next();)
+        Halfedge_handle gg = g->opposite()->next();
         CGAL_assertion( P.size_of_vertices()  == 8);
         CGAL_assertion( P.size_of_halfedges() == 24);
         CGAL_assertion( P.size_of_facets()    == 8);
