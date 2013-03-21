@@ -11,3 +11,5 @@ namespace CGAL {
 
 This chapter describes the polyline simplification algorithm
 of \cgal. 
+*/
+}
