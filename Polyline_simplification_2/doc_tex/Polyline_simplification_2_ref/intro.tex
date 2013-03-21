@@ -1,0 +1,31 @@
+
+\ccRefChapter{Topology Preserving Polyline Simplification \label{ref-chapter-polylinesimplification}}
+\ccChapterAuthor{Andreas Fabri \ and Fernando Cacciola}
+
+This chapter introduces the concepts and classes of the polyline simplification package.
+The algorithms iteratively remove vertices according to a user defined cost and stop function,
+and the algorithm guarantees that no intersections are introduced. 
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+\ccRefConceptPage{PolylineSimplificationCostFunction}\\
+\ccRefConceptPage{PolylineSimplificationStopPredicate}\\
+
+\subsection*{Cost Functions}
+\ccRefIdfierPage{CGAL::Polyline_simplification_2::Squared_distance_cost}\\
+\ccRefIdfierPage{CGAL::Polyline_simplification_2::Scaled_squared_distance_cost}\\
+\ccRefIdfierPage{CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost}
+
+\subsection*{Stop Predicates}
+\ccRefIdfierPage{CGAL::Polyline_simplification_2::Stop_above_cost_threshold<FT>}\\
+\ccRefIdfierPage{CGAL::Polyline_simplification_2::Stop_below_count_threshold}\\
+\ccRefIdfierPage{CGAL::Polyline_simplification_2::Stop_below_count_ratio_threshold}
+
+
+
+\subsection*{Functions}
+\ccRefIdfierPage{CGAL::Polyline_simplification_2::simplify}\\
+\ccRefIdfierPage{CGAL::Polyline_simplification_2::mark_vertices_unremovable}\\
+

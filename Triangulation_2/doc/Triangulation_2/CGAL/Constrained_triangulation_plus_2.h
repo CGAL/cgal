@@ -4,6 +4,8 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
 
+This class is deprecated. Use `Polyline_constrained_triangulation_2` instead.
+
 The class `Constrained_triangulation_plus_2` 
 implements a constrained triangulation 
 with an additional data 
@@ -302,3 +304,4 @@ vertices_in_constraint_end(Vertex_handle va, Vertex_handle vb);
 
 }; /* end Constrained_triangulation_plus_2 */
 } /* end namespace CGAL */
+
