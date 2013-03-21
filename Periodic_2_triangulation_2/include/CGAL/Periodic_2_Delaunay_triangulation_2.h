@@ -88,10 +88,12 @@ public:
   using Triangulation::cw;
   using Triangulation::ccw;
   using Triangulation::tds;
+  using Triangulation::geom_traits;
+  using Triangulation::create_face;
   using Triangulation::is_infinite;
   using Triangulation::get_offset;
+  using Triangulation::set_offsets;
   using Triangulation::int_to_off;
-  using Triangulation::geom_traits;
   using Triangulation::is_1_cover;
   using Triangulation::dimension;
   using Triangulation::number_of_vertices;
@@ -105,6 +107,8 @@ public:
   using Triangulation::orientation;
   using Triangulation::side_of_oriented_circle;
   using Triangulation::remove_degree_init;
+  using Triangulation::insert_too_long_edge;
+  using Triangulation::incident_faces;
 #endif
 
   /// \name Constructors
@@ -1491,7 +1495,7 @@ remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
     f[0]->set_offsets(0,0,0);
     f[1]->set_offsets(0,0,0);
 
-    this->insert_too_long_edge(f[0], ccw(i[0]));
+    insert_too_long_edge(f[0], ccw(i[0]));
   }else{
     // diagonal 0 2
     f[0]->set_vertex( i[0], w[2]); //w0 w1 w2
@@ -1560,7 +1564,7 @@ remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
     o_face[ cw(i[1])] = oo[2];
     this->set_offsets(f[1], o_face[0], o_face[1], o_face[2]);
 
-    this->insert_too_long_edge(f[0], ccw(i[0]));
+    insert_too_long_edge(f[0], ccw(i[0]));
   }else{
     // diagonal 0 2
     f[0]->set_vertex( i[0], w[2]); //w0 w1 w2
@@ -1583,7 +1587,7 @@ remove_degree4(Vertex_handle, std::vector<Face_handle> &f,
     o_face[ cw(i[3])] = oo[0];
     this->set_offsets(f[3], o_face[0], o_face[1], o_face[2]);
 
-    this->insert_too_long_edge(f[3], ccw(i[3]));
+    insert_too_long_edge(f[3], ccw(i[3]));
   }
 }
 
@@ -1779,9 +1783,9 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree5_star
   oo[ cw(i3)] = oo4;
   this->set_offsets(f3, oo[0], oo[1], oo[2]);
 
-  //this->insert_too_long_edges_in_star(f1->vertex(i1));
-  this->insert_too_long_edge(f1, ccw(i1));
-  this->insert_too_long_edge(f2, ccw(i2));
+  //insert_too_long_edges_in_star(f1->vertex(i1));
+  insert_too_long_edge(f1, ccw(i1));
+  insert_too_long_edge(f2, ccw(i2));
 }
 
 template < class Gt, class Tds >
@@ -2161,9 +2165,9 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_star
   oo[ cw(i4)] = oo5;
   this->set_offsets(f4, oo[0], oo[1], oo[2]);
 
-  this->insert_too_long_edge(f1, ccw(i1));
-  this->insert_too_long_edge(f2, ccw(i2));
-  this->insert_too_long_edge(f3, ccw(i3));
+  insert_too_long_edge(f1, ccw(i1));
+  insert_too_long_edge(f2, ccw(i2));
+  insert_too_long_edge(f3, ccw(i3));
 }
 
 template < class Gt, class Tds >
@@ -2255,10 +2259,10 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_N
   oo[ cw(i5)] = oo0;
   this->set_offsets(f5, oo[0], oo[1], oo[2]);
 
-  this->insert_too_long_edge(f1, ccw(i1));
-  this->insert_too_long_edge(f2, ccw(i2));
-  this->insert_too_long_edge(f4, ccw(i4));
-  this->insert_too_long_edge(f5, ccw(i5));
+  insert_too_long_edge(f1, ccw(i1));
+  insert_too_long_edge(f2, ccw(i2));
+  insert_too_long_edge(f4, ccw(i4));
+  insert_too_long_edge(f5, ccw(i5));
 }
 
 
@@ -2350,10 +2354,10 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
   oo[ cw(i4)] = oo5;
   this->set_offsets(f4, oo[0], oo[1], oo[2]);
 
-  this->insert_too_long_edge(f0, ccw(i0));
-  this->insert_too_long_edge(f1, ccw(i1));
-  this->insert_too_long_edge(f3, ccw(i3));
-  this->insert_too_long_edge(f4, ccw(i4));
+  insert_too_long_edge(f0, ccw(i0));
+  insert_too_long_edge(f1, ccw(i1));
+  insert_too_long_edge(f3, ccw(i3));
+  insert_too_long_edge(f4, ccw(i4));
 }
 
 template < class Gt, class Tds >
@@ -2450,9 +2454,9 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_diamond
   oo[ cw(i1)] = oo2;
   this->set_offsets(f1, oo[0], oo[1], oo[2]);
 
-  this->insert_too_long_edge(f1, 0);
-  this->insert_too_long_edge(f1, 1);
-  this->insert_too_long_edge(f1, 2);
+  insert_too_long_edge(f1, 0);
+  insert_too_long_edge(f1, 1);
+  insert_too_long_edge(f1, 2);
 }
 
 
@@ -3368,10 +3372,10 @@ std::vector<Face_handle> &f, std::vector<Vertex_handle> &w, std::vector<Offset> 
   ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
   this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
   
-  this->insert_too_long_edge(f[1], ccw(i[1]));
-  this->insert_too_long_edge(f[2], ccw(i[2]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4], ccw(i[4]));
+  insert_too_long_edge(f[1], ccw(i[1]));
+  insert_too_long_edge(f[2], ccw(i[2]));
+  insert_too_long_edge(f[3], ccw(i[3]));
+  insert_too_long_edge(f[4], ccw(i[4]));
 }
 template < class Gt, class Tds >
 void
@@ -3436,10 +3440,10 @@ remove_degree7_zigzag (Vertex_handle &v, int j,
   ii = i[5]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
   this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
   
-  this->insert_too_long_edge(f[1],  cw(i[1]));
-  this->insert_too_long_edge(f[2], ccw(i[2]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4],     i[4]);
+  insert_too_long_edge(f[1],  cw(i[1]));
+  insert_too_long_edge(f[2], ccw(i[2]));
+  insert_too_long_edge(f[3], ccw(i[3]));
+  insert_too_long_edge(f[4],     i[4]);
 }
 template < class Gt, class Tds >
 void
@@ -3501,10 +3505,10 @@ remove_degree7_leftdelta(Vertex_handle &v, int j,
   ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
   this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
     
-  this->insert_too_long_edge(f[1], ccw(i[1]));
-  this->insert_too_long_edge(f[2], ccw(i[2]));
-  this->insert_too_long_edge(f[3],     i[3]);
-  this->insert_too_long_edge(f[3], ccw(i[3]));
+  insert_too_long_edge(f[1], ccw(i[1]));
+  insert_too_long_edge(f[2], ccw(i[2]));
+  insert_too_long_edge(f[3],     i[3]);
+  insert_too_long_edge(f[3], ccw(i[3]));
 }
 template < class Gt, class Tds >
 void
@@ -3565,10 +3569,10 @@ remove_degree7_rightdelta(Vertex_handle &v, int j,
   ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
   this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
     
-  this->insert_too_long_edge(f[1], ccw(i[1]));
-  this->insert_too_long_edge(f[2],  cw(i[2]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4], ccw(i[4]));
+  insert_too_long_edge(f[1], ccw(i[1]));
+  insert_too_long_edge(f[2],  cw(i[2]));
+  insert_too_long_edge(f[3], ccw(i[3]));
+  insert_too_long_edge(f[4], ccw(i[4]));
 }
 template < class Gt, class Tds >
 void
@@ -3627,10 +3631,10 @@ remove_degree7_leftfan(Vertex_handle &v, int j,
   ii = i[6]; o_face[ii] = oo[4]; o_face[ccw(ii)] = oo[6]; o_face[ cw(ii)] = oo[0];
   this->set_offsets(f[6], o_face[0], o_face[1], o_face[2]);
   
-  this->insert_too_long_edge(f[1], ccw(i[1]));
-  this->insert_too_long_edge(f[2], ccw(i[2]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4],  cw(i[4]));
+  insert_too_long_edge(f[1], ccw(i[1]));
+  insert_too_long_edge(f[2], ccw(i[2]));
+  insert_too_long_edge(f[3], ccw(i[3]));
+  insert_too_long_edge(f[4],  cw(i[4]));
 }
 template < class Gt, class Tds >
 void
@@ -3688,10 +3692,10 @@ remove_degree7_rightfan(Vertex_handle &v, int j,
   ii = i[5]; o_face[ii] = oo[0]; o_face[ccw(ii)] = oo[5]; o_face[ cw(ii)] = oo[6];
   this->set_offsets(f[5], o_face[0], o_face[1], o_face[2]);
   
-  this->insert_too_long_edge(f[0], ccw(i[0]));
-  this->insert_too_long_edge(f[0],  cw(i[0]));
-  this->insert_too_long_edge(f[3], ccw(i[3]));
-  this->insert_too_long_edge(f[4], ccw(i[4]));
+  insert_too_long_edge(f[0], ccw(i[0]));
+  insert_too_long_edge(f[0],  cw(i[0]));
+  insert_too_long_edge(f[3], ccw(i[3]));
+  insert_too_long_edge(f[4], ccw(i[4]));
 }
 
 
