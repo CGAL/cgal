@@ -150,7 +150,7 @@ public:
   void remove_first(Vertex_handle  v);
   void remove_degree_3(Vertex_handle  v);
 
-  Vertex_handle move(Vertex_handle v, const Point &p);
+  Vertex_handle move_point(Vertex_handle v, const Point &p);
   Vertex_handle move_if_no_collision(Vertex_handle v, const Point &p);
 
   //LOCATE
@@ -461,31 +461,59 @@ template <class PTr>
 typename Periodic_2_triangulation_hierarchy_2<PTr>::Vertex_handle
 Periodic_2_triangulation_hierarchy_2<PTr>::
 move_if_no_collision(Vertex_handle v, const Point &p) {
-    NGHK_NYI;
-  Vertex_handle u=v->up(), norm = v;
-  int l = 0 ;
-  while(1) {
-    Vertex_handle w = hierarchy[l++]->move_if_no_collision(v, p);
-    if(w != v) return w;
-    if (u == Vertex_handle()) break; 
-    if (l >= m_maxlevel) break;
-    v=u; u=v->up();
+  CGAL_triangulation_precondition(v != Vertex_handle());
+  Vertex_handle old, ret;
+
+  for (int l = 0; l < m_maxlevel; ++l) {
+    Vertex_handle u = v->up();
+    CGAL_triangulation_assertion(hierarchy[l]->is_valid());
+    Vertex_handle w = hierarchy[l]->move_if_no_collision(v, p);
+    if (l == 0) {
+	ret = w;
+    } else {
+      old->set_up(w);
+      w->set_down(old);
+      if (hierarchy[l]->number_of_sheets()[0] != 1) {
+        std::vector<Vertex_handle> vtc = hierarchy[l]->periodic_copies(w);
+        for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(old);
+      }
+    }
+    if (u == Vertex_handle())
+      break;
+    old = w;
+    v = u;
   }
-  return norm;
+
+  return ret;
 }
 
 template <class PTr>
 typename Periodic_2_triangulation_hierarchy_2<PTr>::Vertex_handle
 Periodic_2_triangulation_hierarchy_2<PTr>::
-move(Vertex_handle v, const Point &p) {
-    NGHK_NYI;
-  CGAL_triangulation_precondition(!this->is_infinite(v));
-  Vertex_handle w = move_if_no_collision(v,p);
-  if(w != v) {
-    remove(v);
-    return w;
+move_point(Vertex_handle v, const Point &p) {
+  CGAL_triangulation_precondition(v != Vertex_handle());
+  Vertex_handle old, ret;
+
+  for (int l = 0; l < m_maxlevel; ++l) {
+    Vertex_handle u = v->up();
+    CGAL_triangulation_assertion(hierarchy[l]->is_valid());
+    Vertex_handle w = hierarchy[l]->move_point(v, p);
+    if (l == 0) {
+	ret = w;
+    } else {
+      old->set_up(w);
+      w->set_down(old);
+      if (hierarchy[l]->number_of_sheets()[0] != 1) {
+        std::vector<Vertex_handle> vtc = hierarchy[l]->periodic_copies(w);
+        for (unsigned int i=0 ; i<vtc.size() ; i++) vtc[i]->set_down(old);
+      }
+    }
+    if (u == Vertex_handle())
+      break;
+    old = w;
+    v = u;
   }
-  return v;
+  return ret;
 }
 
 template <class PTr>
