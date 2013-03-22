@@ -1158,7 +1158,9 @@ template < class SK > \
 
   template < class SK >
   class Intersect_3
-    : public SK::Linear_kernel::Intersect_3
+  //The inheritance is commented as for some reason this does not work when
+  //using the Lazy_kernel as linear kernel.
+  //  : public SK::Linear_kernel::Intersect_3
   {
     typedef typename SK::Sphere_3                 Sphere_3;
     typedef typename SK::Line_3                   Line_3;
@@ -1201,9 +1203,23 @@ template < class SK > \
                         Plane_3 > > type;
       #endif
     };
-    
-    using SK::Linear_kernel::Intersect_3::operator();
-    
+
+    //using SK::Linear_kernel::Intersect_3::operator();
+
+    typedef typename SK::Linear_kernel::Intersect_3 Intersect_linear_3;
+
+    template<class A, class B>
+    typename Intersection_traits<SK, A, B>::result_type
+    operator()(const A& a, const B& b) const{
+      return Intersect_linear_3()(a,b);
+    }
+
+    typename result<Intersect_linear_3(Plane_3, Plane_3, Plane_3)>::type
+    operator()(const Plane_3& p, const Plane_3& q, const Plane_3& r) const
+    {
+      return Intersect_linear_3()(p, q, r);
+    }
+
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Line_3 & l, 
