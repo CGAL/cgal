@@ -24,22 +24,9 @@
 #define CGAL_NEF_DEBUG 23
 #include <CGAL/Nef_2/debug.h>
 
-#if defined(CGAL_USE_LEDA)
+#if defined(CGAL_USE_LEDA_LIBRARY)
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/tuple.h>
-#include <LEDA/slist.h>
-#include <LEDA/list.h>
-#include <LEDA/map.h>
-#include <LEDA/map2.h>
-#include <LEDA/sortseq.h>
-#include <LEDA/p_queue.h>
-#include <LEDA/impl/ab_tree.h>
-#include <LEDA/impl/bb_tree.h>
-#include <LEDA/impl/rb_tree.h>
-#include <LEDA/impl/rs_tree.h>
-#include <LEDA/impl/skiplist.h>
-#else
+
 #include <LEDA/core/tuple.h>
 #include <LEDA/core/slist.h>
 #include <LEDA/core/list.h>
@@ -52,7 +39,7 @@
 #include <LEDA/core/impl/rb_tree.h>
 #include <LEDA/core/impl/rs_tree.h>
 #include <LEDA/core/impl/skiplist.h>
-#endif
+
 #include <utility>
 #include <sstream>
 
@@ -444,8 +431,8 @@ public:
 
 } // namespace CGAL
 
-#endif // defined(CGAL_USE_LEDA)
-#if !defined(CGAL_USE_LEDA)
+#endif // defined(CGAL_USE_LEDA_LIBRARY)
+#if !defined(CGAL_USE_LEDA_LIBRARY)
 #include <list>
 #include <string>
 #include <sstream>
@@ -1123,10 +1110,10 @@ public:
 
 } // namespace CGAL
 
-#endif // !defined(CGAL_USE_LEDA)
+#endif // !defined(CGAL_USE_LEDA_LIBRARY)
 
 namespace CGAL {
-#if defined(CGAL_USE_LEDA)
+#if defined(CGAL_USE_LEDA_LIBRARY)
 #define Segment_overlay_traits leda_seg_overlay_traits
 static const char* const sweepversion = "LEDA segment overlay sweep";
 #else

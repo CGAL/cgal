@@ -35,7 +35,7 @@
 #include <boost/any.hpp>
 #endif
 
-#ifdef CGAL_USE_LEDA
+#ifdef CGAL_USE_LEDA_LIBRARY
 #include <CGAL/LEDA_basic.h>
 # if __LEDA__ > 410 && __LEDA__ < 441
 #  define CGAL_USING_PPL
