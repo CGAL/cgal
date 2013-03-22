@@ -1,16 +1,4 @@
-#include <CGAL/basic.h>
-
-#ifdef CGAL_USE_GMP
-  // GMP is installed. Use the GMP rational number-type. 
-  #include <CGAL/Gmpq.h>
-  typedef CGAL::Gmpq                                    NT;
-#else
-  // GMP is not installed. Use CGAL's exact rational number-type.
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-  typedef CGAL::Quotient<CGAL::MP_Float>                NT;
-#endif
-
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
@@ -23,7 +11,8 @@
 
 using std::strcmp;
 
-typedef CGAL::Gmpq                                      NT;
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational               NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2, 
