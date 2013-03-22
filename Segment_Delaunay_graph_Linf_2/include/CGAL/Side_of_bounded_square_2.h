@@ -40,81 +40,284 @@ namespace CGAL {
 
         CGAL_assertion(orientation_Linf(p,q,r) != DEGENERATE);
 
-        Comparison_result cmpxpq = compare_x_2(p, q);
-        Comparison_result cmpypq = compare_y_2(p, q);
-        Comparison_result cmpxpr = compare_x_2(p, r);
-        Comparison_result cmpypr = compare_y_2(p, r);
-        Comparison_result cmpxqr = compare_x_2(q, r);
-        Comparison_result cmpyqr = compare_y_2(q, r);
-
         //compute the minimum x and maximum x
+        Point_2 const * lft_p;
+        Point_2 const * rgt_p;
+        bool samex_pq (false);
+        bool samex_pr (false);
+        bool samex_qr (false);
+        Comparison_result cmpxpq = compare_x_2(p, q);
+        switch(cmpxpq) {
+          case SMALLER:
+            lft_p = &p;
+            rgt_p = &q;
+            break;
+          case LARGER:
+            lft_p = &q;
+            rgt_p = &p;
+            break;
+          default: // EQUAL
+            lft_p = &p;
+            rgt_p = &q;
+            samex_pq = true;
+            break;
+        }
+        Comparison_result cmpxpr = compare_x_2(p, r);
+        Comparison_result cmpxqr;
+        if (samex_pq) {
+          cmpxqr = cmpxpr;
+          switch(cmpxpr) {
+            case SMALLER:
+              rgt_p = &r;
+              break;
+            case LARGER:
+              lft_p = &r;
+              break;
+            default: // EQUAL is impossible
+              CGAL_assertion(false);
+              break;
+          }
+        } else {
+          if (lft_p == &p) {
+            switch(cmpxpr) {
+              case SMALLER:
+                cmpxqr = compare_x_2(q, r);
+                switch(cmpxqr) {
+                  case SMALLER:
+                    rgt_p = &r;
+                    break;
+                  case LARGER:
+                    break;
+                  default:
+                    // q and r have the same x coord
+                    samex_qr = true;
+                    break;
+                }
+                break;
+              case LARGER:
+                cmpxqr = cmpxpr;
+                lft_p = &r;
+                break;
+              default:
+                // p and r have the same x coord
+                cmpxqr = - cmpxpr;
+                samex_pr = true;
+                break;
+            }
+          } else { // lft_p == &q
+            switch(cmpxpr) {
+              case SMALLER:
+                cmpxqr = cmpxpr;
+                rgt_p = &r;
+                break;
+              case LARGER:
+                cmpxqr = compare_x_2(q, r);
+                switch(cmpxqr) {
+                  case SMALLER:
+                    break;
+                  case LARGER:
+                    lft_p = &r;
+                    break;
+                  default:
+                    // q and r have the same x coord
+                    samex_qr = true;
+                    break;
+                }
+                break;
+              default:
+                // p and r have the same x coord
+                cmpxqr = - cmpxpq;
+                samex_pr = true;
+                break;
+            }
+          }
+        }
+
         if ( (cmpxpq == LARGER or cmpxpq == EQUAL)
               and (cmpxpr == LARGER or cmpxpr == EQUAL) ){
           px_max = p;
           px_min = (cmpxqr == LARGER or cmpxqr == EQUAL) ? r : q;
+          CGAL_assertion(compare_x_2(px_max, *rgt_p) == EQUAL);
+          CGAL_assertion(compare_x_2(px_min, *lft_p) == EQUAL);
         }
         else if ((cmpxpq == SMALLER or cmpxpq == EQUAL)
                  and (cmpxqr == LARGER or cmpxqr == EQUAL) ){
           px_max = q;
           px_min = (cmpxpr == LARGER or cmpxpr == EQUAL) ? r : p;
+          CGAL_assertion(compare_x_2(px_max, *rgt_p) == EQUAL);
+          CGAL_assertion(compare_x_2(px_min, *lft_p) == EQUAL);
         }
         else {
           px_max = r;
           px_min = (cmpxpq == LARGER or cmpxpq == EQUAL) ? q : p;
+          CGAL_assertion(compare_x_2(px_max, *rgt_p) == EQUAL);
+          CGAL_assertion(compare_x_2(px_min, *lft_p) == EQUAL);
         }
+
+        //compute the minimum y and maximum y
+        Point_2 const * bot_p;
+        Point_2 const * top_p;
+        bool samey_pq (false);
+        bool samey_pr (false);
+        bool samey_qr (false);
+        Comparison_result cmpypq = compare_y_2(p, q);
+        switch(cmpypq) {
+          case SMALLER:
+            bot_p = &p;
+            top_p = &q;
+            break;
+          case LARGER:
+            bot_p = &q;
+            top_p = &p;
+            break;
+          default: // EQUAL
+            bot_p = &p;
+            top_p = &q;
+            samey_pq = true;
+            break;
+        }
+        Comparison_result cmpypr = compare_y_2(p, r);
+        CGAL_SDG_DEBUG( std::cout << "debug bs " << " p=" << p
+            << "  r=" << r << "  cmpypr=" << cmpypr << std::endl ; );
+        Comparison_result cmpyqr;
+        if (samey_pq) {
+          cmpyqr = cmpypr;
+          switch(cmpypr) {
+            case SMALLER:
+              top_p = &r;
+              break;
+            case LARGER:
+              bot_p = &r;
+              break;
+            default: // EQUAL is impossible
+              CGAL_assertion(false);
+              break;
+          }
+        } else {
+          if (bot_p == &p) {
+            switch(cmpypr) {
+              case SMALLER:
+                cmpyqr = compare_y_2(q, r);
+                switch(cmpyqr) {
+                  case SMALLER:
+                    top_p = &r;
+                    break;
+                  case LARGER:
+                    break;
+                  default:
+                    // q and r have the same y coord
+                    samey_qr = true;
+                    break;
+                }
+                break;
+              case LARGER:
+                cmpyqr = cmpypr;
+                bot_p = &r;
+                break;
+              default:
+                // p and r have the same y coord
+                cmpyqr = - cmpypq;
+                samey_pr = true;
+                break;
+            }
+          } else { // bot_p == &q
+            CGAL_SDG_DEBUG(std::cout << "debug cmpypr=" << cmpypr
+                << " and q is lower than p" << std::endl; );
+            switch(cmpypr) {
+              case SMALLER:
+                cmpyqr = cmpypr;
+                top_p = &r;
+                break;
+              case LARGER:
+                cmpyqr = compare_y_2(q, r);
+                CGAL_SDG_DEBUG( std::cout << "debug bs " << " q=" << q
+                    << "  r=" << r << "  cmpyqr=" << cmpyqr << std::endl ; );
+                switch(cmpyqr) {
+                  case SMALLER:
+                    break;
+                  case LARGER:
+                    bot_p = &r;
+                    break;
+                  default:
+                    // q and r have the same y coord
+                    samey_qr = true;
+                    break;
+                }
+                break;
+              default:
+                // p and r have the same y coord
+                cmpyqr = - cmpypq;
+                samey_pr = true;
+                break;
+            }
+          }
+        }
+
+        CGAL_SDG_DEBUG(std::cout << "debug bs " << " lft=" << *lft_p <<
+            "  rgt=" << *rgt_p << "  bot=" << *bot_p << "  top=" << *top_p
+            << std::endl; );
+        CGAL_SDG_DEBUG(std::cout << "debug bs cmpypq=" << cmpypq <<
+            " cmpypr=" << cmpypr << " cmpyqr=" << cmpyqr
+            << std::endl; );
+
         //compute the minimum y and maximum y
         if ((cmpypq == LARGER or cmpypq == EQUAL)
             and (cmpypr == LARGER or cmpypr == EQUAL) ){
           py_max = p;
           py_min = (cmpyqr == LARGER or cmpyqr == EQUAL) ? r : q;
+          CGAL_assertion(compare_y_2(py_max, *top_p) == EQUAL);
+          CGAL_assertion(compare_y_2(py_min, *bot_p) == EQUAL);
         }
         else if ((cmpypq == SMALLER or cmpypq == EQUAL)
                  and (cmpyqr == LARGER or cmpyqr == EQUAL) ){
           py_max = q;
           py_min = (cmpypr == LARGER or cmpypr == EQUAL) ? r : p;
+          CGAL_assertion(compare_y_2(py_max, *top_p) == EQUAL);
+          CGAL_assertion(compare_y_2(py_min, *bot_p) == EQUAL);
         }
         else {
           py_max = r;
           py_min = (cmpypq == LARGER or cmpypq == EQUAL) ? q : p;
+          CGAL_assertion(compare_y_2(py_max, *top_p) == EQUAL);
+          CGAL_assertion(compare_y_2(py_min, *bot_p) == EQUAL);
         }
 
 
         // check if two points have the same x or y coordinate
-        bool exist_two_with_same_x;
-        bool exist_two_with_same_y;
-        Point_2 s1, s2, dx, dy;
+        Point_2 const *s1;
+        Point_2 const *s2;
+        Point_2 const *dx;
+        Point_2 const *dy;
 
+        bool exist_two_with_same_x (false);
         // check if two points have the same x coordinate
-        if (cmpxpq == EQUAL) {
+        if (samex_pq) {
           exist_two_with_same_x = true;
-          s1 = p;
-          s2 = q;
-          dx = r;
+          s1 = &p;
+          s2 = &q;
+          dx = &r;
         }
-        else if (cmpxpr == EQUAL) {
+        else if (samex_pr) {
           exist_two_with_same_x = true;
-          s1 = p;
-          s2 = r;
-          dx = q;
+          s1 = &p;
+          s2 = &r;
+          dx = &q;
         }
-        else if (cmpxqr == EQUAL) {
+        else if (samex_qr) {
           exist_two_with_same_x = true;
-          s1 = q;
-          s2 = r;
-          dx = p;
-        }
-        else {
-          exist_two_with_same_x = false;
+          s1 = &q;
+          s2 = &r;
+          dx = &p;
         }
 
         if (exist_two_with_same_x) {
           CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same x"
               << std::endl;);
-          if ( ( ( compare_y_2(dx, s1) == SMALLER ) and
-                 ( compare_y_2(dx, s2) == SMALLER )   ) or
-               ( ( compare_y_2(dx, s1) == LARGER  ) and
-                 ( compare_y_2(dx, s2) == LARGER  )   )   )   {
-            Point_2 dxmirror (dx.x(), s1.y()+s2.y()-dx.y());
+          if ( ( ( compare_y_2(*dx, *s1) == SMALLER ) and
+                 ( compare_y_2(*dx, *s2) == SMALLER )   ) or
+               ( ( compare_y_2(*dx, *s1) == LARGER  ) and
+                 ( compare_y_2(*dx, *s2) == LARGER  )   )   )   {
+            Point_2 dxmirror (dx->x(), s1->y() + s2->y() - dx->y());
             if (compare_y_2(dxmirror, py_min) == SMALLER) {
               py_min = dxmirror;
             }
@@ -125,36 +328,34 @@ namespace CGAL {
         }
 
         // check if two points have the same y coordinate
-        if (cmpypq == EQUAL) {
+        bool exist_two_with_same_y (false);
+        if (samey_pq) {
           exist_two_with_same_y = true;
-          s1 = p;
-          s2 = q;
-          dy = r;
+          s1 = &p;
+          s2 = &q;
+          dy = &r;
         }
-        else if (cmpypr == EQUAL) {
+        else if (samey_pr) {
           exist_two_with_same_y = true;
-          s1 = p;
-          s2 = r;
-          dy = q;
+          s1 = &p;
+          s2 = &r;
+          dy = &q;
         }
-        else if (cmpyqr == EQUAL) {
+        else if (samey_qr) {
           exist_two_with_same_y = true;
-          s1 = q;
-          s2 = r;
-          dy = p;
-        }
-        else {
-          exist_two_with_same_y = false;
+          s1 = &q;
+          s2 = &r;
+          dy = &p;
         }
 
         if (exist_two_with_same_y) {
           CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y"
               << std::endl;);
-          if ( ( ( compare_x_2(dy, s1) == SMALLER ) and
-                 ( compare_x_2(dy, s2) == SMALLER )   ) or
-               ( ( compare_x_2(dy, s1) == LARGER  ) and
-                 ( compare_x_2(dy, s2) == LARGER  )   )   )   {
-            Point_2 dymirror (s1.x()+s2.x()-dy.x(), dy.y());
+          if ( ( ( compare_x_2(*dy, *s1) == SMALLER ) and
+                 ( compare_x_2(*dy, *s2) == SMALLER )   ) or
+               ( ( compare_x_2(*dy, *s1) == LARGER  ) and
+                 ( compare_x_2(*dy, *s2) == LARGER  )   )   )   {
+            Point_2 dymirror (s1->x() + s2->x() - dy->x(), dy->y());
             if (compare_x_2(dymirror, px_min) == SMALLER) {
               px_min = dymirror;
             }
