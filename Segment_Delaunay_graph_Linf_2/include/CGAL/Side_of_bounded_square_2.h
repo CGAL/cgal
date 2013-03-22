@@ -36,8 +36,6 @@ namespace CGAL {
         CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs (pqrt)= (" << p
             << ") (" << q << ") (" << r << ") (" << t << ")" << std::endl;);
 
-        Point_2 px_min, px_max, py_min, py_max;
-
         CGAL_assertion(orientation_Linf(p,q,r) != DEGENERATE);
 
         //compute the minimum x and maximum x
@@ -131,27 +129,6 @@ namespace CGAL {
                 break;
             }
           }
-        }
-
-        if ( (cmpxpq == LARGER or cmpxpq == EQUAL)
-              and (cmpxpr == LARGER or cmpxpr == EQUAL) ){
-          px_max = p;
-          px_min = (cmpxqr == LARGER or cmpxqr == EQUAL) ? r : q;
-          CGAL_assertion(compare_x_2(px_max, *rgt_p) == EQUAL);
-          CGAL_assertion(compare_x_2(px_min, *lft_p) == EQUAL);
-        }
-        else if ((cmpxpq == SMALLER or cmpxpq == EQUAL)
-                 and (cmpxqr == LARGER or cmpxqr == EQUAL) ){
-          px_max = q;
-          px_min = (cmpxpr == LARGER or cmpxpr == EQUAL) ? r : p;
-          CGAL_assertion(compare_x_2(px_max, *rgt_p) == EQUAL);
-          CGAL_assertion(compare_x_2(px_min, *lft_p) == EQUAL);
-        }
-        else {
-          px_max = r;
-          px_min = (cmpxpq == LARGER or cmpxpq == EQUAL) ? q : p;
-          CGAL_assertion(compare_x_2(px_max, *rgt_p) == EQUAL);
-          CGAL_assertion(compare_x_2(px_min, *lft_p) == EQUAL);
         }
 
         //compute the minimum y and maximum y
@@ -260,29 +237,6 @@ namespace CGAL {
             " cmpypr=" << cmpypr << " cmpyqr=" << cmpyqr
             << std::endl; );
 
-        //compute the minimum y and maximum y
-        if ((cmpypq == LARGER or cmpypq == EQUAL)
-            and (cmpypr == LARGER or cmpypr == EQUAL) ){
-          py_max = p;
-          py_min = (cmpyqr == LARGER or cmpyqr == EQUAL) ? r : q;
-          CGAL_assertion(compare_y_2(py_max, *top_p) == EQUAL);
-          CGAL_assertion(compare_y_2(py_min, *bot_p) == EQUAL);
-        }
-        else if ((cmpypq == SMALLER or cmpypq == EQUAL)
-                 and (cmpyqr == LARGER or cmpyqr == EQUAL) ){
-          py_max = q;
-          py_min = (cmpypr == LARGER or cmpypr == EQUAL) ? r : p;
-          CGAL_assertion(compare_y_2(py_max, *top_p) == EQUAL);
-          CGAL_assertion(compare_y_2(py_min, *bot_p) == EQUAL);
-        }
-        else {
-          py_max = r;
-          py_min = (cmpypq == LARGER or cmpypq == EQUAL) ? q : p;
-          CGAL_assertion(compare_y_2(py_max, *top_p) == EQUAL);
-          CGAL_assertion(compare_y_2(py_min, *bot_p) == EQUAL);
-        }
-
-
         // check if two points have the same x or y coordinate
         Point_2 const *s1;
         Point_2 const *s2;
@@ -310,6 +264,8 @@ namespace CGAL {
           dx = &p;
         }
 
+
+        Point_2 dxmirror;
         if (exist_two_with_same_x) {
           CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same x"
               << std::endl;);
@@ -317,12 +273,12 @@ namespace CGAL {
                  ( compare_y_2(*dx, *s2) == SMALLER )   ) or
                ( ( compare_y_2(*dx, *s1) == LARGER  ) and
                  ( compare_y_2(*dx, *s2) == LARGER  )   )   )   {
-            Point_2 dxmirror (dx->x(), s1->y() + s2->y() - dx->y());
-            if (compare_y_2(dxmirror, py_min) == SMALLER) {
-              py_min = dxmirror;
+            dxmirror = Point_2 (dx->x(), s1->y() + s2->y() - dx->y());
+            if (compare_y_2(dxmirror, *bot_p) == SMALLER) {
+              bot_p = &dxmirror;
             }
-            if (compare_y_2(dxmirror, py_max) == LARGER) {
-              py_max = dxmirror;
+            if (compare_y_2(dxmirror, *top_p) == LARGER) {
+              top_p = &dxmirror;
             }
           }
         }
@@ -348,6 +304,7 @@ namespace CGAL {
           dy = &p;
         }
 
+        Point_2 dymirror;
         if (exist_two_with_same_y) {
           CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs two same y"
               << std::endl;);
@@ -355,97 +312,106 @@ namespace CGAL {
                  ( compare_x_2(*dy, *s2) == SMALLER )   ) or
                ( ( compare_x_2(*dy, *s1) == LARGER  ) and
                  ( compare_x_2(*dy, *s2) == LARGER  )   )   )   {
-            Point_2 dymirror (s1->x() + s2->x() - dy->x(), dy->y());
-            if (compare_x_2(dymirror, px_min) == SMALLER) {
-              px_min = dymirror;
+            dymirror = Point_2 (s1->x() + s2->x() - dy->x(), dy->y());
+            if (compare_x_2(dymirror, *lft_p) == SMALLER) {
+              lft_p = &dymirror;
             }
-            if (compare_x_2(dymirror, px_max) == LARGER) {
-              px_max = dymirror;
+            if (compare_x_2(dymirror, *rgt_p) == LARGER) {
+              rgt_p = &dymirror;
             }
           }
         }
 
-        Point_2 pmin, pmax;
-        //pmin and pmax define the bounded square by p,q,r
-
         const FT half(0.5);
 
-        CGAL_SDG_DEBUG( std::cout << "debug bs " << "px_min=" << px_min
-            << "  px_max=" << px_max << "  py_min=" << py_min << " "
-            << "py_max=" << py_max << std::endl ; );
+        CGAL_SDG_DEBUG( std::cout << "debug bs after mirror "
+            << "lft=" << *lft_p
+            << "  rgt=" << *rgt_p << "  bot=" << *bot_p << " "
+            << "top=" << *top_p << std::endl ; );
 
         Comparison_result cmpsides =
-          CGAL::compare(px_max.x() - px_min.x(), py_max.y() - py_min.y());
+          CGAL::compare(rgt_p->x() - lft_p->x(), top_p->y() - bot_p->y());
+
+        Point_2 fix1;
+        Point_2 fix2;
 
         if (cmpsides == EQUAL)
-        { //diff x == diff y forms a square
-          pmin = Point_2(px_min.x(), py_min.y());
-          pmax = Point_2(px_max.x(), py_max.y());
+        {
+          // do nothing, lrbt are fine
         }
         else if (cmpsides == LARGER)
         { //diff x > diff y forms a rectangle
           //need to find the movable side of rectangle
-          if (compare_x_2(px_min,py_max)==SMALLER &&
-              compare_x_2(py_max,px_max)==SMALLER   ) {
-          //move the lower side
-            pmin = Point_2(px_min.x(),py_max.y() - px_max.x() + px_min.x());
-            pmax = Point_2(px_max.x(),py_max.y());
+          if (compare_x_2(*lft_p, *top_p) == SMALLER and
+              compare_x_2(*top_p, *rgt_p) == SMALLER   ) {
+            // lower the bottom side
+            fix1 = Point_2 (bot_p->x(), top_p->y() - rgt_p->x() + lft_p->x());
+            bot_p = &fix1;
           }
-          else if (compare_x_2(px_min,py_min)==SMALLER &&
-                   compare_x_2(py_min,px_max)==SMALLER   ){
-            //move the upper side
-            pmin = Point_2(px_min.x(),py_min.y());
-            pmax = Point_2(px_max.x(),py_min.y() + px_max.x() - px_min.x());
+          else if (compare_x_2(*lft_p, *bot_p) == SMALLER and
+                   compare_x_2(*bot_p, *rgt_p) == SMALLER   ){
+            // augment the top side
+            fix2 = Point_2 (top_p->x(), bot_p->y() + rgt_p->x() - lft_p->x());
+            top_p = &fix2;
           }
           else {
-            //move both sides
+            // expand rectangle both downwards and upwards
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs move both sides"
                 << std::endl;);
-            pmin = Point_2(
-                px_min.x(),
-               (py_max.y() + py_min.y() - px_max.x() + px_min.x())*half);
-            pmax = Point_2(
-                px_max.x(),
-               (py_max.y() + py_min.y() + px_max.x() - px_min.x())*half);
+            fix1 = Point_2 (
+                bot_p->x(),
+               (bot_p->y() + top_p->y() - rgt_p->x() + lft_p->x())*half);
+            bot_p = &fix1;
+            fix2 = Point_2 (
+                top_p->x(),
+               (top_p->y() + bot_p->y() + rgt_p->x() - lft_p->x())*half);
+            top_p = &fix2;
           }
         }
         else
-        {//px_max.x() - px_min.x() < py_max.y() - py_min.y())
-         // diff x < diff y forms a rectangle
-            //need to find the movable side of rectangle
-          if (compare_y_2(px_min,py_min)==LARGER &&
-              compare_y_2(px_min,py_max)==SMALLER ) {
-          //move the right side
-            pmin = Point_2(px_min.x(),py_min.y());
-            pmax = Point_2(px_min.x() + py_max.y() - py_min.y(),py_max.y());
+        { // px_max.x() - px_min.x() < py_max.y() - py_min.y())
+          // diff x < diff y forms a rectangle
+
+          // find the movable side or sides of the rectangle
+          if (compare_y_2(*lft_p, *bot_p) == LARGER and
+              compare_y_2(*lft_p, *top_p) == SMALLER ) {
+            // augment the right side
+            fix1 = Point_2 (lft_p->x() + top_p->y() - bot_p->y(), rgt_p->y());
+            rgt_p = &fix1;
           }
-          else if (compare_y_2(px_max,py_min)==LARGER &&
-                   compare_y_2(px_max,py_max)==SMALLER ){
-          //move the left side
-            pmin = Point_2(px_max.x() - py_max.y() + py_min.y(),py_min.y());
-            pmax = Point_2(px_max.x(),py_max.y());
+          else if (compare_y_2(*rgt_p,*bot_p) == LARGER and
+                   compare_y_2(*rgt_p,*top_p) == SMALLER ){
+            // diminish from the left side
+            fix2 = Point_2 (rgt_p->x() - top_p->y() + bot_p->y(), lft_p->y());
+            lft_p = &fix2;
           }
           else {
-            //move both sides
+            // change both sides
             CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs move both sides"
                 << std::endl;);
-            pmin = Point_2(
-                (px_min.x() + px_max.x() - py_max.y() + py_min.y())*half,
-                 py_min.y() );
-            pmax = Point_2(
-                (px_min.x() + px_max.x() + py_max.y() - py_min.y())*half,
-                 py_max.y() );
+
+            fix1 = Point_2 (
+               (lft_p->x() + rgt_p->x() + top_p->y() - bot_p->y())*half,
+                rgt_p->y());
+            rgt_p = &fix1;
+
+            fix2 = Point_2 (
+               (lft_p->x() + rgt_p->x() - top_p->y() + bot_p->y())*half,
+                lft_p->y());
+            lft_p = &fix2;
           }
         }
 
-        CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs pmin=" << pmin
-                  << " pmax=" << pmax << " t=" << t << std::endl;);
+        CGAL_SDG_DEBUG( std::cout << "debug bs after side fixing "
+            << "lft=" << *lft_p
+            << "  rgt=" << *rgt_p << "  bot=" << *bot_p << " "
+            << "top=" << *top_p << std::endl ; );
 
-        //Now we answer the predicate bounded side of square
-        Comparison_result cxmint = compare_x_2(pmin, t);
-        Comparison_result cxtmax = compare_x_2(t, pmax);
-        Comparison_result cymint = compare_y_2(pmin, t);
-        Comparison_result cytmax = compare_y_2(t, pmax);
+        // comparison of query point t with lrbt
+        Comparison_result cxmint = compare_x_2(*lft_p, t);
+        Comparison_result cxtmax = compare_x_2(t, *rgt_p);
+        Comparison_result cymint = compare_y_2(*bot_p, t);
+        Comparison_result cytmax = compare_y_2(t, *top_p);
         if( cxmint == SMALLER and
             cxtmax == SMALLER and
             cymint == SMALLER and
