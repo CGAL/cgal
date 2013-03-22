@@ -21,6 +21,15 @@
 #ifndef ENVELOPE_TEST_OVERLAY_FUNCTOR_H
 #define ENVELOPE_TEST_OVERLAY_FUNCTOR_H
 
+#ifndef assert_msg
+#ifndef NDEBUG
+#  define assert_msg(EX,MSG) \
+   (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+#else
+#  define assert_msg(EX,MSG) (static_cast<void>(0))
+#endif
+#endif
+
 #include <iostream>
 
 namespace CGAL {
