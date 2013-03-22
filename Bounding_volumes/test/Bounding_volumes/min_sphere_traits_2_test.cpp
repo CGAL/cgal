@@ -39,11 +39,12 @@
 #include<CGAL/Min_sphere_d.h>
 #include<CGAL/Min_circle_2.h>
 #include<CGAL/Min_circle_2_traits_2.h>  //why is this not in Min_circle_2.h
-#include<CGAL/Gmpq.h>
+#include <CGAL/Arithmetic_kernel.h>
 
 using namespace CGAL;
 
-typedef Gmpq                                        NT;
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational           NT;
 typedef NT                                          FT;
 typedef NT                                          RT;
 typedef Cartesian<FT>                               C;
