@@ -70,6 +70,64 @@ struct Handle_group_data
   { }
 };
 
+// To hold pressing states together
+struct Mouse_keyboard_state
+{
+  bool ctrl_pressing;
+  bool shift_pressing;
+  bool left_button_pressing;
+  bool right_button_pressing;
+
+  Mouse_keyboard_state() 
+    : ctrl_pressing(false), shift_pressing(false), left_button_pressing(false), right_button_pressing(false)
+  { }
+};
+
+#include <QGLViewer/camera.h>
+class ManipulatedFrameWithCustomGrabber 
+  : public qglviewer::ManipulatedFrame 
+{
+public:
+  ManipulatedFrameWithCustomGrabber(std::list<Handle_group_data>* all_frames, Mouse_keyboard_state* state) 
+    : all_frames(all_frames), state(state)
+  { }
+
+  void checkIfGrabsMouse(int x, int y, const qglviewer::Camera* const camera)
+  {
+    if(state->ctrl_pressing && (state->left_button_pressing || state->right_button_pressing) ) 
+    { // user is deforming currently don't change the state 
+      return;  
+    }
+
+    if(! state->ctrl_pressing) 
+    { // if ctrl is not pressed then deactivate all handle manipulators 
+      setGrabsMouse(false);
+      return;
+    }
+    
+    // now find closest frame and grab mouse
+    // all frames can't be empty (at least contains 'this')
+    std::list<Handle_group_data>::iterator min_it = all_frames->begin();    
+    const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(min_it->frame->position());
+    float min_dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
+
+    for(std::list<Handle_group_data>::iterator it = all_frames->begin(); it != all_frames->end(); ++it)
+    {
+      const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->frame->position());
+      float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
+      if(dist < min_dist) {
+        min_dist = dist;
+        min_it = it;
+      }
+    }
+    setGrabsMouse(min_it->frame == this);
+  }
+protected:
+  std::list<Handle_group_data>* all_frames;
+  Mouse_keyboard_state* state;
+};
+
+
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_2_EXPORT Scene_edit_polyhedron_item_2 
   : public Scene_item {
@@ -114,7 +172,12 @@ public:
   bool isEmpty() const;
   Bbox bbox() const;
 
-  // bool keyPressEvent(QKeyEvent*);
+  // take mouse events from viewer, main-window does not work
+  // take keyboard events from main-window, which is more stable
+  bool eventFilter(QObject *target, QEvent *event);
+  
+protected:
+  void timerEvent(QTimerEvent *event);
 
 public slots:
   void changed();
@@ -127,11 +190,12 @@ public slots:
   
   void vertex_has_been_selected(void* void_ptr); // a vertex is selected by shift + left_click
   void deform();                                 // deform the mesh
-
+  
 signals:
-  void mesh_deformed(Scene_edit_polyhedron_item_2* edit_item); // emits when deformation is completed
-
+  void mesh_deformed(Scene_edit_polyhedron_item_2* edit_item);      // emits when deformation is completed
+  void mesh_repaint_needed(Scene_edit_polyhedron_item_2* edit_item);
 public:
+
   Ui::DeformMesh_2* ui_widget;
 
   Scene_polyhedron_item* poly_item;
@@ -142,26 +206,30 @@ public:
 
   Deform_mesh deform_mesh;
   Deform_mesh::Handle_group active_group;
-  typedef std::list<Handle_group_data> Handle_group_data_list;
-  Handle_group_data_list handle_frame_map;
+typedef std::list<Handle_group_data> Handle_group_data_list;
+  Handle_group_data_list handle_frame_map; // keep list of handle_groups with assoc data
 
   bool show_roi; // draw roi points
+
+  // by interleaving 'viewer's events (check constructor), keep followings:
+  Mouse_keyboard_state state;
 
 public:
   // Deformation related functions //
   void insert_handle(vertex_descriptor v)
   {
     if(!is_there_any_handle_group()) {
-      ui_widget->MessageTextEdit->appendPlainText("There is no handle group, create one!");
+      print_message("There is no handle group, create one!");
       return; 
     } // no handle group to insert
 
     if(handles.insert(v).second)
     {
       deform_mesh.insert_handle(active_group, v);
-      refresh_manipulated_frame_center(active_group);
     }
     insert_roi(v); // also insert as roi
+
+    need_reprocess();
   }
 
   void insert_roi(vertex_descriptor v)
@@ -170,6 +238,8 @@ public:
     {
       deform_mesh.insert_roi(v);
     }
+
+    need_reprocess();
   }
   
   void erase_handle(vertex_descriptor v)
@@ -178,8 +248,9 @@ public:
     if(handles.erase(v) == 1)
     {
       deform_mesh.erase_handle(active_group, v);
-      refresh_manipulated_frame_center(active_group);
     }
+
+    need_reprocess();
   }
 
   void erase_roi(vertex_descriptor v)
@@ -189,6 +260,8 @@ public:
       deform_mesh.erase_roi(v);
     }
     erase_handle(v); // also erase from handles
+
+    need_reprocess();
   }
 
   void set_all_vertices_as_roi()
@@ -198,25 +271,41 @@ public:
     {
       insert_roi(*vb);
     }   
+
+    need_reprocess();
   }
+
+  void clear_roi()
+  {
+    for(std::set<vertex_descriptor>::iterator it = roi.begin(); it != roi.end();)
+    {
+      std::set<vertex_descriptor>::iterator tmp = it; ++tmp;
+      erase_roi(*it);
+      it = tmp;
+    }
+
+    need_reprocess();
+  } 
 
   void create_handle_group()
   {
     active_group = deform_mesh.create_handle_group();
 
-    qglviewer::ManipulatedFrame* new_frame = new CustomManipulatedFrame(0);//new qglviewer::ManipulatedFrame();
+    qglviewer::ManipulatedFrame* new_frame = 
+      new ManipulatedFrameWithCustomGrabber(&handle_frame_map, &state);
+    new_frame->setRotationSensitivity(2.0f);
     handle_frame_map.push_back(Handle_group_data(active_group, new_frame));
     refresh_manipulated_frame_center(active_group);
 
     connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  
 
-    ui_widget->MessageTextEdit->appendPlainText("A new empty handle group is created.");
+    print_message("A new empty handle group is created.");
   }
 
   void delete_handle_group()
   {
     if(!is_there_any_handle_group()) { 
-      ui_widget->MessageTextEdit->appendPlainText("There is no handle group to be deleted!");
+      print_message("There is no handle group to be deleted!");
       return; 
     } // no handle group
 
@@ -241,18 +330,20 @@ public:
     }
     deform_mesh.erase_handle(active_group);
 
-
+    // assign another handle_group to active_group
     Deform_mesh::Handle_group hgb, hge;
     if( !is_there_any_handle_group(hgb, hge) )
     { return; } // no handle group 
-    active_group = hgb;    
+    active_group = hgb;
+
+    need_reprocess();
   }
 
   void prev_handle_group()
   {
     Deform_mesh::Handle_group hgb, hge;
     if( !is_there_any_handle_group(hgb, hge) ) {
-      ui_widget->MessageTextEdit->appendPlainText("There is no handle group to iterate on!");
+      print_message("There is no handle group to iterate on!");
       return; 
     }
     // shift
@@ -264,12 +355,25 @@ public:
   {
     Deform_mesh::Handle_group hgb, hge;
     if( !is_there_any_handle_group(hgb, hge) ) {
-      ui_widget->MessageTextEdit->appendPlainText("There is no handle group to iterate on!");
+      print_message("There is no handle group to iterate on!");
       return; 
     }
     // shift
     if(--hge == active_group) { active_group = hgb; }
     else                      {++active_group; }    
+  }
+
+protected:
+  // Deformation related functions //
+  void print_message(const QString& message)
+  {
+    if(ui_widget != NULL)
+      ui_widget->MessageTextEdit->appendPlainText(message);
+  }
+
+  void need_reprocess()
+  {
+    refresh_all_handle_centers();
   }
 
   bool is_there_any_handle_group(Deform_mesh::Handle_group& hgb, Deform_mesh::Handle_group& hge)
@@ -300,6 +404,15 @@ public:
         if(is_insert) { insert_handle(vh); }
         else          { erase_handle(vh);  }
       }
+    }
+  }
+
+  void refresh_all_handle_centers()
+  {
+    Deform_mesh::Handle_group hgb, hge;
+    for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb)
+    {
+      refresh_manipulated_frame_center(hgb);
     }
   }
 
@@ -376,6 +489,7 @@ public:
     }
     return D;
   }
+
 }; // end class Scene_edit_polyhedron_item_2
 
 #endif // SCENE_EDIT_POLYHEDRON_ITEM_2_H

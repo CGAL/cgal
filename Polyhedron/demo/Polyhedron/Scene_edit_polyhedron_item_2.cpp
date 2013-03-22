@@ -22,19 +22,33 @@
 
 Scene_edit_polyhedron_item_2::Scene_edit_polyhedron_item_2(Scene_polyhedron_item* poly_item)
   : poly_item(poly_item), deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map())
-  , show_roi(true)
+  , show_roi(true), ui_widget(NULL), frame(new qglviewer::ManipulatedFrame())
 {
-  frame = new qglviewer::ManipulatedFrame();
   frame->setProperty("item", QVariant::fromValue<QObject*>(this));
-
+  // bind vertex picking 
   connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
   poly_item->enable_facets_picking(true);
 
-  //connect(frame, SIGNAL(modified()), this, SIGNAL(modified())); 
+  // interleave events of viewer (there is only one viewer) 
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  viewer->installEventFilter(this);
+    
+  // create an empty handle group for starting
+  create_handle_group();
+   
+  // start QObject's timer for continous effects 
+  // (like selecting vertices as 'painting', deforming mesh while mouse not moving)
+  startTimer(0);
 }
 
 Scene_edit_polyhedron_item_2::~Scene_edit_polyhedron_item_2()
-{ }
+{
+  delete frame;
+  while(is_there_any_handle_group())
+  {
+    delete_handle_group();
+  }
+}
 
 struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
 {
@@ -44,7 +58,8 @@ struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
     vh = hds.vertex_handle(vertex_ptr);
   }
 };
-
+/////////////////////////////////////////////////////////
+/////////// Most relevant functions lie here ///////////
 void Scene_edit_polyhedron_item_2::deform()
 {
   if(handles.empty()) { return; }
@@ -64,9 +79,7 @@ void Scene_edit_polyhedron_item_2::deform()
   deform_mesh.deform();
 
   emit mesh_deformed(this);
-  //draw();
 }
-
 void Scene_edit_polyhedron_item_2::vertex_has_been_selected(void* void_ptr) {
 
   Polyhedron* poly = poly_item->polyhedron();
@@ -81,7 +94,64 @@ void Scene_edit_polyhedron_item_2::vertex_has_been_selected(void* void_ptr) {
   int k_ring = ui_widget->BrushSpinBox->value();
   process_selection(clicked_vertex, k_ring, is_roi, is_insert);
 }
+void Scene_edit_polyhedron_item_2::timerEvent(QTimerEvent *event)
+{
+  if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing) ) {
+    deform(); 
+  }
+}
+bool Scene_edit_polyhedron_item_2::eventFilter(QObject *target, QEvent *event)
+{
+  // key events
+  if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) 
+  {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+    Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
+    state.ctrl_pressing = modifiers.testFlag(Qt::ControlModifier);
+    state.shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
+
+    std::cout << "ctrl " << (state.ctrl_pressing ? "active" : "not active") << " ";
+    std::cout << "shift " << (state.shift_pressing ? "active" : "not active") << std::endl;
+  }
+  // mouse events
+  if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)
+	{
+    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+    if(mouse_event->button() == Qt::LeftButton) {
+      state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
+    }
+    if(mouse_event->button() == Qt::RightButton) {
+      state.right_button_pressing = event->type() == QEvent::MouseButtonPress;
+    }    
+    std::cout << "left " << (state.left_button_pressing ? "active" : "not active") << " ";
+    std::cout << "right " << (state.right_button_pressing ? "active" : "not active") << std::endl;    
+  }
+
+  if(event->type() == QEvent::MouseMove)    
+  { 
+    // paint with mouse hover event
+    if(state.shift_pressing && state.left_button_pressing)
+    {    
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      qglviewer::Camera* camera = viewer->camera();
+
+      bool found = false;
+      qglviewer::Vec point = camera->pointUnderPixel(mouse_event->pos(), found);
+      if(found)
+      {
+        qglviewer::Vec orig = camera->position();
+        qglviewer::Vec dir = point - orig;
+        select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+
+        emit mesh_repaint_needed(this); // might be placed somewhere more appropriate
+      }
+    }// end shift_pressing
+  }//end MouseMove
+
+  return false;
+}
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item_2::draw() const {
   poly_item->direct_draw();
@@ -107,20 +177,26 @@ void Scene_edit_polyhedron_item_2::draw() const {
     if(hgb == active_group) { color.set_rgb_color(1.0f, 0, 0); }
     else                    { color.set_rgb_color(0, 0, 1.0f); }
     ::glBegin(GL_POINTS);
-    Deform_mesh::Const_handle_iterator hb, he;
-    for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb)
-    {           
-      const Kernel::Point_3& p = (*hb)->point();
-      ::glVertex3d(p.x(), p.y(), p.z());
-    }
-    // draw axis using manipulated frame assoc with handle_group
+      Deform_mesh::Const_handle_iterator hb, he;
+      for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb)
+      {           
+        const Kernel::Point_3& p = (*hb)->point();
+        ::glVertex3d(p.x(), p.y(), p.z());
+      }
     ::glEnd();
-    ::glPushMatrix();
-      ::glMultMatrixd(get_data(hgb).frame->matrix());
-      QGLViewer::drawAxis(0.1f);
-    ::glPopMatrix();
+
+    // draw axis using manipulated frame assoc with handle_group
+    const Handle_group_data& hgb_data = get_data(hgb);
+    if(hgb_data.frame->grabsMouse())
+    {      
+      ::glPushMatrix();
+        ::glMultMatrixd(hgb_data.frame->matrix());
+        QGLViewer::drawAxis(0.1f);
+      ::glPopMatrix();
+    }
   }
 }
+//////////////////////////////////////////////////////////
 
 void Scene_edit_polyhedron_item_2::changed()
 {
@@ -128,12 +204,6 @@ void Scene_edit_polyhedron_item_2::changed()
   Scene_item::changed();
 //  last_pos = current_position();
 }
-
-//bool Scene_edit_polyhedron_item_2::keyPressEvent(QKeyEvent* key_event)
-//{
-//  if(event->key() == Qt::Key_Escape
-//}
-
 Scene_polyhedron_item* Scene_edit_polyhedron_item_2::to_polyhedron_item() const {
   return poly_item;
 }
