@@ -1,19 +1,5 @@
-#include <CGAL/basic.h>
 
-#ifdef CGAL_USE_GMP
-
-  #include <CGAL/Gmpq.h>
-
-  typedef CGAL::Gmpq                                    Number_type;
-
-#else
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-
-  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
-
-#endif
-
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
@@ -107,6 +93,8 @@ are_same_results(Arrangement& arr,
   return true;
 }
 
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational             Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Base_traits_2;
 typedef Base_traits_2::Point_2                        Base_point_2;
