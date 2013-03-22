@@ -519,7 +519,7 @@ public:
 public:
   Cell_handle
   inexact_locate(const Point& p,
-                 Cell_handle start, 
+                 Cell_handle start = Cell_handle(), 
                  int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
 protected:
   Cell_handle

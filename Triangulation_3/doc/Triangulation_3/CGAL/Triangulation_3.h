@@ -584,6 +584,16 @@ Same as above but uses `hint` as the starting place for the search.
 Cell_handle 
 locate(const Point & query, Vertex_handle hint) const; 
 
+/*!
+Same as above but uses a `Cell_handle` as starting hint, and inexact predicates. 
+This function returns a `Cell_handle` which is a good approximation of the exact
+location of `query`, while being faster. Note that it may return a `Cell_handle` of which 
+`query` is not in the interior. For example, in provides a good `Cell_handle start` for
+the above `locate(query, start)` function.
+*/
+Cell_handle
+inexact_locate(const Point & query, Cell_handle start = Cell_handle()) const;
+
 /*! 
 If `query` lies inside the affine hull of the points, the \f$ k\f$-face 
 (finite or infinite) that contains `query` in its interior is 
@@ -617,6 +627,7 @@ Same as above but uses `hint` as the starting place for the search.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Vertex_handle hint) const; 
+
 
 /*! 
 Returns a value indicating on which side of the oriented boundary 
