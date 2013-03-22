@@ -230,6 +230,11 @@ namespace CGAL {
           }
         }
 
+        bool is_lft_input (true);
+        bool is_rgt_input (true);
+        bool is_bot_input (true);
+        bool is_top_input (true);
+
         CGAL_SDG_DEBUG(std::cout << "debug bs " << " lft=" << *lft_p <<
             "  rgt=" << *rgt_p << "  bot=" << *bot_p << "  top=" << *top_p
             << std::endl; );
@@ -276,9 +281,11 @@ namespace CGAL {
             dxmirror = Point_2 (dx->x(), s1->y() + s2->y() - dx->y());
             if (compare_y_2(dxmirror, *bot_p) == SMALLER) {
               bot_p = &dxmirror;
+              is_bot_input = false;
             }
             if (compare_y_2(dxmirror, *top_p) == LARGER) {
               top_p = &dxmirror;
+              is_top_input = false;
             }
           }
         }
@@ -315,9 +322,11 @@ namespace CGAL {
             dymirror = Point_2 (s1->x() + s2->x() - dy->x(), dy->y());
             if (compare_x_2(dymirror, *lft_p) == SMALLER) {
               lft_p = &dymirror;
+              is_lft_input = false;
             }
             if (compare_x_2(dymirror, *rgt_p) == LARGER) {
               rgt_p = &dymirror;
+              is_rgt_input = false;
             }
           }
         }
@@ -347,12 +356,14 @@ namespace CGAL {
             // lower the bottom side
             fix1 = Point_2 (bot_p->x(), top_p->y() - rgt_p->x() + lft_p->x());
             bot_p = &fix1;
+            is_bot_input = false;
           }
           else if (compare_x_2(*lft_p, *bot_p) == SMALLER and
                    compare_x_2(*bot_p, *rgt_p) == SMALLER   ){
             // augment the top side
             fix2 = Point_2 (top_p->x(), bot_p->y() + rgt_p->x() - lft_p->x());
             top_p = &fix2;
+            is_top_input = false;
           }
           else {
             // expand rectangle both downwards and upwards
@@ -362,10 +373,12 @@ namespace CGAL {
                 bot_p->x(),
                (bot_p->y() + top_p->y() - rgt_p->x() + lft_p->x())*half);
             bot_p = &fix1;
+            is_bot_input = false;
             fix2 = Point_2 (
                 top_p->x(),
                (top_p->y() + bot_p->y() + rgt_p->x() - lft_p->x())*half);
             top_p = &fix2;
+            is_top_input = false;
           }
         }
         else
@@ -378,12 +391,14 @@ namespace CGAL {
             // augment the right side
             fix1 = Point_2 (lft_p->x() + top_p->y() - bot_p->y(), rgt_p->y());
             rgt_p = &fix1;
+            is_rgt_input = false;
           }
           else if (compare_y_2(*rgt_p,*bot_p) == LARGER and
                    compare_y_2(*rgt_p,*top_p) == SMALLER ){
             // diminish from the left side
             fix2 = Point_2 (rgt_p->x() - top_p->y() + bot_p->y(), lft_p->y());
             lft_p = &fix2;
+            is_lft_input = false;
           }
           else {
             // change both sides
@@ -394,11 +409,13 @@ namespace CGAL {
                (lft_p->x() + rgt_p->x() + top_p->y() - bot_p->y())*half,
                 rgt_p->y());
             rgt_p = &fix1;
+            is_rgt_input = false;
 
             fix2 = Point_2 (
                (lft_p->x() + rgt_p->x() - top_p->y() + bot_p->y())*half,
                 lft_p->y());
             lft_p = &fix2;
+            is_lft_input = false;
           }
         }
 
