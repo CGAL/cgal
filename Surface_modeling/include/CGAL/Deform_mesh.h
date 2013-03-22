@@ -96,8 +96,8 @@ private:
   typedef internal::Spokes_and_rims_iterator<Polyhedron> Rims_iterator;
 
   // Handle container types
-  typedef std::vector<vertex_descriptor>            Handle_container;
-  typedef std::list<Handle_container>               Handle_group_container;
+  typedef std::list<vertex_descriptor>  Handle_container;
+  typedef std::list<Handle_container>   Handle_group_container;
 public:
   /** The type for returned handle group representative from Deform_mesh::create_handle_group()*/
   typedef typename Handle_group_container::iterator       Handle_group;
@@ -118,6 +118,7 @@ private:
   VertexIndexMap vertex_index_map;                    // storing indices of ros vertices
   EdgeIndexMap   edge_index_map;                      // storing indices of ros related edges
 
+  std::vector<vertex_descriptor> roi;                 // region of interest
   std::vector<vertex_descriptor> ros;                 // region of solution, including roi and hard constraints on boundary of roi
   std::vector<bool> is_roi;                           // (size: ros)
   std::vector<bool> is_hdl;                           // (size: ros)
@@ -130,7 +131,7 @@ private:
   double tolerance;                                   // tolerance of convergence 
 
   bool need_preprocess;                               // is there any need to call preprocess() function
-  Handle_group_container handle_group_list;               // user specified handles
+  Handle_group_container handle_group_list;           // user specified handles
 
 private:
   Deform_mesh(const Self& s) { } 
@@ -167,7 +168,7 @@ public:
   {
     need_preprocess = true;
     // clear vertices
-    ros.clear();
+    roi.clear();
     handle_group_list.clear();
     // no need to clear vertex index map (or edge) since they are going to be reassigned 
     // (at least the useful parts will be reassigned)
@@ -246,7 +247,7 @@ public:
    * Return iterator [begin, end) for handle groups
    * @return tuple of [begin, end) as Handle_group
    * Note that the returned types are handle group representatives, so there is no need to use
-   * dereference operator over iterators to obtain representatives.
+   * dereference operator over iterators to reach representatives.
    */
   boost::tuple<Handle_group, Handle_group> handle_groups()
   {
@@ -257,7 +258,7 @@ public:
    * Return iterator [begin, end) for handle groups
    * @return tuple of [begin, end) as Const_handle_group
    * Note that the returned types are handle group representatives, so there is no need to use
-   * dereference operator over iterators to obtain representatives.
+   * dereference operator over iterators to reach representatives.
    */
   boost::tuple<Const_handle_group, Const_handle_group> handle_groups() const
   {
@@ -320,7 +321,7 @@ public:
   void insert_roi(vertex_descriptor vd)   
   {
     need_preprocess = true;
-    ros.push_back(vd);
+    roi.push_back(vd);
   }
 
   /**
@@ -330,10 +331,10 @@ public:
   void erase_roi(vertex_descriptor vd)   
   {
     need_preprocess = true;
-    typename std::vector<vertex_descriptor>::iterator it = std::find(ros.begin(), ros.end(), vd);
-    if(it != ros.end())
+    typename std::vector<vertex_descriptor>::iterator it = std::find(roi.begin(), roi.end(), vd);
+    if(it != roi.end())
     {
-      ros.erase(it);
+      roi.erase(it);
     }
   }
   /**
@@ -636,10 +637,9 @@ private:
   /// Find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
   void region_of_solution()
   {
-    // Important: at this point ros contains the roi vertices only.
-    // copy roi vertices to roi vector
-    std::vector<vertex_descriptor> roi;	// we can remove this temp, but I try to simplify things below
-    roi.insert(roi.end(), ros.begin(), ros.end()); 
+    ros.clear(); // clear ros
+    
+    ros.insert(ros.end(), roi.begin(), roi.end()); 
 
     ////////////////////////////////////////////////////////////////
     // assign id to vertices inside: roi, boundary of roi (roi + boundary of roi = ros),
