@@ -30,7 +30,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/Circular_kernel_2.h>
-#include <CGAL/iterator.h>
+
 #include <iostream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Linear_k1;
@@ -42,8 +42,6 @@ CK ck;
 #include <CGAL/_test_circles_predicates.h>
 #include <CGAL/_test_circles_constructions.h>
 #include <CGAL/_test_circles_extention.h>
-  
-void toto(int){}
   
 int main() {
 
