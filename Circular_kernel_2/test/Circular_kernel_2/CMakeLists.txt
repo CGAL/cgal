@@ -29,6 +29,7 @@ include_directories (BEFORE ../Homogeneous_kernel/include)
 include_directories (BEFORE ../Intersections_2/include)
 
 create_single_source_cgal_program( "test_Circular_kernel.cpp" )
+create_single_source_cgal_program( "test_Lazy_circular_kernel.cpp" )
 create_single_source_cgal_program( "test_Exact_circular_kernel.cpp" )
 create_single_source_cgal_program( "test_Filtered_bbox_circular_kernel.cpp" )
 create_single_source_cgal_program( "test_Line_arc.cpp" )
