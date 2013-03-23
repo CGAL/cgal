@@ -2123,28 +2123,20 @@ private:
       return (bs == ON_UNBOUNDED_SIDE) ? POSITIVE : NEGATIVE;
     }
 
-    // Here, bs == ON_BOUNDARY
-
-    Oriented_side os =
-      side_of_oriented_square(p.point(), q.point(), r.point(), t.point());
-    if ( os == ON_POSITIVE_SIDE ) {
-      CGAL_SDG_DEBUG(std::cout
-          << "debug incircle_p returns NEGATIVE" << std::endl;);
-      return NEGATIVE;
+    switch(bs) {
+      case ON_UNBOUNDED_SIDE:
+        CGAL_SDG_DEBUG(std::cout
+            << "debug incircle_p returns POSITIVE" << std::endl;);
+        return POSITIVE;
+      case ON_BOUNDED_SIDE:
+        CGAL_SDG_DEBUG(std::cout
+            << "debug incircle_p returns NEGATIVE" << std::endl;);
+        return NEGATIVE;
+      default:
+        CGAL_SDG_DEBUG(std::cout
+            << "debug incircle_p returns ZERO" << std::endl;);
+        return ZERO;
     }
-    if ( os == ON_NEGATIVE_SIDE ) {
-      CGAL_SDG_DEBUG(std::cout
-          << "debug incircle_p returns POSITIVE" << std::endl;);
-      return POSITIVE;
-
-    }
-    if ( os == ON_ORIENTED_BOUNDARY) {
-      CGAL_SDG_DEBUG(std::cout << "debug incircle_p on same square pqrt=0" << std::endl;);
-      return ZERO;
-    }
-
-    // avoid complaining from some compilers
-    return ZERO;
   }
 
   //--------------------------------------------------------------------------
