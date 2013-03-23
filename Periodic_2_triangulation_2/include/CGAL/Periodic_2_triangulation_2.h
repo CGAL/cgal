@@ -858,13 +858,6 @@ public:
 
   /// \name Predicates and Constructions
   //\{
-  /// Returns the oriented side of the point p with respect to the
-  /// triangle (p0,p1,p2)
-  /// \n NGHK: Not yet implemented
-  Oriented_side
-  oriented_side(const Point &p0, const Point &p1, const Point &p2,
-      const Point &p) const;
-
   /// Determines whether the point p lies on the (un-)bounded side of
   /// the triangle (p0,p1,p2)
   ///\n NGHK: Not yet implemented
@@ -1159,11 +1152,6 @@ protected:
   /// Removes an edge if it is too long
   void remove_too_long_edge(Face_handle f, int i);
 
-  /// Remove too long edges from the faces in the specified range
-  /// NGHK: Not Implemented
-  template<class FaceIt>
-  void remove_too_long_edges(const FaceIt begin, const FaceIt end);
-
   /// Check whether an edge is too long
   bool edge_is_too_long(const Point &p1, const Point &p2) const;
 
@@ -1240,11 +1228,6 @@ protected:
   /// NGHK: Not yet implemented
   void delete_vertex(Vertex_handle v);
 
-  /// NGHK: Not yet implemented
-  void file_input(std::istream& is);
-  /// NGHK: Not yet implemented
-  void file_output(std::ostream& os) const;
-
   // template members
 
   /// NGHK: Not yet implemented
@@ -1264,14 +1247,20 @@ protected:
     typedef typename Geom_traits::Orientation_2 Orientation_2;
     Face_circulator fc = incident_faces(v), done(fc);
     do {
-      if (!is_infinite(fc)) {
-        Vertex_handle v0 = fc->vertex(0);
-        Vertex_handle v1 = fc->vertex(1);
-        Vertex_handle v2 = fc->vertex(2);
-        if (orientation(v0->point(), v1->point(), v2->point())
-            != COUNTERCLOCKWISE)
-          return false;
+      Orientation o;
+      
+      Vertex_handle v0 = fc->vertex(0);
+      Vertex_handle v1 = fc->vertex(1);
+      Vertex_handle v2 = fc->vertex(2);
+      if (fc->has_zero_offsets()) {
+        o = orientation(v0->point(), v1->point(), v2->point());
+      } else {
+        Offset off0 = get_offset(fc, 0);
+        Offset off1 = get_offset(fc, 1);
+        Offset off2 = get_offset(fc, 2);
+        o = orientation(v0->point(), v1->point(), v2->point(), off0, off1, off2);
       }
+      if (o != COUNTERCLOCKWISE) return false;
     } while (++fc != done);
     return true;
   }
@@ -2599,7 +2588,6 @@ inline typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_tria
 template<class Gt, class Tds>
 inline typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_triangulation_2<
     Gt, Tds>::create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) {
-  CGAL_assertion(false && "NGHK: NYI");
   return _tds.create_face(v1, v2, v3);
 }
 
@@ -2607,21 +2595,18 @@ template<class Gt, class Tds>
 inline typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_triangulation_2<
     Gt, Tds>::create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
     Face_handle f1, Face_handle f2, Face_handle f3) {
-  CGAL_assertion(false && "NGHK: NYI");
   return _tds.create_face(v1, v2, v3, f1, f2, f3);
 }
 
 template<class Gt, class Tds>
 inline typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_triangulation_2<
     Gt, Tds>::create_face(Face_handle fh) {
-  CGAL_assertion(false && "NGHK: NYI");
   return _tds.create_face(fh);
 }
 
 template<class Gt, class Tds>
 inline typename Periodic_2_triangulation_2<Gt, Tds>::Face_handle Periodic_2_triangulation_2<
     Gt, Tds>::create_face() {
-  CGAL_assertion(false && "NGHK: NYI");
   return _tds.create_face();
 }
 
@@ -2641,7 +2626,6 @@ template<class Gt, class Tds>
 bool Periodic_2_triangulation_2<Gt, Tds>::compare_walks(const Point& p,
     Face_handle c1, Face_handle c2, Locate_type& lt1, Locate_type& lt2,
     int li1, int li2) const {
-  CGAL_assertion(false && "NGHK: NYI");
   bool b = true;
   b &= (lt1 == lt2);
   if ((lt1 == lt2) && (lt1 == VERTEX)) {
@@ -3493,22 +3477,6 @@ Bounded_side Periodic_2_triangulation_2<Gt, Tds>::side_of_face(const Point &q,
 }
 
 template<class Gt, class Tds>
-Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(
-    const Point &p0, const Point &p1, const Point &p2, const Point &p) const {
-  CGAL_assertion(false && "NGHK: NYI");
-  // return position of point p with respect to the oriented triangle p0p1p2
-  // depends on the orientation of the vertices
-  Bounded_side bs = bounded_side(p0, p1, p2, p);
-  if (bs == ON_BOUNDARY)
-    return ON_ORIENTED_BOUNDARY;
-  Orientation ot = orientation(p0, p1, p2);
-  if (bs == ON_BOUNDED_SIDE)
-    return (ot == LEFT_TURN) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
-  // bs == ON_UNBOUNDED_SIDE
-  return (ot == LEFT_TURN) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
-}
-
-template<class Gt, class Tds>
 Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(Face_handle f,
                                                                  const Point& p, const Offset &o) const {
   Point &p0 = f->vertex(0)->point();
@@ -3966,13 +3934,6 @@ void Periodic_2_triangulation_2<Gt, Tds>::remove_too_long_edge(Face_handle f,
 }
 
 template<class Gt, class Tds>
-template<class FaceIt>
-void Periodic_2_triangulation_2<Gt, Tds>::remove_too_long_edges(
-    const FaceIt begin, const FaceIt end) {
-  CGAL_assertion(false && "NGHK: NYI");
-}
-
-template<class Gt, class Tds>
 bool Periodic_2_triangulation_2<Gt, Tds>::edge_is_too_long(const Point &p1,
     const Point &p2) const {
   return squared_distance(p1, p2) > _edge_length_threshold;
@@ -4039,19 +4000,6 @@ inline bool Periodic_2_triangulation_2<GT, Tds>::is_triangulation_in_1_sheet() c
       return false;
   }
   return true;
-}
-
-template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::file_output(std::ostream& os) const {
-  CGAL_assertion(false && "NGHK: NYI");
-  _tds.file_output(os, NULL, false);
-}
-
-template<class Gt, class Tds>
-void Periodic_2_triangulation_2<Gt, Tds>::file_input(std::istream& is) {
-  CGAL_assertion(false && "NGHK: NYI");
-  clear();
-  _tds.file_input(is, false);
 }
 
 template<class Gt, class Tds>
