@@ -904,7 +904,7 @@ private:
 
     Point_2 t = st.point();
 
-    Bounded_side os =
+    Bounded_side bs =
       side_of_bounded_square(p_.point(), q_.point(), r_.point(), t);
 
     switch(bs) {
