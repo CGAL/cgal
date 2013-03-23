@@ -213,7 +213,7 @@ load_cin_file(std::istream& ifs) {
       qold = q;
       continue;
     }
-    if(p == qold) {
+    if ((p == qold) and site.is_segment()) {
       points.push_back(q);
       constraints.push_back(std::make_pair(point_counter-1, point_counter));
       ++point_counter;

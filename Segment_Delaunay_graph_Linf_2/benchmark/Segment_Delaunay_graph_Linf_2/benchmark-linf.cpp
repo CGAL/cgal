@@ -213,8 +213,9 @@ load_cin_file(std::istream& ifs) {
       qold = q;
       continue;
     }
-    if(p == qold) {
+    if((p == qold) and site.is_segment()) {
       points.push_back(q);
+      //std::cout << "push pq old" << std::endl;
       constraints.push_back(std::make_pair(point_counter-1, point_counter));
       ++point_counter;
     }
@@ -225,6 +226,7 @@ load_cin_file(std::istream& ifs) {
       } else {
         points.push_back(p);
         points.push_back(q);
+        //std::cout << "push pq new" << std::endl;
         constraints.push_back(std::make_pair(point_counter, point_counter+1));
         point_counter += 2;
       }
