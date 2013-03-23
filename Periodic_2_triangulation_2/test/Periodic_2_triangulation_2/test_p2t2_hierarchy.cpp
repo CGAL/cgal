@@ -69,15 +69,15 @@ template class CGAL::Periodic_2_triangulation_hierarchy_2<PDT3>;
 int main()
 {
   typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT1 > P2T2_1;
-  test<P2T2_1>();
+  test<P2T2_1>(false);
   test_nearest<P2T2_1>();
 
   typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT2 > P2T2_2;
-  test<P2T2_2>();
+  test<P2T2_2>(true);
   test_nearest<P2T2_2>();
 
   typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT3 > P2T2_3;
-  test<P2T2_3>();
+  test<P2T2_3>(true);
   test_nearest<P2T2_3>();
 
   return 0;

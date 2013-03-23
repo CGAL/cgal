@@ -439,9 +439,7 @@ void test_miscellaneous() {
 }
 
 template <class T>
-void test_io(T &pt1) {
-  bool ex = false; // Exact predicates
-
+void test_io(T &pt1, bool ex) {
   // std::cout << "I/O" << std::endl;
   // std::cout << "  ascii" << std::endl;
   
@@ -452,7 +450,7 @@ void test_io(T &pt1) {
   ss1 >> pt1r;
  
   assert(CGAL::is_ascii(ss1));
-  if (!ex) assert(pt1 == pt1r);
+  if (!ex) { assert(pt1 == pt1r); }
 
   // std::cout << "  binary" << std::endl;
   pt1r.clear();
@@ -479,29 +477,29 @@ void test_io(T &pt1) {
 }
 
 template <class T>
-void test_io() {
+void test_io(bool exact) {
   typedef typename T::Point             Point;
 
   T t;
-  test_io(t);
+  test_io(t, exact);
 
   t.insert(Point(0.5, 0.5));
-  test_io(t);
+  test_io(t, exact);
 
   t.insert(Point(0.6, 0.8));
   t.insert(Point(0.2, 0.6));
-  test_io(t);
+  test_io(t, exact);
 
   // One cover for the Delaunay triangulation
   t.clear();
   for (int x=0; x<5; ++x)
     for (int y=0; y<5; ++y)
       t.insert(Point(x/5.0, y/5.0));
-  test_io(t);
+  test_io(t, exact);
 }
 
 template <class T>
-void test() {
+void test(bool exact) {
   test_constructor<T>();
   test_global_access<T>();
   test_geometric_access<T>();
@@ -511,7 +509,7 @@ void test() {
   test_circulators<T>();
   test_modifiers<T>();
   test_miscellaneous<T>();
-  test_io<T>();
+  test_io<T>(exact);
 }
 
 

@@ -4214,14 +4214,10 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is) {
 
   if (is_ascii(is)) {
     is >> domain;
-    is >> cx >> cy;
-    is >> n;
-  }
-  else {
+    is >> cx >> cy >> n;
+  } else {
     is >> domain;
-    read(is,cx);
-    read(is,cy);
-    read(is,n);
+    read(is,cx); read(is,cy); read(is,n);
   }
  
   CGAL_triangulation_assertion((n/(cx*cy))*cx*cy == n);
@@ -4244,16 +4240,19 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is) {
     Vertex_handle v,w;
     std::vector<Vertex_handle> vv;
     Offset off;
+    Point p;
     for (std::size_t i=0; i < n; i++) {
       v = tds().create_vertex();
       V[i] = v;
-      is >> *V[i] >> off;
+      is >> p >> off;
+      V[i]->set_point(p);
       vv.clear();
       for (int j=1; j<cx*cy; j++) {
         i++;
         w = tds().create_vertex();
         V[i] = w;
-        is >> *V[i] >> off;
+        is >> p >> off;
+        V[i]->set_point(p);
         vv.push_back(w);
         _virtual_vertices[w]=std::make_pair(v,off);
       }
