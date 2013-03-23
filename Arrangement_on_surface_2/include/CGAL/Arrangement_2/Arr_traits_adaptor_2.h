@@ -192,7 +192,7 @@ public:
      */
     Comparison_result _compare_y_at_x_left_imp(const X_monotone_curve_2& xcv1,
                                                const X_monotone_curve_2& xcv2,
-                                               const Point_2& p,
+                                               const Point_2& CGAL_assertion_code(p),
                                                Tag_false) const
     {
       Parameter_space_in_x_2  ps_x = m_self->parameter_space_in_x_2_object();

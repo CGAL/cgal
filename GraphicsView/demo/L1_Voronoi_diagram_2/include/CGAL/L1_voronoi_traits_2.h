@@ -244,7 +244,7 @@ public:
   class Construct_projected_boundary_2 {
   public:
     template <class OutputIterator>
-    OutputIterator operator()(const Xy_monotone_surface_3& s,
+    OutputIterator operator()(const Xy_monotone_surface_3& ,
                               OutputIterator o) const {
       return o;
     }
