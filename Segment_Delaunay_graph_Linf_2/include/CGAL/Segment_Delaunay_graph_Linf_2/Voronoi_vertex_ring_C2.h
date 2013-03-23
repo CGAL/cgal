@@ -7,7 +7,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Compare_x_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Compare_y_2.h>
-#include <CGAL/Side_of_oriented_square_2.h>
+#include <CGAL/Side_of_bounded_square_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_2/Bisector_Linf.h>
 
 
@@ -41,6 +41,7 @@ public:
   typedef typename Base::Orientation         Orientation;
   typedef typename Base::Comparison_result   Comparison_result;
   typedef typename Base::Oriented_side       Oriented_side;
+  typedef typename Base::Bounded_side        Bounded_side;
   typedef typename Base::Sign                Sign;
 
   typedef typename Base::Polychainline_2     Polychainline_2;
@@ -64,7 +65,7 @@ private:
           Are_same_points_2;
   typedef SegmentDelaunayGraph_2::Are_same_segments_C2<K>
           Are_same_segments_2;
-  typedef Side_of_oriented_square_2<K>   Side_of_oriented_square_2_Type;
+  typedef Side_of_bounded_square_2<K>    Side_of_bounded_square_2_Type;
   typedef Bisector_Linf<K>               Bisector_Linf_Type;
 
   typedef SegmentDelaunayGraph_2::Compare_x_2<K> Compare_x_2_Sites_Type;
@@ -74,7 +75,7 @@ private:
 
   Are_same_points_2                same_points;
   Are_same_segments_2              same_segments;
-  Side_of_oriented_square_2_Type   side_of_oriented_square;
+  Side_of_bounded_square_2_Type    side_of_bounded_square;
   Bisector_Linf_Type               bisector_linf;
   Compare_x_2_Sites_Type           scmpx;
   Compare_y_2_Sites_Type           scmpy;
@@ -903,9 +904,23 @@ private:
 
     Point_2 t = st.point();
 
-    Oriented_side os =
-      side_of_oriented_square(p_.point(), q_.point(), r_.point(), t);
-    return - os;
+    Bounded_side os =
+      side_of_bounded_square(p_.point(), q_.point(), r_.point(), t);
+
+    switch(bs) {
+      case ON_UNBOUNDED_SIDE:
+        CGAL_SDG_DEBUG(std::cout
+            << "debug incircle_p returns POSITIVE" << std::endl;);
+        return POSITIVE;
+      case ON_BOUNDED_SIDE:
+        CGAL_SDG_DEBUG(std::cout
+            << "debug incircle_p returns NEGATIVE" << std::endl;);
+        return NEGATIVE;
+      default:
+        CGAL_SDG_DEBUG(std::cout
+            << "debug incircle_p returns ZERO" << std::endl;);
+        return ZERO;
+    }
   }
 
   //--------------------------------------------------------------------------
