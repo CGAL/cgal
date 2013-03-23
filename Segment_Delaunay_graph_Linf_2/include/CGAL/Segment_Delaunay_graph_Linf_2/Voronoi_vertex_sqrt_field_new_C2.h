@@ -2119,10 +2119,6 @@ private:
     Bounded_side bs =
       side_of_bounded_square(p.point(), q.point(), r.point(), t.point());
 
-    if (bs != ON_BOUNDARY) {
-      return (bs == ON_UNBOUNDED_SIDE) ? POSITIVE : NEGATIVE;
-    }
-
     switch(bs) {
       case ON_UNBOUNDED_SIDE:
         CGAL_SDG_DEBUG(std::cout
