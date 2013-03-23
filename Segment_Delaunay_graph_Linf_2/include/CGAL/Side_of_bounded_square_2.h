@@ -372,13 +372,15 @@ namespace CGAL {
             fix1 = Point_2 (
                 bot_p->x(),
                (bot_p->y() + top_p->y() - rgt_p->x() + lft_p->x())*half);
-            bot_p = &fix1;
             is_bot_input = false;
             fix2 = Point_2 (
                 top_p->x(),
                (top_p->y() + bot_p->y() + rgt_p->x() - lft_p->x())*half);
-            top_p = &fix2;
             is_top_input = false;
+
+            // update bottom and top
+            bot_p = &fix1;
+            top_p = &fix2;
           }
         }
         else
@@ -408,14 +410,20 @@ namespace CGAL {
             fix1 = Point_2 (
                (lft_p->x() + rgt_p->x() + top_p->y() - bot_p->y())*half,
                 rgt_p->y());
-            rgt_p = &fix1;
             is_rgt_input = false;
+            CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs fatten fix1="
+                << fix1 << std::endl;);
 
             fix2 = Point_2 (
                (lft_p->x() + rgt_p->x() - top_p->y() + bot_p->y())*half,
                 lft_p->y());
-            lft_p = &fix2;
             is_lft_input = false;
+            CGAL_SDG_DEBUG(std::cout << "debug Side_of_bs fatten fix2="
+                << fix2 << std::endl;);
+
+            // update right and left
+            rgt_p = &fix1;
+            lft_p = &fix2;
           }
         }
 
@@ -450,11 +458,65 @@ namespace CGAL {
               << "left=" << cxmint << " right=" << cxtmax
               << " bot=" << cymint << " top  =" << cytmax
               << std::endl; );
+
+          if (is_lft_input and (cxmint == EQUAL)) {
+            CGAL_SDG_DEBUG(std::cout
+                << "debug Side_of_bs t on lft input" << std::endl;);
+            Comparison_result test =
+              test1d(bot_p->y(), top_p->y(), lft_p->y(), t.y());
+            if (test != EQUAL) {
+              return (test == SMALLER) ?
+                     ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
+            }
+          }
+
+          if (is_rgt_input and (cxtmax == EQUAL)) {
+            CGAL_SDG_DEBUG(std::cout
+                << "debug Side_of_bs t on rgt input" << std::endl;);
+            Comparison_result test =
+              test1d(bot_p->y(), top_p->y(), rgt_p->y(), t.y());
+            if (test != EQUAL) {
+              return (test == SMALLER) ?
+                     ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
+            }
+          }
+
+          if (is_bot_input and (cymint == EQUAL)) {
+            CGAL_SDG_DEBUG(std::cout
+                << "debug Side_of_bs t on bot input" << std::endl;);
+            Comparison_result test =
+              test1d(lft_p->x(), rgt_p->x(), bot_p->x(), t.x());
+            if (test != EQUAL) {
+              return (test == SMALLER) ?
+                     ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
+            }
+          }
+
+          if (is_top_input and (cytmax == EQUAL)) {
+            CGAL_SDG_DEBUG(std::cout
+                << "debug Side_of_bs t on top input" << std::endl;);
+            Comparison_result test =
+              test1d(lft_p->x(), rgt_p->x(), top_p->x(), t.x());
+            if (test != EQUAL) {
+              return (test == SMALLER) ?
+                     ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
+            }
+          }
+
           CGAL_SDG_DEBUG(std::cout
               << "debug Side_of_bs return ON_BOUNDARY" << std::endl;);
           return ON_BOUNDARY;
         }
       }
+
+    inline Comparison_result test1d(
+        const FT& A, const FT& B, const FT&C, const FT& D) const
+    {
+      const FT two(2);
+      CGAL_SDG_DEBUG( std::cout << "debug bs test1d entering with ABCD "
+          << A << " " << B << " " << C << " " << D << std::endl; );
+      return CGAL::compare(CGAL::abs(A+B-two*D), CGAL::abs(A+B-two*C));
+    }
 
     public:
 
