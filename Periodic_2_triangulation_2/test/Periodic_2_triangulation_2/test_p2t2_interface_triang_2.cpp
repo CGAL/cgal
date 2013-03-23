@@ -20,10 +20,10 @@ int main() {
   typedef Periodic_2_triangulation_2<Gt>              P2T2;
   typedef Periodic_2_Delaunay_triangulation_2<Gt>     DP2T2;
 
-  test<P2T2>();
-  test<DP2T2>();
-  test<PTH_Dt>();
-  test<Delaunay_triangulation_hierarchy>();
+  test<P2T2>(false);
+  test<DP2T2>(false);
+  test<PTH_Dt>(false);
+  test<Delaunay_triangulation_hierarchy>(false);
 
   test_nearest<DP2T2>();
   test_nearest<PTH_Dt>();
