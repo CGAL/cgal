@@ -1,3 +1,4 @@
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cartesian.h>
 
 #include <CGAL/Convex_hull_traits_3.h>
@@ -6,21 +7,8 @@
 #include <CGAL/point_generators_3.h>
 #include <vector>
 #include <cassert>
-#ifdef CGAL_USE_LEDA
-#  include <CGAL/leda_rational.h>
-typedef leda_rational                   Precise_rational;
-#elif defined CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::Gmpz>      Precise_rational;
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float>  Precise_rational;
-#endif
 
-
-typedef Precise_rational                              NT;
+typedef CGAL::Arithmetic_kernel::Rational             NT;
 typedef CGAL::Cartesian<NT>                           K;
 typedef CGAL::Convex_hull_traits_3<K>                 Traits;
 typedef Traits::Polyhedron_3                          Polyhedron_3;

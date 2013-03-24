@@ -1,4 +1,4 @@
-// file : examples/Nef_2/point_location.C
+// file : examples/Nef_2/point_location.cpp
 
 
 #include <CGAL/Arithmetic_kernel.h>

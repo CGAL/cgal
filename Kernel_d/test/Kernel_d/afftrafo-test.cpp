@@ -9,25 +9,12 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/simple_transformations_d.h>
 #include <CGAL/test_macros.h>
+#include <CGAL/Arithmetic_kernel.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-typedef leda_integer  RT_;
+
+typedef CGAL::Arithmetic_kernel::Integer RT_;
+typedef CGAL::Arithmetic_kernel::Rational FT_;
 typedef leda_rational FT_;
-#else
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-#include <CGAL/Quotient.h>
-typedef CGAL::Gmpz RT_;
-typedef CGAL::Quotient<RT_> FT_;
-#else
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-typedef CGAL::MP_Float RT_;
-typedef CGAL::Quotient<RT_> FT_;
-#endif
-#endif
 
 
 int main()

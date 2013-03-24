@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cartesian.h>
 
 #include <fstream>
@@ -9,20 +9,8 @@
 #include <CGAL/point_generators_3.h>
 #include <cassert>
 
-#ifdef CGAL_USE_LEDA
-#  include <CGAL/leda_rational.h>
-typedef leda_rational                   Precise_rational;
-#elif defined CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::Gmpz>      Precise_rational;
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::Quotient<CGAL::MP_Float>  Precise_rational;
-#endif
 
-
+typedef CGAL::Arithmetic_kernel::Rational Precise_rational;
 typedef CGAL::Cartesian< Precise_rational >     R;
 typedef CGAL::Convex_hull_traits_3<R>           Traits;
 typedef Traits::Polyhedron_3                    Polyhedron_3;
