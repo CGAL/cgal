@@ -100,22 +100,6 @@ PeriodicTriangulationVoronoiGraphicsItem<DT>::paint(QPainter *painter, const QSt
   
   painter->setPen(edgesPen());
   dt->draw_dual(pos);
-  // TODO(NGHK): Not yet implement
-  // for(typename DT::Finite_edges_iterator eit = dt->finite_edges_begin();
-  //     eit != dt->finite_edges_end();
-  //     eit++){
-  //   CGAL::Object o = dt->dual(eit);
-  //   typename DT::Segment s;
-  //   typename DT::Geom_traits::Ray_2 r;
-  //   typename DT::Geom_traits::Line_2 l;
-  //   if(CGAL::assign(s,o)){
-  //     pos << s;
-  //   } else if(CGAL::assign(r,o)) {
-  //     pos << r;
-  //   }else if(CGAL::assign(l,o)) {
-  //     pos << l;
-  //   } 
-  // }
 }
 
 

@@ -110,7 +110,7 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   pt_gi, SLOT(modelChanged()));
 
-  pt_gi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  pt_gi->setVerticesPen(QPen(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pt_gi);
 
   // Add a GraphicItem for the Voronoi diagram

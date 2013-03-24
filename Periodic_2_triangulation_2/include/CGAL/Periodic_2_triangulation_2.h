@@ -1096,6 +1096,16 @@ public:
     CGAL_triangulation_assertion(_virtual_vertices_reverse.find(v) != _virtual_vertices_reverse.end());
     return _virtual_vertices_reverse.find(v)->second;
   }
+
+  /// NGHK: Not yet implemented
+  template<class Stream>
+  Stream& draw_triangulation(Stream& os) const {
+    Edge_iterator it = edges_begin();
+    for (; it != edges_end(); ++it) {
+      os << segment(it);
+    }
+    return os;
+  }
 protected:
   /// NGHK: implemented
   std::vector<Vertex_handle> insert_dummy_points();
@@ -1231,19 +1241,7 @@ protected:
   // template members
 
   /// NGHK: Not yet implemented
-  template<class Stream>
-  Stream& draw_triangulation(Stream& os) const {
-    NGHK_NYI;
-    Edge_iterator it = edges_begin();
-    for (; it != edges_end(); ++it) {
-      os << segment(it);
-    }
-    return os;
-  }
-
-  /// NGHK: Not yet implemented
   bool well_oriented(Vertex_handle v) const {
-    NGHK_NYI;
     typedef typename Geom_traits::Orientation_2 Orientation_2;
     Face_circulator fc = incident_faces(v), done(fc);
     do {
@@ -1263,18 +1261,6 @@ protected:
       if (o != COUNTERCLOCKWISE) return false;
     } while (++fc != done);
     return true;
-  }
-
-  /// NGHK: Not yet implemented
-  bool from_convex_hull(Vertex_handle v) {
-    NGHK_NYI;
-    CGAL_triangulation_precondition(!is_infinite(v));
-    Vertex_circulator vc = adjacent_vertices(v), done(vc);
-    do {
-      if (is_infinite(vc))
-        return true;
-    } while (++vc != done);
-    return false;
   }
 
   /// NGHK: Not yet implemented

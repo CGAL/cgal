@@ -175,10 +175,7 @@ namespace CGAL {
       
       if(visibleEdges()) {
         painter->setPen(this->edgesPen());
-        for (typename T::Periodic_segment_iterator psit = t->periodic_segments_begin();
-             psit != t->periodic_segments_end(); ++psit) {
-          painterostream << t->segment(*psit);
-        }
+        t->draw_triangulation(painterostream);
       }
       
       paintVertices(painter);
@@ -191,15 +188,36 @@ namespace CGAL {
       if(visibleVertices()) {
         Converter<Geom_traits> convert;
         
-        painter->setPen(verticesPen());
         QMatrix matrix = painter->matrix();
         painter->resetMatrix();
-        for (typename T::Periodic_point_iterator ppit = t->periodic_points_begin();
-             ppit != t->periodic_points_end(); ++ppit)
-        {
-          QPointF point = matrix.map(convert(t->point(*ppit)));
-          painter->drawPoint(point);
+
+        QPen pen = verticesPen();
+        if (t->number_of_vertices() < 8) {
+          int v_index=1;
+          for (typename T::Unique_vertex_iterator vit = t->unique_vertices_begin();
+               vit != t->unique_vertices_end(); ++vit) {
+            pen.setColor(QColor(255*(v_index&1), 255*((v_index>>1)&1), 255*((v_index>>2)&1)));
+            painter->setPen(pen);
+
+            painter->drawPoint(matrix.map(convert(t->point(vit))));
+            std::vector<typename T::Vertex_handle> copies = t->periodic_copies(vit);
+            for (size_t i=0; i<copies.size(); ++i)
+              painter->drawPoint(matrix.map(convert(t->point(copies[i]))));
+
+            ++v_index;
+          }
+          
+        } else {
+          painter->setPen(verticesPen());
+          for (typename T::Periodic_point_iterator ppit = t->periodic_points_begin();
+               ppit != t->periodic_points_end(); ++ppit)
+            {
+              QPointF point = matrix.map(convert(t->point(*ppit)));
+              painter->drawPoint(point);
+            }
         }
+
+        painter->setMatrix(matrix);
       }
     }
     
