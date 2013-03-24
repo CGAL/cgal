@@ -61,7 +61,9 @@ ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
                     this, SLOT( updateConicType( QAction* ) ) );
 }
 
-ArrangementDemoWindow::~ArrangementDemoWindow( ) { }
+ArrangementDemoWindow::~ArrangementDemoWindow( )
+{
+}
 
 ArrangementDemoTabBase* ArrangementDemoWindow::makeTab( TraitsType tt )
 {
@@ -226,7 +228,7 @@ void ArrangementDemoWindow::updateMode( QAction* newMode )
   this->removeCallback( TabIndex );
 
   // update the active mode
-  this->activeModes[ TabIndex ] = newMode;
+  this->activeModes.at( 0 ) = newMode;
 
   // hook up the new active mode
   if ( newMode == this->ui->actionInsert )
@@ -274,10 +276,12 @@ void ArrangementDemoWindow::updateMode( QAction* newMode )
 
 void ArrangementDemoWindow::resetCallbackState( unsigned int tabIndex )
 {
-  if (tabIndex == static_cast<unsigned int>(-1)) return;
+  if (tabIndex == static_cast<unsigned int>(-1)
+      || tabIndex >= this->tabs.size( )) return;
 
   ArrangementDemoTabBase* activeTab = this->tabs[ tabIndex ];
-  QAction* activeMode = this->activeModes[ tabIndex ];
+
+  QAction* activeMode = this->activeModes.at( 0 );
 
   // unhook the old active mode
   if ( activeMode == this->ui->actionInsert )
@@ -594,11 +598,11 @@ void ArrangementDemoWindow::updateEnvelope( QAction* newMode )
   bool show = newMode->isChecked( );
   if ( newMode == this->ui->actionLowerEnvelope )
   {
-    activeTab->getEnvelopeCallback( )->showUpperEnvelope( show );
+    activeTab->getEnvelopeCallback( )->showLowerEnvelope( show );
   }
   else if ( newMode == this->ui->actionUpperEnvelope )
   {
-    activeTab->getEnvelopeCallback( )->showLowerEnvelope( show );
+    activeTab->getEnvelopeCallback( )->showUpperEnvelope( show );
   }
 }
 
@@ -841,7 +845,7 @@ void ArrangementDemoWindow::on_actionOpen_triggered( )
 
 void ArrangementDemoWindow::on_actionQuit_triggered( )
 {
-  qApp->exit( ); 
+  qApp->exit( );
 }
 
 void ArrangementDemoWindow::on_actionNewTab_triggered( )

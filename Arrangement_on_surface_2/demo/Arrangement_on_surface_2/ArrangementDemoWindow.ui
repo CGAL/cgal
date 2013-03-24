@@ -24,79 +24,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>946</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu_File">
-    <property name="title">
-     <string>&amp;File</string>
-    </property>
-    <addaction name="actionNewTab"/>
-    <addaction name="actionCloseTab"/>
-    <addaction name="separator"/>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSaveAs"/>
-    <addaction name="separator"/>
-    <addaction name="actionQuit"/>
-   </widget>
-   <widget class="QMenu" name="menuMode">
-    <property name="title">
-     <string>&amp;Mode</string>
-    </property>
-    <addaction name="actionDrag"/>
-    <addaction name="actionInsert"/>
-    <addaction name="actionDelete"/>
-    <addaction name="actionPointLocation"/>
-    <addaction name="actionRayShootingUp"/>
-    <addaction name="actionRayShootingDown"/>
-    <addaction name="actionMerge"/>
-    <addaction name="actionSplit"/>
-    <addaction name="actionFill"/>
-   </widget>
-   <widget class="QMenu" name="menuTraits">
-    <property name="title">
-     <string>&amp;Traits</string>
-    </property>
-    <addaction name="actionSegment"/>
-    <addaction name="actionPolyline"/>
-    <addaction name="actionConic"/>
-   </widget>
-   <widget class="QMenu" name="menu_Edit">
-    <property name="title">
-     <string>&amp;Edit</string>
-    </property>
-    <addaction name="actionSnapMode"/>
-    <addaction name="actionGridSnapMode"/>
-    <addaction name="separator"/>
-    <addaction name="actionShowGrid"/>
-    <addaction name="separator"/>
-    <addaction name="actionPreferences"/>
-   </widget>
-   <widget class="QMenu" name="menuT_ools">
-    <property name="title">
-     <string>T&amp;ools</string>
-    </property>
-    <addaction name="actionOverlay"/>
-   </widget>
-   <widget class="QMenu" name="menuTesting">
-    <property name="title">
-     <string>Testing</string>
-    </property>
-    <addaction name="actionPrintConicCurves"/>
-   </widget>
-   <addaction name="menu_File"/>
-   <addaction name="menu_Edit"/>
-   <addaction name="menuMode"/>
-   <addaction name="menuTraits"/>
-   <addaction name="menuT_ools"/>
-   <addaction name="menuTesting"/>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -136,6 +63,63 @@
    <addaction name="actionConicEllipse"/>
    <addaction name="actionConicThreePoint"/>
    <addaction name="actionConicFivePoint"/>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>946</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionNewTab"/>
+    <addaction name="actionCloseTab"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuMode">
+    <property name="title">
+     <string>&amp;Mode</string>
+    </property>
+    <addaction name="actionDrag"/>
+    <addaction name="actionInsert"/>
+    <addaction name="actionDelete"/>
+    <addaction name="actionPointLocation"/>
+    <addaction name="actionRayShootingUp"/>
+    <addaction name="actionRayShootingDown"/>
+    <addaction name="actionMerge"/>
+    <addaction name="actionSplit"/>
+    <addaction name="actionFill"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionSnapMode"/>
+    <addaction name="actionGridSnapMode"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowGrid"/>
+    <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
+   </widget>
+   <widget class="QMenu" name="menuT_ools">
+    <property name="title">
+     <string>T&amp;ools</string>
+    </property>
+    <addaction name="actionOverlay"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menuMode"/>
+   <addaction name="menuT_ools"/>
   </widget>
   <action name="actionQuit">
    <property name="text">

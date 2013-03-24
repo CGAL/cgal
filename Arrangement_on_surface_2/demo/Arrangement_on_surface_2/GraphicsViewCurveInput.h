@@ -508,7 +508,7 @@ protected:
           }
           else
           {
-            std::cout << "Oops, points don't specify a valid conic."
+            std::cout << "Points don't specify a valid conic."
                       << " Try again!" << std::endl;
           }
 
@@ -537,13 +537,11 @@ protected:
             Curve_2 res( p1, p2, p3, p4, p5 );
             if ( res.is_valid( ) )
             {
-              std::cout << "Meow, valid 5 point conic!"
-                        << std::endl;
               emit generate( CGAL::make_object( res ) );
             }
             else
             {
-              std::cout << "Oops, points don't specify a valid conic. Try again!"
+              std::cout << "Points don't specify a valid conic. Try again!"
                         << std::endl;
             }
             this->points.clear( );
@@ -552,7 +550,7 @@ protected:
           } 
           catch (...)
           {
-            std::cout << "Oops, points don't specify a valid conic. Try again!"
+            std::cout << "Points don't specify a valid conic. Try again!"
                       << std::endl;
             this->points.clear( );
             this->pointsGraphicsItem.clear( );
@@ -635,7 +633,7 @@ protected: // methods
     QRectF clippingRect = this->viewportRect( );
     if ( !clippingRect.isValid( ) )
     {
-      std::cout << "Warning: invalid clipping rect" << std::endl;
+      //std::cout << "Warning: invalid clipping rect" << std::endl;
     }
     this->convert = Converter< Kernel >( clippingRect );
 
@@ -761,6 +759,7 @@ protected:
   {
     Point_2 clickedPoint = this->snapPoint( event );
     this->points.push_back( clickedPoint );
+    this->pointsGraphicsItem.insert( clickedPoint );
 
     if ( this->points.size( ) == 3 )
     {
@@ -808,11 +807,12 @@ protected:
       }
       else
       {
-        std::cout << "Oops, points don't specify a valid circular arc."
+        std::cout << "Points don't specify a valid circular arc."
                   << " Try again!" << std::endl;
       }
 
       this->points.clear( );
+      this->pointsGraphicsItem.clear( );
     }
   }
 
