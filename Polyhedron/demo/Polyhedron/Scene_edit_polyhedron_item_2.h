@@ -554,7 +554,7 @@ protected:
     Q.push(root); D[root] = 0;
 
     int dist_v;
-    double max_distance;
+    double max_distance = 0.0;
     while( !Q.empty() && (dist_v = D[Q.front()]) < k ) {
       vertex_descriptor v = Q.front();
       Q.pop();
