@@ -31,6 +31,8 @@ Scene_edit_polyhedron_item_2::Scene_edit_polyhedron_item_2(Scene_polyhedron_item
   connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
   poly_item->enable_facets_picking(true);
 
+  length_of_axis = bbox().diagonal_length() / 15.0;
+
   // interleave events of viewer (there is only one viewer) 
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(this);
@@ -71,10 +73,10 @@ void Scene_edit_polyhedron_item_2::deform()
   {
     Handle_group_data& hd = get_data(hgb);
     qglviewer::ManipulatedFrame* hgb_frame = hd.frame;
-    qglviewer::Vec translation = hgb_frame->position() - hd.initial_center;
+    qglviewer::Vec translation = hgb_frame->position() - hd.frame_initial_center;
 
     deform_mesh.rotate(hgb, 
-      Point(hd.initial_center.x, hd.initial_center.y, hd.initial_center.z),
+      Point(hd.frame_initial_center.x, hd.frame_initial_center.y, hd.frame_initial_center.z),
       hgb_frame->orientation(),
       translation);
   }
@@ -94,11 +96,14 @@ void Scene_edit_polyhedron_item_2::vertex_has_been_selected(void* void_ptr) {
   bool is_roi = ui_widget->ROIRadioButton->isChecked();
   bool is_insert = ui_widget->InsertRadioButton->isChecked();
   int k_ring = ui_widget->BrushSpinBox->value();
-  process_selection(clicked_vertex, k_ring, is_roi, is_insert);
+  bool use_euclidean = ui_widget->UseEuclideanCheckBox->isChecked();
+  process_selection(clicked_vertex, k_ring, is_roi, is_insert, use_euclidean);
 }
 void Scene_edit_polyhedron_item_2::timerEvent(QTimerEvent *event)
 {
-  if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing) ) {
+  if(state.ctrl_pressing && 
+    (state.left_button_pressing || state.right_button_pressing) &&
+    !ui_widget->ActivatePivotingCheckBox->isChecked() ) {
     deform(); 
   }
 }
@@ -198,16 +203,19 @@ void Scene_edit_polyhedron_item_2::draw() const {
       // draw axis
       ::glPushMatrix();
         ::glMultMatrixd(hgb_data.frame->matrix());
-        QGLViewer::drawAxis(0.1f);
+        QGLViewer::drawAxis(length_of_axis);
       ::glPopMatrix();
       // draw bbox
-      color.set_rgb_color(1.0f, 0, 0);
-      ::glPushMatrix();
-        ::glTranslated(hgb_data.frame->position().x, hgb_data.frame->position().y, hgb_data.frame->position().z);
-        ::glMultMatrixd(hgb_data.frame->orientation().matrix());
-        ::glTranslated(-hgb_data.initial_center.x, -hgb_data.initial_center.y, -hgb_data.initial_center.z);        
-        draw_bbox(hgb_data.bbox);
-      ::glPopMatrix();
+      if(!ui_widget->ActivatePivotingCheckBox->isChecked())
+      {
+        color.set_rgb_color(1.0f, 0, 0);
+        ::glPushMatrix();
+          ::glTranslated(hgb_data.frame->position().x, hgb_data.frame->position().y, hgb_data.frame->position().z);
+          ::glMultMatrixd(hgb_data.frame->orientation().matrix());
+          ::glTranslated(-hgb_data.frame_initial_center.x, -hgb_data.frame_initial_center.y, -hgb_data.frame_initial_center.z);        
+          draw_bbox(hgb_data.bbox);
+        ::glPopMatrix();
+      }
     }
 
     if(hgb == active_group) { color.set_rgb_color(1.0f, 0, 0); }

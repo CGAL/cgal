@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>272</width>
-    <height>313</height>
+    <width>316</width>
+    <height>336</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,14 +24,25 @@
        <item row="2" column="1" rowspan="2" colspan="3">
         <layout class="QVBoxLayout" name="RingLayout">
          <item>
-          <widget class="QLabel" name="BrushLabel">
+          <widget class="QCheckBox" name="UseEuclideanCheckBox">
            <property name="text">
-            <string>Brush Size</string>
+            <string>Use Euclidean</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="BrushSpinBox"/>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="BrushLabel">
+             <property name="text">
+              <string>Brush size:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="BrushSpinBox"/>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -149,6 +160,13 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="ActivatePivotingCheckBox">
+         <property name="text">
+          <string>Activate pivoting </string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

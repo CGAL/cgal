@@ -47,6 +47,7 @@ public slots:
   void on_ApplyAndClosePushButton_clicked();
   void on_ClearROIPushButton_clicked();
   void on_ShowROICheckBox_stateChanged(int state);
+  void on_ActivatePivotingCheckBox_stateChanged(int state);
   void dock_widget_visibility_changed(bool visible);
   ///////////////////////////////////////////
   void mesh_deformed(Scene_edit_polyhedron_item_2* edit_item);
@@ -116,6 +117,7 @@ void Polyhedron_demo_edit_polyhedron_plugin_2::init(QMainWindow* mainWindow, Sce
   connect(ui_widget->ApplyAndClosePushButton, SIGNAL(clicked()), this, SLOT(on_ApplyAndClosePushButton_clicked()));
   connect(ui_widget->ClearROIPushButton, SIGNAL(clicked()), this, SLOT(on_ClearROIPushButton_clicked()));
   connect(ui_widget->ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
+  connect(ui_widget->ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
 
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
   ///////////////////////////////////////////////////////////////////
@@ -198,6 +200,18 @@ void Polyhedron_demo_edit_polyhedron_plugin_2::on_ShowROICheckBox_stateChanged(i
   if(!edit_item) return; 
 
   edit_item->show_roi = (state == Qt::Checked);
+  scene->itemChanged(edit_item); 
+}
+void Polyhedron_demo_edit_polyhedron_plugin_2::on_ActivatePivotingCheckBox_stateChanged(int state)
+{
+  int item_id = scene->mainSelectionIndex();
+  Scene_edit_polyhedron_item_2* edit_item = qobject_cast<Scene_edit_polyhedron_item_2*>(scene->item(item_id));
+  if(!edit_item) return; 
+
+  if(state != Qt::Checked)
+  {
+    edit_item->pivoting_finished();
+  }
   scene->itemChanged(edit_item); 
 }
 void Polyhedron_demo_edit_polyhedron_plugin_2::dock_widget_visibility_changed(bool visible)

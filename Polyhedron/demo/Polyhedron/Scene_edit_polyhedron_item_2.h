@@ -65,11 +65,12 @@ struct Handle_group_data
 {
   Deform_mesh::Handle_group handle_group;
   qglviewer::ManipulatedFrame* frame;
-  qglviewer::Vec initial_center;
+  qglviewer::Vec initial_center;       // initial center of handles
+  qglviewer::Vec frame_initial_center; // initial center of frame
   Scene_interface::Bbox bbox;
 
   Handle_group_data(Deform_mesh::Handle_group handle_group, qglviewer::ManipulatedFrame* frame = 0)
-    : handle_group(handle_group), frame(frame)
+    : handle_group(handle_group), frame(frame), bbox(0,0,0,0,0,0)
   { }
 };
 
@@ -236,6 +237,7 @@ typedef std::list<Handle_group_data> Handle_group_data_list;
   Handle_group_data_list handle_frame_map; // keep list of handle_groups with assoc data
 
   bool show_roi; // draw roi points
+  double length_of_axis; // for drawing axis at a handle group
 
   // by interleaving 'viewer's events (check constructor), keep followings:
   Mouse_keyboard_state state;
@@ -323,7 +325,7 @@ public:
     handle_frame_map.push_back(Handle_group_data(active_group, new_frame));
     refresh_manipulated_frame_center(active_group);
 
-    connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  
+    // connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  
 
     print_message("A new empty handle group is created.");
   }
@@ -389,6 +391,14 @@ public:
     else                      {++active_group; }    
   }
 
+  void pivoting_finished()
+  {       
+    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    {
+      it->frame_initial_center = it->frame->position();
+    }
+  }
+
 protected:
   // Deformation related functions //
   void print_message(const QString& message)
@@ -415,11 +425,14 @@ protected:
     return is_there_any_handle_group(hgb, hge);
   }
 
-  void process_selection(vertex_descriptor v, int k_ring, bool is_roi, bool is_insert)
+  void process_selection(vertex_descriptor v, int k_ring, bool is_roi, bool is_insert, bool use_euclidean)
   {
     std::cout << "Process k-ring: " << k_ring << " roi: " << is_roi << " insert: " << is_insert << std::endl;
 
-    std::map<vertex_descriptor, int> neighs = extract_k_ring(*polyhedron(), v, k_ring);
+    std::map<vertex_descriptor, int> neighs = use_euclidean ?
+      extract_k_ring_with_distance(*polyhedron(), v, k_ring) :
+      extract_k_ring(*polyhedron(), v, k_ring);
+
     for(std::map<vertex_descriptor, int>::iterator it = neighs.begin(); it != neighs.end(); ++it)
     {
       vertex_descriptor vh = it->first;
@@ -445,17 +458,15 @@ protected:
 
   void refresh_manipulated_frame_center(Deform_mesh::Handle_group hg)
   {
-    qglviewer::Vec center = calculate_center(hg);
     Handle_group_data& hd = get_data(hg);
+    qglviewer::Vec center = calculate_center(hg);
 
     hd.initial_center = center;
+    hd.frame_initial_center = center;
     hd.bbox = calculate_bbox(hg);
 
     qglviewer::ManipulatedFrame* hg_frame = hd.frame;
-    hg_frame->blockSignals(true); // do not let it emit modified, which will cause a deformation
-                                  // but we are just adjusting the center so it does not require a deformation
     hg_frame->setPosition(center);
-    hg_frame->blockSignals(false);
   }
 
   qglviewer::Vec calculate_center(Deform_mesh::Handle_group hg)
@@ -535,6 +546,50 @@ protected:
     return D;
   }
 
+  std::map<vertex_descriptor, int> extract_k_ring_with_distance(const Polyhedron &P, vertex_descriptor root, int k)
+  {
+    // tuple: <vertex, geodistance, euclidian distane>
+    std::map<vertex_descriptor, int>  D;
+    std::queue<vertex_descriptor>     Q;
+    Q.push(root); D[root] = 0;
+
+    int dist_v;
+    double max_distance;
+    while( !Q.empty() && (dist_v = D[Q.front()]) < k ) {
+      vertex_descriptor v = Q.front();
+      Q.pop();
+
+      out_edge_iterator e, e_end;
+      for(boost::tie(e, e_end) = boost::out_edges(v, P); e != e_end; e++)
+      {
+        vertex_descriptor new_v = boost::target(*e, P);
+        if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
+          max_distance = (std::max)( (new_v->point() - root->point()).squared_length(), max_distance);
+          Q.push(new_v);
+        }
+      }   
+    }
+    // now Q contains all nonprocessed 
+    while( !Q.empty() ) {
+      vertex_descriptor v = Q.front();
+      Q.pop();
+
+      out_edge_iterator e, e_end;
+      for(boost::tie(e, e_end) = boost::out_edges(v, P); e != e_end; e++)
+      {
+        vertex_descriptor new_v = boost::target(*e, P);
+        double distance = (new_v->point() - root->point()).squared_length();
+        if(distance < max_distance)
+        {
+          if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
+            Q.push(new_v);
+          }
+        }
+      }   
+    }
+
+    return D;
+  }
   void activate_closest_manipulated_frame(QPoint p)
   {
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
