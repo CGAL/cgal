@@ -252,7 +252,8 @@ parameters::internal::Lloyd_options lloyd(
 double parameters::time_limit = 0,
 std::size_t parameters::max_iteration_number = 0,
 double parameters::convergence = 0.02,
-double parameters::freeze_bound = 0.01);
+double parameters::freeze_bound = 0.01,
+bool parameters::do_freeze=true);
 
 /*!
 \ingroup PkgMesh_3Parameters
@@ -405,7 +406,8 @@ parameters::internal::Odt_options odt(
 double parameters::time_limit = 0,
 std::size_t parameters::max_iteration_number = 0,
 double parameters::convergence = 0.02,
-double parameters::freeze_bound = 0.01);
+double parameters::freeze_bound = 0.01,
+bool parameters::do_freeze=true);
 
 /*!
 \ingroup PkgMesh_3Parameters
