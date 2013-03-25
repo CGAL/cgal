@@ -62,22 +62,33 @@ namespace CGAL {
 //
 template<class MD,
          class K=typename Kernel_traits<MD>::Kernel,
-         class Concurrency_tag = Sequential_tag>
+         class Concurrency_tag = Sequential_tag,
+         class Vertex_base_ = Default,
+         class Cell_base_   = Default>
 struct Mesh_triangulation_3;
 
 // Sequential version (default)
-template<class MD, class K, class Concurrency_tag>
+template<class MD, class K, class Concurrency_tag,
+         class Vertex_base_, class Cell_base_>
 struct Mesh_triangulation_3
 {
 private:
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
 #ifdef CGAL_COMPACT_MESH_VERTEX_CELL
-  typedef Compact_mesh_vertex_base_3<Geom_traits, MD>           Vertex_base;
-  typedef Compact_mesh_cell_base_3<Geom_traits, MD>             Cell_base;
+  typedef typename Default::Get<
+    Vertex_base_, 
+    Compact_mesh_vertex_base_3<Geom_traits, MD>>::type          Vertex_base;
+  typedef typename Default::Get<
+    Cell_base_, 
+    Compact_mesh_cell_base_3<Geom_traits, MD>>::type            Cell_base;
 #else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
-  typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
-  typedef Mesh_cell_base_3<Geom_traits, MD>                     Cell_base;
+  typedef typename Default::Get<
+    Vertex_base_, 
+    Mesh_vertex_base_3<Geom_traits, MD>>::type                  Vertex_base;
+  typedef typename Default::Get<
+    Cell_base_, 
+    Mesh_cell_base_3<Geom_traits, MD>>::type                    Cell_base;
 #endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
 
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)\
@@ -99,19 +110,28 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
 // Parallel version (specialization)
 //
-template<class MD, class K>
-struct Mesh_triangulation_3<MD, K, Parallel_tag>
+template<class MD, class K,
+         class Vertex_base_, class Cell_base_>
+struct Mesh_triangulation_3<MD, K, Parallel_tag, Vertex_base_, Cell_base_>
 {
 private:
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
-# ifdef CGAL_COMPACT_MESH_VERTEX_CELL
-  typedef Compact_mesh_vertex_base_3<Geom_traits, MD>           Vertex_base;
-  typedef Compact_mesh_cell_base_3<Geom_traits,MD>              Cell_base;
-# else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
-  typedef Mesh_vertex_base_3<Geom_traits, MD>                   Vertex_base;
-  typedef Mesh_cell_base_3<Geom_traits, MD>                     Cell_base;
-# endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
+#ifdef CGAL_COMPACT_MESH_VERTEX_CELL
+  typedef typename Default::Get<
+    Vertex_base_, 
+    Compact_mesh_vertex_base_3<Geom_traits, MD>>::type          Vertex_base;
+  typedef typename Default::Get<
+    Cell_base_, 
+    Compact_mesh_cell_base_3<Geom_traits, MD>>::type            Cell_base;
+#else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
+  typedef typename Default::Get<
+    Vertex_base_, 
+    Mesh_vertex_base_3<Geom_traits, MD>>::type                  Vertex_base;
+  typedef typename Default::Get<
+    Cell_base_, 
+    Mesh_cell_base_3<Geom_traits, MD>>::type                    Cell_base;
+#endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
 
   typedef Triangulation_data_structure_3<
     Vertex_base, Cell_base, 
