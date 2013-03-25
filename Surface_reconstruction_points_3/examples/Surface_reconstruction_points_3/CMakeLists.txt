@@ -19,7 +19,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/mo
 include_directories (BEFORE . include ../../include)
 
 # Find CGAL
-find_package(CGAL QUIET COMPONENTS Eigen3)
+find_package(CGAL)
 
 if ( CGAL_FOUND )
 
@@ -51,11 +51,16 @@ if ( CGAL_FOUND )
   # Temporary debugging stuff
   ADD_DEFINITIONS( "-DDEBUG_TRACE" ) # turn on traces
 
-
-  find_package(TAUCS)
-  if(TAUCS_FOUND)
-    include( ${TAUCS_USE_FILE} )
-  endif(TAUCS_FOUND)
+  # Find Eigen3 (requires 3.1.0 or greater)
+  find_package(Eigen3 3.1.0)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+  else()
+    find_package(TAUCS)
+    if(TAUCS_FOUND)
+      include( ${TAUCS_USE_FILE} )
+    endif(TAUCS_FOUND)
+  endif()
   
   if (EIGEN3_FOUND OR TAUCS_FOUND)
     # Executables that require Eigen 3 or TAUCS
