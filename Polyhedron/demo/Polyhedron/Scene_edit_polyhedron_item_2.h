@@ -485,6 +485,7 @@ protected:
                                     (*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z());
       bbox = bbox + bbox_it;
     }
+    return bbox;
   }
 
   Handle_group_data& get_data(Deform_mesh::Handle_group hg)
