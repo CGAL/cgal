@@ -17,7 +17,7 @@ using std::endl;
 bool TestSimplicity(const char* FileName)
 // tests the simplicity of the polygon in the file FileName
 {
-  typedef Arithmetic_kernel::Rational NT;
+  typedef CGAL::Arithmetic_kernel::Rational NT;
   typedef CGAL::Cartesian<NT> K;
   typedef CGAL::Point_2<K> Point;
 
