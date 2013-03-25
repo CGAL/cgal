@@ -62,7 +62,7 @@ namespace CGAL {
 //
 template<class MD, 
          class K=typename Kernel_traits<MD>::Kernel,
-         class Concurrency_tag = Void,
+         class Concurrency_tag = Default,
          class Vertex_base_ = Default,
          class Cell_base_   = Default>
 struct Mesh_triangulation_3
