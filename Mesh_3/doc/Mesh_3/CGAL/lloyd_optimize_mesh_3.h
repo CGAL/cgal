@@ -73,7 +73,7 @@ which is:
 <LI>`CGAL::MAX_ITERATION_NUMBER_REACHED` when `lloyd_optimize_mesh_3()` stops because it has performed `max_iteration_number` iterations. 
 <LI>`CGAL::CONVERGENCE_REACHED` when `lloyd_optimize_mesh_3()` stops because the convergence criterion 
 is achieved. 
-<LI>`CGAL::ALL_VERTICES_FROZEN` when `lloyd_optimize_mesh_3()` all vertices have been frozen, when the 
+<LI>`CGAL::ALL_VERTICES_FROZEN` when all vertices have been frozen, when the 
 `do_freeze` parameter is set to true.
 </UL> 
 
@@ -86,7 +86,8 @@ is achieved.
 lloyd_optimize_mesh_3(c3t3, 
                       domain, 
                       parameters::convergence=0.01, 
-                      parameters::freeze_bound=0.001); 
+                      parameters::freeze_bound=0.001,
+                      parameters::do_freeze=true); 
 
 \endcode 
 
