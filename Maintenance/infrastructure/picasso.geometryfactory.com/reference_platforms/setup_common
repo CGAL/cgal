@@ -21,5 +21,5 @@ export MPFR_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
 export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.3.17"
 export QTDIR="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\QT-4.8.4"
 
-export PATH=$PATH:"`cygpath $CGAL_DIR`/bin:`cygpath $GMP_LIB_DIR`:`cygpath $QTDIR`/bin:`cygpath $BOOST_LIBRARYDIR`:`cygpath $QGLVIEWERROOT`/QGLViewer/debug:`cygpath $QGLVIEWERROOT`/QGLViewer/release:/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib"
+export PATH="`cygpath $CGAL_DIR`/bin:`cygpath $GMP_LIB_DIR`:`cygpath $QTDIR`/bin:`cygpath $BOOST_LIBRARYDIR`:`cygpath $QGLVIEWERROOT`/QGLViewer/debug:`cygpath $QGLVIEWERROOT`/QGLViewer/release:/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib":$PATH
 
