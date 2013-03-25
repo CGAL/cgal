@@ -28,29 +28,20 @@
 #define CGAL_NEF3_SORT_OUTPUT 1
 
 
-#include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
-#include <CGAL/Quotient.h>
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
-typedef CGAL::Gmpz NT;
-typedef CGAL::Gmpq FNT;
-typedef CGAL::Quotient<NT> FNT2;
-
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
-typedef leda_integer LNT;
-typedef leda_rational LFNT;
-typedef CGAL::Quotient<LNT> LFNT2;
-#endif
-
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/OFF_to_nef_3.h>
 #include <CGAL/Timer.h>
 #include <fstream>
 #include <cassert>
+
+
+typedef CGAL::Arithmetic_kernel::Integer NT;
+typedef CGAL::Arithmetic_kernel::Rational FNT;
+
 
 template<typename Kernel>
 class test {
@@ -135,36 +126,22 @@ int main() {
   CGAL::Timer t;
   t.start();
 
-#ifndef CGAL_USE_LEDA
-  { typedef CGAL::Homogeneous<NT>              H_kernel;
-    typedef CGAL::Cartesian<FNT>               C_kernel;
-    //    typedef CGAL::Cartesian<FNT2>              Q_kernel;
+#if defined( CGAL_USE_LEDA ) || defined ( CGAL_USE_GMP )
+  typedef CGAL::Homogeneous<NT>              H_kernel;
+  typedef CGAL::Cartesian<FNT>               C_kernel;
+  
+  test<H_kernel>  test_H;
+  test<C_kernel>  test_C;
 
-    test<H_kernel>  test_H;
-    test<C_kernel>  test_C;
-    // test<Q_kernel>  test_Q;
-
-    test_H.run_test(true,".H");
-    test_C.run_test(false,".C");
-    // test_Q.run_test();
-  }
-
-#else
-  { typedef CGAL::Homogeneous<LNT>              LH_kernel;
-    typedef CGAL::Cartesian<LFNT>               LC_kernel;
-    //    typedef CGAL::Cartesian<LFNT2>              LQ_kernel;
-    
-    test<LH_kernel>  test_LH;
-    test<LC_kernel>  test_LC;
-    //    test<LQ_kernel>  test_LQ;
-    
-    test_LH.run_test(true,".H");
-    test_LC.run_test(false,".LC");
-    //    test_LQ.run_test();
-  }
+  test_H.run_test(true,".H");
+# ifdef CGAL_USE_GMP
+  test_C.run_test(false,".C");
+# else
+  test_C.run_test(false,".LC");
+# endif
 #endif
-
   t.stop();
   std::cout << "Time " << t.time() << std::endl;
+  return 0;
 }
 
