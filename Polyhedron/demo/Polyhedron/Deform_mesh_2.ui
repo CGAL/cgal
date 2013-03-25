@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>272</width>
-    <height>390</height>
+    <height>313</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -159,13 +159,6 @@
        <string>Show ROI</string>
       </property>
       <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPlainTextEdit" name="MessageTextEdit">
-      <property name="enabled">
        <bool>true</bool>
       </property>
      </widget>

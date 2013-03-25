@@ -17,6 +17,8 @@
 #include <QList>
 
 #include <QGLViewer/manipulatedFrame.h>
+#include <QGLViewer/qglviewer.h>
+
 #include "Custom_manipulated_frame.h"
 
 #include "ui_Deform_mesh_2.h"
@@ -64,6 +66,7 @@ struct Handle_group_data
   Deform_mesh::Handle_group handle_group;
   qglviewer::ManipulatedFrame* frame;
   qglviewer::Vec initial_center;
+  Scene_interface::Bbox bbox;
 
   Handle_group_data(Deform_mesh::Handle_group handle_group, qglviewer::ManipulatedFrame* frame = 0)
     : handle_group(handle_group), frame(frame)
@@ -101,7 +104,19 @@ public:
 
     if(! state->ctrl_pressing) 
     { // if ctrl is not pressed then deactivate all handle manipulators 
-      setGrabsMouse(false);
+
+      // this part required because we are using our custom update function (when pressed/released to ctrl)
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); 
+      viewer->setMouseGrabber(NULL);  
+      ////////////////////
+
+      // this part is required because when user release ctrl but keep left/right button pressed,
+      // previous state at frame is kept. 
+      action_ = QGLViewer::NO_MOUSE_ACTION;
+      stopSpinning();
+      ////////////////////////////
+
+      setGrabsMouse(false);    
       return;
     }
     
@@ -120,6 +135,14 @@ public:
         min_it = it;
       }
     }
+
+    // This part required because we are using our custom update function (when pressed/released to ctrl)
+    if(min_it->frame == this)
+    {
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      viewer->setMouseGrabber(this);      
+    }
+    //This part required... ends//////////////////
     setGrabsMouse(min_it->frame == this);
   }
 protected:
@@ -154,7 +177,10 @@ public:
   bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const;
- 
+  void draw_bbox(const Scene_interface::Bbox& bb ) const;
+  void gl_draw_edge(double px, double py, double pz,
+                          double qx, double qy, double qz) const;
+
   bool manipulatable() const { return true; }
   qglviewer::ManipulatedFrame* manipulatedFrame();
 
@@ -367,8 +393,9 @@ protected:
   // Deformation related functions //
   void print_message(const QString& message)
   {
-    if(ui_widget != NULL)
-      ui_widget->MessageTextEdit->appendPlainText(message);
+    // std::cout << message.toStdString() << std::endl;
+    //if(ui_widget != NULL)
+    //  ui_widget->MessageTextEdit->appendPlainText(message);
   }
 
   void need_reprocess()
@@ -422,6 +449,7 @@ protected:
     Handle_group_data& hd = get_data(hg);
 
     hd.initial_center = center;
+    hd.bbox = calculate_bbox(hg);
 
     qglviewer::ManipulatedFrame* hg_frame = hd.frame;
     hg_frame->blockSignals(true); // do not let it emit modified, which will cause a deformation
@@ -441,6 +469,22 @@ protected:
     }
     if(counter == 0) { return qglviewer::Vec(0,0,0); } 
     return qglviewer::Vec(center_acc.x() / counter, center_acc.y() / counter, center_acc.z() / counter);
+  }
+
+  Scene_interface::Bbox calculate_bbox(Deform_mesh::Handle_group hg)
+  {    
+    Deform_mesh::Handle_iterator hb, he;
+    boost::tie(hb, he) = deform_mesh.handles(hg);
+    if(hb == he) { return Scene_interface::Bbox(0,0,0,0,0,0); }
+
+    Scene_interface::Bbox bbox((*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z(),
+                               (*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z());
+    for(; hb != he; ++hb)
+    {
+      Scene_interface::Bbox bbox_it((*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z(),
+                                    (*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z());
+      bbox = bbox + bbox_it;
+    }
   }
 
   Handle_group_data& get_data(Deform_mesh::Handle_group hg)
@@ -488,6 +532,16 @@ protected:
       }   
     }
     return D;
+  }
+
+  void activate_closest_manipulated_frame(QPoint p)
+  {
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    qglviewer::Camera* camera = viewer->camera();
+    for(std::list<Handle_group_data>::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    {
+      it->frame->checkIfGrabsMouse(p.x(), p.y(), camera);
+    }
   }
 
 }; // end class Scene_edit_polyhedron_item_2
