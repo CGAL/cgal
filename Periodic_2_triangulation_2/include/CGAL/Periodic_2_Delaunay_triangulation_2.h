@@ -1142,6 +1142,12 @@ remove_degree_triangulate(Vertex_handle v,
 {
   // degree: 3: 1%, 4: 9%, 5: 23%, 6: 35%, 7: 19%, r: 10%
 
+  // Remove all the edges that are too long.
+  // This only needs to be done when the simplicity condition is not
+  // met because the simplicity condition implies is_1_cover(), hence
+  // no too long edges.
+  this->remove_too_long_edges_in_star(v);
+
   switch (d) {
   case 3:
     remove_degree3(v,f,w,offset_w,i);    break;
@@ -2139,9 +2145,8 @@ Periodic_2_Delaunay_triangulation_2<Gt,Tds>::remove_degree6_antiN
   this->set_offsets(f4, oo[0], oo[1], oo[2]);
 
   insert_too_long_edge(f0, ccw(i0));
-  insert_too_long_edge(f1, ccw(i1));
+  insert_too_long_edge(f0,  cw(i0));
   insert_too_long_edge(f3, ccw(i3));
-  insert_too_long_edge(f4, ccw(i4));
 }
 
 template < class Gt, class Tds >
