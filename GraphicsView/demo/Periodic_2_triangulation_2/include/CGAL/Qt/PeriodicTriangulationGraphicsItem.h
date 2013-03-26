@@ -254,12 +254,18 @@ namespace CGAL {
                                                 QWidget *)
     {
       painter->setPen(this->domainPen());
-      //painter->drawRect(boundingRect());
       const typename Geom_traits::Iso_rectangle_2 &domain = t->domain();
-      painter->drawRect(domain.xmin(), 
-                        domain.ymin(), 
-                        domain.xmax()-domain.xmin(), 
-                        domain.ymax()-domain.ymin());
+      if (t->is_1_cover()) {
+        painter->drawRect(domain.xmin(), 
+                          domain.ymin(), 
+                          domain.xmax()-domain.xmin(), 
+                          domain.ymax()-domain.ymin());
+      } else {
+        painter->drawRect(domain.xmax(), 
+                          domain.ymax(), 
+                          domain.xmax()-domain.xmin(), 
+                          domain.ymax()-domain.ymin());
+      }
       drawAll(painter);
       m_painter = painter;
     }
