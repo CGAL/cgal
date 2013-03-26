@@ -1,6 +1,8 @@
 #ifndef P2T2_INTERFACE_TEST_H
 #define P2T2_INTERFACE_TEST_H
 
+#include <CGAL/point_generators_2.h>
+
 template <class T>
 void test_constructor() {
   typedef typename T::Iso_rectangle Iso_rectangle;
@@ -536,7 +538,49 @@ void test_nearest() {
   CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p0)) == vh0);
   CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p1)) == vh1);
   CGAL_assertion(t.get_original_vertex(t.nearest_vertex(p2)) == vh2);
+}
+
+template <class T>
+void test_locally_delaunay() {
+  typedef typename T::Geom_traits       Gt;
+  typedef typename Gt::Vector_2         Vector;
+  typedef typename T::Point             Point;
+  typedef typename T::Face_iterator     Face_iterator;
+
+  typedef CGAL::Creator_uniform_2<typename Gt::FT,Point>    Creator;
+  typedef CGAL::Random_points_in_square_2<Point, Creator>   Random_points_in_square;
+
+  T t;
+
+  CGAL::Random random(1284141159);
+  Random_points_in_square g(0.499, random);
+  Vector midpoint(0.5, 0.5);
+
+  for (int i = 0; i < 10; ++i)
+    t.insert(*(++g) + midpoint);
+
+  for (Face_iterator fit = t.faces_begin(); fit != t.faces_end(); ++fit) {
+    for (int i=0; i<3; ++i) {
+      CGAL_assertion(t.locally_Delaunay(fit, i, fit->neighbor(i)));
+    }
+  }
+
+  while (!t.is_1_cover())
+    t.insert(*(++g) + midpoint);
+
+  for (Face_iterator fit = t.faces_begin(); fit != t.faces_end(); ++fit) {
+    for (int i=0; i<3; ++i) {
+      CGAL_assertion(t.locally_Delaunay(fit, i, fit->neighbor(i)));
+    }
+  }
+
   
+}
+
+template <class T>
+void test_delaunay() {
+  test_nearest<T>();
+  test_locally_delaunay<T>();
 }
 
 #endif  // P2T2_INTERFACE_TEST_H

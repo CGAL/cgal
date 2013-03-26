@@ -25,9 +25,9 @@ int main() {
   test<PTH_Dt>(false);
   test<Delaunay_triangulation_hierarchy>(false);
 
-  test_nearest<DP2T2>();
-  test_nearest<PTH_Dt>();
-  test_nearest<Delaunay_triangulation_hierarchy>();
+  test_delaunay<DP2T2>();
+  test_delaunay<PTH_Dt>();
+  test_delaunay<Delaunay_triangulation_hierarchy>();
 
   return 0;
 }
