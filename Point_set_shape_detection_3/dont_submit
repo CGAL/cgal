@@ -1,0 +1,9 @@
+depends
+GNUmakefile
+Doxyfile
+TODO
+applications
+applications.README
+README
+makefile.dependencies
+doc
