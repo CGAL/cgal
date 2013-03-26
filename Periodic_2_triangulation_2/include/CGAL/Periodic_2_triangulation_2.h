@@ -18,8 +18,6 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_2_H
 
-#define NGHK_NYI { std::cout << "NYI: " << __PRETTY_FUNCTION__ << std::endl; CGAL_assertion(false); }
-
 #include <CGAL/basic.h>
 
 #include <list>
