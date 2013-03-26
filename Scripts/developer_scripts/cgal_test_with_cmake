@@ -3,7 +3,7 @@
 dir=${PWD%/*}
 dir=${dir##*/}
 
-if [ "x${dir}" == "xdemo" ]; then
+if [ "x${dir}" = "xdemo" ]; then
   in_demo="--no-run"
 fi
 
