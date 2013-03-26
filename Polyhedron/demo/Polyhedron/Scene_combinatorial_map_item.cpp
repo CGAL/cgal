@@ -283,7 +283,7 @@ void Scene_combinatorial_map_item::direct_draw() const {
             ::glNormal3d(normal.x(),normal.y(),normal.z());
 
             //iterate over all darts of facets
-            for ( typename Combinatorial_map_3::Dart_of_orbit_const_range<1>::const_iterator
+            for ( Combinatorial_map_3::Dart_of_orbit_const_range<1>::const_iterator
                   face_it=combinatorial_map().darts_of_orbit<1>(vol_it).begin(),
                   face_end=combinatorial_map().darts_of_orbit<1>(vol_it).end();
                   face_it!=face_end; ++face_it)
