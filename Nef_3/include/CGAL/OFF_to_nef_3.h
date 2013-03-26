@@ -32,6 +32,7 @@
 
 #include<sstream>
 #include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Fraction_traits.h>
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
 #include<CGAL/Nef_S2/Normalizing.h>
@@ -55,15 +56,21 @@ class number_type_converter_nef_3<Homogeneous_tag, Kernel> {
   {
     typedef typename Kernel::Point_3   Point_3;
     typedef typename Kernel::RT        RT;
-    
+
+    typedef Fraction_traits<Rational> F_traits;
+
     Rational x(d.x()), y(d.y()), z(d.z());
-    
+    Integer xn, xd, yn, yd, zn, zd;
+    typename F_traits::Decompose decompose;
+    decompose(x, xn, xd);
+    decompose(y, yn, yd);
+    decompose(z, zn, zd);
       CGAL::Homogeneous<Integer>::Point_3 b =
 	normalized ( CGAL::Homogeneous<Integer>::Point_3 (
-	 x.numerator()   * y.denominator() * z.denominator(),
-         x.denominator() * y.numerator()   * z.denominator(),
-         x.denominator() * y.denominator() * z.numerator(),
-         x.denominator() * y.denominator() * z.denominator() ) );
+	 xn * yd * zd,
+         xd * yn * zd,
+         xd * yd * zn,
+         xd * yd * zd ) );
 
       std::ostringstream outx, outy, outz, outw;
       outx << b.hx();
