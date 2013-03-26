@@ -114,9 +114,6 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   // if you plan to call a reconstruction algorithm that expects oriented normals.
   points.erase(unoriented_points_begin, points.end());
 
-  // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-  PointList(points).swap(points);
-
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
