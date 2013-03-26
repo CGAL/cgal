@@ -25,6 +25,11 @@
 
 #include <CGAL/basic.h>
 
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+# define CGAL_PROFILE
+# include <CGAL/Profile_counter.h>
+#endif
+
 #include <utility>
 #include <vector>
 
@@ -216,6 +221,16 @@ public:
   Delaunay_triangulation_3(Lock_data_structure *p_lock_ds, const Gt& gt = Gt())
     : Tr_Base(p_lock_ds, gt)
   {}
+  
+  // Create a 3D triangulation from 4 points which must be well-oriented
+  // AND non-coplanar
+  Delaunay_triangulation_3(const Point &p0, const Point &p1,
+                           const Point &p2, const Point &p3,
+                           const Gt& gt = Gt(), 
+                           Lock_data_structure *p_lock_ds = 0)
+    : Tr_Base(p0, p1, p2, p3, gt, p_lock_ds)
+  {}
+
 
   // copy constructor duplicates vertices and cells
   Delaunay_triangulation_3(const Delaunay_triangulation_3 & tr)
@@ -249,6 +264,11 @@ public:
   insert( InputIterator first, InputIterator last)
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+    static Profile_branch_counter_3 bcounter(
+      "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
+#endif
+
     size_type n = number_of_vertices();
     std::vector<Point> points (first, last);
     spatial_sort (points.begin(), points.end(), geom_traits());
@@ -301,10 +321,22 @@ public:
                 {
                   tls_hint.local() = new_hint;
                   success = true;
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                  ++bcounter;
+#endif
+                }          
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                else
+                {
+                  bcounter.increment_branch_1(); // THIS is a late withdrawal!
                 }
+#endif
               }
               else
               {
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                bcounter.increment_branch_2(); // THIS is an early withdrawal!
+#endif
                 //std::this_thread::yield();
                 //if (i_point != (r.end() - 1))
                 //  std::swap(points[i_point], points[i_point+1]);
@@ -391,7 +423,7 @@ public:
           hint = insert(*p, hint);
     }
 
-    std::cerr << "Triangulation computed in " << t.elapsed() << " seconds." << std::endl;
+    std::cerr << "Triangulation computed in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
 
 
     return number_of_vertices() - n;
@@ -639,6 +671,7 @@ public:
     {
       std::vector<Vertex_handle> vertices(first, beyond);
 
+      tbb::task_scheduler_init init(10); // CJTODO TEMP
       // CJTODO: lambda functions OK?
       tbb::parallel_for(
         tbb::blocked_range<size_t>( 0, vertices.size()),

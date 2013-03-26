@@ -537,6 +537,12 @@ public:
   }
 
   //INSERTION
+  
+  // Create a finite cell with v1, v2, v3 and v4
+  // Precondition: v1, v2, v3 and v4 MUST BE positively oriented
+  Vertex_handle insert_first_finite_cell(
+    Vertex_handle &v1, Vertex_handle &v2, Vertex_handle &v3, Vertex_handle &v4,
+    Vertex_handle v_infinite = Vertex_handle());
 
   Vertex_handle insert_in_cell(Cell_handle c);
 
@@ -1116,6 +1122,35 @@ public:
     }
     return visit.result();
   }
+  
+  template <class Visitor, class OutputIterator, class Filter>
+  OutputIterator
+  visit_incident_cells(Vertex_handle v, OutputIterator output, 
+                       std::vector<Cell_handle> &cells, Filter f) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+
+    if ( dimension() < 2 )
+    return output;
+
+    Visitor visit(v, output, this, f);
+
+    if ( dimension() == 3 )
+    incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(cells), visit.facet_it()));
+    else
+    incident_cells_2(v, v->cell(), std::back_inserter(cells));
+
+    typename std::vector<Cell_handle>::iterator cit;
+    for(cit = cells.begin();
+	cit != cells.end();
+	++cit)
+    {
+      (*cit)->tds_data().clear();
+      visit(*cit);
+    }
+    return visit.result();
+  }
 
   template <class Visitor, class OutputIterator, class Filter>
   OutputIterator
@@ -1146,6 +1181,36 @@ public:
       visit(*cit);
     }
     return visit.result();
+  }
+  
+  // For dimension 3 only
+  template <class VertexFilter, class OutputVertexIterator>
+  OutputVertexIterator
+  adjacent_vertices_and_cells_3(Vertex_handle v, OutputVertexIterator vertices,
+                                std::vector<Cell_handle> &cells,
+                                VertexFilter f = VertexFilter()) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_triangulation_expensive_precondition( is_valid() );
+
+    return 
+      visit_incident_cells
+      <
+        Vertex_extractor<Vertex_feeder_treatment<OutputVertexIterator>,
+                         OutputVertexIterator, VertexFilter>,
+        OutputVertexIterator
+      >(v, vertices, cells, f);
+  }
+
+  // For dimension 3 only
+  template <class OutputVertexIterator>
+  OutputVertexIterator
+  adjacent_vertices_and_cells_3(Vertex_handle v, OutputVertexIterator vertices,
+                                std::vector<Cell_handle> &cells) const
+  {
+    return adjacent_vertices_and_cells_3<False_filter>(v, vertices, cells);
   }
 
   size_type degree(Vertex_handle v) const;
@@ -2263,6 +2328,54 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       break;
     }
   }
+}
+
+
+template <class Vb, class Cb, class Vcs, class Ccs, class Ct>
+typename Triangulation_data_structure_3<Vb,Cb,Vcs,Ccs,Ct>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Vcs,Ccs,Ct>::insert_first_finite_cell(
+  Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2, Vertex_handle &v3,
+  Vertex_handle v_infinite)
+{
+  CGAL_triangulation_precondition( 
+    (v_infinite == Vertex_handle() && dimension() == -2)
+    || (v_infinite != Vertex_handle() && dimension() == -1));
+
+  if (v_infinite == Vertex_handle())
+    v_infinite = create_vertex();
+
+  set_dimension(3);
+
+  v0 = create_vertex();
+  v1 = create_vertex();
+  v2 = create_vertex();
+  v3 = create_vertex();
+
+  Cell_handle c0123 = create_cell(v0,         v1,   v2,   v3);
+  Cell_handle ci012 = create_cell(v_infinite, v0,   v1,   v2);
+  Cell_handle ci103 = create_cell(v_infinite, v1,   v0,   v3);
+  Cell_handle ci023 = create_cell(v_infinite, v0,   v2,   v3);
+  Cell_handle ci132 = create_cell(v_infinite, v1,   v3,   v2);
+
+  v_infinite->set_cell(ci012);
+  v0->set_cell(c0123);
+  v1->set_cell(c0123);
+  v2->set_cell(c0123);
+  v3->set_cell(c0123);
+
+  set_adjacency(c0123, 0, ci132, 0);
+  set_adjacency(c0123, 1, ci023, 0);
+  set_adjacency(c0123, 2, ci103, 0);
+  set_adjacency(c0123, 3, ci012, 0);
+
+  set_adjacency(ci012, 3, ci103, 3);
+  set_adjacency(ci012, 2, ci023, 3);
+  set_adjacency(ci012, 1, ci132, 2);
+  set_adjacency(ci103, 1, ci023, 2);
+  set_adjacency(ci023, 1, ci132, 1);
+  set_adjacency(ci103, 2, ci132, 3);
+
+  return v_infinite;
 }
 
 template <class Vb, class Cb, class Vcs, class Ccs, class Ct>
