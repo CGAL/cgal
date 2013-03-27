@@ -1,0 +1,3 @@
+TAUCS_LIB_DIR=/home/lrineau/CGAL/taucs_full/install/lib64
+TAUCS_INC_DIR=/home/lrineau/CGAL/taucs_full/install/include
+export TAUCS_INC_DIR TAUCS_LIB_DIR
