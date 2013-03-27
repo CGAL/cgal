@@ -1,6 +1,8 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#define CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+
 #include <vector>  //dynamic array
 #include <list>  //linked list
 
@@ -84,17 +86,21 @@ private:
  *     and point location is then O(n^(1/3)) time
  */
 #ifdef CONCURRENT_TRIANGULATION_3
+typedef CGAL::Spatial_grid_lock_data_structure_3<
+  CGAL::Tag_priority_blocking_with_atomics>           Lock_ds;
 typedef CGAL::Triangulation_data_structure_3< 
   Vertex_base<Kernel>, 
   CGAL::Triangulation_ds_cell_base_3<>, 
   CGAL::Compact_container_strategy_base, 
   CGAL::Compact_container_strategy_base, 
   CGAL::Parallel_tag >	                              Tds;
-typedef CGAL::Delaunay_triangulation_3<Kernel, Tds>	  DT3;
+typedef CGAL::Delaunay_triangulation_3<
+  Kernel, Tds, CGAL::Default, Lock_ds>	              DT3;
+
 #else
 typedef CGAL::Triangulation_data_structure_3< Vertex_base<Kernel> >	Tds;
 typedef CGAL::Delaunay_triangulation_3<
-  Kernel, Tds, CGAL::Fast_location>	                            DT3;
+  Kernel, Tds/*, CGAL::Fast_location*/>	                            DT3;
 #endif
 
 typedef DT3::Object		Object_3;

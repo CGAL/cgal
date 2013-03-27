@@ -50,6 +50,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_for.h>
 # include <tbb/enumerable_thread_specific.h>
+# include <tbb/concurrent_vector.h>
 #endif
 
 #ifdef CGAL_DELAUNAY_3_OLD_REMOVE
@@ -281,9 +282,10 @@ public:
     {
       size_t num_points = points.size();
       int i = 0;
-      // Sequential until dim = 3 (or more)
+      // Insert "num_points_seq" points sequentially 
+      // (or more if dim < 3 after that)
       Vertex_handle hint;
-      size_t num_points_seq = (std::min)(num_points, (size_t)500); // CJTODO: 100, 1000... ?
+      size_t num_points_seq = (std::min)(num_points, (size_t)500);
       while (dimension() < 3 || i < num_points_seq)
       {
         hint = insert(points[i], hint);
@@ -650,7 +652,10 @@ public:
   }
 
   // REMOVE
-  void remove(Vertex_handle v, bool *p_could_lock_zone = 0);
+  void remove(Vertex_handle v);
+  // Concurrency-safe
+  // See Triangulation_3::remove for more information
+  bool remove(Vertex_handle v, bool *p_could_lock_zone);
 
   // return new cells (internal)
   template <class OutputItCells>
@@ -670,8 +675,9 @@ public:
     if (is_parallel())
     {
       std::vector<Vertex_handle> vertices(first, beyond);
+      tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 
-      tbb::task_scheduler_init init(10); // CJTODO TEMP
+      tbb::task_scheduler_init init(2); // CJTODO TEMP
       // CJTODO: lambda functions OK?
       tbb::parallel_for(
         tbb::blocked_range<size_t>( 0, vertices.size()),
@@ -679,21 +685,29 @@ public:
         {
           for( size_t i_vertex = r.begin() ; i_vertex != r.end() ; ++i_vertex)
           {
-            bool could_lock_zone;
+            Vertex_handle v = vertices[i_vertex];
+            bool could_lock_zone, needs_to_be_done_sequentially;
             do
             {
-              remove(vertices[i_vertex], &could_lock_zone);
+              needs_to_be_done_sequentially = 
+                remove(v, &could_lock_zone);
               this->unlock_all_elements();
-              /*if (!could_lock_zone)
-              {
-                if (r.end() - i_vertex > 2)
-                  std::swap(vertices[i_vertex], vertices[i_vertex + 1 + (std::rand()%(r.end() - i_vertex - 2))]);
-                else if (i_vertex != r.end()-1)
-                  std::swap(vertices[i_vertex], vertices[i_vertex + 1]);
-              }*/
             } while (!could_lock_zone);
+
+            if (needs_to_be_done_sequentially)
+              vertices_to_remove_sequentially.push_back(v);
           }
         });
+
+      // Do the rest sequentially
+      for ( tbb::concurrent_vector<Vertex_handle>::const_iterator 
+              it = vertices_to_remove_sequentially.begin(), 
+              it_end = vertices_to_remove_sequentially.end() 
+          ; it != it_end 
+          ; ++it)
+      {
+        remove(*it);
+      }
     }
     // Sequential
     else
@@ -1122,13 +1136,26 @@ public:
 template < class Gt, class Tds, class Lds >
 void
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
+remove(Vertex_handle v)
+{
+  Self tmp;
+  Vertex_remover<Self> remover (tmp);
+  Tr_Base::remove(v, remover);
+
+  CGAL_triangulation_expensive_postcondition(is_valid());
+}
+
+template < class Gt, class Tds, class Lds >
+bool
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 remove(Vertex_handle v, bool *p_could_lock_zone)
 {
   Self tmp;
   Vertex_remover<Self> remover (tmp);
-  Tr_Base::remove(v, remover, p_could_lock_zone);
+  bool ret = Tr_Base::remove(v, remover, p_could_lock_zone);
 
   CGAL_triangulation_expensive_postcondition(is_valid());
+  return ret;
 }
 
 template < class Gt, class Tds, class Lds >
