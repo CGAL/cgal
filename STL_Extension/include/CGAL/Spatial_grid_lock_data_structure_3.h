@@ -231,11 +231,35 @@ public:
   {
     // Compute indices on grid
     int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
-    index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
+    //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
+    index_x = 
+      (index_x < 0 ? 
+        0 
+        : (index_x >= m_num_grid_cells_per_axis ? 
+            m_num_grid_cells_per_axis - 1 
+            : index_x
+          ) 
+      );
     int index_y = static_cast<int>( (point.y() - m_ymin) * m_resolution_y);
-    index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
+    //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
+    index_y = 
+      (index_y < 0 ? 
+        0 
+        : (index_y >= m_num_grid_cells_per_axis ? 
+            m_num_grid_cells_per_axis - 1 
+            : index_y
+          ) 
+      );
     int index_z = static_cast<int>( (point.z() - m_zmin) * m_resolution_z);
-    index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
+    //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
+    index_z = 
+      (index_z < 0 ? 
+        0 
+        : (index_z >= m_num_grid_cells_per_axis ? 
+            m_num_grid_cells_per_axis - 1 
+            : index_z
+          ) 
+      );
 
     int index =
       index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
