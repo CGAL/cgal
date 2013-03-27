@@ -1,20 +1,4 @@
-#include <CGAL/basic.h>
-
-#ifdef CGAL_USE_GMP
-
-  #include <CGAL/Gmpq.h>
-
-  typedef CGAL::Gmpq                                    Number_type;
-
-#else
-
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-
-  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
-
-#endif 
-
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -27,6 +11,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+
+
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational         Number_type;
 
 // instead of
 //typedef CGAL::Simple_cartesian<Number_type>            Kernel;

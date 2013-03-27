@@ -1501,13 +1501,15 @@ usage of \sc{Gmp} and of \sc{Mpfr} will be disabled.
 <B>Description</B> 
 <TD ALIGN=LEFT NOWRAP>
 <B>Type</B>
+
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-`WITH_GMP` 
+`CGAL_DISABLE_GMP` 
 <TD ALIGN=LEFT NOWRAP>
 Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not 
 <TD ALIGN=LEFT NOWRAP>
 CMake
+
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 `GMP_DIR` 

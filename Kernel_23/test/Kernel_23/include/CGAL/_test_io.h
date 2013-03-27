@@ -31,7 +31,7 @@ _test_io_for(const T& t)
 {
     {
         std::ofstream oFile("Test_IO.out", std::ios::out);
-        oFile << t;
+        oFile << t << std::endl;
     }
 
     std::ifstream iFile("Test_IO.out", std::ios::in);

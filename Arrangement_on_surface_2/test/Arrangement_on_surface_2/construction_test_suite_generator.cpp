@@ -1,9 +1,6 @@
 
-
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/Gmpq.h>
 
 #include <CGAL/Arr_segment_traits_2.h>
 #include<CGAL/Arr_curve_data_traits_2.h>
@@ -17,7 +14,7 @@
 
 #include "utils.h"
 
-typedef CGAL::Gmpq                                    Number_type;
+typedef CGAL::Arithmetic_kernel::Rational             Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Base_traits_2;
 typedef Base_traits_2::Curve_2                        Base_curve_2;

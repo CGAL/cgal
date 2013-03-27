@@ -10,15 +10,16 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Arithmetic_kernel.h>
 
 #include <iostream>
 #include <vector>
 #include <ctime>
 
 // The program will work with numbers of type FieldType.
-// You can change FieldType to leda_real, for instance.
-typedef CGAL::Gmpq FieldType;
+
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational FieldType;
 
 class Ball {
 private: // representation:
@@ -60,8 +61,8 @@ struct BallTraits {
 };
 
 double to_double(const std::pair<FieldType,FieldType>& p,const FieldType& disc) {
-  return to_double(p.first)+to_double(p.second)*
-    std::sqrt(to_double(disc));
+  return CGAL::to_double(p.first)+CGAL::to_double(p.second)*
+    std::sqrt(CGAL::to_double(disc));
 }
 
 double uniform() {  // a (platform independent) random number generator

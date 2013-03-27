@@ -3,18 +3,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/assertions_behaviour.h>
 
-#ifdef CGAL_USE_GMP
-  // GMP is installed. Use the GMP rational number-type.
-  #include <CGAL/Gmpq.h>
-  typedef CGAL::Gmpq                                    Number_type;
-#else
-  // GMP is not installed. Use CGAL's exact rational number-type.
-  #include <CGAL/MP_Float.h>
-  #include <CGAL/Quotient.h>
-  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
-#endif
-
-
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gps_segment_traits_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
@@ -24,8 +13,10 @@
 #include <sstream>
 #include <iostream>
 
+// leda_rational, or Gmpq, or Quotient<MP_float>
+typedef CGAL::Arithmetic_kernel::Rational          Number_type;
 typedef CGAL::Cartesian<Number_type>               Kernel;
-typedef CGAL::Gps_segment_traits_2<Kernel>       	Traits_2;
+typedef CGAL::Gps_segment_traits_2<Kernel>         Traits_2;
 typedef Traits_2::Polygon_2                        Polygon_2;
 typedef Traits_2::Polygon_with_holes_2             Polygon_with_holes_2;
 
@@ -99,7 +90,7 @@ special_warnings(const char *,
             << std::endl;
 }
 
-int main ()
+int main()
 {
   std::cerr << "Modify the w-a-r-n-i-n-g-s handler...\n";
   CGAL::set_warning_handler(special_warnings);

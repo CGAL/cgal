@@ -1,6 +1,7 @@
-// file : examples/Nef_2/point_location.C
+// file : examples/Nef_2/point_location.cpp
 
-#include <CGAL/Gmpz.h>
+
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Bounded_kernel.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
@@ -51,7 +52,7 @@ void test() {
  
 int main() {
 
-  typedef CGAL::Gmpz RT;
+  typedef CGAL::Arithmetic_kernel::Integer RT;
   typedef CGAL::Filtered_extended_homogeneous<RT> EKernel;
   typedef CGAL::Homogeneous<RT> HOM;
   typedef CGAL::Bounded_kernel<HOM> BKernel;

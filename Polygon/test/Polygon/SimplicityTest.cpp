@@ -1,14 +1,8 @@
 #define CGAL_POLYGON_DEBUG 1
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Quotient.h>
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-typedef CGAL::Quotient<CGAL::Gmpz> NT;
-#else
-#include <CGAL/MP_Float.h>
-typedef CGAL::Quotient<CGAL::MP_Float> NT;
-#endif
+#include <CGAL/Arithmetic_kernel.h>
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
@@ -23,6 +17,7 @@ using std::endl;
 bool TestSimplicity(const char* FileName)
 // tests the simplicity of the polygon in the file FileName
 {
+  typedef CGAL::Arithmetic_kernel::Rational NT;
   typedef CGAL::Cartesian<NT> K;
   typedef CGAL::Point_2<K> Point;
 
