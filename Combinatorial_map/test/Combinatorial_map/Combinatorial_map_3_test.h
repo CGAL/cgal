@@ -36,7 +36,7 @@ bool check_number_of_cells_3(CMap& cmap, unsigned int nbv, unsigned int nbe,
   if ( !cmap.is_valid() )
     {
       std::cout<<"ERROR: the cmap is not valid."<<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
 
@@ -52,23 +52,11 @@ bool check_number_of_cells_3(CMap& cmap, unsigned int nbv, unsigned int nbe,
                <<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "<<nbc[3]<<", "
                <<nbc[4]<<")."
                <<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
 
   return true;
-}
-
-template<class Map>
-void drawCell3(Map& amap, typename Map::Dart_handle adart, int aorbit, int mark)
-{
-  cout << "Orbite " << Map::ORBIT_NAME[aorbit] << " (";
-  /*  CGAL::CMap_dart_iterator_basic_of_orbit_3<Map> it2(amap, adart, aorbit, mark);
-  for (;it2.cont(); ++it2)
-    {
-      cout << (*it2)->vertex()->point() << ", ";
-      }*/
-  cout << ")" << flush;
 }
 
 template<class Map, class Functor>
@@ -1036,7 +1024,7 @@ bool test3D()
   map.template sew<3>(d1,d2);   
   d3 = d1->beta(2);
   d4 = map.beta(d1, 1,3,1,2);
-  CGAL_assertion(d4==d1->beta(1)->beta(3)->beta(1)->beta(2));
+  assert(d4==d1->beta(1)->beta(3)->beta(1)->beta(2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove facet4: " << flush; CGAL::remove_cell<Map,2>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;

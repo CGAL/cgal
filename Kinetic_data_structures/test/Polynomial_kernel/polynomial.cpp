@@ -47,7 +47,7 @@ template <class Traits>
 void check_equal(const typename Traits::Function&a, const typename Traits::Function &b) {
   if (a != b) {
     std::cerr << a <<  " != " << b << std::endl;
-    CGAL_assertion(a==b);
+    assert(a==b);
   }
 }
 

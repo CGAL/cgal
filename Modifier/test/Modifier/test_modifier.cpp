@@ -49,7 +49,7 @@ int main() {
     A a;
     Modifier m;
     a.delegate(m);
-    CGAL_assertion( a.get_i() == 42);
+    assert( a.get_i() == 42);
     return 0;
 }
 // EOF //

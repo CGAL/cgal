@@ -38,11 +38,6 @@
 
 #include <CGAL/config.h>
 
-// suppress bogus warning when compiling with gcc>=4.3
-#if CGAL_GCC_VERSION >= 40300
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#endif
-
 namespace CGAL {
 
   /** @file Combinatorial_map.h

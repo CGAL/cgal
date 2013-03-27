@@ -678,9 +678,11 @@ int main()
   
   std::cout << std::endl << "Testing with Simple_cartesian<double>..." << std::endl ;
   b &= test_kernel<CGAL::Simple_cartesian<double> >(true);
-  
+
+#ifdef CGAL_USE_GMP  
   std::cout << std::endl << "Testing with Simple_cartesian<Gmpq>..." << std::endl ;
   b &= test_kernel<CGAL::Simple_cartesian<CGAL::Gmpq> >(true);
+#endif
   
   std::cout << std::endl << "Testing with Cartesian<float>..." << std::endl ;
   b &= test_kernel<CGAL::Cartesian<float> >(false);

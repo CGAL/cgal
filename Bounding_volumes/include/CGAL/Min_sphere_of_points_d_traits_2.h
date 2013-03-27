@@ -41,7 +41,7 @@ namespace CGAL {
     static const int D = 2;                  // dimension
 
   public: // accessors:
-    static inline const FT radius(const Sphere& s) {
+    static inline const FT radius(const Sphere&) {
       return 0;
     }
 

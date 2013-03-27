@@ -156,7 +156,7 @@ struct Is_sewable_functor<CMap, 0, dim>
 template<typename CMap>
 struct Is_sewable_functor<CMap, 0, 1>
 {
-  static bool run( const CMap* amap,
+  static bool run( const CMap* /*amap*/,
                    typename CMap::Dart_const_handle adart1,
                    typename CMap::Dart_const_handle adart2 )
   {

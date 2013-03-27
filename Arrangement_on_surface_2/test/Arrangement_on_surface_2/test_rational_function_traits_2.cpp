@@ -35,7 +35,7 @@ struct Cmp {
   { return (m_cmp_object(p1, p2) == CGAL::LARGER); }
 };
 
-int main(int argc, char* argv[])
+int main()
 {
   // testing that all types are present: 
   

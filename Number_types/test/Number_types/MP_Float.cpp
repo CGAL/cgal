@@ -132,7 +132,7 @@ void square_test()
   {
     double d = CGAL::default_random.get_double();
     MPF D(d);
-    CGAL_assertion(D*D == CGAL_NTS square(D));
+    assert(D*D == CGAL_NTS square(D));
   }
 
   // Test case by Nico Kruithof.
@@ -366,12 +366,12 @@ int main(int argc, char **argv)
         std::cout << " " << a.v[j];
     std::cout << std::endl;
 #endif
-    CGAL_assertion(a == MPF(j));
+    assert(a == MPF(j));
     // std::cout << "a=" << a << std::endl << "MPF(j)=" << MPF(j) << std::endl;
   }
 
   std::cout << a << std::endl;
-  CGAL_assertion ( a == MPF(5000*9999));
+  assert ( a == MPF(5000*9999));
 
   MPF bb = factoriel(100);
   std::cout << "100! = " << bb << std::endl;
@@ -379,7 +379,7 @@ int main(int argc, char **argv)
   MPF b = factoriel(10);
   std::cout << "10! = " << b << " =? 3628800 " << " =? " << CGAL_NTS to_double(b);
   std::cout << std::endl;
-  CGAL_assertion ( b == MPF(3628800));
+  assert ( b == MPF(3628800));
 
   test_equality(0);
   test_equality(10);
@@ -388,16 +388,16 @@ int main(int argc, char **argv)
   MPF c = -10*65536+30; // Note : limb==short is hardcoded here
   MPF d = c * 65536;
 
-  CGAL_assertion(c < (c+1));
-  CGAL_assertion(c > (c-1));
-  CGAL_assertion(d < (d+1));
-  CGAL_assertion(d > (d-1));
+  assert(c < (c+1));
+  assert(c > (c-1));
+  assert(d < (d+1));
+  assert(d > (d-1));
 
   MPF e =  7*65536 + 10;
   MPF f = 10*65536 + 7;
-  CGAL_assertion(e < f);
+  assert(e < f);
 
-  CGAL_assertion(MPF(-2) == -MPF(2));
+  assert(MPF(-2) == -MPF(2));
 
   print_test();
 

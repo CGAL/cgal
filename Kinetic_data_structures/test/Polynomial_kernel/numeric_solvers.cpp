@@ -39,13 +39,13 @@ struct Interval_root_stack {
   }
 
   const Root &top() const {
-    CGAL_assertion(ok_);
+    assert(ok_);
     return stack_.back();
   }
 
   void pop() {
     if (stack_.size()>1) {
-      CGAL_assertion(!stack_.empty());
+      assert(!stack_.empty());
       stack_.pop_back();
       ok_=false;
       if (stack_.size() >1) refine();
@@ -102,7 +102,7 @@ struct Interval_root_stack {
 
   void refine() {
     CGAL_POLYNOMIAL_NS::Interval_arithmetic_guard gd;
-    CGAL_assertion(stack_.size()>1);
+    assert(stack_.size()>1);
     while (stack_.size() >1 ){
       if (! is_small(stack_.back())) {
 	//std::cout << "Splitting " << stack_.back() << std::endl;
@@ -117,7 +117,7 @@ struct Interval_root_stack {
       do {
 	changed=false;
 	while(stack_.size() >1&&no_root(stack_.back()) ){
-	  CGAL_assertion(!stack_.empty());
+	  assert(!stack_.empty());
 	  //std::cout << "Discarding " << stack_.back() << std::endl;
 	  stack_.pop_back();
 	  changed =true;
@@ -125,7 +125,7 @@ struct Interval_root_stack {
 	
 	while (stack_.size() >1 && is_small(stack_.back()) 
 	       && !is_odd(stack_.back().inf(), stack_.back().sup())) {
-	  CGAL_assertion(!stack_.empty());
+	  assert(!stack_.empty());
 	  //std::cout << "Discarding " << stack_.back() << std::endl;
 	  stack_.pop_back();
 	  changed =true;
@@ -136,8 +136,8 @@ struct Interval_root_stack {
    
     if (!empty()) {
       Interval b= stack_.back();
-      CGAL_assertion(is_small(b));
-      CGAL_assertion(is_odd(b.inf(),b.sup()));
+      assert(is_small(b));
+      assert(is_odd(b.inf(),b.sup()));
     }
     ok_=true;
   }

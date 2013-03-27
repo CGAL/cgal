@@ -109,7 +109,7 @@ template <typename Arr>
 void 
 ArrangementGraphicsItem<Arr>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
-                                    QWidget *w)
+                                    QWidget* )
 {
   if (m_arr == NULL)
     return;

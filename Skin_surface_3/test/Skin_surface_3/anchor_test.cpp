@@ -41,20 +41,20 @@ void test_anchor_del() {
 
   // Regular case:
   for (int i=0; i<4; i++) {
-    CGAL_assertion(Simplex(vh[i]) == compute_anchor_obj.anchor_del(vh[i]));
-    CGAL_assertion(Simplex(vh[i]) == compute_anchor_obj.anchor_vor(vh[i]));
+    assert(Simplex(vh[i]) == compute_anchor_obj.anchor_del(vh[i]));
+    assert(Simplex(vh[i]) == compute_anchor_obj.anchor_vor(vh[i]));
     for (int j=i+1; j<4; j++) {
-      CGAL_assertion(Simplex(Edge(ch,i,j)) ==
+      assert(Simplex(Edge(ch,i,j)) ==
 	compute_anchor_obj.anchor_del(Edge(ch,i,j)));
-      CGAL_assertion(Simplex(Edge(ch,i,j)) ==
+      assert(Simplex(Edge(ch,i,j)) ==
 	compute_anchor_obj.anchor_vor(Edge(ch,i,j)));
     }
-    CGAL_assertion(Simplex(Facet(ch,i)) ==
+    assert(Simplex(Facet(ch,i)) ==
       compute_anchor_obj.anchor_del(Facet(ch,i)));
-    CGAL_assertion(Simplex(Facet(ch,i)) ==
+    assert(Simplex(Facet(ch,i)) ==
       compute_anchor_obj.anchor_vor(Facet(ch,i)));
-    CGAL_assertion(Simplex(ch) == compute_anchor_obj.anchor_del(ch));
-    CGAL_assertion(Simplex(ch) == compute_anchor_obj.anchor_vor(ch));
+    assert(Simplex(ch) == compute_anchor_obj.anchor_del(ch));
+    assert(Simplex(ch) == compute_anchor_obj.anchor_vor(ch));
   }
   reg.clear();
 
@@ -66,20 +66,20 @@ void test_anchor_del() {
 
   // Voronoi vertex on a Delaunay edge (degenerate):
   for (int i=0; i<4; i++) {
-    CGAL_assertion(Simplex(vh[i]) == compute_anchor_obj.anchor_del(vh[i]));
-    CGAL_assertion(Simplex(vh[i]) == compute_anchor_obj.anchor_vor(vh[i]));
-    CGAL_assertion(Simplex(Facet(ch,i)) ==
+    assert(Simplex(vh[i]) == compute_anchor_obj.anchor_del(vh[i]));
+    assert(Simplex(vh[i]) == compute_anchor_obj.anchor_vor(vh[i]));
+    assert(Simplex(Facet(ch,i)) ==
       compute_anchor_obj.anchor_del(Facet(ch,i)));
-    CGAL_assertion(Simplex(Facet(ch,i)) ==
+    assert(Simplex(Facet(ch,i)) ==
       compute_anchor_obj.anchor_vor(Facet(ch,i)));
     for (int j=i+1; j<4; j++) {
-      CGAL_assertion(Simplex(Edge(ch,i,j)) ==
+      assert(Simplex(Edge(ch,i,j)) ==
 	compute_anchor_obj.anchor_del(Edge(ch,i,j)));
-      CGAL_assertion(Simplex(Edge(ch,i,j)) ==
+      assert(Simplex(Edge(ch,i,j)) ==
 	compute_anchor_obj.anchor_vor(Edge(ch,i,j)));
     }
-    CGAL_assertion(Simplex(ch) == compute_anchor_obj.anchor_del(ch));
-    CGAL_assertion(Simplex(ch) == compute_anchor_obj.anchor_vor(ch));
+    assert(Simplex(ch) == compute_anchor_obj.anchor_del(ch));
+    assert(Simplex(ch) == compute_anchor_obj.anchor_vor(ch));
   }
   reg.clear();
 
@@ -91,19 +91,19 @@ void test_anchor_del() {
   index1 = ch->index(vh[0]);
 
   // Anchor of a Delaunay edge/facet/cell on a vertex
-  CGAL_assertion(Simplex(vh[0]) ==
+  assert(Simplex(vh[0]) ==
     compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+1)&3)));
-  CGAL_assertion(Simplex(vh[0]) ==
+  assert(Simplex(vh[0]) ==
     compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+2)&3)));
-  CGAL_assertion(Simplex(vh[0]) ==
+  assert(Simplex(vh[0]) ==
     compute_anchor_obj.anchor_del(Edge(ch,index1,(index1+3)&3)));
-  CGAL_assertion(Simplex(vh[0]) ==
+  assert(Simplex(vh[0]) ==
     compute_anchor_obj.anchor_del(Facet(ch,(index1+1)&3)));
-  CGAL_assertion(Simplex(vh[0]) ==
+  assert(Simplex(vh[0]) ==
     compute_anchor_obj.anchor_del(Facet(ch,(index1+2)&3)));
-  CGAL_assertion(Simplex(vh[0]) ==
+  assert(Simplex(vh[0]) ==
     compute_anchor_obj.anchor_del(Facet(ch,(index1+3)&3)));
-  CGAL_assertion(Simplex(vh[0]) == compute_anchor_obj.anchor_del(ch));
+  assert(Simplex(vh[0]) == compute_anchor_obj.anchor_del(ch));
   reg.clear();
 
   vh[0] = reg.insert(Weighted_point(Point(-1,0,0), 1));
@@ -115,11 +115,11 @@ void test_anchor_del() {
   index2 = ch->index(vh[1]);
 
   // Anchor of a Delaunay facet/cell on an edge
-  CGAL_assertion(Simplex(Edge(ch,index1,index2)) ==
+  assert(Simplex(Edge(ch,index1,index2)) ==
     compute_anchor_obj.anchor_del(Facet(ch,ch->index(vh[2]))));
-  CGAL_assertion(Simplex(Edge(ch,index1,index2)) ==
+  assert(Simplex(Edge(ch,index1,index2)) ==
     compute_anchor_obj.anchor_del(Facet(ch,ch->index(vh[3]))));
-  CGAL_assertion(Simplex(Edge(ch,index1,index2)) ==
+  assert(Simplex(Edge(ch,index1,index2)) ==
     compute_anchor_obj.anchor_del(ch));
   reg.clear();
 
@@ -131,7 +131,7 @@ void test_anchor_del() {
   index1 = ch->index(vh[0]);
 
   // Anchor of a Delaunay cell on an facet
-  CGAL_assertion(Simplex(Facet(ch,index1)) ==
+  assert(Simplex(Facet(ch,index1)) ==
     compute_anchor_obj.anchor_del(ch));
   reg.clear();
 

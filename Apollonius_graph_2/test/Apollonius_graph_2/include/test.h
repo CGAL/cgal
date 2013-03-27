@@ -22,7 +22,7 @@
 namespace CGAL {
 
 bool dummy(bool b) {
-  CGAL_assertion( b );
+  assert( b );
   return b;
 }
 
@@ -192,27 +192,27 @@ bool test_traits_base(const Traits& = Traits())
 
   // testing coordinate comparison
   //--------------------------------------------------------------------
-  CGAL_assertion( compare_x(wp1, wp1) == EQUAL );
-  CGAL_assertion( compare_y(wp1, wp1) == EQUAL );
-  CGAL_assertion( compare_w(wp1, wp1) == EQUAL );
+  assert( compare_x(wp1, wp1) == EQUAL );
+  assert( compare_y(wp1, wp1) == EQUAL );
+  assert( compare_w(wp1, wp1) == EQUAL );
 
-  CGAL_assertion( compare_x(wp1, wp2) == LARGER );
-  CGAL_assertion( compare_y(wp1, wp2) == SMALLER );
-  CGAL_assertion( compare_w(wp1, wp2) == LARGER );
+  assert( compare_x(wp1, wp2) == LARGER );
+  assert( compare_y(wp1, wp2) == SMALLER );
+  assert( compare_w(wp1, wp2) == LARGER );
 
   // testing orientation
   //--------------------------------------------------------------------
-  CGAL_assertion( orientation(wp1, wp2, wp3) == COLLINEAR );
+  assert( orientation(wp1, wp2, wp3) == COLLINEAR );
 
   // testing is_hidden
   //--------------------------------------------------------------------
-  CGAL_assertion( is_hidden(wp1, wp4) == true );
-  CGAL_assertion( is_hidden(wp4, wp1) == false );
+  assert( is_hidden(wp1, wp4) == true );
+  assert( is_hidden(wp4, wp1) == false );
 
   // testing oriented_side_of_bisector
   //--------------------------------------------------------------------
   Point_2 p = wp2.point();
-  CGAL_assertion( oriented_side_of_bisector(wp1, wp3, p) ==
+  assert( oriented_side_of_bisector(wp1, wp3, p) ==
 		  ON_POSITIVE_SIDE );
 
 
@@ -225,13 +225,13 @@ bool test_traits_base(const Traits& = Traits())
   wp3 = Site_2(Point_2(2,4),4);
   wp4 = Site_2(Point_2(3,9),9);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == ZERO );
-  CGAL_assertion( vertex_conflict(wp2, wp3, wp4, wp1) == ZERO );
+  assert( vertex_conflict(wp1, wp2, wp3, wp4) == ZERO );
+  assert( vertex_conflict(wp2, wp3, wp4, wp1) == ZERO );
 
   wp4 = Site_2(Point_2(3,9),9.0001);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp3, wp4, wp1) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
+  assert( vertex_conflict(wp2, wp3, wp4, wp1) == POSITIVE );
 
 
   // then we consider the case where v3 is the vertex at infinity
@@ -239,22 +239,22 @@ bool test_traits_base(const Traits& = Traits())
   wp2 = Site_2(Point_2(0,-100),50);
   
   wp3 = Site_2(Point_2(0,0),0);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
   wp3 = Site_2(Point_2(-100000,0),0);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
   wp3 = Site_2(Point_2(100000,0),1000);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
 
   wp3 = Site_2(Point_2(-1,0),51);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
 
   wp3 = Site_2(Point_2(-1,200),51);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
   wp3 = Site_2(Point_2(-1,-200),51);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
 
 
   // testing finite_edge_interior_conflict
@@ -272,43 +272,43 @@ bool test_traits_base(const Traits& = Traits())
   // endpoints are not in conflict but the interior is
   wp5 = Site_2(Point_2(0,-49),0);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp5) == POSITIVE );
-  CGAL_assertion( vertex_conflict(wp1, wp4, wp2, wp5) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp5) == POSITIVE );
+  assert( vertex_conflict(wp1, wp4, wp2, wp5) == POSITIVE );
   
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, wp5,  false);
 
-  CGAL_assertion( b );
+  assert( b );
 
   // both endpoints and interior are in conflict
   wp5 = Site_2(Point_2(0,-49),10);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp5) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp1, wp4, wp2, wp5) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp5) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp4, wp2, wp5) == NEGATIVE );
   
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, wp5,  true);
 
-  CGAL_assertion( b );
+  assert( b );
 
   // endpoints are in conflict but the interior isn't
   wp5 = Site_2(Point_2(0,-150),99);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp5) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp1, wp4, wp2, wp5) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp5) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp4, wp2, wp5) == NEGATIVE );
   
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, wp5,  true);
 
-  CGAL_assertion( !b );
+  assert( !b );
 
   // finally endpoints are not in conflict and interior is not in
   // conflict
   wp5 = Site_2(Point_2(0,-150),70);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp5) == POSITIVE );
-  CGAL_assertion( vertex_conflict(wp1, wp4, wp2, wp5) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp5) == POSITIVE );
+  assert( vertex_conflict(wp1, wp4, wp2, wp5) == POSITIVE );
   
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, wp5,  true);
 
-  CGAL_assertion( !b );
+  assert( !b );
 
 
   // then we consider the case where v4 is the vertex at infinity
@@ -318,36 +318,36 @@ bool test_traits_base(const Traits& = Traits())
 
   // endpoints are not in conflict but interior is
   wp4 = Site_2(Point_2(0,-48),0);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == POSITIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp1, wp4) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp4) == POSITIVE );
+  assert( vertex_conflict(wp2, wp1, wp4) == POSITIVE );
 
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, false);
-  CGAL_assertion( b );
+  assert( b );
 
   // both endpoints and interior are in conflict
   wp4 = Site_2(Point_2(-1,0),51);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp1, wp4) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
+  assert( vertex_conflict(wp2, wp1, wp4) == NEGATIVE );
 
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, true);
-  CGAL_assertion( b );
+  assert( b );
 
   // endpoints are in conflict but interior isn't
   wp4 = Site_2(Point_2(-1,200),149);
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp1, wp4) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp4) == NEGATIVE );
+  assert( vertex_conflict(wp2, wp1, wp4) == NEGATIVE );
 
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, true);
-  CGAL_assertion( !b );
+  assert( !b );
 
   // neither the endpoints nor the interior are in conflict
   wp4 = Site_2(Point_2(-1,200),51);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3, wp4) == POSITIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp1, wp4) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3, wp4) == POSITIVE );
+  assert( vertex_conflict(wp2, wp1, wp4) == POSITIVE );
 
   b = finite_edge_interior_conflict(wp1, wp2, wp3, wp4, false);
-  CGAL_assertion( !b );
+  assert( !b );
 
 
   // finally consider the case where both v3 and v4 are the vertex at
@@ -359,38 +359,38 @@ bool test_traits_base(const Traits& = Traits())
   // endpoints are not in conflict but the interior is
   wp3 = Site_2(Point_2(20,0),0);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp1, wp3) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
+  assert( vertex_conflict(wp2, wp1, wp3) == POSITIVE );
 
   b = finite_edge_interior_conflict(wp1, wp2, wp3, false);
-  CGAL_assertion( b );
+  assert( b );
 
   // endpoints are in conflict and so is the interior
   wp3 = Site_2(Point_2(20,0),10);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp1, wp3) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
+  assert( vertex_conflict(wp2, wp1, wp3) == NEGATIVE );
 
   b = finite_edge_interior_conflict(wp1, wp2, wp3, true);
-  CGAL_assertion( b );
+  assert( b );
 
   // both the endpoints and the interior are not in conflict
   wp3 = Site_2(Point_2(4,0),2);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp1, wp3) == POSITIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == POSITIVE );
+  assert( vertex_conflict(wp2, wp1, wp3) == POSITIVE );
 
   b = finite_edge_interior_conflict(wp1, wp2, wp3, false);
-  CGAL_assertion( !b );
+  assert( !b );
 
   // the endpoints are in conflict but the interior isn't
   wp3 = Site_2(Point_2(4,0),3);
 
-  CGAL_assertion( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp2, wp1, wp3) == NEGATIVE );
+  assert( vertex_conflict(wp1, wp2, wp3) == NEGATIVE );
+  assert( vertex_conflict(wp2, wp1, wp3) == NEGATIVE );
 
   b = finite_edge_interior_conflict(wp1, wp2, wp3, true);
-  CGAL_assertion( !b );
+  assert( !b );
 
   // testing infinite_edge_interior_conflict
   //--------------------------------------------------------------------
@@ -403,41 +403,41 @@ bool test_traits_base(const Traits& = Traits())
   // the endpoints are not in conflict but the interior is
   wp5 = Site_2(Point_2(0,-150),2);
   
-  CGAL_assertion( vertex_conflict(wp2, wp3, wp5) == POSITIVE );
-  CGAL_assertion( vertex_conflict(wp4, wp2, wp5) == POSITIVE );
+  assert( vertex_conflict(wp2, wp3, wp5) == POSITIVE );
+  assert( vertex_conflict(wp4, wp2, wp5) == POSITIVE );
 
   b = infinite_edge_interior_conflict(wp2, wp3, wp4, wp5, false);
-  CGAL_assertion( b );
+  assert( b );
 
 
   // the endpoints are in conflict but the interior isn't
   wp5 = Site_2(Point_2(0,150),150);
   
-  CGAL_assertion( vertex_conflict(wp2, wp3, wp5) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp4, wp2, wp5) == NEGATIVE );
+  assert( vertex_conflict(wp2, wp3, wp5) == NEGATIVE );
+  assert( vertex_conflict(wp4, wp2, wp5) == NEGATIVE );
 
   b = infinite_edge_interior_conflict(wp2, wp3, wp4, wp5, true);
-  CGAL_assertion( !b );
+  assert( !b );
 
 
   // the endpoints are in conflict as well as the interior
   wp5 = Site_2(Point_2(0,-150),150);
   
-  CGAL_assertion( vertex_conflict(wp2, wp3, wp5) == NEGATIVE );
-  CGAL_assertion( vertex_conflict(wp4, wp2, wp5) == NEGATIVE );
+  assert( vertex_conflict(wp2, wp3, wp5) == NEGATIVE );
+  assert( vertex_conflict(wp4, wp2, wp5) == NEGATIVE );
 
   b = infinite_edge_interior_conflict(wp2, wp3, wp4, wp5, true);
-  CGAL_assertion( b );
+  assert( b );
 
 
   // neither the endpoints nor the interior are in conflict
   wp5 = Site_2(Point_2(0,150),50);
   
-  CGAL_assertion( vertex_conflict(wp2, wp3, wp5) == POSITIVE );
-  CGAL_assertion( vertex_conflict(wp4, wp2, wp5) == POSITIVE );
+  assert( vertex_conflict(wp2, wp3, wp5) == POSITIVE );
+  assert( vertex_conflict(wp4, wp2, wp5) == POSITIVE );
 
   b = infinite_edge_interior_conflict(wp2, wp3, wp4, wp5, false);
-  CGAL_assertion( !b );
+  assert( !b );
 
 
 
@@ -450,7 +450,7 @@ bool test_traits_base(const Traits& = Traits())
 
   b = is_degenerate_edge(wp1, wp2, wp3, wp4);
 
-  CGAL_assertion( b );
+  assert( b );
 
   wp1 = Site_2(Point_2(2,4),4);
   wp2 = Site_2(Point_2(10,100),100);
@@ -459,7 +459,7 @@ bool test_traits_base(const Traits& = Traits())
 
   b = is_degenerate_edge(wp1, wp2, wp3, wp4);
 
-  CGAL_assertion( !b );
+  assert( !b );
 
   return true;
 }
@@ -563,7 +563,7 @@ bool test_algo_generic(InputStream& is)
   for (; fvit != ag.finite_vertices_end(); ++fvit) {
     n_fvertices++;
   }
-  CGAL_assertion( n_fvertices == num_vertices );
+  assert( n_fvertices == num_vertices );
 
   Finite_edges_iterator feit = ag.finite_edges_begin();
   size_type n_fedges = 0;
@@ -583,7 +583,7 @@ bool test_algo_generic(InputStream& is)
   for (; avit != ag.all_vertices_end(); ++avit) {
     n_avertices++;
   }
-  CGAL_assertion( n_avertices == num_vertices + 1 );
+  assert( n_avertices == num_vertices + 1 );
 
   All_edges_iterator aeit = ag.all_edges_begin();
   size_type n_aedges = 0;
@@ -598,8 +598,8 @@ bool test_algo_generic(InputStream& is)
   }
 
     
-  CGAL_assertion( 2 * n_aedges == 3 * n_afaces );
-  CGAL_assertion( n_avertices - n_aedges + n_afaces == 2 );
+  assert( 2 * n_aedges == 3 * n_afaces );
+  assert( n_avertices - n_aedges + n_afaces == 2 );
 
   // site iterators
   size_type n_sites(0), n_hidden_sites(0), n_visible_sites(0);
@@ -625,7 +625,7 @@ bool test_algo_generic(InputStream& is)
     nos << sit->point();
   }
 
-  CGAL_assertion( n_sites == n_visible_sites + n_hidden_sites );
+  assert( n_sites == n_visible_sites + n_hidden_sites );
 
   // testing traversal - circulators
   //--------------------------------------------------------------------
@@ -643,7 +643,7 @@ bool test_algo_generic(InputStream& is)
       vc++;
     } while ( vc != vc_start );
 
-    CGAL_assertion( deg == ag.data_structure().degree(v) );
+    assert( deg == ag.data_structure().degree(v) );
   }
 
   for (avit = ag.all_vertices_begin();
@@ -658,7 +658,7 @@ bool test_algo_generic(InputStream& is)
       vc++;
     } while ( vc != vc_start );
 
-    CGAL_assertion( deg == ag.data_structure().degree(v) );
+    assert( deg == ag.data_structure().degree(v) );
   }
 
   // face circulators
@@ -674,7 +674,7 @@ bool test_algo_generic(InputStream& is)
       fc++;
     } while ( fc != fc_start );
 
-    CGAL_assertion( deg == ag.data_structure().degree(v) );
+    assert( deg == ag.data_structure().degree(v) );
   }
 
   for (avit = ag.all_vertices_begin();
@@ -689,7 +689,7 @@ bool test_algo_generic(InputStream& is)
       fc++;
     } while ( fc != fc_start );
 
-    CGAL_assertion( deg == ag.data_structure().degree(v) );
+    assert( deg == ag.data_structure().degree(v) );
   }
 
   // edge circulators
@@ -705,7 +705,7 @@ bool test_algo_generic(InputStream& is)
       ec++;
     } while ( ec != ec_start );
 
-    CGAL_assertion( deg == ag.data_structure().degree(v) );
+    assert( deg == ag.data_structure().degree(v) );
   }
 
   for (avit = ag.all_vertices_begin();
@@ -720,34 +720,34 @@ bool test_algo_generic(InputStream& is)
       ec++;
     } while ( ec != ec_start );
 
-    CGAL_assertion( deg == ag.data_structure().degree(v) );
+    assert( deg == ag.data_structure().degree(v) );
   }
 
 
   // testing predicates
   //--------------------------------------------------------------------
-  CGAL_assertion( ag.is_infinite(inf_f) );
-  CGAL_assertion( ag.is_infinite(v1) );
-  CGAL_assertion( !ag.is_infinite(v2) );
+  assert( ag.is_infinite(inf_f) );
+  assert( ag.is_infinite(v1) );
+  assert( !ag.is_infinite(v2) );
   {
     Edge_circulator ec = ag.incident_edges(ag.infinite_vertex());
-    CGAL_assertion( ag.is_infinite(*ec) );
-    CGAL_assertion( ag.is_infinite(ec) );
-    CGAL_assertion( ag.is_infinite(ec->first, ec->second) );
+    assert( ag.is_infinite(*ec) );
+    assert( ag.is_infinite(ec) );
+    assert( ag.is_infinite(ec->first, ec->second) );
   }
 
   // testing insertion
   //--------------------------------------------------------------------
   ag.clear();
   ag.insert(wp_list.begin(), wp_list.end());
-  CGAL_assertion( ag.is_valid() );
+  assert( ag.is_valid() );
 
   ag.clear();
   typename std::vector<Site_2>::iterator it;
   for (it = wp_list.begin(); it != wp_list.end(); ++it) {
     ag.insert(*it);
   }
-  CGAL_assertion( ag.is_valid() );
+  assert( ag.is_valid() );
 
   {
     ag.clear();
@@ -760,19 +760,19 @@ bool test_algo_generic(InputStream& is)
 	v = ag.insert(*it, v);
       }
     }
-    CGAL_assertion( ag.is_valid() );
+    assert( ag.is_valid() );
   }
 
   // testing removal
   //--------------------------------------------------------------------
   ag.clear();
   ag.insert(wp_list.begin(), wp_list.end());
-  CGAL_assertion( ag.is_valid() );
+  assert( ag.is_valid() );
   {
     while ( ag.number_of_vertices() > 0 ) {
       Vertex_handle v(ag.finite_vertices_begin());
       ag.remove(v);
-      CGAL_assertion( ag.is_valid() );
+      assert( ag.is_valid() );
     }
   }
 
@@ -780,21 +780,21 @@ bool test_algo_generic(InputStream& is)
   //--------------------------------------------------------------------
   ag.clear();
   ag.insert(wp_list.begin(), wp_list.end());
-  CGAL_assertion( ag.is_valid() );
+  assert( ag.is_valid() );
   for (fvit = ag.finite_vertices_begin();
        fvit != ag.finite_vertices_end(); ++fvit) {
     Site_2 wp = fvit->site();
     Vertex_handle nn = ag.nearest_neighbor(wp.point());
-    CGAL_assertion( wp == nn->site() );
+    assert( wp == nn->site() );
   }
 
   // testing swap
   //--------------------------------------------------------------------
   ag.clear();
   ag.swap(ag2);
-  CGAL_assertion( ag.number_of_vertices() +
+  assert( ag.number_of_vertices() +
 		  ag.number_of_hidden_sites() == wp_list.size() );
-  CGAL_assertion( ag2.number_of_vertices() == 0 );
+  assert( ag2.number_of_vertices() == 0 );
 
 
   // drawing methods

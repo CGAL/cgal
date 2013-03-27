@@ -20,7 +20,7 @@ copy_tds(const TDS_src& src,TDS_tgt& tgt,typename TDS_src::Vertex_handle s_infin
        vit != src.vertices_end(); ++vit)
     TV[i++] = vit; 
   
-  CGAL_triangulation_assertion( i == n ); 
+  assert( i == n ); 
 
   std::map< typename TDS_src::Vertex_handle, typename TDS_tgt::Vertex_handle > V;
   std::map< typename TDS_src::Cell_handle, typename TDS_tgt::Cell_handle > F;

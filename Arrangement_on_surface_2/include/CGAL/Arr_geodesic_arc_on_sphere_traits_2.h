@@ -973,7 +973,7 @@ public:
      * \param p2 the second point.
      * There is no horizontal identification arc!
      */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+    Comparison_result operator()(const Point_2&, const Point_2&) const
     {
       CGAL_error_msg("There is no horizontal identification arc!");
       return SMALLER;
@@ -1199,7 +1199,7 @@ public:
      * \return a Boolean indicating whether p lies on the horizontal
      * identification arc.
      */
-    bool operator()(const Point_2& p) const
+    bool operator()(const Point_2&) const
     {
       CGAL_error_msg("There is no horizontal identification arc!");
       return false;
@@ -1211,7 +1211,7 @@ public:
      * \return a Boolean indicating whether xcv coincides with the horizontal
      * identification arc.
      */
-    bool operator()(const X_monotone_curve_2& xcv) const
+    bool operator()(const X_monotone_curve_2&) const
     {
       CGAL_error_msg("There is no horizontal identification arc!");
       return false;
@@ -3126,7 +3126,7 @@ operator<<(OutputStream& os,
 template <typename Kernel, typename InputStream>
 InputStream &
 operator>>(InputStream& is,
-           const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>& arc)
+           const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>&)
 {
   std::cerr << "Not implemented yet!" << std::endl;
   return is;

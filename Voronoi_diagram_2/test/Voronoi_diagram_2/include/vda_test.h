@@ -92,7 +92,7 @@ class VDA_Tester
       for (fit = vd.faces_begin(); fit != vd.faces_end(); ++fit) {}
     }
 
-    CGAL_assertion( vd.is_valid() );
+    assert( vd.is_valid() );
 
     std::cout << "# of vertices: " << vd.number_of_vertices() << std::endl;
     std::cout << "# of faces   : " << vd.number_of_faces() << std::endl;
@@ -219,8 +219,8 @@ class VDA_Tester
     std::cout << "Is Voronoi diagram valid? " << std::flush;
     std::cout << ((b_vd = vd->is_valid()) ? "yes" : "no") << std::endl;
 
-    CGAL_assertion( b_dg );
-    CGAL_assertion( b_vd );
+    assert( b_dg );
+    assert( b_vd );
 #else
     vda_timer_.start();
     
