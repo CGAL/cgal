@@ -8,7 +8,7 @@ The function `create_exterior_straight_skeleton_2()` creates a straight skeleton
 The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon `P` given by the point sequence `[vertices_begin,vertices_end]`.
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q` with `P` as its hole and a rectangular frame `F` as outer boundary.
 The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`. 
-`d` is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
+`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
 
 
 \cgalHeading{Requirements}
@@ -41,7 +41,7 @@ The function `create_exterior_straight_skeleton_2()` creates a straight skeleton
 The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon `P`.
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q` with `P` as its hole and a rectangular frame `F` as outer boundary.
 The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`. 
-`d` is a margin sufficiently large to allow an outer offset at dinstance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
+`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
 
 \cgalHeading{Requirements}
 
