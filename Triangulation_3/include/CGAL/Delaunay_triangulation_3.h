@@ -269,12 +269,19 @@ public:
     static Profile_branch_counter_3 bcounter(
       "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
+    
+    WallClockTimer t; // CJTODO TEMP
 
     size_type n = number_of_vertices();
     std::vector<Point> points (first, last);
-    spatial_sort (points.begin(), points.end(), geom_traits());
 
-    WallClockTimer t; // CJTODO TEMP
+    std::cerr << "Point vector created in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+    t.reset();
+
+    spatial_sort (points.begin(), points.end(), geom_traits());
+    
+    std::cerr << "Points sorted in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+    t.reset();
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
@@ -292,13 +299,6 @@ public:
         ++i;
       }
 
-      tbb::task_scheduler_init init(10); // CJTODO TEMP
-      //tbb::enumerable_thread_specific<Vertex_handle> tls_hint(
-      //  [&]()
-      //  {
-      //    static tbb::atomic<size_t> i_hints;
-      //    return hints[(++i_hints) - 1];
-      //  });
       tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint);
       // CJTODO: lambda functions OK?
       tbb::parallel_for(
@@ -367,7 +367,6 @@ public:
         ++i;
       }
 
-      tbb::task_scheduler_init init(10); // CJTODO TEMP
       // CJTODO: lambda functions OK?
       tbb::parallel_for(
         tbb::blocked_range<size_t>( 0, num_points_seq, 1 ),
@@ -677,7 +676,6 @@ public:
       std::vector<Vertex_handle> vertices(first, beyond);
       tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 
-      tbb::task_scheduler_init init(2); // CJTODO TEMP
       // CJTODO: lambda functions OK?
       tbb::parallel_for(
         tbb::blocked_range<size_t>( 0, vertices.size()),
