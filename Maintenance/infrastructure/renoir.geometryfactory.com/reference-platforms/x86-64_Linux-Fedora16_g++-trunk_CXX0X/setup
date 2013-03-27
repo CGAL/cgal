@@ -9,6 +9,5 @@ export BOOST_ROOT
 export CXX CC
 export LD_LIBRARY_PATH QTDIR
 
-source /home/lrineau/CGAL/MPFI-RS/setup-rs
 source /home/lrineau/infrastructure/reference-platforms/setup-common
 

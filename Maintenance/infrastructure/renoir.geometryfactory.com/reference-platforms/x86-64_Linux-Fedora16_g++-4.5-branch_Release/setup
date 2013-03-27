@@ -11,6 +11,5 @@ export BOOST_ROOT
 
 CXXFLAGS=-I$BOOST_ROOT/include
 
-source /home/lrineau/CGAL/MPFI-RS/setup-rs
 source /home/lrineau/infrastructure/reference-platforms/setup-common
 

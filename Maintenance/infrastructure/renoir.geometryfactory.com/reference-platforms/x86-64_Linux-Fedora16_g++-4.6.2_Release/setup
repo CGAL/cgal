@@ -1,5 +1,4 @@
 export QTDIR=/usr/lib64/qt-3.3
-source /home/lrineau/CGAL/MPFI-RS/setup-rs
 source /home/lrineau/infrastructure/reference-platforms/setup-common
 
 BOOST_ROOT=/home/lrineau/CGAL/boost/1_54
