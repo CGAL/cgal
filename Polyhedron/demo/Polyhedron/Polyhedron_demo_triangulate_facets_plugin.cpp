@@ -18,6 +18,10 @@ class Polyhedron_demo_triangulate_facets_plugin :
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
 
 public:
+  // To silent a warning -Woverloaded-virtual
+  // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
+  using Polyhedron_demo_plugin_helper::init;
+
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,
             Messages_interface* m) {
