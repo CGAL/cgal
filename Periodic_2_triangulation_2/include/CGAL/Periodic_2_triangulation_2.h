@@ -1667,7 +1667,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::clear() {
 }
 
 template<class Gt, class Tds>
-bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(Face_handle fh, bool verbose, int level) const {
+bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(Face_handle fh, bool /*verbose*/, int /*level*/) const {
   bool result = true;
 
   int xmin, xmax, ymin, ymax;
@@ -1692,8 +1692,6 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(Face_handle fh, bool verbose,
     std::cerr << std::endl;
     CGAL_triangulation_assertion(false);
   }
-
-  result &= is_valid_too_long_edges(verbose, level);
 
   return result;
 }
@@ -1788,6 +1786,9 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid(bool verbose, int level) cons
     }
   }
 
+  // Check the too_long_edges administration
+  result &= is_valid_too_long_edges(verbose, level);
+
   return result;
 }
 
@@ -1868,9 +1869,9 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
     }
 
     if (_too_long_edge_counter != too_long_edges) {
-	  if (verbose)
+      if (verbose)
         std::cout << "Counts do not match: " << _too_long_edge_counter << " != " << too_long_edges << std::endl;
-	  result = false;
+      result = false;
     }
     CGAL_triangulation_assertion(result);
   }
