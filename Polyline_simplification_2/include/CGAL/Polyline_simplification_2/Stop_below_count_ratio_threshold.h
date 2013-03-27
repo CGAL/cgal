@@ -26,17 +26,18 @@ namespace CGAL {
 namespace Polyline_simplification_2
 {
 
-/// This class is a stop predicate returning true when the percentage of remaning vertices is smaller than a certain threshold.
+/// This class is a stop predicate returning `true` when the percentage 
+/// of remaning vertices is smaller than a certain threshold.
 ///
-/// @heading Is Model for the Concepts: 'PolylineSimplificationStopPredicate'.
+/// \cgalModels `PolylineSimplificationStopPredicate`.
 class Stop_below_count_ratio_threshold
 {
 public :
   
-  /// Initializes it with the given threshold value
+  /// Initializes it with the given threshold value.
   Stop_below_count_ratio_threshold( double threshold ) : mThres(threshold) {}
 
-  /// Returns true when "( current_count / initial_count )" is smaller or equal than the threshold
+  /// Returns `true` when `( current_count / initial_count )` is smaller or equal than the threshold.
   template<class ConstrainedDelaunayTriangulation, class VertexHandle>  
   bool operator()( ConstrainedDelaunayTriangulation const& 
                  , VertexHandle                     const& 

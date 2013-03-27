@@ -20,6 +20,7 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 
+#include <CGAL/Polyline_simplification_2/Squared_distance_cost.h>
 #include <CGAL/Polyline_simplification_2/Scaled_squared_distance_cost.h>
 #include <CGAL/Polyline_simplification_2/Hybrid_squared_distance_cost.h>
 #include <CGAL/Polyline_simplification_2/Stop_below_count_ratio_threshold.h>
@@ -299,12 +300,15 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
 
   mark_vertices_unremovable(pct);
   bool keep_points = false;
-  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop, keep_points);
+  Polyline_simplification_2<PCT, CostFunction, StopFunction> simplifier(pct, cost, stop);
   while(simplifier()){}
 
   CGAL::Polygon_2<PolygonTraits_2,Container> result;
-  std::copy(pct.points_in_constraint_begin(cid),
-            pct.points_in_constraint_end(cid), std::back_inserter(result));
+  Vertices_in_constraint_iterator beg = pct.vertices_in_constraint_begin(cid);
+  Vertices_in_constraint_iterator end = pct.vertices_in_constraint_end(cid);
+  for(; beg!=end;++beg){
+    result.push_back((*beg)->point());
+  }
   return result;
 }
 

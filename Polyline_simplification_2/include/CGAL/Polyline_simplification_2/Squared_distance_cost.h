@@ -28,7 +28,7 @@ namespace Polyline_simplification_2
 
 /// This class is a cost function which calculates the cost as the square of the distance between the original and simplified polylines.
 ///
-/// @heading Is Model for the Concepts: 'PolylineSimplificationCostFunction'.
+/// \cgalModels `PolylineSimplificationCostFunction`.
 class Squared_distance_cost
 {
  
@@ -38,8 +38,8 @@ public:
   Squared_distance_cost() {}
   
   /// Returns the maximal square distances between each point along the original subpolyline, 
-  /// given by the range [original_subpolyline_vertices_begin,original_subpolyline_vertices_end),
-  /// and the straight line segment "p->r".
+  /// given by the range `[original_subpolyline_vertices_begin,original_subpolyline_vertices_end)`,
+  /// and the straight line segment `p->r`.
 
     template<class PolylineConstraintTriangulation, class CVI>  
     boost::optional<typename PolylineConstraintTriangulation::Geom_traits::FT> 

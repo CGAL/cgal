@@ -14,8 +14,8 @@ int main( )
 {
   Polygon_2 polygon;
   std::cin >> polygon;
-  
-  polygon = PS::simplify(polygon, Cost(), Stop(0.5));
+  Cost cost;
+  polygon = PS::simplify(polygon, cost, Stop(0.5));
   
   std::cout.precision(12);
   std::cout << polygon << std::endl;

@@ -25,17 +25,18 @@ namespace CGAL {
 namespace Polyline_simplification_2
 {
 
-/// This class is a stop predicate returning the number of vertices is smaller than a certain threshold.
+/// This class is a stop predicate returning `true` when the number of 
+/// vertices is smaller than a certain threshold.
 ///
-/// @heading Is Model for the Concepts: 'PolylineSimplificationStopPredicate'.
+/// \cgalModels `PolylineSimplificationStopPredicate`.
 class Stop_below_count_threshold
 {
 public :
   
-  /// Initializes it with the given threshold value
+  /// Initializes it with the given threshold value.
   Stop_below_count_threshold( std::size_t threshold ) : mThres(threshold) {}
   
-  /// Returns true when "current_count" is smaller or equal than the threshold
+  /// Returns `true` when `current_count` is smaller or equal than the threshold.
   template<class ConstrainedDelaunayTriangulation, class VertexHandle>  
   bool operator()( ConstrainedDelaunayTriangulation const& cdt
                  , VertexHandle                     const& p

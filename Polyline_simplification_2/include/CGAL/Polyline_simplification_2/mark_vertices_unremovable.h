@@ -27,7 +27,7 @@ class Polyline_constrained_triangulation_2;
 
 namespace Polyline_simplification_2 {
 
-// Fix the leftmost, rightmost, topmost and bottommost vertex
+// Fix the leftmost, rightmost, topmost and bottommost vertex of each polyine.
 template <typename Tr>
 void
 mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,

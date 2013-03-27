@@ -110,7 +110,7 @@ namespace for the XML file to be processed properly.  -->
           <bool name="SHOW_INCLUDE_FILES">true</bool>
 
           <list name="TAGFILES" append="true">
-            <item>./tags/Polyline_simplification_2.tag=../../CGAL.CGAL.2D-Polyline-Simplification/html</item>
+            <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
           </list>
         </doxygen>
       </project>

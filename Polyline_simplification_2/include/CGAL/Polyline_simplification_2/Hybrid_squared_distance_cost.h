@@ -29,21 +29,21 @@ namespace Polyline_simplification_2
 /// This class is a cost function which calculates the cost as the square of the distance between the original and simplified polylines,
 /// possibly scaled based on a factor.
 ///
-/// @heading Is Model for the Concepts: 'PolylineSimplificationCostFunction'.
+/// @heading Is Model for the Concepts: `PolylineSimplificationCostFunction`.
 template<class FT>
 class Hybrid_squared_distance_cost
 {
 
 public:
 
-  /// Initializes the cost function with the specified "ratio"
+  /// Initializes the cost function with the specified `ratio`
   Hybrid_squared_distance_cost( FT ratio ) : mSquaredRatio(ratio*ratio) {}
 
   /// Returns the maximal square distances between each point along the original subpolyline,
-  /// given by the range [original_subpolyline_vertices_begin,original_subpolyline_vertices_end),
-  /// and the straight line segment "p->r" divided by the smallest of
+  /// given by the range `[original_subpolyline_vertices_begin,original_subpolyline_vertices_end)`,
+  /// and the straight line segment `p->r` divided by the smallest of
   /// - the square of the ratio given to the constructor of the cost function,
-  /// - and the shortest squared distance between that segment and each of the vertices adjacent to "q".
+  /// - and the shortest squared distance between that segment and each of the vertices adjacent to `q`.
  template<class PolylineConstraintTriangulation, class CVI>  
     boost::optional<typename PolylineConstraintTriangulation::Geom_traits::FT> 
     operator()( PolylineConstraintTriangulation const& pct
