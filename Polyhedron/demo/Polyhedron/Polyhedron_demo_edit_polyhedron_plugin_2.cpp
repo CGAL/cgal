@@ -208,9 +208,13 @@ void Polyhedron_demo_edit_polyhedron_plugin_2::on_ActivatePivotingCheckBox_state
   Scene_edit_polyhedron_item_2* edit_item = qobject_cast<Scene_edit_polyhedron_item_2*>(scene->item(item_id));
   if(!edit_item) return; 
 
+  if(state == Qt::Checked)
+  {
+    edit_item->pivoting_begin();
+  }
   if(state != Qt::Checked)
   {
-    edit_item->pivoting_finished();
+    edit_item->pivoting_end();
   }
   scene->itemChanged(edit_item); 
 }

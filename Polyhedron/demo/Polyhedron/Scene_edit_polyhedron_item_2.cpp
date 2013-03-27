@@ -66,7 +66,7 @@ struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
 /////////// Most relevant functions lie here ///////////
 void Scene_edit_polyhedron_item_2::deform()
 {
-  if(handles.empty()) { return; }
+  if(!is_there_any_handle()) { return; }
 
   Deform_mesh::Handle_group hgb, hge;
   for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb)
@@ -182,11 +182,12 @@ void Scene_edit_polyhedron_item_2::draw() const {
   if(show_roi) {
     // draw ROI
     ::glBegin(GL_POINTS);
-    for(std::set<vertex_descriptor>::const_iterator it = roi.begin(); it != roi.end(); ++it)
+    Deform_mesh::Const_roi_iterator rb, re;
+    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
     {
-      if(handles.find(*it) == handles.end())
+      if(!deform_mesh.is_handle(*rb))
       {
-        const Kernel::Point_3& p = (*it)->point();
+        const Kernel::Point_3& p = (*rb)->point();
         ::glVertex3d(p.x(), p.y(), p.z());
       }
     }
