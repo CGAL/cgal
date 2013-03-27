@@ -32,18 +32,19 @@ void Scene::generatePoints(int num)
   //for (int i=0; i<num; ++i, ++pts_generator) {
   //  pts.push_back(*pts_generator);
   //}
+  
+  // To define the max number of threads TBB can use
+  //tbb::task_scheduler_init init(5);
 
   /* Insert the points to build a Delaunay triangulation */
   /* Note: this function returns the number of inserted points;
       it is not guaranteed to insert the points following the order of iteraror. */
 #ifdef CONCURRENT_TRIANGULATION_3
-  typedef CGAL::Spatial_grid_lock_data_structure_3<
-    CGAL::Tag_priority_blocking_with_atomics>       Lock_data_structure;
-  Lock_data_structure locking_ds(CGAL::Bbox_3(-1.,-1.,-1.,1,1,1), 50);
+  Lock_ds locking_ds(CGAL::Bbox_3(-1.,-1.,-1.,1,1,1), 50);
   m_dt.set_lock_data_structure(&locking_ds);
   // CJTODO TEMP
 # ifdef CGAL_DEBUG_GLOBAL_LOCK_DS
-  Lock_data_structure::set_global_lock_ds(&locking_ds);
+  Lock_ds::set_global_lock_ds(&locking_ds);
 # endif
 #endif
   m_dt.insert( pts.begin(), pts.end() );
