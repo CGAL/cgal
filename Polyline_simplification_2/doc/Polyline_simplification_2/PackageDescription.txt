@@ -31,11 +31,17 @@
 
 ## Concepts ##
 
+- `PolylineSimplificationCostFunction`
+- `PolylineSimplificationStopPredicate`
 
 ## Classes ##
 
 - `CGAL::Polyline_simplification_2<Traits>`
 
+
+## Global Functions ##
+- `CGAL::Polyline_simplification::simplify()`
+- `CGAL::Polyline_simplification::mark_vertices_unremovable()`
 
 */
 

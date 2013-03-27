@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Andreas Fabri
 
-\image html simplification.png
+\image html norway.png
 
 This chapter describes the polyline simplification algorithm
 of \cgal.
@@ -71,7 +71,7 @@ distance between a subsequence of the original polyline and the
 corresponding subsequence of the simplified polyline with the vertex
 whose cost is calculated being removed.
 
-Let vertices `p`, `q`, and ``r` be three consecutive vertices of a
+Let vertices `p`, `q`, and `r` be three consecutive vertices of a
 polyline constraint. If the vertex `q` is removed, the edges `(p,q)`
 and `(q,r)` would be replaced by the edge `(p,r)`.
 
@@ -81,7 +81,7 @@ and `(q,r)` would be replaced by the edge `(p,r)`.
 
 The maximum squared distance is the maximum of the squared Euclidean
 distances between each point on the original polyline between `p` and
-`r` and the line segment ``(p,r)`. Let \f$s_0,...,s_n\f$ be the points
+`r` and the line segment `(p,r)`. Let \f$s_0,...,s_n\f$ be the points
 strictly between `p` and `r` on the original polyline.  The cost of
 removing vertex `q` is: \f$ v_1 = \max \{ sdist((p,r), s_i) |
 i=0,..,n\} \f$
