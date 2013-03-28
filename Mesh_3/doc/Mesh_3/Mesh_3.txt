@@ -333,15 +333,13 @@ approximating simplicial mesh
 and to represent the final 3D mesh at the end
 of the procedure.
 
-The embedding 3D triangulation is required to be a CGAL::Regular
-triangulation_3 whose  vertex and cell base classes  are respectively models of the
-concepts `MeshVertexBase_3` and `MeshCellBase_3`.
-The type for this triangulation is  the nested type
-CGAL::Mesh_triangulation_3<>::type, provided by  the meta functor
-CGAL::Mesh_triangulation_3.  Among other advantages, such a design
-allows the user to customize the vertex and cell  types of the
-embedding 3D  triangulation.
-
+The embedding 3D triangulation is required to be the nested type
+`CGAL::Mesh_triangulation_3<>::type`, provided by the meta functor 
+`CGAL::Mesh_triangulation_3`. The type for this triangulation is a 
+`CGAL::Regular_triangulation_3` whose vertex and cell base classes 
+are respectively models of the concepts `MeshVertexBase_3` and 
+`MeshCellBase_3`. Among other advantages, such a design allows the 
+user to customize the vertex and cell types of the embedding 3D triangulation.
 
 
 \subsection Mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
