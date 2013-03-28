@@ -20,7 +20,6 @@
 #define CGAL_DEFORM_MESH_H
 
 #include <CGAL/internal/Surface_modeling/Weights.h>
-#include <CGAL/internal/Surface_modeling/Spokes_and_rims_iterator.h>
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -40,7 +39,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSurfaceModeling,
+/// \ingroup PkgSurfaceModeling
 ///@brief Deformation algorithm type
 enum Deformation_type
 { 
@@ -76,6 +75,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  * @tparam VertexIndexMap_ model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
  * @tparam EdgeIndexMap_ model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
  * @tparam deformation_type non-type template parameter from ::Deformation_type for selecting deformation algorithm
+ * @tparam WeightCalculator_ model of SurfaceModelingWeightCalculator
  */
 template <
   class Polyhedron_, 
@@ -83,7 +83,7 @@ template <
   class VertexIndexMap_, 
   class EdgeIndexMap_,
   Deformation_type deformation_type = SPOKES_AND_RIMS,
-  class WeightCalculator = internal::Weight_calculator_selector<Polyhedron_, deformation_type>::weight_calculator
+  class WeightCalculator_ = typename internal::Weight_calculator_selector<Polyhedron_, deformation_type>::weight_calculator
   >
 class Deform_mesh
 {
@@ -97,6 +97,7 @@ public:
   typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d; /**< sparse linear solver for square sparse linear systems */
   typedef VertexIndexMap_ VertexIndexMap; /**< model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
   typedef EdgeIndexMap_ EdgeIndexMap; /**< model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
+  typedef WeightCalculator_ WeightCalculator; /**< model of SurfaceModelingWeightCalculator */
   /// @}
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
@@ -113,25 +114,24 @@ private:
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator    in_edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator   out_edge_iterator;
-  
-  typedef internal::Spokes_and_rims_iterator<Polyhedron> Rims_iterator;
 
   // Handle container types
   typedef std::list<vertex_descriptor>  Handle_container;
   typedef std::list<Handle_container>   Handle_group_container;
 public:
   /** The type for returned handle group representative from Deform_mesh::create_handle_group()*/
-  typedef typename Handle_group_container::iterator       Handle_group;
+  typedef typename Handle_group_container::iterator                Handle_group;
   /** Const version of Handle_group*/
-  typedef typename Handle_group_container::const_iterator Const_handle_group;
+  typedef typename Handle_group_container::const_iterator          Const_handle_group;
   /** The type for iterating over handles */
-  typedef typename Handle_container::iterator             Handle_iterator;
+  typedef typename Handle_container::iterator                      Handle_iterator;
    /** Const version of Handle_iterator*/
-  typedef typename Handle_container::const_iterator       Const_handle_iterator;
+  typedef typename Handle_container::const_iterator                Const_handle_iterator;
   /** The type for iterating over handles */
-  typedef typename std::vector<vertex_descriptor>::iterator             roi_iterator;
-  /** The type for iterating over handles */
-  typedef typename std::vector<vertex_descriptor>::const_iterator       Const_roi_iterator;
+  typedef typename std::vector<vertex_descriptor>::iterator        Roi_iterator;
+   /** Const version of Roi_iterator*/
+  typedef typename std::vector<vertex_descriptor>::const_iterator  Const_roi_iterator;
+
 // Data members.
 public:
   Polyhedron& polyhedron;															/**< Source triangulated surface mesh for modeling */
@@ -143,7 +143,7 @@ private:
   std::vector<Point> original_all;                    // original positions of all vertices, it is stored separately to simplify coding
 
   VertexIndexMap vertex_index_map;                    // storing indices of all vertices
-  EdgeIndexMap   edge_index_map;                      // storing indices of ros related edges
+  EdgeIndexMap   edge_index_map;                      // storing indices of all edges
 
   std::vector<vertex_descriptor> roi;                 // region of interest
   std::vector<vertex_descriptor> ros;                 // region of solution, including roi and hard constraints on boundary of roi
@@ -178,6 +178,7 @@ public:
    * @param edge_index_map edge index map for associating ids with region of interest edges
    * @param iterations see explanations set_iterations(unsigned int iterations)
    * @param tolerance  see explanations set_tolerance(double tolerance)
+   * @param weight_calculator function object or pointer for weight calculation
    */
   Deform_mesh(Polyhedron& polyhedron, 
               VertexIndexMap vertex_index_map, 
@@ -253,16 +254,19 @@ public:
    * Insert the vertex into the handle group
    * @param handle_group group to be inserted into
    * @param vd vertex to be inserted
+   * Note that if the vertex is not previously inserted as ROI, it will.
+   * @return true if the insertion is successful
    */
-  void insert_handle(Handle_group handle_group, vertex_descriptor vd)
+  bool insert_handle(Handle_group handle_group, vertex_descriptor vd)
   {
-    if(is_handle(vd)) { return; }
+    if(is_handle(vd)) { return false; }
     need_preprocess = true;
 
     insert_roi(vd); // also insert it as roi
 
     is_handle(vd) = true;    
     handle_group->push_back(vd);
+    return true;
   }
 
   /**
@@ -271,6 +275,7 @@ public:
    * @param handle_group group to be inserted in
    * @param begin iterators specifying the range of vertices [begin, end) 
    * @param end iterators specifying the range of vertices [begin, end) 
+   * Note that if the vertices are not previously inserted as ROI, they will.
    */
   template<class InputIterator>
   void insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
@@ -299,20 +304,40 @@ public:
    * Erase the vertex from the handle group, note that the handle group is not erased even if it becomes empty.
    * @param handle_group group to be erased from
    * @param vd vertex to be erased
+   * @return true if the erasion is successful
    */
-  void erase_handle(Handle_group handle_group, vertex_descriptor vd)
+  bool erase_handle(Handle_group handle_group, vertex_descriptor vd)
   {
-    if(!is_handle(vd)) { return; }
-    need_preprocess = true;
-
-    typename Handle_container::iterator it 
-      = std::find(handle_group->begin(), handle_group->end(), vd);
+    if(!is_handle(vd)) { return false; }
+    
+    typename Handle_container::iterator it = std::find(handle_group->begin(), handle_group->end(), vd);
     if(it != handle_group->end())
     {
       is_handle(*it) = false;
-      handle_group->erase(it);      
+      handle_group->erase(it);   
+      need_preprocess = true;
+      return true;
       // Although the handle group might get empty, we do not delete it from handle_group
     }
+    return false; // OK (vd is handle but placed in other handle group than handle_group argument)
+  }
+
+  /**
+   * Erase the vertex by searching through all handle groups, note that the handle group is not erased even if it becomes empty.
+   * @param vd vertex to be erased
+   * @return true if the erasion is successful
+   */
+  bool erase_handle(vertex_descriptor vd)
+  {
+    if(!is_handle(vd)) { return false; }
+
+    for(Handle_group it = handle_group_list.begin(); it != handle_group_list.end(); ++it)
+    {
+      if(erase_handle(it, vd)) { return true; }
+    }
+
+    CGAL_assertion(false);// inconsistency between is_handle_map, and handle_group_list
+    return false;
   }
 
   /** 
@@ -388,40 +413,51 @@ public:
   /**
    * Insert the vertex to region of interest
    * @param vd vertex to be inserted
+   * @return true if the insertion is successful
    */
-  void insert_roi(vertex_descriptor vd)   
+  bool insert_roi(vertex_descriptor vd)   
   {
-    if(is_roi(vd)) { return; }
+    if(is_roi(vd)) { return false; }
     need_preprocess = true;
 
     is_roi(vd) = true;
     roi.push_back(vd);
+    return true;
   }
 
   /**
    * Erease the vertex from region of interest
    * @param vd vertex to be erased
+   * @return true if the erasion is successful
+   * Note that the vertex is also erased from being handle, if it is.
    */
-  void erase_roi(vertex_descriptor vd)   
+  bool erase_roi(vertex_descriptor vd)   
   {
-    if(!is_roi(vd)) { return; }  
-    need_preprocess = true;
+    if(!is_roi(vd)) { return false; }  
+    
+    erase_handle(vd); // also erase from being handle
 
     typename std::vector<vertex_descriptor>::iterator it = std::find(roi.begin(), roi.end(), vd);
     if(it != roi.end())
     {
       is_roi(vd) = false;
       roi.erase(it);
+
+      need_preprocess = true;
+      return true;
     }
+    
+    CGAL_assertion(false); // inconsistency between is_roi_map, and roi vector!
+    return false;
   }
 
   /** 
    * Return iterator [begin, end) for roi vertices
    * @return tuple of [begin, end) as roi_iterator
    * Note that deleting a roi vertex will invalidate iterators. 
-   * @see Deform_mesh::is_roi(vertex_descriptor v)
+   * @see Deform_mesh::is_roi(vertex_descriptor vd)
    */
-  boost::tuple<roi_iterator, roi_iterator> roi_vertices()
+  boost::tuple<Roi_iterator, Roi_iterator> roi_vertices()
   {
     return boost::make_tuple(roi.begin(), roi.end());
   }
@@ -430,7 +466,7 @@ public:
    * Return iterator [begin, end) for roi vertices
    * @return tuple of [begin, end) as Const_roi_iterator
    * Note that deleting a roi vertex will invalidate iterators.
-   * @see Deform_mesh::is_roi(vertex_descriptor v)
+   * @see Deform_mesh::is_roi(vertex_descriptor vd)
    */
   boost::tuple<Const_roi_iterator, Const_roi_iterator> roi_vertices() const
   {
@@ -440,31 +476,11 @@ public:
   /**
    * Necessary precomputation work before beginning deformation.
    * It needs to be called after insertion of vertices as handles or roi is done.
-   * For edge weights cotangent weights are used by default.
    * @return true if Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, 
    * which happens if there is no path between a free vertex and a handle vertex (i.e. both fixed and user-inserted).
-   * @see Deform_mesh::preprocess(WeightCalculator weight_calculator) for using custom weights
    */
   bool preprocess()
-  {
-    if(deformation_type == SPOKES_AND_RIMS) 
-    {
-      return preprocess(internal::Single_cotangent_weight<Polyhedron>());
-    }
-    else
-    {
-      return preprocess(internal::Cotangent_weight<Polyhedron>());
-    }
-  }
-  /** 
-   * see explanations in preprocess()
-   * @tparam WeightCalculator model of SurfaceModelingWeightCalculator
-   * @param weight_calculator function object or pointer for weight calculation
-   * @return true if Laplacian matrix factorization is successful
-   */
-  template<class WeightCalculator>
-  bool preprocess(WeightCalculator weight_calculator)
   {
     need_preprocess = false;
 
@@ -480,27 +496,6 @@ public:
   }
 /// @} Preprocess Section
 
-/// \name Utilities
-/// @{
-  /**
-   * Set the number of iterations used in deform()
-   */
-  void set_iterations(unsigned int iterations)
-  {
-    this->iterations = iterations;
-  }
-
-  
-   /// @brief Set the tolerance of convergence used in deform().
-   /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
-   ///
-   /// tolerance > \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ will be used as a termination criterium.
-  void set_tolerance(double tolerance)
-  {
-    this->tolerance = tolerance;
-  }
-/// @} Utilities
-
 /// \name Deform Section
 /// @{  
   /**
@@ -510,11 +505,11 @@ public:
    * @param handle_group representative of the handle group which is subject to translation
    * @param translation translation vector 
    */
-  void translate(Handle_group handle_group, const Vector& translation)
+  void translate(Const_handle_group handle_group, const Vector& translation)
   {
-    if(need_preprocess) { preprocess(); }
+    if(need_preprocess) { preprocess(); } // we require ros ids, so preprocess is needed
 
-    for(typename Handle_container::iterator it = handle_group->begin();
+    for(typename Handle_container::const_iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
     {
       std::size_t v_id = ros_id(*it);
@@ -533,11 +528,11 @@ public:
    * @param translation post translation vector
    */
   template <typename Quaternion, typename Vect>
-  void rotate(Handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
+  void rotate(Const_handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
   {
-    if(need_preprocess) { preprocess(); }
+    if(need_preprocess) { preprocess(); } // we require ros ids, so preprocess is needed
 
-    for(typename Handle_container::iterator it = handle_group->begin();
+    for(typename Handle_container::const_iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
     {
       std::size_t v_id = ros_id(*it);
@@ -550,30 +545,6 @@ public:
       solution[v_id] = p;
     }
   }
-
-  /*
-   * Rotate the handle group around center of original positions of handles in the group by quaternion then translate it by translation 
-   * from its original position (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
-   * @tparam Quaternion model of SurfaceModelingQuaternion
-   * @tparam Vect model of SurfaceModelingVect
-   * @param handle_group representative of the handle group which is subject to rotation
-   * @param quat rotation holder quaternion
-   * @param translation post translation vector
-   */
-
-  //template <typename Quaternion, typename Vect>
-  //void rotate(Handle_group handle_group, const Quaternion& quat, const Vect& translation)
-  //{
-  //  Point center_acc(0, 0, 0);
-  //  for(typename Handle_container::iterator it = handle_group->begin();
-  //    it != handle_group->end(); ++it)
-  //  {
-  //    center_acc = center_acc + (original[id(*it)] - CGAL::ORIGIN);
-  //  }
-  //  std::size_t handles_size = handle_group->size();
-  //  Point center(center_acc.x() / handles_size, center_acc.y() / handles_size, center_acc.z() / handles_size);
-  //  rotate(handle_group, center, quat, translation);
-  //}
 
   /**
    * Assign the target position for the handle vertex 
@@ -626,10 +597,7 @@ public:
       {                                             // also no need compute energy if this iteration is the last iteration
         energy_last = energy_this;
         energy_this = energy();
-        if(energy_this < 0)
-        {
-           std::cout << "Negative energy" << std::endl;
-        }
+        CGAL_warning(energy_this >= 0);
 
         if(ite != 0) // skip first iteration
         {
@@ -643,14 +611,51 @@ public:
   }
 /// @} Deform Section
 
-  Point original_position(vertex_descriptor v) const
-  { return original_all[id(v)]; }
+/// \name Utilities
+/// @{
+  /**
+   * Set the number of iterations used in deform()
+   */
+  void set_iterations(unsigned int iterations)
+  {
+    this->iterations = iterations;
+  }
 
-  bool is_roi(vertex_descriptor v) const
-  { return is_roi_map[id(v)]; }
+  
+   /// @brief Set the tolerance of convergence used in deform().
+   /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
+   ///
+   /// tolerance > \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ will be used as a termination criterium.
+  void set_tolerance(double tolerance)
+  {
+    this->tolerance = tolerance;
+  }
 
-  bool is_handle(vertex_descriptor v) const
-  { return is_hdl_map[id(v)]; }
+  /**
+   * Original positions of all vertices can be reached.
+   * @param vd vertex to obtain original position
+   * @return original position which is saved at the time of construction
+   */
+  const Point& original_position(vertex_descriptor vd) const
+  { return original_all[id(vd)]; }
+
+  /**
+   * Query whether a vertex is ROI or not.
+   * @param vd vertex to be queried
+   * @return true if vd is inside ROI
+   */
+  bool is_roi(vertex_descriptor vd) const
+  { return is_roi_map[id(vd)]; }
+
+  /**
+   * Query whether a vertex is handle or not.
+   * @param vd vertex to be queried
+   * @return true if vd is inside any handle group
+   */
+  bool is_handle(vertex_descriptor vd) const
+  { return is_hdl_map[id(vd)]; }
+/// @} Utilities
+
 
 private:
 
@@ -710,15 +715,17 @@ private:
 
     // initialize the rotation matrices (size: ros)
     rot_mtr.resize(ros.size());
-    for(std::size_t i = 0; i < ros.size(); i++)
+    for(std::size_t i = 0; i < rot_mtr.size(); i++)
     {
-      rot_mtr[ros_id(ros[i])].setIdentity();
-      //if(old_ros_id_map[id(ros[i])] != -1) { // current vertex has a rot mat previously, use that to prevent jumping effects
-      //  rot_mtr[ros_id(ros[i])] = old_rot_mtr[old_ros_id_map[id(ros[i])]];
-      //}
-      //else {
-      //  rot_mtr[ros_id(ros[i])].setIdentity();
-      //}
+      std::size_t v_ros_id = ros_id(ros[i]);
+      std::size_t v_id = id(ros[i]);
+
+      if(old_ros_id_map[v_id] != -1) { // current vertex has a rot mat previously, use that to prevent jumping effects
+        rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];
+      }
+      else {
+        rot_mtr[v_ros_id].setIdentity();
+      }
     }
     
     // initialize solution and original (size: ros + boundary_of_ros)
@@ -730,16 +737,17 @@ private:
     
     for(std::size_t i = 0; i < ros.size(); i++)
     {
-      std::size_t v_id = ros_id(ros[i]);
-      original[v_id] = original_all[id(ros[i])];
-      solution[v_id] = ros[i]->point();
+      std::size_t v_ros_id = ros_id(ros[i]);
+      std::size_t v_id = id(ros[i]);
 
-      //if(old_ros_id_map[id(ros[i])] != -1) { // current vertex has a solution previously, use that to prevent jumping effects
-      //  solution[ros_id(ros[i])] = old_solution[old_ros_id_map[id(ros[i])]];
-      //}
-      //else {
-      //  solution[v_id] = ros[i]->point();
-      //}            
+      original[v_ros_id] = original_all[v_id];
+
+      if(old_ros_id_map[v_id] != -1) { // current vertex has a solution previously, use that to prevent jumping effects
+        solution[v_ros_id] = old_solution[old_ros_id_map[v_id]];
+      }
+      else {
+        solution[v_ros_id] = original_all[v_id];
+      }            
     }
     for(std::size_t i = 0; i < outside_ros.size(); ++i)
     {
@@ -958,7 +966,7 @@ private:
       update_solution_arap();
     }
   }
-  // calculate right-hand side of eq:lap_ber in user manual and solve the system
+  /// calculate right-hand side of eq:lap_ber in user manual and solve the system
   void update_solution_arap()
   {
     typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
@@ -1006,7 +1014,7 @@ private:
       solution[v_id] = p;
     }
   }
-  // calculate right-hand side of eq:lap_ber_rims in user manual and solve the system
+  /// calculate right-hand side of eq:lap_ber_rims in user manual and solve the system
   void update_solution_spokes_and_rims()
   {
     typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
@@ -1157,19 +1165,19 @@ private:
     return Eigen::RowVector3d(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
   }
   /// shorthand of get(vertex_index_map, v)
-  std::size_t id(vertex_descriptor v) const
-  { return get(vertex_index_map, v); }
+  std::size_t id(vertex_descriptor vd) const
+  { return get(vertex_index_map, vd); }
 
-  std::size_t& ros_id(vertex_descriptor v)       
-  { return ros_id_map[id(v)]; }
-  std::size_t  ros_id(vertex_descriptor v) const 
-  { return ros_id_map[id(v)]; }
+  std::size_t& ros_id(vertex_descriptor vd)       
+  { return ros_id_map[id(vd)]; }
+  std::size_t  ros_id(vertex_descriptor vd) const 
+  { return ros_id_map[id(vd)]; }
 
-  std::vector<bool>::reference is_handle(vertex_descriptor v)
-  { return is_hdl_map[id(v)]; }
+  std::vector<bool>::reference is_handle(vertex_descriptor vd)
+  { return is_hdl_map[id(vd)]; }
 
-  std::vector<bool>::reference is_roi(vertex_descriptor v)
-  { return is_roi_map[id(v)]; }
+  std::vector<bool>::reference is_roi(vertex_descriptor vd)
+  { return is_roi_map[id(vd)]; }
 
   /// shorthand of get(edge_index_map, e)
   std::size_t id(edge_descriptor e) const

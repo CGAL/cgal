@@ -73,6 +73,19 @@ public:
   }
 };
 
+template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+class Cotangent_value_minimum_zero : CotangentValue
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  {
+    double value = CotangentValue::operator()(v0, v1, v2);
+    return (std::max)(0.0, value);
+  }
+};
+
 // Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
 // as suggested by -[Mullen08] Spectral Conformal Parameterization-
 template<class Polyhedron, 
@@ -95,7 +108,7 @@ public:
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
 template<class Polyhedron, 
-         class CotangentValue = Cotangent_value_clamped<Polyhedron> >
+         class CotangentValue = Cotangent_value_minimum_zero<Polyhedron> >
 class Cotangent_weight : CotangentValue
 {
 public:
@@ -273,6 +286,8 @@ public:
   double operator()(edge_descriptor /*e*/, Polyhedron& /*polyhedron*/)
   { return 1.0; }
 };
+
+
 
 }//namespace internal
 /// @endcond

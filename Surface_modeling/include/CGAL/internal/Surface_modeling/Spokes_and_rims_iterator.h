@@ -8,6 +8,7 @@
 namespace CGAL {
 namespace internal {
 /** 
+ * Currently this class is not used by surface modeling package, just leave it for possible future need.
  * Provide simple functionality for iterating over spoke and rim edges
  *   - use get_descriptor() to obtain active edge
  *   - get_iterator() always holds spoke edges */
