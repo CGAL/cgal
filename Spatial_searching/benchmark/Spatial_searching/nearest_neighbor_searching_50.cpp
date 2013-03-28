@@ -52,7 +52,7 @@ int main() {
   timer.reset();
   timer.start();
   for(int i = 0; i < queries.size(); i++){
-    Neighbor_search search(tree, queries[i], 50);
+    Neighbor_search search(tree, queries[i], 50, 0);
 
     // report the N nearest neighbors and their distance
     // This should sort all N points by increasing distance from origin

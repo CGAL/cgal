@@ -82,7 +82,8 @@ void kdtree_demo(const size_t N)
 
 
 	// Generate points:
-	generateRandomPointCloud(cloud, std::ifstream("points.xyz"));
+        std::ifstream input("points.xyz");
+	generateRandomPointCloud(cloud, input);
 
         std::vector<Point<double> > queries;
         std::ifstream queries_stream("queries.xyz");
@@ -125,12 +126,13 @@ void kdtree_demo(const size_t N)
           query_pt[2] = queries[i].z;
           nanoflann::KNNResultSet<num_t> resultSet(num_results);
           resultSet.init(ret_index, out_dist_sqr );
-          index.findNeighbors(resultSet, &query_pt[0], nanoflann::SearchParams(10));
+          index.findNeighbors(resultSet, &query_pt[0], nanoflann::SearchParams(10,0));
 
           //std::cout << "knnSearch(nn="<<num_results<<"): \n";
           //std::cout << "ret_index=" << ret_index << " out_dist_sqr=" << out_dist_sqr << endl;
           //std::cout << cloud.pts[ret_index] << std::endl;
-          sum += cloud.pts[ret_index[0]].x;
+          for (int k=0; k<num_results; ++k)
+            sum += cloud.pts[ret_index[k]].x;
         }
         timer.stop();
         std::cout << sum << " done in " << timer.time() << " sec."<< std::endl;
