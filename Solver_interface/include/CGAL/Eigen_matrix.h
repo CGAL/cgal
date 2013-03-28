@@ -38,7 +38,7 @@ namespace CGAL {
 /// @heading Parameters:
 /// @param T Number type.
 
-template<class T, int Options = Eigen::RowMajor>
+template<class T, int Options = Eigen::SparseMatrix<T>::Options>
 struct Eigen_sparse_matrix
 {
 // Public types
