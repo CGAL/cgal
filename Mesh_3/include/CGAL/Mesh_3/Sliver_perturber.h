@@ -540,7 +540,7 @@ private:
   {
     std::size_t operator()(Vertex_handle vh) const
     {
-	  	return boost::hash_value(&*vh);
+      return boost::hash_value(&*vh);
     }
   };
 
