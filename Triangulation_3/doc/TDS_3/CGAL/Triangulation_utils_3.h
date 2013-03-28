@@ -8,7 +8,7 @@ The class `Triangulation_utils_3` defines operations on the indices of vertices
 and neighbors within a cell. 
 
 \anchor Triangulation3figutils 
-\image html utils.gif "Operations on indices."
+\image html utils.png "Operations on indices."
 
 */
 
