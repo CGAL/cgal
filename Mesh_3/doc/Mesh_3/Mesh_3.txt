@@ -548,19 +548,7 @@ those processes have themselves parameters (see details in reference pages) to t
 
 \subsection Mesh_3ParallelAlgorithms Parallel algorithms
 
-Enabling parallel meshing and optimization algorithms can be done in several ways:
-<UL>
-<LI>Using the `Mesh_triangulation_3` class: set the third template parameter to `Parallel_tag`.</LI>
-<LI>If the user provides its own triangulation using the CGAL's `Triangulation_data_structure_3`: 
-    the template parameter Vertex_container_strategy must be set to `Compact_container_strategy_with_counter`,
-    the template parameter Cell_container_strategy must be set to `Compact_container_strategy_with_counter`,
-    and the template parameter Concurrency_tag must be set to `Parallel_tag`. In addition, 
-	the user should check the `MeshVertexBase_3` and `MeshCellBase_3` concepts for requirements 
-	on the vertex and cell classes.</LI>
-<LI>If the user provide its own triangulation and TDS: it must be a concurrency-safe TDS with regard to
-    insertion and deletion of elements. In addition, the user should check the `MeshVertexBase_3` and 
-    `MeshCellBase_3` concepts for requirements on the vertex and cell classes.</LI>
-</UL>
+Enabling parallel meshing and optimization algorithms can be done by setting the third template parameter of the `Mesh_triangulation_3` class  to `Parallel_tag`, when defining the triangulation type. Note that if the user provides its own vertex and cell base classes, the `MeshVertexBase_3` and `MeshCellBase_3` concepts give additionnal requirements.
 
 Parallel algorithms require the program to be linked against the Intel TBB library.
 We <b>strongly suggest</b> the user to use the TBB malloc proxy by including <tbb/tbbmalloc_proxy.h> in his source code.
