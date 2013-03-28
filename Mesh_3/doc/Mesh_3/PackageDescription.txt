@@ -78,7 +78,7 @@ related to the template parameters of some models of the main concepts:
 ## Classes ##
 
 - `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
-- `CGAL::Mesh_triangulation_3<MD,Gt,Concurrency_tag>`
+- `CGAL::Mesh_triangulation_3<MD,Gt,Concurrency_tag,Vertex_base,Cell_base>`
 - `CGAL::Mesh_vertex_base_3<MD,Gt,Vb>`
 - `CGAL::Mesh_cell_base_3<MD,Gt,Cb>`
 - `CGAL::Mesh_criteria_3<Tr>`
