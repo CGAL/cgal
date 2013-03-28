@@ -119,7 +119,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt4_wrap_ui( editionUI_FILES Deform_mesh.ui )
-  qt4_wrap_ui( editionUI_FILES Deform_mesh_2.ui )
   
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
@@ -148,7 +147,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_polyhedron_transform_item.cpp
               Scene_polylines_item.cpp
               Scene_edit_polyhedron_item.cpp
-			  Scene_edit_polyhedron_item_2.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
@@ -218,8 +216,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # special
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item custom_manipulated_frame)
 
-  add_item(scene_edit_polyhedron_item_2 Scene_edit_polyhedron_item_2.cpp Scene_edit_polyhedron_item_2.moc)
-  target_link_libraries(scene_edit_polyhedron_item_2 scene_polyhedron_item custom_manipulated_frame)
   
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
@@ -420,11 +416,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(TAUCS_FOUND OR EIGEN3_FOUND )
     polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin ${editionUI_FILES})
     target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
-  endif()
-  
-  if(TAUCS_FOUND OR EIGEN3_FOUND )
-    polyhedron_demo_plugin(edit_polyhedron_plugin_2 Polyhedron_demo_edit_polyhedron_plugin_2 ${editionUI_FILES})
-    target_link_libraries(edit_polyhedron_plugin_2 scene_polyhedron_item scene_edit_polyhedron_item_2)
   endif()
   
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
