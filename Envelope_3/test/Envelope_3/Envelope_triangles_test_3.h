@@ -146,7 +146,7 @@ public:
       for (bit = boundary_list.begin(); bit != boundary_list.end(); ++bit) {
         const Object& obj = *bit;
         Boundary_xcurve boundary_cv;
-        CGAL_assertion(assign(boundary_cv, obj));
+        assert(assign(boundary_cv, obj));
         assign(boundary_cv, obj);
         curves_col.push_back(boundary_cv.first);
       }
@@ -165,7 +165,7 @@ public:
         for(std::size_t k=0; k<inter_objs.size(); ++k)
         {
           cur_obj = inter_objs[k];
-          CGAL_assertion(!cur_obj.is_empty());
+          assert(!cur_obj.is_empty());
           if (CGAL::assign(point, cur_obj)) {
 #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
               std::cout << "intersection between surfaces is a point: "
@@ -184,7 +184,7 @@ public:
           }
           else
           {
-            CGAL_assertion_msg(false, "wrong intersection type");
+            assert_msg(false, "wrong intersection type");
           }
         }
       }
@@ -282,9 +282,9 @@ public:
         pl_obj = pl.locate(inside_test);
         // faces of env must contain the faces of test
         bool located_in_face = assign(pl_fh, pl_obj);
-        CGAL_assertion(located_in_face);
+        assert(located_in_face);
         eq = fh->is_equal_data(pl_fh->begin_data(), pl_fh->end_data());
-        CGAL_assertion(eq);
+        assert(eq);
         result &= eq;
       }
     }
@@ -412,7 +412,7 @@ protected:
       std::cout << "result1 = " << result1 << " and result2 = " << result2
                 << std::endl;
 
-      CGAL_assertion(result1 == result2);
+      assert(result1 == result2);
 #endif
 
     return result2;
@@ -436,7 +436,7 @@ protected:
     // we iterate over the vertices of the face, and look for one that the
     // surfaces are not equal above it. (if doesn't exist, then the surfaces
     // overlap)
-    CGAL_assertion(!face->is_unbounded());
+    assert(!face->is_unbounded());
     Comparison_result cur_res;
     Ccb_halfedge_circulator hec = face->outer_ccb();
     Ccb_halfedge_circulator hec_begin = hec;
@@ -471,7 +471,7 @@ protected:
                                 const Xy_monotone_surface_3 &surf1,
                                 const Xy_monotone_surface_3& surf2)
   {
-    CGAL_assertion(!face->is_unbounded());
+    assert(!face->is_unbounded());
     Comparison_result cur_res;
     if (face != current_face)
     compute_point_in_current_face(face);
@@ -516,7 +516,7 @@ protected:
       std::cout << "result1 = " << result1 << " and result2 = " << result2
                 << std::endl;
 
-      CGAL_assertion(result1 == result2);      
+      assert(result1 == result2);      
 #endif
 
     return result2;
@@ -593,7 +593,7 @@ protected:
   Point_2 compute_point_inside_face(Minimization_diagram_2 &env,
                                     Face_handle face)
   {
-    CGAL_assertion(!face->is_unbounded());
+    assert(!face->is_unbounded());
     
     #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
       std::cout << "in compute point inside face" << std::endl;
@@ -610,7 +610,7 @@ protected:
       }
       hec++;
     } while (hec != hec_begin && !found);
-    CGAL_assertion(found);
+    assert(found);
 
     Halfedge_handle found_hh = hec;
     
@@ -662,8 +662,8 @@ protected:
       // just for checking, locate res_point in env to find face
       Object test_pl_obj = pl.locate(res_point);
       Face_const_handle test_fh;
-      CGAL_assertion(assign(test_fh, test_pl_obj));
-      CGAL_assertion(test_fh == face);
+      assert(assign(test_fh, test_pl_obj));
+      assert(test_fh == face);
 #endif
 
     return res_point;

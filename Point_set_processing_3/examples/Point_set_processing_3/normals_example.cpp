@@ -52,9 +52,6 @@ int main(void)
     // if you plan to call a reconstruction algorithm that expects oriented normals.
     points.erase(unoriented_points_begin, points.end());
 
-    // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-    std::list<PointVectorPair>(points).swap(points);
-
     return EXIT_SUCCESS;
 }
 

@@ -619,7 +619,20 @@ namespace CircularFunctors {
   {
     public:
 
-    typedef void result_type;
+    template<typename>
+    struct result;
+
+    template<typename F>
+    struct result<F(typename CK::Line_2)>
+    {
+      typedef typename CK::Polynomial_1_2 type;
+    };
+
+    template<typename F>
+    struct result<F(typename CK::Circle_2)>
+    {
+      typedef typename CK::Polynomial_for_circles_2_2 type;
+    };
 
     typename CK::Polynomial_1_2
     operator() ( const typename CK::Line_2 & l )
@@ -1254,40 +1267,36 @@ namespace CircularFunctors {
     typedef typename CK::FT          FT;
     typedef typename CK::Point_2     Point_2;
     typedef typename CK::Circle_2    Circle_2;
-    typedef FT                       forwarded_result_type;
   public:
     template<typename>
-    struct result {
-      typedef forwarded_result_type type;
+    struct result{
+      typedef FT type;
     };
 
     template<typename F>
     struct result<F(Circular_arc_2)> {
-      typedef const forwarded_result_type& type;
+      typedef typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type type;
     };
 
     template<typename F>
     struct result<F(Circle_2)> {
-      typedef const forwarded_result_type& type;
+      typedef typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type type;
     };
     
-    const forwarded_result_type&
+    typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type
     operator()( const Circle_2& c) const
     { return LK_Compute_squared_radius_2()(c); }
     
-    forwarded_result_type
-    operator()( const Point_2& p) const
+    FT operator()( const Point_2& p) const
     { return LK_Compute_squared_radius_2()(p); }
     
-    forwarded_result_type
-    operator()( const Point_2& p, const Point_2& q) const
+    FT operator()( const Point_2& p, const Point_2& q) const
     { return LK_Compute_squared_radius_2()(p, q); }
     
-    forwarded_result_type
-    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    FT operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return LK_Compute_squared_radius_2()(p, q, r); }
     
-    const forwarded_result_type&
+    typename cpp11::result_of<LK_Compute_squared_radius_2(Circle_2)>::type
     operator()(const Circular_arc_2& c) const
     { return c.rep().squared_radius(); }
 

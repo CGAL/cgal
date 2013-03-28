@@ -47,6 +47,6 @@ int main(){
   cdt.insert_constraint(Point(1,1,4),Point(0,0,4));
   cdt.insert_constraint(Point(0,1,2),Point(1,0,2));
   
-  CGAL_assertion (cdt.number_of_vertices() == 8 );
+  assert (cdt.number_of_vertices() == 8 );
   return 0;
 }

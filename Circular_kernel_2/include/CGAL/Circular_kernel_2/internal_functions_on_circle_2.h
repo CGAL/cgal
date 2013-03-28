@@ -130,7 +130,7 @@ namespace CircularFunctors {
     Equation e2 = CircularFunctors::get_equation<CK>(c2);
     
     if (e1 == e2) {
-      *res++ = make_object(e1);
+      *res++ = make_object(c1);
       return res;
     }
 

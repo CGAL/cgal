@@ -31,7 +31,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
   if ( !lcc.is_valid() )
     {
       std::cout<<"ERROR: the lcc is not valid."<<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
   
@@ -46,7 +46,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<", "<<nbcc<<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "
                <<nbc[2]<<", "<<nbc[3]<<", "<<nbc[4]<<", "<<nbc[5]<<")."
                <<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
 
@@ -56,7 +56,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<"the number of vertex attributes ("
                <<lcc.number_of_vertex_attributes()<<")"<<std::endl;
 
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
   
@@ -265,7 +265,7 @@ bool test_LCC_4()
   if ( !lcc.template is_sewable<4>(dh1, dh2) )
   {
     std::cout<<"ERROR: the two 3-cells are not sewable."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return false;
   }
 
@@ -280,7 +280,7 @@ bool test_LCC_4()
   if ( lcc.template is_sewable<4>(dh1, dh2) )
   {
     std::cout<<"ERROR: the two 3-cells are sewable."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return false;
   }
 

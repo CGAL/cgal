@@ -76,8 +76,8 @@ public:
 	if (!tmc.is_infinite(*cell)) {
 	  Exact_K::FT val2 = (*cell)->info().second->value(vit->point());
 	  // NGHK: Make exact:
- 	  //CGAL_assertion(val == val2);
-	  CGAL_assertion(std::abs(CGAL::to_double(val-val2)) < 1e-8);
+ 	  //assert(val == val2);
+	  assert(std::abs(CGAL::to_double(val-val2)) < 1e-8);
 	}
       }
     }

@@ -32,7 +32,7 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
   if ( !lcc.is_valid() )
     {
       std::cout<<"ERROR: the lcc is not valid."<<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
   
@@ -45,7 +45,7 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<" ("<<nbv<<", "<<nbe<<", "<<nbf<<", "<<nbcc<<") and we have"
                <<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "<<nbc[3]<<")."
                <<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
 
@@ -55,7 +55,7 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<"the number of vertex attributes ("
                <<lcc.number_of_vertex_attributes()<<")"<<std::endl;
 
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
   

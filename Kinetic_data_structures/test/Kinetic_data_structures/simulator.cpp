@@ -84,7 +84,7 @@ struct Test
       event_map.erase(time_map.begin()->second);
       time_map.erase(time_map.begin());
     } else {
-      CGAL_assertion(!inf_events_.empty());
+      assert(!inf_events_.empty());
       // just look at count for now
       inf_events_.erase(inf_events_.begin());
     }
@@ -138,7 +138,7 @@ struct Test
     }
     for (unsigned int i=0; i< 3; ++i) {
       Key k= sim->new_final_event( Ev(sim->end_time(), this));
-      CGAL_assertion(k != sim->null_event());
+      assert(k != sim->null_event());
       inf_events_.insert(k);
       
       if (std::rand()%3==0) {
@@ -214,7 +214,7 @@ struct Test
     delete_events();
 
     sim->set_current_time(sim->end_time());
-    CGAL_precondition(inf_events_.size() != 0);
+    assert(inf_events_.size() != 0);
     while (!sim->empty()) {
       sim->set_current_event_number(sim->current_event_number()+1);
     }

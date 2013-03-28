@@ -12,7 +12,7 @@ typedef std::pair<point_iterator,point_iterator>
   point_range;
 typedef std::list<point_range> polyline;
 
-int main(int argc, char* argv[]) 
+int main() 
 {
   Nef_polyhedron N0;
   std::cin >> N0;

@@ -18,15 +18,15 @@ void test_erase(AOT &aot, CGAL::Tag_true) {
   }
   aot.set_is_editing(false);
   for (typename AOT::Key_iterator it= aot.keys_begin(); it != aot.keys_end(); ++it){
-    CGAL_assertion(erased.find(*it) == erased.end());
-    CGAL_assertion(remaining.find(*it) != remaining.end());
+    assert(erased.find(*it) == erased.end());
+    assert(remaining.find(*it) != remaining.end());
     ++i;
   }
-  CGAL_assertion(aot.size() == remaining.size());
+  assert(aot.size() == remaining.size());
 }
 
 template <class AOT>
-void test_erase(AOT &aot, CGAL::Tag_false) {
+void test_erase(AOT &, CGAL::Tag_false) {
   
 }
 
@@ -36,14 +36,14 @@ void test(AOT &aot, Erase_tag et) {
   for (unsigned int i=0; i< 100; ++i){
     keys.push_back(aot.insert(i));
   }
-  CGAL_assertion(static_cast<unsigned int> (std::distance(aot.keys_begin(), 
+  assert(static_cast<unsigned int> (std::distance(aot.keys_begin(), 
 							  aot.keys_end()))
 		 == keys.size());
 
   for (int i=0; i< 100; ++i){
-    CGAL_assertion(aot[keys[i]]==i);
+    assert(aot[keys[i]]==i);
   }
-  CGAL_assertion(aot.size()==100);
+  assert(aot.size()==100);
   
   test_erase(aot, et);
 }

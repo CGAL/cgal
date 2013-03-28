@@ -221,7 +221,7 @@ bool test_traits(const char* title)
   
   std::cout << std::endl;  
 
-  CGAL_assertion( s == CGAL::ZERO );
+  assert( s == CGAL::ZERO );
   return s == CGAL::ZERO;
 }
 

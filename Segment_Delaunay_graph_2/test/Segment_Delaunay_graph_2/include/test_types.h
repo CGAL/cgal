@@ -48,7 +48,7 @@ struct Level_finder
   typedef typename SDG::Vertex_handle  Vertex_handle;
 
   size_type operator()(Vertex_handle v) const {
-    CGAL_precondition( v != Vertex_handle() );
+    assert( v != Vertex_handle() );
     size_type level = 0;
     Vertex_handle vertex = v;
     while ( vertex->up() != Vertex_handle() ) {
@@ -145,24 +145,24 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 
   start_testing("constructors");
   Segment_Delaunay_graph_2 sdg;
-  CGAL_assertion( sdg.is_valid() );
+  assert( sdg.is_valid() );
 
   Segment_Delaunay_graph_2 sdg2(gt);
-  CGAL_assertion( sdg2.is_valid() );
+  assert( sdg2.is_valid() );
   {
     Segment_Delaunay_graph_2 sdg3(sdg);
 
-    CGAL_assertion( sdg3.is_valid() );
+    assert( sdg3.is_valid() );
 
     sdg.insert(site_list.begin(), site_list.end());
     Segment_Delaunay_graph_2 sdg4(sdg);
-    CGAL_assertion( sdg4.is_valid() );
+    assert( sdg4.is_valid() );
     sdg.clear();
 
     Segment_Delaunay_graph_2 sdg5(site_list.begin(), site_list.end());
-    CGAL_assertion( sdg5.is_valid() );
+    assert( sdg5.is_valid() );
     Segment_Delaunay_graph_2 sdg6(site_list.begin(), site_list.end(), gt);
-    CGAL_assertion( sdg6.is_valid() );
+    assert( sdg6.is_valid() );
   }
   end_testing("constructors");
 
@@ -172,13 +172,13 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
   sdg = sdg;
   sdg2 = sdg;
 
-  CGAL_assertion( sdg.is_valid() );
-  CGAL_assertion( sdg2.is_valid() );
+  assert( sdg.is_valid() );
+  assert( sdg2.is_valid() );
 
   sdg.clear();
 
-  CGAL_assertion( sdg.is_valid() );
-  CGAL_assertion( sdg2.is_valid() );
+  assert( sdg.is_valid() );
+  assert( sdg2.is_valid() );
 
   sdg = sdg2;
 
@@ -334,15 +334,15 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
   {
     sdg.clear();
     sdg.insert(site_list.begin(), site_list.end());
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.is_valid() );
 
     sdg.clear();
     sdg.insert(site_list.begin(), site_list.end(), Tag_false());
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.is_valid() );
 
     sdg.clear();
     sdg.insert(site_list.begin(), site_list.end(), Tag_true());
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.is_valid() );
 
     sdg.clear();
     Vertex_handle v1 = sdg.insert(p1);
@@ -355,7 +355,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg.insert(s3, v1);
     sdg.insert(s4, v1);
 
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.is_valid() );
   }
   end_testing("insertion methods");
 
@@ -371,7 +371,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 	sdg.insert(t);
       }
       std::cerr << std::endl;
-      CGAL_assertion( sdg.is_valid(true, 1) );
+      assert( sdg.is_valid(true, 1) );
 
       Finite_vertices_iterator vit;
 
@@ -405,7 +405,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
       sdg.clear();
 
       sdg.insert(site_list.begin(), site_list.end());
-      CGAL_assertion( sdg.is_valid() );
+      assert( sdg.is_valid() );
 
       vit = sdg.finite_vertices_begin();
       do {
@@ -432,7 +432,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg.insert(s3, v1);
     sdg.insert(s4, v1);
 
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.is_valid() );
   }
 
   start_testing("nearest neighbor methods");
@@ -461,13 +461,13 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg2.clear();
     sdg.swap(sdg2);
 
-    CGAL_assertion( sdg2.number_of_input_sites() == i1 );
-    CGAL_assertion( sdg2.number_of_vertices() == n1 );
-    CGAL_assertion( sdg2.is_valid() );
+    assert( sdg2.number_of_input_sites() == i1 );
+    assert( sdg2.number_of_vertices() == n1 );
+    assert( sdg2.is_valid() );
 
-    CGAL_assertion( sdg.number_of_input_sites() == 0 );
-    CGAL_assertion( sdg.number_of_vertices() == 0 );
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.number_of_input_sites() == 0 );
+    assert( sdg.number_of_vertices() == 0 );
+    assert( sdg.is_valid() );
 
     //--------------------------------------------
  
@@ -485,13 +485,13 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 
     sdg.swap(sdg2);
 
-    CGAL_assertion( sdg2.number_of_input_sites() == i1 );
-    CGAL_assertion( sdg2.number_of_vertices() == n1 );
-    CGAL_assertion( sdg2.is_valid() );
+    assert( sdg2.number_of_input_sites() == i1 );
+    assert( sdg2.number_of_vertices() == n1 );
+    assert( sdg2.is_valid() );
 
-    CGAL_assertion( sdg.number_of_input_sites() == i2 );
-    CGAL_assertion( sdg.number_of_vertices() == n2 );
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.number_of_input_sites() == i2 );
+    assert( sdg.number_of_vertices() == n2 );
+    assert( sdg.is_valid() );
 
     //--------------------------------------------
 
@@ -501,13 +501,13 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg.clear();
     sdg.swap(sdg2);
 
-    CGAL_assertion( sdg2.number_of_input_sites() == 0 );
-    CGAL_assertion( sdg2.number_of_vertices() == 0 );
-    CGAL_assertion( sdg2.is_valid() );
+    assert( sdg2.number_of_input_sites() == 0 );
+    assert( sdg2.number_of_vertices() == 0 );
+    assert( sdg2.is_valid() );
 
-    CGAL_assertion( sdg.number_of_input_sites() == i2 );
-    CGAL_assertion( sdg.number_of_vertices() == n2 );
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.number_of_input_sites() == i2 );
+    assert( sdg.number_of_vertices() == n2 );
+    assert( sdg.is_valid() );
   }
   end_testing("swap method");
 
@@ -529,7 +529,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     std::ofstream ofs(ofname);
     assert( ofs );
     sdg.file_output(ofs);
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.is_valid() );
     ofs.close();
 
     sdg.clear();
@@ -537,7 +537,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     std::ifstream ifs(ofname);
     assert( ifs );
     sdg.file_input(ifs);
-    CGAL_assertion( sdg.is_valid() );
+    assert( sdg.is_valid() );
     ifs.close();
 
     size_type nisc2 = sdg.number_of_input_sites();

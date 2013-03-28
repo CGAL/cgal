@@ -86,12 +86,12 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
 
     Simplex s4(s1);
     
-    CGAL_assertion(s1.dimension() == 0);
-    CGAL_assertion(s1 == s2);
-    CGAL_assertion(s1 == s3);
-    CGAL_assertion(s1 == s4);
+    assert(s1.dimension() == 0);
+    assert(s1 == s2);
+    assert(s1 == s3);
+    assert(s1 == s4);
     Vertex_handle vh2 = s1;
-    CGAL_assertion(vh == vh2);
+    assert(vh == vh2);
   }
 
   {  // Check edges
@@ -106,13 +106,13 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
 
     Simplex s5(s1);
     
-    CGAL_assertion(s1.dimension() == 1);
-    CGAL_assertion(s1 == s2);
-    CGAL_assertion(s1 == s3);
-    CGAL_assertion(s1 == s4);
-    CGAL_assertion(s1 == s5);
+    assert(s1.dimension() == 1);
+    assert(s1 == s2);
+    assert(s1 == s3);
+    assert(s1 == s4);
+    assert(s1 == s5);
     Edge e2 = s1;
-    CGAL_assertion(e == e2);
+    assert(e == e2);
   }
 
   {  // Check facets
@@ -127,13 +127,13 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
 
     Simplex s5(s1);
     
-    CGAL_assertion(s1.dimension() == 2);
-    CGAL_assertion(s1 == s2);
-    CGAL_assertion(s1 == s3);
-    CGAL_assertion(s1 == s4);
-    CGAL_assertion(s1 == s5);
+    assert(s1.dimension() == 2);
+    assert(s1 == s2);
+    assert(s1 == s3);
+    assert(s1 == s4);
+    assert(s1 == s5);
     Facet f2 = s1;
-    CGAL_assertion(f == f2);
+    assert(f == f2);
   }
 
   {  // Check cells
@@ -148,12 +148,12 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
 
     Simplex s5(s1);
     
-    CGAL_assertion(s1.dimension() == 3);
-    CGAL_assertion(s1 == s2);
-    CGAL_assertion(s1 == s3);
-    CGAL_assertion(s1 == s4);
-    CGAL_assertion(s1 == s5);
+    assert(s1.dimension() == 3);
+    assert(s1 == s2);
+    assert(s1 == s3);
+    assert(s1 == s4);
+    assert(s1 == s5);
     Cell_handle ch2 = s1;
-    CGAL_assertion(ch == ch2);
+    assert(ch == ch2);
   }
 }

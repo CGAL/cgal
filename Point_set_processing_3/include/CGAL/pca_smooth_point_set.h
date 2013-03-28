@@ -102,6 +102,7 @@ pca_smooth_point(
 // Public section
 // ----------------------------------------------------------------------------
 
+/// \cond SKIP_IN_MANUAL
 /// \ingroup PkgPointSetProcessing
 /// Smoothes the `[first, beyond)` range of points using pca on the k
 /// nearest neighbors and reprojection onto the plane.
@@ -165,6 +166,7 @@ pca_smooth_point_set(
     p = internal::pca_smooth_point<Kernel>(p,tree,k);
   }
 }
+/// @endcond
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.

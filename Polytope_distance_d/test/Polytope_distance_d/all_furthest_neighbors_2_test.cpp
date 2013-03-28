@@ -81,7 +81,7 @@ int main()
                     back_inserter(neighbors2));
     
     // and compare both results:
-    CGAL_assertion( equal( neighbors.begin(),
+    assert( equal( neighbors.begin(),
                            neighbors.end(),
                            neighbors2.begin()));
   } // for (i = 0..4)

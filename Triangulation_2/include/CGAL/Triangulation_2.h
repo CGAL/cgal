@@ -544,7 +544,7 @@ public:
 // 			      FaceIt face_begin,
 // 			      FaceIt face_end);
 
-  Face_handle create_face(Face_handle f1, int i1,
+  Face_handle create_face(Face_handle f1d, int i1,
 			  Face_handle f2, int i2,
 			  Face_handle f3, int i3);
   Face_handle create_face(Face_handle f1, int i1,

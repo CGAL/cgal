@@ -48,7 +48,7 @@ void print_report(const VDA& vda, const Projector& project,
   int n_all = 0, n_empty = 0, n_vert = 0;
   for (typename VDA::Face_iterator fit = vda.faces_begin();
        fit != vda.faces_end(); ++fit) {
-    //    CGAL_assertion( !face_rejector(vda.dual(), fit->dual_vertex()) );
+    //    assert( !face_rejector(vda.dual(), fit->dual_vertex()) );
     n_all++;
   }
 
@@ -169,7 +169,7 @@ void print_report(const VDA& vda, const Projector& project,
 	do {
 	  hc++;
 	  n_halfedges++;
-	  CGAL_assertion( fit->is_halfedge_on_ccb(hc) );
+	  assert( fit->is_halfedge_on_ccb(hc) );
 	} while ( hc != hc_start );
       }
     }
@@ -178,17 +178,17 @@ void print_report(const VDA& vda, const Projector& project,
     typename VDA::Unbounded_faces_iterator ufit;
     for (ufit = vda.unbounded_faces_begin();
 	 ufit != vda.unbounded_faces_end(); ++ufit) {
-      CGAL_assertion( ufit->is_unbounded() );
+      assert( ufit->is_unbounded() );
       n_unbounded_faces++;
     }
 
     if ( vda.unbounded_faces_begin() != vda.unbounded_faces_end() ) {
       for (ufit = --vda.unbounded_faces_end();
 	   ufit != vda.unbounded_faces_begin(); --ufit) {
-	CGAL_assertion( ufit->is_unbounded() );
+	assert( ufit->is_unbounded() );
 	n_unbounded_faces2++;
       }
-      CGAL_assertion( ufit->is_unbounded() );
+      assert( ufit->is_unbounded() );
       n_unbounded_faces2++;
     }
 
@@ -197,36 +197,36 @@ void print_report(const VDA& vda, const Projector& project,
       typename VDA::Face_handle f;
       f = vda.unbounded_face();
       if ( vda.dual().dimension() < 0 ) {
-	CGAL_assertion( f == typename VDA::Face_handle() );
+	assert( f == typename VDA::Face_handle() );
       } else {
-	CGAL_assertion( f != typename VDA::Face_handle() );
-	CGAL_assertion( vda.unbounded_faces_begin() !=
+	assert( f != typename VDA::Face_handle() );
+	assert( vda.unbounded_faces_begin() !=
 			vda.unbounded_faces_end() );
       }
       f = vda.bounded_face();
       if ( f == typename VDA::Face_handle() ) {
-	CGAL_assertion( vda.bounded_faces_begin() ==
+	assert( vda.bounded_faces_begin() ==
 			vda.bounded_faces_end() );
       } else {
-	CGAL_assertion( vda.bounded_faces_begin() !=
+	assert( vda.bounded_faces_begin() !=
 			vda.bounded_faces_end() );
       }
 
       typename VDA::Halfedge_handle e;
       e = vda.unbounded_halfedge();
       if ( e == typename VDA::Halfedge_handle() ) {
-	CGAL_assertion( vda.unbounded_halfedges_begin() ==
+	assert( vda.unbounded_halfedges_begin() ==
 			vda.unbounded_halfedges_end() );
       } else {
-	CGAL_assertion( vda.unbounded_halfedges_begin() !=
+	assert( vda.unbounded_halfedges_begin() !=
 			vda.unbounded_halfedges_end() );
       }
       e = vda.bounded_halfedge();
       if ( e == typename VDA::Halfedge_handle() ) {
-	CGAL_assertion( vda.bounded_halfedges_begin() ==
+	assert( vda.bounded_halfedges_begin() ==
 			vda.bounded_halfedges_end() );
       } else {
-	CGAL_assertion( vda.bounded_halfedges_begin() !=
+	assert( vda.bounded_halfedges_begin() !=
 			vda.bounded_halfedges_end() );
       }
     }
@@ -262,7 +262,7 @@ void print_report(const VDA& vda, const Projector& project,
 	  p_src = eit->source()->point();
 	  os << p_src << " - inf" << std::endl;
 	} else {
-	  CGAL_assertion( eit->has_target() );
+	  assert( eit->has_target() );
 	  p_trg = eit->target()->point();
 	  os << "inf - " << p_trg << std::endl;
 	}

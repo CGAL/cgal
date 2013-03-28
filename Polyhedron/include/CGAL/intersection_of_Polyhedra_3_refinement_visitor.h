@@ -1731,7 +1731,7 @@ public:
             typename CDT::Vertex_handle vn=curr->first->vertex(nindex);
             if ( vit->info() > vn->info() ) continue; //take only one out of the two edges + skip negative vn->info()
             CGAL_assertion(vn->info()>=0);            
-            res->second.insert( vn->info() ).second;
+            res->second.insert( vn->info() );
           }while(start!=++curr);
         }
         
