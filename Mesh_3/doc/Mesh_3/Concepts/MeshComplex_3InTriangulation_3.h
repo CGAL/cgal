@@ -57,10 +57,20 @@ public:
 /// @{
 
 /*! 
-Type of the 
+The type of the 
 embedding 3D triangulation. 
-This type must be a 3D 
-regular triangulation of \cgal when used for 3D mesh generation. 
+ It is required to be
+  the nested type
+`CGAL::Mesh_triangulation_3::type`, provided by the meta functor 
+`CGAL::Mesh_triangulation_3<MD, GT, Concurrency_tag, Vertex_base, Cell_base>`
+where the Vertex_base and  Cell_base template parameters are respectively instantiated   with models
+of the concepts `MeshVertexBase_3` and 
+`MeshCellBase_3`. 
+ The provided  triangulation type  is  then a 
+`CGAL::Regular_triangulation_3` with Vertex_base and Cell_base for respectively
+ vertex and cell base types.
+ Among other advantages, such a design allows the 
+user to customize the vertex and cell types of the embedding 3D triangulation.
 */ 
 typedef Hidden_type Triangulation; 
 
