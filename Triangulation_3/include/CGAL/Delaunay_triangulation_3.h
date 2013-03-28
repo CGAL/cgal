@@ -537,7 +537,7 @@ public: // internal methods
                                           Cell_handle c, int li, int lj, 
                                           OutputItCells fit); 
 
-public:	
+public:
         
 #ifndef CGAL_NO_DEPRECATED_CODE
   CGAL_DEPRECATED Vertex_handle move_point(Vertex_handle v, const Point & p);
@@ -795,7 +795,7 @@ public:
 
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
 
-  template < class Stream> 		
+  template < class Stream>
   Stream& draw_dual(Stream & os)
     {
       for (Finite_facets_iterator fit = finite_facets_begin(),
@@ -983,7 +983,7 @@ insert_and_give_new_cells(const Point  &p,
       *fit++ = c;
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
-    } while(c != end);			
+    } while(c != end);
   } 
   else if(dimension == 1)
   {
@@ -992,10 +992,10 @@ insert_and_give_new_cells(const Point  &p,
     *fit++ = c->neighbor((~(c->index(v)))&1);
   }
   else *fit++ = v->cell(); // dimension = 0
-  return v;		
+  return v;
 }
 
-template < class Gt, class Tds, class Lds >	
+template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
 typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle 
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
@@ -1013,7 +1013,7 @@ insert_and_give_new_cells(const Point& p,
       *fit++ = c;
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
-    } while(c != end);			
+    } while(c != end);
   } 
   else if(dimension == 1)
   {
@@ -1044,7 +1044,7 @@ insert_and_give_new_cells(const Point& p,
       *fit++ = c;
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
-    } while(c != end);			
+    } while(c != end);
   } 
   else if(dimension == 1)
   {
@@ -1052,7 +1052,7 @@ insert_and_give_new_cells(const Point& p,
     *fit++ = c;
     *fit++ = c->neighbor((~(c->index(v)))&1);
   }
-  else *fit++ = v->cell(); // dimension = 0		 
+  else *fit++ = v->cell(); // dimension = 0 
   return v;
 }
 
@@ -1166,7 +1166,7 @@ move_if_no_collision(Vertex_handle v, const Point &p)
   Vertex_inserter<Self> inserter (*this);
   Vertex_handle res = Tr_Base::move_if_no_collision(v,p,remover,inserter);
 
-  CGAL_triangulation_expensive_postcondition(is_valid());	
+  CGAL_triangulation_expensive_postcondition(is_valid());
         return res;
 }
 
@@ -1209,7 +1209,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
     Tr_Base::move_if_no_collision_and_give_new_cells(v,p,
       remover,inserter,fit);
 
-  CGAL_triangulation_expensive_postcondition(is_valid());	
+  CGAL_triangulation_expensive_postcondition(is_valid());
         return res;
 }
 
@@ -1514,8 +1514,8 @@ bool
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));	
-  CGAL_triangulation_precondition(this->dimension() == 2);	
+  CGAL_triangulation_precondition(!this->is_infinite(v));
+  CGAL_triangulation_precondition(this->dimension() == 2);
   CGAL_triangulation_precondition(!this->test_dim_down(v));
         if(v->point() == p) return true;
   Point ant = v->point();
@@ -1541,9 +1541,9 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
     } 
   }
 
-  // are incident bi-cells Delaunay?	
+  // are incident bi-cells Delaunay?
   std::vector<Facet> facets;
-  facets.reserve(128);	
+  facets.reserve(128);
   this->incident_facets(v, std::back_inserter(facets));
   size = facets.size();
   for(std::size_t i=0; i<size; i++)
@@ -1603,7 +1603,7 @@ is_Gabriel(Cell_handle c, int i) const
       side_of_bounded_sphere(
          c->vertex(vertex_triple_index(i,0))->point(),
          c->vertex(vertex_triple_index(i,1))->point(),
-         c->vertex(vertex_triple_index(i,2))->point(),	
+         c->vertex(vertex_triple_index(i,2))->point(),
          neighbor->vertex(in)->point()) == ON_BOUNDED_SIDE ) return false;
 
   return true;
