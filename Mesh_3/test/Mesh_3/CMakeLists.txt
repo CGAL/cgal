@@ -20,8 +20,6 @@ if(MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core ImageIO)
-
 # Add specific Find.cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules/ )
 
