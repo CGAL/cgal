@@ -25,7 +25,11 @@ a circumscribing ball, centered
 on an input complex surface patch, 
 and empty of triangulation vertices. 
 In the following we call `surface center` 
-of a surface facet, the center of its biggest Delaunay surface ball. 
+of a surface facet, the center of its biggest Delaunay surface ball.
+
+The optimizers also need this concept to provide read-write access to two `Vertex_handle`
+used to speed-up the optimizers.
+
 
 \cgalRefines `RegularTriangulationCellBase_3` 
 
@@ -114,5 +118,33 @@ Sets point `p` as the surface center of `facet(i)`.
 void set_facet_surface_center (int i, Point p); 
 
 /// @}
+
+/*! \name Internal 
+These functions are used internally by mesh optimizers. */
+/// @{
+
+/*!
+
+*/
+Cell_handle next_intrusive() const;
+
+/*!
+
+*/
+void set_next_intrusive(Cell_handle);
+
+/*!
+
+*/
+Cell_handle previous_intrusive() const;
+
+/*!
+
+*/
+void set_previous_intrusive(Cell_handle);
+
+
+/// @}
+
 
 }; /* end MeshCellBase_3 */
