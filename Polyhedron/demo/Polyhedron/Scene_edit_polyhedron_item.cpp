@@ -28,6 +28,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   , show_roi(true), show_as_sphere(false), ui_widget(NULL), frame(new qglviewer::ManipulatedFrame()),
   quadric(gluNewQuadric())
 {
+  gluQuadricNormals(quadric, GLU_SMOOTH);
   // bind vertex picking 
   connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
   poly_item->enable_facets_picking(true);
@@ -86,8 +87,8 @@ void Scene_edit_polyhedron_item::deform()
 
   emit mesh_deformed(this);
 }
-void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
-
+void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) 
+{
   Polyhedron* poly = poly_item->polyhedron();
   // get vertex descriptor
   Get_vertex_handle get_vertex_handle;  
@@ -102,7 +103,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   process_selection(clicked_vertex, k_ring, is_roi, is_insert, use_euclidean);
 }
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent *event)
-{
+{ // just handle deformation - paint like selection is handled in eventFilter()
   if(state.ctrl_pressing && 
     (state.left_button_pressing || state.right_button_pressing) &&
     !ui_widget->ActivatePivotingCheckBox->isChecked() ) {
@@ -137,14 +138,14 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
     }    
   }
   ////////////////// //////////////// /////////////////////
-
   // check state changes between old and current state
   bool ctrl_pressed_now = state.ctrl_pressing && !old_state.ctrl_pressing;
   bool ctrl_released_now = !state.ctrl_pressing && old_state.ctrl_pressing;
-  if(ctrl_pressed_now || ctrl_released_now) 
+  if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove) 
   {// update manipulated frame autoselection because they are not updated by QGLViewer until mouse moves
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    activate_closest_manipulated_frame(viewer->mapFromGlobal(QCursor::pos())); 
+    const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
+    activate_closest_manipulated_frame(p.x(), p.y()); 
 
     need_repaint = true;
   }
@@ -180,11 +181,15 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item::draw() const {
   poly_item->direct_draw();
+  CGAL::GL::Color color;
+  color.set_rgb_color(1, 1.f, 1);
+  poly_item->direct_draw_edges();
+
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
-  CGAL::GL::Color color; color.set_rgb_color(0, 1.f, 0);
+  color.set_rgb_color(0, 1.f, 0);
   // draw ROI
   if(show_roi) {
-    Deform_mesh::Const_roi_iterator rb, re;
+    Deform_mesh::Roi_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
     {
       if(!deform_mesh.is_handle(*rb))
@@ -194,12 +199,14 @@ void Scene_edit_polyhedron_item::draw() const {
     }          
   }
   // draw handle related things
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+
   Deform_mesh::Const_handle_group hgb, hge;
   for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb)
   {
     // draw axis using manipulated frame assoc with handle_group
     const Handle_group_data& hgb_data = get_data(hgb);
-    if(hgb_data.frame->grabsMouse())
+    if(hgb_data.frame == viewer->manipulatedFrame())
     {      
       // draw axis
       ::glPushMatrix();
@@ -221,7 +228,7 @@ void Scene_edit_polyhedron_item::draw() const {
     // draw handle points
     if(hgb == active_group) { color.set_rgb_color(1.0f, 0, 0); }
     else                    { color.set_rgb_color(0, 0, 1.0f); }
-    Deform_mesh::Const_handle_iterator hb, he;
+    Deform_mesh::Handle_const_iterator hb, he;
     for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb)
     {           
       gl_draw_point( (*hb)->point() );
@@ -236,10 +243,16 @@ void Scene_edit_polyhedron_item::gl_draw_point(const Point& p) const
     ::glEnd();
   } 
   else {
+    GLint shading;
+    ::glGetIntegerv(GL_SHADE_MODEL, &shading);
+    ::glShadeModel(GL_SMOOTH);
+
     ::glPushMatrix();
       ::glTranslated(p.x(), p.y(), p.z());
       ::gluSphere(quadric, length_of_axis/15, 8, 8);
     ::glPopMatrix();
+
+    ::glShadeModel(shading);
   }
 }
 //////////////////////////////////////////////////////////

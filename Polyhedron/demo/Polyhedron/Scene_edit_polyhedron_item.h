@@ -19,6 +19,7 @@
 
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
+#include <QGLViewer/camera.h>
 
 #include <CGAL/glu.h>
 
@@ -56,7 +57,7 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor		  edge_descriptor;
 typedef boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
 typedef boost::graph_traits<Polyhedron>::in_edge_iterator		  in_edge_iterator;
-typedef boost::graph_traits<Polyhedron>::out_edge_iterator		  out_edge_iterator;
+typedef boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
 
 typedef Deform_mesh::Point  Point;
 typedef Deform_mesh::Vector Vector;
@@ -65,9 +66,9 @@ typedef Deform_mesh::Vector Vector;
 struct Handle_group_data
 {
   Deform_mesh::Handle_group handle_group;
-  qglviewer::ManipulatedFrame* frame;
+  qglviewer::ManipulatedFrame* frame;  // manframe assoc with handle group
   qglviewer::Vec frame_initial_center; // initial center of frame
-  Scene_interface::Bbox bbox;
+  Scene_interface::Bbox bbox;          // bbox of handles inside group  
 
   Handle_group_data(Deform_mesh::Handle_group handle_group, qglviewer::ManipulatedFrame* frame = 0)
     : handle_group(handle_group), frame(frame), bbox(0,0,0,0,0,0)
@@ -86,71 +87,6 @@ struct Mouse_keyboard_state
     : ctrl_pressing(false), shift_pressing(false), left_button_pressing(false), right_button_pressing(false)
   { }
 };
-
-#include <QGLViewer/camera.h>
-class ManipulatedFrameWithCustomGrabber 
-  : public qglviewer::ManipulatedFrame 
-{
-public:
-  ManipulatedFrameWithCustomGrabber(std::list<Handle_group_data>* all_frames, Mouse_keyboard_state* state) 
-    : all_frames(all_frames), state(state)
-  { }
-
-  void checkIfGrabsMouse(int x, int y, const qglviewer::Camera* const camera)
-  {
-    if(state->ctrl_pressing && (state->left_button_pressing || state->right_button_pressing) ) 
-    { // user is deforming currently don't change the state 
-      return;  
-    }
-
-    if(! state->ctrl_pressing) 
-    { // if ctrl is not pressed then deactivate all handle manipulators 
-
-      // this part required because we are using our custom update function (when pressed/released to ctrl)
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); 
-      viewer->setMouseGrabber(NULL);  
-      ////////////////////
-
-      // this part is required because when user release ctrl but keep left/right button pressed,
-      // previous state at frame is kept. 
-      action_ = QGLViewer::NO_MOUSE_ACTION;
-      stopSpinning();
-      ////////////////////////////
-
-      setGrabsMouse(false);    
-      return;
-    }
-    
-    // now find closest frame and grab mouse
-    // all frames can't be empty (at least contains 'this')
-    std::list<Handle_group_data>::iterator min_it = all_frames->begin();    
-    const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(min_it->frame->position());
-    float min_dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
-
-    for(std::list<Handle_group_data>::iterator it = all_frames->begin(); it != all_frames->end(); ++it)
-    {
-      const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->frame->position());
-      float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
-      if(dist < min_dist) {
-        min_dist = dist;
-        min_it = it;
-      }
-    }
-
-    // This part required because we are using our custom update function (when pressed/released to ctrl)
-    if(min_it->frame == this)
-    {
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      viewer->setMouseGrabber(this);      
-    }
-    //This part required... ends//////////////////
-    setGrabsMouse(min_it->frame == this);
-  }
-protected:
-  std::list<Handle_group_data>* all_frames;
-  Mouse_keyboard_state* state;
-};
-
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
@@ -269,7 +205,7 @@ public:
       return; 
     }
     
-    refresh_manipulated_frame_center(active_group);
+    refresh_all_handle_centers(); // since we don't know which handle group that v erased of, refresh all
   }
 
   void erase_roi(vertex_descriptor v)
@@ -303,14 +239,14 @@ public:
   {
     active_group = deform_mesh.create_handle_group();
 
-    qglviewer::ManipulatedFrame* new_frame = 
-      new ManipulatedFrameWithCustomGrabber(&handle_frame_map, &state);
+    qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
     new_frame->setRotationSensitivity(2.0f);
     handle_frame_map.push_back(Handle_group_data(active_group, new_frame));
     refresh_manipulated_frame_center(active_group);
 
     connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  // OK we are deforming via timer,
     // but it makes demo more responsive if we also add this signal
+    emit mesh_repaint_needed(this);
 
     print_message("A new empty handle group is created.");
   }
@@ -391,7 +327,7 @@ public:
   }
 
   void save_roi(const char* file_name)
-  {
+  { 
     std::ofstream out(file_name);
     // save roi
     int hc = 0;
@@ -423,7 +359,7 @@ public:
   }
 
   void read_roi(const char* file_name)
-  {
+  { 
     clear_roi();
     delete_handle_group(false);
 
@@ -484,8 +420,9 @@ protected:
   bool is_there_any_handle()
   {
     Deform_mesh::Handle_group hgb, hge;
-    if(!is_there_any_handle_group(hgb, hge)) { return false; }
-    for(; hgb != hge; ++hgb)
+    if(!is_there_any_handle_group(hgb, hge)) { return false; } // there isn't any handle group
+
+    for(; hgb != hge; ++hgb) // check inside handle groups
     {
       Deform_mesh::Handle_iterator hb, he;
       boost::tie(hb, he) = deform_mesh.handles(hgb);
@@ -594,6 +531,7 @@ protected:
       }
     }
     return *handle_frame_map.end(); // crash
+    // this can't happen since every created handle group is inserted in handle_frame_map
   }
 
   Handle_group_data get_data(Deform_mesh::Const_handle_group hg) const
@@ -605,7 +543,8 @@ protected:
         return *it;
       }
     }
-    return *handle_frame_map.end(); // crash
+    return *handle_frame_map.end(); // crash 
+    // this can't happen since every created handle group is inserted in handle_frame_map
   }
 
   std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
@@ -676,14 +615,40 @@ protected:
     return D;
   }
 
-  void activate_closest_manipulated_frame(QPoint p)
+  void activate_closest_manipulated_frame(int x, int y)
   {
+    if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing) ) 
+    { // user is deforming currently don't change the state 
+      return;  
+    }
+
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
+
+    if(! state.ctrl_pressing) 
+    {     
+      viewer->setManipulatedFrame(frame);    
+      return;
+    }
+    
+    if(handle_frame_map.empty()) { return; }
+
+    // now find closest frame and make it active manipulated frame
+    std::list<Handle_group_data>::iterator min_it = handle_frame_map.begin();    
+    const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(min_it->frame->position());
+    float min_dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
+
     for(std::list<Handle_group_data>::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     {
-      it->frame->checkIfGrabsMouse(p.x(), p.y(), camera);
+      const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->frame->position());
+      float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
+      if(dist < min_dist) {
+        min_dist = dist;
+        min_it = it;
+      }
     }
+
+    viewer->setManipulatedFrame(min_it->frame);  
   }
 
 protected:

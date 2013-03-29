@@ -279,9 +279,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
       convert_to_plain_polyhedron(i, edit_item);
     }
   }
-  // activate deactivate mouse tracking for handle movements
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-  viewer->setMouseTracking(visible);
   //if(visible)
   //{
   //  viewer->camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
