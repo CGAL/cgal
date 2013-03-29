@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_SurfaceModeling
 
 \cgalAutoToc
-\author TODO
+\authors Olga Sorkine, Yin Xu and Ilker %O. Yaz
 
 \section Surface_Modeling_Intro Introduction
 Surface mesh deformation is the process of transforming the shape of the surface mesh under control constraints without requiring any additional structure other than the surface itself. 
