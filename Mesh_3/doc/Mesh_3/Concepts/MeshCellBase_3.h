@@ -117,6 +117,11 @@ Sets point `p` as the surface center of `facet(i)`.
 */ 
 void set_facet_surface_center (int i, Point p); 
 
+/*!
+Invalidates the circumcenter value stored in the cell.
+*/
+void invalidate_circumcenter();
+
 /// @}
 
 /*! \name Internal 
