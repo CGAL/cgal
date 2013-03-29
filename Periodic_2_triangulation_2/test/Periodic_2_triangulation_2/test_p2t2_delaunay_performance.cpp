@@ -31,23 +31,13 @@ public:
 };
 
 
-template <class PT>
+template <class PT, bool large>
 class P2DT2_inserter {
   PT t;
 public:
   template <class Iterator>
   void insert(Iterator begin, Iterator end) {
-    t.insert(begin, end);
-  }
-};
-
-template <class PT>
-class P2DT2_large_point_set_inserter {
-  PT t;
-public:
-  template <class Iterator>
-  void insert(Iterator begin, Iterator end) {
-    t.insert(begin, end);
+    t.insert(begin, end, large);
   }
 };
 
@@ -77,8 +67,8 @@ void test_performance(const std::string &name) {
 
 int main() {
   test_performance<DT2_inserter<DT2> >("Euclidean Delaunay");
-  test_performance<P2DT2_inserter<P2DT2> >("Periodic Delaunay");
-  test_performance<P2DT2_large_point_set_inserter<P2DT2> >("Periodic Delaunay, large point set");
+  test_performance<P2DT2_inserter<P2DT2, false> >("Periodic Delaunay");
+  test_performance<P2DT2_inserter<P2DT2, true>  >("Periodic Delaunay, large point set");
 
   return 0;
 }
