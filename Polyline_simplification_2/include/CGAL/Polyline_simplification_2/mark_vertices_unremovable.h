@@ -29,7 +29,7 @@ namespace Polyline_simplification_2 {
 
 /// \addtogroup PkgPolylineSimplification2Functions
 /// @{
-/// Fix the leftmost, rightmost, topmost and bottommost vertex of each polyine.
+/// Fix the leftmost, rightmost, topmost and bottommost vertex of a polyline.
 template <typename Tr>
 void
 mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
@@ -51,7 +51,7 @@ mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
 }
 
 
-/// Fix the leftmost, rightmost, topmost and bottommost vertex
+/// Fix the leftmost, rightmost, topmost and bottommost vertex of each polyline.
 template <typename Tr>
 void
 mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct)
