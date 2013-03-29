@@ -48,9 +48,10 @@ void test_performance(const std::string &name, int maximum = 1e5) {
   CGAL::Random rnd(7);
   CGAL::Random_points_in_square_2<Point, Creator> in_square(0.5, rnd);
 
-  CGAL::Timer timer;
 
   for (int n = 1000; n<=maximum; n+=1000) {
+    CGAL::Timer timer;
+
     std::vector<Point> pts;
     for (int i=0 ; i<n ; i++) {
       pts.push_back(*in_square++ + Vector(0.5, 0.5));
