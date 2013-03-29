@@ -20,8 +20,8 @@ and defaults to `Mesh_vertex_base_3<Gt, MD>`.
 \tparam Cell_base stands for a model of `MeshCellBase_3`
 and defaults to `Mesh_cell_base_3<Gt, MD>`. 
 
-\sa `CGAL::make_mesh_3()` 
-\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
+\sa `make_mesh_3()` 
+\sa `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
 
 */
 template< typename MD, typename Gt,
@@ -37,7 +37,7 @@ public:
 /*! 
 The  triangulation type to be used
  for the  3D  triangulation embedding the mesh. 
-This type is a `CGAL::Regular_triangulation_3` type 
+This type is a `Regular_triangulation_3` type 
 whose vertex and cell base classes are respectively 
 `Vertex_base` and `Cell_base`. 
 */ 
