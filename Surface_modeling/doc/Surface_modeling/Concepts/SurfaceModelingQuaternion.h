@@ -6,10 +6,13 @@
 class SurfaceModelingQuaternion
 {
 public:
+/// \name Operations 
+/// @{
   /// Rotate v by quaternion
   /// @tparam Vect a model of SurfaceModelingVect
   /// @param v vector to be rotated
   /// @return rotated vector
   template<class Vect>
   Vect operator*(Vect v);
+/// @}
 };
