@@ -1,4 +1,4 @@
- /// \ingroup PkgSurfaceModeling
+ /// \ingroup PkgSurfaceModelingConcepts
  /// \cgalConcept
  ///
  /// @brief Concept describing the set of requirements for calculating weights for edges. 

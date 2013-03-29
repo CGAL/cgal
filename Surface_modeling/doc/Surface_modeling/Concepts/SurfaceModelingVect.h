@@ -1,4 +1,4 @@
- /// \ingroup PkgSurfaceModeling
+ /// \ingroup PkgSurfaceModelingConcepts
  /// \cgalConcept
  ///
  /// @brief Concept describing the set of requirements for vector to be used in CGAL::Deform_mesh::rotate

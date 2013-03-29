@@ -1,4 +1,6 @@
 /// \defgroup PkgSurfaceModeling Surface Modeling Reference
+/// \defgroup PkgSurfaceModelingConcepts Concepts
+/// \ingroup PkgSurfaceModeling
 
 /*!
 \addtogroup PkgSurfaceModeling
