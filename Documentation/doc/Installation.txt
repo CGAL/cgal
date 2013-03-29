@@ -65,7 +65,7 @@ or if Qt4 demos are desired
 sudo port install cgal +qt4 +universal +demos
 </PRE>
 
-The setup is similar for homebrew.
+The setup is similar for <a href="http://mxcl.github.com/homebrew/"><tt>homebrew</tt></a> .
 
 \subsection sseccgaldebian CGAL on Linux 
 
