@@ -277,6 +277,12 @@ operator()()
 
   };
 
+/// \addtogroup  PkgPolylineSimplification2Functions
+/// @{
+/// Simplifies a single polygon.
+
+/// @tparam CostFunction must be a model of `PolylineSimplificationCostFunction`.
+/// @tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
 
 template <class PolygonTraits_2, class Container, class CostFunction, class StopFunction>
                   CGAL::Polygon_2<PolygonTraits_2,Container>
@@ -313,6 +319,8 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
 }
 
 
+/// Simplifies a single polyline in a triangulation with polylines as constraints.
+
 template <class Tr, class CostFunction, class StopFunction>
 std::size_t
 simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
@@ -331,7 +339,7 @@ simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
   return simplifier.number_of_removed_vertices();
 }
 
-
+/// Simplifies all polylines in a triangulation with polylines as constraints.
 template <class Tr, class CostFunction, class StopFunction>
 std::size_t
 simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
@@ -350,6 +358,9 @@ simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
   std::cerr << "simplify removed " << simplifier.number_of_removed_vertices() << "vertices" << std::endl;
   return simplifier.number_of_removed_vertices();
 }
+
+///@}
+
 
 } // namespace polyline_simplification_2
 } // namespace CGAL 

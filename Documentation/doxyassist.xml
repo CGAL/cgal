@@ -111,6 +111,7 @@ namespace for the XML file to be processed properly.  -->
 
           <list name="TAGFILES" append="true">
             <item>./tags/Triangulation_2.tag=../../CGAL.CGAL.2D-Triangulation/html</item>
+            <item>./tags/Polygon.tag=../../CGAL.CGAL.2D-Polygons/html</item>
           </list>
         </doxygen>
       </project>

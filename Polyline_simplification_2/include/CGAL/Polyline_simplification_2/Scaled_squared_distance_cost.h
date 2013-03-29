@@ -25,6 +25,8 @@ namespace CGAL {
 
 namespace Polyline_simplification_2
 {
+/// \addtogroup PkgPolylineSimplification2Classes
+/// @{
 
 /// This class is a cost function which calculates the cost as a scaled variant of the square of the distance between the original and simplified polylines.
 ///
@@ -34,7 +36,7 @@ class Scaled_squared_distance_cost
 
 public:
 
-  /// Initializes the cost function
+  /// Initializes the cost function.
   Scaled_squared_distance_cost() {}
 
   /// Returns the maximal square distances between each point along the original subpolyline,
@@ -86,6 +88,7 @@ public:
 
 };
 
+/// @}
 
 } // namespace Polyline_simplification_2
 

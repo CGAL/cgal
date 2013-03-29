@@ -2,9 +2,12 @@
 /// \defgroup PkgPolylineSimplification2Concepts Concepts
 /// \ingroup PkgPolylineSimplification2
 
-/// \defgroup PkgPolylineSimplification2PolylineSimplificationClasses PolylineSimplification Classes
+/// \defgroup PkgPolylineSimplification2Classes Polyline Simplification Classes
 /// \ingroup PkgPolylineSimplification2
 
+
+/// \defgroup PkgPolylineSimplification2Functions Global Functions
+/// \ingroup PkgPolylineSimplification2
 
 
 
@@ -34,14 +37,10 @@
 - `PolylineSimplificationCostFunction`
 - `PolylineSimplificationStopPredicate`
 
-## Classes ##
-
-- `CGAL::Polyline_simplification_2<Traits>`
-
 
 ## Global Functions ##
-- `CGAL::Polyline_simplification::simplify()`
-- `CGAL::Polyline_simplification::mark_vertices_unremovable()`
+- `CGAL::Polyline_simplification_2::simplify()`
+- `CGAL::Polyline_simplification_2::mark_vertices_unremovable()`
 
 */
 

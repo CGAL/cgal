@@ -26,6 +26,8 @@ namespace CGAL {
 namespace Polyline_simplification_2
 {
 
+/// \addtogroup PkgPolylineSimplification2Classes
+/// @{
 /// This class is a stop predicate returning `true` when the percentage 
 /// of remaning vertices is smaller than a certain threshold.
 ///
@@ -54,6 +56,7 @@ private:
   double mThres ;
 };    
 
+  ///@}
 } // namespace Polyline_simplification_2
 
 } //namespace CGAL
