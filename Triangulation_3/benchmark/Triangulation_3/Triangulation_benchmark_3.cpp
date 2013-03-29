@@ -62,13 +62,23 @@ using namespace CGAL;
 // - or EPIC (the default)
 #ifdef SC_DOUBLE
 typedef Simple_cartesian<double>                       K;
+#elif C_LEDA
+#include <CGAL/leda_rational.h>
+#include <CGAL/Cartesian.h>
+typedef Cartesian<leda_rational> K;
 #elif defined(ONLY_STATIC_FILTERS)
 typedef CGAL::internal::Static_filters<CGAL::Simple_cartesian<double> > K;
 #elif defined(EPEC)
 #  ifdef CGAL_DONT_USE_LAZY_KERNEL
 typedef Epeck K;
 #  else
+#ifdef CGAL_USE_LEDA
+#include <CGAL/leda_rational.h>
+#include <CGAL/Cartesian.h>
+typedef Cartesian<leda_rational> SK;
+#else 
 typedef Simple_cartesian<Gmpq> SK;
+#endif
 typedef Lazy_kernel<SK> K;
 #  endif
 #else // EPIC
@@ -104,9 +114,11 @@ Point rnd_point()
 void generate_points()
 {
 	if (input_file_selected) {
-		Point p;
-		while (input_file >> p)
-			pts.push_back(p);
+          Point p;
+          while (input_file >> p){
+
+                  pts.push_back(p);
+                }
 		cout << " [ Read " << pts.size() << " points from file ] " << endl;
 		min_pts = max_pts = pts.size();
 	}
