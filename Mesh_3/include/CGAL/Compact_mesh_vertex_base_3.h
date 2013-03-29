@@ -111,10 +111,16 @@ public:
 
 #ifdef CGAL_INTRUSIVE_LIST
   Vertex_handle next_intrusive() const { return next_intrusive_; }
-  Vertex_handle& next_intrusive() { return next_intrusive_; }
+  void set_next_intrusive(Vertex_handle v)
+  { 
+    next_intrusive_ = v;
+  }
 
   Vertex_handle previous_intrusive() const { return previous_intrusive_; }
-  Vertex_handle& previous_intrusive() { return previous_intrusive_; }
+  void set_previous_intrusive(Vertex_handle v)
+  {
+    previous_intrusive_ = v; 
+  }
 #endif
 
   bool is_c2t3_cache_valid() const {
