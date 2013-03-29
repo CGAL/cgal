@@ -305,6 +305,7 @@ public:
         tbb::blocked_range<size_t>( i, num_points ),
         [&] (const tbb::blocked_range<size_t>& r)
         {
+          Vertex_handle &hint = tls_hint.local();
           for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
           {
             //std::stringstream sstr;
@@ -313,15 +314,15 @@ public:
             bool success = false;
             while(!success)
             {
-              if (try_lock_vertex(tls_hint.local()) && try_lock_point(points[i_point]))
+              if (try_lock_vertex(hint) && try_lock_point(points[i_point]))
               {
                 bool could_lock_zone;
                 Vertex_handle new_hint = insert(
-                  points[i_point], tls_hint.local(), &could_lock_zone);
+                  points[i_point], hint, &could_lock_zone);
                 
                 if (could_lock_zone)
                 {
-                  tls_hint.local() = new_hint;
+                  hint = new_hint;
                   success = true;
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
                   ++bcounter;
