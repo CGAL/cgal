@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QSettings>
+#include <QFileDialog>
 
 #include <QGLViewer/qglviewer.h>
 
@@ -49,6 +50,8 @@ public slots:
   void on_ShowROICheckBox_stateChanged(int state);
   void on_ShowAsSphereCheckBox_stateChanged(int state);  
   void on_ActivatePivotingCheckBox_stateChanged(int state);
+  void on_SaveROIPushButton_clicked();
+  void on_ReadROIPushButton_clicked();
   void dock_widget_visibility_changed(bool visible);
   ///////////////////////////////////////////
   void mesh_deformed(Scene_edit_polyhedron_item* edit_item);
@@ -119,7 +122,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   connect(ui_widget->ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
   connect(ui_widget->ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));  
   connect(ui_widget->ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
-
+  connect(ui_widget->SaveROIPushButton, SIGNAL(clicked()), this, SLOT(on_SaveROIPushButton_clicked()));
+  connect(ui_widget->ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
   ///////////////////////////////////////////////////////////////////
 
@@ -234,6 +238,31 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivatePivotingCheckBox_stateCh
   }
 }
 
+void Polyhedron_demo_edit_polyhedron_plugin::on_SaveROIPushButton_clicked()
+{
+  int item_id = scene->mainSelectionIndex();
+  Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
+  if(!edit_item) return;  
+
+  QString fileName = QFileDialog::getSaveFileName(mw, "Save", 
+      "roi.txt", "Text (*.txt)");
+  if(fileName.isNull()) { return; }
+
+  edit_item->save_roi(fileName.toLocal8Bit().data());  
+}
+void Polyhedron_demo_edit_polyhedron_plugin::on_ReadROIPushButton_clicked()
+{
+  int item_id = scene->mainSelectionIndex();
+  Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
+  if(!edit_item) return;  
+
+  QString fileName = QFileDialog::getOpenFileName(mw, "Read", 
+    "roi.txt", "Text (*.txt)");
+  if(fileName.isNull()) { return; }
+
+  edit_item->read_roi(fileName.toLocal8Bit().data());
+  scene->itemChanged(edit_item); 
+}
 void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool visible)
 {
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries();

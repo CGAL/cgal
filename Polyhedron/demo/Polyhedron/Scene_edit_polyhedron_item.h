@@ -8,6 +8,7 @@
 #include <CGAL/boost/graph/properties.h>
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <set>
 #include <map>
@@ -219,8 +220,8 @@ public slots:
   void deform();                                 // deform the mesh
   
 signals:
-  void mesh_deformed(Scene_edit_polyhedron_item* edit_item);      // emits when deformation is completed
-  void mesh_repaint_needed(Scene_edit_polyhedron_item* edit_item);
+  void mesh_deformed(Scene_edit_polyhedron_item* edit_item);        // emits when deformation is completed (currently handled by plugin)
+  void mesh_repaint_needed(Scene_edit_polyhedron_item* edit_item);  // emits when there is a need for repaint (currently handled by plugin)
 public:
 
   Ui::DeformMesh* ui_widget;
@@ -233,8 +234,8 @@ public:
 typedef std::list<Handle_group_data> Handle_group_data_list;
   Handle_group_data_list handle_frame_map; // keep list of handle_groups with assoc data
 
-  bool show_roi; // draw roi points
-  bool show_as_sphere;
+  bool show_roi;         // draw roi points
+  bool show_as_sphere;   // draw points or spheres (for roi and handles)
   double length_of_axis; // for drawing axis at a handle group
 
   // by interleaving 'viewer's events (check constructor), keep followings:
@@ -389,6 +390,76 @@ public:
     }
   }
 
+  void save_roi(const char* file_name)
+  {
+    std::ofstream out(file_name);
+    // save roi
+    int hc = 0;
+    Deform_mesh::Roi_iterator rb, re;
+    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb) { ++hc; }
+    out << hc << std::endl;
+    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
+    {
+      out << (*rb )->id() << " ";
+    }
+    out << std::endl;
+    // save handles
+    hc = 0;
+    Deform_mesh::Handle_group hgb, hge;
+    for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb) 
+    { ++hc; }
+    out << hc << std::endl; // handle count
+    for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb) {
+      hc = 0;
+      Deform_mesh::Handle_iterator hb, he;
+      for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb) { ++hc; }
+      out << hc << std::endl;
+      for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb) 
+      {
+        out << (*hb)->id() << " ";
+      }
+      out << std::endl;
+    }
+  }
+
+  void read_roi(const char* file_name)
+  {
+    clear_roi();
+    delete_handle_group(false);
+
+    // put vertices to vector
+    std::vector<vertex_descriptor> all_vertices;
+    all_vertices.reserve(boost::num_vertices(deform_mesh.polyhedron));
+    vertex_iterator vb, ve;
+    for(boost::tie(vb, ve) = boost::vertices(deform_mesh.polyhedron); vb != ve; ++vb) {
+      all_vertices.push_back(*vb);
+    }
+    // read roi
+    std::ifstream in(file_name);
+    int roi_size;
+    in >> roi_size;
+    while(roi_size-- > 0)
+    {
+      std::size_t v_id;
+      in >> v_id;
+      insert_roi(all_vertices[v_id]);
+    }
+    // read handles
+    int handle_group_size;
+    in >> handle_group_size;
+    while(handle_group_size-- > 0)
+    {
+      create_handle_group();
+      int handle_size;
+      in >> handle_size;      
+      while(handle_size-- > 0) 
+      {                    
+        std::size_t v_id;
+        in >> v_id;
+        insert_handle(all_vertices[v_id]);
+      }
+    }
+  }
 protected:
   // Deformation related functions //
   void print_message(const QString& message)
@@ -513,7 +584,6 @@ protected:
     return bbox;
   }
 
-  
   Handle_group_data& get_data(Deform_mesh::Handle_group hg)
   {
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)

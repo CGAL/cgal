@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>316</width>
-    <height>338</height>
+    <width>317</width>
+    <height>369</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,7 @@
            <item>
             <widget class="QLabel" name="BrushLabel">
              <property name="text">
-              <string>Brush size:</string>
+              <string>Brush Size:</string>
              </property>
             </widget>
            </item>
@@ -51,7 +51,7 @@
          <item>
           <widget class="QPushButton" name="SelectAllVerticesPushButton">
            <property name="text">
-            <string>Set all vertices as ROI</string>
+            <string>Set All Vertices as ROI</string>
            </property>
           </widget>
          </item>
@@ -69,6 +69,9 @@
          <layout class="QVBoxLayout" name="HandleRoiLayout">
           <item>
            <widget class="QRadioButton" name="ROIRadioButton">
+            <property name="toolTip">
+             <string>Use Shift + Left Click to paint ROI vertices</string>
+            </property>
             <property name="text">
              <string>ROI</string>
             </property>
@@ -79,6 +82,9 @@
           </item>
           <item>
            <widget class="QRadioButton" name="HandleRadioButton">
+            <property name="toolTip">
+             <string>Use Shift + Left Click to paint handle vertices</string>
+            </property>
             <property name="text">
              <string>Handle</string>
             </property>
@@ -164,7 +170,7 @@
        <item>
         <widget class="QCheckBox" name="ActivatePivotingCheckBox">
          <property name="text">
-          <string>Activate pivoting </string>
+          <string>Activate Pivoting </string>
          </property>
         </widget>
        </item>
@@ -190,6 +196,24 @@
         </property>
         <property name="checked">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <widget class="QPushButton" name="SaveROIPushButton">
+        <property name="text">
+         <string>Save ROI / Handles</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ReadROIPushButton">
+        <property name="text">
+         <string>Load ROI / Handles</string>
         </property>
        </widget>
       </item>
