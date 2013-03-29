@@ -47,6 +47,15 @@ Construction from a polyhedral surface.
 */ 
 Polyhedral_mesh_domain_3(Polyhedron polyhedron); 
 
+/*!
+Construction from a polyhedral surface, and a bounding polyhedral surface,.
+The first polyhedron should be entirely included inside `bounding_polyhedron`, which has to be 
+a closed polyhedron. Using this constructor allows to mesh a polyhedral surface which is not closed.
+*/
+Polyhedral_mesh_domain_3(Polyhedron polyhedron,
+				     Polyhedron bounding_polyhedron);
+			   
+
 /// @}
 
 }; /* end Polyhedral_mesh_domain_3 */
