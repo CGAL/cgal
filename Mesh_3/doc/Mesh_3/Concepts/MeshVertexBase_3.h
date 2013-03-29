@@ -17,7 +17,7 @@ and to an index characteristic of this face.
 The concept `MeshVertexBase_3` provides read-write access to a boolean 
 that indicates if the vertex is special, for feature edges protection.
 The optimizers also need this concept to provide read-write access to two `Vertex_handle`
-used to speed-up the optimizers.
+called 'intrusive'.
 
 \cgalRefines `TriangulationVertexBase_3` 
 \cgalRefines `SurfaceMeshVertexBase_3`

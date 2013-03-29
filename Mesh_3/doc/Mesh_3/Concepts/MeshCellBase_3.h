@@ -27,8 +27,8 @@ and empty of triangulation vertices.
 In the following we call `surface center` 
 of a surface facet, the center of its biggest Delaunay surface ball.
 
-The optimizers also need this concept to provide read-write access to two `Vertex_handle`
-used to speed-up the optimizers.
+The optimizers also need this concept to provide read-write access to two `Cell_handle`
+called 'intrusive'.
 
 
 \cgalRefines `RegularTriangulationCellBase_3` 
