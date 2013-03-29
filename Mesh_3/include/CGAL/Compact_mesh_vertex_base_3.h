@@ -40,7 +40,7 @@ namespace CGAL {
 // Adds information to Vb about the localization of the vertex in regards
 // to the 3D input complex.
 template<class GT,
-         class MT,
+         class MD,
          class Vb = Triangulation_vertex_base_3<GT> >
 class Compact_mesh_vertex_base_3
 : public Vb
@@ -53,11 +53,11 @@ public:
   template < class TDS3 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Compact_mesh_vertex_base_3 <GT, MT, Vb3> Other;
+    typedef Compact_mesh_vertex_base_3 <GT, MD, Vb3> Other;
   };
 
   // Types
-  typedef typename MT::Index                      Index;
+  typedef typename MD::Index                      Index;
   typedef typename GT::FT                         FT;
 
   // Constructor
@@ -186,13 +186,13 @@ namespace Mesh_3 {
 } // end namespace internal
 
 template<class GT,
-         class MT,
+         class MD,
          class Vb>
 inline
 std::istream&
-operator>>(std::istream &is, Compact_mesh_vertex_base_3<GT,MT,Vb>& v)
+operator>>(std::istream &is, Compact_mesh_vertex_base_3<GT,MD,Vb>& v)
 {
-  typedef Compact_mesh_vertex_base_3<GT,MT,Vb> Vertex;
+  typedef Compact_mesh_vertex_base_3<GT,MD,Vb> Vertex;
   typedef typename Vertex::Cmvb3_base Cmvb3_base;
   is >> static_cast<Cmvb3_base&>(v);
   int dimension;
@@ -205,20 +205,20 @@ operator>>(std::istream &is, Compact_mesh_vertex_base_3<GT,MT,Vb>& v)
   CGAL_assertion(dimension >= 0);
   CGAL_assertion(dimension < 4);
   typename Vertex::Index index = 
-    internal::Mesh_3::Read_mesh_domain_index<MT>()(dimension, is);
+    internal::Mesh_3::Read_mesh_domain_index<MD>()(dimension, is);
   v.set_dimension(dimension);
   v.set_index(index);
   return is;
 }
 
 template<class GT,
-         class MT,
+         class MD,
          class Vb>
 inline
 std::ostream&
-operator<<(std::ostream &os, const Compact_mesh_vertex_base_3<GT,MT,Vb>& v)
+operator<<(std::ostream &os, const Compact_mesh_vertex_base_3<GT,MD,Vb>& v)
 {
-  typedef Compact_mesh_vertex_base_3<GT,MT,Vb> Vertex;
+  typedef Compact_mesh_vertex_base_3<GT,MD,Vb> Vertex;
   typedef typename Vertex::Cmvb3_base Cmvb3_base;
   os << static_cast<const Cmvb3_base&>(v);
   if(is_ascii(os)) {
@@ -227,7 +227,7 @@ operator<<(std::ostream &os, const Compact_mesh_vertex_base_3<GT,MT,Vb>& v)
   } else {
     CGAL::write(os, v.in_dimension());
   }
-  internal::Mesh_3::Write_mesh_domain_index<MT>()(os, 
+  internal::Mesh_3::Write_mesh_domain_index<MD>()(os, 
                                                   v.in_dimension(),
                                                   v.index());
   return os;
