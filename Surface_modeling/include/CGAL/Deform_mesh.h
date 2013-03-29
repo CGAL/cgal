@@ -123,14 +123,21 @@ public:
   typedef typename Handle_group_container::iterator                Handle_group;
   /** Const version of Handle_group*/
   typedef typename Handle_group_container::const_iterator          Const_handle_group;
-  /** The type for iterating over handles */
+  /** The type of iterator pointing to group container, and can be implicitly 
+      converted to Deform_mesh::Handle_group or Deform_mesh::Const_handle_group */
+  typedef typename Handle_group_container::iterator                Handle_group_iterator;
+   /** Const version of Handle_group_iterator */
+  typedef typename Handle_group_container::const_iterator          Handle_group_const_iterator;
+
+  /** The type of iterator pointing to vertex descriptors */
   typedef typename Handle_container::iterator                      Handle_iterator;
    /** Const version of Handle_iterator*/
-  typedef typename Handle_container::const_iterator                Const_handle_iterator;
-  /** The type for iterating over ROI */
+  typedef typename Handle_container::const_iterator                Handle_const_iterator;
+
+  /** The type of iterator pointing to vertex descriptors */
   typedef typename std::vector<vertex_descriptor>::iterator        Roi_iterator;
    /** Const version of Roi_iterator*/
-  typedef typename std::vector<vertex_descriptor>::const_iterator  Const_roi_iterator;
+  typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_const_iterator;
 
 // Data members.
 public:
@@ -341,7 +348,7 @@ public:
    * dereference operator over iterators to reach representatives.
    * @return tuple of [begin, end) as Deform_mesh::Handle_group
    */
-  boost::tuple<Handle_group, Handle_group> handle_groups()
+  boost::tuple<Handle_group_iterator, Handle_group_iterator> handle_groups()
   {
     return boost::make_tuple(handle_group_list.begin(), handle_group_list.end());
   }
@@ -351,7 +358,7 @@ public:
    * dereference operator over iterators to reach representatives.
    * @return tuple of [begin, end) as Deform_mesh::Const_handle_group
    */
-  boost::tuple<Const_handle_group, Const_handle_group> handle_groups() const
+  boost::tuple<Handle_group_const_iterator, Handle_group_const_iterator> handle_groups() const
   {
     return boost::make_tuple(handle_group_list.begin(), handle_group_list.end());
   }
@@ -370,9 +377,9 @@ public:
   /** 
    * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
    * @param handle_group group containing the requested handles
-   * @return tuple of [begin, end) as Deform_mesh::Const_handle_iterator
+   * @return tuple of [begin, end) as Deform_mesh::Handle_const_iterator
    */
-  boost::tuple<Const_handle_iterator, Const_handle_iterator> handles(Handle_group handle_group) const
+  boost::tuple<Handle_const_iterator, Handle_const_iterator> handles(Handle_group handle_group) const
   {
     return boost::make_tuple(handle_group->begin(), handle_group->end());
   }
@@ -380,9 +387,9 @@ public:
   /** 
    * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
    * @param handle_group group containing the requested handles
-   * @return tuple of [begin, end) as Deform_mesh::Const_handle_iterator
+   * @return tuple of [begin, end) as Deform_mesh::Handle_const_iterator
    */
-  boost::tuple<Const_handle_iterator, Const_handle_iterator> handles(Const_handle_group handle_group) const
+  boost::tuple<Handle_const_iterator, Handle_const_iterator> handles(Const_handle_group handle_group) const
   {
     return boost::make_tuple(handle_group->begin(), handle_group->end());
   }
@@ -453,9 +460,9 @@ public:
 
   /** 
    * Return iterator [begin, end) for roi vertices. Note that deleting a roi vertex will invalidate iterators. 
-   * @return tuple of [begin, end) as Deform_mesh::Const_roi_iterator
+   * @return tuple of [begin, end) as Deform_mesh::Roi_const_iterator
    */
-  boost::tuple<Const_roi_iterator, Const_roi_iterator> roi_vertices() const
+  boost::tuple<Roi_const_iterator, Roi_const_iterator> roi_vertices() const
   {
     return boost::make_tuple(roi.begin(), roi.end());
   }
