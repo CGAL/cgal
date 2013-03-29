@@ -71,7 +71,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  * @brief Class providing the functionalities for deforming a triangulated surface mesh
  *
  * @tparam Polyhedron_ model of HalfedgeGraph
- * @tparam SparseLinearAlgebraTraitsWithPreFactor_d_ sparse linear solver for square sparse linear systems (link to concept?)
+ * @tparam SparseLinearAlgebraTraitsWithPreFactor_d_ model of SparseLinearAlgebraTraitsWithPreFactor_d
  * @tparam VertexIndexMap_ model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
  * @tparam EdgeIndexMap_ model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
  * @tparam deformation_type non-type template parameter from ::Deformation_type for selecting deformation algorithm
@@ -79,7 +79,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  */
 template <
   class Polyhedron_, 
-  class SparseLinearAlgebraTraits_d_, 
+  class SparseLinearAlgebraTraitsWithPreFactor_d_, 
   class VertexIndexMap_, 
   class EdgeIndexMap_,
   Deformation_type deformation_type = SPOKES_AND_RIMS,
@@ -94,7 +94,7 @@ public:
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
   typedef Polyhedron_ Polyhedron; /**< model of HalfedgeGraph */
-  typedef SparseLinearAlgebraTraits_d_ SparseLinearAlgebraTraits_d; /**< sparse linear solver for square sparse linear systems */
+  typedef SparseLinearAlgebraTraitsWithPreFactor_d_ SparseLinearAlgebraTraitsWithPreFactor_d; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
   typedef VertexIndexMap_ VertexIndexMap; /**< model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
   typedef EdgeIndexMap_ EdgeIndexMap; /**< model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
   typedef WeightCalculator_ WeightCalculator; /**< model of SurfaceModelingWeightCalculator */
@@ -107,7 +107,7 @@ public:
   typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
-  typedef Deform_mesh<Polyhedron, SparseLinearAlgebraTraits_d, VertexIndexMap, EdgeIndexMap, deformation_type,
+  typedef Deform_mesh<Polyhedron, SparseLinearAlgebraTraitsWithPreFactor_d, VertexIndexMap, EdgeIndexMap, deformation_type,
     WeightCalculator> Self;
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
@@ -127,7 +127,7 @@ public:
   typedef typename Handle_container::iterator                      Handle_iterator;
    /** Const version of Handle_iterator*/
   typedef typename Handle_container::const_iterator                Const_handle_iterator;
-  /** The type for iterating over handles */
+  /** The type for iterating over ROI */
   typedef typename std::vector<vertex_descriptor>::iterator        Roi_iterator;
    /** Const version of Roi_iterator*/
   typedef typename std::vector<vertex_descriptor>::const_iterator  Const_roi_iterator;
@@ -155,7 +155,7 @@ private:
   std::vector<double> edge_weight;                    // all edge weights 
   std::vector<Eigen::Matrix3d> rot_mtr;               // rotation matrices of ros vertices (size: ros)
 
-  SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
+  SparseLinearAlgebraTraitsWithPreFactor_d m_solver;               // linear sparse solver
   unsigned int iterations;                            // number of maximal iterations
   double tolerance;                                   // tolerance of convergence 
 
@@ -232,14 +232,12 @@ public:
     handle_group_list.clear();
     is_roi_map.assign(boost::num_vertices(polyhedron), false);
     is_hdl_map.assign(boost::num_vertices(polyhedron), false);
-    // no need to clear vertex index map (or edge) since they are going to be reassigned 
-    // (at least the useful parts will be reassigned)
   }
 
   /**
    * Create a new empty handle group for inserting handles.
    * insert_handle(Handle_group handle_group, vertex_descriptor vd) or insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
-   * can be used for populating a group.
+   * can be used for populating the group.
    * After inserting vertices, translate() or rotate() can be used for applying transformations on all vertices inside the group. 
    * @return created handle group representative (returned representative is valid until erase_handle(Handle_group handle_group) is called)
    */
@@ -251,10 +249,9 @@ public:
   }
   
   /**
-   * Insert the vertex into the handle group
+   * Insert the vertex into the handle group. If the vertex is not previously inserted as ROI, it will.
    * @param handle_group group to be inserted into
    * @param vd vertex to be inserted
-   * Note that if the vertex is not previously inserted as ROI, it will.
    * @return true if the insertion is successful
    */
   bool insert_handle(Handle_group handle_group, vertex_descriptor vd)
@@ -270,12 +267,11 @@ public:
   }
 
   /**
-   * Insert vertices in the range to the handle group
+   * Insert vertices in the range to the handle group. If the vertices are not previously inserted as ROI, they will.
    * @tparam InputIterator input iterator type which points to vertex descriptors
    * @param handle_group group to be inserted in
    * @param begin iterators specifying the range of vertices [begin, end) 
    * @param end iterators specifying the range of vertices [begin, end) 
-   * Note that if the vertices are not previously inserted as ROI, they will.
    */
   template<class InputIterator>
   void insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
@@ -287,7 +283,7 @@ public:
   }
 
   /**
-   * Erase the handle group, and invalidate the representative so that it should not be used anymore.
+   * Erase the handle group, and invalidate the representative.
    * @param handle_group group to be erased
    */
   void erase_handle(Handle_group handle_group)
@@ -301,7 +297,7 @@ public:
   }
 
   /**
-   * Erase the vertex from the handle group, note that the handle group is not erased even if it becomes empty.
+   * Erase the vertex from the handle group. Note that the handle group is not erased even if it becomes empty.
    * @param handle_group group to be erased from
    * @param vd vertex to be erased
    * @return true if the erasion is successful
@@ -323,7 +319,7 @@ public:
   }
 
   /**
-   * Erase the vertex by searching through all handle groups, note that the handle group is not erased even if it becomes empty.
+   * Erase the vertex by searching through all handle groups. Note that the handle group is not erased even if it becomes empty.
    * @param vd vertex to be erased
    * @return true if the erasion is successful
    */
@@ -341,10 +337,9 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handle groups
-   * @return tuple of [begin, end) as Handle_group
-   * Note that the returned types are handle group representatives, so there is no need to use
+   * Return iterator [begin, end) for handle groups. The returned types are handle group representatives, so there is no need to use
    * dereference operator over iterators to reach representatives.
+   * @return tuple of [begin, end) as Deform_mesh::Handle_group
    */
   boost::tuple<Handle_group, Handle_group> handle_groups()
   {
@@ -352,10 +347,9 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handle groups
-   * @return tuple of [begin, end) as Const_handle_group
-   * Note that the returned types are handle group representatives, so there is no need to use
+   * Return iterator [begin, end) for handle groups. The returned types are handle group representatives, so there is no need to use
    * dereference operator over iterators to reach representatives.
+   * @return tuple of [begin, end) as Deform_mesh::Const_handle_group
    */
   boost::tuple<Const_handle_group, Const_handle_group> handle_groups() const
   {
@@ -363,10 +357,10 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handles inside the group
+   * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
    * @param handle_group group containing the requested handles
-   * @return tuple of [begin, end) as Handle_iterator
-   * Use dereference operator to reach vertex_descriptors.
+   * @return tuple of [begin, end) as Deform_mesh::Handle_iterator
+   * 
    */
   boost::tuple<Handle_iterator, Handle_iterator> handles(Handle_group handle_group)
   {
@@ -374,10 +368,9 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handles inside the group
+   * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
    * @param handle_group group containing the requested handles
-   * @return tuple of [begin, end) as Const_handle_iterator
-   * Use dereference operator to reach vertex_descriptors.
+   * @return tuple of [begin, end) as Deform_mesh::Const_handle_iterator
    */
   boost::tuple<Const_handle_iterator, Const_handle_iterator> handles(Handle_group handle_group) const
   {
@@ -385,10 +378,9 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handles inside the group
+   * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
    * @param handle_group group containing the requested handles
-   * @return tuple of [begin, end) as Const_handle_iterator
-   * Use dereference operator to reach vertex_descriptors.
+   * @return tuple of [begin, end) as Deform_mesh::Const_handle_iterator
    */
   boost::tuple<Const_handle_iterator, Const_handle_iterator> handles(Const_handle_group handle_group) const
   {
@@ -426,10 +418,9 @@ public:
   }
 
   /**
-   * Erease the vertex from region of interest
+   * Erease the vertex from region of interest. The vertex is also erased from being handle, if it is.
    * @param vd vertex to be erased
-   * @return true if the erasion is successful
-   * Note that the vertex is also erased from being handle, if it is.
+   * @return true if the erasion is successful   
    */
   bool erase_roi(vertex_descriptor vd)   
   {
@@ -452,10 +443,8 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for roi vertices
-   * @return tuple of [begin, end) as roi_iterator
-   * Note that deleting a roi vertex will invalidate iterators. 
-   * @see Deform_mesh::is_roi(vertex_descriptor vd)
+   * Return iterator [begin, end) for roi vertices. Note that deleting a roi vertex will invalidate iterators. 
+   * @return tuple of [begin, end) as Deform_mesh::Roi_iterator   
    */
   boost::tuple<Roi_iterator, Roi_iterator> roi_vertices()
   {
@@ -463,10 +452,8 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for roi vertices
-   * @return tuple of [begin, end) as Const_roi_iterator
-   * Note that deleting a roi vertex will invalidate iterators.
-   * @see Deform_mesh::is_roi(vertex_descriptor vd)
+   * Return iterator [begin, end) for roi vertices. Note that deleting a roi vertex will invalidate iterators. 
+   * @return tuple of [begin, end) as Deform_mesh::Const_roi_iterator
    */
   boost::tuple<Const_roi_iterator, Const_roi_iterator> roi_vertices() const
   {
@@ -487,7 +474,7 @@ public:
     region_of_solution();
 
     // Assemble linear system A*X=B
-    typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
+    typename SparseLinearAlgebraTraitsWithPreFactor_d::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
     assemble_laplacian(A);		
 
     // Pre-factorizing the linear system A*X=B
@@ -501,7 +488,7 @@ public:
   /**
    * Translate the handle group by translation,
    * in other words every handle vertex in the handle_group is translated from its original position
-   * (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
+   * (i.e. position of the vertex at the time of construction).
    * @param handle_group representative of the handle group which is subject to translation
    * @param translation translation vector 
    */
@@ -519,7 +506,7 @@ public:
 
   /**
    * Rotate the handle group around rotation center by quaternion then translate it by translation 
-   * from its original position (i.e. position of the vertex at the time of the call Deform_mesh::preprocess()).
+   * from its original position (i.e. position of the vertex at the time of construction).
    * @tparam Quaternion model of SurfaceModelingQuaternion
    * @tparam Vect model of SurfaceModelingVect
    * @param handle_group representative of the handle group which is subject to rotation
@@ -555,6 +542,7 @@ public:
   {
     if(need_preprocess) { preprocess(); }
 
+    if(!is_handle(vd)) { return; }
     solution[ros_id(vd)] = target_position;
   }
 
@@ -613,23 +601,19 @@ public:
 
 /// \name Utilities
 /// @{
+
   /**
    * Set the number of iterations used in deform()
    */
   void set_iterations(unsigned int iterations)
-  {
-    this->iterations = iterations;
-  }
-
+  { this->iterations = iterations; }
   
    /// @brief Set the tolerance of convergence used in deform().
    /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
    ///
-   /// tolerance > \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ will be used as a termination criterium.
+   /// `tolerance >` \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ will be used as a termination criterium.
   void set_tolerance(double tolerance)
-  {
-    this->tolerance = tolerance;
-  }
+  { this->tolerance = tolerance; }
 
   /**
    * Original positions of all vertices can be reached.
@@ -640,9 +624,9 @@ public:
   { return original_all[id(vd)]; }
 
   /**
-   * Query whether a vertex is ROI or not.
+   * Query whether a vertex is inside region of interest or not.
    * @param vd vertex to be queried
-   * @return true if vd is inside ROI
+   * @return true if the vertex is inside region of interest
    */
   bool is_roi(vertex_descriptor vd) const
   { return is_roi_map[id(vd)]; }
@@ -650,7 +634,7 @@ public:
   /**
    * Query whether a vertex is handle or not.
    * @param vd vertex to be queried
-   * @return true if vd is inside any handle group
+   * @return true if the vertex is inside any handle group
    */
   bool is_handle(vertex_descriptor vd) const
   { return is_hdl_map[id(vd)]; }
@@ -682,6 +666,9 @@ private:
     std::vector<std::size_t>      old_ros_id_map = ros_id_map;
     std::vector<Eigen::Matrix3d>  old_rot_mtr = rot_mtr;
     std::vector<Point>            old_solution = solution;
+
+    // any vertices which are no longer ROI, should be assigned to their original position
+    // for(
 
     ros.clear(); // clear ros    
     ros.insert(ros.end(), roi.begin(), roi.end()); 
@@ -720,8 +707,10 @@ private:
       std::size_t v_ros_id = ros_id(ros[i]);
       std::size_t v_id = id(ros[i]);
 
-      if(old_ros_id_map[v_id] != -1) { // current vertex has a rot mat previously, use that to prevent jumping effects
-        rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];
+      if(old_ros_id_map[v_id] != -1 && old_ros_id_map[v_id] < old_rot_mtr.size()) { 
+        // current vertex has a rot mat previously, use that to prevent jumping effects
+        // && boundary of ros vertices also have ids so check whether it is ros
+        rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];        
       }
       else {
         rot_mtr[v_ros_id].setIdentity();
@@ -758,7 +747,7 @@ private:
   }
 
   /// Assemble Laplacian matrix A of linear system A*X=B
-  void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
+  void assemble_laplacian(typename SparseLinearAlgebraTraitsWithPreFactor_d::Matrix& A)
   {
     if(deformation_type == SPOKES_AND_RIMS) 
     {
@@ -771,7 +760,7 @@ private:
   }
   /// Construct matrix that corresponds to left-hand side of eq:lap_ber in user manual
   /// Also constraints are integrated as eq:lap_energy_system in user manual
-  void assemble_laplacian_arap(typename SparseLinearAlgebraTraits_d::Matrix& A)
+  void assemble_laplacian_arap(typename SparseLinearAlgebraTraitsWithPreFactor_d::Matrix& A)
   {
     /// assign cotangent Laplacian to ros vertices
     for(std::size_t k = 0; k < ros.size(); k++)
@@ -803,7 +792,7 @@ private:
   }
   /// Construct matrix that corresponds to left-hand side of eq:lap_ber_rims in user manual
   /// Also constraints are integrated as eq:lap_energy_system in user manual
-  void assemble_laplacian_spokes_and_rims(typename SparseLinearAlgebraTraits_d::Matrix& A)
+  void assemble_laplacian_spokes_and_rims(typename SparseLinearAlgebraTraitsWithPreFactor_d::Matrix& A)
   {
     /// assign cotangent Laplacian to ros vertices    
     for(std::size_t k = 0; k < ros.size(); k++)
@@ -969,9 +958,9 @@ private:
   /// calculate right-hand side of eq:lap_ber in user manual and solve the system
   void update_solution_arap()
   {
-    typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
-    typename SparseLinearAlgebraTraits_d::Vector Y(ros.size()), By(ros.size());
-    typename SparseLinearAlgebraTraits_d::Vector Z(ros.size()), Bz(ros.size());
+    typename SparseLinearAlgebraTraitsWithPreFactor_d::Vector X(ros.size()), Bx(ros.size());
+    typename SparseLinearAlgebraTraitsWithPreFactor_d::Vector Y(ros.size()), By(ros.size());
+    typename SparseLinearAlgebraTraitsWithPreFactor_d::Vector Z(ros.size()), Bz(ros.size());
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1017,9 +1006,9 @@ private:
   /// calculate right-hand side of eq:lap_ber_rims in user manual and solve the system
   void update_solution_spokes_and_rims()
   {
-    typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
-    typename SparseLinearAlgebraTraits_d::Vector Y(ros.size()), By(ros.size());
-    typename SparseLinearAlgebraTraits_d::Vector Z(ros.size()), Bz(ros.size());
+    typename SparseLinearAlgebraTraitsWithPreFactor_d::Vector X(ros.size()), Bx(ros.size());
+    typename SparseLinearAlgebraTraitsWithPreFactor_d::Vector Y(ros.size()), By(ros.size());
+    typename SparseLinearAlgebraTraitsWithPreFactor_d::Vector Z(ros.size()), Bz(ros.size());
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
