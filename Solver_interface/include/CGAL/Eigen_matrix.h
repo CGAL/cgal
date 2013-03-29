@@ -38,7 +38,7 @@ namespace CGAL {
 /// @heading Parameters:
 /// @param T Number type.
 
-template<class T, int Options = Eigen::RowMajor>
+template<class T, int Options = Eigen::SparseMatrix<T>::Options>
 struct Eigen_sparse_matrix
 {
 // Public types
@@ -53,7 +53,7 @@ public:
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(int  dim,                   ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
-    : m_is_uptodate(false), m_matrix(dim,dim)
+    : m_is_already_built(false), m_matrix(dim,dim)
   {
     CGAL_precondition(dim > 0);
 
@@ -68,7 +68,7 @@ public:
   Eigen_sparse_matrix(int  rows,                 ///< Number of rows.
                       int  columns,              ///< Number of columns.
                       bool is_symmetric = false) ///< Symmetric/hermitian?
-    : m_is_uptodate(false), m_matrix(rows,columns)
+    : m_is_already_built(false), m_matrix(rows,columns)
   {
     CGAL_precondition(rows > 0);
     CGAL_precondition(columns > 0);
@@ -103,16 +103,26 @@ public:
   /// @commentheading Preconditions:
   /// - 0 <= i < row_dimension().
   /// - 0 <= j < column_dimension().
-  void set_coef(int i, int j, T  val, bool /* new_coef */ = false)
+  void set_coef(int i, int j, T  val, bool new_coef = false)
   {
     CGAL_precondition(i < row_dimension());
     CGAL_precondition(j < column_dimension());
 
     if (m_is_symmetric && (j > i))
       return;
-    
-    m_triplets.push_back(Triplet(i,j,val));
-    m_is_uptodate = false;
+
+    if (m_is_already_built)
+      m_matrix.coeffRef(i,j)=val;
+    else
+    {
+      if ( new_coef == false )
+      {
+        assemble_matrix();
+        m_matrix.coeffRef(i,j)=val;
+      }
+      else
+        m_triplets.push_back(Triplet(i,j,val));
+    }
   }
 
   /// Write access to a matrix coefficient: a_ij <- a_ij+val.
@@ -132,19 +142,23 @@ public:
     if (m_is_symmetric && (j > i))
       return;
 
-    m_triplets.push_back(Triplet(i,j,val));
-    m_is_uptodate = false;
-  }  
-  
+    if (m_is_already_built)
+      m_matrix.coeffRef(i,j)+=val;
+    else
+      m_triplets.push_back(Triplet(i,j,val));
+  }
 
+  void assemble_matrix() const
+  {
+    m_matrix.setFromTriplets(m_triplets.begin(), m_triplets.end());
+    m_is_already_built = true;
+    m_triplets.clear(); //the matrix is built and will not be rebuilt
+  }
 
   const EigenType& eigen_object() const
   {
-    if(!m_is_uptodate)
-    {
-      m_matrix.setFromTriplets(m_triplets.begin(), m_triplets.end());
-      m_is_uptodate = true;
-    }
+    if(!m_is_already_built) assemble_matrix();
+
     // turns the matrix into compressed mode:
     //  -> release some memory
     //  -> required for some external solvers
@@ -162,7 +176,7 @@ private:
 // Fields
 private:
   
-  mutable bool m_is_uptodate;
+  mutable bool m_is_already_built;
   typedef Eigen::Triplet<T,int> Triplet;
   mutable std::vector<Triplet> m_triplets;
 
