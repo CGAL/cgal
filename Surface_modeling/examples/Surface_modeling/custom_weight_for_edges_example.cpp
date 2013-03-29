@@ -27,8 +27,6 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map> Deform_mesh;
-
 // a model for SurfaceModelingWeightCalculator, use precomputed weights stored in a map
 struct Weights_from_map
 {
@@ -40,15 +38,15 @@ struct Weights_from_map
   std::map<edge_descriptor, double>* weight_map;
 };
 
+typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP, Weights_from_map> Deform_mesh;
+
 int main()
 {
   Polyhedron mesh;
   std::ifstream("models/plane.off") >> mesh;
 
   std::map<edge_descriptor, double> weight_map;
-  // The implemented algorithm needs weights for each halfedge which is incident to a vertex in ROS
-  // ROS = ROI + boundary vertices of ROI
-  // In this example we store weights for every edge
+  // Store all weights
   edge_iterator eb, ee;
   for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb)
   {
@@ -57,11 +55,7 @@ int main()
   
   Internal_vertex_map vertex_index_map;
   Internal_edge_map   edge_index_map;
-  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map)); 
-
-  // Insert handles as you wish
-
-  deform_mesh.preprocess(Weights_from_map(&weight_map)); // preprocess with custom model
+  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map), 5, 1e-4, Weights_from_map(&weight_map)); 
 
   // Deform mesh as you wish
 }

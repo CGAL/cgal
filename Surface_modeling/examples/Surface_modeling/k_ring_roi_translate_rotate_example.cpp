@@ -28,7 +28,7 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
 
 // extract vertices which are at most k (inclusive) far from vertex v
 std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
@@ -110,7 +110,7 @@ int main()
   std::ofstream("deform_1.off") << mesh; // save deformed mesh
   
   // Note that translate and rotate are not cumulative,
-  // they just use original positions of the handles while calculating target positions
+  // they just use original positions (positions at the time of construction) of the handles while calculating target positions
   deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0.30,0));
   deform_mesh.translate(handles_2, Deform_mesh::Vector(0,0.30,0));
 

@@ -26,7 +26,7 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
 
 template<class Iterator>
 Iterator next_helper(Iterator it, std::size_t n) { 
@@ -72,7 +72,7 @@ int main()
   // note that we only assign a constraint for handle_1, other handles will be constained to last assigned positions
 
   // deform the mesh, now positions of vertices of 'mesh' will be changed
-  deform_mesh.deform(); // also 
+  deform_mesh.deform();  
   deform_mesh.deform(); // you can call deform multiple times if you like
 
   Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
