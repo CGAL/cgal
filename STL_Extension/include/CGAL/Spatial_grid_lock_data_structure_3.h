@@ -87,6 +87,11 @@ private:
   }
 
 public:
+  bool *get_thread_local_grid()
+  {
+    return m_tls_grids.local();
+  }
+
   void set_bbox(const Bbox_3 &bbox)
   {
     // Keep mins and resolutions
@@ -109,13 +114,13 @@ public:
 
   bool is_locked_by_this_thread(int cell_index)
   {
-    return m_tls_grids.local()[cell_index];
+    return get_thread_local_grid()[cell_index];
   }
 
   template <typename P3>
   bool is_locked_by_this_thread(const P3 &point)
   {
-    return m_tls_grids.local()[get_grid_index(point)];
+    return get_thread_local_grid()[get_grid_index(point)];
   }
 
   bool try_lock(int cell_index)
@@ -126,7 +131,7 @@ public:
   template <bool no_spin>
   bool try_lock(int cell_index)
   {
-    return m_tls_grids.local()[cell_index]
+    return get_thread_local_grid()[cell_index]
         || try_lock_cell<no_spin>(cell_index);
   }
 
@@ -229,7 +234,7 @@ public:
   template <bool no_spin, typename P3>
   bool try_lock(const P3 &point, int lock_radius = 0)
   {
-    // Compute indices on grid
+    // Compute index on grid
     int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
     //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
     index_x = 
@@ -261,13 +266,12 @@ public:
           ) 
       );
 
-    int index =
-      index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-      + index_y*m_num_grid_cells_per_axis
-      + index_x;
-
     if (lock_radius == 0)
     {
+      int index =
+        index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
+        + index_y*m_num_grid_cells_per_axis
+        + index_x;
       return try_lock<no_spin>(index);
     }
     else
@@ -286,7 +290,7 @@ public:
   {
     // Unlock lock and shared grid
     unlock_cell(cell_index);
-    m_tls_grids.local()[cell_index] = false;
+    get_thread_local_grid()[cell_index] = false;
   }
 
   void unlock_all_tls_locked_locations()
@@ -298,7 +302,7 @@ public:
     {
       // If we still own the lock
       int cell_index = *it;
-      if (m_tls_grids.local()[cell_index] == true)
+      if (get_thread_local_grid()[cell_index] == true)
         unlock(cell_index);
     }
     tls_locked_cells.clear();
@@ -314,7 +318,7 @@ public:
     {
       // If we still own the lock
       int cell_index = *it;
-      if (m_tls_grids.local()[cell_index] == true)
+      if (get_thread_local_grid()[cell_index] == true)
       {
         if (cell_index == cell_index_to_keep_locked)
           cell_to_keep_found = true;
@@ -349,7 +353,7 @@ public:
       m_num_grid_cells_per_axis*m_num_grid_cells_per_axis;
     bool unlocked = true;
     for (int i = 0 ; unlocked && i < num_cells ; ++i)
-      unlocked = (m_tls_grids.local()[i] == false);
+      unlocked = (get_thread_local_grid()[i] == false);
     return unlocked;
   }
 
@@ -380,11 +384,35 @@ protected:
   {
     // Compute indices on grid
     int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
-    index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
+    //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
+    index_x = 
+      (index_x < 0 ? 
+        0 
+        : (index_x >= m_num_grid_cells_per_axis ? 
+            m_num_grid_cells_per_axis - 1 
+            : index_x
+          ) 
+      );
     int index_y = static_cast<int>( (point.y() - m_ymin) * m_resolution_y);
-    index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
+    //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
+    index_y = 
+      (index_y < 0 ? 
+        0 
+        : (index_y >= m_num_grid_cells_per_axis ? 
+            m_num_grid_cells_per_axis - 1 
+            : index_y
+          ) 
+      );
     int index_z = static_cast<int>( (point.z() - m_zmin) * m_resolution_z);
-    index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
+    //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
+    index_z = 
+      (index_z < 0 ? 
+        0 
+        : (index_z >= m_num_grid_cells_per_axis ? 
+            m_num_grid_cells_per_axis - 1 
+            : index_z
+          ) 
+      );
 
     return
       index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
@@ -421,8 +449,11 @@ protected:
   double                                          m_resolution_z;
 
   // TLS
-  typedef tbb::enumerable_thread_specific<bool*>              TLS_grid;
-  typedef tbb::enumerable_thread_specific<std::vector<int> >  TLS_locked_cells;
+  typedef tbb::enumerable_thread_specific<
+    bool*, 
+    tbb::cache_aligned_allocator<bool*>,
+    tbb::ets_key_per_instance>                               TLS_grid;
+  typedef tbb::enumerable_thread_specific<std::vector<int>>  TLS_locked_cells;
 
   TLS_grid                                        m_tls_grids;
   TLS_locked_cells                                m_tls_locked_cells;
@@ -479,7 +510,7 @@ public:
     bool old_value = m_grid[cell_index].compare_and_swap(true, false);
     if (old_value == false)
     {
-      m_tls_grids.local()[cell_index] = true;
+      get_thread_local_grid()[cell_index] = true;
       m_tls_locked_cells.local().push_back(cell_index);
       return true;
     }
@@ -548,7 +579,7 @@ public:
         m_grid[cell_index].compare_and_swap(this_thread_id, 0);
       if (old_value == 0)
       {
-        m_tls_grids.local()[cell_index] = true;
+        get_thread_local_grid()[cell_index] = true;
         m_tls_locked_cells.local().push_back(cell_index);
         return true;
       }
@@ -562,7 +593,7 @@ public:
           m_grid[cell_index].compare_and_swap(this_thread_id, 0);
         if (old_value == 0)
         {
-          m_tls_grids.local()[cell_index] = true;
+          get_thread_local_grid()[cell_index] = true;
           m_tls_locked_cells.local().push_back(cell_index);
           return true;
         }
@@ -646,7 +677,7 @@ public:
     bool success = m_grid[cell_index].try_lock();
     if (success)
     {
-      m_tls_grids.local()[cell_index] = true;
+      get_thread_local_grid()[cell_index] = true;
       m_tls_locked_cells.local().push_back(cell_index);
     }
     return success;
