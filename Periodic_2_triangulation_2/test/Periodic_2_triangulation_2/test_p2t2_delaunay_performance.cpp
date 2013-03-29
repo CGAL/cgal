@@ -42,7 +42,7 @@ public:
 };
 
 template <class Inserter>
-void test_performance(const std::string &name) {
+void test_performance(const std::string &name, int maximum = 1e5) {
   // Create point sets
   typedef CGAL::Creator_uniform_2<double,Point>  Creator;
   CGAL::Random rnd(7);
@@ -50,7 +50,7 @@ void test_performance(const std::string &name) {
 
   CGAL::Timer timer;
 
-  for (int n = 1000; n<=1e6; n+=1000) {
+  for (int n = 1000; n<=maximum; n+=1000) {
     std::vector<Point> pts;
     for (int i=0 ; i<n ; i++) {
       pts.push_back(*in_square++ + Vector(0.5, 0.5));
@@ -65,10 +65,67 @@ void test_performance(const std::string &name) {
   }
 }
 
-int main() {
-  test_performance<DT2_inserter<DT2> >("Euclidean Delaunay");
-  test_performance<P2DT2_inserter<P2DT2, false> >("Periodic Delaunay");
-  test_performance<P2DT2_inserter<P2DT2, true>  >("Periodic Delaunay, large point set");
+int main(int argc, char *argv[]) {
+  int maximum = 1e5;
+  if (argc > 1) maximum = atoi(argv[1]);
+  test_performance<DT2_inserter<DT2> >("Euclidean Delaunay", maximum);
+  test_performance<P2DT2_inserter<P2DT2, false> >("Periodic Delaunay", maximum);
+  test_performance<P2DT2_inserter<P2DT2, true>  >("Periodic Delaunay, large point set", maximum);
 
   return 0;
 }
+
+// For generating the plot:
+
+/*
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>P2T2 performance</title>
+    <script language="javascript" type="text/javascript" src="js/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.csv-0.71.js"></script>
+ </head>
+    <body>
+    <div id="placeholder" style="width:600px;height:300px;"></div>
+
+    <script type="text/javascript">
+      function createPlot(csv_data) {
+        var data = $.csv.toArrays(csv_data, {separator:";"});
+        var processed_data = {};
+        data.map(function (elem) {
+          if (!(elem[0] in processed_data)) processed_data[elem[0]] = []
+          return processed_data[elem[0]].push([ elem[1], elem[2] ]);
+        });
+      
+        var processed_data2 = {};
+        for (var key in processed_data) {
+          var data0 = processed_data["Euclidean Delaunay"];
+          var data1 = processed_data[key];
+          var data = []
+          for (var i=0; i<.25*data1.length; ++i) {
+            data.push([data0[i][0], data1[i][1]/data0[i][1]]);
+          }
+          processed_data2[key] = data;
+        }
+
+        var plot_data = [];
+        for (var key in processed_data) {
+          plot_data.push({
+            label : key,
+            data  : processed_data[key],
+            lines : { lineWidth: 1 },
+            shadowSize: 0
+          });
+        }
+
+        $.plot($("#placeholder"), plot_data, { legend: { position: "nw" } } );
+      }
+
+      $.get('performance.txt', createPlot);
+
+    </script>
+    </body>
+</html>
+*/
