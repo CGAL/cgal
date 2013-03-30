@@ -316,6 +316,9 @@ The final action is invoking the deformation algorithm:
 After deformation, handle vertices will be placed to their target positions and free vertices will be deformed accordingly. 
 The steps in \ref Deform_section can be repeated for further deformations.
 
+\note No matter how many times region of interest or handles are changed, the algorithm always operates as it is just constructed.
+For that reason any vertex which is no longer inside region of interest will be always assigned to its original position in Deform_mesh::preprocess().
+
 \subsection Surface_modeling_examples Examples
 
 \subsubsection Example_1 Example 1
