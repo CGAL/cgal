@@ -177,6 +177,7 @@ typedef std::list<Handle_group_data> Handle_group_data_list;
   // by interleaving 'viewer's events (check constructor), keep followings:
   Mouse_keyboard_state state;
 
+  std::vector<Point> original_positions;
 public:
   // Deformation related functions //
   void insert_handle(vertex_descriptor v)
@@ -497,7 +498,7 @@ protected:
     std::size_t counter = 0;
     for(boost::tie(hb, he) = deform_mesh.handles(hg); hb != he; ++hb, ++counter)
     {
-      center_acc = center_acc + (deform_mesh.original_position(*hb) - CGAL::ORIGIN);
+      center_acc = center_acc + (original_positions[(*hb)->id()] - CGAL::ORIGIN);
     }
     if(counter == 0) { return qglviewer::Vec(0,0,0); } 
     return qglviewer::Vec(center_acc.x() / counter, center_acc.y() / counter, center_acc.z() / counter);
@@ -508,12 +509,12 @@ protected:
     Deform_mesh::Handle_iterator hb, he;
     boost::tie(hb, he) = deform_mesh.handles(hg);
     if(hb == he) { return Scene_interface::Bbox(0,0,0,0,0,0); }
-    const Deform_mesh::Point& p_i = deform_mesh.original_position(*hb);
+    const Deform_mesh::Point& p_i = original_positions[(*hb)->id()];
     Scene_interface::Bbox bbox(p_i.x(), p_i.y(), p_i.z(),
                                p_i.x(), p_i.y(), p_i.z());
     for(; hb != he; ++hb)
     {
-      const Deform_mesh::Point& p_i = deform_mesh.original_position(*hb);
+      const Deform_mesh::Point& p_i = original_positions[(*hb)->id()];
       Scene_interface::Bbox bbox_it(p_i.x(), p_i.y(), p_i.z(),
                                     p_i.x(), p_i.y(), p_i.z());
       bbox = bbox + bbox_it;

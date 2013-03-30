@@ -28,6 +28,14 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   , show_roi(true), show_as_sphere(false), ui_widget(NULL), frame(new qglviewer::ManipulatedFrame()),
   quadric(gluNewQuadric())
 {
+  // it is not good to rely on id() for reaching original positions
+  // if usage of vertex index map is changed in Deform_mesh, we need to change this part to use map instead of vector
+  vertex_iterator vb, ve;
+  for(boost::tie(vb, ve) = boost::vertices(*poly_item->polyhedron()); vb != ve; ++vb)
+  {
+    original_positions.push_back(vb->point());
+  }
+
   gluQuadricNormals(quadric, GLU_SMOOTH);
   // bind vertex picking 
   connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
@@ -43,7 +51,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   create_handle_group();
    
   // start QObject's timer for continous effects 
-  // (like selecting vertices as 'painting', deforming mesh while mouse not moving)
+  // (deforming mesh while mouse not moving)
   startTimer(0);
 }
 
@@ -142,7 +150,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
   bool ctrl_pressed_now = state.ctrl_pressing && !old_state.ctrl_pressing;
   bool ctrl_released_now = !state.ctrl_pressing && old_state.ctrl_pressing;
   if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove) 
-  {// update manipulated frame autoselection because they are not updated by QGLViewer until mouse moves
+  {// activate a handle manipulated frame
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     activate_closest_manipulated_frame(p.x(), p.y()); 
@@ -153,25 +161,23 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
   // use mouse move event for paint-like selection
   // specificly placed in here (not in timer function) for preventing unneccessary ray-casting 
   // (while mouse not moving, ray casting is pointless since the same vertex will be returned and processed)
-  if(event->type() == QEvent::MouseMove)    
-  { // paint with mouse move event
-    if(state.shift_pressing && state.left_button_pressing)
-    {    
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      qglviewer::Camera* camera = viewer->camera();
+  if(event->type() == QEvent::MouseMove &&
+    (state.shift_pressing && state.left_button_pressing) )    
+  { // paint with mouse move event 
+    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    qglviewer::Camera* camera = viewer->camera();
 
-      bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
-      if(found)
-      {
-        const qglviewer::Vec& orig = camera->position();
-        const qglviewer::Vec& dir = point - orig;
-        select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z); // it will cause 'selected_vertex' signal where our slot will handle selection 
+    bool found = false;
+    const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+    if(found)
+    {
+      const qglviewer::Vec& orig = camera->position();
+      const qglviewer::Vec& dir = point - orig;
+      select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z); // it will cause 'selected_vertex' signal where our slot will handle selection 
 
-        need_repaint = true;
-      }
-    }// end shift_pressing
+      need_repaint = true;
+    }
   }//end MouseMove
 
   if(need_repaint) { emit mesh_repaint_needed(this); } // which will be handled by a slot in plugin
@@ -182,7 +188,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
 void Scene_edit_polyhedron_item::draw() const {
   poly_item->direct_draw();
   CGAL::GL::Color color;
-  color.set_rgb_color(1, 1.f, 1);
+  color.set_rgb_color(0.f, 0.f, 0.f);
   poly_item->direct_draw_edges();
 
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
