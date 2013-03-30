@@ -147,8 +147,6 @@ private:
   std::vector<Point> original;                        // original positions of roi (size: ros + boundary_of_ros)
   std::vector<Point> solution;                        // storing position of ros vertices during iterations (size: ros + boundary_of_ros)
 
-  std::vector<Point> original_all;                    // original positions of all vertices, it is stored separately to simplify coding
-
   VertexIndexMap vertex_index_map;                    // storing indices of all vertices
   EdgeIndexMap   edge_index_map;                      // storing indices of all edges
 
@@ -219,13 +217,6 @@ public:
     for(boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
     {
       edge_weight.push_back(weight_calculator(*eb, polyhedron));
-    }
-
-    // save original positions for later use
-    original_all.reserve(boost::num_vertices(polyhedron));
-    for(boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb )
-    {
-      original_all.push_back((*vb)->point());
     }
   }
   /**
@@ -426,6 +417,7 @@ public:
 
   /**
    * Erease the vertex from region of interest. The vertex is also erased from being handle, if it is.
+   * Note that in next preprocess() call, any vertex which is no longer ROI will be assigned to its original position.
    * @param vd vertex to be erased
    * @return true if the erasion is successful   
    */
@@ -476,6 +468,8 @@ public:
    */
   bool preprocess()
   {
+    if(!need_preprocess) { return true; }
+
     need_preprocess = false;
 
     region_of_solution();
@@ -623,14 +617,6 @@ public:
   { this->tolerance = tolerance; }
 
   /**
-   * Original positions of all vertices can be reached.
-   * @param vd vertex to obtain original position
-   * @return original position which is saved at the time of construction
-   */
-  const Point& original_position(vertex_descriptor vd) const
-  { return original_all[id(vd)]; }
-
-  /**
    * Query whether a vertex is inside region of interest or not.
    * @param vd vertex to be queried
    * @return true if the vertex is inside region of interest
@@ -673,38 +659,43 @@ private:
     std::vector<std::size_t>      old_ros_id_map = ros_id_map;
     std::vector<Eigen::Matrix3d>  old_rot_mtr = rot_mtr;
     std::vector<Point>            old_solution = solution;
+    std::vector<Point>            old_original = original;
+    
+    // any vertices which are no longer ROI, should be assigned to their original position, so that:
+    // IF a vertex is ROI (actually if its ros + boundary) previously (when previous region_of_solution() is called)
+    // we have its original position in old_original 
+    // ELSE 
+    // we have its original position in vertex->point()
+    // (current ros is actually old ros - we did not change it yet)
+    for(std::vector<vertex_descriptor>::iterator it = ros.begin(); it != ros.end(); ++it)
+    {
+      if(!is_roi(*it)) {
+        (*it)->point() = old_original[ old_ros_id_map[id(*it)] ];
+      }
+    }
 
-    // any vertices which are no longer ROI, should be assigned to their original position
-    // for(
-
-    ros.clear(); // clear ros    
-    ros.insert(ros.end(), roi.begin(), roi.end()); 
-
-    ros_id_map.assign(boost::num_vertices(polyhedron), -1); // use -1 (max) as not assigned mark
     ////////////////////////////////////////////////////////////////
     // assign id to vertices inside: roi, boundary of roi (roi + boundary of roi = ros),
     //                               and boundary of ros
     // keep in mind that id order does not have to be compatible with ros order
-    
+    ros.clear(); // clear ros    
+    ros.insert(ros.end(), roi.begin(), roi.end()); 
+
+    ros_id_map.assign(boost::num_vertices(polyhedron), -1); // use -1 (max) as not assigned mark
+
     for(std::size_t i = 0; i < roi.size(); i++)  // assign id to all roi vertices
-    {
-      ros_id(roi[i]) = i;
-    }
+    { ros_id(roi[i]) = i; }
 
     // now assign an id to vertices on boundary of roi
     std::size_t next_ros_index = roi.size();
     for(std::size_t i = 0; i < roi.size(); i++)
-    {
-      assign_ros_id_to_one_ring(roi[i], next_ros_index, ros);
-    }
+    { assign_ros_id_to_one_ring(roi[i], next_ros_index, ros); }
 
     std::vector<vertex_descriptor> outside_ros;
     // boundary of ros also must have ids because in SVD calculation,
     // one-ring neighbor of ROS vertices are reached. 
     for(std::size_t i = roi.size(); i < ros.size(); i++)
-    {
-      assign_ros_id_to_one_ring(ros[i], next_ros_index, outside_ros);
-    }
+    { assign_ros_id_to_one_ring(ros[i], next_ros_index, outside_ros); }
     ////////////////////////////////////////////////////////////////
 
     // initialize the rotation matrices (size: ros)
@@ -714,9 +705,10 @@ private:
       std::size_t v_ros_id = ros_id(ros[i]);
       std::size_t v_id = id(ros[i]);
 
+      // any vertex which is previously ROS has a rotation matrix
+      // use that matrix to prevent jumping effects
       if(old_ros_id_map[v_id] != -1 && old_ros_id_map[v_id] < old_rot_mtr.size()) { 
-        // current vertex has a rot mat previously, use that to prevent jumping effects
-        // && boundary of ros vertices also have ids so check whether it is ros
+                                 // && boundary of ros vertices also have ids so check whether it is ros
         rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];        
       }
       else {
@@ -736,20 +728,25 @@ private:
       std::size_t v_ros_id = ros_id(ros[i]);
       std::size_t v_id = id(ros[i]);
 
-      original[v_ros_id] = original_all[v_id];
-
-      if(old_ros_id_map[v_id] != -1) { // current vertex has a solution previously, use that to prevent jumping effects
+      if(is_roi(ros[i]) && old_ros_id_map[v_id] != -1) { 
+        // if it is currently roi and previously ros + boundary
+        // (actually I just need to assign old's to new's if a vertex is currently and previously ROI
+        // but no harm on assigning if its also previously ros + boundary because 
+        // those(old_original & old_solution) will be equal to original position)
+        original[v_ros_id] = old_original[old_ros_id_map[v_id]];
         solution[v_ros_id] = old_solution[old_ros_id_map[v_id]];
       }
       else {
-        solution[v_ros_id] = original_all[v_id];
-      }            
+        solution[v_ros_id] = ros[i]->point();
+        original[v_ros_id] = ros[i]->point();
+      }         
     }
+
     for(std::size_t i = 0; i < outside_ros.size(); ++i)
     {
-      std::size_t v_id = ros_id(outside_ros[i]);
-      original[v_id] = original_all[id(outside_ros[i])];
-      solution[v_id] = outside_ros[i]->point();
+      std::size_t v_ros_id = ros_id(outside_ros[i]);
+      original[v_ros_id] = outside_ros[i]->point();
+      solution[v_ros_id] = outside_ros[i]->point();
     }
   }
 
