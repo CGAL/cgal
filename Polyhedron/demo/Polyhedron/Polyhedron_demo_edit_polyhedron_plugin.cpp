@@ -47,6 +47,8 @@ public slots:
   void on_DeleteHandlePushButton_clicked();  
   void on_ApplyAndClosePushButton_clicked();
   void on_ClearROIPushButton_clicked();
+  void on_ShowROICheckBox_stateChanged(int state);
+  void on_ShowAsSphereCheckBox_stateChanged(int state);  
   void on_ActivatePivotingCheckBox_stateChanged(int state);
   void on_SaveROIPushButton_clicked();
   void on_ReadROIPushButton_clicked();
@@ -117,6 +119,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   connect(ui_widget->DeleteHandlePushButton, SIGNAL(clicked()), this, SLOT(on_DeleteHandlePushButton_clicked()));
   connect(ui_widget->ApplyAndClosePushButton, SIGNAL(clicked()), this, SLOT(on_ApplyAndClosePushButton_clicked()));
   connect(ui_widget->ClearROIPushButton, SIGNAL(clicked()), this, SLOT(on_ClearROIPushButton_clicked()));
+  connect(ui_widget->ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
+  connect(ui_widget->ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));  
   connect(ui_widget->ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
   connect(ui_widget->SaveROIPushButton, SIGNAL(clicked()), this, SLOT(on_SaveROIPushButton_clicked()));
   connect(ui_widget->ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
@@ -193,6 +197,26 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ClearROIPushButton_clicked()
 void Polyhedron_demo_edit_polyhedron_plugin::on_ApplyAndClosePushButton_clicked()
 {
   dock_widget->setVisible(false);
+}
+void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int state)
+{
+  for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
+  {
+    Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    if(!edit_item) { continue; }
+    
+    scene->itemChanged(edit_item);  // just for redraw   
+  }  
+}
+void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChanged(int state)
+{
+  for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
+  {
+    Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    if(!edit_item) { continue; }
+    
+    scene->itemChanged(edit_item);  // just for redraw   
+  }  
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ActivatePivotingCheckBox_stateChanged(int state)
 {
@@ -303,7 +327,6 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
     this, SLOT(mesh_deformed(Scene_edit_polyhedron_item*)));
   connect(edit_poly, SIGNAL(mesh_repaint_needed(Scene_edit_polyhedron_item*)), 
     this, SLOT(mesh_repaint_needed(Scene_edit_polyhedron_item*)));
-  
 
   scene->replaceItem(i, edit_poly);
   return edit_poly;
