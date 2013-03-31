@@ -13,10 +13,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
- 
+
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_STATICALLY_FILTERED_TRAITS_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_STATICALLY_FILTERED_TRAITS_2_H
 
@@ -40,7 +40,8 @@
 // TODO :
 // - add more predicates :
 
-namespace CGAL {
+namespace CGAL
+{
 
 // The K_base argument is supposed to provide exact primitives.
 template < typename Traits >
@@ -52,14 +53,16 @@ public:
   Periodic_2_triangulation_statically_filtered_traits_2() {}
 
   typedef internal::Static_filters_predicates::Periodic_2_orientation_2<Traits>
-    Orientation_2;
+  Orientation_2;
   typedef internal::Static_filters_predicates::Periodic_2_side_of_oriented_circle_2<Traits>
-    Side_of_oriented_circle_2;
+  Side_of_oriented_circle_2;
 
-  Orientation_2 orientation_2_object() const {
-    return Orientation_2(&this->_domain,&this->_domain_e,&this->_domain_f);
+  Orientation_2 orientation_2_object() const
+  {
+    return Orientation_2(&this->_domain, &this->_domain_e, &this->_domain_f);
   }
-  Side_of_oriented_circle_2  side_of_oriented_circle_2_object() const {
+  Side_of_oriented_circle_2  side_of_oriented_circle_2_object() const
+  {
     return Side_of_oriented_circle_2(&this->_domain,
                                      &this->_domain_e,
                                      &this->_domain_f);

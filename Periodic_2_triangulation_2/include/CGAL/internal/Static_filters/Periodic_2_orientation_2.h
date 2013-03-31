@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
@@ -79,7 +79,12 @@
   }
 */
 
-namespace CGAL { namespace internal { namespace Static_filters_predicates {
+namespace CGAL
+{
+namespace internal
+{
+namespace Static_filters_predicates
+{
 
 template < typename K_base >
 class Periodic_2_orientation_2 : public K_base::Orientation_2
@@ -92,174 +97,183 @@ class Periodic_2_orientation_2 : public K_base::Orientation_2
 
   typedef typename K_base::Orientation_2    Base;
 
- public:
+public:
   const Iso_rectangle_2 * const _dom;
-  
- public:
+
+public:
   typedef typename Base::result_type  result_type;
 
   template <class EX, class AP>
-    Periodic_2_orientation_2(const Iso_rectangle_2 * const dom,
-                             const EX * dom_e, const AP * dom_f) : Base(dom_e,dom_f), _dom(dom) {
+  Periodic_2_orientation_2(const Iso_rectangle_2 * const dom,
+                           const EX * dom_e, const AP * dom_f) : Base(dom_e, dom_f), _dom(dom)
+  {
   }
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else 
+#else
   result_type
-    operator()(const Vector_2& u, const Vector_2& v) const
-  { 
-    return Base::operator()(u,v);
+  operator()(const Vector_2& u, const Vector_2& v) const
+  {
+    return Base::operator()(u, v);
   }
-  
+
   result_type
-    operator()(const Circle_2& c) const
+  operator()(const Circle_2& c) const
   {
     return Base::operator()(c);
   }
 
-  result_type operator()(const Point_2 &p, 
-                         const Point_2 &q, 
+  result_type operator()(const Point_2 &p,
+                         const Point_2 &q,
                          const Point_2 &r,
                          const Offset_2 &o_p,
-                         const Offset_2 &o_q, 
-                         const Offset_2 &o_r) const {
+                         const Offset_2 &o_q,
+                         const Offset_2 &o_r) const
+  {
     return Base::operator()(p, q, r, o_p, o_q, o_r);
   }
 #endif
   /// Normal static orientation test, copied from Orientation_2
   result_type operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const
-    {
-      CGAL_PROFILER("Periodic_2_orientation_2 calls");
+  {
+    CGAL_PROFILER("Periodic_2_orientation_2 calls");
 
-      double px, py, qx, qy, rx, ry;
+    double px, py, qx, qy, rx, ry;
 
-      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
-          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
-          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry))
+    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+        fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry))
       {
-          CGAL_PROFILER("Periodic_2_orientation_2 semi-static attempts");
+        CGAL_PROFILER("Periodic_2_orientation_2 semi-static attempts");
 
-          double pqx = qx - px;
-          double pqy = qy - py;
-          double prx = rx - px;
-          double pry = ry - py;
+        double pqx = qx - px;
+        double pqy = qy - py;
+        double prx = rx - px;
+        double pry = ry - py;
 
-          // Then semi-static filter.
-          double maxx = CGAL::abs(pqx);
-          double maxy = CGAL::abs(pqy);
+        // Then semi-static filter.
+        double maxx = CGAL::abs(pqx);
+        double maxy = CGAL::abs(pqy);
 
-          double aprx = CGAL::abs(prx);
-          double apry = CGAL::abs(pry);
+        double aprx = CGAL::abs(prx);
+        double apry = CGAL::abs(pry);
 
-          if (maxx < aprx) maxx = aprx;
-          if (maxy < apry) maxy = apry;
-          double eps = 5.1107127829973299e-15 * maxx * maxy;
-          double det = CGAL::determinant(pqx, pqy,
-                                         prx, pry);
+        if (maxx < aprx) maxx = aprx;
+        if (maxy < apry) maxy = apry;
+        double eps = 5.1107127829973299e-15 * maxx * maxy;
+        double det = CGAL::determinant(pqx, pqy,
+                                       prx, pry);
 
-          // Sort maxx < maxy
-          if (maxx > maxy)
-              std::swap(maxx, maxy);
+        // Sort maxx < maxy
+        if (maxx > maxy)
+          std::swap(maxx, maxy);
 
-          // Protect against underflow in the computation of eps.
-          if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
+        // Protect against underflow in the computation of eps.
+        if (maxx < 1e-97) /* cbrt(min_double/eps) */
+          {
             if (maxx == 0)
               return ZERO;
           }
-          // Protect against overflow in the computation of det.
-          else if (maxy < 1e102) /* cbrt(max_double [hadamard]/4) */ {
+        // Protect against overflow in the computation of det.
+        else if (maxy < 1e102) /* cbrt(max_double [hadamard]/4) */
+          {
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }
 
-          CGAL_PROFILER("Periodic_2_orientation_2 semi-static failures");
+        CGAL_PROFILER("Periodic_2_orientation_2 semi-static failures");
       }
 
-      return Base::operator()(p, q, r);
+    return Base::operator()(p, q, r);
   }
 
-  
+
   /// Static orientation test with offsets
   result_type operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r,
-                        const Offset_2 &o_p, const Offset_2 &o_q, const Offset_2 &o_r) const {
+                         const Offset_2 &o_p, const Offset_2 &o_q, const Offset_2 &o_r) const
+  {
 
-      CGAL_PROFILER("Periodic_2_orientation_2 with offset calls");
+    CGAL_PROFILER("Periodic_2_orientation_2 with offset calls");
 
-      double px, py, qx, qy, rx, ry;
-      double domxmax, domxmin, domymax, domymin;
-      int opx = o_p.x();
-      int opy = o_p.y();
+    double px, py, qx, qy, rx, ry;
+    double domxmax, domxmin, domymax, domymin;
+    int opx = o_p.x();
+    int opy = o_p.y();
 
-      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
-          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
-          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
-	  fit_in_double(_dom->xmax(), domxmax) &&
-	  fit_in_double(_dom->xmin(), domxmin) &&
-	  fit_in_double(_dom->ymax(), domymax) &&
-	  fit_in_double(_dom->ymin(), domymin))
+    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+        fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
+        fit_in_double(_dom->xmax(), domxmax) &&
+        fit_in_double(_dom->xmin(), domxmin) &&
+        fit_in_double(_dom->ymax(), domymax) &&
+        fit_in_double(_dom->ymin(), domymin))
       {
-          CGAL_PROFILER("Periodic_2_orientation_2 with offset semi-static attempts");
+        CGAL_PROFILER("Periodic_2_orientation_2 with offset semi-static attempts");
 
-	  double domx = domxmax - domxmin;
-	  double domy = domymax - domymin;
+        double domx = domxmax - domxmin;
+        double domy = domymax - domymin;
 
-          double pqx = qx - px + domx * ( o_q.x() - opx );
-          double pqy = qy - py + domy * ( o_q.y() - opy );
-          double prx = rx - px + domx * ( o_r.x() - opx );
-          double pry = ry - py + domy * ( o_r.y() - opy );
+        double pqx = qx - px + domx * ( o_q.x() - opx );
+        double pqy = qy - py + domy * ( o_q.y() - opy );
+        double prx = rx - px + domx * ( o_r.x() - opx );
+        double pry = ry - py + domy * ( o_r.y() - opy );
 
-          // Then semi-static filter.
-          double maxx = CGAL::abs(pqx);
-          double maxy = CGAL::abs(pqy);
+        // Then semi-static filter.
+        double maxx = CGAL::abs(pqx);
+        double maxy = CGAL::abs(pqy);
 
-          double aprx = CGAL::abs(prx);
-          double apry = CGAL::abs(pry);
+        double aprx = CGAL::abs(prx);
+        double apry = CGAL::abs(pry);
 
-          if (maxx < aprx) maxx = aprx;
-          if (maxy < apry) maxy = apry;
-          double eps = 4.111024169857068197e-15 * maxx * maxy;
-          double det = CGAL::determinant(pqx, pqy,
-                                         prx, pry);
+        if (maxx < aprx) maxx = aprx;
+        if (maxy < apry) maxy = apry;
+        double eps = 4.111024169857068197e-15 * maxx * maxy;
+        double det = CGAL::determinant(pqx, pqy,
+                                       prx, pry);
 
-          // Sort maxx < maxy.
-          if (maxx > maxy)
-              std::swap(maxx, maxy);
+        // Sort maxx < maxy.
+        if (maxx > maxy)
+          std::swap(maxx, maxy);
 
-          // Protect against underflow in the computation of eps.
-          if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
+        // Protect against underflow in the computation of eps.
+        if (maxx < 1e-97) /* cbrt(min_double/eps) */
+          {
             if (maxx == 0)
               return ZERO;
           }
-          // Protect against overflow in the computation of det.
-          else if (maxy < 1e102) /* cbrt(max_double [hadamard]/4) */ {
+        // Protect against overflow in the computation of det.
+        else if (maxy < 1e102) /* cbrt(max_double [hadamard]/4) */
+          {
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }
 
-          CGAL_PROFILER("Periodic_2_orientation_2 with offset semi-static failures");
+        CGAL_PROFILER("Periodic_2_orientation_2 with offset semi-static failures");
       }
 
-      return Base::operator()(p,q,r,o_p,o_q,o_r);
+    return Base::operator()(p, q, r, o_p, o_q, o_r);
   }
 
   // Computes the epsilon for Periodic_2_orientation_2.
   static double compute_epsilon()
   {
     typedef Static_filter_error F;
-    F t1 = F(1, F::ulp()/4);         // First translation
+    F t1 = F(1, F::ulp() / 4);       // First translation
     F det = CGAL::determinant(t1, t1, t1,
                               t1, t1, t1,
                               t1, t1, t1); // Full det
     double err = det.error();
     err += err * 2 * F::ulp(); // Correction due to "eps * maxx * maxy...".
-    std::cerr << "*** epsilon for Periodic_2_orientation_2 = " << err 
-	      << std::endl;
+    std::cerr << "*** epsilon for Periodic_2_orientation_2 = " << err
+              << std::endl;
     return err;
   }
 
 };
 
-} } } // namespace CGAL::internal::Static_filters_predicates
+}
+}
+} // namespace CGAL::internal::Static_filters_predicates
 
 #endif // CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_2_ORIENTATION_2_H

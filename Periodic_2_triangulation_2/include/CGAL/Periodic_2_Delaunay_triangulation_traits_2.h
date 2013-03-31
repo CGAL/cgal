@@ -13,7 +13,7 @@
 //
 // $URL: svn+ssh://cgal/svn/cgal/branches/experimental-packages/Periodic_2_triangulation_2/include/CGAL/Periodic_2_triangulation_traits_2.h $
 // $Id: Periodic_2_triangulation_traits_2.h 60448 2010-12-21 15:40:31Z nicokruithof $
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
@@ -22,13 +22,15 @@
 
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 
-namespace CGAL {
+namespace CGAL
+{
 
 /// The Periodic_2_Delaunay_triangulation_traits_2 is equal to
 /// Periodic_2_triangulation_traits_2
 template < typename K, typename Off = CGAL::Periodic_2_offset_2 >
 class Periodic_2_Delaunay_triangulation_traits_2 :
-        public Periodic_2_triangulation_traits_2<K, Off> {
+  public Periodic_2_triangulation_traits_2<K, Off>
+{
 };
 
 

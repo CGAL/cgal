@@ -2,7 +2,8 @@
 
 #include "./types.h"
 
-int main() {
+int main()
+{
   Point p;
   Triangulation t;
 

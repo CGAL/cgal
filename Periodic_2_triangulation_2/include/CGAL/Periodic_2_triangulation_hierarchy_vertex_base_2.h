@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
 //                 Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
@@ -25,11 +25,12 @@
 
 #include <CGAL/basic.h>
 
-namespace CGAL {
+namespace CGAL
+{
 
 template < class Gt, class Vb = CGAL::Periodic_2_triangulation_vertex_base_2<Gt> >
 class Periodic_2_triangulation_hierarchy_vertex_base_2
- : public Vb
+  : public Vb
 {
   typedef typename Vb::Triangulation_data_structure    Tds;
   typedef Gt                                    Geom_traits;
@@ -39,7 +40,8 @@ class Periodic_2_triangulation_hierarchy_vertex_base_2
   typedef typename Tds::Vertex_handle           Vertex_handle;
 
   template < typename Tds2 >
-  struct Rebind_Tds {
+  struct Rebind_Tds
+  {
     typedef typename Vb::template Rebind_Tds<Tds2>::Other  Vb2;
     typedef Triangulation_vertex_base_2<Gt, Vb2>           Other;
   };
@@ -47,21 +49,33 @@ class Periodic_2_triangulation_hierarchy_vertex_base_2
 
   Periodic_2_triangulation_hierarchy_vertex_base_2()
     : Base(), _up(0), _down(0)
-    {}
+  {}
   Periodic_2_triangulation_hierarchy_vertex_base_2(const Point & p, Face_handle f)
-    : Base(p,f), _up(0), _down(0)
-    {}
+    : Base(p, f), _up(0), _down(0)
+  {}
   Periodic_2_triangulation_hierarchy_vertex_base_2(const Point & p)
     : Base(p), _up(0), _down(0)
-    {}
+  {}
 
-  Vertex_handle up() {return _up;}
-  Vertex_handle down() {return _down;}
-  void set_up(Vertex_handle u) {_up=u;}
-  void set_down(Vertex_handle d) { _down=d;}
+  Vertex_handle up()
+  {
+    return _up;
+  }
+  Vertex_handle down()
+  {
+    return _down;
+  }
+  void set_up(Vertex_handle u)
+  {
+    _up = u;
+  }
+  void set_down(Vertex_handle d)
+  {
+    _down = d;
+  }
 
 
- private:
+private:
   Vertex_handle  _up;    // same vertex one level above
   Vertex_handle  _down;  // same vertex one level below
 };

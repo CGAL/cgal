@@ -29,33 +29,35 @@ int main()
   PDT PT1, PT2, PT3;
 
   // Generating n random points
-  for (int i=0 ; i < n ; i++) {
-    Point p = *in_square;
-    in_square++;
-    pts.push_back(Point(p.x()+.5, p.y()+.5));
-  }
+  for (int i = 0 ; i < n ; i++)
+    {
+      Point p = *in_square;
+      in_square++;
+      pts.push_back(Point(p.x() + .5, p.y() + .5));
+    }
 
   // Standard insertion
   t.start();
-  for (int i=0 ; i < n ; i++) {
-    PT1.insert(pts[i]);
-  }
+  for (int i = 0 ; i < n ; i++)
+    {
+      PT1.insert(pts[i]);
+    }
   t.stop();
-  std::cout<<"  Time: "<<t.time()<<" sec. (Standard insertion)"<<std::endl;
+  std::cout << "  Time: " << t.time() << " sec. (Standard insertion)" << std::endl;
   t.reset();
 
   // Iterator range insertion using spatial sorting but no dummy points
   t.start();
   PT2.insert(pts.begin(), pts.end()); // third parameter defaults to false
   t.stop();
-  std::cout<<"  Time: "<<t.time()<<" sec. (with spatial sorting)"<<std::endl;
+  std::cout << "  Time: " << t.time() << " sec. (with spatial sorting)" << std::endl;
   t.reset();
 
   // Iterator range insertion using spatial sorting and dummy point heuristic
   t.start();
   PT3.insert(pts.begin(), pts.end(), true);
   t.stop();
-  std::cout<<"  Time: "<<t.time()<<" sec. (Dummy point heuristic)"<<std::endl;
+  std::cout << "  Time: " << t.time() << " sec. (Dummy point heuristic)" << std::endl;
 
   return 0;
 }

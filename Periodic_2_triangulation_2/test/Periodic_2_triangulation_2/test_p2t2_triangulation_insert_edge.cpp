@@ -2,7 +2,8 @@
 
 #include "./types.h"
 
-void insert_in_edge(Triangulation &t, const Point &p) {
+void insert_in_edge(Triangulation &t, const Point &p)
+{
   Triangulation::Locate_type lt;
   int li;
 
@@ -12,7 +13,8 @@ void insert_in_edge(Triangulation &t, const Point &p) {
   CGAL_assertion(t.is_valid());
 }
 
-int main() {
+int main()
+{
   Point p;
   Triangulation t;
 

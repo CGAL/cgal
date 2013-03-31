@@ -21,11 +21,11 @@ int main()
 {
   PDT T;
 
-  T.insert(Point(0,0));
-  T.insert(Point(.1,0));
-  T.insert(Point(0,.1));
-  T.insert(Point(.2,.2));
-  T.insert(Point(.9,0));
+  T.insert(Point(0, 0));
+  T.insert(Point(.1, 0));
+  T.insert(Point(0, .1));
+  T.insert(Point(.2, .2));
+  T.insert(Point(.9, 0));
 
   // Set the color of vertices with degree 6 to red.
   PDT::Vertex_iterator vit;

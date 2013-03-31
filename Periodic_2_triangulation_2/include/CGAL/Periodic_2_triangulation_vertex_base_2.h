@@ -13,7 +13,7 @@
 //
 // $URL: svn+ssh://nicokruithof@scm.gforge.inria.fr/svnroot/cgal/trunk/Periodic_2_triangulation_2/include/CGAL/Periodic_2_triangulation_vertex_base_2.h $
 // $Id: Periodic_2_triangulation_vertex_base_2.h 56667 2010-06-09 07:37:13Z sloriot $
-// 
+//
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -26,7 +26,8 @@
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/Periodic_2_offset_2.h>
 
-namespace CGAL {
+namespace CGAL
+{
 
 
 template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
@@ -45,9 +46,10 @@ public:
   typedef Periodic_2_offset_2                   Offset;
 
   template < typename Tds2 >
-  struct Rebind_TDS {
+  struct Rebind_TDS
+  {
     typedef typename Vb::template Rebind_TDS<Tds2>::Other     Vb2;
-    typedef Periodic_2_triangulation_vertex_base_2<Gt,Vb2>    Other;
+    typedef Periodic_2_triangulation_vertex_base_2<Gt, Vb2>    Other;
   };
 
 public:
@@ -55,24 +57,29 @@ public:
   Periodic_2_triangulation_vertex_base_2(const Point & p)
     : Base(p), _off(), _offset_flag(false) {}
   Periodic_2_triangulation_vertex_base_2(const Point & p, Face_handle f)
-    : Base(f,p), _off(), _offset_flag(false) {}
+    : Base(f, p), _off(), _offset_flag(false) {}
   Periodic_2_triangulation_vertex_base_2(Face_handle f)
     : Base(f), _off(), _offset_flag(false) {}
 
-  const Offset& offset() const {
+  const Offset& offset() const
+  {
     return _off;
   }
-  
-  void set_offset(const Offset& off) {
-    _off = off; _offset_flag=true;
+
+  void set_offset(const Offset& off)
+  {
+    _off = off;
+    _offset_flag = true;
   }
 
-  void clear_offset() {
-    _offset_flag=false;
+  void clear_offset()
+  {
+    _offset_flag = false;
     _off = Offset();
   }
 
-  bool get_offset_flag() const {
+  bool get_offset_flag() const
+  {
     return _offset_flag;
   }
 
@@ -92,7 +99,7 @@ template < class Tds >
 inline
 std::istream&
 operator>>(std::istream &is, Periodic_2_triangulation_vertex_base_2<Tds> &)
-  // no combinatorial information.
+// no combinatorial information.
 {
   return is;
 }
@@ -101,8 +108,8 @@ template < class Tds >
 inline
 std::ostream&
 operator<<(std::ostream &os,
-    const Periodic_2_triangulation_vertex_base_2<Tds> &)
-  // no combinatorial information.
+           const Periodic_2_triangulation_vertex_base_2<Tds> &)
+// no combinatorial information.
 {
   return os;
 }
@@ -116,7 +123,8 @@ public:
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Face_handle     Face_handle;
   template <typename Tds2>
-  struct Rebind_Tds {
+  struct Rebind_Tds
+  {
     typedef Periodic_2_triangulation_vertex_base_2<Tds2> Other;
   };
 };

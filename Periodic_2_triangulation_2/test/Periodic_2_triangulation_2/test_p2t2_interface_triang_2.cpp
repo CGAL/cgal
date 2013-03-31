@@ -18,7 +18,8 @@ typedef CGAL::Periodic_2_triangulation_traits_2<K3>                  PTT3;
 // Explicit instantiation of the whole class :
 template class CGAL::Periodic_2_Delaunay_triangulation_2<PTT3>;
 
-int main() {
+int main()
+{
   typedef Periodic_2_triangulation_2<Gt>              P2T2;
   typedef Periodic_2_Delaunay_triangulation_2<Gt>     DP2T2;
 

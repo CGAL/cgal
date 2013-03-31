@@ -4,7 +4,8 @@
 #include <CGAL/point_generators_2.h>
 
 template <class T>
-void test_constructor() {
+void test_constructor()
+{
   typedef typename T::Iso_rectangle Iso_rectangle;
   typedef typename T::Geom_traits   Geom_traits;
   typedef typename T::Point         Point;
@@ -14,8 +15,8 @@ void test_constructor() {
   CGAL_assertion(t == t2);
   T t3 = t2;
   CGAL_assertion(t == t3);
-  T t4(Iso_rectangle(0,0,2,2));
-  T t5(Iso_rectangle(0,0,2,2), Geom_traits());
+  T t4(Iso_rectangle(0, 0, 2, 2));
+  T t5(Iso_rectangle(0, 0, 2, 2), Geom_traits());
   t5.clear();
 
   t.insert(Point(0.5, 0.5));
@@ -38,7 +39,8 @@ void test_constructor() {
 }
 
 template <class T>
-void test_global_access() {
+void test_global_access()
+{
   T t;
   const T &t_const = t;
 
@@ -76,7 +78,8 @@ void test_global_access() {
 }
 
 template <class T>
-void test_geometric_access() {
+void test_geometric_access()
+{
   typedef typename T::Point             Point;
   typedef typename T::Segment           Segment;
   typedef typename T::Triangle          Triangle;
@@ -116,7 +119,8 @@ void test_geometric_access() {
 }
 
 template <class T>
-void test_predicates() {
+void test_predicates()
+{
   typedef typename T::Vertex_handle   Vertex_handle;
   typedef typename T::Face_handle     Face_handle;
   typedef typename T::Point             Point;
@@ -128,15 +132,17 @@ void test_predicates() {
   Vertex_handle vh2 = t.insert(Point(0.7, 0.7));
 
   t.is_edge(vh0, vh1);
-  Face_handle fh; int i;
+  Face_handle fh;
+  int i;
   t.is_edge(vh0, vh1, fh, i);
-  
+
   t.is_face(vh0, vh1, vh2);
   t.is_face(vh0, vh1, vh2, fh);
 }
 
 template <class T>
-void test_queries() {
+void test_queries()
+{
   typedef typename T::Vertex_handle   Vertex_handle;
   typedef typename T::Face_handle     Face_handle;
   typedef typename T::Point             Point;
@@ -156,7 +162,8 @@ void test_queries() {
   Face_handle fh = t_const.locate(p0);
   fh = t_const.locate(Point(0.5, 0.5), fh);
 
-  typename T::Locate_type lt; int li;
+  typename T::Locate_type lt;
+  int li;
   fh = t_const.locate(p0, lt, li);
   fh = t_const.locate(p0, lt, li, fh);
 
@@ -164,7 +171,8 @@ void test_queries() {
 }
 
 template <class T>
-void test_iterators() {
+void test_iterators()
+{
   typedef typename T::Vertex_handle     Vertex_handle;
   typedef typename T::Face_handle       Face_handle;
   typedef typename T::Point             Point;
@@ -183,116 +191,139 @@ void test_iterators() {
   // vertices
   size_t size = 0;
   for (typename T::Vertex_iterator vit = t_const.vertices_begin();
-       vit != t_const.vertices_end(); ++vit) {
-    ++size;
-  }
+       vit != t_const.vertices_end(); ++vit)
+    {
+      ++size;
+    }
   CGAL_assertion(size == t_const.number_of_stored_vertices());
   size = 0;
   for (typename T::Unique_vertex_iterator uvit = t_const.unique_vertices_begin();
-       uvit != t_const.unique_vertices_end(); ++uvit) {
-    ++size;
-  }
+       uvit != t_const.unique_vertices_end(); ++uvit)
+    {
+      ++size;
+    }
   CGAL_assertion(size == t_const.number_of_vertices());
   size = 0;
   for (typename T::Vertex_iterator vit = t_const.all_vertices_begin();
-       vit != t_const.all_vertices_end(); ++vit) {
-    ++size;
-  }
+       vit != t_const.all_vertices_end(); ++vit)
+    {
+      ++size;
+    }
   CGAL_assertion(size == t_const.number_of_stored_vertices());
 
   // edges
   size = 0;
   for (typename T::Edge_iterator eit = t_const.edges_begin();
-       eit != t_const.edges_end(); ++eit) {
-    ++size;
-  }
+       eit != t_const.edges_end(); ++eit)
+    {
+      ++size;
+    }
   CGAL_assertion(size == t_const.number_of_stored_edges());
   size = 0;
   for (typename T::Edge_iterator eit = t_const.all_edges_begin();
-       eit != t_const.all_edges_end(); ++eit) {
-    ++size;
-  }
+       eit != t_const.all_edges_end(); ++eit)
+    {
+      ++size;
+    }
   CGAL_assertion(size == t_const.number_of_stored_edges());
 
   // faces
   size = 0;
   for (typename T::Face_iterator fit = t_const.faces_begin();
-       fit != t_const.faces_end(); ++fit) {
-    ++size;
-  }
+       fit != t_const.faces_end(); ++fit)
+    {
+      ++size;
+    }
   CGAL_assertion(size == t_const.number_of_stored_faces());
   size = 0;
   for (typename T::All_faces_iterator fit = t_const.all_faces_begin();
-       fit != t_const.all_faces_end(); ++fit) {
-    ++size;
-  }
+       fit != t_const.all_faces_end(); ++fit)
+    {
+      ++size;
+    }
   CGAL_assertion(size == t_const.number_of_stored_faces());
 
   /// Geometric iterators
   for (typename T::Periodic_point_iterator ppit = t_const.periodic_points_begin();
-       ppit != t_const.periodic_points_end(); ++ppit) {
-  }
-  for (typename T::Periodic_point_iterator ppit = 
+       ppit != t_const.periodic_points_end(); ++ppit)
+    {
+    }
+  for (typename T::Periodic_point_iterator ppit =
          t_const.periodic_points_begin(T::STORED);
-       ppit != t_const.periodic_points_end(T::STORED); ++ppit) {
-  }
-  for (typename T::Periodic_point_iterator ppit = 
+       ppit != t_const.periodic_points_end(T::STORED); ++ppit)
+    {
+    }
+  for (typename T::Periodic_point_iterator ppit =
          t_const.periodic_points_begin(T::UNIQUE);
-       ppit != t_const.periodic_points_end(T::UNIQUE); ++ppit) {
-  }
-  for (typename T::Periodic_point_iterator ppit = 
+       ppit != t_const.periodic_points_end(T::UNIQUE); ++ppit)
+    {
+    }
+  for (typename T::Periodic_point_iterator ppit =
          t_const.periodic_points_begin(T::STORED_COVER_DOMAIN);
-       ppit != t_const.periodic_points_end(T::STORED_COVER_DOMAIN); ++ppit) {
-  }
-  for (typename T::Periodic_point_iterator ppit = 
+       ppit != t_const.periodic_points_end(T::STORED_COVER_DOMAIN); ++ppit)
+    {
+    }
+  for (typename T::Periodic_point_iterator ppit =
          t_const.periodic_points_begin(T::UNIQUE_COVER_DOMAIN);
-       ppit != t_const.periodic_points_end(T::UNIQUE_COVER_DOMAIN); ++ppit) {
-  }
+       ppit != t_const.periodic_points_end(T::UNIQUE_COVER_DOMAIN); ++ppit)
+    {
+    }
 
   for (typename T::Periodic_segment_iterator psit = t_const.periodic_segments_begin();
-       psit != t_const.periodic_segments_end(); ++psit) {
-  }
-  for (typename T::Periodic_segment_iterator psit = 
+       psit != t_const.periodic_segments_end(); ++psit)
+    {
+    }
+  for (typename T::Periodic_segment_iterator psit =
          t_const.periodic_segments_begin(T::STORED);
-       psit != t_const.periodic_segments_end(T::STORED); ++psit) {
-  }
-  for (typename T::Periodic_segment_iterator psit = 
+       psit != t_const.periodic_segments_end(T::STORED); ++psit)
+    {
+    }
+  for (typename T::Periodic_segment_iterator psit =
          t_const.periodic_segments_begin(T::UNIQUE);
-       psit != t_const.periodic_segments_end(T::UNIQUE); ++psit) {
-  }
-  for (typename T::Periodic_segment_iterator psit = 
+       psit != t_const.periodic_segments_end(T::UNIQUE); ++psit)
+    {
+    }
+  for (typename T::Periodic_segment_iterator psit =
          t_const.periodic_segments_begin(T::STORED_COVER_DOMAIN);
-       psit != t_const.periodic_segments_end(T::STORED_COVER_DOMAIN); ++psit) {
-  }
-  for (typename T::Periodic_segment_iterator psit = 
+       psit != t_const.periodic_segments_end(T::STORED_COVER_DOMAIN); ++psit)
+    {
+    }
+  for (typename T::Periodic_segment_iterator psit =
          t_const.periodic_segments_begin(T::UNIQUE_COVER_DOMAIN);
-       psit != t_const.periodic_segments_end(T::UNIQUE_COVER_DOMAIN); ++psit) {
-  }
+       psit != t_const.periodic_segments_end(T::UNIQUE_COVER_DOMAIN); ++psit)
+    {
+    }
 
   for (typename T::Periodic_triangle_iterator ptit = t_const.periodic_triangles_begin();
-       ptit != t_const.periodic_triangles_end(); ++ptit) {
-  }
-  for (typename T::Periodic_triangle_iterator ptit = 
+       ptit != t_const.periodic_triangles_end(); ++ptit)
+    {
+    }
+  for (typename T::Periodic_triangle_iterator ptit =
          t_const.periodic_triangles_begin(T::STORED);
-       ptit != t_const.periodic_triangles_end(T::STORED); ++ptit) {
-  }
-  for (typename T::Periodic_triangle_iterator ptit = 
+       ptit != t_const.periodic_triangles_end(T::STORED); ++ptit)
+    {
+    }
+  for (typename T::Periodic_triangle_iterator ptit =
          t_const.periodic_triangles_begin(T::UNIQUE);
-       ptit != t_const.periodic_triangles_end(T::UNIQUE); ++ptit) {
-  }
-  for (typename T::Periodic_triangle_iterator ptit = 
+       ptit != t_const.periodic_triangles_end(T::UNIQUE); ++ptit)
+    {
+    }
+  for (typename T::Periodic_triangle_iterator ptit =
          t_const.periodic_triangles_begin(T::STORED_COVER_DOMAIN);
-       ptit != t_const.periodic_triangles_end(T::STORED_COVER_DOMAIN); ++ptit) {
-  }
-  for (typename T::Periodic_triangle_iterator ptit = 
+       ptit != t_const.periodic_triangles_end(T::STORED_COVER_DOMAIN); ++ptit)
+    {
+    }
+  for (typename T::Periodic_triangle_iterator ptit =
          t_const.periodic_triangles_begin(T::UNIQUE_COVER_DOMAIN);
-       ptit != t_const.periodic_triangles_end(T::UNIQUE_COVER_DOMAIN); ++ptit) {
-  }
+       ptit != t_const.periodic_triangles_end(T::UNIQUE_COVER_DOMAIN); ++ptit)
+    {
+    }
 }
 
 
 template <class T>
-void test_circulators() {
+void test_circulators()
+{
   typedef typename T::Vertex_handle     Vertex_handle;
   typedef typename T::Face_handle       Face_handle;
   typedef typename T::Point             Point;
@@ -323,7 +354,8 @@ void test_circulators() {
 }
 
 template <class T>
-void test_modifiers() {
+void test_modifiers()
+{
   typedef typename T::Vertex_handle     Vertex_handle;
   typedef typename T::Face_handle       Face_handle;
   typedef typename T::Point             Point;
@@ -348,7 +380,8 @@ void test_modifiers() {
   vh1 = t.insert(p1);
   vh2 = t.insert(p2);
 
-  typename T::Locate_type lt; int li;
+  typename T::Locate_type lt;
+  int li;
   fh = t_const.locate(p0, lt, li);
   t.insert(p0, lt, fh, li);
   t.push_back(p0);
@@ -360,10 +393,11 @@ void test_modifiers() {
   t.clear();
   vh0 = t.insert_first(p0);
   vh1 = t.insert(p1);
-  if (t.degree(vh1) == 3) {
-    // The vertex has degree 6 in case we are testing the Delaunay triangulation
-    t.remove_degree_3(vh1);
-  }
+  if (t.degree(vh1) == 3)
+    {
+      // The vertex has degree 6 in case we are testing the Delaunay triangulation
+      t.remove_degree_3(vh1);
+    }
 
   t.clear();
   vh0 = t.insert_first(p0);
@@ -376,12 +410,14 @@ void test_modifiers() {
   t.insert_in_edge(p2, fh, li);
 
   for (typename T::Vertex_iterator vit = t_const.vertices_begin();
-       vit != t_const.vertices_end(); ++vit) {
-    if (t_const.degree(vit) == 3) {
-      t.remove_degree_3(vit);
-      vit = t_const.vertices_begin();
+       vit != t_const.vertices_end(); ++vit)
+    {
+      if (t_const.degree(vit) == 3)
+        {
+          t.remove_degree_3(vit);
+          vit = t_const.vertices_begin();
+        }
     }
-  }
 
   t.clear();
   vh0 = t.insert(p0);
@@ -391,7 +427,8 @@ void test_modifiers() {
 }
 
 template <class T>
-void test_miscellaneous() {
+void test_miscellaneous()
+{
   typedef typename T::Vertex_handle     Vertex_handle;
   typedef typename T::Face_handle       Face_handle;
   typedef typename T::Point             Point;
@@ -406,10 +443,10 @@ void test_miscellaneous() {
   vh1 = t.insert(p1);
   vh2 = t.insert(p2);
 
-  t.set_domain(typename T::Iso_rectangle(0,0,2,2));
+  t.set_domain(typename T::Iso_rectangle(0, 0, 2, 2));
   int i = t.ccw(0);
   int j = t.cw(0);
-  CGAL_assertion(i+j == 3);
+  CGAL_assertion(i + j == 3);
 
   t = T();
   vh0 = t.insert(p0);
@@ -427,35 +464,40 @@ void test_miscellaneous() {
 }
 
 template <class T>
-void test_io(T &pt1, bool ex) {
+void test_io(T &pt1, bool ex)
+{
   // std::cout << "I/O" << std::endl;
   // std::cout << "  ascii" << std::endl;
-  
+
   std::stringstream ss1;
   ss1 << pt1;
 
   T pt1r;
   ss1 >> pt1r;
- 
+
   assert(CGAL::is_ascii(ss1));
-  if (!ex) { assert(pt1 == pt1r); }
+  if (!ex)
+    {
+      assert(pt1 == pt1r);
+    }
 
   // std::cout << "  binary" << std::endl;
   pt1r.clear();
   // There are problems with the IO of exact number types in binary mode.
-  if (!ex) {
-    std::stringstream ss1b;
-    CGAL::set_binary_mode(ss1b);
-    ss1b << pt1;
-    
-    ss1b >> pt1r;
-    assert(CGAL::is_binary(ss1b));
+  if (!ex)
+    {
+      std::stringstream ss1b;
+      CGAL::set_binary_mode(ss1b);
+      ss1b << pt1;
 
-    assert(pt1 == pt1r);
-  }
+      ss1b >> pt1r;
+      assert(CGAL::is_binary(ss1b));
+
+      assert(pt1 == pt1r);
+    }
 
   // std::cout << "  pretty" << std::endl;
-  
+
   pt1r.clear();
   std::stringstream ss1p;
   CGAL::set_pretty_mode(ss1p);
@@ -465,7 +507,8 @@ void test_io(T &pt1, bool ex) {
 }
 
 template <class T>
-void test_io(bool exact) {
+void test_io(bool exact)
+{
   typedef typename T::Point             Point;
 
   T t;
@@ -480,14 +523,15 @@ void test_io(bool exact) {
 
   // One cover for the Delaunay triangulation
   t.clear();
-  for (int x=0; x<5; ++x)
-    for (int y=0; y<5; ++y)
-      t.insert(Point(x/5.0, y/5.0));
+  for (int x = 0; x < 5; ++x)
+    for (int y = 0; y < 5; ++y)
+      t.insert(Point(x / 5.0, y / 5.0));
   test_io(t, exact);
 }
 
 template <class T>
-void test(bool exact) {
+void test(bool exact)
+{
   test_constructor<T>();
   test_global_access<T>();
   test_geometric_access<T>();
@@ -503,7 +547,8 @@ void test(bool exact) {
 
 
 template <class T>
-void test_batch_insertion() {
+void test_batch_insertion()
+{
   typedef typename T::Vertex_handle     Vertex_handle;
   typedef typename T::Point             Point;
 
@@ -530,7 +575,8 @@ void test_batch_insertion() {
 }
 
 template <class T>
-void test_nearest() {
+void test_nearest()
+{
   typedef typename T::Vertex_handle     Vertex_handle;
   typedef typename T::Point             Point;
 
@@ -555,13 +601,14 @@ void test_nearest() {
 }
 
 template <class T>
-void test_locally_delaunay() {
+void test_locally_delaunay()
+{
   typedef typename T::Geom_traits       Gt;
   typedef typename Gt::Vector_2         Vector;
   typedef typename T::Point             Point;
   typedef typename T::Face_iterator     Face_iterator;
 
-  typedef CGAL::Creator_uniform_2<typename Gt::FT,Point>    Creator;
+  typedef CGAL::Creator_uniform_2<typename Gt::FT, Point>    Creator;
   typedef CGAL::Random_points_in_square_2<Point, Creator>   Random_points_in_square;
 
   T t;
@@ -573,26 +620,31 @@ void test_locally_delaunay() {
   for (int i = 0; i < 10; ++i)
     t.insert(*(++g) + midpoint);
 
-  for (Face_iterator fit = t.faces_begin(); fit != t.faces_end(); ++fit) {
-    for (int i=0; i<3; ++i) {
-      CGAL_assertion(t.locally_Delaunay(fit, i, fit->neighbor(i)));
+  for (Face_iterator fit = t.faces_begin(); fit != t.faces_end(); ++fit)
+    {
+      for (int i = 0; i < 3; ++i)
+        {
+          CGAL_assertion(t.locally_Delaunay(fit, i, fit->neighbor(i)));
+        }
     }
-  }
 
   while (!t.is_1_cover())
     t.insert(*(++g) + midpoint);
 
-  for (Face_iterator fit = t.faces_begin(); fit != t.faces_end(); ++fit) {
-    for (int i=0; i<3; ++i) {
-      CGAL_assertion(t.locally_Delaunay(fit, i, fit->neighbor(i)));
+  for (Face_iterator fit = t.faces_begin(); fit != t.faces_end(); ++fit)
+    {
+      for (int i = 0; i < 3; ++i)
+        {
+          CGAL_assertion(t.locally_Delaunay(fit, i, fit->neighbor(i)));
+        }
     }
-  }
 
-  
+
 }
 
 template <class T>
-void test_delaunay() {
+void test_delaunay()
+{
   test_batch_insertion<T>();
   test_nearest<T>();
   test_locally_delaunay<T>();

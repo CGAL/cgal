@@ -23,52 +23,60 @@ typedef CGAL::Periodic_2_Delaunay_triangulation_2<Gt>       P2DT2;
 typedef CGAL::Delaunay_triangulation_2<Gt>                  DT2;
 
 template <class Dt>
-class DT2_inserter {
+class DT2_inserter
+{
   Dt t;
 public:
   template <class Iterator>
-  void insert(Iterator begin, Iterator end) {
+  void insert(Iterator begin, Iterator end)
+  {
     t.insert(begin, end);
   }
 };
 
 
 template <class PT, bool large>
-class P2DT2_inserter {
+class P2DT2_inserter
+{
   PT t;
 public:
   template <class Iterator>
-  void insert(Iterator begin, Iterator end) {
+  void insert(Iterator begin, Iterator end)
+  {
     t.insert(begin, end, large);
   }
 };
 
 template <class Inserter>
-void test_performance(const std::string &name, int maximum = 1e5) {
+void test_performance(const std::string &name, int maximum = 1e5)
+{
   // Create point sets
-  typedef CGAL::Creator_uniform_2<double,Point>  Creator;
+  typedef CGAL::Creator_uniform_2<double, Point>  Creator;
   CGAL::Random rnd(7);
   CGAL::Random_points_in_square_2<Point, Creator> in_square(0.5, rnd);
 
 
-  for (int n = 0; n<=maximum; n+=5000) {
-    CGAL::Timer timer;
+  for (int n = 0; n <= maximum; n += 5000)
+    {
+      CGAL::Timer timer;
 
-    std::vector<Point> pts;
-    for (int i=0 ; i<n ; i++) {
-      pts.push_back(*in_square++ + Vector(0.5, 0.5));
+      std::vector<Point> pts;
+      for (int i = 0 ; i < n ; i++)
+        {
+          pts.push_back(*in_square++ + Vector(0.5, 0.5));
+        }
+
+      Inserter inserter;
+
+      timer.start();
+      inserter.insert(pts.begin(), pts.end());
+      timer.stop();
+      std::cout << name << "; " << pts.size() << "; " << timer.time() << std::endl;
     }
-    
-    Inserter inserter;
-    
-    timer.start();
-    inserter.insert(pts.begin(), pts.end());
-    timer.stop();
-    std::cout << name << "; " << pts.size() << "; " << timer.time() << std::endl;
-  }
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   int maximum = 1e5;
   if (argc > 1) maximum = atoi(argv[1]);
   test_performance<DT2_inserter<DT2> >("Euclidean Delaunay", maximum);
@@ -101,7 +109,7 @@ int main(int argc, char *argv[]) {
           if (!(elem[0] in processed_data)) processed_data[elem[0]] = []
           return processed_data[elem[0]].push([ elem[1], elem[2] ]);
         });
-      
+
         var processed_data2 = {};
         for (var key in processed_data) {
           var data0 = processed_data["Euclidean Delaunay"];

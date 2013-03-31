@@ -6,7 +6,8 @@
 #define N_PTS 10000
 #endif
 
-int main() {
+int main()
+{
   Triangulation t;
 
   Random random(1284141159);
@@ -16,14 +17,16 @@ int main() {
   Random_points_on_circle g(0.495, random);
   Vector midpoint(0.5, 0.5);
 
-  for (int i = 0; i < N_PTS; ++i) {
-    t.insert(*(++g) + midpoint);
-  }
-      
-  if (!t.is_valid(true)) {
-    std::cout << "l:" << __LINE__ << std::endl;
-    std::exit(1);
-  }
+  for (int i = 0; i < N_PTS; ++i)
+    {
+      t.insert(*(++g) + midpoint);
+    }
+
+  if (!t.is_valid(true))
+    {
+      std::cout << "l:" << __LINE__ << std::endl;
+      std::exit(1);
+    }
 
   return 0;
 }

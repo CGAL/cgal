@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
@@ -34,13 +34,15 @@
 
 #include <CGAL/Periodic_2_offset_2.h>
 
-namespace CGAL { 
+namespace CGAL
+{
 
 template < class K, class Predicate_ >
-class Traits_with_offsets_2_adaptor {
+class Traits_with_offsets_2_adaptor
+{
   typedef K Kernel;
   typedef Predicate_ Predicate;
-  
+
   typedef typename Kernel::Point_2       Point;
   typedef typename Kernel::Offset_2      Offset;
 
@@ -48,45 +50,52 @@ class Traits_with_offsets_2_adaptor {
   typedef typename Kernel::Construct_point_2 Construct_point_2;
 public:
   typedef typename Kernel::Iso_rectangle_2  Iso_rectangle_2;
-  
+
 public:
   typedef typename Predicate::result_type result_type;
-  
+
   Traits_with_offsets_2_adaptor(const Iso_rectangle_2 * dom) : _domain(dom) { }
-  
+
   result_type operator()(const Point& p0, const Point& p1,
-                         const Offset& o0, const Offset& o1) const {
-    return Predicate()(pp(p0,o0),pp(p1,o1));
+                         const Offset& o0, const Offset& o1) const
+  {
+    return Predicate()(pp(p0, o0), pp(p1, o1));
   }
   result_type operator()(const Point& p0, const Point& p1, const Point& p2,
-                         const Offset& o0, const Offset& o1, const Offset& o2) const {
-    return Predicate()(pp(p0,o0),pp(p1,o1),pp(p2,o2));
+                         const Offset& o0, const Offset& o1, const Offset& o2) const
+  {
+    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2));
   }
   result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2, const Point& p3,
-      const Offset& o0, const Offset& o1,
-      const Offset& o2, const Offset& o3) const {
-    return Predicate()(pp(p0,o0),pp(p1,o1),pp(p2,o2),pp(p3,o3));
+                         const Point& p2, const Point& p3,
+                         const Offset& o0, const Offset& o1,
+                         const Offset& o2, const Offset& o3) const
+  {
+    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3));
   }
 
-  result_type operator()(const Point& p0, const Point& p1) const {
+  result_type operator()(const Point& p0, const Point& p1) const
+  {
     return Predicate()(p0, p1);
   }
   result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2) const {
+                         const Point& p2) const
+  {
     return Predicate()(p0, p1, p2);
   }
   result_type operator()(const Point& p0, const Point& p1,
-      const Point& p2, const Point& p3) const {
+                         const Point& p2, const Point& p3) const
+  {
     return Predicate()(p0, p1, p2, p3);
   }
-  
+
 private:
-  Point pp(const Point &p, const Offset &o) const {
-    return Point(p.x()+(_domain->xmax()-_domain->xmin())*o.x(),
-                 p.y()+(_domain->ymax()-_domain->ymin())*o.y());
+  Point pp(const Point &p, const Offset &o) const
+  {
+    return Point(p.x() + (_domain->xmax() - _domain->xmin()) * o.x(),
+                 p.y() + (_domain->ymax() - _domain->ymin()) * o.y());
   }
- public:
+public:
   const Iso_rectangle_2* _domain;
 };
 
@@ -104,9 +113,10 @@ public:
 
   Periodic_2_construct_point_2(const Iso_rectangle_2 & dom) : _dom(dom) { }
 
-  Point operator() ( const Point& p, const Offset& o ) const {
-    return Point(p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
-	p.y()+(_dom.ymax()-_dom.ymin())*o.y());
+  Point operator() ( const Point& p, const Offset& o ) const
+  {
+    return Point(p.x() + (_dom.xmax() - _dom.xmin()) * o.x(),
+                 p.y() + (_dom.ymax() - _dom.ymin()) * o.y());
   }
 
 private:
@@ -115,12 +125,13 @@ private:
 
 
 template < class Kernel, class Off = typename CGAL::Periodic_2_offset_2 >
-class Periodic_2_triangulation_traits_base_2 : public Kernel {
+class Periodic_2_triangulation_traits_base_2 : public Kernel
+{
 public: // Undocumented
   typedef Kernel                                                   K;
   typedef Kernel                                                   Kernel_base;
   typedef Off                                                      Offset_2;
-  typedef Periodic_2_triangulation_traits_base_2<Kernel, Off>      Self;  
+  typedef Periodic_2_triangulation_traits_base_2<Kernel, Off>      Self;
 
   typedef typename K::FT                   FT;
   typedef typename K::RT                   RT;
@@ -154,20 +165,25 @@ public:
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Construct_triangle_2>       Construct_triangle_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Construct_direction_2>      Construct_direction_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Construct_ray_2>            Construct_ray_2;
-  
-  Periodic_2_triangulation_traits_base_2() : _domain(Iso_rectangle_2(0,0,1,1)) {
+
+  Periodic_2_triangulation_traits_base_2() : _domain(Iso_rectangle_2(0, 0, 1, 1))
+  {
   }
   Periodic_2_triangulation_traits_base_2(const Periodic_2_triangulation_traits_base_2 &) {}
   Periodic_2_triangulation_traits_base_2 &operator=
   (const Periodic_2_triangulation_traits_base_2 &)
-  {return *this;}
-  
+  {
+    return *this;
+  }
+
   // Access
-  void set_domain(const Iso_rectangle_2& domain) {
+  void set_domain(const Iso_rectangle_2& domain)
+  {
     _domain = domain;
   }
-  
-  Iso_rectangle_2 get_domain() const {
+
+  Iso_rectangle_2 get_domain() const
+  {
     return _domain;
   }
 
@@ -175,40 +191,61 @@ public:
 
   Compare_x_2
   compare_x_2_object() const
-  { return Compare_x_2(&_domain);}
-  
+  {
+    return Compare_x_2(&_domain);
+  }
+
   Compare_y_2
   compare_y_2_object() const
-  { return Compare_y_2(&_domain);}
-  
+  {
+    return Compare_y_2(&_domain);
+  }
+
   Compare_xy_2
   compare_xy_2_object() const
-  { return Compare_xy_2(&_domain);}
-  
+  {
+    return Compare_xy_2(&_domain);
+  }
+
   Orientation_2
-  orientation_2_object() const { return Orientation_2(&_domain); }
-  
+  orientation_2_object() const
+  {
+    return Orientation_2(&_domain);
+  }
+
   Side_of_oriented_circle_2
   side_of_oriented_circle_2_object() const
-  {return Side_of_oriented_circle_2(&_domain);}
-  
+  {
+    return Side_of_oriented_circle_2(&_domain);
+  }
+
   Construct_circumcenter_2
   construct_circumcenter_2_object() const
-  { return Construct_circumcenter_2(&_domain);}
-  
+  {
+    return Construct_circumcenter_2(&_domain);
+  }
+
   Compare_distance_2
   compare_distance_2_object() const
-  {return Compare_distance_2(&_domain);}
-  
+  {
+    return Compare_distance_2(&_domain);
+  }
+
   Construct_point_2  construct_point_2_object() const
-  {return Construct_point_2(_domain);}
+  {
+    return Construct_point_2(_domain);
+  }
 
   Construct_segment_2  construct_segment_2_object() const
-  {return Construct_segment_2(&_domain);}
+  {
+    return Construct_segment_2(&_domain);
+  }
 
   Construct_triangle_2  construct_triangle_2_object() const
-  {return Construct_triangle_2(&_domain);}
-  
+  {
+    return Construct_triangle_2(&_domain);
+  }
+
 protected:
   Iso_rectangle_2 _domain;
 };
@@ -218,7 +255,7 @@ protected:
 template < typename K, typename Off = CGAL::Periodic_2_offset_2, bool Has_filtered_predicates = K::Has_filtered_predicates  >
 class Periodic_2_triangulation_traits_2;
 
-} //namespace CGAL 
+} //namespace CGAL
 
 
 // Partial specialization for Filtered_kernel<CK>.
@@ -227,7 +264,8 @@ class Periodic_2_triangulation_traits_2;
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Periodic_2_triangulation_filtered_traits_2.h>
 
-namespace CGAL {
+namespace CGAL
+{
 
 // This declaration is needed to break the cyclic dependency.
 template < typename K, typename Off >
