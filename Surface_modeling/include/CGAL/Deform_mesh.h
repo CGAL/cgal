@@ -144,28 +144,28 @@ public:
   Polyhedron& polyhedron;															/**< Source triangulated surface mesh for modeling */
 
 private:
-  std::vector<Point> original;                        // original positions of roi (size: ros + boundary_of_ros)
-  std::vector<Point> solution;                        // storing position of ros vertices during iterations (size: ros + boundary_of_ros)
+  std::vector<Point> original;                        ///< original positions of roi (size: ros + boundary_of_ros)
+  std::vector<Point> solution;                        ///< storing position of ros vertices during iterations (size: ros + boundary_of_ros)
 
-  Vertex_index_map vertex_index_map;                    // storing indices of all vertices
-  Edge_index_map   edge_index_map;                      // storing indices of all edges
+  Vertex_index_map vertex_index_map;                  ///< storing indices of all vertices
+  Edge_index_map   edge_index_map;                    ///< storing indices of all edges
 
-  std::vector<vertex_descriptor> roi;                 // region of interest
-  std::vector<vertex_descriptor> ros;                 // region of solution, including roi and hard constraints on boundary of roi
+  std::vector<vertex_descriptor> roi;                 ///< region of interest
+  std::vector<vertex_descriptor> ros;                 ///< region of solution, including roi and hard constraints on boundary of roi
 
-  std::vector<std::size_t> ros_id_map;                // (size: num vertices)
-  std::vector<bool>        is_roi_map;                // (size: num vertices)
-  std::vector<bool>        is_hdl_map;                // (size: num vertices)
+  std::vector<std::size_t> ros_id_map;                ///< (size: num vertices)
+  std::vector<bool>        is_roi_map;                ///< (size: num vertices)
+  std::vector<bool>        is_hdl_map;                ///< (size: num vertices)
 
-  std::vector<double> edge_weight;                    // all edge weights 
-  std::vector<Eigen::Matrix3d> rot_mtr;               // rotation matrices of ros vertices (size: ros)
+  std::vector<double> edge_weight;                    ///< all edge weights 
+  std::vector<Eigen::Matrix3d> rot_mtr;               ///< rotation matrices of ros vertices (size: ros)
 
-  Sparse_linear_solver_with_prefactor m_solver;       // linear sparse solver
-  unsigned int iterations;                            // number of maximal iterations
-  double tolerance;                                   // tolerance of convergence 
+  Sparse_linear_solver_with_prefactor m_solver;       ///< linear sparse solver
+  unsigned int iterations;                            ///< number of maximal iterations
+  double tolerance;                                   ///< tolerance of convergence 
 
-  bool need_preprocess;                               // is there any need to call preprocess() function
-  Handle_group_container handle_group_list;           // user specified handles
+  bool need_preprocess;                               ///< is there any need to call preprocess() function
+  Handle_group_container handle_group_list;           ///< user specified handles
 
 private:
   Deform_mesh(const Self& s) { } 
