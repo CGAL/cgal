@@ -114,17 +114,15 @@ public:
   /// \name Constructors
   // \{
   /// Constructor
-  /// NGHK: implemented
   Periodic_2_Delaunay_triangulation_2(const Iso_rectangle & domain = Iso_rectangle(0,0,1,1),
                                      const Gt& gt = Gt())
     : Periodic_2_triangulation_2<Gt,Tds>(domain, gt) {}
 
   /// Copy constructor
-  /// \n NGHK: implemented
   Periodic_2_Delaunay_triangulation_2(
 	       const Periodic_2_Delaunay_triangulation_2<Gt,Tds> &tr)
     : Periodic_2_triangulation_2<Gt,Tds>(tr) {
-    CGAL_triangulation_postcondition( is_valid() );
+    CGAL_triangulation_postcondition( is_valid(true) );
   }
 
   /// Constructor with insertion of points
@@ -140,20 +138,16 @@ public:
 
   /// \name Insertion-Removal
   // \{
-  /// NGHK: implemented
   Vertex_handle insert(const Point  &p, 
 		       Face_handle start = Face_handle() );
-  /// NGHK: implemented
   Vertex_handle insert(const Point& p,
 		       Locate_type lt,
 		       Face_handle loc, int li );
 
 
   /// Inserts a point in the triangulation.
-  /// NGHK: Implemented
   Vertex_handle push_back(const Point &p);
 
-  /// NGHK: implemented
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t
@@ -362,20 +356,16 @@ public:
   /// \name Displacement
   // \{
   
-  /// NGHK: Not yet implemented
   Vertex_handle move_if_no_collision(Vertex_handle v, const Point &p);
-  /// NGHK: Not yet implemented
   Vertex_handle move_point(Vertex_handle v, const Point &p);
   // \}
 
   /// \name Check - Query
   // \{
   /// Returns the vertex closest to p, the point location will start from f
-  /// NGHK: Not yet implemented
   Vertex_handle
   nearest_vertex(const Point& p, Face_handle f= Face_handle()) const;
 
-  /// NGHK: Not yet implemented
   template <class OutputItFaces, class OutputItBoundaryEdges>
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   get_conflicts_and_boundary(const Point  &p,
@@ -404,7 +394,6 @@ public:
     return std::make_pair(fit,eit);
   }
 
-  /// NGHK: Not yet implemented
   template <class OutputItFaces>
   OutputItFaces
   get_conflicts (const Point  &p,
@@ -415,7 +404,6 @@ public:
     return pp.first;
   }
 
-  /// NGHK: Not yet implemented
   template <class OutputItBoundaryEdges>
   OutputItBoundaryEdges
   get_boundary_of_conflicts(const Point  &p,
@@ -451,10 +439,8 @@ public:
 
   /// \name Checking
   // \{
-  /// NGHK: Not yet implemented
   bool is_valid(bool verbose = false, int level = 0) const;
 
-  /// NGHK: Not yet implemented
   bool is_valid(Face_handle f, bool verbose = false, int level = 0) const;
 
   /// Checks whether f->vertex(i) lies outside the circumcircle of the face nb
@@ -463,7 +449,6 @@ public:
 
 private:
   /// Not in the documentation
-  /// NGHK: Not yet implemented
   inline void restore_Delaunay(Vertex_handle v);
 
 #ifndef CGAL_DT2_USE_RECURSIVE_PROPAGATING_FLIP
@@ -473,13 +458,11 @@ private:
   void propagating_flip(const Face_handle& f,int i);
 #endif
 
-  /// NGHK: Not yet implemented
   void remove_2D(Vertex_handle v );
 
   // auxilliary functions for remove
   // returns false if we first need to convert to a 9-cover before the vertex can be removed
   bool remove_single_vertex(Vertex_handle v, const Offset &v_o);
-  /// NGHK: implemented
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w,
                                  std::vector<int> &i,int d);
@@ -492,35 +475,30 @@ private:
   void remove_degree_d(Vertex_handle v, std::vector<Face_handle> &f,
                        std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
                        std::vector<int> &i,int d);
-  /// NGHK: Implemented
   /// Assumes that all offsets are (0,0)
   void fill_hole_delaunay(std::list<Edge> & hole);
   /// Fill hole over a periodic boundary
   void fill_hole_delaunay(std::list<Edge> & hole,
                           std::map<Vertex_handle, Offset> &vertex_offsets);
 
-  /// NGHK: implemented
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w,
                       std::vector<int> &i);
   void remove_degree3(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
   void remove_degree4(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w,
                       std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w,
                       std::vector<int> &i);
   void remove_degree5(Vertex_handle v, std::vector<Face_handle> &f,
                       std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree5_star   (Vertex_handle &v,
                               Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,Face_handle & ,
                               Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,
@@ -530,14 +508,12 @@ private:
                               Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,Vertex_handle&,
                               Offset&,Offset&,Offset&,Offset&,Offset&,
                               int           ,int           ,int           ,int           ,int );
-  /// NGHK: implemented
   void remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w,
                       std::vector<int> &i);
   void remove_degree6(Vertex_handle v, std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree6_star   (Vertex_handle &v,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
@@ -554,7 +530,6 @@ private:
 			      Offset&,Offset&,Offset&,
 			      int           ,int           ,int           ,
 			      int           ,int           ,int );
-  /// NGHK: implemented
   void remove_degree6_N      (Vertex_handle &v,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
@@ -571,7 +546,6 @@ private:
 			      Offset&,Offset&,Offset&,
 			      int           ,int           ,int           ,
 			      int           ,int           ,int  );
-  /// NGHK: implemented
   void remove_degree6_antiN  (Vertex_handle &v,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
@@ -579,7 +553,6 @@ private:
 			      Vertex_handle&,Vertex_handle&,Vertex_handle&,
 			      int           ,int           ,int           ,
 			      int           ,int           ,int  );
-  /// NGHK: implemented
   void remove_degree6_antiN  (Vertex_handle &v,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
@@ -589,7 +562,6 @@ private:
 			      Offset&,Offset&,Offset&,
 			      int           ,int           ,int           ,
 			      int           ,int           ,int  );
-  /// NGHK: implemented
   void remove_degree6_diamond(Vertex_handle &v,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
 			      Face_handle & ,Face_handle & ,Face_handle & ,
@@ -606,7 +578,6 @@ private:
 			      Offset&,Offset&,Offset&,
 			      int           ,int           ,int           ,
 			      int           ,int           ,int  );
-  /// NGHK: implemented
   void remove_degree7(Vertex_handle v,std::vector<Face_handle> &f,
 		      std::vector<Vertex_handle> &w,
                       std::vector<int> &i);
@@ -614,42 +585,34 @@ private:
 		      std::vector<Vertex_handle> &w, std::vector<Offset> &o,
                       std::vector<int> &i);
 
-  /// NGHK: implemented
   void rotate7(int j, std::vector<Vertex_handle> &w,
 	       std::vector<Face_handle> &f,
                std::vector<int> &i);
   void rotate7(int j, std::vector<Vertex_handle> &w,
 	       std::vector<Face_handle> &f, std::vector<Offset> &o,
                std::vector<int> &i);
-  /// NGHK: implemented
   /// Returns whether the simplicity criterion is satisfied
   void get_offset_degree7(std::vector<Offset> &in_o, int out_o[]);
-  /// NGHK: implemented
   void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<int> &i);
   void remove_degree7_star      (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree7_zigzag    (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<int> &i);
   void remove_degree7_zigzag    (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree7_leftdelta (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<int> &i);
   void remove_degree7_leftdelta (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree7_rightdelta(Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<int> &i);
   void remove_degree7_rightdelta(Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree7_leftfan   (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<int> &i);
   void remove_degree7_leftfan   (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<Offset> &o, std::vector<int> &i);
-  /// NGHK: implemented
   void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
                                  std::vector<Vertex_handle> &w, std::vector<int> &i);
   void remove_degree7_rightfan  (Vertex_handle&,int,std::vector<Face_handle> &f,
@@ -674,16 +637,13 @@ private:
 
 
 
-  /// NGHK: Not yet implemented
   Vertex_handle nearest_vertex_2D(const Point& p, Face_handle f) const;
 
-  /// NGHK: Not yet implemented
   void  look_nearest_neighbor(const Point& p,
 			      Face_handle f,
 			      int i,
 			      Vertex_handle& nn) const;
 
-  /// NGHK: Not yet implemented
   template <class OutputItFaces, class OutputItBoundaryEdges>
   std::pair<OutputItFaces,OutputItBoundaryEdges>
   propagate_conflicts (const Point  &p,

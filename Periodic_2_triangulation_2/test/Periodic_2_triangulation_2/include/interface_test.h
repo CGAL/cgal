@@ -31,14 +31,10 @@ void test_constructor() {
   CGAL_assertion(t != t6);
   CGAL_assertion(t != t7);
 
-  std::vector<Point> pts;
-  pts.push_back(Point(0.5, 0.5));
-  pts.push_back(Point(0.25, 0.5));
-  pts.push_back(Point(0.5, 0.25));
-  pts.push_back(Point(0.25, 0.25));
-  T t8(pts.begin(), pts.end());
-
-  t7.swap(t8);
+  t.swap(t7);
+  CGAL_assertion(t7.empty());
+  CGAL_assertion(!t.empty());
+  CGAL_assertion(t != t7);
 }
 
 template <class T>
@@ -358,14 +354,6 @@ void test_modifiers() {
   t.push_back(p0);
 
   t.clear();
-  std::vector<Point> pts;
-  pts.push_back(p0);
-  pts.push_back(p1);
-  pts.push_back(p0);
-  pts.push_back(p2);
-  t.insert(pts.begin(), pts.end());
-
-  t.clear();
   vh0 = t.insert(p0);
   t.remove_first(vh0);
 
@@ -387,8 +375,6 @@ void test_modifiers() {
   CGAL_assertion(lt == T::EDGE);
   t.insert_in_edge(p2, fh, li);
 
-  t.clear();
-  t.insert(pts.begin(), pts.end());
   for (typename T::Vertex_iterator vit = t_const.vertices_begin();
        vit != t_const.vertices_end(); ++vit) {
     if (t_const.degree(vit) == 3) {
@@ -515,6 +501,34 @@ void test(bool exact) {
 }
 
 
+
+template <class T>
+void test_batch_insertion() {
+  typedef typename T::Vertex_handle     Vertex_handle;
+  typedef typename T::Point             Point;
+
+  Point p0(0.5, 0.5);
+  Point p1(0.8, 0.6);
+  Point p2(0.7, 0.7);
+
+  std::vector<Point> pts;
+  pts.push_back(p0);
+  pts.push_back(p1);
+  pts.push_back(p0);
+  pts.push_back(p2);
+
+  T t(pts.begin(), pts.end());
+
+
+  t.insert(pts.begin(), pts.end());
+
+  t.clear();
+  t.insert(pts.begin(), pts.end(), true);
+
+  t.clear();
+  t.insert(pts.begin(), pts.end(), false);
+}
+
 template <class T>
 void test_nearest() {
   typedef typename T::Vertex_handle     Vertex_handle;
@@ -579,6 +593,7 @@ void test_locally_delaunay() {
 
 template <class T>
 void test_delaunay() {
+  test_batch_insertion<T>();
   test_nearest<T>();
   test_locally_delaunay<T>();
 }

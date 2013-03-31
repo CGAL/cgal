@@ -116,7 +116,6 @@ public:
   /// Iterator over the vertices whose corresponding points lie in the
   /// original domain, i.e. for each set of periodic copies the
   /// Unique_vertex_iterator iterates over exactly one representative.
-  /// \n NGHK: Not implemented
   typedef Periodic_2_triangulation_unique_vertex_iterator_2<Self>
       Unique_vertex_iterator;
 
@@ -138,15 +137,12 @@ public:
   /// \name Periodic iterator types
   //\{
   /// Iterator over all periodic triangles
-  /// \n NGHK: implemented
   typedef Periodic_2_triangulation_triangle_iterator_2<Self>
       Periodic_triangle_iterator;
   /// Iterator over all periodic segments
-  /// \n NGHK: implemented
   typedef Periodic_2_triangulation_segment_iterator_2<Self>
       Periodic_segment_iterator;
   /// Iterator over all periodic points
-  /// \n NGHK: implemented
   typedef Periodic_2_triangulation_point_iterator_2<Self>
       Periodic_point_iterator;
   //\}
@@ -179,19 +175,15 @@ public:
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
   /// Functor that returns the point given a vertex
-  /// \n NGHK: implemented
   typedef Project_point<Vertex> Proj_point;
 
   /// \name STL types
   // \{
   /// value_type similar to stl containers
-  /// \n NGHK: implemented
   typedef Point value_type; // to have a back_inserter
   /// const_reference similar to stl containers
-  /// \n NGHK: implemented
   typedef const value_type& const_reference;
   /// reference similar to stl containers
-  /// \n NGHK: implemented
   typedef value_type& reference;
   // \}
 
@@ -256,24 +248,16 @@ public:
 		  const Iso_rectangle &domain = Iso_rectangle(0,0,1,1),
 		  const Geom_traits &geom_traits = Geom_traits());
 
-  template < class InputIterator >
-  Periodic_2_triangulation_2(InputIterator first, InputIterator last,
-                             const Iso_rectangle & domain = Iso_rectangle(0,0,1,1),
-                             const Gt& gt = Gt());
-
   /// Copy constructor
   Periodic_2_triangulation_2(const Periodic_2_triangulation_2<Gt, Tds> &tr);
   /// Assignment
   Periodic_2_triangulation_2 &operator=(const Periodic_2_triangulation_2 &tr);
 
   /// Copy the triangulation
-  /// \n NGHK: not implemented
   void copy_triangulation(const Periodic_2_triangulation_2 &tr);
   /// Swap two triangulations
-  /// \n NGHK: not implemented
   void swap(Periodic_2_triangulation_2 &tr);
   /// Clear the triangulation
-  /// \n NGHK: not implemented
   void clear();
 
   /// Serialize the triangulation to an output stream
@@ -288,33 +272,27 @@ public:
   //\{
 
   /// Returns the geometric traits used for the predicates and constructions.
-  /// NGHK: Implemented
   const Geom_traits& geom_traits() const {
     return _gt;
   }
   /// Returns the datastructure storing the triangulation.
-  /// NGHK: Implemented
   const Triangulation_data_structure & tds() const {
     return _tds;
   }
   /// Returns the datastructure storing the triangulation.
-  /// NGHK: Implemented
   Triangulation_data_structure & tds() {
     return _tds;
   }
   /// Returns the domain of the 1-sheeted cover.
-  /// NGHK: Implemented
   const Iso_rectangle & domain() const {
     return _domain;
   }
   /// Returns the number of copies of the 1-sheeted cover stored in each of 
   /// the principal directions.
-  /// NGHK: Implemented
   Covering_sheets number_of_sheets() const {
     return _cover;
   }
   /// Returns the dimension of the triangulation.
-  /// NGHK: Implemented
   int dimension() const {
     return _tds.dimension() == 2 ? 2 : 0;
   }
@@ -324,14 +302,12 @@ public:
   /// \name Number of simplices
   //\{
   /// Returns whether the triangulation is empty.
-  /// NGHK: implemented
   bool empty() const {
     return _tds.dimension() < 2;
   }
 
   /// Returns the number of vertices. Counts all vertices that are
   /// representatives of the same point in the 1-cover as one vertex.
-  /// NGHK: implemented
   size_type number_of_vertices() const {
     if (is_1_cover())
       return _tds.number_of_vertices();
@@ -341,7 +317,6 @@ public:
 
   /// Returns the number of edges. Counts all edges that are
   /// representatives of the same segment in the 1-cover as one edge.
-  /// NGHK: implemented
   size_type number_of_edges() const {
     if (is_1_cover())
       return _tds.number_of_edges();
@@ -350,7 +325,6 @@ public:
   }
   /// Returns the number of faces. Counts all faces that are
   /// representatives of the same triangle in the 1-cover as one face.
-  /// NGHK: implemented
   size_type number_of_faces() const {
     if (is_1_cover())
       return _tds.number_of_faces();
@@ -358,17 +332,14 @@ public:
       return _tds.number_of_faces() / 9;
   }
   /// Returns the number of vertices stored in the datastructure.
-  /// NGHK: implemented
   size_type number_of_stored_vertices() const {
     return _tds.number_of_vertices();
   }
   /// Returns the number of edges stored in the datastructure.
-  /// NGHK: implemented
   size_type number_of_stored_edges() const {
     return _tds.number_of_edges();
   }
   /// Returns the number of faces stored in the datastructure.
-  /// NGHK: implemented
   size_type number_of_stored_faces() const {
     return _tds.number_of_faces();
   }
@@ -390,12 +361,10 @@ public:
   bool is_triangulation_in_1_sheet() const;
 
   /// Convert a 9 sheeted cover (used for sparse triangulations) to a single sheeted cover.
-  /// NGHK: Implemented
   /// \pre !is_1_cover();
   void convert_to_1_sheeted_covering();
   /// Convert a single sheeted cover (used for dense triangulations) to a 9 sheeted cover.
   /// \pre is_1_cover();
-  /// NGHK: Implemented
   void convert_to_9_sheeted_covering();
   // \}
 
@@ -406,7 +375,6 @@ public:
   /// represented in the 1-sheeted covering space, the offset is
   /// always zero. Otherwise v can correspond to a periodic copy
   /// outside domain of an input point.
-  /// \n NGHK: Not implemented
   Periodic_point periodic_point(const Vertex_handle &v) const {
     return Periodic_point(v->point(), get_offset(v));
   }
@@ -418,7 +386,6 @@ public:
   /// covering space, this offset is possibly added to another offset
   /// determining the periodic copy. 
   /// \pre i == {0,1,2}
-  /// \n NGHK: Not implemented
   Periodic_point periodic_point(const Face_handle &f, int i) const {
     return Periodic_point(f->vertex(i)->point(), get_offset(f, i));
   }
@@ -426,7 +393,6 @@ public:
   /// Returns the periodic segment formed by the two point-offset
   /// pairs corresponding to the two vertices of edge (f,i).
   /// \pre i == {0,1,2}
-  /// \n NGHK: Not implemented
   Periodic_segment periodic_segment(const Face_handle &f, int i) const {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= 2);
@@ -435,7 +401,6 @@ public:
   }
 
   /// Same as the previous method for edge e.
-  /// \n NGHK: Not implemented
   Periodic_segment periodic_segment(const Edge &e) const {
     return periodic_segment(e.first, e.second);
   }
@@ -450,7 +415,6 @@ public:
 
   /// Converts the Periodic_point pp (point-offset pair) to the corresponding 
   /// Point in \f$R^2\f$.
-  /// NGHK: Implemented
   Point point(const Periodic_point & pp) const {
     return construct_point(pp.first, pp.second);
   }
@@ -461,13 +425,10 @@ public:
     return point(periodic_point(fh, i));
   }
   /// Converts the Periodic_segment ps to a Segment in \f$R^2\f$.
-  /// NGHK: Implemented
   Segment segment(const Periodic_segment &ps) const {
-    return construct_segment(ps[0].first, ps[1].first, ps[0].second,
-        ps[1].second);
+    return construct_segment(ps[0].first, ps[1].first, ps[0].second, ps[1].second);
   }
   /// Converts the Periodic_triangle pt to a Triagle in \f$R^2\f$.
-  /// NGHK: Implemented
   Triangle triangle(const Periodic_triangle &pt) const {
     Triangle triang = construct_triangle(pt[0].first, pt[1].first, pt[2].first,
         pt[0].second, pt[1].second, pt[2].second);
@@ -479,17 +440,14 @@ public:
     return segment(periodic_segment(f, i));
   }
   /// Constructs the segment associated with the edge e, respects the offset
-  /// \n NGHK: implemented
   Segment segment(const Edge& e) const {
     return segment(periodic_segment(e));
   }
   /// Constructs the segment associated with the edge ec, respects the offset
-  /// \n NGHK: implemented
   Segment segment(const Edge_circulator& ec) const {
     return segment(periodic_segment(ec->first, ec->second));
   }
   /// Constructs the segment associated with the edge ei, respects the offset
-  /// \n NGHK: implemented
   Segment segment(const Edge_iterator& ei) const {
     return segment(periodic_segment(ei->first, ei->second));
   }
@@ -515,19 +473,15 @@ public:
 
   /// \name Queries on simplices
   // \{
-  /// NGHK: Implemented
   bool is_edge(Vertex_handle va, Vertex_handle vb) const {
     return _tds.is_edge(va, vb);
   }
-  /// NGHK: Implemented
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i) const {
     return _tds.is_edge(va, vb, fr, i);
   }
-  /// NGHK: Implemented
   bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const {
     return _tds.is_face(v1, v2, v3);
   }
-  /// NGHK: Implemented
   bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
       Face_handle &fr) const {
     return _tds.is_face(v1, v2, v3, fr);
@@ -538,7 +492,6 @@ public:
   // \{
 
   /// Wrapper function for locate if only the requested point is given.
-  /// NGHK: Implemented
   Face_handle locate(const Point &p, Face_handle start = Face_handle()) const {
     Locate_type lt;
     int li;
@@ -546,7 +499,6 @@ public:
   }
 
   /// Wrapper function for locate if the offset is omitted.
-  /// NGHK: Implemented
   Face_handle locate(const Point& p, Locate_type& lt, int& li,
       Face_handle start = Face_handle()) const {
     return locate(p, Offset(), lt, li, start);
@@ -565,104 +517,84 @@ public:
   // \{
   /// Iterator over all stored vertices. Starts at an arbitrary vertex. 
   /// Returns vertices_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
   Vertex_iterator vertices_begin() const {
     return _tds.vertices_begin();
   }
   /// Past the end Vertex_iterator.
-  /// NGHK: Implemented
   Vertex_iterator vertices_end() const {
     return _tds.vertices_end();
   }
   /// Iterator over all stored edges. Starts at an arbitrary edge. 
   /// Returns edges_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
-  // NGHK: Iterates over all edges, not the ones in the unique cover
   Edge_iterator edges_begin() const {
     return _tds.edges_begin();
   }
   /// Past the end Edge_iterator.
-  /// NGHK: Implemented
-  // NGHK: Iterates over all edges, not the ones in the unique cover
   Edge_iterator edges_end() const {
     return _tds.edges_end();
   }
   /// Iterator over all stored faces. Starts at an arbitrary face. 
   /// Returns faces_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
   Face_iterator faces_begin() const {
     return _tds.faces_begin();
   }
   /// Past the end Face_iterator.
-  /// NGHK: Implemented
   Face_iterator faces_end() const {
     return _tds.faces_end();
   }
 
   /// Iterator over all stored vertices. Starts at an arbitrary vertex. 
   /// Returns vertices_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
   Vertex_iterator finite_vertices_begin() const {
     return _tds.vertices_begin();
   }
   /// Past the end Vertex_iterator.
-  /// NGHK: Implemented
   Vertex_iterator finite_vertices_end() const {
     return _tds.vertices_end();
   }
   /// Iterator over all stored edges. Starts at an arbitrary edge. 
   /// Returns edges_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
   Edge_iterator finite_edges_begin() const {
     return _tds.edges_begin();
   }
   /// Past the end Edge_iterator.
-  /// NGHK: Implemented
   Edge_iterator finite_edges_end() const {
     return _tds.edges_end();
   }
   /// Iterator over all stored faces. Starts at an arbitrary face. 
   /// Returns faces_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
   Face_iterator finite_faces_begin() const {
     return _tds.faces_begin();
   }
   /// Past the end Face_iterator.
-  /// NGHK: Implemented
   Face_iterator finite_faces_end() const {
     return _tds.faces_end();
   }
 
   /// Iterator over all stored vertices. Starts at an arbitrary vertex. 
   /// Returns vertices_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
   Vertex_iterator all_vertices_begin() const {
     return _tds.vertices_begin();
   }
   /// Past the end Vertex_iterator.
-  /// NGHK: Implemented
   Vertex_iterator all_vertices_end() const {
     return _tds.vertices_end();
   }
   /// Iterator over all stored edges. Starts at an arbitrary edge. 
   /// Returns edges_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
   Edge_iterator all_edges_begin() const {
     return _tds.edges_begin();
   }
   /// Past the end Edge_iterator.
-  /// NGHK: Implemented
   Edge_iterator all_edges_end() const {
     return _tds.edges_end();
   }
   /// Iterator over all stored faces. Starts at an arbitrary face. 
   /// Returns faces_end() if t.number_of_vertices()=0.
-  /// \n NGHK: Implemented
   Face_iterator all_faces_begin() const {
     return _tds.faces_begin();
   }
   /// Past the end Face_iterator.
-  /// NGHK: Implemented
   Face_iterator all_faces_end() const {
     return _tds.faces_end();
   }
@@ -712,21 +644,17 @@ public:
   /// \name Incident simplices
   // \{
 
-  /// NGHK: Implemented
   Face_circulator incident_faces(Vertex_handle v, Face_handle f = Face_handle()) const {
     return _tds.incident_faces(v, f);
   }
-  /// NGHK: Implemented
   Edge_circulator incident_edges(Vertex_handle v, Face_handle f = Face_handle()) const {
     return _tds.incident_edges(v, f);
   }
-  /// NGHK: Implemented, deprecated
   Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f =
       Face_handle()) const {
       bool DEPRECATED_USE_ADJACENT_VERTICES;
       return adjacent_vertices(v,f);
   }
-  /// NGHK: Implemented
   Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f =
       Face_handle()) const {
     return _tds.incident_vertices(v, f);
@@ -736,11 +664,9 @@ public:
   /// \name Traversal between adjacent faces
   // \{
 
-  /// NGHK: Implemented
   Vertex_handle mirror_vertex(Face_handle f, int i) const {
     return _tds.mirror_vertex(f, i);
   }
-  /// NGHK: Implemented
   int mirror_index(Face_handle f, int i) const {
     return _tds.mirror_index(f, i);
   }
@@ -751,41 +677,21 @@ public:
   // \{
 
   /// Flips the edge and all periodic copies
-  /// \n NGHK: implemented
   void flip(Face_handle f, int i);
 
   /// Inserts a point in the triangulation
   /// \param p the point to be inserted
   /// \param start the start face for point location
   /// \return The new vertex handle or an existing Vertex_handle if p was inserted before
-  /// \n NGHK: Implemented
   Vertex_handle insert(const Point &p, Face_handle start = Face_handle());
 
   /// Inserts a point in the triangulation
   /// \pre The point has been located in the triangulation
-  /// \n NGHK: Not implemented
   Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li);
 
   /// Insert a point in the triangulation
-  /// \n NGHK: implemented
   Vertex_handle push_back(const Point& p) {
     return insert(p);
-  }
-
-  /// Inserts a range of points in the triangulation
-  /// \n NGHK: not implemented (tested)
-  template<class InputIterator>
-  int insert(InputIterator first, InputIterator last) {
-    int n = number_of_vertices();
-
-    std::vector<Point> points(first, last);
-    spatial_sort(points.begin(), points.end(), geom_traits());
-    Face_handle f;
-    for (typename std::vector<Point>::const_iterator p = points.begin(), end =
-        points.end(); p != end; ++p)
-      f = insert(*p, f)->face();
-
-    return number_of_vertices() - n;
   }
 
   // \}
@@ -797,17 +703,14 @@ public:
   Vertex_handle insert_first(const Point& p);
   /// Inserts p in the face f and sets the offsets of the newly created faces
   /// Insert periodic copies in all periodic copies of the domain
-  /// NGHK: Implemented
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
   /// Inserts (p,o) in the edge (f,i) and sets the offsets of the newly created faces
   /// Insert periodic copies in all periodic copies of the domain
-  /// NGHK: Implemented
   Vertex_handle insert_in_edge(const Point& p, Face_handle f, int i);
 
   /// Remove a degree 3 vertex from a 2D triangulation
   void remove_degree_3(Vertex_handle v);
 
-  /// NGHK: implemented
   bool remove_degree_init(Vertex_handle v, const Offset &v_o,
                           std::vector<Face_handle> &f,
                           std::vector<Vertex_handle> &w, std::vector<Offset> &offset_w,
@@ -831,23 +734,19 @@ public:
   /// \name Point location
 
   /// Do a remembering heuristic walk to locate point (p,o)
-  /// \n NGHK: implemented
   Face_handle
   march_locate_2D(Face_handle f, const Point& p, const Offset& o,
       Locate_type& lt, int& li) const;
 
   /// Checks whether the result of two point location queries are equivalent.
-  /// NGHK: Implemented, not used
   bool
   compare_walks(const Point& p, Face_handle c1, Face_handle c2,
       Locate_type& lt1, Locate_type& lt2, int li1, int li2) const;
 
   /// Testing where the point (p,off) lies w.r.t. the face f
-  /// NGHK: Implemented
   Bounded_side side_of_face(const Point &p, const Offset &off, Face_handle f,
       Locate_type &lt, int &li) const;
   /// Testing where the point (p,off) lies w.r.t. the face f
-  /// NGHK: Implemented
   Bounded_side side_of_face(const Point &p, Face_handle f, Locate_type &lt,
       int &li) const {
     return side_of_face(p, Offset(), f, lt, li);
@@ -858,56 +757,43 @@ public:
   //\{
   /// Determines whether the point p lies on the (un-)bounded side of
   /// the triangle (p0,p1,p2)
-  ///\n NGHK: Not yet implemented
   Bounded_side
-  bounded_side(const Point &p0, const Point &p1, const Point &p2,
-      const Point &p) const;
+  bounded_side(const Point &p0, const Point &p1, const Point &p2, const Point &p) const;
 
   /// Determines whether the point (p,o) lies on the (un-)bounded side of
   /// the triangle ((p0,o0),(p1,o1),(p2,o2))
-  ///\n NGHK: Not yet implemented
   Bounded_side
-  bounded_side(const Point &p0, const Point &p1, const Point &p2,
-      const Point &p, const Offset &o0, const Offset &o1, const Offset &o2,
-      const Offset &o) const;
+  bounded_side(const Point &p0, const Point &p1, const Point &p2, const Point &p,
+               const Offset &o0, const Offset &o1, const Offset &o2, const Offset &o) const;
 
   /// Determines whether the point q lies strictly between the points p and r
   /// p,q and r are supposed to be collinear points
-  ///\n NGHK: Not yet implemented
   bool
   collinear_between(const Point& p, const Point& q, const Point& r) const;
 
   /// Determines whether the point (q,o_q) lies strictly between the points (p,o_p) and (r,o_r)
   /// (q,o_q), (p,o_p) and (r,o_r) are supposed to be collinear points
-  ///\n NGHK: Not yet implemented
   bool
   collinear_between(const Point& p, const Point& q, const Point& r,
       const Offset& o_p, const Offset& o_q, const Offset& o_r) const;
 
   /// Compares the x-coordinates of p and q
-  ///\n NGHK: Not yet implemented
   Comparison_result compare_x(const Point& p, const Point& q) const;
   /// Compares the x-coordinates of (p,o_p) and (q,o_q)
-  ///\n NGHK: Not yet implemented
   Comparison_result compare_x(const Point& p, const Point& q,
       const Offset &o_p, const Offset &o_q) const;
 
   /// Compares p and q lexicographically
-  ///\n NGHK: Not yet implemented
   Comparison_result compare_xy(const Point& p, const Point& q,
       const Offset &o_p, const Offset &o_q) const;
   /// Compares (p,o_p) and (q,o_q) lexicographically
-  ///\n NGHK: Not yet implemented
   Comparison_result compare_xy(const Point& p, const Point& q) const;
   /// Compares the x-coordinates of p and q
-  ///\n NGHK: Not yet implemented
   Comparison_result compare_y(const Point& p, const Point& q) const;
   /// Compares the x-coordinates of (p,o_p) and (q,o_q)
-  ///\n NGHK: Not yet implemented
   Comparison_result compare_y(const Point& p, const Point& q,
       const Offset &o_p, const Offset &o_q) const;
   /// Checks for equality of p and q
-  ///\n NGHK: Not yet implemented
   bool xy_equal(const Point& p, const Point& q) const;
   /// Returns the orientation of p1,p2,p3
   Orientation orientation(const Point& p1, const Point& p2, const Point& p3) const;
@@ -922,13 +808,11 @@ public:
                           const Point & p, bool perturb = false) const;
   /// Determines whether the point p lies on the (un-)bounded side of
   /// the circle through the points p0, p1 and p2
-  ///\n NGHK: implemented
   Oriented_side
   side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
       const Point &p, bool perturb) const;
   /// Determines whether the point (p,o) lies on the (un-)bounded side of
   /// the circle through the points (p0,o0), (p1,o1) and (p2,o2)
-  ///\n NGHK: implemented
   Oriented_side
   side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
       const Point &p, const Offset &o0, const Offset &o1, const Offset &o2,
@@ -937,7 +821,6 @@ public:
 
 
   /// Constructs the circumcenter of the face f, respects the offset
-  /// \n NGHK: not implemented
   Point circumcenter(Face_handle f) const {
       return construct_circumcenter(f->vertex(0)->point(), 
                                     f->vertex(1)->point(),
@@ -946,7 +829,6 @@ public:
                                     get_offset(f, 1),
                                     get_offset(f, 2));
   }
-  /// NGHK: Implemented
     Point construct_circumcenter(const Point &p1, const Point &p2, const Point &p3,
                                  const Offset &o1, const Offset &o2, const Offset &o3) const {
     return geom_traits().construct_circumcenter_2_object()(p1, p2, p3, o1, o2, o3);
@@ -959,19 +841,15 @@ public:
 
   /// Returns whether the union of the faces f and f->neighbor(i) form
   /// a convex quadrilateral.
-  /// \n NGHK: implemented
   bool flippable(Face_handle f, int i);
 
-  /// NGHK: Implemented
   size_type degree(Vertex_handle v) const {
     return _tds.degree(v);
   }
 
   /// Checks if the triangulation is valid.
-  /// \n NGHK: implemented
   bool is_valid(bool verbose = false, int level = 0) const;
   /// Checks if the face is valid.
-  /// \n NGHK: implemented
   bool is_valid(Face_handle fh, bool verbose = false, int level = 0) const;
 
   //\}
@@ -980,14 +858,12 @@ public:
   /// \name Undocumented functions, needed by the geometric iterators
   // \{
   /// [Undoc] Returns whether the stored triangulation covers a 1-cover.
-  /// NGHK: implemented
   bool is_1_cover() const {
     return (_cover[0] == 1) && (_cover[1] == 1);
   }
 
   /// [Undoc] Combines two offsets, where the first offset is defined by the
   /// virtual vertex and the second by the face.
-  /// NGHK: implemented
   Offset combine_offsets(const Offset& o_c, const Offset& o_t) const {
     Offset o_ct(_cover[0] * o_t.x(), _cover[1] * o_t.y());
     return o_c + o_ct;
@@ -999,7 +875,6 @@ public:
   /// - Find two corresponding vertices from each face
   /// - Return the difference of their offsets.
   ///
-  /// NGHK: implemented
   Offset get_neighbor_offset(Face_handle fh, int i) const {
     Face_handle nb = fh->neighbor(i);
     return get_neighbor_offset(fh, i, nb, nb->index(fh));
@@ -1011,7 +886,6 @@ public:
   /// - Find two corresponding vertices from each face
   /// - Return the difference of their offsets.
   ///
-  /// NGHK: implemented
   Offset get_neighbor_offset(Face_handle fh, int i, Face_handle nb, int j) const {
     // Redundance in the signature
     CGAL_triangulation_precondition(fh->neighbor(i) == nb);
@@ -1022,7 +896,6 @@ public:
   }
   /// [Undoc] returns the combined offset of the vertex
   /// (if we are not on the 1-cover) and the offset defined by the face.
-  /// NGHK: implemented
   Offset get_offset(Face_handle f, int i) const {
     if (is_1_cover())
       return int_to_off(f->offset(i));
@@ -1034,7 +907,6 @@ public:
       return combine_offsets(Offset(), int_to_off(f->offset(i)));
   }
   /// [Undoc] Returns the offset of the vertex if we are not on the 1-cover.
-  /// NGHK: implemented
   Offset get_offset(Vertex_handle vh) const {
     if (is_1_cover())
       return Offset();
@@ -1046,7 +918,6 @@ public:
   }
 
   /// Converts an offset to a bit pattern where bit1==offx and bit0==offy.
-  /// NGHK: implemented
   int off_to_int(const Offset & off) const {
     CGAL_triangulation_assertion( off.x()==0 || off.x() ==1 );
     CGAL_triangulation_assertion( off.y()==0 || off.y() ==1 );
@@ -1054,7 +925,6 @@ public:
     return i;
   }
   /// Creates an offset from a bit pattern.
-  /// NGHK: implemented
   Offset int_to_off(int i) const {
     return Offset((i >> 1) & 1, i & 1);
   }
@@ -1068,7 +938,6 @@ public:
   }
 
   /// [Undoc] Returns the non-virtual copy of the vertex.
-  /// NGHK: implemented
   Vertex_handle get_original_vertex(Vertex_handle vh) const {
     if (is_1_cover())
       return vh;
@@ -1081,7 +950,6 @@ public:
 
 
   /// Tests whether a vertex is a periodic copy of a vertex in the 3-cover.
-  /// NGHK: implemented
   bool is_virtual(Vertex_handle v) {
     if (is_1_cover())
       return false;
@@ -1095,7 +963,6 @@ public:
     return _virtual_vertices_reverse.find(v)->second;
   }
 
-  /// NGHK: Not yet implemented
   template<class Stream>
   Stream& draw_triangulation(Stream& os) const {
     Edge_iterator it = edges_begin();
@@ -1105,7 +972,6 @@ public:
     return os;
   }
 protected:
-  /// NGHK: implemented
   std::vector<Vertex_handle> insert_dummy_points();
 
 
@@ -1135,13 +1001,11 @@ protected:
   /// The type of the simplex is stored in lt.
   /// The simplex containing the point is returned using lt and li.
   /// The Face_handle start is the start point of the heuristic walk.
-  /// \n NGHK: implemented
   Face_handle
   locate(const Point& p, const Offset &o, Locate_type& lt, int& li,
       Face_handle start = Face_handle()) const;
   /// Returns the oriented side of the point (p,o) with respect to the
   /// triangle defined by the face f
-  /// \n NGHK: Not yet implemented
   Oriented_side
   oriented_side(Face_handle f, const Point& p, const Offset &o) const;
   // \}
@@ -1164,7 +1028,6 @@ protected:
   bool edge_is_too_long(const Point &p1, const Point &p2) const;
 
   /// Flips the edge, no periodic copies are flipped
-  /// \n NGHK: implemented
   void flip_single_edge(Face_handle f, int i);
 
   /// Remove a vertex from the virtual copies maps
@@ -1174,30 +1037,24 @@ protected:
 
   /// \name Wrapping the traits
   //\{
-  /// NGHK: Implemented
   Point construct_point(const Point& p, const Offset &o) const {
     return geom_traits().construct_point_2_object()(p, o);
   }
-  /// NGHK: Implemented
   Point construct_point(const Periodic_point& pp) const {
     return construct_point(pp.first, pp.second);
   }
-  /// NGHK: Implemented
   Triangle construct_triangle(const Point &p1, const Point &p2,
       const Point &p3, const Offset &o1, const Offset &o2, const Offset &o3) const {
     return geom_traits().construct_triangle_2_object()(p1, p2, p3, o1, o2, o3);
   }
-  /// NGHK: Implemented
   Triangle construct_triangle(const Periodic_triangle& tri) const {
     return construct_triangle(tri[0].first, tri[1].first, tri[2].first,
         tri[0].second, tri[1].second, tri[2].second);
   }
-  /// NGHK: Implemented
   Segment construct_segment(const Point &p1, const Point &p2, const Offset &o1,
       const Offset &o2) const {
     return geom_traits().construct_segment_2_object()(p1, p2, o1, o2);
   }
-  /// NGHK: Implemented
   Segment construct_segment(const Periodic_segment& seg) const {
     return construct_segment(seg[0].first, seg[1].first, seg[0].second,
         seg[1].second);
@@ -1205,40 +1062,26 @@ protected:
   //\}
 
   /// Test whether removing vertex v decreases the dimension of the triangulation.
-  /// NGHK: Implemented
   bool test_dim_down(Vertex_handle /*v*/) const {
     //test the dimensionality of the resulting triangulation
     //upon removing of vertex v
     return number_of_vertices() == 1;
   }
-  /// NGHK: Implemented
   void make_hole(Vertex_handle v, std::list<Edge> & hole);
 
 
-  /// NGHK: Not yet implemented
-  Face_handle create_face(Face_handle f1, int i1, Face_handle f2, int i2,
-      Face_handle f3, int i3);
-  /// NGHK: Not yet implemented
+  Face_handle create_face(Face_handle f1, int i1, Face_handle f2, int i2, Face_handle f3, int i3);
   Face_handle create_face(Face_handle f1, int i1, Face_handle f2, int i2);
-  /// NGHK: Not yet implemented
   Face_handle create_face(Face_handle f, int i, Vertex_handle v);
-  /// NGHK: Not yet implemented
   Face_handle create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3);
-  /// NGHK: Not yet implemented
-  Face_handle create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
-      Face_handle f1, Face_handle f2, Face_handle f3);
-  /// NGHK: Not yet implemented
+  Face_handle create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle f1, Face_handle f2, Face_handle f3);
   Face_handle create_face();
-  /// NGHK: Not yet implemented
   Face_handle create_face(Face_handle); //calls copy constructor of Face
-  /// NGHK: Not yet implemented
   void delete_face(Face_handle f);
-  /// NGHK: Not yet implemented
   void delete_vertex(Vertex_handle v);
 
   // template members
 
-  /// NGHK: Not yet implemented
   bool well_oriented(Vertex_handle v) const {
     typedef typename Geom_traits::Orientation_2 Orientation_2;
     Face_circulator fc = incident_faces(v), done(fc);
@@ -1261,7 +1104,6 @@ protected:
     return true;
   }
 
-  /// NGHK: Not yet implemented
   template<class EdgeIt>
   Vertex_handle star_hole(const Point& p, EdgeIt edge_begin, EdgeIt edge_end) {
     std::list<Face_handle> empty_list;
@@ -1269,7 +1111,6 @@ protected:
         empty_list.end());
   }
 
-  /// NGHK: Not yet implemented
   template<class EdgeIt, class FaceIt>
   Vertex_handle star_hole(const Point& p, EdgeIt edge_begin, EdgeIt edge_end,
       FaceIt face_begin, FaceIt face_end) {
@@ -1288,22 +1129,17 @@ protected:
 
   /// These functions give the pair (vertex, offset) that corresponds
   /// to the i-th vertex of face f. The vertex returned is not a virtual copy.
-  /// NGHK: implemented
   void get_vertex(Face_handle f, int i, Vertex_handle &vh, Offset &off) const;
   /// These functions give the pair (vertex, offset) that corresponds
   /// to the i-th vertex of vertex vh. The vertex returned is not a virtual copy.
-  /// NGHK: implemented
   void get_vertex(Vertex_handle vh_i, Vertex_handle &vh, Offset &off) const;
   /// Returns the face containing the three vertices defined by vh[0], vh1[1] and vh[2].
-  /// NGHK: implemented
   inline Face_handle get_face(const Vertex_handle* vh) const;
   /// Constructs a list of too long edges in the triangulation.
-  /// NGHK: implemented
   int find_too_long_edges(
       std::map<Vertex_handle, std::list<Vertex_handle> >& edges) const;
 
   /// Returns the offset such that (p, o) lies on the bounded side of the face f.
-  /// NGHK: implemented
   Offset get_location_offset(Face_handle f, const Point &p, const Offset &o) const {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
 
@@ -1336,7 +1172,6 @@ protected:
   }
 
   /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
-  /// NGHK: Implemented
   void set_offsets(Face_handle f, int o0, int o1, int o2) {
     int off0[2] = { (o0 >> 1) & 1, (o0 & 1) };
     int off1[2] = { (o1 >> 1) & 1, (o1 & 1) };
@@ -1357,7 +1192,6 @@ protected:
   }
 
   /// Assigns the offsets to the vertices of the face f, and makes the offset minimal in each direction.
-  /// NGHK: Implemented
   template<class Offset>
   void set_offsets(Face_handle f, const Offset &o0, const Offset &o1, const Offset &o2) {
     int off0[2] = { o0.x(), o0.y() };
@@ -1389,7 +1223,6 @@ protected:
   //\}
 
   /// Checks the too_long_edges bookkeeping
-  /// \n NGHK: implemented
   bool is_valid_too_long_edges(bool verbose = false, int level = 0) const;
 
   /** @name Checking helpers */ //@{
@@ -1426,20 +1259,18 @@ protected:
   Tds _tds;
   // \}
 
-  /// NGHK: Remove, avoid errors, no infinite simplices in the periodic triangulation
+  /// Returns false, no infinite simplices in the periodic triangulation
   template <class T>
   inline bool is_infinite(T) const { return false; }
 
 private:
   /// Inserts (p,o) in the face f and sets the offsets of the newly created faces
   /// Doesn't insert periodic copies
-  /// NGHK: Implemented
   Vertex_handle insert_in_face(const Point& p, const Offset &o,
                                Face_handle f,
                                Vertex_handle vh);
   /// Inserts (p,o) in the edge (f,i) and sets the offsets of the newly created faces
   /// Doesn't insert periodic copies
-  /// NGHK: Implemented
   Vertex_handle insert_in_edge(const Point& p, const Offset &o,
                                Face_handle f, int i,
                                Vertex_handle vh);
@@ -1486,22 +1317,6 @@ Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
   CGAL_triangulation_precondition(_domain.xmax() - _domain.xmin() ==
       _domain.ymax() - _domain.ymin());
   set_domain(_domain);
-}
-
-template<class Gt, class Tds>
-template < class InputIterator >
-Periodic_2_triangulation_2<Gt, Tds>::Periodic_2_triangulation_2(
-		InputIterator first, InputIterator last,
-		const Iso_rectangle & domain, const Gt& geom_traits)
-  : _gt(geom_traits), _tds()
-  , _cover(make_array(1, 1))
-  , _domain(domain)
-  , _too_long_edge_counter(0) {
-  CGAL_triangulation_precondition(_domain.xmax()-_domain.xmin() == _domain.ymax()-_domain.ymin());
-  
-  set_domain(_domain);
-  
-  insert(first, last);
 }
 
 // copy constructor duplicates vertices and faces
@@ -1625,11 +1440,13 @@ void Periodic_2_triangulation_2<Gt, Tds>::copy_triangulation(
   _cover = tr._cover;
   _domain = tr._domain;
   _edge_length_threshold = tr._edge_length_threshold;
+  _too_long_edge_counter = tr._too_long_edge_counter;
   if (tr.is_1_cover()) {
     _tds = tr.tds();
   } else {
     copy_multiple_covering(tr);
   }
+  CGAL_assertion(_too_long_edge_counter == tr._too_long_edge_counter);
   CGAL_triangulation_expensive_postcondition(*this == tr);
 }
 
@@ -3535,8 +3352,7 @@ Oriented_side Periodic_2_triangulation_2<Gt, Tds>::oriented_side(Face_handle f,
 }
 
 template<class Gt, class Tds>
-Bounded_side Periodic_2_triangulation_2<Gt, Tds>::bounded_side(const Point &p0,
-    const Point &p1, const Point &p2, const Point &p) const {
+Bounded_side Periodic_2_triangulation_2<Gt, Tds>::bounded_side(const Point &p0, const Point &p1, const Point &p2, const Point &p) const {
 
   // return position of point p with respect to triangle p0p1p2
   CGAL_triangulation_precondition( orientation(p0, p1, p2) != COLLINEAR);

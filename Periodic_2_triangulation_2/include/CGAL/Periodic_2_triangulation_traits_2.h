@@ -116,16 +116,14 @@ private:
 
 template < class Kernel, class Off = typename CGAL::Periodic_2_offset_2 >
 class Periodic_2_triangulation_traits_base_2 : public Kernel {
-public:
-//private:
-  // TODO(NGHK): Make these types private, they are not part of the concept
+public: // Undocumented
   typedef Kernel                                                   K;
   typedef Kernel                                                   Kernel_base;
   typedef Off                                                      Offset_2;
   typedef Periodic_2_triangulation_traits_base_2<Kernel, Off>      Self;  
 
-  typedef typename K::RT                   RT;
   typedef typename K::FT                   FT;
+  typedef typename K::RT                   RT;
   typedef typename K::Line_2               Line_2;
   typedef typename K::Ray_2                Ray_2;
   typedef typename K::Circle_2             Circle_2;
@@ -175,15 +173,6 @@ public:
 
   // Predicates&_domain
 
-  // NGHK: Remove
-//   Less_x_2
-//   less_x_2_object() const
-//   { return Less_x_2(&_domain);}
-  
-//   Less_y_2
-//   less_y_2_object() const
-//   { return Less_y_2(&_domain);}
-  
   Compare_x_2
   compare_x_2_object() const
   { return Compare_x_2(&_domain);}
@@ -211,11 +200,6 @@ public:
   compare_distance_2_object() const
   {return Compare_distance_2(&_domain);}
   
-  // NGHK: Remove
-  Construct_bisector_2
-  construct_bisector_2_object() const
-  {return Construct_bisector_2(&_domain);}
-  
   Construct_point_2  construct_point_2_object() const
   {return Construct_point_2(_domain);}
 
@@ -224,14 +208,6 @@ public:
 
   Construct_triangle_2  construct_triangle_2_object() const
   {return Construct_triangle_2(&_domain);}
-  
-  // NGHK: Remove
-  Construct_direction_2  construct_direction_2_object() const
-  {return Construct_direction_2(&_domain);}
-  
-  // NGHK: Remove
-  Construct_ray_2  construct_ray_2_object() const
-  {return Construct_ray_2(&_domain);}
   
 protected:
   Iso_rectangle_2 _domain;
