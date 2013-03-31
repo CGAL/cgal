@@ -100,7 +100,7 @@ public:
         --pos;
         break;
       case T::UNIQUE:
-        do { --pos; } while (pos != _t->cells_begin() && !is_canonical());
+        do { --pos; } while (pos != _t->faces_begin() && !is_canonical());
         break;
       case T::STORED_COVER_DOMAIN:
       case T::UNIQUE_COVER_DOMAIN:
@@ -154,7 +154,7 @@ public:
   
 private:
   const T*  _t;
-  Face_iterator pos; // current cell.
+  Face_iterator pos; // current face.
   Iterator_type _it;
   int _off; // current offset
   mutable Periodic_triangle periodic_triangle; // current triangle.
@@ -210,7 +210,7 @@ private:
   // copies into account.
   void decrement_domain() {
     if (_off == 0) {
-      if (pos == _t->cells_begin()) return;
+      if (pos == _t->faces_begin()) return;
       do { --pos; } while (_it == T::UNIQUE_COVER_DOMAIN && !is_canonical());
       _off = get_drawing_offsets();
     } else {
@@ -282,8 +282,8 @@ private:
     CGAL_triangulation_assertion(pos != typename T::Face_handle());
     Offset off0, off1, off2;
     get_edge_offsets(off0, off1, off2);
-    Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
-                               (((_off>>1)&1)==1 ? -1:0));
+    Offset transl_off = Offset((((_off>>1)&1)==1 ? -1:0),
+                               (((_off   )&1)==1 ? -1:0));
     if (_it == T::STORED_COVER_DOMAIN) {
       off0 = _t->combine_offsets(off0,transl_off);
       off1 = _t->combine_offsets(off1,transl_off);
@@ -474,7 +474,7 @@ private:
     } else {
       do {
         ++_off;
-      } while ((((~_off)|off)&7)!=7); // Increment until a valid
+      } while ((((~_off)|off)&3)!=3); // Increment until a valid
                                       // offset has been found
     }
   }
@@ -490,7 +490,7 @@ private:
       int off = get_drawing_offsets();
       do {
         --_off;
-      } while ((((~_off)|off)&7)!=7); // Decrement until a valid
+      } while ((((~_off)|off)&3)!=3); // Decrement until a valid
                                       // offset has been found
     }
   }
