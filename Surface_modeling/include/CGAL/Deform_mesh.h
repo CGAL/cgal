@@ -416,7 +416,7 @@ public:
   }
 
   /**
-   * Erease the vertex from region of interest. The vertex is also erased from being handle, if it is.
+   * Erase the vertex from region of interest. The vertex is also erased from being handle, if it is.
    * Note that in next preprocess() call, any vertex which is no longer ROI will be assigned to its original position.
    * @param vd vertex to be erased
    * @return true if the erasion is successful   
@@ -636,7 +636,7 @@ public:
 
 private:
 
-  /// Assigns id to one rign neighbor of vd, and also push them into push_vector
+  /// Assigns id to one ring neighbor of vd, and also push them into push_vector
   void assign_ros_id_to_one_ring(vertex_descriptor vd, 
                              std::size_t& next_id, 
                              std::vector<vertex_descriptor>& push_vector)
@@ -889,7 +889,7 @@ private:
       if ( rot_mtr[vi_id].determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
       {
         Eigen::Matrix3d u_m = u;
-        u_m.col(2) *= -1;      // singular values are always sorted in decresing order so use column 2
+        u_m.col(2) *= -1;      // singular values are always sorted in decreasing order so use column 2
         rot_mtr[vi_id] = v*u_m.transpose(); // re-extract rotation matrix
       }
     }
@@ -941,7 +941,7 @@ private:
       if ( rot_mtr[vi_id].determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
       {
         Eigen::Matrix3d u_m = u;
-        u_m.col(2) *= -1;      // singular values are always sorted in decresing order so use column 2
+        u_m.col(2) *= -1;      // singular values are always sorted in decreasing order so use column 2
         rot_mtr[vi_id] = v*u_m.transpose(); // re-extract rotation matrix
       }
     }
@@ -1245,7 +1245,7 @@ private:
     if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)<th)
     {
       // The computation of the eigenvalues might have diverged.
-      // Fallback to an accurate SVD based decomposiiton method.
+      // Fallback to an accurate SVD based decompositon method.
       Eigen::JacobiSVD<Mat> svd;
       svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
       const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV();
@@ -1262,7 +1262,7 @@ private:
     if(std::abs(R.squaredNorm()-3.) > th)
     {
       // The computation of the eigenvalues might have diverged.
-      // Fallback to an accurate SVD based decomposiiton method.
+      // Fallback to an accurate SVD based decomposition method.
       Eigen::JacobiSVD<Mat> svd;
       svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
       const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV();
