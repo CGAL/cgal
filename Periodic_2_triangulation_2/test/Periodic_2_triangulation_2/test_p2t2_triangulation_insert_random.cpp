@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 #include "./types.h"
 
 #ifndef N_PTS

@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 #include "types.h"
 #include "interface_test.h"
 #include <CGAL/Periodic_2_triangulation_2.h>

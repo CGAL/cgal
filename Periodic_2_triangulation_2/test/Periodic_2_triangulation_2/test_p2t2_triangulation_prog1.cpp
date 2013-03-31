@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
 

@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 #define CGAL_USE_DELAUNAY
 
 #include "./types.h"

@@ -16,7 +16,7 @@
 // $Id: test_periodic_2_delaunay_2.cpp 48874 2009-04-22 12:54:28Z mcaroli $
 // 
 //
-// Author(s)     : Nico Kruithof
+// Author(s)     : Nico Kruithof <Nico@nghk.nl>
 //                 Manuel Caroli
 
 #include <iostream>

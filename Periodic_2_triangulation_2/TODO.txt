@@ -1,109 +1,14 @@
-$Id$
-$Date$
+=== POSTPONED
 
-=== TODO - Manual
+The periodic regular triangulation is not implemented. This will need
+a different criterion here for changing from the 3x3 cover to the 1x1
+cover. An outline is given in the ESA paper.
 
- * Check the template arguments for the vertex and face classes
+The 2D periodic triangulation implements a (Delaunay) triangulation on
+the 2-torus. For the Euclidean triangulation there exist interfaces
+with other packages. These have not been implemented for the periodic
+triangulation. The interfaces are:
 
-DOC:
- * circumcenter moved to Delaunay triangulation instead of triangulation
- * Interface check whether the function is called move or move_point
-
-TODO:
- * all_vertices_iterator / finite_vertices_iterator / vertices_iterator give the same vertices
-   unique_vertex_iterator gives only one copy
-   Check the edges and faces iterators as well to make everything consistent.
-
- * Documentation
-   * obvious things (that Nico is certainly aware of) still TODOs left, and NGHKs
-   - Demo's
-     - geometric_access.cpp: Added, TODO: check implementation
-     - large_point_set.cpp: Added, TODO: implement
-   * TODO Check whether we use a randomized walk
-   * Philipp: While going through the documentation a few things
-     randomly jumped at me: Especially in Period_2_triangulation_2.h
-     you spend lots of space explaining Handles, Circulators as well
-     as basic value semantics in your constructors and swap member
-     functions. I found that to really distract from the actual
-     content.
-   * Also, why do you document operator<< if the format is not
-     documented and when they impose an additional requirement on the
-     Point type.
-
-
-
- * Add \ccMethod{bool has_zero_offsets() const;} to the face base and use it where possible to speed up code
- * BATCH INSERTION, check 12 points and update if not possible.
- * Periodic_2_triangulation_2
-   * Remove Periodic_2_vertex_base: This is exactly the same as the Triangulation_vertex_base.
-   * Check copyright notice
-   * deletion of vertices (fairly easy in the 3x3 covering case)
-   * IO / serializing
-   * Check geometric iterators
-* Periodic_2_Delaunay_triangulation_2
-  * Deletion of vertices
-* Hierarchy
-  * Needs to be implememented completely
-    * Note from Manuel: Yes it is (usefull). However there was some
-      change in design that I have not yet implemented for the
-      periodic case. The hierarchy does not inherit from DT anymore
-      but is toggled using a tag I think. I have not yet checked how
-      it works exactly.
-    * Note from Manuel: I would consider the hierarchy a useful
-      add-on.
-    * Need to design and implement. Functionally, I would like to
-      provide is the same as for the 2D Triangulation.
-* Then what? Submit?
-  Note from Manuel: I would say so...
-
-=== POSTPONE
-
-* Regular triangulation
-  * Note from Manuel: You will need a different criterion here. See our ESA paper.
-* What about the mesher? Is there one for 2D? Do you know?
-  Note from Manuel: there is this package:
-    http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Mesh_2/Chapter_main.html
-  Note from Manuel: It is probably rather non-trivial to establish
-    compatibility with the mesher. I would say this is not required
-    for a first submission. Of course you can add it later on. You
-    could probably profit from the work Vissarion Fisikopoulos and
-    Mikhail Bogdanov (Monique's new phd student) were doing in the 3D
-    case.
-* Add the interface to the 2d alpha shape as an extension.
-
-=== DONE
-
-Documentation (query replace):
-- Finite -> nothing
-- Cell   -> Face
-- 27     -> 9
-
-Questions
-K::Point_2 and Point_2<K> are not the same for Periodic_3_triangulation_euclidean_traits
-
-
-P3T3:
-Doc
-  * Periodic_3_triangulation_3::Unique_vertex_iterator not visible
-  * Difference between STORED and STORED_COVER_DOMAIN?
-  * \ccRefPage{CGAL::Periodic_3_triangulation_3::Iterator_type}
-  doesn't work
-
-CHECK:
-Manuel: Given that I don't really know what you have done so far I
-don't see what you might be missing. Just check with the DT2 and the
-P3T3 interface ;-) What about dual functions for example ? Oh yes and
-I have these "geometric iterators" that iterate over certain subsets
-of the simplices and can for example return only the simplices
-involved in [0,1]^2, even if the 1x1 cover currently does not form a
-triangulation. See the section "Geometric iterators" in
-http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Periodic_3_triangulation_3_ref/Class_Periodic_3_triangulation_3.html
-
-Manuel: Another idea that just comes to my mind: In order to have a
-simplicial complex you have to avoid 2-cycles in the 1-skeleton. This
-is also important for the star-hole approach to work. However if you
-use flips, avoiding 1-cycles might be sufficient. In this case your
-output is not guaranteed to be a simplicial complex, but I suppose
-both computation and representation in the TDS would still
-work. Unfortunately, I don't know how to prove this.
+* There is no compatibility with the mesher.
+* The interface with the 2D alpha is not tested.
 

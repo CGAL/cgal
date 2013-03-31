@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 // #define CGAL_PROFILE
 
 #include "./types.h"

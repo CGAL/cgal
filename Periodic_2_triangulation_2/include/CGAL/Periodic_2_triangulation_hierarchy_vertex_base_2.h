@@ -18,6 +18,7 @@
 //
 // Author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
 //                 Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
+//                 Nico Kruithof  <Nico@nghk.nl>
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_VERTEX_BASE_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_VERTEX_BASE_2_H

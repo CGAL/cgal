@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 #include "./types.h"
 
 Face_handle test_point_location(const Triangulation &t,

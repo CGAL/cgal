@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 #include "./types.h"
 #include <CGAL/Triangulation_2.h>
 #include <ctime>

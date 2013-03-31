@@ -1,3 +1,5 @@
+// Author(s)     : Nico Kruithof  <Nico@nghk.nl>
+
 #include "./types.h"
 
 void insert_in_edge(Triangulation &t, const Point &p) {
