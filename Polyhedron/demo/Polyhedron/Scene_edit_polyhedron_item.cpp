@@ -146,6 +146,9 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
     }    
   }
   ////////////////// //////////////// /////////////////////
+
+  if(!poly_item->visible()) { return false; } // if not visible just update event state but don't do any action
+
   // check state changes between old and current state
   bool ctrl_pressed_now = state.ctrl_pressing && !old_state.ctrl_pressing;
   bool ctrl_released_now = !state.ctrl_pressing && old_state.ctrl_pressing;
@@ -347,6 +350,9 @@ Scene_edit_polyhedron_item::Bbox Scene_edit_polyhedron_item::bbox() const {
 void Scene_edit_polyhedron_item::setVisible(bool b) {
   poly_item->setVisible(b);
   Scene_item::setVisible(b);
+  if(!b) {
+    (*QGLViewer::QGLViewerPool().begin())->setManipulatedFrame(NULL);
+  }
 }
 void Scene_edit_polyhedron_item::setColor(QColor c) {
   poly_item->setColor(c);
