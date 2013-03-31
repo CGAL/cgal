@@ -13,7 +13,7 @@ Surface mesh deformation is the process of transforming the shape of the surface
 In this package, we implement the algorithm described in \cite Sorkine2007AsRigidAs, 
 where a nonlinear deformation energy is minimized under constraints to preserve rigidity as much as possible. 
 
-\cgalFigureBegin{Main_image_suggestion_all, main_image_suggestion.png}
+\cgalFigureBegin{Main_image_suggestion, main_image_suggestion_4_resized.png}
 Deformation results for dinousaur model.
 \cgalFigureEnd
 
