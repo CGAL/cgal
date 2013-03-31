@@ -42,7 +42,16 @@ namespace CGAL {
       PeriodicTriangulationGraphicsItem(T* t_);
       
       void modelChanged();
-      
+
+      enum Iterator_type {
+        STORED = 0,
+        UNIQUE, // 1
+        STORED_COVER_DOMAIN, // 2
+        UNIQUE_COVER_DOMAIN, // 3
+        NONE
+      };
+      void setEmphasizedSimplices(Iterator_type type) { this->type = type; }
+      Iterator_type getEmphasizedSimplices() { return this->type; }
     public:
       
       QRectF boundingRect() const;
@@ -60,6 +69,11 @@ namespace CGAL {
       {
         return edges_pen;
       }
+
+      const QPen& facesPen() const
+      {
+        return faces_pen;
+      }
       
       const QPen& domainPen() const
       {
@@ -72,6 +86,11 @@ namespace CGAL {
       }
       
       void setEdgesPen(const QPen& pen)
+      {
+        edges_pen = pen;
+      }
+
+      void setFacesPen(const QPen& pen)
       {
         edges_pen = pen;
       }
@@ -120,18 +139,23 @@ namespace CGAL {
       
       QPen vertices_pen;
       QPen edges_pen;
+      QPen faces_pen;
       QPen domain_pen;
       bool visible_edges;
       bool visible_vertices;
+
+      Iterator_type type;
     };
     
     
     template <typename T>
     PeriodicTriangulationGraphicsItem<T>::PeriodicTriangulationGraphicsItem(T * t_)
     :  t(t_), painterostream(0),
-    visible_edges(true), visible_vertices(true)
+       visible_edges(true), visible_vertices(true),
+       type(NONE)
     {
       setVerticesPen(QPen(::Qt::red, 3.));
+      setFacesPen(QPen(QColor(100,100,100)));
       setDomainPen(QPen(::Qt::blue, .01));
       if(t->number_of_vertices() == 0){
         this->hide();
@@ -172,7 +196,65 @@ namespace CGAL {
     PeriodicTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     {
       painterostream = PainterOstream<Geom_traits>(painter);
-      
+
+      if (type != NONE)
+      {
+        typename T::Iterator_type itype;
+        switch (type) {
+        case STORED:
+          itype = T::STORED;
+          break;
+        case UNIQUE:
+          itype = T::UNIQUE;
+          break;
+        case STORED_COVER_DOMAIN:
+          itype = T::STORED_COVER_DOMAIN;
+          break;
+        case UNIQUE_COVER_DOMAIN:
+          itype = T::UNIQUE_COVER_DOMAIN;
+          break;
+        case NONE:
+          assert(false);
+          itype = T::STORED;
+          break;
+        }
+        
+        Converter<Geom_traits> convert;
+
+        QMatrix matrix = painter->matrix();
+        painter->resetMatrix();
+
+        { // Faces
+          painter->setPen(QPen());
+          painter->setBrush(QBrush(::Qt::green));
+          for (typename T::Periodic_triangle_iterator tit = t->periodic_triangles_begin(itype);
+               tit != t->periodic_triangles_end(itype); ++tit) {
+            painter->drawConvexPolygon(matrix.map(convert(t->triangle(*tit))));
+          }
+          painter->setBrush(QBrush());
+        }
+        { // Edges
+          QPen pen = edgesPen();
+          pen.setWidth(pen.width() + 2);
+          painter->setPen(pen);
+          for (typename T::Periodic_segment_iterator sit = t->periodic_segments_begin(itype);
+               sit != t->periodic_segments_end(itype); ++sit) {
+            painter->drawLine(matrix.map(convert(t->segment(*sit))));
+          }
+        }
+        { // Vertices
+          QPen pen = verticesPen();
+          pen.setWidth(pen.width() + 2);
+          painter->setPen(pen);
+          for (typename T::Periodic_point_iterator pit = t->periodic_points_begin(itype);
+               pit != t->periodic_points_end(itype); ++pit) {
+            painter->drawPoint(matrix.map(convert(t->point(*pit))));
+          }
+        }
+
+        painter->setMatrix(matrix);
+      }      
+
       if(visibleEdges()) {
         painter->setPen(this->edgesPen());
         t->draw_triangulation(painterostream);
@@ -253,20 +335,18 @@ namespace CGAL {
                                                 const QStyleOptionGraphicsItem *,
                                                 QWidget *)
     {
+      drawAll(painter);
+
       painter->setPen(this->domainPen());
       const typename Geom_traits::Iso_rectangle_2 &domain = t->domain();
-      if (t->is_1_cover()) {
-        painter->drawRect(domain.xmin(), 
-                          domain.ymin(), 
-                          domain.xmax()-domain.xmin(), 
-                          domain.ymax()-domain.ymin());
-      } else {
-        painter->drawRect(domain.xmax(), 
-                          domain.ymax(), 
-                          domain.xmax()-domain.xmin(), 
-                          domain.ymax()-domain.ymin());
+      double dx = domain.xmax()-domain.xmin();
+      double dy = domain.ymax()-domain.ymin();
+      typename T::Covering_sheets sheets = t->number_of_sheets();
+      for (int x=0; x<sheets[0]; ++x) {
+        for (int y=0; y<sheets[1]; ++y) {
+          painter->drawRect(domain.xmin() + x*dx, domain.ymin() + y*dy, dx, dy);
+        }
       }
-      drawAll(painter);
       m_painter = painter;
     }
     
@@ -284,7 +364,7 @@ namespace CGAL {
       double dx = bb.xmax() - xmin;
       double dy = bb.ymax() - ymin;
 
-      double delta = 0.1;
+      double delta = 1.0;
       bounding_rect = QRectF(xmin - dx*delta,
                              ymin - dy*delta,
                              dx * t->number_of_sheets()[0] + 2*dx*delta,

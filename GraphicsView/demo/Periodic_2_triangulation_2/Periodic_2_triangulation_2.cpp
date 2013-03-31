@@ -48,6 +48,8 @@ private:
   Periodic_DT triang; 
   QGraphicsScene scene;  
 
+  typedef CGAL::Qt::PeriodicTriangulationGraphicsItem<Periodic_DT> PTGI;
+
   CGAL::Qt::PeriodicTriangulationGraphicsItem<Periodic_DT> * pt_gi;
   CGAL::Qt::PeriodicTriangulationVoronoiGraphicsItem<Periodic_DT> * vgi;
 
@@ -63,31 +65,28 @@ public slots:
 
   void processInput(CGAL::Object o);
 
+  void on_actionClear_triggered();
+  void on_actionInsertPoint_toggled(bool checked);
+  void on_actionInsertRandomPoints_triggered();
+  void on_actionConvertTo9Cover_triggered();
+  void on_actionConvertTo1Cover_triggered();
+  
   void on_actionMovingPoint_toggled(bool checked);
-
-
   void on_actionShowConflictZone_toggled(bool checked);
-
   void on_actionCircumcenter_toggled(bool checked);
 
   void on_actionShowDelaunay_toggled(bool checked);
-
   void on_actionShowVoronoi_toggled(bool checked);
+  void on_actionNoneSimplicesEmphasized_triggered(bool checked);
+  void on_actionUniqueSimplicesEmphasized_triggered(bool checked);
+  void on_actionStoredSimplicesEmphasized_triggered(bool checked);
+  void on_actionUniqueCoverDomainSimplicesEmphasized_triggered(bool checked);
+  void on_actionStoredCoverDomainSimplicesEmphasized_triggered(bool checked);
 
-  void on_actionInsertPoint_toggled(bool checked);
   
-  void on_actionInsertRandomPoints_triggered();
-
-  void on_actionConvertTo9Cover_triggered();
-
-  void on_actionConvertTo1Cover_triggered();
-
   void on_actionLoadPoints_triggered();
-
   void on_actionSavePoints_triggered();
-
-  void on_actionClear_triggered();
-
+  
   void on_actionRecenter_triggered();
 
   virtual void open(QString fileName);
@@ -384,9 +383,9 @@ MainWindow::on_actionSavePoints_triggered()
 						  ".");
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Periodic_DT::Vertex_iterator 
-          vit = triang.vertices_begin(),
-          end = triang.vertices_end();
+    for(Periodic_DT::Unique_vertex_iterator 
+          vit = triang.unique_vertices_begin(),
+          end = triang.unique_vertices_end();
         vit!= end; ++vit)
     {
       ofs << vit->point() << std::endl;
@@ -401,6 +400,32 @@ MainWindow::on_actionRecenter_triggered()
   pt_gi->modelChanged();
   this->graphicsView->setSceneRect(pt_gi->boundingRect());
   this->graphicsView->fitInView(pt_gi->boundingRect(), Qt::KeepAspectRatio);  
+}
+
+void MainWindow::on_actionNoneSimplicesEmphasized_triggered(bool)
+{
+  pt_gi->setEmphasizedSimplices(PTGI::NONE);
+  emit changed();
+}
+void MainWindow::on_actionUniqueSimplicesEmphasized_triggered(bool)
+{
+  pt_gi->setEmphasizedSimplices(PTGI::UNIQUE);
+  emit changed();
+}
+void MainWindow::on_actionStoredSimplicesEmphasized_triggered(bool)
+{
+  pt_gi->setEmphasizedSimplices(PTGI::STORED);
+  emit changed();
+}
+void MainWindow::on_actionUniqueCoverDomainSimplicesEmphasized_triggered(bool)
+{
+  pt_gi->setEmphasizedSimplices(PTGI::UNIQUE_COVER_DOMAIN);
+  emit changed();
+}
+void MainWindow::on_actionStoredCoverDomainSimplicesEmphasized_triggered(bool)
+{
+  pt_gi->setEmphasizedSimplices(PTGI::STORED_COVER_DOMAIN);
+  emit changed();
 }
 
 
