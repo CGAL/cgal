@@ -23,10 +23,9 @@
 
 #include "ui_Deform_mesh.h"
 
-Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item)
+Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget)
   : poly_item(poly_item), deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map())
-  , show_roi(true), show_as_sphere(false), ui_widget(NULL), frame(new qglviewer::ManipulatedFrame()),
-  quadric(gluNewQuadric())
+  , ui_widget(ui_widget), frame(new qglviewer::ManipulatedFrame()), quadric(gluNewQuadric())
 {
   // it is not good to rely on id() for reaching original positions
   // if usage of vertex index map is changed in Deform_mesh, we need to change this part to use map instead of vector
@@ -191,13 +190,13 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
 void Scene_edit_polyhedron_item::draw() const {
   poly_item->direct_draw();
   CGAL::GL::Color color;
-  color.set_rgb_color(0.f, 0.f, 0.f);
-  poly_item->direct_draw_edges();
+  //color.set_rgb_color(0.f, 0.f, 0.f);
+  //poly_item->direct_draw_edges();
 
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
   color.set_rgb_color(0, 1.f, 0);
   // draw ROI
-  if(show_roi) {
+  if(show_roi()) {
     Deform_mesh::Roi_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
     {
@@ -246,7 +245,7 @@ void Scene_edit_polyhedron_item::draw() const {
 }
 void Scene_edit_polyhedron_item::gl_draw_point(const Point& p) const
 {
-  if(!show_as_sphere) {
+  if(!show_as_sphere()) {
     ::glBegin(GL_POINTS);
       ::glVertex3d(p.x(), p.y(), p.z());
     ::glEnd();

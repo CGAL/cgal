@@ -96,7 +96,7 @@ public:
   /// Create an Scene_edit_polyhedron_item from a Scene_polyhedron_item.
   /// The ownership of the polyhedron is moved to the new edit_polyhedron
   /// item.
-  Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item);
+  Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget);
   ~Scene_edit_polyhedron_item();
 
   /// Returns 0, so that one cannot clone an "edit polyhedron" item.
@@ -170,8 +170,6 @@ public:
 typedef std::list<Handle_group_data> Handle_group_data_list;
   Handle_group_data_list handle_frame_map; // keep list of handle_groups with assoc data
 
-  bool show_roi;         // draw roi points
-  bool show_as_sphere;   // draw points or spheres (for roi and handles)
   double length_of_axis; // for drawing axis at a handle group
 
   // by interleaving 'viewer's events (check constructor), keep followings:
@@ -327,12 +325,12 @@ public:
     }
   }
 
-  void save_roi(const char* file_name)
+  void save_roi(const char* file_name) const
   { 
     std::ofstream out(file_name);
     // save roi
     int hc = 0;
-    Deform_mesh::Roi_iterator rb, re;
+    Deform_mesh::Roi_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb) { ++hc; }
     out << hc << std::endl;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
@@ -342,13 +340,13 @@ public:
     out << std::endl;
     // save handles
     hc = 0;
-    Deform_mesh::Handle_group hgb, hge;
+    Deform_mesh::Const_handle_group hgb, hge;
     for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb) 
     { ++hc; }
     out << hc << std::endl; // handle count
     for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb) {
       hc = 0;
-      Deform_mesh::Handle_iterator hb, he;
+      Deform_mesh::Handle_const_iterator hb, he;
       for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb) { ++hc; }
       out << hc << std::endl;
       for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb) 
@@ -397,6 +395,13 @@ public:
       }
     }
   }
+
+  bool show_roi() const
+  { return ui_widget->ShowROICheckBox->isChecked(); }
+
+  bool show_as_sphere() const
+  { return ui_widget->ShowAsSphereCheckBox->isChecked(); }
+
 protected:
   // Deformation related functions //
   void print_message(const QString& message)
