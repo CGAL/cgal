@@ -6,13 +6,16 @@
 class SurfaceModelingQuaternion
 {
 public:
+/// \name Types 
+/// @{
+	typedef Hidden_type Vect; ///< a model of SurfaceModelingVect
+/// @} 
+
 /// \name Operations 
 /// @{
   /// Rotate v by quaternion
-  /// @tparam Vect a model of SurfaceModelingVect
   /// @param v vector to be rotated
   /// @return rotated vector
-  template<class Vect>
   Vect operator*(Vect v);
 /// @}
 };
