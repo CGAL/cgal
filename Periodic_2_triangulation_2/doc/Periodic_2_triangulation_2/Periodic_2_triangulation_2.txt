@@ -363,7 +363,7 @@ example we use the `Periodic_triangle_iterator` with the option
 `UNIQUE_COVER_DOMAIN`. This means that only those triangles are
 returned that have a non-empty intersection with the original domain
 of the 1-sheeted covering space, see
-Figure \ref P2Triangulation2figgeom_iterators.
+\Figure \ref P2Triangulation2figgeom_iterators.
 The `Periodic_triangle` is actually a two-dimensional array of
 point-offset pairs. We check for all three entries of the periodic
 triangle whether the offset is (0,0,0) using the
@@ -386,10 +386,13 @@ In 2009, Nico Kruithof started implementation of the
 # Performance #
 
 The performance of the 2D periodic Delaunay triangulation is compared
-to the Euclidean 2D Delaunay triangulation.
+to the Euclidean 2D Delaunay triangulation. The plot shows the running
+time in seconds for different numbers of batch inserted points. The
+tests were done on an Intel i7 @ 2.67GHz.
 
-NGHK: TODO: Performance benchmark
+\image html p2dt2_performance.png
 
 */ 
 } /* namespace CGAL */
 
+\\\\\\\\\\\\
