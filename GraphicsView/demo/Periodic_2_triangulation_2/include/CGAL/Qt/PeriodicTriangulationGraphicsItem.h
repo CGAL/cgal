@@ -154,7 +154,7 @@ namespace CGAL {
        visible_edges(true), visible_vertices(true),
        type(NONE)
     {
-      setVerticesPen(QPen(::Qt::red, 3.));
+      setVerticesPen(QPen(::Qt::red, 1.));
       setFacesPen(QPen(QColor(100,100,100)));
       setDomainPen(QPen(::Qt::blue, .01));
       if(t->number_of_vertices() == 0){
@@ -359,16 +359,23 @@ namespace CGAL {
       prepareGeometryChange();
       
       CGAL::Bbox_2 bb = t->domain().bbox();
+      for (typename T::Periodic_triangle_iterator tit = t->periodic_triangles_begin(T::STORED_COVER_DOMAIN);
+           tit != t->periodic_triangles_end(T::STORED_COVER_DOMAIN); ++tit) {
+        bb = bb + t->triangle(*tit).bbox();
+      }
+      
       double xmin = bb.xmin();
       double ymin = bb.ymin();
       double dx = bb.xmax() - xmin;
       double dy = bb.ymax() - ymin;
 
-      double delta = 1.0;
-      bounding_rect = QRectF(xmin - dx*delta,
-                             ymin - dy*delta,
-                             dx * t->number_of_sheets()[0] + 2*dx*delta,
-                             dy * t->number_of_sheets()[0] + 2*dy*delta);
+      double delta = 0.05;
+      xmin -= delta * dx;
+      ymin -= delta * dy;
+      dx += 2 * delta * dx;
+      dy += 2 * delta * dy;
+
+      bounding_rect = QRectF(xmin, ymin, dx, dy);
     }
     
     

@@ -212,10 +212,10 @@
      <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Clear</string>
+    <string>&amp;New</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+C</string>
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionShowVoronoi">
@@ -260,7 +260,7 @@
     <string>&amp;Load Points...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+L</string>
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionSavePoints">

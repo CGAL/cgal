@@ -365,6 +365,7 @@ MainWindow::open(QString fileName)
   while(ifs >> p) {
     points.push_back(p);
   }
+  triang.clear();
   triang.insert(points.begin(), points.end());
 
   // default cursor
