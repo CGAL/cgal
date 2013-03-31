@@ -14,7 +14,7 @@ In this package, we implement the algorithm described in \cite Sorkine2007AsRigi
 where a nonlinear deformation energy is minimized under constraints to preserve rigidity as much as possible. 
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion_4_resized.png}
-Deformation results for dinousaur model.
+Deformation results for dinosaur model.
 \cgalFigureEnd
 
 \section Surface_Modeling_Overview Overview 
@@ -164,7 +164,7 @@ so that we can fill \f$\delta\f$ using the right-hand side of the equation which
 Then,  the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ can be solved in order to find \f$\mathbf{V}'\f$. 
 This two-step optimization can be applied iteratively for several times to obtain a better result.
 
-An important observation is the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ only depents on the initial mesh structure and which vertices are handle vertices. 
+An important observation is the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ only depends on the initial mesh structure and which vertices are handle vertices. 
 So that, once handle vertices are determined, we can use a direct solver to factorize sparse matrix in Eq. \f$\eqref{eq:lap_energy_system}\f$, and use this factorization
 in each iteration of the optimization procedure with the cost of back-substitution.
 
@@ -216,7 +216,7 @@ where \f$\mathbf{R}_m\f$ and \f$\mathbf{R}_n\f$ are rotation matrices of \f$\mat
 
 The main difference compared to \ref Surface_Modeling_Overview_ARAP is that the energy function is guaranteed to stay nonnegative. 
 We are using cotangent weights as it is proposed in \cite Chao2010SimpleGeomModel.
-However, produced results can be asymmetric as demostrated in \cgalFigureRef{Arap_spokes_comparison}.
+However, produced results can be asymmetric as demonstrated in \cgalFigureRef{Arap_spokes_comparison}.
 
 \cgalFigureBegin{Arap_spokes_comparison, arap_spokes_comparison.png}
 Comparison between \ref Surface_Modeling_Overview_ARAP and \ref Surface_Modeling_Overview_ARAP_Rims. \ref Surface_Modeling_Overview_ARAP_Rims is affected from meshing bias and produces asymmetric results.
@@ -225,7 +225,7 @@ Comparison between \ref Surface_Modeling_Overview_ARAP and \ref Surface_Modeling
 \section Surface_Modeling_API API
 
 \cgalFigureBegin{Flow_of_API, usage_flow_of_API.png}
-The deformation workflow.  (<b>SL</b>: what is the meaning of the different box style? what software did you use? are the source inside the git repo? Not sure that it is obvious that <i>clear</i> is optional.)
+The deformation work flow.  (<b>SL</b>: what is the meaning of the different box style? what software did you use? are the source inside the git repo? Not sure that it is obvious that <i>clear</i> is optional.)
 \cgalFigureEnd
 
 \subsection Preprocess_section Preprocess Section
@@ -239,7 +239,7 @@ The deformation is handled thanks to a function object that must be initialized:
   - For details on `weight_calculator` see \ref Example_4
   - `deformation_type` can be used as nontype template parameter for selecting deformation algorithm. The default algorithm is \ref Surface_Modeling_Overview_ARAP_Rims.
 
-\todo The ROI is first mentionned here. It should be mentionned yearlier. That is that not all vertices in the mesh are considered.
+\todo The ROI is first mentioned here. It should be mentioned earlier. That is that not all vertices in the mesh are considered.
 
 Then, the region that the algorithm operates on (i.e. region of interest -ROI) 
 should be determined. The API is convenient enough for either using a subset or the whole mesh as region of interest.
