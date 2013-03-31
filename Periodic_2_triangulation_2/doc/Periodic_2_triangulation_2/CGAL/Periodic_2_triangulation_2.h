@@ -767,14 +767,15 @@ const;
 /// ::CGAL::Periodic_2_triangulation_2::Iterator_type.
 ///
 /// \anchor P2Triangulation2figgeom_iterators
-/// \image html it_STORED_small.png 
-/// \image html it_STORED_COVER_DOMAIN_small.jpg
-/// \image html it_UNIQUE_small.png
-/// \image html it_UNIQUE_COVER_DOMAIN_small.jpg
-/// <center><b>NGHK: Change images. The four different modes of the
-/// geometric iterators: `STORED`, `STORED_COVER_DOMAIN`, `UNIQUE`,
+/// \image html 3pts_stored.png
+/// \image html 3pts_stored_cover_domain.png
+/// \image html 3pts_unique.png
+/// \image html 3pts_unique_cover_domain.png
+/// <center><b>The four different modes of the geometric iterators:
+/// `STORED`, `STORED_COVER_DOMAIN`, `UNIQUE`,
 /// `UNIQUE_COVER_DOMAIN`. Note that in case of computing in the
-/// 1-sheeted covering space, and give the same result.</b></center>
+/// 1-sheeted covering space, stored and unique give the same
+/// result.</b></center>
 /// @{
 
 /*! 

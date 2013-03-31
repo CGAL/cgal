@@ -16,7 +16,7 @@
 \addtogroup PkgPeriodic2Triangulation2
  
 \cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodicTriangulation2Summary}
-\cgalPkgPicture{p2Delaunay2_small.png}
+\cgalPkgPicture{thumb120x120.png}
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Nico Kruithof}
@@ -64,7 +64,7 @@ orientation, the positive orientation being defined by the orientation
 of the underlying space \f$ \mathbb T_c^3\f$. The neighbors of a face are
 also indexed with 0, 1, 2 in such a way that the neighbor indexed
 by \f$ i\f$ is opposite to the vertex with the same index. See
-Figure  \cgalFigureRef{P2Triangulation2figorient}.
+Figure  \ref P2Triangulation2figorient.
 
 In order to be able to specify the triangle that contain vertices
 both inside and outside the original domain we store additional
