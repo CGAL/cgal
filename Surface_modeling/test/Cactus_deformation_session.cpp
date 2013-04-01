@@ -63,7 +63,7 @@ Deform_mesh::Handle_group read_rois(Deform_mesh& deform_mesh)
   while(handle_stream >> id) { handles.push_back(id); }
   while(roi_stream >> id) { rois.push_back(id); }
 
-  Deform_mesh::Handle_group active_handle_group;
+  Deform_mesh::Handle_group active_handle_group = deform_mesh.create_handle_group();
 
   id = 0;
   for(Polyhedron::Vertex_iterator it = deform_mesh.polyhedron.vertices_begin(); it != deform_mesh.polyhedron.vertices_end();
@@ -71,7 +71,7 @@ Deform_mesh::Handle_group read_rois(Deform_mesh& deform_mesh)
 	{
     // not efficient but small poly
     if(std::find(handles.begin(), handles.end(), id) != handles.end()) { 
-      active_handle_group = deform_mesh.insert_handle(it);
+      deform_mesh.insert_handle(active_handle_group, it);
     }
 
     if(std::find(rois.begin(), rois.end(), id) != rois.end()) {
@@ -124,8 +124,8 @@ void read_handle_difs_and_deform(Deform_mesh& deform_mesh, Deform_mesh::Handle_g
     Polyhedron predeformed_cactus;
 	
     std::ifstream(predeformed_cactus_file) >> predeformed_cactus;
-	compare_mesh(predeformed_cactus, deform_mesh.polyhedron);
-	// for saving deformation
+	  compare_mesh(predeformed_cactus, deform_mesh.polyhedron);
+	  // for saving deformation
     //std::ofstream(predeformed_cactus_file) << deform_mesh.polyhedron;
     //std::cout << predeformed_cactus_file << std::endl;
   }
@@ -134,7 +134,7 @@ void read_handle_difs_and_deform(Deform_mesh& deform_mesh, Deform_mesh::Handle_g
 int main()
 {
   Polyhedron mesh;
-	std::ifstream("data/cactus.off") >> mesh;
+  std::ifstream("data/cactus.off") >> mesh;
 
   Deform_mesh deform_mesh(mesh, Vertex_index_map(), Edge_index_map()); 
   // load handles and roi from txt
