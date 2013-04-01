@@ -244,7 +244,7 @@ The deformation is handled thanks to a function object that must be initialized:
 Then, the region that the algorithm operates on (i.e. region of interest -ROI) 
 should be determined. The API is convenient enough for either using a subset or the whole mesh as region of interest.
   - `Deform_mesh::insert_roi(vertex_descriptor vd)` insert vertices one by one
-  - `Deform_mesh::insert_roi(InputIterator begin, InputIterator end)` insert vertices in a range
+  - `Deform_mesh::insert_roi(InputIterator begin, InputIterator end)` insert vertices in the range
 
 The ROI should also include the handle vertices \cgalFigureRef{Simple_roi}.
 Note that the algorithm automatically finds the exterior-boundary of the ROI and treat them as <i>fixed handles</i>.
@@ -289,7 +289,7 @@ Some cases for such failure:
 Calling preprocess function is optional, which means it is called by functions in \ref Deform_section, if there is any need to. 
 Of course, it might create a delay in corresponding function caused by preprocess computations. 
 
-\note The ROI does not have to be a connected component, however considering performance issues it is best to use an individual deformation objects per each connected component ROI. 
+\note The ROI does not have to be a connected component, however considering performance issues it is best to use an individual deformation object per each connected component ROI. 
 The main performance gain in such case is related to factorization process (i.e. `Deform_mesh::preprocess`). 
 In deformation, if we assume that fill-ins produced by factorization is negligible, and cost of back-substitution is linearly proportional to non-zero elements in the system, 
 then the performance hit should not be remarkable.
@@ -325,8 +325,8 @@ The final action is invoking the deformation algorithm:
 After deformation, handle vertices will be placed to their target positions and free vertices will be deformed accordingly. 
 The steps in \ref Deform_section can be repeated for further deformations.
 
-\note No matter how many times region of interest or handles are changed, the algorithm always operates as it is just constructed.
-For that reason any vertex which is no longer inside region of interest will be always assigned to its original position in Deform_mesh::preprocess().
+\note No matter how many times ROI or handles are changed, the algorithm always operates as it is just constructed.
+For that reason any vertex which is no longer inside ROI will be always assigned to its original position in Deform_mesh::preprocess().
 
 \subsection Surface_modeling_examples Examples
 
