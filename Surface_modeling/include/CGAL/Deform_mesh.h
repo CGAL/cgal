@@ -31,11 +31,9 @@
 #include <Eigen/Eigen>
 #include <Eigen/SVD>
 
-#include <set>
 #include <vector>
 #include <list>
-
-#include "boost/tuple/tuple.hpp"
+#include <utility>
 
 namespace CGAL {
 
@@ -220,7 +218,7 @@ public:
     }
   }
   /**
-   * Clear the internal state of the object, after cleanup the object can be treated as if it is just constructed
+   * Clear ROI and all handles
    */
   void clear()
   {
@@ -337,52 +335,52 @@ public:
   /** 
    * Return iterator [begin, end) for handle groups. The returned types are handle group representatives, so there is no need to use
    * dereference operator over iterators to reach representatives.
-   * @return tuple of [begin, end) as Deform_mesh::Handle_group
+   * @return pair of [begin, end) as Deform_mesh::Handle_group
    */
-  boost::tuple<Handle_group_iterator, Handle_group_iterator> handle_groups()
+  std::pair<Handle_group_iterator, Handle_group_iterator> handle_groups()
   {
-    return boost::make_tuple(handle_group_list.begin(), handle_group_list.end());
+    return std::make_pair(handle_group_list.begin(), handle_group_list.end());
   }
 
   /** 
    * Return iterator [begin, end) for handle groups. The returned types are handle group representatives, so there is no need to use
    * dereference operator over iterators to reach representatives.
-   * @return tuple of [begin, end) as Deform_mesh::Const_handle_group
+   * @return pair of [begin, end) as Deform_mesh::Const_handle_group
    */
-  boost::tuple<Handle_group_const_iterator, Handle_group_const_iterator> handle_groups() const
+  std::pair<Handle_group_const_iterator, Handle_group_const_iterator> handle_groups() const
   {
-    return boost::make_tuple(handle_group_list.begin(), handle_group_list.end());
+    return std::make_pair(handle_group_list.begin(), handle_group_list.end());
   }
 
   /** 
    * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
    * @param handle_group group containing the requested handles
-   * @return tuple of [begin, end) as Deform_mesh::Handle_iterator
+   * @return pair of [begin, end) as Deform_mesh::Handle_iterator
    * 
    */
-  boost::tuple<Handle_iterator, Handle_iterator> handles(Handle_group handle_group)
+  std::pair<Handle_iterator, Handle_iterator> handles(Handle_group handle_group)
   {
-    return boost::make_tuple(handle_group->begin(), handle_group->end());
+    return std::make_pair(handle_group->begin(), handle_group->end());
   }
 
   /** 
    * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
    * @param handle_group group containing the requested handles
-   * @return tuple of [begin, end) as Deform_mesh::Handle_const_iterator
+   * @return pair of [begin, end) as Deform_mesh::Handle_const_iterator
    */
-  boost::tuple<Handle_const_iterator, Handle_const_iterator> handles(Handle_group handle_group) const
+  std::pair<Handle_const_iterator, Handle_const_iterator> handles(Handle_group handle_group) const
   {
-    return boost::make_tuple(handle_group->begin(), handle_group->end());
+    return std::make_pair(handle_group->begin(), handle_group->end());
   }
 
   /** 
    * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
    * @param handle_group group containing the requested handles
-   * @return tuple of [begin, end) as Deform_mesh::Handle_const_iterator
+   * @return pair of [begin, end) as Deform_mesh::Handle_const_iterator
    */
-  boost::tuple<Handle_const_iterator, Handle_const_iterator> handles(Const_handle_group handle_group) const
+  std::pair<Handle_const_iterator, Handle_const_iterator> handles(Const_handle_group handle_group) const
   {
-    return boost::make_tuple(handle_group->begin(), handle_group->end());
+    return std::make_pair(handle_group->begin(), handle_group->end());
   }
 
   /**
@@ -443,20 +441,20 @@ public:
 
   /** 
    * Return iterator [begin, end) for roi vertices. Note that deleting a roi vertex will invalidate iterators. 
-   * @return tuple of [begin, end) as Deform_mesh::Roi_iterator   
+   * @return pair of [begin, end) as Deform_mesh::Roi_iterator   
    */
-  boost::tuple<Roi_iterator, Roi_iterator> roi_vertices()
+  std::pair<Roi_iterator, Roi_iterator> roi_vertices()
   {
-    return boost::make_tuple(roi.begin(), roi.end());
+    return std::make_pair(roi.begin(), roi.end());
   }
 
   /** 
    * Return iterator [begin, end) for roi vertices. Note that deleting a roi vertex will invalidate iterators. 
-   * @return tuple of [begin, end) as Deform_mesh::Roi_const_iterator
+   * @return pair of [begin, end) as Deform_mesh::Roi_const_iterator
    */
-  boost::tuple<Roi_const_iterator, Roi_const_iterator> roi_vertices() const
+  std::pair<Roi_const_iterator, Roi_const_iterator> roi_vertices() const
   {
-    return boost::make_tuple(roi.begin(), roi.end());
+    return std::make_pair(roi.begin(), roi.end());
   }
 
   /**
