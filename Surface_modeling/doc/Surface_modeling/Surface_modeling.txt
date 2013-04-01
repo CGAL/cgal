@@ -266,6 +266,15 @@ The status of a vertex (roi or handle) can be reinitialized :
   - `Deform_mesh::erase_handle(Handle_group handle_group)` erase the whole group
   - `Deform_mesh::erase_handle(Handle_group handle_group, vertex_descriptor vd)` erase the vertex which is inside given group
   - `Deform_mesh::erase_handle(vertex_descriptor vd)` erase the vertex by searching through all handle groups
+  
+Iteration over ROI and handle vertices are possible using:
+  - Deform_mesh::roi_vertices() iterate over ROI vertices
+  - Deform_mesh::handle_groups() iterate over handle group containers
+  - Deform_mesh::handles(Handle_group handle_group) iterate over vertices inside the given handle group
+  
+Also constant time querying the state of a vertex can be done using:
+  - Deform_mesh::is_roi(vertex_descriptor vd) const check whether the vertex is inside ROI
+  - Deform_mesh::is_handle(vertex_descriptor vd) const check whether the vertex inside any handle group
 
 After having set the ROI and the handle groups, a preprocess function needs to be called.
   - `Deform_mesh::preprocess()` preprocess ROI and handles, make internal stuff ready for deformation
