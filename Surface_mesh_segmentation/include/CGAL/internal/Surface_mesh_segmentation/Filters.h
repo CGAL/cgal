@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <queue>
 
+#include <boost/optional.hpp>
+
 namespace CGAL
 {
 
@@ -43,9 +45,19 @@ public:
   template<class ValuePropertyMap>
   void operator()(const Polyhedron& mesh,
                   int window_size,
-                  ValuePropertyMap values) const {
+                  ValuePropertyMap values,
+                  boost::optional<double> spatial_parameter = boost::optional<double>(),
+                  boost::optional<double> range_parameter = boost::optional<double>()
+                 ) const {
     typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
     typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
+
+    double spatial_parameter_actual;
+    if(!spatial_parameter) {
+      spatial_parameter_actual = window_size / 2.0;
+    } else                   {
+      spatial_parameter_actual = *range_parameter;
+    }
 
     std::vector<double> smoothed_values; // holds smoothed values
     smoothed_values.reserve(mesh.size_of_facets());
@@ -55,29 +67,35 @@ public:
       std::map<Facet_const_handle, int> neighbors;
       NeighborSelector()(facet_it, window_size,
                          neighbors); // gather neighbors in the window
-
-      // calculate deviation for range weighting.
       double current_sdf_value = values[facet_it];
-      double deviation = 0.0;
-      for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
-          it != neighbors.end(); ++it) {
-        deviation += std::pow(values[it->first] - current_sdf_value, 2);
+
+      double range_parameter_actual;
+      if(!range_parameter) {
+        // calculate deviation for range weighting.
+        double deviation = 0.0;
+        for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
+            it != neighbors.end(); ++it) {
+          deviation += std::pow(values[it->first] - current_sdf_value, 2);
+        }
+        deviation = std::sqrt(deviation / neighbors.size());
+        if(deviation == 0.0) {
+          //this might happen. In case there is no neighbors (i.e. NeighborSelector() returns just the parameter facet)
+          //                 . Or all neighbor facets have same sdf value.
+          smoothed_values.push_back(current_sdf_value);
+          continue;
+        }
+        range_parameter_actual = 1.5 * deviation;
+      } else {
+        range_parameter_actual = *range_parameter;
       }
-      deviation = std::sqrt(deviation / neighbors.size());
-      if(deviation == 0.0) {
-        //this might happen. In case there is no neighbors (i.e. NeighborSelector() returns just the parameter facet)
-        //                 . Or all neighbor facets have same sdf value.
-        smoothed_values.push_back(current_sdf_value);
-        continue;
-      }
+
       // smooth
       double total_sdf_value = 0.0, total_weight = 0.0;
       for(typename std::map<Facet_const_handle, int>::iterator it = neighbors.begin();
           it != neighbors.end(); ++it) {
-        const int range_parameter = window_size / 2.0; // window_size => 2*sigma
-        double spatial_weight = gaussian_function(it->second, range_parameter);
+        double spatial_weight = gaussian_function(it->second, spatial_parameter_actual);
         double range_weight = gaussian_function(values[it->first] - current_sdf_value,
-                                                1.5 * deviation);
+                                                range_parameter_actual);
         // we can use just spatial_weight for Gaussian filtering
         double weight = spatial_weight * range_weight;
 
