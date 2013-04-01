@@ -37,9 +37,9 @@ class PlaneC3;
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
 PlaneC3<R>
-plane_from_points(const PointC3<R> &p,
-                  const PointC3<R> &q,
-		  const PointC3<R> &r)
+plane_from_points(const typename R::Point_3 &p,
+                  const typename R::Point_3 &q,
+		  const typename R::Point_3 &r)
 {
   typename R::FT a, b, c, d;
   plane_from_pointsC3(p.x(), p.y(), p.z(),
@@ -52,8 +52,8 @@ plane_from_points(const PointC3<R> &p,
 template <class R>
 CGAL_KERNEL_LARGE_INLINE
 PlaneC3<R>
-plane_from_point_direction(const PointC3<R> &p,
-                           const DirectionC3<R> &d)
+plane_from_point_direction(const typename R::Point_3 &p,
+                           const typename R::Direction_3 &d)
 {
   typename R::FT A, B, C, D;
   plane_from_point_directionC3(p.x(), p.y(), p.z(), d.dx(), d.dy(), d.dz(),

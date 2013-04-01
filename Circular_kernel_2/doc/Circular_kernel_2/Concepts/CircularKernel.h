@@ -192,6 +192,11 @@ Model of `CircularKernel::ConstructCircle_2`.
 */ 
 typedef Hidden_type Construct_circle_2; 
 
+/*!
+Model of `CircularKernel::ConstructBbox_2`.
+*/
+typedef Hidden_type Construct_bbox_2;
+
 /*! 
 Model of `CircularKernel::ConstructCircularArcPoint_2`. 
 */ 

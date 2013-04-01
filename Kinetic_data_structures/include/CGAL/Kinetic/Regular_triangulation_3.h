@@ -33,6 +33,9 @@
 
 #include <CGAL/Kinetic/listeners.h>
 
+#include <CGAL/use.h>
+#include <CGAL/assertions.h>
+
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -840,6 +843,7 @@ protected:
 	    }
 	  }
 	  CGAL_assertion(found);
+          CGAL_USE(found);
 	}
 
 	
@@ -872,6 +876,7 @@ protected:
 	  }
 	}
 	CGAL_assertion(found);
+        CGAL_USE(found);
       } 
 
       for (typename RCMap::const_iterator it= redundant_cells_.begin(); 

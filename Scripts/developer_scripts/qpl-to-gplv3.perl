@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 
+## Run that script on a file (files one by one) that is under QPL, to turn
+## its license into GPLv3+.
+
 use warnings;
 
 sub print_gplv3

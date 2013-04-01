@@ -72,7 +72,7 @@ void Viewer::drawFacet(Dart_const_handle ADart)
 {
   LCC &m = *scene->lcc;
   ::glBegin(GL_POLYGON);
-  assert( ADart->attribute<3>()!=NULL );
+  CGAL_assertion( ADart->attribute<3>()!=NULL );
 
   //  double r = (double)ADart->attribute<3>()->info().r()/255.0;
   double r = (double)ADart->attribute<3>()->info().color().r()/255.0;

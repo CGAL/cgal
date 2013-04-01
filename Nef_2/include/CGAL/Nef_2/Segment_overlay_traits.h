@@ -645,7 +645,7 @@ public:
       : K(lt.K) 
     {}
     
-    int 
+    bool 
     operator()(const Point_2& p1, const Point_2& p2) const
     { 
       return K.compare_xy(p1,p2) < 0; 

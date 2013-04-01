@@ -32,6 +32,7 @@
 #include <CGAL/Min_ellipse_2/Min_ellipse_2_adapterC2.h>
 #include <CGAL/Min_ellipse_2/Min_ellipse_2_adapterH2.h>
 #include <CGAL/IO/Verbose_ostream.h>
+#include <CGAL/use.h>
 #include <cassert>
 #include <cstring>
 #include <fstream>
@@ -90,7 +91,7 @@ core_test_Min_ellipse_2( bool verbose, const Traits&)
 
     typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
     typedef  typename Min_ellipse::Point    Point;
-    typedef  typename Min_ellipse::Ellipse  Ellipse;
+    CGAL_USE_TYPE(typename Min_ellipse::Ellipse);
     
     CGAL::Verbose_ostream verr( verbose);
     
@@ -155,7 +156,6 @@ double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
 
     typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
     typedef  typename Min_ellipse::Point    Point;
-    typedef  typename Min_ellipse::Ellipse  Ellipse;
 
     CGAL::Verbose_ostream verr( verbose);
     
@@ -226,7 +226,6 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
 
     typedef  CGAL::Min_ellipse_2< Traits >  Min_ellipse;
     typedef  typename Min_ellipse::Point    Point;
-    typedef  typename Min_ellipse::Ellipse  Ellipse;
 
     CGAL::Verbose_ostream verr( verbose);
 
@@ -648,7 +647,6 @@ main( int argc, char* argv[])
     
         typedef  CGAL::Min_ellipse_2< TraitsH >  Min_ellipse;
         typedef  Min_ellipse::Point              Point;
-        typedef  Min_ellipse::Ellipse            Ellipse;
     
         CGAL::Verbose_ostream verr( verbose);
     

@@ -187,7 +187,7 @@ Viewer::render_video()
     for (int fr=0 ; fr < 50 ; fr++) {
       Vec cam = camera()->position();
       Vec ori = sceneCenter();
-      Vec new_cam = next_around_circle(0.01,cam,ori);
+      Vec new_cam = next_around_circle(0.01f,cam,ori);
       camera()->setPosition(new_cam);
       camera()->lookAt(ori);
       this->showEntireScene();

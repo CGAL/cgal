@@ -63,24 +63,26 @@ struct Myitems_4
 
 int main()
 {
+  std::cout<<"Linear_cell_complex start test (v1)."<<std::flush;
+
   typedef CGAL::Linear_cell_complex<2> LCC2;
   if ( !test_LCC_2<LCC2>() )
   {
-    std::cout<<"ERROR during Test_LCC_2<LCC2>."<<std::endl;
+    std::cout<<" Error during Test_LCC_2<LCC2>."<<std::endl;
     return EXIT_FAILURE;
   }
   
   typedef CGAL::Linear_cell_complex<3> LCC3;
   if ( !test_LCC_3<LCC3>() )
   {
-    std::cout<<"ERROR during Test_LCC_3<LCC3>."<<std::endl;
+    std::cout<<" Error during Test_LCC_3<LCC3>."<<std::endl;
     return EXIT_FAILURE;
   }
   
   typedef CGAL::Linear_cell_complex<4> LCC4;
   if ( !test_LCC_4<LCC4>() )
   {
-    std::cout<<"ERROR during Test_LCC_4<LCC4>."<<std::endl;
+    std::cout<<" Error during Test_LCC_4<LCC4>."<<std::endl;
     return EXIT_FAILURE;
   }
   
@@ -89,7 +91,7 @@ int main()
                                     Myitems_2> LCC2b;
   if ( !test_LCC_2<LCC2b>() )
   {
-    std::cout<<"ERROR during Test_LCC_2<LCC2b>."<<std::endl;
+    std::cout<<" Error during Test_LCC_2<LCC2b>."<<std::endl;
     return EXIT_FAILURE;
   }
   
@@ -98,7 +100,7 @@ int main()
                                     Myitems_3> LCC3b;
   if ( !test_LCC_3<LCC3b>() )
   {
-    std::cout<<"ERROR during Test_LCC_3<LCC3b>."<<std::endl;
+    std::cout<<" Error during Test_LCC_3<LCC3b>."<<std::endl;
     return EXIT_FAILURE;
   }
   
@@ -107,9 +109,10 @@ int main()
                                     Myitems_4> LCC4b;
   if ( !test_LCC_4<LCC4b>() )
   {
-    std::cout<<"ERROR during Test_LCC_4<LCC4b>."<<std::endl;
+    std::cout<<" Error during Test_LCC_4<LCC4b>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
+  std::cout<<" Success."<<std::endl;
   return EXIT_SUCCESS;
 }

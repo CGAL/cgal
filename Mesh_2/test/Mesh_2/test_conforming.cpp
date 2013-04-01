@@ -28,8 +28,6 @@ struct Tester {
   void operator()() const {
     typedef CGAL::Constrained_Delaunay_triangulation_2<K> CDT;
     typedef typename CDT::Point Point;
-    typedef typename CDT::Vertex_handle Vertex_handle;
-
     typedef typename CDT::size_type size_type;
 
     CDT cdt;

@@ -190,7 +190,6 @@ private:
   void propagating_flip(const Face_handle& f,int i);
 #endif
 
-  void remove_2D(Vertex_handle v );
 
 // auxilliary functions for remove
   void remove_degree_init(Vertex_handle v, std::vector<Face_handle> &f,

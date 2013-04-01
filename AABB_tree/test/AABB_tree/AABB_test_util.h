@@ -68,10 +68,10 @@ void test_all_intersection_query_types(Tree& tree)
     typedef typename K::Ray_3 Ray;
     typedef typename K::Line_3 Line;
     typedef typename K::Point_3 Point;
-    typedef typename K::Vector_3 Vector;
+    // typedef typename K::Vector_3 Vector;
     typedef typename K::Segment_3 Segment;
     typedef typename Tree::Primitive Primitive;
-    typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
+    // typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
     typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
 
     Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
@@ -122,10 +122,10 @@ template <class Tree, class K>
 void test_all_distance_query_types(Tree& tree)
 {
     typedef typename K::FT FT;
-    typedef typename K::Ray_3 Ray;
+    // typedef typename K::Ray_3 Ray;
     typedef typename K::Point_3 Point;
-    typedef typename K::Vector_3 Vector;
-    typedef typename Tree::Primitive Primitive;
+    // typedef typename K::Vector_3 Vector;
+    // typedef typename Tree::Primitive Primitive;
     typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
 
     Point query = random_point_in<K>(tree.bbox());
@@ -152,10 +152,10 @@ template <class Tree, class K>
 void test_distance_speed(Tree& tree,
                          const double duration)
 {
-    typedef typename K::FT FT;
-    typedef typename K::Ray_3 Ray;
+    // typedef typename K::FT FT;
+    // typedef typename K::Ray_3 Ray;
     typedef typename K::Point_3 Point;
-    typedef typename K::Vector_3 Vector;
+    // typedef typename K::Vector_3 Vector;
 
     CGAL::Timer timer;
     timer.start();

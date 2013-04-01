@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include <CGAL/iterator.h>
+#include <CGAL/use.h>
 
 struct A{};
 struct B{};
@@ -12,12 +13,12 @@ struct B{};
 template<class output>
 void check_types(output out){
   typedef typename output::Iterator_tuple T1;
-  typedef typename output::Value_type_tuple T2;
-  typedef typename output::iterator_category T3;
-  typedef typename output::value_type T4;
-  typedef typename output::difference_type T5;
-  typedef typename output::pointer T6;
-  typedef typename output::reference T7;
+  CGAL_USE_TYPE(typename output::Value_type_tuple);
+  CGAL_USE_TYPE(typename output::iterator_category);
+  CGAL_USE_TYPE(typename output::value_type);
+  CGAL_USE_TYPE(typename output::difference_type);
+  CGAL_USE_TYPE(typename output::pointer);
+  CGAL_USE_TYPE(typename output::reference);
   T1 tmp=out.get_iterator_tuple();
   tmp=tmp;
 }

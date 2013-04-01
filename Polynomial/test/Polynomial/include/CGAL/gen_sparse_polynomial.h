@@ -18,7 +18,6 @@ generate_sparse_random_polynomial(CGAL::Random random, int max_degree = 6){
     typedef typename PT::Polynomial_d Polynomial_d;
     typename PT::Construct_polynomial construct; 
 
-    typedef CGAL::Exponent_vector Exponent_vector;
     typedef std::pair< CGAL::Exponent_vector , IC > Monom;
     typedef std::vector< Monom > Monom_rep;
 

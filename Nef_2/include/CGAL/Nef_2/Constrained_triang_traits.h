@@ -137,7 +137,7 @@ public:
 
    lt_pnts_xy(const PMDEC& D, const GEOMETRY& k) : PMDEC(D), K(k) {}
    lt_pnts_xy(const lt_pnts_xy& lt) : PMDEC(lt), K(lt.K) {}
-   int operator()(const Vertex_handle& v1, const Vertex_handle& v2) const
+   bool operator()(const Vertex_handle& v1, const Vertex_handle& v2) const
    { return K.compare_xy(point(v1),point(v2)) < 0; }
   }; // lt_pnts_xy
 

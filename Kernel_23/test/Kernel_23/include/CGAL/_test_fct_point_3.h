@@ -41,8 +41,6 @@ bool
 _test_fct_point_sqrt_3(const R&, CGAL::Tag_true)
 {
  typedef typename  R::RT       RT;
- typedef typename  R::Point_3  Point_3;
- typedef typename  R::Vector_3   Vector_3;
 
  // unit_normal of three points
  CGAL::Point_3<R> pe0( RT(1), RT(0), RT(0) );

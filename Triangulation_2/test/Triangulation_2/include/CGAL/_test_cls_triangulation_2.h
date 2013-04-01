@@ -33,6 +33,7 @@
 #include <CGAL/_test_triangulation_circulators.h>
 #include <CGAL/_test_line_face_circulator.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/use.h>
 
 template <class Triangul>
 void
@@ -70,6 +71,15 @@ _test_cls_triangulation_2( const Triangul & )
 
   typedef typename Triangul::Locate_type          Locate_type;
   
+  CGAL_USE_TYPE(Gt);
+  CGAL_USE_TYPE(Vertex);
+  CGAL_USE_TYPE(Face);
+  CGAL_USE_TYPE(Finite_vertices_iterator);
+  CGAL_USE_TYPE(Finite_edges_iterator);
+  CGAL_USE_TYPE(Vertex_circulator);
+  CGAL_USE_TYPE(Edge_circulator);
+  CGAL_USE_TYPE(Line_face_circulator);
+
   // Build a few objects
   // p1,p3,p2,p9,p8 aligned in this order
   // p0,p5,p7 also

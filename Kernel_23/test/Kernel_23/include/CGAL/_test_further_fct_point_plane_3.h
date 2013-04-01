@@ -30,7 +30,6 @@ _test_further_fct_point_plane_3(const R& )
  std::cout << "Testing further functions Point_3 Plane_3" ;
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    FT;
 
  CGAL::Point_3<R> p0( RT(0), RT(0), RT(0) );
  CGAL::Point_3<R> px( RT(1), RT(0), RT(0) );

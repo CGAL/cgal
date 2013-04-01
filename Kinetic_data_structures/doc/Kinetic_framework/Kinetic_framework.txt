@@ -79,7 +79,7 @@ handle the kinetic event they represent. Specifically, the
 The body of the `Kinetic::Simulator::Event::process()` method typically
 simply calls a method of the kinetic data structure that created the
 event; for example in our kinetic sorting example, processing an event
-means calling the `Kinetic::Sort<Traits, Visitor>::swap(Iterator)`
+means calling the \link CGAL::Kinetic::Sort::swap `Kinetic::Sort<Traits, Visitor>::swap()` \endlink
 method of the kinetic sorting data structure.
 
 In the model of the `Kinetic::Simulator` concept that we provide,

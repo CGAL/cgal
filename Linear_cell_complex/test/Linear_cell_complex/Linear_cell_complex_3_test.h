@@ -35,10 +35,10 @@ bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
   if ( !lcc.is_valid() )
   {
     std::cout<<"ERROR: the lcc is not valid."<<std::endl;
-    assert(false);
+    CGAL_assertion(false);
     return false;
   }
-  
+
   std::vector<unsigned int> nbc;
   nbc=lcc.count_all_cells();
 
@@ -50,7 +50,7 @@ bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
              <<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "<<nbc[2]<<", "
              <<nbc[3]<<", "<<nbc[4]<<")."
              <<std::endl;
-    assert(false);
+    CGAL_assertion(false);
     return false;
   }
 
@@ -60,11 +60,30 @@ bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
              <<"the number of vertex attributes ("
              <<lcc.number_of_vertex_attributes()<<")"<<std::endl;
 
-    assert(false);
+    CGAL_assertion(false);
     return false;
   }
-  
+
   return true;
+}
+
+template<typename LCC>
+typename LCC::Dart_handle make_loop(LCC& lcc, const typename LCC::Point& p1)
+{
+  typename LCC::Dart_handle dh1 = lcc.create_dart(p1);
+  lcc.template sew<1>(dh1, dh1);
+  return dh1;
+}
+
+template<typename LCC>
+typename LCC::Dart_handle make_face_two_edges(LCC& lcc,
+                                              const typename LCC::Point& p1,
+                                              const typename LCC::Point& p2)
+{
+  typename LCC::Dart_handle dh1 = lcc.create_dart(p1);
+  lcc.template sew<1>(dh1, lcc.create_dart(p2));
+  lcc.template sew<0>(dh1, dh1->beta(1));
+  return dh1;
 }
 
 template<typename LCC>
@@ -74,21 +93,21 @@ bool test_LCC_3()
 
   typedef typename LCC::Dart_handle Dart_handle;
   typedef typename LCC::Point Point;
-  
+
   // Construction operations
   Dart_handle dh1=lcc.make_segment(Point(0,0,0),Point(1,0,0));
   Dart_handle dh2=lcc.make_segment(Point(2,0,0),Point(2,1,0));
   Dart_handle dh3=lcc.make_segment(Point(2,2,0),Point(3,1,0));
   if ( !check_number_of_cells_3(lcc, 6, 3, 6, 3, 3) )
     return false;
-  
+
   lcc.template sew<0>(dh2,dh1);
   lcc.template sew<1>(dh2,dh3);
   if ( !check_number_of_cells_3(lcc, 4, 3, 4, 1, 1) )
     return false;
 
   Dart_handle dh5=lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
-  Dart_handle dh6=lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));    
+  Dart_handle dh6=lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
   if ( !check_number_of_cells_3(lcc, 10, 9, 6, 3, 3) )
     return false;
 
@@ -145,7 +164,7 @@ bool test_LCC_3()
   CGAL::remove_cell<LCC,1>(lcc, dh14);
   if ( !check_number_of_cells_3(lcc, 18, 26, 17, 4, 3) )
     return false;
-  
+
   lcc.template unsew<3>(dh12);
   if ( !check_number_of_cells_3(lcc, 21, 29, 18, 4, 4) )
     return false;
@@ -154,7 +173,7 @@ bool test_LCC_3()
   CGAL::remove_cell<LCC,3>(lcc, dh12);
   if ( !check_number_of_cells_3(lcc, 13, 17, 10, 2, 2) )
     return false;
-  
+
   CGAL::remove_cell<LCC,1>(lcc, dh11);
   if ( !check_number_of_cells_3(lcc, 12, 16, 10, 2, 2) )
     return false;
@@ -165,14 +184,14 @@ bool test_LCC_3()
           itend=lcc.template darts_of_cell<0,2>(dh10).end();
         it!=itend; ++it )
     toremove.push_back( it );
-  
+
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
   toremove.clear();
   if ( !check_number_of_cells_3(lcc, 11, 13, 8, 2, 2) )
     return false;
-  
+
   CGAL::remove_cell<LCC,0>(lcc, dh9);
   if ( !check_number_of_cells_3(lcc, 10, 12, 8, 2, 2) )
     return false;
@@ -182,14 +201,14 @@ bool test_LCC_3()
           itend=lcc.template darts_of_cell<0,2>(dh8).end();
         it!=itend; ++it )
     toremove.push_back( it );
-  
+
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
   toremove.clear();
   if ( !check_number_of_cells_3(lcc, 9, 9, 6, 2, 2) )
     return false;
-  
+
   CGAL::remove_cell<LCC,0>(lcc, dh7);
   if ( !check_number_of_cells_3(lcc, 8, 8, 6, 2, 2) )
     return false;
@@ -207,17 +226,476 @@ bool test_LCC_3()
   if ( !check_number_of_cells_3(lcc, 5, 3, 5, 2, 2) )
     return false;
 
-  lcc.template unsew<0>(dh2); 
+  lcc.template unsew<0>(dh2);
   if ( !check_number_of_cells_3(lcc, 6, 3, 6, 3, 3) )
     return false;
 
   CGAL::remove_cell<LCC,1>(lcc, dh1);
   CGAL::remove_cell<LCC,1>(lcc, dh2);
-  CGAL::remove_cell<LCC,1>(lcc, dh3);  
+  CGAL::remove_cell<LCC,1>(lcc, dh3);
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
     return false;
 
+  // Edge contraction
+  dh1 = lcc.create_dart(Point(0,0,0));
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
 
+  dh1 = make_loop(lcc, Point(0,0,0));
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  lcc.template sew<1>(dh1, dh1);
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  lcc.template sew<1>(dh1, dh1);
+  lcc.template sew<1>(dh1->beta(2), dh1->beta(2));
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
+  dh2 = dh1->beta(0); dh3 = dh1->beta(1);
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 2, 2, 1, 1, 1) ||
+       !CGAL::is_face_combinatorial_polygon(lcc, dh2, 2) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 1, 1, 1, 1, 1) ||
+       !CGAL::is_face_combinatorial_polygon(lcc, dh3, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
+  dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  lcc.template sew<3>(dh1, dh2); dh2 = dh1->beta(0); dh3 = dh1->beta(1);
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 2, 2, 1, 2, 1) ||
+       !CGAL::is_face_combinatorial_polygon(lcc, dh2, 2) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 1, 1, 1, 2, 1) ||
+       !CGAL::is_face_combinatorial_polygon(lcc, dh3, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
+  dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  lcc.template sew<2>(dh1, dh2);
+
+  dh2 = dh2->beta(1);
+  dh3 = dh1->beta(1);
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 4, 4, 2, 2, 2) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2->beta(1));
+  if ( !check_number_of_cells_3(lcc, 3, 3, 2, 2, 2) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 2, 2, 1, 1, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3->beta(1));
+  if ( !check_number_of_cells_3(lcc, 1, 1, 1, 1, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
+  dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  lcc.template sew<2>(dh1, dh2);
+
+  dh2 = dh2->beta(1);
+  dh3 = dh1->beta(1);
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2->beta(1));
+  if ( !check_number_of_cells_3(lcc, 3, 4, 2, 1, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3->beta(1));
+  if ( !check_number_of_cells_3(lcc, 2, 3, 2, 1, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 1, 2, 2, 1, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3);
+  if ( !check_number_of_cells_3(lcc, 1, 1, 2, 1, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
+  dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  lcc.template sew<2>(dh1, dh2);
+
+  dh3 = lcc.make_triangle(Point(5,5,4),Point(7,5,4),Point(6,6,4));
+  lcc.template sew<3>(dh1, dh3);
+
+  dh3 = lcc.make_triangle(Point(5,4,4),Point(7,4,4),Point(6,3,4));
+  lcc.template sew<3>(dh2, dh3);
+
+  lcc.template sew<2>(dh1->beta(3), dh3);
+
+  dh2 = dh2->beta(1);
+  dh3 = dh1->beta(1);
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 4, 4, 2, 4, 2) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2->beta(1));
+  if ( !check_number_of_cells_3(lcc, 3, 3, 2, 4, 2) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 2, 2, 1, 2, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3->beta(1));
+  if ( !check_number_of_cells_3(lcc, 1, 1, 1, 2, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
+  dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  lcc.template sew<2>(dh1, dh2);
+
+  dh3 = lcc.make_triangle(Point(5,5,4),Point(7,5,4),Point(6,6,4));
+  lcc.template sew<3>(dh1, dh3);
+
+  dh3 = lcc.make_triangle(Point(5,4,4),Point(7,4,4),Point(6,3,4));
+  lcc.template sew<3>(dh2, dh3);
+
+  dh2 = dh2->beta(1);
+  dh3 = dh1->beta(1);
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2->beta(1));
+  if ( !check_number_of_cells_3(lcc, 3, 4, 2, 3, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3->beta(1));
+  if ( !check_number_of_cells_3(lcc, 2, 3, 2, 3, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 1, 2, 2, 3, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh3);
+  if ( !check_number_of_cells_3(lcc, 1, 1, 2, 3, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.
+      make_hexahedron(Point(0,0,0),Point(1,0,0),Point(1,1,0),Point(0,1,0),
+                      Point(0,1,1),Point(0,0,1),Point(1,0,1),Point(1,1,1));
+  dh2 = lcc.
+      make_hexahedron(Point(0,3,0),Point(1,3,0),Point(1,4,0),Point(0,4,0),
+                      Point(0,4,1),Point(0,3,1),Point(1,3,1),Point(1,4,1));
+  dh2 = lcc.beta(dh2, 2,1,1,2);
+  lcc.template sew<3>(dh1,dh2);
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1->beta(0));
+  if ( !check_number_of_cells_3(lcc, 11, 19, 11, 2, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1->beta(1)->beta(1));
+  if ( !check_number_of_cells_3(lcc, 10, 18, 11, 2, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1->beta(1));
+  if ( !check_number_of_cells_3(lcc, 9, 17, 11, 2, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,1>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 10, 16, 10, 2, 2 ) )
+    return false;
+  lcc.clear();
+
+  // Face contraction
+  dh1 = lcc.create_dart(Point(0,0,0));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = make_loop<LCC>(lcc, Point(0,0,0));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 1, 1, 1, 1, 1) )
+    return false;
+  lcc.clear();
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  lcc.template sew<1>(dh1, dh1);
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 1, 1, 1, 1, 1) )
+    return false;
+  lcc.clear();
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  lcc.template sew<1>(dh1, dh1);
+  lcc.template sew<1>(dh1->beta(2), dh1->beta(2));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 1, 1, 1, 1, 1) )
+    return false;
+  lcc.clear();
+
+  dh1 = make_face_two_edges(lcc, Point(0,0,0), Point(1,0,0));
+  dh2 = make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1));
+  lcc.template sew<2>(dh1, dh2);
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 2, 2, 1, 1, 1) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
+  dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  dh3 = lcc.make_triangle(Point(5,3,3),Point(7,3,3),Point(6,0,3));
+  lcc.template sew<2>(dh1, dh2);
+  lcc.template sew<2>(dh2->beta(1), dh3);
+
+  CGAL::contract_cell<LCC,1>(lcc,dh2->beta(0));
+  if ( !check_number_of_cells_3(lcc, 4, 6, 3, 1, 1) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 4, 5, 2, 1, 1) )
+    return false;
+  lcc.clear();
+
+  dh1 = lcc.create_dart(Point(0,0,0));
+  lcc.template sew<3>(dh1, lcc.create_dart(Point(1,0,0)));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = make_loop(lcc, Point(0,0,0));
+  dh2 = make_loop(lcc, Point(0,0,1));
+  lcc.template sew<3>(dh1, dh2);
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  lcc.template sew<3>(dh1, lcc.make_segment(Point(0,0,1),Point(1,0,1)));
+  lcc.template sew<3>(dh1->beta(2),dh1->beta(3)->beta(2));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 2, 1, 1, 2, 1) )
+    return false;
+  lcc.clear();
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  lcc.template sew<1>(dh1, dh1);
+  dh2 = lcc.make_segment(Point(0,0,1),Point(1,0,1));
+  lcc.template sew<1>(dh2, dh2);
+  lcc.template sew<3>(dh1, dh2);
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 2, 2, 2, 2, 2) )
+    return false;
+  lcc.clear();
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  lcc.template sew<1>(dh1, dh1);
+  lcc.template sew<1>(dh1->beta(2), dh1->beta(2));
+  dh2 = lcc.make_segment(Point(0,0,1),Point(1,0,1));
+  lcc.template sew<1>(dh2, dh2);
+  lcc.template sew<1>(dh2->beta(2), dh2->beta(2));
+  lcc.template sew<3>(dh1, dh2);
+  lcc.template sew<3>(dh1->beta(2), dh2->beta(2));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 1, 1, 1, 2, 1) )
+    return false;
+  lcc.clear();
+
+  dh1 = make_face_two_edges(lcc, Point(0,0,0), Point(1,0,0));
+  dh2 = make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1));
+  lcc.template sew<2>(dh1, dh2);
+  lcc.template sew<3>(dh1,
+                      make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1)));
+  lcc.template sew<3>(dh2,
+                      make_face_two_edges(lcc, Point(1,0,1), Point(1,0,2)));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 2, 2, 1, 2, 1) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = make_face_two_edges(lcc, Point(0,0,0), Point(1,0,0));
+  dh2 = make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1));
+  lcc.template sew<2>(dh1, dh2);
+  lcc.template sew<3>(dh1,
+                      make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1)));
+  lcc.template sew<3>(dh2,
+                      make_face_two_edges(lcc, Point(1,0,1), Point(1,0,2)));
+  lcc.template sew<2>(dh1->beta(3), dh2->beta(3));
+  CGAL::contract_cell<LCC,2>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 2, 2, 1, 2, 1) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
+  dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  dh3 = lcc.make_triangle(Point(5,3,3),Point(7,3,3),Point(6,0,3));
+  lcc.template sew<2>(dh1, dh2);
+  lcc.template sew<2>(dh2->beta(1), dh3);
+  lcc.template sew<3>(dh1, lcc.make_triangle(Point(5,5,4),Point(7,5,4),
+                                             Point(6,6,4)));
+  lcc.template sew<3>(dh2, lcc.make_triangle(Point(5,4,4),Point(7,4,4),
+                                             Point(6,3,4)));
+  lcc.template sew<3>(dh3, lcc.make_triangle(Point(5,3,4),Point(7,3,4),
+                                             Point(6,0,4)));
+  lcc.template sew<2>(dh1->beta(3), dh2->beta(3));
+  lcc.template sew<2>(dh2->beta(1)->beta(3), dh3->beta(3));
+  CGAL::contract_cell<LCC,1>(lcc,dh2->beta(0));
+  if ( !check_number_of_cells_3(lcc, 4, 6, 3, 2, 1) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 4, 5, 2, 2, 1) )
+    return false;
+  lcc.clear();
+
+  // Volume contraction
+  dh1 = lcc.create_dart(Point(0,0,0));
+  CGAL::contract_cell<LCC,3>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = make_loop<LCC>(lcc, Point(0,0,0));
+  CGAL::contract_cell<LCC,3>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  CGAL::contract_cell<LCC,3>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+
+  dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  lcc.template sew<1>(dh1, dh1); lcc.template sew<1>(dh1->beta(2), dh1->beta(2));
+  CGAL::contract_cell<LCC,3>(lcc,dh1);
+  if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
+    return false;
+  lcc.clear();
+
+  dh1 = lcc.
+    make_hexahedron(Point(0,0,0),Point(1,0,0),Point(1,1,0),Point(0,1,0),
+                    Point(0,1,1),Point(0,0,1),Point(1,0,1),Point(1,1,1));
+  dh2 = lcc.
+    make_hexahedron(Point(0,3,0),Point(1,3,0),Point(1,4,0),Point(0,4,0),
+                    Point(0,4,1),Point(0,3,1),Point(1,3,1),Point(1,4,1));
+  dh2 = lcc.beta(dh2, 2,1,1,2);
+  lcc.template sew<3>(dh1,dh2);
+
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,2,1));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,2,0));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,1,1,2,0));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,1,1,2,1));
+
+  if ( !check_number_of_cells_3(lcc, 8, 16, 11, 2, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,0,2));
+  if ( !check_number_of_cells_3(lcc, 8, 15, 10, 2, 1 ) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,1,1,2));
+  if ( !check_number_of_cells_3(lcc, 8, 14, 9, 2, 1 ) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,1,2));
+  if ( !check_number_of_cells_3(lcc, 8, 13, 8, 2, 1 ) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,2));
+  if ( !check_number_of_cells_3(lcc, 8, 12, 7, 2, 1 ) )
+    return false;
+
+  CGAL::contract_cell<LCC,3>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 8, 12, 6, 1, 1 ) )
+    return false;
+  lcc.clear();
+
+  dh1 = lcc.
+    make_hexahedron(Point(0,0,0),Point(1,0,0),Point(1,1,0),Point(0,1,0),
+                    Point(0,1,1),Point(0,0,1),Point(1,0,1),Point(1,1,1));
+  dh2 = lcc.
+    make_hexahedron(Point(0,3,0),Point(1,3,0),Point(1,4,0),Point(0,4,0),
+                    Point(0,4,1),Point(0,3,1),Point(1,3,1),Point(1,4,1));
+  dh3 = lcc.
+    make_hexahedron(Point(0,6,0),Point(1,6,0),Point(1,7,0),Point(0,7,0),
+                    Point(0,7,1),Point(0,6,1),Point(1,6,1),Point(1,7,1));
+  dh3 = lcc.beta(dh3, 2,1,1,2);
+  lcc.template sew<3>(dh2,dh3);
+  dh2 = lcc.beta(dh2, 2,1,1,2);
+  lcc.template sew<3>(dh1,dh2);
+
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,2,1));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,2,0));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,1,1,2,0));
+  CGAL::contract_cell<LCC,1>(lcc,lcc.beta(dh2,1,1,2,1));
+
+  if ( !check_number_of_cells_3(lcc, 12, 24, 16, 3, 1) )
+    return false;
+
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,0,2));
+  if ( !check_number_of_cells_3(lcc, 12, 23, 15, 3, 1 ) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,1,1,2));
+  if ( !check_number_of_cells_3(lcc, 12, 22, 14, 3, 1 ) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,1,2));
+  if ( !check_number_of_cells_3(lcc, 12, 21, 13, 3, 1 ) )
+    return false;
+  CGAL::contract_cell<LCC,2>(lcc,lcc.beta(dh2,2));
+  if ( !check_number_of_cells_3(lcc, 12, 20, 12, 3, 1 ) )
+    return false;
+
+  CGAL::contract_cell<LCC,3>(lcc,dh2);
+  if ( !check_number_of_cells_3(lcc, 12, 20, 11, 2, 1 ) )
+    return false;
+  lcc.clear();
+
+  // Construction from Polyhedron_3
   {
     CGAL::Polyhedron_3<typename LCC::Traits> P;
     std::ifstream in("data/armadillo.off");
@@ -233,6 +711,7 @@ bool test_LCC_3()
     lcc.clear();
   }
 
+  // Construction from Triangulation_3
   {
     CGAL::Triangulation_3<typename LCC::Traits> T;
     std::ifstream in("data/points.txt");
@@ -250,7 +729,7 @@ bool test_LCC_3()
       return false;
     lcc.clear();
   }
-  
+
   return true;
 }
 

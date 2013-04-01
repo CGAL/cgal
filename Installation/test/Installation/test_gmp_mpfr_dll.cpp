@@ -38,6 +38,7 @@ bool get_version_info(const LPCTSTR name,
   if (!GetFileVersionInfo(fileName, handle, size, versionInfo))
   {
     delete[] versionInfo;
+    std::cerr << name << " has no VersionInfo!\n";
     return false;
   }
   // we have version information
@@ -56,8 +57,10 @@ int main() {
   std::cout << "Hello GMP version " << gmp_version << std::endl;
   std::cout << "Hello MPFR version " << mpfr_get_version() << std::endl;
   int major, minor, patch, build;
-  bool result = get_version_info(GMP_SONAME, major, minor, patch, build);
-  assert(result);
+  if(!get_version_info(GMP_SONAME, major, minor, patch, build)) {
+    return 1;
+  }
+
   std::cout << "GMP version "
             << major << "."
             << minor << "."
@@ -65,8 +68,9 @@ int main() {
             << build << "\n";
   assert(major==GMP_MAJOR);
   major = 0;
-  result = get_version_info(MPFR_SONAME, major, minor, patch, build);
-  assert(result);
+  if(!get_version_info(MPFR_SONAME, major, minor, patch, build)) {
+    return 1;
+  }
   std::cout << "MPFR version "
             << major << "."
             << minor << "."

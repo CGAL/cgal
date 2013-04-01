@@ -179,7 +179,6 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   typedef typename Traits::Point_2       Point_2;
 
   typedef typename Dt::Vertex_handle     Vertex_handle;
-  typedef typename Dt::Face_handle     Face_handle;
   typedef typename Dt::Face_circulator   Face_circulator;
 
 

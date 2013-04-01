@@ -22,6 +22,8 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_IMPL_H
 #define CGAL_APOLLONIUS_GRAPH_2_IMPL_H
 
+#include <CGAL/use.h>
+
 // class implementation continued
 //=================================
 
@@ -860,7 +862,7 @@ add_bogus_vertex(Edge e, List& l)
 {
   Edge esym = sym_edge(e);
   Face_handle g1 = e.first;
-  Face_handle g2 = esym.first;
+  CGAL_assertion_code(Face_handle g2 = esym.first);
 
   Vertex_handle v = insert_degree_2(e);
   Face_circulator fc(v);
@@ -1103,7 +1105,7 @@ retriangulate_conflict_region(const Site_2& p,	List& l,
   Edge e_start = l.front();
   Edge eit = e_start;
   do {
-    Edge esym = sym_edge(eit);
+    CGAL_assertion_code(Edge esym =)sym_edge(eit);
     Face_handle f = eit.first;
     int k = eit.second;
     CGAL_assertion( !l.is_in_list(esym) );
@@ -1824,6 +1826,7 @@ remove_degree_d_vertex(Vertex_handle v)
     } while ( ec != ec_start );
 
     CGAL_assertion( found );
+    CGAL_USE(found);
   }
   CGAL_triangulation_precondition( degree(v) == 3 );
 

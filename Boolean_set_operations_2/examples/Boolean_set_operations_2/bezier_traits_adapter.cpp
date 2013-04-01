@@ -6,7 +6,7 @@
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
-int main ()
+int main()
 {
   std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return (0);
@@ -16,7 +16,6 @@ int main ()
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
-#include <CGAL/Arrangement_2.h>
 #include <CGAL/Gps_traits_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Timer.h>
@@ -43,10 +42,10 @@ typedef std::list<Polygon_with_holes_2>                 Polygon_set;
 /*! Read a general polygon with holes, formed by Bezier curves, from the
  * given input file.
  */
-bool read_Bezier_polygon (const char* filename, Polygon_with_holes_2& P)
+bool read_Bezier_polygon(const char* filename, Polygon_with_holes_2& P)
 {
   // Open the input file.
-  std::ifstream   in_file (filename);
+  std::ifstream   in_file(filename);
 
   if (! in_file.is_open())
     return false;
@@ -76,29 +75,29 @@ bool read_Bezier_polygon (const char* filename, Polygon_with_holes_2& P)
     X_monotone_curve_2                       xcv;
 
     in_file >> B;
-    mk_x_monotone (B, std::back_inserter (x_objs));
+    mk_x_monotone(B, std::back_inserter(x_objs));
     
     for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
-      if (CGAL::assign (xcv, *xoit))
-        xcvs.push_back (xcv);
+      if (CGAL::assign(xcv, *xoit))
+        xcvs.push_back(xcv);
     }
     
     // Check if the current curve closes a polygon, namely whether it target
     // point (the last control point) equals the source of the first curve in
     // the current chain.
     if (! first) {
-      if (equal (p_0, B.control_point(B.number_of_control_points() - 1))) {
+      if (equal(p_0, B.control_point(B.number_of_control_points() - 1))) {
         // Push a new polygon into the polygon list. Make sure that the polygon
         // is counterclockwise oriented if it represents the outer boundary
         // and clockwise oriented if it represents a hole.
-        Polygon_2          pgn (xcvs.begin(), xcvs.end());
+        Polygon_2          pgn(xcvs.begin(), xcvs.end());
         CGAL::Orientation  orient = pgn.orientation();
         
-        if ((pgns.empty() && orient == CGAL::CLOCKWISE) ||
-            (! pgns.empty() && orient == CGAL::COUNTERCLOCKWISE))
+        if ((pgns.empty() && (orient == CGAL::CLOCKWISE)) ||
+            (! pgns.empty() && (orient == CGAL::COUNTERCLOCKWISE)))
           pgn.reverse_orientation();
         
-        pgns.push_back (pgn);
+        pgns.push_back(pgn);
         xcvs.clear();
         first = true;
       }
@@ -117,13 +116,13 @@ bool read_Bezier_polygon (const char* filename, Polygon_with_holes_2& P)
   std::list<Polygon_2>::iterator     pit = pgns.begin();
   
   ++pit;
-  P = Polygon_with_holes_2 (pgns.front(), pit, pgns.end());
+  P = Polygon_with_holes_2(pgns.front(), pit, pgns.end());
 
   return true;
 }
 
 // The main program.
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   // Get the name of the input files from the command line, or use the default
   // char_g.dat and char_m.dat files if no command-line parameters are given.
@@ -136,12 +135,12 @@ int main (int argc, char* argv[])
 
   timer.start();
 
-  if (! read_Bezier_polygon (filename1, P1)) {
+  if (! read_Bezier_polygon(filename1, P1)) {
     std::cerr << "Failed to read " << filename1 << " ..." << std::endl;
     return 1;
   }
 
-  if (! read_Bezier_polygon (filename2, P2)) {
+  if (! read_Bezier_polygon(filename2, P2)) {
     std::cerr << "Failed to read " << filename2 << " ..." << std::endl;
     return 1;
   }
@@ -156,7 +155,7 @@ int main (int argc, char* argv[])
 
   timer.reset();
   timer.start();
-  CGAL::intersection (P1, P2, std::back_inserter(R));
+  CGAL::intersection(P1, P2, std::back_inserter(R));
   timer.stop();
   
   std::cout << "The intersection polygons are of sizes: {";

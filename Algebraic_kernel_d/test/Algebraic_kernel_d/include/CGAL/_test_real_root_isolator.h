@@ -100,7 +100,7 @@ template <class RealRootIsolator>
 void test_real_root_isolator() {
     typedef RealRootIsolator Isolator;
     typedef typename Isolator::Polynomial    Polynomial;
-    typedef typename Isolator::Bound Bound;
+    CGAL_USE_TYPE(typename Isolator::Bound);
     typedef typename Polynomial::NT          NT;
  
     // just some Polynomials (not all are used)

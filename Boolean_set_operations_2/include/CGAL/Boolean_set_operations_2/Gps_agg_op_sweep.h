@@ -114,7 +114,7 @@ public:
 
     this->m_visitor->before_sweep();
     // Allocate all of the Subcurve objects as one block.
-    this->m_num_of_subCurves = std::distance (curves_begin, curves_end);
+    this->m_num_of_subCurves = static_cast<unsigned int>(std::distance (curves_begin, curves_end));
     this->m_subCurves = 
       this->m_subCurveAlloc.allocate (this->m_num_of_subCurves);
 
@@ -126,7 +126,7 @@ public:
     Vertex_handle      vh;
     Vertex_handle      invalid_v;
     unsigned int       i = lower;
-    unsigned int       n = (arr_vec[i].second)->size();
+    unsigned int       n = static_cast<unsigned int>((arr_vec[i].second)->size());
     unsigned int       j;
     EventQueueIter     q_iter;
     bool               first = true;
@@ -172,7 +172,7 @@ public:
     {
       // Merge the vertices of the other vectors into the existing queue.
       q_iter = this->m_queue->begin();
-      n = (arr_vec[i].second)->size();
+      n = static_cast<unsigned int>((arr_vec[i].second)->size());
 
       for (j = 0;
            j < n && (vh = (*(arr_vec[i].second))[j]) != invalid_v;

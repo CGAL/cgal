@@ -17,7 +17,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2_dispatching.h>
-
+#include <CGAL/use.h>
 #include "Traits_base_test.h"
 
 /*! Traits test */
@@ -538,7 +538,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream& str_stream)
   typedef T_Traits                              Traits;
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
-  typedef typename Traits::Curve_2              Curve_2;
+  CGAL_USE_TYPE(typename Traits::Curve_2);
   
   unsigned int id;
   str_stream >> id;
@@ -595,7 +595,6 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream& str_stream)
   typedef T_Traits                              Traits;
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
-  typedef typename Traits::Curve_2              Curve_2;
   typedef typename Traits::Multiplicity         Multiplicity; 
 
   unsigned int id1, id2;
@@ -651,9 +650,7 @@ template <typename T_Traits>
 bool Traits_test<T_Traits>::split_wrapper(std::istringstream& str_stream)
 {
   typedef T_Traits                              Traits;
-  typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
-  typedef typename Traits::Curve_2              Curve_2;
 
   unsigned int id1, id2, id3, id4;
   str_stream >> id1 >> id2 >> id3 >> id4;

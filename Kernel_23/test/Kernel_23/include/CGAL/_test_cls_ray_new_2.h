@@ -30,13 +30,11 @@ _test_cls_ray_new_2(const R& )
  std::cout << "Testing class Ray_2";
 
  typedef typename  R::RT    RT;
- typedef typename  R::FT    FT;
 
  typedef typename  R::Point_2 Point_2;
  typedef typename  R::Vector_2 Vector_2;
  typedef typename  R::Direction_2 Direction_2;
 
- typedef typename  R::Segment_2 Segment_2;
  typedef typename  R::Line_2 Line_2;
  typedef typename  R::Ray_2 Ray_2; 
 

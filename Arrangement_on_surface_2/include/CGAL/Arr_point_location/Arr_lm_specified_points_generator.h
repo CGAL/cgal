@@ -103,11 +103,9 @@ public:
     Base (arr)
   {
     //this constructor creates a single landmark in the origin
-    Points_set points;
-    points.push_back(Point_2(0,0));
-    num_landmarks = points.size();
+    m_points.push_back(Point_2(0,0));
+    num_landmarks = 1;
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-    m_points = points;
     build_landmark_set();
   }
 

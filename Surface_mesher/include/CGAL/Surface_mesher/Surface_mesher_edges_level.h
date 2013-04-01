@@ -30,6 +30,7 @@
 #include <CGAL/circulator.h> // for CGAL::Circulator_from_container<C>
 #include <sstream>
 #include <boost/format.hpp>
+#include <CGAL/use.h>
 
 namespace CGAL {
 namespace Surface_mesher {
@@ -121,7 +122,6 @@ namespace Surface_mesher {
       tr.geom_traits().compute_squared_length_3_object();
 
     typedef std::vector<Point_3> Edge_dual;
-    typedef typename Edge_dual::size_type size_type;
     Edge_dual edge_dual;
     edge_dual.reserve(12);
 
@@ -145,6 +145,8 @@ namespace Surface_mesher {
 					// incident cell.
     typename Tr::Cell_circulator begin = circ;
 
+    typedef typename Edge_dual::size_type size_type;
+    CGAL_USE_TYPE(size_type);
     CGAL_assertion_code(size_type number_of_finite_incident_cells = 0);
     CGAL_assertion_code(size_type number_of_infinite_incident_cells = 0);
 

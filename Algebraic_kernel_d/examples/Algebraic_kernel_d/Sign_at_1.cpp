@@ -16,7 +16,6 @@ typedef AK::Multiplicity_type                           Multiplicity_type;
 
 int main(){
   AK ak;
-  AK::Construct_algebraic_real_1 construct_algreal_1 = ak.construct_algebraic_real_1_object();
   AK::Solve_1 solve_1 = ak.solve_1_object();
   AK::Sign_at_1 sign_at_1 = ak.sign_at_1_object();
   AK::Is_zero_at_1 is_zero_at_1 = ak.is_zero_at_1_object();

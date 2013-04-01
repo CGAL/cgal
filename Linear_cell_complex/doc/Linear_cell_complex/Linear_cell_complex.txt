@@ -6,6 +6,7 @@ namespace CGAL {
 \anchor ChapterLinearCellComplex
 
 \author Guillaume Damiand
+\cgalAutoToc
 
 \section Linear_cell_complexIntroduction Introduction
 

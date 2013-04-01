@@ -40,6 +40,8 @@
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_utils.h>
 #include <CGAL/Sweep_line_2/Sweep_line_2_visitors.h>
+#include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 #include <boost/type_traits.hpp>
 
@@ -614,6 +616,7 @@ insert_non_intersecting_curve
                                                          Traits_adaptor_2;
   typedef typename Arr::Vertex_const_handle              Vertex_const_handle;
   typedef typename Arr::Halfedge_const_handle            Halfedge_const_handle;
+  CGAL_USE_TYPE(Halfedge_const_handle);
 
   const Traits_adaptor_2 * geom_traits =
     static_cast<const Traits_adaptor_2*> (arr.geometry_traits());

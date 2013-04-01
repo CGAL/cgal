@@ -66,4 +66,4 @@ Scene_polyhedron_transform_item::bbox() const {
 }
 
 #include "Scene_polyhedron_transform_item.moc"
-  
+

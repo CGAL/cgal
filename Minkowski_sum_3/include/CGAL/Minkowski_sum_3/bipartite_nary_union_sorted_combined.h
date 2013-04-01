@@ -69,7 +69,6 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   typedef typename Nef_polyhedron::Kernel Kernel;
   typedef typename Nef_polyhedron::Point_3 Point_3;
   typedef typename Nef_polyhedron::Volume_const_iterator  Volume_const_iterator;
-  typedef typename Nef_polyhedron::Volume_const_handle  Volume_const_handle;
   typedef typename Nef_polyhedron::SFace_const_handle  SFace_const_handle;
   typedef typename Nef_polyhedron::SHalfedge_const_handle  SHalfedge_const_handle;
   typedef typename Nef_polyhedron::Vertex_const_iterator  Vertex_const_iterator;
@@ -220,6 +219,16 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
     Ntmp.delegate(Convertor, true);
     CGAL_assertion(Ntmp.is_valid());
     nary_union.add_polyhedron(Ntmp);
+    delete GcG.sphere_map();
+  }
+
+  // clean up the spherical_mapS
+  for(GM_iterator it = GM0.begin(); it != GM0.end(); ++it) {
+    delete it->first.sphere_map();
+  }
+
+  for(GM_iterator it = GM1.begin(); it != GM1.end(); ++it) {
+    delete it->first.sphere_map();
   }
   
   return nary_union.get_union();

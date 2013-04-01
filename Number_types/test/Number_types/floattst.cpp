@@ -1,5 +1,9 @@
 #include <CGAL/basic.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4723)
+#endif
+
 int main()
 {
     float zero = 0.0;

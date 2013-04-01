@@ -1561,6 +1561,29 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeA_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the coefficient `a` of the line with equation `ax +by + cz+ d = 0`.
+  */
+  Kernel::FT operator()(const Kernel::Line_3& l) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeA_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
   \sa `CGAL::Circle_3<Kernel>` 
 
   \cgalRefines AdaptableFunctor
@@ -1728,6 +1751,31 @@ public:
 
 }; /* end Kernel::ComputeB_2 */
 
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeB_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the coefficient `b` of the line with equation `ax +by + cz+ d = 0`.
+  */
+  Kernel::FT operator()(const Kernel::Line_3& l) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeB_3 */
+
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -1750,6 +1798,55 @@ public:
   /// @}
 
 }; /* end Kernel::ComputeC_2 */
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeC_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the coefficient `c` of the line with equation `ax +by + cz+ d = 0`.
+  */
+  Kernel::FT operator()(const Kernel::Line_3& l) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeC_3 */
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeD_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the coefficient `d` of the line with equation `ax +by + cz+ d = 0`.
+  */
+  Kernel::FT operator()(const Kernel::Line_3& l) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeD_3 */
+
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -1825,11 +1922,35 @@ public:
   /*! 
     returns an \f$ x\f$-coordinate of the direction. 
   */ 
-  Kernel::FT operator()(const Kernel::Direction_2& v) const; 
+  Kernel::FT operator()(const Kernel::Direction_2& d) const; 
 
   /// @}
 
 }; /* end Kernel::ComputeDx_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeDx_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+
+  /*!
+    returns an \f$ x\f$-coordinate of the direction.
+  */
+  Kernel::FT operator()(const Kernel::Direction_3& d) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeDx_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -1848,11 +1969,57 @@ public:
   /*! 
     returns an \f$ y\f$-coordinate of the direction. 
   */ 
-  Kernel::FT operator()(const Kernel::Direction_2& v) const; 
+  Kernel::FT operator()(const Kernel::Direction_2& d) const; 
 
   /// @}
 
 }; /* end Kernel::ComputeDy_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` 
+
+*/
+class ComputeDy_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*! 
+    returns an \f$ y\f$-coordinate of the direction. 
+  */ 
+  Kernel::FT operator()(const Kernel::Direction_3& d) const; 
+
+  /// @}
+
+}; /* end Kernel::ComputeDy_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` 
+
+*/
+class ComputeDz_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*! 
+    returns an \f$ z\f$-coordinate of the direction. 
+  */ 
+  Kernel::FT operator()(const Kernel::Direction_3& d) const; 
+
+  /// @}
+
+}; /* end Kernel::ComputeDz_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -1886,6 +2053,34 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeHx_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the homogeneous \f$ x\f$-coordinate of the point.
+  */
+  Kernel::FT operator()(const Kernel::Point_3& p) const;
+
+  /*!
+    returns the homogeneous \f$ x\f$-coordinate of the vector.
+  */
+  Kernel::FT operator()(const Kernel::Vector_3& v) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeHx_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
   \cgalRefines `AdaptableFunctor` 
 
 */
@@ -1909,6 +2104,118 @@ public:
   /// @}
 
 }; /* end Kernel::ComputeHy_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeHy_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the homogeneous \f$ y\f$-coordinate of the point.
+  */
+  Kernel::FT operator()(const Kernel::Point_3& p) const;
+
+  /*!
+    returns the homogeneous \f$ y\f$-coordinate of the vector.
+  */
+  Kernel::FT operator()(const Kernel::Vector_3& v) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeHy_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeHw_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the homogenizing coordinate of the point.
+  */
+  Kernel::FT operator()(const Kernel::Point_2& p) const;
+
+  /*!
+    returns the homogenizing coordinate of the vector.
+  */
+  Kernel::FT operator()(const Kernel::Vector_2& v) const; 
+
+  /// @}
+
+}; /* end Kernel::ComputeHw_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeHw_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the homogenizing coordinate of the point.
+  */
+  Kernel::FT operator()(const Kernel::Point_3& p) const;
+
+  /*!
+    returns the homogenizing coordinate of the vector.
+  */
+  Kernel::FT operator()(const Kernel::Vector_3& v) const; 
+
+  /// @}
+
+}; /* end Kernel::ComputeHw_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeHz_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the homogeneous \f$ z\f$-coordinate of the point.
+  */
+  Kernel::FT operator()(const Kernel::Point_3& p) const;
+
+  /*!
+    returns the homogeneous \f$ z\f$-coordinate of the vector.
+  */
+  Kernel::FT operator()(const Kernel::Vector_3& v) const; 
+
+  /// @}
+
+}; /* end Kernel::ComputeHz_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -2387,6 +2694,29 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeXmax_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the largest \f$ x\f$-coordinate of the iso-cuboid.
+  */
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeXmax_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
   \cgalRefines `AdaptableFunctor` 
 
 */
@@ -2405,6 +2735,29 @@ public:
   /// @}
 
 }; /* end Kernel::ComputeXmin_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` 
+
+*/
+class ComputeXmin_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*! 
+    returns the smallest \f$ x\f$-coordinate of the iso-cuboid. 
+  */ 
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const; 
+
+  /// @}
+
+}; /* end Kernel::ComputeXmin_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -2517,6 +2870,29 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeYmax_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the largest \f$ y\f$-coordinate of the iso-cuboid.
+  */
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeYmax_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
   \cgalRefines `AdaptableFunctor` 
 
 */
@@ -2533,6 +2909,27 @@ public:
   Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const; 
 
 }; /* end Kernel::ComputeYmin_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeYmin_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the smallest \f$ y\f$-coordinate of the iso-cuboid.
+  */
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
+
+}; /* end Kernel::ComputeYmin_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -2561,6 +2958,47 @@ public:
   /// @}
 
 }; /* end Kernel::ComputeZ_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeZmax_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the largest \f$ z\f$-coordinate of the iso-cuboid.
+  */
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
+
+}; /* end Kernel::ComputeZmax_3 */
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeZmin_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the smallest \f$ z\f$-coordinate of the iso-cuboid.
+  */
+  Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const;
+
+}; /* end Kernel::ComputeZmin_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -4124,7 +4562,7 @@ public:
 
 
   /*! 
-    computes the normal of the vectors`q-p` and `r-p`. 
+    computes the normal of the vectors `q-p` and `r-p`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Point_3& p, 
                               const Kernel::Point_3& q, 
@@ -5320,6 +5758,34 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+  \cgalRefines `AdaptableFunctor` (with one argument)
+
+  \sa `CGAL::Ray_3<Kernel>`
+
+*/
+class ConstructSecondPoint_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns a point different from the source on
+    the ray `r`.
+  */
+  Kernel::Point_3 operator()(const
+                             Kernel::Ray_3 &r);
+
+
+  /// @}
+
+}; /* end Kernel::ConstructSecondPoint_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
   \sa `CGAL::Segment_2<Kernel>` 
@@ -5405,6 +5871,42 @@ public:
   /// @}
 
 }; /* end Kernel::ConstructSource_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with one argument)
+
+  \sa `CGAL::Segment_3<Kernel>`
+  \sa `CGAL::Ray_3<Kernel>`
+
+*/
+class ConstructSource_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the source of
+    the segment `s`.
+  */
+  Kernel::Point_3 operator()(const
+                             Kernel::Segment_3 &s);
+
+  /*!
+    returns the source of
+    the ray `r`.
+  */
+  Kernel::Point_3 operator()(const
+                             Kernel::Ray_3 &r);
+
+
+  /// @}
+
+}; /* end Kernel::ConstructSource_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -5587,6 +6089,33 @@ public:
   /// @}
 
 }; /* end Kernel::ConstructTarget_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with one argument)
+
+  \sa `CGAL::Segment_3<Kernel>`
+
+*/
+class ConstructTarget_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the target of
+    the segment `s`.
+  */
+  Kernel::Point_3 operator()(const
+                             Kernel::Segment_3 &s);
+
+  /// @}
+
+}; /* end Kernel::ConstructTarget_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
