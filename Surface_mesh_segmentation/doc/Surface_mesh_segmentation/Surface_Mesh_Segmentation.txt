@@ -26,7 +26,8 @@ Also same SDF values can be used multiple times as a parameter for the segmentat
 Since the mesh segmentation problem is ill-posed, we also evaluate results of our implementation by using data set and evaluation software \cite Chen2009SegmentationBenchmark, 
 and provide detailed results at the end of the manual.
 
-\todo where is the benchmark result?
+\todo where is the benchmark result? - IOY how to integrate them into manual, I guess we can convert segmentation results(screen-captures) to pdf and give a link to it ? 
+(And also quantitative results are in pdf format).
 
 \note The goal of this package is to associate each facet of a mesh to a <i>segment</i>. In this chapter, a <i>segment</i> refers to a connected component of facets.
       In the internal of the algorithm, facets are first gathered into <i>clusters</i>. A <i>cluster</i> is a set of facets (not necessarily connected) verifying the same criterium.
@@ -52,7 +53,7 @@ Comparison of biased-to-center and uniform disk sampling for 64 rays.
 \cgalFigureEnd
 \image latex vogel_uniform_biased.png "Comparison of biased-to-center and uniform disk sampling for 64 rays." width=12cm
 
-\todo check biased to center
+\todo check biased to center - IOY do you mean change it ?
 
 We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays. 
 The sampling method is biased to center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
@@ -63,18 +64,21 @@ After having calculated the SDF value for each facet, bilateral smoothing \cite 
 The purpose of edge-preserving smoothing is removing noise while keeping fast changes on SDF values in-place without smoothing,
 since they are natural candidates for segment boundaries. The bilateral smoothing has three parameters that are set by default as follows:
 -\f$ w = \sqrt{number\:of\:facet / 2000} + 1 \f$, the window size
--\f$ \sigma_s = w /2 \f$, the range parameter
--\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the spatial parameter set for each facet \f$ f_i \f$
-\todo add hint on parameters influence?
+-\f$ \sigma_s = w /2 \f$, the spatial parameter
+-\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$
+\todo add hint on parameters influence? IOY added below.
 
-\todo in the implementation the integral part only of the window size is taken
+Large window sizes are more effective on eliminating noise but also might smooth SDF values along boundaries too much. 
+Large range parameters make smoothing closer to Gaussian smoothing which might also lead to extra smoothed SDF values along boundaries.
+
+\todo in the implementation the integral part only of the window size is taken - IOY done (spatial & domain parameters are now parameters of the internal function).
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
 Effect of pose changes on segmentation and SDF values.
 \cgalFigureEnd
 \image latex pose_changes_sdf_low_3.png "Effect of pose changes on segmentation and SDF values." width=12cm
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
-Given a number of intial clusters, the soft clustering applied on the SDF values computed first groups facets using k-means clustering algorithm. It is initialized with k-means++,
+Given a number of initial clusters, the soft clustering applied on the SDF values computed first groups facets using k-means clustering algorithm. It is initialized with k-means++,
 (an algorithm for choosing random seeds for clusters) and run multiple times. Among these runs, we choose clustering result that has minimum with-in
 cluster error and use it to initialize expectation maximization algorithm for fitting Gaussian mixture models.
 
@@ -95,7 +99,7 @@ Effect of different number of clusters on the segmentation. Number of clusters w
 The final hard clustering, which gives the final partitioning of the mesh, is obtained by minimizing an energy function. 
 This energy function combines the aforementioned probability matrix and geometric surface features. 
 The algorithm assigns a cluster to each facet, 
-however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e for each segments / surface patches).
+however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e. for each segments / surface patches).
 
 The expression of the energy function that is minimized using alpha-expansion graph cut algorithm \cite Boykov2001FastApproximate is the following:
 
@@ -134,7 +138,7 @@ The smoothness parameter makes this geometric criteria more or less prevalent.
 
 Basically, assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets which are placed under different clusters is less expensive than separating them and creating boundaries.
-On the contrary, assigning smaller values to smoothness parameter results in ahigh number of segments, by getting closer to the result of soft clustering 
+On the contrary, assigning smaller values to smoothness parameter results in a high number of segments, by getting closer to the result of soft clustering 
 (notice that setting the smoothness parameter to zero directly returns the result of the soft clustering). The effect of different smoothness parameters is illustrated on \cgalFigureRef{Segmentation_lambdas}.
 
 \cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
@@ -142,7 +146,8 @@ Effect of different smoothness parameters on the segmentation (using 10 clusters
 \cgalFigureEnd
 \image latex dino_different_lambda_small.png "Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively." width=16cm
 
-\todo this is the effect on the clustering not the segmentation? (same color for different connected components)
+\todo this is the effect on the clustering not the segmentation? (same color for different connected components) - 
+IOY - I just make segments in a cluster the same color, thought that the visualization might be better in this way. If it is confusing I can change it (different color for each segment).
 
 
 \section Surface_mesh_segmentationAPI API
@@ -177,13 +182,13 @@ Note that these SDF values can be any set of scalar value associated with each f
 This function allows to use the same SDF values several times but with different parameters for segmentation stage.
 The output is the number of segments and a property map which associates to each facet its segment-id (an integer between 0 and number-of-segments - 1). 
 
-\note A segment is a set of connected facets which are placed under same the cluster after the graph-cut step. Note that the number of clusters given as input of the function and the number of partitions in the final segmentation (computed by thefunction) are not equal in general.
+\note A segment is a set of connected facets which are placed under same the cluster after the graph-cut step. Note that the number of clusters given as input of the function and the number of partitions in the final segmentation (computed by the function) are not equal in general.
 
 \subsubsection Surface_mesh_segmentationExample Example
 \cgalExample{Surface_mesh_segmentation/segment_from_sdf_values_example.cpp}
 
 The function `CGAL::compute_sdf_values_and_segment` combines the two aforementioned functions. 
-Note that computing several segmention of the mesh with different parameters (i.e. number of levels, and smoothing lambda), 
+Note that computing several segmentation of the mesh with different parameters (i.e. number of levels, and smoothing lambda), 
 it is advised to first compute the SDF values using `CGAL::compute_sdf_values` and use them each time you want to call `CGAL::segment_from_sdf_values` with different parameters (i.e. number of levels, and smoothing lambda).
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_example.cpp}
