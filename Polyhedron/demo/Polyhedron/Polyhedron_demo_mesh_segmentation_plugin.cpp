@@ -79,6 +79,19 @@ public:
         
         init_color_map_sdf();
         init_color_map_segmentation();
+
+        dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
+        dock_widget->setVisible(false); // do not show at the beginning
+        ui_widget = new Ui::Mesh_segmentation_widget();
+
+        QWidget* qw =new QWidget();
+        ui_widget->setupUi(qw); //calling this on dock_widget is not working, since dock_widget has already layout
+        // deleting dock_widget layout is also not working. So for a work-around I created a intermadiate widget (qw).
+        dock_widget->setWidget(qw); // transfer widgets in ui_widget by qw.
+        mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+    
+        connect(ui_widget->Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));   
+        connect(ui_widget->SDF_button,  SIGNAL(clicked()), this, SLOT(on_SDF_button_clicked()));   
     }
     
     template<class SDFPropertyMap>
@@ -165,18 +178,11 @@ void Polyhedron_demo_mesh_segmentation_plugin::itemAboutToBeDestroyed(Scene_item
 
 void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
 {    
-    dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
-    
-    ui_widget = new Ui::Mesh_segmentation_widget();
-    QWidget* qw =new QWidget();
-    ui_widget->setupUi(qw); //calling this on dock_widget is not working, since dock_widget has already layout
-    // deleting dock_widget layout is also not working. So for a work-around I created a intermadiate widget (qw).
-    dock_widget->setWidget(qw); // transfer widgets in ui_widget by qw.
-    mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
-    
-    connect(ui_widget->Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));   
-    connect(ui_widget->SDF_button,  SIGNAL(clicked()), this, SLOT(on_SDF_button_clicked()));  
-    dock_widget->show();   
+    // dock widget should be constructed in init()
+    if(dock_widget != NULL)
+    {
+      dock_widget->show();
+    } 
 }
 
 void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
