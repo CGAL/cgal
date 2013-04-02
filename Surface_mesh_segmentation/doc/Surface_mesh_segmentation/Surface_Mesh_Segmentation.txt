@@ -58,15 +58,13 @@ A comparison with biased and uniform sampling of points can be seen in \cgalFigu
 After having calculated the SDF value for each facet, bilateral smoothing \cite Tomasi1998Bilateral (an edge-preserving filtering technique) is applied. 
 The purpose of edge-preserving smoothing is removing noise while keeping fast changes on SDF values in-place without smoothing,
 since they are natural candidates for segment boundaries. The bilateral smoothing has three parameters that are set by default as follows:
--\f$ w = \sqrt{number\:of\:facet / 2000} + 1 \f$, the window size
--\f$ \sigma_s = w /2 \f$, the spatial parameter
+-\f$ w = \lfloor\sqrt{number\:of\:facet / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection)
+-\f$ \sigma_s = w /2.0 \f$, the spatial parameter
 -\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$
 
 Large window sizes are more effective on eliminating noise but also might smooth SDF values along boundaries too much. 
 Large range parameters make smoothing closer to Gaussian smoothing which might also lead to extra smoothed SDF values along boundaries.
 
-\todo in the implementation the integral part only of the window size is taken - IOY done (spatial & domain parameters are now parameters of the internal function).
-\todo SL: What I mean is that the definition here is not consistent with the code: window_size in the code is an integer (you take the integral part of what you document here) 
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
 Effect of pose changes on segmentation and SDF values.
 \cgalFigureEnd
@@ -137,13 +135,9 @@ On the contrary, assigning smaller values to smoothness parameter results in a h
 (notice that setting the smoothness parameter to zero directly returns the result of the soft clustering). The effect of different smoothness parameters is illustrated on \cgalFigureRef{Segmentation_lambdas}.
 
 \cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
-Effect of different smoothness parameters on the segmentation (using 10 clusters). The smoothness parameter was set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively.
+Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. (Do not be confused by coloring, these are the real segmentation results that are before assigning each connected component to its own id.)
 \cgalFigureEnd
-\image latex dino_different_lambda_small.png "Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively." width=16cm
-
-\todo this is the effect on the clustering not the segmentation? (same color for different connected components) - 
-IOY - I just make segments in a cluster the same color, thought that the visualization might be better in this way. If it is confusing I can change it (different color for each segment).
-
+\image latex dino_different_lambda_small.png "Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. (Do not be confused by coloring, these are the real segmentation results that are before assigning each connected component to its own id.)" width=16cm
 
 \section Surface_mesh_segmentationAPI API
 This package provides three functions:
