@@ -30,7 +30,7 @@ namespace CGAL
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] sdf_values the sdf value of each facet
  * @param cone_angle opening angle for cone, expressed in radians
- * @param number_of_rays number of rays picked from cone for each facet
+ * @param number_of_rays number of rays picked from cone for each facet. In general, increasing the number of rays has a little effect on the quality of the result.
  * @param traits traits object
  * @return minimum and maximum SDF values before linear normalization
  */
@@ -118,7 +118,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] segment_ids the segment id of each facet
  * @param cone_angle opening angle for cone, expressed in radians
- * @param number_of_rays number of rays picked from cone for each facet
+ * @param number_of_rays number of rays picked from cone for each facet. In general, increasing the number of rays has a little effect on the quality of the result.
  * @param number_of_levels number of clusters for soft clustering
  * @param smoothing_lambda factor in the interval [0,1] which indicates the importance of surface features in energy minimization
  * @param traits traits object
