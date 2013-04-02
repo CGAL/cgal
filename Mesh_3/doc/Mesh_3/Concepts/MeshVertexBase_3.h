@@ -22,7 +22,8 @@ called 'intrusive'.
 \cgalRefines `TriangulationVertexBase_3` 
 \cgalRefines `SurfaceMeshVertexBase_3`
 
-\cgalHasModel `CGAL::Mesh_vertex_base_3<MD,Gt,Vb>` 
+\cgalHasModel `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>` 
+\cgalHasModel `CGAL::Compact_mesh_vertex_base_3<Gt,MD,Vb>`
 
 \sa `CGAL::make_mesh_3()` 
 \sa `CGAL::refine_mesh_3()` 
@@ -39,7 +40,7 @@ public:
 /*! 
 Index type. Must match the type `MeshDomain_3::Index`. 
 */ 
-typedef Hidden_type Index;; 
+typedef Hidden_type Index;
 
 /*! 
 Numerical type. 

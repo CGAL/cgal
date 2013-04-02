@@ -18,8 +18,7 @@ and four additional helper markers
 used in some operations to mark for instance 
 the facets that have been visited. 
 
-This concept also provides storage for the centers of Delaunay surface 
-balls. 
+This concept also provides storage for the centers of Delaunay surface balls. 
 Each surface facet has a Delaunay surface ball, i. e. 
 a circumscribing ball, centered 
 on an input complex surface patch, 
@@ -33,7 +32,8 @@ called 'intrusive'.
 
 \cgalRefines `RegularTriangulationCellBase_3` 
 
-\cgalHasModel `CGAL::Mesh_cell_base_3<MD,Gt,Cb>` 
+\cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>` 
+\cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
 
 \sa `CGAL::make_mesh_3()` 
 \sa `MeshDomain_3` 
