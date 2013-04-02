@@ -138,10 +138,9 @@ public:
   typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_const_iterator;
 
 // Data members.
-public:
+private:
   Polyhedron& polyhedron;															/**< Source triangulated surface mesh for modeling */
 
-private:
   std::vector<Point> original;                        ///< original positions of roi (size: ros + boundary_of_ros)
   std::vector<Point> solution;                        ///< storing position of ros vertices during iterations (size: ros + boundary_of_ros)
 
@@ -217,10 +216,11 @@ public:
       edge_weight.push_back(weight_calculator(*eb, polyhedron));
     }
   }
+
   /**
-   * Removes all the vertices from the region-of-interest and all the groups of handles
+   * Puts the object in the same state after the creation (except iterations and tolerance).
    */
-  void clear()
+  void reset()
   {
     need_preprocess = true;
     // clear vertices
@@ -356,14 +356,6 @@ public:
    * 
    */
   std::pair<Handle_iterator, Handle_iterator> handles(Handle_group handle_group)
-  {
-    return std::make_pair(handle_group->begin(), handle_group->end());
-  }
-
-  /** 
-   * const version
-   */
-  std::pair<Handle_const_iterator, Handle_const_iterator> handles(Handle_group handle_group) const
   {
     return std::make_pair(handle_group->begin(), handle_group->end());
   }
@@ -592,6 +584,18 @@ public:
 /// @{
 
   /**
+   * Getter of `set_iterations()`
+   */
+  unsigned int get_iterations()
+  { return iterations; }
+  
+  /**
+   * Getter of `set_tolerance()`
+   */
+  double get_tolerance()
+  { return tolerance; }
+
+  /**
    * Sets the number of iterations used in `deform()`
    */
   void set_iterations(unsigned int iterations)
@@ -619,6 +623,14 @@ public:
    */
   bool is_handle(vertex_descriptor vd) const
   { return is_hdl_map[id(vd)]; }
+
+  /**
+   * Accessor for halfedge graph being deformed
+   * @return the halfedge graph
+   */
+  const Polyhedron& halfedge_graph() const
+  { return polyhedron; }
+
 /// @} Utilities
 
 

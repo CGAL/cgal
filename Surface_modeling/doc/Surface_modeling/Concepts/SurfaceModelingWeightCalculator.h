@@ -9,7 +9,7 @@
  /// class Uniform_weight
  /// {
  /// public:
- ///   double operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor  /*e*/, Polyhedron& /*polyhedron*/)
+ ///   double operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor  /*e*/, const Polyhedron& /*polyhedron*/)
  ///   { return 1.0; }
  /// };
  /// \endcode
@@ -18,8 +18,8 @@ class SurfaceModelingWeightCalculator
 public:
 /// \name Types 
 /// @{
-        /// a model of HalfedgeGraph
-	typedef Hidden_type Polyhedron;
+  /// a model of HalfedgeGraph
+  typedef Hidden_type Polyhedron;
 /// @} 
 
 /// \name Creation 
@@ -31,7 +31,7 @@ public:
 /// \name Operations 
 /// @{
   /// Function computing the edge weight of edge `e`
-  double operator()(boost::graph_traits<Polyhedron>::edge_descriptor  e, Polyhedron& polyhedron);
+  double operator()(boost::graph_traits<Polyhedron>::edge_descriptor  e, const Polyhedron& polyhedron);
 /// @}
 };
 

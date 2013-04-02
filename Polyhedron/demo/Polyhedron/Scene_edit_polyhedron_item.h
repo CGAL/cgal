@@ -229,7 +229,7 @@ public:
       delete it->frame;
     }
     handle_frame_map.clear();
-    deform_mesh.clear();
+    deform_mesh.reset();
 
     create_handle_group(); // create one new handle group
   } 
@@ -364,9 +364,9 @@ public:
 
     // put vertices to vector
     std::vector<vertex_descriptor> all_vertices;
-    all_vertices.reserve(boost::num_vertices(deform_mesh.polyhedron));
+    all_vertices.reserve(boost::num_vertices(deform_mesh.halfedge_graph()));
     vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = boost::vertices(deform_mesh.polyhedron); vb != ve; ++vb) {
+    for(boost::tie(vb, ve) = boost::vertices(deform_mesh.halfedge_graph()); vb != ve; ++vb) {
       all_vertices.push_back(*vb);
     }
     // read roi
