@@ -55,10 +55,12 @@ represents the number of periods a representative in the original
 domain must be translated in \f$ x\f$- and \f$ y\f$-direction.
 The vector \f$ (0,0)\f$ corresponds to the representative in the original
 domain. To specify a \f$ k\f$-simplex we need \f$ k+1\f$ point-offset pairs
-(cf. Fig. \ref P2Triangulation2figoffsets).
+(cf. Fig. \cgalFigureRef{P2Triangulation2figoffsets}).
 
-\anchor P2Triangulation2figoffsets
-\image html offsets.gif Offsets in a face. 
+\cgalFigureBegin{P2Triangulation2figoffsets,offsets.gif}
+Offsets in a face.
+\cgalFigureEnd
+
 
 \section P2Triangulation2secintro Representation 
 
@@ -72,10 +74,11 @@ The three vertices of a face are indexed with 0, 1 and 2 in positive
 orientation. The orientation of a simplex in \f$ \mathbb T_c^2\f$ is
 defined as the orientation of the corresponding simplex in \f$ \mathbb
 R^2\f$ given by representatives determined by the respective offsets
-(see Figure \ref P2Triangulation2figorient).
+(see Figure \cgalFigureRef{P2Triangulation2figorient}).
 
-\anchor P2Triangulation2figorient
-\image html orient.gif "Orientation of a face."
+\cgalFigureBegin{P2Triangulation2figorient, orient.gif}
+Orientation of a face.
+\cgalFigureEnd
 
 As in the underlying combinatorial triangulation (see
 Chapter \ref Chapter_2D_Triangulation_Data_Structure), the neighbors
@@ -84,7 +87,7 @@ indexed by \f$ i\f$ is opposite to the vertex with the same index. Edges
 (\f$ 1\f$-faces) are not explicitly represented: an edge is given by a face
 and an index (the edge `i` of a face `f` is the edge of
 `f` that is opposite to the vertex with index `i`). See
-Figure \ref P2Triangulation2figorient.
+Figure \cgalFigureRef{P2Triangulation2figorient}.
 
 Some point sets do not admit a triangulation in \f$ \mathbb T_c^2\f$. In
 this case we use 9 periodic copies of the point set arranged in a
@@ -92,15 +95,11 @@ square of edge length \f$ 3c\f$. Any point set constructed in this way has a
 triangulation in \f$ \mathbb R^2/G'\f$ with \f$ G'=(3c\cdot\mathbb Z)^2\f$
 \cite cgal:ct-c3pt-09. So we compute the triangulation in this
 space, which is a <I>9-sheeted covering space</I> of \f$ \mathbb T_c^2\f$
-(see Figure \ref P2Triangulation2figcovering).
+(see Figure \cgalFigureRef{P2Triangulation2figcovering}).
 
-\anchor P2Triangulation2figcovering
-
-\image html one_cover.png
-\image html one_and_nine_cover.png
-<center><b>
+\cgalFigureBegin{P2Triangulation2figcovering, one_cover.png, one_and_nine_cover.png}
 The same periodic triangulation in 1-sheeted covering space and 9-sheeted covering space. 
-</b></center>
+\cgalFigureEnd
 
 The machinery that manages the copies is largely hidden from the
 user. However there are some effects that cannot be ignored. For
@@ -133,7 +132,7 @@ data structure, is `locally valid`
 (see Chapter \ref Chapter_2D_Triangulation_Data_Structure)
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
-orientation. See Figure \ref P2Triangulation2figorient.
+orientation. See Figure \cgalFigureRef{P2Triangulation2figorient}.
 
 # Delaunay Triangulation #
 
