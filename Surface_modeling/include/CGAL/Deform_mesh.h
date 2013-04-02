@@ -39,7 +39,7 @@ namespace CGAL {
 
 /// \ingroup PkgSurfaceModeling
 ///@brief Deformation algorithm type
-enum Deformation_type
+enum Deformation_algorithm_tag
 { 
   ORIGINAL_ARAP,  /**< use original as-rigid-as possible algorithm */
   SPOKES_AND_RIMS /**< use spokes and rims version of as-rigid-as possible algorithm */
@@ -47,7 +47,7 @@ enum Deformation_type
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal {
-template<class Polyhedron, Deformation_type deformation_type>
+template<class Polyhedron, Deformation_algorithm_tag deformation_algorithm_tag>
 struct Weight_calculator_selector {
   typedef Uniform_weight<Polyhedron> weight_calculator;
 };
@@ -72,7 +72,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  * @tparam SparseLinearAlgebraTraitsWithPreFactor_d a model of SparseLinearAlgebraTraitsWithPreFactor_d
  * @tparam VertexIndexMap a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
  * @tparam EdgeIndexMap a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
- * @tparam deformation_type tag for selecting the deformation algorithm
+ * @tparam deformation_algorithm_tag tag for selecting the deformation algorithm
  * @tparam WeightCalculator a model of SurfaceModelingWeightCalculator, with `WeightCalculator::Polyhedron` being `Polyhedron_`
  */
 template <
@@ -80,8 +80,8 @@ template <
   class SparseLinearAlgebraTraitsWithPreFactor_d, 
   class VertexIndexMap, 
   class EdgeIndexMap,
-  Deformation_type deformation_type = SPOKES_AND_RIMS,
-  class WeightCalculator = typename internal::Weight_calculator_selector<Polyhedron_, deformation_type>::weight_calculator
+  Deformation_algorithm_tag deformation_algorithm_tag = SPOKES_AND_RIMS,
+  class WeightCalculator = typename internal::Weight_calculator_selector<Polyhedron_, deformation_algorithm_tag>::weight_calculator
   >
 class Deform_mesh
 {
@@ -105,7 +105,7 @@ public:
   typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
-  typedef Deform_mesh<Polyhedron, Sparse_linear_solver_with_prefactor, Vertex_index_map, Edge_index_map, deformation_type,
+  typedef Deform_mesh<Polyhedron, Sparse_linear_solver_with_prefactor, Vertex_index_map, Edge_index_map, deformation_algorithm_tag,
     Weight_calculator> Self;
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
@@ -400,9 +400,9 @@ public:
 
   /**
    * Erases a vertex from the region-of-interest. The vertex is also removed from any group of handles.
-   * Note that the next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position.
+   * Note that the next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position (i.e. position of the vertex at the time of construction).
    * @param vd vertex to be erased
-   * @return true if the erasion is successful
+   * @return true if the removal is successful
    */
   bool erase_roi(vertex_descriptor vd)   
   {
@@ -470,7 +470,7 @@ public:
 /// \name Deform Section
 /// @{  
   /**
-   * Translates all the vertices in a group of handles by `translation`.
+   * Translates all the vertices in a group of handles by `translation` based on their original positions (that is positions of vertices at the time of construction). 
    * @param handle_group the representative of the group of handles to be translated
    * @param translation translation vector 
    */
@@ -488,7 +488,7 @@ public:
 
   /**
    * Rotates all the vertices in a group of handles around `rotation_center` using `quaternion`, and
-   * then translate it by `translation`.
+   * then translate it by `translation` based on their original positions (that is positions of vertices at the time of construction).
    * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
    * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
    * @param handle_group the representative of the group of handles to be rotated and translated
@@ -753,7 +753,7 @@ private:
   /// Assemble Laplacian matrix A of linear system A*X=B
   void assemble_laplacian(typename Sparse_linear_solver_with_prefactor::Matrix& A)
   {
-    if(deformation_type == SPOKES_AND_RIMS) 
+    if(deformation_algorithm_tag == SPOKES_AND_RIMS) 
     {
       assemble_laplacian_spokes_and_rims(A);
     }
@@ -843,7 +843,7 @@ private:
   /// Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
   {
-    if(deformation_type == SPOKES_AND_RIMS) 
+    if(deformation_algorithm_tag == SPOKES_AND_RIMS) 
     {
       optimal_rotations_svd_spokes_and_rims();
     }
@@ -950,7 +950,7 @@ private:
   /// Global step of iterations, updating solution
   void update_solution()
   {
-    if(deformation_type == SPOKES_AND_RIMS) 
+    if(deformation_algorithm_tag == SPOKES_AND_RIMS) 
     {
       update_solution_spokes_and_rims();
     }
@@ -1081,7 +1081,7 @@ private:
   /// Compute modeling energy
   double energy() const 
   {
-    if(deformation_type == SPOKES_AND_RIMS) 
+    if(deformation_algorithm_tag == SPOKES_AND_RIMS) 
     {
       return energy_spokes_and_rims();
     }
