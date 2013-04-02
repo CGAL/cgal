@@ -26,9 +26,6 @@ Also same SDF values can be used multiple times as a parameter for the segmentat
 Since the mesh segmentation problem is ill-posed, we also evaluate results of our implementation by using data set and evaluation software \cite Chen2009SegmentationBenchmark, 
 and provide detailed results at the end of the manual.
 
-\todo where is the benchmark result? - IOY how to integrate them into manual, I guess we can convert segmentation results(screen-captures) to pdf and give a link to it ? 
-(And also quantitative results are in pdf format).
-
 \note The goal of this package is to associate each facet of a mesh to a <i>segment</i>. In this chapter, a <i>segment</i> refers to a connected component of facets.
       In the internal of the algorithm, facets are first gathered into <i>clusters</i>. A <i>cluster</i> is a set of facets (not necessarily connected) verifying the same criterium.
       While running the algorithm, clusters might be merged or split in order to give the final segmentation.
@@ -49,14 +46,12 @@ Using these casted rays (which intuitively correspond to a local volume sampling
 the SDF value is calculated by first applying outlier removal and then taking average of ray lengths.
 
 \cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
-Comparison of biased-to-center and uniform disk sampling for 64 rays.
+Comparison of biased toward the center and uniform disk sampling for 64 rays.
 \cgalFigureEnd
-\image latex vogel_uniform_biased.png "Comparison of biased-to-center and uniform disk sampling for 64 rays." width=12cm
-
-\todo check biased to center - IOY do you mean change it ?
+\image latex vogel_uniform_biased.png "Comparison of biased toward the center and uniform disk sampling for 64 rays." width=12cm
 
 We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays. 
-The sampling method is biased to center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
+The sampling method is biased toward the center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
 As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles. 
 A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into one Median Absolute Deviation (MAD) from the median of all lengths.  
 
@@ -66,12 +61,12 @@ since they are natural candidates for segment boundaries. The bilateral smoothin
 -\f$ w = \sqrt{number\:of\:facet / 2000} + 1 \f$, the window size
 -\f$ \sigma_s = w /2 \f$, the spatial parameter
 -\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$
-\todo add hint on parameters influence? IOY added below.
 
 Large window sizes are more effective on eliminating noise but also might smooth SDF values along boundaries too much. 
 Large range parameters make smoothing closer to Gaussian smoothing which might also lead to extra smoothed SDF values along boundaries.
 
 \todo in the implementation the integral part only of the window size is taken - IOY done (spatial & domain parameters are now parameters of the internal function).
+\todo SL: What I mean is that the definition here is not consistent with the code: window_size in the code is an integer (you take the integral part of what you document here) 
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
 Effect of pose changes on segmentation and SDF values.
 \cgalFigureEnd
