@@ -40,7 +40,8 @@ int main(int argc, char **argv)
     Facet_int_map internal_segment_map;
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
 	
-    // segment the mesh using default parameters for number of levels, and smoothing lambda	
+    // segment the mesh using default parameters for number of levels, and smoothing lambda
+    // Note that you can use your own scalar value, instead of using SDF calculation computed using the CGAL function
     int number_of_segments = CGAL::segment_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 	
     std::cout << "Number of segments: " << number_of_segments << std::endl;
