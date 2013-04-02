@@ -7,7 +7,7 @@ namespace CGAL {
 \mainpage 2D Periodic Triangulations
 \anchor Chapter_2D_Periodic_Triangulations
 
-\authors Nico Kruithof
+\author Nico Kruithof
 
 \image html 3pts_unique.png
 
