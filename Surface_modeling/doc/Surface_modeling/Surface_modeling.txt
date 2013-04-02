@@ -307,7 +307,8 @@ The second possibility offered by the API is to set translation and rotation for
   - `Deform_mesh::rotate(Const_handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)` 
   rotate the `handle_group` around `rotation_center` using the quaternion `quat` and then translate it by `translation`
 
-`rotate` and `translate` operate on original positions (i.e. positions of vertices at the time of construction) of handle vertices. 
+`rotate` and `translate` operate on <i>original positions</i> (i.e. positions of vertices at the time of construction) of handle vertices.
+So that, they are not accumulative (i.e. any call to `rotate`, `translate`, or `assign` overrides previous calls).
 
 Note that changing target positions of handle vertices has no immediate effect on actual positions.
 Also unconstrained handles will be constrained to their last target positions.
