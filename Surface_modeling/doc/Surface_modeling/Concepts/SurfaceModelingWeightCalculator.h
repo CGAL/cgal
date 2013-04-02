@@ -18,20 +18,20 @@ class SurfaceModelingWeightCalculator
 public:
 /// \name Types 
 /// @{
+        /// a model of HalfedgeGraph
 	typedef Hidden_type Polyhedron;
-	typedef Hidden_type edge_descriptor;
 /// @} 
 
 /// \name Creation 
 /// @{
-  /// Default constructor. Required only if default parameter is used in CGAL::Deform_mesh().
+  /// Default constructor. Required only if the default parameter is used in the constructor of `CGAL::Deform_mesh`.
   SurfaceModelingWeightCalculator();
 /// @} 
 
 /// \name Operations 
 /// @{
-  /// Function computing edge weight for edge e
-  double operator()(edge_descriptor  e, Polyhedron& polyhedron);
+  /// Function computing the edge weight of edge `e`
+  double operator()(boost::graph_traits<Polyhedron>::edge_descriptor  e, Polyhedron& polyhedron);
 /// @}
 };
 

@@ -68,12 +68,12 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  * \ingroup PkgSurfaceModeling
  * @brief Class providing the functionalities for deforming a triangulated surface mesh
  *
- * @tparam Polyhedron_ model of HalfedgeGraph
- * @tparam SparseLinearAlgebraTraitsWithPreFactor_d model of SparseLinearAlgebraTraitsWithPreFactor_d
- * @tparam VertexIndexMap model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
- * @tparam EdgeIndexMap model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
- * @tparam deformation_type non-type template parameter from ::Deformation_type for selecting deformation algorithm
- * @tparam WeightCalculator model of SurfaceModelingWeightCalculator
+ * @tparam Polyhedron_ a model of HalfedgeGraph
+ * @tparam SparseLinearAlgebraTraitsWithPreFactor_d a model of SparseLinearAlgebraTraitsWithPreFactor_d
+ * @tparam VertexIndexMap a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
+ * @tparam EdgeIndexMap a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
+ * @tparam deformation_type tag for selecting the deformation algorithm
+ * @tparam WeightCalculator a model of SurfaceModelingWeightCalculator, with `WeightCalculator::Polyhedron` being `Polyhedron_`
  */
 template <
   class Polyhedron_, 
@@ -88,13 +88,13 @@ class Deform_mesh
 //Typedefs
 public:
 
-  /// \name Types from template parameters
+  /// \name Template parameter types
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
   typedef Polyhedron_ Polyhedron; /**< model of HalfedgeGraph */
   typedef SparseLinearAlgebraTraitsWithPreFactor_d Sparse_linear_solver_with_prefactor; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
-  typedef VertexIndexMap Vertex_index_map; /**< model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
-  typedef EdgeIndexMap Edge_index_map; /**< model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">`ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
+  typedef VertexIndexMap Vertex_index_map; /**< model of `ReadWritePropertyMap`  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
+  typedef EdgeIndexMap Edge_index_map; /**< model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
   typedef WeightCalculator Weight_calculator; /**< model of SurfaceModelingWeightCalculator */
   /// @}
 
@@ -117,22 +117,22 @@ private:
   typedef std::list<vertex_descriptor>  Handle_container;
   typedef std::list<Handle_container>   Handle_group_container;
 public:
-  /** The type for returned handle group representative from Deform_mesh::create_handle_group()*/
+  /** The type used as the representative of a group of handles*/
   typedef typename Handle_group_container::iterator                Handle_group;
   /** Const version of Handle_group*/
   typedef typename Handle_group_container::const_iterator          Const_handle_group;
-  /** The type of iterator pointing to group container, and can be implicitly 
+  /** The iterator type over the groups of handles. The type can be implicitly 
       converted to Deform_mesh::Handle_group or Deform_mesh::Const_handle_group */
   typedef typename Handle_group_container::iterator                Handle_group_iterator;
    /** Const version of Handle_group_iterator */
   typedef typename Handle_group_container::const_iterator          Handle_group_const_iterator;
 
-  /** The type of iterator pointing to vertex descriptors */
+  /** Iterator over vertex descriptors in a group of handles. Its value type is `vertex_descriptor` */
   typedef typename Handle_container::iterator                      Handle_iterator;
    /** Const version of Handle_iterator*/
   typedef typename Handle_container::const_iterator                Handle_const_iterator;
 
-  /** The type of iterator pointing to vertex descriptors */
+  /** Iterator over vertex descriptors in the region-of-interest. Its value type is `vertex_descriptor` */
   typedef typename std::vector<vertex_descriptor>::iterator        Roi_iterator;
    /** Const version of Roi_iterator*/
   typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_const_iterator;
@@ -173,14 +173,14 @@ public:
 /// \name Preprocess Section
 /// @{
   /**
-   * The constructor for deformation object
+   * The constructor of a deformation object
    *
-   * @pre is there anyway to add @a polyhedron.is_pure_triangle() in halfedgegraph
-   * @param polyhedron triangulated surface mesh for modeling
-   * @param vertex_index_map vertex index map for associating ids with region of interest vertices
-   * @param edge_index_map edge index map for associating ids with region of interest edges
-   * @param iterations see explanations set_iterations(unsigned int iterations)
-   * @param tolerance  see explanations set_tolerance(double tolerance)
+   * @pre the polyhedron consists of only triangular facets
+   * @param polyhedron triangulated surface mesh used to deform
+   * @param vertex_index_map property map for associating an id to each vertex
+   * @param edge_index_map property map for associating an id to each edge in the region of interest
+   * @param iterations see `set_iterations()` for more details
+   * @param tolerance  see `set_tolerance()` for more details
    * @param weight_calculator function object or pointer for weight calculation
    */
   Deform_mesh(Polyhedron& polyhedron, 
@@ -218,7 +218,7 @@ public:
     }
   }
   /**
-   * Clear ROI and all handles
+   * Removes all the vertices fromt the region-of-interest and all the groups of handles
    */
   void clear()
   {
@@ -231,11 +231,11 @@ public:
   }
 
   /**
-   * Create a new empty handle group for inserting handles.
-   * insert_handle(Handle_group handle_group, vertex_descriptor vd) or insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
-   * can be used for populating the group.
-   * After inserting vertices, translate() or rotate() can be used for applying transformations on all vertices inside the group. 
-   * @return created handle group representative (returned representative is valid until erase_handle(Handle_group handle_group) is called)
+   * Creates a new empty group of handles.
+   * `insert_handle(Handle_group handle_group, vertex_descriptor vd)` or `insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)`
+   * must be used to insert handles in a group.
+   * After inserting vertices, use `translate()` or `rotate()` for applying a transformation on all the vertices inside a group.
+   * @return a representative of the group of handles created (it is valid until `erase_handle(Handle_group handle_group)` is called)
    */
   Handle_group create_handle_group()
   {
@@ -245,9 +245,9 @@ public:
   }
   
   /**
-   * Insert the vertex into the handle group. If the vertex is not previously inserted as ROI, it will.
-   * @param handle_group group to be inserted into
-   * @param vd vertex to be inserted
+   * Inserts a vertex into a group of handles. The vertex is also inserted in the region-of-interest if it is not already in.
+   * @param handle_group the group where the vertex will be inserted in
+   * @param vd the vertex to be inserted
    * @return true if the insertion is successful
    */
   bool insert_handle(Handle_group handle_group, vertex_descriptor vd)
@@ -263,11 +263,11 @@ public:
   }
 
   /**
-   * Insert vertices in the range to the handle group. If the vertices are not previously inserted as ROI, they will.
-   * @tparam InputIterator input iterator type which points to vertex descriptors
-   * @param handle_group group to be inserted in
-   * @param begin iterators specifying the range of vertices [begin, end) 
-   * @param end iterators specifying the range of vertices [begin, end) 
+   * Inserts a range of vertices in a group of handles. The vertices are also inserted in the region-of-interest if they are not already in.
+   * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
+   * @param handle_group the group where the vertex will be inserted in
+   * @param begin first iterator of the range of vertices
+   * @param end past-the-end iterator of the range of vertices
    */
   template<class InputIterator>
   void insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
@@ -279,7 +279,7 @@ public:
   }
 
   /**
-   * Erase the handle group, and invalidate the representative.
+   * Erases a group of handles. Its representative becomes invalid.
    * @param handle_group group to be erased
    */
   void erase_handle(Handle_group handle_group)
@@ -293,10 +293,10 @@ public:
   }
 
   /**
-   * Erase the vertex from the handle group. Note that the handle group is not erased even if it becomes empty.
-   * @param handle_group group to be erased from
-   * @param vd vertex to be erased
-   * @return true if the erasion is successful
+   * Erases a vertex from a group of handles. Note that the group of handles is not erased even if it becomes empty.
+   * @param handle_group the group of handles from which the vertex is erased
+   * @param vd the vertex to be erased
+   * @return true if the removal is successful
    */
   bool erase_handle(Handle_group handle_group, vertex_descriptor vd)
   {
@@ -315,9 +315,9 @@ public:
   }
 
   /**
-   * Erase the vertex by searching through all handle groups. Note that the handle group is not erased even if it becomes empty.
-   * @param vd vertex to be erased
-   * @return true if the erasion is successful
+   * Erases a vertex by searching it through all groups of handles. Note that the group of handles is not erased even if it becomes empty.
+   * @param vd the vertex to be erased
+   * @return true if the removal is successful
    */
   bool erase_handle(vertex_descriptor vd)
   {
@@ -333,9 +333,8 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handle groups. The returned types are handle group representatives, so there is no need to use
-   * dereference operator over iterators to reach representatives.
-   * @return pair of [begin, end) as Deform_mesh::Handle_group
+   * Provides access to all the groups of handles.
+   * @return a range of iterators over all groups of handles
    */
   std::pair<Handle_group_iterator, Handle_group_iterator> handle_groups()
   {
@@ -343,9 +342,7 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handle groups. The returned types are handle group representatives, so there is no need to use
-   * dereference operator over iterators to reach representatives.
-   * @return pair of [begin, end) as Deform_mesh::Const_handle_group
+   * const version
    */
   std::pair<Handle_group_const_iterator, Handle_group_const_iterator> handle_groups() const
   {
@@ -353,9 +350,9 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
-   * @param handle_group group containing the requested handles
-   * @return pair of [begin, end) as Deform_mesh::Handle_iterator
+   * Provides access to all the handles of a group.
+   * @param handle_group the group of handles considered
+   * @return a range of iterators over all handle of a group
    * 
    */
   std::pair<Handle_iterator, Handle_iterator> handles(Handle_group handle_group)
@@ -364,9 +361,7 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
-   * @param handle_group group containing the requested handles
-   * @return pair of [begin, end) as Deform_mesh::Handle_const_iterator
+   * const version
    */
   std::pair<Handle_const_iterator, Handle_const_iterator> handles(Handle_group handle_group) const
   {
@@ -374,9 +369,7 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for handles inside the group. Use dereference operator to reach vertex descriptors.
-   * @param handle_group group containing the requested handles
-   * @return pair of [begin, end) as Deform_mesh::Handle_const_iterator
+   * const version
    */
   std::pair<Handle_const_iterator, Handle_const_iterator> handles(Const_handle_group handle_group) const
   {
@@ -384,10 +377,10 @@ public:
   }
 
   /**
-   * Insert vertices in the range to region of interest
-   * @tparam InputIterator input iterator type which points to vertex descriptors
-   * @param begin iterators specifying the range of vertices [begin, end) 
-   * @param end iterators specifying the range of vertices [begin, end) 
+   * Inserts a range of vertices in the region-of-interest
+   * @tparam InputIterator input iterator with `vertex_descriptor` as value type
+   * @param begin first iterator of the range of vertices
+   * @param end past-the-end iterator of the range of vertices
    */
   template<class InputIterator>
   void insert_roi(InputIterator begin, InputIterator end)
@@ -399,7 +392,7 @@ public:
   }
 
   /**
-   * Insert the vertex to region of interest
+   * Inserts a vertex in the region-of-interest
    * @param vd vertex to be inserted
    * @return true if the insertion is successful
    */
@@ -414,10 +407,10 @@ public:
   }
 
   /**
-   * Erase the vertex from region of interest. The vertex is also erased from being handle, if it is.
-   * Note that in next preprocess() call, any vertex which is no longer ROI will be assigned to its original position.
+   * Erases a vertex from the region-of-interest. The vertex is also removed from any group of handles.
+   * Note that the next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position.
    * @param vd vertex to be erased
-   * @return true if the erasion is successful   
+   * @return true if the erasion is successful
    */
   bool erase_roi(vertex_descriptor vd)   
   {
@@ -440,8 +433,8 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for roi vertices. Note that deleting a roi vertex will invalidate iterators. 
-   * @return pair of [begin, end) as Deform_mesh::Roi_iterator   
+   * Provides access to the vertices in the region-of-interest. Note that deleting a vertex from the region-of-interest will invalidate its iterator. 
+   * @return an iterator range
    */
   std::pair<Roi_iterator, Roi_iterator> roi_vertices()
   {
@@ -449,8 +442,7 @@ public:
   }
 
   /** 
-   * Return iterator [begin, end) for roi vertices. Note that deleting a roi vertex will invalidate iterators. 
-   * @return pair of [begin, end) as Deform_mesh::Roi_const_iterator
+   * const version
    */
   std::pair<Roi_const_iterator, Roi_const_iterator> roi_vertices() const
   {
@@ -458,8 +450,9 @@ public:
   }
 
   /**
-   * Necessary precomputation work before beginning deformation.
-   * It needs to be called after insertion of vertices as handles or roi is done.
+   * Triggers the necessary precomputation work before beginning deformation.
+   * Note that the insertion of a vertex in a group of handles or in the region-of-interest invalidates the
+   * preprocessing data. This function need only to be called before calling `deform()`.
    * @return true if Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, 
    * which happens if there is no path between a free vertex and a handle vertex (i.e. both fixed and user-inserted).
@@ -485,10 +478,8 @@ public:
 /// \name Deform Section
 /// @{  
   /**
-   * Translate the handle group by translation,
-   * in other words every handle vertex in the handle_group is translated from its original position
-   * (i.e. position of the vertex at the time of construction).
-   * @param handle_group representative of the handle group which is subject to translation
+   * Translates all the vertices in a group of handles by `translation`.
+   * @param handle_group the representative of the group of handles to be translated
    * @param translation translation vector 
    */
   void translate(Const_handle_group handle_group, const Vector& translation)
@@ -504,11 +495,11 @@ public:
   }
 
   /**
-   * Rotate the handle group around rotation center by quaternion then translate it by translation 
-   * from its original position (i.e. position of the vertex at the time of construction).
-   * @tparam Quaternion model of SurfaceModelingQuaternion
-   * @tparam Vect model of SurfaceModelingVect
-   * @param handle_group representative of the handle group which is subject to rotation
+   * Rotates all the vertices in a group of handles around `rotation_center` using `quaternion`, and
+   * then translate it by `translation`.
+   * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
+   * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
+   * @param handle_group the representative of the group of handles to be rotated and translated
    * @param rotation_center center of rotation
    * @param quat rotation holder quaternion
    * @param translation post translation vector
@@ -533,9 +524,9 @@ public:
   }
 
   /**
-   * Assign the target position for the handle vertex 
-   * @param vd handle vertex to be assigned target position
-   * @param target_position constrained position
+   * Assigns the target position of a handle vertex 
+   * @param vd handle the vertex to be assigned target position
+   * @param target_position the new vertex position
    */
   void assign(vertex_descriptor vd, const Point& target_position)
   {
@@ -546,7 +537,7 @@ public:
   }
 
   /**
-   * Deformation on roi vertices.
+   * Deforms the region-of-interest according to the deformation algorithm, according to the transformation applied to the groups of handles.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
   void deform()
@@ -555,8 +546,7 @@ public:
   }
 
   /**
-   * Deformation on roi vertices.
-   * Instant values for iterations and tolerance can be used as one-time parameters.
+   * same as `deform()` but the number of iterations and the tolerance are one-time parameters.
    * @param iterations number of iterations for optimization procedure
    * @param tolerance tolerance of convergence (see explanations set_tolerance(double tolerance))
    */
@@ -602,12 +592,12 @@ public:
 /// @{
 
   /**
-   * Set the number of iterations used in deform()
+   * Sets the number of iterations used in `deform()`
    */
   void set_iterations(unsigned int iterations)
   { this->iterations = iterations; }
   
-   /// @brief Set the tolerance of convergence used in deform().
+   /// @brief Sets the tolerance of convergence used in `deform()`.
    /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
    ///
    /// `tolerance >` \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ will be used as a termination criterium.
@@ -615,17 +605,17 @@ public:
   { this->tolerance = tolerance; }
 
   /**
-   * Query whether a vertex is inside region of interest or not.
-   * @param vd vertex to be queried
-   * @return true if the vertex is inside region of interest
+   * Queries whether a vertex is inside the region-of-interest.
+   * @param vd the query vertex
+   * @return true if the vertex is inside the region-of-interest
    */
   bool is_roi(vertex_descriptor vd) const
   { return is_roi_map[id(vd)]; }
 
   /**
-   * Query whether a vertex is handle or not.
-   * @param vd vertex to be queried
-   * @return true if the vertex is inside any handle group
+   * Queries whether a vertex is a handle.
+   * @param vd the query vertex
+   * @return true if the vertex is inside any group of handles
    */
   bool is_handle(vertex_descriptor vd) const
   { return is_hdl_map[id(vd)]; }
