@@ -165,6 +165,7 @@ private:
   bool last_preprocess_successful;                     ///< stores the result of last call to preprocess()
   Handle_group_container handle_group_list;           ///< user specified handles
 
+  Weight_calculator weight_calculator;
 private:
   Deform_mesh(const Self& s) { } 
 
@@ -190,7 +191,8 @@ public:
               double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator())
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      iterations(iterations), tolerance(tolerance), need_preprocess(true), last_preprocess_successful(false),
+      iterations(iterations), tolerance(tolerance), weight_calculator(weight_calculator),
+      need_preprocess(true), last_preprocess_successful(false),
       is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
       is_hdl_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), -1))
@@ -214,7 +216,7 @@ public:
     edge_weight.reserve(boost::num_edges(polyhedron));
     for(boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
     {
-      edge_weight.push_back(weight_calculator(*eb, polyhedron));
+      edge_weight.push_back(this->weight_calculator(*eb, polyhedron));
     }
   }
 
@@ -547,7 +549,6 @@ public:
    */
   void deform(unsigned int iterations, double tolerance)
   {
-    // CGAL_precondition(!need_preprocess || !"preprocess() need to be called before deforming!");
     if(need_preprocess) { preprocess(); }
 
     if(!last_preprocess_successful) { 
@@ -637,6 +638,50 @@ public:
    */
   const Polyhedron& halfedge_graph() const
   { return polyhedron; }
+  
+  /**
+   * Makes current positions as original positions. Effect of calling this funtion is equal to creating a new deformation
+   * object with current polyhedron and transfering region-of-interest and handles.
+   * \note There should not be any need for preprocess when this function is called, otherwise it just returns.
+   */
+  void override_halfedge_graph()
+  {
+    if(roi.empty()) { return; } // no ROI to override
+
+    if(need_preprocess) { preprocess(); } // the roi should be preprocessed since we are using original_position vec
+
+    Roi_iterator rb, re;
+    for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
+    {
+      original[ros_id(*rb)] = (*rb)->point();
+    }
+
+    // now I need to compute weights for edges incident to roi vertices
+    std::vector<bool> is_weight_computed(boost::num_edges(polyhedron), false);
+    for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
+    {
+      in_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::in_edges(*rb, polyhedron); e != e_end; e++)
+      {
+        std::size_t id_e = id(*e);
+        if(is_weight_computed[id_e]) { continue; }
+
+        edge_weight[id_e] = weight_calculator(*e, polyhedron);
+        is_weight_computed[id_e] = true;
+
+        edge_descriptor e_opp = CGAL::opposite_edge(*e, polyhedron);
+        std::size_t id_e_opp = id(e_opp);
+
+        edge_weight[id_e_opp] = weight_calculator(e_opp, polyhedron);
+        is_weight_computed[id_e_opp] = true;
+      }
+    }    
+
+    // also set rotation matrix to identity
+    std::fill(rot_mtr.begin(), rot_mtr.end(), Eigen::Matrix3d().setIdentity());
+
+    need_preprocess = true; // now we need reprocess
+  }
 
 /// @} Utilities
 

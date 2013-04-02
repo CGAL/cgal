@@ -402,6 +402,30 @@ public:
   bool show_as_sphere() const
   { return ui_widget->ShowAsSphereCheckBox->isChecked(); }
 
+  void override_deform_object()
+  {
+    deform_mesh.override_halfedge_graph();
+
+    Deform_mesh::Roi_iterator rb, re;
+    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
+    {
+      original_positions[(*rb)->id()] = (*rb)->point();
+    }
+
+    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    {
+      it->frame_initial_center = calculate_original_center(it->handle_group);
+
+      it->frame->blockSignals(true);
+      it->frame->setOrientation(qglviewer::Quaternion());
+      it->frame->setPosition(it->frame_initial_center);
+      it->frame->blockSignals(false);
+
+      it->bbox = calculate_bbox(it->handle_group);
+    }
+  }
+
+
 protected:
   // Deformation related functions //
   void print_message(const QString& message)
@@ -439,7 +463,7 @@ protected:
 
   void process_selection(vertex_descriptor v, int k_ring, bool is_roi, bool is_insert, bool use_euclidean)
   {
-    std::cout << "Process k-ring: " << k_ring << " roi: " << is_roi << " insert: " << is_insert << std::endl;
+    // std::cout << "Process k-ring: " << k_ring << " roi: " << is_roi << " insert: " << is_insert << std::endl;
 
     std::map<vertex_descriptor, int> neighs = use_euclidean ?
       extract_k_ring_with_distance(*polyhedron(), v, k_ring) :

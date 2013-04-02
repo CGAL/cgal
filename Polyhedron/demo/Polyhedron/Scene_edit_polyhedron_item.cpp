@@ -190,8 +190,8 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
 void Scene_edit_polyhedron_item::draw() const {
   poly_item->direct_draw();
   CGAL::GL::Color color;
-  //color.set_rgb_color(0.f, 0.f, 0.f);
-  //poly_item->direct_draw_edges();
+  color.set_rgb_color(0.f, 0.f, 0.f);
+  poly_item->direct_draw_edges();
 
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
   color.set_rgb_color(0, 1.f, 0);
