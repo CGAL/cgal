@@ -454,7 +454,7 @@ public:
    */
   bool preprocess()
   {
-    if(!need_preprocess) { return true; }
+    if(!need_preprocess) { return last_preprocess_successful; }
     need_preprocess = false;
 
     region_of_solution();
