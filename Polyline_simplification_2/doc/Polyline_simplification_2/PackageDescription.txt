@@ -21,7 +21,7 @@
 \cgalPkgManuals{Chapter_2D_PolylineSimplifications,PkgPolylineSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.2}
+\cgalPkgSince{4.3}
 \cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:fc-ps2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}

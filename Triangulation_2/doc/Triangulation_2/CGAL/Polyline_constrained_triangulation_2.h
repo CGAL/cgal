@@ -65,7 +65,7 @@ The identifier of a polyline constraint.
 
 /*! 
 An iterator to visit 
-all the input constraints. The order of visit is arbitrary. 
+all the input constraints. The order of visit is undefined. 
 The value type of this iterator is `Constraint_id` corresponding to the 
 endpoints of the constraint. 
 */ 
@@ -74,7 +74,7 @@ typedef Hidden_type Constraint_iterator;
 /*! 
 An iterator 
 to visit all the sub-constraints of the triangulation. 
-The order of visit is arbitrary. 
+The order of visit is undefined. 
 The value type of this iterator is a pair 
 `std::pair<Vertex_handle, Vertex_handle>` 
 corresponding to the vertices of the 
@@ -120,7 +120,7 @@ constraints enclosing a given sub-constraint. The value type of this
 iterator 
 is `Context`. 
 */ 
-typedef Context_iterator; 
+typedef Hidden_type Context_iterator; 
 
 /// @} 
 
@@ -305,7 +305,7 @@ vertices_in_constraint_end(Constraint_id cid) const;
 
 /// \name Polyline Simplification
 /// The polyline simplification algorithm described in Chapter
-/// \ref{chapter-polylinesimplification} uses the following types and 
+/// \ref Chapter_2D_Polyline_simplification uses the following types and 
 /// functions.
 
 /// @{
@@ -335,7 +335,7 @@ void
 Removes the points that were kept in the constraint `cid`.
 */
 size_type
-remove_points_from_constraint(Constraint_id cid);}
+remove_points_from_constraint(Constraint_id cid);
 
 
 /*!
