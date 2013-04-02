@@ -7,6 +7,10 @@ namespace CGAL {
 The class `Delaunay_triangulation_3` represents a three-dimensional 
 Delaunay triangulation. 
 
+If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+such as insertion/removal of a range of points, are performed in parallel. See 
+the documentation of the operations for more details.
+
 \tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
 
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
@@ -30,16 +34,25 @@ provided before \cgal 3.6 by `Triangulation_hierarchy_3`.
 An example of use can be found in the user 
 manual \ref Triangulation3exfastlocation. 
 
+\tparam SpatialLockDataStructure_3 is only used by the parallel version of the triangulation
+        (i.e.\ when `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
+        It must be a model of the `SpatialLockDataStructure_3` concept.
+        See the documentation of `Triangulation_3` for more details.
+        
+If 
+
 \sa `CGAL::Regular_triangulation_3` 
 
 */
-template< typename DelaunayTriangulationTraits_3, typename TriangulationDataStructure_3, typename LocationPolicy >
+template< typename DelaunayTriangulationTraits_3, typename TriangulationDataStructure_3, typename LocationPolicy, typename SpatialLockDataStructure_3 >
 class Delaunay_triangulation_3 : 
     public Triangulation_3<DelaunayTriangulationTraits_3,
                            Delaunay_triangulation_3<DelaunayTriangulationTraits_3,
                                                     TriangulationDataStructure_3,
-                                                    LocationPolicy>::Triangulation_data_structure 
+                                                    LocationPolicy>::Triangulation_data_structure,
+                           SpatialLockDataStructure_3
                            >
+                           
 {
 public:
 
@@ -87,12 +100,17 @@ typedef DelaunayTriangulationTraits_3::Object_3 Object;
 /*! 
 Creates an empty Delaunay triangulation, possibly specifying a traits class 
 `traits`. 
+`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations.
 */ 
 Delaunay_triangulation_3 
-(const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3()); 
+(const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
+SpatialLockDataStructure_3 *p_lock_ds = 0);
 
 /*! 
 Copy constructor. 
+The pointer to the lock data structure is not copied. Thus, the copy won't be
+concurrency-safe as long as the user has not call `set_lock_data_structure`.
+
 */ 
 Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1); 
 
@@ -102,7 +120,8 @@ traits class argument and calling `insert(first,last)`.
 */ 
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
-const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3()); 
+const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
+SpatialLockDataStructure_3 *p_lock_ds = 0); 
 
 /// @} 
 
@@ -115,14 +134,21 @@ Inserts point `p` in the triangulation and returns the corresponding
 vertex. Similar to the insertion in a triangulation, but ensures in 
 addition the empty sphere property of all the created faces. 
 The optional argument `start` is used as a starting place for the search. 
+
+The optional argument `p_could_lock_zone` is used by the concurrency-safe
+version of the triangulation. When the pointer is not-null, the insertion will
+try to lock vertices/cells before modifying them. If it succeed, *p_could_lock_zone
+is true, otherwise it is false (and the point is not inserted). In any case, 
+the locked vertices are not unlocked by the function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Point & p, 
-Cell_handle start = Cell_handle() ); 
+Cell_handle start = Cell_handle(), bool *p_could_lock_zone = 0); 
 
 /*! 
 Same as above but uses `hint` as a starting place for the search. 
 */ 
-Vertex_handle insert(const Point & p, Vertex_handle hint); 
+Vertex_handle insert(const Point & p, Vertex_handle hint,
+                     bool *p_could_lock_zone = 0); 
 
 /*! 
 Inserts point `p` in the triangulation and returns the corresponding 
@@ -131,13 +157,16 @@ parameter the return values of a previous location query. See description of
 `Triangulation_3::locate()`. 
 */ 
 Vertex_handle insert(const Point & p, Locate_type lt, 
-Cell_handle loc, int li, int lj); 
+Cell_handle loc, int li, int lj,
+bool *p_could_lock_zone = 0); 
 
 /*! 
 Inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
 following the order of `PointInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
+If parallelism is enabled, the points will be inserted in parallel.
+
 \tparam PointInputIterator must be an input iterator with the value type `Point`. 
 
 */ 
@@ -152,6 +181,7 @@ Returns the number of inserted points.
 Note that this function is not guaranteed to insert the points 
 following the order of `PointWithInfoInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
+If parallelism is enabled, the points will be inserted in parallel.
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
 only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex. 
@@ -208,14 +238,22 @@ decreases drastically, it might be interesting to defragment the
 
 /*! 
 Removes the vertex `v` from the triangulation. 
+
+The optional argument `p_could_lock_zone` is used by the concurrency-safe
+version of the triangulation. When the pointer is not-null, the removal will
+try to lock vertices/cells before deleting/modifying them. If it succeed, *p_could_lock_zone
+is true, otherwise it is false (and the point is not inserted). In any case, 
+the locked vertices are not unlocked by the function, leaving this choice to the user.
+
 \pre `v` is a finite vertex of the triangulation. 
 */ 
-void remove(Vertex_handle v); 
+void remove(Vertex_handle v, bool *p_could_lock_zone = 0); 
 
 /*! 
 Removes the vertices specified by the iterator range `[first, beyond)`. 
 The function `remove(Vertex_handle)` is called over each element of the range. 
 The number of vertices removed is returned. 
+If parallelism is enabled, the points will be inserted in parallel.
 \pre (i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range. 
 
 \tparam InputIterator must be an input iterator with value type `Vertex_handle`.

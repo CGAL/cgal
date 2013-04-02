@@ -12,7 +12,7 @@ of points.
 \tparam TriangulationDataStructure_3 is the triangulation data structure.
 It has the default value `Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> >`. 
 
-\tparam SpatialLockDataStructure_3 is an optional parameter to specify a spatial lock data structure.
+\tparam SpatialLockDataStructure_3 is an optional parameter to specify the type of the spatial lock data structure.
 It is only used if the triangulation data structure used is concurrency-safe.
 It must be a model of the `SpatialLockDataStructure_3` concept.
 It allows to perform some operations currently (see the operations documentation).
@@ -214,7 +214,8 @@ typedef TriangulationDataStructure_3::::Concurrency_tag Concurrency_tag;
 
 /*! 
 Introduces a triangulation `t` having only one vertex which is the 
-infinite vertex.
+infinite vertex. 
+`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations.
 */ 
 Triangulation_3 
 (const TriangulationTraits_3 & traits = TriangulationTraits_3(), 
@@ -230,6 +231,8 @@ Triangulation_3
 
 /*! 
 Copy constructor. All vertices and faces are duplicated. 
+The pointer to the lock data structure is not copied. Thus, the copy won't be
+concurrency-safe as long as the user has not call `set_lock_data_structure`.
 */ 
 Triangulation_3 (const Triangulation_3 & tr); 
 
@@ -1362,6 +1365,18 @@ Writes the triangulation `t` into `os`.
 ostream& operator<< (ostream& os, const Triangulation_3 &t); 
 
 /// @}
+
+/// @} 
+
+/// \name Concurrency 
+/// @{
+
+/*! 
+Set the pointer to the lock data structure.
+*/ 
+void set_lock_data_structure(SpatialLockDataStructure_3 *p_lock_ds) const;
+
+/// @} 
 
 }; /* end Triangulation_3 */
 } /* end namespace CGAL */
