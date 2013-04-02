@@ -99,6 +99,4 @@ int main()
   deform_mesh.deform(15, 0.0);
 
   std::ofstream("deform_2.off") << mesh;
-
-  deform_mesh.clear(); // deform object is like just constructed with current mesh
 }
