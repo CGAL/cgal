@@ -162,6 +162,7 @@ private:
   double tolerance;                                   ///< tolerance of convergence 
 
   bool need_preprocess;                               ///< is there any need to call preprocess() function
+  bool last_preprocess_successful;                     ///< stores the result of last call to preprocess()
   Handle_group_container handle_group_list;           ///< user specified handles
 
 private:
@@ -189,7 +190,7 @@ public:
               double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator())
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      iterations(iterations), tolerance(tolerance), need_preprocess(true),
+      iterations(iterations), tolerance(tolerance), need_preprocess(true), last_preprocess_successful(false),
       is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
       is_hdl_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), -1))
@@ -452,7 +453,6 @@ public:
   bool preprocess()
   {
     if(!need_preprocess) { return true; }
-
     need_preprocess = false;
 
     region_of_solution();
@@ -463,7 +463,9 @@ public:
 
     // Pre-factorizing the linear system A*X=B
     double D;
-    return m_solver.pre_factor(A, D);
+    last_preprocess_successful = m_solver.pre_factor(A, D);
+    CGAL_warning(last_preprocess_successful);
+    return last_preprocess_successful;
   }
 /// @} Preprocess Section
 
@@ -530,6 +532,7 @@ public:
 
   /**
    * Deforms the region-of-interest according to the deformation algorithm, according to the transformation applied to the groups of handles.
+   * No action is taken if the preprocess step was not successful.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
   void deform()
@@ -547,6 +550,10 @@ public:
     // CGAL_precondition(!need_preprocess || !"preprocess() need to be called before deforming!");
     if(need_preprocess) { preprocess(); }
 
+    if(!last_preprocess_successful) { 
+      CGAL_warning(false);
+      return; 
+    }
     // Note: no energy based termination occurs at first iteration
     // because comparing energy of original model (before deformation) and deformed model (deformed_1_iteration)
     // simply does not make sense, comparison is meaningful between deformed_(i)_iteration & deformed_(i+1)_iteration
