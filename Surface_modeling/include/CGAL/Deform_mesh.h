@@ -218,7 +218,7 @@ public:
     }
   }
   /**
-   * Removes all the vertices fromt the region-of-interest and all the groups of handles
+   * Removes all the vertices from the region-of-interest and all the groups of handles
    */
   void clear()
   {
