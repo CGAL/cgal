@@ -58,11 +58,9 @@ namespace internal
 //     * Didn't try adjacency_matrix since our graph is sparse
 //     ( Also one can check BGL book, performance section )
 //
-//    Decision: Two implementation is provided:
+//    Decision:
 //     * Alpha_expansion_graph_cut_boost: use adjacency_list<vecS, listS> without
-//       pre-allocating vertex-list, it should be DEFAULT since it is both efficient and clear.
-//     * Alpha_expansion_graph_cut_boost_with_preallocate: use adjacency_list<vecS, vecS>
-//       with pre-allocating vertex-list using max-node size.
+//       pre-allocating vertex-list.
 //
 // 2) With Boykov-Kolmogorov MAXFLOW software:
 //   (http://pub.ist.ac.at/~vnk/software/maxflow-v2.21.src.tar.gz)
@@ -121,8 +119,8 @@ private:
     Edge_descriptor v1_v2, v2_v1;
     bool v1_v2_added, v2_v1_added;
 
-    tie(v1_v2, v1_v2_added) = boost::add_edge(v1, v2, graph);
-    tie(v2_v1, v2_v1_added) = boost::add_edge(v2, v1, graph);
+    boost::tie(v1_v2, v1_v2_added) = boost::add_edge(v1, v2, graph);
+    boost::tie(v2_v1, v2_v1_added) = boost::add_edge(v2, v1, graph);
 
     CGAL_assertion(v1_v2_added && v2_v1_added);
     //put edge capacities
