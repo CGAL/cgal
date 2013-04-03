@@ -121,6 +121,7 @@ protected:
   Triangulation_3_base()  {}
 
   Triangulation_3_base(Lock_data_structure *) {}
+
   void swap(Triangulation_3_base<Concurrency_tag, Lock_data_structure_> &tr){}
   
 public:
@@ -130,6 +131,11 @@ public:
   }
 
   // LOCKS (no-op functions)
+  
+  template <typename Point_3>
+  bool try_lock_point(const Point_3 &p, int = 0) const
+  { return true; }
+
   template <typename Vertex_handle>
   bool try_lock_vertex(const Vertex_handle &, int = 0) const
   { return true; }
