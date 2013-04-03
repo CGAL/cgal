@@ -27,6 +27,7 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/FPU_extension.h>
+#include <CGAL/Default.h>
 
 #include <Eigen/Eigen>
 #include <Eigen/SVD>
@@ -81,7 +82,7 @@ template <
   class VIM, 
   class EIM,
   Deformation_algorithm_tag TAG = SPOKES_AND_RIMS,
-  class WC = typename internal::Weight_calculator_selector<P, TAG>::weight_calculator
+  class WC = Default
   >
 class Deform_mesh
 {
@@ -95,7 +96,14 @@ public:
   typedef ST Sparse_linear_solver; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
   typedef VIM Vertex_index_map; /**< model of `ReadWritePropertyMap`  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
   typedef EIM Edge_index_map; /**< model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
+  #ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    WC,
+    typename internal::Weight_calculator_selector<P, TAG>::weight_calculator
+  >::type Weight_calculator;
+  #else
   typedef WC Weight_calculator; /**< model of SurfaceModelingWeightCalculator */
+  #endif
   /// @}
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
