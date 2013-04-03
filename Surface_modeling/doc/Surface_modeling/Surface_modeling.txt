@@ -225,8 +225,10 @@ Comparison between \ref Surface_Modeling_Overview_ARAP and \ref Surface_Modeling
 \section Surface_Modeling_API API
 
 \cgalFigureBegin{Flow_of_API, usage_flow_of_API.png}
-The deformation work flow.  (<b>SL</b>: what is the meaning of the different box style? what software did you use? are the source inside the git repo? Not sure that it is obvious that <i>clear</i> is optional.)
+The deformation work flow.
 \cgalFigureEnd
+
+\todo   <b>SL</b>: what is the meaning of the different box style? what software did you use? are the source inside the git repo? Not sure that it is obvious that <i>clear</i> is optional.
 
 \subsection Preprocess_section Preprocess Section
 
@@ -324,8 +326,11 @@ The final action is invoking the deformation algorithm:
 After deformation, handle vertices will be placed to their target positions and free vertices will be deformed accordingly. 
 The steps in \ref Deform_section can be repeated for further deformations.
 
-\note No matter how many times ROI or handles are changed, the algorithm always operates as it is just constructed.
-For that reason any vertex which is no longer inside ROI will be always assigned to its original position in Deform_mesh::preprocess().
+\warning The transformation provided to the functions `Deform_mesh::rotate` and `Deform_mesh::translate` always applies on the original coordinates of the input graph.
+That is in an interactive deformation session, the user is responsible for composing the transformations given to `Deform_mesh::rotate` and `Deform_mesh::translate`.
+In particular, any vertex which is no longer inside the ROI will be assigned to its original position in `Deform_mesh::preprocess`.
+The original positions can be updated by calling `Deform_mesh::overwrite_original_positions`. This behavior is illustrated in the tutorial.
+\todo tutorial for original positions and overwrite.
 
 \subsection Surface_modeling_examples Examples
 
