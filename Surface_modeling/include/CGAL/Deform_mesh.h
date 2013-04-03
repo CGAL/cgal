@@ -68,20 +68,20 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  * \ingroup PkgSurfaceModeling
  * @brief Class providing the functionalities for deforming a triangulated surface mesh
  *
- * @tparam Polyhedron_ a model of HalfedgeGraph
- * @tparam SparseLinearAlgebraTraitsWithPreFactor_d a model of SparseLinearAlgebraTraitsWithPreFactor_d
- * @tparam VertexIndexMap a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
- * @tparam EdgeIndexMap a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
- * @tparam deformation_algorithm_tag tag for selecting the deformation algorithm
- * @tparam WeightCalculator a model of SurfaceModelingWeightCalculator, with `WeightCalculator::Polyhedron` being `Polyhedron_`
+ * @tparam P a model of HalfedgeGraph
+ * @tparam ST a model of SparseLinearAlgebraTraitsWithPreFactor_d
+ * @tparam VIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
+ * @tparam EIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
+ * @tparam tag tag for selecting the deformation algorithm
+ * @tparam WC a model of SurfaceModelingWeightCalculator, with `WeightCalculator::Polyhedron` being `Polyhedron_`
  */
 template <
-  class Polyhedron_, 
-  class SparseLinearAlgebraTraitsWithPreFactor_d, 
-  class VertexIndexMap, 
-  class EdgeIndexMap,
-  Deformation_algorithm_tag deformation_algorithm_tag = SPOKES_AND_RIMS,
-  class WeightCalculator = typename internal::Weight_calculator_selector<Polyhedron_, deformation_algorithm_tag>::weight_calculator
+  class P, 
+  class ST, 
+  class VIM, 
+  class EIM,
+  Deformation_algorithm_tag TAG = SPOKES_AND_RIMS,
+  class WC = typename internal::Weight_calculator_selector<P, TAG>::weight_calculator
   >
 class Deform_mesh
 {
@@ -91,11 +91,11 @@ public:
   /// \name Template parameter types
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
-  typedef Polyhedron_ Polyhedron; /**< model of HalfedgeGraph */
-  typedef SparseLinearAlgebraTraitsWithPreFactor_d Sparse_linear_solver_with_prefactor; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
-  typedef VertexIndexMap Vertex_index_map; /**< model of `ReadWritePropertyMap`  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
-  typedef EdgeIndexMap Edge_index_map; /**< model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
-  typedef WeightCalculator Weight_calculator; /**< model of SurfaceModelingWeightCalculator */
+  typedef P Polyhedron; /**< model of HalfedgeGraph */
+  typedef ST Sparse_linear_solver; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
+  typedef VIM Vertex_index_map; /**< model of `ReadWritePropertyMap`  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
+  typedef EIM Edge_index_map; /**< model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
+  typedef WC Weight_calculator; /**< model of SurfaceModelingWeightCalculator */
   /// @}
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
@@ -105,8 +105,7 @@ public:
   typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
-  typedef Deform_mesh<Polyhedron, Sparse_linear_solver_with_prefactor, Vertex_index_map, Edge_index_map, deformation_algorithm_tag,
-    Weight_calculator> Self;
+  typedef Deform_mesh<P, ST, VIM, EIM, TAG, WC> Self;
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
@@ -157,7 +156,7 @@ private:
   std::vector<double> edge_weight;                    ///< all edge weights 
   std::vector<Eigen::Matrix3d> rot_mtr;               ///< rotation matrices of ros vertices (size: ros)
 
-  Sparse_linear_solver_with_prefactor m_solver;       ///< linear sparse solver
+  Sparse_linear_solver m_solver;       ///< linear sparse solver
   unsigned int iterations;                            ///< number of maximal iterations
   double tolerance;                                   ///< tolerance of convergence 
 
@@ -461,7 +460,7 @@ public:
     region_of_solution();
 
     // Assemble linear system A*X=B
-    typename Sparse_linear_solver_with_prefactor::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
+    typename Sparse_linear_solver::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
     assemble_laplacian(A);		
 
     // Pre-factorizing the linear system A*X=B
@@ -805,9 +804,9 @@ private:
   }
 
   /// Assemble Laplacian matrix A of linear system A*X=B
-  void assemble_laplacian(typename Sparse_linear_solver_with_prefactor::Matrix& A)
+  void assemble_laplacian(typename Sparse_linear_solver::Matrix& A)
   {
-    if(deformation_algorithm_tag == SPOKES_AND_RIMS) 
+    if(TAG == SPOKES_AND_RIMS) 
     {
       assemble_laplacian_spokes_and_rims(A);
     }
@@ -818,7 +817,7 @@ private:
   }
   /// Construct matrix that corresponds to left-hand side of eq:lap_ber in user manual
   /// Also constraints are integrated as eq:lap_energy_system in user manual
-  void assemble_laplacian_arap(typename Sparse_linear_solver_with_prefactor::Matrix& A)
+  void assemble_laplacian_arap(typename Sparse_linear_solver::Matrix& A)
   {
     /// assign cotangent Laplacian to ros vertices
     for(std::size_t k = 0; k < ros.size(); k++)
@@ -850,7 +849,7 @@ private:
   }
   /// Construct matrix that corresponds to left-hand side of eq:lap_ber_rims in user manual
   /// Also constraints are integrated as eq:lap_energy_system in user manual
-  void assemble_laplacian_spokes_and_rims(typename Sparse_linear_solver_with_prefactor::Matrix& A)
+  void assemble_laplacian_spokes_and_rims(typename Sparse_linear_solver::Matrix& A)
   {
     /// assign cotangent Laplacian to ros vertices    
     for(std::size_t k = 0; k < ros.size(); k++)
@@ -897,7 +896,7 @@ private:
   /// Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
   void optimal_rotations_svd()
   {
-    if(deformation_algorithm_tag == SPOKES_AND_RIMS) 
+    if(TAG == SPOKES_AND_RIMS) 
     {
       optimal_rotations_svd_spokes_and_rims();
     }
@@ -1004,7 +1003,7 @@ private:
   /// Global step of iterations, updating solution
   void update_solution()
   {
-    if(deformation_algorithm_tag == SPOKES_AND_RIMS) 
+    if(TAG == SPOKES_AND_RIMS) 
     {
       update_solution_spokes_and_rims();
     }
@@ -1016,9 +1015,9 @@ private:
   /// calculate right-hand side of eq:lap_ber in user manual and solve the system
   void update_solution_arap()
   {
-    typename Sparse_linear_solver_with_prefactor::Vector X(ros.size()), Bx(ros.size());
-    typename Sparse_linear_solver_with_prefactor::Vector Y(ros.size()), By(ros.size());
-    typename Sparse_linear_solver_with_prefactor::Vector Z(ros.size()), Bz(ros.size());
+    typename Sparse_linear_solver::Vector X(ros.size()), Bx(ros.size());
+    typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
+    typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1064,9 +1063,9 @@ private:
   /// calculate right-hand side of eq:lap_ber_rims in user manual and solve the system
   void update_solution_spokes_and_rims()
   {
-    typename Sparse_linear_solver_with_prefactor::Vector X(ros.size()), Bx(ros.size());
-    typename Sparse_linear_solver_with_prefactor::Vector Y(ros.size()), By(ros.size());
-    typename Sparse_linear_solver_with_prefactor::Vector Z(ros.size()), Bz(ros.size());
+    typename Sparse_linear_solver::Vector X(ros.size()), Bx(ros.size());
+    typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
+    typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1135,7 +1134,7 @@ private:
   /// Compute modeling energy
   double energy() const 
   {
-    if(deformation_algorithm_tag == SPOKES_AND_RIMS) 
+    if(TAG == SPOKES_AND_RIMS) 
     {
       return energy_spokes_and_rims();
     }
