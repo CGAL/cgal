@@ -169,8 +169,10 @@ private:
   unsigned int iterations;                            ///< number of maximal iterations
   double tolerance;                                   ///< tolerance of convergence 
 
-  bool need_preprocess;                               ///< is there any need to call preprocess() function
-  bool last_preprocess_successful;                     ///< stores the result of last call to preprocess()
+  bool need_preprocess_factorization;                 ///< is there any need to compute L and factorize
+  bool need_preprocess_region_of_solution;            ///< is there any need to compute region of solution 
+
+  bool last_preprocess_successful;                    ///< stores the result of last call to preprocess()
   Handle_group_container handle_group_list;           ///< user specified handles
 
   Weight_calculator weight_calculator;
@@ -199,12 +201,13 @@ public:
               double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator())
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)())),
+      iterations(iterations), tolerance(tolerance), weight_calculator(weight_calculator),
+      need_preprocess_factorization(true), 
+      need_preprocess_region_of_solution(true),
+      last_preprocess_successful(false),
       is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
       is_hdl_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
-      iterations(iterations), tolerance(tolerance),
-      need_preprocess(true), last_preprocess_successful(false),
-      weight_calculator(weight_calculator)
+      ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)() ))
   {
     // assign id to each vertex and edge
     vertex_iterator vb, ve;
@@ -234,7 +237,7 @@ public:
    */
   void reset()
   {
-    need_preprocess = true;
+    need_preprocess_both();
     // clear vertices
     roi.clear();
     handle_group_list.clear();
@@ -265,7 +268,7 @@ public:
   bool insert_handle(Handle_group handle_group, vertex_descriptor vd)
   {
     if(is_handle(vd)) { return false; }
-    need_preprocess = true;
+    need_preprocess_both();
 
     insert_roi(vd); // also insert it as roi
 
@@ -296,7 +299,7 @@ public:
    */
   void erase_handle(Handle_group handle_group)
   {
-    need_preprocess = true;
+    need_preprocess_both();
     for(typename Handle_container::iterator it = handle_group->begin(); it != handle_group->end(); ++it) 
     {
       is_handle(*it) = false;
@@ -319,7 +322,7 @@ public:
     {
       is_handle(*it) = false;
       handle_group->erase(it);   
-      need_preprocess = true;
+      need_preprocess_both();
       return true;
       // Although the handle group might get empty, we do not delete it from handle_group
     }
@@ -403,7 +406,7 @@ public:
   bool insert_roi(vertex_descriptor vd)   
   {
     if(is_roi(vd)) { return false; }
-    need_preprocess = true;
+    need_preprocess_both();
 
     is_roi(vd) = true;
     roi.push_back(vd);
@@ -428,7 +431,7 @@ public:
       is_roi(vd) = false;
       roi.erase(it);
 
-      need_preprocess = true;
+      need_preprocess_both();
       return true;
     }
     
@@ -463,20 +466,9 @@ public:
    */
   bool preprocess()
   {
-    if(!need_preprocess) { return last_preprocess_successful; }
-    need_preprocess = false;
-
     region_of_solution();
-
-    // Assemble linear system A*X=B
-    typename Sparse_linear_solver::Matrix A(ros.size()); // matrix is definite positive, and not necessarily symmetric
-    assemble_laplacian(A);		
-
-    // Pre-factorizing the linear system A*X=B
-    double D;
-    last_preprocess_successful = m_solver.pre_factor(A, D);
-    CGAL_warning(last_preprocess_successful);
-    return last_preprocess_successful;
+    assemble_laplacian_and_factorize();
+    return last_preprocess_successful; // which is set by assemble_laplacian_and_factorize()
   }
 /// @} Preprocess Section
 
@@ -491,7 +483,7 @@ public:
    */
   void translate(Const_handle_group handle_group, const Vector& t)
   {
-    if(need_preprocess) { preprocess(); } // we require ros ids, so preprocess is needed
+    region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     for(typename Handle_container::const_iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
@@ -516,7 +508,7 @@ public:
   template <typename Quaternion, typename Vect>
   void rotate(Const_handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& t)
   {
-    if(need_preprocess) { preprocess(); } // we require ros ids, so preprocess is needed
+    region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     for(typename Handle_container::const_iterator it = handle_group->begin();
       it != handle_group->end(); ++it)
@@ -539,7 +531,7 @@ public:
    */
   void assign(vertex_descriptor vd, const Point& target_position)
   {
-    if(need_preprocess) { preprocess(); }
+    region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     if(!is_handle(vd)) { return; }
     solution[ros_id(vd)] = target_position;
@@ -564,7 +556,7 @@ public:
    */
   void deform(unsigned int iterations, double tolerance)
   {
-    if(need_preprocess) { preprocess(); }
+    preprocess();
 
     if(!last_preprocess_successful) { 
       CGAL_warning(false);
@@ -664,7 +656,7 @@ public:
   {
     if(roi.empty()) { return; } // no ROI to overwrite
 
-    if(need_preprocess) { preprocess(); } // the roi should be preprocessed since we are using original vec
+    region_of_solution(); // the roi should be preprocessed since we are using original_position vec
 
     Roi_iterator rb, re;
     for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
@@ -696,7 +688,7 @@ public:
     // also set rotation matrix to identity
     std::fill(rot_mtr.begin(), rot_mtr.end(), Eigen::Matrix3d().setIdentity());
 
-    need_preprocess = true; // now we need reprocess
+    need_preprocess_both(); // now we need reprocess
   }
 
 /// @} Utilities
@@ -722,8 +714,19 @@ private:
   }
   
   /// Find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
+  /// Contains four parts:
+  ///  - if there is any vertex which is no longer roi, set its position back to original position
+  ///  - assign a ros id to vertices inside ros + ros-boundary
+  ///  - reinitialize rotation matrices, if a vertex is previously ros, use its previous matrix, otherwise set zero
+  ///  - reinitialize original, and solution, 
+  ///      + if a vertex is previously roi, then use its original position in old_origional, else use point(). 
+  ///        In both case we are using "original position" of the vertex.
+  ///      + same for solution (it is required to prevent jumping effects)
   void region_of_solution()
   {
+    if(!need_preprocess_region_of_solution) { return; }
+    need_preprocess_region_of_solution = false;
+
     std::vector<std::size_t>      old_ros_id_map = ros_id_map;
     std::vector<Eigen::Matrix3d>  old_rot_mtr = rot_mtr;
     std::vector<Point>            old_solution = solution;
@@ -820,21 +823,26 @@ private:
   }
 
   /// Assemble Laplacian matrix A of linear system A*X=B
-  void assemble_laplacian(typename Sparse_linear_solver::Matrix& A)
+  void assemble_laplacian_and_factorize()
   {
     if(TAG == SPOKES_AND_RIMS) 
     {
-      assemble_laplacian_spokes_and_rims(A);
+      assemble_laplacian_and_factorize_spokes_and_rims();
     }
     else
     {
-      assemble_laplacian_arap(A);
+      assemble_laplacian_and_factorize_arap();
     }
   }
   /// Construct matrix that corresponds to left-hand side of eq:lap_ber in user manual
   /// Also constraints are integrated as eq:lap_energy_system in user manual
-  void assemble_laplacian_arap(typename Sparse_linear_solver::Matrix& A)
+  void assemble_laplacian_and_factorize_arap()
   {
+    if(!need_preprocess_factorization) { return; }
+    need_preprocess_factorization = false;
+
+    typename Sparse_linear_solver::Matrix A(ros.size());
+
     /// assign cotangent Laplacian to ros vertices
     for(std::size_t k = 0; k < ros.size(); k++)
     {
@@ -862,11 +870,21 @@ private:
         A.set_coef(vi_id, vi_id, 1.0, true);
       }
     }
+
+    // now factorize
+    double D;
+    last_preprocess_successful = m_solver.pre_factor(A, D);
+    CGAL_warning(last_preprocess_successful);
   }
   /// Construct matrix that corresponds to left-hand side of eq:lap_ber_rims in user manual
   /// Also constraints are integrated as eq:lap_energy_system in user manual
-  void assemble_laplacian_spokes_and_rims(typename Sparse_linear_solver::Matrix& A)
+  void assemble_laplacian_and_factorize_spokes_and_rims()
   {
+    if(!need_preprocess_factorization) { return; }
+    need_preprocess_factorization = false;
+
+    typename Sparse_linear_solver::Matrix A(ros.size());
+
     /// assign cotangent Laplacian to ros vertices    
     for(std::size_t k = 0; k < ros.size(); k++)
     {
@@ -907,6 +925,11 @@ private:
         A.set_coef(vi_id, vi_id, 1.0, true); 
       }
     }
+
+    // now factorize
+    double D;
+    last_preprocess_successful = m_solver.pre_factor(A, D);
+    CGAL_warning(last_preprocess_successful);
   }
 
   /// Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
@@ -1066,8 +1089,11 @@ private:
     }
 
     // solve "A*X = B".
-    m_solver.linear_solver(Bx, X); m_solver.linear_solver(By, Y); m_solver.linear_solver(Bz, Z);
-
+    bool is_all_solved = m_solver.linear_solver(Bx, X) && m_solver.linear_solver(By, Y) && m_solver.linear_solver(Bz, Z);
+    if(!is_all_solved) {
+      CGAL_warning(false); 
+      return; 
+    }
     // copy to solution
     for (std::size_t i = 0; i < ros.size(); i++)
     {
@@ -1124,7 +1150,11 @@ private:
       }
     }
     // solve "A*X = B".
-    m_solver.linear_solver(Bx, X); m_solver.linear_solver(By, Y); m_solver.linear_solver(Bz, Z);
+    bool is_all_solved = m_solver.linear_solver(Bx, X) && m_solver.linear_solver(By, Y) && m_solver.linear_solver(Bz, Z);
+    if(!is_all_solved) {
+      CGAL_warning(false); 
+      return; 
+    }
 
     // copy to solution
     for (std::size_t i = 0; i < ros.size(); i++)
@@ -1214,6 +1244,12 @@ private:
       }
     }
     return sum_of_energy;
+  }
+
+  void need_preprocess_both()
+  {
+    need_preprocess_factorization = true;
+    need_preprocess_region_of_solution = true;
   }
 
   /// p1 - p2, return Eigen Column Vector
