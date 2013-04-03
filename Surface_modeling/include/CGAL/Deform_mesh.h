@@ -482,11 +482,13 @@ public:
 /// \name Deform Section
 /// @{  
   /**
-   * Translates all the vertices in a group of handles by `translation` based on their original positions (that is positions of vertices at the time of construction). 
+   * Sets the transformation to apply to all the vertices in a group of handles to be a translation by vector `t`.
+   * \note This transformation is applied on the original positions of the vertices (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`). 
+   * \note A call to this function cancels the last call to `rotate()` or `translate()`.
    * @param handle_group the representative of the group of handles to be translated
-   * @param translation translation vector 
+   * @param t translation vector 
    */
-  void translate(Const_handle_group handle_group, const Vector& translation)
+  void translate(Const_handle_group handle_group, const Vector& t)
   {
     if(need_preprocess) { preprocess(); } // we require ros ids, so preprocess is needed
 
@@ -494,22 +496,24 @@ public:
       it != handle_group->end(); ++it)
     {
       std::size_t v_id = ros_id(*it);
-      solution[v_id] = original[v_id] + translation;
+      solution[v_id] = original[v_id] + t;
     }
   }
 
   /**
-   * Rotates all the vertices in a group of handles around `rotation_center` using `quaternion`, and
-   * then translate it by `translation` based on their original positions (that is positions of vertices at the time of construction).
+   * Sets the transformation to apply to all the vertices in a group of handles to be a rotation around `rotation_center`
+   * defined by the quaternion `quat`, followed by a translation by vector `t`.
+   * \note This transformation is applied on the original positions of the vertices (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`).  
+   * \note A call to this function cancels the last call to `rotate()` or `translate()`.
    * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
    * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
    * @param handle_group the representative of the group of handles to be rotated and translated
    * @param rotation_center center of rotation
    * @param quat rotation holder quaternion
-   * @param translation post translation vector
+   * @param t post translation vector
    */
   template <typename Quaternion, typename Vect>
-  void rotate(Const_handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)
+  void rotate(Const_handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& t)
   {
     if(need_preprocess) { preprocess(); } // we require ros ids, so preprocess is needed
 
@@ -521,7 +525,7 @@ public:
       Point p = CGAL::ORIGIN + ( original[v_id] - rotation_center);
       Vect v = quat * Vect(p.x(),p.y(),p.z());
       p = Point(v[0], v[1], v[2]) + (rotation_center - CGAL::ORIGIN);
-      p = p + Vector(translation[0],translation[1],translation[2]);
+      p = p + Vector(t[0],t[1],t[2]);
 
       solution[v_id] = p;
     }
@@ -541,8 +545,10 @@ public:
   }
 
   /**
-   * Deforms the region-of-interest according to the deformation algorithm, according to the transformation applied to the groups of handles.
-   * No action is taken if the preprocess step was not successful.
+   * Deforms the region-of-interest according to the deformation algorithm, applying for each group of handles the transformation provided by `rotate()` or `translate()`
+   * to their original positions. The coordinates of the vertices of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
+   * deformation problem is using the coordinates of the input graph before calling the function.
+   * \note Nothing happens if `preprocess()` returns false.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
   void deform()
@@ -655,7 +661,7 @@ public:
    */
   void overwrite_original_positions()
   {
-    if(roi.empty()) { return; } // no ROI to override
+    if(roi.empty()) { return; } // no ROI to overwrite
 
     if(need_preprocess) { preprocess(); } // the roi should be preprocessed since we are using original vec
 
