@@ -35,6 +35,7 @@
 #include <vector>
 #include <list>
 #include <utility>
+#include <limits>
 
 namespace CGAL {
 
@@ -198,7 +199,7 @@ public:
               double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator())
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), -1)),
+      ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)())),
       is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
       is_hdl_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
       iterations(iterations), tolerance(tolerance),
@@ -712,7 +713,7 @@ private:
     for (boost::tie(e,e_end) = boost::in_edges(vd, polyhedron); e != e_end; e++)
     {
       vertex_descriptor vt = boost::source(*e, polyhedron);    
-      if(ros_id(vt) == -1)  // neighboring vertex which is outside of roi and not visited previously (i.e. need an id)
+      if(ros_id(vt) == (std::numeric_limits<std::size_t>::max)())  // neighboring vertex which is outside of roi and not visited previously (i.e. need an id)
       {
         ros_id(vt) = next_id++;
         push_vector.push_back(vt);        
@@ -748,7 +749,7 @@ private:
     ros.clear(); // clear ros    
     ros.insert(ros.end(), roi.begin(), roi.end()); 
 
-    ros_id_map.assign(boost::num_vertices(polyhedron), -1); // use -1 (max) as not assigned mark
+    ros_id_map.assign(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)()); // use max as not assigned mark
 
     for(std::size_t i = 0; i < roi.size(); i++)  // assign id to all roi vertices
     { ros_id(roi[i]) = i; }
@@ -774,8 +775,9 @@ private:
 
       // any vertex which is previously ROS has a rotation matrix
       // use that matrix to prevent jumping effects
-      if(old_ros_id_map[v_id] != -1 && old_ros_id_map[v_id] < old_rot_mtr.size()) { 
-                                 // && boundary of ros vertices also have ids so check whether it is ros
+      if(old_ros_id_map[v_id] != (std::numeric_limits<std::size_t>::max)()
+          && old_ros_id_map[v_id] < old_rot_mtr.size()) { 
+          // && boundary of ros vertices also have ids so check whether it is ros
         rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];        
       }
       else {
@@ -795,7 +797,7 @@ private:
       std::size_t v_ros_id = ros_id(ros[i]);
       std::size_t v_id = id(ros[i]);
 
-      if(is_roi(ros[i]) && old_ros_id_map[v_id] != -1) { 
+      if(is_roi(ros[i]) && old_ros_id_map[v_id] != (std::numeric_limits<std::size_t>::max)()) { 
         // if it is currently roi and previously ros + boundary
         // (actually I just need to assign old's to new's if a vertex is currently and previously ROI
         // but no harm on assigning if its also previously ros + boundary because 
