@@ -185,7 +185,7 @@ private:
     
     return r ;
   }
-  
+public:
   boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
   {
     CGAL_assertion(aBisector->is_bisector());
@@ -236,7 +236,7 @@ private:
     
     return p ;
   }
-
+private:
   void ResetBisectorData();
 
   Traits const&              mTraits ;
