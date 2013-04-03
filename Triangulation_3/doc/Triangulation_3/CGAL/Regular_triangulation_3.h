@@ -457,7 +457,7 @@ bool is_Gabriel(Vertex_handle v);
 Returns the weighted circumcenter of the four vertices of c. 
 \pre `rt`.`dimension()`\f$ =3\f$ and `c` is not infinite. 
 */ 
-Weighted_point dual(Cell_handle c) const; 
+Bare_point dual(Cell_handle c) const; 
 
 /*! 
 Returns the dual of facet `f`, which is 
