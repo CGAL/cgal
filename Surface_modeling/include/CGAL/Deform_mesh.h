@@ -719,7 +719,7 @@ private:
     // ELSE 
     // we have its original position in vertex->point()
     // (current ros is actually old ros - we did not change it yet)
-    for(std::vector<vertex_descriptor>::iterator it = ros.begin(); it != ros.end(); ++it)
+    for(typename std::vector<vertex_descriptor>::iterator it = ros.begin(); it != ros.end(); ++it)
     {
       if(!is_roi(*it)) {
         (*it)->point() = old_original[ old_ros_id_map[id(*it)] ];
