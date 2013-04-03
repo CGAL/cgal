@@ -135,9 +135,9 @@ On the contrary, assigning smaller values to smoothness parameter results in a h
 (notice that setting the smoothness parameter to zero directly returns the result of the soft clustering). The effect of different smoothness parameters is illustrated on \cgalFigureRef{Segmentation_lambdas}.
 
 \cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
-Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. (Do not be confused by coloring, these are the real segmentation results that are before assigning each connected component to its own id.)
+Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment.
 \cgalFigureEnd
-\image latex dino_different_lambda_small.png "Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. (Do not be confused by coloring, these are the real segmentation results that are before assigning each connected component to its own id.)" width=16cm
+\image latex dino_different_lambda_small.png "Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment." width=16cm
 
 \section Surface_mesh_segmentationAPI API
 This package provides three functions:
