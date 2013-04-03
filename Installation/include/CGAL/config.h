@@ -328,7 +328,7 @@ using std::max;
 
 // Macro CGAL_ASSUME
 // Call a builtin of the compiler to pass a hint to the compiler
-#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION >= 40500)
+#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION >= 40500 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!EX) { __builtin_unreachable(); }
