@@ -329,8 +329,7 @@ The steps in \ref Deform_section can be repeated for further deformations.
 \warning The transformation provided to the functions `Deform_mesh::rotate` and `Deform_mesh::translate` always applies on the original coordinates of the input graph.
 That is in an interactive deformation session, the user is responsible for composing the transformations given to `Deform_mesh::rotate` and `Deform_mesh::translate`.
 In particular, any vertex which is no longer inside the ROI will be assigned to its original position in `Deform_mesh::preprocess`.
-The original positions can be updated by calling `Deform_mesh::overwrite_original_positions`. This behavior is illustrated in the tutorial.
-\todo tutorial for original positions and overwrite.
+The original positions can be updated by calling `Deform_mesh::overwrite_original_positions`. This behavior is illustrated in \ref Surface_Modeling_Demo_Tutorial.
 
 \subsection Surface_modeling_examples Examples
 
@@ -369,11 +368,20 @@ You can also check the code example in SurfaceModelingWeightCalculator for direc
 \section Surface_Modeling_Demo How to use the demo
 A plugin for the polyhedron demo is available to test the algorithm. The following video tutorials explain how to use it.
 
+\subsection Surface_Modeling_Demo_Showcase An Introduction and Real World Example
 @htmlonly
 <center>
 <iframe width="420" height="315" src="http://www.youtube.com/embed/288N_SKrubY" frameborder="0" allowfullscreen></iframe>
 
-<iframe width="420" height="315" src="http://www.youtube.com/embed/yMbhA5-5wKU" frameborder="0" allowfullscreen></iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/0oTi5aKdcmg" frameborder="0" allowfullscreen></iframe>
+</center>
+@endhtmlonly
+
+\subsection Surface_Modeling_Demo_Tutorial Demonstration for Deleting Handle / ROI and Overwrite
+
+@htmlonly
+<center>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/PWXmViSzD8M" frameborder="0" allowfullscreen></iframe>
 </center>
 @endhtmlonly
 
