@@ -74,7 +74,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  * @tparam ST a model of SparseLinearAlgebraTraitsWithPreFactor_d
  * @tparam VIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
  * @tparam EIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
- * @tparam tag tag for selecting the deformation algorithm
+ * @tparam TAG tag for selecting the deformation algorithm
  * @tparam WC a model of SurfaceModelingWeightCalculator, with `WeightCalculator::Polyhedron` being `Polyhedron_`
  */
 template <
@@ -201,14 +201,13 @@ public:
               double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator())
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)() )),
-      is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
-      is_hdl_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
-      iterations(iterations), tolerance(tolerance),
+      iterations(iterations), tolerance(tolerance), weight_calculator(weight_calculator),
       need_preprocess_factorization(true), 
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
-      weight_calculator(weight_calculator)
+      is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
+      is_hdl_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
+      ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)() ))
   {
     // assign id to each vertex and edge
     vertex_iterator vb, ve;
