@@ -222,6 +222,22 @@ pointed by `va` and `vb` in the triangulation.
 */ 
 void insert_constraint(Vertex_handle va, Vertex_handle vb); 
 
+/*!
+Inserts a polyline defined by the points in the range `[first,last)`.
+Returns the constraint id.
+
+\tparam InputIterator must be an input iterator with the value type `Point`. 
+*/
+template < class InputIterator>
+Constraint_id insert_constraint(InputIterator first, InputIterator last);
+
+/*!
+Inserts the polyline defined by the iterator range `range`. 
+\tparam IteratorRange must be an iterator range with value type `Point`.
+*/
+template <typename IteratorRange>
+void insert_constraint(IteratorRange range);
+
 /*! 
 Removes the constraint `cid`, without removing the points from the triangulation.
 */ 
@@ -303,10 +319,19 @@ vertices_in_constraint_end(Constraint_id cid) const;
 
 /// @}
 
-/// \name Polyline Simplification
-/// The polyline simplification algorithm described in Chapter
-/// \ref Chapter_2D_Polyline_simplification uses the following types and 
-/// functions.
+/*! \name Polyline Simplification
+ The polyline simplification algorithm described in Chapter
+\ref Chapter_2D_Polyline_simplification 
+operates on polyline constraints. The algorithm removes
+vertices of a constraint and at the same time  from the triangulation.
+The points of removed vertices are nevertheless kept
+in the the polyline constraint.
+This allows the simplification algorithm to compute the error
+introduced by the simplification process by comparing the 
+current sequence (vertices) to the original sequence (points).
+
+The simplification algorithm uses the following types and functions.
+*/
 
 /// @{
 
@@ -321,9 +346,11 @@ typedef Hidden_type Points_in_constraint_iterator;
 /*! 
 Removes vertex at `viq` from the constraint and the triangulation.
 Only the vertex but not the point is removed from the constraint `cid`.
-\pre The vertex at `viq` must not be the first or last vertex, 
-must not be fixed, and the line segment between the predecessor `vip` and 
-the successor `vir` of `viq` must not intersect any constraint.
+\pre The vertices `vip`, `viq`, and `vir` must be three successive 
+vertices in a constraint.
+\pre No other constraint must pass through `viq`.
+\pre The line segment between `vip` and `vir` must not intersect any constraint.
+\pre All vertices of the triangulation are vertex of a constaint.
  */
 
 void

@@ -1027,12 +1027,12 @@ constrained edge, the set of input constraints that overlap it.
 The class `Polyline_constrained_triangulation_2<Tr>`
 is especially useful when the base constrained triangulation class
 handles intersections of constraints and uses an exact number type,
-i.e. when its intersection tag is `Exact_intersections_tag`.
+i.e.\ when its intersection tag is `Exact_intersections_tag`.
 Indeed in this case, the `Polyline_constrained_triangulation_2<Tr>`
 is specially designed to avoid cascading in the computations of
 intersection points.
 
-\subsection Triangulation_2ExampleBuildingaTriangulated Example: Building a Triangulated Arrangement of Segments
+\subsection Triangulation_2ExampleBuildingaTriangulated Example: Building a Triangulated Arrangement of Polylines
 
 The following code inserts a set of intersecting constraint segments
 into a triangulation 

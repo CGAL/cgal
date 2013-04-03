@@ -29,6 +29,7 @@
 #include <CGAL/Skiplist.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/triangulation_assertions.h>
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -113,11 +114,11 @@ public:
       : enclosing(hc.enclosing), pos(hc.pos)
     {}
 
-    Vertex_it    vertices_begin() { return enclosing->begin();}
+    Vertex_it    vertices_begin() { return enclosing->skip_begin();}
     Vertex_it    current() {return pos;}
-    Vertex_it    vertices_end() {return enclosing->end();}
+    Vertex_it    vertices_end() {return enclosing->skip_end();}
     Constraint_id  id() { return enclosing; }
-    std::size_t    number_of_vertices() {return enclosing->size();}
+    std::size_t    number_of_vertices() const {return enclosing->size();}
   };                                           
 
   typedef std::list<Context>              Context_list;
@@ -127,6 +128,15 @@ public:
   typedef std::map<Edge,   Context_list* >        Sc_to_c_map;
   typedef typename Constraint_set::const_iterator C_iterator;
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
+
+  struct First
+    : public std::unary_function<std::pair<Edge, Context_list*>,Edge>  {
+    Edge operator()(const std::pair<Edge, Context_list*>& p) const
+    {
+      return p.first;
+    } 
+  };
+  typedef boost::transform_iterator<First,Sc_iterator> Subconstraint_iterator;
   
 private:
   // data for the 1d hierarchy
@@ -164,11 +174,11 @@ public:
   void oriented_end(T va, T vb, T& vc) const;
 
   Context context(T va, T vb);
-  std::size_t number_of_enclosing_constraints(T va, T vb);
-  Context_iterator contexts_begin(T va, T vb);
-  Context_iterator contexts_end(T va, T vb);
-  std::size_t number_of_constraints() { return constraint_set.size();}
-  std::size_t number_of_subconstraints() {return sc_to_c_map.size();}
+  std::size_t number_of_enclosing_constraints(T va, T vb) const;
+  Context_iterator contexts_begin(T va, T vb) const;
+  Context_iterator contexts_end(T va, T vb) const;
+  std::size_t number_of_constraints() const  { return constraint_set.size();}
+  std::size_t number_of_subconstraints()const {return sc_to_c_map.size();}
   
 
   // insert/remove
@@ -194,6 +204,18 @@ public:
   void remove_Steiner(T v, T va, T vb);
 
   // iterators
+
+  Subconstraint_iterator subconstraint_begin() const
+  { 
+    First f;
+    return boost::make_transform_iterator(sc_to_c_map.begin(),f); 
+  }
+
+  Subconstraint_iterator subconstraint_end() const
+  { 
+    First f;
+    return boost::make_transform_iterator(sc_to_c_map.end(),f);   }
+
   Sc_iterator sc_begin() const{ return sc_to_c_map.begin(); }
   Sc_iterator sc_end()   const{ return sc_to_c_map.end();   }
   C_iterator  c_begin()  const{ return constraint_set.begin(); }
@@ -389,7 +411,7 @@ context(T va, T vb)
 template <class T, class Data>
 std::size_t 
 Polyline_constraint_hierarchy_2<T,Data>::
-number_of_enclosing_constraints(T va, T vb)
+number_of_enclosing_constraints(T va, T vb) const
 {
   Context_list* hcl;
   if (! get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
@@ -399,7 +421,7 @@ number_of_enclosing_constraints(T va, T vb)
 template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Context_iterator
 Polyline_constraint_hierarchy_2<T,Data>::
-contexts_begin(T va, T vb)
+contexts_begin(T va, T vb) const
 {
    Context_iterator first, last;
    if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);
@@ -409,7 +431,7 @@ contexts_begin(T va, T vb)
 template <class T, class Data>
 typename Polyline_constraint_hierarchy_2<T,Data>::Context_iterator
 Polyline_constraint_hierarchy_2<T,Data>::
-contexts_end(T va, T vb)
+contexts_end(T va, T vb) const
 {   
    Context_iterator first, last;
    if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);

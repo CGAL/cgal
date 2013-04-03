@@ -283,7 +283,7 @@ void insert_constraint(InputIterator begin, InputIterator end);
 
 /*!
 Inserts the polyline defined by the iterator range `range`. 
-\tparam InputIterator must be an input iterator with value type `Point`.
+\tparam IteratorRange must be an iterator range with value type `Point`.
 */
 template <typename IteratorRange>
 void insert_constraint(IteratorRange range);

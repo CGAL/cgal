@@ -39,7 +39,7 @@ namespace CGAL {
 template < class Tr_ = Default >
 class Polyline_constrained_triangulation_2  
   : public  
-      Default::Get< Constrained_Delaunay_triangulation_2< 
+Default::Get< Tr_, Constrained_Delaunay_triangulation_2< 
                       Exact_predicates_inexact_constructions_kernel
                       , Triangulation_data_structure_2< 
                           Polyline_constrained_triangulation_vertex_base< 
@@ -48,11 +48,10 @@ class Polyline_constrained_triangulation_2
                           , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
                           >
                       , CGAL::Exact_predicates_tag
-                      >
-                    , Tr_>::type
+                      > >::type
 {
   typedef typename 
-  Default::Get< Constrained_Delaunay_triangulation_2< 
+  Default::Get< Tr_, Constrained_Delaunay_triangulation_2< 
                   Exact_predicates_inexact_constructions_kernel
                   , Triangulation_data_structure_2< 
                       Polyline_constrained_triangulation_vertex_base< 
@@ -61,9 +60,7 @@ class Polyline_constrained_triangulation_2
                       , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
                       >
                   , CGAL::Exact_predicates_tag
-                  >
-                , Tr_
-  >::type Tr;
+                  > >::type Tr;
 
 
   template<class CDT>
@@ -144,7 +141,7 @@ public:
   typedef typename Polyline_constraint_hierarchy::Context      Context;
   typedef typename Polyline_constraint_hierarchy::Context_iterator  Context_iterator;
   typedef typename Polyline_constraint_hierarchy::C_iterator   Constraint_iterator;
-  typedef typename Polyline_constraint_hierarchy::Sc_iterator  Subconstraint_iterator;
+  typedef typename Polyline_constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
  
   typedef typename Polyline_constraint_hierarchy::Constraint_id Constraint_id;   
                                             
@@ -501,7 +498,7 @@ private:
       vertices.push_back(vertices.front());
     }
 
-    int n = vertices.size();
+    std::size_t n = vertices.size();
     if(n == 1){
       return NULL;
     }
@@ -625,16 +622,16 @@ public:
   Constraint_iterator constraints_end()   const;
   Subconstraint_iterator subconstraints_begin() const;
   Subconstraint_iterator subconstraints_end() const;
-  Context   context(Vertex_handle va, Vertex_handle vb); 
+  Context   context(Vertex_handle va, Vertex_handle vb) const; 
 
   bool is_subconstraint(Vertex_handle va, 
 			Vertex_handle vb);
   size_type number_of_enclosing_constraints(Vertex_handle va, 
-                                            Vertex_handle vb);
+                                            Vertex_handle vb) const;
   Context_iterator   contexts_begin(Vertex_handle va, 
-				    Vertex_handle vb);
+				    Vertex_handle vb) const;
   Context_iterator   contexts_end(Vertex_handle va, 
-				  Vertex_handle vb);
+				  Vertex_handle vb) const;
 
   Vertices_in_constraint_iterator vertices_in_constraint_begin(Constraint_id cid) const;
   Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const ;
@@ -1013,7 +1010,7 @@ Polyline_constrained_triangulation_2<Tr>::Subconstraint_iterator
 Polyline_constrained_triangulation_2<Tr>::
 subconstraints_begin() const
 {
-  return hierarchy.sc_begin();
+  return hierarchy.subconstraint_begin();
 }
 
 template <class Tr>
@@ -1023,7 +1020,7 @@ Polyline_constrained_triangulation_2<Tr>::Subconstraint_iterator
 Polyline_constrained_triangulation_2<Tr>::
 subconstraints_end() const
 {
-  return hierarchy.sc_end();
+  return hierarchy.subconstraint_end();
 }
 
 
@@ -1031,7 +1028,7 @@ template <class Tr>
 inline
 typename Polyline_constrained_triangulation_2<Tr>::Context
 Polyline_constrained_triangulation_2<Tr>::
-context(Vertex_handle va, Vertex_handle vb)
+context(Vertex_handle va, Vertex_handle vb) const
 {
   return hierarchy.context(va,vb);
 }
@@ -1041,7 +1038,7 @@ template <class Tr>
 inline 
 typename Polyline_constrained_triangulation_2<Tr>::size_type
 Polyline_constrained_triangulation_2<Tr>::
-number_of_enclosing_constraints(Vertex_handle va, Vertex_handle vb)
+number_of_enclosing_constraints(Vertex_handle va, Vertex_handle vb) const
 {
  return static_cast<size_type> 
    (hierarchy.number_of_enclosing_constraints(va,vb)); 
@@ -1060,7 +1057,7 @@ template <class Tr>
 inline
 typename Polyline_constrained_triangulation_2<Tr>::Context_iterator
 Polyline_constrained_triangulation_2<Tr>::
-contexts_begin(Vertex_handle va, Vertex_handle vb)
+contexts_begin(Vertex_handle va, Vertex_handle vb) const
 {
   return hierarchy.contexts_begin(va,vb);
 }
@@ -1069,7 +1066,7 @@ template <class Tr>
 inline
 typename Polyline_constrained_triangulation_2<Tr>::Context_iterator
 Polyline_constrained_triangulation_2<Tr>::
-contexts_end(Vertex_handle va, Vertex_handle vb)
+contexts_end(Vertex_handle va, Vertex_handle vb) const
 {
   return hierarchy.contexts_end(va,vb);
 }

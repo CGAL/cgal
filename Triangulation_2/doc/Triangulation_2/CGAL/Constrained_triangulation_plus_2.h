@@ -208,13 +208,28 @@ void insert_constraint(Point a, Point b);
 /*! 
 Inserts the constraint `c`. 
 */ 
-void push_back(const Constraint& c); 
+  void push_back(const std::pair<Point,Point>& c); 
 
 /*! 
 Inserts a constraint whose endpoints are the vertices 
 pointed by `va` and `vb` in the triangulation. 
 */ 
 void insert_constraint(Vertex_handle va, Vertex_handle vb); 
+
+/*!
+Inserts a polyline defined by the points in the range `[first,last)`.
+
+\tparam InputIterator must be an input iterator with the value type `Point`. 
+*/
+template < class InputIterator>
+insert_constraint(InputIterator first, InputIterator last)
+
+/*!
+Inserts the polyline defined by the iterator range `range`. 
+\tparam IteratorRange must be an iterator range with value type `Point`.
+*/
+template <typename IteratorRange>
+void insert_constraint(IteratorRange range);
 
 /*! 
 Removes the constraint joining the vertices pointed by `va` and `vb`. 

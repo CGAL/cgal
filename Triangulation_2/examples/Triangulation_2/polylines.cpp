@@ -17,18 +17,43 @@ typedef CGAL::Polyline_constrained_triangulation_2<CDT>          PCT;
 
 typedef PCT::Point                                               Point;
 typedef PCT::Constraint_id                                       Cid;
-typedef PCT::Vertices_in_constraint                              Vertices_in_constraint;
 typedef PCT::Vertex_handle                                       Vertex_handle;
 
 void 
 print(const PCT& cdt, Cid cid)
 {
+  typedef PCT::Vertices_in_constraint                              Vertices_in_constraint;
+
   std::cout << "Polyline constraint:" << std::endl;
   for(Vertices_in_constraint it = cdt.vertices_in_constraint_begin(cid);
       it != cdt.vertices_in_constraint_end(cid);
       it++){
     Vertex_handle vh = *it;
     std::cout << vh->point() << std::endl;
+  }
+}
+
+
+void 
+contexts(const PCT& pct)
+{
+  PCT::Subconstraint_iterator beg, end;
+  beg = pct.subconstraints_begin();
+  end = pct.subconstraints_end();
+
+  for(; beg!=end; ++beg){
+    Vertex_handle vp = beg->first, vq = beg->second;
+
+    if(pct.number_of_enclosing_constraints(vp, vq) == 2){
+      PCT::Context_iterator cbeg = pct.contexts_begin(vp,vq);
+      PCT::Context_iterator cend = pct.contexts_end(vp,vq);
+      std::cout << "subconstraint " << vp->point() << " " << vq->point() 
+                << " is on constraints starting at:\n";
+      for(; cbeg !=  cend; ++cbeg){
+        PCT::Context c = *cbeg;
+        std::cout << (*(c.vertices_begin()))->point() << std::endl;
+      }
+    }
   }
 }
 
@@ -58,6 +83,8 @@ main( )
 
   print(pct, id1);
   print(pct, id2);
+
+  contexts(pct);
 
   return 0;
 }
