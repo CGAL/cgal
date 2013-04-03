@@ -201,7 +201,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ApplyAndClosePushButton_clicked(
 {
   dock_widget->setVisible(false);
 }
-void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int state)
+void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int /*state*/)
 {
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {
@@ -211,7 +211,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int
     scene->itemChanged(edit_item);  // just for redraw   
   }  
 }
-void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChanged(int state)
+void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChanged(int /*state*/)
 {
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {

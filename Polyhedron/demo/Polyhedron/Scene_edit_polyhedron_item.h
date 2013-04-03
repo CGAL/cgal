@@ -428,11 +428,9 @@ public:
 
 protected:
   // Deformation related functions //
-  void print_message(const QString& message)
+  void print_message(const QString& /*message*/)
   {
     // std::cout << message.toStdString() << std::endl;
-    //if(ui_widget != NULL)
-    //  ui_widget->MessageTextEdit->appendPlainText(message);
   }
 
   bool is_there_any_handle_group(Deform_mesh::Handle_group& hgb, Deform_mesh::Handle_group& hge)

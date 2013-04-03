@@ -109,7 +109,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr)
   bool use_euclidean = ui_widget->UseEuclideanCheckBox->isChecked();
   process_selection(clicked_vertex, k_ring, is_roi, is_insert, use_euclidean);
 }
-void Scene_edit_polyhedron_item::timerEvent(QTimerEvent *event)
+void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(state.ctrl_pressing && 
     (state.left_button_pressing || state.right_button_pressing) &&
@@ -117,7 +117,7 @@ void Scene_edit_polyhedron_item::timerEvent(QTimerEvent *event)
     deform(); 
   }
 }
-bool Scene_edit_polyhedron_item::eventFilter(QObject *target, QEvent *event)
+bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 {
   // This filter is both filtering events from 'viewer' and 'main window'
  
