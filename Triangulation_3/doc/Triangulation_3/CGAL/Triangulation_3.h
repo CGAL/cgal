@@ -13,10 +13,11 @@ of points.
 It has the default value `Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> >`. 
 
 \tparam SpatialLockDataStructure_3 is an optional parameter to specify the type of the spatial lock data structure.
-It is only used if the triangulation data structure used is concurrency-safe.
+It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
 It must be a model of the `SpatialLockDataStructure_3` concept.
-It allows to perform some operations currently (see the operations documentation).
-The default value is `Spatial_grid_SpatialLockDataStructure_3_3<Tag_priority_blocking_with_atomics>` if
+It allows to perform some operations (such as insertion or removal) currently (see the operations documentation below).
+The default value is `Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>` if
 the TDS is concurrency-safe, and `void` otherwise.
 
 \cgalHeading{Traversal of the Triangulation}
@@ -601,7 +602,7 @@ the facet (resp. edge, vertex) containing the query point.
 The optional argument `start` is used as a starting place for the search. 
 
 The optional argument `p_could_lock_zone` is used by the concurrency-safe
-version of the triangulation. When the pointer is not-null, the locate will
+version of the triangulation. When the pointer is not null, the locate will
 try to lock all the vertices along the walk. If it succeed, *p_could_lock_zone
 is true, otherwise it is false. In any case, the locked vertices are not
 unlocked by `locate`, leaving this choice to the user.
@@ -640,7 +641,7 @@ triangulation, `lt` is set to `OUTSIDE_AFFINE_HULL` and
 The optional argument `start` is used as a starting place for the search. 
 
 The optional argument `p_could_lock_zone` is used by the concurrency-safe
-version of the triangulation. When the pointer is not-null, the locate will
+version of the triangulation. When the pointer is not null, the locate will
 try to lock all the vertices along the walk. If it succeed, *p_could_lock_zone
 is true, otherwise it is false. In any case, the locked vertices are not
 unlocked by `locate`, leaving this choice to the user.

@@ -253,7 +253,7 @@ void remove(Vertex_handle v, bool *p_could_lock_zone = 0);
 Removes the vertices specified by the iterator range `[first, beyond)`. 
 The function `remove(Vertex_handle)` is called over each element of the range. 
 The number of vertices removed is returned. 
-If parallelism is enabled, the points will be inserted in parallel.
+If parallelism is enabled, the points will be removed in parallel.
 \pre (i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range. 
 
 \tparam InputIterator must be an input iterator with value type `Vertex_handle`.

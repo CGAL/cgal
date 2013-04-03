@@ -25,12 +25,14 @@ They have the default values `Triangulation_ds_vertex_base_3<>` and
 
 The `Vertex_container_strategy` and `Cell_container_strategy` parameters are the 
 strategies used by the `Compact_container` (or `Concurrent_compact_container` 
-if the TDS is concurrency-safe) storing the vertices and cells. The default values are both
+if the TDS is concurrency-safe) storing the vertices and cells. They are models of 
+the concept `CompactContainerStrategy`. The default values are both
 `Compact_container_strategy_base`.
 
 The `Concurrency_tag` parameter allows to ask for a concurrency-safe TDS (with regard to
 insertion and deletion of elements). Possible values are `CGAL::Sequential_tag` (the default) and
-`CGAL::Parallel_tag`.
+`CGAL::Parallel_tag`. The concurrency-safe version uses two `Concurrent_compact_container` to store 
+vertices and cells (instead of two `Compact_container`).
 
 \cgalModels `TriangulationDataStructure_3`
 
