@@ -27,7 +27,7 @@ class Polyhedron_demo_edit_polyhedron_plugin :
 
 public:
   Polyhedron_demo_edit_polyhedron_plugin() 
-    : Polyhedron_demo_plugin_helper(), dock_widget(NULL), ui_widget(NULL)
+    : Polyhedron_demo_plugin_helper(), ui_widget(NULL), dock_widget(NULL)
   { }
   ~Polyhedron_demo_edit_polyhedron_plugin()
   { }

@@ -191,11 +191,12 @@ public:
               double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator())
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
-      iterations(iterations), tolerance(tolerance), weight_calculator(weight_calculator),
-      need_preprocess(true), last_preprocess_successful(false),
+      ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), -1)),
       is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
       is_hdl_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
-      ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), -1))
+      iterations(iterations), tolerance(tolerance),
+      need_preprocess(true), last_preprocess_successful(false),
+      weight_calculator(weight_calculator)
   {
     // assign id to each vertex and edge
     vertex_iterator vb, ve;

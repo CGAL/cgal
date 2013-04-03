@@ -24,8 +24,8 @@
 #include "ui_Deform_mesh.h"
 
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget)
-  : poly_item(poly_item), deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map())
-  , ui_widget(ui_widget), frame(new qglviewer::ManipulatedFrame()), quadric(gluNewQuadric())
+  : ui_widget(ui_widget), poly_item(poly_item), frame(new qglviewer::ManipulatedFrame()), 
+    deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map()), quadric(gluNewQuadric())
 {
   // it is not good to rely on id() for reaching original positions
   // if usage of vertex index map is changed in Deform_mesh, we need to change this part to use map instead of vector
