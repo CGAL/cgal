@@ -640,15 +640,16 @@ public:
   { return polyhedron; }
   
   /**
-   * Makes current positions as original positions. Effect of calling this funtion is equal to creating a new deformation
-   * object with current polyhedron and transfering region-of-interest and handles.
-   * \note There should not be any need for preprocess when this function is called, otherwise it just returns.
+   * Sets the original positions to be the current positions. Calling this function as the same effect as creating
+   * a new deformation object with the current deformed polyhedron, keeping the region-of-interest and the groups of handles.
+   * \note if the region-of-interest or any group of handles have been modified since the last call to `preprocess()`,
+   * it will be called prior to the overwrite.
    */
-  void override_halfedge_graph()
+  void overwrite_original_positions()
   {
     if(roi.empty()) { return; } // no ROI to override
 
-    if(need_preprocess) { preprocess(); } // the roi should be preprocessed since we are using original_position vec
+    if(need_preprocess) { preprocess(); } // the roi should be preprocessed since we are using original vec
 
     Roi_iterator rb, re;
     for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)

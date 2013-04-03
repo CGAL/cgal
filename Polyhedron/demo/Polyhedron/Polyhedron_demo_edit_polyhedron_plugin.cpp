@@ -50,7 +50,7 @@ public slots:
   void on_ShowROICheckBox_stateChanged(int state);
   void on_ShowAsSphereCheckBox_stateChanged(int state);  
   void on_ActivatePivotingCheckBox_stateChanged(int state);
-  void on_OverridePushButton_clicked();
+  void on_OverwritePushButton_clicked();
   void on_SaveROIPushButton_clicked();
   void on_ReadROIPushButton_clicked();
   void dock_widget_visibility_changed(bool visible);
@@ -123,7 +123,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   connect(ui_widget->ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
   connect(ui_widget->ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));  
   connect(ui_widget->ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
-  connect(ui_widget->OverridePushButton, SIGNAL(clicked()), this, SLOT(on_OverridePushButton_clicked()));
+  connect(ui_widget->OverwritePushButton, SIGNAL(clicked()), this, SLOT(on_OverwritePushButton_clicked()));
   
   connect(ui_widget->SaveROIPushButton, SIGNAL(clicked()), this, SLOT(on_SaveROIPushButton_clicked()));
   connect(ui_widget->ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
@@ -237,13 +237,13 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivatePivotingCheckBox_stateCh
     scene->itemChanged(edit_item);     
   }
 }
-void Polyhedron_demo_edit_polyhedron_plugin::on_OverridePushButton_clicked()
+void Polyhedron_demo_edit_polyhedron_plugin::on_OverwritePushButton_clicked()
 {
   int item_id = scene->mainSelectionIndex();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  edit_item->override_deform_object();
+  edit_item->overwrite_deform_object();
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_SaveROIPushButton_clicked()

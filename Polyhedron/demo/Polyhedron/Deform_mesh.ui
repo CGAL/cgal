@@ -193,7 +193,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="OverridePushButton">
+       <widget class="QPushButton" name="OverwritePushButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -201,7 +201,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Override</string>
+         <string>Update Original Positions</string>
         </property>
        </widget>
       </item>

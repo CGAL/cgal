@@ -402,9 +402,9 @@ public:
   bool show_as_sphere() const
   { return ui_widget->ShowAsSphereCheckBox->isChecked(); }
 
-  void override_deform_object()
+  void overwrite_deform_object()
   {
-    deform_mesh.override_halfedge_graph();
+    deform_mesh.overwrite_original_positions();
 
     Deform_mesh::Roi_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
