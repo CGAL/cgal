@@ -38,8 +38,6 @@ manual \ref Triangulation3exfastlocation.
         (i.e.\ when `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
         It must be a model of the `SpatialLockDataStructure_3` concept.
         See the documentation of `Triangulation_3` for more details.
-        
-If 
 
 \sa `CGAL::Regular_triangulation_3` 
 
@@ -110,7 +108,6 @@ SpatialLockDataStructure_3 *p_lock_ds = 0);
 Copy constructor. 
 The pointer to the lock data structure is not copied. Thus, the copy won't be
 concurrency-safe as long as the user has not call `set_lock_data_structure`.
-
 */ 
 Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1); 
 
@@ -138,8 +135,9 @@ The optional argument `start` is used as a starting place for the search.
 The optional argument `p_could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not-null, the insertion will
 try to lock vertices/cells before modifying them. If it succeed, *p_could_lock_zone
-is true, otherwise it is false (and the point is not inserted). In any case, 
-the locked vertices are not unlocked by the function, leaving this choice to the user.
+is true, otherwise it is false and the return value is Vertex_handle() 
+(the point is not inserted). In any case, the locked vertices are not unlocked by the 
+function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Point & p, 
 Cell_handle start = Cell_handle(), bool *p_could_lock_zone = 0); 
@@ -242,7 +240,7 @@ Removes the vertex `v` from the triangulation.
 The optional argument `p_could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not-null, the removal will
 try to lock vertices/cells before deleting/modifying them. If it succeed, *p_could_lock_zone
-is true, otherwise it is false (and the point is not inserted). In any case, 
+is true, otherwise it is false (and the point is not removed). In any case, 
 the locked vertices are not unlocked by the function, leaving this choice to the user.
 
 \pre `v` is a finite vertex of the triangulation. 

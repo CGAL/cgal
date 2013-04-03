@@ -49,7 +49,7 @@ if( TBB_FOUND )
   add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
   include_directories ( ${TBB_INCLUDE_DIRS} )
 endif()
-  
+
 if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
 
   include(${QT_USE_FILE})

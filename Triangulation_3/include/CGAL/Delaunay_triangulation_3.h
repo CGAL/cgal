@@ -274,15 +274,8 @@ public:
 
     size_type n = number_of_vertices();
     std::vector<Point> points (first, last);
-
-    std::cerr << "Point vector created in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-    t.reset();
-
     spatial_sort (points.begin(), points.end(), geom_traits());
     
-    std::cerr << "Points sorted in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-    t.reset();
-
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
     if (is_parallel())
@@ -308,9 +301,6 @@ public:
           Vertex_handle &hint = tls_hint.local();
           for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
           {
-            //std::stringstream sstr;
-            //sstr << i_point << " ";
-            //std::cerr << sstr.str() << std::endl;
             bool success = false;
             while(!success)
             {
@@ -340,80 +330,14 @@ public:
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
                 bcounter.increment_branch_2(); // THIS is an early withdrawal!
 #endif
-                //std::this_thread::yield();
-                //if (i_point != (r.end() - 1))
-                //  std::swap(points[i_point], points[i_point+1]);
               }
 
               unlock_all_elements();
             }
 
-            //std::cerr << i_point << " done." << std::endl;
-
           }
         }
       );
-      
-      /*size_t num_points = points.size();
-
-      // Sequential until dim = 3 (or more)
-      Vertex_handle hint;
-      size_t num_points_seq = 1000;
-      std::vector<Vertex_handle> hints(num_points_seq);
-      size_t i = 0;
-      while (i < num_points_seq)
-      {
-        hint = insert(points[i*num_points/num_points_seq], hint);
-        hints[i] = hint;
-        ++i;
-      }
-
-      // CJTODO: lambda functions OK?
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>( 0, num_points_seq, 1 ),
-        [&] (const tbb::blocked_range<size_t>& r)
-        {
-          for( size_t i_range = r.begin() ; i_range != r.end() ; ++i_range)
-          {
-            Vertex_handle hint = hints[i_range];
-            for (size_t i_point = i_range*num_points/num_points_seq + 1 ; 
-                 i_point != (i_range+1)*num_points/num_points_seq ; 
-                 ++i_point)
-            {
-              //std::stringstream sstr;
-              //sstr << i_point << " ";
-              //std::cerr << sstr.str() << std::endl;
-              bool success = false;
-              while(!success)
-              {
-                if (try_lock_vertex(hint) && try_lock_point(points[i_point]))
-                {
-                  bool could_lock_zone;
-                  Vertex_handle new_hint = insert(
-                    points[i_point], hint, &could_lock_zone);
-                
-                  if (could_lock_zone)
-                  {
-                    hint = new_hint;
-                    success = true;
-                  }
-                }
-                else
-                {
-                  //std::this_thread::yield();
-                  //if (i_point != (r.end() - 1))
-                  //  std::swap(points[i_point], points[i_point+1]);
-                }
-
-                unlock_all_elements();
-              }
-            }
-
-            //std::cerr << i_point << " done." << std::endl;
-
-          }
-        }
-      );*/
     }
     // Sequential
     else
@@ -426,7 +350,6 @@ public:
     }
 
     std::cerr << "Triangulation computed in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
-
 
     return number_of_vertices() - n;
   }
