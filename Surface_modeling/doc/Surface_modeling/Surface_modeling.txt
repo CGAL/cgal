@@ -228,8 +228,6 @@ Comparison between \ref Surface_Modeling_Overview_ARAP and \ref Surface_Modeling
 The deformation work flow.
 \cgalFigureEnd
 
-\todo   <b>SL</b>: what is the meaning of the different box style? what software did you use? are the source inside the git repo? Not sure that it is obvious that <i>clear</i> is optional.
-
 \subsection Preprocess_section Preprocess Section
 
 We present the API by considering the user point of view during a deformation session (see \cgalFigureRef{Flow_of_API} for an illustration).
