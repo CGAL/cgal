@@ -57,9 +57,6 @@ if(MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
 endif()
 
-# Add specific Find.cmake modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules/ )
-
 if ( MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()
@@ -67,6 +64,7 @@ endif()
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
 
   # Activate concurrency ? (turned OFF by default)
   option(ACTIVATE_CONCURRENT_MESH_3
@@ -92,7 +90,6 @@ if ( CGAL_FOUND )
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
   
-  include( ${CGAL_USE_FILE} )
   find_package(Boost COMPONENTS program_options REQUIRED)
 
   if ( Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND AND Boost_VERSION GREATER 103400 )

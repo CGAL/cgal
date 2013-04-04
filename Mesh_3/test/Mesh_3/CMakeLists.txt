@@ -20,12 +20,10 @@ if(MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
 endif()
 
-# Add specific Find.cmake modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../Installation/cmake/modules/ )
-
 find_package(CGAL QUIET COMPONENTS Core ImageIO)
 
 if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
 
   # Activate concurrency ? (turned OFF by default)
   option(ACTIVATE_CONCURRENT_MESH_3
@@ -50,8 +48,6 @@ if ( CGAL_FOUND )
     include_directories ( ${TBB_INCLUDE_DIRS} )
 	list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
-
-  include( ${CGAL_USE_FILE} )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
