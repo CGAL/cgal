@@ -75,7 +75,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  * @tparam VIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
  * @tparam EIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
  * @tparam TAG tag for selecting the deformation algorithm
- * @tparam WC a model of SurfaceModelingWeightCalculator, with `WeightCalculator::Polyhedron` being `Polyhedron_`
+ * @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Polyhedron` being `Polyhedron_`
  */
 template <
   class P, 
@@ -129,7 +129,7 @@ public:
   typedef typename Handle_group_container::iterator                Handle_group;
   /** Const version of Handle_group*/
   typedef typename Handle_group_container::const_iterator          Const_handle_group;
-  /** The iterator type over the groups of handles. The type can be implicitly 
+  /** Iterator over the groups of handles. The type can be implicitly 
       converted to Deform_mesh::Handle_group or Deform_mesh::Const_handle_group */
   typedef typename Handle_group_container::iterator                Handle_group_iterator;
    /** Const version of Handle_group_iterator */
@@ -165,7 +165,7 @@ private:
   std::vector<double> edge_weight;                    ///< all edge weights 
   std::vector<Eigen::Matrix3d> rot_mtr;               ///< rotation matrices of ros vertices (size: ros)
 
-  Sparse_linear_solver m_solver;       ///< linear sparse solver
+  Sparse_linear_solver m_solver;                      ///< linear sparse solver
   unsigned int iterations;                            ///< number of maximal iterations
   double tolerance;                                   ///< tolerance of convergence 
 
@@ -189,7 +189,7 @@ public:
    * @pre the polyhedron consists of only triangular facets
    * @param polyhedron triangulated surface mesh used to deform
    * @param vertex_index_map property map for associating an id to each vertex
-   * @param edge_index_map property map for associating an id to each edge in the region of interest
+   * @param edge_index_map property map for associating an id to each edge
    * @param iterations see `set_iterations()` for more details
    * @param tolerance  see `set_tolerance()` for more details
    * @param weight_calculator function object or pointer for weight calculation
@@ -262,7 +262,7 @@ public:
   
   /**
    * Inserts a vertex into a group of handles. The vertex is also inserted in the region-of-interest if it is not already in.
-   * @param handle_group the group where the vertex will be inserted in
+   * @param handle_group the group where the vertex is inserted in
    * @param vd the vertex to be inserted
    * @return true if the insertion is successful
    */
@@ -281,7 +281,7 @@ public:
   /**
    * Inserts a range of vertices in a group of handles. The vertices are also inserted in the region-of-interest if they are not already in.
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
-   * @param handle_group the group where the vertex will be inserted in
+   * @param handle_group the group where the vertex is inserted in
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
    */
@@ -296,7 +296,7 @@ public:
 
   /**
    * Erases a group of handles. Its representative becomes invalid.
-   * @param handle_group group to be erased
+   * @param handle_group the group to be erased
    */
   void erase_handle(Handle_group handle_group)
   {
@@ -309,8 +309,9 @@ public:
   }
 
   /**
-   * Erases a vertex from a group of handles. Note that the group of handles is not erased even if it becomes empty.
-   * @param handle_group the group of handles from which the vertex is erased
+   * Erases a vertex from a group of handles.
+   * \note The group of handles is not erased even if it becomes empty.
+   * @param handle_group the group where the vertex is erased from
    * @param vd the vertex to be erased
    * @return true if the removal is successful
    */
@@ -331,7 +332,8 @@ public:
   }
 
   /**
-   * Erases a vertex by searching it through all groups of handles. Note that the group of handles is not erased even if it becomes empty.
+   * Erases a vertex by searching it through all groups of handles.
+   * \note The group of handles is not erased even if it becomes empty.
    * @param vd the vertex to be erased
    * @return true if the removal is successful
    */
@@ -350,7 +352,7 @@ public:
 
   /** 
    * Provides access to all the groups of handles.
-   * @return a range of iterators over all groups of handles
+   * @return the range of iterators over all groups of handles
    */
   std::pair<Handle_group_iterator, Handle_group_iterator> handle_groups()
   {
@@ -366,9 +368,9 @@ public:
   }
 
   /** 
-   * Provides access to all the handles of a group.
-   * @param handle_group the group of handles considered
-   * @return a range of iterators over all handle of a group
+   * Provides access to all the handles inside a group.
+   * @param handle_group the group containing handles
+   * @return the range of iterators over all handles inside a group
    * 
    */
   std::pair<Handle_iterator, Handle_iterator> handles(Handle_group handle_group)
@@ -401,7 +403,7 @@ public:
 
   /**
    * Inserts a vertex in the region-of-interest
-   * @param vd vertex to be inserted
+   * @param vd the vertex to be inserted
    * @return true if the insertion is successful
    */
   bool insert_roi(vertex_descriptor vd)   
@@ -416,8 +418,9 @@ public:
 
   /**
    * Erases a vertex from the region-of-interest. The vertex is also removed from any group of handles.
-   * Note that the next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position (i.e. position of the vertex at the time of construction).
-   * @param vd vertex to be erased
+   * \note The next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position 
+   * (that is position of the vertex at the time of construction or after the last call to `overwrite_original_positions()`).
+   * @param vd the vertex to be erased
    * @return true if the removal is successful
    */
   bool erase_roi(vertex_descriptor vd)   
@@ -441,7 +444,8 @@ public:
   }
 
   /** 
-   * Provides access to the vertices in the region-of-interest. Note that deleting a vertex from the region-of-interest will invalidate its iterator. 
+   * Provides access to the vertices in the region-of-interest. 
+   * \note Deleting a vertex from the region-of-interest invalidates iterators. 
    * @return an iterator range
    */
   std::pair<Roi_iterator, Roi_iterator> roi_vertices()
@@ -459,8 +463,9 @@ public:
 
   /**
    * Triggers the necessary precomputation work before beginning deformation.
-   * Note that the insertion of a vertex in a group of handles or in the region-of-interest invalidates the
-   * preprocessing data. This function need only to be called before calling `deform()`.
+   * \note Calling this function is optional.
+   * \note The insertion / removal of a vertex in a group of handles or in the region-of-interest invalidates the
+   * preprocessing data.
    * @return true if Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, 
    * which happens if there is no path between a free vertex and a handle vertex (i.e. both fixed and user-inserted).
@@ -477,8 +482,9 @@ public:
 /// @{  
   /**
    * Sets the transformation to apply to all the vertices in a group of handles to be a translation by vector `t`.
-   * \note This transformation is applied on the original positions of the vertices (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`). 
-   * \note A call to this function cancels the last call to `rotate()` or `translate()`.
+   * \note This transformation is applied on the original positions of the vertices 
+   * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`). 
+   * \note A call to this function cancels the last call to `rotate()`, `translate()`, or `assign()`.
    * @param handle_group the representative of the group of handles to be translated
    * @param t translation vector 
    */
@@ -497,8 +503,9 @@ public:
   /**
    * Sets the transformation to apply to all the vertices in a group of handles to be a rotation around `rotation_center`
    * defined by the quaternion `quat`, followed by a translation by vector `t`.
-   * \note This transformation is applied on the original positions of the vertices (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`).  
-   * \note A call to this function cancels the last call to `rotate()` or `translate()`.
+   * \note This transformation is applied on the original positions of the vertices 
+   * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`).  
+   * \note A call to this function cancels the last call to `rotate()`, `translate()`, or `assign()`.
    * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
    * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
    * @param handle_group the representative of the group of handles to be rotated and translated
@@ -527,8 +534,8 @@ public:
 
   /**
    * Assigns the target position of a handle vertex 
-   * @param vd handle the vertex to be assigned target position
-   * @param target_position the new vertex position
+   * @param vd the handle vertex to be assigned target position
+   * @param target_position the new target position
    */
   void assign(vertex_descriptor vd, const Point& target_position)
   {
@@ -540,7 +547,8 @@ public:
 
   /**
    * Deforms the region-of-interest according to the deformation algorithm, applying for each group of handles the transformation provided by `rotate()` or `translate()`
-   * to their original positions. The coordinates of the vertices of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
+   * to their original positions, or using target positions provided by `assign()`. 
+   * The coordinates of the vertices of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
    * deformation problem is using the coordinates of the input graph before calling the function.
    * \note Nothing happens if `preprocess()` returns false.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
@@ -551,7 +559,7 @@ public:
   }
 
   /**
-   * same as `deform()` but the number of iterations and the tolerance are one-time parameters.
+   * Same as `deform()` but the number of iterations and the tolerance are one-time parameters.
    * @param iterations number of iterations for optimization procedure
    * @param tolerance tolerance of convergence (see explanations set_tolerance(double tolerance))
    */
