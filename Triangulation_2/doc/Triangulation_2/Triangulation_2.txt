@@ -1034,18 +1034,13 @@ intersection points.
 
 \subsection Triangulation_2ExampleBuildingaTriangulated Example: Building a Triangulated Arrangement of Polylines
 
-The following code inserts a set of intersecting constraint segments
-into a triangulation 
-and counts the number of constrained edges of the
-resulting triangulation.
-
- 
-
 The following code inserts two polylines into a triangulation.
 Note that if the triangulation allows intersections we can have
 arbitrary complicated overlapping polylines.  They can share
 any number of edges, and a polyline may pass several times through 
 the same edge.  
+
+
 
 For an edge we can further find out how many and which polyline
 constraints pass through it. For an edge we can obtain an iterator

@@ -40,7 +40,7 @@ original polyline and the current polyline without the vertex.
 
 The algorithm terminates when a user-supplied *stop predicate* returns
 true, for instance, upon reaching a desired number of vertices or
-reaching a maximum cost.
+reaching a maximum simplification error.
 
 The polyline simplification algorithm operates on a triangulation
 class from Chapter \ref Chapter_2D_Triangulations, namely
@@ -208,7 +208,7 @@ implementation we simplified this test even further.
 
 Fernando Cacciola made a first prototype implementation for
 GeometryFactory, and Andreas Fabri developed the
-`Polyline_constrained_triangulation` and the final version of this
+`Polyline_constrained_triangulation_2` and the final version of this
 package.
 
 
