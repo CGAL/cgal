@@ -70,9 +70,79 @@ struct Handle_group_data
   qglviewer::Vec frame_initial_center; // initial center of frame
   Scene_interface::Bbox bbox;          // bbox of handles inside group  
 
-  Handle_group_data(Deform_mesh::Handle_group handle_group, qglviewer::ManipulatedFrame* frame = 0)
-    : handle_group(handle_group), frame(frame), bbox(0,0,0,0,0,0)
+
+  std::vector<qglviewer::Vec> initial_positions;
+  Deform_mesh* deform_mesh;
+
+  Handle_group_data(Deform_mesh::Handle_group handle_group, Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
+    : handle_group(handle_group), frame(frame), bbox(0,0,0,0,0,0), deform_mesh(deform_mesh)
   { }
+
+  void refresh()
+  {
+    reset_initial_positions();
+    frame_initial_center = calculate_initial_center();
+    bbox = calculate_initial_bbox();
+
+    bool oldState = frame->blockSignals(true); // do not let it emit modified, which will cause a deformation
+                                  // but we are just adjusting the center so it does not require a deformation
+    frame->setOrientation(qglviewer::Quaternion());
+    frame->setPosition(frame_initial_center);
+    frame->blockSignals(oldState);
+  }
+
+  void reset_initial_positions()
+  {
+    initial_positions.clear();
+    Deform_mesh::Handle_iterator hb, he;
+    for(boost::tie(hb, he) = deform_mesh->handles(handle_group); hb != he; ++hb)
+    {
+      qglviewer::Vec point((*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z() );
+      initial_positions.push_back(point);
+    }
+  }
+
+  qglviewer::Vec calculate_initial_center()
+  {
+    qglviewer::Vec center_acc(0, 0, 0);
+    if(initial_positions.empty()) {return center_acc; }
+
+    for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it)
+    {
+      center_acc += (*it);
+    }
+    return center_acc / initial_positions.size();
+  }
+
+  Scene_interface::Bbox calculate_initial_bbox()
+  {    
+    if(initial_positions.empty()) {return Scene_interface::Bbox(0,0,0,0,0,0); }
+
+    const qglviewer::Vec& p_i = *(initial_positions.begin());
+    Scene_interface::Bbox bbox(p_i.x, p_i.y, p_i.z, p_i.x, p_i.y, p_i.z);
+
+    for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it)
+    {
+      const qglviewer::Vec& p_i = (*it);
+      Scene_interface::Bbox bbox_it(p_i.x, p_i.y, p_i.z, p_i.x, p_i.y, p_i.z);
+      bbox = bbox + bbox_it;
+    }
+    return bbox;
+  }
+
+  void assign()
+  {
+    Deform_mesh::Handle_iterator hb, he;
+    boost::tie(hb, he) = deform_mesh->handles(handle_group);
+    for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
+    {
+      qglviewer::Vec dif_from_initial_center = (*it) - frame_initial_center;
+      qglviewer::Vec rotated = frame->orientation() * dif_from_initial_center;
+      qglviewer::Vec rotated_and_translated = rotated + frame->position();
+
+      deform_mesh->assign(*hb, Point(rotated_and_translated.x, rotated_and_translated.y, rotated_and_translated.z) );
+    }
+  }
 };
 
 // To hold pressing states together
@@ -175,7 +245,6 @@ typedef std::list<Handle_group_data> Handle_group_data_list;
   // by interleaving 'viewer's events (check constructor), keep followings:
   Mouse_keyboard_state state;
 
-  std::vector<Point> original_positions;
 public:
   // Deformation related functions //
   void insert_handle(vertex_descriptor v)
@@ -187,7 +256,7 @@ public:
 
     deform_mesh.insert_handle(active_group, v);
 
-    refresh_manipulated_frame_center(active_group);
+    get_data(active_group).refresh();
   }
 
   void insert_roi(vertex_descriptor v)
@@ -197,20 +266,21 @@ public:
   
   void erase_handle(vertex_descriptor v)
   {
-    deform_mesh.erase_handle(v); // API should be safe enough to do that (without checking empty handle group etc.)
+    if(deform_mesh.erase_handle(v)) // API should be safe enough to do that (without checking empty handle group etc.)
+    {
+      refresh_all_handle_centers(); // since we don't know which handle group that v erased of, refresh all
+    }
 
-    if(!is_there_any_handle_group()) {
+    if(!is_there_any_handle_group()) { 
       print_message("There is no handle group!");
       return; 
-    }
-    
-    refresh_all_handle_centers(); // since we don't know which handle group that v erased of, refresh all
+    }        
   }
 
   void erase_roi(vertex_descriptor v)
   {
+    erase_handle(v); // erase from handles
     deform_mesh.erase_roi(v);
-    erase_handle(v); // also erase from handles
   }
 
   void set_all_vertices_as_roi()
@@ -240,8 +310,10 @@ public:
 
     qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
     new_frame->setRotationSensitivity(2.0f);
-    handle_frame_map.push_back(Handle_group_data(active_group, new_frame));
-    refresh_manipulated_frame_center(active_group);
+
+    Handle_group_data hgd(active_group, &deform_mesh, new_frame);
+    handle_frame_map.push_back(hgd);
+    hgd.refresh();
 
     connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  // OK we are deforming via timer,
     // but it makes demo more responsive if we also add this signal
@@ -309,7 +381,10 @@ public:
   {       
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     {
-      it->frame_initial_center = it->frame->position();
+      qglviewer::Vec vec= it->frame->position();
+      it->refresh();
+      it->frame_initial_center = vec;
+      it->frame->setPosition(vec);
     }
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     {
@@ -319,6 +394,7 @@ public:
 
   void pivoting_begin()
   {
+    // just block signals to prevent deformation
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     {
       it->frame->blockSignals(true);
@@ -406,23 +482,7 @@ public:
   {
     deform_mesh.overwrite_original_positions();
 
-    Deform_mesh::Roi_iterator rb, re;
-    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
-    {
-      original_positions[(*rb)->id()] = (*rb)->point();
-    }
-
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
-    {
-      it->frame_initial_center = calculate_original_center(it->handle_group);
-
-      it->frame->blockSignals(true);
-      it->frame->setOrientation(qglviewer::Quaternion());
-      it->frame->setPosition(it->frame_initial_center);
-      it->frame->blockSignals(false);
-
-      it->bbox = calculate_bbox(it->handle_group);
-    }
+    refresh_all_handle_centers();
   }
 
 
@@ -483,70 +543,10 @@ protected:
 
   void refresh_all_handle_centers()
   {
-    Deform_mesh::Handle_group hgb, hge;
-    for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb)
+    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     {
-      refresh_manipulated_frame_center(hgb);
+      it->refresh();
     }
-  }
-
-  void refresh_manipulated_frame_center(Deform_mesh::Handle_group hg)
-  {
-    Handle_group_data& hd = get_data(hg);
-
-    hd.frame_initial_center = calculate_original_center(hg);
-    hd.bbox = calculate_bbox(hg);
-
-    qglviewer::ManipulatedFrame* hg_frame = hd.frame;
-    hg_frame->blockSignals(true); // do not let it emit modified, which will cause a deformation
-                                  // but we are just adjusting the center so it does not require a deformation
-    hg_frame->setPosition(calculate_center(hg));
-    hg_frame->blockSignals(false);
-  }
-
-  qglviewer::Vec calculate_center(Deform_mesh::Handle_group hg)
-  {
-    Point center_acc(0, 0, 0);
-    Deform_mesh::Handle_iterator hb, he;
-    std::size_t counter = 0;
-    for(boost::tie(hb, he) = deform_mesh.handles(hg); hb != he; ++hb, ++counter)
-    {
-      center_acc = center_acc + ((*hb)->point() - CGAL::ORIGIN);
-      // center_acc = center_acc + (deform_mesh.original_position(*hb) - CGAL::ORIGIN);
-    }
-    if(counter == 0) { return qglviewer::Vec(0,0,0); } 
-    return qglviewer::Vec(center_acc.x() / counter, center_acc.y() / counter, center_acc.z() / counter);
-  }
-
-  qglviewer::Vec calculate_original_center(Deform_mesh::Handle_group hg)
-  {
-    Point center_acc(0, 0, 0);
-    Deform_mesh::Handle_iterator hb, he;
-    std::size_t counter = 0;
-    for(boost::tie(hb, he) = deform_mesh.handles(hg); hb != he; ++hb, ++counter)
-    {
-      center_acc = center_acc + (original_positions[(*hb)->id()] - CGAL::ORIGIN);
-    }
-    if(counter == 0) { return qglviewer::Vec(0,0,0); } 
-    return qglviewer::Vec(center_acc.x() / counter, center_acc.y() / counter, center_acc.z() / counter);
-  }
-
-  Scene_interface::Bbox calculate_bbox(Deform_mesh::Handle_group hg)
-  {    
-    Deform_mesh::Handle_iterator hb, he;
-    boost::tie(hb, he) = deform_mesh.handles(hg);
-    if(hb == he) { return Scene_interface::Bbox(0,0,0,0,0,0); }
-    const Deform_mesh::Point& p_i = original_positions[(*hb)->id()];
-    Scene_interface::Bbox bbox(p_i.x(), p_i.y(), p_i.z(),
-                               p_i.x(), p_i.y(), p_i.z());
-    for(; hb != he; ++hb)
-    {
-      const Deform_mesh::Point& p_i = original_positions[(*hb)->id()];
-      Scene_interface::Bbox bbox_it(p_i.x(), p_i.y(), p_i.z(),
-                                    p_i.x(), p_i.y(), p_i.z());
-      bbox = bbox + bbox_it;
-    }
-    return bbox;
   }
 
   Handle_group_data& get_data(Deform_mesh::Handle_group hg)

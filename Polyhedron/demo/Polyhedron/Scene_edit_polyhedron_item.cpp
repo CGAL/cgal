@@ -27,14 +27,6 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   : ui_widget(ui_widget), poly_item(poly_item), frame(new qglviewer::ManipulatedFrame()), 
     deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map()), quadric(gluNewQuadric())
 {
-  // it is not good to rely on id() for reaching original positions
-  // if usage of vertex index map is changed in Deform_mesh, we need to change this part to use map instead of vector
-  vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = boost::vertices(*poly_item->polyhedron()); vb != ve; ++vb)
-  {
-    original_positions.push_back(vb->point());
-  }
-
   gluQuadricNormals(quadric, GLU_SMOOTH);
   // bind vertex picking 
   connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
@@ -78,22 +70,13 @@ void Scene_edit_polyhedron_item::deform()
 {
   if(!is_there_any_handle()) { return; }
 
-  Deform_mesh::Handle_group hgb, hge;
-  for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb)
-  {
-    Handle_group_data& hd = get_data(hgb);
-    qglviewer::ManipulatedFrame* hgb_frame = hd.frame;
-    qglviewer::Vec translation = hgb_frame->position() - hd.frame_initial_center;
-
-    deform_mesh.rotate(hgb, 
-      Point(hd.frame_initial_center.x, hd.frame_initial_center.y, hd.frame_initial_center.z),
-      hgb_frame->orientation(),
-      translation);
-  }
+  for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+  { it->assign(); }
   deform_mesh.deform();
 
   emit mesh_deformed(this);
 }
+
 void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) 
 {
   Polyhedron* poly = poly_item->polyhedron();
@@ -186,6 +169,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 
   return false;
 }
+
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item::draw() const {
   poly_item->direct_draw();
