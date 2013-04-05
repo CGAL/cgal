@@ -43,9 +43,7 @@ private:
   typedef typename GeomTraits::Plane_3    Plane;
   typedef typename GeomTraits::Segment_3  Segment;
 
-  typedef typename Polyhedron::Traits Kernel;
   typedef typename Polyhedron::Facet  Facet;
-  typedef typename Polyhedron::Facet  Vertex;
 
   typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
   typedef typename Polyhedron::Facet_const_handle   Facet_const_handle;
@@ -108,6 +106,7 @@ public:
     this->cone_angle = cone_angle;
     this->number_of_rays = number_of_rays;
 
+    disk_samples.clear();
     DiskSampling()(number_of_rays, cone_angle, std::back_inserter(disk_samples));
 
     Tree tree(mesh.facets_begin(), mesh.facets_end());
@@ -135,21 +134,25 @@ private:
 
     Plane plane(center, normal);
     Vector v1 = plane.base1(), v2 = plane.base2();
-    v1 = scale_functor(v1, 1.0 / CGAL::sqrt(v1.squared_length()));
-    v2 = scale_functor(v2, 1.0 / CGAL::sqrt(v2.squared_length()));
+    v1 = scale_functor(v1, static_cast<GeomTraits::FT>(1.0 / CGAL::sqrt(
+                         v1.squared_length())));
+    v2 = scale_functor(v2, static_cast<GeomTraits::FT>(1.0 / CGAL::sqrt(
+                         v2.squared_length())));
 
     std::vector<std::pair<double, double> > ray_distances;
     ray_distances.reserve(disk_samples.size());
 
-    const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
+    const GeomTraits::FT length_of_normal = static_cast<GeomTraits::FT>( 1.0 / tan(
+        cone_angle / 2.0) );
     normal = scale_functor(normal, length_of_normal);
 
     for(Disk_samples_list::const_iterator sample_it = disk_samples.begin();
         sample_it != disk_samples.end(); ++sample_it) {
       bool is_intersected, intersection_is_acute;
       double min_distance;
-      Vector disk_vector = sum_functor(scale_functor(v1, sample_it->get<0>()),
-                                       scale_functor(v2, sample_it->get<1>()));
+      Vector disk_vector = sum_functor(
+                             scale_functor(v1, static_cast<GeomTraits::FT>(sample_it->get<0>())),
+                             scale_functor(v2, static_cast<GeomTraits::FT>(sample_it->get<1>())) );
       Vector ray_direction = sum_functor(normal, disk_vector);
 
       Ray ray(center, ray_direction);
