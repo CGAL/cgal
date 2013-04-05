@@ -774,8 +774,6 @@ public:
           if (not is_certain( not on_different_parabola_arcs ) ) {
             return indeterminate<Boolean>();
           }
-          CGAL_assertion((cmpx(pp, t.point()) == EQUAL) or
-                         (cmpy(pp, t.point()) == EQUAL)   );
         }
         if (is_q_pnt) {
           Point_2 qq = q.point();
@@ -802,8 +800,6 @@ public:
           if (not is_certain( not on_different_parabola_arcs ) ) {
             return indeterminate<Boolean>();
           }
-          CGAL_assertion((cmpx(qq, t.point()) == EQUAL) or
-                         (cmpy(qq, t.point()) == EQUAL)   );
         }
         CGAL_SDG_DEBUG( std::cout <<
             "debug finite-edge-int-cf with (p,q,r,t,sgn)= ("
