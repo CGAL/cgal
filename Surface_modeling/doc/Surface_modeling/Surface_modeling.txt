@@ -233,11 +233,11 @@ The deformation work flow.
 We present the API by considering the user point of view during a deformation session (see \cgalFigureRef{Flow_of_API} for an illustration).
 
 The deformation is handled thanks to a function object that must be initialized:
-  - `Deform_mesh deform = Deform_mesh(Polyhedron& polyhedron, VertexIndexMap vertex_index_map, EdgeIndexMap edge_index_map, unsigned int iterations = 5, double tolerance = 1e-4, WeightCalculator weight_calculator = WeightCalculator())`  
+  - `Deform_mesh(Polyhedron& polyhedron, Vertex_index_map vertex_index_map, Edge_index_map edge_index_map, unsigned int iterations = 5, double tolerance = 1e-4, Weight_calculator weight_calculator = Weight_calculator())`  
   - `vertex_index_map` and `edge_index_map` are property maps used for assigning indexes to vertices and edges. 
   - For details on `iterations` and `tolerance` parameters see the \ref deform_method "deform method". 
   - For details on `weight_calculator` see \ref Example_4
-  - `deformation_type` can be used as nontype template parameter for selecting deformation algorithm. The default algorithm is \ref Surface_Modeling_Overview_ARAP_Rims.
+  - `TAG` can be used as nontype template parameter for selecting deformation algorithm. The default algorithm is \ref Surface_Modeling_Overview_ARAP_Rims.
 
 The region the algorithm operates on (called the region-of-interest and abbreviated ROI) must be defined.
 The API is convenient enough for either using a subset or the whole mesh as region of interest.
@@ -266,13 +266,13 @@ The status of a vertex (roi or handle) can be reinitialized :
   - `Deform_mesh::erase_handle(vertex_descriptor vd)` erase the vertex by searching through all handle groups
   
 Iteration over ROI and handle vertices are possible using:
-  - Deform_mesh::roi_vertices() iterate over ROI vertices
-  - Deform_mesh::handle_groups() iterate over the groups of handles
-  - Deform_mesh::handles(Handle_group handle_group) iterate over the vertices inside a given group of handles
+  - `Deform_mesh::roi_vertices()` iterate over ROI vertices
+  - `Deform_mesh::handle_groups()` iterate over the groups of handles
+  - `Deform_mesh::handles(Handle_group handle_group)` iterate over the vertices inside a given group of handles
   
 Also constant time querying the state of a vertex can be done using:
-  - Deform_mesh::is_roi(vertex_descriptor vd) const check whether the vertex is inside ROI
-  - Deform_mesh::is_handle(vertex_descriptor vd) const check whether a vertex is inside any group of handles
+  - `Deform_mesh::is_roi(vertex_descriptor vd) const` check whether the vertex is inside ROI
+  - `Deform_mesh::is_handle(vertex_descriptor vd) const` check whether a vertex is inside any group of handles
 
 After having set the ROI and the handle groups, a preprocess function needs to be called.
   - `Deform_mesh::preprocess()` preprocess ROI and handles, make internal stuff ready for deformation
@@ -284,7 +284,7 @@ Some cases for such failure:
 	- Inserting whole mesh as ROI and inserting no handle vertices,
 	- Using custom weights which includes too many zero weights, so that the connectivity is broken.
 	
-Calling preprocess function is optional, which means it is called by functions in \ref Deform_section, if there is any need to. 
+Calling preprocess function is optional, which means it is called by `Deform_mesh::deform`, if there is any need to. 
 Of course, it might create a delay in corresponding function caused by preprocess computations. 
 
 \note The ROI does not have to be a connected component, however considering performance issues it is best to use an individual deformation object per each connected component ROI. 
@@ -326,7 +326,9 @@ The steps in \ref Deform_section can be repeated for further deformations.
 
 \warning The transformation provided to the functions `Deform_mesh::rotate` and `Deform_mesh::translate` always applies on the original coordinates of the input graph.
 That is in an interactive deformation session, the user is responsible for composing the transformations given to `Deform_mesh::rotate` and `Deform_mesh::translate`.
-In particular, any vertex which is no longer inside the ROI will be assigned to its original position in `Deform_mesh::preprocess`.
+
+\warning Vertices can be inserted in or removed from region-of-interest and handles at any time. In particular, any vertex which is no longer inside the ROI will be
+assigned to its original position in `Deform_mesh::preprocess`.
 The original positions can be updated by calling `Deform_mesh::overwrite_original_positions`. This behavior is illustrated in \ref Surface_Modeling_Demo_Tutorial.
 
 \subsection Surface_modeling_examples Examples
@@ -369,7 +371,7 @@ A plugin for the polyhedron demo is available to test the algorithm. The followi
 \subsection Surface_Modeling_Demo_Showcase An Introduction and Real World Example
 @htmlonly
 <center>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/288N_SKrubY" frameborder="0" allowfullscreen></iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/WvC47fVSPGU" frameborder="0" allowfullscreen></iframe>
 
 <iframe width="420" height="315" src="http://www.youtube.com/embed/0oTi5aKdcmg" frameborder="0" allowfullscreen></iframe>
 </center>
@@ -379,7 +381,7 @@ A plugin for the polyhedron demo is available to test the algorithm. The followi
 
 @htmlonly
 <center>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/PWXmViSzD8M" frameborder="0" allowfullscreen></iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/xPAG_AOLvU0" frameborder="0" allowfullscreen></iframe>
 </center>
 @endhtmlonly
 
