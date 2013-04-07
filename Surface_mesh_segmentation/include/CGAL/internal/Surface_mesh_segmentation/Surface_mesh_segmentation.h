@@ -111,8 +111,7 @@ public:
   template <class FacetSegmentMap, class SDFPropertyMap>
   int partition(int number_of_centers, double smoothing_lambda,
                 SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap) {
-    smoothing_lambda = (std::max)(0.0, (std::min)(1.0,
-                                  smoothing_lambda)); // clip into [0-1]
+    smoothing_lambda = (std::max)(0.0, smoothing_lambda); // min zero
     smoothing_lambda *=
       CGAL_SMOOTHING_LAMBDA_MULTIPLIER; // scale it into meaningful range for graph-cut
 
