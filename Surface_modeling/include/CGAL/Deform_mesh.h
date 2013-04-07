@@ -75,7 +75,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  * @tparam VIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
  * @tparam EIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
  * @tparam TAG tag for selecting the deformation algorithm
- * @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Polyhedron` being `Polyhedron_`
+ * @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Polyhedron` being `P`
  */
 template <
   class P, 
@@ -360,7 +360,7 @@ public:
   }
 
   /** 
-   * const version
+   * Const version
    */
   std::pair<Handle_group_const_iterator, Handle_group_const_iterator> handle_groups() const
   {
@@ -379,7 +379,7 @@ public:
   }
 
   /** 
-   * const version
+   * Const version
    */
   std::pair<Handle_const_iterator, Handle_const_iterator> handles(Const_handle_group handle_group) const
   {
@@ -649,14 +649,14 @@ public:
   { return is_hdl_map[id(vd)]; }
 
   /**
-   * Accessor for halfedge graph being deformed
+   * Provides access to halfedge graph being deformed
    * @return the halfedge graph
    */
   const Polyhedron& halfedge_graph() const
   { return polyhedron; }
   
   /**
-   * Sets the original positions to be the current positions. Calling this function as the same effect as creating
+   * Sets the original positions to be the current positions for vertices inside region-of-interest. Calling this function as the same effect as creating
    * a new deformation object with the current deformed polyhedron, keeping the region-of-interest and the groups of handles.
    * \note if the region-of-interest or any group of handles have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
