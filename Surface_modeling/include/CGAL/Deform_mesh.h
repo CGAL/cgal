@@ -454,7 +454,7 @@ public:
   }
 
   /** 
-   * const version
+   * Const version
    */
   std::pair<Roi_const_iterator, Roi_const_iterator> roi_vertices() const
   {
