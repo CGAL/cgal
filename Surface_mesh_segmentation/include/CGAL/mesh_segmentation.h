@@ -100,13 +100,12 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * \ingroup PkgSurfaceSegmentation
  * @brief Function computing the segmentation of a surface mesh.
  *
- * Basically this function combines `CGAL::sdf_values_computation()` and
- * `CGAL::surface_mesh_segmentation_from_sdf_values()` functions by computing SDF values and segmenting the mesh in one go.
+ * Basically this function combines `CGAL::sdf_values_computation` and
+ * `CGAL::surface_mesh_segmentation_from_sdf_values` functions by computing SDF values and segmenting the mesh in one go.
  *
- * \note For segmenting a mesh several times with different parameters (i.e. number of levels, and smoothing lambda),
- * it is wise to first compute SDF values using CGAL::sdf_values_computation,
- * and then call `CGAL::surface_mesh_segmentation_from_sdf_values()` with the same SDF values. The current implementation uses a map to
- * associate to each facet a sdf value.
+ * \note For computing several segmentation of the mesh with different parameters (i.e. number of levels, and smoothing lambda),
+ * it is advised to first compute the SDF values using `CGAL::compute_sdf_values` and use them each time you want to
+ * call `CGAL::segment_from_sdf_values`.
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Polyhedron a %CGAL polyhedron
