@@ -123,17 +123,8 @@ public:
   {
     return Base::operator()(c);
   }
-
-  result_type operator()(const Point_2 &p,
-                         const Point_2 &q,
-                         const Point_2 &r,
-                         const Offset_2 &o_p,
-                         const Offset_2 &o_q,
-                         const Offset_2 &o_r) const
-  {
-    return Base::operator()(p, q, r, o_p, o_q, o_r);
-  }
 #endif
+
   /// Normal static orientation test, copied from Orientation_2
   result_type operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const
   {
@@ -269,7 +260,6 @@ public:
               << std::endl;
     return err;
   }
-
 };
 
 }
