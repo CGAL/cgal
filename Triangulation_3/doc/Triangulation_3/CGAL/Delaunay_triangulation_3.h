@@ -120,6 +120,14 @@ Delaunay_triangulation_3 (InputIterator first, InputIterator last,
 const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
 SpatialLockDataStructure_3 *p_lock_ds = 0); 
 
+/*! 
+Same as before, with last two parameters in reverse order.
+*/ 
+template < class InputIterator > 
+Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
+SpatialLockDataStructure_3 *p_lock_ds, 
+const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3()); 
+
 /// @} 
 
 /// \name Insertion 
