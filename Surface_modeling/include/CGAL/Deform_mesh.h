@@ -20,6 +20,7 @@
 #define CGAL_DEFORM_MESH_H
 
 #include <CGAL/internal/Surface_modeling/Weights.h>
+#include <CGAL/internal/Surface_modeling/Eigen_SVD_helper_3.h>
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -28,9 +29,6 @@
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/FPU_extension.h>
 #include <CGAL/Default.h>
-
-#include <Eigen/Eigen>
-#include <Eigen/SVD>
 
 #include <vector>
 #include <list>
@@ -124,6 +122,12 @@ private:
   // Handle container types
   typedef std::list<vertex_descriptor>  Handle_container;
   typedef std::list<Handle_container>   Handle_group_container;
+
+  typedef Eigen_SVD_helper_3 SVD_helper;
+  typedef SVD_helper::Matrix SVD_matrix;
+  typedef SVD_helper::Vector SVD_vector;
+  typedef SVD_helper::Solver SVD_solver;
+
 public:
   /** The type used as the representative of a group of handles*/
   typedef typename Handle_group_container::iterator                Handle_group;
@@ -163,7 +167,7 @@ private:
   std::vector<bool>        is_hdl_map;                ///< (size: num vertices)
 
   std::vector<double> edge_weight;                    ///< all edge weights 
-  std::vector<Eigen::Matrix3d> rot_mtr;               ///< rotation matrices of ros vertices (size: ros)
+  std::vector<SVD_matrix> rot_mtr;    ///< rotation matrices of ros vertices (size: ros)
 
   Sparse_linear_solver m_solver;                      ///< linear sparse solver
   unsigned int iterations;                            ///< number of maximal iterations
@@ -695,7 +699,7 @@ public:
     }    
 
     // also set rotation matrix to identity
-    std::fill(rot_mtr.begin(), rot_mtr.end(), Eigen::Matrix3d().setIdentity());
+    std::fill(rot_mtr.begin(), rot_mtr.end(), SVD_helper().identity_matrix());
 
     need_preprocess_both(); // now we need reprocess
   }
@@ -736,10 +740,10 @@ private:
     if(!need_preprocess_region_of_solution) { return; }
     need_preprocess_region_of_solution = false;
 
-    std::vector<std::size_t>      old_ros_id_map = ros_id_map;
-    std::vector<Eigen::Matrix3d>  old_rot_mtr = rot_mtr;
-    std::vector<Point>            old_solution = solution;
-    std::vector<Point>            old_original = original;
+    std::vector<std::size_t>                old_ros_id_map = ros_id_map;
+    std::vector<SVD_matrix> old_rot_mtr    = rot_mtr;
+    std::vector<Point>                      old_solution   = solution;
+    std::vector<Point>                      old_original   = original;
     
     // any vertices which are no longer ROI, should be assigned to their original position, so that:
     // IF a vertex is ROI (actually if its ros + boundary) previously (when previous region_of_solution() is called)
@@ -793,7 +797,7 @@ private:
         rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];        
       }
       else {
-        rot_mtr[v_ros_id].setIdentity();
+        rot_mtr[v_ros_id] = SVD_helper().identity_matrix();
       }
     }
     
@@ -954,9 +958,9 @@ private:
     }
   }
   void optimal_rotations_svd_arap()
-  {
-    Eigen::Matrix3d cov;            // covariance matrix
-    Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
+  {     
+    SVD_helper svd_helper;
+    SVD_matrix cov = svd_helper.zero_matrix();
 
     // only accumulate ros vertices
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -964,7 +968,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
       // compute covariance matrix (user manual eq:cov_matrix)
-      cov.setZero();
+      cov = svd_helper.zero_matrix();
 
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
@@ -972,33 +976,33 @@ private:
         vertex_descriptor vj = boost::source(*e, polyhedron);
         std::size_t vj_id = ros_id(vj);
 
-        Eigen::Vector3d    pij = sub_to_col(original[vi_id], original[vj_id]);
-        Eigen::RowVector3d qij = sub_to_row(solution[vi_id], solution[vj_id]);
+        const SVD_vector& pij = sub_to_SVD_vector(original[vi_id], original[vj_id]);
+        const SVD_vector& qij = sub_to_SVD_vector(solution[vi_id], solution[vj_id]);
         double wij = edge_weight[id(*e)];
 
-        cov += wij * (pij * qij);
+        svd_helper.scalar_vector_vector_transpose_mult(cov, wij, pij, qij); // cov += wij * (pij * qij)
       }
       // svd decomposition
-      svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      const Eigen::Matrix3d& u = svd.matrixU();
-      const Eigen::Matrix3d& v = svd.matrixV();
+      const std::pair<SVD_solver, int>& solver_and_minimum_column = svd_helper.compute_svd(cov);
 
+      const SVD_solver& solver = solver_and_minimum_column.first;
+      const SVD_matrix& V      = svd_helper.get_matrixV(solver);
+      const SVD_matrix& U      = svd_helper.get_matrixU(solver);
       // extract rotation matrix
-      rot_mtr[vi_id] = v*u.transpose();
+      svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U ); // rot_mtr[vi_id] = v*u.transpose()
 
-      // checking negative determinant of r
-      if ( rot_mtr[vi_id].determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
+      if ( svd_helper.determinant(rot_mtr[vi_id]) < 0 ) // changing the sign of column corresponding to smallest singular value
       {
-        Eigen::Matrix3d u_m = u;
-        u_m.col(2) *= -1;      // singular values are always sorted in decreasing order so use column 2
-        rot_mtr[vi_id] = v*u_m.transpose(); // re-extract rotation matrix
+        SVD_matrix U_copy = U;
+        svd_helper.negate_column(U_copy, solver_and_minimum_column.second);
+        svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U_copy );
       }
     }
   }
   void optimal_rotations_svd_spokes_and_rims()
   {    
-    Eigen::Matrix3d cov;            // covariance matrix
-    Eigen::JacobiSVD<Eigen::Matrix3d> svd;       // SVD solver         
+    SVD_helper svd_helper;
+    SVD_matrix cov = svd_helper.zero_matrix();   
 
     // only accumulate ros vertices
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1006,7 +1010,8 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
       // compute covariance matrix
-      cov.setZero();
+      cov = svd_helper.zero_matrix();
+
       //iterate through all triangles 
       out_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; e++)
@@ -1021,29 +1026,30 @@ private:
 
           std::size_t v1_id = ros_id(v1); std::size_t v2_id = ros_id(v2);
         
-          Eigen::Vector3d    p12 = sub_to_col(original[v1_id], original[v2_id]);
-          Eigen::RowVector3d q12 = sub_to_row(solution[v1_id], solution[v2_id]);
-
+          const SVD_vector& p12 = sub_to_SVD_vector(original[v1_id], original[v2_id]);
+          const SVD_vector& q12 = sub_to_SVD_vector(solution[v1_id], solution[v2_id]);
           double w12 = edge_weight[id(edge_around_facet)];
 
-          cov += w12 * (p12 * q12);
+          svd_helper.scalar_vector_vector_transpose_mult(cov, w12, p12, q12); // cov += w12 * (p12 * q12);
+
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, polyhedron)) != *e);
       }
   
       // svd decomposition
-      svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      const Eigen::Matrix3d& u = svd.matrixU();
-      const Eigen::Matrix3d& v = svd.matrixV();
+      const std::pair<SVD_solver, int>& solver_and_minimum_column = svd_helper.compute_svd(cov);
+
+      const SVD_solver& solver = solver_and_minimum_column.first;
+      const SVD_matrix& V      = svd_helper.get_matrixV(solver);
+      const SVD_matrix& U      = svd_helper.get_matrixU(solver);
 
       // extract rotation matrix
-      rot_mtr[vi_id] = v*u.transpose();
+      svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U ); // rot_mtr[vi_id] = v*u.transpose()
 
-      // checking negative determinant of r
-      if ( rot_mtr[vi_id].determinant() < 0 )    // changing the sign of column corresponding to smallest singular value
+      if ( svd_helper.determinant(rot_mtr[vi_id]) < 0 ) // changing the sign of column corresponding to smallest singular value
       {
-        Eigen::Matrix3d u_m = u;
-        u_m.col(2) *= -1;      // singular values are always sorted in decreasing order so use column 2
-        rot_mtr[vi_id] = v*u_m.transpose(); // re-extract rotation matrix
+        SVD_matrix U_copy = U;
+        svd_helper.negate_column(U_copy, solver_and_minimum_column.second);
+        svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U_copy );
       }
     }
   }
@@ -1067,6 +1073,8 @@ private:
     typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
     typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
+    SVD_helper svd_helper;
+
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
     {
@@ -1075,7 +1083,8 @@ private:
 
       if ( is_roi(vi) && !is_handle(vi) ) 
       {// free vertices
-        Eigen::Vector3d xyz; xyz.setZero(); // sum of right-hand side of eq:lap_ber in user manual
+        // sum of right-hand side of eq:lap_ber in user manual
+        SVD_vector xyz = svd_helper.vector(0, 0, 0);
 
         in_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
@@ -1083,13 +1092,17 @@ private:
           vertex_descriptor vj = boost::source(*e, polyhedron);
           std::size_t vj_id = ros_id(vj); 
           
-          Eigen::Vector3d pij = sub_to_col(original[vi_id], original[vj_id]);
+          const SVD_vector& pij = sub_to_SVD_vector(original[vi_id], original[vj_id]);
+
           double wij = edge_weight[id(*e)];
           double wji = edge_weight[id(CGAL::opposite_edge(*e, polyhedron))];
 
-          xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij; 
+          svd_helper.scalar_matrix_scalar_matrix_vector_mult(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
+          // corresponds xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij
         }
-        Bx[vi_id] = xyz(0,0); By[vi_id] = xyz(1,0); Bz[vi_id] = xyz(2,0);
+        Bx[vi_id] = svd_helper.vector_coeff(xyz, 0); 
+        By[vi_id] = svd_helper.vector_coeff(xyz, 1); 
+        Bz[vi_id] = svd_helper.vector_coeff(xyz, 2); 
       }
       else 
       {// constrained vertex
@@ -1118,6 +1131,8 @@ private:
     typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
     typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
+    SVD_helper svd_helper;
+
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
     {
@@ -1126,7 +1141,8 @@ private:
 
       if ( is_roi(vi) && !is_handle(vi) ) 
       {// free vertices
-        Eigen::Vector3d xyz;  xyz.setZero(); // sum of right-hand side of eq:lap_ber_rims in user manual
+        // sum of right-hand side of eq:lap_ber_rims in user manual
+        SVD_vector xyz = svd_helper.vector(0, 0, 0);
 
         out_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; e++)
@@ -1134,13 +1150,14 @@ private:
           vertex_descriptor vj = boost::target(*e, polyhedron);
           std::size_t vj_id = ros_id(vj); 
 
-          Eigen::Vector3d pij = sub_to_col(original[vi_id], original[vj_id]);
+          const SVD_vector& pij = sub_to_SVD_vector(original[vi_id], original[vj_id]);
           
           if(!boost::get(CGAL::edge_is_border, polyhedron, *e))
           {
             vertex_descriptor vn = boost::target(CGAL::next_edge(*e, polyhedron), polyhedron); // opp vertex of e_ij
-            double wji = edge_weight[id(*e)] / 3.0;  // edge(pj - pi)
-            xyz += wji*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vn)])*pij;
+            double wji = edge_weight[id(*e)] / 3.0;  // edge(pj - pi)           
+            svd_helper.scalar_mult_with_matrix_sum(xyz, wji, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vn)], pij);
+            // corresponds  xyz += wji*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vn)])*pij;
           }
 
           edge_descriptor opp = CGAL::opposite_edge(*e, polyhedron);
@@ -1148,10 +1165,13 @@ private:
           {
             vertex_descriptor vm = boost::target(CGAL::next_edge(opp, polyhedron), polyhedron); // other opp vertex of e_ij
             double wij = edge_weight[id(opp)] / 3.0;  // edge(pi - pj)
-            xyz += wij*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vm)])*pij;
+            svd_helper.scalar_mult_with_matrix_sum(xyz, wij, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vm)], pij);
+            // corresponds xyz += wij * ( rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vm)] ) * pij
           }
         }
-        Bx[vi_id] = xyz(0,0); By[vi_id] = xyz(1,0); Bz[vi_id] = xyz(2,0); 
+        Bx[vi_id] = svd_helper.vector_coeff(xyz, 0); 
+        By[vi_id] = svd_helper.vector_coeff(xyz, 1); 
+        Bz[vi_id] = svd_helper.vector_coeff(xyz, 2); 
       }
       else 
       {// constrained vertices
@@ -1196,11 +1216,14 @@ private:
     else
     {
       return energy_arap();
+      return 0;
     }
   }
   double energy_arap() const
   {
-    double sum_of_energy = 0;
+    SVD_helper svd_helper;
+
+    double sum_of_energy = 0;    
     // only accumulate ros vertices
     for( std::size_t k = 0; k < ros.size(); k++ )
     {
@@ -1213,17 +1236,21 @@ private:
         vertex_descriptor vj = boost::source(*e, polyhedron);
         std::size_t vj_id = ros_id(vj);
 
-        Eigen::Vector3d pij = sub_to_col(original[vi_id], original[vj_id]);
-        Eigen::Vector3d qij = sub_to_col(solution[vi_id], solution[vj_id]);
+        const SVD_vector& pij = sub_to_SVD_vector(original[vi_id], original[vj_id]);
+        const SVD_vector& qij = sub_to_SVD_vector(solution[vi_id], solution[vj_id]);
+
         double wij = edge_weight[id(*e)];
 
-        sum_of_energy += wij * (qij - rot_mtr[vi_id]*pij).squaredNorm();
+        sum_of_energy += wij * svd_helper.squared_norm_vector_scalar_vector_subs(qij, rot_mtr[vi_id], pij);
+        // sum_of_energy += wij * ( qij - rot_mtr[vi_id]*pij )^2
       }
     }
     return sum_of_energy;
   }
   double energy_spokes_and_rims() const
   {
+    SVD_helper svd_helper;
+
     double sum_of_energy = 0;
     // only accumulate ros vertices
     for( std::size_t k = 0; k < ros.size(); k++ )
@@ -1243,11 +1270,12 @@ private:
           vertex_descriptor v2 = boost::source(edge_around_facet, polyhedron);
           std::size_t v1_id = ros_id(v1); std::size_t v2_id = ros_id(v2);
 
-          Eigen::Vector3d p12 = sub_to_col(original[v1_id], original[v2_id]);
-          Eigen::Vector3d q12 = sub_to_col(solution[v1_id], solution[v2_id]);
+          const SVD_vector& p12 = sub_to_SVD_vector(original[v1_id], original[v2_id]);
+          const SVD_vector& q12 = sub_to_SVD_vector(solution[v1_id], solution[v2_id]);
           double w12 = edge_weight[id(edge_around_facet)];
          
-          sum_of_energy += w12 * (q12 - rot_mtr[vi_id]*p12).squaredNorm();
+          sum_of_energy += w12 * svd_helper.squared_norm_vector_scalar_vector_subs(q12, rot_mtr[vi_id], p12);
+          // sum_of_energy += w12 * ( q12 - rot_mtr[vi_id]*p12 )^2
 
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, polyhedron)) != *e);
       }
@@ -1261,16 +1289,12 @@ private:
     need_preprocess_region_of_solution = true;
   }
 
-  /// p1 - p2, return Eigen Column Vector
-  Eigen::Vector3d sub_to_col(const Point& p1, const Point& p2) const
+  /// p1 - p2, return SVD_vector
+  SVD_vector sub_to_SVD_vector(const Point& p1, const Point& p2) const
   {
-    return Eigen::Vector3d(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+    return SVD_helper().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
   }
-  /// p1 - p2, return Eigen Row Vector
-  Eigen::RowVector3d sub_to_row(const Point& p1, const Point& p2) const
-  {
-    return Eigen::RowVector3d(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
-  }
+
   /// shorthand of get(vertex_index_map, v)
   std::size_t id(vertex_descriptor vd) const
   { return get(vertex_index_map, vd); }
