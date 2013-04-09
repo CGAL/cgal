@@ -96,8 +96,8 @@
 
 namespace CGAL { namespace internal {
 
-// Here is the case when has_cheap_access_to_cartesian_coordinates, used by
-// Lazy_kernel
+// Here is the case when has_cheap_access_to_cartesian_coordinates is
+// false, used by Lazy_kernel
 // The K_base argument is supposed to provide exact primitives.
 template < typename K_base, 
            bool has_cheap_access_to_cartesian_coordinates = true>
