@@ -67,13 +67,14 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2         Point_2;
 typedef K::Segment_2       Segment_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
-
+/*
 typedef CGAL::Triangulation_vertex_base_2<K>              Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K>    Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
 typedef CGAL::Exact_predicates_tag                        Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K,TDS, Itag> CDT;
-typedef CGAL::Polyline_constrained_triangulation_2<CDT>       PCT;
+*/
+typedef CGAL::Polyline_constrained_triangulation_2<>       PCT;
 
 namespace PS2 = CGAL::Polyline_simplification_2 ;
 
@@ -228,6 +229,14 @@ MainWindow::processInput(CGAL::Object o)
     if(points.size() >= 2) 
     {
       m_pct.insert_constraint(points.begin(), points.end());
+#if 0
+      std::ofstream out("polygon.txt");
+      out.precision(12);
+      out << points.size() << std::endl;
+      for(std::list<Point_2>::iterator it = points.begin(); it!= points.end(); ++it){
+        out << *it << std::endl;
+      }
+#endif
       emit(changed());
     }  
   }
