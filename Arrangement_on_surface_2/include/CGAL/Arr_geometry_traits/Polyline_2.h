@@ -553,8 +553,16 @@ private:
 
     while (iter != cv.end_segments())
       {
-        os << "  " << *iter;
-        ++iter;
+        if (iter == cv.begin_segments())
+          {
+            os << " " << *iter;
+            ++iter;
+          }
+        else
+          {
+            os << " <-> " << *iter;
+            ++iter;
+          }
       }
     return (os);
   }
