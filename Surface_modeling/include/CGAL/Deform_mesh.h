@@ -234,7 +234,7 @@ public:
   }
 
   /**
-   * Puts the object in the same state after the creation (except iterations and tolerance).
+   * Puts the object in the same state as after the creation (except iterations and tolerance).
    */
   void reset()
   {
@@ -261,10 +261,10 @@ public:
   }
   
   /**
-   * Inserts a vertex into a group of handles. The vertex is also inserted in the region-of-interest if it is not already in.
+   * Inserts a vertex into a group of handles. The vertex is also inserted in the region-of-interest if it is not already in it.
    * @param handle_group the group where the vertex is inserted in
    * @param vd the vertex to be inserted
-   * @return true if the insertion is successful
+   * @return `true` if the insertion is successful
    */
   bool insert_handle(Handle_group handle_group, vertex_descriptor vd)
   {
@@ -279,7 +279,7 @@ public:
   }
 
   /**
-   * Inserts a range of vertices in a group of handles. The vertices are also inserted in the region-of-interest if they are not already in.
+   * Inserts a range of vertices in a group of handles. The vertices are also inserted in the region-of-interest if they are not already in it.
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
    * @param handle_group the group where the vertex is inserted in
    * @param begin first iterator of the range of vertices
@@ -313,7 +313,7 @@ public:
    * \note The group of handles is not erased even if it becomes empty.
    * @param handle_group the group where the vertex is erased from
    * @param vd the vertex to be erased
-   * @return true if the removal is successful
+   * @return `true` if the removal is successful
    */
   bool erase_handle(Handle_group handle_group, vertex_descriptor vd)
   {
@@ -335,7 +335,7 @@ public:
    * Erases a vertex by searching it through all groups of handles.
    * \note The group of handles is not erased even if it becomes empty.
    * @param vd the vertex to be erased
-   * @return true if the removal is successful
+   * @return `true` if the removal is successful
    */
   bool erase_handle(vertex_descriptor vd)
   {
@@ -404,7 +404,7 @@ public:
   /**
    * Inserts a vertex in the region-of-interest
    * @param vd the vertex to be inserted
-   * @return true if the insertion is successful
+   * @return `true` if the insertion is successful
    */
   bool insert_roi(vertex_descriptor vd)   
   {
@@ -421,7 +421,7 @@ public:
    * \note The next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position 
    * (that is position of the vertex at the time of construction or after the last call to `overwrite_original_positions()`).
    * @param vd the vertex to be erased
-   * @return true if the removal is successful
+   * @return `true` if the removal is successful
    */
   bool erase_roi(vertex_descriptor vd)   
   {
@@ -466,7 +466,7 @@ public:
    * \note Calling this function is optional.
    * \note The insertion / removal of a vertex in a group of handles or in the region-of-interest invalidates the
    * preprocessing data.
-   * @return true if Laplacian matrix factorization is successful.
+   * @return `true` if Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, 
    * which happens if there is no path between a free vertex and a handle vertex (i.e. both fixed and user-inserted).
    */
@@ -550,7 +550,7 @@ public:
    * to their original positions, or using target positions provided by `assign()`. 
    * The coordinates of the vertices of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
    * deformation problem is using the coordinates of the input graph before calling the function.
-   * \note Nothing happens if `preprocess()` returns false.
+   * \note Nothing happens if `preprocess()` returns `false`.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
   void deform()
@@ -628,14 +628,14 @@ public:
    /// @brief Sets the tolerance of convergence used in `deform()`.
    /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
    ///
-   /// `tolerance >` \f$|energy(m_i) - energy(m_{i-1})| / energy(m_i)\f$ will be used as a termination criterium.
+   /// `tolerance >` \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ will be used as a termination criterium.
   void set_tolerance(double tolerance)
   { this->tolerance = tolerance; }
 
   /**
    * Queries whether a vertex is inside the region-of-interest.
    * @param vd the query vertex
-   * @return true if the vertex is inside the region-of-interest
+   * @return `true` if the vertex is inside the region-of-interest
    */
   bool is_roi(vertex_descriptor vd) const
   { return is_roi_map[id(vd)]; }
@@ -643,7 +643,7 @@ public:
   /**
    * Queries whether a vertex is a handle.
    * @param vd the query vertex
-   * @return true if the vertex is inside any group of handles
+   * @return `true` if the vertex is inside any group of handles
    */
   bool is_handle(vertex_descriptor vd) const
   { return is_hdl_map[id(vd)]; }
@@ -656,7 +656,7 @@ public:
   { return polyhedron; }
   
   /**
-   * Sets the original positions to be the current positions for vertices inside region-of-interest. Calling this function as the same effect as creating
+   * Sets the original positions to be the current positions for vertices inside region-of-interest. Calling this function has the same effect as creating
    * a new deformation object with the current deformed polyhedron, keeping the region-of-interest and the groups of handles.
    * \note if the region-of-interest or any group of handles have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
