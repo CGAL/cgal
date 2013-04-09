@@ -14,7 +14,7 @@ CGAL_ROOT=/no-raid$HOME/CGAL
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
 
-COMPILERS_localhost="x86-64_Linux-Fedora16_g++-4.6.2 x86-64_Linux-Fedora16_g++-4.6.2_ansi x86-64_Linux-Fedora16_g++-4.6.2_m32 x86-64_Linux-Fedora16_g++-4.6.2_MATCHING-BUG-6 x86-64_Linux-Fedora16_g++-4.6.2_Release x86-64_Linux-Fedora16_g++-4.6.2_LEDA x86-64_Linux-Fedora16_g++-4.5-branch_Release x86-64_Linux-Fedora16_IntelCompiler-12.0-with-g++-4.6.2 x86-64_Linux-Fedora16_IntelCompiler-12.0-with-g++-4.6.2_strict-ansi x86-64_Linux-Fedora16_g++-4.8_CXX0X x86-64_Linux-Fedora16_llvm-clang-with-g++-4.6.2 x86-64_Linux-Fedora16_g++-4.6.2_CXXDEBUG x86-64_Linux-Fedora16_IntelCompiler-13.1-with-g++-4.6.3-STL"
+COMPILERS_localhost="x86-64_Linux-Fedora16_g++-4.6.2 x86-64_Linux-Fedora16_g++-4.6.2_ansi x86-64_Linux-Fedora16_g++-4.6.2_m32 x86-64_Linux-Fedora16_g++-4.6.2_MATCHING-BUG-6 x86-64_Linux-Fedora16_g++-4.6.2_Release x86-64_Linux-Fedora16_g++-4.6.2_Release-LEDA x86-64_Linux-Fedora16_g++-4.5-branch_Release x86-64_Linux-Fedora16_IntelCompiler-12.0-with-g++-4.6.2 x86-64_Linux-Fedora16_IntelCompiler-12.0-with-g++-4.6.2_strict-ansi x86-64_Linux-Fedora16_g++-4.8_CXX0X x86-64_Linux-Fedora16_llvm-clang-with-g++-4.6.2 x86-64_Linux-Fedora16_g++-4.6.2_CXXDEBUG x86-64_Linux-Fedora16_IntelCompiler-13.1-with-g++-4.6.3-STL"
 BUILD_ON_localhost=all
 
 REFERENCE_PLATFORMS_DIR=$HOME/infrastructure/reference-platforms
