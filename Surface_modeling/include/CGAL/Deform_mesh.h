@@ -1,4 +1,4 @@
-// Copyright (c) 2011 GeometryFactory
+// Copyright (c) 2011-2013 GeometryFactory
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -14,7 +14,7 @@
 // $URL:$
 // $Id:$
 //
-// Author(s)     : Yin Xu, Andreas Fabri
+// Author(s)     : Yin Xu, Andreas Fabri and Ilker O. Yaz
 
 #ifndef CGAL_DEFORM_MESH_H
 #define CGAL_DEFORM_MESH_H
