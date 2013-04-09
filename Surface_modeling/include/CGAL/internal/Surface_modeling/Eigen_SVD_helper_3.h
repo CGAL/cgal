@@ -79,13 +79,16 @@ public:
     return m.determinant();
   }
     
-  /// Computes the singular value decomposition
-  std::pair<Solver, int> compute_svd(const Matrix& m)
+  /// Computes the singular value decomposition and returns the solver
+  Solver compute_svd(const Matrix& m)
   {
-    return std::make_pair(
-      Solver().compute( m, Eigen::ComputeFullU | Eigen::ComputeFullV ),
-      2 // singular values are always sorted in decreasing order so use column 2
-      );
+    return Solver().compute( m, Eigen::ComputeFullU | Eigen::ComputeFullV );
+  }
+	
+  /// Returns the diagonal index of smallest singular value 	
+  int get_smallest_singular_value_index(const Solver& /*solver*/)
+  {
+    return 2; // singular values are always sorted in decreasing order so use column 2
   }
 
   /// Gets matrix U from solver

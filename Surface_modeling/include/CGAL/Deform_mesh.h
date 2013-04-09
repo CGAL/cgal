@@ -740,10 +740,10 @@ private:
     if(!need_preprocess_region_of_solution) { return; }
     need_preprocess_region_of_solution = false;
 
-    std::vector<std::size_t>                old_ros_id_map = ros_id_map;
-    std::vector<SVD_matrix> old_rot_mtr    = rot_mtr;
-    std::vector<Point>                      old_solution   = solution;
-    std::vector<Point>                      old_original   = original;
+    std::vector<std::size_t>  old_ros_id_map = ros_id_map;
+    std::vector<SVD_matrix>   old_rot_mtr    = rot_mtr;
+    std::vector<Point>        old_solution   = solution;
+    std::vector<Point>        old_original   = original;
     
     // any vertices which are no longer ROI, should be assigned to their original position, so that:
     // IF a vertex is ROI (actually if its ros + boundary) previously (when previous region_of_solution() is called)
@@ -983,9 +983,7 @@ private:
         svd_helper.scalar_vector_vector_transpose_mult(cov, wij, pij, qij); // cov += wij * (pij * qij)
       }
       // svd decomposition
-      const std::pair<SVD_solver, int>& solver_and_minimum_column = svd_helper.compute_svd(cov);
-
-      const SVD_solver& solver = solver_and_minimum_column.first;
+      const SVD_solver& solver = svd_helper.compute_svd(cov);
       const SVD_matrix& V      = svd_helper.get_matrixV(solver);
       const SVD_matrix& U      = svd_helper.get_matrixU(solver);
       // extract rotation matrix
@@ -993,8 +991,9 @@ private:
 
       if ( svd_helper.determinant(rot_mtr[vi_id]) < 0 ) // changing the sign of column corresponding to smallest singular value
       {
+        int smallest_singular_value_index = svd_helper.get_smallest_singular_value_index(solver);
         SVD_matrix U_copy = U;
-        svd_helper.negate_column(U_copy, solver_and_minimum_column.second);
+        svd_helper.negate_column(U_copy, smallest_singular_value_index);
         svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U_copy );
       }
     }
@@ -1034,21 +1033,18 @@ private:
 
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, polyhedron)) != *e);
       }
-  
       // svd decomposition
-      const std::pair<SVD_solver, int>& solver_and_minimum_column = svd_helper.compute_svd(cov);
-
-      const SVD_solver& solver = solver_and_minimum_column.first;
+      const SVD_solver& solver = svd_helper.compute_svd(cov);
       const SVD_matrix& V      = svd_helper.get_matrixV(solver);
       const SVD_matrix& U      = svd_helper.get_matrixU(solver);
-
       // extract rotation matrix
       svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U ); // rot_mtr[vi_id] = v*u.transpose()
 
       if ( svd_helper.determinant(rot_mtr[vi_id]) < 0 ) // changing the sign of column corresponding to smallest singular value
       {
+        int smallest_singular_value_index = svd_helper.get_smallest_singular_value_index(solver);
         SVD_matrix U_copy = U;
-        svd_helper.negate_column(U_copy, solver_and_minimum_column.second);
+        svd_helper.negate_column(U_copy, smallest_singular_value_index);
         svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U_copy );
       }
     }

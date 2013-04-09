@@ -61,9 +61,12 @@ public:
   /// Returns determinant of `m`
   double determinant(const Matrix& m);
     
-  /// Computes the singular value decomposition, returns solver and index of the smallest singular value.  
-  std::pair<Solver, int> compute_svd(const Matrix& m);
-
+  /// Computes the singular value decomposition and returns the solver
+  Solver compute_svd(const Matrix& m);
+  
+  /// Returns the diagonal index of smallest singular value 	
+  int get_smallest_singular_value_index(const Solver& solver);
+  
   /// Gets matrix U from solver
   const Matrix& get_matrixU(const Solver& solver);
 
