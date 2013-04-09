@@ -3,7 +3,7 @@
 cd $HOME/infrastructure
 crontab -l >| crontab
 if [ -d ../../../.git ]; then
-    git pull --quiet
+    git pull --ff-only --quiet || exit $?
     git add crontab
     if git commit -m 'updated crontab (automated commit)' > /dev/null; then
         git push origin master
