@@ -117,4 +117,4 @@ orient(TDS& tds, const Advancing_front_surface_reconstruction<Kernel,Triangulati
 } // namespace AFSR
 } // namespace CGAL
 
-#endif CGAL_AFSR_ORIENT
+#endif //CGAL_AFSR_ORIENT

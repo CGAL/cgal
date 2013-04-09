@@ -16,10 +16,9 @@
 #include <CGAL/AFSR/Surface_vertex_base_2.h>
 #include <CGAL/AFSR/Surface_face_base_2.h>
 #include <CGAL/AFSR/construct_surface_2.h>
+#include <CGAL/AFSR_options.h>
 
 namespace CGAL {
-
-class AFSR_options;
 
 // This iterator allows to visit all contours. It has the particularity
 // that it visits the entry point of the contour twice. This allows to
@@ -238,22 +237,22 @@ public:
     : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
-      NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
-    _postprocessing_counter(0), _size_before_postprocessing(0), area(opt.area), perimeter(opt.perimeter), 
-    abs_area(opt.abs_area), abs_perimeter(opt.abs_perimeter), 
-    total_area(0), total_perimeter(0), _number_of_connected_components(0)
+      NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2), area(opt.area), perimeter(opt.perimeter),
+    abs_area(opt.abs_area), abs_perimeter(opt.abs_perimeter), total_area(0), total_perimeter(0),
+    _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
+     _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0)
   {
     bool re_init = false;
     do 
       {
 	_number_of_connected_components++;
 
-	if (re_init = init(re_init))
+	if ( (re_init = init(re_init)) )
 	  {
 	    std::cerr << "Growing connected component " << _number_of_connected_components << std::endl;
 	    extend(opt.K_init, opt.K_step, opt.K);
 
-	    if ((number_of_facets() > T.number_of_vertices())&&
+	    if ((number_of_facets() > static_cast<int>(T.number_of_vertices()))&&
 		(opt.NB_BORDER_MAX > 0))
 	      // en principe 2*nb_sommets = nb_facettes: y a encore de la marge!!!
 	      {

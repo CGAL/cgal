@@ -377,7 +377,7 @@ write_to_file_iv_border_edges(const Surface& S, std::ofstream& os)
 	_vh_bord_count++;
       }
 
-  typedef const Point*  Const_point_star;
+  typedef const typename Triangulation_3::Point*  Const_point_star;
   std::vector<Const_point_star>  points_tab(_vh_bord_count);
   for (typename std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
@@ -455,7 +455,7 @@ write_to_file_iv_remaining_points(const Surface& S, std::ofstream& os)
 	_vh_bord_count++;
       }
 
-  typedef const Point*  Const_point_star;
+  typedef const typename Triangulation_3::Point*  Const_point_star;
   std::vector<Const_point_star>  points_tab(_vh_bord_count);
   for (typename std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
@@ -521,7 +521,7 @@ write_to_file_iv_border_facets(const Surface& S, std::ofstream& os)
 	_vh_bord_count++;
       }
 
-  typedef const Point*  Const_point_star;
+  typedef const typename Triangulation_3::PoinPoint*  Const_point_star;
   std::vector<Const_point_star>  points_tab(_vh_bord_count);
   for (typename std::map<Vertex_handle, int>::iterator vh_it = _vh_vect.begin();
        vh_it != _vh_vect.end(); vh_it++)
@@ -813,7 +813,7 @@ write_to_file_vrml2(char* foutput, const Surface& S,
   typedef typename Surface::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Cell_handle Cell_handle;
-  Triangulation_3& T = S.triangulation();
+  //Triangulation_3& T = S.triangulation();
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
  
@@ -891,6 +891,8 @@ write_to_file_stl(char* foutput, const Surface& S)
   typedef typename Surface::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Surface::Vertex_handle Vertex_handle;
   typedef typename Surface::Cell_handle Cell_handle;
+  typedef typename Triangulation_3::Point Point;
+  typedef typename CGAL::Kernel_traits<Point>::Kernel::Vector_3 Vector;
   Triangulation_3& T = S.triangulation();
 
 

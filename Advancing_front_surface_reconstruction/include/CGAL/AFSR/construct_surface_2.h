@@ -43,7 +43,7 @@ construct_surface(TDS& tds, const CGAL::Advancing_front_surface_reconstruction<K
       d = i;
       Vertex_handle vh = tds.create_vertex();
       vvh.push_back(vh);
-      vh->set_vertex(Triangulation::Vertex_handle(v_it));
+      vh->set_vertex(typename Triangulation::Vertex_handle(v_it));
       i++;
     }
   }
@@ -105,7 +105,7 @@ construct_surface(TDS& tds, const CGAL::Advancing_front_surface_reconstruction<K
      Face_handle fn = tds.create_face( vinf, 
 				       fh->vertex(TDS::cw(ih)), 
 				       fh->vertex(TDS::ccw(ih)));
-     fn->set_facet(std::make_pair(Triangulation::Cell_handle(),0));
+     fn->set_facet(std::make_pair( typename Triangulation::Cell_handle(),0));
      fn->set_is_on_surface(false);
      vinf->set_face(fn);
      tds.set_adjacency(fn, 0, fh, ih);

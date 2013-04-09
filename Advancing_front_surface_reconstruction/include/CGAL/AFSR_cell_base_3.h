@@ -150,21 +150,23 @@ public:
 
   
   //-------------------------------------------------------------------
-void
-set_facet_number(int i, int n)
-{
+
 #ifdef FACET_NUMBER
-  _facet_number[i] = n;
+  void set_facet_number(int i, int n){}
+  {
+    _facet_number[i] = n;
+  }
+
+  int facet_number(int i)
+  {
+    return _facet_number[i];
+  }
+#else
+  void set_facet_number(int, int){}
+  int facet_number(int){return 0;}
 #endif
-}
-int
-facet_number(int i)
-{
-#ifdef FACET_NUMBER
-  return _facet_number[i];
-#endif
-  return 0;
-}
+
+
   //-------------------------------------------------------------------
   
   inline void select_facet(const int& i)

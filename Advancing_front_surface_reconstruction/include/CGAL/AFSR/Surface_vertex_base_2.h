@@ -61,7 +61,7 @@ public:
     return _vertex;
   }
 
-  const Point&  point() const { return vertex->point(); }
+  const Point&  point() const { return _vertex->point(); }
 
 
 };
