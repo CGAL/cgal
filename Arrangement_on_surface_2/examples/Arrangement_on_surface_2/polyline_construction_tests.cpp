@@ -21,6 +21,11 @@ typedef Traits_2::X_monotone_curve_2                    X_polyline_2;
 
 int main ()
 {
+
+  std::cout << "--\n"
+    "This example construct various polylines using the various"
+    "construction functors that are provided in the Arr_polyline_traits_2\n";
+
   Traits_2 traits;
   Traits_2::Construct_curve_2 polyline_const =
     traits.construct_curve_2_object();
@@ -31,57 +36,81 @@ int main ()
   Polyline_2 poly;
   X_polyline_2 x_poly;
 
+  std::cout << "----==Construction from two points==----"<< std::endl;
+  Point_2 p1 = Point_2(0,0);
+  Point_2 p2 = Point_2(1,1);
+
+  poly = polyline_const(p1,p2);
+  std::cout << "Polyline is: " << poly << std::endl;
+
+  x_poly = x_polyline_const(p1,p2);
+  std::cout << "x-mono polyline is: " << x_poly << std::endl;
+  x_poly = x_polyline_const(p2,p1);
+  std::cout << "x-mono polyline is the same even if the points' order is "
+            << "reversed: " << x_poly << std::endl;
+
+  std::cout << "\n----==Construction from a single segment==----"<< std::endl;
+  std::cout << "Polyline is: " << polyline_const(Segment_2(p1,p2))
+            << std::endl;
+  std::cout << "Reverting the points' order yields: "
+            << polyline_const(Segment_2(p2,p1)) << std::endl;
+  std::cout << "For x-monotone construction the order doesn't matter:\n"
+            << x_polyline_const(Segment_2(p1,p2)) << "\n"
+            << x_polyline_const(Segment_2(p1,p2)) << std::endl;
+
+  std::cout << "\n----==Construction from a range of point==----"<< std::endl;
+  std::cout << "* general polyline:" << std::endl;
   // Containers of points and segments
   std::vector<Point_2> pts;
-
-  std::cout << "Starting a construction of a polyline from two points..."
-            << std::endl;
-  Point_2 p1 = Point_2(1,1);
-  Point_2 p2 = Point_2(0,0);
-  poly = polyline_const(p1,p2);
-  x_poly = x_polyline_const(p1,p2);
-  std::cout << "The constructed polyline is:" << std::endl;
-  std::cout << "non-x-mono: " << poly << std::endl;
-  std::cout << "x-mono    : " << x_poly << std::endl;
-  std::cout << "----====----"<< std::endl;
-
-  std::cout << "Starting a construction of a polyline from a range of point..."
-            << std::endl;
-  pts.push_back(Point_2(2,-11));
+  pts.push_back(Point_2(0,0));
   pts.push_back(Point_2(1,0));
-  pts.push_back(Point_2(0,-1));
-  pts.push_back(Point_2(0,1));
-  pts.push_back(Point_2(-1,-1));
-  pts.push_back(Point_2(0,1));
-  poly = polyline_const(pts.begin(),pts.end());
-  pts.clear();
+  pts.push_back(Point_2(3,3));
+  pts.push_back(Point_2(1,2));
+  pts.push_back(Point_2(4,1));
+  pts.push_back(Point_2(4,3));
   std::cout << "The constructed polyline is:" << std::endl;
-  std::cout << poly << std::endl;
-  std::cout << "----====----"<< std::endl;
+  std::cout <<  polyline_const(pts.begin(),pts.end()) << std::endl;
 
-  // Construction of polyline from range of points
-  // std::cout << "Starting a construction of polyline from a range of point"
-  //           << std::endl;
-  // pts.clear();
-  // pts.push_back(Point_2(0,0));
-  // pts.push_back(Point_2(1,1));
-  // pts.push_back(Point_2(2,0));
-  // pts.push_back(Point_2(2,-3));
-  // pts.push_back(Point_2(-5,0));
-  // pts.push_back(Point_2(20,0));
-  // poly = polyline_const(pts.begin(),pts.end());
-  // std::cout << "The constructed polyline is:" << std::endl;
-  // std::cout << poly << std::endl;
-  // std::cout << "----====----"<< std::endl;
+  std::cout << "* X-monotone case:" << std::endl;
+  pts.clear();
+  pts.push_back(Point_2(0,0));
+  pts.push_back(Point_2(1,1));
+  pts.push_back(Point_2(3,-10));
+  std::cout << "The constructed x-monotone polyline is independent of the "
+            << "input's order:" << std::endl;
+  std::cout <<  x_polyline_const(pts.begin(),pts.end()) << std::endl;
+  std::cout <<  x_polyline_const(pts.rbegin(),pts.rend()) << std::endl;
 
-  // Construction from a single segment
-  // std::cout << "Starting a construction of polyline from a single segment."
-  //           << std::endl;
-  // Segment_2 seg = Segment_2(Point_2(0,0),Point_2(1,1));
-  // poly = polyline_const(seg);
-  // std::cout << "The constructed polyline is:" << std::endl;
-  // std::cout << poly << std::endl;
-  // std::cout << "----====----"<< std::endl;
+  std::cout << "* Same goes, for example, for vertical polyline" << std::endl;
+  pts.clear();
+  pts.push_back(Point_2(0,0));
+  pts.push_back(Point_2(0,1));
+  pts.push_back(Point_2(0,10));
+  std::cout << "The constructed x-monotone polyline is independent of the "
+            << "input's order:" << std::endl;
+  std::cout <<  x_polyline_const(pts.begin(),pts.end()) << std::endl;
+  std::cout <<  x_polyline_const(pts.rbegin(),pts.rend()) << std::endl;
+
+  std::cout << "\n----==Construction from a range of segments==----\n"
+    "* general polyline:" << std::endl;
+  std::vector<Segment_2> segs;
+  Point_2 q1(Point_2(0,0));
+  Point_2 q2(Point_2(1,1));
+  Point_2 q3(Point_2(2,0));
+  Point_2 q4(Point_2(3,1));
+  //TODO: Discussion: The orientation of each segment in the range seems not to
+  //      play a role. This is good, isn't it? The polyline is defined by its
+  //      segments, regardless of their order. Verify that the constructions
+  //      (i.e. general and x-mono) are consistent with the decision.
+  segs.push_back(Segment_2(q2,q1));
+  segs.push_back(Segment_2(q2,q3));
+  segs.push_back(Segment_2(q3,q4));
+  std::cout << "Constructed polyline is:\n"
+            << polyline_const(segs.begin(),segs.end()) << std::endl;
+  std::cout << "Constructed x-monotone polyline is:\n"
+            << x_polyline_const(segs.begin(),segs.end()) << std::endl;
+  std::cout << "And in reversed order, constructed x-monotone polyline is:\n"
+            << x_polyline_const(segs.rbegin(),segs.rend()) << std::endl;
 
   return 0;
 }

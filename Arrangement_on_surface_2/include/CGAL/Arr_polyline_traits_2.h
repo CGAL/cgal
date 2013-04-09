@@ -104,6 +104,10 @@ public:
   typedef typename Segment_traits_2::Point_2            Point_2;
   typedef typename Segment_traits_2::Curve_2            Segment_2;
 
+  /*
+   * A polyline represents a general continuous piecewise-linear curve, without
+   * degenerated segments.
+   */
   typedef _Polyline_2<Segment_traits_2>                 Curve_2;
   typedef _X_monotone_polyline_2<Segment_traits_2>      X_monotone_curve_2;
 
@@ -1173,11 +1177,6 @@ public:
      * \param q The second point.
      * \pre p and q are distinct.
      * \return A segment connecting p and q.
-     * TODO: Some how it is impossible to invoke this construction, it is
-     *       always dispatches the call to the following constructor:
-     *       "Curve_2 operator()(InputIterator begin, InputIterator end)"
-     *       This can be corrected by adding a "const" at the end of the
-     *       signature of following functor.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
@@ -1197,6 +1196,23 @@ public:
      */
     Curve_2 operator()(const Segment_2& seg) const
     {
+      CGAL_precondition_code
+        (
+         /*
+          * Test that the segment is not degenerated. We do this test
+          * independently from the SegmentTraits in use, as we do not allow
+          * a polyline with degenerated segments.
+          */
+         typename Segment_traits_2::Construct_min_vertex_2 min_v =
+         m_seg_traits->construct_min_vertex_2_object();
+         typename Segment_traits_2::Construct_max_vertex_2 max_v =
+         m_seg_traits->construct_max_vertex_2_object();
+         typename Segment_traits_2::Equal_2 equal =
+         m_seg_traits->equal_2_object();
+
+         CGAL_precondition_msg(!equal(min_v(seg),max_v(seg)),
+                               "Cannot construct a degenerated segment");
+         );
       return Curve_2(seg);
     }
 
@@ -1257,14 +1273,11 @@ public:
     Curve_2 constructor_impl (InputIterator begin, InputIterator end,
                              boost::false_type) const
     {
+      // Range has to contain at least one segment
       CGAL_precondition(begin != end);
 
       InputIterator curr = begin;
       InputIterator next = curr;
-
-      if (++next == end)
-        // Construct a polyline with one segment.
-        return Curve_2 (begin,end);
 
       CGAL_precondition_code
         (
@@ -1273,18 +1286,34 @@ public:
          typename Segment_traits_2::Construct_max_vertex_2 max_v =
          m_seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Compare_xy_2 comp_xy =
-         m_seg_traits->construct_compare_xy_2_object();
-
-         while (next != end)
-           {
-             CGAL_precondition( comp_xy (min_v(*curr),min_v(*next)) == EQUAL ||
-                                comp_xy (min_v(*curr),max_v(*next)) == EQUAL ||
-                                comp_xy (max_v(*curr),min_v(*next)) == EQUAL ||
-                                comp_xy (max_v(*curr),max_v(*next)) == EQUAL );
-             ++next;
-             ++curr;
-           }
+         m_seg_traits->compare_xy_2_object();
+         typename Segment_traits_2::Equal_2 equal =
+         m_seg_traits->equal_2_object();
          );
+
+      if (++next == end)
+        {
+          CGAL_precondition_msg (!equal(min_v(*curr),max_v(*curr)),
+                                 "Cannot construct degenerated segment");
+          // Construct a polyline with one segment.
+          return Curve_2 (begin,end);
+        }
+
+      while (next != end)
+        {
+          CGAL_precondition_msg (!equal(min_v(*curr),max_v(*curr)),
+                                 "Cannot construct degenerated segment");
+          // Verify that the segments' ends match
+          CGAL_precondition( comp_xy (min_v(*curr),min_v(*next)) == EQUAL ||
+                             comp_xy (min_v(*curr),max_v(*next)) == EQUAL ||
+                             comp_xy (max_v(*curr),min_v(*next)) == EQUAL ||
+                             comp_xy (max_v(*curr),max_v(*next)) == EQUAL );
+          ++next;
+          ++curr;
+        }
+      CGAL_precondition_msg (!equal(min_v(*curr),max_v(*curr)),
+                             "Cannot construct degenerated segment");
+
       return Curve_2 (begin, end);
     }
   };
@@ -1334,6 +1363,23 @@ public:
      */
     X_monotone_curve_2 operator()(const Segment_2& seg) const
     {
+      CGAL_precondition_code
+        (
+         /*
+          * Test that the segment is not degenerated. We do this test
+          * independently from the SegmentTraits in use, as we do not allow
+          * a polyline with degenerated segments.
+          */
+         typename Segment_traits_2::Construct_min_vertex_2 min_v =
+         m_seg_traits->construct_min_vertex_2_object();
+         typename Segment_traits_2::Construct_max_vertex_2 max_v =
+         m_seg_traits->construct_max_vertex_2_object();
+         typename Segment_traits_2::Equal_2 equal =
+         m_seg_traits->equal_2_object();
+
+         CGAL_precondition_msg(!equal(min_v(seg),max_v(seg)),
+                               "Cannot construct a degenerated segment");
+         );
       return X_monotone_curve_2(seg);
     }
 
@@ -1369,7 +1415,7 @@ public:
       CGAL_precondition (pt != end);
 
       // Initialize two comparison functors
-      CGAL_precondition_code(typename Segment_traits_2::Compare_x_2 compare_x=
+      CGAL_precondition_code(typename Segment_traits_2::Compare_x_2 compare_x =
                              m_seg_traits->compare_x_2_object(););
       typename Segment_traits_2::Compare_xy_2 compare_xy =
         m_seg_traits->compare_xy_2_object();
@@ -1381,7 +1427,9 @@ public:
       // Save the comp_xy between the first two points
       const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
 
-      // Assure that the first two points are not the same
+      // Assure that the first two points are not the same.
+      // Note that this also assures that no to consecutive points are equal
+      // in the whole range.
       CGAL_precondition (cmp_xy_res != EQUAL);
 
       while (pt != end) {
