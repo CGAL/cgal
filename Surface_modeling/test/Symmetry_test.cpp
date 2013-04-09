@@ -1,3 +1,4 @@
+#include "StdAfx.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -61,13 +62,14 @@ int main()
   std::cout << handles.size() << std::endl;
   std::cout << non_rois.size();
   id = 0;
+  Deform_mesh::Handle_group active_handle_group = deform_mesh.create_handle_group();
   for(Polyhedron::Vertex_iterator it = mesh.vertices_begin(); it != mesh.vertices_end();
 	  ++it, ++id)
 	{
     // not efficient but small poly
     if(std::find(handles.begin(), handles.end(), id) != handles.end())
     {
-      deform_mesh.insert_handle(it);
+      deform_mesh.insert_handle(active_handle_group, it);
     }
 
     if(std::find(non_rois.begin(), non_rois.end(), id) == non_rois.end())
@@ -79,7 +81,7 @@ int main()
   deform_mesh.preprocess();
 
   Kernel::Vector_3 dif(-0.45, -0.65, 0);
-  deform_mesh(dif);
+  deform_mesh.translate(active_handle_group, dif);
   for(int i = 0; i < 50; ++i)
   {
     deform_mesh.deform();

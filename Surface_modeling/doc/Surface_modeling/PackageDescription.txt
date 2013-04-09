@@ -1,11 +1,13 @@
 /// \defgroup PkgSurfaceModeling Surface Modeling Reference
+/// \defgroup PkgSurfaceModelingConcepts Concepts
+/// \ingroup PkgSurfaceModeling
 
 /*!
 \addtogroup PkgSurfaceModeling
 \cgalPkgDescriptionBegin{Surface Modeling,PkgSurfaceModelingSummary}
 \cgalPkgPicture{deform-ico.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{TODO}
+\cgalPkgAuthor{Olga Sorkine, Yin Xu and Ilker %O. Yaz}
 \cgalPkgDesc{This package allows to apply a as-rigid-as-possible deformation to a 3D triangulated surface mesh.}
 \cgalPkgManuals{Chapter_SurfaceModeling,PkgSurfaceModeling}
 \cgalPkgSummaryEnd

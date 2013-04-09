@@ -11,7 +11,7 @@
 #include <boost/property_map/property_map.hpp>
 
 #include <Eigen/SuperLUSupport>
-  
+
 typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
   
 typedef CGAL::Simple_cartesian<double>   Kernel;
@@ -28,7 +28,7 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
 
 // extract vertices which are at most k (inclusive) far from vertex v
 std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
@@ -75,7 +75,7 @@ int main()
   vertex_iterator vb, ve;
   boost::tie(vb,ve) = boost::vertices(mesh);
 
-  std::map<vertex_descriptor, int> roi_map = extract_k_ring(mesh, *next_helper(vb, 47), 10);
+  std::map<vertex_descriptor, int> roi_map = extract_k_ring(mesh, *next_helper(vb, 47), 9);
   std::map<vertex_descriptor, int> handles_1_map = extract_k_ring(mesh, *next_helper(vb, 39), 1);
   std::map<vertex_descriptor, int> handles_2_map = extract_k_ring(mesh, *next_helper(vb, 97), 1);
 
@@ -96,13 +96,22 @@ int main()
   deform_mesh.preprocess();
 //// DEFORM SECTION ////
 
-  deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0,1)); // any latter calls to translate or rotate will override previous calls
-  deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0.30,0)); // overrides any previous call
+  deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0,1)); 
+   // overrides any previous call
+
+  Eigen::Quaternion<double> quad(0.92, 0, 0, -0.38);
+  Eigen::Vector3d vect(0, 0, 0);
+
+  deform_mesh.rotate(handles_1, Deform_mesh::Point(0,0,0), quad, vect);
+  deform_mesh.rotate(handles_2, Deform_mesh::Point(0,0,0), quad, vect);
 
   deform_mesh.deform();
 
   std::ofstream("deform_1.off") << mesh; // save deformed mesh
-
+  
+  // Note that translate and rotate are not cumulative,
+  // they just use original positions (positions at the time of construction) of the handles while calculating target positions
+  deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0.30,0));
   deform_mesh.translate(handles_2, Deform_mesh::Vector(0,0.30,0));
 
   deform_mesh.set_iterations(10);
