@@ -2159,22 +2159,22 @@ reorient_faces()
   Face_iterator fit = faces_begin();
   std::ptrdiff_t nf  = std::distance(faces_begin(),faces_end());
 
-  while (oriented_set.size() != nf) {
-    while ( oriented_set.find(fit) != oriented_set.end()){
+  while (0 != nf) {
+    while ( !oriented_set.insert(fit).second ){
       ++fit; // find a germ for  non oriented components 
     }
     // orient component
-    oriented_set.insert(fit);
+    --nf;
     st.push(fit);
     while ( ! st.empty()) {
       Face_handle fh = st.top();
       st.pop();
       for(int ih = 0 ; ih < 3 ; ++ih){
 	Face_handle fn = fh->neighbor(ih);
-	if (oriented_set.find(fn) == oriented_set.end()){
+	if (oriented_set.insert(fn).second){
 	  int in = fn->index(fh);
 	  if (fn->vertex(cw(in)) != fh->vertex(ccw(ih))) fn->reorient();
-	  oriented_set.insert(fn);
+          --nf;
 	  st.push(fn);
 	}
       }
