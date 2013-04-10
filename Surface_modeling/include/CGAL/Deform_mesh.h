@@ -37,7 +37,7 @@
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
-#include <CGAL/internal/Surface_modeling/Eigen_SVD_helper_3.h>  // for 3x3 SVD solver
+#include <CGAL/Eigen_SVD_helper_3.h>  // for 3x3 SVD solver
   #if defined(CGAL_SUPERLU_ENABLED)
     #include <Eigen/SuperLUSupport>
   #else

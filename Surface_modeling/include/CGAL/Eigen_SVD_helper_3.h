@@ -5,7 +5,10 @@
 #include <Eigen/SVD>
 
 namespace CGAL {
-
+/// \ingroup PkgSurfaceModeling
+/// Class providing functionality to compute SVD factorization of a 3x3 Matrix . `Eigen::JacobiSVD<>` is used as internal SVD solver.
+///
+/// \cgalModels `SVDHelper_3`
 class Eigen_SVD_helper_3{
 public:
 
