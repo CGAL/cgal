@@ -245,15 +245,31 @@ decreases drastically, it might be interesting to defragment the
 /*! 
 Removes the vertex `v` from the triangulation. 
 
-The optional argument `p_could_lock_zone` is used by the concurrency-safe
-version of the triangulation. When the pointer is not-null, the removal will
+\pre `v` is a finite vertex of the triangulation. 
+*/ 
+void remove(Vertex_handle v); 
+
+/*! 
+Removes the vertex `v` from the triangulation.
+
+This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
 try to lock vertices/cells before deleting/modifying them. If it succeed, *p_could_lock_zone
 is true, otherwise it is false (and the point is not removed). In any case, 
 the locked vertices are not unlocked by the function, leaving this choice to the user.
 
+This function will try to remove `v` only if the removal does not
+decrease the dimension. If the removal would decrease dimension, the function returns false
+(providing the zone could be locked, i.e.\ *p_could_lock_zone = true).
+
 \pre `v` is a finite vertex of the triangulation. 
+\pre `dt`.`dimension()` \f$ =3\f$.
+
+The return value is only meaningful if *p_could_lock_zone is true:
+  - returns true if the vertex was removed
+  - returns false if the vertex wasn't removed since it would decrease 
+    the dimension.
 */ 
-void remove(Vertex_handle v, bool *p_could_lock_zone = 0); 
+bool remove(Vertex_handle v, bool *p_could_lock_zone);
 
 /*! 
 Removes the vertices specified by the iterator range `[first, beyond)`. 

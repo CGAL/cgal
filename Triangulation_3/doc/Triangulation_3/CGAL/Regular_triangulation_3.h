@@ -27,15 +27,22 @@ the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres 
 of all simplices are regular. 
 
+If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+such as insertion/removal of a range of points, are performed in parallel. See 
+the documentation of the operations for more details.
 
 \tparam  RegularTriangulationTraits_3 is the geometric traits class.
 
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
 It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<RegularTriangulationTraits_3>, Regular_triangulation_cell_base_3<RegularTriangulationTraits_3> >`. 
 
+\tparam SpatialLockDataStructure_3 is only used by the parallel version of the triangulation
+        (i.e.\ when `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
+        It must be a model of the `SpatialLockDataStructure_3` concept.
+        See the documentation of `Triangulation_3` for more details.
 */
-template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3 >
-class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3> {
+template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3, typename SpatialLockDataStructure_3 >
+class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SpatialLockDataStructure_3> {
 public:
 
 /// \name Types 
@@ -60,12 +67,16 @@ typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point;
 /*! 
 Creates an empty regular triangulation, possibly specifying a traits class 
 `traits`. 
+`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations.
 */ 
 Regular_triangulation_3 
-(const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3()); 
+(const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3(), 
+SpatialLockDataStructure_3 *p_lock_ds = 0); 
 
 /*! 
 Copy constructor. 
+The pointer to the lock data structure is not copied. Thus, the copy won't be
+concurrency-safe as long as the user has not call `set_lock_data_structure`.
 */ 
 Regular_triangulation_3 
 (const Regular_triangulation_3 & rt1); 
@@ -77,8 +88,16 @@ traits class argument and calling `insert(first,last)`.
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
-const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3()); 
+const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3(), 
+SpatialLockDataStructure_3 *p_lock_ds = 0); 
 
+/*! 
+Same as before, with last two parameters in reverse order.
+*/ 
+template < class InputIterator > 
+Regular_triangulation_3 (InputIterator first, InputIterator last, 
+SpatialLockDataStructure_3 *p_lock_ds, 
+const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3());
 /// @} 
 
 /*!\name Insertion 
@@ -104,14 +123,20 @@ remains unchanged.
 Otherwise if `p` does not appear as a vertex of the triangulation, 
 then it is stored as a hidden point and this method returns the default 
 constructed handle. 
+
+The optional argument `p_could_lock_zone` is used by the concurrency-safe
+version of the triangulation. When the pointer is not-null, the insertion will
+try to lock vertices/cells before modifying them. If it succeed, *p_could_lock_zone
+is true, otherwise it is false (and the point is not inserted). In any case, 
+the locked vertices are not unlocked by the function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Weighted_point & p, 
-Cell_handle start = Cell_handle() ); 
+Cell_handle start = Cell_handle(), bool *p_could_lock_zone = 0); 
 
 /*! 
 Same as above but uses `hint` as a starting place for the search. 
 */ 
-Vertex_handle insert(const Weighted_point & p, Vertex_handle hint); 
+Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *p_could_lock_zone = 0); 
 
 /*! 
 Inserts weighted point `p` in the triangulation and returns the corresponding 
@@ -120,7 +145,7 @@ parameter the return values of a previous location query. See description of
 `Triangulation_3::locate()`. 
 */ 
 Vertex_handle insert(const Weighted_point & p, Locate_type lt, 
-Cell_handle loc, int li, int lj); 
+Cell_handle loc, int li, int lj, bool *p_could_lock_zone = 0); 
 
 /*! 
 Inserts the weighted points in the range `[first,last)`. 
@@ -129,6 +154,7 @@ before the insertions (it may be negative due to hidden points).
 Note that this function is not guaranteed to insert the points 
 following the order of `InputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
+If parallelism is enabled, the points will be inserted in parallel.
 
 \tparam InputIterator must be an input iterator with value type `Weighted_point`. 
 */ 
@@ -144,6 +170,7 @@ before the insertions (it may be negative due to hidden points).
 Note that this function is not guaranteed to insert the weighted points 
 following the order of `WeightedPointWithInfoInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
+If parallelism is enabled, the points will be inserted in parallel.
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
 only one vertex is created, one of the objects of type `Vertex::Info` will be stored in the vertex. 
@@ -355,11 +382,23 @@ A weighted point `p` is said to be in conflict with a cell `c` in dimension 3 (r
 
 Compute the conflicts with `p`. 
 
-@param p     The query point.
-@param c     The starting cell.
-@param cit  The cells (resp. facets) in conflict with `p`. 
-@param bfit The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
-@param ifit The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
+@param p                  The query point.
+@param c                  The starting cell.
+@param cit                The cells (resp. facets) in conflict with `p`. 
+@param bfit               The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
+@param ifit               The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
+@param p_could_lock_zone  The optional argument `p_could_lock_zone` is used by the concurrency-safe
+                          version of the triangulation. When the pointer is not-null, the algorithm will
+                          try to lock vertices of the conflict zone. If it succeed, *p_could_lock_zone
+                          is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
+                          the locked vertices are not unlocked by the function, leaving this choice to the user.
+@param p_this_facet_must_be_in_the_cz 
+                          If the optional argument `p_this_facet_must_be_in_the_cz` is not null, the algorithm will check
+                          if this facet is in the conflict (it may be internal as well as boundary).
+@param p_the_facet_is_not_in_its_cz 
+                          This argument must be not-null if the previous `p_this_facet_must_be_in_the_cz` argument is not null. 
+                          The boolean value pointed by this pointer is set to true if *`p_this_facet_must_be_in_the_cz` is
+                          not among the internal and boundary facets of the conflict zone, and false otherwise.                         
 
 \pre  The starting cell (resp.\ facet) `c` must be in conflict with `p`. 
 \pre `rt`.`dimension()` \f$ \geq2\f$, and `c` is in conflict with `p`. 
@@ -377,7 +416,10 @@ OutputIteratorInternalFacets>
 find_conflicts(const Weighted_point p, Cell_handle c, 
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit, 
-OutputIteratorInternalFacets ifit); 
+OutputIteratorInternalFacets ifit,
+bool *p_could_lock_zone = 0,
+const Facet *p_this_facet_must_be_in_the_cz = 0,
+bool *p_the_facet_is_not_in_its_cz = 0);
 
 /*! 
 This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
