@@ -2,7 +2,9 @@
 \ingroup PkgSurfaceModelingConcepts
 \cgalConcept
 
-@brief Concept describing the set of requirements for SVD factorization of a 3x3 matrix together with computations in `CGAL::Deform_mesh`.
+@brief Concept describing the set of requirements for a SVD factorization of a 3x3 matrix together with basic computations used in the class `CGAL::Deform_mesh`.
+The fact that some basic operations are hidden behind a function is to allow to benefit from optimizations like expression template from libraries used
+to implement a model of this concept.
 
 \cgalHasModel `CGAL::Eigen_SVD_helper_3`
 
