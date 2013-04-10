@@ -248,6 +248,15 @@ public:
       insert(first, last);
   }
 
+  template < typename InputIterator >
+  Delaunay_triangulation_3(InputIterator first, InputIterator last,
+                           Lock_data_structure *p_lock_ds, 
+                           const Gt& gt = Gt())
+    : Tr_Base(gt, p_lock_ds)
+  {
+      insert(first, last);
+  }
+
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t
@@ -310,6 +319,8 @@ public:
                 Vertex_handle new_hint = insert(
                   points[i_point], hint, &could_lock_zone);
                 
+                unlock_all_elements();
+
                 if (could_lock_zone)
                 {
                   hint = new_hint;
@@ -327,12 +338,12 @@ public:
               }
               else
               {
+                unlock_all_elements();
+
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
                 bcounter.increment_branch_2(); // THIS is an early withdrawal!
 #endif
               }
-
-              unlock_all_elements();
             }
 
           }
@@ -349,7 +360,9 @@ public:
           hint = insert(*p, hint);
     }
 
+#ifdef CGAL_TRIANGULATION_3_VERBOSE
     std::cerr << "Triangulation computed in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+#endif
 
     return number_of_vertices() - n;
   }
@@ -597,6 +610,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
     if (is_parallel())
     {
+      // CJTODO: avoid that by asking for ramdom-access iterators?
       std::vector<Vertex_handle> vertices(first, beyond);
       tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 
@@ -612,7 +626,7 @@ public:
             do
             {
               needs_to_be_done_sequentially = 
-                remove(v, &could_lock_zone);
+                !remove(v, &could_lock_zone);
               this->unlock_all_elements();
             } while (!could_lock_zone);
 
