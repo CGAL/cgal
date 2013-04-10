@@ -17,6 +17,7 @@ typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>   Traits_2;
 typedef Traits_2::Point_2                               Point_2;
+typedef Segment_traits_2::Curve_2                       Segment_2;
 typedef Traits_2::Curve_2                               Polyline_2;
 typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 
@@ -24,42 +25,27 @@ int main ()
 {
 
   Traits_2 traits;
-  Traits_2::Construct_curve_2 polyline_const =
+  Traits_2::Construct_curve_2 polyline_construct =
     traits.construct_curve_2_object();
 
   Arrangement_2         arr;
 
-  Point_2               points1[5];
-  points1[0] = Point_2 (0, 0);
-  points1[1] = Point_2 (2, 4);
-  points1[2] = Point_2 (3, 0);
-  points1[3] = Point_2 (4, 4);
-  points1[4] = Point_2 (6, 0);
-  Polyline_2            pi1 = polyline_const(&points1[0], &points1[5]);
+  std::list<Point_2>    pts;
+  pts.push_back(Point_2(-1,-1));
+  pts.push_back(Point_2(0,1));
+  pts.push_back(Point_2(1,-1));
+  Polyline_2 poly1 = polyline_construct(pts.begin(), pts.end());
 
-  std::list<Point_2>    points2;
-  points2.push_back (Point_2 (1, 3));
-  points2.push_back (Point_2 (0, 2));
-  points2.push_back (Point_2 (1, 0));
-  points2.push_back (Point_2 (2, 1));
-  points2.push_back (Point_2 (3, 0));
-  points2.push_back (Point_2 (4, 1));
-  points2.push_back (Point_2 (5, 0));
-  points2.push_back (Point_2 (6, 2));
-  points2.push_back (Point_2 (5, 3));
-  points2.push_back (Point_2 (4, 2));
-  Polyline_2            pi2 = polyline_const(points2.begin(), points2.end());
+  std::vector<Segment_2> segs;
+  // Note that the segments source and target do not match, that is the target
+  // of the first one is NOT the source of the second one. This however
+  // introduces no problem and the yielded arrangement is correct.
+  segs.push_back(Segment_2(Point_2(-1,1),Point_2(0,-1)));
+  segs.push_back(Segment_2(Point_2(1,1),Point_2(0,-1)));
+  Polyline_2 poly2 = polyline_construct(segs.begin(), segs.end());
 
-  std::vector<Point_2>  points3 (4);
-  points3[0] = Point_2 (0, 2);
-  points3[1] = Point_2 (1, 2);
-  points3[2] = Point_2 (3, 6);
-  points3[3] = Point_2 (5, 2);
-  Polyline_2            pi3 = polyline_const(points3.begin(), points3.end());
-
-  insert (arr, pi1);
-  insert (arr, pi2);
-  insert (arr, pi3);
+  insert (arr, poly1);
+  insert (arr, poly2);
 
   print_arrangement (arr);
   return 0;
