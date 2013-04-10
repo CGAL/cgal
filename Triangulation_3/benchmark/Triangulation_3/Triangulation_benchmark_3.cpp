@@ -29,6 +29,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
@@ -41,6 +42,12 @@
 #include <string>
 #include <vector>
 #include <cstdlib> // for drand48
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Use TBB malloc proxy (for all new/delete/malloc/free calls)
+// Highly recommended
+# include <tbb/tbbmalloc_proxy.h>
+#endif
 
 #ifdef SHOW_ITERATIONS
 #  undef SHOW_ITERATIONS
@@ -77,7 +84,65 @@ typedef Exact_predicates_inexact_constructions_kernel  K;
 typedef Regular_triangulation_euclidean_traits_3<K>    WK;
 typedef K::Point_3                                     Point;
 
+#ifdef CONCURRENT_TRIANGULATION_3
+  typedef CGAL::Spatial_grid_lock_data_structure_3<
+    CGAL::Tag_priority_blocking_with_atomics>                 Lock_ds;
+
+  // Delaunay T3
+  typedef CGAL::Triangulation_data_structure_3< 
+    CGAL::Triangulation_vertex_base_3<K>, 
+    CGAL::Triangulation_cell_base_3<K>, 
+    CGAL::Compact_container_strategy_base, 
+    CGAL::Compact_container_strategy_base, 
+    CGAL::Parallel_tag >	                                    DT_Tds;
+  typedef CGAL::Delaunay_triangulation_3<
+    K, DT_Tds, CGAL::Default, Lock_ds>	                      DT3;
+  typedef CGAL::Delaunay_triangulation_3<
+    K, DT_Tds, CGAL::Default, Lock_ds>	                      DT3_FastLoc; // CJTODO (no fast location for now)
+  
+  // Regular T3
+  typedef CGAL::Triangulation_data_structure_3<
+    CGAL::Triangulation_vertex_base_3<WK>, 
+    CGAL::Triangulation_cell_base_3<WK>,
+    CGAL::Compact_container_strategy_base, 
+    CGAL::Compact_container_strategy_base, 
+    CGAL::Parallel_tag >	                                    RT_Tds;
+  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds>	RT3;
+
+  // Regular T3 with hidden points kept
+  typedef CGAL::Triangulation_data_structure_3<
+    CGAL::Triangulation_vertex_base_3<WK>, 
+    CGAL::Regular_triangulation_cell_base_3<WK>,
+    CGAL::Compact_container_strategy_base, 
+    CGAL::Compact_container_strategy_base, 
+    CGAL::Parallel_tag >	                                    RT_Tds_WithHP;
+  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds>	RT3_WithHP;
+
+  // Regular T3 with hidden points discarded
+  typedef CGAL::Triangulation_data_structure_3<
+    CGAL::Triangulation_vertex_base_3<WK>, 
+    CGAL::Triangulation_cell_base_3<WK>,
+    CGAL::Compact_container_strategy_base, 
+    CGAL::Compact_container_strategy_base, 
+    CGAL::Parallel_tag >	                                    RT_Tds_NoHP;
+  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds>	RT3_NoHP;
+
+#else
+  typedef CGAL::Delaunay_triangulation_3<K>                   DT3;
+  typedef CGAL::Delaunay_triangulation_3<K, Fast_location>    DT3_FastLoc;
+  
+  // Regular T3 with hidden points kept
+  typedef CGAL::Regular_triangulation_3<WK>                   RT3_WithHP;
+  
+  // Regular T3 with hidden points discarded
+  typedef CGAL::Triangulation_data_structure_3<
+    CGAL::Triangulation_vertex_base_3<WK>, 
+    CGAL::Triangulation_cell_base_3<WK> >	                    RT_Tds_NoHP;
+  typedef CGAL::Regular_triangulation_3<WK, RT_Tds_NoHP>      RT3_NoHP;
+#endif
+
 vector<Point> pts, pts2;
+Bbox_3 pts_bbox, pts2_bbox;
 size_t min_pts = 100;
 size_t max_pts = 100000;
 
@@ -105,17 +170,38 @@ void generate_points()
 {
 	if (input_file_selected) {
 		Point p;
-		while (input_file >> p)
-			pts.push_back(p);
+    if (input_file >> p)
+    {
+      pts.push_back(p);
+      pts_bbox = Bbox_3(p.bbox());
+
+		  while (input_file >> p)
+      {
+			  pts.push_back(p);
+        pts_bbox = pts_bbox + p.bbox();
+      }
+    }
 		cout << " [ Read " << pts.size() << " points from file ] " << endl;
 		min_pts = max_pts = pts.size();
 	}
 	else {
 		pts.reserve(max_pts);
 		pts2.reserve(max_pts);
-		for(size_t i = 0; i < (std::max)(std::size_t(100000), max_pts); ++i) {
-			pts.push_back(rnd_point());
-			pts2.push_back(rnd_point());
+
+    Point p = rnd_point();
+		pts.push_back(p);
+    pts_bbox = Bbox_3(p.bbox());
+    p = rnd_point();
+		pts2.push_back(p);
+    pts2_bbox = Bbox_3(p.bbox());
+
+		for(size_t i = 1; i < (std::max)(std::size_t(100000), max_pts); ++i) {
+      p = rnd_point();
+			pts.push_back(p);
+      pts_bbox = pts_bbox + p.bbox();
+      p = rnd_point();
+			pts2.push_back(p);
+      pts2_bbox = pts2_bbox + p.bbox();
 		}
 	}
 }
@@ -137,7 +223,12 @@ void benchmark_construction()
 		do {
 			++iterations;
 			Time_accumulator tt(time);
+#ifdef CONCURRENT_TRIANGULATION_3
+      Lock_ds locking_ds(pts_bbox, 50);
+			Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
+#else
 			Tr tr(pts.begin(), pts.begin() + nb_pts);
+#endif
 			mem_size = Memory_sizer().virtual_size();
 			// cout << "#vertices = " << tr.number_of_vertices() << endl;
 			// cout << "#cells = " << tr.number_of_cells() << endl;
@@ -157,7 +248,12 @@ void benchmark_location()
 	cout << "#pts\tTime" << endl;
 	for (size_t nb_pts = min_pts; nb_pts <= max_pts; nb_pts *= 10)
 	{
-		Tr tr(pts.begin(), pts.begin() + nb_pts);
+#ifdef CONCURRENT_TRIANGULATION_3
+    Lock_ds locking_ds(pts_bbox, 50);
+		Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
+#else
+	  Tr tr(pts.begin(), pts.begin() + nb_pts);
+#endif
 		double time = 0;
 		size_t iterations = 0;
 		do {
@@ -183,7 +279,12 @@ void benchmark_remove()
 	cout << "#pts\tTime" << endl;
 	size_t nb_pts = 100000; // only one size of triangulation hard-coded.
 	{
+#ifdef CONCURRENT_TRIANGULATION_3
+    Lock_ds locking_ds(pts_bbox, 50);
+		Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
+#else
 		Tr tr(pts.begin(), pts.begin() + nb_pts);
+#endif
 		vector<Vertex_handle> vhs;
 		for (Vertex_iterator vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end();
 		     vit != end; ++vit)
@@ -191,14 +292,26 @@ void benchmark_remove()
 		double time = 0;
 		size_t iterations = 0;
 		size_t j = 0;
+#ifdef CONCURRENT_TRIANGULATION_3
+    const size_t NUM_VERTICES_TO_REMOVE = 10000;
+#else
+    const size_t NUM_VERTICES_TO_REMOVE = 1024;
+#endif
 		do {
 			++iterations;
 			Time_accumulator tt(time);
+#ifdef CONCURRENT_TRIANGULATION_3
+			// We do chunks of 10000 vertex removal at once.
+			tr.remove(&vhs[j], &vhs[j+NUM_VERTICES_TO_REMOVE]);
+      j += NUM_VERTICES_TO_REMOVE;
+#else
 			// We do chunks of 1024 vertex removal at once.
-			for(size_t i = 0; i < 1024; ++i, ++j)
+			for(size_t i = 0; i < NUM_VERTICES_TO_REMOVE; ++i, ++j)
 				tr.remove(vhs[j]);
-		} while (time < BENCH_MIN_TIME);
-		cout << nb_pts << "\t" << (time/iterations)/1024 << SHOW_ITERATIONS;
+#endif
+		} while (j + NUM_VERTICES_TO_REMOVE <= nb_pts && time < BENCH_MIN_TIME);
+		cout << nb_pts << "\t" 
+         << (time/iterations)/NUM_VERTICES_TO_REMOVE << SHOW_ITERATIONS;
 	}
 }
 
@@ -207,6 +320,7 @@ template < typename Tr >
 void do_benchmarks(string name)
 {
 	cout << "\n\nBenchmarking configuration : " << name << endl;
+  tbb::task_scheduler_init tbb_init(10); // CJTODO TEMP
 	benchmark_construction<Tr>();
 	if (input_file_selected)
 		return;
@@ -245,7 +359,7 @@ int main(int argc, char **argv)
 	do_benchmarks<Delaunay_triangulation_3<K> >("Delaunay  [Compact_location]");
 	if (input_file_selected)
 		return 0;
-	do_benchmarks<Delaunay_triangulation_3<K, Fast_location> >("Delaunay with Fast_location");
-	do_benchmarks<Regular_triangulation_3<WK> >("Regular  [with hidden points kept, except there's none in the data sets]");
-	do_benchmarks<Regular_triangulation_3<WK, Triangulation_data_structure_3<Triangulation_vertex_base_3<WK>, Triangulation_cell_base_3<WK> > > >("Regular with hidden points discarded");
+	//do_benchmarks<DT3_FastLoc>("Delaunay with Fast_location"); // CJTODO A REMETTRE
+  do_benchmarks<RT3_WithHP>("Regular  [with hidden points kept, except there's none in the data sets]");
+  do_benchmarks<RT3_NoHP>("Regular with hidden points discarded");
 }
