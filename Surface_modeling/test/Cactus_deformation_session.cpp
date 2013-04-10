@@ -6,43 +6,49 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Deform_mesh.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include "Property_maps_for_edit_plugin.h"
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
-#include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Timer.h>
 
-#define CGAL_SUPERLU_ENABLED
+#define CGAL_EIGEN3_ENABLED
+//#define CGAL_SUPERLU_ENABLED
+#include <CGAL/Deform_mesh.h>
 
-#ifdef CGAL_SUPERLU_ENABLED
-	#include <Eigen/SuperLUSupport>
-	typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
-#else
-	#include <Eigen/SparseLU>
-	typedef CGAL::Eigen_solver_traits<
-			Eigen::SparseLU<
-			  CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
-			  Eigen::COLAMDOrdering<int> >  > DefaultSolver;
-#endif
-  
 typedef CGAL::Simple_cartesian<double>   Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
-typedef Polyhedron_vertex_deformation_index_map<Polyhedron> Vertex_index_map;
-typedef Polyhedron_edge_deformation_index_map<Polyhedron>   Edge_index_map;
+template<class PolyhedronWithId, class KeyType>
+struct Polyhedron_with_id_property_map
+    : public boost::put_get_helper<std::size_t&,
+             Polyhedron_with_id_property_map<PolyhedronWithId, KeyType> >
+{
+public:
+    typedef KeyType      key_type;
+    typedef std::size_t  value_type;
+    typedef value_type&  reference;
+    typedef boost::lvalue_property_map_tag category;
+        
+    reference operator[](key_type key) const { return key->id(); }
+};
 
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP>  Deform_mesh_original;
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::SPOKES_AND_RIMS> Deform_mesh_spokes;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
+
+typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
+typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
+
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP>  Deform_mesh_original;
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::SPOKES_AND_RIMS> Deform_mesh_spokes;
 
 typedef boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
 
 const double squared_threshold = 0.0001; // alert if average difs between precomputed and deformed mesh models is above threshold
 
-// #define PERFORMANCE            // define for checking performance
-#define MESH_DIFFERENCE        // define for checking difs with precomputed-saved deformations
+#define PERFORMANCE            // define for checking performance
+// #define MESH_DIFFERENCE        // define for checking difs with precomputed-saved deformations
 
 
 template <class T>

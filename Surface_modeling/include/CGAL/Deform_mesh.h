@@ -20,7 +20,6 @@
 #define CGAL_DEFORM_MESH_H
 
 #include <CGAL/internal/Surface_modeling/Weights.h>
-#include <CGAL/internal/Surface_modeling/Eigen_SVD_helper_3.h>
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -34,6 +33,17 @@
 #include <list>
 #include <utility>
 #include <limits>
+
+// for default parameters
+#if defined(CGAL_EIGEN3_ENABLED)
+#include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
+#include <CGAL/internal/Surface_modeling/Eigen_SVD_helper_3.h>  // for 3x3 SVD solver
+  #if defined(CGAL_SUPERLU_ENABLED)
+    #include <Eigen/SuperLUSupport>
+  #else
+    #include <Eigen/SparseLU>
+  #endif
+#endif
 
 namespace CGAL {
 
@@ -64,24 +74,36 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
 }//namespace internal
 /// @endcond
 
-/**
- * \ingroup PkgSurfaceModeling
- * @brief Class providing the functionalities for deforming a triangulated surface mesh
- *
- * @tparam P a model of HalfedgeGraph
- * @tparam ST a model of SparseLinearAlgebraTraitsWithPreFactor_d
- * @tparam VIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
- * @tparam EIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
- * @tparam TAG tag for selecting the deformation algorithm
- * @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Polyhedron` being `P`
- */
+ ///
+ /// \ingroup PkgSurfaceModeling
+ /// @brief Class providing the functionalities for deforming a triangulated surface mesh
+ ///
+ /// @tparam P a model of HalfedgeGraph 
+ /// @tparam VIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
+ /// @tparam EIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
+ /// @tparam TAG tag for selecting the deformation algorithm
+ /// @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Polyhedron` being `P`
+ /// @tparam ST a model of SparseLinearAlgebraTraitsWithPreFactor_d. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available 
+ /// and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.\n
+ /// If `CGAL_SUPERLU_ENABLED` is defined, the overload is equal to:
+ /// \code CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > \endcode
+ /// else it is equal to:
+ /// \code
+ ///     CGAL::Eigen_solver_traits<
+ ///         Eigen::SparseLU<
+ ///            CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
+ ///            Eigen::COLAMDOrdering<int> >  >
+ /// \endcode
+ /// @tparam SVD a model of SVDHelper_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
+ /// `Eigen_SVD_helper_3` is provided as default parameter.
 template <
   class P, 
-  class ST, 
   class VIM, 
   class EIM,
   Deformation_algorithm_tag TAG = SPOKES_AND_RIMS,
-  class WC = Default
+  class WC = Default,
+  class ST = Default, 
+  class SVD = Default  
   >
 class Deform_mesh
 {
@@ -91,18 +113,55 @@ public:
   /// \name Template parameter types
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
-  typedef P Polyhedron; /**< model of HalfedgeGraph */
-  typedef ST Sparse_linear_solver; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
+  typedef P Polyhedron; /**< model of HalfedgeGraph */  
   typedef VIM Vertex_index_map; /**< model of `ReadWritePropertyMap`  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
   typedef EIM Edge_index_map; /**< model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
-  #ifndef DOXYGEN_RUNNING
+
+// weight calculator
+#ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
     WC,
     typename internal::Weight_calculator_selector<P, TAG>::weight_calculator
   >::type Weight_calculator;
-  #else
+#else
   typedef WC Weight_calculator; /**< model of SurfaceModelingWeightCalculator */
+#endif
+
+// sparse linear solver
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    ST,
+  #if defined(CGAL_EIGEN3_ENABLED)
+    #if defined(CGAL_SUPERLU_ENABLED)
+      CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> >
+    #else
+      CGAL::Eigen_solver_traits<
+          Eigen::SparseLU<
+            CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
+            Eigen::COLAMDOrdering<int> >  >
+    #endif
+  #else
+    ST // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
+  >::type Sparse_linear_solver;
+#else
+  typedef ST Sparse_linear_solver; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
+#endif
+
+// SVD helper
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    SVD,
+  #if defined(CGAL_EIGEN3_ENABLED)
+    Eigen_SVD_helper_3
+  #else
+    SVD // no parameter provided, and Eigen is not enabled: so don't compile!
+  #endif
+  >::type SVD_helper;
+#else
+  typedef SVD SVD_helper; /**< model of SVDHelper_3 */
+#endif
+
   /// @}
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
@@ -112,7 +171,7 @@ public:
   typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
-  typedef Deform_mesh<P, ST, VIM, EIM, TAG, WC> Self;
+  typedef Deform_mesh<P, VIM, EIM, TAG, WC, ST, SVD> Self;
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
@@ -123,10 +182,9 @@ private:
   typedef std::list<vertex_descriptor>  Handle_container;
   typedef std::list<Handle_container>   Handle_group_container;
 
-  typedef Eigen_SVD_helper_3 SVD_helper;
-  typedef SVD_helper::Matrix SVD_matrix;
-  typedef SVD_helper::Vector SVD_vector;
-  typedef SVD_helper::Solver SVD_solver;
+  typedef typename SVD_helper::Matrix SVD_matrix;
+  typedef typename SVD_helper::Vector SVD_vector;
+  typedef typename SVD_helper::Solver SVD_solver;
 
 public:
   /** The type used as the representative of a group of handles*/

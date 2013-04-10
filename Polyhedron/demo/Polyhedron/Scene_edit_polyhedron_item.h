@@ -25,32 +25,7 @@
 
 #include "ui_Deform_mesh.h"
 
-#include "Property_maps_for_edit_plugin.h"
 #include <CGAL/Deform_mesh.h> 
-
-typedef Polyhedron_vertex_deformation_index_map<Polyhedron> Vertex_index_map;
-typedef Polyhedron_edge_deformation_index_map<Polyhedron> Edge_index_map;
-
-#if defined(CGAL_EIGEN3_ENABLED)
-#include <CGAL/Eigen_solver_traits.h>
-  #if defined(CGAL_SUPERLU_ENABLED)
-    #include <Eigen/SuperLUSupport>
-    typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
-  #else
-    #include <Eigen/SparseLU>
-    typedef CGAL::Eigen_solver_traits<
-                Eigen::SparseLU<
-                  CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
-                  Eigen::COLAMDOrdering<int> >  > DefaultSolver;
-  #endif
-#elif defined(CGAL_TAUCS_ENABLED)
-  #include <CGAL/Taucs_solver_traits.h>
-  typedef CGAL::Taucs_solver_traits<double> DefaultSolver;
-#else
-  typedef CGAL::Eigen_solver_traits<Eigen::BiCGSTAB<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
-#endif
-
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
@@ -58,6 +33,26 @@ typedef boost::graph_traits<Polyhedron>::edge_descriptor		  edge_descriptor;
 typedef boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
 typedef boost::graph_traits<Polyhedron>::in_edge_iterator		  in_edge_iterator;
 typedef boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
+
+template<class PolyhedronWithId, class KeyType>
+struct Polyhedron_with_id_property_map
+    : public boost::put_get_helper<std::size_t&,
+             Polyhedron_with_id_property_map<PolyhedronWithId, KeyType> >
+{
+public:
+    typedef KeyType      key_type;
+    typedef std::size_t  value_type;
+    typedef value_type&  reference;
+    typedef boost::lvalue_property_map_tag category;
+        
+    reference operator[](key_type key) const { return key->id(); }
+};
+
+typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; 
+typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map; 
+
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
+
 
 typedef Deform_mesh::Point  Point;
 typedef Deform_mesh::Vector Vector;
