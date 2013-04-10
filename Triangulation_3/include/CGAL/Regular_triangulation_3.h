@@ -42,6 +42,7 @@
 #include <boost/mpl/and.hpp>
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
+#include <CGAL/Mesh_3/Profiling_tools.h> // CJTODO TEMP
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -172,6 +173,14 @@ namespace CGAL {
     {
       insert(first, last);
     }
+    
+    template < typename InputIterator >
+    Regular_triangulation_3(InputIterator first, InputIterator last,
+      Lock_data_structure *p_lock_ds, const Gt & gt = Gt())
+      : Tr_Base(gt, p_lock_ds), hidden_point_visitor(this)
+    {
+      insert(first, last);
+    }
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
     template < class InputIterator >
@@ -190,23 +199,112 @@ namespace CGAL {
       insert( InputIterator first, InputIterator last)
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
     {
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+      static Profile_branch_counter_3 bcounter(
+        "early withdrawals / late withdrawals / successes [Regular_tri_3::insert]");
+#endif
+      
+      WallClockTimer t; // CJTODO TEMP
+
       size_type n = number_of_vertices();
 
       std::vector<Weighted_point> points(first, last);
       spatial_sort (points.begin(), points.end(), geom_traits());
-
-      Cell_handle hint;
-      for (typename std::vector<Weighted_point>::const_iterator p = points.begin(),
-        end = points.end(); p != end; ++p)
+      
+    // Parallel
+#ifdef CGAL_LINKED_WITH_TBB
+      if (is_parallel())
       {
-        Locate_type lt;
-        Cell_handle c;
-        int li, lj;
-        c = locate (*p, lt, li, lj, hint);
+        size_t num_points = points.size();
+        int i = 0;
+        // Insert "num_points_seq" points sequentially 
+        // (or more if dim < 3 after that)
+        Cell_handle hint;
+        size_t num_points_seq = (std::min)(num_points, (size_t)500);
+        while (dimension() < 3 || i < num_points_seq)
+        {
+          Locate_type lt;
+          Cell_handle c;
+          int li, lj;
 
-        Vertex_handle v = insert (*p, lt, c, li, lj);
+          c = locate (points[i], lt, li, lj, hint);
+          Vertex_handle v = insert (points[i], lt, c, li, lj);
 
-        hint = v == Vertex_handle() ? c : v->cell();
+          hint = (v == Vertex_handle() ? c : v->cell());
+          ++i;
+        }
+
+        tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
+        // CJTODO: lambda functions OK?
+        tbb::parallel_for(
+          tbb::blocked_range<size_t>( i, num_points ),
+          [&] (const tbb::blocked_range<size_t>& r)
+          {
+            Vertex_handle &hint = tls_hint.local();
+            for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
+            {
+              bool success = false;
+              const Weighted_point &p = points[i_point];
+              while(!success)
+              {
+                if (try_lock_vertex(hint) && try_lock_point(p))
+                {
+                  bool could_lock_zone;
+                  Locate_type lt;
+                  int li, lj;
+
+                  Cell_handle c = locate (p, lt, li, lj, hint->cell(), &could_lock_zone);
+                  Vertex_handle v;
+                  if (could_lock_zone)
+                    v = insert (p, lt, c, li, lj, &could_lock_zone);
+
+                  if (could_lock_zone)
+                  {
+                    hint = (v == Vertex_handle() ? c->vertex(0) : v);
+                    unlock_all_elements();
+                    success = true;
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                    ++bcounter;
+#endif
+                  }          
+                  else
+                  {
+                    unlock_all_elements();
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                    bcounter.increment_branch_1(); // THIS is a late withdrawal!
+#endif
+                  }
+                }
+                else
+                {
+                  unlock_all_elements();
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                  bcounter.increment_branch_2(); // THIS is an early withdrawal!
+#endif
+                }
+              }
+
+            }
+          }
+        );
+      }
+      // Sequential
+      else
+#endif // CGAL_LINKED_WITH_TBB
+      {
+        Cell_handle hint;
+        for (typename std::vector<Weighted_point>::const_iterator p = points.begin(),
+          end = points.end(); p != end; ++p)
+        {
+          Locate_type lt;
+          Cell_handle c;
+          int li, lj;
+          c = locate (*p, lt, li, lj, hint);
+
+          Vertex_handle v = insert (*p, lt, c, li, lj);
+
+          hint = v == Vertex_handle() ? c : v->cell();
+        }
       }
       return number_of_vertices() - n;
     }
@@ -295,16 +393,19 @@ namespace CGAL {
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 
-    Vertex_handle insert(const Weighted_point & p, Vertex_handle hint)
+    Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, 
+                         bool *p_could_lock_zone = 0)
     {
-      return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
+      return insert(p, 
+                    hint == Vertex_handle() ? this->infinite_cell() : hint->cell(),
+                    p_could_lock_zone);
     }
 
     Vertex_handle insert(const Weighted_point & p,
-      Cell_handle start = Cell_handle());
+      Cell_handle start = Cell_handle(), bool *p_could_lock_zone = 0);
 
     Vertex_handle insert(const Weighted_point & p, Locate_type lt,
-      Cell_handle c, int li, int);
+      Cell_handle c, int li, int, bool *p_could_lock_zone = 0);
 
     template <class CellIt>
     Vertex_handle
@@ -487,16 +588,68 @@ namespace CGAL {
     }
 
     void remove (Vertex_handle v);
+    // Concurrency-safe
+    // See Triangulation_3::remove for more information
+    bool remove (Vertex_handle v, bool *p_could_lock_zone);
 
     template < typename InputIterator >
     size_type remove(InputIterator first, InputIterator beyond)
     {
       CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
       size_type n = number_of_vertices();
-      while (first != beyond) {
-        remove (*first);
-        ++first;
+      
+      WallClockTimer t; // CJTODO TEMP
+    
+      // Parallel
+#ifdef CGAL_LINKED_WITH_TBB
+      if (is_parallel())
+      {
+        // CJTODO: avoid that by asking for ramdom-access iterators?
+        std::vector<Vertex_handle> vertices(first, beyond);
+        tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
+
+        // CJTODO: lambda functions OK?
+        tbb::parallel_for(
+          tbb::blocked_range<size_t>( 0, vertices.size()),
+          [&] (const tbb::blocked_range<size_t>& r)
+          {
+            for( size_t i_vertex = r.begin() ; i_vertex != r.end() ; ++i_vertex)
+            {
+              Vertex_handle v = vertices[i_vertex];
+              bool could_lock_zone, needs_to_be_done_sequentially;
+              do
+              {
+                needs_to_be_done_sequentially = 
+                  !remove(v, &could_lock_zone);
+                this->unlock_all_elements();
+              } while (!could_lock_zone);
+
+              if (needs_to_be_done_sequentially)
+                vertices_to_remove_sequentially.push_back(v);
+            }
+          });
+
+        // Do the rest sequentially
+        for ( tbb::concurrent_vector<Vertex_handle>::const_iterator 
+                it = vertices_to_remove_sequentially.begin(), 
+                it_end = vertices_to_remove_sequentially.end() 
+            ; it != it_end 
+            ; ++it)
+        {
+          remove(*it);
+        }
       }
+      // Sequential
+      else
+#endif // CGAL_LINKED_WITH_TBB
+      {
+        while (first != beyond) {
+          remove(*first);
+          ++first;
+        }
+      }
+
+      std::cerr << "Points removed in " << t.elapsed() << " seconds." << std::endl;
       return n - number_of_vertices();
     }
 
@@ -1474,54 +1627,62 @@ namespace CGAL {
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
     Regular_triangulation_3<Gt,Tds,Lds>::
-    insert(const Weighted_point & p, Cell_handle start)
+    insert(const Weighted_point & p, Cell_handle start, bool *p_could_lock_zone)
   {
     Locate_type lt;
     int li, lj;
 
-    // Sequential
-    if (!is_parallel())
-    {
-      Cell_handle c = locate(p, lt, li, lj, start);
-      return insert(p, lt, c, li, lj);
-    }
     // Parallel
-    else
+    if (p_could_lock_zone)
     {
-      bool could_lock_zone;
-      Cell_handle c = locate(p, lt, li, lj, start, &could_lock_zone);
-      if (could_lock_zone)
-        return insert(p, lt, c, li, lj);
+      Cell_handle c = locate(p, lt, li, lj, start, p_could_lock_zone);
+      if (*p_could_lock_zone)
+        return insert(p, lt, c, li, lj, p_could_lock_zone);
       else
         return Vertex_handle();
     }
+    // Sequential
+    else
+    {
+      Cell_handle c = locate(p, lt, li, lj, start);
+      return insert(p, lt, c, li, lj);
+    }    
   }
 
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
     Regular_triangulation_3<Gt,Tds,Lds>::
-    insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int lj)
+    insert(const Weighted_point & p, Locate_type lt, Cell_handle c, 
+           int li, int lj, bool *p_could_lock_zone)
   {
     switch (dimension()) {
     case 3:
       {
         Conflict_tester_3 tester (p, this);
-        return insert_in_conflict(p, lt,c,li,lj, tester, get_hidden_point_visitor());
+        return insert_in_conflict(p, lt,c,li,lj, tester, 
+                                  get_hidden_point_visitor(), 
+                                  p_could_lock_zone);
       }
     case 2:
       {
         Conflict_tester_2 tester (p, this);
-        return insert_in_conflict(p, lt,c,li,lj, tester, get_hidden_point_visitor());
+        return insert_in_conflict(p, lt,c,li,lj, tester, 
+                                  get_hidden_point_visitor(), 
+                                  p_could_lock_zone);
       }
     case 1:
       {
         Conflict_tester_1 tester (p, this);
-        return insert_in_conflict(p, lt,c,li,lj, tester, get_hidden_point_visitor());
+        return insert_in_conflict(p, lt,c,li,lj, tester, 
+                                  get_hidden_point_visitor(), 
+                                  p_could_lock_zone);
       }
     }
 
     Conflict_tester_0 tester (p, this);
-    return insert_in_conflict(p, lt,c,li,lj, tester, get_hidden_point_visitor());
+    return insert_in_conflict(p, lt,c,li,lj, tester, 
+                              get_hidden_point_visitor(), 
+                              p_could_lock_zone);
   }
 
 
@@ -1656,6 +1817,50 @@ namespace CGAL {
         if (hv != Vertex_handle()) c = hv->cell();
     }
     CGAL_triangulation_expensive_postcondition (is_valid());
+  }
+  
+  template < class Gt, class Tds, class Lds >
+  bool
+    Regular_triangulation_3<Gt,Tds,Lds>::
+    remove(Vertex_handle v, bool *p_could_lock_zone)
+  {
+    bool removed = true;
+
+    // Locking vertex v...
+    if (!try_lock_vertex(v))
+    {
+      *p_could_lock_zone = false;
+    }
+    else
+    {
+      Vertex_handle hint = (v->cell()->vertex(0) == v ?
+        v->cell()->vertex(1) : v->cell()->vertex(0));
+
+      Self tmp;
+      Vertex_remover<Self> remover(tmp);
+      removed = Tr_Base::remove(v, remover, p_could_lock_zone);
+
+      if (*p_could_lock_zone && removed)
+      {
+        // Re-insert the points that v was hiding.
+        for (typename Vertex_remover<Self>::Hidden_points_iterator
+          hi = remover.hidden_points_begin();
+          hi != remover.hidden_points_end(); ++hi) 
+        {
+          bool could_lock_zone = false;
+          Vertex_handle hv;
+          while (!could_lock_zone)
+          {
+            hv = insert (*hi, hint, &could_lock_zone);
+          }
+          if (hv != Vertex_handle()) 
+            hint = hv;
+        }
+        CGAL_triangulation_expensive_postcondition (is_valid());
+      }
+    }
+
+    return removed;
   }
 
   // Again, verbatim copy from Delaunay.
