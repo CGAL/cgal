@@ -3435,14 +3435,28 @@ copy_tds(const TDS_src& tds,
 //utilities for copy_tds
 namespace internal { namespace TDS_3{
   template <class Vertex_src,class Vertex_tgt>
-  struct Default_vertex_converter;
+  struct Default_vertex_converter
+  {
+    Vertex_tgt operator()(const Vertex_src& src) const {
+      return Vertex_tgt(src.point());
+    }
+    
+    void operator()(const Vertex_src&,Vertex_tgt&) const {}
+  };
+
   template <class Cell_src,class Cell_tgt>
-  struct Default_cell_converter;
+  struct Default_cell_converter
+  {
+    Cell_tgt operator()(const Cell_src&) const {
+      return Cell_tgt();
+    }
+    
+    void operator()(const Cell_src&,Cell_tgt&) const {}
+  };
   
   template <class Vertex>
   struct Default_vertex_converter<Vertex,Vertex>
   {
-    inline
     const Vertex& operator()(const Vertex& src) const {
       return src;
     }
@@ -3452,7 +3466,6 @@ namespace internal { namespace TDS_3{
   
   template <class Cell>
   struct Default_cell_converter<Cell,Cell>{
-    inline
     const Cell& operator()(const Cell& src) const {
       return src;
     } 

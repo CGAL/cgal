@@ -1832,14 +1832,28 @@ copy_tds(const TDS_src& tds_src,
 //utilities for copy_tds
 namespace internal { namespace TDS_2{
   template <class Vertex_src,class Vertex_tgt>
-  struct Default_vertex_converter;
+  struct Default_vertex_converter
+  {
+    Vertex_tgt operator()(const Vertex_src& src) const {
+      return Vertex_src( src.point() );
+    }
+    
+    void operator()(const Vertex_src&,Vertex_tgt&) const {}
+  };
+
   template <class Face_src,class Face_tgt>
-  struct Default_face_converter;
+  struct Default_face_converter
+  {
+    Face_tgt operator()(const Face_src& src) const {
+      return Face_tgt();
+    } 
+    
+    void operator()(const Face_src&,Face_tgt&) const {}
+  };
   
   template <class Vertex>
   struct Default_vertex_converter<Vertex,Vertex>
   {
-    inline
     const Vertex& operator()(const Vertex& src) const {
       return src;
     }
