@@ -21,10 +21,9 @@ struct Convert_vertex{
   void operator()(const DT3_epic::Vertex& src,DT3_epec::Vertex& tgt) const
   {
     if (!first_vertex)
-    {
-      first_vertex=false;
       tgt.point() = Converter()( src.point() );
-    }
+    else
+      first_vertex=false;
   }
 };
 
