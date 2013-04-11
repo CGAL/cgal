@@ -276,9 +276,13 @@ void benchmark_remove()
 	typedef typename Tr::Vertex_iterator   Vertex_iterator;
 
 	cout << "\nVertex removal : " << endl;
-	cout << "#pts\tTime" << endl;
-	size_t nb_pts = 100000; // only one size of triangulation hard-coded.
-	{
+	cout << "#pts\tTime\tTime/removal" << endl;
+	size_t nb_pts = 1000000; // only one size of triangulation hard-coded.
+  const size_t NUM_VERTICES_TO_REMOVE = 100000;
+	double time = 0;
+	size_t iterations = 0;
+
+	do {
 #ifdef CONCURRENT_TRIANGULATION_3
     Lock_ds locking_ds(pts_bbox, 50);
 		Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
@@ -289,30 +293,15 @@ void benchmark_remove()
 		for (Vertex_iterator vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end();
 		     vit != end; ++vit)
 			vhs.push_back(vit);
-		double time = 0;
-		size_t iterations = 0;
-		size_t j = 0;
-#ifdef CONCURRENT_TRIANGULATION_3
-    const size_t NUM_VERTICES_TO_REMOVE = 10000;
-#else
-    const size_t NUM_VERTICES_TO_REMOVE = 1024;
-#endif
-		do {
-			++iterations;
-			Time_accumulator tt(time);
-#ifdef CONCURRENT_TRIANGULATION_3
-			// We do chunks of 10000 vertex removal at once.
-			tr.remove(&vhs[j], &vhs[j+NUM_VERTICES_TO_REMOVE]);
-      j += NUM_VERTICES_TO_REMOVE;
-#else
-			// We do chunks of 1024 vertex removal at once.
-			for(size_t i = 0; i < NUM_VERTICES_TO_REMOVE; ++i, ++j)
-				tr.remove(vhs[j]);
-#endif
-		} while (j + NUM_VERTICES_TO_REMOVE <= nb_pts && time < BENCH_MIN_TIME);
-		cout << nb_pts << "\t" 
-         << (time/iterations)/NUM_VERTICES_TO_REMOVE << SHOW_ITERATIONS;
-	}
+    
+	  Time_accumulator tt(time);
+		tr.remove(&vhs[0], &vhs[NUM_VERTICES_TO_REMOVE - 1]);
+	  ++iterations;
+	} while (time < BENCH_MIN_TIME);
+
+	cout << NUM_VERTICES_TO_REMOVE << "\t" 
+        << (time/iterations) << "\t" 
+        << (time/iterations)/NUM_VERTICES_TO_REMOVE << SHOW_ITERATIONS;
 }
 
 
