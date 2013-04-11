@@ -14,7 +14,6 @@ Release date: March 2013
   - With Microsoft Visual C++ (all supported versions), the compiler flags /
     bigobj and /wd4503 are added by CGAL CMake scripts.
 
-
   - This is the last release whose "UseCGAL.cmake" file (if using CGAL in a
     CMake build environment) contains the line
       link_libraries(${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
@@ -32,17 +31,6 @@ Release date: March 2013
     building executables, removal of '${CGAL_3RD_PARTY_LIBRARIES}').
 
 
-* 3D Minkowski Sum of Polyhedra
-
-  - Fix a memory leak.
-
-
-* 3D Fast Intersection and Distance Computation
-
-  - Update requirements of the concepts AABBTraits and AABBGeomTraits to match
-    the implementation of the package.
-
-
 * 2D Arrangements
 
   - Enhanced the 2D-arrangements demonstration program and ported it to Qt4.
@@ -56,10 +44,36 @@ Release date: March 2013
     arrangements induced by unbounded curves.
 
 
+* 2D Circular Geometry Kernel
+
+  - Fix the intersection type computed when intersecting two identical circles.
+
+  - Forward correctly the result type of the linear kernel functors
+
+
 * 2D Triangulations
 
   - Add mechanism to avoid call stack overflow in Delaunay_triangulation_2 and
     Constrained_Delaunay_triangulation_2.
+
+  - Add a constructor for Regular_triangulation_2 and Delaunay_triangulation_2
+    from a range of points or a range of points with info.
+
+
+* 2D Voronoi Diagram Adaptor
+
+  - Bug-fix: Add ccb() method in face type as documented.
+
+
+* 3D Minkowski Sum of Polyhedra
+
+  - Fix a memory leak.
+
+
+* 3D Fast Intersection and Distance Computation
+
+  - Update requirements of the concepts AABBTraits and AABBGeomTraits to match
+    the implementation of the package.
 
 
 * Generator
@@ -80,17 +94,6 @@ Release date: March 2013
   - Performance improvements and addition of an option to better reconstruct
     undersampled zones. The poisson reconstruction plugin of the Polyhedron
     demo has an option to switch it on.
-
-
-* 2D Voronoi Diagram Adaptor
-
-  - Bug-fix: Add ccb() method in face type as documented.
-
-
-* 2D Triangulations
-
-  - Add a constructor for Regular_triangulation_2 and Delaunay_triangulation_2
-    from a range of points or a range of points with info.
 
 
 -------------------------------- Release 4.1 --------------------------------
