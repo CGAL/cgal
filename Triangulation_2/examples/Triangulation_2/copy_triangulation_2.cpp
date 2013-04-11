@@ -40,6 +40,7 @@ int main()
   CGAL::cpp11::copy_n( g, 600, std::back_inserter(points) );
 
   DT2_epic dt2_epic;
+  dt2_epic.insert(points.begin(), points.end());
   DT2_epec dt2_epec;
   dt2_epec.infinite_vertex() = 
     dt2_epec.tds().copy_tds( dt2_epic.tds(),dt2_epic.infinite_vertex(), Convert_vertex(), Convert_face() );

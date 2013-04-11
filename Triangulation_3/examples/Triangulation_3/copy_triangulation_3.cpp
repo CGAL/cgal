@@ -39,7 +39,7 @@ int main()
   CGAL::Random_points_in_sphere_3<EPIC::Point_3,Creator> g(1.0);
   CGAL::cpp11::copy_n( g, 600, std::back_inserter(points) );
 
-  DT3_epic dt3_epic;
+  DT3_epic dt3_epic(points.begin(), points.end());
   DT3_epec dt3_epec;
   dt3_epec.infinite_vertex() = 
     dt3_epec.tds().copy_tds( dt3_epic.tds(),dt3_epic.infinite_vertex(), Convert_vertex(), Convert_cell() );
