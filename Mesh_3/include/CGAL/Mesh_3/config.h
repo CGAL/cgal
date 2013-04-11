@@ -39,9 +39,6 @@
 //experimental
 #  define CGAL_FASTER_BUILD_QUEUE
 
-// to disable new features :
-//#  define CGAL_TDS_3_NOT_JUST_INCIDENT_CELLS
-
 //should not be used
 //#define CGAL_MESH_3_OLD_MINIMUM_DIHEDRAL_ANGLE
 
