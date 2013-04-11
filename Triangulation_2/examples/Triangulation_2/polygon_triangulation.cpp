@@ -67,9 +67,8 @@ mark_domains(CDT& cdt)
     it->info().nesting_level = -1;
   }
 
-  int index = 0;
   std::list<CDT::Edge> border;
-  mark_domains(cdt, cdt.infinite_face(), index++, border);
+  mark_domains(cdt, cdt.infinite_face(), 0, border);
   while(! border.empty()){
     CDT::Edge e = border.front();
     border.pop_front();
