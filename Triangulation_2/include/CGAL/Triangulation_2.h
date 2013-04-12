@@ -372,12 +372,6 @@ public:
 
 protected:
   Face_handle
-  inexact_locate(const Point& p,
-                 Face_handle start, 
-                 int max_num_cells = 
-                 CGAL_T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
-
-  Face_handle
   exact_locate(const Point& p,
                Locate_type& lt,
                int& li,
@@ -406,6 +400,12 @@ protected:
                       const Point &r) const;
 
 public:
+  Face_handle
+  inexact_locate(const Point& p,
+                 Face_handle start, 
+                 int max_num_cells = 
+                 CGAL_T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
+
   Face_handle
   locate(const Point & p,
          Locate_type & lt, int & li, 
