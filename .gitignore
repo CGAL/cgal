@@ -1213,8 +1213,6 @@ Makefile
 *.vcproj
 *.sln
 *.depends
-*.vcxproj
-*.vcxproj.filters
 
 # The rest: "various" things that I do not know how to classify
 # -- Laurent Rineau, 2013/01/11
@@ -1232,49 +1230,9 @@ gmon.*
 
 # TODO:
 #   remove everything about /doc_tex once LaTeX is not longer supported
-
-
-/Point_set_processing_3/test/Point_set_processing_3/cgal_test_with_cmake
-/Point_set_processing_3/test/Point_set_processing_3/read_test
-/Nef_S2/test/Nef_S2/CMakeLists.txt
-/Nef_S2/test/Nef_S2/cgal_test_with_cmake
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/construction_test_suite_generator
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/ex_kernel_point
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/ex_kernel_segment
-/Triangulation_3/test/Triangulation_3/color
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/point_location_dynamic
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_construction
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_dual
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_insertion
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_iso_verts
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_overlay
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_removal
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_tags
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_dispatching
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_vert_ray_shoot_vert_segments
-/Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone
-/Triangulation_3/examples/Triangulation_3/info_insert_with_pair_iterator
-/Triangulation_3/examples/Triangulation_3/info_insert_with_pair_iterator_regular
-/Triangulation_3/examples/Triangulation_3/info_insert_with_transform_iterator
-/Triangulation_3/examples/Triangulation_3/info_insert_with_zip_iterator
-/Triangulation_2/examples/Triangulation_2/adding_handles
-/Triangulation_2/examples/Triangulation_2/colored_face
-/Triangulation_2/examples/Triangulation_2/constrained
-/Triangulation_2/examples/Triangulation_2/constrained_hierarchy_plus
-/Triangulation_2/examples/Triangulation_2/constrained_plus
-/Triangulation_2/examples/Triangulation_2/hierarchy
-/Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_2
-/Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_regular_2
-/Triangulation_2/examples/Triangulation_2/info_insert_with_transform_iterator_2
-/Triangulation_2/examples/Triangulation_2/info_insert_with_zip_iterator_2
-/Triangulation_2/examples/Triangulation_2/polygon_triangulation
-/Triangulation_2/examples/Triangulation_2/print_cropped_voronoi
-/Triangulation_2/examples/Triangulation_2/terrain
-/Triangulation_2/examples/Triangulation_2/triangulation_prog1
-/Triangulation_2/examples/Triangulation_2/voronoi
+/Arrangement_on_surface_2/examples/Arrangement_on_surface_2/polyline_example/polylines_illustration.synctex.gz
+/Arrangement_on_surface_2/examples/Arrangement_on_surface_2/polyline_example/polylines_illustration.fdb_latexmk
+/Arrangement_on_surface_2/examples/Arrangement_on_surface_2/polyline_example/polylines_illustration.fls
+/Arrangement_on_surface_2/examples/Arrangement_on_surface_2/polyline_construction_tests
+/Arrangement_on_surface_2/examples/Arrangement_on_surface_2/polylines-WIP-dror
+/Arrangement_on_surface_2/examples/Arrangement_on_surface_2/polylines-WIP
