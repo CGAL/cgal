@@ -9,6 +9,8 @@
  */
 #include <cmath>
 #include <CGAL/number_type_basic.h>
+#include <CGAL/assertions.h>
+#include <limits>
 
 #define CGAL_ANGLE_ST_DEV_DIVIDER 3.0
 
@@ -66,6 +68,12 @@ public:
   void operator()(int number_of_points,
                   double cone_angle,
                   OutputIterator out_it) const {
+    if(cone_angle <= 0.0) {
+      CGAL_warning(false
+                   && "Warning: cone angle smaller than or equal to zero will be assigned to epsilon!");
+      cone_angle = (std::numeric_limits<double>::epsilon)();
+    }
+
     const double golden_ratio = 3.0 - std::sqrt(5.0);
 
     if(uniform) {
@@ -141,6 +149,12 @@ public:
   void operator()(int number_of_points,
                   double cone_angle,
                   OutputIterator out_it) const {
+    if(cone_angle <= 0.0) {
+      CGAL_warning(false
+                   && "Warning: cone angle smaller than or equal to zero will be assigned to epsilon!");
+      cone_angle = (std::numeric_limits<double>::epsilon)();
+    }
+
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
@@ -207,6 +221,12 @@ public:
   void operator()(int number_of_points,
                   double cone_angle,
                   OutputIterator out_it) const {
+    if(cone_angle <= 0.0) {
+      CGAL_warning(false
+                   && "Warning: cone angle smaller than or equal to zero will be assigned to epsilon!");
+      cone_angle = (std::numeric_limits<double>::epsilon)();
+    }
+
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
     const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
