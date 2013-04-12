@@ -38,9 +38,6 @@
 
 //#define CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
 
-// Debugging
-//#define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-
 // Optimizers
 //#define CGAL_MESH_3_DEMO_DISABLE_ODT
 //#define CGAL_MESH_3_DEMO_DISABLE_LLOYD
@@ -74,7 +71,7 @@
 # include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
   // ==========================================================================
-  // Concurrency activation
+  // Verbose
   // ==========================================================================
 
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
@@ -107,6 +104,8 @@
 
   // For abortion profiling, etc.
 # define CGAL_CONCURRENT_MESH_3_PROFILING
+  // Debugging
+//# define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
 
 
 // ==========================================================================

@@ -398,7 +398,11 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "==== Facet refinement: " << facet_ref_time << " seconds ===="
             << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_time", facet_ref_time);
+    // If it's parallel but the refinement is forced to sequential, we don't
+    // output the value
+#   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_scan_time", cell_scan_time);
+#   endif
 # endif
 #endif
 
@@ -430,7 +434,11 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "==== Cell refinement: " << cell_ref_time << " seconds ====" 
             << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refin_time", cell_ref_time);
+    // If it's parallel but the refinement is forced to sequential, we don't
+    // output the value
+#   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_scan_time", cell_scan_time);
+#   endif
 # endif
 #endif
   

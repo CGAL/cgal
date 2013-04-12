@@ -683,7 +683,11 @@ scan_triangulation_impl()
   std::cerr << "==== Cell scan: " << cell_scan_time << " seconds ====" 
             << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+    // If it's parallel but the refinement is forced to sequential, we don't
+    // output the value
+#   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
   CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_scan_time", cell_scan_time);
+#   endif
 # endif
   std::cerr << "Refining... ";
 #endif

@@ -45,7 +45,7 @@ namespace po = boost::program_options;
 // BENCHMARK GENERAL PARAMETERS
 // ==========================================================================
 
-//#define BENCHMARK_WITH_1_TO_MAX_THREADS
+#define BENCHMARK_WITH_1_TO_MAX_THREADS
 //#define MESH_3_POLYHEDRON_WITH_FEATURES
 //#define MESH_3_IMPLICIT_WITH_FEATURES
 //#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
@@ -91,7 +91,7 @@ const int     TET_SHAPE                = 3;
 //#define CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE // not recommended
 
   // ==========================================================================
-  // Concurrency activation
+  // Verbose
   // ==========================================================================
 
 # define CGAL_CONCURRENT_MESH_3_VERBOSE
@@ -129,6 +129,7 @@ const int     TET_SHAPE                = 3;
 
   // For profiling, etc.
 # define CGAL_CONCURRENT_MESH_3_PROFILING
+# define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
 
   // ==========================================================================
   // TBB
@@ -955,7 +956,7 @@ int main()
 #ifdef CONCURRENT_MESH_3
 # ifdef BENCHMARK_WITH_1_TO_MAX_THREADS
     for(num_threads = 1 ; 
-          num_threads <= task_scheduler_init::default_num_threads() ; 
+          num_threads <= tbb::task_scheduler_init::default_num_threads() ; 
           ++num_threads)
 # endif
     /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ;
