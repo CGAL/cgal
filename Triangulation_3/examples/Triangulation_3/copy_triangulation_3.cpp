@@ -40,8 +40,8 @@ int main()
 
   DT3_epic dt3_epic(points.begin(), points.end());
   DT3_epec dt3_epec;
-  dt3_epec.infinite_vertex() = 
-    dt3_epec.tds().copy_tds( dt3_epic.tds(),dt3_epic.infinite_vertex(), Convert_vertex(), Convert_cell() );
+  dt3_epec.set_infinite_vertex( 
+    dt3_epec.tds().copy_tds( dt3_epic.tds(),dt3_epic.infinite_vertex(), Convert_vertex(), Convert_cell() ) );
 
   CGAL_assertion( dt3_epec.is_valid() );
 }

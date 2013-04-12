@@ -91,7 +91,7 @@ void make_one_run(const char* filename){
   
 //copy triangulation for familly alpha-shape
   WDT T1;
-  T1.infinite_vertex() = T1.tds().copy_tds( wfixed_as.tds(), wfixed_as.infinite_vertex() );
+  T1.set_infinite_vertex( T1.tds().copy_tds( wfixed_as.tds(), wfixed_as.infinite_vertex() ) );
   std::cout << "Build familly weighted alpha complex" << std::endl;
   time.start();
   WAS w_as(T1,0,WAS::GENERAL);
@@ -102,7 +102,7 @@ void make_one_run(const char* filename){
 
   //copy triangulation for familly alpha-shape
   WDT_f T1f;
-  T1f.infinite_vertex() = T1f.tds().copy_tds(wfixed_as.tds(),wfixed_as.infinite_vertex());
+  T1f.set_infinite_vertex( T1f.tds().copy_tds(wfixed_as.tds(),wfixed_as.infinite_vertex()) );
   
   std::cout << "Build familly filtered weighted alpha complex" << std::endl;
   time.start();
