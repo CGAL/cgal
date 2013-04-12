@@ -75,6 +75,7 @@ which is:
 is achieved. 
 <LI>`CGAL::ALL_VERTICES_FROZEN` when all vertices have been frozen, when the 
 `do_freeze` parameter is set to true.
+<LI>`CGAL::CANT_IMPROVE_ANYMORE`when most vertices are frozen, and no better convergence can be reached.
 </UL> 
 
 \cgalHeading{Example}
