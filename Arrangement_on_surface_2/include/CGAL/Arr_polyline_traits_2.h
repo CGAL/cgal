@@ -1169,8 +1169,7 @@ public:
   public:
     /*! Constructor. */
     Construct_curve_2 (const Segment_traits_2* seg_traits) :
-      m_seg_traits(seg_traits)
-    {}
+      m_seg_traits(seg_traits) {}
 
     /*! Returns an polyline connecting the two given endpoints.
      * \param p The first point.
@@ -1266,8 +1265,12 @@ public:
     }
 
     /*! Construction implementation from a range of segments.
-     *  \pre The segments form a polyline, that is the end of the i-th segment
-     *       is the start of the (i+1)-th segment.
+     *  \pre The segments form a polyline, that is one of the ends of the i-th
+     *       segment should coincide with one of the ends of the (i+1)-th
+     *       segment. NOTE: The segments are not assumed to have any
+     *       orientation. The end points are extracted using the
+     *       Construct_max_vertex_2 Construct_min_vertex_2 functors which are
+     *       provided by the SegmentTraits class.
      */
     template <typename InputIterator>
     Curve_2 constructor_impl (InputIterator begin, InputIterator end,
@@ -1455,11 +1458,11 @@ public:
     /*! Returns an x-monotone polyline from a range of segments.
      * \param begin An iterator pointing to the first segment in the range.
      * \param end An iterator pointing to the past-the-end segment in the range.
-     * \pre The range is not empty.
+     * \pre The range contains at least one segment.
      * \pre One endpoint of the i-th segment is an endpoint of the
      *      (i+1)th segment.
-     * \pre The sequence of segments in the range forms a weak
-     *      x-monotone polyline.
+     * \pre The sequence of segments in the range forms a weak x-monotone
+     *      polyline.
      * \pre The container should support bidirectional iteration.
      * \post The resulting x-monotone polyline directed from left to
      *      right.
@@ -1469,23 +1472,28 @@ public:
     X_monotone_curve_2 constructor_impl(InputIterator begin, InputIterator end,
                                        boost::false_type) const
     {
-      CGAL_precondition(begin != end);
+      CGAL_precondition_msg(begin != end,
+                            "Input range of segments has to contain at least"
+                            "one segment");
 
+      // Functors that have to be used always
       typename Segment_traits_2::Construct_min_vertex_2 min_v =
         m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_v =
         m_seg_traits->construct_max_vertex_2_object();
+      typename Segment_traits_2::Equal_2 equal = m_seg_traits->equal_2_object();
 
       CGAL_precondition_code
         (
-         typename Segment_traits_2::Equal_2 equal =
-           m_seg_traits->equal_2_object();
+         // A functor which is used only when validity tests of the
+         // input have to be ran.
          typename Segment_traits_2::Is_vertical_2 is_vertical =
            m_seg_traits->is_vertical_2_object();
 
          InputIterator curr = begin;
          // Ensure that the first segment does not degenerate to a point.
-         CGAL_precondition(!equal(min_v(*curr), max_v(*curr)));
+         CGAL_precondition_msg(!equal(min_v(*curr), max_v(*curr)),
+                               "Cannot construct a degenerated segment");
 
          InputIterator next = curr;
 
@@ -1527,10 +1535,6 @@ public:
       if (std::distance(begin, end) >= 2) {
         InputIterator second = begin;
         ++second;
-        // TODO: This causes problems when compiled in RELEASE mode.
-        //       The problem seems to come from the fact that "equal" is
-        //       instantiated in a CGAL_precondition_code() block! Thus,
-        //       when compiled in Release mode the magic doesn't work.
         rev = equal(min_v(*begin), max_v(*second));
       }
       // The following statement assumes that the begin (and end) iterators
