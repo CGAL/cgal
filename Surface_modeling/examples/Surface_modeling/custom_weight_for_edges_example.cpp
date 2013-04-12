@@ -1,7 +1,6 @@
-#include <CGAL/Deform_mesh.h>
-
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Deform_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Eigen_solver_traits.h>
 
@@ -9,17 +8,13 @@
 #include <map>
 #include <boost/property_map/property_map.hpp>
 
-#include <Eigen/SuperLUSupport>
-  
-typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
-
 typedef CGAL::Simple_cartesian<double>   Kernel;
 typedef CGAL::Polyhedron_3<Kernel>       Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator  	  vertex_iterator; 
+typedef boost::graph_traits<Polyhedron>::vertex_iterator  	  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor  	  edge_descriptor;
-typedef boost::graph_traits<Polyhedron>::edge_iterator        edge_iterator; 
+typedef boost::graph_traits<Polyhedron>::edge_iterator        edge_iterator;
 
 typedef std::map<vertex_descriptor, std::size_t>   Internal_vertex_map;
 typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
@@ -38,12 +33,19 @@ struct Weights_from_map
   std::map<edge_descriptor, double>* weight_map;
 };
 
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP, Weights_from_map> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP, Weights_from_map> Deform_mesh;
 
 int main()
 {
   Polyhedron mesh;
-  std::ifstream("models/plane.off") >> mesh;
+  std::ifstream input("models/plane.off");
+
+  if (input)
+    input >> mesh;
+  else{
+    std::cerr << "Cannot open  models/plane.off\n";
+    return 1;
+  }
 
   std::map<edge_descriptor, double> weight_map;
   // Store all weights
@@ -52,10 +54,10 @@ int main()
   {
     weight_map[*eb] = 1.0; // store your precomputed weights
   }
-  
+
   Internal_vertex_map vertex_index_map;
   Internal_edge_map   edge_index_map;
-  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map), 5, 1e-4, Weights_from_map(&weight_map)); 
+  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map), 5, 1e-4, Weights_from_map(&weight_map));
 
   // Deform mesh as you wish
 }
