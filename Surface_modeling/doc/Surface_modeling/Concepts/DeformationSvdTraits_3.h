@@ -6,10 +6,10 @@
 The fact that some basic operations are hidden behind a function is to allow to benefit from optimizations like expression template from libraries used
 to implement a model of this concept.
 
-\cgalHasModel `CGAL::Eigen_SVD_helper_3`
+\cgalHasModel `CGAL::Deformation_Eigen_Svd_traits_3`
 
 */
-class SVDHelper_3{
+class DeformationSvdTraits_3{
 public:
 /// \name Types 
 /// @{
@@ -17,14 +17,14 @@ public:
   typedef Hidden_type Matrix;
   /// <I>3x1</I> vector type with copy constructor
   typedef Hidden_type Vector;
-  /// SVD factorization solver for SVDHelper_3::Matrix
+  /// SVD factorization solver for DeformationSvdTraits_3::Matrix
   typedef Hidden_type Solver;
 /// @} 
 
 /// \name Creation
 /// @{
 /// Default constructor.
-  SVDHelper_3();
+  DeformationSvdTraits_3();
 /// @}
 
 /// \name Operations 
