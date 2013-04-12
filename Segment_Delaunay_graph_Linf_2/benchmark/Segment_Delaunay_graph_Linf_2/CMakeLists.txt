@@ -24,6 +24,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "sdg-creation-time-hv.cpp" )
   create_single_source_cgal_program( "sdg-creation-time.cpp" )
   create_single_source_cgal_program( "benchmark-linf.cpp" )
+  create_single_source_cgal_program( "benchmark-linf-hv.cpp" )
   create_single_source_cgal_program( "benchmark-l2.cpp" )
 
 else()
