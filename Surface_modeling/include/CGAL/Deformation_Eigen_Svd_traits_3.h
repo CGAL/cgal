@@ -1,5 +1,5 @@
-#ifndef CGAL_EIGEN_SVD_HELPER_3_H
-#define CGAL_EIGEN_SVD_HELPER_3_H
+#ifndef CGAL_DEFORMATION_EIGEN_SVD_TRAITS_3_H
+#define CGAL_DEFORMATION_EIGEN_SVD_TRAITS_3_H
 
 #include <Eigen/Eigen>
 #include <Eigen/SVD>
@@ -8,8 +8,8 @@ namespace CGAL {
 /// \ingroup PkgSurfaceModeling
 /// A wrapper class to compute the SVD factorization of a 3x3 Matrix using `Eigen` library. The internal solver is  `Eigen::JacobiSVD<>`.
 ///
-/// \cgalModels `SVDHelper_3`
-class Eigen_SVD_helper_3{
+/// \cgalModels `DeformationSvdTraits_3`
+class Deformation_Eigen_Svd_traits_3{
 public:
 
   /// \cond SKIP_FROM_MANUAL
@@ -112,4 +112,4 @@ public:
 };
 
 }//namespace CGAL
-#endif // CGAL_EIGEN_SVD_HELPER_3_H
+#endif // CGAL_DEFORMATION_EIGEN_SVD_TRAITS_3_H

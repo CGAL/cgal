@@ -43,7 +43,7 @@
 #if defined(USE_FAST_SVD_EXPERIMENTAL)
   #include <CGAL/internal/Surface_modeling/auxiliary/Eigen_with_fast_SVD_helper_3.h>
 #else
-  #include <CGAL/Eigen_SVD_helper_3.h>  // for 3x3 SVD solver
+  #include <CGAL/Deformation_Eigen_Svd_traits_3.h>  // for 3x3 SVD solver
 #endif
 
   #if defined(CGAL_SUPERLU_ENABLED)
@@ -102,8 +102,8 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  ///            CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
  ///            Eigen::COLAMDOrdering<int> >  >
  /// \endcode
- /// @tparam SVD a model of SVDHelper_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
- /// `Eigen_SVD_helper_3` is provided as default parameter.
+ /// @tparam SVD a model of DeformationSvdTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
+ /// `Deformation_Eigen_Svd_traits_3` is provided as default parameter.
 template <
   class P, 
   class VIM, 
@@ -161,13 +161,13 @@ public:
   typedef typename Default::Get<
     SVD,
   #if defined(CGAL_EIGEN3_ENABLED)
-    Eigen_SVD_helper_3
+    Deformation_Eigen_Svd_traits_3
   #else
     SVD // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type SVD_helper;
 #else
-  typedef SVD SVD_helper; /**< model of SVDHelper_3 */
+  typedef SVD SVD_helper; /**< model of DeformationSvdTraits_3 */
 #endif
 
   /// @}
