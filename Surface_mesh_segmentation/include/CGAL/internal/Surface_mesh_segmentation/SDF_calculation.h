@@ -67,9 +67,10 @@ private:
 
   Disk_samples_list disk_samples;
 
+  GeomTraits traits;
   bool use_minimum_segment;
   double multiplier_for_segment;
-  GeomTraits traits;
+
 
   typename GeomTraits::Angle_3                         angle_functor;
   typename GeomTraits::Construct_scaled_vector_3       scale_functor;
@@ -134,16 +135,16 @@ private:
 
     Plane plane(center, normal);
     Vector v1 = plane.base1(), v2 = plane.base2();
-    v1 = scale_functor(v1, static_cast<GeomTraits::FT>(1.0 / CGAL::sqrt(
+    v1 = scale_functor(v1, static_cast<typename GeomTraits::FT>(1.0 / CGAL::sqrt(
                          v1.squared_length())));
-    v2 = scale_functor(v2, static_cast<GeomTraits::FT>(1.0 / CGAL::sqrt(
+    v2 = scale_functor(v2, static_cast<typename GeomTraits::FT>(1.0 / CGAL::sqrt(
                          v2.squared_length())));
 
     std::vector<std::pair<double, double> > ray_distances;
     ray_distances.reserve(disk_samples.size());
 
-    const GeomTraits::FT length_of_normal = static_cast<GeomTraits::FT>( 1.0 / tan(
-        cone_angle / 2.0) );
+    const typename GeomTraits::FT length_of_normal =
+      static_cast<typename GeomTraits::FT>( 1.0 / tan(cone_angle / 2.0) );
     normal = scale_functor(normal, length_of_normal);
 
     for(Disk_samples_list::const_iterator sample_it = disk_samples.begin();
@@ -151,8 +152,8 @@ private:
       bool is_intersected, intersection_is_acute;
       double min_distance;
       Vector disk_vector = sum_functor(
-                             scale_functor(v1, static_cast<GeomTraits::FT>(sample_it->get<0>())),
-                             scale_functor(v2, static_cast<GeomTraits::FT>(sample_it->get<1>())) );
+                             scale_functor(v1, static_cast<typename GeomTraits::FT>(sample_it->get<0>())),
+                             scale_functor(v2, static_cast<typename GeomTraits::FT>(sample_it->get<1>())) );
       Vector ray_direction = sum_functor(normal, disk_vector);
 
       Ray ray(center, ray_direction);
