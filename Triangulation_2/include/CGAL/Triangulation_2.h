@@ -402,7 +402,7 @@ protected:
 public:
   Face_handle
   inexact_locate(const Point& p,
-                 Face_handle start, 
+                 Face_handle start = Face_handle(), 
                  int max_num_cells = 
                  CGAL_T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
 
