@@ -131,8 +131,8 @@ public:
          qx, qy, qz,
          b);
 
-      if(is_indeterminate(ub)) return Base::operator()(s,b);
-      else return ub.sup();
+      if(!is_indeterminate(ub)) return ub.sup();
+      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     }
     return Base::operator()(s,b);
   }
@@ -174,8 +174,8 @@ public:
          qx, qy, qz,
          b);
 
-      if(is_indeterminate(ub)) return Base::operator()(r,b);
-      else return ub.sup();
+      if( !is_indeterminate(ub) ) return ub.sup();
+      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     }
     return Base::operator()(r,b);
   }
