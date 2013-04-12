@@ -1,6 +1,6 @@
 // standard includes
 
-//#define CGAL_SDG_VERBOSE 
+//#define CGAL_SDG_VERBOSE
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
