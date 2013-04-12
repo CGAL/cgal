@@ -550,6 +550,17 @@ Face_handle
 locate(const Point& query, 
 Face_handle f = Face_handle()) const; 
 
+/*!
+Same as above but uses inexact predicates. 
+This function returns a `Face_handle` which is a good approximation of the exact
+location of `query`, while being faster. Note that it may return a `Face_handle` of which 
+`query` is not in the interior. It can be used to provide a good `Face_handle start` for
+the above `locate(const Point &, Face_handle) const` function.
+*/
+Face_handle
+inexact_locate(const Point & query, 
+Face_handle start = Face_handle()) const;
+
 /*! 
 Same as above. Additionally, the parameters `lt` 
 and `li` 
