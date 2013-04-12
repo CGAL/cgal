@@ -155,6 +155,12 @@ public:
 
 
   class Construct_min_vertex_2 {
+    /*
+     * TODO: - Shouldn't there be an implementation for non-x-mono polylines?
+     *       - Do we assert that an x-mono poly is oriented from left to right?
+     *         In general we can find the min/max vertex of a (x-mono) poly
+     *         using the Construct_min_vertex_2 of the segment traits class.
+     */
   protected:
     /*! The segment traits (in case it has state) */
     const Segment_traits_2* m_seg_traits;
