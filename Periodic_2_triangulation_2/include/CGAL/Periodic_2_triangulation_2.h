@@ -1429,7 +1429,7 @@ private:
   /// edge_length_threshold.
   Too_long_edges_map _too_long_edges;
   /// Number of edges that are too long
-  unsigned int _too_long_edge_counter;
+  size_t _too_long_edge_counter;
 
   /// map of offsets for periodic copies of vertices
   Virtual_vertex_map _virtual_vertices;
@@ -1795,7 +1795,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
 
   result &= is_1_cover() == _too_long_edges.empty();
   CGAL_triangulation_assertion(result);
-  unsigned int too_long_edges = 0;
+  size_t too_long_edges = 0;
   for (Too_long_edges_map_it it = _too_long_edges.begin(); it
        != _too_long_edges.end(); ++it)
     {

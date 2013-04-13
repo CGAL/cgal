@@ -68,17 +68,21 @@ template class CGAL::Periodic_2_triangulation_hierarchy_2<PDT3>;
 
 int main()
 {
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT1 > P2T2_1;
   test<P2T2_1>(false);
   test_delaunay<P2T2_1>();
 
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT2 > P2T2_2;
   test<P2T2_2>(true);
   test_delaunay<P2T2_2>();
 
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT3 > P2T2_3;
   test<P2T2_3>(true);
   test_delaunay<P2T2_3>();
 
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   return 0;
 }
