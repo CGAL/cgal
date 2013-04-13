@@ -398,7 +398,7 @@ private:
     Point_2 points[1];
     Direction_2 dinc, dout;
 
-    if (are_parallel(p, q)) {
+    if ((not have_common_endp) and are_parallel(p, q)) {
       // here p and q are parallel,
       // but not on the same supporting line (precondition)
 
