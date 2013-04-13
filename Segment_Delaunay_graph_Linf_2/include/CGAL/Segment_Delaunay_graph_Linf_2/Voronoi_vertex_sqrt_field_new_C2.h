@@ -807,6 +807,12 @@ private:
       bool bqrset(false);
       bool brpset(false);
 
+      CGAL_SDG_DEBUG(std::cout
+          << "debug: vsqr common pq=" << have_common_pq
+          << " qr=" << have_common_qr
+          << " rp=" << have_common_rp
+          << std::endl;);
+
       Polychainline_2 bpq;
       if ((is_p_hv and is_q_hv and have_common_pq) ) {
         bpq = bisector_linf(sp, sq);
@@ -843,10 +849,16 @@ private:
           or (brpset and bpqset));
 
       if (bpqset and bqrset) {
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr SSS using bpq bqr" << std::endl;);
         vv = bpq.first_intersection_point_with(bqr);
       } else if (bqrset and brpset) {
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr SSS using bqr brp" << std::endl;);
         vv = bqr.first_intersection_point_with(brp);
       } else {
+        CGAL_SDG_DEBUG(std::cout
+            << "debug: vsqr SSS using brp bpq" << std::endl;);
         vv = brp.first_intersection_point_with(bpq);
       }
       CGAL_SDG_DEBUG(std::cout
