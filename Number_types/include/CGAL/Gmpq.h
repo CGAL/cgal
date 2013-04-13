@@ -88,14 +88,19 @@ template <> class Real_embeddable_traits< Gmpq >
       : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-          mpfr_t y;
-          mpfr_init2 (y, 53); /* Assume IEEE-754 */
-          mpfr_set_q (y, x.mpq(), GMP_RNDD);
-          double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
-          mpfr_set_q (y, x.mpq(), GMP_RNDU);
-          double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
-          mpfr_clear (y);
-          return std::pair<double, double>(i, s);
+	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+	  int r = mpfr_set_q (y, x.mpq(), MPFR_RNDA);
+	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+	  if (r == 0 && !isinf (i))
+	    return std::pair<double, double>(i, i);
+	  else
+	    {
+	      double s = nextafter (i, 0);
+	      if (i < 0)
+		return std::pair<double, double>(i, s);
+	      else
+		return std::pair<double, double>(s, i);
+	    }
         }
     };
 };
