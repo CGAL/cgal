@@ -468,12 +468,14 @@ private:
             compute_linf_bisecting_direction(dirp, dirq) :
             - compute_linf_bisecting_direction(dirq, dirp) ;
 
+        CGAL_SDG_DEBUG(std::cout << "debug bisector_SS: " <<
+            "common endpoint case: dirp=" << dirp <<
+            " dirq=" << dirq << " d=" << d << std::endl;);
+
         points[0] = mid;
         dinc = -d;
         dout = d;
 
-        CGAL_SDG_DEBUG(std::cout << "debug bisector_SS " <<
-            "common endpoint case" << std::endl;);
       } else {
 
         // compute intersection point of two lines
