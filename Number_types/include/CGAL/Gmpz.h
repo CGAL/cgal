@@ -133,7 +133,7 @@ public:
 	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
 	  int r = mpfr_set_z (y, x.mpz(), MPFR_RNDA);
 	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
-	  if (r == 0 && !isinf (i))
+	  if (r == 0 && is_finite (i))
 	    return std::pair<double, double>(i, i);
 	  else
 	    {
