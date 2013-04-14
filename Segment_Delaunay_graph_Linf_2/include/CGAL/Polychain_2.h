@@ -252,7 +252,8 @@ public:
 
 template <class Traits_P, class Container_P>
 std::ostream&
-operator<<(std::ostream &os, const Polychainray_2<Traits_P,Container_P>& p)
+operator<<(std::ostream &os,
+           const Polychainray_2<Traits_P,Container_P>& p)
 {
   typename Polychainray_2<Traits_P,Container_P>::Vertex_const_iterator i;
 
@@ -366,13 +367,12 @@ public:
     operator-() const {
       // first reverse list of points of polychainline
 
-      //CGAL_SDG_DEBUG(std::cout << "debug pcl_reverse of " << *this << std::endl;);
-
       std::vector<typename Traits_P::Point_2> reverse;
 
       unsigned int npts = this->size();
 
-      CGAL_SDG_DEBUG(std::cout << "pcl_reverse npts=" << npts << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "pcl_reverse npts="
+          << npts << std::endl;);
 
       reverse.resize(npts);
 
@@ -409,8 +409,6 @@ public:
                       reverse.end(),
                       this->get_incoming());
 
-      //CGAL_SDG_DEBUG(std::cout << "pcl_reverse res= " << pclreverse << std::endl;);
-
       return pclreverse;
     }
 
@@ -426,10 +424,9 @@ public:
       typedef typename Traits_P::Ray_2      Ray_2;
       typedef typename Traits_P::Segment_2  Segment_2;
 
-//#if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection entering this="
-                                    << *this << " pcl=" << pcl << std::endl;);
-//#endif
+      CGAL_SDG_DEBUG(std::cout
+          << "debug first_intersection entering this="
+          << *this << " pcl=" << pcl << std::endl;);
 
       typedef typename
 	  Polychainline_2<Traits_P,Container_P>::
@@ -439,17 +436,12 @@ public:
       typedef typename std::vector<typename Traits_P::Segment_2>::
                const_iterator SI;
 
-#if 0
-      CGAL_SDG_DEBUG(std::cout << "debug first_intersection thissize=" << this->size()
-                                    << " pclsize=" << pcl.size() << std::endl;);
-#endif
-
       CGAL_assertion( this->size() > 0 );
       CGAL_assertion( pcl.size() > 0 );
 
 #if 0
       CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
-                                    << "creating empty vectors" << std::endl;);
+          << "creating empty vectors" << std::endl;);
 #endif
 
       // create two empty vectors for storing the segments
@@ -572,15 +564,16 @@ public:
 #endif
 
           result = CGAL::intersection(*sithis, *sipcl);
-          if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+          if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result))
+          {
             return *ipoint;
           }
         }
 
 #if 0
         CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
-                << "trying segment " << *sithis
-                       << " with ray " << rayoutpcl << std::endl;);
+            << "trying segment " << *sithis
+            << " with ray " << rayoutpcl << std::endl;);
 #endif
 
         result = CGAL::intersection(*sithis, rayoutpcl);
@@ -632,8 +625,9 @@ public:
         return *ipoint;
       }
 
-      CGAL_SDG_DEBUG(std::cout << "debug error: no intersection found for "
-                     << "this=" << *this << " pcl=" << pcl << std::endl;);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug error: no intersection found for "
+          << "this=" << *this << " pcl=" << pcl << std::endl;);
 
       CGAL_assertion(false);
 
@@ -706,7 +700,8 @@ public:
 
 template <class Traits_P, class Container_P>
 std::ostream&
-operator<<(std::ostream &os, const Polychainline_2<Traits_P,Container_P>& p)
+operator<<(std::ostream &os,
+           const Polychainline_2<Traits_P,Container_P>& p)
 {
   typename Polychainline_2<Traits_P,Container_P>::Vertex_const_iterator i;
 
