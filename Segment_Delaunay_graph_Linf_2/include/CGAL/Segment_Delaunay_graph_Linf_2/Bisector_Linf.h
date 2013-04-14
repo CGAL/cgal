@@ -466,14 +466,15 @@ private:
         Direction_2 d =
           dirq.counterclockwise_in_between(dirp, -dirp) ?
             compute_linf_bisecting_direction(dirp, dirq) :
-            - compute_linf_bisecting_direction(dirq, dirp) ;
+            compute_linf_bisecting_direction(dirq, dirp) ;
 
         CGAL_SDG_DEBUG(std::cout << "debug bisector_SS: " <<
             "common endpoint case: dirp=" << dirp <<
             " dirq=" << dirq << " d=" << d << std::endl;);
 
+        /* philaris: the bisector is double */
         points[0] = mid;
-        dinc = -d;
+        dinc = d;
         dout = d;
 
       } else {
