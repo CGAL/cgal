@@ -456,6 +456,9 @@ private:
       // compute intersection point of two lines
       Point_2 mid;
 
+      bool is_mid_qsrc = is_psrc_qsrc or is_ptrg_qsrc;
+      bool is_mid_qtrg = is_psrc_qtrg or is_ptrg_qtrg;
+
       if (is_mid_psrc) {
         mid = p.source();
       } else if (is_mid_ptrg) {
