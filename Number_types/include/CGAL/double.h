@@ -137,7 +137,6 @@ inline double sse2fabs(double a)
   __m128d temp = _mm_set1_pd(a);
   
   temp = _mm_and_pd(temp, absMask.m);
-  // return _mm_cvtsd_f64 (temp);
   _mm_store_sd(&a, temp);
   return a;
 }
@@ -169,16 +168,11 @@ template <> class Real_embeddable_traits< double >
       : public std::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
-#if defined __GNUC__ && defined __GNUC_MINOR__ && \
-    __GNUC__ * 100 + __GNUC_MINOR__ >= 403
-	  return __builtin_isfinite (x);
-#elif defined CGAL_CFG_IEEE_754_BUG
+#ifdef CGAL_CFG_IEEE_754_BUG
           Type d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_double( p->c.H );
 #elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
-	  // TODO: Unless people activate trapping maths,
-	  // the second test is sufficient.
           return (x == x) && (is_valid(x-x));
 #else
           return (x != std::numeric_limits<Type>::infinity())
@@ -212,7 +206,7 @@ inline
 std::pair<double, double>
 split_numerator_denominator(double d)
 {
-  // Note that it could be optimized.
+  // Note that it could probably be optimized.
   double num = d;
   double den = 1.0;
   while (std::ceil(num) != num)
