@@ -145,7 +145,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/no-raid/opt/intel/composer_xe_2013.1.117/bin/intel64/icpc
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING= -fp-model strict
+CMAKE_CXX_FLAGS:STRING=-w1 -fp-model strict
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
@@ -1201,7 +1201,7 @@ Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_LIBRARY_DIRS
 Boost_LIBRARY_DIRS-ADVANCED:INTERNAL=1
 //The library version string for boost libraries
-Boost_LIB_VERSION:INTERNAL=1_52
+Boost_LIB_VERSION:INTERNAL=1_54
 //Whether the Boost SYSTEM library found
 Boost_SYSTEM_FOUND:INTERNAL=ON
 //ADVANCED property for variable: Boost_SYSTEM_LIBRARY
@@ -1219,7 +1219,7 @@ Boost_THREAD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_THREAD_LIBRARY_RELEASE
 Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //The version number for boost libraries
-Boost_VERSION:INTERNAL=105200
+Boost_VERSION:INTERNAL=105400
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/home/lrineau/CGAL/boost/boost-release-branch
 CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/home/lrineau/CGAL/boost/boost-release-branch/stage-intel/lib/libboost_thread-mt.so;/home/lrineau/CGAL/boost/boost-release-branch/stage-intel/lib/libboost_system-mt.so
@@ -1288,7 +1288,7 @@ CGAL_Core_LIBRARY-ADVANCED:INTERNAL=1
 //Variable hidden from user
 CGAL_Core_LIBRARY_INSTALLED:INTERNAL=/usr/local/lib/libCGAL_Core.so
 //Variable hidden from user
-CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR
+CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR
 CGAL_EXECUTABLE_TARGETS:INTERNAL=
 //Variable hidden from user
 CGAL_EXT_LIB_BLAS_PREFIX:INTERNAL=BLAS
@@ -1372,7 +1372,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=2
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=8
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=9
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
 CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
@@ -1503,7 +1503,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL= -fp-model strict
+CONFIG_CXX_FLAGS:INTERNAL=-w1 -fp-model strict
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding GMP
