@@ -20,6 +20,25 @@ namespace CGAL
 namespace internal
 {
 
+template<class ID>
+struct SkipPrimitiveFunctor {
+
+  bool operator()(const ID& skip_me) const {
+    return skip_me == skip;
+  }
+
+  SkipPrimitiveFunctor(const ID& skip) : skip(skip) { }
+
+  ID skip;
+};
+
+template<class ID>
+struct FirstIntersectionVisitor {
+
+  void operator()(const ID& /*closest*/, double /*distance*/) const {
+  }
+};
+
 /**
  * @brief Responsible for calculating Shape Diameter Function over surface of the mesh.
  *
@@ -29,8 +48,7 @@ namespace internal
  */
 template <
 class Polyhedron,
-      class GeomTraits,
-      class DiskSampling = Vogel_disk_sampling<boost::tuple<double, double, double> >
+      class GeomTraits = typename Polyhedron::Traits
       >
 class SDF_calculation
 {
@@ -60,17 +78,11 @@ private:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 
+  typedef Vogel_disk_sampling<boost::tuple<double, double, double> >
+  Default_sampler;
 // member variables
 private:
-  double cone_angle;
-  int    number_of_rays;
-
-  Disk_samples_list disk_samples;
-
   GeomTraits traits;
-  bool use_minimum_segment;
-  double multiplier_for_segment;
-
 
   typename GeomTraits::Angle_3                         angle_functor;
   typename GeomTraits::Construct_scaled_vector_3       scale_functor;
@@ -79,12 +91,19 @@ private:
   typename GeomTraits::Construct_unit_normal_3         unit_normal_functor;
   typename GeomTraits::Construct_translated_point_3    translated_point_functor;
   typename GeomTraits::Construct_centroid_3            centroid_functor;
+
+  Tree tree;
+
 public:
   /**
-   * Assign default values to member variables.
+   * Construct AABB tree with a mesh.
+   * @param mesh `CGAL Polyhedron` on which AABB tree constructed
+   * @param build_kd_tree requirement on internal kd-tree (it is only required if find_closest_with_AABB_distance is planned to use)
+   * @param traits trait object
    */
-  SDF_calculation(GeomTraits traits)
-    : traits(traits), use_minimum_segment(false), multiplier_for_segment(1),
+  SDF_calculation(const Polyhedron& mesh, bool build_kd_tree = false,
+                  GeomTraits traits = GeomTraits())
+    : traits(traits),
       angle_functor(traits.angle_3_object()),
       scale_functor(traits.construct_scaled_vector_3_object()),
       sum_functor(traits.construct_sum_of_vectors_3_object()),
@@ -92,47 +111,145 @@ public:
       unit_normal_functor(traits.construct_unit_normal_3_object()),
       translated_point_functor(traits.construct_translated_point_3_object()),
       centroid_functor(traits.construct_centroid_3_object()) {
-  }
+    tree.insert(mesh.facets_begin(), mesh.facets_end());
+    tree.build();
 
-  /**
-   * Calculates SDF values for each facet, and stores them in @a sdf_values. Note that sdf values are neither smoothed nor normalized.
-   * @param mesh `CGAL Polyhedron` on which SDF values are computed
-   * @param cone_angle opening angle for cone, expressed in radians
-   * @param number_of_rays number of rays picked from cone for each facet
-   * @param[out] sdf_values `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   */
-  template <class FacetValueMap>
-  void calculate_sdf_values(const Polyhedron& mesh, double cone_angle,
-                            int number_of_rays, FacetValueMap sdf_values) {
-    this->cone_angle = cone_angle;
-    this->number_of_rays = number_of_rays;
-
-    disk_samples.clear();
-    DiskSampling()(number_of_rays, cone_angle, std::back_inserter(disk_samples));
-
-    Tree tree(mesh.facets_begin(), mesh.facets_end());
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      sdf_values[facet_it] = calculate_sdf_value_of_facet(facet_it, tree);
+    if(build_kd_tree) {
+      tree.accelerate_distance_queries();
     }
   }
 
-private:
   /**
-   * Calculates SDF value for parameter @a facet.
-   * @param facet
-   * @param tree AABB tree which is built from polyhedron
-   * @param samples sampled points from a unit-disk which are corresponds to rays picked from cone
-   * @return calculated SDF value
+   * Construct AABB tree with meshes inside interval.
+   * @tparam InputIterator Iterator over polyhedrons. Its value type is `pointer to polyhedron`.
+   * @param polyhedron_begin range begin
+   * @param polyhedron_end range past-the-end
+   * @param build_kd_tree requirement on internal kd-tree (it is only required if find_closest_with_AABB_distance is planned to use)
+   * @param traits trait object
    */
-  double calculate_sdf_value_of_facet(Facet_const_handle facet,
-                                      const Tree& tree) const {
-    const Point& p1 = facet->halfedge()->vertex()->point();
-    const Point& p2 = facet->halfedge()->next()->vertex()->point();
-    const Point& p3 = facet->halfedge()->prev()->vertex()->point();
-    Point center  = centroid_functor(p1, p2, p3);
-    Vector normal = unit_normal_functor(p2, p1, p3);
+  template<class InputIterator>
+  SDF_calculation(InputIterator polyhedron_begin, InputIterator polyhedron_end,
+                  bool build_kd_tree = false, GeomTraits traits = GeomTraits())
+    : traits(traits),
+      angle_functor(traits.angle_3_object()),
+      scale_functor(traits.construct_scaled_vector_3_object()),
+      sum_functor(traits.construct_sum_of_vectors_3_object()),
+      normal_functor(traits.construct_normal_3_object()),
+      unit_normal_functor(traits.construct_unit_normal_3_object()),
+      translated_point_functor(traits.construct_translated_point_3_object()),
+      centroid_functor(traits.construct_centroid_3_object()) {
+    for( ; polyhedron_begin != polyhedron_end; ++polyhedron_begin) {
+      tree.insert((*polyhedron_begin)->facets_begin(),
+                  (*polyhedron_begin)->facets_end());
+    }
+    tree.build();
 
+    if(build_kd_tree) {
+      tree.accelerate_distance_queries();
+    }
+  }
+
+  /**
+   * Calculates SDF values for each facet in a range, and stores them in @a sdf_values. Note that sdf values are neither smoothed nor normalized.
+   * @tparam FacetValueMap `WritablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @tparam InputIterator Iterator over polyhedrons. Its value type is `pointer to polyhedron`.
+   * @param facet_begin range begin
+   * @param facet_end range past-the-end
+   * @param cone_angle opening angle for cone, expressed in radians
+   * @param number_of_rays number of rays picked from cone for each facet
+   * @param[out] sdf_values
+   */
+  template <class FacetValueMap, class InputIterator, class DiskSampling>
+  void calculate_sdf_values(
+    InputIterator facet_begin,
+    InputIterator facet_end,
+    double cone_angle,
+    int number_of_rays,
+    FacetValueMap sdf_values,
+    DiskSampling disk_sampler) const {
+    Disk_samples_list disk_samples;
+    disk_sampler(number_of_rays, cone_angle, std::back_inserter(disk_samples));
+
+    for( ; facet_begin != facet_end; ++facet_begin) {
+      boost::optional<double> sdf_value = calculate_sdf_value_of_facet(facet_begin,
+                                          cone_angle, true, disk_samples);
+
+      if(sdf_value) {
+        sdf_values[facet_begin] = *sdf_value;
+      } else          {
+        sdf_values[facet_begin] =
+          0.0;  // no intersection is found, for now we are returning 0 not a special indicator
+      }
+    }
+  }
+
+  /**
+   * Overload for default sampling parameter
+   */
+  template <class FacetValueMap, class InputIterator>
+  void calculate_sdf_values(
+    InputIterator facet_begin,
+    InputIterator facet_end,
+    double cone_angle,
+    int number_of_rays,
+    FacetValueMap sdf_values) const {
+    calculate_sdf_values(facet_begin, facet_end, cone_angle, number_of_rays,
+                         sdf_values, Default_sampler());
+  }
+
+  /**
+   * Cast rays inside code located around normal with apex at center.
+   * Any encountered primitives are tested with `skip`, and accepted if `skip` returns false.
+   * For each ray, closest encountered primitive send to `visitor`.
+   *
+   * \note: normal should have unit length
+   */
+  template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor>
+  boost::optional<double> calculate_sdf_value_of_point(
+    Point center,
+    Vector normal,
+    SkipPrimitiveFunctor skip,
+    FirstIntersectionVisitor visitor,
+    double cone_angle,
+    int number_of_rays,
+    bool accept_if_acute) const {
+    return calculate_sdf_value_of_point(center, normal, skip, visitor, cone_angle,
+                                        number_of_rays, accept_if_acute,
+                                        Default_sampler() );
+  }
+
+  /**
+   * Overload for taking DiskSampling as template parameter
+   */
+  template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor, class DiskSampling>
+  boost::optional<double> calculate_sdf_value_of_point(
+    Point center,
+    Vector normal,
+    SkipPrimitiveFunctor skip,
+    FirstIntersectionVisitor visitor,
+    double cone_angle,
+    int number_of_rays,
+    bool accept_if_acute,
+    DiskSampling disk_sampler) const {
+    Disk_samples_list disk_samples;
+    disk_sampler(number_of_rays, cone_angle, std::back_inserter(disk_samples));
+
+    return calculate_sdf_value_of_point(center, normal, skip, visitor, cone_angle,
+                                        accept_if_acute, disk_samples);
+  }
+
+  /**
+   * Overload for directly taking sampled points from disk as parameter
+   */
+  template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor>
+  boost::optional<double> calculate_sdf_value_of_point(
+    const Point& center,
+    const Vector& normal,
+    SkipPrimitiveFunctor skip,
+    FirstIntersectionVisitor visitor,
+    double cone_angle,
+    bool accept_if_acute,
+    const Disk_samples_list& disk_samples) const {
     Plane plane(center, normal);
     Vector v1 = plane.base1(), v2 = plane.base2();
     v1 = scale_functor(v1, static_cast<typename GeomTraits::FT>(1.0 / CGAL::sqrt(
@@ -145,27 +262,74 @@ private:
 
     const typename GeomTraits::FT length_of_normal =
       static_cast<typename GeomTraits::FT>( 1.0 / tan(cone_angle / 2.0) );
-    normal = scale_functor(normal, length_of_normal);
+    Vector scaled_normal = scale_functor(normal, length_of_normal);
 
     for(Disk_samples_list::const_iterator sample_it = disk_samples.begin();
         sample_it != disk_samples.end(); ++sample_it) {
       bool is_intersected, intersection_is_acute;
       double min_distance;
+      Primitive_id closest_id;
+
       Vector disk_vector = sum_functor(
                              scale_functor(v1, static_cast<typename GeomTraits::FT>(sample_it->get<0>())),
                              scale_functor(v2, static_cast<typename GeomTraits::FT>(sample_it->get<1>())) );
-      Vector ray_direction = sum_functor(normal, disk_vector);
+      Vector ray_direction = sum_functor(scaled_normal, disk_vector);
 
       Ray ray(center, ray_direction);
-      boost::tie(is_intersected, intersection_is_acute,
-                 min_distance) = cast_and_return_minimum(ray, tree, facet);
+      boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
+        = cast_and_return_minimum(ray, skip, accept_if_acute);
+
       if(!intersection_is_acute) {
         continue;
       }
 
+      visitor(closest_id, min_distance);
+
       ray_distances.push_back(std::make_pair(min_distance, sample_it->get<2>()));
     }
-    return remove_outliers_and_calculate_sdf_value(ray_distances);
+
+    if(ray_distances.empty()) {
+      return boost::optional<double>();
+    }
+
+    return boost::optional<double>(remove_outliers_and_calculate_sdf_value(
+                                     ray_distances));
+  }
+
+  /**
+   * Finds closest distance to center using `closest_point` query on AABB.
+   * @return squared distance
+   */
+  double find_closest_with_AABB_distance(Point center) const {
+    Point closest = tree.closest_point(center);
+    return (closest - center).squared_length();
+  }
+private:
+  /**
+   * Calculates SDF value for parameter @a facet.
+   * @param facet
+   * @param tree AABB tree which is built from polyhedron
+   * @param samples sampled points from a unit-disk which are corresponds to rays picked from cone
+   * @return calculated SDF value
+   */
+  boost::optional<double> calculate_sdf_value_of_facet(
+    Facet_const_handle facet,
+    double cone_angle,
+    bool accept_if_acute,
+    const Disk_samples_list& disk_samples) const {
+    const Point& p1 = facet->halfedge()->vertex()->point();
+    const Point& p2 = facet->halfedge()->next()->vertex()->point();
+    const Point& p3 = facet->halfedge()->prev()->vertex()->point();
+    const Point& center  = centroid_functor(p1, p2, p3);
+    const Vector& normal = unit_normal_functor(p2, p1, p3);
+
+    CGAL::internal::SkipPrimitiveFunctor<Polyhedron::Facet_const_handle> skip(
+      facet);
+    CGAL::internal::FirstIntersectionVisitor<Polyhedron::Facet_const_handle>
+    visitor;
+
+    return calculate_sdf_value_of_point(center, normal, skip, visitor, cone_angle,
+                                        accept_if_acute, disk_samples);
   }
 
   /**
@@ -177,12 +341,14 @@ private:
    * @return tuple of:
    *   - get<0> bool   : true if any intersection is found
    *   - get<1> bool   : true if intersection is found and is acceptable (i.e. accute angle with surface normal)
-   *   - get<2> double : distance between ray/segment origin and intersection point (0.0 if get<0> or get<1> is false)
+   *   - get<2> double : distance between ray/segment origin and intersection point (0.0 if get<0> is false)
+   *   - get<3> Primitive_id : closest intersected primitive if get<0> is true, else Primitive_id()
    */
-  template <class Query> // Query can be templated for just Ray and Segment types.
-  boost::tuple<bool, bool, double> cast_and_return_minimum(
-    const Query& query, const Tree& tree, Facet_const_handle facet) const {
-    boost::tuple<bool, bool, double> min_distance(false, false, 0.0);
+  template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
+  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
+    const Query& query, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
+    boost::tuple<bool, bool, double, Primitive_id>
+    min_distance(false, false, 0.0, Primitive_id());
     std::list<Object_and_primitive_id> intersections;
 
     //SL: the difference with all_intersections is that in the traversal traits, we do do_intersect before calling intersection.
@@ -199,8 +365,8 @@ private:
         op_it != intersections.end() ; ++op_it) {
       Object object = op_it->first;
       Primitive_id id = op_it->second;
-      if(id == facet) {
-        continue;  // since center is located on related facet, we should skip it if there is an intersection with it.
+      if( skip(id) ) {
+        continue;
       }
 
       const Point* i_point;
@@ -211,6 +377,7 @@ private:
       Vector i_ray(*i_point, query.source());
       double new_distance = i_ray.squared_length();
       if(!min_distance.get<0>() || new_distance < min_distance.get<2>()) {
+        min_distance.get<3>() = id;
         min_distance.get<2>() = new_distance;
         min_distance.get<0>() = true;
         min_id = id;
@@ -221,17 +388,20 @@ private:
       return min_distance;
     }
 
-    // check whether the ray makes acute angle with intersected facet
-    const Point& min_v1 = min_id->halfedge()->vertex()->point();
-    const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
-    const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
-    Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
+    if(accept_if_acute) {
+      // check whether the ray makes acute angle with intersected facet
+      const Point& min_v1 = min_id->halfedge()->vertex()->point();
+      const Point& min_v2 = min_id->halfedge()->next()->vertex()->point();
+      const Point& min_v3 = min_id->halfedge()->prev()->vertex()->point();
+      Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
 
-    if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
-                     Point(ORIGIN),
-                     translated_point_functor(Point(ORIGIN), min_normal)) != ACUTE) {
-      return min_distance;
+      if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
+                       Point(ORIGIN),
+                       translated_point_functor(Point(ORIGIN), min_normal)) != ACUTE) {
+        return min_distance;
+      }
     }
+
     min_distance.get<1>() = true; // founded intersection is acceptable.
     min_distance.get<2>() = std::sqrt(min_distance.get<2>());
     return min_distance;
@@ -251,7 +421,7 @@ private:
     if(accepted_ray_count == 0)      {
       return 0.0;
     } else if(accepted_ray_count == 1) {
-      return ray_distances[0].first * ray_distances[0].second;
+      return ray_distances[0].first;
     }
 
     /* Calculate median sdf */
