@@ -180,7 +180,7 @@ sequence of points.  As explained in the introduction the
 `Polyline_constrained_triangulation_2` allows to remove vertices from
 a polyline constraint, and hence from the triangulation, while keeping
 the points in the polyline constraint. This explains why there is a
-`Vertex_in_constraint_iterator` and a `Point_in_constraint_iterator`.
+\link Polyline_constrained_triangulation_2::Vertex_in_constraint_iterator `Vertex_in_constraint_iterator`\endlink and a \link Polyline_constrained_triangulation_2::Point_in_constraint_iterator `Point_in_constraint_iterator`\endlink.
 
 With the last argument of `Polyline_simplification_2::simplify()` set
 to `true`, we can keep the points even when the simplification
