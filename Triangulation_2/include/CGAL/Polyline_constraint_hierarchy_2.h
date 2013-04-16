@@ -538,7 +538,6 @@ void Polyline_constraint_hierarchy_2<T,Data>::simplify(Vertex_it uc,
                                                        Vertex_it wc)
 
 {
-  //  CGAL_assertion((*vc)->fixed != true);
   Vertex_handle u = *uc, v = *vc, w = *wc;
   typename Sc_to_c_map::iterator uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
   CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
@@ -930,8 +929,7 @@ add_Steiner(T va, T vb, T vc){
     // insert vc in enclosing constraint
     pos = ctit->current();
     ++pos;
-    pos = ctit->enclosing->insert(pos.base(), Node(vc));// fixed == true 
-    //AF vc->fixed = true;
+    pos = ctit->enclosing->insert(pos.base(), Node(vc));
     --pos;
     
     // set ctxt to the context of (vc,vb)

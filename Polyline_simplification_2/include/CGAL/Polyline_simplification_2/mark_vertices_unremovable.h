@@ -48,7 +48,7 @@ mark_vertices_unremovable(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
     if((*it)->point().y() < b->point().y()) b = *it; 
     if((*it)->point().y() > t->point().y()) t = *it; 
   }
-  l->fixed() = r->fixed() = t->fixed() = b->fixed() = true;
+  l->unremovable() = r->unremovable() = t->unremovable() = b->unremovable() = true;
 }
 
 

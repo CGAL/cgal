@@ -99,7 +99,7 @@ public:
   {
     std::cerr << pct_initial_number_of_vertices << std::endl;
     int m = initialize_indices();
-    initialize_fixed();
+    initialize_unremovable();
     Compare_cost cc;
     Id_map idm;
     mpq =  new MPQ(m, cc, idm);
@@ -110,7 +110,7 @@ public:
     : pct(pct), cost(cost), stop(stop), pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
   {
     int m = initialize_indices(cid);
-    initialize_fixed();
+    initialize_unremovable();
     Compare_cost cc;
     Id_map idm;
     mpq =  new MPQ(m, cc, idm);
@@ -124,27 +124,27 @@ public:
     delete mpq;
   }
 
-  void initialize_fixed()
+  void initialize_unremovable()
   {
     std::set<Vertex_handle> vertices;
     Constraint_iterator cit = pct.constraints_begin(), e = pct.constraints_end();
     for(; cit!=e; ++cit){
       Constraint_id cid = *cit;
       Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
-      (*it)->fixed() = true;
+      (*it)->unremovable() = true;
       for(; it != pct.vertices_in_constraint_end(cid); ++it){
         if(vertices.find(*it) != vertices.end()){
-          (*it)->fixed() = true;
+          (*it)->unremovable() = true;
         } else {
           vertices.insert(*it);
         }
       }
       it = boost::prior(it);
-      (*it)->fixed() = true;
+      (*it)->unremovable() = true;
     }
   }
 
-  // For all polyline constraints we compute the cost of all non fixed and not removed vertices
+  // For all polyline constraints we compute the cost of all unremovable and not removed vertices
   int
   initialize_costs(Constraint_id cid)
   {
@@ -152,7 +152,7 @@ public:
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         ++it){
-      if(! (*it)->fixed()){
+      if(! (*it)->unremovable()){
         Vertices_in_constraint_iterator u = boost::prior(it);
         Vertices_in_constraint_iterator w = boost::next(it);
         
@@ -185,7 +185,7 @@ public:
   is_removable(Vertices_in_constraint_iterator it)
   {
     typedef typename PCT::Geom_traits Geom_traits;
-    if((*it)->fixed()) {
+    if((*it)->unremovable()) {
       return false;
     }
     
@@ -260,7 +260,7 @@ operator()()
     Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
     pct.simplify(u,v,w);
     
-    if(! (*u)->fixed()){
+    if(! (*u)->unremovable()){
       Vertices_in_constraint_iterator uu = boost::prior(u);
       boost::optional<double> dist = cost(pct, uu,u,w);
       if(! dist){
@@ -273,7 +273,7 @@ operator()()
       }
     }
     
-    if(! (*w)->fixed()){
+    if(! (*w)->unremovable()){
       Vertices_in_constraint_iterator ww = boost::next(w);
       boost::optional<double> dist = cost(pct, u,w,ww);
       if(! dist){
@@ -316,8 +316,9 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
 {
   typedef PolygonTraits_2::Point_2 Point_2;
   typedef CGAL::Kernel_traits<Point_2>::type K;
-  typedef Vertex_base_2< CGAL::Triangulation_vertex_base_2< K > > Vb;
-  typedef CGAL::Triangulation_data_structure_2<Vb, CGAL::Constrained_triangulation_face_base_2<K> > TDS;
+  typedef Vertex_base_2< K > Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb> TDS;
   typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, CGAL::Exact_predicates_tag> CDT;
   typedef CGAL::Polyline_constrained_triangulation_2<CDT>       PCT;
   typedef PCT::Constraint_id Constraint_id;

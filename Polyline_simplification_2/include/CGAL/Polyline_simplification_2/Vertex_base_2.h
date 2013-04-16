@@ -44,19 +44,19 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other      Vb2;
-    typedef Vertex_base_2<Vb2>         Other;
+    typedef Vertex_base_2<K,Vb2>         Other;
   };
 
   Vertex_base_2() 
-    : Base(), m_fixed(false), m_cost(-1.0) 
+    : Base(), m_unremovable(false), m_cost(-1.0) 
   {}
   
-  bool m_fixed;
+  bool m_unremovable;
   FT m_cost;
 
-  bool& fixed()
+  bool& unremovable()
   {
-    return m_fixed;
+    return m_unremovable;
   }
 
   FT& cost()

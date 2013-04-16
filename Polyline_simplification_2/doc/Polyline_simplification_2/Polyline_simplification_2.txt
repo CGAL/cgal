@@ -153,18 +153,17 @@ the number of vertices.
 \subsection Subsection_PolylineSimplification_Simplifying_Several Simplifying Several Polylines
 
 In the second example we insert several polygons in a
-`Polyline_constrained_triangulation_2`.  Assuming that the polygons do not
-intersect, we can take the default template parameters for the
-`Constrained_Delaunay_triangulation_2`.
-
-Before calling `Polyline_simplification_2::simplify()` we mark some
-polyline vertices as not removable.  This package provides a
-convenience function
+`Polyline_constrained_triangulation_2`.    As a vertex 
+type we have to use `CGAL::Polyline_simplification_2::Vertex_base`
+as vertices may be marked as non-removable. The simplification
+algorithm marks the first and last vertex of polyline constraints
+as well as intersections.
+ 
+In the example we mark further polyline vertices as not removable. 
+This package provides a convenience function
 `Polyline_simplification_2::mark_vertices_unremovable()` that marks
 the vertices with smallest and largest `x` and `y` coordinates of each
-polyline constraint as non-removable.  The class
-`Polyline_constrained_triangulation_2` offers functions to mark
-individual polyline vertices as non removable.  Finally, we iterate
+polyline constraint as non-removable.  Finally, we iterate
 over all vertices of all polyline constraints.
 
 \cgalExample{Polyline_simplification_2/simplify.cpp}
@@ -180,7 +179,7 @@ During the simplification the cost functions need the original
 sequence of points.  As explained in the introduction the
 `Polyline_constrained_triangulation_2` allows to remove vertices from
 a polyline constraint, and hence from the triangulation, while keeping
-the point in the polyline constraint. This explains why there is a
+the points in the polyline constraint. This explains why there is a
 `Vertex_in_constraint_iterator` and a `Point_in_constraint_iterator`.
 
 With the last argument of `Polyline_simplification_2::simplify()` set
@@ -207,9 +206,7 @@ to check if an elementary simplification step can be performed. In our
 implementation we simplified this test even further.
 
 Fernando Cacciola made a first prototype implementation for
-GeometryFactory, and Andreas Fabri developed the
-`Polyline_constrained_triangulation_2` and the final version of this
-package.
+GeometryFactory.
 
 
 

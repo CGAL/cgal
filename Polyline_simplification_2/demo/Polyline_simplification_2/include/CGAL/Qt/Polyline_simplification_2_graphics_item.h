@@ -66,8 +66,8 @@ public:
     constraints_pen = this->edgesPen();
     constraints_pen.setColor(::Qt::red);
     
-    fixed_vertices_pen = this->verticesPen();
-    fixed_vertices_pen.setColor(::Qt::blue);
+    unremovable_vertices_pen = this->verticesPen();
+    unremovable_vertices_pen.setColor(::Qt::blue);
   }
   
   void operator()(typename PCT::Face_handle fh);
@@ -82,14 +82,14 @@ public:
     constraints_pen = pen;
   }
 
-  const QPen& fixedVerticesPen() const
+  const QPen& unremovableVerticesPen() const
   {
-    return fixed_vertices_pen;
+    return unremovable_vertices_pen;
   }
 
-  void setFixedVerticesPen(const QPen& pen)
+  void setUnremovableVerticesPen(const QPen& pen)
   {
-    fixed_vertices_pen = pen;
+    unremovable_vertices_pen = pen;
   }
 
   bool visibleConstraints() const
@@ -110,7 +110,7 @@ protected:
   virtual void paintVertex(typename PCT::Vertex_handle vh);
 
   QPen constraints_pen;
-  QPen fixed_vertices_pen;
+  QPen unremovable_vertices_pen;
 
 private:
   bool visible_constraints;
@@ -170,8 +170,8 @@ PolylineSimplificationGraphicsItem<PCT>::paintVertex( typename PCT::Vertex_handl
 {
   Converter<Geom_traits> convert;
   
-  //  if ( vh->is_fixed() || vh->is_shared() ) {     
-  //    this->m_painter->setPen(this->fixedVerticesPen());
+  //  if ( vh->is_unremovable() || vh->is_shared() ) {     
+  //    this->m_painter->setPen(this->unremovableVerticesPen());
   // } else {
     this->m_painter->setPen(this->verticesPen());
     //  }
@@ -199,8 +199,8 @@ PolylineSimplificationGraphicsItem<PCT>::paintVertices(QPainter *painter)
         it != this->t->vertices_in_constraint_end(*cit);
         it++){
         QPointF point = matrix.map(convert((*it)->point()));  
-        if ( (*it)->fixed )       
-          painter->setPen(this->fixedVerticesPen());
+        if ( (*it)->unremovable() )       
+          painter->setPen(this->unremovableVerticesPen());
         else 
           painter->setPen(this->verticesPen());
         

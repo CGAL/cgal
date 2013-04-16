@@ -68,7 +68,7 @@ typedef K::Point_2         Point_2;
 typedef K::Segment_2       Segment_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
 
-typedef CGAL::Polyline_simplification_2::Vertex_base_2<>  Vb;
+typedef CGAL::Polyline_simplification_2::Vertex_base_2<K> Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K>    Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
 typedef CGAL::Exact_predicates_tag                        Itag;
