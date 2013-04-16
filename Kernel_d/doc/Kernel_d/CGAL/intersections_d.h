@@ -32,11 +32,12 @@ returns the intersection between \f$ f1\f$ and \f$ f2\f$.
 
 The same functionality is also available through the functor `Kernel::Intersect_d`.
  
-The following table gives the possible values for `Type1` and `Type2`
-and the resulting return types `T...` in `boost::optional< boost::variant< T... > >`.
+The following table gives the possible values for `Type1` and `Type2`.
 
-The resulting return type can be obtained through
-`cpp11::result_of(Kernel::Intersect_d(A, B)>::type`.
+The return type can be obtained through `cpp11::result_of<Kernel::Intersect_d(A, B)>::%type`.
+It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
+
+
 
 <DIV ALIGN="CENTER"> 
 <TABLE CELLPADDING=3 BORDER="1"> 
