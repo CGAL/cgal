@@ -58,32 +58,21 @@ public:
   /**
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
-   * @param cone_angle opening angle of cone (might be necessary for weighting)
    * @param[out] out_it sampled points from disk, each point is tuple of:
    *   - coordinate-x
    *   - coordinate-y
-   *   - weight (proportional to angle between cone-normal)
+   *   - weight (proportional to distance from disk center)
    */
   template<class OutputIterator>
   void operator()(int number_of_points,
-                  double cone_angle,
                   OutputIterator out_it) const {
-    if(cone_angle <= 0.0) {
-      CGAL_warning(false
-                   && "Warning: cone angle smaller than or equal to zero will be assigned to epsilon!");
-      cone_angle = (std::numeric_limits<double>::epsilon)();
-    }
-
     const double golden_ratio = 3.0 - std::sqrt(5.0);
 
     if(uniform) {
-      const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
-      const double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
       for(int i = 0; i < number_of_points; ++i) {
         double Q = i * golden_ratio * CGAL_PI;
         double R = std::sqrt(static_cast<double>(i) / number_of_points);
-        double angle = atan(R / length_of_normal);
-        double weight =  exp(-0.5 * (std::pow(angle / angle_st_dev, 2)));
+        double weight =  exp(-0.5 * (std::pow(R / CGAL_ANGLE_ST_DEV_DIVIDER, 2)));
         *out_it++ = Tuple(R * cos(Q), R * sin(Q), weight);
       }
     } else {
@@ -137,29 +126,19 @@ public:
   /**
    * Samples points from unit-disk.
    * @param number_of_points number of points to be picked
-   * @param cone_angle opening angle of cone (might be necessary for weighting)
    * @param[out] out_it sampled points from disk, each point is tuple of:
    *   - coordinate-x
    *   - coordinate-y
-   *   - weight (proportional to angle between cone-normal)
+   *   - weight (proportional to distance from disk center)
    *
    * Note: returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
   template<class OutputIterator>
   void operator()(int number_of_points,
-                  double cone_angle,
                   OutputIterator out_it) const {
-    if(cone_angle <= 0.0) {
-      CGAL_warning(false
-                   && "Warning: cone angle smaller than or equal to zero will be assigned to epsilon!");
-      cone_angle = (std::numeric_limits<double>::epsilon)();
-    }
-
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
-    const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
     // use cone_angle / 3 as one standard deviation while weighting.
-    const double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
 
     for(int i = 1; i <= number_of_points_sqrt; ++i)
       for(int j = 1; j <= number_of_points_sqrt; ++j) {
@@ -167,8 +146,8 @@ public:
         double w2 = static_cast<double>(j) / number_of_points_sqrt;
         double R = w1;
         double Q = 2 * w2 * CGAL_PI;
-        double angle = atan(R / length_of_normal);
-        double weight = exp(-0.5 * (pow(angle / angle_st_dev, 2)));
+
+        double weight = exp(-0.5 * (pow(R / CGAL_ANGLE_ST_DEV_DIVIDER, 2)));
         *out_it++ = Tuple(R * cos(Q), R * sin(Q), weight);
       }
   }
@@ -219,21 +198,11 @@ public:
    */
   template<class OutputIterator>
   void operator()(int number_of_points,
-                  double cone_angle,
                   OutputIterator out_it) const {
-    if(cone_angle <= 0.0) {
-      CGAL_warning(false
-                   && "Warning: cone angle smaller than or equal to zero will be assigned to epsilon!");
-      cone_angle = (std::numeric_limits<double>::epsilon)();
-    }
-
     const int number_of_points_sqrt = static_cast<int>(std::sqrt(
                                         static_cast<double>(number_of_points)));
-    const double length_of_normal = 1.0 / tan(cone_angle / 2.0);
     const double fraction = (number_of_points_sqrt == 1) ? 0.0
                             : 2.0 / (number_of_points_sqrt -1);
-    // use cone_angle / 3 as one standard deviation while weighting.
-    const double angle_st_dev = cone_angle / CGAL_ANGLE_ST_DEV_DIVIDER;
 
     for(int i = 0; i < number_of_points_sqrt; ++i)
       for(int j = 0; j < number_of_points_sqrt; ++j) {
@@ -261,8 +230,8 @@ public:
           }
         }
         Q *= (CGAL_PI / 4.0);
-        double angle = atan(R / length_of_normal);
-        double weight = exp(-0.5 * (pow(angle / angle_st_dev, 2)));
+
+        double weight = exp(-0.5 * (pow(R / CGAL_ANGLE_ST_DEV_DIVIDER, 2)));
         *out_it++ = Tuple(R * cos(Q), R * sin(Q), weight);
       }
   }
