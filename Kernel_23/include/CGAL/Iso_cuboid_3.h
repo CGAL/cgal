@@ -90,6 +90,10 @@ public:
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), min_hx, min_hy, min_hz,
 					     max_hx, max_hy, max_hz)) {}
 
+  Iso_cuboid_3(const Bbox_3& bbox)
+   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), bbox.xmin(), bbox.ymin(), bbox.zmin(),
+				                                 bbox.xmax(), bbox.ymax(), bbox.zmax())) {}
+
   typename cpp11::result_of<typename R::Construct_min_vertex_3( Iso_cuboid_3 )>::type
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {

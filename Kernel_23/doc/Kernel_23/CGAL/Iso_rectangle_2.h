@@ -67,6 +67,12 @@ Iso_rectangle_2(const Kernel::RT& min_hx, const Kernel::RT& min_hy,
 const Kernel::RT& max_hx, const Kernel::RT& max_hy, 
 const Kernel::RT& hw = RT(1)); 
 
+/*!
+If `Kernel::RT` is constructible from double,
+introduces an iso-oriented rectangle from `bbox`.
+*/
+Iso_rectangle_2(const Bbox_2& bbox);
+
 /// @} 
 
 /// \name Operations 
