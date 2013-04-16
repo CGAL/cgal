@@ -126,11 +126,12 @@ complete segment.
 Here, `Intersect_23` means either `Intersect_2` or `Intersect_3`,
 depending on the arguments.
 
-The following table gives the possible values for `Type1` and `Type2`
-and the resulting return types `T...` in `boost::optional< boost::variant< T... > >`. 
-The resulting return type can be obtained through
-`cpp11::result_of<Kernel::Intersect_2(A, B)>::%type` or
-`cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
+The following tables give the possible values for `Type1` and `Type2`.
+
+\cgalHeading{2D intersections}
+
+The return type can be obtained through `cpp11::result_of<Kernel::Intersect_2(A, B)>::%type`.
+It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
@@ -214,8 +215,15 @@ The resulting return type can be obtained through
     <TD VALIGN="CENTER" > Triangle_2 </TD>
     <TD>Point_2, or Segment_2, or Triangle_2, or std::vector&lt;Point_2&gt;</TD>
 </TR>
-
 </TABLE>
+</DIV>
+
+\cgalHeading{3D intersections}
+
+The return type can be obtained through `cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
+It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
+
+<DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
 <TR> <TH> Type1 </TH>
  <TH> Type2 </TH>
