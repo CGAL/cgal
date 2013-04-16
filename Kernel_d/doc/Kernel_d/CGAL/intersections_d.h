@@ -26,7 +26,7 @@ bool do_intersect(Type1<R> obj1, Type2<R> obj2);
 /*!
 \ingroup PkgKernelDFunctions
 
-returns the intersection between \f$ f1\f$ and \f$ f2\f$.
+returns the intersection between `f1` and `f2`.
 
 \pre The objects are of the same dimension.
 
@@ -164,7 +164,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</a>
 
 */
-Object intersection(Type1<R> f1, Type2<R> f2);
+cpp11::result_of<R::Intersect_d(Type1<R>, Type2<R>)>::type intersection(Type1<R> f1, Type2<R> f2);
 
 } /* namespace CGAL */
 
