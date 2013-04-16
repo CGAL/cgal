@@ -20,13 +20,15 @@
 #ifndef CGAL_COMPACT_CONTAINER_STRATEGIES_H
 #define CGAL_COMPACT_CONTAINER_STRATEGIES_H
 
+#include <CGAL/tags.h>
+
 namespace CGAL {
 
 // A basic "do nothing" strategy
 // One can inheritate from it for partial specialisation
 class Compact_container_strategy_base {
 public:
-  static const bool Uses_erase_counter = false;
+  typedef Tag_false Uses_erase_counter;
 
   // Do nothing
   template <typename Element>
@@ -42,7 +44,7 @@ public:
 class Compact_container_strategy_with_counter
 {
 public:
-  static const bool Uses_erase_counter = true;
+  typedef Tag_true Uses_erase_counter;
 
   template <typename Element>
   static unsigned int get_erase_counter(const Element &e)

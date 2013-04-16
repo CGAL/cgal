@@ -30,8 +30,50 @@
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/atomic.h>
+#endif
+
 namespace CGAL {
+    
+// Without erase counter
+template <typename Use_erase_counter, typename Concurrency_tag>
+class Mesh_cell_base_3_base
+{
+};
+
+// Specialized version (with erase counter)
+template <typename Concurrency_tag>
+class Mesh_cell_base_3_base<Tag_true, Concurrency_tag>
+{
+public:
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+	  this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
   
+protected:
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  typedef typename boost::mpl::if_c<
+    boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
+    tbb::atomic<unsigned int>,
+    unsigned int>::type             Erase_counter_type;
+#else
+  typedef unsigned int              Erase_counter_type;
+#endif
+  Erase_counter_type                m_erase_counter;
+
+};
 // Class Mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
@@ -40,7 +82,10 @@ template< class GT,
           class Cb = CGAL::Regular_triangulation_cell_base_3<
               GT, CGAL::Triangulation_cell_base_with_circumcenter_3<GT> > >
 class Mesh_cell_base_3
-: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>
+: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>,
+  public Mesh_cell_base_3_base<
+    typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Cell_container_strategy::Uses_erase_counter,
+    typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Concurrency_tag>
 {
   typedef typename GT::FT FT;
   

@@ -37,6 +37,40 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
+  
+// Without erase counter
+template <typename Use_erase_counter>
+class Mesh_vertex_base_3_base
+{
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Specialized version (with erase counter)
+template <>
+class Mesh_vertex_base_3_base<Tag_true>
+{
+public:
+  
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+
+};
+#endif // CGAL_LINKED_WITH_TBB
 
 // Class Mesh_vertex_base_3
 // Vertex base class used in 3D meshing process.
@@ -46,7 +80,9 @@ template<class GT,
          class MT,
          class Vb = Triangulation_vertex_base_3<GT> >
 class Mesh_vertex_base_3
-: public Surface_mesh_vertex_base_3<GT, Vb>
+: public Surface_mesh_vertex_base_3<GT, Vb>,
+  public Mesh_vertex_base_3_base<
+    typename Surface_mesh_vertex_base_3<GT, Vb>::Tds::Cell_container_strategy::Uses_erase_counter>
 {
 public:
   typedef Surface_mesh_vertex_base_3<GT, Vb> Mvb3_base;

@@ -33,9 +33,10 @@ public:
 /// \name Constants
 /// @{
 /*! 
-Constant saying if this strategy uses an erase counter or not
+Tells if this strategy uses an erase counter or not. 
+Can be `CGAL::Tag_true` or `CGAL::Tag_false`.
 */ 
-  static const bool Uses_erase_counter;
+  typedef Hidden_type Uses_erase_counter;
   
 /// @} 
 

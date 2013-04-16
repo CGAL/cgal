@@ -59,6 +59,7 @@
 #endif
 
 #include <boost/foreach.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 
 namespace CGAL {
 

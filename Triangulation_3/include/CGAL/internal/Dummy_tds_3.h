@@ -25,7 +25,13 @@ namespace CGAL { namespace internal {
 
 // Dummy TDS which provides all types that a vertex_base or cell_base can use.
 struct Dummy_tds_3 {
-  typedef Sequential_tag Concurrency_tag;
+  struct Concurrency_tag {};
+  struct Cell_container_strategy {
+    struct Uses_erase_counter{};
+  };
+  struct Vertex_container_strategy {
+    struct Uses_erase_counter{};
+  };
 
   struct Vertex {};
   struct Cell {};

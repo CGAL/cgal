@@ -25,47 +25,8 @@
 
 namespace CGAL {
 
-
-// Without erase counter
-template <bool Use_erase_counter>
-class Triangulation_ds_vertex_base_3_base
-{
-};
-
-#ifdef CGAL_LINKED_WITH_TBB
-// Specialized version (with erase counter)
-template <>
-class Triangulation_ds_vertex_base_3_base<true>
-{
-public:
-  
-  // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
-  {
-    return this->m_erase_counter;
-  }
-  void set_erase_counter(unsigned int c)
-  {
-	  this->m_erase_counter = c;
-  }
-  void increment_erase_counter()
-  {
-    ++this->m_erase_counter;
-  }
-  
-protected:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
-  Erase_counter_type                m_erase_counter;
-
-};
-#endif // CGAL_LINKED_WITH_TBB
-
-
-
 template < typename TDS = void >
 class Triangulation_ds_vertex_base_3
-: public Triangulation_ds_vertex_base_3_base<
-    TDS::Vertex_container_strategy::Uses_erase_counter>
 {
 public:
   typedef TDS                          Triangulation_data_structure;
