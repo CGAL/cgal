@@ -466,8 +466,8 @@ void test_miscellaneous()
 template <class T>
 void test_io(T &pt1, bool ex)
 {
-  // std::cout << "I/O" << std::endl;
-  // std::cout << "  ascii" << std::endl;
+  std::cout << "I/O" << std::endl;
+  std::cout << "  ascii" << std::endl;
 
   std::stringstream ss1;
   ss1 << pt1;
@@ -481,7 +481,7 @@ void test_io(T &pt1, bool ex)
       assert(pt1 == pt1r);
     }
 
-  // std::cout << "  binary" << std::endl;
+  std::cout << "  binary" << std::endl;
   pt1r.clear();
   // There are problems with the IO of exact number types in binary mode.
   if (!ex)
@@ -496,7 +496,7 @@ void test_io(T &pt1, bool ex)
       assert(pt1 == pt1r);
     }
 
-  // std::cout << "  pretty" << std::endl;
+  std::cout << "  pretty" << std::endl;
 
   pt1r.clear();
   std::stringstream ss1p;
@@ -511,22 +511,28 @@ void test_io(bool exact)
 {
   typedef typename T::Point             Point;
 
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   T t;
   test_io(t, exact);
 
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   t.insert(Point(0.5, 0.5));
   test_io(t, exact);
 
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   t.insert(Point(0.6, 0.8));
   t.insert(Point(0.2, 0.6));
   test_io(t, exact);
 
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   // One cover for the Delaunay triangulation
   t.clear();
   for (int x = 0; x < 5; ++x)
     for (int y = 0; y < 5; ++y)
       t.insert(Point(x / 5.0, y / 5.0));
   test_io(t, exact);
+
+  std::cout << __FILE__ << ", " << __LINE__ << std::endl;
 }
 
 template <class T>

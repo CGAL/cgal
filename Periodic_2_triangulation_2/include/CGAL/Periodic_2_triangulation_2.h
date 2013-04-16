@@ -4576,6 +4576,11 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
           {
             if (is_ascii(is)) is >> index;
             else read(is, index);
+            if (index >= F.size()) {
+              std::cout << __FILE__ << ", " << __FUNCTION__ << ", l:" << __LINE__ << "  f="
+                        << i << "<" << m << ", index=" << j << " nb=" << index << " #F=" << F.size()
+                        << std::endl;
+            }
             CGAL_assertion(i < F.size());
             CGAL_assertion(index < F.size());
             F[i]->set_neighbor(j, F[index]);

@@ -77,7 +77,7 @@ void test_performance(const std::string &name, int maximum = 1e5)
 
 int main(int argc, char *argv[])
 {
-  int maximum = 1e5;
+  int maximum = 100000;
   if (argc > 1) maximum = atoi(argv[1]);
   test_performance<DT2_inserter<DT2> >("Euclidean Delaunay", maximum);
   test_performance<P2DT2_inserter<P2DT2, false> >("Periodic Delaunay", maximum);

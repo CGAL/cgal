@@ -14,14 +14,15 @@ Face_handle test_point_location(const Triangulation &t,
 
   fh = t.locate(query, lt, li);
   CGAL_assertion(lt == lt_in);
-  if (lt_in != Triangulation::EMPTY)
-    {
-      bs = t.side_of_face(query, fh, lt2, li2);
-      os = t.oriented_side(fh, query);
+  if (lt_in == Triangulation::EMPTY) {
+    CGAL_assertion(fh == Face_handle());
+    return fh;
+  }
 
-      CGAL_assertion(lt2 == lt_in);
-    }
-
+  bs = t.side_of_face(query, fh, lt2, li2);
+  os = t.oriented_side(fh, query);
+  
+  CGAL_assertion(lt2 == lt_in);
 
   switch (lt_in)
     {
@@ -44,7 +45,8 @@ Face_handle test_point_location(const Triangulation &t,
     }
     case Triangulation::EMPTY:
     {
-      CGAL_assertion(fh == Face_handle());
+      // Handled above
+      CGAL_assertion(false);
       break;
     }
     }
