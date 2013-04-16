@@ -36,7 +36,10 @@
 
 - `PolylineSimplificationCostFunction`
 - `PolylineSimplificationStopPredicate`
+- `PolylineSimplificationVertexBase_2`
 
+## Classes ##
+- `CGAL::Polyline_simplification_2::Vertex_base_2`
 
 ## Global Functions ##
 - `CGAL::Polyline_simplification_2::simplify()`

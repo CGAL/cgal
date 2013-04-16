@@ -153,7 +153,7 @@ the number of vertices.
 \subsection Subsection_PolylineSimplification_Simplifying_Several Simplifying Several Polylines
 
 In the second example we insert several polygons in a
-`Polyline_simplification_2`.  Assuming that the polygons do not
+`Polyline_constrained_triangulation_2`.  Assuming that the polygons do not
 intersect, we can take the default template parameters for the
 `Constrained_Delaunay_triangulation_2`.
 

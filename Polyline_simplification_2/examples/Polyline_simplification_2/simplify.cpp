@@ -10,8 +10,9 @@ namespace PS = CGAL::Polyline_simplification_2;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polygon_2<K>                                  Polygon_2;
 
-typedef CGAL::Polyline_constrained_triangulation_vertex_base< CGAL::Triangulation_vertex_base_2< K > > Vb;
-typedef CGAL::Triangulation_data_structure_2<Vb, CGAL::Constrained_triangulation_face_base_2<K> > TDS;
+typedef PS::Vertex_base_2<K> Vb;
+typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb, Fb> TDS;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, CGAL::Exact_predicates_tag> CDT;
 typedef CGAL::Polyline_constrained_triangulation_2<CDT>     PCT;
 typedef PCT::Point                           Point;

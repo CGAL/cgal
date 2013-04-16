@@ -87,6 +87,7 @@ are described in Chapter \ref PkgTDS2 "2D Triangulation Data Structure".
 - `CGAL::Constrained_triangulation_2<Traits,Tds,Itag>`
 - `CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds,Itag>`
 - `CGAL::Constrained_triangulation_plus_2<Tr>`
+- `CGAL::Polyline_constrained_triangulation_2<Tr>`
 - `CGAL::Triangulation_hierarchy_2<Tr>`
 
 - `CGAL::Triangulation_euclidean_traits_2<K>`

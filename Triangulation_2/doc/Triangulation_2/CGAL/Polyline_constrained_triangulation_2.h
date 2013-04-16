@@ -344,13 +344,13 @@ a `Points_in_constraint_iterator`, but not the other way round.
 typedef Hidden_type Points_in_constraint_iterator;
 
 /*! 
-Removes vertex at `viq` from the constraint and the triangulation.
+Removes the vertex at `viq` from the constraint and the triangulation.
 Only the vertex but not the point is removed from the constraint `cid`.
 \pre The vertices `vip`, `viq`, and `vir` must be three successive 
 vertices in a constraint.
 \pre No other constraint must pass through `viq`.
 \pre The line segment between `vip` and `vir` must not intersect any constraint.
-\pre All vertices of the triangulation are vertex of a constaint.
+\pre All vertices of the triangulation must be a vertex of a constaint.
  */
 
 void

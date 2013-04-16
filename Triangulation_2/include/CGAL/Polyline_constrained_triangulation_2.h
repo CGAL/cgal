@@ -24,7 +24,6 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polyline_constraint_hierarchy_2.h>
-#include <CGAL/Polyline_constrained_triangulation_vertex_base_2.h>
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/Default.h>
@@ -42,9 +41,7 @@ class Polyline_constrained_triangulation_2
 Default::Get< Tr_, Constrained_Delaunay_triangulation_2< 
                       Exact_predicates_inexact_constructions_kernel
                       , Triangulation_data_structure_2< 
-                          Polyline_constrained_triangulation_vertex_base< 
                             Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
-                            >
                           , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
                           >
                       , CGAL::Exact_predicates_tag
@@ -54,9 +51,7 @@ Default::Get< Tr_, Constrained_Delaunay_triangulation_2<
   Default::Get< Tr_, Constrained_Delaunay_triangulation_2< 
                   Exact_predicates_inexact_constructions_kernel
                   , Triangulation_data_structure_2< 
-                      Polyline_constrained_triangulation_vertex_base< 
                         Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
-                        >
                       , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
                       >
                   , CGAL::Exact_predicates_tag
@@ -471,9 +466,9 @@ public:
 	vcit++){
       insert_incident_faces(vcit, out);
     }
-    vertices_in_constraint_begin(ca)->fixed = true;
-    Vertices_in_constraint_iterator end = boost::prior(vertices_in_constraint_end(ca));
-    end->fixed = true;
+    //AF    vertices_in_constraint_begin(ca)->fixed() = true;
+    // Vertices_in_constraint_iterator end = boost::prior(vertices_in_constraint_end(ca));
+    // end->fixed() = true;
     fc.write_faces(out);
     
     return ca;
@@ -515,8 +510,8 @@ private:
     }
  
     // fix first and last, one is redundant for is_polygon == true
-    vertices.front()->fixed = true;
-    vertices.back()->fixed = true;
+    // vertices.front()->fixed() = true;
+    // vertices.back()->fixed() = true;
 
     return ca;
   }

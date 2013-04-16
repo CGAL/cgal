@@ -67,14 +67,14 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2         Point_2;
 typedef K::Segment_2       Segment_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
-/*
-typedef CGAL::Triangulation_vertex_base_2<K>              Vb;
+
+typedef CGAL::Polyline_simplification_2::Vertex_base_2<>  Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K>    Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>       TDS;
 typedef CGAL::Exact_predicates_tag                        Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K,TDS, Itag> CDT;
-*/
-typedef CGAL::Polyline_constrained_triangulation_2<>       PCT;
+
+typedef CGAL::Polyline_constrained_triangulation_2<CDT>       PCT;
 
 namespace PS2 = CGAL::Polyline_simplification_2 ;
 

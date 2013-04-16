@@ -1077,7 +1077,7 @@ the data structure remains small and achieves fast point location
 queries on real
 data. As proved in \cite d-iirdt-98, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
-However it can be used as well for other triangulations
+However, it can be used as well for other triangulations
 and the class `Triangulation_hierarchy_2<Tr>` is templated by a parameter
 which is to be instantiated by one of the \cgal triangulation
 classes.

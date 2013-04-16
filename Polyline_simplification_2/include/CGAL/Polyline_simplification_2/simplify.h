@@ -20,6 +20,7 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SIMPLIFY_H
 
+#include <CGAL/Polyline_simplification_2/Vertex_base_2.h>
 #include <CGAL/Polyline_simplification_2/Squared_distance_cost.h>
 #include <CGAL/Polyline_simplification_2/Scaled_squared_distance_cost.h>
 #include <CGAL/Polyline_simplification_2/Hybrid_squared_distance_cost.h>
@@ -75,7 +76,7 @@ public:
     bool operator() ( Vertices_in_constraint_iterator const& x, 
                       Vertices_in_constraint_iterator const& y ) const 
     { 
-      return (*x)->cost < (*y)->cost; 
+      return (*x)->cost() < (*y)->cost(); 
     }
   } ;
   
@@ -98,6 +99,7 @@ public:
   {
     std::cerr << pct_initial_number_of_vertices << std::endl;
     int m = initialize_indices();
+    initialize_fixed();
     Compare_cost cc;
     Id_map idm;
     mpq =  new MPQ(m, cc, idm);
@@ -108,6 +110,7 @@ public:
     : pct(pct), cost(cost), stop(stop), pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
   {
     int m = initialize_indices(cid);
+    initialize_fixed();
     Compare_cost cc;
     Id_map idm;
     mpq =  new MPQ(m, cc, idm);
@@ -121,6 +124,26 @@ public:
     delete mpq;
   }
 
+  void initialize_fixed()
+  {
+    std::set<Vertex_handle> vertices;
+    Constraint_iterator cit = pct.constraints_begin(), e = pct.constraints_end();
+    for(; cit!=e; ++cit){
+      Constraint_id cid = *cit;
+      Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
+      (*it)->fixed() = true;
+      for(; it != pct.vertices_in_constraint_end(cid); ++it){
+        if(vertices.find(*it) != vertices.end()){
+          (*it)->fixed() = true;
+        } else {
+          vertices.insert(*it);
+        }
+      }
+      it = boost::prior(it);
+      (*it)->fixed() = true;
+    }
+  }
+
   // For all polyline constraints we compute the cost of all non fixed and not removed vertices
   int
   initialize_costs(Constraint_id cid)
@@ -129,17 +152,17 @@ public:
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         ++it){
-      if(! (*it)->fixed){
+      if(! (*it)->fixed()){
         Vertices_in_constraint_iterator u = boost::prior(it);
         Vertices_in_constraint_iterator w = boost::next(it);
         
         boost::optional<double> dist = cost(pct, u, it, w);
         if(dist){
-          (*it)->cost = *dist;
+          (*it)->cost() = *dist;
           (*mpq).push(it);
           ++n;
         } else {
-          (*it)->cost = (std::numeric_limits<double>::max)();
+          (*it)->cost() = (std::numeric_limits<double>::max)();
           std::cerr << "could not compute a cost" << std::endl;
         } 
       }
@@ -162,7 +185,7 @@ public:
   is_removable(Vertices_in_constraint_iterator it)
   {
     typedef typename PCT::Geom_traits Geom_traits;
-    if((*it)->fixed) {
+    if((*it)->fixed()) {
       return false;
     }
     
@@ -230,33 +253,33 @@ operator()()
     }
   Vertices_in_constraint_iterator v = (*mpq).top();
   (*mpq).pop();
-  if(stop(pct, v, (*v)->cost, pct_initial_number_of_vertices, pct.number_of_vertices())){
+  if(stop(pct, v, (*v)->cost(), pct_initial_number_of_vertices, pct.number_of_vertices())){
     return false;
   }
   if(is_removable(v)){
     Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
     pct.simplify(u,v,w);
     
-    if(! (*u)->fixed){
+    if(! (*u)->fixed()){
       Vertices_in_constraint_iterator uu = boost::prior(u);
       boost::optional<double> dist = cost(pct, uu,u,w);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
       } else {
-        (*u)->cost = *dist;
+        (*u)->cost() = *dist;
         if((*mpq).contains(u)){
         (*mpq).update(u, true);
         }
       }
     }
     
-    if(! (*w)->fixed){
+    if(! (*w)->fixed()){
       Vertices_in_constraint_iterator ww = boost::next(w);
       boost::optional<double> dist = cost(pct, u,w,ww);
       if(! dist){
         std::cerr << "undefined cost not handled yet" << std::endl;
       } else {
-        (*w)->cost = *dist;
+        (*w)->cost() = *dist;
         if((*mpq).contains(w)){
         (*mpq).update(w, true);
         }
@@ -291,7 +314,12 @@ template <class PolygonTraits_2, class Container, class CostFunction, class Stop
                            CostFunction cost,
                            StopFunction stop)
 {
-  typedef CGAL::Polyline_constrained_triangulation_2<>       PCT;
+  typedef PolygonTraits_2::Point_2 Point_2;
+  typedef CGAL::Kernel_traits<Point_2>::type K;
+  typedef Vertex_base_2< CGAL::Triangulation_vertex_base_2< K > > Vb;
+  typedef CGAL::Triangulation_data_structure_2<Vb, CGAL::Constrained_triangulation_face_base_2<K> > TDS;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, CGAL::Exact_predicates_tag> CDT;
+  typedef CGAL::Polyline_constrained_triangulation_2<CDT>       PCT;
   typedef PCT::Constraint_id Constraint_id;
   typedef PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
 
@@ -331,7 +359,7 @@ simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
 
   while(simplifier()){}
   if(! keep_points){
-    pct.remove_points_from_constraints(cid);
+    pct.remove_points_from_constraint(cid);
   }
   return simplifier.number_of_removed_vertices();
 }
@@ -339,6 +367,7 @@ simplify(CGAL::Polyline_constrained_triangulation_2<Tr>& pct,
 /*!
 \ingroup  PkgPolylineSimplification2Functions
 Simplifies all polylines in a triangulation with polylines as constraints.
+The vertex type must be a model of `PolylineSimplificationVertexBase_2`.
 */
 
 template <class Tr, class CostFunction, class StopFunction>

@@ -21,31 +21,51 @@
 #ifndef CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H
 #define CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H
 
+#include <CGAL/Triangulation_vertex_base_2.h>
 
 namespace CGAL {
 
 namespace Polyline_simplification_2 {
 
-template<class Vb>
+/// \addtogroup PkgPolylineSimplification2Classes
+/// @{
+
+/// A vertex base class with data members needed by the simplification algorithm.
+
+/// \cgalModels `PolylineSimplificationVertexBase_2`.
+  template<class K, class Vb = CGAL::Triangulation_vertex_base_2<K> >
 class Vertex_base_2 
   : public Vb
 {
+  typedef typename K::FT FT;
   typedef Vb                                            Base;
   typedef typename Base::Triangulation_data_structure   Tds;
 public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other      Vb2;
-    typedef Vertex_base<Vb2>         Other;
+    typedef Vertex_base_2<Vb2>         Other;
   };
 
   Vertex_base_2() 
-    : Base(), fixed(false), cost(-1.0) 
+    : Base(), m_fixed(false), m_cost(-1.0) 
   {}
   
-  bool fixed;
-  double cost;
+  bool m_fixed;
+  FT m_cost;
+
+  bool& fixed()
+  {
+    return m_fixed;
+  }
+
+  FT& cost()
+  {
+    return m_cost;
+  }
 };
+
+/// @}
 
 } // Polyline_simplification_2
 } // CGAL
