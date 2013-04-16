@@ -698,15 +698,17 @@ We set a time bound of 10s and a sliver bound of 10 degrees for the exuder.
 
 \section Mesh_3Performances Performances
 
-We provide here some benchmarks of the performances of the mesh generation engine. The machine
-used is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
-with 32GB of RAM. The program has been compiled with g++ v4.3.2 with the -O3 option. 
-Note that our implementation does not take advantage of multi-core
-architectures.
-
-Those benchmarks have been done using \cgal v3.8.
+We provide here some benchmarks of the performances of the mesh generation engine.
 
 \subsection Mesh_3DelaunayRefinement_1 Delaunay Refinement
+
+The machine used is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
+with 32GB of RAM. The program has been compiled with g++ v4.3.2 with the -O3 option. 
+Note that those benchmarks were done with the sequential version of the algorithm, 
+which does not take advantage of multi-core architectures. See next section for 
+parallel performance.
+
+Those benchmarks have been done using \cgal v3.8.
 
 We study the refinement part of the mesh generation engine in this section. We
 give the CPU time (measured by `Timer`) using the 3 provided oracles. In all experiments, we produce well
@@ -986,6 +988,23 @@ vertices/second
 </TABLE>
 
 </CENTER>
+
+\subsection Mesh_3Parallel_performance_1 Parallel performance
+
+In this section, we provide speed-up charts generated using the parallel version of the meshing algorithms.
+The machine used is a PC running Windows 7 64-bits with two 6-core Intel Xeon CPU X5660 clocked at 2.80 GHz
+with 32GB of RAM. The program has been compiled with Microsoft Visual C++ 2012 in Release mode.
+
+Figure \cgalFigureRef{figure_refinement_speedup} shows mesh refinement speed-up, and figure \cgalFigureRef{figure_lloyd_speedup}
+shows Lloyd optimization speed-up. ODT optimization exhibits similar speed-up.
+
+\cgalFigureBegin{figure_refinement_speedup,refinement_speedup.png}
+Facet refinement speed-up (left) and cell refinement speed-up (right), compared to the sequential version of the algorithm.
+\cgalFigureEnd
+
+\cgalFigureBegin{figure_lloyd_speedup,lloyd_speedup.png}
+Lloyd optimization speed-up, compared to the sequential version of the algorithm. Parallel ODT shows similar performance.
+\cgalFigureEnd
 
 \section Mesh_3DesignAndImpl Design and Implementation History
 
