@@ -1,12 +1,12 @@
 namespace CGAL {
 
 /*!
-\addtogroup do_intersect_spherical do_intersect (3D Spherical Kernel)
-\ingroup do_intersect
+\ingroup do_intersect_spherical_grp
+
 
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
 
-When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
+When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear_grp "here",
 the following function overloads are also available.
 */
 /// @{
@@ -46,12 +46,11 @@ bool do_intersect(Type1<SphericalKernel> obj1, Type2<SphericalKernel> obj2, Type
 /// @}
 
 /*!
-\addtogroup intersection_spherical intersection (3D Spherical Kernel)
-\ingroup intersection
+\ingroup intersection_spherical_grp
 
 \details See Chapter \ref Chapter_3D_Spherical_Geometry_Kernel for details on a spherical kernel instantiation.
 
-When using a spherical kernel, in addition to the function overloads documented \ref intersection_linear "here",
+When using a spherical kernel, in addition to the function overloads documented \ref intersection_linear_grp "here",
 the following function overloads are also available.
 
 The iterator versions of those functions can be used in conjunction

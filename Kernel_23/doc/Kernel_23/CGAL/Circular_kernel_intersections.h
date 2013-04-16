@@ -1,12 +1,12 @@
 namespace CGAL {
 
 /*!
-\addtogroup do_intersect_circular do_intersect (2D Circular Kernel)
-\ingroup do_intersect
+\ingroup do_intersect_circular_grp
+
 
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
 
-When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear "here",
+When using a circular kernel, in addition to the function overloads documented \ref do_intersect_linear_grp "here",
 the following function overloads are also available.
 */
 
@@ -35,12 +35,12 @@ bool do_intersect(Type1<CircularKernel> obj1, Type2<CircularKernel> obj2);
 /// @}
 
 /*!
-\addtogroup intersection_circular intersection (2D Circular Kernel)
-\ingroup intersection
+\ingroup intersection_circular_grp
+
 
 \details See Chapter \ref Chapter_2D_Circular_Geometry_Kernel for details on a circular kernel instantiation.
 
-When using a circular kernel, in addition to the function overloads documented \ref intersection_linear "here",
+When using a circular kernel, in addition to the function overloads documented \ref intersection_linear_grp "here",
 the following function overloads are also available.
 
 The iterator versions of those functions can be used in conjunction
