@@ -96,28 +96,42 @@ private:
 
   Tree tree;
 
+  double max_diagonal;
+  bool   use_diagonal;
 public:
   /**
    * Construct AABB tree with a mesh.
    * @param mesh `CGAL Polyhedron` on which AABB tree constructed
    * @param build_kd_tree requirement on internal kd-tree (it is only required if find_closest_with_AABB_distance is planned to use)
+   * @param use_diagonal if true: calculates diagonal of AABB tree and cast segments instead of rays using diagonal length
    * @param traits trait object
    */
   SDF_calculation(const Polyhedron& mesh, bool build_kd_tree = false,
-                  GeomTraits traits = GeomTraits())
-    : traits(traits),
-      angle_functor(traits.angle_3_object()),
-      scale_functor(traits.construct_scaled_vector_3_object()),
-      sum_functor(traits.construct_sum_of_vectors_3_object()),
-      normal_functor(traits.construct_normal_3_object()),
-      unit_normal_functor(traits.construct_unit_normal_3_object()),
-      translated_point_functor(traits.construct_translated_point_3_object()),
-      centroid_functor(traits.construct_centroid_3_object()) {
+                  bool use_diagonal = true, GeomTraits traits = GeomTraits())
+    :
+    use_diagonal(use_diagonal),
+    traits(traits),
+    angle_functor(traits.angle_3_object()),
+    scale_functor(traits.construct_scaled_vector_3_object()),
+    sum_functor(traits.construct_sum_of_vectors_3_object()),
+    normal_functor(traits.construct_normal_3_object()),
+    unit_normal_functor(traits.construct_unit_normal_3_object()),
+    translated_point_functor(traits.construct_translated_point_3_object()),
+    centroid_functor(traits.construct_centroid_3_object()) {
     tree.insert(mesh.facets_begin(), mesh.facets_end());
     tree.build();
 
     if(build_kd_tree) {
       tree.accelerate_distance_queries();
+    }
+
+    if(use_diagonal) {
+      CGAL::Bbox_3 bbox = tree.bbox();
+      max_diagonal =
+        std::sqrt(
+          CGAL::squared_distanceC3( bbox.xmin(), bbox.ymin(), bbox.zmin(), bbox.xmax(),
+                                    bbox.ymax(), bbox.zmax() )
+        );
     }
   }
 
@@ -259,8 +273,8 @@ public:
 
     Plane plane(center, normal);
     Vector v1 = plane.base1(), v2 = plane.base2();
-    v1 = scale_functor(v1, static_cast<FT>(1.0 / CGAL::sqrt(v1.squared_length())));
-    v2 = scale_functor(v2, static_cast<FT>(1.0 / CGAL::sqrt(v2.squared_length())));
+    v1 = scale_functor(v1, FT(1.0 / CGAL::sqrt(v1.squared_length())));
+    v2 = scale_functor(v2, FT(1.0 / CGAL::sqrt(v2.squared_length())));
 
     std::vector<std::pair<double, double> > ray_distances;
     ray_distances.reserve(disk_samples.size());
@@ -268,7 +282,7 @@ public:
     const FT normal_multiplier( cos(cone_angle / 2.0) );
     const FT disk_multiplier  ( sin(cone_angle / 2.0) );
 
-    Vector scaled_normal = scale_functor(normal, normal_multiplier);
+    const Vector& scaled_normal = scale_functor(normal, normal_multiplier);
 
     for(Disk_samples_list::const_iterator sample_it = disk_samples.begin();
         sample_it != disk_samples.end(); ++sample_it) {
@@ -277,19 +291,37 @@ public:
       Primitive_id closest_id;
 
       Vector disk_vector = sum_functor(
-                             scale_functor(v1, static_cast<FT>(disk_multiplier * sample_it->get<0>())),
-                             scale_functor(v2, static_cast<FT>(disk_multiplier * sample_it->get<1>())) );
+                             scale_functor(v1, FT(disk_multiplier * sample_it->get<0>())),
+                             scale_functor(v2, FT(disk_multiplier * sample_it->get<1>())) );
       Vector ray_direction = sum_functor(scaled_normal, disk_vector);
 
-      Ray ray(center, ray_direction);
+      if(use_diagonal) {
+        FT max_distance( max_diagonal / std::sqrt(ray_direction.squared_length()));
+        const Vector& scaled_direction = scale_functor(ray_direction, max_distance);
+        const Vector& target_vector = sum_functor( Vector(Point(ORIGIN), center),
+                                      scaled_direction);
+        const Point&  target_point = translated_point_functor(Point(ORIGIN),
+                                     target_vector);
+        Segment segment(center, target_point);
 
-      if(traits.is_degenerate_3_object()(ray)) {
-        CGAL_warning(false &&
-                     "A degenerate ray is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
+        if(traits.is_degenerate_3_object()(segment)) {
+          CGAL_warning(false &&
+                       "A degenerate segment is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
+        }
+
+        boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
+          = cast_and_return_minimum(segment, skip, accept_if_acute);
+      } else {
+        Ray ray(center, ray_direction);
+
+        if(traits.is_degenerate_3_object()(ray)) {
+          CGAL_warning(false &&
+                       "A degenerate ray is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
+        }
+
+        boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
+          = cast_and_return_minimum(ray, skip, accept_if_acute);
       }
-
-      boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-        = cast_and_return_minimum(ray, skip, accept_if_acute);
 
       if(!intersection_is_acute) {
         continue;

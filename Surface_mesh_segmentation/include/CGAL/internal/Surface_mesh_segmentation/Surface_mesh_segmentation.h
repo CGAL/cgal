@@ -96,8 +96,9 @@ public:
   calculate_sdf_values(double cone_angle, int number_of_rays,
                        SDFPropertyMap sdf_pmap) {
     // calculate sdf values
-    SDF_calculation_class(mesh, traits).calculate_sdf_values(cone_angle,
-        number_of_rays, sdf_pmap);
+    SDF_calculation_class sdf_calculator(mesh, false, true, traits);
+    sdf_calculator.calculate_sdf_values(mesh.facets_begin(), mesh.facets_end(),
+                                        cone_angle, number_of_rays, sdf_pmap);
     // apply post-processing steps
     check_zero_sdf_values(sdf_pmap);
     Filter()(mesh, get_window_size(), sdf_pmap);
