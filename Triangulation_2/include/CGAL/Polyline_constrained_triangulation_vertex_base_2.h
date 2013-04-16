@@ -18,14 +18,16 @@
 //
 // Author(s)     : Philipp Moeller
 
-#ifndef CGAL_POLYLINE_CONSTRAINED_TRIANGULATION_VERTEX_BASE_2_H
-#define CGAL_POLYLINE_CONSTRAINED_TRIANGULATION_VERTEX_BASE_2_H
+#ifndef CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H
+#define CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H
 
 
 namespace CGAL {
 
+namespace Polyline_simplification_2 {
+
 template<class Vb>
-class Polyline_constrained_triangulation_vertex_base 
+class Vertex_base_2 
   : public Vb
 {
   typedef Vb                                            Base;
@@ -34,10 +36,10 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS2>::Other      Vb2;
-    typedef Polyline_constrained_triangulation_vertex_base<Vb2>         Other;
+    typedef Vertex_base<Vb2>         Other;
   };
 
-  Polyline_constrained_triangulation_vertex_base() 
+  Vertex_base_2() 
     : Base(), fixed(false), cost(-1.0) 
   {}
   
@@ -45,6 +47,7 @@ public:
   double cost;
 };
 
+} // Polyline_simplification_2
 } // CGAL
 
-#endif /* CGAL_POLYLINE_CONSTRAINED_TRIANGULATION_VERTEX_BASE_2_H */
+#endif /* CGAL_POLYLINE_SIMPLIFICATION_VERTEX_BASE_2_H */
