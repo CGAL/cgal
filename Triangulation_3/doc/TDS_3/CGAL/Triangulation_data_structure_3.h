@@ -70,6 +70,17 @@ Cell container type. If Concurrency_tag is Parallel_tag, a
 */ 
 typedef Compact_container<Cell, Default, Cell_container_strategy> Cell_range; 
 
+/*! 
+Strategy used by the `CGAL::Compact_container` (or `CGAL::Concurrent_compact_container` if the TDS
+is concurrency-safe) storing the vertices.
+*/ 
+typedef Hidden_type Vertex_container_strategy;
+
+/*! 
+Strategy used by the `CGAL::Compact_container` (or `CGAL::Concurrent_compact_container` if the TDS
+is concurrency-safe) storing the cells.
+*/ 
+typedef Hidden_type Cell_container_strategy;
 /// @} 
 
 /// \name Operations 

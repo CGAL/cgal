@@ -111,18 +111,6 @@ typedef Hidden_type Vertex_handle;
 typedef Hidden_type Cell_handle; 
 
 /*! 
-Strategy used by the `CGAL::Compact_container` (or `CGAL::Concurrent_compact_container` if the TDS
-is concurrency-safe) storing the vertices.
-*/ 
-typedef Hidden_type Vertex_container_strategy;
-
-/*! 
-Strategy used by the `CGAL::Compact_container` (or `CGAL::Concurrent_compact_container` if the TDS
-is concurrency-safe) storing the cells.
-*/ 
-typedef Hidden_type Cell_container_strategy;
-
-/*! 
 Indicate if the TDS is concurrency-safe (i.e.\ if one can add/remove vertices and cells concurrently). 
 Can be `Sequential_tag` or `Parallel_tag`.
 */

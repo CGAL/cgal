@@ -19,6 +19,8 @@ It must be a model of the `SpatialLockDataStructure_3` concept.
 It allows to perform some operations (such as insertion or removal) currently (see the operations documentation below).
 The default value is `Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>` if
 the TDS is concurrency-safe, and `void` otherwise.
+In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
+instance via the constructor or `set_lock_data_structure`.
 
 \cgalHeading{Traversal of the Triangulation}
 
@@ -216,7 +218,8 @@ typedef TriangulationDataStructure_3::::Concurrency_tag Concurrency_tag;
 /*! 
 Introduces a triangulation `t` having only one vertex which is the 
 infinite vertex. 
-`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations.
+`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations. It
+must be provided if concurrency is enabled.
 */ 
 Triangulation_3 
 (const TriangulationTraits_3 & traits = TriangulationTraits_3(), 

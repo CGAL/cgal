@@ -38,6 +38,8 @@ manual \ref Triangulation3exfastlocation.
         (i.e.\ when `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
         It must be a model of the `SpatialLockDataStructure_3` concept.
         See the documentation of `Triangulation_3` for more details.
+        In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
+        instance via the constructor or using `set_lock_data_structure`.
 
 \sa `CGAL::Regular_triangulation_3` 
 
@@ -98,7 +100,8 @@ typedef DelaunayTriangulationTraits_3::Object_3 Object;
 /*! 
 Creates an empty Delaunay triangulation, possibly specifying a traits class 
 `traits`. 
-`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations.
+`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations. It
+must be provided if concurrency is enabled.
 */ 
 Delaunay_triangulation_3 
 (const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 

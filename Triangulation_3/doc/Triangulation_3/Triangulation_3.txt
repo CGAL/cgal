@@ -222,6 +222,9 @@ Chapter \ref chapterTDS3 "3D Triangulation Data Structure".
 triangulation class, described in Section \ref Triangulation3seclocpol.
 </UL>
 
+Optionnally, the main Delaunay and regular triangulations algorithms (insert, remove) 
+support multi-core shared-memory architectures to take advantage of available parallelism.
+
 \subsection Triangulation3secTraits The Geometric Traits Parameter 
 
 The first template parameter of the triangulation class
@@ -400,6 +403,18 @@ My_vertex(const Point&p, Cell_handle c) : Vb(p, c) {}
 
 The situation is exactly similar for cell base classes.
 Section \ref TDS3secdesign "Software Design" provides more detailed information.
+
+\section Triangulation_3ParallelAlgorithms Parallel algorithms
+
+Parallel algorithms of `Delaunay_triangulation_3` and `Regular_triangulation_3` are enabled 
+if the `TriangulationDataStructure_3::Concurrency_tag` embeddded type is `Parallel_tag` and a
+reference to a `SpatialLockDataStructure_3` instance is provided via the constructor or 
+by using `set_lock_data_structure`.
+
+Parallel algorithms require the program to be linked against the Intel TBB library.
+We <b>strongly suggest</b> the user to use the TBB malloc proxy by including <tbb/tbbmalloc_proxy.h> in his source code.
+To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+See TBB documentation for more details.
 
 \section Triangulation3secexamples Examples 
 

@@ -40,6 +40,8 @@ It has the default value `Triangulation_data_structure_3<Triangulation_vertex_ba
         (i.e.\ when `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
         It must be a model of the `SpatialLockDataStructure_3` concept.
         See the documentation of `Triangulation_3` for more details.
+        In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
+        instance via the constructor or using `set_lock_data_structure`.
 */
 template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3, typename SpatialLockDataStructure_3 >
 class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SpatialLockDataStructure_3> {
@@ -67,7 +69,8 @@ typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point;
 /*! 
 Creates an empty regular triangulation, possibly specifying a traits class 
 `traits`. 
-`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations.
+`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations. It
+must be provided if concurrency is enabled.
 */ 
 Regular_triangulation_3 
 (const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3(), 
