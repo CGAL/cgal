@@ -61,29 +61,29 @@ using namespace CGAL;
 // - EPEC,
 // - or EPIC (the default)
 #ifdef SC_DOUBLE
-typedef Simple_cartesian<double>                       K;
+   typedef Simple_cartesian<double>                       K;
 #elif C_LEDA
-#include <CGAL/leda_rational.h>
-#include <CGAL/Cartesian.h>
-typedef Cartesian<leda_rational> K;
+#  include <CGAL/leda_rational.h>
+#  include <CGAL/Cartesian.h>
+   typedef Cartesian<leda_rational> K;
 #elif defined(ONLY_STATIC_FILTERS)
-typedef CGAL::internal::Static_filters<CGAL::Simple_cartesian<double> > K;
+   typedef CGAL::internal::Static_filters<CGAL::Simple_cartesian<double> > K;
 #elif defined(EPEC)
 #  ifdef CGAL_DONT_USE_LAZY_KERNEL
-typedef Epeck K;
-#  else
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_rational.h>
-#include <CGAL/Cartesian.h>
-typedef Cartesian<leda_rational> SK;
-#else 
-typedef Simple_cartesian<Gmpq> SK;
-#endif
-typedef Lazy_kernel<SK> K;
-#  endif
+     typedef Epeck K;
+#  else // not CGAL_DONT_USE_LAZY_KERNEL
+#    ifdef CGAL_USE_LEDA
+#      include <CGAL/leda_rational.h>
+#      include <CGAL/Cartesian.h>
+       typedef Cartesian<leda_rational> SK;
+#    else // not CGAL_USE_LEDA
+       typedef Simple_cartesian<Gmpq> SK;
+#    endif // not CGAL_USE_LEDA
+     typedef Lazy_kernel<SK> K;
+#  endif // not CGAL_DONT_USE_LAZY_KERNEL
 #else // EPIC
-typedef Exact_predicates_inexact_constructions_kernel  K;
-#endif
+  typedef Exact_predicates_inexact_constructions_kernel  K;
+#endif // EPIC
 typedef Regular_triangulation_euclidean_traits_3<K>    WK;
 typedef K::Point_3                                     Point;
 
@@ -252,7 +252,7 @@ int main(int argc, char **argv)
 
 	cout << "\nProcessor : "
              << ((sizeof(void*)==4) ? 32 : (sizeof(void*)==8) ? 64 : -1) << " bits\n";
-	// cout << "Kernel : EPICK\n";
+	cout << "Kernel typeid: " << typeid(K).name() << "\n";
 
 	do_benchmarks<Delaunay_triangulation_3<K> >("Delaunay  [Compact_location]");
 	if (input_file_selected)
