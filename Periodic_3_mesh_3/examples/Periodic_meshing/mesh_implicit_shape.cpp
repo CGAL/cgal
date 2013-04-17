@@ -29,17 +29,13 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-const FT& PI = 3.14159265358979;
-
-Tr tr;
+const FT PI = std::acos(-1.);
 
 // Function
 FT sphere_function (const Point& p)
 { return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.2; }
 
-FT schwarz_p(const Point& point) {
-  Point p = tr.canonicalize_point(point);
-  
+FT schwarz_p(const Point& p) {
   const FT x2=std::cos( p.x() * 2*PI ), 
   y2=std::cos( p.y() * 2*PI ),
   z2=std::cos( p.z() * 2*PI ); 

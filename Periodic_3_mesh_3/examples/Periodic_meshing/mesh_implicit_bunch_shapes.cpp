@@ -32,14 +32,9 @@ using namespace CGAL::parameters;
 FT sphere(const Point& p)
 { return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5))-0.2; }
 
-// rewrite the code below:
-const FT& PI = 3.14159265358979;
+const FT PI = std::acos(-1.);
 
-Tr tr;
-
-FT schwarz_p(const Point& point) {
-  Point p = tr.canonicalize_point(point);
-  
+FT schwarz_p(const Point& p) {
   const FT x2=std::cos( p.x() * 2*PI ), 
   y2=std::cos( p.y() * 2*PI ),
   z2=std::cos( p.z() * 2*PI ); 
@@ -52,18 +47,14 @@ FT scherk(const Point& p) {
 }
 
 // Triply Implicit Periodic Functions for meshing
-FT schwarz_p_transl (const Point& point) {
-  Point p = tr.canonicalize_point(point);
-  
+FT schwarz_p_transl (const Point& p) {
   const FT x2 = std::cos(p.x() * 2 * PI + PI / 2.0), 
   y2 = std::cos(p.y() * 2 * PI + PI / 2.0),
   z2 = std::cos(p.z() * 2 * PI + PI / 2.0); 
   return x2 + y2 + z2;
 }
 
-FT gyroid (const Point& point) {
-  Point p = tr.canonicalize_point(point);
-  
+FT gyroid (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI), 
   cy = std::cos(p.y() * 2 * PI),
   cz = std::cos(p.z() * 2 * PI); 
@@ -74,9 +65,7 @@ FT gyroid (const Point& point) {
   
 }
 
-FT diamond (const Point& point) {
-  Point p = tr.canonicalize_point(point);
-  
+FT diamond (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI), 
   cy = std::cos(p.y() * 2 * PI),
   cz = std::cos(p.z() * 2 * PI); 
@@ -86,9 +75,7 @@ FT diamond (const Point& point) {
   return sx * sy * sz + sx * cy * cz + cx * sy * cz + cx * cy * sz;
 }
 
-FT double_p (const Point& point) {
-  Point p = tr.canonicalize_point(point);
-  
+FT double_p (const Point& p) {
   const FT cx = std::cos(p.x() * 2 * PI), 
   cy = std::cos(p.y() * 2 * PI),
   cz = std::cos(p.z() * 2 * PI);
