@@ -379,8 +379,8 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
 {
   Context_iterator hcit, past;
   if ( !get_contexts(vaa,vbb, hcit ,past)) return false;
-  va = hcit->enclosing->front();
-  vb = hcit->enclosing->back();
+  va = hcit->enclosing->front().vertex();
+  vb = hcit->enclosing->back().vertex();
   return true;
 }
 
