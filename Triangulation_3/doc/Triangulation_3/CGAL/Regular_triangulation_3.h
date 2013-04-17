@@ -241,16 +241,14 @@ is true, otherwise it is false (and the point is not removed). In any case,
 the locked vertices are not unlocked by the function, leaving this choice to the user.
 
 This function will try to remove `v` only if the removal does not
-decrease the dimension. If the removal would decrease dimension, the function returns false
-(providing the zone could be locked, i.e.\ *p_could_lock_zone = true).
-
-\pre `v` is a finite vertex of the triangulation. 
-\pre `dt`.`dimension()` \f$ =3\f$.
-
+decrease the dimension. 
 The return value is only meaningful if *p_could_lock_zone is true:
   - returns true if the vertex was removed
   - returns false if the vertex wasn't removed since it would decrease 
     the dimension.
+
+\pre `v` is a finite vertex of the triangulation. 
+\pre `dt`.`dimension()` \f$ =3\f$.
 */ 
 bool remove(Vertex_handle v, bool *p_could_lock_zone);
 

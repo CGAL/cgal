@@ -16,7 +16,7 @@ It has the default value `Triangulation_data_structure_3< Triangulation_vertex_b
 It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
 TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
 It must be a model of the `SpatialLockDataStructure_3` concept.
-It allows to perform some operations (such as insertion or removal) currently (see the operations documentation below).
+It allows to perform some operations currently (see the operations documentation below).
 The default value is `Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>` if
 the TDS is concurrency-safe, and `void` otherwise.
 In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
@@ -206,7 +206,7 @@ circulator over all facets incident to a given edge
 typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator; 
 
 /*! 
-Concurrency tag "inherited" from the TDS.
+Concurrency tag (from the TDS).
 */ 
 typedef TriangulationDataStructure_3::::Concurrency_tag Concurrency_tag;
 
@@ -217,7 +217,7 @@ typedef TriangulationDataStructure_3::::Concurrency_tag Concurrency_tag;
 
 /*! 
 Introduces a triangulation `t` having only one vertex which is the 
-infinite vertex. 
+infinite vertex.
 `p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
@@ -226,8 +226,7 @@ Triangulation_3
  SpatialLockDataStructure_3 *p_lock_ds = 0);
 
 /*! 
-Introduces a triangulation `t` having only one vertex which is the 
-infinite vertex. Same as the previous one, but with parameters in reverse order.
+Same as the previous one, but with parameters in reverse order.
 */ 
 Triangulation_3 
 (SpatialLockDataStructure_3 *p_lock_ds = 0,
