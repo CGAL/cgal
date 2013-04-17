@@ -30,8 +30,8 @@ the concept `CompactContainerStrategy`. The default values are both
 `Compact_container_strategy_base`.
 
 The `Concurrency_tag` parameter allows to ask for a concurrency-safe TDS (with regard to
-insertion and deletion of elements). Possible values are `CGAL::Sequential_tag` (the default) and
-`CGAL::Parallel_tag`. The concurrency-safe version uses two `Concurrent_compact_container` to store 
+insertion and deletion of elements). Possible values are `Sequential_tag` (the default) and
+`Parallel_tag`. The concurrency-safe version uses two `Concurrent_compact_container` to store 
 vertices and cells (instead of two `Compact_container`).
 
 \cgalModels `TriangulationDataStructure_3`
@@ -71,13 +71,13 @@ Cell container type. If Concurrency_tag is Parallel_tag, a
 typedef Compact_container<Cell, Default, Cell_container_strategy> Cell_range; 
 
 /*! 
-Strategy used by the `CGAL::Compact_container` (or `CGAL::Concurrent_compact_container` if the TDS
+Strategy used by the `Compact_container` (or `Concurrent_compact_container` if the TDS
 is concurrency-safe) storing the vertices.
 */ 
 typedef Hidden_type Vertex_container_strategy;
 
 /*! 
-Strategy used by the `CGAL::Compact_container` (or `CGAL::Concurrent_compact_container` if the TDS
+Strategy used by the `Compact_container` (or `Concurrent_compact_container` if the TDS
 is concurrency-safe) storing the cells.
 */ 
 typedef Hidden_type Cell_container_strategy;
