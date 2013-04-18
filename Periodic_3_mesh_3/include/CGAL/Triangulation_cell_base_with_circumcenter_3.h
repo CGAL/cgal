@@ -115,7 +115,7 @@ public:
   const Point_3 &
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
-#warning Periodic version!
+#warning Patch for the periodic version!
     
     if (circumcenter_ == NULL) {
       circumcenter_ = new Point_3(

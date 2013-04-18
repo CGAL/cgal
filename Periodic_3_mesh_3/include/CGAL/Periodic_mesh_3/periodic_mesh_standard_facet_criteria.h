@@ -15,7 +15,7 @@
 // $Id: mesh_standard_facet_criteria.h 60688 2011-01-10 15:43:22Z lrineau $
 //
 //
-// Author(s)     : Stephane Tayeb
+// Author(s)     : Mikhail Bogdanov
 //
 //******************************************************************************
 // File Description :
@@ -541,6 +541,10 @@ protected:
   
 }; // end class Facet_on_same_surface_criterion
 
+  
+// The class is a copy of the same class from the Mesh_3 package.
+// If our package supports regular triangulations, then 
+// this class (essentially, the constructor) must be adapted. 
 template <typename Tr>
 class Facet_criterion_visitor_with_features
   : public Mesh_3::Criterion_visitor<Tr, typename Tr::Facet>
@@ -574,8 +578,6 @@ public:
     , angle_ratio_(0.5*0.5*4.)
     , size_ratio_(0.4*0.4*4.)
   {
-#warning If it works well then remove the periodic version!
-    
     typedef typename Tr::Point        Point_3;
     typedef typename Tr::Cell_handle  Cell_handle;
     

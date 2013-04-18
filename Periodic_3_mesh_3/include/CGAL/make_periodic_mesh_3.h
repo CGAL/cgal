@@ -15,7 +15,7 @@
 // $Id: make_mesh_3.h 60688 2011-01-10 15:43:22Z lrineau $
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Stéphane Tayeb, Mikhail Bogdanov
 //
 //******************************************************************************
 // File Description : make_periodic_mesh_3 function definition.

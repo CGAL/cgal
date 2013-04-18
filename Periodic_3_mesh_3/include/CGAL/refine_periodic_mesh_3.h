@@ -15,7 +15,7 @@
 // $Id: refine_mesh_3.h 60688 2011-01-10 15:43:22Z lrineau $
 //
 //
-// Author(s)     : Stephane Tayeb
+// Author(s)     : Mikhail Bogdanov
 //
 //******************************************************************************
 // File Description : refine_mesh_3 function declaration and implementation.

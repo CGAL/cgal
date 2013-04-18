@@ -15,7 +15,7 @@
 // $Id: mesh_standard_cell_criteria.h 60688 2011-01-10 15:43:22Z lrineau $
 //
 //
-// Author(s)     : Stephane Tayeb
+// Author(s)     : Mikhail Bogdanov
 //
 //******************************************************************************
 // File Description :
@@ -254,7 +254,9 @@ private:
   const Tr& tr_;
 };  // end class Cell_variable_size_criterion
 
-
+// The class is a copy of the same class from the Mesh_3 package.
+// If our package supports regular triangulations, then 
+// this class (essentially, the constructor) must be adapted.
 template <typename Tr>
 class Cell_criteria_visitor_with_features
   : public Criterion_visitor<Tr, typename Tr::Cell_handle>
@@ -286,8 +288,6 @@ public:
     , ratio_(0)
     , size_ratio_(0.5*0.5*4.)
   {
-#warning if it works fine then it has to be removed!
-    
     typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
       Gt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
     
