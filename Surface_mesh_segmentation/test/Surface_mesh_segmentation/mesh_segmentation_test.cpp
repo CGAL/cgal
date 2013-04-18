@@ -18,34 +18,26 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
  */
 int main(void)
 {	
-	Polyhedron mesh;
-	if( !read_to_polyhedron("./data/cactus.off", mesh) ) { return 1; }
-	
-	typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
+    Polyhedron mesh;
+    if( !read_to_polyhedron("./data/cactus.off", mesh) ) { return 1; }
+  
+    typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
     Facet_double_map internal_map;
     boost::associative_property_map<Facet_double_map> sdf_property_map(internal_map);	
-	
-	std::pair<double, double> min_max_sdf = CGAL::sdf_values_computation(mesh, sdf_property_map);
-	std::cout << "minimum sdf: " << min_max_sdf.first << " maximum sdf: " << min_max_sdf.second << std::endl;
-	
-	
-	typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
-		Facet_int_map internal_segment_map;
+  
+    std::pair<double, double> min_max_sdf = CGAL::sdf_values_computation(mesh, sdf_property_map);
+    std::cout << "minimum sdf: " << min_max_sdf.first << " maximum sdf: " << min_max_sdf.second << std::endl;
+  
+    typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
+    Facet_int_map internal_segment_map;
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
-	
+  
     int nb_segments = CGAL::surface_mesh_segmentation_from_sdf_values(
-		mesh, sdf_property_map, segment_property_map);
-		
-	if(nb_segments != 3)
-	{
-		std::cout << "Number of segments should be 3 for cactus model (since it is pretty easy model to segment)" << std::endl;
-	}
-
-	int nb_segments_2 = CGAL::surface_mesh_segmentation(mesh, segment_property_map);
-	
-	if(nb_segments_2 != nb_segments) 
-	{
-		std::cout << "Inconsistency between 'surface_mesh_segmentation' and 'surface_mesh_segmentation_from_sdf_values'" 
-			<< std::endl;
-	}
+      mesh, sdf_property_map, segment_property_map);
+    
+    if(nb_segments != 3)
+    {
+        std::cerr << "Number of segments should be 3 for cactus model (since it is pretty easy model to segment)" << std::endl;
+        return EXIT_FAILURE;
+    }
 }

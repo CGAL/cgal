@@ -1,4 +1,4 @@
-
+//
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
 #include <boost/random.hpp>
@@ -8,12 +8,12 @@
  * Then applies k-means on these generated points.
  * Provides a heuristic score for each k-means clustering result.
  *
- * Note that it always return EXIT_SUCCESS
+ * EXIT_FAILURE does not mean failure but if approximate matching is too low it is best to check
  */
 int main(void)
 {
     boost::mt19937 engine;
-	engine.seed(1340818006);
+    engine.seed(1340818006);
 
     // generate random data using gauissians below
     std::vector< boost::normal_distribution<double> > distributions;
@@ -57,9 +57,7 @@ int main(void)
     typedef CGAL::internal::K_means_clustering K_means;
     std::vector<K_means> k_means;
     k_means.push_back(K_means(distributions.size(), data, K_means::PLUS_INITIALIZATION));
-    k_means.push_back(K_means(distributions.size(), data, K_means::PLUS_INITIALIZATION, 2, 5));
     k_means.push_back(K_means(distributions.size(), data, K_means::RANDOM_INITIALIZATION));
-    k_means.push_back(K_means(distributions.size(), data, K_means::RANDOM_INITIALIZATION, 2, 5));
 
     std::vector< std::vector<int> > calculated_centers(k_means.size());
     std::vector< std::vector<int> >::iterator calc_centers_it = calculated_centers.begin();
@@ -79,6 +77,11 @@ int main(void)
         {
             if( (*it) == (*calculated_it) ) { ++true_count; }
         }
-        std::cout << "[0,1]: " << static_cast<double>(true_count) / data_centers.size() << std::endl;
+        double app_fit = static_cast<double>(true_count) / data_centers.size();
+        std::cout << "[0,1]: " << app_fit << std::endl;
+        if(app_fit < 0.7) {
+            std::cerr << "There might be a problem if above printed comparison is too low." << std::endl;
+            return EXIT_FAILURE;
+        }
     }
 }	

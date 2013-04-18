@@ -8,12 +8,11 @@
  * Then applies gmm fitting on these generated points.
  * Provides a heuristic score for each gmm fitting result.
  *
- * Note that it always return EXIT_SUCCESS
  */
 int main(void)
 {
     boost::mt19937 engine;
-	engine.seed(1340818006);
+    engine.seed(1340818006);
 
     // generate random data using gauissians below
     std::vector< boost::normal_distribution<double> > distributions;
@@ -35,7 +34,7 @@ int main(void)
     
     // calculate closest center (using above gauissians) for each generated points
     // we will compare it with gmm fitting results
-	// also we might want to compute mixing coef for each center and select centers according to mixing_coef * prob(data)
+    // also we might want to compute mixing coef for each center and select centers according to mixing_coef * prob(data)
     std::vector<int> data_centers;
     for(std::vector<double>::iterator it = data.begin(); it != data.end(); ++it)
     {
@@ -79,6 +78,11 @@ int main(void)
         {
             if( (*it) == (*calculated_it) ) { ++true_count; }
         }
-        std::cout << "[0,1]: " << static_cast<double>(true_count) / data_centers.size() << std::endl;
+        double app_fit = static_cast<double>(true_count) / data_centers.size();
+        std::cout << "[0,1]: " << app_fit << std::endl;
+        if(app_fit < 0.7) {
+            std::cerr << "There might be a problem if above printed comparison is too low." << std::endl;
+            return EXIT_FAILURE;
+        }
     }
 }	
