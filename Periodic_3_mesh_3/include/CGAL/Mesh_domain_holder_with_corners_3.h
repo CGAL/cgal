@@ -15,7 +15,7 @@
 // $Id: Mesh_domain_holder_with_corners_3.h 60882 2011-01-19 13:53:28Z lrineau $
 //
 //
-// Author(s)     : 
+// Author(s)     : Mikhail Bogdanov
 //
 //******************************************************************************
 // File Description :
