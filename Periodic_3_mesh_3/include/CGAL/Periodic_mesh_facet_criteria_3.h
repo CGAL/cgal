@@ -15,15 +15,15 @@
 // $Id: Mesh_facet_criteria_3.h 60688 2011-01-10 15:43:22Z lrineau $
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Mikhail Bogdanov
 //
 //******************************************************************************
 // File Description :
-// Mesh_facet_criteria_3 class.
+// Periodic_mesh_facet_criteria_3 class.
 //******************************************************************************
 
-#ifndef CGAL_MESH_FACET_CRITERIA_3_H
-#define CGAL_MESH_FACET_CRITERIA_3_H
+#ifndef CGAL_PERIODIC_MESH_FACET_CRITERIA_3_H
+#define CGAL_PERIODIC_MESH_FACET_CRITERIA_3_H
 
 #include <CGAL/Periodic_mesh_3/periodic_mesh_standard_facet_criteria.h>
 #include <CGAL/Mesh_facet_topology.h>
@@ -32,7 +32,7 @@ namespace CGAL {
   
 template<typename Tr,
   typename Visitor_ = Mesh_3::Periodic_mesh_3::Facet_criterion_visitor_with_features<Tr> >
-class Mesh_facet_criteria_3
+class Periodic_mesh_facet_criteria_3
 {
 public:
   typedef Visitor_ Visitor;
@@ -48,19 +48,19 @@ private:
   
   typedef typename Tr::Iso_cuboid Iso_cuboid;
 
-  typedef Mesh_facet_criteria_3<Tr> Self;
+  typedef Periodic_mesh_facet_criteria_3<Tr> Self;
 
 public:
   /**
    * @brief Constructor
    */
   
-  Mesh_facet_criteria_3(const Iso_cuboid& iso_cuboid,
-                        const FT& angle_bound,
-                        const FT& radius_bound,
-                        const FT& distance_bound,
-                        const Mesh_facet_topology topology =
-                        FACET_VERTICES_ON_SURFACE) :
+  Periodic_mesh_facet_criteria_3(const Iso_cuboid& iso_cuboid,
+                                 const FT& angle_bound,
+                                 const FT& radius_bound,
+                                 const FT& distance_bound,
+                                 const Mesh_facet_topology topology =
+                                 FACET_VERTICES_ON_SURFACE) :
     helper_(iso_cuboid)
   {
     if ( FT(0) != angle_bound )
@@ -76,12 +76,12 @@ public:
   }
   
   template< typename MD >
-  Mesh_facet_criteria_3(const MD& periodic_domain,
-                        const FT& angle_bound,
-                        const FT& radius_bound,
-                        const FT& distance_bound,
-                        const Mesh_facet_topology topology =
-                        FACET_VERTICES_ON_SURFACE) :
+  Periodic_mesh_facet_criteria_3(const MD& periodic_domain,
+                                 const FT& angle_bound,
+                                 const FT& radius_bound,
+                                 const FT& distance_bound,
+                                 const Mesh_facet_topology topology =
+                                 FACET_VERTICES_ON_SURFACE) :
     helper_(periodic_domain.periodic_cuboid())
   {
     if ( FT(0) != angle_bound )
@@ -99,13 +99,13 @@ public:
   // Nb: SFINAE (dummy) to avoid wrong matches with built-in numerical types
   // as int.
   template < typename MD, typename Sizing_field >
-  Mesh_facet_criteria_3(const MD& periodic_domain,
-                        const FT& angle_bound,
-                        const Sizing_field& radius_bound,
-                        const FT& distance_bound,
-                        const Mesh_facet_topology topology = 
-                          FACET_VERTICES_ON_SURFACE,
-                        typename Sizing_field::FT dummy = 0) :
+  Periodic_mesh_facet_criteria_3(const MD& periodic_domain,
+                                 const FT& angle_bound,
+                                 const Sizing_field& radius_bound,
+                                 const FT& distance_bound,
+                                 const Mesh_facet_topology topology = 
+                                 FACET_VERTICES_ON_SURFACE,
+                                 typename Sizing_field::FT dummy = 0) :
     helper_(periodic_domain)
   {
     if ( FT(0) != angle_bound )
@@ -120,7 +120,7 @@ public:
   }
   
   /// Destructor
-  ~Mesh_facet_criteria_3() { }
+  ~Periodic_mesh_facet_criteria_3() { }
 
    /**
    * @brief returns the badness of facet \c facet
@@ -195,9 +195,9 @@ private:
   Criteria criteria_;
   
   Tr helper_;
-};  // end class Mesh_facet_criteria_3
+};  // end class Periodic_mesh_facet_criteria_3
 
 }  // end namespace CGAL
 
 
-#endif // CGAL_MESH_FACET_CRITERIA_3_H
+#endif // CGAL_PERIODIC_MESH_FACET_CRITERIA_3_H
