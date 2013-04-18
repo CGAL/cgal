@@ -41,8 +41,12 @@ private:
 
     Gaussian_center(): mean(0), deviation(0), mixing_coefficient(1.0) {
     }
-    Gaussian_center(double mean, double deviation, double mixing_coefficient)
+    Gaussian_center(double mean, double deviation = 0.0,
+                    double mixing_coefficient = 0.0)
       : mean(mean), deviation(deviation), mixing_coefficient(mixing_coefficient) {
+    }
+    operator double() const {
+      return mean;
     }
     /**
      * Probability density function (pdf).
@@ -51,6 +55,10 @@ private:
      * @return pdf result (without dividing \f$ \sqrt {2\pi}  \f$)
      */
     double probability(double x) const {
+      if(deviation == 0.0) {
+        return x == mean ? 1.0 : 0.0;
+      }
+
       double e_over = -0.5 * std::pow((x - mean) / deviation, 2);
       return exp(e_over) / deviation;
     }
@@ -88,6 +96,9 @@ private:
 
 public:
   /**
+   * @pre @a number_of_centers should be positive
+   * @pre size of @a data should be no smaller than number_of_centers
+   *
    * Constructs structures and runs the algorithm.
    *
    * If @a init_type is either RANDOM_INITIALIZATION or PLUS_INITIALIZATION,
@@ -112,15 +123,20 @@ public:
                           std::vector<double>(points.size()))),
     threshold(threshold), maximum_iteration(maximum_iteration),
     init_type(init_type) {
+    CGAL_assertion(number_of_centers > 0
+                   && "Number of centers should be positive.");
+    CGAL_assertion(data.size() >= static_cast<std::size_t>(number_of_centers)
+                   && "Number of centers can not be more than number of data.");
+
     // For initialization with k-means, with one run
     if(init_type == K_MEANS_INITIALIZATION) {
       K_means_clustering k_means(number_of_centers, data,
                                  K_means_clustering::PLUS_INITIALIZATION,
                                  number_of_runs, maximum_iteration);
-      std::vector<int> initial_center_ids;
-      k_means.fill_with_center_ids(initial_center_ids);
 
-      initiate_centers_from_memberships(number_of_centers, initial_center_ids);
+      k_means.fill_with_centers(centers);
+      calculate_initial_mixing_and_deviation();
+
       calculate_clustering();
     }
     // For initialization with random center selection, with multiple run
@@ -178,7 +194,14 @@ private:
    * Calculates deviation for each center.
    * Initial deviation of a center is equal to deviation of the points whose closest center is the current center.
    */
-  void calculate_initial_deviations() {
+  void calculate_initial_mixing_and_deviation() {
+    // assign same mixing coef for each cluster
+    for(std::vector<Gaussian_center>::iterator it = centers.begin();
+        it != centers.end(); ++it) {
+      it->mixing_coefficient = 1.0 / centers.size();
+    }
+
+    // calculate deviation
     std::vector<int> member_count(centers.size(), 0);
     for(std::vector<double>::iterator it = points.begin(); it!= points.end();
         ++it) {
@@ -195,9 +218,12 @@ private:
       centers[closest_center].deviation += min_distance * min_distance;
     }
     for(std::size_t i = 0; i < centers.size(); ++i) {
-      // There shouldn't be such case, unless same point is selected as a center twice (and it is also checked!)
-      CGAL_assertion(member_count[i] != 0);
-      centers[i].deviation = std::sqrt(centers[i].deviation / member_count[i]);
+      if(member_count[i] == 0) {
+        CGAL_assertion( false &&
+                        "There is a cluster which does not contain any points, it will not cause an error but associated probabilites to this cluster will be 0.");
+      } else {
+        centers[i].deviation = std::sqrt(centers[i].deviation / member_count[i]);
+      }
     }
   }
 
@@ -207,17 +233,9 @@ private:
    */
   void initiate_centers_randomly(int number_of_centers) {
     centers.clear();
-    double initial_mixing_coefficient = 1.0 / number_of_centers;
-    double initial_deviation = 0.0;
-    for(int i = 0; i < number_of_centers; ++i) {
-      int random_index = rand() % points.size();
-      double initial_mean = points[random_index];
-      // if same point is choosen as a center twice, algorithm will not work
-      if(!make_center(initial_mean, initial_deviation, initial_mixing_coefficient)) {
-        --i;
-      }
-    }
-    calculate_initial_deviations();
+    Selector().forgy_initialization(number_of_centers, points, centers);
+
+    calculate_initial_mixing_and_deviation();
   }
 
   /**
@@ -227,109 +245,11 @@ private:
    */
   void initiate_centers_plus_plus(int number_of_centers) {
     centers.clear();
-    double initial_deviation = 0.0;
-    double initial_mixing_coefficient = 1.0 / number_of_centers;
+    Selector().plus_plus_initialization(number_of_centers, points, centers);
 
-    std::vector<double> distance_square_cumulative(points.size());
-    std::vector<double> distance_square(points.size(),
-                                        (std::numeric_limits<double>::max)());
-    // distance_square stores squared distance to closest center for each point.
-    // say, distance_square -> [ 0.1, 0.2, 0.3, 0.4, ... ]
-    // then corresponding distance_square_cumulative -> [ 0.1, 0.3, 0.6, 1, ...]
-    double initial_mean = points[rand() % points.size()];
-    make_center(initial_mean, initial_deviation, initial_mixing_coefficient);
-
-    for(int i = 1; i < number_of_centers; ++i) {
-      double cumulative_distance_square = 0.0;
-      for(std::size_t j = 0; j < points.size(); ++j) {
-        double new_distance = std::pow(centers.back().mean - points[j], 2);
-        if(new_distance < distance_square[j]) {
-          distance_square[j] = new_distance;
-        }
-        cumulative_distance_square += distance_square[j];
-        distance_square_cumulative[j] = cumulative_distance_square;
-      }
-
-      double zero_one = rand() / (RAND_MAX + 1.0); // [0,1) random number
-      double random_ds =  zero_one * (distance_square_cumulative.back());
-      int selection_index = std::upper_bound(distance_square_cumulative.begin(),
-                                             distance_square_cumulative.end(), random_ds)
-                            - distance_square_cumulative.begin();
-      double initial_mean = points[selection_index];
-      // if same point is choosen as a center twice, algorithm will not work
-      if(!make_center(initial_mean, initial_deviation, initial_mixing_coefficient)) {
-        --i;
-      }
-    }
-    calculate_initial_deviations();
+    calculate_initial_mixing_and_deviation();
   }
 
-  /**
-   * Uses initial_center_ids to determine parameters for each center.
-   * @param number_of_centers
-   * @param initial_center_ids includes center id for each point.
-   */
-  void initiate_centers_from_memberships(int number_of_centers,
-                                         const std::vector<int>& initial_center_ids) {
-    // Calculate mean
-    int number_of_points = initial_center_ids.size();
-    centers = std::vector<Gaussian_center>(number_of_centers);
-    std::vector<int> member_count(number_of_centers, 0);
-
-    for(int i = 0; i < number_of_points; ++i) {
-      int center_id = initial_center_ids[i];
-      centers[center_id].mean += points[i];
-      member_count[center_id] += 1;
-    }
-    // Assign mean, and mixing coef
-    for(int i = 0; i < number_of_centers; ++i) {
-      centers[i].mean /= member_count[i];
-      centers[i].mixing_coefficient =  member_count[i] / static_cast<double>
-                                       (number_of_points);
-    }
-    // Calculate deviation
-    for(int i = 0; i < number_of_points; ++i) {
-      int center_id = initial_center_ids[i];
-      centers[center_id].deviation += std::pow(points[i] - centers[center_id].mean,
-                                      2);
-    }
-    for(int i = 0; i < number_of_centers; ++i) {
-      CGAL_assertion(member_count[i] !=
-                     0); // There should be no such case, each center should have at least one member.
-      centers[i].deviation = std::sqrt(centers[i].deviation / member_count[i]);
-    }
-  }
-
-  /**
-   * Checks whether the parameter center is previosly included in the center list.
-   * @param center to be checked against existent centers
-   * @return true if there is any center in the center list which has the same mean with the parameter center
-   */
-  bool is_already_center(const Gaussian_center& center) const {
-    for(std::vector<Gaussian_center>::const_iterator it = centers.begin();
-        it != centers.end(); ++it) {
-      if(it->mean == center.mean) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Adds parameters as a center if it is not previously added
-   * @param mean
-   * @param deviation
-   * @param mixing_coefficient
-   * @return true if center addition is succesful
-   */
-  bool make_center(double mean, double deviation, double mixing_coefficient) {
-    Gaussian_center new_center(mean, deviation, mixing_coefficient);
-    if(is_already_center(new_center)) {
-      return false;
-    }
-    centers.push_back(new_center);
-    return true;
-  }
   //Main steps of EM algorithm
 
   /**
