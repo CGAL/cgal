@@ -1,0 +1,1 @@
+The Point_set_shape_detection_3 package is a shape detector in point clouds.
