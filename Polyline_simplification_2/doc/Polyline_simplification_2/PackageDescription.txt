@@ -18,7 +18,7 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Andreas Fabri}
 \cgalPkgDesc{This package  allows to simplify polylines with the guarantee that the topolgy of the polylines does not change.}
-\cgalPkgManuals{Chapter_2D_PolylineSimplifications,PkgPolylineSimplification2}
+\cgalPkgManuals{Chapter_2D_Polyline_simplification,PkgPolylineSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.3}

@@ -25,7 +25,9 @@ public:
 Given three consecutive polyline vertices `*vip, *viq, *vir`, calculates the cost of removing vertex `*viq`, replacing edges `(*vip,*viq)` and `(*viq,*vir)` with edge `(*vip,*vir)`. 
 
 \param pct The underlying polyline constrained  triangulation which embeds the polyline set.
-
+\param vip The first vertex
+\param viq The second vertex
+\param vir The third vertex
 \returns The cost for removing `*viq`. A result of `boost::none` can be used to indicate an infinite or uncomputable cost.
 
 `Tr::Geom_traits` must provide a functor `Compute_squared_distance` with an operator `Tr::Geom_traits::FT operator()(Tr::Point, Tr::Point)`.
