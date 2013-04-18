@@ -166,7 +166,7 @@ print_dag(double d, std::ostream& os, int level)
 
 inline
 void
-msg(std::ostream& os, int level, char* s)
+msg(std::ostream& os, int level, const char* s)
 {
     for(int i = 0; i < level; i++)
       os << "    ";
@@ -175,7 +175,7 @@ msg(std::ostream& os, int level, char* s)
 
 inline
 void
-print_dag(const Null_vector& nv, std::ostream& os, int level)
+print_dag(const Null_vector&, std::ostream& os, int level)
 {
   for(int i = 0; i < level; i++)
     os << "    ";
@@ -184,7 +184,7 @@ print_dag(const Null_vector& nv, std::ostream& os, int level)
 
 inline
 void
-print_dag(const Origin& nv, std::ostream& os, int level)
+print_dag(const Origin&, std::ostream& os, int level)
 {
   for(int i = 0; i < level; i++)
     os << "    ";
