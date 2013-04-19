@@ -785,8 +785,7 @@ public:
 
       // Push all segments labeled(0, 1, ... , i-1) into c1.
       // Instead of the following 3 lines, we use copy, as follows:
-      unsigned int j;
-      for (j = 0; j < i; ++j)
+      for (int j = 0; j < i; ++j)
         c1.push_back(cv[j]);
 
       // Check whether the split point is cv[i]'s source or target.
