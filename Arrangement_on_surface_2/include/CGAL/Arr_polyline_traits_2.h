@@ -1099,23 +1099,24 @@ public:
 
       const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
 
-      Construct_min_vertex_2 min_vertex =
+      Construct_min_vertex_2 get_min_v =
         m_traits->construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_vertex =
+      Construct_max_vertex_2 get_max_v =
         m_traits->construct_max_vertex_2_object();
       Equal_2 equal = m_traits->equal_2_object();
 
-      const unsigned int n1 = cv1.number_of_segments();
-      const unsigned int n2 = cv2.number_of_segments();
-      unsigned int       i;
-
       c.clear();
-      if (equal(max_vertex(cv1), min_vertex(cv2))) {
+      if (equal(get_max_v(cv1), get_min_v(cv2))) {
+
+        const unsigned int n1 = cv1.number_of_segments();
+        const unsigned int n2 = cv2.number_of_segments();
+        unsigned int       i;
+
         // cv2 extends cv1 to the right:
         for (i = 0; i < n1 - 1; ++i)
           c.push_back(cv1[i]);
 
-        // Try to merge tthe to contiguous line segments:
+        // Try to merge the to contiguous line segments:
         if (seg_traits->are_mergeable_2_object()(cv1[n1 - 1], cv2[0])) {
           Segment_2       seg;
           seg_traits->merge_2_object()(cv1[n1 - 1], cv2[0], seg);
@@ -1127,26 +1128,8 @@ public:
 
         for (i = 1; i < n2; ++i)
           c.push_back(cv2[i]);
-      } else {
-        CGAL_precondition(equal(max_vertex(cv2), min_vertex(cv1)));
-
-        // cv1 extends cv2 to the right:
-        for (i = 0; i < n2 - 1; ++i)
-          c.push_back(cv2[i]);
-
-        // Try to merge tthe to contiguous line segments:
-        if (seg_traits->are_mergeable_2_object()(cv2[n2 - 1], cv1[0])) {
-          Segment_2       seg;
-          seg_traits->merge_2_object()(cv2[n2 - 1], cv1[0], seg);
-          c.push_back(seg);
-        } else {
-          c.push_back(cv2[n2 - 1]);
-          c.push_back(cv1[0]);
-        }
-
-        for (i = 1; i < n1; ++i)
-          c.push_back(cv1[i]);
-      }
+      } else
+        return this->operator()(cv2,cv1,c);
     }
   };
 
