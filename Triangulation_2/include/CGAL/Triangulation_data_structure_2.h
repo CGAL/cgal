@@ -347,7 +347,15 @@ private:
 
 public:
   void clear();
-  Vertex_handle copy_tds(const Tds &tds, Vertex_handle = Vertex_handle());
+
+  template <class TDS_src>
+  Vertex_handle copy_tds(const TDS_src &tds, typename TDS_src::Vertex_handle);
+
+  template <class TDS_src>
+  Vertex_handle copy_tds(const TDS_src &tds)
+  {
+    return copy_tds(tds, typename TDS_src::Vertex_handle());
+  }
 
   template <class TDS_src,class ConvertVertex,class ConvertFace>
   Vertex_handle copy_tds(const TDS_src&, typename TDS_src::Vertex_handle,const ConvertVertex&,const ConvertFace&);
@@ -1863,7 +1871,6 @@ namespace internal { namespace TDS_2{
   
   template <class Face>
   struct Default_face_converter<Face,Face>{
-    inline
     const Face& operator()(const Face& src) const {
       return src;
     } 
@@ -1873,14 +1880,15 @@ namespace internal { namespace TDS_2{
 } } //namespace internal::TDS_2
 
 template <  class Vb, class Fb>
+template < class TDS_src>
 typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
 Triangulation_data_structure_2<Vb,Fb>::
-copy_tds(const Tds &src, Vertex_handle vh)
+copy_tds(const TDS_src &src, typename TDS_src::Vertex_handle vh)
   // return the vertex corresponding to vh in the new tds
 {
   if (this == &src) return Vertex_handle();
-  internal::TDS_2::Default_vertex_converter<Vertex,Vertex> setv;
-  internal::TDS_2::Default_face_converter<Face,Face>  setf;
+  internal::TDS_2::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
+  internal::TDS_2::Default_face_converter<typename TDS_src::Face,Face>  setf;
   return copy_tds(src,vh,setv,setf);
 }
 
