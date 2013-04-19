@@ -625,6 +625,11 @@ public:
 
       int last_seg = num_seg-1;
 
+      /*
+       * Roadmap: Since the segments currently have no orientation this test
+       *          is WAY too complicated although unavoidable. This can be
+       *          solved once we introduce the HAS_SOURCE_TARGET tag.
+       */
       if (equal (get_min_v(cv[last_seg]), get_min_v(cv[last_seg-1])) ||
           equal (get_min_v(cv[last_seg]), get_max_v(cv[last_seg-1])) )
         cv.push_back(Segment_2(get_max_v(cv[last_seg]),p));
