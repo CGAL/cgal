@@ -528,9 +528,9 @@ public:
       ++it_next;
 
       const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
-      typename Segment_traits_2::Construct_max_vertex_2 max_v =
+      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Construct_min_vertex_2 min_v =
+      typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
         seg_traits->construct_min_vertex_2_object();
       Construct_x_monotone_curve_2 construct_x_monotone_curve =
         m_traits->construct_x_monotone_curve_2_object();
@@ -538,9 +538,10 @@ public:
       if (it_next == end_seg) {
         // The polyline contains a single segment:
         // Check if it is degenerated
-        *oi++ = (compare_xy(min_v(*start_seg), max_v(*start_seg)) == EQUAL) ?
+        *oi++ =
+          (compare_xy(get_min_v(*start_seg), get_max_v(*start_seg)) == EQUAL) ?
           // One segment is degenerated, returns the point.
-          make_object(min_v(*start_seg)) :
+          make_object(get_min_v(*start_seg)) :
           // Polyline consists of only one segments, and it is returned.
           make_object(construct_x_monotone_curve(start_seg, end_seg));
         return oi;
@@ -577,8 +578,10 @@ public:
             //       of geometrical elements.
             //       Without having the tag HAS_SOURCE_TARGET it seems that
             //       these tests cannot be simplified!
-            if (((comp_xy(max_v(*it_curr), min_v(*it_next)) != EQUAL) &&
-                 (comp_xy(min_v(*it_curr), max_v(*it_next)) != EQUAL) ) ||
+            if (
+                ((comp_xy(get_max_v(*it_curr), get_min_v(*it_next)) != EQUAL) &&
+                 (comp_xy(get_min_v(*it_curr), get_max_v(*it_next)) != EQUAL)
+                 ) ||
                 // Polyline has to be cut when starting vertical part
 
                 is_vertical(*it_next) )
@@ -627,20 +630,20 @@ public:
       int num_seg = cv.number_of_segments();
       CGAL_precondition(num_seg > 1);
 
-      typename Segment_traits_2::Construct_min_vertex_2 min_v =
+      typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
         m_seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 max_v =
+      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         m_seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
         m_seg_traits->equal_2_object();
 
       int last_seg = num_seg-1;
 
-      if (equal (min_v(cv[last_seg]), min_v(cv[last_seg-1])) ||
-          equal (min_v(cv[last_seg]), max_v(cv[last_seg-1])) )
-        cv.push_back(Segment_2(max_v(cv[last_seg]),p));
+      if (equal (get_min_v(cv[last_seg]), get_min_v(cv[last_seg-1])) ||
+          equal (get_min_v(cv[last_seg]), get_max_v(cv[last_seg-1])) )
+        cv.push_back(Segment_2(get_max_v(cv[last_seg]),p));
       else
-        cv.push_back(Segment_2(min_v(cv[last_seg]),p));
+        cv.push_back(Segment_2(get_min_v(cv[last_seg]),p));
     }
 
     /*!
@@ -654,9 +657,9 @@ public:
     {
       int num_seg = cv.number_of_segments();
 
-      typename Segment_traits_2::Construct_min_vertex_2 min_v =
+      typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
         m_seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 max_v =
+      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         m_seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
         m_seg_traits->equal_2_object();
@@ -670,13 +673,13 @@ public:
 
       CGAL_precondition_code(
         if (num_seg==1)
-        CGAL_precondition(!equal(min_v(cv[0]),max_v(cv[0])));
+        CGAL_precondition(!equal(get_min_v(cv[0]),get_max_v(cv[0])));
         );
 
-      CGAL_precondition(equal(min_v(cv[num_seg-1]),min_v(seg))||
-                        equal(min_v(cv[num_seg-1]),max_v(seg))||
-                        equal(max_v(cv[num_seg-1]),min_v(seg))||
-                        equal(max_v(cv[num_seg-1]),max_v(seg)));
+      CGAL_precondition(equal(get_min_v(cv[num_seg-1]),get_min_v(seg))||
+                        equal(get_min_v(cv[num_seg-1]),get_max_v(seg))||
+                        equal(get_max_v(cv[num_seg-1]),get_min_v(seg))||
+                        equal(get_max_v(cv[num_seg-1]),get_max_v(seg)));
 
         cv.push_back(seg);
     }
@@ -694,15 +697,15 @@ public:
 
       CGAL_precondition(num_seg > 0);
 
-      typename Segment_traits_2::Construct_max_vertex_2 max_v =
+      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         m_seg_traits->construct_max_vertex_2_object();
 
       CGAL_precondition_code(
         typename Segment_traits_2::Compare_x_2 comp_x =
           m_seg_traits->compare_x_2_object();
-        CGAL_precondition_code(comp_x(max_v(cv[num_seg-1]),p)==LARGER);
+        CGAL_precondition_code(comp_x(get_max_v(cv[num_seg-1]),p)==LARGER);
                              );
-      cv.push_back(Segment_2(max_v(cv[num_seg-1]),p));
+      cv.push_back(Segment_2(get_max_v(cv[num_seg-1]),p));
     }
 
     /*!
@@ -723,9 +726,9 @@ public:
           return;
         }
 
-      typename Segment_traits_2::Construct_max_vertex_2 max_v =
+      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         m_seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Construct_min_vertex_2 min_v =
+      typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
         m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Compare_x_2 comp_x =
         m_seg_traits->compare_x_2_object();
@@ -734,11 +737,11 @@ public:
 
       CGAL_precondition_code(
         if (num_seg == 1);
-        CGAL_precondition(!equal(min_v(cv[0]),max_v(cv[0])));
+        CGAL_precondition(!equal(get_min_v(cv[0]),get_max_v(cv[0])));
                              );
 
-      CGAL_precondition(equal(max_v(cv[num_seg-1]),min_v(seg)));
-      CGAL_precondition(comp_x(min_v(seg),max_v(seg))==LARGER);
+      CGAL_precondition(equal(get_max_v(cv[num_seg-1]),get_min_v(seg)));
+      CGAL_precondition(comp_x(get_min_v(seg),get_max_v(seg))==LARGER);
 
       cv.push_back(seg);
     }
@@ -1206,14 +1209,14 @@ public:
           * independently from the SegmentTraits in use, as we do not allow
           * a polyline with degenerated segments.
           */
-         typename Segment_traits_2::Construct_min_vertex_2 min_v =
+         typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
          m_seg_traits->construct_min_vertex_2_object();
-         typename Segment_traits_2::Construct_max_vertex_2 max_v =
+         typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
          m_seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Equal_2 equal =
          m_seg_traits->equal_2_object();
 
-         CGAL_precondition_msg(!equal(min_v(seg),max_v(seg)),
+         CGAL_precondition_msg(!equal(get_min_v(seg),get_max_v(seg)),
                                "Cannot construct a degenerated segment");
          );
       return Curve_2(seg);
@@ -1288,9 +1291,9 @@ public:
 
       CGAL_precondition_code
         (
-         typename Segment_traits_2::Construct_min_vertex_2 min_v =
+         typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
          m_seg_traits->construct_min_vertex_2_object();
-         typename Segment_traits_2::Construct_max_vertex_2 max_v =
+         typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
          m_seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Compare_xy_2 comp_xy =
          m_seg_traits->compare_xy_2_object();
@@ -1300,7 +1303,7 @@ public:
 
       if (++next == end)
         {
-          CGAL_precondition_msg (!equal(min_v(*curr),max_v(*curr)),
+          CGAL_precondition_msg (!equal(get_min_v(*curr),get_max_v(*curr)),
                                  "Cannot construct degenerated segment");
           // Construct a polyline with one segment.
           return Curve_2 (begin,end);
@@ -1308,17 +1311,18 @@ public:
 
       while (next != end)
         {
-          CGAL_precondition_msg (!equal(min_v(*curr),max_v(*curr)),
+          CGAL_precondition_msg (!equal(get_min_v(*curr),get_max_v(*curr)),
                                  "Cannot construct degenerated segment");
           // Verify that the segments' ends match
-          CGAL_precondition( comp_xy (min_v(*curr),min_v(*next)) == EQUAL ||
-                             comp_xy (min_v(*curr),max_v(*next)) == EQUAL ||
-                             comp_xy (max_v(*curr),min_v(*next)) == EQUAL ||
-                             comp_xy (max_v(*curr),max_v(*next)) == EQUAL );
+          CGAL_precondition(
+                       comp_xy (get_min_v(*curr),get_min_v(*next)) == EQUAL ||
+                       comp_xy (get_min_v(*curr),get_max_v(*next)) == EQUAL ||
+                       comp_xy (get_max_v(*curr),get_min_v(*next)) == EQUAL ||
+                       comp_xy (get_max_v(*curr),get_max_v(*next)) == EQUAL );
           ++next;
           ++curr;
         }
-      CGAL_precondition_msg (!equal(min_v(*curr),max_v(*curr)),
+      CGAL_precondition_msg (!equal(get_min_v(*curr),get_max_v(*curr)),
                              "Cannot construct degenerated segment");
 
       return Curve_2 (begin, end);
@@ -1377,14 +1381,14 @@ public:
           * independently from the SegmentTraits in use, as we do not allow
           * a polyline with degenerated segments.
           */
-         typename Segment_traits_2::Construct_min_vertex_2 min_v =
+         typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
          m_seg_traits->construct_min_vertex_2_object();
-         typename Segment_traits_2::Construct_max_vertex_2 max_v =
+         typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
          m_seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Equal_2 equal =
          m_seg_traits->equal_2_object();
 
-         CGAL_precondition_msg(!equal(min_v(seg),max_v(seg)),
+         CGAL_precondition_msg(!equal(get_min_v(seg),get_max_v(seg)),
                                "Cannot construct a degenerated segment");
          );
       return X_monotone_curve_2(seg);
@@ -1481,9 +1485,9 @@ public:
                             "one segment");
 
       // Functors that have to be used always
-      typename Segment_traits_2::Construct_min_vertex_2 min_v =
+      typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
         m_seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 max_v =
+      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         m_seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal = m_seg_traits->equal_2_object();
 
@@ -1496,14 +1500,14 @@ public:
 
          InputIterator curr = begin;
          // Ensure that the first segment does not degenerate to a point.
-         CGAL_precondition_msg(!equal(min_v(*curr), max_v(*curr)),
+         CGAL_precondition_msg(!equal(get_min_v(*curr), get_max_v(*curr)),
                                "Cannot construct a degenerated segment");
 
          InputIterator next = curr;
 
          if (++next != end) {
            // Ensure that the second segment does not degenerate to a point.
-           CGAL_precondition(!equal(min_v(*next), max_v(*next)));
+           CGAL_precondition(!equal(get_min_v(*next), get_max_v(*next)));
 
            // Ensure that either both are vertical or both are not vertical.
 
@@ -1511,15 +1515,15 @@ public:
                              (!is_vertical(*curr) && !is_vertical(*next)));
 
            // Ensure that the segment connect.
-           CGAL_precondition(equal(max_v(*curr), min_v(*next)) ||
-                             equal(min_v(*curr), max_v(*next)));
+           CGAL_precondition(equal(get_max_v(*curr), get_min_v(*next)) ||
+                             equal(get_min_v(*curr), get_max_v(*next)));
 
            // Record the initial direction.
-           bool left_to_right = equal(max_v(*curr), min_v(*next));
+           bool left_to_right = equal(get_max_v(*curr), get_min_v(*next));
 
            for (curr = next++; next != end; ++next) {
              // Ensure that the next segment does not degenerate to a point
-             CGAL_precondition(!equal(min_v(*next), max_v(*next)));
+             CGAL_precondition(!equal(get_min_v(*next), get_max_v(*next)));
 
              // Ensure that either both are vertical or both are not vertical.
              CGAL_precondition((is_vertical(*curr) && is_vertical(*next)) ||
@@ -1527,9 +1531,9 @@ public:
 
              // Ensure the direction and connectivity.
              CGAL_precondition((left_to_right &&
-                                equal(max_v(*curr), min_v(*next))) ||
+                                equal(get_max_v(*curr), get_min_v(*next))) ||
                                (!left_to_right &&
-                                equal(max_v(*next), min_v(*curr))));
+                                equal(get_max_v(*next), get_min_v(*curr))));
              ++curr;
            }
          }
@@ -1539,7 +1543,7 @@ public:
       if (std::distance(begin, end) >= 2) {
         InputIterator second = begin;
         ++second;
-        rev = equal(min_v(*begin), max_v(*second));
+        rev = equal(get_min_v(*begin), get_max_v(*second));
       }
       // The following statement assumes that the begin (and end) iterators
       // are biderctional.
