@@ -999,7 +999,13 @@ public:
   // Helping functions
   template <class TDS_src>
   Vertex_handle copy_tds(const TDS_src & tds,
-	                 typename TDS_src::Vertex_handle vert = typename TDS_src::Vertex_handle() );
+	                 typename TDS_src::Vertex_handle vert);
+
+  template <class TDS_src>
+  Vertex_handle copy_tds(const TDS_src & tds)
+  {
+    return copy_tds(tds, typename TDS_src::Vertex_handle());
+  }
     // returns the new vertex corresponding to vert in the new tds
 
   template <class TDS_src,class ConvertVertex,class ConvertCell>
