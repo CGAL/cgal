@@ -277,7 +277,6 @@ public:
       return m_seg_traits->compare_y_at_x_2_object()(p, cv[i]);
     }
   };
-  friend class Compare_y_at_x_2;
 
   /*! Get a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
@@ -324,7 +323,6 @@ public:
       return m_seg_traits->compare_y_at_x_left_2_object()(cv1[i1], cv2[i2], p);
     }
   };
-  friend class Compare_y_at_x_left_2;
 
   /*! Get a Compare_y_at_x_left_2 functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
@@ -372,7 +370,6 @@ public:
       return m_seg_traits->compare_y_at_x_right_2_object()(cv1[i1],cv2[i2], p);
     }
   };
-  friend class Compare_y_at_x_right_2;
 
   /*! Get a Compare_y_at_x_right_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
@@ -822,7 +819,6 @@ public:
         c2.push_back(cv[j]);
     }
   };
-  friend class Split_2;
 
   /*! Get a Split_2 functor object. */
   Split_2 split_2_object() const
@@ -1023,7 +1019,6 @@ public:
       return oi;
     }
   };
-  friend class Intersect_2;
 
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object() const
@@ -1087,8 +1082,6 @@ public:
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits* traits) : m_traits(traits) {}
-
-    friend class Arr_polyline_traits_2<Segment_traits_2>;
 
   public:
     /*!
