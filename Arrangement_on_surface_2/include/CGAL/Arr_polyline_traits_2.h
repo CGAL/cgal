@@ -117,8 +117,8 @@ public:
    * A polyline represents a general continuous piecewise-linear curve, without
    * degenerated segments.
    */
-  typedef _Polyline_2<Segment_traits_2>                 Curve_2;
-  typedef _X_monotone_polyline_2<Segment_traits_2>      X_monotone_curve_2;
+  typedef POLYLINE::Polyline_2<Segment_traits_2>            Curve_2;
+  typedef POLYLINE::X_monotone_polyline_2<Segment_traits_2> X_monotone_curve_2;
 
   typedef typename Segment_traits_2::Multiplicity       Multiplicity;
 

@@ -35,12 +35,14 @@
 
 namespace CGAL {
 
+  namespace POLYLINE{
+
 
 /*! \class
  * Representation of a polyline.
  */
 template <typename SegmentTraits_>
-class _Polyline_2
+class Polyline_2
 {
 public:
 
@@ -56,9 +58,9 @@ protected:
 
 public:
   /*! Default constructor. */
-  _Polyline_2() : m_segments() {}
+  Polyline_2() : m_segments() {}
 
-  _Polyline_2(const Segment_2 &seg) : m_segments()
+  Polyline_2(const Segment_2 &seg) : m_segments()
   {
     m_segments.push_back(seg);
   }
@@ -94,7 +96,7 @@ public:
    *      details.
    */
   template <typename InputIterator>
-  _Polyline_2(InputIterator begin, InputIterator end) :
+  Polyline_2(InputIterator begin, InputIterator end) :
     m_segments()
   {
     typedef typename std::iterator_traits<InputIterator>::value_type VT;
@@ -224,7 +226,7 @@ public:
 
   private:
 
-    const _Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
+    const Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
     int   m_num_pts;                            // Its number of points.
     int   m_index;                              // The current point.
 
@@ -233,7 +235,7 @@ public:
      * \param cv The scanned curve.
      * \param index The index of the segment.
      */
-    const_iterator (const _Polyline_2<SegmentTraits_>* cvP, int index) :
+    const_iterator (const Polyline_2<SegmentTraits_>* cvP, int index) :
       m_cvP(cvP),
       m_index(index)
     {
@@ -327,7 +329,7 @@ public:
       return (m_cvP != it.m_cvP || m_index != it.m_index);
     }
 
-    friend class _Polyline_2<SegmentTraits_>;
+    friend class Polyline_2<SegmentTraits_>;
   };
 
   /* ! Get an iterator for the polyline points.*/
@@ -432,18 +434,18 @@ public:
  * An x-monotone polyline is always directed from left to right.
  */
 template <typename SegmentTraits_>
-class _X_monotone_polyline_2 : public _Polyline_2<SegmentTraits_>
+class X_monotone_polyline_2 : public Polyline_2<SegmentTraits_>
 {
 public:
   typedef SegmentTraits_                        Segment_traits_2;
-  typedef _Polyline_2<SegmentTraits_>           Base;
+  typedef Polyline_2<SegmentTraits_>           Base;
   typedef typename Segment_traits_2::Point_2    Point_2;
   typedef typename Segment_traits_2::Curve_2    Segment_2;
 
   /*! Default constructor. */
-  _X_monotone_polyline_2() : Base () {}
+  X_monotone_polyline_2() : Base () {}
 
-  _X_monotone_polyline_2(Segment_2 seg) : Base(seg){ }
+  X_monotone_polyline_2(Segment_2 seg) : Base(seg){ }
 
   /*! Constructor
    * Similar to the constructor of a general polyline.
@@ -452,7 +454,7 @@ public:
    * from a range of points. DO NOT USE THIS CONSTRUCTION.
    */
   template <typename InputIterator>
-  _X_monotone_polyline_2(InputIterator begin, InputIterator end) :
+  X_monotone_polyline_2(InputIterator begin, InputIterator end) :
     Base(begin, end)
   {
     typedef typename std::iterator_traits<InputIterator>::value_type VT;
@@ -543,9 +545,9 @@ private:
   /*! Output operator for a polyline. */
   template <typename SegmentTraits>
   std::ostream& operator<< (std::ostream & os,
-                            const _Polyline_2<SegmentTraits>& cv)
+                            const Polyline_2<SegmentTraits>& cv)
   {
-    typename _Polyline_2<SegmentTraits>::Segment_const_iterator  iter =
+    typename Polyline_2<SegmentTraits>::Segment_const_iterator  iter =
       cv.begin_segments();
 
     while (iter != cv.end_segments())
@@ -568,9 +570,9 @@ private:
   /*! Input operator for a polyline. */
   template <typename SegmentTraits>
   std::istream& operator>> (std::istream& is,
-                            _Polyline_2<SegmentTraits>& pl)
+                            Polyline_2<SegmentTraits>& pl)
   {
-    typedef _Polyline_2<SegmentTraits>  Curve_2;
+    typedef Polyline_2<SegmentTraits>  Curve_2;
     typedef typename Curve_2::Point_2   Point_2;
 
     // Read the number of input points.
@@ -594,5 +596,6 @@ private:
 
     return (is);
   }
+}// namespace POLYLINE
 } //namespace CGAL
 #endif
