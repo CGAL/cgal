@@ -63,7 +63,16 @@ public:
     m_segments.push_back(seg);
   }
 
-
+  /*
+   * Roadmap:
+   * - Currently construction from points is marked as deprecated.
+   *   For the sake of backwards compatibility, it is not removed yet.
+   * - In the next release, construction from points will be removed.
+   * - Then, the remaining construction from segments will become private
+   *   in this class as construction is provided by the traits.
+   *   Furthermore, the polyline traits class will become a friend of
+   *   this class.
+   */
   /*!
    * Constructor from a range. The range can be either:
    *
@@ -99,13 +108,6 @@ public:
    * \param end An iterator pointing after the past-the-end segment
    *        in the range.
    * \pre The end of segment n should be the beginning of segment n+1.
-   *
-   * TODO: Ultimately, we want to construct polylines only from segments.
-   *       Furthermore, we do not want the user to construct polyline directly,
-   *       but only using the traits class. Therefore:
-   *       - constructions from points should be deprecated and finally removed.
-   *       - Constructions from ranges of segments should be private.
-   *       - The traits class has to become a friend.
    */
   template <typename InputIterator>
   void construct_polyline(InputIterator begin, InputIterator end,
@@ -151,6 +153,10 @@ public:
     }
   }
 
+  /*
+   * Roadmap: Make this private in the next version (after the traits becomes
+   * friendly...)
+   */
   /*!
    * Append a segment to the (x-monotone) polyline.
    * Warning: This is a risky function! Don't use it! Prefer the
@@ -159,8 +165,6 @@ public:
    * \pre If the polyline is not empty, seg source must be the
    *      same as the target point of the last segment in the polyline
    *      (thus it must extend it to the right).
-   * TODO: Make this private in the next version (after the tarits becomes
-   * friendly...)
    */
   inline void push_back (const Segment_2& seg)
   {
@@ -355,13 +359,6 @@ public:
   {
     return (const_reverse_iterator (begin()));
   }
-
-  // TODO: This was added to handle the Split_2. Understand whether
-  // also a reverse version should be implemented?
-  // typedef typename Segments_container::iterator Segment_iterator;
-
-  // Segment_iterator begin_segments()
-  // { return m_segments.begin(); }
 
   typedef typename Segments_container::const_iterator
     Segment_const_iterator;

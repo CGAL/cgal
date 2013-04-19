@@ -24,8 +24,8 @@
  * TODO: Add a tag HAS_SOURCE_TARGET and dispatch calls in
  *       Push_back_2 accordingly.
  * TODO: Complete the documentation of the changes derived from the cleaning
- * TODO: What to do with an isolated point? How to construct it? Should we
- *       support it?
+ *       In particular, doxygen only the things that have to be exposed
+ *       to the user.
  */
 
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
@@ -46,14 +46,23 @@
 
 namespace CGAL {
 
-template <class T_SegmentTraits_2>
+template <class SegmentTraits_2>
 class Arr_polyline_traits_2 {
 public:
-  typedef T_SegmentTraits_2                          Segment_traits_2;
+  typedef SegmentTraits_2                          Segment_traits_2;
 
-  // Tag defintion:
+  // Tag definitions:
   typedef Tag_true                                   Has_left_category;
   typedef Tag_true                                   Has_merge_category;
+  /*
+   * TODO: Add a Do_intersect_2 functor which stops after the first intersection
+   *       found.
+   *       Either copy/paste the code of the Intersect_2 only without using
+   *       output iterator and stopping after the first intersection.
+   *       Or, use a dummy output iterator which throws an exception as soon as
+   *       it is changed. Then from Do_intersect_2 call the Intersect_2 and
+   *       provide this dummy output iterator as the third argument.
+   */
   typedef Tag_false                                  Has_do_intersect_category;
 
   typedef Arr_oblivious_side_tag                     Left_side_category;
@@ -113,8 +122,6 @@ public:
 
   typedef typename Segment_traits_2::Multiplicity       Multiplicity;
 
-  // TODO: where do these two are begin used? It seems like when ever needed,
-  //       the functors are constructed directly.
   /*! Compare the x-coordinates of two points. */
   typedef typename Segment_traits_2::Compare_x_2        Compare_x_2;
 
@@ -136,11 +143,11 @@ public:
 
   class Number_of_points_2 {
   protected:
-    /*! The segment traits (in case it has state) */
+    /* The segment traits (in case it has state) */
     const Segment_traits_2* m_seg_traits;
 
   public:
-    /*! Constructor. */
+    /* Constructor. */
     Number_of_points_2(const Segment_traits_2* traits) :
       m_seg_traits(traits)
     {}
@@ -158,11 +165,11 @@ public:
 
   class Construct_min_vertex_2 {
   protected:
-    /*! The segment traits (in case it has state) */
+    /* The segment traits (in case it has state) */
     const Segment_traits_2* m_seg_traits;
 
   public:
-    /*! Constructor. */
+    /* Constructor. */
     Construct_min_vertex_2(const Segment_traits_2* traits) :
       m_seg_traits(traits)
     {}
@@ -570,7 +577,9 @@ public:
         else
           {
             // TODO: Improve this test. Avoid double tests
-            // of geometrical elements.
+            //       of geometrical elements.
+            //       Without having the tag HAS_SOURCE_TARGET it seems that
+            //       these tests cannot be simplified!
             if (((comp_xy(max_v(*it_curr), min_v(*it_next)) != EQUAL) &&
                  (comp_xy(min_v(*it_curr), max_v(*it_next)) != EQUAL) ) ||
                 // Polyline has to be cut when starting vertical part
