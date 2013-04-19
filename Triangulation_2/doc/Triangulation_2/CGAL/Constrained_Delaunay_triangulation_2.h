@@ -155,6 +155,22 @@ template < class InputIterator >
 std::ptrdiff_t 
 insert(InputIterator first, InputIterator last); 
 
+/*!
+inserts the points in the iterator range `[first,last)`. Returns the number of inserted points.
+Note that this function is not guaranteed to insert the points
+following the order of `PointWithInfoInputIterator`, as `spatial_sort()`
+is used to improve efficiency.
+Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is
+`v.point() == p` and `v.info() == i`. If several pairs have the same point,
+only one vertex is created, and one of the objects of type `Vertex::Info` will be stored in the vertex.
+\pre `Vertex` must be model of the concept `TriangulationVertexBaseWithInfo_2`.
+
+\tparam PointWithInfoInputIterator must be an input iterator with the value type `std::pair<Point,Vertex::Info>`.
+*/ 
+template < class PointWithInfoInputIterator >
+std::ptrdiff_t
+insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
+
 /*! 
 Inserts segment `ab` as a constrained edge in the triangulation. 
 */ 
