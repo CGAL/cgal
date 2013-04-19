@@ -237,16 +237,16 @@ int readInrimageHeader(const char *,_image *im) {
     while(str[0] != '#' && str[0] != '\0') {
 
       if(!strncmp(str, "XDIM=", 5)) {
-	if(sscanf(str+5, "%i", &im->xdim) != 1) return -1;
+	if(sscanf(str+5, "%u", &im->xdim) != 1) return -1;
       }
       else if(!strncmp(str, "YDIM=", 5)) {
-	if(sscanf(str+5, "%i", &im->ydim) != 1) return -1;
+	if(sscanf(str+5, "%u", &im->ydim) != 1) return -1;
       }
       else if(!strncmp(str, "ZDIM=", 5)) {
-	if(sscanf(str+5, "%i", &im->zdim) != 1) return -1;
+	if(sscanf(str+5, "%u", &im->zdim) != 1) return -1;
       }
       else if(!strncmp(str, "VDIM=", 5)) {
-	if(sscanf(str+5, "%i", &im->vdim) != 1) return -1;
+	if(sscanf(str+5, "%u", &im->vdim) != 1) return -1;
 	if(im->vdim == 1) im->vectMode = VM_SCALAR;
 	else im->vectMode = VM_INTERLACED;
       }
@@ -293,7 +293,7 @@ int readInrimageHeader(const char *,_image *im) {
 	 insight (GM).
       */
       else if(!strncmp(str, "PIXSIZE=", 8)) {
-	if(sscanf(str+8, "%i", &im->wdim) != 1) return -1;
+	if(sscanf(str+8, "%u", &im->wdim) != 1) return -1;
 	if(im->wdim != 8 && im->wdim != 16 && im->wdim != 32 &&
 	   im->wdim != 64) return -1;
 	
