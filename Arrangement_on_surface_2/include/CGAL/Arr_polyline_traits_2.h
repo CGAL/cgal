@@ -561,40 +561,26 @@ public:
 
       for (/*it_next was advanced earlier*/; it_next != end_seg; ++it_next)
       {
-        if ( is_start_vertical )
+        // TODO: Improve this test. Avoid double tests
+        //       of geometrical elements.
+        //       Without having the tag HAS_SOURCE_TARGET it seems that
+        //       these tests cannot be simplified!
+        if (
+            // Polyline changes direction (zig-zag)
+            ((comp_xy(get_max_v(*it_curr), get_min_v(*it_next)) != EQUAL) &&
+             (comp_xy(get_min_v(*it_curr), get_max_v(*it_next)) != EQUAL)
+             ) ||
+            // or, polyline changes it vertical-ness
+            (is_vertical(*it_curr) != is_vertical(*it_next)) )
           {
-            if ( !is_vertical(*it_next) )
-              {
-                *oi++ =
-                  make_object(construct_x_monotone_curve(it_start, it_next));
-                it_start = it_next;
-                is_start_vertical = is_vertical(*it_start);
-              }
-            it_curr = it_next;
+            // Construct an x-monotone curve from the sub-range which
+            // was found
+            *oi++ =
+              make_object(construct_x_monotone_curve(it_start, it_next));
+            it_start = it_next;
+            is_start_vertical = is_vertical(*it_start);
           }
-        else
-          {
-            // TODO: Improve this test. Avoid double tests
-            //       of geometrical elements.
-            //       Without having the tag HAS_SOURCE_TARGET it seems that
-            //       these tests cannot be simplified!
-            if (
-                ((comp_xy(get_max_v(*it_curr), get_min_v(*it_next)) != EQUAL) &&
-                 (comp_xy(get_min_v(*it_curr), get_max_v(*it_next)) != EQUAL)
-                 ) ||
-                // Polyline has to be cut when starting vertical part
-
-                is_vertical(*it_next) )
-              {
-                // Construct an x-monotone curve from the sub-range which
-                // was found
-                *oi++ =
-                  make_object(construct_x_monotone_curve(it_start, it_next));
-                it_start = it_next;
-                is_start_vertical = is_vertical(*it_start);
-              }
-            it_curr = it_next;
-          }
+        it_curr = it_next;
       }
       *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
       return oi;
