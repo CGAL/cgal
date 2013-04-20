@@ -94,6 +94,7 @@ public:
   /*! Append a point to the polyline. */
   void push_back (const Point_2 & p)
   {
+    CGAL_assertion(!segments.empty());
     Point_2 pt = p;
     Point_2 ps = segments.back().target();
     segments.push_back (Segment_2 (ps, pt));
