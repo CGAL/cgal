@@ -1,7 +1,6 @@
-#include <CGAL/Deform_mesh.h>
-
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Deform_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Eigen_solver_traits.h>
 
@@ -10,15 +9,11 @@
 #include <queue>
 #include <boost/property_map/property_map.hpp>
 
-#include <Eigen/SuperLUSupport>
-
-typedef CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> > DefaultSolver;
-  
 typedef CGAL::Simple_cartesian<double>   Kernel;
 typedef CGAL::Polyhedron_3<Kernel>       Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator  	  vertex_iterator; 
+typedef boost::graph_traits<Polyhedron>::vertex_iterator  	  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor  	  edge_descriptor;
 typedef boost::graph_traits<Polyhedron>::out_edge_iterator    out_edge_iterator;
 
@@ -28,7 +23,7 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
-typedef CGAL::Deform_mesh<Polyhedron, DefaultSolver, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map> Deform_mesh;
 
 // extract vertices which are at most k (inclusive) far from vertex v
 std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
@@ -49,27 +44,34 @@ std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_desc
       if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
         Q.push(new_v);
       }
-    }   
+    }
   }
   return D;
 }
 
 template<class Iterator>
-Iterator next_helper(Iterator it, std::size_t n) { 
+Iterator next_helper(Iterator it, std::size_t n) {
   Iterator it_next = it;
   while(n-- > 0) { ++it_next; }
   return it_next;
-} 
+}
 
 int main()
 {
   Polyhedron mesh;
-  std::ifstream("models/plane.off") >> mesh;
+  std::ifstream input("models/plane.off");
+
+  if (input)
+    input >> mesh;
+  else{
+    std::cerr<< "Cannot open  models/plane.off";
+    return 1;
+  }
 
   Internal_vertex_map vertex_index_map;
   Internal_edge_map   edge_index_map;
 //// PREPROCESS SECTION ////
-  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map)); 
+  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map));
 
   // insert region of interest
   vertex_iterator vb, ve;
@@ -87,7 +89,7 @@ int main()
   for(std::map<vertex_descriptor, int>::iterator it = handles_1_map.begin(); it != handles_1_map.end(); ++it) {
     deform_mesh.insert_handle(handles_1, it->first);
   }
-  
+
   Deform_mesh::Handle_group handles_2 = deform_mesh.create_handle_group();
   for(std::map<vertex_descriptor, int>::iterator it = handles_2_map.begin(); it != handles_2_map.end(); ++it) {
     deform_mesh.insert_handle(handles_2, it->first);
@@ -96,7 +98,7 @@ int main()
   deform_mesh.preprocess();
 //// DEFORM SECTION ////
 
-  deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0,1)); 
+  deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0,1));
    // overrides any previous call
 
   Eigen::Quaternion<double> quad(0.92, 0, 0, -0.38);
@@ -107,8 +109,10 @@ int main()
 
   deform_mesh.deform();
 
-  std::ofstream("deform_1.off") << mesh; // save deformed mesh
-  
+  std::ofstream output("deform_1.off");
+  output << mesh; // save deformed mesh
+  output.close();
+
   // Note that translate and rotate are not cumulative,
   // they just use original positions (positions at the time of construction) of the handles while calculating target positions
   deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0.30,0));
@@ -118,6 +122,7 @@ int main()
   deform_mesh.set_tolerance(0.0);
   deform_mesh.deform(); // will iterate 10 times
 
-  std::ofstream("deform_2.off") << mesh;
+  output.open("deform_2.off");
+  output << mesh;
 }
 
