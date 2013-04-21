@@ -25,7 +25,10 @@
 
 #include "ui_Deform_mesh.h"
 
+#undef CGAL_SUPERLU_ENABLED
 #include <CGAL/Deform_mesh.h> 
+
+#include <CGAL/internal/Surface_modeling/Deformation_Eigen_polar_closest_rotation_traits_3.h>
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
@@ -51,7 +54,16 @@ public:
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; 
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map; 
 
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
+// #define CGAL_USE_EXPERIMENTAL_POLAR
+
+#ifdef CGAL_USE_EXPERIMENTAL_POLAR
+  typedef CGAL::Deformation_Eigen_polar_closest_rotation_traits_3 Closest_rotation_model;
+#else
+  typedef CGAL::Deformation_Eigen_closest_rotation_traits_3 Closest_rotation_model;
+#endif
+
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, 
+  CGAL::ORIGINAL_ARAP, CGAL::Default, CGAL::Default, Closest_rotation_model> Deform_mesh;
 
 
 typedef Deform_mesh::Point  Point;
