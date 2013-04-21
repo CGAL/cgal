@@ -108,8 +108,13 @@ read_xyz_points_and_normals(
       Point point(x,y,z);
       Vector normal(nx,ny,nz);
       Enriched_point pwn;
+    #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
       put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
       put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+    #else
+      put(point_pmap,  pwn, point);  // point_pmap[pwn] = point
+      put(normal_pmap, pwn, normal); // normal_pmap[pwn] = normal
+    #endif
       *output++ = pwn;
     }
     // ...or reads only position...
@@ -118,8 +123,13 @@ read_xyz_points_and_normals(
       Point point(x,y,z);
       Vector normal = CGAL::NULL_VECTOR;
       Enriched_point pwn;
+    #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
       put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
       put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+    #else
+      put(point_pmap,  pwn, point);  // point_pmap[pwn] = point
+      put(normal_pmap, pwn, normal); // normal_pmap[pwn] = normal
+    #endif
       *output++ = pwn;
     }
     // ...or skips number of points on first line (optional)
@@ -175,7 +185,11 @@ read_xyz_points_and_normals(
   return read_xyz_points_and_normals(
     stream,
     output,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(output),
+#else
+    Typed_identity_property_map_by_reference<typename value_type_traits<OutputIterator>::type>(),
+#endif
     normal_pmap);
 }
 /// @endcond
@@ -251,7 +265,12 @@ read_xyz_points(
   return read_xyz_points(
     stream,
     output,
-    make_dereference_property_map(output));
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    make_dereference_property_map(output)
+#else
+    Typed_identity_property_map_by_reference<typename value_type_traits<OutputIterator>::type>()
+#endif
+    );
 }
 /// @endcond
 

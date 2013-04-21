@@ -34,6 +34,27 @@
 
 namespace CGAL {
 
+/// An alternative to boost::put_get_helper for:
+/// - return type of `get` function is `const Reference`
+/// - `key` is passed by reference in `put` function
+template <class Reference, class LvaluePropertyMap>
+struct put_get_helper_pass_key_by_reference { };
+
+template <class PropertyMap, class Reference, class K>
+inline const Reference
+get(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, const K& k)
+{
+  Reference v = static_cast<const PropertyMap&>(pa)[k];
+  return v;
+}
+
+template <class PropertyMap, class Reference, class K, class V>
+inline void
+put(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, K& k, const V& v)
+{
+  static_cast<const PropertyMap&>(pa)[k] = v;
+}
+
 
 /// \ingroup PkgProperty_map
 /// Property map that converts a `T*` pointer (or in general an iterator
@@ -67,9 +88,23 @@ make_dereference_property_map(Iter)
   return Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>();
 }
 
+template <typename T>
+struct Typed_identity_property_map_by_reference
+  : put_get_helper_pass_key_by_reference<T, Typed_identity_property_map_by_reference<T> >
+{
+  typedef T key_type;
+  typedef T value_type;
+  typedef T& reference;
+  typedef boost::lvalue_property_map_tag category;
+
+  reference operator[](key_type& v) const { return reference(v); }
+  const reference operator[](const key_type& v) const { return reference(v); }
+};
+
+
 
 //=========================================================================
-
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// \ingroup PkgProperty_map
 /// Property map that accesses the first item of a `std::pair`. 
 /// \tparam Pair Instance of `std::pair`. 
@@ -92,6 +127,34 @@ struct First_of_pair_property_map
   template <class Iter>
   reference operator[](Iter pair) const { return reference(pair->first); }
 };
+#else
+/// \ingroup PkgProperty_map
+/// Property map that accesses the first item of a `std::pair`. 
+/// \tparam Pair Instance of `std::pair`. 
+/// \cgalModels `LvaluePropertyMap`
+///
+/// \sa `CGAL::Second_of_pair_property_map<Pair>`
+template <typename Pair>
+struct First_of_pair_property_map
+  : put_get_helper_pass_key_by_reference<typename Pair::first_type&, 
+                                         First_of_pair_property_map<Pair> >
+{
+  typedef Pair key_type; ///< typedef to 'Pair'
+  typedef typename Pair::first_type value_type; ///< typedef to `Pair::first_type`
+  typedef value_type& reference; ///< typedef to `value_type&`
+  typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
+
+  /// Access a property map element.
+  ///
+  /// @tparam pair a key whose first item is accessed
+  reference operator[](key_type& pair) const { return reference(pair.first); }
+
+  /// Access a property map element.
+  ///
+  /// @tparam pair a key whose first item is accessed read-only
+  const reference operator[](const key_type& pair) const { return reference(pair.first); }
+};
+#endif
 
 /// Free function to create a `First_of_pair_property_map` property map. 
 ///
@@ -104,6 +167,7 @@ make_first_of_pair_property_map(Iter)
   return First_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>();
 }
 
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// \ingroup PkgProperty_map
 /// 
 /// Property map that accesses the second item of a `std::pair`. 
@@ -129,7 +193,37 @@ struct Second_of_pair_property_map
   template <class Iter>
   reference operator[](Iter pair) const { return reference(pair->second); }
 };
+#else
+/// \ingroup PkgProperty_map
+/// 
+/// Property map that accesses the second item of a `std::pair`. 
+/// 
+/// \tparam Pair Instance of `std::pair`. 
+/// 
+/// \cgalModels `LvaluePropertyMap`
+/// 
+/// \sa `CGAL::First_of_pair_property_map<Pair>`
+template <typename Pair>
+struct Second_of_pair_property_map
+  : put_get_helper_pass_key_by_reference<typename Pair::second_type&, 
+                                         Second_of_pair_property_map<Pair> >
+{
+  typedef Pair key_type; ///< typedef to 'Pair'
+  typedef typename Pair::second_type value_type; ///< typedef to `Pair::first_type`
+  typedef value_type& reference; ///< typedef to `value_type&`
+  typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
 
+  /// Access a property map element.
+  ///
+  /// @tparam pair a key whose second item is accessed
+  reference operator[](key_type& pair) const { return reference(pair.second); }
+
+  /// Access a property map element.
+  ///
+  /// @tparam pair a key whose second item is accessed read-only
+  const reference operator[](const key_type& pair) const { return reference(pair.second); }
+};
+#endif
 /// Free function to create a Second_of_pair_property_map property map.
 ///
 /// \relates Second_of_pair_property_map 
@@ -144,7 +238,7 @@ make_second_of_pair_property_map(Iter)
 
 //=========================================================================
 
-
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// \ingroup PkgProperty_map
 /// 
 /// Property map that accesses the Nth item of a `boost::tuple`. 
@@ -169,6 +263,36 @@ struct Nth_of_tuple_property_map
   template <class Iter>
   reference operator[](Iter tuple) const { return (reference) tuple->template get<N>(); }
 };
+#else
+/// \ingroup PkgProperty_map
+/// 
+/// Property map that accesses the Nth item of a `boost::tuple`. 
+/// 
+/// \tparam N Index of the item to access.
+/// \tparam Tuple Instance of `boost::tuple`.
+/// 
+/// \cgalModels `LvaluePropertyMap`
+template <int N, typename Tuple>
+struct Nth_of_tuple_property_map
+  : put_get_helper_pass_key_by_reference<typename boost::tuples::element<N,Tuple>::type&,
+                                         Nth_of_tuple_property_map<N,Tuple> >
+{
+  typedef Tuple key_type; ///< typedef to 'Tuple'
+  typedef typename boost::tuples::element<N,Tuple>::type value_type; ///< typedef to `boost::tuples::element<N,Tuple>::%type`
+  typedef value_type& reference; ///< typedef to `value_type&`
+  typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
+
+  /// Access a property map element.
+  ///
+  /// @tparam tuple a key whose Nth item is accessed
+  reference operator[](key_type& tuple) const { return reference(tuple.template get<N>()); }
+
+  /// Access a property map element.
+  ///
+  /// @tparam tuple a key whose Nth item is accessed read-only
+  const reference operator[](const key_type& tuple) const { return reference(tuple.template get<N>()); }
+};
+#endif
 
 /// Free function to create a Nth_of_tuple_property_map property map.
 ///
