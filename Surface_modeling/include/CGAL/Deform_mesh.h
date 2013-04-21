@@ -38,19 +38,14 @@
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 
-// #define USE_FAST_SVD_EXPERIMENTAL
-
-#if defined(USE_FAST_SVD_EXPERIMENTAL)
-  #include <CGAL/internal/Surface_modeling/auxiliary/Eigen_with_fast_SVD_helper_3.h>
-#else
-  #include <CGAL/Deformation_Eigen_Svd_traits_3.h>  // for 3x3 SVD solver
-#endif
+  #include <CGAL/Deformation_Eigen_closest_rotation_traits_3.h>  // for 3x3 closest rotation computer
 
   #if defined(CGAL_SUPERLU_ENABLED)
     #include <Eigen/SuperLUSupport>
   #else
     #include <Eigen/SparseLU>
   #endif
+
 #endif
 
 namespace CGAL {
@@ -102,8 +97,8 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  ///            CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
  ///            Eigen::COLAMDOrdering<int> >  >
  /// \endcode
- /// @tparam SVD a model of DeformationSvdTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
- /// `Deformation_Eigen_Svd_traits_3` is provided as default parameter.
+ /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
+ /// `Deformation_Eigen_closest_rotation_traits_3` is provided as default parameter.
 template <
   class P, 
   class VIM, 
@@ -111,7 +106,7 @@ template <
   Deformation_algorithm_tag TAG = SPOKES_AND_RIMS,
   class WC = Default,
   class ST = Default, 
-  class SVD = Default  
+  class CR = Default  
   >
 class Deform_mesh
 {
@@ -156,18 +151,18 @@ public:
   typedef ST Sparse_linear_solver; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
 #endif
 
-// SVD helper
+// CR helper
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
-    SVD,
+    CR,
   #if defined(CGAL_EIGEN3_ENABLED)
-    Deformation_Eigen_Svd_traits_3
+    Deformation_Eigen_closest_rotation_traits_3
   #else
-    SVD // no parameter provided, and Eigen is not enabled: so don't compile!
+    CR // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
-  >::type SVD_helper;
+  >::type CR_helper;
 #else
-  typedef SVD SVD_helper; /**< model of DeformationSvdTraits_3 */
+  typedef CR CR_helper; /**< model of DeformationClosestRotationTraits_3 */
 #endif
 
   /// @}
@@ -179,7 +174,7 @@ public:
   typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
-  typedef Deform_mesh<P, VIM, EIM, TAG, WC, ST, SVD> Self;
+  typedef Deform_mesh<P, VIM, EIM, TAG, WC, ST, CR> Self;
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator       edge_iterator;
@@ -190,9 +185,8 @@ private:
   typedef std::list<vertex_descriptor>  Handle_container;
   typedef std::list<Handle_container>   Handle_group_container;
 
-  typedef typename SVD_helper::Matrix SVD_matrix;
-  typedef typename SVD_helper::Vector SVD_vector;
-  typedef typename SVD_helper::Solver SVD_solver;
+  typedef typename CR_helper::Matrix CR_matrix;
+  typedef typename CR_helper::Vector CR_vector;
 
 public:
   /** The type used as the representative of a group of handles*/
@@ -233,7 +227,7 @@ private:
   std::vector<bool>        is_hdl_map;                ///< (size: num vertices)
 
   std::vector<double> edge_weight;                    ///< all edge weights 
-  std::vector<SVD_matrix> rot_mtr;    ///< rotation matrices of ros vertices (size: ros)
+  std::vector<CR_matrix> rot_mtr;    ///< rotation matrices of ros vertices (size: ros)
 
   Sparse_linear_solver m_solver;                      ///< linear sparse solver
   unsigned int iterations;                            ///< number of maximal iterations
@@ -653,7 +647,7 @@ public:
     {
       // main steps of optimization
       update_solution();       
-      optimal_rotations_svd(); 
+      optimal_rotations(); 
 
       // energy based termination
       if(tolerance > 0.0 && (ite + 1) < iterations) // if tolerance <= 0 then don't compute energy 
@@ -765,7 +759,7 @@ public:
     }    
 
     // also set rotation matrix to identity
-    std::fill(rot_mtr.begin(), rot_mtr.end(), SVD_helper().identity_matrix());
+    std::fill(rot_mtr.begin(), rot_mtr.end(), CR_helper().identity_matrix());
 
     need_preprocess_both(); // now we need reprocess
   }
@@ -807,7 +801,7 @@ private:
     need_preprocess_region_of_solution = false;
 
     std::vector<std::size_t>  old_ros_id_map = ros_id_map;
-    std::vector<SVD_matrix>   old_rot_mtr    = rot_mtr;
+    std::vector<CR_matrix>   old_rot_mtr    = rot_mtr;
     std::vector<Point>        old_solution   = solution;
     std::vector<Point>        old_original   = original;
     
@@ -842,7 +836,7 @@ private:
     { assign_ros_id_to_one_ring(roi[i], next_ros_index, ros); }
 
     std::vector<vertex_descriptor> outside_ros;
-    // boundary of ros also must have ids because in SVD calculation,
+    // boundary of ros also must have ids because in CR calculation,
     // one-ring neighbor of ROS vertices are reached. 
     for(std::size_t i = roi.size(); i < ros.size(); i++)
     { assign_ros_id_to_one_ring(ros[i], next_ros_index, outside_ros); }
@@ -863,14 +857,14 @@ private:
         rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];        
       }
       else {
-        rot_mtr[v_ros_id] = SVD_helper().identity_matrix();
+        rot_mtr[v_ros_id] = CR_helper().identity_matrix();
       }
     }
     
     // initialize solution and original (size: ros + boundary_of_ros)
 
     // for simplifying coding effort, I also put boundary of ros into solution and original
-    // because boundary of ros vertices are reached in optimal_rotations_svd() and energy()
+    // because boundary of ros vertices are reached in optimal_rotations() and energy()
     solution.resize(ros.size() + outside_ros.size());
     original.resize(ros.size() + outside_ros.size());
     
@@ -1011,22 +1005,22 @@ private:
     CGAL_warning(last_preprocess_successful);
   }
 
-  /// Local step of iterations, computing optimal rotation matrices using SVD decomposition, stable
-  void optimal_rotations_svd()
+  /// Local step of iterations, computing optimal rotation matrices
+  void optimal_rotations()
   {
     if(TAG == SPOKES_AND_RIMS) 
     {
-      optimal_rotations_svd_spokes_and_rims();
+      optimal_rotations_spokes_and_rims();
     }
     else
     {
-      optimal_rotations_svd_arap();
+      optimal_rotations_arap();
     }
   }
-  void optimal_rotations_svd_arap()
+  void optimal_rotations_arap()
   {     
-    SVD_helper svd_helper;
-    SVD_matrix cov = svd_helper.zero_matrix();
+    CR_helper cr_helper;
+    CR_matrix cov = cr_helper.zero_matrix();
 
     // only accumulate ros vertices
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1034,7 +1028,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
       // compute covariance matrix (user manual eq:cov_matrix)
-      cov = svd_helper.zero_matrix();
+      cov = cr_helper.zero_matrix();
 
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
@@ -1042,32 +1036,21 @@ private:
         vertex_descriptor vj = boost::source(*e, polyhedron);
         std::size_t vj_id = ros_id(vj);
 
-        const SVD_vector& pij = sub_to_SVD_vector(original[vi_id], original[vj_id]);
-        const SVD_vector& qij = sub_to_SVD_vector(solution[vi_id], solution[vj_id]);
+        const CR_vector& pij = sub_to_CR_vector(original[vi_id], original[vj_id]);
+        const CR_vector& qij = sub_to_CR_vector(solution[vi_id], solution[vj_id]);
         double wij = edge_weight[id(*e)];
 
-        svd_helper.scalar_vector_vector_transpose_mult(cov, wij, pij, qij); // cov += wij * (pij * qij)
+        cr_helper.scalar_vector_vector_transpose_mult(cov, wij, pij, qij); // cov += wij * (pij * qij)
       }
-      // svd decomposition
-      const SVD_solver& solver = svd_helper.compute_svd(cov);
-      const SVD_matrix& V      = svd_helper.get_matrixV(solver);
-      const SVD_matrix& U      = svd_helper.get_matrixU(solver);
-      // extract rotation matrix
-      svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U ); // rot_mtr[vi_id] = v*u.transpose()
 
-      if ( svd_helper.determinant(rot_mtr[vi_id]) < 0 ) // changing the sign of column corresponding to smallest singular value
-      {
-        int smallest_singular_value_index = svd_helper.get_smallest_singular_value_index(solver);
-        SVD_matrix U_copy = U;
-        svd_helper.negate_column(U_copy, smallest_singular_value_index);
-        svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U_copy );
-      }
+      cr_helper.compute_closest_rotation(cov, rot_mtr[vi_id]);
     }
   }
-  void optimal_rotations_svd_spokes_and_rims()
+
+  void optimal_rotations_spokes_and_rims()
   {    
-    SVD_helper svd_helper;
-    SVD_matrix cov = svd_helper.zero_matrix();   
+    CR_helper cr_helper;
+    CR_matrix cov =cr_helper.zero_matrix();   
 
     // only accumulate ros vertices
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1075,7 +1058,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
       // compute covariance matrix
-      cov = svd_helper.zero_matrix();
+      cov = cr_helper.zero_matrix();
 
       //iterate through all triangles 
       out_edge_iterator e, e_end;
@@ -1091,28 +1074,16 @@ private:
 
           std::size_t v1_id = ros_id(v1); std::size_t v2_id = ros_id(v2);
         
-          const SVD_vector& p12 = sub_to_SVD_vector(original[v1_id], original[v2_id]);
-          const SVD_vector& q12 = sub_to_SVD_vector(solution[v1_id], solution[v2_id]);
+          const CR_vector& p12 = sub_to_CR_vector(original[v1_id], original[v2_id]);
+          const CR_vector& q12 = sub_to_CR_vector(solution[v1_id], solution[v2_id]);
           double w12 = edge_weight[id(edge_around_facet)];
 
-          svd_helper.scalar_vector_vector_transpose_mult(cov, w12, p12, q12); // cov += w12 * (p12 * q12);
+          cr_helper.scalar_vector_vector_transpose_mult(cov, w12, p12, q12); // cov += w12 * (p12 * q12);
 
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, polyhedron)) != *e);
       }
-      // svd decomposition
-      const SVD_solver& solver = svd_helper.compute_svd(cov);
-      const SVD_matrix& V      = svd_helper.get_matrixV(solver);
-      const SVD_matrix& U      = svd_helper.get_matrixU(solver);
-      // extract rotation matrix
-      svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U ); // rot_mtr[vi_id] = v*u.transpose()
 
-      if ( svd_helper.determinant(rot_mtr[vi_id]) < 0 ) // changing the sign of column corresponding to smallest singular value
-      {
-        int smallest_singular_value_index = svd_helper.get_smallest_singular_value_index(solver);
-        SVD_matrix U_copy = U;
-        svd_helper.negate_column(U_copy, smallest_singular_value_index);
-        svd_helper.matrix_matrix_transpose_mult( rot_mtr[vi_id], V, U_copy );
-      }
+      cr_helper.compute_closest_rotation(cov, rot_mtr[vi_id]);
     }
   }
 
@@ -1135,7 +1106,7 @@ private:
     typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
     typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
-    SVD_helper svd_helper;
+    CR_helper cr_helper;
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1146,7 +1117,7 @@ private:
       if ( is_roi(vi) && !is_handle(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber in user manual
-        SVD_vector xyz = svd_helper.vector(0, 0, 0);
+        CR_vector xyz = cr_helper.vector(0, 0, 0);
 
         in_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
@@ -1154,17 +1125,17 @@ private:
           vertex_descriptor vj = boost::source(*e, polyhedron);
           std::size_t vj_id = ros_id(vj); 
           
-          const SVD_vector& pij = sub_to_SVD_vector(original[vi_id], original[vj_id]);
+          const CR_vector& pij = sub_to_CR_vector(original[vi_id], original[vj_id]);
 
           double wij = edge_weight[id(*e)];
           double wji = edge_weight[id(CGAL::opposite_edge(*e, polyhedron))];
 
-          svd_helper.scalar_matrix_scalar_matrix_vector_mult(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
+          cr_helper.scalar_matrix_scalar_matrix_vector_mult(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
           // corresponds xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij
         }
-        Bx[vi_id] = svd_helper.vector_coeff(xyz, 0); 
-        By[vi_id] = svd_helper.vector_coeff(xyz, 1); 
-        Bz[vi_id] = svd_helper.vector_coeff(xyz, 2); 
+        Bx[vi_id] = cr_helper.vector_coeff(xyz, 0); 
+        By[vi_id] = cr_helper.vector_coeff(xyz, 1); 
+        Bz[vi_id] = cr_helper.vector_coeff(xyz, 2); 
       }
       else 
       {// constrained vertex
@@ -1193,7 +1164,7 @@ private:
     typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
     typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
-    SVD_helper svd_helper;
+    CR_helper cr_helper;
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1204,7 +1175,7 @@ private:
       if ( is_roi(vi) && !is_handle(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber_rims in user manual
-        SVD_vector xyz = svd_helper.vector(0, 0, 0);
+        CR_vector xyz = cr_helper.vector(0, 0, 0);
 
         out_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::out_edges(vi, polyhedron); e != e_end; e++)
@@ -1212,13 +1183,13 @@ private:
           vertex_descriptor vj = boost::target(*e, polyhedron);
           std::size_t vj_id = ros_id(vj); 
 
-          const SVD_vector& pij = sub_to_SVD_vector(original[vi_id], original[vj_id]);
+          const CR_vector& pij = sub_to_CR_vector(original[vi_id], original[vj_id]);
           
           if(!boost::get(CGAL::edge_is_border, polyhedron, *e))
           {
             vertex_descriptor vn = boost::target(CGAL::next_edge(*e, polyhedron), polyhedron); // opp vertex of e_ij
             double wji = edge_weight[id(*e)] / 3.0;  // edge(pj - pi)           
-            svd_helper.scalar_mult_with_matrix_sum(xyz, wji, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vn)], pij);
+            cr_helper.scalar_mult_with_matrix_sum(xyz, wji, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vn)], pij);
             // corresponds  xyz += wji*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vn)])*pij;
           }
 
@@ -1227,13 +1198,13 @@ private:
           {
             vertex_descriptor vm = boost::target(CGAL::next_edge(opp, polyhedron), polyhedron); // other opp vertex of e_ij
             double wij = edge_weight[id(opp)] / 3.0;  // edge(pi - pj)
-            svd_helper.scalar_mult_with_matrix_sum(xyz, wij, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vm)], pij);
+            cr_helper.scalar_mult_with_matrix_sum(xyz, wij, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vm)], pij);
             // corresponds xyz += wij * ( rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vm)] ) * pij
           }
         }
-        Bx[vi_id] = svd_helper.vector_coeff(xyz, 0); 
-        By[vi_id] = svd_helper.vector_coeff(xyz, 1); 
-        Bz[vi_id] = svd_helper.vector_coeff(xyz, 2); 
+        Bx[vi_id] = cr_helper.vector_coeff(xyz, 0); 
+        By[vi_id] = cr_helper.vector_coeff(xyz, 1); 
+        Bz[vi_id] = cr_helper.vector_coeff(xyz, 2); 
       }
       else 
       {// constrained vertices
@@ -1283,7 +1254,7 @@ private:
   }
   double energy_arap() const
   {
-    SVD_helper svd_helper;
+    CR_helper cr_helper;
 
     double sum_of_energy = 0;    
     // only accumulate ros vertices
@@ -1298,12 +1269,12 @@ private:
         vertex_descriptor vj = boost::source(*e, polyhedron);
         std::size_t vj_id = ros_id(vj);
 
-        const SVD_vector& pij = sub_to_SVD_vector(original[vi_id], original[vj_id]);
-        const SVD_vector& qij = sub_to_SVD_vector(solution[vi_id], solution[vj_id]);
+        const CR_vector& pij = sub_to_CR_vector(original[vi_id], original[vj_id]);
+        const CR_vector& qij = sub_to_CR_vector(solution[vi_id], solution[vj_id]);
 
         double wij = edge_weight[id(*e)];
 
-        sum_of_energy += wij * svd_helper.squared_norm_vector_scalar_vector_subs(qij, rot_mtr[vi_id], pij);
+        sum_of_energy += wij * cr_helper.squared_norm_vector_scalar_vector_subs(qij, rot_mtr[vi_id], pij);
         // sum_of_energy += wij * ( qij - rot_mtr[vi_id]*pij )^2
       }
     }
@@ -1311,7 +1282,7 @@ private:
   }
   double energy_spokes_and_rims() const
   {
-    SVD_helper svd_helper;
+    CR_helper cr_helper;
 
     double sum_of_energy = 0;
     // only accumulate ros vertices
@@ -1332,11 +1303,11 @@ private:
           vertex_descriptor v2 = boost::source(edge_around_facet, polyhedron);
           std::size_t v1_id = ros_id(v1); std::size_t v2_id = ros_id(v2);
 
-          const SVD_vector& p12 = sub_to_SVD_vector(original[v1_id], original[v2_id]);
-          const SVD_vector& q12 = sub_to_SVD_vector(solution[v1_id], solution[v2_id]);
+          const CR_vector& p12 = sub_to_CR_vector(original[v1_id], original[v2_id]);
+          const CR_vector& q12 = sub_to_CR_vector(solution[v1_id], solution[v2_id]);
           double w12 = edge_weight[id(edge_around_facet)];
          
-          sum_of_energy += w12 * svd_helper.squared_norm_vector_scalar_vector_subs(q12, rot_mtr[vi_id], p12);
+          sum_of_energy += w12 * cr_helper.squared_norm_vector_scalar_vector_subs(q12, rot_mtr[vi_id], p12);
           // sum_of_energy += w12 * ( q12 - rot_mtr[vi_id]*p12 )^2
 
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, polyhedron)) != *e);
@@ -1351,10 +1322,10 @@ private:
     need_preprocess_region_of_solution = true;
   }
 
-  /// p1 - p2, return SVD_vector
-  SVD_vector sub_to_SVD_vector(const Point& p1, const Point& p2) const
+  /// p1 - p2, return CR_vector
+  CR_vector sub_to_CR_vector(const Point& p1, const Point& p2) const
   {
-    return SVD_helper().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+    return CR_helper().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
   }
 
   /// shorthand of get(vertex_index_map, v)

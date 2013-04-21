@@ -1,27 +1,21 @@
-#ifndef CGAL_DEFORMATION_EIGEN_SVD_TRAITS_3_H
-#define CGAL_DEFORMATION_EIGEN_SVD_TRAITS_3_H
+#ifndef CGAL_DEFORMATION_EIGEN_CLOSEST_ROTATION_TRAITS_3_H
+#define CGAL_DEFORMATION_EIGEN_CLOSEST_ROTATION_TRAITS_3_H
 
 #include <Eigen/Eigen>
 #include <Eigen/SVD>
 
 namespace CGAL {
 /// \ingroup PkgSurfaceModeling
-/// A wrapper class to compute the SVD factorization of a 3x3 Matrix using `Eigen` library. The internal solver is  `Eigen::JacobiSVD<>`.
+/// A wrapper class to compute closest rotation to a 3x3 Matrix using `Eigen` library.
+/// The internal computation relies on `Eigen::JacobiSVD<>` solver.
 ///
-/// \cgalModels `DeformationSvdTraits_3`
-class Deformation_Eigen_Svd_traits_3{
+/// \cgalModels `DeformationClosestRotationTraits_3`
+class Deformation_Eigen_closest_rotation_traits_3{
 public:
 
   /// \cond SKIP_FROM_MANUAL
   typedef Eigen::Matrix3d Matrix;
   typedef Eigen::Vector3d Vector;
-  typedef Eigen::JacobiSVD<Eigen::Matrix3d> Solver;
-  
-  /// Equivalent to `result = m1*m2^t`
-  void matrix_matrix_transpose_mult(Matrix& result, const Matrix& m1, const Matrix& m2) 
-  { 
-    result = m1*m2.transpose();
-  }
 
   /// Equivalent to `result += w * (v1*v2^t)`
   void scalar_vector_vector_transpose_mult(Matrix& result, double w, const Vector& v1, const Vector& v2) 
@@ -47,12 +41,6 @@ public:
     return (v1 - m*v2).squaredNorm(); 
   } 
 
-  /// Negates column `i` of matrix `result`
-  void negate_column(Matrix& result, int i) 
-  {
-    result.col(i) *= -1;  
-  }
-
   /// Returns an identity matrix
   Matrix identity_matrix() 
   {
@@ -76,35 +64,21 @@ public:
   {
     return v(i);
   }
-  
-  /// Returns determinant of m
-  double determinant(const Matrix& m) 
-  {
-    return m.determinant();
-  }
     
-  /// Computes the singular value decomposition and returns the solver
-  Solver compute_svd(const Matrix& m)
+  /// Computes closest rotation to `m` and places it into `R`
+  void compute_closest_rotation(const Matrix& m, Matrix& R)
   {
-    return Solver().compute( m, Eigen::ComputeFullU | Eigen::ComputeFullV );
-  }
-	
-  /// Returns the diagonal index of smallest singular value 	
-  int get_smallest_singular_value_index(const Solver& /*solver*/)
-  {
-    return 2; // singular values are always sorted in decreasing order so use column 2
-  }
+    Eigen::JacobiSVD<Eigen::Matrix3d> solver;
+    solver.compute( m, Eigen::ComputeFullU | Eigen::ComputeFullV );
 
-  /// Gets matrix U from solver
-  const Matrix& get_matrixU(const Solver& solver) 
-  {
-    return solver.matrixU();
-  }
+    const Matrix& u = solver.matrixU(); const Matrix& v = solver.matrixV();
+    R = v * u.transpose();
 
-  /// Gets matrix V from solver
-  const Matrix& get_matrixV(const Solver& solver) 
-  {
-    return solver.matrixV();
+    if( R.determinant() < 0 ) {
+      Matrix u_copy = u;
+      u_copy.col(2) *= -1;        // singular values sorted ascendingly  
+      R = v * u_copy.transpose(); // re-extract rotation matrix
+    }
   }
 
   /// \endcond
@@ -112,4 +86,4 @@ public:
 };
 
 }//namespace CGAL
-#endif // CGAL_DEFORMATION_EIGEN_SVD_TRAITS_3_H
+#endif // CGAL_DEFORMATION_EIGEN_CLOSEST_ROTATION_TRAITS_3_H
