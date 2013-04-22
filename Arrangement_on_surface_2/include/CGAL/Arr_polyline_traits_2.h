@@ -120,11 +120,16 @@ public:
   typedef typename Segment_traits_2::Point_2            Point_2;
   typedef typename Segment_traits_2::Curve_2            Segment_2;
 
-  /*
+  /*!
    * A polyline represents a general continuous piecewise-linear curve, without
    * degenerated segments.
    */
   typedef POLYLINE::Polyline_2<Segment_traits_2>            Curve_2;
+  /*!
+   * An x monotone polyline represents a continuous piecewise-linear curve which
+   * is either strongly x-monotone or vertical. Again, the polyline is without
+   * degenerated segments.
+   */
   typedef POLYLINE::X_monotone_polyline_2<Segment_traits_2> X_monotone_curve_2;
 
   typedef typename Segment_traits_2::Multiplicity       Multiplicity;
