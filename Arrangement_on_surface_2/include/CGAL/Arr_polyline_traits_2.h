@@ -1546,7 +1546,7 @@ public:
 
 private:
   /*
-   * Roadmap:
+   * Roadmap: Improve the implementation _locate()
    *  - _locate() should return an iterator to the located segment
    *  - Should not get m_seg_traits as an argument, instead it should be called
    *    as a member function of the Arr_polyline_traits_2 object.
