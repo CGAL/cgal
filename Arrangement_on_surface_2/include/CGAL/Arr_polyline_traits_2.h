@@ -150,13 +150,14 @@ public:
 
   class Number_of_points_2 {
   protected:
-    /* The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+    /* The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /* Constructor. */
-    Number_of_points_2(const Segment_traits_2* traits) :
-      m_seg_traits(traits)
+    Number_of_points_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits)
     {}
 
     const int operator()(const Curve_2& cv) const
@@ -167,18 +168,19 @@ public:
   };
 
   Number_of_points_2 number_of_points_2_object() const
-  { return Number_of_points_2(m_seg_traits); }
+  { return Number_of_points_2(this); }
 
 
   class Construct_min_vertex_2 {
   protected:
-    /* The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /* Constructor. */
-    Construct_min_vertex_2(const Segment_traits_2* traits) :
-      m_seg_traits(traits)
+    Construct_min_vertex_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits)
     {}
 
     /*!
@@ -189,23 +191,25 @@ public:
     const Point_2& operator()(const X_monotone_curve_2& cv) const
     {
       CGAL_assertion(cv.number_of_segments() > 0);
-      return m_seg_traits->construct_min_vertex_2_object()(cv[0]);
+      return m_poly_traits->
+        m_seg_traits->construct_min_vertex_2_object()(cv[0]);
     }
   };
 
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(m_seg_traits); }
+  { return Construct_min_vertex_2(this); }
 
   class Construct_max_vertex_2 {
   protected:
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Construct_max_vertex_2(const Segment_traits_2* traits) :
-      m_seg_traits(traits)
+    Construct_max_vertex_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits)
     {}
 
     /*!
@@ -216,24 +220,24 @@ public:
     const Point_2& operator()(const X_monotone_curve_2& cv) const
     {
       CGAL_assertion(cv.number_of_segments() > 0);
-      return
-        m_seg_traits->construct_max_vertex_2_object()
-        (cv[cv.number_of_segments() - 1]);
+      return m_poly_traits->m_seg_traits->
+        construct_max_vertex_2_object()(cv[cv.number_of_segments() - 1]);
     }
   };
 
   /*! Get a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(m_seg_traits); }
+  { return Construct_max_vertex_2(this); }
 
   class Is_vertical_2 {
   protected:
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Is_vertical_2(const Segment_traits_2* traits) : m_seg_traits(traits) {}
+    Is_vertical_2(const Geometry_traits_2* traits) : m_poly_traits(traits) {}
 
     /*!
      * Check whether the given x-monotone curve is a vertical segment.
@@ -245,24 +249,23 @@ public:
       // An x-monotone polyline can represent a vertical segment only if it
       // is comprised of vertical segments. If the first segment is vertical,
       // all segments are vertical in an x-monotone polyline
-      return (m_seg_traits->is_vertical_2_object()(cv[0]));
+      return (m_poly_traits->m_seg_traits->is_vertical_2_object()(cv[0]));
     }
   };
 
   /*! Get an Is_vertical_2 functor object. */
   Is_vertical_2 is_vertical_2_object() const
-  { return Is_vertical_2(m_seg_traits); }
+  { return Is_vertical_2(this); }
 
   class Compare_y_at_x_2 {
   protected:
     typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
-
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Compare_y_at_x_2(const Segment_traits_2* traits) : m_seg_traits(traits) {}
+    Compare_y_at_x_2(const Geometry_traits_2* traits) : m_poly_traits(traits) {}
 
     /*!
      * Return the location of the given point with respect to the input curve.
@@ -277,28 +280,29 @@ public:
                                  const X_monotone_curve_2& cv) const
     {
       // Get the index of the segment in cv containing p.
-      unsigned int i = Geometry_traits_2::_locate(m_seg_traits, cv, p);
+      unsigned int i = // What is a smart way to call _locate()?
+        Geometry_traits_2::_locate(m_poly_traits->m_seg_traits, cv, p);
       CGAL_precondition(i != INVALID_INDEX);
 
       // Compare the segment cv[i] and p.
-      return m_seg_traits->compare_y_at_x_2_object()(p, cv[i]);
+      return m_poly_traits->m_seg_traits->compare_y_at_x_2_object()(p, cv[i]);
     }
   };
 
   /*! Get a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(m_seg_traits); }
+  { return Compare_y_at_x_2(this); }
 
   class Compare_y_at_x_left_2 {
   protected:
     typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
-
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Compare_y_at_x_left_2(const Segment_traits_2* traits) : m_seg_traits(traits)
+    Compare_y_at_x_left_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits)
     {}
 
     /*!
@@ -318,34 +322,36 @@ public:
     {
       // Get the indices of the segments in cv1 and cv2 containing p and
       // defined to its left.
-      unsigned int i1 =
-        Geometry_traits_2::_locate_side(m_seg_traits, cv1, p, false);
-      unsigned int i2 =
-        Geometry_traits_2::_locate_side(m_seg_traits, cv2, p, false);
+      unsigned int i1=Geometry_traits_2::_locate_side(m_poly_traits->
+                                                      m_seg_traits,
+                                                      cv1, p, false);
+      unsigned int i2=Geometry_traits_2::_locate_side(m_poly_traits->
+                                                      m_seg_traits,cv2,
+                                                      p, false);
 
       CGAL_precondition(i1 != INVALID_INDEX);
       CGAL_precondition(i2 != INVALID_INDEX);
 
       // Compare cv1[i1] and cv2[i2] at p's left.
-      return m_seg_traits->compare_y_at_x_left_2_object()(cv1[i1], cv2[i2], p);
+      return m_poly_traits->m_seg_traits->
+        compare_y_at_x_left_2_object()(cv1[i1], cv2[i2], p);
     }
   };
 
   /*! Get a Compare_y_at_x_left_2 functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(m_seg_traits); }
+  { return Compare_y_at_x_left_2(this); }
 
   class Compare_y_at_x_right_2 {
   protected:
     typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
-
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Compare_y_at_x_right_2(const Segment_traits_2* traits) :
-      m_seg_traits(traits)
+    Compare_y_at_x_right_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits)
     {}
 
     /*!
@@ -365,27 +371,30 @@ public:
     {
       // Get the indices of the segments in cv1 and cv2 containing p and
       // defined to its right.
-      unsigned int i1 =
-        Geometry_traits_2::_locate_side(m_seg_traits, cv1, p, true);
-      unsigned int i2 =
-        Geometry_traits_2::_locate_side(m_seg_traits, cv2, p, true);
+      unsigned int i1=Geometry_traits_2::_locate_side(m_poly_traits->
+                                                      m_seg_traits,
+                                                      cv1, p, true);
+      unsigned int i2=Geometry_traits_2::_locate_side(m_poly_traits->
+                                                      m_seg_traits,
+                                                      cv2, p, true);
 
       CGAL_precondition(i1 != INVALID_INDEX);
       CGAL_precondition(i2 != INVALID_INDEX);
 
       // Compare cv1[i1] and cv2[i2] at p's right.
-      return m_seg_traits->compare_y_at_x_right_2_object()(cv1[i1],cv2[i2], p);
+      return m_poly_traits->m_seg_traits->
+        compare_y_at_x_right_2_object()(cv1[i1],cv2[i2], p);
     }
   };
 
   /*! Get a Compare_y_at_x_right_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(m_seg_traits); }
+  { return Compare_y_at_x_right_2(this); }
 
   class Equal_2 {
   protected:
-    typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
 
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
     /*! The polyline traits (in case it has state) */
     const Geometry_traits_2* m_poly_traits;
 
@@ -502,13 +511,13 @@ public:
   class Make_x_monotone_2 {
   protected:
     typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
-
     /*! The traits (in case it has state) */
-    const Geometry_traits_2* m_traits;
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Make_x_monotone_2(const Geometry_traits_2* traits) : m_traits(traits) {}
+    Make_x_monotone_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits) {}
 
     /*!
      * Cut the given curve into x-monotone subcurves and insert them into the
@@ -534,13 +543,12 @@ public:
       const_seg_iterator it_next = start_seg;
       ++it_next;
 
-      const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        seg_traits->construct_max_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        seg_traits->construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       Construct_x_monotone_curve_2 construct_x_monotone_curve =
-        m_traits->construct_x_monotone_curve_2_object();
+        m_poly_traits->construct_x_monotone_curve_2_object();
 
       if (it_next == end_seg) {
         // The polyline contains a single segment:
@@ -557,9 +565,9 @@ public:
       // Polyline contains at least 2 segments!
 
       typename Segment_traits_2::Compare_xy_2 comp_xy =
-        seg_traits->compare_xy_2_object();
+        m_poly_traits->m_seg_traits->compare_xy_2_object();
       typename Segment_traits_2::Is_vertical_2 is_vertical =
-        seg_traits->is_vertical_2_object();
+        m_poly_traits->m_seg_traits->is_vertical_2_object();
 
       const_seg_iterator it_start = start_seg;
       const_seg_iterator it_curr = start_seg;
@@ -604,13 +612,12 @@ public:
   class Push_back_2 {
   protected:
     typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
-
     /*! The traits (in case it has state) */
-    const Geometry_traits_2* m_traits;
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Push_back_2(const Geometry_traits_2* traits) : m_traits(traits) {}
+    Push_back_2(const Geometry_traits_2* traits) : m_poly_traits(traits) {}
 
     /*!
      * Append a point p to an existing polyline cv.
@@ -622,13 +629,12 @@ public:
     {
       int num_seg = cv.number_of_segments();
       CGAL_precondition(num_seg > 1);
-
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_seg_traits->construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_seg_traits->construct_max_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_seg_traits->equal_2_object();
+        m_poly_traits->m_seg_traits->equal_2_object();
 
       int last_seg = num_seg-1;
 
@@ -656,11 +662,11 @@ public:
       int num_seg = cv.number_of_segments();
 
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_seg_traits->construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_seg_traits->construct_max_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_seg_traits->equal_2_object();
+        m_poly_traits->m_seg_traits->equal_2_object();
 
       // cv is empty
       if (num_seg == 0)
@@ -725,13 +731,13 @@ public:
         }
 
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_seg_traits->construct_max_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_seg_traits->construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Compare_x_2 comp_x =
-        m_seg_traits->compare_x_2_object();
+        m_poly_traits->m_seg_traits->compare_x_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_seg_traits->equal_2_object();
+        m_poly_traits->m_seg_traits->equal_2_object();
 
       CGAL_precondition_code(
         if (num_seg == 1);
@@ -752,13 +758,12 @@ public:
   class Split_2 {
   protected:
     typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
-
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Split_2(const Segment_traits_2* traits) : m_seg_traits(traits) {}
+    Split_2(const Geometry_traits_2* traits) : m_poly_traits(traits) {}
 
   public:
     /*!
@@ -773,17 +778,19 @@ public:
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_seg_traits->construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Equal_2 equal = m_seg_traits->equal_2_object();
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+      typename Segment_traits_2::Equal_2 equal =
+        m_poly_traits->m_seg_traits->equal_2_object();
 
       // Make sure the split point is not one of the curve endpoints.
       CGAL_precondition(!equal(min_vertex(cv[0]), p));
       CGAL_precondition(!equal(max_vertex(cv[cv.number_of_segments() - 1]), p));
 
       // Locate the segment on the polyline cv that contains p.
-      unsigned int i = Geometry_traits_2::_locate(m_seg_traits, cv, p);
+      unsigned int i = Geometry_traits_2::_locate(m_poly_traits->
+                                                  m_seg_traits, cv, p);
       CGAL_precondition(i != INVALID_INDEX);
 
       // Clear the output curves.
@@ -806,7 +813,7 @@ public:
         // The i'th segment should be split: The left part(seg1) goes to cv1,
         // and the right part(seg2) goes to cv2.
         Segment_2   seg1, seg2;
-        m_seg_traits->split_2_object()(cv[i], p, seg1, seg2);
+        m_poly_traits->m_seg_traits->split_2_object()(cv[i], p, seg1, seg2);
 
         c1.push_back(seg1);
         c2.push_back(seg2);
@@ -822,18 +829,17 @@ public:
 
   /*! Get a Split_2 functor object. */
   Split_2 split_2_object() const
-  { return Split_2(m_seg_traits); }
+  { return Split_2(this); }
 
   class Intersect_2 {
   protected:
     typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
-
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Intersect_2(const Segment_traits_2* traits) : m_seg_traits(traits) {}
+    Intersect_2(const Geometry_traits_2* traits) : m_poly_traits(traits) {}
 
     /*!
      * Find the intersections of the two given curves and insert them into the
@@ -850,17 +856,17 @@ public:
                               OutputIterator oi)
     {
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_seg_traits->construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_seg_traits->construct_max_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2                equal =
-        m_seg_traits->equal_2_object();
+        m_poly_traits->m_seg_traits->equal_2_object();
       typename Segment_traits_2::Compare_xy_2           compare_xy =
-        m_seg_traits->compare_xy_2_object();
+        m_poly_traits->m_seg_traits->compare_xy_2_object();
       typename Segment_traits_2::Intersect_2            intersect =
-        m_seg_traits->intersect_2_object();
+        m_poly_traits->m_seg_traits->intersect_2_object();
       typename Segment_traits_2::Compare_y_at_x_2       compare_y_at_x =
-        m_seg_traits->compare_y_at_x_2_object();
+        m_poly_traits->m_seg_traits->compare_y_at_x_2_object();
 
       const unsigned int n1 = cv1.number_of_segments();
       const unsigned int n2 = cv2.number_of_segments();
@@ -875,7 +881,8 @@ public:
         // cv1's left endpoint is to the left of cv2's left endpoint:
         // Locate the index i1 of the segment in cv1 which contains cv2's
         // left endpoint.
-        i1 = Geometry_traits_2::_locate(m_seg_traits, cv1, min_vertex(cv2[i2]));
+        i1 = Geometry_traits_2::_locate(m_poly_traits->m_seg_traits,
+                                        cv1, min_vertex(cv2[i2]));
         if (i1 == INVALID_INDEX)
           return oi;
 
@@ -887,7 +894,8 @@ public:
         // cv1's left endpoint is to the right of cv2's left endpoint:
         // Locate the index i2 of the segment in cv2 which contains cv1's
         // left endpoint.
-        i2 = Geometry_traits_2::_locate(m_seg_traits, cv2, min_vertex(cv1[i1]));
+        i2 = Geometry_traits_2::_locate(m_poly_traits->m_seg_traits,
+                                        cv2, min_vertex(cv1[i1]));
 
         if (i2 == INVALID_INDEX)
           return oi;
@@ -1022,16 +1030,17 @@ public:
 
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object() const
-  { return Intersect_2(m_seg_traits); }
+  { return Intersect_2(this); }
 
   class Are_mergeable_2 {
   protected:
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Are_mergeable_2(const Segment_traits_2* traits) : m_seg_traits(traits) {}
+    Are_mergeable_2(const Geometry_traits_2* traits) : m_poly_traits(traits) {}
 
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
@@ -1044,13 +1053,13 @@ public:
                     const X_monotone_curve_2& cv2) const
     {
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_seg_traits->construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Equal_2 equal = m_seg_traits->equal_2_object();
-
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+      typename Segment_traits_2::Equal_2 equal =
+        m_poly_traits->m_seg_traits->equal_2_object();
       typename Segment_traits_2::Is_vertical_2 is_vertical =
-        m_seg_traits->is_vertical_2_object();
+        m_poly_traits->m_seg_traits->is_vertical_2_object();
 
       const unsigned int n1 = cv1.number_of_segments();
       const unsigned int n2 = cv2.number_of_segments();
@@ -1066,22 +1075,21 @@ public:
 
   /*! Get an Are_mergeable_2 functor object. */
   Are_mergeable_2 are_mergeable_2_object() const
-  { return Are_mergeable_2(m_seg_traits); }
+  { return Are_mergeable_2(this); }
 
   /*! \class Merge_2
    * A functor that merges two x-monotone arcs into one.
    */
   class Merge_2 {
   protected:
-    typedef Arr_polyline_traits_2<Segment_traits_2>     Traits;
-
+    typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits;
     /*! The traits (in case it has state) */
-    const Traits* m_traits;
+    const Geometry_traits* m_poly_traits;
 
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
-    Merge_2(const Traits* traits) : m_traits(traits) {}
+    Merge_2(const Geometry_traits* traits) : m_poly_traits(traits) {}
 
   public:
     /*!
@@ -1095,15 +1103,13 @@ public:
                     const X_monotone_curve_2 & cv2,
                     X_monotone_curve_2 & c) const
     {
-      CGAL_precondition(m_traits->are_mergeable_2_object()(cv1, cv2));
-
-      const Segment_traits_2* seg_traits = m_traits->segment_traits_2();
+      CGAL_precondition(m_poly_traits->are_mergeable_2_object()(cv1, cv2));
 
       Construct_min_vertex_2 get_min_v =
-        m_traits->construct_min_vertex_2_object();
+        m_poly_traits->construct_min_vertex_2_object();
       Construct_max_vertex_2 get_max_v =
-        m_traits->construct_max_vertex_2_object();
-      Equal_2 equal = m_traits->equal_2_object();
+        m_poly_traits->construct_max_vertex_2_object();
+      Equal_2 equal = m_poly_traits->equal_2_object();
 
       c.clear();
       if (equal(get_max_v(cv1), get_min_v(cv2))) {
@@ -1117,9 +1123,11 @@ public:
           c.push_back(cv1[i]);
 
         // Try to merge the to contiguous line segments:
-        if (seg_traits->are_mergeable_2_object()(cv1[n1 - 1], cv2[0])) {
+        if (m_poly_traits->m_seg_traits->
+            are_mergeable_2_object()(cv1[n1 - 1], cv2[0])) {
           Segment_2       seg;
-          seg_traits->merge_2_object()(cv1[n1 - 1], cv2[0], seg);
+          m_poly_traits->m_seg_traits->
+            merge_2_object()(cv1[n1 - 1], cv2[0], seg);
           c.push_back(seg);
         } else {
           c.push_back(cv1[n1 - 1]);
@@ -1150,13 +1158,14 @@ public:
 
   class Construct_curve_2 {
   protected:
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Construct_curve_2 (const Segment_traits_2* seg_traits) :
-      m_seg_traits(seg_traits) {}
+    Construct_curve_2 (const Geometry_traits_2* traits) :
+      m_poly_traits(traits) {}
 
     /*! Returns an polyline connecting the two given endpoints.
      * \param p The first point.
@@ -1169,7 +1178,7 @@ public:
       CGAL_precondition_code
         (
          typename Segment_traits_2::Equal_2 equal =
-         m_seg_traits->equal_2_object();
+         m_poly_traits->m_seg_traits->equal_2_object();
          );
       CGAL_precondition_msg (!equal(p,q),
                              "Cannot construct a degenerated segment");
@@ -1190,11 +1199,11 @@ public:
           * a polyline with degenerated segments.
           */
          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-         m_seg_traits->construct_min_vertex_2_object();
+         m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-         m_seg_traits->construct_max_vertex_2_object();
+         m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Equal_2 equal =
-         m_seg_traits->equal_2_object();
+         m_poly_traits->m_seg_traits->equal_2_object();
 
          CGAL_precondition_msg(!equal(get_min_v(seg),get_max_v(seg)),
                                "Cannot construct a degenerated segment");
@@ -1234,7 +1243,7 @@ public:
       CGAL_precondition_code
         (
          typename Segment_traits_2::Equal_2 equal =
-         m_seg_traits->equal_2_object();
+         m_poly_traits->m_seg_traits->equal_2_object();
          );
       InputIterator curr = begin;
       InputIterator next = curr;
@@ -1272,13 +1281,13 @@ public:
       CGAL_precondition_code
         (
          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-         m_seg_traits->construct_min_vertex_2_object();
+         m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-         m_seg_traits->construct_max_vertex_2_object();
+         m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Compare_xy_2 comp_xy =
-         m_seg_traits->compare_xy_2_object();
+         m_poly_traits->m_seg_traits->compare_xy_2_object();
          typename Segment_traits_2::Equal_2 equal =
-         m_seg_traits->equal_2_object();
+         m_poly_traits->m_seg_traits->equal_2_object();
          );
 
       if (++next == end)
@@ -1311,17 +1320,18 @@ public:
 
   /*! Get a Construct_curve_2 functor object. */
   Construct_curve_2 construct_curve_2_object() const
-  { return Construct_curve_2(m_seg_traits); }
+  { return Construct_curve_2(this); }
 
   class Construct_x_monotone_curve_2 {
   protected:
-    /*! The segment traits (in case it has state) */
-    const Segment_traits_2* m_seg_traits;
+    typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+    /*! The polyline traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
 
   public:
     /*! Constructor. */
-    Construct_x_monotone_curve_2(const Segment_traits_2* seg_traits) :
-      m_seg_traits(seg_traits)
+    Construct_x_monotone_curve_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits)
     {}
 
 
@@ -1335,12 +1345,12 @@ public:
     {
       CGAL_precondition_code(
                              typename Segment_traits_2::Equal_2 equal =
-                             m_seg_traits->equal_2_object();
+                             m_poly_traits->m_seg_traits->equal_2_object();
                              );
       CGAL_precondition_msg(!equal(p,q),
                        "Cannot construct a degenerated segment as a polyline");
       typename Segment_traits_2::Compare_xy_2 comp_xy =
-        m_seg_traits->compare_xy_2_object();
+        m_poly_traits->m_seg_traits->compare_xy_2_object();
 
       if (comp_xy(p,q) == SMALLER)
         return X_monotone_curve_2(Segment_2(p,q));
@@ -1362,11 +1372,11 @@ public:
           * a polyline with degenerated segments.
           */
          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-         m_seg_traits->construct_min_vertex_2_object();
+         m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-         m_seg_traits->construct_max_vertex_2_object();
+         m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Equal_2 equal =
-         m_seg_traits->equal_2_object();
+         m_poly_traits->m_seg_traits->equal_2_object();
 
          CGAL_precondition_msg(!equal(get_min_v(seg),get_max_v(seg)),
                                "Cannot construct a degenerated segment");
@@ -1407,9 +1417,10 @@ public:
 
       // Initialize two comparison functors
       CGAL_precondition_code(typename Segment_traits_2::Compare_x_2 compare_x =
-                             m_seg_traits->compare_x_2_object(););
+                             m_poly_traits->m_seg_traits->compare_x_2_object();
+                             );
       typename Segment_traits_2::Compare_xy_2 compare_xy =
-        m_seg_traits->compare_xy_2_object();
+        m_poly_traits->m_seg_traits->compare_xy_2_object();
 
       // Make sure there is no change of directions as we traverse the polyline.
       // Save the comp_x between the first two points
@@ -1466,17 +1477,18 @@ public:
 
       // Functors that have to be used always
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_seg_traits->construct_min_vertex_2_object();
+        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Equal_2 equal = m_seg_traits->equal_2_object();
+        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+      typename Segment_traits_2::Equal_2 equal =
+        m_poly_traits->m_seg_traits->equal_2_object();
 
       CGAL_precondition_code
         (
          // A functor which is used only when validity tests of the
          // input have to be ran.
          typename Segment_traits_2::Is_vertical_2 is_vertical =
-           m_seg_traits->is_vertical_2_object();
+           m_poly_traits->m_seg_traits->is_vertical_2_object();
 
          InputIterator curr = begin;
          // Ensure that the first segment does not degenerate to a point.
@@ -1541,7 +1553,7 @@ public:
 
   /*! Get a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
-  { return Construct_x_monotone_curve_2(m_seg_traits); }
+  { return Construct_x_monotone_curve_2(this); }
   //@}
 
 private:
