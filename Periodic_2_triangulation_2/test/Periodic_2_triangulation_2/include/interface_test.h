@@ -477,24 +477,24 @@ void test_io(T &pt1, bool ex)
 
   assert(CGAL::is_ascii(ss1));
   if (!ex)
-    {
-      assert(pt1 == pt1r);
-    }
+  {
+    assert(pt1 == pt1r);
+  }
 
   std::cout << "  binary" << std::endl;
   pt1r.clear();
   // There are problems with the IO of exact number types in binary mode.
   if (!ex)
-    {
-      std::stringstream ss1b;
-      CGAL::set_binary_mode(ss1b);
-      ss1b << pt1;
-
-      ss1b >> pt1r;
-      assert(CGAL::is_binary(ss1b));
-
-      assert(pt1 == pt1r);
-    }
+  {
+    std::stringstream ss1b;
+    CGAL::set_binary_mode(ss1b);
+    ss1b << pt1;
+    
+    ss1b >> pt1r;
+    assert(CGAL::is_binary(ss1b));
+    
+    assert(pt1 == pt1r);
+  }
 
   std::cout << "  pretty" << std::endl;
 
@@ -530,6 +530,8 @@ void test_io(bool exact)
   for (int x = 0; x < 5; ++x)
     for (int y = 0; y < 5; ++y)
       t.insert(Point(x / 5.0, y / 5.0));
+  CGAL_assertion(t.number_of_vertices() == 25);
+  CGAL_assertion(t.is_1_cover());
   test_io(t, exact);
 
   std::cout << __FILE__ << ", " << __LINE__ << std::endl;

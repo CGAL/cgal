@@ -4341,6 +4341,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       write(os, cover[1]);
       write(os, n * cover[0]*cover[1]);
     }
+  std::cout << "Line:" << __LINE__ << " cover[0]:" << cover[0] << " cover[1]:" << cover[1] << " n*c0*c1:" << (n * cover[0]*cover[1]) << std::endl;
 
   if (n == 0)
     return os;
@@ -4485,17 +4486,18 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   size_type n = 0;
 
   if (is_ascii(is))
-    {
-      is >> domain;
-      is >> cx >> cy >> n;
-    }
+  {
+    is >> domain;
+    is >> cx >> cy >> n;
+  }
   else
-    {
-      is >> domain;
-      read(is, cx);
-      read(is, cy);
-      read(is, n);
-    }
+  {
+    is >> domain;
+    read(is, cx);
+    read(is, cy);
+    read(is, n);
+  }
+  std::cout << "Line:" << __LINE__ << " cx:" << cx << " cy:" << cy << " n:" << n << std::endl;
 
   CGAL_triangulation_assertion((n / (cx * cy))*cx*cy == n);
 

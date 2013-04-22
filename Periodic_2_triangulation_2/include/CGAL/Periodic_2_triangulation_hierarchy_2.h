@@ -267,29 +267,6 @@ copy_triangulation(const Periodic_2_triangulation_hierarchy_2<PTr> &tr)
   }
 }
 
-/* template <class PTr> */
-/* void */
-/* Periodic_2_triangulation_hierarchy_2<PTr>::  */
-/* add_hidden_vertices_into_map(Tag_false, */
-/* 			     std::map<Vertex_handle,Vertex_handle >& V) { */
-/*   return; */
-/* } */
-
-
-/* template <class PTr> */
-/* void */
-/* Periodic_2_triangulation_hierarchy_2<PTr>::  */
-/* add_hidden_vertices_into_map(Tag_true, */
-/* 			     std::map<Vertex_handle,Vertex_handle >& V)  */
-/* { */
-/*   for (typename PTr_Base::Hidden_vertices_iterator  */
-/* 	 it=hierarchy[0]->hidden_vertices_begin();  */
-/*        it != hierarchy[0]->hidden_vertices_end(); ++it) { */
-/*     if (it->up() != Vertex_handle()) V[ it->up()->down() ] = it; */
-/*   } */
-/* } */
-
-
 template <class PTr>
 void
 Periodic_2_triangulation_hierarchy_2<PTr>::
@@ -306,9 +283,7 @@ Periodic_2_triangulation_hierarchy_2<PTr>::
 {
   clear();
   for(int i = 1; i < m_maxlevel; ++i)
-    {
       delete hierarchy[i];
-    }
 }
 
 template <class PTr>
@@ -316,8 +291,11 @@ void
 Periodic_2_triangulation_hierarchy_2<PTr>::
 clear()
 {
-  for(int i = 0; i < m_maxlevel; ++i)
-    hierarchy[i]->clear();
+  for(int i = 0; i < m_maxlevel; ++i) 
+  {
+      CGAL_assertion(hierarchy[i] != NULL);
+      hierarchy[i]->clear();
+  }
 }
 
 
