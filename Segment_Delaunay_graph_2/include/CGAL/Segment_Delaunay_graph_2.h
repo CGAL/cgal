@@ -1435,6 +1435,67 @@ protected:
 #endif
 
 
+// choosing the correct bisector constructors
+private:
+  template<typename T>
+  struct CheckForTypeBis
+  {
+  private:
+    typedef char                      yes;
+    typedef struct { char array[2]; } no;
+
+    template<typename C> static yes test(
+                 typename C::Has_bisector_constructions_type*);
+    template<typename C> static no  test(...);
+  public:
+    static const bool value = sizeof(test<T>(0)) == sizeof(yes);
+  };
+
+  // default L2 constructors
+  template <typename T, bool>
+  struct ConstructionHelper
+  {
+    typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
+              Construct_sdg_bisector_2<Gt,
+                Integral_domain_without_division_tag>
+            tagbis;
+    typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
+              Construct_sdg_bisector_ray_2<Gt,
+                Integral_domain_without_division_tag>
+            tagbisray;
+    typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
+              Construct_sdg_bisector_segment_2<Gt,
+                Integral_domain_without_division_tag>
+            tagbisseg;
+  };
+
+  // constructors from traits
+  template <typename T>
+  struct ConstructionHelper<T, true>
+  {
+    typedef
+            typename T:: template Construct_sdg_bisector_2
+              <Gt, Integral_domain_without_division_tag>
+            tagbis;
+    typedef
+            typename T:: template Construct_sdg_bisector_ray_2
+              <Gt, Integral_domain_without_division_tag>
+            tagbisray;
+    typedef
+            typename T:: template Construct_sdg_bisector_segment_2
+              <Gt, Integral_domain_without_division_tag>
+            tagbisseg;
+  };
+
+  template <typename T>
+  struct ConstructionChooser
+  {
+    typedef typename ConstructionHelper<T, CheckForTypeBis<T>::value>::tagbis tagbis;
+    typedef typename ConstructionHelper<T, CheckForTypeBis<T>::value>::tagbisray tagbisray;
+    typedef typename ConstructionHelper<T, CheckForTypeBis<T>::value>::tagbisseg tagbisseg;
+  };
+
+
 protected:
   // TYPES AND ACCESS METHODS FOR VISUALIZATION
   //-------------------------------------------
@@ -1444,18 +1505,15 @@ protected:
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_circle_2<Gt,Integral_domain_without_division_tag>
   Construct_sdg_circle_2;
 
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_2<Gt,Integral_domain_without_division_tag>
-  Construct_sdg_bisector_2;
-
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_ray_2<Gt,Integral_domain_without_division_tag>
-  Construct_sdg_bisector_ray_2;
-
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
-  Construct_sdg_bisector_segment_2<Gt,Integral_domain_without_division_tag>
-  Construct_sdg_bisector_segment_2;
+  typedef typename
+          ConstructionChooser<Geom_traits>::tagbis
+          Construct_sdg_bisector_2;
+  typedef typename
+          ConstructionChooser<Geom_traits>::tagbisray
+          Construct_sdg_bisector_ray_2;
+  typedef typename
+          ConstructionChooser<Geom_traits>::tagbisseg
+          Construct_sdg_bisector_segment_2;
 
   // access
   inline Construct_sdg_circle_2
