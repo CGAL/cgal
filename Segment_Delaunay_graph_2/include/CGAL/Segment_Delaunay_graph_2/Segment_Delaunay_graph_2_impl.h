@@ -572,7 +572,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
     }
 
     if ( !found_f2 &&
-	 os1 == ON_POSITIVE_SIDE && os2 != ON_POSITIVE_SIDE ) {
+         os1 != ON_NEGATIVE_SIDE && os2 == ON_NEGATIVE_SIDE ) {
       f2 = ff2;
       found_f2 = true;
     }
