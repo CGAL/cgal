@@ -1,5 +1,6 @@
 #ifndef CGAL_DEFORMATION_EIGEN_POLAR_CLOSEST_ROTATION_TRAITS_3_H
 #define CGAL_DEFORMATION_EIGEN_POLAR_CLOSEST_ROTATION_TRAITS_3_H
+/// @cond CGAL_DOCUMENT_INTERNAL
 
 #include <Eigen/Eigen>
 #include <Eigen/SVD>
@@ -16,6 +17,8 @@ class Deformation_Eigen_polar_closest_rotation_traits_3 :
  public Deformation_Eigen_closest_rotation_traits_3{
 public:
     
+  /// \cond SKIP_FROM_MANUAL
+	
   /// Computes closest rotation to `m` and places it into `R`
   /// Warning: it is adapted from previous experimental code, and not checked deeply
   void compute_closest_rotation(const Matrix& m, Matrix& R)
@@ -57,6 +60,6 @@ private:
   /// \endcond
 
 };
-
+/// @endcond
 }//namespace CGAL
 #endif // CGAL_DEFORMATION_EIGEN_POLAR_CLOSEST_ROTATION_TRAITS_3_H

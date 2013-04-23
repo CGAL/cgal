@@ -2,7 +2,6 @@
 #include <CGAL/Deform_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Eigen_solver_traits.h>
 
 #include <fstream>
 #include <boost/property_map/property_map.hpp>
