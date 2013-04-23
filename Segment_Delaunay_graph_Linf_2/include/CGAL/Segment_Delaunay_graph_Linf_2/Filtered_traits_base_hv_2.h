@@ -163,14 +163,14 @@ private:
   EK_Construct_svd_vertex_2;
 
 
-  typedef typename CK_traits::Construct_sdg_bisector_2
-  CK_Construct_sdg_bisector_2;
+  //typedef typename CK_traits::Construct_sdg_bisector_2
+  //CK_Construct_sdg_bisector_2;
 
-  typedef typename FK_traits::Construct_sdg_bisector_2
-  FK_Construct_sdg_bisector_2;
+  //typedef typename FK_traits::Construct_sdg_bisector_2
+  //FK_Construct_sdg_bisector_2;
 
-  typedef typename EK_traits::Construct_sdg_bisector_2
-  EK_Construct_sdg_bisector_2;
+  //typedef typename EK_traits::Construct_sdg_bisector_2
+  //EK_Construct_sdg_bisector_2;
 
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT
@@ -188,12 +188,12 @@ public:
 			C2E, C2F, E2C, F2C>
   Construct_svd_vertex_2;
 
-  typedef
-  Filtered_construction<CK_Construct_sdg_bisector_2,
-			EK_Construct_sdg_bisector_2,
-			FK_Construct_sdg_bisector_2,
-			C2E, C2F, E2C, F2C>
-  Construct_sdg_bisector_2;
+  //typedef
+  //Filtered_construction<CK_Construct_sdg_bisector_2,
+  //			EK_Construct_sdg_bisector_2,
+  //			FK_Construct_sdg_bisector_2,
+  //			C2E, C2F, E2C, F2C>
+  //Construct_sdg_bisector_2;
 
   //  typedef typename CK::Construct_site_2   Construct_site_2;
 
@@ -384,10 +384,10 @@ public:
     return Construct_svd_vertex_2();
   }
 
-  Construct_sdg_bisector_2
-  construct_sdg_bisector_2_object() const {
-    return Construct_sdg_bisector_2();
-  }
+  //Construct_sdg_bisector_2
+  //construct_sdg_bisector_2_object() const {
+  //  return Construct_sdg_bisector_2();
+  //}
 
   /*
   Construct_site_2
