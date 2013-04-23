@@ -43,9 +43,29 @@ public:
   CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Construct_svd_vertex_2<K,MTag>
   Construct_svd_vertex_2;
 
-  typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Construct_sdg_bisector_2<K,MTag>
-  Construct_sdg_bisector_2;
+  //typedef
+  //CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::Construct_sdg_bisector_2<K,MTag>
+  //Construct_sdg_bisector_2;
+
+  typedef char Has_bisector_constructions_type;
+
+  template<class Gt, class M>
+  class Construct_sdg_bisector_2
+   : public CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::
+            Construct_sdg_bisector_2<Gt, M>
+  {};
+
+  template<class Gt, class M>
+  class Construct_sdg_bisector_ray_2
+   : public CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::
+            Construct_sdg_bisector_ray_2<Gt, M>
+  {};
+
+  template<class Gt, class M>
+  class Construct_sdg_bisector_segment_2
+   : public CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::
+            Construct_sdg_bisector_segment_2<Gt, M>
+  {};
 
   // PREDICATES
   //-----------
@@ -87,10 +107,10 @@ public:
     return Construct_svd_vertex_2();
   }
 
-  Construct_sdg_bisector_2
-  construct_sdg_bisector_2_object() const { 
-    return Construct_sdg_bisector_2();
-  }
+  //Construct_sdg_bisector_2
+  //construct_sdg_bisector_2_object() const {
+  //  return Construct_sdg_bisector_2();
+  //}
 
   // PREDICATES
   //-----------
