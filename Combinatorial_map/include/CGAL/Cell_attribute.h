@@ -140,11 +140,11 @@ namespace CGAL {
       --mrefcounting; 
     }
 
-  public:
     /// Get the reference counting.
     unsigned int get_nb_refs() const
     { return mrefcounting; }
 
+  public:
     void * for_compact_container() const 
     { return vp; }
     void * & for_compact_container()       
