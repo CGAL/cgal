@@ -306,7 +306,7 @@ CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 Additional formats supported for writing are OpenInventor (<TT>.iv</TT>)
 \cite cgal:w-impoo-94, VRML 1.0 and 2.0 (<TT>.wrl</TT>)
-\cite cgal:bpp-vrml-95, \cite cgal:vrmls-96, \cite cgal:hw-vrml2h-96, and Wavefront Advanced
+\cite cgal:bpp-vrml-95, \cite cgal:vrmls-97, \cite cgal:hw-vrml2h-96, and Wavefront Advanced
 Visualizer object format (<TT>.obj</TT>). Another convenient output
 function writes a polyhedral surface to a Geomview process spawned
 from the \cgal program. These output functions are provided as
