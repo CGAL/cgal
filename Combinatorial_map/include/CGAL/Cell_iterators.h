@@ -112,7 +112,10 @@ namespace CGAL {
     CMap_cell_iterator(const Self& aiterator):
       Ite(aiterator),
       mcell_mark_number(aiterator.mcell_mark_number)
-    { this->mmap->share_a_mark(this->mcell_mark_number); }
+    {
+      this->mmap->share_a_mark(this->mmark_number);
+      this->mmap->share_a_mark(this->mcell_mark_number);
+    }
 
     /// Assignment operator.
     Self& operator=(const Self& aiterator)
@@ -120,6 +123,7 @@ namespace CGAL {
       if (this != &aiterator)
       {
         Ite::operator=(aiterator);
+        this->mmap->share_a_mark(this->mmark_number);
         this->mmap->share_a_mark(mcell_mark_number);
       }
       return *this;
@@ -201,7 +205,7 @@ namespace CGAL {
       mmark_number(amap.get_new_mark())
     {
       CGAL_static_assertion( (boost::is_same<typename Ite::Basic_iterator,
-                              Tag_true>::value) );      
+                              Tag_true>::value) );
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, adart, mmark_number);
     }
