@@ -531,7 +531,6 @@ void test_io(bool exact)
     for (int y = 0; y < 5; ++y)
       t.insert(Point(x / 5.0, y / 5.0));
   CGAL_assertion(t.number_of_vertices() == 25);
-  CGAL_assertion(t.is_1_cover());
   test_io(t, exact);
 
   std::cout << __FILE__ << ", " << __LINE__ << std::endl;
