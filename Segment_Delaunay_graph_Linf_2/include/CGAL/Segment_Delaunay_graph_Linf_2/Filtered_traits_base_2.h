@@ -35,6 +35,8 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/Filtered_traits_base_2.h>
 
+#include <CGAL/Segment_Delaunay_graph_Linf_2/Constructions_C2.h>
+
 namespace CGAL {
 
 
@@ -189,14 +191,14 @@ private:
   EK_Construct_svd_vertex_2;
 
 
-  typedef typename CK_traits::Construct_sdg_bisector_2
-  CK_Construct_sdg_bisector_2;
+  //typedef typename CK_traits::Construct_sdg_bisector_2
+  //CK_Construct_sdg_bisector_2;
 
-  typedef typename FK_traits::Construct_sdg_bisector_2
-  FK_Construct_sdg_bisector_2;
+  //typedef typename FK_traits::Construct_sdg_bisector_2
+  //FK_Construct_sdg_bisector_2;
 
-  typedef typename EK_traits::Construct_sdg_bisector_2
-  EK_Construct_sdg_bisector_2;
+  //typedef typename EK_traits::Construct_sdg_bisector_2
+  //EK_Construct_sdg_bisector_2;
 
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT
@@ -214,12 +216,32 @@ public:
 			C2E, C2F, E2C, F2C>
   Construct_svd_vertex_2;
 
-  typedef
-  Filtered_construction<CK_Construct_sdg_bisector_2,
-			EK_Construct_sdg_bisector_2,
-			FK_Construct_sdg_bisector_2,
-			C2E, C2F, E2C, F2C>
-  Construct_sdg_bisector_2;
+  //typedef
+  //Filtered_construction<CK_Construct_sdg_bisector_2,
+  //			EK_Construct_sdg_bisector_2,
+  //			FK_Construct_sdg_bisector_2,
+  //			C2E, C2F, E2C, F2C>
+  //Construct_sdg_bisector_2;
+
+  typedef char Has_bisector_constructions_type;
+
+  template<class Gt, class M>
+  class Construct_sdg_bisector_2
+   : public CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::
+            Construct_sdg_bisector_2<Gt, M>
+  {};
+
+  template<class Gt, class M>
+  class Construct_sdg_bisector_ray_2
+   : public CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::
+            Construct_sdg_bisector_ray_2<Gt, M>
+  {};
+
+  template<class Gt, class M>
+  class Construct_sdg_bisector_segment_2
+   : public CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_NS::
+            Construct_sdg_bisector_segment_2<Gt, M>
+  {};
 
   //  typedef typename CK::Construct_site_2   Construct_site_2;
 
@@ -410,10 +432,10 @@ public:
     return Construct_svd_vertex_2();
   }
 
-  Construct_sdg_bisector_2
-  construct_sdg_bisector_2_object() const { 
-    return Construct_sdg_bisector_2();
-  }
+  //Construct_sdg_bisector_2
+  //construct_sdg_bisector_2_object() const {
+  //  return Construct_sdg_bisector_2();
+  //}
 
   /*
   Construct_site_2
