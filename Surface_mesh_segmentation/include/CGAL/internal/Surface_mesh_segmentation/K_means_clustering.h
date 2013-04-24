@@ -101,13 +101,11 @@ public:
 
     std::vector<double> distance_square(points.size(),
                                         (std::numeric_limits<double>::max)());
-    std::vector<double> distance_square_cumulative(points.size() +1);
-    distance_square_cumulative[0] = 0.0; // dummy element at zero
+    std::vector<double> distance_square_cumulative(points.size());
 
     // distance_square stores squared distance to the closest center for each point.
-    // say, "distance_square" ->                                        [ 0.1, 0.2, 0.3, 0.0, 0.2 ... ]
-    // then cumulative of distance_square will be ->                    [ 0.1, 0.3, 0.6, 0.6, 0.8 ... ]
-    // "distance_square_cumulative" is shifted version of cumulative -> [ 0.0 (dummy), 0.1, 0.3, 0.6, 0.6, 0.8 ... ]
+    // say, "distance_square" ->            [ 0.1, 0.2, 0.3, 0.0, 0.2 ... ]
+    // then distance_square_cumulative ->   [ 0.1, 0.3, 0.6, 0.6, 0.8 ... ]
     std::size_t initial_index = random.get_int(0,
                                 points.size()); // [0, points size)
     centers.push_back(points[initial_index]);
@@ -121,7 +119,7 @@ public:
           distance_square[j] = new_distance;
         }
         cumulative_distance_square += distance_square[j];
-        distance_square_cumulative[j +1] = cumulative_distance_square;
+        distance_square_cumulative[j] = cumulative_distance_square;
       }
 
       // check whether there is a way to select a new center
@@ -132,13 +130,15 @@ public:
       double random_ds = random.get_double(0.0,
                                            total_probability); // [0.0, total_probability)
 
-      // this can not select first element since it is 0.0 and upper bound returns "greater"
-      // this can not select end(), since random_ds < total_probability (= distance_square_cumulative.back())
+      // this can not select end(), since random_ds < total_probability (i.e. distance_square_cumulative.back())
+      // this can not select an already selected item since either (by considering that upper bounds returns greater)
+      //  - aready selected item is at 0, and its value is 0.0
+      //  - or its value is equal to value of previous element
       int selection_index = std::upper_bound(distance_square_cumulative.begin(),
                                              distance_square_cumulative.end(), random_ds)
                             - distance_square_cumulative.begin();
 
-      centers.push_back(points[selection_index -1]);
+      centers.push_back(points[selection_index]);
     }
   }
 };
