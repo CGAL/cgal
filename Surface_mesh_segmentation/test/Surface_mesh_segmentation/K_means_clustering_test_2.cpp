@@ -3,21 +3,12 @@
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 typedef CGAL::internal::K_means_clustering K_means;
 /**
- * Test degenerate cases
+ * Test where number of points equal to number of centers,
+ * Specifically useful for testing random and plus initializations (i.e. Selector class)
  */
 
 int main(void)
 {
-  for(int init_type = 0; init_type < 2; ++init_type)
-  {
-    K_means::Initialization_types init_type_enum = init_type == 0 ? K_means::RANDOM_INITIALIZATION : 
-                                                                    K_means::PLUS_INITIALIZATION;
-    for(int i = 1; i < 100; ++i) {
-      std::vector<double> points(i, 1.0); // generate point set with same points
-      K_means kmeans(points.size(), points, init_type_enum); // should not crash
-    }
-  }
-  
   for(int init_type = 0; init_type < 2; ++init_type)
   {
     K_means::Initialization_types init_type_enum = init_type == 0 ? K_means::RANDOM_INITIALIZATION : 

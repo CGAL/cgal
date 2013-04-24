@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include <CGAL/assertions.h>
+#include <CGAL/Random.h>
 
 #define CGAL_DEFAULT_MAXIMUM_ITERATION 10
 #define CGAL_DEFAULT_NUMBER_OF_RUN 15
@@ -38,14 +39,15 @@ public:
    */
   template<class T1, class T2>
   void forgy_initialization(int number_of_centers, const std::vector<T1>& points,
-                            std::vector<T2>& centers) {
+                            std::vector<T2>& centers, CGAL::Random& random) {
     centers.reserve(number_of_centers);
     std::set<std::size_t> selected;
 
     for(int i = 0; i < number_of_centers; ++i) {
       std::size_t random_range = points.size() - number_of_centers +
                                  i; // activate one more element in each iteration for as selectable
-      std::size_t random_index = rand() % (random_range + 1);
+      std::size_t random_index = random.get_int(0,
+                                 random_range + 1); // [0, random_range];
 
       std::pair<std::set<std::size_t>::iterator, bool> random_index_unique =
         selected.insert(random_index);
@@ -87,58 +89,56 @@ public:
    * Probability of a point to become a center is proportional to its squared distance to the closest center.
    *
    * T2 should be constructable by T1, and both T1 and T2 should have conversion operator to double.
-   *
-   * Implementation note: to force uniqueness a variant of Fisher–Yates shuffle is used, however to keep `points` intact I use another vector to
-   * store and swap indices.
-   *
-   * where n = number of points,  k = number of centers
    */
   template<class T1, class T2>
   void plus_plus_initialization(int number_of_centers,
-                                const std::vector<T1>& points, std::vector<T2>& centers) {
-    std::vector<std::size_t> indices(
-      points.size()); // it is required to not to swap points
-    for(std::size_t i = 0; i < points.size(); ++i) {
-      indices[i] = i;
+                                const std::vector<T1>& points, std::vector<T2>& centers, CGAL::Random& random) {
+    if(number_of_centers <= 0) {
+      return;
     }
 
     centers.reserve(number_of_centers);
 
-    std::vector<double> distance_square_cumulative(points.size());
     std::vector<double> distance_square(points.size(),
                                         (std::numeric_limits<double>::max)());
+    std::vector<double> distance_square_cumulative(points.size() +1);
+    distance_square_cumulative[0] = 0.0; // dummy element at zero
+
     // distance_square stores squared distance to the closest center for each point.
-    // say, distance_square -> [ 0.1, 0.2, 0.3, 0.1, ... ]
-    // then corresponding distance_square_cumulative -> [ 0.1, 0.3, 0.6, 0.7, ...]
-    std::size_t initial_index = rand() % points.size();
+    // say, "distance_square" ->                                        [ 0.1, 0.2, 0.3, 0.0, 0.2 ... ]
+    // then cumulative of distance_square will be ->                    [ 0.1, 0.3, 0.6, 0.6, 0.8 ... ]
+    // "distance_square_cumulative" is shifted version of cumulative -> [ 0.0 (dummy), 0.1, 0.3, 0.6, 0.6, 0.8 ... ]
+    std::size_t initial_index = random.get_int(0,
+                                points.size()); // [0, points size)
     centers.push_back(points[initial_index]);
-    std::swap(indices[initial_index], indices[points.size() -1]);
 
     for(int i = 1; i < number_of_centers; ++i) {
       double cumulative_distance_square = 0.0;
-      for(std::size_t j = 0; j < points.size() - i; ++j) {
-        double new_distance = std::pow(centers.back() - points[ indices[j] ], 2);
+      // distance_square holds closest distance that points have, so just test new coming center (i.e. centers.back())
+      for(std::size_t j = 0; j < points.size(); ++j) {
+        double new_distance = std::pow(centers.back() - points[j], 2);
         if(new_distance < distance_square[j]) {
           distance_square[j] = new_distance;
         }
         cumulative_distance_square += distance_square[j];
-        distance_square_cumulative[j] = cumulative_distance_square;
+        distance_square_cumulative[j +1] = cumulative_distance_square;
       }
-      std::vector<double>::iterator last_active = distance_square_cumulative.begin()
-          + (points.size() -i -1);
-      double zero_one = rand() / (RAND_MAX + 1.0); // [0,1) random number
 
-      double random_ds =  zero_one * (*last_active);
+      // check whether there is a way to select a new center
+      double total_probability = distance_square_cumulative.back();
+      CGAL_assertion( total_probability != 0.0 &&
+                      "Squared distances of all elements to their closest centers are 0.0, there is no way to select a new center.");
+
+      double random_ds = random.get_double(0.0,
+                                           total_probability); // [0.0, total_probability)
+
+      // this can not select first element since it is 0.0 and upper bound returns "greater"
+      // this can not select end(), since random_ds < total_probability (= distance_square_cumulative.back())
       int selection_index = std::upper_bound(distance_square_cumulative.begin(),
-                                             last_active + 1, random_ds)
+                                             distance_square_cumulative.end(), random_ds)
                             - distance_square_cumulative.begin();
 
-      centers.push_back(points[ indices[selection_index] ]);
-
-      std::swap(indices[selection_index], indices[points.size() -i -1]);
-      std::swap(distance_square[selection_index],
-                distance_square[points.size() -i -1]);
-      // no need to update distance_square_cumulative since it is overwritten in each iteration
+      centers.push_back(points[selection_index -1]);
     }
   }
 };
@@ -272,6 +272,7 @@ private:
 
   Initialization_types init_type;
 
+  CGAL::Random random;
 public:
   /**
    * @pre @a number_of_centers should be positive
@@ -293,14 +294,14 @@ public:
                      int number_of_run = CGAL_DEFAULT_NUMBER_OF_RUN,
                      int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION)
     :
-    points(data.begin(), data.end()), maximum_iteration(maximum_iteration),
-    init_type(init_type) {
+    points(data.begin(), data.end()),
+    maximum_iteration(maximum_iteration),
+    init_type(init_type),
+    random(CGAL_DEFAULT_SEED) {
     CGAL_precondition(number_of_centers > 0
                       && "Number of centers should be positive.");
     CGAL_precondition(data.size() >= static_cast<std::size_t>(number_of_centers)
                       && "Number of centers can not be more than number of data.");
-
-    srand(CGAL_DEFAULT_SEED); //(static_cast<unsigned int>(time(NULL)))
 
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
     sort(centers.begin(), centers.end());
@@ -334,7 +335,7 @@ private:
    */
   void initiate_centers_randomly(int number_of_centers) {
     centers.clear();
-    Selector().forgy_initialization(number_of_centers, points, centers);
+    Selector().forgy_initialization(number_of_centers, points, centers, random);
   }
 
   /**
@@ -344,7 +345,7 @@ private:
    */
   void initiate_centers_plus_plus(int number_of_centers) {
     centers.clear();
-    Selector().plus_plus_initialization(number_of_centers, points, centers);
+    Selector().plus_plus_initialization(number_of_centers, points, centers, random);
   }
 
   /**
