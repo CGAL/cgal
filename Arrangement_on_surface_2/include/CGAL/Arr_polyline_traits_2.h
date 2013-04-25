@@ -28,13 +28,6 @@
  *       to the user.
  */
 
-/*
- * Roadmap: In all functors, replace the member m_seg_traits with an instance
- *          of Arr_polyline_traits. Then use the member function
- *          segment_traits_2() to get whatever needed from the segment traits.
- *          See the implementation of Equal_2
- */
-
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
 #define CGAL_ARR_POLYLINE_TRAITS_2_H
 
@@ -1576,8 +1569,6 @@ private:
   /*
    * Roadmap: Improve the implementation _locate()
    *  - _locate() should return an iterator to the located segment
-   *  - Should not get m_seg_traits as an argument, instead it should be called
-   *    as a member function of the Arr_polyline_traits_2 object.
    */
   /*!
    * Return the index of the segment in the polyline that contains the
