@@ -286,7 +286,7 @@ public:
     {
       // Get the index of the segment in cv containing p.
       unsigned int i = // What is a smart way to call _locate()?
-        Geometry_traits_2::_locate(m_poly_traits->m_seg_traits, cv, p);
+        m_poly_traits->locate(m_poly_traits->m_seg_traits, cv, p);
       CGAL_precondition(i != INVALID_INDEX);
 
       // Compare the segment cv[i] and p.
@@ -794,7 +794,7 @@ public:
       CGAL_precondition(!equal(max_vertex(cv[cv.number_of_segments() - 1]), p));
 
       // Locate the segment on the polyline cv that contains p.
-      unsigned int i = Geometry_traits_2::_locate(m_poly_traits->
+      unsigned int i = m_poly_traits->locate(m_poly_traits->
                                                   m_seg_traits, cv, p);
       CGAL_precondition(i != INVALID_INDEX);
 
@@ -886,7 +886,7 @@ public:
         // cv1's left endpoint is to the left of cv2's left endpoint:
         // Locate the index i1 of the segment in cv1 which contains cv2's
         // left endpoint.
-        i1 = Geometry_traits_2::_locate(m_poly_traits->m_seg_traits,
+        i1 = m_poly_traits->locate(m_poly_traits->m_seg_traits,
                                         cv1, min_vertex(cv2[i2]));
         if (i1 == INVALID_INDEX)
           return oi;
@@ -899,7 +899,7 @@ public:
         // cv1's left endpoint is to the right of cv2's left endpoint:
         // Locate the index i2 of the segment in cv2 which contains cv1's
         // left endpoint.
-        i2 = Geometry_traits_2::_locate(m_poly_traits->m_seg_traits,
+        i2 = m_poly_traits->locate(m_poly_traits->m_seg_traits,
                                         cv2, min_vertex(cv1[i1]));
 
         if (i2 == INVALID_INDEX)
@@ -1578,7 +1578,7 @@ private:
    * \return An index i such that q is in the x-range of cv[i].
    *         If q is not in the x-range of cv, returns INVALID_INDEX.
    */
-  static unsigned int _locate(const Segment_traits_2* m_seg_traits,
+  static unsigned int locate(const Segment_traits_2* m_seg_traits,
                               const X_monotone_curve_2& cv,
                               const Point_2& q)
   {
@@ -1686,7 +1686,7 @@ private:
                                    const Point_2& q, const bool& to_right)
   {
     // First locate a segment segments[i] that contains q in its x-range.
-    unsigned int i = _locate(m_seg_traits, cv, q);
+    unsigned int i = locate(m_seg_traits, cv, q);
     if (i == INVALID_INDEX)
       return INVALID_INDEX;
 
