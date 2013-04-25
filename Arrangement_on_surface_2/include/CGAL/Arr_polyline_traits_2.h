@@ -422,16 +422,17 @@ public:
       unsigned int n2 = cv2.number_of_segments();
 
       // Check the pairwise equality of the contained segments.
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Equal_2 equal =
-        m_poly_traits->m_seg_traits->equal_2_object();
+        seg_traits->equal_2_object();
       typename Segment_traits_2::Compare_x_2 compare_x =
-        m_poly_traits->m_seg_traits->compare_x_2_object();
+        seg_traits->compare_x_2_object();
       typename Segment_traits_2::Compare_y_at_x_2 compare_y_at_x =
-        m_poly_traits->m_seg_traits->compare_y_at_x_2_object();
+        seg_traits->compare_y_at_x_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       Is_vertical_2 is_vertical = m_poly_traits->is_vertical_2_object();
       Point_2 point1,point2;
       Comparison_result res_x;
@@ -540,10 +541,11 @@ public:
       const_seg_iterator it_next = start_seg;
       ++it_next;
 
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       Construct_x_monotone_curve_2 construct_x_monotone_curve =
         m_poly_traits->construct_x_monotone_curve_2_object();
 
@@ -562,9 +564,9 @@ public:
       // Polyline contains at least 2 segments!
 
       typename Segment_traits_2::Compare_xy_2 comp_xy =
-        m_poly_traits->m_seg_traits->compare_xy_2_object();
+        seg_traits->compare_xy_2_object();
       typename Segment_traits_2::Is_vertical_2 is_vertical =
-        m_poly_traits->m_seg_traits->is_vertical_2_object();
+        seg_traits->is_vertical_2_object();
 
       const_seg_iterator it_start = start_seg;
       const_seg_iterator it_curr = start_seg;
@@ -626,12 +628,14 @@ public:
     {
       int num_seg = cv.number_of_segments();
       CGAL_precondition(num_seg > 1);
+
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_poly_traits->m_seg_traits->equal_2_object();
+        seg_traits->equal_2_object();
 
       int last_seg = num_seg-1;
 
@@ -658,12 +662,13 @@ public:
     {
       int num_seg = cv.number_of_segments();
 
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_poly_traits->m_seg_traits->equal_2_object();
+        seg_traits->equal_2_object();
 
       // cv is empty
       if (num_seg == 0)
@@ -698,13 +703,14 @@ public:
 
       CGAL_precondition(num_seg > 0);
 
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
 
       CGAL_precondition_code(
         typename Segment_traits_2::Compare_x_2 comp_x =
-          m_seg_traits->compare_x_2_object();
-        CGAL_precondition_code(comp_x(get_max_v(cv[num_seg-1]),p)==LARGER);
+          seg_traits->compare_x_2_object();
+        CGAL_precondition(comp_x(get_max_v(cv[num_seg-1]),p)==LARGER);
                              );
       cv.push_back(Segment_2(get_max_v(cv[num_seg-1]),p));
     }
@@ -727,14 +733,15 @@ public:
           return;
         }
 
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Compare_x_2 comp_x =
-        m_poly_traits->m_seg_traits->compare_x_2_object();
+        seg_traits->compare_x_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_poly_traits->m_seg_traits->equal_2_object();
+        seg_traits->equal_2_object();
 
       CGAL_precondition_code(
         if (num_seg == 1);
@@ -774,12 +781,13 @@ public:
     void operator()(const X_monotone_curve_2& cv, const Point_2& p,
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_poly_traits->m_seg_traits->equal_2_object();
+        seg_traits->equal_2_object();
 
       // Make sure the split point is not one of the curve endpoints.
       CGAL_precondition(!equal(min_vertex(cv[0]), p));
@@ -851,18 +859,19 @@ public:
                               const X_monotone_curve_2& cv2,
                               OutputIterator oi)
     {
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2                equal =
-        m_poly_traits->m_seg_traits->equal_2_object();
+        seg_traits->equal_2_object();
       typename Segment_traits_2::Compare_xy_2           compare_xy =
-        m_poly_traits->m_seg_traits->compare_xy_2_object();
+        seg_traits->compare_xy_2_object();
       typename Segment_traits_2::Intersect_2            intersect =
-        m_poly_traits->m_seg_traits->intersect_2_object();
+        seg_traits->intersect_2_object();
       typename Segment_traits_2::Compare_y_at_x_2       compare_y_at_x =
-        m_poly_traits->m_seg_traits->compare_y_at_x_2_object();
+        seg_traits->compare_y_at_x_2_object();
 
       const unsigned int n1 = cv1.number_of_segments();
       const unsigned int n2 = cv2.number_of_segments();
@@ -1046,14 +1055,15 @@ public:
     bool operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2) const
     {
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_poly_traits->m_seg_traits->equal_2_object();
+        seg_traits->equal_2_object();
       typename Segment_traits_2::Is_vertical_2 is_vertical =
-        m_poly_traits->m_seg_traits->is_vertical_2_object();
+        seg_traits->is_vertical_2_object();
 
       const unsigned int n1 = cv1.number_of_segments();
       const unsigned int n2 = cv2.number_of_segments();
@@ -1192,12 +1202,13 @@ public:
           * independently from the SegmentTraits in use, as we do not allow
           * a polyline with degenerated segments.
           */
+         const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-         m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+         seg_traits->construct_min_vertex_2_object();
          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-         m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+         seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Equal_2 equal =
-         m_poly_traits->m_seg_traits->equal_2_object();
+         seg_traits->equal_2_object();
 
          CGAL_precondition_msg(!equal(get_min_v(seg),get_max_v(seg)),
                                "Cannot construct a degenerated segment");
@@ -1274,14 +1285,15 @@ public:
 
       CGAL_precondition_code
         (
+         const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-         m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+         seg_traits->construct_min_vertex_2_object();
          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-         m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+         seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Compare_xy_2 comp_xy =
-         m_poly_traits->m_seg_traits->compare_xy_2_object();
+         seg_traits->compare_xy_2_object();
          typename Segment_traits_2::Equal_2 equal =
-         m_poly_traits->m_seg_traits->equal_2_object();
+         seg_traits->equal_2_object();
          );
 
       if (++next == end)
@@ -1365,12 +1377,13 @@ public:
           * independently from the SegmentTraits in use, as we do not allow
           * a polyline with degenerated segments.
           */
+         const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-         m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+         seg_traits->construct_min_vertex_2_object();
          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-         m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+         seg_traits->construct_max_vertex_2_object();
          typename Segment_traits_2::Equal_2 equal =
-         m_poly_traits->m_seg_traits->equal_2_object();
+         seg_traits->equal_2_object();
 
          CGAL_precondition_msg(!equal(get_min_v(seg),get_max_v(seg)),
                                "Cannot construct a degenerated segment");
@@ -1409,12 +1422,14 @@ public:
       ++pt;
       CGAL_precondition (pt != end);
 
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+
       // Initialize two comparison functors
       CGAL_precondition_code(typename Segment_traits_2::Compare_x_2 compare_x =
-                             m_poly_traits->m_seg_traits->compare_x_2_object();
+                             seg_traits->compare_x_2_object();
                              );
       typename Segment_traits_2::Compare_xy_2 compare_xy =
-        m_poly_traits->m_seg_traits->compare_xy_2_object();
+        seg_traits->compare_xy_2_object();
 
       // Make sure there is no change of directions as we traverse the polyline.
       // Save the comp_x between the first two points
@@ -1470,19 +1485,20 @@ public:
                             "one segment");
 
       // Functors that have to be used always
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        m_poly_traits->m_seg_traits->construct_min_vertex_2_object();
+        seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        m_poly_traits->m_seg_traits->construct_max_vertex_2_object();
+        seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
-        m_poly_traits->m_seg_traits->equal_2_object();
+        seg_traits->equal_2_object();
 
       CGAL_precondition_code
         (
          // A functor which is used only when validity tests of the
          // input have to be ran.
          typename Segment_traits_2::Is_vertical_2 is_vertical =
-           m_poly_traits->m_seg_traits->is_vertical_2_object();
+           seg_traits->is_vertical_2_object();
 
          InputIterator curr = begin;
          // Ensure that the first segment does not degenerate to a point.
