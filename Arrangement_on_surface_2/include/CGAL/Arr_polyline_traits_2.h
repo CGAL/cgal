@@ -286,7 +286,7 @@ public:
     {
       // Get the index of the segment in cv containing p.
       unsigned int i = // What is a smart way to call _locate()?
-        m_poly_traits->locate(m_poly_traits->m_seg_traits, cv, p);
+        m_poly_traits->locate(cv, p);
       CGAL_precondition(i != INVALID_INDEX);
 
       // Compare the segment cv[i] and p.
@@ -327,12 +327,8 @@ public:
     {
       // Get the indices of the segments in cv1 and cv2 containing p and
       // defined to its left.
-      unsigned int i1=Geometry_traits_2::_locate_side(m_poly_traits->
-                                                      m_seg_traits,
-                                                      cv1, p, false);
-      unsigned int i2=Geometry_traits_2::_locate_side(m_poly_traits->
-                                                      m_seg_traits,cv2,
-                                                      p, false);
+      unsigned int i1=m_poly_traits->locate_side(cv1, p, false);
+      unsigned int i2=m_poly_traits->locate_side(cv2, p, false);
 
       CGAL_precondition(i1 != INVALID_INDEX);
       CGAL_precondition(i2 != INVALID_INDEX);
@@ -376,12 +372,8 @@ public:
     {
       // Get the indices of the segments in cv1 and cv2 containing p and
       // defined to its right.
-      unsigned int i1=Geometry_traits_2::_locate_side(m_poly_traits->
-                                                      m_seg_traits,
-                                                      cv1, p, true);
-      unsigned int i2=Geometry_traits_2::_locate_side(m_poly_traits->
-                                                      m_seg_traits,
-                                                      cv2, p, true);
+      unsigned int i1=m_poly_traits->locate_side(cv1, p, true);
+      unsigned int i2=m_poly_traits->locate_side(cv2, p, true);
 
       CGAL_precondition(i1 != INVALID_INDEX);
       CGAL_precondition(i2 != INVALID_INDEX);
@@ -794,8 +786,7 @@ public:
       CGAL_precondition(!equal(max_vertex(cv[cv.number_of_segments() - 1]), p));
 
       // Locate the segment on the polyline cv that contains p.
-      unsigned int i = m_poly_traits->locate(m_poly_traits->
-                                                  m_seg_traits, cv, p);
+      unsigned int i = m_poly_traits->locate(cv, p);
       CGAL_precondition(i != INVALID_INDEX);
 
       // Clear the output curves.
@@ -886,8 +877,7 @@ public:
         // cv1's left endpoint is to the left of cv2's left endpoint:
         // Locate the index i1 of the segment in cv1 which contains cv2's
         // left endpoint.
-        i1 = m_poly_traits->locate(m_poly_traits->m_seg_traits,
-                                        cv1, min_vertex(cv2[i2]));
+        i1 = m_poly_traits->locate(cv1, min_vertex(cv2[i2]));
         if (i1 == INVALID_INDEX)
           return oi;
 
@@ -899,8 +889,7 @@ public:
         // cv1's left endpoint is to the right of cv2's left endpoint:
         // Locate the index i2 of the segment in cv2 which contains cv1's
         // left endpoint.
-        i2 = m_poly_traits->locate(m_poly_traits->m_seg_traits,
-                                        cv2, min_vertex(cv1[i1]));
+        i2 = m_poly_traits->locate(cv2, min_vertex(cv1[i1]));
 
         if (i2 == INVALID_INDEX)
           return oi;
@@ -1578,9 +1567,8 @@ private:
    * \return An index i such that q is in the x-range of cv[i].
    *         If q is not in the x-range of cv, returns INVALID_INDEX.
    */
-  static unsigned int locate(const Segment_traits_2* m_seg_traits,
-                              const X_monotone_curve_2& cv,
-                              const Point_2& q)
+  unsigned int locate(const X_monotone_curve_2& cv,
+                      const Point_2& q) const
   {
     typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
       m_seg_traits->construct_min_vertex_2_object();
@@ -1681,12 +1669,11 @@ private:
    * \return An index i such that segments[i] is defined to the left(or to the
    *         right) of q, or INVALID_INDEX if no such segment exists.
    */
-  static unsigned int _locate_side(const Segment_traits_2* m_seg_traits,
-                                   const X_monotone_curve_2& cv,
-                                   const Point_2& q, const bool& to_right)
+  unsigned int locate_side(const X_monotone_curve_2& cv,
+                            const Point_2& q, const bool& to_right) const
   {
     // First locate a segment segments[i] that contains q in its x-range.
-    unsigned int i = locate(m_seg_traits, cv, q);
+    unsigned int i = locate(cv, q);
     if (i == INVALID_INDEX)
       return INVALID_INDEX;
 
