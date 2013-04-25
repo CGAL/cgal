@@ -44,6 +44,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
+#include <cassert>
 
 using namespace CGAL;
 

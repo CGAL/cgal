@@ -3,6 +3,7 @@
 #include <functional>
 #include <algorithm>
 #include <numeric>
+#include <cassert>
 
 using CGAL::compose1_1;
 using CGAL::compose1_2;

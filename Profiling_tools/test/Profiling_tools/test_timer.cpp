@@ -3,6 +3,8 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/FPU.h>
 
+#include <cassert>
+
 template <class T>
 double test_timer() {
     T t;

@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

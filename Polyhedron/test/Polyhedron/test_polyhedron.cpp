@@ -38,6 +38,8 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/halfedgeds_connected_components.h>
 
+#include <cassert>
+
 // A polyhedron modifier that creates a tetrahedron using the
 // incremental builder.
 template < class HDS >
