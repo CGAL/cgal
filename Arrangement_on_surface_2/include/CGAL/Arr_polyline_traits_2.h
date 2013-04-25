@@ -55,13 +55,15 @@ public:
   typedef Tag_true                                   Has_left_category;
   typedef Tag_true                                   Has_merge_category;
   /*
-   * TODO: Add a Do_intersect_2 functor which stops after the first intersection
-   *       found.
-   *       Either copy/paste the code of the Intersect_2 only without using
-   *       output iterator and stopping after the first intersection.
-   *       Or, use a dummy output iterator which throws an exception as soon as
-   *       it is changed. Then from Do_intersect_2 call the Intersect_2 and
+   * Roadmap:
+   *       Add a Do_intersect_2 functor which stops after the first
+   *       intersection found.  Either copy/paste the code of the
+   *       Intersect_2 only without using output iterator and stopping
+   *       after the first intersection.  Or, use a dummy output
+   *       iterator which throws an exception as soon as it is
+   *       changed. Then from Do_intersect_2 call the Intersect_2 and
    *       provide this dummy output iterator as the third argument.
+   *       Note that this tag is false also for Arr_segment_traits_2.h
    */
   typedef Tag_false                                  Has_do_intersect_category;
 
