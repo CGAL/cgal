@@ -1221,10 +1221,10 @@ public:
      *  \param end An iterator pointing to the past-the-end segment in the range
      *  \return A polyline using the corresponding construction implementation.
      */
-    template <typename InputIterator>
-    Curve_2 operator()(InputIterator begin, InputIterator end) const
+    template <typename ForwardIterator>
+    Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
     {
-      typedef typename std::iterator_traits<InputIterator>::value_type VT;
+      typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
       typedef typename boost::is_same<VT,Point_2>::type Is_point;
       return constructor_impl(begin, end, Is_point());
     }
@@ -1235,8 +1235,8 @@ public:
      * \return Polyline connecting the points in the input using the same
      *         order in which they were given.
      */
-    template <typename InputIterator>
-    Curve_2 constructor_impl (InputIterator begin, InputIterator end,
+    template <typename ForwardIterator>
+    Curve_2 constructor_impl (ForwardIterator begin, ForwardIterator end,
                              boost::true_type) const
     {
       // Container of the segments to be created.
@@ -1250,8 +1250,8 @@ public:
          typename Segment_traits_2::Equal_2 equal =
          m_poly_traits->m_seg_traits->equal_2_object();
          );
-      InputIterator curr = begin;
-      InputIterator next = curr;
+      ForwardIterator curr = begin;
+      ForwardIterator next = curr;
       ++next;
       while (next!=end)
         {
@@ -1273,15 +1273,15 @@ public:
      *       Construct_max_vertex_2 Construct_min_vertex_2 functors which are
      *       provided by the SegmentTraits class.
      */
-    template <typename InputIterator>
-    Curve_2 constructor_impl (InputIterator begin, InputIterator end,
+    template <typename ForwardIterator>
+    Curve_2 constructor_impl (ForwardIterator begin, ForwardIterator end,
                              boost::false_type) const
     {
       // Range has to contain at least one segment
       CGAL_precondition(begin != end);
 
-      InputIterator curr = begin;
-      InputIterator next = curr;
+      ForwardIterator curr = begin;
+      ForwardIterator next = curr;
 
       CGAL_precondition_code
         (
@@ -1391,10 +1391,10 @@ public:
       return X_monotone_curve_2(seg);
     }
 
-    template <typename InputIterator>
-    X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const
+    template <typename ForwardIterator>
+    X_monotone_curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
     {
-      typedef typename std::iterator_traits<InputIterator>::value_type VT;
+      typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
       typedef typename boost::is_same<VT,Point_2>::type Is_point;
       return constructor_impl(begin, end, Is_point());
     }
@@ -1408,17 +1408,17 @@ public:
      * \post The constructed polyline is x-monotone and
      *       oriented from left to right.
      */
-    template <typename InputIterator>
-    X_monotone_curve_2 constructor_impl(InputIterator begin, InputIterator end,
+    template <typename ForwardIterator>
+    X_monotone_curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
                                        boost::true_type) const
     {
       // Vector of the segments to be constructed from the range of points
       std::vector<Segment_2> segs;
 
       // Make sure the range of points contains at least two points.
-      InputIterator ps = begin;
+      ForwardIterator ps = begin;
       CGAL_precondition (ps != end);
-      InputIterator pt = ps;
+      ForwardIterator pt = ps;
       ++pt;
       CGAL_precondition (pt != end);
 
@@ -1476,8 +1476,8 @@ public:
      *      right.
      * \return An x-monotone polyline directed from left to right.
      */
-    template <typename InputIterator>
-    X_monotone_curve_2 constructor_impl(InputIterator begin, InputIterator end,
+    template <typename ForwardIterator>
+    X_monotone_curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
                                        boost::false_type) const
     {
       CGAL_precondition_msg(begin != end,
@@ -1500,12 +1500,12 @@ public:
          typename Segment_traits_2::Is_vertical_2 is_vertical =
            seg_traits->is_vertical_2_object();
 
-         InputIterator curr = begin;
+         ForwardIterator curr = begin;
          // Ensure that the first segment does not degenerate to a point.
          CGAL_precondition_msg(!equal(get_min_v(*curr), get_max_v(*curr)),
                                "Cannot construct a degenerated segment");
 
-         InputIterator next = curr;
+         ForwardIterator next = curr;
 
          if (++next != end) {
            // Ensure that the second segment does not degenerate to a point.
@@ -1543,7 +1543,7 @@ public:
 
       bool rev = false;
       if (std::distance(begin, end) >= 2) {
-        InputIterator second = begin;
+        ForwardIterator second = begin;
         ++second;
         rev = equal(get_min_v(*begin), get_max_v(*second));
       }
@@ -1553,8 +1553,8 @@ public:
         {
           // Reverse the _order_ of the segments in the container.
           return X_monotone_curve_2(
-                         std::reverse_iterator<InputIterator>(end),
-                         std::reverse_iterator<InputIterator>(begin));
+                         std::reverse_iterator<ForwardIterator>(end),
+                         std::reverse_iterator<ForwardIterator>(begin));
         }
       else
         return X_monotone_curve_2(begin, end);
