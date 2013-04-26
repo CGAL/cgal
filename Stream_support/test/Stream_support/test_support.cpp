@@ -24,6 +24,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <cstddef>
+#include <cassert>
 #include <sstream>
 #include <CGAL/IO/Ostream_iterator.h>
 #include <CGAL/IO/Istream_iterator.h>

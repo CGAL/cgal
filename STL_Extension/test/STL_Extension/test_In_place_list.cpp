@@ -30,6 +30,7 @@
 
 #include <CGAL/basic.h>
 #include <cstddef>
+#include <cassert>
 #include <iterator>
 #include <list>
 #include <vector>

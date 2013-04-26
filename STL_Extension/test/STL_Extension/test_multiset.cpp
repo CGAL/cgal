@@ -33,6 +33,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <cassert>
 
 void test_massive_insert_and_erase();
 void test_iterators();

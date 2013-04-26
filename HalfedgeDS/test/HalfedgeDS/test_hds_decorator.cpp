@@ -31,6 +31,8 @@
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 
+#include <cassert>
+
 typedef CGAL::Cartesian<double> Kernel;
 struct Dummy_traits_2 {
     typedef Kernel::Point_2 Point_2;

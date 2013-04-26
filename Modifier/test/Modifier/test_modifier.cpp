@@ -28,6 +28,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Modifier_base.h>
 
+#include <cassert>
+
 using CGAL::Modifier_base;
 
 class A {
