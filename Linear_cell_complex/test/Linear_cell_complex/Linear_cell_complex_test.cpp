@@ -173,7 +173,7 @@ int main()
   typedef CGAL::Linear_cell_complex<4,4,
                                     CGAL::Linear_cell_complex_traits<4>,
                                     Myitems_4c> LCC4c;
-  if ( !test_LCC_4<LCC4b>() )
+  if ( !test_LCC_4<LCC4c>() )
   {
     std::cout<<" Error during Test_LCC_4<LCC4c>."<<std::endl;
     return EXIT_FAILURE;
