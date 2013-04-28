@@ -1180,24 +1180,21 @@ public:
             }
           }
 
+          CGAL_SDG_DEBUG( std::cout << "debug first check npts="
+              << npts << std::endl; );
+
           if ((npts == 3) and
               ((p.is_segment() and not l.has_on_positive_side(vqps))
                or(p.is_point() and not l.has_on_negative_side(vqps)))) {
             npts = 2;
           }
           if (npts == 4) {
-            if ((p.is_segment() and not l.has_on_positive_side(vqps))
-                or(p.is_point() and not l.has_on_negative_side(vqps))) {
-              if (l.perpendicular(pnt).has_on_positive_side(vqps)) {
-                npts = 2;
-              }
-              else {
-                if (compare_x_2(vqps,points[1]) == EQUAL
-                    and compare_y_2(vqps,points[1]) == EQUAL) {
-                  npts = 2;
-                } else {
-                  npts = 3;
-                }
+            if (not l.perpendicular(pnt).has_on_negative_side(vqps)) {
+              npts = 2;
+            } else {
+              if ((p.is_segment() and not l.has_on_positive_side(vqps))
+                  or(p.is_point() and not l.has_on_negative_side(vqps))) {
+                npts = 3;
               }
             }
           }
