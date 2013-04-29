@@ -1278,3 +1278,7 @@ gmon.*
 /Triangulation_2/examples/Triangulation_2/terrain
 /Triangulation_2/examples/Triangulation_2/triangulation_prog1
 /Triangulation_2/examples/Triangulation_2/voronoi
+/Kernel_23/test/Kernel_23/overload_bug
+/Kernel_23/test/Kernel_23/test_Projection_traits_xy_3_Intersect_2
+/Kernel_23/test/Kernel_23/test_has_filters
+/Kernel_23/test/Kernel_23/test_result_of
