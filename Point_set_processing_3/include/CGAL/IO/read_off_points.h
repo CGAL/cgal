@@ -198,7 +198,7 @@ read_off_points_and_normals(
     stream,
     output,
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-    make_dereference_property_map(first),
+    make_dereference_property_map(output),
 #else
     make_typed_identity_property_map_by_reference(
     typename value_type_traits<OutputIterator>::type()),
