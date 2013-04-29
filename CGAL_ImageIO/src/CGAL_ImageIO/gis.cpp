@@ -246,7 +246,7 @@ int readGisHeader( const char* name,_image* im)
   
   if ( !fgetns(str, _LGTH_STRING_, im) ) 
     { ImageIO_free( str ); return -1; }
-  status = sscanf( str,"%d %d %d %d", &(im->xdim), &(im->ydim), 
+  status = sscanf( str,"%u %u %u %u", &(im->xdim), &(im->ydim), 
 		   &(im->zdim), &(im->vdim) );
   switch ( status ) {
   case 2 :    im->zdim = 1;
