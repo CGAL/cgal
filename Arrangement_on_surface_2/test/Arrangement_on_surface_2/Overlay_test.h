@@ -132,16 +132,34 @@ protected:
   //! Overlay traits
   class Overlay_traits {
   private:
-    std::size_t count(Face_const_handle f) const
+    std::size_t count_outer(Face_const_handle f) const
     {
       std::size_t cnt = 0;
       Outer_ccb_const_iterator ocit;
-      Inner_ccb_const_iterator icit;
       for (ocit = f->outer_ccbs_begin(); ocit != f->outer_ccbs_end(); ++ocit) {
         Ccb_halfedge_const_circulator curr = *ocit;
         do ++cnt;
         while (++curr != *ocit);
       }
+      return cnt;
+    }
+    
+    std::size_t count_outer(Face_handle f) const
+    {
+      std::size_t cnt = 0;
+      Outer_ccb_iterator ocit;
+      for (ocit = f->outer_ccbs_begin(); ocit != f->outer_ccbs_end(); ++ocit) {
+        Ccb_halfedge_circulator curr = *ocit;
+        do ++cnt;
+        while (++curr != *ocit);
+      }
+      return cnt;
+    }
+
+    std::size_t count_inner(Face_const_handle f) const
+    {
+      std::size_t cnt = 0;
+      Inner_ccb_const_iterator icit;
       for (icit = f->inner_ccbs_begin(); icit != f->inner_ccbs_end(); ++icit) {
         Ccb_halfedge_const_circulator curr = *icit;
         do ++cnt;
@@ -150,16 +168,10 @@ protected:
       return cnt;
     }
     
-    std::size_t count(Face_handle f) const
+    std::size_t count_inner(Face_handle f) const
     {
       std::size_t cnt = 0;
-      Outer_ccb_iterator ocit;
       Inner_ccb_iterator icit;
-      for (ocit = f->outer_ccbs_begin(); ocit != f->outer_ccbs_end(); ++ocit) {
-        Ccb_halfedge_circulator curr = *ocit;
-        do ++cnt;
-        while (++curr != *ocit);
-      }
       for (icit = f->inner_ccbs_begin(); icit != f->inner_ccbs_end(); ++icit) {
         Ccb_halfedge_circulator curr = *icit;
         do ++cnt;
@@ -167,7 +179,7 @@ protected:
       }
       return cnt;
     }
-
+    
   public:
     /*! Destructor. */
     virtual ~Overlay_traits() {}
@@ -212,7 +224,9 @@ protected:
     {
 #ifdef CGAL_OVERLAY_TRAITS_VERBOSE
       std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
-      std::cout << "  f2: " << count(f2) << ", " << f2->data() << std::endl;
+      std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
+                << ", Outer(" << count_outer(f2) << ")"
+                << ", " << f2->data() << std::endl;
 #endif
       v->set_data(v1->data() + f2->data());
 #ifdef CGAL_OVERLAY_TRAITS_VERBOSE
@@ -243,7 +257,9 @@ protected:
                                Vertex_handle v) const
     {
 #ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  f1: " << count(f1) << ", " << f1->data() << std::endl;
+      std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
+                << ", Outer(" << count_outer(f1) << ")"
+                << ", " << f1->data() << std::endl;
       std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
 #endif
       v->set_data(f1->data() + v2->data());
@@ -305,7 +321,9 @@ protected:
                 << e1->target()->point()
                 << ", " << e1->data()
                 << std::endl;
-      std::cout << "  f2: " << count(f2) << ", " << f2->data() << std::endl;
+      std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
+                << ", Outer(" << count_outer(f2) << ")"
+                << ", " << f2->data() << std::endl;
 #endif
       e->set_data(e1->data() + f2->data());
       e->twin()->set_data(e1->data() + f2->data());
@@ -322,7 +340,9 @@ protected:
                              Halfedge_handle e) const
     {
 #ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  f1: " << count(f1) << ", " << f1->data() << std::endl;
+      std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
+                << ", Outer(" << count_outer(f1) << ")"
+                << ", " << f1->data() << std::endl;
       std::cout << "  e2: " << e2->source()->point() << "=>"
                 << e2->target()->point()
                 << ", " << e2->data() << std::endl;
@@ -342,12 +362,18 @@ protected:
                              Face_handle f) const
     {
 #ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  f1: " << count(f1) << ", " << f1->data() << std::endl;
-      std::cout << "  f2: " << count(f2) << ", " << f2->data() << std::endl;
+      std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
+                << ", Outer(" << count_outer(f1) << ")"
+                << ", " << f1->data() << std::endl;
+      std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
+                << ", Outer(" << count_outer(f2) << ")"
+                << ", " << f2->data() << std::endl;
 #endif
       f->set_data(f1->data() + f2->data());
 #ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  f: " << count(f) << ", " << f->data() << std::endl;
+      std::cout << "  f: " << "Inner(" << count_inner(f) << ")"
+                << ", Outer(" << count_outer(f) << ")"
+                << ", " << f->data() << std::endl;
       std::cout << std::endl;
 #endif
     }
