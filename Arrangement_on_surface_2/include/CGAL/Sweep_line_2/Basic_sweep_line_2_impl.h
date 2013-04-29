@@ -33,7 +33,8 @@ namespace CGAL {
 //-----------------------------------------------------------------------------
 // Constructor.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 Basic_sweep_line_2(Visitor* visitor) :
   m_traits(new Traits_adaptor_2()),
@@ -52,7 +53,8 @@ Basic_sweep_line_2(Visitor* visitor) :
 //-----------------------------------------------------------------------------
 // Constructor with a given traits-class.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 Basic_sweep_line_2(const Traits_2* traits, Visitor* visitor) :
   m_traits(static_cast<const Traits_adaptor_2*>(traits)),
@@ -71,12 +73,12 @@ Basic_sweep_line_2(const Traits_2* traits, Visitor* visitor) :
 //-----------------------------------------------------------------------------
 // Destrcutor.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::~Basic_sweep_line_2()
 {
   // Free the traits-class object, if we own it.
-  if (m_traitsOwner)
-    delete m_traits;
+  if (m_traitsOwner) delete m_traits;
 
   // Free the event queue.
   delete m_queue;
@@ -84,7 +86,6 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::~Basic_sweep_line_2()
   // Free all the event that have not been de-allocated so far.
   Allocated_events_iterator iter;
   Event* p_event;
-
   for (iter = m_allocated_events.begin();
        iter != m_allocated_events.end(); ++iter)
   {
@@ -97,7 +98,8 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::~Basic_sweep_line_2()
 //-----------------------------------------------------------------------------
 // Stop the sweep-line process.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::stop_sweep()
 {
   // Clear the event queue, deallocating all events but the current one
@@ -126,7 +128,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::stop_sweep()
 //-----------------------------------------------------------------------------
 // Deallocate event object..
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 deallocate_event(Event* event)
 {
@@ -141,7 +144,8 @@ deallocate_event(Event* event)
 //-----------------------------------------------------------------------------
 // Perform the main sweep-line loop.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep()
 {
   CGAL_SL_DEBUG(
@@ -201,7 +205,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep()
 //-----------------------------------------------------------------------------
 // Initialize the data structures for the sweep-line algorithm.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
 {
   CGAL_assertion(m_queue->empty());
@@ -216,15 +221,15 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
 //-----------------------------------------------------------------------------
 // Complete the sweep (complete the data structures).
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
 {
   CGAL_assertion(m_queue->empty());
   CGAL_assertion((m_statusLine.size() == 0));
   
   // Free all subcurve objects.
-  unsigned int  i;
-  for (i = 0 ; i < m_num_of_subCurves; ++i)
+  for (unsigned int i = 0; i < m_num_of_subCurves; ++i)
     m_subCurveAlloc.destroy(m_subCurves + i);
 
   if (m_num_of_subCurves > 0)
@@ -234,7 +239,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
 //-----------------------------------------------------------------------------
 // Initialize an event associated with a point.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _init_point(const Point_2& pt, Attribute type)
 {
@@ -250,7 +256,8 @@ _init_point(const Point_2& pt, Attribute type)
 //-----------------------------------------------------------------------------
 // Initialize the events associated with an x-monotone curve.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _init_curve(const X_monotone_curve_2& curve, unsigned int index)
 {
@@ -267,7 +274,8 @@ _init_curve(const X_monotone_curve_2& curve, unsigned int index)
 //-----------------------------------------------------------------------------
 // Initialize an event associated with an x-monotone curve end.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 {
@@ -310,7 +318,8 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Handle the subcurves to the left of the current event point.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 { 
   CGAL_PRINT("Handling left curve" << std::endl;);
@@ -360,9 +369,9 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
   // we can inform the visitor that we are about to handle this event.
   m_visitor->before_handle_event(m_currentEvent);
   
-  CGAL_PRINT("left curves after sorting: "<<"\n";);
+  CGAL_PRINT("left curves after sorting: " << std::endl);
   CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
-                    m_currentEvent->left_curves_end() )
+                    m_currentEvent->left_curves_end())
                 {
                   m_currentEvent->Print();
                 });
@@ -385,7 +394,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 //-----------------------------------------------------------------------------
 // Handle an event that does not have any incident left curves.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _handle_event_without_left_curves()
 {
@@ -437,7 +447,8 @@ _handle_event_without_left_curves()
 // Sort the left subcurves of an event point according to their order in
 // their status line (no geometric comprasions are needed).
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
 {
   CGAL_assertion(m_currentEvent->has_left_curves());
@@ -456,7 +467,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
         m_currentEvent->left_curves_end())
       break;
   }
-  Status_line_iterator  end = sl_iter;
+  Status_line_iterator end = sl_iter;
   
   sl_iter = curve->hint();
   if (sl_iter == m_statusLine.begin()) {
@@ -497,26 +508,26 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
 //-----------------------------------------------------------------------------
 // Handle the subcurves to the right of the current event point.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 {
-  CGAL_PRINT("Handling right curves (" ;);
-  CGAL_SL_DEBUG(PrintEvent(m_currentEvent););
-  CGAL_PRINT(")\n";);
+  CGAL_PRINT("Handling right curves (");
+  CGAL_SL_DEBUG(PrintEvent(m_currentEvent));
+  CGAL_PRINT(")\n");
     
   // We have nothing to do if the current event does not have any incident
   // right subcurves.
-  if (! m_currentEvent->has_right_curves())
-    return;
+  if (! m_currentEvent->has_right_curves()) return;
 
   // Loop over the curves to the right of the current event and handle them:
   // Since the curves are non intersecting, the event can represents the
   // left end of the right curves and we have no prior information from the
   // order of the left subcurves. Thus, we just insert the curves to the
   // status line.
-  Event_subcurve_iterator  curr = m_currentEvent->right_curves_begin();
-  Event_subcurve_iterator  right_end = m_currentEvent->right_curves_end();
-  Status_line_iterator     sl_iter;
+  Event_subcurve_iterator curr = m_currentEvent->right_curves_begin();
+  Event_subcurve_iterator right_end = m_currentEvent->right_curves_end();
+  Status_line_iterator sl_iter;
 
   while (curr != right_end) {
     CGAL_PRINT_INSERT(*curr);
@@ -527,13 +538,14 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
     ++curr;
   }        
       
-  CGAL_SL_DEBUG(PrintStatusLine(););
+  CGAL_SL_DEBUG(PrintStatusLine());
 }
 
 //-----------------------------------------------------------------------------
 // Add a subcurve to the right of an event point.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 bool Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _add_curve_to_right(Event* event, Subcurve* curve, bool /* overlap_exist */)
 {
@@ -551,7 +563,8 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool /* overlap_exist */)
 //-----------------------------------------------------------------------------
 // Remove a curve from the status line.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _remove_curve_from_status_line(Subcurve* sc)
 {
@@ -575,7 +588,8 @@ _remove_curve_from_status_line(Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Allocate an event object associated with a valid point.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _allocate_event(const Point_2& pt, Attribute type,
@@ -595,7 +609,8 @@ _allocate_event(const Point_2& pt, Attribute type,
 // Allocate an event at open boundary, 
 // which is not associated with a valid point.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _allocate_event_at_open_boundary(Attribute type,
@@ -613,7 +628,8 @@ _allocate_event_at_open_boundary(Attribute type,
 //-----------------------------------------------------------------------------
 // Push a closed event point into the event queue.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 std::pair<typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
           bool>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
@@ -676,7 +692,8 @@ _push_event(const Point_2& pt, Attribute type,
 //-----------------------------------------------------------------------------
 // Push an event point associated with a curve end into the event queue.
 //
-template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
+template <typename Tr, typename Vis, typename Subcv, typename Evnt,
+          typename Alloc>
 std::pair<typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
           bool>
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::

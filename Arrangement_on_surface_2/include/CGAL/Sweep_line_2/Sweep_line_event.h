@@ -52,7 +52,6 @@ namespace CGAL {
 template <typename Traits_, typename Subcurve_>
 class Sweep_line_event {
 public:
-
   typedef Traits_                                       Traits_2;
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
   typedef typename Traits_2::Point_2                    Point_2;
@@ -90,7 +89,7 @@ public:
 
 protected:
   // Data members:
-  Point_2            m_point;       // The point associated with the event.
+  Point_2 m_point;                  // The point associated with the event.
 
   Subcurve_container m_leftCurves;  // The curves lying to the left of the
                                     // event and incident to it.
@@ -99,14 +98,13 @@ protected:
                                     // event and incident to it, sorted by
                                     // their y-value to the right of the point.
 
-  char               m_type;        // The event type.
-  char               m_ps_x;        // The boundary condition in x.
-  char               m_ps_y;        // The boundary condition in y.
-  char               m_closed;      // Is the event closed (associated with
+  char m_type;                      // The event type.
+  char m_ps_x;                      // The boundary condition in x.
+  char m_ps_y;                      // The boundary condition in y.
+  char m_closed;                    // Is the event closed (associated with
                                     // a valid point.
 
 public:
-
   /*! Default constructor. */
   Sweep_line_event() :
     m_type (0),
@@ -174,9 +172,7 @@ public:
 
   /*! Add a subcurve to the container of left curves (without checks). */
   void push_back_curve_to_left(Subcurve* curve)
-  {
-    m_leftCurves.push_back(curve);
-  }
+  { m_leftCurves.push_back(curve); }
 
   /*! Add a subcurve to the container of right curves. */
   std::pair<bool, Subcurve_iterator>
@@ -216,8 +212,7 @@ public:
     return std::make_pair(false, --iter);
   }
   
-  /*!
-   * Add two Subcurves to the right of the event.
+  /*! Add two Subcurves to the right of the event.
    * \pre The event does not contain any right curves, and the order of sc1
    *      and sc2 is correct.
    */
@@ -237,7 +232,7 @@ public:
   {
     Subcurve_iterator iter;
     for (iter = m_leftCurves.begin(); iter!= m_leftCurves.end(); ++iter) {
-      if(curve->has_common_leaf (*iter)) {
+      if (curve->has_common_leaf (*iter)) {
         m_leftCurves.erase(iter);
         return;
       }
@@ -297,7 +292,7 @@ public:
   const Point_2& point() const
   {
     CGAL_precondition(is_closed());
-    return (m_point);
+    return m_point;
   }
 
   /*!
@@ -413,20 +408,18 @@ public:
   bool are_left_neighbours(Subcurve* c1, Subcurve* c2)
   {
     Subcurve_iterator left_iter = m_leftCurves.begin();
-    for ( ; left_iter != m_leftCurves.end(); ++left_iter) {
+    for (; left_iter != m_leftCurves.end(); ++left_iter) {
       if (*left_iter == c1) {
         Subcurve_iterator temp = left_iter;
         ++temp;
-        if (temp != m_leftCurves.end())
-          return (*temp == c2);
+        if (temp != m_leftCurves.end()) return (*temp == c2);
         return false;
       }
 
       if (*left_iter == c2) {
         Subcurve_iterator temp = left_iter;
         ++temp;
-        if(temp!=m_leftCurves.end())
-          return (*temp == c1);
+        if (temp!=m_leftCurves.end()) return (*temp == c1);
         return false;
       }
     }
