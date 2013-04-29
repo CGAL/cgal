@@ -255,15 +255,25 @@ improved_jet_smooth_point_set(
   std::vector<KdTreeElement> treeElements;
   for (it = first, i=0 ; it != beyond ; ++it,++i)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point& p0 = get(point_pmap,it);
+#else
+    Point& p0 = get(point_pmap,*it);
+#endif
     treeElements.push_back(KdTreeElement(p0,i));
   }
   Tree tree(treeElements.begin(), treeElements.end());
 
   std::vector<Point>  p(nb_points); // positions at step iter_n
   std::vector<Vector> b(nb_points); // ...
-  for(it = first, i=0; it != beyond; it++, ++i)
-      p[i] = get(point_pmap,it);
+  for(it = first, i=0; it != beyond; it++, ++i) {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    p[i] = get(point_pmap,it);
+#else
+    p[i] = get(point_pmap,*it);
+#endif
+  }
+      
 
   // loop until convergence
   for(int iter_n = 0; iter_n < iter_number ; ++iter_n)
@@ -273,7 +283,11 @@ improved_jet_smooth_point_set(
       // Iterates over input points, computes (original) Laplacian smoothing and b[].
       for(it = first, i=0; it != beyond; it++, ++i)
       {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
           Point& p0  = get(point_pmap,it);
+#else
+          Point& p0  = get(point_pmap,*it);
+#endif
           Point np   = improved_jet_smoothing_i::jet_smooth_point<Kernel>(p0,tree,kk);
           b[i]       = alpha*(np - p0) + (1-alpha)*(np - p[i]);
           p[i]       = np;
@@ -339,7 +353,12 @@ improved_jet_smooth_point_set(
 {
   return improved_jet_smooth_point_set(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<ForwardIterator>::type()),
+#endif
     k,
     iter_number,
     alpha, beta);

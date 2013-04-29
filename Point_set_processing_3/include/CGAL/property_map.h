@@ -34,18 +34,27 @@
 
 namespace CGAL {
 
+#ifndef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// An alternative to boost::put_get_helper for:
 /// - return type of `get` function is `const Reference`
 /// - `key` is passed by reference in `put` function
 template <class Reference, class LvaluePropertyMap>
 struct put_get_helper_pass_key_by_reference { };
 
+// this is required since LValuePM should have get which returns reference
 template <class PropertyMap, class Reference, class K>
-inline const Reference
+inline Reference
+get(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, K& k)
+{
+  return static_cast<const PropertyMap&>(pa)[k];
+}
+
+// this is also required because some of the functions pass const ref parameters
+template <class PropertyMap, class Reference, class K>
+inline const typename PropertyMap::value_type&
 get(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, const K& k)
 {
-  Reference v = static_cast<const PropertyMap&>(pa)[k];
-  return v;
+  return static_cast<const PropertyMap&>(pa)[k];
 }
 
 template <class PropertyMap, class Reference, class K, class V>
@@ -54,8 +63,9 @@ put(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, K& k
 {
   static_cast<const PropertyMap&>(pa)[k] = v;
 }
+#endif
 
-
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// \ingroup PkgProperty_map
 /// Property map that converts a `T*` pointer (or in general an iterator
 /// over `T` elements) to the `T` object.
@@ -87,7 +97,9 @@ make_dereference_property_map(Iter)
   // value_type_traits is a workaround as back_insert_iterator's `value_type` is void
   return Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>();
 }
+#endif
 
+#ifndef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 template <typename T>
 struct Typed_identity_property_map_by_reference
   : put_get_helper_pass_key_by_reference<T, Typed_identity_property_map_by_reference<T> >
@@ -97,10 +109,20 @@ struct Typed_identity_property_map_by_reference
   typedef T& reference;
   typedef boost::lvalue_property_map_tag category;
 
-  reference operator[](key_type& v) const { return reference(v); }
-  const reference operator[](const key_type& v) const { return reference(v); }
+  reference operator[](key_type& v) const { return v; }
+  const value_type& operator[](const key_type& v) const { return v; }
 };
 
+/// Free function to create a `Typed_identity_property_map_by_reference` property map.
+///
+/// \relates Typed_identity_property_map_by_reference 
+template <class T> // Key and value type
+Typed_identity_property_map_by_reference<T>
+  make_typed_identity_property_map_by_reference(T)
+{
+  return Typed_identity_property_map_by_reference<T>();
+}
+#endif
 
 
 //=========================================================================
@@ -127,6 +149,17 @@ struct First_of_pair_property_map
   template <class Iter>
   reference operator[](Iter pair) const { return reference(pair->first); }
 };
+
+/// Free function to create a `First_of_pair_property_map` property map. 
+///
+/// \relates First_of_pair_property_map 
+template <class Iter> // Type convertible to key_type
+First_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>
+  make_first_of_pair_property_map(Iter)
+{
+  // value_type_traits is a workaround as back_insert_iterator's value_type is void
+  return First_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>();
+}
 #else
 /// \ingroup PkgProperty_map
 /// Property map that accesses the first item of a `std::pair`. 
@@ -147,25 +180,20 @@ struct First_of_pair_property_map
   /// Access a property map element.
   ///
   /// @tparam pair a key whose first item is accessed
-  reference operator[](key_type& pair) const { return reference(pair.first); }
-
-  /// Access a property map element.
-  ///
-  /// @tparam pair a key whose first item is accessed read-only
-  const reference operator[](const key_type& pair) const { return reference(pair.first); }
+  reference operator[](key_type& pair) const { return pair.first; }
+  const value_type& operator[](const key_type& v) const { return pair.first; }
 };
-#endif
 
 /// Free function to create a `First_of_pair_property_map` property map. 
 ///
 /// \relates First_of_pair_property_map 
-template <class Iter> // Type convertible to key_type
-First_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>
-make_first_of_pair_property_map(Iter)
+template <class Pair> // Pair type
+First_of_pair_property_map<Pair>
+  make_first_of_pair_property_map(Pair)
 {
-  // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  return First_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>();
+  return First_of_pair_property_map<Pair>();
 }
+#endif
 
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// \ingroup PkgProperty_map
@@ -193,6 +221,17 @@ struct Second_of_pair_property_map
   template <class Iter>
   reference operator[](Iter pair) const { return reference(pair->second); }
 };
+
+/// Free function to create a Second_of_pair_property_map property map.
+///
+/// \relates Second_of_pair_property_map 
+template <class Iter> // Type convertible to key_type
+Second_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>
+  make_second_of_pair_property_map(Iter)
+{
+  // value_type_traits is a workaround as back_insert_iterator's value_type is void
+  return Second_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>();
+}
 #else
 /// \ingroup PkgProperty_map
 /// 
@@ -216,24 +255,21 @@ struct Second_of_pair_property_map
   /// Access a property map element.
   ///
   /// @tparam pair a key whose second item is accessed
-  reference operator[](key_type& pair) const { return reference(pair.second); }
-
-  /// Access a property map element.
-  ///
-  /// @tparam pair a key whose second item is accessed read-only
-  const reference operator[](const key_type& pair) const { return reference(pair.second); }
+  reference operator[](key_type& pair) const { return pair.second; }
+  const value_type& operator[](const key_type& v) const { return pair.second; }
 };
-#endif
+
 /// Free function to create a Second_of_pair_property_map property map.
 ///
 /// \relates Second_of_pair_property_map 
-template <class Iter> // Type convertible to key_type
-Second_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>
-make_second_of_pair_property_map(Iter)
+template <class Pair> // Pair type
+Second_of_pair_property_map<Pair>
+  make_second_of_pair_property_map(Pair)
 {
-  // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  return Second_of_pair_property_map<typename CGAL::value_type_traits<Iter>::type>();
+  return Second_of_pair_property_map<Pair>();
 }
+#endif
+
 
 
 //=========================================================================
@@ -263,6 +299,17 @@ struct Nth_of_tuple_property_map
   template <class Iter>
   reference operator[](Iter tuple) const { return (reference) tuple->template get<N>(); }
 };
+
+/// Free function to create a Nth_of_tuple_property_map property map.
+///
+/// \relates Nth_of_tuple_property_map
+template <int N, class Iter> // Type convertible to key_type
+Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>
+  make_nth_of_tuple_property_map(Iter)
+{
+  // value_type_traits is a workaround as back_insert_iterator's `value_type` is void
+  return Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>();
+}
 #else
 /// \ingroup PkgProperty_map
 /// 
@@ -285,26 +332,20 @@ struct Nth_of_tuple_property_map
   /// Access a property map element.
   ///
   /// @tparam tuple a key whose Nth item is accessed
-  reference operator[](key_type& tuple) const { return reference(tuple.template get<N>()); }
-
-  /// Access a property map element.
-  ///
-  /// @tparam tuple a key whose Nth item is accessed read-only
-  const reference operator[](const key_type& tuple) const { return reference(tuple.template get<N>()); }
+  reference operator[](key_type& tuple) const { return tuple.template get<N>(); }
+  const value_type& operator[](const key_type& v) const { return tuple.template get<N>(); }
 };
-#endif
 
 /// Free function to create a Nth_of_tuple_property_map property map.
 ///
 /// \relates Nth_of_tuple_property_map
-template <int N, class Iter> // Type convertible to key_type
-Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>
-make_nth_of_tuple_property_map(Iter)
+template <int N, class Tuple> // Tuple type
+Nth_of_tuple_property_map<N, Tuple>
+  make_nth_of_tuple_property_map(Tuple)
 {
-  // value_type_traits is a workaround as back_insert_iterator's `value_type` is void
-  return Nth_of_tuple_property_map<N, typename CGAL::value_type_traits<Iter>::type>();
+  return Nth_of_tuple_property_map<N, Tuple>();
 }
-
+#endif
 
 } // namespace CGAL
 

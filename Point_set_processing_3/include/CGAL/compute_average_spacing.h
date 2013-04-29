@@ -140,7 +140,11 @@ compute_average_spacing(
   std::vector<Point> kd_tree_points; 
   for(InputIterator it = first; it != beyond; it++)
   {
+  #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
       Point point = get(point_pmap, it);
+  #else
+      Point point = get(point_pmap, *it);
+  #endif
       kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -151,7 +155,14 @@ compute_average_spacing(
   unsigned int nb_points = 0;
   for(InputIterator it = first; it != beyond; it++)
   {
-    sum_spacings += internal::compute_average_spacing<Kernel,Tree>(get(point_pmap,it),tree,k);
+    sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
+      
+  #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      get(point_pmap,it),
+  #else
+      get(point_pmap,*it),
+  #endif
+      tree,k);
     nb_points++;
   }
 
@@ -192,7 +203,12 @@ compute_average_spacing(
 {
   return compute_average_spacing(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<InputIterator>::type()),
+#endif
     k);
 }
 /// @endcond

@@ -164,7 +164,11 @@ remove_outliers(
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point point = get(point_pmap, it);
+#else
+    Point point = get(point_pmap, *it);
+#endif 
     kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -173,7 +177,13 @@ remove_outliers(
   std::multimap<FT,Enriched_point> sorted_points;
   for(it = first; it != beyond; it++)
   {
-    FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(get(point_pmap,it), tree, k);
+    FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      get(point_pmap,it),
+#else
+      get(point_pmap,*it),
+#endif 
+      tree, k);
     sorted_points.insert( std::make_pair(sq_distance, *it) );
   }
 
@@ -232,7 +242,12 @@ remove_outliers(
 {
   return remove_outliers(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<InputIterator>::type()),
+#endif
     k,threshold_percent);
 }
 /// @endcond

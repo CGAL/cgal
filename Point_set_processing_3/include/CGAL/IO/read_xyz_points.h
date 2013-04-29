@@ -188,7 +188,8 @@ read_xyz_points_and_normals(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(output),
 #else
-    Typed_identity_property_map_by_reference<typename value_type_traits<OutputIterator>::type>(),
+    make_typed_identity_property_map_by_reference(
+      typename value_type_traits<OutputIterator>::type()),
 #endif
     normal_pmap);
 }
@@ -268,7 +269,8 @@ read_xyz_points(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(output)
 #else
-    Typed_identity_property_map_by_reference<typename value_type_traits<OutputIterator>::type>()
+    make_typed_identity_property_map_by_reference(
+      typename value_type_traits<OutputIterator>::type())
 #endif
     );
 }

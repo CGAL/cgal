@@ -80,7 +80,11 @@ radial_orient_normals(
     int nb_points = 0;
     for (ForwardIterator it = first; it != beyond; it++)
     {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
       Point point = get(point_pmap, it);
+#else
+      Point point = get(point_pmap, *it);
+#endif  
       sum = sum + (point - CGAL::ORIGIN);
       nb_points++;
     }
@@ -91,8 +95,11 @@ radial_orient_normals(
     std::deque<Enriched_point> oriented_points, unoriented_points;
     for (ForwardIterator it = first; it != beyond; it++)
     {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
       Point point = get(point_pmap, it);
-
+#else
+      Point point = get(point_pmap, *it);
+#endif 
       // Radial vector towards exterior of the point set
       Vector vec1 = point - barycenter;
 
@@ -161,7 +168,12 @@ radial_orient_normals(
 {
     return radial_orient_normals(
       first,beyond,
-      make_dereference_property_map(first), 
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      make_dereference_property_map(first),
+#else
+      make_typed_identity_property_map_by_reference(
+      typename value_type_traits<ForwardIterator>::type()),
+#endif
       normal_pmap);
 }
 /// @endcond

@@ -64,8 +64,13 @@ public:
         typedef typename boost::property_traits<PointPMap>::value_type Point;
         
         // Round points to multiples of m_epsilon, then compare.
-        Point a_n = get(point_pmap,&a),
-              b_n = get(point_pmap,&b);
+    #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+        Point a_n = get(point_pmap,&a);
+        Point b_n = get(point_pmap,&b);
+    #else
+        Point a_n = get(point_pmap,a);
+        Point b_n = get(point_pmap,b);
+    #endif
         
         Point rounded_a(round_epsilon(a_n.x(), m_epsilon),
                         round_epsilon(a_n.y(), m_epsilon),
@@ -213,7 +218,12 @@ grid_simplify_point_set(
 {
   return grid_simplify_point_set(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<ForwardIterator>::type()),
+#endif
     epsilon);
 }
 /// @endcond

@@ -88,8 +88,13 @@ write_off_points_and_normals(
   // Write positions + normals
   for(ForwardIterator it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point p = get(point_pmap, it);
     Vector n = get(normal_pmap, it);
+#else
+    Point p = get(point_pmap, *it);
+    Vector n = get(normal_pmap, *it);
+#endif
     stream << p << " " << n << std::endl;
   }
 
@@ -187,7 +192,11 @@ write_off_points(
   // Write positions
   for(ForwardIterator it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point p = get(point_pmap, it);
+#else
+    Point p = get(point_pmap, *it);
+#endif
     stream << p << std::endl;
   }
 
@@ -229,7 +238,13 @@ write_off_points(
   return write_off_points(
     stream,
     first, beyond,
-    make_dereference_property_map(first));
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    make_dereference_property_map(first)
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<ForwardIterator>::type())
+#endif
+    );
 }
 /// @endcond
 

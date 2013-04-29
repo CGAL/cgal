@@ -1,3 +1,4 @@
+#define CGAL_EIGEN3_ENABLED
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -158,7 +159,11 @@ jet_smooth_point_set(
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point point = get(point_pmap, it);
+#else
+    Point point = get(point_pmap, *it);
+#endif  
     kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -167,7 +172,11 @@ jet_smooth_point_set(
   // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point& p = get(point_pmap, it);
+#else
+    Point& p = get(point_pmap, *it);
+#endif  
     p = internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge);
   }
 }
@@ -211,7 +220,12 @@ jet_smooth_point_set(
 {
   jet_smooth_point_set(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<InputIterator>::type()),
+#endif
     k,
     degree_fitting,degree_monge);
 }

@@ -162,7 +162,11 @@ pca_estimate_normals(
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point point = get(point_pmap, it);
+#else
+    Point point = get(point_pmap, *it);
+#endif  
     kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -174,8 +178,20 @@ pca_estimate_normals(
   // vectors (already normalized)
   for(it = first; it != beyond; it++)
   {
-    Vector normal = internal::pca_estimate_normal<Kernel,Tree>(get(point_pmap,it), tree, k);
+    Vector normal = internal::pca_estimate_normal<Kernel,Tree>(      
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      get(point_pmap,it),
+#else
+      get(point_pmap,*it),
+#endif  
+      tree,
+      k);
+
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     put(normal_pmap, it, normal); // normal_pmap[it] = normal
+#else
+    put(normal_pmap, *it, normal); // normal_pmap[it] = normal
+#endif 
   }
 
   /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
@@ -221,7 +237,12 @@ pca_estimate_normals(
 {
   pca_estimate_normals(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<InputIterator>::type()),
+#endif
     normal_pmap,
     k);
 }

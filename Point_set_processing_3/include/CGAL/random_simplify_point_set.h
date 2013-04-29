@@ -106,7 +106,12 @@ random_simplify_point_set(
 {
   return random_simplify_point_set(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<ForwardIterator>::type()),
+#endif
     removed_percentage);
 }
 /// @endcond
