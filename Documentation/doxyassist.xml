@@ -68,7 +68,6 @@ namespace for the XML file to be processed properly.  -->
           <bool name="EXTRACT_ALL">false</bool>
           <bool name="HIDE_UNDOC_MEMBERS">true</bool>
           <bool name="HIDE_UNDOC_CLASSES">true</bool>
-          <bool name="SHOW_INCLUDE_FILES">false</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Box_intersection_d.tag=../../CGAL.CGAL.Intersecting-Sequences-of-dD-Iso-oriented-Boxes/html</item>
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
@@ -89,7 +88,6 @@ namespace for the XML file to be processed properly.  -->
           <bool name="EXTRACT_ALL">false</bool>
           <bool name="HIDE_UNDOC_MEMBERS">true</bool>
           <bool name="HIDE_UNDOC_CLASSES">true</bool>
-          <bool name="SHOW_INCLUDE_FILES">true</bool>
         </doxygen>
       </project>
 
@@ -98,8 +96,14 @@ namespace for the XML file to be processed properly.  -->
         <input>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</input>
         <input>../Surface_mesh_parameterization/include</input>
         <doxygen>
-          <string name="STRIP_FROM_PATH">../Surface_mesh_parameterization/include</string>
-          <string name="STRIP_FROM_INC_PATH">../Surface_mesh_parameterization/include</string>
+          <list name="STRIP_FROM_PATH" append="true">
+            <item>../Surface_mesh_parameterization/include</item>
+            <item>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</item>
+          </list>
+          <list name="STRIP_FROM_INC_PATH" append="true">
+            <item>../Surface_mesh_parameterization/include</item>
+            <item>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization</item>
+          </list>
           <string name="GENERATE_TAGFILE">./tags/Surface_mesh_parameterization.tag</string>
           <string name="IMAGE_PATH">../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig</string>
           <string name="EXAMPLE_PATH">../Surface_mesh_parameterization/examples</string>
@@ -108,7 +112,6 @@ namespace for the XML file to be processed properly.  -->
           <bool name="HIDE_UNDOC_CLASSES">true</bool>
           <!-- too many warnings -->
           <bool name="WARN_IF_UNDOCUMENTED">false</bool>
-          <bool name="SHOW_INCLUDE_FILES">false</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
             <item>./tags/Kernel_d.tag=../../CGAL.CGAL.dD-Geometry-Kernel/html</item>
@@ -129,7 +132,6 @@ namespace for the XML file to be processed properly.  -->
           <bool name="EXTRACT_ALL">false</bool>
           <bool name="HIDE_UNDOC_CLASSES">true</bool>
           <bool name="WARN_IF_UNDOCUMENTED">false</bool>
-          <bool name="SHOW_INCLUDE_FILES">true</bool>
           <list name="TAGFILES" append="true">
             <item>./tags/Surface_mesher.tag=../../CGAL.CGAL.3D-Surface-Mesh-Generation/html</item>
             <item>./tags/Point_set_processing_3.tag=../../CGAL.CGAL.Point-Set-Processing/html</item>
