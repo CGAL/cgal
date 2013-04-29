@@ -174,7 +174,7 @@ and incompatible, the creation of new faces and vertices is made thanks to the
 functors \ccc{convert_vertex} and \ccc{convert_face}, that convert vertex and face types.
 For each vertex \ccc{v_src} in \ccc{tds_src}, the corresponding vertex \ccc{v_tgt} in \ccc{tds} is a
 copy of the vertex returned by \ccc{convert_vertex(v_src)}. The same operations are
-done for faces with the functor convert_face. If \ccc{v != TDS_src::Vertex_handle()},
+done for faces with the functor \ccc{convert_face}. If \ccc{v != TDS_src::Vertex_handle()},
 a handle to the vertex created in \ccc{tds} that is the copy of \ccc{v} is returned,
 otherwise \ccc{Vertex_handle()} is returned.
 A model of \ccc{ConvertVertex} must provide two operator()'s that are responsible for converting the source vertex \ccc{v_src} into the target vertex:
