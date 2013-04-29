@@ -17,8 +17,6 @@
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 
-#include "copy_tds.h"
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     Kernel;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<Kernel>                                  EPIC_traits;
 
@@ -93,7 +91,7 @@ void make_one_run(const char* filename){
   
 //copy triangulation for familly alpha-shape
   WDT T1;
-  copy_tds(wfixed_as.tds(),T1.tds(),wfixed_as.infinite_vertex(),T1.infinite_vertex());
+  T1.set_infinite_vertex( T1.tds().copy_tds( wfixed_as.tds(), wfixed_as.infinite_vertex() ) );
   std::cout << "Build familly weighted alpha complex" << std::endl;
   time.start();
   WAS w_as(T1,0,WAS::GENERAL);
@@ -104,7 +102,8 @@ void make_one_run(const char* filename){
 
   //copy triangulation for familly alpha-shape
   WDT_f T1f;
-  copy_tds(wfixed_as.tds(),T1f.tds(),wfixed_as.infinite_vertex(),T1f.infinite_vertex());
+  T1f.set_infinite_vertex( T1f.tds().copy_tds(wfixed_as.tds(),wfixed_as.infinite_vertex()) );
+  
   std::cout << "Build familly filtered weighted alpha complex" << std::endl;
   time.start();
   WAS_f w_asf(T1f,0,WAS_f::GENERAL);

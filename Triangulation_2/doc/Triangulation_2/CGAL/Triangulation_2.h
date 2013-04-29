@@ -1069,7 +1069,8 @@ Point circumcenter(Face_handle f) const;
 /// @{
 
 /*! 
-  \cgalAdvanced
+\cgalAdvanced This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
+Sets the infinite vertex.
 */ 
 void set_infinite_vertex(const Vertex_handle& v); 
 

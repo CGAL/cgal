@@ -167,6 +167,25 @@ corresponding to \ccc{v} is returned, otherwise \ccc{Vertex_handle()}
 is returned.
 \ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds1}.}}
 
+\ccMethod{template <class TDS_src, class ConvertVertex, class ConvertFace>
+Vertex_handle tds.copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertFace& convert_face);}
+{\ccc{tds_src} is copied into \ccc{tds}. As the vertex and face types might be different
+and incompatible, the creation of new faces and vertices is made thanks to the
+functors \ccc{convert_vertex} and \ccc{convert_face}, that convert vertex and face types.
+For each vertex \ccc{v_src} in \ccc{tds_src}, the corresponding vertex \ccc{v_tgt} in \ccc{tds} is a
+copy of the vertex returned by \ccc{convert_vertex(v_src)}. The same operations are
+done for faces with the functor \ccc{convert_face}. If \ccc{v != TDS_src::Vertex_handle()},
+a handle to the vertex created in \ccc{tds} that is the copy of \ccc{v} is returned,
+otherwise \ccc{Vertex_handle()} is returned.
+A model of \ccc{ConvertVertex} must provide two operator()'s that are responsible for converting the source vertex \ccc{v_src} into the target vertex:
+\ccc{Vertex operator()(const TDS_src::Vertex& v_src);} This operator is used to create the vertex from \ccc{v_src} and
+\ccc{void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt);} This operator is meant to be used in case heavy data should transferred to \ccc{v_tgt}.
+A model of ConvertFace must provide two operator()'s that are responsible for converting the source face \ccc{f_src} into the target face:
+\ccc{Face operator()(const TDS_src::Face& f_src);} This operator is used to create the face from \ccc{f_src}.
+\ccc{void operator()(const TDS_src::Face& f_src, Face& f_tgt);} This operator is meant to be used in case heavy data should transferred to \ccc{f_tgt}. 
+\ccPrecond{The optional argument \ccc{v} is a vertex of \ccc{tds_src} or is \ccc{Vertex_handle()}.}}
+
+
 \ccMethod{void swap( TriangulationDataStructure_2 &  tds1);}
 {Swaps \ccVar\ and \ccc{tds1}. Should be preferred to \ccVar=\ccc{tds1} or \ccVar(\ccc{tds1})
 when \ccc{tds1} is deleted after that.}

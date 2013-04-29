@@ -306,6 +306,12 @@ Returns the infinite vertex.
 Vertex_handle infinite_vertex(); 
 
 /*! 
+\cgalAdvanced This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
+Sets the infinite vertex.
+*/ 
+void set_infinite_vertex(Vertex_handle v);
+
+/*! 
 Returns a cell incident to the infinite vertex. 
 */ 
 Cell_handle infinite_cell() const; 
