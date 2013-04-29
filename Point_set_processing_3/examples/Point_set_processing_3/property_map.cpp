@@ -6,8 +6,14 @@
 //----------------------------------------------------------
 // Usage: no parameters
 
+//#define CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+// define CGAL_USE_OLD_PAIR_PROPERTY_MAPS for using previous property-maps which accept an iterator type as key type,
+// new versions accept value_type of an iterator as key type
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/property_map.h>
+#include <CGAL/value_type_traits.h>
+
 #include <algorithm>
 #include <vector>
 #include <boost/tuple/tuple.hpp>
@@ -42,7 +48,13 @@ struct MyLess {
 
   bool operator()(const T& t0, const T& t1) const
   {
-    return get(pmap, &t0) < get(pmap, &t1);
+    return 
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      get(pmap, &t0) < get(pmap, &t1);
+#else
+      get(pmap, t0) < get(pmap, t1);
+#endif
+      
   }
 };
 
@@ -64,7 +76,14 @@ void process_point_set(Iterator beg, Iterator end, PointPMap pmap)
 template <typename Iterator>
 void process_point_set(Iterator beg, Iterator end)
 {
-  process_point_set(beg,end, CGAL::make_dereference_property_map(beg));
+  process_point_set(beg,end, 
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    CGAL::make_dereference_property_map(beg)
+#else
+    CGAL::make_typed_identity_property_map_by_reference(
+    typename CGAL::value_type_traits<Iterator>::type())
+#endif
+    );
 }
 
 
@@ -75,13 +94,22 @@ template <typename Iterator, typename PointPMap, typename OrientationPMap, typen
 void orient_normals(Iterator beg, Iterator end, PointPMap point_pmap, OrientationPMap orient_pmap, NormalPMap normal_pmap)
 {
   for(;beg!= end;++beg){
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Vector_3& v = get(normal_pmap, beg);
+    put(orient_pmap, beg, (v == CGAL::NULL_VECTOR));
+#else
+    Vector_3& v = get(normal_pmap, *beg);
+    put(orient_pmap, *beg, (v == CGAL::NULL_VECTOR));
+#endif
     
-    boost::put(orient_pmap, beg, (v == CGAL::NULL_VECTOR));
 
     if(v.x() < 0){
       v = -v;
-      boost::put(normal_pmap, beg, v);
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      put(normal_pmap, beg, v);
+#else
+      put(normal_pmap,*beg, v);  
+#endif
     }
   }
 }
@@ -95,7 +123,7 @@ int main()
   // Here we run it on plain points. No need for a property map
   {
     std::vector<Point_3> points;
-    
+
     process_point_set(points.begin(), points.end());
   }
 
@@ -108,11 +136,11 @@ int main()
     for(int i = 0; i < 10; i++){
       points.push_back(std::make_pair(Point_3(9-i,0,0), Vector_3(i,0,0)));
     }
-    
+
     process_point_set(points.begin(),
-                      points.end(),
-                      CGAL::First_of_pair_property_map<PointVectorPair>());
-    
+      points.end(),
+      CGAL::First_of_pair_property_map<PointVectorPair>());
+
     for(int i = 0; i < 10; i++){
       std::cout << points[i].first << "\t" << points[i].second << std::endl;
     }
@@ -131,11 +159,11 @@ int main()
       double x = (i%2)?i:-i;
       points.push_back(boost::make_tuple(i,Point_3(9-i,0,0), false, Vector_3(x,0,0)));
     }
-    
+
     process_point_set(points.begin(),
-                      points.end(),
-                      CGAL::Nth_of_tuple_property_map<1,IndexedPointWithOrientableNormalTuple>());
-    
+      points.end(),
+      CGAL::Nth_of_tuple_property_map<1,IndexedPointWithOrientableNormalTuple>());
+
     std::cout << boost::tuples::set_open('[') << boost::tuples::set_close(']') << boost::tuples::set_delimiter(','); 
 
     for(int i = 0; i < 10; i++){
@@ -144,16 +172,22 @@ int main()
 
     //We keep the sequence in order, but determine the normal and if it is different from zero set the Boolean to true 
     orient_normals(points.begin(),
-                   points.end(),
-                   CGAL::make_nth_of_tuple_property_map<1>(points.begin()),
-                   CGAL::make_nth_of_tuple_property_map<2>(points.begin()),
-                   CGAL::make_nth_of_tuple_property_map<3>(points.begin()));
-    
+      points.end(),
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      CGAL::make_nth_of_tuple_property_map<1>(points.begin()),
+      CGAL::make_nth_of_tuple_property_map<2>(points.begin()),
+      CGAL::make_nth_of_tuple_property_map<3>(points.begin())
+#else
+      CGAL::make_nth_of_tuple_property_map<1>(IndexedPointWithOrientableNormalTuple()),
+      CGAL::make_nth_of_tuple_property_map<2>(IndexedPointWithOrientableNormalTuple()),
+      CGAL::make_nth_of_tuple_property_map<3>(IndexedPointWithOrientableNormalTuple())
+#endif
+      );
+
     std::cout << "\nAfter orient_normals\n";
     for(int i = 0; i < 10; i++){
       std::cout << points[i]  << std::endl;
     }     
   }
-  
   return 0;
 }
