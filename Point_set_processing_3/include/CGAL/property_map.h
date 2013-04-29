@@ -181,7 +181,7 @@ struct First_of_pair_property_map
   ///
   /// @tparam pair a key whose first item is accessed
   reference operator[](key_type& pair) const { return pair.first; }
-  const value_type& operator[](const key_type& v) const { return pair.first; }
+  const value_type& operator[](const key_type& pair) const { return pair.first; }
 };
 
 /// Free function to create a `First_of_pair_property_map` property map. 
@@ -256,7 +256,7 @@ struct Second_of_pair_property_map
   ///
   /// @tparam pair a key whose second item is accessed
   reference operator[](key_type& pair) const { return pair.second; }
-  const value_type& operator[](const key_type& v) const { return pair.second; }
+  const value_type& operator[](const key_type& pair) const { return pair.second; }
 };
 
 /// Free function to create a Second_of_pair_property_map property map.
@@ -333,7 +333,7 @@ struct Nth_of_tuple_property_map
   ///
   /// @tparam tuple a key whose Nth item is accessed
   reference operator[](key_type& tuple) const { return tuple.template get<N>(); }
-  const value_type& operator[](const key_type& v) const { return tuple.template get<N>(); }
+  const value_type& operator[](const key_type& tuple) const { return tuple.template get<N>(); }
 };
 
 /// Free function to create a Nth_of_tuple_property_map property map.
