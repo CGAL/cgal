@@ -169,7 +169,7 @@ write_xyz_points(
   std::ostream& stream, ///< output stream.
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3. To use depracated version (i.e. ForwardIterator -> Point_3) define `CGAL_USE_OLD_PAIR_PROPERTY_MAPS`.
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
