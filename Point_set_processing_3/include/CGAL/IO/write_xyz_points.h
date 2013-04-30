@@ -64,8 +64,8 @@ write_xyz_points_and_normals(
   std::ostream& stream, ///< output stream.
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
@@ -107,8 +107,8 @@ write_xyz_points_and_normals(
   std::ostream& stream, ///< output stream.
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond, ///< past-the-end input point.
-  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
-  NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
+  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -122,7 +122,7 @@ write_xyz_points_and_normals(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename ForwardIterator,
           typename NormalPMap
 >
@@ -131,7 +131,7 @@ write_xyz_points_and_normals(
   std::ostream& stream, ///< output stream.
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond, ///< past-the-end input point.
-  NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
+  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
 {
   return write_xyz_points_and_normals(
     stream,
@@ -169,7 +169,7 @@ write_xyz_points(
   std::ostream& stream, ///< output stream.
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3. To use depracated version (i.e. ForwardIterator -> Point_3) define `CGAL_USE_OLD_PAIR_PROPERTY_MAPS`.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
@@ -208,7 +208,7 @@ write_xyz_points(
   std::ostream& stream, ///< output stream.
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond, ///< past-the-end input point.
-  PointPMap point_pmap) ///< property map OutputIterator -> Point_3.
+  PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -221,7 +221,7 @@ write_xyz_points(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename ForwardIterator
 >
 bool
