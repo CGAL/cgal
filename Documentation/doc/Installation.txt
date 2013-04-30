@@ -50,7 +50,7 @@ essential third party software.
 Some operating systems with package managers offer \cgal and its
 essential third party software through the manager, 
 for instance, Mac OS X, or some Linux distribution (e.g. Debian).
-For Windows an installer is provided.
+For Windows, an installer is provided.
 
 \subsection sseccgalmacosxe CGAL on MAC OS X 
 
