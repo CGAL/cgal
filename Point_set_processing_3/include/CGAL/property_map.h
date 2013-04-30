@@ -46,20 +46,33 @@ template <class Reference, class LvaluePropertyMap>
 struct put_get_helper_pass_key_by_reference { };
 
 // this is required since LValuePM should have get which returns reference
-template <class PropertyMap, class Reference, class K>
+template <class PropertyMap, class Reference>
 inline Reference
+get(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, 
+    typename PropertyMap::key_type& k)
+{
+  return Reference(static_cast<const PropertyMap&>(pa)[k]);
+}
+
+// this is also required because some of the functions pass const ref parameters
+template <class PropertyMap, class Reference>
+inline const typename PropertyMap::value_type&
+get(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, 
+      const typename PropertyMap::key_type& k)
+{
+  return static_cast<const PropertyMap&>(pa)[k];
+}
+
+// this is also required to support key types different then key_type (i.e. key types that are convertible to key_type)
+// return type can not be non-const since a temp is constructed
+template <class PropertyMap, class Reference, class K>
+inline const typename PropertyMap::value_type&
 get(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, K& k)
 {
   return static_cast<const PropertyMap&>(pa)[k];
 }
 
-// this is also required because some of the functions pass const ref parameters
-template <class PropertyMap, class Reference, class K>
-inline const typename PropertyMap::value_type&
-get(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, const K& k)
-{
-  return static_cast<const PropertyMap&>(pa)[k];
-}
+
 
 template <class PropertyMap, class Reference, class K, class V>
 inline void
