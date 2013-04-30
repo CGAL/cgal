@@ -17,9 +17,8 @@ int main(void)
   std::vector<Point> points;
   std::ifstream stream("data/oni.xyz");
   if (!stream ||
-    !CGAL::read_xyz_points(stream, std::back_inserter(points),
-    CGAL::Typed_identity_property_map_by_reference<Point>())
-    )
+      !CGAL::read_xyz_points(stream, std::back_inserter(points),
+        CGAL::Typed_identity_property_map_by_reference<Point>()))
   {
     std::cerr << "Error: cannot read file data/oni.xyz" << std::endl;
     return EXIT_FAILURE;
@@ -30,9 +29,9 @@ int main(void)
   const double removed_percentage = 5.0; // percentage of points to remove
   const int nb_neighbors = 24; // considers 24 nearest neighbor points
   points.erase(CGAL::remove_outliers(points.begin(), points.end(),
-    CGAL::Typed_identity_property_map_by_reference<Point>(),
-    nb_neighbors, removed_percentage), 
-    points.end());
+                  CGAL::Typed_identity_property_map_by_reference<Point>(),
+                  nb_neighbors, removed_percentage), 
+               points.end());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::vector<Point>(points).swap(points);
