@@ -114,7 +114,7 @@ typename Kernel::FT
 compute_average_spacing(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
@@ -179,7 +179,7 @@ typename Kernel_traits<typename boost::property_traits<PointPMap>::value_type>::
 compute_average_spacing(
   InputIterator first,    ///< iterator over the first input point.
   InputIterator beyond,   ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k) ///< number of neighbors
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -193,7 +193,7 @@ compute_average_spacing(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template < typename InputIterator >
 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
 compute_average_spacing(

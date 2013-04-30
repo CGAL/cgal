@@ -126,8 +126,8 @@ void
 pca_estimate_normals(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map: value_type of InputIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
@@ -208,8 +208,8 @@ void
 pca_estimate_normals(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map: value_type of InputIterator -> Vector_3.
   unsigned int k) ///< number of neighbors.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -224,7 +224,7 @@ pca_estimate_normals(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename InputIterator,
           typename NormalPMap
 >
@@ -232,7 +232,7 @@ void
 pca_estimate_normals(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  NormalPMap normal_pmap, ///< property map: value_type of InputIterator -> Vector_3.
   unsigned int k) ///< number of neighbors.
 {
   pca_estimate_normals(

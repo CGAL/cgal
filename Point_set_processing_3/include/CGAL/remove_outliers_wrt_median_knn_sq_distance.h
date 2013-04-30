@@ -125,7 +125,7 @@ InputIterator
 remove_outliers_wrt_median_knn_sq_distance(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   double threshold_percent, ///< percentage of points to remove.
   const Kernel& kernel) ///< geometric traits.
@@ -213,7 +213,7 @@ InputIterator
 remove_outliers_wrt_median_knn_sq_distance(
   InputIterator first, ///< iterator over the first input point
   InputIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   double threshold_percent) ///< percentage of points to remove
 {
@@ -228,7 +228,7 @@ remove_outliers_wrt_median_knn_sq_distance(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename InputIterator
 >
 InputIterator

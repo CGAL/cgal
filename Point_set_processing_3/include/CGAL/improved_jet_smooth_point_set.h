@@ -219,7 +219,7 @@ void
 improved_jet_smooth_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const unsigned int iter_number, ///< number of iterations.
   const Kernel& kernel, ///< geometric traits.
@@ -319,7 +319,7 @@ void
 improved_jet_smooth_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   const unsigned int iter_number,
   FT alpha,
@@ -338,7 +338,7 @@ improved_jet_smooth_point_set(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename ForwardIterator,
           typename FT
 >

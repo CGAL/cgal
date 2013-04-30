@@ -129,7 +129,7 @@ void
 jet_smooth_point_set(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/, ///< geometric traits.
   unsigned int degree_fitting = 2, ///< fitting degree
@@ -189,7 +189,7 @@ void
 jet_smooth_point_set(
   InputIterator first, ///< iterator over the first input point
   InputIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   const unsigned int degree_fitting = 2,
   const unsigned int degree_monge = 2)
@@ -206,7 +206,7 @@ jet_smooth_point_set(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename InputIterator
 >
 void

@@ -35,8 +35,12 @@
 namespace CGAL {
 
 #ifndef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-/// An alternative to boost::put_get_helper for:
-/// - return type of `get` function is `const Reference`
+/// \cond SKIP_IN_MANUAL
+
+/// An alternative to boost::put_get_helper for pmaps where key itself or a part of it returned as mapped value.
+/// - Two `get` functions exist. 
+///    + One of them passes key by reference and returns mapped value as reference
+///    + The other passes key by const reference, and returns mapped value as const reference
 /// - `key` is passed by reference in `put` function
 template <class Reference, class LvaluePropertyMap>
 struct put_get_helper_pass_key_by_reference { };
@@ -63,6 +67,7 @@ put(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, K& k
 {
   static_cast<const PropertyMap&>(pa)[k] = v;
 }
+/// \endcond
 #endif
 
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
@@ -100,16 +105,23 @@ make_dereference_property_map(Iter)
 #endif
 
 #ifndef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+/// \ingroup PkgProperty_map
+/// Property map that maps a key to itself.
+///
+/// \cgalModels `LvaluePropertyMap`
 template <typename T>
 struct Typed_identity_property_map_by_reference
   : put_get_helper_pass_key_by_reference<T, Typed_identity_property_map_by_reference<T> >
 {
-  typedef T key_type;
-  typedef T value_type;
-  typedef T& reference;
-  typedef boost::lvalue_property_map_tag category;
-
+  typedef T key_type; ///< typedef to `T`
+  typedef T value_type; ///< typedef to `T`
+  typedef T& reference; ///< typedef to `T&`
+  typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
+	
+  /// Access a property map element.
+  /// @param v a key which is returned as mapped value.
   reference operator[](key_type& v) const { return v; }
+  /// Const version.
   const value_type& operator[](const key_type& v) const { return v; }
 };
 
@@ -138,7 +150,7 @@ struct First_of_pair_property_map
   : public boost::put_get_helper<typename Pair::first_type&,
                                  First_of_pair_property_map<Pair> >
 {
-  typedef Pair* key_type; ///< typedef to 'Pair*'
+  typedef Pair* key_type; ///< typedef to `Pair*`
   typedef typename Pair::first_type value_type; ///< typedef to `Pair::first_type`
   typedef value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
@@ -172,15 +184,15 @@ struct First_of_pair_property_map
   : put_get_helper_pass_key_by_reference<typename Pair::first_type&, 
                                          First_of_pair_property_map<Pair> >
 {
-  typedef Pair key_type; ///< typedef to 'Pair'
+  typedef Pair key_type; ///< typedef to `Pair`
   typedef typename Pair::first_type value_type; ///< typedef to `Pair::first_type`
   typedef value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
 
   /// Access a property map element.
-  ///
-  /// @tparam pair a key whose first item is accessed
+  /// @param pair a key whose first item is accessed
   reference operator[](key_type& pair) const { return pair.first; }
+  /// Const version.
   const value_type& operator[](const key_type& pair) const { return pair.first; }
 };
 
@@ -210,7 +222,7 @@ struct Second_of_pair_property_map
   : public boost::put_get_helper<typename Pair::second_type&,
                                  Second_of_pair_property_map<Pair> >
 {
-  typedef Pair* key_type; ///< typedef to 'Pair*'
+  typedef Pair* key_type; ///< typedef to `Pair*`
   typedef typename Pair::second_type value_type; ///< typedef to `Pair::second_type`
   typedef value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
@@ -247,15 +259,15 @@ struct Second_of_pair_property_map
   : put_get_helper_pass_key_by_reference<typename Pair::second_type&, 
                                          Second_of_pair_property_map<Pair> >
 {
-  typedef Pair key_type; ///< typedef to 'Pair'
+  typedef Pair key_type; ///< typedef to `Pair`
   typedef typename Pair::second_type value_type; ///< typedef to `Pair::first_type`
   typedef value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
 
   /// Access a property map element.
-  ///
-  /// @tparam pair a key whose second item is accessed
+  /// @param pair a key whose second item is accessed
   reference operator[](key_type& pair) const { return pair.second; }
+  /// Const version.
   const value_type& operator[](const key_type& pair) const { return pair.second; }
 };
 
@@ -288,7 +300,7 @@ struct Nth_of_tuple_property_map
   : public boost::put_get_helper<typename boost::tuples::element<N,Tuple>::type&,
                                  Nth_of_tuple_property_map<N,Tuple> >
 {
-  typedef Tuple* key_type; ///< typedef to 'Tuple*'
+  typedef Tuple* key_type; ///< typedef to `Tuple*`
   typedef typename boost::tuples::element<N,Tuple>::type value_type; ///< typedef to `boost::tuples::element<N,Tuple>::%type`
   typedef value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
@@ -324,15 +336,15 @@ struct Nth_of_tuple_property_map
   : put_get_helper_pass_key_by_reference<typename boost::tuples::element<N,Tuple>::type&,
                                          Nth_of_tuple_property_map<N,Tuple> >
 {
-  typedef Tuple key_type; ///< typedef to 'Tuple'
+  typedef Tuple key_type; ///< typedef to `Tuple`
   typedef typename boost::tuples::element<N,Tuple>::type value_type; ///< typedef to `boost::tuples::element<N,Tuple>::%type`
   typedef value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
 
   /// Access a property map element.
-  ///
-  /// @tparam tuple a key whose Nth item is accessed
+  /// @param tuple a key whose Nth item is accessed
   reference operator[](key_type& tuple) const { return tuple.template get<N>(); }
+  /// Const version.
   const value_type& operator[](const key_type& tuple) const { return tuple.template get<N>(); }
 };
 

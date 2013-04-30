@@ -58,8 +58,8 @@ ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
-    NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
+    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+    NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
     const Kernel& kernel) ///< geometric traits.
 {
     CGAL_TRACE("Calls radial_orient_normals()\n");
@@ -143,8 +143,8 @@ ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
-    NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
+    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+    NormalPMap normal_pmap) ///< property map: value_type of ForwardIterator -> Vector_3.
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -156,7 +156,7 @@ radial_orient_normals(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename ForwardIterator,
           typename NormalPMap
 >
@@ -164,7 +164,7 @@ ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
+    NormalPMap normal_pmap) ///< property map: value_type of ForwardIterator -> Vector_3.
 {
     return radial_orient_normals(
       first,beyond,
