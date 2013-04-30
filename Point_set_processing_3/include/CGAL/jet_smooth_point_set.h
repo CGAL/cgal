@@ -1,4 +1,3 @@
-#define CGAL_EIGEN3_ENABLED
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
