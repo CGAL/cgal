@@ -51,7 +51,7 @@ inline Reference
 get(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, 
     typename PropertyMap::key_type& k)
 {
-  return Reference(static_cast<const PropertyMap&>(pa)[k]);
+  return static_cast<const PropertyMap&>(pa)[k];
 }
 
 // this is also required because some of the functions pass const ref parameters
