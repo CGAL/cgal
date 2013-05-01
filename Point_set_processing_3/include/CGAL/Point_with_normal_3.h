@@ -151,8 +151,12 @@ struct Normal_of_point_with_normal_pmap
   typedef boost::lvalue_property_map_tag category;
 
   /// Access a property map element.
-  reference operator[](key_type& pair) const { return pair.normal(); }
-  const value_type& operator[](const key_type& pair) const { return pair.normal(); }
+  /// Key types are need to be templated for backward compatibility (i.e. keys which are not type of key_type need to be accepted)
+  template<class K>
+  reference operator[](K& pair) const { return pair.normal(); }
+  template<class K>
+  const value_type& operator[](const K& pair) const { return pair.normal(); }
+
 };
 
 /// Free function to create a Normal_of_point_with_normal_pmap property map.
