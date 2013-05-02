@@ -34,7 +34,6 @@
 
 namespace CGAL {
 
-#ifndef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// \cond SKIP_IN_MANUAL
 
 /// An alternative to boost::put_get_helper for pmaps where key itself or a part of it returned as mapped value.
@@ -70,9 +69,7 @@ put(const put_get_helper_pass_key_by_reference<Reference, PropertyMap>& pa, K& k
   static_cast<const PropertyMap&>(pa)[k] = v;
 }
 /// \endcond
-#endif
 
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// \ingroup PkgProperty_map
 /// Property map that converts a `T*` pointer (or in general an iterator
 /// over `T` elements) to the `T` object.
@@ -104,9 +101,7 @@ make_dereference_property_map(Iter)
   // value_type_traits is a workaround as back_insert_iterator's `value_type` is void
   return Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>();
 }
-#endif
 
-#ifndef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 /// \ingroup PkgProperty_map
 /// Property map that maps a key to itself.
 ///
@@ -136,7 +131,6 @@ Typed_identity_property_map_by_reference<T>
 {
   return Typed_identity_property_map_by_reference<T>();
 }
-#endif
 
 
 //=========================================================================
