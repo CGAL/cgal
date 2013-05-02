@@ -1,6 +1,6 @@
 #ifndef SCENE_EDIT_POLYHEDRON_ITEM_H
 #define SCENE_EDIT_POLYHEDRON_ITEM_H
-
+//#define CGAL_PROFILE 
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
@@ -24,8 +24,6 @@
 #include <CGAL/glu.h>
 
 #include "ui_Deform_mesh.h"
-
-#undef CGAL_SUPERLU_ENABLED
 #include <CGAL/Deform_mesh.h> 
 
 #include <CGAL/internal/Surface_modeling/Deformation_Eigen_polar_closest_rotation_traits_3.h>
