@@ -41,6 +41,8 @@ This component provides property maps to support these cases:
 
 `Nth_of_tuple_property_map<N, Tuple>` 
 
+`Dereference_property_map<T>`
+
 \subsection Property_mapExamplewithIdentity Example with Typed_identity_property_map_by_reference
 
 The following example reads a point set and removes 5% of the points. It uses `Typed_identity_property_map_by_reference<Point_3>` as position property map.
