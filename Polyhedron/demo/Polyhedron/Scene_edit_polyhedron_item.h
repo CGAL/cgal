@@ -26,8 +26,6 @@
 #include "ui_Deform_mesh.h"
 #include <CGAL/Deform_mesh.h> 
 
-#include <CGAL/internal/Surface_modeling/Deformation_Eigen_polar_closest_rotation_traits_3.h>
-
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor		  edge_descriptor;
@@ -55,6 +53,7 @@ typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_inde
 // #define CGAL_USE_EXPERIMENTAL_POLAR
 
 #ifdef CGAL_USE_EXPERIMENTAL_POLAR
+  #include <CGAL/internal/Surface_modeling/Deformation_Eigen_polar_closest_rotation_traits_3.h>
   typedef CGAL::Deformation_Eigen_polar_closest_rotation_traits_3 Closest_rotation_model;
 #else
   typedef CGAL::Deformation_Eigen_closest_rotation_traits_3 Closest_rotation_model;
