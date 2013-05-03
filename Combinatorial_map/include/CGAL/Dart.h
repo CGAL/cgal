@@ -72,6 +72,12 @@ namespace CGAL {
 
     template <typename Map,unsigned int i>
     friend struct internal::link_beta_functor;
+      
+    template <typename CMap, typename Attrib>
+    friend struct internal::Flip_map_functor;
+
+    template <typename CMap, typename Attrib>
+    friend struct internal::Flip_connected_components_functor;
 
   public:
     typedef Dart<d,Refs>                     Self;
@@ -271,6 +277,16 @@ namespace CGAL {
 
       Helper::template Foreach_enabled_attributes<Init_attribute_functor>::
         run(this);
+    }
+    
+    /** Copy constructor:
+     * @param adart a dart.
+     */
+    Dart(const std::bitset<NB_MARKS>& /*amarks*/, const Dart& adart) : mmarks(adart.mmarks),
+    mattribute_handles(adart.mattribute_handles)
+    {
+      for (unsigned int i = 0; i <= dimension; ++i)
+        mbeta[i] = adart.mbeta[i];
     }
 
     /** Return the mark value of a given mark number.

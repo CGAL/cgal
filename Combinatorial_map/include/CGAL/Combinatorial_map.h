@@ -2003,6 +2003,25 @@ namespace CGAL {
       if ( update_attributes ) unsew<i>(adart);
       else topo_unsew<i>(adart);
     }
+      
+    /** Reverse the orientation (swap beta 0 & 1 links) of the entire map.
+     * A valid map after this operation remains valid.
+     * @param none
+     * @return none
+     */
+    void inside_out()
+    {
+      internal::Flip_map_functor<Self>::run(this);
+    }
+    
+    /** Reverse the orientation (swap beta 0 & 1 links) of the cells connected to the given dart.
+     * @param adart handle to a dart
+     * @return none
+     */
+    void connected_inside_out (Dart_handle adart)
+    {
+      internal::Flip_connected_components_functor<Self>::run(this, adart);
+    }
 
     /** Count the marked cells (at least one marked dart).
      * @param amark the mark to consider.
