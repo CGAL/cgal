@@ -2401,7 +2401,8 @@ number_of_incident_slivers(const Vertex_handle& v,
   typedef Counter<Cell_handle,Is_sliver<Sc> > C;
 
   std::size_t count = 0;
-  C c(Is_sliver<Sc>(c3t3_,criterion,sliver_bound), count);
+  Is_sliver<Sc> is_sliver(c3t3_,criterion,sliver_bound);
+  C c(is_sliver, count);
   tr_.incident_cells(v, boost::make_function_output_iterator(c));
 
   return count;
