@@ -132,7 +132,7 @@ private:
 /// Property map that accesses the normal vector from a Point_with_normal_3 object
 ///
 /// @heading Is Model for the Concepts:
-/// Model of boost::LvaluePropertyMap concept.
+/// \cgalModels `LvaluePropertyMap`
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
@@ -177,7 +177,7 @@ Normal_of_point_with_normal_pmap<
 /// (or in general an iterator over Point_with_normal_3 elements).
 ///
 /// @heading Is Model for the Concepts:
-/// Model of boost::LvaluePropertyMap concept.
+/// \cgalModels `LvaluePropertyMap`
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
