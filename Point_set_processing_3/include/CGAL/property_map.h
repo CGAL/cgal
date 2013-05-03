@@ -34,8 +34,6 @@
 
 namespace CGAL {
 
-/// \cond SKIP_IN_MANUAL
-
 /// \ingroup PkgProperty_map
 /// Property map that converts a `T*` pointer (or in general an iterator
 /// over `T` elements) to the `T` object.
@@ -79,11 +77,17 @@ struct Typed_identity_property_map_by_reference
   typedef T value_type; ///< typedef to `T`
   typedef T& reference; ///< typedef to `T&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
+  /// Access a property map element.
+  /// @param v a key which is returned as mapped value.
+  reference operator[](key_type& k) const { return k; }
 
-  /// put/get free functions
   typedef Typed_identity_property_map_by_reference<T> Self;
+  /// \name Put/get free functions
+  /// @{
   friend const value_type& get(const Self&,const key_type& k) {return k;}
+  friend         reference get(const Self&,      key_type& k) {return k;}
   friend void put(const Self&,key_type& k, const value_type& v) {k=v;}
+  /// @}
 };
 
 /// Free function to create a `Typed_identity_property_map_by_reference` property map.
@@ -150,13 +154,14 @@ struct First_of_pair_property_map
   /// Access a property map element.
   /// @param pair a key whose first item is accessed
   reference operator[](key_type& pair) const { return pair.first; }
-  /// Const version.
-  const value_type& operator[](const key_type& pair) const { return pair.first; }
 
-  /// put/get free functions
   typedef First_of_pair_property_map<Pair> Self;
+  /// \name Put/get free functions
+  /// @{
   friend const value_type& get(const Self&,const key_type& k) {return k.first;}
+  friend         reference get(const Self&,      key_type& k) {return k.first;}
   friend void put(const Self&,key_type& k, const value_type& v) {k.first=v;}
+  /// @}
 };
 
 /// Free function to create a `First_of_pair_property_map` property map. 
@@ -225,10 +230,17 @@ struct Second_of_pair_property_map
   typedef value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
 
-  /// put/get free functions
+  /// Access a property map element.
+  /// @param pair a key whose second item is accessed
+  reference operator[](key_type& pair) const { return pair.second; }
+
   typedef Second_of_pair_property_map<Pair> Self;
+  /// \name Put/get free functions
+  /// @{
   friend const value_type& get(const Self&,const key_type& k) {return k.second;}
+  friend         reference get(const Self&,      key_type& k) {return k.second;}
   friend void put(const Self&,key_type& k, const value_type& v) {k.second=v;}
+  /// @}
 };
 
 /// Free function to create a Second_of_pair_property_map property map.
@@ -298,11 +310,17 @@ struct Nth_of_tuple_property_map
   typedef typename boost::tuples::element<N,Tuple>::type value_type; ///< typedef to `boost::tuples::element<N,Tuple>::%type`
   typedef value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
+  /// Access a property map element.
+  /// @param tuple a key whose Nth item is accessed
+  reference operator[](key_type& tuple) const { return get<N>(tuple); }
 
-  /// put/get free functions
   typedef Nth_of_tuple_property_map<N,Tuple> Self;
+  /// \name Put/get free functions
+  /// @{
   friend const value_type& get(const Self&,const key_type& k) {return get<N>(k);}
-  friend void put(const Self&, key_type& k, const value_type& v) {get<N>(k)=v;}
+  friend         reference get(const Self&,      key_type& k) {return get<N>(k);}
+  friend void put(const Self&,key_type& k, const value_type& v) {get<N>(k)=v;}
+  /// @}
 };
 
 /// Free function to create a Nth_of_tuple_property_map property map.
