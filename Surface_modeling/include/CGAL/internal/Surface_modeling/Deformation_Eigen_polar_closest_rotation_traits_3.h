@@ -27,7 +27,7 @@ namespace CGAL {
       bool solved = polar_eigen(m, R);
 
       if(!solved) { 
-        CGAL_PROFILER(" times fallback from polar_eigen failed and SVD is called");
+        CGAL_PROFILER(" times polar_eigen failed and SVD is called");
         Deformation_Eigen_closest_rotation_traits_3::compute_closest_rotation(m, R); 
       }       
     }
