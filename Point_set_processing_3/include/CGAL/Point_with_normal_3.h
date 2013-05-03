@@ -139,8 +139,6 @@ private:
 
 template <class Gt>
 struct Normal_of_point_with_normal_pmap
-  : put_get_helper_pass_key_by_reference<typename Gt::Vector_3&,
-  Normal_of_point_with_normal_pmap<Gt> >
 {
   typedef Point_with_normal_3<Gt> Point_with_normal; ///< Position + normal
   typedef typename Gt::Vector_3 Vector; /// normal
@@ -150,13 +148,10 @@ struct Normal_of_point_with_normal_pmap
   typedef value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 
-  /// Access a property map element.
-  /// Key types are need to be templated for backward compatibility (i.e. keys which are not type of key_type need to be accepted)
-  template<class K>
-  reference operator[](K& pair) const { return pair.normal(); }
-  template<class K>
-  const value_type& operator[](const K& pair) const { return pair.normal(); }
-
+  /// put/get free functions
+  typedef Normal_of_point_with_normal_pmap<Gt> Self;
+  friend const value_type& get(const Self&,const key_type& k) {return k.normal();}
+  friend void put(const Self&,key_type& k, const value_type& v) {k.normal()=v;}
 };
 
 /// Free function to create a Normal_of_point_with_normal_pmap property map.
