@@ -282,6 +282,12 @@ public:
       os << "Exact: ";
       print_at(os, *et);
       os << std::endl;
+#ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+      for(int i = 0; i < level; i++){
+	os << "    ";
+      }
+      os << "  (type: " << typeid(*et).name() << ")" << std::endl;
+#endif // CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
     }
   }
 

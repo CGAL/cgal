@@ -98,6 +98,16 @@ namespace CGAL {
 template <class NT> class Lazy_exact_nt;
 
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+template <typename ET>
+inline
+void
+print_dag(const Lazy_exact_nt<ET>& l, std::ostream& os, int level=0)
+{
+  l.print_dag(os, level);
+}
+#endif
+
 // Abstract base representation class for lazy numbers
 template <typename ET>
 struct Lazy_exact_nt_rep : public Lazy_exact_nt<ET>::Self_rep
@@ -201,7 +211,7 @@ struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
     this->print_at_et(os, level);
     if(this->is_lazy()){
       msg(os, level, "Unary number operator:");
-      print_dag(op1, os, level+1);
+      CGAL::print_dag(op1, os, level+1);
     }
   }
 #endif
@@ -234,8 +244,8 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
     this->print_at_et(os, level);
     if(this->is_lazy()){
       msg(os, level, "Binary number operator:");
-      print_dag(op1, os, level+1);
-      print_dag(op2, os, level+1);
+      CGAL::print_dag(op1, os, level+1);
+      CGAL::print_dag(op2, os, level+1);
     }
   }
 #endif
