@@ -172,11 +172,14 @@ jet_smooth_point_set(
   for(it = first; it != beyond; it++)
   {
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-    Point& p = get(point_pmap, it);
+    const Point& p = get(point_pmap, it);
+    put(point_pmap, it ,
+        internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge) );
 #else
-    Point& p = get(point_pmap, *it);
+    const Point& p = get(point_pmap, *it);
+    put(point_pmap, *it ,
+        internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge) );
 #endif  
-    p = internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge);
   }
 }
 

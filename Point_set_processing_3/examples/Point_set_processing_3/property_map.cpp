@@ -77,15 +77,14 @@ void process_point_set(Iterator beg, Iterator end)
 // Here comes a function that changes the orientation and the normal
 
 template <typename Iterator, typename PointPMap, typename OrientationPMap, typename NormalPMap >
-void orient_normals(Iterator beg, Iterator end, PointPMap point_pmap, OrientationPMap orient_pmap, NormalPMap normal_pmap)
+void orient_normals(Iterator beg, Iterator end, PointPMap, OrientationPMap orient_pmap, NormalPMap normal_pmap)
 {
   for(;beg!= end;++beg){
-    Vector_3& v = get(normal_pmap, *beg);
+    const Vector_3& v = get(normal_pmap, *beg);
     put(orient_pmap, *beg, (v == CGAL::NULL_VECTOR));
 
     if(v.x() < 0){
-      v = -v;
-      put(normal_pmap,*beg, v);  
+      put(normal_pmap,*beg, -v);
     }
   }
 }

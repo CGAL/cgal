@@ -159,28 +159,32 @@ struct Propagate_normal_orientation
         // Gets source normal
         vertex_descriptor source_vertex = boost::source(edge, mst_graph);
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-        const Vector source_normal = mst_graph.m_normal_pmap[mst_graph[source_vertex].input_point];
-        const bool source_normal_is_oriented = mst_graph[source_vertex].is_oriented;
+        const Vector source_normal = get(mst_graph.m_normal_pmap, mst_graph[source_vertex].input_point);
 #else
-        const Vector source_normal = mst_graph.m_normal_pmap[*(mst_graph[source_vertex].input_point)];
-        const bool source_normal_is_oriented = mst_graph[source_vertex].is_oriented;
+        const Vector source_normal = get(mst_graph.m_normal_pmap, *(mst_graph[source_vertex].input_point) );
 #endif
+        const bool source_normal_is_oriented = mst_graph[source_vertex].is_oriented;
         // Gets target normal
         vertex_descriptor target_vertex = boost::target(edge, mst_graph);
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-        Vector& target_normal = mst_graph.m_normal_pmap[mst_graph[target_vertex].input_point];
-        bool& target_normal_is_oriented = ((MST_graph&)mst_graph)[target_vertex].is_oriented;
+        const Vector& target_normal = get( mst_graph.m_normal_pmap, mst_graph[target_vertex].input_point);
 #else
-        Vector& target_normal = mst_graph.m_normal_pmap[*(mst_graph[target_vertex].input_point)];
-        bool& target_normal_is_oriented = ((MST_graph&)mst_graph)[target_vertex].is_oriented;
+        const Vector& target_normal = get( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point) );
 #endif
+        bool& target_normal_is_oriented = ((MST_graph&)mst_graph)[target_vertex].is_oriented;
         if ( ! target_normal_is_oriented )
         {
           //             ->                        ->
           // Orients target_normal parallel to source_normal
           double normals_dot = source_normal * target_normal;
           if (normals_dot < 0)
-            target_normal = -target_normal;
+          {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+            put( mst_graph.m_normal_pmap, mst_graph[target_vertex].input_point, -target_normal);
+#else
+            put( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point), -target_normal );
+#endif
+          }
 
           // Is orientation robust?
           target_normal_is_oriented
@@ -243,14 +247,18 @@ mst_find_source(
 
     // Orients its normal towards +Z axis
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-    Vector& normal = get(normal_pmap,top_point);
+    const Vector& normal = get(normal_pmap,top_point);
 #else
-    Vector& normal = get(normal_pmap,*top_point);
-#endif  
+    const Vector& normal = get(normal_pmap,*top_point);
+#endif
     const Vector Z(0, 0, 1);
     if (Z * normal < 0) {
       CGAL_TRACE("  Flip top point normal\n");
-      normal = -normal;
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    put(normal_pmap,top_point, -normal);
+#else
+    put(normal_pmap,*top_point, -normal);
+#endif
     }
 
     return top_point;

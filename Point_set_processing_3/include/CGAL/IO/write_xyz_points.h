@@ -131,7 +131,7 @@ write_xyz_points_and_normals(
   std::ostream& stream, ///< output stream.
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond, ///< past-the-end input point.
-  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
+  NormalPMap normal_pmap) ///< property map: value_type of ForwardIterator -> Vector_3.
 {
   return write_xyz_points_and_normals(
     stream,
@@ -139,7 +139,7 @@ write_xyz_points_and_normals(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(output),
 #else
-    Typed_identity_property_map_by_reference<typename value_type_traits<OutputIterator>::type>(),
+    Typed_identity_property_map_by_reference<typename std::iterator_traits<ForwardIterator>::type>(),
 #endif
     normal_pmap);
 }
