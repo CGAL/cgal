@@ -34,8 +34,6 @@
  
 \cgalPkgDescriptionEnd
  
-*/
-
 The main classes of the 2D Periodic Triangulation package are
 `Periodic_2_triangulation_2` and
 `Periodic_2_Delaunay_triangulation_2`. They contain functionality
@@ -50,7 +48,7 @@ predicates and constructions that are needed by the functions in the
 triangulation classes.
 
 The package uses `Triangulation_data_structure_2` to represent the
-triangulation. The faces and vertices need to be alModels of the
+triangulation. The faces and vertices need to be Models of the
 concepts `Periodic_2TriangulationFaceBase_2` and
 `TriangulationVertexBase_2`, respectively.
 A triangulation is stored as a collection of vertices and faces that
@@ -64,11 +62,41 @@ orientation, the positive orientation being defined by the orientation
 of the underlying space \f$ \mathbb T_c^3\f$. The neighbors of a face are
 also indexed with 0, 1, 2 in such a way that the neighbor indexed
 by \f$ i\f$ is opposite to the vertex with the same index. See
-Figure  \ref P2Triangulation2figorient.
+\cgalFigureRef{P2Triangulation2figorient}.
 
 In order to be able to specify the triangle that contain vertices
 both inside and outside the original domain we store additional
-offset information for each vertex of a face. These offsets are alModels
+offset information for each vertex of a face. These offsets are Models
 of the concept `Periodic_2Offset_2`.
+
+
+## Concepts ##
+
+- `Periodic_2DelaunayTriangulationTraits_2`
+- `TriangulationDataStructure_2`
+- `Periodic_2TriangulationFaceBase_2`
+- `Periodic_2TriangulationVertexBase_2`
+- `Periodic_2Offset_2`
+
+## Classes ##
+
+### Main Classes ###
+
+- `CGAL::Periodic_2_triangulation_2<PT,TDS>`
+- `CGAL::Periodic_2_Delaunay_triangulation_2<PT,TDS>`
+- `CGAL::Periodic_2_triangulation_hierarchy_2<PTr>`
+- `CGAL::Periodic_2_triangulation_face_base_2<>`
+- `CGAL::Periodic_2_triangulation_vertex_base_2<>`
+- `CGAL::Periodic_2_offset_2`
+
+### Traits Classes ###
+
+- `CGAL::Periodic_2_triangulation_traits_2<Traits,Periodic_2Offset_2>`
+
+## Enums ##
+
+- `CGAL::Periodic_2_triangulation_2::Iterator_type`
+- `CGAL::Periodic_2_triangulation_2::Locate_type`
+
 */
 

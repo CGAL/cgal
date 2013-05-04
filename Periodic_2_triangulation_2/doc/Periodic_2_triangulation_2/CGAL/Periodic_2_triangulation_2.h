@@ -10,11 +10,12 @@ triangulation of a point set in \f$ \mathbb T_c^2\f$.
 
 ### Parameters ###
 
-The class `Periodic_2_triangulation_2` has two template parameters. The first one
-`Traits` is the geometric traits, it is to be instantiated by
-a model of the concept `Periodic_2TriangulationTraits_2`.
+The class `Periodic_2_triangulation_2` has two template
+parameters. The first one \tparam Traits is the geometric traits, it
+is to be instantiated by a model of the concept
+`Periodic_2TriangulationTraits_2`.
 
-The second parameter is the triangulation data structure,
+The second parameter \tparam TDS is the triangulation data structure,
 it has to be instantiated by a model of the concept
 `TriangulationDataStructure_2` with some additional
 functionality in faces.
@@ -30,10 +31,6 @@ The periodic triangulation class provides several iterators and circulators that
 The I/O operators are defined for `iostream`. The format for the
 iostream is an internal format.
 
-\code
-`CGAL/IO/ostream_2.h`
-\endcode
-
 The information in the `iostream` is:
 
 - the original domain
@@ -46,16 +43,6 @@ The information in the `iostream` is:
   corresponds to the preceding list of faces
 - the offsets corresponding to the vertices of the faces
 - the non-combinatorial information of each face
-
-CGAL also provides a stream operator `<<` to draw triangulations
-for `CGAL::Qt_widget`, the Qt based graphic package.
-These operators require the include statement:
-
-\code
-#include CGAL/IO/Qt_widget_Triangulation_2.h
-\endcode
-
-See the `Qt_widget` class.
 
 ### Implementation ###
 
@@ -135,60 +122,59 @@ public:
 /// @{
 
   /*!
-  The traits class.
+  the traits class.
   */
   typedef Traits Geom_traits;
 
   /*!
-  The triangulation data structure type.
+  the triangulation data structure type.
   */
   typedef Tds Triangulation_data_structure;
 
   /*!
-  The offset type
+  the offset type.
   */
   typedef Geom_traits::Periodic_2_offset_2 Offset;
 
   /*!
-  the iso rectangle type
+  the iso rectangle type.
   */
   typedef Geom_traits::Iso_rectangle_2 Iso_rectangle;
 
-  /*!
-  Integer tuple to
-  store the number of sheets in each direction of space.
+  /*! 
+  integer tuple to store the number of sheets in each direction of space.
   */
   typedef array<int, 2> Covering_sheets;
 
   /*!
-  the point type
+  the point type.
   */
   typedef Geom_traits::Point_2 Point;
 
   /*!
-  the segment type
+  the segment type.
   */
   typedef Geom_traits::Segment_2 Segment;
 
   /*!
-  the triangle type
+  the triangle type.
   */
   typedef Geom_traits::Triangle_2 Triangle;
 
   /*!
-  Represents a point-offset pair. The point in the
-  pair lies in the original domain.
+  represents a point-offset pair. The point in the pair lies in the
+  original domain.
   */
   typedef std::pair< Point, Offset > Periodic_point;
 
   /*!
-  A pair of periodic points representing a segment in the periodic
+  a pair of periodic points representing a segment in the periodic
   domain.
   */
   typedef array< Periodic_point, 2> Periodic_segment;
 
   /*!
-  A triple of periodic points representing a triangle in the periodic
+  a triple of periodic points representing a triangle in the periodic
   domain.
   */
   typedef array< Periodic_point, 3>
@@ -210,12 +196,12 @@ public:
   typedef Tds::Edge Edge;
 
   /*!
-  Size type (an unsigned integral type)
+  size type (an unsigned integral type).
   */
   typedef Tds::size_type size_type;
 
   /*!
-  Difference type (a signed integral type)
+  difference type (a signed integral type).
   */
   typedef Tds::difference_type difference_type;
 
@@ -224,7 +210,7 @@ public:
   \name Handles, Iterators and Circulators
 
   The vertices and faces of the triangulations are accessed through
-  `handles`, `iterators` and `circulators`. The handles are alModels of
+  `handles`, `iterators` and `circulators`. The handles are \cgalModels of
   the concept `Handle` which basically offers the two dereference
   operators and `->`. The iterators and circulators are all
   bidirectional and non-mutable. The circulators and iterators are
@@ -239,12 +225,12 @@ public:
 /// @{
 
   /*!
-  handle to a vertex
+  handle to a vertex.
   */
   typedef Tds::Vertex_handle Vertex_handle;
 
   /*!
-  handle to a face
+  handle to a face.
   */
   typedef Tds::Face_handle Face_handle;
 
@@ -254,12 +240,12 @@ public:
   typedef Tds::Face_iterator Face_iterator;
 
   /*!
-  iterator over all edges
+  iterator over all edges.
   */
   typedef Tds::Edge_iterator Edge_iterator;
 
   /*!
-  iterator over all vertices
+  iterator over all vertices.
   */
   typedef Tds::Vertex_iterator Vertex_iterator;
 

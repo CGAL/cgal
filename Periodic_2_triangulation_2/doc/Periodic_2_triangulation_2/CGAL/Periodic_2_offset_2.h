@@ -2,7 +2,7 @@ namespace CGAL
 {
 
 /*!
-\ingroup PkgPeriodic2Triangulation2
+\ingroup PkgPeriodic2Triangulation2MainClasses
 
 The class `Periodic_2_offset_2` is a model of the concept `Periodic_2Offset_2`.
 

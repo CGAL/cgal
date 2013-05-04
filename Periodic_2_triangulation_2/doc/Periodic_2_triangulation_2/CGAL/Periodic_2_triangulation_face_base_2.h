@@ -31,7 +31,6 @@ whether all offsets are zero.
 
 \sa `CGAL::Triangulation_face_base_2`
 \sa `CGAL::Triangulation_face_base_with_info_2`
-\sa `CGAL::Triangulation_face_base_with_circumcenter_2`
 
 */
 template< >

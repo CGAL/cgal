@@ -4,8 +4,9 @@
 namespace CGAL {
 /*!
 
-\mainpage 2D Periodic Triangulations
+\mainpage User Manual 
 \anchor Chapter_2D_Periodic_Triangulations
+\anchor chapterP2Triangulation2
 
 \cgalAutoToc
 \author Nico Kruithof
@@ -202,7 +203,7 @@ parameters:
   combinatorial structure, described in Section \ref
   P2Triangulation2sectds and in more detail in Chapter \ref
   Chapter_2D_Triangulation_Data_Structure. The triangulation data
-  structure needs Models of the concepts
+  structure needs models of the concepts
   `Periodic_2TriangulationFaceBase_2` and
   `Periodic_2TriangulationVertexBase_2` as template parameters.
 
@@ -232,7 +233,7 @@ is also a model for the concept `TriangulationTraits_2`.
 
 The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as alModels for
+`Filtered_kernel` can all be used as \cgalModels for
 `Traits`. `Periodic_2_triangulation_traits_2` provides exact
 predicates and exact constructions if `Traits` does. It provides
 exact predicates but not exact constructions if

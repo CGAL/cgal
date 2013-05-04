@@ -11,7 +11,7 @@ Delaunay triangulation in two-dimensional periodic space.
 ### Parameters ###
 
 The class `Periodic_2_Delaunay_triangulation_2` has two template parameters. The first one
-`Traits` is the geometric traits, it is to be instantiated by a
+\tparam Traits is the geometric traits, it is to be instantiated by a
 model of the concept `Periodic_2DelaunayTriangulationTraits_2`.
 
 The second parameter is the triangulation data structure, it has to be

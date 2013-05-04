@@ -3,7 +3,7 @@ namespace CGAL
 {
 
 /*!
-\ingroup PkgPeriodic2Triangulation2
+\ingroup PkgPeriodic2Triangulation2MainClasses
 
 The class `Periodic_2_triangulation_hierarchy_2` implements a
 triangulation augmented with a data structure which allows fast point
@@ -15,10 +15,10 @@ It is templated by a parameter which must be instantiated by one of the \cgal pe
 implementation, only `Periodic_2_Delaunay_triangulation_2` is
 supported for `PTr`.</I>
 
-`PTr::Vertex` has to be a model of the concept
+\tparam PTr::Vertex has to be a model of the concept
 `Periodic_2TriangulationHierarchyVertexBase_2`.
 
-`PTr::Geom_traits` has to be a model of the concept
+\tparam PTr::Geom_traits has to be a model of the concept
 `Periodic_2DelaunayTriangulationTraits_2`.
 
 ### Inherits From ###

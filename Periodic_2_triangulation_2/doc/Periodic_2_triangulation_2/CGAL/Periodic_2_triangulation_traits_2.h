@@ -9,9 +9,9 @@ The class `Periodic_2_triangulation_traits_2` is designed as a default
 traits class for the class
 `Periodic_2_triangulation_2<Periodic_2TriangulationTraits_2,TriangulationDataStructure_2>`.
 
-The argument `Traits` must be a model of the
+The argument \tparam Traits must be a model of the
 `TriangulationTraits_2` concept. The argument
-`Periodic_2Offset_2` must be a model of the concept
+\tparam Periodic_2Offset_2 must be a model of the concept
 `Periodic_2Offset_2` and defaults to `Periodic_2_offset_2`.
 
 Note that this template class is specialized for
@@ -20,8 +20,8 @@ predicates. This holds implicitly for
 `CGAL::Exact_predicates_inexact_constructions_kernel`, as it is an
 instantiation of `CGAL::Filtered_kernel`.
 
-\alModels `Periodic_2TriangulationTraits_2` and
-\alModels `Periodic_2DelaunayTriangulationTraits_2` if the template parameter `Traits` is a model of the
+\cgalModels `Periodic_2TriangulationTraits_2` and
+\cgalModels `Periodic_2DelaunayTriangulationTraits_2` if the template parameter `Traits` is a model of the
 `DelaunayTriangulationTraits_2` concept.
 
 */
