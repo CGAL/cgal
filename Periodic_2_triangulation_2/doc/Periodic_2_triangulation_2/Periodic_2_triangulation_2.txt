@@ -273,7 +273,7 @@ all the triangulation classes, so it does not need to be specified by
 the user unless he wants to use a different triangulation data
 structure or a different vertex or cell base class.
 
-## Flexibility of the Design ##
+\subsection P2T2FlexDesign Flexibility of the Design
 
 `Periodic_2_triangulation_2` uses the
 `TriangulationDataStructure_2` in essentially the same way as
@@ -281,11 +281,11 @@ structure or a different vertex or cell base class.
 \ref Section_2D_Triangulations_Software_Design is applicable in exactly the same
 way. Also the classes `Triangulation_vertex_base_with_info_2` and
 `Triangulation_face_base_with_info_2` can be reused directly, see
-also Example \ref P2Triangulation2secexamplescolor.
+also Example \ref P2T2ExampleColor.
 
 \section P2Triangulation2secexamples Examples 
 
-## Basic Example ##
+\subsection P2T2ExampleBasic Basic example
 
 This example shows the incremental construction of a periodic 2D
 Delaunay triangulation, the location of a point and how to perform
@@ -295,12 +295,12 @@ the triangulation data structure.
 
 \cgalExample{Periodic_2_triangulation_2/p2t2_simple_example.cpp}
 
-## Changing the Vertex Base ##
+\subsection P2T2ExampleVertexBase Changing the vertex base
 
 The following two examples show how the user can plug his own vertex
 base in a triangulation. Changing the face base is similar.
 
-\subsection P2Triangulation2secexamplescolor Adding a Color 
+\subsubsection P2T2ExampleColor Adding a color 
 
 If the user does not need to add a type in a vertex that depends on
 the `TriangulationDataStructure_2` (e.g. a `Vertex_handle` or
@@ -311,7 +311,7 @@ add a `CGAL::Color` this way.
 
 \cgalExample{Periodic_2_triangulation_2/p2t2_colored_vertices.cpp}
 
-## Adding Handles ##
+\subsubsection P2T2ExampleAddingHandles Adding handles
 
 If the user needs to add a type in a vertex that depends on the
 `TriangulationDataStructure_2` (e.g. a `Vertex_handle` or
@@ -320,7 +320,7 @@ following example shows.
 
 \cgalExample{Periodic_2_triangulation_2/p2t2_adding_handles.cpp}
 
-## 9-sheeted Covering ##
+\subsection P2T2ExampleCovering 9-sheeted covering
 
 The user can check at any time whether a triangulation would be a
 simplicial complex in \f$ \mathbb T_c^2\f$ and force a conversion if
@@ -335,7 +335,7 @@ covering anymore, so the triangulation is not <I>extensible</I>.
 
 \cgalExample{Periodic_2_triangulation_2/p2t2_covering.cpp}
 
-## Large Point Set ##
+\subsection P2T2ExampleLargePointSet Large point set
 
 For large point sets there are two optimizations available. Firstly,
 there is spatial sorting that sorts the input points according to a
@@ -355,7 +355,7 @@ mode because of the relatively large number of points.
 
 \cgalExample{Periodic_2_triangulation_2/p2t2_large_point_set.cpp}
 
-## Geometric Access ##
+\subsection P2T2ExampleGeometricAccess Geometric access
 
 There might be applications that need the geometric primitives of a
 triangulation as an input but do not require a simplicial complex. For

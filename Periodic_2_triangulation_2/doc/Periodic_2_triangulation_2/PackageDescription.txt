@@ -25,9 +25,9 @@
 \cgalPkgSummaryEnd
  
 \cgalPkgShortInfoBegin
-\cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary and \ref PkgPeriodic3Triangulation3Summary}
-\cgalPkgBib{cgal:k-pt2-09}
+\cgalPkgSince{4.3}
+\cgalPkgDependsOn{\ref PkgTDS2Summary, \ref PkgTriangulation2Summary and \ref PkgPeriodic3Triangulation3Summary}
+\cgalPkgBib{cgal:k-pt2-13}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Periodic Delaunay Triangulation,Periodic_2_Delaunay_triangulation_2.zip}
 \cgalPkgShortInfoEnd

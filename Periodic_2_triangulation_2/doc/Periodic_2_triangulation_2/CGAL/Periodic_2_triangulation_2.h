@@ -893,16 +893,6 @@ public:
 /// @{
 
   /*!
-  Exchanges the edge
-  incident to `f` and `f->neighbor(i)` with the other diagonal
-  of the quadrilateral formed by `f` and
-  `f->neighbor(i)`. Flips all periodic copies of the edge when
-  the triangulation is on the 9-sheeted cover.
-  \pre The union of the faces `f` and `f->neighbor(i)` form a convex quadrilateral.
-  */
-  void flip(Face_handle f, int i);
-
-  /*!
   Inserts point `p` in the triangulation and returns the
   corresponding vertex.
   If point `p` coincides with an already
@@ -983,12 +973,6 @@ public:
   \pre The point in vertex `v` lies inside face `f`.
   */
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
-
-  /*!
-  Inserts vertex v in edge `i` of `f`. If the triangulation contains periodic copies, a point is inserted in all periodic copies.
-  \pre The point in vertex `v` lies on the edge opposite to the vertex `i` of face `f`.
-  */
-  Vertex_handle insert_in_edge(const Point& p, const Offset &o, Face_handle f, int i);
 
   /*!
   Removes a vertex of degree three. Two of the incident faces are
