@@ -387,10 +387,19 @@ In 2009, Nico Kruithof started implementation of the
 \section P2T2_Performance Performance
 
 The performance of the 2D periodic Delaunay triangulation is compared
-to the Euclidean 2D Delaunay triangulation. The plot shows the running
-time in seconds for different numbers of batch inserted points. The
-points are uniformly randomly distributed in the unit rectangle. The
-tests were done on an Intel i7 @ 2.67GHz.
+to the Euclidean 2D Delaunay triangulation. The points are inserted in
+the Euclidean 2D Delaunay triangulation using spatial sorting.  In the
+Periodic triangulation the points are first inserted in random order
+until the triangulation is valid in the 1 sheeted covering space. The
+remaining points are then inserted using spatial sorting. For the
+large point set, first dummy points are inserted to create a valid
+triangulation in the 1 sheeted covering space. Then all points are
+inserted using spatial sorting. As a final step, the dummy points are
+removed again.
+
+The plot shows the running time in seconds for different numbers of
+batch inserted points. The points are uniformly randomly distributed
+in the unit rectangle. The tests were done on an Intel i7 @ 2.67GHz.
 
 \image html p2dt2_performance.png
 
