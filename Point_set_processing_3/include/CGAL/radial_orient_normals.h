@@ -104,15 +104,23 @@ radial_orient_normals(
       Vector vec1 = point - barycenter;
 
       // Point's normal
-      Vector vec2 = normal_pmap[it];
-
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      Vector vec2 = normal_pmap[it]; 
+#else
+      Vector vec2 = get(normal_pmap, *it);
+#endif
+      
       //         ->               ->
       // Orients vec2 parallel to vec1
       double dot = vec1 * vec2;
       if (dot < 0)
         vec2 = -vec2;
 
-      it->normal() = vec2;
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      it->normal() = vec2; 
+#else
+      put(normal_pmap, *it, vec2);
+#endif
 
       // Is orientation robust?
       bool oriented = (std::abs(dot) > std::cos(80.*CGAL_PI/180.)); // robust iff angle < 80 degrees
