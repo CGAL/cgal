@@ -239,7 +239,7 @@ improved_laplacian_smooth_point_set(
   for (it = first, i=0 ; it != beyond ; ++it,++i)
   {
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-    Point& p0 = get(point_pmap,it);
+    const Point& p0 = get(point_pmap,it);
 #else
     const Point& p0 = get(point_pmap,*it);
 #endif
@@ -264,7 +264,7 @@ improved_laplacian_smooth_point_set(
       for(it = first, i=0; it != beyond; it++, ++i)
       {
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-          Point& p0  = get(point_pmap,it);
+          const Point& p0  = get(point_pmap,it);
 #else
           const Point& p0  = get(point_pmap,*it);
 #endif
@@ -285,8 +285,7 @@ improved_laplacian_smooth_point_set(
   for(it = first, i=0; it != beyond; it++, ++i)
   {
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-    Point& p0 = get(point_pmap,it);
-    p0 = p[i];
+    put(point_pmap, it, p[i]);
 #else
     put(point_pmap, *it, p[i]);
 #endif
