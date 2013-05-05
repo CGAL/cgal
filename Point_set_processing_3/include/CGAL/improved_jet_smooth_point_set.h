@@ -256,9 +256,8 @@ improved_jet_smooth_point_set(
   for (it = first, i=0 ; it != beyond ; ++it,++i)
   {
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-    Point& p0 = get(point_pmap,it);
+    const Point& p0 = get(point_pmap,it);
 #else
-    // changed to const Point&
     const Point& p0 = get(point_pmap,*it);
 #endif
     treeElements.push_back(KdTreeElement(p0,i));
@@ -285,9 +284,8 @@ improved_jet_smooth_point_set(
       for(it = first, i=0; it != beyond; it++, ++i)
       {
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-          Point& p0  = get(point_pmap,it);
+          const Point& p0  = get(point_pmap,it);
 #else
-          // changed to const Point&
           const Point& p0  = get(point_pmap,*it);
 #endif
           Point np   = improved_jet_smoothing_i::jet_smooth_point<Kernel>(p0,tree,kk);
@@ -307,8 +305,7 @@ improved_jet_smooth_point_set(
   for(it = first, i=0; it != beyond; it++, ++i)
   {
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-    Point& p0 = get(point_pmap,it);
-    p0 = p[i];
+    put(point_pmap, it, p[i]);
 #else
     put(point_pmap, *it, p[i]);
 #endif
