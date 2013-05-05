@@ -89,8 +89,13 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
-                              points.begin(), points.end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()) );
+                              points.begin(), points.end(),                              
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+                              CGAL::make_normal_of_point_with_normal_pmap(points.begin())
+#else
+                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())
+#endif
+                              );
 
     bool ok = false;
     #ifdef CGAL_TAUCS_ENABLED
