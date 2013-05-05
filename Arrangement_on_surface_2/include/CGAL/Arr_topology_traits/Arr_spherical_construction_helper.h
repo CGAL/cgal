@@ -110,65 +110,38 @@ public:
     Arr_parameter_space ps_y = event->parameter_space_in_y();
 
     if (ps_y == ARR_BOTTOM_BOUNDARY) {
-      // Bootom contraction boundary:
-      // The event has only one (right or left) curve.
-      CGAL_assertion(((event->number_of_left_curves() == 0) &&
-                      (event->number_of_right_curves() == 1)) ||
-                     ((event->number_of_left_curves() == 1) &&
-                      (event->number_of_right_curves() == 0)));
-      Arr_curve_end ind = (event->number_of_left_curves() == 0 &&
-                       event->number_of_right_curves() == 1) ?
-        ARR_MIN_END : ARR_MAX_END;
-      const X_monotone_curve_2 & xc = (ind == ARR_MIN_END) ?
-        (*(event->right_curves_begin()))->last_curve() :
-        (*(event->left_curves_begin()))->last_curve();
+      // Process bootom contraction boundary:
+      // The event has only one right curve.
+      CGAL_assertion((event->number_of_left_curves() == 0) &&
+                     (event->number_of_right_curves() == 1));
 
-      // Check whether we have a vertex that corresponds to the south pole.
-      // If not, we create one.
-      if (m_top_traits->south_pole() == NULL) {
-        Vertex_handle v =
-            m_arr_access.create_boundary_vertex(xc, ind, ps_x, ps_y);
-        event->set_vertex_handle(v);
+      DVertex* dv = m_top_traits->south_pole();
+      if (dv) {
+        event->set_vertex_handle(Vertex_handle(dv));
+        return;
       }
-      else
-        event->set_vertex_handle(Vertex_handle(m_top_traits->south_pole()));
+      // We do not have a vertex that corresponds to the south pole.
+      // If not, we create one.
+      Arr_curve_end ind = ARR_MIN_END;
+      const X_monotone_curve_2& xc =
+        (*(event->right_curves_begin()))->last_curve();
+      Vertex_handle v = m_arr_access.create_boundary_vertex(xc, ind, ps_x, ps_y);
+      event->set_vertex_handle(v);
       return;
     }
 
     if (ps_y == ARR_TOP_BOUNDARY) {
-      // Top contraction boundary:
-      // The event has only one (right or left) curve.
-      CGAL_assertion(((event->number_of_left_curves() == 0) &&
-                      (event->number_of_right_curves() == 1)) ||
-                     ((event->number_of_left_curves() == 1) &&
-                      (event->number_of_right_curves() == 0)));
-      Arr_curve_end ind = ((event->number_of_left_curves() == 0) &&
-                           (event->number_of_right_curves() == 1)) ?
-        ARR_MIN_END : ARR_MAX_END;
-
-      const X_monotone_curve_2 & xc = (ind == ARR_MIN_END) ?
-        (*(event->right_curves_begin()))->last_curve() :
+      // Process top contraction boundary:
+      // The event has only one left curve.
+      CGAL_assertion((event->number_of_left_curves() == 1) &&
+                     (event->number_of_right_curves() == 0));
+      Arr_curve_end ind = ARR_MAX_END;
+      const X_monotone_curve_2& xc = 
         (*(event->left_curves_begin()))->last_curve();
 
-      // Check whether we have a vertex that corresponds to the north pole.
-      // If not, we create one.
-      if (m_top_traits->north_pole() == NULL) {
-        Vertex_handle v = 
-            m_arr_access.create_boundary_vertex(xc, ind, ps_x, ps_y);
-        event->set_vertex_handle(v);
-
-        // Since this is the first event corresponding to the north pole,
-        // the list m_subcurves_at_nf contains all subcurves whose minimal
-        // endpoint lies between the curve of discontinuity and the current
-        // curve incident to the north pole. In case these subcurves represent
-        // holes, these holes should stay in the "north face" that contains the
-        // line of discontinuity, and we should not keep track of them in order
-        // to later move them to another face.
-        m_subcurves_at_nf.clear();
-      }
-      else {
-        event->set_vertex_handle(Vertex_handle(m_top_traits->north_pole()));
-
+      DVertex* dv = m_top_traits->north_pole();
+      if (dv) {
+        event->set_vertex_handle(Vertex_handle(dv));
         DHalfedge* dprev =
           m_top_traits->locate_around_boundary_vertex(m_top_traits->
                                                       north_pole(), xc, ind,
@@ -186,10 +159,24 @@ public:
           }
           else
             m_subcurves_at_nf.clear();
-          CGAL_assertion(m_subcurves_at_nf.empty());
         }
         return;
       }
+      
+      // We  do nothave a vertex that corresponds to the north pole.
+      // Create one.
+      Vertex_handle v =
+        m_arr_access.create_boundary_vertex(xc, ind, ps_x, ps_y);
+      event->set_vertex_handle(v);
+
+      // Since this is the first event corresponding to the north pole,
+      // the list m_subcurves_at_nf contains all subcurves whose minimal
+      // endpoint lies between the curve of discontinuity and the current
+      // curve incident to the north pole. In case these subcurves represent
+      // holes, these holes should stay in the "north face" that contains the
+      // line of discontinuity, and we should not keep track of them in order
+      // to later move them to another face.
+      m_subcurves_at_nf.clear();
       return;
     }
 
@@ -197,7 +184,7 @@ public:
       // The event has only right curves.
       CGAL_assertion((event->number_of_left_curves() == 0) &&
                      (event->number_of_right_curves() >= 1));
-      const X_monotone_curve_2 & xc =
+      const X_monotone_curve_2& xc =
         (*(event->right_curves_begin()))->last_curve();
       DVertex* v = m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
 
@@ -217,7 +204,7 @@ public:
        // The event has only left curves.
       CGAL_assertion((event->number_of_left_curves() >= 1) &&
                      (event->number_of_right_curves() == 0));
-      const X_monotone_curve_2 & xc =
+      const X_monotone_curve_2& xc =
         (*(event->left_curves_begin()))->last_curve();
       DVertex* v = m_top_traits->discontinuity_vertex(xc, ARR_MAX_END);
 

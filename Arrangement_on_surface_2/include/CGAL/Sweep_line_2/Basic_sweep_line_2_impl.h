@@ -762,7 +762,6 @@ _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
     // looked for it.
     m_queue->insert_before(pair_res.first, e);
   }
-  
   return (std::make_pair(e, !exist));
 }
 

@@ -52,7 +52,7 @@ struct Integer_hash_function {
 /*! \class Arr_construction_sl_visitor
  * A sweep-line visitor for constructing an arrangement embedded on a surface.
  */
-template <class Helper_> 
+template <typename Helper_> 
 class Arr_construction_sl_visitor : public Helper_::Base_visitor {
 public:
   typedef Helper_                                      Helper;
@@ -79,9 +79,8 @@ protected:
 
   typedef typename Helper::Indices_list                Indices_list;
   typedef typename Helper::Halfedge_indices_map        Halfedge_indices_map;
-  typedef Unique_hash_map<unsigned int,
-                          Vertex_handle,
-                          Integer_hash_function>       Iso_vertices_map;
+  typedef Unique_hash_map<unsigned int, Vertex_handle, Integer_hash_function>
+                                                       Iso_vertices_map;
 
 protected:
   Helper m_helper;                          // The helper class.
@@ -118,9 +117,7 @@ public:
     m_sc_counter(0),
     m_sc_he_table(1),
     m_invalid_vertex()
-  {
-    m_helper.set_halfedge_indices_map(m_he_indices_table);
-  }
+  { m_helper.set_halfedge_indices_map(m_he_indices_table); }
 
   /*! Destructor. */
   virtual ~Arr_construction_sl_visitor() {}
@@ -217,9 +214,7 @@ public:
 
   /*! Get the last event associated with the given subcurve. */
   Event* last_event_on_subcurve(Subcurve* sc)
-  {
-    return (reinterpret_cast<Event*>((sc)->last_event()));
-  }
+  { return (reinterpret_cast<Event*>((sc)->last_event())); }
 
 private:
   /// \name Auxiliary functions.
@@ -231,9 +226,7 @@ private:
    * from this base class.
    */
   inline const typename Arrangement_2::Point_2& _point(const Point_2& p) const
-  {
-    return (static_cast<const typename Arrangement_2::Point_2&>(p));
-  }
+  { return (static_cast<const typename Arrangement_2::Point_2&>(p)); }
 
   /*!
    * Cast a Traits::X_monotone_curve_2 object into an
@@ -258,13 +251,10 @@ private:
 
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
-//
-template <class Hlpr> 
+// Notifies the helper that the sweep process now starts.
+template <typename Hlpr> 
 void Arr_construction_sl_visitor<Hlpr>::before_sweep()
-{
-  // We just have to notify the helper that the sweep process now starts.
-  m_helper.before_sweep();
-}
+{ m_helper.before_sweep(); }
 
 //-----------------------------------------------------------------------------
 // A notification invoked before the sweep-line starts handling the given
@@ -284,7 +274,7 @@ void Arr_construction_sl_visitor<Hlpr>::before_handle_event(Event* event)
 // A notification invoked after the sweep-line finishes handling the given
 // event.
 //
-template <class Hlpr> 
+template <typename Hlpr> 
 bool Arr_construction_sl_visitor<Hlpr>::
 after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 {
@@ -298,9 +288,9 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
     // There are no incident subcurves, so this event is an isolated vertex.
     // We map the current index to this vertex, and add this index to the
     // indices list of the curve the vertex "sees" from below.
-    Vertex_handle  v = insert_isolated_vertex(event->point(), iter);
+    Vertex_handle v = insert_isolated_vertex(event->point(), iter);
 
-    m_sc_counter++;
+    ++m_sc_counter;
     m_iso_verts_map[m_sc_counter] = v;
     _map_new_halfedge(m_sc_counter, Halfedge_handle());
 
@@ -320,26 +310,23 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
     }
 
     // The event can now be deallocated.
-    return (true);
+    return true;
   }
 
   // TODO EBEB 2012-10-16 compile only when non-oblivious
   if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
     if (!this->is_status_line_empty()) {
       Status_line_iterator prev = iter; 
-      for (unsigned i = 0; i < event->number_of_right_curves(); i++) {
-        --prev;
-      }
+      for (unsigned i = 0; i < event->number_of_right_curves(); ++i) --prev;
       // move items from top face to last inserted curve
-      Indices_list& list_ref = (*prev)->halfedges_indices_list();
+      Indices_list& list_ref = (*prev)->halfedge_indices_list();
       list_ref.clear();
       list_ref.splice(list_ref.end(), m_helper.halfedge_indices_list());
 
-#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
-      for (typename Indices_list::const_iterator it = list_ref.begin();
-           it != list_ref.end(); it++) {
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
+      typename Indices_list::const_iterator it;
+      for (it = list_ref.begin(); it != list_ref.end(); ++it)
         std::cout << "moved " << *it << " from top to below" << std::endl;
-      }
 #endif
     }
   }
@@ -352,11 +339,11 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
     // associated with a point that may be the leftmost one in a hole.
     // We give index to the topmost subcurve from the right, and add this
     // vertex indices list of the curve the event "sees" from below.
-    m_sc_counter++;
+    ++m_sc_counter;
     (*(event->right_curves_rbegin()))->set_index(m_sc_counter);
     if (iter != this->status_line_end()) {
       // The vertex "sees" the subcurve of the given position from below.
-      Subcurve *sc_above = *iter;
+      Subcurve* sc_above = *iter;
       sc_above->add_halfedge_index(m_sc_counter);
     }
     else {
@@ -383,7 +370,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
   if (event->number_of_right_curves() == 0) {
     // Inform the helper class that the event will soon be deallocated.
     m_helper.before_deallocate_event(event);
-    return (true);
+    return true;
   }
 
   // Mark that all right subcurves incident to the current event are not
@@ -401,13 +388,13 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
   }
 
   // Mark that the event cannot be deallocated just yet.
-  return (false); 
+  return false; 
 }
 
 //-----------------------------------------------------------------------------
 // A notification invoked when a new subcurve is created.
 //
-template <class Hlpr> 
+template <typename Hlpr> 
 void Arr_construction_sl_visitor<Hlpr>::
 add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 {
@@ -548,10 +535,8 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
   if ((last_event->number_of_left_curves() == 0) &&
       last_event->is_curve_largest((Subcurve*)sc))
   {
-
-    if (last_event->vertex_handle() == m_invalid_vertex) {
+    if (last_event->vertex_handle() == m_invalid_vertex)
       last_event->set_halfedge_handle(res->twin());
-    }
     
     // If sc has valid index, insert its index to m_sc_he_table.
     if (sc->has_valid_index()) {
@@ -561,9 +546,8 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
   }
 
   // Update the halfedge handle associated with the current event.
-  if (this->current_event()->vertex_handle() == m_invalid_vertex) {
+  if (this->current_event()->vertex_handle() == m_invalid_vertex)
       this->current_event()->set_halfedge_handle(res);
-  }
 
   // In case the event has no more right subcurves associated with it, we can
   // deallocate it. Note that we inform the helper class before deallocating
@@ -580,7 +564,7 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 //-----------------------------------------------------------------------------
 // Insert the given subcurve in the interior of an arrangement face.
 //
-template <class Hlpr>
+template <typename Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
 Arr_construction_sl_visitor<Hlpr>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
@@ -623,13 +607,13 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
   // Notify the helper on the creation of the new halfedge.
   m_helper.add_subcurve(res, sc);
 
-  return (res);
+  return res;
 }
 
 //-----------------------------------------------------------------------------
 // Insert the given subcurve using its two end-vertices.
 //
-template <class Hlpr>
+template <typename Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
 Arr_construction_sl_visitor<Hlpr>::
 insert_at_vertices(const X_monotone_curve_2& cv,
@@ -676,17 +660,13 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   Halfedge_handle curr1 = prev1->next();
   bool found2 = false;
   while (curr1 != prev1) {
-    if (curr1 == prev2) {
-      found2 = true;
-    }
+    if (curr1 == prev2) found2 = true;
     curr1 = curr1->next();
   }
   Halfedge_handle curr2 = prev2->next();
   bool found1 = false;
   while (curr2 != prev2) {
-    if (curr2 == prev1) {
-      found1 = true;
-    }
+    if (curr2 == prev1) found1 = true;
     curr2 = curr2->next();
   }
   if (found1 && found2) {
@@ -733,20 +713,15 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   res = m_arr_access.insert_at_vertices_ex(prev1, _curve(cv), ARR_RIGHT_TO_LEFT,
                                            prev2->next(), new_face_created,
                                            check_swapped_predecessors);
-  if (check_swapped_predecessors)
-    res = res->twin();
+  if (check_swapped_predecessors) res = res->twin();
 #endif
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
   if (sc->has_halfedge_indices()) {
     Halfedge_handle he = res;
-    
-    if (swap_preds)
-      he = he->twin();
-
+    if (swap_preds) he = he->twin();
     CGAL_assertion(he->direction() == ARR_RIGHT_TO_LEFT);
-
     Indices_list& list_ref = m_he_indices_table[he];
     list_ref.clear();
     list_ref.splice(list_ref.end(), sc->halfedge_indices_list());
@@ -767,13 +742,13 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     this->relocate_in_new_face(res);
   }
 
-  return (res);
+  return res;
 }
 
 //-----------------------------------------------------------------------------
 // Insert the given subcurve from a vertex that corresponds to its right end.
 //
-template <class Hlpr>
+template <typename Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
 Arr_construction_sl_visitor<Hlpr>::
 insert_from_right_vertex(const X_monotone_curve_2& cv,
@@ -801,7 +776,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
   // Insert the curve given its left vertex and the predecessor around the
   // right vertex.
-  Halfedge_handle  res =
+  Halfedge_handle res =
     m_arr_access.insert_from_vertex_ex(prev, _curve(cv), ARR_RIGHT_TO_LEFT, v);
 
   // Map the new halfedge to the indices list of all subcurves that lie
@@ -815,14 +790,13 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
   // Notify the helper on the creation of the new halfedge.
   m_helper.add_subcurve(res, sc);
-
-  return (res);
+  return res;
 }
 
 //-----------------------------------------------------------------------------
 // Insert the given subcurve from a vertex that corresponds to its left end.
 //
-template <class Hlpr>
+template <typename Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
 Arr_construction_sl_visitor<Hlpr>::
 insert_from_left_vertex(const X_monotone_curve_2& cv,
@@ -864,14 +838,13 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
   // Notify the helper on the creation of the new halfedge.
   m_helper.add_subcurve(res, sc);
-
-  return (res);
+  return res;
 }
 
 //-----------------------------------------------------------------------------
 // Insert an isolated vertex into the arrangement.
 //
-template <class Hlpr>
+template <typename Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Vertex_handle
 Arr_construction_sl_visitor<Hlpr>::
 insert_isolated_vertex(const Point_2& pt, Status_line_iterator /* iter */)
@@ -888,7 +861,7 @@ insert_isolated_vertex(const Point_2& pt, Status_line_iterator /* iter */)
 //-----------------------------------------------------------------------------
 // Reloacte holes and isolated vertices inside a newly created face.
 //
-template <class Hlpr>
+template <typename Hlpr>
 void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
 {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
@@ -896,9 +869,6 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
   std::cout << "HeCv: " << he->curve() << std::endl;
   std::cout << "HeDi: " << he->direction() << std::endl;
 #endif
-
-  // We use a constant indices map so no new entries are added there.
-  const Halfedge_indices_map& const_he_indices_table = m_he_indices_table;
 
   // Go along the boundary of the new face.
   Face_handle                 new_face = he->face();
@@ -919,9 +889,8 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
     
     // Get the indices list associated with the current halfedges, representing
     // the halfedges and isolated vertices that "see" it from above.
-    const Indices_list& indices_list = const_he_indices_table[curr_he];
+    const Indices_list& indices_list = m_he_indices_table[curr_he];
     typename Indices_list::const_iterator itr;
-
     for (itr = indices_list.begin(); itr != indices_list.end(); ++itr) {
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
       std::cout << "itr: " << *itr << std::endl;
@@ -933,16 +902,13 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
       // not yet mapped. This can happen only if this halfedge is he itself.
       // As we know that he lies on the outer CCB of the new face, it is
       // definitely not a hole in the face, therefore we can ignore it.
-      if ((*itr > m_sc_counter) || (*itr >= m_sc_he_table.size()))
-        continue; 
+      if ((*itr > m_sc_counter) || (*itr >= m_sc_he_table.size())) continue; 
       
       Halfedge_handle he_on_face = m_sc_he_table[*itr];
-          
       if (he_on_face == invalid_he) {
         // If the halfedge handle is invalid, then we have an index for an
         // isolated vertex. Move this vertex to the new face, if necessary.
         v = m_iso_verts_map[*itr];
-        
         CGAL_assertion(v != m_invalid_vertex);
         if (v->face() != new_face) {
           m_arr_access.move_isolated_vertex(v->face(), new_face, v);
@@ -951,10 +917,9 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
       else {
         // If necessary, move the hole that the halfedge belongs to into the
         // new face.
-        if (he_on_face->twin()->face() != new_face &&
+        if ((he_on_face->twin()->face() != new_face) &&
             he_on_face->twin()->is_on_inner_ccb())
         {
-          //std::cout << "move inner ccb " << std::endl;
           m_arr_access.move_inner_ccb(he_on_face->twin()->face(),
                                       new_face,
                                       he_on_face->twin()->ccb());
@@ -975,7 +940,7 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
 //-----------------------------------------------------------------------------
 // Map the given subcurve index to the given halfedge handle.
 //
-template <class Hlpr>
+template <typename Hlpr>
 void Arr_construction_sl_visitor<Hlpr>::
 _map_new_halfedge(unsigned int i, Halfedge_handle he)
 {
@@ -985,8 +950,7 @@ _map_new_halfedge(unsigned int i, Halfedge_handle he)
 #endif
   CGAL_assertion(i != 0);
   // Resize the index table if needed.
-  if (i >= m_sc_he_table.size())
-    m_sc_he_table.resize(i+1);
+  if (i >= m_sc_he_table.size()) m_sc_he_table.resize(i+1);
   
   // Map the index to the given halfedge handle.
   m_sc_he_table[i] = he;

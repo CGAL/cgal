@@ -74,7 +74,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
-{ 
+{
   CGAL_PRINT("Handling left curve" << std::endl);
   
   this->m_is_event_on_above = false;
@@ -116,7 +116,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
       
       // If necessary, add the subcurves as a right incident curve as well.
       // We also check for overlaps.
-      bool       is_overlap = _add_curve_to_right(this->m_currentEvent, sc);
+      bool is_overlap = _add_curve_to_right(this->m_currentEvent, sc);
       
       this->m_traits->split_2_object()(last_curve,
                                        this->m_currentEvent->point(), 
