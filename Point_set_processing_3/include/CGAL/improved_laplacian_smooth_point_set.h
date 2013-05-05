@@ -188,7 +188,7 @@ improved_laplacian_smooth_point(
 /// \pre `k >= 2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadWritePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
@@ -241,7 +241,7 @@ improved_laplacian_smooth_point_set(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point& p0 = get(point_pmap,it);
 #else
-    Point& p0 = get(point_pmap,*it);
+    const Point& p0 = get(point_pmap,*it);
 #endif
     treeElements.push_back(KdTreeElement(p0,i));
   }
@@ -266,7 +266,7 @@ improved_laplacian_smooth_point_set(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
           Point& p0  = get(point_pmap,it);
 #else
-          Point& p0  = get(point_pmap,*it);
+          const Point& p0  = get(point_pmap,*it);
 #endif
           Point np   = improved_laplacian_smoothing_i::laplacian_smooth_point<Kernel>(p0,tree,k);
           b[i]       = alpha*(np - p0) + (1-alpha)*(np - p[i]);
@@ -284,8 +284,12 @@ improved_laplacian_smooth_point_set(
   // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first, i=0; it != beyond; it++, ++i)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point& p0 = get(point_pmap,it);
     p0 = p[i];
+#else
+    put(point_pmap, *it, p[i]);
+#endif
   }
 }
 
