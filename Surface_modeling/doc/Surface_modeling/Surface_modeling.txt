@@ -101,6 +101,10 @@ preserves Laplacians of free vertices (upper side of the system) while satisfyin
 
 The constructed matrix in Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square nonsymmetric sparse matrix and an appropriate solver (e.g. LU solver) should be used.
 
+\note This section is introduced to provide a background for the next sections. 
+A system relying on solely the mentioned approach above can cause non-smooth translations on the handle boundaries which may or may not be desirable.
+For different Laplacian-based editing techniques please refer to \cite Botsch2008OnLinearVariational."
+
 \subsection Surface_Modeling_Overview_ARAP As-Rigid-As Possible Deformation
 
 The energy function proposed to be minimized in \cite Sorkine2007AsRigidAs under modeling constraints for a mesh structure \f$M\f$ is:
@@ -289,7 +293,7 @@ Some cases for such failure are:
 	- Using custom weights which contain too many zero weights, so that the connectivity is broken.
 	
 Calling the preprocess function is optional, which means it is called by `Deform_mesh::deform`, if there is any need to. 
-Of course, it might cause a delay in corresponding function due to the preprocess computations. 
+Of course, it might cause a delay in first `Deform_mesh::deform` call due to the extra preprocess computations. 
 
 \note The ROI does not have to be a single connected component, however considering performance issues it is best to use an individual deformation object for each connected component of the ROI. 
 The main performance gain in such a case is related to the factorization process (i.e. `Deform_mesh::preprocess`). 
@@ -314,7 +318,8 @@ The second possibility offered by the API is to set translation and rotation for
 `rotate` and `translate` operate on <i>original positions</i> (i.e. positions of vertices at the time of construction) of handle vertices.
 Hence, they are not accumulative (i.e. any call to `rotate`, `translate`, or `assign` overrides previous calls).
 
-Note that changing target positions of handle vertices has no immediate effect on actual positions.
+Note that changing target positions of handle vertices (via `translate`, `rotate`, and `assign`) 
+has no immediate effect on actual positions until `Deform_mesh::deform` is called.
 Also unconstrained handles will be constrained to their last target positions.
 
 \anchor deform_method
