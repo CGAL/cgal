@@ -141,7 +141,12 @@ write_off_points_and_normals(
   return write_off_points_and_normals(
     stream,
     first, beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<ForwardIterator>::type()),
+#endif
     normal_pmap);
 }
 /// @endcond
