@@ -105,7 +105,7 @@ radial_orient_normals(
 
       // Point's normal
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-      Vector vec2 = normal_pmap[it]; 
+      Vector vec2 = get(normal_pmap, it);
 #else
       Vector vec2 = get(normal_pmap, *it);
 #endif
@@ -117,7 +117,7 @@ radial_orient_normals(
         vec2 = -vec2;
 
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-      it->normal() = vec2; 
+      put(normal_pmap, it, vec2); 
 #else
       put(normal_pmap, *it, vec2);
 #endif
