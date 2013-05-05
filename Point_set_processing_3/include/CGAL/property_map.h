@@ -78,7 +78,7 @@ struct Typed_identity_property_map_by_reference
   typedef T& reference; ///< typedef to `T&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
   /// Access a property map element.
-  /// @param v a key which is returned as mapped value.
+  /// @param k a key which is returned as mapped value.
   reference operator[](key_type& k) const { return k; }
 
   typedef Typed_identity_property_map_by_reference<T> Self;
