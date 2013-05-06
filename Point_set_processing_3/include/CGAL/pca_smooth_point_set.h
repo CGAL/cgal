@@ -97,11 +97,11 @@ pca_smooth_point(
 
 } /* namespace internal */
 
-
 // ----------------------------------------------------------------------------
 // Public section
 // ----------------------------------------------------------------------------
 
+/// \cond SKIP_IN_MANUAL
 /// \ingroup PkgPointSetProcessing
 /// Smoothes the `[first, beyond)` range of points using pca on the k
 /// nearest neighbors and reprojection onto the plane.
@@ -111,7 +111,7 @@ pca_smooth_point(
 /// \pre `k >= 2`
 ///
 /// @tparam InputIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadWritePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
@@ -165,15 +165,16 @@ pca_smooth_point_set(
   // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first; it != beyond; it++)
   {
-    
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
-    Point& p = get(point_pmap, it);
+    const Point& p = get(point_pmap, it);
+    put(point_pmap, it, internal::pca_smooth_point<Kernel>(p,tree,k) );
 #else
-    Point& p = get(point_pmap, *it);
+    const Point& p = get(point_pmap, *it);
+    put(point_pmap, *it, internal::pca_smooth_point<Kernel>(p,tree,k) );
 #endif 
-    p = internal::pca_smooth_point<Kernel>(p,tree,k);
   }
 }
+/// @endcond
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
