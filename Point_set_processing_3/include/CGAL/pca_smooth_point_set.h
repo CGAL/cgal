@@ -97,7 +97,6 @@ pca_smooth_point(
 
 } /* namespace internal */
 
-
 // ----------------------------------------------------------------------------
 // Public section
 // ----------------------------------------------------------------------------
@@ -112,7 +111,7 @@ pca_smooth_point(
 /// \pre `k >= 2`
 ///
 /// @tparam InputIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadWritePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
@@ -126,7 +125,7 @@ void
 pca_smooth_point_set(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& kernel) ///< geometric traits.
 {
@@ -153,7 +152,11 @@ pca_smooth_point_set(
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     Point point = get(point_pmap, it);
+#else
+    Point point = get(point_pmap, *it);
+#endif  
     kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -162,8 +165,13 @@ pca_smooth_point_set(
   // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first; it != beyond; it++)
   {
-    Point& p = get(point_pmap, it);
-    p = internal::pca_smooth_point<Kernel>(p,tree,k);
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    const Point& p = get(point_pmap, it);
+    put(point_pmap, it, internal::pca_smooth_point<Kernel>(p,tree,k) );
+#else
+    const Point& p = get(point_pmap, *it);
+    put(point_pmap, *it, internal::pca_smooth_point<Kernel>(p,tree,k) );
+#endif 
   }
 }
 /// @endcond
@@ -177,7 +185,7 @@ void
 pca_smooth_point_set(
   InputIterator first, ///< iterator over the first input point
   InputIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k) ///< number of neighbors.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -191,7 +199,7 @@ pca_smooth_point_set(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename InputIterator
 >
 void
@@ -202,7 +210,12 @@ pca_smooth_point_set(
 {
   pca_smooth_point_set(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<InputIterator>::type()),
+#endif
     k);
 }
 /// @endcond

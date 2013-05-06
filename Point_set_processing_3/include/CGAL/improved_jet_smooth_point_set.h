@@ -205,7 +205,7 @@ improved_jet_smooth_point(
 /// \pre `k >= 2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadWritePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
@@ -219,7 +219,7 @@ void
 improved_jet_smooth_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const unsigned int iter_number, ///< number of iterations.
   const Kernel& kernel, ///< geometric traits.
@@ -255,15 +255,25 @@ improved_jet_smooth_point_set(
   std::vector<KdTreeElement> treeElements;
   for (it = first, i=0 ; it != beyond ; ++it,++i)
   {
-    Point& p0 = get(point_pmap,it);
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    const Point& p0 = get(point_pmap,it);
+#else
+    const Point& p0 = get(point_pmap,*it);
+#endif
     treeElements.push_back(KdTreeElement(p0,i));
   }
   Tree tree(treeElements.begin(), treeElements.end());
 
   std::vector<Point>  p(nb_points); // positions at step iter_n
   std::vector<Vector> b(nb_points); // ...
-  for(it = first, i=0; it != beyond; it++, ++i)
-      p[i] = get(point_pmap,it);
+  for(it = first, i=0; it != beyond; it++, ++i) {
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    p[i] = get(point_pmap,it);
+#else
+    p[i] = get(point_pmap,*it);
+#endif
+  }
+      
 
   // loop until convergence
   for(int iter_n = 0; iter_n < iter_number ; ++iter_n)
@@ -273,7 +283,11 @@ improved_jet_smooth_point_set(
       // Iterates over input points, computes (original) Laplacian smoothing and b[].
       for(it = first, i=0; it != beyond; it++, ++i)
       {
-          Point& p0  = get(point_pmap,it);
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+          const Point& p0  = get(point_pmap,it);
+#else
+          const Point& p0  = get(point_pmap,*it);
+#endif
           Point np   = improved_jet_smoothing_i::jet_smooth_point<Kernel>(p0,tree,kk);
           b[i]       = alpha*(np - p0) + (1-alpha)*(np - p[i]);
           p[i]       = np;
@@ -290,8 +304,11 @@ improved_jet_smooth_point_set(
   // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first, i=0; it != beyond; it++, ++i)
   {
-    Point& p0 = get(point_pmap,it);
-    p0 = p[i];
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    put(point_pmap, it, p[i]);
+#else
+    put(point_pmap, *it, p[i]);
+#endif
   }
 }
 
@@ -305,7 +322,7 @@ void
 improved_jet_smooth_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   const unsigned int iter_number,
   FT alpha,
@@ -324,7 +341,7 @@ improved_jet_smooth_point_set(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename ForwardIterator,
           typename FT
 >
@@ -339,7 +356,12 @@ improved_jet_smooth_point_set(
 {
   return improved_jet_smooth_point_set(
     first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<ForwardIterator>::type()),
+#endif
     k,
     iter_number,
     alpha, beta);

@@ -4,6 +4,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/property_map.h>
 #include <boost/iterator/zip_iterator.hpp>
 #include <utility>
 
@@ -11,23 +12,11 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef boost::tuple<Point_3,int> Point_and_int;
 
-//definition of the property map
-struct My_point_property_map{
-  typedef Point_3 value_type;
-  typedef const value_type& reference;
-  typedef const Point_and_int& key_type;
-  typedef boost::readable_property_map_tag category;
-};
-
-//get function for the property map
-My_point_property_map::reference 
-get(My_point_property_map,My_point_property_map::key_type p)
-{return boost::get<0>(p);}
-
-
 typedef CGAL::Random_points_in_cube_3<Point_3>                                          Random_points_iterator;
 typedef CGAL::Search_traits_3<Kernel>                                                   Traits_base;
-typedef CGAL::Search_traits_adapter<Point_and_int,My_point_property_map,Traits_base>    Traits;
+typedef CGAL::Search_traits_adapter<Point_and_int,
+  CGAL::Nth_of_tuple_property_map<0, Point_and_int>,
+  Traits_base>    Traits;
 
 
 typedef CGAL::Orthogonal_k_neighbor_search<Traits>                      K_neighbor_search;

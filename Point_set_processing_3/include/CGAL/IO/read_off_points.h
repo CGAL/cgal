@@ -64,8 +64,8 @@ bool
 read_off_points_and_normals(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map OutputIterator -> Vector_3.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
@@ -137,8 +137,13 @@ read_off_points_and_normals(
             }
           }
         Enriched_point pwn;
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
         put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
         put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+#else
+        put(point_pmap,  pwn, point);  // point_pmap[&pwn] = point
+        put(normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
+#endif
         *output++ = pwn;
         pointsRead++;
       }
@@ -160,8 +165,8 @@ bool
 read_off_points_and_normals(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
-  NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
+  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -175,7 +180,7 @@ read_off_points_and_normals(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename OutputIterator,
           typename NormalPMap
 >
@@ -183,12 +188,17 @@ bool
 read_off_points_and_normals(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
+  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
 {
   return read_off_points_and_normals(
     stream,
     output,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(output),
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<OutputIterator>::type()),
+#endif
     normal_pmap);
 }
 /// @endcond
@@ -218,7 +228,7 @@ bool
 read_off_points(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
   const Kernel& kernel) ///< geometric traits.
 {
   // Calls read_off_points_and_normals() with a normal property map = boost::dummy_property_map
@@ -239,7 +249,7 @@ bool
 read_off_points(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap) ///< property map OutputIterator -> Point_3.
+  PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -252,7 +262,7 @@ read_off_points(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Typed_identity_property_map_by_reference.
 template <typename OutputIterator
 >
 bool
@@ -263,7 +273,13 @@ read_off_points(
   return read_off_points(
     stream,
     output,
-    make_dereference_property_map(output));
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    make_dereference_property_map(first)
+#else
+    make_typed_identity_property_map_by_reference(
+    typename value_type_traits<OutputIterator>::type())
+#endif
+    );
 }
 /// @endcond
 

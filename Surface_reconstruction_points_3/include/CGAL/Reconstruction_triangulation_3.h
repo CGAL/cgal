@@ -372,8 +372,8 @@ public:
   int insert(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map to access the position of an input point.
-    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
+    PointPMap point_pmap, ///< property map: `value_type of InputIterator` -> `Point_3` (the position of an input point).
+    NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector_3` (the *oriented* normal of an input point).
     Visitor visitor)
   {
     if(! points.empty()){
@@ -383,8 +383,12 @@ public:
     //std::vector<Point_with_normal> points;
     for (InputIterator it = first; it != beyond; ++it)
     {
-        Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
-        points.push_back(pwn);
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+      Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
+#else
+      Point_with_normal pwn(get(point_pmap,*it), get(normal_pmap,*it));
+#endif
+      points.push_back(pwn);
     }
     std::size_t n = points.size();
 
@@ -435,7 +439,7 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  // This variant creates a default point property map = Dereference_property_map.
+  // This variant creates a default point property map = Typed_identity_property_map_by_reference.
   template <typename InputIterator,
             typename NormalPMap,
             typename Visitor
@@ -443,12 +447,17 @@ public:
   int insert(
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
-    NormalPMap normal_pmap, ///< property map to access the *oriented* normal of an input point.
+    NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector_3` (the *oriented* normal of an input point).
     Visitor visitor)
   {
     return insert(
       first,beyond,
+#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
       make_dereference_property_map(first),
+#else
+      make_typed_identity_property_map_by_reference(
+      typename value_type_traits<InputIterator>::type()),
+#endif
       normal_pmap,
       visitor);
   }

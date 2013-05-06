@@ -61,11 +61,11 @@ The following classes described in Chapter \ref chapterProperty_map
 provide property maps for the implementations of points with normals
 listed above:
 
-- `Dereference_property_map<T>` 
+- `Typed_identity_property_map_by_reference<T>`  
 - `First_of_pair_property_map<Pair>` and `Second_of_pair_property_map<Pair>` 
 - `Nth_of_tuple_property_map<N, Tuple>` 
 
-`Dereference_property_map<Point_3>` is the default value of the
+`Typed_identity_property_map_by_reference<Point_3>` is the default value of the
 position property map expected by all functions in this component.
 
 See below examples using pair and tuple property maps.
@@ -128,7 +128,7 @@ input points in increasing order of average squared distances to their
 \subsection Point_set_processing_3Example_2 Example
 
 The following example reads a point set and removes 5% of the
-points. It uses the `Dereference_property_map<Point_3>` property
+points. It uses the `Typed_identity_property_map_by_reference<Point_3>` property
 map (optional as it is the default position property map of all
 functions in this component.)
 \cgalExample{Point_set_processing_3/remove_outliers_example.cpp}
