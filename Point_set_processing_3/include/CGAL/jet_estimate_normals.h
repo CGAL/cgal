@@ -251,7 +251,7 @@ jet_estimate_normals(
     make_dereference_property_map(first),
 #else
     make_typed_identity_property_map_by_reference(
-    typename value_type_traits<InputIterator>::type()),
+    typename value_type_traits<ForwardIterator>::type()),
 #endif
     normal_pmap,
     k,
