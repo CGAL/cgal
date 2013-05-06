@@ -103,7 +103,7 @@ The constructed matrix in Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square nons
 
 \note This section is introduced to provide a background for the next sections. 
 A system relying on solely the mentioned approach above can cause non-smooth translations on the handle boundaries which may or may not be desirable.
-For different Laplacian-based editing techniques please refer to \cite Botsch2008OnLinearVariational."
+For different Laplacian-based editing techniques please refer to \cite Botsch2008OnLinearVariational.
 
 \subsection Surface_Modeling_Overview_ARAP As-Rigid-As Possible Deformation
 
