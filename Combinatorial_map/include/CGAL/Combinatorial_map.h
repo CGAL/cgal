@@ -2014,11 +2014,13 @@ namespace CGAL {
       internal::Flip_map_functor<Self>::run(this);
     }
     
-    /** Reverse the orientation (swap beta 0 & 1 links) of the cells connected to the given dart.
+    /** Reverse the orientation (swap beta 0 & 1 links) of the connected
+     * component containing the given dart.
+     * A valid map after this operation remains valid.
      * @param adart handle to a dart
      * @return none
      */
-    void connected_inside_out (Dart_handle adart)
+    void inside_out_connected_component (Dart_handle adart)
     {
       internal::Flip_connected_components_functor<Self>::run(this, adart);
     }
