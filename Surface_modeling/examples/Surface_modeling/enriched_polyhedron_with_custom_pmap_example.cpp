@@ -37,12 +37,10 @@ typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map> Deform_m
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("models/plane.off");
+  std::ifstream input("data/plane.off");
 
-  if (input)
-    input >> mesh;
-  else{
-    std::cerr<< "Cannot open  models/plane.off";
+  if ( !input || !(input >> mesh) || mesh.empty() ) {
+    std::cerr<< "Cannot open  data/plane.off";
     return 1;
   }
 

@@ -58,12 +58,10 @@ Iterator next_helper(Iterator it, std::size_t n) {
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("models/plane.off");
+  std::ifstream input("data/plane.off");
 
-  if (input)
-    input >> mesh;
-  else{
-    std::cerr<< "Cannot open  models/plane.off";
+  if ( !input || !(input >> mesh) || mesh.empty() ) {
+    std::cerr<< "Cannot open  data/plane.off";
     return 1;
   }
 
