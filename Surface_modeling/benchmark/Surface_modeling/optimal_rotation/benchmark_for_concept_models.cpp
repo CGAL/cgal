@@ -13,7 +13,7 @@
 // Warning: we require more functionality than requested in DeformationClosestRotationTraits_3,
 // so this benchmark may not compile with other models of DeformationClosestRotationTraits_3
 template<class DeformationClosestRotationTraits_3>
-void benchmark()
+void benchmark(int iteration_count = 1)
 {
   typedef typename DeformationClosestRotationTraits_3::Matrix Matrix;
 
@@ -43,8 +43,10 @@ void benchmark()
   }
   std::cerr << "Reading matrices from file is completed ( "<< matrices.size() << " number of matrices )." << std::endl;
 
-  std::cerr << "Starting benchmark for " << matrices.size() << " matrices..." << std::endl;
+  std::cerr << "Starting benchmark for " << matrices.size() << " matrices, and solving " << 
+    iteration_count << " times..." << std::endl;
   CGAL::Timer task_timer; task_timer.start();
+  for(int i = 0; i < iteration_count; ++i )
   for(typename std::vector<Matrix>::iterator it = matrices.begin();
     it != matrices.end(); ++it) {
       model.compute_close_rotation(*it, R);
@@ -56,15 +58,16 @@ void benchmark()
 
 
 int main() {
+  const int multiple_iterate = 50;
 
   std::cerr << "Benchmark for Deformation_Eigen_closest_rotation_traits_3 (Eigen SVD): " << std::endl;
-  benchmark<CGAL::Deformation_Eigen_closest_rotation_traits_3>();
+  benchmark<CGAL::Deformation_Eigen_closest_rotation_traits_3>(multiple_iterate);
 
   std::cerr << "Benchmark for Deformation_Eigen_polar_closest_rotation_traits_3 (Eigen polar(as a filter) and SVD(as a gold standard)): " << std::endl;
-  benchmark<CGAL::Deformation_Eigen_polar_closest_rotation_traits_3>();
+  benchmark<CGAL::Deformation_Eigen_polar_closest_rotation_traits_3>(multiple_iterate);
 
   std::cerr << "Benchmark for Deformation_fast_SVD_closest_rotation_traits_3 (fast SVD code with SSE): " << std::endl;
-  benchmark<CGAL::Deformation_fast_SVD_closest_rotation_traits_3>();
+  benchmark<CGAL::Deformation_fast_SVD_closest_rotation_traits_3>(multiple_iterate);
 
   std::cerr << "All done!" << std::endl;
 }
