@@ -2,11 +2,10 @@
 #define CGAL_DEFORMATION_EIGEN_POLAR_CLOSEST_ROTATION_TRAITS_3_H
 /// @cond CGAL_DOCUMENT_INTERNAL
 
-#include <Eigen/Eigen>
-#include <Eigen/SVD>
-
 #include <CGAL/Deformation_Eigen_closest_rotation_traits_3.h>
+#include <CGAL/FPU_extension.h>
 #include <CGAL/Profile_counter.h>
+
 namespace CGAL {
   /// \ingroup PkgSurfaceModeling
   /// A wrapper class to compute closest rotation to a 3x3 Matrix using `Eigen` library.
@@ -21,14 +20,14 @@ namespace CGAL {
 
     /// Computes closest rotation to `m` and places it into `R`
     /// Warning: it is adapted from previous experimental code, and not checked deeply
-    void compute_closest_rotation(const Matrix& m, Matrix& R)
+    void compute_close_rotation(const Matrix& m, Matrix& R)
     {
       CGAL_PROFILER(" times closest rotation is computed");
       bool solved = polar_eigen(m, R);
 
       if(!solved) { 
         CGAL_PROFILER(" times polar_eigen failed and SVD is called");
-        Deformation_Eigen_closest_rotation_traits_3::compute_closest_rotation(m, R); 
+        Deformation_Eigen_closest_rotation_traits_3::compute_close_rotation(m, R); 
       }       
     }
 
