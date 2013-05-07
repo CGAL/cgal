@@ -74,10 +74,10 @@ namespace CGAL {
     friend struct internal::link_beta_functor;
       
     template <typename CMap, typename Attrib>
-    friend struct internal::Flip_map_functor;
+    friend struct internal::Reverse_orientation_of_map_functor;
 
     template <typename CMap, typename Attrib>
-    friend struct internal::Flip_connected_components_functor;
+    friend struct internal::Reverse_orientation_of_conected_component_functor;
 
   public:
     typedef Dart<d,Refs>                     Self;

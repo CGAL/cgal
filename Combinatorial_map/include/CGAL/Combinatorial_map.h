@@ -2009,9 +2009,9 @@ namespace CGAL {
      * @param none
      * @return none
      */
-    void inside_out()
+    void reverse_orientation()
     {
-      internal::Flip_map_functor<Self>::run(this);
+      internal::Reverse_orientation_of_map_functor<Self>::run(this);
     }
     
     /** Reverse the orientation (swap beta 0 & 1 links) of the connected
@@ -2020,9 +2020,9 @@ namespace CGAL {
      * @param adart handle to a dart
      * @return none
      */
-    void inside_out_connected_component (Dart_handle adart)
+    void reverse_orientation_connected_component (Dart_handle adart)
     {
-      internal::Flip_connected_components_functor<Self>::run(this, adart);
+      internal::Reverse_orientation_of_conected_component_functor<Self>::run(this, adart);
     }
 
     /** Count the marked cells (at least one marked dart).

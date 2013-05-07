@@ -415,7 +415,7 @@ struct Set_i_attribute_of_dart_functor<CMap, i, CGAL::Void>
 // ****************************************************************************
 /// Functor to reverse the orientation of a combinatorial map
 template <typename CMap, typename Attrib = typename CMap::Helper::template Attribute_type<0>::type>
-struct Flip_map_functor
+struct Reverse_orientation_of_map_functor
 {
   static void run(CMap *amap)
   {
@@ -451,7 +451,7 @@ struct Flip_map_functor
   }
 };
 template <typename CMap>
-struct Flip_map_functor<CMap, Void>
+struct Reverse_orientation_of_map_functor<CMap, Void>
 {
   static void run(CMap *amap)
   {
@@ -478,17 +478,15 @@ struct Flip_map_functor<CMap, Void>
 // ****************************************************************************
 /// Functor to reverse the orientation of a set of connected components in a given map
 template <typename CMap, typename Attrib = typename CMap::Helper::template Attribute_type<0>::type>
-struct Flip_connected_components_functor
+struct Reverse_orientation_of_conected_component_functor
 {
   static void run(CMap *amap, typename CMap::Dart_handle adart)
   {
-    //unsigned int flipped_darts = 0, flipped_2cells = 0;
     int mark = amap->get_new_mark();
     CGAL_precondition(amap->is_whole_map_unmarked(mark));
     for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator current_dart = amap->template darts_of_cell<CMap::dimension+1>(adart).begin(),
          last_dart = amap->template darts_of_cell<CMap::dimension+1>(adart).end(); current_dart != last_dart; ++current_dart) {
       if (amap->is_marked(current_dart, mark)) continue;
-      //++flipped_2cells;
       typename CMap::Dart_handle first_dart_in_cell = current_dart;
       typename CMap::Dart_handle current_dart_in_cell = first_dart_in_cell->beta(1);
       typename CMap::Helper::template Attribute_handle<0>::type attribute_for_first_dart = current_dart_in_cell->template attribute<0>();
@@ -501,7 +499,6 @@ struct Flip_connected_components_functor
         current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
         current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
         current_dart_in_cell = current_dart_in_cell->beta(0);
-        //++flipped_darts;
       } while (current_dart_in_cell != first_dart_in_cell);
       amap->mark(current_dart_in_cell, mark);
       typename CMap::Dart_handle previous_dart_in_cell = current_dart_in_cell->beta(0);
@@ -509,17 +506,15 @@ struct Flip_connected_components_functor
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::run(amap, current_dart_in_cell, attribute_for_first_dart);
       current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
       current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
-      //++flipped_darts;
     } for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator current_dart = amap->template darts_of_cell<CMap::dimension+1>(adart).begin(),
            last_dart = amap->template darts_of_cell<CMap::dimension+1>(adart).end(); current_dart != last_dart; ++current_dart) {
       amap->unmark(current_dart, mark);
     } CGAL_postcondition(amap->is_whole_map_unmarked(mark));
     amap->free_mark(mark);
-    //std::cout << "Flip_connected_components_functor::run(): Flipped " << flipped_2cells << " 2-cells, " << flipped_darts << " darts." << std::endl;
   }
 };
 template <typename CMap>
-struct Flip_connected_components_functor<CMap, Void>
+struct Reverse_orientation_of_conected_component_functor<CMap, Void>
 {
   static void run(CMap *amap, typename CMap::Dart_handle adart)
   {
