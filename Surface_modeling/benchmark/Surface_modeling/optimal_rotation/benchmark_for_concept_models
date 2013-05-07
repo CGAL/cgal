@@ -8,20 +8,6 @@
 #include <CGAL/internal/Surface_modeling/Deformation_Eigen_polar_closest_rotation_traits_3.h>
 #include <CGAL/internal/Surface_modeling/auxiliary/Deformation_fast_SVD_closest_rotation_traits_3.h>
 
-int main() {
-
-  std::cerr << "Benchmark for Deformation_Eigen_closest_rotation_traits_3 (Eigen SVD): " << std::endl;
-  benchmark<Deformation_Eigen_closest_rotation_traits_3>();
-
-  std::cerr << "Benchmark for Deformation_Eigen_polar_closest_rotation_traits_3 (Eigen polar(as a filter) and SVD(as a gold standard)): " << std::endl;
-  benchmark<Deformation_Eigen_polar_closest_rotation_traits_3>();
-
-  std::cerr << "Benchmark for Deformation_fast_SVD_closest_rotation_traits_3 (fast SVD code with SSE): " << std::endl;
-  benchmark<Deformation_fast_SVD_closest_rotation_traits_3>();
-
-  std::cerr << "All done!" << std::endl;
-}
-
 // provide a model of DeformationClosestRotationTraits_3
 //
 // Warning: we require more functionality than requested in DeformationClosestRotationTraits_3,
@@ -38,7 +24,7 @@ void benchmark()
   std::ifstream file("SVD_benchmark");
   if (!file) {
     std::cerr << "Error: can not open SVD_benchmark file!" << std::endl;
-    return 1;
+    return;
   }
 
   std::vector<Matrix> matrices;
@@ -55,7 +41,7 @@ void benchmark()
     if(!read_ok) { break; }
     matrices.push_back(m);
   }
-  std::cerr << "Reading matrices from file is completed, (number of matrices read: " << matrices.size() << " )." << std::endl;
+  std::cerr << "Reading matrices from file is completed ( "<< matrices.size() << " number of matrices )." << std::endl;
 
   std::cerr << "Starting benchmark for " << matrices.size() << " matrices..." << std::endl;
   CGAL::Timer task_timer; task_timer.start();
@@ -63,6 +49,22 @@ void benchmark()
     it != matrices.end(); ++it) {
       model.compute_close_rotation(*it, R);
   }
-  std::cerr << "done: " << task_timer.time() << std::endl;
-  
+  std::cerr << "-----------------------------" << std::endl;
+  std::cerr << "Done: " << task_timer.time() << " sc" << std::endl;
+  std::cerr << "-----------------------------" << std::endl;
+}
+
+
+int main() {
+
+  std::cerr << "Benchmark for Deformation_Eigen_closest_rotation_traits_3 (Eigen SVD): " << std::endl;
+  benchmark<CGAL::Deformation_Eigen_closest_rotation_traits_3>();
+
+  std::cerr << "Benchmark for Deformation_Eigen_polar_closest_rotation_traits_3 (Eigen polar(as a filter) and SVD(as a gold standard)): " << std::endl;
+  benchmark<CGAL::Deformation_Eigen_polar_closest_rotation_traits_3>();
+
+  std::cerr << "Benchmark for Deformation_fast_SVD_closest_rotation_traits_3 (fast SVD code with SSE): " << std::endl;
+  benchmark<CGAL::Deformation_fast_SVD_closest_rotation_traits_3>();
+
+  std::cerr << "All done!" << std::endl;
 }
