@@ -214,7 +214,7 @@ pca_smooth_point_set(
     make_dereference_property_map(first),
 #else
     make_typed_identity_property_map_by_reference(
-    typename value_type_traits<InputIterator>::type()),
+    typename std::iterator_traits<InputIterator>::value_type()),
 #endif
     k);
 }

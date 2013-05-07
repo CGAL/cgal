@@ -340,7 +340,7 @@ improved_laplacian_smooth_point_set(
     make_dereference_property_map(first),
 #else
     make_typed_identity_property_map_by_reference(
-    typename value_type_traits<ForwardIterator>::type()),
+    typename std::iterator_traits<ForwardIterator>::value_type()),
 #endif
     k,
     iter_number,

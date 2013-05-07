@@ -30,6 +30,7 @@
 #include <deque>
 #include <algorithm>
 #include <cmath>
+#include <iterator>
 
 #include <CGAL/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
@@ -344,7 +345,7 @@ public:
       make_dereference_property_map(first),
 #else
       make_typed_identity_property_map_by_reference(
-      typename value_type_traits<InputIterator>::type()),
+      typename std::iterator_traits<InputIterator>::value_type()),
 #endif
       normal_pmap, Poisson_visitor());
     CGAL::Timer task_timer; task_timer.start();
