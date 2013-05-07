@@ -989,8 +989,10 @@ public:
 
 
   /*!
-  creates a new vertex `v` and use it to star the hole
-  whose boundary is described by the sequence of edges `[edge_begin, edge_end]`. Returns a handle to the new vertex.
+    \name
+    \cgalAdvanced creates a new vertex `v` and use it to star the hole
+      whose boundary is described by the sequence of edges
+      `[edge_begin, edge_end]`. Returns a handle to the new vertex.
 
   \pre The triangulation is a triangulation of 1 sheet
 
