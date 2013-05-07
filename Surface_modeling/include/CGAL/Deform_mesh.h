@@ -21,12 +21,9 @@
 
 #include <CGAL/internal/Surface_modeling/Weights.h>
 
-#include <CGAL/trace.h>
-#include <CGAL/Timer.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
-#include <CGAL/FPU_extension.h>
 #include <CGAL/Default.h>
 
 #include <vector>
