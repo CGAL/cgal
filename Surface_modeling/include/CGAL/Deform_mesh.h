@@ -227,7 +227,7 @@ private:
   std::vector<bool>        is_hdl_map;                ///< (size: num vertices)
 
   std::vector<double> edge_weight;                    ///< all edge weights 
-  std::vector<CR_matrix> rot_mtr;    ///< rotation matrices of ros vertices (size: ros)
+  std::vector<CR_matrix> rot_mtr;                     ///< rotation matrices of ros vertices (size: ros)
 
   Sparse_linear_solver m_solver;                      ///< linear sparse solver
   unsigned int iterations;                            ///< number of maximal iterations
@@ -1043,7 +1043,7 @@ private:
         cr_helper.scalar_vector_vector_transpose_mult(cov, wij, pij, qij); // cov += wij * (pij * qij)
       }
 
-      cr_helper.compute_closest_rotation(cov, rot_mtr[vi_id]);
+      cr_helper.compute_close_rotation(cov, rot_mtr[vi_id]);
     }
   }
 
@@ -1083,7 +1083,7 @@ private:
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, polyhedron)) != *e);
       }
 
-      cr_helper.compute_closest_rotation(cov, rot_mtr[vi_id]);
+      cr_helper.compute_close_rotation(cov, rot_mtr[vi_id]);
     }
   }
 

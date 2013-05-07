@@ -2,7 +2,7 @@
 \ingroup PkgSurfaceModelingConcepts
 \cgalConcept
 
-@brief Concept describing the set of requirements for computing closest rotation to a 3x3 matrix together with basic computations used in the class `CGAL::Deform_mesh`.
+@brief Concept describing the set of requirements for computing a close rotation to a 3x3 matrix together with basic computations used in the class `CGAL::Deform_mesh`.
 The fact that some basic operations are hidden behind a function is to allow to benefit from optimizations like expression template from libraries used
 to implement a model of this concept.
 
@@ -52,8 +52,10 @@ public:
   /// Returns `i`th coefficient of a vector
   double vector_coeff(const Vector& v, int i);
     
-  /// Computes closest rotation to `m` and places it into `R`
-  void compute_closest_rotation(const Matrix& m, Matrix& R);
+  /// Computes a close rotation to `m` and places it into `R`
+  /// \note The algorithm expects the closest rotation in Frobenius norm, however not returning the closest rotation does not lead to a crash or malfunction. 
+  ///  For example, returning directly identity matrix without regarding `m`, will result in naive Laplacian deformation.
+  void compute_close_rotation(const Matrix& m, Matrix& R);
   
 /// @}
  
