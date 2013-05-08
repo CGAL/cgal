@@ -145,7 +145,7 @@ write_off_points_and_normals(
     make_dereference_property_map(first),
 #else
     make_typed_identity_property_map_by_reference(
-    typename std::input_iterator<ForwardIterator>::value_type()),
+    typename std::iterator_traits<ForwardIterator>::value_type()),
 #endif
     normal_pmap);
 }
