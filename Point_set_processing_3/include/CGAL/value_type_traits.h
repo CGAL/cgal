@@ -24,16 +24,19 @@
 
 namespace CGAL {
 
-/// \cond SKIP_IN_MANUAL
-
 /// Traits class to get the value type of any iterator,
 /// including an output iterator.
-/// Based on code posted by Alberto Ganesh Barbati at
-/// http://www.adras.com/Why-no-std-back-insert-iterator-value-type.t2639-153-3.html
 ///
 /// Usage is:
-/// typedef typename value_type_traits<Iter>::type value_type;
-
+/// \code
+///    typedef typename value_type_traits<Iter>::type value_type;
+/// \endcode
+/// 
+/// There are specializations for the following iterators to use value_type of a container:
+///  - insert_iterator
+///  - back_insert_iterator
+///  - front_insert_iterator
+///  
 template <class T>
 struct value_type_traits
 {
@@ -46,7 +49,17 @@ struct value_type_traits<std::back_insert_iterator<T> >
   typedef typename T::value_type type;
 };
 
-/// \endcond
+template <class T>
+struct value_type_traits<std::insert_iterator<T> >
+{
+  typedef typename T::value_type type;
+};
+
+template <class T>
+struct value_type_traits<std::front_insert_iterator<T> >
+{
+  typedef typename T::value_type type;
+};
 
 } //namespace CGAL
 
