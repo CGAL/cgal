@@ -205,10 +205,9 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
   typename Point_container::iterator pit = points_res.begin();
   Vertex_const_iterator vit;
   for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit) {
-    if (is_interior(vit))
-      *pit++ = vit->point();
+    if (! vit->is_at_open_boundary()) *pit++ = vit->point();
   }
-  Point_compare<Geom_traits> pt_compare;
+  Point_compare<Geom_traits> pt_compare(m_geom_traits);
   std::sort(points_res.begin(), pit, pt_compare);
 
   if (m_verbose_level > 2) {
@@ -228,7 +227,7 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
     if (is_interior(eit->source()) && is_interior(eit->target()))
       *xcit++ = eit->curve();
   }
-  Curve_compare<Geom_traits> curve_compare;
+  Curve_compare<Geom_traits> curve_compare(m_geom_traits);
   std::sort(curves_res.begin(), xcit, curve_compare);
 
   if (m_verbose_level > 2) {
