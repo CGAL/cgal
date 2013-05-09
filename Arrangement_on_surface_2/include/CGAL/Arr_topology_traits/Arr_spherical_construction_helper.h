@@ -151,8 +151,12 @@ public:
           Halfedge_handle prev = Halfedge_handle(dprev);
           event->set_halfedge_handle(prev);
           
-          // Associate all curve indices of subcurves that "see" the top face
-          // from below with the left portion of the twin of the predecessor.
+          // Associate the indices of all subcurves that "see" the top boundary
+          // (from below) with the halfedge that (clockwise) succeeds the
+          // predecessor of the curve to be inserted around the north pole. The
+          // next halfedge is actually the last halfedge that starts at the
+          // north pole encountered. Observe that the direction of every
+          // halfedge that starts at the north pole is right to left.
           if (m_he_ind_map_p != NULL) {
             Indices_list& list_ref = (*m_he_ind_map_p)[prev->next()];
             list_ref.splice(list_ref.end(), m_subcurves_at_nf);
