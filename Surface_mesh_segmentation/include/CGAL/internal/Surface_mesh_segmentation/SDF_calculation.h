@@ -2,9 +2,9 @@
 #define CGAL_SURFACE_MESH_SEGMENTATION_SDF_CALCULATION_H
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h>
+#include <CGAL/internal/Surface_mesh_segmentation/AABB_traits.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Disk_samplers.h>
 #include <vector>
 #include <algorithm>
@@ -44,11 +44,11 @@ struct FirstIntersectionVisitor {
  *
  * @tparam Polyhedron a CGAL polyhedron
  * @tparam GeomTraits a model of SegmentationGeomTraits
- * @tparam DiskSampling class responsible for the sampling points in a disk. It is used for generating rays in the cones. For different example see Disk_samplers.h
  */
 template <
 class Polyhedron,
-      class GeomTraits = typename Polyhedron::Traits
+      class GeomTraits = typename Polyhedron::Traits,
+      bool fast_bbox_intersection = true
       >
 class SDF_calculation
 {
@@ -69,7 +69,10 @@ private:
 
   typedef AABB_const_polyhedron_triangle_primitive<GeomTraits, Polyhedron>
   Primitive;
-  typedef typename CGAL::AABB_tree<AABB_traits<GeomTraits, Primitive> >    Tree;
+  typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
+  AABB_traits_internal;
+  typedef typename CGAL::AABB_tree<AABB_traits_internal>                 Tree;
+
   typedef typename Tree::Object_and_primitive_id
   Object_and_primitive_id;
   typedef typename Tree::Primitive_id
@@ -79,6 +82,7 @@ private:
   typedef boost::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 
+  // DiskSampling class responsible for the sampling points in a disk. It is used for generating rays in the cones. For different example see Disk_samplers.h
   typedef Vogel_disk_sampling<boost::tuple<double, double, double> >
   Default_sampler;
 
@@ -109,7 +113,6 @@ public:
   SDF_calculation(const Polyhedron& mesh, bool build_kd_tree = false,
                   bool use_diagonal = true, GeomTraits traits = GeomTraits())
     :
-    use_diagonal(use_diagonal),
     traits(traits),
     angle_functor(traits.angle_3_object()),
     scale_functor(traits.construct_scaled_vector_3_object()),
@@ -117,7 +120,8 @@ public:
     normal_functor(traits.construct_normal_3_object()),
     unit_normal_functor(traits.construct_unit_normal_3_object()),
     translated_point_functor(traits.construct_translated_point_3_object()),
-    centroid_functor(traits.construct_centroid_3_object()) {
+    centroid_functor(traits.construct_centroid_3_object()),
+    use_diagonal(use_diagonal) {
     tree.insert(mesh.facets_begin(), mesh.facets_end());
     tree.build();
 
@@ -153,7 +157,8 @@ public:
       normal_functor(traits.construct_normal_3_object()),
       unit_normal_functor(traits.construct_unit_normal_3_object()),
       translated_point_functor(traits.construct_translated_point_3_object()),
-      centroid_functor(traits.construct_centroid_3_object()) {
+      centroid_functor(traits.construct_centroid_3_object()),
+      use_diagonal(false) {
     for( ; polyhedron_begin != polyhedron_end; ++polyhedron_begin) {
       tree.insert((*polyhedron_begin)->facets_begin(),
                   (*polyhedron_begin)->facets_end());

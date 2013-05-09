@@ -47,6 +47,7 @@ namespace internal
 template <
 class Polyhedron,
       class GeomTraits,
+      bool fast_bbox_intersection = true,
 #ifdef CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
       class GraphCut = Alpha_expansion_graph_cut_boykov_kolmogorov,
 #else
@@ -72,7 +73,8 @@ private:
   typedef typename Polyhedron::Facet_const_iterator    Facet_const_iterator;
   typedef typename Polyhedron::Vertex_const_iterator   Vertex_const_iterator;
 
-  typedef SDF_calculation<Polyhedron, GeomTraits> SDF_calculation_class;
+  typedef SDF_calculation<Polyhedron, GeomTraits, fast_bbox_intersection>
+  SDF_calculation_class;
 
 // member variables
 private:
