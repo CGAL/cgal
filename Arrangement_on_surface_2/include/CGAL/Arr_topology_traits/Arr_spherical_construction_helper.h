@@ -154,7 +154,7 @@ public:
           // Associate all curve indices of subcurves that "see" the top face
           // from below with the left portion of the twin of the predecessor.
           if (m_he_ind_map_p != NULL) {
-            Indices_list& list_ref = (*m_he_ind_map_p)[prev->twin()];
+            Indices_list& list_ref = (*m_he_ind_map_p)[prev->next()];
             list_ref.splice(list_ref.end(), m_subcurves_at_nf);
           }
           else
