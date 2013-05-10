@@ -76,6 +76,13 @@ private:
   Point_container m_points;
   Xcurve_container m_xcurves;
 
+  /*! The number of inner and outer ccbs of faces. */
+  typedef std::pair<unsigned int, unsigned int>         Face_ccbs;
+  typedef std::vector<Face_ccbs>                        Face_ccbs_vector;
+  typedef Face_ccbs_vector::const_iterator              Face_ccbs_const_iter;
+  typedef Face_ccbs_vector::iterator                    Face_ccbs_iter;
+  Face_ccbs_vector m_faces;
+  
 public:
   /*! Constructor */
   Construction_test(const Geom_traits& geom_traits);
@@ -173,6 +180,7 @@ void Construction_test<T_Geom_traits, T_Topol_traits>::clear()
   m_isolated_points.clear();
   m_filename.clear();
   m_points.clear();
+  m_faces.clear();
 }
 
 template <typename T_Geom_traits, typename T_Topol_traits>
@@ -239,16 +247,46 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
   if (! std::equal(curves_res.begin(), xcit, m_xcurves.begin(), curve_eq))
     return false;
 
-  Face_const_iterator fit;
-  for (fit = m_arr->faces_begin(); fit != m_arr->faces_end(); ++fit) {
+  if (m_arr->number_of_faces() == 1) {
+    Face_const_iterator fit = m_arr->faces_begin();
     if (m_verbose_level > 1)
       std::cout << "Face: # inner " << fit->number_of_inner_ccbs()
-                << ", # outer: " << fit->number_of_outer_ccbs()
-                << std::endl;
-    if ((m_arr->number_of_faces() > 1) &&
-        (fit->number_of_inner_ccbs() == 0) &&
-        (fit->number_of_outer_ccbs() == 0))
+                  << ", # outer: " << fit->number_of_outer_ccbs()
+                  << std::endl;
+    if ((fit->number_of_inner_ccbs() != 0) ||
+        (fit->number_of_outer_ccbs() != 0))
       return false;
+  }
+  else {
+    if (m_faces.empty()) {
+      m_faces.resize(m_num_faces);
+      Face_ccbs_iter cit = m_faces.begin();
+      Face_const_iterator fit;
+      for (fit = m_arr->faces_begin(); fit != m_arr->faces_end(); ++fit) {
+        if (m_verbose_level > 1)
+          std::cout << "Face: # inner " << fit->number_of_inner_ccbs()
+                    << ", # outer: " << fit->number_of_outer_ccbs()
+                    << std::endl;
+        *cit++ = Face_ccbs(fit->number_of_inner_ccbs(),
+                           fit->number_of_outer_ccbs());
+      }
+    }
+    else {
+      Face_ccbs_vector faces = m_faces;
+      Face_const_iterator fit;
+      for (fit = m_arr->faces_begin(); fit != m_arr->faces_end(); ++fit) {
+        if (m_verbose_level > 1)
+          std::cout << "Face: # inner " << fit->number_of_inner_ccbs()
+                    << ", # outer: " << fit->number_of_outer_ccbs()
+                    << std::endl;
+        Face_ccbs face_ccbs(fit->number_of_inner_ccbs(),
+                            fit->number_of_outer_ccbs());
+        Face_ccbs_iter cit = std::find(faces.begin(), faces.end(), face_ccbs);
+        if (cit == faces.end()) return false;
+        *cit = Face_ccbs(0, 0);
+      }
+      faces.clear();
+    }
   }
   
   return true;
@@ -367,7 +405,7 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::test2()
 }
 
 // Test the insertion of half of the curves aggregatley followed by the
-// insertion of the rest aggregatley (test the addition visitor).
+// insertion of the rest aggregatley (test the insertion visitor).
 template <typename T_Geom_traits, typename T_Topol_traits>
 bool Construction_test<T_Geom_traits, T_Topol_traits>::test3()
 {
