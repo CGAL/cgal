@@ -37,8 +37,8 @@ private:
 int main(int argc, char **argv)
 {
     if (argc !=2){
-		std::cerr << "Usage: " << argv[0] << " input.OFF" << std::endl;
-		return 1;
+        std::cerr << "Usage: " << argv[0] << " input.OFF" << std::endl;
+        return 1;
     }
   
     // create and read Polyhedron
@@ -46,14 +46,14 @@ int main(int argc, char **argv)
     std::ifstream input(argv[1]);
     
     if ( !input || !(input >> mesh) || mesh.empty() ){
-	std::cerr << argv[1] << " is not a valid off file." << std::endl;
-	return 1;
+        std::cerr << argv[1] << " is not a valid off file." << std::endl;
+        return 1;
     }
 
     // assign id field for each facet	
     int facet_id = 0;
     for(Polyhedron::Facet_iterator facet_it = mesh.facets_begin(); 
-	facet_it != mesh.facets_end(); ++facet_it, ++facet_id)
+      facet_it != mesh.facets_end(); ++facet_it, ++facet_id)
     {
         facet_it->id() = facet_id;
     }
@@ -63,23 +63,23 @@ int main(int argc, char **argv)
     Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_property_map(&sdf_values);
 
     CGAL::compute_sdf_values(mesh, sdf_property_map);
-	
+
     // access sdf values (with constant-complexity) either via sdf_values or sdf_property_map
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
-	facet_it != mesh.facets_end(); ++facet_it)
+      facet_it != mesh.facets_end(); ++facet_it)
     {
         std::cout << sdf_property_map[facet_it] << std::endl; // or segment_ids[facet_it->id()]
     }
 
     // create a property-map for segment-ids 
-    std::vector<unsigned> segment_ids(mesh.size_of_facets()); 
-    Polyhedron_with_id_to_vector_property_map<Polyhedron, unsigned> segment_property_map(&segment_ids);
+    std::vector<int> segment_ids(mesh.size_of_facets()); 
+    Polyhedron_with_id_to_vector_property_map<Polyhedron, int> segment_property_map(&segment_ids);
 
     CGAL::segment_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
     // access segment-ids (with constant-complexity) either via segment_ids or segment_property_map
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
-	facet_it != mesh.facets_end(); ++facet_it)   
+      facet_it != mesh.facets_end(); ++facet_it)   
     {
         std::cout << segment_property_map[facet_it] << std::endl; // or segment_ids[facet_it->id()]                               
     }
