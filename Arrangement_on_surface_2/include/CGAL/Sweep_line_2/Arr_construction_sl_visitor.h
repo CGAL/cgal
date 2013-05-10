@@ -626,14 +626,16 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   std::cout << "CGAL_CSLV insert_at_vertices:\ncurve:" << cv << std::endl;
   if (!prev1->is_fictitious()) {
     std::cout << "prev1cv   : " << prev1->curve() << std::endl;
-  } else {
+  }
+  else {
     std::cout << "prev1     : fictitious" << std::endl;
   }
   std::cout << "prev1dir  : " << prev1->direction() << std::endl;
   std::cout << "prev1fac  : " << &(*prev1->face()) << std::endl;
   if (!prev2->is_fictitious()) {
     std::cout << "prev2cv   : " << prev2->curve() << std::endl;
-  } else {
+  }
+  else {
     std::cout << "prev2     : fictitious" << std::endl;
   }
   std::cout << "prev2dir  : " << prev2->direction() << std::endl;
@@ -654,9 +656,10 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 #if 0
   if ((prev1->is_on_inner_ccb() && prev1->is_on_inner_ccb() &&
        prev1->inner_ccb() == prev2->inner_ccb()) ||
-      (!prev1->is_on_inner_ccb() && prev1->is_on_inner_ccb())) {
+      (!prev1->is_on_inner_ccb() && prev1->is_on_inner_ccb()))
+  {
 #else
-      // TODO improve this code!
+  // TODO improve this code!
   Halfedge_handle curr1 = prev1->next();
   bool found2 = false;
   while (curr1 != prev1) {

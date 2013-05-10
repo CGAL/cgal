@@ -354,8 +354,8 @@ typename Arr_basic_insertion_sl_visitor<Hlpr>::Halfedge_handle
 Arr_basic_insertion_sl_visitor<Hlpr>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 {
-  Event* lastEvent = this->last_event_on_subcurve(sc);
-  Vertex_handle last_v = lastEvent->point().vertex_handle();
+  Event* last_event = this->last_event_on_subcurve(sc);
+  Vertex_handle last_v = last_event->point().vertex_handle();
   Vertex_handle curr_v = this->current_event()->point().vertex_handle();
   Vertex_handle null_v;
   if (last_v == null_v && curr_v == null_v)
@@ -363,12 +363,10 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
   if (last_v == null_v && curr_v != null_v) {
     Halfedge_handle he =
       this->m_arr->insert_from_right_vertex(cv.base(), curr_v);
-    return (he->twin());
+    return he->twin();
   }
-   
   if (last_v != null_v && curr_v == null_v)
     return (this->m_arr->insert_from_left_vertex(cv.base(), last_v));
-
   CGAL_assertion(last_v != null_v && curr_v != null_v);
   return (this->m_arr->insert_at_vertices(cv.base(), last_v, curr_v));
 }
@@ -384,10 +382,8 @@ insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
 {
   Vertex_handle curr_v =
     this->current_event()->point().vertex_handle();
-
   if (curr_v != Vertex_handle())
     return (this->m_arr->insert_at_vertices (cv.base(), he, curr_v));
-
   return (_insert_from_left_vertex(cv, he, sc));
 }
 
@@ -400,12 +396,10 @@ Arr_basic_insertion_sl_visitor<Hlpr>::
 insert_from_right_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
                          Subcurve* sc)
 {
-  Event* lastEvent = this->last_event_on_subcurve(sc);
-  Vertex_handle last_v = lastEvent->point().vertex_handle();
-
+  Event* last_event = this->last_event_on_subcurve(sc);
+  Vertex_handle last_v = last_event->point().vertex_handle();
   if (last_v != Vertex_handle())
     return (this->m_arr->insert_at_vertices (cv.base(), he, last_v));
-    
   return (_insert_from_right_vertex(cv, he, sc));
 }
 
@@ -428,25 +422,22 @@ typename Arr_basic_insertion_sl_visitor<Hlpr>::Vertex_handle
 Arr_basic_insertion_sl_visitor<Hlpr>::
 insert_isolated_vertex(const Point_2& pt, Status_line_iterator iter)
 {
-  Vertex_handle res;
-  if (pt.vertex_handle() != Vertex_handle())
-    // The isolated vertex is already at the arrangement:
-    return res;
-
+  // If the isolated vertex is already at the arrangement, return:
+  if (pt.vertex_handle() != Vertex_handle()) return Vertex_handle();
+    
   // Choose the right face to insert the vertex.
   if (iter == this->status_line_end()) {
     // Insert the vertex inside the current top face (as given by the
     // helper class).
-    res = this->m_arr->insert_in_face_interior(pt.base(),
-                                               this->m_helper.top_face());
+    Vertex_handle res =
+      this->m_arr->insert_in_face_interior(pt.base(),
+                                           this->m_helper.top_face());
+    return res;
   }
-  else {
-    // Look up and insert the isolated vertex in the incident face of the
-    // halfedge we see.
-    Face_handle   f = _ray_shoot_up(*iter);
-
-    res = this->m_arr->insert_in_face_interior(pt.base(), f);
-  }
+  // Look up and insert the isolated vertex in the incident face of the
+  // halfedge we see.
+  Face_handle f = _ray_shoot_up(*iter);
+  Vertex_handle res = this->m_arr->insert_in_face_interior(pt.base(), f);
   return res;
 }
 
@@ -480,13 +471,12 @@ _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
       Halfedge_handle
       (this->m_top_traits->locate_around_boundary_vertex(&(*v1), cv.base(),
                                                          ARR_MIN_END, bx, by));
-    
     return (_insert_from_left_vertex (cv, l_prev, sc));
   }
 
   // Check if the vertex to be associated with the right end of the curve has
   // already been created.
-  Event        * curr_event = this->current_event();
+  Event* curr_event = this->current_event();
   Vertex_handle  v2 = curr_event->vertex_handle();
 
   if (v2 == this->m_invalid_vertex) {
@@ -499,8 +489,7 @@ _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
     // and insert the curve from this right vertex.
     Arr_parameter_space  bx = curr_event->parameter_space_in_x();
     Arr_parameter_space  by = curr_event->parameter_space_in_y();
-
-    CGAL_assertion(bx != ARR_INTERIOR || by != ARR_INTERIOR);
+    CGAL_assertion((bx != ARR_INTERIOR) || (by != ARR_INTERIOR));
 
     Halfedge_handle r_prev =
       Halfedge_handle
@@ -605,7 +594,7 @@ typename Arr_basic_insertion_sl_visitor<Hlpr>::Halfedge_handle
 Arr_basic_insertion_sl_visitor<Hlpr>::
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     Halfedge_handle prev1, Halfedge_handle prev2,
-                    Subcurve* , bool &new_face_created)
+                    Subcurve* , bool& new_face_created)
 {
   // Perform the insertion.
   new_face_created = false;
@@ -623,13 +612,11 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                                    * comparing lengths */
                                              );
 
-  if (new_face_created) {
-    // In case a new face has been created (pointed by the new halfedge we
-    // obtained), we have to examine the holes and isolated vertices in the
-    // existing face (pointed by the twin halfedge) and move the relevant
-    // holes and isolated vertices into the new face.
-    this->m_arr_access.relocate_in_new_face (new_he);
-  }
+  // In case a new face has been created (pointed by the new halfedge we
+  // obtained), we have to examine the holes and isolated vertices in the
+  // existing face (pointed by the twin halfedge) and move the relevant
+  // holes and isolated vertices into the new face.
+  if (new_face_created) this->m_arr_access.relocate_in_new_face(new_he);
 
   // Return a handle to the new halfedge directed from prev1's target to
   // prev2's target. Note that this may be the twin halfedge of the one
@@ -648,19 +635,14 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_ray_shoot_up(Subcurve* sc)
 {
   // Go up the status line and try to locate a curve which is associated
   // with a valid arrangement halfedge.
-  Halfedge_handle he_above;
-  Status_line_iterator iter;
   const Halfedge_handle invalid_he;
-  Halfedge_handle he;
-
-  for (iter = this->status_line_position(sc);
+  for (Status_line_iterator iter = this->status_line_position(sc);
        iter != this->status_line_end(); ++iter)
   {
-    he = (*iter)->last_curve().halfedge_handle();
+    Halfedge_handle he = (*iter)->last_curve().halfedge_handle();
     if (he != invalid_he) {
       // Return the incident face of the halfedge we found.
-      he_above = he;
-      return (he_above->face());
+      return (he->face());
     }
   }
 
