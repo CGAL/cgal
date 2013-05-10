@@ -36,8 +36,8 @@ namespace CGAL
  * @param traits traits object
  * @return minimum and maximum SDF values before linear normalization
  */
-template <bool fast_bbox_intersection, class Polyhedron, class SDFPropertyMap,
-         class GeomTraits
+template <bool Fast_sdf_calculation_mode, class Polyhedron,
+         class SDFPropertyMap, class GeomTraits
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
          = typename Polyhedron::Traits
 #endif
@@ -49,7 +49,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
                    int number_of_rays = 25,
                    GeomTraits traits = GeomTraits())
 {
-  internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, fast_bbox_intersection>
+  internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, Fast_sdf_calculation_mode>
   algorithm(polyhedron, traits);
   return algorithm.calculate_sdf_values(cone_angle, number_of_rays, sdf_values);
 }
@@ -128,7 +128,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * call `CGAL::segment_from_sdf_values`.
  *
  * @pre @a polyhedron.is_pure_triangle()
- * @tparam fast_bbox_intersection regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
+ * @tparam Fast_sdf_calculation_mode regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
  *          It is default to true, and can be omitted.
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
@@ -142,7 +142,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * @param traits traits object
  * @return number of segments
  */
-template < bool fast_bbox_intersection, class Polyhedron,
+template < bool Fast_sdf_calculation_mode, class Polyhedron,
          class SegmentPropertyMap, class GeomTraits
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
          = typename Polyhedron::Traits
@@ -163,7 +163,7 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
   boost::associative_property_map<Facet_double_map> sdf_property_map(
     internal_sdf_map);
 
-  compute_sdf_values<fast_bbox_intersection, Polyhedron, boost::associative_property_map<Facet_double_map>, GeomTraits>
+  compute_sdf_values<Fast_sdf_calculation_mode, Polyhedron, boost::associative_property_map<Facet_double_map>, GeomTraits>
   (polyhedron, sdf_property_map, cone_angle, number_of_rays, traits);
   return segment_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, GeomTraits>
          (polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda,
@@ -192,7 +192,7 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
 /// @endcond
 
 #ifdef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
-template <bool fast_bbox_intersection, class Polyhedron, class SDFPropertyMap>
+template <bool Fast_sdf_calculation_mode, class Polyhedron, class SDFPropertyMap>
 std::pair<double, double>
 compute_sdf_values(const Polyhedron& polyhedron,
                    SDFPropertyMap sdf_values,
@@ -200,7 +200,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
                    int number_of_rays = 25,
                    typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return compute_sdf_values<fast_bbox_intersection, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
+  return compute_sdf_values<Fast_sdf_calculation_mode, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
          (polyhedron, sdf_values, cone_angle, number_of_rays, traits);
 }
 
@@ -230,7 +230,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
           traits);
 }
 
-template <bool fast_bbox_intersection, class Polyhedron, class SegmentPropertyMap>
+template <bool Fast_sdf_calculation_mode, class Polyhedron, class SegmentPropertyMap>
 int
 compute_sdf_values_and_segment(const Polyhedron& polyhedron,
                                SegmentPropertyMap segment_ids,
@@ -240,7 +240,7 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
                                double smoothing_lambda = 0.26,
                                typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return compute_sdf_values_and_segment< fast_bbox_intersection, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
+  return compute_sdf_values_and_segment< Fast_sdf_calculation_mode, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_levels,
           smoothing_lambda, traits);
 }
