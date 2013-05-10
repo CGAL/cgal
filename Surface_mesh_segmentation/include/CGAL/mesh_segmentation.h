@@ -25,7 +25,7 @@ namespace CGAL
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam fast_bbox_intersection regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
- *          it is default to true, and can be omitted.
+ *          It is default to true, and can be omitted.
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
@@ -129,7 +129,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam fast_bbox_intersection regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
- *          it is default to true, and can be omitted.
+ *          It is default to true, and can be omitted.
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
