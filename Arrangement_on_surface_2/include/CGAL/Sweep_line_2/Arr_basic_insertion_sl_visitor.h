@@ -449,6 +449,7 @@ typename Arr_basic_insertion_sl_visitor<Hlpr>::Halfedge_handle
 Arr_basic_insertion_sl_visitor<Hlpr>::
 _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 {
+  std::cout << "insert_in_face_interior: " << cv << std::endl;
   // Check if the vertex to be associated with the left end of the curve has
   // already been created.
   Event* last_event = this->last_event_on_subcurve(sc);
@@ -464,24 +465,24 @@ _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
     // In this case the left vertex v1 is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this left vertex.
-    Arr_parameter_space  bx = last_event->parameter_space_in_x();
-    Arr_parameter_space  by = last_event->parameter_space_in_y();
-    CGAL_assertion(bx != ARR_INTERIOR || by != ARR_INTERIOR);
+    Arr_parameter_space bx = last_event->parameter_space_in_x();
+    Arr_parameter_space by = last_event->parameter_space_in_y();
+    CGAL_assertion((bx != ARR_INTERIOR) || (by != ARR_INTERIOR));
     Halfedge_handle l_prev =
       Halfedge_handle
       (this->m_top_traits->locate_around_boundary_vertex(&(*v1), cv.base(),
                                                          ARR_MIN_END, bx, by));
-    return (_insert_from_left_vertex (cv, l_prev, sc));
+    return (_insert_from_left_vertex(cv, l_prev, sc));
   }
 
   // Check if the vertex to be associated with the right end of the curve has
   // already been created.
   Event* curr_event = this->current_event();
-  Vertex_handle  v2 = curr_event->vertex_handle();
+  Vertex_handle v2 = curr_event->vertex_handle();
 
   if (v2 == this->m_invalid_vertex) {
     // Create the vertex to be associated with the right end of the curve.
-    v2 = this->m_arr_access.create_vertex (curr_event->point().base());
+    v2 = this->m_arr_access.create_vertex(curr_event->point().base());
   }
   else if (v2->degree() > 0) {
     // In this case the right vertex v2 is a boundary vertex which already has
@@ -501,7 +502,7 @@ _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
   // If necessary, create the vertex to be associated with the left end
   // of the curve.
   if (create_v1)
-    v1 = this->m_arr_access.create_vertex (last_event->point().base());
+    v1 = this->m_arr_access.create_vertex(last_event->point().base());
 
   // Look up and insert the edge in the interior of the incident face of the
   // halfedge we see.

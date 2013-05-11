@@ -18,6 +18,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_CONSTRUCTION_SL_VISITOR_H
 #define CGAL_ARR_CONSTRUCTION_SL_VISITOR_H
