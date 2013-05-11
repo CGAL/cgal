@@ -3123,8 +3123,8 @@ _relocate_inner_ccbs_in_new_face(DHalfedge* new_he)
   
   // Examine the inner CCBs inside the existing old face and move the relevant
   // ones into the new face.
-  DInner_ccb_iter    ic_it = old_face->inner_ccbs_begin();
-  DInner_ccb_iter    ic_to_move;
+  DInner_ccb_iter ic_it = old_face->inner_ccbs_begin();
+  DInner_ccb_iter ic_to_move;
 
   while (ic_it != old_face->inner_ccbs_end()) {
     // In case the new edge represents the current component in the old face
@@ -3140,17 +3140,14 @@ _relocate_inner_ccbs_in_new_face(DHalfedge* new_he)
     
     // Check whether the current inner CCB is inside new face (we actually
     // check if a representative vertex is located in the new face).
-    if (m_topol_traits.is_in_face(new_face,
-                                  (*ic_it)->vertex()->point(),
+    if (m_topol_traits.is_in_face(new_face, (*ic_it)->vertex()->point(),
                                   (*ic_it)->vertex()))
     {
       // We store the current iterator which get then incremented before it
       // gets moved, as the move operation invalidates the iterator.
       ic_to_move = ic_it;
       ++ic_it;
-      
-      // Move the hole.
-      _move_inner_ccb(old_face, new_face, *ic_to_move);
+      _move_inner_ccb(old_face, new_face, *ic_to_move); // move the hole
     }
     else
       ++ic_it;

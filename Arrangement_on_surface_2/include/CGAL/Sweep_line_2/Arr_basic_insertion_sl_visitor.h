@@ -640,10 +640,8 @@ Arr_basic_insertion_sl_visitor<Hlpr>::_ray_shoot_up(Subcurve* sc)
        iter != this->status_line_end(); ++iter)
   {
     Halfedge_handle he = (*iter)->last_curve().halfedge_handle();
-    if (he != invalid_he) {
-      // Return the incident face of the halfedge we found.
-      return (he->face());
-    }
+    // Return the incident face of the halfedge if found.
+    if (he != invalid_he) return (he->face());
   }
 
   // If we reached here, there is no arrangement halfedge above the given

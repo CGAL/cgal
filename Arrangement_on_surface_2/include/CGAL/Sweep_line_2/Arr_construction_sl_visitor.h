@@ -874,10 +874,9 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
 #endif
 
   // Go along the boundary of the new face.
-  Face_handle                 new_face = he->face();
-  Halfedge_handle             curr_he = he;
-  const Halfedge_handle       invalid_he;
-  Vertex_handle               v;
+  Face_handle new_face = he->face();
+  Halfedge_handle curr_he = he;
+  const Halfedge_handle invalid_he;
 
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
   std::cout << "m_sc_counter: " << m_sc_counter << std::endl;
@@ -911,7 +910,7 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
       if (he_on_face == invalid_he) {
         // If the halfedge handle is invalid, then we have an index for an
         // isolated vertex. Move this vertex to the new face, if necessary.
-        v = m_iso_verts_map[*itr];
+        Vertex_handle v = m_iso_verts_map[*itr];
         CGAL_assertion(v != m_invalid_vertex);
         if (v->face() != new_face) {
           m_arr_access.move_isolated_vertex(v->face(), new_face, v);
@@ -934,9 +933,7 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
         }
       }
     }
-      
     curr_he = curr_he->next();
-  
   } while(curr_he != he);
 }
 
