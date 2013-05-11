@@ -24,7 +24,7 @@ namespace CGAL
  *  - Linearly normalized between [0,1].
  *
  * @pre @a polyhedron.is_pure_triangle()
- * @tparam fast_bbox_intersection regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
+ * @tparam Fast_sdf_calculation_mode regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
  *          It is default to true, and can be omitted.
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
