@@ -61,7 +61,7 @@ int main()
   assert( fh->vertex(li)->point() == p );
 
   std::cout << __FILE__ << ", " << __LINE__ << std::endl;
-  Vertex_handle v = fh->vertex( (li + 1) & 3 );
+  Vertex_handle v = fh->vertex( (li + 1) % 3 );
   // v is another vertex of c
   std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   Face_handle nb = fh->neighbor(li);
