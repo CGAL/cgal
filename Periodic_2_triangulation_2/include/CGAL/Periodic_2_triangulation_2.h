@@ -4398,6 +4398,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
   size_type m = _tds.number_of_faces();
   if (is_ascii(os)) os << std::endl << m << std::endl;
   else write(os, m);
+  std::cout << "save, #Faces: " << m << std::endl;
 
   for( Face_iterator ib = faces_begin();
        ib != faces_end(); ++ib)
@@ -4413,12 +4414,16 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
     }
   if(is_ascii(os)) os << "\n";
 
+  std::cout << "save, face check: " << inum << " == " << m << std::endl;
+  CGAL_assertion(inum == m);
+
   // neighbor pointers of the  faces
   for( Face_iterator it = faces_begin();
        it != faces_end(); ++it)
     {
       for(int j = 0; j < 3; ++j)
         {
+          CGAL_assertion(F.is_defined(it->neighbor(j)));
           if(is_ascii(os))  os << F[it->neighbor(j)] << " ";
           else write(os, F[it->neighbor(j)]);
         }
@@ -4551,6 +4556,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   if (is_ascii(is)) is >> m;
   else read(is, m);
   std::vector<Face_handle> F(m);
+  std::cout << "load, #Faces: " << m << std::endl;
   {
     for(size_t i = 0; i < m; ++i)
       {

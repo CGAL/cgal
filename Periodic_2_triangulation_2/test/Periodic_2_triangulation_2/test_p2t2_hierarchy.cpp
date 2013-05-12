@@ -68,6 +68,7 @@ template class CGAL::Periodic_2_triangulation_hierarchy_2<PDT3>;
 
 int main()
 {
+  std::cout << "New version" << std::endl;
   std::cout << __FILE__ << ", " << __LINE__ << std::endl;
   typedef CGAL::Periodic_2_triangulation_hierarchy_2< PDT1 > P2T2_1;
   test<P2T2_1>(false);
