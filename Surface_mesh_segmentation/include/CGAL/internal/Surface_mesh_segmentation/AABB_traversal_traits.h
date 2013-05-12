@@ -11,7 +11,6 @@ namespace CGAL
  * the only difference with the offical one (Listing_intersection_traits) is that
  * is the do_intersect which is made prior to the intersection call.
  */
-//#define TRAITS_USE_COUNTER
 template<typename AABBTraits, typename Query, typename Output_iterator>
 class Listing_intersection_traits_ray_or_segment_triangle
 {
@@ -49,11 +48,6 @@ public:
     return AABBTraits().do_intersect_object()(query, node.bbox());
   }
 
-#ifdef TRAITS_USE_COUNTER
-  static long true_inter_counter;
-  static long inter_counter;
-  static long do_inter_counter;
-#endif
 private:
   Output_iterator m_out_it;
 
@@ -62,7 +56,6 @@ private:
 /// @endcond
 
 } //namespace CGAL
-#undef TRAITS_USE_COUNTER
 #endif
 
 
