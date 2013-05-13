@@ -15,9 +15,12 @@
  * Also algorithms can be used by their-own for applying alpha-expansion graph-cut on any graph.
  */
 #include <CGAL/assertions.h>
+#include <CGAL/Timer.h>
+#include <CGAL/Trace.h>
 
 #include <boost/version.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/compressed_sparse_row_graph.hpp>
 #if BOOST_VERSION >= 104400 // at this version kolmogorov_max_flow become depricated.
 #include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 #else
@@ -152,6 +155,10 @@ public:
 
     double min_cut = (std::numeric_limits<double>::max)();
 
+    // for debug time
+    double vertex_creation_time, edge_creation_time, cut_time;
+    vertex_creation_time = edge_creation_time = cut_time = 0.0;
+
     std::vector<Vertex_descriptor> inserted_vertices;
     inserted_vertices.resize(labels.size());
 
@@ -170,6 +177,8 @@ public:
         Vertex_descriptor cluster_source = boost::add_vertex(graph);
         Vertex_descriptor cluster_sink = boost::add_vertex(graph);
 
+        Timer timer;
+        timer.start();
         // For E-Data
         // add every facet as a vertex to the graph, put edges to source & sink vertices
         for(std::size_t vertex_i = 0; vertex_i < labels.size(); ++vertex_i) {
@@ -185,7 +194,8 @@ public:
           add_edge_and_reverse(cluster_source, new_vertex, source_weight, 0.0, graph);
           add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, 0.0, graph);
         }
-
+        vertex_creation_time += timer.time();
+        timer.reset();
         // For E-Smooth
         // add edge between every vertex,
         std::vector<double>::const_iterator weight_it = edge_weights.begin();
@@ -209,6 +219,7 @@ public:
             add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
           }
         }
+        edge_creation_time += timer.time();
 
         // initialize vertex indices, it is neccessary since we are using VertexList = listS
         Vertex_iterator v_begin, v_end;
@@ -217,12 +228,14 @@ public:
           boost::put(boost::vertex_index, graph, *v_begin, index++);
         }
 
+        timer.reset();
 #if BOOST_VERSION >= 104400
         double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                       cluster_sink);
 #else
         double flow = boost::kolmogorov_max_flow(graph, cluster_source, cluster_sink);
 #endif
+        cut_time += timer.time();
 
         if(min_cut - flow < flow * tolerance) {
           continue;
@@ -240,10 +253,234 @@ public:
         }
       }
     } while(success);
+
+    CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
+                      std::endl;
+    CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
+    CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
     return min_cut;
   }
 };
 
+// another implementation using compressed_sparse_row_graph
+// for now there is a performance problem while setting reverse edges
+// if that can be solved, it is faster than Alpha_expansion_graph_cut_boost
+class Alpha_expansion_graph_cut_boost_CSR
+{
+private:
+  // CSR only accepts bundled props
+  struct VertexP {
+    boost::default_color_type vertex_color;
+    double vertex_distance_t;
+    // ? do not now there is another way to take it, I think since edge_descriptor does not rely on properties
+    // this should be fine...
+    boost::compressed_sparse_row_graph<boost::directedS>::edge_descriptor
+    vertex_predecessor;
+  };
+
+  struct EdgeP {
+    double edge_capacity;
+    double edge_residual_capacity;
+    boost::compressed_sparse_row_graph<boost::directedS>::edge_descriptor
+    edge_reverse;
+  };
+
+  typedef boost::compressed_sparse_row_graph<boost::directedS,
+          VertexP, EdgeP> Graph;
+
+  typedef boost::graph_traits<Graph> Traits;
+  typedef boost::color_traits<boost::default_color_type> ColorTraits;
+
+  typedef Traits::vertex_descriptor Vertex_descriptor;
+  typedef Traits::vertex_iterator   Vertex_iterator;
+  typedef Traits::edge_descriptor   Edge_descriptor;
+  typedef Traits::edge_iterator     Edge_iterator;
+
+  void
+  add_edge_and_reverse(int v1 , int v2, double w1, double w2,
+                       std::vector<std::pair<int, int> >& edge_map,
+                       std::vector<EdgeP>& edge_weights) const {
+    edge_map.push_back(std::make_pair(v1, v2));
+    EdgeP p1;
+    p1.edge_capacity = w1;
+    edge_weights.push_back(p1);
+
+    edge_map.push_back(std::make_pair(v2, v1));
+    EdgeP p2;
+    p2.edge_capacity = w2;
+    edge_weights.push_back(p2);
+  }
+
+public:
+  /**
+   * Applies alpha-expansion graph-cut for energy minimization.
+   * @param edges contains incident vertex-id pairs for each edge (vertex-ids should be between [0, number of vertices -1])
+   * @param edge_weights contains weights for each edge in @a edges (correspondence according to order)
+   * @param probability_matrix contains responsibility of the center on the vertex probability[center][vertex]
+   * @param[in, out] labels as input it contains initial labeling of vertices (i.e. a center-id between [0, number of centers -1]),
+   * and as output it returns final labeling of vertices (i.e. assigned cluster-id to each facet)
+   * @return result of energy function
+   */
+  double operator()(const std::vector<std::pair<int, int> >& edges,
+                    const std::vector<double>& edge_weights,
+                    const std::vector<std::vector<double> >& probability_matrix,
+                    std::vector<int>& labels) const {
+    const double tolerance = 1e-10;
+
+    double min_cut = (std::numeric_limits<double>::max)();
+
+    // for debug time
+    double vertex_creation_time, edge_creation_time, graph_creation_time,
+           reverse_mapping_time, cut_time;
+    vertex_creation_time = edge_creation_time = graph_creation_time =
+                             reverse_mapping_time = cut_time = 0.0;
+
+    Graph graph;
+
+    bool success;
+    do {
+      success = false;
+      int alpha = 0;
+
+      for(std::vector<std::vector<double> >::const_iterator it =
+            probability_matrix.begin();
+          it != probability_matrix.end(); ++it, ++alpha) {
+        std::vector<std::pair<int, int> > edge_map;
+        std::vector<EdgeP>                edge_map_weights;
+        edge_map.reserve(labels.size() *
+                         8); // there is no way to know exact edge count, it is a heuristic value
+        edge_map_weights.reserve(labels.size() * 8);
+
+        int cluster_source = 0;
+        int cluster_sink = 1;
+
+        Timer timer;
+        timer.start();
+        // For E-Data
+        // add every facet as a vertex to the graph, put edges to source & sink vertices
+        for(std::size_t vertex_i = 0; vertex_i < labels.size(); ++vertex_i) {
+          double source_weight = probability_matrix[alpha][vertex_i];
+          // since it is expansion move, current alpha labeled vertices will be assigned to alpha again,
+          // making sink_weight 'infinity' guarantee this.
+          double sink_weight = (labels[vertex_i] == alpha) ?
+                               (std::numeric_limits<double>::max)()
+                               : probability_matrix[labels[vertex_i]][vertex_i];
+
+          add_edge_and_reverse(cluster_source, vertex_i + 2, source_weight, 0.0, edge_map,
+                               edge_map_weights);
+          add_edge_and_reverse(vertex_i + 2, cluster_sink, sink_weight, 0.0, edge_map,
+                               edge_map_weights);
+        }
+        vertex_creation_time += timer.time();
+        timer.reset();
+        // For E-Smooth
+        // add edge between every vertex,
+        int num_vert = labels.size() + 2;
+        std::vector<double>::const_iterator weight_it = edge_weights.begin();
+        for(std::vector<std::pair<int, int> >::const_iterator edge_it = edges.begin();
+            edge_it != edges.end();
+            ++edge_it, ++weight_it) {
+          int v1 = edge_it->first + 2, v2 = edge_it->second + 2;
+          int label_1 = labels[edge_it->first], label_2 = labels[edge_it->second];
+          if(label_1 == label_2) {
+            if(label_1 != alpha) {
+              add_edge_and_reverse(v1, v2, *weight_it, *weight_it, edge_map,
+                                   edge_map_weights);
+            }
+          } else {
+            int inbetween = num_vert++;
+
+            double w1 = (label_1 == alpha) ? 0 : *weight_it;
+            double w2 = (label_2 == alpha) ? 0 : *weight_it;
+            add_edge_and_reverse(inbetween, v1, w1, w1, edge_map, edge_map_weights);
+            add_edge_and_reverse(inbetween, v2, w2, w2, edge_map, edge_map_weights);
+            add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, edge_map,
+                                 edge_map_weights);
+          }
+        }
+        edge_creation_time += timer.time();
+        timer.reset();
+
+        Graph graph(boost::edges_are_unsorted, edge_map.begin(), edge_map.end(),
+                    edge_map_weights.begin(), num_vert);
+        graph_creation_time += timer.time();
+        timer.reset();
+
+        // PERFORMANCE PROBLEM
+        // need to set reverse edge map, I guess there is no way to do that before creating the graph
+        // since we do not have edge_descs
+        // however from our edge_map, we know that each (2i, 2i + 1) is reverse pairs, how to facilitate that ?
+        // will look it back
+        Graph::edge_iterator ei, ee;
+        for(boost::tie(ei, ee) = boost::edges(graph); ei != ee; ++ei) {
+          Graph::vertex_descriptor v1 = boost::source(*ei, graph);
+          Graph::vertex_descriptor v2 = boost::target(*ei, graph);
+          std::pair<Graph::edge_descriptor, bool> opp_edge = boost::edge(v2, v1, graph);
+
+          CGAL_assertion(opp_edge.second);
+          graph[opp_edge.first].edge_reverse =
+            *ei; // and edge_reverse of *ei will be (or already have been) set by the opp_edge
+        }
+        reverse_mapping_time += timer.time();
+        timer.reset();
+
+#if BOOST_VERSION >= 104400
+        // since properties are bundled, defaults does not work need to specify them
+        double flow = boost::boykov_kolmogorov_max_flow(graph,
+                      boost::get(&EdgeP::edge_capacity, graph),
+                      boost::get(&EdgeP::edge_residual_capacity, graph),
+                      boost::get(&EdgeP::edge_reverse, graph),
+                      boost::get(&VertexP::vertex_predecessor, graph),
+                      boost::get(&VertexP::vertex_color, graph),
+                      boost::get(&VertexP::vertex_distance_t, graph),
+                      boost::get(boost::vertex_index,
+                                 graph), // this is not bundled, get it from graph (CRS provides one)
+                      cluster_source,
+                      cluster_sink
+                                                       );
+#else
+        double flow = boost::kolmogorov_max_flow(graph,
+                      boost::get(&EdgeP::edge_capacity, graph),
+                      boost::get(&EdgeP::edge_residual_capacity, graph),
+                      boost::get(&EdgeP::edge_reverse, graph),
+                      boost::get(&VertexP::vertex_predecessor, graph),
+                      boost::get(&VertexP::vertex_color, graph),
+                      boost::get(&VertexP::vertex_distance_t, graph),
+                      boost::get(boost::vertex_index,
+                                 graph), // this is not bundled, get it from graph
+                      cluster_source,
+                      cluster_sink
+                                                );
+#endif
+        cut_time += timer.time();
+
+        if(min_cut - flow < flow * tolerance) {
+          continue;
+        }
+        min_cut = flow;
+        success = true;
+        //update labeling
+        for(std::size_t vertex_i = 0; vertex_i < labels.size(); ++vertex_i) {
+          boost::default_color_type color =  graph[vertex_i + 2].vertex_color;
+          if(labels[vertex_i] != alpha
+              && color == ColorTraits::white()) { //new comers (expansion occurs)
+            labels[vertex_i] = alpha;
+          }
+        }
+      }
+    } while(success);
+
+    CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
+                      std::endl;
+    CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
+    CGAL_TRACE_STREAM << "graph creation time: " << graph_creation_time <<
+                      std::endl;
+    CGAL_TRACE_STREAM << "reverse mapping time: " << reverse_mapping_time <<
+                      std::endl;
+    CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
+    return min_cut;
+  }
+};
 #ifdef CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 /**
  * @brief Implements alpha-expansion graph cut algorithm.
@@ -270,11 +507,14 @@ public:
     const double tolerance = 1e-10;
 
     double min_cut = (std::numeric_limits<double>::max)();
-    bool success;
+
+    // for debug time
+    double vertex_creation_time, edge_creation_time, cut_time;
+    vertex_creation_time = edge_creation_time = cut_time = 0.0;
 
     std::vector<Graph::node_id> inserted_vertices;
     inserted_vertices.resize(labels.size());
-
+    bool success;
     do {
       success = false;
       int alpha = 0;
@@ -282,7 +522,8 @@ public:
             probability_matrix.begin();
           it != probability_matrix.end(); ++it, ++alpha) {
         Graph graph;
-
+        Timer timer;
+        timer.start();
         // For E-Data
         // add every facet as a vertex to graph, put edges to source-sink vertices
         for(std::size_t vertex_i = 0; vertex_i <  labels.size(); ++vertex_i) {
@@ -297,6 +538,8 @@ public:
                                : probability_matrix[labels[vertex_i]][vertex_i];
           graph.add_tweights(new_vertex, source_weight, sink_weight);
         }
+        vertex_creation_time += timer.time();
+        timer.reset();
         // For E-Smooth
         // add edge between every vertex,
         std::vector<double>::const_iterator weight_it = edge_weights.begin();
@@ -321,7 +564,11 @@ public:
             graph.add_tweights(inbetween, 0.0, *weight_it);
           }
         }
+        edge_creation_time += timer.time();
+        timer.reset();
+
         double flow = graph.maxflow();
+        cut_time += timer.time();
         if(min_cut - flow < flow * tolerance) {
           continue;
         }
@@ -337,6 +584,11 @@ public:
         }
       }
     } while(success);
+
+    CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
+                      std::endl;
+    CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
+    CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
     return min_cut;
   }
 };
