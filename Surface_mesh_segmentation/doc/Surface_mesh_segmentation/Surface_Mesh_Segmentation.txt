@@ -190,6 +190,108 @@ The main advantage is to decrease the complexity of accessing associated data wi
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
 
+\section Performances Performances
+We provide performance results of `CGAL::compute_sdf_values` and `CGAL::segment_from_sdf_values` for various models with different kernels. 
+These results are taken on Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+
+Performance of `CGAL::compute_sdf_values` with 25 rays (in ms):
+<table border="1"> 
+<tr>
+	<td> Number of triangles </td> 
+	<td> `Simple_cartesian<double>` </td> 
+	<td> `Exact_predicates_inexact_construction` (`EPICK`) </td> 
+	<td> `EPICK` with `Fast_sdf_calculation_mode = false` </td> 
+</tr>
+<tr>
+	<td> 5,558 </td>
+	<td> 1,601 </td>
+	<td> 3,948 </td>
+	<td> 8,461 </td>
+</tr>
+<tr>
+	<td> 34,986 </td>
+	<td> 13,601 </td>
+	<td> 26,222 </td>
+	<td> 63,900 </td>
+</tr>
+<tr>
+	<td> 100,332 </td>
+	<td> 48,705 </td>
+	<td> 88,173 </td>
+	<td> 169,279 </td>
+</tr>
+</table> 
+
+Performance of `CGAL::segment_from_sdf_values` (in ms):
+
+<table border="1"> 
+<tr>
+	<td> Number of triangles </td> 
+	<td> Number of levels (2) </td> 
+	<td> Number of levels (5) </td> 
+	<td> Number of levels (10) </td> 
+	<td> Number of levels (15) </td> 
+</tr>
+<tr>
+	<td> 5,558 </td>
+	<td> 55 </td>
+	<td> 215 </td>
+	<td> 538 </td>
+	<td> 847 </td>
+</tr>
+<tr>
+	<td> 34,986 </td>
+	<td> 351 </td>
+	<td> 1,279 </td>
+	<td> 3,551 </td>
+	<td> 5,875 </td>
+</tr>
+<tr>
+	<td> 100,332 </td>
+	<td> 1,112 </td>
+	<td> 4,227 </td>
+	<td> 11,850 </td>
+	<td> 23,408 </td>
+</tr>
+</table> 
+
+We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow software</a> instead of `boost::boykov_kolmogorov_max_flow`. 
+It can be activated by defining `CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE`. 
+Performance of `CGAL::segment_from_sdf_values` with this implementation (in ms):
+
+<table border="1"> 
+<tr>
+	<td> Number of triangles </td> 
+	<td> Number of levels (2) </td> 
+	<td> Number of levels (5) </td> 
+	<td> Number of levels (10) </td> 
+	<td> Number of levels (15) </td> 
+</tr>
+<tr>
+	<td> 5,558 </td>
+	<td> 21 </td>
+	<td> 58 </td>
+	<td> 116 </td>
+	<td> 168 </td>
+</tr>
+<tr>
+	<td> 34,986 </td>
+	<td> 127 </td>
+	<td> 280 </td>
+	<td> 659 </td>
+	<td> 960 </td>
+</tr>
+<tr>
+	<td> 100,332 </td>
+	<td> 437 </td>
+	<td> 1,042 </td>
+	<td> 2,373 </td>
+	<td> 3,947 </td>
+</tr>
+</table> 
+
+<br>
+
 \section Surface_mesh_segmentationImplementationhistory Implementation History
 The initial implementation of this package is the result of the work of Ilker during the 2012 season
 of the Google Summer of Code. He has been mentored by Sebastien Loriot who also contributed to the documentation
