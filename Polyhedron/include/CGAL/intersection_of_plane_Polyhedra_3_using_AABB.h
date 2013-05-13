@@ -26,11 +26,11 @@ class AABB_to_polyline_imp
 private:
   typedef typename Polyhedron::Traits::Kernel K;
   typedef AABB_polyhedron_triangle_primitive<K, Polyhedron>       AABB_primitive;
-  typedef AABB_traits<K, AABB_primitive>                          AABB_traits;
-  typedef AABB_tree<AABB_traits>                                  AABB_tree;
+  typedef AABB_traits<K, AABB_primitive>                          AABB_traits_;
+  typedef AABB_tree<AABB_traits_>                                  AABB_tree_;
 
-  typedef typename AABB_tree::Object_and_primitive_id             Object_and_primitive_id;
-  typedef typename AABB_tree::Primitive_id                        Primitive_id;
+  typedef typename AABB_tree_::Object_and_primitive_id             Object_and_primitive_id;
+  typedef typename AABB_tree_::Primitive_id                        Primitive_id;
 
   typedef typename PK::Plane_3    Plane;
   typedef typename PK::Segment_3  Segment;
@@ -93,7 +93,7 @@ private:
   typedef typename Facet_intersection_map::iterator Facet_intersection_map_iterator;
   // members
   Facet_intersection_map facet_intersection_map;
-  AABB_tree tree;
+  AABB_tree_ tree;
 
   void process_intersection(Halfedge_handle hf) {
     if(!hf->is_border()) {

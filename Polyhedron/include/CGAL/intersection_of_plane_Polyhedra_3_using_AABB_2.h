@@ -28,11 +28,11 @@ class AABB_to_polyline_imp_2
 private:
   typedef typename Polyhedron::Traits::Kernel K;
   typedef AABB_const_polyhedron_edge_primitive<K, Polyhedron>     AABB_primitive;
-  typedef AABB_traits<K, AABB_primitive>                          AABB_traits;
-  typedef AABB_tree<AABB_traits>                                  AABB_tree;
+  typedef AABB_traits<K, AABB_primitive>                          AABB_traits_;
+  typedef AABB_tree<AABB_traits_>                                  AABB_tree_;
 
-  typedef typename AABB_tree::Object_and_primitive_id             Object_and_primitive_id;
-  typedef typename AABB_tree::Primitive_id                        Primitive_id;
+  typedef typename AABB_tree_::Object_and_primitive_id             Object_and_primitive_id;
+  typedef typename AABB_tree_::Primitive_id                        Primitive_id;
 
   typedef typename PK::Plane_3    Plane;
   typedef typename PK::Segment_3  Segment;
@@ -101,7 +101,7 @@ private:
   typedef typename Edge_intersection_map::iterator Edge_intersection_map_iterator;
 
   // member variables //
-  AABB_tree tree;
+  AABB_tree_ tree;
   Node_graph node_graph;
 
   bool is_planar(Halfedge_const_handle hf, const Plane& plane) {
