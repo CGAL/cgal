@@ -24,41 +24,40 @@
 
 namespace CGAL {
 
-/// Traits class to get the value type of any iterator,
-/// including an output iterator.
+/// \ingroup PkgPointSetProcessing
+/// Class providing the value type of an iterator, and
+/// in the case of an output iterator, a type of objects that can be put in it.
 ///
-/// Usage is:
-/// \code
-///    typedef typename value_type_traits<Iter>::type value_type;
-/// \endcode
-/// 
-/// There are specializations for the following iterators to use value_type of a container:
-///  - insert_iterator
-///  - back_insert_iterator
-///  - front_insert_iterator
-///  
 template <class T>
 struct value_type_traits
 {
+  #ifndef DOXYGEN_RUNNING
   typedef typename std::iterator_traits<T>::value_type type;
+  #else
+  /// If `T` is `std::insert_iterator<Container>`, `std::back_insert_iterator<Container>` or
+  /// `std::front_insert_iterator<Container>`, then `type` is `Container::value_type`.
+  /// Otherwise, `type` is `std::iterator_traits<T>::%value_type`.
+
+  typedef Hidden_type type;
+  #endif
 };
 
-template <class T>
-struct value_type_traits<std::back_insert_iterator<T> >
+template <class Container>
+struct value_type_traits<std::back_insert_iterator<Container> >
 {
-  typedef typename T::value_type type;
+  typedef typename Container::value_type type;
 };
 
-template <class T>
-struct value_type_traits<std::insert_iterator<T> >
+template <class Container>
+struct value_type_traits<std::insert_iterator<Container> >
 {
-  typedef typename T::value_type type;
+  typedef typename Container::value_type type;
 };
 
-template <class T>
-struct value_type_traits<std::front_insert_iterator<T> >
+template <class Container>
+struct value_type_traits<std::front_insert_iterator<Container> >
 {
-  typedef typename T::value_type type;
+  typedef typename Container::value_type type;
 };
 
 } //namespace CGAL
