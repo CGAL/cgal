@@ -104,7 +104,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
-
+  qt4_wrap_ui( plane_multiple_cutUI_FILES Plane_multiple_cut_widget.ui)
+  
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
@@ -379,6 +380,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(mesh_simplification_plugin Polyhedron_demo_mesh_simplification_plugin)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 
+  polyhedron_demo_plugin(plane_multiple_cut_plugin Polyhedron_demo_plane_multiple_cut_plugin ${plane_multiple_cutUI_FILES})
+  target_link_libraries(plane_multiple_cut_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
+  
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
 
