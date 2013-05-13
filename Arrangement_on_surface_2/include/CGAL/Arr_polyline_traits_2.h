@@ -547,13 +547,7 @@ public:
 
       if (it_next == end_seg) {
         // The polyline contains a single segment:
-        // Check if it is degenerated
-        *oi++ =
-          (compare_xy(get_min_v(*start_seg), get_max_v(*start_seg)) == EQUAL) ?
-          // One segment is degenerated, returns the point.
-          make_object(get_min_v(*start_seg)) :
-          // Polyline consists of only one segments, and it is returned.
-          make_object(construct_x_monotone_curve(start_seg, end_seg));
+        *oi++ = make_object(construct_x_monotone_curve(*start_seg));
         return oi;
       }
 
