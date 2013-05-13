@@ -91,6 +91,13 @@ int main ()
   std::cout <<  x_polyline_const(pts.begin(),pts.end()) << std::endl;
   std::cout <<  x_polyline_const(pts.rbegin(),pts.rend()) << std::endl;
 
+  std::cout << "\n----==Construction from a single segment==----\n";
+  Segment_2 s(Point_2(0,0),Point_2(6,7));
+  poly = polyline_const(s);
+  x_poly = x_polyline_const(s);
+  std::cout << "The polyline is: " << poly << std::endl;
+  std::cout << "The x-poly is: " << x_poly << std::endl;
+
   std::cout << "\n----==Construction from a range of segments==----\n"
     "* general polyline:" << std::endl;
   std::vector<Segment_2> segs;
