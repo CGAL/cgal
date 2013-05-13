@@ -95,7 +95,7 @@ random_simplify_point_set(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Typed_identity_property_map_by_reference.
+// This variant creates a default point property map = Identity_property_map.
 template <typename ForwardIterator
 >
 ForwardIterator
@@ -109,7 +109,7 @@ random_simplify_point_set(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
 #else
-    make_typed_identity_property_map_by_reference(
+    make_identity_property_map(
     typename std::iterator_traits<ForwardIterator>::value_type()),
 #endif
     removed_percentage);

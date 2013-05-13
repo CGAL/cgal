@@ -230,7 +230,7 @@ remove_outliers(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Typed_identity_property_map_by_reference.
+// This variant creates a default point property map = Identity_property_map.
 template <typename InputIterator
 >
 InputIterator
@@ -245,7 +245,7 @@ remove_outliers(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(first),
 #else
-    make_typed_identity_property_map_by_reference(
+    make_identity_property_map(
     typename std::iterator_traits<InputIterator>::value_type()),
 #endif
     k,threshold_percent);

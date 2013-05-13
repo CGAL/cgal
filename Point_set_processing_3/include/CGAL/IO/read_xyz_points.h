@@ -231,7 +231,7 @@ read_xyz_points_and_normals(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Typed_identity_property_map_by_reference.
+// This variant creates a default point property map = Identity_property_map.
 //-----------------------------------------------------------------------------------
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -250,7 +250,7 @@ read_xyz_points_and_normals(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(output),
 #else
-    make_typed_identity_property_map_by_reference(OutputIteratorValueType()),
+    make_identity_property_map(OutputIteratorValueType()),
 #endif
     normal_pmap);
 }
@@ -383,7 +383,7 @@ read_xyz_points(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Typed_identity_property_map_by_reference.
+// This variant creates a default point property map = Identity_property_map.
 //-----------------------------------------------------------------------------------
 template <typename OutputIteratorValueType,
           typename OutputIterator
@@ -400,7 +400,7 @@ read_xyz_points(
 #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
     make_dereference_property_map(output)
 #else
-    make_typed_identity_property_map_by_reference(OutputIteratorValueType())
+    make_identity_property_map(OutputIteratorValueType())
 #endif
     );
 }

@@ -127,7 +127,7 @@ bool test_no_deduction_points_xyz(const char* file_name)
   // read with ordinary pmaps
   CGAL::read_xyz_points(
     std::ifstream(file_name), back_inserter(points_2), 
-    CGAL::Typed_identity_property_map_by_reference<Point_3>(), 
+    CGAL::Identity_property_map<Point_3>(), 
     Kernel());
 
   return check_points(points_1, points_2, indices);
@@ -148,7 +148,7 @@ bool test_no_deduction_points_off(const char* file_name)
   // read with ordinary pmaps
   CGAL::read_off_points(
     std::ifstream(file_name), back_inserter(points_2), 
-    CGAL::Typed_identity_property_map_by_reference<Point_3>(), 
+    CGAL::Identity_property_map<Point_3>(), 
     Kernel());
 
   return check_points(points_1, points_2, indices);
@@ -166,12 +166,12 @@ void compile_test() {
   CGAL::read_xyz_points(
     std::ifstream("data/read_test/simple.xyz"),
     std::front_inserter(points),
-    CGAL::Typed_identity_property_map_by_reference<Point_3>());
+    CGAL::Identity_property_map<Point_3>());
 
   CGAL::read_xyz_points(
     std::ifstream("data/read_test/simple.xyz"),
     std::front_inserter(points),
-    CGAL::Typed_identity_property_map_by_reference<Point_3>(),
+    CGAL::Identity_property_map<Point_3>(),
     Kernel());
   // this will span all OutputIteratorValueType versions
   CGAL::read_xyz_points<Point_3>(
@@ -185,12 +185,12 @@ void compile_test() {
   CGAL::read_off_points(
     std::ifstream("data/read_test/simple.off"),
     std::front_inserter(points),
-    CGAL::Typed_identity_property_map_by_reference<Point_3>());
+    CGAL::Identity_property_map<Point_3>());
 
   CGAL::read_off_points(
     std::ifstream("data/read_test/simple.off"),
     std::front_inserter(points),
-    CGAL::Typed_identity_property_map_by_reference<Point_3>(),
+    CGAL::Identity_property_map<Point_3>(),
     Kernel());
   // this will span all OutputIteratorValueType versions
   CGAL::read_off_points<Point_3>(

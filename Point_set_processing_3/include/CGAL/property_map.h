@@ -67,11 +67,11 @@ make_dereference_property_map(Iter)
 }
 
 /// \ingroup PkgProperty_map
-/// Property map that maps a key to itself.
+/// A `LvaluePropertyMap` property map mapping a key to itself (by reference).
 ///
 /// \cgalModels `LvaluePropertyMap`
 template <typename T>
-struct Typed_identity_property_map_by_reference
+struct Identity_property_map
 {
   typedef T key_type; ///< typedef to `T`
   typedef T value_type; ///< typedef to `T`
@@ -81,7 +81,7 @@ struct Typed_identity_property_map_by_reference
   /// @param k a key which is returned as mapped value.
   reference operator[](key_type& k) const { return k; }
 
-  typedef Typed_identity_property_map_by_reference<T> Self;
+  typedef Identity_property_map<T> Self;
   /// \name Put/get free functions
   /// @{
   friend const value_type& get(const Self&,const key_type& k) {return k;}
@@ -90,14 +90,14 @@ struct Typed_identity_property_map_by_reference
   /// @}
 };
 
-/// Free function to create a `Typed_identity_property_map_by_reference` property map.
+/// Free function to create a `Identity_property_map` property map.
 ///
-/// \relates Typed_identity_property_map_by_reference 
+/// \relates Identity_property_map 
 template <class T> // Key and value type
-Typed_identity_property_map_by_reference<T>
-  make_typed_identity_property_map_by_reference(T)
+Identity_property_map<T>
+  make_identity_property_map(T)
 {
-  return Typed_identity_property_map_by_reference<T>();
+  return Identity_property_map<T>();
 }
 
 
