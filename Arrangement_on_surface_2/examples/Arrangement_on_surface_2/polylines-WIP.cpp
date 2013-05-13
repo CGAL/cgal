@@ -44,6 +44,10 @@ int main ()
   segs.push_back(Segment_2(Point_2(1,1),Point_2(0,-1)));
   Polyline_2 poly2 = polyline_construct(segs.begin(), segs.end());
 
+  // TODO: Make sure to construct all possible of polylines. That is, from
+  //       ranges of points, ranges of segments, ranges with only one segment
+  //       or only two points, etc.
+
   insert (arr, poly1);
   insert (arr, poly2);
 
