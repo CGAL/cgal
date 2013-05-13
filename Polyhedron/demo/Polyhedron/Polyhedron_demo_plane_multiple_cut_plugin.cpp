@@ -14,7 +14,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/bounding_box.h> 
-
 #include <CGAL/intersection_of_plane_Polyhedra_3_using_AABB.h>
 #include <CGAL/intersection_of_plane_Polyhedra_3_using_AABB_2.h>
 
@@ -27,6 +26,7 @@
 #include <QDockWidget>
 
 #include <vector>
+#include <algorithm>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
@@ -225,11 +225,11 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
 
     if(!CGAL::do_intersect(cgal_bbox, plane)) { 
       if(dir == -1) { break; }
+      std::reverse(planes.begin(), planes.end());
       dir = -1; // reverse direction
       step = 0; // we should skip the plane itself, and we will when continue cause ++step
       continue;
     }
-    std::cout << "PLANE: " << plane << std::endl;
     planes.push_back(plane);
   }
   print_message(QString("Created %1 cuts inside bbox...").arg(planes.size()));
