@@ -35,7 +35,7 @@
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 
-  #include <CGAL/Deformation_Eigen_closest_rotation_traits_3.h>  // for 3x3 closest rotation computer
+  #include <CGAL/Deformation_Eigen_polar_closest_rotation_traits_3.h>  // for 3x3 closest rotation computer
 
   #if defined(CGAL_SUPERLU_ENABLED)
     #include <Eigen/SuperLUSupport>
@@ -95,7 +95,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  ///            Eigen::COLAMDOrdering<int> >  >
  /// \endcode
  /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
- /// `Deformation_Eigen_closest_rotation_traits_3` is provided as default parameter.
+ /// `Deformation_Eigen_polar_closest_rotation_traits_3` is provided as default parameter.
 template <
   class P, 
   class VIM, 
