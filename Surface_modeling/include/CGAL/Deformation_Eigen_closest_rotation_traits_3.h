@@ -26,7 +26,7 @@
 
 namespace CGAL {
 /// \ingroup PkgSurfaceModeling
-/// A class to compute the closest rotation in Frobenius norm to a 3x3 Matrix using `Eigen` library.
+/// A class to compute the closest rotation in Frobenius norm to a 3x3 Matrix using the `Eigen` library.
 /// The internal computation relies on `Eigen::JacobiSVD<>` solver.
 ///
 /// \cgalModels `DeformationClosestRotationTraits_3`
