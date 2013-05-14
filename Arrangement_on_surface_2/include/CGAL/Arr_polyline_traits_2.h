@@ -537,11 +537,6 @@ public:
       const_seg_iterator it_next = start_seg;
       ++it_next;
 
-      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
-      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        seg_traits->construct_min_vertex_2_object();
       Construct_x_monotone_curve_2 construct_x_monotone_curve =
         m_poly_traits->construct_x_monotone_curve_2_object();
 
@@ -553,8 +548,10 @@ public:
 
       // Polyline contains at least 2 segments!
 
-      typename Segment_traits_2::Compare_xy_2 comp_xy =
-        seg_traits->compare_xy_2_object();
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+      // Functor defined in ArrangementDirectionalXMonotoneTraits_2
+      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts_xy =
+        seg_traits->compare_endpoints_xy_2_object();
       typename Segment_traits_2::Is_vertical_2 is_vertical =
         seg_traits->is_vertical_2_object();
 
@@ -562,20 +559,14 @@ public:
       const_seg_iterator it_curr = start_seg;
 
       bool is_start_vertical = is_vertical(*it_start);
+      Comparison_result start_dir = comp_endpts_xy(*it_start);
 
       for (/*it_next was advanced earlier*/; it_next != end_seg; ++it_next)
       {
-        // TODO: Improve this test. Avoid double tests
-        //       of geometrical elements.
-        //       Without having the tag HAS_SOURCE_TARGET it seems that
-        //       these tests cannot be simplified!
         if (
-            // Polyline changes direction (zig-zag)
-            ((comp_xy(get_max_v(*it_curr), get_min_v(*it_next)) != EQUAL) &&
-             (comp_xy(get_min_v(*it_curr), get_max_v(*it_next)) != EQUAL)
-             ) ||
-            // or, polyline changes it vertical-ness
-            (is_vertical(*it_curr) != is_vertical(*it_next)) )
+            comp_endpts_xy(*it_next) != start_dir ||
+            is_vertical(*it_next) != is_start_vertical
+            )
           {
             // Construct an x-monotone curve from the sub-range which
             // was found
@@ -583,6 +574,7 @@ public:
               make_object(construct_x_monotone_curve(it_start, it_next));
             it_start = it_next;
             is_start_vertical = is_vertical(*it_start);
+            start_dir = comp_endpts_xy(*it_start);
           }
         it_curr = it_next;
       }
