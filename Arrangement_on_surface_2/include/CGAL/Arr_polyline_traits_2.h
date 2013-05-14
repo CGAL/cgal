@@ -602,33 +602,37 @@ public:
      * Append a point p to an existing polyline cv.
      * \param cv a polyline. Note, cv is not (necessarily) x-monotone.
      * \param p a point to be appended to cv
-     * \pre cv contains at least two segments
+     * \pre cv contains at least one segment
      */
-    void operator()(const Curve_2& cv, Point_2& p) const
+    void operator()(Curve_2& cv, const Point_2& p) const
     {
       int num_seg = cv.number_of_segments();
-      CGAL_precondition(num_seg > 1);
-
-      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
-      typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Equal_2 equal =
-        seg_traits->equal_2_object();
-
+      CGAL_precondition(num_seg >0);
       int last_seg = num_seg-1;
 
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts=
+        seg_traits->compare_endpoints_xy_2_object();
+
       /*
-       * Roadmap: Since the segments currently have no orientation this test
-       *          is WAY too complicated although unavoidable. This can be
-       *          solved once we introduce the HAS_SOURCE_TARGET tag.
+       * Since we assume that the segments of cv are well oriented,
+       * pushing a single point to an existing polyline means that we
+       * have to append the segment [cv[last_seg].target(),p]. The
+       * following test determines which end of the last segment is
+       * the target.
        */
-      if (equal (get_min_v(cv[last_seg]), get_min_v(cv[last_seg-1])) ||
-          equal (get_min_v(cv[last_seg]), get_max_v(cv[last_seg-1])) )
-        cv.push_back(Segment_2(get_max_v(cv[last_seg]),p));
+      if (comp_endpts(cv[last_seg]) == SMALLER)
+        {
+          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
+            seg_traits->construct_max_vertex_2_object();
+          cv.push_back(Segment_2(get_max_v(cv[last_seg]),p));
+        }
       else
-        cv.push_back(Segment_2(get_min_v(cv[last_seg]),p));
+        {
+          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
+            seg_traits->construct_min_vertex_2_object();
+          cv.push_back(Segment_2(get_min_v(cv[last_seg]),p));
+        }
     }
 
     /*!
