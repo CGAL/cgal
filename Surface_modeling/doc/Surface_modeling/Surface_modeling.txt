@@ -287,7 +287,7 @@ After having set the ROI and the handle groups, a preprocess function needs to b
   
 The preprocess function returns `true` if the factorization of the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ is successful, and `false` in case of a failure. 
 
-Rank deficiency is the main reason for the failure, which happens if there is no path between a free vertex and a handle vertex (i.e. both fixed and user-inserted). 
+Rank deficiency is the main reason for the failure, which happens if there is no path between a non-handle vertex from the ROI and a handle vertex (i.e. both fixed and user-inserted). 
 Some cases for such failure are:
 	- Inserting the whole mesh as ROI and inserting no handle vertices,
 	- Using custom weights which contain too many zero weights, so that the connectivity is broken.
@@ -330,7 +330,7 @@ The final action is invoking the deformation algorithm:
 	Otherwise it is compared against \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ where \f$m_i\f$ is the resulting surface mesh at iteration \f$i\f$.  
   - `Deform_mesh::deform()` deforms the mesh using global iterations and tolerance parameters provided in constructor or using `Deform_mesh::set_iterations`, and `Deform_mesh::set_tolerance`
 
-After deformation, handle vertices will be placed to their target positions and free vertices will be deformed accordingly. 
+After the call to the deformation function, the handle vertices are at their target positions and the other vertices from the ROI are moved accordingly.
 The steps in \ref Deform_section can be repeated for further deformations.
 
 \warning The transformation provided to the functions `Deform_mesh::rotate` and `Deform_mesh::translate` is always applied to the original coordinates of the input mesh.
