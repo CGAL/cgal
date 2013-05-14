@@ -7,6 +7,7 @@ The fact that some basic operations are hidden behind a function is to allow to 
 to implement models of this concept.
 
 \cgalHasModel `CGAL::Deformation_Eigen_closest_rotation_traits_3`
+\cgalHasModel `CGAL::Deformation_Eigen_polar_closest_rotation_traits_3`
 
 */
 class DeformationClosestRotationTraits_3{
