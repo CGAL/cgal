@@ -80,6 +80,25 @@ private:
   Vertex_handle  _down;  // same vertex one level below
 };
 
+template < class Tds >
+inline
+std::istream&
+operator>>(std::istream &is, Periodic_2_triangulation_hierarchy_vertex_base_2<Tds> &)
+// no combinatorial information.
+{
+  return is;
+}
+
+template < class Tds >
+inline
+std::ostream&
+operator<<(std::ostream &os,
+           const Periodic_2_triangulation_hierarchy_vertex_base_2<Tds> &)
+// no combinatorial information.
+{
+  return os;
+}
+
 } //namespace CGAL
 
 #endif // CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_VERTEX_BASE_2_H

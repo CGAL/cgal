@@ -1107,7 +1107,7 @@ remove(Vertex_handle v)
       CGAL_assertion(this->virtual_vertices_reverse().find(v) != this->virtual_vertices_reverse().end());
 
       const std::vector<Vertex_handle> &virtual_copies = this->virtual_vertices_reverse().find(v)->second;
-      for (size_t i = 0; i < 8; ++i)
+      for (int i = 0; i < 8; ++i)
         {
           remove_single_vertex(virtual_copies[i], Offset((i + 1) / 3, (i + 1) % 3));
         }

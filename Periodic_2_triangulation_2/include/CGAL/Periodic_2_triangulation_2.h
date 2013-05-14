@@ -4343,6 +4343,8 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
     }
   std::cout << "Line:" << __LINE__ << " cover[0]:" << cover[0] << " cover[1]:" << cover[1] << " n*c0*c1:" << (n * cover[0]*cover[1]) << std::endl;
 
+  std::cout << "save, #Vertices: " << n << std::endl;
+
   if (n == 0)
     return os;
 
@@ -4354,7 +4356,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it)
         {
           V[it] = i++;
-          os << it->point();
+          os << (*it);
           if (is_ascii(os))
             os << std::endl;
         }
@@ -4415,7 +4417,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
   if(is_ascii(os)) os << "\n";
 
   std::cout << "save, face check: " << inum << " == " << m << std::endl;
-  CGAL_assertion(inum == m);
+  CGAL_assertion(m == (size_type)inum);
 
   // neighbor pointers of the  faces
   for( Face_iterator it = faces_begin();
