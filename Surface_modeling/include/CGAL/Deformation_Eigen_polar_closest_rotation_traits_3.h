@@ -61,9 +61,9 @@ namespace CGAL {
       const Scalar th = std::sqrt(Eigen::NumTraits<Scalar>::dummy_precision());
 
       Eigen::SelfAdjointEigenSolver<Matrix> eig;
-      feclearexcept(FE_UNDERFLOW);
+      CGAL::feclearexcept(FE_UNDERFLOW);
       eig.computeDirect(A.transpose()*A);
-      if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)<th)
+      if(CGAL::fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)<th)
       { return false; }
 
       Vector S = eig.eigenvalues().cwiseSqrt();
