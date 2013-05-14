@@ -50,17 +50,7 @@ public:
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; 
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map; 
 
-// #define CGAL_USE_EXPERIMENTAL_POLAR
-
-#ifdef CGAL_USE_EXPERIMENTAL_POLAR
-  #include <CGAL/internal/Surface_modeling/Deformation_Eigen_polar_closest_rotation_traits_3.h>
-  typedef CGAL::Deformation_Eigen_polar_closest_rotation_traits_3 Closest_rotation_model;
-#else
-  typedef CGAL::Deformation_Eigen_closest_rotation_traits_3 Closest_rotation_model;
-#endif
-
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, 
-  CGAL::ORIGINAL_ARAP, CGAL::Default, CGAL::Default, Closest_rotation_model> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map> Deform_mesh;
 
 
 typedef Deform_mesh::Point  Point;
