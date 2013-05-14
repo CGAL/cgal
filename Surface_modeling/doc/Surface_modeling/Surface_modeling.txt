@@ -292,12 +292,12 @@ Some cases for such failure are:
 	- Inserting the whole mesh as ROI and inserting no handle vertices,
 	- Using custom weights which contain too many zero weights, so that the connectivity is broken.
 	
-Calling the preprocess function is optional, which means it is called by `Deform_mesh::deform`, if there is any need to. 
-Of course, it might cause a delay in first `Deform_mesh::deform` call due to the extra preprocessing computations. 
+Calling the preprocess function is optional, which means it is called by `Deform_mesh::deform()`, if there is any need to. 
+Of course, it might cause a delay in first `Deform_mesh::deform()` call due to the extra preprocessing computations. 
 
 \note The ROI does not have to be a single connected component, however considering performance issues it is best to use an individual deformation object for each connected component of the ROI. 
-The main performance gain in such a case is related to the factorization process (i.e. `Deform_mesh::preprocess`). 
-During deformation (i.e. `Deform_mesh::deform`), if we assume that the fill-in produced by the factorization is negligible, and the cost of back-substitution is linearly 
+The main performance gain in such a case is related to the factorization process (i.e. `Deform_mesh::preprocess()`). 
+During deformation (i.e. `Deform_mesh::deform()`), if we assume that the fill-in produced by the factorization is negligible, and the cost of back-substitution is linearly 
 proportional to the number of non-zero elements in the system, then the decrease in performance should be trivial.
  
 
@@ -307,7 +307,7 @@ In order to deform the mesh, the final position of handle vertices must be provi
   - `Deform_mesh::assign(vertex_descriptor vd, const Point& target_position)` directly assigns the target position for the handle vertex
   
 If the target positions for the handles are provided directly, then handles can be simply gathered into a single group 
-and `Deform_mesh::assign` can be used for direct assignment of target positions. 
+and `Deform_mesh::assign()` can be used for direct assignment of target positions. 
 
 \anchor rot
 The second possibility offered by the API is to set a translation and a rotation applied to the vertices of a group of handles.
@@ -319,7 +319,7 @@ The second possibility offered by the API is to set a translation and a rotation
 Hence, they are not cumulative (i.e. any call to `rotate`, `translate`, or `assign` overrides previous calls).
 
 Note that changing target positions of handle vertices (via `translate`, `rotate`, and `assign`) 
-has no effect while `Deform_mesh::deform` is not called.
+has no effect while `Deform_mesh::deform()` is not called.
 Also unconstrained handles will be constrained to their last target positions.
 
 \anchor deform_method
@@ -328,24 +328,24 @@ The final action is invoking the deformation algorithm:
     - Each iteration consists of two optimization steps explained in \ref Surface_Modeling_Overview_ARAP
     - If the tolerance is smaller than or equal to zero, no energy based termination occurs. 
 	Otherwise it is compared against \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ where \f$m_i\f$ is the resulting surface mesh at iteration \f$i\f$.  
-  - `Deform_mesh::deform()` deforms the mesh using global iterations and tolerance parameters provided in constructor or using `Deform_mesh::set_iterations`, and `Deform_mesh::set_tolerance`
+  - `Deform_mesh::deform()` deforms the mesh using global iterations and tolerance parameters provided in constructor or using `Deform_mesh::set_iterations()`, and `Deform_mesh::set_tolerance()`
 
 After the call to the deformation function, the handle vertices are at their target positions and the other vertices from the ROI are moved accordingly.
 The steps in \ref Deform_section can be repeated for further deformations.
 
-\warning The transformation provided to the functions `Deform_mesh::rotate` and `Deform_mesh::translate` is always applied to the original coordinates of the input mesh.
-That is, in an interactive deformation session, the user is responsible for composing the transformations given to `Deform_mesh::rotate` and `Deform_mesh::translate`.
+\warning The transformation provided to the functions `Deform_mesh::rotate()` and `Deform_mesh::translate()` is always applied to the original coordinates of the input mesh.
+That is, in an interactive deformation session, the user is responsible for composing the transformations given to `Deform_mesh::rotate()` and `Deform_mesh::translate()`.
 
 \warning Vertices can be inserted into or removed from region-of-interest and handles at any time. In particular, any vertex which is no longer inside the ROI will be
-assigned to its original position in `Deform_mesh::preprocess`.
-The original positions can be updated by calling `Deform_mesh::overwrite_original_positions`. This behavior is illustrated in the video \ref Surface_Modeling_Demo_Tutorial.
+assigned to its original position in `Deform_mesh::preprocess()`.
+The original positions can be updated by calling `Deform_mesh::overwrite_original_positions()`. This behavior is illustrated in the video \ref Surface_Modeling_Demo_Tutorial.
 
 \warning The rationale for this choice is the stability of the result. The algorithm is applied on the input and the current deformed mesh is only used as the initial guess.
 
 \subsection Surface_modeling_examples Examples
 
 \subsubsection Example_1 Using the Whole Mesh as Region-of-interest
-In this example, the whole mesh is used as ROI and a few vertices are added as handles. `Deform_mesh::assign` is used for constraining handle vertices.
+In this example, the whole mesh is used as ROI and a few vertices are added as handles. `Deform_mesh::assign()` is used for constraining handle vertices.
 
 \cgalExample{Surface_modeling/all_roi_assign_example.cpp}
 
@@ -354,7 +354,7 @@ Deformation results from example, deform_1.off and deform_2.off.
 \cgalFigureEnd
 
 \subsubsection Example_2 Using Different Groups of Handles
-In this example, we use the handle grouping feature of the API together with `Deform_mesh::translate` and `Deform_mesh::rotate`. 
+In this example, we use the handle grouping feature of the API together with `Deform_mesh::translate()` and `Deform_mesh::rotate()`. 
 
 \cgalExample{Surface_modeling/k_ring_roi_translate_rotate_example.cpp}
 
