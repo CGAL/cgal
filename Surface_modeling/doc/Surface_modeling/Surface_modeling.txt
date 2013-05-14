@@ -302,8 +302,8 @@ Calling the preprocess function is optional, which means it is called by `Deform
 Of course, it might cause a delay in first `Deform_mesh::deform()` call due to the extra preprocessing computations. 
 
 \note The ROI does not have to be a single connected component, however considering performance issues it is best to use an individual deformation object for each connected component of the ROI. 
-The main performance gain in such a case is related to the factorization process (i.e. `Deform_mesh::preprocess`). 
-During deformation (i.e. `Deform_mesh::deform`), if we assume that the fill-in produced by the factorization is negligible, and the cost of back-substitution is linearly 
+The main performance gain in such a case is related to the factorization process (i.e. `Deform_mesh::preprocess()`). 
+During deformation (i.e. `Deform_mesh::deform()`), if we assume that the fill-in produced by the factorization is negligible, and the cost of back-substitution is linearly 
 proportional to the number of non-zero elements in the system, then the decrease in performance should be negligible.
  
 
@@ -325,8 +325,8 @@ The second possibility offered by the API is to set a translation and a rotation
 Hence, they are not cumulative (i.e. any call to `rotate`, `translate`, or `assign` overrides previous calls).
 
 Note that changing target positions of handle vertices (via `translate`, `rotate`, and `assign`) 
-has no effect while `Deform_mesh::deform` is not called. If no transformation is defined for a group of handles,
-the corresponding vertices stay at their last target positions after a call to `Deform_mesh::deform`.
+has no effect while `Deform_mesh::deform()` is not called. If no transformation is defined for a group of handles,
+the corresponding vertices stay at their last target positions after a call to `Deform_mesh::deform()`.
 
 \anchor deform_method
 The final action is invoking the deformation algorithm:
