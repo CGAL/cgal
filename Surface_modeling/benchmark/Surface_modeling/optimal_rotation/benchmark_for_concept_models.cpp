@@ -5,8 +5,7 @@
 
 // models of DeformationClosestRotationTraits_3
 #include <CGAL/Deformation_Eigen_closest_rotation_traits_3.h>
-#include <CGAL/internal/Surface_modeling/Deformation_Eigen_polar_closest_rotation_traits_3.h>
-#include <CGAL/internal/Surface_modeling/auxiliary/Deformation_fast_SVD_closest_rotation_traits_3.h>
+#include <CGAL/Deformation_Eigen_polar_closest_rotation_traits_3.h>
 
 // provide a model of DeformationClosestRotationTraits_3
 //
@@ -65,9 +64,6 @@ int main() {
 
   std::cerr << "Benchmark for Deformation_Eigen_polar_closest_rotation_traits_3 (Eigen polar(as a filter) and SVD(as a gold standard)): " << std::endl;
   benchmark<CGAL::Deformation_Eigen_polar_closest_rotation_traits_3>(multiple_iterate);
-
-  std::cerr << "Benchmark for Deformation_fast_SVD_closest_rotation_traits_3 (fast SVD code with SSE): " << std::endl;
-  benchmark<CGAL::Deformation_fast_SVD_closest_rotation_traits_3>(multiple_iterate);
 
   std::cerr << "All done!" << std::endl;
 }
