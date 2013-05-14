@@ -272,12 +272,18 @@ The status of a vertex (roi or handle) can be reinitialized :
   - `Deform_mesh::erase_handle(Handle_group handle_group)` removes a group of handles
   - `Deform_mesh::erase_handle(Handle_group handle_group, vertex_descriptor vd)` removes a vertex from a group of handles
   - `Deform_mesh::erase_handle(vertex_descriptor vd)` removes a vertex by searching for it through all groups of handles
-  
+
+\note The conventions used for the insertion/removal of vertices are the following:
+ - a vertex added to a group of handles is also added to the ROI
+ - a handle vertex removed from the ROI is also removed from its group of handles
+ - a handle vertex removed from its group of handles is not removed from the ROI
+
+
 Iteration over the ROI and handle vertices is possible using:
   - `Deform_mesh::roi_vertices()` returns an iterator range of the vertices in the ROI
   - `Deform_mesh::handle_groups()` returns an iterator range of the groups of handles
   - `Deform_mesh::handles(Handle_group handle_group)` returns an iterator range of the vertices inside a given group of handles
-  
+
 Also constant time querying the state of a vertex can be done using:
   - `Deform_mesh::is_roi(vertex_descriptor vd) const` queries whether the vertex is inside the ROI
   - `Deform_mesh::is_handle(vertex_descriptor vd) const` queries whether a vertex is inside any group of handles
@@ -296,9 +302,9 @@ Calling the preprocess function is optional, which means it is called by `Deform
 Of course, it might cause a delay in first `Deform_mesh::deform()` call due to the extra preprocessing computations. 
 
 \note The ROI does not have to be a single connected component, however considering performance issues it is best to use an individual deformation object for each connected component of the ROI. 
-The main performance gain in such a case is related to the factorization process (i.e. `Deform_mesh::preprocess()`). 
-During deformation (i.e. `Deform_mesh::deform()`), if we assume that the fill-in produced by the factorization is negligible, and the cost of back-substitution is linearly 
-proportional to the number of non-zero elements in the system, then the decrease in performance should be trivial.
+The main performance gain in such a case is related to the factorization process (i.e. `Deform_mesh::preprocess`). 
+During deformation (i.e. `Deform_mesh::deform`), if we assume that the fill-in produced by the factorization is negligible, and the cost of back-substitution is linearly 
+proportional to the number of non-zero elements in the system, then the decrease in performance should be negligible.
  
 
 \subsection Deform_section Deform Section
@@ -319,8 +325,8 @@ The second possibility offered by the API is to set a translation and a rotation
 Hence, they are not cumulative (i.e. any call to `rotate`, `translate`, or `assign` overrides previous calls).
 
 Note that changing target positions of handle vertices (via `translate`, `rotate`, and `assign`) 
-has no effect while `Deform_mesh::deform()` is not called.
-Also unconstrained handles will be constrained to their last target positions.
+has no effect while `Deform_mesh::deform` is not called. If no transformation is defined for a group of handles,
+the corresponding vertices stay at their last target positions after a call to `Deform_mesh::deform`.
 
 \anchor deform_method
 The final action is invoking the deformation algorithm:
