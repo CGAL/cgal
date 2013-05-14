@@ -21,8 +21,6 @@
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
 /*
- * TODO: Add a tag HAS_SOURCE_TARGET and dispatch calls in
- *       Push_back_2 accordingly.
  * TODO: Complete the documentation of the changes derived from the cleaning
  *       In particular, doxygen only the things that have to be exposed
  *       to the user.
