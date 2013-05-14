@@ -141,9 +141,9 @@ Effect of different smoothness parameters on the segmentation (using 10 clusters
 
 \section Surface_mesh_segmentationAPI API
 This package provides three functions:
-	- `CGAL::compute_sdf_values` : given a triangulated surface mesh, computes the SDF value of each facet as described above.
-	- `CGAL::segment_from_sdf_values` : given a set of SDF values of facets of a mesh, computes the mesh segmentation.
-	- `CGAL::compute_sdf_values_and_segment` : given a triangulated surface mesh, combines the functions above in one line.
+	- `compute_sdf_values()` : given a triangulated surface mesh, computes the SDF value of each facet as described above.
+	- `segment_from_sdf_values()` : given a set of SDF values of facets of a mesh, computes the mesh segmentation.
+	- `compute_sdf_values_and_segment()` : given a triangulated surface mesh, combines the functions above in one line.
 
 These functions expects a manifold, normal oriented, and triangulated polyhedron without boundary as input. Note that the current implementation is running fine on polyhedral surfaces with boundaries,
 but considering how the SDF values are computed, using a polyhedron with large holes is likely to result in
@@ -153,7 +153,7 @@ The current implementation of the computation of the SDF values relies on the \r
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 
 \subsection Surface_mesh_segmentationTheSDFComputation The SDF Computation
-The function `CGAL::compute_sdf_values` provides an implementation of the SDF computation for a given \cgal Polyhedron.
+The function `compute_sdf_values()` provides an implementation of the SDF computation for a given \cgal Polyhedron.
 
 After the raw computation, the following post-processing steps are applied:
   - Facets with no SDF values (i.e. zero) are assigned the average SDF value of its neighbors. If there is still a facet having a zero SDF value, the minimum SDF value greater than zero is assigned to it. Note that this step is not inherited from the paper.
@@ -166,7 +166,7 @@ The output is the minimum and the maximum SDF values before applying the linear 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_example.cpp}
 
 \subsection Surface_mesh_segmentationSurfaceMeshSegmentation Surface Mesh Segmentation
-The function `CGAL::segment_from_sdf_values` computes a segmentation of the mesh using SDF values given as input.
+The function `segment_from_sdf_values()` computes a segmentation of the mesh using SDF values given as input.
 Note that these SDF values can be any set of scalar value associated with each facet as long as they have been normalized between 0 and 1.
 This function allows to use the same SDF values several times but with different parameters for segmentation stage.
 The output is the number of segments and a property map which associates to each facet its segment-id (an integer between 0 and number-of-segments - 1).
@@ -176,9 +176,9 @@ The output is the number of segments and a property map which associates to each
 \cgalExample{Surface_mesh_segmentation/segment_from_sdf_values_example.cpp}
 
 \subsubsection Example_3 Computation of SDF Values and Segmentation
-The function `CGAL::compute_sdf_values_and_segment` combines the two aforementioned functions.
+The function `compute_sdf_values_and_segment()` combines the two aforementioned functions.
 Note that computing several segmentation of the mesh with different parameters (i.e. number of levels, and smoothing lambda),
-it is advised to first compute the SDF values using `CGAL::compute_sdf_values` and use them each time you want to call `CGAL::segment_from_sdf_values`.
+it is advised to first compute the SDF values using `compute_sdf_values()` and use them each time you want to call `segment_from_sdf_values()`.
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_example.cpp}
 
@@ -190,10 +190,10 @@ The main advantage is to decrease the complexity of accessing associated data wi
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
 
 \section Performances Performances
-We provide performance results of `CGAL::compute_sdf_values` and `CGAL::segment_from_sdf_values` for various models with different kernels.
+We provide performance results of `compute_sdf_values()` and `segment_from_sdf_values()` for various models with different kernels.
 These results are taken on Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 
-Performance of `CGAL::compute_sdf_values` with 25 rays (in ms):
+Performance of `compute_sdf_values()` with 25 rays (in ms):
 <center>
 <table border="1">
 <tr>
@@ -222,7 +222,7 @@ Performance of `CGAL::compute_sdf_values` with 25 rays (in ms):
 </tr>
 </table>
 </center>
-Performance of `CGAL::segment_from_sdf_values` (in ms):
+Performance of `segment_from_sdf_values()` (in ms):
 
 <center>
 <table border="1">
@@ -259,7 +259,7 @@ Performance of `CGAL::segment_from_sdf_values` (in ms):
 
 We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow software</a> instead of `boost::boykov_kolmogorov_max_flow`.
 It can be activated by defining `CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE`.
-Performance of `CGAL::segment_from_sdf_values` with this implementation (in ms):
+Performance of `segment_from_sdf_values()` with this implementation (in ms):
 
 <center>
 <table border="1">
