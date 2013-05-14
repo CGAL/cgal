@@ -58,7 +58,7 @@ A comparison with biased and uniform sampling of points can be seen in \cgalFigu
 After having calculated the SDF value for each facet, bilateral smoothing \cite Tomasi1998Bilateral (an edge-preserving filtering technique) is applied.
 The purpose of edge-preserving smoothing is removing noise while keeping fast changes on SDF values in-place without smoothing,
 since they are natural candidates for segment boundaries. The bilateral smoothing has three parameters that are set by default as follows:
--\f$ w = \lfloor\sqrt{number\:of\:facet / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection)
+-\f$ w = \lfloor\sqrt{  \mathrm{number\:of\:facet} / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection)
 -\f$ \sigma_s = w /2.0 \f$, the spatial parameter
 -\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$
 
@@ -71,7 +71,7 @@ Effect of pose changes on segmentation and SDF values.
 \image latex pose_changes_sdf_low_3.png "Effect of pose changes on segmentation and SDF values." width=12cm
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
-Given a number of initial clusters, the soft clustering applied on the SDF values computed first groups facets using k-means clustering algorithm. It is initialized with k-means++,
+Given a number of initial clusters, the soft clustering applied on the SDF values computed first groups facets using k-means clustering algorithm. It is initialized with k-means++ \cite Arthur2007Kmeans,
 (an algorithm for choosing random seeds for clusters) and run multiple times. Among these runs, we choose clustering result that has minimum with-in
 cluster error and use it to initialize expectation maximization algorithm for fitting Gaussian mixture models.
 
@@ -156,19 +156,23 @@ This operation is reliable when the `AABBTraits` model provided has exact predic
 The function `compute_sdf_values()` provides an implementation of the SDF computation for a given \cgal Polyhedron.
 
 After the raw computation, the following post-processing steps are applied:
-  - Facets with no SDF values (i.e. zero) are assigned the average SDF value of its neighbors. If there is still a facet having a zero SDF value, the minimum SDF value greater than zero is assigned to it. Note that this step is not inherited from the paper.
-  - Smoothed with bilateral filtering.
-  - Linearly normalized between [0,1].
+  - Facets with no SDF values (i.e. zero) are assigned the average SDF value of their neighbors. 
+  If there is still a facet having a zero SDF value, the minimum SDF value greater than zero is assigned to it. Note that this step is not inherited from the paper. 
+  The main reason for avoiding zero SDF values is that it can obstruct log-normalization process.
+  - SDF values are smoothed with bilateral filtering.
+  - SDF values are linearly normalized between [0,1].
 
-The output is the minimum and the maximum SDF values before applying the linear normalization, and a property map which associates to each facet its SDF value.
+The output is the minimum and the maximum SDF values before applying the linear normalization, and a property map (\ref chapterProperty_map
+"CGAL and Boost Property Maps") which associates to each facet its SDF value.
 
 \subsubsection Example_1 Example: Computation of SDF Values
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_example.cpp}
 
 \subsection Surface_mesh_segmentationSurfaceMeshSegmentation Surface Mesh Segmentation
 The function `segment_from_sdf_values()` computes a segmentation of the mesh using SDF values given as input.
-Note that these SDF values can be any set of scalar value associated with each facet as long as they have been normalized between 0 and 1.
-This function allows to use the same SDF values several times but with different parameters for segmentation stage.
+Note that these SDF values can be any set of scalar values associated with each facet as long as they have been normalized between 0 and 1. 
+These values are also log-normalized at the beginning as the paper suggests.
+This function allows to use the same SDF values several times but with different parameters for the segmentation stage.
 The output is the number of segments and a property map which associates to each facet its segment-id (an integer between 0 and number-of-segments - 1).
 \note A segment is a set of connected facets which are placed under same the cluster after the graph-cut step. Note that the number of clusters given as input of the function and the number of partitions in the final segmentation (computed by the function) are not equal in general.
 
@@ -182,7 +186,7 @@ it is advised to first compute the SDF values using `compute_sdf_values()` and u
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_example.cpp}
 
-\subsubsection Surface_mesh_segmentationUsingapolyhedron Using a polyhedron with an ID per facet
+\subsubsection Surface_mesh_segmentationUsingapolyhedron Using a Polyhedron with an ID per Facet
 The previous examples use a `std::map` as property maps for storing the SDF values and the segmentation results. This example uses
 a polyhedron type with a facet type having an extra ID field together with a vector as underlying data structure in the property maps.
 The main advantage is to decrease the complexity of accessing associated data with facets from logarithmic to constant.
@@ -193,7 +197,7 @@ The main advantage is to decrease the complexity of accessing associated data wi
 We provide performance results of `compute_sdf_values()` and `segment_from_sdf_values()` for various models with different kernels.
 These results are taken on Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 
-Performance of `compute_sdf_values()` with 25 rays (in ms):
+Performance of `compute_sdf_values()` with 25 rays (in seconds):
 <center>
 <table border="1">
 <tr>
@@ -204,21 +208,21 @@ Performance of `compute_sdf_values()` with 25 rays (in ms):
 </tr>
 <tr>
 	<td> 5,558 </td>
-	<td> 1,601 </td>
-	<td> 3,948 </td>
-	<td> 8,461 </td>
+	<td align='right'> 1.6 </td>
+	<td align='right'> 3.9 </td>
+	<td align='right'> 8.4 </td>
 </tr>
 <tr>
 	<td> 34,986 </td>
-	<td> 13,601 </td>
-	<td> 26,222 </td>
-	<td> 63,900 </td>
+	<td align='right'> 13.6 </td>
+	<td align='right'> 26.2 </td>
+	<td align='right'> 63.9 </td>
 </tr>
 <tr>
 	<td> 100,332 </td>
-	<td> 48,705 </td>
-	<td> 88,173 </td>
-	<td> 169,279 </td>
+	<td align='right'> 48.7 </td>
+	<td align='right'> 88.1 </td>
+	<td align='right'> 169.2 </td>
 </tr>
 </table>
 </center>
@@ -235,29 +239,29 @@ Performance of `segment_from_sdf_values()` (in ms):
 </tr>
 <tr>
 	<td> 5,558 </td>
-	<td> 55 </td>
-	<td> 215 </td>
-	<td> 538 </td>
-	<td> 847 </td>
+	<td align='right'> 55 </td>
+	<td align='right'> 215 </td>
+	<td align='right'> 538 </td>
+	<td align='right'> 847 </td>
 </tr>
 <tr>
 	<td> 34,986 </td>
-	<td> 351 </td>
-	<td> 1,279 </td>
-	<td> 3,551 </td>
-	<td> 5,875 </td>
+	<td align='right'> 351 </td>
+	<td align='right'> 1,279 </td>
+	<td align='right'> 3,551 </td>
+	<td align='right'> 5,875 </td>
 </tr>
 <tr>
 	<td> 100,332 </td>
-	<td> 1,112 </td>
-	<td> 4,227 </td>
-	<td> 11,850 </td>
-	<td> 23,408 </td>
+	<td align='right'> 1,112 </td>
+	<td align='right'> 4,227 </td>
+	<td align='right'> 11,850 </td>
+	<td align='right'> 23,408 </td>
 </tr>
 </table>
 </center>
 
-We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow software</a> instead of `boost::boykov_kolmogorov_max_flow`.
+We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">the MaxFlow</a> instead of `boost::boykov_kolmogorov_max_flow`.
 It can be activated by defining `CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE`.
 Performance of `segment_from_sdf_values()` with this implementation (in ms):
 
@@ -272,24 +276,24 @@ Performance of `segment_from_sdf_values()` with this implementation (in ms):
 </tr>
 <tr>
 	<td> 5,558 </td>
-	<td> 21 </td>
-	<td> 58 </td>
-	<td> 116 </td>
-	<td> 168 </td>
+	<td align='right'> 21 </td>
+	<td align='right'> 58 </td>
+	<td align='right'> 116 </td>
+	<td align='right'> 168 </td>
 </tr>
 <tr>
 	<td> 34,986 </td>
-	<td> 127 </td>
-	<td> 280 </td>
-	<td> 659 </td>
-	<td> 960 </td>
+	<td align='right'> 127 </td>
+	<td align='right'> 280 </td>
+	<td align='right'> 659 </td>
+	<td align='right'> 960 </td>
 </tr>
 <tr>
 	<td> 100,332 </td>
-	<td> 437 </td>
-	<td> 1,042 </td>
-	<td> 2,373 </td>
-	<td> 3,947 </td>
+	<td align='right'> 437 </td>
+	<td align='right'> 1,042 </td>
+	<td align='right'> 2,373 </td>
+	<td align='right'> 3,947 </td>
 </tr>
 </table>
 </center>

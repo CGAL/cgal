@@ -20,8 +20,8 @@ namespace CGAL
  * After the computation of SDF values for each facet, the following post-processing steps are applied:
  *  - Facets with no SDF values (i.e. zero) are assigned to average SDF value of its neighbors.
  * If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it.
- *  - Smoothed with bilateral filtering.
- *  - Linearly normalized between [0,1].
+ *  - SDF values are smoothed with bilateral filtering.
+ *  - SDF values are linearly between [0,1].
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Fast_sdf_calculation_mode regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
@@ -79,6 +79,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * This function fills a property map which associates a segment-id (between [0, number of segments -1]) to each facet.
  * Formally, a segment is a set of connected facets which are placed under same cluster.
  *
+ * \note Log-normalization is applied on @a sdf_values before segmentation.
  * \note There is no direct relation between the parameter @a number_of_levels
  * and number of segments. However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
  *
@@ -88,7 +89,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
- * @param sdf_values sdf_values the sdf value of each facet
+ * @param sdf_values the sdf value of each facet between [0-1]
  * @param[out] segment_ids the segment id of each facet
  * @param number_of_levels number of clusters for soft clustering
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]
