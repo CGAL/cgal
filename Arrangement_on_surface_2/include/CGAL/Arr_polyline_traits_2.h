@@ -635,14 +635,16 @@ public:
         }
     }
 
+
     /*!
      * Append a segment seg to an existing polyline cv. If cv is empty, seg will
      * be its first segment.
      * \param cv a polyline. Note, cv is not (necessarily) x-monotone.
      * \param seg a segment to be appended to cv
-     * \pre cv is not an isolated point
+     * \pre One of the ends of seg should be equal to the last vertex of cv
+     * \post The resulting cv is well oriented.
      */
-    void operator()(const Curve_2& cv, Segment_2& seg) const
+    void operator()(Curve_2& cv, Segment_2& seg) const
     {
       int num_seg = cv.number_of_segments();
 
@@ -651,6 +653,8 @@ public:
         seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         seg_traits->construct_max_vertex_2_object();
+      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+        seg_traits->compare_endpoints_xy_2_object();
       typename Segment_traits_2::Equal_2 equal =
         seg_traits->equal_2_object();
 
@@ -661,17 +665,35 @@ public:
           return;
         }
 
-      CGAL_precondition_code(
-        if (num_seg==1)
-        CGAL_precondition(!equal(get_min_v(cv[0]),get_max_v(cv[0])));
-        );
+      Point_2 last_v;
 
-      CGAL_precondition(equal(get_min_v(cv[num_seg-1]),get_min_v(seg))||
-                        equal(get_min_v(cv[num_seg-1]),get_max_v(seg))||
-                        equal(get_max_v(cv[num_seg-1]),get_min_v(seg))||
-                        equal(get_max_v(cv[num_seg-1]),get_max_v(seg)));
+      /*
+       * ROADMAP: In order to ensure that the resulting cv is well oriented
+       *          the following test must(?) be made. If we allow ill-oriented
+       *          polylines, then at this point seg can simply be appended.
+       */
+      if (comp_endpts(cv[num_seg-1]) == SMALLER)
+        last_v = get_max_v(cv[num_seg-1]);
+      else
+        last_v = get_min_v(cv[num_seg-1]);
 
-        cv.push_back(seg);
+      CGAL_precondition(equal(last_v,get_min_v(seg))||
+                        equal(last_v,get_max_v(seg)));
+
+      if (equal(last_v,get_min_v(seg)))
+        {
+          if (comp_endpts(seg) == SMALLER)
+            cv.push_back(seg);
+          else
+            cv.push_back(seg_traits->construct_opposite_2_object()(seg));
+        }
+      else
+        {
+          if (comp_endpts(seg) == SMALLER)
+            cv.push_back(seg_traits->construct_opposite_2_object()(seg));
+          else
+            cv.push_back(seg);
+        }
     }
 
     /*!
