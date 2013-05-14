@@ -252,7 +252,7 @@ The API is convenient enough for either using a subset or the whole mesh as regi
   - `Deform_mesh::insert_roi(vertex_descriptor vd)` inserts a vertex into the region-of-interest
   - `Deform_mesh::insert_roi(InputIterator begin, InputIterator end)` inserts a range of vertices into the region-of-interest
 
-The ROI should also include the handle vertices, see \cgalFigureRef{Simple_roi}.
+The ROI also features the handle vertices, see \cgalFigureRef{Simple_roi}.
 Note that the algorithm automatically finds the exterior-boundary of the ROI and treats them as <i>fixed handles</i>.
 
 \cgalFigureBegin{Simple_roi, roi_example.png}
@@ -260,8 +260,8 @@ Red vertices represent handles, and yellow vertices together with red vertices r
 \cgalFigureEnd
 
 Similarly, the handle vertices which will constrain the deformation should be added. 
-At this point vertices should be grouped that are expected to translate or rotate together.
-  - `Deform_mesh::create_handle_group()` creates an empty group for vertices and return a representative `Deform_mesh::Handle_group` of the group
+Handle vertices are gathered into a group when they are expected to be translated and/or rotated together.
+  - `Deform_mesh::create_handle_group()` creates an empty group for vertices and returns a representative `Deform_mesh::Handle_group` of the group
   - `Deform_mesh::insert_handle(Handle_group handle_group, vertex_descriptor vd)` inserts a vertex in a group of handles
   - `Deform_mesh::insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)` inserts a set of vertices to a group of handles
 
@@ -274,9 +274,9 @@ The status of a vertex (roi or handle) can be reinitialized :
   - `Deform_mesh::erase_handle(vertex_descriptor vd)` removes a vertex by searching for it through all groups of handles
   
 Iteration over the ROI and handle vertices is possible using:
-  - `Deform_mesh::roi_vertices()` returns range iterators over the ROI vertices
-  - `Deform_mesh::handle_groups()` returns range iterators over the groups of handles
-  - `Deform_mesh::handles(Handle_group handle_group)` returns range iterators over the vertices inside a given group of handles
+  - `Deform_mesh::roi_vertices()` returns an iterator range of the vertices in the ROI
+  - `Deform_mesh::handle_groups()` returns an iterator range of the groups of handles
+  - `Deform_mesh::handles(Handle_group handle_group)` returns an iterator range of the vertices inside a given group of handles
   
 Also constant time querying the state of a vertex can be done using:
   - `Deform_mesh::is_roi(vertex_descriptor vd) const` queries whether the vertex is inside the ROI
@@ -293,7 +293,7 @@ Some cases for such failure are:
 	- Using custom weights which contain too many zero weights, so that the connectivity is broken.
 	
 Calling the preprocess function is optional, which means it is called by `Deform_mesh::deform`, if there is any need to. 
-Of course, it might cause a delay in first `Deform_mesh::deform` call due to the extra preprocess computations. 
+Of course, it might cause a delay in first `Deform_mesh::deform` call due to the extra preprocessing computations. 
 
 \note The ROI does not have to be a single connected component, however considering performance issues it is best to use an individual deformation object for each connected component of the ROI. 
 The main performance gain in such a case is related to the factorization process (i.e. `Deform_mesh::preprocess`). 
@@ -310,23 +310,23 @@ If the target positions for the handles are provided directly, then handles can 
 and `Deform_mesh::assign` can be used for direct assignment of target positions. 
 
 \anchor rot
-The second possibility offered by the API is to set translation and rotation for vertex handle groups. 
-  - `Deform_mesh::translate(Const_handle_group handle_group, const Vector& translation)` translates the vertices in `handle_group` by `translation`
+The second possibility offered by the API is to set a translation and a rotation applied to the vertices of a group of handles.
+  - `Deform_mesh::translate(Const_handle_group handle_group, const Vector& translation)` defines a translation of the vertices in `handle_group` by `translation`
+  defines a rotation of the vertices in `handle_group` around `rotation_center` using the quaternion `quat`, followed by a translation by `translation`
   - `Deform_mesh::rotate(Const_handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& translation)` 
-  rotates the `handle_group` around `rotation_center` using the quaternion `quat` and then translates it by `translation`
 
-`rotate` and `translate` operate on <i>original positions</i> (i.e. positions of vertices at the time of construction) of handle vertices.
-Hence, they are not accumulative (i.e. any call to `rotate`, `translate`, or `assign` overrides previous calls).
+`rotate` and `translate` are always applied on the <i>original positions</i> (i.e. positions of vertices at the time of construction) of handle vertices.
+Hence, they are not cumulative (i.e. any call to `rotate`, `translate`, or `assign` overrides previous calls).
 
 Note that changing target positions of handle vertices (via `translate`, `rotate`, and `assign`) 
-has no immediate effect on actual positions until `Deform_mesh::deform` is called.
+has no effect while `Deform_mesh::deform` is not called.
 Also unconstrained handles will be constrained to their last target positions.
 
 \anchor deform_method
 The final action is invoking the deformation algorithm:
   - `Deform_mesh::deform(unsigned int iterations, double tolerance)` deforms the mesh with one-time parameters. 
-    - Each iteration consists of two steps of optimization procedure explained in \ref Surface_Modeling_Overview_ARAP
-    - In case of tolerance is smaller than or equal to zero, no energy based termination occurs. 
+    - Each iteration consists of two optimization steps explained in \ref Surface_Modeling_Overview_ARAP
+    - If the tolerance is smaller than or equal to zero, no energy based termination occurs. 
 	Otherwise it is compared against \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ where \f$m_i\f$ is the resulting surface mesh at iteration \f$i\f$.  
   - `Deform_mesh::deform()` deforms the mesh using global iterations and tolerance parameters provided in constructor or using `Deform_mesh::set_iterations`, and `Deform_mesh::set_tolerance`
 
@@ -338,7 +338,9 @@ That is, in an interactive deformation session, the user is responsible for comp
 
 \warning Vertices can be inserted into or removed from region-of-interest and handles at any time. In particular, any vertex which is no longer inside the ROI will be
 assigned to its original position in `Deform_mesh::preprocess`.
-The original positions can be updated by calling `Deform_mesh::overwrite_original_positions`. This behavior is illustrated in \ref Surface_Modeling_Demo_Tutorial.
+The original positions can be updated by calling `Deform_mesh::overwrite_original_positions`. This behavior is illustrated in the video \ref Surface_Modeling_Demo_Tutorial.
+
+\warning The rationale for this choice is the stability of the result. The algorithm is applied on the input and the current deformed mesh is only used as the initial guess.
 
 \subsection Surface_modeling_examples Examples
 
@@ -395,7 +397,9 @@ A plugin for the polyhedron demo is available to test the algorithm. The followi
 @endhtmlonly
 
 \section Surface_Modeling_History Implementation History
-The initial version of this package has been implemented during the 2011 Google Summer of Code by Yin Xu under the guidance of Olga Sorkine and Andreas Fabri. Ilker O. Yaz took over the finalization of the package.
+An initial version of this package has been implemented during the 2011 Google Summer of Code by Yin Xu under the guidance of Olga Sorkine and Andreas Fabri.
+Ilker O. Yaz took over the finalization of the package with the help of Sébastien Loriot for the documentation and the API.
+The authors are grateful to Gaël Guennebaud for his great help on optimally using the Eigen library.
 */
 
 } /* namespace CGAL */
