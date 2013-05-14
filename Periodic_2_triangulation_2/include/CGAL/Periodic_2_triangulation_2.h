@@ -4356,7 +4356,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       for (Vertex_iterator it = vertices_begin(); it != vertices_end(); ++it)
         {
           V[it] = i++;
-          os << (*it);
+          os << it->point();
           if (is_ascii(os))
             os << std::endl;
         }
@@ -4519,10 +4519,12 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
 
   if (cx == 1 && cy == 1)
     {
+      Point p;
       for (std::size_t i = 0; i < n; i++)
         {
           V[i] = tds().create_vertex();
-          is >> *V[i];
+          is >> p;
+          V[i]->set_point(p);
         }
     }
   else
