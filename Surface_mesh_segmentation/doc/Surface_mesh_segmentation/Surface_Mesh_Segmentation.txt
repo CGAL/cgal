@@ -226,7 +226,7 @@ Performance of `compute_sdf_values()` with 25 rays (in seconds):
 </tr>
 </table>
 </center>
-Performance of `segment_from_sdf_values()` (in ms):
+Performance of `segment_from_sdf_values()` (in milliseconds):
 
 <center>
 <table border="1">
@@ -263,7 +263,7 @@ Performance of `segment_from_sdf_values()` (in ms):
 
 We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">the MaxFlow</a> instead of `boost::boykov_kolmogorov_max_flow`.
 It can be activated by defining `CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE`.
-Performance of `segment_from_sdf_values()` with this implementation (in ms):
+Performance of `segment_from_sdf_values()` with this implementation :
 
 <center>
 <table border="1">
