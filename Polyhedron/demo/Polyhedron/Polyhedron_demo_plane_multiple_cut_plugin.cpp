@@ -1,5 +1,7 @@
 #undef NDEBUG // there are assertions to notify degenarete cases which are not handled
               // so keep it open in release mode to see whether there is a prob in algo, or a failure in predefined cases
+#define CGAL_PROFILE
+
 #include <QtCore/qglobal.h>
 #include <CGAL/AABB_intersections.h>
 
@@ -15,7 +17,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/bounding_box.h> 
 #include <CGAL/intersection_of_plane_Polyhedra_3_using_AABB.h>
-#include <CGAL/intersection_of_plane_Polyhedra_3_using_AABB_2.h>
 
 #include "Polyhedron_type.h"
 
@@ -89,7 +90,7 @@ QList<QAction*> Polyhedron_demo_plane_multiple_cut_plugin::actions() const {
 }
 
 void Polyhedron_demo_plane_multiple_cut_plugin::multiple_plane_action(){
-  if(dock_widget != NULL) { 
+  if(dock_widget != NULL && !dock_widget->isVisible()) { 
     dock_widget->show(); 
 
     ///// from cut plugin /////
@@ -210,11 +211,8 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
   const Scene_interface::Bbox& bbox = item->bbox();
   CGAL::Bbox_3 cgal_bbox(bbox.xmin, bbox.ymin, bbox.zmin,
     bbox.xmax, bbox.ymax, bbox.zmax);
-
-  Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
   Polyhedron* poly = item->polyhedron();
 
-  QTime time; time.start();
   // continue generating planes while inside bbox
   std::vector<Epic_kernel::Plane_3> planes;
   for(int dir = 1, step = 0; /* */ ; ++step) 
@@ -239,18 +237,45 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
   //  std::back_inserter(new_polylines_item->polylines)
   //  );
 
-  // call algorithm and fill polylines in polylines_item
-  CGAL::intersection_of_plane_Polyhedra_3_using_AABB<Epic_kernel>(
-    *poly, planes.begin(), planes.end(),
-    std::back_inserter(new_polylines_item->polylines) );
+  bool new_polyline_item_for_polylines = ui_widget->newPolylineItemCheckBox->checkState() == Qt::Checked;
+  
+  if(!new_polyline_item_for_polylines) 
+  {
+    Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
+    QTime time; time.start();
+    // call algorithm and fill polylines in polylines_item
+    CGAL::intersection_of_plane_Polyhedra_3_using_AABB<Epic_kernel>(
+      *poly, planes.begin(), planes.end(),
+      std::back_inserter(new_polylines_item->polylines ));
+    // set names etc and print timing
+    print_message( QString("Processed %1 cuts in %2 ms!").arg(planes.size()).arg(time.elapsed()) );
+    new_polylines_item->setName(QString("%1 with %2 cuts").
+      arg(item->name()).arg(planes.size()) );
+    new_polylines_item->setColor(Qt::green);
+    new_polylines_item->setRenderingMode(Wireframe);
+    scene->addItem(new_polylines_item);
+  }
+  else {
+    QTime time; time.start();
+    std::list<std::vector<Epic_kernel::Point_3> > polylines;
+    // call algorithm and fill polylines in polylines_item
+    CGAL::intersection_of_plane_Polyhedra_3_using_AABB<Epic_kernel>(
+      *poly, planes.begin(), planes.end(),
+      std::back_inserter(polylines));
+    // set names etc and print timing
+    print_message( QString("Processed %1 cuts in %2 ms!").arg(planes.size()).arg(time.elapsed()) );
 
-  // set names etc and print timing
-  new_polylines_item->setName(QString("%1 with %2 cuts").
-    arg(item->name()).arg(planes.size()) );
-  new_polylines_item->setColor(Qt::green);
-  new_polylines_item->setRenderingMode(Wireframe);
-  scene->addItem(new_polylines_item);
-  print_message( QString("Processed %1 cuts in %2 ms!").arg(planes.size()).arg(time.elapsed()) );
+    int counter = 0;
+    for(std::list<std::vector<Epic_kernel::Point_3> >::iterator it = polylines.begin(); it != polylines.end(); ++it, ++counter) {
+      Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
+      new_polylines_item->polylines.push_back(*it);
+      new_polylines_item->setName(QString("%1 with %2 cuts %3").
+        arg(item->name()).arg(planes.size()).arg(counter) );
+      new_polylines_item->setColor(Qt::green);
+      new_polylines_item->setRenderingMode(Wireframe);
+      scene->addItem(new_polylines_item);
+    }
+  }
 }
 
 void Polyhedron_demo_plane_multiple_cut_plugin::plane_destroyed() {

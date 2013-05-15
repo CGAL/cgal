@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>301</width>
+    <width>295</width>
     <height>180</height>
    </rect>
   </property>
@@ -82,17 +82,6 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
-    <layout class="QHBoxLayout">
-     <item>
-      <widget class="QPushButton" name="Generate_button">
-       <property name="text">
-        <string>Generate</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -104,6 +93,24 @@
      </item>
      <item>
       <widget class="QLineEdit" name="Distance_with_planes"/>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0">
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QCheckBox" name="newPolylineItemCheckBox">
+       <property name="text">
+        <string>New polyline item for each polyline</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Generate_button">
+       <property name="text">
+        <string>Generate</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

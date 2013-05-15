@@ -9,14 +9,18 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Plane_3.h>
-
 #include <CGAL/intersection_of_Polyhedra_3.h>
+
+#include <CGAL/Timer.h>
+#include <CGAL/Profile_counter.h>
 
 #include <vector>
 #include <map>
-#include <algorithm>
+#include <deque>
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/optional.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
 namespace CGAL {
 
@@ -25,7 +29,7 @@ class AABB_to_polyline_imp
 {
 private:
   typedef typename Polyhedron::Traits::Kernel K;
-  typedef AABB_polyhedron_triangle_primitive<K, Polyhedron>       AABB_primitive;
+  typedef AABB_const_polyhedron_edge_primitive<K, Polyhedron>     AABB_primitive;
   typedef AABB_traits<K, AABB_primitive>                          AABB_traits_;
   typedef AABB_tree<AABB_traits_>                                  AABB_tree_;
 
@@ -36,146 +40,353 @@ private:
   typedef typename PK::Segment_3  Segment;
   typedef typename PK::Point_3    Point;
 
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-  typedef typename Polyhedron::Facet_handle Facet_handle;
+  typedef typename Polyhedron::Edge_const_iterator   Edge_const_iterator;
+  typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Polyhedron::Facet_const_handle    Facet_const_handle;
+  typedef typename Polyhedron::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator;
+  typedef typename Polyhedron::Halfedge_around_facet_const_circulator  Halfedge_around_facet_const_circulator;
 
-  // to store two intersecting halfedges of a facet
-  struct Halfedge_pair {
-    Halfedge_handle h1, h2;
-    int halfedge_count;
-    int halfedge_intersections;
-
-    Halfedge_pair() : halfedge_count(0), halfedge_intersections(0) { }
-    Halfedge_pair(Halfedge_handle h1, Halfedge_handle h2) : h1(h1), h2(h2), halfedge_count(2), halfedge_intersections(0)
-    { }
-
-    void put(Halfedge_handle h) {
-      if(halfedge_count > 2) { CGAL_assertion(false && "degenerate case occured"); }
-      (halfedge_count == 0 ? h1 : h2) = h;
-      ++halfedge_count;
-    }
-
-    // halfedge `h` points to a neighbor facet
-    Halfedge_handle get_other(Halfedge_handle h) {
-      if(halfedge_count != 2) { CGAL_assertion(false && "degenerate case occured"); }
-      return h->opposite() == h1 ? h2 : h1;
-    }
-    
-    void halfedge_intersection_found() { 
-      ++halfedge_intersections; 
-      if(halfedge_intersections > 2) {
-        std::cout << "halfedge_intersections: " << halfedge_intersections << std::endl;
-        CGAL_assertion(false);        
-      }
+  // to unite halfedges under an "edge"
+  struct Edge_comparator {
+    bool operator()(Halfedge_const_handle h1, Halfedge_const_handle h2) const {
+      return (std::min)(&*h1, &*(h1->opposite())) 
+        < (std::min)(&*h2, &*(h2->opposite()));
     }
   };
 
-  bool halfedge_do_intersect(Halfedge_handle hf, const Plane& plane) {
-    const Point& s = hf->vertex()->point();
-    const Point& t = hf->opposite()->vertex()->point();
-    return CGAL::do_intersect(plane, Segment(s,t));
-  }
+  ////////////////////////////////////////////////
+  // to represent a intersection point with plane
+  struct Node {
+    Point point;
+  };
 
-  Point halfedge_intersection(Halfedge_handle hf, const Plane& plane) {
+  struct Node_edge { 
+    bool is_processed;
+    Node_edge() : is_processed(false) 
+    { }
+  };
+
+  // out_edges is setS for preventing parallel edges automatically (do not change it, or add custom check before add_edge)
+  typedef boost::adjacency_list<
+    boost::setS, boost::vecS, boost::undirectedS,
+    Node, Node_edge>
+  Node_graph;
+
+  typedef typename Node_graph::vertex_descriptor Vertex_g;
+  typedef typename Node_graph::vertex_iterator   Vertex_iterator_g;
+  typedef typename Node_graph::edge_descriptor   Edge_g;
+  typedef typename Node_graph::out_edge_iterator Out_edge_iterator_g;
+  ////////////////////////////////////////////////
+
+  // to store intersections of an edge
+  // there is two nodes (intersection points) when an edge is coplanar to plane
+  struct Node_pair {
+    Vertex_g v1, v2;
+    int vertex_count;
+
+    Node_pair() : vertex_count(0){ }
+    Node_pair(Vertex_g v1, Vertex_g v2) : v1(v1), v2(v2), vertex_count(2) { }
+
+    void put(Vertex_g v) {
+      CGAL_assertion(vertex_count <= 2);
+
+      (vertex_count == 0 ? v1 : v2) = v;
+      ++vertex_count;
+    }
+  };
+
+  typedef std::map<Halfedge_const_handle, Node_pair, Edge_comparator> Edge_node_map;
+  typedef typename Edge_node_map::iterator Edge_node_map_iterator;
+
+  enum Intersection_type { BOUNDARY, INTERVAL, PLANAR };
+
+  typedef std::map<Halfedge_const_handle, Intersection_type, Edge_comparator> Edge_intersection_map;
+  typedef typename Edge_intersection_map::iterator Edge_intersection_map_iterator;
+
+  // member variables //
+  AABB_tree_ tree;
+  Node_graph node_graph;
+
+  boost::tuple<Point, Intersection_type, Vertex_const_handle>
+  halfedge_intersection(Halfedge_const_handle hf, const Plane& plane)
+  { 
+    boost::tuple<Point, Intersection_type, Vertex_const_handle> ret;
+
     const Point& s = hf->vertex()->point();
     const Point& t = hf->opposite()->vertex()->point();
+    Oriented_side s_os, t_os;
+    s_os = plane.oriented_side(s);
+    t_os = plane.oriented_side(t);
+
+    // in case of planar just Intersection_type is not empty in tuple
+    if(t_os == ON_ORIENTED_BOUNDARY && s_os == ON_ORIENTED_BOUNDARY) {
+      ret.get<1>() = PLANAR;
+      return ret;
+    }
+    // in case of boundary Intersection_type and vertex are not empty in tuple
+    if(t_os == ON_ORIENTED_BOUNDARY || s_os == ON_ORIENTED_BOUNDARY) { 
+      ret.get<1>() = BOUNDARY;
+      ret.get<2>() = t_os == ON_ORIENTED_BOUNDARY ? hf->opposite()->vertex() :
+                                                    hf->vertex();
+      return ret;
+    }
+
+    CGAL_assertion(t_os != s_os); // should one positive one negative
+    // in case of interval Intersection_type and point are not empty in tuple
+    ret.get<1>() = INTERVAL;
     Object intersection = CGAL::intersection(plane, Segment(s,t));
 
-    const Point* i_point = 0; 
-    if(!(i_point = object_cast<Point>(&intersection))) { 
-      CGAL_assertion(false && "degenarate case occured");
+    if(const Point* i_point  = object_cast<Point>(&intersection)) { 
+      ret.get<0>() = *i_point;
     }
-
-    return Point(*i_point);
+    else if(const Segment* i_segment = object_cast<Segment>(&intersection)) {
+      // is it possible to predicate not-planar but construct segment ?
+      CGAL_warning(false && "on interval case - predicate not-planar but construct segment");
+      ret.get<1>() = PLANAR;
+    }
+    else {
+      // prediction indicates intersection but construction returns nothing, returning closest point
+      CGAL_warning(false && "on interval case - no intersection found");
+      ret.get<0>() = squared_distance(plane, s) < squared_distance(plane, t) ? s : t; 
+    }
+    return ret;
   }
 
-  typedef std::map<Facet_handle, Halfedge_pair> Facet_intersection_map;
-  typedef typename Facet_intersection_map::iterator Facet_intersection_map_iterator;
-  // members
-  Facet_intersection_map facet_intersection_map;
-  AABB_tree_ tree;
+  void add_intersection_node_to_one_ring(Vertex_const_handle v, Edge_node_map& edge_node_map) {
+    Vertex_g v_g = boost::add_vertex(node_graph);
+    node_graph[v_g].point = v->point();
 
-  void process_intersection(Halfedge_handle hf) {
-    if(!hf->is_border()) {
-      facet_intersection_map.find(hf->facet())
-        ->second.halfedge_intersection_found();
-    }
-    if(!hf->opposite()->is_border()) {
-      facet_intersection_map.find(hf->opposite()->facet())
-        ->second.halfedge_intersection_found();
-    }
+    Halfedge_around_vertex_const_circulator around_vertex_c = v->vertex_begin();
+    do {
+      edge_node_map[around_vertex_c].put(v_g);
+    } 
+    while(++around_vertex_c != v->vertex_begin());
+  }
+  
+  void add_intersection_edge_to_facet_neighbors(Halfedge_const_handle hf, Edge_node_map& edge_node_map) {
+    Node_pair& hf_node_pair = edge_node_map.find(hf)->second;
+    CGAL_assertion(hf_node_pair.vertex_count == 1);
+
+    for(int i = 0; i < 2; ++i) // loop for hf and hf->opposite
+    {
+      if(i == 1) { hf = hf->opposite(); }
+      if(hf->is_border()) { continue;} 
+
+      for(int i = 0; i < 2; ++i) 
+      {
+        Halfedge_const_handle facet_hf = i == 0 ? hf->next() : hf->prev();
+        Edge_node_map_iterator facet_hf_it = edge_node_map.find(facet_hf);
+
+        if(facet_hf_it != edge_node_map.end()) {
+          Node_pair& facet_hf_node_pair = facet_hf_it->second;
+          CGAL_assertion(facet_hf_node_pair.vertex_count == 1); // == 2 if hf is planar and that cant happen 
+          boost::add_edge(hf_node_pair.v1, facet_hf_node_pair.v1, node_graph); 
+        }
+      }
+    } // for hf and hf->opposite
+  }
+
+  void add_intersection_edge_to_vertex_neighbors(Halfedge_const_handle hf, Vertex_const_handle v, Edge_node_map& edge_node_map){
+    // do not worry about duplicate edges, they are not allowed (but performance might be a concern)
+    Node_pair& hf_node_pair = edge_node_map.find(hf)->second;
+    Vertex_g v_g = node_graph[hf_node_pair.v1].point == v->point() ? hf_node_pair.v1 : hf_node_pair.v2;// find node containing v
+
+    Halfedge_around_vertex_const_circulator around_vertex_c = v->vertex_begin();
+    do {
+      if(around_vertex_c->is_border()) { continue;} 
+      Node_pair& around_vertex_node_pair = edge_node_map.find(around_vertex_c)->second;
+      Halfedge_around_facet_const_circulator around_facet_c = around_vertex_c->facet_begin();
+      do {
+        CGAL_assertion(around_vertex_node_pair.vertex_count != 0);
+        if(around_vertex_node_pair.v1 != v_g) {
+          boost::add_edge(around_vertex_node_pair.v1, v_g, node_graph); 
+        }
+        if(around_vertex_node_pair.vertex_count == 2 && around_vertex_node_pair.v2 != v_g) {
+          boost::add_edge(around_vertex_node_pair.v2, v_g, node_graph); 
+        }
+      } 
+      while(++around_facet_c != around_vertex_c->facet_begin());
+    } 
+    while(++around_vertex_c != v->vertex_begin());
   }
 
   template<class OutputIterator>
   void intersect_plane(const Plane& plane, OutputIterator out) 
   {
-    facet_intersection_map.clear();
+    node_graph.clear();
 
-    std::vector<Primitive_id> intersected_triangles;
-    tree.all_intersected_primitives(plane, std::back_inserter(intersected_triangles));
+    // find out intersecting halfedges (note that tree contains edges only with custom comparator)
+    std::vector<Halfedge_const_handle> intersected_edges;
+    tree.all_intersected_primitives(plane, std::back_inserter(intersected_edges));
 
-    // put two intersected edge for each facet
-    for(typename std::vector<Primitive_id>::iterator it = intersected_triangles.begin();
-      it != intersected_triangles.end(); ++it)
+    // create node graph from segments
+    // each node is associated with multiple edges
+    Edge_node_map edge_node_map;
+    Edge_intersection_map edge_intersection_map;
+    for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin();
+      it != intersected_edges.end(); ++it)
     {
-      Halfedge_pair& halfedge_intersections = facet_intersection_map[*it];
+      Halfedge_const_handle hf = *it;
+      Node_pair& assoc_nodes = edge_node_map[hf];
+      CGAL_assertion(assoc_nodes.vertex_count < 3); // every Node_pair can at most contain 2 nodes
 
-      typename Polyhedron::Facet::Halfedge_around_facet_circulator edge_it = (*it)->facet_begin();
-      do {
-        if(halfedge_do_intersect(edge_it, plane))
-        { halfedge_intersections.put(edge_it); }
+      boost::tuple<Point, Intersection_type, Vertex_const_handle> intersection = halfedge_intersection(hf, plane);
+      edge_intersection_map[hf] = intersection.get<1>(); // save intersection type
 
-      } while(++edge_it != (*it)->facet_begin());
+      if(intersection.get<1>() == INTERVAL) {
+        CGAL_PROFILER(" number of INTERVAL intersections.");
+        CGAL_assertion(assoc_nodes.vertex_count == 0); 
+
+        Vertex_g v = boost::add_vertex(node_graph);
+        node_graph[v].point = intersection.get<0>();
+        assoc_nodes.put(v);
+        // no related hf to edge node, done
+      }
+      else if(intersection.get<1>() == BOUNDARY) {
+        CGAL_PROFILER(" number of BOUNDARY intersections.");
+        CGAL_assertion(assoc_nodes.vertex_count < 2); 
+
+        if(assoc_nodes.vertex_count == 0) {
+          Vertex_const_handle v_h = intersection.get<2>(); // boundary vertex
+          // update edge_node_map for neighbor halfedges of v_h
+          add_intersection_node_to_one_ring(v_h, edge_node_map);
+        } // else node is already added by other hf
+      }
+      else {// intersection.get<1>() == PLANAR
+        CGAL_PROFILER(" number of PLANAR intersections.");
+        CGAL_assertion(intersection.get<1>() == PLANAR);
+
+        if(assoc_nodes.vertex_count != 2) {
+          if(assoc_nodes.vertex_count == 1) { // there is one intersection node that we need to add
+            if(node_graph[assoc_nodes.v1].point == hf->vertex()->point()) {
+              add_intersection_node_to_one_ring(hf->opposite()->vertex(), edge_node_map);
+            }
+            else {
+              CGAL_assertion(node_graph[assoc_nodes.v1].point == hf->opposite()->vertex()->point());
+              add_intersection_node_to_one_ring(hf->vertex(), edge_node_map);
+            }
+          }
+          else { // assoc_nodes.vertex_count == 0
+            // update edge_node_map for neighbor halfedges 
+            add_intersection_node_to_one_ring(hf->vertex(), edge_node_map);
+            add_intersection_node_to_one_ring(hf->opposite()->vertex(), edge_node_map);
+          }
+        } // else both nodes are already added by other hfs
+      }
+    } // for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin()...
+    
+    // introduce node connectivity
+    for(typename std::vector<Halfedge_const_handle>::iterator it = intersected_edges.begin();
+      it != intersected_edges.end(); ++it)
+    {
+      Halfedge_const_handle hf = *it;
+      Edge_intersection_map_iterator intersection_it = edge_intersection_map.find(hf);
+      CGAL_assertion(intersection_it != edge_intersection_map.end());
+
+      Intersection_type intersection = intersection_it->second;
+      if(intersection == INTERVAL) {
+        add_intersection_edge_to_facet_neighbors(hf, edge_node_map);
+      }
+      else if(intersection == BOUNDARY) {
+        Node_pair& node_pair = edge_node_map[hf];
+        Vertex_const_handle v = hf->vertex()->point() == node_graph[node_pair.v1].point ?
+          hf->vertex() : hf->opposite()->vertex();
+        add_intersection_edge_to_vertex_neighbors(hf, v, edge_node_map);
+      }
+      else {
+        add_intersection_edge_to_vertex_neighbors(hf, hf->vertex(), edge_node_map);
+        add_intersection_edge_to_vertex_neighbors(hf, hf->opposite()->vertex(), edge_node_map);
+      }
+    }
+    
+    // use node_graph to construct polylines
+    construct_polylines(out);
+  }
+
+  // find a new node to advance, if no proper node exists return v
+  std::pair<Vertex_g, bool> find_next(Vertex_g v) {
+    std::pair<Vertex_g, bool> ret;
+    Out_edge_iterator_g ei_b, ei_e;
+    for(boost::tie(ei_b, ei_e) = boost::out_edges(v, node_graph); ei_b != ei_e; ++ei_b) {
+      if(node_graph[*ei_b].is_processed) { continue; } // do not go over same edge twice
+
+      ret.first = boost::target(*ei_b, node_graph);
+      ret.second = true;
+      node_graph[*ei_b].is_processed = true;
+      
+      CGAL_assertion(ret.first != v);
+      return ret;
     }
 
-    // for each intersected facet, make it head and try to create a loop (works fine with border determination cases)
-    for(typename std::vector<Primitive_id>::iterator it = intersected_triangles.begin();
-      it != intersected_triangles.end(); ++it)
+    ret.second = false;
+    return ret;
+  }
+
+  template<class OutputIterator>
+  void construct_polylines(OutputIterator out) {
+    //std::cout << boost::num_vertices(node_graph) << std::endl;
+    //std::cout << boost::num_edges(node_graph) << std::endl;
+    //Vertex_iterator_g v_b, v_e;
+    //for(boost::tie(v_b, v_e) = boost::vertices(node_graph); v_b != v_e; ++v_b)
+    //{
+    //  Out_edge_iterator_g e_b, e_e;
+    //  boost::tie(e_b, e_e) = boost::out_edges(*v_b, node_graph);
+    //  for( ;e_b != e_e; ++e_b) // keep current vertex active while there is 
+    //  {
+    //    std::cout << "source " << boost::source(*e_b, node_graph) 
+    //      << " target " << boost::target(*e_b, node_graph) << std::endl;
+    //  }
+    //}
+
+    Vertex_iterator_g v_b, v_e;
+    for(boost::tie(v_b, v_e) = boost::vertices(node_graph); v_b != v_e; ++v_b)
     {
-      Facet_handle active_facet = *it;
-      Facet_intersection_map_iterator active_facet_it = facet_intersection_map.find(active_facet);
-      if(active_facet_it->second.halfedge_intersections == 2) { continue; } // we previously process this facet, continue
-      CGAL_assertion(active_facet_it->second.halfedge_intersections == 0);
+      Vertex_g v = *v_b;
+      Out_edge_iterator_g e_b, e_e;
+      boost::tie(e_b, e_e) = boost::out_edges(v, node_graph);
+      // isolated intersection, construct a polyline with one point
+      if(e_b == e_e) {
+        std::vector<Point> polyline;
+        polyline.push_back(node_graph[v].point);
+        *out++ = polyline;
+        continue;
+      }
 
-      std::vector<Point> polyline;
+      Vertex_g v_head = v;
+      // there are edges, construct one or more polylines
+      for( ;e_b != e_e; ++e_b) // keep current vertex active while there is an non-processed edge to go
+      {
+        if(node_graph[*e_b].is_processed) { continue; } // we previously put it to polylines
 
-      // now create one polyline
-      Facet_handle head_facet = active_facet;
-      Halfedge_handle head_edge = active_facet_it->second.h1;
-      Halfedge_handle active_edge = head_edge;
+        // construct new polyline
+        std::vector<Point> polyline;
 
-      bool loop_ok = true;
-      while( true ) {
-        // process active edge and delete active facet
-        polyline.push_back(halfedge_intersection(active_edge, plane));
-        process_intersection(active_edge); // marks neighbor facets (i.e. ++halfedge_intersections)
+        bool first_border = true;
+        while(true) {
+          polyline.push_back(node_graph[v].point);
+          bool found;
+          boost::tie(v, found) = find_next(v);
 
-        // proceed to next facet, if edge is border then we know that we can not complete the loop
-        if(active_edge->opposite()->is_border()) { 
-          // this is the first border, so go to the other direction from head_facet
-          if(loop_ok) {
-            active_edge = facet_intersection_map.find(head_facet)
-              ->second.get_other(head_edge->opposite());
-            loop_ok = false;
+          if(!found) { // intersection at boundary
+            if(!first_border) { break; } // completed non-loop polyline
+
+            first_border = false;
+            boost::tie(v, found) = find_next(v_head); // try to go other direction
+            if(!found) { break; }
             std::reverse(polyline.begin(), polyline.end());
             continue;
           }
-          else { break; }
-        }
-        active_facet = active_edge->opposite()->facet();
-        // check whether the loop is completed
-        if(active_facet == head_facet) { 
-          polyline.push_back(halfedge_intersection(head_edge, plane)); // put first edge again
-          break;
-        }
 
-        Facet_intersection_map_iterator tmp_it = facet_intersection_map.find(active_facet);
-        // CGAL_assertion(tmp_it != facet_intersection_map.end());
-        active_edge = tmp_it->second.get_other(active_edge); 
-      }
+          if(v == v_head) { // loop is completed
+            polyline.push_back(node_graph[v_head].point); // put first point again
+            break;
+          }
+        } // while( true )...
+        *out++ = polyline;
 
-      *out++ = polyline;
-    }
+      } // for( ;e_b != e_e;...
+    } // for(boost::tie(v_b, v_e) = boost::vertices(node_graph)...
   }
 
 public:
@@ -185,7 +396,7 @@ public:
     InputIterator plane_end,
     OutputIterator out) 
   {
-    tree.rebuild(mesh.facets_begin(), mesh.facets_end());
+    tree.rebuild(mesh.edges_begin(), mesh.edges_end());
     for(; plane_begin != plane_end; ++plane_begin) {
       intersect_plane(*plane_begin, out);
     }
@@ -211,9 +422,7 @@ void intersection_of_plane_Polyhedra_3_using_AABB(Polyhedron& mesh,
   OutputIterator out
   )
 {
-  const Plane_3<PK>* plane_begin = &plane;
-  const Plane_3<PK>* plane_end = plane_begin + 1;
-  AABB_to_polyline_imp<Polyhedron, PK>()(mesh, plane_begin, plane_end, out);
+  intersection_of_plane_Polyhedra_3_using_AABB<PK>(mesh, &plane, &plane + 1, out);
 }
 
 template<class PK, class Polyhedron, class InputIterator, class OutputIterator>
@@ -225,133 +434,7 @@ void intersection_of_plane_Polyhedra_3_using_AABB(Polyhedron& mesh,
   AABB_to_polyline_imp<Polyhedron, PK>()(mesh, plane_begin, plane_end, out);
 }
 
-///////////////////////////////////////////////////////////////////////////
-// not good, since segment of constructed 'plane Polyhedron' can intersect
-template<class Polyhedron, class PK, class OutputIterator>
-Polyhedron use_intersection_of_Polyhedra_3_with_plane(Polyhedron& mesh, 
-  const Point_3<PK>& center, 
-  const Vector_3<PK>& base1,
-  const Vector_3<PK>& base2,
-  OutputIterator out
-  )
-{
-  // Construct a polyhedron consisting two triangles to represent plane
-  Polyhedron plane;
-  const Point_3<PK>& v0 = center + (base1 + base2);
-  const Point_3<PK>& v1 = center + (base1 - base2);
-  const Point_3<PK>& v2 = center + (base2 - base1);
-  const Point_3<PK>& v3 = center + (-base2 - base1);
-
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-
-  Halfedge_handle he_v0 = plane.make_triangle(v0, v1, v2);
-
-  Halfedge_handle h = he_v0->opposite();
-  Halfedge_handle g = h->next();
-  Halfedge_handle he_v3 = plane.add_vertex_and_facet_to_border(h, g);
-  he_v3->vertex()->point() = v3;
-  
-  intersection_Polyhedron_3_Polyhedron_3(plane, mesh, out); 
-  return plane;
-}
-
-template<class Polyhedron, class PK, class OutputIterator>
-Polyhedron use_intersection_of_Polyhedra_3_with_triangle(Polyhedron& mesh, 
-  const Point_3<PK>& center, 
-  const Vector_3<PK>& base1,
-  const Vector_3<PK>& base2,
-  OutputIterator out
-  )
-{
-  // Construct a polyhedron consisting two triangles to represent plane
-  Polyhedron plane;
-  const Point_3<PK>& v0 = center + (base1 + base2);
-  const Point_3<PK>& v1 = center + (base1 - base2);
-  const Point_3<PK>& v2 = center + (base2 - base1);
-
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-
-  plane.make_triangle(v0, v1, v2);
-
-  intersection_Polyhedron_3_Polyhedron_3(plane, mesh, out); 
-  return plane;
-}
-///////////////////////////////////////////////////////////////////////////
 
 }// end of namespace CGAL
 #endif //CGAL_INTERSECTION_OF_PLANE_POLYHEDRA_3_USING_AABB_H
 
-//enum Intersection_type { NONE, POINT, SEGMENT, TRIANGLE };
-
-//private:
-// use halfedge which has smaller address
-//struct Edge_comparator {
-//  bool operator()(Halfedge_handle h1, Halfedge_handle h2) const {
-//    return (std::min)(&*h1, &*(h1->opposite())) 
-//           < (std::min)(&*h2, &*(h2->opposite()));
-//  }
-//};
-
-//public:
-//template<class OutputIterator>
-//void imp_1(Polyhedron& mesh, const Plane& plane, OutputIterator out) 
-//{
-//  AABB_tree tree(mesh.facets_begin(), mesh.facets_end());
-//  std::vector<Primitive_id> intersected_triangles;
-//  tree.all_intersected_primitives(plane, std::back_inserter(intersected_triangles));
-//  
-//  typedef boost::tuple<Intersection_type, Object> intersection_info;
-//  typedef std::map<Halfedge_handle, intersection_info, Edge_comparator> Halfedge_intersection_map;
-//  typedef std::map<Facet_handle, Halfedge_intersection_map> Facet_intersection_map;
-
-//  Facet_intersection_map facet_intersection_map;    
-
-//  for(std::vector<Primitive_id>::iterator it = intersected_triangles.begin();
-//    it != intersected_triangles.end(); ++it)
-//  {
-//    Halfedge_intersection_map& halfedge_intersections = Facet_intersection_map[*it];
-//    // Object intersection = CGAL::intersection(plane, *it);
-//    typename Polyhedron::Facet::Halfedge_around_facet_circulator edge_it = (*it)->facet_begin();
-//    do {
-//      std::pair<Halfedge_intersection_map::iterator, bool> inserted =
-//      facet_intersection_map.insert(std::make_pair(edge_it, intersection_info(NONE, Object())));
-//      if(inserted.second) {
-//        const Point& s = edge_it->vertex()->point();
-//        const Point& t = edge_it->opposite()->vertex()->point();
-//        Object intersection = CGAL::intersection(plane, Segment(s,t));
-//        
-//        const Point* i_point; 
-//        if(!(i_point = object_cast<Point>(&intersection))) { 
-//          CGAL_warning(false && "degenarate case");
-//          continue;
-//        }
-
-//        inserted.first->second.get<0>() = POINT;
-//        inserted.first->second.get<1>() = intersection;
-//        polyline.push_back(*i_point);
-//      }
-//    } while(++edge_it != (*it)->facet_begin());
-
-//    for()
-//    std::vector<Point> polyline;
-//    *out++ = polyline;
-//    const Point& a = m_halfedge_handle->vertex()->point();
-//    const Point& b = m_halfedge_handle->opposite()->vertex()->point();
-
-//    
-//    if(!(i_point = object_cast<Point>(&object))) 
-//    { continue; } // continue in case of segment.
-//    facet_intersection_map
-//  }
-
-//Facet_intersection_map_iterator
-//get_neighbor(Facet_handle fh) {
-//  Facet_intersection_map_iterator ret;
-//  typename Polyhedron::Facet::Halfedge_around_facet_circulator edge_it = fh->facet_begin();
-//  do {
-//    ret = facet_intersection_map[edge_it->opposite()->facet()];
-//    if(ret != facet_intersection_map.end()) { return ret; }
-//  } while(++edge_it != (*it)->facet_begin());
-
-//  return ret;
-//}
