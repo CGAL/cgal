@@ -647,7 +647,7 @@ public:
      * \pre One of the ends of seg should be equal to the last vertex of cv
      * \post The resulting cv is well oriented.
      */
-    void operator()(Curve_2& cv, Segment_2& seg) const
+    void operator()(Curve_2& cv, const Segment_2& seg) const
     {
       int num_seg = cv.number_of_segments();
 
