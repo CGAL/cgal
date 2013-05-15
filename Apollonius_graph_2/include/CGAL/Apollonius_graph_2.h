@@ -23,6 +23,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_H
 
+#define CGAL_APOLLONIUS_GRAPH_PSEUDO_CIRCLE_DESIGN 1
+
+
 #include <iostream>
 #include <vector>
 #include <map>
@@ -775,8 +778,7 @@ protected:
   // wrappers for the geometric predicates
 
   // checks is q is contained inside p
-  bool is_hidden(const Site_2 &p,
-		 const Site_2 &q) const;
+  bool is_hidden(const Site_2 &p, const Site_2 &q) const;
 
   // returns:
   //   ON_POSITIVE_SIDE if q is closer to p1
@@ -861,6 +863,12 @@ protected:
 			      const Vertex_handle& v4,
 			      const Vertex_handle& v,
 			      bool endpoints_in_conflict) const;
+
+  Conflict_type
+  infinite_edge_conflict_type(const Site_2& p2,
+			      const Site_2& p3,
+			      const Site_2& p4,
+			      const Site_2& q) const;
 
   Conflict_type
   finite_edge_conflict_type_degenerated(const Site_2& p1,

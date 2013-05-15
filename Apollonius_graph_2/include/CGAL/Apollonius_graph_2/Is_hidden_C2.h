@@ -23,6 +23,7 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_IS_HIDDEN_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_IS_HIDDEN_C2_H
 
+
 #include <CGAL/Apollonius_graph_2/basic.h>
 
 

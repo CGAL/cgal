@@ -22,8 +22,8 @@
 #define CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 
 #include <CGAL/Apollonius_graph_2/Predicates_C2.h>
-#ifdef CGAL_APOLLONIUS_GRAPH_D8_TRAITS_2
 #include <CGAL/Apollonius_graph_2/Incircle8_C2.h>
+#ifdef CGAL_APOLLONIUS_GRAPH_D8_TRAITS_2
 #include <CGAL/Apollonius_graph_2/Orientation8_C2.h>
 #include <CGAL/Apollonius_graph_2/Finite_edge_test8_C2.h>
 #endif
@@ -71,7 +71,6 @@ public:
   typedef typename Kernel::FT                           FT;
   typedef typename Kernel::RT                           RT;
 
-
 public:
   // OBJECT CONSTRUCTION & ASSIGNMENT
   //---------------------------------
@@ -110,13 +109,8 @@ public:
   typedef CGAL_APOLLONIUS_GRAPH_2_NS::Oriented_side_of_bisector_2<Kernel,MTag> 
   /*                                          */ Oriented_side_of_bisector_2;
 
-#ifdef CGAL_APOLLONIUS_GRAPH_D8_TRAITS_2
   typedef CGAL_APOLLONIUS_GRAPH_2_NS::Vertex_conflict8_2<Kernel,MTag>
   /*                                                    */ Vertex_conflict_2;
-#else
-  typedef CGAL_APOLLONIUS_GRAPH_2_NS::Vertex_conflict_2<Kernel,MTag>
-  /*                                                    */ Vertex_conflict_2;
-#endif
 
 #ifdef CGAL_APOLLONIUS_GRAPH_D8_TRAITS_2
   typedef
