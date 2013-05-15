@@ -195,7 +195,7 @@ The main advantage is to decrease the complexity of accessing associated data wi
 
 \section Performances Performances
 We provide performance results of `compute_sdf_values()` and `segment_from_sdf_values()` for various models with different kernels.
-These results are produced with the release 4.X of \cgal, on Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+These results were produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 \todo Update release number as well as first introduced in.
 
 Performance of `compute_sdf_values()` with 25 rays (in seconds):
