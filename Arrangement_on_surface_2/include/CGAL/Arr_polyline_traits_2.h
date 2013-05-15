@@ -24,6 +24,7 @@
  * TODO: What to do with all the calls to push_back(seg)? Probably I should
  *       use the functor Push_Back_2 from this traits class or make sure that
  *       they maintain the well-oriented invariant.
+ * TODO: Model the concept ArrangementDirectionalXMonotoneTraits_2.
  * TODO: Complete the documentation of the changes derived from the cleaning
  *       In particular, doxygen only the things that have to be exposed
  *       to the user.
@@ -707,9 +708,9 @@ public:
      * \pre cv contains at least one segment
      * \pre p is to the right of cv
      */
-    void operator()(const X_monotone_curve_2& cv, Point_2& p) const
+    void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
     {
-      int num_seg = cv.number_of_segments();
+      int num_seg = xcv.number_of_segments();
 
       CGAL_precondition(num_seg > 0);
 
@@ -720,9 +721,9 @@ public:
       CGAL_precondition_code(
         typename Segment_traits_2::Compare_x_2 comp_x =
           seg_traits->compare_x_2_object();
-        CGAL_precondition(comp_x(get_max_v(cv[num_seg-1]),p)==LARGER);
+        CGAL_precondition(comp_x(get_max_v(xcv[num_seg-1]),p)==LARGER);
                              );
-      cv.push_back(Segment_2(get_max_v(cv[num_seg-1]),p));
+      xcv.push_back(Segment_2(get_max_v(xcv[num_seg-1]),p));
     }
 
     /*!
@@ -812,7 +813,6 @@ public:
       c2.clear();
 
       // Push all segments labeled(0, 1, ... , i-1) into c1.
-      // Instead of the following 3 lines, we use copy, as follows:
       for (int j = 0; j < i; ++j)
         c1.push_back(cv[j]);
 
