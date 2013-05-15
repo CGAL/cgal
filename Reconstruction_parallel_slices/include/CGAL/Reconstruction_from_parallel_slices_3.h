@@ -1516,35 +1516,36 @@ class Reconstruction_from_parallel_slices_3{
     // Third pass: Remove connected components which do not have at least one edge_edge cell
     std::list<Cell_handle_3> cells_to_remove;
     for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it ) {
-      if(it->info().type != CellInfo3::EDGE_EDGE){
-        if(! it->info().cc){
-          // explore the component
-          bool found_edge_edge_cell = false;
-          std::list<Cell_handle_3> component;
-          std::list<Cell_handle_3> queue;
-          it->info().cc = true;
-          component.push_back(it);
-          queue.push_back(it);
-          while(! queue.empty()){
-            Cell_handle_3 ch = queue.front();
-            queue.pop_front();
-            for(int i=0; i < 4; i++){
-              Cell_handle_3 nh = ch->neighbor(i);
-              if(nh->info().volume){
-                if(! nh->info().cc){
-                  if(nh->info().type == CellInfo3::EDGE_EDGE){
-                    found_edge_edge_cell = true;
-                  }
-                  nh->info().cc = true;
-                  component.push_back(nh);
-                  queue.push_back(nh);
+      if( it->info().volume &&  //consider only cells in the volume
+          it->info().type != CellInfo3::EDGE_EDGE // consider only top and bottom cells
+          ! it->info().cc ) //skip connected component already explored
+      {
+        // explore the component
+        bool found_edge_edge_cell = false;
+        std::list<Cell_handle_3> component;
+        std::list<Cell_handle_3> queue;
+        it->info().cc = true;
+        component.push_back(it);
+        queue.push_back(it);
+        while(! queue.empty()){
+          Cell_handle_3 ch = queue.front();
+          queue.pop_front();
+          for(int i=0; i < 4; i++){
+            Cell_handle_3 nh = ch->neighbor(i);
+            if(nh->info().volume){
+              if(! nh->info().cc){
+                if(nh->info().type == CellInfo3::EDGE_EDGE){
+                  found_edge_edge_cell = true;
                 }
+                nh->info().cc = true;
+                component.push_back(nh);
+                queue.push_back(nh);
               }
             }
           }
-          if(! found_edge_edge_cell)
-            cells_to_remove.splice(cells_to_remove.end(),component);
         }
+        if(! found_edge_edge_cell)
+          cells_to_remove.splice(cells_to_remove.end(),component);
       }
     }
     for(typename std::list<Cell_handle_3>::iterator it = cells_to_remove.begin(); it != cells_to_remove.end(); ++it){
