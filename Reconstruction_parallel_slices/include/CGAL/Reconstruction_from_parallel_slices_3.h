@@ -36,7 +36,9 @@
 /// \todo Try inserting outer voronoi bisector of neighboring contours failing inside current contour as constrained edges.
 /// \todo What we actually need is to snap the voronoi diagram to the polygonal contour.
 
+/// \todo replace the usage of module by Triangulation_utils_3::vertex_triple_index and Triangulation_cw_ccw_2::ccw
 
+/// \todo test the duplication of contours to resolve non-manifold situations
 
 //#define DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
 #define CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL
