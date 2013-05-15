@@ -227,7 +227,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       Polyhedron_3.cpp
 #      Viewer.cpp
 #      Scene.cpp
-#      MainWindow_curvature_estimation.cpp
       MainWindow_moc.cpp
       File_loader_dialog_moc.cpp
 #      Viewer_moc.cpp
@@ -365,6 +364,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
     polyhedron_demo_plugin(point_set_average_spacing_plugin Polyhedron_demo_point_set_average_spacing_plugin)
     target_link_libraries(point_set_average_spacing_plugin scene_points_with_normal_item)
+
+    polyhedron_demo_plugin(jet_fitting_plugin Polyhedron_demo_jet_fitting_plugin)
+    target_link_libraries(jet_fitting_plugin scene_polyhedron_item scene_polylines_item)
     
   else(EIGEN3_FOUND OR LAPACK_FOUND)
     message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")
