@@ -526,9 +526,8 @@ class Reconstruction_from_parallel_slices_3{
       it->info().nesting_level = -1;
     }
 
-    int index = 0;
     std::list<Edge_2> border;
-    mark_domains(cdt, cdt.infinite_face(), index++, border);
+    mark_domains(cdt, cdt.infinite_face(), 0, border);
     while(! border.empty()){
       Edge_2 e = border.front();
       border.pop_front();
