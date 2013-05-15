@@ -21,6 +21,9 @@
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
 /*
+ * TODO: What to do with all the calls to push_back(seg)? Probably I should
+ *       use the functor Push_Back_2 from this traits class or make sure that
+ *       they maintain the well-oriented invariant.
  * TODO: Complete the documentation of the changes derived from the cleaning
  *       In particular, doxygen only the things that have to be exposed
  *       to the user.
@@ -668,9 +671,10 @@ public:
       Point_2 last_v;
 
       /*
-       * ROADMAP: In order to ensure that the resulting cv is well oriented
-       *          the following test must(?) be made. If we allow ill-oriented
-       *          polylines, then at this point seg can simply be appended.
+       * ROADMAP: In order to ensure that the resulting cv is well
+       *          oriented the following test must(?) be made. If, in
+       *          the future we allow ill-oriented polylines, then at
+       *          this point seg can simply be appended.
        */
       if (comp_endpts(cv[num_seg-1]) == SMALLER)
         last_v = get_max_v(cv[num_seg-1]);
