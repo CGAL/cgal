@@ -162,7 +162,7 @@ After the raw computation, the following post-processing steps are applied:
   - SDF values are smoothed with bilateral filtering.
   - SDF values are linearly normalized between [0,1].
 
-The output is the minimum and the maximum SDF values before applying the linear normalization, and a property map (\ref chapterProperty_map
+The output is the minimum and the maximum SDF values before applying the linear normalization, and a property map (see the chapter \ref Chapter_CGAL_and_Boost_Property_Maps
 "CGAL and Boost Property Maps") which associates to each facet its SDF value.
 
 \subsubsection Example_1 Example: Computation of SDF Values
