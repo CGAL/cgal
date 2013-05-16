@@ -24,7 +24,10 @@
  * TODO: What to do with all the calls to push_back(seg)? Probably I should
  *       use the functor Push_Back_2 from this traits class or make sure that
  *       they maintain the well-oriented invariant.
- * TODO: Model the concept ArrangementDirectionalXMonotoneTraits_2.
+ *       - In Split_2 it works fine since the way Arr_segment_traits_2 splits
+ *         segments maintains the well oriented-ness.
+ * TODO: Make sure that Make_x_monotone_2 maintain well oriented-ness.
+ * TODO: Model the concept ArrangementDirectionalXMonotoneTraits_2?
  * TODO: Complete the documentation of the changes derived from the cleaning
  *       In particular, doxygen only the things that have to be exposed
  *       to the user.
@@ -1277,12 +1280,9 @@ public:
     }
 
     /*! Construction implementation from a range of segments.
-     *  \pre The segments form a polyline, that is one of the ends of the i-th
-     *       segment should coincide with one of the ends of the (i+1)-th
-     *       segment. NOTE: The segments are not assumed to have any
-     *       orientation. The end points are extracted using the
-     *       Construct_max_vertex_2 Construct_min_vertex_2 functors which are
-     *       provided by the SegmentTraits class.
+     *  \pre The segments form a continuous polyline.
+     *  \pre The polyline is well oriented, that is the target of the i-th
+     *       segment should be the source of the (i+1)-th segment.
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl (ForwardIterator begin, ForwardIterator end,
