@@ -487,8 +487,6 @@ public:
   // \{
   bool is_valid(bool verbose = false, int level = 0) const;
 
-  bool is_valid(Face_handle f, bool verbose = false, int level = 0) const;
-
   /// Checks whether f->vertex(i) lies outside the circumcircle of the face nb
   inline bool locally_Delaunay(const Face_handle &f, int i, const Face_handle &nb);
   // \}
@@ -503,8 +501,6 @@ private:
 #else
   void propagating_flip(const Face_handle& f, int i);
 #endif
-
-  void remove_2D(Vertex_handle v );
 
   // auxilliary functions for remove
   // returns false if we first need to convert to a 9-cover before the vertex can be removed
