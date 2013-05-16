@@ -1280,6 +1280,7 @@ public:
     }
 
     /*! Construction implementation from a range of segments.
+     *  \pre Range should contain at least one segment.
      *  \pre The segments form a continuous polyline.
      *  \pre The polyline is well oriented, that is the target of the i-th
      *       segment should be the source of the (i+1)-th segment.
@@ -1297,12 +1298,12 @@ public:
       CGAL_precondition_code
         (
          const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+         typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+         seg_traits->compare_endpoints_xy_2_object();
          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
          seg_traits->construct_min_vertex_2_object();
          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
          seg_traits->construct_max_vertex_2_object();
-         typename Segment_traits_2::Compare_xy_2 comp_xy =
-         seg_traits->compare_xy_2_object();
          typename Segment_traits_2::Equal_2 equal =
          seg_traits->equal_2_object();
          );
@@ -1319,15 +1320,32 @@ public:
         {
           CGAL_precondition_msg (!equal(get_min_v(*curr),get_max_v(*curr)),
                                  "Cannot construct degenerated segment");
-          // Verify that the segments' ends match
-          CGAL_precondition(
-                       comp_xy (get_min_v(*curr),get_min_v(*next)) == EQUAL ||
-                       comp_xy (get_min_v(*curr),get_max_v(*next)) == EQUAL ||
-                       comp_xy (get_max_v(*curr),get_min_v(*next)) == EQUAL ||
-                       comp_xy (get_max_v(*curr),get_max_v(*next)) == EQUAL );
+
+          // Verify that the segments' ends match and well-oriented
+
+          CGAL_precondition_code(
+          Point_2 curr_target;
+          Point_2 next_source;
+
+          if (comp_endpts(*curr) == SMALLER)
+            curr_target = get_max_v(*curr);
+          else
+            curr_target = get_min_v(*curr);
+
+          if (comp_endpts(*next) == SMALLER)
+            next_source = get_min_v(*next);
+          else
+            next_source = get_max_v(*next);
+
+          CGAL_precondition_msg(
+               equal(curr_target,next_source),
+               "Input form a continuous be well-oriented polyline");
+                                 );
+
           ++next;
           ++curr;
         }
+      // Verify that the last segment is not degenerated
       CGAL_precondition_msg (!equal(get_min_v(*curr),get_max_v(*curr)),
                              "Cannot construct degenerated segment");
 
