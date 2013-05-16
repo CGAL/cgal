@@ -104,7 +104,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
-
+  qt4_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
+  
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
@@ -408,6 +409,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
+  
+  polyhedron_demo_plugin(hole_filling_plugin Polyhedron_demo_hole_filling_plugin ${hole_fillingUI_FILES})
+  target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
 
 #
 # Exporting

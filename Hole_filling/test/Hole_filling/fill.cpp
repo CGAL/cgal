@@ -1,3 +1,4 @@
+// Going to be removed, related part is moved into include/Fill_hole_Polyhedron_3
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
