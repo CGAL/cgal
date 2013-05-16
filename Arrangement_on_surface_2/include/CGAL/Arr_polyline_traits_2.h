@@ -1385,9 +1385,9 @@ public:
                              );
       CGAL_precondition_msg(!equal(p,q),
                        "Cannot construct a degenerated segment as a polyline");
+
       typename Segment_traits_2::Compare_xy_2 comp_xy =
         m_poly_traits->segment_traits_2()->compare_xy_2_object();
-
       if (comp_xy(p,q) == SMALLER)
         return X_monotone_curve_2(Segment_2(p,q));
       else
