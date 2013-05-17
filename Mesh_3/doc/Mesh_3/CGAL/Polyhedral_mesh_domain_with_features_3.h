@@ -78,9 +78,9 @@ Polyhedral_mesh_domain_with_features_3(Polyhedron polyhedron,
 /// @{
 
 /*! 
-Detects sharp features of the internal polyhedron 
+Detects sharp features of the internal bounding polyhedron (and the potential internal polyhedron) 
 and inserts them in as features of the domain. `angle_bound` gives the maximum dihedral angle 
-(in degrees) between two triangles of the internal polyhedron which is used to consider that the edge between 
+(in degrees) between two triangles of the input polyhedron/a which is used to consider that the edge between 
 those triangles is a feature edge. 
 */ 
 void detect_features(FT angle_bound=120); 
