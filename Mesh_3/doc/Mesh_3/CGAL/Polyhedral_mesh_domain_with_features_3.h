@@ -48,8 +48,8 @@ typedef Hidden_type FT;
 Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface of type `Polyhedron`. 
 The only requirement on type `Polyhedron` is that `CGAL::Mesh_polyhedron_3<IGT>::%type` should 
 be constructible from `Polyhedron`. 
-No feature detection is done at this level. Note that a copy of `p` will be done. 
-The interior of `p` will be meshed.
+No feature detection is done at this level. Note that a copy of `bounding_polyhedron` will be done. 
+The interior of `bounding_polyhedron` will be meshed.
 */ 
 template <typename Polyhedron> 
 Polyhedral_mesh_domain_with_features_3(Polyhedron bounding_polyhedron); 
