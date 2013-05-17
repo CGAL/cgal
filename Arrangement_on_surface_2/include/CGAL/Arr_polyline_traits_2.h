@@ -1193,18 +1193,15 @@ public:
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const
     {
-      CGAL_precondition_code
-        (
-         typename Segment_traits_2::Equal_2 equal =
-         m_poly_traits->segment_traits_2()->equal_2_object();
-         );
-      CGAL_precondition_msg (!equal(p,q),
+      CGAL_precondition_msg (!m_poly_traits->
+                             segment_traits_2()->equal_2_object()(p,q),
                              "Cannot construct a degenerated segment");
       return Curve_2(Segment_2(p,q));
     }
 
     /*! Returns an polyline consists of one given segment.
      * \param seg input segment
+     * \pre seg is not degenerated
      * \return A polyline with one segment, namely seg.
      */
     Curve_2 operator()(const Segment_2& seg) const
@@ -1230,9 +1227,10 @@ public:
       return Curve_2(seg);
     }
 
-    /*! Construct a polyline from a range of objects.
-     *  \param begin An iterator pointing to the first segment in the range.
-     *  \param end An iterator pointing to the past-the-end segment in the range
+    /*! Construct a well-oriented polyline from a range of objects.
+     *  \param begin iterator pointing to the first element in the range.
+     *  \param end iterator pointing to the past-the-end element in the range.
+     *  \pre The given range form a continuous and well-oriented polyline.
      *  \return A polyline using the corresponding construction implementation.
      */
     template <typename ForwardIterator>
@@ -1240,14 +1238,17 @@ public:
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
       typedef typename boost::is_same<VT,Point_2>::type Is_point;
+      // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
 
     /*! Construction of a polyline from a range of points.
      * \pre The range contains at least two points
      * \pre Consecutive points are disjoint.
-     * \return Polyline connecting the points in the input using the same
-     *         order in which they were given.
+     * \return Well-oriented polyline connecting the given points. The order of
+     *         the vertices is determined by their order in the range.
+     *         Furthermore, the orientation of the polyline is induced by their
+     *         order.
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl (ForwardIterator begin, ForwardIterator end,
@@ -1284,6 +1285,7 @@ public:
      *  \pre The segments form a continuous polyline.
      *  \pre The polyline is well oriented, that is the target of the i-th
      *       segment should be the source of the (i+1)-th segment.
+     *  \return Well-oriented polyline.
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl (ForwardIterator begin, ForwardIterator end,
@@ -1322,7 +1324,6 @@ public:
                                  "Cannot construct degenerated segment");
 
           // Verify that the segments' ends match and well-oriented
-
           CGAL_precondition_code(
           Point_2 curr_target;
           Point_2 next_source;
