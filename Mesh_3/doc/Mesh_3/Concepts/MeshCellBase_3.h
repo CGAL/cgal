@@ -32,7 +32,6 @@ called 'intrusive'.
 
 \cgalRefines `RegularTriangulationCellBase_3` 
 
-\cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>` 
 \cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
 
 \sa `CGAL::make_mesh_3()` 
@@ -119,13 +118,17 @@ void set_facet_surface_center (int i, Point p);
 
 /*!
 Invalidates the circumcenter value stored in the cell.
+This value is usually stored in the cell, but the optimizers need to be able to 
+invalidate this cache value.
 */
 void invalidate_circumcenter();
 
 /// @}
 
 /*! \name Internal 
-These functions are used internally by mesh optimizers. */
+These functions are used internally by mesh optimizers. 
+The class should provide storage, accessors and modificators for two `Vertex_handle`
+and two `Cell_handle`.*/
 /// @{
 
 /*!
