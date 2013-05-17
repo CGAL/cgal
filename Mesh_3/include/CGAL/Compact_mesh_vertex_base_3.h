@@ -25,8 +25,8 @@
 //******************************************************************************
 
 
-#ifndef CGAL_COMPACT_MESH_VERTEX_BASE_3_H
-#define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
+#ifndef CGAL_MESH_VERTEX_BASE_3_H
+#define CGAL_MESH_VERTEX_BASE_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Mesh_3/Has_features.h>
@@ -216,9 +216,9 @@ template<class GT,
          class Vb>
 inline
 std::ostream&
-operator<<(std::ostream &os, const Compact_mesh_vertex_base_3<GT,MD,Vb>& v)
+operator<<(std::ostream &os, const Mesh_vertex_base_3<GT,MD,Vb>& v)
 {
-  typedef Compact_mesh_vertex_base_3<GT,MD,Vb> Vertex;
+  typedef Mesh_vertex_base_3<GT,MD,Vb> Vertex;
   typedef typename Vertex::Cmvb3_base Cmvb3_base;
   os << static_cast<const Cmvb3_base&>(v);
   if(is_ascii(os)) {
@@ -237,4 +237,4 @@ operator<<(std::ostream &os, const Compact_mesh_vertex_base_3<GT,MD,Vb>& v)
 
 
 
-#endif // CGAL_COMPACT_MESH_VERTEX_BASE_3_H
+#endif // CGAL_MESH_VERTEX_BASE_3_H
