@@ -54,24 +54,33 @@ void test_global_access()
   t_const.dimension();
 
   size_t number_of_vertices = t_const.number_of_vertices();
+  remove_unused_warning(number_of_vertices);
   CGAL_assertion(number_of_vertices == t.number_of_vertices());
   size_t number_of_faces = t_const.number_of_faces();
+  remove_unused_warning(number_of_faces);
   CGAL_assertion(number_of_faces == t.number_of_faces());
   size_t number_of_stored_vertices = t_const.number_of_stored_vertices();
+  remove_unused_warning(number_of_stored_vertices);
   CGAL_assertion(number_of_stored_vertices == t.number_of_stored_vertices());
   size_t number_of_stored_faces = t_const.number_of_stored_faces();
+  remove_unused_warning(number_of_stored_faces);
   CGAL_assertion(number_of_stored_faces == t.number_of_stored_faces());
 
   size_t number_of_edges = t_const.number_of_edges();
+  remove_unused_warning(number_of_edges);
   CGAL_assertion(number_of_edges == t.number_of_edges());
   size_t number_of_stored_edges = t_const.number_of_stored_edges();
+  remove_unused_warning(number_of_stored_edges);
   CGAL_assertion(number_of_stored_edges == t.number_of_stored_edges());
 
   bool ext1 = t_const.is_extensible_triangulation_in_1_sheet_h1();
+  remove_unused_warning(ext1);
   CGAL_assertion(ext1 == t.is_extensible_triangulation_in_1_sheet_h1());
   bool ext2 = t_const.is_extensible_triangulation_in_1_sheet_h2();
+  remove_unused_warning(ext2);
   CGAL_assertion(ext2 == t.is_extensible_triangulation_in_1_sheet_h2());
   bool is_triang1 = t_const.is_triangulation_in_1_sheet();
+  remove_unused_warning(is_triang1);
   CGAL_assertion(is_triang1 == t.is_triangulation_in_1_sheet());
   t.convert_to_1_sheeted_covering();
   t.convert_to_9_sheeted_covering();
@@ -446,6 +455,8 @@ void test_miscellaneous()
   t.set_domain(typename T::Iso_rectangle(0, 0, 2, 2));
   int i = t.ccw(0);
   int j = t.cw(0);
+  remove_unused_warning(i);
+  remove_unused_warning(j);
   CGAL_assertion(i + j == 3);
 
   t = T();

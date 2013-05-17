@@ -1189,7 +1189,6 @@ protected:
 
   bool well_oriented(Vertex_handle v) const
   {
-    typedef typename Geom_traits::Orientation_2 Orientation_2;
     Face_circulator fc = incident_faces(v), done(fc);
     do
       {
@@ -1229,10 +1228,7 @@ protected:
   {
     CGAL_assertion(is_1_cover());
 
-    typedef typename Triangulation_data_structure::Edge Tds_Edge;
-    typedef typename Triangulation_data_structure::Face Tds_Face;
-    Vertex_handle v =
-      _tds.star_hole(edge_begin, edge_end, face_begin, face_end);
+    Vertex_handle v = _tds.star_hole(edge_begin, edge_end, face_begin, face_end);
     v->set_point(p);
     return v;
   }
@@ -1977,7 +1973,6 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
   CGAL_assertion(v1s.size() == 8);
   CGAL_assertion(v1s.size() == v2s.size());
 
-  bool found;
   Face_handle fh;
   int index;
   Vertex_handle vh1_copy, vh2_copy;
@@ -1999,7 +1994,8 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
           else
             vh2_copy = v2s[i2 - 1];
 
-          found = is_edge(vh1_copy, vh2_copy, fh, index);
+          bool found = is_edge(vh1_copy, vh2_copy, fh, index);
+	  (void)found;
           CGAL_assertion(found);
 
           flip_single_edge(fh, index);
@@ -3292,7 +3288,6 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
   Virtual_face_map;
   typedef std::map<Face_handle, std::vector<Face_handle> >
   Virtual_face_reverse_map;
-  typedef typename Virtual_face_map::const_iterator VCMIT;
   typedef typename Virtual_face_reverse_map::const_iterator VCRMIT;
 
   Virtual_face_map virtual_faces;
@@ -4755,8 +4750,6 @@ operator==(const Periodic_2_triangulation_2<GT, Tds1> &t1,
 
   typedef typename Periodic_2_triangulation_2<GT, Tds1>::Point      Point;
   typedef typename Periodic_2_triangulation_2<GT, Tds1>::Offset     Offset;
-  typedef typename Periodic_2_triangulation_2<GT, Tds1>
-  ::Geom_traits::Compare_xy_2                       Compare_xy_2;
 
   // Some quick checks.
   if (   t1.domain()           != t2.domain()
