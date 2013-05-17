@@ -5,7 +5,7 @@ namespace CGAL {
 
 The class `Polyhedral_mesh_domain_3` implements 
 a domain whose boundary is a simplicial polyhedral surface.
-The input surface must be free of intersection. 
+This surface must be free of intersection. 
 It must also be either closed 
 or included inside another polyhedral surface which is closed and free of intersection.	
 	
