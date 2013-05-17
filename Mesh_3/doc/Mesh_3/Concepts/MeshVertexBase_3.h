@@ -14,10 +14,8 @@ More specifically, the concept `MeshVertexBase_3` provides read-write access
 to an integer representing the dimension of the lowest dimensional face 
 of the input 3D complex on which the vertex lies, 
 and to an index characteristic of this face. 
-The concept `MeshVertexBase_3` provides read-write access to a boolean 
-that indicates if the vertex is special, for feature edges protection.
-The optimizers also need this concept to provide read-write access to two `Vertex_handle`
-called 'intrusive'.
+The concept `MeshVertexBase_3` provides storage and read-write access to a boolean, a `FT` value, 
+and two `Vertex_handle` called 'intrusive'.
 
 \cgalRefines `TriangulationVertexBase_3` 
 \cgalRefines `SurfaceMeshVertexBase_3`
@@ -72,8 +70,16 @@ Sets the index of the lowest dimensional face of the input 3D complex that conta
 */ 
 void set_index(Index); 
 
+/// @} 
+
+/*! \name Internal 
+These functions are used internally. The user is 
+not encouraged to use them directly as they may change in the future. 
+*/
+/// @{
+
 /*!
-Returns a boolean that indicates if the vertex is special, used for feature edges protection.
+Returns a boolean, used for feature edges protection.
 */
 bool is_special();
 
@@ -81,14 +87,6 @@ bool is_special();
 Sets the special aspect of the vertex.
 */
 void set_special(bool); 
-
-/// @} 
-
-/*! \name Internal 
-These functions are used internally by mesh optimizers. The user is 
-not encouraged to use them directly as they may change in the future. 
-*/
-/// @{
 
 /*! 
 
