@@ -57,8 +57,4 @@ typedef Creator_uniform_2<double, Point>             Creator;
 typedef Random_points_in_square_2<Point, Creator>   Random_points_in_square;
 typedef Random_points_on_circle_2<Point, Creator>   Random_points_on_circle;
 
-template <class T>
-void remove_unused_warning(const T &);
-
-
 #endif // P2T2_UNIT_TEST_TYPES_H
