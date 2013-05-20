@@ -1418,23 +1418,29 @@ public:
       return X_monotone_curve_2(seg);
     }
 
+    /*!
+     * Construct an x-monotone polyline which is well-oriented from a range of
+     * elements.
+     * \pre Range should from a continuous well-oriented x-monotone polyline.
+     */
     template <typename ForwardIterator>
     X_monotone_curve_2 operator()(ForwardIterator begin,
                                   ForwardIterator end) const
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
       typedef typename boost::is_same<VT,Point_2>::type Is_point;
+      // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
 
-    /*
-     * Construct a polyline from a range of points.
-     * As the input is a range of points it is natural to orient the
-     * resulting polyline from left to right.
-     * \pre no two consecutive points are the same
-     * \pre The points form an x-monotone polyline
-     * \post The constructed polyline is x-monotone and
-     *       oriented from left to right.
+    /*!
+     * Construct an x-monotone polyline from a range of points. The polyline may
+     * be oriented left-to-right or right-to-left depending on the
+     * lexicographical order of the points in the input.
+     * \pre Range contains at least two points.
+     * \pre No two consecutive points are the same.
+     * \pre The points form an continuous well-oriented x-monotone polyline.
+     * \post By the construction the returned polyline is well-oriented.
      */
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
@@ -1449,23 +1455,22 @@ public:
       CGAL_precondition (ps != end);
       ForwardIterator pt = ps;
       ++pt;
-      CGAL_precondition (pt != end);
+      CGAL_precondition_msg ((pt != end),
+                             "Range of points must contain at least 2 points");
 
-      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
-
-      // Initialize two comparison functors
-      CGAL_precondition_code(typename Segment_traits_2::Compare_x_2 compare_x =
-                             seg_traits->compare_x_2_object();
-                             );
-      typename Segment_traits_2::Compare_xy_2 compare_xy =
+      CGAL_precondition_code(
+        const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+        // Initialize two comparison functors
+        typename Segment_traits_2::Compare_x_2 compare_x =
+        seg_traits->compare_x_2_object();
+        typename Segment_traits_2::Compare_xy_2 compare_xy =
         seg_traits->compare_xy_2_object();
-
-      // Make sure there is no change of directions as we traverse the polyline.
-      // Save the comp_x between the first two points
-      CGAL_precondition_code (const Comparison_result cmp_x_res =
-                              compare_x(*ps, *pt););
-      // Save the comp_xy between the first two points
-      const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
+        // Make sure there is no changed of directions.
+        // Save the comp_x between the first two points
+        const Comparison_result cmp_x_res = compare_x(*ps, *pt);
+        // Save the comp_xy between the first two points
+        const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
+                             );
 
       // Assure that the first two points are not the same.
       // Note that this also assures that no to consecutive points are equal
@@ -1475,21 +1480,12 @@ public:
       while (pt != end) {
         CGAL_precondition (compare_xy(*ps, *pt) == cmp_xy_res);
         CGAL_precondition (compare_x(*ps, *pt) == cmp_x_res);
-        cmp_xy_res == LARGER ?
-          segs.push_back(Segment_2(*pt,*ps)) :
-          segs.push_back(Segment_2(*ps,*pt));
+
+        segs.push_back(Segment_2(*pt,*ps));
         ++ps; ++pt;
       }
 
-      // Reverse the polyline so it always directed from left to right.
-      if (cmp_xy_res == LARGER)
-        {
-          // The constructed polyline has to be reversed.
-          return X_monotone_curve_2(segs.rbegin(),segs.rend());
-        }
-      else
-        // No need to reverse. Returning the polyline
-        return X_monotone_curve_2(segs.begin(), segs.end());
+      return X_monotone_curve_2(segs.begin(), segs.end());
     }
 
     /*! Returns an x-monotone polyline from a range of segments.
