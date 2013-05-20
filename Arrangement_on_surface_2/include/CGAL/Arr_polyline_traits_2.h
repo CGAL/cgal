@@ -1492,98 +1492,78 @@ public:
      * \param begin An iterator pointing to the first segment in the range.
      * \param end An iterator pointing to the past-the-end segment in the range.
      * \pre The range contains at least one segment.
-     * \pre One endpoint of the i-th segment is an endpoint of the
-     *      (i+1)th segment.
+     * \pre Segments correspond to a well-oriented polyline. That is, the target
+     *      of the i-th segment is an source of the (i+1)th segment.
      * \pre The sequence of segments in the range forms a weak x-monotone
      *      polyline.
      * \pre The container should support bidirectional iteration.
-     * \post The resulting x-monotone polyline directed from left to
-     *      right.
-     * \return An x-monotone polyline directed from left to right.
+     * \return A continuous, well-oriented x-monotone polyline which is directed
+     *         either left-to-right or right-to-left depending on the segments
+     *         in the input.
      */
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
                                         boost::false_type) const
     {
+      // std::cout << "Construct x-poly from the following range:\n";
+      // for (ForwardIterator it = begin; it !=end; ++it)
+      //   std::cout << *it << std::endl;
+
       CGAL_precondition_msg(begin != end,
                             "Input range of segments has to contain at least"
                             "one segment");
 
-      // Functors that have to be used always
-      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
-      typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-        seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-        seg_traits->construct_max_vertex_2_object();
-      typename Segment_traits_2::Equal_2 equal =
-        seg_traits->equal_2_object();
+      CGAL_precondition_code(
+                             const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+                             typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+                             seg_traits->compare_endpoints_xy_2_object();
+                             typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
+                             seg_traits->construct_min_vertex_2_object();
+                             typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
+                             seg_traits->construct_max_vertex_2_object();
+                             typename Segment_traits_2::Equal_2 equal =
+                             seg_traits->equal_2_object();
 
-      CGAL_precondition_code
-        (
-         // A functor which is used only when validity tests of the
-         // input have to be ran.
-         typename Segment_traits_2::Is_vertical_2 is_vertical =
-           seg_traits->is_vertical_2_object();
+                             ForwardIterator curr = begin;
+                             ForwardIterator next = begin;
+                             ++next;
 
-         ForwardIterator curr = begin;
-         // Ensure that the first segment does not degenerate to a point.
-         CGAL_precondition_msg(!equal(get_min_v(*curr), get_max_v(*curr)),
-                               "Cannot construct a degenerated segment");
+                             if (next == end){
+                               CGAL_precondition_msg(!equal(get_max_v(*curr),get_min_v(*curr)),
+                                                     "Cannot construct a polyline "
+                                                     "with degenerated segment");
+                               return X_monotone_curve_2(begin,end);
+                             }
 
-         ForwardIterator next = curr;
+                             // Range contains at least two segments
 
-         if (++next != end) {
-           // Ensure that the second segment does not degenerate to a point.
-           CGAL_precondition(!equal(get_min_v(*next), get_max_v(*next)));
+                             Comparison_result init_dir = comp_endpts(*curr);
+                             while (next != end){
+                               CGAL_precondition_msg(!equal(get_min_v(*next),get_max_v(*next)),
+                                                     "Cannot construct a polyline "
+                                                     "with degenerated segment");
+                               CGAL_precondition_msg(init_dir == comp_endpts(*next),
+                                                     "Segments must form x-monotone polyline");
+                               if (init_dir == SMALLER){
+                                 CGAL_precondition_msg(equal(get_max_v(*curr),get_min_v(*next)),
+                                                       "Segments should concatenate in "
+                                                       "source->target manner");
+                               }
+                               else{
+                                 CGAL_precondition_msg(equal(get_min_v(*curr),get_max_v(*next)),
+                                                       "Segments should concatenate in "
+                                                       "source->target manner");
+                               }
+                               ++curr;
+                               ++next;
+                             }
+                             );
+      // std::cout << "The resulting x-poly is:\n"
+      //           << X_monotone_curve_2(begin,end)
+      //           << std::endl;
 
-           // Ensure that either both are vertical or both are not vertical.
-
-           CGAL_precondition((is_vertical(*curr) && is_vertical(*next)) ||
-                             (!is_vertical(*curr) && !is_vertical(*next)));
-
-           // Ensure that the segment connect.
-           CGAL_precondition(equal(get_max_v(*curr), get_min_v(*next)) ||
-                             equal(get_min_v(*curr), get_max_v(*next)));
-
-           // Record the initial direction.
-           bool left_to_right = equal(get_max_v(*curr), get_min_v(*next));
-
-           for (curr = next++; next != end; ++next) {
-             // Ensure that the next segment does not degenerate to a point
-             CGAL_precondition(!equal(get_min_v(*next), get_max_v(*next)));
-
-             // Ensure that either both are vertical or both are not vertical.
-             CGAL_precondition((is_vertical(*curr) && is_vertical(*next)) ||
-                               (!is_vertical(*curr) && !is_vertical(*next)));
-
-             // Ensure the direction and connectivity.
-             CGAL_precondition((left_to_right &&
-                                equal(get_max_v(*curr), get_min_v(*next))) ||
-                               (!left_to_right &&
-                                equal(get_max_v(*next), get_min_v(*curr))));
-             ++curr;
-           }
-         }
-         );
-
-      bool rev = false;
-      if (std::distance(begin, end) >= 2) {
-        ForwardIterator second = begin;
-        ++second;
-        rev = equal(get_min_v(*begin), get_max_v(*second));
-      }
-      // The following statement assumes that the begin (and end) iterators
-      // are biderctional.
-      if (rev)
-        {
-          // Reverse the _order_ of the segments in the container.
-          return X_monotone_curve_2(
-                         std::reverse_iterator<ForwardIterator>(end),
-                         std::reverse_iterator<ForwardIterator>(begin));
-        }
-      else
-        return X_monotone_curve_2(begin, end);
+      return X_monotone_curve_2(begin, end);
     }
   };
 
