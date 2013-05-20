@@ -87,7 +87,7 @@ private:
   const Geom_traits& m_geom_traits;  
 
   /*! Verbosity */
-  int m_verbose_level;
+  unsigned int m_verbose_level;
 
   unsigned int m_num_vertices;
   unsigned int m_num_edges;
@@ -116,7 +116,9 @@ public:
   /*! Destructor */
   virtual ~Overlay_test() { clear(); }
 
-  void set_verbose_level(int verbose_level) { m_verbose_level = verbose_level; }
+  void set_verbose_level(unsigned int verbose_level)
+  { m_verbose_level = verbose_level; }
+  
   void set_filename(const char* filename) { m_filename.assign(filename); }
 
   /*! Initialize the test */
@@ -132,6 +134,9 @@ protected:
   //! Overlay traits
   class Overlay_traits {
   private:
+    /*! Verbosity */
+    unsigned int m_verbose_level;
+    
     std::size_t count_outer(Face_const_handle f) const
     {
       std::size_t cnt = 0;
@@ -183,7 +188,11 @@ protected:
   public:
     /*! Destructor. */
     virtual ~Overlay_traits() {}
-  
+
+    /*! Constructor */
+    Overlay_traits(unsigned int verbose_level)
+    { m_verbose_level = verbose_level; }
+    
     /*! Create a vertex v that corresponds to the coinciding vertices v1 and v2.
      */
     virtual void create_vertex(Vertex_const_handle v1, Vertex_const_handle v2,
@@ -205,68 +214,68 @@ protected:
                                Halfedge_const_handle e2,
                                Vertex_handle v) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
-      std::cout << "  e2: " << e2->source()->point() << "=>"
-                << e2->target()->point()
-                << ", " << e2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
+        std::cout << "  e2: " << e2->source()->point() << "=>"
+                  << e2->target()->point()
+                  << ", " << e2->data() << std::endl;
+      }
       v->set_data(v1->data() + e2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
     
     /*! Create a vertex v that mathces v1, contained in the face f2. */
     virtual void create_vertex(Vertex_const_handle v1, Face_const_handle f2,
                                Vertex_handle v) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
-      std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
-                << ", Outer(" << count_outer(f2) << ")"
-                << ", " << f2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  v1: " << v1->point() << ", " << v1->data() << std::endl;
+        std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
+                  << ", Outer(" << count_outer(f2) << ")"
+                  << ", " << f2->data() << std::endl;
+      }
       v->set_data(v1->data() + f2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  V: " << v->point() << ", " << v->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
 
     /*! Create a vertex v that mathces v2, which lies of the edge e1. */
     virtual void create_vertex(Halfedge_const_handle e1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  e1: " << e1->source()->point() << "=>"
-                << e1->target()->point()
-                << ", " << e1->data() << std::endl;
-      std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  e1: " << e1->source()->point() << "=>"
+                  << e1->target()->point()
+                  << ", " << e1->data() << std::endl;
+        std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
+      }
       v->set_data(e1->data() + v2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE      
-      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
 
     /*! Create a vertex v that mathces v2, contained in the face f1. */
     virtual void create_vertex(Face_const_handle f1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
-                << ", Outer(" << count_outer(f1) << ")"
-                << ", " << f1->data() << std::endl;
-      std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
+                  << ", Outer(" << count_outer(f1) << ")"
+                  << ", " << f1->data() << std::endl;
+        std::cout << "  v2: " << v2->point() << ", " << v2->data() << std::endl;
+      }
       v->set_data(f1->data() + v2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE      
-      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
 
     /*! Create a vertex v that mathces the intersection of the edges e1 and e2.
@@ -275,107 +284,107 @@ protected:
                                Halfedge_const_handle e2,
                                Vertex_handle v) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  e1: " << e1->source()->point() << "=>"
-                << e1->target()->point()
-                << ", " << e1->data() << std::endl;
-      std::cout << "  e2: " << e2->source()->point()  << "=>"
-                << e2->target()->point() 
-                << ", " << e2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  e1: " << e1->source()->point() << "=>"
+                  << e1->target()->point()
+                  << ", " << e1->data() << std::endl;
+        std::cout << "  e2: " << e2->source()->point()  << "=>"
+                  << e2->target()->point() 
+                  << ", " << e2->data() << std::endl;
+      }
       v->set_data(e1->data() + e2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  v: " << v->point() << ", " << v->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
 
     /*! Create an edge e that matches the overlap between e1 and e2. */
     virtual void create_edge(Halfedge_const_handle e1, Halfedge_const_handle e2,
                              Halfedge_handle e) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  e1: " << e1->source()->point() << "=>"
-                << e1->target()->point()
-                << ", " << e1->data() << std::endl;
-      std::cout << "  e2: " << e2->source()->point() << "=>"
-                << e2->target()->point()
-                << ", " << e2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  e1: " << e1->source()->point() << "=>"
+                  << e1->target()->point()
+                  << ", " << e1->data() << std::endl;
+        std::cout << "  e2: " << e2->source()->point() << "=>"
+                  << e2->target()->point()
+                  << ", " << e2->data() << std::endl;
+      }
       e->set_data(e1->data() + e2->data());
       e->twin()->set_data(e1->data() + e2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  e: " << e->source()->point() << "=>"
-                << e->target()->point()
-                << ", " << e->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  e: " << e->source()->point() << "=>"
+                  << e->target()->point()
+                  << ", " << e->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
 
     /*! Create an edge e that matches the edge e1, contained in the face f2. */
     virtual void create_edge(Halfedge_const_handle e1, Face_const_handle f2,
                              Halfedge_handle e) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  e1: " << e1->source()->point() << "=>"
-                << e1->target()->point()
-                << ", " << e1->data()
-                << std::endl;
-      std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
-                << ", Outer(" << count_outer(f2) << ")"
-                << ", " << f2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  e1: " << e1->source()->point() << "=>"
+                  << e1->target()->point()
+                  << ", " << e1->data()
+                  << std::endl;
+        std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
+                  << ", Outer(" << count_outer(f2) << ")"
+                  << ", " << f2->data() << std::endl;
+      }
       e->set_data(e1->data() + f2->data());
       e->twin()->set_data(e1->data() + f2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  e: " << e->source()->point() << "=>"
-                << e->target()->point()
-                << ", " << e->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  e: " << e->source()->point() << "=>"
+                  << e->target()->point()
+                  << ", " << e->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
 
     /*! Create an edge e that matches the edge e2, contained in the face f1. */
     virtual void create_edge(Face_const_handle f1, Halfedge_const_handle e2,
                              Halfedge_handle e) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
-                << ", Outer(" << count_outer(f1) << ")"
-                << ", " << f1->data() << std::endl;
-      std::cout << "  e2: " << e2->source()->point() << "=>"
-                << e2->target()->point()
-                << ", " << e2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
+                  << ", Outer(" << count_outer(f1) << ")"
+                  << ", " << f1->data() << std::endl;
+        std::cout << "  e2: " << e2->source()->point() << "=>"
+                  << e2->target()->point()
+                  << ", " << e2->data() << std::endl;
+      }
       e->set_data(f1->data() + e2->data());
       e->twin()->set_data(f1->data() + e2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  e: " << e->source()->point() << "=>"
-                << e->target()->point()
-                << ", " << e->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  e: " << e->source()->point() << "=>"
+                  << e->target()->point()
+                  << ", " << e->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
 
     /*! Create a face f that matches the overlapping region between f1 and f2. */
     virtual void create_face(Face_const_handle f1, Face_const_handle f2,
                              Face_handle f) const
     {
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
-                << ", Outer(" << count_outer(f1) << ")"
-                << ", " << f1->data() << std::endl;
-      std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
-                << ", Outer(" << count_outer(f2) << ")"
-                << ", " << f2->data() << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  f1: " << "Inner(" << count_inner(f1) << ")"
+                  << ", Outer(" << count_outer(f1) << ")"
+                  << ", " << f1->data() << std::endl;
+        std::cout << "  f2: " << "Inner(" << count_inner(f2) << ")"
+                  << ", Outer(" << count_outer(f2) << ")"
+                  << ", " << f2->data() << std::endl;
+      }
       f->set_data(f1->data() + f2->data());
-#ifdef CGAL_OVERLAY_TRAITS_VERBOSE
-      std::cout << "  f: " << "Inner(" << count_inner(f) << ")"
-                << ", Outer(" << count_outer(f) << ")"
-                << ", " << f->data() << std::endl;
-      std::cout << std::endl;
-#endif
+      if (m_verbose_level > 2) {
+        std::cout << "  f: " << "Inner(" << count_inner(f) << ")"
+                  << ", Outer(" << count_outer(f) << ")"
+                  << ", " << f->data() << std::endl;
+        std::cout << std::endl;
+      }
     }
   };
 
@@ -970,7 +979,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::perform()
 {
   // Overlay the input arrangements:
   Arrangement arr;
-  Overlay_traits overlay_traits;
+  Overlay_traits overlay_traits(m_verbose_level);
   // Formatter formatter;
   // CGAL::write(m_arr2, std::cout, formatter);
 
