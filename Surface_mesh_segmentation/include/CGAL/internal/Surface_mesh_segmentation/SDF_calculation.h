@@ -407,7 +407,7 @@ private:
     traversal_traits(std::back_inserter(intersections));
     tree.traversal(query,traversal_traits);
 
-    Vector min_i_ray;
+    Vector min_i_ray(NULL_VECTOR);
     Primitive_id min_id;
     for(typename std::list<Object_and_primitive_id>::iterator op_it =
           intersections.begin();

@@ -16,7 +16,7 @@
  */
 #include <CGAL/assertions.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Trace.h>
+#include <CGAL/trace.h>
 
 #include <boost/version.hpp>
 #include <boost/graph/adjacency_list.hpp>
