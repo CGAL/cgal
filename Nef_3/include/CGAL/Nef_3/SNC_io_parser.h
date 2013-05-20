@@ -597,78 +597,6 @@ class Homogeneous_tag;
 class Cartesian_tag;
 template<typename Tag, typename Kernel> class Geometry_io;
 
-template<typename ET>
-class Geometry_io<Cartesian_tag, CGAL::Lazy_kernel<CGAL::Simple_cartesian<ET> > > {
- public:
-  template <typename EK, typename K> static
-  typename EK::Point_3 
-  read_point(std::istream& in) {
-    typedef Fraction_traits<typename K::FT> FracTraits;
-    typename FracTraits::Type hx, hy, hz, hw;
-    typename FracTraits::Numerator_type num;
-    typename FracTraits::Denominator_type denom(1);
-    typename FracTraits::Compose composer;
-    in >> num;
-    hx = composer(num, denom);
-    in >> num;
-    hy = composer(num, denom);
-    in >> num;
-    hz = composer(num, denom);
-    in >> num;
-    hw = composer(num, denom);
-    return typename EK::Point_3(hx,hy,hz,hw);
-  }
-
-  template <typename EK, typename K> static
-  typename EK::Plane_3 read_plane(std::istream& in) {
-    typedef Fraction_traits<typename K::FT> FracTraits;
-    typename FracTraits::Type a, b, c, d;
-    typename FracTraits::Numerator_type num;
-    typename FracTraits::Denominator_type denom(1);
-    typename FracTraits::Compose composer;
-    in >> num;
-    a = composer(num, denom);
-    in >> num;
-    b = composer(num, denom);
-    in >> num;
-    c = composer(num, denom);
-    in >> num;
-    d = composer(num, denom);
-    return typename EK::Plane_3(a,b,c,d);
-  }
-
-  template <typename R> static
-  void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
-    typedef typename CGAL::Simple_cartesian<ET> SC;
-    typedef typename SC::Point_3 Exact_point;
-    typedef Geometry_io<Cartesian_tag, SC> Gio;
-    
-    Exact_point ep(p.x().exact(), p.y().exact(), p.z().exact());
-    Gio::print_point(out, ep);
-  }  
-
-  template <typename R> static
-  void print_vector(std::ostream& out, const CGAL::Vector_3<R> vec) {
-    typedef typename CGAL::Simple_cartesian<ET> SC;
-    typedef typename SC::Vector_3 Exact_vector;
-    typedef Geometry_io<Cartesian_tag, SC> Gio;
-    
-    Exact_vector ev(vec.x().exact(), vec.y().exact(), vec.z().exact());
-    Gio::print_vector(out, ev);
-  }  
-
-  template <typename R> static
-  void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
-    typedef typename CGAL::Simple_cartesian<ET> SC;
-    typedef typename SC::Plane_3 Exact_plane;
-    typedef Geometry_io<Cartesian_tag, SC> Gio;
-    
-    Exact_plane ep(p.a().exact(), p.b().exact(), 
-		   p.c().exact(), p.d().exact());
-    Gio::print_plane(out, ep);
-  }  
-};
-
 template<typename Kernel>
 class Geometry_io<Cartesian_tag, Kernel> {
  public:
@@ -803,6 +731,80 @@ class Geometry_io<Cartesian_tag, Kernel> {
 
     out << vec[0] << " " << vec[1] << " "
 	<< vec[2] << " " << vec[3];
+  }
+};
+
+class Epeck;
+
+template<>
+class Geometry_io<Cartesian_tag, Epeck > {
+ public:
+  template <typename EK, typename K> static
+  typename EK::Point_3
+  read_point(std::istream& in) {
+    typedef Fraction_traits<typename K::FT> FracTraits;
+    typename FracTraits::Type hx, hy, hz, hw;
+    typename FracTraits::Numerator_type num;
+    typename FracTraits::Denominator_type denom(1);
+    typename FracTraits::Compose composer;
+    in >> num;
+    hx = composer(num, denom);
+    in >> num;
+    hy = composer(num, denom);
+    in >> num;
+    hz = composer(num, denom);
+    in >> num;
+    hw = composer(num, denom);
+    return typename EK::Point_3(hx,hy,hz,hw);
+  }
+
+  template <typename EK, typename K> static
+  typename EK::Plane_3 read_plane(std::istream& in) {
+    typedef Fraction_traits<typename K::FT> FracTraits;
+    typename FracTraits::Type a, b, c, d;
+    typename FracTraits::Numerator_type num;
+    typename FracTraits::Denominator_type denom(1);
+    typename FracTraits::Compose composer;
+    in >> num;
+    a = composer(num, denom);
+    in >> num;
+    b = composer(num, denom);
+    in >> num;
+    c = composer(num, denom);
+    in >> num;
+    d = composer(num, denom);
+    return typename EK::Plane_3(a,b,c,d);
+  }
+
+  template <typename R> static
+  void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
+    typedef typename Epeck::Exact_kernel SC;
+    typedef typename SC::Point_3 Exact_point;
+    typedef Geometry_io<Cartesian_tag, SC> Gio;
+
+    Exact_point ep(p.x().exact(), p.y().exact(), p.z().exact());
+    Gio::print_point(out, ep);
+  }
+
+  template <typename R> static
+  void print_vector(std::ostream& out, const CGAL::Vector_3<R> vec) {
+    typedef typename Epeck::Exact_kernel SC;
+    typedef typename SC::Vector_3 Exact_vector;
+    typedef Geometry_io<Cartesian_tag, SC> Gio;
+
+    Exact_vector ev(vec.x().exact(), vec.y().exact(), vec.z().exact());
+    Gio::print_vector(out, ev);
+  }
+
+  template <typename R> static
+  void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
+    typedef typename Epeck::Exact_kernel SC;
+    typedef typename SC::Plane_3 Exact_plane;
+    typedef Geometry_io<Cartesian_tag, SC> Gio;
+
+    Exact_plane ep(p.a().exact(), p.b().exact(),
+		   p.c().exact(), p.d().exact());
+    Gio::print_plane(out, ep);
   }
 };
 
