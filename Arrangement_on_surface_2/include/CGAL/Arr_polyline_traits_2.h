@@ -1383,19 +1383,16 @@ public:
                              m_poly_traits->segment_traits_2()->
                              equal_2_object();
                              );
-      CGAL_precondition_msg(!equal(p,q),
-                       "Cannot construct a degenerated segment as a polyline");
+      CGAL_precondition_msg(
+        !equal(p,q),
+        "Cannot construct a degenerated segment as a polyline");
 
-      typename Segment_traits_2::Compare_xy_2 comp_xy =
-        m_poly_traits->segment_traits_2()->compare_xy_2_object();
-      if (comp_xy(p,q) == SMALLER)
-        return X_monotone_curve_2(Segment_2(p,q));
-      else
-        return X_monotone_curve_2(Segment_2(q,p));
+      return X_monotone_curve_2(Segment_2(p,q));
     }
 
     /*! Returns an x-monotone polyline consists of one given segment.
-     * \param seg input segment
+     * \param seg input segment.
+     * \pre seg is not degenerated.
      * \return An x-monotone polyline with one segment, namely seg.
      */
     X_monotone_curve_2 operator()(const Segment_2& seg) const
