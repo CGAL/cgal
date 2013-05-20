@@ -372,9 +372,9 @@ private:
     const Point& center  = centroid_functor(p1, p2, p3);
     const Vector& normal = unit_normal_functor(p2, p1, p3);
 
-    CGAL::internal::SkipPrimitiveFunctor<Polyhedron::Facet_const_handle> skip(
-      facet);
-    CGAL::internal::FirstIntersectionVisitor<Polyhedron::Facet_const_handle>
+    CGAL::internal::SkipPrimitiveFunctor<typename Polyhedron::Facet_const_handle>
+    skip(facet);
+    CGAL::internal::FirstIntersectionVisitor<typename Polyhedron::Facet_const_handle>
     visitor;
 
     return calculate_sdf_value_of_point(center, normal, skip, visitor, cone_angle,
