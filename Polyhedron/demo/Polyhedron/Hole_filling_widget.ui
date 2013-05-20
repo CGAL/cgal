@@ -7,8 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>317</width>
-    <height>229</height>
+    <height>407</height>
    </rect>
+  </property>
+  <property name="toolTip">
+   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;adsf&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+  </property>
+  <property name="whatsThis">
+   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;adf&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
   </property>
   <property name="windowTitle">
    <string>Hole Filling</string>
@@ -16,7 +22,122 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Parameters</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QRadioButton" name="Triangulate_radio_button">
+         <property name="text">
+          <string>Triangulate</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="Triangulate_refine_radio_button">
+         <property name="text">
+          <string>Triangulate + Refine</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="Triangulate_refine_fair_radio_button">
+         <property name="text">
+          <string>Triangulate + Refine + Fair</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Refine Parameters</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Density control factor:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="Density_control_factor_spin_box">
+            <property name="maximum">
+             <double>96.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.200000000000000</double>
+            </property>
+            <property name="value">
+             <double>1.410000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Fair Parameters</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QRadioButton" name="Uniform_weight_radio_button">
+            <property name="text">
+             <string>Uniform Weight</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="Cotangent_weight_radio_button">
+            <property name="text">
+             <string>Cotangent Weight</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="Scale_dependent_weight_radio_button">
+            <property name="text">
+             <string>Scale-dependent Weight</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="Create_new_polyhedron_check_box">
+      <property name="text">
+       <string>Create New Polyhedron</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Fill_all_holes_button">
+      <property name="text">
+       <string>Fill All Holes</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QPushButton" name="Create_polyline_item_button">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Create Polyline Item for each Hole</string>
       </property>
@@ -24,6 +145,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="Fill_and_update_button">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Fill and Update Polyhedron</string>
       </property>
