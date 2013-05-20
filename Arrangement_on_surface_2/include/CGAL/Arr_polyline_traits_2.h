@@ -1252,14 +1252,14 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl (ForwardIterator begin, ForwardIterator end,
-                             boost::true_type) const
+                              boost::true_type) const
     {
       // Container of the segments to be created.
       std::vector<Segment_2> segs;
 
       // The range must contain at least two points.
       CGAL_precondition_msg (std::distance(begin,end)>1,
-                             "Cannot construct a polyline from one point");
+                             "Range of points must contain at least 2 points");
       CGAL_precondition_code
         (
          typename Segment_traits_2::Equal_2 equal =
@@ -1289,7 +1289,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl (ForwardIterator begin, ForwardIterator end,
-                             boost::false_type) const
+                              boost::false_type) const
     {
       // Range has to contain at least one segment
       CGAL_precondition(begin != end);
@@ -1325,24 +1325,23 @@ public:
 
           // Verify that the segments' ends match and well-oriented
           CGAL_precondition_code(
-          Point_2 curr_target;
-          Point_2 next_source;
+            Point_2 curr_target;
+            Point_2 next_source;
 
-          if (comp_endpts(*curr) == SMALLER)
-            curr_target = get_max_v(*curr);
-          else
-            curr_target = get_min_v(*curr);
+            if (comp_endpts(*curr) == SMALLER)
+              curr_target = get_max_v(*curr);
+            else
+              curr_target = get_min_v(*curr);
 
-          if (comp_endpts(*next) == SMALLER)
-            next_source = get_min_v(*next);
-          else
-            next_source = get_max_v(*next);
+            if (comp_endpts(*next) == SMALLER)
+              next_source = get_min_v(*next);
+            else
+              next_source = get_max_v(*next);
 
-          CGAL_precondition_msg(
-               equal(curr_target,next_source),
-               "Input form a continuous be well-oriented polyline");
+            CGAL_precondition_msg(
+              equal(curr_target,next_source),
+              "Input must form a continuous, well-oriented polyline");
                                  );
-
           ++next;
           ++curr;
         }
