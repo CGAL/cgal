@@ -213,7 +213,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
                    int number_of_rays = 25,
                    typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return compute_sdf_values<true, Polyhedron, SDFPropertyMap>
+  return compute_sdf_values<true, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
          (polyhedron, sdf_values, cone_angle, number_of_rays, traits);
 }
 
@@ -256,7 +256,7 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
                                double smoothing_lambda = 0.26,
                                typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return compute_sdf_values_and_segment<true, Polyhedron, SegmentPropertyMap>
+  return compute_sdf_values_and_segment<true, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_levels,
           smoothing_lambda, traits);
 }
