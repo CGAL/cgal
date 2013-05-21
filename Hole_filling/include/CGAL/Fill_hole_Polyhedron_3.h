@@ -192,7 +192,7 @@ private:
   bool subdivide(Polyhedron& poly, std::set<Facet_handle>& facets)
   {
     std::list<Facet_handle> new_facets;
-    for(std::set<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
+    for(typename std::set<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
       if(*it  == Facet_handle()){
       } else {
         Halfedge_handle hh =  (*it)->halfedge();
@@ -236,7 +236,7 @@ private:
         }
       }
     }
-    for(std::list<Facet_handle>::iterator it = new_facets.begin();
+    for(typename std::list<Facet_handle>::iterator it = new_facets.begin();
       it!= new_facets.end();
       ++it){
         facets.insert(*it);
@@ -248,7 +248,7 @@ private:
   {
     int flips = 0;
     std::list<Halfedge_handle> interior_edges;
-    for(std::set<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
+    for(typename std::set<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
       Halfedge_around_facet_circulator  circ = (*it)->facet_begin(), done(circ);
       do {
         Halfedge_handle h = circ;
@@ -261,7 +261,7 @@ private:
       } while(circ != done);
     }
     std::cerr << "Test " << interior_edges.size() << " edges " << std::endl;
-    for(std::list<Halfedge_handle>::iterator it = interior_edges.begin();
+    for(typename std::list<Halfedge_handle>::iterator it = interior_edges.begin();
       it != interior_edges.end();
       ++it){
         if(relax(poly,*it)){
@@ -349,14 +349,14 @@ private:
 
     std::map<Vertex_handle, std::size_t> vertex_id_map;
     std::size_t id = 0;
-    for(std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
+    for(typename std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
       vertex_id_map[*it] = id;      
     }
     
     typename Sparse_linear_solver::Matrix A(nb_vertices);
     // this one-to-one corresponds to "second-order weighted umbrella operator" equation in [Filling Holes in Meshes] paper
     // fixed vertex positions are transfered to right hand side
-    for(std::set<Vertex_handle>::iterator vb = interior_vertices.begin(); vb != interior_vertices.end(); ++vb) {
+    for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin(); vb != interior_vertices.end(); ++vb) {
       std::size_t v_id = vertex_id_map[*vb];
       double v_weight_sum = weight_sum(*vb, polyhedron);
       double x, y, z;
@@ -426,7 +426,7 @@ private:
     }
     // update 
     id = 0;
-    for(std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
+    for(typename std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
       (*it)->point() = Point_3(X[id], Y[id], Z[id]);
     }
 
@@ -471,7 +471,7 @@ public:
 
       if(is_fairing) {
         std::set<Vertex_handle> interior_vertices;
-        for(std::set<Facet_handle>::iterator it = facets.begin(); it != facets.end(); ++it) {
+        for(typename std::set<Facet_handle>::iterator it = facets.begin(); it != facets.end(); ++it) {
           Halfedge_around_facet_circulator circ = (*it)->facet_begin();
           do {
             if(boundary_vertices.find(circ->vertex()) == boundary_vertices.end()) {
