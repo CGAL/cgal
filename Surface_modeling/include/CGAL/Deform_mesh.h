@@ -153,7 +153,7 @@ public:
   typedef typename Default::Get<
     CR,
   #if defined(CGAL_EIGEN3_ENABLED)
-    Deformation_Eigen_closest_rotation_traits_3
+    Deformation_Eigen_polar_closest_rotation_traits_3
   #else
     CR // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif

@@ -6,13 +6,17 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Timer.h>
 #include <CGAL/Deform_mesh.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
@@ -21,19 +25,12 @@ typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
 
-// #define CGAL_USE_EXPERIMENTAL_POLAR
-#ifdef CGAL_USE_EXPERIMENTAL_POLAR
-#include <CGAL/internal/Surface_modeling/Deformation_Eigen_polar_closest_rotation_traits_3.h>
-typedef CGAL::Deformation_Eigen_polar_closest_rotation_traits_3 Closest_rotation_model;
-#else
-typedef CGAL::Deformation_Eigen_closest_rotation_traits_3 Closest_rotation_model;
-#endif
 
 typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, 
-  CGAL::ORIGINAL_ARAP, CGAL::Default, CGAL::Default, Closest_rotation_model> Deform_mesh_arap;
+  CGAL::ORIGINAL_ARAP> Deform_mesh_arap;
 
 typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, 
-  CGAL::SPOKES_AND_RIMS, CGAL::Default, CGAL::Default, Closest_rotation_model> Deform_mesh_spoke;
+  CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
 
 
 template<class DeformMesh>
