@@ -25,6 +25,7 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/Default.h>
+#include <CGAL/Origin.h>
 
 #include <vector>
 #include <list>
