@@ -212,7 +212,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	
   add_item(custom_manipulated_frame Custom_manipulated_frame.cpp Custom_manipulated_frame.moc)
   
-  add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
+  add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc ${editionUI_FILES})
   # special
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item custom_manipulated_frame)
 
