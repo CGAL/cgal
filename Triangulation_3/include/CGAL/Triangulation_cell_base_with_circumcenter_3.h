@@ -26,7 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-# include <CGAL/Triangulation_ds_cell_base_3.h>
+#include <CGAL/Triangulation_ds_cell_base_3.h>
 
 namespace CGAL {
 
@@ -37,7 +37,7 @@ class Triangulation_cell_base_with_circumcenter_3
   typedef typename GT::Point_3                         Point_3;
 
   mutable Point_3 * circumcenter_;
-  
+
 public:
   void invalidate_circumcenter()
   {
@@ -75,12 +75,12 @@ public:
   }
 
   Triangulation_cell_base_with_circumcenter_3(
-	                    Vertex_handle v0, Vertex_handle v1,
+                      Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3), circumcenter_(NULL) {}
 
   Triangulation_cell_base_with_circumcenter_3(
-	                    Vertex_handle v0, Vertex_handle v1,
+                      Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3,
                             Cell_handle   n0, Cell_handle   n1,
                             Cell_handle   n2, Cell_handle   n3)
@@ -117,11 +117,11 @@ public:
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       if (circumcenter_ == NULL) {
-	  circumcenter_ = new Point_3(
-	      gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
-	                                           this->vertex(1)->point(),
-						   this->vertex(2)->point(),
-						   this->vertex(3)->point()));
+    circumcenter_ = new Point_3(
+        gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
+                                             this->vertex(1)->point(),
+               this->vertex(2)->point(),
+               this->vertex(3)->point()));
       }
       return *circumcenter_;
   }
