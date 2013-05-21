@@ -50,7 +50,7 @@ public:
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; 
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map; 
 
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
 
 
 typedef Deform_mesh::Point  Point;
@@ -675,7 +675,6 @@ protected:
 
 protected:
   GLUquadric* quadric; // for drawing spheres
-
 }; // end class Scene_edit_polyhedron_item
 
 #endif // SCENE_EDIT_POLYHEDRON_ITEM_H

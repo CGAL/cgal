@@ -135,11 +135,13 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   bool ctrl_released_now = !state.ctrl_pressing && old_state.ctrl_pressing;
   if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove) 
   {// activate a handle manipulated frame
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
-    activate_closest_manipulated_frame(p.x(), p.y()); 
+    if(is_there_any_handle()) { // to prevent unnecessary painting
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
+      activate_closest_manipulated_frame(p.x(), p.y()); 
 
-    need_repaint = true;
+      need_repaint = true;
+    }
   }
 
   // use mouse move event for paint-like selection
@@ -171,10 +173,11 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item::draw() const {
-  poly_item->direct_draw();
+
+  poly_item->draw();
   CGAL::GL::Color color;
-  color.set_rgb_color(0.f, 0.f, 0.f);
-  poly_item->direct_draw_edges();
+  //color.set_rgb_color(0.f, 0.f, 0.f);
+  //poly_item->direct_draw_edges();
 
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
   color.set_rgb_color(0, 1.f, 0);
