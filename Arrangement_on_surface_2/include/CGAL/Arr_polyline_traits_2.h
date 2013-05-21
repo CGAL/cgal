@@ -196,8 +196,14 @@ public:
     const Point_2& operator()(const X_monotone_curve_2& cv) const
     {
       CGAL_assertion(cv.number_of_segments() > 0);
-      return m_poly_traits->
-        segment_traits_2()->construct_min_vertex_2_object()(cv[0]);
+
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+
+      if (seg_traits->compare_endpoints_xy_2_object()(cv[0])==SMALLER)
+        return seg_traits->construct_min_vertex_2_object()(cv[0]);
+      else
+        return seg_traits->
+          construct_min_vertex_2_object()(cv[cv.number_of_segments()-1]);
     }
   };
 
@@ -219,14 +225,20 @@ public:
 
     /*!
      * Get the right endpoint of the x-monotone curve(segment).
-     * \param cv The polylinecurve.
+     * \param cv The polyline.
      * \return The right endpoint.
      */
     const Point_2& operator()(const X_monotone_curve_2& cv) const
     {
       CGAL_assertion(cv.number_of_segments() > 0);
-      return m_poly_traits->segment_traits_2()->
-        construct_max_vertex_2_object()(cv[cv.number_of_segments() - 1]);
+
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+
+      if (seg_traits->compare_endpoints_xy_2_object()(cv[0])==SMALLER)
+        return seg_traits->
+          construct_max_vertex_2_object()(cv[cv.number_of_segments()-1]);
+      else
+        return seg_traits->construct_max_vertex_2_object()(cv[0]);
     }
   };
 
