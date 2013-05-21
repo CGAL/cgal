@@ -33,23 +33,28 @@ void test_write_read()
   typedef CGAL::Polyhedron_3< Kernel >     Polyhedron;
   typedef typename Kernel::Point_3         Point;
 
-  Point p(sqrt(2),      0,      0);
-  Point q(      0,sqrt(2),      0);
-  Point r(      0,      0,sqrt(2));
-  Point s(      0,      0,      0);
+  Point p(6369051672525773,      0,      0, 4503599627370496);
+  Point q(      0,6369051672525773,      0, 4503599627370496);
+  Point r(      0,      0,6369051672525773, 4503599627370496);
+  Point s(      0,      0,      0, 4503599627370496);
 
+  std::cout << "    build...\n";
   Polyhedron P;
   P.make_tetrahedron( p, q, r, s);
   Nef_polyhedron nef_1( P );
 
+  std::cout << "    write...\n";
   std::ofstream out ("temp.nef");
   out << nef_1;
   out.close();
 
+  std::cout << "    read...\n";
   std::ifstream in ("temp.nef");
   Nef_polyhedron nef_2;
   in >> nef_2;
+  in.close();
 
+  std::cout << "    check...\n";
   assert( nef_1 == nef_2);
 }
 
@@ -57,15 +62,15 @@ int main()
 {
   std::cout << "Testing Exact_predicates_exact_constructions_kernel\n";
   test_write_read<EPEC>();
-  std::cout << "Testing Cartesian< Lazy_exact_nt<FT> >\n";
+  std::cout << "Testing Cartesian< FT >\n";
   test_write_read<C_FT>();
   std::cout << "Testing Simple_cartesian< FT >\n";
   test_write_read<SC_FT>();
   std::cout << "Testing Homogeneous< RT >\n";
   test_write_read<H_RT>();
   std::cout << "Testing Simple_homogeneous< RT >\n";
-  test_write_read<SH_FT>();
-  std::cout << "Testing Cartesian< FT >\n";
+  test_write_read<SH_RT>();
+  std::cout << "Testing Cartesian< Lazy_exact_nt<FT> >\n";
   test_write_read<C_Lazy_FT>();
   std::cout << "Testing Simple_cartesian< Lazy_exact_nt<FT> >\n";
   test_write_read<SC_Lazy_FT>();
