@@ -1553,6 +1553,7 @@ struct Lazy_construction_variant {
                                          typename Type_mapper<L2, LK, EK>::type,
                                          typename Type_mapper<L3, LK, EK>::type)>::type ET;
 
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     try {
       Lazy<AT, ET, EFT, E2A> lazy(new Lazy_rep_3<AT, ET, AC, EC, E2A, L1, L2, L3>(AC(), EC(), l1, l2, l3));
 
