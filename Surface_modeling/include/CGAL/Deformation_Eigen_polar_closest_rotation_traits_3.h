@@ -27,8 +27,8 @@
 
 namespace CGAL {
   /// \ingroup PkgSurfaceModeling
-  /// A class to compute the closest rotation in Frobenius norm to a 3x3 Matrix using `Eigen` library.
-  /// The internal computation relies on an hybrid system of `Eigen::SelfAdjointEigenSolver<>` and `Eigen::JacobiSVD<>` solvers.
+  /// A class to compute the closest rotation in Frobenius norm to a 3x3 Matrix using the `Eigen` library.
+  /// The internal computation relies on a hybrid system of `Eigen::SelfAdjointEigenSolver<>` and `Eigen::JacobiSVD<>` solvers.
   ///
   /// \cgalModels `DeformationClosestRotationTraits_3`
   class Deformation_Eigen_polar_closest_rotation_traits_3 : 
@@ -61,9 +61,9 @@ namespace CGAL {
       const Scalar th = std::sqrt(Eigen::NumTraits<Scalar>::dummy_precision());
 
       Eigen::SelfAdjointEigenSolver<Matrix> eig;
-      feclearexcept(FE_UNDERFLOW);
+      CGAL::feclearexcept(FE_UNDERFLOW);
       eig.computeDirect(A.transpose()*A);
-      if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)<th)
+      if(CGAL::fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)<th)
       { return false; }
 
       Vector S = eig.eigenvalues().cwiseSqrt();
