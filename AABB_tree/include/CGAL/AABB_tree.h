@@ -262,7 +262,7 @@ public:
     #if CGAL_INTERSECTION_VERSION < 2
 		boost::optional<Object_and_primitive_id> 
     #else
-    typename Intersection_and_primitive_id<Query>::Type
+    boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     #endif
     any_intersection(const Query& query) const;
 
@@ -706,7 +706,7 @@ public:
   #if CGAL_INTERSECTION_VERSION < 2
 	boost::optional<typename AABB_tree<Tr>::Object_and_primitive_id>
   #else
-  typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type
+  boost::optional< typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type >
   #endif
 		AABB_tree<Tr>::any_intersection(const Query& query) const
 	{

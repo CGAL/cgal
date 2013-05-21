@@ -73,11 +73,11 @@ class First_intersection_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  typedef typename 
+  typedef
   #if CGAL_INTERSECTION_VERSION < 2
   boost::optional<Object_and_primitive_id> 
   #else
-  AABBTraits::template Intersection_and_primitive_id<Query>::Type
+  boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
   #endif
   Result;
 public:
@@ -86,11 +86,7 @@ public:
   {}
 
   bool go_further() const { 
-    #if CGAL_INTERSECTION_VERSION < 2
     return !m_result;
-    #else
-    return !m_result.first; 
-    #endif
   }
 
   void intersection(const Query& query, const Primitive& primitive)
@@ -105,11 +101,7 @@ public:
 
   Result result() const { return m_result; }
   bool is_intersection_found() const { 
-    #if CGAL_INTERSECTION_VERSION < 2
     return m_result;
-    #else
-    return m_result.first;
-    #endif
   }
 
 private:
@@ -143,21 +135,14 @@ public:
     #if CGAL_INTERSECTION_VERSION < 2
     boost::optional<Object_and_primitive_id>
     #else
-    typename AABBTraits::template Intersection_and_primitive_id<Query>::Type 
+    boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
     #endif
     intersection = AABBTraits().intersection_object()(query, primitive);
 
-    #if CGAL_INTERSECTION_VERSION < 2
     if(intersection)
     {
       *m_out_it++ = *intersection;
     }
-    #else
-    if(intersection.first)
-    {
-      *m_out_it++ = intersection;
-    }
-    #endif
   }
 
   bool do_intersect(const Query& query, const Node& node) const

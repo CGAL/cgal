@@ -71,9 +71,8 @@ public:
   template<typename Query>
   struct Intersection_and_primitive_id {
     typedef std::pair< 
-      typename cpp11::result_of<typename GeomTraits::Intersect_3(Query, typename Primitive::Datum) >::type, 
+      typename IT<Query, typename Primitive::Datum>::variant_type, //using Intersection_traits to skip the optional
       typename Primitive::Id > Type;
-    typedef Type type;
   };
 
   // types for search tree
@@ -206,10 +205,13 @@ operator()(const Query& query, const typename AT::Primitive& primitive) const
 }
     #else
     template<typename Query>
-    typename Intersection_and_primitive_id<Query>::Type
+    boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     operator()(const Query& query, const typename AT::Primitive& primitive) const {
-      return std::make_pair(GeomTraits().intersect_3_object()(primitive.datum(),query), 
-                            primitive.id());
+      typename cpp11::result_of<typename GeomTraits::Intersect_3(Query, typename Primitive::Datum) >::type
+        inter_res = GeomTraits().intersect_3_object()(primitive.datum(),query);
+      if (!inter_res)
+          return boost::optional<typename Intersection_and_primitive_id<Query>::Type>();
+      return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
     }
     #endif
 };

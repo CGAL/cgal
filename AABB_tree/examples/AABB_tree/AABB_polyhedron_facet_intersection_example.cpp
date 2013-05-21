@@ -17,8 +17,8 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef Tree::Intersection_and_primitive_id<Segment>::Type Segment_intersection;
-typedef Tree::Intersection_and_primitive_id<Plane>::Type Plane_intersection;
+typedef boost::optional< Tree::Intersection_and_primitive_id<Segment>::Type > Segment_intersection;
+typedef boost::optional< Tree::Intersection_and_primitive_id<Plane>::Type > Plane_intersection;
 typedef Tree::Primitive_id Primitive_id;
 
 int main()
@@ -52,10 +52,10 @@ int main()
     // (generally a point)
     Segment_intersection intersection =
         tree.any_intersection(segment_query);
-    if(intersection.first)
+    if(intersection)
     {
         // gets intersection object
-      if(boost::get<Point>(&*intersection.first))
+      if(boost::get<Point>(&(intersection->first)))
         std::cout << "intersection object is a point" << std::endl;
     }
 
@@ -74,10 +74,10 @@ int main()
     // computes first encountered intersection with plane query
     // (generally a segment)
     Plane_intersection plane_intersection = tree.any_intersection(plane_query);
-    if(plane_intersection.first)
+    if(plane_intersection)
     {
       
-      if(boost::get<Segment>(&*plane_intersection.first))
+      if(boost::get<Segment>(&(plane_intersection->first)))
             std::cout << "intersection object is a segment" << std::endl;
     }
 

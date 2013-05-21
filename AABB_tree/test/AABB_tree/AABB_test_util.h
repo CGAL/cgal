@@ -106,9 +106,9 @@ void test_all_intersection_query_types(Tree& tree)
     optional_object_and_primitive = tree.any_intersection(line);
     optional_object_and_primitive = tree.any_intersection(segment);
     #else
-    typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::type r = tree.any_intersection(ray);
-    typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::type l = tree.any_intersection(line);    
-    typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::type s = tree.any_intersection(segment);
+    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > r = tree.any_intersection(ray);
+    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);    
+    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > s = tree.any_intersection(segment);
     #endif
 
     // any_intersected_primitive
@@ -124,9 +124,9 @@ void test_all_intersection_query_types(Tree& tree)
     tree.all_intersections(line,std::back_inserter(intersections));
     tree.all_intersections(segment,std::back_inserter(intersections));
     #else
-    std::list<typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::type> intersections_r;
-    std::list<typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::type> intersections_l;
-    std::list<typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::type> intersections_s;
+    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > > intersections_r;
+    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > > intersections_l;
+    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > > intersections_s;
     tree.all_intersections(ray,std::back_inserter(intersections_r));
     tree.all_intersections(line,std::back_inserter(intersections_l));
     tree.all_intersections(segment,std::back_inserter(intersections_s));
@@ -389,14 +389,12 @@ public:
       #if CGAL_INTERSECTION_VERSION < 2
       Intersection_result 
         intersection  = Traits().intersection_object()(query, Pr(it));
+      #else
+      boost::optional< typename Traits::template Intersection_and_primitive_id<Query>::Type >
+        intersection  = Traits().intersection_object()(query, Pr(it));
+      #endif
       if ( intersection )
         *out++ = *intersection;
-      #else
-      typename Traits::template Intersection_and_primitive_id<Query>::type
-        intersection  = Traits().intersection_object()(query, Pr(it));
-      if ( intersection.first )
-        *out++ = intersection;
-      #endif                           
     }
 
     return out;
@@ -704,7 +702,7 @@ private:
         #if CGAL_INTERSECTION_VERSION < 2
         Object_and_primitive_id
         #else
-        typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::type
+        typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::Type
         #endif
         Obj_type;
 
@@ -746,12 +744,11 @@ private:
       #if CGAL_INTERSECTION_VERSION < 2
       boost::optional<Object_and_primitive_id>
       #else
-      typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::type 
+      boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::Type >
       #endif
         intersection = tree.any_intersection(query);
 
       // Check: verify we do get the result by naive method
-      #if CGAL_INTERSECTION_VERSION < 2
       if ( intersection )
       {
         assert( std::find(intersections_naive_id.begin(),
@@ -759,15 +756,6 @@ private:
                           intersection->second)
                != intersections_naive_id.end());
       }
-      #else
-      if ( intersection.first )
-      {
-        assert( std::find(intersections_naive_id.begin(),
-                          intersections_naive_id.end(),
-                          intersection.second)
-               != intersections_naive_id.end());
-      }
-      #endif
       else if ( intersections_naive.size() != 0 )
         assert(false);
 

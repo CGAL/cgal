@@ -42,7 +42,7 @@ std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, lo
 #if CGAL_INTERSECTION_VERSION < 2
         typename Tree::Object_and_primitive_id
 #else
-        typename Tree::AABB_traits::template Intersection_and_primitive_id<typename ForwardIterator::value_type>::type
+        typename Tree::AABB_traits::template Intersection_and_primitive_id<typename ForwardIterator::value_type>::Type
 #endif
         Obj_type;
 
@@ -51,16 +51,9 @@ std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, lo
   v.reserve(elements);
   for(; b != e; ++b) {
     tree.all_intersections(*b, std::back_inserter(v));
-#if CGAL_INTERSECTION_VERSION < 2
     boost::optional<Obj_type> o = tree.any_intersection(*b);
     if(o)
       ++counter;
-#else
-    Obj_type
-      o = tree.any_intersection(*b);
-    if(o.first)
-      ++counter;
-#endif
   }
 
   return v.size();
