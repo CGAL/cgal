@@ -85,7 +85,9 @@ bool Polyhedron_demo_edit_polyhedron_plugin::applicable() const {
 
 void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene_interface* scene_interface)
 {
-  this->mw = mainWindow;
+  mw = mainWindow;
+  scene = scene_interface;
+
   actionDeformation = new QAction("Surface Mesh Deformation", mw);
 
   actionDeformation->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
