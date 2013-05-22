@@ -756,197 +756,207 @@ arrangement operations - see more details in the Reference Manual.
 \section arr_secqueries Issuing Queries on an Arrangement 
 
 One of the most important query types defined on arrangements is
-the <I>point-location</I> query: Given a point, find the
-arrangement cell that contains it. Typically, the result of a
-point-location query is one of the arrangement faces, but in
-degenerate situations the query point can be located on an edge or
-coincide with a vertex.
+the <I>point-location</I> query: Given a point, find the arrangement
+cell that contains it. Typically, the result of a point-location
+query is one of the arrangement faces, but in degenerate situations
+the query point can be located on an edge or it may coincide with a
+vertex.
 
-Point-location queries are not only common in many applications,
-they also play an important role in the free insertion-functions
-(see Section \ref arr_secgl_funcs). Therefore, it is crucial to
-have the ability to answer such queries effectively for any
-arrangement instance.
+Point-location queries are common in many applications, and also
+play an important role in the incremental construction of arrangements
+(and more specifically in the free insertion-functions described in
+Section \ref arr_secgl_funcs). Therefore, it is crucial to have the
+ability to answer such queries effectively.
 
 \subsection arr_ssecpl Point-Location Queries 
 
-The arrangement package includes several classes (more precisely,
-class templates parameterized by an arrangement class) that model
-the `ArrangementPointLocation_2` concept. Namely, they all
-have a member function called `locate(q)` that accepts a query
-point \f$ q\f$ and result with a \cgal `Object` that wraps a handle
-to the arrangement cell containing the query point. This object can
-be assigned to either a `Face_const_handle`,
-`Halfedge_const_handle` or a `Vertex_const_handle`, depending
-on whether the query point is located inside a face, on an edge or
-on a vertex.
+The `Arrangement_2` class template does not support point-location
+queries directly, as the arrangement representation is decoupled from
+the geometric algorithms that operate on it. The <I>2D Arrangements</I>
+package includes a set of classe templates that are capable of
+answering such queries; all are models of the concept
+`ArrangementPointLocation_2`. Each model employs a different
+algorithm or <I>strategy</I> for answering queries. A model of this
+concept must define the `locate()` member function, which accepts
+an input query-point and returns an object that represents the
+arrangement cell that contains this point. This object is is type
+`Arr_point_location_result<Arrangement_2>::%Type`---a discriminated
+union container of the bounded types `Vertex_const_handle`,
+`Halfedge_const_handle`, or `Face_const_handle`. Depending on
+whether the query point is located inside a face, on an edge, or on a
+vertex, the appropriate handle can be obtained with <I>value retrieval</I>
+by `boost::get` as demonstrated in the example below.
 
 Note that the handles returned by the `locate()` functions are
-`const` (non-mutable) handles. If necessary, such handles may
-be casted to mutable handles using the static functions
-`Arrangement_on_surface_2::non_const_handle()` provided by the
-arrangement class.
+non-mutable (`const`). If necessary, such handles may
+be cast to mutable handles using the `non_const_handle()` methods
+`Arrangement_2::non_const_handle()` provided by the
+`Arrangement_2` class.
 
-An instance of any point-location class must be attached to an
-`Arrangement_on_surface_2` instance so we can use it to issue point-location
-queries. This attachment can be performed when the point-location
-instance is constructed, or at a later time, using the `init(arr)`
-method, where `arr` is the attached `Arrangement_on_surface_2` instance.
-In this chapter we always use the first option.
+An object `pl` of any point-location class must be attached to an
+`Arrangement_2` object `arr` before it is used to answer
+point-location queries on `arr`. This attachment can be performed
+when `pl` is constructed or at a later time using the
+`pl.init(arr)` call.
 
-The following function template, which can be found in the example
-file `point_location_utils.h`, accepts a point-location object
-(whose type can be any of the models to the
-`ArrangementPointLocation_2` concept) and a query point, and
-prints out the result of the point-location query for the given
-point. Observe how we use the function `assign()` is order
-to cast the resulting `Object` into a handle to an arrangement
-feature. The point-location object `pl` is assumed to be already
-associated with an arrangement:
+The function template listed below accepts a point-location object,
+the type of which is a model of the `ArrangementPointLocation_2`
+concept, and a query point. The function template issues a
+point-location query for the given point, and prints out the result.
+It is defined in the header file `point_location_utils.h`.
 
+\anchor lst_pl
 \code
-template <class PointLocation>
-void point_location_query
-  (const PointLocation& pl,
-   const typename PointLocation::Arrangement_on_surface_2::Point_2& q)
+template <typename PointLocation>
+void locate_point(const PointLocation& pl,
+                  const typename PointLocation::Arrangement_2::Point_2& q)
 {
-  // Perform the point-location query.
-  CGAL::Object obj = pl.locate (q);
+  typedef PointLocation                                 Point_location;
+  typedef typename Point_location::Arrangement_2        Arrangement_2;
+  typename CGAL::Arr_point_location_result<Arrangement_2>::Type obj =
+    pl.locate(q);
 
   // Print the result.
-  typedef typename PointLocation::Arrangement_on_surface_2 Arrangement_on_surface_2;
+  print_point_location<Arrangement_2>(q, obj);
+}
+\endcode
 
-  typename Arrangement_on_surface_2::Vertex_const_handle v;
-  typename Arrangement_on_surface_2::Halfedge_const_handle e;
-  typename Arrangement_on_surface_2::Face_const_handle f;
+The function template `locate_point()` calls an instance of the
+function template `print_point_location()`, which inserts the
+result of the query into the standard output-stream. It is listed
+below, and defined in the header file `point_location_utils.h`.
+Observe how the function `boost::get()` is used to cast the
+resulting object into a handle to an arrangement feature. The
+point-location object `pl` is assumed to be already attached
+to an arrangement.
 
-  std::cout << "The point " << q << " is located ";
-  if (CGAL::assign (f, obj)) {
-    // q is located inside a face:
-    if (f->is_unbounded())
-      std::cout << "inside the unbounded face." << std::endl;
-    else
-      std::cout << "inside a bounded face." << std::endl;
-  } else if (CGAL::assign (e, obj)) {
-    // q is located on an edge:
-    std::cout << "on an edge: " << e->curve() << std::endl;
-  } else if (CGAL::assign (v, obj)) {
-    // q is located on a vertex:
-    if (v->is_isolated())
-      std::cout << "on an isolated vertex: " << v->point() << std::endl;
-    else
-      std::cout << "on a vertex: " << v->point() << std::endl;
-  } else {
-    CGAL_assertion_msg (false, "Invalid object.");
-  }
+\code
+template <typename Arrangement_>
+void
+print_point_location
+(const typename PointLocation::Arrangement_2::Point_2& q
+ typename CGAL::Arr_point_location_result<Arrangement_>::Type obj)
+{
+  typedef Arrangement_                                  Arrangement_2;
+  
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+
+  const Vertex_const_handle*   v;
+  const Halfedge_const_handle* e;
+  const Face_const_handle*     f;
+
+  std::cout << "The point (" << q << ") is located ";
+  if (f = boost::get<Face_const_handle>(&obj)) // located inside a face
+    std::cout << "inside "
+              << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
+              << " face." << std::endl;
+  else if (e = boost::get<Halfedge_const_handle>(&obj)) // located on an edge
+    std::cout << "on an edge: " << (*e)->curve() << std::endl;
+  else if (v = boost::get<Vertex_const_handle>(&obj)) // located on a vertex
+    std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
+              << " vertex: " << (*v)->point() << std::endl;
+  else CGAL_error_msg("Invalid object.");
 }
 \endcode
 
 \subsection arr_sssecpl_strat Choosing a Point-Location Strategy 
 
-Each of the various point-location classes employs a different
-algorithm or <I>strategy</I>\cgalFootnote{We use the term <I>strategy</I> following the design pattern taxonomy \cite cgal:ghjv-dpero-95.}
+Each of the various point-location class templates employs a different
+algorithm or <I>strategy</I>\cgalFootnote{We use the term <I>strategy</I>
+is borrowed from the design-pattern taxonomy \cite cgal:ghjv-dpero-95, Chapter 5.}
 for answering queries:
 <UL>
-<LI>`Arr_naive_point_location<Arrangement>` locates the query
-point naively, by exhaustively scanning all arrangement cells.
-<LI>`Arr_walk_along_a_line_point_location<Arrangement>`
-simulates a traversal, in reverse order, along an imaginary vertical
-ray emanating
-from the query point: It starts from the unbounded face of the
-arrangement and moves downward toward the query point until
-locating the arrangement cell containing it.
+<LI> `Arr_naive_point_location<Arrangement>` employes the
+  <I>naive</I> strategy. It locates the query point naively,
+  exhaustively scanning all arrangement cells.
+  %
+<LI> `Arr_walk_along_a_line_point_location<Arrangement>`} employs
+  the <I>walk-along-a-line</I> (or <I>walk</I> for short) strategy.
+  It simulates a traversal, in reverse order, along an imaginary
+  vertical ray emanating from the query point. It starts from the
+  unbounded face of the arrangement and moves downward toward the
+  query point until locating the arrangement cell containing it.
 <LI>`Arr_landmarks_point_location<Arrangement,Generator>`
-uses a set of "landmark" points whose location in the
-arrangement is known. Given a query point, it uses a <span class="textsc">Kd</span>-tree to
-find the nearest landmark and then traverses the straight line
-segment connecting this landmark to the query point.<BR>
-There are various ways to select the landmark set in the
-arrangement, determined by the `Generator` template parameter.
-By default, the generator
-class `Arr_landmarks_vertices_generator` is used and the
-arrangement vertices are the selected landmarks, but other
-landmark generators, such as sampling random points or
-choosing points on a grid, are also available; see the
-Reference Manual for more details.
+  uses a set of <I>landmark</I> points the location of which in the
+  arrangement is known. It employs the
+  <I>landmark</I> strategy. Given a query point, it uses a
+  nearest-neighbor search-structure (a <span class="textsc">Kd</span>-tree is used by default)
+  to find the nearest landmark and then traverses the straight-line
+  segment connecting this landmark to the query point.
+
+  There are various ways to select the landmark set in the
+  arrangement. The selection is governed by the `Generator`
+  template parameter. The default generator class, namely
+  `Arr_landmarks_vertices_generator`, selects all the vertices of
+  the attached arrangement as landmarks. Additional generators that
+  select the set in other ways, such as by sampling random
+  points or choosing points on a grid, are also available; see the
+  Reference Manual for more details.
+
+  The landmark strategy requires that the type of the attached
+  arrangement be an instance of the `Arrangement_2<Traits,Dcel>`
+  class template, where the `Traits` parameter is substituted with
+  a geometry-traits class that models the
+  `ArrangementLandmarkTraits_2` concept, which refines the basic
+  `ArrangementBasicTraits_2` concept; see
+  Section \ref arr_sssectr_lanmarks_concept for details. Most traits
+  classes included in the <I>2D Arrangement</I> package are models of
+  this refined concept.
 <LI>`Arr_trapezoid_ric_point_location<Arrangement>` implements
-a point location algorithm presented by Seidel \cite s-sfira-91, which uses the 
-randomized incremental construction described by Mulmuley \cite m-fppa-90 (see
-also [\cite bkos-cgaa-00 Chapter 6). The
-arrangement faces are decomposed into simpler cells of constant
-complexity known as <I>pseudo-trapezoids</I> and a search-structure
-(a directed acyclic graph) is constructed on top of these cells,
-allowing to locate the pseudo-trapezoid (hence the arrangement
-cell) containing a query point in logarithmic time.
+  Mulmuley's point-location algorithm \cite m-fppa-90; see
+  also \cite bkos-cgaa-00, Chapter 6. The arrangement faces are
+  decomposed into simpler cells each of constant complexity, known as
+  <I>pseudo-trapezoids</I>, and a search structure (a directed acyclic
+  graph) is constructed on top of these cells, facilitating the search
+  of the pseudo trapezoid (hence the arrangement cell) containing a
+  query point in expected logarithmic time. The trapezoidal map and
+  the search structure are built by a algorithm (RIC).
 </UL>
 
-The main advantage of the first two strategies is that they do not
-require any extra data, so the respective classes just store a
-pointer to an arrangement object and operate directly on it.
-Attaching such point-location objects to an existing arrangement
-has virtually no running-time cost at all, but the query time is
-linear in the size of the arrangement (the performance of the
-"walk" strategy is much better in practice, but its worst-case
-performance is linear). Using these strategies is therefore
-recommended only when a relatively small number of point-location
-queries are issued by the application, or when the arrangement is
-constantly changing (i.e., changes in the arrangement structure
-are more frequent than point-location queries).
+The first two strategies do not require any extra data. The class
+templates that implement them store a pointer to an arrangement object
+and operate directly on it. Attaching such point-location objects to
+an existing arrangement has virtually no running-time cost at all, but
+the query time is linear in the size of the arrangement (the
+performance of the walk strategy is much better in practice, but
+its worst-case performance is linear). Using these strategies is
+therefore recommended only when a relatively small number of
+point-location queries are issued by the application, or when the
+arrangement is constantly changing (That is, changes in the arrangement
+structure are more frequent than point-location queries).
 
 On the other hand, the landmarks and the trapezoid RIC strategies
 require auxiliary data structures on top of the arrangement, which
 they need to construct once they are attached to an arrangement
 object and need to keep up-to-date as this arrangement changes.
 The data structure needed by the landmarks strategy can be constructed
-in \f$ O(N \log N)\f$ time (where \f$ N\f$ is the overall number of edges in
-the arrangement), whereas the construction of the data structure needed 
-by the trapezoid RIC strategy takes expected \f$ O(N \log N)\f$, but 
-may require several rebuilds. As shown in \cite hkh-iiplgtds-12, one can 
-expect only a small number of rebuilds.
-In practice, the construction needed by the landmark algorithm is
-significantly faster. 
-In addition, although both
-resulting data structures are asymptotically linear in size, the
-<span class="textsc">Kd</span>-tree that the landmark algorithm stores needs significantly
-less memory.
+in \f$ O(N \log N) \f$ time, where \f$ N \f$ is the overall number of edges in
+the arrangement, but the constant hidden in the \f$ O() \f$ notation for the
+trapezoidal map RIC strategy is much larger. Thus, construction needed
+by the landmark algorithm is in practice significantly faster than the
+construction needed by the trapezoidal map RIC strategy. In addition,
+although both resulting data structures are asymptotically linear in
+size, using a <span class="textsc">Kd</span>-tree as the nearest-neighbor search-structure that
+the landmark algorithm stores significantly reduces memory consumption.
+The trapezoidal map RIC algorithm has expected logarithmic query time,
+while the query time for the landmark strategy may be as large as
+linear. In practice however, the query times of both strategies are
+competitive. For a detailed experimental comparison
+see \cite hh-eplca-05
 
-We note that the trapezoid RIC algorithm guarantees a
-logarithmic query time for any scenario
-making it advantageous comparing to other strategies.
-The query time of the landmarks strategy, on the other hand,
-is only logarithmic on average - and we may have
-scenarios where the query time can be linear. 
-In practice, in many scenarios
-the query times of both strategies are competitive. For a detailed
-experimental comparison, see \cite hh-esplp-08.
-
-Another advantageous feature of the trapezoid RIC strategy
-when compared with other methods
-is the unbounded curves support. 
-Currently, this is the most efficient strategy 
-suitable for general unbounded subdivisions.
-
-The main drawback in the current implementation of the landmark
-strategy, compared to the trapezoidal RIC strategy, is that while
-the updating the auxiliary data structures
-related to the trapezoidal decomposition is done very efficiently,
-the <span class="textsc">Kd</span>-tree maintained by the landmark algorithm needs to be
-frequently rebuilt as the arrangement changes. In addition, using
-the landmark point-location class adds some extra requirement
-from the traits class (that is, the traits class should be a model
-of a refined concept `ArrangementLandmarkTraits_2`; see
-Section \ref arr_sectraits for the details). However, most
-built-in traits classes that come with the \cgal public release
-support these extra operations.
-
-It is therefore recommended to use the
-`Arr_landmarks_point_location` class when the application
-frequently issues point-location queries on a bounded
-arrangement that only seldom changes. If the arrangement 
-consists of unbounded curves or is more
-dynamic and is frequently going through changes, the
-`Arr_trapezoid_ric_point_location` class should be the
-selected point-location strategy.
+Updating the auxiliary data structures of the trapezoidal map RIC
+algorithm is done very efficiently. On the other hand, updating the
+nearest-neighbor search-structure of the landmark algorithm may consume
+more time when the arrangement changes frequently, especially when
+a <span class="textsc">Kd</span>-tree is used, as it must be rebuilt each time the arrangement
+changes. It is therefore recommended that the
+`Arr_landmarks_point_location` class template be used when the
+application frequently issues point-location queries on an arrangement
+that only seldom changes. If the arrangement is more dynamic and is
+frequently going through changes, the `Arr_trapezoid_ric_point_location`
+class template should be the selected point-location strategy.
 
 \subsection arr_sssecpl_ex An Example 
 
@@ -954,135 +964,136 @@ selected point-location strategy.
 The arrangement of line segments, as constructed in `point_location_example.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$ q_1, \ldots, q_6\f$ are marked with crosses.
 \cgalFigureEnd
 
-The following program constructs a simple arrangement of five line
+The program listed below constructs a simple arrangement of five line
 segments that form a pentagonal face, with a single isolated
-vertex in its interior, as depicted in \cgalFigureRef{arr_figex_5}
-(the arrangement construction is performed by the function
-`construct_segment_arr()` whose listing is omitted here and
-can be found in `point_location_utils.h`).
-It then employs the naive and the landmark strategies to issue
-several point-location queries on this arrangement:
+vertex in its interior, as depicted in Figure \cgalFigureRef{arr_figex_5}.
+Notice that we use the same arrangement structure in the next
+three example programs. The arrangement construction is performed by
+the function `construct_segment_arr()` defined in the heade file
+`point_location_utils.h`. (Its listing is omitted here.) The
+program employs the naive and the landmark strategies to issue
+several point-location queries on this arrangement.
 
 \cgalExample{Arrangement_on_surface_2/point_location_example.cpp}
 
-Note that the program uses the auxiliary
-`point_location_query()` function template to nicely print the
-result of each query. This function can be found in the header file
-`point_location_utils.h`.
+Note that the program uses the `locate_point()` function template
+to locate a point and nicely print the result of each query; see
+\ref lst_pl "here".
 
 \subsection arr_ssecray_shoot Vertical Ray Shooting 
 
 Another important query issued on arrangements is the vertical
 ray-shooting query: Given a query point, which arrangement feature
-do we encounter if we shoot a vertical ray emanating upward (or
-downward) from this point? In the general case the ray hits an
-edge, but it is possible that it hits a vertex, or that the
-arrangement does not have any feature lying directly above (or
-below) the query point.
+do we encounter by a vertical ray shot upward (or downward) from this
+point? In the general case the ray hits an edge, but it is possible
+that it hits a vertex, or that the arrangement does not have any
+vertex or edge lying directly above (or below) the query point.
 
-All point-location classes listed in the previous section are also models
-of the `ArrangementVerticalRayShoot_2` concept. That is, they all
-have member functions called `ray_shoot_up(q)` and
-`ray_shoot_down(q)` that accept a query point \f$ q\f$ and output a
-\cgal `Object`. This can be assigned to either a
-`Halfedge_const_handle` or to a `Vertex_const_handle`.
-Alternatively, the returned value is a `Face_const_handle`
-for the unbounded face of the arrangement, in case there is no edge
-or vertex lying directly above (or below) \f$ q\f$.
+All point-location classes listed in the previous section are also
+models of the `ArrangementVerticalRayShoot_2` concept. That is,
+they all have member functions called `ray_shoot_up(q)` and
+`ray_shoot_down(q)` that accept a query point `q`. These functions
+output an object of type type
+`Arr_point_location_result<Arrangement_2>::%Type`---a discriminated
+union container of the bounded types `Vertex_const_handle`,
+`Halfedge_const_handle`, or `Face_const_handle`. The latter type
+is used for the unbounded face of the arrangement, in case there is no
+edge or vertex lying directly above (or below) `q`.
 
-The following function template, `vertical_ray_shooting_query()`,
-which also located in the header file `point_location_utils.h`,
-accepts a vertical ray-shooting
-object, whose type can be any of the models to the
-`ArrangementVerticalRayShoot_2` concept and prints out the
-result of the upward vertical ray-shooting operations from a given
-query point. The ray-shooting object `vrs` is assumed to be
-already associated with an arrangement:
+The function template `vertical_ray_shooting_query()` listed
+below accepts a vertical ray-shooting object, the type of which
+models the `ArrangementVerticalRayShoot_2` concept. It exports
+the result of the upward vertical ray-shooting operation from a
+given query point to the standard output-stream. The ray-shooting
+object `vrs` is assumed to be already attached to an arrangement.
+The function template is defined in the header file
+`point_location_utils.h.
 
 \code
-template <class VerticalRayShoot>
-void vertical_ray_shooting_query
-  (const VerticalRayShoot& vrs,
-   const typename VerticalRayShoot::Arrangement_on_surface_2::Point_2& q)
+template <typename RayShoot>
+void shoot_vertical_ray(const RayShoot& vrs,
+                       const typename RayShoot::Arrangement_2::Point_2& q)
 {
+  typedef RayShoot                                      Vertical_ray_shooting;
+
   // Perform the point-location query.
-  CGAL::Object obj = vrs.ray_shoot_up (q);
+  typename Vertical_ray_shooting::result_type obj = vrs.ray_shoot_up(q);
 
   // Print the result.
-  typedef typename VerticalRayShoot::Arrangement_on_surface_2 Arrangement_on_surface_2;
+  typedef typename Vertical_ray_shooting::Arrangement_2 Arrangement_2;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  typename Arrangement_on_surface_2::Vertex_const_handle v;
-  typename Arrangement_on_surface_2::Halfedge_const_handle e;
-  typename Arrangement_on_surface_2::Face_const_handle f;
-
-  std::cout << "Shooting up from " << q << " : ";
-  if (CGAL::assign (e, obj)) {
-    // We hit an edge:
-   std::cout << "hit an edge: " << e->curve() << std::endl;
-  } else if (CGAL::assign (v, obj)) {
-    // We hit a vertex:
-    if (v->is_isolated())
-      std::cout << "hit an isolated vertex: " << v->point() << std::endl;
-    else
-      std::cout << "hit a vertex: " << v->point() << std::endl;
-  } else if (CGAL::assign (f, obj)) {
-    // We did not hit anything:
-    CGAL_assertion (f->is_unbounded());
-
+  const Vertex_const_handle*   v;
+  const Halfedge_const_handle* e;
+  const Face_const_handle*     f;
+  
+  std::cout << "Shooting up from (" << q << ") : ";
+  if (v = boost::get<Vertex_const_handle>(&obj))         // we hit a vertex
+    std::cout << "hit " << (((*v)->is_isolated()) ? "an isolated" : "a")
+              << " vertex: " << (*v)->point() << std::endl;
+  else if (e = boost::get<Halfedge_const_handle>(&obj))  // we hit an edge
+    std::cout << "hit an edge: " << (*e)->curve() << std::endl;
+  else if (f = boost::get<Face_const_handle>(&obj)) \{    // we hit nothing
+    CGAL_assertion((*f)->is_unbounded());
     std::cout << "hit nothing." << std::endl;
-  } else {
-    CGAL_assertion_msg (false, "Invalid object.");
-  }
+  else CGAL_error();
 }
 \endcode
 
-The following program uses the auxiliary function listed above to
-perform vertical ray-shooting queries on an arrangement.
-The arrangement and the query points are exactly the same as in
-`point_location_example.cpp` (see \cgalFigureRef{arr_figex_5}):
+The program below uses the function template listed above to
+perform vertical ray-shooting queries on an arrangement. The
+arrangement and the query points are exactly the same as in
+`point_location.cpp`; see \cgalFigureRef{arr_figex_5}.
 
 \cgalExample{Arrangement_on_surface_2/vertical_ray_shooting.cpp}
 
 The number type we use in this example is \cgal's built-in
-`MP_Float` type which is a floating-point number with an
-unbounded mantissa and a 32-bit exponent. It supports construction from an
-integer or from a machine `float` or `double` and performs additions,
-subtractions and multiplications in an exact number.
+`MP_Float` type, which is a floating-point number with an
+unbounded mantissa and a 32-bit exponent. It supports construction
+from an integer or from a machine `float` or `double` and
+performs additions, subtractions and multiplications in an exact
+number.
 
 \subsection arr_ssecbatched_pl Batched Point-Location 
 
 Suppose that at a given moment our application has to issue a
 relatively large number \f$ m\f$ of point-location queries on a
-specific arrangement instance. It is possible of course to define
-a point-location object and to issue separate queries on the
-arrangement. However, as explained in Section \ref arr_ssecpl,
+specific arrangement object. Naturally, It is possible to define
+a point-location object and use it to issue separate queries on
+the arrangement. However, as explained in Section \ref arr_ssecpl
 choosing a simple point-location strategy (either the naive or
 the walk strategy) means inefficient queries, while the more
 sophisticated strategies need to construct auxiliary structures
 that incur considerable overhead in running time.
 
-On the other hand, the arrangement package includes a free
-`locate()` function that accepts an arrangement a range of
+Alternatively, the <I>2D Arrangement</I> package includes a free
+`locate()` function that accepts an arrangement and a range of
 query points as its input and sweeps through the arrangement to
 locate all query points in one pass. The function outputs the query
-results as pairs, where each pair is comprised of a query point
-and a \cgal `Object` that represents the cell containing the
-point (see Section \ref arr_ssecpl). The output pairs are
-sorted in increasing \f$ xy\f$-lexicographical order of the query point.
+results as pairs, where each pair consists of a query point
+and a discriminated union container, which represents the
+cell containing the point; see Section \ref arr_ssecpl. The output
+pairs are sorted in increasing $xy$-lexicographical order of the
+query point.
 
-The batched point-location operation can be performed in
-\f$ O\left((m+N)\log{(m+N)}\right)\f$ time, where \f$ N\f$ is the number of
-edges in the arrangement. This means that when the number \f$ m\f$ of
+The batched point-location operation is carried out by sweeping the
+arrangement. Thus, it takes \f$ O((m+N)\log{(m+N)}) \f$  time, where \f$ N \f$
+is the number of edges in the arrangement. Issuing separate queries
+exploiting a point-location strategy with logarithmic query time
+per query, such as the trapezoidal map RIC strategy (see
+Section \ref arr_sssecpl_strat), is asymptotically more
+efficient. However, experiments show that when the number \f$ m \f$ of
 point-location queries is of the same order of magnitude as \f$ N\f$,
-this operation is more efficient than issuing separate queries.
-This suggestion is also backed up by experimental results.
-Moreover, the batched point-location operation is also
-advantageous as it does not have to construct and maintain
-additional data structures.
+the batched point-location operation is more efficient in practice. 
+One of the reasons for the inferior performance of the alternative
+(asymptotically faster) procedures is the necessity to construct
+and maintain complex additional data structures.
 
-The following program issues a batched point-location query, which
+The program below issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
-`point_location_example.cpp` (see Section \ref arr_ssecpl):
+`point_location_example.cpp`; see Section \ref arr_ssecpl.
 
 \cgalExample{Arrangement_on_surface_2/batched_point_location.cpp}
 
@@ -3266,8 +3277,8 @@ segments, as depicted in \cgalFigureRef{arr_figex_24}, while maintaining
 the curve history. The example demonstrates the usage of the special
 traversal functions. It also shows how to issue point-location queries
 on the resulting arrangement, using the auxiliary function 
-`point_location_query()` defined in the header file 
-`point_location_utils.h` (see also Section \ref arr_ssecpl).
+`locate_point()` defined in the header file 
+`point_location_utils.h`; see also Section \ref arr_ssecpl.
 
 \cgalExample{Arrangement_on_surface_2/curve_history.cpp}
 
