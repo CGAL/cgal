@@ -78,17 +78,17 @@ private:
 #ifdef CGAL_COMPACT_MESH_VERTEX_CELL
   typedef typename Default::Get<
     Vertex_base_, 
-    Compact_mesh_vertex_base_3<Geom_traits, MD>>::type          Vertex_base;
+    Compact_mesh_vertex_base_3<Geom_traits, MD> >::type         Vertex_base;
   typedef typename Default::Get<
     Cell_base_, 
-    Compact_mesh_cell_base_3<Geom_traits, MD>>::type            Cell_base;
+    Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
 #else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
   typedef typename Default::Get<
     Vertex_base_, 
-    Mesh_vertex_base_3<Geom_traits, MD>>::type                  Vertex_base;
+    Mesh_vertex_base_3<Geom_traits, MD> >::type                 Vertex_base;
   typedef typename Default::Get<
     Cell_base_, 
-    Mesh_cell_base_3<Geom_traits, MD>>::type                    Cell_base;
+    Mesh_cell_base_3<Geom_traits, MD> >::type                   Cell_base;
 #endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
 
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)\
@@ -120,17 +120,17 @@ private:
 #ifdef CGAL_COMPACT_MESH_VERTEX_CELL
   typedef typename Default::Get<
     Vertex_base_, 
-    Compact_mesh_vertex_base_3<Geom_traits, MD>>::type          Vertex_base;
+    Compact_mesh_vertex_base_3<Geom_traits, MD> >::type         Vertex_base;
   typedef typename Default::Get<
     Cell_base_, 
-    Compact_mesh_cell_base_3<Geom_traits, MD>>::type            Cell_base;
+    Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
 #else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
   typedef typename Default::Get<
     Vertex_base_, 
-    Mesh_vertex_base_3<Geom_traits, MD>>::type                  Vertex_base;
+    Mesh_vertex_base_3<Geom_traits, MD> >::type                 Vertex_base;
   typedef typename Default::Get<
     Cell_base_, 
-    Mesh_cell_base_3<Geom_traits, MD>>::type                    Cell_base;
+    Mesh_cell_base_3<Geom_traits, MD> >::type                   Cell_base;
 #endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
 
   typedef Triangulation_data_structure_3<
