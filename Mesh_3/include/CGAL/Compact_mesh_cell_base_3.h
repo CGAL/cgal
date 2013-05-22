@@ -300,8 +300,8 @@ public:
     , sliver_value_(FT(0.))
     , subdomain_index_()
     , sliver_cache_validity_(false)
+    , V(CGAL::make_array(v0, v1, v2, v3))
   {
-    set_vertices(v0, v1, v2, v3);
   }
 
 
@@ -325,9 +325,9 @@ public:
     , subdomain_index_()
     , bits_(0)
     , sliver_cache_validity_(false)
+    , V(CGAL::make_array(v0, v1, v2, v3))
+    , N(CGAL::make_array(n0, n1, n2, n3))
   {
-    set_neighbors(n0, n1, n2, n3);
-    set_vertices(v0, v1, v2, v3);
   }
 
   ~Compact_mesh_cell_base_3()
