@@ -36,13 +36,13 @@ namespace CGAL {
 // Class Mesh_cell_base_3_base
 // Base for Compact_mesh_cell_base_3, with specializations 
 // for different walues of Parallel_tag and Use_erase_counter
-template <bool Use_erase_counter, typename Concurrency_tag>
+template <typename Use_erase_counter, typename Concurrency_tag>
 class Compact_mesh_cell_base_3_base;
 
 // Class Mesh_cell_base_3_base
 // Specialization for sequential - no erase counter
 template <typename Concurrency_tag>
-class Compact_mesh_cell_base_3_base<false, Concurrency_tag>
+class Compact_mesh_cell_base_3_base<Tag_false, Concurrency_tag>
 {
   protected:
   Compact_mesh_cell_base_3_base()
@@ -85,7 +85,7 @@ private:
 // Class Mesh_cell_base_3_base
 // Specialization for sequential - WITH erase counter
 template <typename Concurrency_tag>
-class Compact_mesh_cell_base_3_base<true, Concurrency_tag>
+class Compact_mesh_cell_base_3_base<Tag_true, Concurrency_tag>
 {
 protected:
   Compact_mesh_cell_base_3_base()
@@ -140,7 +140,7 @@ private:
 // Class Mesh_cell_base_3_base
 // Specialization for parallel - WITH erase counter
 template <>
-class Compact_mesh_cell_base_3_base<true, Parallel_tag>
+class Compact_mesh_cell_base_3_base<Tag_true, Parallel_tag>
 {
 protected:
   Compact_mesh_cell_base_3_base()
@@ -211,7 +211,7 @@ template< class GT,
           class TDS = void > 
 class Compact_mesh_cell_base_3
   : public Compact_mesh_cell_base_3_base<
-      TDS::Cell_container_strategy::Uses_erase_counter,
+      typename TDS::Cell_container_strategy::Uses_erase_counter,
       typename TDS::Concurrency_tag>
 {
   typedef typename GT::FT FT;

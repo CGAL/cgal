@@ -34,8 +34,44 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
+   
+// Without erase counter
+template <typename Use_erase_counter>
+class Compact_mesh_vertex_base_3_base
+{
+};
 
-// Class Mesh_vertex_base_3
+#ifdef CGAL_LINKED_WITH_TBB
+// Specialized version (with erase counter)
+template <>
+class Compact_mesh_vertex_base_3_base<Tag_true>
+{
+public:
+  
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+
+};
+#endif // CGAL_LINKED_WITH_TBB
+
+
+
+// Class Compact_mesh_vertex_base_3
 // Vertex base class used in 3D meshing process.
 // Adds information to Vb about the localization of the vertex in regards
 // to the 3D input complex.
@@ -43,7 +79,9 @@ template<class GT,
          class MT,
          class Vb = Triangulation_vertex_base_3<GT> >
 class Compact_mesh_vertex_base_3
-: public Vb
+: public Vb,
+  public Mesh_vertex_base_3_base<
+    typename Vb::Triangulation_data_structure::Cell_container_strategy::Uses_erase_counter>
 {
 public:
   typedef Vb Cmvb3_base;
@@ -167,11 +205,11 @@ private:
   // Dimension of the lowest dimensional face of the input 3D complex
   // that contains me. Negative values are a marker for special vertices.
   short dimension_;
-  bool cache_validity;
 #ifdef CGAL_INTRUSIVE_LIST
   Vertex_handle next_intrusive_;
   Vertex_handle previous_intrusive_;
 #endif
+  bool cache_validity;
 };  // end class Compact_mesh_vertex_base_3
 
 namespace internal {
