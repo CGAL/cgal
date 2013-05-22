@@ -33,10 +33,13 @@ void test_write_read()
   typedef CGAL::Polyhedron_3< Kernel >     Polyhedron;
   typedef typename Kernel::Point_3         Point;
 
-  Point p(6369051672525773,      0,      0, 4503599627370496);
-  Point q(      0,6369051672525773,      0, 4503599627370496);
-  Point r(      0,      0,6369051672525773, 4503599627370496);
-  Point s(      0,      0,      0, 4503599627370496);
+  typename Kernel::RT n( std::string("6369051672525773"));
+  typename Kernel::RT d( std::string("4503599627370496"));
+
+  Point p(n, 0, 0, d);
+  Point q(0, n, 0, d);
+  Point r(0, 0, n, d);
+  Point s(0, 0, 0, 1);
 
   std::cout << "    build...\n";
   Polyhedron P;
