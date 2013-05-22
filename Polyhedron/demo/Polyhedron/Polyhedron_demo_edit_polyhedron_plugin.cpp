@@ -54,9 +54,6 @@ public slots:
   void on_SaveROIPushButton_clicked();
   void on_ReadROIPushButton_clicked();
   void dock_widget_visibility_changed(bool visible);
-  ///////////////////////////////////////////
-  void mesh_deformed(Scene_edit_polyhedron_item* edit_item);
-  void mesh_repaint_needed(Scene_edit_polyhedron_item* edit_item);
   
   void item_destroyed();
   void new_item_created(int item_id);
@@ -129,8 +126,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   connect(ui_widget->ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
   ///////////////////////////////////////////////////////////////////
-
-  Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered()
@@ -297,17 +292,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
   //  viewer->camera()->setType(qglviewer::Camera::PERSPECTIVE);
   //}
 }
-//////////////////////////////////
-// slots get called by Scene_edit_polyhedron_item when mesh deformed or repaint needed
-void Polyhedron_demo_edit_polyhedron_plugin::mesh_deformed(Scene_edit_polyhedron_item* edit_item)
-{
-  scene->itemChanged(edit_item); 
-}
-void Polyhedron_demo_edit_polyhedron_plugin::mesh_repaint_needed(Scene_edit_polyhedron_item* edit_item)
-{
-  scene->itemChanged(edit_item); 
-}
-//////////////////////////////////
+
 void Polyhedron_demo_edit_polyhedron_plugin::new_item_created(int item_id)
 {
   if(dock_widget->isVisible()) {
@@ -334,11 +319,6 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
   mw->installEventFilter(edit_poly); // filter mainwindows events for key(pressed/released)
 
   connect(edit_poly, SIGNAL(destroyed()), this, SLOT(item_destroyed()));
-  connect(edit_poly, SIGNAL(mesh_deformed(Scene_edit_polyhedron_item*)), 
-    this, SLOT(mesh_deformed(Scene_edit_polyhedron_item*)));
-  connect(edit_poly, SIGNAL(mesh_repaint_needed(Scene_edit_polyhedron_item*)), 
-    this, SLOT(mesh_repaint_needed(Scene_edit_polyhedron_item*)));
-
   scene->replaceItem(i, edit_poly);
   return edit_poly;
 }

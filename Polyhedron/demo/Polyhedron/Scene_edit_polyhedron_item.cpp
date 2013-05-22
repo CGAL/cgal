@@ -23,7 +23,7 @@
 #include "ui_Deform_mesh.h"
 
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget)
-  : ui_widget(ui_widget), poly_item(poly_item), frame(new qglviewer::ManipulatedFrame()), 
+  : ui_widget(ui_widget), poly_item(poly_item),
     deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map()), quadric(gluNewQuadric())
 {
   gluQuadricNormals(quadric, GLU_SMOOTH);
@@ -40,14 +40,13 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   // create an empty handle group for starting
   create_handle_group();
    
-  // start QObject's timer for continous effects 
+  // start QObject's timer for continuous effects 
   // (deforming mesh while mouse not moving)
   startTimer(0);
 }
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 {
-  delete frame;
   while(is_there_any_handle_group())
   {
     delete_handle_group(false);
@@ -73,7 +72,8 @@ void Scene_edit_polyhedron_item::deform()
   { it->assign(); }
   deform_mesh.deform();
 
-  emit mesh_deformed(this);
+  poly_item->changed(); // now we need to call poly_item changed to update AABB tree 
+  emit itemChanged();
 }
 
 void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) 
@@ -89,7 +89,8 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr)
   bool is_insert = ui_widget->InsertRadioButton->isChecked();
   int k_ring = ui_widget->BrushSpinBox->value();
   bool use_euclidean = ui_widget->UseEuclideanCheckBox->isChecked();
-  process_selection(clicked_vertex, k_ring, is_roi, is_insert, use_euclidean);
+  bool need_repaint = process_selection(clicked_vertex, k_ring, is_roi, is_insert, use_euclidean);
+  if(need_repaint) { emit itemChanged(); }
 }
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
@@ -102,8 +103,6 @@ void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 {
   // This filter is both filtering events from 'viewer' and 'main window'
- 
-  bool need_repaint = false;
   Mouse_keyboard_state old_state = state;
   ////////////////// TAKE EVENTS /////////////////////
   // key events
@@ -135,17 +134,15 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   bool ctrl_released_now = !state.ctrl_pressing && old_state.ctrl_pressing;
   if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove) 
   {// activate a handle manipulated frame
-    if(is_there_any_handle()) { // to prevent unnecessary painting
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
-      activate_closest_manipulated_frame(p.x(), p.y()); 
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
+    bool need_repaint = activate_closest_manipulated_frame(p.x(), p.y());
 
-      need_repaint = true;
-    }
+    if(need_repaint) { emit itemChanged(); }
   }
 
   // use mouse move event for paint-like selection
-  // specificly placed in here (not in timer function) for preventing unneccessary ray-casting 
+  // specifically placed in here (not in timer function) for preventing unnecessary ray-casting 
   // (while mouse not moving, ray casting is pointless since the same vertex will be returned and processed)
   if(event->type() == QEvent::MouseMove &&
     (state.shift_pressing && state.left_button_pressing) )    
@@ -161,13 +158,8 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
       const qglviewer::Vec& orig = camera->position();
       const qglviewer::Vec& dir = point - orig;
       select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z); // it will cause 'selected_vertex' signal where our slot will handle selection 
-
-      need_repaint = true;
     }
   }//end MouseMove
-
-  if(need_repaint) { emit mesh_repaint_needed(this); } // which will be handled by a slot in plugin
-
   return false;
 }
 
@@ -182,7 +174,7 @@ void Scene_edit_polyhedron_item::draw() const {
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
   color.set_rgb_color(0, 1.f, 0);
   // draw ROI
-  if(show_roi()) {
+  if(ui_widget->ShowROICheckBox->isChecked()) {
     Deform_mesh::Roi_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
     {
@@ -231,7 +223,7 @@ void Scene_edit_polyhedron_item::draw() const {
 }
 void Scene_edit_polyhedron_item::gl_draw_point(const Point& p) const
 {
-  if(!show_as_sphere()) {
+  if(!ui_widget->ShowAsSphereCheckBox->isChecked()) {
     ::glBegin(GL_POINTS);
       ::glVertex3d(p.x(), p.y(), p.z());
     ::glEnd();
@@ -294,15 +286,12 @@ void Scene_edit_polyhedron_item::gl_draw_edge(double px, double py, double pz,
 
 void Scene_edit_polyhedron_item::changed()
 {
-  poly_item->changed();
+  // poly_item->changed();
   Scene_item::changed();
-//  last_pos = current_position();
+  // last_pos = current_position();
 }
 Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() const {
   return poly_item;
-}
-qglviewer::ManipulatedFrame* Scene_edit_polyhedron_item::manipulatedFrame() {
-  return frame;
 }
 
 Polyhedron* Scene_edit_polyhedron_item::polyhedron()       
