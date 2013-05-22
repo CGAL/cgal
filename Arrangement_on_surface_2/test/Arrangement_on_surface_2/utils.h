@@ -1,4 +1,4 @@
-
+#include <cassert>
 #include <iostream>
 #include <CGAL/enum.h>
 
