@@ -40,20 +40,16 @@ int main ()
   locate(arr, points.begin(), points.end(), std::back_inserter(results));
 
   // Print the results.
-  const Vertex_const_handle*   v;
-  const Halfedge_const_handle* e;
-  const Face_const_handle*     f;
-
   std::list<Query_result>::const_iterator it;
   for (it = results.begin(); it != results.end(); ++it) {
     std::cout << "The point (" << it->first << ") is located ";
-    if (f = boost::get<Face_const_handle>(&(it->second)))       // inside a face
+    if (const Face_const_handle* f = boost::get<Face_const_handle>(&(it->second)))       // inside a face
       std::cout << "inside "
                 << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
                 << " face." << std::endl;
-    else if (e = boost::get<Halfedge_const_handle>(&(it->second))) // on an edge
+    else if (const Halfedge_const_handle* e = boost::get<Halfedge_const_handle>(&(it->second))) // on an edge
       std::cout << "on an edge: " << (*e)->curve() << std::endl;
-    else if (v = boost::get<Vertex_const_handle>(&(it->second)))  // on a vertex
+    else if (const Vertex_const_handle*   v = boost::get<Vertex_const_handle>(&(it->second)))  // on a vertex
       std::cout << "on "
                 << (((*v)->is_isolated()) ? "an isolated" : "a")
                 << " vertex: " << (*v)->point() << std::endl;
