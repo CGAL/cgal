@@ -1,3 +1,4 @@
+#include <cassert>
 #include <CGAL/Cartesian.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
