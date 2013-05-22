@@ -104,6 +104,60 @@ public:
   }
 };
 
+template<class Polyhedron, 
+         class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+class Voronoi_area : CotangentValue
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator in_edge_iterator;
+  typedef typename Polyhedron::Traits::Point_3   Point;
+
+  double operator()(vertex_descriptor v0, Polyhedron& polyhedron) {
+    //return 1.0;
+    double voronoi_area = 0.0;
+    in_edge_iterator e, e_end;
+    for (boost::tie(e,e_end) = boost::in_edges(v0, polyhedron); e != e_end; e++)
+    {
+      if(boost::get(CGAL::edge_is_border, polyhedron, *e)) { continue; }
+
+      vertex_descriptor v1 = boost::source(*e, polyhedron);
+      vertex_descriptor v_op = boost::target(CGAL::next_edge(*e, polyhedron), polyhedron);
+
+      const Point& v0_p = v0->point();
+      const Point& v1_p = v1->point();
+      const Point& v_op_p = v_op->point();
+
+      // (?) check if there is a better way to predicate triangle is obtuse or not
+      CGAL::Angle angle0 = CGAL::angle(v1_p, v0_p, v_op_p);
+      CGAL::Angle angle1 = CGAL::angle(v_op_p, v1_p, v0_p);
+      CGAL::Angle angle_op = CGAL::angle(v0_p, v_op_p, v1_p);
+
+      bool obtuse = (angle0 == CGAL::OBTUSE) || (angle1 == CGAL::OBTUSE) || (angle_op == CGAL::OBTUSE);
+
+      if(!obtuse) {
+        double cot_v1 = CotangentValue::operator()(v_op, v1, v0);
+        double cot_v_op = CotangentValue::operator()(v0, v_op, v1);
+
+        double term1 = cot_v1   * (v_op_p - v0_p).squared_length();
+        double term2 = cot_v_op * (v1_p  - v0_p).squared_length();
+        voronoi_area += (1.0 / 8.0) * (term1 + term2);
+      }
+      else {
+        double area_t = std::sqrt(squared_area(v0_p, v1_p, v_op_p));
+        if(angle0 == CGAL::OBTUSE) {
+          voronoi_area += area_t / 2.0;
+        }
+        else {
+          voronoi_area += area_t / 4.0;
+        }
+      }
+    }
+    return voronoi_area;
+  }
+};
 // Returns the cotangent value of half angle v0 v1 v2 by dividing the triangle area
 // as suggested by -[Mullen08] Spectral Conformal Parameterization-
 template<class Polyhedron, 
@@ -305,14 +359,19 @@ public:
   { return 1.0; }
 };
 
+////////////////////////////////////////////////////////////////////////////
+//                              FAIRING                                   //
 template<class Polyhedron>
-class Scale_dependent_weight
+class Scale_dependent_weight_fairing
 {
 public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   typedef typename Polyhedron::Traits::Vector_3  Vector;
 
-  double operator()(edge_descriptor e, Polyhedron& polyhedron)
+  double w_i(vertex_descriptor /*v_i*/, Polyhedron& /*polyhedron*/) { return 1.0; }
+
+  double w_ij(edge_descriptor e, Polyhedron& polyhedron)
   {
     Vector v = boost::target(e, polyhedron)->point() - boost::source(e, polyhedron)->point();
     double divider = std::sqrt(v.squared_length());
@@ -324,6 +383,35 @@ public:
   }
 };
 
+template<class Polyhedron>
+class Cotangent_weight_with_voronoi_area_fairing {
+public:
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  double w_i(vertex_descriptor v_i, Polyhedron& polyhedron) {
+    Voronoi_area<Polyhedron> voronoi_functor;
+    return 1.0 / voronoi_functor(v_i, polyhedron);
+  }
+
+  double w_ij(edge_descriptor e, Polyhedron& polyhedron) {
+    Cotangent_weight<Polyhedron, CGAL::internal::Cotangent_value_Meyer<Polyhedron> > cotangent_functor;
+    return cotangent_functor(e, polyhedron);
+  }
+};
+
+template<class Polyhedron>
+class Uniform_weight_fairing
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  double w_ij(edge_descriptor /*e*/, Polyhedron& /*polyhedron*/) { return 1.0; }
+
+  double w_i(vertex_descriptor /*v_i*/, Polyhedron& /*polyhedron*/) { return 1.0; }
+};
+////////////////////////////////////////////////////////////////////////////
 
 }//namespace internal
 /// @endcond
