@@ -98,6 +98,9 @@
             <property name="text">
              <string>Cotangent Weight</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -106,7 +109,7 @@
              <string>Scale-dependent Weight</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>

@@ -40,6 +40,7 @@ public slots:
   void on_Fill_and_update_button();
   void on_Fill_all_holes_button();
 private:
+  QMainWindow* mw;
   Scene_interface* scene;
   Messages_interface* messages;
   QAction* actionHoleFilling;
@@ -52,10 +53,11 @@ private:
   Polyline_data_map polyline_data_map;
 }; // end Polyhedron_demo_hole_filling_plugin
 
-void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mw,
+void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
                                       Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
+  mw = mainWindow;
   scene = scene_interface;
   messages = m;
   actionHoleFilling = new QAction(tr("Hole Filling"), mw);
@@ -197,7 +199,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_and_update_button() {
   bool fair = ui_widget->Triangulate_refine_fair_radio_button->isChecked();
   bool refine = fair || ui_widget->Triangulate_refine_radio_button->isChecked();
   double alpha = ui_widget->Density_control_factor_spin_box->value();
-  bool create_new = ui_widget->Create_new_polyhedron_check_box->checkState() == Qt::Checked;
+  //bool create_new = ui_widget->Create_new_polyhedron_check_box->checkState() == Qt::Checked;
 
   Polyline_data_map::iterator it = polyline_data_map.find(polyline_item);
   if(it == polyline_data_map.end()) {

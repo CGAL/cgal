@@ -105,6 +105,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt4_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
+  qt4_wrap_ui( smoothing_fairingUI_FILES Smoothing_fairing_widget.ui)
   
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
@@ -138,6 +139,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Mesher_base.cpp
               Camera_positions_list.cpp
               Scene_points_with_normal_item.cpp
+			  Scene_polyhedron_item_decorator.cpp
               )
   qt4_automoc( Scene_implicit_function_item.cpp )
 
@@ -197,7 +199,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
   # special
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
-
+	
+  add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp Scene_polyhedron_item_decorator.moc)
+  target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
+  
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
@@ -412,7 +417,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   polyhedron_demo_plugin(hole_filling_plugin Polyhedron_demo_hole_filling_plugin ${hole_fillingUI_FILES})
   target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
-
+	
+  polyhedron_demo_plugin(smoothing_fairing_plugin Polyhedron_demo_smoothing_fairing_plugin ${smoothing_fairingUI_FILES})
+  target_link_libraries(smoothing_fairing_plugin scene_polyhedron_item_decorator)
 #
 # Exporting
 #
