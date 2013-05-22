@@ -44,6 +44,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_do.h>
@@ -1575,7 +1576,7 @@ private:
   {
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
-    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_do(outdated_cells.begin(), outdated_cells.end(),
         [&]( const Cell_handle& cell ) // CJTODO: lambdas ok?
@@ -1679,7 +1680,7 @@ private:
   {
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
-    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for(tbb::blocked_range<size_t>(0, outdated_cells_vector.size()),
         [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
@@ -2186,7 +2187,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     std::vector<Cell_handle> outdated_cells_vector;
     outdated_cells_vector.reserve(outdated_cells.size());
@@ -2315,7 +2316,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Note: ~58% of rebuild_restricted_delaunay time
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::parallel_do(first_cell, last_cell,
       [&]( typename ForwardIterator::reference cell ) // CJTODO: lambdas ok?
@@ -2340,7 +2341,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   std::set<std::pair<Vertex_handle, Surface_patch_index> > vertex_to_proj;
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::parallel_do(facets.begin(), facets.end(),
       [&]( const Facet& facet ) // CJTODO: lambdas ok?

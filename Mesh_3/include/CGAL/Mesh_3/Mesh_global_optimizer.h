@@ -47,6 +47,7 @@
 
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/atomic.h>
@@ -585,7 +586,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     tbb::concurrent_vector<Vertex_handle> vertices_not_moving_any_more;
 
@@ -683,7 +684,7 @@ compute_move(const Vertex_handle& v)
   incident_cells.reserve(64);
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     helper_.get_incident_cells_without_using_tds_data(v, incident_cells);
   }
@@ -740,7 +741,7 @@ update_mesh(const Moves_vector& moves,
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     // Apply moves in triangulation
     tbb::parallel_for(tbb::blocked_range<size_t>(0, moves.size()),
@@ -869,7 +870,7 @@ fill_sizing_field()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     typedef tbb::enumerable_thread_specific<
       std::vector< std::pair<Point_3, FT> > > Local_list;
@@ -943,7 +944,7 @@ average_circumradius_length(const Vertex_handle& v) const
   incident_cells.reserve(64);
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     helper_.get_incident_cells_without_using_tds_data(v, incident_cells);
   }

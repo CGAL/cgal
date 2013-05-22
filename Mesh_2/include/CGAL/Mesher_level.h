@@ -42,8 +42,6 @@
 # include <tbb/tbb.h>
 #endif
 
-#include <boost/type_traits/is_base_of.hpp>
-
 #include <string>
 
 namespace CGAL {

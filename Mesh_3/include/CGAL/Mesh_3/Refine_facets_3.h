@@ -49,8 +49,9 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/if.hpp>
 #include <CGAL/tuple.h>
+#include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
-#include "boost/tuple/tuple.hpp"
+#include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
 
@@ -271,7 +272,7 @@ template<class Tr,
 #ifdef CGAL_LINKED_WITH_TBB
          class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
          <
-          boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
+          boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
           // Parallel
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
@@ -862,7 +863,7 @@ scan_triangulation_impl()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Ct>::value)
+  if (boost::is_convertible<Ct, Parallel_tag>::value)
   {
 # if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad facets (in parallel) - "

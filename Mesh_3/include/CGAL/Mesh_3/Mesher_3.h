@@ -57,6 +57,7 @@
 #endif
 
 #include <boost/format.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include <string>
 
 namespace CGAL {
@@ -567,7 +568,7 @@ initialize()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     // we're not multi-thread, yet
     r_c3t3_.triangulation().set_lock_data_structure(0);

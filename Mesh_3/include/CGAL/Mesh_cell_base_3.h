@@ -30,6 +30,8 @@
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
+#include <boost/type_traits/is_convertible.hpp>
+
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/atomic.h>
 #endif
@@ -65,7 +67,7 @@ protected:
   
 #ifdef CGAL_LINKED_WITH_TBB
   typedef typename boost::mpl::if_c<
-    boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
+    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
     tbb::atomic<unsigned int>,
     unsigned int>::type             Erase_counter_type;
 #else

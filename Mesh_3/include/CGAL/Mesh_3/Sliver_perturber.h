@@ -67,6 +67,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 #include <boost/unordered_map.hpp>
 
@@ -879,7 +880,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
 # ifdef CGAL_MESH_3_PERTURBER_VERBOSE
     int iteration_nb = 0;

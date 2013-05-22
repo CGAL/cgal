@@ -37,6 +37,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 #include <CGAL/Timer.h>
 
@@ -683,7 +684,7 @@ private:
   {
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
-    if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       enqueue_task<pump_vertices_on_surfaces>(
         ch, get_erase_counter(ch), criterion_value);
     // Sequential
@@ -892,7 +893,7 @@ pump_vertices(double sliver_criterion_limit,
   
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_base_of<Parallel_tag, Concurrency_tag>::value)
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     this->create_root_task();
     
