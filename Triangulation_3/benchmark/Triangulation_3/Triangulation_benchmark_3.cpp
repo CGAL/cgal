@@ -144,7 +144,7 @@ typedef K::Point_3                                     Point;
 vector<Point> pts, pts2;
 Bbox_3 pts_bbox, pts2_bbox;
 size_t min_pts = 100;
-size_t max_pts = 100000;
+size_t max_pts = 1000000;
 
 bool input_file_selected = false;
 std::ifstream input_file;
@@ -282,6 +282,12 @@ void benchmark_remove()
   double time = 0;
   size_t iterations = 0;
 
+  if (nb_pts > max_pts)
+  {
+    std::cerr << "ERROR: nb_pts > max_pts. Cancelling..." << std::endl;
+    return;
+  }
+
   do {
 #ifdef CONCURRENT_TRIANGULATION_3
     Lock_ds locking_ds(pts_bbox, 50);
@@ -293,7 +299,7 @@ void benchmark_remove()
     for (Vertex_iterator vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end();
          vit != end; ++vit)
       vhs.push_back(vit);
-    
+
     Time_accumulator tt(time);
     tr.remove(&vhs[0], &vhs[NUM_VERTICES_TO_REMOVE - 1]);
     ++iterations;
@@ -319,7 +325,7 @@ void do_benchmarks(string name)
 
 int main(int argc, char **argv)
 {
-        if (argc >= 2) {
+  if (argc >= 2) {
     input_file.open(argv[1], std::ios::in);
     if (input_file.is_open())
       input_file_selected = true;
@@ -330,9 +336,9 @@ int main(int argc, char **argv)
   }
 
   cout << "Usage : " << argv[0] << " [filename]"
-             << " [max_points = " << max_pts << ", and please use a power of 10]" << endl;
+       << " [max_points = " << max_pts << ", and please use a power of 10]" << endl;
   cout << "Benchmarking the Triangulation_3 package for ";
-        if (input_file_selected)
+  if (input_file_selected)
     cout << "data file : " << argv[1] << endl;
   else
     cout << "up to " << max_pts << " random points." << endl;
@@ -342,10 +348,10 @@ int main(int argc, char **argv)
   generate_points();
 
   cout << "\nProcessor : "
-             << ((sizeof(void*)==4) ? 32 : (sizeof(void*)==8) ? 64 : -1) << " bits\n";
+       << ((sizeof(void*)==4) ? 32 : (sizeof(void*)==8) ? 64 : -1) << " bits\n";
   // cout << "Kernel : EPICK\n";
 
-  do_benchmarks<Delaunay_triangulation_3<K> >("Delaunay  [Compact_location]");
+  do_benchmarks<DT3>("Delaunay  [Compact_location]");
   if (input_file_selected)
     return 0;
   //do_benchmarks<DT3_FastLoc>("Delaunay with Fast_location"); // CJTODO A REMETTRE
