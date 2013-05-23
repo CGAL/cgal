@@ -152,58 +152,58 @@ std::ifstream input_file;
 
 class Time_accumulator
 {
-	double &accumulator;
-	Timer timer;
+  double &accumulator;
+  Timer timer;
 public:
-	Time_accumulator(double &acc) : accumulator(acc) { timer.reset(); timer.start(); }
-	~Time_accumulator() { timer.stop(); accumulator += timer.time(); }
+  Time_accumulator(double &acc) : accumulator(acc) { timer.reset(); timer.start(); }
+  ~Time_accumulator() { timer.stop(); accumulator += timer.time(); }
 };
 
 #define drand48 CGAL::default_random.get_double
 
 Point rnd_point()
 {
-	return Point(drand48(), drand48(), drand48());
+  return Point(drand48(), drand48(), drand48());
 }
 
 void generate_points()
 {
-	if (input_file_selected) {
-		Point p;
+  if (input_file_selected) {
+    Point p;
     if (input_file >> p)
     {
       pts.push_back(p);
       pts_bbox = Bbox_3(p.bbox());
 
-		  while (input_file >> p)
+      while (input_file >> p)
       {
-			  pts.push_back(p);
+        pts.push_back(p);
         pts_bbox = pts_bbox + p.bbox();
       }
     }
-		cout << " [ Read " << pts.size() << " points from file ] " << endl;
-		min_pts = max_pts = pts.size();
-	}
-	else {
-		pts.reserve(max_pts);
-		pts2.reserve(max_pts);
+    cout << " [ Read " << pts.size() << " points from file ] " << endl;
+    min_pts = max_pts = pts.size();
+  }
+  else {
+    pts.reserve(max_pts);
+    pts2.reserve(max_pts);
 
     Point p = rnd_point();
-		pts.push_back(p);
+    pts.push_back(p);
     pts_bbox = Bbox_3(p.bbox());
     p = rnd_point();
-		pts2.push_back(p);
+    pts2.push_back(p);
     pts2_bbox = Bbox_3(p.bbox());
 
-		for(size_t i = 1; i < (std::max)(std::size_t(100000), max_pts); ++i) {
+    for(size_t i = 1; i < (std::max)(std::size_t(100000), max_pts); ++i) {
       p = rnd_point();
-			pts.push_back(p);
+      pts.push_back(p);
       pts_bbox = pts_bbox + p.bbox();
       p = rnd_point();
-			pts2.push_back(p);
+      pts2.push_back(p);
       pts2_bbox = pts2_bbox + p.bbox();
-		}
-	}
+    }
+  }
 }
 
 
@@ -211,32 +211,32 @@ void generate_points()
 template < typename Tr >
 void benchmark_construction()
 {
-	cout << "\nTriangulation construction : " << endl;
-	cout << "#pts\tTime" << endl;
-	size_t mem_size_init = Memory_sizer().virtual_size();
-	size_t mem_size = 0;
+  cout << "\nTriangulation construction : " << endl;
+  cout << "#pts\tTime" << endl;
+  size_t mem_size_init = Memory_sizer().virtual_size();
+  size_t mem_size = 0;
 
-	for (size_t nb_pts = min_pts; nb_pts <= max_pts; nb_pts *= 10)
-	{
-		double time = 0;
-		size_t iterations = 0;
-		do {
-			++iterations;
-			Time_accumulator tt(time);
+  for (size_t nb_pts = min_pts; nb_pts <= max_pts; nb_pts *= 10)
+  {
+    double time = 0;
+    size_t iterations = 0;
+    do {
+      ++iterations;
+      Time_accumulator tt(time);
 #ifdef CONCURRENT_TRIANGULATION_3
       Lock_ds locking_ds(pts_bbox, 50);
-			Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
+      Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
 #else
-			Tr tr(pts.begin(), pts.begin() + nb_pts);
+      Tr tr(pts.begin(), pts.begin() + nb_pts);
 #endif
-			mem_size = Memory_sizer().virtual_size();
-			// cout << "#vertices = " << tr.number_of_vertices() << endl;
-			// cout << "#cells = " << tr.number_of_cells() << endl;
-		} while (time < BENCH_MIN_TIME);
-		cout << nb_pts << "\t" << time/iterations << SHOW_ITERATIONS;
-	}
-	cout << "\nMemory usage : " << (mem_size - mem_size_init)*1./max_pts << " Bytes/Point"
-	     << " (observed for the largest data set, and may be unreliable)" << endl;
+      mem_size = Memory_sizer().virtual_size();
+      // cout << "#vertices = " << tr.number_of_vertices() << endl;
+      // cout << "#cells = " << tr.number_of_cells() << endl;
+    } while (time < BENCH_MIN_TIME);
+    cout << nb_pts << "\t" << time/iterations << SHOW_ITERATIONS;
+  }
+  cout << "\nMemory usage : " << (mem_size - mem_size_init)*1./max_pts << " Bytes/Point"
+       << " (observed for the largest data set, and may be unreliable)" << endl;
 }
 
 
@@ -244,27 +244,27 @@ void benchmark_construction()
 template < typename Tr >
 void benchmark_location()
 {
-	cout << "\nPoint location : " << endl;
-	cout << "#pts\tTime" << endl;
-	for (size_t nb_pts = min_pts; nb_pts <= max_pts; nb_pts *= 10)
-	{
+  cout << "\nPoint location : " << endl;
+  cout << "#pts\tTime" << endl;
+  for (size_t nb_pts = min_pts; nb_pts <= max_pts; nb_pts *= 10)
+  {
 #ifdef CONCURRENT_TRIANGULATION_3
     Lock_ds locking_ds(pts_bbox, 50);
-		Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
+    Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
 #else
-	  Tr tr(pts.begin(), pts.begin() + nb_pts);
+    Tr tr(pts.begin(), pts.begin() + nb_pts);
 #endif
-		double time = 0;
-		size_t iterations = 0;
-		do {
-			++iterations;
-			Time_accumulator tt(time);
-			// We do chunks of    100000 point locations at once.
-			for(size_t i = 0; i < 100000; ++i)
-				tr.locate(pts2[i]);
-		} while (time < BENCH_MIN_TIME);
-		cout << nb_pts << "\t" << (time/iterations)/100000 << SHOW_ITERATIONS;
-	}
+    double time = 0;
+    size_t iterations = 0;
+    do {
+      ++iterations;
+      Time_accumulator tt(time);
+      // We do chunks of    100000 point locations at once.
+      for(size_t i = 0; i < 100000; ++i)
+        tr.locate(pts2[i]);
+    } while (time < BENCH_MIN_TIME);
+    cout << nb_pts << "\t" << (time/iterations)/100000 << SHOW_ITERATIONS;
+  }
 }
 
 
@@ -272,34 +272,34 @@ void benchmark_location()
 template < typename Tr >
 void benchmark_remove()
 {
-	typedef typename Tr::Vertex_handle     Vertex_handle;
-	typedef typename Tr::Vertex_iterator   Vertex_iterator;
+  typedef typename Tr::Vertex_handle     Vertex_handle;
+  typedef typename Tr::Vertex_iterator   Vertex_iterator;
 
-	cout << "\nVertex removal : " << endl;
-	cout << "#pts\tTime\tTime/removal" << endl;
-	size_t nb_pts = 1000000; // only one size of triangulation hard-coded.
+  cout << "\nVertex removal : " << endl;
+  cout << "#pts\tTime\tTime/removal" << endl;
+  size_t nb_pts = 1000000; // only one size of triangulation hard-coded.
   const size_t NUM_VERTICES_TO_REMOVE = 100000;
-	double time = 0;
-	size_t iterations = 0;
+  double time = 0;
+  size_t iterations = 0;
 
-	do {
+  do {
 #ifdef CONCURRENT_TRIANGULATION_3
     Lock_ds locking_ds(pts_bbox, 50);
-		Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
+    Tr tr(pts.begin(), pts.begin() + nb_pts, &locking_ds);
 #else
-		Tr tr(pts.begin(), pts.begin() + nb_pts);
+    Tr tr(pts.begin(), pts.begin() + nb_pts);
 #endif
-		vector<Vertex_handle> vhs;
-		for (Vertex_iterator vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end();
-		     vit != end; ++vit)
-			vhs.push_back(vit);
+    vector<Vertex_handle> vhs;
+    for (Vertex_iterator vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end();
+         vit != end; ++vit)
+      vhs.push_back(vit);
     
-	  Time_accumulator tt(time);
-		tr.remove(&vhs[0], &vhs[NUM_VERTICES_TO_REMOVE - 1]);
-	  ++iterations;
-	} while (time < BENCH_MIN_TIME);
+    Time_accumulator tt(time);
+    tr.remove(&vhs[0], &vhs[NUM_VERTICES_TO_REMOVE - 1]);
+    ++iterations;
+  } while (time < BENCH_MIN_TIME);
 
-	cout << NUM_VERTICES_TO_REMOVE << "\t" 
+  cout << NUM_VERTICES_TO_REMOVE << "\t" 
         << (time/iterations) << "\t" 
         << (time/iterations)/NUM_VERTICES_TO_REMOVE << SHOW_ITERATIONS;
 }
@@ -308,47 +308,47 @@ void benchmark_remove()
 template < typename Tr >
 void do_benchmarks(string name)
 {
-	cout << "\n\nBenchmarking configuration : " << name << endl;
+  cout << "\n\nBenchmarking configuration : " << name << endl;
   tbb::task_scheduler_init tbb_init(10); // CJTODO TEMP
-	benchmark_construction<Tr>();
-	if (input_file_selected)
-		return;
-	benchmark_location<Tr>();
-	benchmark_remove<Tr>();
+  benchmark_construction<Tr>();
+  if (input_file_selected)
+    return;
+  benchmark_location<Tr>();
+  benchmark_remove<Tr>();
 }
 
 int main(int argc, char **argv)
 {
         if (argc >= 2) {
-		input_file.open(argv[1], std::ios::in);
-		if (input_file.is_open())
-			input_file_selected = true;
-		else {
-			input_file_selected = false;
-			max_pts = atoi(argv[1]);
-		}
-	}
+    input_file.open(argv[1], std::ios::in);
+    if (input_file.is_open())
+      input_file_selected = true;
+    else {
+      input_file_selected = false;
+      max_pts = atoi(argv[1]);
+    }
+  }
 
-	cout << "Usage : " << argv[0] << " [filename]"
+  cout << "Usage : " << argv[0] << " [filename]"
              << " [max_points = " << max_pts << ", and please use a power of 10]" << endl;
-	cout << "Benchmarking the Triangulation_3 package for ";
+  cout << "Benchmarking the Triangulation_3 package for ";
         if (input_file_selected)
-		cout << "data file : " << argv[1] << endl;
-	else
-		cout << "up to " << max_pts << " random points." << endl;
+    cout << "data file : " << argv[1] << endl;
+  else
+    cout << "up to " << max_pts << " random points." << endl;
 
-	cout.precision(3);
+  cout.precision(3);
 
-	generate_points();
+  generate_points();
 
-	cout << "\nProcessor : "
+  cout << "\nProcessor : "
              << ((sizeof(void*)==4) ? 32 : (sizeof(void*)==8) ? 64 : -1) << " bits\n";
-	// cout << "Kernel : EPICK\n";
+  // cout << "Kernel : EPICK\n";
 
-	do_benchmarks<Delaunay_triangulation_3<K> >("Delaunay  [Compact_location]");
-	if (input_file_selected)
-		return 0;
-	//do_benchmarks<DT3_FastLoc>("Delaunay with Fast_location"); // CJTODO A REMETTRE
+  do_benchmarks<Delaunay_triangulation_3<K> >("Delaunay  [Compact_location]");
+  if (input_file_selected)
+    return 0;
+  //do_benchmarks<DT3_FastLoc>("Delaunay with Fast_location"); // CJTODO A REMETTRE
   do_benchmarks<RT3_WithHP>("Regular  [with hidden points kept, except there's none in the data sets]");
   do_benchmarks<RT3_NoHP>("Regular with hidden points discarded");
 }
