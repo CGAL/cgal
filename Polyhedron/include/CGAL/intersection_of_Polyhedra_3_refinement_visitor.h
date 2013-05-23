@@ -235,7 +235,7 @@ namespace CGAL
       }
       
       std::vector<CGAL::cpp0x::tuple<int,int,int> >::iterator it=faces_to_create_.begin();
-      
+      Face_handle face_triangulated = current_face;
       //create the new faces and update adjacencies
       while (true)
       {
@@ -271,7 +271,8 @@ namespace CGAL
         unlock_halfedge(previous) ->set_face(current_face);        
         
         if ( ++it!=faces_to_create_.end() )
-          current_face=hds.faces_push_back(Face());
+          /// \todo integrate properly the copy of attributes in faces
+          current_face=hds.faces_push_back(Face(*face_triangulated));
         else
           break;
       }
