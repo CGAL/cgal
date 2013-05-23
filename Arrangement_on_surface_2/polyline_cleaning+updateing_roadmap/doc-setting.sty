@@ -1,0 +1,65 @@
+% Style and command for the document
+%
+% Dror Atariah, 18.04.2013
+%
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{doc-setting}
+
+%
+% Packages in use
+%%%%%%%%%%%%%%%%%%%
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8x]{inputenc}
+\RequirePackage[english]{babel}
+\RequirePackage{microtype}
+\RequirePackage{hyperref}
+\RequirePackage{amsthm,amsmath}
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{xspace}
+\RequirePackage{todonotes}
+\RequirePackage{verbments}
+
+\RequirePackage{enumitem}
+\setlist{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
+
+\RequirePackage{tikz}
+\usetikzlibrary{decorations.markings,
+arrows}
+
+\newcommand*{\cgal}{\textbf{\textsc{Cgal}}\xspace}
+
+\newcommand*{\file}[1]{\textit{\texttt{#1}}}
+\newcommand*{\concept}[1]{\textsc{#1}}
+\newcommand*{\model}[1]{\textit{#1}}
+\newcommand*{\type}[1]{\texttt{#1}}
+\newcommand*{\code}[1]{\texttt{#1}}
+\newcommand*{\functor}[1]{\textsf{#1}}
+
+\newcommand*{\seg}{{\color{blue}\type{Segment}}\xspace}
+\newcommand*{\segtr}{{\color{red}\model{Segment\_traits}}\xspace}
+
+\newcommand*{\polytr}{{\color{red}\model{Polyline\_traits}}\xspace}
+\newcommand*{\poly}{{\color{blue}\type{Polyline}}\xspace}
+\newcommand*{\xpoly}{{\color{blue}\type{X-Polyline}}\xspace}
+
+\usepackage[framemethod=tikz]{mdframed}
+\theoremstyle{definition}
+\newtheorem{que}{Question}
+% \newenvironment{queframe}%
+% {\begin{mdframed}[backgroundcolor=lightgray]\begin{que}}%
+%     {\end{que}\end{mdframed}}
+\newmdtheoremenv[%
+backgroundcolor=red!10,%
+outerlinecolor=black,%
+innertopmargin = \topskip,%
+splittopskip = \topskip,%
+ntheorem = true,%
+skipabove = \baselineskip,%
+skipbelow = \baselineskip,%
+roundcorner=4]
+{queframe}{Question}
+
+\RequirePackage[capitalise]{cleveref}
+
+\endinput

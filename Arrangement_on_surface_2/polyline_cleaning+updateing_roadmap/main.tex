@@ -1,0 +1,310 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[scale=0.7,vmarginratio={1:2},heightrounded]{geometry}
+
+\usepackage{doc-setting}
+
+
+\title{Arrangement of Polylines Traits Class - Upgrade}
+\author{Dror Atariah}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Outline the projects goals and progress.
+\end{abstract}
+
+\begin{queframe}
+  Its seems like the out put of computation of an arrangement is very sensitive to the input.
+  For example, consider the vertices \(p_1 = (0,2), p_2 = (-1,-1)\) and \(p_3 = (1,-1)\).
+  The optimal result would be one vertex, one edge and two cells.
+  In this case, the triangle defined by \(\overline{p_2 p_1 p_3 p_2}\) yields \((2,2,2)\) as the \(f\)-vector.
+  However, the triangle \(\overline{p_1 p_2 p_3 p_1}\) yields the \(f\)-vector \((3,3,2)\).
+  Note that the number of face is correct, but the other elements of the vector are not stable.
+  Is this the expected behavior?
+  Can it be improved?
+  Is \((1,1,2)\) the ``real'' or ``optimal'' answer?
+\end{queframe}
+
+
+\section{Definitions}
+\label{sec:definitions}
+
+In this document we use the following conventions:
+\begin{itemize}
+%
+\item \href{http://doc.cgal.org/4.2/CGAL.CGAL.2D-Arrangements/html/classCGAL_1_1Arr__polyline__traits__2.html}{\polytr} is the polyline traits class which currently models the following concepts:
+  \begin{itemize}
+  \item \concept{ArrangementTraits\_2}
+  \item \concept{ArrangementLandmarkTraits\_2}
+  \end{itemize}
+  Its implementation can be found in \file{Arr\_polyline\_traits\_2.h}.
+  This traits class has two nested types \poly and \xpoly which are the \type{Curve\_2} and \type{X\_monotone\_curve\_2} of the traits class.
+  These curves are the representations of piecewise linear (PL) curves and x-monotone PL curves respectively.
+  Together, \polytr is the component of the arrangement on surfaces package of \cgal which handles the construction and computations of arrangements of  sets of polylines.
+  The actual implementations of \poly and \xpoly can be found in \file{Polyline\_2.h}.
+%
+\item \segtr is substituting the template parameter when instantiating \polytr and it should be a model of \concept{ArrangementTraits\_2}.
+  In practice, currently, there are two implementations of segment traits classes that can be used
+  \begin{itemize}
+  \item \model{Arr\_segment\_traits\_2}
+  \item \model{Arr\_non\_caching\_segment\_traits\_2}
+  \end{itemize}
+  In both cases \segtr is the traits class of segments (that is finite, linear segments), and they model the concepts:
+  \begin{itemize}
+  \item \concept{ArrangementTraits\_2}
+  \item \concept{ArrangementLandmarkTraits\_2}
+  \item \concept{ArrangementDirectionalXMonotoneTraits\_2}
+  \end{itemize}
+  The first one, for example, is implemented in \file{Arr\_segment\_traits\_2.h}.
+  Let \seg be the \type{Curve\_2} and \type{X\_monotone\_curve\_2} types that are nested in \segtr.
+\end{itemize}
+
+\section{Implementation of \poly and \xpoly}
+\label{sec:implementation-poly}
+
+The implementations of \poly and \xpoly are the building blocks of the polyline traits class and the way we could compute arrangement of polylines.
+In particular, this implementation has to be revised in order to support the computation of arrangements of unbounded polylines as well.
+Furthermore, the code implementing these two classes is rather old and no longer meets the standards of \cgal.
+In this section we shall list the elements of the implementation that have to be modified/updated/corrected/etc.
+
+\subsection{Design and General Issues}
+\label{sec:design-gener-issu-poly}
+
+\begin{itemize}
+\item Forbid the construction of degenerated \poly's and \xpoly's.
+  Here \emph{degenerated} means that the polyline cannot reduce to an isolated vertex nor can it contain degenerated \seg's.
+\item In general the segments of a given polyline may not be oriented, they merely have to concatenate properly and form a PL curve.
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{scope}[thick,decoration={%
+          markings,
+          mark=at position 0.5 with {\arrow{>}}%
+        }]
+        \draw[postaction={decorate}] (-2,0) coordinate (a1) -- (-1,1) coordinate (a2);
+        \draw[postaction={decorate}] (0,0) coordinate (a3) -- (a2);
+        \draw[postaction={decorate}] (1,1) coordinate (a4) -- (a3);
+        \draw[postaction={decorate}] (a4) -- (-0.25,0.75) coordinate (a5);
+        \foreach \i in {1,2,3,4,5}
+        \fill (a\i) circle (2pt);
+      \end{scope}
+    \end{tikzpicture}
+  \end{center}
+  In turn, this means that ideally the \seg's constituting a \poly may not be oriented, or in other words that the \segtr may not provide the notion of neither \emph{source} nor \emph{target} nor any equivalent notion of the constituting \seg's.
+  However the current implementation of \polytr and its \poly and \xpoly nested types uses the functions \code{source()} and \code{target()} which are provided by \segtr.
+  But these functions are \emph{not} defined by any of the concepts that \segtr models.
+  As the existing implementations of \segtr's models the concept \concept{ArrangementDirectionalXMonotoneTraits\_2} we can mimic functions like \code{source()} and \code{target()} using a combination of
+  \begin{itemize}
+  \item \functor{Construct\_min\_vertex\_2}
+  \item \functor{Construct\_max\_vertex\_2}
+  \end{itemize}
+  which are provided by \concept{ArrangementTraits\_2}, and by the functors
+  \begin{itemize}
+  \item \functor{Compare\_endpoints\_xy\_2}
+  \item \functor{Construct\_opposite\_2}
+  \end{itemize}
+  which are provided by \concept{ArrangementDirectionalXMonotoneTraits\_2}.
+
+  In order to keep the efficiency benefits of the usage of \code{source()} and \code{target()} on one hand and consistency with the documentation on the other, \textbf{{we add a requirement that \segtr should be model of the \concept{ArrangementDirectionalXMonotoneTraits\_2}.}}
+  Once \segtr models this concept we can remove all occurrences of \code{source()} and \code{target()}.
+  Note that this assumption implies only a conceptual restriction, since in practice the available implementations that can be used models this concept anyway.
+  In this case we also assert that \polytr itself will be a model of this concept.
+
+  As a result, we can also provide the following invariant: \textbf{\poly and \xpoly will be \emph{well oriented}.}\marginpar{\footnotesize{\emph{well oriented}}}
+  That is, the \emph{source} of the \(n\)-th \seg should be the \emph{target} of the \((n-1)\)-th \seg.
+  In particular the polyline plotted above could be either of the following:
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{scope}[thick,decoration={%
+          markings,
+          mark=at position 0.5 with {\arrow{>}}%
+        }]
+        \coordinate (a1) at (-2,0);
+        \coordinate (a2) at (-1,1);
+        \coordinate (a3) at (0,0);
+        \coordinate (a4) at (1,1);
+        \coordinate (a5) at (-0.25,0.75);
+        \draw[postaction={decorate}] (a1) -- (a2);
+        \draw[postaction={decorate}] (a2) -- (a3);
+        \draw[postaction={decorate}] (a3) -- (a4);
+        \draw[postaction={decorate}] (a4) -- (a5);
+        \foreach \i in {1,2,3,4,5}
+        \fill (a\i) circle (2pt);
+      \end{scope}
+      %
+      \begin{scope}[xshift=4cm,thick,decoration={%
+          markings,
+          mark=at position 0.5 with {\arrow{>}}%
+        }]
+        \coordinate (a1) at (-2,0);
+        \coordinate (a2) at (-1,1);
+        \coordinate (a3) at (0,0);
+        \coordinate (a4) at (1,1);
+        \coordinate (a5) at (-0.25,0.75);
+        \draw[postaction={decorate}] (a2) -- (a1);
+        \draw[postaction={decorate}] (a3) -- (a2);
+        \draw[postaction={decorate}] (a4) -- (a3);
+        \draw[postaction={decorate}] (a5) -- (a4);
+        \foreach \i in {1,2,3,4,5}
+        \fill (a\i) circle (2pt);
+      \end{scope}
+    \end{tikzpicture}
+  \end{center}
+  and only one of them!
+  %
+
+  An \xpoly is x-monotone regardless of its representation.
+  X-monotonicity is determined by the geometrical image of the polyline, and not by its internal representation.
+  Currently, an \xpoly maintains a \emph{direction invariant}\marginpar{\footnotesize{\emph{direction invariant}}} that it is oriented \emph{left-to-right}.
+  That is, its vertices should be given in an increasing lexicographic order.
+  However, in general an \xpoly should merely be x-monotone, and its vertices (or segments) may be oriented from left-to-right \emph{or} from right-to-left.
+  %
+  \begin{queframe}
+    What about \xpoly?
+    \begin{itemize}
+    \item Given our assumption that \segtr models \concept{ArrangementDirectionalXMonotoneTraits\_2}, an \xpoly should be well oriented just like the general \poly.
+      Should it also be directed from \emph{left-to-right}?
+      Is this decision depends on what \segtr models?
+      Does there any connection exists between a direction invariant of \xpoly and the concepts modeled by \segtr?
+    \item In general, obviously this should not be the case (see above).
+      Actually, it make sense not to have this invariant just like the segments themselves are not maintaining a similar invariant.
+    \end{itemize}
+  \end{queframe}
+
+\begin{queframe}
+  Is there some concept in the package which provides source and target?
+  Maybe as functors?
+\end{queframe}
+%
+\begin{queframe}
+  Why using the \functor{Compare\_xy\_2} from \segtr and not the global function \code{CGAL::compare\_xy} (when comparing points of course)?
+\end{queframe}
+
+\item According to \cgal's style there should be no instances of usage of functors from traits classes (also if they occur in \emph{pre-condition} code) inside \poly and \xpoly.
+In particular, remove all calls to construction of functors from the traits class.
+%
+\item Method of accessing the \seg's of a \poly: Currently the \code{operator[]} is used to access the segments of a given polygon.
+\begin{queframe}
+  Do we want to change this method?
+\end{queframe}
+\item Name-spaces changes\todo{TBA}.
+\end{itemize}
+
+\subsection{Construction and Iteration}
+\label{sec:constr+iter-poly}
+
+Currently in \file{Polyline\_2.h} the implementation of the \poly{'s} is \emph{relaying on their vertices}.
+The possible constructors get as inputs ranges of \emph{points}.
+Furthermore, given either a \poly or \xpoly, it is only possible to iterate over its vertices.
+There is no way to iterate over its constituting \seg{'s}.
+This design limits the possibilities of extending the traits class' support, for example handling unbounded polylines.
+
+\paragraph{Has to be done:}
+\subparagraph{Construction.}
+In order to enable construction of unbounded polylines, we have to add the possibility of construction from ranges of \seg's.
+Ultimately, there will be \emph{only} one constructor of either \poly's or \xpoly's.
+This construction will construct the polyline \emph{only} from ranges of \seg's.
+For the sake of backwards compatibility, the current constructor, namely the one from a range of points, will be kept as deprecated\footnote{In the next version it will be removed completely.}.
+
+The user should be encouraged to use the construction functors from \polytr (see \cref{sec:constr-funct-polytr}) and not the direct constructor of the class.
+The functors provide the construction from two points, one segment, range of points and range of segments.
+
+\subparagraph{Iteration.}
+As we pointed out, iteration over the vertices of the polyline is restrictive.
+We thus replace the iterators over the vertices which are currently defined in \poly with iterators over the segments of the \poly.
+The iterators over the segments are obtained directly from the container of the \seg's in \poly.
+
+\subsection{Augmenting a polyline}
+\label{sec:augmenting-poly}
+
+Currently, a polyline can be augmented using a \emph{push-back} function.
+This function works as follows:
+\begin{enumerate}
+\item Gets a vertex as its input.
+\item Obtains the last vertex of the polyline using \code{target()} function.
+\item Generates a new \seg and pushes it to the range of segments representing the \poly.
+\end{enumerate}
+The use of \code{target()} is problematic as it implicitly assume that the \segtr class provides orientation of the \seg's.
+
+\paragraph{Has to be done:}
+All \code{push\_back()} should be deprecated and removed.
+The functionality of augmenting a \poly (or an \xpoly) should be handled by \polytr.
+See \cref{sec:augmenting-poly-in-polytr} for further details.
+
+\section{Implementation of \polytr}
+\label{sec:impl-polytr}
+
+Ultimately, the \polytr should be in charge of all the operations which deal with \poly's and \xpoly's.
+To that end, the traits class should provide functors which construct, augment, split etc. polylines.
+
+\subsection{Construction Functors}
+\label{sec:constr-funct-polytr}
+
+As we leave only one constructor (which handles a range of \seg's) in the class of \poly and \xpoly we have to provide other needed construction methods in the traits class, namely in \polytr.
+To that end we provide several construction functors which can handle various types of inputs.
+Here is a list of the various overloads of the parentheses operator of the construction functors:
+\begin{pyglist}[language=c++]
+  Curve_2 operator()(const Point_2& p, const Point_2& q) const
+  Curve_2 operator()(const Segment_2& seg) const
+  Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
+\end{pyglist}
+\noindent
+The last functor dispatches the given range to the corresponding implementation depending on the \emph{type} of the elements of the range.
+Similar functors are provided for the construction of \xpoly.
+All validity tests of the input should be done in \code{CGAL\_precondition} blocks.
+
+\subsection{Augmenting a \poly or \xpoly}
+\label{sec:augmenting-poly-in-polytr}
+
+Add a functor to the traits class which will provide the user an interface to augment \poly (and \xpoly if needed).
+This functor should be able to append vertices or segments to an \emph{existing} \poly.
+Note that one the polyline will be unbounded augmentation will not be always possible.
+
+\subsection{Output of \functor{Intersect\_2}}
+\label{sec:outp-funct-intersect-2}
+
+In the concept \concept{ArrTraits::Intersect\_2} it is defined that the output iterator should contain the elements in an ascending \(xy\)-lexicographic order.
+Thus, obviously, the implementation of \functor{Intersect\_2} should meet this requirement as well.
+\begin{queframe}
+  If indeed the \xpoly may not maintain left-to-right direction invariant (see Section~\ref{sec:design-gener-issu-poly}), meeting this requirement can be hard, isn't it?
+
+  Furthermore, the current implementation of \functor{Intersect\_2} seems to fail if the given \xpoly's are not oriented from left-to-right.
+  \begin{pyglist}[language=c++]
+    Traits_2::Intersect_2 int_2 = traits.intersect_2_object();
+    std::vector<CGAL::Object> out;
+    int_2(poly1,poly2,back_inserter(out));
+    std::cout << "Number of intersection elements: " << out.size() << std::endl;
+    for (
+    std::vector<CGAL::Object>::iterator it = out.begin() ;
+    it!=out.end() ; ++it)
+    {
+      typedef std::pair<Point_2,Traits_2::Multiplicity> pt_int;
+      const pt_int p =
+      CGAL::object_cast<pt_int>(*it);
+      std::cout << "Intersection element: " << p.first << std::endl;
+    }
+  \end{pyglist}
+\end{queframe}
+
+\subsection{Changes Derived from \poly}
+\label{sec:changes-derived-from-polytr}
+
+As a result of the changes in \poly and \xpoly (cf. \cref{sec:implementation-poly}), updates and modifications are needed also in \polytr.
+In particular the following functors have to be updated:
+\begin{itemize}
+\item \functor{Make\_x\_monotone\_2}:
+  \begin{itemize}
+  \item Assumes iteration over the vertices of the given \poly.
+  \item When constructing the \xpoly's, this functor should use the construction functors provided in \polytr.
+  \end{itemize}
+\end{itemize}
+
+
+\subsection{Relation to the \segtr Parameter}
+\label{sec:relat-segtr-param-polytr}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
