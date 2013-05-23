@@ -1608,7 +1608,8 @@ public:
   { return Construct_x_monotone_curve_2(this); }
   //@}
 
-private:
+  // TODO: Turn this *private* again
+// private:
   /*
    * Roadmap: Improve the implementation _locate()
    *  - _locate() should return an iterator to the located segment
@@ -1630,56 +1631,72 @@ private:
       segment_traits_2()->construct_min_vertex_2_object();
     typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
       segment_traits_2()->construct_max_vertex_2_object();
+    typename Segment_traits_2::Compare_x_2 compare_x =
+      segment_traits_2()->compare_x_2_object();
 
-    unsigned int from = 0;
-    unsigned int to = cv.number_of_segments() - 1;
 
+    // The direction of cv. SMALLER means left-to-right and
+    // otherwise right-to-left
+    Comparison_result direction = segment_traits_2()->
+      compare_endpoints_xy_2_object()(cv[0]);
+    unsigned int from, to;
+    if (direction == SMALLER){
+      from = 0;
+      to = cv.number_of_segments() - 1;
+    }
+    else{
+      from = cv.number_of_segments() - 1;
+      to = 0;
+    }
+
+    // Test the case that cv is vertical
     if (segment_traits_2()->is_vertical_2_object()(cv[0])) {
       typename Segment_traits_2::Compare_xy_2 compare_xy =
         segment_traits_2()->compare_xy_2_object();
 
-      // First check whether the polyline curve really contains q in its
-      // xy-range:
-
-      Comparison_result res_from = compare_xy(min_vertex(cv[from]), q);
+      // Test if q is one of cv's end points
+      Comparison_result res_from;
+      res_from = compare_xy(min_vertex(cv[from]), q);
       if (res_from == EQUAL) return from;
 
-      Comparison_result res_to = compare_xy(max_vertex(cv[to]), q);
+      Comparison_result res_to;
+      res_to = compare_xy(max_vertex(cv[to]), q);
       if (res_to == EQUAL) return to;
 
-      typename Segment_traits_2::Compare_x_2 compare_x =
-        segment_traits_2()->compare_x_2_object();
-
+      // Verify that q has the same x-coord as cv (which is vertical)
       Comparison_result res = compare_x(max_vertex(cv[to]), q);
       if (res != EQUAL) return INVALID_INDEX;
 
-      //// q is not in the x-range of cv:
-      //if (res_from == res_to) return INVALID_INDEX;
-
       // Perform a binary search to locate the segment that contains q in its
       // xy-range:
-      while (to > from) {
+      while ((direction == SMALLER && to > from) ||
+             (direction == LARGER && to < from)) {
         unsigned int mid = (from + to) / 2;
-        if (mid > from) {
+        if ((direction == SMALLER && mid > from) ||
+            (direction == LARGER && mid < from)) {
           Comparison_result res_mid = compare_xy(min_vertex(cv[mid]), q);
           if (res_mid == EQUAL) return mid;
           if (res_mid == res_from) from = mid;
-          else to = mid - 1;
+          else if (direction == SMALLER)
+            to = mid - 1;
+          else
+            to = mid + 1;
         } else {
-          CGAL_assertion(mid < to);
+          CGAL_assertion((direction == SMALLER && mid < to) ||
+                         (direction == LARGER && mid > to));
           Comparison_result res_mid = compare_xy(max_vertex(cv[mid]), q);
           if (res_mid == EQUAL) return mid;
           if (res_mid == res_to) to = mid;
-          else from = mid + 1;
+          else if (direction == SMALLER)
+            from = mid + 1;
+          else
+            from = mid - 1;
         }
       }
       // In case (from == to), and we know that the polyline contains the q:
       CGAL_assertion(from == to);
       return from;
     }
-
-    typename Segment_traits_2::Compare_x_2 compare_x =
-      segment_traits_2()->compare_x_2_object();
 
     // First check whether the polyline curve really contains q in its x-range.
     Comparison_result res_from = compare_x(min_vertex(cv[from]), q);
