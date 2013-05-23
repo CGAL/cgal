@@ -183,10 +183,6 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_vertex_index_map<Arrangement>`
 - `CGAL::Arr_face_index_map<Arrangement>`
 - `CGAL::Arr_point_location_result<Arrangement>`
-## Tags ##
-
-- `CGAL::Arr_oblivious_side_tag`
-- `CGAL::Arr_open_side_tag`
 
 ## Macros ##
 - \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink

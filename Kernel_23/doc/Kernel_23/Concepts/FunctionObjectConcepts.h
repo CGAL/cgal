@@ -7639,7 +7639,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
   \sa `CGAL::intersection`
-  \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</A>
+  \sa `cpp11::result_of`
 
 */
 class Intersect_2 {
@@ -7668,7 +7668,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with two or three arguments) 
 
   \sa `CGAL::intersection` 
-  \sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</A>
+  \sa `cpp11::result_of`
 
 */
 class Intersect_3 {

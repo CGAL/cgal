@@ -490,16 +490,13 @@ especially integer types and rationals.
 
 Some functions, for example `intersection()`, can return different types of objects. To achieve this
 in a type-safe way \cgal uses return values of type
-`boost::optional< boost::variant< T \ldots\ > >` were `T...` is a
+`boost::optional< boost::variant< T...  > >` were `T...` is a
 list of all possible resulting geometric objects.  The exact result
 type of an intersection can be determined through the metafunction
 `cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>` or
 `cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>`, where
 `Type1` and `Type2` are the types of the objects used in the
-intersection computation. See
-<A HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</A>
-for more details about this mechanism.
- 
+intersection computation.
 
 
 
@@ -535,23 +532,6 @@ if(v) {
   }
 } else {
   /* empty intersection */
-}
-\endcode
-
-The intersection routine itself looks roughly as follows:
-
-\code{.cpp}
-template < class Kernel >
-Object intersection(Segment_2<Kernel> s1, Segment_2<Kernel> s2)
-{
-if (intersection in a point) {
-Point_2<Kernel> p = ... ;
-return make_object(p);
-} else if (intersection in a segment) {
-Segment_2<Kernel> s = ... ;
-return make_object(s);
-}
-return Object();
 }
 \endcode
 

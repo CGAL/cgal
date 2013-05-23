@@ -12,7 +12,7 @@ public:
 
 /*! 
 returns the result of the intersection of \f$ p\f$ and \f$ q\f$ in form of a 
-polymorphic object. `Type1` and `Type2` may be any of 
+stack-based discriminated union container object. `Type1` and `Type2` may be any of 
 `Kernel_d::Segment_d`, `Kernel_d::Ray_d`, `Kernel_d::Line_d`, 
 `Kernel_d::Hyperplane_d`. 
 

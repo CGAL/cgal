@@ -161,7 +161,7 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 \sa CGAL_INTERSECTION_VERSION
 \sa <a HREF="http://www.boost.org/doc/libs/release/libs/optional/index.html">`boost::optional`</a>
 \sa <a HREF="http://www.boost.org/doc/html/variant.html">`boost::variant`</a>
-\sa <a HREF="http://www.boost.org/libs/utility/utility.htm#result_of">`cpp11::result_of`</a>
+\sa `cpp11::result_of`
 
 */
 cpp11::result_of<R::Intersect_d(Type1<R>, Type2<R>)>::type intersection(Type1<R> f1, Type2<R> f2);

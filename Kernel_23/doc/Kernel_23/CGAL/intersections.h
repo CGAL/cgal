@@ -3,7 +3,7 @@
 /*!
 \def CGAL_INTERSECTION_VERSION
 
-\ingroup intersection
+\ingroup intersection_grp
 
 The macro `CGAL_INTERSECTION_VERSION` can be used to configure
 which version of the \ref intersection_grp function should be used and
@@ -98,7 +98,7 @@ return type is determined by a metafunction defined by the kernel. To
 preserve backward compatibility `Object` can be
 constructed from the new return types implicitly, but switching to the
 new style is recommended. To enable the old style without any overhead,
-the macro `CGAL_INTERSECTION_VERSION` must be defined to
+the macro \link CGAL_INTERSECTION_VERSION `CGAL_INTERSECTION_VERSION` \endlink must be defined to
 `1` before any \cgal header is included.
 
 \sa \ref upgrading_object
