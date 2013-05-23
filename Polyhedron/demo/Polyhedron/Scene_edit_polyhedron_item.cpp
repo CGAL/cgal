@@ -30,6 +30,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   // bind vertex picking 
   connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
   poly_item->enable_facets_picking(true);
+  poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in changed()
 
   length_of_axis = bbox().diagonal_length() / 15.0;
 
@@ -72,7 +73,7 @@ void Scene_edit_polyhedron_item::deform()
   { it->assign(); }
   deform_mesh.deform();
 
-  poly_item->changed(); // now we need to call poly_item changed to update AABB tree 
+  poly_item->changed(); // now we need to call poly_item changed to delete AABB tree 
   emit itemChanged();
 }
 
@@ -164,13 +165,20 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 }
 
 #include "opengl_tools.h"
+void Scene_edit_polyhedron_item::draw_edges() const {
+  poly_item->direct_draw_edges();
+  if(rendering_mode == Wireframe) {
+    draw_ROI_and_handles();
+  }
+}
+
 void Scene_edit_polyhedron_item::draw() const {
+  poly_item->direct_draw();
+  draw_ROI_and_handles();
+}
 
-  poly_item->draw();
+void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
   CGAL::GL::Color color;
-  //color.set_rgb_color(0.f, 0.f, 0.f);
-  //poly_item->direct_draw_edges();
-
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
   color.set_rgb_color(0, 1.f, 0);
   // draw ROI
@@ -196,18 +204,18 @@ void Scene_edit_polyhedron_item::draw() const {
     {      
       // draw axis
       ::glPushMatrix();
-        ::glMultMatrixd(hgb_data.frame->matrix());
-        QGLViewer::drawAxis(length_of_axis);
+      ::glMultMatrixd(hgb_data.frame->matrix());
+      QGLViewer::drawAxis(length_of_axis);
       ::glPopMatrix();
       // draw bbox
       if(!ui_widget->ActivatePivotingCheckBox->isChecked())
       {
         color.set_rgb_color(1.0f, 0, 0);
         ::glPushMatrix();
-          ::glTranslated(hgb_data.frame->position().x, hgb_data.frame->position().y, hgb_data.frame->position().z);
-          ::glMultMatrixd(hgb_data.frame->orientation().matrix());
-          ::glTranslated(-hgb_data.frame_initial_center.x, -hgb_data.frame_initial_center.y, -hgb_data.frame_initial_center.z);        
-          draw_bbox(hgb_data.bbox);
+        ::glTranslated(hgb_data.frame->position().x, hgb_data.frame->position().y, hgb_data.frame->position().z);
+        ::glMultMatrixd(hgb_data.frame->orientation().matrix());
+        ::glTranslated(-hgb_data.frame_initial_center.x, -hgb_data.frame_initial_center.y, -hgb_data.frame_initial_center.z);        
+        draw_bbox(hgb_data.bbox);
         ::glPopMatrix();
       }
     }
@@ -285,12 +293,9 @@ void Scene_edit_polyhedron_item::gl_draw_edge(double px, double py, double pz,
 /////////////////////////////////////////////////////////////
 
 void Scene_edit_polyhedron_item::changed()
-{
-  // poly_item->changed();
-  Scene_item::changed();
-  // last_pos = current_position();
-}
+{ }
 Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() const {
+  poly_item->set_color_vector_read_only(false);
   return poly_item;
 }
 

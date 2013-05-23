@@ -177,6 +177,7 @@ public:
   bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const;
+  void draw_edges() const;
   void draw_bbox(const Scene_interface::Bbox& bb ) const;
   void gl_draw_edge(double px, double py, double pz,
                           double qx, double qy, double qz) const;
@@ -202,6 +203,7 @@ public:
   
 protected:
   void timerEvent(QTimerEvent *event);
+  void draw_ROI_and_handles() const;
 
 public slots:
   void changed();
@@ -301,7 +303,7 @@ public:
 
     connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  // OK we are deforming via timer,
     // but it makes demo more responsive if we also add this signal
-    emit itemChanged();;
+    emit itemChanged();
 
     print_message("A new empty handle group is created.");
   }
