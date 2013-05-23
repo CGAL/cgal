@@ -59,7 +59,7 @@
 #endif
 
 #include <boost/foreach.hpp>
-#include <boost/type_traits/is_base_of.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 namespace CGAL {
 
@@ -134,7 +134,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
   typedef typename boost::mpl::if_c
   <
-    boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
+    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<
       Cell, Default, Cell_container_strategy>,
     Compact_container<
@@ -151,7 +151,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
   typedef typename boost::mpl::if_c
   <
-    boost::is_base_of<Parallel_tag, Concurrency_tag>::value,
+    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<
       Vertex, Default, Vertex_container_strategy>,
     Compact_container<
