@@ -46,6 +46,7 @@
 #include <CGAL/Lazy.h>
 
 #include <CGAL/Sqrt_extension_fwd.h>
+#include <CGAL/Kernel/mpl.h>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -1321,6 +1322,35 @@ struct NT_converter < Lazy_exact_nt<ET>, ET >
 {
   const ET& operator()(const Lazy_exact_nt<ET> &a) const
   { return a.exact(); }
+};
+
+// Forward declaration to break inclusion cycle
+namespace internal {
+template<class>struct Exact_field_selector;
+template<class>struct Exact_ring_selector;
+}
+// Compiler can deduce ET from the first argument.
+template < typename ET >
+struct NT_converter < Lazy_exact_nt<ET>,
+  typename First_if_different<
+    typename internal::Exact_field_selector<ET>::Type,
+    ET>::Type>
+{
+  typename internal::Exact_field_selector<ET>::Type
+    operator()(const Lazy_exact_nt<ET> &a) const
+  { return NT_converter<ET,typename internal::Exact_field_selector<ET>::Type>()(a.exact()); }
+};
+
+template < typename ET >
+struct NT_converter < Lazy_exact_nt<ET>,
+  typename First_if_different<
+   typename First_if_different<
+    typename internal::Exact_ring_selector<ET>::Type,
+    ET>::Type,
+   typename internal::Exact_field_selector<ET>::Type>::Type>
+{
+  typename internal::Exact_ring_selector<ET>::Type operator()(const Lazy_exact_nt<ET> &a) const
+  { return NT_converter<ET,typename internal::Exact_ring_selector<ET>::Type>()(a.exact()); }
 };
 
 namespace internal {

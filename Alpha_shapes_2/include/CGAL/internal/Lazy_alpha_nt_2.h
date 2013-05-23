@@ -75,7 +75,7 @@ class Lazy_alpha_nt_2{
 //NT & kernels
   typedef CGAL::Interval_nt<mode>                                                               NT_approx;
   //Gmpq or Quotient<MP_float>
-  typedef Exact_type_selector<double>::Type                                                     NT_exact; 
+  typedef Exact_field_selector<double>::Type                                                    NT_exact;
   typedef CGAL::Simple_cartesian<NT_approx>                                                     Kernel_approx;
   typedef CGAL::Simple_cartesian<NT_exact>                                                      Kernel_exact;
   typedef typename Kernel_traits<typename Input_traits::Point_2>::Kernel                        Kernel_input;
