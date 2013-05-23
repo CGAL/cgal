@@ -29,8 +29,8 @@
 #include <CGAL/Circular_kernel_intersections.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -509,7 +509,9 @@ namespace CircularFunctors {
   
   template < class CK >
   class Intersect_2
-    : public CK::Linear_kernel::Intersect_2
+  //The inheritance is commented as for some reason this does not work when
+  //using the Lazy_kernel as linear kernel.
+    //: public CK::Linear_kernel::Intersect_2
   {
   
     typedef typename CK::Circle_2                 Circle;
@@ -519,9 +521,27 @@ namespace CircularFunctors {
     
     public:
 
-	  typedef typename CK::Linear_kernel::Intersect_2::result_type result_type; 
-    
-    using CK::Linear_kernel::Intersect_2::operator();
+    //using CK::Linear_kernel::Intersect_2::operator();
+
+    template<typename>
+    struct result;
+
+    template<typename F, typename A, typename B>
+    struct result<F(A,B)> {
+      typedef typename Intersection_traits<CK, A, B>::result_type type;
+    };
+
+    //need a specialization for the case of 3 object in CK
+    template<typename F, typename A, typename B, typename OutputIterator>
+    struct result<F(A,B,OutputIterator)> {
+      typedef OutputIterator type;
+    };
+
+    template<class A, class B>
+    typename Intersection_traits<CK, A, B>::result_type
+    operator()(const A& a, const B& b) const{
+      return typename CK::Linear_kernel::Intersect_2()(a,b);
+    }
 
     template < class OutputIterator >
     OutputIterator

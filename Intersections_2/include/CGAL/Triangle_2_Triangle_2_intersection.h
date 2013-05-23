@@ -26,23 +26,7 @@
 #ifndef CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 #define CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
 
-#include <CGAL/Object.h>
 #include <CGAL/Triangle_2_Triangle_2_do_intersect.h>
-
-namespace CGAL {
-
-template <class K>
-inline
-Object
-intersection(const Triangle_2<K> &tr1, 
-	     const Triangle_2<K>& tr2)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(tr1, tr2);
-}
-
-} //namespace CGAL
-
 #include <CGAL/Intersections_2/Triangle_2_Triangle_2_intersection_impl.h>
 
 #endif

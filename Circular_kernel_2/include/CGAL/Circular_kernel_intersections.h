@@ -31,7 +31,6 @@
 #include <CGAL/Line_arc_2.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Circular_arc_point_2.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 
@@ -48,9 +47,9 @@ namespace internal { \
   bool \
   do_intersect(const typename K::A &c1, const typename K::B &c2, const K&) \
   { \
-		std::vector< Object > res; \
+    std::vector< typename CK2_Intersection_traits<K, typename K::A, typename K::B>::type > res; \
     typename K::Intersect_2()(c1,c2,std::back_inserter(res)); \
-		return res.size() != 0; \
+		return !res.empty(); \
   } \
 } \
 template <class K> \
@@ -97,6 +96,8 @@ CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_2, Line_arc_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Circular_arc_2, Line_2)
 CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_(Line_arc_2, Line_2)
 
+
 } //namespace CGAL
 
+#undef CGAL_CIRCULAR_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_
 #endif // CGAL_CIRCULAR_KERNEL_INTERSECTIONS_H

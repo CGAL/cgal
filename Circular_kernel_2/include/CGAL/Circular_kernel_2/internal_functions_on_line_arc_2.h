@@ -28,6 +28,7 @@
 
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -381,6 +382,8 @@ namespace CircularFunctors {
 	       const typename CK::Circle_2 & c,
 	       OutputIterator res )
   {
+    typedef typename CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>
+      ::type result_type;
     typedef typename CK::Algebraic_kernel            AK;
     typedef typename CK::Polynomial_1_2              Equation_line;
     typedef typename CK::Polynomial_for_circles_2_2  Equation_circle; 
@@ -401,7 +404,7 @@ namespace CircularFunctors {
     for ( typename solutions_container::iterator it = solutions.begin(); 
 	  it != solutions.end(); ++it )
       {
-	*res++ = make_object
+	*res++ = CGAL::internal::ck2_intersection_return<result_type>
 	  (std::make_pair(Circular_arc_point_2(it->first), it->second ));
       }
 
@@ -414,6 +417,8 @@ namespace CircularFunctors {
 	       const typename CK::Line_arc_2 &a2,
 	       OutputIterator res )
   {
+    typedef typename CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_arc_2>
+      ::type result_type;
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Line_arc_2               Line_arc_2;
     typedef typename CK::Point_2                  Point_2;
@@ -427,13 +432,13 @@ namespace CircularFunctors {
 
     if((a1s_a2s && a1t_a2t) || (a1s_a2t && a1t_a2s)){
 
-      *res++ = make_object(a1); 
+      *res++ = result_type(a1); 
       return res;
     }
     if(a1s_a2s || a1s_a2t || a1t_a2s || a1t_a2t) {
       if(! LinearFunctors::non_oriented_equal<CK>(a1.supporting_line(),a2.supporting_line())){
-	if(a1s_a2s || a1s_a2t) *res++ = make_object(std::make_pair(a1.source(), 1u));
-	if(a1t_a2s || a1t_a2t) *res++ = make_object(std::make_pair(a1.target(), 1u));
+	if(a1s_a2s || a1s_a2t) *res++ = CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(a1.source(), 1u));
+	if(a1t_a2s || a1t_a2t) *res++ = CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(a1.target(), 1u));
       return res;
       }
     }
@@ -445,15 +450,15 @@ namespace CircularFunctors {
 	int comparison = compare_xy(a2.left(),a1.right());
 	if(comparison < 0){
 	  if(compare_xy(a1.right(),a2.right()) <= 0){
-	    *res++ = make_object
+	    *res++ = CGAL::internal::ck2_intersection_return<result_type>
 	      (Line_arc_2(a1.supporting_line(), a2.left(), a1.right() ));
 	  } else{
-	    *res++ = make_object
+	    *res++ = CGAL::internal::ck2_intersection_return<result_type>
 	      (Line_arc_2(a1.supporting_line(), a2.left(), a2.right() ));
 	  }
 	}
 	else if (comparison == 0){
-	  *res++ =make_object
+	  *res++ =CGAL::internal::ck2_intersection_return<result_type>
 	    ( std::make_pair(a2.left(),1u));
 	}
 	return res;
@@ -462,24 +467,27 @@ namespace CircularFunctors {
 	int comparison = compare_xy(a1.left(),a2.right());
 	if(comparison < 0){
 	  if(compare_xy(a1.right(),a2.right()) <= 0){
-	    *res++ = make_object
+	    *res++ = CGAL::internal::ck2_intersection_return<result_type>
 	      (Line_arc_2(a1.supporting_line(), a1.left(), a1.right() ));
 	  }
 	  else{
-	    *res++ = make_object
+	    *res++ = CGAL::internal::ck2_intersection_return<result_type>
 	      (Line_arc_2(a1.supporting_line(), a1.left(), a2.right() ));
 	  }
 	}
 	else if (comparison == 0){
-	  *res++ = make_object
+	  *res++ = CGAL::internal::ck2_intersection_return<result_type>
 	    ( std::make_pair(a1.left(),1u));
 	}
 	return res;
       }
     }
     
-    Object obj = intersection(a1.supporting_line(), a2.supporting_line());
-    const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
+    typename Intersection_traits<CK, typename CK::Line_2, typename CK::Line_2>::result_type
+      v = CGAL::internal::intersection(a1.supporting_line(), a2.supporting_line(), CK());
+    if(!v) return res;
+
+    const Point_2 *pt = CGAL::internal::intersect_get<Point_2>(v);
     if(pt == NULL) return res;
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
     //      (Root_for_circles_2_2(Root_of_2(pt->x()),Root_of_2(pt->y())));
@@ -488,10 +496,19 @@ namespace CircularFunctors {
 	 CircularFunctors::compare_xy<CK>(intersect_point, a1.target())) &&
 	(CircularFunctors::compare_xy<CK>(intersect_point, a2.source()) !=
 	 CircularFunctors::compare_xy<CK>(intersect_point, a2.target())))
-      *res++ = make_object(std::make_pair(intersect_point, 1u));
+      *res++ = CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(intersect_point, 1u));
 
     return res;
   }
+
+  template<typename CK, typename T>
+  struct Has_on_visitor : public boost::static_visitor<bool> {
+    Has_on_visitor(const T* l) : l(l){}
+    const T* l;
+    bool operator()(const std::pair<typename CK::Circular_arc_point_2, unsigned>& pair) const {
+      return has_on<CK>(*l,pair.first,true);
+    }
+  };
 
   template< class CK, class OutputIterator>
   OutputIterator
@@ -499,7 +516,8 @@ namespace CircularFunctors {
 	       const typename CK::Circle_2 &c,
 	       OutputIterator res )
   { 
-    typedef std::vector<CGAL::Object> solutions_container;
+    typedef std::vector<typename CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>::type> 
+      solutions_container;
     solutions_container solutions;
 
     CircularFunctors::intersect_2<CK>
@@ -507,37 +525,22 @@ namespace CircularFunctors {
     
     for (typename solutions_container::iterator it = solutions.begin(); 
 	 it != solutions.end(); ++it) {
-      const std::pair<typename CK::Circular_arc_point_2, unsigned>
-        *result = CGAL::object_cast
-	  <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
-      if ( has_on<CK>(l,result->first,true))
+      #if CGAL_INTERSECTION_VERSION  < 2
+      if(const std::pair<typename CK::Circular_arc_point_2, unsigned>* p =
+         object_cast< std::pair< typename CK::Circular_arc_point_2, unsigned> >(& (*it))) {
+        Has_on_visitor<CK, typename CK::Line_arc_2> vis(&l);
+        if(vis(*p)) {
 	*res++ = *it;
     }
+  }
+      #else
+      if(boost::apply_visitor(Has_on_visitor<CK, typename CK::Line_arc_2>(&l), *it))
+	*res++ = *it;
+      #endif
+    }
+
     return res;
   }
-
-  /*template< class CK, class OutputIterator>
-  OutputIterator
-  intersect_2( const typename CK::Line_arc_2 &l,
-	       const typename CK::Circle_2 &c,
-	       OutputIterator res )
-  { 
-    typedef std::vector<CGAL::Object> solutions_container;
-    solutions_container solutions;
-
-    CGAL::LinearFunctors::intersect_2<CK>
-      ( l.supporting_line(), c, std::back_inserter(solutions) );
-    
-    for (typename solutions_container::iterator it = solutions.begin(); 
-	 it != solutions.end(); ++it) {
-      const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
-      result = CGAL::object_cast
-	<std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
-      if ( has_on<CK>(l,result->first))
-	*res++ = *it;
-    }
-    return res;
-  }*/
 
   template< class CK, class OutputIterator>
   OutputIterator
@@ -555,6 +558,11 @@ namespace CircularFunctors {
 	       OutputIterator res )
   {
     typedef std::vector<CGAL::Object > solutions_container;
+    typedef typename CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Circular_arc_2 >
+      ::type result_type;
+    typedef typename CK::Circular_arc_2 Circular_arc_2;
+    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
+    typedef typename CK::Line_arc_2 Line_arc_2;
 
 #ifdef CGAL_CK_EXPLOIT_IDENTITY
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
@@ -565,11 +573,11 @@ namespace CircularFunctors {
     
     if((ls_cs && lt_ct) || (ls_ct && lt_cs)){ // Case 0
       if (compare_xy<CK>(l.source(), l.target()) == SMALLER){
-	*res++ = make_object(std::make_pair(l.source(), 1u));
-	*res++ = make_object(std::make_pair(l.target(), 1u));
+	*res++ = result_type(std::make_pair(l.source(), 1u));
+	*res++ = result_type(std::make_pair(l.target(), 1u));
       } else {
-	*res++ = make_object(std::make_pair(l.target(), 1u));
-	*res++ = make_object(std::make_pair(l.source(), 1u));
+	*res++ = result_type(std::make_pair(l.target(), 1u));
+	*res++ = result_type(std::make_pair(l.source(), 1u));
       }
       return res;
     } else if (ls_cs || lt_ct || ls_ct || lt_cs) {
@@ -594,20 +602,20 @@ namespace CircularFunctors {
       }
       
       if( (CircularFunctors::compare_x<CK>(p,q) == EQUAL) || CircularFunctors::point_in_x_range<CK>(p,r,q)){ // Case 1
-	*res++ = make_object(std::make_pair(q,1u));
+	*res++ = result_type(std::make_pair(q,1u));
 	return res;
       }
        else if(c.on_upper_part()){ // Case 2
 	if(CircularFunctors::compare_x<CK>(r,q) == LARGER){
 	  if(CircularFunctors::orientation<CK>(q,r,p) == RIGHT_TURN   // Case 2
 	     || CircularFunctors::compare_y_to_right<CK>(l,c,q) == LARGER){ // Case 3a
-	    *res++ = make_object(std::make_pair(q,1u));
+	    *res++ = result_type(std::make_pair(q,1u));
 	    return res;
 	  }
 	} else {
 	  if(CircularFunctors::orientation<CK>(r,q,p) == RIGHT_TURN  // Case 2
 	  || CircularFunctors::compare_y_to_left<CK>(l,c,q) == LARGER){ // Case 3c 
-	    *res++ = make_object(std::make_pair(q,1u));
+	    *res++ = result_type(std::make_pair(q,1u));
 	    return res;
 	  }
 	}
@@ -615,13 +623,13 @@ namespace CircularFunctors {
 	if(CircularFunctors::compare_x<CK>(r,q) == LARGER){
 	  if (CircularFunctors::orientation<CK>(q,r,p) == LEFT_TURN // Case 2
 	    || CircularFunctors::compare_y_to_right<CK>(l,c,q) == SMALLER){  // Case 3b
-	    *res++ = make_object(std::make_pair(q,1u));
+	    *res++ = result_type(std::make_pair(q,1u));
 	    return res;
 	  } 
 	} else {
 	  if(CircularFunctors::orientation<CK>(r,q,p) == LEFT_TURN
 	     || CircularFunctors::compare_y_to_left<CK>(l,c,q) == SMALLER){ // Case 3d 
-	    *res++ = make_object(std::make_pair(q,1u));
+	    *res++ = result_type(std::make_pair(q,1u));
 	    return res;
 	  } 
 	} 
@@ -629,20 +637,22 @@ namespace CircularFunctors {
        
       typename CK::Linear_kernel::Bounded_side bs = CircularFunctors::bounded_side<CK>(c.supporting_circle(),p);
       if(bs == ON_BOUNDED_SIDE){ 
-	*res++ = make_object(std::make_pair(q,1u));
+	*res++ = result_type(std::make_pair(q,1u));
 	return res;
       } else { //Case 4b
-	solutions_container solutions;
+        typedef std::vector<typename CK2_Intersection_traits<CK, typename CK::Line_2, typename CK::Circle_2>::type> 
+          container;
+        container solutions;
 	CGAL::CircularFunctors::intersect_2<CK>( l.supporting_line(), c.supporting_circle(),
 					       std::back_inserter(solutions) );
 	
 	if(CircularFunctors::compare_x<CK>(r,q) == LARGER){
-	  *res++ = make_object(std::make_pair(q,1u));
+	  *res++ = result_type(std::make_pair(q,1u));
 	  *res++ = solutions.back();
 	  return res;
 	} else {
 	  *res++ = solutions.front();
-	  *res++ = make_object(std::make_pair(q,1u));
+	  *res++ = result_type(std::make_pair(q,1u));
 	  return res;
 	}
 	
@@ -654,6 +664,7 @@ namespace CircularFunctors {
     }
 #endif // CGAL_CK_EXPLOIT_IDENTITY
     
+    typedef std::vector<CGAL::Object > solutions_container;
     solutions_container solutions;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
@@ -752,19 +763,26 @@ namespace CircularFunctors {
   {
     typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
     typedef typename CK::Point_2                  Point_2;
+    typedef typename CK::Line_2                   Line_2;
+    typedef typename CK::Line_arc_2               Line_arc_2;
+    typedef typename CK2_Intersection_traits<CK, Line_2, Line_arc_2>::type result_type;
 
     if(LinearFunctors::non_oriented_equal<CK>(l, la.supporting_line())) {
-      *res++ = make_object(la);
+      *res++ = result_type(la);
     }
     
-    Object obj = intersection(l, la.supporting_line());
-    const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
+    typename Intersection_traits<CK, Line_2, Line_2>::result_type 
+      v = intersection(l, la.supporting_line());
+
+    if(!v) return res;
+    const Point_2 *pt = boost::get<Point_2>(&*v);
     if(pt == NULL) return res;
+
     Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
 
     if (CircularFunctors::compare_xy<CK>(intersect_point, la.source()) !=
 	 CircularFunctors::compare_xy<CK>(intersect_point, la.target()))
-      *res++ = make_object(std::make_pair(intersect_point, 1u));
+      *res++ = result_type(std::make_pair(intersect_point, 1u));
 
     return res;
   }
@@ -776,7 +794,11 @@ namespace CircularFunctors {
 	       OutputIterator res )
   {
     typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
-    typedef std::vector<CGAL::Object > solutions_container;
+    typedef typename CK::Circular_arc_2 Circular_arc_2;
+
+    typedef typename CK::Line_2 Line_2;
+    typedef std::vector< typename CK2_Intersection_traits<CK, Line_2, typename CK::Circle_2 >::type> 
+      solutions_container;
 
     solutions_container solutions;
 
@@ -784,17 +806,20 @@ namespace CircularFunctors {
       ( l, c.supporting_circle(),
 	std::back_inserter(solutions) );
 
-    for (typename solutions_container::iterator it = solutions.begin();
+    for (typename solutions_container::const_iterator it = solutions.begin();
 	 it != solutions.end(); ++it) {
-      const std::pair<Circular_arc_point_2, unsigned>
-        *result = CGAL::object_cast
-	  <std::pair<Circular_arc_point_2, unsigned> > (&(*it));
-      if (has_on<CK>(c,result->first,true)) {
-	*res++ = *it;
-      }
+        #if CGAL_INTERSECTION_VERSION < 2
+        const std::pair<Circular_arc_point_2, unsigned>* p =
+            object_cast<std::pair<Circular_arc_point_2, unsigned> >(& (*it)) )
+        Has_on_visitor<CK, Circular_arc_2> vis(&c);
+        if(vis(*p)) *res++ = *it;
+        #else
+        if(boost::apply_visitor(Has_on_visitor<CK, Circular_arc_2>(&c), *it))
+          *res++ = *it;
+        #endif
     }
     return res;
-  }  
+  }
 
   template< class CK, class OutputIterator>
   OutputIterator

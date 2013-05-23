@@ -201,9 +201,8 @@ proper_subset(Interval interval1, Interval interval2) {
 template<typename Interval> inline 
 typename Interval_traits<Interval>::Intersection::result_type
 intersection(Interval interval1, Interval interval2, typename boost::enable_if<
-                                                       boost::is_same<
-                                                          typename Interval_traits<Interval>::Is_interval,
-                                                          Tag_true > >::type* = NULL
+             typename Interval_traits<Interval>::Is_interval
+             >::type* = NULL
 ) {
     typename Interval_traits<Interval>::Intersection intersection;
     return intersection(interval1, interval2);

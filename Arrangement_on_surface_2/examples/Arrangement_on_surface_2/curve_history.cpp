@@ -40,7 +40,6 @@ int main()
 
   // Print out the curves and the number of edges each one induces.
   Arr_with_hist_2::Curve_iterator            cit;
-
   std::cout << "The arrangement contains "
             << arr.number_of_curves() << " curves:" << std::endl;
   for (cit = arr.curves_begin(); cit != arr.curves_end(); ++cit)
@@ -51,16 +50,13 @@ int main()
   // induce each edge.
   Arr_with_hist_2::Edge_iterator                  eit;
   Arr_with_hist_2::Originating_curve_iterator     ocit;
-
   std::cout << "The arrangement is comprised of "
             << arr.number_of_edges() << " edges:" << std::endl;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     std::cout << "[" << eit->curve() << "]. Originating curves: ";
-    for (ocit = arr.originating_curves_begin (eit);
-         ocit != arr.originating_curves_end (eit); ++ocit)
-    {
+    for (ocit = arr.originating_curves_begin(eit);
+         ocit != arr.originating_curves_end(eit); ++ocit)
       std::cout << " [" << *ocit << "]" << std::flush;
-    }
     std::cout << std::endl;
   }
 

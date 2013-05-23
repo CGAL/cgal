@@ -22,12 +22,12 @@ and segments to have rational coordinates.
 The nested `Point_2` type defined by the traits class is therefore 
 <I>different</I> than the `Kernel::Point_2` type. Its coordinates are 
 of type `CoordNT`, which an instantiation of 
-`CGAL::Sqrt_extension<NT,ROOT>` where `NT = ROOT = Kernel::FT`. 
+`Sqrt_extension<NT,ROOT>` where `NT = ROOT = Kernel::FT`. 
 Moreover, the third and fourth (hidden) template parameters of 
-`CGAL::Sqrt_extension<NT,ROOT>` are set to `CGAL::Tag_true`, which 
+`Sqrt_extension<NT,ROOT>` are set to `CGAL::Tag_true`, which 
 enables efficient comparison among different extensions. 
 
-For more details see the documentation of \ref ::CGAL::Sqrt_extension<NT,ROOT> 
+For more details see the documentation of `Sqrt_extension<NT,ROOT>`. 
 
 While `Arr_circle_segment_traits_2` models the concept 
 `ArrangementDirectionalXMonotoneTraits_2`, the implementation of 

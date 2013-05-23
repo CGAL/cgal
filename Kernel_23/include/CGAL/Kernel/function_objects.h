@@ -2051,6 +2051,11 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const T1& t1, const T2& t2) const
     { return internal::do_intersect(t1, t2, K()); }
+
+    result_type
+    operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
+    { return internal::do_intersect(pl1, pl2, pl3, K() ); }
+
   };
 
   template <typename K>
@@ -2518,13 +2523,18 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Intersect_2
   {
-    typedef typename K::Object_2    Object_2;
   public:
-    typedef Object_2                result_type;
+    template<typename>
+    struct result;
+
+    template<typename F, typename A, typename B>
+    struct result<F(A,B)> {
+      typedef typename Intersection_traits<K, A, B>::result_type type;
+    };
 
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    Object_2
+    typename Intersection_traits<K, T1, T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K()); }
   };
@@ -2532,18 +2542,40 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Intersect_3
   {
-    typedef typename K::Object_3    Object_3;
     typedef typename K::Plane_3     Plane_3;
   public:
-    typedef Object_3                result_type;
+    template<typename>
+    struct result;
+
+    template<typename F, typename A, typename B>
+    struct result<F(A, B)> {
+      typedef typename Intersection_traits<K, A, B>::result_type type;
+    };
+
+    template<typename F>
+    struct result<F(Plane_3, Plane_3, Plane_3)> {
+      typedef boost::optional< 
+        boost::variant< typename K::Point_3, 
+                        typename K::Line_3, 
+                        typename K::Plane_3 > > type;
+    };
+
+    // Solely to make the lazy kernel work
+    #if CGAL_INTERSECTION_VERSION < 2
+    typedef CGAL::Object result_type;
+    #endif
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
-    Object_3
+    typename cpp11::result_of< Intersect_3(T1, T2) >::type
     operator()(const T1& t1, const T2& t2) const
     { return internal::intersection(t1, t2, K() ); }
 
-    Object_3
+    #if CGAL_INTERSECTION_VERSION < 2
+    CGAL::Object
+    #else
+    typename boost::optional< boost::variant< typename K::Point_3, typename K::Line_3, typename K::Plane_3 > >
+    #endif
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return internal::intersection(pl1, pl2, pl3, K() ); }
   };

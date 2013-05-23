@@ -41,6 +41,7 @@
 #endif
 
 #include <CGAL/intersections.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
 #include <CGAL/result_of.h>
 
 namespace CGAL {
@@ -173,9 +174,9 @@ namespace internal {
       if (c1 != c2) {
 	_begin = CGAL::circle_intersect<CK>(c, c1, b_1);
 	_end = CGAL::circle_intersect<CK>(c, c2, b_2);
-      }
-      else{
-	typedef std::vector<CGAL::Object > solutions_container;
+      } else {
+	typedef std::vector<typename CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>::type>
+          solutions_container;
 	
 	solutions_container solutions;
 	intersection( c, c1, std::back_inserter(solutions) );
@@ -184,22 +185,19 @@ namespace internal {
 	CGAL_kernel_precondition( it != solutions.end() );
 	// the circles intersect
 	
-	const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
-	result = CGAL::object_cast<
-	  std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+	const std::pair<typename CK::Circular_arc_point_2, unsigned>*
+          result = CGAL::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
 	if ( result->second == 2 ){ // double solution
-	  _begin =  result->first;
+	  _begin = result->first;
 	  _end = result->first;
-	}
-	else{
+	} else {
 	  if (b_1)
 	    _begin = result->first;
 	  if (b_2)
 	    _end = result->first;
-	  if (!(b_1 & b_2)) {
+	  if (!(b_1 && b_2)) {
 	    ++it;
-	    result = CGAL::object_cast<
-	      std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+	    result = CGAL::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
 	    if (!b_1)
 	      _begin = result->first;
 	    if (!b_2)

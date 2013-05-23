@@ -292,6 +292,8 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+ \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
+
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
   \sa `CGAL::Object` 
@@ -301,7 +303,7 @@ public:
 */
 class Assign_2 {
 public:
-
+ 
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -325,6 +327,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
+ \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
   \sa `CGAL::Object` 
   \sa `Kernel::Object_3` 
   \sa `Kernel::Intersect_3` 
@@ -4579,6 +4582,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with one argument) 
 
+  \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
+
   \sa `CGAL::Object` 
   \sa `Kernel::Assign_2` 
   \sa `Kernel::Assign_3` 
@@ -4609,6 +4614,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with one argument) 
 
+ \deprecated This class is deprecated since %CGAL 4.2 and type safe ways should be preferred. 
   \sa `CGAL::Object` 
   \sa `Kernel::Assign_2` 
   \sa `Kernel::Assign_3` 
@@ -7632,7 +7638,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `intersection_grp`
+  \sa `CGAL::intersection`
+  \sa `cpp11::result_of`
 
 */
 class Intersect_2 {
@@ -7644,16 +7651,11 @@ public:
 
   /*! 
     computes the intersection region of two geometrical objects of type 
-    `Type1` and `Type2`, for all pairs `Type1` and `Type2`, where 
-    the types `Type1` and `Type2` can be any of the 
-    following: 
-    - `Kernel::Line_2` 
-    - `Kernel::Ray_2` 
-    - `Kernel::Segment_2` 
-    - `Kernel::Triangle_2` 
-    - `Kernel::Iso_rectangle_2` 
+    `Type1` and `Type2`, for all pairs `Type1` and `Type2`.
+    For details see the reference manual page for `intersection()`.
   */ 
-  Kernel::Object_2 operator()(Type1 obj1, Type2 obj2); 
+  cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>::type
+  operator()(Type1 obj1, Type2 obj2); 
 
   /// @}
 
@@ -7665,7 +7667,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two or three arguments) 
 
-  \sa `intersection_grp`
+  \sa `CGAL::intersection` 
+  \sa `cpp11::result_of`
 
 */
 class Intersect_3 {
@@ -7677,47 +7680,13 @@ public:
 
   /*! 
     computes the intersection region of two geometrical 
-    objects of type `Type1` and `Type2`, for all pairs `Type1` and `Type2`, where 
-    the types `Type1` and 
-    `Type2` can be any of the following: 
-    - `Kernel::Plane_3` 
-    - `Kernel::Line_3` 
-    - `Kernel::Ray_3` 
-    - `Kernel::Segment_3` 
-    - `Kernel::Triangle_3` 
+    objects of type `Type1` and `Type2`. 
+    For details see the reference manual page for `intersection()`.
   */ 
-  Kernel::Object_3 operator()(Type1 obj1, Type2 obj2); 
+  cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>::type 
+ operator()(Type1 obj1, Type2 obj2); 
 
-  /*! 
-    computes the intersection of two spheres. The result 
-    can be either a `Kernel::Point_3`, a `Kernel::Circle_3`, a 
-    `Kernel::Sphere_3` or empty. 
-  */ 
-  Kernel::Object_3 operator()(Kernel::Sphere_3 s1, 
-                              Kernel::Sphere_3 s2); 
-
-  /*! 
-    computes the intersection of a plane and a sphere. The result 
-    can be either a `Kernel::Point_3`, a `Kernel::Circle_3` or empty. 
-  */ 
-  Kernel::Object_3 operator()(Kernel::Plane_3 p, 
-                              Kernel::Sphere_3 s); 
-
-  /*! 
-    computes the intersection of a plane and a sphere. The result 
-    can be either a `Kernel::Point_3`, a `Kernel::Circle_3` or empty. 
-  */ 
-  Kernel::Object_3 operator()(Kernel::Sphere_3 s, 
-                              Kernel::Plane_3 p); 
-
-  /*! 
-    computes the intersection of three planes. The result 
-    can be either a `Kernel::Point_3`, a `Kernel::Line_3`, a 
-    `Kernel::Plane_3`, or empty. 
-  */ 
-  Kernel::Object_3 operator()(Kernel::Plane_3 pl1, 
-                              Kernel::Plane_3 pl2, 
-                              Kernel::Plane_3 pl3); 
+ 
 
   /// @}
 

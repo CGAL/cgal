@@ -28,12 +28,22 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <boost/optional.hpp>
 
 /// \file AABB_traits.h
 
 namespace CGAL {
+
+namespace internal{  namespace AABB_tree {
+  template <class T>
+  struct Remove_optional  { typedef T type; };
+
+  template <class T>
+  struct Remove_optional< ::boost::optional<T> >  { typedef T type; };
+
+} } //end of namespace internal::AABB_tree
 
 /// \addtogroup PkgAABB_tree
 /// @{
@@ -64,7 +74,23 @@ public:
   typedef AABB_primitive Primitive;
 
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
+
   typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
+
+  /// `Intersection_and_primitive_id<Query>::%Type::first_type` is found according to
+  /// the result type of `GeomTraits::Intersect_3::operator()`,
+  /// (that is cpp11::result_of<GeomTraits::Intersect_3(Query, Primitive::Datum)>::type). If it is
+  /// `boost::optional<T>` then it is `T`, and the result type otherwise.
+  template<typename Query>
+  struct Intersection_and_primitive_id {
+    typedef typename cpp11::result_of<
+      typename GeomTraits::Intersect_3(Query, typename Primitive::Datum)
+    >::type Intersection_type;
+
+    typedef std::pair< 
+      typename internal::AABB_tree::Remove_optional<Intersection_type>::type,
+      typename Primitive::Id > Type;
+  };
 
   // types for search tree
   /// \name Types
@@ -181,6 +207,7 @@ Do_intersect do_intersect_object() {return Do_intersect();}
 
 class Intersection {
 public:
+    #if CGAL_INTERSECTION_VERSION < 2
 template<typename Query>
 boost::optional<typename AT::Object_and_primitive_id>
 operator()(const Query& query, const typename AT::Primitive& primitive) const
@@ -193,10 +220,20 @@ operator()(const Query& query, const typename AT::Primitive& primitive) const
   else
     return Intersection(Object_and_primitive_id(object,primitive.id()));
 }
+    #else
+    template<typename Query>
+    boost::optional< typename Intersection_and_primitive_id<Query>::Type >
+    operator()(const Query& query, const typename AT::Primitive& primitive) const {
+      typename cpp11::result_of<typename GeomTraits::Intersect_3(Query, typename Primitive::Datum) >::type
+        inter_res = GeomTraits().intersect_3_object()(primitive.datum(),query);
+      if (!inter_res)
+          return boost::optional<typename Intersection_and_primitive_id<Query>::Type>();
+      return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
+    }
+    #endif
 };
 
 Intersection intersection_object() {return Intersection();}
-
 
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {

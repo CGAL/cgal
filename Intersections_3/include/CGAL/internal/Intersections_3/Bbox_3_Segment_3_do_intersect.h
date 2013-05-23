@@ -423,19 +423,18 @@ namespace internal {
 
 } // namespace internal
 
-template <class K>
-bool do_intersect(const CGAL::Segment_3<K>& segment,
-		  const CGAL::Bbox_3& bbox)
-{
-  return typename K::Do_intersect_3()(segment, bbox);
+template<typename K>
+bool do_intersect(const CGAL::Bbox_3 a,
+                  const Segment_3<K>& b) {
+  return K().do_intersect_3_object()(a, b);
 }
 
-template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-		  const CGAL::Segment_3<K>& segment)
-{
-  return typename K::Do_intersect_3()(segment, bbox);
+template<typename K>
+bool do_intersect(const Segment_3<K>& a,
+                  const CGAL::Bbox_3& b) {
+  return K().do_intersect_3_object()(a, b);
 }
+
 
 } //namespace CGAL
 

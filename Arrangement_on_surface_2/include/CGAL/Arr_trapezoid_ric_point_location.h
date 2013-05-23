@@ -26,6 +26,7 @@
  * Definition of the Arr_trapezoid_ric_point_location<Arrangement> template.
  */
 
+#include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <CGAL/Arr_point_location/Td_traits.h>
@@ -33,15 +34,13 @@
 
 namespace CGAL {
 
-
 /*! \class
  * A class that answers point-location and queries
  * on a planar arrangement using the trapezoid_ric algorithm.
  * The Arrangement parameter corresponds to an arrangement instantiation.
  */
-template <class Arrangement_>
-class Arr_trapezoid_ric_point_location : public Arr_observer <Arrangement_>
-{
+template <typename Arrangement_>
+class Arr_trapezoid_ric_point_location : public Arr_observer <Arrangement_> {
 public:
   //type of arrangement on surface
   typedef Arrangement_                          Arrangement_on_surface_2;
@@ -108,6 +107,13 @@ public:
   typedef typename Traits_adaptor_2::Right_side_category  
                                                 Right_side_category;
  
+protected:
+  typedef Arr_point_location_result<Arrangement_on_surface_2>        Result;
+  typedef typename Result::Type                           Result_type;
+
+public:
+  // Support cpp11::result_of
+  typedef Result_type                                     result_type;
 
 protected:
   //type of trapezoidal decomposition class
@@ -130,8 +136,11 @@ protected:
   //X_monotone_curve_2        m_cv_before_merge1;
   //X_monotone_curve_2        m_cv_before_merge2;
 
-public:
+  template<typename T>
+  Result_type result_return(T t) const { return Result()(t); }
+  inline Result_type result_return() const { return Result()(); }
 
+public:
   /*! Default constructor. */
   Arr_trapezoid_ric_point_location (bool with_guarantees = true, 
                            double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD, 
@@ -211,7 +220,7 @@ public:
    *         query point. This object is either a Face_const_handle or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  Object locate (const Point_2& p) const;
+  result_type locate(const Point_2& p) const;
 
   /*!
    * Locate the arrangement feature which a upward vertical ray emanating from
@@ -221,10 +230,8 @@ public:
    *         This object is either an empty object or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  Object ray_shoot_up (const Point_2& p) const
-  {
-    return (_vertical_ray_shoot (p, true));
-  }
+  result_type ray_shoot_up(const Point_2& p) const
+  { return (_vertical_ray_shoot(p, true)); }
 
   /*!
    * Locate the arrangement feature which a downward vertical ray emanating
@@ -234,10 +241,8 @@ public:
    *         This object is either an empty object or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  Object ray_shoot_down (const Point_2& p) const
-  {
-    return (_vertical_ray_shoot (p, false));
-  }
+  result_type ray_shoot_down(const Point_2& p) const
+  { return (_vertical_ray_shoot(p, false)); }
 
   /// \name Notification functions, inherited and overloaded from the
   //        base observer.
@@ -398,14 +403,15 @@ protected:
    *         This object is either a Halfedge_const_handle,
    *         a Vertex_const_handle or an empty object.
    */
-  Object _vertical_ray_shoot (const Point_2& p, bool shoot_up) const;
+  result_type _vertical_ray_shoot(const Point_2& p, bool shoot_up) const;
 
   /*! In vertical ray shoot, when the closest halfedge is found
    * (or unbounded face)
    * we check the isolated vertices inside the face to check whether there
    * is an isolated vertex right above/below the query point.
    */ 
-  Object _check_isolated_for_vertical_ray_shoot
+  result_type
+  _check_isolated_for_vertical_ray_shoot
                              (Halfedge_const_handle halfedge_found, 
                               const Point_2& p, bool shoot_up,
                               const Td_map_item& tr) const;

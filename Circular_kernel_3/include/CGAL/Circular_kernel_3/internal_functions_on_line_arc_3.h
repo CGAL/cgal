@@ -24,6 +24,8 @@
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_ON_LINE_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_ON_LINE_ARC_3_H
 
+#include <CGAL/Circular_kernel_3/Intersection_traits.h>
+
 namespace CGAL {
   namespace SphericalFunctors {
 
@@ -86,20 +88,21 @@ namespace CGAL {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Line_3 Line_3;
       typedef typename SK::Line_arc_3 Line_arc_3;
+      typedef typename SK3_Intersection_traits<SK, Line_arc_3, Line_arc_3>::type result_type;
 
-      Point_3 inters_p;
-      Line_3 inters_l;
-
-      Object o = SK().intersect_3_object()(l1.supporting_line(),
+      typename Intersection_traits<SK, Line_3, Line_3>::result_type o = 
+        SK().intersect_3_object()(l1.supporting_line(),
         l2.supporting_line());
 
-      if(assign(inters_p, o)) {
-        Circular_arc_point_3 p = inters_p;
+      if(!o)
+        return res;
+
+      if(const Point_3* inters_p = CGAL::internal::intersect_get<Point_3>(o)) {
+          Circular_arc_point_3 p = *inters_p;
         if(!SK().has_on_3_object()(l1,p,true)) return res;
         if(!SK().has_on_3_object()(l2,p,true)) return res;
-        *res++ = make_object(std::make_pair(p,1u));
-      } else if(assign(inters_l, o)) {
-
+          *res++ = CGAL::internal::sk3_intersection_return<result_type>(std::make_pair(p,1u));
+      } else if( CGAL::internal::intersect_get<Line_3>(o) ) {
         if(SK().compare_xyz_3_object()(l1.lower_xyz_extremity(), 
                                        l2.lower_xyz_extremity()) < 0) {
 	  int comparison = 
@@ -108,15 +111,15 @@ namespace CGAL {
 	  if(comparison < 0) {
 	    if(SK().compare_xyz_3_object()(l1.higher_xyz_extremity(), 
                                            l2.higher_xyz_extremity()) <= 0) {
-	      *res++ = make_object
+              *res++ = CGAL::internal::sk3_intersection_return<result_type>
 	        (Line_arc_3(l1.supporting_line(),
                             l2.lower_xyz_extremity(),
                             l1.higher_xyz_extremity()));
 	    } else {
-	      *res++ = make_object(l2);
+              *res++ = CGAL::internal::sk3_intersection_return<result_type>(l2);
 	    }
 	  } else if (comparison == 0) {
-	    *res++ = make_object(std::make_pair(l2.lower_xyz_extremity(),1u));
+            *res++ = CGAL::internal::sk3_intersection_return<result_type>(std::make_pair(l2.lower_xyz_extremity(),1u));
 	  } 
         }
         else {
@@ -126,16 +129,16 @@ namespace CGAL {
 	  if(comparison < 0){
 	    if(SK().compare_xyz_3_object()(l1.higher_xyz_extremity(),
                                            l2.higher_xyz_extremity()) <= 0) {
-	      *res++ = make_object(l1);
+              *res++ = CGAL::internal::sk3_intersection_return<result_type>(l1);
 	    } else {
-	      *res++ = make_object
+              *res++ = CGAL::internal::sk3_intersection_return<result_type>
 	        (Line_arc_3(l1.supporting_line(), 
                             l1.lower_xyz_extremity(), 
                             l2.higher_xyz_extremity() ));
 	    }
 	  }
 	  else if (comparison == 0){
-	    *res++ = make_object(std::make_pair(l1.lower_xyz_extremity(),1u));
+            *res++ = CGAL::internal::sk3_intersection_return<result_type>(std::make_pair(l1.lower_xyz_extremity(),1u));
 	  }
         }
       }
@@ -151,19 +154,23 @@ namespace CGAL {
       typedef typename SK::Point_3 Point_3;
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Line_3 Line_3;
+      typedef typename SK::Line_arc_3 Line_arc_3;
+      typedef typename SK3_Intersection_traits<SK, Line_3, Line_arc_3>::type result_type;
 
-      Point_3 inters_p;
-      Line_3 inters_l;
+      typename Intersection_traits<SK, Line_3, Line_3>::result_type o = 
+        SK().intersect_3_object()(l, la.supporting_line());
 
-      Object o = SK().intersect_3_object()(l, la.supporting_line());
+      if(!o)
+        return res;
 
-      if(assign(inters_l, o)) {
-        *res++ = make_object(la);
-      } else if(assign(inters_p, o)) {
-        Circular_arc_point_3 p = inters_p;
+      if(const Line_3* inters_l = CGAL::internal::intersect_get<Line_3>(o)) {
+        *res++ = CGAL::internal::sk3_intersection_return<result_type>(la);
+      } else if(const Point_3* inters_p = CGAL::internal::intersect_get<Point_3>(o)) {
+        Circular_arc_point_3 p = *inters_p;
         if(!SK().has_on_3_object()(la,p,true)) return res;
-        *res++ = make_object(std::make_pair(p,1u));
+        *res++ = CGAL::internal::sk3_intersection_return<result_type>(std::make_pair(p,1u));
       }
+
       return res;
     }
 
@@ -174,24 +181,27 @@ namespace CGAL {
 	        OutputIterator res)
     { 
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-      typedef std::vector<CGAL::Object> solutions_container;
+      typedef std::vector<
+        typename SK3_Intersection_traits<SK, typename SK::Line_3, typename SK::Circle_3
+                                  >::type> solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
+      typedef typename SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Line_arc_3>::type result_type;
+
       solutions_container solutions;
       SK().intersect_3_object()(l.supporting_line(), c, 
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         Solution sol;
-         assign(sol, solutions[0]);
-         if(SK().has_on_3_object()(l,sol.first,true))
+        const Solution* sol = CGAL::internal::intersect_get<Solution>(solutions[0]);
+        if(SK().has_on_3_object()(l,(*sol).first,true))
            *res++ = solutions[0];
       } else {
-         Solution sol1, sol2;
-         assign(sol1, solutions[0]);
-         assign(sol2, solutions[1]);
-         if(SK().has_on_3_object()(l,sol1.first,true))
+         const Solution* sol1 = CGAL::internal::intersect_get<Solution>(solutions[0]);
+         const Solution* sol2 = CGAL::internal::intersect_get<Solution>(solutions[1]);
+
+         if(SK().has_on_3_object()(l,(*sol1).first,true))
            *res++ = solutions[0];
-         if(SK().has_on_3_object()(l,sol2.first,true))
+         if(SK().has_on_3_object()(l,(*sol2).first,true))
            *res++ = solutions[1];
       }
       return res;
@@ -204,24 +214,24 @@ namespace CGAL {
 	       OutputIterator res)
     {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-      typedef std::vector<CGAL::Object> solutions_container;
+      typedef std::vector<
+        typename SK3_Intersection_traits<SK, typename SK::Line_3, typename SK::Sphere_3>::type 
+      > solutions_container;
       typedef std::pair<Circular_arc_point_3, unsigned> Solution;
       solutions_container solutions;
       SK().intersect_3_object()(l.supporting_line(), s,
                                 std::back_inserter(solutions) );
       if(solutions.size() == 0) return res;
       if(solutions.size() == 1) {
-         Solution sol;
-         assign(sol, solutions[0]);
-         if(SK().has_on_3_object()(l,sol.first,true))
+        const Solution* sol = CGAL::internal::intersect_get<Solution>(solutions[0]);
+        if(SK().has_on_3_object()(l,(*sol).first,true))
            *res++ = solutions[0];
       } else {
-         Solution sol1, sol2;
-         assign(sol1, solutions[0]);
-         assign(sol2, solutions[1]);
-         if(SK().has_on_3_object()(l,sol1.first,true))
+         const Solution* sol1 = CGAL::internal::intersect_get<Solution>(solutions[0]);
+         const Solution* sol2 = CGAL::internal::intersect_get<Solution>(solutions[1]);
+         if(SK().has_on_3_object()(l,(*sol1).first,true))
            *res++ = solutions[0];
-         if(SK().has_on_3_object()(l,sol2.first,true))
+         if(SK().has_on_3_object()(l,(*sol2).first,true))
            *res++ = solutions[1];
       }
       return res;
@@ -236,14 +246,19 @@ namespace CGAL {
       typedef typename SK::Point_3 Point_3;
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       if(SK().has_on_3_object()(p,l.supporting_line())) {
-        *res++ = make_object(l);
+        *res++ = result_type(l);
       }
-      Point_3 sol;
-      if(!assign(sol,SK().intersect_3_object()(p,l.supporting_line())))
+      const Point_3* sol;
+      typename Intersection_traits<SK, typename SK::Plane_3, typename SK::Line_3>
+        ::result_type o = SK().intersect_3_object()(p,l.supporting_line());
+
+      if(!o)
         return res;
-      if(!SK().has_on_3_object()(l,sol)) return res;
+      if(sol = CGAL::internal::intersect_get<Point_3>(o)) {
+        if(!SK().has_on_3_object()(l,*sol)) return res;
       Circular_arc_point_3 point = sol;
-      *res++ = make_object(std::make_pair(point,1u));
+        *res++ = result_type(std::make_pair(point,1u));
+      }
       return res;
     }
 

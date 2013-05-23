@@ -486,30 +486,25 @@ a specific number type and platform, avoiding it is always cheaper.
 especially integer types and rationals.
 </UL>
 
-\subsection Kernel_23PolymorphicReturnValues Polymorphic Return Values
+\subsection Kernel_23VariantReturnValues Intersections and Variant Return Types
 
-Some functions can return different types of objects. A typical
-\cpp solution to this problem is to derive all possible return
-types from a common base class, to return a pointer to this 
-class and to perform a dynamic cast on this pointer. The class
-`Object` provides an abstraction.
-An object `obj` of the class `Object` can
-represent an arbitrary class. The only operations it provides is
-to make copies and assignments, so that you can put them in lists
-or arrays. Note that `Object` is *not* a common base class for the
-elementary classes. Therefore, there is no 
-automatic conversion from these classes to `Object`. Rather 
-this is done with the global function `make_object()`. This 
-encapsulation mechanism requires the use of
-`object_cast` to access the encapsulated class (a less
-efficient way, which is now discouraged, used to be to
-use the `assign` function).
+Some functions, for example `intersection()`, can return different types of objects. To achieve this
+in a type-safe way \cgal uses return values of type
+`boost::optional< boost::variant< T...  > >` were `T...` is a
+list of all possible resulting geometric objects.  The exact result
+type of an intersection can be determined through the metafunction
+`cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>` or
+`cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>`, where
+`Type1` and `Type2` are the types of the objects used in the
+intersection computation.
+
+
 
 Example 
 -------
 
-In the following example, the object class is used as return value for the 
-intersection computation, as there are possibly different return values.
+In the following example, `result_of` is used to query the type of the
+return value for the intersection computation:
 
 \code{.cpp}
 typedef Cartesian<double> K;
@@ -520,31 +515,23 @@ Segment_2 segment_1, segment_2;
 
 std::cin >> segment_1 >> segment_2;
 
-Object obj = intersection(segment_1, segment_2);
+ 
+/* C++11 */
+// auto v = intersection(segment_1, segment_2);
 
-if (const Point_2 *point = object_cast<Point_2>(&obj)) {
-  // do something with point
-} else if (const Segment_2 *segment = object_cast<Segment_2>(&obj)) {
-  // do something with segment
+/* C++03 */
+cpp11::result_of<K::Intersect_2(Segment_2, Segment_2)>::type
+v = intersection(segment_1, segment_2); 
+if(v) {
+  /* not empty */
+  if (const Point_2 *p = boost::get<Point_2>(&*v) ) {
+    /* do something with *p */
+  } else {
+    const Segment_2 *s = boost::get<Segment_2>(&*v);
+    /* do something with *s */
+  }
 } else {
-  // there was no intersection
-}
-\endcode
-
-The intersection routine itself looks roughly as follows:
-
-\code{.cpp}
-template < class Kernel >
-Object intersection(Segment_2<Kernel> s1, Segment_2<Kernel> s2)
-{
-if (intersection in a point) {
-Point_2<Kernel> p = ... ;
-return make_object(p);
-} else if (intersection in a segment) {
-Segment_2<Kernel> s = ... ;
-return make_object(s);
-}
-return Object();
+  /* empty intersection */
 }
 \endcode
 
@@ -557,7 +544,7 @@ This may pay off if many tests with respect to the plane are made.
 Nevertheless, unless the number type is exact, the constructed plane 
 is only approximated, and round-off errors may lead 
 `oriented_side(p)` to return an orientation 
-which is different from the orientation of `p`, `q`, `r`, and `s`.
+which is different from the real orientation of `p`, `q`, `r`, and `s`.
 
 In \cgal, we provide predicates in which such
 geometric decisions are made directly with a reference to the input points
@@ -586,7 +573,7 @@ kernel concept (but there are some exceptions).
 
 \subsection Kernel_23AnExtensiveExample An Extensive Example
 
-Assume you have the following point class, where the coordinates are
+Assume we have the following point class, where the coordinates are
 stored in an array of `doubles`, where we have another data member
 `color`, which shows up in the constructor.
 
@@ -726,3 +713,54 @@ and No. 28155 (GALIA).
 */ 
 } /* namespace CGAL */
 
+/*!
+\page upgrading_object Upgrading from CGAL::Object to boost::variant
+
+Code can be upgraded by using either `boost::get` or the
+`boost::static_visitor<T>`.
+
+\code
+#include <CGAL/intersections.h>
+
+template<typename R>
+struct Intersection_visitor : public boost::static_visitor<> {
+  void operator()(const Point_2& p) const 
+  { // Point_2  
+  }
+  void operator()(const Segment_2& s) const 
+  { // Segment_2 
+  }
+};
+
+template <class R>
+void foo(Segment_2<R> seg, Line_2<R> lin)
+{
+  CGAL::Object obj = intersection(seg1, seg2);
+  if(const Point_2* foo = object_cast<Point_2>(&obj)) {
+    // Point_2 
+  } else if(const Segment_2* foo = object_cast<Segment_2>(&obj)) {
+    // Segment_2 
+  } else {
+    // empty
+  }
+
+  // becomes
+  auto result = intersection(seg, lin);
+  if(result) {
+    if(const Point_2* foo = boost::get<Point_2>(&*obj)) {
+      // Point_2 
+    } else if(const Segment_2* foo = boost::get<Segment_2>(&*obj)) {
+      // Segment_2 
+    }
+  } else {
+    // empty
+  }
+
+  // or with boost::static_visitor<T>
+  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
+  else { // empty  
+  }
+}
+\endcode
+
+*/

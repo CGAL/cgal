@@ -17,12 +17,13 @@
 // 
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
+
 #ifndef CGAL_ARR_TRAPEZOID_RIC_POINT_LOCATION_FUNCTIONS_H
 #define CGAL_ARR_TRAPEZOID_RIC_POINT_LOCATION_FUNCTIONS_H
 
 /*! \file
-* Member-function definitions for the Arr_trapezoid_ric_point_location<Arrangement>
-* class.
+* Member-function definitions for the
+* Arr_trapezoid_ric_point_location<Arrangement> class.
 */
 
 #define CGAL_TRAP_DEBUG
@@ -39,8 +40,8 @@ namespace CGAL {
 // Locate the arrangement feature containing the given point.
 //
 template <class Arrangement_2>
-Object Arr_trapezoid_ric_point_location<Arrangement_2>
-::locate (const Point_2& p) const
+typename Arr_trapezoid_ric_point_location<Arrangement_2>::result_type
+Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
 {
   CGAL_TRAP_PRINT_DEBUG("locate point "<<p);
 
@@ -54,8 +55,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
 
   // treat special case, where trapezoid is unbounded.
   //	for then get_parent() is not defined
-  if (td_lt==TD::UNBOUNDED_TRAPEZOID)
-  {
+  if (td_lt==TD::UNBOUNDED_TRAPEZOID) {
     CGAL_TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
 
     Face_const_handle ubf = _get_unbounded_face(tr, p, Are_all_sides_oblivious_tag());
@@ -66,13 +66,12 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
            iso_verts_it != ubf->isolated_vertices_end();
            ++iso_verts_it)
       {
-        if (m_traits->equal_2_object()(p, iso_verts_it->point()))
-        {
+      if (m_traits->equal_2_object()(p, iso_verts_it->point())) {
           Vertex_const_handle  vh = iso_verts_it;
-          return (CGAL::make_object (vh));
+        return result_return(vh);
         }
       }
-    return (CGAL::make_object (ubf));
+    return result_return(ubf);
   }
 
   switch(td_lt)
@@ -83,7 +82,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       Td_active_vertex& v (boost::get<Td_active_vertex>(tr));
       CGAL_TRAP_PRINT_DEBUG("POINT");
       CGAL_assertion(!v.vertex()->is_at_open_boundary());
-      return (CGAL::make_object(v.vertex()));
+      return result_return(v.vertex());
     }
     break;
 
@@ -94,11 +93,12 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       CGAL_TRAP_PRINT_DEBUG("CURVE");
       if ( m_traits->is_in_x_range_2_object()(h->curve(),p) && 
            m_traits->compare_y_at_x_2_object()(p,h->curve()) == EQUAL)
-      {
-        return (CGAL::make_object(h));
-      }
-      else
+        return result_return(h);
+      else {
+        //ixx
+        std::cerr << "curve is: "<< h->curve() <<" point is: "<< p <<std::endl; 
         CGAL_error();
+      }
     }
     break;
 
@@ -122,14 +122,13 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
       for (iso_verts_it = fh->isolated_vertices_begin();
           iso_verts_it != fh->isolated_vertices_end(); ++iso_verts_it)
       {
-        if (m_traits->equal_2_object()(p, iso_verts_it->point()))
-        {
+        if (m_traits->equal_2_object()(p, iso_verts_it->point())) {
           Vertex_const_handle  vh = iso_verts_it;
-          return (CGAL::make_object (vh));
+          return result_return(vh);
         }
       }
 
-      return (CGAL::make_object(fh));
+      return result_return(fh);
     }
     break;
   default:
@@ -139,7 +138,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement_2>
   }
 
   CGAL_TRAP_PRINT_DEBUG("EMPTY");
-  return Object();   
+  return result_return();   
 }
 
 
@@ -254,8 +253,9 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
 // given point hits, considering isolated vertices.
 //
 template <class Arrangement>
-Object Arr_trapezoid_ric_point_location<Arrangement>
-::_vertical_ray_shoot (const Point_2& p, bool shoot_up) const
+typename Arr_trapezoid_ric_point_location<Arrangement>::result_type
+Arr_trapezoid_ric_point_location<Arrangement>::
+_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 {
   //trying to workaround internal compiler error
   typename TD::Locate_type td_lt;
@@ -275,7 +275,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
     {
       //p fell on Td_active_vertex
       Td_active_vertex& v (boost::get<Td_active_vertex>(item));
-      return (CGAL::make_object(v.vertex()));
+      return (result_return(v.vertex()));
     }
     break;
  case TD::CURVE:
@@ -288,7 +288,7 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
       {
         h=h->twin();
       }
-      return (CGAL::make_object(h));
+      return result_return(h);
     }
     break;
   case TD::TRAPEZOID:
@@ -321,7 +321,8 @@ Object Arr_trapezoid_ric_point_location<Arrangement>
 // is an isolated vertex right above/below the query point.
 // 
 template <class Arrangement>
-Object Arr_trapezoid_ric_point_location<Arrangement>::
+typename Arr_trapezoid_ric_point_location<Arrangement>::result_type
+Arr_trapezoid_ric_point_location<Arrangement>::
 _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found, 
                                         const Point_2& p, 
                                         bool shoot_up,
@@ -364,8 +365,7 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
 
     // Check if the current isolated vertex lies closer to the query point than
     // the closest feature so far.
-    if (closest_iso_v == invalid_v)
-    {
+    if (closest_iso_v == invalid_v) {
       // Compare the current isolated vertex with the closest halfedge.
       if (halfedge_found == invalid_he ||
           compare_y_at_x (iso_verts_it->point(),
@@ -384,17 +384,15 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
   // If we found an isolated vertex above (or under) the query point, return
   // a handle to this vertex.
   if (closest_iso_v != invalid_v)
-    return (CGAL::make_object (closest_iso_v));
+    return result_return(closest_iso_v);
 
   // If we are inside the unbounded face, return this face.
   if (halfedge_found == invalid_he)
-    return (CGAL::make_object (face));
+    return result_return(face);
 
   // Return the halfedge lying above (or below) the query point.
-  return (CGAL::make_object (halfedge_found));
+  return result_return(halfedge_found);
 }
-
-
 
 } //namespace CGAL
 
