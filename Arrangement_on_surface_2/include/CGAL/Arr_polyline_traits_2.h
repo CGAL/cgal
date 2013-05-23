@@ -431,9 +431,6 @@ public:
     bool operator()(const X_monotone_curve_2 & cv1,
                     const X_monotone_curve_2 & cv2) const
     {
-      unsigned int n1 = cv1.number_of_segments();
-      unsigned int n2 = cv2.number_of_segments();
-
       // Check the pairwise equality of the contained segments.
       const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Equal_2 equal =
@@ -446,17 +443,21 @@ public:
         seg_traits->construct_min_vertex_2_object();
       typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
         seg_traits->construct_max_vertex_2_object();
+      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpt =
+        seg_traits->compare_endpoints_xy_2_object();
       Is_vertical_2 is_vertical = m_poly_traits->is_vertical_2_object();
-      Point_2 point1,point2;
-      Comparison_result res_x;
-      Comparison_result res_y_at_x;
-      unsigned int i = 0, j = 0;
+      Construct_min_vertex_2 xpoly_min_v = m_poly_traits->
+        construct_min_vertex_2_object();
+      Construct_max_vertex_2 xpoly_max_v = m_poly_traits->
+        construct_max_vertex_2_object();
 
-      // the first and last points of the segments should be equal.
-      bool res = equal(min_vertex(cv1[0]),min_vertex(cv2[0]));
+      bool res;
+
+      // The first and last points of the segments should be equal.
+      res = equal(xpoly_min_v(cv1),xpoly_min_v(cv2));
       if (!res)
         return false;
-      res = equal(max_vertex(cv1[n1-1]),max_vertex(cv2[n2-1]));
+      res = equal(xpoly_max_v(cv1),xpoly_max_v(cv2));
       if (!res)
         return false;
 
@@ -473,9 +474,33 @@ public:
 
       // If we arrived here it means that the first and last point of the
       // curve are equal.
+      Point_2 point1,point2;
+      Comparison_result res_x;
+      Comparison_result res_y_at_x;
+      unsigned int i = 0, j = 0;
+      unsigned int n1 = cv1.number_of_segments();
+      unsigned int n2 = cv2.number_of_segments();
+      Comparison_result is_cv1_left_to_right = comp_endpt(cv1[0]);
+      Comparison_result is_cv2_left_to_right = comp_endpt(cv2[0]);
+
       while ((i < n1-1) || (j < n2-1)) {
-        point1 = max_vertex(cv1[i]);
-        point2 = max_vertex(cv2[j]);
+        int cv1_seg_ind,cv2_seg_ind;
+        if (is_cv1_left_to_right == SMALLER){
+          cv1_seg_ind = i;
+          point1 = max_vertex(cv1[cv1_seg_ind]);
+        }
+        else{
+          cv1_seg_ind=n1-1-i;
+          point1 = max_vertex(cv1[cv1_seg_ind]);
+        }
+        if (is_cv2_left_to_right == SMALLER){
+          cv2_seg_ind=j;
+          point2 = max_vertex(cv2[cv2_seg_ind]);
+        }
+        else{
+          cv2_seg_ind=n2-1-j;
+          point2 = max_vertex(cv2[cv2_seg_ind]);
+        }
 
         res = equal(point1, point2);
         // Easy case - the two points are equal
@@ -488,14 +513,14 @@ public:
           // Check if the different point is a collinear point situated on
           // the line between its two neighbors.
           if (res_x == SMALLER) {
-            res_y_at_x = compare_y_at_x(point1,cv2[j]);
+            res_y_at_x = compare_y_at_x(point1,cv2[cv2_seg_ind]);
             if (res_y_at_x == EQUAL)
               ++i;
             else
               return false;
           }
           else if(res_x == LARGER) {
-            res_y_at_x = compare_y_at_x(point2,cv1[i]);
+            res_y_at_x = compare_y_at_x(point2,cv1[cv1_seg_ind]);
             if (res_y_at_x == EQUAL)
               ++j;
             else
@@ -1461,7 +1486,6 @@ public:
     {
       // Vector of the segments to be constructed from the range of points
       std::vector<Segment_2> segs;
-
       // Make sure the range of points contains at least two points.
       ForwardIterator ps = begin;
       CGAL_precondition (ps != end);
@@ -1493,7 +1517,7 @@ public:
         CGAL_precondition (compare_xy(*ps, *pt) == cmp_xy_res);
         CGAL_precondition (compare_x(*ps, *pt) == cmp_x_res);
 
-        segs.push_back(Segment_2(*pt,*ps));
+        segs.push_back(Segment_2(*ps,*pt));
         ++ps; ++pt;
       }
 
