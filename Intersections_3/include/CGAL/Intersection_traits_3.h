@@ -115,20 +115,6 @@ template<typename K>
 struct Intersection_traits<K, typename K::Line_3, CGAL::Bbox_3> : 
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
-template<typename K>
-inline
-typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Line_3>
-intersection(const CGAL::Bbox_3& a, typename K::Line_3 const& b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template<typename K>
-inline
-typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Line_3>
-intersection(typename K::Line_3 const& b, const CGAL::Bbox_3& a) {
-  return K().intersect_3_object()(b, a);
-}
-
 // Bbox_3 Segment_3
 template<typename K>
 struct Intersection_traits<K, typename K::Segment_3, CGAL::Bbox_3> : 
@@ -138,20 +124,6 @@ template<typename K>
 struct Intersection_traits<K, CGAL::Bbox_3, typename K::Segment_3> : 
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
-template<typename K>
-inline
-typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Segment_3>
-intersection(typename K::Segment_3 const& b, const CGAL::Bbox_3& a) {
-  return K().intersect_3_object()(b, a);
-}
-
-template<typename K>
-inline
-typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Segment_3>
-intersection(typename CGAL::Bbox_3 const& b, typename K::Segment_3 const& a) {
-  return K().intersect_3_object()(b, a);
-}
-
 // Bbox_3 Ray_3
 template<typename K>
 struct Intersection_traits<K, typename K::Ray_3, CGAL::Bbox_3> : 
@@ -160,20 +132,6 @@ struct Intersection_traits<K, typename K::Ray_3, CGAL::Bbox_3> :
 template<typename K>
 struct Intersection_traits<K, CGAL::Bbox_3, typename K::Ray_3> : 
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
-
-template<typename K>
-inline
-typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Ray_3>
-intersection(typename K::Ray_3 const& b, const CGAL::Bbox_3& a) {
-  return K().intersect_3_object()(b, a);
-}
-
-template<typename K>
-inline
-typename K::Intersect_3::template Result<CGAL::Bbox_3, typename K::Ray_3>
-intersection(const CGAL::Bbox_3& a, typename K::Ray_3 const& b) {
-  return K().intersect_3_object()(b, a);
-}
 
 } // namespace
 
