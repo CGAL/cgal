@@ -10,7 +10,7 @@
 #include <vector>
 #include <list>
 
-#include "arr_print.h"
+#include "../arr_print.h"
 
 typedef CGAL::Quotient<CGAL::MP_Float>                  Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
