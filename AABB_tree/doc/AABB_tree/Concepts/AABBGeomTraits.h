@@ -37,12 +37,12 @@ among `Ray_3`, `Segment_3`, `Line_3`, `Triangle_3`, `Plane_3` and `Bbox_3`. Rele
 typedef Hidden_type Do_intersect_3; 
 
 /*! 
-A functor object to construct the intersection between two geometric objects. 
-Provides the nested type `Result<A, B>` where `Result<A, B>::Type` is the return 
-type of the `operator()(A, B)`.
+A functor object to construct the intersection between two geometric objects.
+This functor must support the result_of protocol, that is the return 
+type of the `operator()(A, B)` is `CGAL::cpp11::result<Intersect_3(A,B)>`.
 
 Provides the operators: 
-`Result<A, B>::type operator()(const A& a, const B& b);` 
+`CGAL::cpp11::result<Intersect_3(A,B)> operator()(const A& a, const B& b);` 
 where `A` and `B` are any relevant types among `Ray_3`, `Segment_3`, `Line_3`, 
 `Triangle_3`, `Plane_3` and `Bbox_3`. 
 Relevant herein means that a line primitive (ray, segment, line) is tested 

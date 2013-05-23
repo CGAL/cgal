@@ -68,6 +68,7 @@ public:
 
   typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
 
+  ///\todo update this to use the return type of `GeomTraits::Intersection` together with an helper to remove optional
   template<typename Query>
   struct Intersection_and_primitive_id {
     typedef std::pair< 

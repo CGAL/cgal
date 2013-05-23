@@ -87,17 +87,12 @@ namespace CGAL {
     /// \deprecated 
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
 
-    /*!  
-\todo Fill in the types in the std::pair.
-A nested type to aquire the  return type of intersections
-with an object of type `Query` through the member typedef
-`Type` equal to `std::pair< >`
+    /*!
+    An alias to AABBTraits::Interesction_and_primitive_id
     */
-
     template<typename Query>
     struct Intersection_and_primitive_id {
       typedef typename AABBTraits::template Intersection_and_primitive_id<Query>::Type Type;
-      typedef Type type;
     };
 
     
@@ -246,7 +241,7 @@ public:
     /// `Intersection_and_primitive_id<Query>::Type`,
     /// between the query and the input data to
     /// the iterator. `do_intersect()`
-    /// predicates and intersections must be defined for Query`
+    /// predicates and intersections must be defined for `Query`
     /// in the `AABBTraits` class.
 		template<typename Query, typename OutputIterator>
 		OutputIterator all_intersections(const Query& query, OutputIterator out) const;
