@@ -53,8 +53,8 @@ namespace CGAL {
 template <class NT> class Lazy_exact_nt;
 class Homogeneous_tag;
 class Cartesian_tag;
-template <class T> class Simple_cartesian;
-template <class T1, class T2> class Simple_homogeneous;
+template <class T> struct Simple_cartesian;
+template <class T1, class T2> struct Simple_homogeneous;
 template <class RT> class Quotient;
 
 namespace Nef_3_internal{
