@@ -36,6 +36,15 @@
 
 namespace CGAL {
 
+namespace internal{  namespace AABB_tree {
+  template <class T>
+  struct Remove_optional  { typedef T type; };
+
+  template <class T>
+  struct Remove_optional< ::boost::optional<T> >  { typedef T type; };
+
+} } //end of namespace internal::AABB_tree
+
 /// \addtogroup PkgAABB_tree
 /// @{
 
@@ -68,11 +77,18 @@ public:
 
   typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
 
-  ///\todo update this to use the return type of `GeomTraits::Intersection` together with an helper to remove optional
+  /// `Intersection_and_primitive_id<Query>::%Type::first_type` is found according to
+  /// the result type of `GeomTraits::Intersect_3::operator()`,
+  /// (that is cpp11::result_of<GeomTraits::Intersect_3(Query, Primitive::Datum)>::type). If it is
+  /// `boost::optional<T>` then it is `T`, and the result type otherwise.
   template<typename Query>
   struct Intersection_and_primitive_id {
+    typedef typename cpp11::result_of<
+      typename GeomTraits::Intersect_3(Query, typename Primitive::Datum)
+    >::type Intersection_type;
+
     typedef std::pair< 
-      typename IT<Query, typename Primitive::Datum>::variant_type, //using Intersection_traits to skip the optional
+      typename internal::AABB_tree::Remove_optional<Intersection_type>::type,
       typename Primitive::Id > Type;
   };
 

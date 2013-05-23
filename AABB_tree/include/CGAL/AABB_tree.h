@@ -238,7 +238,7 @@ public:
     ///@{
 
     /// Outputs the list of all intersections, as objects of
-    /// `Intersection_and_primitive_id<Query>::Type`,
+    /// `Intersection_and_primitive_id<Query>::%Type`,
     /// between the query and the input data to
     /// the iterator. `do_intersect()`
     /// predicates and intersections must be defined for `Query`
