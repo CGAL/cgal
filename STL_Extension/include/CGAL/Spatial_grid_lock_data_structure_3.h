@@ -104,10 +104,10 @@ public:
     m_resolution_z = n / (bbox.zmax() - m_zmin);
 
 #ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-    std::cerr << "Locking data structure Bounding Box = ["
-      << bbox.xmin() << ", " << bbox.xmax() << "], "
-      << bbox.ymin() << ", " << bbox.ymax() << "], "
-      << bbox.zmin() << ", " << bbox.zmax() << "]"
+    std::cerr << "Locking data structure Bounding Box = "
+      << "[" << bbox.xmin() << ", " << bbox.xmax() << "], "
+      << "[" << bbox.ymin() << ", " << bbox.ymax() << "], "
+      << "[" << bbox.zmin() << ", " << bbox.zmax() << "]"
       << std::endl;
 #endif
   }

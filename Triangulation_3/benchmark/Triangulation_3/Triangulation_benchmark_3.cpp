@@ -27,6 +27,12 @@
 // - replace drand48() by CGAL Generators
 // - move/document Time_accumulator to CGAL/Profiling_tools (?) 
 
+#ifdef CGAL_LINKED_WITH_TBB
+// Use TBB malloc proxy (for all new/delete/malloc/free calls)
+// Highly recommended
+# include <tbb/tbbmalloc_proxy.h>
+#endif
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Bbox_3.h>
@@ -42,12 +48,6 @@
 #include <string>
 #include <vector>
 #include <cstdlib> // for drand48
-
-#ifdef CGAL_LINKED_WITH_TBB
-// Use TBB malloc proxy (for all new/delete/malloc/free calls)
-// Highly recommended
-# include <tbb/tbbmalloc_proxy.h>
-#endif
 
 #ifdef SHOW_ITERATIONS
 #  undef SHOW_ITERATIONS
@@ -204,6 +204,12 @@ void generate_points()
       pts2_bbox = pts2_bbox + p.bbox();
     }
   }
+
+  cout << "Bounding box = "
+    << "[" << pts_bbox.xmin() << ", " << pts_bbox.xmax() << "], "
+    << "[" << pts_bbox.ymin() << ", " << pts_bbox.ymax() << "], "
+    << "[" << pts_bbox.zmin() << ", " << pts_bbox.zmax() << "]"
+    << endl;
 }
 
 
