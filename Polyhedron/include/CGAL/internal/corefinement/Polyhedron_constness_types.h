@@ -53,6 +53,27 @@ struct Polyhedron_types<Polyhedron,Tag_true>{
   typedef const typename Polyhedron::Facet                   Facet;
 };
 
+#include <boost/type_traits/is_const.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/mpl/if.hpp>
+
+template <class Polyhedron_>
+struct Polyhedron_types_with_mpl
+{
+  typedef typename boost::remove_const<Polyhedron_>::type Polyhedron;
+  typedef typename boost::mpl::if_< boost::is_const<Polyhedron_>,
+                                    typename Polyhedron::Face_const_handle,
+                                    typename Polyhedron::Face_handle>::type   Face_handle;
+  typedef typename boost::mpl::if_< boost::is_const<Polyhedron_>,
+                                    typename Polyhedron::Face_const_iterator,
+                                    typename Polyhedron::Face_iterator>::type   Face_iterator;
+  typedef typename boost::mpl::if_< boost::is_const<Polyhedron_>,
+                                    typename Polyhedron::Halfedge_const_handle,
+                                    typename Polyhedron::Halfedge_handle>::type   Halfedge_handle;
+  typedef Face_handle Facet_handle;
+  typedef Face_iterator Facet_iterator;
+};
+
 } } //namespace CGAL::internal_IOP
 
 #endif //CGAL_INTERNAL_POLYHEDRON_CONSTNESS_TYPES_H
