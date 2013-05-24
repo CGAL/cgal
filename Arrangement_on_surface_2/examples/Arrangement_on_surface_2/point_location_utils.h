@@ -55,13 +55,13 @@ print_point_location
   const Face_const_handle*     f;
   
   std::cout << "The point (" << q << ") is located ";
-  if (f = boost::get<Face_const_handle>(&obj))          // located inside a face
+  if ( ( f = boost::get<Face_const_handle>(&obj) ) )          // located inside a face
     std::cout << "inside "
               << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
               << " face." << std::endl;
-  else if (e = boost::get<Halfedge_const_handle>(&obj)) // located on an edge
+  else if ( ( e = boost::get<Halfedge_const_handle>(&obj) ) ) // located on an edge
     std::cout << "on an edge: " << (*e)->curve() << std::endl;
-  else if (v = boost::get<Vertex_const_handle>(&obj))   // located on a vertex
+  else if ( ( v = boost::get<Vertex_const_handle>(&obj) ) )   // located on a vertex
     std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
   else CGAL_error_msg("Invalid object.");
@@ -111,12 +111,12 @@ void vertical_ray_shooting_query(const VerticalRayShoot& vrs,
   
   std::cout << "Shooting up from (" << q << ") : ";
 
-  if (v = boost::get<Vertex_const_handle>(&obj))         // we hit a vertex
+  if ( (v = boost::get<Vertex_const_handle>(&obj)) )         // we hit a vertex
     std::cout << "hit " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
-  else if (e = boost::get<Halfedge_const_handle>(&obj))  // we hit an edge
+  else if ( (e = boost::get<Halfedge_const_handle>(&obj)) )  // we hit an edge
     std::cout << "hit an edge: " << (*e)->curve() << std::endl;
-  else if (f = boost::get<Face_const_handle>(&obj)) {    // we hit nothing
+  else if ( (f = boost::get<Face_const_handle>(&obj)) ) {    // we hit nothing
     CGAL_assertion((*f)->is_unbounded());
     std::cout << "hit nothing." << std::endl;
   }

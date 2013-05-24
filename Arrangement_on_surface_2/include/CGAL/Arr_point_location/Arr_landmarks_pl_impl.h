@@ -61,15 +61,15 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   const Vertex_const_handle*   vh;
   const Halfedge_const_handle* hh;
   const Face_const_handle*     fh;
-  if (vh = Result().assign<Vertex_const_handle>(lm_location_obj))
+  if ( ( vh = Result().assign<Vertex_const_handle>(lm_location_obj) ) )
     out_obj = _walk_from_vertex(*vh, p, crossed_edges);
-  else if (hh = Result().assign<Halfedge_const_handle>(lm_location_obj))
+  else if ( ( hh = Result().assign<Halfedge_const_handle>(lm_location_obj) ) )
     out_obj = _walk_from_edge(*hh, landmark_point, p, crossed_edges);
-  else if (fh =  Result().assign<Face_const_handle>(lm_location_obj))
+  else if ( ( fh =  Result().assign<Face_const_handle>(lm_location_obj) ) )
     out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
   else CGAL_error_msg("lm_location_obj of an unknown type.");
   
-  if (fh = Result().assign<Face_const_handle>(out_obj)) {
+  if ( ( fh = Result().assign<Face_const_handle>(out_obj) ) ) {
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this
     // face.

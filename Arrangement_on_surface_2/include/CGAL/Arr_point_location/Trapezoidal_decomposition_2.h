@@ -403,7 +403,7 @@ public:
     }
     
     template < typename T >
-    Td_map_item operator()(T& t) const
+    Td_map_item operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return Td_map_item(0);
@@ -422,7 +422,7 @@ public:
     }
     
     template < typename T >
-    void operator()(T& t) const
+    void operator()(T& /* t */) const
     {
       CGAL_assertion(false);
     }
@@ -440,7 +440,7 @@ public:
     }
     
     template < typename T >
-    Td_map_item operator()(T& t) const
+    Td_map_item operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return Td_map_item(0);
@@ -458,7 +458,7 @@ public:
     }
     
     template < typename T >
-    void operator()(T& t) const
+    void operator()(T& /*t*/) const
     {
       CGAL_assertion(false);
     }
@@ -476,7 +476,7 @@ public:
     }
 
     template < typename T >
-    Td_map_item operator()(T& t) const
+    Td_map_item operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return Td_map_item(0);
@@ -494,7 +494,7 @@ public:
     }
     
     template < typename T >
-    void operator()(T& t) const
+    void operator()(T& /* t */) const
     {
       CGAL_assertion(false);
     }
@@ -514,7 +514,7 @@ public:
     }
     
     template < typename T >
-    void operator()(T& t) const
+    void operator()(T& /*t*/) const
     {
       CGAL_assertion(false);
     }
@@ -532,7 +532,7 @@ public:
     }
     
     template < typename T >
-    Halfedge_const_handle operator()(T& t) const
+    Halfedge_const_handle operator()(T& /*t*/) const
     {
       CGAL_assertion(false);
       return Halfedge_const_handle();
@@ -550,7 +550,7 @@ public:
     }
    
     template < typename T >
-    void operator()(T& t) const
+    void operator()(T& /*t*/) const
     {
       CGAL_assertion(false);
     }
@@ -567,7 +567,7 @@ public:
     }
     
     template < typename T >
-    Halfedge_const_handle operator()(T& t) const
+    Halfedge_const_handle operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return Halfedge_const_handle();
@@ -585,7 +585,7 @@ public:
     }
     
     template < typename T >
-    void operator()(T& t) const
+    void operator()(T& /* t */) const
     {
       CGAL_assertion(false);
     }
@@ -606,7 +606,7 @@ public:
     }
     
     template < typename T >
-    Halfedge_const_handle operator()(T& t) const
+    Halfedge_const_handle operator()(T& /*t*/) const
     {
       CGAL_assertion(false);
       return Halfedge_const_handle();
@@ -628,7 +628,7 @@ public:
     }
    
     template < typename T >
-    void operator()(T& t) const
+    void operator()(T& /*t*/) const
     {
       CGAL_assertion(false);
     }
@@ -639,12 +639,12 @@ public:
   class dag_node_visitor : public boost::static_visitor<Dag_node*>
   {
   public:
-    Dag_node* operator()(Td_nothing& t) const
+    Dag_node* operator()(Td_nothing& /* t */) const
     {
       CGAL_assertion(false);
       return NULL;
     }
-    Dag_node* operator()(Td_inactive_trapezoid& t) const
+    Dag_node* operator()(Td_inactive_trapezoid& /* t */) const
     {
       CGAL_assertion(false);
       return NULL;
@@ -662,11 +662,11 @@ public:
   public:
     set_dag_node_visitor(Dag_node* node):m_node(node) {}
     
-    void operator()(Td_nothing& t) const
+    void operator()(Td_nothing& /*t*/) const
     {
       CGAL_assertion(false);
     }
-    void operator()(Td_inactive_trapezoid& t) const
+    void operator()(Td_inactive_trapezoid& /*t*/) const
     {
       CGAL_assertion(false);
     }
@@ -740,7 +740,7 @@ public:
     }
 
     template < typename T >
-    boost::optional<Curve_end> operator()(T& t) const
+    boost::optional<Curve_end> operator()(T& /* t */) const
     {
       CGAL_assertion(false);
       return boost::none;
@@ -762,7 +762,7 @@ public:
     }
 
     template < typename T >
-    Vertex_const_handle operator()(T& t) const
+    Vertex_const_handle operator()(T& /*t*/) const
     {
       CGAL_assertion(false);
       return Vertex_const_handle();

@@ -299,8 +299,8 @@ public:
   //this curve.
   virtual void before_split_edge (Halfedge_handle e,
 				                          Vertex_handle /* v */,
-                                  const X_monotone_curve_2&  cv1 ,
-                                  const X_monotone_curve_2&  cv2 )
+                                  const X_monotone_curve_2&  /* cv1 */ ,
+                                  const X_monotone_curve_2&  /* cv2 */ )
   {
   
     ////MICHAL: commented due to inefficient depth update, remove and insert instead
