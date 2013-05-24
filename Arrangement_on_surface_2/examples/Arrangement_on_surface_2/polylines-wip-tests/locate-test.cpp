@@ -32,12 +32,12 @@ void test_locate(std::vector<Point_2> pts, Point_2 p)
   int res = traits.locate(xpoly,p);
   std::cout << "The x-poly: " << xpoly << "\n"
     "contains the point: " << p << "\n"
-    "in its " << res << " segment\n\n";
+    "in its " << res << " segment\n";
   xpoly = xpolyline_construct(pts.rbegin(),pts.rend());
   res = traits.locate(xpoly,p);
   std::cout << "The reversed x-poly: " << xpoly << "\n"
     "contains the point: " << p << "\n"
-    "in its " << res << " segment\n\n";
+    "in its " << res << " segment\n";
 }
 
 int main ()
@@ -47,30 +47,142 @@ int main ()
   Traits_2::Construct_x_monotone_curve_2 xpolyline_construct =
     traits.construct_x_monotone_curve_2_object();
 
-  std::cout << "* Test the vertical case\n";
+  std::cout << "* Vertical xpoly with one segment\n";
 
   std::vector<Point_2> pts;
   pts.push_back(Point_2(0,0));
   pts.push_back(Point_2(0,1));
+
+  // Contains
+  test_locate(pts,Point_2(0,0));
+  test_locate(pts,Point_2(0,1));
+  test_locate(pts,Point_2(0,0.5));
+  // Above/below
+  test_locate(pts,Point_2(0,2));
+  test_locate(pts,Point_2(0,-1));
+  // Left/right
+  test_locate(pts,Point_2(0.2,0));
+  test_locate(pts,Point_2(-0.2,0));
+  test_locate(pts,Point_2(0.2,1));
+  test_locate(pts,Point_2(-0.2,1));
+  test_locate(pts,Point_2(0.2,0.5));
+  test_locate(pts,Point_2(-0.2,0.5));
+  test_locate(pts,Point_2(0.2,-1));
+  test_locate(pts,Point_2(-0.2,-1));
+  test_locate(pts,Point_2(0.2,2));
+  test_locate(pts,Point_2(-0.2,2));
+
+  std::cout << "* Vertical xpoly with two segment\n";
   pts.push_back(Point_2(0,2));
+  test_locate(pts,Point_2(0,0));
+  test_locate(pts,Point_2(0,1));
+  test_locate(pts,Point_2(0,2));
+  test_locate(pts,Point_2(0,0.5));
+  test_locate(pts,Point_2(0,1.4));
+  test_locate(pts,Point_2(0.5,0));
+  test_locate(pts,Point_2(-0.5,0));
+  test_locate(pts,Point_2(0.5,1));
+  test_locate(pts,Point_2(-0.5,1));
+  test_locate(pts,Point_2(0.5,2));
+  test_locate(pts,Point_2(-0.5,2));
+  test_locate(pts,Point_2(0.5,1.2));
+  test_locate(pts,Point_2(-0.5,1.2));
+  test_locate(pts,Point_2(0.5,-1));
+  test_locate(pts,Point_2(-0.5,2.1));
+
+  std::cout << "* Vertical xpoly with more segments\n";
   pts.push_back(Point_2(0,3));
   pts.push_back(Point_2(0,4));
   pts.push_back(Point_2(0,5));
   pts.push_back(Point_2(0,6));
 
-  Point_2 p;
+  test_locate(pts,Point_2(0,0));
+  test_locate(pts,Point_2(0,6));
+  test_locate(pts,Point_2(0,1));
+  test_locate(pts,Point_2(0,5));
+  test_locate(pts,Point_2(0,3));
+  test_locate(pts,Point_2(0,0.5));
+  test_locate(pts,Point_2(0,5.6));
+  test_locate(pts,Point_2(0,1.6));
+  test_locate(pts,Point_2(0,3.6));
+  test_locate(pts,Point_2(0,6));
+  test_locate(pts,Point_2(0.5,0));
+  test_locate(pts,Point_2(-0.5,0));
+  test_locate(pts,Point_2(0.5,1));
+  test_locate(pts,Point_2(-0.5,1));
+  test_locate(pts,Point_2(0.5,6));
+  test_locate(pts,Point_2(-0.5,6));
+  test_locate(pts,Point_2(0.5,4.1));
+  test_locate(pts,Point_2(-0.5,4.1));
+  test_locate(pts,Point_2(0.5,-1));
+  test_locate(pts,Point_2(-0.5,-1));
+  test_locate(pts,Point_2(0.5,7));
+  test_locate(pts,Point_2(-0.5,7));
 
-  p = Point_2(0,0);
-  test_locate(pts,p);
+  std::cout << "* Test non-vertical xpoly with one segment\n";
+  pts.clear();
+  pts.push_back(Point_2(0,0));
+  pts.push_back(Point_2(1,1));
+  test_locate(pts,Point_2(-1,-2));
+  test_locate(pts,Point_2(-1,-1));
+  test_locate(pts,Point_2(-1,2));
+  test_locate(pts,Point_2(0,-2));
+  test_locate(pts,Point_2(0,0));
+  test_locate(pts,Point_2(0,2));
+  test_locate(pts,Point_2(0.5,-1));
+  test_locate(pts,Point_2(0.5,0.5));
+  test_locate(pts,Point_2(0.5,1));
+  test_locate(pts,Point_2(1,-1));
+  test_locate(pts,Point_2(1,1));
+  test_locate(pts,Point_2(1,2));
+  test_locate(pts,Point_2(2,-1));
+  test_locate(pts,Point_2(2,2));
+  test_locate(pts,Point_2(2,2.2));
 
-  p=Point_2(0,6);
-  test_locate(pts,p);
+  std::cout << "* Test non-vertical xpoly with two segments\n";
+  pts.push_back(Point_2(2,2));
+  test_locate(pts,Point_2(-1,-2));
+  test_locate(pts,Point_2(-1,-1));
+  test_locate(pts,Point_2(-1,2));
+  test_locate(pts,Point_2(0,-2));
+  test_locate(pts,Point_2(0,0));
+  test_locate(pts,Point_2(0,2));
+  test_locate(pts,Point_2(0.5,-1));
+  test_locate(pts,Point_2(0.5,0.5));
+  test_locate(pts,Point_2(0.5,1));
+  test_locate(pts,Point_2(1,-1));
+  test_locate(pts,Point_2(1,1));
+  test_locate(pts,Point_2(1,2));
+  test_locate(pts,Point_2(2,-1));
+  test_locate(pts,Point_2(2,2));
+  test_locate(pts,Point_2(2,2.2));
+  test_locate(pts,Point_2(3,-2.2));
+  test_locate(pts,Point_2(3,3));
+  test_locate(pts,Point_2(3,6));
 
-  p=Point_2(0,1.5);
-  test_locate(pts,p);
-
-  p=Point_2(0,3.5);
-  test_locate(pts,p);
+  std::cout << "* Test non-vertical xpoly with more segments\n";
+  pts.push_back(Point_2(3,3));
+  pts.push_back(Point_2(4,4));
+  pts.push_back(Point_2(5,5));
+  test_locate(pts,Point_2(-1,-2));
+  test_locate(pts,Point_2(-1,-1));
+  test_locate(pts,Point_2(-1,2));
+  test_locate(pts,Point_2(0,-2));
+  test_locate(pts,Point_2(0,0));
+  test_locate(pts,Point_2(0,2));
+  test_locate(pts,Point_2(0.5,-1));
+  test_locate(pts,Point_2(0.5,0.5));
+  test_locate(pts,Point_2(0.5,1));
+  test_locate(pts,Point_2(1,-1));
+  test_locate(pts,Point_2(1,1));
+  test_locate(pts,Point_2(1,2));
+  test_locate(pts,Point_2(2,-1));
+  test_locate(pts,Point_2(2,2));
+  test_locate(pts,Point_2(2,2.2));
+  test_locate(pts,Point_2(3,-2.2));
+  test_locate(pts,Point_2(3,3));
+  test_locate(pts,Point_2(3,6));
+  //TODO: Verify and complete the test of locte(cv,p) for a multi-segments cv
 
 
   return 0;
