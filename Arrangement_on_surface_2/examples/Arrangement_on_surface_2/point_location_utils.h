@@ -3,14 +3,49 @@
 //-----------------------------------------------------------------------------
 // Print the result of a point-location query.
 //
-template <typename Arrangement_>
+#if CGAL_ARR_POINT_LOCATION_VERSION < 2
+template <class Arrangement_2>
+void print_point_location(const typename Arrangement_2::Point_2& q,
+                          CGAL::Object    obj)
+{
+  typename Arrangement_2::Vertex_const_handle    v;
+  typename Arrangement_2::Halfedge_const_handle  e;
+  typename Arrangement_2::Face_const_handle      f;
+
+  std::cout << "The point (" << q << ") is located ";
+  if (CGAL::assign(f, obj))
+  {
+    // q is located inside a face:
+    if (f->is_unbounded())
+      std::cout << "inside the unbounded face." << std::endl;
+    else
+      std::cout << "inside a bounded face." << std::endl;
+  }
+  else if (CGAL::assign(e, obj))
+  {
+    // q is located on an edge:
+    std::cout << "on an edge: " << e->curve() << std::endl;
+  }
+  else if (CGAL::assign(v, obj))
+  {
+    // q is located on a vertex:
+    if (v->is_isolated())
+      std::cout << "on an isolated vertex: " << v->point() << std::endl;
+    else
+      std::cout << "on a vertex: " << v->point() << std::endl;
+  }
+  else
+  {
+    CGAL_error_msg( "Invalid object.");
+  }
+}
+#else
+template <typename Arrangement_2>
 void
 print_point_location
-(const typename Arrangement_::Point_2& q,
- typename CGAL::Arr_point_location_result<Arrangement_>::Type obj)
+(const typename Arrangement_2::Point_2& q,
+ typename CGAL::Arr_point_location_result<Arrangement_2>::Type obj)
 {
-  typedef Arrangement_                                  Arrangement_2;
-  
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
@@ -31,6 +66,7 @@ print_point_location
               << " vertex: " << (*v)->point() << std::endl;
   else CGAL_error_msg("Invalid object.");
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // Perform a point-location query and print the result.

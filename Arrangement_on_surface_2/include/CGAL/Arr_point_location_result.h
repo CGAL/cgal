@@ -67,7 +67,7 @@ struct Arr_point_location_result {
   inline CGAL::Object operator()() const { return CGAL::Object(); }
 
   template<typename T>
-  T* assign(CGAL::Object obj) const { return CGAL::object_cast<T>(&obj); }
+  const T* assign(CGAL::Object obj) const { return CGAL::object_cast<T>(&obj); }
 #else
   template<typename T>
   inline Type operator()(T t) const { return Type(t); }

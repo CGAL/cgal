@@ -76,11 +76,8 @@ protected:
   const Topology_traits*  m_topol_traits;   // Its associated topology traits.
 
 #if CGAL_ARR_POINT_LOCATION_VERSION < 2
-  template<typename T>
-  inline bool optional_empty(T t) const { return t.empty(); }
-
-  template<typename T>
-  inline const Result_type& optional_assign(T t) const { return t; }  
+  inline bool optional_empty(const CGAL::Object& obj) const { return obj.empty(); }
+  inline const Result_type& optional_assign(const CGAL::Object& t) const { return t; }
 #else
   template<typename T>
   inline bool optional_empty(T t) const { return (!t); }
