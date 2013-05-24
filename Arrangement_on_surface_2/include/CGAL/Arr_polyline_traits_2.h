@@ -1665,7 +1665,7 @@ public:
 
       // Verify that q has the same x-coord as cv (which is vertical)
       Comparison_result res = compare_x(max_vertex(cv[to]), q);
-      if (res != EQUAL) return INVALID_INDEX;
+      if (res != EQUAL || res_to == res_from) return INVALID_INDEX;
 
       // Perform a binary search to locate the segment that contains q in its
       // xy-range:
@@ -1710,20 +1710,29 @@ public:
 
     // Perform a binary search and locate the segment that contains q in its
     // x-range:
-    while (to > from) {
+    while ((direction == SMALLER && to > from) ||
+           (direction == LARGER && to <from)) {
       unsigned int mid = (from + to) / 2;
 
-      if (mid > from) {
+      if ((direction == SMALLER && mid > from) ||
+          (direction == LARGER && mid < from)) {
         Comparison_result res_mid = compare_x(min_vertex(cv[mid]), q);
         if (res_mid == EQUAL) return mid;
         if (res_mid == res_from) from = mid;
-        else to = mid - 1;
+        else if (direction == SMALLER)
+          to = mid - 1;
+        else
+          to = mid + 1;
       } else {
-        CGAL_assertion(mid < to);
+        CGAL_assertion((direction == SMALLER && mid < to) ||
+                       (direction == LARGER && mid > to));
         Comparison_result res_mid = compare_x(max_vertex(cv[mid]), q);
         if (res_mid == EQUAL) return mid;
         if (res_mid == res_to) to = mid;
-        else from = mid + 1;
+        else if (direction==SMALLER)
+          from = mid + 1;
+        else
+          from = mid - 1;
       }
     }
 
