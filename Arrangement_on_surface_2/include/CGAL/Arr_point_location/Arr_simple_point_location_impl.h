@@ -94,7 +94,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   }
 
   CGAL_error();
-  return make_default_result();
+  return default_result();
 }
 
 //-----------------------------------------------------------------------------

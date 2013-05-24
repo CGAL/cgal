@@ -186,7 +186,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
 
   // We should never reach here:
   CGAL_error();
-  return make_default_result();
+  return default_result();
 }
 
 //-----------------------------------------------------------------------------
@@ -275,7 +275,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
       // traversal around v without locating a place for seg.
       if (curr == first) {
         CGAL_error_msg("Completed a full cycle around v without locating seg.");
-        return make_default_result();
+        return default_result();
       }
     }
 
@@ -586,7 +586,7 @@ _walk_from_face(Face_const_handle face,
 
   // We should never reach here:
   CGAL_error();
-  return make_default_result();
+  return default_result();
 }
 
 //-----------------------------------------------------------------------------
