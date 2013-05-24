@@ -95,10 +95,14 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr)
 }
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
-  if(state.ctrl_pressing && 
-    (state.left_button_pressing || state.right_button_pressing) &&
-    !ui_widget->ActivatePivotingCheckBox->isChecked() ) {
-    deform(); 
+  if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing)) {
+    if(!ui_widget->ActivatePivotingCheckBox->isChecked()) {
+      deform();
+    }
+    else {
+      emit itemChanged(); // for redraw while Pivoting (since we close signals of manipulatedFrames while pivoting, 
+                          // for now redraw with timer)
+    }
   }
 }
 bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
