@@ -29,8 +29,10 @@ public:
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
+  // dispatch to poly_item direct_draw and direct_draw_edges
   void draw() const;
- 
+  void draw_edges() const;
+
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
   const Polyhedron* polyhedron() const;

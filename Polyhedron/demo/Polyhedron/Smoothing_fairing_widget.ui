@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>265</width>
-    <height>198</height>
+    <width>237</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="toolTip">
@@ -22,15 +22,95 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QRadioButton" name="Insertion_radio_button">
+               <property name="text">
+                <string>Insertion</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="Removal_radio_button">
+               <property name="text">
+                <string>Removal</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Brush size:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="Brush_size_spin_box"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QPushButton" name="Set_all_vertices_button">
+             <property name="text">
+              <string>Set All Vertices as ROI</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="Clear_ROI_button">
+             <property name="text">
+              <string>Clear ROI</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="Show_ROI_check_box">
+         <property name="text">
+          <string>Show ROI</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Fair Parameters</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QRadioButton" name="Insertion_radio_button">
+           <widget class="QRadioButton" name="Uniform_weight_radio_button">
             <property name="text">
-             <string>Insertion</string>
+             <string>Uniform Weight</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="Cotangent_weight_radio_button">
+            <property name="text">
+             <string>Cotangent Weight</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -38,54 +118,19 @@
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="Removal_radio_button">
+           <widget class="QRadioButton" name="Scale_dependent_weight_radio_button">
             <property name="text">
-             <string>Removal</string>
+             <string>Scale-dependent Weight</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Brush size:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="Brush_size_spin_box"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QPushButton" name="Set_all_vertices_button">
-          <property name="text">
-           <string>Set All Vertices as ROI</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="Clear_ROI_button">
-          <property name="text">
-           <string>Clear ROI</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="Show_ROI_check_box">
-      <property name="text">
-       <string>Show ROI</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>

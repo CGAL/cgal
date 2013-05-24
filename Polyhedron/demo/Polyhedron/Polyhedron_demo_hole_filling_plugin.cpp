@@ -136,14 +136,8 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   bool refine = fair || ui_widget->Triangulate_refine_radio_button->isChecked();
   double alpha = ui_widget->Density_control_factor_spin_box->value();
   bool create_new = ui_widget->Create_new_polyhedron_check_box->checkState() == Qt::Checked;
-  CGAL::Fairing_weight_type_tag weight_tag;
-  if(ui_widget->Scale_dependent_weight_radio_button->isChecked()) {
-    weight_tag = CGAL::SCALE_DEPENDENT_WEIGHTING;
-  } else if(ui_widget->Uniform_weight_radio_button->isChecked()) {
-    weight_tag = CGAL::UNIFORM_WEIGHTING;
-  } else {
-    weight_tag = CGAL::COTANGENT_WEIGHTING;
-  }
+
+
   // create new polyhedron item if required
   Polyhedron* poly_pointer;
   Scene_polyhedron_item* new_item = 0;
@@ -163,7 +157,17 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ){
     if(it->is_border()){
       any_changes = true;
-      CGAL::fill(poly, it, refine, alpha, fair, weight_tag);
+
+      if(ui_widget->Scale_dependent_weight_radio_button->isChecked())
+        CGAL::fill(poly, it, refine, alpha, fair, 
+          CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::SCALE_DEPENDENT_WEIGHTING>::weight_calculator());
+      if(ui_widget->Uniform_weight_radio_button->isChecked())
+        CGAL::fill(poly, it, refine, alpha, fair, 
+          CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::UNIFORM_WEIGHTING>::weight_calculator());
+      else
+        CGAL::fill(poly, it, refine, alpha, fair, 
+          CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::COTANGENT_WEIGHTING>::weight_calculator());
+
       it = poly.halfedges_begin();
       continue;
     }

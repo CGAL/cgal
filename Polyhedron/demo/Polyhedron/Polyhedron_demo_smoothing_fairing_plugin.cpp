@@ -40,11 +40,23 @@ public:
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
   }
+
+  void draw_edges() const {
+    poly_item->direct_draw_edges();
+    if(rendering_mode == Wireframe) {
+      draw_ROI();
+    }
+  }  
   void draw() const {
-    poly_item->direct_draw();
+    poly_item->draw();
+    draw_ROI();
+  }
+  void draw_ROI() const {
     if(!selected_vertices.empty() && ui_widget->Show_ROI_check_box->isChecked()) {
+      CGAL::GL::Color color;
       CGAL::GL::Point_size point_size; point_size.set_point_size(5);
-      CGAL::GL::Color color; color.set_rgb_color(0, 0, 0);
+      color.set_rgb_color(0, 1.f, 0);
+
       ::glBegin(GL_POINTS);
       for(std::set<Vertex_handle>::iterator 
         it = selected_vertices.begin(),
@@ -80,7 +92,7 @@ public slots:
       }
     }else {
       for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_vertices.erase(it->first);
+        any_change |= selected_vertices.erase(it->first) != 0;
       }
     }
     if(any_change) { emit itemChanged(); }
@@ -105,7 +117,7 @@ protected:
       }   
     }
 
-    //if(!visible()) { return false; } // if not visible just update event state but don't do any action
+    if(!poly_item->visible()) { return false; } // if not visible just update event state but don't do any action
 
     // use mouse move event for paint-like selection
     if(event->type() == QEvent::MouseMove &&
@@ -126,7 +138,6 @@ protected:
     }//end MouseMove
     return false;
   }
-
   std::map<Vertex_handle, int> extract_k_ring(const Polyhedron &P, Vertex_handle v, int k)
   {
     std::map<Vertex_handle, int>  D;
@@ -283,23 +294,16 @@ void Polyhedron_demo_smoothing_fairing_plugin::on_Fair_button_clicked() {
     return;
   }
 
-  typedef
-#if defined(CGAL_EIGEN3_ENABLED)
-#if defined(CGAL_SUPERLU_ENABLED)
-    CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> >
-#else
-    CGAL::Eigen_solver_traits<
-    Eigen::SparseLU<
-    CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
-    Eigen::COLAMDOrdering<int> >  >
-#endif
-#endif
-    Sparse_linear_system;
-  typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Cotangent_weight;
-
-  CGAL::internal::Fair_Polyhedron_3<Polyhedron, Sparse_linear_system, Cotangent_weight> fair_functor;
-  fair_functor(poly_item->selected_vertices, *poly_item->polyhedron());
-  scene->itemChanged(poly_item);
+  if(ui_widget->Scale_dependent_weight_radio_button->isChecked())
+    CGAL::fair(*poly_item->polyhedron(), poly_item->selected_vertices, 
+      CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::SCALE_DEPENDENT_WEIGHTING>::weight_calculator());
+  if(ui_widget->Uniform_weight_radio_button->isChecked())
+    CGAL::fair(*poly_item->polyhedron(), poly_item->selected_vertices,
+      CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::UNIFORM_WEIGHTING>::weight_calculator());
+  else
+    CGAL::fair(*poly_item->polyhedron(), poly_item->selected_vertices,
+      CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::COTANGENT_WEIGHTING>::weight_calculator());
+  poly_item->changed();
 }
 
 Scene_polyhedron_selectable_item* 
