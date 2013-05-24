@@ -94,8 +94,8 @@ protected:
   int                      num_small_not_updated_changes;
 
   template<typename T>
-  PL_result_type pl_result_return(T t) { return PL_result()(t); }
-  inline PL_result_type pl_result_return() { return PL_result()(); }
+  PL_result_type pl_result_return(T t) { return PL_result::make_result(t); }
+  inline PL_result_type pl_default_result() { return PL_result::default_result(); }
   
 public: 
   bool is_empty() const { return nn.is_empty(); }

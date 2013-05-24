@@ -79,16 +79,14 @@ protected:
   inline bool optional_empty(const CGAL::Object& obj) const { return obj.empty(); }
   inline const Result_type& optional_assign(const CGAL::Object& t) const { return t; }
 #else
-  template<typename T>
-  inline bool optional_empty(T t) const { return (!t); }
-
-  template<typename T>
-  inline const Result_type& optional_assign(T t) const { return *t; }  
+  inline bool optional_empty(const boost::optional<Result_type>& t) const { return (!t); }
+  inline const Result_type& optional_assign(const boost::optional<Result_type>& t) const { return *t; }
 #endif
   
   template<typename T>
-  Result_type result_return(T t) const { return Result()(t); }
-  inline Result_type result_return() const { return Result()(); }
+  Result_type result_return(T t) const { return Result::make_result(t); }
+  inline Optional_result_type make_optional_result() const { return Result::empty_optional_result(); }
+  inline Result_type make_default_result() const { return Result::default_result(); }
 
 public:
   /*! Default constructor. */

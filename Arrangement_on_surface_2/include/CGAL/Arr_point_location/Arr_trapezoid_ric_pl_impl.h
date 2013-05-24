@@ -138,7 +138,7 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
   }
 
   CGAL_TRAP_PRINT_DEBUG("EMPTY");
-  return result_return();   
+  return make_default_result();   
 }
 
 

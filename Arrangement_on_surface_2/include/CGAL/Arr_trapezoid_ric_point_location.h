@@ -137,8 +137,8 @@ protected:
   //X_monotone_curve_2        m_cv_before_merge2;
 
   template<typename T>
-  Result_type result_return(T t) const { return Result()(t); }
-  inline Result_type result_return() const { return Result()(); }
+  Result_type result_return(T t) const { return Result::make_result(t); }
+  inline Result_type make_default_result() const { return Result::default_result(); }
 
 public:
   /*! Default constructor. */

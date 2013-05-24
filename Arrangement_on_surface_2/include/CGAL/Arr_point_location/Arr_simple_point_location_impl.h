@@ -94,7 +94,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   }
 
   CGAL_error();
-  return result_return();
+  return make_default_result();
 }
 
 //-----------------------------------------------------------------------------
@@ -239,7 +239,7 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 
   // If we did not locate a closest halfedge, return an empty object.
   if (closest_he == NULL)
-    return result_return();
+    return make_optional_result();
 
   // If we found a fictitious edge, return it now.
   if (closest_he->has_null_curve())
