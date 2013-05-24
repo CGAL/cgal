@@ -84,7 +84,7 @@ protected:
 #endif
   
   template<typename T>
-  Result_type result_return(T t) const { return Result::make_result(t); }
+  Result_type make_result(T t) const { return Result::make_result(t); }
   inline Optional_result_type make_optional_result() const { return Result::empty_optional_result(); }
   inline Result_type default_result() const { return Result::default_result(); }
 

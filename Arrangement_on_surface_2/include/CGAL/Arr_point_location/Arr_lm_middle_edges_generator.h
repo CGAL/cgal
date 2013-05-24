@@ -120,7 +120,7 @@ protected:
     {
       //special treatment for arrangement with one isolated verrtex
       Vertex_const_iterator vit = arr->vertices_begin();
-      PL_result_type obj = this->pl_result_return(vit);
+      PL_result_type obj = this->pl_make_result(vit);
       Point_2 p (vit->point());
       NN_Point_2 np(p, obj);
       nn_points.push_back(np);
@@ -136,7 +136,7 @@ protected:
       
       //CGAL_PRINT_DEBUG("mid point is= " << p);
       
-      PL_result_type obj = this->pl_result_return(hh); 
+      PL_result_type obj = this->pl_make_result(hh); 
       NN_Point_2 np(p, obj); 
       nn_points.push_back(np);
     } 

@@ -68,10 +68,10 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
       {
       if (m_traits->equal_2_object()(p, iso_verts_it->point())) {
           Vertex_const_handle  vh = iso_verts_it;
-        return result_return(vh);
+        return make_result(vh);
         }
       }
-    return result_return(ubf);
+    return make_result(ubf);
   }
 
   switch(td_lt)
@@ -82,7 +82,7 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
       Td_active_vertex& v (boost::get<Td_active_vertex>(tr));
       CGAL_TRAP_PRINT_DEBUG("POINT");
       CGAL_assertion(!v.vertex()->is_at_open_boundary());
-      return result_return(v.vertex());
+      return make_result(v.vertex());
     }
     break;
 
@@ -93,7 +93,7 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
       CGAL_TRAP_PRINT_DEBUG("CURVE");
       if ( m_traits->is_in_x_range_2_object()(h->curve(),p) && 
            m_traits->compare_y_at_x_2_object()(p,h->curve()) == EQUAL)
-        return result_return(h);
+        return make_result(h);
       else {
         //ixx
         std::cerr << "curve is: "<< h->curve() <<" point is: "<< p <<std::endl; 
@@ -124,11 +124,11 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
       {
         if (m_traits->equal_2_object()(p, iso_verts_it->point())) {
           Vertex_const_handle  vh = iso_verts_it;
-          return result_return(vh);
+          return make_result(vh);
         }
       }
 
-      return result_return(fh);
+      return make_result(fh);
     }
     break;
   default:
@@ -275,7 +275,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
     {
       //p fell on Td_active_vertex
       Td_active_vertex& v (boost::get<Td_active_vertex>(item));
-      return (result_return(v.vertex()));
+      return (make_result(v.vertex()));
     }
     break;
  case TD::CURVE:
@@ -288,7 +288,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
       {
         h=h->twin();
       }
-      return result_return(h);
+      return make_result(h);
     }
     break;
   case TD::TRAPEZOID:
@@ -384,14 +384,14 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
   // If we found an isolated vertex above (or under) the query point, return
   // a handle to this vertex.
   if (closest_iso_v != invalid_v)
-    return result_return(closest_iso_v);
+    return make_result(closest_iso_v);
 
   // If we are inside the unbounded face, return this face.
   if (halfedge_found == invalid_he)
-    return result_return(face);
+    return make_result(face);
 
   // Return the halfedge lying above (or below) the query point.
-  return result_return(halfedge_found);
+  return make_result(halfedge_found);
 }
 
 } //namespace CGAL

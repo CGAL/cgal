@@ -41,7 +41,7 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   if (p_arr->number_of_vertices() == 0) {
     CGAL_assertion(p_arr->number_of_faces() == 1);
     Face_const_handle      fh = p_arr->faces_begin();
-    return result_return(fh);
+    return make_result(fh);
   }
   // Use the generator and to find the closest landmark to the query point.
   result_type    lm_location_obj; 
@@ -83,7 +83,7 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
     {
       if (equal(p, iso_verts_it->point())) {
         Vertex_const_handle  ivh = iso_verts_it;
-        return result_return(ivh);
+        return make_result(ivh);
       }
     }
   }
@@ -107,7 +107,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
 
   // Check if the qurey point p conincides with the vertex.
   if (m_traits->equal_2_object()(vh->point(), p))
-    return result_return(vh);
+    return make_result(vh);
 
   // In case of an isolated vertex, walk to from the face that contains
   // it toward the query point.
@@ -239,7 +239,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
     // twin, as v is the tip of an "antenna").
     if (! equal_curr) {
       CGAL_assertion(curr->face() == curr->twin()->face());
-      return result_return(curr->face());
+      return make_result(curr->face());
     }
   }
   else {
@@ -282,7 +282,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
     // In case seg is not equal to curr's curve, just return the incident face
     // of the halfegde we have located.
     if (! equal_curr)
-      return result_return(curr->face());
+      return make_result(curr->face());
   }
 
   // If we reached here, seg overlaps the curve associated with curr next to
@@ -290,7 +290,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
   // halfedge.
   if (m_traits->equal_2_object()(p, curr->source()->point())) {
     // In this case p equals the source point of the edge.
-    return result_return(curr->source());
+    return make_result(curr->source());
   }
 
   // Check whether p lies on the curve associated with the edge.
@@ -299,13 +299,13 @@ _find_face_around_vertex(Vertex_const_handle vh,
   {
     // p is located on the interior of the edge.
     Halfedge_const_handle   he = curr;
-    return result_return(he);
+    return make_result(he);
   }
 
   // In this case, the source vertex of the current edge is closer
   // to the query point p.
   new_vertex = true;
-  return result_return(curr->source());
+  return make_result(curr->source());
 }
 
 //-----------------------------------------------------------------------------
@@ -341,7 +341,7 @@ _walk_from_edge(Halfedge_const_handle eh,
   if (! eh->source()->is_at_open_boundary()) {
     if (m_traits->equal_2_object()(p, eh->source()->point())) {
       Vertex_const_handle vh = eh->source();
-      return result_return(vh);
+      return make_result(vh);
     }
     // if the source point of the halfedge is located on seg then we insert
     // the predecessor of the halfedge and its twin to crossed_edges
@@ -363,7 +363,7 @@ _walk_from_edge(Halfedge_const_handle eh,
   if (! eh->target()->is_at_open_boundary()) {
     if (m_traits->equal_2_object()(p, eh->target()->point())) {
       Vertex_const_handle vh = eh->target();
-      return result_return(vh);
+      return make_result(vh);
     }
     // if the target point of the halfedge is located on seg then we insert
     // the successor of the halfedge and its twin to crossed_edges
@@ -393,7 +393,7 @@ _walk_from_edge(Halfedge_const_handle eh,
     switch (res) { 
      case EQUAL:
       // The edge contains p in its interior:
-      return result_return(eh);
+      return make_result(eh);
 
      case LARGER:
       // p is above cv: the edge must be oriented from left to right.
@@ -522,9 +522,9 @@ _walk_from_face(Face_const_handle face,
         if (he != invalid_he) {
           // Check if the query point is located on a vertex or on an edge.
           if (is_target)
-            return result_return(he->target());
+            return make_result(he->target());
           else if (is_on_edge)
-            return result_return(he);
+            return make_result(he);
           if (new_vertex != invalid_vertex) {
             // if we got here it means that a closer vertex then np was found
             return (_walk_from_vertex(new_vertex, p, crossed_edges));
@@ -540,7 +540,7 @@ _walk_from_face(Face_const_handle face,
       // Check if we found a new face (hole) containing p. If not, the current
       // face contains p.
       if (new_face == face)
-        return result_return(face);
+        return make_result(face);
 
       // Continue from the new face (hole).
       face = new_face;
@@ -563,9 +563,9 @@ _walk_from_face(Face_const_handle face,
         if (he != invalid_he) {
           // Check if the query point is located on a vertex or on an edge.
           if (is_target)
-            return result_return(he->target());
+            return make_result(he->target());
           else if (is_on_edge)
-            return result_return(he);
+            return make_result(he);
           if (new_vertex != invalid_vertex) {
             // if we got here it means that a closer vertex then np was found
             return (_walk_from_vertex(new_vertex, p, crossed_edges));

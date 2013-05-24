@@ -73,18 +73,18 @@ Arr_walk_along_line_point_location<Arrangement>::locate(const Point_2& p) const
         {
           // The query point is located on the source vertex:
           Vertex_const_handle  vh = closest_he->source();
-          return result_return(vh);
+          return make_result(vh);
         }
         else if (! closest_he->target()->is_at_open_boundary() &&
                  equal (p, closest_he->target()->point()))
         {
           // The query point is located on the target vertex:
           Vertex_const_handle  vh = closest_he->target();
-          return result_return(vh);
+          return make_result(vh);
         }
 
         // The query point is located in the edge interior:
-        return result_return(closest_he);
+        return make_result(closest_he);
       }
 
       // Check if the point is contained in the interior of the current hole.
@@ -138,18 +138,18 @@ Arr_walk_along_line_point_location<Arrangement>::locate(const Point_2& p) const
             {
               // The query point is located on the source vertex:
               Vertex_const_handle  vh = closest_he->source();
-              return result_return(vh);
+              return make_result(vh);
             }
             else if (! closest_he->target()->is_at_open_boundary() &&
                      equal (p, closest_he->target()->point()))
             {
               // The query point is located on the target vertex:
               Vertex_const_handle  vh = closest_he->target();
-              return result_return(vh);
+              return make_result(vh);
             }
 
             // The query point is located in the edge iterior:
-            return result_return(closest_he);
+            return make_result(closest_he);
           }
 
           // If the point is not contained in the face, move to the neighboring
@@ -190,12 +190,12 @@ Arr_walk_along_line_point_location<Arrangement>::locate(const Point_2& p) const
   {
     if (equal(p, iso_verts_it->point())) {
       Vertex_const_handle  vh = iso_verts_it;
-      return result_return(vh);
+      return make_result(vh);
     }
   }
 
   // The query point is contained in the face interior:
-  return result_return(face);
+  return make_result(face);
 }
 
 //-----------------------------------------------------------------------------
@@ -240,7 +240,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
       // This can happen only if the edge is vertical.
       if (is_on_edge) {
         CGAL_assertion (is_vertical (closest_he->curve()));
-        return result_return(closest_he);
+        return make_result(closest_he);
       }
 
       // Check if the point is contained in the interior of the current hole.
@@ -278,7 +278,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
           // This can happen only if the edge is vertical.
           if (is_on_edge) {
             CGAL_assertion (is_vertical (closest_he->curve()));
-            return result_return(closest_he);
+            return make_result(closest_he);
           }
 
           // If the point is not contained in the face, move to the neighboring
@@ -365,14 +365,14 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
   if (closest_iso_v != invalid_v) {
     // The first object we encounter when we shoot a vertical ray from p is
     // an isolated vertex:
-    return result_return(closest_iso_v);
+    return make_result(closest_iso_v);
   }
 
   // If we have no halfedge above, return the initial face.
   if (closest_he == invalid_he) {
     Face_const_handle  uf = Face_const_handle (top_traits->initial_face());
 
-    return result_return(uf);
+    return make_result(uf);
   }
 
   // If we reached here, closest_he is the closest edge from above (below)
@@ -387,7 +387,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
     Face_const_handle  uf = closest_he->face();
 
     CGAL_assertion (! uf->is_fictitious());
-    return result_return(uf);
+    return make_result(uf);
   }
 
   // Check if one of closest_he's end vertices lies directly above (below) the
@@ -397,14 +397,14 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
         compare_x (p, closest_he->source()->point()) == EQUAL)
     {
       Vertex_const_handle  vh = closest_he->source();
-      return result_return(vh);
+      return make_result(vh);
     }
 
     if (! closest_he->target()->is_at_open_boundary() &&
         compare_x (p, closest_he->target()->point()) == EQUAL)
     {
       Vertex_const_handle  vh = closest_he->target();
-      return result_return(vh);
+      return make_result(vh);
     }
   }
   else {
@@ -415,16 +415,16 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
     if ((shoot_up && is_directed_up) || (! shoot_up && ! is_directed_up))
     {
       Vertex_const_handle  vh = closest_he->source();
-      return result_return(vh);
+      return make_result(vh);
     }
     else {
       Vertex_const_handle  vh = closest_he->target();
-      return result_return(vh);
+      return make_result(vh);
     }
   }
 
   // The interior of the edge is closest to the query point:
-  return result_return(closest_he);
+  return make_result(closest_he);
 }
 
 //-----------------------------------------------------------------------------

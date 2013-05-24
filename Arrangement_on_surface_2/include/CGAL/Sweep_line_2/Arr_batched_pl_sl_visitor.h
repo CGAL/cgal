@@ -65,7 +65,7 @@ protected:
   OutputIterator& m_out;       // An output iterator for the result.
 
   template<typename T>
-  Pl_result_type pl_result_return(T t) { return Pl_result::make_result(t); }
+  Pl_result_type pl_make_result(T t) { return Pl_result::make_result(t); }
   inline Pl_result_type pl_default_result() { return Pl_result::default_result(); }
   
 public:
@@ -128,7 +128,7 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
   if (event->is_action()) {
     // The query point coincides with an isolated arrangement vertex:
     Vertex_const_handle  vh = event->point().vertex_handle();
-    *m_out++ = std::make_pair(event->point().base(), pl_result_return(vh));
+    *m_out++ = std::make_pair(event->point().base(), pl_make_result(vh));
     return true;
   }
 
@@ -151,7 +151,7 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
       vh = he->source();
     }
 
-    *m_out++ = std::make_pair(event->point().base(), pl_result_return(vh));
+    *m_out++ = std::make_pair(event->point().base(), pl_make_result(vh));
     return true;
   }
 
@@ -159,7 +159,7 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
     // There are no valid edges above the query point, so we use the helper
     // class to obtain the current top face.
     *m_out++ = std::make_pair(event->point().base(),
-                              pl_result_return(m_helper.top_face()));
+                              pl_make_result(m_helper.top_face()));
     return true;
   }
 
@@ -167,7 +167,7 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
     // The query point lies on the halfedge associated with the subcurve
     // that the status-line iterator refers to.
     Halfedge_const_handle  he = (*above)->last_curve().halfedge_handle();
-    *m_out++ = std::make_pair(event->point().base(), pl_result_return(he));
+    *m_out++ = std::make_pair(event->point().base(), pl_make_result(he));
     return true;
   }
 
@@ -175,7 +175,7 @@ after_handle_event(Event* event, Status_line_iterator above, bool on_above)
   // the query point, such that the query point is located in the incident
   // face of this halfedge.
   Halfedge_const_handle  he = (*above)->last_curve().halfedge_handle();
-  *m_out++ = std::make_pair(event->point().base(), pl_result_return(he->face()));
+  *m_out++ = std::make_pair(event->point().base(), pl_make_result(he->face()));
   return true;
 }
 

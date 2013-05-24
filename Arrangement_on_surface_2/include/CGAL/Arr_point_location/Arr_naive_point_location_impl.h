@@ -46,7 +46,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
   for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
     vh = vit;
     if (equal(p, vh->point()))
-      return result_return(vh);
+      return make_result(vh);
   }
 
   // Go over arrangement halfedges and check whether one of them contains
@@ -62,7 +62,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
     hh = eit;
 
     if (is_in_x_range(hh->curve(), p) && compare_y_at_x(p, hh->curve()) == EQUAL)
-      return result_return(hh);
+      return make_result(hh);
   }
 
   // Go over all faces an locate the innermost one that contains the query
@@ -106,7 +106,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
 
   // Return the innermost face.
   CGAL_assertion(f_inner != invalid_f);
-  return result_return(f_inner);
+  return make_result(f_inner);
 }
 
 } //namespace CGAL

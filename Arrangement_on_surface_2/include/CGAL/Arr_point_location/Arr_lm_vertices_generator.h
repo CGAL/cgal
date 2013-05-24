@@ -108,7 +108,7 @@ public:
     num_landmarks = 0;
     for (vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
       Vertex_const_handle vh = vit;
-      nnp_list.push_back(NN_Point_2(vh->point(), this->pl_result_return(vh)));
+      nnp_list.push_back(NN_Point_2(vh->point(), this->pl_make_result(vh)));
       num_landmarks++;
     }
 

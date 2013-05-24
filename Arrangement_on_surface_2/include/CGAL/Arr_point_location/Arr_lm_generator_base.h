@@ -94,7 +94,7 @@ protected:
   int                      num_small_not_updated_changes;
 
   template<typename T>
-  PL_result_type pl_result_return(T t) { return PL_result::make_result(t); }
+  PL_result_type pl_make_result(T t) { return PL_result::make_result(t); }
   inline PL_result_type pl_default_result() { return PL_result::default_result(); }
   
 public: 

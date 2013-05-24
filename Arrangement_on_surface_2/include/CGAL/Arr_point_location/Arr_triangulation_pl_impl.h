@@ -72,11 +72,11 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
         if (equal (p, iso_verts_it->point()))
         {
           Vertex_const_handle  vh = iso_verts_it;
-          return result_return(vh);
+          return make_result(vh);
         }
       }
 
-      return result_return(face_found);
+      return make_result(face_found);
     }
 
    case CDT::VERTEX:
@@ -84,7 +84,7 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
       //get the vertex from li, which is the index of the vertex
       Vertex_const_handle vertex_found = fh->vertex(li)->info();
       CGAL_TRG_PRINT_DEBUG("vertex: "<< vertex_found->point());
-      return result_return(vertex_found);
+      return make_result(vertex_found);
     }
 
    case CDT::EDGE:
@@ -114,7 +114,7 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
           }
         } while (++circ1 != circ1_done);
 
-        return result_return(edeg_found); 
+        return make_result(edeg_found); 
       }
       //if the edge is not a constrained - its not an edge of the 
       //plannar map, which means we're inside of a pm face -
@@ -142,9 +142,9 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
   CGAL_assertion(!v0->is_isolated());
   CGAL_assertion(!v1->is_isolated());
   CGAL_assertion(!v2->is_isolated());
-  if (v0->is_isolated()) return result_return(v0->face());
-  if (v1->is_isolated()) return result_return(v1->face());
-  if (v2->is_isolated()) return result_return(v2->face());
+  if (v0->is_isolated()) return make_result(v0->face());
+  if (v1->is_isolated()) return make_result(v1->face());
+  if (v2->is_isolated()) return make_result(v2->face());
 
   //find the face in the pm correspond to the 3 vertices
   Halfedge_around_vertex_const_circulator havc0 = v0->incident_halfedges(); 
@@ -203,11 +203,11 @@ Arr_triangulation_point_location<Arrangement_2>::locate (const Point_2& p) const
   {
     if (equal (p, iso_verts_it->point())) {
       Vertex_const_handle  vh = iso_verts_it;
-      return result_return(vh);
+      return make_result(vh);
     }
   }		
 
-  return result_return(face_found);
+  return make_result(face_found);
 }
 
 

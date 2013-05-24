@@ -44,7 +44,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   for (vit = m_arr->vertices_begin(); vit != m_arr->vertices_end(); ++vit) {
     Vertex_const_handle vh = vit;
     if (equal(p, vh->point()))
-      return result_return(vh);
+      return make_result(vh);
   }
 
   // Go over arrangement halfedges and check whether one of them contains
@@ -58,7 +58,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) {
     Halfedge_const_handle hh = eit;
     if (is_in_x_range(hh->curve(), p) && (cmp_y_at_x(p, hh->curve()) == EQUAL))
-      return result_return(hh);
+      return make_result(hh);
   }
 
   // Shoot a vertical ray from the query point.
@@ -68,7 +68,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   if (optional_empty(optional_obj)) {
     // We should return the unbounded face.
     Face_const_handle fh = Face_const_handle(m_topol_traits->initial_face());
-    return result_return(fh);
+    return make_result(fh);
   }
 
   const Result_type& obj = optional_assign(optional_obj);
@@ -80,7 +80,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   if (vh) {
     Halfedge_const_handle hh = _first_around_vertex(*vh);
     Face_const_handle fh = hh->face();
-    return result_return(fh);
+    return make_result(fh);
   }
 
   const Halfedge_const_handle* hh = Result().assign<Halfedge_const_handle>(obj);
@@ -90,7 +90,7 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
     // we take the twin halfedge.
     Face_const_handle fh = ((*hh)->direction() == ARR_LEFT_TO_RIGHT) ?
       (*hh)->twin()->face() : (*hh)->face();    // Return the incident face.
-    return result_return(fh);
+    return make_result(fh);
   }
 
   CGAL_error();
@@ -229,7 +229,7 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
         // The vertical ray overlaps an existing vertical edge containing p.
         // In this case simply return this edge.
         closest_he = he;
-        return result_return(Halfedge_const_handle(closest_he));
+        return make_result(Halfedge_const_handle(closest_he));
       }
     }
 
@@ -243,17 +243,17 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 
   // If we found a fictitious edge, return it now.
   if (closest_he->has_null_curve())
-    return result_return(Halfedge_const_handle(closest_he));
+    return make_result(Halfedge_const_handle(closest_he));
 
   // If one of the closest edge's end vertices has the same x-coordinate
   // as the query point, return this vertex.
   if (! is_vertical(closest_he->curve())) {
     if (! cl_vs->has_null_point() &&
         m_geom_traits->compare_x_2_object()(cl_vs->point(), p) == EQUAL)
-      return result_return(Vertex_const_handle(cl_vs));
+      return make_result(Vertex_const_handle(cl_vs));
     else if (! cl_vt->has_null_point() &&
              m_geom_traits->compare_x_2_object()(cl_vt->point(), p) == EQUAL)
-      return result_return(Vertex_const_handle(cl_vt));
+      return make_result(Vertex_const_handle(cl_vt));
   }
   else {
     CGAL_assertion_code(
@@ -265,12 +265,12 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 
     return ((shoot_up && closest_he->direction() == ARR_LEFT_TO_RIGHT) ||
             (! shoot_up && closest_he->direction() == ARR_RIGHT_TO_LEFT)) ?
-      result_return(Vertex_const_handle(cl_vs)) :
-      result_return(Vertex_const_handle(cl_vt));
+      make_result(Vertex_const_handle(cl_vs)) :
+      make_result(Vertex_const_handle(cl_vt));
   }
 
   // Otherwise, return the closest edge.
-  return result_return(Halfedge_const_handle(closest_he));
+  return make_result(Halfedge_const_handle(closest_he));
 }
 
 //-----------------------------------------------------------------------------
@@ -353,12 +353,12 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
 
   // If we found a vertex, return it.
   if (found_vertex)
-    return result_return(closest_v);
+    return make_result(closest_v);
 
   if (found_halfedge) {
     // If we found a valid edge, return it.
     if (! closest_he->is_fictitious())
-      return result_return(closest_he);
+      return make_result(closest_he);
   
     // If we found a fictitious edge, we have to return a handle to its
     // incident unbounded face.
@@ -366,12 +366,12 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
         (!shoot_up && closest_he->direction() == ARR_RIGHT_TO_LEFT))
       closest_he = closest_he->twin();
     Face_const_handle fh = closest_he->face();
-    return result_return(fh);
+    return make_result(fh);
   }
 
   // If we have no halfedge above, return the initial face.
   Face_const_handle  uf = Face_const_handle(m_topol_traits->initial_face());
-  return result_return(uf);
+  return make_result(uf);
 }
 
 //-----------------------------------------------------------------------------
