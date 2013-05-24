@@ -12,7 +12,7 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel EPEC;
-typedef CGAL::internal::Exact_type_selector<int>::Type    FT;
+typedef CGAL::internal::Exact_field_selector<int>::Type   FT;
 typedef CGAL::Fraction_traits<FT>::Numerator_type         RT;
 typedef CGAL::Lazy_exact_nt < FT >                        Lazy_FT;
 typedef CGAL::Lazy_exact_nt < RT >                        Lazy_RT;
