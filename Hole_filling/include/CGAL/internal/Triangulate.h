@@ -159,7 +159,7 @@ class Triangulate_Hole_Polyhedron_3{
   }
 
 public:
-  void operator()(Halfedge_handle it, Polyhedron& poly, std::set<Facet_handle>& facets) {
+  void operator()(Polyhedron& poly, Halfedge_handle it, std::set<Facet_handle>& facets) {
     Polyline_3 P;
     Halfedge_around_facet_circulator circ(it), done(circ);
     do{ 

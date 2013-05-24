@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <CGAL/assertions.h>
+#include <CGAL/trace.h>
 #include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
@@ -113,7 +114,7 @@ private:
         ++circ;
       } while(circ != done);
     }
-    std::cerr << "Test " << interior_edges.size() << " edges " << std::endl;
+    CGAL_TRACE_STREAM << "Test " << interior_edges.size() << " edges " << std::endl;
     for(typename std::list<Halfedge_handle>::iterator it = interior_edges.begin();
       it != interior_edges.end();
       ++it){
@@ -121,12 +122,12 @@ private:
           ++flips;
         }
     }
-    std::cerr << "|flips| = " << flips << std::endl;
+    CGAL_TRACE_STREAM << "|flips| = " << flips << std::endl;
     return flips > 0;
   }
 
 public:
-  void operator()(std::map<Vertex_handle, double>& scale_attribute, std::set<Facet_handle>& facets, Polyhedron& poly)
+  void operator()(Polyhedron& poly, std::map<Vertex_handle, double>& scale_attribute, std::set<Facet_handle>& facets)
   {
     int i = 0;
     do {

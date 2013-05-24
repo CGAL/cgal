@@ -6,8 +6,35 @@
 #include <CGAL/assertions.h>
 #include <CGAL/internal/Weights.h>
 
+// for default parameters
+#if defined(CGAL_EIGEN3_ENABLED)
+#include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
+#if defined(CGAL_SUPERLU_ENABLED)
+#include <Eigen/SuperLUSupport>
+#else
+#include <Eigen/SparseLU>
+#endif
+#endif
+
 namespace CGAL {
 namespace internal {
+
+struct Fair_default_sparse_linear_solver {
+  typedef
+#if defined(CGAL_EIGEN3_ENABLED)
+  #if defined(CGAL_SUPERLU_ENABLED)
+    CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> >
+  #else
+    CGAL::Eigen_solver_traits<
+      Eigen::SparseLU<
+        CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
+        Eigen::COLAMDOrdering<int> >  >
+  #endif
+#else
+  Fair_default_sparse_linear_solver // dummy type to make it compile
+#endif
+  Solver;
+};
 
 template<class Polyhedron, class SparseLinearSolver, class WeightCalculator>
 class Fair_Polyhedron_3 {
@@ -70,8 +97,9 @@ private:
       z += -diagonal_v * v->point().z();
     }
   }
+
 public:
-  bool operator()(std::set<Vertex_handle>& interior_vertices, Polyhedron& polyhedron)
+  bool operator()(Polyhedron& polyhedron, std::set<Vertex_handle>& interior_vertices)
   {
     if(interior_vertices.empty()) {
       CGAL_warning("interior_vertices is empty.");
@@ -106,7 +134,9 @@ public:
       for(std::vector<std::pair<std::size_t, double> >::iterator it = row.begin(); it != row.end(); ++it) {
         A.add_coef(v_id, it->first, - w_v * wn_sum * it->second);
       }
-      x += - w_v * wn_sum * nx; y += - w_v * wn_sum * ny; z += - w_v * wn_sum * nz;
+      x += - w_v * wn_sum * nx; 
+      y += - w_v * wn_sum * ny; 
+      z += - w_v * wn_sum * nz;
 
       Halfedge_around_vertex_circulator circ = (*vb)->vertex_begin();
       do {
@@ -117,7 +147,9 @@ public:
         for(std::vector<std::pair<std::size_t, double> >::iterator it = row.begin(); it != row.end(); ++it) {
           A.add_coef(v_id, it->first, w_v * nv_w * it->second);
         }
-        x += w_v * nv_w * nx; y += w_v * nv_w * ny; z += w_v * nv_w * nz;
+        x += w_v * nv_w * nx; 
+        y += w_v * nv_w * ny; 
+        z += w_v * nv_w * nz;
       } while(++circ != (*vb)->vertex_begin());
 
       Bx[v_id] = x; By[v_id] = y; Bz[v_id] = z;
@@ -155,5 +187,54 @@ public:
 };
 
 }//namespace internal
+
+template<class Polyhedron, class WeightCalculator>
+void fair(Polyhedron& poly, 
+  std::set<typename Polyhedron::Vertex_handle>& interior_vertices, 
+  WeightCalculator weight_calculator = WeightCalculator()
+  )
+{
+  typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+  internal::Fair_Polyhedron_3<Polyhedron, Sparse_linear_solver, WeightCalculator> fair_functor(weight_calculator);
+  fair_functor(poly, interior_vertices);
+
+  //typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+  //fair<Sparse_linear_solver, Polyhedron, WeightCalculator>
+  //  (poly, interior_vertices, weight_calculator);
+}
+
+template<class SparseLinearSolver, class Polyhedron, class WeightCalculator>
+void fair(Polyhedron& poly, 
+ std::set<typename Polyhedron::Vertex_handle>& interior_vertices, 
+  WeightCalculator weight_calculator = WeightCalculator()
+  )
+{
+  internal::Fair_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> fair_functor(weight_calculator);
+  fair_functor(poly, interior_vertices);
+}
+
+//template<class SparseLinearSolver, class Polyhedron>
+//void fair(Polyhedron& poly, 
+//  std::set<typename Polyhedron::Vertex_handle>& interior_vertices
+//  )
+//{
+//  typedef typename CGAL::internal::Fairing_weight_selector<Polyhedron, COTANGENT_WEIGHTING>::weight_calculator
+//    Weight_calculator;
+//  fair<SparseLinearSolver, Polyhedron, Weight_calculator>
+//    (poly, interior_vertices, Weight_calculator());
+//}
+//
+
+//
+//template<class Polyhedron>
+//void fair(Polyhedron& poly, 
+//  std::set<typename Polyhedron::Vertex_handle>& interior_vertices
+//  )
+//{
+//  typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+//  fair<Sparse_linear_solver, Polyhedron>
+//    (poly, interior_vertices);
+//}
+
 }//namespace CGAL
 #endif //CGAL_HOLE_FILLING_FAIR_H

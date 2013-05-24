@@ -155,6 +155,7 @@ public:
         }
       }
     }
+    CGAL_warning(voronoi_area != 0 && "Zero voronoi area!");
     return voronoi_area;
   }
 };
@@ -376,7 +377,7 @@ public:
     Vector v = boost::target(e, polyhedron)->point() - boost::source(e, polyhedron)->point();
     double divider = std::sqrt(v.squared_length());
     if(divider == 0.0) {
-      CGAL_warning("Scale dependent weight - zero length edge.");
+      CGAL_warning(!"Scale dependent weight - zero length edge.");
       return (std::numeric_limits<double>::max)();
     }
     return 1.0 / divider;
@@ -415,5 +416,33 @@ public:
 
 }//namespace internal
 /// @endcond
+
+enum Fairing_weight_type_tag {
+  UNIFORM_WEIGHTING,
+  SCALE_DEPENDENT_WEIGHTING,
+  COTANGENT_WEIGHTING
+};
+
+namespace internal {
+  template<class Polyhedron, Fairing_weight_type_tag fairing_weight_type_tag>
+  struct Fairing_weight_selector { };
+
+  template<class Polyhedron>
+  struct Fairing_weight_selector<Polyhedron, CGAL::UNIFORM_WEIGHTING> {
+    typedef CGAL::internal::Uniform_weight_fairing<Polyhedron> weight_calculator;
+  };
+
+  template<class Polyhedron>
+  struct Fairing_weight_selector<Polyhedron, CGAL::SCALE_DEPENDENT_WEIGHTING> {
+    typedef CGAL::internal::Scale_dependent_weight_fairing<Polyhedron> weight_calculator;
+  };
+
+  template<class Polyhedron>
+  struct Fairing_weight_selector<Polyhedron, CGAL::COTANGENT_WEIGHTING> {
+    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> weight_calculator;
+  };
+}
+
+
 }//namespace CGAL
 #endif //CGAL_SURFACE_MODELING_WEIGHTS_H
