@@ -1761,25 +1761,61 @@ public:
 
     typename Segment_traits_2::Equal_2 equal = segment_traits_2()->
       equal_2_object();
+    typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+      segment_traits_2()->compare_endpoints_xy_2_object();
+    typename Segment_traits_2::Compare_x_2 comp_x =
+      segment_traits_2()->compare_x_2_object();
+    typename Segment_traits_2::Is_vertical_2 is_vert =
+      segment_traits_2()->is_vertical_2_object();
+    typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
+      segment_traits_2()->construct_max_vertex_2_object();
+    typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
+      segment_traits_2()->construct_min_vertex_2_object();
 
-    if (equal(segment_traits_2()->construct_min_vertex_2_object()(cv[i]), q)) {
+    Comparison_result direction = comp_endpts(cv[i]);
+
+    if (
+        (!is_vert(cv[0]) && comp_x(get_min_v(cv[i]), q)==EQUAL) ||
+        (is_vert(cv[0]) && equal(get_min_v(cv[i]), q))){
       // q is the left endpoint of the i'th segment:
       if (to_right)
         return i;
-      else if (i == 0)
-        return INVALID_INDEX;
-      else
-        return i - 1;
+      else{
+        // to_left
+        if (direction == SMALLER)
+          if (i == 0)
+            return INVALID_INDEX;
+          else
+            return i - 1;
+        else{
+          if (i == cv.number_of_segments()-1)
+            return INVALID_INDEX;
+          else
+            return i+1;
+        }
+      }
     }
 
-    if (equal(segment_traits_2()->construct_max_vertex_2_object()(cv[i]), q)) {
+    if (
+        (!is_vert(cv[0]) && comp_x(get_max_v(cv[i]), q)==EQUAL) ||
+        (is_vert(cv[0]) && equal(get_max_v(cv[i]), q))) {
       // q is the right endpoint of the i'th segment:
       if (!to_right)
         return i;
-      else if (i == (cv.number_of_segments() - 1))
-        return INVALID_INDEX;
-      else
-        return i + 1;
+      else{
+        if (direction == SMALLER){
+          if (i == (cv.number_of_segments() - 1))
+            return INVALID_INDEX;
+          else
+            return i + 1;
+        }
+        else{
+          if (i==0)
+            return INVALID_INDEX;
+          else
+            return i-1;
+        }
+      }
     }
 
     // In case q is in cv[i]'s interior:
