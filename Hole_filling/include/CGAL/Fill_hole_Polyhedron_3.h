@@ -17,7 +17,7 @@
 namespace CGAL {
 namespace internal {
 
-  template<class Polyhedron, class SparseLinearSolver, class WeightCalculator>
+  template<class Polyhedron>
   class Fill_hole_Polyhedron_3 {
 
     typedef typename Polyhedron::Traits::Point_3 Point_3;
@@ -26,17 +26,6 @@ namespace internal {
     typedef typename Polyhedron::Facet_handle Facet_handle;
     typedef typename Polyhedron::Halfedge_around_facet_circulator  Halfedge_around_facet_circulator;
     typedef typename Polyhedron::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
-
-    //members
-    bool is_refining;
-    bool is_fairing;
-    double alpha;
-    WeightCalculator weight_calculator;
-
-  public:
-    Fill_hole_Polyhedron_3(bool is_refining, double alpha, bool is_fairing, WeightCalculator weight_calculator = WeightCalculator()) 
-      : is_refining(is_refining), is_fairing(is_fairing), alpha(alpha), weight_calculator(weight_calculator)
-    { }
 
   private:
     void average_length(Polyhedron& poly, Vertex_handle vh, std::map<Vertex_handle, double>& scale_attribute)
@@ -54,111 +43,177 @@ namespace internal {
       scale_attribute[vh] = sum/deg;
     }
 
+    void get_boundary_vertices(Polyhedron& poly, Halfedge_handle it, std::set<Vertex_handle>& boundary_vertices) {
+      Halfedge_around_facet_circulator circ(it), done(circ);
+      do{
+        boundary_vertices.insert(circ->vertex()); 
+      } while (++circ != done);
+    }
+
   public:
-    void operator()(Polyhedron& poly, Halfedge_handle it)
+
+    void triangulate_and_refine_hole(Polyhedron& poly, Halfedge_handle it, std::set<Facet_handle>* facets, double alpha)
     {
-      if(! it->is_border()){
-        return;
-      }
+      if(! it->is_border()){ return; }
+      
+      std::set<Facet_handle> facets_tmp;
+      if(facets == NULL) { facets = &facets_tmp; }
 
-      // save boundary vertices and scale attributes to use in refining and fairing state
+      // compute scale_attribute before triangulation
       std::map<Vertex_handle, double> scale_attribute;
+      Halfedge_around_facet_circulator circ(it), done(circ);
+      do{
+        average_length(poly, circ->vertex(), scale_attribute); 
+      } while (++circ != done);
+      // Triangulate
+      triangulate_hole(poly, it, facets);
+      // Refine
+      internal::Refine_Polyhedron_3<Polyhedron> refine_functor(alpha);
+      refine_functor(poly, scale_attribute, *facets);
+    }
+
+    template<class SparseLinearSolver, class WeightCalculator>
+    void triangulate_refine_and_fair
+      (Polyhedron& poly, Halfedge_handle it, std::set<Facet_handle>* facets, double alpha, WeightCalculator weight_calculator) 
+    {
+      if(! it->is_border()){ return; }
+
+      std::set<Facet_handle> facets_tmp;
+      if(facets == NULL) { facets = &facets_tmp; }
+
+      // save boundary vertices before triangulation
       std::set<Vertex_handle> boundary_vertices;
-      if(is_refining) {
-        Halfedge_around_facet_circulator circ(it), done(circ);
-        do{
-          average_length(poly, circ->vertex(), scale_attribute); 
-          if(is_fairing){ boundary_vertices.insert(circ->vertex()); }
-        } while (++circ != done);
+      get_boundary_vertices(poly, it, boundary_vertices);
+
+      //Triangulate and refine
+      triangulate_and_refine_hole(poly, it, facets, alpha);
+
+      // get interior vertices
+      std::set<Vertex_handle> interior_vertices;
+      for(std::set<Facet_handle>::iterator it = facets->begin(); it != facets->end(); ++it) {
+        Halfedge_around_facet_circulator circ = (*it)->facet_begin();
+        do {
+          if(boundary_vertices.find(circ->vertex()) == boundary_vertices.end()) {
+            interior_vertices.insert(circ->vertex());
+          }
+        } while(++circ != (*it)->facet_begin());
       }
 
-      // Triangulate
-      std::set<Facet_handle> facets;
-      internal::Triangulate_Hole_Polyhedron_3<Polyhedron> triangulate_functor;
-      triangulate_functor(poly, it, facets);
-
-      if(is_refining) {
-        // Refine
-        internal::Refine_Polyhedron_3<Polyhedron> refine_functor(alpha);
-        refine_functor(poly, scale_attribute, facets);
-        CGAL_TRACE_STREAM << "after refine |facets| = " << facets.size() << std::endl;
-
-        if(is_fairing) {
-          std::set<Vertex_handle> interior_vertices;
-          for(std::set<Facet_handle>::iterator it = facets.begin(); it != facets.end(); ++it) {
-            Halfedge_around_facet_circulator circ = (*it)->facet_begin();
-            do {
-              if(boundary_vertices.find(circ->vertex()) == boundary_vertices.end()) {
-                interior_vertices.insert(circ->vertex());
-              }
-            } while(++circ != (*it)->facet_begin());
-          }
-
-          CGAL_TRACE_STREAM << "before fair |boundary vertices| = " << boundary_vertices.size() << std::endl;
-          CGAL_TRACE_STREAM << "before fair |interior vertices| = " << interior_vertices.size() << std::endl;
-          // Fair
-          internal::Fair_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> fair_functor(weight_calculator);
-          fair_functor(poly, interior_vertices);
-        } // if(is_fairing)
-      } // if(is_refining)
+      CGAL_TRACE_STREAM << "before fair |boundary vertices| = " << boundary_vertices.size() << std::endl;
+      CGAL_TRACE_STREAM << "before fair |interior vertices| = " << interior_vertices.size() << std::endl;
+      // Fair
+      fair<SparseLinearSolver>(poly, interior_vertices, weight_calculator);
     }
   };
 }//namespace internal
 
-  template<class SparseLinearSolver, class Polyhedron, class WeightCalculator>
-  void fill(Polyhedron& poly, 
-    typename Polyhedron::Halfedge_handle it, 
-    bool refine = true,
-    double density_control_factor = 1.41 /* ~sqrt(2) */,
-    bool fair = true,
-    WeightCalculator weight_calculator = WeightCalculator()
-    )
-  {
-    internal::Fill_hole_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> 
-      fill_functor(refine, density_control_factor, fair, weight_calculator);
-    fill_functor(poly, it);
-  }
+/**
+ * @brief Function triangulating a hole in surface mesh.
+ * 
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @param[in, out] polyhedron surface mesh which has the hole
+ * @param border_halfedge a border halfedge incident to the hole
+ * @param[out] new_facets patch facets to close the hole
+ * 
+ * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
+ */
+template<class Polyhedron>
+void triangulate_hole(Polyhedron& polyhedron, 
+  typename Polyhedron::Halfedge_handle border_halfedge, 
+  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL
+  ) 
+{
+  internal::Triangulate_Hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge, new_facets);
+}
 
-  template<class SparseLinearSolver, class Polyhedron>
-  void fill(Polyhedron& poly, 
-    typename Polyhedron::Halfedge_handle it, 
-    bool refine = true,
-    double density_control_factor = 1.41 /* ~sqrt(2) */,
-    bool fair = true
-    )
-  {
-    typedef typename CGAL::internal::Fairing_weight_selector<Polyhedron, COTANGENT_WEIGHTING>::weight_calculator
-      Weight_calculator;
-    fill<SparseLinearSolver, Polyhedron, Weight_calculator>
-      (poly, it, refine, density_control_factor, fair, Weight_calculator());
-  }
+/**
+ * @brief Function triangulating and refining a hole in surface mesh.
+ * 
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @param[in, out] polyhedron surface mesh which has the hole
+ * @param border_halfedge a border halfedge incident to the hole
+ * @param[out] new_facets patch facets to close the hole
+ * @param density_control_factor factor for density where larger values cause denser refinements
+ * 
+ * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
+ */
+template<class Polyhedron>
+void triangulate_and_refine_hole(Polyhedron& polyhedron, 
+  typename Polyhedron::Halfedge_handle border_halfedge, 
+  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL,
+  double density_control_factor = std::sqrt(2.0)) 
+{
+  internal::Fill_hole_Polyhedron_3<Polyhedron>().
+    triangulate_and_refine_hole(polyhedron, border_halfedge, new_facets, density_control_factor);
+}
 
-  template<class Polyhedron, class WeightCalculator>
-  void fill(Polyhedron& poly, 
-    typename Polyhedron::Halfedge_handle it, 
-    bool refine = true,
-    double density_control_factor = 1.41 /* ~sqrt(2) */,
-    bool fair = true,
-    WeightCalculator weight_calculator = WeightCalculator()
-    )
-  {
-    typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-    fill<Sparse_linear_solver, Polyhedron, WeightCalculator>
-      (poly, it, refine, density_control_factor, fair, weight_calculator);
-  }
+//////////////////////////////////////////////////////////////////////////
 
-  template<class Polyhedron>
-  void fill(Polyhedron& poly, 
-    typename Polyhedron::Halfedge_handle it, 
-    bool refine = true,
-    double density_control_factor = 1.41 /* ~sqrt(2) */,
-    bool fair = true
-    )
-  {
-    typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-    fill<Sparse_linear_solver, Polyhedron>
-      (poly, it, refine, density_control_factor, fair);
-  }
+template<class Polyhedron, class WeightCalculator>
+void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
+  typename Polyhedron::Halfedge_handle border_halfedge, 
+  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL,
+  double density_control_factor = std::sqrt(2.0),
+  WeightCalculator weight_calculator = WeightCalculator()
+  )
+{
+  typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+  //triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron, WeightCalculator>
+  //  (polyhedron, border_halfedge, new_facets, density_control_factor, weight_calculator);
+
+  CGAL::internal::Fill_hole_Polyhedron_3<Polyhedron> fill_functor;
+  fill_functor.triangulate_refine_and_fair<Sparse_linear_solver, WeightCalculator>
+    (polyhedron, border_halfedge, new_facets, density_control_factor, weight_calculator);
+}
+
+/** 
+ * @brief Function triangulating, refining and fairing a hole in surface mesh.
+ *
+ * @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d and can be omitted if Eigen defined...(give exact models etc)
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam WeightCalculator a model of "weight model" and default to Cotangent weights
+ * @param polyhedron surface mesh which has the hole
+ * @param border_halfedge a border halfedge incident to the hole
+ * @param[out] new_facets patch facets to close the hole
+ * @param density_control_factor factor for density where larger values cause denser refinements
+ */
+template<class SparseLinearSolver, class Polyhedron, class WeightCalculator>
+void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
+  typename Polyhedron::Halfedge_handle border_halfedge, 
+  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL,
+  double density_control_factor = std::sqrt(2.0),
+  WeightCalculator weight_calculator = WeightCalculator()
+  )
+{
+  CGAL::internal::Fill_hole_Polyhedron_3<Polyhedron> fill_functor;
+  fill_functor.triangulate_refine_and_fair<SparseLinearSolver, WeightCalculator>
+    (polyhedron, border_halfedge, new_facets, density_control_factor, weight_calculator);
+}
+
+//template<class SparseLinearSolver, class Polyhedron>
+//void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
+//  typename Polyhedron::Halfedge_handle border_halfedge, 
+//  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL,
+//  double density_control_factor = std::sqrt(2.0)
+//  )
+//{
+//  typedef typename CGAL::internal::Fairing_weight_selector<Polyhedron, COTANGENT_WEIGHTING>::weight_calculator
+//    Weight_calculator;
+//  triangulate_refine_and_fair_hole<SparseLinearSolver, Polyhedron, Weight_calculator>
+//    (polyhedron, border_halfedge, new_facets, density_control_factor, Weight_calculator());
+//}
+
+//template<class Polyhedron>
+//void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
+//  typename Polyhedron::Halfedge_handle border_halfedge, 
+//  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL,
+//  double density_control_factor = std::sqrt(2.0)
+//  )
+//{
+//  typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+//  triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron>
+//    (polyhedron, border_halfedge, new_facets, density_control_factor);
+//}
 } // namespace CGAL
 
 #endif

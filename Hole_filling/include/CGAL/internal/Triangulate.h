@@ -83,8 +83,19 @@ class Triangulate_Hole_Polyhedron_3{
     return Weight((std::max)(ang1, ang2), std::sqrt(CGAL::squared_area(pi,pm,pk)));
   }
 
+  struct set_inserter {
+    std::set<Facet_handle>* facets;
+    set_inserter(std::set<Facet_handle>* facets) : facets(facets) { }
+    void insert(Facet_handle facet_handle) { facets->insert(facet_handle); }
+  };
+
+  struct dummy_inserter {
+    void insert(Facet_handle facet_handle) {}
+  };
+
+  template<class Inserter>
   Halfedge_handle add_facets(const Polyline_3& P, const std::vector<int>& lambda, 
-    int i, int k, Polyhedron& poly, std::set<Facet_handle>& facets, bool last = true)
+    int i, int k, Polyhedron& poly, Inserter facets, bool last = true)
   {
     Halfedge_handle h, g;
     int n = P.size() -1; // because the first and last point are equal
@@ -159,7 +170,7 @@ class Triangulate_Hole_Polyhedron_3{
   }
 
 public:
-  void operator()(Polyhedron& poly, Halfedge_handle it, std::set<Facet_handle>& facets) {
+  void operator()(Polyhedron& poly, Halfedge_handle it, std::set<Facet_handle>* facets) {
     Polyline_3 P;
     Halfedge_around_facet_circulator circ(it), done(circ);
     do{ 
@@ -171,7 +182,13 @@ public:
     compute_lambda(P, lambda);
 
     int n = P.size() - 1; // because the first and last point are equal
-    add_facets(P, lambda, 0, n-1, poly, facets);
+    if(facets == NULL) {
+      add_facets(P, lambda, 0, n-1, poly, dummy_inserter());
+    }
+    else {
+      add_facets(P, lambda, 0, n-1, poly, set_inserter(facets));
+    }
+    
   }
 };
 

@@ -203,9 +203,18 @@ void fair(Polyhedron& poly,
   //  (poly, interior_vertices, weight_calculator);
 }
 
+/** 
+ * @brief Function fairing a region on surface mesh.
+ *
+ * @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d and can be omitted if Eigen defined...(give exact models etc)
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam WeightCalculator a model of "weight model" and default to Cotangent weights
+ * @param polyhedron surface mesh which has the hole
+ * @param interior_vertices set of interior vertices
+ */
 template<class SparseLinearSolver, class Polyhedron, class WeightCalculator>
 void fair(Polyhedron& poly, 
- std::set<typename Polyhedron::Vertex_handle>& interior_vertices, 
+  std::set<typename Polyhedron::Vertex_handle>& interior_vertices, 
   WeightCalculator weight_calculator = WeightCalculator()
   )
 {

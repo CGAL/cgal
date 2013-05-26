@@ -392,12 +392,12 @@ public:
 
   double w_i(vertex_descriptor v_i, Polyhedron& polyhedron) {
     Voronoi_area<Polyhedron> voronoi_functor;
-    return 1.0 / voronoi_functor(v_i, polyhedron);
+    return 0.5 / voronoi_functor(v_i, polyhedron);
   }
 
   double w_ij(edge_descriptor e, Polyhedron& polyhedron) {
     Cotangent_weight<Polyhedron, CGAL::internal::Cotangent_value_Meyer<Polyhedron> > cotangent_functor;
-    return cotangent_functor(e, polyhedron);
+    return cotangent_functor(e, polyhedron) * 2.0;
   }
 };
 
@@ -417,32 +417,17 @@ public:
 }//namespace internal
 /// @endcond
 
-enum Fairing_weight_type_tag {
-  UNIFORM_WEIGHTING,
-  SCALE_DEPENDENT_WEIGHTING,
-  COTANGENT_WEIGHTING
-};
+template <typename Polyhedron>
+struct Fairing_uniform_weight : public CGAL::internal::Uniform_weight_fairing<Polyhedron>
+{ };
 
-namespace internal {
-  template<class Polyhedron, Fairing_weight_type_tag fairing_weight_type_tag>
-  struct Fairing_weight_selector { };
+template <typename Polyhedron>
+struct Fairing_scale_dependent_weight : public CGAL::internal::Scale_dependent_weight_fairing<Polyhedron>
+{ };
 
-  template<class Polyhedron>
-  struct Fairing_weight_selector<Polyhedron, CGAL::UNIFORM_WEIGHTING> {
-    typedef CGAL::internal::Uniform_weight_fairing<Polyhedron> weight_calculator;
-  };
-
-  template<class Polyhedron>
-  struct Fairing_weight_selector<Polyhedron, CGAL::SCALE_DEPENDENT_WEIGHTING> {
-    typedef CGAL::internal::Scale_dependent_weight_fairing<Polyhedron> weight_calculator;
-  };
-
-  template<class Polyhedron>
-  struct Fairing_weight_selector<Polyhedron, CGAL::COTANGENT_WEIGHTING> {
-    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> weight_calculator;
-  };
-}
-
+template <typename Polyhedron>
+struct Fairing_cotangent_weight : public CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> 
+{ };
 
 }//namespace CGAL
 #endif //CGAL_SURFACE_MODELING_WEIGHTS_H
