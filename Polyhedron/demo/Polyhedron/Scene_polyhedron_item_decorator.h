@@ -38,9 +38,9 @@ public:
   const Polyhedron* polyhedron() const;
 
 
-  /// Returns a Scene_polyhedron_item from the decorator item
+  /// Transfers the ownership of Scene_polyhedron_item, and sets NULL
   /// The item 'this' must be destroy just after a call to this function.
-  Scene_polyhedron_item* to_polyhedron_item() const;
+  Scene_polyhedron_item* to_polyhedron_item();
 
   // Get dimensions
   bool isFinite() const { return true; }

@@ -6,7 +6,7 @@ Scene_polyhedron_item_decorator::Scene_polyhedron_item_decorator(Scene_polyhedro
 { }
 
 Scene_polyhedron_item_decorator::~Scene_polyhedron_item_decorator()
-{ }
+{ delete poly_item; }
 
 Scene_polyhedron_item_decorator* 
 Scene_polyhedron_item_decorator::clone() const {
@@ -88,8 +88,10 @@ Scene_polyhedron_item_decorator::select(double orig_x,
                        dir_z);
 }
 
-Scene_polyhedron_item* Scene_polyhedron_item_decorator::to_polyhedron_item() const {
-  return poly_item;
+Scene_polyhedron_item* Scene_polyhedron_item_decorator::to_polyhedron_item() {
+  Scene_polyhedron_item* tmp = poly_item;
+  poly_item = NULL;
+  return tmp;
 }
 
 #include "Scene_polyhedron_item_decorator.moc"

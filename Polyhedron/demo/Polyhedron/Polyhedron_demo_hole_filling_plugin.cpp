@@ -39,6 +39,7 @@ public slots:
   void on_Create_polyline_item_button();
   void on_Fill_and_update_button();
   void on_Fill_all_holes_button();
+
 private:
   QMainWindow* mw;
   Scene_interface* scene;
@@ -158,15 +159,23 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     if(it->is_border()){
       any_changes = true;
 
-      if(ui_widget->Scale_dependent_weight_radio_button->isChecked())
-        CGAL::fill(poly, it, refine, alpha, fair, 
-          CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::SCALE_DEPENDENT_WEIGHTING>::weight_calculator());
-      if(ui_widget->Uniform_weight_radio_button->isChecked())
-        CGAL::fill(poly, it, refine, alpha, fair, 
-          CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::UNIFORM_WEIGHTING>::weight_calculator());
-      else
-        CGAL::fill(poly, it, refine, alpha, fair, 
-          CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::COTANGENT_WEIGHTING>::weight_calculator());
+      if(!fair && !refine) {
+        CGAL::triangulate_hole(poly, it);
+      }
+      else if(!fair) {
+        CGAL::triangulate_and_refine_hole(poly, it, NULL, alpha);
+      }
+      else {
+        if(ui_widget->Scale_dependent_weight_radio_button->isChecked())
+          CGAL::triangulate_refine_and_fair_hole(poly, it, NULL, alpha,
+            CGAL::Fairing_scale_dependent_weight<Polyhedron>());
+        if(ui_widget->Uniform_weight_radio_button->isChecked())
+          CGAL::triangulate_refine_and_fair_hole(poly, it, NULL, alpha, 
+            CGAL::Fairing_uniform_weight<Polyhedron>());
+        else
+          CGAL::triangulate_refine_and_fair_hole(poly, it, NULL, alpha,
+            CGAL::Fairing_cotangent_weight<Polyhedron>());
+      }
 
       it = poly.halfedges_begin();
       continue;
@@ -220,8 +229,8 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_and_update_button() {
   //  new_item->setName(tr("%1-Filled-%2-(alpha:%3)").arg(poly_item->name()).arg(param_exp).arg(alpha));
   //}
 
-  CGAL::fill(*poly_item->polyhedron(), it->second.second, refine, alpha, fair);
-  scene->itemChanged(poly_item);
+  //CGAL::fill(*poly_item->polyhedron(), it->second.second, refine, alpha, fair);
+  // scene->itemChanged(poly_item);
   //if(create_new) {
   //  using std::swap;
   //  swap(*poly_item->polyhedron(), *new_item->polyhedron());

@@ -8,6 +8,7 @@
 
 //#include <CGAL/Fill_hole.h>
 #include <CGAL/Fill_hole_Polyhedron_3.h>
+#include <CGAL/internal/Smooth.h>
 
 #include <QTime>
 #include <QAction>
@@ -17,10 +18,13 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QFileDialog>
 
 #include <vector>
 #include <algorithm>
 #include <queue>
+
+#include <boost/iterator/transform_iterator.hpp>
 
 #include <QGLViewer/qglviewer.h>
 #include "opengl_tools.h"
@@ -39,6 +43,12 @@ public:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
+    // assign id's to vertices (save roi, load roi)
+    std::size_t idx = 0;
+    for(Polyhedron::Vertex_iterator it = polyhedron()->vertices_begin(); 
+      it != polyhedron()->vertices_end(); ++it, ++idx) {
+        it->id() = idx;
+    }
   }
 
   void draw_edges() const {
@@ -48,7 +58,7 @@ public:
     }
   }  
   void draw() const {
-    poly_item->draw();
+    poly_item->direct_draw();
     draw_ROI();
   }
   void draw_ROI() const {
@@ -70,6 +80,44 @@ public:
     }
   }
 
+  void save_roi(const char* file_name) const { 
+    std::ofstream out(file_name);
+    // save roi
+    for(std::set<Vertex_handle>::iterator it = selected_vertices.begin();
+      it != selected_vertices.end(); ++it) {
+      out << (*it)->id() << " ";
+    }
+    out.close();
+  }
+  void load_roi(const char* file_name) {
+    // put vertices to vector
+    std::vector<Polyhedron::Vertex_handle> all_vertices;
+    all_vertices.reserve(polyhedron()->size_of_vertices());
+    Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
+    for( ;vb != ve; ++vb) {
+      all_vertices.push_back(vb);
+    }
+    // read roi
+    std::ifstream in(file_name);
+    std::size_t idx;
+    while(in >> idx) {
+      selected_vertices.insert(all_vertices[idx]);
+    }
+    in.close();
+  }
+
+  void changed_with_poly_item() {
+    poly_item->changed();
+    emit itemChanged();
+  }
+private:
+  // for transform iterator
+  struct Get_key {
+    typedef Vertex_handle result_type;
+    Vertex_handle operator()(const std::pair<Vertex_handle, int>& map_pair) const
+    { return map_pair.first; }
+  };
+
 public slots:
   void changed() {
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
@@ -79,23 +127,33 @@ public slots:
     // get vertex descriptor
     Get_vertex_handle get_vertex_handle;  
     get_vertex_handle.vertex_ptr = static_cast<Polyhedron::Vertex*>(void_ptr);
-    poly_item->polyhedron()->delegate(get_vertex_handle);
+    polyhedron()->delegate(get_vertex_handle);
     Vertex_handle clicked_vertex = get_vertex_handle.vh;
     // use clicked_vertex, do what you want 
     bool is_insert = ui_widget->Insertion_radio_button->isChecked();
+    bool is_paint_like_smooth = ui_widget->Paint_like_smooth_radio_button->isChecked();
+
     int k_ring = ui_widget->Brush_size_spin_box->value();
-    std::map<Vertex_handle, int> selection = extract_k_ring(*poly_item->polyhedron(), clicked_vertex, k_ring);
-    bool any_change = false;
-    if(is_insert) {
-      for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_vertices.insert(it->first).second;
+    std::map<Vertex_handle, int> selection = extract_k_ring(*polyhedron(), clicked_vertex, k_ring);
+    if(!is_paint_like_smooth) 
+    {
+      bool any_change = false;
+      if(is_insert) {
+        for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
+          any_change |= selected_vertices.insert(it->first).second;
+        }
+      }else {
+        for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
+          any_change |= selected_vertices.erase(it->first) != 0;
+        }
       }
-    }else {
-      for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_vertices.erase(it->first) != 0;
-      }
+      if(any_change) { emit itemChanged(); }
     }
-    if(any_change) { emit itemChanged(); }
+    else {
+      CGAL::smooth(*polyhedron(), boost::make_transform_iterator(selection.begin(), Get_key()),
+        boost::make_transform_iterator(selection.end(), Get_key()));
+      changed_with_poly_item();
+    }
   }
 
 protected:
@@ -164,11 +222,8 @@ protected:
 // structs
   struct Mouse_keyboard_state
   {
-    bool shift_pressing;
-    bool left_button_pressing;
-
-    Mouse_keyboard_state() 
-      : shift_pressing(false), left_button_pressing(false) { }
+    bool shift_pressing, left_button_pressing;
+    Mouse_keyboard_state() : shift_pressing(false), left_button_pressing(false) { }
   };
 
   struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
@@ -198,18 +253,32 @@ public:
   bool applicable() const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message);}
   QList<QAction*> actions() const { return QList<QAction*>() << actionSmoothingFairing; }
+  Scene_polyhedron_selectable_item* get_selected_item() {
+    int item_id = scene->mainSelectionIndex();
+    Scene_polyhedron_selectable_item* selectable_item = qobject_cast<Scene_polyhedron_selectable_item*>(scene->item(item_id));
+    if(!selectable_item) {
+      print_message("Error: there is no selected polyhedron item!");
+      return NULL;
+    } 
+    return selectable_item;
+  }
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
   Scene_polyhedron_selectable_item* convert_to_selectable_polyhedron(Scene_interface::Item_id i, Scene_polyhedron_item* poly_item);
   Scene_polyhedron_item* convert_to_plain_polyhedron(Scene_interface::Item_id i, Scene_polyhedron_selectable_item* selectable_poly);
-
+  
 public slots:
   void smoothing_fairing_action();
   void dock_widget_visibility_changed(bool visible);
   void on_Fair_button_clicked();
+  void on_Smooth_button_clicked();
   void on_Set_all_vertices_button_clicked();
   void on_Clear_ROI_button_clicked();
   void on_Show_ROI_check_box_stateChanged(int state);
+  void on_Save_ROI_button_clicked();
+  void on_Load_ROI_button_clicked();
+  void new_item_created(int item_id);
+
 private:
   typedef Scene_interface::Item_id Item_id;
 
@@ -243,9 +312,15 @@ void Polyhedron_demo_smoothing_fairing_plugin::init(QMainWindow* mw,
 
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
   connect(ui_widget->Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
+  connect(ui_widget->Smooth_button,  SIGNAL(clicked()), this, SLOT(on_Smooth_button_clicked()));
   connect(ui_widget->Set_all_vertices_button,  SIGNAL(clicked()), this, SLOT(on_Set_all_vertices_button_clicked()));  
   connect(ui_widget->Clear_ROI_button,  SIGNAL(clicked()), this, SLOT(on_Clear_ROI_button_clicked()));  
   connect(ui_widget->Show_ROI_check_box, SIGNAL(stateChanged(int)), this, SLOT(on_Show_ROI_check_box_stateChanged(int)));
+  connect(ui_widget->Save_ROI_button,  SIGNAL(clicked()), this, SLOT(on_Save_ROI_button_clicked()));
+  connect(ui_widget->Load_ROI_button,  SIGNAL(clicked()), this, SLOT(on_Load_ROI_button_clicked())); 
+
+  QObject* scene = dynamic_cast<QObject*>(scene_interface);
+  if(scene) { connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int))); } 
 }
 
 void Polyhedron_demo_smoothing_fairing_plugin::smoothing_fairing_action(){
@@ -254,58 +329,94 @@ void Polyhedron_demo_smoothing_fairing_plugin::smoothing_fairing_action(){
   }
 }
 void Polyhedron_demo_smoothing_fairing_plugin::on_Set_all_vertices_button_clicked() {
-  int item_id = scene->mainSelectionIndex();
-  Scene_polyhedron_selectable_item* poly_item = qobject_cast<Scene_polyhedron_selectable_item*>(scene->item(item_id));
-  if(!poly_item) {
-    print_message("Error: there is no selected polyhedron item!");
-    return;
-  }
-  Polyhedron::Vertex_iterator vb(poly_item->polyhedron()->vertices_begin()), ve(poly_item->polyhedron()->vertices_end());
+  Scene_polyhedron_selectable_item* selectable_item = get_selected_item();
+  if(!selectable_item) { return; }
+
+  Polyhedron::Vertex_iterator vb(selectable_item->polyhedron()->vertices_begin()), ve(selectable_item->polyhedron()->vertices_end());
   for( ;vb != ve; ++vb) {
-    poly_item->selected_vertices.insert(vb);
+    selectable_item->selected_vertices.insert(vb);
   }
+  scene->itemChanged(selectable_item);
 }
 void Polyhedron_demo_smoothing_fairing_plugin::on_Clear_ROI_button_clicked() {
-  int item_id = scene->mainSelectionIndex();
-  Scene_polyhedron_selectable_item* poly_item = qobject_cast<Scene_polyhedron_selectable_item*>(scene->item(item_id));
-  if(!poly_item) {
-    print_message("Error: there is no selected polyhedron item!");
-    return;
-  }
-  poly_item->selected_vertices.clear();
+  Scene_polyhedron_selectable_item* selectable_item = get_selected_item();
+  if(!selectable_item) { return; }
+  selectable_item->selected_vertices.clear();
+  
+  scene->itemChanged(selectable_item);
 }
 void Polyhedron_demo_smoothing_fairing_plugin::on_Show_ROI_check_box_stateChanged(int /*state*/)
 {
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {
-    Scene_polyhedron_selectable_item* poly_item = qobject_cast<Scene_polyhedron_selectable_item*>(scene->item(i));
-    if(!poly_item) { continue; }
+    Scene_polyhedron_selectable_item* selectable_item = qobject_cast<Scene_polyhedron_selectable_item*>(scene->item(i));
+    if(!selectable_item) { continue; }
 
-    scene->itemChanged(poly_item);  // just for redraw   
+    scene->itemChanged(selectable_item);  // just for redraw   
   }  
 }
+void Polyhedron_demo_smoothing_fairing_plugin::on_Save_ROI_button_clicked()
+{
+  Scene_polyhedron_selectable_item* selectable_item = get_selected_item();
+  if(!selectable_item) { return; }
 
-void Polyhedron_demo_smoothing_fairing_plugin::on_Fair_button_clicked() {
+  QString fileName = QFileDialog::getSaveFileName(mw, "Save", 
+    selectable_item->name() + ".txt", "Text (*.txt)");
+  if(fileName.isNull()) { return; }
 
-  int item_id = scene->mainSelectionIndex();
-  Scene_polyhedron_selectable_item* poly_item = qobject_cast<Scene_polyhedron_selectable_item*>(scene->item(item_id));
-  if(!poly_item) {
-    print_message("Error: there is no selected polyhedron item!");
-    return;
+  selectable_item->save_roi(fileName.toLocal8Bit().data());  
+}
+void Polyhedron_demo_smoothing_fairing_plugin::on_Load_ROI_button_clicked()
+{
+  Scene_polyhedron_selectable_item* selectable_item = get_selected_item();
+  if(!selectable_item) { return; }
+
+  QString fileName = QFileDialog::getOpenFileName(mw, "Read", 
+    selectable_item->name() + ".txt", "Text (*.txt)");
+  if(fileName.isNull()) { return; }
+
+  selectable_item->load_roi(fileName.toLocal8Bit().data());
+  scene->itemChanged(selectable_item); 
+}
+void Polyhedron_demo_smoothing_fairing_plugin::new_item_created(int item_id)
+{
+  if(dock_widget->isVisible()) {
+    Scene_polyhedron_item* poly_item = 
+      qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
+    if(poly_item) {
+      convert_to_selectable_polyhedron(item_id, poly_item);
+    }
   }
-
-  if(ui_widget->Scale_dependent_weight_radio_button->isChecked())
-    CGAL::fair(*poly_item->polyhedron(), poly_item->selected_vertices, 
-      CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::SCALE_DEPENDENT_WEIGHTING>::weight_calculator());
-  if(ui_widget->Uniform_weight_radio_button->isChecked())
-    CGAL::fair(*poly_item->polyhedron(), poly_item->selected_vertices,
-      CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::UNIFORM_WEIGHTING>::weight_calculator());
-  else
-    CGAL::fair(*poly_item->polyhedron(), poly_item->selected_vertices,
-      CGAL::internal::Fairing_weight_selector<Polyhedron, CGAL::COTANGENT_WEIGHTING>::weight_calculator());
-  poly_item->changed();
 }
 
+void Polyhedron_demo_smoothing_fairing_plugin::on_Fair_button_clicked() 
+{
+  Scene_polyhedron_selectable_item* selectable_item = get_selected_item();
+  if(!selectable_item) { return; }
+
+  if(ui_widget->Scale_dependent_weight_radio_button->isChecked())
+    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices, 
+      CGAL::Fairing_scale_dependent_weight<Polyhedron>());
+  if(ui_widget->Uniform_weight_radio_button->isChecked())
+    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices,
+      CGAL::Fairing_uniform_weight<Polyhedron>());
+  else
+    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices,
+      CGAL::Fairing_cotangent_weight<Polyhedron>());
+  selectable_item->changed_with_poly_item();
+}
+
+void Polyhedron_demo_smoothing_fairing_plugin::on_Smooth_button_clicked() 
+{
+  Scene_polyhedron_selectable_item* selectable_item = get_selected_item();
+  if(!selectable_item) { return; }
+
+  CGAL::smooth(*selectable_item->polyhedron(), 
+    selectable_item->selected_vertices.begin(),
+    selectable_item->selected_vertices.end());
+
+  selectable_item->changed_with_poly_item();
+}
 Scene_polyhedron_selectable_item* 
   Polyhedron_demo_smoothing_fairing_plugin::convert_to_selectable_polyhedron(Item_id i,
   Scene_polyhedron_item* poly_item)
