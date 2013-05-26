@@ -21,23 +21,37 @@ typedef Traits_2::Curve_2                               Polyline_2;
 typedef Traits_2::X_monotone_curve_2                    X_Polyline_2;
 typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 
+const bool TO_RIGHT = true;
+const bool TO_LEFT = false;
+
 void test_locate(std::vector<Point_2> pts, Point_2 p)
 {
   Traits_2 traits;
   Traits_2::Construct_x_monotone_curve_2 xpolyline_construct =
     traits.construct_x_monotone_curve_2_object();
 
-  std::cout << "\n** Testing locate(poly,p)\n";
+  std::cout << "** Test the point (" << p << ")\n";
+
+  std::cout << "*** Direct Case\n";
   X_Polyline_2 xpoly = xpolyline_construct(pts.begin(),pts.end());
+  std::cout << "Consider: " << xpoly << "\n";
+
   int res = traits.locate(xpoly,p);
-  std::cout << "The x-poly: " << xpoly << "\n"
-    "contains the point: " << p << "\n"
-    "in its " << res << " segment\n";
+  std::cout << "locate(xpoly,p) = " << res << "\n";
+  res = traits.locate_side(xpoly,p,TO_RIGHT);
+  std::cout << "locate_side(xpoly,p,TO_RIGHT) = " << res << "\n";
+  res = traits.locate_side(xpoly,p,TO_LEFT);
+  std::cout << "locate_side(xpoly,p,TO_LEFT) = " << res << "\n";
+
+  std::cout << "*** Inverse case\n";
   xpoly = xpolyline_construct(pts.rbegin(),pts.rend());
+  std::cout << "Consider: " << xpoly << "\n";
   res = traits.locate(xpoly,p);
-  std::cout << "The reversed x-poly: " << xpoly << "\n"
-    "contains the point: " << p << "\n"
-    "in its " << res << " segment\n";
+  std::cout << "locate(cv,p) = " << res << "\n";
+  res = traits.locate_side(xpoly,p,TO_RIGHT);
+  std::cout << "locate_side(xpoly,p,TO_RIGHT) = " << res << "\n";
+  res = traits.locate_side(xpoly,p,TO_LEFT);
+  std::cout << "locate_side(xpoly,p,TO_LEFT) = " << res << "\n";
 }
 
 int main ()
@@ -176,12 +190,12 @@ int main ()
   test_locate(pts,Point_2(1,-1));
   test_locate(pts,Point_2(1,1));
   test_locate(pts,Point_2(1,2));
-  test_locate(pts,Point_2(2,-1));
-  test_locate(pts,Point_2(2,2));
-  test_locate(pts,Point_2(2,2.2));
-  test_locate(pts,Point_2(3,-2.2));
-  test_locate(pts,Point_2(3,3));
-  test_locate(pts,Point_2(3,6));
+  test_locate(pts,Point_2(5,4));
+  test_locate(pts,Point_2(5,5));
+  test_locate(pts,Point_2(5,6));
+  test_locate(pts,Point_2(6,5));
+  test_locate(pts,Point_2(6,6));
+  test_locate(pts,Point_2(6,7));
   //TODO: Verify and complete the test of locte(cv,p) for a multi-segments cv
 
 
