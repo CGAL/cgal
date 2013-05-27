@@ -130,8 +130,7 @@ predicates and constructions.
 
 For reasons that will become evident later, a representation class
 provides two typenames for number types,
-namely `R::FT` and `R::RT` and one typename for the linear
-algebra module `R::LA`.
+namely `R::FT` and `R::RT`.
 The type `R::FT` must fulfill the
 requirements on what is called a <I>field type</I> in \cgal. This
 roughly means that `R::FT` is a type for which operations \f$ +\f$,
