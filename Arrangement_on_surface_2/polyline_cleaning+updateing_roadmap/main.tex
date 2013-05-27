@@ -286,6 +286,18 @@ Thus, obviously, the implementation of \functor{Intersect\_2} should meet this r
   \end{pyglist}
 \end{queframe}
 
+\subsection{Location Functions}
+\label{sec:location-functions-polytr}
+
+Due to the lifting of the left-to-right invariant of the x-monotone polylines, the functions \code{locate()} and \code{locate\_side()} had to be corrected.
+During the correction a mistake in the original implementation was found.\todo{Detail what was the problem and how was it fixed}
+Originally, there were two tests in \code{locate\_side()}
+\begin{pyglist}
+  if (equal(segment_traits_2()->construct_min_vertex_2_object()(cv[i]), q))
+  if (equal(segment_traits_2()->construct_max_vertex_2_object()(cv[i]), q))
+\end{pyglist}
+However, if the given \xpoly is \emph{not} vertical, then this test is too restrictive and would never be evaluated \emph{TRUE}.
+
 \subsection{Changes Derived from \poly}
 \label{sec:changes-derived-from-polytr}
 
