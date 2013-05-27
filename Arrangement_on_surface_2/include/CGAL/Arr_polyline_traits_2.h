@@ -199,10 +199,9 @@ public:
 
       const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
 
-      if (seg_traits->compare_endpoints_xy_2_object()(cv[0])==SMALLER)
-        return seg_traits->construct_min_vertex_2_object()(cv[0]);
-      else
-        return seg_traits->
+      return (seg_traits->compare_endpoints_xy_2_object()(cv[0])==SMALLER) ?
+        seg_traits->construct_min_vertex_2_object()(cv[0]) :
+        seg_traits->
           construct_min_vertex_2_object()(cv[cv.number_of_segments()-1]);
     }
   };
@@ -1608,8 +1607,7 @@ public:
   { return Construct_x_monotone_curve_2(this); }
   //@}
 
-  // TODO: Turn this *private* again
-// private:
+private:
   /*
    * Roadmap: Improve the implementation _locate()
    *  - _locate() should return an iterator to the located segment
