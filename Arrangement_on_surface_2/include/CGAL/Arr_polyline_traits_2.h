@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 //                 Ron Wein  <wein@post.tau.ac.il>
@@ -57,7 +57,7 @@ private:
 
 private:
   enum { INVALID_INDEX = 0xffffffff };
-  
+
 public:
   /*! Default constructor */
   Arr_polyline_traits_2() : m_seg_traits() {}
@@ -90,7 +90,7 @@ public:
 
   /*! Compare two points lexigoraphically: by x, then by y. */
   typedef typename Segment_traits_2::Compare_xy_2       Compare_xy_2;
-  
+
   /*! Get a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object() const
   {
@@ -124,7 +124,7 @@ public:
       return m_seg_traits->construct_min_vertex_2_object()(cv[0]);
     }
   };
-    
+
   /*! Get a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   {
@@ -180,7 +180,7 @@ public:
       return (m_seg_traits->is_vertical_2_object()(cv[0]));
     }
   };
-  
+
   /*! Get an Is_vertical_2 functor object. */
   Is_vertical_2 is_vertical_2_object() const
   {
@@ -318,7 +318,7 @@ public:
   }
 
   class Equal_2 {
-  private: 
+  private:
     const Self * m_poly_traits;
 
   public:
@@ -349,11 +349,11 @@ public:
       unsigned int n1 = cv1.size();
       unsigned int n2 = cv2.size();
 
-      // Check the pairwise equality of the contained segments.    
+      // Check the pairwise equality of the contained segments.
       typename Segment_traits_2::Equal_2 equal =
         m_poly_traits->m_seg_traits.equal_2_object();
       typename Segment_traits_2::Compare_x_2 compare_x =
-        m_poly_traits->m_seg_traits.compare_x_2_object(); 
+        m_poly_traits->m_seg_traits.compare_x_2_object();
       typename Segment_traits_2::Compare_y_at_x_2 compare_y_at_x =
         m_poly_traits->m_seg_traits.compare_y_at_x_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
@@ -365,7 +365,7 @@ public:
       Comparison_result res_x;
       Comparison_result res_y_at_x;
       unsigned int i = 0, j = 0;
-      
+
       // the first and last points of the segments should be equal.
       bool res = equal(min_vertex(cv1[0]),min_vertex(cv2[0]));
       if (!res)
@@ -378,13 +378,13 @@ public:
       // it means that it is equal.
       bool ver1 = is_vertical(cv1);
       bool ver2 = is_vertical(cv2);
-      // both curves are vertical and therefore equal. 
+      // both curves are vertical and therefore equal.
       if (ver1 && ver2)
         return true;
       // one is vertical and the other is not - hence not equal.
       if ((ver1 && !ver2) || (ver2 && !ver1))
         return false;
-      
+
       // If we arrived here it means that the first and last point of the
       // curve are equal.
       while ((i < n1-1) || (j < n2-1)) {
@@ -401,7 +401,7 @@ public:
           res_x = compare_x(point1,point2);
           // Check if the different point is a collinear point situated on
           // the line between its two neighbors.
-          if (res_x == SMALLER) { 
+          if (res_x == SMALLER) {
             res_y_at_x = compare_y_at_x(point1,cv2[j]);
             if (res_y_at_x == EQUAL)
               ++i;
@@ -423,9 +423,9 @@ public:
       return true;
     }
   };
- 
+
   /*! Get an Equal_2 functor object. */
-  
+
   Equal_2 equal_2_object() const
   {
     return Equal_2(this);
@@ -455,7 +455,7 @@ public:
      */
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2 & cv, OutputIterator oi) const
-    { 
+    {
       // Go over all points in the input curve.
       typename Curve_2::const_iterator       ps = cv.begin();
       typename Curve_2::const_iterator       end = cv.end();
@@ -483,7 +483,7 @@ public:
       typename Curve_2::const_iterator           x_begin = ps;
       Comparison_result                          curr_x_res;
       Comparison_result                          curr_xy_res;
-     
+
       x_res = compare_x(*ps, *pt);
       if (x_res != EQUAL)
         xy_res = x_res;
@@ -517,14 +517,14 @@ public:
       return oi;
     }
   };
-  
+
   /*! Get a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   {
     return Make_x_monotone_2(&m_seg_traits);
   }
 
-  class Split_2 
+  class Split_2
   {
   private:
     typedef Arr_polyline_traits_2<Segment_traits_2>       Self;
@@ -562,7 +562,7 @@ public:
       CGAL_precondition(i != INVALID_INDEX);
 
       // Clear the output curves.
-      c1.clear(); 
+      c1.clear();
       c2.clear();
 
       // Push all segments labeled(0, 1, ... , i-1) into c1.
@@ -623,7 +623,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & cv1,
                               const X_monotone_curve_2 & cv2,
-                              OutputIterator oi)
+                              OutputIterator oi) const
     {
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
         m_seg_traits->construct_min_vertex_2_object();
@@ -637,7 +637,7 @@ public:
         m_seg_traits->intersect_2_object();
       typename Segment_traits_2::Compare_y_at_x_2       compare_y_at_x =
         m_seg_traits->compare_y_at_x_2_object();
-      
+
       const unsigned int n1 = cv1.size();
       const unsigned int n2 = cv2.size();
       unsigned int       i1 = 0;
@@ -646,7 +646,7 @@ public:
 
       Comparison_result left_res = compare_xy(min_vertex(cv1[i1]),
                                               min_vertex(cv2[i2]));
-      
+
       if (left_res == SMALLER) {
         // cv1's left endpoint is to the left of cv2's left endpoint:
         // Locate the index i1 of the segment in cv1 which contains cv2's
@@ -700,7 +700,7 @@ public:
                                             cv1[i1]) == EQUAL);
 
         right_overlap = false;
-        
+
         if (!right_coincides && !left_coincides) {
           // Non of the endpoints of the current segment of one polyline
           // coincides with the curent segment of the other polyline:
@@ -761,7 +761,7 @@ public:
 
         left_res = (right_res == SMALLER) ? LARGER :
           (right_res == LARGER) ? SMALLER : EQUAL;
-        
+
         left_coincides = right_coincides;
         left_overlap = right_overlap;
       }
@@ -772,7 +772,7 @@ public:
       std::cout << "right res: " << right_res << std::endl;
       std::cout << "left res: " << left_res << std::endl;
 #endif
-      
+
       // Output the remaining overlapping polyline, if necessary.
       if (ocv.size() > 0) {
         *oi++ = make_object(ocv);
@@ -796,7 +796,7 @@ public:
     }
   };
   friend class Intersect_2;
-  
+
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object() const
   {
@@ -829,7 +829,7 @@ public:
 
       typename Segment_traits_2::Is_vertical_2 is_vertical =
         m_seg_traits->is_vertical_2_object();
-      
+
       const unsigned int n1 = cv1.size();
       const unsigned int n2 = cv2.size();
 
@@ -841,7 +841,7 @@ public:
               ((ver1 && ver2) || (!ver1 && !ver2)));
     }
   };
-  
+
   /*! Get an Are_mergeable_2 functor object. */
   Are_mergeable_2 are_mergeable_2_object() const
   {
@@ -857,14 +857,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_polyline_traits_2<Segment_traits_2>;
-    
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve(segment).
@@ -886,7 +886,7 @@ public:
       Construct_max_vertex_2 max_vertex =
         m_traits->construct_max_vertex_2_object();
       Equal_2 equal = m_traits->equal_2_object();
-      
+
       const unsigned int n1 = cv1.size();
       const unsigned int n2 = cv2.size();
       unsigned int       i;
@@ -911,7 +911,7 @@ public:
           c.push_back(cv2[i]);
       } else {
         CGAL_precondition(equal(max_vertex(cv2), min_vertex(cv1)));
-        
+
         // cv1 extends cv2 to the right:
         for (i = 0; i < n2 - 1; ++i)
           c.push_back(cv2[i]);
@@ -931,14 +931,14 @@ public:
       }
     }
   };
-  
+
   /*! Get a Merge_2 functor object. */
   Merge_2 merge_2_object() const { return Merge_2(this); }
   ///@}
-  
+
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  typedef typename Segment_traits_2::Approximate_number_type  
+  typedef typename Segment_traits_2::Approximate_number_type
   Approximate_number_type;
   typedef typename Segment_traits_2::Approximate_2    Approximate_2;
 
@@ -1008,12 +1008,12 @@ private:
       // First check whether the polyline curve really contains q in its
       // xy-range:
 
-      Comparison_result res_from = compare_xy(min_vertex(cv[from]), q);    
+      Comparison_result res_from = compare_xy(min_vertex(cv[from]), q);
       if (res_from == EQUAL) return from;
-    
+
       Comparison_result res_to = compare_xy(max_vertex(cv[to]), q);
       if (res_to == EQUAL) return to;
-    
+
       typename Segment_traits_2::Compare_x_2 compare_x =
         m_seg_traits->compare_x_2_object();
 
@@ -1022,7 +1022,7 @@ private:
 
       //// q is not in the x-range of cv:
       //if (res_from == res_to) return INVALID_INDEX;
-      
+
       // Perform a binary search to locate the segment that contains q in its
       // xy-range:
       while (to > from) {
@@ -1044,17 +1044,17 @@ private:
       CGAL_assertion(from == to);
       return from;
     }
-    
+
     typename Segment_traits_2::Compare_x_2 compare_x =
       m_seg_traits->compare_x_2_object();
 
     // First check whether the polyline curve really contains q in its x-range.
-    Comparison_result res_from = compare_x(min_vertex(cv[from]), q);    
+    Comparison_result res_from = compare_x(min_vertex(cv[from]), q);
     if (res_from == EQUAL) return from;
-    
+
     Comparison_result res_to = compare_x(max_vertex(cv[to]), q);
     if (res_to == EQUAL) return to;
-    
+
     // q is not in the x-range of cv:
     if (res_from == res_to) return INVALID_INDEX;
 
@@ -1100,7 +1100,7 @@ private:
     unsigned int i = _locate(m_seg_traits, cv, q);
     if (i == INVALID_INDEX)
       return INVALID_INDEX;
-   
+
     typename Segment_traits_2::Equal_2 equal = m_seg_traits->equal_2_object();
 
     if (equal(m_seg_traits->construct_min_vertex_2_object()(cv[i]), q)) {
@@ -1122,7 +1122,7 @@ private:
       else
         return i + 1;
     }
-    
+
     // In case q is in cv[i]'s interior:
     return i;
   }
