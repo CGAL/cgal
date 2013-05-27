@@ -204,10 +204,12 @@ bool is_valid(bool verbose = false, int level = 0) const;
 /// @} 
 
 /// \name Members for Compact_container
-/// \cgalAdvanced These member functions are required by
+/// \cgalAdvancedBegin
+/// These member functions are required by
 /// `Triangulation_data_structure_3` because it uses
 /// `Compact_container` to store its cells. See the documentation of
 /// `Compact_container` for the exact requirements.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 
@@ -223,9 +225,11 @@ void * & for_compact_container();
 /// @}
 
 /// \name Internal
-/// \cgalAdvanced These functions are used internally by the triangulation data
+/// \cgalAdvancedBegin
+/// These functions are used internally by the triangulation data
 /// structure. The user is not encouraged to use them directly as they
 /// may change in the future.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

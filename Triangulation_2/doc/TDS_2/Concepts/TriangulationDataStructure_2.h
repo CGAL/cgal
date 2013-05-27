@@ -269,7 +269,10 @@ void clear();
 /// @{
 
 /*! 
-  \cgalAdvanced returns the dimension of the triangulation data structure. 
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+  returns the dimension of the triangulation data structure. 
+  \cgalAdvancedEnd
 */ 
 int dimension() const; 
 
@@ -754,12 +757,18 @@ Face_handle face() const;
 /// @{
 
 /*! 
-\cgalAdvanced sets the geometric information to `p`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+sets the geometric information to `p`. 
+\cgalAdvancedEnd
 */ 
 void set_point(const Point& p); 
 
 /*! 
-\cgalAdvanced sets the incident face to `f`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+sets the incident face to `f`. 
+\cgalAdvancedEnd
 */ 
 void set_face(Face_handle f); 
 

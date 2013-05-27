@@ -1069,19 +1069,24 @@ Point circumcenter(Face_handle f) const;
 /// @{
 
 /*! 
-\cgalAdvanced This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
 Sets the infinite vertex.
+\cgalAdvancedEnd
 */ 
 void set_infinite_vertex(const Vertex_handle& v); 
 
 /// @} 
 
 /// \name Checking 
-/// \cgalAdvanced The responsibility of keeping a valid triangulation
+/// \cgalAdvancedBegin
+/// The responsibility of keeping a valid triangulation
 /// belongs to the users if advanced operations are used. Obviously
 /// the advanced user, who implements higher levels operations may
 /// have to make a triangulation invalid at some times. The following
 /// method is provided to help the debugging.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

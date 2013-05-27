@@ -46,32 +46,47 @@ bool is_constrained(int i);
 /// @{
 
 /*! 
-\cgalAdvanced sets the edge between the face and its neighbor `neighbor(i)` 
-as a constrained or unconstrained edge according to `b`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+sets the edge between the face and its neighbor `neighbor(i)` 
+as a constrained or unconstrained edge according to `b`.
+\cgalAdvancedEnd
 */ 
 void set_constraint(int i, bool b); 
 
 /*! 
-\cgalAdvanced sets the status (constrained or unconstrained) of the three edges of the face. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+sets the status (constrained or unconstrained) of the three edges of the face. 
+\cgalAdvancedEnd
 */ 
 void set_constraints(bool c0, bool c1, bool c2); 
 
 /*! 
-\cgalAdvanced changes the orientation of the face by exchanging `vertex(0)` 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+changes the orientation of the face by exchanging `vertex(0)` 
 with `vertex(1)` and `neighbor(0)` with `neighbor(1)` 
-and the corresponding constrained status. 
+and the corresponding constrained status.
+\cgalAdvancedEnd
 */ 
 void reorient(); 
 
 /*! 
-\cgalAdvanced performs a counterclockwise permutation of the 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+performs a counterclockwise permutation of the 
 vertices, neighbors and constrained status of the face. 
+\cgalAdvancedEnd
 */ 
 void ccw_permute(); 
 
 /*! 
-\cgalAdvanced performs a clockwise permutation of the 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+performs a clockwise permutation of the 
 vertices and neighbors and constrained status of the face. 
+\cgalAdvancedEnd
 */ 
 void cw_permute(); 
 
@@ -82,10 +97,13 @@ void cw_permute();
 
 /*! 
 
-\cgalAdvanced tests the validity of the face as a face of a plain
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+tests the validity of the face as a face of a plain
 triangulation and additionally checks if the edges of the face are
 consistently marked as constrained or unconstrained edges in the face
 and its neighbors.
+\cgalAdvancedEnd
 */ 
 bool is_valid(); 
 

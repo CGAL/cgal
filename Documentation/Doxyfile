@@ -239,7 +239,9 @@ ALIASES += "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships
 ALIASES += "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
 ALIASES += "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""
 ALIASES += "cgalDebug=\par \"Debug\""
-ALIASES += "cgalAdvanced=\par \"Advanced\""
+ALIASES += "cgalAdvancedBegin=<div class=\"CGALAdvanced\"> <div>Advanced</div>"
+ALIASES += "cgalAdvancedEnd=</div>"
+ALIASES += "cgalAdvancedFunction=This is an advanced functions."
 
 ALIASES += "cgalPkgPicture{1}=<div class=\"PkgImage\"> \n \image html \1 \n</div>"
 

@@ -278,11 +278,12 @@ const TriangulationDataStructure_3 & tds() const;
 
 
 /*! 
-Returns a reference to the triangulation data structure. 
-\cgalAdvanced This method is mainly a help for users implementing their own triangulation algorithms.
-
-\cgalAdvanced The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
-*/ 
+Returns a reference to the triangulation data structure.
+\cgalAdvancedBegin
+This method is mainly a help for users implementing their own triangulation algorithms.
+The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
+\cgalAdvancedEnd
+*/
 TriangulationDataStructure_3 & tds(); 
 
 /*! 
@@ -305,9 +306,12 @@ Returns the infinite vertex.
 */ 
 Vertex_handle infinite_vertex(); 
 
-/*! 
-\cgalAdvanced This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
+/*!
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
 Sets the infinite vertex.
+\cgalAdvancedEnd
 */ 
 void set_infinite_vertex(Vertex_handle v);
 

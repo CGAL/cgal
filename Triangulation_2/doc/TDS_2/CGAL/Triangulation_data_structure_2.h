@@ -51,8 +51,10 @@ public:
 /// @}
 
 /// \name  
-/// \cgalAdvanced In addition to the interface documented in the concept,
+/// \cgalAdvancedBegin
+/// In addition to the interface documented in the concept,
 /// the class offers the following types.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

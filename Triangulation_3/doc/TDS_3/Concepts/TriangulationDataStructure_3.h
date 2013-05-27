@@ -306,7 +306,10 @@ size_type number_of_edges() const;
 /// @{
 
 /*! 
-\cgalAdvanced Sets the dimension to `n`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Sets the dimension to `n`. 
+\cgalAdvancedEnd
 */ 
 void set_dimension(int n); 
 
@@ -650,44 +653,65 @@ void decrease_dimension(Cell_handle c, int i);
 /// @{
 
 /*! 
-\cgalAdvanced Changes the orientation of all cells of the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Changes the orientation of all cells of the triangulation data structure. 
 \pre `tds`.`dimension()` \f$ \geq1\f$. 
+\cgalAdvancedEnd
 */ 
 void reorient(); 
 
 /*! 
-\cgalAdvanced Adds a copy of the vertex `v` to the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Adds a copy of the vertex `v` to the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Vertex_handle create_vertex(const Vertex &v = Vertex()); 
 
 /*! 
-\cgalAdvanced Creates a vertex which is a copy of the one pointed to by `v` 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Creates a vertex which is a copy of the one pointed to by `v` 
 and adds it to the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Vertex_handle create_vertex(Vertex_handle v); 
 
 /*! 
-\cgalAdvanced Adds a copy of the cell `c` to the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Adds a copy of the cell `c` to the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Cell_handle create_cell(const Cell &c = Cell()); 
 
 /*! 
-\cgalAdvanced Creates a cell which is a copy of the one pointed to by `c` 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Creates a cell which is a copy of the one pointed to by `c` 
 and adds it to the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Cell_handle create_cell(Cell_handle c); 
 
 /*! 
-\cgalAdvanced Creates a cell and adds it into the triangulation data 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Creates a cell and adds it into the triangulation data 
 structure. Initializes the vertices of the cell, its neighbor handles 
-being initialized with the default constructed handle. 
-*/ 
+being initialized with the default constructed handle.
+\cgalAdvancedEnd
+*/
 Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1, 
 Vertex_handle v2, Vertex_handle v3); 
 
 /*! 
-\cgalAdvanced Creates a cell, initializes its vertices and neighbors, and adds it 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Creates a cell, initializes its vertices and neighbors, and adds it 
 into the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Cell_handle create_cell( Vertex_handle v0, Vertex_handle v1, 
 Vertex_handle v2, Vertex_handle v3, 
@@ -695,27 +719,37 @@ Cell_handle n0, Cell_handle n1,
 Cell_handle n2, Cell_handle n3); 
 
 /*! 
-\cgalAdvanced Removes the vertex from the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Removes the vertex from the triangulation data structure. 
 \pre The vertex is a vertex of `tds`. 
+\cgalAdvancedEnd
 */ 
 void delete_vertex( Vertex_handle v ); 
 
 /*! 
-\cgalAdvanced Removes the cell from the triangulation data structure. 
-\pre The cell is a cell of `tds`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Removes the cell from the triangulation data structure. 
+\pre The cell is a cell of `tds`.
+\cgalAdvancedEnd
 */ 
 void delete_cell( Cell_handle c ); 
 
 /*! 
-\cgalAdvanced Calls `delete_vertex` over an iterator range of value type 
-`Vertex_handle`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Calls `delete_vertex` over an iterator range of value type `Vertex_handle`.
+\cgalAdvancedEnd
 */ 
 template <class VertexIt> 
 void delete_vertices(VertexIt first, VertexIt last); 
 
 /*! 
-\cgalAdvanced Calls `delete_cell` over an iterator range of value type 
-`Cell_handle`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Calls `delete_cell` over an iterator range of value type `Cell_handle`. 
+\cgalAdvancedEnd
 */ 
 template <class CellIt> 
 void delete_cells(CellIt first, CellIt last); 

@@ -364,12 +364,14 @@ considerably slower:
 
 \cgalExample{Minkowski_sum_2/exact_offset.cpp}
 
-\cgalAdvanced Both functions `approximated_offset_2()` and `offset_polygon_2()`
+\cgalAdvancedBegin
+Both functions `approximated_offset_2()` and `offset_polygon_2()`
 also have overloaded versions that accept a decomposition strategy
 and use the polygon-decomposition approach to compute (or approximate)
 the offset. These functions are less efficient than their counterparts
 that employ the convolution approach, and are only included in the package
 for the sake of completeness.
+\cgalAdvancedEnd
 
 \subsection mink_ssecinner_offset Computing Inner Offsets 
 
@@ -409,9 +411,11 @@ exact manner, whereas `oi`'s value-type must be
 
 \cgalExample{Minkowski_sum_2/exact_inset.cpp}
 
-\cgalAdvanced Unlike the offset functions, there are no overloaded versions of the inset
+\cgalAdvancedBegin
+Unlike the offset functions, there are no overloaded versions of the inset
 functions that use convex polygon decomposition to compute insets, as this
 method cannot be easily generalized for inset computations.
+\cgalAdvancedEnd
 
 In this context let us mention that there exist overloaded versions of the
 functions 
