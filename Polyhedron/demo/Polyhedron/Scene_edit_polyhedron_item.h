@@ -190,7 +190,7 @@ public:
   /// Returns a Scene_polyhedron_item from the edit polyhedron item, and
   /// transfer the ownership of the polyhedron to it.
   /// The item 'this' must be destroy just after a call to this function.
-  Scene_polyhedron_item* to_polyhedron_item() const;
+  Scene_polyhedron_item* to_polyhedron_item();
 
   // Get dimensions
   bool isFinite() const { return true; }

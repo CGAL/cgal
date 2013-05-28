@@ -55,7 +55,6 @@ public slots:
   void on_ReadROIPushButton_clicked();
   void dock_widget_visibility_changed(bool visible);
   
-  void item_destroyed();
   void new_item_created(int item_id);
 
 private:
@@ -319,8 +318,6 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
                                       // name of edit_poly is changed.
 
   mw->installEventFilter(edit_poly); // filter mainwindows events for key(pressed/released)
-
-  connect(edit_poly, SIGNAL(destroyed()), this, SLOT(item_destroyed()));
   scene->replaceItem(i, edit_poly);
   return edit_poly;
 }
@@ -336,7 +333,6 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_polyhedron(Item_id i,
 }
 
 
-void Polyhedron_demo_edit_polyhedron_plugin::item_destroyed() { }
 
 Q_EXPORT_PLUGIN2(Polyhedron_demo_edit_polyhedron_plugin, Polyhedron_demo_edit_polyhedron_plugin)
 

@@ -53,6 +53,7 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
     delete_handle_group(false);
   }
   gluDeleteQuadric(quadric);
+  delete poly_item;
 }
 
 struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
@@ -298,9 +299,11 @@ void Scene_edit_polyhedron_item::gl_draw_edge(double px, double py, double pz,
 
 void Scene_edit_polyhedron_item::changed()
 { }
-Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() const {
+Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() {
+  Scene_polyhedron_item* poly_item_tmp = poly_item;
   poly_item->set_color_vector_read_only(false);
-  return poly_item;
+  poly_item = NULL;
+  return poly_item_tmp;
 }
 
 Polyhedron* Scene_edit_polyhedron_item::polyhedron()       
