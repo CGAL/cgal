@@ -1,24 +1,3 @@
-// Copyright (c) 2003,2004,2005,2006  INRIA Sophia-Antipolis (France) and
-// Notre Dame University (U.S.A.).  All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Segment_Delaunay_graph_Linf_2/include/CGAL/Segment_Delaunay_graph_Linf_2/Oriented_side_of_bisector_C2.h $
-// $Id: Oriented_side_of_bisector_C2.h 56668 2010-06-09 08:45:58Z sloriot $
-// 
-//
-// Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
-
-
-
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_ORIENTED_SIDE_OF_BISECTOR_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_2_ORIENTED_SIDE_OF_BISECTOR_C2_H
@@ -79,7 +58,7 @@ private:
 
   bool is_degenerate(const Site_2& s) const
   {
-    CGAL_precondition( s.is_segment() );    
+    CGAL_precondition( s.is_segment() );
     return same_points( s.source_site(), s.target_site() );
   }
 
@@ -94,7 +73,6 @@ private:
 
     if ( same_points(q, p1) ) { return SMALLER; }
     if ( same_points(q, p2) ) { return LARGER; }
-    
 
     //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_pp" << std::endl;);
 
@@ -110,8 +88,8 @@ private:
   {
 
     //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp entering "
-    //  << "(s =" << s << ") p=(" << p << ") q=(" << q << ")" 
-    //  << std::endl;); 
+    //  << "(s =" << s << ") p=(" << p << ") q=(" << q << ")"
+    //  << std::endl;);
 
     CGAL_precondition( s.is_segment() && p.is_point() );
     CGAL_precondition( !is_degenerate(s) );
@@ -155,15 +133,15 @@ private:
     Point_2 ssrc = s.source(), strg = s.target();
 
     Line_2 ls = compute_supporting_line(s.supporting_site());
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp ls=" 
+    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp ls="
     //  << ls.a() << ' ' << ls.b() << ' ' << ls.c() << std::endl;);
 
     Line_2 lsrc = compute_linf_perpendicular(ls, ssrc);
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp lsrc=" 
+    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp lsrc="
     //  << lsrc.a() << ' ' << lsrc.b() << ' ' << lsrc.c() << std::endl;);
 
     Line_2 ltrg = compute_linf_perpendicular(ls, strg);
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp lstrg=" 
+    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp lstrg="
     //  << ltrg.a() << ' ' << ltrg.b() << ' ' << ltrg.c() << std::endl;);
 
     Oriented_side os_src = oriented_side_of_line(lsrc, qq);
@@ -184,15 +162,15 @@ private:
 
     // here closest point of s to q is inside s
     if (not set_closest) {
-      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp closest inside" 
+      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp closest inside"
       //  << std::endl;);
       Homogeneous_point_2 hp = compute_linf_projection_hom(ls, qq);
-      closest = Point_2(hp.x(), hp.y());  
+      closest = Point_2(hp.x(), hp.y());
     }
 
-    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp closest=" 
+    //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp closest="
     //  << closest << std::endl;);
-    
+
     return
       compare_distance_to_point_linf(qq, closest, pp);
   }
@@ -224,7 +202,7 @@ private:
 
 
     Point_2 qq = q.point();
-    
+
     Point_2 ssrc1 = s1.source(), strg1 = s1.target();
 
     Line_2 ls1 = compute_supporting_line(s1.supporting_site());
@@ -238,7 +216,7 @@ private:
     Line_2 ltrg2 = compute_linf_perpendicular(ls2, strg2);
 
     // idx1 and idx2 indicate if q is to the left (source endpoint
-    // side), the right side (target endpoint side) or inside 
+    // side), the right side (target endpoint side) or inside
     // the band of s1 and s2 respectively; if q is on the boundary of
     // the band we assign it to the adjacent halfplane; for left
     // halfplane the value is -1; for the band the value is 0; for the
@@ -354,12 +332,12 @@ private:
 
     if ( t1.is_point() && t2.is_point() ) {
       r = compare_distances_pp(t1, t2, q);
-      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances pp result" 
+      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances pp result"
       //          << " t1=" << t1 << " t2=" << t2
       //          << " q=" << q << "  res=" << r << std::endl;);
     } else if ( t1.is_segment() && t2.is_point() ) {
       r = compare_distances_sp(t1, t2, q);
-      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances sp result" 
+      //CGAL_SDG_DEBUG(std::cout << "debug compare_distances sp result"
       //          << " t1=" << t1 << " t2=" << t2
       //          << " q=" << q << "  res=" << r << std::endl;);
     } else if ( t1.is_point() && t2.is_segment() ) {
