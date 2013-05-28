@@ -23,20 +23,23 @@ public:
   typedef typename std::vector<Curve_2>                 Curves_vector;
 
   /*! Constructor */
-  IO_test();
+  IO_test(const Traits& traits);
 
   /*! Destructor */
   virtual ~IO_test();
-  
-  bool read_xcurves(const char* filename, Xcurves_vector& xcurves);
-  bool read_points(const char* filename, Points_vector& points);
-  bool read_curves(const char* filename, Curves_vector& curves);
+
+  bool read_xcurves(const char* filename, Xcurves_vector& xcurves,
+                    const Traits&);
+  bool read_points(const char* filename, Points_vector& points,
+                   const Traits&);
+  bool read_curves(const char* filename, Curves_vector& curves,
+                   const Traits&);
 
   /*! Set the file names */
   void set_filenames(const char* points_filename,
                      const char* xcurves_filename,
                      const char* curves_filename);
-  
+
   /*! Parse the command line */
   virtual bool parse(int argc, char* argv[]);
 
@@ -48,7 +51,7 @@ public:
 
 protected:
   /*! Skip comments */
-  std::istream& skip_comments(std::istream& is, std::string& line);  
+  std::istream& skip_comments(std::istream& is, std::string& line);
 
   /*! Remove blanks */
   std::string remove_blanks(char* str);
@@ -108,17 +111,23 @@ protected:
 
   /*! The container of x-monotone curves */
   Xcurves_vector m_xcurves;
+
+  /* Instance of the traits class */
+  const Traits& m_traits;
 };
 
 /*!
- * Constructor. 
+ * Constructor.
  * Accepts test data file name.
  */
 template <typename T_Traits>
-IO_test<T_Traits>::IO_test() : m_eol_printed(true) {}
+IO_test<T_Traits>::IO_test(const T_Traits& traits) :
+  m_eol_printed(true),
+  m_traits(traits)
+{}
 
 /*!
- * Destructor. 
+ * Destructor.
  */
 template <typename T_Traits>
 IO_test<T_Traits>::~IO_test() { clear(); }
@@ -153,9 +162,10 @@ bool IO_test<T_Traits>::parse(int argc, char* argv[])
 template <typename T_Traits>
 bool IO_test<T_Traits>::init()
 {
-  if (!read_points(m_filename_points.c_str(), m_points)) return false;
-  if (!read_xcurves(m_filename_xcurves.c_str(), m_xcurves)) return false;
-  if (!read_curves(m_filename_curves.c_str(), m_curves)) return false;
+  if (!read_points(m_filename_points.c_str(), m_points, m_traits)) return false;
+  if (!read_xcurves(m_filename_xcurves.c_str(), m_xcurves, m_traits))
+    return false;
+  if (!read_curves(m_filename_curves.c_str(), m_curves, m_traits)) return false;
   return true;
 }
 
@@ -210,7 +220,9 @@ std::string IO_test<T_Traits>::remove_blanks(char* str)
 
 /*! */
 template <typename T_Traits>
-bool IO_test<T_Traits>::read_points(const char* filename, Points_vector& points)
+bool IO_test<T_Traits>::read_points(const char* filename,
+                                    Points_vector& points,
+                                    const T_Traits& /* traits */)
 {
   typedef T_Traits                              Traits;
 
@@ -235,7 +247,9 @@ bool IO_test<T_Traits>::read_points(const char* filename, Points_vector& points)
 /*! */
 template <typename T_Traits>
 bool
-IO_test<T_Traits>::read_xcurves(const char* filename, Xcurves_vector& xcurves)
+IO_test<T_Traits>::read_xcurves(const char* filename,
+                                Xcurves_vector& xcurves,
+                                const T_Traits& traits)
 {
   typedef T_Traits                              Traits;
 
@@ -250,7 +264,7 @@ IO_test<T_Traits>::read_xcurves(const char* filename, Xcurves_vector& xcurves)
   while (skip_comments(xcv_stream, line)) {
     std::istringstream line_stream(line);
     typename Traits::X_monotone_curve_2 xcv;
-    this->read_xcurve(line_stream, xcv);
+    this->read_xcurve(line_stream, xcv, traits);
     xcurves.push_back(xcv);
     line_stream.clear();
   }
@@ -260,7 +274,8 @@ IO_test<T_Traits>::read_xcurves(const char* filename, Xcurves_vector& xcurves)
 /*! */
 template <typename T_Traits>
 bool
-IO_test<T_Traits>::read_curves(const char* filename, Curves_vector& curves)
+IO_test<T_Traits>::read_curves(const char* filename, Curves_vector& curves,
+                               const T_Traits& traits)
 {
   typedef T_Traits                              Traits;
 
@@ -275,7 +290,7 @@ IO_test<T_Traits>::read_curves(const char* filename, Curves_vector& curves)
   while (skip_comments(cv_stream, line)) {
     std::istringstream line_stream(line);
     typename Traits::Curve_2 cv;
-    this->read_curve(line_stream, cv);
+    this->read_curve(line_stream, cv, traits);
     curves.push_back(cv);
     line_stream.clear();
   }
