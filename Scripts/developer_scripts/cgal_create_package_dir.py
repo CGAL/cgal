@@ -6,12 +6,16 @@
 import sys
 import os
 import re
+import argparse
 
-if len(sys.argv) != 2:
-    print 'Usage:', sys.argv[0], 'Package_name'
-elif re.match("^[A-Za-z_][A-Za-z0-9_]*$", sys.argv[1]):
-    packagename = sys.argv[1]
-    #print 'Creating package directory named', packagename
+parser = argparse.ArgumentParser(
+    description='Create directory structure for a new CGAL package.')
+parser.add_argument('packagename',
+                    help='name of new CGAL package')
+args = parser.parse_args()
+packagename = args.packagename
+
+if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.mkdir(packagename)
     open(os.path.join(packagename, 'dont_submit'), 'w').close()
 
@@ -51,6 +55,6 @@ elif re.match("^[A-Za-z_][A-Za-z0-9_]*$", sys.argv[1]):
     open(os.path.join(infopath, 'maintainer'), 'w').close()
 
 else:
-    print "Error: Bad package name:", sys.argv[1]
+    print "Error: Bad package name:", packagename
     print "The package name should consist of:"
     print "letters, digits and underscores and not start with a digit."
