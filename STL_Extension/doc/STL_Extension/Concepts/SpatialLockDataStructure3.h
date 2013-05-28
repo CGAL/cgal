@@ -21,16 +21,20 @@ public:
   /// empty function.
   void set_bbox(const CGAL::Bbox_3 &bbox);
   
-  /// Test if `point` is locked by the current thread.
+  /// Test if `point` is locked (by this thread or by any other thread).
+  template <typename P3>
+  bool is_locked(const P3 &point);
+
+  /// Test if `point` is locked by this thread.
   template <typename P3>
   bool is_locked_by_this_thread(const P3 &point);
 
-  /// Try to lock a point in the domain. Returns true if success.
+  /// Try to lock a point in the domain. Returns true if the point is already locked by this thread or if the point could be locked.
   template <typename P3>
   bool try_lock(const P3 &point);
 
-  /// Try to lock the point `p`. Returns true if success.
-  /// \tparam no_spin If true, ask for non-blocking operation
+  /// Try to lock the point `p`. Returns true if the point is already locked by this thread or if the point could be locked.
+  /// \tparam no_spin If true, force non-blocking operation (never blocks). If false, use the default behavior (same as previous function).
   template <bool no_spin, typename P3>
   bool try_lock(const P3 &p);
 
