@@ -522,9 +522,9 @@ public:
 
   Zone conflicts_zone(const Point& p
                       , Element e
-                      , bool &facet_not_in_its_cz)
+                      , bool &facet_is_in_its_cz)
   {
-    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz);
+    return derived().conflicts_zone_impl(p, e, facet_is_in_its_cz);
   }
 
   /** Tells if, as regards this level of the refinement process, if the
@@ -571,9 +571,9 @@ public:
 
     before_conflicts(e, p, visitor);
 
-    bool facet_not_in_its_cz = false;
-    zone = conflicts_zone(p, e, facet_not_in_its_cz);
-    if (facet_not_in_its_cz)
+    bool facet_is_in_its_cz = true;
+    zone = conflicts_zone(p, e, facet_is_in_its_cz);
+    if (!facet_is_in_its_cz)
       result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
     else
       result = test_point_conflict(p, zone);
@@ -769,10 +769,10 @@ public:
 
   Zone conflicts_zone(const Point& p
                       , Element e
-                      , bool &facet_not_in_its_cz
+                      , bool &facet_is_in_its_cz
                       , bool &could_lock_zone)
   {
-    return derived().conflicts_zone_impl(p, e, facet_not_in_its_cz,
+    return derived().conflicts_zone_impl(p, e, facet_is_in_its_cz,
                                          could_lock_zone);
   }
 
@@ -977,12 +977,12 @@ public:
     before_conflicts(e, p, visitor);
 
     bool could_lock_zone;
-    bool facet_not_in_its_cz = false;
-    Zone zone = conflicts_zone(p, e, facet_not_in_its_cz, could_lock_zone);
+    bool facet_is_in_its_cz = true;
+    Zone zone = conflicts_zone(p, e, facet_is_in_its_cz, could_lock_zone);
     Mesher_level_conflict_status result;
     if (!could_lock_zone)
       result = COULD_NOT_LOCK_ZONE;
-    else if (facet_not_in_its_cz)
+    else if (!facet_is_in_its_cz)
       result = THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE;
     else
       result = test_point_conflict(p, zone, visitor);

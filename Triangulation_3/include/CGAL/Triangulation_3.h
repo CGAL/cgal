@@ -1161,13 +1161,13 @@ protected:
                         OutputIteratorInternalFacets> it
      , bool *p_could_lock_zone = 0
      , const Facet *p_this_facet_must_be_in_the_cz = 0
-     , bool *p_the_facet_is_not_in_its_cz = 0
+     , bool *p_the_facet_is_in_its_cz = 0
      ) const
   {
     CGAL_triangulation_precondition( dimension()>=2 );
 
-    if (p_the_facet_is_not_in_its_cz)
-      *p_the_facet_is_not_in_its_cz = true;
+    if (p_the_facet_is_in_its_cz)
+      *p_the_facet_is_in_its_cz = false;
 
     if (p_could_lock_zone)
       *p_could_lock_zone = true;
@@ -1217,10 +1217,10 @@ protected:
 
           Facet f(c, i); // Internal facet.
           // Is it the facet where're looking for?
-          if (p_this_facet_must_be_in_the_cz && p_the_facet_is_not_in_its_cz
+          if (p_this_facet_must_be_in_the_cz && p_the_facet_is_in_its_cz
             && f == *p_this_facet_must_be_in_the_cz)
           {
-            *p_the_facet_is_not_in_its_cz = false;
+            *p_the_facet_is_in_its_cz = true;
           }
           if (c < test)
           {
@@ -1249,10 +1249,10 @@ protected:
 
             Facet f(c, i); // Internal facet.
             // Is it the facet where're looking for?
-            if (p_this_facet_must_be_in_the_cz && p_the_facet_is_not_in_its_cz
+            if (p_this_facet_must_be_in_the_cz && p_the_facet_is_in_its_cz
               && f == *p_this_facet_must_be_in_the_cz)
             {
-              *p_the_facet_is_not_in_its_cz = false;
+              *p_the_facet_is_in_its_cz = true;
             }
 
             if (c < test)
@@ -1272,12 +1272,12 @@ protected:
         Facet f(c, i); // Boundary facet.
         // Is it the facet where're looking for?
         if (p_this_facet_must_be_in_the_cz
-            && p_the_facet_is_not_in_its_cz
+            && p_the_facet_is_in_its_cz
             &&
             (mirror_facet(f) == *p_this_facet_must_be_in_the_cz
              || f == *p_this_facet_must_be_in_the_cz) )
         {
-          *p_the_facet_is_not_in_its_cz = false;
+          *p_the_facet_is_in_its_cz = true;
         }
 
         *it.first++ = f;

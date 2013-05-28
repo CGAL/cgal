@@ -306,6 +306,9 @@ namespace CGAL {
           hint = v == Vertex_handle() ? c : v->cell();
         }
       }
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+      std::cerr << "Points inserted in " << t.elapsed() << " seconds." << std::endl;
+#endif
       return number_of_vertices() - n;
     }
 
@@ -429,7 +432,7 @@ namespace CGAL {
       OutputIteratorInternalFacets ifit
       , bool *p_could_lock_zone = 0
       , const Facet *p_this_facet_must_be_in_the_cz = 0
-      , bool *p_the_facet_is_not_in_its_cz = 0
+      , bool *p_the_facet_is_in_its_cz = 0
       ) const
     {
       CGAL_triangulation_precondition(dimension() >= 2);
@@ -449,7 +452,7 @@ namespace CGAL {
           ifit)
           , p_could_lock_zone
           , p_this_facet_must_be_in_the_cz
-          , p_the_facet_is_not_in_its_cz
+          , p_the_facet_is_in_its_cz
           ).third;
       }
       else {
@@ -462,7 +465,7 @@ namespace CGAL {
           ifit)
           , p_could_lock_zone
           , p_this_facet_must_be_in_the_cz
-          , p_the_facet_is_not_in_its_cz
+          , p_the_facet_is_in_its_cz
           ).third;
       }
 
@@ -648,8 +651,10 @@ namespace CGAL {
           ++first;
         }
       }
-
+      
+#ifdef CGAL_TRIANGULATION_3_PROFILING
       std::cerr << "Points removed in " << t.elapsed() << " seconds." << std::endl;
+#endif
       return n - number_of_vertices();
     }
 

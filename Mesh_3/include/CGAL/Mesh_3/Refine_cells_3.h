@@ -401,10 +401,10 @@ public:
   // Returns the conflicts zone
   Zone conflicts_zone_impl(const Point& point
                            , const Cell_handle& cell
-                           , bool &facet_not_in_its_cz) const;
+                           , bool &facet_is_in_its_cz) const;
   Zone conflicts_zone_impl(const Point& point
                            , const Cell_handle& cell
-                           , bool &facet_not_in_its_cz
+                           , bool &facet_is_in_its_cz
                            , bool &could_lock_zone) const;
 
   // Job to do before insertion
@@ -738,7 +738,7 @@ typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 conflicts_zone_impl(const Point& point
                     , const Cell_handle& cell
-                    , bool &facet_not_in_its_cz) const
+                    , bool &facet_is_in_its_cz) const
 {
   Zone zone;
   zone.cell = cell;
@@ -750,7 +750,7 @@ conflicts_zone_impl(const Point& point
                        std::back_inserter(zone.cells),
                        std::back_inserter(zone.internal_facets));
 
-  facet_not_in_its_cz = false; // Always false
+  facet_is_in_its_cz = true; // Always true
 
   CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone", zone.cells.size()); 
   return zone;
@@ -761,7 +761,7 @@ typename Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 conflicts_zone_impl(const Point& point
                     , const Cell_handle& cell
-                    , bool &facet_not_in_its_cz
+                    , bool &facet_is_in_its_cz
                     , bool &could_lock_zone
      ) const
 {
@@ -776,7 +776,7 @@ conflicts_zone_impl(const Point& point
                        std::back_inserter(zone.internal_facets),
                        &could_lock_zone);
 
-  facet_not_in_its_cz = false; // Always false
+  facet_is_in_its_cz = true; // Always true
 
   return zone;
 }

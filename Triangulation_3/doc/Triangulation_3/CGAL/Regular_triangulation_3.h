@@ -433,10 +433,10 @@ Compute the conflicts with `p`.
 @param p_this_facet_must_be_in_the_cz 
                           If the optional argument `p_this_facet_must_be_in_the_cz` is not null, the algorithm will check
                           if this facet is in the conflict zone (it may be internal as well as boundary).
-@param p_the_facet_is_not_in_its_cz 
+@param p_the_facet_is_in_its_cz 
                           This argument must be not null if the previous `p_this_facet_must_be_in_the_cz` argument is not null. 
                           The boolean value pointed by this pointer is set to true if *`p_this_facet_must_be_in_the_cz` is
-                          not among the internal and boundary facets of the conflict zone, and false otherwise.                         
+                          among the internal or boundary facets of the conflict zone, and false otherwise.                         
 
 \pre  The starting cell (resp.\ facet) `c` must be in conflict with `p`. 
 \pre `rt`.`dimension()` \f$ \geq2\f$, and `c` is in conflict with `p`. 
@@ -457,7 +457,7 @@ OutputIteratorCells cit,
 OutputIteratorInternalFacets ifit,
 bool *p_could_lock_zone = 0,
 const Facet *p_this_facet_must_be_in_the_cz = 0,
-bool *p_the_facet_is_not_in_its_cz = 0);
+bool *p_the_facet_is_in_its_cz = 0);
 
 /*! 
 This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 

@@ -503,10 +503,10 @@ public:
   /// Returns the conflicts zone
   Zone conflicts_zone_impl(const Point& point
                            , const Facet& facet
-                           , bool &facet_not_in_its_cz);
+                           , bool &facet_is_in_its_cz);
   Zone conflicts_zone_impl(const Point& point
                            , const Facet& facet
-                           , bool &facet_not_in_its_cz
+                           , bool &facet_is_in_its_cz
                            , bool &could_lock_zone);
 
   /// Job to do before insertion
@@ -1180,7 +1180,7 @@ typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 conflicts_zone_impl(const Point& point
                     , const Facet& facet
-                    , bool &facet_not_in_its_cz)
+                    , bool &facet_is_in_its_cz)
 {
   Zone zone;
 
@@ -1202,9 +1202,9 @@ conflicts_zone_impl(const Point& point
                          std::back_inserter(zone.internal_facets)
                          , 0
                          , p_facet
-                         , &facet_not_in_its_cz);
+                         , &facet_is_in_its_cz);
 
-    if (p_facet != 0 && facet_not_in_its_cz)
+    if (p_facet != 0 && !facet_is_in_its_cz)
     {
 # ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "Info: the facet is not in its conflict zone. "
@@ -1239,7 +1239,7 @@ typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 conflicts_zone_impl(const Point& point
                     , const Facet& facet
-                    , bool &facet_not_in_its_cz
+                    , bool &facet_is_in_its_cz
                     , bool &could_lock_zone)
 {
   Zone zone;
@@ -1263,9 +1263,9 @@ conflicts_zone_impl(const Point& point
                          std::back_inserter(zone.internal_facets)
                          , &could_lock_zone
                          , p_facet
-                         , &facet_not_in_its_cz);
+                         , &facet_is_in_its_cz);
 
-    if (could_lock_zone && p_facet != 0 && facet_not_in_its_cz)
+    if (could_lock_zone && p_facet != 0 && !facet_is_in_its_cz)
     {
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << "Info: the facet is not in its conflict zone. "
