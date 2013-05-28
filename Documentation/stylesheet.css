@@ -966,14 +966,6 @@ dl.pre, dl.post, dl.invariant
         border-color: #00D000;
 }
 
-dl.deprecated
-{
-        /* margin-left:-7px; */
-        padding-left: 5px !important;
-        border-left:4px solid;
-        border-color: #505050;
-}
-
 dl.todo
 {
         /* margin-left:-7px; */
@@ -1006,16 +998,25 @@ dl.section dd {
 div.CGALAdvanced
 {
   background:     #eeb;
+  border:         1px solid #9e9e7d;
   box-shadow:     0.5ex 0.5ex #ccc;
 }
-div.CGALDeprecated
+div.CGALDebug
+{
+  background:     #c8a8d0;
+  border:         1px solid #846f8a;
+  box-shadow:     0.5ex 0.5ex #777;
+}
+dl.deprecated
 {
   background:     #d8c0a0;
+  border:         1px solid #94836e;
   box-shadow:     0.5ex 0.5ex #aaa;
 }
 
 div.CGALAdvanced,
-div.CGALDeprecated
+div.CGALDebug,
+dl.deprecated
 {
   border-radius:  1ex;
   padding-top:    0.5ex;
@@ -1027,14 +1028,16 @@ div.CGALDeprecated
 
 /* The first div in CGALAdvanced sections is the "Advanced" header */
 div.CGALAdvanced > div,
-div.CGALDeprecated > div
+div.CGALDebug > div,
+dl.deprecated > dt > b > a
 {
   font-style:  italic;
   font-weight: bold;
 }
 /* Everything else is noise and should stay in the normal font */
 div.CGALAdvanced > div ~ div,
-div.CGALDeprecated > div ~ div
+div.CGALDebug > div ~ div,
+dl.deprecated > dt ~ dt
 {
   font-style:  normal;
   font-weight: normal;
@@ -1042,8 +1045,10 @@ div.CGALDeprecated > div ~ div
 
 /* More indentation for the text body */
 div.CGALAdvanced > p,
-div.CGALDeprecated > p
+div.CGALDebug > p,
+dl.deprecated > dd
 {
+  margin-left:   0;
   margin-top:    1ex;
   margin-bottom: 1ex;
   padding-left:  1em;
