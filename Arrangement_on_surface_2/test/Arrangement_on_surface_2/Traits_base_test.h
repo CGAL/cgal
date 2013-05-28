@@ -23,24 +23,24 @@
 /* The test test_traits has a global configuration flag, abort_on_error.
  * It determines what happens when an unexpected CGAL assertion, pre-condition,
  * post-condition, or error occur. By default abort_on_error is false.
- * This means that when an unexpected CGAL assertion, pre-condition, 
+ * This means that when an unexpected CGAL assertion, pre-condition,
  * post-condition or error occur, the test does not abort, instead it proceeds
  * to the next sub-test.
  *
- * in general you may test any violation by appending _precondition or 
- * _postcondition or _assertion or _warning to the wrappers token in the test 
+ * in general you may test any violation by appending _precondition or
+ * _postcondition or _assertion or _warning to the wrappers token in the test
  * input file
  *
- * the CGAL error and warning handling is set to a failure_handler function 
+ * the CGAL error and warning handling is set to a failure_handler function
  * that throws a special exceptions, which indicates whether the violation was
  * expected or not unexpected. Depending on abort_on_error the right exceptions
  * is thrown. the exceptions are caught in perform function.
  * so basiclly we have 4 cases:
- * 
- *                          | violation occurred       | violation did 
+ *
+ *                          | violation occurred       | violation did
  *                          |                          |  not occurred
  * ---------------------------------------------------------------------------
- * violation is expected    |                          |      fail, if 
+ * violation is expected    |                          |      fail, if
  * (violation appended      |     pass, continue       |  !abort_on_error
  * to token)                |                          | continue else abort
  * ---------------------------------------------------------------------------
@@ -62,17 +62,17 @@ protected:
   typedef typename Base::Points_vector                  Points_vector;
   typedef typename Base::Xcurves_vector                 Xcurves_vector;
   typedef typename Base::Curves_vector                  Curves_vector;
-  
+
   enum Exception_type {EXPECTED_CONTINUE,
                        EXPECTED_ABORT,
                        UNEXPECTED_CONTINUE,
                        UNEXPECTED_ABORT};
-  
+
   enum Violation_type {NON, PRECONDITION,
                        POSTCONDITION,
                        ASSERTION,
                        WARNING};
-  
+
   enum Enum_type {NUMBER, SIGN, CURVE_END, BOUNDARY, PARAMETER_SPACE};
 
   /*! The input data file of commands*/
@@ -86,11 +86,11 @@ protected:
 
   std::map<Violation_type,std::string> m_violation_map;
 
-  //indicates if precondition or postcondition or 
+  //indicates if precondition or postcondition or
   //assertion or warning is violated
   Violation_type m_violation_occurred;
 
-  //indicates if precondition or postcondition or 
+  //indicates if precondition or postcondition or
   //assertion or warning violation is tested
   Violation_type m_violation_tested;
 
@@ -98,7 +98,7 @@ protected:
   virtual bool exec(std::istringstream& str_stream,
                     const std::string& str_command,
                     bool& result) = 0;
-  
+
   bool get_expected_boolean(std::istringstream& str_stream);
 
   unsigned int get_expected_enum(std::istringstream& str_stream);
@@ -116,7 +116,7 @@ protected:
   /*! Print curve-end string */
   const char* curve_end_str(CGAL::Arr_curve_end cv_end) const
   { return (cv_end == CGAL::ARR_MIN_END) ? "MIN_END" : "MAX_END"; }
-  
+
   /*! Compare two points */
   bool compare_points(const Point_2& exp_answer, const Point_2& real_answer)
   {
@@ -156,7 +156,7 @@ protected:
 
 public:
   /*! Constructor */
-  Traits_base_test();
+  Traits_base_test(const Traits& traits);
 
   /*! Destructor */
   virtual ~Traits_base_test();
@@ -172,11 +172,12 @@ public:
 };
 
 /*!
- * Constructor. 
+ * Constructor.
  * Accepts test data file name.
  */
 template <class T_Traits>
-Traits_base_test<T_Traits>::Traits_base_test() :
+Traits_base_test<T_Traits>::Traits_base_test(const T_Traits& traits) :
+  IO_test<T_Traits>(traits),
   m_abort_on_error(false)       // run all tests
 {
   m_violation_map[PRECONDITION] = std::string("precondition");
@@ -186,7 +187,7 @@ Traits_base_test<T_Traits>::Traits_base_test() :
 }
 
 /*!
- * Destructor. 
+ * Destructor.
  */
 template <class T_Traits>
 Traits_base_test<T_Traits>::~Traits_base_test() { clear(); }
@@ -219,7 +220,7 @@ void Traits_base_test<T_Traits>::clear()
 /*!
  * Command dispatcher. Retrieves a line from the input file and performes
  * some action. See comments for suitable function in order to know specific
- * command arguments. 
+ * command arguments.
  */
 template <class T_Traits>
 bool Traits_base_test<T_Traits>::perform()
@@ -229,7 +230,7 @@ bool Traits_base_test<T_Traits>::perform()
     this->print_error(std::string("cannot open file ").append(m_filename_commands));
     return false;
   }
-  
+
   bool test_result = true;
   std::cout << "Performing test: traits type is " << m_traitstype
             << ", input files are "
@@ -272,14 +273,14 @@ bool Traits_base_test<T_Traits>::perform()
     if (m_violation_tested != NON) {
 #if !defined(CGAL_NDEBUG)
       str_command = str_command.substr(0, location);
-      std::cout << "Test " << m_violation_map[m_violation_tested] 
+      std::cout << "Test " << m_violation_map[m_violation_tested]
                 << " violation : ";
 #else
       std::cout << "Skipping condition tests in release mode." << std::endl;
       continue;
 #endif
     }
-    
+
     try {
       bool result;
       bool ignore = exec(str_stream, str_command, result);
@@ -320,7 +321,7 @@ bool Traits_base_test<T_Traits>::perform()
     }
   }
 
-  is.close();  
+  is.close();
   return test_result;
 }
 
