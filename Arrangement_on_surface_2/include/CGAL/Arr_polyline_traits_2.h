@@ -838,6 +838,8 @@ public:
         seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
         seg_traits->equal_2_object();
+      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+        seg_traits->compare_endpoints_xy_2_object();
 
       // Make sure the split point is not one of the curve endpoints.
       CGAL_precondition(!equal(min_vertex(cv[0]), p));
@@ -851,26 +853,60 @@ public:
       c1.clear();
       c2.clear();
 
+      Comparison_result dir = comp_endpts(cv[0]);
+
       // Push all segments labeled(0, 1, ... , i-1) into c1.
       for (int j = 0; j < i; ++j)
         c1.push_back(cv[j]);
 
-      // Check whether the split point is cv[i]'s source or target.
-      if (equal(max_vertex(cv[i]), p)) {
-        // The entire i'th segment belongs to c1:
-        c1.push_back(cv[i]);
-      } else if (equal(min_vertex(cv[i]), p)) {
-        // The entire i'th segments belongs to c2:
-        c2.push_back(cv[i]);
-      } else {
-        // The i'th segment should be split: The left part(seg1) goes to cv1,
-        // and the right part(seg2) goes to cv2.
-        Segment_2   seg1, seg2;
-        m_poly_traits->segment_traits_2()->
-          split_2_object()(cv[i], p, seg1, seg2);
+      if (dir == SMALLER){
+        // Check whether the split point is cv[i]'s source or target.
+        if (equal(max_vertex(cv[i]), p)) {
+          // The entire i'th segment belongs to c1:
+          c1.push_back(cv[i]);
+        } else if (equal(min_vertex(cv[i]), p)) {
+          // The entire i'th segments belongs to c2:
+          c2.push_back(cv[i]);
+        } else {
+          // The i'th segment should be split: The left part(seg1) goes to cv1,
+          // and the right part(seg2) goes to cv2.
+          Segment_2   seg1, seg2;
+          m_poly_traits->segment_traits_2()->
+            split_2_object()(cv[i], p, seg1, seg2);
 
-        c1.push_back(seg1);
-        c2.push_back(seg2);
+          c1.push_back(seg1);
+          c2.push_back(seg2);
+        }
+      }
+      else{
+        if (equal(min_vertex(cv[i]), p)) {
+          c1.push_back(cv[i]);
+        } else if (equal(max_vertex(cv[i]), p)) {
+          c2.push_back(cv[i]);
+        } else {
+          Segment_2 seg1, seg2;
+          m_poly_traits->segment_traits_2()->
+            split_2_object()(cv[i], p, seg1, seg2);
+
+          if (comp_endpts(seg2)==LARGER){
+            c1.push_back(seg2);
+          }
+          else{
+            // seg2 has to be reversed
+            seg2 = m_poly_traits->segment_traits_2()->
+              construct_opposite_2_object()(seg2);
+            c1.push_back(seg2);
+          }
+
+          if (comp_endpts(seg1)==LARGER){
+            c2.push_back(seg1);
+          } else {
+            // seg2 has to be reversed
+            seg1 = m_poly_traits->segment_traits_2()->
+              construct_opposite_2_object()(seg1);
+            c1.push_back(seg1);
+          }
+        }
       }
 
       // Push all segments labeled(i+1, i+2, ... , n-1) into cv1.
@@ -878,6 +914,13 @@ public:
 
       for (int j = i+1; j < n; ++j)
         c2.push_back(cv[j]);
+
+      if (dir != SMALLER){
+        X_monotone_curve_2 tmp;
+        tmp = c1;
+        c1 = c2;
+        c2 = tmp;
+      }
     }
   };
 
@@ -922,11 +965,20 @@ public:
         seg_traits->intersect_2_object();
       typename Segment_traits_2::Compare_y_at_x_2       compare_y_at_x =
         seg_traits->compare_y_at_x_2_object();
+      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+        seg_traits->compare_endpoints_xy_2_object();
+
+      Comparison_result dir1 = comp_endpts(cv1[0]);
+      Comparison_result dir2 = comp_endpts(cv2[0]);
 
       const unsigned int n1 = cv1.number_of_segments();
       const unsigned int n2 = cv2.number_of_segments();
-      unsigned int       i1 = 0;
-      unsigned int       i2 = 0;
+
+      unsigned int       i1;
+      unsigned int       i2;
+      dir1 == SMALLER ? i1 = 0 : i1 = n1-1;
+      dir2 == SMALLER ? i2 = 0 : i2 = n2-1;
+
       X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
       Comparison_result left_res =
@@ -941,7 +993,7 @@ public:
           return oi;
 
         if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
-          ++i1;
+          dir1 == SMALLER ? ++i1 : --i1;
           left_res = EQUAL;
         }
       }  else if (left_res == LARGER) {
@@ -954,7 +1006,7 @@ public:
           return oi;
 
         if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {
-          ++i2;
+          dir2 == SMALLER ? ++i2 : --i2;
           left_res = EQUAL;
         }
       }
@@ -973,7 +1025,10 @@ public:
       bool right_coincides = left_coincides;
       bool right_overlap = false;
 
-      while (i1 < n1 && i2 < n2) {
+      while (((dir1==SMALLER) && (dir2 == SMALLER) && (i1 < n1) && (i2 < n2))||
+             ((dir1!=SMALLER) && (dir2 == SMALLER) && (i1 >= 0) && (i2 < n2)) ||
+             ((dir1==SMALLER) && (dir2 != SMALLER) && (i1 < n1) && (i2 >= 0)) ||
+             ((dir1!=SMALLER) && (dir2 != SMALLER) && (i1 >= 0) && (i2 >= 0))){
         right_res = compare_xy(max_vertex(cv1[i1]), max_vertex(cv2[i2]));
 
         right_coincides = (right_res == EQUAL);
@@ -1040,33 +1095,58 @@ public:
 
         // Proceed forward.
         if (right_res != SMALLER)
-          ++i2;
+          if (dir2 == SMALLER)
+            ++i2;
+          else if (i2 == 0)
+            break;
+          else
+            --i2;
         if (right_res != LARGER)
-          ++i1;
-
+          if (dir1 == SMALLER)
+            ++i1;
+          else if (i1 == 0)
+            break;
+          else --i1;
         left_res = (right_res == SMALLER) ? LARGER :
           (right_res == LARGER) ? SMALLER : EQUAL;
 
         left_coincides = right_coincides;
         left_overlap = right_overlap;
-      }
+      }// END of while loop
 
       // Output the remaining overlapping polyline, if necessary.
       if (ocv.number_of_segments() > 0) {
         *oi++ = make_object(ocv);
       } else if (right_coincides) {
+        typedef std::pair<Point_2,Multiplicity> return_point;
+        return_point ip;
         if (right_res == SMALLER) {
-          std::pair<Point_2,Multiplicity> ip(max_vertex(cv1[i1 - 1]), 0);
+          if (dir1 == SMALLER)
+            ip = return_point(max_vertex(cv1[i1 - 1]), 0);
+          else
+            ip = return_point(max_vertex(cv1[i1]), 0);
           *oi++ = make_object(ip);
         } else if (right_res == LARGER) {
-          std::pair<Point_2,Multiplicity> ip(max_vertex(cv2[i2 - 1]), 0);
+          if (dir2 == SMALLER)
+            ip = return_point(max_vertex(cv2[i2 - 1]), 0);
+          else
+            ip = return_point(max_vertex(cv2[i2]), 0);
           *oi++ = make_object(ip);
         } else if (i1 > 0) {
-          std::pair<Point_2,Multiplicity> ip(max_vertex(cv1[i1 - 1]), 0);
+          if (dir1 == SMALLER)
+            ip = return_point(max_vertex(cv1[i1 - 1]), 0);
+          else
+            ip = return_point(max_vertex(cv1[i1]), 0);
           *oi++ = make_object(ip);
         } else {
-          CGAL_assertion(i2 > 0);
-          std::pair<Point_2,Multiplicity> ip(max_vertex(cv2[i2 - 1]), 0);
+          CGAL_assertion_msg((dir2 == SMALLER && i2 > 0) ||
+                             (dir2 != SMALLER && i2 < n2),
+                             "Wrong index for xcv2 in Intersect_2 of "
+                             "polylines.");
+          if (dir2 == SMALLER)
+            ip = return_point(max_vertex(cv2[i2 - 1]), 0);
+          else
+            ip = return_point(max_vertex(cv2[i2]), 0);
           *oi++ = make_object(ip);
         }
       }
