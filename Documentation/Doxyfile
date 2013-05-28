@@ -1,8 +1,10 @@
-# Doxyfile 1.8.1.2
+# Doxyfile 1.8.4
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
 #
+# All text after a double hash (##) is considered a comment and is placed
+# in front of the TAG it is preceding .
 # All text after a hash (#) is considered a comment and will be ignored.
 # The format is:
 #       TAG = value [value, ...]
@@ -26,7 +28,7 @@ DOXYFILE_ENCODING      = UTF-8
 # identify the project. Note that if you do not use Doxywizard you need
 # to put quotes around the project name if it contains spaces.
 
-PROJECT_NAME           = 
+PROJECT_NAME           =
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -45,7 +47,7 @@ PROJECT_BRIEF          =
 # exceed 55 pixels and the maximum width should not exceed 200 pixels.
 # Doxygen will copy the logo to the output directory.
 
-PROJECT_LOGO           = 
+PROJECT_LOGO           =
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -70,9 +72,9 @@ CREATE_SUBDIRS         = NO
 # Afrikaans, Arabic, Brazilian, Catalan, Chinese, Chinese-Traditional,
 # Croatian, Czech, Danish, Dutch, Esperanto, Farsi, Finnish, French, German,
 # Greek, Hungarian, Italian, Japanese, Japanese-en (Japanese with English
-# messages), Korean, Korean-en, Lithuanian, Norwegian, Macedonian, Persian,
-# Polish, Portuguese, Romanian, Russian, Serbian, Serbian-Cyrillic, Slovak,
-# Slovene, Spanish, Swedish, Ukrainian, and Vietnamese.
+# messages), Korean, Korean-en, Latvian, Lithuanian, Norwegian, Macedonian,
+# Persian, Polish, Portuguese, Romanian, Russian, Serbian, Serbian-Cyrillic,
+# Slovak, Slovene, Spanish, Swedish, Ukrainian, and Vietnamese.
 
 OUTPUT_LANGUAGE        = English
 
@@ -100,7 +102,7 @@ REPEAT_BRIEF           = YES
 # "The $name file" "is" "provides" "specifies" "contains"
 # "represents" "a" "an" "the"
 
-ABBREVIATE_BRIEF       = 
+ABBREVIATE_BRIEF       =
 
 # If the ALWAYS_DETAILED_SEC and REPEAT_BRIEF tags are both set to YES then
 # Doxygen will generate a detailed section even if there is only a brief
@@ -126,7 +128,9 @@ FULL_PATH_NAMES        = YES
 # only done if one of the specified strings matches the left-hand part of
 # the path. The tag can be used to show relative paths in the file list.
 # If left blank the directory from which doxygen is run is used as the
-# path to strip.
+# path to strip. Note that you specify absolute paths here, but also
+# relative paths, which will be relative from the directory where doxygen is
+# started.
 
 STRIP_FROM_PATH        =
 
@@ -137,7 +141,7 @@ STRIP_FROM_PATH        =
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = 
+STRIP_FROM_INC_PATH    =
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful if your file system
@@ -309,23 +313,17 @@ OPTIMIZE_FOR_FORTRAN   = NO
 OPTIMIZE_OUTPUT_VHDL   = NO
 
 # Doxygen selects the parser to use depending on the extension of the files it
-# parses. With this tag you can assign which parser to use for a given extension.
-# Doxygen has a built-in mapping, but you can override or extend it using this
-# tag. The format is ext=language, where ext is a file extension, and language
-# is one of the parsers supported by doxygen: IDL, Java, Javascript, CSharp, C,
-# C++, D, PHP, Objective-C, Python, Fortran, VHDL, C, C++. For instance to make
-# doxygen treat .inc files as Fortran files (default is PHP), and .f files as C
-# (default is Fortran), use: inc=Fortran f=C. Note that for custom extensions
-# you also need to set FILE_PATTERNS otherwise the files are not read by doxygen.
+# parses. With this tag you can assign which parser to use for a given
+# extension. Doxygen has a built-in mapping, but you can override or extend it
+# using this tag. The format is ext=language, where ext is a file extension,
+# and language is one of the parsers supported by doxygen: IDL, Java,
+# Javascript, CSharp, C, C++, D, PHP, Objective-C, Python, Fortran, VHDL, C,
+# C++. For instance to make doxygen treat .inc files as Fortran files (default
+# is PHP), and .f files as C (default is Fortran), use: inc=Fortran f=C. Note
+# that for custom extensions you also need to set FILE_PATTERNS otherwise the
+# files are not read by doxygen.
 
 EXTENSION_MAPPING      =
-
-# When enabled doxygen tries to link words that correspond to documented classes,
-# or namespaces to their corresponding documentation. Such a link can be
-# prevented in individual cases by by putting a % sign in front of the word or
-# globally by setting AUTOLINK_SUPPORT to NO.
-
-AUTOLINK_SUPPORT       = YES
 
 # If MARKDOWN_SUPPORT is enabled (the default) then doxygen pre-processes all
 # comments according to the Markdown format, which allows for more readable
@@ -335,6 +333,13 @@ AUTOLINK_SUPPORT       = YES
 # Disable only in case of backward compatibilities issues.
 
 MARKDOWN_SUPPORT       = YES
+
+# When enabled doxygen tries to link words that correspond to documented
+# classes, or namespaces to their corresponding documentation. Such a link can
+# be prevented in individual cases by by putting a % sign in front of the word
+# or globally by setting AUTOLINK_SUPPORT to NO.
+
+AUTOLINK_SUPPORT       = YES
 
 # If you use STL classes (i.e. std::string, std::vector, etc.) but do not want
 # to include (a tag file for) the STL sources as input, then you should
@@ -356,10 +361,10 @@ CPP_CLI_SUPPORT        = NO
 
 SIP_SUPPORT            = NO
 
-# For Microsoft's IDL there are propget and propput attributes to indicate getter
-# and setter methods for a property. Setting this option to YES (the default)
-# will make doxygen replace the get and set methods by a property in the
-# documentation. This will only work if the methods are indeed getting or
+# For Microsoft's IDL there are propget and propput attributes to indicate
+# getter and setter methods for a property. Setting this option to YES (the
+# default) will make doxygen replace the get and set methods by a property in
+# the documentation. This will only work if the methods are indeed getting or
 # setting a simple type. If this is not the case, or you want to show the
 # methods anyway, you should set this option to NO.
 
@@ -388,11 +393,11 @@ SUBGROUPING            = NO
 INLINE_GROUPED_CLASSES = NO
 
 # When the INLINE_SIMPLE_STRUCTS tag is set to YES, structs, classes, and
-# unions with only public data fields will be shown inline in the documentation
-# of the scope in which they are defined (i.e. file, namespace, or group
-# documentation), provided this scope is documented. If set to NO (the default),
-# structs, classes, and unions are shown on a separate page (for HTML and Man
-# pages) or section (for LaTeX and RTF).
+# unions with only public data fields or simple typedef fields will be shown
+# inline in the documentation of the scope in which they are defined (i.e. file,
+# namespace, or group documentation), provided this scope is documented. If set
+# to NO (the default), structs, classes, and unions are shown on a separate
+# page (for HTML and Man pages) or section (for LaTeX and RTF).
 
 INLINE_SIMPLE_STRUCTS  = NO
 
@@ -406,30 +411,14 @@ INLINE_SIMPLE_STRUCTS  = NO
 
 TYPEDEF_HIDES_STRUCT   = NO
 
-# The SYMBOL_CACHE_SIZE determines the size of the internal cache use to
-# determine which symbols to keep in memory and which to flush to disk.
-# When the cache is full, less often used symbols will be written to disk.
-# For small to medium size projects (<1000 input files) the default value is
-# probably good enough. For larger projects a too small cache size can cause
-# doxygen to be busy swapping symbols to and from disk most of the time
-# causing a significant performance penalty.
-# If the system has enough physical memory increasing the cache will improve the
-# performance by keeping more symbols in memory. Note that the value works on
-# a logarithmic scale so increasing the size by one will roughly double the
-# memory usage. The cache size is given by this formula:
-# 2^(16+SYMBOL_CACHE_SIZE). The valid range is 0..9, the default is 0,
-# corresponding to a cache size of 2^16 = 65536 symbols.
-
-SYMBOL_CACHE_SIZE      = 0
-
-# Similar to the SYMBOL_CACHE_SIZE the size of the symbol lookup cache can be
-# set using LOOKUP_CACHE_SIZE. This cache is used to resolve symbols given
-# their name and scope. Since this can be an expensive process and often the
-# same symbol appear multiple times in the code, doxygen keeps a cache of
-# pre-resolved symbols. If the cache is too small doxygen will become slower.
-# If the cache is too large, memory is wasted. The cache size is given by this
-# formula: 2^(16+LOOKUP_CACHE_SIZE). The valid range is 0..9, the default is 0,
-# corresponding to a cache size of 2^16 = 65536 symbols.
+# The size of the symbol lookup cache can be set using LOOKUP_CACHE_SIZE. This
+# cache is used to resolve symbols given their name and scope. Since this can
+# be an expensive process and often the same symbol appear multiple times in
+# the code, doxygen keeps a cache of pre-resolved symbols. If the cache is too
+# small doxygen will become slower. If the cache is too large, memory is wasted.
+# The cache size is given by this formula: 2^(16+LOOKUP_CACHE_SIZE). The valid
+# range is 0..9, the default is 0, corresponding to a cache size of 2^16 = 65536
+# symbols.
 
 LOOKUP_CACHE_SIZE      = 0
 
@@ -440,7 +429,7 @@ LOOKUP_CACHE_SIZE      = 0
 # If the EXTRACT_ALL tag is set to YES doxygen will assume all entities in
 # documentation are documented, even if no documentation was available.
 # Private class members and static file members will be hidden unless
-# the EXTRACT_PRIVATE and EXTRACT_STATIC tags are set to YES
+# the EXTRACT_PRIVATE respectively EXTRACT_STATIC tags are set to YES
 
 EXTRACT_ALL            = YES
 
@@ -449,7 +438,8 @@ EXTRACT_ALL            = YES
 
 EXTRACT_PRIVATE        = NO
 
-# If the EXTRACT_PACKAGE tag is set to YES all members with package or internal scope will be included in the documentation.
+# If the EXTRACT_PACKAGE tag is set to YES all members with package or internal
+# scope will be included in the documentation.
 
 EXTRACT_PACKAGE        = NO
 
@@ -534,6 +524,11 @@ HIDE_SCOPE_NAMES       = NO
 # of that file.
 
 SHOW_INCLUDE_FILES     = YES
+
+# If the SHOW_GROUPED_MEMBER_INCLUDES tag is set to YES (the default is NO) then Doxygen
+# will show the include file for each file member that is grouped.
+
+SHOW_GROUPED_MEMBER_INCLUDES = YES
 
 # If the FORCE_LOCAL_INCLUDES tag is set to YES then Doxygen
 # will list include files with double quotes in the documentation
@@ -620,7 +615,8 @@ GENERATE_BUGLIST       = YES
 GENERATE_DEPRECATEDLIST= YES
 
 # The ENABLED_SECTIONS tag can be used to enable conditional
-# documentation sections, marked by \if sectionname ... \endif.
+# documentation sections, marked by \if section-label ... \endif
+# and \cond section-label ... \endcond blocks.
 
 ENABLED_SECTIONS       =
 
@@ -678,7 +674,8 @@ LAYOUT_FILE            = DoxygenLayout.xml
 # requires the bibtex tool to be installed. See also
 # http://en.wikipedia.org/wiki/BibTeX for more info. For LaTeX the style
 # of the bibliography can be controlled using LATEX_BIB_STYLE. To use this
-# feature you need bibtex and perl available in the search path.
+# feature you need bibtex and perl available in the search path. Do not use
+# file names with spaces, bibtex cannot handle them.
 
 CITE_BIB_FILES         = ./biblio/cgal_manual.bib \
                          ./biblio/geom.bib
@@ -738,11 +735,12 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 
-FILE_PATTERNS = *.cpp \
-                *.txt \
-                *.md \
-                *.h   \
-                *.hpp
+# The INPUT tag can be used to specify the files and/or directories that contain
+# documented source files. You may enter file names like "myfile.cpp" or
+# directories like "/usr/src/myproject". Separate the files or directories
+# with spaces.
+
+INPUT                  =
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -752,11 +750,33 @@ FILE_PATTERNS = *.cpp \
 
 INPUT_ENCODING         = UTF-8
 
+# If the value of the INPUT tag contains directories, you can use the
+# FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
+# and *.h) to filter out the source-files in the directories. If left
+# blank the following patterns are tested:
+# *.c *.cc *.cxx *.cpp *.c++ *.d *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh
+# *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py
+# *.f90 *.f *.for *.vhd *.vhdl
+
+FILE_PATTERNS          = *.cpp \
+                         *.txt \
+                         *.md \
+                         *.h \
+                         *.hpp
+
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
 # If left blank NO is used.
 
 RECURSIVE              = YES
+
+# The EXCLUDE tag can be used to specify files and/or directories that should be
+# excluded from the INPUT source files. This way you can easily exclude a
+# subdirectory from a directory tree whose root is specified with the INPUT tag.
+# Note that relative paths are relative to the directory from which doxygen is
+# run.
+
+EXCLUDE                =
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -770,7 +790,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS       =
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -784,6 +804,12 @@ EXCLUDE_SYMBOLS        = Tr \
                          Fb \
                          K \
                          Traits
+
+# The EXAMPLE_PATH tag can be used to specify one or more files or
+# directories that contain example code fragments that are included (see
+# the \include command).
+
+EXAMPLE_PATH           =
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -800,14 +826,22 @@ EXAMPLE_PATTERNS       = *.cpp \
 
 EXAMPLE_RECURSIVE      = YES
 
+# The IMAGE_PATH tag can be used to specify one or more files or
+# directories that contain image that are included in the documentation (see
+# the \image command).
+
+IMAGE_PATH             =
+
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
 # by executing (via popen()) the command <filter> <input-file>, where <filter>
 # is the value of the INPUT_FILTER tag, and <input-file> is the name of an
 # input file. Doxygen will then use the output that the filter program writes
 # to standard output.
-# If FILTER_PATTERNS is specified, this tag will be
-# ignored.
+# If FILTER_PATTERNS is specified, this tag will be ignored.
+# Note that the filter must not add or remove lines; it is applied before the
+# code is scanned, but not when the output code is generated. If lines are added
+# or removed, the anchors will not be placed correctly.
 
 INPUT_FILTER           =
 
@@ -816,11 +850,11 @@ INPUT_FILTER           =
 # Doxygen will compare the file name with each pattern and apply the
 # filter if there is a match.
 # The filters are a list of the form:
-# pattern=filter (like *.cpp=my_cpp_filter ). See INPUT_FILTER for further
+# pattern=filter (like *.cpp=my_cpp_filter). See INPUT_FILTER for further
 # info on how filters are used. If FILTER_PATTERNS is empty or if
 # non of the patterns match the file name, INPUT_FILTER is applied.
 
-FILTER_PATTERNS        = 
+FILTER_PATTERNS        =
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will be used to filter the input files when producing source
@@ -835,6 +869,13 @@ FILTER_SOURCE_FILES    = NO
 # FILTER_SOURCE_FILES is enabled.
 
 FILTER_SOURCE_PATTERNS =
+
+# If the USE_MD_FILE_AS_MAINPAGE tag refers to the name of a markdown file that
+# is part of the input, its contents will be placed on the main page
+# (index.html). This can be useful if you have a project on for instance GitHub
+# and want reuse the introduction page also for the doxygen output.
+
+USE_MDFILE_AS_MAINPAGE =
 
 #---------------------------------------------------------------------------
 # configuration options related to source browsing
@@ -957,24 +998,31 @@ HTML_FOOTER            = footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
-# fine-tune the look of the HTML output. If the tag is left blank doxygen
-# will generate a default style sheet. Note that doxygen will try to copy
-# the style sheet file to the HTML output directory, so don't put your own
-# style sheet in the HTML output directory as well, or it will be erased!
+# fine-tune the look of the HTML output. If left blank doxygen will
+# generate a default style sheet. Note that it is recommended to use
+# HTML_EXTRA_STYLESHEET instead of this one, as it is more robust and this
+# tag will in the future become obsolete.
 
 HTML_STYLESHEET        = stylesheet.css
+
+# The HTML_EXTRA_STYLESHEET tag can be used to specify an additional
+# user-defined cascading style sheet that is included after the standard
+# style sheets created by doxygen. Using this option one can overrule
+# certain style aspects. This is preferred over using HTML_STYLESHEET
+# since it does not replace the standard style sheet and is therefor more
+# robust against future updates. Doxygen will copy the style sheet file to
+# the output directory.
+
+HTML_EXTRA_STYLESHEET  =
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
 # that these files will be copied to the base HTML output directory. Use the
-# $relpath$ marker in the HTML_HEADER and/or HTML_FOOTER files to load these
+# $relpath^ marker in the HTML_HEADER and/or HTML_FOOTER files to load these
 # files. In the HTML_STYLESHEET file, use the file name only. Also note that
 # the files will be copied as-is; there are no commands or markers available.
 
-HTML_EXTRA_FILES       = 
-
-HTML_EXTRA_STYLESHEET  = 
-
+HTML_EXTRA_FILES       =
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output.
 # Doxygen will adjust the colors in the style sheet and background images
@@ -1051,9 +1099,9 @@ DOCSET_FEEDNAME        = "Doxygen generated docs"
 
 DOCSET_BUNDLE_ID       = org.doxygen.Project
 
-# When GENERATE_PUBLISHER_ID tag specifies a string that should uniquely identify
-# the documentation publisher. This should be a reverse domain-name style
-# string, e.g. com.mycompany.MyDocSet.documentation.
+# When GENERATE_PUBLISHER_ID tag specifies a string that should uniquely
+# identify the documentation publisher. This should be a reverse domain-name
+# style string, e.g. com.mycompany.MyDocSet.documentation.
 
 DOCSET_PUBLISHER_ID    = org.doxygen.Publisher
 
@@ -1238,6 +1286,13 @@ FORMULA_TRANSPARENT    = YES
 
 USE_MATHJAX            = YES
 
+# When MathJax is enabled you can set the default output format to be used for
+# the MathJax output. Supported types are HTML-CSS, NativeMML (i.e. MathML) and
+# SVG. The default value is HTML-CSS, which is slower, but has the best
+# compatibility.
+
+MATHJAX_FORMAT         = HTML-CSS
+
 # When MathJax is enabled you need to specify the location relative to the
 # HTML output directory using the MATHJAX_RELPATH option. The destination
 # directory should contain the MathJax.js script. For instance, if the mathjax
@@ -1253,7 +1308,12 @@ MATHJAX_RELPATH        = ../../MathJax/
 # The MATHJAX_EXTENSIONS tag can be used to specify one or MathJax extension
 # names that should be enabled during MathJax rendering.
 
-MATHJAX_EXTENSIONS     = 
+MATHJAX_EXTENSIONS     =
+
+# The MATHJAX_CODEFILE tag can be used to specify a file with javascript
+# pieces of code that will be used on startup of the MathJax code.
+
+MATHJAX_CODEFILE       =
 
 # When the SEARCHENGINE tag is enabled doxygen will generate a search box
 # for the HTML output. The underlying search engine uses javascript
@@ -1266,14 +1326,54 @@ MATHJAX_EXTENSIONS     =
 SEARCHENGINE           = NO
 
 # When the SERVER_BASED_SEARCH tag is enabled the search engine will be
-# implemented using a PHP enabled web server instead of at the web client
-# using Javascript. Doxygen will generate the search PHP script and index
-# file to put on the web server. The advantage of the server
-# based approach is that it scales better to large projects and allows
-# full text search. The disadvantages are that it is more difficult to setup
-# and does not have live searching capabilities.
+# implemented using a web server instead of a web client using Javascript.
+# There are two flavours of web server based search depending on the
+# EXTERNAL_SEARCH setting. When disabled, doxygen will generate a PHP script for
+# searching and an index file used by the script. When EXTERNAL_SEARCH is
+# enabled the indexing and searching needs to be provided by external tools.
+# See the manual for details.
 
 SERVER_BASED_SEARCH    = NO
+
+# When EXTERNAL_SEARCH is enabled doxygen will no longer generate the PHP
+# script for searching. Instead the search results are written to an XML file
+# which needs to be processed by an external indexer. Doxygen will invoke an
+# external search engine pointed to by the SEARCHENGINE_URL option to obtain
+# the search results. Doxygen ships with an example indexer (doxyindexer) and
+# search engine (doxysearch.cgi) which are based on the open source search
+# engine library Xapian. See the manual for configuration details.
+
+EXTERNAL_SEARCH        = NO
+
+# The SEARCHENGINE_URL should point to a search engine hosted by a web server
+# which will returned the search results when EXTERNAL_SEARCH is enabled.
+# Doxygen ships with an example search engine (doxysearch) which is based on
+# the open source search engine library Xapian. See the manual for configuration
+# details.
+
+SEARCHENGINE_URL       =
+
+# When SERVER_BASED_SEARCH and EXTERNAL_SEARCH are both enabled the unindexed
+# search data is written to a file for indexing by an external tool. With the
+# SEARCHDATA_FILE tag the name of this file can be specified.
+
+SEARCHDATA_FILE        = searchdata.xml
+
+# When SERVER_BASED_SEARCH AND EXTERNAL_SEARCH are both enabled the
+# EXTERNAL_SEARCH_ID tag can be used as an identifier for the project. This is
+# useful in combination with EXTRA_SEARCH_MAPPINGS to search through multiple
+# projects and redirect the results back to the right project.
+
+EXTERNAL_SEARCH_ID     =
+
+# The EXTRA_SEARCH_MAPPINGS tag can be used to enable searching through doxygen
+# projects other than the one defined by this configuration file, but that are
+# all added to the same external search index. Each project needs to have a
+# unique id set via EXTERNAL_SEARCH_ID. The search mapping then maps the id
+# of to a relative location where the documentation can be found.
+# The format is: EXTRA_SEARCH_MAPPINGS = id1=loc1 id2=loc2 ...
+
+EXTRA_SEARCH_MAPPINGS  =
 
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
@@ -1312,7 +1412,7 @@ COMPACT_LATEX          = NO
 
 # The PAPER_TYPE tag can be used to set the paper type that is used
 # by the printer. Possible values are: a4, letter, legal and
-# executive. If left blank a4wide will be used.
+# executive. If left blank a4 will be used.
 
 PAPER_TYPE             = a4
 
@@ -1334,6 +1434,13 @@ LATEX_HEADER           =
 # standard footer. Notice: only use this tag if you know what you are doing!
 
 LATEX_FOOTER           =
+
+# The LATEX_EXTRA_FILES tag can be used to specify one or more extra images
+# or other source files which should be copied to the LaTeX output directory.
+# Note that the files will be copied as-is; there are no commands or markers
+# available.
+
+LATEX_EXTRA_FILES      =
 
 # If the PDF_HYPERLINKS tag is set to YES, the LaTeX that is generated
 # is prepared for conversion to pdf (using ps2pdf). The pdf file will
@@ -1596,6 +1703,26 @@ SKIP_FUNCTION_MACROS   = YES
 # Configuration::additions related to external references
 #---------------------------------------------------------------------------
 
+# The TAGFILES option can be used to specify one or more tagfiles. For each
+# tag file the location of the external documentation should be added. The
+# format of a tag file without this location is as follows:
+#
+# TAGFILES = file1 file2 ...
+# Adding location for the tag files is done as follows:
+#
+# TAGFILES = file1=loc1 "file2 = loc2" ...
+# where "loc1" and "loc2" can be relative or absolute paths
+# or URLs. Note that each tag file must have a unique name (where the name does
+# NOT include the path). If a tag file is not located in the directory in which
+# doxygen is run, you must also specify the path to the tagfile here.
+
+TAGFILES               =
+
+# When a file name is specified after GENERATE_TAGFILE, doxygen will create
+# a tag file that is based on the input files it reads.
+
+GENERATE_TAGFILE       =
+
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed
 # in the class index. If set to NO only the inherited external classes
 # will be listed.
@@ -1608,7 +1735,10 @@ ALLEXTERNALS           = NO
 
 EXTERNAL_GROUPS        = NO
 
-# Currently only available with Philipp's patches.
+# If the EXTERNAL_PAGES tag is set to YES all external pages will be listed
+# in the related pages index. If set to NO, only the current project's
+# pages will be listed.
+
 EXTERNAL_PAGES         = NO
 
 # The PERL_PATH should be the absolute path and name of the perl script
@@ -1707,7 +1837,7 @@ UML_LOOK               = NO
 # the class node. If there are many fields or methods and many nodes the
 # graph may become too big to be useful. The UML_LIMIT_NUM_FIELDS
 # threshold limits the number of items for each type to make the size more
-# managable. Set this to 0 for no limit. Note that the threshold may be
+# manageable. Set this to 0 for no limit. Note that the threshold may be
 # exceeded by 50% before the limit is enforced.
 
 UML_LIMIT_NUM_FIELDS   = 10
@@ -1779,7 +1909,7 @@ INTERACTIVE_SVG        = YES
 # The tag DOT_PATH can be used to specify the path where the dot tool can be
 # found. If left blank, it is assumed the dot tool can be found in the path.
 
-DOT_PATH               = 
+DOT_PATH               =
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that
 # contain dot files that are included in the documentation (see the
@@ -1839,6 +1969,3 @@ GENERATE_LEGEND        = YES
 # the various graphs.
 
 DOT_CLEANUP            = YES
-
-# Currently only available with Philipp's patches.
-SHOW_GROUPED_MEMBER_INCLUDES = YES
