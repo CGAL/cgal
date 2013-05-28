@@ -10,11 +10,9 @@ concurrent algorithms to lock simplices.
 
 \tparam Grid_lock_tag allows to choose the locking strategy used by the
 structure. The following tags are available:
-- `Tag_non_blocking_with_atomics` is non-blocking (i.e. try_lock will always
+- `Tag_non_blocking` is non-blocking (i.e. try_lock will always
 return immediately) and uses atomics to perform lock operations.
-- `Tag_non_blocking_with_mutexes` is non-blocking (i.e. try_lock will always
-return immediately) and uses mutexes to perform lock operations.
-- `Tag_priority_blocking_with_atomics` provides both non-blocking and
+- `Tag_priority_blocking` provides both non-blocking and
 partially-blocking `try_lock` versions. The partially-blocking version will 
 block (spin) if the thread owning the lock has a "lower ID" (each thread is 
 given an arbitrary ID) or return immediately otherwise. It uses atomics to 
