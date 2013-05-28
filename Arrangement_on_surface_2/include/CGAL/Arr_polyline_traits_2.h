@@ -1051,13 +1051,6 @@ public:
         left_overlap = right_overlap;
       }
 
-#if 0
-      std::cout << "left coincides: " << left_coincides << std::endl;
-      std::cout << "right coincides: " << right_coincides << std::endl;
-      std::cout << "right res: " << right_res << std::endl;
-      std::cout << "left res: " << left_res << std::endl;
-#endif
-
       // Output the remaining overlapping polyline, if necessary.
       if (ocv.number_of_segments() > 0) {
         *oi++ = make_object(ocv);
