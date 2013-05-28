@@ -1006,8 +1006,18 @@ dl.section dd {
 div.CGALAdvanced
 {
   background:     #eeb;
-  border-radius:  1ex;
   box-shadow:     0.5ex 0.5ex #ccc;
+}
+div.CGALDeprecated
+{
+  background:     #d8c0a0;
+  box-shadow:     0.5ex 0.5ex #aaa;
+}
+
+div.CGALAdvanced,
+div.CGALDeprecated
+{ 
+  border-radius:  1ex;
   padding-top:    0.5ex;
   padding-bottom: 0.25ex;
   padding-left:   1ex;
@@ -1016,20 +1026,23 @@ div.CGALAdvanced
 }
 
 /* The first div in CGALAdvanced sections is the "Advanced" header */
-div.CGALAdvanced > div
+div.CGALAdvanced > div,
+div.CGALDeprecated > div
 {
   font-style:  italic;
   font-weight: bold;
 }
 /* Everything else is noise and should stay in the normal font */
-div.CGALAdvanced > div ~ div
+div.CGALAdvanced > div ~ div,
+div.CGALDeprecated > div ~ div
 {
   font-style:  normal;
   font-weight: normal;
 }
 
 /* More indentation for the text body */
-div.CGALAdvanced > p
+div.CGALAdvanced > p,
+div.CGALDeprecated > p
 {
   margin-top:    1ex;
   margin-bottom: 1ex;
