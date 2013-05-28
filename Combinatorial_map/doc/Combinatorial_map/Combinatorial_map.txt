@@ -943,9 +943,6 @@ Section \ref sseclinkdarts "Sewing Orbits and Linking Darts");
 The `CombinatorialMap` defines two groups of methods to modify the
 \f$ \beta\f$ pointers of existing darts.
 
-\todo check the advanced is working nice here
-
-
 The \ref CombinatorialMap::sew "sew" and \ref CombinatorialMap::unsew "unsew"
  methods iterate over two orbits in
 order to link or unlink specific darts two by two. Intuitively, a

@@ -1537,7 +1537,6 @@ and inserted into the arrangement. This operation is followed by a
 test that verifies that a vertex of degree greater than \f$ 4\f$
 exists. This implied that collinearity indeed exists as explained above.
 
-\todo check advanced section is correctly colored
 \subsection arr_ssecunb_rep Representation of Unbounded Arrangements 
 \cgalAdvancedBegin
 
