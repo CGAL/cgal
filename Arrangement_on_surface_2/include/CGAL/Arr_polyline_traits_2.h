@@ -907,7 +907,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1,
                               const X_monotone_curve_2& cv2,
-                              OutputIterator oi)
+                              OutputIterator oi) const
     {
       const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
