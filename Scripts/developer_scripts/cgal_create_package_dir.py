@@ -15,6 +15,65 @@ parser.add_argument('packagename',
 args = parser.parse_args()
 packagename = args.packagename
 
+xmlstring = \
+"""<project>
+ <name>PROJECT NAME</name>
+ <input>../PACKAGENAME/doc/PACKAGENAME</input>
+ <doxygen>
+   <string name="STRIP_FROM_PATH">../PACKAGENAME/doc/PACKAGENAME</string>
+   <string name="STRIP_FROM_INC_PATH">../PACKAGENAME/doc/PACKAGENAME/</string>
+   <string name="GENERATE_TAGFILE">./tags/PACKAGENAME.tag</string>
+   <string name="IMAGE_PATH">../PACKAGENAME/doc/PACKAGENAME/fig</string>
+   <string name="EXAMPLE_PATH">../PACKAGENAME/examples</string>
+   <list name="PACKAGE_REFERENCES">
+       <item>PACKAGENAME</item>
+   </list>
+ </doxygen>
+</project>
+"""
+
+descrstring = \
+r"""/// \defgroup PkgPACKAGE PACKAGE NAME Reference
+/// \defgroup PkgPACKAGEConcepts Concepts
+/// \ingroup PkgPACKAGE
+
+/// \defgroup PkgPACKAGEAlgorithmClasses Algorithm Classes
+/// \ingroup PkgPACKAGE
+
+/// \defgroup PkgPACKAGETraitsClasses Traits Classes
+/// \ingroup PkgPACKAGE
+
+/// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
+/// \ingroup PkgPACKAGE
+
+/*!
+\addtogroup PkgPACKAGE
+\todo check generated documentation
+
+\cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGESummary}
+\cgalPkgPicture{cdt2d-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{PACKAGE AUTHOR}
+\cgalPkgDesc{PACKAGE DESCRIPTION.
+The package provides ... }
+\cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGE}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{X.X}
+\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgBib{cgal:x-x}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{DEMO 1,demo1.zip}
+\cgalPkgDemo{DEMO 2,demo2.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+*/
+"""
+
 if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.mkdir(packagename)
     open(os.path.join(packagename, 'dont_submit'), 'w').close()
@@ -61,6 +120,16 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.mkdir(os.path.join(docpath, 'fig'))
     open(os.path.join(docpath, 'examples.txt'), 'w').close()
     open(os.path.join(docpath, (packagename + '.txt')), 'w').close()
+
+    xmlpath = os.path.join(docpath, (packagename + '.xml'))
+    xmlfile = open(xmlpath, 'w')
+    xmlfile.write(re.sub('PACKAGENAME', packagename, xmlstring))
+    xmlfile.close()
+
+    descrpath = os.path.join(docpath, 'PackageDescription.txt')
+    descrfile = open(descrpath, 'w')
+    descrfile.write(descrstring)
+    descrfile.close()
 
 else:
     print "Error: Bad package name:", packagename
