@@ -382,7 +382,7 @@ OutputIteratorCells cit,
 OutputIteratorInternalFacets ifit); 
 
 /*! 
-This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
+\deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
