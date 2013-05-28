@@ -552,9 +552,10 @@ Face_handle f = Face_handle()) const;
 
 /*!
 Same as above but uses inexact predicates. 
-This function returns a `Face_handle` which is a good approximation of the exact
-location of `query`, while being faster. Note that it may return a `Face_handle` of which 
-`query` is not in the interior.
+This function returns a handle on a face that is a good approximation of the exact
+location of `query`, while being faster. 
+Note that it may return a handle on a facet whose interior does not contain 
+`query`.
 */
 Face_handle
 inexact_locate(const Point & query, 
