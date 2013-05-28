@@ -93,8 +93,8 @@ checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
 `obj2` intersect if there is a point `p` that is part of both `obj1`
 and `obj2`.  The intersection region of those two objects is defined
 as the set of all points `p` that are part of both `obj1` and `obj2`.
-Note that for objects like triangles and polygons that enclose a
-bounded region, this region is part of the object.
+Note that while for a polygon we consider the enclosed domain, for an
+object of type `Circle_2` only the curve is considered.
 
 `Type1` and `Type2` can be any of
 the following:
@@ -137,8 +137,9 @@ checks whether `obj1` and `obj2` intersect.  Two objects `obj1` and
 `obj2` intersect if there is a point `p` that is part of both `obj1`
 and `obj2`.  The intersection region of those two objects is defined
 as the set of all points `p` that are part of both `obj1` and `obj2`.
-Note that for objects like triangles and polygons that enclose a
-bounded region, this region is part of the object.
+Note that while for a polygon we consider the enclosed domain, for an
+object of type `Circle_3` or `Sphere_3` only the curve
+or the surface is considered. 
 
 `Type1` and `Type2` can be any of
 the following:
