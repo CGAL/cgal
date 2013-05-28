@@ -1261,23 +1261,29 @@ Facet mirror_facet(Facet f) const;
 /// @{
 
 /*! 
-\cgalDebug Checks the combinatorial validity of the triangulation. Checks also the 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the combinatorial validity of the triangulation. Checks also the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). 
 When `verbose` is set to true, 
 messages describing the first invalidity encountered are printed. 
+\cgalDebugEnd
 */ 
 bool 
 is_valid(bool verbose = false) const; 
 
 /*! 
-\cgalDebug Checks the combinatorial validity of the cell by calling the 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the combinatorial validity of the cell by calling the 
 `is_valid` method of the `TriangulationDataStructure_3` cell class. Also checks the 
 geometric validity of `c`, if `c` is finite. (See 
 Section \ref Triangulation3secintro.) 
 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication of the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool 
 is_valid(Cell_handle c, bool verbose = false) const; 
