@@ -34,12 +34,15 @@ provided before \cgal 3.6 by `Triangulation_hierarchy_3`.
 An example of use can be found in the user 
 manual \ref Triangulation3exfastlocation. 
 
-\tparam SpatialLockDataStructure_3 is only used by the parallel version of the triangulation
-        (i.e.\ when `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
+\tparam SpatialLockDataStructure_3 is an optional parameter to specify the type of the spatial lock data structure.
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
         It must be a model of the `SpatialLockDataStructure_3` concept.
-        See the documentation of `Triangulation_3` for more details.
+        It allows to perform some operations concurrently (see the operations documentation below).
+        The default value is `Spatial_grid_lock_data_structure_3<Tag_priority_blocking>` if
+        the TDS is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
-        instance via the constructor or using `set_lock_data_structure`.
+        instance via the constructor or `set_lock_data_structure`.
 
 \sa `CGAL::Regular_triangulation_3` 
 

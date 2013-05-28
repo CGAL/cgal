@@ -36,12 +36,15 @@ the documentation of the operations for more details.
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
 It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<RegularTriangulationTraits_3>, Regular_triangulation_cell_base_3<RegularTriangulationTraits_3> >`. 
 
-\tparam SpatialLockDataStructure_3 is only used by the parallel version of the triangulation
-        (i.e.\ when `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
+\tparam SpatialLockDataStructure_3 is an optional parameter to specify the type of the spatial lock data structure.
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
         It must be a model of the `SpatialLockDataStructure_3` concept.
-        See the documentation of `Triangulation_3` for more details.
+        It allows to perform some operations concurrently (see the operations documentation below).
+        The default value is `Spatial_grid_lock_data_structure_3<Tag_priority_blocking>` if
+        the TDS is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
-        instance via the constructor or using `set_lock_data_structure`.
+        instance via the constructor or `set_lock_data_structure`.
 */
 template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3, typename SpatialLockDataStructure_3 >
 class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SpatialLockDataStructure_3> {

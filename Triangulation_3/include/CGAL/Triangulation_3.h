@@ -178,7 +178,7 @@ public:
   // If Lock_data_structure_ = Default => use Spatial_grid_lock_data_structure_3
   typedef typename Default::Get<
     Lock_data_structure_, 
-    Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics> >
+    Spatial_grid_lock_data_structure_3<Tag_priority_blocking> >
     ::type Lock_data_structure;
 
 protected:
