@@ -23,7 +23,8 @@ Note that this is a \f$ (n+m)\times(n+m)\f$ matrix as there are \f$ n\f$ rows fo
 and \f$ m\f$ rows that are used for \f$ g\f$. The blank spaces are supposed to be 
 filled with zeros. 
 
-\cgalAdvanced Let \f$ L\f$ be the algebraic closure of \f$ A\f$, and write \f$ f\f$ and \f$ g\f$ as 
+\cgalAdvancedBegin
+Let \f$ L\f$ be the algebraic closure of \f$ A\f$, and write \f$ f\f$ and \f$ g\f$ as 
 \f[ f := f_m \ccProd{i=1}{m}{(x-\alpha_i)},\ \alpha_i \in L \f] 
 and 
 \f[ g := g_n \ccProd{j=1}{n}{(x-\beta_j)},\ \beta_i \in L, \f] then 
@@ -32,6 +33,7 @@ the product of all pairwise differences of the roots of \f$ f\f$ and \f$ g\f$, n
 \f[ res(f,g) = f_m^n g_n^m \ccProd{i=1}{m}{\ccProd{j=1}{n}{(\alpha_i-\beta_j)}}. \f] 
 In particular, \f$ res(f,g) \neq 0\f$ iff \f$ f\f$ and \f$ g\f$ have a common factor with a 
 positive degree in \f$ X\f$. 
+\cgalAdvancedEnd
 
 There are various ways to compute the resultant. 
 Naive options are the computation of the resultant as the determinant of 

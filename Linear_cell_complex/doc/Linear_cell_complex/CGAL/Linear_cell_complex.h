@@ -25,10 +25,12 @@ There are four default template arguments:
 `Items` is equal to `CGAL::Linear_cell_complex_min_items<d>` and
 `Alloc` is `CGAL_ALLOCATOR(int)`.
 
-\cgalAdvanced Note that there is an additional, and undocumented, template
+\cgalAdvancedBegin
+Note that there is an additional, and undocumented, template
 parameter `CMap` for
 `Linear_cell_complex<d,d2,LCCTraits,Items,Alloc,CMap>` allowing to
 inherit from any model of the `CombinatorialMap` concept.
+\cgalAdvancedEnd
 
 \sa `CombinatorialMap`
 \sa `CGAL::Combinatorial_map<d,Items,Alloc>`

@@ -195,19 +195,24 @@ Cell_handle n2, Cell_handle n3);
 /*! 
 Performs any desired geometric test on a cell. 
 
-\cgalDebug When `verbose` is set to `true`, messages are printed to give 
+\cgalDebugFunction
+\cgalDebugBegin
+When `verbose` is set to `true`, messages are printed to give 
 a precise indication of the kind of invalidity encountered. `level` 
 increases the level of testing. 
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose = false, int level = 0) const; 
 
 /// @} 
 
 /// \name Members for Compact_container
-/// \cgalAdvanced These member functions are required by
+/// \cgalAdvancedBegin
+/// These member functions are required by
 /// `Triangulation_data_structure_3` because it uses
 /// `Compact_container` to store its cells. See the documentation of
 /// `Compact_container` for the exact requirements.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 
@@ -223,9 +228,11 @@ void * & for_compact_container();
 /// @}
 
 /// \name Internal
-/// \cgalAdvanced These functions are used internally by the triangulation data
+/// \cgalAdvancedBegin
+/// These functions are used internally by the triangulation data
 /// structure. The user is not encouraged to use them directly as they
 /// may change in the future.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

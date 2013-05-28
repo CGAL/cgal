@@ -488,16 +488,17 @@ it is not required to pass the exact princiapl Sturm-Habicht coefficients
 to the functions; it is only required that the sign of each element 
 corresponds to the sign of the actual principal Sturm-Habicht coefficient. 
 
-\cgalAdvanced We explain the internals of this function. 
+\cgalAdvancedBegin
+We explain the internals of this function. 
 For a sequence \f$ I:=(a_0,\ldots,a_n)\f$ of real numbers with \f$ a_0\neq 0\f$, define 
 \f[ C(I)=\ccSum{i=1}{s}\epsilon_i \f] 
 where \f$ s\f$ is the number of subsequences of \f$ I\f$ of the form 
 
 \image html underbrace.gif
 
-\cgalAdvanced with \f$ a\neq 0,b\neq 0, k\geq 0\f$. 
+with \f$ a\neq 0,b\neq 0, k\geq 0\f$. 
 
-\cgalAdvanced For the \f$ i\f$-th subsequence of \f$ I\f$, define 
+For the \f$ i\f$-th subsequence of \f$ I\f$, define 
 
 \f[
 \epsilon_i:=\begin{array}{cc}
@@ -506,10 +507,11 @@ where \f$ s\f$ is the number of subsequences of \f$ I\f$ of the form
 \end{array}
 \f]
 
-\cgalAdvanced For \f$ f\in\mathbb{R}[x]\f$ with \f$ \deg f=n\f$, we have: 
+For \f$ f\in\mathbb{R}[x]\f$ with \f$ \deg f=n\f$, we have: 
 \f[ C(\mathrm{stha}_n(f),\ldots,\mathrm{stha}_0(f)) = \#\{\alpha\in\R\mid f(\alpha)=0\} \f] 
 In other words, the signs of the principal Sturm-Habicht coefficients 
 determine the number of distinct real roots of \f$ f\f$. 
+\cgalAdvancedEnd
 
 \sa `Polynomial_d` 
 \sa `PolynomialTraits_d` 
@@ -537,16 +539,17 @@ it is not required to pass the exact princiapl Sturm-Habicht coefficients
 to the functions; it is only required that the sign of each element 
 corresponds to the sign of the actual principal Sturm-Habicht coefficient. 
 
-\cgalAdvanced We explain the internals of this function. 
+\cgalAdvancedBegin
+We explain the internals of this function. 
 For a sequence \f$ I:=(a_0,\ldots,a_n)\f$ of real numbers with \f$ a_0\neq 0\f$, define 
 \f[ C(I)=\ccSum{i=1}{s}\epsilon_i \f] 
 where \f$ s\f$ is the number of subsequences of \f$ I\f$ of the form 
 
 \image html underbrace.gif
 
-\cgalAdvanced with \f$ a\neq 0,b\neq 0, k\geq 0\f$. 
+with \f$ a\neq 0,b\neq 0, k\geq 0\f$. 
 
-\cgalAdvanced For the \f$ i\f$-th subsequence of \f$ I\f$, define 
+For the \f$ i\f$-th subsequence of \f$ I\f$, define 
 
 \f[
 \epsilon_i:=\begin{array}{cc}
@@ -555,10 +558,11 @@ where \f$ s\f$ is the number of subsequences of \f$ I\f$ of the form
 \end{array}
 \f]
 
-\cgalAdvanced For \f$ f\in\mathbb{R}[x]\f$ with \f$ \deg f=n\f$, we have: 
+For \f$ f\in\mathbb{R}[x]\f$ with \f$ \deg f=n\f$, we have: 
 \f[ C(\mathrm{stha}_n(f),\ldots,\mathrm{stha}_0(f)) = \#\{\alpha\in\R\mid f(\alpha)=0\} \f] 
 In other words, the signs of the principal Sturm-Habicht coefficients 
 determine the number of distinct real roots of \f$ f\f$. 
+\cgalAdvancedEnd
 
 \sa `Polynomial_d` 
 \sa `PolynomialTraits_d` 

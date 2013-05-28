@@ -37,10 +37,12 @@ Currently, the following coefficient types are supported:
 - `CORE::BigInt`, `CORE::BigRat`, (requires configuration with external library GMP) 
 - `leda_integer`, `leda_rational`. (requires configuration with external library LEDA) 
 
-\cgalAdvanced The template argument type can also be set to
+\cgalAdvancedBegin
+The template argument type can also be set to
 `Sqrt_extension<NT,ROOT>`, where `NT` is one of the types listed
 above. `ROOT` should be one of the integer types.  See also the
 documentation of `Sqrt_extension<NT,ROOT>`.
+\cgalAdvancedEnd
 
 \cgalModels `AlgebraicKernel_d_2`
 

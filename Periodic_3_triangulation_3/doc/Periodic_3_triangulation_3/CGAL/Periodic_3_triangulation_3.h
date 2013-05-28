@@ -362,8 +362,11 @@ Returns the original domain.
 Iso_cuboid domain() const; 
 
 /*! 
-\cgalAdvanced Returns the number of sheets of the covering space the triangulation is 
-currently computed in. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Returns the number of sheets of the covering space the triangulation is 
+currently computed in.
+\cgalAdvancedEnd
 */ 
 Covering_sheets number_of_sheets() const; 
 
@@ -373,18 +376,24 @@ Covering_sheets number_of_sheets() const;
 /// @{
 
 /*! 
-\cgalAdvanced Changes the domain. Note that this function calls `clear()`, 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Changes the domain. Note that this function calls `clear()`, 
 i.e., it erases the existing triangulation. 
+\cgalAdvancedEnd
 */ 
 void set_domain(const Iso_cuboid dom); 
 
 /*! 
-\cgalAdvanced Returns a reference to the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Returns a reference to the triangulation data structure. 
 
-\cgalAdvanced The responsibility of keeping a valid triangulation belongs
+The responsibility of keeping a valid triangulation belongs
 to the user when using advanced operations allowing a direct
 manipulation of the `tds`. This method is mainly a help for users
 implementing their own triangulation algorithms.
+\cgalAdvancedEnd
 */ 
 Triangulation_data_structure & tds(); 
 
@@ -1127,10 +1136,12 @@ Facet mirror_facet(Facet f) const;
 /// @} 
 
 /// \name Checking 
-/// \cgalAdvanced The responsibility of keeping a valid triangulation belongs to the
+/// \cgalAdvancedBegin
+/// The responsibility of keeping a valid triangulation belongs to the
 /// user when using advanced operations allowing a direct manipulation
 /// of cells and vertices. We provide the user with the following
 /// methods to help debugging.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

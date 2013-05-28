@@ -330,12 +330,13 @@ such as `CMAKE_CXX_FLAGS`.
 The command line tool `cmake` accepts CMake variables as arguments of the form `-D<VAR>:<TYPE>=<VALUE>`, as
 in the example above, but this is only useful if you already know which variables need to be explicitly defined.
 
-\cgalAdvanced CMake keeps the variables that a user can manipulate in a
+\cgalAdvancedBegin
+CMake keeps the variables that a user can manipulate in a
 so-called <I>CMake cache</I>, a simple text file named
 `CMakeCache.txt`, whose entries are of the form
 `VARIABLE:TYPE=VALUE`. Advanced users can manually edit this file,
 instead of going through the interactive configuration session.
-
+\cgalAdvancedEnd
 
 The configuration process not only determines the location of the required dependencies, it also dynamically generates a
 `compiler_config.h` file, which encodes the properties of your system and a special file named 
@@ -709,7 +710,8 @@ The "Debug" argument is needed because CMake creates solution files for
 all four configurations, and you need to explicitly choose one when building
 (the other choices are Release, RelWithDebInfo and MinSizeRel).
 
-\cgalAdvanced The build files produced by CMake are autoconfigured. That
+\cgalAdvancedBegin
+The build files produced by CMake are autoconfigured. That
 is, if you change any of the dependencies, the build step
 automatically goes all the way back to the configuration step. This
 way, once the target has been configured the very first time by
@@ -718,6 +720,7 @@ again. Rebuilding will call itself `cmake` and re-generate the
 build file whenever needed. Keep this in mind if you configure \cgal
 for the Visual Studio IDE since a build could then change the
 solution/project file in-place and VS will prompt you to reload it.
+\cgalAdvancedEnd
 
 If you have turned on the configuration of examples
 (`-DWITH_examples=ON`) and/or demos (`-DWITH_demos=ON`), there will be additional
@@ -741,9 +744,11 @@ make Straight_skeleton_2_demo
 
 </PRE>
 
-\cgalAdvanced When using `UNIX Makefiles` you can find out the
+\cgalAdvancedBegin
+When using `UNIX Makefiles` you can find out the
 exact name of the example or demo target of a particular package by
 typing `make help | grep <package>`.
+\cgalAdvancedEnd
 
 \section secinstalling Installing CGAL 
 
@@ -772,10 +777,12 @@ make install # install
 If you use a generator that produces IDE files (for Visual Studio for instance) there will be an optional
 `INSTALL` project, which you will be able to <I>"build"</I> to execute the installation step.
 
-\cgalAdvanced The files are copied into a directory tree relative to the <I>installation directory</I> determined by the 
+\cgalAdvancedBegin
+The files are copied into a directory tree relative to the <I>installation directory</I> determined by the 
 CMake variable `CMAKE_INSTALL_PREFIX`. This variable defaults to `/usr/local` under \sc{Unix}-like operating systems
 and <A HREF="C:\ProgramFiles">`C:\Program Files`</A> under Windows. If you want to install to a different location, you must override that CMake
 variable explicitly <I>at the configuration time</I> and not when executing the install step.
+\cgalAdvancedEnd
 
 The file `CGALConfig.cmake` is installed by default in
 `$CMAKE_INSTALLED_PREFIX/lib/CGAL-x.y`.
@@ -1139,12 +1146,13 @@ provide your own flags and this time they will not be overridden.
 When using the interactive `cmake-gui` the first press on `Configure` unlocks
 the flags, so that you can edit them as needed.
 
-\cgalAdvanced The locking of flags is controlled by the variable
+\cgalAdvancedBegin
+The locking of flags is controlled by the variable
 `CGAL_DONT_OVERRIDE_CMAKE_FLAGS` which starts out FALSE and is
 toggled right after the flags have been loaded from
 `CGALConfig.cmake`.
 
-\cgalAdvanced If you use the command line tool you can specify flags <I>directly</I> by setting the
+If you use the command line tool you can specify flags <I>directly</I> by setting the
 controlling variable right up front:
 
 \code{.sh}
@@ -1153,6 +1161,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
 cd CGAL-x.y/examples/Straight_skeleton_2
 cmake -DCGAL_DIR=CGAL-x.y -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
 \endcode
+\cgalAdvancedEnd
 
 \section installation_summary Summary of CGAL's Configuration Variables
 

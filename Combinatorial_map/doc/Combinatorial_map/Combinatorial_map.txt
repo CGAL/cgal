@@ -943,27 +943,29 @@ Section \ref sseclinkdarts "Sewing Orbits and Linking Darts");
 The `CombinatorialMap` defines two groups of methods to modify the
 \f$ \beta\f$ pointers of existing darts.
 
-<ul>
-<li> The \ref CombinatorialMap::sew "sew" and \ref CombinatorialMap::unsew "unsew"
-   methods iterate over two orbits in
-  order to link or unlink specific darts two by two. Intuitively, a
-  \ref CombinatorialMap::sew "sew<i>" operation glues two <I>i</I>-cells by identifying two of
-  their <I>(i-1)</I>-cells (see example in \cgalFigureRef{figexemplesew}
-  where \ref CombinatorialMap::sew "sew<3>" is used to glue two 3-cells along one 2-cell).
-  Reciprocally, a \ref CombinatorialMap::unsew "unsew<i>" operation un-glues
-  two <I>i</I>-cells which
-  were glued along one of their <I>(i-1)</I>-cells.
-  These methods guarantee that given a valid combinatorial map and a
-  possible operation we obtain a valid combinatorial map as result of
-  the operation.
-<li> \cgalAdvanced The \ref CombinatorialMap::link_beta "link_beta" and
+The \ref CombinatorialMap::sew "sew" and \ref CombinatorialMap::unsew "unsew"
+ methods iterate over two orbits in
+order to link or unlink specific darts two by two. Intuitively, a
+\ref CombinatorialMap::sew "sew<i>" operation glues two <I>i</I>-cells by identifying two of
+their <I>(i-1)</I>-cells (see example in \cgalFigureRef{figexemplesew}
+where \ref CombinatorialMap::sew "sew<3>" is used to glue two 3-cells along one 2-cell).
+Reciprocally, a \ref CombinatorialMap::unsew "unsew<i>" operation un-glues
+two <I>i</I>-cells which
+were glued along one of their <I>(i-1)</I>-cells.
+These methods guarantee that given a valid combinatorial map and a
+possible operation we obtain a valid combinatorial map as result of
+the operation.
+
+\cgalAdvancedBegin 
+  The \ref CombinatorialMap::link_beta "link_beta" and
   \ref CombinatorialMap::unlink_beta "unlink_beta" methods only modify
   the pointer of two darts: the obtained combinatorial maps may be not
   valid. These operations can be useful to use low level operations
   in a specific algorithm, for example to modify locally a
   combinatorial map in a really fast way. In such a case, additional
   operations may be needed to restore the validity conditions.
-</ul>
+\cgalAdvancedEnd
+
 
 Linking two darts <I>d1</I> and <I>d2</I> by \f$ \beta_i\f$, with 2\f$
 \leq\f$<I>i</I>\f$ \leq\f$<I>d</I> and <I>d1</I>\f$ \neq\f$<I>d2</I>,
@@ -1094,7 +1096,8 @@ operation has duplicated the
 2-attribute associated to the 2-cell {1,2,3,4,5,6,7,8} since this
 2-cell is split in two after the unsew operation.
 
-\cgalAdvanced If one wants to modify a combinatorial map <I>manually</I>,
+\cgalAdvancedBegin
+If one wants to modify a combinatorial map <I>manually</I>,
 it is  possible to switch off the updating between darts and
 attributes by passing `false` as last argument of
 \ref CombinatorialMap::sew "sew<i>(dh1,dh2,update_attributes=true)" and
@@ -1122,6 +1125,7 @@ attributes.  In \cgalFigureRef{figexemplesew} (Left), if we call
 \f$ \beta_3\f$(1)=5 and \f$ \beta_3\f$(5)=1. This combinatorial map is
 no longer valid (for example dart 2 is 3-free and we should have \f$
 \beta_3\f$(2)=8).
+\cgalAdvancedEnd
 
 \subsection ssecoperations Removal and Insertion Operations
 

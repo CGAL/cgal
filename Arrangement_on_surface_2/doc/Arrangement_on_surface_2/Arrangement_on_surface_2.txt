@@ -701,7 +701,8 @@ by \f$ (\frac{1}{2}, 3)\f$.
 
 \image html pred_around_vertex.gif
 
-\cgalAdvanced Assume that the specialized insertion function
+\cgalAdvancedBegin
+Assume that the specialized insertion function
 `insert_from_left_vertex(c,v)` is invoked for a curve \f$ c\f$,
 whose left endpoint is already associated with a non-isolated
 vertex \f$ v\f$. Namely, \f$ v\f$ has already several incident halfedges. It
@@ -716,7 +717,7 @@ take \f$ O(d)\f$ time where \f$ d\f$ is the degree of the vertex. However,
 if the halfedge `pred` is known in advance, the insertion can
 be carried out in constant time.
 
-\cgalAdvanced The `Arrangement_2` class provides the advanced versions of
+The `Arrangement_2` class provides the advanced versions of
 the specialized insertion functions for a curve \f$ c\f$ - namely we have
 `insert_from_left_vertex(c,pred)` and
 `insert_from_right_vertex(c,pred)` that accept a halfedge `pred`
@@ -728,30 +729,32 @@ that the predecessor halfedge for the new inserted curve is not
 known, the simpler versions of these insertion functions should be
 used.
 
-\cgalAdvanced Similarly, there exist two overrides of the
+Similarly, there exist two overrides of the
 `insert_at_vertices()` function: One that accept the two
 predecessor halfedges around the two vertices \f$ v_1\f$ and \f$ v_2\f$ that
 correspond to the curve endpoints, and one that accepts a handle
 for one vertex and a predecessor halfedge around the other
 vertex.
 
+
 \cgalFigureBegin{arr_figex_5,ex_4.gif}
 An arrangement of line segments, as constructed in `special_edge_insertion.cpp`. Note that \f$ p_0\f$ is initially inserted as an isolated point and later on connected to the other four vertices.
 \cgalFigureEnd
 
-\cgalAdvanced The following program shows how to construct the arrangement
+The following program shows how to construct the arrangement
 depicted in \cgalFigureRef{arr_figex_4} using the specialized
 insertion functions that accept predecessor halfedges:
 
 \cgalExample{Arrangement_on_surface_2/special_edge_insertion.cpp}
 
-\cgalAdvanced It is possible to perform even more refined operations on an
+It is possible to perform even more refined operations on an
 `Arrangement_2` instance given specific topological information.
 As most of these operations are very fragile and perform no precondition
 testing on their input in order to gain efficiency, they are not included
 in the public interface of the arrangement class. Instead, the
 `Arr_accessor<Arrangement>` class allows access to these internal
 arrangement operations - see more details in the Reference Manual.
+\cgalAdvancedEnd
 
 \section arr_secqueries Issuing Queries on an Arrangement 
 
@@ -1164,7 +1167,8 @@ walk point-location strategy (namely, the variant
 running-time of this insertion function is proportional to the
 complexity of the zone of the curve \f$ c\f$.
 
-\cgalAdvanced In some cases users may have a prior knowledge of the location of the
+\cgalAdvancedBegin
+In some cases users may have a prior knowledge of the location of the
 left endpoint of the \f$ x\f$-monotone curve `c` they wish to insert,
 so they can perform the insertion without issuing any point-location
 queries. This can be done by calling
@@ -1173,6 +1177,7 @@ object represents the location of `c`'s left endpoint in the
 arrangement - namely it wraps a `Vertex_const_handle`, a
 `Halfedge_const_handle` or a `Face_const_handle` (see
 also Section \ref arr_ssecpl).
+\cgalAdvancedEnd
 
 \subsection arr_sssecinsert_gen Inserting General Curves 
 
@@ -1533,6 +1538,7 @@ test that verifies that a vertex of degree greater than \f$ 4\f$
 exists. This implied that collinearity indeed exists as explained above.
 
 \subsection arr_ssecunb_rep Representation of Unbounded Arrangements 
+\cgalAdvancedBegin
 
 \cgalFigureBegin{typenormal,unb_dcel.gif}
 A \sc{Dcel} representing an arrangement of four lines. Halfedges are drawn as thin arrows. The vertices \f$ v_1, \ldots, v_8\f$ lie at infinity, and are not associated with valid points. The halfedges that connect them are fictitious, and are not associated with concrete curves. The face denoted \f$ f_0\f$ (lightly shaded) is the fictitious "unbounded face" which lies outside the bounding rectangle (dashed) that bounds the actual arrangement. The four fictitious vertices \f$ v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$ v_{\rm tr}\f$ represent the four corners of the bounding rectangle.
@@ -1690,7 +1696,7 @@ using the following procedure:
     std::cout << std::endl;
 }
 \endcode
-
+\cgalAdvancedEnd
 
 \section arr_sectraits Traits Classes 
 
@@ -2609,7 +2615,8 @@ represents the weakly \f$ x\f$-monotone segment that was queried.
 We call a segment <I>terminal</I> if it can be represented
 by the type `X_monotone_curve_2`.
 
-\cgalAdvanced The subdivision of segments is due to the internal representation of 
+\cgalAdvancedBegin
+The subdivision of segments is due to the internal representation of 
 \f$ x\f$-monotone segments, which is based on a vertical decomposition.
 We assume the defining polynomial \f$ f\f$ of the curve \f$ C\f$
 to be <I>square-free</I>, that means, it contains no divisor \f$ g^2\f$ of total
@@ -2629,6 +2636,7 @@ The type `X_monotone_curve_2` is only able to represent such segments
 for an example of a decomposition into terminal segments. Formally, 
 a terminal segment is a weakly \f$ x\f$-monotone segment that is either vertical, or
 its \f$ x\f$-range contains no critical point in its interior.
+\cgalAdvancedEnd
 
 \cgalFigureBegin{arr_figcylindrical_decomposition,cylindrical_decomposition.gif}
 The critical \f$ x\f$-coordinates of an algebraic curve (dashed lines), and its decomposition into terminal segments (in different colors). The segment from \f$ p\f$ to \f$ q\f$ consists of the union of three terminal segments.
@@ -2993,13 +3001,15 @@ is copied to another arrangement instance:
 
 \cgalExample{Arrangement_on_surface_2/dcel_extension.cpp}
 
-\cgalAdvanced The various \sc{Dcel} classes presented in this section are perfectly
+\cgalAdvancedBegin
+The various \sc{Dcel} classes presented in this section are perfectly
 sufficient for most applications based on the arrangement package.
 However, users may also use their own implementation of a \sc{Dcel} class
 to instantiate the `Arrangement_2` class-template, in case they need
 special functionality from their \sc{Dcel}. Such a class must be a model of the
 concept `ArrangementDcel`, whose exact specification is listed in the
 Reference Manual.
+\cgalAdvancedEnd
 
 \section arr_secoverlay Overlaying Arrangements 
 
@@ -3328,7 +3338,8 @@ demonstrates how to re-read the arrangement from a file:
 
 \subsection arr_ssecarr_io_aux_data Arrangements with Auxiliary Data 
 
-\cgalAdvanced The inserter and extractor both ignore any auxiliary data stored with
+\cgalAdvancedBegin
+The inserter and extractor both ignore any auxiliary data stored with
 the arrangement features. Thus, they are ideal for arrangements
 instantiated using the `Arr_default_dcel` class.
 However, as explained in Section \ref arr_secex_dcel, one can easily
@@ -3337,7 +3348,7 @@ template, or extend all \sc{Dcel} records by using the `Arr_extended_dcel`
 template. In such cases, it might be crucial that the auxiliary data fields
 are written to the file and read from there.
 
-\cgalAdvanced The arrangement package includes the free functions
+The arrangement package includes the free functions
 `write(arr, os, formatter)`, which writes the arrangement `arr`
 to an output stream `os`, and `read(arr, os, formatter)`, which
 reads the arrangement `arr` from an input stream `is`. Both
@@ -3364,7 +3375,7 @@ and faces, provided that the `VertexData`, `HalfedgeData` and
 `FaceData` classed all have inserters and extractors.
 </UL>
 
-\cgalAdvanced The following example constructs the same arrangement as the
+The following example constructs the same arrangement as the
 example `dcel_extension` does
 (see Section \ref arr_ssecex_dcel_all), depicted in
 \cgalFigureRef{arr_figex_20}, and writes it to an output file. It also
@@ -3372,11 +3383,12 @@ demonstrates how to re-read the arrangement from a file:
 
 \cgalExample{Arrangement_on_surface_2/dcel_extension_io.cpp}
 
-\cgalAdvanced You may develop your own own formatter classes - models of the
+You may develop your own own formatter classes - models of the
 `ArrangementInputFormatter` and `ArrangementOutputFormatter`
 concepts, as defined in the Reference Manual.
 Doing so, you can define other I/O formats, such as an XML-based
 format or a binary format.
+\cgalAdvancedEnd
 
 \subsection arr_ssecarr_io_hist Arrangements with Curve History 
 
@@ -3404,7 +3416,8 @@ demonstrates how to re-read the arrangement-with-history from a file:
 
 \cgalExample{Arrangement_on_surface_2/io_curve_history.cpp}
 
-\cgalAdvanced The arrangement package also includes the free functions
+\cgalAdvancedBegin
+The arrangement package also includes the free functions
 `write(arr, os, formatter)` and `read(arr, os, formatter)` that
 operate on a given arrangement-with-history instance `arr`.
 Both functions are parameterized by a `formatter` object, which define
@@ -3412,6 +3425,7 @@ the I/O format. The package contains a template called,
 `Arr_with_hist_text_formatter<ArranagmentFormatter>`, which extends
 an arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
+\cgalAdvancedEnd
 
 \subsection Arrangement_on_surface_2OutputQtwidgetStream Output Qt-widget Stream
 \anchor arr_ssecqt_stream

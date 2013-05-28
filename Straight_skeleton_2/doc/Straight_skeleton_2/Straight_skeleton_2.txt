@@ -289,7 +289,8 @@ As a shortcut, you can use the function `create_interior_skeleton_and_offset_pol
 
 \cgalExample{Straight_skeleton_2/Create_skeleton_and_offset_polygons_with_holes_2.cpp}
 
-\cgalAdvanced Consider an input polygon with parallel edges separated a
+\cgalAdvancedBegin
+Consider an input polygon with parallel edges separated a
 distance \f$ 2*t\f$. If you produce an offset polygon at distance \f$
 t\f$, these parallel edges will just collapse each other and vanish
 from the result, keeping the output as a <I>simple polygon</I>, just
@@ -303,7 +304,7 @@ roundoff in the coordinates of the output points will cause parallel
 edges that <I>almost</I> collapse-but not so-to become really
 collinear or even cross each other.
 
-\cgalAdvanced Thus, it is neccessary to use a kernel with exact constructions if
+Thus, it is neccessary to use a kernel with exact constructions if
 offset polygons must be simple, yet computing a straight skeleton
 using that kernel is very slow, much more than computing the offset
 polygons. To help with this, it is possible to construct the straight
@@ -313,17 +314,18 @@ skeleton to a different kernel via the function
 `convert_straight_skeleton_2()` and input the converted skeleton to the
 offsetting functions.
 
-\cgalAdvanced All the offsetting functions that take polygons as input (and create
+All the offsetting functions that take polygons as input (and create
 the straight skeleton under the hood) apply that optimization
 automatically: that is, the output polygons are defined over the same
 kernel of the input polygons, whatever that is, yet the straight
 skeleton is constructed with the faster recommended kernel and
 converted if necessary.
 
-\cgalAdvanced Notice how some of the examples above use
+Notice how some of the examples above use
 `Exact_predicates_exact_constructions_kernel`. In all cases, the
 straight skeleton is constructed using
 `Exact_predicates_inexact_constructions_kernel`.
+\cgalAdvancedEnd
 
 \subsection Straight_skeleton_2LowlevelAPI Low level API
 

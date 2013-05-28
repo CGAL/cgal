@@ -382,7 +382,7 @@ OutputIteratorCells cit,
 OutputIteratorInternalFacets ifit); 
 
 /*! 
-This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
+\deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
@@ -489,6 +489,8 @@ bool
 is_valid(bool verbose = false) const; 
 
 /*! 
+\cgalDebugFunction
+\cgalDebugBegin
 Checks the combinatorial and geometric validity of the cell (see 
 Section \ref Triangulation3secintro). Also checks that the 
 circumscribing sphere (resp. circle in dimension 2) of cells 
@@ -497,6 +499,7 @@ circumscribing sphere (resp. circle in dimension 2) of cells
 When `verbose` is set to 
 true, messages are printed to give 
 a precise indication of the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool 
 is_valid(Cell_handle c, bool verbose = false) const; 

@@ -214,10 +214,12 @@ update in the halfedge data structure is costly, thus it is advisable
 to reserve enough space in advance as indicated with the alternative
 constructor in the comment.
 
-\cgalAdvanced Note that the polyhedron and not the underlying halfedge data
+\cgalAdvancedBegin
+Note that the polyhedron and not the underlying halfedge data
 structure triggers the resize operation, since the resize operation
 requires some preconditions, such as valid incidences, to be fulfilled
 that only the polyhedron can guarantee.
+\cgalAdvancedEnd
 
 \cgalExample{Polyhedron/polyhedron_prog_vector.cpp}
 

@@ -1466,7 +1466,8 @@ n  */
   /*!
     \name Operations with Border Halfedges 
 
-    \cgalAdvanced Halfedges incident to a hole are called <I>border
+    \cgalAdvancedBegin
+    Halfedges incident to a hole are called <I>border
     halfedges</I>. An halfedge is a <I>border edge</I> if itself or its
     opposite halfedge are border halfedges. The only requirement to work
     with border halfedges is that the `Halfedge` class provides a member
@@ -1484,6 +1485,7 @@ n  */
     the data structure. Halfedge insertion or removal and changing the
     border status of a halfedge invalidate these values. They are not
     automatically updated.
+    \cgalAdvancedEnd
   */
   /// @{
 
@@ -1564,7 +1566,10 @@ n  */
   bool normalized_border_is_valid( bool verbose = false) const; 
 
   /*!  
-    \cgalAdvanced calls the `Modifier_base::operator()()` of the modifier `m`.
+    \cgalAdvancedFunction
+    \cgalAdvancedBegin
+    calls the `Modifier_base::operator()()` of the modifier `m`.
+    \cgalAdvancedEnd
     \pre The polyhedral surface must be valid when the modifier returns from execution. 
   */ 
   void delegate( CGAL::Modifier_base<HDS>& m); 

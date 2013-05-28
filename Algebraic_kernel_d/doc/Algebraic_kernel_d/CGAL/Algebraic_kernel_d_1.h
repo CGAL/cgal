@@ -17,9 +17,11 @@ Currently, the following coefficient types are supported:
 
 - `leda_integer`, `leda_rational`. (requires configuration with external library LEDA) 
 
-\cgalAdvanced The template argument type can also be set to `Sqrt_extension<NT,ROOT>`, where `NT` is 
+\cgalAdvancedBegin
+The template argument type can also be set to `Sqrt_extension<NT,ROOT>`, where `NT` is 
 one of the types listed above. `ROOT` should be one of the integer types. 
 See also the documentation of `Sqrt_extension<NT,ROOT>`. 
+\cgalAdvancedEnd
 
 The current method to isolate roots is the bitstream Descartes method
 presented in \cite eigenwillig-phd-08.  The used method to refine the

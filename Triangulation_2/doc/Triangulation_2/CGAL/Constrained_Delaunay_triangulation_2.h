@@ -290,27 +290,34 @@ bool is_valid() const;
 
 /*! 
 determines if edge `(f,i)` can be flipped.
-\cgalAdvanced  Returns true if 
+\cgalAdvancedBegin
+Returns true if 
 edge `(f,i)` is not constrained and the circle circumscribing `f` 
 contains the vertex of `f->neighbor(i)` 
-opposite to edge `(f,i)`. 
+opposite to edge `(f,i)`.
+\cgalAdvancedEnd
 */ 
 bool is_flipable(Face_handle f, int i) const; 
 
 /*! 
-\cgalAdvanced Flip `f` and `f->neighbor(i)`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Flip `f` and `f->neighbor(i)`. 
+\cgalAdvancedEnd
 */ 
 void flip(Face_handle& f, int i); 
 
 /*! 
 makes the triangulation constrained Delaunay by flipping
 edges.
-\cgalAdvanced   The list `edges` contains an initial list of edges to be
+\cgalAdvancedBegin
+The list `edges` contains an initial list of edges to be
 flipped. The returned triangulation is constrained Delaunay if the
 initial list contains at least all the edges of the input
 triangulation that failed to be constrained Delaunay. (An edge is said
 to be constrained Delaunay if it is either constrained or locally
 Delaunay.)
+\cgalAdvancedEnd
 */ 
 void propagating_flip(List_edges & edges); 
 
