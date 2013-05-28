@@ -13,44 +13,44 @@ elif re.match("^[A-Za-z_][A-Za-z0-9_]*$", sys.argv[1]):
     packagename = sys.argv[1]
     #print 'Creating package directory named', packagename
     os.mkdir(packagename)
-    open(packagename + '/dont_submit', 'w').close()
+    open(os.path.join(packagename, 'dont_submit'), 'w').close()
 
-    os.makedirs(packagename + '/include/CGAL')
+    os.makedirs(os.path.join(packagename, 'include', 'CGAL'))
 
-    os.mkdir(packagename + '/src')
+    os.mkdir(os.path.join(packagename, 'src'))
 
-    testdirname = packagename + '/test/' + packagename
-    os.makedirs(testdirname)
-    os.mkdir(testdirname + '/data')
-    os.mkdir(testdirname + '/include')
+    testpath = os.path.join(packagename, 'test', packagename)
+    os.makedirs(testpath)
+    os.mkdir(os.path.join(testpath, 'data'))
+    os.mkdir(os.path.join(testpath, 'include'))
 
-    exdirname = packagename + '/examples/' + packagename
-    os.makedirs(exdirname)
-    os.mkdir(exdirname + '/data')
-    os.mkdir(exdirname + '/include')
-    open(exdirname + '/README', 'w').close()
+    expath = os.path.join(packagename, 'examples', packagename)
+    os.makedirs(expath)
+    os.mkdir(os.path.join(expath, 'data'))
+    os.mkdir(os.path.join(expath, 'include'))
+    open(os.path.join(expath, 'README'), 'w').close()
 
-    demodirname = packagename + '/demo/' + packagename
-    os.makedirs(demodirname)
-    os.mkdir(demodirname + '/data')
-    os.mkdir(demodirname + '/include')
-    open(demodirname + '/README', 'w').close()
+    demopath = os.path.join(packagename, 'demo', packagename)
+    os.makedirs(demopath)
+    os.mkdir(os.path.join(demopath, 'data'))
+    os.mkdir(os.path.join(demopath, 'include'))
+    open(os.path.join(demopath, 'README'), 'w').close()
 
-    bendirname = packagename + '/benchmark/' + packagename
-    os.makedirs(bendirname)
+    benpath = os.path.join(packagename, 'benchmark', packagename)
+    os.makedirs(benpath)
 
-    os.mkdir(packagename + '/scripts')
-    os.mkdir(packagename + '/developer_scripts')
-  
-    infodirname = packagename + '/package_info/' + packagename
-    os.makedirs(infodirname)
-    open(infodirname + '/copyright.txt', 'w').close()
-    open(infodirname + '/description.txt', 'w').close()
-    open(infodirname + '/license.txt', 'w').close()
-    open(infodirname + '/long_description.txt', 'w').close()
-    open(infodirname + '/maintainer', 'w').close()
+    os.mkdir(os.path.join(packagename, 'scripts'))
+    os.mkdir(os.path.join(packagename, 'developer_scripts'))
+
+    infopath = os.path.join(packagename,'package_info', packagename)
+    os.makedirs(infopath)
+    open(os.path.join(infopath, 'copyright.txt'), 'w').close()
+    open(os.path.join(infopath, 'description.txt'), 'w').close()
+    open(os.path.join(infopath, 'license.txt'), 'w').close()
+    open(os.path.join(infopath, 'long_description.txt'), 'w').close()
+    open(os.path.join(infopath, 'maintainer'), 'w').close()
 
 else:
-    print "Error: Bad package name"
-    print "Error: It should consist of letters, digits", \
-          "and underscores and not start with a digit"
+    print "Error: Bad package name:", sys.argv[1]
+    print "The package name should consist of:"
+    print "letters, digits and underscores and not start with a digit."
