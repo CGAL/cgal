@@ -165,7 +165,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
       // We found a vertex closer to p; Continue using this vertex.
       const Vertex_const_handle* p_vh =
         Result().assign<Vertex_const_handle>(obj);
-      CGAL_assertion(p_vh);
+      CGAL_assertion(p_vh != NULL);
       vh = *p_vh;
       continue;
     }
