@@ -253,7 +253,7 @@ protected:
 
   void unlock_all_elements() const
   {
-    m_lock_ds.unlock_all_tls_locked_locations();
+    m_lock_ds.unlock_all_points_locked_by_this_thread();
   }
 
   void create_root_task() const

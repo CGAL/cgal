@@ -179,7 +179,7 @@ protected:
 
   void unlock_all_elements()
   {
-    m_lock_ds.unlock_all_tls_locked_locations();
+    m_lock_ds.unlock_all_points_locked_by_this_thread();
   }
 
 public:

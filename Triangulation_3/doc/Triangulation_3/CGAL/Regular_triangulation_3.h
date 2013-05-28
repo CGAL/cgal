@@ -69,7 +69,7 @@ typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point;
 /*! 
 Creates an empty regular triangulation, possibly specifying a traits class 
 `traits`. 
-`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations. It
+`p_lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
 Regular_triangulation_3 
@@ -79,7 +79,7 @@ SpatialLockDataStructure_3 *p_lock_ds = 0);
 /*! 
 Copy constructor. 
 The pointer to the lock data structure is not copied. Thus, the copy won't be
-concurrency-safe as long as the user has not call `set_lock_data_structure`.
+concurrency-safe as long as the user has not called `set_lock_data_structure`.
 */ 
 Regular_triangulation_3 
 (const Regular_triangulation_3 & rt1); 
@@ -128,8 +128,8 @@ then it is stored as a hidden point and this method returns the default
 constructed handle. 
 
 The optional argument `p_could_lock_zone` is used by the concurrency-safe
-version of the triangulation. When the pointer is not-null, the insertion will
-try to lock vertices/cells before modifying them. If it succeed, *p_could_lock_zone
+version of the triangulation. When the pointer is not null, the insertion will
+try to lock vertices/cells before modifying them. If it succeeds, *p_could_lock_zone
 is true, otherwise it is false (and the point is not inserted). In any case, 
 the locked vertices are not unlocked by the function, leaving this choice to the user.
 */ 
@@ -236,7 +236,7 @@ void remove(Vertex_handle v);
 Removes the vertex `v` from the triangulation.
 
 This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock vertices/cells before deleting/modifying them. If it succeed, *p_could_lock_zone
+try to lock vertices/cells before deleting/modifying them. If it succeeds, *p_could_lock_zone
 is true, otherwise it is false (and the point is not removed). In any case, 
 the locked vertices are not unlocked by the function, leaving this choice to the user.
 
@@ -423,15 +423,15 @@ Compute the conflicts with `p`.
 @param bfit               The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
 @param ifit               The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
 @param p_could_lock_zone  The optional argument `p_could_lock_zone` is used by the concurrency-safe
-                          version of the triangulation. When the pointer is not-null, the algorithm will
-                          try to lock vertices of the conflict zone. If it succeed, *p_could_lock_zone
+                          version of the triangulation. When the pointer is not null, the algorithm will
+                          try to lock vertices of the conflict zone. If it succeeds, *p_could_lock_zone
                           is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
                           the locked vertices are not unlocked by the function, leaving this choice to the user.
 @param p_this_facet_must_be_in_the_cz 
                           If the optional argument `p_this_facet_must_be_in_the_cz` is not null, the algorithm will check
-                          if this facet is in the conflict (it may be internal as well as boundary).
+                          if this facet is in the conflict zone (it may be internal as well as boundary).
 @param p_the_facet_is_not_in_its_cz 
-                          This argument must be not-null if the previous `p_this_facet_must_be_in_the_cz` argument is not null. 
+                          This argument must be not null if the previous `p_this_facet_must_be_in_the_cz` argument is not null. 
                           The boolean value pointed by this pointer is set to true if *`p_this_facet_must_be_in_the_cz` is
                           not among the internal and boundary facets of the conflict zone, and false otherwise.                         
 

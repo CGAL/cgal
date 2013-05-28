@@ -16,7 +16,7 @@ It has the default value `Triangulation_data_structure_3< Triangulation_vertex_b
 It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
 TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
 It must be a model of the `SpatialLockDataStructure_3` concept.
-It allows to perform some operations currently (see the operations documentation below).
+It allows to perform some operations concurrently (see the operations documentation below).
 The default value is `Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>` if
 the TDS is concurrency-safe, and `void` otherwise.
 In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
@@ -218,7 +218,7 @@ typedef TriangulationDataStructure_3::::Concurrency_tag Concurrency_tag;
 /*! 
 Introduces a triangulation `t` having only one vertex which is the 
 infinite vertex.
-`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations. It
+`p_lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
 Triangulation_3 
@@ -605,7 +605,7 @@ The optional argument `start` is used as a starting place for the search.
 
 The optional argument `p_could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the locate will
-try to lock all the vertices along the walk. If it succeed, *p_could_lock_zone
+try to lock all the vertices along the walk. If it succeeds, *p_could_lock_zone
 is true, otherwise it is false. In any case, the locked vertices are not
 unlocked by `locate`, leaving this choice to the user.
 */ 
@@ -644,7 +644,7 @@ The optional argument `start` is used as a starting place for the search.
 
 The optional argument `p_could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the locate will
-try to lock all the vertices along the walk. If it succeed, *p_could_lock_zone
+try to lock all the vertices along the walk. If it succeeds, *p_could_lock_zone
 is true, otherwise it is false. In any case, the locked vertices are not
 unlocked by `locate`, leaving this choice to the user.
 */ 

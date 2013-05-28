@@ -100,7 +100,7 @@ typedef DelaunayTriangulationTraits_3::Object_3 Object;
 /*! 
 Creates an empty Delaunay triangulation, possibly specifying a traits class 
 `traits`. 
-`p_lock_ds` is an optionnal pointer to the lock data structure for parallel operations. It
+`p_lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
 Delaunay_triangulation_3 
@@ -110,7 +110,7 @@ SpatialLockDataStructure_3 *p_lock_ds = 0);
 /*! 
 Copy constructor. 
 The pointer to the lock data structure is not copied. Thus, the copy won't be
-concurrency-safe as long as the user has not call `set_lock_data_structure`.
+concurrency-safe as long as the user has not called `set_lock_data_structure`.
 */ 
 Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1); 
 
@@ -144,8 +144,8 @@ addition the empty sphere property of all the created faces.
 The optional argument `start` is used as a starting place for the search. 
 
 The optional argument `p_could_lock_zone` is used by the concurrency-safe
-version of the triangulation. When the pointer is not-null, the insertion will
-try to lock vertices/cells before modifying them. If it succeed, *p_could_lock_zone
+version of the triangulation. When the pointer is not null, the insertion will
+try to lock vertices/cells before modifying them. If it succeeds, *p_could_lock_zone
 is true, otherwise it is false and the return value is Vertex_handle() 
 (the point is not inserted). In any case, the locked vertices are not unlocked by the 
 function, leaving this choice to the user.
@@ -256,7 +256,7 @@ void remove(Vertex_handle v);
 Removes the vertex `v` from the triangulation.
 
 This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock vertices/cells before deleting/modifying them. If it succeed, *p_could_lock_zone
+try to lock vertices/cells before deleting/modifying them. If it succeeds, *p_could_lock_zone
 is true, otherwise it is false (and the point is not removed). In any case, 
 the locked vertices are not unlocked by the function, leaving this choice to the user.
 

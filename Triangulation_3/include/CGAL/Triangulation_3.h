@@ -289,7 +289,7 @@ public:
   void unlock_all_elements() const
   {
     if (m_lock_ds)
-      m_lock_ds->unlock_all_tls_locked_locations();
+      m_lock_ds->unlock_all_points_locked_by_this_thread();
   }
 
   template <typename P3>
@@ -3495,10 +3495,10 @@ template < class Conflict_tester, class Hidden_points_visitor >
 typename Triangulation_3<GT,Tds,Lds>::Vertex_handle
 Triangulation_3<GT,Tds,Lds>::
 insert_in_conflict(const Point & p,
-           Locate_type lt, Cell_handle c, int li, int /*lj*/,
+                   Locate_type lt, Cell_handle c, int li, int /*lj*/,
                    const Conflict_tester &tester,
                    Hidden_points_visitor &hider,
-       bool *p_could_lock_zone)
+                   bool *p_could_lock_zone)
 {
   if (p_could_lock_zone)
     *p_could_lock_zone = true;
@@ -4957,7 +4957,7 @@ remove(Vertex_handle v, VertexRemover &remover, bool *p_could_lock_zone)
     "early withdrawals / late withdrawals / successes [Delaunay_tri_3::remove]");
 #endif
 
-  bool needs_to_be_done_sequentially = false;
+  bool removed = true;
 
   // Locking vertex v is a good start
   if (!try_lock_vertex(v))
@@ -4979,7 +4979,7 @@ remove(Vertex_handle v, VertexRemover &remover, bool *p_could_lock_zone)
     if (*p_could_lock_zone)
     {
       if (dim_down)
-        needs_to_be_done_sequentially = true;
+        removed = false;
       else
         remove_3D (v, remover, incident_cells, adj_vertices);
     }
@@ -4995,7 +4995,7 @@ remove(Vertex_handle v, VertexRemover &remover, bool *p_could_lock_zone)
   }
 #endif
 
-  return needs_to_be_done_sequentially;
+  return removed;
 }
 
 // The remove here uses the remover, but

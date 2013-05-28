@@ -280,12 +280,6 @@ public:
     }
   }
 
-  template <typename P3>
-  void unlock(const P3 &point)
-  {
-    unlock(get_grid_index(point));
-  }
-
   void unlock(int cell_index)
   {
     // Unlock lock and shared grid
@@ -293,7 +287,7 @@ public:
     get_thread_local_grid()[cell_index] = false;
   }
 
-  void unlock_all_tls_locked_locations()
+  void unlock_all_points_locked_by_this_thread()
   {
     std::vector<int> &tls_locked_cells = m_tls_locked_cells.local();
     std::vector<int>::const_iterator it = tls_locked_cells.begin();

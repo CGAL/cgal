@@ -857,7 +857,7 @@ public:
   {
     if (m_lock_ds)
     {
-      m_lock_ds->unlock_all_tls_locked_locations();
+      m_lock_ds->unlock_all_points_locked_by_this_thread();
     }
   }
 

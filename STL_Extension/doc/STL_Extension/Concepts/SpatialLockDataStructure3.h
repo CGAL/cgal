@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `SpatialLockDataStructure_3` is intended to be used by concurrent
-algorithms. It allows to lock point coordinates (x, y, z) in a 3D bounding box.
+algorithms. It allows to lock points (x, y, z) in a 3D bounding box.
 Each templated type called `P3` below must provide x(), y() and z() functions
 returning doubles.
 
@@ -17,7 +17,7 @@ public:
 /// \name Operations 
 /// @{ 
   /// Set the bounding box of the domain
-  /// Depending on the way one manage the 3D domain, this may be an
+  /// Depending on the way one manages the 3D domain, this may be an
   /// empty function.
   void set_bbox(const CGAL::Bbox_3 &bbox);
   
@@ -34,12 +34,8 @@ public:
   template <bool no_spin, typename P3>
   bool try_lock(const P3 &p);
 
-  /// Unlock the point `p`
-  template <typename P3>
-  void unlock(const P3 &p);
-
   /// Unlock all the locations locked by this thread
-  void unlock_all_tls_locked_locations();
+  void unlock_all_points_locked_by_this_thread();
   
   /// Unlock all the locations locked by this thread except point `p`
   template <typename P3>
