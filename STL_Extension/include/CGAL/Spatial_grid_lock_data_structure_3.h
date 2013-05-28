@@ -40,9 +40,9 @@
 namespace CGAL {
 
 struct Tag_no_lock {};
-struct Tag_non_blocking_with_atomics {};
+struct Tag_non_blocking {};
 struct Tag_non_blocking_with_mutexes {};
-struct Tag_priority_blocking_with_atomics {};
+struct Tag_priority_blocking {};
 
 //*****************************************************************************
 // class Spatial_grid_lock_data_structure_base_3
@@ -115,6 +115,12 @@ public:
   bool is_locked_by_this_thread(int cell_index)
   {
     return get_thread_local_grid()[cell_index];
+  }
+  
+  template <typename P3>
+  bool is_locked(const P3 &point)
+  {
+    return is_cell_locked(get_grid_index(point));
   }
 
   template <typename P3>
@@ -458,20 +464,20 @@ protected:
 //*****************************************************************************
 // class Spatial_grid_lock_data_structure_3
 //*****************************************************************************
-template <typename Grid_lock_tag = Tag_priority_blocking_with_atomics>
+template <typename Grid_lock_tag = Tag_priority_blocking>
 class Spatial_grid_lock_data_structure_3;
 
       
 //*****************************************************************************
-// class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics>
+// class Spatial_grid_lock_data_structure_3<Tag_non_blocking>
 //*****************************************************************************
 template <>
-class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics>
+class Spatial_grid_lock_data_structure_3<Tag_non_blocking>
   : public Spatial_grid_lock_data_structure_base_3<
-      Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics> >
+      Spatial_grid_lock_data_structure_3<Tag_non_blocking> >
 {
   typedef Spatial_grid_lock_data_structure_base_3<
-    Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_atomics> > Base;
+    Spatial_grid_lock_data_structure_3<Tag_non_blocking> > Base;
 
 public:
   // Constructors
@@ -523,16 +529,16 @@ protected:
 
 
 //*****************************************************************************
-// class Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>
+// class Spatial_grid_lock_data_structure_3<Tag_priority_blocking>
 //*****************************************************************************
 
 template <>
-class Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics>
+class Spatial_grid_lock_data_structure_3<Tag_priority_blocking>
   : public Spatial_grid_lock_data_structure_base_3<
-      Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics> >
+      Spatial_grid_lock_data_structure_3<Tag_priority_blocking> >
 {
   typedef Spatial_grid_lock_data_structure_base_3<
-      Spatial_grid_lock_data_structure_3<Tag_priority_blocking_with_atomics> > Base;
+      Spatial_grid_lock_data_structure_3<Tag_priority_blocking> > Base;
 
 public:
   // Constructors
@@ -630,6 +636,7 @@ protected:
 
 //*****************************************************************************
 // class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes>
+// Note: undocumented, for testing only...
 //*****************************************************************************
 
 template <>
