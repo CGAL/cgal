@@ -239,7 +239,7 @@ ALIASES += "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships
 ALIASES += "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
 ALIASES += "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""
 
-ALIASES += "cgalDebugBegin=<div class=\"CGALDebug\"> <div>Debug</div>"
+ALIASES += "cgalDebugBegin=<div class=\"CGALDebug\"> <div>Debugging Support</div>"
 ALIASES += "cgalDebugEnd=</div>"
 ALIASES += "cgalDebugFunction=This is a function for debugging purpose."
 
