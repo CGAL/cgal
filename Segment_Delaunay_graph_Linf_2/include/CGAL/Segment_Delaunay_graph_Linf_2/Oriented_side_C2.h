@@ -183,8 +183,6 @@ public:
     Oriented_side retval =
       oriented_side_of_line(lp, proj_of_infv);
 
-    bool do_invert (false);
-
     if (retval == ON_ORIENTED_BOUNDARY) {
       // philaris: tocheck this later
       CGAL_assertion(not are_both_segments);
