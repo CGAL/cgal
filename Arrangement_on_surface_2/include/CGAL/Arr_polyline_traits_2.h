@@ -907,7 +907,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1,
                               const X_monotone_curve_2& cv2,
-                              OutputIterator oi) const
+                              OutputIterator oi)
     {
       const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
@@ -922,21 +922,11 @@ public:
         seg_traits->intersect_2_object();
       typename Segment_traits_2::Compare_y_at_x_2       compare_y_at_x =
         seg_traits->compare_y_at_x_2_object();
-      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
-        seg_traits->compare_endpoints_xy_2_object();
 
       const unsigned int n1 = cv1.number_of_segments();
       const unsigned int n2 = cv2.number_of_segments();
-
-      Comparison_result direction1 = comp_endpts(cv1[0]);
-      Comparison_result direction2 = comp_endpts(cv2[0]);
-
-      unsigned int i1;
-      direction1 == SMALLER ? i1 = 0 : i1 = n1-1;
-
-      unsigned int i2;
-      direction2 == SMALLER ? i2 = 0 : i2 = n2-1;
-
+      unsigned int       i1 = 0;
+      unsigned int       i2 = 0;
       X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
       Comparison_result left_res =
@@ -951,7 +941,7 @@ public:
           return oi;
 
         if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
-          direction1 == SMALLER ? ++i1 : --i1;
+          ++i1;
           left_res = EQUAL;
         }
       }  else if (left_res == LARGER) {
@@ -964,7 +954,7 @@ public:
           return oi;
 
         if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {
-          direction2 == SMALLER ? ++i2 : --i2;
+          ++i2;
           left_res = EQUAL;
         }
       }
@@ -983,12 +973,7 @@ public:
       bool right_coincides = left_coincides;
       bool right_overlap = false;
 
-      while (// TODO: Can/should this be improved? Optimized?
-             (direction1==SMALLER && direction2==SMALLER && i1<n1 && i2<n2) ||
-             (direction1==SMALLER && direction2!=SMALLER && i1<n1 && i2>=0) ||
-             (direction1!=SMALLER && direction2==SMALLER && i1>=0 && i2<n2) ||
-             (direction1!=SMALLER && direction2!=SMALLER && i1>=0 && i2>=0)
-             ) {
+      while (i1 < n1 && i2 < n2) {
         right_res = compare_xy(max_vertex(cv1[i1]), max_vertex(cv2[i2]));
 
         right_coincides = (right_res == EQUAL);
@@ -1055,9 +1040,9 @@ public:
 
         // Proceed forward.
         if (right_res != SMALLER)
-          direction2==SMALLER ? ++i2 : --i2;
+          ++i2;
         if (right_res != LARGER)
-          direction1==SMALLER ? ++i1 : --i1;
+          ++i1;
 
         left_res = (right_res == SMALLER) ? LARGER :
           (right_res == LARGER) ? SMALLER : EQUAL;
@@ -1066,23 +1051,22 @@ public:
         left_overlap = right_overlap;
       }
 
+#if 0
+      std::cout << "left coincides: " << left_coincides << std::endl;
+      std::cout << "right coincides: " << right_coincides << std::endl;
+      std::cout << "right res: " << right_res << std::endl;
+      std::cout << "left res: " << left_res << std::endl;
+#endif
+
       // Output the remaining overlapping polyline, if necessary.
       if (ocv.number_of_segments() > 0) {
         *oi++ = make_object(ocv);
       } else if (right_coincides) {
         if (right_res == SMALLER) {
-          std::pair<Point_2,Multiplicity> ip;
-          if (direction1 == SMALLER)
-            ip = std::pair<Point_2,Multiplicity>(max_vertex(cv1[i1 - 1]), 0);
-          else
-            ip = std::pair<Point_2,Multiplicity>(min_vertex(cv1[0]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv1[i1 - 1]), 0);
           *oi++ = make_object(ip);
         } else if (right_res == LARGER) {
-          std::pair<Point_2,Multiplicity> ip;
-          if (direction2 == SMALLER)
-            ip = std::pair<Point_2,Multiplicity>(max_vertex(cv2[i2 - 1]), 0);
-          else
-            ip = std::pair<Point_2,Multiplicity>(min_vertex(cv2[0]), 0);
+          std::pair<Point_2,Multiplicity> ip(max_vertex(cv2[i2 - 1]), 0);
           *oi++ = make_object(ip);
         } else if (i1 > 0) {
           std::pair<Point_2,Multiplicity> ip(max_vertex(cv1[i1 - 1]), 0);
@@ -1156,12 +1140,12 @@ public:
     /*! The traits (in case it has state) */
     const Geometry_traits* m_poly_traits;
 
-  public:
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Geometry_traits* traits) : m_poly_traits(traits) {}
 
+  public:
     /*!
      * Merge two given x-monotone curves into a single curve(segment).
      * \param cv1 The first curve.
