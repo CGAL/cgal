@@ -73,7 +73,9 @@ In this manual you will encounter sections marked as follows.
 Some functionality is considered more advanced, for example because it is
 relatively low-level, or requires special care to be properly used.
 
-\cgalAdvanced Such functionality is identified this way in the manual.
+\cgalAdvancedBegin
+Such functionality is identified this way in the manual.
+\cgalAdvancedEnd
 
 \subsection debugging_support Debugging Support Features
 

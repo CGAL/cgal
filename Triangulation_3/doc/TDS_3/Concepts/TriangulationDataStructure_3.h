@@ -656,8 +656,8 @@ void decrease_dimension(Cell_handle c, int i);
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 Changes the orientation of all cells of the triangulation data structure. 
-\pre `tds`.`dimension()` \f$ \geq1\f$. 
 \cgalAdvancedEnd
+\pre `tds`.`dimension()` \f$ \geq1\f$. 
 */ 
 void reorient(); 
 
@@ -722,8 +722,8 @@ Cell_handle n2, Cell_handle n3);
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 Removes the vertex from the triangulation data structure. 
-\pre The vertex is a vertex of `tds`. 
 \cgalAdvancedEnd
+\pre The vertex is a vertex of `tds`. 
 */ 
 void delete_vertex( Vertex_handle v ); 
 
@@ -731,8 +731,8 @@ void delete_vertex( Vertex_handle v );
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 Removes the cell from the triangulation data structure. 
-\pre The cell is a cell of `tds`.
 \cgalAdvancedEnd
+\pre The cell is a cell of `tds`.
 */ 
 void delete_cell( Cell_handle c ); 
 

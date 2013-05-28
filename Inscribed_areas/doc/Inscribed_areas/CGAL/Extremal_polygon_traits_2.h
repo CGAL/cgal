@@ -3,6 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgInscribedAreas
 
+\cgalAdvancedClass
 \cgalAdvancedBegin
 The class `Extremal_polygon_area_traits_2` provides the types and 
 operations needed to compute a maximum area \f$ k\f$-gon \f$ P_k\f$ that can 
@@ -107,6 +108,7 @@ Orientation_2 orientation_2_object();
 /*!
 \ingroup PkgInscribedAreas
 
+\cgalAdvancedClass
 \cgalAdvancedBegin
 The class `Extremal_polygon_perimeter_traits_2` provides the
 types and operations needed to compute a maximum perimeter \f$

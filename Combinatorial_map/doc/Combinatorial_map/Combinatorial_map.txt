@@ -943,23 +943,23 @@ Section \ref sseclinkdarts "Sewing Orbits and Linking Darts");
 The `CombinatorialMap` defines two groups of methods to modify the
 \f$ \beta\f$ pointers of existing darts.
 
-\todo check the advanced is working in the <li>
+\todo check the advanced is working nice here
 
-<ul>
-<li> The \ref CombinatorialMap::sew "sew" and \ref CombinatorialMap::unsew "unsew"
-   methods iterate over two orbits in
-  order to link or unlink specific darts two by two. Intuitively, a
-  \ref CombinatorialMap::sew "sew<i>" operation glues two <I>i</I>-cells by identifying two of
-  their <I>(i-1)</I>-cells (see example in \cgalFigureRef{figexemplesew}
-  where \ref CombinatorialMap::sew "sew<3>" is used to glue two 3-cells along one 2-cell).
-  Reciprocally, a \ref CombinatorialMap::unsew "unsew<i>" operation un-glues
-  two <I>i</I>-cells which
-  were glued along one of their <I>(i-1)</I>-cells.
-  These methods guarantee that given a valid combinatorial map and a
-  possible operation we obtain a valid combinatorial map as result of
-  the operation.
-<li> 
-  \cgalAdvancedBegin
+
+The \ref CombinatorialMap::sew "sew" and \ref CombinatorialMap::unsew "unsew"
+ methods iterate over two orbits in
+order to link or unlink specific darts two by two. Intuitively, a
+\ref CombinatorialMap::sew "sew<i>" operation glues two <I>i</I>-cells by identifying two of
+their <I>(i-1)</I>-cells (see example in \cgalFigureRef{figexemplesew}
+where \ref CombinatorialMap::sew "sew<3>" is used to glue two 3-cells along one 2-cell).
+Reciprocally, a \ref CombinatorialMap::unsew "unsew<i>" operation un-glues
+two <I>i</I>-cells which
+were glued along one of their <I>(i-1)</I>-cells.
+These methods guarantee that given a valid combinatorial map and a
+possible operation we obtain a valid combinatorial map as result of
+the operation.
+
+\cgalAdvancedBegin 
   The \ref CombinatorialMap::link_beta "link_beta" and
   \ref CombinatorialMap::unlink_beta "unlink_beta" methods only modify
   the pointer of two darts: the obtained combinatorial maps may be not
@@ -967,8 +967,8 @@ The `CombinatorialMap` defines two groups of methods to modify the
   in a specific algorithm, for example to modify locally a
   combinatorial map in a really fast way. In such a case, additional
   operations may be needed to restore the validity conditions.
-  \cgalAdvancedEnd
-</ul>
+\cgalAdvancedEnd
+
 
 Linking two darts <I>d1</I> and <I>d2</I> by \f$ \beta_i\f$, with 2\f$
 \leq\f$<I>i</I>\f$ \leq\f$<I>d</I> and <I>d1</I>\f$ \neq\f$<I>d2</I>,

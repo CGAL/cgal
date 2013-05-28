@@ -1569,8 +1569,8 @@ n  */
     \cgalAdvancedFunction
     \cgalAdvancedBegin
     calls the `Modifier_base::operator()()` of the modifier `m`.
-    \pre The polyhedral surface must be valid when the modifier returns from execution. 
     \cgalAdvancedEnd
+    \pre The polyhedral surface must be valid when the modifier returns from execution. 
   */ 
   void delegate( CGAL::Modifier_base<HDS>& m); 
 

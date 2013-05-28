@@ -70,8 +70,10 @@ typedef Compact_container<Face> Face_range;
 /// @} 
 
 /// \name Operations 
-/// \cgalAdvanced In addition to the interface documented in the concept,
+/// \cgalAdvancedBegin
+/// In addition to the interface documented in the concept,
 /// the class offers the following functions.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

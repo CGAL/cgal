@@ -1538,8 +1538,8 @@ test that verifies that a vertex of degree greater than \f$ 4\f$
 exists. This implied that collinearity indeed exists as explained above.
 
 \todo check advanced section is correctly colored
-\cgalAdvancedBegin
 \subsection arr_ssecunb_rep Representation of Unbounded Arrangements 
+\cgalAdvancedBegin
 
 \cgalFigureBegin{typenormal,unb_dcel.gif}
 A \sc{Dcel} representing an arrangement of four lines. Halfedges are drawn as thin arrows. The vertices \f$ v_1, \ldots, v_8\f$ lie at infinity, and are not associated with valid points. The halfedges that connect them are fictitious, and are not associated with concrete curves. The face denoted \f$ f_0\f$ (lightly shaded) is the fictitious "unbounded face" which lies outside the bounding rectangle (dashed) that bounds the actual arrangement. The four fictitious vertices \f$ v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$ v_{\rm tr}\f$ represent the four corners of the bounding rectangle.

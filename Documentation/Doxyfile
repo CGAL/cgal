@@ -241,7 +241,8 @@ ALIASES += "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relation
 ALIASES += "cgalDebug=\par \"Debug\""
 ALIASES += "cgalAdvancedBegin=<div class=\"CGALAdvanced\"> <div>Advanced</div>"
 ALIASES += "cgalAdvancedEnd=</div>"
-ALIASES += "cgalAdvancedFunction=This is an advanced functions."
+ALIASES += "cgalAdvancedFunction=This is an advanced function."
+ALIASES += "cgalAdvancedClass=This is an advanced class."
 
 ALIASES += "cgalPkgPicture{1}=<div class=\"PkgImage\"> \n \image html \1 \n</div>"
 
