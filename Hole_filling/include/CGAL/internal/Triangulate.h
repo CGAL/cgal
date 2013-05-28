@@ -90,7 +90,7 @@ class Triangulate_Hole_Polyhedron_3{
   };
 
   struct dummy_inserter {
-    void insert(Facet_handle facet_handle) {}
+    void insert(Facet_handle /*facet_handle*/) {}
   };
 
   template<class Inserter>
@@ -169,8 +169,8 @@ class Triangulate_Hole_Polyhedron_3{
     }
   }
 
-public:
-  void operator()(Polyhedron& poly, Halfedge_handle it, std::set<Facet_handle>* facets) {
+  template<class Inserter>
+  void triangulate(Polyhedron& poly, Halfedge_handle it, Inserter inserter) {
     Polyline_3 P;
     Halfedge_around_facet_circulator circ(it), done(circ);
     do{ 
@@ -182,14 +182,21 @@ public:
     compute_lambda(P, lambda);
 
     int n = P.size() - 1; // because the first and last point are equal
-    if(facets == NULL) {
-      add_facets(P, lambda, 0, n-1, poly, dummy_inserter());
-    }
-    else {
-      add_facets(P, lambda, 0, n-1, poly, set_inserter(facets));
-    }
-    
+    add_facets(P, lambda, 0, n-1, poly, inserter);
   }
+
+public:
+  template<class OutputIterator>
+  void operator()(Polyhedron& poly, Halfedge_handle it, OutputIterator output_iterator) {
+    std::set<Facet_handle> facets;
+    triangulate(poly, it, set_inserter(&facets));
+    std::copy(facets.begin(), facets.end(), output_iterator);
+  }
+
+  void operator()(Polyhedron& poly, Halfedge_handle it) {
+    triangulate(poly, it, dummy_inserter());
+  }
+
 };
 
 }//namespace internal

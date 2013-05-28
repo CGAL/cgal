@@ -9,6 +9,8 @@
 #include <CGAL/internal/Weights.h>
 #include <CGAL/trace.h>
 
+#include <boost/function_output_iterator.hpp>
+
 #include <vector>
 #include <limits>
 #include <set>
@@ -16,6 +18,11 @@
 
 namespace CGAL {
 namespace internal {
+
+  struct Nop_functor {
+    template<class T>
+    void operator()(const T& t) const {}
+  };
 
   template<class Polyhedron>
   class Fill_hole_Polyhedron_3 {
@@ -51,13 +58,10 @@ namespace internal {
     }
 
   public:
-
-    void triangulate_and_refine_hole(Polyhedron& poly, Halfedge_handle it, std::set<Facet_handle>* facets, double alpha)
+    template<class OutputIterator>
+    void triangulate_and_refine_hole(Polyhedron& poly, Halfedge_handle it, double alpha, OutputIterator output)
     {
       if(! it->is_border()){ return; }
-      
-      std::set<Facet_handle> facets_tmp;
-      if(facets == NULL) { facets = &facets_tmp; }
 
       // compute scale_attribute before triangulation
       std::map<Vertex_handle, double> scale_attribute;
@@ -66,31 +70,32 @@ namespace internal {
         average_length(poly, circ->vertex(), scale_attribute); 
       } while (++circ != done);
       // Triangulate
-      triangulate_hole(poly, it, facets);
+      std::set<Facet_handle> facets;
+      triangulate_hole(poly, it, std::inserter(facets, facets.begin()));
       // Refine
       internal::Refine_Polyhedron_3<Polyhedron> refine_functor(alpha);
-      refine_functor(poly, scale_attribute, *facets);
+      refine_functor(poly, scale_attribute, facets);
+
+      std::copy(facets.begin(), facets.end(), output);
     }
 
     template<class SparseLinearSolver, class WeightCalculator>
     void triangulate_refine_and_fair
-      (Polyhedron& poly, Halfedge_handle it, std::set<Facet_handle>* facets, double alpha, WeightCalculator weight_calculator) 
+      (Polyhedron& poly, Halfedge_handle it, double alpha, WeightCalculator weight_calculator) 
     {
       if(! it->is_border()){ return; }
-
-      std::set<Facet_handle> facets_tmp;
-      if(facets == NULL) { facets = &facets_tmp; }
 
       // save boundary vertices before triangulation
       std::set<Vertex_handle> boundary_vertices;
       get_boundary_vertices(poly, it, boundary_vertices);
 
       //Triangulate and refine
-      triangulate_and_refine_hole(poly, it, facets, alpha);
+      std::vector<Facet_handle> facets;
+      triangulate_and_refine_hole(poly, it, alpha, std::back_inserter(facets));
 
       // get interior vertices
       std::set<Vertex_handle> interior_vertices;
-      for(std::set<Facet_handle>::iterator it = facets->begin(); it != facets->end(); ++it) {
+      for(std::vector<Facet_handle>::iterator it = facets.begin(); it != facets.end(); ++it) {
         Halfedge_around_facet_circulator circ = (*it)->facet_begin();
         do {
           if(boundary_vertices.find(circ->vertex()) == boundary_vertices.end()) {
@@ -111,40 +116,61 @@ namespace internal {
  * @brief Function triangulating a hole in surface mesh.
  * 
  * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
  * @param[in, out] polyhedron surface mesh which has the hole
  * @param border_halfedge a border halfedge incident to the hole
- * @param[out] new_facets patch facets to close the hole
+ * @param[out] output iterator over patch facets. It can be omitted if output is not required.
  * 
  * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
  */
-template<class Polyhedron>
+template<class Polyhedron, class OutputIterator>
 void triangulate_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
-  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL
+  OutputIterator output
   ) 
 {
-  internal::Triangulate_Hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge, new_facets);
+  internal::Triangulate_Hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge, output);
+}
+
+template<class Polyhedron>
+void triangulate_hole(Polyhedron& polyhedron, 
+  typename Polyhedron::Halfedge_handle border_halfedge
+  ) 
+{
+  internal::Triangulate_Hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge);
 }
 
 /**
  * @brief Function triangulating and refining a hole in surface mesh.
  * 
  * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
  * @param[in, out] polyhedron surface mesh which has the hole
  * @param border_halfedge a border halfedge incident to the hole
- * @param[out] new_facets patch facets to close the hole
+ * @param[out] output iterator over patch facets. It can be omitted if output is not required.
  * @param density_control_factor factor for density where larger values cause denser refinements
  * 
  * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
  */
-template<class Polyhedron>
+template<class Polyhedron, class OutputIterator>
 void triangulate_and_refine_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
-  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL,
+  OutputIterator output,
   double density_control_factor = std::sqrt(2.0)) 
 {
   internal::Fill_hole_Polyhedron_3<Polyhedron>().
-    triangulate_and_refine_hole(polyhedron, border_halfedge, new_facets, density_control_factor);
+    triangulate_and_refine_hole(polyhedron, border_halfedge, density_control_factor, output);
+}
+
+template<class Polyhedron>
+void triangulate_and_refine_hole(Polyhedron& polyhedron, 
+  typename Polyhedron::Halfedge_handle border_halfedge, 
+  double density_control_factor = std::sqrt(2.0)
+  ) 
+{
+  triangulate_and_refine_hole(polyhedron, border_halfedge,
+    boost::make_function_output_iterator(CGAL::internal::Nop_functor()),
+    density_control_factor);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,7 +178,6 @@ void triangulate_and_refine_hole(Polyhedron& polyhedron,
 template<class Polyhedron, class WeightCalculator>
 void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
-  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL,
   double density_control_factor = std::sqrt(2.0),
   WeightCalculator weight_calculator = WeightCalculator()
   )
@@ -163,7 +188,7 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
 
   CGAL::internal::Fill_hole_Polyhedron_3<Polyhedron> fill_functor;
   fill_functor.triangulate_refine_and_fair<Sparse_linear_solver, WeightCalculator>
-    (polyhedron, border_halfedge, new_facets, density_control_factor, weight_calculator);
+    (polyhedron, border_halfedge, density_control_factor, weight_calculator);
 }
 
 /** 
@@ -180,7 +205,6 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
 template<class SparseLinearSolver, class Polyhedron, class WeightCalculator>
 void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
-  std::set<typename Polyhedron::Facet_handle>* new_facets = NULL,
   double density_control_factor = std::sqrt(2.0),
   WeightCalculator weight_calculator = WeightCalculator()
   )
