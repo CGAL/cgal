@@ -264,11 +264,11 @@ void Arr_construction_sl_visitor<Hlpr>::before_sweep()
 template <class Hlpr> 
 void Arr_construction_sl_visitor<Hlpr>::before_handle_event(Event* event)
 {
-  // We just have to notify the helper class on the event.
-  m_helper.before_handle_event(event);
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
   std::cout << "CGAL_CSLV before_handle_event" << std::endl;
 #endif
+  // We just have to notify the helper class on the event.
+  m_helper.before_handle_event(event);
 }
 
 //-----------------------------------------------------------------------------
