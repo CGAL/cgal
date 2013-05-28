@@ -46,13 +46,21 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.mkdir(os.path.join(packagename, 'scripts'))
     os.mkdir(os.path.join(packagename, 'developer_scripts'))
 
-    infopath = os.path.join(packagename,'package_info', packagename)
+    infopath = os.path.join(packagename, 'package_info', packagename)
     os.makedirs(infopath)
     open(os.path.join(infopath, 'copyright.txt'), 'w').close()
     open(os.path.join(infopath, 'description.txt'), 'w').close()
     open(os.path.join(infopath, 'license.txt'), 'w').close()
     open(os.path.join(infopath, 'long_description.txt'), 'w').close()
     open(os.path.join(infopath, 'maintainer'), 'w').close()
+
+    docpath = os.path.join(packagename, 'doc', packagename)
+    os.makedirs(docpath)
+    os.mkdir(os.path.join(docpath, 'CGAL'))
+    os.mkdir(os.path.join(docpath, 'Concepts'))
+    os.mkdir(os.path.join(docpath, 'fig'))
+    open(os.path.join(docpath, 'examples.txt'), 'w').close()
+    open(os.path.join(docpath, (packagename + '.txt')), 'w').close()
 
 else:
     print "Error: Bad package name:", packagename
