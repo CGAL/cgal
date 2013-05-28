@@ -76,14 +76,14 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   // In case the ray-shooting returned a vertex, we have to locate the first
   // halfedge whose source vertex is v, rotating clockwise around the vertex
   // from "6 o'clock", and to return its incident face.   
-  const Vertex_const_handle* vh = Result().assign<Vertex_const_handle>(obj);
+  const Vertex_const_handle* vh = Result().template assign<Vertex_const_handle>(obj);
   if (vh) {
     Halfedge_const_handle hh = _first_around_vertex(*vh);
     Face_const_handle fh = hh->face();
     return make_result(fh);
   }
 
-  const Halfedge_const_handle* hh = Result().assign<Halfedge_const_handle>(obj);
+  const Halfedge_const_handle* hh = Result().template assign<Halfedge_const_handle>(obj);
   if (hh) {
     // Make sure that the edge is directed from right to left, so that p
     // (which lies below it) is contained in its incident face. If necessary,
@@ -293,14 +293,14 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
 
   if (! optional_empty(optional_obj)) {
     const Result_type& obj = optional_assign(optional_obj);
-    const Vertex_const_handle* p_vh = Result().assign<Vertex_const_handle>(obj);
+    const Vertex_const_handle* p_vh = Result().template assign<Vertex_const_handle>(obj);
     if (p_vh) {
       found_vertex = true;
       closest_v = *p_vh;
     }
     else {
       const Halfedge_const_handle* p_hh =
-        Result().assign<Halfedge_const_handle>(obj);
+        Result().template assign<Halfedge_const_handle>(obj);
       CGAL_assertion(p_hh);
       found_halfedge = true;
       closest_he = *p_hh;
