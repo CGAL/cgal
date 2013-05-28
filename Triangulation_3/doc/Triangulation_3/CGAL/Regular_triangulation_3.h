@@ -496,7 +496,9 @@ template <class Stream> Stream & draw_dual(Stream & os);
 /// \name Checking 
 /// @{
 
-/*! 
+/*!
+\cgalDebugFunction
+\cgalDebugBegin
 Checks the combinatorial validity of the triangulation and the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). Also checks that all the 
@@ -507,7 +509,7 @@ is set to true, messages describing the first invalidity encountered
 are printed. 
 This method is mainly a debugging help for the users of 
 advanced features. 
-
+\cgalDebugEnd
 */ 
 bool 
 is_valid(bool verbose = false) const; 

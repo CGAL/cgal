@@ -238,7 +238,11 @@ ALIASES += "cgalRequires=\xrefitem requires \"Requires\" \"Type Requirements\""
 ALIASES += "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\""
 ALIASES += "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
 ALIASES += "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""
-ALIASES += "cgalDebug=\par \"Debug\""
+
+ALIASES += "cgalDebugBegin=<div class=\"CGALDebug\"> <div>Debugging Support</div>"
+ALIASES += "cgalDebugEnd=</div>"
+ALIASES += "cgalDebugFunction=This is a function for debugging purpose."
+
 ALIASES += "cgalAdvancedBegin=<div class=\"CGALAdvanced\"> <div>Advanced</div>"
 ALIASES += "cgalAdvancedEnd=</div>"
 ALIASES += "cgalAdvancedFunction=This is an advanced function."

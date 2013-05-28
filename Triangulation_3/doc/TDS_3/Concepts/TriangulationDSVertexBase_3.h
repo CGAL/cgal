@@ -108,8 +108,11 @@ void set_cell(Cell_handle c);
 /// @{
 
 /*! 
-\cgalDebug Performs any desired test on a vertex. Checks that the 
+\cgalDebugFunction
+\cgalDebugBegin
+Performs any desired test on a vertex. Checks that the 
 pointer to an incident cell is not the default constructed handle. 
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose=false, int level=0) const; 
 

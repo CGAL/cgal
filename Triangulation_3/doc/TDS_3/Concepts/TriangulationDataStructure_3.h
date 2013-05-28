@@ -971,29 +971,38 @@ Facet mirror_facet(Facet f) const;
 /// @{
 
 /*! 
-\cgalDebug Checks the combinatorial validity of the triangulation by checking 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the combinatorial validity of the triangulation by checking 
 the local validity of all its cells and vertices (see functions below). 
 (See Section \ref TDS3secintro.) Moreover, the Euler relation is 
 tested. 
 
-\cgalDebug When `verbose` is set to `true`, messages are printed to give 
+When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose = false) const; 
 
 /*! 
-\cgalDebug Checks the local validity of the adjacency relations of the triangulation. 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the local validity of the adjacency relations of the triangulation. 
 It also calls the `is_valid` member function of the vertex. 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool is_valid(Vertex_handle v, bool verbose = false) const; 
 
 /*! 
-\cgalDebug Checks the local validity of the adjacency relations of the triangulation. 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the local validity of the adjacency relations of the triangulation. 
 It also calls the `is_valid` member function of the cell. 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool is_valid(Cell_handle c, bool verbose = false) const; 
 
@@ -1099,11 +1108,14 @@ void set_point(const Point & p);
 /// @{
 
 /*! 
-\cgalDebug Checks the validity of the vertex. Must check that its incident cell 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the validity of the vertex. Must check that its incident cell 
 has this vertex. The validity of the base vertex is also checked. 
 
-\cgalDebug When `verbose` is set to `true`, messages are printed to give 
+When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose = false) const; 
 
@@ -1248,7 +1260,10 @@ Cell_handle n3);
 /// @{
 
 /*! 
-\cgalDebug User defined local validity checking function. 
+\cgalDebugFunction
+\cgalDebugBegin
+User defined local validity checking function.
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose = false, int level = 0) const; 
 

@@ -195,9 +195,12 @@ Cell_handle n2, Cell_handle n3);
 /*! 
 Performs any desired geometric test on a cell. 
 
-\cgalDebug When `verbose` is set to `true`, messages are printed to give 
+\cgalDebugFunction
+\cgalDebugBegin
+When `verbose` is set to `true`, messages are printed to give 
 a precise indication of the kind of invalidity encountered. `level` 
 increases the level of testing. 
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose = false, int level = 0) const; 
 
