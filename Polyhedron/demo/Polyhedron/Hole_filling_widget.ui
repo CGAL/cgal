@@ -137,22 +137,22 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="Create_polyline_item_button">
+     <widget class="QPushButton" name="Visualize_holes_button">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="text">
-       <string>Create Polyline Item for each Hole</string>
+       <string>Visualize Holes</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="Fill_and_update_button">
+     <widget class="QPushButton" name="Fill_selected_holes_button">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="text">
-       <string>Fill and Update Polyhedron</string>
+       <string>Fill Selected Holes</string>
       </property>
      </widget>
     </item>
