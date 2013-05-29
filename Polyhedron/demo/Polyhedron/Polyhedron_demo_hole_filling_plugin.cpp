@@ -9,7 +9,6 @@
 #include "ui_Hole_filling_widget.h"
 #include "Polyhedron_type.h"
 
-//#include <CGAL/Fill_hole.h>
 #include <CGAL/Fill_hole_Polyhedron_3.h>
 
 #include <QTime>

@@ -1,5 +1,5 @@
-#ifndef CGAL_HOLE_FILLING_SMOOTH_H
-#define CGAL_HOLE_FILLING_SMOOTH_H
+#ifndef CGAL_HOLE_FILLING_SMOOTH_POLYHEDRON_3_H
+#define CGAL_HOLE_FILLING_SMOOTH_POLYHEDRON_3_H
 // going to be moved some place more relevant
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -9,7 +9,7 @@
 
 namespace CGAL {
 
-// simple laplacian smoothing
+// simple Laplacian smoothing
 template<class WeightCalculator, class Polyhedron, class InputIterator>
 void smooth(  Polyhedron& polyhedron,
   InputIterator vertex_begin, 
@@ -17,8 +17,6 @@ void smooth(  Polyhedron& polyhedron,
   WeightCalculator weight_calculator = WeightCalculator()
   ) 
 {
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator in_edge_iterator;
   typedef typename Polyhedron::Traits::Point_3   Point;

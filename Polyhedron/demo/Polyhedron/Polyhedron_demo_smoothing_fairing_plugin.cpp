@@ -6,9 +6,8 @@
 #include "ui_Smoothing_fairing_widget.h"
 #include "Polyhedron_type.h"
 
-//#include <CGAL/Fill_hole.h>
 #include <CGAL/Fill_hole_Polyhedron_3.h>
-#include <CGAL/internal/Smooth.h>
+#include <CGAL/internal/Smooth_Polyhedron_3.h>
 
 #include <QTime>
 #include <QAction>

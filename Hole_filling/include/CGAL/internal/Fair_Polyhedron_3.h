@@ -1,5 +1,5 @@
-#ifndef CGAL_HOLE_FILLING_FAIR_H
-#define CGAL_HOLE_FILLING_FAIR_H
+#ifndef CGAL_HOLE_FILLING_FAIR_POLYHEDRON_3_H
+#define CGAL_HOLE_FILLING_FAIR_POLYHEDRON_3_H
 
 #include <map>
 #include <set>
@@ -246,4 +246,4 @@ void fair(Polyhedron& poly,
 //}
 
 }//namespace CGAL
-#endif //CGAL_HOLE_FILLING_FAIR_H
+#endif //CGAL_HOLE_FILLING_FAIR_POLYHEDRON_3_H

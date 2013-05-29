@@ -1,6 +1,5 @@
-
-#ifndef CGAL_FILL_HOLE_H
-#define CGAL_FILL_HOLE_H
+#ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
+#define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 
 #include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <CGAL/utility.h>
@@ -8,9 +7,10 @@
 #include <limits>
 
 namespace CGAL {
+namespace internal {
 
 template <typename K>
-class Fill_hole {
+class Triangulate_hole_polyline {
 public:
   typedef typename K::Point_3 Point_3;
   typedef std::vector<Point_3> Polyline_3;
@@ -156,6 +156,7 @@ public:
   }
 
 };
+} // namespace internal
 
 /*!
 Creates triangles to fill the hole defined by points in the range `(pbegin,pend)`.
@@ -170,7 +171,7 @@ fill_hole(InputIterator pbegin, InputIterator pend,
           OutputIterator out)
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef Fill_hole<Kernel> Fill;
+  typedef CGAL::internal::Triangulate_hole_polyline<Kernel> Fill;
   typename Fill::Polyline_3 P(pbegin, pend);
   typename Fill::Polyline_3 Q(qbegin, qend);
   if(P.front() != P.back()){
@@ -193,7 +194,7 @@ fill_hole(InputIterator pbegin, InputIterator pend,
           OutputIterator out)
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef Fill_hole<Kernel> Fill;
+  typedef CGAL::internal::Triangulate_hole_polyline<Kernel> Fill;
   typename Fill::Polyline_3 P(pbegin, pend);
   typename Fill::Polyline_3 Q;
   if(P.front() != P.back()){
@@ -205,4 +206,4 @@ fill_hole(InputIterator pbegin, InputIterator pend,
 
 } // namespace CGAL
 
-#endif // CGAL_FILL_HOLE_H
+#endif // CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H

@@ -1,5 +1,5 @@
-#ifndef CGAL_HOLE_FILLING_REFINE_H
-#define CGAL_HOLE_FILLING_REFINE_H
+#ifndef CGAL_HOLE_FILLING_REFINE_POLYHEDRON_3_H
+#define CGAL_HOLE_FILLING_REFINE_POLYHEDRON_3_H
 #include <cmath>
 #include <map>
 #include <set>
@@ -148,4 +148,4 @@ public:
 
 }//namespace internal
 }//namespace CGAL
-#endif //CGAL_HOLE_FILLING_REFINE_H
+#endif //CGAL_HOLE_FILLING_REFINE_POLYHEDRON_3_H

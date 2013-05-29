@@ -1,17 +1,19 @@
-#ifndef CGAL_HOLE_FILLING_TRIANGULATE_H
-#define CGAL_HOLE_FILLING_TRIANGULATE_H
+#ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
+#define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
 
 #include <limits>
 #include <map>
 #include <set>
 #include <vector>
+
 #include <CGAL/assertions.h>
+#include <CGAL/Mesh_3/dihedral_angle_3.h>
 
 namespace CGAL {
 namespace internal {
 
 template<class Polyhedron>
-class Triangulate_Hole_Polyhedron_3{
+class Triangulate_hole_Polyhedron_3{
 // typedefs
   typedef typename Polyhedron::Traits::Point_3 Point_3;
   typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
@@ -196,9 +198,8 @@ public:
   void operator()(Polyhedron& poly, Halfedge_handle it) {
     triangulate(poly, it, dummy_inserter());
   }
-
 };
 
 }//namespace internal
 }//namespace CGAL
-#endif //CGAL_HOLE_FILLING_TRIANGULATE_H
+#endif //CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
