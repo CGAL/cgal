@@ -7,6 +7,7 @@ import sys
 import os
 import re
 import argparse
+import shutil
 
 parser = argparse.ArgumentParser(
     description='Create directory structure for a new CGAL package.')
@@ -133,6 +134,14 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     descrfile.write(descrstring)
     descrfile.close()
 
+    # try to find figure pkg-small.png and copy it to figure path
+    scriptdir = os.path.dirname(sys.argv[0])
+    cgaldir = os.path.dirname(os.path.dirname(scriptdir))
+    figfile = os.path.join(cgaldir, 'Documentation', 'doc', 'fig',
+        'pkg-small.png')
+
+    if os.path.exists(figfile):
+        shutil.copy(figfile, figpath)
 else:
     print "Error: Bad package name:", packagename
     print "The package name should consist of:"
