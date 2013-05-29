@@ -57,6 +57,7 @@ r"""// PRETTY PACKAGE NAME should be the same as the one in the xml file
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{PACKAGE AUTHOR}
+%\cgalPkgAuthors{PACKAGE MULTIPLE AUTHORS}
 \cgalPkgDesc{PACKAGE DESCRIPTION.
 The package provides ... }
 \cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGE}
