@@ -22,7 +22,6 @@ xmlstring = \
  <doxygen>
    <string name="STRIP_FROM_PATH">../PACKAGENAME/doc/PACKAGENAME</string>
    <string name="STRIP_FROM_INC_PATH">../PACKAGENAME/doc/PACKAGENAME/</string>
-   <string name="GENERATE_TAGFILE">./tags/PACKAGENAME.tag</string>
    <string name="IMAGE_PATH">../PACKAGENAME/doc/PACKAGENAME/fig</string>
    <string name="EXAMPLE_PATH">../PACKAGENAME/examples</string>
    <list name="PACKAGE_REFERENCES">
