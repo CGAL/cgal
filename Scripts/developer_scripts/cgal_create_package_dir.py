@@ -26,6 +26,7 @@ xmlstring = \
  <!-- PRETTY PACKAGE NAME should be the same as the one used in description -->
  <name>PRETTY PACKAGE NAME</name>
  <input>../PACKAGENAME/doc/PACKAGENAME</input>
+ <input>../PACKAGENAME/include</input>
  <doxygen>
    <string name="STRIP_FROM_PATH">../PACKAGENAME/doc/PACKAGENAME</string>
    <string name="STRIP_FROM_INC_PATH">../PACKAGENAME/doc/PACKAGENAME/</string>
