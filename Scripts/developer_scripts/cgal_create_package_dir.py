@@ -53,7 +53,7 @@ r"""// PRETTY PACKAGE NAME should be the same as the one in the xml file
 \todo check generated documentation
 
 \cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGESummary}
-\cgalPkgPicture{cdt2d-small.png}
+\cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{PACKAGE AUTHOR}
