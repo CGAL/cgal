@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
     CGAL::Random_points_in_square_2<Point_2> g(10, rnd);
     for (unsigned int i = 1; i < number_of_points; ++i) pts.push_back(*g++);
   }
+  std::cout << "Seed to be used: " << seed << std::endl;
   Polyline_2 poly(pts.begin(), pts.end());
   Arrangement_2 arr;
   boost::timer timer;
@@ -45,14 +46,13 @@ int main(int argc, char* argv[])
   double secs = timer.elapsed();
 
   std::cout << "Arrangement computation took: " << secs << std::endl;
-  std::cout << "Seed used: " << seed << std::endl;
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Output for org-mode table
-  std::cout << "| | " << seed << " | "
+  std::cout << "| | "  << " | "
             << number_of_points << " | "
             << arr.number_of_vertices() << " | "
             << arr.number_of_edges() << " | "
