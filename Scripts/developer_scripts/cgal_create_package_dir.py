@@ -76,6 +76,32 @@ The package provides ... }
 */
 """
 
+usermanstring = \
+r"""namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_PACKAGE_NAME
+\anchor chaptermine
+\cgalAutoToc
+\author AUTHOR1, AUTHOR2
+
+This chapter describes the ...
+
+\section secmydefinitions Definitions
+
+Section on definitions here ...
+
+\section secmyexamples Examples
+
+\subsection myFirstExample First Example
+
+The following example shows ...
+
+*/
+} /* namespace CGAL */
+"""
+
 if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.mkdir(packagename)
     open(os.path.join(packagename, 'dont_submit'), 'w').close()
@@ -122,7 +148,11 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     figpath = os.path.join(docpath, 'fig')
     os.mkdir(figpath)
     open(os.path.join(docpath, 'examples.txt'), 'w').close()
-    open(os.path.join(docpath, (packagename + '.txt')), 'w').close()
+
+    usermanpath = os.path.join(docpath, (packagename + '.txt'))
+    usermanfile = open(usermanpath, 'w')
+    usermanfile.write(usermanstring)
+    usermanfile.close()
 
     xmlpath = os.path.join(docpath, (packagename + '.xml'))
     xmlfile = open(xmlpath, 'w')
