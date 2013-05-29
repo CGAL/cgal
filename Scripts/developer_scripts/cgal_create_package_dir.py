@@ -18,6 +18,7 @@ packagename = args.packagename
 
 xmlstring = \
 """<project>
+ <!-- PRETTY PACKAGE NAME should be the same as the one used in description -->
  <name>PRETTY PACKAGE NAME</name>
  <input>../PACKAGENAME/doc/PACKAGENAME</input>
  <doxygen>
@@ -26,7 +27,13 @@ xmlstring = \
    <string name="IMAGE_PATH">../PACKAGENAME/doc/PACKAGENAME/fig</string>
    <string name="EXAMPLE_PATH">../PACKAGENAME/examples</string>
    <list name="PACKAGE_REFERENCES">
-       <item>PACKAGENAME</item>
+       <item>Manual</item>
+       <item>Kernel_23</item>
+       <item>STL_Extension</item>
+       <item>Algebraic_foundations</item>
+       <item>Circulator</item>
+       <item>Stream_support</item>
+       <!-- insert other possibly referenced packages -->
    </list>
  </doxygen>
 </project>
