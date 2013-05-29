@@ -21,12 +21,6 @@
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
 /*
- * TODO: What to do with all the calls to push_back(seg)? Probably I should
- *       use the functor Push_Back_2 from this traits class or make sure that
- *       they maintain the well-oriented invariant.
- *       - In Split_2 it works fine since the way Arr_segment_traits_2 splits
- *         segments maintains the well oriented-ness.
- * TODO: Make sure that Make_x_monotone_2 maintain well oriented-ness.
  * TODO: Model the concept ArrangementDirectionalXMonotoneTraits_2?
  * TODO: Complete the documentation of the changes derived from the cleaning
  *       In particular, doxygen only the things that have to be exposed
@@ -1611,53 +1605,50 @@ public:
                             "one segment");
 
       CGAL_precondition_code(
-                             const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
-                             typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
-                             seg_traits->compare_endpoints_xy_2_object();
-                             typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-                             seg_traits->construct_min_vertex_2_object();
-                             typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-                             seg_traits->construct_max_vertex_2_object();
-                             typename Segment_traits_2::Equal_2 equal =
-                             seg_traits->equal_2_object();
+        const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+        typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+        seg_traits->compare_endpoints_xy_2_object();
+        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
+        seg_traits->construct_min_vertex_2_object();
+        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
+        seg_traits->construct_max_vertex_2_object();
+        typename Segment_traits_2::Equal_2 equal =
+        seg_traits->equal_2_object();
 
-                             ForwardIterator curr = begin;
-                             ForwardIterator next = begin;
-                             ++next;
+        ForwardIterator curr = begin;
+        ForwardIterator next = begin;
+        ++next;
 
-                             if (next == end){
-                               CGAL_precondition_msg(!equal(get_max_v(*curr),get_min_v(*curr)),
-                                                     "Cannot construct a polyline "
-                                                     "with degenerated segment");
-                               return X_monotone_curve_2(begin,end);
-                             }
+        if (next == end){
+        CGAL_precondition_msg(!equal(get_max_v(*curr),get_min_v(*curr)),
+        "Cannot construct a polyline "
+        "with degenerated segment");
+        return X_monotone_curve_2(begin,end);
+        }
 
-                             // Range contains at least two segments
+        // Range contains at least two segments
 
-                             Comparison_result init_dir = comp_endpts(*curr);
-                             while (next != end){
-                               CGAL_precondition_msg(!equal(get_min_v(*next),get_max_v(*next)),
-                                                     "Cannot construct a polyline "
-                                                     "with degenerated segment");
-                               CGAL_precondition_msg(init_dir == comp_endpts(*next),
-                                                     "Segments must form x-monotone polyline");
-                               if (init_dir == SMALLER){
-                                 CGAL_precondition_msg(equal(get_max_v(*curr),get_min_v(*next)),
-                                                       "Segments should concatenate in "
-                                                       "source->target manner");
-                               }
-                               else{
-                                 CGAL_precondition_msg(equal(get_min_v(*curr),get_max_v(*next)),
-                                                       "Segments should concatenate in "
-                                                       "source->target manner");
-                               }
-                               ++curr;
-                               ++next;
-                             }
+        Comparison_result init_dir = comp_endpts(*curr);
+        while (next != end){
+        CGAL_precondition_msg(!equal(get_min_v(*next),get_max_v(*next)),
+        "Cannot construct a polyline "
+        "with degenerated segment");
+        CGAL_precondition_msg(init_dir == comp_endpts(*next),
+        "Segments must form x-monotone polyline");
+        if (init_dir == SMALLER){
+        CGAL_precondition_msg(equal(get_max_v(*curr),get_min_v(*next)),
+        "Segments should concatenate in "
+        "source->target manner");
+        }
+        else{
+        CGAL_precondition_msg(equal(get_min_v(*curr),get_max_v(*next)),
+        "Segments should concatenate in "
+        "source->target manner");
+        }
+        ++curr;
+        ++next;
+        }
                              );
-      // std::cout << "The resulting x-poly is:\n"
-      //           << X_monotone_curve_2(begin,end)
-      //           << std::endl;
 
       return X_monotone_curve_2(begin, end);
     }
