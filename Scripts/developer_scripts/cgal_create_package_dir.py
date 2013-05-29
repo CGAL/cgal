@@ -17,7 +17,7 @@ packagename = args.packagename
 
 xmlstring = \
 """<project>
- <name>PROJECT NAME</name>
+ <name>PRETTY PACKAGE NAME</name>
  <input>../PACKAGENAME/doc/PACKAGENAME</input>
  <doxygen>
    <string name="STRIP_FROM_PATH">../PACKAGENAME/doc/PACKAGENAME</string>
@@ -33,7 +33,9 @@ xmlstring = \
 """
 
 descrstring = \
-r"""/// \defgroup PkgPACKAGE PACKAGE NAME Reference
+r"""// PRETTY PACKAGE NAME should be the same as the one in the xml file
+
+/// \defgroup PkgPACKAGE PRETTY PACKAGE NAME Reference
 /// \defgroup PkgPACKAGEConcepts Concepts
 /// \ingroup PkgPACKAGE
 
