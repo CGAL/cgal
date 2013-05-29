@@ -236,9 +236,7 @@ Generic IO for type `T` with formatting tag.
 template <class T, typename F> Output_rep<T,F> oformat( const T& t, F );
 
 /*!
-\ingroup PkgIOstreams
-
-\anchor PkgIOstreams_op_left_shift
+\ingroup IOstreamOperators
 
 \brief Inserts object `c` in the stream `os`. Returns `os`.
 
@@ -256,14 +254,11 @@ The output operator is defined for all classes in the \cgal `Kernel` and for the
 \sa `CGAL::is_ascii()`
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
-\sa \ref PkgIOstreams_op_right_shift "CGAL::operator>>"
 */
 ostream& operator<<(ostream& os, Class c);
 
 /*!
-\ingroup PkgIOstreams
-
-\anchor PkgIOstreams_op_right_shift
+\ingroup IOstreamOperators
 
 \brief \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
@@ -280,7 +275,6 @@ The input operator is defined for all classes in the \cgal `Kernel`.
 \sa `CGAL::is_ascii()`
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
-\sa \ref PkgIOstreams_op_left_shift "CGAL::operator<<"
 */
 istream& operator>>(istream& is, Class c);
 

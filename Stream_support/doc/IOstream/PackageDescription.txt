@@ -1,4 +1,6 @@
 /// \defgroup PkgIOstreams IO Streams Reference
+/// \defgroup IOstreamOperators Stream Operators
+/// \ingroup PkgIOstreams
 /*!
 \addtogroup PkgIOstreams
 \cgalPkgDescriptionBegin{IO Streams,PkgIOstreamsSummary}
@@ -35,8 +37,8 @@ the printing mode.
 - `CGAL::set_ascii_mode()`
 - `CGAL::set_binary_mode()`
 - `CGAL::set_pretty_mode()`
-- \link PkgIOstreams_op_right_shift `CGAL::operator>>()` \endlink
-- \link PkgIOstreams_op_left_shift `CGAL::operator<<()` \endlink
+- \link IOstreamOperators `CGAL::operator>>()` \endlink
+- \link IOstreamOperators `CGAL::operator<<()` \endlink
 - `CGAL::iformat()`
 - `CGAL::oformat()`
 
