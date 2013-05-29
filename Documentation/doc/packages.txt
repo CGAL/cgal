@@ -135,7 +135,7 @@ h1 {
 \package_listing{Circulator}
 \package_listing{Generator}
 \package_listing{Miscellany}
-\package_listing{Stream_support/IOstream}
+\package_listing{Stream_support}
 
 \section PartVisualization Visualization
 

@@ -435,10 +435,10 @@ namespace for the XML file to be processed properly.  -->
         <name>IO Streams</name>
         <input>../Stream_support/doc</input>
         <doxygen>
-          <string name="STRIP_FROM_PATH">../Stream_support/doc/IOstream/</string>
-          <string name="STRIP_FROM_INC_PATH">../Stream_support/doc/IOstream/</string>
+          <string name="STRIP_FROM_PATH">../Stream_support/doc/Stream_support/</string>
+          <string name="STRIP_FROM_INC_PATH">../Stream_support/doc/Stream_support/</string>
           <string name="GENERATE_TAGFILE">./tags/Stream_support.tag</string>
-          <string name="IMAGE_PATH">../Stream_support/doc/IOstream/fig</string>
+          <string name="IMAGE_PATH">../Stream_support/doc/Stream_support/fig</string>
           <list name="TAGFILES" append="false">
             <item>./tags/Manual.tag=../../CGAL.CGAL/html</item>
             <item>./tags/STL_Extension.tag=../../CGAL.CGAL.STL-Extensions-for-CGAL/html</item>
@@ -1498,7 +1498,7 @@ namespace for the XML file to be processed properly.  -->
           <item>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig</item>
           <item>../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig</item>
           <item>../Stream_lines_2/doc/Stream_lines_2/fig</item>
-          <item>../Stream_support/doc/IOstream/fig</item>
+          <item>../Stream_support/doc/Stream_support/fig</item>
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
