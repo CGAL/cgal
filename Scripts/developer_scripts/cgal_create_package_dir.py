@@ -119,7 +119,8 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.makedirs(docpath)
     os.mkdir(os.path.join(docpath, 'CGAL'))
     os.mkdir(os.path.join(docpath, 'Concepts'))
-    os.mkdir(os.path.join(docpath, 'fig'))
+    figpath = os.path.join(docpath, 'fig')
+    os.mkdir(figpath)
     open(os.path.join(docpath, 'examples.txt'), 'w').close()
     open(os.path.join(docpath, (packagename + '.txt')), 'w').close()
 
