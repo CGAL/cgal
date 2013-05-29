@@ -91,7 +91,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  /// \code
  ///     CGAL::Eigen_solver_traits<
  ///         Eigen::SparseLU<
- ///            CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
+ ///            CGAL::Eigen_sparse_matrix<double>::EigenType,
  ///            Eigen::COLAMDOrdering<int> >  >
  /// \endcode
  /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
