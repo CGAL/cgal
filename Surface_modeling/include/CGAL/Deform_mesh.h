@@ -25,7 +25,6 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/Default.h>
-#include <CGAL/Origin.h>
 
 #include <vector>
 #include <list>
@@ -138,7 +137,7 @@ public:
     #else
       CGAL::Eigen_solver_traits<
           Eigen::SparseLU<
-            CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
+            CGAL::Eigen_sparse_matrix<double>::EigenType,
             Eigen::COLAMDOrdering<int> >  >
     #endif
   #else
