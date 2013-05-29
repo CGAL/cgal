@@ -416,7 +416,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
   
   polyhedron_demo_plugin(hole_filling_plugin Polyhedron_demo_hole_filling_plugin ${hole_fillingUI_FILES})
-  target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
+  target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item)
+  
+  polyhedron_demo_plugin(hole_filling_polyline_plugin Polyhedron_demo_hole_filling_polyline_plugin)
+  target_link_libraries(hole_filling_polyline_plugin scene_polyhedron_item scene_polylines_item)
 	
   polyhedron_demo_plugin(smoothing_fairing_plugin Polyhedron_demo_smoothing_fairing_plugin ${smoothing_fairingUI_FILES})
   target_link_libraries(smoothing_fairing_plugin scene_polyhedron_item_decorator)

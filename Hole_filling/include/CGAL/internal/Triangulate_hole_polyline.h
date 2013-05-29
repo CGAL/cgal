@@ -5,6 +5,7 @@
 #include <CGAL/utility.h>
 #include <vector>
 #include <limits>
+#include <CGAL/value_type_traits.h>
 
 namespace CGAL {
 namespace internal {
@@ -62,7 +63,7 @@ private:
       ang1 = 180 - CGAL::abs( CGAL::Mesh_3::dihedral_angle(p,q,r,Q[i]));
       ang2 = 180 - CGAL::abs( CGAL::Mesh_3::dihedral_angle(q,r,p, Q[j]));
     }
-    return Weight((std::max)(ang1, ang2), sqrt(CGAL::squared_area(p,q,r)));
+    return Weight((std::max)(ang1, ang2), std::sqrt(CGAL::squared_area(p,q,r)));
   }
   
   
@@ -87,10 +88,10 @@ private:
         ang2 = 180 - CGAL::abs( CGAL::Mesh_3::dihedral_angle(pm,pk,pi, pmk));
       }
     }
-    return Weight((std::max)(ang1, ang2), sqrt(CGAL::squared_area(pi,pm,pk)));
+    return Weight((std::max)(ang1, ang2), std::sqrt(CGAL::squared_area(pi,pm,pk)));
   }
   
-  template <typename OutputIterator>
+  template <typename OutputIteratorValueType, typename OutputIterator>
   OutputIterator
   trace(int n,
         const std::vector<int>& lambda, 
@@ -99,15 +100,15 @@ private:
         OutputIterator out)
   {            
     if(i+2 == k){
-      *out++ = CGAL::Triple<int,int,int>(i%n, (i+1)%n, k%n);
+      *out++ = OutputIteratorValueType(i%n, (i+1)%n, k%n);
     } else {
       int la = lambda[i*n + k];
       if(la != i+1){
-        out = trace(n, lambda, i, la, out);
+        out = trace<OutputIteratorValueType>(n, lambda, i, la, out);
       }
-      *out++ = CGAL::Triple<int,int,int>(i%n, la%n, k%n);
+      *out++ = OutputIteratorValueType(i%n, la%n, k%n);
     if(la != k-1){
-      out = trace(n, lambda, la, k, out);
+      out = trace<OutputIteratorValueType>(n, lambda, la, k, out);
     }
     }
     return out;
@@ -115,7 +116,7 @@ private:
   
 public:
 
-  template <typename OutputIterator>
+  template <typename OutputIteratorValueType, typename OutputIterator>
   OutputIterator 
   operator()(const Polyline_3& P, 
              const Polyline_3& Q,
@@ -151,7 +152,7 @@ public:
         lambda[i*n+k] = m_min;
       }
     }
-    return  trace(n, lambda, 0, n-1, out);
+    return  trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
     
   }
 
@@ -163,10 +164,19 @@ Creates triangles to fill the hole defined by points in the range `(pbegin,pend)
 The range `(qbegin,qend)` indicate for each pair of consecutive points in the aforementioned range,
 the third point of the facet this segment is incident to. Triangles are put into `out`
 using the indices of the input points in the range `(pbegin,pend)`.
+@tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available. 
+        It is default to value_type_traits<OutputIterator>::type, and can be omitted when the default is fine
+@tparam InputIterator iterator over input points
+@tparam OutputIterator iterator over patch triangles
+@param pbegin first iterator of the range of points
+@param pend past-the-end iterator of the range of points
+@param qbegin first iterator of the range of third points
+@param qend past-the-end iterator of the range of third points
+@param out iterator over output patch triangles
 */
-template <typename InputIterator, typename OutputIterator>
+template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
 OutputIterator
-fill_hole(InputIterator pbegin, InputIterator pend, 
+triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
           InputIterator qbegin, InputIterator qend, 
           OutputIterator out)
 {
@@ -181,16 +191,35 @@ fill_hole(InputIterator pbegin, InputIterator pend,
     Q.push_back(Q.front());
   }
   Fill fill;
-  return fill(P,Q,out);
+  return fill.operator()<OutputIteratorValueType>(P,Q,out);
 }
+
+// overload for OutputIteratorValueType
+template <typename InputIterator, typename OutputIterator>
+OutputIterator
+triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
+          InputIterator qbegin, InputIterator qend, 
+          OutputIterator out)
+{
+  return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
+    (pbegin, pend, qbegin, qend, out);
+}
+
 
 /*!
 Creates triangles to fill the hole defined by points in the range `(pbegin,pend)`.
 Triangles are put into `out` using the indices of the input points in the range `(pbegin,pend)`.
+@tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available. 
+        It is default to value_type_traits<OutputIterator>::type, and can be omitted when the default is fine
+@tparam InputIterator iterator over input points
+@tparam OutputIterator iterator over output patch triangles
+@param pbegin first iterator of the range of points
+@param pend past-the-end iterator of the range of points
+@param out iterator over output patch triangles
 */
-template <typename InputIterator, typename OutputIterator>
+template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
 OutputIterator
-fill_hole(InputIterator pbegin, InputIterator pend, 
+triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
           OutputIterator out)
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
@@ -201,7 +230,17 @@ fill_hole(InputIterator pbegin, InputIterator pend,
     P.push_back(P.front());
   }
   Fill fill;
-  return fill(P,Q,out);
+  return fill.operator()<OutputIteratorValueType>(P,Q,out);
+}
+
+// overload for OutputIteratorValueType
+template <typename InputIterator, typename OutputIterator>
+OutputIterator
+triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
+          OutputIterator out)
+{
+  return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
+    (pbegin, pend, out);
 }
 
 } // namespace CGAL
