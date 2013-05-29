@@ -27,7 +27,7 @@ struct Fair_default_sparse_linear_solver {
   #else
     CGAL::Eigen_solver_traits<
       Eigen::SparseLU<
-        CGAL::Eigen_sparse_matrix<double, Eigen::ColMajor>::EigenType,
+        CGAL::Eigen_sparse_matrix<double>::EigenType,
         Eigen::COLAMDOrdering<int> >  >
   #endif
 #else
