@@ -1121,32 +1121,20 @@ public:
         typedef std::pair<Point_2,Multiplicity> return_point;
         return_point ip;
         if (right_res == SMALLER) {
-          if (dir1 == SMALLER)
-            ip = return_point(max_vertex(cv1[i1 - 1]), 0);
-          else
-            ip = return_point(max_vertex(cv1[i1]), 0);
+          ip = return_point(max_vertex(cv1[i1]), 0);
           *oi++ = make_object(ip);
         } else if (right_res == LARGER) {
-          if (dir2 == SMALLER)
-            ip = return_point(max_vertex(cv2[i2 - 1]), 0);
-          else
-            ip = return_point(max_vertex(cv2[i2]), 0);
+          ip = return_point(max_vertex(cv2[i2]), 0);
           *oi++ = make_object(ip);
         } else if (i1 > 0) {
-          if (dir1 == SMALLER)
-            ip = return_point(max_vertex(cv1[i1 - 1]), 0);
-          else
-            ip = return_point(max_vertex(cv1[i1]), 0);
+          ip = return_point(max_vertex(cv1[i1]), 0);
           *oi++ = make_object(ip);
         } else {
           CGAL_assertion_msg((dir2 == SMALLER && i2 > 0) ||
                              (dir2 != SMALLER && i2 < n2),
                              "Wrong index for xcv2 in Intersect_2 of "
                              "polylines.");
-          if (dir2 == SMALLER)
-            ip = return_point(max_vertex(cv2[i2 - 1]), 0);
-          else
-            ip = return_point(max_vertex(cv2[i2]), 0);
+          ip = return_point(max_vertex(cv2[i2]), 0);
           *oi++ = make_object(ip);
         }
       }
