@@ -13,8 +13,13 @@ parser = argparse.ArgumentParser(
     description='Create directory structure for a new CGAL package.')
 parser.add_argument('packagename',
                     help='name of new CGAL package')
+parser.add_argument('creationpath', nargs='?',
+                    help='directory where package is created; ' +
+                         'if omitted, the package directory is created ' +
+                         'in the current directory')
 args = parser.parse_args()
 packagename = args.packagename
+creationpath = args.creationpath
 
 xmlstring = \
 """<project>
@@ -110,37 +115,43 @@ The following example shows ...
 """
 
 if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
-    os.mkdir(packagename)
-    open(os.path.join(packagename, 'dont_submit'), 'w').close()
 
-    os.makedirs(os.path.join(packagename, 'include', 'CGAL'))
+    if creationpath and (not creationpath == '.'):
+        packagepath = os.path.join(creationpath, packagename)
+    else:
+        packagepath = packagename
 
-    os.mkdir(os.path.join(packagename, 'src'))
+    os.mkdir(packagepath)
+    open(os.path.join(packagepath, 'dont_submit'), 'w').close()
 
-    testpath = os.path.join(packagename, 'test', packagename)
+    os.makedirs(os.path.join(packagepath, 'include', 'CGAL'))
+
+    os.mkdir(os.path.join(packagepath, 'src'))
+
+    testpath = os.path.join(packagepath, 'test', packagename)
     os.makedirs(testpath)
     os.mkdir(os.path.join(testpath, 'data'))
     os.mkdir(os.path.join(testpath, 'include'))
 
-    expath = os.path.join(packagename, 'examples', packagename)
+    expath = os.path.join(packagepath, 'examples', packagename)
     os.makedirs(expath)
     os.mkdir(os.path.join(expath, 'data'))
     os.mkdir(os.path.join(expath, 'include'))
     open(os.path.join(expath, 'README'), 'w').close()
 
-    demopath = os.path.join(packagename, 'demo', packagename)
+    demopath = os.path.join(packagepath, 'demo', packagename)
     os.makedirs(demopath)
     os.mkdir(os.path.join(demopath, 'data'))
     os.mkdir(os.path.join(demopath, 'include'))
     open(os.path.join(demopath, 'README'), 'w').close()
 
-    benpath = os.path.join(packagename, 'benchmark', packagename)
+    benpath = os.path.join(packagepath, 'benchmark', packagename)
     os.makedirs(benpath)
 
-    os.mkdir(os.path.join(packagename, 'scripts'))
-    os.mkdir(os.path.join(packagename, 'developer_scripts'))
+    os.mkdir(os.path.join(packagepath, 'scripts'))
+    os.mkdir(os.path.join(packagepath, 'developer_scripts'))
 
-    infopath = os.path.join(packagename, 'package_info', packagename)
+    infopath = os.path.join(packagepath, 'package_info', packagename)
     os.makedirs(infopath)
     open(os.path.join(infopath, 'copyright.txt'), 'w').close()
     open(os.path.join(infopath, 'description.txt'), 'w').close()
@@ -148,7 +159,7 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     open(os.path.join(infopath, 'long_description.txt'), 'w').close()
     open(os.path.join(infopath, 'maintainer'), 'w').close()
 
-    docpath = os.path.join(packagename, 'doc', packagename)
+    docpath = os.path.join(packagepath, 'doc', packagename)
     os.makedirs(docpath)
     os.mkdir(os.path.join(docpath, 'CGAL'))
     os.mkdir(os.path.join(docpath, 'Concepts'))
