@@ -48,7 +48,7 @@ namespace CGAL {
 
     template <class FT, class EigenMatrix, class EigenOrdering>
     struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
-      typedef Eigen_sparse_matrix<FT, ::Eigen::ColMajor> type;
+      typedef Eigen_sparse_matrix<FT> type;
     };
   } //internal 
 
