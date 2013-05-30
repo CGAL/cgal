@@ -1,0 +1,4 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/STL_Extension/doc/STL_Extension/
+

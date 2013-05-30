@@ -1,0 +1,7 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Nef_S2/doc/Nef_S2/
+
+HTML_EXTRA_FILES           =  
+            
+

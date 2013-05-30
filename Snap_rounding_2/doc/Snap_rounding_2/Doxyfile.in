@@ -1,0 +1,4 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Snap_rounding_2/doc/Snap_rounding_2/
+

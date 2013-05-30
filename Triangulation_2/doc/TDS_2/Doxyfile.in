@@ -1,0 +1,6 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/TDS_2/
+
+IMAGE_PATHS               +=  ../Triangulation_2/doc/Triangulation_2/fig
+

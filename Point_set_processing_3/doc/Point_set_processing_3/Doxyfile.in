@@ -1,0 +1,8 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Point_set_processing_3/doc/Point_set_processing_3/ \ 
+                              ${CMAKE_SOURCE_DIR}/Point_set_processing_3/include
+
+EXCLUDE_PATTERNS           =  
+            
+

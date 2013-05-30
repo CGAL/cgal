@@ -1,0 +1,7 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Mesh_3/doc/Mesh_3/
+
+HTML_EXTRA_FILES           =  
+            
+

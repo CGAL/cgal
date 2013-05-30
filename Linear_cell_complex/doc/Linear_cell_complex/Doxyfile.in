@@ -1,0 +1,4 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Linear_cell_complex/doc/Linear_cell_complex/
+
