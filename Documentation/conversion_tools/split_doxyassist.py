@@ -140,7 +140,7 @@ for p in tree.iter(tag='{http://simply-life.net/doxyassist/doxyassist.xsd}projec
     path = '../'+package_path
     if os.path.exists(path):
 
-        doxygen_in = os.path.join(path, 'Doxygen.in')
+        doxygen_in = os.path.join(path, 'Doxyfile.in')
         temp = open (doxygen_in, 'w')        
 
         clean_package_inputs = []        
