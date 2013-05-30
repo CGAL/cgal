@@ -21,7 +21,7 @@ endfunction()
 find_package(Doxygen)
 find_package(PythonInterp 2.7)
 
-if(DOXYGEN_FOUND AND DOXYASSIST_EXECUTABLE)
+if(DOXYGEN_FOUND)
   # set up the directories and variables
   set(CGAL_DOC_MATHJAX_LOCATION "http://cdn.mathjax.org/mathjax/latest")
 
@@ -42,11 +42,17 @@ if(DOXYGEN_FOUND AND DOXYASSIST_EXECUTABLE)
   
   set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter.in ${CMAKE_BINARY_DIR}/pkglist_filter)
+  # pkglist_filter gets the path to the pkglist_filter of this source
+  # directory.
+  if(WIN32)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter.bat ${CMAKE_BINARY_DIR}/pkglist_filter)
+  else()
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
+  endif()
 
   # the main package
   message("Configuring doxygen for: CGAL main package")
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CGAL.dxy.in ${CGAL_DOC_DXY_DIR}/CGAL.dxy)
+  # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CGAL.dxy.in ${CGAL_DOC_DXY_DIR}/CGAL.dxy)
   add_custom_target(CGAL_doc
     ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/CGAL.dxy
     )

@@ -24,6 +24,6 @@ message( "== CMake setup (DONE) ==\n" )
 add_subdirectory( Installation )
 
 # for releases, where dont_submit is honored
-if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Documentation")o
+if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Documentation")
   add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/Documentation" )
 endif()
