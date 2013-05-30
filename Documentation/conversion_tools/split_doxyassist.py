@@ -89,11 +89,7 @@ for p in tree.iter(tag='{http://simply-life.net/doxyassist/doxyassist.xsd}projec
             continue
         if (e.attrib["name"] == "STRIP_FROM_PATH"):            
             continue
-            strip_from_path = e.text            
-            
-        if (e.attrib["name"] == "EXCLUDE_SYMBOLS"):            
-            continue
-
+            strip_from_path = e.text                        
             
         if (e.attrib["name"] == "STRIP_FROM_INC_PATH"):
             continue
@@ -147,15 +143,15 @@ for p in tree.iter(tag='{http://simply-life.net/doxyassist/doxyassist.xsd}projec
         doxygen_in = os.path.join(path, 'Doxygen.in')
         temp = open (doxygen_in, 'w')        
 
-        clean_package_inputs = []
+        clean_package_inputs = []        
         for this_input in package_inputs:
             if ('include' in this_input):
                 new_input = this_input.split('include')[1]            
-                new_input = "@{CMAKE_SOURCE_DIR}/include"+new_input
+                new_input = "@{CMAKE_SOURCE_DIR}/"+this_input.split('/')[1]+"/include"+new_input
                 clean_package_inputs.append(new_input)
-            else:            
+            else:
                 new_input = this_input.split('doc')[1]            
-                new_input = "@{CMAKE_SOURCE_DIR}/doc"+new_input
+                new_input = "@{CMAKE_SOURCE_DIR}/"+ this_input.split('/')[1] +"/doc"+new_input
                 clean_package_inputs.append(new_input)            
 
         # This will include the default paramters for the configuration.
