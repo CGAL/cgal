@@ -1,10 +1,10 @@
-@INCLUDE = ${CGAL_DOC_DOXY_DEFAULT}
 # this package is a little peculiar and different from the other packages
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME        = CGAL
 PROJECT_BRIEF       =
 OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/CGAL
 
-INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc \
+INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
         ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite_cgal.txt
 
 HTML_HEADER         = ${CGAL_DOC_HEADER}
@@ -17,7 +17,7 @@ HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
                     ${CMAKE_SOURCE_DIR}/Documentation/cgal_stylesheet.css \
                     ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite.html
 
-EXCLUDE_PATTERNS += */doc/Developer_manual/*
+EXCLUDE_PATTERNS += */Developer_manual/*
 
 ALLEXTERNALS             = true
 EXTERNAL_GROUPS          = false
