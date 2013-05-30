@@ -21,7 +21,7 @@
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
 /*
- * TODO: Model the concept ArrangementDirectionalXMonotoneTraits_2?
+ * TODO: Model the concept ArrangementDirectionalXMonotoneTraits_2!
  * TODO: Complete the documentation of the changes derived from the cleaning
  *       In particular, doxygen only the things that have to be exposed
  *       to the user.
@@ -53,17 +53,6 @@ public:
   // Tag definitions:
   typedef Tag_true                                   Has_left_category;
   typedef Tag_true                                   Has_merge_category;
-  /*
-   * Roadmap:
-   *       Add a Do_intersect_2 functor which stops after the first
-   *       intersection found.  Either copy/paste the code of the
-   *       Intersect_2 only without using output iterator and stopping
-   *       after the first intersection.  Or, use a dummy output
-   *       iterator which throws an exception as soon as it is
-   *       changed. Then from Do_intersect_2 call the Intersect_2 and
-   *       provide this dummy output iterator as the third argument.
-   *       Note that this tag is false also for Arr_segment_traits_2.h
-   */
   typedef Tag_false                                  Has_do_intersect_category;
 
   typedef Arr_oblivious_side_tag                     Left_side_category;
@@ -678,7 +667,10 @@ public:
      * be its first segment.
      * \param cv a polyline. Note, cv is not (necessarily) x-monotone.
      * \param seg a segment to be appended to cv
-     * \pre One of the ends of seg should be equal to the last vertex of cv
+     * TODO: implement this precondition.
+     * \pre If cv is not empty then target of cv should coincide with the source
+     *       of seg or(!) the source of cv should coincide with the target of
+     *       seg.
      * \post The resulting cv is well oriented.
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const
@@ -704,12 +696,6 @@ public:
 
       Point_2 last_v;
 
-      /*
-       * ROADMAP: In order to ensure that the resulting cv is well
-       *          oriented the following test must(?) be made. If, in
-       *          the future we allow ill-oriented polylines, then at
-       *          this point seg can simply be appended.
-       */
       if (comp_endpts(cv[num_seg-1]) == SMALLER)
         last_v = get_max_v(cv[num_seg-1]);
       else
@@ -1661,8 +1647,7 @@ public:
 
 private:
   /*
-   * Roadmap: Improve the implementation _locate()
-   *  - _locate() should return an iterator to the located segment
+   * Roadmap: locate() should return an iterator to the located segment
    */
   /*!
    * Return the index of the segment in the polyline that contains the
