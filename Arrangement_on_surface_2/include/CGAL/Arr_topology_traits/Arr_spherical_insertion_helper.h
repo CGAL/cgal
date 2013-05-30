@@ -94,6 +94,12 @@ public:
    * event.
    */
   virtual void before_handle_event(Event* event);
+
+  /*! A notification invoked when a new subcurve is created. */
+  virtual void add_subcurve(Halfedge_handle he, Subcurve* sc);
+
+  /*! Get the current top face. */
+  virtual Face_handle top_face() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -108,9 +114,6 @@ template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
 before_handle_event(Event* event)
 {
-  std::cout << "ins-helper::before_handle_event: " << event->point()
-            << std::endl;
-
   // Ignore events that do not have boundary conditions.
   const Arr_parameter_space ps_x = event->parameter_space_in_x();
   const Arr_parameter_space ps_y = event->parameter_space_in_y();
@@ -197,6 +200,31 @@ before_handle_event(Event* event)
     event->set_vertex_handle(v);
     return;
   }
+}
+
+/*! A notification invoked when a new subcurve is created. */
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
+add_subcurve(Halfedge_handle he, Subcurve* sc)
+{
+  if (he->source()->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
+    m_spherical_halfedge = he;
+    return;
+  }
+  if (he->target()->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
+    m_spherical_halfedge = he->twin();
+    return;
+  }
+}
+
+/*! Get the current top face. */
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+typename Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::Face_handle
+Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::top_face() const
+{
+  const Halfedge_handle invalid_he;
+  if (m_spherical_halfedge != invalid_he) return m_spherical_halfedge->face();
+  return this->m_spherical_face;
 }
 
 } //namespace CGAL

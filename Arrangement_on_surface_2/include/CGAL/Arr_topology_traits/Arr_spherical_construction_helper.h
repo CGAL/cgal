@@ -138,7 +138,7 @@ public:
   }
 
   /*! Get the current top face. */
-  Face_handle top_face() const { return m_spherical_face; }
+  virtual Face_handle top_face() const { return m_spherical_face; }
 
   /*! Splice the indices list of the given halfedge, inserting the
    * indices of the halfedges that "see" the north pole.

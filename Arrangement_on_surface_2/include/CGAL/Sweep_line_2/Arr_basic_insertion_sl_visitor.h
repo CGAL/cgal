@@ -489,10 +489,6 @@ _insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
   // Look up and insert the edge in the interior of the incident face of the
   // halfedge we see.
   Face_handle f = _ray_shoot_up(this->status_line_position(sc));
-  std::cout << "f: "
-            << "outer: " << f->number_of_outer_ccbs()
-            << ", inner: " << f->number_of_inner_ccbs()
-            << std::endl;
   return (this->m_arr_access.insert_in_face_interior_ex(f, cv.base(),
                                                         ARR_LEFT_TO_RIGHT,
                                                         v1, v2));
@@ -580,7 +576,7 @@ typename Arr_basic_insertion_sl_visitor<Hlpr>::Halfedge_handle
 Arr_basic_insertion_sl_visitor<Hlpr>::
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     Halfedge_handle prev1, Halfedge_handle prev2,
-                    Subcurve* , bool& new_face_created)
+                    Subcurve* sc, bool& new_face_created)
 {
   // Perform the insertion.
   new_face_created = false;
@@ -597,6 +593,12 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
                                                    * which is cheaper than
                                                    * comparing lengths */
                                              );
+
+  // Notify the helper on the creation of the new halfedge.
+  // Note that we do this before trying to relocate holes in the new
+  // face (if one is created to match the corresponding call from the
+  // construction visitor).
+  this->m_helper.add_subcurve(new_he, sc);
 
   // In case a new face has been created (pointed by the new halfedge we
   // obtained), we have to examine the holes and isolated vertices in the
