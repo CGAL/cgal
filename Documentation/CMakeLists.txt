@@ -1,5 +1,7 @@
 project(Documentation NONE)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 macro(subdirlist result curdir)
   file(GLOB children RELATIVE ${curdir} ${curdir}/*)
   set(dirlist "")
@@ -57,6 +59,9 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
         # depend because we need the styefiles and collective resources
         DEPENDS ${CGAL_PACKAGE_NAME}_doxy)
 
+      set_target_properties(${CGAL_PACKAGE_NAME}_doxy PROPERTIES FOLDER Documentation/Sub/internal)
+      set_target_properties(${CGAL_PACKAGE_NAME}_doc PROPERTIES FOLDER Documentation/Packages)
+
       # don't do this for now
       # foreach(depend ${DEPENDENCIES})
       #   add_dependencies(${CGAL_PACKAGE_NAME}_doc
@@ -112,6 +117,7 @@ if(DOXYGEN_FOUND)
 
   # do the main package manually, it isn't part of ${CGAL_CONFIGURED_PACKAGES_NAMES}
   configure_doxygen_package("Documentation")
+  set_target_properties(Documentation_doc PROPERTIES FOLDER Documentation)
 
   # hard-code that Documentation_doc depends on all packages
   file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
