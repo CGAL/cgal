@@ -2,3 +2,4 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/GraphicsView/doc/GraphicsView/
 
+EXAMPLE_PATH =

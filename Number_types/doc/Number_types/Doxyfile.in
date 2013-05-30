@@ -2,3 +2,4 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Number_types/doc/Number_types/
 
+EXAMPLE_PATH =

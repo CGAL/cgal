@@ -2,3 +2,4 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Convex_hull_d/doc/Convex_hull_d/
 
+EXAMPLE_PATH =

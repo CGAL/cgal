@@ -2,3 +2,4 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/
 
+EXAMPLE_PATH =

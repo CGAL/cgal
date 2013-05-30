@@ -2,4 +2,4 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Kernel_23/doc/Kernel_23/
 
-EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Filtered_kernel/examples</item>
+EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Filtered_kernel/examples

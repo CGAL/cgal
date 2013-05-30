@@ -2,3 +2,4 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Geomview/doc/Geomview/
 
+EXAMPLE_PATH = ${CMAKE_SOURCE_DIR}/Geomview/demo

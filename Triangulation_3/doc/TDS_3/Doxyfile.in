@@ -2,5 +2,5 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/TDS_3/
 
-IMAGE_PATHS               +=  ../Triangulation_3/doc/Triangulation_3/fig
+IMAGE_PATH               +=  ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/Triangulation_3/fig
 

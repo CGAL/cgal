@@ -4,3 +4,4 @@ INPUT                      =  ${CMAKE_SOURCE_DIR}/Kernel_d/doc/Kernel_d/
 
 SORT_GROUP_NAMES           =  true
 
+EXAMPLE_PATH =

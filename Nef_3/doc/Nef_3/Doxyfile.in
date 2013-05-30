@@ -2,4 +2,4 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Nef_3/doc/Nef_3/
 
-EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Nef_3/demo</item>
+EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Nef_3/demo
