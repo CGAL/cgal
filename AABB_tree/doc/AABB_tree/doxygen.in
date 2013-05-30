@@ -1,0 +1,22 @@
+INPUT                      =  ../AABB_tree/doc/AABB_tree\ 
+                              ../AABB_tree/include
+
+STRIP_FROM_PATH            =  ../AABB_tree/include
+
+STRIP_FROM_INC_PATH        =  ../AABB_tree/include
+
+GENERATE_TAGFILE           =  ./tags/AABB_tree.tag
+
+IMAGE_PATH                 =  ../AABB_tree/doc/AABB_tree/fig
+
+EXAMPLE_PATH               =  ../AABB_tree/examples
+
+EXTRACT_ALL                =  false
+
+HIDE_UNDOC_MEMBERS         =  true
+
+HIDE_UNDOC_CLASSES         =  true
+
+TAGFILES                   =  
+            
+
