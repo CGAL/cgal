@@ -1,5 +1,8 @@
 intersect 0 1 1 0 0 0
+intersect 0 0 1 1 0
 intersect 1 0 1 0 0 0
+intersect 1 1 1 1 1
+#
 intersect 0 2 1 0 0 0
 intersect 2 0 1 0 0 0
 intersect 0 3 1 0 0 0
