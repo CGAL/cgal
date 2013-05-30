@@ -57,7 +57,7 @@ if(DOXYGEN_FOUND)
     ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/CGAL.dxy
     )
   
-  foreach(package ${CGAL_PACKAGES_DOC_HACK})
+  foreach(package ${CGAL_CONFIGURED_PACKAGES_NAMES})
     configure_doxygen_package(${package})
   endforeach()
 
