@@ -130,8 +130,7 @@ predicates and constructions.
 
 For reasons that will become evident later, a representation class
 provides two typenames for number types,
-namely `R::FT` and `R::RT` and one typename for the linear
-algebra module `R::LA`.
+namely `R::FT` and `R::RT`.
 The type `R::FT` must fulfill the
 requirements on what is called a <I>field type</I> in \cgal. This
 roughly means that `R::FT` is a type for which operations \f$ +\f$,
@@ -297,8 +296,8 @@ a point \f$ p\f$ results in the locus vector of \f$ p\f$.
 
 \code{.cpp}
 double coord[] = {1.0, 1.0, 1.0, 1.0};
-Point_d< Cartesian_d<double> > p(4,coord,coord+4), q(4);
-Vector_d< Cartesian_d<double> > v(4);
+Cartesian_d<double>::Point_d p(4,coord,coord+4), q(4);
+Cartesian_d<double>::Vector_d v(4);
 v = p - ORIGIN;
 q = ORIGIN + v; 
 assert( p == q );
@@ -319,14 +318,14 @@ classes.
 
 \subsection Kernel_dKernelObjects Kernel Objects
 
-Besides points (`Point_d<R>`), vectors (`Vector_d<R>`), and
-directions (`Direction_d<R>`), \cgal provides lines, rays,
+Besides points (`R::Point_d`), vectors (`R::Vector_d`), and
+directions (`R::Direction_d`), \cgal provides lines, rays,
 segments, hyperplanes, and spheres.
 
-Lines (`Line_d<R>`) in \cgal are oriented. A ray
-(`Ray_d<R>`) is a semi-infinite interval on a line, and this line
+Lines (`R::Line_d`) in \cgal are oriented. A ray
+(`R::Ray_d`) is a semi-infinite interval on a line, and this line
 is oriented from the finite endpoint of this interval towards any
-other point in this interval. A segment (`Segment_d<R>`) is a
+other point in this interval. A segment (`R::Segment_d`) is a
 bounded interval on a directed line, and the endpoints are ordered so
 that they induce the same direction as that of the line.
 
@@ -396,11 +395,11 @@ Constructions involve computation of new numerical values and may be
 imprecise due to rounding errors unless a kernel with an exact number
 type is used.
 
-Affine transformations (`Aff_transformation_d<R>`) allow to
+Affine transformations (`R::Aff_transformation_d`) allow to
 generate new object instances under arbitrary affine transformations.
 These transformations include translations, rotations (within planes)
 and scaling. Most of the geometric objects in a kernel have a member
-function `transform(Aff_transformation t)` which applies the
+function `transform(Aff_transformation_d t)` which applies the
 transformation to the object instance.
 
 \cgal also provides a set of functions that detect or compute the
@@ -432,8 +431,8 @@ defined, especially integer types and rationals.
 \subsection Kernel_dIntersectionandPolymorphicReturn Intersection and Polymorphic Return Values
 
 Intersections on kernel objects currently cover only those objects
-that are part of flats (`Segment_d<R>`, `Ray_d<R>`,
-`Line_c<R>`, and `Hyperplane_d<R>`). For any pair of objects
+that are part of flats (`R::Segment_d`, `R::Ray_d`,
+`R::Line_d`, and `R::Hyperplane_d`). For any pair of objects
 \f$ o1\f$, \f$ o2\f$ of these types the operation `intersection(o1,o2)`
 returns a polymorphic object that wraps the result of the intersection
 operation.
@@ -455,8 +454,8 @@ the intersection computation, as there are
 possibly different return values.
 
 \code{.cpp}
-typedef Point_d< Cartesian_d<double> > Point;
-typedef Segment_d< Cartesian_d<double> > Segment;
+typedef Cartesian_d<double>::Point_d Point;
+typedef Cartesian_d<double>::Segment_d Segment;
 Segment s1, s2;
 std::cin >> s1 >> s2;
 Object obj = intersection(s1, s2);
@@ -472,7 +471,7 @@ if (const Point *p = object_cast<Point>(&obj) ) {
 
 For testing where a point \f$ p\f$ lies with respect to a hyperplane
 defined by an array \f$ P\f$ of points \f$ p_1\f$, ... , \f$ p_d\f$, one may be
-tempted to construct the hyperplane `Hyperplane_d<R>(d,P,P+d)` and
+tempted to construct the hyperplane `R::Hyperplane_d(d,P,P+d)` and
 use the method `oriented_side(p)`. This may pay off if many tests
 with respect to the plane are made. Nevertheless, unless the number
 type is exact, the constructed plane is only approximated, and

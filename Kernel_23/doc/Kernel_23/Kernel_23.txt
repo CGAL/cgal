@@ -339,8 +339,8 @@ between points and vectors. Subtracting it from a point \f$ p\f$ results in the
 locus vector of \f$ p\f$.
 
 \code{.cpp}
-Point_2< Cartesian<double> > p(1.0, 1.0), q;
-Vector_2< Cartesian<double> > v;
+Cartesian<double>::Point_2 p(1.0, 1.0), q;
+Cartesian<double>::Vector_2 v;
 v = p - ORIGIN;
 q = ORIGIN + v; 
 assert( p == q );
@@ -359,21 +359,21 @@ the conversion with the currently available representation classes.
 
 \subsection Kernel_23KernelObjects Kernel Objects
 
-Besides points (`Point_2<Kernel>`, `Point_3<Kernel>`, `Point_d<Kernel>`), 
-vectors (`Vector_2<Kernel>`, `Vector_3<Kernel>`), and 
-directions (`Direction_2<Kernel>`, `Direction_3<Kernel>`), 
+Besides points (`Kernel::Point_2`, `Kernel::Point_3`),
+vectors (`Kernel::Vector_2`, `Kernel::Vector_3`), and
+directions (`Kernel::Direction_2`, `Kernel::Direction_3`),
 \cgal provides lines, rays, segments, planes,
 triangles, tetrahedra, iso-rectangles, iso-cuboids, circles and spheres.
 
-Lines (`Line_2<Kernel>`, `Line_3<Kernel>`) in \cgal are oriented. In 
+Lines (`Kernel::Line_2`, `Kernel::Line_3`) in \cgal are oriented. In
 two-dimensional space, they induce a partition of the plane
 into a positive side and a negative side. 
 Any two points on a line induce an orientation
 of this line. 
-A ray (`Ray_2<Kernel>`, `Ray_3<Kernel>`) is semi-infinite interval on a line, 
+A ray (`Kernel::Ray_2`, `Kernel::Ray_3`) is semi-infinite interval on a line,
 and this line is oriented from the finite endpoint of this interval towards 
-any other point in this interval. A segment (`Segment_2<Kernel>`, 
-`Segment_3<Kernel>`) is a bounded interval on a directed line,
+any other point in this interval. A segment (`Kernel::Segment_2`,
+`Kernel::Segment_3`) is a bounded interval on a directed line,
 and the endpoints are ordered so that they induce the same direction 
 as that of the line.
 
@@ -451,8 +451,8 @@ Constructions involve computation of new numerical values and may be
 imprecise due to rounding errors unless a kernel with an exact number type is 
 used.
 
-Affine transformations (`Aff_transformation_2<Kernel>`, 
-`Aff_transformation_3<Kernel>`) allow to generate new object instances under
+Affine transformations (`Kernel::Aff_transformation_2`,
+`Kernel::Aff_transformation_3`) allow to generate new object instances under
 arbitrary affine transformations. These transformations include translations,
 rotations (in 2D only) and scaling. Most of the geometric objects in a
 kernel have a member function `transform(Aff_transformation t)` 
@@ -552,7 +552,7 @@ return Object();
 
 For testing where a point `p` lies with respect to a plane defined by three
 points `q`, `r` and `s`, one may be tempted to construct the plane
-`Plane_3<Kernel>(q,r,s)` and use the method `oriented_side(p)`. 
+`Kernel::Plane_3(q,r,s)` and use the method `oriented_side(p)`.
 This may pay off if many tests with respect to the plane are made. 
 Nevertheless, unless the number type is exact, the constructed plane 
 is only approximated, and round-off errors may lead 
