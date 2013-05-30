@@ -30,6 +30,7 @@
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/Unique_hash_map.h>
 #include <bitset>
 #include <vector>
 #include <deque>
@@ -60,6 +61,9 @@ namespace CGAL {
     friend struct CGAL::internal::Call_split_functor;
 
   public:
+    template < unsigned int A, class B, class I, class D >
+    friend class Combinatorial_map_base;
+    
     /// Types definition
     typedef Combinatorial_map_base<d_, Refs, Items_,Alloc_>  Self;
 
@@ -146,6 +150,138 @@ namespace CGAL {
       }
 
       CGAL_assertion(number_of_darts()==0);
+    }
+
+    /** Copy the given combinatorial map into *this.
+     *  Note that both CMap can have different dimensions and/or non void attributes.
+     *  @param amap the combinatorial map to copy.
+     *  @post *this is valid.
+     */
+    template <unsigned int d2, typename Refs2, typename Items2, class Alloc2>
+    void copy(const Combinatorial_map_base<d2,Refs2,Items2,Alloc2> & amap)
+    {
+      typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2> CMap2;
+
+      this->clear();
+
+      this->mnb_used_marks = amap.mnb_used_marks;
+      this->mmask_marks    = amap.mmask_marks;
+
+      for (size_type i = 0; i < NB_MARKS; ++i)
+      {
+        this->mfree_marks_stack[i]        = amap.mfree_marks_stack[i];
+        this->mindex_marks[i]             = amap.mindex_marks[i];
+        this->mnb_marked_darts[i]         = amap.mnb_marked_darts[i];
+        this->mnb_times_reserved_marks[i] = amap.mnb_times_reserved_marks[i];
+      }
+      
+      // We must do this ony once, but problem because null_dart_handle
+      // is static !
+      if (mnull_dart_container.empty())
+      {
+        null_dart_handle =
+          mnull_dart_container.emplace(amap.null_dart_handle->mmarks);
+        
+        for (unsigned int i = 0; i <= dimension; ++i)
+        {
+          null_dart_handle->unlink_beta(i);
+        }
+      }
+      else
+        null_dart_handle->mmarks = amap.null_dart_handle->mmarks;
+      
+      // Create an mapping between darts of the two maps (originals->copies).
+      std::map<typename CMap2::Dart_const_handle, Dart_handle> dartmap;
+      
+      for (typename CMap2::Dart_const_range::const_iterator
+             it=amap.darts().begin(), itend=amap.darts().end();
+           it!=itend; ++it)
+      {
+        Dart_handle dh2 = mdarts.emplace(it->mmarks);
+        dartmap.insert(std::pair<typename CMap2::Dart_const_handle,Dart_handle>
+                       (it, dh2));
+      }
+      
+      unsigned int min_dim=
+        (dimension<amap.dimension?dimension:amap.dimension);
+      
+      typename std::map<typename CMap2::Dart_const_handle,Dart_handle>
+        ::iterator dartmap_iter, dartmap_iter_end=dartmap.end();
+      for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
+           ++dartmap_iter)
+      {
+        for (unsigned int i=0; i<=min_dim; i++)
+        {
+          if (dartmap_iter->first->beta(i)!=CMap2::null_dart_handle &&
+              (dartmap_iter->first)<(dartmap_iter->first->beta(i)))
+          {
+            basic_link_beta(dartmap_iter->second,
+                            dartmap[dartmap_iter->first->beta(i)], i);
+          }
+        }
+      }
+      
+      /** Copy attributes */
+      for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
+           ++dartmap_iter)
+      {
+        Helper::template Foreach_enabled_attributes
+          < internal::Copy_attributes_functor <Self, CMap2> >::
+          run(this, &amap, dartmap_iter->second, dartmap_iter->first);
+      }
+      
+      CGAL_assertion (is_valid () == 1);
+    }
+    
+    // Copy constructor from a map having exactly the same type.
+    Combinatorial_map_base (const Self & amap)
+    { copy<d_, Refs, Items_,Alloc_>(amap); }
+    
+    // "Copy constructor" from a map having different type.
+    template <unsigned int d2, typename Refs2, typename Items2, class Alloc2>
+    Combinatorial_map_base(const Combinatorial_map_base<d2,Refs2,Items2,Alloc2>
+                           & amap)
+    { copy<d2,Refs2,Items2,Alloc2>(amap); }
+    
+    /** Affectation operation. Copies one map to the other.
+     * @param amap a combinatorial map.
+     * @return A copy of that combinatorial map.
+     */
+    Self & operator= (const Self & amap)
+    {
+      if (this!=&amap)
+      {
+        Self tmp(amap);
+        this->swap(tmp);
+      }
+      return *this;
+    }
+
+    /** Swap this combinatorial map with amap, a second combinatorial map.
+     * Note that the two maps have exactly the same type.
+     * @param amap a combinatorial map.
+     */
+    void swap(Self & amap)
+    {
+      if (this!=&amap)
+      {
+        amap.mdarts.swap(mdarts);
+        
+        std::swap_ranges(mnb_times_reserved_marks,
+                         mnb_times_reserved_marks+NB_MARKS,
+                         amap.mnb_times_reserved_marks);
+        std::swap(mmask_marks,amap.mmask_marks);
+        std::swap(mnb_used_marks, amap.mnb_used_marks);
+        std::swap_ranges(mindex_marks,mindex_marks+NB_MARKS,
+                         amap.mindex_marks);
+        std::swap_ranges(mfree_marks_stack, mfree_marks_stack+NB_MARKS,
+                         amap.mfree_marks_stack);
+        std::swap_ranges(mused_marks_stack,mused_marks_stack+NB_MARKS,
+                         amap.mused_marks_stack);
+        std::swap_ranges(mnb_marked_darts,mnb_marked_darts+NB_MARKS,
+                         amap.mnb_marked_darts);
+        mattribute_containers.swap(amap.mattribute_containers);
+      }
     }
 
     /** Clear the combinatorial map. Remove all darts and all attributes.
@@ -3081,6 +3217,191 @@ namespace CGAL {
       return res;
     }
 
+
+    /** Test if the connected component of cmap containing dart dh1 is
+     *  isomorphic to the connected component of map2 containing dart dh2,
+     *  starting from dh1 and dh2.
+     * @param dh1  initial dart for this map
+     * @param map2 the second combinatorial map
+     * @param dh2  initial dart for map2
+     * @param testAttributes Boolean to test the equality of attributes (true)
+     *                       or not (false)
+     * @return true iff the cc of map is isomorphic to the cc of map2 starting
+     *     from dh1 and dh2; by testing the equality of attributes if
+     *     testAttributes is true
+     */
+    template <unsigned int d2, typename Refs2, typename Items2, class Alloc2>
+    bool are_cc_isomorphic(Dart_const_handle dh1,
+                           const Combinatorial_map_base
+                           <d2,Refs2,Items2,Alloc2>& map2,
+                           typename Combinatorial_map_base
+                           <d2,Refs2,Items2,Alloc2>::Dart_const_handle dh2,
+                           bool testAttributes=true) const
+    {
+      CGAL_assertion(dimension==map2.dimension);
+      CGAL_assertion(dh1!=NULL && dh2!=NULL);
+      
+      typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2> Map2;
+      
+      bool match = true;
+
+      // Two stacks used to run through the two maps.
+      std::deque< Dart_const_handle > toTreat1;
+      std::deque< typename Map2::Dart_const_handle > toTreat2;
+
+      int m1 = get_new_mark();
+      int m2 = map2.get_new_mark();
+
+      toTreat1.push(dh1);
+      toTreat2.push(dh2);
+
+      Dart_const_handle current;
+      typename Map2::Dart_const_handle other;
+
+      int i = 0;
+      CGAL::Unique_hash_map<Dart_const_handle,
+                            typename Map2::Dart_const_handle> bijection;
+
+      while (match && !toTreat1.empty())
+      {
+        // Next dart
+        current = toTreat1.top();
+        toTreat1.pop();
+        other = toTreat2.top();
+        toTreat2.pop();
+
+        if (!is_marked(current, m1))
+        {
+          if (map2.is_marked(other, m2))
+            match=false;
+          else
+          {
+            bijection[current] = other;
+
+            mark(current, m1);
+            map2.mark(other, m2);
+
+            if (testAttributes)
+            {
+              Helper::template Foreach_enabled_attributes
+                < internal::Test_is_same_attribute_functor<Self, Map2> >::
+                run(current, other);
+              if ( !internal::Test_is_same_attribute_functor<Self, Map2>::
+                   value )
+                match=false;
+            }
+
+            // We test if the injection is valid with its neighboors.
+            // We go out as soon as it is not satisfied.
+            for (i = 0; match && i <= dimension; ++i)
+            {
+              if (current->is_free(i))
+              {
+                if (!other->is_free(i))
+                  match = false;
+              }
+              else
+              {
+                if (other->is_free(i))
+                  match = false;
+                else
+                {
+                  if (is_marked(current->beta (i), m1) !=
+                      map2.is_marked(other->beta(i), m2))
+                    match = false;
+                  else
+                  {
+                    if (!is_marked (current->beta(i), m1))
+                    {
+                      toTreat1.push(current->beta (i));
+                      toTreat2.push(other->beta (i));
+                    }
+                    else
+                    {
+                      if (bijection[current->beta(i)] !=
+                          other->beta(i))
+                        match = false;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        else
+        {
+          if (!map2.is_marked(other, m2))
+            match = false;
+        }
+      }
+      
+      // Here we unmark all the marked darts.
+      while (!toTreat1.empty())
+        toTreat1.pop();
+      while (!toTreat2.empty())
+        toTreat2.pop();
+      
+      toTreat1.push(dh1);
+      toTreat2.push(dh2);
+      
+      while (!toTreat1.empty())
+      {
+        current = toTreat1.top();
+        toTreat1.pop();
+        other = toTreat2.top();
+        toTreat2.pop();
+        
+        unmark(current, m1);
+        map2.unmark(other, m2);
+        
+        for (i = 0; match && i <= dimension; ++i)
+        {
+          if (!current->is_free(i) && is_marked(current->beta(i), m1))
+          {
+            CGAL_assertion(!other->is_free(i) &&
+                           map2.is_marked(other->beta(i), m2));
+            toTreat1.push(current->beta(i));
+            toTreat2.push(other->beta(i));
+          }
+        }
+      }
+      
+      free_mark(m1);
+      map2.free_mark(m2);
+      
+      return match;
+    }
+    
+    /** Test if this cmap is isomorphic to map2.
+     * @pre cmap is connected.
+     * @param map2 the second combinatorial map
+     * @param testAttributes Boolean to test the equality of attributes (true)
+     *                       or not (false)
+     * @return true iff this map is isomorphic to map2, testing the equality
+     *         of attributes if testAttributes is true
+     */
+    template <unsigned int d2, typename Refs2, typename Items2, class Alloc2>
+    bool is_isomorphic_to(const Combinatorial_map_base
+                          <d2,Refs2,Items2,Alloc2>& map2,
+                          bool testAttributes=true)
+    {
+      if ( dimension!=map2.dimension ) return false;
+      
+      Dart_const_handle d1=darts().begin();
+      
+      for (typename Combinatorial_map_base<d2,Refs2,Items2,Alloc2>::
+             Dart_range::const_iterator it(map2.darts().begin()),
+             itend(map2.darts().end()); it!=itend; ++it)
+      {
+        if (are_cc_isomorphic(d1, map2, it, testAttributes))
+        {
+          return true;
+        }
+      }
+      
+      return false;
+    }    
+    
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
     static Dart_handle null_dart_handle;
 

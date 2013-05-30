@@ -413,6 +413,178 @@ struct Set_i_attribute_of_dart_functor<CMap, i, CGAL::Void>
   {}
 };
 // ****************************************************************************
+// Functor allowing to copy attributes whey info are convertible
+// TODO replace these version by using is_constructible
+// if no support for gcc11, use this simplified version ? (same type)
+template<typename T1, typename T2>
+struct Affectation_if_same_type
+{
+  static void run(T1&, const T2&)
+  {}
+};
+
+template<typename T1>
+struct Affectation_if_same_type<T1,T1>
+{
+  static void run(T1&e1, const T1&e2)
+  { e1=e2; }
+};
+
+// Case of two non void type
+template <typename Map1, typename Map2, int i,
+          typename T1, typename T2>
+struct Copy_attr_functor
+{
+  static void const run(Map1* cmap1, const Map2* cmap2,
+                        typename Map1::Dart_handle dh1,
+                        typename Map2::Dart_const_handle dh2)
+  {
+    CGAL_static_assertion(i<=Map2::dimension);
+    if (dh1->template attribute<i>()==NULL &&
+        dh2->template attribute<i>()!=NULL)
+    {
+      cmap1->template
+        set_attribute<i>(dh1, cmap1->template create_attribute<i>());
+      Affectation_if_same_type<typename T1::Info,typename T2::Info>::
+        run(dh1->template attribute<i>()->info(),
+            dh2->template attribute<i>()->info());
+    }
+  }
+};
+
+// Case T1==void
+template <typename Map1, typename Map2, int i, typename T1>
+struct Copy_attr_functor<Map1, Map2, i, Void, T1>
+{
+  static void const run(Map1*, const Map2*,
+                        typename Map1::Dart_handle,
+                        typename Map2::Dart_const_handle)
+  {}
+};
+
+// Case T2==void
+template <typename Map1, typename Map2, int i, typename T1>
+struct Copy_attr_functor<Map1, Map2, i, T1, Void>
+{
+  static void const run(Map1*, const Map2*,
+                        typename Map1::Dart_handle,
+                        typename Map2::Dart_const_handle)
+  {}
+};
+
+// Case T1==T2==void
+template <typename Map1, typename Map2, int i>
+struct Copy_attr_functor<Map1, Map2, i, Void, Void>
+{
+  static void const run(Map1*, const Map2*,
+                        typename Map1::Dart_handle,
+                        typename Map2::Dart_const_handle)
+  {}
+};
+
+/// Copy enabled attributes from one cmap to other
+template<typename Map1, typename Map2>
+struct Copy_attributes_functor{
+  template<unsigned int i>
+  static void run( Map1* cmap1,
+                   const Map2* cmap2,
+                   typename Map1::Dart_handle dh1,
+                   typename Map2::Dart_const_handle dh2 )
+  {
+    Copy_attr_functor<Map1, Map2, i,
+                      typename Map1::Helper::template Attribute_type<i>::type,
+                      typename Map2::Helper::template Attribute_type<i>::type>
+    ::run(cmap1, cmap2, dh1, dh2);
+  }
+};
+// ****************************************************************************
+// Functor allowing to test if two info are the same or not
+template<typename T1, typename T2>
+struct Is_same_info
+{
+  static bool run(const T1&, const T2&)
+  { return false; }
+};
+
+template<typename T1>
+struct Is_same_info<T1,T1>
+{
+  static bool run(const T1&e1, const T1&e2)
+  { return e1==e2; }
+};
+
+// Case of two non void type
+template<typename Map1, typename Map2,
+         typename T1, typename T2, int i>
+struct Is_same_attribute_functor
+{
+  static bool const run(typename Map1::Dart_const_handle dh1,
+                        typename Map2::Dart_const_handle dh2)
+  {
+    if (dh1->template attribute<i>()==NULL &&
+        dh2->template attribute<i>()==NULL)
+      return true;
+    
+    if (dh1->template attribute<i>()==NULL ||
+        dh2->template attribute<i>()==NULL)
+      return false;
+    
+    return
+      Is_same_info<typename T1::Info,typename T2::Info>::
+      run(dh1->template attribute<i>()->info(),
+          dh2->template attribute<i>()->info());
+  }
+};
+
+// Case T1==void
+template <typename Map1, typename Map2,
+          typename T1, int i>
+struct Is_same_attribute_functor<Map1, Map2, Void, T1, i>
+{
+  static bool run(typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle dh2)
+  { return dh2->template attribute<i>()==NULL; }
+};
+
+// Case T2==void
+template <typename Map1, typename Map2,
+          typename T1, int i>
+struct Is_same_attribute_functor<Map1, Map2, T1, Void, i>
+{
+  static bool run(typename Map1::Dart_const_handle dh1,
+                  typename Map2::Dart_const_handle)
+  { return dh1->template attribute<i>()==NULL; }
+};
+
+// Case T1==T2==void
+template <typename Map1, typename Map2, int i>
+struct Is_same_attribute_functor<Map1, Map2, Void, Void, i>
+{
+  static bool run(typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle)
+  { return true; }
+};
+
+/// Test if the two darts are associated with the same attribute.
+template<typename Map1, typename Map2>
+struct Test_is_same_attribute_functor
+{
+  template<unsigned int i>
+  static void run(typename Map1::Dart_const_handle dh1,
+                  typename Map2::Dart_const_handle dh2 )
+  {
+    if (value)
+      value = Is_same_attribute_functor
+        <Map1, Map2,
+         typename Map1::Helper::template Attribute_type<i>::type,
+         typename Map2::Helper::template Attribute_type<i>::type,
+         i>::run(dh1, dh2);
+  }
+  static bool value;
+};
+template<typename Map1, typename Map2>
+bool Test_is_same_attribute_functor<Map1, Map2>::value = true;
+// ****************************************************************************
 // Beta functor, used to combine several beta.
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template<typename Dart_handle, typename ... Betas>
