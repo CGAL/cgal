@@ -530,7 +530,7 @@ public:
 
   public:
     /*! Constructor. */
-    Make_x_monotone_2(const Geometry_traits_2* traits) :
+    Compare_endpoints_xy_2(const Geometry_traits_2* traits) :
       m_poly_traits(traits) {}
 
     /*!
@@ -983,10 +983,8 @@ public:
       const unsigned int n1 = cv1.number_of_segments();
       const unsigned int n2 = cv2.number_of_segments();
 
-      unsigned int       i1;
-      unsigned int       i2;
-      dir1 == SMALLER ? i1 = 0 : i1 = n1-1;
-      dir2 == SMALLER ? i2 = 0 : i2 = n2-1;
+      unsigned int i1 = (dir1 == SMALLER) ? 0 : n1-1;
+      unsigned int i2 = (dir2 == SMALLER) ? 0 : n2-1;
 
       X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
@@ -998,21 +996,19 @@ public:
         // Locate the index i1 of the segment in cv1 which contains cv2's
         // left endpoint.
         i1 = m_poly_traits->locate(cv1, min_vertex(cv2[i2]));
-        if (i1 == INVALID_INDEX)
-          return oi;
+        if (i1 == INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
           dir1 == SMALLER ? ++i1 : --i1;
           left_res = EQUAL;
         }
-      }  else if (left_res == LARGER) {
+      }
+      else if (left_res == LARGER) {
         // cv1's left endpoint is to the right of cv2's left endpoint:
         // Locate the index i2 of the segment in cv2 which contains cv1's
         // left endpoint.
         i2 = m_poly_traits->locate(cv2, min_vertex(cv1[i1]));
-
-        if (i2 == INVALID_INDEX)
-          return oi;
+        if (i2 == INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {
           dir2 == SMALLER ? ++i2 : --i2;
@@ -1034,10 +1030,11 @@ public:
       bool right_coincides = left_coincides;
       bool right_overlap = false;
 
-      while (((dir1==SMALLER) && (dir2 == SMALLER) && (i1 < n1) && (i2 < n2))||
+      while (((dir1==SMALLER) && (dir2 == SMALLER) && (i1 < n1) && (i2 < n2)) ||
              ((dir1!=SMALLER) && (dir2 == SMALLER) && (i1 >= 0) && (i2 < n2)) ||
              ((dir1==SMALLER) && (dir2 != SMALLER) && (i1 < n1) && (i2 >= 0)) ||
-             ((dir1!=SMALLER) && (dir2 != SMALLER) && (i1 >= 0) && (i2 >= 0))){
+             ((dir1!=SMALLER) && (dir2 != SMALLER) && (i1 >= 0) && (i2 >= 0)))
+      {
         right_res = compare_xy(max_vertex(cv1[i1]), max_vertex(cv2[i2]));
 
         right_coincides = (right_res == EQUAL);
@@ -1055,7 +1052,8 @@ public:
           // coincides with the curent segment of the other polyline:
           // Output the intersection if exists.
           oi = intersect(cv1[i1], cv2[i2], oi);
-        } else if (right_coincides && left_coincides) {
+        }
+        else if (right_coincides && left_coincides) {
           // An overlap exists between the current segments of the polylines:
           // Output the overlapping segment.
           right_overlap = true;
@@ -1063,20 +1061,24 @@ public:
             if (right_res == SMALLER) {
               Segment_2 seg(min_vertex(cv2[i2]), max_vertex(cv1[i1]));
               ocv.push_back(seg);
-            } else {
+            }
+            else {
               Segment_2 seg(min_vertex(cv2[i2]), max_vertex(cv2[i2]));
               ocv.push_back(seg);
             }
-          } else {
+          }
+          else {
             if (right_res == SMALLER) {
               Segment_2 seg(min_vertex(cv1[i1]), max_vertex(cv1[i1]));
               ocv.push_back(seg);
-            } else {
+            }
+            else {
               Segment_2 seg(min_vertex(cv1[i1]), max_vertex(cv2[i2]));
               ocv.push_back(seg);
             }
           }
-        } else if (left_coincides && !right_coincides) {
+        }
+        else if (left_coincides && !right_coincides) {
           // The left point of the current segment of one polyline
           // coincides with the current segment of the other polyline.
           if (left_overlap) {
@@ -1085,7 +1087,8 @@ public:
             CGAL_assertion(ocv.number_of_segments() > 0);
             *oi++ = make_object(ocv);
             ocv.clear();
-          } else {
+          }
+          else {
             // The left point of the current segment of one polyline
             // coincides with the current segment of the other polyline, and
             // no overlap occured at the previous iteration:
@@ -1095,7 +1098,8 @@ public:
             if (left_res == SMALLER) {
               std::pair<Point_2,Multiplicity>  p(min_vertex(cv2[i2]), 0);
               *oi++ = make_object(p);
-            } else {
+            }
+            else {
               std::pair<Point_2,Multiplicity>  p(min_vertex(cv1[i1]), 0);
               *oi++ = make_object(p);
             }
@@ -1130,20 +1134,28 @@ public:
         typedef std::pair<Point_2,Multiplicity> return_point;
         return_point ip;
         if (right_res == SMALLER) {
-          ip = return_point(max_vertex(cv1[i1]), 0);
+          ip = (dir1 == SMALLER) ?
+            return_point(max_vertex(cv1[i1-1]), 0) :
+            return_point(max_vertex(cv1[i1]), 0);
           *oi++ = make_object(ip);
         } else if (right_res == LARGER) {
-          ip = return_point(max_vertex(cv2[i2]), 0);
+          ip = (dir2 == SMALLER) ?
+            return_point(max_vertex(cv2[i2-1]), 0) :
+            return_point(max_vertex(cv2[i2]), 0);
           *oi++ = make_object(ip);
         } else if (i1 > 0) {
-          ip = return_point(max_vertex(cv1[i1]), 0);
+          ip = (dir1 == SMALLER) ?
+            return_point(max_vertex(cv1[i1-1]), 0) :
+            return_point(max_vertex(cv1[i1]), 0);
           *oi++ = make_object(ip);
         } else {
           CGAL_assertion_msg((dir2 == SMALLER && i2 > 0) ||
                              (dir2 != SMALLER && i2 < n2),
                              "Wrong index for xcv2 in Intersect_2 of "
                              "polylines.");
-          ip = return_point(max_vertex(cv2[i2]), 0);
+          ip = (dir2 == SMALLER) ?
+            return_point(max_vertex(cv2[i2-1]), 0) :
+            return_point(max_vertex(cv2[i2]), 0);
           *oi++ = make_object(ip);
         }
       }
@@ -1210,12 +1222,12 @@ public:
     /*! The traits (in case it has state) */
     const Geometry_traits* m_poly_traits;
 
+  public:
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Geometry_traits* traits) : m_poly_traits(traits) {}
 
-  public:
     /*!
      * Merge two given x-monotone curves into a single curve(segment).
      * \param cv1 The first curve.
