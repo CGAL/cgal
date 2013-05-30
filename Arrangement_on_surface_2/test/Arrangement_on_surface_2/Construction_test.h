@@ -253,7 +253,7 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
       std::cout << "Face: # inner " << fit->number_of_inner_ccbs()
                   << ", # outer: " << fit->number_of_outer_ccbs()
                   << std::endl;
-    if ((fit->number_of_inner_ccbs() != 0) ||
+    if ((fit->number_of_inner_ccbs() != 0) &&
         (fit->number_of_outer_ccbs() != 0))
       return false;
   }
