@@ -3,6 +3,7 @@
 
 #include "Combinatorial_map_2_test.h"
 #include "Combinatorial_map_3_test.h"
+#include "Combinatorial_map_copy_test.h"
 
 struct f1
 {
@@ -63,9 +64,9 @@ struct Map_2_dart_max_items_3
 
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true, f1, f2 > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true, f3, f4 > Double_attrib;
-    
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib, 
-			       Double_attrib> Attributes;
+
+    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+          Double_attrib> Attributes;
   };
 };
 
@@ -79,9 +80,9 @@ struct Map_3_dart_max_items_3
 
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true, f5, f6 > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true, f7 > Double_attrib;
-    
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib, 
-			       Int_attrib, Double_attrib> Attributes;
+
+    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+          Int_attrib, Double_attrib> Attributes;
   };
 };
 
@@ -95,8 +96,8 @@ public:
     typedef CGAL::Dart< 3, Refs > Dart;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    
-    typedef CGAL::cpp11::tuple<Int_attrib, void, Int_attrib> 
+
+    typedef CGAL::cpp11::tuple<Int_attrib, void, Int_attrib>
     Attributes;
   };
 };
@@ -110,14 +111,12 @@ struct Map_dart_max_items_4
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-    
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib, 
-			       Int_attrib, Double_attrib, Double_attrib> 
+
+    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+          Int_attrib, Double_attrib, Double_attrib>
     Attributes;
   };
 };
-
-
 
 int main()
 {
@@ -183,6 +182,14 @@ int main()
   if ( !test3D<Map9>() )
   {
     std::cout<<"ERROR during test3D<Map9>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Copy tests
+  if ( !testCopy<Map1, Map2, Map3, Map4, Map5, Map6, Map7, Map8, Map9>() )
+  {
+    std::cout<<"ERROR during testCopy<Map1, Map2, Map3, Map4, Map5, Map6, "
+      "Map7, Map8, Map9>."<<std::endl;
     return EXIT_FAILURE;
   }
 

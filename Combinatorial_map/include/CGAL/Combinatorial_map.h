@@ -197,9 +197,7 @@ namespace CGAL {
              it=amap.darts().begin(), itend=amap.darts().end();
            it!=itend; ++it)
       {
-        Dart_handle dh2 = mdarts.emplace(it->mmarks);
-        dartmap.insert(std::pair<typename CMap2::Dart_const_handle,Dart_handle>
-                       (it, dh2));
+        dartmap[it]=mdarts.emplace(it->mmarks);
       }
       
       unsigned int min_dim=
@@ -3252,8 +3250,8 @@ namespace CGAL {
       int m1 = get_new_mark();
       int m2 = map2.get_new_mark();
 
-      toTreat1.push(dh1);
-      toTreat2.push(dh2);
+      toTreat1.push_back(dh1);
+      toTreat2.push_back(dh2);
 
       Dart_const_handle current;
       typename Map2::Dart_const_handle other;
@@ -3265,10 +3263,10 @@ namespace CGAL {
       while (match && !toTreat1.empty())
       {
         // Next dart
-        current = toTreat1.top();
-        toTreat1.pop();
-        other = toTreat2.top();
-        toTreat2.pop();
+        current = toTreat1.front();
+        toTreat1.pop_front();
+        other = toTreat2.front();
+        toTreat2.pop_front();
 
         if (!is_marked(current, m1))
         {
@@ -3295,36 +3293,48 @@ namespace CGAL {
             // We go out as soon as it is not satisfied.
             for (i = 0; match && i <= dimension; ++i)
             {
-              if (current->is_free(i))
+              if ( i>Map2::dimension )
               {
-                if (!other->is_free(i))
-                  match = false;
+                if (!current->is_free(i)) match=false;
               }
               else
               {
-                if (other->is_free(i))
-                  match = false;
+                if (current->is_free(i))
+                {
+                  if (!other->is_free(i))
+                    match = false;
+                }
                 else
                 {
-                  if (is_marked(current->beta (i), m1) !=
-                      map2.is_marked(other->beta(i), m2))
+                  if (other->is_free(i))
                     match = false;
                   else
                   {
-                    if (!is_marked (current->beta(i), m1))
-                    {
-                      toTreat1.push(current->beta (i));
-                      toTreat2.push(other->beta (i));
-                    }
+                    if (is_marked(current->beta (i), m1) !=
+                        map2.is_marked(other->beta(i), m2))
+                      match = false;
                     else
                     {
-                      if (bijection[current->beta(i)] !=
-                          other->beta(i))
-                        match = false;
+                      if (!is_marked (current->beta(i), m1))
+                      {
+                        toTreat1.push_back(current->beta (i));
+                        toTreat2.push_back(other->beta (i));
+                      }
+                      else
+                      {
+                        if (bijection[current->beta(i)] !=
+                            other->beta(i))
+                          match = false;
+                      }
                     }
                   }
                 }
               }
+            }
+            // Now we test if the second map has more beta links than the first
+            for ( i=dimension+1; match && i<=Map2::dimension; ++i )
+            {
+              if (!other->is_free(i)) match=false;
             }
           }
         }
@@ -3336,20 +3346,18 @@ namespace CGAL {
       }
       
       // Here we unmark all the marked darts.
-      while (!toTreat1.empty())
-        toTreat1.pop();
-      while (!toTreat2.empty())
-        toTreat2.pop();
+      toTreat1.clear();
+      toTreat2.clear();
       
-      toTreat1.push(dh1);
-      toTreat2.push(dh2);
+      toTreat1.push_back(dh1);
+      toTreat2.push_back(dh2);
       
       while (!toTreat1.empty())
       {
-        current = toTreat1.top();
-        toTreat1.pop();
-        other = toTreat2.top();
-        toTreat2.pop();
+        current = toTreat1.front();
+        toTreat1.pop_front();
+        other = toTreat2.front();
+        toTreat2.pop_front();
         
         unmark(current, m1);
         map2.unmark(other, m2);
@@ -3360,8 +3368,8 @@ namespace CGAL {
           {
             CGAL_assertion(!other->is_free(i) &&
                            map2.is_marked(other->beta(i), m2));
-            toTreat1.push(current->beta(i));
-            toTreat2.push(other->beta(i));
+            toTreat1.push_back(current->beta(i));
+            toTreat2.push_back(other->beta(i));
           }
         }
       }
