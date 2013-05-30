@@ -539,6 +539,7 @@ public:
      * \param cv The curve.
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
+     * TODO: Test!
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv) const
     {
@@ -550,6 +551,37 @@ public:
 
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(this); }
+
+  class Construct_opposite_2 {
+  protected:
+    typedef Arr_polyline_traits_2<Segment_traits_2> Geometry_traits_2;
+    /*! The traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
+
+  public:
+    /*! Constructor */
+    Construct_opposite_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits) {}
+
+    /*!
+     * TODO: Add docs and test
+     */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const
+    {
+      const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+      typename Segment_traits_2::Construct_opposite_2 const_op =
+        seg_traits->construct_opposite_2_object();
+      std::vector<Segment_2> rev_segs;
+      for (typename Curve_2::Segment_const_iterator it = xcv.begin_segments();
+           it != xcv.end_segments(); ++it)
+        rev_segs.push_back(const_op(*it));
+      return X_monotone_curve_2(rev_segs.rbegin(),rev_segs.rend());
+    }
+  };
+
+  Construct_opposite_2 construct_opposite_2_object() const
+  { return Construct_opposite_2(this); }
+
   ///@}
 
   /// \name Construction functors(based on the segment traits).
