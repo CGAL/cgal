@@ -14,8 +14,8 @@ The const specialization, `boost::graph_traits< CGAL::Polyhedron_3<Traits> const
 is also defined, using the constant handles in the polyhedron. 
 
 */
-template< typename Traits> >
-class graph_traits< CGAL::Polyhedron_3<Traits> > {
+template< typename T> >
+class graph_traits< CGAL::Polyhedron_3<T> > {
 public:
 
 /// \name Types 

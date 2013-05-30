@@ -43,8 +43,8 @@
 - `CGAL::vertex_point_t`
 
 ## Classes ##
-- `boost::graph_traits< CGAL::Arrangement_2<Traits,Dcel> >`
-- `boost::graph_traits< CGAL::Polyhedron_3<Traits> >`
+- `boost::graph_traits< CGAL::Arrangement_2<T,DC> >`
+- `boost::graph_traits< CGAL::Polyhedron_3<T> >`
 - `CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >`
 - `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >`
 - `CGAL::Triangulation_vertex_base_with_id_2<TriangulationTraits_2, TriangulationVertexBase_2>`

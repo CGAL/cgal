@@ -15,8 +15,8 @@ The const specialization, `boost::graph_traits< CGAL::Arrangement_2<Traits,Dcel>
 is also defined, using the constant handles in the arrangement. 
 
 */
-template< typename Traits, typename Dcel> >
-class graph_traits< CGAL::Arrangement_2<Traits, Dcel> > {
+template< typename T, typename DC> >
+class graph_traits< CGAL::Arrangement_2<T, DC> > {
 public:
 
 /// \name Types 
