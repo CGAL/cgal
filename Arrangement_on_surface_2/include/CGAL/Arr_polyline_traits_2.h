@@ -521,6 +521,35 @@ public:
 
   Equal_2 equal_2_object() const
   { return Equal_2(this); }
+
+  class Compare_endpoints_xy_2 {
+  protected:
+    typedef Arr_polyline_traits_2<Segment_traits_2> Geometry_traits_2;
+    /*! The traits (in case it has state) */
+    const Geometry_traits_2* m_poly_traits;
+
+  public:
+    /*! Constructor. */
+    Make_x_monotone_2(const Geometry_traits_2* traits) :
+      m_poly_traits(traits) {}
+
+    /*!
+     * Compare the endpoints of an \(x\)-monotone curve lexicographically.
+     * (assuming the curve has a designated source and target points).
+     * \param cv The curve.
+     * \return SMALLER if the curve is directed right;
+     *         LARGER if the curve is directed left.
+     */
+    Comparison_result operator()(const X_monotone_curve_2& xcv) const
+    {
+      return (m_poly_traits->segment_traits_2()->
+              compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) ?
+        (SMALLER) : (LARGER);
+    }
+  };
+
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
+  { return Compare_endpoints_xy_2(this); }
   ///@}
 
   /// \name Construction functors(based on the segment traits).
