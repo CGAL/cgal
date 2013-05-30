@@ -3470,6 +3470,16 @@ namespace CGAL {
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Alloc Alloc;
+
+    Combinatorial_map() : Base()
+    {}
+
+    template < class CMap >
+    Combinatorial_map(const CMap & amap) : Base(amap)
+    {}
+
+    Combinatorial_map(const Self & amap) : Base(amap)
+    {}
   };
 
 } // namespace CGAL

@@ -84,6 +84,16 @@ namespace CGAL {
     /// To use previous definition of create_dart methods.
     using Base::create_dart;
 
+    Linear_cell_complex() : Base()
+    {}
+
+    template < class LCC >
+    Linear_cell_complex(const LCC & alcc) : Base(alcc)
+    {}
+
+    Linear_cell_complex(const Self & alcc) : Base(alcc)
+    {}
+
     /** Create a vertex attribute.
      * @return an handle on the new attribute.
      */
