@@ -5,18 +5,18 @@ macro(subdirlist result curdir)
   set(dirlist "")
   foreach(child ${children})
     if(IS_DIRECTORY ${curdir}/${child})
-        set(dirlist ${dirlist} ${child})
+      set(dirlist ${dirlist} ${child})
     endif()
   endforeach()
   set(${result} ${dirlist})
-ENDMACRO()
+endmacro()
 
 function(configure_doxygen_package CGAL_PACKAGE_NAME)
   set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/${CGAL_PACKAGE_NAME})
   subdirlist(SUBPACKAGES ${CGAL_PACKAGE_DIR}/doc)
   foreach(package ${SUBPACKAGES})
     set(CGAL_PACKAGE_NAME ${package}) # variable used for configuration
-    if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/doxygen.in)
+    if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in)
       message("Configuring doxygen for: ${CGAL_PACKAGE_NAME}")
       set(CGAL_DOC_PACKAGE_DEFAULTS ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
       file(REMOVE ${CGAL_DOC_PACKAGE_DEFAULTS})
@@ -31,7 +31,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
       
       # figure out the dependencies
-      file(STRINGS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependeds.txt DEPENDENCIES)
+      file(STRINGS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependencies DEPENDENCIES)
       message("${CGAL_PACKAGE_NAME} Depends on ${DEPENDENCIES}")
       foreach(depend ${DEPENDENCIES})
         file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=${CGAL_DOC_OUTPUT_DIR}/${depend}/html\n")
@@ -84,14 +84,8 @@ if(DOXYGEN_FOUND)
   else()
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
   endif()
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter.py ${CMAKE_BINARY_DIR}/pkglist_filter.py)
 
-  # the main package
-  message("Configuring doxygen for: CGAL main package")
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CGAL.dxy.in ${CGAL_DOC_DXY_DIR}/CGAL.dxy)
-  add_custom_target(CGAL_doc
-    ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/CGAL.dxy
-    )
-  
   foreach(package ${CGAL_CONFIGURED_PACKAGES_NAMES})
     configure_doxygen_package(${package})
   endforeach()
