@@ -229,19 +229,19 @@ public:
     }
   }
 
-  /// P3 must provide .x(), .y(), .z()
+  // P3 must provide .x(), .y(), .z()
   template <typename P3>
   bool try_lock(const P3 &point, int lock_radius = 0)
   {
     return try_lock<false, P3>(point, lock_radius);
   }
 
-  /// P3 must provide .x(), .y(), .z()
+  // P3 must provide .x(), .y(), .z()
   template <bool no_spin, typename P3>
   bool try_lock(const P3 &point, int lock_radius = 0)
   {
     // Compute index on grid
-    int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
+    int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_xmin) * m_resolution_x);
     //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
     index_x = 
       (index_x < 0 ? 
@@ -251,7 +251,7 @@ public:
             : index_x
           ) 
       );
-    int index_y = static_cast<int>( (point.y() - m_ymin) * m_resolution_y);
+    int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_ymin) * m_resolution_y);
     //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
     index_y = 
       (index_y < 0 ? 
@@ -261,7 +261,7 @@ public:
             : index_y
           ) 
       );
-    int index_z = static_cast<int>( (point.z() - m_zmin) * m_resolution_z);
+    int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_zmin) * m_resolution_z);
     //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
     index_z = 
       (index_z < 0 ? 
@@ -383,7 +383,7 @@ protected:
   int get_grid_index(const P3& point) const
   {
     // Compute indices on grid
-    int index_x = static_cast<int>( (point.x() - m_xmin) * m_resolution_x);
+    int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_xmin) * m_resolution_x);
     //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
     index_x = 
       (index_x < 0 ? 
@@ -393,7 +393,7 @@ protected:
             : index_x
           ) 
       );
-    int index_y = static_cast<int>( (point.y() - m_ymin) * m_resolution_y);
+    int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_ymin) * m_resolution_y);
     //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
     index_y = 
       (index_y < 0 ? 
@@ -403,7 +403,7 @@ protected:
             : index_y
           ) 
       );
-    int index_z = static_cast<int>( (point.z() - m_zmin) * m_resolution_z);
+    int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_zmin) * m_resolution_z);
     //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
     index_z = 
       (index_z < 0 ? 

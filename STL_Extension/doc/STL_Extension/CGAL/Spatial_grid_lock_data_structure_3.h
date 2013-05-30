@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgStlExtension
 
 The class `Spatial_grid_lock_data_structure_3` allows to lock 
-point coordinates (x, y, z) in a 3D grid. For example, it can be used by 
+points (x, y, z) in a 3D grid. For example, it can be used by 
 concurrent algorithms to lock simplices.
 
 \tparam Grid_lock_tag allows to choose the locking strategy used by the
