@@ -55,10 +55,11 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
         # depend because we need the styefiles and collective resources
         DEPENDS ${CGAL_PACKAGE_NAME}_doxy)
 
-      foreach(depend ${DEPENDENCIES})
-        add_dependencies(${CGAL_PACKAGE_NAME}_doc
-          ${depend}_doc)
-      endforeach()
+      # don't do this for now
+      # foreach(depend ${DEPENDENCIES})
+      #   add_dependencies(${CGAL_PACKAGE_NAME}_doc
+      #     ${depend}_doc)
+      # endforeach()
       
     endif()
   endforeach()
