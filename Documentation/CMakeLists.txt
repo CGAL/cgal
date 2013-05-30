@@ -105,6 +105,11 @@ if(DOXYGEN_FOUND)
     configure_doxygen_package(${package})
   endforeach()
 
+  
+  # hard-coded. this is not recognized as a package by the
+  # build-system, because it doesn't have a package_description subdir.
+  configure_doxygen_package("Miscellany")
+
   # do the main package manually, it isn't part of ${CGAL_CONFIGURED_PACKAGES_NAMES}
   configure_doxygen_package("Documentation")
 
