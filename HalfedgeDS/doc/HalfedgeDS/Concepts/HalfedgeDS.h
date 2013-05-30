@@ -87,47 +87,47 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 traits class. 
 */ 
 typedef Hidden_type Traits; 
 
-/*! 
+/*!
 model of `HalfedgeDSItems` concept. 
 */ 
 typedef Hidden_type Items; 
 
-/*! 
+/*!
 size type. 
 */ 
 typedef Hidden_type size_type; 
 
-/*! 
+/*!
 difference type. 
 */ 
 typedef Hidden_type difference_type; 
 
-/*! 
+/*!
 iterator category for all iterators. 
 */ 
 typedef Hidden_type iterator_category; 
 
-/*! 
+/*!
 allocator type `Alloc`. 
 */ 
 typedef Hidden_type allocator_type; 
 
-/*! 
+/*!
 model of `HalfedgeDSVertex` concept. 
 */ 
 typedef Hidden_type Vertex; 
 
-/*! 
+/*!
 model of `HalfedgeDSHalfedge` concept. 
 */ 
 typedef Hidden_type Halfedge; 
 
-/*! 
+/*!
 model of `HalfedgeDSFace` concept. 
 */ 
 typedef Hidden_type Face; 
@@ -146,32 +146,32 @@ value. It will be used in analogy to `NULL` for pointers.
 */
 /// @{
 
-/*! 
+/*!
 handle to vertex. 
 */ 
 typedef Hidden_type Vertex_handle; 
 
-/*! 
+/*!
 handle to halfedge. 
 */ 
 typedef Hidden_type Halfedge_handle; 
 
-/*! 
+/*!
 handle to face. 
 */ 
 typedef Hidden_type Face_handle; 
 
-/*! 
+/*!
 iterator over all vertices. 
 */ 
 typedef Hidden_type Vertex_iterator; 
 
-/*! 
+/*!
 iterator over all halfedges. 
 */ 
 typedef Hidden_type Halfedge_iterator; 
 
-/*! 
+/*!
 iterator over all faces. 
 */ 
 typedef Hidden_type Face_iterator; 
@@ -204,32 +204,32 @@ Faces are supported \f$ \Longleftrightarrow\f$
 */
 /// @{
 
-/*! 
+/*!
 `Vertex::halfedge()`. 
 */ 
 typedef Hidden_type Supports_vertex_halfedge; 
 
-/*! 
+/*!
 `Halfedge::prev()`. 
 */ 
 typedef Hidden_type Supports_halfedge_prev; 
 
-/*! 
+/*!
 `Halfedge::vertex()`. 
 */ 
 typedef Hidden_type Supports_halfedge_vertex; 
 
-/*! 
+/*!
 `Halfedge::face()`. 
 */ 
 typedef Hidden_type Supports_halfedge_face; 
 
-/*! 
+/*!
 `Face::halfedge()`. 
 */ 
 typedef Hidden_type Supports_face_halfedge; 
 
-/*! 
+/*!
 removal of individual elements. 
 */ 
 typedef Hidden_type Supports_removal; 
@@ -270,32 +270,32 @@ arises.
 */
 /// @{
 
-/*! 
+/*!
 
 */ 
 static Vertex_handle vertex_handle( Vertex_base* v); 
 
-/*! 
+/*!
 
 */ 
 static Vertex_const_handle vertex_handle( const Vertex_base* v); 
 
-/*! 
+/*!
 
 */ 
 static Halfedge_handle halfedge_handle( Halfedge_base* h); 
 
-/*! 
+/*!
 
 */ 
 static Halfedge_const_handle halfedge_handle( const Halfedge_base* h); 
 
-/*! 
+/*!
 
 */ 
 static Face_handle face_handle( Face_base* f); 
 
-/*! 
+/*!
 
 */ 
 static Face_const_handle face_handle( const Face_items* f); 
@@ -305,28 +305,28 @@ static Face_const_handle face_handle( const Face_items* f);
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 empty halfedge data structure. 
 */ 
 HalfedgeDS(); 
 
-/*! 
+/*!
 storage reserved for `v` vertices, `h` halfedges, and `f` faces. 
 */ 
 HalfedgeDS( size_type v, size_type h, size_type f); 
 
-/*! 
+/*!
 copy constructor. \pre `hds2` contains no dangling handles. 
 */ 
 HalfedgeDS( const HalfedgeDS<Traits,Items,Alloc>& hds2); 
 
-/*! 
+/*!
 assignment operator. \pre `hds2` contains no dangling handles. 
 */ 
 HalfedgeDS<Traits,Items,Alloc>& 
 operator=( const HalfedgeDS<Traits,Items,Alloc>& hds2); 
 
-/*! 
+/*!
 reserves storage for `v` vertices, `h` halfedges, and `f` faces. 
 If all capacities are already greater or equal than the requested sizes 
 nothing happens. Otherwise, the halfedge data structure will be resized and all handles, 
@@ -341,77 +341,77 @@ void reserve( size_type v, size_type h, size_type f);
 /// \name Access Member Functions 
 /// @{
 
-/*! 
+/*!
 number of vertices. 
 */ 
 Size size_of_vertices() const; 
 
-/*! 
+/*!
 number of halfedges. 
 */ 
 Size size_of_halfedges() const; 
 
-/*! 
+/*!
 number of faces. 
 */ 
 Size size_of_faces() const; 
 
-/*! 
+/*!
 space reserved for vertices. 
 */ 
 Size capacity_of_vertices() const; 
 
-/*! 
+/*!
 space reserved for halfedges. 
 */ 
 Size capacity_of_halfedges() const; 
 
-/*! 
+/*!
 space reserved for faces. 
 */ 
 Size capacity_of_faces() const; 
 
-/*! 
+/*!
 bytes used for the halfedge data structure. 
 */ 
 size_t bytes() const; 
 
-/*! 
+/*!
 bytes reserved for the halfedge data structure. 
 */ 
 size_t bytes_reserved() const; 
 
-/*! 
+/*!
 allocator object. 
 */ 
 allocator_type get_allocator() const; 
 
-/*! 
+/*!
 iterator over all vertices. 
 */ 
 Vertex_iterator vertices_begin(); 
 
-/*! 
+/*!
 
 */ 
 Vertex_iterator vertices_end(); 
 
-/*! 
+/*!
 iterator over all halfedges 
 */ 
 Halfedge_iterator halfedges_begin(); 
 
-/*! 
+/*!
 
 */ 
 Halfedge_iterator halfedges_end(); 
 
-/*! 
+/*!
 iterator over all faces. 
 */ 
 Face_iterator faces_begin(); 
 
-/*! 
+/*!
 
 */ 
 Face_iterator faces_end(); 
@@ -425,26 +425,26 @@ faces respectively.
 */
 /// @{
 
-/*! 
+/*!
 appends a copy of `v` to the halfedge data structure. Returns a handle of the new vertex. 
 */ 
 Vertex_handle vertices_push_back( const Vertex& v); 
 
-/*! 
+/*!
 appends a copy of `h` and a copy of `g` to the halfedge data structure and makes them 
 opposite to each other. Returns a handle of the copy of `h`. 
 */ 
 Halfedge_handle edges_push_back( const Halfedge& h, 
 const Halfedge& g); 
 
-/*! 
+/*!
 appends a copy of `h` and a copy of  \link HalfedgeDSHalfedge::opposite() `h->opposite()`\endlink  
 to the halfedge data structure and makes them opposite to each other. Returns a handle of the copy of `h`. 
 \pre  \link HalfedgeDSHalfedge::opposite() `h->opposite()`\endlink  denotes a halfedge. 
 */ 
 Halfedge_handle edges_push_back( const Halfedge& h); 
 
-/*! 
+/*!
 appends a copy of `f` to the halfedge data structure. Returns a handle of the new face. 
 */ 
 Face_handle faces_push_back( const Face& f); 
@@ -460,103 +460,95 @@ functions must be provided as null operations.
 */
 /// @{
 
-/*! 
-
+/*!
 removes the first vertex if vertices are supported and 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void vertices_pop_front(); 
 
-/*! 
-
+/*!
 removes the last vertex. 
 */ 
 void vertices_pop_back(); 
 
-/*! 
-
+/*!
 removes the vertex `v` if vertices are supported and 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void vertices_erase( Vertex_handle v); 
 
-/*! 
-
+/*!
 removes the range of vertices `[first,last)` if vertices 
 are supported and `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void vertices_erase( Vertex_handle first, Vertex_handle last); 
 
-/*! 
-
+/*!
 removes the first two halfedges if 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void edges_pop_front(); 
 
-/*! 
-
+/*!
 removes the last two halfedges. 
 */ 
 void edges_pop_back(); 
 
-/*! 
-
+/*!
 removes the pair of halfedges `h` and \link HalfedgeDSHalfedge::opposite() `h->opposite()`\endlink 
 if `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void edges_erase( Halfedge_handle h); 
 
-/*! 
-
+/*!
 removes the range of edges `[first},last)` if 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void edges_erase( Halfedge_handle first, Halfedge_handle last); 
 
-/*! 
+/*!
 
 removes the first face if faces are supported and 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void faces_pop_front(); 
 
-/*! 
+/*!
 
 removes the last face. 
 */ 
 void faces_pop_back(); 
 
-/*! 
+/*!
 
 removes the face `f` if faces are supported and 
 `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void faces_erase( Face_handle f); 
 
-/*! 
+/*!
 
 removes the range of faces `[first,last)` if faces are 
 supported and `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 */ 
 void faces_erase( Face_handle first, Face_handle last); 
 
-/*! 
+/*!
 removes all vertices. 
 */ 
 void vertices_clear(); 
 
-/*! 
+/*!
 removes all halfedges. 
 */ 
 void edges_clear(); 
 
-/*! 
+/*!
 removes all faces. 
 */ 
 void faces_clear(); 
 
-/*! 
+/*!
 removes all elements. 
 */ 
 void clear(); 
@@ -591,7 +583,7 @@ a halfedge. There is no automatic update required.
 */
 /// @{
 
-/*! 
+/*!
 sorts halfedges such that the non-border edges precede the 
 border edges. For each border edge that is incident to a face, 
 the halfedge iterator will reference the halfedge incident to the 
@@ -599,14 +591,14 @@ face right before the halfedge incident to the open region.
 */ 
 void normalize_border(); 
 
-/*! 
+/*!
 number of border halfedges. An edge with no incident face 
 counts as two border halfedges. 
 \pre `normalize_border()` has been called and no halfedge insertion or removal and no change in border status of the halfedges have occurred since then. 
 */ 
 Size size_of_border_halfedges() const; 
 
-/*! 
+/*!
 number of border edges. If `size_of_border_edges()` is equal 
 to `size_of_border_halfedges()` all border edges are incident to 
 a face on one side and to an open region on the other side. 
@@ -614,7 +606,7 @@ a face on one side and to an open region on the other side.
 */ 
 Size size_of_border_edges() const; 
 
-/*! 
+/*!
 halfedge iterator starting with the border edges. The range 
 [`halfedges_begin(), border_halfedges_begin()`) denotes 
 all non-border edges. The range 
