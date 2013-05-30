@@ -1033,6 +1033,13 @@ public:
         if (i1 == INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
+          if ((i1 == n1-1) || (i1 == 0)){
+            // cv1's right endpoint equals cv2's left endpoint
+            // Thus we can return this single(!) intersection point
+            std::pair<Point_2,Multiplicity>  p(max_vertex(cv1[i1]), 0);
+            *oi++ = make_object(p);
+            return oi;
+          }
           dir1 == SMALLER ? ++i1 : --i1;
           left_res = EQUAL;
         }
@@ -1045,7 +1052,16 @@ public:
         if (i2 == INVALID_INDEX) return oi;
 
         if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {
+          if ((i2 == n2-1) || (i2 == 0)){
+            // cv2's right endpoint equals cv1's left endpoint
+            // Thus we can return this single(!) intersection point
+            std::pair<Point_2,Multiplicity>  p(max_vertex(cv2[i2]), 0);
+            *oi++ = make_object(p);
+            return oi;
+          }
+
           dir2 == SMALLER ? ++i2 : --i2;
+          std::cout << "i2 = " << i2 << "\n";
           left_res = EQUAL;
         }
       }
