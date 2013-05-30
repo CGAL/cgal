@@ -31,24 +31,35 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
       
       # figure out the dependencies
-      file(STRINGS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependencies DEPENDENCIES)
+      if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependencies)
+        file(STRINGS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependencies DEPENDENCIES)
+      else()
+        set(DEPENDENCIES "")
+      endif()
+      
       message("${CGAL_PACKAGE_NAME} Depends on ${DEPENDENCIES}")
       foreach(depend ${DEPENDENCIES})
-        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=${CGAL_DOC_OUTPUT_DIR}/${depend}/html\n")
+        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} 
+          "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=${CGAL_DOC_OUTPUT_DIR}/${depend}/html\n")
       endforeach()
       
-      configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/doxygen.in ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
-
+      configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in 
+        ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
       
       add_custom_target(${CGAL_PACKAGE_NAME}_doxy
-        ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy
-        DEPENDS CGAL_doc) # list actual dependencies here... 
-      
+        ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
+
       add_custom_target(${CGAL_PACKAGE_NAME}_doc
         # to be implemented
         # ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --package path_to_package
         # depend because we need the styefiles and collective resources
         DEPENDS ${CGAL_PACKAGE_NAME}_doxy)
+
+      foreach(depend ${DEPENDENCIES})
+        add_dependencies(${CGAL_PACKAGE_NAME}_doc
+          ${depend}_doc)
+      endforeach()
+      
     endif()
   endforeach()
 endfunction()
@@ -89,6 +100,9 @@ if(DOXYGEN_FOUND)
   foreach(package ${CGAL_CONFIGURED_PACKAGES_NAMES})
     configure_doxygen_package(${package})
   endforeach()
+
+  # do the main package manually, it isn't part of ${CGAL_CONFIGURED_PACKAGES_NAMES}
+  configure_doxygen_package("Documentation")
 
   add_custom_target(html_postprocess
     ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR}
