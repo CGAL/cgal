@@ -1,21 +1,39 @@
 project(Documentation NONE)
 
+macro(subdirlist result curdir)
+  file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+  set(dirlist "")
+  foreach(child ${children})
+    if(IS_DIRECTORY ${curdir}/${child})
+        set(dirlist ${dirlist} ${child})
+    endif()
+  endforeach()
+  set(${result} ${dirlist})
+ENDMACRO()
+
 function(configure_doxygen_package CGAL_PACKAGE_NAME)
   set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/${CGAL_PACKAGE_NAME})
-  if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in)
-    message("Configuring doxygen for: ${CGAL_PACKAGE_NAME}")
-    configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
+  subdirlist(SUBPACKAGES ${CGAL_PACKAGE_DIR}/doc)
+  foreach(package ${SUBPACKAGES})
+    set(CGAL_PACKAGE_NAME ${package}) # variable used for configuration
+    if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in)
+      message("Configuring doxygen for: ${CGAL_PACKAGE_NAME}")
+      configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
 
-    add_custom_target(${CGAL_PACKAGE_NAME}_doxy
-      ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy
-      DEPENDS CGAL_doc) # list actual dependencies here... 
-    
-    add_custom_target(${CGAL_PACKAGE_NAME}_doc
-      # to be implemented
-      # ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --package path_to_package
-      # depend because we need the styefiles and collective resources
-      DEPENDS ${CGAL_PACKAGE_NAME}_doxy)
-  endif()
+      # figure out the dependencies
+      file(STRINGS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependencies ${CGAL_PACKAGE_NAME}_dependencies)
+      
+      add_custom_target(${CGAL_PACKAGE_NAME}_doxy
+        ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy
+        DEPENDS CGAL_doc) # list actual dependencies here... 
+      
+      add_custom_target(${CGAL_PACKAGE_NAME}_doc
+        # to be implemented
+        # ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --package path_to_package
+        # depend because we need the styefiles and collective resources
+        DEPENDS ${CGAL_PACKAGE_NAME}_doxy)
+    endif()
+  endforeach()
 endfunction()
 
 find_package(Doxygen)
