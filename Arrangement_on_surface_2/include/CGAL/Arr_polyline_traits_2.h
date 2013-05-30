@@ -983,6 +983,8 @@ public:
      * Find the intersections of the two given curves and insert them into the
      * given output iterator. As two segments may itersect only once, only a
      * single intersection will be contained in the iterator.
+     * Note: If the intersection yields an overlap then it will be oriented
+     *       from left-to-right.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param oi The output iterator.
