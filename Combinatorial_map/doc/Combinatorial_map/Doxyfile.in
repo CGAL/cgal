@@ -2,8 +2,4 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Combinatorial Maps"
 
-
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Combinatorial_map/doc/Combinatorial_map/
-
-
-

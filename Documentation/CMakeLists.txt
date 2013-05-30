@@ -116,7 +116,7 @@ if(DOXYGEN_FOUND)
   # hard-code that Documentation_doc depends on all packages
   file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
   foreach(depend ${DEPENDENCIES})
-    add_dependencies(Documentation_doc ${depend}_doc)
+    add_dependencies(Documentation_doxy ${depend}_doc)
   endforeach()
 
   add_custom_target(html_postprocess

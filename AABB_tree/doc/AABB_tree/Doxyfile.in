@@ -4,19 +4,10 @@ PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Fas
 
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/AABB_tree/doc/AABB_tree/ \ 
-
                               ${CMAKE_SOURCE_DIR}/AABB_tree/include
 
-
-
 EXTRACT_ALL                =  false
-
-
-
 HIDE_UNDOC_MEMBERS         =  true
-
-
-
 HIDE_UNDOC_CLASSES         =  true
 
 

@@ -2,21 +2,11 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Polygons"
 
-
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Polygon/doc/Polygon/ \ 
-
                               ${CMAKE_SOURCE_DIR}/Polygon/include
 
-
-
 EXTRACT_ALL                =  false
-
-
-
 HIDE_UNDOC_MEMBERS         =  true
-
-
-
 HIDE_UNDOC_CLASSES         =  true
 
 
