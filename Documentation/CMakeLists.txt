@@ -52,7 +52,7 @@ if(DOXYGEN_FOUND)
 
   # the main package
   message("Configuring doxygen for: CGAL main package")
-  # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CGAL.dxy.in ${CGAL_DOC_DXY_DIR}/CGAL.dxy)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CGAL.dxy.in ${CGAL_DOC_DXY_DIR}/CGAL.dxy)
   add_custom_target(CGAL_doc
     ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/CGAL.dxy
     )
