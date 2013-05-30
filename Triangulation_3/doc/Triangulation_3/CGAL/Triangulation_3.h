@@ -589,7 +589,7 @@ Same as above but uses inexact predicates.
 This function returns a handle on a cell that is a good approximation of the exact
 location of `query`, while being faster. Note that it may return a handle on a cell 
 whose interior does not contain `query`.
-When the triangulation has dimension smaller than 3, `hint` is returned.
+When the triangulation has dimension smaller than 3, `start` is returned.
 */
 Cell_handle
 inexact_locate(const Point & query, Cell_handle start = Cell_handle()) const;
