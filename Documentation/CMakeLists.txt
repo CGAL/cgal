@@ -19,7 +19,6 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   foreach(package ${SUBPACKAGES})
     set(CGAL_PACKAGE_NAME ${package}) # variable used for configuration
     if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in)
-      message("Configuring doxygen for: ${CGAL_PACKAGE_NAME}")
       set(CGAL_DOC_PACKAGE_DEFAULTS ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
       file(REMOVE ${CGAL_DOC_PACKAGE_DEFAULTS})
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "@INCLUDE = ${CGAL_DOC_DOXY_DEFAULT}\n")
@@ -41,7 +40,6 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
         set(DEPENDENCIES "")
       endif()
       
-      message("${CGAL_PACKAGE_NAME} Depends on ${DEPENDENCIES}")
       foreach(depend ${DEPENDENCIES})
         file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} 
           "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=${CGAL_DOC_OUTPUT_DIR}/${depend}/html\n")
