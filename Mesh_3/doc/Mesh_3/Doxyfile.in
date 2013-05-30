@@ -2,6 +2,6 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Mesh_3/doc/Mesh_3/
 
-HTML_EXTRA_FILES           =  
-            
-
+HTML_EXTRA_FILES           =  ${CMAKE_SOURCE_DIR}/doc/Mesh_3/fig/implicit_domain_3.jpg \
+                              ${CMAKE_SOURCE_DIR}/fig/implicit_domain_4.jpg \
+                              ${CMAKE_SOURCE_DIR}/fig/implicit_domain_5.jpg

@@ -2,3 +2,4 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Polyhedron/doc/Polyhedron/
 
+EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Polyhedron_IO/examples

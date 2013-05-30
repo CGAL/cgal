@@ -2,8 +2,7 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Arrangement_on_surface_2/
 
-EXCLUDE_SYMBOLS            =  
-            
-            
-            
-
+EXCLUDE_SYMBOLS           +=  Dcel         \
+                              FaceBase     \
+                              HalfedgeBase \
+                              VertexBase

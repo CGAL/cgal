@@ -2,3 +2,5 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/CGAL_ipelets/doc/CGAL_ipelets/
 
+EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/CGAL_ipelets/demo</item>
+

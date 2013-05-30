@@ -2,6 +2,6 @@
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Apollonius_graph_2/doc/Apollonius_graph_2/
 
-EXCLUDE_SYMBOLS            =  
+EXCLUDE_SYMBOLS           +=  Agvb
             
 
