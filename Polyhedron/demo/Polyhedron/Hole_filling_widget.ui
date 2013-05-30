@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
-    <height>407</height>
+    <width>305</width>
+    <height>261</height>
    </rect>
   </property>
   <property name="toolTip">
@@ -22,99 +22,100 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Action:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="action_combo_box">
+        <property name="currentIndex">
+         <number>2</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Triangulate</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Triangulate + Refine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Triangulate + Refine + Fair</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
        <string>Parameters</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QRadioButton" name="Triangulate_radio_button">
-         <property name="text">
-          <string>Triangulate</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Density Control Factor for Refining:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="Density_control_factor_spin_box">
+           <property name="maximum">
+            <double>96.989999999999995</double>
+           </property>
+           <property name="singleStep">
+            <double>0.200000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.410000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QRadioButton" name="Triangulate_refine_radio_button">
-         <property name="text">
-          <string>Triangulate + Refine</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="Triangulate_refine_fair_radio_button">
-         <property name="text">
-          <string>Triangulate + Refine + Fair</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>Refine Parameters</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Density control factor:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="Density_control_factor_spin_box">
-            <property name="maximum">
-             <double>96.989999999999995</double>
-            </property>
-            <property name="singleStep">
-             <double>0.200000000000000</double>
-            </property>
-            <property name="value">
-             <double>1.410000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Fair Parameters</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QRadioButton" name="Uniform_weight_radio_button">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Weight Type for Fairing:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="weight_combo_box">
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <item>
             <property name="text">
              <string>Uniform Weight</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="Cotangent_weight_radio_button">
+           </item>
+           <item>
             <property name="text">
              <string>Cotangent Weight</string>
             </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="Scale_dependent_weight_radio_button">
+           </item>
+           <item>
             <property name="text">
              <string>Scale-dependent Weight</string>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

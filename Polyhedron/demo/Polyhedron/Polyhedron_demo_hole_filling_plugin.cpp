@@ -87,14 +87,16 @@ public:
   }
   void draw() const {}
   void draw_edges() const {
-    ::glLineWidth(3.f);
+    
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
+      if(it == active_hole) { ::glLineWidth(7.f); }
+      else                  { ::glLineWidth(3.f); }
+
       if(selected_holes.find(it) != selected_holes.end()) 
-      { it->polyline->setRbgColor(0, 255, 0); }
-      else if(it == active_hole) 
       { it->polyline->setRbgColor(255, 0, 0); }
       else 
-      { it->polyline->setRbgColor(0, 0, 255); }
+      { it->polyline->setRbgColor(0, 255, 0); }
+
       it->polyline->draw_edges();
     }
   }
@@ -392,16 +394,15 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   }
 
   bool create_new = ui_widget->Create_new_polyhedron_check_box->checkState() == Qt::Checked;
-  bool fair = ui_widget->Triangulate_refine_fair_radio_button->isChecked();
-  bool refine = fair || ui_widget->Triangulate_refine_radio_button->isChecked();
   double alpha = ui_widget->Density_control_factor_spin_box->value();
+  int action_index = ui_widget->action_combo_box->currentIndex();
 
   // create new polyhedron item if required
   Polyhedron* poly_pointer;
   Scene_polyhedron_item* new_item = 0;
   if(create_new) {
     new_item = new Scene_polyhedron_item(*poly_item->polyhedron());
-    QString param_exp = fair ? "Refine + Fair" : refine ? "Refine" : "Triangulate";
+    QString param_exp = action_index == 2 ? "Refine + Fair" : action_index == 1 ? "Refine" : "Triangulate";
     new_item->setName(tr("%1-%2-(alpha:%3)").arg(poly_item->name()).arg(param_exp).arg(alpha));
     poly_pointer = new_item->polyhedron();
   }
@@ -447,26 +448,27 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
 void Polyhedron_demo_hole_filling_plugin::fill
   (Polyhedron& poly, Polyhedron::Halfedge_handle it) {
 
-  bool fair = ui_widget->Triangulate_refine_fair_radio_button->isChecked();
-  bool refine = fair || ui_widget->Triangulate_refine_radio_button->isChecked();
+  int action_index = ui_widget->action_combo_box->currentIndex();
   double alpha = ui_widget->Density_control_factor_spin_box->value();
 
-  if(!fair && !refine) {
+  if(action_index == 0) {
     CGAL::triangulate_hole(poly, it);
   }
-  else if(!fair) {
+  else if(action_index == 1) {
     CGAL::triangulate_and_refine_hole(poly, it, alpha);
   }
   else {
-    if(ui_widget->Scale_dependent_weight_radio_button->isChecked())
-      CGAL::triangulate_refine_and_fair_hole(poly, it, alpha,
-        CGAL::Fairing_scale_dependent_weight<Polyhedron>());
-    if(ui_widget->Uniform_weight_radio_button->isChecked())
+    int weight_index = ui_widget->weight_combo_box->currentIndex();
+
+    if(weight_index == 0)
       CGAL::triangulate_refine_and_fair_hole(poly, it, alpha, 
         CGAL::Fairing_uniform_weight<Polyhedron>());
+    if(weight_index == 1)
+      CGAL::triangulate_refine_and_fair_hole(poly, it, alpha,
+       CGAL::Fairing_cotangent_weight<Polyhedron>());
     else
       CGAL::triangulate_refine_and_fair_hole(poly, it, alpha,
-        CGAL::Fairing_cotangent_weight<Polyhedron>());
+        CGAL::Fairing_scale_dependent_weight<Polyhedron>());
   }
 }
 

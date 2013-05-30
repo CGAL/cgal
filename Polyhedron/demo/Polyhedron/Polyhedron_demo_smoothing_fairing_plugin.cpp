@@ -51,13 +51,13 @@ public:
   }
 
   void draw_edges() const {
-    poly_item->direct_draw_edges();
+    poly_item->draw_edges();
     if(rendering_mode == Wireframe) {
       draw_ROI();
     }
   }  
   void draw() const {
-    poly_item->direct_draw();
+    poly_item->draw();
     draw_ROI();
   }
   void draw_ROI() const {
@@ -103,6 +103,41 @@ public:
       selected_vertices.insert(all_vertices[idx]);
     }
     in.close();
+  }
+  bool select_isolated_components() {
+    bool any_inserted = false;
+    int threshold_size = ui_widget->Threshold_size_spin_box->value();
+
+    std::vector<bool> mark(polyhedron()->size_of_vertices(), false);
+    Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
+    for( ;vb != ve; ++vb) 
+    {
+      if(mark[vb->id()] || selected_vertices.find(vb) != selected_vertices.end()) { continue; }
+      std::queue<Polyhedron::Vertex_handle> Q;
+      std::vector<Polyhedron::Vertex_handle> C;
+      Q.push(vb);
+      mark[vb->id()] = true; C.push_back(vb);
+
+      while(!Q.empty()) {
+        Vertex_handle current = Q.front();
+        Q.pop();
+
+        Polyhedron::Halfedge_around_vertex_circulator circ = current->vertex_begin();
+        do {
+          Vertex_handle nv = circ->opposite()->vertex();
+          if(!mark[nv->id()] && selected_vertices.find(nv) == selected_vertices.end()) {
+            Q.push(nv);
+            mark[nv->id()] = true; C.push_back(nv);
+          }
+        } while(++circ != current->vertex_begin());
+      } // while(!Q.empty())
+
+      if(C.size() < threshold_size) {
+        any_inserted = true;
+        selected_vertices.insert(C.begin(), C.end());
+      }
+    }
+    return any_inserted;
   }
 
   void changed_with_poly_item() {
@@ -240,6 +275,7 @@ protected:
 public:
   std::set<Vertex_handle> selected_vertices;
 };
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Polyhedron_demo_smoothing_fairing_plugin :
   public QObject,
@@ -276,6 +312,7 @@ public slots:
   void on_Show_ROI_check_box_stateChanged(int state);
   void on_Save_ROI_button_clicked();
   void on_Load_ROI_button_clicked();
+  void on_Select_isolated_components_button_clicked();
   void new_item_created(int item_id);
 
 private:
@@ -316,8 +353,9 @@ void Polyhedron_demo_smoothing_fairing_plugin::init(QMainWindow* mw,
   connect(ui_widget->Clear_ROI_button,  SIGNAL(clicked()), this, SLOT(on_Clear_ROI_button_clicked()));  
   connect(ui_widget->Show_ROI_check_box, SIGNAL(stateChanged(int)), this, SLOT(on_Show_ROI_check_box_stateChanged(int)));
   connect(ui_widget->Save_ROI_button,  SIGNAL(clicked()), this, SLOT(on_Save_ROI_button_clicked()));
-  connect(ui_widget->Load_ROI_button,  SIGNAL(clicked()), this, SLOT(on_Load_ROI_button_clicked())); 
-
+  connect(ui_widget->Load_ROI_button,  SIGNAL(clicked()), this, SLOT(on_Load_ROI_button_clicked()));
+  connect(ui_widget->Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
+  
   QObject* scene = dynamic_cast<QObject*>(scene_interface);
   if(scene) { connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int))); } 
 }
@@ -387,21 +425,29 @@ void Polyhedron_demo_smoothing_fairing_plugin::new_item_created(int item_id)
     }
   }
 }
+void Polyhedron_demo_smoothing_fairing_plugin::on_Select_isolated_components_button_clicked() {
+  Scene_polyhedron_selectable_item* selectable_item = get_selected_item();
+  if(!selectable_item) { return; }
+  bool any_inserted = selectable_item->select_isolated_components();
 
+  if(any_inserted) { scene->itemChanged(selectable_item); }
+}
 void Polyhedron_demo_smoothing_fairing_plugin::on_Fair_button_clicked() 
 {
   Scene_polyhedron_selectable_item* selectable_item = get_selected_item();
   if(!selectable_item) { return; }
 
-  if(ui_widget->Scale_dependent_weight_radio_button->isChecked())
-    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices, 
-      CGAL::Fairing_scale_dependent_weight<Polyhedron>());
-  if(ui_widget->Uniform_weight_radio_button->isChecked())
+  int weight_index = ui_widget->weight_combo_box->currentIndex();
+
+  if(weight_index == 0)
     CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices,
       CGAL::Fairing_uniform_weight<Polyhedron>());
-  else
+  if(weight_index == 1)
     CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices,
       CGAL::Fairing_cotangent_weight<Polyhedron>());
+  else
+    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices, 
+      CGAL::Fairing_scale_dependent_weight<Polyhedron>());
   selectable_item->changed_with_poly_item();
 }
 
