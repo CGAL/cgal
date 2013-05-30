@@ -105,6 +105,12 @@ if(DOXYGEN_FOUND)
   # do the main package manually, it isn't part of ${CGAL_CONFIGURED_PACKAGES_NAMES}
   configure_doxygen_package("Documentation")
 
+  # hard-code that Documentation_doc depends on all packages
+  file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
+  foreach(depend ${DEPENDENCIES})
+    add_dependencies(Documentation_doc ${depend}_doc)
+  endforeach()
+
   add_custom_target(html_postprocess
     ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR}
     )
