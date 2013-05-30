@@ -16,12 +16,29 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   subdirlist(SUBPACKAGES ${CGAL_PACKAGE_DIR}/doc)
   foreach(package ${SUBPACKAGES})
     set(CGAL_PACKAGE_NAME ${package}) # variable used for configuration
-    if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in)
+    if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/doxygen.in)
       message("Configuring doxygen for: ${CGAL_PACKAGE_NAME}")
-      configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
-
+      set(CGAL_DOC_PACKAGE_DEFAULTS ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
+      file(REMOVE ${CGAL_DOC_PACKAGE_DEFAULTS})
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "@INCLUDE = ${CGAL_DOC_DOXY_DEFAULT}\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "OUTPUT_DIRECTORY = ${CGAL_DOC_OUTPUT_DIR}/${CGAL_PACKAGE_NAME}\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "IMAGE_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/fig\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TAGFILE = ${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_NAME}.tag\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
+      
       # figure out the dependencies
-      file(STRINGS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependencies ${CGAL_PACKAGE_NAME}_dependencies)
+      file(STRINGS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependeds.txt DEPENDENCIES)
+      message("${CGAL_PACKAGE_NAME} Depends on ${DEPENDENCIES}")
+      foreach(depend ${DEPENDENCIES})
+        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=${CGAL_DOC_OUTPUT_DIR}/${depend}/html\n")
+      endforeach()
+      
+      configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/doxygen.in ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
+
       
       add_custom_target(${CGAL_PACKAGE_NAME}_doxy
         ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy
