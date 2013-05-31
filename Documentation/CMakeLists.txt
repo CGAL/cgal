@@ -136,7 +136,7 @@ if(DOXYGEN_FOUND)
   endforeach()
 
   if(PYTHONINTERP_FOUND)
-    add_custom_target(html_postprocess
+    add_custom_target(Documentation_postprocess
       ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR}
       )
 
