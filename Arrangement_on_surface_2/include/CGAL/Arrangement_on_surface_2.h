@@ -1795,7 +1795,7 @@ protected:
    * NEGATIVE if perimetric ccb is oriented in negative direction).
    */
   template <typename OutputIterator>
-  std::pair<CGAL::Sign, CGAL::Sign>
+  std::pair<Sign, Sign>
   _compute_signs_and_local_minima(const DHalfedge* he_to,
                                   const X_monotone_curve_2& cv,
                                   Arr_halfedge_direction cv_dir,
@@ -1803,30 +1803,36 @@ protected:
                                   OutputIterator local_mins_it) const;
 
   /*!
-   * Compute the signs (in left/right and bottom/top) of a closed path
-   * represented by a given halfedge, and reports
-   * as side-effect the halfedges pointing to local minima copied
-   * to an outputiterator.
-   * \param he The representative halfedge.
-   TODO
-   * \param local_mins_it the outputiterator 
-   * (value_type = std::pair< DHalfedge*, int >, where the int denotes the
-   * index) to report the halfedges pointing to local minima (<-shaped situation)
-   * \return A pair of signs for the induced path (ZERO if non-perimetric,
-   * POSITIVE if perimetric ccb is oriented in positive direction, 
-   * NEGATIVE if perimetric ccb is oriented in negative direction).
+   * Compute the signs (in left/right and bottom/top) of a closed ccb (loop)
+   * represented by a given halfedge, and the halfedge pointing to the smallest
+   * vertex on the ccb.
+   * \param he The representative halfedge on the ccb.
+   * \param ps_x_min The parameter space in x of the smallest vertex.
+   * \param ps_y_min The parameter space in y of the smallest vertex.
+   * \param index_min The index of the smallest vertex.
+   * \return A pair of, a pair of signs for the induced path, and the halfedge
+   *     pointing to the smallest vertex.
+   *     A sign ZERO is if the ccb is non-perimetric,
+   *     POSITIVE if the ccb is perimetric and oriented in positive direction, 
+   *     NEGATIVE if the ccb is perimetric and oriented in negative direction).
    */
-  template <typename OutputIterator>
-  std::pair< CGAL::Sign, CGAL::Sign > 
-  _compute_signs_and_local_minima(const DHalfedge* he_ccb,
-                                  OutputIterator local_mins_it,
-                                  bool end_is_anchor_opposite = false) const;
-
-  std::pair< CGAL::Sign, CGAL::Sign > 
-  _compute_signs(const DHalfedge* he_ccb,
-                 bool end_is_anchor_opposite = false) const;
+  std::pair<std::pair<Sign, Sign>,  const DHalfedge*>
+  _compute_signs_and_min(const DHalfedge* he,
+                         Arr_parameter_space& ps_x_min,
+                         Arr_parameter_space& ps_y_min,
+                         int& index_min) const;
   
-
+  /*!
+   * Compute the signs (in left/right and bottom/top) of a closed ccb (loop)
+   * represented by a given halfedge.
+   * \param he The representative halfedge on the ccb.
+   * \return A pair of signs for the induced path.
+   *     A sign ZERO is if the ccb is non-perimetric,
+   *     POSITIVE if the ccb is perimetric and oriented in positive direction, 
+   *     NEGATIVE if the ccb is perimetric and oriented in negative direction).
+   */
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he) const;
+  
   /*!
    * Given two predecessor halfedges that will be used for inserting a
    * new halfedge pair (he_to is the predecessor of the directed curve 

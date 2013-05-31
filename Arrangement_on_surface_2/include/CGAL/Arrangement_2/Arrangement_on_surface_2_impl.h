@@ -2444,8 +2444,8 @@ _insert_at_vertices(DHalfedge* he_to,
   swapped_predecessors = false;
 
   // default values for signs
-  std::pair< CGAL::Sign, CGAL::Sign > signs1(CGAL::ZERO, CGAL::ZERO);
-  std::pair< CGAL::Sign, CGAL::Sign > signs2(CGAL::ZERO, CGAL::ZERO);
+  std::pair<Sign, Sign> signs1(ZERO, ZERO);
+  std::pair<Sign, Sign> signs2(ZERO, ZERO);
   // Remark: signs1 and signs2 are only used later when hole1==hole2
 
   // Comment: This also checks which is the 'cheaper' (previously the
@@ -2973,7 +2973,7 @@ _insert_at_vertices(DHalfedge* he_to,
             // store signs of CCB with CCB in DCEL and use them here
             // *oc_it is already closed, so we do a full round
             // (default = false)
-            std::pair<CGAL::Sign, CGAL::Sign> signs_oc = _compute_signs(*oc_it);
+            std::pair<Sign, Sign> signs_oc = _compute_signs(*oc_it);
 
             bool move = false;
            
@@ -3440,7 +3440,7 @@ _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
 //                No other local minima can be NULL.
 template <typename GeomTraits, typename TopTraits>
 template <typename OutputIterator>
-std::pair< CGAL::Sign, CGAL::Sign > 
+std::pair<Sign, Sign> 
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _compute_signs_and_local_minima(const DHalfedge* he_to,
                                 const X_monotone_curve_2& cv,
@@ -3578,14 +3578,12 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
   return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
 }
 
-// Computes locale minima of closed loop (end_is_anchor_opposite = false)
-// when deleting he_anchor and its opposite belonging to different faces
-// or 'loop-about-to-split' (end_is_anchor_opposite = true)
-// when deleting he_anchor and its opposite belonging to same face
+// Computes the signs of a closed ccb (loop) when deleting he_anchor and its
+// opposite belonging to different faces.
 template <typename GeomTraits, typename TopTraits>
-std::pair< CGAL::Sign, CGAL::Sign > 
+std::pair<Sign, Sign> 
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs(const DHalfedge* he_anchor, bool end_is_anchor_opposite) const
+_compute_signs(const DHalfedge* he_anchor) const
 {
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
@@ -3606,13 +3604,11 @@ _compute_signs(const DHalfedge* he_anchor, bool end_is_anchor_opposite) const
   
   // init with edges at first link
   // assuming that he_anchor has been removed
-  const DHalfedge* he_curr =
-    end_is_anchor_opposite ? he_anchor->opposite()->prev() : he_anchor;
+  const DHalfedge* he_curr = he_anchor;
   CGAL_assertion(! he_curr->has_null_curve());
   const DHalfedge* he_next = he_anchor->next();
   // init edge where loop should end
-  const DHalfedge* he_end =
-    end_is_anchor_opposite ? he_anchor->opposite() : he_anchor;
+  const DHalfedge* he_end = he_anchor;
 
   int x_index = 0;
   int y_index = 0;
@@ -3651,27 +3647,31 @@ _compute_signs(const DHalfedge* he_anchor, bool end_is_anchor_opposite) const
     // iterate
     he_curr = he_next;
     he_next = he_next->next();
-
-    CGAL_assertion(!end_is_anchor_opposite || he_curr != he_anchor); 
-
-  } while (end_is_anchor_opposite ? (he_next != he_end) : (he_curr != he_end));
+  } while (he_curr != he_end);
     
   // Return the leftmost vertex and its x_index (with respect to he_before).
-  return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
+  return (std::make_pair(sign(x_index), sign(y_index)));
 }
 
-// Computes locale minima of closed loop (end_is_anchor_opposite = false)
-// when deleting he_anchor and its opposite belonging to different faces
-// or 'loop-about-to-split' (end_is_anchor_opposite = true)
+// Computes the halfedge that points at the smallest vertex in a closed ccb
 // when deleting he_anchor and its opposite belonging to same face
+// (loop-about-to-split).
 template <typename GeomTraits, typename TopTraits>
-template <typename OutputIterator>
-std::pair< CGAL::Sign, CGAL::Sign > 
+std::pair<std::pair<Sign, Sign>,
+          const typename Arrangement_on_surface_2<GeomTraits,
+                                                  TopTraits>::DHalfedge*>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs_and_local_minima(const DHalfedge* he_anchor, 
-                                OutputIterator local_mins_it,
-                                bool end_is_anchor_opposite /* = false */) const
+_compute_signs_and_min(const DHalfedge* he_anchor, 
+                       Arr_parameter_space& ps_x_min,
+                       Arr_parameter_space& ps_y_min,
+                       int& index_min) const
 {
+  // Initialize
+  const DHalfedge* he_min = NULL;
+  ps_x_min = ARR_INTERIOR;
+  ps_y_min = ARR_INTERIOR;
+  index_min = 0;
+  
   // We go over the sequence of vertices, starting from he_before's target
   // vertex, until reaching he_after's source vertex, and find the leftmost
   // one. Note that we do this carefully, keeping track of the number of
@@ -3681,23 +3681,14 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
     m_geom_traits->parameter_space_in_x_2_object(); 
   typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
     m_geom_traits->parameter_space_in_y_2_object(); 
-  // typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
-  //   m_geom_traits->compare_y_at_x_right_2_object();  
 
-  // IDEA EBEB 2012-07-28 store indices of local_minima with CCB in DCEL:
-  // - determine values upon insertion of a curve
-  // - or if this is not possible, perform the following computation 
-  //   on-demand only
-  
-  // init with edges at first link
+  // init with edges at first link.
   // assuming that he_anchor has been removed
-  const DHalfedge* he_curr =
-    end_is_anchor_opposite ? he_anchor->opposite()->prev() : he_anchor;
+  const DHalfedge* he_curr = he_anchor->opposite()->prev();
   CGAL_assertion(! he_curr->has_null_curve());
   const DHalfedge* he_next = he_anchor->next();
   // init edge where loop should end
-  const DHalfedge* he_end =
-    end_is_anchor_opposite ? he_anchor->opposite() : he_anchor;
+  const DHalfedge* he_end = he_anchor->opposite();
 
   int x_index = 0;
   int y_index = 0;
@@ -3744,13 +3735,24 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
     if ((he_curr->direction() == ARR_RIGHT_TO_LEFT) &&
         (he_next->direction() == ARR_LEFT_TO_RIGHT))
     {
-      // Update the left lowest halfedge incident to the leftmost vertex.
-      // Note that we may visit the leftmost vertex several times.
-      
-      // std::cout << "hit" << std::endl;
-      // store he (and implicitly he->next) as halfedge pointing to a local
-      // minimum
-      *local_mins_it++  = std::make_pair(he_curr, x_index + x_correction);
+      const int index_curr = x_index + x_correction;
+
+      // Test the halfedge incident to the leftmost vertex.
+      // Note that we may visit the same vertex several times.
+        
+      if ((he_min == NULL) ||
+          (index_curr < index_min) ||
+          ((index_curr == index_min) &&
+           ((he_curr->vertex() != he_min->vertex()) &&
+            _is_smaller(he_curr, ps_x_curr, ps_y_curr,
+                        he_min, ps_x_min, ps_y_min,
+                        Are_all_sides_oblivious_category()))))
+      {
+        index_min = index_curr;
+        ps_x_min = ps_x_curr;
+        ps_y_min = ps_y_curr;
+        he_min = he_curr;
+      }
     }
     
     _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
@@ -3760,12 +3762,12 @@ _compute_signs_and_local_minima(const DHalfedge* he_anchor,
     he_curr = he_next;
     he_next = he_next->next();
 
-    CGAL_assertion(!end_is_anchor_opposite || he_curr != he_anchor); 
+    CGAL_assertion(he_curr != he_anchor); 
 
-  } while (end_is_anchor_opposite ? (he_next != he_end) : (he_curr != he_end));
+  } while (he_next != he_end);
     
-  // Return the leftmost vertex and its x_index (with respect to he_before).
-  return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
+  // Return the leftmost vertex and the signs.
+  return std::make_pair(std::make_pair(sign(x_index), sign(y_index)), he_min);
 }
 
 /* This is the implementation for the case where all 4 boundary sides are
@@ -4166,134 +4168,67 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // upon their removal - here each he1 and he2 belongs to a full cycle
     // THAT IS WHY we give the f1 == f2 test to determine whether end of loop 
     // should be he1->opposite() and he2->opposite(), respectively.
+
+    // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
+    // the two incident faces to merge. Thus, swapping is not needed.
     bool swap_he1_he2 = false;
     if (f1 == f2) {
-      // Compute signs of ccbs for he1 and he (and local_mins as side-effect)
-
-      // Comment EFEF 2013-05-31: if we ever find the need to use signs1 and
-      // signs2 out of this scope (for the non-planar case), the code must be
-      // dispatched, so that the planar case is not affected.
-      bool end_is_anchor_opposite = (f1 == f2);
-
-      std::list< std::pair< const DHalfedge*, int > > local_mins1;
-      std::pair< CGAL::Sign, CGAL::Sign > signs1 =
-        _compute_signs_and_local_minima(he1, std::front_inserter(local_mins1),
-                                        end_is_anchor_opposite);
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-      std::cout << "signs1.x: " << signs1.first << std::endl;
-      std::cout << "signs1.y: " << signs1.second << std::endl;
-      std::cout << "# local_mins1: " << local_mins1.size() << std::endl;
-#endif
-
-      std::list< std::pair< const DHalfedge*, int > > local_mins2;
-      std::pair< CGAL::Sign, CGAL::Sign > signs2 =
-        _compute_signs_and_local_minima(he2, std::front_inserter(local_mins2),
-                                      end_is_anchor_opposite);
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-      std::cout << "signs2.x: " << signs2.first << std::endl;
-      std::cout << "signs2.y: " << signs2.second << std::endl;
-      std::cout << "# local_mins2: " << local_mins2.size() << std::endl;
-#endif
-      // Comments: signs1/2 are used later again, probably for
-      // hole_creation_after_edge_removed
-
-      // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
-      // the two incident faces to merge. Thus, swapping is not needed.
-
       // In this case one of the following can happen: (a) a new hole will be
       // created by the removal of the edge (case 3.2.1 of the removal
       // procedure), or (b) an outer CCB will be split into two (case 3.2.2).
       // We begin by locating the leftmost vertex along the path from he1 to its
       // twin he2 and the leftmost vertex point along the path from the twin to
       // he1 (both paths do not include he1 and he2 themselves).
-      
-      // EBEB 2012-07-26 the following code enables optimizations:
-      // - compute perimetricy without geometric predicates
-      // - compute global min from local mimima
-      // EFEF 2012-11-08 - I think the above is addressed
+
+      // Comment EFEF 2013-05-31: if we ever find the need to use signs1 and
+      // signs2 out of this scope (for the non-planar case), the code must be
+      // dispatched, so that the planar case is not affected.
+
+      // Compute signs of ccbs for he1 and he2
+      // Comments: signs1/2 are used later again, probably for
+      // hole_creation_after_edge_removed
+
       typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
         m_geom_traits->parameter_space_in_x_2_object(); 
       typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
         m_geom_traits->parameter_space_in_y_2_object(); 
-      
-      bool is_perimetric1 = signs1.first || signs1.second;
-      // TODO EBEB 2012-07-29
-      // is this the right thing to do for torus, or let TopTraits decide?
 
-      const DHalfedge* he_min1 = NULL;
-      Arr_parameter_space ps_x_min1 = CGAL::ARR_INTERIOR;
-      Arr_parameter_space ps_y_min1 = CGAL::ARR_INTERIOR;
-      int index_min1 = 0;
-      
-      // Check all reported local minima
-      // IDEA EBEB 2012-07-29 maintain a tree to determine min in log(n) time
       typename std::list<std::pair<const DHalfedge*, int> >::iterator lm_it;
-      for (lm_it = local_mins1.begin(); lm_it != local_mins1.end(); ++lm_it) {
-        const DHalfedge* he = lm_it->first;
-        const int index = lm_it->second;
-        
-        const Arr_parameter_space ps_x_he_min =
-          parameter_space_in_x(he->curve(), ARR_MIN_END);
-        const Arr_parameter_space ps_y_he_min =
-          parameter_space_in_y(he->curve(), ARR_MIN_END);
 
-        if ((he_min1 == NULL) ||
-            (index < index_min1) ||
-            ((index == index_min1) &&
-             ((he->vertex() != he_min1->vertex()) &&
-              _is_smaller(he, ps_x_he_min, ps_y_he_min,
-                          he_min1, ps_x_min1, ps_y_min1,
-                          Are_all_sides_oblivious_category()))))
-        {
-          index_min1 = index;
-          ps_x_min1 = ps_x_he_min;
-          ps_y_min1 = ps_y_he_min;
-          he_min1 = he;
+      // Compute the minmum along ccb of he1:
+      Arr_parameter_space ps_x_min1, ps_y_min1;
+      int index_min1;
+      std::pair<std::pair<Sign, Sign>, const DHalfedge*> res1 =
+        _compute_signs_and_min(he1, ps_x_min1, ps_y_min1, index_min1);
+      std::pair<Sign, Sign> signs1 = res1.first;
+      const DHalfedge* he_min1 = res1.second;
+
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-          std::cout << "set global min1 to he: " << he->curve() << std::endl;
+      std::cout << "signs1.x: " << signs1.first << std::endl;
+      std::cout << "signs1.y: " << signs1.second << std::endl;
+      std::cout << "he_min1: " << he_min1->curve() << std::endl;
 #endif
-        }
-      }
+
+      // Compute the minmum along ccb of he2:
+      Arr_parameter_space ps_x_min2, ps_y_min2;
+      int index_min2;
+      std::pair<std::pair<Sign, Sign>, const DHalfedge*> res2 =
+        _compute_signs_and_min(he2, ps_x_min2, ps_y_min2, index_min2);
+      std::pair<Sign, Sign> signs2 = res2.first;
+      const DHalfedge* he_min2 = res2.second;
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+      std::cout << "signs2.x: " << signs2.first << std::endl;
+      std::cout << "signs2.y: " << signs2.second << std::endl;
+      std::cout << "he_min2: " << he_min2->curve() << std::endl;
+#endif
       
-      bool is_perimetric2 = signs2.first || signs2.second;
       // TODO EBEB 2012-07-29
       // is this the right thing to do for torus, or let TopTraits decide?
-      
-      const DHalfedge* he_min2 = NULL;
-      Arr_parameter_space ps_x_min2 = CGAL::ARR_INTERIOR;
-      Arr_parameter_space ps_y_min2 = CGAL::ARR_INTERIOR;
-      int index_min2 = 0;
-      
-      // check all reported local minima
-      for (lm_it = local_mins2.begin(); lm_it != local_mins2.end(); ++lm_it) {
-        const DHalfedge* he = lm_it->first;
-        const int index = lm_it->second;
-        
-        const Arr_parameter_space ps_x_he_min =
-          parameter_space_in_x(he->curve(), ARR_MIN_END);
-        const Arr_parameter_space ps_y_he_min =
-          parameter_space_in_y(he->curve(), ARR_MIN_END);
-        
-        if ((he_min2 == NULL) ||
-            (index < index_min2) ||
-            ((index == index_min2) &&
-             ((he->vertex() != he_min2->vertex()) &&
-              _is_smaller(he, ps_x_he_min, ps_y_he_min,
-                          he_min2, ps_x_min2, ps_y_min2,
-                          Are_all_sides_oblivious_category()))))
-        {
-          index_min2 = index;
-          ps_x_min2 = ps_x_he_min;
-          ps_y_min2 = ps_y_he_min;
-          he_min2 = he;
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-          std::cout << "set global min2 to he: " << he->curve() << std::endl;
-#endif
-        }
-      }
+      bool is_perimetric1 = signs1.first || signs1.second;
+      bool is_perimetric2 = signs2.first || signs2.second;
       
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-#if 0
       std::cout << std::endl
                 << "index 1: " << index_min1
                 << ", ps_x_min1: " << ps_x_min1
@@ -4306,7 +4241,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
                 << ", ps_y_min2: " << ps_y_min2
                 << ", is_perimetric2: " << is_perimetric2
                 << std::endl;
-#endif
 #endif
       
       if (is_perimetric1 || is_perimetric2) {
