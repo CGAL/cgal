@@ -54,6 +54,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in 
         ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
       
+      # TODO we also want to run html_post_process per package as a custom_command with POST_BUILD
       add_custom_target(${CGAL_PACKAGE_NAME}_doc
         ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
 
