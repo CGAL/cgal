@@ -66,15 +66,15 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   check_types(disp);
   check_types(drop);
   
-	disp = disp;
-	drop = drop;
+  disp = disp;
+  drop = drop;
 
   std::back_insert_iterator<std::vector<T2> > bck_ins(cont_2);
   
   T1* d;
 
-	CGAL::cpp11::tie(d, bck_ins) = disp;
-	CGAL::cpp11::tie(d, bck_ins) = drop;
+  CGAL::cpp11::tie(d, bck_ins) = disp;
+  CGAL::cpp11::tie(d, bck_ins) = drop;
 }
 
 
