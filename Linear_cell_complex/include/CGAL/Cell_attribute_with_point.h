@@ -49,6 +49,13 @@ namespace CGAL {
     const Point& point() const
     { return mpoint; }
 
+    /// Copy the point of an attribute in parameter.
+    template<class Attr2>
+    void copy(const Attr2& attr)
+    {
+      internal::Set_point_if_exist<Point, Attr2>::run(point(), aattr);
+    }
+
   protected:
     /// The point associated with the cell.
     Point mpoint;
@@ -56,27 +63,36 @@ namespace CGAL {
 
   /// Attribute associated with a point and an info.
   template < class LCC, class Info_=void, class Tag=Tag_true,
-             class Functor_on_merge_=Null_functor, 
+             class Functor_on_merge_=Null_functor,
              class Functor_on_split_=Null_functor >
   class Cell_attribute_with_point :
-    public Cell_attribute<LCC, Info_, Tag, 
+    public Cell_attribute<LCC, Info_, Tag,
                           Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
+    template<typename Map1, typename Map2, int i,
+             typename T1, typename T2, typename Info1, typename Info2>
+    friend struct internal::Copy_attr_if_same_type;
+
   public:
-    typedef Cell_attribute<LCC, Info_, Tag, 
+    typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
+                                      Functor_on_split_> Self;
+
+    typedef Cell_attribute<LCC, Info_, Tag,
                            Functor_on_merge_, Functor_on_split_> Base1;
     typedef Point_for_cell<typename LCC::Point> Base2;
-    
+
     typedef typename LCC::Point             Point;
     typedef typename LCC::Dart_handle       Dart_handle;
     typedef typename LCC::Dart_const_handle Dart_const_handle;
-    
+
     typedef Info_                Info;
     typedef Functor_on_merge_    Functor_on_merge;
     typedef Functor_on_split_    Functor_on_split;
 
-    
+    using Base1::info;
+
+  protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}
@@ -91,30 +107,41 @@ namespace CGAL {
       Base2(apoint)
     {}
 
-    using Base1::info;
+    /// Copy the point, and if same type info.
+    template<class Attr2>
+    void copy(const Attr2& aattr)
+    {
+      Base1::copy(aattr);
+      Base2::copy(aattr);
+    }
   };
 
   /// Attribute associated with a point and without info.
   template < class LCC, class Tag,
-             class Functor_on_merge_, 
+             class Functor_on_merge_,
              class Functor_on_split_ >
   class Cell_attribute_with_point<LCC, void, Tag,
                                   Functor_on_merge_, Functor_on_split_> :
     public Cell_attribute<LCC, void, Tag, Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
+    template<typename Map1, typename Map2, int i,
+             typename T1, typename T2, typename Info1, typename Info2>
+    friend struct internal::Copy_attr_if_same_type;
+
   public:
-    typedef Cell_attribute<LCC, void, Tag, 
+    typedef Cell_attribute<LCC, void, Tag,
                            Functor_on_merge_, Functor_on_split_> Base1;
     typedef Point_for_cell<typename LCC::Point> Base2;
 
     typedef typename LCC::Point             Point;
     typedef typename LCC::Dart_handle       Dart_handle;
-    typedef typename LCC::Dart_const_handle Dart_const_handle;    
+    typedef typename LCC::Dart_const_handle Dart_const_handle;
 
     typedef Functor_on_merge_ Functor_on_merge;
     typedef Functor_on_split_ Functor_on_split;
 
+  protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}
@@ -122,6 +149,13 @@ namespace CGAL {
     /// Contructor with a point in parameter.
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
+
+    /// Copy the point of an attribute in parameter.
+    template<class Attr2>
+    void copy(const Attr2& attr)
+    {
+      Base2::copy(aattr);
+    }
   };
 } // namespace CGAL
 
