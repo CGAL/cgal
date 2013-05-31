@@ -673,7 +673,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            = ${CMAKE_CURRENT_SOURCE_DIR}/DoxygenLayout.xml
+LAYOUT_FILE            = ${CMAKE_CURRENT_SOURCE_DIR}/DoxygenLayoutPackage.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files
 # containing the references data. This must be a list of .bib files. The
