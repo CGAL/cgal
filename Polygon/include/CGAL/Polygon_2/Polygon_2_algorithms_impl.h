@@ -110,27 +110,6 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 }
 
 //-----------------------------------------------------------------------//
-//                          bbox_2
-//-----------------------------------------------------------------------//
-
-template <class InputIterator, class PolygonTraits>
-Bbox_2 bbox_2(InputIterator first, 
-	      InputIterator last,
-	      const PolygonTraits& traits)
-{
-  typename PolygonTraits::Construct_bbox_2 
-    construct_bbox = traits.construct_bbox_2_object();
-
-  CGAL_polygon_precondition(first != last);
-  Bbox_2 result = construct_bbox(*first);
-
-  while (++first != last)
-    result = result + construct_bbox(*first);
-
-  return result;
-}
-
-//-----------------------------------------------------------------------//
 //                          area_2
 //-----------------------------------------------------------------------//
 // uses Traits::

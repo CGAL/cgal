@@ -122,21 +122,6 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 				ForwardIterator last,
 				const PolygonTraits& traits);
 
-/// Returns the bounding box of the range `[first,last)`. 
-/// 
-/// \cgalRequires `Traits` is a model of the concept 
-/// 	  `PolygonTraits_2`.
-/// 	  Only the members `Construct_bbox_2` and
-/// 	  `construct_bbox_2_object()` are used.
-/// \cgalRequires The value type of `InputIterator` must be `Traits::Point_2`.
-/// 
-/// \sa `CGAL::Polygon_2`
-template <class InputIterator, class PolygonTraits>
-Bbox_2 bbox_2(InputIterator first, 
-	      InputIterator last,
-	      const PolygonTraits& traits);
-
-
 /// Computes the signed area of the polygon defined by the range of points
 /// `[first,last)`. The area is returned in the parameter
 /// `result`. The sign is positive for counterclockwise polygons, negative for
@@ -400,17 +385,6 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
     typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return bottom_vertex_2(first, last, K());
 }
-
-template <class InputIterator>
-inline
-Bbox_2 bbox_2(InputIterator first,
-	      InputIterator last)
-{
-  typedef typename Kernel_traits<
-    typename std::iterator_traits<InputIterator>::value_type>::Kernel K; 
-  return bbox_2(first, last, K());
-}
-
 
 template <class ForwardIterator, class Numbertype>
 inline

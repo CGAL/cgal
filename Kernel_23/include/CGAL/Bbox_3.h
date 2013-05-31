@@ -233,6 +233,28 @@ operator>>(std::istream &is, Bbox_3& b)
   return is;
 }
 
+template <class Input_iterator, class Traits>
+Bbox_3 bbox_3(Input_iterator begin, Input_iterator end, const Traits& traits)
+{
+  if (begin==end) return Bbox_3();
+  typename Traits::Construct_bbox_3 get_bbox = traits.construct_bbox_3_object();
+  Bbox_3 res = get_bbox( *begin );
+  for (++begin; begin!=end; ++begin)
+    res += get_bbox( *begin );
+  return res;
+}
+
+template <class Input_iterator>
+Bbox_3 bbox_3(Input_iterator begin, Input_iterator end)
+{
+  if (begin==end) return Bbox_3();
+  Bbox_3 res = begin->bbox();
+  for (++begin; begin!=end; ++begin)
+    res += begin->bbox();
+  return res;
+}
+
+
 } //namespace CGAL
 
 #endif // CGAL_BBOX_3_H

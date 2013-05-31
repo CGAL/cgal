@@ -102,6 +102,28 @@ intersection is non-empty.
 */
 bool do_overlap(const Bbox_2 &bb1, const Bbox_2 &bb2);
 
+/*!
+returns the bounding box of the objects in the range `[first,past_end[`.
+Each object in the range must have a member function `BBox_2 bbox()`
+returning its bounding box.
+
+\relates Bbox_2
+*/
+template<class InputIterator>
+Bbox_2 bbox_2(InputIterator begin, InputIterator past_end);
+
+/*!
+returns the bounding box of the objects in the range `[first,past_end[`.
+`Traits` must provide a functor `Traits::Construct_bbox_2` having an
+operator returning the bounding box of each object in the range.
+`Traits` must also have a member function 
+`Traits::Construct_bbox_2 construct_bbox_2_object() const`.
+
+\relates Bbox_2
+*/
+template<class InputIterator, class Traits>
+Bbox_2 bbox_2(InputIterator begin, InputIterator past_end, const Traits& traits);
+
 /// @}
 
 } /* end namespace CGAL */

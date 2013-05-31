@@ -207,6 +207,27 @@ operator>>(std::istream &is, Bbox_2 &b)
     return is;
 }
 
+template <class Input_iterator, class Traits>
+Bbox_2 bbox_2(Input_iterator begin, Input_iterator end, const Traits& traits)
+{
+  if (begin==end) return Bbox_2();
+  typename Traits::Construct_bbox_2 get_bbox = traits.construct_bbox_2_object();
+  Bbox_2 res = get_bbox( *begin );
+  for (++begin; begin!=end; ++begin)
+    res += get_bbox( *begin );
+  return res;
+}
+
+template <class Input_iterator>
+Bbox_2 bbox_2(Input_iterator begin, Input_iterator end)
+{
+  if (begin==end) return Bbox_2();
+  Bbox_2 res = begin->bbox();
+  for (++begin; begin!=end; ++begin)
+    res += begin->bbox();
+  return res;
+}
+
 } //namespace CGAL
 
 #endif // CGAL_BBOX_2_H
