@@ -21,6 +21,13 @@ args = parser.parse_args()
 packagename = args.packagename
 creationpath = args.creationpath
 
+doxystring = \
+r"""@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Put title of project here"
+INPUT        = ${CMAKE_SOURCE_DIR}/PACKAGENAME/doc/PACKAGENAME/ \
+               ${CMAKE_SOURCE_DIR}/PACKAGENAME/include
+"""
+
 xmlstring = \
 """<project>
  <!-- PRETTY PACKAGE NAME should be the same as the one used in description -->
@@ -177,6 +184,11 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     xmlfile = open(xmlpath, 'w')
     xmlfile.write(re.sub('PACKAGENAME', packagename, xmlstring))
     xmlfile.close()
+
+    doxypath = os.path.join(docpath, ('Doxyfile.in'))
+    doxyfile = open(doxypath, 'w')
+    doxyfile.write(re.sub('PACKAGENAME', packagename, doxystring))
+    doxyfile.close()
 
     descrpath = os.path.join(docpath, 'PackageDescription.txt')
     descrfile = open(descrpath, 'w')
