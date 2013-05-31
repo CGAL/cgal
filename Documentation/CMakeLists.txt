@@ -23,6 +23,11 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       file(REMOVE ${CGAL_DOC_PACKAGE_DEFAULTS})
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "@INCLUDE = ${CGAL_DOC_DOXY_DEFAULT}\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "OUTPUT_DIRECTORY = ${CGAL_DOC_OUTPUT_DIR}/${CGAL_PACKAGE_NAME}\n")
+
+      if(CGAL_DOC_CREATE_LOGS)
+        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "WARN_LOGFILE = ${CGAL_DOC_LOG_DIR}/${CGAL_PACKAGE_NAME}.log\n")
+      endif()
+
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "IMAGE_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/fig\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TAGFILE = ${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_NAME}.tag\n")
@@ -75,12 +80,19 @@ find_package(PythonInterp 2.7)
 
 if(DOXYGEN_FOUND)
   # set up the directories and variables
-  set(CGAL_DOC_MATHJAX_LOCATION "http://cdn.mathjax.org/mathjax/latest")
+  option(CGAL_DOC_MATHJAX_LOCATION "The location of MathJax to be used for the documentation." 
+    "http://cdn.mathjax.org/mathjax/latest")
 
   set(CGAL_DOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc_output")
   file(MAKE_DIRECTORY "${CGAL_DOC_OUTPUT_DIR}")
-  set(CGAL_DOC_LOG_DIR "${CMAKE_BINARY_DIR}/doc_log")
-  file(MAKE_DIRECTORY "${CGAL_DOC_LOG_DIR}")
+  
+  option(CGAL_DOC_CREATE_LOGS "Write log files or print warnings and errors to cerr when building the doc." OFF)
+
+  if(CGAL_DOC_CREATE_LOGS)
+    set(CGAL_DOC_LOG_DIR "${CMAKE_BINARY_DIR}/doc_log")
+    file(MAKE_DIRECTORY "${CGAL_DOC_LOG_DIR}")
+  endif()
+
   set(CGAL_DOC_TAG_DIR "${CMAKE_BINARY_DIR}/doc_tags")
   file(MAKE_DIRECTORY "${CGAL_DOC_TAG_DIR}")
   set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
@@ -123,9 +135,22 @@ if(DOXYGEN_FOUND)
     add_dependencies(Documentation_doxy ${depend}_doc)
   endforeach()
 
-  add_custom_target(html_postprocess
-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR}
-    )
+  if(PYTHONINTERP_FOUND)
+    add_custom_target(html_postprocess
+      ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR}
+      )
+
+    if(CGAL_DOC_CREATE_LOGS)
+      add_custom_target(Documentation_test
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR}
+        DEPENDS Documentation_doc)
+
+      add_custom_target(Documentation_test_publish
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
+        DEPENDS Documentation_doc)
+    endif()
+  endif()
+  
   
   # add_custom_target(doc) dummy to depend on all docs, require to run
   # twice or something

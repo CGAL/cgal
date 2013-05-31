@@ -42,35 +42,14 @@ def count_errors_and_warnings(fn):
         warn_count=0
         error_count=0
         for line in f:
-            if re.match('^citelist.*warning.*$', line):
-              continue
-            if re.match('^.*: warning: .*$', line):
+            if re.match('^citelist.*[wW]arning.*$', line):
+                continue
+            if re.match('^.*:.*[wW]arning.*$', line):
                 warn_count=warn_count + 1
-            if re.match('^.*: error: .*$', line):
+            if re.match('^.*:.*[eE]rror.*$', line):
                 error_count=error_count + 1
     return (warn_count, error_count)
 
-def update():
-    subprocess.call(['git', 'pull'])
-
-def integration_test():
-  subprocess.call(['git', 'fetch'])
-  subprocess.call(['git', 'checkout','origin/integration'])
-  subprocess.call(['git', 'reset','--hard','origin/integration'])
-
-def purge_doc():
-    for log in glob.glob('./log/*.*'):
-        os.remove(log)
-
-    for tag in glob.glob('./tags/*.*'):
-        os.remove(tag)
-
-    for output in glob.glob('./output/CGAL.CGAL*'):
-        shutil.rmtree(output)
-
-def run_doxyassist(doxyassist, doxygen):
-    subprocess.call([sys.executable,doxyassist, '--debug', '--doxygen', doxygen, 'doxyassist.xml'])
-    
 def get_version():
     proc=subprocess.Popen(['git', 'rev-parse', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     rev=proc.communicate()[0].strip()
@@ -114,23 +93,23 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </table></body></html>'''
     
     if args.publish and args.do_copy_results:
-      link="\nLink to this <a href=CGAL.CGAL/html/index.html>documentation</a>\n"
+      link="\nLink to this <a href=output/CGAL/html/index.html>documentation</a>\n"
       d = pq(page_header+link+page_footer)
     else:
       d = pq(page_header+page_footer)
-    logs=sorted(glob.glob('./log/CGAL.CGAL*-error.log'))
+    logs=sorted(glob.glob('./*.log'))
     err_war_sum=(0,0)
     for log in logs:
         res=count_errors_and_warnings(log)
         err_war_sum=tuple(map(operator.add, err_war_sum, res))
-        status='class="package-errors"'
+        status='class="package-error"'
         if res[0] == 0 and res[1] == 0:
             status='class="package-good"'
         elif res[0] != 0 and res[1] == 0:
             status='class="package-warnings"'
     
         basename=os.path.basename(log)
-        pretty_name=basename[5:-10]
+        pretty_name=basename[0:-4]
         new_row='''<tr {status}>
 <td><a class="name" href="{basename}">{pretty_name}</a></td>
 <td class="warn-count">{warn_count}
@@ -142,35 +121,17 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 def main():
     parser = argparse.ArgumentParser(
     description='This script updates a checkout of cgal, purges the documentation, rebuilds it, creates an HTML summary of the resulting log files, and publishes the created files and logs.')
-    parser.add_argument('--doxyassist', default='/usr/bin/doxyassist.py', metavar='/path/to/doxyassist.py')
-    parser.add_argument('--doxygen', default='/usr/bin/doxygen', metavar='/path/to/doxygenbinary', help='the doxygen binary', )
-    parser.add_argument('--mathjax', metavar='/path/to/MathJaxCheckout', help='path to MathJax checkout', )
-    parser.add_argument('--documentation', default='.', metavar='/path/to/cgal/Documentation', help='The path to the Documentation dir of the git checkout you would like to test.')
+
     parser.add_argument('--publish', metavar='/path/to/publish', help='Specify this argument if the results should be published.')
-    parser.add_argument('--do-update', action="store_true", help='Specify this argument if you want to do a version control update.')
-    parser.add_argument('--test-integration', action="store_true", help='Specify this argument if you want to switch to integration and use the latest version.')
-    parser.add_argument('--do-purge-rebuild', action="store_true", help='Specify this argument if you want to actually rebuild the documentation. Just write the report if not specified.')
+    parser.add_argument('--doc-log-dir', default='.', metavar='/path/to/cgal/build/dir/doc_log', help='The path of the documentation logs.')
+    parser.add_argument('--output-dir', default='.', metavar='/path/to/cgal/build/dir/doc_output', help='The path to the build documentation')
     parser.add_argument('--cgal-version', help='Path to a version.h file from the current release. If not specified use git hash instead.')
     parser.add_argument('--version-to-keep', help='indicates the number of release testsuites that should be kept at the publishing location.')
     parser.add_argument('--do-copy-results', action="store_true", help='Specify this argument if you want to copy the generated documentation into the publishing location.')
     
     args = parser.parse_args()
     
-    os.chdir(args.documentation)
-    if args.do_update:
-        update()
-
-    if args.test_integration:
-      integration_test()
-
-    if args.do_purge_rebuild:
-        doxyassist="".join(args.doxyassist)
-        doxygen="".join(args.doxygen)
-        purge_doc()
-        # two runs are required, one to build the tags, the next to actually use them
-        run_doxyassist(doxyassist, doxygen)
-        run_doxyassist(doxyassist, doxygen)
-        subprocess.call([sys.executable,'./html_output_post_processing.py', '--output', './output'])
+    os.chdir(args.doc_log_dir)
 
     d, sum=write_report(args)
     if args.cgal_version:
@@ -182,7 +143,7 @@ def main():
 
     title=d('#maintitle')
     title.text(title.text() + ' for ' + version_string)
-    write_out_html(d, './log/index.html')
+    write_out_html(d, './index.html')
     
     if args.publish:
         if args.publish.endswith('/'):
@@ -232,25 +193,14 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         log_target=publish_dir + version_string
         try:
           #copy log files
-          shutil.copytree('./log', log_target)
+          shutil.copytree('.', log_target)
           try:
             #copy documentation
             if args.do_copy_results:
-              for dir in os.listdir('output'):
-                  src = os.path.join('output', dir)
-                  tgt = os.path.join(log_target, dir)
-                  if os.path.islink(src):
-                    link_target=os.readlink(src)
-                    os.symlink(link_target, tgt)
-                  else:
-                    shutil.copytree(src, tgt,symlinks=True)
+              tgt=os.path.join(log_target, 'output')
+              shutil.copytree(args.output_dir, tgt, symlinks=True)
           except:
             sys.stderr.write("Error while copying documentation\n")
-          #create symbolic link to MathJax for the output
-          if args.mathjax:
-            mathjax_link=os.path.join(log_target,"MathJax")
-            if not os.path.exists(mathjax_link):
-              os.symlink(args.mathjax, mathjax_link)
         except:
           sys.stderr.write("Error while writing to "+log_target+". Does it already exists?\n")
         
