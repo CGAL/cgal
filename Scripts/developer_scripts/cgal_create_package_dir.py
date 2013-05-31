@@ -98,6 +98,15 @@ The following example shows ...
 } /* namespace CGAL */
 """
 
+depsstring = \
+r"""Manual
+Kernel_23
+STL_Extension
+Algebraic_foundations
+Circulator
+Stream_support
+"""
+
 if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
 
     if creationpath and (not creationpath == '.'):
@@ -165,6 +174,11 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     descrfile = open(descrpath, 'w')
     descrfile.write(descrstring)
     descrfile.close()
+
+    depspath = os.path.join(docpath, ('dependencies'))
+    depsfile = open(depspath, 'w')
+    depsfile.write(depsstring)
+    depsfile.close()
 
     # try to find figure pkg-small.png and copy it to figure path
     scriptdir = os.path.dirname(sys.argv[0])
