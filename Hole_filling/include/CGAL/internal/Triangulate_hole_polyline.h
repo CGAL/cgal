@@ -98,18 +98,17 @@ private:
         int i, 
         int k, 
         OutputIterator out)
-  {            
+  {
+    if(i + 1 == k) { return out; }
+
     if(i+2 == k){
       *out++ = OutputIteratorValueType(i%n, (i+1)%n, k%n);
-    } else {
+    } 
+    else {
       int la = lambda[i*n + k];
-      if(la != i+1){
-        out = trace<OutputIteratorValueType>(n, lambda, i, la, out);
-      }
+      out = trace<OutputIteratorValueType>(n, lambda, i, la, out);
       *out++ = OutputIteratorValueType(i%n, la%n, k%n);
-    if(la != k-1){
       out = trace<OutputIteratorValueType>(n, lambda, la, k, out);
-    }
     }
     return out;
   }

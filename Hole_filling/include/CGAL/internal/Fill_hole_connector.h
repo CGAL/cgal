@@ -66,11 +66,14 @@ namespace internal {
         average_length(poly, circ->vertex(), scale_attribute); 
       } while (++circ != done);
       // Triangulate
-      std::set<Facet_handle> facets;
-      triangulate_hole(poly, it, std::inserter(facets, facets.begin()));
+      //std::set<Facet_handle> facets;
+      std::vector<Facet_handle> facets;
+      triangulate_hole(poly, it, std::back_inserter(facets));//std::inserter(facets, facets.begin()));
+      std::cout << "f " << facets.size() << std::endl;
       // Refine
+      std::set<Facet_handle> facets_2(facets.begin(), facets.end());
       internal::Refine_Polyhedron_3<Polyhedron> refine_functor(alpha);
-      refine_functor(poly, scale_attribute, facets);
+      refine_functor(poly, scale_attribute, facets_2);
 
       std::copy(facets.begin(), facets.end(), output);
     }

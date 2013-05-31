@@ -30,7 +30,8 @@ void triangulate_hole(Polyhedron& polyhedron,
   typename Polyhedron::Halfedge_handle border_halfedge
   ) 
 {
-  internal::Triangulate_hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge);
+  triangulate_hole(polyhedron, border_halfedge, 
+    boost::make_function_output_iterator(CGAL::internal::Nop_functor()));
 }
 
 /**
