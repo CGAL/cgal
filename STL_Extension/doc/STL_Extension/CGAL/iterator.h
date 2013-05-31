@@ -107,8 +107,9 @@ Counting_iterator( Iterator j, std::size_t n = 0);
 The class `Dispatch_or_drop_output_iterator` defines an
 `OutputIterator` that contains a tuple of output iterators, and dispatches
 among those based on the type of the value type which is put in it.
-Other types are also accepted, and the object is simply discarded in this case.
-It also inherits from `O`, which makes it easy to treat like a tuple.
+The output iterator is also able to dispatch values to the output iterators if a tuple of type `V` is put in it.
+An object of any other type can be put in it, but it is simply discarded in this case.
+It inherits from `O`, which makes it easy to treat like a tuple.
 
 \cgalHeading{Parameters}
 
@@ -188,7 +189,8 @@ dispatch_or_drop_output(O... o);
 The class `Dispatch_output_iterator` defines an
 `OutputIterator` that contains a tuple of output iterators, and dispatches
 among those based on the type of the value type which is put in it.
-It also inherits from `O`, which makes it easy to treat like a tuple.
+The output iterator is also able to dispatch values to the output iterators if a tuple of type `V` is put in it.
+It inherits from `O`, which makes it easy to treat like a tuple.
 
 \cgalHeading{Parameters}
 

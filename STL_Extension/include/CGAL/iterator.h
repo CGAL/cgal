@@ -1199,6 +1199,9 @@ struct Derivator
   typedef Derivator<D, V, O> Self;
   Self& operator=(const Self&) = delete;
 #endif
+  template <class Tuple>
+  void tuple_dispatch(const Tuple&)
+  {}
 };
 
 template < typename D, typename V1, typename O1, typename... V, typename... O>
@@ -1218,6 +1221,14 @@ struct Derivator<D, cpp11::tuple<V1, V...>, cpp11::tuple<O1, O...> >
   {
     * cpp11::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = v;
     return static_cast<D&>(*this);
+  }
+
+  template <class Tuple>
+  void tuple_dispatch(const Tuple& t)
+  {
+    * cpp11::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = 
+        cpp11::get< D::size - sizeof...(V) - 1 >(t);
+    static_cast<Base&>(*this).tuple_dispatch(t);
   }
 };
 
@@ -1261,6 +1272,7 @@ private:
 public:
 
   using Base::operator=;
+  using Base::tuple_dispatch;
 
   Dispatch_output_iterator(O... o) : cpp11::tuple<O...>(o...) {}
 
@@ -1275,6 +1287,12 @@ public:
   Self& operator*() { return *this; }
 
   const Iterator_tuple& get_iterator_tuple() const { return *this; }
+  
+  Self& operator=(const cpp11::tuple<V...>& t)
+  {
+    tuple_dispatch(t);
+    return *this;
+  }
 };
 
 template < typename... V, typename... O>
@@ -1365,7 +1383,12 @@ public:
     *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
-  
+
+  Self& operator=(const cpp11::tuple<V1>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    return *this;
+  }
+
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
@@ -1466,7 +1489,13 @@ public:
     *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
-  
+
+  Self& operator=(const cpp11::tuple<V1, V2>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    return *this;
+  }
+
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
@@ -1577,6 +1606,13 @@ public:
     *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    return *this;
+  }
   
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
@@ -1701,6 +1737,14 @@ public:
     *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3, V4>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<3>(obj);
+    return *this;
+  }
   
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
@@ -1835,6 +1879,15 @@ public:
     *cpp11::get<4>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3, V4, V5>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<3>(obj);
+    *cpp11::get<4>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<4>(obj);
+    return *this;
+  }
   
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
@@ -1979,7 +2032,17 @@ public:
     *cpp11::get<5>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
-  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3, V4, V5, V6>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<3>(obj);
+    *cpp11::get<4>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<4>(obj);
+    *cpp11::get<5>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<5>(obj);
+    return *this;
+  }
+
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
@@ -2133,7 +2196,18 @@ public:
     *cpp11::get<6>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
-  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3, V4, V5, V6, V7>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<3>(obj);
+    *cpp11::get<4>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<4>(obj);
+    *cpp11::get<5>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<5>(obj);
+    *cpp11::get<6>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<6>(obj);
+    return *this;
+  }
+
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
