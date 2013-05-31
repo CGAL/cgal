@@ -56,7 +56,7 @@ struct Null_functor {
 
 // For concurrency
 struct Sequential_tag {};
-struct Parallel_tag {};
+struct Parallel_tag : public Sequential_tag {};
 
 // A function that asserts a specific compile time tag
 // forcing its two arguments to have equal type.
