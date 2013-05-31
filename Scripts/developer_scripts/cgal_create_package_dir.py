@@ -10,7 +10,9 @@ import argparse
 import shutil
 
 parser = argparse.ArgumentParser(
-    description='Create directory structure for a new CGAL package.')
+    description='Create directory structure for a new CGAL package.',
+    epilog='A single directory named after the package, which contains ' +
+           'the whole directory structure, is created at the creation path.')
 parser.add_argument('packagename',
                     help='name of new CGAL package')
 parser.add_argument('creationpath', nargs='?',
