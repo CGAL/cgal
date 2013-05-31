@@ -1,6 +1,7 @@
 project(Documentation NONE)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+# Visuall Studio users might appreciate this
+# set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 macro(subdirlist result curdir)
   file(GLOB children RELATIVE ${curdir} ${curdir}/*)
@@ -53,16 +54,9 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in 
         ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
       
-      add_custom_target(${CGAL_PACKAGE_NAME}_doxy
+      add_custom_target(${CGAL_PACKAGE_NAME}_doc
         ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
 
-      add_custom_target(${CGAL_PACKAGE_NAME}_doc
-        # to be implemented
-        # ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --package path_to_package
-        # depend because we need the styefiles and collective resources
-        DEPENDS ${CGAL_PACKAGE_NAME}_doxy)
-
-      set_target_properties(${CGAL_PACKAGE_NAME}_doxy PROPERTIES FOLDER Documentation/Sub/internal)
       set_target_properties(${CGAL_PACKAGE_NAME}_doc PROPERTIES FOLDER Documentation/Packages)
 
       # don't do this for now
@@ -132,7 +126,7 @@ if(DOXYGEN_FOUND)
   # hard-code that Documentation_doc depends on all packages
   file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
   foreach(depend ${DEPENDENCIES})
-    add_dependencies(Documentation_doxy ${depend}_doc)
+    add_dependencies(Documentation_doc ${depend}_doc)
   endforeach()
 
   if(PYTHONINTERP_FOUND)
