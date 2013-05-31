@@ -90,7 +90,7 @@ introduces a
 variable `p` of type `Point_d<Kernel>` in dimension `d` 
 initialized to the point with homogeneous coordinates as defined by 
 `H = set [first,last)` and `D`: \f$ (\pm H[0], 
-\pm H[1], \ldots, \pm H[d-1], \pm D}\f$. 
+\pm H[1], \ldots, \pm H[d-1], \pm D)\f$. 
 The sign  chosen is the sign of \f$ D\f$.
 
 \pre `D` is non-zero, the iterator range defines a \f$ d\f$-tuple of `RT`. 
