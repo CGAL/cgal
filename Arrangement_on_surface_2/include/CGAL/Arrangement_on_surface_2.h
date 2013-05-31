@@ -1822,6 +1822,10 @@ protected:
                                   OutputIterator local_mins_it,
                                   bool end_is_anchor_opposite = false) const;
 
+  std::pair< CGAL::Sign, CGAL::Sign > 
+  _compute_signs(const DHalfedge* he_ccb,
+                 bool end_is_anchor_opposite = false) const;
+  
 
   /*!
    * Given two predecessor halfedges that will be used for inserting a

@@ -2426,8 +2426,10 @@ _insert_at_vertices(DHalfedge* he_to,
   CGAL_precondition(he_to != NULL);
   CGAL_precondition(he_away != NULL);
 
-  // TODO EBEB 2012-10-21 rewrite the code in terms of he_to and he_away instead of prev1 and prev2
-  // the remainder of the function we deal with this situation adds he1 and he2 in this way:
+  // TODO EBEB 2012-10-21 rewrite the code in terms of he_to and he_away
+  // instead of prev1 and prev2
+  // the remainder of the function we deal with this situation adds he1 and
+  // he2 in this way:
   //    ----prev1---> ( --he2--> ) ---p2next--->
   //                  o ===cv=== 0
   //    <---p1next--- ( <--he1-- ) <---prev2----
@@ -2465,7 +2467,8 @@ _insert_at_vertices(DHalfedge* he_to,
       // - avoid length-test
       // - search only local minima to find leftmost vertex
       // - re-use of signs of ccbs
-      // signs1/2 are only used when hole1 == hole2, thus we have to init them now
+      // signs1/2 are only used when hole1 == hole2,
+      // thus we have to init them now
       Arr_halfedge_direction cv_dir1 = cv_dir;
       std::list<std::pair<const DHalfedge*, int> > local_mins1;
       signs1 =
@@ -2966,29 +2969,25 @@ _insert_at_vertices(DHalfedge* he_to,
             // he2 is supposed to be a perimetric path and so all of the oc_its,
             // we only have to detect which one. We do so by comparing signs of
             // ccbs:
-            std::list< std::pair< const DHalfedge*, int > > dummy;
             // IDEA EBEB 2012-07-28
             // store signs of CCB with CCB in DCEL and use them here
-            std::pair< CGAL::Sign, CGAL::Sign > signs_oc =
-              // *oc_it is already closed, so we do a full round
-              // (default = false)
-              _compute_signs_and_local_minima(*oc_it,
-                                              std::front_inserter(dummy));
+            // *oc_it is already closed, so we do a full round
+            // (default = false)
+            std::pair<CGAL::Sign, CGAL::Sign> signs_oc = _compute_signs(*oc_it);
 
             bool move = false;
            
             // TODO EBEB 2012-08-07 this either compares signs in left-right
             // direction OR signs in bottom-top direction, which will probably
             // not work for torus!
-            if (signs2.first != CGAL::ZERO && signs_oc.first != CGAL::ZERO) {
-              if (signs2.first != signs_oc.first)
-                move = true;
+            if ((signs2.first != CGAL::ZERO) && (signs_oc.first != CGAL::ZERO))
+            {
+              if (signs2.first != signs_oc.first) move = true;
             }
             else if ((signs2.second != CGAL::ZERO) &&
                      (signs_oc.second != CGAL::ZERO))
             {
-              if (signs2.second != signs_oc.second)
-                move = true;
+              if (signs2.second != signs_oc.second) move = true;
             }
             
             if (move) {
@@ -3584,6 +3583,88 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
 // or 'loop-about-to-split' (end_is_anchor_opposite = true)
 // when deleting he_anchor and its opposite belonging to same face
 template <typename GeomTraits, typename TopTraits>
+std::pair< CGAL::Sign, CGAL::Sign > 
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_compute_signs(const DHalfedge* he_anchor, bool end_is_anchor_opposite) const
+{
+  // We go over the sequence of vertices, starting from he_before's target
+  // vertex, until reaching he_after's source vertex, and find the leftmost
+  // one. Note that we do this carefully, keeping track of the number of
+  // times we crossed the identification curve in x or in y (if they exist).
+  // Note that the path must not be incident to any vertex on open boundary.
+  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+    m_geom_traits->parameter_space_in_x_2_object(); 
+  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+    m_geom_traits->parameter_space_in_y_2_object(); 
+  // typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right_2 =
+  //   m_geom_traits->compare_y_at_x_right_2_object();  
+
+  // IDEA EBEB 2012-07-28 store indices of local_minima with CCB in DCEL:
+  // - determine values upon insertion of a curve
+  // - or if this is not possible, perform the following computation 
+  //   on-demand only
+  
+  // init with edges at first link
+  // assuming that he_anchor has been removed
+  const DHalfedge* he_curr =
+    end_is_anchor_opposite ? he_anchor->opposite()->prev() : he_anchor;
+  CGAL_assertion(! he_curr->has_null_curve());
+  const DHalfedge* he_next = he_anchor->next();
+  // init edge where loop should end
+  const DHalfedge* he_end =
+    end_is_anchor_opposite ? he_anchor->opposite() : he_anchor;
+
+  int x_index = 0;
+  int y_index = 0;
+
+  // obtain the parameter space pair of he_curr
+  Arr_curve_end he_curr_tgt_end =
+    (he_curr->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
+  Arr_parameter_space ps_x_save =
+    parameter_space_in_x(he_curr->curve(), he_curr_tgt_end);
+  Arr_parameter_space ps_y_save =
+    parameter_space_in_y(he_curr->curve(), he_curr_tgt_end);
+
+  Arr_parameter_space ps_x_curr, ps_y_curr;
+  Arr_parameter_space ps_x_next, ps_y_next;
+  
+  // start loop
+  do {
+    ps_x_curr = ps_x_save;
+    ps_y_curr = ps_y_save;
+    Arr_curve_end he_next_src_end =
+      (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MIN_END : ARR_MAX_END;
+    ps_x_next = parameter_space_in_x(he_next->curve(), he_next_src_end);
+    ps_y_next = parameter_space_in_y(he_next->curve(), he_next_src_end);
+    Arr_curve_end he_next_tgt_end =
+      (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
+    ps_x_save = parameter_space_in_x(he_next->curve(), he_next_tgt_end);
+    ps_y_save = parameter_space_in_y(he_next->curve(), he_next_tgt_end);
+
+    // TODO EBEB 2012-07-29 what if we reach a boundary?
+    CGAL_assertion(!is_open(ps_x_curr, ps_y_curr));
+    CGAL_assertion(!is_open(ps_x_next, ps_y_next));
+
+    _compute_indices(ps_x_curr, ps_y_curr, ps_x_next, ps_y_next,
+                     x_index, y_index, Has_identified_sides_category());
+
+    // iterate
+    he_curr = he_next;
+    he_next = he_next->next();
+
+    CGAL_assertion(!end_is_anchor_opposite || he_curr != he_anchor); 
+
+  } while (end_is_anchor_opposite ? (he_next != he_end) : (he_curr != he_end));
+    
+  // Return the leftmost vertex and its x_index (with respect to he_before).
+  return (std::make_pair(CGAL::sign(x_index), CGAL::sign(y_index)));
+}
+
+// Computes locale minima of closed loop (end_is_anchor_opposite = false)
+// when deleting he_anchor and its opposite belonging to different faces
+// or 'loop-about-to-split' (end_is_anchor_opposite = true)
+// when deleting he_anchor and its opposite belonging to same face
+template <typename GeomTraits, typename TopTraits>
 template <typename OutputIterator>
 std::pair< CGAL::Sign, CGAL::Sign > 
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
@@ -4078,43 +4159,47 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   // If the removal of he1 (and its twin halfedge) form an "antenna", there
   // is neither a need to compute signs and nor swapping of the halfedges
   if ((he1->next() != he2) && (he2->next() != he1)) {
+
     // If f1 == f2 (same_face-case), then we consider two loops that occur
     // when he1 and he2 get removedl;
     // if f1 != f2, then he1 and he2 seperated the two faces that will be merged
     // upon their removal - here each he1 and he2 belongs to a full cycle
     // THAT IS WHY we give the f1 == f2 test to determine whether end of loop 
     // should be he1->opposite() and he2->opposite(), respectively.
-
     bool swap_he1_he2 = false;
-
-    // Compute signs of ccbs for he1 and he (and local_mins as side-effect)
-    bool end_is_anchor_opposite = (f1 == f2);
-
-    std::list< std::pair< const DHalfedge*, int > > local_mins1;
-    std::pair< CGAL::Sign, CGAL::Sign > signs1 =
-      _compute_signs_and_local_minima(he1, std::front_inserter(local_mins1),
-                                      end_is_anchor_opposite);
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-    std::cout << "signs1.x: " << signs1.first << std::endl;
-    std::cout << "signs1.y: " << signs1.second << std::endl;
-    std::cout << "# local_mins1: " << local_mins1.size() << std::endl;
-#endif
-
-    std::list< std::pair< const DHalfedge*, int > > local_mins2;
-    std::pair< CGAL::Sign, CGAL::Sign > signs2 =
-      _compute_signs_and_local_minima(he2, std::front_inserter(local_mins2),
-                                      end_is_anchor_opposite);
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-    std::cout << "signs2.x: " << signs2.first << std::endl;
-    std::cout << "signs2.y: " << signs2.second << std::endl;
-    std::cout << "# local_mins2: " << local_mins2.size() << std::endl;
-#endif
-    // Comments: signs1/2 are used later again, probably for
-    // hole_creation_after_edge_removed
-
-    // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
-    // the two incident faces to merge. Thus, swapping is not needed.
     if (f1 == f2) {
+      // Compute signs of ccbs for he1 and he (and local_mins as side-effect)
+
+      // Comment EFEF 2013-05-31: if we ever find the need to use signs1 and
+      // signs2 out of this scope (for the non-planar case), the code must be
+      // dispatched, so that the planar case is not affected.
+      bool end_is_anchor_opposite = (f1 == f2);
+
+      std::list< std::pair< const DHalfedge*, int > > local_mins1;
+      std::pair< CGAL::Sign, CGAL::Sign > signs1 =
+        _compute_signs_and_local_minima(he1, std::front_inserter(local_mins1),
+                                        end_is_anchor_opposite);
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+      std::cout << "signs1.x: " << signs1.first << std::endl;
+      std::cout << "signs1.y: " << signs1.second << std::endl;
+      std::cout << "# local_mins1: " << local_mins1.size() << std::endl;
+#endif
+
+      std::list< std::pair< const DHalfedge*, int > > local_mins2;
+      std::pair< CGAL::Sign, CGAL::Sign > signs2 =
+        _compute_signs_and_local_minima(he2, std::front_inserter(local_mins2),
+                                      end_is_anchor_opposite);
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+      std::cout << "signs2.x: " << signs2.first << std::endl;
+      std::cout << "signs2.y: " << signs2.second << std::endl;
+      std::cout << "# local_mins2: " << local_mins2.size() << std::endl;
+#endif
+      // Comments: signs1/2 are used later again, probably for
+      // hole_creation_after_edge_removed
+
+      // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
+      // the two incident faces to merge. Thus, swapping is not needed.
+
       // In this case one of the following can happen: (a) a new hole will be
       // created by the removal of the edge (case 3.2.1 of the removal
       // procedure), or (b) an outer CCB will be split into two (case 3.2.2).
@@ -4155,11 +4240,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         if ((he_min1 == NULL) ||
             (index < index_min1) ||
             ((index == index_min1) &&
-             ((he->vertex() == he_min1->vertex()) ?
-              _is_smaller_near_right(he->curve(), he_min1->curve(),
-                                     he->vertex()->point(),
-                                     ps_x_min1, ps_y_min1,
-                                     Are_all_sides_oblivious_category()) :
+             ((he->vertex() != he_min1->vertex()) &&
               _is_smaller(he, ps_x_he_min, ps_y_he_min,
                           he_min1, ps_x_min1, ps_y_min1,
                           Are_all_sides_oblivious_category()))))
@@ -4193,13 +4274,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         const Arr_parameter_space ps_y_he_min =
           parameter_space_in_y(he->curve(), ARR_MIN_END);
         
-        if ((he_min2 == NULL) || (index < index_min2) ||
+        if ((he_min2 == NULL) ||
+            (index < index_min2) ||
             ((index == index_min2) &&
-             ((he->vertex() == he_min2->vertex()) ?
-              _is_smaller_near_right(he->curve(), he_min2->curve(),
-                                     he->vertex()->point(),
-                                     ps_x_min2, ps_y_min2,
-                                     Are_all_sides_oblivious_category()) :
+             ((he->vertex() != he_min2->vertex()) &&
               _is_smaller(he, ps_x_he_min, ps_y_he_min,
                           he_min2, ps_x_min2, ps_y_min2,
                           Are_all_sides_oblivious_category()))))
@@ -4312,7 +4390,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       std::swap(oc1, oc2);
       std::swap(f1 , f2);
       // not needed below here std::swap(local_mins1, local_mins2);
-      std::swap(signs1, signs2);
+      // std::swap(signs1, signs2);
     }
   }
 
