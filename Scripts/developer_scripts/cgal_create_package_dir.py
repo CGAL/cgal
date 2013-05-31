@@ -28,32 +28,8 @@ INPUT        = ${CMAKE_SOURCE_DIR}/PACKAGENAME/doc/PACKAGENAME/ \
                ${CMAKE_SOURCE_DIR}/PACKAGENAME/include
 """
 
-xmlstring = \
-"""<project>
- <!-- PRETTY PACKAGE NAME should be the same as the one used in description -->
- <name>PRETTY PACKAGE NAME</name>
- <input>../PACKAGENAME/doc/PACKAGENAME</input>
- <input>../PACKAGENAME/include</input>
- <doxygen>
-   <string name="STRIP_FROM_PATH">../PACKAGENAME/doc/PACKAGENAME</string>
-   <string name="STRIP_FROM_INC_PATH">../PACKAGENAME/doc/PACKAGENAME/</string>
-   <string name="IMAGE_PATH">../PACKAGENAME/doc/PACKAGENAME/fig</string>
-   <string name="EXAMPLE_PATH">../PACKAGENAME/examples</string>
-   <list name="PACKAGE_REFERENCES">
-       <item>Manual</item>
-       <item>Kernel_23</item>
-       <item>STL_Extension</item>
-       <item>Algebraic_foundations</item>
-       <item>Circulator</item>
-       <item>Stream_support</item>
-       <!-- insert other possibly referenced packages -->
-   </list>
- </doxygen>
-</project>
-"""
-
 descrstring = \
-r"""// PRETTY PACKAGE NAME should be the same as the one in the xml file
+r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
 /// \defgroup PkgPACKAGE PRETTY PACKAGE NAME Reference
 /// \defgroup PkgPACKAGEConcepts Concepts
@@ -179,11 +155,6 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     usermanfile = open(usermanpath, 'w')
     usermanfile.write(usermanstring)
     usermanfile.close()
-
-    xmlpath = os.path.join(docpath, (packagename + '.xml'))
-    xmlfile = open(xmlpath, 'w')
-    xmlfile.write(re.sub('PACKAGENAME', packagename, xmlstring))
-    xmlfile.close()
 
     doxypath = os.path.join(docpath, ('Doxyfile.in'))
     doxyfile = open(doxypath, 'w')
