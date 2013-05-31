@@ -67,6 +67,7 @@ public:
   inline double     min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   inline Bbox_2     operator+(const Bbox_2 &b) const;
+  inline Bbox_2&     operator+=(const Bbox_2 &b);
 
 };
 
@@ -136,6 +137,17 @@ Bbox_2::operator+(const Bbox_2 &b) const
                 (std::min)(ymin(), b.ymin()),
                 (std::max)(xmax(), b.xmax()),
                 (std::max)(ymax(), b.ymax()));
+}
+
+inline
+Bbox_2&
+Bbox_2::operator+=(const Bbox_2& b)
+{
+  rep[0] = (std::min)(xmin(), b.xmin());
+  rep[1] = (std::min)(ymin(), b.ymin());
+  rep[2] = (std::max)(xmax(), b.xmax());
+  rep[3] = (std::max)(ymax(), b.ymax());
+  return *this;
 }
 
 inline

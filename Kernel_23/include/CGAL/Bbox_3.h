@@ -66,6 +66,7 @@ public:
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   Bbox_3  operator+(const Bbox_3& b) const;
+  Bbox_3& operator+=(const Bbox_3& b);
 };
 
 inline
@@ -149,6 +150,19 @@ Bbox_3::operator+(const Bbox_3& b) const
                 (std::max)(xmax(), b.xmax()),
                 (std::max)(ymax(), b.ymax()),
                 (std::max)(zmax(), b.zmax()));
+}
+
+inline
+Bbox_3&
+Bbox_3::operator+=(const Bbox_3& b)
+{
+  rep[0] = (std::min)(xmin(), b.xmin());
+  rep[1] = (std::min)(ymin(), b.ymin());
+  rep[2] = (std::min)(zmin(), b.zmin());
+  rep[3] = (std::max)(xmax(), b.xmax());
+  rep[4] = (std::max)(ymax(), b.ymax());
+  rep[5] = (std::max)(zmax(), b.zmax());
+  return *this;
 }
 
 inline

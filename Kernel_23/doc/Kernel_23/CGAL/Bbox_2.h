@@ -82,6 +82,11 @@ returns a bounding box of `b` and `c`.
 */ 
 Bbox_2 operator+(const Bbox_2 &c) const; 
 
+/*!
+updates `b` to be the bounding box of `b` and `c` and returns itself.
+*/
+Bbox_2& operator+=(const Bbox_2 &c);
+
 /// @}
 
 }; /* end Bbox_2 */
