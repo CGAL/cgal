@@ -1,0 +1,78 @@
+
+/*!
+\ingroup PkgVisibility_2Concepts
+\cgalConcept
+
+A model of the concept `Visibility_2` offers visibility queries within 
+an Arrangement. 
+
+\cgalHasModel `CGAL::Naive_visibility_2<Arrangement_2>`
+
+\sa `CGAL::Naive_visibility_2<Arrangement_2>` 
+
+*/
+class Visibility_2 {
+public:
+
+/// \name Types 
+/// @{
+  
+ /*! 
+   The supported Arrangement type. 
+ */ 
+  typedef Hidden_type Arrangement_2; 
+
+ /*! 
+   The supported Point_2 type which is used for queries . 
+ */ 
+  typedef Hidden_type Point_2; 
+
+  /*! 
+    Tag identifying whether `Visibility_2` computes regularized visbility area. 
+  */
+  typedef Hidden_type Regularization_tag; 
+  
+/// @}
+
+/// \name Constructors 
+/// @{
+
+/*! 
+Constructs a `Visibility_2` object from a given `Arrangement_2`
+*/ 
+Visibility_2(const Arrangement_2& arr); 
+
+/// @}
+
+
+/// \name functions 
+/// @{
+
+
+//  to be added in doxygen style 
+//  bool  	is_attached ()// whether the object is attachted to an arrangement  
+//  void 	attach ( Arrangement_2 arr)  // attaches visibility object to the given arrangement arr.
+//  void 	detach () // detaches vb from the arrangement it is currently attached to.
+//  Arrangement_2 arr() // access to the attached Arrangement_2 
+
+/*! 
+Computes the visibility region for the given query point q. 
+\pre face is a face of  this->arr()
+\pre p is in the interior of face 
+
+*/ 
+  Arrangement_2 visibility_region(const Point_2& q, const Face& face); 
+
+/*! 
+Computes for the given query point q the visibility region that is on the side of the given halfedge.   
+\pre half_edge is a half edge of  this->arr()
+\pre p is on halfedge  
+
+*/ 
+  Arrangement_2 visibility_region(const Point_2& q, const Halfedge& halfedge); 
+
+/// @}
+
+
+}; /* end Visibility_2 */
+
