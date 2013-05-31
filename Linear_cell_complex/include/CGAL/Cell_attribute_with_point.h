@@ -51,7 +51,7 @@ namespace CGAL {
 
     /// Copy the point of an attribute in parameter.
     template<class Attr2>
-    void copy(const Attr2& attr)
+    void copy(const Attr2& aattr)
     {
       internal::Set_point_if_exist<Point, Attr2>::run(point(), aattr);
     }
@@ -152,7 +152,7 @@ namespace CGAL {
 
     /// Copy the point of an attribute in parameter.
     template<class Attr2>
-    void copy(const Attr2& attr)
+    void copy(const Attr2& aattr)
     {
       Base2::copy(aattr);
     }

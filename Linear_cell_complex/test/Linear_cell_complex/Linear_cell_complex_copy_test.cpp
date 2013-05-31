@@ -1,6 +1,7 @@
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/Cell_attribute_with_point.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
@@ -16,9 +17,10 @@ struct Map_2_dart_items
     typedef CGAL::Dart< 2, Refs > Dart;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib;
+    typedef CGAL::Cell_attribute< Refs, int > Double_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
 
-    typedef CGAL::cpp11::tuple<Double_attrib, void, Double_attrib> Attributes;
+    typedef CGAL::cpp11::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
   };
 };
 
@@ -30,10 +32,11 @@ struct Map_2_dart_max_items_3
   {
     typedef CGAL::Dart< 2, Refs > Dart;
 
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+    typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
           Double_attrib> Attributes;
   };
 };
@@ -47,9 +50,10 @@ struct Map_3_dart_items_3
     typedef CGAL::Dart< 3, Refs > Dart;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib;
+    typedef CGAL::Cell_attribute< Refs, int > Double_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
 
-    typedef CGAL::cpp11::tuple<Double_attrib, void,
+    typedef CGAL::cpp11::tuple<Double_attrib_wp, void,
           Int_attrib, Double_attrib> Attributes;
   };
 };
@@ -62,10 +66,11 @@ struct Map_3_dart_max_items_3
   {
     typedef CGAL::Dart< 3, Refs > Dart;
 
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+    typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
           Int_attrib, Double_attrib> Attributes;
   };
 };
@@ -79,9 +84,10 @@ public:
   {
     typedef CGAL::Dart< 3, Refs > Dart;
 
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, void, Int_attrib> Attributes;
+    typedef CGAL::cpp11::tuple<Int_attrib_wp, void, Int_attrib> Attributes;
   };
 };
 
@@ -92,10 +98,11 @@ struct Map_dart_items_4
   {
     typedef CGAL::Dart< 4, Refs > Dart;
 
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, void,
+    typedef CGAL::cpp11::tuple<Int_attrib_wp, void,
           Int_attrib, void, Int_attrib>
     Attributes;
   };
@@ -108,20 +115,15 @@ struct Map_dart_max_items_4
   {
     typedef CGAL::Dart< 4, Refs > Dart;
 
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
-    typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
+    typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
           Int_attrib, Double_attrib, Double_attrib>
     Attributes;
   };
 };
-
-typedef CGAL::Linear_cell_complex_traits
-<2, CGAL::Exact_predicates_inexact_constructions_kernel> Traits2_a;
-
-typedef CGAL::Linear_cell_complex_traits
-<2, CGAL::Exact_predicates_exact_constructions_kernel> Traits2_b;
 
 typedef CGAL::Linear_cell_complex_traits
 <3, CGAL::Exact_predicates_inexact_constructions_kernel> Traits3_a;
@@ -129,35 +131,34 @@ typedef CGAL::Linear_cell_complex_traits
 typedef CGAL::Linear_cell_complex_traits
 <3, CGAL::Exact_predicates_exact_constructions_kernel> Traits3_b;
 
-typedef CGAL::Linear_cell_complex_traits
-<4, CGAL::Exact_predicates_inexact_constructions_kernel> Traits4_a;
+typedef CGAL::Linear_cell_complex_traits<4> Traits4_a;
 
-// void, void, void
-typedef CGAL::Linear_cell_complex<2,2, Traits2_a, CGAL::Linear_cell_complex_min_items<2> > Map1;
+// Point_3, void, void
+typedef CGAL::Linear_cell_complex<2,3, Traits3_a, CGAL::Linear_cell_complex_min_items<2> > Map1;
 
-// double, void, double
-typedef CGAL::Linear_cell_complex<2,2, Traits2_a, Map_2_dart_items > Map2;
+// Point_3+double, void, double
+typedef CGAL::Linear_cell_complex<2,3, Traits3_a, Map_2_dart_items > Map2;
 
-// int, int, double
-typedef CGAL::Linear_cell_complex<2,2, Traits2_b, Map_2_dart_max_items_3> Map3;
+// Point_3+int, int, double
+typedef CGAL::Linear_cell_complex<2,3, Traits3_b, Map_2_dart_max_items_3> Map3;
 
-// void, void, void, void
-typedef CGAL::Linear_cell_complex<3,3, Traits3_a, CGAL::Combinatorial_map_min_items<3> > Map4;
+// Point_3, void, void, void
+typedef CGAL::Linear_cell_complex<3,3, Traits3_a, CGAL::Linear_cell_complex_min_items<3> > Map4;
 
-// double, void, int, double
+// Point_3+double, void, int, double
 typedef CGAL::Linear_cell_complex<3,3, Traits3_a, Map_3_dart_items_3> Map5;
 
-// int, int, int, double
+// Point_3+int, int, int, double
 typedef CGAL::Linear_cell_complex<3,3, Traits3_b, Map_3_dart_max_items_3> Map6;
 
-// int, void, int, void
+// Point_4+int, void, int, void
 typedef CGAL::Linear_cell_complex<3,4, Traits4_a, Another_map_3_dart_items_3> Map7;
 
-// int, void, int, void, int
-typedef CGAL::Linear_cell_complex<4, Traits4_a, Map_dart_items_4> Map8;
+// Point_4+int, void, int, void, int
+typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_items_4> Map8;
 
-// int, int, int, double, double
-typedef CGAL::Linear_cell_complex<4, Traits4_a, Map_dart_max_items_4> Map9;
+// Point_4+int, int, int, double, double
+typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_max_items_4> Map9;
 
 /*
 template<typename Map>
@@ -188,12 +189,47 @@ struct CreateAttributes
   }
 };
 
+template<typename Attr, typename Info=typename Attr::Info>
+struct SetInfoIfNonVoid
+{
+  static void run(Attr&attr, int&nb)
+  {
+    if ( attr.info()==0 ) attr.info()=(++nb);
+  }
+};
+template<typename Attr>
+struct SetInfoIfNonVoid<Attr, void>
+{
+  static void run(Attr&attr, int&nb)
+  {}
+};
+
+template<typename Map, typename Attr>
+struct CreateAttributes<Map, 0, Attr>
+{
+  static void run(Map& map)
+  {
+    int nb=0;
+    for(typename Map::Dart_range::iterator it=map.darts().begin(),
+        itend=map.darts().end(); it!=itend; ++it)
+    {
+      SetInfoIfNonVoid<Attr>::run(*it->template attribute<0>(), nb);
+    }
+  }
+};
+
 template<typename Map, unsigned int i>
 struct CreateAttributes<Map, i, CGAL::Void>
 {
   static void run(Map&)
-  {
-  }
+  {}
+};
+
+template<typename Map>
+struct CreateAttributes<Map, 0, CGAL::Void>
+{
+  static void run(Map&)
+  {}
 };
 
 template<typename Map, unsigned int i, typename Attr=typename Map::
@@ -227,13 +263,25 @@ void displayAllAttribs2D(Map& amap, const char* c)
   DisplayAttribs<Map,0>::run(amap);
   DisplayAttribs<Map,1>::run(amap);
   DisplayAttribs<Map,2>::run(amap);
+
+  std::cout<<"Points: ";
+  for ( typename Map::template Attribute_range<0>::type::iterator
+        it=amap.template attributes<0>().begin(),
+        itend=amap.template attributes<0>().end();
+        it!=itend; ++it )
+  {
+    std::cout<<it->point()<<"; ";
+  }
+  std::cout<<std::endl;
+
 }
 
 template<typename Map>
 void create2Dmap(Map& map)
 {
   for ( int i=0; i<15; ++i )
-    CGAL::make_combinatorial_hexahedron(map);
+    map.make_tetrahedron(typename Map::Point(i, 0, 0),typename Map::Point(i, 2, 0),
+                         typename Map::Point(i+1, 0, 0),typename Map::Point(i+1, 1, 2));
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
@@ -242,7 +290,8 @@ template<typename Map>
 void create3Dmap(Map& map)
 {
   for ( int i=0; i<15; ++i )
-    CGAL::make_combinatorial_hexahedron(map);
+    map.make_tetrahedron(typename Map::Point(i, 0, 0),typename Map::Point(i, 2, 0),
+                         typename Map::Point(i+1, 0, 0),typename Map::Point(i+1, 1, 2));
 
   for ( int i=0; i<20; ++i )
   {
@@ -257,11 +306,24 @@ void create3Dmap(Map& map)
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
 }
+
+template<typename LCC>
+typename LCC::Point apoint(typename LCC::FT x, typename LCC::FT y,
+                           typename LCC::FT z, typename LCC::FT t)
+{
+  std::vector<typename LCC::FT> tab;
+  tab.push_back(x); tab.push_back(y);
+  tab.push_back(z); tab.push_back(t);
+  typename LCC::Point p(4,tab.begin(),tab.end());
+  return p;
+}
+
 template<typename Map>
 void create4Dmap(Map& map)
 {
   for ( int i=0; i<45; ++i )
-    CGAL::make_combinatorial_hexahedron(map);
+    map.make_tetrahedron(apoint<Map>(i, 0, 0, 0),apoint<Map>(i, 2, 0, 0),
+                         apoint<Map>(i+1, 0, 0, 0),apoint<Map>(i+1, 1, 2, 0));
 
   for ( int i=0; i<40; ++i )
   {
