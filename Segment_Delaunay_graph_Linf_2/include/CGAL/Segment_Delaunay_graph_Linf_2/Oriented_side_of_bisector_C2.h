@@ -112,6 +112,10 @@ private:
 
       Oriented_side os = oriented_side_of_line(lp, q.point());
 
+      CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp "
+          << " is_src=" << is_src << " is_trg=" << is_trg
+          << " has os=" << os << std::endl;);
+
       if ( os == ON_POSITIVE_SIDE ) {
 	return LARGER;
       } else if ( os == ON_NEGATIVE_SIDE) {
