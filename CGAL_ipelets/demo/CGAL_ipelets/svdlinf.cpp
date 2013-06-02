@@ -1,6 +1,3 @@
-#define CGAL_SDG_VERBOSE
-#undef CGAL_SDG_VERBOSE
-
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
 #else
@@ -117,12 +114,17 @@ namespace CGAL_svdlinf {
          sit != sg_list.end();
          ++sit)
     {
+      CGAL_SDG_DEBUG( std::cout << "IPELET: inserting segment "
+          << *sit << std::endl ; );
       if ((fn == 0) or (fn == 1)) {
         svd.insert(sit->point(0),sit->point(1));
       } else {
         svdhv.insert(sit->point(0),sit->point(1));
       }
     }
+
+    CGAL_SDG_DEBUG( std::cout << "IPELET: inserting points"
+        << std::endl ; );
 
     if ((fn == 0) or (fn == 1)) {
       svd.insert(pt_list.begin(),pt_list.end());
