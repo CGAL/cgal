@@ -256,6 +256,10 @@ private:
     }
 
     CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss "
+        << " os_src1=" << os_src1 << " os_trg1=" << os_trg1
+        << " os_src2=" << os_src2 << " os_trg2=" << os_trg2 << std::endl;);
+
+    CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss "
         << " idx=" << idx1 << " idx2=" << idx2 << std::endl;);
 
     CGAL_assertion( idx1 >= -1 && idx1 <= 1 );
