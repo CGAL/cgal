@@ -333,8 +333,8 @@ bool testCopy()
   Map6 map6; create3Dmap(map6);
   Map7 map7; create3Dmap(map7);
 
-  Map8 map8; create3Dmap(map8);
-  Map9 map9; create3Dmap(map9);
+  Map8 map8; create4Dmap(map8);
+  Map9 map9; create4Dmap(map9);
 
   // First copy of same types
   {

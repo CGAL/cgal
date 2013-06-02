@@ -49,13 +49,6 @@ namespace CGAL {
     const Point& point() const
     { return mpoint; }
 
-    /// Copy the point of an attribute in parameter.
-    template<class Attr2>
-    void copy(const Attr2& aattr)
-    {
-      internal::Set_point_if_exist<Point, Attr2>::run(point(), aattr);
-    }
-
   protected:
     /// The point associated with the cell.
     Point mpoint;
@@ -70,9 +63,12 @@ namespace CGAL {
                           Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
-    template<typename Map1, typename Map2, int i,
-             typename T1, typename T2, typename Info1, typename Info2>
-    friend struct internal::Copy_attr_if_same_type;
+    template < unsigned int d_, class Refs_,
+               class Items_, class Alloc_ >
+    friend class Combinatorial_map_base;
+
+    template <class T, class Alloc_>
+    friend class Compact_container;
 
   public:
     typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
@@ -106,14 +102,6 @@ namespace CGAL {
       Base1(ainfo),
       Base2(apoint)
     {}
-
-    /// Copy the point, and if same type info.
-    template<class Attr2>
-    void copy(const Attr2& aattr)
-    {
-      Base1::copy(aattr);
-      Base2::copy(aattr);
-    }
   };
 
   /// Attribute associated with a point and without info.
@@ -125,9 +113,12 @@ namespace CGAL {
     public Cell_attribute<LCC, void, Tag, Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
-    template<typename Map1, typename Map2, int i,
-             typename T1, typename T2, typename Info1, typename Info2>
-    friend struct internal::Copy_attr_if_same_type;
+    template < unsigned int d_, class Refs_,
+               class Items_, class Alloc_ >
+    friend class Combinatorial_map_base;
+
+    template <class T, class Alloc_>
+    friend class Compact_container;
 
   public:
     typedef Cell_attribute<LCC, void, Tag,
@@ -149,13 +140,6 @@ namespace CGAL {
     /// Contructor with a point in parameter.
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
-
-    /// Copy the point of an attribute in parameter.
-    template<class Attr2>
-    void copy(const Attr2& aattr)
-    {
-      Base2::copy(aattr);
-    }
   };
 } // namespace CGAL
 

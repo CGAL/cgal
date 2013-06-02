@@ -151,8 +151,8 @@ typedef CGAL::Linear_cell_complex<3,3, Traits3_a, Map_3_dart_items_3> Map5;
 // Point_3+int, int, int, double
 typedef CGAL::Linear_cell_complex<3,3, Traits3_b, Map_3_dart_max_items_3> Map6;
 
-// Point_4+int, void, int, void
-typedef CGAL::Linear_cell_complex<3,4, Traits4_a, Another_map_3_dart_items_3> Map7;
+// Point_3+int, void, int, void
+typedef CGAL::Linear_cell_complex<3,3, Traits3_b, Another_map_3_dart_items_3> Map7;
 
 // Point_4+int, void, int, void, int
 typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_items_4> Map8;
@@ -360,8 +360,8 @@ bool testCopy()
   Map6 map6; create3Dmap(map6);
   Map7 map7; create3Dmap(map7);
 
-  Map8 map8; create3Dmap(map8);
-  Map9 map9; create3Dmap(map9);
+  Map8 map8; create4Dmap(map8);
+  Map9 map9; create4Dmap(map9);
 
   // First copy of same types
   {

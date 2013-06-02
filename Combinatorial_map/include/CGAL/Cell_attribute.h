@@ -284,10 +284,6 @@ namespace CGAL {
     template <class T, class Alloc_>
     friend class Compact_container;
 
-    template<typename Map1, typename Map2, int i,
-             typename T1, typename T2, typename Info1, typename Info2>
-    friend struct internal::Copy_attr_if_same_type;
-
   public:
     typedef Tag_                             Supports_cell_dart;
     typedef typename Refs::Dart_handle       Dart_handle;
@@ -297,17 +293,9 @@ namespace CGAL {
     typedef OnSplit                          On_split;
     typedef void                             Info;
 
-    typedef CGAL::Void                       Point;
-
   protected:
     /// Default contructor.
     Cell_attribute()
-    {}
-
-    /// Copy the info of an attribute in parameter, if same type.
-    /// Nothing to do as this attribute has no info.
-    template<class Attr2>
-    void copy(const Attr2&)
     {}
   };
 
@@ -327,10 +315,6 @@ namespace CGAL {
     template <class T, class Alloc_>
     friend class Compact_container;
 
-    template<typename Map1, typename Map2, int i,
-             typename T1, typename T2, typename Info1, typename Info2>
-    friend struct internal::Copy_attr_if_same_type;
-
   public:
     typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit> Self;
 
@@ -342,8 +326,6 @@ namespace CGAL {
     typedef OnSplit                          On_split;
     typedef Info_                            Info;
 
-    typedef CGAL::Void                       Point;
-
   protected:
     /// Default contructor.
     Cell_attribute()
@@ -353,13 +335,6 @@ namespace CGAL {
     Cell_attribute(const Info_& ainfo) :
       Info_for_cell_attribute<Info_>(ainfo)
     {}
-
-    /// Copy the info of an attribute in parameter, if same type.
-    template<class Attr2>
-    void copy(const Attr2& aattr)
-    {
-      internal::Set_info_if_same_type<Self, Attr2>::run(*this, aattr);
-    }
   };
 
 } // namespace CGAL

@@ -22,9 +22,6 @@
 
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
-#include <CGAL/Dimension.h>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Cartesian_converter.h>
 #include <vector>
 
 /* Definition of functors used internally to manage attributes (we need
@@ -61,6 +58,9 @@
  *
  * internal::Set_i_attribute_of_dart_functor<CMap, i> to set the i-attribute
  *   of a given dart.
+ *
+ * internal::Test_is_same_attribute_functor<Map1, Map2> to test if two
+ *   i-attributes of two darts are isomorphic.
  */
 
 namespace CGAL
@@ -416,225 +416,42 @@ struct Set_i_attribute_of_dart_functor<CMap, i, CGAL::Void>
   {}
 };
 // ****************************************************************************
-// Functor allowing to set the value of a point if point exist, have
-// same dimension. For dim>3, if type of points are the same (because no converter).
-template<typename Point1, typename Point2>
-struct Set_point_d_if_same
-{
-  static void run(Point1&, const Point2&)
-  {}
-};
-
-template<typename Point1>
-struct Set_point_d_if_same<Point1, Point1>
-{
-  static void run(Point1& p1, const Point1& p2)
-  {
-    p1 = p2; // Copy of Point_d having same type
-  }
-};
-
-template<typename Point1, typename Point2,
-         typename T1=typename Ambient_dimension<Point1>::type,
-         typename T2=typename Ambient_dimension<Point2>::type>
-struct Set_point_if_possible
-{
-  static void run(Point1&, const Point2&)
-  {}
-};
-
-template<typename Point1, typename Point2>
-struct Set_point_if_possible<Point1, Point2, Dimension_tag<2>, Dimension_tag<2> >
-{
-  static void run(Point1& p1, const Point2& p2)
-  {
-    p1 = Cartesian_converter<typename Kernel_traits<Point1>::Kernel,
-        typename Kernel_traits<Point2>::Kernel>(p2);
-  }
-};
-
-template<typename Point1, typename Point2>
-struct Set_point_if_possible<Point1, Point2, Dimension_tag<3>, Dimension_tag<3> >
-{
-  static void run(Point1& p1, const Point2& p2)
-  {
-    p1 = Cartesian_converter<typename Kernel_traits<Point1>::Kernel,
-        typename Kernel_traits<Point2>::Kernel>(p2);
-  }
-};
-
-template<typename Point1, typename Point2>
-struct Set_point_if_possible<Point1, Point2, Dynamic_dimension_tag,
-    Dynamic_dimension_tag>
-{
-  static void run(Point1& p1, const Point2& p2)
-  {
-    if ( p1.dimension()==p2.dimension() )
-      Set_point_d_if_same<Point1, Point2>::run(p1, p2);
-  }
-};
-
-// Set_point_if_exist ensure that Attr2 has a point
-template<typename Point1, typename Attr2,
-         typename Point2=typename Attr2::Point>
-struct Set_point_if_exist
-{
-  static void run(Point1& p1, const Attr2& a2)
-  {
-    Set_point_if_possible<Point1, Point2>(p1, a2.point());
-  }
-};
-
-template<typename Point1, typename Attr2>
-struct Set_point_if_exist<Point1, Attr2, CGAL::Void>
-{
-  static void run(Point1&, const Attr2& )
-  {}
-};
-
-// Functor allowing to set a value if two info are the same or not
-// TODO replace these version by using is_constructible ?
-// if no support for gcc11, use this simplified version ? (same type)
-template<typename Attr1, typename Attr2,
-         typename T1=typename Attr1::Info, typename T2=typename Attr2::Info>
-struct Set_info_if_same_type
-{
-  static void run(Attr1&, const Attr2&)
-  {}
-};
-
-template<typename Attr1, typename Attr2, typename T1>
-struct Set_info_if_same_type<Attr1, Attr2, T1, void>
-{
-  static void run(Attr1&, const Attr2&)
-  {}
-};
-
-template<typename Attr1, typename Attr2, typename T1>
-struct Set_info_if_same_type<Attr1, Attr2, void, T1>
-{
-  static void run(Attr1&, const Attr2&)
-  {}
-};
-
-template<typename Attr1, typename Attr2>
-struct Set_info_if_same_type<Attr1, Attr2, void, void>
-{
-  static void run(Attr1&, const Attr2&)
-  {}
-};
-
-template<typename Attr1, typename Attr2, typename T1>
-struct Set_info_if_same_type<Attr1, Attr2, T1, T1>
-{
-  static void run(Attr1& a1, const Attr2& a2)
-  { a1.info()=a2.info(); }
-};
-
-// Functor allowing to copy attributes whey info are convertible
-template<typename Map1, typename Map2, int i,
-         typename T1, typename T2,
-         typename Info1=typename T1::Info, typename Info2=typename T2::Info>
-struct Copy_attr_if_same_type
-{
-  static void const run(Map1* cmap1, const Map2* cmap2,
-                        typename Map1::Dart_handle dh1,
-                        typename Map2::Dart_const_handle dh2)
-  {}
-};
-
-template<typename Map1, typename Map2, int i,
-         typename T1, typename T2, typename Info>
-struct Copy_attr_if_same_type<Map1, Map2, i, T1, T2, Info, Info>
-{
-  static void const run(Map1* cmap1, const Map2* cmap2,
-                        typename Map1::Dart_handle dh1,
-                        typename Map2::Dart_const_handle dh2)
-  {
-    CGAL_static_assertion(i<=Map2::dimension);
-    if (dh1->template attribute<i>()==NULL &&
-        dh2->template attribute<i>()!=NULL)
-    {
-      cmap1->template
-        set_attribute<i>(dh1, cmap1->template create_attribute<i>());
-      dh1->template attribute<i>()->copy(*dh2->template attribute<i>());
-    }
-  }
-};
-
-// Case of two non void type
-template <typename Map1, typename Map2, int i,
-          typename T1, typename T2>
-struct Copy_attr_functor
-{
-  static void const run(Map1* cmap1, const Map2* cmap2,
-                        typename Map1::Dart_handle dh1,
-                        typename Map2::Dart_const_handle dh2)
-  {
-    Copy_attr_if_same_type<Map1, Map2, i, T1, T2>::
-        run(cmap1, cmap2, dh1, dh2);
-  }
-};
-
-// Case T1==void
-template <typename Map1, typename Map2, int i, typename T1>
-struct Copy_attr_functor<Map1, Map2, i, CGAL::Void, T1>
-{
-  static void const run(Map1*, const Map2*,
-                        typename Map1::Dart_handle,
-                        typename Map2::Dart_const_handle)
-  {}
-};
-
-// Case T2==void
-template <typename Map1, typename Map2, int i, typename T1>
-struct Copy_attr_functor<Map1, Map2, i, T1, CGAL::Void>
-{
-  static void const run(Map1*, const Map2*,
-                        typename Map1::Dart_handle,
-                        typename Map2::Dart_const_handle)
-  {}
-};
-
-// Case T1==T2==void
-template <typename Map1, typename Map2, int i>
-struct Copy_attr_functor<Map1, Map2, i, CGAL::Void, CGAL::Void>
-{
-  static void const run(Map1*, const Map2*,
-                        typename Map1::Dart_handle,
-                        typename Map2::Dart_const_handle)
-  {}
-};
-
-/// Copy enabled attributes from one cmap to other
-template<typename Map1, typename Map2>
-struct Copy_attributes_functor{
-  template<unsigned int i>
-  static void run( Map1* cmap1,
-                   const Map2* cmap2,
-                   typename Map1::Dart_handle dh1,
-                   typename Map2::Dart_const_handle dh2 )
-  {
-    Copy_attr_functor<Map1, Map2, i,
-                      typename Map1::Helper::template Attribute_type<i>::type,
-                      typename Map2::Helper::template Attribute_type<i>::type>
-    ::run(cmap1, cmap2, dh1, dh2);
-  }
-};
-// ****************************************************************************
 // Functor allowing to test if two info are the same or not
-template<typename T1, typename T2>
+template< typename Attr1, typename Attr2,
+          typename Info1=typename Attr1::Info,
+          typename Info2=typename Attr2::Info >
 struct Is_same_info
 {
-  static bool run(const T1&, const T2&)
+  static bool run(const Attr1&, const Attr2&)
   { return false; }
 };
 
-template<typename T1>
-struct Is_same_info<T1,T1>
+template< typename Attr1, typename Attr2, typename Info1 >
+struct Is_same_info<Attr1, Attr2, Info1, void>
 {
-  static bool run(const T1&e1, const T1&e2)
-  { return e1==e2; }
+  static bool run(const Attr1&, const Attr2&)
+  { return false; }
+};
+
+template< typename Attr1, typename Attr2, typename Info2 >
+struct Is_same_info<Attr1, Attr2, void, Info2>
+{
+  static bool run(const Attr1&, const Attr2&)
+  { return false; }
+};
+
+template< typename Attr1, typename Attr2 >
+struct Is_same_info<Attr1, Attr2, void, void>
+{
+  static bool run(const Attr1&, const Attr2&)
+  { return true; }
+};
+
+template< typename Attr1, typename Attr2, typename Info >
+struct Is_same_info<Attr1, Attr2, Info, Info>
+{
+  static bool run(const Attr1&a1, const Attr2&a2)
+  { return a1.info()==a2.info(); }
 };
 
 // Case of two non void type
@@ -654,9 +471,8 @@ struct Is_same_attribute_functor
       return false;
 
     return
-      Is_same_info<typename T1::Info,typename T2::Info>::
-      run(dh1->template attribute<i>()->info(),
-          dh2->template attribute<i>()->info());
+        Is_same_info<T1,T2>::run(*(dh1->template attribute<i>()),
+                                 *(dh2->template attribute<i>()));
   }
 };
 

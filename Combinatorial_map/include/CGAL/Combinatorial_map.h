@@ -24,6 +24,7 @@
 #include <CGAL/internal/Combinatorial_map_utility.h>
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/internal/Combinatorial_map_group_functors.h>
+#include <CGAL/internal/Combinatorial_map_copy_functors.h>
 #include <CGAL/internal/Combinatorial_map_sewable.h>
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/Combinatorial_map_min_items.h>
@@ -157,10 +158,12 @@ namespace CGAL {
      *  @param amap the combinatorial map to copy.
      *  @post *this is valid.
      */
-    template <unsigned int d2, typename Refs2, typename Items2, class Alloc2>
-    void copy(const Combinatorial_map_base<d2,Refs2,Items2,Alloc2> & amap)
+    template <unsigned int dbis, typename Refsbis, typename Itemsbis,
+              class Allocbis, typename Converters>
+    void copy(const Combinatorial_map_base<dbis,Refsbis,Itemsbis,Allocbis> & amap,
+              Converters& converters)
     {
-      typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2> CMap2;
+      typedef Combinatorial_map_base<dbis,Refsbis,Itemsbis,Allocbis> CMap2;
 
       this->clear();
 
@@ -224,22 +227,34 @@ namespace CGAL {
            ++dartmap_iter)
       {
         Helper::template Foreach_enabled_attributes
-          < internal::Copy_attributes_functor <Self, CMap2> >::
-          run(this, &amap, dartmap_iter->second, dartmap_iter->first);
+          < internal::Copy_attributes_functor <CMap2, Self, Converters> >::
+          run(&amap, this, dartmap_iter->first, dartmap_iter->second,
+              converters);
       }
 
       CGAL_assertion (is_valid () == 1);
     }
 
+    template <unsigned int dbis, typename Refsbis, typename Itemsbis,
+              class Allocbis>
+    void copy(const Combinatorial_map_base<dbis,Refsbis,Itemsbis,Allocbis> & amap)
+    {
+      CGAL::cpp11::tuple<> converters;
+      return copy< dbis,Refsbis,Itemsbis,Allocbis,CGAL::cpp11::tuple<> >
+          (amap, converters);
+    }
+
     // Copy constructor from a map having exactly the same type.
     Combinatorial_map_base (const Self & amap)
-    { copy<d_, Refs, Items_,Alloc_>(amap); }
+    { copy<d_, Refs, Items_, Alloc_>(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <unsigned int d2, typename Refs2, typename Items2, class Alloc2>
-    Combinatorial_map_base(const Combinatorial_map_base<d2,Refs2,Items2,Alloc2>
-                           & amap)
-    { copy<d2,Refs2,Items2,Alloc2>(amap); }
+    template <unsigned int dbis, typename Refsbis, typename Itemsbis,
+              class Allocbis, typename Converters>
+    Combinatorial_map_base(const Combinatorial_map_base
+                           <dbis,Refsbis,Itemsbis,Allocbis>& amap,
+                           Converters& converters=CGAL::cpp11::tuple<>())
+    { copy<dbis,Refsbis,Itemsbis,Allocbis,Converters>(amap, converters); }
 
     /** Affectation operation. Copies one map to the other.
      * @param amap a combinatorial map.
@@ -3490,12 +3505,16 @@ namespace CGAL {
     Combinatorial_map() : Base()
     {}
 
-    template < class CMap >
-    Combinatorial_map(const CMap & amap) : Base(amap)
-    {}
-
     Combinatorial_map(const Self & amap) : Base(amap)
     {}
+
+    template < class CMap >
+    Combinatorial_map(const CMap & amap)
+    { Base::copy(amap); }
+
+    template < class CMap, typename Converters >
+    Combinatorial_map(const CMap & amap, Converters& converters)
+    { Base::copy(amap, converters); }
   };
 
 } // namespace CGAL

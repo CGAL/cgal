@@ -87,12 +87,16 @@ namespace CGAL {
     Linear_cell_complex() : Base()
     {}
 
-    template < class LCC >
-    Linear_cell_complex(const LCC & alcc) : Base(alcc)
-    {}
-
     Linear_cell_complex(const Self & alcc) : Base(alcc)
     {}
+
+    template < class LCC >
+    Linear_cell_complex(const LCC & alcc)
+    { Base::copy(alcc);}
+
+    template < class LCC, typename Converters >
+    Linear_cell_complex(const LCC & alcc, Converters& converters)
+    { Base::copy(alcc, converters);}
 
     /** Create a vertex attribute.
      * @return an handle on the new attribute.
