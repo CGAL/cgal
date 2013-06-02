@@ -261,6 +261,8 @@ private:
       closest1 = ssrc1;
       if ( idx2 == -1 ) {
 	if ( same_points(s1.source_site(), s2.source_site()) ) {
+          CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
+              << " same_s1src_s2src" << std::endl;);
 	  return EQUAL;
 	}
 	//RT d2_s2 = compute_linf_distance(qq, ssrc2);
@@ -268,6 +270,8 @@ private:
 	//return CGAL::compare(d2_s1, d2_s2);
       } else if ( idx2 == 1 ) {
 	if ( same_points(s1.source_site(), s2.target_site()) ) {
+          CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
+              << " same_s1src_s2trg" << std::endl;);
 	  return EQUAL;
 	}
 	//RT d2_s2 = compute_linf_distance(qq, strg2);
@@ -284,6 +288,8 @@ private:
       closest1 = strg1;
       if ( idx2 == -1 ) {
 	if ( same_points(s1.target_site(), s2.source_site()) ) {
+          CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
+              << " same_s1trg_s2src" << std::endl;);
 	  return EQUAL;
 	}
 	//RT d2_s2 = compute_linf_distance(qq, ssrc2);
@@ -291,6 +297,8 @@ private:
 	//return CGAL::compare(d2_s1, d2_s2);
       } else if ( idx2 == 1 ) {
 	if ( same_points(s1.target_site(), s2.target_site()) ) {
+          CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
+              << " same_s1trg_s2trg" << std::endl;);
 	  return EQUAL;
 	}
 	//RT d2_s2 = compute_linf_distance(qq, strg2);
