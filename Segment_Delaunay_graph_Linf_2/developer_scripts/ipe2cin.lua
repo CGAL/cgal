@@ -12,18 +12,26 @@ fname = argv[1]
 doc = assert(ipe.Document(fname))
 
 -- io.write("# number of pages = ", #doc, "\n")
--- print ("# of pages =", #doc)
+-- print("# of pages =", #doc)
 
 p = assert(doc[1])
 
 -- print("# of views=", p:countViews())
 
--- print ("# of objects in p1 =", #p)
+-- print("# of objects in p1 =", #p)
 
 function process_object(obj)
+  -- print(obj:matrix())
+  m = obj:matrix()
+  is_id = m:isIdentity()
   if obj:type() == "reference" then
-    if ((obj:get("markshape")):find("mark")) then
-      print ("p", obj:position().x, obj:position().y)
+    if (obj:get("markshape")):find("mark") then
+      if is_id then
+        vec = obj:position()
+      else
+        vec = m * obj:position()
+      end
+      print("p", vec.x, vec.y)
     end
   end
   if obj:type() == "path" then
@@ -37,7 +45,14 @@ function process_object(obj)
             segf = seg
           end
           if seg["type"] == "segment" then
-            print("s", seg[1].x, seg[1].y, seg[2].x, seg[2].y)
+            if is_id then
+              endp1 = seg[1]
+              endp2 = seg[2]
+            else
+              endp1 = m * seg[1]
+              endp2 = m * seg[2]
+            end
+            print("s", endp1.x, endp1.y, endp2.x, endp2.y)
           else
             allsegments = false
           end
@@ -49,7 +64,14 @@ function process_object(obj)
         if subpath["closed"] and allsegments and manycomponents then
           -- connect last point of last segment to
           -- first point of first segment
-         print("s", segl[2].x, segl[2].y, segf[1].x, segf[1].y)
+          if is_id then
+            endp1 = segl[2]
+            endp2 = segf[1]
+          else
+            endp1 = m * segl[2]
+            endp2 = m * segf[1]
+          end
+          print("s", endp1.x, endp1.y, endp2.x, endp2.y)
         end
       end
     end
