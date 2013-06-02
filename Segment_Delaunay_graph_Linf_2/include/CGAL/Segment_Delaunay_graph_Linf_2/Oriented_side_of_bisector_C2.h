@@ -232,20 +232,24 @@ private:
     int idx1(0), idx2(0);
 
     Oriented_side os_src1 = oriented_side_of_line(lsrc1, qq);
+    Oriented_side os_trg1;
     if ( os_src1 != ON_NEGATIVE_SIDE ) {
       idx1 = -1;
+      os_trg1 = ON_POSITIVE_SIDE;
     } else {
-      Oriented_side os_trg1 = oriented_side_of_line(ltrg1, qq);
+      os_trg1 = oriented_side_of_line(ltrg1, qq);
       if ( os_trg1 != ON_POSITIVE_SIDE ) {
 	idx1 = 1;
       }
     }
 
     Oriented_side os_src2 = oriented_side_of_line(lsrc2, qq);
+    Oriented_side os_trg2;
     if ( os_src2 != ON_NEGATIVE_SIDE ) {
       idx2 = -1;
+      os_trg2 = ON_POSITIVE_SIDE;
     } else {
-      Oriented_side os_trg2 = oriented_side_of_line(ltrg2, qq);
+      os_trg2 = oriented_side_of_line(ltrg2, qq);
       if ( os_trg2 != ON_POSITIVE_SIDE ) {
 	idx2 = 1;
       }
