@@ -2503,6 +2503,10 @@ nearest_neighbor(const Site_2& p,
 	Site_2 t1 = v1->site();
 	Oriented_side os = side_of_bisector(t0, t1, p);
 
+        CGAL_SDG_DEBUG(std::cout << "debug comparing for nearest"
+            << " sideofbs t0=" << t0 << " t1=" << t1 << " p=" << p
+            << " has os =" << os << std::endl;);
+
 	if ( os == ON_NEGATIVE_SIDE ) {
 	  v = v1;
 	  break;
