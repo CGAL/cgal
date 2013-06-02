@@ -189,6 +189,10 @@ private:
     CGAL_precondition( !is_degenerate(s1) );
     CGAL_precondition( !is_degenerate(s2) );
 
+    CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss "
+        << "entering with s1=" << s1 << " s2=" << s2
+        << " q=" << q << std::endl;);
+
     bool is_on_s1 = is_endpoint(q, s1);
     bool is_on_s2 = is_endpoint(q, s2);
 
@@ -271,7 +275,7 @@ private:
       } else if ( idx2 == 1 ) {
 	if ( same_points(s1.source_site(), s2.target_site()) ) {
           CGAL_SDG_DEBUG(std::cout << "debug compare_distances_ss"
-              << " same_s1src_s2trg" << std::endl;);
+              << " same_s1src_s2trg, closest1=" << closest1 << std::endl;);
 	  return EQUAL;
 	}
 	//RT d2_s2 = compute_linf_distance(qq, strg2);
