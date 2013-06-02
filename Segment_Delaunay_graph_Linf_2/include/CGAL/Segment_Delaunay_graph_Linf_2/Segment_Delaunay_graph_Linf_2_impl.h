@@ -894,8 +894,12 @@ insert_segment(const Storage_site_2& ss, const Site_2& t, Vertex_handle vnear)
   convert_info(ss_trg, ss, false);
 
   Vertex_handle v0 = insert_point( ss_src, t.source(), vnear );
+  CGAL_SDG_DEBUG(std::cout << "debug inserted source point " << t.source()
+      << std::endl; );
   CGAL_assertion( is_valid() );
   Vertex_handle v1 = insert_point( ss_trg, t.target(), v0 );
+  CGAL_SDG_DEBUG(std::cout << "debug inserted target point " << t.target()
+      << std::endl; );
   CGAL_assertion( is_valid() );
 
   if ( number_of_vertices() == 2 ) {
