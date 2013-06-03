@@ -1194,7 +1194,8 @@ public:
             return_point(max_vertex(cv2[i2-1]), 0) :
             return_point(max_vertex(cv2[i2]), 0);
           *oi++ = make_object(ip);
-        } else if (i1 > 0) {
+        } else if (((i1 > 0) && (dir1 == SMALLER))||
+                   ((i1 < n1) && (dir1 != SMALLER))) {
           ip = (dir1 == SMALLER) ?
             return_point(max_vertex(cv1[i1-1]), 0) :
             return_point(max_vertex(cv1[i1]), 0);
