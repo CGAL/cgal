@@ -194,25 +194,6 @@ typedef CGAL::Combinatorial_map<4, Map_dart_items_4> Map8;
 // int, int, int, int, double
 typedef CGAL::Combinatorial_map<4, Map_dart_max_items_4> Map9;
 
-// Convert a number type into another number type
-// @pre Both info must be non void and number types
-template< typename Map1, typename Map2, unsigned int i>
-struct Number_type_converter_cmap_attr
-{
-  typename Map2::template Attribute_handle<i>::type operator()
-  (Map2& map2, typename Map1::Dart_const_handle dh) //const
-  {
-    std::cout<<"Number type converter<"<<i<<">\n";
-    if ( dh->template attribute<i>()!=NULL )
-      return map2.template create_attribute<i>
-          ((typename Map2::template Attribute_type<i>::type::Info)
-           dh->template attribute<i>()->info());
-
-    return map2.template create_attribute<i>();
-  }
-};
-
-
 /*
 template<typename Map>
 typename Map::Dart_handle getRandomDart(Map& map)
@@ -281,6 +262,27 @@ void displayAllAttribs2D(Map& amap, const char* c)
   DisplayAttribs<Map,0>::run(amap);
   DisplayAttribs<Map,1>::run(amap);
   DisplayAttribs<Map,2>::run(amap);
+}
+
+template<typename Map>
+void displayAllAttribs3D(Map& amap, const char* c)
+{
+  std::cout<<c;
+  DisplayAttribs<Map,0>::run(amap);
+  DisplayAttribs<Map,1>::run(amap);
+  DisplayAttribs<Map,2>::run(amap);
+  DisplayAttribs<Map,3>::run(amap);
+}
+
+template<typename Map>
+void displayAllAttribs4D(Map& amap, const char* c)
+{
+  std::cout<<c;
+  DisplayAttribs<Map,0>::run(amap);
+  DisplayAttribs<Map,1>::run(amap);
+  DisplayAttribs<Map,2>::run(amap);
+  DisplayAttribs<Map,3>::run(amap);
+  DisplayAttribs<Map,4>::run(amap);
 }
 
 template<typename Map>
@@ -488,55 +490,61 @@ bool testCopy()
 
     Map5 map9a(map9); assert(map9a.is_valid());
     if ( map9a.is_isomorphic_to(map9) ) { assert(false); return false; }
-
-    std::cout<<map9a.number_of_attributes<0>()<<"  "
-               <<map9a.number_of_attributes<2>()<<"  "
-              <<map9.number_of_attributes<2>()<<"  "
-             <<map9a.number_of_attributes<3>()<<std::endl;
-
     assert( map9a.number_of_attributes<0>()==0 &&
             map9a.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
             map9a.number_of_attributes<3>()==0 );
     assert( map9a.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9a) );
 
-    /*CGAL::cpp11::tuple*/
-    typedef boost::tuple<Number_type_converter_cmap_attr<Map9,Map5,0> >/*,
-        CGAL::internal::Default_converter_cmap_attr<Map9,Map5,1>,
-        CGAL::internal::Default_converter_cmap_attr<Map9,Map5,2>,
-        Number_type_converter_cmap_attr<Map9,Map5,3> >*/ MyConverters;
+    CGAL::Cast_converter_cmap_attributes<Map9,Map5,0> c0;
+    CGAL::Default_converter_cmap_attributes<Map9,Map5,1> c1;
+    CGAL::Default_converter_cmap_attributes<Map9,Map5,2> c2;
+    CGAL::Cast_converter_cmap_attributes<Map9,Map5,3> c3;
 
+    CGAL::cpp11::tuple<CGAL::Cast_converter_cmap_attributes<Map9,Map5,0>,
+        CGAL::Default_converter_cmap_attributes<Map9,Map5,1>,
+        CGAL::Default_converter_cmap_attributes<Map9,Map5,2>,
+        CGAL::Cast_converter_cmap_attributes<Map9,Map5,3> > myconverters
+        (c0, c1, c2, c3);
 
-    Number_type_converter_cmap_attr<Map9,Map5,0> c0;
-    CGAL::internal::Default_converter_cmap_attr<Map9,Map5,1> c1;
-    CGAL::internal::Default_converter_cmap_attr<Map9,Map5,2> c2;
-    Number_type_converter_cmap_attr<Map9,Map5,3> c3;
-
-    c0(map5,map9.darts().begin());
-
-    MyConverters myconverters(c0); //, c1, c2, c3);
     Map5 map9b(map9, myconverters); assert(map9a.is_valid());
     if ( map9b.is_isomorphic_to(map9) ) { assert(false); return false; }
-
-    map9.display_characteristics(std::cout)<<std::endl;
-    map9b.display_characteristics(std::cout)<<std::endl;
-    std::cout<<map9b.number_of_attributes<0>()<<"  "
-            <<map9.number_of_attributes<0>()<<"  "
-           <<map9b.number_of_attributes<2>()<<"  "
-          <<map9.number_of_attributes<2>()<<"  "
-         <<map9b.number_of_attributes<3>()<<"  "
-        <<map9.number_of_attributes<3>()<<std::endl;
-
     assert( map9b.number_of_attributes<0>()>=map9.number_of_attributes<0>() &&
             map9b.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
             map9b.number_of_attributes<3>()>=map9.number_of_attributes<3>() );
     assert( map9b.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9b) );
 
+    CGAL::Cast_converter_cmap_attributes<Map5,Map9,0> cb0;
+    CGAL::Default_converter_cmap_attributes<Map5,Map9,1> cb1;
+    CGAL::Default_converter_cmap_attributes<Map5,Map9,2> cb2;
+    CGAL::Cast_converter_cmap_attributes<Map5,Map9,3> cb3;
+
+    CGAL::cpp11::tuple<CGAL::Cast_converter_cmap_attributes<Map5,Map9,0>,
+        CGAL::Default_converter_cmap_attributes<Map5,Map9,1>,
+        CGAL::Default_converter_cmap_attributes<Map5,Map9,2>,
+        CGAL::Cast_converter_cmap_attributes<Map5,Map9,3> > myconverters2
+        (cb0, cb1, cb2, cb3);
+
+    Map9 map5b(map5, myconverters2); assert(map5b.is_valid());
+    if ( map5b.is_isomorphic_to(map5) ) { assert(false); return false; }
+    if ( !map5b.is_isomorphic_to(map5, false) ) { assert(false); return false; }
+    assert( map5b.number_of_attributes<0>()==map5.number_of_attributes<0>() &&
+            map5b.number_of_attributes<2>()==map5.number_of_attributes<2>() &&
+            map5b.number_of_attributes<3>()==map5.number_of_attributes<3>() );
+    assert( map5b.is_isomorphic_to(map5)==map5.is_isomorphic_to(map5b) );
   }
+
+  /*    displayAllAttribs4D(map9, "map9******************\n");
+      displayAllAttribs3D(map9b, "map9b******************\n");*/
+
+  /*   std::cout<<map9b.number_of_attributes<0>()<<"  "
+             <<map9.number_of_attributes<0>()<<"  "
+            <<map9b.number_of_attributes<2>()<<"  "
+           <<map9.number_of_attributes<2>()<<"  "
+          <<map9b.number_of_attributes<3>()<<"  "
+         <<map9.number_of_attributes<3>()<<std::endl;*/
 
   //map5.display_characteristics(std::cout)<<std::endl;
   //map5a.display_characteristics(std::cout)<<std::endl;
-  // displayAllAttribs2D(mapXX, "mapXX******************\n");
-  // displayAllAttribs2D(mapYY, "mapYY******************\n");
 
   return true;
 }

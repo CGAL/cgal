@@ -28,6 +28,10 @@
  */
 namespace CGAL
 {
+template< typename Map1, typename Map2, unsigned int i,
+          typename Attr1=typename Map1::template Attribute_type<i>::type,
+          typename Attr2=typename Map2::template Attribute_type<i>::type >
+struct Default_converter_cmap_attributes;
 // ****************************************************************************
 namespace internal
 {
@@ -79,45 +83,6 @@ struct Default_converter_two_non_void_attributes_cmap<Map1, Map2, i, Info, Info>
   }
 };
 
-// Map1 is the existing map, to convert into map2.
-template< typename Map1, typename Map2, unsigned int i,
-          typename Attr1=typename Map1::template Attribute_type<i>::type,
-          typename Attr2=typename Map2::template Attribute_type<i>::type >
-struct Default_converter_cmap_attr
-{
-  typename Map2::template Attribute_handle<i>::type operator()
-  (Map2& map2, typename Map1::Dart_const_handle dh1)
-  { return Default_converter_two_non_void_attributes_cmap
-      <Map1,Map2,i,typename Attr1::Info,typename Attr2::Info>::
-      run(map2, dh1->template attribute<i>()); }
-};
-
-template< typename Map1, typename Map2, unsigned int i,
-          typename Attr1>
-struct Default_converter_cmap_attr<Map1, Map2, i, Attr1, CGAL::Void>
-{
-  typename Map2::template Attribute_handle<i>::type operator()
-  (Map2&, typename Map1::Dart_const_handle)
-  { return NULL; }
-};
-
-template< typename Map1, typename Map2, unsigned int i,
-          typename Attr2>
-struct Default_converter_cmap_attr<Map1, Map2, i, CGAL::Void, Attr2>
-{
-  typename Map2::template Attribute_handle<i>::type operator()
-  (Map2&, typename Map1::Dart_const_handle)
-  { return NULL; }
-};
-
-template< typename Map1, typename Map2, unsigned int i>
-struct Default_converter_cmap_attr<Map1, Map2, i, CGAL::Void, CGAL::Void>
-{
-  typename Map2::template Attribute_handle<i>::type operator()
-  (Map2&, typename Map1::Dart_const_handle)
-  { return NULL; }
-};
-
 template<typename Map1, typename Map2, typename Converters, unsigned int i,
          bool t=(i>=boost::tuples::length<Converters>::value)>
 struct Convert_attribute_functor
@@ -126,7 +91,7 @@ struct Convert_attribute_functor
   run( Map2* cmap2, typename Map1::Dart_const_handle dh1,
        const Converters& converters)
   {
-    return Default_converter_cmap_attr<Map1, Map2, i>() (*cmap2, dh1);
+    return CGAL::Default_converter_cmap_attributes<Map1, Map2, i>() (*cmap2, dh1);
   }
 };
 
@@ -137,7 +102,6 @@ struct Convert_attribute_functor<Map1,Map2,Converters,i,false>
   run( Map2* cmap2, typename Map1::Dart_const_handle dh1,
        const Converters& converters)
   {
-
     return CGAL::cpp11::get<i>(converters) (*cmap2, dh1);
   }
 };
@@ -167,6 +131,67 @@ struct Copy_attributes_functor
 };
 // ****************************************************************************
 } // namespace internal
+// ****************************************************************************
+// Map1 is the existing map, to convert into map2.
+// Default converter copy only attributes if they have
+// same info types.
+template< typename Map1, typename Map2, unsigned int i,
+          typename Attr1,typename Attr2 >
+struct Default_converter_cmap_attributes
+{
+  typename Map2::template Attribute_handle<i>::type operator()
+  (Map2& map2, typename Map1::Dart_const_handle dh1) const
+  { return internal::Default_converter_two_non_void_attributes_cmap
+      <Map1,Map2,i,typename Attr1::Info,typename Attr2::Info>::
+      run(map2, dh1->template attribute<i>()); }
+};
+
+template< typename Map1, typename Map2, unsigned int i,
+          typename Attr1>
+struct Default_converter_cmap_attributes<Map1, Map2, i, Attr1, CGAL::Void>
+{
+  typename Map2::template Attribute_handle<i>::type operator()
+  (Map2&, typename Map1::Dart_const_handle) const
+  { return NULL; }
+};
+
+template< typename Map1, typename Map2, unsigned int i,
+          typename Attr2>
+struct Default_converter_cmap_attributes<Map1, Map2, i, CGAL::Void, Attr2>
+{
+  typename Map2::template Attribute_handle<i>::type operator()
+  (Map2&, typename Map1::Dart_const_handle) const
+  { return NULL; }
+};
+
+template< typename Map1, typename Map2, unsigned int i>
+struct Default_converter_cmap_attributes<Map1, Map2, i, CGAL::Void, CGAL::Void>
+{
+  typename Map2::template Attribute_handle<i>::type operator()
+  (Map2&, typename Map1::Dart_const_handle) const
+  { return NULL; }
+};
+
+// Map1 is the existing map, to convert into map2.
+// Cast converter copy always copy attributes, doing
+// a cast. This works only if both types are convertible
+// (and this is user responsability to use it only in
+//  this case).
+template< typename Map1, typename Map2, unsigned int i>
+struct Cast_converter_cmap_attributes
+{
+  typename Map2::template Attribute_handle<i>::type operator()
+  (Map2& map2, typename Map1::Dart_const_handle dh) const
+  {
+    if ( dh->template attribute<i>()!=NULL )
+      return map2.template create_attribute<i>
+          ((typename Map2::template Attribute_type<i>::type::Info)
+           dh->template attribute<i>()->info());
+
+    return map2.template create_attribute<i>();
+  }
+};
+// ****************************************************************************
 } // namespace CGAL
 
 #endif // CGAL_COMBINATORIAL_MAP_COPY_FUNCTORS_H
