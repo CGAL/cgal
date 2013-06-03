@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Alpha Shapes"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Alpha_shapes_3/doc/Alpha_shapes_3/
+
+
+

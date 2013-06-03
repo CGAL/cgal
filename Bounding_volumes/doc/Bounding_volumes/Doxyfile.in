@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Bounding Volumes"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Bounding_volumes/doc/Bounding_volumes/
+
+
+

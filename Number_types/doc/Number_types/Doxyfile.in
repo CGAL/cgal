@@ -1,0 +1,11 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Number Types"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Number_types/doc/Number_types/
+
+
+
+EXAMPLE_PATH =
+

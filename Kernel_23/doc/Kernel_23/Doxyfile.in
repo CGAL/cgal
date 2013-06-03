@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D and 3D Linear Geometry Kernel"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Kernel_23/doc/Kernel_23/
+
+
+
+EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Filtered_kernel/examples

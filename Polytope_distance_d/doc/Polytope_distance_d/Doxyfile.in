@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Optimal Distances"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Polytope_distance_d/doc/Polytope_distance_d/
+
+
+

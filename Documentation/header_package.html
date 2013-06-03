@@ -6,11 +6,11 @@
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
-<link href="$relpath$../../CGAL.CGAL/html/stylesheet.css" rel="stylesheet" type="text/css" />
-<link href="$relpath$../../CGAL.CGAL/html/cgal_stylesheet.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="$relpath$../../CGAL.CGAL/html/jquery.js"></script>
-<script type="text/javascript" src="$relpath$../../CGAL.CGAL/html/dynsections.js"></script>
-<script type="text/javascript" src="$relpath$../../CGAL.CGAL/html/resize.js"></script>
+<link href="$relpath$../../CGAL/html/stylesheet.css" rel="stylesheet" type="text/css" />
+<link href="$relpath$../../CGAL/html/cgal_stylesheet.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="$relpath$../../CGAL/html/jquery.js"></script>
+<script type="text/javascript" src="$relpath$../../CGAL/html/dynsections.js"></script>
+<script type="text/javascript" src="$relpath$../../CGAL/html/resize.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   resizeHeight = function() {
@@ -23,8 +23,8 @@
   $(document).ready(initResizable);
 </script>
 
-<link href="../../CGAL.CGAL/html/search/search.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="../../CGAL.CGAL/html/search/search.js"></script>
+<link href="../../CGAL/html/search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../../CGAL/html/search/search.js"></script>
 <script type="text/javascript">
   $(document).ready(function() { searchBox.OnSelectItem(0); });
 </script>
@@ -39,8 +39,8 @@ MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-<script src="$relpath$../../MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-<script src="$relpath$../../CGAL.CGAL/html/hacks.js" type="text/javascript"></script>
+<script src="@CGAL_DOC_MATHJAX_LOCATION@/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<script src="$relpath$../../CGAL/html/hacks.js" type="text/javascript"></script>
 <script src="$relpath$modules.js" type="text/javascript"></script>
 </head>
 <body>
@@ -58,15 +58,15 @@ MathJax.Hub.Config({
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="back-nav">
   <ul>
-    <li><a href="../../CGAL.CGAL/html/index.html">Home</a></li>
-    <li><a href="../../CGAL.CGAL/html/general_intro.html">Getting Started</a></li>
-    <li><a href="../../CGAL.CGAL/html/packages.html">Package Overview</a></li>
-    <li><a href="../../CGAL.CGAL/html/how_to_cite_cgal.html">Acknowledging CGAL</a></li>
+    <li><a href="../../CGAL/html/index.html">Home</a></li>
+    <li><a href="../../CGAL/html/general_intro.html">Getting Started</a></li>
+    <li><a href="../../CGAL/html/packages.html">Package Overview</a></li>
+    <li><a href="../../CGAL/html/how_to_cite_cgal.html">Acknowledging CGAL</a></li>
   </ul>
   <!--BEGIN DISABLE_INDEX-->
   <div id="MSearchBox" class="MSearchBoxInactive">
     <span class="left">
-      <img id="MSearchSelect" src="../../CGAL.CGAL/html/search/mag_sel.png"
+      <img id="MSearchSelect" src="../../CGAL/html/search/mag_sel.png"
            onmouseover="return searchBox.OnSearchSelectShow()"
            onmouseout="return searchBox.OnSearchSelectHide()"
            alt=""/>
@@ -77,7 +77,7 @@ MathJax.Hub.Config({
     </span>
     <span class="right">
       <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()">
-        <img id="MSearchCloseImg" border="0" src="../../CGAL.CGAL/html/search/close.png" alt=""/>
+        <img id="MSearchCloseImg" border="0" src="../../CGAL/html/search/close.png" alt=""/>
       </a>
     </span>
   </div>
@@ -114,7 +114,7 @@ MathJax.Hub.Config({
 <!-- Manual insertion of the search function. Notice that the path to
      the search directory is adjusted to the top-level. -->
 <script type="text/javascript">
-var searchBox = new SearchBox("searchBox", "../../CGAL.CGAL/html/search",false,'Search');
+var searchBox = new SearchBox("searchBox", "../../CGAL/html/search",false,'Search');
 </script>
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"

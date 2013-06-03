@@ -1,0 +1,5 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Surface Subdivision Methods"
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Subdivision_method_3/doc/Subdivision_method_3/
