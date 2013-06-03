@@ -99,51 +99,49 @@ private:
   {
     std::list<Facet_handle> new_facets;
     for(typename std::vector<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
-      if(*it  == Facet_handle()){
-      } else {
-        Halfedge_handle hh =  (*it)->halfedge();
-        Vertex_handle vi = (*it)->halfedge()->vertex();
-        Vertex_handle vj = (*it)->halfedge()->next()->vertex();
-        Vertex_handle vk = (*it)->halfedge()->prev()->vertex();
-        Point_3 c = CGAL::centroid(vi->point(), vj->point(), vk->point());
-        double sac  = (scale_attribute[vi] + scale_attribute[vj] + scale_attribute[vk])/3.0;
-        double dist_c_vi = std::sqrt(CGAL::squared_distance(c,vi->point()));
-        double dist_c_vj = std::sqrt(CGAL::squared_distance(c,vj->point()));
-        double dist_c_vk = std::sqrt(CGAL::squared_distance(c,vk->point()));
-        if((alpha * dist_c_vi > sac) &&
-          (alpha * dist_c_vj > sac) &&
-          (alpha * dist_c_vk > sac) &&
-          (alpha * dist_c_vi > scale_attribute[vi]) &&
-          (alpha * dist_c_vj > scale_attribute[vj]) &&
-          (alpha * dist_c_vk > scale_attribute[vk])){
-            Halfedge_handle h = poly.create_center_vertex((*it)->halfedge());
-            h->vertex()->point() = c;
-            scale_attribute[h->vertex()] = sac;
+      CGAL_assertion(*it  != Facet_handle());
 
-            // collect 2 new facets for next round 
-            Facet_handle h1 = h->next()->opposite()->face();
-            Facet_handle h2 = h->opposite()->face();
-            new_facets.push_back(h1);
-            new_facets.push_back(h2);
-            // relax edges of the  patching mesh 
-            Halfedge_handle e_ij = h->prev();
-            Halfedge_handle e_ik = h->opposite()->next();
-            Halfedge_handle e_jk = h->next()->opposite()->prev();
+      Halfedge_handle hh =  (*it)->halfedge();
+      Vertex_handle vi = (*it)->halfedge()->vertex();
+      Vertex_handle vj = (*it)->halfedge()->next()->vertex();
+      Vertex_handle vk = (*it)->halfedge()->prev()->vertex();
+      Point_3 c = CGAL::centroid(vi->point(), vj->point(), vk->point());
+      double sac  = (scale_attribute[vi] + scale_attribute[vj] + scale_attribute[vk])/3.0;
+      double dist_c_vi = std::sqrt(CGAL::squared_distance(c,vi->point()));
+      double dist_c_vj = std::sqrt(CGAL::squared_distance(c,vj->point()));
+      double dist_c_vk = std::sqrt(CGAL::squared_distance(c,vk->point()));
+      if((alpha * dist_c_vi > sac) &&
+        (alpha * dist_c_vj > sac) &&
+        (alpha * dist_c_vk > sac) &&
+        (alpha * dist_c_vi > scale_attribute[vi]) &&
+        (alpha * dist_c_vj > scale_attribute[vj]) &&
+        (alpha * dist_c_vk > scale_attribute[vk])){
+          Halfedge_handle h = poly.create_center_vertex((*it)->halfedge());
+          h->vertex()->point() = c;
+          scale_attribute[h->vertex()] = sac;
 
-            if(interior_map.find(e_ij->opposite()->face()) != interior_map.end()){
-              relax(poly, e_ij);
-            }
-            if(interior_map.find(e_ik->opposite()->face()) != interior_map.end()){
-              relax(poly, e_ik);
-            }
-            if(interior_map.find(e_jk->opposite()->face()) != interior_map.end()){
-              relax(poly, e_jk);
-            }
-        }
+          // collect 2 new facets for next round 
+          Facet_handle h1 = h->next()->opposite()->face();
+          Facet_handle h2 = h->opposite()->face();
+          new_facets.push_back(h1); interior_map.insert(h1);
+          new_facets.push_back(h2); interior_map.insert(h2);
+          // relax edges of the  patching mesh 
+          Halfedge_handle e_ij = h->prev();
+          Halfedge_handle e_ik = h->opposite()->next();
+          Halfedge_handle e_jk = h->next()->opposite()->prev();
+
+          if(interior_map.find(e_ij->opposite()->face()) != interior_map.end()){
+            relax(poly, e_ij);
+          }
+          if(interior_map.find(e_ik->opposite()->face()) != interior_map.end()){
+            relax(poly, e_ik);
+          }
+          if(interior_map.find(e_jk->opposite()->face()) != interior_map.end()){
+            relax(poly, e_jk);
+          }
       }
     }
     facets.insert(facets.end(), new_facets.begin(), new_facets.end());
-    interior_map.insert(new_facets.begin(), new_facets.end());
     return ! new_facets.empty();
   }
 
