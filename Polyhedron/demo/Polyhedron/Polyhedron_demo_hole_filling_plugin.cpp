@@ -1,3 +1,4 @@
+#undef NDEBUG
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
