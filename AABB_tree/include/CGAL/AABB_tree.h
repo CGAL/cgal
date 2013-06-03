@@ -385,7 +385,7 @@ public:
     // clear nodes
     void clear_nodes()
     {
-			if( !empty() ) {
+			if( size() > 1 ) {
 				delete [] m_p_root_node;
 			}
 			m_p_root_node = NULL;
