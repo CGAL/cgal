@@ -87,8 +87,111 @@ namespace CGAL {
     Linear_cell_complex() : Base()
     {}
 
-    Linear_cell_complex(const Self & alcc) : Base(alcc)
-    {}
+    /** Copy the given linear cell complex into *this.
+     *  Note that both LCC can have different dimensions and/or non void attributes.
+     *  @param alcc the linear cell complex to copy.
+     *  @post *this is valid.
+     */
+    template <unsigned int dbis, unsigned int ambientdimbis, typename Traitsbis,
+              typename Itemsbis, class Allocbis, typename CMapbis, typename Converters>
+    void copy(const Linear_cell_complex<dbis,ambientdimbis,Traitsbis,
+                                        Itemsbis,Allocbis,CMapbis> & alcc,
+              Converters& converters)
+    {
+      typedef Linear_cell_complex<dbis,ambientdimbis,Traitsbis,Itemsbis,Allocbis,
+                                  CMapbis> LCC2;
+
+      this->clear();
+
+      this->mnb_used_marks = amap.mnb_used_marks;
+      this->mmask_marks    = amap.mmask_marks;
+
+      for (size_type i = 0; i < NB_MARKS; ++i)
+      {
+        this->mfree_marks_stack[i]        = amap.mfree_marks_stack[i];
+        this->mindex_marks[i]             = amap.mindex_marks[i];
+        this->mnb_marked_darts[i]         = amap.mnb_marked_darts[i];
+        this->mnb_times_reserved_marks[i] = amap.mnb_times_reserved_marks[i];
+      }
+
+      // We must do this ony once, but problem because null_dart_handle
+      // is static !
+      if (mnull_dart_container.empty())
+      {
+        null_dart_handle =
+          mnull_dart_container.emplace(amap.null_dart_handle->mmarks);
+
+        for (unsigned int i = 0; i <= dimension; ++i)
+        {
+          null_dart_handle->unlink_beta(i);
+        }
+      }
+      else
+        null_dart_handle->mmarks = amap.null_dart_handle->mmarks;
+
+      // Create an mapping between darts of the two maps (originals->copies).
+      std::map<typename CMap2::Dart_const_handle, Dart_handle> dartmap;
+
+      for (typename CMap2::Dart_const_range::const_iterator
+             it=amap.darts().begin(), itend=amap.darts().end();
+           it!=itend; ++it)
+      {
+        dartmap[it]=mdarts.emplace(it->mmarks);
+      }
+
+      unsigned int min_dim=
+        (dimension<amap.dimension?dimension:amap.dimension);
+
+      typename std::map<typename CMap2::Dart_const_handle,Dart_handle>
+        ::iterator dartmap_iter, dartmap_iter_end=dartmap.end();
+      for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
+           ++dartmap_iter)
+      {
+        for (unsigned int i=0; i<=min_dim; i++)
+        {
+          if (dartmap_iter->first->beta(i)!=CMap2::null_dart_handle &&
+              (dartmap_iter->first)<(dartmap_iter->first->beta(i)))
+          {
+            basic_link_beta(dartmap_iter->second,
+                            dartmap[dartmap_iter->first->beta(i)], i);
+          }
+        }
+      }
+
+      /** Copy attributes */
+      for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
+           ++dartmap_iter)
+      {
+        Helper::template Foreach_enabled_attributes
+          < internal::Copy_attributes_functor <CMap2, Self, Converters> >::
+          run(&amap, this, dartmap_iter->first, dartmap_iter->second,
+              converters);
+        // Ici tester si pas attribut alors le créer et associer le Point
+        if ( dartmap_iter->second->attribute<0>()==NULL )
+        {
+          set_attribute<0>(dartmap_iter->second, create_attribute<0>());
+          Set_point_if_exist<Attribute_type<0>::type,
+                             typename LCC2::template Attribute_type<0>::type>::
+            run( dartmap_iter->first->template attribute<0>(),
+            dartmap_iter->second->template attribute<0>() );
+        }
+      }
+
+      CGAL_assertion (is_valid () == 1);
+    }
+
+    template <unsigned int dbis, unsigned int ambientdimbis, typename Traitsbis,
+              typename Itemsbis, class Allocbis, typename CMapbis>
+    void copy(const Linear_cell_complex<dbis,ambientdimbis,Traitsbis,
+                                        Itemsbis,Allocbis,CMapbis> & alcc)
+    {
+      CGAL::cpp11::tuple<> converters;
+      return copy< dbis,Refsbis,Itemsbis,Allocbis,CGAL::cpp11::tuple<> >
+        (amap, converters);
+    }
+
+    Linear_cell_complex(const Self & alcc)
+    { copy<dimension, ambientdimbis>(alcc); }
 
     template < class LCC >
     Linear_cell_complex(const LCC & alcc)
