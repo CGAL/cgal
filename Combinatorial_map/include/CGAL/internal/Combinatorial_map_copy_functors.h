@@ -72,10 +72,10 @@ struct Default_converter_two_non_void_attributes_cmap<Map1, Map2, i, Info, Info>
   static typename Map2::template Attribute_handle<i>::type
   run(Map2& map2, typename Map1::template Attribute_const_handle<i>::type ah)
   {
-    if ( ah!=NULL )
-      return map2.template create_attribute<i>(ah->info());
-
-    return map2.template create_attribute<i>();
+    typename Map2::template Attribute_handle<i>::type
+      res = map2.template create_attribute<i>();
+    if ( ah!=NULL ) res->info() = ah->info();
+    return res;
   }
 };
 
