@@ -11,7 +11,7 @@ int main()
 
   Point p0(0.5, 0.5);
   CGAL_assertion_code(Vertex_handle vh0 = )
-  insert(p0);
+  t.insert(p0);
   CGAL_assertion(t.is_valid());
 
   CGAL_assertion(t.number_of_vertices() == 1);
