@@ -50,7 +50,7 @@ struct Map_3_dart_items_3
     typedef CGAL::Dart< 3, Refs > Dart;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, int > Double_attrib;
+    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
 
     typedef CGAL::cpp11::tuple<Double_attrib_wp, void,
@@ -120,7 +120,7 @@ struct Map_dart_max_items_4
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
     typedef CGAL::cpp11::tuple<Int_attrib_wp, Int_attrib,
-          Int_attrib, Double_attrib, Double_attrib>
+          Int_attrib, Int_attrib, Double_attrib>
     Attributes;
   };
 };
@@ -157,7 +157,7 @@ typedef CGAL::Linear_cell_complex<3,3, Traits3_b, Another_map_3_dart_items_3> Ma
 // Point_4+int, void, int, void, int
 typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_items_4> Map8;
 
-// Point_4+int, int, int, double, double
+// Point_4+int, int, int, int, double
 typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_max_items_4> Map9;
 
 /*
@@ -256,6 +256,36 @@ struct DisplayAttribs<Map,i,CGAL::Void>
   {}
 };
 
+template<typename Map,typename Attr,typename Info=typename Attr::Info>
+struct DisplayVertexAttrib
+{
+  static void run(Map& amap)
+  {
+    std::cout<<"0-attributes: ";
+    for ( typename Map::template Attribute_range<0>::type::iterator
+          it=amap.template attributes<0>().begin(),
+          itend=amap.template attributes<0>().end();
+          it!=itend; ++it )
+    {
+      std::cout<<it->info()<<"; ";
+    }
+    std::cout<<std::endl;
+  }
+};
+template<typename Map,typename Attr>
+struct DisplayVertexAttrib<Map,Attr,void>
+{
+  static void run(Map& amap)
+  {}
+};
+
+template<typename Map, typename Attr>
+struct DisplayAttribs<Map,0,Attr>
+{
+  static void run(Map& amap)
+  { DisplayVertexAttrib<Map,Attr>::run(amap); }
+};
+
 template<typename Map>
 void displayAllAttribs2D(Map& amap, const char* c)
 {
@@ -263,6 +293,47 @@ void displayAllAttribs2D(Map& amap, const char* c)
   DisplayAttribs<Map,0>::run(amap);
   DisplayAttribs<Map,1>::run(amap);
   DisplayAttribs<Map,2>::run(amap);
+
+  std::cout<<"Points: ";
+  for ( typename Map::template Attribute_range<0>::type::iterator
+        it=amap.template attributes<0>().begin(),
+        itend=amap.template attributes<0>().end();
+        it!=itend; ++it )
+  {
+    std::cout<<it->point()<<"; ";
+  }
+  std::cout<<std::endl;
+}
+
+template<typename Map>
+void displayAllAttribs3D(Map& amap, const char* c)
+{
+  std::cout<<c;
+  DisplayAttribs<Map,0>::run(amap);
+  DisplayAttribs<Map,1>::run(amap);
+  DisplayAttribs<Map,2>::run(amap);
+  DisplayAttribs<Map,3>::run(amap);
+
+  std::cout<<"Points: ";
+  for ( typename Map::template Attribute_range<0>::type::iterator
+        it=amap.template attributes<0>().begin(),
+        itend=amap.template attributes<0>().end();
+        it!=itend; ++it )
+  {
+    std::cout<<it->point()<<"; ";
+  }
+  std::cout<<std::endl;
+}
+
+template<typename Map>
+void displayAllAttribs4D(Map& amap, const char* c)
+{
+  std::cout<<c;
+  DisplayAttribs<Map,0>::run(amap);
+  DisplayAttribs<Map,1>::run(amap);
+  DisplayAttribs<Map,2>::run(amap);
+  DisplayAttribs<Map,3>::run(amap);
+  DisplayAttribs<Map,4>::run(amap);
 
   std::cout<<"Points: ";
   for ( typename Map::template Attribute_range<0>::type::iterator
@@ -399,12 +470,15 @@ bool testCopy()
   {
     // 2D
     Map2 map1p(map1); assert(map1p.is_valid());
-    if ( !map1.is_isomorphic_to(map1p) ) { assert(false); return false; }
+    if ( map1.is_isomorphic_to(map1p) ) { assert(false); return false; }
+    if ( !map1.is_isomorphic_to(map1p, false) ) { assert(false); return false; }
 
     Map3 map1t(map1); assert(map1t.is_valid());
-    if ( !map1.is_isomorphic_to(map1t) ) { assert(false); return false; }
+    if ( map1.is_isomorphic_to(map1t) ) { assert(false); return false; }
+    if ( !map1.is_isomorphic_to(map1t, false) ) { assert(false); return false; }
 
-    if ( !map1p.is_isomorphic_to(map1t) ) { assert(false); return false; }
+    if ( map1p.is_isomorphic_to(map1t) ) { assert(false); return false; }
+    if ( !map1p.is_isomorphic_to(map1t, false) ) { assert(false); return false; }
 
     Map1 map2p(map2); assert(map2p.is_valid());
     if ( map2.is_isomorphic_to(map2p) ) { assert(false); return false; }
@@ -443,7 +517,7 @@ bool testCopy()
     Map6 map5b(map5); assert(map5b.is_valid());
     if ( map5.is_isomorphic_to(map5b) ) { assert(false); return false; }
     if ( !map5.is_isomorphic_to(map5b, false) ) { assert(false); return false; }
-    assert( map5b.number_of_attributes<0>()==0 &&
+    assert( map5b.number_of_attributes<0>()==map5.number_of_attributes<0>() &&
             map5b.number_of_attributes<1>()==0 &&
             map5b.number_of_attributes<2>()==map5.number_of_attributes<2>() &&
             map5b.number_of_attributes<3>()==map5.number_of_attributes<3>() );
@@ -451,7 +525,7 @@ bool testCopy()
     Map7 map5c(map5); assert(map5c.is_valid());
     if ( map5.is_isomorphic_to(map5c) ) { assert(false); return false; }
     if ( !map5.is_isomorphic_to(map5c, false) ) { assert(false); return false; }
-    assert( map5c.number_of_attributes<0>()==0 &&
+    assert( map5c.number_of_attributes<0>()==map5.number_of_attributes<0>() &&
             map5c.number_of_attributes<2>()==map5.number_of_attributes<2>() );
 
     assert( map5.is_isomorphic_to(map5a)==map5a.is_isomorphic_to(map5) );
@@ -507,7 +581,7 @@ bool testCopy()
 
 int main()
 {
-  std::cout<<"Combinatorial map copy test (v1)."<<std::flush;
+  std::cout<<"Linear cell complex copy test (v1)."<<std::flush;
 
   if ( !testCopy() )
   {

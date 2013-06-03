@@ -99,10 +99,10 @@ namespace CGAL {
     void copy(const LCC2& alcc, const Converters& converters)
     {
       typedef typename CGAL::internal::Modify_tuple_of_converter_for_vertex_attribute
-          <Self, LCC2, Converters>::type Converters2;
+          <LCC2, Self, Converters>::type Converters2;
 
       Converters2 converters2=CGAL::internal::Modify_tuple_of_converter_for_vertex_attribute
-          <Self, LCC2, Converters>::run(converters);
+          <LCC2, Self, Converters>::run(converters);
       Base::template copy<LCC2, Converters2>(alcc, converters2);
     }
 
