@@ -49,12 +49,19 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
 
   // Required for drawing functionality
   positions.resize(boost::num_vertices(*polyhedron())*3);
+  //vnormals.resize(positions.size());
   vertex_iterator vb, ve;
   std::size_t counter = 0;
   for(boost::tie(vb, ve) = boost::vertices(*polyhedron()); vb != ve; ++vb, ++counter) {
     positions[counter*3] = vb->point().x();
     positions[counter*3+1] = vb->point().y();
     positions[counter*3+2] = vb->point().z();
+
+    //const Polyhedron::Traits::Vector_3& n = compute_vertex_normal<Polyhedron::Vertex, Polyhedron::Traits>(**vb);
+
+    //vnormals[counter*3] = n.x();
+    //vnormals[counter*3+1] = n.y();
+    //vnormals[counter*3+2] = n.z();
   }
 
   tris.resize(polyhedron()->size_of_facets()*3);
@@ -217,9 +224,13 @@ void Scene_edit_polyhedron_item::draw() const {
   glEnableClientState(GL_VERTEX_ARRAY);
   glVertexPointer(3, GL_DOUBLE, 0, positions.data());
 
+  //glEnableClientState(GL_NORMAL_ARRAY);
+  //glNormalPointer(GL_DOUBLE, 0, vnormals.data());
+
   glDrawElements(GL_TRIANGLES, tris.size(), GL_UNSIGNED_INT, tris.data());
 
   glDisableClientState(GL_VERTEX_ARRAY);
+  //glDisableClientState(GL_NORMAL_ARRAY);
 
   draw_ROI_and_handles();
 }

@@ -207,7 +207,11 @@ public:
   void setRenderingMode(RenderingMode m);
   
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
+  bool supportsRenderingMode(RenderingMode m) const { 
+    return (m!=PointsPlusNormals)
+         && (m!= Gouraud)
+         && (m != Flat); 
+  }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const;
   void draw_edges() const;
@@ -258,6 +262,7 @@ private:
   std::vector<double> positions;
   std::vector<unsigned int> tris;
   std::vector<unsigned int> edges;
+  std::vector<double> vnormals;
 
   Deform_mesh deform_mesh;
   Deform_mesh::Handle_group active_group;
