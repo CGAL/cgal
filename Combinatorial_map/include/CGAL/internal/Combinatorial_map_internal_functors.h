@@ -459,8 +459,8 @@ template<typename Map1, typename Map2,
          typename T1, typename T2, int i>
 struct Is_same_attribute_functor
 {
-  static bool const run(typename Map1::Dart_const_handle dh1,
-                        typename Map2::Dart_const_handle dh2)
+  static bool run(typename Map1::Dart_const_handle dh1,
+                  typename Map2::Dart_const_handle dh2)
   {
     if (dh1->template attribute<i>()==NULL &&
         dh2->template attribute<i>()==NULL)

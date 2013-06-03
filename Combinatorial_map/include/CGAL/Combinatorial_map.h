@@ -159,7 +159,7 @@ namespace CGAL {
      *  @post *this is valid.
      */
     template <typename CMap2, typename Converters>
-    void copy(const CMap2& amap, Converters& converters)
+    void copy(const CMap2& amap, const Converters& converters)
     {
       this->clear();
 
@@ -233,7 +233,7 @@ namespace CGAL {
     }
 
     template <typename CMap2>
-    void copy(const CMap2 & amap)
+    void copy(const CMap2& amap)
     {
       CGAL::cpp11::tuple<> converters;
       return copy< CMap2, CGAL::cpp11::tuple<> >(amap, converters);

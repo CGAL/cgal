@@ -38,7 +38,8 @@ namespace internal
 // ****************************************************************************
 // Map1 is the existing map, to convert into map2.
 // Case where the two i-attributes are non void.
-template< typename Map1, typename Map2, unsigned int i, typename Info1, typename Info2 >
+template< typename Map1, typename Map2, unsigned int i,
+          typename Info1, typename Info2 >
 struct Default_converter_two_non_void_attributes_cmap
 {
   static typename Map2::template Attribute_handle<i>::type
@@ -88,10 +89,12 @@ template<typename Map1, typename Map2, typename Converters, unsigned int i,
 struct Convert_attribute_functor
 {
   static typename Map2::template Attribute_handle<i>::type
-  run( Map2* cmap2, typename Map1::Dart_const_handle dh1,
-       const Converters& converters)
+  run( const Map1* cmap1, Map2* cmap2, typename Map1::Dart_const_handle dh1,
+       typename Map2::Dart_handle dh2, const Converters& converters)
   {
-    return CGAL::Default_converter_cmap_attributes<Map1, Map2, i>() (*cmap2, dh1);
+    return
+        CGAL::Default_converter_cmap_attributes<Map1, Map2, i>()
+        (*cmap1, *cmap2, dh1, dh2);
   }
 };
 
@@ -99,10 +102,10 @@ template<typename Map1, typename Map2, typename Converters, unsigned int i>
 struct Convert_attribute_functor<Map1,Map2,Converters,i,false>
 {
   static typename Map2::template Attribute_handle<i>::type
-  run( Map2* cmap2, typename Map1::Dart_const_handle dh1,
-       const Converters& converters)
+  run( const Map1* cmap1, Map2* cmap2, typename Map1::Dart_const_handle dh1,
+       typename Map2::Dart_handle dh2, const Converters& converters)
   {
-    return CGAL::cpp11::get<i>(converters) (*cmap2, dh1);
+    return CGAL::cpp11::get<i>(converters) (*cmap1, *cmap2, dh1, dh2);
   }
 };
 
@@ -122,7 +125,7 @@ struct Copy_attributes_functor
     {
     typename Map2::template Attribute_handle<i>::type
           res=Convert_attribute_functor<Map1,Map2,Converters,i>::
-          run(cmap2,dh1,converters);
+          run(cmap1, cmap2, dh1, dh2, converters);
 
     if ( res!=NULL )
       cmap2->template set_attribute<i>(dh2, res);
@@ -140,7 +143,8 @@ template< typename Map1, typename Map2, unsigned int i,
 struct Default_converter_cmap_attributes
 {
   typename Map2::template Attribute_handle<i>::type operator()
-  (Map2& map2, typename Map1::Dart_const_handle dh1) const
+  (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
+   typename Map2::Dart_handle dh2) const
   { return internal::Default_converter_two_non_void_attributes_cmap
       <Map1,Map2,i,typename Attr1::Info,typename Attr2::Info>::
       run(map2, dh1->template attribute<i>()); }
@@ -151,7 +155,8 @@ template< typename Map1, typename Map2, unsigned int i,
 struct Default_converter_cmap_attributes<Map1, Map2, i, Attr1, CGAL::Void>
 {
   typename Map2::template Attribute_handle<i>::type operator()
-  (Map2&, typename Map1::Dart_const_handle) const
+  (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
+   typename Map2::Dart_handle dh2) const
   { return NULL; }
 };
 
@@ -160,7 +165,8 @@ template< typename Map1, typename Map2, unsigned int i,
 struct Default_converter_cmap_attributes<Map1, Map2, i, CGAL::Void, Attr2>
 {
   typename Map2::template Attribute_handle<i>::type operator()
-  (Map2&, typename Map1::Dart_const_handle) const
+  (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
+   typename Map2::Dart_handle dh2) const
   { return NULL; }
 };
 
@@ -168,7 +174,8 @@ template< typename Map1, typename Map2, unsigned int i>
 struct Default_converter_cmap_attributes<Map1, Map2, i, CGAL::Void, CGAL::Void>
 {
   typename Map2::template Attribute_handle<i>::type operator()
-  (Map2&, typename Map1::Dart_const_handle) const
+  (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
+   typename Map2::Dart_handle dh2) const
   { return NULL; }
 };
 
@@ -181,12 +188,13 @@ template< typename Map1, typename Map2, unsigned int i>
 struct Cast_converter_cmap_attributes
 {
   typename Map2::template Attribute_handle<i>::type operator()
-  (Map2& map2, typename Map1::Dart_const_handle dh) const
+  (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
+   typename Map2::Dart_handle dh2) const
   {
-    if ( dh->template attribute<i>()!=NULL )
+    if ( dh1->template attribute<i>()!=NULL )
       return map2.template create_attribute<i>
           ((typename Map2::template Attribute_type<i>::type::Info)
-           dh->template attribute<i>()->info());
+           dh1->template attribute<i>()->info());
 
     return map2.template create_attribute<i>();
   }
