@@ -23,8 +23,10 @@
 #include "ui_Deform_mesh.h"
 
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget)
-  : ui_widget(ui_widget), poly_item(poly_item),
-    deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map()), quadric(gluNewQuadric())
+  : ui_widget(ui_widget), 
+    poly_item(poly_item),
+    deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map(), Array_based_vertex_point_map(&positions)),
+    quadric(gluNewQuadric())
 {
   gluQuadricNormals(quadric, GLU_SMOOTH);
   // bind vertex picking 
@@ -44,6 +46,31 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   // start QObject's timer for continuous effects 
   // (deforming mesh while mouse not moving)
   startTimer(0);
+
+  // Required for drawing functionality
+  positions.resize(boost::num_vertices(*polyhedron())*3);
+  vertex_iterator vb, ve;
+  std::size_t counter = 0;
+  for(boost::tie(vb, ve) = boost::vertices(*polyhedron()); vb != ve; ++vb, ++counter) {
+    positions[counter*3] = vb->point().x();
+    positions[counter*3+1] = vb->point().y();
+    positions[counter*3+2] = vb->point().z();
+  }
+
+  tris.resize(polyhedron()->size_of_facets()*3);
+  counter = 0;
+  for(Polyhedron::Facet_handle fb = polyhedron()->facets_begin(); fb != polyhedron()->facets_end(); ++fb, ++counter) {
+    tris[counter*3] = fb->halfedge()->vertex()->id();
+    tris[counter*3+1] = fb->halfedge()->next()->vertex()->id();
+    tris[counter*3+2] = fb->halfedge()->prev()->vertex()->id();
+  }
+
+  edges.resize(polyhedron()->size_of_halfedges());
+  counter = 0;
+  for(Polyhedron::Edge_iterator eb = polyhedron()->edges_begin(); eb != polyhedron()->edges_end(); ++eb, ++counter) {
+    edges[counter*2] = eb->vertex()->id();
+    edges[counter*2+1] = eb->opposite()->vertex()->id();
+  }
 }
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
@@ -171,14 +198,29 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item::draw_edges() const {
-  poly_item->direct_draw_edges();
+  //poly_item->direct_draw_edges();
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glVertexPointer(3, GL_DOUBLE, 0, positions.data());
+
+  glDrawElements(GL_LINES, edges.size(), GL_UNSIGNED_INT, edges.data());
+
+  glDisableClientState(GL_VERTEX_ARRAY); 
+
   if(rendering_mode == Wireframe) {
     draw_ROI_and_handles();
   }
 }
-
 void Scene_edit_polyhedron_item::draw() const {
-  poly_item->direct_draw();
+  //poly_item->direct_draw();
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glVertexPointer(3, GL_DOUBLE, 0, positions.data());
+
+  glDrawElements(GL_TRIANGLES, tris.size(), GL_UNSIGNED_INT, tris.data());
+
+  glDisableClientState(GL_VERTEX_ARRAY);
+
   draw_ROI_and_handles();
 }
 

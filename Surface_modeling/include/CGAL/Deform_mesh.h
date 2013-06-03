@@ -96,6 +96,7 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  /// \endcode
  /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
  /// `Deformation_Eigen_polar_closest_rotation_traits_3` is provided as default parameter.
+ /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `Polyhedron::Point_3` as value type
 template <
   class P, 
   class VIM, 
@@ -103,7 +104,8 @@ template <
   Deformation_algorithm_tag TAG = SPOKES_AND_RIMS,
   class WC = Default,
   class ST = Default, 
-  class CR = Default  
+  class CR = Default,
+  class VPM = Default
   >
 class Deform_mesh
 {
@@ -162,13 +164,22 @@ public:
   typedef CR CR_helper; /**< model of DeformationClosestRotationTraits_3 */
 #endif
 
+// vertex point pmap
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    VPM,
+    typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
+  >::type Vertex_point_map;
+#else
+  typedef VPM Vertex_point_map; /**<  a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `Polyhedron::Point_3` as value type */
+#endif
   /// @}
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		edge_descriptor;   /**< The type for edge representative objects */
 
   typedef typename Polyhedron::Traits::Vector_3  Vector; /**<The type for Vector_3 from Polyhedron traits */
-  typedef typename Polyhedron::Traits::Point_3   Point;  /**<The type for Point_3 from Polyhedron traits */
+  typedef typename Polyhedron::Point_3 Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
   typedef Deform_mesh<P, VIM, EIM, TAG, WC, ST, CR> Self;
@@ -237,6 +248,8 @@ private:
   Handle_group_container handle_group_list;           ///< user specified handles
 
   Weight_calculator weight_calculator;
+
+  Vertex_point_map vertex_point_map;
 private:
   Deform_mesh(const Self& s) { } 
 
@@ -244,23 +257,15 @@ private:
 public:
 /// \name Preprocess Section
 /// @{
-  /**
-   * The constructor of a deformation object
-   *
-   * @pre the polyhedron consists of only triangular facets
-   * @param polyhedron triangulated surface mesh used to deform
-   * @param vertex_index_map property map for associating an id to each vertex
-   * @param edge_index_map property map for associating an id to each edge
-   * @param iterations see `set_iterations()` for more details
-   * @param tolerance  see `set_tolerance()` for more details
-   * @param weight_calculator function object or pointer for weight calculation
-   */
+
+  /// \cond SKIP_FROM_MANUAL
   Deform_mesh(Polyhedron& polyhedron, 
               Vertex_index_map vertex_index_map, 
               Edge_index_map edge_index_map,
               unsigned int iterations = 5,
               double tolerance = 1e-4,
-              Weight_calculator weight_calculator = Weight_calculator())
+              Weight_calculator weight_calculator = Weight_calculator()
+              )
     : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
@@ -269,8 +274,50 @@ public:
       need_preprocess_factorization(true), 
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
-      weight_calculator(weight_calculator)
+      weight_calculator(weight_calculator),
+      vertex_point_map(boost::get(vertex_point, polyhedron))
   {
+    init();
+  }
+  /// \endcond
+
+    /**
+   * The constructor of a deformation object
+   *
+   * @pre the polyhedron consists of only triangular facets
+   * @param polyhedron triangulated surface mesh used to deform
+   * @param vertex_index_map property map for associating an id to each vertex
+   * @param edge_index_map property map for associating an id to each edge
+   * @param vertex_point_map property map for associating a position to each vertex. 
+   *        It is default to `boost::get(vertex_point, polyhedron)` and can be omitted.
+   * @param iterations see `set_iterations()` for more details
+   * @param tolerance  see `set_tolerance()` for more details
+   * @param weight_calculator function object or pointer for weight calculation
+   */
+  Deform_mesh(Polyhedron& polyhedron, 
+    Vertex_index_map vertex_index_map, 
+    Edge_index_map edge_index_map,
+    Vertex_point_map vertex_point_map,
+    unsigned int iterations = 5,
+    double tolerance = 1e-4,
+    Weight_calculator weight_calculator = Weight_calculator()
+    )
+    : polyhedron(polyhedron), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
+    ros_id_map(std::vector<std::size_t>(boost::num_vertices(polyhedron), (std::numeric_limits<std::size_t>::max)() )),
+    is_roi_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
+    is_hdl_map(std::vector<bool>(boost::num_vertices(polyhedron), false)),
+    iterations(iterations), tolerance(tolerance),
+    need_preprocess_factorization(true), 
+    need_preprocess_region_of_solution(true),
+    last_preprocess_successful(false),
+    weight_calculator(weight_calculator),
+    vertex_point_map(vertex_point_map)
+  {
+    init();
+  }
+
+private:
+  void init() {
     // assign id to each vertex and edge
     vertex_iterator vb, ve;
     std::size_t id = 0;
@@ -294,6 +341,7 @@ public:
     }
   }
 
+public:
   /**
    * Puts the object in the same state as after the creation (except iterations and tolerance).
    */
@@ -731,7 +779,7 @@ public:
     Roi_iterator rb, re;
     for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
     {
-      original[ros_id(*rb)] = (*rb)->point();
+      original[ros_id(*rb)] = boost::get(vertex_point_map, (*rb));
     }
 
     // now I need to compute weights for edges incident to roi vertices
@@ -811,7 +859,7 @@ private:
     for(typename std::vector<vertex_descriptor>::iterator it = ros.begin(); it != ros.end(); ++it)
     {
       if(!is_roi(*it)) {
-        (*it)->point() = old_original[ old_ros_id_map[id(*it)] ];
+        boost::put(vertex_point_map, *it, old_original[ old_ros_id_map[id(*it)] ]);
       }
     }
 
@@ -879,16 +927,16 @@ private:
         solution[v_ros_id] = old_solution[old_ros_id_map[v_id]];
       }
       else {
-        solution[v_ros_id] = ros[i]->point();
-        original[v_ros_id] = ros[i]->point();
+        solution[v_ros_id] = boost::get(vertex_point_map, ros[i]);
+        original[v_ros_id] = boost::get(vertex_point_map, ros[i]);
       }         
     }
 
     for(std::size_t i = 0; i < outside_ros.size(); ++i)
     {
       std::size_t v_ros_id = ros_id(outside_ros[i]);
-      original[v_ros_id] = outside_ros[i]->point();
-      solution[v_ros_id] = outside_ros[i]->point();
+      original[v_ros_id] = boost::get(vertex_point_map, outside_ros[i]);
+      solution[v_ros_id] = boost::get(vertex_point_map, outside_ros[i]);
     }
   }
 
@@ -1231,7 +1279,7 @@ private:
       std::size_t v_id = ros_id(ros[i]);
       if(is_roi(ros[i]))
       {
-        ros[i]->point() = solution[v_id];
+        boost::put(vertex_point_map, ros[i], solution[v_id]);
       }
     }
   }

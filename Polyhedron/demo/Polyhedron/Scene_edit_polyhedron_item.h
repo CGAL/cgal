@@ -47,10 +47,43 @@ public:
     reference operator[](key_type key) const { return key->id(); }
 };
 
+struct Array_based_vertex_point_map
+{
+public:
+  typedef vertex_descriptor            key_type;
+  typedef Polyhedron::Traits::Point_3  value_type;
+  typedef value_type&  reference;
+  typedef boost::read_write_property_map_tag category;
+  Array_based_vertex_point_map(std::vector<double>* positions) : positions(positions) {}
+  std::vector<double>* positions;
+};
+
+namespace boost {
+  Array_based_vertex_point_map::value_type
+  get(Array_based_vertex_point_map pmap,
+    Array_based_vertex_point_map::key_type key) {
+      return key->point();
+  }
+
+  void
+  put(Array_based_vertex_point_map pmap,
+    Array_based_vertex_point_map::key_type key,
+    Array_based_vertex_point_map::value_type val) {
+    key->point() = val; // to make things easy (ray selection after deformation, save to polyhedron after close etc),
+    // I also change point() of vertex together with positions list
+    // So that we do not need to pmap everywhere other than draw
+    std::size_t pos = key->id() * 3;
+    (*pmap.positions)[pos] = val.x();
+    (*pmap.positions)[pos+1] = val.y();
+    (*pmap.positions)[pos+2] = val.z();
+  }
+}
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; 
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map; 
 
-typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP> Deform_mesh;
+typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP
+  ,CGAL::Default, CGAL::Default, CGAL::Default, 
+  Array_based_vertex_point_map> Deform_mesh;
 
 
 typedef Deform_mesh::Point  Point;
@@ -221,6 +254,10 @@ public slots:
 private:
   Ui::DeformMesh* ui_widget;
   Scene_polyhedron_item* poly_item;
+  // For drawing
+  std::vector<double> positions;
+  std::vector<unsigned int> tris;
+  std::vector<unsigned int> edges;
 
   Deform_mesh deform_mesh;
   Deform_mesh::Handle_group active_group;
