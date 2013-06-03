@@ -34,6 +34,26 @@
 
 #include <boost/variant.hpp>
 
+#ifdef CGAL_CFG_BOOST_VARIANT_SWAP_BUG
+#if CGAL_ARR_POINT_LOCATION_VERSION > 1
+#include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
+// workaround for this bug:
+// https://svn.boost.org/trac/boost/ticket/2839
+namespace boost{ namespace detail { namespace variant {
+
+template <class CI, class F, class MI, class V, class D, class C>
+inline void move_swap(
+  ::CGAL::I_Filtered_const_iterator<CI, F, MI, V, D, C>& lhs,
+  ::CGAL::I_Filtered_const_iterator<CI, F, MI,  V, D, C>& rhs)
+{
+    ::CGAL::I_Filtered_const_iterator<CI, F, MI, V, D, C> tmp( boost::detail::variant::move(lhs) );
+    lhs = boost::detail::variant::move(rhs);
+    rhs = boost::detail::variant::move(tmp);
+}
+} } }
+#endif
+#endif
+
 namespace CGAL {
 
 template <typename Arrangement_>
