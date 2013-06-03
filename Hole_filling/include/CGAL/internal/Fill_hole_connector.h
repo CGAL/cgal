@@ -94,7 +94,7 @@ namespace internal {
 
       // get interior vertices
       std::set<Vertex_handle> interior_vertices;
-      for(std::vector<Facet_handle>::iterator it = facets.begin(); it != facets.end(); ++it) {
+      for(typename std::vector<Facet_handle>::iterator it = facets.begin(); it != facets.end(); ++it) {
         Halfedge_around_facet_circulator circ = (*it)->facet_begin();
         do {
           if(boundary_vertices.find(circ->vertex()) == boundary_vertices.end()) {

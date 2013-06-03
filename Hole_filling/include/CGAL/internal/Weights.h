@@ -111,7 +111,6 @@ class Voronoi_area : CotangentValue
 public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator in_edge_iterator;
   typedef typename Polyhedron::Traits::Point_3   Point;
 

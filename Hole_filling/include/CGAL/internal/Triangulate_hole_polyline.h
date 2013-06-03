@@ -190,7 +190,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     Q.push_back(Q.front());
   }
   Fill fill;
-  return fill.operator()<OutputIteratorValueType>(P,Q,out);
+  return fill.template operator()<OutputIteratorValueType>(P,Q,out);
 }
 
 // overload for OutputIteratorValueType
@@ -229,7 +229,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     P.push_back(P.front());
   }
   Fill fill;
-  return fill.operator()<OutputIteratorValueType>(P,Q,out);
+  return fill.template operator()<OutputIteratorValueType>(P,Q,out);
 }
 
 // overload for OutputIteratorValueType

@@ -81,7 +81,7 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   //  (polyhedron, border_halfedge, new_facets, density_control_factor, weight_calculator);
 
   CGAL::internal::Fill_hole_Polyhedron_3<Polyhedron> fill_functor;
-  fill_functor.triangulate_refine_and_fair<Sparse_linear_solver, WeightCalculator>
+  fill_functor.template triangulate_refine_and_fair<Sparse_linear_solver, WeightCalculator>
     (polyhedron, border_halfedge, density_control_factor, weight_calculator);
 }
 
@@ -104,7 +104,7 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   )
 {
   CGAL::internal::Fill_hole_Polyhedron_3<Polyhedron> fill_functor;
-  fill_functor.triangulate_refine_and_fair<SparseLinearSolver, WeightCalculator>
+  fill_functor.template triangulate_refine_and_fair<SparseLinearSolver, WeightCalculator>
     (polyhedron, border_halfedge, new_facets, density_control_factor, weight_calculator);
 }
 
