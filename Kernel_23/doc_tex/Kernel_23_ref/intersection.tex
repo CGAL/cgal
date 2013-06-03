@@ -523,6 +523,9 @@ where \ccStyle{Type1} and \ccStyle{Type2} can both be either
 \item {} \ccStyle{Circular_arc_2<CircularKernel>}.
 \end{itemize} 
 
+Note that while for a polygon we consider the enclosed domain, for an
+object of type \ccStyle{Circle_2} only the curve is considered.
+
 Depending on the types \ccStyle{Type1} and \ccStyle{Type2}, these
 elements can be assigned to
 \begin{itemize}
@@ -569,10 +572,14 @@ where \ccStyle{Type1} and \ccStyle{Type2} can both be either:
 \item {} \ccStyle{Line_3<SphericalKernel>},
 \item {} \ccStyle{Circle_3<SphericalKernel>},
 \item {} \ccStyle{Line_arc_3<SphericalKernel>} or
-\item {} \ccStyle{Circular_arc_3<SphericalKernel>},
+\item {} \ccStyle{Circular_arc_3<SphericalKernel>}.
 \end{itemize} 
 
-and depending on the types \ccStyle{Type1} and \ccStyle{Type2}, the computed 
+Note that while for a polygon we consider the enclosed domain, for an
+object of type \ccStyle{Circle_3} or \ccStyle{Sphere_3} only the curve
+or the surface is considered. 
+
+Depending on the types \ccStyle{Type1} and \ccStyle{Type2}, the computed 
 \ccStyle{CGAL::Object}s can be assigned to 
 \begin{itemize}
 \item {} \ccStyle{std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>},
