@@ -20,6 +20,8 @@
 #ifndef CGAL_COMBINATORIAL_MAP_COPY_FUNCTORS_H
 #define CGAL_COMBINATORIAL_MAP_COPY_FUNCTORS_H
 
+#include <CGAL/internal/Combinatorial_map_utility.h>
+
 /* Definition of functors used internally to copy combinatorial maps attributes
  * (we need functors as attributes are stored in tuple, thus all the access
  *  must be done at compiling time).
@@ -117,7 +119,7 @@ struct Default_converter_cmap_attr<Map1, Map2, i, CGAL::Void, CGAL::Void>
 };
 
 template<typename Map1, typename Map2, typename Converters, unsigned int i,
-         bool t=(i>=My_length<Converters>::value)>
+         bool t=(i>=boost::tuples::length<Converters>::value)>
 struct Convert_attribute_functor
 {
   static typename Map2::template Attribute_handle<i>::type
@@ -135,6 +137,7 @@ struct Convert_attribute_functor<Map1,Map2,Converters,i,false>
   run( Map2* cmap2, typename Map1::Dart_const_handle dh1,
        const Converters& converters)
   {
+
     return CGAL::cpp11::get<i>(converters) (*cmap2, dh1);
   }
 };
@@ -151,18 +154,15 @@ struct Copy_attributes_functor
                    typename Map2::Dart_handle dh2,
                    const Converters& converters)
   {
-    typename Map2::template Attribute_handle<i>::type res=NULL;
-
- /*   if ( i>=My_length<Converters>::value )
-      res = Default_converter_cmap_attr<Map1, Map2, i>()
-          (*cmap2, dh1->template attribute<i>());
-    else
-      res =CGAL::cpp11::get<i>(converters)
-          (*cmap2, dh1->template attribute<i>());*/
-    res=Convert_attribute_functor<Map1,Map2,Converters,i>::run(cmap2,dh1,converters);
+    if (dh2->template attribute<i>()==NULL)
+    {
+    typename Map2::template Attribute_handle<i>::type
+          res=Convert_attribute_functor<Map1,Map2,Converters,i>::
+          run(cmap2,dh1,converters);
 
     if ( res!=NULL )
       cmap2->template set_attribute<i>(dh2, res);
+    }
   }
 };
 // ****************************************************************************

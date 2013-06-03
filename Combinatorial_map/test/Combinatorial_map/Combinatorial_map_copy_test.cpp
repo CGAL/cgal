@@ -162,7 +162,7 @@ struct Map_dart_max_items_4
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 
     typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
-          Int_attrib, Double_attrib, Double_attrib>
+          Int_attrib, Int_attrib, Double_attrib>
     Attributes;
   };
 };
@@ -191,8 +191,27 @@ typedef CGAL::Combinatorial_map<3, Another_map_3_dart_items_3> Map7;
 // int, void, int, void, int
 typedef CGAL::Combinatorial_map<4, Map_dart_items_4> Map8;
 
-// int, int, int, double, double
+// int, int, int, int, double
 typedef CGAL::Combinatorial_map<4, Map_dart_max_items_4> Map9;
+
+// Convert a number type into another number type
+// @pre Both info must be non void and number types
+template< typename Map1, typename Map2, unsigned int i>
+struct Number_type_converter_cmap_attr
+{
+  typename Map2::template Attribute_handle<i>::type operator()
+  (Map2& map2, typename Map1::Dart_const_handle dh) //const
+  {
+    std::cout<<"Number type converter<"<<i<<">\n";
+    if ( dh->template attribute<i>()!=NULL )
+      return map2.template create_attribute<i>
+          ((typename Map2::template Attribute_type<i>::type::Info)
+           dh->template attribute<i>()->info());
+
+    return map2.template create_attribute<i>();
+  }
+};
+
 
 /*
 template<typename Map>
@@ -461,17 +480,61 @@ bool testCopy()
             map2a.number_of_attributes<2>()==0 &&
             map2a.number_of_attributes<3>()==0 );
     assert( map2a.is_isomorphic_to(map2)==map2.is_isomorphic_to(map2a) );
-    //map2.display_characteristics(std::cout)<<std::endl;
-    //map2a.display_characteristics(std::cout)<<std::endl;
 
     Map2 map5a(map5); assert(map5a.is_valid());
-    // Here we cannot use is_isomorphic_to because map5a has several cc
-    assert( map5a.number_of_attributes<0>()==map2.number_of_attributes<0>() &&
+    if ( map5a.is_isomorphic_to(map5) ) { assert(false); return false; }
+    assert( map5a.number_of_attributes<0>()>=map5.number_of_attributes<0>() &&
             map5a.number_of_attributes<2>()==0 );
-    //map5.display_characteristics(std::cout)<<std::endl;
-    //map5a.display_characteristics(std::cout)<<std::endl;
+
+    Map5 map9a(map9); assert(map9a.is_valid());
+    if ( map9a.is_isomorphic_to(map9) ) { assert(false); return false; }
+
+    std::cout<<map9a.number_of_attributes<0>()<<"  "
+               <<map9a.number_of_attributes<2>()<<"  "
+              <<map9.number_of_attributes<2>()<<"  "
+             <<map9a.number_of_attributes<3>()<<std::endl;
+
+    assert( map9a.number_of_attributes<0>()==0 &&
+            map9a.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
+            map9a.number_of_attributes<3>()==0 );
+    assert( map9a.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9a) );
+
+    /*CGAL::cpp11::tuple*/
+    typedef boost::tuple<Number_type_converter_cmap_attr<Map9,Map5,0> >/*,
+        CGAL::internal::Default_converter_cmap_attr<Map9,Map5,1>,
+        CGAL::internal::Default_converter_cmap_attr<Map9,Map5,2>,
+        Number_type_converter_cmap_attr<Map9,Map5,3> >*/ MyConverters;
+
+
+    Number_type_converter_cmap_attr<Map9,Map5,0> c0;
+    CGAL::internal::Default_converter_cmap_attr<Map9,Map5,1> c1;
+    CGAL::internal::Default_converter_cmap_attr<Map9,Map5,2> c2;
+    Number_type_converter_cmap_attr<Map9,Map5,3> c3;
+
+    c0(map5,map9.darts().begin());
+
+    MyConverters myconverters(c0); //, c1, c2, c3);
+    Map5 map9b(map9, myconverters); assert(map9a.is_valid());
+    if ( map9b.is_isomorphic_to(map9) ) { assert(false); return false; }
+
+    map9.display_characteristics(std::cout)<<std::endl;
+    map9b.display_characteristics(std::cout)<<std::endl;
+    std::cout<<map9b.number_of_attributes<0>()<<"  "
+            <<map9.number_of_attributes<0>()<<"  "
+           <<map9b.number_of_attributes<2>()<<"  "
+          <<map9.number_of_attributes<2>()<<"  "
+         <<map9b.number_of_attributes<3>()<<"  "
+        <<map9.number_of_attributes<3>()<<std::endl;
+
+    assert( map9b.number_of_attributes<0>()>=map9.number_of_attributes<0>() &&
+            map9b.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
+            map9b.number_of_attributes<3>()>=map9.number_of_attributes<3>() );
+    assert( map9b.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9b) );
+
   }
 
+  //map5.display_characteristics(std::cout)<<std::endl;
+  //map5a.display_characteristics(std::cout)<<std::endl;
   // displayAllAttribs2D(mapXX, "mapXX******************\n");
   // displayAllAttribs2D(mapYY, "mapYY******************\n");
 

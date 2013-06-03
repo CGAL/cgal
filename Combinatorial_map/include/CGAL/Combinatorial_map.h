@@ -3368,6 +3368,9 @@ namespace CGAL {
         }
       }
 
+      // Here we test if both queue are empty
+      if ( !toTreat1.empty() || !toTreat2.empty() ) match = false;
+
       // Here we unmark all the marked darts.
       toTreat1.clear();
       toTreat2.clear();
