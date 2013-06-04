@@ -11,7 +11,7 @@ namespace internal {
 struct Vector{
   double coords[3];
   template<class Point>
-  Vector(const Point& a, const Point& b) {
+  Vector(const Point& b, const Point& a) {
     coords[0] = a[0] - b[0];
     coords[1] = a[1] - b[1];
     coords[2] = a[2] - b[2];
@@ -33,9 +33,9 @@ public:
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector vec0(v1->point(), v2->point());
-    Vector vec1(v2->point(), v0->point());
-    Vector vec2(v0->point(), v1->point());
+    Vector vec0(v2->point(), v1->point());
+    Vector vec1(v0->point(), v2->point());
+    Vector vec2(v1->point(), v0->point());
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
@@ -61,8 +61,8 @@ public:
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a(v0->point(), v1->point());
-    Vector b(v2->point(), v1->point());
+    Vector a(v1->point(), v0->point());
+    Vector b(v1->point(), v2->point());
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
@@ -204,7 +204,7 @@ public:
   {
     vertex_descriptor v0 = boost::target(e, polyhedron);
     vertex_descriptor v1 = boost::source(e, polyhedron);
-    Vector vec(v0->point(), v1->point());
+    Vector vec(v1->point(), v0->point());
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
@@ -237,9 +237,9 @@ private:
   // Returns the tangent value of half angle v0_v1_v2/2
   double half_tan_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector vec0(v1->point(), v2->point());
-    Vector vec1(v2->point(), v0->point());
-    Vector vec2(v0->point(), v1->point());
+    Vector vec0(v2->point(), v1->point());
+    Vector vec1(v0->point(), v2->point());
+    Vector vec2(v1->point(), v0->point());
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
@@ -255,8 +255,8 @@ private:
   // My deviation built on Meyer_02
   double half_tan_value_2(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a(v0->point(), v1->point());
-    Vector b(v2->point(), v1->point());
+    Vector a(v1->point(), v0->point());
+    Vector b(v1->point(), v2->point());
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
