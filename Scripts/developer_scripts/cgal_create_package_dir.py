@@ -185,8 +185,8 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     # try to find figure pkg-small.png and copy it to figure path
     scriptdir = os.path.dirname(sys.argv[0])
     cgaldir = os.path.dirname(os.path.dirname(scriptdir))
-    figfile = os.path.join(cgaldir, 'Documentation', 'doc', 'fig',
-        'pkg-small.png')
+    figfile = os.path.join(cgaldir, 'Documentation', 'doc',
+        'Documentation', 'fig', 'pkg-small.png')
 
     if os.path.exists(figfile):
         shutil.copy(figfile, figpath)
