@@ -1435,7 +1435,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1547,7 +1552,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1673,7 +1683,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1810,7 +1825,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3,V4>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1958,7 +1978,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3,V4,V5>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -2117,7 +2142,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3,V4,V5,V6>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -2287,7 +2317,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3,V4,V5,V6,V7>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
