@@ -775,7 +775,7 @@ public:
     Roi_iterator rb, re;
     for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
     {
-      original[ros_id(*rb)] = boost::get(vertex_point_map, (*rb));
+      original[ros_id(*rb)] = get(vertex_point_map, (*rb));
     }
 
     // now I need to compute weights for edges incident to roi vertices
@@ -855,7 +855,7 @@ private:
     for(typename std::vector<vertex_descriptor>::iterator it = ros.begin(); it != ros.end(); ++it)
     {
       if(!is_roi(*it)) {
-        boost::put(vertex_point_map, *it, old_original[ old_ros_id_map[id(*it)] ]);
+        put(vertex_point_map, *it, old_original[ old_ros_id_map[id(*it)] ]);
       }
     }
 
@@ -923,16 +923,16 @@ private:
         solution[v_ros_id] = old_solution[old_ros_id_map[v_id]];
       }
       else {
-        solution[v_ros_id] = boost::get(vertex_point_map, ros[i]);
-        original[v_ros_id] = boost::get(vertex_point_map, ros[i]);
+        solution[v_ros_id] = get(vertex_point_map, ros[i]);
+        original[v_ros_id] = get(vertex_point_map, ros[i]);
       }         
     }
 
     for(std::size_t i = 0; i < outside_ros.size(); ++i)
     {
       std::size_t v_ros_id = ros_id(outside_ros[i]);
-      original[v_ros_id] = boost::get(vertex_point_map, outside_ros[i]);
-      solution[v_ros_id] = boost::get(vertex_point_map, outside_ros[i]);
+      original[v_ros_id] = get(vertex_point_map, outside_ros[i]);
+      solution[v_ros_id] = get(vertex_point_map, outside_ros[i]);
     }
   }
 
@@ -1275,7 +1275,7 @@ private:
       std::size_t v_id = ros_id(ros[i]);
       if(is_roi(ros[i]))
       {
-        boost::put(vertex_point_map, ros[i], solution[v_id]);
+        put(vertex_point_map, ros[i], solution[v_id]);
       }
     }
   }
