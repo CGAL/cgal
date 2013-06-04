@@ -141,8 +141,8 @@ namespace CGAL {
 		void clear()
 		{
 			// clear AABB tree
-			m_primitives.clear();
       clear_nodes();
+			m_primitives.clear();
 			clear_search_tree();
 		}
 
@@ -385,7 +385,7 @@ public:
     // clear nodes
     void clear_nodes()
     {
-			if(size() > 1) {
+			if( size() > 1 ) {
 				delete [] m_p_root_node;
 			}
 			m_p_root_node = NULL;
@@ -394,10 +394,14 @@ public:
 		// clears internal KD tree
 		void clear_search_tree() const
 		{
-			delete m_p_search_tree;
-			m_p_search_tree = NULL;
-			m_search_tree_constructed = false;
-			m_default_search_tree_constructed = false;
+			if ( m_search_tree_constructed )
+			{
+				CGAL_assertion( m_p_search_tree!=NULL );
+				delete m_p_search_tree;
+				m_p_search_tree = NULL;
+				m_search_tree_constructed = false;
+				m_default_search_tree_constructed = false;
+                        }
 		}
 
 	public:
