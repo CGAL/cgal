@@ -49,11 +49,27 @@ Visibility_2(const Arrangement_2& arr);
 /// @{
 
 
-//  to be added in doxygen style 
-//  bool  	is_attached ()// whether the object is attachted to an arrangement  
-//  void 	attach ( Arrangement_2 arr)  // attaches visibility object to the given arrangement arr.
-//  void 	detach () // detaches vb from the arrangement it is currently attached to.
-//  Arrangement_2 arr() // access to the attached Arrangement_2 
+
+/*!
+Return whether the object is attachted to an arrangement.
+*/
+  bool is_attached ();
+
+/*!
+Attaches visibility object to the given arrangement arr.
+*/
+  void attach ( Arrangement_2 arr);
+
+  
+/*!
+Detaches the object from the arrangement it is currently attached to.
+*/
+  void detach ();
+
+/*!
+Access to the attached Arrangement_2.
+*/
+  Arrangement_2 arr();
 
 /*! 
 Computes the visibility region for the given query point q. 
