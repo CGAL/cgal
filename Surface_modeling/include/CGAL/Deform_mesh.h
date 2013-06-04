@@ -178,7 +178,6 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		edge_descriptor;   /**< The type for edge representative objects */
 
-  typedef typename Polyhedron::Traits::Vector_3  Vector; /**<The type for Vector_3 from Polyhedron traits */
   typedef typename Polyhedron::Point_3 Point;  /**<The type for Point_3 from Polyhedron traits */
 
 private:
@@ -594,10 +593,12 @@ public:
    * \note This transformation is applied on the original positions of the vertices 
    * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`). 
    * \note A call to this function cancels the last call to `rotate()`, `translate()`, or `assign()`.
+   * @tparam Vect is a 3D vector class, `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
    * @param handle_group the representative of the group of handles to be translated
    * @param t translation vector 
    */
-  void translate(Const_handle_group handle_group, const Vector& t)
+  template<class Vect>
+  void translate(Const_handle_group handle_group, const Vect& t)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
@@ -605,7 +606,7 @@ public:
       it != handle_group->end(); ++it)
     {
       std::size_t v_id = ros_id(*it);
-      solution[v_id] = original[v_id] + t;
+      solution[v_id] = add_to_point(original[v_id], t);
     }
   }
 
@@ -631,13 +632,8 @@ public:
       it != handle_group->end(); ++it)
     {
       std::size_t v_id = ros_id(*it);
-
-      Point p = CGAL::ORIGIN + ( original[v_id] - rotation_center);
-      Vect v = quat * Vect(p.x(),p.y(),p.z());
-      p = Point(v[0], v[1], v[2]) + (rotation_center - CGAL::ORIGIN);
-      p = p + Vector(t[0],t[1],t[2]);
-
-      solution[v_id] = p;
+      Vect v = quat * sub_to_vector<Vect>(original[v_id], rotation_center);
+      solution[v_id] = add_to_point(rotation_center, v);
     }
   }
 
@@ -1373,6 +1369,16 @@ private:
     return CR_helper().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
   }
 
+  template<class Vect>
+  Point add_to_point(const Point& p, const Vect& v) {
+    return Point(
+      p.x() + v[0], p.y() + v[1], p.z() + v[2]);
+  }
+  template<class Vect>
+  Vect sub_to_vector(const Point& p1, const Point& p2) {
+    return Vect(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+  }
+
   /// shorthand of get(vertex_index_map, v)
   std::size_t id(vertex_descriptor vd) const
   { return get(vertex_index_map, vd); }
@@ -1384,7 +1390,6 @@ private:
 
   std::vector<bool>::reference is_handle(vertex_descriptor vd)
   { return is_hdl_map[id(vd)]; }
-
   std::vector<bool>::reference is_roi(vertex_descriptor vd)
   { return is_roi_map[id(vd)]; }
 
@@ -1393,189 +1398,6 @@ private:
   {
     return get(edge_index_map, e);
   }
-
-  #ifdef CGAL_DEFORM_EXPERIMENTAL      // Experimental stuff, needs further testing
-
-  double norm_1(const Eigen::Matrix3d& X)
-  {
-    double sum = 0;
-    for ( int i = 0; i < 3; i++ )
-    {
-      for ( int j = 0; j < 3; j++ )
-      {
-        sum += abs(X(i,j));
-      }
-    }
-    return sum;
-  }
-
-  double norm_inf(const Eigen::Matrix3d& X)
-  {
-    double max_abs = abs(X(0,0));
-    for ( int i = 0; i < 3; i++ )
-    {
-      for ( int j = 0; j < 3; j++ )
-      {
-        double new_abs = abs(X(i,j));
-        if ( new_abs > max_abs )
-        {
-          max_abs = new_abs;
-        }
-      }
-    }
-    return max_abs;
-  }
-
-  // polar decomposition using Newton's method, with warm start, stable but slow
-  // not used, need to be investigated later
-  void polar_newton(const Eigen::Matrix3d& A, Eigen::Matrix3d &U, double tole)
-  {
-    Eigen::Matrix3d X = A;
-    Eigen::Matrix3d Y;
-    double alpha, beta, gamma;
-    do 
-    {
-      Y = X.inverse();
-      alpha = sqrt( norm_1(X) * norm_inf(X) );
-      beta = sqrt( norm_1(Y) * norm_inf(Y) );
-      gamma = sqrt(beta/alpha);
-      X = 0.5*( gamma*X + Y.transpose()/gamma );
-
-    } while ( abs(gamma-1) > tole );
-
-    U = X;
-  }
-  
-  // polar decomposition using Eigen, 5 times faster than SVD
-  template<typename Mat>
-  void polar_eigen(const Mat& A, Mat& R, bool& SVD)
-  {
-    typedef typename Mat::Scalar Scalar;
-    typedef Eigen::Matrix<typename Mat::Scalar,3,1> Vec;
-
-    const Scalar th = std::sqrt(Eigen::NumTraits<Scalar>::dummy_precision());
-
-    Eigen::SelfAdjointEigenSolver<Mat> eig;
-    feclearexcept(FE_UNDERFLOW);
-    eig.computeDirect(A.transpose()*A);
-    if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)<th)
-    {
-      // The computation of the eigenvalues might have diverged.
-      // Fallback to an accurate SVD based decompositon method.
-      Eigen::JacobiSVD<Mat> svd;
-      svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV();
-      R = u*v.transpose();
-      SVD = true;
-      return;
-    }
-
-    Vec S = eig.eigenvalues().cwiseSqrt();
-    R = A  * eig.eigenvectors() * S.asDiagonal().inverse()
-      * eig.eigenvectors().transpose();
-    SVD = false;
-
-    if(std::abs(R.squaredNorm()-3.) > th)
-    {
-      // The computation of the eigenvalues might have diverged.
-      // Fallback to an accurate SVD based decomposition method.
-      Eigen::JacobiSVD<Mat> svd;
-      svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
-      const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV();
-      R = u*v.transpose();
-      SVD = true;
-      return;
-    }
-  }
-
-  // Local step of iterations, computing optimal rotation matrices using Polar decomposition
-  void optimal_rotations_polar()
-  {
-    Eigen::Matrix3d u, v;           // orthogonal matrices 
-    Eigen::Vector3d w;              // singular values
-    Eigen::Matrix3d cov;            // covariance matrix
-    Eigen::Matrix3d r;
-    Eigen::JacobiSVD<Eigen::Matrix3d> svd;      // SVD solver, for non-positive covariance matrices
-    int num_svd = 0;
-    bool SVD = false;
-
-    // only accumulate ros vertices
-    for ( std::size_t i = 0; i < ros.size(); i++ )
-    {
-      vertex_descriptor vi = ros[i];
-      // compute covariance matrix
-      cov.setZero();
-
-      in_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
-      {
-        vertex_descriptor vj = boost::source(*e, polyhedron);
-        Vector pij = original[get(vertex_index_map, vi)] - original[get(vertex_index_map, vj)];
-        Vector qij = solution[get(vertex_index_map, vi)] - solution[get(vertex_index_map, vj)];
-        double wij = edge_weight[get(edge_index_map, *e)];
-        for (int j = 0; j < 3; j++)
-        {
-          for (int k = 0; k < 3; k++)
-          {
-            cov(j, k) += wij*pij[j]*qij[k]; 
-          }
-        }
-      }
-
-      // svd decomposition
-      if (cov.determinant() > 0)
-      {
-        polar_eigen<Eigen::Matrix3d> (cov, r, SVD);
-        //polar_newton(cov, r, 1e-4);   
-        if(SVD)
-          num_svd++;
-        r.transposeInPlace();     // the optimal rotation matrix should be transpose of decomposition result
-      }
-      else
-      {
-        svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-        u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
-        r = v*u.transpose();
-        num_svd++;
-      }
-      
-      // checking negative determinant of covariance matrix
-      if ( r.determinant() < 0 )    // back to SVD method
-      {
-        if (cov.determinant() > 0)
-        {
-          svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
-          u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
-          num_svd++;
-        }
-        for (int j = 0; j < 3; j++)
-        {
-          int j0 = j;
-          int j1 = (j+1)%3;
-          int j2 = (j1+1)%3;
-          if ( w[j0] <= w[j1] && w[j0] <= w[j2] )    // smallest singular value as j0
-          {
-            u(0, j0) = - u(0, j0);
-            u(1, j0) = - u(1, j0);
-            u(2, j0) = - u(2, j0);
-            break;
-          }
-        }
-
-        // re-extract rotation matrix
-        r = v*u.transpose();
-      }
-
-      rot_mtr[i] = r;
-    }
-
-    double svd_percent = (double)(num_svd)/ros.size();
-    CGAL_TRACE_STREAM << svd_percent*100 << "% percentage SVD decompositions;";
-    CGAL_TRACE_STREAM << num_svd << " SVD decompositions\n";
-
-  }
-
-#endif
 };
 } //namespace CGAL
 #endif  // CGAL_DEFORM_MESH_H

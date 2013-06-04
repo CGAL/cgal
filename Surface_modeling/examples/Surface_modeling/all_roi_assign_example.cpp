@@ -81,7 +81,7 @@ int main()
   deform_mesh.deform(10, 0.0); // deform(unsigned int iterations, double tolerance) can be called with instant parameters
   // this time iterate 10 times, and do not use energy based termination
 
-  std::ofstream output("deform_1.off");
+  std::ofstream output("data/deform_1.off");
   output << mesh; // save deformed mesh
   output.close();
 
@@ -99,6 +99,6 @@ int main()
 
   deform_mesh.deform(15, 0.0);
 
-  output.open("deform_2.off");
+  output.open("data/deform_2.off");
   output << mesh;
 }

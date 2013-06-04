@@ -95,7 +95,7 @@ int main()
   deform_mesh.preprocess();
 //// DEFORM SECTION ////
 
-  deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0,1));
+  deform_mesh.translate(handles_1, Eigen::Vector3d(0,0,1));
    // overrides any previous call
 
   Eigen::Quaternion<double> quad(0.92, 0, 0, -0.38);
@@ -106,20 +106,20 @@ int main()
 
   deform_mesh.deform();
 
-  std::ofstream output("deform_1.off");
+  std::ofstream output("data/deform_1.off");
   output << mesh; // save deformed mesh
   output.close();
 
   // Note that translate and rotate are not cumulative,
   // they just use original positions (positions at the time of construction) of the handles while calculating target positions
-  deform_mesh.translate(handles_1, Deform_mesh::Vector(0,0.30,0));
-  deform_mesh.translate(handles_2, Deform_mesh::Vector(0,0.30,0));
+  deform_mesh.translate(handles_1, Eigen::Vector3d(0,0.30,0));
+  deform_mesh.translate(handles_2, Eigen::Vector3d(0,0.30,0));
 
   deform_mesh.set_iterations(10);
   deform_mesh.set_tolerance(0.0);
   deform_mesh.deform(); // will iterate 10 times
 
-  output.open("deform_2.off");
+  output.open("data/deform_2.off");
   output << mesh;
 }
 

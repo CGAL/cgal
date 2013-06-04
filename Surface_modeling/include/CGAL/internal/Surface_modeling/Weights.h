@@ -1,21 +1,3 @@
-// Copyright (c) 2011-2013 GeometryFactory
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL:$
-// $Id:$
-//
-// Author(s)     : Yin Xu, Andreas Fabri and Ilker O. Yaz
-
 #ifndef CGAL_SURFACE_MODELING_WEIGHTS_H
 #define CGAL_SURFACE_MODELING_WEIGHTS_H
 /// @cond CGAL_DOCUMENT_INTERNAL
@@ -25,6 +7,22 @@
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 namespace CGAL {
 namespace internal {
+
+struct Vector{
+  double coords[3];
+  template<class Point>
+  Vector(const Point& a, const Point& b) {
+    coords[0] = a[0] - b[0];
+    coords[1] = a[1] - b[1];
+    coords[2] = a[2] - b[2];
+  }
+  double& operator[](int i)       { return coords[i]; }
+  double  operator[](int i) const { return coords[i]; }
+  double squared_length() const {
+    return coords[0]*coords[0] + coords[1]*coords[1] + coords[2]*coords[2];
+  }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////
 // Returns the cotangent value of half angle v0 v1 v2
 template<class Polyhedron>
@@ -32,13 +30,12 @@ class Cotangent_value
 {
 public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector vec0 = v1->point() - v2->point();
-    Vector vec1 = v2->point() - v0->point();
-    Vector vec2 = v0->point() - v1->point();
+    Vector vec0(v1->point(), v2->point());
+    Vector vec1(v2->point(), v0->point());
+    Vector vec2(v0->point(), v1->point());
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
@@ -61,12 +58,11 @@ class Cotangent_value_Meyer
 {
 public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a = v0->point() - v1->point();
-    Vector b = v2->point() - v1->point();
+    Vector a(v0->point(), v1->point());
+    Vector b(v2->point(), v1->point());
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
@@ -133,7 +129,6 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
   typedef typename Polyhedron::Traits::Point_3   Point;
 
   // Returns the cotangent weight of specified edge_descriptor
@@ -177,7 +172,6 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
   typedef typename Polyhedron::Traits::Point_3   Point;
 
   // Returns the cotangent of the opposite angle of the edge
@@ -202,7 +196,6 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-  typedef typename Polyhedron::Traits::Vector_3  Vector;
   typedef typename Polyhedron::Traits::Point_3   Point;
 
   // Returns the mean-value coordinate of specified edge_descriptor
@@ -211,7 +204,7 @@ public:
   {
     vertex_descriptor v0 = boost::target(e, polyhedron);
     vertex_descriptor v1 = boost::source(e, polyhedron);
-    Vector vec = v0->point() - v1->point();
+    Vector vec(v0->point(), v1->point());
     double norm = std::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
@@ -244,9 +237,9 @@ private:
   // Returns the tangent value of half angle v0_v1_v2/2
   double half_tan_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector vec0 = v1->point() - v2->point();
-    Vector vec1 = v2->point() - v0->point();
-    Vector vec2 = v0->point() - v1->point();
+    Vector vec0(v1->point(), v2->point());
+    Vector vec1(v2->point(), v0->point());
+    Vector vec2(v0->point(), v1->point());
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
@@ -262,8 +255,8 @@ private:
   // My deviation built on Meyer_02
   double half_tan_value_2(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a = v0->point() - v1->point();
-    Vector b = v2->point() - v1->point();
+    Vector a(v0->point(), v1->point());
+    Vector b(v2->point(), v1->point());
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();

@@ -3,22 +3,6 @@
 #include <cmath>
 #include <boost/property_map/property_map.hpp>
 
-struct Custom_vector_3{
-  double coords[3];
-  Custom_vector_3(){}
-  Custom_vector_3(double x, double y, double z)
-  { coords[0]=x; coords[1]=y; coords[2]=z; }
-
-  double x() const {return coords[0];}
-  double y() const {return coords[1];}
-  double z() const {return coords[2];}
-  
-  double operator[](int i) const {return coords[i];}
-  
-  double squared_length() const
-  { return x()*x()+y()*y()+z()*z();}
-};
-
 struct Custom_point_3{
   //needed by File_scanner_OFF
   struct R{
@@ -35,7 +19,10 @@ struct Custom_point_3{
   double x() const {return coords[0];}
   double y() const {return coords[1];}
   double z() const {return coords[2];}
-  
+
+  double& operator[](int i)       { return coords[i]; }
+  double  operator[](int i) const { return coords[i]; }
+
   friend std::ostream& operator<<(std::ostream& out, const Custom_point_3& p)
   {
     out << p.x() << " " << p.y() << " " << p.z();
@@ -46,12 +33,6 @@ struct Custom_point_3{
   {
     in >> p.coords[0] >> p.coords[1] >> p.coords[2];
     return in;
-  }
-  
-  Custom_vector_3 operator-(const Custom_point_3& p) const{
-    return Custom_vector_3( coords[0]-p.coords[0],
-                            coords[1]-p.coords[1],
-                            coords[2]-p.coords[2] );
   }
 };
 
@@ -69,15 +50,14 @@ namespace CGAL{
 
 struct Custom_traits{
   typedef Custom_point_3 Point_3;
-  typedef Custom_vector_3 Vector_3;
   struct Plane_3{};
 };
 
 typedef CGAL::Polyhedron_3<Custom_traits>       Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator  	  vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor  	  edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
 
 typedef std::map<vertex_descriptor, std::size_t>   Internal_vertex_map;
 typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
@@ -146,7 +126,7 @@ int main()
   deform_mesh.deform(10, 0.0); // deform(unsigned int iterations, double tolerance) can be called with instant parameters
   // this time iterate 10 times, and do not use energy based termination
 
-  std::ofstream output("deform_1.off");
+  std::ofstream output("data/deform_1.off");
   output << mesh; // save deformed mesh
   output.close();
 
@@ -164,6 +144,6 @@ int main()
 
   deform_mesh.deform(15, 0.0);
 
-  output.open("deform_2.off");
+  output.open("data/deform_2.off");
   output << mesh;
 }

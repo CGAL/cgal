@@ -87,7 +87,6 @@ typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::OR
 
 
 typedef Deform_mesh::Point  Point;
-typedef Deform_mesh::Vector Vector;
 
 /// For storing associated data with handle group
 class Handle_group_data
