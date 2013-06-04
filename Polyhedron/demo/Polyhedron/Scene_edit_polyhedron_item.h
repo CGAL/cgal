@@ -58,26 +58,26 @@ public:
   std::vector<double>* positions;
 };
 
-namespace boost {
-  Array_based_vertex_point_map::value_type
-  get(Array_based_vertex_point_map pmap,
-    Array_based_vertex_point_map::key_type key) {
-      return key->point();
-  }
 
-  void
-  put(Array_based_vertex_point_map pmap,
-    Array_based_vertex_point_map::key_type key,
-    Array_based_vertex_point_map::value_type val) {
-    key->point() = val; // to make things easy (ray selection after deformation, save to polyhedron after close etc),
-    // I also change point() of vertex together with positions list
-    // So that we do not need to pmap everywhere other than draw
-    std::size_t pos = key->id() * 3;
-    (*pmap.positions)[pos] = val.x();
-    (*pmap.positions)[pos+1] = val.y();
-    (*pmap.positions)[pos+2] = val.z();
-  }
+Array_based_vertex_point_map::value_type
+get(Array_based_vertex_point_map,
+  Array_based_vertex_point_map::key_type key) {
+    return key->point();
 }
+
+void
+put(Array_based_vertex_point_map pmap,
+  Array_based_vertex_point_map::key_type key,
+  Array_based_vertex_point_map::value_type val) {
+  key->point() = val; // to make things easy (ray selection after deformation, save to polyhedron after close etc),
+  // I also change point() of vertex together with positions list
+  // So that we do not need to pmap everywhere other than draw
+  std::size_t pos = key->id() * 3;
+  (*pmap.positions)[pos] = val.x();
+  (*pmap.positions)[pos+1] = val.y();
+  (*pmap.positions)[pos+2] = val.z();
+}
+
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; 
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map; 
 
