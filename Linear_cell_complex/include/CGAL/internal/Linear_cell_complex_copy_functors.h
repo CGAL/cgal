@@ -91,8 +91,7 @@ struct Set_point_if_possible<Point1, Point2, Dynamic_dimension_tag,
 {
   static void run(const Point1& p1, Point2& p2)
   {
-    if ( p1.dimension()==p2.dimension() )
-      Set_point_d_if_same<Point1, Point2>::run(p1, p2);
+    Set_point_d_if_same<Point1, Point2>::run(p1, p2);
   }
 };
 
@@ -123,15 +122,13 @@ struct Set_point_if_exist<Attr1, Attr2, CGAL::Void, Point2>
 };
 // ****************************************************************************
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-template <typename LCC1, typename LCC2, class Tuple,
-          class Res=CGAL::cpp11::tuple<> >
+template <typename LCC1, typename LCC2, class Tuple>
 struct Modify_tuple_of_converter_for_vertex_attribute;
 
-// empty tuple and empty res: res is a tuple with only
-// Point_converter_lcc_vertex_attributes
+// empty tuple
 template <typename LCC1, typename LCC2>
 struct Modify_tuple_of_converter_for_vertex_attribute
-    <LCC1, LCC2, CGAL::cpp11::tuple<>, CGAL::cpp11::tuple<> >
+    <LCC1, LCC2, CGAL::cpp11::tuple<> >
 {
   typedef CGAL::cpp11::tuple
   <Modify_attribute_converter_lcc_vertex_attributes
@@ -141,50 +138,21 @@ struct Modify_tuple_of_converter_for_vertex_attribute
   { return type(); }
 };
 
-// empty tuple but non empty res: we already have modified vertex attribute
-template < typename LCC1, typename LCC2, class ... Res >
-struct Modify_tuple_of_converter_for_vertex_attribute
-    <LCC1, LCC2, CGAL::cpp11::tuple<>, CGAL::cpp11::tuple<Res...> >
-{
-  typedef CGAL::cpp11::tuple<Res...> type;
-
-  static type run(const CGAL::cpp11::tuple<>&)
-  { CGAL_assertion(false); return type(); }
-};
-
-// empty res but non empty empty tuple, Firsttype is vertex attribute.
+// non empty empty tuple, Firsttype is vertex attribute.
 template < typename LCC1, typename LCC2, class Firsttype, class ... Tuple >
 struct Modify_tuple_of_converter_for_vertex_attribute
-    <LCC1, LCC2, CGAL::cpp11::tuple<Firstype, Tuple...>, CGAL::cpp11::tuple<> >
+    <LCC1, LCC2, CGAL::cpp11::tuple<Firstype, Tuple...> >
 {
-  typedef typename Modify_tuple_of_converter_for_vertex_attribute
-  <LCC1, LCC2, CGAL::cpp11::tuple<Tuple...>,
-  CGAL::cpp11::tuple
-  <Modify_attribute_converter_lcc_vertex_attributes<Firsttype, LCC1, LCC2> >::
-  type type;
+  typedef typename CGAL::cpp11::tuple
+  <Modify_attribute_converter_lcc_vertex_attributes<Firsttype, LCC1, LCC2>,
+  Tuple...> type;
 
   static type run(const CGAL::cpp11::tuple<Firsttype, Tuple...>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<Firsttype, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        Tuple... >(t.get_head(),t.get_tail());
   }
-};
-
-// non empty res, non empty tuple, we copy
-template < typename LCC1, typename LCC2, class Firsttype,
-           class ... Tuple, class ... Res >
-struct Modify_tuple_of_converter_for_vertex_attribute
-    <LCC1, LCC2, CGAL::cpp11::tuple<Firsttype,Tuple...>,
-    CGAL::cpp11::tuple<Res...> >
-{
-  typedef typename Modify_tuple_of_converter_for_vertex_attribute
-  <LCC1, LCC2, CGAL::cpp11::tuple<Tuple...>,
-  CGAL::cpp11::tuple<Res...,Functor> >::type type;
-
-  static type run(const CGAL::cpp11::tuple<>&)
-  { CGAL_assertion(false); return type; }
 };
 #else // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template <class LCC1, class LCC2, class Tuple>
@@ -200,9 +168,10 @@ struct Modify_tuple_of_converter_for_vertex_attribute
   static type run(const CGAL::cpp11::tuple<>&)
   {
     CGAL::Default_converter_cmap_attributes<LCC1, LCC2,0> tmp;
-    return type(Modify_attribute_converter_lcc_vertex_attributes
-        <CGAL::Default_converter_cmap_attributes<LCC1, LCC2,0>, LCC1, LCC2>
-        (tmp));
+    return CGAL::cpp11::tuple
+        <CGAL::Modify_attribute_converter_lcc_vertex_attributes
+        <CGAL::Default_converter_cmap_attributes<LCC1, LCC2,0>, LCC1, LCC2> >
+        (tmp);
   }
 };
 
@@ -214,10 +183,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<> >(t.get_head(),t.get_tail());
   }
 };
 
@@ -229,10 +197,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1,T2>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<T2> >(t.get_head(),t.get_tail());
   }
 };
 
@@ -245,10 +212,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1,T2,T3>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<T2,T3> >(t.get_head(),t.get_tail());
   }
 };
 
@@ -261,10 +227,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1,T2,T3,T4>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<T2,T3,T4> >(t.get_head(),t.get_tail());
   }
 };
 
@@ -278,10 +243,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1,T2,T3,T4,T5>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<T2,T3,T4,T5> >(t.get_head(),t.get_tail());
   }
 };
 
@@ -295,10 +259,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1,T2,T3,T4,T5,T6>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<T2,T3,T4,T5,T6> >(t.get_head(),t.get_tail());
   }
 };
 
@@ -312,10 +275,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1,T2,T3,T4,T5,T6,T7>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<T2,T3,T4,T5,T6,T7> >(t.get_head(),t.get_tail());
   }
 };
 
@@ -329,10 +291,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1,T2,T3,T4,T5,T6,T7,T8>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<T2,T3,T4,T5,T6,T7,T8> >(t.get_head(),t.get_tail());
   }
 };
 
@@ -346,10 +307,9 @@ struct Modify_tuple_of_converter_for_vertex_attribute
 
   static type run(const CGAL::cpp11::tuple<T1,T2,T3,T4,T5,T6,T7,T8,T9>& t)
   {
-    return type
-        (Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>
-         (t.get_head()),
-         t.get_tail());
+    return boost::tuples::cons
+        <Modify_attribute_converter_lcc_vertex_attributes<T1, LCC1, LCC2>,
+        CGAL::cpp11::tuple<T2,T3,T4,T5,T6,T7,T8,T9> >(t.get_head(),t.get_tail());
   }
 };
 #endif

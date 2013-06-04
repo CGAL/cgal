@@ -191,12 +191,11 @@ struct Cast_converter_cmap_attributes
   (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
    typename Map2::Dart_handle dh2) const
   {
+    typename Map2::template Attribute_handle<i>::type
+      res = map2.template create_attribute<i>();
     if ( dh1->template attribute<i>()!=NULL )
-      return map2.template create_attribute<i>
-          ((typename Map2::template Attribute_type<i>::type::Info)
-           dh1->template attribute<i>()->info());
-
-    return map2.template create_attribute<i>();
+      res->info() = dh1->template attribute<i>()->info();
+    return res;
   }
 };
 // ****************************************************************************

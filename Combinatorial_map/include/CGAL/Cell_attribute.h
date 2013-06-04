@@ -119,6 +119,12 @@ namespace CGAL {
     bool is_valid() const
     { return true; }
 
+    bool operator==(const Cell_attribute_without_info&) const
+    { return true; }
+
+    bool operator!=(const Cell_attribute_without_info& other) const
+    { return !operator==(other); }
+
   protected:
     /// Contructor without parameter.
     Cell_attribute_without_info(): mrefcounting(0)
@@ -220,6 +226,12 @@ namespace CGAL {
     /// A cell is valid if its dart is not NULL.
     bool is_valid() const
     { return mdart!=NULL; }
+
+    bool operator==(const Cell_attribute_without_info&) const
+    { return true; }
+
+    bool operator!=(const Cell_attribute_without_info& other) const
+    { return !operator==(other); }
 
   protected:
     /// Contructor without parameter.
@@ -325,6 +337,13 @@ namespace CGAL {
     typedef OnMerge                          On_merge;
     typedef OnSplit                          On_split;
     typedef Info_                            Info;
+
+    bool operator==(const Self& other) const
+    { return this->info()==other.info(); }
+
+    bool operator!=(const Self& other) const
+    { return !operator==(other); }
+
 
   protected:
     /// Default contructor.

@@ -17,7 +17,7 @@ struct Map_2_dart_items
     typedef CGAL::Dart< 2, Refs > Dart;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, int > Double_attrib;
+    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
 
     typedef CGAL::cpp11::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
@@ -562,19 +562,65 @@ bool testCopy()
             map2a.number_of_attributes<2>()==0 &&
             map2a.number_of_attributes<3>()==0 );
     assert( map2a.is_isomorphic_to(map2)==map2.is_isomorphic_to(map2a) );
-    //map2.display_characteristics(std::cout)<<std::endl;
-    //map2a.display_characteristics(std::cout)<<std::endl;
 
     Map2 map5a(map5); assert(map5a.is_valid());
-    // Here we cannot use is_isomorphic_to because map5a has several cc
+    if ( map5a.is_isomorphic_to(map5) ) { assert(false); return false; }
     assert( map5a.number_of_attributes<0>()==map2.number_of_attributes<0>() &&
             map5a.number_of_attributes<2>()==0 );
-    //map5.display_characteristics(std::cout)<<std::endl;
-    //map5a.display_characteristics(std::cout)<<std::endl;
+
+    Map5 map9a(map9); assert(map9a.is_valid());
+    if ( map9a.is_isomorphic_to(map9) ) { assert(false); return false; }
+    assert( map9a.number_of_attributes<0>()>=map9.number_of_attributes<0>() &&
+            map9a.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
+            map9a.number_of_attributes<3>()==0 );
+    assert( map9a.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9a) );
+
+    CGAL::Cast_converter_cmap_attributes<Map9,Map5,0> c0;
+    CGAL::Default_converter_cmap_attributes<Map9,Map5,1> c1;
+    CGAL::Default_converter_cmap_attributes<Map9,Map5,2> c2;
+    CGAL::Cast_converter_cmap_attributes<Map9,Map5,3> c3;
+
+    CGAL::cpp11::tuple<CGAL::Cast_converter_cmap_attributes<Map9,Map5,0>,
+        CGAL::Default_converter_cmap_attributes<Map9,Map5,1>,
+        CGAL::Default_converter_cmap_attributes<Map9,Map5,2>,
+        CGAL::Cast_converter_cmap_attributes<Map9,Map5,3> > myconverters
+        (c0, c1, c2, c3);
+
+    Map5 map9b(map9, myconverters); assert(map9a.is_valid());
+    if ( map9b.is_isomorphic_to(map9) ) { assert(false); return false; }
+    assert( map9b.number_of_attributes<0>()>=map9.number_of_attributes<0>() &&
+            map9b.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
+            map9b.number_of_attributes<3>()>=map9.number_of_attributes<3>() );
+    assert( map9b.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9b) );
+
+    CGAL::Cast_converter_cmap_attributes<Map5,Map9,0> cb0;
+    CGAL::Default_converter_cmap_attributes<Map5,Map9,1> cb1;
+    CGAL::Default_converter_cmap_attributes<Map5,Map9,2> cb2;
+    CGAL::Cast_converter_cmap_attributes<Map5,Map9,3> cb3;
+
+    CGAL::cpp11::tuple<CGAL::Cast_converter_cmap_attributes<Map5,Map9,0>,
+        CGAL::Default_converter_cmap_attributes<Map5,Map9,1>,
+        CGAL::Default_converter_cmap_attributes<Map5,Map9,2>,
+        CGAL::Cast_converter_cmap_attributes<Map5,Map9,3> > myconverters2
+        (cb0, cb1, cb2, cb3);
+
+    Map9 map5b(map5, myconverters2); assert(map5b.is_valid());
+    if ( map5b.is_isomorphic_to(map5) ) { assert(false); return false; }
+    if ( !map5b.is_isomorphic_to(map5, false) ) { assert(false); return false; }
+    assert( map5b.number_of_attributes<0>()==map5.number_of_attributes<0>() &&
+            map5b.number_of_attributes<2>()==map5.number_of_attributes<2>() &&
+            map5b.number_of_attributes<3>()==map5.number_of_attributes<3>() );
+    assert( map5b.is_isomorphic_to(map5)==map5.is_isomorphic_to(map5b) );
   }
 
-  // displayAllAttribs2D(mapXX, "mapXX******************\n");
-  // displayAllAttribs2D(mapYY, "mapYY******************\n");
+  /*map2.display_characteristics(std::cout)<<std::endl;
+    map2a.display_characteristics(std::cout)<<std::endl;
+    displayAllAttribs2D(mapXX, "mapXX******************\n");
+    displayAllAttribs2D(mapYY, "mapYY******************\n");*/
+  /*map5.display_characteristics(std::cout)<<std::endl;
+    map5b.display_characteristics(std::cout)<<std::endl;
+    displayAllAttribs3D(map5, "map5******************\n");
+    displayAllAttribs3D(map5b, "map5b******************\n");*/
 
   return true;
 }

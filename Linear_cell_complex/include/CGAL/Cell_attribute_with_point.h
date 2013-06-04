@@ -88,6 +88,12 @@ namespace CGAL {
 
     using Base1::info;
 
+    bool operator==(const Self& other) const
+    { return Base1::operator==(other) && this->point()==other.point(); }
+
+    bool operator!=(const Self& other) const
+    { return !operator==(other); }
+
   protected:
     /// Default contructor.
     Cell_attribute_with_point()
@@ -131,6 +137,16 @@ namespace CGAL {
 
     typedef Functor_on_merge_ Functor_on_merge;
     typedef Functor_on_split_ Functor_on_split;
+
+    bool operator==(const Cell_attribute_with_point& other) const
+    { return Base1::operator==(other) && this->point()==other.point(); }
+
+    bool operator!=(const Cell_attribute_with_point& other) const
+    { return !operator==(other); }
+
+    template<typename Cellattr>
+    bool operator==(const Cellattr& other) const
+    { return false; }
 
   protected:
     /// Default contructor.
