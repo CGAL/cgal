@@ -132,14 +132,12 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
 void Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered()
 {  
   // dock widget should be constructed in init()
-  if(dock_widget != NULL)
-  {
-    dock_widget->show();
-  }
+  if(dock_widget->isVisible()) { dock_widget->hide(); }
+  else                         { dock_widget->show(); }
 }
 
 /////// Dock window signal handlers //////
-// what they do is simply transmiting required 'action' to selected scene_edit_polyhedron_item object
+// what they do is simply transmitting required 'action' to selected scene_edit_polyhedron_item object
 void Polyhedron_demo_edit_polyhedron_plugin::on_AddHandlePushButton_clicked()
 {
   int item_id = scene->mainSelectionIndex();
