@@ -32,11 +32,11 @@ Scene_polyhedron_item_decorator::toolTip() const
 }
 
 void Scene_polyhedron_item_decorator::draw() const {
-  poly_item->direct_draw();
+  poly_item->draw();
 }
 
 void Scene_polyhedron_item_decorator::draw_edges() const {
-  poly_item->direct_draw_edges();
+  poly_item->draw_edges();
 }
 
 Polyhedron* 

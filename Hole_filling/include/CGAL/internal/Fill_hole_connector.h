@@ -110,5 +110,35 @@ namespace internal {
     }
   };
 }//namespace internal
+
+/**
+ * @brief Function triangulating a hole in surface mesh.
+ * 
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
+ * @param[in, out] polyhedron surface mesh which has the hole
+ * @param border_halfedge a border halfedge incident to the hole
+ * @param[out] output iterator over patch facets. It can be omitted if output is not required.
+ * 
+ * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
+ */
+template<class Polyhedron, class OutputIterator>
+void triangulate_hole(Polyhedron& polyhedron, 
+  typename Polyhedron::Halfedge_handle border_halfedge, 
+  OutputIterator output
+  ) 
+{
+  internal::Triangulate_hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge, output);
+}
+
+template<class Polyhedron>
+void triangulate_hole(Polyhedron& polyhedron, 
+  typename Polyhedron::Halfedge_handle border_halfedge
+  ) 
+{
+  triangulate_hole(polyhedron, border_halfedge, 
+    boost::make_function_output_iterator(CGAL::internal::Nop_functor()));
+}
+
 }//namespace CGAL
 #endif // CGAL_HOLE_FILLING_FILL_HOLE_CONNECTOR

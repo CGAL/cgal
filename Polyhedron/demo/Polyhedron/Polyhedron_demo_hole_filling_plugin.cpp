@@ -241,6 +241,23 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
 
+  template<class SceneType>
+  SceneType* get_selected() {
+    int item_id = scene->mainSelectionIndex();
+    SceneType* scene_item = qobject_cast<SceneType*>(scene->item(item_id));
+    if(!scene_item) {
+      // no selected SceneType, if there is only one in list use it, otherwise error
+      int counter = 0;
+      for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
+        scene_item = qobject_cast<SceneType*>(scene->item(i));
+        if(scene_item) { counter++; }
+      }
+
+      if(counter != 1) { return NULL; }
+    }
+    return scene_item;
+  }
+
 public slots:
   void hole_filling_action() { dock_widget->show(); }
   void on_Fill_all_holes_button();
@@ -331,12 +348,12 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
   typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
   typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
 
-  int item_id = scene->mainSelectionIndex();
-  Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
+  Scene_polyhedron_item* poly_item = get_selected<Scene_polyhedron_item>();
   if(!poly_item) {
-    print_message("Error: there is no selected polyhedron item!");
+    print_message("Error: please select a polyhedron item from Geometric Objects list!");
     return;
   }
+
   if(polyhedron_item_hole_map.find(poly_item) != polyhedron_item_hole_map.end()) {
     print_message("Error: selected polyhedron item already has an associated hole item!");
     return;
@@ -361,10 +378,9 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
 }
 // fills selected holes on active Scene_polylines_collection
 void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
-  int item_id = scene->mainSelectionIndex();
-  Scene_polylines_collection* polyline_item = qobject_cast<Scene_polylines_collection*>(scene->item(item_id));
+  Scene_polylines_collection* polyline_item = get_selected<Scene_polylines_collection>();
   if(!polyline_item) {
-    print_message("Error: there is no selected holes item!");
+    print_message("Error: please select a hole visualizer from Geometric Objects list!");
     return;
   }
 
@@ -387,10 +403,9 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
   typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
 
-  int item_id = scene->mainSelectionIndex();
-  Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
+  Scene_polyhedron_item* poly_item = get_selected<Scene_polyhedron_item>();
   if(!poly_item) {
-    print_message("Error: there is no selected polyhedron item!");
+    print_message("Error: please select a polyhedron item from Geometric Objects list!");
     return;
   }
 

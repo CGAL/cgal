@@ -117,7 +117,7 @@ public:
 
   template <typename OutputIteratorValueType, typename OutputIterator>
   OutputIterator 
-  operator()(const Polyline_3& P, 
+  triangulate(const Polyline_3& P, 
              const Polyline_3& Q,
              OutputIterator out)
   {
@@ -190,7 +190,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     Q.push_back(Q.front());
   }
   Fill fill;
-  return fill.template operator()<OutputIteratorValueType>(P,Q,out);
+  return fill.template triangulate<OutputIteratorValueType>(P,Q,out);
 }
 
 // overload for OutputIteratorValueType
@@ -229,7 +229,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     P.push_back(P.front());
   }
   Fill fill;
-  return fill.template operator()<OutputIteratorValueType>(P,Q,out);
+  return fill.template triangulate<OutputIteratorValueType>(P,Q,out);
 }
 
 // overload for OutputIteratorValueType
