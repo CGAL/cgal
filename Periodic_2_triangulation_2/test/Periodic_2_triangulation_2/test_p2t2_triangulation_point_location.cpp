@@ -21,6 +21,8 @@ Face_handle test_point_location(const Triangulation &t,
 
   bs = t.side_of_face(query, fh, lt2, li2);
   os = t.oriented_side(fh, query);
+  CGAL_USE(bs);
+  CGAL_USE(os);
   
   CGAL_assertion(lt2 == lt_in);
 
@@ -67,6 +69,7 @@ int main()
   Point p0(0.5, 0.5);
   Vertex_handle vh0 = t.insert(p0);
   CGAL_assertion(t.is_valid(true));
+  CGAL_USE(vh0);
 
   fh = test_point_location(t, p0, Triangulation::VERTEX);
   CGAL_assertion(fh->has_vertex(vh0));
@@ -85,6 +88,7 @@ int main()
   // Insert the second point on an edge
   Point p1(0.7, 0.7);
   Vertex_handle vh1 = t.insert(p1);
+  CGAL_USE(vh1);
   CGAL_assertion(t.is_valid(true));
 
   fh = test_point_location(t, p0, Triangulation::VERTEX);
@@ -116,6 +120,7 @@ int main()
   // Insert the third point in a face
   Point p2(0.8, 0.6);
   Vertex_handle vh2 = t.insert(p2);
+  CGAL_USE(vh2);
   CGAL_assertion(t.is_valid(true));
 
   fh = test_point_location(t, p0, Triangulation::VERTEX);

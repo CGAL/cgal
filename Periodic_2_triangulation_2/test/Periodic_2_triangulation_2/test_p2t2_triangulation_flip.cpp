@@ -69,6 +69,8 @@ int main()
 
   size_t n_vertices = t.number_of_vertices();
   size_t n_faces = t.number_of_faces();
+  CGAL_USE(n_vertices);
+  CGAL_USE(n_faces);
 
   std::cout << "Converting to 1 cover" << std::endl;
   t.convert_to_1_sheeted_covering();

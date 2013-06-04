@@ -722,12 +722,12 @@ public:
   {
     return _tds.incident_edges(v, f);
   }
-  Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f =
-                                        Face_handle()) const
-  {
-    bool DEPRECATED_USE_ADJACENT_VERTICES;
-    return adjacent_vertices(v, f);
-  }
+/*   Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f = */
+/*                                         Face_handle()) const */
+/*   { */
+/*     bool DEPRECATED_USE_ADJACENT_VERTICES; */
+/*     return adjacent_vertices(v, f); */
+/*   } */
   Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f =
                                         Face_handle()) const
   {
@@ -1974,7 +1974,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
   CGAL_assertion(v1s.size() == v2s.size());
 
   Face_handle fh;
-  int index;
+  int index=0;
   Vertex_handle vh1_copy, vh2_copy;
 
   // Virtual copies
@@ -1995,10 +1995,10 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
             vh2_copy = v2s[i2 - 1];
 
           bool found = is_edge(vh1_copy, vh2_copy, fh, index);
-	  (void)found;
+	  CGAL_USE(found);
           CGAL_assertion(found);
-
-          flip_single_edge(fh, index);
+	  if (found)
+	    flip_single_edge(fh, index);
         }
     }
 
