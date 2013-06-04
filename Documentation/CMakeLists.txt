@@ -133,7 +133,7 @@ if(DOXYGEN_FOUND)
   if(PYTHONINTERP_FOUND)
     add_custom_target(Documentation_postprocess
       ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CMAKE_CURRENT_SOURCE_DIR}/resources
-      )
+      DEPENDS Documentation_doc)
 
     if(CGAL_DOC_CREATE_LOGS)
       add_custom_target(Documentation_test
@@ -143,6 +143,12 @@ if(DOXYGEN_FOUND)
       add_custom_target(Documentation_test_publish
         ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
         DEPENDS Documentation_doc)
+
+      set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
+
+      add_custom_target(Documentation_testsuite_publish
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
+        DEPENDS Documentation_postprocess)
     endif()
   endif()
   
