@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # This script creates the directory structure for a new package.
 # Usage: cgal_create_package_dir.py Package_name
@@ -191,6 +191,7 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     if os.path.exists(figfile):
         shutil.copy(figfile, figpath)
 else:
-    print "Error: Bad package name:", packagename
-    print "The package name should consist of:"
-    print "letters, digits and underscores and not start with a digit."
+    sys.stderr.write("Error: Bad package name: " + packagename + '\n')
+    sys.stderr.write("The package name should consist of:" + '\n')
+    sys.stderr.write \
+      ("letters, digits and underscores and not start with a digit." + '\n')
