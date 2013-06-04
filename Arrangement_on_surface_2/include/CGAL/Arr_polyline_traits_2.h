@@ -1839,13 +1839,21 @@ private:
     // Perform a binary search and locate the segment that contains q in its
     // x-range:
     while ((direction == SMALLER && to > from) ||
-           (direction == LARGER && to <from)) {
+           (direction == LARGER  && to < from)) {
       unsigned int mid = (from + to) / 2;
 
       if ((direction == SMALLER && mid > from) ||
-          (direction == LARGER && mid < from)) {
+          (direction == LARGER  && mid < from)) {
         Comparison_result res_mid = compare_x(min_vertex(cv[mid]), q);
-        if (res_mid == EQUAL) return mid;
+        if (res_mid == EQUAL) {
+          // Ensure that the returned segment contains the query point
+          // on its right end (if possible)
+          if ((direction == SMALLER) && (mid > 0))
+            --mid;
+          else if ((direction == LARGER) && (mid + 1 < cv.number_of_segments()))
+            ++mid;
+          return mid;
+        }
         if (res_mid == res_from) from = mid;
         else if (direction == SMALLER)
           to = mid - 1;
