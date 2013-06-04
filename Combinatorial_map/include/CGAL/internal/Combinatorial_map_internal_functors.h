@@ -605,43 +605,6 @@ struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, false, i>
   { return true; }
 };
 
-// Case T1==void
-/*template <typename Map1, typename Map2,
-          typename T2, bool Withpoint1, bool Withpoint2, int i>
-struct Is_same_attribute_point_functor<Map1, Map2, Void, T2,
-    Withpoint1, Withpoint2, i>
-{
-  static bool run(typename Map1::Dart_const_handle,
-                  typename Map2::Dart_const_handle dh2)
-  {
-    return dh2->template attribute<i>()==NULL ||
-        Withpoint2==false;
-  }
-};
-
-// Case T2==void
-template <typename Map1, typename Map2,
-          typename T1, bool Withpoint1, bool Withpoint2, int i>
-struct Is_same_attribute_point_functor<Map1, Map2, T1, Void,
-    Withpoint1, Withpoint2, i>
-{
-  static bool run(typename Map1::Dart_const_handle dh1,
-                  typename Map2::Dart_const_handle)
-  {
-    return dh1->template attribute<i>()==NULL ||
-        Withpoint1==false;
-  }
-};
-
-// Case T1==T2==void
-template <typename Map1, typename Map2, bool Withpoint1, bool Withpoint2, int i>
-struct Is_same_attribute_point_functor<Map1, Map2, Void, Void,
-    Withpoint1, Withpoint2, i>
-{
-  static bool run(typename Map1::Dart_const_handle,
-                  typename Map2::Dart_const_handle)
-  { return true; }
-};*/
 
 struct twochar{ char dummy[2]; };
 

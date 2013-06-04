@@ -25,7 +25,6 @@
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Linear_cell_complex_traits.h>
-#include <CGAL/internal/Linear_cell_complex_copy_functors.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
@@ -95,34 +94,16 @@ namespace CGAL {
      *  @param alcc the linear cell complex to copy.
      *  @post *this is valid.
      */
-    template <typename LCC2, typename Converters>
-    void copy(const LCC2& alcc, const Converters& converters)
-    {
-      typedef typename CGAL::internal::Modify_tuple_of_converter_for_vertex_attribute
-          <LCC2, Self, Converters>::type Converters2;
-
-      Converters2 converters2=CGAL::internal::Modify_tuple_of_converter_for_vertex_attribute
-          <LCC2, Self, Converters>::run(converters);
-      Base::template copy<LCC2, Converters2>(alcc, converters2);
-    }
-
-    template <typename LCC2>
-    void copy(const LCC2& alcc)
-    {
-      CGAL::cpp11::tuple<> converters;
-      return copy<LCC2, CGAL::cpp11::tuple<> >(alcc, converters);
-    }
-
-    Linear_cell_complex(const Self & alcc)
-    { copy<Self>(alcc); }
+     Linear_cell_complex(const Self & alcc)
+    { Base::template copy<Self>(alcc); }
 
     template < class LCC2 >
     Linear_cell_complex(const LCC2& alcc)
-    { copy<LCC2>(alcc);}
+    { Base::template copy<LCC2>(alcc);}
 
     template < class LCC2, typename Converters >
     Linear_cell_complex(const LCC2& alcc, Converters& converters)
-    { copy<LCC2, Converters>(alcc, converters);}
+    { Base::template copy<LCC2, Converters>(alcc, converters);}
 
     /** Create a vertex attribute.
      * @return an handle on the new attribute.

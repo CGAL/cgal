@@ -94,7 +94,7 @@ namespace CGAL {
     bool operator!=(const Self& other) const
     { return !operator==(other); }
 
-  protected:
+    // protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}
@@ -148,7 +148,7 @@ namespace CGAL {
     bool operator==(const Cellattr& other) const
     { return false; }
 
-  protected:
+    //  protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}

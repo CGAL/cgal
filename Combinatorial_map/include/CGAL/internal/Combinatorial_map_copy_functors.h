@@ -21,6 +21,10 @@
 #define CGAL_COMBINATORIAL_MAP_COPY_FUNCTORS_H
 
 #include <CGAL/internal/Combinatorial_map_utility.h>
+#include <CGAL/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/Dimension.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Cartesian_converter.h>
 
 /* Definition of functors used internally to copy combinatorial maps attributes
  * (we need functors as attributes are stored in tuple, thus all the access
@@ -108,8 +112,108 @@ struct Convert_attribute_functor<Map1,Map2,Converters,i,false>
     return CGAL::cpp11::get<i>(converters) (*cmap1, *cmap2, dh1, dh2);
   }
 };
+// ****************************************************************************
+// Functor allowing to set the value of a point if point exist, have
+// same dimension. For dim>3, if type of points are the same
+// (because no converter).
+template<typename Point1, typename Point2,
+         typename T1=typename Ambient_dimension<Point1>::type,
+         typename T2=typename Ambient_dimension<Point2>::type>
+struct Set_point_if_possible
+{
+  static void run(const Point1&, Point2&)
+  {}
+};
 
+template<typename Point1, typename Point2>
+struct Set_point_if_possible<Point1, Point2,
+    Dimension_tag<2>, Dimension_tag<2> >
+{
+  static void run(const Point1& p1, Point2& p2)
+  {
+    p2 = Cartesian_converter<typename Kernel_traits<Point1>::Kernel,
+        typename Kernel_traits<Point2>::Kernel>(p1);
+  }
+};
 
+template<typename Point1>
+struct Set_point_if_possible<Point1, Point1,
+    Dimension_tag<2>, Dimension_tag<2> >
+{
+  static void run(const Point1& p1, Point1& p2)
+  {
+    p2 = p1;
+  }
+};
+
+template<typename Point1, typename Point2>
+struct Set_point_if_possible<Point1, Point2,
+    Dimension_tag<3>, Dimension_tag<3> >
+{
+  static void run(const Point1& p1, Point2& p2)
+  {
+    p2 = Cartesian_converter<typename Kernel_traits<Point1>::Kernel,
+        typename Kernel_traits<Point2>::Kernel>()(p1);
+  }
+};
+
+template<typename Point1>
+struct Set_point_if_possible<Point1, Point1,
+    Dimension_tag<3>, Dimension_tag<3> >
+{
+  static void run(const Point1& p1, Point1& p2)
+  {
+    p2 = p1;
+  }
+};
+
+template<typename Point1>
+struct Set_point_if_possible<Point1, Point1,
+    Dynamic_dimension_tag, Dynamic_dimension_tag >
+{
+  static void run(const Point1& p1, Point1& p2)
+  {
+    p2 = p1;
+  }
+};
+// ****************************************************************************
+// Set_point_if_exist if both attribute has a point
+template< typename Map1, typename Map2, unsigned int i,
+          bool Withpoint1, bool Withpoint2 >
+struct Set_point_if_exist
+{
+  static void run( const Map1* cmap1,
+                   Map2* cmap2,
+                   typename Map1::Dart_const_handle dh1,
+                   typename Map2::Dart_handle dh2 )
+  {}
+};
+
+template< typename Map1, typename Map2, unsigned int i >
+struct Set_point_if_exist<Map1, Map2, i, true, true>
+{
+  static void run( const Map1* cmap1,
+                   Map2* cmap2,
+                   typename Map1::Dart_const_handle dh1,
+                   typename Map2::Dart_handle dh2 )
+  {
+    if ( dh1->template attribute<i>()==NULL ) return;
+
+    typename Map2::template Attribute_handle<i>::type
+      res = dh2->template attribute<i>();
+    if ( res==NULL )
+    {
+      res = cmap2->template create_attribute<i>();
+      cmap2->template set_attribute<i>(dh2, res);
+    }
+    Set_point_if_possible
+        <typename Map1::template Attribute_type<i>::type::Point,
+        typename Map2::template Attribute_type<i>::type::Point>::
+        run(dh1->template attribute<i>()->point(),
+            res->point());
+  }
+};
+// ****************************************************************************
 /// Copy enabled attributes from one cmap to other
 template<typename Map1, typename Map2, typename Converters>
 struct Copy_attributes_functor
@@ -129,6 +233,11 @@ struct Copy_attributes_functor
 
     if ( res!=NULL )
       cmap2->template set_attribute<i>(dh2, res);
+
+    Set_point_if_exist<Map1, Map2, i,
+        sizeof(has_point<typename Map1::template Attribute_type<i>::type>(NULL))==sizeof(char),
+        sizeof(has_point<typename Map2::template Attribute_type<i>::type>(NULL))==sizeof(char)>::
+        run(cmap1, cmap2, dh1, dh2);
     }
   }
 };
@@ -178,7 +287,7 @@ struct Default_converter_cmap_attributes<Map1, Map2, i, CGAL::Void, CGAL::Void>
    typename Map2::Dart_handle dh2) const
   { return NULL; }
 };
-
+// ****************************************************************************
 // Map1 is the existing map, to convert into map2.
 // Cast converter copy always copy attributes, doing
 // a cast. This works only if both types are convertible

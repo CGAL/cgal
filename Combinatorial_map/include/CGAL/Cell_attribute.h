@@ -125,7 +125,7 @@ namespace CGAL {
     bool operator!=(const Cell_attribute_without_info& other) const
     { return !operator==(other); }
 
-  protected:
+    // protected:
     /// Contructor without parameter.
     Cell_attribute_without_info(): mrefcounting(0)
     {}
@@ -135,6 +135,7 @@ namespace CGAL {
       mrefcounting(0)
     {}
 
+  protected:
     /// Increment the reference counting.
     void inc_nb_refs()
     { mrefcounting+=4; } // 4 because this is the 3rd bit (ie 1<<2)
@@ -233,7 +234,7 @@ namespace CGAL {
     bool operator!=(const Cell_attribute_without_info& other) const
     { return !operator==(other); }
 
-  protected:
+    //  protected:
     /// Contructor without parameter.
     Cell_attribute_without_info() : mdart(NULL),
                                     mrefcounting(0)
@@ -245,6 +246,7 @@ namespace CGAL {
       mrefcounting(0)
     {}
 
+  protected:
     /// Increment the reference counting.
     void inc_nb_refs()
     { ++mrefcounting; }
@@ -305,7 +307,7 @@ namespace CGAL {
     typedef OnSplit                          On_split;
     typedef void                             Info;
 
-  protected:
+    //  protected:
     /// Default contructor.
     Cell_attribute()
     {}
@@ -345,7 +347,7 @@ namespace CGAL {
     { return !operator==(other); }
 
 
-  protected:
+    // protected:
     /// Default contructor.
     Cell_attribute()
     {}
