@@ -100,7 +100,7 @@ struct Arr_point_location_result {
   boost::optional<Type> empty_optional_result() { return boost::optional<Type>(); }
 
   template<typename T>
-  T* assign(Type obj) const { return boost::get<T>(&obj); }
+  const T* assign(const Type& obj) const { return boost::get<T>(&obj); }
 #endif // CGAL_ARR_POINT_LOCATION_VERSION < 2
   
   //this one is only to remove warnings in functions 
