@@ -186,7 +186,6 @@ struct Order_along_a_halfedge{
     //returns true, iff q lies strictly between p and r.
     try{
       typename Nodes_vector::Protector p;
-      typename Node_vector::Protector p;
       CGAL::internal::use(p);
 
       return CGAL::collinear_are_strictly_ordered_along_line(nodes.to_interval(hedge->vertex()->point()),
