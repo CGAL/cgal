@@ -37,7 +37,7 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   > Dropper;
   
   assert(data1.size()==4);
-  T1 cont_1[4];
+  T1 cont_1[6];
   std::vector<T2> cont_2;
   
   Dispatcher disp=CGAL::dispatch_output<T1,T2>( cont_1,std::back_inserter(cont_2) );
@@ -66,15 +66,25 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   check_types(disp);
   check_types(drop);
   
-	disp = disp;
-	drop = drop;
+  disp = disp;
+  drop = drop;
 
   std::back_insert_iterator<std::vector<T2> > bck_ins(cont_2);
   
   T1* d;
 
-	CGAL::cpp11::tie(d, bck_ins) = disp;
-	CGAL::cpp11::tie(d, bck_ins) = drop;
+  CGAL::cpp11::tie(d, bck_ins) = disp;
+  CGAL::cpp11::tie(d, bck_ins) = drop;
+
+  //testing putting the tuple directly
+  CGAL::cpp11::tuple<T1,T2> tuple =
+    CGAL::cpp11::make_tuple(*data1.begin(), *data2.begin());
+
+  *disp++ = tuple;
+  assert(cont_2.size()==2 * data2.size()+1);
+
+  *drop++ = tuple;
+  assert(cont_2.size()==2 * data2.size()+2);
 }
 
 
