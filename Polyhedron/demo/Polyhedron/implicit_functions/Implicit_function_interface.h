@@ -46,7 +46,7 @@ public:
   /// In that case, the function will be scanned over the bounding box to
   /// compute approximation of the extrema. If the method is not
   /// overloaded by derived classes, the default is to return false.
-  virtual bool get_min_max(double& min, double& max) {
+  virtual bool get_min_max(double&, double&) {
     return false;
   }
 };
