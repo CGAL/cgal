@@ -319,7 +319,7 @@ struct Nth_of_tuple_property_map
   /// @{
   friend const value_type& get(const Self&,const key_type& k) {return get<N>(k);}
   friend         reference get(const Self&,      key_type& k) {return get<N>(k);}
-  friend void put(const Self&,key_type& k, const value_type& v) {get<N>(k)=v;}
+  friend void put(const Self&,key_type& k, const value_type& v) {boost::get<N>(k)=v;}
   /// @}
 };
 
