@@ -37,10 +37,8 @@ public:
   Polyhedron*       polyhedron();
   const Polyhedron* polyhedron() const;
 
-
-  /// Transfers the ownership of Scene_polyhedron_item, and sets NULL
-  /// The item 'this' must be destroy just after a call to this function.
-  Scene_polyhedron_item* to_polyhedron_item();
+  Scene_polyhedron_item* polyhedron_item();
+  void                   set_polyhedron_item(Scene_polyhedron_item* poly_item);
 
   // Get dimensions
   bool isFinite() const { return true; }

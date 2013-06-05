@@ -88,10 +88,12 @@ Scene_polyhedron_item_decorator::select(double orig_x,
                        dir_z);
 }
 
-Scene_polyhedron_item* Scene_polyhedron_item_decorator::to_polyhedron_item() {
-  Scene_polyhedron_item* tmp = poly_item;
-  poly_item = NULL;
-  return tmp;
+Scene_polyhedron_item* Scene_polyhedron_item_decorator::polyhedron_item() {
+  return poly_item;
+}
+
+void Scene_polyhedron_item_decorator::set_polyhedron_item(Scene_polyhedron_item* poly_item) {
+  this->poly_item = poly_item;
 }
 
 #include "Scene_polyhedron_item_decorator.moc"

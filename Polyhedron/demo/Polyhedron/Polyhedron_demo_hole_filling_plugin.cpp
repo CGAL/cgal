@@ -97,7 +97,7 @@ public:
       if(selected_holes.find(it) != selected_holes.end()) 
       { it->polyline->setRbgColor(255, 0, 0); }
       else 
-      { it->polyline->setRbgColor(0, 255, 0); }
+      { it->polyline->setRbgColor(0, 0, 255); }
 
       it->polyline->draw_edges();
     }
@@ -117,7 +117,7 @@ public:
     for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
       if(it->is_border() && it->id() == 0){
         polyline_data_list.push_back(Polyline_data());
-        Scene_polylines_collection::Polyline_data& polyline_data = polyline_data_list.back();
+        Polyline_data& polyline_data = polyline_data_list.back();
         polyline_data.polyline = new Scene_polylines_item();
         polyline_data.polyline->polylines.push_back(Scene_polylines_item::Polyline());
         polyline_data.halfedge = it;

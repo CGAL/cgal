@@ -229,18 +229,21 @@ public:
  * @tparam WeightCalculator a model of "weight model" and can be omitted to use default Cotangent weights
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam InputIterator iterator over input vertices
+ *
  * @param polyhedron surface mesh to be faired
- * @param interior_vertices set of interior vertices
+ * @param vertex_begin first iterator of the range of vertices
+ * @param vertex_end past-the-end iterator of the range of vertices
+ * @param weight_calculator function object to calculate weights
  */
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class InputIterator>
-void fair(Polyhedron& poly, 
-  InputIterator vb,
-  InputIterator ve,
+void fair(Polyhedron& polyhedron, 
+  InputIterator vertex_begin,
+  InputIterator vertex_end,
   WeightCalculator weight_calculator = WeightCalculator()
   )
 {
   internal::Fair_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> fair_functor(weight_calculator);
-  fair_functor.fair(poly, vb, ve);
+  fair_functor.fair(polyhedron, vertex_begin, vertex_end);
 }
 
 //use default SparseLinearSolver

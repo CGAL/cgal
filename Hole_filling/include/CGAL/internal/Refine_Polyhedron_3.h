@@ -36,11 +36,28 @@ private:
       //  std::cout << "before flip not valid" << std::endl; 
       //}
 
+      // this is the part which makes is_valid not valid
+      for(Halfedge_iterator hb = poly.halfedges_begin(); hb != poly.halfedges_end(); ++hb) {
+        if(hb->vertex() == hb->next()->vertex())
+        {
+          std::cout << "before flip not valid" << std::endl;
+        }
+      }
+
       poly.flip_edge(h);
 
       //if(!poly.is_valid()) {
       //  std::cout << "after flip not valid" << std::endl; 
       //}
+
+      // this is the part which makes is_valid not valid
+      for(Halfedge_iterator hb = poly.halfedges_begin(); hb != poly.halfedges_end(); ++hb) {
+        if(hb->vertex() == hb->next()->vertex())
+        {
+          std::cout << "after flip not valid" << std::endl;
+        }
+      }
+
 
       return true;
     }
@@ -154,6 +171,8 @@ private:
       sum += std::sqrt(CGAL::squared_distance(vp, vq));
       ++deg;
     } while(++circ != done);
+
+    CGAL_assertion(deg != 0); // interior vertices are not accepted
     return sum/deg;
   }
 
@@ -209,7 +228,21 @@ public:
 
 }//namespace internal
 
-
+/** 
+ * @brief Function refining a region on surface mesh.
+ *
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam InputIterator iterator over input facets
+ * @tparam FacetOutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
+ * @tparam VertexOutputIterator iterator holding 'Polyhedron::Vertex_handle' for patch vertices.
+ *
+ * @param polyhedron surface mesh to be refined
+ * @param facet_begin first iterator of the range of facets
+ * @param facet_end past-the-end iterator of the range of facets
+ * @param[out] facet_out iterator over patch facets
+ * @param[out] vertex_out iterator over patch vertices without including boundary
+ * @param density_control_factor factor for density where larger values cause denser refinements
+ */
 template<class Polyhedron, class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
 void refine(Polyhedron& poly, 
   InputIterator facet_begin, 

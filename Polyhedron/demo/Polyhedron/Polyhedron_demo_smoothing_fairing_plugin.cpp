@@ -485,8 +485,9 @@ Scene_polyhedron_item*
   Polyhedron_demo_smoothing_fairing_plugin::convert_to_plain_polyhedron(Item_id i,
   Scene_polyhedron_selectable_item* selectable_poly) 
 {
-  Scene_polyhedron_item* poly_item = selectable_poly->to_polyhedron_item();
+  Scene_polyhedron_item* poly_item = selectable_poly->polyhedron_item();
   scene->replaceItem(i, poly_item);
+  selectable_poly->set_polyhedron_item(NULL); // do not let it delete item
   delete selectable_poly;
   return poly_item;
 }

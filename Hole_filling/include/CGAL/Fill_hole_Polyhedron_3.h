@@ -18,10 +18,11 @@ namespace CGAL {
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam FacetOutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
  * @tparam VertexOutputIterator iterator holding 'Polyhedron::Vertex_handle' for patch vertices.
+ *
  * @param[in, out] polyhedron surface mesh which has the hole
  * @param border_halfedge a border halfedge incident to the hole
- * @param[out] facet_out iterator over patch facets.
- * @param[out] vertex_out iterator over patch vertices without including boundary.
+ * @param[out] facet_out iterator over patch facets
+ * @param[out] vertex_out iterator over patch vertices without including boundary
  * @param density_control_factor factor for density where larger values cause denser refinements
  * 
  * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
@@ -58,10 +59,13 @@ void triangulate_and_refine_hole(Polyhedron& polyhedron,
  * @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d and can be omitted if Eigen defined...(give exact models etc)
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam WeightCalculator a model of "weight model" and default to Cotangent weights
+ *
  * @param polyhedron surface mesh which has the hole
  * @param border_halfedge a border halfedge incident to the hole
- * @param[out] new_facets patch facets to close the hole
+ * @param[out] facet_out iterator over patch facets
+ * @param[out] vertex_out iterator over patch vertices without including boundary
  * @param density_control_factor factor for density where larger values cause denser refinements
+ * @param weight_calculator function object to calculate weights
  */
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
 void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 

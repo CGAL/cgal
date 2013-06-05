@@ -224,17 +224,17 @@ else {
  * 
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
+ *
  * @param[in, out] polyhedron surface mesh which has the hole
  * @param border_halfedge a border halfedge incident to the hole
  * @param[out] output iterator over patch facets.
  * 
- * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
  */
 template<class Polyhedron, class OutputIterator>
 void triangulate_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
   OutputIterator output
-  ) 
+  )
 {
   internal::Triangulate_hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge, output);
 }
