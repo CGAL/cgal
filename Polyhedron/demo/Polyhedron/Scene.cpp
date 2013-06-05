@@ -37,11 +37,13 @@ Scene::Scene(QObject* parent)
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
+  Bbox bbox_before = bbox();
   m_entries.push_back(item);
 
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
-  emit updated_bbox();
+  if(bbox_before + item->bbox() != bbox_before) 
+  { emit updated_bbox(); }
   emit updated();
   QAbstractListModel::reset();
   Item_id id = m_entries.size() - 1;
@@ -55,11 +57,13 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item)
   if(index < 0 || index >= m_entries.size())
     return 0;
 
+  Bbox bbox_before = bbox();
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
   std::swap(m_entries[index], item);
 
-  emit updated_bbox();
+  if(bbox_before + item->bbox() != bbox_before)
+  { emit updated_bbox(); }
   emit updated();
   itemChanged(index);
   QAbstractListModel::reset();
