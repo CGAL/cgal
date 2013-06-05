@@ -67,7 +67,7 @@ template <typename Iterator>
 void process_point_set(Iterator beg, Iterator end)
 {
   process_point_set(beg,end, 
-    CGAL::make_typed_identity_property_map_by_reference(
+    CGAL::make_identity_property_map(
       typename CGAL::value_type_traits<Iterator>::type())
     );
 }

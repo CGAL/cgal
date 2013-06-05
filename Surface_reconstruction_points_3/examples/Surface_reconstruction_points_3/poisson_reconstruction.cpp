@@ -269,7 +269,7 @@ int main(int argc, char * argv[])
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
-                              CGAL::make_typed_identity_property_map_by_reference(PointList::value_type()),
+                              CGAL::make_identity_property_map(PointList::value_type()),
                               CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()),
                               visitor);
 
