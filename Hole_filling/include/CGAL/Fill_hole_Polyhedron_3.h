@@ -1,7 +1,12 @@
 #ifndef CGAL_FILL_HOLE_POLYHEDRON_H
 #define CGAL_FILL_HOLE_POLYHEDRON_H
-// This file is the place where all free functions related to hole triangulation stand
-#include <CGAL/internal/Fill_hole_connector.h>
+
+// Helper functions which combine triangulate, fair, and refine 
+
+#include <CGAL/internal/Fair_Polyhedron_3.h>
+#include <CGAL/internal/Refine_Polyhedron_3.h>
+#include <CGAL/internal/Triangulate_hole_Polyhedron_3.h>
+#include <vector>
 
 namespace CGAL {
 
@@ -11,35 +16,40 @@ namespace CGAL {
  * @brief Function triangulating and refining a hole in surface mesh.
  * 
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
+ * @tparam FacetOutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
+ * @tparam VertexOutputIterator iterator holding 'Polyhedron::Vertex_handle' for patch vertices.
  * @param[in, out] polyhedron surface mesh which has the hole
  * @param border_halfedge a border halfedge incident to the hole
- * @param[out] output iterator over patch facets. It can be omitted if output is not required.
+ * @param[out] facet_out iterator over patch facets.
+ * @param[out] vertex_out iterator over patch vertices without including boundary.
  * @param density_control_factor factor for density where larger values cause denser refinements
  * 
  * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
  */
-template<class Polyhedron, class OutputIterator>
+template<class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
 void triangulate_and_refine_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
-  OutputIterator output, // omittable
+  FacetOutputIterator facet_out,
+  VertexOutputIterator vertex_out,
   double density_control_factor = std::sqrt(2.0)) 
 {
-  internal::Fill_hole_Polyhedron_3<Polyhedron>().
-    triangulate_and_refine_hole(polyhedron, border_halfedge, density_control_factor, output);
+  std::vector<typename Polyhedron::Facet_handle> patch;
+  triangulate_hole(polyhedron, border_halfedge, std::back_inserter(patch));
+
+  refine(polyhedron, patch.begin(), patch.end(), facet_out, vertex_out, density_control_factor);
 }
 
-// do not use OutputIterator
-template<class Polyhedron>
-void triangulate_and_refine_hole(Polyhedron& polyhedron, 
-  typename Polyhedron::Halfedge_handle border_halfedge, 
-  double density_control_factor = std::sqrt(2.0)
-  ) 
-{
-  triangulate_and_refine_hole(polyhedron, border_halfedge,
-    boost::make_function_output_iterator(CGAL::internal::Nop_functor()),
-    density_control_factor);
-}
+//// do not use OutputIterator
+//template<class Polyhedron>
+//void triangulate_and_refine_hole(Polyhedron& polyhedron, 
+//  typename Polyhedron::Halfedge_handle border_halfedge, 
+//  double density_control_factor = std::sqrt(2.0)
+//  ) 
+//{
+//  triangulate_and_refine_hole(polyhedron, border_halfedge,
+//    boost::make_function_output_iterator(CGAL::internal::Nop_functor()),
+//    density_control_factor);
+//}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** 
@@ -53,53 +63,62 @@ void triangulate_and_refine_hole(Polyhedron& polyhedron,
  * @param[out] new_facets patch facets to close the hole
  * @param density_control_factor factor for density where larger values cause denser refinements
  */
-template<class SparseLinearSolver, class Polyhedron, class WeightCalculator>
+template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
 void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
+  FacetOutputIterator facet_out,
+  VertexOutputIterator vertex_out,
   double density_control_factor = std::sqrt(2.0),
   WeightCalculator weight_calculator = WeightCalculator()
   )
 {
-  CGAL::internal::Fill_hole_Polyhedron_3<Polyhedron> fill_functor;
-  fill_functor.template triangulate_refine_and_fair<SparseLinearSolver, WeightCalculator>
-    (polyhedron, border_halfedge, density_control_factor, weight_calculator);
+  std::vector<typename Polyhedron::Vertex_handle> patch;
+  triangulate_and_refine_hole(polyhedron, border_halfedge, facet_out, std::back_inserter(patch), density_control_factor);
+  fair<SparseLinearSolver>(polyhedron, patch.begin(), patch.end(), weight_calculator);
+  std::copy(patch.begin(), patch.end(), vertex_out);
 }
 
-//deduce SparseLinearSolver
-template<class Polyhedron, class WeightCalculator>
+//use default SparseLinearSolver
+template<class WeightCalculator, class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
 void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
+  FacetOutputIterator facet_out,
+  VertexOutputIterator vertex_out,
   double density_control_factor = std::sqrt(2.0),
   WeightCalculator weight_calculator = WeightCalculator()
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron, WeightCalculator>
-    (polyhedron, border_halfedge, density_control_factor, weight_calculator);
+  triangulate_refine_and_fair_hole<Sparse_linear_solver, WeightCalculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
+    (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor, weight_calculator);
 }
 
-//deduce WeightCalculator
-template<class SparseLinearSolver, class Polyhedron>
+//use default WeightCalculator
+template<class SparseLinearSolver, class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
 void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
+  FacetOutputIterator facet_out,
+  VertexOutputIterator vertex_out,
   double density_control_factor = std::sqrt(2.0)
   )
 {
   typedef CGAL::Fairing_cotangent_weight<Polyhedron> Weight_calculator;
-  triangulate_refine_and_fair_hole<SparseLinearSolver, Polyhedron, Weight_calculator>
-    (polyhedron, border_halfedge, density_control_factor, Weight_calculator());
+  triangulate_refine_and_fair_hole<SparseLinearSolver, Weight_calculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
+    (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor, Weight_calculator());
 }
 
-// deduce SparseLinearSolver and WeightCalculator
-template<class Polyhedron>
+//use default SparseLinearSolver and WeightCalculator
+template<class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
 void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
+  FacetOutputIterator facet_out,
+  VertexOutputIterator vertex_out,
   double density_control_factor = std::sqrt(2.0)
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron>
-    (polyhedron, border_halfedge, density_control_factor);
+  triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron, FacetOutputIterator, VertexOutputIterator>
+    (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor);
 }
 
 } // namespace CGAL

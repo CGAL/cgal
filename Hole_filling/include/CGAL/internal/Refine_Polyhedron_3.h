@@ -10,45 +10,6 @@
 namespace CGAL {
 namespace internal {
 
-//// use custom comp to prevent random ordering in set
-//template<class Polyhedron>
-//struct Facet_comparator {
-//  typedef typename Polyhedron::Facet_handle Facet_handle;
-//  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-//  typedef typename Polyhedron::Vertex_handle Vertex_handle;
-//  typedef typename Polyhedron::Traits::Point_3 Point_3;
-//
-//  bool operator()(Facet_handle f1, Facet_handle f2) const {
-//    return &*f1 < &*f2;
-//    //const Point_3& p11 = f1->halfedge()->vertex()->point();
-//    //const Point_3& p21 = f1->halfedge()->next()->vertex()->point();
-//    //const Point_3& p31 = f1->halfedge()->next()->next()->vertex()->point();
-//
-//    //const Point_3& p12 = f2->halfedge()->vertex()->point();
-//    //const Point_3& p22 = f2->halfedge()->next()->vertex()->point();
-//    //const Point_3& p32 = f2->halfedge()->next()->next()->vertex()->point();
-//
-//    //if(p11 != p12) { return point_comp(p11, p12); }
-//    //if(p21 != p22) { return point_comp(p21, p22); }
-//    //return point_comp(p31, p32);
-//
-//    //Halfedge_handle hf1 = f1->halfedge(), hf2 = f2->halfedge();
-//    //do {
-//    //  if(hf1->vertex()->point() != hf2->vertex()->point()) {
-//    //    return point_comp(hf1->vertex()->point(), hf2->vertex()->point());
-//    //  }
-//    //  ++hf1; ++hf2;
-//    //} while(hf1 != f1->halfedge());
-//    //return false;
-//  }
-//
-//  bool point_comp(const Point_3& p1, const Point_3& p2) const {
-//    if(p1.x() != p2.x()) return p1.x() < p2.x();
-//    if(p1.y() != p2.y()) return p1.y() < p2.y();
-//    return p1.z() < p2.z();
-//  }
-//};
-
 template<class Polyhedron>
 class Refine_Polyhedron_3 {
 // typedefs
@@ -61,14 +22,6 @@ class Refine_Polyhedron_3 {
   typedef typename Polyhedron::Halfedge_around_facet_circulator  Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
 
-  //typedef std::set<Facet_handle, Facet_comparator<Polyhedron> > Facet_set;
-// members
-  double alpha;
-
-public:
-  Refine_Polyhedron_3(double alpha) 
-    : alpha(alpha) { }
-
 private:
   bool relax(Polyhedron& poly, Halfedge_handle h)
   {
@@ -79,23 +32,28 @@ private:
     if( (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,r,s)) ||
       (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) ){
 
-        //if(!poly.is_valid()) { 
-        //  std::cout << "before flip not valid" << std::endl; 
-        //}
+      //if(!poly.is_valid()) { 
+      //  std::cout << "before flip not valid" << std::endl; 
+      //}
 
-        poly.flip_edge(h);
+      poly.flip_edge(h);
 
-        //if(!poly.is_valid()) {
-        //  std::cout << "after flip not valid" << std::endl; 
-        //}
+      //if(!poly.is_valid()) {
+      //  std::cout << "after flip not valid" << std::endl; 
+      //}
 
-        return true;
+      return true;
     }
     return false;
   }
 
-  bool subdivide(Polyhedron& poly, std::vector<Facet_handle>& facets, 
-    std::set<Facet_handle>& interior_map, std::map<Vertex_handle, double>& scale_attribute)
+  template<class VertexOutputIterator>
+  bool subdivide(Polyhedron& poly, 
+    std::vector<Facet_handle>& facets, 
+    std::set<Facet_handle>& interior_map,
+    std::map<Vertex_handle, double>& scale_attribute, 
+    VertexOutputIterator vertex_out,
+    double alpha)
   {
     std::list<Facet_handle> new_facets;
     for(typename std::vector<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
@@ -119,6 +77,7 @@ private:
           Halfedge_handle h = poly.create_center_vertex((*it)->halfedge());
           h->vertex()->point() = c;
           scale_attribute[h->vertex()] = sac;
+          *vertex_out++ = h->vertex();
 
           // collect 2 new facets for next round 
           Facet_handle h1 = h->next()->opposite()->face();
@@ -145,13 +104,13 @@ private:
     return ! new_facets.empty();
   }
 
-  bool relax(Polyhedron& poly, std::vector<Facet_handle>& facets, std::set<Facet_handle>& interior_map)
+  bool relax(Polyhedron& poly, const std::vector<Facet_handle>& facets, const std::set<Facet_handle>& interior_map)
   {
     int flips = 0;
     std::list<Halfedge_handle> interior_edges;
     std::set<Halfedge_handle> included_map; // do not use just std::set, the order effects the output (for the same input we want to get same output)
 
-    for(typename std::vector<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
+    for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it){
       Halfedge_around_facet_circulator  circ = (*it)->facet_begin(), done(circ);
       do {
         Halfedge_handle h = circ;
@@ -180,13 +139,55 @@ private:
     return flips > 0;
   }
 
-public:
-  template<class InputIterator, class OutputIterator>
-  void operator()(Polyhedron& poly, std::map<Vertex_handle, double>& scale_attribute, 
-    InputIterator facet_begin, InputIterator facet_end, OutputIterator out)
+  double average_length(Vertex_handle vh, const std::set<Facet_handle>& interior_map)
   {
+    const Point_3& vp = vh->point(); 
+    Halfedge_around_vertex_circulator circ(vh->vertex_begin()), done(circ);
+    int deg = 0;
+    double sum = 0;
+    do {
+      Facet_handle f(circ->facet()), f_op(circ->opposite()->facet());
+      if(interior_map.find(f) != interior_map.end() && interior_map.find(f_op) != interior_map.end())
+      { continue; } // which means current edge is an interior edge and should not be included in scale attribute calculation
+
+      const Point_3& vq = circ->opposite()->vertex()->point();
+      sum += std::sqrt(CGAL::squared_distance(vp, vq));
+      ++deg;
+    } while(++circ != done);
+    return sum/deg;
+  }
+
+  void calculate_scale_attribute(
+    const std::vector<Facet_handle>& facets, 
+    const std::set<Facet_handle>& interior_map,
+    std::map<Vertex_handle, double>& scale_attribute) 
+  {
+    for(std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
+      Halfedge_around_facet_circulator circ((*f_it)->facet_begin()), done(circ);
+      do {
+        Vertex_handle v = circ->vertex();
+        std::pair<std::map<Vertex_handle, double>::iterator, bool> v_insert 
+          = scale_attribute.insert(std::make_pair(v, 0));
+        if(!v_insert.second) { continue; } // already calculated
+        v_insert.first->second = average_length(v, interior_map);
+      } while(++circ != done);
+    }
+  }
+public:
+  template<class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
+  void refine(Polyhedron& poly, 
+    InputIterator facet_begin, 
+    InputIterator facet_end, 
+    FacetOutputIterator facet_out,
+    VertexOutputIterator vertex_out,
+    double alpha)
+  {
+    
     std::vector<Facet_handle> facets(facet_begin, facet_end); // do not use just std::set, the order effects the output (for the same input we want to get same output)
     std::set<Facet_handle> interior_map(facet_begin, facet_end);
+
+    std::map<Vertex_handle, double> scale_attribute;
+    calculate_scale_attribute(facets, interior_map, scale_attribute);
 
     int i = 0;
     do {
@@ -194,9 +195,9 @@ public:
         break;
       }
       i++;
-    } while( subdivide(poly, facets, interior_map, scale_attribute) && relax(poly,facets, interior_map) );
+    } while( subdivide(poly, facets, interior_map, scale_attribute, vertex_out, alpha) && relax(poly,facets, interior_map) );
 
-    std::copy(facets.begin(), facets.end(), out);
+    std::copy(facets.begin(), facets.end(), facet_out);
     // according to paper it should be like below (?) IOY
     //while(true) {
     //  bool subdiv = subdivide(poly, facets);
@@ -207,6 +208,21 @@ public:
 };
 
 }//namespace internal
+
+
+template<class Polyhedron, class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
+void refine(Polyhedron& poly, 
+  InputIterator facet_begin, 
+  InputIterator facet_end,
+  FacetOutputIterator facet_out,
+  VertexOutputIterator vertex_out,
+  double density_control_factor = std::sqrt(2.0)
+  )
+{
+  internal::Refine_Polyhedron_3<Polyhedron> refine_functor;
+  refine_functor.refine(poly, facet_begin, facet_end, facet_out, vertex_out, density_control_factor);
+}
+
 
 
 }//namespace CGAL

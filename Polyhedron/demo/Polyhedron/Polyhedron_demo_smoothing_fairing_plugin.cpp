@@ -106,7 +106,8 @@ public:
   }
   bool select_isolated_components() {
     bool any_inserted = false;
-    int threshold_size = ui_widget->Threshold_size_spin_box->value();
+    std::size_t threshold_size = ui_widget->Threshold_size_spin_box->value() < 0 ? 0 :
+      ui_widget->Threshold_size_spin_box->value();
 
     std::vector<bool> mark(polyhedron()->size_of_vertices(), false);
     Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
@@ -440,13 +441,16 @@ void Polyhedron_demo_smoothing_fairing_plugin::on_Fair_button_clicked()
   int weight_index = ui_widget->weight_combo_box->currentIndex();
 
   if(weight_index == 0)
-    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices,
+    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices.begin(),
+      selectable_item->selected_vertices.end(),
       CGAL::Fairing_uniform_weight<Polyhedron>());
   if(weight_index == 1)
-    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices,
+    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices.begin(),
+    selectable_item->selected_vertices.end(),
       CGAL::Fairing_cotangent_weight<Polyhedron>());
   else
-    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices, 
+    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices.begin(),
+    selectable_item->selected_vertices.end(),
       CGAL::Fairing_scale_dependent_weight<Polyhedron>());
   selectable_item->changed_with_poly_item();
 }

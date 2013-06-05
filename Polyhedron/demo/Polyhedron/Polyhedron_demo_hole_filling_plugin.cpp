@@ -28,6 +28,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <CGAL/gl_render.h>
 
+#include <boost/function_output_iterator.hpp>
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
 class Q_DECL_EXPORT Scene_polylines_collection : public Scene_item
@@ -249,10 +250,11 @@ public:
       // no selected SceneType, if there is only one in list use it, otherwise error
       int counter = 0;
       for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
-        scene_item = qobject_cast<SceneType*>(scene->item(i));
-        if(scene_item) { counter++; }
+        if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) { 
+          scene_item = tmp;
+          counter++; 
+        }
       }
-
       if(counter != 1) { return NULL; }
     }
     return scene_item;
@@ -265,7 +267,14 @@ public slots:
   void on_Fill_selected_holes_button();
   void item_about_to_be_destroyed(Scene_item*);
   void dock_widget_visibility_changed(bool visible);
+
 private:
+  struct Nop_functor {
+    template<class T>
+    void operator()(const T& t) const {}
+  };
+  typedef boost::function_output_iterator<Nop_functor> Nop_out;
+
   QMainWindow* mw;
   Scene_interface* scene;
   Messages_interface* messages;
@@ -468,22 +477,22 @@ void Polyhedron_demo_hole_filling_plugin::fill
   double alpha = ui_widget->Density_control_factor_spin_box->value();
 
   if(action_index == 0) {
-    CGAL::triangulate_hole(poly, it);
+    CGAL::triangulate_hole(poly, it, Nop_out());
   }
   else if(action_index == 1) {
-    CGAL::triangulate_and_refine_hole(poly, it, alpha);
+    CGAL::triangulate_and_refine_hole(poly, it, Nop_out(), Nop_out(), alpha);
   }
   else {
     int weight_index = ui_widget->weight_combo_box->currentIndex();
 
     if(weight_index == 0)
-      CGAL::triangulate_refine_and_fair_hole(poly, it, alpha, 
+      CGAL::triangulate_refine_and_fair_hole(poly, it, Nop_out(), Nop_out(), alpha, 
         CGAL::Fairing_uniform_weight<Polyhedron>());
     if(weight_index == 1)
-      CGAL::triangulate_refine_and_fair_hole(poly, it, alpha,
+      CGAL::triangulate_refine_and_fair_hole(poly, it, Nop_out(), Nop_out(), alpha,
        CGAL::Fairing_cotangent_weight<Polyhedron>());
     else
-      CGAL::triangulate_refine_and_fair_hole(poly, it, alpha,
+      CGAL::triangulate_refine_and_fair_hole(poly, it, Nop_out(), Nop_out(), alpha,
         CGAL::Fairing_scale_dependent_weight<Polyhedron>());
   }
 }
