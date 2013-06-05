@@ -1041,7 +1041,7 @@ public:
             *oi++ = make_object(p);
             return oi;
           }
-          dir1 == SMALLER ? ++i1 : --i1;
+          dir1 == SMALLER ? ++i1 : (i1 != 0) ? --i1 : INVALID_INDEX;
           left_res = EQUAL;
         }
       }
@@ -1062,7 +1062,7 @@ public:
             return oi;
           }
 
-          dir2 == SMALLER ? ++i2 : --i2;
+          dir2 == SMALLER ? ++i2 : (i2 != 0) ? --i2 : INVALID_INDEX;
           left_res = EQUAL;
         }
       }
@@ -1082,9 +1082,12 @@ public:
       bool right_overlap = false;
 
       while (((dir1==SMALLER) && (dir2 == SMALLER) && (i1 < n1) && (i2 < n2)) ||
-             ((dir1!=SMALLER) && (dir2 == SMALLER) && (i1 >= 0) && (i2 < n2)) ||
-             ((dir1==SMALLER) && (dir2 != SMALLER) && (i1 < n1) && (i2 >= 0)) ||
-             ((dir1!=SMALLER) && (dir2 != SMALLER) && (i1 >= 0) && (i2 >= 0)))
+             ((dir1!=SMALLER) && (dir2 == SMALLER) && (i1 >= 0) &&
+              (i1 != INVALID_INDEX) && (i2 < n2)) ||
+             ((dir1==SMALLER) && (dir2 != SMALLER) && (i1 < n1) &&
+              (i2 >= 0) && (i2 != INVALID_INDEX)) ||
+             ((dir1!=SMALLER) && (dir2 != SMALLER) && (i1 >= 0) && (i2 >= 0) &&
+              (i1 != INVALID_INDEX) && (i2 != INVALID_INDEX)))
       {
         right_res = compare_xy(max_vertex(cv1[i1]), max_vertex(cv2[i2]));
 
@@ -1162,14 +1165,14 @@ public:
           if (dir2 == SMALLER)
             ++i2;
           else if (i2 == 0)
-            break;
+            i2 = INVALID_INDEX;
           else
             --i2;
         if (right_res != LARGER)
           if (dir1 == SMALLER)
             ++i1;
           else if (i1 == 0)
-            break;
+            i1 = INVALID_INDEX;
           else --i1;
         left_res = (right_res == SMALLER) ? LARGER :
           (right_res == LARGER) ? SMALLER : EQUAL;
@@ -1187,27 +1190,38 @@ public:
         if (right_res == SMALLER) {
           ip = (dir1 == SMALLER) ?
             return_point(max_vertex(cv1[i1-1]), 0) :
-            return_point(max_vertex(cv1[i1]), 0);
+            (i1 != INVALID_INDEX) ?
+            return_point(max_vertex(cv1[i1+1]), 0) :
+            return_point(max_vertex(cv1[0]), 0);
           *oi++ = make_object(ip);
         } else if (right_res == LARGER) {
           ip = (dir2 == SMALLER) ?
             return_point(max_vertex(cv2[i2-1]), 0) :
-            return_point(max_vertex(cv2[i2]), 0);
+            (i2 != INVALID_INDEX) ?
+            return_point(max_vertex(cv2[i2+1]), 0) :
+            return_point(max_vertex(cv2[0]), 0);
           *oi++ = make_object(ip);
-        } else if (((i1 > 0) && (dir1 == SMALLER))||
-                   ((i1 < n1) && (dir1 != SMALLER))) {
+        } else if (((i1 > 0) && (dir1 == SMALLER)) ||
+                   ((i1 < n1) && (dir1 != SMALLER)) ||
+                   (i1 == INVALID_INDEX) && (dir1 != SMALLER)) {
           ip = (dir1 == SMALLER) ?
             return_point(max_vertex(cv1[i1-1]), 0) :
-            return_point(max_vertex(cv1[i1]), 0);
+            (i1 != INVALID_INDEX) ?
+            return_point(max_vertex(cv1[i1+1]), 0) :
+            return_point(max_vertex(cv1[0]), 0);
           *oi++ = make_object(ip);
         } else {
           CGAL_assertion_msg((dir2 == SMALLER && i2 > 0) ||
-                             (dir2 != SMALLER && i2 < n2),
+                             (dir2 != SMALLER && i2 < n2) ||
+                             (dir2 != SMALLER &&
+                              (i1 == INVALID_INDEX || i2 ==INVALID_INDEX)),
                              "Wrong index for xcv2 in Intersect_2 of "
                              "polylines.");
           ip = (dir2 == SMALLER) ?
             return_point(max_vertex(cv2[i2-1]), 0) :
-            return_point(max_vertex(cv2[i2]), 0);
+            (i2 != INVALID_INDEX) ?
+            return_point(max_vertex(cv2[i2+1]), 0) :
+            return_point(max_vertex(cv2[0]), 0);
           *oi++ = make_object(ip);
         }
       }
