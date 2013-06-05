@@ -603,22 +603,22 @@ the facet (resp. edge, vertex) containing the query point.
 
 The optional argument `start` is used as a starting place for the search. 
 
-The optional argument `p_could_lock_zone` is used by the concurrency-safe
+The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the locate will
-try to lock all the vertices along the walk. If it succeeds, *p_could_lock_zone
+try to lock all the vertices along the walk. If it succeeds, *could_lock_zone
 is true, otherwise it is false. In any case, the locked vertices are not
 unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
 locate(const Point & query, Cell_handle start = Cell_handle(),
-       bool *p_could_lock_zone = 0) const; 
+       bool *could_lock_zone = NULL) const; 
 
 /*! 
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Cell_handle 
 locate(const Point & query, Vertex_handle hint,
-       bool *p_could_lock_zone = 0) const; 
+       bool *could_lock_zone = NULL) const; 
 
 /*! 
 If `query` lies inside the affine hull of the points, the \f$ k\f$-face 
@@ -642,16 +642,16 @@ triangulation, `lt` is set to `OUTSIDE_AFFINE_HULL` and
 
 The optional argument `start` is used as a starting place for the search. 
 
-The optional argument `p_could_lock_zone` is used by the concurrency-safe
+The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the locate will
-try to lock all the vertices along the walk. If it succeeds, *p_could_lock_zone
+try to lock all the vertices along the walk. If it succeeds, *could_lock_zone
 is true, otherwise it is false. In any case, the locked vertices are not
 unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Cell_handle start = Cell_handle(),
-bool *p_could_lock_zone = 0 ) const; 
+bool *could_lock_zone = NULL ) const; 
 
 /*! 
 Same as above but uses `hint` as the starting place for the search. 
@@ -659,7 +659,7 @@ Same as above but uses `hint` as the starting place for the search.
 Cell_handle 
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Vertex_handle hint,
-bool *p_could_lock_zone = 0) const; 
+bool *could_lock_zone = NULL) const; 
 
 /*! 
 Returns a value indicating on which side of the oriented boundary 

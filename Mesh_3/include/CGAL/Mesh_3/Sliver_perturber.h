@@ -589,7 +589,7 @@ private:
                 , const FT& sliver_bound
                 , Visitor& visitor
                 , Bad_vertices_vector &bad_vertices
-                , bool *p_could_lock_zone
+                , bool *could_lock_zone
                 ) const;
 
   /**
@@ -1216,7 +1216,7 @@ perturb_vertex( PVertex pv
               , const FT& sliver_bound
               , Visitor& visitor
               , Bad_vertices_vector &bad_vertices
-              , bool *p_could_lock_zone
+              , bool *could_lock_zone
               ) const
 {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
@@ -1224,7 +1224,7 @@ perturb_vertex( PVertex pv
     "early withdrawals / late withdrawals / successes [Perturber]");
 #endif
 
-  *p_could_lock_zone = true;
+  *could_lock_zone = true;
 
   // Zombie?
   if (pv.is_zombie())
@@ -1238,7 +1238,7 @@ perturb_vertex( PVertex pv
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!
 #endif
-    *p_could_lock_zone = false;
+    *could_lock_zone = false;
     return;
   }
 
@@ -1257,7 +1257,7 @@ perturb_vertex( PVertex pv
   if (!helper_.try_lock_and_get_incident_slivers(
     pv.vertex(), sliver_criterion_, sliver_bound, slivers))
   {
-    *p_could_lock_zone = false;
+    *could_lock_zone = false;
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_1(); // THIS is a late withdrawal!
 #endif
@@ -1286,9 +1286,9 @@ perturb_vertex( PVertex pv
                                     sliver_criterion_,
                                     sliver_bound,
                                     modified_vertices,
-                                    p_could_lock_zone);
+                                    could_lock_zone);
 
-    if (*p_could_lock_zone)
+    if (*could_lock_zone)
     {
       // If vertex has changed - may happen in two cases: vertex has been moved
       // or vertex has been reverted to the same location -

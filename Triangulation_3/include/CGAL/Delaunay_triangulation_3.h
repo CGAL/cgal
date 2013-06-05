@@ -360,7 +360,7 @@ public:
           hint = insert(*p, hint);
     }
 
-#ifdef CGAL_TRIANGULATION_3_VERBOSE
+#ifdef CGAL_TRIANGULATION_3_PROFILING
     std::cerr << "Triangulation computed in " << t.elapsed() << " seconds." << std::endl; // CJTODO TEMP
 #endif
 
@@ -443,18 +443,18 @@ public:
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   
   Vertex_handle insert(const Point & p, Vertex_handle hint,
-                       bool *p_could_lock_zone = 0)
+                       bool *could_lock_zone = NULL)
   {
     return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell(),
-                  p_could_lock_zone);
+                  could_lock_zone);
   }
 
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle(),
-                       bool *p_could_lock_zone = 0);
+                       bool *could_lock_zone = NULL);
 
   Vertex_handle insert(const Point & p, Locate_type lt,
                        Cell_handle c, int li, int,
-                 bool *p_could_lock_zone = 0);
+                 bool *could_lock_zone = NULL);
         
 public: // internal methods
         
@@ -591,7 +591,7 @@ public:
   void remove(Vertex_handle v);
   // Concurrency-safe
   // See Triangulation_3::remove for more information
-  bool remove(Vertex_handle v, bool *p_could_lock_zone);
+  bool remove(Vertex_handle v, bool *could_lock_zone);
 
   // return new cells (internal)
   template <class OutputItCells>
@@ -654,8 +654,10 @@ public:
         ++first;
       }
     }
-
+    
+#ifdef CGAL_TRIANGULATION_3_PROFILING
     std::cerr << "Points removed in " << t.elapsed() << " seconds." << std::endl;
+#endif
     return n - number_of_vertices();
   }
         
@@ -853,17 +855,17 @@ protected:
 template < class Gt, class Tds, class Lds >
 typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
-insert(const Point & p, Cell_handle start, bool *p_could_lock_zone)
+insert(const Point & p, Cell_handle start, bool *could_lock_zone)
 {
   Locate_type lt;
   int li, lj;
   
   // Parallel
-  if (p_could_lock_zone)
+  if (could_lock_zone)
   {
-    Cell_handle c = locate(p, lt, li, lj, start, p_could_lock_zone);
-    if (*p_could_lock_zone)
-      return insert(p, lt, c, li, lj, p_could_lock_zone);
+    Cell_handle c = locate(p, lt, li, lj, start, could_lock_zone);
+    if (*could_lock_zone)
+      return insert(p, lt, c, li, lj, could_lock_zone);
     else
       return Vertex_handle();
   }
@@ -880,21 +882,21 @@ template < class Gt, class Tds, class Lds >
 typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert(const Point & p, Locate_type lt, Cell_handle c, int li, int lj,
-       bool *p_could_lock_zone)
+       bool *could_lock_zone)
 {
   switch (dimension()) {
   case 3:
     {
       Conflict_tester_3 tester(p, this);
       Vertex_handle v = insert_in_conflict(p, lt, c, li, lj,
-                                           tester, hidden_point_visitor, p_could_lock_zone);
+                                           tester, hidden_point_visitor, could_lock_zone);
       return v;
     }// dim 3
   case 2:
     {
       Conflict_tester_2 tester(p, this);
       return insert_in_conflict(p, lt, c, li, lj,
-                                tester, hidden_point_visitor, p_could_lock_zone);
+                                tester, hidden_point_visitor, could_lock_zone);
     }//dim 2
   default :
     // dimension <= 1
@@ -1084,11 +1086,11 @@ remove(Vertex_handle v)
 template < class Gt, class Tds, class Lds >
 bool
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
-remove(Vertex_handle v, bool *p_could_lock_zone)
+remove(Vertex_handle v, bool *could_lock_zone)
 {
   Self tmp;
   Vertex_remover<Self> remover (tmp);
-  bool ret = Tr_Base::remove(v, remover, p_could_lock_zone);
+  bool ret = Tr_Base::remove(v, remover, could_lock_zone);
 
   CGAL_triangulation_expensive_postcondition(is_valid());
   return ret;

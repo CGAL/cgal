@@ -130,19 +130,19 @@ Otherwise if `p` does not appear as a vertex of the triangulation,
 then it is stored as a hidden point and this method returns the default 
 constructed handle. 
 
-The optional argument `p_could_lock_zone` is used by the concurrency-safe
+The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the insertion will
-try to lock vertices/cells before modifying them. If it succeeds, *p_could_lock_zone
+try to lock vertices/cells before modifying them. If it succeeds, *could_lock_zone
 is true, otherwise it is false (and the point is not inserted). In any case, 
 the locked vertices are not unlocked by the function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Weighted_point & p, 
-Cell_handle start = Cell_handle(), bool *p_could_lock_zone = 0); 
+Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL); 
 
 /*! 
 Same as above but uses `hint` as a starting place for the search. 
 */ 
-Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *p_could_lock_zone = 0); 
+Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *could_lock_zone = NULL); 
 
 /*! 
 Inserts weighted point `p` in the triangulation and returns the corresponding 
@@ -151,7 +151,7 @@ parameter the return values of a previous location query. See description of
 `Triangulation_3::locate()`. 
 */ 
 Vertex_handle insert(const Weighted_point & p, Locate_type lt, 
-Cell_handle loc, int li, int lj, bool *p_could_lock_zone = 0); 
+Cell_handle loc, int li, int lj, bool *could_lock_zone = NULL); 
 
 /*! 
 Inserts the weighted points in the range `[first,last)`. 
@@ -239,13 +239,13 @@ void remove(Vertex_handle v);
 Removes the vertex `v` from the triangulation.
 
 This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock vertices/cells before deleting/modifying them. If it succeeds, *p_could_lock_zone
+try to lock vertices/cells before deleting/modifying them. If it succeeds, *could_lock_zone
 is true, otherwise it is false (and the point is not removed). In any case, 
 the locked vertices are not unlocked by the function, leaving this choice to the user.
 
 This function will try to remove `v` only if the removal does not
 decrease the dimension. 
-The return value is only meaningful if *p_could_lock_zone is true:
+The return value is only meaningful if *could_lock_zone is true:
   - returns true if the vertex was removed
   - returns false if the vertex wasn't removed since it would decrease 
     the dimension.
@@ -253,7 +253,7 @@ The return value is only meaningful if *p_could_lock_zone is true:
 \pre `v` is a finite vertex of the triangulation. 
 \pre `dt`.`dimension()` \f$ =3\f$.
 */ 
-bool remove(Vertex_handle v, bool *p_could_lock_zone);
+bool remove(Vertex_handle v, bool *could_lock_zone);
 
 /*! 
 Removes the vertices specified by the iterator range `[first, beyond)`. 
@@ -425,9 +425,9 @@ Compute the conflicts with `p`.
 @param cit                The cells (resp. facets) in conflict with `p`. 
 @param bfit               The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
 @param ifit               The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
-@param p_could_lock_zone  The optional argument `p_could_lock_zone` is used by the concurrency-safe
+@param could_lock_zone  The optional argument `could_lock_zone` is used by the concurrency-safe
                           version of the triangulation. When the pointer is not null, the algorithm will
-                          try to lock vertices of the conflict zone. If it succeeds, *p_could_lock_zone
+                          try to lock vertices of the conflict zone. If it succeeds, *could_lock_zone
                           is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
                           the locked vertices are not unlocked by the function, leaving this choice to the user.
 @param p_this_facet_must_be_in_the_cz 
@@ -455,7 +455,7 @@ find_conflicts(const Weighted_point p, Cell_handle c,
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit, 
 OutputIteratorInternalFacets ifit,
-bool *p_could_lock_zone = 0,
+bool *could_lock_zone = NULL,
 const Facet *p_this_facet_must_be_in_the_cz = 0,
 bool *p_the_facet_is_in_its_cz = 0);
 

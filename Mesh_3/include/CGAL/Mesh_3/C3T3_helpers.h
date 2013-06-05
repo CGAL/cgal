@@ -667,7 +667,7 @@ public:
               const Vertex_handle& old_vertex,
               const SliverCriterion& criterion,
               OutputIterator modified_vertices,
-              bool *p_could_lock_zone = 0);
+              bool *could_lock_zone = NULL);
 
   /** @brief tries to move \c old_vertex to \c new_position in the mesh
    *
@@ -681,7 +681,7 @@ public:
                           const Vertex_handle& old_vertex,
                           const SliverCriterion& criterion,
                           OutputIterator modified_vertices,
-                          bool *p_could_lock_zone = 0);
+                          bool *could_lock_zone = NULL);
 
   /**
    * Updates mesh moving vertex \c old_vertex to \c new_position. Returns the
@@ -746,7 +746,7 @@ public:
    * Moves \c old_vertex to \c new_position
    * Stores the cells which have to be updated in \c outdated_cells
    * Updates the Vertex_handle old_vertex to its new value in \c moving_vertices
-   * The second one (with the p_could_lock_zone param) is for the parallel version
+   * The second one (with the could_lock_zone param) is for the parallel version
    */
   Vertex_handle move_point(const Vertex_handle& old_vertex,
                            const Point_3& new_position,
@@ -756,7 +756,7 @@ public:
                            const Point_3& new_position,
                            Outdated_cell_set& outdated_cells_set,
                            Moving_vertices_set& moving_vertices,
-                           bool *p_could_lock_zone);
+                           bool *could_lock_zone);
 
   /**
    * Try to lock the incident cells and return them in \c cells
@@ -1311,7 +1311,7 @@ private:
   move_point_topo_change(const Vertex_handle& old_vertex,
                          const Point_3& new_position,
                          Outdated_cell_set& outdated_cells_set,
-                         bool *p_could_lock_zone = 0);
+                         bool *could_lock_zone = NULL);
 
   template < typename OutdatedCellsOutputIterator,
              typename DeletedCellsOutputIterator >
@@ -1426,7 +1426,7 @@ private:
                                 CellsOutputIterator insertion_conflict_cells,
                                 FacetsOutputIterator insertion_conflict_boundary,
                                 CellsOutputIterator removal_conflict_cells,
-                                bool *p_could_lock_zone = 0) const;
+                                bool *could_lock_zone = NULL) const;
 
 
   template < typename ConflictCellsInputIterator,
@@ -1960,14 +1960,14 @@ update_mesh(const Point_3& new_position,
             const Vertex_handle& old_vertex,
             const SliverCriterion& criterion,
             OutputIterator modified_vertices,
-            bool *p_could_lock_zone)
+            bool *could_lock_zone)
 {
   // std::cerr << "\nupdate_mesh[v1](" << new_position << ",\n"
   //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
 
-  if (p_could_lock_zone)
-    *p_could_lock_zone = true;
+  if (could_lock_zone)
+    *could_lock_zone = true;
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
@@ -1991,7 +1991,7 @@ update_mesh(const Point_3& new_position,
                                    old_vertex,
                                    criterion,
                                    modified_vertices,
-                                   p_could_lock_zone);
+                                   could_lock_zone);
   }
 }
 
@@ -2048,7 +2048,7 @@ update_mesh_topo_change(const Point_3& new_position,
                         const Vertex_handle& old_vertex,
                         const SliverCriterion& criterion,
                         OutputIterator modified_vertices,
-                        bool *p_could_lock_zone)
+                        bool *could_lock_zone)
 {
   // check_c3t3(c3t3_);
   // std::cerr << "\n"
@@ -2063,9 +2063,9 @@ update_mesh_topo_change(const Point_3& new_position,
                                 std::inserter(insertion_conflict_cells,insertion_conflict_cells.end()),
                                 std::back_inserter(insertion_conflict_boundary),
                                 std::inserter(removal_conflict_cells, removal_conflict_cells.end()),
-                                p_could_lock_zone);
+                                could_lock_zone);
 
-  if (p_could_lock_zone && *p_could_lock_zone == false)
+  if (could_lock_zone && *could_lock_zone == false)
     return std::make_pair(false, Vertex_handle());
 
   if(insertion_conflict_boundary.empty())
@@ -2506,14 +2506,14 @@ move_point(const Vertex_handle& old_vertex,
            const Point_3& new_position,
            Outdated_cell_set& outdated_cells_set,
            Moving_vertices_set& moving_vertices,
-           bool *p_could_lock_zone)
+           bool *could_lock_zone)
 {
-  CGAL_assertion(p_could_lock_zone != 0);
-  *p_could_lock_zone = true;
+  CGAL_assertion(could_lock_zone != NULL);
+  *could_lock_zone = true;
 
   if (!try_lock_vertex(old_vertex)) // LOCK
   {
-    *p_could_lock_zone = false;
+    *could_lock_zone = false;
     this->unlock_all_elements();
     return Vertex_handle();
   }
@@ -2523,14 +2523,14 @@ move_point(const Vertex_handle& old_vertex,
   incident_cells_.reserve(64);
   if (try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
   {
-    *p_could_lock_zone = false;
+    *could_lock_zone = false;
     return Vertex_handle();
   }
   //======= /Get incident cells ==========
 
   if (!try_lock_point(new_position)) // LOCK
   {
-    *p_could_lock_zone = false;
+    *could_lock_zone = false;
     this->unlock_all_elements();
     return Vertex_handle();
   }
@@ -2558,9 +2558,9 @@ move_point(const Vertex_handle& old_vertex,
 
     Vertex_handle new_vertex =
       move_point_topo_change(old_vertex, new_position, outdated_cells_set,
-                             p_could_lock_zone);
+                             could_lock_zone);
 
-    if (*p_could_lock_zone == false)
+    if (*could_lock_zone == false)
     {
       this->unlock_all_elements();
       return Vertex_handle();
@@ -2583,7 +2583,7 @@ C3T3_helpers<C3T3,MD>::
 move_point_topo_change(const Vertex_handle& old_vertex,
                        const Point_3& new_position,
                        Outdated_cell_set& outdated_cells_set,
-                       bool *p_could_lock_zone)
+                       bool *could_lock_zone)
 {
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
@@ -2594,9 +2594,9 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 std::inserter(insertion_conflict_cells,insertion_conflict_cells.end()),
                                 std::back_inserter(insertion_conflict_boundary),
                                 std::inserter(removal_conflict_cells, removal_conflict_cells.end()),
-                                p_could_lock_zone);
+                                could_lock_zone);
 
-  if (p_could_lock_zone && *p_could_lock_zone == false)
+  if (could_lock_zone && *could_lock_zone == false)
     return Vertex_handle();
 
   this->lock_outdated_cells();
@@ -3331,7 +3331,7 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
                               CellsOutputIterator insertion_conflict_cells,
                               FacetsOutputIterator insertion_conflict_boundary,
                               CellsOutputIterator removal_conflict_cells,
-                              bool *p_could_lock_zone) const
+                              bool *could_lock_zone) const
 {
   // Get triangulation_vertex incident cells : removal conflict zone
   // CJTODO: hasn't it already been computed in "perturb_vertex" (when getting the slivers)?
@@ -3342,9 +3342,9 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
   int lj=0;
   typename Tr::Locate_type lt;
   Cell_handle cell = tr_.locate(
-    conflict_point, lt, li, lj, v->cell(), p_could_lock_zone);
+    conflict_point, lt, li, lj, v->cell(), could_lock_zone);
 
-  if (p_could_lock_zone && *p_could_lock_zone == false)
+  if (could_lock_zone && *could_lock_zone == false)
     return;
 
   if ( lt == Tr::VERTEX ) // Vertex removal is forbidden
@@ -3355,7 +3355,7 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
                      cell,
                      insertion_conflict_boundary,
                      insertion_conflict_cells,
-                     p_could_lock_zone);
+                     could_lock_zone);
 }
 
 template <typename C3T3, typename MD>

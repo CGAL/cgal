@@ -397,18 +397,18 @@ namespace CGAL {
 
 
     Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, 
-                         bool *p_could_lock_zone = 0)
+                         bool *could_lock_zone = NULL)
     {
       return insert(p, 
                     hint == Vertex_handle() ? this->infinite_cell() : hint->cell(),
-                    p_could_lock_zone);
+                    could_lock_zone);
     }
 
     Vertex_handle insert(const Weighted_point & p,
-      Cell_handle start = Cell_handle(), bool *p_could_lock_zone = 0);
+      Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL);
 
     Vertex_handle insert(const Weighted_point & p, Locate_type lt,
-      Cell_handle c, int li, int, bool *p_could_lock_zone = 0);
+      Cell_handle c, int li, int, bool *could_lock_zone = NULL);
 
     template <class CellIt>
     Vertex_handle
@@ -430,7 +430,7 @@ namespace CGAL {
       OutputIteratorBoundaryFacets bfit,
       OutputIteratorCells cit,
       OutputIteratorInternalFacets ifit
-      , bool *p_could_lock_zone = 0
+      , bool *could_lock_zone = NULL
       , const Facet *p_this_facet_must_be_in_the_cz = 0
       , bool *p_the_facet_is_in_its_cz = 0
       ) const
@@ -450,7 +450,7 @@ namespace CGAL {
           make_triple(std::back_inserter(facets),
           std::back_inserter(cells),
           ifit)
-          , p_could_lock_zone
+          , could_lock_zone
           , p_this_facet_must_be_in_the_cz
           , p_the_facet_is_in_its_cz
           ).third;
@@ -463,7 +463,7 @@ namespace CGAL {
           make_triple(std::back_inserter(facets),
           std::back_inserter(cells),
           ifit)
-          , p_could_lock_zone
+          , could_lock_zone
           , p_this_facet_must_be_in_the_cz
           , p_the_facet_is_in_its_cz
           ).third;
@@ -490,14 +490,14 @@ namespace CGAL {
       find_conflicts(const Weighted_point &p, Cell_handle c,
       OutputIteratorBoundaryFacets bfit,
       OutputIteratorCells cit
-      , bool *p_could_lock_zone = 0
+      , bool *could_lock_zone = NULL
       ) const
     {
       Triple<OutputIteratorBoundaryFacets,
         OutputIteratorCells,
         Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
         Emptyset_iterator()
-        , p_could_lock_zone
+        , could_lock_zone
         );
       return std::make_pair(t.first, t.second);
     }
@@ -593,7 +593,7 @@ namespace CGAL {
     void remove (Vertex_handle v);
     // Concurrency-safe
     // See Triangulation_3::remove for more information
-    bool remove (Vertex_handle v, bool *p_could_lock_zone);
+    bool remove (Vertex_handle v, bool *could_lock_zone);
 
     template < typename InputIterator >
     size_type remove(InputIterator first, InputIterator beyond)
@@ -1632,17 +1632,17 @@ namespace CGAL {
   template < class Gt, class Tds, class Lds >
   typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
     Regular_triangulation_3<Gt,Tds,Lds>::
-    insert(const Weighted_point & p, Cell_handle start, bool *p_could_lock_zone)
+    insert(const Weighted_point & p, Cell_handle start, bool *could_lock_zone)
   {
     Locate_type lt;
     int li, lj;
 
     // Parallel
-    if (p_could_lock_zone)
+    if (could_lock_zone)
     {
-      Cell_handle c = locate(p, lt, li, lj, start, p_could_lock_zone);
-      if (*p_could_lock_zone)
-        return insert(p, lt, c, li, lj, p_could_lock_zone);
+      Cell_handle c = locate(p, lt, li, lj, start, could_lock_zone);
+      if (*could_lock_zone)
+        return insert(p, lt, c, li, lj, could_lock_zone);
       else
         return Vertex_handle();
     }
@@ -1658,7 +1658,7 @@ namespace CGAL {
   typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
     Regular_triangulation_3<Gt,Tds,Lds>::
     insert(const Weighted_point & p, Locate_type lt, Cell_handle c, 
-           int li, int lj, bool *p_could_lock_zone)
+           int li, int lj, bool *could_lock_zone)
   {
     switch (dimension()) {
     case 3:
@@ -1666,28 +1666,28 @@ namespace CGAL {
         Conflict_tester_3 tester (p, this);
         return insert_in_conflict(p, lt,c,li,lj, tester, 
                                   get_hidden_point_visitor(), 
-                                  p_could_lock_zone);
+                                  could_lock_zone);
       }
     case 2:
       {
         Conflict_tester_2 tester (p, this);
         return insert_in_conflict(p, lt,c,li,lj, tester, 
                                   get_hidden_point_visitor(), 
-                                  p_could_lock_zone);
+                                  could_lock_zone);
       }
     case 1:
       {
         Conflict_tester_1 tester (p, this);
         return insert_in_conflict(p, lt,c,li,lj, tester, 
                                   get_hidden_point_visitor(), 
-                                  p_could_lock_zone);
+                                  could_lock_zone);
       }
     }
 
     Conflict_tester_0 tester (p, this);
     return insert_in_conflict(p, lt,c,li,lj, tester, 
                               get_hidden_point_visitor(), 
-                              p_could_lock_zone);
+                              could_lock_zone);
   }
 
 
@@ -1827,14 +1827,14 @@ namespace CGAL {
   template < class Gt, class Tds, class Lds >
   bool
     Regular_triangulation_3<Gt,Tds,Lds>::
-    remove(Vertex_handle v, bool *p_could_lock_zone)
+    remove(Vertex_handle v, bool *could_lock_zone)
   {
     bool removed = true;
 
     // Locking vertex v...
     if (!try_lock_vertex(v))
     {
-      *p_could_lock_zone = false;
+      *could_lock_zone = false;
     }
     else
     {
@@ -1843,9 +1843,9 @@ namespace CGAL {
 
       Self tmp;
       Vertex_remover<Self> remover(tmp);
-      removed = Tr_Base::remove(v, remover, p_could_lock_zone);
+      removed = Tr_Base::remove(v, remover, could_lock_zone);
 
-      if (*p_could_lock_zone && removed)
+      if (*could_lock_zone && removed)
       {
         // Re-insert the points that v was hiding.
         for (typename Vertex_remover<Self>::Hidden_points_iterator

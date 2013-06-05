@@ -795,7 +795,7 @@ public:
   locate(const Point & p,
          Locate_type & lt, int & li, int & lj,
          Cell_handle start = Cell_handle(),
-   bool *p_could_lock_zone = 0) const;
+   bool *could_lock_zone = NULL) const;
 #else // no CGAL_NO_STRUCTURAL_FILTERING
 #  ifndef CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 #    define CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
@@ -807,14 +807,14 @@ public:
   inexact_locate(const Point& p,
                  Cell_handle start,
                  int max_num_cells = CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS,
-                 bool *p_could_lock_zone = 0) const;
+                 bool *could_lock_zone = NULL) const;
 protected:
   Cell_handle
   exact_locate(const Point& p,
                Locate_type& lt,
                int& li, int & lj,
                Cell_handle start,
-               bool *p_could_lock_zone = 0
+               bool *could_lock_zone = NULL
                ) const;
 
   Cell_handle
@@ -823,14 +823,14 @@ protected:
                  int& li, int & lj,
                  Cell_handle start,
                  internal::Structural_filtering_3_tag,
-                 bool *p_could_lock_zone = 0) const
+                 bool *could_lock_zone = NULL) const
   {
     Cell_handle ch = inexact_locate(
-      p, start, CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS, p_could_lock_zone);
-    if (p_could_lock_zone && *p_could_lock_zone == false)
+      p, start, CGAL_T3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS, could_lock_zone);
+    if (could_lock_zone && *could_lock_zone == false)
       return ch; // = Cell_handle() here
     else
-      return exact_locate(p, lt, li, lj, ch, p_could_lock_zone);
+      return exact_locate(p, lt, li, lj, ch, could_lock_zone);
   }
 
   Cell_handle
@@ -839,9 +839,9 @@ protected:
                  int& li, int & lj,
                  Cell_handle start,
                  internal::No_structural_filtering_3_tag
-                 , bool *p_could_lock_zone = 0) const
+                 , bool *could_lock_zone = NULL) const
   {
-    return exact_locate(p, lt, li, lj, start, p_could_lock_zone);
+    return exact_locate(p, lt, li, lj, start, could_lock_zone);
   }
 
 public:
@@ -886,42 +886,42 @@ public:
   locate(const Point & p,
          Locate_type & lt, int & li, int & lj,
          Cell_handle start = Cell_handle()
-         , bool *p_could_lock_zone = 0
+         , bool *could_lock_zone = NULL
          ) const
   {
     typedef Triangulation_structural_filtering_traits<Geom_traits> TSFT;
     typedef typename internal::Structural_filtering_selector_3<
       TSFT::Use_structural_filtering_tag::value >::Tag Should_filter_tag;
 
-    return generic_locate(p, lt, li, lj, start, Should_filter_tag(), p_could_lock_zone);
+    return generic_locate(p, lt, li, lj, start, Should_filter_tag(), could_lock_zone);
   }
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
   Cell_handle
   locate(const Point & p, Cell_handle start = Cell_handle(),
-         bool *p_could_lock_zone = 0) const
+         bool *could_lock_zone = NULL) const
   {
       Locate_type lt;
       int li, lj;
-      return locate( p, lt, li, lj, start, p_could_lock_zone);
+      return locate( p, lt, li, lj, start, could_lock_zone);
   }
 
   Cell_handle
   locate(const Point & p,
          Locate_type & lt, int & li, int & lj, Vertex_handle hint,
-   bool *p_could_lock_zone = 0) const
+   bool *could_lock_zone = NULL) const
   {
       return locate(p, lt, li, lj,
         hint == Vertex_handle() ? infinite_cell() : hint->cell(),
-        p_could_lock_zone);
+        could_lock_zone);
   }
 
   Cell_handle
   locate(const Point & p, Vertex_handle hint,
-         bool *p_could_lock_zone = 0) const
+         bool *could_lock_zone = NULL) const
     {
       return locate(p, hint == Vertex_handle() ? infinite_cell() : hint->cell(),
-        p_could_lock_zone);
+        could_lock_zone);
   }
 
   // PREDICATES ON POINTS ``TEMPLATED'' by the geom traits
@@ -1045,7 +1045,7 @@ public:
                                           Cell_handle c, int li, int lj,
                                           const Conflict_tester &tester,
                                           Hidden_points_visitor &hider,
-            bool *p_could_lock_zone = 0);
+            bool *could_lock_zone = NULL);
 
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -1159,7 +1159,7 @@ protected:
                  Triple<OutputIteratorBoundaryFacets,
             OutputIteratorCells,
                         OutputIteratorInternalFacets> it
-     , bool *p_could_lock_zone = 0
+     , bool *could_lock_zone = NULL
      , const Facet *p_this_facet_must_be_in_the_cz = 0
      , bool *p_the_facet_is_in_its_cz = 0
      ) const
@@ -1169,14 +1169,14 @@ protected:
     if (p_the_facet_is_in_its_cz)
       *p_the_facet_is_in_its_cz = false;
 
-    if (p_could_lock_zone)
-      *p_could_lock_zone = true;
+    if (could_lock_zone)
+      *could_lock_zone = true;
 
-    if (p_could_lock_zone)
+    if (could_lock_zone)
     {
       if (!try_lock_cell(d))
       {
-        *p_could_lock_zone = false;
+        *could_lock_zone = false;
         return it;
       }
     }
@@ -1203,11 +1203,11 @@ protected:
         // IF WE WANT TO LOCK ADJACENT CELLS
         // CJTODO: remove this #ifdef?
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
-        if (p_could_lock_zone)
+        if (could_lock_zone)
         {
           if (!try_lock_cell(test))
           {
-            *p_could_lock_zone = false;
+            *could_lock_zone = false;
             return it;
           }
         }
@@ -1235,11 +1235,11 @@ protected:
             // IF WE DO NOT WANT TO LOCK ADJACENT CELLS
             // CJTODO: remove this #ifdef?
 #if !defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
-            if (p_could_lock_zone)
+            if (could_lock_zone)
             {
               if (!try_lock_cell(test))
               {
-                *p_could_lock_zone = false;
+                *could_lock_zone = false;
                 // Unlock
                 return it;
               }
@@ -1367,7 +1367,7 @@ protected:
   bool test_dim_down_using_incident_cells_3(
     Vertex_handle v, std::vector<Cell_handle> &incident_cells, 
     std::vector<Vertex_handle> &adj_vertices,
-    bool *p_could_lock_zone = 0) const;
+    bool *could_lock_zone = NULL) const;
 
   // REMOVAL
   template < class VertexRemover >
@@ -1375,12 +1375,12 @@ protected:
   template < class VertexRemover >
   // Concurrency-safe version
   // Pre-condition: dimension = 3
-  // The return value is only meaningful if *p_could_lock_zone = true:
+  // The return value is only meaningful if *could_lock_zone = true:
   // * returns true if the vertex was removed
   // * returns false if the vertex wasn't removed since it would decrease 
   //   the dimension => needs to be done sequentially
   bool remove(Vertex_handle v, VertexRemover &remover,
-              bool *p_could_lock_zone);
+              bool *could_lock_zone);
 
   template < class VertexRemover, class OutputItCells >
   void remove_and_give_new_cells(Vertex_handle v, VertexRemover &remover,
@@ -2423,10 +2423,10 @@ typename Triangulation_3<GT,Tds,Lds>::Cell_handle
 Triangulation_3<GT,Tds,Lds>::
 #ifdef CGAL_NO_STRUCTURAL_FILTERING
 locate(const Point & p, Locate_type & lt, int & li, int & lj,
-       Cell_handle start, bool *p_could_lock_zone) const
+       Cell_handle start, bool *could_lock_zone) const
 #else
 exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
-             Cell_handle start, bool *p_could_lock_zone) const
+             Cell_handle start, bool *could_lock_zone) const
 #endif
   // returns the (finite or infinite) cell p lies in
   // starts at cell "start"
@@ -2442,8 +2442,8 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 {
   CGAL_triangulation_expensive_assertion(start == Cell_handle() || tds().is_simplex(start) );
 
-  if (p_could_lock_zone)
-    *p_could_lock_zone = true;
+  if (could_lock_zone)
+    *could_lock_zone = true;
 
   if ( dimension() >= 1 ) {
       // Make sure we continue from here with a finite cell.
@@ -2469,11 +2469,11 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
     Cell_handle previous = Cell_handle();
     Cell_handle c = start;
 
-    if (p_could_lock_zone)
+    if (could_lock_zone)
     {
       if (!try_lock_cell(c))
       {
-        *p_could_lock_zone = false;
+        *could_lock_zone = false;
         return Cell_handle();
       }
     }
@@ -2535,13 +2535,13 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
                   }
                   previous = c;
                   c = next;
-            if (p_could_lock_zone)
+            if (could_lock_zone)
             {
               //previous->unlock(); // DON'T do that, "c" may be in
                                     // the same locking cell as "previous"
               if (!try_lock_cell(c))
               {
-                *p_could_lock_zone = false;
+                *could_lock_zone = false;
                 return Cell_handle();
               }
             }
@@ -2760,12 +2760,12 @@ inline
 typename Triangulation_3<Gt, Tds, Lds>::Cell_handle
 Triangulation_3<Gt, Tds, Lds>::
 inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
-               bool *p_could_lock_zone) const
+               bool *could_lock_zone) const
 {
   CGAL_triangulation_expensive_assertion(start == Cell_handle() || tds().is_simplex(start) );
 
-  if (p_could_lock_zone)
-    *p_could_lock_zone = true;
+  if (could_lock_zone)
+    *could_lock_zone = true;
 
   if(dimension() < 3) return start;
 
@@ -2774,11 +2774,11 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
     start = infinite_cell();
   
   // CTODO: useless?
-  if (p_could_lock_zone)
+  if (could_lock_zone)
   {
     if (!try_lock_cell(start))
     {
-      *p_could_lock_zone = false;
+      *could_lock_zone = false;
       return Cell_handle();
     }
   }
@@ -2797,11 +2797,11 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
   Cell_handle previous = Cell_handle();
   Cell_handle c = start;
 
-  if (p_could_lock_zone)
+  if (could_lock_zone)
   {
     if (!try_lock_cell(c))
     {
-      *p_could_lock_zone = false;
+      *could_lock_zone = false;
       return Cell_handle();
     }
   }
@@ -2838,13 +2838,13 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
     }
     previous = c;
     c = next;
-    if (p_could_lock_zone)
+    if (could_lock_zone)
     {
       //previous->unlock(); // DON'T do that, "c" may be in
                             // the same locking cell as "previous"
       if (!try_lock_cell(c))
       {
-        *p_could_lock_zone = false;
+        *could_lock_zone = false;
         return Cell_handle();
       }
     }
@@ -3498,10 +3498,10 @@ insert_in_conflict(const Point & p,
                    Locate_type lt, Cell_handle c, int li, int /*lj*/,
                    const Conflict_tester &tester,
                    Hidden_points_visitor &hider,
-                   bool *p_could_lock_zone)
+                   bool *could_lock_zone)
 {
-  if (p_could_lock_zone)
-    *p_could_lock_zone = true;
+  if (could_lock_zone)
+    *could_lock_zone = true;
 
   switch (dimension()) {
   case 3:
@@ -3524,7 +3524,7 @@ insert_in_conflict(const Point & p,
       cells.reserve(32);
 
       // Parallel
-      if (p_could_lock_zone)
+      if (could_lock_zone)
       {
         std::vector<Facet> facets;
         facets.reserve(32);
@@ -3536,9 +3536,9 @@ insert_in_conflict(const Point & p,
             std::back_inserter(facets),
                                     std::back_inserter(cells), 
             Emptyset_iterator()),
-          p_could_lock_zone);
+          could_lock_zone);
 
-        if (*p_could_lock_zone == false)
+        if (*could_lock_zone == false)
         {
           BOOST_FOREACH(Cell_handle& ch,
             std::make_pair(cells.begin(), cells.end()))
@@ -4045,18 +4045,18 @@ Triangulation_3<GT,Tds,Lds>::
 test_dim_down_using_incident_cells_3(
   Vertex_handle v, std::vector<Cell_handle> &incident_cells, 
   std::vector<Vertex_handle> &adj_vertices,
-  bool *p_could_lock_zone) const
+  bool *could_lock_zone) const
 {
   CGAL_triangulation_precondition(dimension() == 3);
   CGAL_triangulation_precondition(! is_infinite(v) );
   
   // Collect all vertices on the boundary
   // and all incident cells
-  if (p_could_lock_zone)
+  if (could_lock_zone)
   {
-    *p_could_lock_zone = try_lock_and_get_adjacent_vertices_and_cells_3(
+    *could_lock_zone = try_lock_and_get_adjacent_vertices_and_cells_3(
       v, std::back_inserter(adj_vertices), incident_cells);
-    if (*p_could_lock_zone == false)
+    if (*could_lock_zone == false)
       return false;
   }
   else
@@ -4942,7 +4942,7 @@ template <class Gt, class Tds, class Lds>
 template < class VertexRemover >
 bool
 Triangulation_3<Gt, Tds, Lds>::
-remove(Vertex_handle v, VertexRemover &remover, bool *p_could_lock_zone)
+remove(Vertex_handle v, VertexRemover &remover, bool *could_lock_zone)
 {
   // N.B.: dimension doesn't need to be atomic since the parallel removal
   //       will never decrease the dimension (the last few removes are done
@@ -4962,7 +4962,7 @@ remove(Vertex_handle v, VertexRemover &remover, bool *p_could_lock_zone)
   // Locking vertex v is a good start
   if (!try_lock_vertex(v))
   {
-    *p_could_lock_zone = false;
+    *could_lock_zone = false;
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!
 #endif
@@ -4974,9 +4974,9 @@ remove(Vertex_handle v, VertexRemover &remover, bool *p_could_lock_zone)
     std::vector<Vertex_handle> adj_vertices;
     adj_vertices.reserve(64);
     bool dim_down = test_dim_down_using_incident_cells_3(
-      v, incident_cells, adj_vertices, p_could_lock_zone);
+      v, incident_cells, adj_vertices, could_lock_zone);
 
-    if (*p_could_lock_zone)
+    if (*could_lock_zone)
     {
       if (dim_down)
         removed = false;
@@ -4986,9 +4986,9 @@ remove(Vertex_handle v, VertexRemover &remover, bool *p_could_lock_zone)
   }
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-  if (p_could_lock_zone)
+  if (could_lock_zone)
   {
-    if (*p_could_lock_zone)
+    if (*could_lock_zone)
       ++bcounter;
     else
       bcounter.increment_branch_1(); // THIS is a late withdrawal!

@@ -506,13 +506,13 @@ private:
    */
   template <bool pump_vertices_on_surfaces>
   bool pump_vertex(const Vertex_handle& v,
-                   bool *p_could_lock_zone = 0);
+                   bool *could_lock_zone = NULL);
   
   /**
    * Returns the best_weight of v
    */
   double get_best_weight(const Vertex_handle& v,
-                         bool *p_could_lock_zone = 0) const;
+                         bool *could_lock_zone = NULL) const;
   
   /**
    * Initializes pre_star and criterion_values
@@ -521,7 +521,7 @@ private:
   initialize_prestar_and_criterion_values(const Vertex_handle& v,
                                           Pre_star& pre_star,
                                           Sliver_values& criterion_values,
-                                          bool *p_could_lock_zone = 0) const;
+                                          bool *could_lock_zone = NULL) const;
   
   /**
    * Expand pre_star with cell_to_add
@@ -549,7 +549,7 @@ private:
   template <bool pump_vertices_on_surfaces>
   void update_mesh(const Weighted_point& new_point,
                    const Vertex_handle& old_vertex,
-                   bool *p_could_lock_zone = 0);
+                   bool *could_lock_zone = NULL);
   
   /**
    * Restores cells and boundary facets of conflict zone of new_vertex in c3t3_
@@ -1012,11 +1012,11 @@ template <bool pump_vertices_on_surfaces>
 bool
 Slivers_exuder<C3T3,Md,SC,V_,FT>::
 pump_vertex(const Vertex_handle& pumped_vertex,
-            bool *p_could_lock_zone)
+            bool *could_lock_zone)
 {
   // Get best_weight
-  double best_weight = get_best_weight(pumped_vertex, p_could_lock_zone);
-  if (p_could_lock_zone && *p_could_lock_zone == false)
+  double best_weight = get_best_weight(pumped_vertex, could_lock_zone);
+  if (could_lock_zone && *could_lock_zone == false)
     return false;
   
   // If best_weight < pumped_vertex weight, nothing to do
@@ -1025,7 +1025,7 @@ pump_vertex(const Vertex_handle& pumped_vertex,
     Weighted_point wp(pumped_vertex->point(), best_weight);
     
     // Insert weighted point into mesh
-    update_mesh<pump_vertices_on_surfaces>(wp, pumped_vertex, p_could_lock_zone);
+    update_mesh<pump_vertices_on_surfaces>(wp, pumped_vertex, could_lock_zone);
     
     return true;
   }
@@ -1040,16 +1040,16 @@ Slivers_exuder<C3T3,Md,SC,V_,FT>::
 initialize_prestar_and_criterion_values(const Vertex_handle& v,
                                         Pre_star& pre_star,
                                         Sliver_values& criterion_values,
-                                        bool *p_could_lock_zone) const
+                                        bool *could_lock_zone) const
 {
   std::vector<Cell_handle> incident_cells;
   incident_cells.reserve(64);
   // Parallel
-  if (p_could_lock_zone)
+  if (could_lock_zone)
   {
     if (!helper_.try_lock_and_get_incident_cells(v, incident_cells))
     {
-      *p_could_lock_zone = false;
+      *could_lock_zone = false;
       return;
     }
   }
@@ -1187,15 +1187,15 @@ expand_prestar(const Cell_handle& cell_to_add,
 template <typename C3T3, typename Md, typename SC, typename V_, typename FT> 
 double
 Slivers_exuder<C3T3,Md,SC,V_,FT>::
-get_best_weight(const Vertex_handle& v, bool *p_could_lock_zone) const
+get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 {
   // Get pre_star and criterion_values
   Pre_star pre_star;
   Sliver_values criterion_values;
   initialize_prestar_and_criterion_values(
-    v, pre_star, criterion_values, p_could_lock_zone);
+    v, pre_star, criterion_values, could_lock_zone);
 
-  if (p_could_lock_zone && *p_could_lock_zone == false)
+  if (could_lock_zone && *could_lock_zone == false)
     return 0.;
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER        
@@ -1225,9 +1225,9 @@ get_best_weight(const Vertex_handle& v, bool *p_could_lock_zone) const
     Facet link = pre_star.front()->second;
     const Cell_handle& opposite_cell = tr_.mirror_facet(link).first;
     // CJTODO: useless?
-    if (p_could_lock_zone && !tr_.try_lock_cell(opposite_cell))
+    if (could_lock_zone && !tr_.try_lock_cell(opposite_cell))
     {
-      *p_could_lock_zone = false;
+      *could_lock_zone = false;
       return 0.;
     }
     can_flip = expand_prestar(opposite_cell, v, pre_star, criterion_values);
@@ -1410,7 +1410,7 @@ void
 Slivers_exuder<C3T3,Md,SC,V_,FT>::  
 update_mesh(const Weighted_point& new_point,
             const Vertex_handle& old_vertex,
-            bool *p_could_lock_zone)
+            bool *could_lock_zone)
 {
   CGAL_assertion_code(std::size_t nb_vert = 
                       tr_.number_of_vertices());
@@ -1427,9 +1427,9 @@ update_mesh(const Weighted_point& new_point,
                      std::back_inserter(boundary_facets),
                      std::back_inserter(deleted_cells),
                      std::back_inserter(internal_facets),
-                     p_could_lock_zone);
+                     could_lock_zone);
   
-  if (p_could_lock_zone && *p_could_lock_zone == false)
+  if (could_lock_zone && *could_lock_zone == false)
     return;
 
   // Get some datas to restore mesh
@@ -1455,7 +1455,7 @@ update_mesh(const Weighted_point& new_point,
   c3t3_.set_index(new_vertex,vertice_index);
 
   // Only true for sequential version
-  CGAL_assertion(p_could_lock_zone || nb_vert == tr_.number_of_vertices());
+  CGAL_assertion(could_lock_zone || nb_vert == tr_.number_of_vertices());
 
   // Restore mesh
   restore_cells_and_boundary_facets<pump_vertices_on_surfaces>(
@@ -1463,7 +1463,7 @@ update_mesh(const Weighted_point& new_point,
   restore_internal_facets(umbrella, new_vertex);
 
   // Only true for sequential version
-  CGAL_assertion(p_could_lock_zone || nb_vert == tr_.number_of_vertices());
+  CGAL_assertion(could_lock_zone || nb_vert == tr_.number_of_vertices());
 }
 
 
