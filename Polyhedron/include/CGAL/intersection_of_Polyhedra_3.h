@@ -39,6 +39,7 @@
 #include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
 #include <CGAL/internal/corefinement/intersection_triangle_segment_3.h>
 #include <CGAL/internal/corefinement/intersection_coplanar_triangles_3.h>
+#include <CGAL/use.h>
 
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
@@ -185,6 +186,8 @@ struct Order_along_a_halfedge{
     //returns true, iff q lies strictly between p and r.
     try{
       typename Nodes_vector::Protector p;
+      CGAL::internal::use(p);
+
       return CGAL::collinear_are_strictly_ordered_along_line(nodes.to_interval(hedge->vertex()->point()),
                                                              nodes.interval_node(j),
                                                              nodes.interval_node(i));
@@ -216,6 +219,12 @@ public:
   template <class Point_3>
   Split_halfedge_at_point( Halfedge_handle h,const Point_3& point):hedge(h),vertex(point){}
 
+  //   new_hedge    hedge
+  //  ----------->   ----------->
+  //               v
+  //  <-----------   <-----------
+  //   new_opposite     opposite 
+  //  
   void operator()( HDS& hds) {
     
     Vertex_handle v=hds.vertices_push_back(vertex);

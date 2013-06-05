@@ -25,6 +25,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/tuple.h>
+#include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
 
 namespace CGAL {
  namespace internal{
@@ -118,31 +119,32 @@ public:
 
 template <class Polyhedron,class Adjacency_criterium,class Face_to_UF_handle_map,class Result>
 void extract_connected_components(
-  const Polyhedron& P,
+  Polyhedron& P,
   const Adjacency_criterium& adjacent,
-  CGAL::Union_find<typename Polyhedron::Facet_const_handle>& uf,
+  CGAL::Union_find<typename internal_IOP::Polyhedron_types_with_mpl<Polyhedron>::Facet_handle>& uf,
   Face_to_UF_handle_map& map_f2h,
   Result&  result
   )
 {
-  typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
-  typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
-  typedef ::CGAL::Union_find<Facet_const_handle> UF;
+  typedef typename internal_IOP::Polyhedron_types_with_mpl<Polyhedron>::Facet_handle Facet_handle;
+  typedef typename internal_IOP::Polyhedron_types_with_mpl<Polyhedron>::Facet_iterator Facet_iterator;
+  typedef typename internal_IOP::Polyhedron_types_with_mpl<Polyhedron>::Halfedge_handle Halfedge_handle;
+  typedef ::CGAL::Union_find<Facet_handle> UF;
   typedef typename UF::handle UF_handle;
   typedef typename UF::iterator UF_iterator;
   
   CGAL_precondition(P.is_pure_triangle());
 
 //init union-find: each facet is in its own set  
-  for (typename Polyhedron::Facet_const_iterator it=P.facets_begin();it!=P.facets_end();++it){
+  for (Facet_iterator it=P.facets_begin();it!=P.facets_end();++it){
     map_f2h.insert(std::make_pair(it,uf.make_set(it)));
   }
 //merge 2 facets if they share a common edge  
-  for (typename Polyhedron::Facet_const_iterator it=P.facets_begin();it!=P.facets_end();++it){
-    Facet_const_handle facet=it;
+  for (Facet_iterator it=P.facets_begin();it!=P.facets_end();++it){
+    Facet_handle facet=it;
     
     UF_handle current=map_f2h.find(it)->second;
-    Halfedge_const_handle neighbors[3];
+    Halfedge_handle neighbors[3];
     neighbors[0]=facet->halfedge()->opposite();
     neighbors[1]=facet->halfedge()->next()->opposite();
     neighbors[2]=facet->halfedge()->next()->next()->opposite();
@@ -187,6 +189,57 @@ void extract_connected_components(const Polyhedron& P,const Adjacency_criterium&
     new_poly.delegate(modifier);
     *out++=new_poly;
   }
+}
+
+template <class Polyhedron, class Adjacency_criterium, class Face_marker>
+void mark_connected_components(Polyhedron& P, const Adjacency_criterium& adjacent, Face_marker& face_marker)
+{
+  typedef typename Polyhedron::Facet_handle Facet_handle;
+  typedef ::CGAL::Union_find<Facet_handle> UF;
+  typedef typename UF::handle UF_handle;
+  typedef std::map<Facet_handle,std::list<Facet_handle>,Compare_handle_ptr<Polyhedron> > Result;
+  typedef std::map<Facet_handle,UF_handle,Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
+  
+  UF uf;
+  Facet_to_handle_map map_f2h;
+  Result result;
+  
+  extract_connected_components(P,adjacent,uf,map_f2h,result);
+  
+  for (typename Result::iterator it=result.begin();it!=result.end();++it)
+  {
+    face_marker.start_new_connected_component();
+    typedef std::list<Facet_handle> Facets;
+    const Facets& facets=it->second;
+    face_marker.mark(facets.begin(),facets.end());
+  }
+}
+
+template <class Polyhedron, class Adjacency_criterium, class Face_marker, class OutputIterator>
+OutputIterator
+mark_connected_components(Polyhedron& P, const Adjacency_criterium& adjacent, Face_marker& face_marker, OutputIterator out)
+{
+  typedef typename Polyhedron::Facet_handle Facet_handle;
+  typedef ::CGAL::Union_find<Facet_handle> UF;
+  typedef typename UF::handle UF_handle;
+  typedef std::map<Facet_handle,std::list<Facet_handle>,Compare_handle_ptr<Polyhedron> > Result;
+  typedef std::map<Facet_handle,UF_handle,Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
+
+  UF uf;
+  Facet_to_handle_map map_f2h;
+  Result result;
+
+  extract_connected_components(P,adjacent,uf,map_f2h,result);
+
+  for (typename Result::iterator it=result.begin();it!=result.end();++it)
+  {
+    face_marker.start_new_connected_component();
+    typedef std::list<Facet_handle> Facets;
+    const Facets& facets=it->second;
+    face_marker.mark(facets.begin(),facets.end());
+    *out++=*facets.begin();
+  }
+  return out;
 }
 
 template <class Polyhedron,class Output_iterator>
