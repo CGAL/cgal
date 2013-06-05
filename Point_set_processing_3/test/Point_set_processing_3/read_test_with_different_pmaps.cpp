@@ -64,6 +64,7 @@ bool check_points(
       return false;
     }
   }
+  return true;
 }
 
 bool test_no_deduction_points_and_normals_xyz(const char* file_name)
@@ -76,12 +77,15 @@ bool test_no_deduction_points_and_normals_xyz(const char* file_name)
 
   // read with custom output iterator type
   dummy_counter::counter = 0;
+  std::ifstream input(file_name);
   CGAL::read_xyz_points_and_normals<dummy_counter>(
-    std::ifstream(file_name), back_inserter(indices), points, normals, Kernel());
+    input, back_inserter(indices), points, normals, Kernel());
 
   // read with ordinary pmaps
+  input.close();
+  input.open(file_name);
   CGAL::read_xyz_points_and_normals(
-    std::ifstream(file_name), back_inserter(pv_pairs), 
+    input, back_inserter(pv_pairs), 
     CGAL::First_of_pair_property_map<PointVectorPair>(), 
     CGAL::Second_of_pair_property_map<PointVectorPair>(),
     Kernel());
@@ -99,12 +103,15 @@ bool test_no_deduction_points_and_normals_off(const char* file_name)
 
   // read with custom output iterator type
   dummy_counter::counter = 0;
+  std::ifstream input(file_name);
   CGAL::read_off_points_and_normals<dummy_counter>(
-    std::ifstream(file_name), back_inserter(indices), points, normals, Kernel());
+    input, back_inserter(indices), points, normals, Kernel());
 
   // read with ordinary pmaps
+  input.close();
+  input.open(file_name);
   CGAL::read_off_points_and_normals(
-    std::ifstream(file_name), back_inserter(pv_pairs), 
+    input, back_inserter(pv_pairs), 
     CGAL::First_of_pair_property_map<PointVectorPair>(), 
     CGAL::Second_of_pair_property_map<PointVectorPair>(),
     Kernel());
@@ -121,12 +128,15 @@ bool test_no_deduction_points_xyz(const char* file_name)
 
   // read with custom output iterator type
   dummy_counter::counter = 0;
+  std::ifstream input(file_name);
   CGAL::read_xyz_points<dummy_counter>(
-    std::ifstream(file_name), back_inserter(indices), points_1, Kernel());
+    input, back_inserter(indices), points_1, Kernel());
 
   // read with ordinary pmaps
+  input.close();
+  input.open(file_name);
   CGAL::read_xyz_points(
-    std::ifstream(file_name), back_inserter(points_2), 
+    input, back_inserter(points_2), 
     CGAL::Identity_property_map<Point_3>(), 
     Kernel());
 
@@ -142,12 +152,15 @@ bool test_no_deduction_points_off(const char* file_name)
 
   // read with custom output iterator type
   dummy_counter::counter = 0;
+  std::ifstream input(file_name);
   CGAL::read_off_points<dummy_counter>(
-    std::ifstream(file_name), back_inserter(indices), points_1, Kernel());
+    input, back_inserter(indices), points_1, Kernel());
 
   // read with ordinary pmaps
+  input.close();
+  input.open(file_name);
   CGAL::read_off_points(
-    std::ifstream(file_name), back_inserter(points_2), 
+    input, back_inserter(points_2), 
     CGAL::Identity_property_map<Point_3>(), 
     Kernel());
 
@@ -158,90 +171,125 @@ void compile_test() {
   std::deque<Point_3> points;
   std::deque<Vector_3> normals;
   std::deque<PointVectorPair> pv_pairs;
-
+  std::ifstream input;
+  
+  input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points(
-    std::ifstream("data/read_test/simple.xyz"),
+    input,
     std::front_inserter(points));
-
+  input.close();
+  
+  input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points(
-    std::ifstream("data/read_test/simple.xyz"),
+    input,
     std::front_inserter(points),
     CGAL::Identity_property_map<Point_3>());
+  input.close();
 
+  input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points(
-    std::ifstream("data/read_test/simple.xyz"),
+    input,
     std::front_inserter(points),
     CGAL::Identity_property_map<Point_3>(),
     Kernel());
+  input.close();
+
   // this will span all OutputIteratorValueType versions
+  input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points<Point_3>(
-    std::ifstream("data/read_test/simple.xyz"),
+    input,
     std::front_inserter(points));
+  input.close();
   //-----------------------------------------------------------------------
+  input.open("data/read_test/simple.off");
   CGAL::read_off_points(
-    std::ifstream("data/read_test/simple.off"),
+    input,
     std::front_inserter(points));
-
+  input.close();
+  
+  input.open("data/read_test/simple.off");
   CGAL::read_off_points(
-    std::ifstream("data/read_test/simple.off"),
+    input,
     std::front_inserter(points),
     CGAL::Identity_property_map<Point_3>());
+  input.close();
 
+  input.open("data/read_test/simple.off");
   CGAL::read_off_points(
-    std::ifstream("data/read_test/simple.off"),
+    input,
     std::front_inserter(points),
     CGAL::Identity_property_map<Point_3>(),
     Kernel());
+  input.close();
+
   // this will span all OutputIteratorValueType versions
+  input.open("data/read_test/simple.off");
   CGAL::read_off_points<Point_3>(
-    std::ifstream("data/read_test/simple.off"),
+    input,
     std::front_inserter(points));
+  input.close();
   //-----------------------------------------------------------------------
+  input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points_and_normals(
-    std::ifstream("data/read_test/simple.xyz"),
+    input,
     std::front_inserter(points),
     boost::dummy_property_map());
+  input.close();
 
+  input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points_and_normals(
-    std::ifstream("data/read_test/simple.xyz"),
+    input,
     std::front_inserter(pv_pairs),
     CGAL::First_of_pair_property_map<PointVectorPair>(), 
     CGAL::Second_of_pair_property_map<PointVectorPair>());
+  input.close();
 
+  input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points_and_normals(
-    std::ifstream("data/read_test/simple.xyz"),
+    input,
     std::front_inserter(pv_pairs),
     CGAL::First_of_pair_property_map<PointVectorPair>(), 
     CGAL::Second_of_pair_property_map<PointVectorPair>(),
     Kernel());
+  input.close();
 
+  input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points_and_normals<Point_3>(
-    std::ifstream("data/read_test/simple.xyz"),
+    input,
     std::front_inserter(points),
     boost::dummy_property_map());
+  input.close();
   //-----------------------------------------------------------------------
+  input.open("data/read_test/simple.off");
   CGAL::read_off_points_and_normals(
-    std::ifstream("data/read_test/simple.off"),
+    input,
     std::front_inserter(points),
     boost::dummy_property_map());
+  input.close();
 
+  input.open("data/read_test/simple.off");
   CGAL::read_off_points_and_normals(
-    std::ifstream("data/read_test/simple.off"),
+    input,
     std::front_inserter(pv_pairs),
     CGAL::First_of_pair_property_map<PointVectorPair>(), 
     CGAL::Second_of_pair_property_map<PointVectorPair>());
+  input.close();
 
+  input.open("data/read_test/simple.off");
   CGAL::read_off_points_and_normals(
-    std::ifstream("data/read_test/simple.off"),
+    input,
     std::front_inserter(pv_pairs),
     CGAL::First_of_pair_property_map<PointVectorPair>(), 
     CGAL::Second_of_pair_property_map<PointVectorPair>(),
     Kernel());
+  input.close();
 
+  input.open("data/read_test/simple.off");
   CGAL::read_off_points_and_normals<Point_3>(
-    std::ifstream("data/read_test/simple.off"),
+    input,
     std::front_inserter(points),
     boost::dummy_property_map());
+  input.close();
 }
 
 int main() {
