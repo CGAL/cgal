@@ -2,7 +2,7 @@
 #include "Scene_polygon_soup_item.h"
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
-
+#include <CGAL/gocad_io.h>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include "Polyhedron_demo_io_plugin_interface.h"
@@ -176,14 +176,30 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_gocad_plugin::canSave(const Scene_item*)
+bool Polyhedron_demo_gocad_plugin::canSave(const Scene_item* item)
 {
-  return false;
+  // This plugin supports polyhedrons
+  return qobject_cast<const Scene_polyhedron_item*>(item);
 }
 
-bool Polyhedron_demo_gocad_plugin::save(const Scene_item*, QFileInfo)
+bool Polyhedron_demo_gocad_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 {
-  return false;
+  // This plugin supports polyhedrons
+  const Scene_polyhedron_item* poly_item = 
+    qobject_cast<const Scene_polyhedron_item*>(item);
+ 
+  if(!poly_item)
+    return false;
+
+  std::ofstream out(fileinfo.filePath().toUtf8());
+
+  Polyhedron* poly = const_cast<Polyhedron*>(poly_item->polyhedron());
+
+  write_gocad(*poly, out, qPrintable(fileinfo.baseName()));
+
+  
+  return true;
+
 }
 
 #include <QtPlugin>
