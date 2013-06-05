@@ -42,7 +42,7 @@ Scene::addItem(Scene_item* item)
 
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
-  if(bbox_before + item->bbox() != bbox_before) 
+  if(m_entries.size() == 1 || bbox_before + item->bbox() != bbox_before) 
   { emit updated_bbox(); }
   emit updated();
   QAbstractListModel::reset();
