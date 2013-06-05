@@ -1045,7 +1045,7 @@ public:
                                           Cell_handle c, int li, int lj,
                                           const Conflict_tester &tester,
                                           Hidden_points_visitor &hider,
-            bool *could_lock_zone = NULL);
+                                          bool *could_lock_zone = NULL);
 
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -1145,29 +1145,28 @@ protected:
 
   // - c is the current cell, which must be in conflict.
   // - tester is the function object that tests if a cell is in conflict.
-  template <
-            class Conflict_test,
-      class OutputIteratorBoundaryFacets,
-      class OutputIteratorCells,
-      class OutputIteratorInternalFacets>
+  template <class Conflict_test,
+            class OutputIteratorBoundaryFacets,
+            class OutputIteratorCells,
+            class OutputIteratorInternalFacets>
   Triple<OutputIteratorBoundaryFacets,
          OutputIteratorCells,
          OutputIteratorInternalFacets>
   find_conflicts(
      Cell_handle d,
      const Conflict_test &tester,
-                 Triple<OutputIteratorBoundaryFacets,
-            OutputIteratorCells,
-                        OutputIteratorInternalFacets> it
+     Triple<OutputIteratorBoundaryFacets,
+     OutputIteratorCells,
+     OutputIteratorInternalFacets> it
      , bool *could_lock_zone = NULL
-     , const Facet *p_this_facet_must_be_in_the_cz = 0
-     , bool *p_the_facet_is_in_its_cz = 0
+     , const Facet *this_facet_must_be_in_the_cz = NULL
+     , bool *the_facet_is_in_its_cz = NULL
      ) const
   {
     CGAL_triangulation_precondition( dimension()>=2 );
 
-    if (p_the_facet_is_in_its_cz)
-      *p_the_facet_is_in_its_cz = false;
+    if (the_facet_is_in_its_cz)
+      *the_facet_is_in_its_cz = false;
 
     if (could_lock_zone)
       *could_lock_zone = true;
@@ -1217,10 +1216,10 @@ protected:
 
           Facet f(c, i); // Internal facet.
           // Is it the facet where're looking for?
-          if (p_this_facet_must_be_in_the_cz && p_the_facet_is_in_its_cz
-            && f == *p_this_facet_must_be_in_the_cz)
+          if (this_facet_must_be_in_the_cz && the_facet_is_in_its_cz
+            && f == *this_facet_must_be_in_the_cz)
           {
-            *p_the_facet_is_in_its_cz = true;
+            *the_facet_is_in_its_cz = true;
           }
           if (c < test)
           {
@@ -1249,10 +1248,10 @@ protected:
 
             Facet f(c, i); // Internal facet.
             // Is it the facet where're looking for?
-            if (p_this_facet_must_be_in_the_cz && p_the_facet_is_in_its_cz
-              && f == *p_this_facet_must_be_in_the_cz)
+            if (this_facet_must_be_in_the_cz && the_facet_is_in_its_cz
+              && f == *this_facet_must_be_in_the_cz)
             {
-              *p_the_facet_is_in_its_cz = true;
+              *the_facet_is_in_its_cz = true;
             }
 
             if (c < test)
@@ -1271,13 +1270,13 @@ protected:
 
         Facet f(c, i); // Boundary facet.
         // Is it the facet where're looking for?
-        if (p_this_facet_must_be_in_the_cz
-            && p_the_facet_is_in_its_cz
+        if (this_facet_must_be_in_the_cz
+            && the_facet_is_in_its_cz
             &&
-            (mirror_facet(f) == *p_this_facet_must_be_in_the_cz
-             || f == *p_this_facet_must_be_in_the_cz) )
+            (mirror_facet(f) == *this_facet_must_be_in_the_cz
+             || f == *this_facet_must_be_in_the_cz) )
         {
-          *p_the_facet_is_in_its_cz = true;
+          *the_facet_is_in_its_cz = true;
         }
 
         *it.first++ = f;

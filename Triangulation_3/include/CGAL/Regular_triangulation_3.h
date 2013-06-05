@@ -431,8 +431,8 @@ namespace CGAL {
       OutputIteratorCells cit,
       OutputIteratorInternalFacets ifit
       , bool *could_lock_zone = NULL
-      , const Facet *p_this_facet_must_be_in_the_cz = 0
-      , bool *p_the_facet_is_in_its_cz = 0
+      , const Facet *this_facet_must_be_in_the_cz = NULL
+      , bool *the_facet_is_in_its_cz = NULL
       ) const
     {
       CGAL_triangulation_precondition(dimension() >= 2);
@@ -451,8 +451,8 @@ namespace CGAL {
           std::back_inserter(cells),
           ifit)
           , could_lock_zone
-          , p_this_facet_must_be_in_the_cz
-          , p_the_facet_is_in_its_cz
+          , this_facet_must_be_in_the_cz
+          , the_facet_is_in_its_cz
           ).third;
       }
       else {
@@ -464,8 +464,8 @@ namespace CGAL {
           std::back_inserter(cells),
           ifit)
           , could_lock_zone
-          , p_this_facet_must_be_in_the_cz
-          , p_the_facet_is_in_its_cz
+          , this_facet_must_be_in_the_cz
+          , the_facet_is_in_its_cz
           ).third;
       }
 
@@ -496,9 +496,8 @@ namespace CGAL {
       Triple<OutputIteratorBoundaryFacets,
         OutputIteratorCells,
         Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
-        Emptyset_iterator()
-        , could_lock_zone
-        );
+                                              Emptyset_iterator(), 
+                                              could_lock_zone);
       return std::make_pair(t.first, t.second);
     }
 

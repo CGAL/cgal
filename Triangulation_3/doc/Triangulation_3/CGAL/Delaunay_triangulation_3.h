@@ -148,9 +148,9 @@ The optional argument `start` is used as a starting place for the search.
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the insertion will
-try to lock vertices/cells before modifying them. If it succeeds, *could_lock_zone
+try to lock cells before modifying them. If it succeeds, *could_lock_zone
 is true, otherwise it is false and the return value is Vertex_handle() 
-(the point is not inserted). In any case, the locked vertices are not unlocked by the 
+(the point is not inserted). In any case, the locked cells are not unlocked by the 
 function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Point & p, 
@@ -259,9 +259,9 @@ void remove(Vertex_handle v);
 Removes the vertex `v` from the triangulation.
 
 This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock vertices/cells before deleting/modifying them. If it succeeds, *could_lock_zone
+try to lock cells before deleting/modifying them. If it succeeds, *could_lock_zone
 is true, otherwise it is false (and the point is not removed). In any case, 
-the locked vertices are not unlocked by the function, leaving this choice to the user.
+the locked cells are not unlocked by the function, leaving this choice to the user.
 
 This function will try to remove `v` only if the removal does not
 decrease the dimension. If the removal would decrease dimension, the function returns false
@@ -403,6 +403,12 @@ respectively in the output iterators:
 (resp. edges) `(t, i)` where the cell (resp. facet) `t` is in 
 conflict, but `t->neighbor(i)` is not. 
 
+- `could_lock_zone`: The optional argument `could_lock_zone` is used by the concurrency-safe
+                     version of the triangulation. When the pointer is not null, the algorithm will
+                     try to lock all the cells of the conflict zone. If it succeeds, *could_lock_zone
+                     is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
+                     the locked cells are not unlocked by the function, leaving this choice to the user.
+
 This function can be used in conjunction with `insert_in_hole()` in order 
 to decide the insertion of a point after seeing which elements of the 
 triangulation are affected. 
@@ -415,7 +421,7 @@ class OutputIteratorCells>
 std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells> 
 find_conflicts(Point p, Cell_handle c, 
 OutputIteratorBoundaryFacets bfit, 
-OutputIteratorCells cit); 
+OutputIteratorCells cit, bool *could_lock_zone = NULL); 
 
 /*! 
 Same as the other `find_conflicts()` function, except that it also 
@@ -432,6 +438,12 @@ conflict, but `t->neighbor(i)` is not.
 - `ifit`: the facets (resp. edges) inside the hole, that is, delimiting 
 two cells (resp facets) in conflict. 
 
+- `could_lock_zone`: The optional argument `could_lock_zone` is used by the concurrency-safe
+                     version of the triangulation. When the pointer is not null, the algorithm will
+                     try to lock all the cells of the conflict zone. If it succeeds, *could_lock_zone
+                     is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
+                     the locked cells are not unlocked by the function, leaving this choice to the user.
+
 Returns the `Triple` composed of the resulting output iterators. 
 \pre `dt`.`dimension()` \f$ \geq2\f$, and `c` is in conflict with `p`. 
 
@@ -445,7 +457,8 @@ OutputIteratorInternalFacets>
 find_conflicts(Point p, Cell_handle c, 
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit, 
-OutputIteratorInternalFacets ifit); 
+OutputIteratorInternalFacets ifit,
+bool *could_lock_zone = NULL); 
 
 /*! 
 This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 

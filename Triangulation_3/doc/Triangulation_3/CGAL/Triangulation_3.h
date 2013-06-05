@@ -208,7 +208,7 @@ typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator;
 /*! 
 Concurrency tag (from the TDS).
 */ 
-typedef TriangulationDataStructure_3::::Concurrency_tag Concurrency_tag;
+typedef TriangulationDataStructure_3::Concurrency_tag Concurrency_tag;
 
 /// @} 
 
@@ -605,8 +605,8 @@ The optional argument `start` is used as a starting place for the search.
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the locate will
-try to lock all the vertices along the walk. If it succeeds, *could_lock_zone
-is true, otherwise it is false. In any case, the locked vertices are not
+try to lock all the cells along the walk. If it succeeds, *could_lock_zone
+is true, otherwise it is false. In any case, the locked cells are not
 unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
@@ -644,8 +644,8 @@ The optional argument `start` is used as a starting place for the search.
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the locate will
-try to lock all the vertices along the walk. If it succeeds, *could_lock_zone
-is true, otherwise it is false. In any case, the locked vertices are not
+try to lock all the cells along the walk. If it succeeds, *could_lock_zone
+is true, otherwise it is false. In any case, the locked cells are not
 unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
@@ -1190,7 +1190,7 @@ incident_cells(Vertex_handle v, OutputIterator cells) const;
 Try to lock and copy the `Cell_handle`s of all cells incident to `v` into
 `cells`. 
 Returns true in case of success. Otherwise, `cells` is emptied and the function
-returns false. In any case, the locked vertices are not unlocked by 
+returns false. In any case, the locked cells are not unlocked by 
 `try_lock_and_get_incident_cells`, leaving this choice to the user.
 
 \pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`. 

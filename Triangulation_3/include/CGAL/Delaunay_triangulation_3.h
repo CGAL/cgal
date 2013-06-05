@@ -489,7 +489,8 @@ public:
   find_conflicts(const Point &p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-                 OutputIteratorInternalFacets ifit) const
+                 OutputIteratorInternalFacets ifit,
+                 bool *could_lock_zone = NULL) const
   {
       CGAL_triangulation_precondition(dimension() >= 2);
 
@@ -504,7 +505,7 @@ public:
             (c, tester,
              make_triple(std::back_inserter(facets),
                          std::back_inserter(cells),
-                         ifit)).third;
+                         ifit, could_lock_zone)).third;
       }
       else {
           Conflict_tester_3 tester(p, this);
@@ -512,7 +513,7 @@ public:
             (c, tester,
              make_triple(std::back_inserter(facets),
                          std::back_inserter(cells),
-                         ifit)).third;
+                         ifit, could_lock_zone)).third;
       }
 
       // Reset the conflict flag on the boundary.
@@ -535,12 +536,14 @@ public:
   std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
   find_conflicts(const Point &p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
-                 OutputIteratorCells cit) const
+                 OutputIteratorCells cit,
+                 bool *could_lock_zone = NULL) const
   {
       Triple<OutputIteratorBoundaryFacets,
              OutputIteratorCells,
              Emptyset_iterator> t = find_conflicts(p, c, bfit, cit,
-                                                   Emptyset_iterator());
+                                                   Emptyset_iterator(),
+                                                   could_lock_zone);
       return std::make_pair(t.first, t.second);
   }
 

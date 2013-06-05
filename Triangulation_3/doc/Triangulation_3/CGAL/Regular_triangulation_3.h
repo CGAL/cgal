@@ -132,9 +132,9 @@ constructed handle.
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the insertion will
-try to lock vertices/cells before modifying them. If it succeeds, *could_lock_zone
+try to lock cells before modifying them. If it succeeds, *could_lock_zone
 is true, otherwise it is false (and the point is not inserted). In any case, 
-the locked vertices are not unlocked by the function, leaving this choice to the user.
+the locked cells are not unlocked by the function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Weighted_point & p, 
 Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL); 
@@ -239,9 +239,9 @@ void remove(Vertex_handle v);
 Removes the vertex `v` from the triangulation.
 
 This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock vertices/cells before deleting/modifying them. If it succeeds, *could_lock_zone
+try to lock cells before deleting/modifying them. If it succeeds, *could_lock_zone
 is true, otherwise it is false (and the point is not removed). In any case, 
-the locked vertices are not unlocked by the function, leaving this choice to the user.
+the locked cells are not unlocked by the function, leaving this choice to the user.
 
 This function will try to remove `v` only if the removal does not
 decrease the dimension. 
@@ -425,17 +425,17 @@ Compute the conflicts with `p`.
 @param cit                The cells (resp. facets) in conflict with `p`. 
 @param bfit               The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
 @param ifit               The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
-@param could_lock_zone  The optional argument `could_lock_zone` is used by the concurrency-safe
+@param could_lock_zone    The optional argument `could_lock_zone` is used by the concurrency-safe
                           version of the triangulation. When the pointer is not null, the algorithm will
-                          try to lock vertices of the conflict zone. If it succeeds, *could_lock_zone
+                          try to lock all the cells of the conflict zone. If it succeeds, *could_lock_zone
                           is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
-                          the locked vertices are not unlocked by the function, leaving this choice to the user.
-@param p_this_facet_must_be_in_the_cz 
-                          If the optional argument `p_this_facet_must_be_in_the_cz` is not null, the algorithm will check
+                          the locked cells are not unlocked by the function, leaving this choice to the user.
+@param this_facet_must_be_in_the_cz 
+                          If the optional argument `this_facet_must_be_in_the_cz` is not null, the algorithm will check
                           if this facet is in the conflict zone (it may be internal as well as boundary).
-@param p_the_facet_is_in_its_cz 
-                          This argument must be not null if the previous `p_this_facet_must_be_in_the_cz` argument is not null. 
-                          The boolean value pointed by this pointer is set to true if *`p_this_facet_must_be_in_the_cz` is
+@param the_facet_is_in_its_cz 
+                          This argument must be not null if the previous `this_facet_must_be_in_the_cz` argument is not null. 
+                          The boolean value pointed by this pointer is set to true if *`this_facet_must_be_in_the_cz` is
                           among the internal or boundary facets of the conflict zone, and false otherwise.                         
 
 \pre  The starting cell (resp.\ facet) `c` must be in conflict with `p`. 
@@ -456,8 +456,8 @@ OutputIteratorBoundaryFacets bfit,
 OutputIteratorCells cit, 
 OutputIteratorInternalFacets ifit,
 bool *could_lock_zone = NULL,
-const Facet *p_this_facet_must_be_in_the_cz = 0,
-bool *p_the_facet_is_in_its_cz = 0);
+const Facet *this_facet_must_be_in_the_cz = NULL,
+bool *the_facet_is_in_its_cz = NULL);
 
 /*! 
 This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
