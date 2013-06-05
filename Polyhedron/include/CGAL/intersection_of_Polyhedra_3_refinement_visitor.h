@@ -122,7 +122,7 @@ namespace CGAL
   };
 
     
-  template <class HDS>
+  template <class HDS, class NestedFacetConstruct>
   class Triangulate_a_face : public CGAL::Modifier_base<HDS> {
     typedef typename HDS::Halfedge_handle Halfedge_handle;
     typedef typename HDS::Vertex_handle   Vertex_handle;
@@ -138,7 +138,8 @@ namespace CGAL
     std::map<std::pair<int,int>,Halfedge_handle>&          edge_to_hedge_;
     std::vector<std::pair<int,int> >                       edges_to_create_;
     std::vector<CGAL::cpp11::tuple<int,int,int> >          faces_to_create_;
-    
+    NestedFacetConstruct facet_construct;
+
     typename HDS::Halfedge::Base*
     unlock_halfedge(Halfedge_handle h){
       return static_cast<typename HDS::Halfedge::Base*>(&(*h));
@@ -157,8 +158,9 @@ namespace CGAL
                         const std::vector<int>& node_ids,
                         std::map<int,Vertex_handle>& node_to_polyhedron_vertex,
                         std::map<std::pair<int,int>,Halfedge_handle>& edge_to_hedge,
-                        const Triangulation& triangulation)
-    :current_face(face),node_to_polyhedron_vertex_(node_to_polyhedron_vertex),edge_to_hedge_(edge_to_hedge)
+                        const Triangulation& triangulation,
+                        const NestedFacetConstruct& fc)
+    :current_face(face), node_to_polyhedron_vertex_(node_to_polyhedron_vertex), edge_to_hedge_(edge_to_hedge), facet_construct(fc)
     {
       //grab vertices to be inserted to copy them from the vector
       for (std::vector<int>::const_iterator it=node_ids.begin();it!=node_ids.end();++it)
@@ -272,8 +274,7 @@ namespace CGAL
         unlock_halfedge(previous) ->set_face(current_face);        
         
         if ( ++it!=faces_to_create_.end() )
-          /// \todo integrate properly the copy of attributes in faces
-          current_face=hds.faces_push_back(Face(*face_triangulated));
+          current_face=hds.faces_push_back( facet_construct(*face_triangulated) );
         else
           break;
       }
@@ -590,7 +591,16 @@ struct Dummy_edge_mark_property_map{
   friend void put(Dummy_edge_mark_property_map,key_type,value_type) {}
 };
 
-template<class Polyhedron,class Kernel=typename Polyhedron::Traits::Kernel,class EdgeMarkPropertyMap=Dummy_edge_mark_property_map<Polyhedron> >
+template <class Polyhedron>
+struct Default_facet_construct{
+  typename Polyhedron::Facet operator()( const typename Polyhedron::Facet& )
+  { return typename Polyhedron::Facet(); }
+};
+
+template< class Polyhedron,
+          class Kernel=typename Polyhedron::Traits::Kernel,
+          class EdgeMarkPropertyMap=Dummy_edge_mark_property_map<Polyhedron>, 
+          class NestedFacetConstruct=Default_facet_construct<Polyhedron > >
 class Node_visitor_refine_polyhedra{
 //typedefs  
   typedef typename Polyhedron::Halfedge_handle                         Halfedge_handle;
@@ -1192,8 +1202,14 @@ bool coplanar_triangles_case_handled(Halfedge_handle first_hedge,Halfedge_handle
   bool do_not_build_cmap; //set to true in the case only the corefinement must be done
   int number_coplanar_vertices; //number of intersection points between coplanar facets, see fixes XSL_TAG_CPL_VERT
   EdgeMarkPropertyMap m_edge_mark_pmap;     //property map to mark halfedge of the original polyhedra that are on the intersection
+  NestedFacetConstruct facet_construct;  // functor called to create new triangular faces inside a given face
 public:
-  Node_visitor_refine_polyhedra (Combinatorial_map_3_* ptr=NULL,bool do_not_build_cmap_=false,EdgeMarkPropertyMap pmap=EdgeMarkPropertyMap()):do_not_build_cmap(do_not_build_cmap_),m_edge_mark_pmap(pmap)
+  Node_visitor_refine_polyhedra (
+    Combinatorial_map_3_* ptr=NULL,
+    bool do_not_build_cmap_=false,
+    EdgeMarkPropertyMap pmap=EdgeMarkPropertyMap(),
+    const NestedFacetConstruct& fc = NestedFacetConstruct()
+  ):do_not_build_cmap(do_not_build_cmap_), m_edge_mark_pmap(pmap), facet_construct(fc)
   {
     if (ptr!=NULL){
       final_map_comes_from_outside=true;
@@ -1765,7 +1781,8 @@ public:
       
       //create a modifier to insert nodes and copy the triangulation of the face
       //inside the polyhedron
-      internal_IOP::Triangulate_a_face<typename Polyhedron::HalfedgeDS> modifier(f,nodes,node_ids,node_to_polyhedron_vertex,edge_to_hedge,triangulation);
+      internal_IOP::Triangulate_a_face<typename Polyhedron::HalfedgeDS, NestedFacetConstruct> modifier(
+        f, nodes, node_ids, node_to_polyhedron_vertex, edge_to_hedge, triangulation, facet_construct);
       
       CGAL_assertion(P->is_valid());
       P->delegate(modifier);
