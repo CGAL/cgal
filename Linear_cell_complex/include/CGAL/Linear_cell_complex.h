@@ -94,7 +94,7 @@ namespace CGAL {
      *  @param alcc the linear cell complex to copy.
      *  @post *this is valid.
      */
-     Linear_cell_complex(const Self & alcc)
+    Linear_cell_complex(const Self & alcc)
     { Base::template copy<Self>(alcc); }
 
     template < class LCC2 >
@@ -104,6 +104,12 @@ namespace CGAL {
     template < class LCC2, typename Converters >
     Linear_cell_complex(const LCC2& alcc, Converters& converters)
     { Base::template copy<LCC2, Converters>(alcc, converters);}
+
+    template < class LCC2, typename Converters, typename Pointconverter >
+    Linear_cell_complex(const LCC2& alcc, Converters& converters,
+                        const Pointconverter& pointconverter)
+    { Base::template copy<LCC2, Converters, Pointconverter>
+          (alcc, converters, pointconverter);}
 
     /** Create a vertex attribute.
      * @return an handle on the new attribute.

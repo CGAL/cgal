@@ -63,6 +63,12 @@
  *
  * internal::Test_is_same_attribute_functor<Map1, Map2> to test if two
  *   i-attributes of two darts are isomorphic.
+ *
+ * internal::Is_attribute_has_non_void_info<Attr> to test if the attribute
+ *   Attr is non Void and has an non void Info as inner type
+ *
+ * internal::Is_attribute_has_point<Attr> to test if the attribute
+ *   Attr is non Void and has a Point inner type
  */
 
 namespace CGAL
@@ -604,8 +610,7 @@ struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, false, i>
                   typename Map2::Dart_const_handle)
   { return true; }
 };
-
-
+// ****************************************************************************
 struct twochar{ char dummy[2]; };
 
 template<typename T>
@@ -614,6 +619,41 @@ static char has_point(typename T::Point*){}
 template<typename T>
 static twochar has_point(...){}
 
+template<typename Attr, typename Info=typename Attr::Info>
+struct Is_nonvoid_attribute_has_non_void_info
+{
+  static const bool value=true;
+};
+template<typename Attr>
+struct Is_nonvoid_attribute_has_non_void_info<Attr, void>
+{
+  static const bool value=false;
+};
+
+template<typename Attr>
+struct Is_attribute_has_non_void_info
+{
+  static const bool value=Is_nonvoid_attribute_has_non_void_info<Attr>::value;
+};
+template<>
+struct Is_attribute_has_non_void_info<CGAL::Void>
+{
+  static const bool value=false;
+};
+
+
+template<typename Attr, bool withpoint=
+         sizeof(has_point<Attr>(NULL))==sizeof(char)>
+struct Is_attribute_has_point
+{
+  static const bool value=true;
+};
+template<typename Attr>
+struct Is_attribute_has_point<Attr, false>
+{
+  static const bool value=false;
+};
+// ****************************************************************************
 /// Test if the two darts are associated with the same attribute.
 template<typename Map1, typename Map2>
 struct Test_is_same_attribute_functor
@@ -636,9 +676,10 @@ struct Test_is_same_attribute_functor
           <Map1, Map2,
           typename Map1::template Attribute_type<i>::type,
           typename Map2::template Attribute_type<i>::type,
-          sizeof(has_point<typename Map1::template Attribute_type<i>::type>(NULL))==sizeof(char),
-          sizeof(has_point<typename Map2::template Attribute_type<i>::type>(NULL))==sizeof(char),
-          i>::run(dh1, dh2);
+          Is_attribute_has_point<typename Map1::template
+          Attribute_type<i>::type>::value,
+          Is_attribute_has_point<typename Map2::template
+          Attribute_type<i>::type>::value, i>::run(dh1, dh2);
     }
   }
   static bool value;

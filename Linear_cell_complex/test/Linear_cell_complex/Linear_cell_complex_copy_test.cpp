@@ -160,6 +160,28 @@ typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_items_4> Map8;
 // Point_4+int, int, int, int, double
 typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_max_items_4> Map9;
 
+struct Converter_map9_points_into_map5_points
+{
+  Map5::Attribute_handle<0>::type operator()
+  (const Map9&, Map5& map2, Map9::Dart_const_handle dh1,
+   Map5::Dart_handle dh2) const
+  {
+    CGAL_assertion( dh1->attribute<0>()!=NULL );
+
+    Map5::Attribute_handle<0>::type
+      res = dh2->attribute<0>();
+    if ( res==NULL )
+    {
+      res = map2.create_attribute<0>();
+    }
+
+    const Map9::Point & p = dh1->attribute<0>()->point();
+    res->point() = Map5::Point(p[0],p[1],p[2]);
+    return res;
+  }
+};
+
+
 /*
 template<typename Map>
 typename Map::Dart_handle getRandomDart(Map& map)
@@ -172,6 +194,21 @@ typename Map::Dart_handle getRandomDart(Map& map)
 }
 */
 
+template<typename Attr, typename Info=typename Attr::Info>
+struct SetInfoIfNonVoid
+{
+  static void run(Attr&attr, int nb)
+  {
+    attr.info()=nb;
+  }
+};
+template<typename Attr>
+struct SetInfoIfNonVoid<Attr, void>
+{
+  static void run(Attr&, int)
+  {}
+};
+
 template<typename Map, unsigned int i, typename Attr=typename Map::
          template Attribute_type<i>::type>
 struct CreateAttributes
@@ -183,38 +220,26 @@ struct CreateAttributes
         itend=map.darts().end(); it!=itend; ++it)
     {
       if ( it->template attribute<i>()==NULL )
+      {
         map.template set_attribute<i>
-            (it, map.template create_attribute<i>(++nb));
+            (it, map.template create_attribute<i>());
+        SetInfoIfNonVoid<Attr>::run(*(it->template attribute<i>()), ++nb);
+      }
     }
   }
-};
-
-template<typename Attr, typename Info=typename Attr::Info>
-struct SetInfoIfNonVoid
-{
-  static void run(Attr&attr, int&nb)
-  {
-    if ( attr.info()==0 ) attr.info()=(++nb);
-  }
-};
-template<typename Attr>
-struct SetInfoIfNonVoid<Attr, void>
-{
-  static void run(Attr&attr, int&nb)
-  {}
 };
 
 template<typename Map, typename Attr>
 struct CreateAttributes<Map, 0, Attr>
 {
-  static void run(Map& map)
+  static void run(Map& amap)
   {
     int nb=0;
-    for(typename Map::Dart_range::iterator it=map.darts().begin(),
-        itend=map.darts().end(); it!=itend; ++it)
-    {
-      SetInfoIfNonVoid<Attr>::run(*it->template attribute<0>(), nb);
-    }
+    for ( typename Map::template Attribute_range<0>::type::iterator
+          it=amap.template attributes<0>().begin(),
+          itend=amap.template attributes<0>().end();
+          it!=itend; ++it )
+      SetInfoIfNonVoid<Attr>::run(*it, ++nb);
   }
 };
 
@@ -227,6 +252,22 @@ struct CreateAttributes<Map, i, CGAL::Void>
 
 template<typename Map>
 struct CreateAttributes<Map, 0, CGAL::Void>
+{
+  static void run(Map&)
+  {}
+};
+
+template<typename Map, unsigned int i, typename Attr=typename Map::
+         template Attribute_type<i>::type>
+struct DisplayNumberOfAttribs
+{
+  static void run(Map& amap)
+  {
+    std::cout<<i<<"-attributes="<<amap.template number_of_attributes<i>()<<"  ";
+  }
+};
+template<typename Map, unsigned int i>
+struct DisplayNumberOfAttribs<Map,i,CGAL::Void>
 {
   static void run(Map&)
   {}
@@ -592,6 +633,15 @@ bool testCopy()
             map9b.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
             map9b.number_of_attributes<3>()>=map9.number_of_attributes<3>() );
     assert( map9b.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9b) );
+
+    Converter_map9_points_into_map5_points mypointconverter;
+
+    Map5 map9c(map9, myconverters, mypointconverter); assert(map9a.is_valid());
+    if ( map9c.is_isomorphic_to(map9) ) { assert(false); return false; }
+    assert( map9c.number_of_attributes<0>()>=map9.number_of_attributes<0>() &&
+            map9c.number_of_attributes<2>()>=map9.number_of_attributes<2>() &&
+            map9c.number_of_attributes<3>()>=map9.number_of_attributes<3>() );
+    assert( map9c.is_isomorphic_to(map9)==map9.is_isomorphic_to(map9c) );
 
     CGAL::Cast_converter_cmap_attributes<Map5,Map9,0> cb0;
     CGAL::Default_converter_cmap_attributes<Map5,Map9,1> cb1;

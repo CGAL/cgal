@@ -158,8 +158,9 @@ namespace CGAL {
      *  @param amap the combinatorial map to copy.
      *  @post *this is valid.
      */
-    template <typename CMap2, typename Converters>
-    void copy(const CMap2& amap, const Converters& converters)
+    template <typename CMap2, typename Converters, typename Pointconverter>
+    void copy(const CMap2& amap, const Converters& converters,
+              const Pointconverter& pointconverter)
     {
       this->clear();
 
@@ -223,10 +224,11 @@ namespace CGAL {
            ++dartmap_iter)
       {
         Helper::template Foreach_enabled_attributes
-          < internal::Copy_attributes_functor <CMap2, Refs, Converters> >::
+          < internal::Copy_attributes_functor <CMap2, Refs, Converters,
+            Pointconverter> >::
           run(&amap, static_cast<Refs*>(this),
               dartmap_iter->first, dartmap_iter->second,
-              converters);
+              converters, pointconverter);
       }
 
       CGAL_assertion (is_valid () == 1);
@@ -236,7 +238,19 @@ namespace CGAL {
     void copy(const CMap2& amap)
     {
       CGAL::cpp11::tuple<> converters;
-      return copy< CMap2, CGAL::cpp11::tuple<> >(amap, converters);
+      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
+      return copy< CMap2, CGAL::cpp11::tuple<>,
+          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >
+          (amap, converters, pointconverter);
+    }
+
+    template <typename CMap2, typename Converters>
+    void copy(const CMap2& amap, const Converters& converters)
+    {
+      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
+      return copy< CMap2, Converters,
+          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >
+          (amap, converters, pointconverter);
     }
 
     // Copy constructor from a map having exactly the same type.
@@ -252,6 +266,13 @@ namespace CGAL {
     template <typename CMap2, typename Converters>
     Combinatorial_map_base(const CMap2& amap, Converters& converters)
     { copy<CMap2,Converters>(amap, converters); }
+
+    // "Copy constructor" from a map having different type.
+    template <typename CMap2, typename Converters, typename Pointconverter>
+    Combinatorial_map_base(const CMap2& amap, Converters& converters,
+                           const Pointconverter& pointconverter)
+    { copy<CMap2,Converters, Pointconverter>
+          (amap, converters, pointconverter); }
 
     /** Affectation operation. Copies one map to the other.
      * @param amap a combinatorial map.
@@ -3513,8 +3534,15 @@ namespace CGAL {
     { Base::template copy<CMap>(amap); }
 
     template < class CMap, typename Converters >
-    Combinatorial_map(const CMap & amap, Converters& converters)
-    { Base::template copy<CMap, Converters>(amap, converters); }
+    Combinatorial_map(const CMap & amap, const Converters& converters)
+    { Base::template copy<CMap, Converters>
+          (amap, converters); }
+
+    template < class CMap, typename Converters, typename Pointconverter >
+    Combinatorial_map(const CMap & amap, const Converters& converters,
+                      const Pointconverter& pointconverter)
+    { Base::template copy<CMap, Converters, Pointconverter>
+          (amap, converters, pointconverter); }
   };
 
 } // namespace CGAL
