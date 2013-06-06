@@ -53,6 +53,9 @@ It stores the iterator and the "erase counter" value of the pointee when the
 `CC_safe_handle` instance was created.
 It can only be used when the compact container strategy uses an erase counter.
 
+\tparam CC_iterator is the type of the embedded `Compact_container` 
+                    (or `Concurrent_compact_container`) iterator
+
 \sa `Compact_container` 
 \sa `Concurrent_compact_container` 
 \sa `CompactContainerStrategy` 
