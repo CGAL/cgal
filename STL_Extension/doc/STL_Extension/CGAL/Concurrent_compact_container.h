@@ -125,7 +125,7 @@ value `CGAL_ALLOCATOR(T)`.
 
 The parameter `Strategy` allows the user to specify a static class which has
 to match the requirements of the concept `CompactContainerStrategy`. This 
-parameter has the default value `CC_strategy_base<T>`.
+parameter has the default value `Compact_container_strategy_base<T>`.
 
 */
 
