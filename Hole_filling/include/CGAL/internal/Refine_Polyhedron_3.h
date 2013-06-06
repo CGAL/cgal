@@ -37,12 +37,12 @@ private:
       //}
 
       // this is the part which makes is_valid not valid
-      for(Halfedge_iterator hb = poly.halfedges_begin(); hb != poly.halfedges_end(); ++hb) {
-        if(hb->vertex() == hb->next()->vertex())
-        {
-          std::cout << "before flip not valid" << std::endl;
-        }
-      }
+      //for(Halfedge_iterator hb = poly.halfedges_begin(); hb != poly.halfedges_end(); ++hb) {
+      //  if(hb->vertex() == hb->next()->vertex())
+      //  {
+      //    std::cout << "before flip not valid" << std::endl;
+      //  }
+      //}
 
       poly.flip_edge(h);
 
@@ -51,12 +51,12 @@ private:
       //}
 
       // this is the part which makes is_valid not valid
-      for(Halfedge_iterator hb = poly.halfedges_begin(); hb != poly.halfedges_end(); ++hb) {
-        if(hb->vertex() == hb->next()->vertex())
-        {
-          std::cout << "after flip not valid" << std::endl;
-        }
-      }
+      //for(Halfedge_iterator hb = poly.halfedges_begin(); hb != poly.halfedges_end(); ++hb) {
+      //  if(hb->vertex() == hb->next()->vertex())
+      //  {
+      //    std::cout << "after flip not valid" << std::endl;
+      //  }
+      //}
 
 
       return true;

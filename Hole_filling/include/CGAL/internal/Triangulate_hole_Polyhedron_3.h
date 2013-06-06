@@ -141,7 +141,11 @@ class Triangulate_hole_Polyhedron_3{
     Halfedge_handle h, g;
     int n = P.size() -1; // because the first and last point are equal
     if(i+2 == k){
-      h = poly.add_facet_to_border(P[i]->prev(), P[i+1]);
+      if(last)
+      { h = poly.fill_hole(P[i+1]); }
+      else 
+      { h = poly.add_facet_to_border(P[i]->prev(), P[i+1]); }
+      
       assert(h->facet() != Facet_handle());
       *out++ = h->facet();
       return h->opposite();
@@ -206,7 +210,7 @@ public:
 
     int n = P.size() - 1; // because the first and last point are equal
 
-if(true) {
+if(false) {
     add_facets_2(P, lambda, 0, n-1, poly, out);
 }
 else {

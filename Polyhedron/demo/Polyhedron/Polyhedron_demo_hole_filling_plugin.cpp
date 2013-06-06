@@ -58,6 +58,7 @@ public:
   Scene_polylines_collection(Scene_polyhedron_item* poly_item, QMainWindow* mainWindow)
     : poly_item(poly_item) 
   {
+    get_holes();
     active_hole = polyline_data_list.end();
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -66,12 +67,9 @@ public:
     mainWindow->installEventFilter(this);
 
     connect(poly_item, SIGNAL(itemChanged()), this, SLOT(poly_item_changed())); 
-    connect(poly_item, SIGNAL(aboutToBeDestroyed()), this, SLOT(poly_item_destroyed())); 
   }
   ~Scene_polylines_collection() {
-    for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
-      delete it->polyline;
-    }
+    clear();
   }
   bool isFinite() const { return true; }
   bool isEmpty() const { return polyline_data_list.empty(); }
@@ -109,41 +107,6 @@ public:
     }
   }
 
-  // find holes in polyhedron and construct a internal polyline for each
-  void get_holes(Polyhedron& poly) {
-    typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
-    typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
-
-    clear();
-
-    for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it)
-    { it->id() = 0; }
-
-    int counter = 0;
-    for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
-      if(it->is_border() && it->id() == 0){
-        polyline_data_list.push_back(Polyline_data());
-        Polyline_data& polyline_data = polyline_data_list.back();
-        polyline_data.polyline = new Scene_polylines_item();
-        polyline_data.polyline->polylines.push_back(Scene_polylines_item::Polyline());
-        polyline_data.halfedge = it;
-
-        qglviewer::Vec center;
-        int counter = 0;
-        Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
-        do {
-          CGAL_assertion(hf_around_facet->id() == 0);
-          hf_around_facet->id() = 1;
-          const Polyhedron::Traits::Point_3& p = hf_around_facet->vertex()->point();          
-          polyline_data.polyline->polylines.front().push_back(p);
-          center += qglviewer::Vec(p.x(), p.y(), p.z());
-          ++counter;
-        } while(++hf_around_facet != it->facet_begin());
-        polyline_data.polyline->polylines.front().push_back(hf_around_facet->vertex()->point());
-        polyline_data.position = center / counter;
-      }
-    }
-  }
   // filter events for selecting / activating holes with mouse input
   bool eventFilter(QObject* /*target*/, QEvent *event)
   {
@@ -189,6 +152,42 @@ public:
   }
 
 private:
+  // find holes in polyhedron and construct a internal polyline for each
+  void get_holes() {
+    typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
+    typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
+
+    clear();
+
+    Polyhedron& poly = *poly_item->polyhedron();
+    for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it)
+    { it->id() = 0; }
+
+    int counter = 0;
+    for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
+      if(it->is_border() && it->id() == 0){
+        polyline_data_list.push_back(Polyline_data());
+        Polyline_data& polyline_data = polyline_data_list.back();
+        polyline_data.polyline = new Scene_polylines_item();
+        polyline_data.polyline->polylines.push_back(Scene_polylines_item::Polyline());
+        polyline_data.halfedge = it;
+
+        qglviewer::Vec center;
+        int counter = 0;
+        Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
+        do {
+          CGAL_assertion(hf_around_facet->id() == 0);
+          hf_around_facet->id() = 1;
+          const Polyhedron::Traits::Point_3& p = hf_around_facet->vertex()->point();          
+          polyline_data.polyline->polylines.front().push_back(p);
+          center += qglviewer::Vec(p.x(), p.y(), p.z());
+          ++counter;
+        } while(++hf_around_facet != it->facet_begin());
+        polyline_data.polyline->polylines.front().push_back(hf_around_facet->vertex()->point());
+        polyline_data.position = center / counter;
+      }
+    }
+  }
   // finds closest polyline from polyline_data_list and makes it active_hole
   bool activate_closest_hole(int x, int y) {
     if(polyline_data_list.empty()) { return false; }
@@ -233,15 +232,12 @@ public:
   Scene_polyhedron_item* poly_item;
   Polyline_data_list polyline_data_list;
 
-protected slots:
+public slots:
   void poly_item_changed() {
-    get_holes(*poly_item->polyhedron());
+    get_holes();
     emit itemChanged();
   }
 
-  void poly_item_destroyed() {
-    std::cout << "why not working?" << std::endl;
-  }
 }; // end class Scene_edges_item
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -276,6 +272,16 @@ public:
     return scene_item;
   }
 
+  Scene_polylines_collection* get_polylines_collection(Scene_polyhedron_item* poly_item) {
+    // did not use a map to assoc Scene_polyhedron_item with Scene_polylines_collection to prevent crowded code
+    for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+      Scene_polylines_collection* polylines_collection = qobject_cast<Scene_polylines_collection*>(scene->item(i));
+      if(polylines_collection && polylines_collection->poly_item == poly_item) 
+      { return polylines_collection; }
+    }
+    return NULL;
+  }
+
 public slots:
   void hole_filling_action() { dock_widget->show(); }
   void on_Fill_all_holes_button();
@@ -283,6 +289,7 @@ public slots:
   void on_Fill_selected_holes_button();
   void item_about_to_be_destroyed(Scene_item*);
   void dock_widget_visibility_changed(bool visible);
+  void item_changed_polylines_collection();
 
 private:
   struct Nop_functor {
@@ -298,9 +305,6 @@ private:
 
   QDockWidget* dock_widget;
   Ui::HoleFilling* ui_widget;
-
-  typedef std::map<Scene_polyhedron_item*, Scene_polylines_collection*> Polyhedron_item_hole_map;
-  Polyhedron_item_hole_map polyhedron_item_hole_map;
 
   void fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
 }; // end Polyhedron_demo_hole_filling_plugin
@@ -333,38 +337,23 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*))); }
 }
 
-// removes items from polyhedron_item_hole_map
-// if item is Scene_polyhedron_item then takes its Scene_polylines_collection and erases it from scene 
-// (this will cause another call to this handler)
-// else (item is Scene_polylines_collection) removes it from the map
 void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(Scene_item* scene_item) {
   Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene_item);
   if(poly_item) {
-    Polyhedron_item_hole_map::iterator hole_it = polyhedron_item_hole_map.find(poly_item);
-    if(hole_it != polyhedron_item_hole_map.end()) {
-      scene->erase( scene->item_id(hole_it->second) );
-    }
-  }
-
-  Scene_polylines_collection* polyline_item = qobject_cast<Scene_polylines_collection*>(scene_item);
-  if(polyline_item) {
-    polyhedron_item_hole_map.erase(polyline_item->poly_item);
+    scene->erase( scene->item_id( get_polylines_collection(poly_item) ) );
   }
 }
 // removes Scene_polylines_collection items on visibility = false
 void Polyhedron_demo_hole_filling_plugin::dock_widget_visibility_changed(bool visible)
 {
   if(visible) { return; }
-
+  // remove all Scene_polylines_collection items
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
     i < end; ++i)
   {
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
-    if(poly_item) {
-      Polyhedron_item_hole_map::iterator hole_it = polyhedron_item_hole_map.find(poly_item);
-      if(hole_it != polyhedron_item_hole_map.end()) {
-        scene->erase( scene->item_id(hole_it->second) );
-      }
+    Scene_polylines_collection* polylines_collection = qobject_cast<Scene_polylines_collection*>(scene->item(i));
+    if(polylines_collection) {
+      scene->erase( scene->item_id(polylines_collection) );
     }
   }
 }
@@ -379,12 +368,13 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
     return;
   }
 
-  if(polyhedron_item_hole_map.find(poly_item) != polyhedron_item_hole_map.end()) {
+  if(get_polylines_collection(poly_item)) {
     print_message("Error: selected polyhedron item already has an associated hole item!");
     return;
   }
+
   Scene_polylines_collection* polylines_collection = new Scene_polylines_collection(poly_item, mw);
-  polylines_collection->get_holes(*poly_item->polyhedron());
+  connect(polylines_collection, SIGNAL(itemChanged()), this, SLOT(item_changed_polylines_collection()));
 
   if(polylines_collection->polyline_data_list.empty()) {
     print_message("There is no holes in selected polyhedron!");
@@ -393,7 +383,6 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
   }
   else {
     poly_item->setFlatMode(); // for better visualization
-    polyhedron_item_hole_map[poly_item] = polylines_collection;
     int item_id = scene->addItem(polylines_collection);
     scene->setSelectedItem(item_id);
     polylines_collection->setName(tr("%1-hole visualizer").arg(poly_item->name()));
@@ -414,14 +403,10 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
     it != polyline_item->selected_holes.end(); ++it) {
       fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge);
   }
-  polyline_item->get_holes(*polyline_item->poly_item->polyhedron());
-
   scene->itemChanged(polyline_item->poly_item);
-  if(polyline_item->polyline_data_list.empty()) {
-    scene->erase( scene->item_id(polyline_item) );
-  }
-  else { scene->itemChanged(polyline_item); }
+  polyline_item->poly_item_changed();
 };
+
 // fills all holes and removes associated Scene_polylines_collection if any
 void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
@@ -475,13 +460,8 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   }
   else {
     scene->itemChanged(poly_item);
-  }
-  // remove assoc Scene_polylines_collection item if any
-  if(!create_new) {
-    Polyhedron_item_hole_map::iterator hole_it = polyhedron_item_hole_map.find(poly_item);
-    if(hole_it != polyhedron_item_hole_map.end()) {
-      scene->erase( scene->item_id(hole_it->second) );
-    }
+    Scene_polylines_collection* polylines_collection = get_polylines_collection(poly_item);
+    if(polylines_collection) { polylines_collection->poly_item_changed();}
   }
 }
 // helper function for filling holes
@@ -509,6 +489,12 @@ void Polyhedron_demo_hole_filling_plugin::fill
   }
 }
 
+void Polyhedron_demo_hole_filling_plugin::item_changed_polylines_collection() {
+  Scene_polylines_collection* polylines_collection = qobject_cast<Scene_polylines_collection*>(this->sender());
+  if(polylines_collection && polylines_collection->polyline_data_list.empty()) {
+    scene->erase( scene->item_id(polylines_collection));
+  }
+}
 Q_EXPORT_PLUGIN2(Polyhedron_demo_hole_filling_plugin, Polyhedron_demo_hole_filling_plugin)
 
 #include "Polyhedron_demo_hole_filling_plugin.moc"
