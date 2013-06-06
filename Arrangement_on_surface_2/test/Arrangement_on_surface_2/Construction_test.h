@@ -8,6 +8,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 
 #include "utils.h"
@@ -142,6 +143,24 @@ protected:
   // A predicate that verifies the results
   bool is_interior(Vertex_const_handle vh);
   bool are_same_results();
+
+  typedef typename Geom_traits::Left_side_category      Left_side_category;
+  typedef typename Geom_traits::Bottom_side_category    Bottom_side_category;
+  typedef typename Geom_traits::Top_side_category       Top_side_category;
+  typedef typename Geom_traits::Right_side_category     Right_side_category;
+  typedef typename
+  CGAL::Arr_are_all_sides_non_open_tag<Left_side_category,
+                                       Bottom_side_category, 
+                                       Top_side_category,
+                                       Right_side_category>::result
+    Arr_are_all_sides_non_open_category;
+  
+  bool is_open() const
+  { return is_open(Arr_are_all_sides_non_open_category()); }
+
+  bool is_open(CGAL::Arr_all_sides_non_open_tag) const { return false; }
+
+  bool is_open(CGAL::Arr_not_all_sides_non_open_tag) const { return true; }
 };
 
 /*! Constructor */
@@ -242,7 +261,7 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
     std::copy(curves_res.begin(), xcit,
               std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));  
   }
-  
+
   Curve_equal curve_eq(m_geom_traits);
   if (! std::equal(curves_res.begin(), xcit, m_xcurves.begin(), curve_eq))
     return false;
@@ -253,9 +272,12 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
       std::cout << "Face: # inner " << fit->number_of_inner_ccbs()
                   << ", # outer: " << fit->number_of_outer_ccbs()
                   << std::endl;
-    if ((fit->number_of_inner_ccbs() != 0) &&
-        (fit->number_of_outer_ccbs() != 0))
-      return false;
+    if (is_open()) {
+      if (fit->number_of_outer_ccbs() != 1) return false;
+    }
+    else {
+      if (fit->number_of_outer_ccbs() != 0) return false;
+    }
   }
   else {
     if (m_faces.empty()) {
