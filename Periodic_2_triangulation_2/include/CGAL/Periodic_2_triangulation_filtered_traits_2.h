@@ -1,4 +1,4 @@
-// Copyright (c) 1997   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2013 Nico Kruithof (The Netherlands)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under

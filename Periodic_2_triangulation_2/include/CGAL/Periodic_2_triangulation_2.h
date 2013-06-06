@@ -1,3 +1,5 @@
+// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// All rights reserved.                                                                                                                                                                                        
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.

@@ -1,3 +1,5 @@
+// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// All rights reserved.
 
 /*!
 \ingroup PkgPeriodic2Triangulation2Concepts

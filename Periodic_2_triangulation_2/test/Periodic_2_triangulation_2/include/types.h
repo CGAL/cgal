@@ -1,3 +1,6 @@
+// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// All rights reserved.
+
 #ifndef P2T2_UNIT_TEST_TYPES_H
 #define P2T2_UNIT_TEST_TYPES_H
 

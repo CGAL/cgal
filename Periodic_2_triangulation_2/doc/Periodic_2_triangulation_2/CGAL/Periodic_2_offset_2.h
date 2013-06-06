@@ -1,3 +1,6 @@
+// Copyright (c) 2013 Nico Kruithof (The Netherlands)
+// All rights reserved.
+
 namespace CGAL
 {
 
