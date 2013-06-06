@@ -312,14 +312,14 @@ struct Nth_of_tuple_property_map
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
   /// Access a property map element.
   /// @param tuple a key whose Nth item is accessed
-  reference operator[](key_type& tuple) const { return get<N>(tuple); }
+  reference operator[](key_type& tuple) const { return tuple.template get<N>(); }
 
   typedef Nth_of_tuple_property_map<N,Tuple> Self;
   /// \name Put/get free functions
   /// @{
-  friend const value_type& get(const Self&,const key_type& k) {return get<N>(k);}
-  friend         reference get(const Self&,      key_type& k) {return get<N>(k);}
-  friend void put(const Self&,key_type& k, const value_type& v) {boost::get<N>(k)=v;}
+  friend const value_type& get(const Self&,const key_type& k) {return k.template get<N>();}
+  friend         reference get(const Self&,      key_type& k) {return k.template get<N>();}
+  friend void put(const Self&,key_type& k, const value_type& v) {k.template get<N>()=v;}
   /// @}
 };
 
