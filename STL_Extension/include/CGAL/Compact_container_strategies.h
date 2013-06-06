@@ -65,6 +65,44 @@ public:
   }
 };
 
+// CC_safe_handle is a helper that store a CC handle and its erase 
+// counter value (value when the CC_safe_handle instance was created).
+// The is_zombie() function allows to know if the pointee was erased since.
+template <typename CC_iterator>
+class CC_safe_handle
+{
+  typedef typename CC_iterator::Strategy Strategy;
+
+public:
+  CC_safe_handle(CC_iterator handle)
+    : m_handle(handle)
+    , m_erase_counter_value(Strategy::get_erase_counter(*handle))
+  {
+    CGAL_static_assertion(
+      (boost::is_same<Strategy::Uses_erase_counter, Tag_true>::value));
+  }
+
+  bool is_zombie() const
+  {
+    return Strategy::get_erase_counter(*m_handle) != m_erase_counter_value;
+  }
+
+  CC_iterator get_cc_handle() const
+  {
+    return m_handle;
+  }
+
+protected:
+  CC_iterator       m_handle;
+  unsigned int    m_erase_counter_value;
+};
+
+template <typename CC_iterator>
+CC_safe_handle<CC_iterator> make_cc_safe_handle(CC_iterator handle)
+{
+  return CC_safe_handle<CC_iterator>(handle);
+}
+
 } //namespace CGAL
 
 #endif // CGAL_COMPACT_CONTAINER_STRATEGIES_H

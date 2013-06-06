@@ -85,9 +85,9 @@ class Cell_to_refine_is_not_zombie
 public:
   Cell_to_refine_is_not_zombie() {}
 
-  bool operator()(const std::pair<Cell_handle, unsigned int> &c) const
+  bool operator()(const CC_safe_handle<Cell_handle> &c) const
   {
-    return (c.first->get_erase_counter() == c.second);
+    return !c.is_zombie();
   }
 };
 
@@ -115,18 +115,18 @@ protected:
 
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-  std::pair<Cell_handle, unsigned int>
+  CC_safe_handle<Cell_handle>
   from_cell_to_refinement_queue_element(Cell_handle ch) const
   {
-    return std::make_pair(ch, ch->get_erase_counter());
+    return make_cc_safe_handle(ch);
   }
 
 public:
   template<typename Container_element>
   Cell_handle extract_element_from_container_value(const Container_element &e) const
   {
-    // We get the Cell_handle from the pair
-    return e.first;
+    // We get the Cell_handle from the safe handle
+    return e.get_cc_handle();
   }
 
 #else
@@ -167,18 +167,18 @@ protected:
     m_last_vertex_index.local() = i;
   }
 
-  std::pair<Cell_handle, unsigned int>
+  CC_safe_handle<Cell_handle>
   from_cell_to_refinement_queue_element(Cell_handle ch) const
   {
-    return std::make_pair(ch, ch->get_erase_counter());
+    return make_cc_safe_handle(ch);
   }
 
 public:
   template<typename Container_element>
   Cell_handle extract_element_from_container_value(const Container_element &e) const
   {
-    // We get the Cell_handle from the pair
-    return e.first;
+    // We get the Cell_handle from the safe handle
+    return e.get_cc_handle();
   }
 
 protected:
@@ -216,7 +216,7 @@ template<class Tr,
           Meshes::Filtered_multimap_container
 # endif
           <
-            std::pair<typename Tr::Cell_handle, unsigned int>,
+            CC_safe_handle<typename Tr::Cell_handle>,
             typename Criteria::Cell_quality,
             Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
             Concurrency_tag
@@ -225,7 +225,7 @@ template<class Tr,
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
           <
-            std::pair<typename Tr::Cell_handle, unsigned int>,
+            CC_safe_handle<typename Tr::Cell_handle>,
             typename Criteria::Cell_quality,
             Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
             Concurrency_tag
@@ -233,7 +233,7 @@ template<class Tr,
 # elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
           Meshes::Filtered_multimap_container
           <
-            std::pair<typename Tr::Cell_handle, unsigned int>,
+            CC_safe_handle<typename Tr::Cell_handle>,
             typename Criteria::Cell_quality,
             Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
             Concurrency_tag
@@ -251,7 +251,7 @@ template<class Tr,
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
           <
-            std::pair<typename Tr::Cell_handle, unsigned int>,
+            CC_safe_handle<typename Tr::Cell_handle>,
             typename Criteria::Cell_quality,
             Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
             Concurrency_tag
@@ -259,7 +259,7 @@ template<class Tr,
 # elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
           Meshes::Filtered_multimap_container
           <
-            std::pair<typename Tr::Cell_handle, unsigned int>,
+            CC_safe_handle<typename Tr::Cell_handle>,
             typename Criteria::Cell_quality,
             Cell_to_refine_is_not_zombie<typename Tr::Cell_handle>,
             Concurrency_tag
