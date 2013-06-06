@@ -141,7 +141,7 @@ typedef Polyhedron::Traits::Point_3      Point_3;
 #include <boost/function_output_iterator.hpp>
 struct Nop_functor {
   template<class T>
-  void operator()(const T& t) const {}
+  void operator()(const T& /* t */) const {}
 };
 typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
