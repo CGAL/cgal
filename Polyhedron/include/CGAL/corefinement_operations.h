@@ -214,11 +214,12 @@ public:
   * Function object to compute the decomposition of the space induced by two polyhedra.
   * @tparam Polyhedron must be an instantiation of  CGAL::Polyhedron_3<Traits>.
   * @tparam Kernel must be a CGAL Kernel compatible with the underlying kernel of Polyhedron.
+  * @tparam Output_polyhedron is a polyhedron type used as output. `Kernel` must be compatible with the underlying kernel of `Output_polyhedron`.
   */
-template <class Polyhedron,class Kernel=typename Polyhedron::Traits::Kernel>
+template <class Polyhedron,class Kernel=typename Polyhedron::Traits::Kernel, class Output_polyhedron=Polyhedron>
 class Polyhedron_corefinement
 {
-  typedef internal::Import_volume_as_polyhedron<typename Polyhedron::HalfedgeDS> Volume_import_modifier;
+  typedef internal::Import_volume_as_polyhedron<typename Output_polyhedron::HalfedgeDS> Volume_import_modifier;
   
 public:
   /** Enumeration of the different feature tags, listing all kind of space decomposition the functor can compute given two input polyhedra P and Q.*/
@@ -311,7 +312,7 @@ public:
       if ( features&Decomposition_tag )
       {
         Volume_import_modifier modifier(final_map,it);
-        Polyhedron* new_poly=new Polyhedron();
+        Output_polyhedron* new_poly=new Output_polyhedron();
         new_poly->delegate(modifier);
         *poly_output++ = std::make_pair( new_poly,static_cast<int>(Decomposition_tag) );
       }
@@ -319,7 +320,7 @@ public:
       if ( features&Parts_of_P_tag && info.inside.find(&P)!=info.inside.end() )
       {
         Volume_import_modifier modifier(final_map,it);
-        Polyhedron* new_poly=new Polyhedron();
+        Output_polyhedron* new_poly=new Output_polyhedron();
         new_poly->delegate(modifier);
         *poly_output++ = std::make_pair( new_poly,static_cast<int>(Parts_of_P_tag) );
       }
@@ -327,7 +328,7 @@ public:
       if ( features&Parts_of_Q_tag && info.inside.find(&Q)!=info.inside.end() )
       {
         Volume_import_modifier modifier(final_map,it);
-        Polyhedron* new_poly=new Polyhedron();
+        Output_polyhedron* new_poly=new Output_polyhedron();
         new_poly->delegate(modifier);
         *poly_output++ = std::make_pair( new_poly,static_cast<int>(Parts_of_Q_tag) );
       }
@@ -336,7 +337,7 @@ public:
     if (!intersection.empty())
     {
       Volume_import_modifier modifier(final_map,intersection.begin(),intersection.end());
-      Polyhedron* new_poly=new Polyhedron();
+      Output_polyhedron* new_poly=new Output_polyhedron();
       new_poly->delegate(modifier);
       *poly_output++=std::make_pair( new_poly,static_cast<int>(Intersection_tag) );
     }
@@ -344,7 +345,7 @@ public:
     if (!P_minus_Q.empty())
     {
       Volume_import_modifier modifier(final_map,P_minus_Q.begin(),P_minus_Q.end());
-      Polyhedron* new_poly=new Polyhedron();
+      Output_polyhedron* new_poly=new Output_polyhedron();
       new_poly->delegate(modifier);
       *poly_output++=std::make_pair( new_poly,static_cast<int>(P_minus_Q_tag) );
     }
@@ -352,7 +353,7 @@ public:
     if (!Q_minus_P.empty())
     {
       Volume_import_modifier modifier(final_map,Q_minus_P.begin(),Q_minus_P.end());
-      Polyhedron* new_poly=new Polyhedron();
+      Output_polyhedron* new_poly=new Output_polyhedron();
       new_poly->delegate(modifier);
       *poly_output++=std::make_pair( new_poly,static_cast<int>(Q_minus_P_tag) );
     }
@@ -360,7 +361,7 @@ public:
     if (!union_.empty())
     {
       Volume_import_modifier modifier(final_map,union_.begin(),union_.end(),true);
-      Polyhedron* new_poly=new Polyhedron();
+      Output_polyhedron* new_poly=new Output_polyhedron();
       new_poly->delegate(modifier);
       *poly_output++=std::make_pair( new_poly,static_cast<int>(Join_tag) );
     }
