@@ -41,9 +41,9 @@ void write_matrix_sparse(std::ostream &stream, const SparseMatrix& m)
 {
   stream << m.rows() << " " << m.cols() << std::endl;
 
-  for(SparseMatrix::Index r = 0; r < m.rows(); ++r) 
+  for(typename SparseMatrix::Index r = 0; r < m.rows(); ++r) 
   {
-    for(SparseMatrix::Index c = 0; c < m.cols(); ++c) 
+    for(typename SparseMatrix::Index c = 0; c < m.cols(); ++c) 
     {
       stream << m.coeff(r,c) << " ";
     }
@@ -56,9 +56,9 @@ void write_matrix(std::ostream &stream, const Matrix& m)
 {
   stream << m.rows() << " " << m.cols() << std::endl;
 
-  for(Matrix::Index r = 0; r < m.rows(); ++r) 
+  for(typename Matrix::Index r = 0; r < m.rows(); ++r) 
   {
-    for(Matrix::Index c = 0; c < m.cols(); ++c) 
+    for(typename Matrix::Index c = 0; c < m.cols(); ++c) 
     {
       stream << m(r,c) << " ";
     }
@@ -266,7 +266,7 @@ void fair(Polyhedron& poly,
   )
 {
   typedef CGAL::Fairing_cotangent_weight<Polyhedron> Weight_calculator;
-  fair<Sparse_linear_solver, Weight_calculator, Polyhedron>(poly, vb, ve, Weight_calculator());
+  fair<SparseLinearSolver, Weight_calculator, Polyhedron>(poly, vb, ve, Weight_calculator());
 }
 
 //use default SparseLinearSolver and WeightCalculator

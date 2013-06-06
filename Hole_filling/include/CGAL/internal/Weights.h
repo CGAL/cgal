@@ -23,6 +23,8 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/Kernel/global_functions_3.h>
+
 namespace CGAL {
 namespace internal {
 /////////////////////////////////////////////////////////////////////////////////////////

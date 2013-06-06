@@ -6,6 +6,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/trace.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL {
 namespace internal {
@@ -181,11 +182,11 @@ private:
     const std::set<Facet_handle>& interior_map,
     std::map<Vertex_handle, double>& scale_attribute) 
   {
-    for(std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
+    for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
       Halfedge_around_facet_circulator circ((*f_it)->facet_begin()), done(circ);
       do {
         Vertex_handle v = circ->vertex();
-        std::pair<std::map<Vertex_handle, double>::iterator, bool> v_insert 
+        std::pair<typename std::map<Vertex_handle, double>::iterator, bool> v_insert 
           = scale_attribute.insert(std::make_pair(v, 0));
         if(!v_insert.second) { continue; } // already calculated
         v_insert.first->second = average_length(v, interior_map);
