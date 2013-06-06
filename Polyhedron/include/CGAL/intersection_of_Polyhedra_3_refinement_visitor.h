@@ -26,6 +26,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Default.h>
 
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h> 
 
@@ -614,12 +615,17 @@ struct Default_node_vertex_visitor{
 };
 
 template< class Polyhedron,
-          class Kernel=typename Polyhedron::Traits::Kernel,
-          class EdgeMarkPropertyMap=Dummy_edge_mark_property_map<Polyhedron>, 
-          class NestedFacetConstruct=Default_facet_construct<Polyhedron >,
-          class NewNodeVertexVisitor=Default_node_vertex_visitor<Polyhedron> 
+          class Kernel_=Default,
+          class EdgeMarkPropertyMap_=Default,
+          class NestedFacetConstruct_=Default,
+          class NewNodeVertexVisitor_=Default
         >
 class Node_visitor_refine_polyhedra{
+//Default typedefs
+  typedef typename Default::Get<Kernel_, typename Polyhedron::Traits::Kernel>::type Kernel;
+  typedef typename Default::Get<EdgeMarkPropertyMap_, Dummy_edge_mark_property_map<Polyhedron> >::type EdgeMarkPropertyMap;
+  typedef typename Default::Get<NestedFacetConstruct_, Default_facet_construct<Polyhedron > >::type NestedFacetConstruct;
+  typedef typename Default::Get<NewNodeVertexVisitor_, Default_node_vertex_visitor<Polyhedron> >::type NewNodeVertexVisitor;
 //typedefs  
   typedef typename Polyhedron::Halfedge_handle                         Halfedge_handle;
   typedef typename Polyhedron::Halfedge_const_handle                   Halfedge_const_handle;
@@ -636,6 +642,7 @@ class Node_visitor_refine_polyhedra{
   typedef CGAL::Triangulation_data_structure_2<Vbi,Fb>                  TDS_2;
   typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel,TDS_2,CGAL::No_intersection_tag> CDT;  //DO WE NEED DELAUNAY????
   #else
+  /// \todo change this, use it only if not already exact
   typedef CGAL::Exact_predicates_exact_constructions_kernel             Exact_kernel;
   typedef CGAL::Triangulation_vertex_base_with_info_2<int,Exact_kernel> Vbi;
   typedef CGAL::Constrained_triangulation_face_base_2<Exact_kernel>           Fb;
