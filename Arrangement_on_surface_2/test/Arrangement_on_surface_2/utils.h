@@ -18,6 +18,10 @@ private:
                                         Top_side_category,
                                         Right_side_category>::result
     Are_all_sides_oblivious_category;
+
+  typedef typename CGAL::Arr_has_identified_sides<Left_side_category,
+                                                  Bottom_side_category>::result
+    Has_identified_sides_category;
   
   const Traits& m_traits;
 
@@ -30,14 +34,31 @@ public:
   { return operator()(p1, p2, Are_all_sides_oblivious_category()); }
 
 private:
+  // The following set of operators is incomplete, but for now there are
+  // no tests that require the missing ones. In particular, an operator
+  // an operator for traits classes, where at least one boundary is either
+  // identified or contracted and another boundary is open, is missing.
+  
+  // This function is invoked for traits classes where all boundaries
+  // are oblivious.
   bool operator()(const Point_2& p1, const Point_2& p2,
                   CGAL::Arr_all_sides_oblivious_tag) const
-  {
-    return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER);
-  }
-  
+  { return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER); }
+
   bool operator()(const Point_2& p1, const Point_2& p2,
                   CGAL::Arr_not_all_sides_oblivious_tag) const
+  { return operator()(p1, p2, Has_identified_sides_category()); }
+
+  // This function is invoked for traits classes where at least one
+  // boundary is not oblivious and all boundaries are not identified.
+  bool operator()(const Point_2& p1, const Point_2& p2,
+                  boost::mpl::bool_<false>) const
+  { return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER); }
+
+  // This function should be invoked for traits classes where at least one
+  // boundary is identified.
+  bool operator()(const Point_2& p1, const Point_2& p2,
+                  boost::mpl::bool_<true>) const
   {
     // Compare in y boundaries:
     CGAL::Arr_parameter_space ps_y1 =
