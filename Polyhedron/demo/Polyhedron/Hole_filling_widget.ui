@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>305</width>
-    <height>261</height>
+    <width>289</width>
+    <height>290</height>
    </rect>
   </property>
   <property name="toolTip">
@@ -122,6 +122,13 @@
       </property>
       <property name="checked">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="Skip_self_intersection_check_box">
+      <property name="text">
+       <string>Skip Holes which Results Self Intersection</string>
       </property>
      </widget>
     </item>

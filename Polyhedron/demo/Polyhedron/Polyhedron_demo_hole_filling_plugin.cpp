@@ -28,6 +28,9 @@
 #include <QGLViewer/qglviewer.h>
 #include <CGAL/gl_render.h>
 
+#include <CGAL/self_intersect.h>
+#include "Kernel_type.h"
+
 #include <boost/function_output_iterator.hpp>
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
@@ -294,7 +297,7 @@ public slots:
 private:
   struct Nop_functor {
     template<class T>
-    void operator()(const T& t) const {}
+    void operator()(const T & /*t*/) const {}
   };
   typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
@@ -307,6 +310,7 @@ private:
   Ui::HoleFilling* ui_widget;
 
   void fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
+  bool self_intersecting(Polyhedron& polyhedron);
 }; // end Polyhedron_demo_hole_filling_plugin
 
 void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
@@ -397,12 +401,11 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
     return;
   }
 
-  bool create_new = ui_widget->Create_new_polyhedron_check_box->checkState() == Qt::Checked;
-  
   for(Scene_polylines_collection::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
     it != polyline_item->selected_holes.end(); ++it) {
       fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge);
   }
+
   scene->itemChanged(polyline_item->poly_item);
   polyline_item->poly_item_changed();
 };
@@ -435,21 +438,31 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     poly_pointer = poly_item->polyhedron();
   }
 
-  // TODO: check whether there is a better way to do this iteration
-  bool any_changes = false;
-  Polyhedron& poly = *poly_pointer;  
-  for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ){
-    if(it->is_border()){
-      any_changes = true;
-      fill(poly, it);
-      it = poly.halfedges_begin();
+  Polyhedron& poly = *poly_pointer;
+  std::vector<Halfedge_iterator> border_reps;
+  for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it)
+  { it->id() = 0; }
+
+  int counter = 0;
+  for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
+    if(it->is_border() && it->id() == 0){
+      border_reps.push_back(it);
+      Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
+      do {
+        CGAL_assertion(hf_around_facet->id() == 0);
+        hf_around_facet->id() = 1;
+      } while(++hf_around_facet != it->facet_begin());
     }
-    else { ++it; }
   }
-  if(!any_changes) {
+
+  if(border_reps.empty()) {
     print_message("There is no holes in selected polyhedron!");
     delete new_item; // if any, delete new_item
     return;
+  }
+
+  for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
+     fill(poly, *it);
   }
 
   // update or add polyhedron item
@@ -464,30 +477,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     if(polylines_collection) { polylines_collection->poly_item_changed();}
   }
 }
-// helper function for filling holes
-void Polyhedron_demo_hole_filling_plugin::fill
-  (Polyhedron& poly, Polyhedron::Halfedge_handle it) {
 
-  int action_index = ui_widget->action_combo_box->currentIndex();
-  double alpha = ui_widget->Density_control_factor_spin_box->value();
-
-  if(action_index == 0) {
-    CGAL::triangulate_hole(poly, it, Nop_out());
-  }
-  else if(action_index == 1) {
-    CGAL::triangulate_and_refine_hole(poly, it, Nop_out(), Nop_out(), alpha);
-  }
-  else {
-    int weight_index = ui_widget->weight_combo_box->currentIndex();
-
-    if(weight_index == 0)
-      CGAL::triangulate_refine_and_fair_hole(poly, it, Nop_out(), Nop_out(), alpha, 
-        CGAL::Fairing_uniform_weight<Polyhedron>());
-    if(weight_index == 1)
-      CGAL::triangulate_refine_and_fair_hole(poly, it, Nop_out(), Nop_out(), alpha,
-       CGAL::Fairing_cotangent_weight<Polyhedron>());
-  }
-}
 
 void Polyhedron_demo_hole_filling_plugin::item_changed_polylines_collection() {
   Scene_polylines_collection* polylines_collection = qobject_cast<Scene_polylines_collection*>(this->sender());
@@ -495,6 +485,51 @@ void Polyhedron_demo_hole_filling_plugin::item_changed_polylines_collection() {
     scene->erase( scene->item_id(polylines_collection));
   }
 }
+
+// helper function for filling holes
+void Polyhedron_demo_hole_filling_plugin::fill
+  (Polyhedron& poly, Polyhedron::Halfedge_handle it) {
+
+    int action_index = ui_widget->action_combo_box->currentIndex();
+    double alpha = ui_widget->Density_control_factor_spin_box->value();
+
+    std::vector<Polyhedron::Facet_handle> patch;
+    if(action_index == 0) {
+      CGAL::triangulate_hole(poly, it, std::back_inserter(patch));
+    }
+    else if(action_index == 1) {
+      CGAL::triangulate_and_refine_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha);
+    }
+    else {
+      int weight_index = ui_widget->weight_combo_box->currentIndex();
+
+      if(weight_index == 0)
+        CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha, 
+        CGAL::Fairing_uniform_weight<Polyhedron>());
+      if(weight_index == 1)
+        CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha,
+        CGAL::Fairing_cotangent_weight<Polyhedron>());
+    }
+
+    if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {
+      if(self_intersecting(poly)) {
+        for(std::vector<Polyhedron::Facet_handle>::iterator it = patch.begin(); it != patch.end(); ++it) {
+          poly.erase_facet((*it)->halfedge());
+        }
+      }
+    }
+}
+
+bool Polyhedron_demo_hole_filling_plugin::self_intersecting(Polyhedron& polyhedron) {
+  typedef Kernel::Triangle_3 Triangle;
+  typedef std::list<Triangle>::iterator Iterator;
+  std::list<Triangle> triangles;
+  typedef std::back_insert_iterator<std::list<Triangle> > OutputIterator;
+  
+  self_intersect<Polyhedron,Kernel,OutputIterator>(polyhedron,std::back_inserter(triangles));
+  return !triangles.empty();
+}
+
 Q_EXPORT_PLUGIN2(Polyhedron_demo_hole_filling_plugin, Polyhedron_demo_hole_filling_plugin)
 
 #include "Polyhedron_demo_hole_filling_plugin.moc"
