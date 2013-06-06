@@ -614,10 +614,10 @@ struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, false, i>
 struct twochar{ char dummy[2]; };
 
 template<typename T>
-static char has_point(typename T::Point*){}
+static char has_point(typename T::Point*);
 
 template<typename T>
-static twochar has_point(...){}
+static twochar has_point(...);
 
 template<typename Attr, typename Info=typename Attr::Info>
 struct Is_nonvoid_attribute_has_non_void_info

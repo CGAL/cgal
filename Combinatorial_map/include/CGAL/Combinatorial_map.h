@@ -3289,7 +3289,7 @@ namespace CGAL {
       Dart_const_handle current;
       typename Map2::Dart_const_handle other;
 
-      int i = 0;
+      unsigned int i = 0;
       CGAL::Unique_hash_map<Dart_const_handle,
                             typename Map2::Dart_const_handle> bijection;
 

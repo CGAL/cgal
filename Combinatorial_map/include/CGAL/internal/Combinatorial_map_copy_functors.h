@@ -137,7 +137,7 @@ struct Set_point_if_possible_cmap<Point1, Point1,
 // Get the ith functor of the converters tuple if i<length of the tuple,
 // otherwise get the default converter.
 template<typename Map1, typename Map2, unsigned int i, typename Converters,
-         bool t=(i>=boost::tuples::length<Converters>::value)>
+         bool t=(i>=My_length<Converters>::value)>
 struct Get_convert_attribute_functor
 {
   static typename Map2::template Attribute_handle<i>::type
