@@ -306,7 +306,6 @@ private:
 /// Private datas
 Vertex_handle vertex_handle_;
 unsigned int vh_erase_counter_when_added_;
-Point_3 vh_point_when_added_;
 int in_dimension_;
 unsigned int incident_sliver_nb_;
 FT min_value_;
