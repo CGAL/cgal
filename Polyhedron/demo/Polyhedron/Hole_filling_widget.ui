@@ -96,7 +96,7 @@
          <item>
           <widget class="QComboBox" name="weight_combo_box">
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <item>
             <property name="text">
@@ -106,11 +106,6 @@
            <item>
             <property name="text">
              <string>Cotangent Weight</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Scale-dependent Weight</string>
             </property>
            </item>
           </widget>

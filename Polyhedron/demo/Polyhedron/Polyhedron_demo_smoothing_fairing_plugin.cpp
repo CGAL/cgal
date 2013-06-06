@@ -448,10 +448,6 @@ void Polyhedron_demo_smoothing_fairing_plugin::on_Fair_button_clicked()
     CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices.begin(),
     selectable_item->selected_vertices.end(),
       CGAL::Fairing_cotangent_weight<Polyhedron>());
-  else
-    CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices.begin(),
-    selectable_item->selected_vertices.end(),
-      CGAL::Fairing_scale_dependent_weight<Polyhedron>());
   selectable_item->changed_with_poly_item();
 }
 

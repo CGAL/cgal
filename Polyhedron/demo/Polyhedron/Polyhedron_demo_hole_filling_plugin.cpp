@@ -55,12 +55,18 @@ private:
 public:
   typedef std::set<Polyline_data_list::const_iterator, List_iterator_comparator> Selected_holes_set;
 
-  Scene_polylines_collection(Scene_polyhedron_item* poly_item)
-    : poly_item(poly_item) {
+  Scene_polylines_collection(Scene_polyhedron_item* poly_item, QMainWindow* mainWindow)
+    : poly_item(poly_item) 
+  {
     active_hole = polyline_data_list.end();
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
+
+    mainWindow->installEventFilter(this);
+
+    connect(poly_item, SIGNAL(itemChanged()), this, SLOT(poly_item_changed())); 
+    connect(poly_item, SIGNAL(aboutToBeDestroyed()), this, SLOT(poly_item_destroyed())); 
   }
   ~Scene_polylines_collection() {
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
@@ -226,6 +232,16 @@ public:
   Selected_holes_set selected_holes;
   Scene_polyhedron_item* poly_item;
   Polyline_data_list polyline_data_list;
+
+protected slots:
+  void poly_item_changed() {
+    get_holes(*poly_item->polyhedron());
+    emit itemChanged();
+  }
+
+  void poly_item_destroyed() {
+    std::cout << "why not working?" << std::endl;
+  }
 }; // end class Scene_edges_item
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -367,7 +383,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
     print_message("Error: selected polyhedron item already has an associated hole item!");
     return;
   }
-  Scene_polylines_collection* polylines_collection = new Scene_polylines_collection(poly_item);
+  Scene_polylines_collection* polylines_collection = new Scene_polylines_collection(poly_item, mw);
   polylines_collection->get_holes(*poly_item->polyhedron());
 
   if(polylines_collection->polyline_data_list.empty()) {
@@ -380,7 +396,6 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
     polyhedron_item_hole_map[poly_item] = polylines_collection;
     int item_id = scene->addItem(polylines_collection);
     scene->setSelectedItem(item_id);
-    mw->installEventFilter(polylines_collection);
     polylines_collection->setName(tr("%1-hole visualizer").arg(poly_item->name()));
     // poly_item->setColor(QColor(poly_item->color().red(), poly_item->color().green(), poly_item->color().blue(), 100));
   }
@@ -491,9 +506,6 @@ void Polyhedron_demo_hole_filling_plugin::fill
     if(weight_index == 1)
       CGAL::triangulate_refine_and_fair_hole(poly, it, Nop_out(), Nop_out(), alpha,
        CGAL::Fairing_cotangent_weight<Polyhedron>());
-    else
-      CGAL::triangulate_refine_and_fair_hole(poly, it, Nop_out(), Nop_out(), alpha,
-        CGAL::Fairing_scale_dependent_weight<Polyhedron>());
   }
 }
 

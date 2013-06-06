@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>263</width>
-    <height>432</height>
+    <width>296</width>
+    <height>412</height>
    </rect>
   </property>
   <property name="toolTip">
@@ -24,7 +24,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="title">
-       <string>ROI Selection</string>
+       <string/>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
@@ -34,13 +34,6 @@
          </property>
          <property name="checked">
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="line_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -130,12 +123,32 @@
         </layout>
        </item>
        <item>
-        <widget class="Line" name="line_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="Save_ROI_button">
+           <property name="text">
+            <string>Save ROI</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="Load_ROI_button">
+           <property name="text">
+            <string>Load ROI</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
@@ -163,31 +176,6 @@
           <widget class="QPushButton" name="Select_isolated_components_button">
            <property name="text">
             <string>Select Isolated Components Below Threshold</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPushButton" name="Save_ROI_button">
-           <property name="text">
-            <string>Save ROI</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="Load_ROI_button">
-           <property name="text">
-            <string>Load ROI</string>
            </property>
           </widget>
          </item>
