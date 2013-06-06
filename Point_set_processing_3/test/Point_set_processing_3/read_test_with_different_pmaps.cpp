@@ -8,7 +8,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/property_map/vector_property_map.hpp>
+//#include <boost/property_map/vector_property_map.hpp>
+#include <CGAL/property_map.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
