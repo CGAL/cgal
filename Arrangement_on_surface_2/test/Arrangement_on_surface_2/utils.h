@@ -43,7 +43,9 @@ private:
   // are oblivious.
   bool operator()(const Point_2& p1, const Point_2& p2,
                   CGAL::Arr_all_sides_oblivious_tag) const
-  { return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER); }
+  {
+    return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER);
+  }
 
   bool operator()(const Point_2& p1, const Point_2& p2,
                   CGAL::Arr_not_all_sides_oblivious_tag) const
@@ -53,7 +55,9 @@ private:
   // boundary is not oblivious and all boundaries are not identified.
   bool operator()(const Point_2& p1, const Point_2& p2,
                   boost::mpl::bool_<false>) const
-  { return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER); }
+  {
+    return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER);
+  }
 
   // This function should be invoked for traits classes where at least one
   // boundary is identified.
