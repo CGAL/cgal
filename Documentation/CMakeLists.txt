@@ -71,7 +71,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
 endfunction()
 
 find_package(Doxygen)
-find_package(PythonInterp 2.7)
+find_package(PythonInterp 2.6.8)
 
 if(DOXYGEN_FOUND)
   # set up the directories and variables
