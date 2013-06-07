@@ -1580,6 +1580,7 @@ public:
       //do split the edges
       for (std::vector<int>::const_iterator it_id=node_ids.begin();it_id!=node_ids.end();++it_id){
         Vertex_handle v=split_edge(hedge,nodes[*it_id],*P);
+        node_vertex_visitor.new_vertex_added(*it_id, v);
         node_to_polyhedron_vertex.insert(std::make_pair(*it_id,v));
         if (first){
           first=false;
