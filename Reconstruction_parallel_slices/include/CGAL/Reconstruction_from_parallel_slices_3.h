@@ -1150,7 +1150,7 @@ class Reconstruction_from_parallel_slices_3{
       Face_handle_2 fh;
       int fi=0;
     //handle top
-      bool found = top.is_edge(t[0],t[1], fh, fi);
+      CGAL_assertion_code( bool found = )top.is_edge(t[0],t[1], fh, fi);
       CGAL_assertion(found);
       ch->info().f0 = fh;
       ch->info().i0 = fi;
@@ -1164,7 +1164,7 @@ class Reconstruction_from_parallel_slices_3{
         ch->info().out_face_status.set(bii);
       }
     //handle bottom
-      found = bottom.is_edge(b[0],b[1], fh, fi);
+      CGAL_assertion_code( found = ) bottom.is_edge(b[0],b[1], fh, fi);
       CGAL_assertion(found);
       ch->info().f1 = fh;
       ch->info().i1 = fi;
@@ -1518,7 +1518,7 @@ class Reconstruction_from_parallel_slices_3{
     for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it ) {
       if( it->info().volume &&  //consider only cells in the volume
           it->info().type != CellInfo3::EDGE_EDGE // consider only top and bottom cells
-          ! it->info().cc ) //skip connected component already explored
+          && ! it->info().cc ) //skip connected component already explored
       {
         // explore the component
         bool found_edge_edge_cell = false;
@@ -2549,7 +2549,7 @@ class Reconstruction_from_parallel_slices_3{
             CGAL_assertion(edges_nm.size()==3);
             int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4};
             if (i%2!=0) std::swap(indices[1],indices[2]);     
-            int poly_indices[3]={-1,-1.-1};
+            int poly_indices[3]={-1,-1,-1};
             for (int k=0;k<3;++k)
               poly_indices[k]=get_vertex_index_in_facet(cell,indices[k],i,indices[(k+1)%3],indices[(k+2)%3],new_vertex_in_facet);
             for (int k=0;k<3;++k)
