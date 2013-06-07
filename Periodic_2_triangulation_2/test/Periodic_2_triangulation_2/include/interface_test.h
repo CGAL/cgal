@@ -187,7 +187,6 @@ template <class T>
 void test_iterators()
 {
   typedef typename T::Vertex_handle     Vertex_handle;
-  typedef typename T::Face_handle       Face_handle;
   typedef typename T::Point             Point;
 
   T t;
@@ -338,7 +337,6 @@ template <class T>
 void test_circulators()
 {
   typedef typename T::Vertex_handle     Vertex_handle;
-  typedef typename T::Face_handle       Face_handle;
   typedef typename T::Point             Point;
 
   T t;
@@ -571,7 +569,6 @@ void test(bool exact)
 template <class T>
 void test_batch_insertion()
 {
-  typedef typename T::Vertex_handle     Vertex_handle;
   typedef typename T::Point             Point;
 
   Point p0(0.5, 0.5);
