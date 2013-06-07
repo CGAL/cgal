@@ -679,6 +679,7 @@ public:
 
   /*! Functor to enable pushing back of either points or segments to an
    *  existing polyline.
+   *  TODO: Should we add tests of this functor to the test suite?
    */
   class Push_back_2 {
   protected:
@@ -733,7 +734,6 @@ public:
      * be its first segment.
      * \param cv a polyline. Note, cv is not (necessarily) x-monotone.
      * \param seg a segment to be appended to cv
-     * TODO: implement this precondition.
      * \pre If cv is not empty then target of cv should coincide with the source
      *       of seg or(!) the source of cv should coincide with the target of
      *       seg.
@@ -742,6 +742,13 @@ public:
     void operator()(Curve_2& cv, const Segment_2& seg) const
     {
       int num_seg = cv.number_of_segments();
+
+      // cv is empty
+      if (num_seg == 0)
+        {
+          cv.push_back(seg);
+          return;
+        }
 
       const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
@@ -753,37 +760,25 @@ public:
       typename Segment_traits_2::Equal_2 equal =
         seg_traits->equal_2_object();
 
-      // cv is empty
-      if (num_seg == 0)
-        {
-          cv.push_back(seg);
-          return;
-        }
-
       Point_2 last_v;
 
-      if (comp_endpts(cv[num_seg-1]) == SMALLER)
+      Comparison_result xcv_dir = comp_endpts(cv[0]);
+      Comparison_result seg_dir = comp_endpts(seg);
+
+      CGAL_precondition_msg(xcv_dir == seg_dir,
+                            "Appended segment must have the same "
+                            "orientation as the x-monotone polyline.");
+
+      if (xcv_dir == SMALLER) {
         last_v = get_max_v(cv[num_seg-1]);
-      else
+        CGAL_precondition(equal(last_v,get_min_v(seg)));
+        cv.push_back(seg);
+      }
+      else {
         last_v = get_min_v(cv[num_seg-1]);
-
-      CGAL_precondition(equal(last_v,get_min_v(seg))||
-                        equal(last_v,get_max_v(seg)));
-
-      if (equal(last_v,get_min_v(seg)))
-        {
-          if (comp_endpts(seg) == SMALLER)
-            cv.push_back(seg);
-          else
-            cv.push_back(seg_traits->construct_opposite_2_object()(seg));
-        }
-      else
-        {
-          if (comp_endpts(seg) == SMALLER)
-            cv.push_back(seg_traits->construct_opposite_2_object()(seg));
-          else
-            cv.push_back(seg);
-        }
+        CGAL_precondition(equal(last_v,get_max_v(seg)));
+        cv.push_back(seg);
+      }
     }
 
     /*!
