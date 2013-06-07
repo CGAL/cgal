@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 # This script creates the directory structure for a new package.
-# Usage: cgal_create_package_dir.py Package_name
+# Usage:
+# cgal_create_package_dir.py Package_name [optional creation directory]
 
 import sys
 import os
