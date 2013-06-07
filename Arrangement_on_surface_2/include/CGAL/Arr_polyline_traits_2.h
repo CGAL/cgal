@@ -563,7 +563,13 @@ public:
       m_poly_traits(traits) {}
 
     /*!
-     * TODO: Add docs and test
+     * Construct the reversed \(x\)-monotone polyline of the input.
+     * Note that the functor constructs the opposites of _all_ segments
+     * constituting xcv.
+     * \param xcv the \(x\)-monotone polyline to be reveres
+     * \pre xcv contains at least one segment
+     * \return An \(x\)-monotone polyline with the same graph as the input xcv
+     *         only with a reverse orientation.
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const
     {
