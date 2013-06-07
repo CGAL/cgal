@@ -120,7 +120,8 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.mkdir(packagepath)
     open(os.path.join(packagepath, 'dont_submit'), 'w').close()
 
-    os.makedirs(os.path.join(packagepath, 'include', 'CGAL'))
+    inclpath = os.path.join(packagepath, 'include', 'CGAL', packagename)
+    os.makedirs(inclpath)
 
     os.mkdir(os.path.join(packagepath, 'src'))
 
