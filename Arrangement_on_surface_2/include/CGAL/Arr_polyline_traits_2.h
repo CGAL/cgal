@@ -679,7 +679,8 @@ public:
 
   /*! Functor to enable pushing back of either points or segments to an
    *  existing polyline.
-   *  TODO: Should we add tests of this functor to the test suite?
+   *  TODO: Test all the operator()'s. (Don't forget vertical cases!)
+   *        Should we add tests of this functor to the test suite?
    */
   class Push_back_2 {
   protected:
@@ -786,7 +787,8 @@ public:
      * \param cv the existing x-monotone polyline
      * \param p the point to be pushed back.
      * \pre cv contains at least one segment
-     * \pre p is to the right of cv
+     * \pre p is either to the right of cv if it is oriented left-to-right
+     *      or it is to its left if it is oriented right-to-left
      */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
     {
@@ -798,51 +800,74 @@ public:
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         seg_traits->construct_max_vertex_2_object();
 
-      CGAL_precondition_code(
-        typename Segment_traits_2::Compare_x_2 comp_x =
+      if (seg_traits->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER) {
+        // xcv is oriented left-to-right
+        CGAL_precondition_code(
+          typename Segment_traits_2::Compare_x_2 comp_x =
           seg_traits->compare_x_2_object();
-        CGAL_precondition(comp_x(get_max_v(xcv[num_seg-1]),p)==LARGER);
-                             );
-      xcv.push_back(Segment_2(get_max_v(xcv[num_seg-1]),p));
+          CGAL_precondition(comp_x(get_max_v(xcv[num_seg-1]),p)==LARGER);
+                               );
+        xcv.push_back(Segment_2(get_max_v(xcv[num_seg-1]),p));
+
+      }
+      else {
+        // xcv is oriented right-to-left
+        CGAL_precondition_code(
+          typename Segment_traits_2::Compare_x_2 comp_x =
+          seg_traits->compare_x_2_object();
+          CGAL_precondition(comp_x(get_min_v(xcv[num_seg-1]),p)==SMALLER);
+                               );
+        xcv.push_back(Segment_2(get_min_v(xcv[num_seg-1]),p));
+      }
     }
 
     /*!
-     * Append a segment seg to an existing x-monotone polyline cv.
-     * \param cv existing x-monotone polyline
+     * Append a segment seg to an existing x-monotone polyline xcv.
+     * \param xcv existing x-monotone polyline
      * \param seg the segment to be added
-     * \pre cv is not an isolated point (in case it contains only one segment)
-     * \pre seg is (strongly) right to cv, that it extends cv in
-     *      a strong x-monotone manner.
+     * \pre If xcv is not empty then seg extends xcv to the right if
+     *      xcv is oriented right-to-left. Otherwise, seg extends xcv to
+     *      the left.
+     * \pre xcv and seg should have the same orientation
      */
-    void operator()(const X_monotone_curve_2& cv, Segment_2& seg) const
+    void operator()(const X_monotone_curve_2& xcv, Segment_2& seg) const
     {
-      int num_seg = cv.number_of_segments();
+      int num_seg = xcv.number_of_segments();
 
       if (num_seg == 0)
         {
-          cv.push_back(seg);
+          xcv.push_back(seg);
           return;
         }
 
+      CGAL_precondition_code(
+
       const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
+      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+        seg_traits->compare_endpoints_xy_2_object();
+
+      CGAL_precondition_msg(comp_endpts(xcv[0]) == comp_endpts(seg),
+                            "xcv and seg should have the same orientation");
+
       typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
         seg_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
         seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Compare_x_2 comp_x =
-        seg_traits->compare_x_2_object();
+      typename Segment_traits_2::Compare_xy_2 comp_xy =
+        seg_traits->compare_xy_2_object();
       typename Segment_traits_2::Equal_2 equal =
         seg_traits->equal_2_object();
 
-      CGAL_precondition_code(
-        if (num_seg == 1);
-        CGAL_precondition(!equal(get_min_v(cv[0]),get_max_v(cv[0])));
+      CGAL_precondition_msg(((comp_endpts(seg) == SMALLER) &&
+                             (equal(get_max_v(xcv[num_seg-1]),get_min_v(seg)))&&
+                             (comp_xy(get_min_v(seg),get_max_v(seg)!=EQUAL))) ||
+                            ((comp_endpts(seg) == LARGER) &&
+                             (equal(get_min_v(xcv[num_seg-1]),get_max_v(seg)))&&
+                             (comp_xy(get_min_v(seg),get_max_v(seg)!=EQUAL))),
+                            "Seg must extend either to the left or to the "
+                            "right of xcv depending on the orientation");
                              );
-
-      CGAL_precondition(equal(get_max_v(cv[num_seg-1]),get_min_v(seg)));
-      CGAL_precondition(comp_x(get_min_v(seg),get_max_v(seg))==LARGER);
-
-      cv.push_back(seg);
+      xcv.push_back(seg);
     }
   };
 
