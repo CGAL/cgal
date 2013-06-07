@@ -1281,20 +1281,28 @@ public:
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return(true) if the two curves are mergeable, that is, they share a
-     * common endpoint;(false) otherwise.
+     * common endpoint and the same orientation;(false) otherwise.
      */
     bool operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2) const
     {
       const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
-      typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        seg_traits->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        seg_traits->construct_max_vertex_2_object();
+      Construct_min_vertex_2 min_vertex =
+        m_poly_traits->construct_min_vertex_2_object();
+      Construct_max_vertex_2 max_vertex =
+        m_poly_traits->construct_max_vertex_2_object();
       typename Segment_traits_2::Equal_2 equal =
         seg_traits->equal_2_object();
       typename Segment_traits_2::Is_vertical_2 is_vertical =
         seg_traits->is_vertical_2_object();
+
+      Comparison_result dir1 = m_poly_traits->
+        compare_endpoints_xy_2_object()(cv1);
+      Comparison_result dir2 = m_poly_traits->
+        compare_endpoints_xy_2_object()(cv2);
+
+      if (dir1 != dir2)
+        return false;
 
       const unsigned int n1 = cv1.number_of_segments();
       const unsigned int n2 = cv2.number_of_segments();
@@ -1302,9 +1310,22 @@ public:
       bool ver1 = is_vertical(cv1[0]);
       bool ver2 = is_vertical(cv2[0]);
 
-      return ((equal(max_vertex(cv1[n1 - 1]), min_vertex(cv2[0])) ||
-               equal(max_vertex(cv2[n2 - 1]), min_vertex(cv1[0]))) &&
-              ((ver1 && ver2) || (!ver1 && !ver2)));
+      return (
+              (
+               (// Both are directed from left-to-right
+                (dir1 == SMALLER) &&
+                ((equal(max_vertex(cv1),min_vertex(cv2))) ||
+                 (equal(max_vertex(cv2),min_vertex(cv1))))
+                ) ||
+               (// Both are directed from right-to-left
+                (dir1 == LARGER) &&
+                ((equal(min_vertex(cv1),max_vertex(cv2))) ||
+                 (equal(max_vertex(cv1),min_vertex(cv2))))
+                )
+               ) &&
+              (// Either both should be vertical or both should
+               // be NOT vertical.
+               (ver1 && ver2) || (!ver1 && !ver2)));
     }
   };
 
@@ -1345,10 +1366,18 @@ public:
         m_poly_traits->construct_min_vertex_2_object();
       Construct_max_vertex_2 get_max_v =
         m_poly_traits->construct_max_vertex_2_object();
+      Compare_endpoints_xy_2 comp_endpts =
+        m_poly_traits->compare_endpoints_xy_2_object();
       Equal_2 equal = m_poly_traits->equal_2_object();
 
       c.clear();
-      if (equal(get_max_v(cv1), get_min_v(cv2))) {
+      if (
+          // Either both are left-to-right and cv2 is to the right of cv1
+          (comp_endpts(cv1)==SMALLER && equal(get_max_v(cv1),get_min_v(cv2))) ||
+          // or both are right-to-left and cv2 is to the left of cv1
+          (comp_endpts(cv1)==LARGER && equal(get_min_v(cv1), get_max_v(cv2)))
+          )
+        {
 
         const unsigned int n1 = cv1.number_of_segments();
         const unsigned int n2 = cv2.number_of_segments();
