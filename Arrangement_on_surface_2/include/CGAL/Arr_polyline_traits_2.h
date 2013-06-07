@@ -537,9 +537,8 @@ public:
      * Compare the endpoints of an \(x\)-monotone curve lexicographically.
      * (assuming the curve has a designated source and target points).
      * \param cv The curve.
-     * \return SMALLER if the curve is directed right;
-     *         LARGER if the curve is directed left.
-     * TODO: Test!
+     * \return SMALLER if the curve is oriented left-to-right;
+     *         LARGER if the curve is oriented right-to-left.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv) const
     {
