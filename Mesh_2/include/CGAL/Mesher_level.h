@@ -493,9 +493,10 @@ public:
                             Previous,
                             Triangulation_traits> Base;
 
-  typedef typename Base::Zone           Zone;
-  typedef typename Base::Point          Point;
-  typedef typename Base::Vertex_handle  Vertex_handle;
+  typedef typename Base::Lock_data_structure Lock_data_structure;
+  typedef typename Base::Zone                Zone;
+  typedef typename Base::Point               Point;
+  typedef typename Base::Vertex_handle       Vertex_handle;
   using Base::derived;
   using Base::is_algorithm_done;
   using Base::triangulation;
@@ -713,9 +714,10 @@ public:
                             Previous,
                             Triangulation_traits> Base;
 
-  typedef typename Base::Zone           Zone;
-  typedef typename Base::Point          Point;
-  typedef typename Base::Vertex_handle  Vertex_handle;
+  typedef typename Base::Lock_data_structure  Lock_data_structure;
+  typedef typename Base::Zone                 Zone;
+  typedef typename Base::Point                Point;
+  typedef typename Base::Vertex_handle        Vertex_handle;
   using Base::derived;
   using Base::is_algorithm_done;
   using Base::triangulation;
@@ -934,7 +936,7 @@ public:
     }
 
     m_empty_root_task->wait_for_all();
-    
+
 #if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << " Flushing";
 #endif

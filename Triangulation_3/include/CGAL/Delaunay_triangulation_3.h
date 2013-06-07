@@ -77,7 +77,7 @@ template < class Gt, class Tds_,
 class Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_>
   : public Triangulation_3<Gt, Tds_, Lock_data_structure_>
 {
-  typedef Delaunay_triangulation_3<Gt, Tds_, Default, 
+  typedef Delaunay_triangulation_3<Gt, Tds_, Default,
                                    Lock_data_structure_> Self;
   typedef Triangulation_3<Gt,Tds_,Lock_data_structure_>  Tr_Base;
 
@@ -87,6 +87,8 @@ public:
                                      Triangulation_data_structure;
   typedef Gt                         Geom_traits;
   typedef Compact_location           Location_policy;
+
+  typedef typename Tr_Base::Lock_data_structure Lock_data_structure;
 
   typedef typename Gt::Point_3       Point;
   typedef typename Gt::Segment_3     Segment;
@@ -218,16 +220,16 @@ public:
   Delaunay_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *p_lock_ds = 0)
     : Tr_Base(gt, p_lock_ds)
   {}
-  
+
   Delaunay_triangulation_3(Lock_data_structure *p_lock_ds, const Gt& gt = Gt())
     : Tr_Base(p_lock_ds, gt)
   {}
-  
+
   // Create a 3D triangulation from 4 points which must be well-oriented
   // AND non-coplanar
   Delaunay_triangulation_3(const Point &p0, const Point &p1,
                            const Point &p2, const Point &p3,
-                           const Gt& gt = Gt(), 
+                           const Gt& gt = Gt(),
                            Lock_data_structure *p_lock_ds = 0)
     : Tr_Base(p0, p1, p2, p3, gt, p_lock_ds)
   {}
@@ -250,7 +252,7 @@ public:
 
   template < typename InputIterator >
   Delaunay_triangulation_3(InputIterator first, InputIterator last,
-                           Lock_data_structure *p_lock_ds, 
+                           Lock_data_structure *p_lock_ds,
                            const Gt& gt = Gt())
     : Tr_Base(gt, p_lock_ds)
   {
@@ -278,20 +280,20 @@ public:
     static Profile_branch_counter_3 bcounter(
       "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
-    
+
     WallClockTimer t; // CJTODO TEMP
 
     size_type n = number_of_vertices();
     std::vector<Point> points (first, last);
     spatial_sort (points.begin(), points.end(), geom_traits());
-    
+
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
-    if (is_parallel())
+    if (this->is_parallel())
     {
       size_t num_points = points.size();
       int i = 0;
-      // Insert "num_points_seq" points sequentially 
+      // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
       Vertex_handle hint;
       size_t num_points_seq = (std::min)(num_points, (size_t)500);
@@ -318,8 +320,8 @@ public:
                 bool could_lock_zone;
                 Vertex_handle new_hint = insert(
                   points[i_point], hint, &could_lock_zone);
-                
-                unlock_all_elements();
+
+                this->unlock_all_elements();
 
                 if (could_lock_zone)
                 {
@@ -328,7 +330,7 @@ public:
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
                   ++bcounter;
 #endif
-                }          
+                }
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
                 else
                 {
@@ -338,7 +340,7 @@ public:
               }
               else
               {
-                unlock_all_elements();
+                this->unlock_all_elements();
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
                 bcounter.increment_branch_2(); // THIS is an early withdrawal!
@@ -366,10 +368,10 @@ public:
 
     return number_of_vertices() - n;
   }
-  
-  
+
+
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-private:  
+private:
   //top stands for tuple-or-pair
   template <class Info>
   const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
@@ -396,7 +398,7 @@ private:
     }
 
     typedef Spatial_sort_traits_adapter_3<Geom_traits,Point*> Search_traits;
-    
+
     spatial_sort(indices.begin(),indices.end(),Search_traits(&(points[0]),geom_traits()));
 
     Vertex_handle hint;
@@ -409,7 +411,7 @@ private:
 
     return number_of_vertices() - n;
   }
-  
+
 public:
 
   template < class InputIterator >
@@ -441,7 +443,7 @@ public:
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);
   }
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-  
+
   Vertex_handle insert(const Point & p, Vertex_handle hint,
                        bool *could_lock_zone = NULL)
   {
@@ -455,14 +457,14 @@ public:
   Vertex_handle insert(const Point & p, Locate_type lt,
                        Cell_handle c, int li, int,
                  bool *could_lock_zone = NULL);
-        
+
 public: // internal methods
-        
+
   template <class OutputItCells>
-  Vertex_handle insert_and_give_new_cells(const Point  &p, 
+  Vertex_handle insert_and_give_new_cells(const Point  &p,
                                           OutputItCells fit,
                                           Cell_handle start = Cell_handle() );
-                
+
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
                                           OutputItCells fit,
@@ -471,14 +473,14 @@ public: // internal methods
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
                                           Locate_type lt,
-                                          Cell_handle c, int li, int lj, 
-                                          OutputItCells fit); 
+                                          Cell_handle c, int li, int lj,
+                                          OutputItCells fit);
 
 public:
-        
+
 #ifndef CGAL_NO_DEPRECATED_CODE
   CGAL_DEPRECATED Vertex_handle move_point(Vertex_handle v, const Point & p);
-#endif  
+#endif
 
   template <class OutputIteratorBoundaryFacets,
             class OutputIteratorCells,
@@ -598,7 +600,7 @@ public:
 
   // return new cells (internal)
   template <class OutputItCells>
-  void remove_and_give_new_cells(Vertex_handle v, 
+  void remove_and_give_new_cells(Vertex_handle v,
                                  OutputItCells fit);
 
   template < typename InputIterator >
@@ -608,10 +610,10 @@ public:
     size_type n = number_of_vertices();
 
     WallClockTimer t; // CJTODO TEMP
-    
+
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
-    if (is_parallel())
+    if (this->is_parallel())
     {
       // CJTODO: avoid that by asking for ramdom-access iterators?
       std::vector<Vertex_handle> vertices(first, beyond);
@@ -628,7 +630,7 @@ public:
             bool could_lock_zone, needs_to_be_done_sequentially;
             do
             {
-              needs_to_be_done_sequentially = 
+              needs_to_be_done_sequentially =
                 !remove(v, &could_lock_zone);
               this->unlock_all_elements();
             } while (!could_lock_zone);
@@ -639,10 +641,10 @@ public:
         });
 
       // Do the rest sequentially
-      for ( tbb::concurrent_vector<Vertex_handle>::const_iterator 
-              it = vertices_to_remove_sequentially.begin(), 
-              it_end = vertices_to_remove_sequentially.end() 
-          ; it != it_end 
+      for ( typename tbb::concurrent_vector<Vertex_handle>::const_iterator
+              it = vertices_to_remove_sequentially.begin(),
+              it_end = vertices_to_remove_sequentially.end()
+          ; it != it_end
           ; ++it)
       {
         remove(*it);
@@ -657,13 +659,13 @@ public:
         ++first;
       }
     }
-    
+
 #ifdef CGAL_TRIANGULATION_3_PROFILING
     std::cerr << "Points removed in " << t.elapsed() << " seconds." << std::endl;
 #endif
     return n - number_of_vertices();
   }
-        
+
   template < typename InputIterator >
   size_type remove_cluster(InputIterator first, InputIterator beyond)
   {
@@ -679,8 +681,8 @@ public:
 
   // return new cells (internal)
   template <class OutputItCells>
-  Vertex_handle move_if_no_collision_and_give_new_cells(Vertex_handle v, 
-                                                        const Point &p, 
+  Vertex_handle move_if_no_collision_and_give_new_cells(Vertex_handle v,
+                                                        const Point &p,
                                                         OutputItCells fit);
 
 private:
@@ -721,7 +723,7 @@ public:
   bool is_Gabriel(const Facet& f)const ;
   bool is_Gabriel(const Edge& e) const;
 
-  bool is_delaunay_after_displacement(Vertex_handle v, 
+  bool is_delaunay_after_displacement(Vertex_handle v,
                                       const Point &p) const;
 
 // Dual functions
@@ -862,7 +864,7 @@ insert(const Point & p, Cell_handle start, bool *could_lock_zone)
 {
   Locate_type lt;
   int li, lj;
-  
+
   // Parallel
   if (could_lock_zone)
   {
@@ -878,7 +880,7 @@ insert(const Point & p, Cell_handle start, bool *could_lock_zone)
     Cell_handle c = locate(p, lt, li, lj, start);
     return insert(p, lt, c, li, lj);
   }
-  
+
 }
 
 template < class Gt, class Tds, class Lds >
@@ -910,9 +912,9 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int lj,
 
 template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
-typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle 
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
-insert_and_give_new_cells(const Point  &p, 
+insert_and_give_new_cells(const Point  &p,
                           OutputItCells fit,
                           Cell_handle start)
 {
@@ -927,7 +929,7 @@ insert_and_give_new_cells(const Point  &p,
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
     } while(c != end);
-  } 
+  }
   else if(dimension == 1)
   {
     Cell_handle c = v->cell();
@@ -940,7 +942,7 @@ insert_and_give_new_cells(const Point  &p,
 
 template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
-typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle 
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert_and_give_new_cells(const Point& p,
                           OutputItCells fit,
@@ -957,7 +959,7 @@ insert_and_give_new_cells(const Point& p,
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
     } while(c != end);
-  } 
+  }
   else if(dimension == 1)
   {
     Cell_handle c = v->cell();
@@ -970,11 +972,11 @@ insert_and_give_new_cells(const Point& p,
 
 template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
-typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle 
+typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 insert_and_give_new_cells(const Point& p,
                           Locate_type lt,
-                          Cell_handle c, int li, int lj, 
+                          Cell_handle c, int li, int lj,
                           OutputItCells fit)
 {
   Vertex_handle v = insert(p, lt, c, li, lj);
@@ -988,14 +990,14 @@ insert_and_give_new_cells(const Point& p,
       int i = c->index(v);
       c = c->neighbor((i+1)%3);
     } while(c != end);
-  } 
+  }
   else if(dimension == 1)
   {
     Cell_handle c = v->cell();
     *fit++ = c;
     *fit++ = c->neighbor((~(c->index(v)))&1);
   }
-  else *fit++ = v->cell(); // dimension = 0 
+  else *fit++ = v->cell(); // dimension = 0
   return v;
 }
 
@@ -1148,7 +1150,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
   Self tmp;
   Vertex_remover<Self> remover (tmp);
   Vertex_inserter<Self> inserter (*this);
-  Vertex_handle res = 
+  Vertex_handle res =
     Tr_Base::move_if_no_collision_and_give_new_cells(v,p,
       remover,inserter,fit);
 
@@ -1446,14 +1448,14 @@ nearest_vertex(const Point& p, Cell_handle start) const
 }
 
 // This is not a fast version.
-// The optimized version needs an int for book-keeping in 
+// The optimized version needs an int for book-keeping in
 // tds() so as to avoiding the need to clear
 // the tds marker in each cell (which is an unsigned char)
 // Also the visitor in TDS could be more clever.
 // The Delaunay triangulation which filters displacements
-// will do these optimizations. 
+// will do these optimizations.
 template <class Gt, class Tds, class Lds >
-bool 
+bool
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
 {
@@ -1475,13 +1477,13 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
   {
     Cell_handle c = cells[i];
     if(this->is_infinite(c)) continue;
-    if(this->orientation(c->vertex(0)->point(), c->vertex(1)->point(), 
-                         c->vertex(2)->point(), c->vertex(3)->point()) 
+    if(this->orientation(c->vertex(0)->point(), c->vertex(1)->point(),
+                         c->vertex(2)->point(), c->vertex(3)->point())
        != POSITIVE)
     {
       v->set_point(ant);
       return false;
-    } 
+    }
   }
 
   // are incident bi-cells Delaunay?
@@ -1498,7 +1500,7 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
     int mj = this->mirror_index(c, j);
     Vertex_handle h1 = c->vertex(j);
     if(this->is_infinite(h1)) {
-      if(this->side_of_sphere(c, cj->vertex(mj)->point(), true) 
+      if(this->side_of_sphere(c, cj->vertex(mj)->point(), true)
          != ON_UNBOUNDED_SIDE) {
         v->set_point(ant);
         return false;
@@ -1510,7 +1512,7 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
       }
     }
   }
-                
+
   v->set_point(ant);
   return true;
 }

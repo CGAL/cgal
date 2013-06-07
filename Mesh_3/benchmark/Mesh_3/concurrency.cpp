@@ -547,7 +547,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 {
   // Domain
   typedef Kernel K;
-  
+
 #ifdef MESH_3_POLYHEDRON_WITH_FEATURES
   typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
   typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
@@ -559,7 +559,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   // Triangulation
 #ifdef CONCURRENT_MESH_3
   typedef CGAL::Mesh_triangulation_3<
-    Mesh_domain, 
+    Mesh_domain,
     CGAL::Kernel_traits<Mesh_domain>::Kernel,
     CGAL::Parallel_tag>::type Tr;
 #else
@@ -579,7 +579,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
     return false;
   }
   input >> polyhedron;
-  
+
   std::cerr << "Building AABB tree... ";
   // Create domain
   Mesh_domain domain(polyhedron);
@@ -631,13 +631,13 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 # endif
                                      , no_odt()
 # ifdef MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit = timelimit, 
+                                     , perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
 #ifdef MESH_3_BENCHMARK_EXUDE
-                                     , exude(time_limit = timelimit, 
+                                     , exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
                                      , no_exude()
@@ -653,7 +653,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   c3t3.output_to_maya(std::ofstream(input_filename + ".maya"), true);
   std::cerr << "done." << std::endl;
 #endif
-  
+
 #ifdef MESH_3_BENCHMARK_EXPORT_TO_MESH
   std::cerr << "Exporting to Medit file format (*.mesh)... ";
   c3t3.output_to_medit(std::ofstream(input_filename + ".mesh"), true);
@@ -671,13 +671,13 @@ bool make_mesh_3D_images(const std::string &input_filename,
 {
   // Domain
   typedef Kernel K;
-  
+
   typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3, K> Mesh_domain;
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
   typedef CGAL::Mesh_triangulation_3<
-    Mesh_domain, 
+    Mesh_domain,
     CGAL::Kernel_traits<Mesh_domain>::Kernel,
     CGAL::Parallel_tag>::type Tr;
 #else
@@ -691,11 +691,11 @@ bool make_mesh_3D_images(const std::string &input_filename,
   // Load image
   CGAL::Image_3 image;
   image.read(input_filename.c_str());
-  
+
   // Create domain
   Mesh_domain domain(image);
   std::cerr << "done." << std::endl;
-  
+
   Mesh_parameters params;
   params.facet_approx = facet_approx;
   params.facet_sizing = facet_sizing;
@@ -736,13 +736,13 @@ bool make_mesh_3D_images(const std::string &input_filename,
 # endif
                                      , no_odt()
 # ifdef MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit = timelimit, 
+                                     , perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
 #ifdef MESH_3_BENCHMARK_EXUDE
-                                     , exude(time_limit = timelimit, 
+                                     , exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
                                      , no_exude()
@@ -758,7 +758,7 @@ bool make_mesh_3D_images(const std::string &input_filename,
   c3t3.output_to_maya(std::ofstream(input_filename + ".maya"), true);
   std::cerr << "done." << std::endl;
 #endif
-  
+
 #ifdef MESH_3_BENCHMARK_EXPORT_TO_MESH
   std::cerr << "Exporting to Medit file format (*.mesh)... ";
   c3t3.output_to_medit(std::ofstream(input_filename + ".mesh"), true);
@@ -772,8 +772,8 @@ bool make_mesh_3D_images(const std::string &input_filename,
 template <class ImplicitFunction>
 bool make_mesh_implicit(double facet_approx,
                         double facet_sizing,
-                        double cell_sizing, 
-                        ImplicitFunction func, 
+                        double cell_sizing,
+                        ImplicitFunction func,
                         const std::string &function_name)
 {
   // Domain
@@ -786,12 +786,12 @@ bool make_mesh_implicit(double facet_approx,
 
   // Triangulation
 #ifdef CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<
-    Mesh_domain, 
-    CGAL::Kernel_traits<Mesh_domain>::Kernel,
+  typedef typename CGAL::Mesh_triangulation_3<
+    Mesh_domain,
+    typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
     CGAL::Parallel_tag>::type Tr;
 #else
-  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
   // C3t3
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
@@ -872,13 +872,13 @@ bool make_mesh_implicit(double facet_approx,
 # endif
                                      , no_odt()
 # ifdef MESH_3_BENCHMARK_PERTURB
-                                     , perturb(time_limit = timelimit, 
+                                     , perturb(time_limit = timelimit,
                                                sliver_bound = sliverbound)
 # else
                                      , no_perturb()
 #endif
 #ifdef MESH_3_BENCHMARK_EXUDE
-                                     , exude(time_limit = timelimit, 
+                                     , exude(time_limit = timelimit,
                                              sliver_bound = sliverbound)
 #else
                                      , no_exude()
@@ -888,7 +888,7 @@ bool make_mesh_implicit(double facet_approx,
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
-  
+
 #ifdef MESH_3_BENCHMARK_EXPORT_TO_MAYA
   std::cerr << "Exporting to maya file format (*.maya)... ";
   c3t3.output_to_maya(std::ofstream(function_name + ".maya"), true);
@@ -955,8 +955,8 @@ int main()
     int i = 1;
 #ifdef CONCURRENT_MESH_3
 # ifdef BENCHMARK_WITH_1_TO_MAX_THREADS
-    for(num_threads = 1 ; 
-          num_threads <= tbb::task_scheduler_init::default_num_threads() ; 
+    for(num_threads = 1 ;
+          num_threads <= tbb::task_scheduler_init::default_num_threads() ;
           ++num_threads)
 # endif
     /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ;
@@ -1039,7 +1039,7 @@ int main()
 #endif
 
             std::cerr << std::endl << "Refinement #" << i << "..." << std::endl;
-            
+
             display_info(num_threads);
 
             if (input == "Klein_function")
@@ -1058,7 +1058,7 @@ int main()
               Cylinder_function f(3., 0.1);
               make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, f, input);
             }*/
-            else 
+            else
             {
               size_t dot_position = input.find_last_of('.');
               std::string extension = input.substr(dot_position + 1);

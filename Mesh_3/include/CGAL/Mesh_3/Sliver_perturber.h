@@ -343,7 +343,7 @@ protected:
   void destroy_root_task()                          const {}
   template <typename Func, typename PVertex>
   void enqueue_work(Func, const PVertex &)          const {}
-  
+
   void increment_erase_counter(const Vertex_handle &vh) const {}
 };
 
@@ -406,7 +406,7 @@ protected:
     CGAL_assertion(m_empty_root_task != 0);
     m_worksharing_ds.enqueue_work(f, pv, *m_empty_root_task);
   }
-  
+
   void increment_erase_counter(const Vertex_handle &vh) const
   {
     vh->increment_erase_counter();
@@ -763,7 +763,7 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
       current_bound = sliver_bound;
     }
   }
-  
+
 #ifdef MESH_3_PROFILING
   double perturbation_time = t.elapsed();
 #endif
@@ -778,7 +778,7 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
 #endif
 
 #ifdef MESH_3_PROFILING
-  std::cerr << std::endl << "Total perturbation 'wall-clock' time: " 
+  std::cerr << std::endl << "Total perturbation 'wall-clock' time: "
             << perturbation_time << "s" << std::endl;
 #endif
 
@@ -813,7 +813,7 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
   else
   {
     CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time",
-      (ret == CANT_IMPROVE_ANYMORE ? 
+      (ret == CANT_IMPROVE_ANYMORE ?
       "CANT_IMPROVE_ANYMORE" : "TIME_LIMIT_REACHED"));
   }
 #endif
@@ -884,7 +884,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 # ifdef CGAL_MESH_3_PERTURBER_VERBOSE
     int iteration_nb = 0;
 # endif
-    
+
     //tbb::task_scheduler_init tsi(1); //CJTODO TEST
 
     this->create_root_task();
@@ -898,7 +898,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
     }
 
     this->wait_for_all();
-    
+
 # if defined(CGAL_MESH_3_PERTURBER_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << " Flushing";
 # endif
@@ -1582,7 +1582,7 @@ enqueue_task(const PVertex &pv,
         this->unlock_all_elements();
       } while (!could_lock_zone);
 
-      if ( is_time_limit_reached() )
+      if ( this->is_time_limit_reached() )
         tbb::task::self().cancel_group_execution();
     },
     pv);

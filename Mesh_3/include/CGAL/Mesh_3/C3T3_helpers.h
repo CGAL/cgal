@@ -479,7 +479,7 @@ public:
   {
     if (m_lock_ds)
     {
-      return m_lock_ds->try_lock<true>(p, lock_radius);
+      return m_lock_ds->template try_lock<true>(p, lock_radius);
     }
     return true;
   }
@@ -585,9 +585,10 @@ class C3T3_helpers
                             typename C3T3::Concurrency_tag> Base;
   typedef typename C3T3::Concurrency_tag Concurrency_tag;
 
-  typedef typename C3T3::Triangulation  Tr;
-  typedef Tr                            Triangulation;
-  typedef typename Tr::Geom_traits      Gt;
+  typedef typename Base::Lock_data_structure  Lock_data_structure;
+  typedef typename C3T3::Triangulation        Tr;
+  typedef Tr                                  Triangulation;
+  typedef typename Tr::Geom_traits            Gt;
 
   typedef typename Gt::Vector_3         Vector_3;
   typedef typename Gt::Point_3          Point_3;

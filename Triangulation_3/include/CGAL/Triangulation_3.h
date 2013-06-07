@@ -123,7 +123,7 @@ protected:
   Triangulation_3_base(Lock_data_structure *) {}
 
   void swap(Triangulation_3_base<Concurrency_tag, Lock_data_structure_> &tr){}
-  
+
 public:
   bool is_parallel() const
   {
@@ -131,7 +131,7 @@ public:
   }
 
   // LOCKS (no-op functions)
-  
+
   template <typename Point_3>
   bool try_lock_point(const Point_3 &p, int = 0) const
   { return true; }
@@ -139,19 +139,19 @@ public:
   template <typename Vertex_handle>
   bool try_lock_vertex(const Vertex_handle &, int = 0) const
   { return true; }
-  
+
   template <typename Cell_handle>
   bool try_lock_cell(const Cell_handle &, int = 0) const
   { return true; }
-  
+
   template <typename Facet>
   bool try_lock_facet(const Facet &, int = 0) const
   { return true; }
-  
+
   template <typename P3>
   bool is_point_locked_by_this_thread(const P3 &) const
   { return false; }
-  
+
   template <typename Cell_handle>
   bool is_cell_locked_by_this_thread(const Cell_handle &) const
   { return false; }
@@ -177,7 +177,7 @@ class Triangulation_3_base<Parallel_tag, Lock_data_structure_>
 public:
   // If Lock_data_structure_ = Default => use Spatial_grid_lock_data_structure_3
   typedef typename Default::Get<
-    Lock_data_structure_, 
+    Lock_data_structure_,
     Spatial_grid_lock_data_structure_3<Tag_priority_blocking> >
     ::type Lock_data_structure;
 
@@ -192,7 +192,7 @@ protected:
   {
     std::swap(tr.m_lock_ds, m_lock_ds);
   }
-  
+
 public:
 
   bool is_parallel() const
@@ -222,7 +222,7 @@ public:
     }
     return locked;
   }
-  
+
   template <typename Cell_handle>
   bool try_lock_cell(const Cell_handle &cell_handle, int lock_radius = 0) const
   {
@@ -234,7 +234,7 @@ public:
     }
     return success;
   }
-  
+
   template <typename Facet>
   bool try_lock_facet(const Facet &facet, int lock_radius = 0) const
   {
@@ -249,7 +249,7 @@ public:
 
     return success;
   }
-  
+
   template <typename P3>
   bool is_point_locked_by_this_thread(const P3 &p) const
   {
@@ -260,7 +260,7 @@ public:
     }
     return locked;
   }
-  
+
   template <typename Cell_handle>
   bool is_cell_locked_by_this_thread(const Cell_handle &cell_handle) const
   {
@@ -275,7 +275,7 @@ public:
     }
     return locked;
   }
-  
+
   Lock_data_structure *get_lock_data_structure() const
   {
     return m_lock_ds;
@@ -314,19 +314,19 @@ template < class GT, class Tds_, class Lock_data_structure_ >
 class Triangulation_3
   : public Triangulation_3_base<
       // Get Concurrency_tag from TDS
-      typename Default::Get< Tds_, 
-                             Triangulation_data_structure_3 
+      typename Default::Get< Tds_,
+                             Triangulation_data_structure_3
                              <
                                Triangulation_vertex_base_3<GT>,
-                                     Triangulation_cell_base_3<GT> 
+                                     Triangulation_cell_base_3<GT>
                              >
-                           >::type::Concurrency_tag, 
+                           >::type::Concurrency_tag,
       Lock_data_structure_>
   , public Triangulation_utils_3
 {
   friend std::istream& operator>> <>
   (std::istream& is, Triangulation_3<GT,Tds_,Lock_data_structure_> &tr);
-  
+
   typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
                                           Triangulation_vertex_base_3<GT>,
                                           Triangulation_cell_base_3<GT> > >::type Tds;
@@ -336,7 +336,8 @@ class Triangulation_3
     typename Tds::Concurrency_tag, Lock_data_structure_>  Base;
 
 public:
-  
+
+  typedef typename Base::Lock_data_structure   Lock_data_structure;
   typedef Tds                                  Triangulation_data_structure;
   typedef GT                                   Geom_traits;
 
@@ -344,7 +345,7 @@ public:
   typedef typename GT::Segment_3               Segment;
   typedef typename GT::Triangle_3              Triangle;
   typedef typename GT::Tetrahedron_3           Tetrahedron;
-  
+
   typedef typename Tds::Concurrency_tag        Concurrency_tag;
 
   typedef typename Tds::Vertex                 Vertex;
@@ -392,7 +393,7 @@ private:
       {
           return t->is_infinite(v);
       }
-      
+
       bool operator()(typename std::vector<Vertex_handle>::const_iterator v) const
       {
               return t->is_infinite(*v);
@@ -577,21 +578,21 @@ protected:
     {
       infinite = _tds.insert_increase_dimension();
     }
-  
-  void init_tds(const Point &p0, const Point &p1, 
+
+  void init_tds(const Point &p0, const Point &p1,
                 const Point &p2, const Point &p3)
   {
     Vertex_handle v0, v1, v2, v3;
     infinite = _tds.insert_first_finite_cell(v0, v1, v2, v3, infinite);
-    v1->set_point(p0);
-    v2->set_point(p1);
-    v3->set_point(p2);
-    v4->set_point(p3);
+    v0->set_point(p0);
+    v1->set_point(p1);
+    v2->set_point(p2);
+    v3->set_point(p3);
   }
-  
-  void init_tds(const Point &p0, const Point &p1, 
+
+  void init_tds(const Point &p0, const Point &p1,
                 const Point &p2, const Point &p3,
-                Vertex_handle &vh0, Vertex_handle &vh1, 
+                Vertex_handle &vh0, Vertex_handle &vh1,
                 Vertex_handle &vh2, Vertex_handle &vh3)
   {
     infinite = _tds.insert_first_finite_cell(vh0, vh1, vh2, vh3, infinite);
@@ -633,7 +634,7 @@ public:
       init_tds();
       insert(first, last);
   }
-  
+
   // Create the 3D triangulation of p0, p1, p3 and p4
   // Precondition: p0, p1, p3 and p4 MUST BE positively oriented
   Triangulation_3(const Point &p0, const Point &p1,
@@ -1364,7 +1365,7 @@ protected:
   bool test_dim_down(Vertex_handle v) const;
 
   bool test_dim_down_using_incident_cells_3(
-    Vertex_handle v, std::vector<Cell_handle> &incident_cells, 
+    Vertex_handle v, std::vector<Cell_handle> &incident_cells,
     std::vector<Vertex_handle> &adj_vertices,
     bool *could_lock_zone = NULL) const;
 
@@ -1376,7 +1377,7 @@ protected:
   // Pre-condition: dimension = 3
   // The return value is only meaningful if *could_lock_zone = true:
   // * returns true if the vertex was removed
-  // * returns false if the vertex wasn't removed since it would decrease 
+  // * returns false if the vertex wasn't removed since it would decrease
   //   the dimension => needs to be done sequentially
   bool remove(Vertex_handle v, VertexRemover &remover,
               bool *could_lock_zone);
@@ -1531,7 +1532,7 @@ private:
   // Version of remove_3D if the incident cells and the adjacent vertices
   // are already known
   template < class VertexRemover >
-  VertexRemover& remove_3D(Vertex_handle v, VertexRemover &remover, 
+  VertexRemover& remove_3D(Vertex_handle v, VertexRemover &remover,
                            const std::vector<Cell_handle> &inc_cells,
                            std::vector<Vertex_handle> &adj_vertices);
 
@@ -1815,7 +1816,7 @@ public:
   {
     return _tds.incident_cells(v, cells);
   }
-  
+
   bool
   try_lock_and_get_incident_cells(Vertex_handle v,
                                   std::vector<Cell_handle>& cells) const
@@ -1865,11 +1866,11 @@ public:
     }
     return true;
   }
-  
+
   template <class OutputIterator>
   bool
   try_lock_and_get_adjacent_vertices_and_cells_3(
-    Vertex_handle v, OutputIterator vertices, 
+    Vertex_handle v, OutputIterator vertices,
     std::vector<Cell_handle> &cells) const
   {
 
@@ -1912,7 +1913,7 @@ public:
       }
       ++head;
     } while(head != tail);
-    
+
     std::set<Vertex_handle> tmp_vertices;
     BOOST_FOREACH(Cell_handle& ch, std::make_pair(cells.begin(), cells.end()))
     {
@@ -1969,7 +1970,7 @@ public:
   {
     return _tds.adjacent_vertices(v, vertices);
   }
-  
+
   template <class OutputIterator>
   OutputIterator
   adjacent_vertices_and_cells_3(Vertex_handle v, OutputIterator vertices,
@@ -2771,7 +2772,7 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
   // Make sure we continue from here with a finite cell.
   if ( start == Cell_handle() )
     start = infinite_cell();
-  
+
   // CTODO: useless?
   if (could_lock_zone)
   {
@@ -3529,11 +3530,11 @@ insert_in_conflict(const Point & p,
         facets.reserve(32);
 
         find_conflicts(
-          c, 
-          tester, 
+          c,
+          tester,
           make_triple(
             std::back_inserter(facets),
-                                    std::back_inserter(cells), 
+                                    std::back_inserter(cells),
             Emptyset_iterator()),
           could_lock_zone);
 
@@ -3544,7 +3545,7 @@ insert_in_conflict(const Point & p,
           {
             ch->tds_data().clear();
           }
-        
+
           BOOST_FOREACH(Facet& f,
             std::make_pair(facets.begin(), facets.end()))
           {
@@ -3552,7 +3553,7 @@ insert_in_conflict(const Point & p,
           }
           return Vertex_handle();
         }
-        
+
         facet = facets.back();
       }
       // Sequential
@@ -3560,14 +3561,14 @@ insert_in_conflict(const Point & p,
       {
         cells.reserve(32);
         find_conflicts(
-          c, 
-          tester, 
+          c,
+          tester,
           make_triple(
             Oneset_iterator<Facet>(facet),
                                     std::back_inserter(cells),
                                     Emptyset_iterator()));
       }
-      
+
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
@@ -4042,13 +4043,13 @@ template < class GT, class Tds, class Lds >
 bool
 Triangulation_3<GT,Tds,Lds>::
 test_dim_down_using_incident_cells_3(
-  Vertex_handle v, std::vector<Cell_handle> &incident_cells, 
+  Vertex_handle v, std::vector<Cell_handle> &incident_cells,
   std::vector<Vertex_handle> &adj_vertices,
   bool *could_lock_zone) const
 {
   CGAL_triangulation_precondition(dimension() == 3);
   CGAL_triangulation_precondition(! is_infinite(v) );
-  
+
   // Collect all vertices on the boundary
   // and all incident cells
   if (could_lock_zone)
@@ -4064,8 +4065,7 @@ test_dim_down_using_incident_cells_3(
       v, std::back_inserter(adj_vertices), incident_cells);
   }
 
-  typedef Filter_iterator<
-                           std::vector<Vertex_handle>::const_iterator,
+  typedef Filter_iterator< typename std::vector<Vertex_handle>::const_iterator,
                            Infinite_tester
                          > Finite_vertex_iterator;
   Finite_vertex_iterator vit(
@@ -4075,15 +4075,15 @@ test_dim_down_using_incident_cells_3(
   const Point &p1 = (*vit++)->point();
   const Point &p2 = (*vit++)->point();
   const Point &p3 = (*vit++)->point();
-  
-  for ( ; vit != vit_end ; ++vit ) 
+
+  for ( ; vit != vit_end ; ++vit )
   {
           if (!coplanar(p1, p2, p3, (*vit)->point()))
             return false;
   }
 
-  for (std::vector<Cell_handle>::const_iterator it_inc_cell 
-         = incident_cells.begin() ; 
+  for (typename std::vector<Cell_handle>::const_iterator it_inc_cell
+         = incident_cells.begin() ;
        it_inc_cell != incident_cells.end() ;
        ++it_inc_cell)
   {
@@ -4589,7 +4589,7 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
   // create a Delaunay triangulation of the points on the boundary
   // and make a map from the vertices in remover.tmp towards the vertices
   // in *this
-  
+
   unsigned int i = 0;
   Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
   Cell_handle ch = Cell_handle();
@@ -4619,8 +4619,8 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
     {
       Vertex_handle vh1, vh2, vh3, vh4;
       remover.tmp.init_tds(
-        vertices[0]->point(), vertices[1]->point(), 
-        vertices[2]->point(), vertices[3]->point(), 
+        vertices[0]->point(), vertices[1]->point(),
+        vertices[2]->point(), vertices[3]->point(),
         vh1, vh2, vh3, vh4);
       ch = vh1->cell();
       vmap[vh1] = vertices[0];
@@ -4741,7 +4741,7 @@ template <class Gt, class Tds, class Lds>
 template < class VertexRemover >
 VertexRemover&
 Triangulation_3<Gt,Tds,Lds>::
-remove_3D(Vertex_handle v, VertexRemover &remover, 
+remove_3D(Vertex_handle v, VertexRemover &remover,
           const std::vector<Cell_handle> &inc_cells,
           std::vector<Vertex_handle> &adj_vertices)
 {
@@ -4766,7 +4766,7 @@ remove_3D(Vertex_handle v, VertexRemover &remover,
   // create a Delaunay triangulation of the points on the boundary
   // and make a map from the vertices in remover.tmp towards the vertices
   // in *this
-  
+
   unsigned int i = 0;
   Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
   Cell_handle ch = Cell_handle();
@@ -4796,8 +4796,8 @@ remove_3D(Vertex_handle v, VertexRemover &remover,
     {
       Vertex_handle vh1, vh2, vh3, vh4;
       remover.tmp.init_tds(
-        adj_vertices[0]->point(), adj_vertices[1]->point(), 
-        adj_vertices[2]->point(), adj_vertices[3]->point(), 
+        adj_vertices[0]->point(), adj_vertices[1]->point(),
+        adj_vertices[2]->point(), adj_vertices[3]->point(),
         vh1, vh2, vh3, vh4);
       ch = vh1->cell();
       vmap[vh1] = adj_vertices[0];
@@ -4950,7 +4950,7 @@ remove(Vertex_handle v, VertexRemover &remover, bool *could_lock_zone)
   CGAL_triangulation_precondition( !is_infinite(v));
   CGAL_triangulation_precondition( dimension() == 3);
   CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );
-  
+
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
   static Profile_branch_counter_3 bcounter(
     "early withdrawals / late withdrawals / successes [Delaunay_tri_3::remove]");
@@ -6164,9 +6164,9 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
 
       o_ch->set_neighbor(o_i,new_ch);
       new_ch->set_neighbor(i_i, o_ch);
-      
+
       for(int j=0;j<4;j++) new_ch->vertex(j)->set_cell(new_ch);
-      
+
       // for the other faces check, if they can also be glued
       for(unsigned int index = 0; index < 4; index++){
         if(index != i_i){

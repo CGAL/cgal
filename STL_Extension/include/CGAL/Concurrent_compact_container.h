@@ -77,13 +77,13 @@ public:
     m_size = other.m_size;
     return *this;
   }
-  
+
   void merge(Free_list &other)
   {
     if (m_head == NULL) {
       *this = other;
-    } 
-    else if (!other.empty()) 
+    }
+    else if (!other.empty())
     {
       pointer p = m_head;
       while (CCC::clean_pointee(p) != NULL)
@@ -104,7 +104,7 @@ protected:
 // Safe concurrent "insert" and "erase".
 // Do not parse the container while others are modifying it.
 // Strategy_ is a functor which provides several functions
-// See Compact_container_strategy_base and 
+// See Compact_container_strategy_base and
 // Compact_container_strategy_with_counter, and/or documentation
 //
 template < class T, class Allocator_ = Default, class Strategy_ = Default >
@@ -135,9 +135,9 @@ public:
 private:
   typedef Free_list<pointer, size_type, Self>       FreeList;
   typedef tbb::enumerable_thread_specific<FreeList> Free_lists;
-  
+
   // FreeList can access our private function (clean_pointee...)
-  friend class FreeList;
+  friend class Free_list<pointer, size_type, Self>;
 
 public:
   friend class internal::CCC_iterator<Self, false>;
@@ -606,7 +606,7 @@ void Concurrent_compact_container<T, Allocator, Strategy>::merge(Self &d)
 
   // Allocators must be "compatible" :
   CGAL_precondition(get_allocator() == d.get_allocator());
-  
+
   // Concatenate the free_lists.
   // Iterates over TLS free lists of "d". Note that the number of TLS freelists
   // may be different.

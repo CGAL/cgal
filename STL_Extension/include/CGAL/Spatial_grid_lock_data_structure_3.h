@@ -75,7 +75,7 @@ public:
 #endif
 
 private:
-  
+
   static bool *init_TLS_grid(int num_cells_per_axis)
   {
     int num_cells = num_cells_per_axis*
@@ -116,7 +116,7 @@ public:
   {
     return get_thread_local_grid()[cell_index];
   }
-  
+
   template <typename P3>
   bool is_locked(const P3 &point)
   {
@@ -141,7 +141,7 @@ public:
         || try_lock_cell<no_spin>(cell_index);
   }
 
-  
+
   bool try_lock(int index_x, int index_y, int index_z, int lock_radius)
   {
     return try_lock<false>(index_x, index_y, index_z, lock_radius);
@@ -204,7 +204,7 @@ public:
     }
   }
 
-  
+
   bool try_lock(int cell_index, int lock_radius)
   {
     return try_lock<false>(cell_index, lock_radius);
@@ -243,33 +243,33 @@ public:
     // Compute index on grid
     int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_xmin) * m_resolution_x);
     //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
-    index_x = 
-      (index_x < 0 ? 
-        0 
-        : (index_x >= m_num_grid_cells_per_axis ? 
-            m_num_grid_cells_per_axis - 1 
+    index_x =
+      (index_x < 0 ?
+        0
+        : (index_x >= m_num_grid_cells_per_axis ?
+            m_num_grid_cells_per_axis - 1
             : index_x
-          ) 
+          )
       );
     int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_ymin) * m_resolution_y);
     //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
-    index_y = 
-      (index_y < 0 ? 
-        0 
-        : (index_y >= m_num_grid_cells_per_axis ? 
-            m_num_grid_cells_per_axis - 1 
+    index_y =
+      (index_y < 0 ?
+        0
+        : (index_y >= m_num_grid_cells_per_axis ?
+            m_num_grid_cells_per_axis - 1
             : index_y
-          ) 
+          )
       );
     int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_zmin) * m_resolution_z);
     //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-    index_z = 
-      (index_z < 0 ? 
-        0 
-        : (index_z >= m_num_grid_cells_per_axis ? 
-            m_num_grid_cells_per_axis - 1 
+    index_z =
+      (index_z < 0 ?
+        0
+        : (index_z >= m_num_grid_cells_per_axis ?
+            m_num_grid_cells_per_axis - 1
             : index_z
-          ) 
+          )
       );
 
     if (lock_radius == 0)
@@ -307,7 +307,7 @@ public:
     }
     tls_locked_cells.clear();
   }
-  
+
   void unlock_all_tls_locked_cells_but_one(int cell_index_to_keep_locked)
   {
     std::vector<int> &tls_locked_cells = m_tls_locked_cells.local();
@@ -330,7 +330,7 @@ public:
     if (cell_to_keep_found)
       tls_locked_cells.push_back(cell_index_to_keep_locked);
   }
-  
+
   template <typename P3>
   void unlock_all_tls_locked_locations_but_one_point(const P3 &point)
   {
@@ -385,33 +385,33 @@ protected:
     // Compute indices on grid
     int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_xmin) * m_resolution_x);
     //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
-    index_x = 
-      (index_x < 0 ? 
-        0 
-        : (index_x >= m_num_grid_cells_per_axis ? 
-            m_num_grid_cells_per_axis - 1 
+    index_x =
+      (index_x < 0 ?
+        0
+        : (index_x >= m_num_grid_cells_per_axis ?
+            m_num_grid_cells_per_axis - 1
             : index_x
-          ) 
+          )
       );
     int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_ymin) * m_resolution_y);
     //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
-    index_y = 
-      (index_y < 0 ? 
-        0 
-        : (index_y >= m_num_grid_cells_per_axis ? 
-            m_num_grid_cells_per_axis - 1 
+    index_y =
+      (index_y < 0 ?
+        0
+        : (index_y >= m_num_grid_cells_per_axis ?
+            m_num_grid_cells_per_axis - 1
             : index_y
-          ) 
+          )
       );
     int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_zmin) * m_resolution_z);
     //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
-    index_z = 
-      (index_z < 0 ? 
-        0 
-        : (index_z >= m_num_grid_cells_per_axis ? 
-            m_num_grid_cells_per_axis - 1 
+    index_z =
+      (index_z < 0 ?
+        0
+        : (index_z >= m_num_grid_cells_per_axis ?
+            m_num_grid_cells_per_axis - 1
             : index_z
-          ) 
+          )
       );
 
     return
@@ -424,7 +424,7 @@ protected:
   {
     return static_cast<Derived*>(this)->is_cell_locked_impl(cell_index);
   }
-  
+
   bool try_lock_cell(int cell_index)
   {
     return try_lock_cell<false>(cell_index);
@@ -433,7 +433,8 @@ protected:
   template <bool no_spin>
   bool try_lock_cell(int cell_index)
   {
-    return static_cast<Derived*>(this)->try_lock_cell_impl<no_spin>(cell_index);
+    return static_cast<Derived*>(this)
+      ->template try_lock_cell_impl<no_spin>(cell_index);
   }
   void unlock_cell(int cell_index)
   {
@@ -450,7 +451,7 @@ protected:
 
   // TLS
   typedef tbb::enumerable_thread_specific<
-    bool*, 
+    bool*,
     tbb::cache_aligned_allocator<bool*>,
     tbb::ets_key_per_instance>                               TLS_grid;
   typedef tbb::enumerable_thread_specific<std::vector<int>>  TLS_locked_cells;
@@ -467,7 +468,7 @@ protected:
 template <typename Grid_lock_tag = Tag_priority_blocking>
 class Spatial_grid_lock_data_structure_3;
 
-      
+
 //*****************************************************************************
 // class Spatial_grid_lock_data_structure_3<Tag_non_blocking>
 //*****************************************************************************
@@ -575,7 +576,7 @@ public:
     // NO SPIN
     if (no_spin)
     {
-      unsigned int old_value = 
+      unsigned int old_value =
         m_grid[cell_index].compare_and_swap(this_thread_id, 0);
       if (old_value == 0)
       {
@@ -589,7 +590,7 @@ public:
     {
       for(;;)
       {
-        unsigned int old_value = 
+        unsigned int old_value =
           m_grid[cell_index].compare_and_swap(this_thread_id, 0);
         if (old_value == 0)
         {
@@ -616,8 +617,8 @@ public:
   {
     m_grid[cell_index] = 0;
   }
-  
-private:  
+
+private:
   static unsigned int init_TLS_thread_ids()
   {
     static tbb::atomic<unsigned int> last_id;
@@ -627,7 +628,7 @@ private:
   }
 
 protected:
-  
+
   tbb::atomic<unsigned int> *                           m_grid;
 
   typedef tbb::enumerable_thread_specific<unsigned int> TLS_thread_uint_ids;
@@ -699,7 +700,7 @@ protected:
 #else // !CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
-  
+
 template <typename Grid_lock_tag = void>
 class Spatial_grid_lock_data_structure_3
 {

@@ -34,7 +34,7 @@
 namespace CGAL {
 
 // Class Mesh_cell_base_3_base
-// Base for Compact_mesh_cell_base_3, with specializations 
+// Base for Compact_mesh_cell_base_3, with specializations
 // for different walues of Parallel_tag and Use_erase_counter
 template <typename Use_erase_counter, typename Concurrency_tag>
 class Compact_mesh_cell_base_3_base;
@@ -54,7 +54,7 @@ public:
   unsigned int get_erase_counter() const { return 0; }
   void set_erase_counter(unsigned int c) {}
   void increment_erase_counter() {}
-  
+
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
   {
@@ -91,7 +91,7 @@ protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0) {}
 
-public:  
+public:
   // Erase counter (cf. Compact_container)
   unsigned int get_erase_counter() const
   {
@@ -105,7 +105,7 @@ public:
   {
     ++this->m_erase_counter;
   }
-  
+
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
   {
@@ -148,7 +148,7 @@ protected:
     bits_ = 0;
   }
 
-public: 
+public:
   // Erase counter (cf. Compact_container)
   unsigned int get_erase_counter() const
   {
@@ -162,7 +162,7 @@ public:
   {
     ++this->m_erase_counter;
   }
-  
+
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
   {
@@ -191,7 +191,7 @@ public:
     CGAL_precondition(facet>=0 && facet<4);
     return ( (bits_ & (1 << facet)) != 0 );
   }
-  
+
 private:
   typedef tbb::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
@@ -208,14 +208,14 @@ private:
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
           class MD,
-          class TDS = void > 
+          class TDS = void >
 class Compact_mesh_cell_base_3
   : public Compact_mesh_cell_base_3_base<
       typename TDS::Cell_container_strategy::Uses_erase_counter,
       typename TDS::Concurrency_tag>
 {
   typedef typename GT::FT FT;
-  
+
 public:
   typedef TDS                          Triangulation_data_structure;
   typedef typename TDS::Vertex_handle  Vertex_handle;
@@ -226,7 +226,7 @@ public:
 
 
   template <typename TDS2>
-  struct Rebind_TDS { 
+  struct Rebind_TDS {
     typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other;
   };
 
@@ -235,10 +235,10 @@ public:
   typedef typename MD::Subdomain_index      Subdomain_index;
   typedef typename MD::Surface_patch_index  Surface_patch_index;
   typedef typename MD::Index                Index;
-  
+
   typedef GT                   Geom_traits;
   typedef typename GT::Point_3 Point;
-  
+
   typedef Point*           Point_container;
   typedef Point*           Point_iterator;
   typedef const Point*     Point_const_iterator;
@@ -268,10 +268,10 @@ public:
   {
   }
 
-  Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs) 
+  Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs)
     : circumcenter_(NULL)
     , sliver_value_(rhs.sliver_value_)
-    , subdomain_index_(rhs.subdomain_index_) 
+    , subdomain_index_(rhs.subdomain_index_)
     , sliver_cache_validity_(false)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
@@ -284,7 +284,7 @@ public:
       surface_center_index_table_[i] = rhs.surface_center_index_table_[i];
     }
   }
-  
+
   Compact_mesh_cell_base_3 (Vertex_handle v0,
                             Vertex_handle v1,
                             Vertex_handle v2,
@@ -323,7 +323,6 @@ public:
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
-    , bits_(0)
     , sliver_cache_validity_(false)
     , V(CGAL::make_array(v0, v1, v2, v3))
     , N(CGAL::make_array(n0, n1, n2, n3))
@@ -498,13 +497,13 @@ public:
 
   // Returns the index of the cell of the input complex that contains the cell
   Subdomain_index subdomain_index() const { return subdomain_index_; }
-  
+
   // Sets the index of the cell of the input complex that contains the cell
   void set_subdomain_index(const Subdomain_index& index)
-  { subdomain_index_ = index; }  
-  
+  { subdomain_index_ = index; }
+
   void set_sliver_value(const FT& value)
-  { 
+  {
     sliver_cache_validity_ = true;
     sliver_value_ = value;
   }
@@ -560,16 +559,16 @@ public:
     CGAL_precondition(facet>=0 && facet<4);
     return ( Surface_patch_index() != surface_index_table_[facet]);
   }
-  
+
   // -----------------------------------
   // Backward Compatibility
   // -----------------------------------
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index   Surface_index;
-  
+
   void set_surface_index(const int facet, const Surface_index& index)
   { set_surface_patch_index(facet,index); }
-  
+
   /// Returns surface index of facet \c facet
   Surface_index surface_index(const int facet) const
   { return surface_patch_index(facet); }
@@ -581,7 +580,7 @@ public:
   static
   std::string io_signature()
   {
-    return 
+    return
       Get_io_signature<Subdomain_index>()() + "+" +
       Get_io_signature<Regular_triangulation_cell_base_3<Geom_traits> >()()
       + "+(" + Get_io_signature<Surface_patch_index>()() + ")[4]";
@@ -591,7 +590,7 @@ public:
 public:
   Cell_handle next_intrusive() const { return next_intrusive_; }
   Cell_handle& next_intrusive()      { return next_intrusive_; }
-   
+
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
   Cell_handle& previous_intrusive()      { return previous_intrusive_; }
 #endif // CGAL_INTRUSIVE_LIST

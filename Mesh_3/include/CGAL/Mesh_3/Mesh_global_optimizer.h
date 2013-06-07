@@ -424,7 +424,7 @@ operator()(int nb_iterations, Visitor visitor)
 {
   running_time_.reset();
   running_time_.start();
-  
+
 #ifdef MESH_3_PROFILING
   WallClockTimer t;
 #endif
@@ -509,7 +509,7 @@ operator()(int nb_iterations, Visitor visitor)
       break;
   }
   running_time_.stop();
-  
+
 #ifdef MESH_3_PROFILING
   double optim_time = t.elapsed();
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
@@ -534,7 +534,7 @@ operator()(int nb_iterations, Visitor visitor)
 #endif
 
 #ifdef MESH_3_PROFILING
-  std::cerr << std::endl << "Total optimization 'wall-clock' time: " 
+  std::cerr << std::endl << "Total optimization 'wall-clock' time: "
             << optim_time << "s" << std::endl;
 #endif
 
@@ -611,7 +611,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
         }
       }
 
-      if ( is_time_limit_reached() )
+      if ( this->is_time_limit_reached() )
         tbb::task::self().cancel_group_execution();
     });
 
@@ -783,7 +783,7 @@ update_mesh(const Moves_vector& moves,
 
         // Stop if time_limit_ is reached, here we can't return without rebuilding
         // restricted delaunay
-        if ( is_time_limit_reached() )
+        if ( this->is_time_limit_reached() )
         {
           tbb::task::self().cancel_group_execution();
           break;

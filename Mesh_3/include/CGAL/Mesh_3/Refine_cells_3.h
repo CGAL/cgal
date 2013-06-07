@@ -444,7 +444,7 @@ public:
 
   bool try_lock_element(const Cell_handle &ch, int lock_radius = 0) const
   {
-    return triangulation().try_lock_cell(ch, lock_radius);
+    return this->triangulation().try_lock_cell(ch, lock_radius);
   }
 
   /// debug info: class name
@@ -624,7 +624,7 @@ scan_triangulation_impl()
 
     //std::cerr << "Parallel_for - push_backs done: " << t2.elapsed() << " seconds." << std::endl;
     //t2.reset();
-    
+
 # if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << " - Num cells to scan = " << cells.size() << "..." << std::endl;
 # endif
@@ -674,14 +674,14 @@ scan_triangulation_impl()
     std::cerr << count << " cells scanned, ";
 #endif
   }
-  
+
 #if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "done." << std::endl;
 #endif
 
 #ifdef MESH_3_PROFILING
   double cell_scan_time = t.elapsed();
-  std::cerr << "==== Cell scan: " << cell_scan_time << " seconds ====" 
+  std::cerr << "==== Cell scan: " << cell_scan_time << " seconds ===="
             << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
     // If it's parallel but the refinement is forced to sequential, we don't
@@ -692,7 +692,7 @@ scan_triangulation_impl()
 # endif
   std::cerr << "Refining... ";
 #endif
-  
+
 #if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "Number of bad cells: " << C_::size() << std::endl;
 #endif
@@ -710,7 +710,7 @@ get_number_of_bad_elements_impl()
   int count = 0;
 #if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "Scanning triangulation for bad cells - "
-    "number of finite cells = " 
+    "number of finite cells = "
     << r_c3t3_.triangulation().number_of_finite_cells() << "...";
 #endif
   for(Finite_cell_iterator cell_it = r_tr_.finite_cells_begin();
@@ -752,7 +752,7 @@ conflicts_zone_impl(const Point& point
 
   facet_is_in_its_cz = true; // Always true
 
-  CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone", zone.cells.size()); 
+  CGAL_HISTOGRAM_PROFILER("Mesh_3::Refine_cells::conflict zone", zone.cells.size());
   return zone;
 }
 
@@ -839,7 +839,7 @@ update_star_self(const Vertex_handle& vertex)
 
   // Get subdomain index
   Subdomain_index cells_subdomain = r_oracle_.subdomain_index(vertex->index());
-  
+
   // Restore surface & domain
   for( Cell_iterator cell_it = incident_cells.begin();
       cell_it != incident_cells.end();

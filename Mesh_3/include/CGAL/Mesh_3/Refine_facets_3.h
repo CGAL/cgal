@@ -383,7 +383,7 @@ class Refine_facets_3
                       Previous_level_,
                       Triangulation_mesher_level_traits_3<Tr>,
                       Concurrency_tag >               Base_ML;
-  
+
   typedef typename Tr::Lock_data_structure Lock_data_structure;
 
 public:
@@ -461,7 +461,7 @@ public:
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     const Cell_handle c = facet.first;
     const int i = facet.second;
-    std::cerr << "Facet (" 
+    std::cerr << "Facet ("
               << c->vertex((i+1)&3)->point() << " , "
               << c->vertex((i+2)&3)->point() << " , "
               << c->vertex((i+3)&3)->point() << ") : refinement point is "
@@ -525,10 +525,10 @@ public:
 
   /// Restore restricted Delaunay ; may be call by Cells_mesher visitor
   void restore_restricted_Delaunay(const Vertex_handle& v);
-  
+
   bool try_lock_element(const Facet &f, int lock_radius = 0) const
   {
-    return triangulation().try_lock_facet(f, lock_radius);
+    return this->triangulation().try_lock_facet(f, lock_radius);
   }
 
   /// debug info: class name
@@ -565,7 +565,7 @@ public:
   }
 
   /// for debugging
-  std::string display_dual(Facet f) const 
+  std::string display_dual(Facet f) const
   {
     std::stringstream stream;
     stream.precision(23);
@@ -577,7 +577,7 @@ public:
     }
     else if ( const Ray_3* p_ray = object_cast<Ray_3>(&dual) ) {
       stream << "Ray(" << p_ray->point(0)
-             << " , " << p_ray->point(1) 
+             << " , " << p_ray->point(1)
              << "), with vector (" << p_ray->to_vector() << ")";
     }
     else if ( const Line_3* p_line = object_cast<Line_3>(&dual) ) {
@@ -888,7 +888,7 @@ scan_triangulation_impl()
   {
 #if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad facets (sequential) - "
-      "number of finite facets = " 
+      "number of finite facets = "
       << r_c3t3_.triangulation().number_of_finite_facets() << "..."
       << std::endl;
 #endif
@@ -909,11 +909,11 @@ scan_triangulation_impl()
   std::cerr << "==== Facet scan: " << t.elapsed() << " seconds ===="
             << std::endl << std::endl;
 #endif
-  
+
 #if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "Number of bad facets: " << C_::size() << std::endl;
 #endif
-  
+
 #ifdef MESH_3_PROFILING
   std::cerr << "Refining... ";
   Base_ML::m_timer.reset();
@@ -933,7 +933,7 @@ get_number_of_bad_elements_impl()
   int num_internal_facets_that_should_be_on_surface = 0;
 #if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr << "Scanning triangulation for bad facets - "
-    "number of finite facets = " 
+    "number of finite facets = "
     << r_c3t3_.triangulation().number_of_finite_facets() << "...";
 #endif
   int num_tested_facets = 0;
@@ -943,7 +943,7 @@ get_number_of_bad_elements_impl()
   {
     Facet facet = *facet_it;
     Facet_properties properties = compute_facet_properties(facet);
-    
+
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
     //facet.first->mark = 0;
 #endif
@@ -955,13 +955,13 @@ get_number_of_bad_elements_impl()
       if (!is_facet_on_surface(facet))
       {
         std::cerr << "\n\n*** The facet f is on surface but is NOT MARKED ON SURFACE. " << std::endl;
-        
+
         // CJTODO DEBUG
         Cell_handle c = facet.first;
         int ind = facet.second;
         Cell_handle mc = mirror_facet(facet).first;
         int mind = mirror_facet(facet).second;
-        
+
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
         c->mark2 = ind;
 #endif
@@ -1008,7 +1008,7 @@ get_number_of_bad_elements_impl()
           }
         }
 
-        std::cerr 
+        std::cerr
           << "*** Num of erroneous surface facets in c: " << num_erroneous_surface_facets_in_c << std::endl
           << "*** Num of erroneous surface facets in mc: " << num_erroneous_surface_facets_in_mc << std::endl
           << "*** Num of real surface facets in c: " << num_real_surface_facets_in_c << std::endl
@@ -1017,19 +1017,19 @@ get_number_of_bad_elements_impl()
         typedef typename MD::Subdomain Subdomain;
         const bool is_c_in_domain = r_oracle_.is_in_domain_object()(r_tr_.dual(c));
         const bool is_mc_in_domain = r_oracle_.is_in_domain_object()(r_tr_.dual(mc));
-        
-        std::cerr << "*** Is in complex? c is marked in domain: " << r_c3t3_.is_in_complex(c) 
+
+        std::cerr << "*** Is in complex? c is marked in domain: " << r_c3t3_.is_in_complex(c)
           << " / c is really in domain: " << is_c_in_domain
           << " / mc is marked in domain: " << r_c3t3_.is_in_complex(mc)
           << " / mc is really in domain: " << is_mc_in_domain
           << std::endl;
-        
+
 
         // ... if it's not, count it
         ++num_internal_facets_that_should_be_on_surface;
 
       }
-      
+
       const Surface_patch_index& surface_index = CGAL::cpp0x::get<0>(*properties);
       const Index& surface_center_index = CGAL::cpp0x::get<1>(*properties);
       const Point& surface_center = CGAL::cpp0x::get<2>(*properties);
@@ -1068,9 +1068,9 @@ get_number_of_bad_elements_impl()
     }
   }
 
-  /*std::cerr << "done (" << num_internal_facets_that_should_be_on_surface 
+  /*std::cerr << "done (" << num_internal_facets_that_should_be_on_surface
     << " facets which were internal facets were added to the surface)." << std::endl;*/
-  std::cerr << "done (" << num_internal_facets_that_should_be_on_surface 
+  std::cerr << "done (" << num_internal_facets_that_should_be_on_surface
     << " facets that should be on surface are actually internal facets)." << std::endl;
   std::cerr << std::endl << "Num_tested_facets = " << num_tested_facets << std::endl;
   std::cerr << std::endl << "Num bad surface-marked facets = " << count_num_bad_surface_facets << std::endl;
@@ -1539,8 +1539,8 @@ compute_facet_properties(const Facet& facet, bool force_exact) const
       // In the following, CGAL::cpp0x::get<2>(intersect) == 0 is a way to
       // test "intersect == Intersection()" (aka empty intersection), but
       // the later does not work.
-      Surface_patch surface = 
-        (CGAL::cpp0x::get<2>(intersect) == 0) ? Surface_patch() : 
+      Surface_patch surface =
+        (CGAL::cpp0x::get<2>(intersect) == 0) ? Surface_patch() :
         r_oracle_.surface_patch_index(CGAL::cpp0x::get<1>(intersect));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -1570,8 +1570,8 @@ compute_facet_properties(const Facet& facet, bool force_exact) const
 
       Intersection intersect = construct_intersection(*p_ray);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      Surface_patch surface = 
-        (CGAL::cpp0x::get<2>(intersect) == 0) ? Surface_patch() : 
+      Surface_patch surface =
+        (CGAL::cpp0x::get<2>(intersect) == 0) ? Surface_patch() :
         r_oracle_.surface_patch_index(CGAL::cpp0x::get<1>(intersect));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3

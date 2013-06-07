@@ -50,7 +50,7 @@ class Mesh_complex_3_in_triangulation_3 :
     Tr, typename Tr::Concurrency_tag>
 {
 public:
-  typedef typename typename Tr::Concurrency_tag                   Concurrency_tag;
+  typedef typename Tr::Concurrency_tag                   Concurrency_tag;
 
 private:
   typedef Mesh_complex_3_in_triangulation_3<

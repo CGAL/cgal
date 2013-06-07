@@ -72,7 +72,7 @@ class Tag_cell{};
 class Explicit_simplex
 {
 public:
-  
+
   typedef std::multiset<
     CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> Point_container;
   Point_container points;
@@ -97,7 +97,7 @@ public:
       points.insert(c.vertex(i)->point());
     }
   }
-  
+
   bool operator<(const Explicit_simplex& other) const
   {
     if (points.size() != other.points.size())
@@ -208,7 +208,7 @@ class Mesher_3
 {
 public:
 #ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  typedef typename Sequential_tag                   Concurrency_tag;
+  typedef Sequential_tag                            Concurrency_tag;
 #else
   typedef typename C3T3::Concurrency_tag            Concurrency_tag;
 #endif
@@ -217,15 +217,15 @@ public:
   typedef typename Kernel_traits<Point>::Kernel     Kernel;
   typedef typename Kernel::Vector_3                 Vector;
   typedef typename MeshDomain::Index                Index;
-  
+
   // Self
   typedef Mesher_3<C3T3, MeshCriteria, MeshDomain>      Self;
 #ifdef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  typedef Mesher_3_base<Triangulation, typename Sequential_tag> Base;
+  typedef Mesher_3_base<Triangulation, Sequential_tag> Base;
 #else
   typedef Mesher_3_base<Triangulation, typename C3T3::Concurrency_tag> Base;
 #endif
-  
+
   using Base::get_lock_data_structure;
 
   //-------------------------------------------------------
@@ -408,8 +408,8 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
     << "===============================================================" << std::endl
     << "=== CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END ===" << std::endl;
   display_number_of_bad_elements();
-  std::cerr 
-    << "===============================================================" 
+  std::cerr
+    << "==============================================================="
     << std::endl << std::endl;
 #endif
 
@@ -428,7 +428,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
   cells_mesher_.refine(cells_visitor_);
 #ifdef MESH_3_PROFILING
   double cell_ref_time = t.elapsed();
-  std::cerr << "==== Cell refinement: " << cell_ref_time << " seconds ====" 
+  std::cerr << "==== Cell refinement: " << cell_ref_time << " seconds ===="
             << std::endl << std::endl;
 # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
     // If it's parallel but the refinement is forced to sequential, we don't
@@ -438,7 +438,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 #   endif
 # endif
 #endif
-  
+
 #if defined(CGAL_MESH_3_VERBOSE) || defined(MESH_3_PROFILING)
   std::cerr
     << "Vertices: " << r_c3t3_.triangulation().number_of_vertices() << std::endl
@@ -527,8 +527,8 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
     << "===============================================================" << std::endl
     << "=== CHECK_AND_DISPLAY_THE_NUMBER_OF_BAD_ELEMENTS_IN_THE_END ===" << std::endl;
   display_number_of_bad_elements();
-  std::cerr 
-    << "===============================================================" 
+  std::cerr
+    << "==============================================================="
     << std::endl << std::endl;
 #endif
 
@@ -559,7 +559,7 @@ initialize()
   ++it;
   for( ; it != it_end ; ++it)
     estimated_bbox = estimated_bbox + it->first.bbox();
-  
+
   Base::set_bbox(estimated_bbox);
 
   //========================================
@@ -603,7 +603,7 @@ initialize()
 #  endif
 
 # endif // CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    
+
 #ifdef MESH_3_PROFILING
     double init_time = t.elapsed();
     std::cerr << "done in " << init_time << " seconds." << std::endl;
@@ -620,7 +620,7 @@ initialize()
 #endif // CGAL_LINKED_WITH_TBB
   {
 #ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    
+
     /*std::cerr << "A little bit of refinement... ";
 
     // Start by a little bit of refinement to get a coarse mesh
@@ -660,7 +660,7 @@ initialize()
 # endif
 
 #endif // CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    
+
 #ifdef MESH_3_PROFILING
     double init_time = t.elapsed();
     std::cerr << "done in " << init_time << " seconds." << std::endl;
