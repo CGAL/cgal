@@ -894,8 +894,8 @@ public:
      * \param c2 Output: The right resulting subcurve(p is its left endpoint).
      * \pre p lies on cv but is not one of its end-points.
      */
-    void operator()(const X_monotone_curve_2& cv, const Point_2& p,
-                    X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
+    void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
+                    X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const
     {
       const Segment_traits_2* seg_traits = m_poly_traits->segment_traits_2();
       typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
@@ -908,84 +908,92 @@ public:
         seg_traits->compare_endpoints_xy_2_object();
 
       // Make sure the split point is not one of the curve endpoints.
-      CGAL_precondition(!equal(min_vertex(cv[0]), p));
-      CGAL_precondition(!equal(max_vertex(cv[cv.number_of_segments() - 1]), p));
+      CGAL_precondition((!equal(
+                                m_poly_traits->
+                                construct_min_vertex_2_object()(xcv), p)));
+      CGAL_precondition((!equal(
+                                m_poly_traits->
+                                construct_max_vertex_2_object()(xcv), p)));
 
-      // Locate the segment on the polyline cv that contains p.
-      unsigned int i = m_poly_traits->locate(cv, p);
+      CGAL_precondition_msg( xcv.number_of_segments() > 0,
+                            "Cannot split a polyline of length zero.");
+
+      Comparison_result dir = comp_endpts(xcv[0]);
+
+      // Locate the segment on the polyline xcv that contains p.
+      unsigned int i = m_poly_traits->locate(xcv, p);
+
       CGAL_precondition(i != INVALID_INDEX);
 
       // Clear the output curves.
-      c1.clear();
-      c2.clear();
+      xcv1.clear();
+      xcv2.clear();
 
-      Comparison_result dir = comp_endpts(cv[0]);
-
-      // Push all segments labeled(0, 1, ... , i-1) into c1.
+      // Push all segments labeled(0, 1, ... , i-1) into xcv1.
       for (int j = 0; j < i; ++j)
-        c1.push_back(cv[j]);
+        xcv1.push_back(xcv[j]);
 
       if (dir == SMALLER){
-        // Check whether the split point is cv[i]'s source or target.
-        if (equal(max_vertex(cv[i]), p)) {
-          // The entire i'th segment belongs to c1:
-          c1.push_back(cv[i]);
-        } else if (equal(min_vertex(cv[i]), p)) {
-          // The entire i'th segments belongs to c2:
-          c2.push_back(cv[i]);
+        // Check whether the split point is xcv[i]'s source or target.
+        if (equal(max_vertex(xcv[i]), p)) {
+          // The entire i'th segment belongs to xcv1:
+          xcv1.push_back(xcv[i]);
+        } else if (equal(min_vertex(xcv[i]), p)) {
+          // The entire i'th segments belongs to xcv2:
+          xcv2.push_back(xcv[i]);
         } else {
-          // The i'th segment should be split: The left part(seg1) goes to cv1,
-          // and the right part(seg2) goes to cv2.
+          // The i'th segment should be split: The left part(seg1) goes to xcv1,
+          // and the right part(seg2) goes to xcv2.
           Segment_2   seg1, seg2;
           m_poly_traits->segment_traits_2()->
-            split_2_object()(cv[i], p, seg1, seg2);
+            split_2_object()(xcv[i], p, seg1, seg2);
 
-          c1.push_back(seg1);
-          c2.push_back(seg2);
+          xcv1.push_back(seg1);
+          xcv2.push_back(seg2);
         }
       }
       else{
-        if (equal(min_vertex(cv[i]), p)) {
-          c1.push_back(cv[i]);
-        } else if (equal(max_vertex(cv[i]), p)) {
-          c2.push_back(cv[i]);
+        if (equal(min_vertex(xcv[i]), p)) {
+          xcv1.push_back(xcv[i]);
+        } else if (equal(max_vertex(xcv[i]), p)) {
+          xcv2.push_back(xcv[i]);
         } else {
           Segment_2 seg1, seg2;
           m_poly_traits->segment_traits_2()->
-            split_2_object()(cv[i], p, seg1, seg2);
+            split_2_object()(xcv[i], p, seg1, seg2);
 
           if (comp_endpts(seg2)==LARGER){
-            c1.push_back(seg2);
+            xcv1.push_back(seg2);
           }
           else{
             // seg2 has to be reversed
             seg2 = m_poly_traits->segment_traits_2()->
               construct_opposite_2_object()(seg2);
-            c1.push_back(seg2);
+            xcv1.push_back(seg2);
           }
 
           if (comp_endpts(seg1)==LARGER){
-            c2.push_back(seg1);
+            xcv2.push_back(seg1);
           } else {
             // seg2 has to be reversed
             seg1 = m_poly_traits->segment_traits_2()->
               construct_opposite_2_object()(seg1);
-            c1.push_back(seg1);
+            xcv1.push_back(seg1);
           }
         }
       }
 
-      // Push all segments labeled(i+1, i+2, ... , n-1) into cv1.
-      unsigned int n = cv.number_of_segments();
+      // Push all segments labeled(i+1, i+2, ... , n-1) into xcv1.
+      unsigned int n = xcv.number_of_segments();
 
       for (int j = i+1; j < n; ++j)
-        c2.push_back(cv[j]);
+        xcv2.push_back(xcv[j]);
 
       if (dir != SMALLER){
         X_monotone_curve_2 tmp;
-        tmp = c1;
-        c1 = c2;
-        c2 = tmp;
+        tmp = xcv1;
+        xcv1 = xcv2;
+        xcv2 = tmp;
       }
     }
   };
