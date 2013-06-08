@@ -210,7 +210,7 @@ public:
 
     int n = P.size() - 1; // because the first and last point are equal
 
-if(false) {
+if(true) {
     add_facets_2(P, lambda, 0, n-1, poly, out);
 }
 else {

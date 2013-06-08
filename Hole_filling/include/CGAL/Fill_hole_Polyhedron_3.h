@@ -72,8 +72,8 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0),
-  WeightCalculator weight_calculator = WeightCalculator()
+  WeightCalculator weight_calculator,
+  double density_control_factor = std::sqrt(2.0)
   )
 {
   std::vector<typename Polyhedron::Vertex_handle> patch;
@@ -88,13 +88,13 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0),
-  WeightCalculator weight_calculator = WeightCalculator()
+  WeightCalculator weight_calculator,
+  double density_control_factor = std::sqrt(2.0)
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
   triangulate_refine_and_fair_hole<Sparse_linear_solver, WeightCalculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
-    (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor, weight_calculator);
+    (polyhedron, border_halfedge, facet_out, vertex_out, weight_calculator, density_control_factor);
 }
 
 //use default WeightCalculator
@@ -108,7 +108,7 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
 {
   typedef CGAL::Fairing_cotangent_weight<Polyhedron> Weight_calculator;
   triangulate_refine_and_fair_hole<SparseLinearSolver, Weight_calculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
-    (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor, Weight_calculator());
+    (polyhedron, border_halfedge, facet_out, vertex_out,  Weight_calculator(), density_control_factor);
 }
 
 //use default SparseLinearSolver and WeightCalculator

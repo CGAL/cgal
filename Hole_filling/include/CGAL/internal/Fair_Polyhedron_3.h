@@ -5,6 +5,8 @@
 #include <set>
 #include <CGAL/assertions.h>
 #include <CGAL/internal/Weights.h>
+#include <CGAL/Timer.h>
+#include <CGAL/trace.h>
 
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -135,6 +137,8 @@ public:
     std::set<Vertex_handle> interior_vertices(vb, ve);
     if(interior_vertices.empty()) { return false; }
 
+    CGAL::Timer timer; timer.start();
+
     const std::size_t nb_vertices = interior_vertices.size();
     typename Sparse_linear_solver::Vector X(nb_vertices), Bx(nb_vertices);
     typename Sparse_linear_solver::Vector Y(nb_vertices), By(nb_vertices);
@@ -184,6 +188,8 @@ public:
       Bx[v_id] = x; By[v_id] = y; Bz[v_id] = z;
     }
 
+    CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
+
     //std::ofstream out_A("D:/A.txt");
     //std::ofstream out_b("D:/b.txt");
     //write_matrix_sparse(out_A, A.eigen_object());
@@ -197,12 +203,16 @@ public:
       CGAL_warning(false && "pre_factor failed!");
       return false;
     }
+    CGAL_TRACE_STREAM << "**Timer** System factorization: " << timer.time() << std::endl; timer.reset();
+
     // solve
     bool is_all_solved = m_solver.linear_solver(Bx, X) && m_solver.linear_solver(By, Y) && m_solver.linear_solver(Bz, Z);
     if(!is_all_solved) {
       CGAL_warning(false && "linear_solver failed!"); 
       return false; 
     }
+
+    CGAL_TRACE_STREAM << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
     // update 
     id = 0;
     for(typename std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
@@ -236,48 +246,48 @@ public:
  * @param weight_calculator function object to calculate weights
  */
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class InputIterator>
-void fair(Polyhedron& polyhedron, 
+bool fair(Polyhedron& polyhedron, 
   InputIterator vertex_begin,
   InputIterator vertex_end,
-  WeightCalculator weight_calculator = WeightCalculator()
+  WeightCalculator weight_calculator
   )
 {
   internal::Fair_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> fair_functor(weight_calculator);
-  fair_functor.fair(polyhedron, vertex_begin, vertex_end);
+  return fair_functor.fair(polyhedron, vertex_begin, vertex_end);
 }
 
 //use default SparseLinearSolver
 template<class WeightCalculator, class Polyhedron, class InputIterator>
-void fair(Polyhedron& poly, 
+bool fair(Polyhedron& poly, 
   InputIterator vb,
   InputIterator ve,
-  WeightCalculator weight_calculator = WeightCalculator()
+  WeightCalculator weight_calculator
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  fair<Sparse_linear_solver, WeightCalculator, Polyhedron, InputIterator>(poly, vb, ve, weight_calculator);
+  return fair<Sparse_linear_solver, WeightCalculator, Polyhedron, InputIterator>(poly, vb, ve, weight_calculator);
 }
 
 //use default WeightCalculator
 template<class SparseLinearSolver, class Polyhedron, class InputIterator>
-void fair(Polyhedron& poly, 
+bool fair(Polyhedron& poly, 
   InputIterator vb,
   InputIterator ve
   )
 {
   typedef CGAL::Fairing_cotangent_weight<Polyhedron> Weight_calculator;
-  fair<SparseLinearSolver, Weight_calculator, Polyhedron>(poly, vb, ve, Weight_calculator());
+  return fair<SparseLinearSolver, Weight_calculator, Polyhedron>(poly, vb, ve, Weight_calculator());
 }
 
 //use default SparseLinearSolver and WeightCalculator
 template<class Polyhedron, class InputIterator>
-void fair(Polyhedron& poly, 
+bool fair(Polyhedron& poly, 
   InputIterator vb,
   InputIterator ve
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  fair<Sparse_linear_solver, Polyhedron, InputIterator>(poly, vb, ve);
+  return fair<Sparse_linear_solver, Polyhedron, InputIterator>(poly, vb, ve);
 }
 
 }//namespace CGAL
