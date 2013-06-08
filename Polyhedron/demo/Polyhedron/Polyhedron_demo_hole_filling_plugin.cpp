@@ -1,3 +1,4 @@
+//#define CGAL_SUPERLU_ENABLED
 #undef NDEBUG
 #include <QtCore/qglobal.h>
 
@@ -258,7 +259,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
 
   template<class SceneType>
-  SceneType* get_selected() {
+  SceneType* get_selected_item() {
     int item_id = scene->mainSelectionIndex();
     SceneType* scene_item = qobject_cast<SceneType*>(scene->item(item_id));
     if(!scene_item) {
@@ -366,7 +367,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
   typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
   typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
 
-  Scene_polyhedron_item* poly_item = get_selected<Scene_polyhedron_item>();
+  Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
   if(!poly_item) {
     print_message("Error: please select a polyhedron item from Geometric Objects list!");
     return;
@@ -395,7 +396,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
 }
 // fills selected holes on active Scene_polylines_collection
 void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
-  Scene_polylines_collection* polyline_item = get_selected<Scene_polylines_collection>();
+  Scene_polylines_collection* polyline_item = get_selected_item<Scene_polylines_collection>();
   if(!polyline_item) {
     print_message("Error: please select a hole visualizer from Geometric Objects list!");
     return;
@@ -409,13 +410,12 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   scene->itemChanged(polyline_item->poly_item);
   polyline_item->poly_item_changed();
 };
-
 // fills all holes and removes associated Scene_polylines_collection if any
 void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
   typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
 
-  Scene_polyhedron_item* poly_item = get_selected<Scene_polyhedron_item>();
+  Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
   if(!poly_item) {
     print_message("Error: please select a polyhedron item from Geometric Objects list!");
     return;
@@ -477,8 +477,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     if(polylines_collection) { polylines_collection->poly_item_changed();}
   }
 }
-
-
+// To delete Scene_polylines_collection when it becomes empty
 void Polyhedron_demo_hole_filling_plugin::item_changed_polylines_collection() {
   Scene_polylines_collection* polylines_collection = qobject_cast<Scene_polylines_collection*>(this->sender());
   if(polylines_collection && polylines_collection->polyline_data_list.empty()) {
@@ -504,11 +503,11 @@ void Polyhedron_demo_hole_filling_plugin::fill
       int weight_index = ui_widget->weight_combo_box->currentIndex();
 
       if(weight_index == 0)
-        CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha, 
-        CGAL::Fairing_uniform_weight<Polyhedron>());
+        CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), 
+        CGAL::Fairing_uniform_weight<Polyhedron>(), alpha);
       if(weight_index == 1)
-        CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha,
-        CGAL::Fairing_cotangent_weight<Polyhedron>());
+        CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
+        CGAL::Fairing_cotangent_weight<Polyhedron>(), alpha);
     }
 
     if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {
