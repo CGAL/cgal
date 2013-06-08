@@ -21,7 +21,6 @@
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
 /*
- * TODO: Model the concept ArrangementDirectionalXMonotoneTraits_2!
  * TODO: Complete the documentation of the changes derived from the cleaning
  *       In particular, doxygen only the things that have to be exposed
  *       to the user.
