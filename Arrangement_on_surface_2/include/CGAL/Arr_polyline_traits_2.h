@@ -1335,6 +1335,9 @@ public:
   /*! \class Merge_2
    * A functor that merges two x-monotone arcs into one.
    */
+  /* Roadmap: Allow merging of overlapping polylines. This means also
+   *          changing the segment traits class.
+   */
   class Merge_2 {
   protected:
     typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits;
