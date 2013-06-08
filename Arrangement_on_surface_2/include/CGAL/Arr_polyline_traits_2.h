@@ -1349,7 +1349,6 @@ public:
     Merge_2(const Geometry_traits* traits) : m_poly_traits(traits) {}
 
     /*!
-     * TODO: Consider the orientation of the cv1 and cv2!!!
      * Merge two given x-monotone curves into a single curve(segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
