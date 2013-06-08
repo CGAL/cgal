@@ -5,6 +5,7 @@
 #include <set>
 #include <CGAL/assertions.h>
 #include <CGAL/trace.h>
+#include <CGAL/Timer.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
@@ -24,6 +25,43 @@ class Refine_Polyhedron_3 {
   typedef typename Polyhedron::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
 
 private:
+
+  bool flippable(Halfedge_handle h) {
+    // this check is added so that edge flip does not break manifoldness
+    // it might happen when there is an edge where flip_edge(h) will be placed (i.e. two edges collide after flip)
+    Vertex_handle v_tip_0 = h->next()->vertex();
+    Vertex_handle v_tip_1 = h->opposite()->next()->vertex();
+    Halfedge_around_vertex_circulator v_cir(v_tip_0->vertex_begin()), v_end(v_cir);
+    do {
+      if(v_cir->opposite()->vertex() == v_tip_1) { return false; }
+    } while(++v_cir != v_end);
+    
+    // also eliminate collinear triangle generation
+    if( CGAL::collinear(v_tip_0->point(), v_tip_1->point(), h->vertex()->point()) ||
+        CGAL::collinear(v_tip_0->point(), v_tip_1->point(), h->opposite()->vertex()->point()) ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  //bool subdividable(Halfedge_handle h, const Point_3& center) {
+  //  const Point_3& p0 = h->vertex()->point();
+  //  const Point_3& p1 = h->next()->vertex()->point();
+  //  const Point_3& p2 = h->prev()->vertex()->point();
+
+  //  if( CGAL::collinear(p0, p1, center) ||
+  //      CGAL::collinear(p0, p2, center) ||
+  //      CGAL::collinear(p1, p2, center) ) {
+  //    std::cout << "------------------------------" << std::endl;
+  //    std::cout << "subdividable false" << std::endl;
+  //    std::cout << "------------------------------" << std::endl;
+  //    return false;
+  //  }
+  //  
+  //  return true;
+  //}
+
   bool relax(Polyhedron& poly, Halfedge_handle h)
   {
     const Point_3& p = h->vertex()->point();
@@ -32,35 +70,11 @@ private:
     const Point_3& s = h->opposite()->next()->vertex()->point();
     if( (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,r,s)) ||
       (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) ){
-
-      //if(!poly.is_valid()) { 
-      //  std::cout << "before flip not valid" << std::endl; 
-      //}
-
-      // this is the part which makes is_valid not valid
-      //for(Halfedge_iterator hb = poly.halfedges_begin(); hb != poly.halfedges_end(); ++hb) {
-      //  if(hb->vertex() == hb->next()->vertex())
-      //  {
-      //    std::cout << "before flip not valid" << std::endl;
-      //  }
-      //}
-
-      poly.flip_edge(h);
-
-      //if(!poly.is_valid()) {
-      //  std::cout << "after flip not valid" << std::endl; 
-      //}
-
-      // this is the part which makes is_valid not valid
-      //for(Halfedge_iterator hb = poly.halfedges_begin(); hb != poly.halfedges_end(); ++hb) {
-      //  if(hb->vertex() == hb->next()->vertex())
-      //  {
-      //    std::cout << "after flip not valid" << std::endl;
-      //  }
-      //}
-
-
-      return true;
+      
+      if(flippable(h)) {
+        poly.flip_edge(h);
+        return true;
+      }
     }
     return false;
   }
@@ -215,15 +229,25 @@ public:
         break;
       }
       i++;
-    } while( subdivide(poly, facets, interior_map, scale_attribute, vertex_out, alpha) && relax(poly,facets, interior_map) );
 
-    std::copy(facets.begin(), facets.end(), facet_out);
+      CGAL::Timer timer; timer.start();
+      bool is_subdivided = subdivide(poly, facets, interior_map, scale_attribute, vertex_out, alpha);
+      CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
+      if(!is_subdivided) { break; }
+
+      bool is_relaxed = relax(poly,facets, interior_map);
+      CGAL_TRACE_STREAM << "**Timer** relax() :" << timer.time() << std::endl;
+      if(!is_relaxed) { break; }
+
+    } while(true);
+
     // according to paper it should be like below (?) IOY
     //while(true) {
-    //  bool subdiv = subdivide(poly, facets);
+    //  bool subdiv = subdivide(poly, facets, interior_map, scale_attribute, vertex_out, alpha);
     //  if(!subdiv) { break; }
-    //  while(relax(poly,facets)) {}
+    //  while(relax(poly, facets, interior_map)) {}
     //}
+    std::copy(facets.begin(), facets.end(), facet_out);
   }
 };
 
