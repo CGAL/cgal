@@ -69,10 +69,29 @@ public:
   {
     Vector a = v0->point() - v1->point();
     Vector b = v2->point() - v1->point();
+
+    
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-    double dot_aa = a.squared_length();
-    double dot_bb = b.squared_length();
-    return dot_ab / std::sqrt( dot_aa * dot_bb - dot_ab * dot_ab );
+    // rewritten for safer fp arithmetic
+    //double dot_aa = a.squared_length();
+    //double dot_bb = b.squared_length();
+    //double divider = std::sqrt( dot_aa * dot_bb - dot_ab * dot_ab );
+
+    Vector cross_ab = CGAL::cross_product(a, b);
+    double divider = std::sqrt(cross_ab*cross_ab);
+
+    if(divider == 0 /*|| divider != divider*/) 
+    {
+      CGAL::collinear(v0->point(), v1->point(), v2->point()) ? 
+        CGAL_warning(!"Infinite Cotangent value with degenerate triangle!") :
+        CGAL_warning(!"Infinite Cotangent value due to floating point arithmetic!");
+      
+
+      return dot_ab > 0 ? (std::numeric_limits<double>::max)() :
+                         -(std::numeric_limits<double>::max)();
+    }
+    
+    return dot_ab / divider;
   }
 };
 
