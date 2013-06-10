@@ -346,9 +346,10 @@ namespace CGAL {
 
         if(zone.locate_type != Tr::VERTEX)
           tr.find_conflicts(p, zone.cell,
-                            std::back_inserter(zone.boundary_facets),
-                            std::back_inserter(zone.cells),
-                            std::back_inserter(zone.internal_facets));
+                            zone.boundary_facets_inserter(),
+                            zone.cells_inserter(),
+                            zone.internal_facets_inserter());
+
 	return zone;
     }
 
