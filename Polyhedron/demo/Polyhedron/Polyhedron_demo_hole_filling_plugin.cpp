@@ -67,7 +67,6 @@ public:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
-
     mainWindow->installEventFilter(this);
 
     connect(poly_item, SIGNAL(itemChanged()), this, SLOT(poly_item_changed())); 
@@ -291,10 +290,12 @@ public slots:
   void on_Fill_all_holes_button();
   void on_Visualize_holes_button();
   void on_Fill_selected_holes_button();
+  void on_Accept_button();
+  void on_Reject_button();
   void item_about_to_be_destroyed(Scene_item*);
   void dock_widget_visibility_changed(bool visible);
   void item_changed_polylines_collection();
-
+  
 private:
   struct Nop_functor {
     template<class T>
@@ -310,42 +311,77 @@ private:
   QDockWidget* dock_widget;
   Ui::HoleFilling* ui_widget;
 
+  // hold created facet for accept reject functionality
+  std::vector<Polyhedron::Facet_handle> new_facets; 
+  Scene_polyhedron_item* last_active_item; // always keep it NULL while not active-reject state
+ 
   void fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
   bool self_intersecting(Polyhedron& polyhedron);
+
+  void accept_reject_toggle(bool activate_accept_reject) {
+    if(activate_accept_reject) {
+      ui_widget->Accept_button->setVisible(true);
+      ui_widget->Reject_button->setVisible(true);
+
+      foreach( QWidget* w, ui_widget->dockWidgetContents->findChildren<QWidget*>() )
+      { w->setEnabled(false); }
+
+      ui_widget->Accept_button->setEnabled(true);
+      ui_widget->Reject_button->setEnabled(true);
+    }
+    else {
+      ui_widget->Accept_button->setVisible(false);
+      ui_widget->Reject_button->setVisible(false);
+
+      foreach( QWidget* w, ui_widget->dockWidgetContents->findChildren<QWidget*>() )
+      { w->setEnabled(true); }
+    }
+  }
 }; // end Polyhedron_demo_hole_filling_plugin
 
 void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
                                       Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
+  last_active_item = NULL;
+
   mw = mainWindow;
   scene = scene_interface;
   messages = m;
-  actionHoleFilling = new QAction(tr("Hole Filling"), mw);
-  connect(actionHoleFilling, SIGNAL(triggered()),
-          this, SLOT(hole_filling_action()));
 
-  dock_widget = new QDockWidget("Hole filling", mw);
+  actionHoleFilling = new QAction(tr("Hole Filling"), mw);
+  connect(actionHoleFilling, SIGNAL(triggered()), this, SLOT(hole_filling_action()));
+
+  dock_widget = new QDockWidget("Hole Filling", mw);
   dock_widget->setVisible(false);
   ui_widget = new Ui::HoleFilling();
 
   ui_widget->setupUi(dock_widget);
+  ui_widget->Accept_button->setVisible(false);
+  ui_widget->Reject_button->setVisible(false);
+
   mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
   connect(ui_widget->Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
   connect(ui_widget->Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
   connect(ui_widget->Fill_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_all_holes_button()));
+  connect(ui_widget->Accept_button,  SIGNAL(clicked()), this, SLOT(on_Accept_button()));
+  connect(ui_widget->Reject_button,  SIGNAL(clicked()), this, SLOT(on_Reject_button()));
 
-  Scene* scene_casted = dynamic_cast<Scene*>(scene_interface);
-  if(scene_casted) 
+  if(Scene* scene_casted = dynamic_cast<Scene*>(scene_interface)) 
   { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*))); }
 }
 
 void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(Scene_item* scene_item) {
   Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene_item);
   if(poly_item) {
+    // erase assoc polylines item
     scene->erase( scene->item_id( get_polylines_collection(poly_item) ) );
+    // close accept-reject dialog if it is open
+    if(last_active_item == poly_item) {
+      on_Accept_button();
+    }
   }
 }
 // removes Scene_polylines_collection items on visibility = false
@@ -361,6 +397,7 @@ void Polyhedron_demo_hole_filling_plugin::dock_widget_visibility_changed(bool vi
       scene->erase( scene->item_id(polylines_collection) );
     }
   }
+  on_Accept_button(); 
 }
 // creates a Scene_polylines_collection and associate it with active Scene_polyhedron_item
 void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
@@ -387,28 +424,34 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
     return;
   }
   else {
-    poly_item->setFlatMode(); // for better visualization
+    // poly_item->setFlatMode(); // for better visualization
     int item_id = scene->addItem(polylines_collection);
     scene->setSelectedItem(item_id);
     polylines_collection->setName(tr("%1-hole visualizer").arg(poly_item->name()));
-    // poly_item->setColor(QColor(poly_item->color().red(), poly_item->color().green(), poly_item->color().blue(), 100));
   }
 }
 // fills selected holes on active Scene_polylines_collection
 void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
+  // get active polylines item
   Scene_polylines_collection* polyline_item = get_selected_item<Scene_polylines_collection>();
   if(!polyline_item) {
     print_message("Error: please select a hole visualizer from Geometric Objects list!");
     return;
   }
+  if(polyline_item->selected_holes.empty()) {
+    print_message("Error: there is no selected holes in hole visualizer!");
+    return;
+  }
 
+  // fill selected holes
   for(Scene_polylines_collection::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
     it != polyline_item->selected_holes.end(); ++it) {
       fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge);
   }
 
   scene->itemChanged(polyline_item->poly_item);
-  polyline_item->poly_item_changed();
+  last_active_item = polyline_item->poly_item;
+  accept_reject_toggle(true);
 };
 // fills all holes and removes associated Scene_polylines_collection if any
 void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
@@ -421,24 +464,10 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     return;
   }
 
-  bool create_new = ui_widget->Create_new_polyhedron_check_box->checkState() == Qt::Checked;
   double alpha = ui_widget->Density_control_factor_spin_box->value();
   int action_index = ui_widget->action_combo_box->currentIndex();
 
-  // create new polyhedron item if required
-  Polyhedron* poly_pointer;
-  Scene_polyhedron_item* new_item = 0;
-  if(create_new) {
-    new_item = new Scene_polyhedron_item(*poly_item->polyhedron());
-    QString param_exp = action_index == 2 ? "Refine + Fair" : action_index == 1 ? "Refine" : "Triangulate";
-    new_item->setName(tr("%1-%2-(alpha:%3)").arg(poly_item->name()).arg(param_exp).arg(alpha));
-    poly_pointer = new_item->polyhedron();
-  }
-  else {
-    poly_pointer = poly_item->polyhedron();
-  }
-
-  Polyhedron& poly = *poly_pointer;
+  Polyhedron& poly = *poly_item->polyhedron();
   std::vector<Halfedge_iterator> border_reps;
   for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it)
   { it->id() = 0; }
@@ -457,7 +486,6 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
 
   if(border_reps.empty()) {
     print_message("There is no holes in selected polyhedron!");
-    delete new_item; // if any, delete new_item
     return;
   }
 
@@ -465,17 +493,31 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
      fill(poly, *it);
   }
 
-  // update or add polyhedron item
-  if(create_new) {
-    Scene_interface::Item_id index = scene->addItem(new_item);
-    scene->itemChanged(new_item);
-    scene->setSelectedItem(index);
+  scene->itemChanged(poly_item);
+  last_active_item = poly_item;
+  accept_reject_toggle(true);
+}
+void Polyhedron_demo_hole_filling_plugin::on_Accept_button() {
+  if(last_active_item == NULL) { return; }
+
+  accept_reject_toggle(false);
+  if(Scene_polylines_collection* polylines_collection = get_polylines_collection(last_active_item)) 
+  { polylines_collection->poly_item_changed();}
+
+  new_facets.clear();
+  last_active_item = NULL;
+}
+void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
+  if(last_active_item == NULL) { return; }
+
+  accept_reject_toggle(false);
+  for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
+   last_active_item->polyhedron()->erase_facet((*it)->halfedge());
   }
-  else {
-    scene->itemChanged(poly_item);
-    Scene_polylines_collection* polylines_collection = get_polylines_collection(poly_item);
-    if(polylines_collection) { polylines_collection->poly_item_changed();}
-  }
+  scene->itemChanged(last_active_item);
+
+  new_facets.clear();
+  last_active_item = NULL;
 }
 // To delete Scene_polylines_collection when it becomes empty
 void Polyhedron_demo_hole_filling_plugin::item_changed_polylines_collection() {
@@ -484,39 +526,41 @@ void Polyhedron_demo_hole_filling_plugin::item_changed_polylines_collection() {
     scene->erase( scene->item_id(polylines_collection));
   }
 }
-
 // helper function for filling holes
 void Polyhedron_demo_hole_filling_plugin::fill
   (Polyhedron& poly, Polyhedron::Halfedge_handle it) {
 
-    int action_index = ui_widget->action_combo_box->currentIndex();
-    double alpha = ui_widget->Density_control_factor_spin_box->value();
+  int action_index = ui_widget->action_combo_box->currentIndex();
+  double alpha = ui_widget->Density_control_factor_spin_box->value();
 
-    std::vector<Polyhedron::Facet_handle> patch;
-    if(action_index == 0) {
-      CGAL::triangulate_hole(poly, it, std::back_inserter(patch));
-    }
-    else if(action_index == 1) {
-      CGAL::triangulate_and_refine_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha);
-    }
-    else {
-      int weight_index = ui_widget->weight_combo_box->currentIndex();
+  std::vector<Polyhedron::Facet_handle> patch;
+  if(action_index == 0) {
+    CGAL::triangulate_hole(poly, it, std::back_inserter(patch));
+  }
+  else if(action_index == 1) {
+    CGAL::triangulate_and_refine_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha);
+  }
+  else {
+    int weight_index = ui_widget->weight_combo_box->currentIndex();
 
-      if(weight_index == 0)
-        CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), 
-        CGAL::Fairing_uniform_weight<Polyhedron>(), alpha);
-      if(weight_index == 1)
-        CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
-        CGAL::Fairing_cotangent_weight<Polyhedron>(), alpha);
-    }
+    if(weight_index == 0)
+      CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), 
+      CGAL::Fairing_uniform_weight<Polyhedron>(), alpha);
+    if(weight_index == 1)
+      CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
+      CGAL::Fairing_cotangent_weight<Polyhedron>(), alpha);
+  }
 
-    if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {
-      if(self_intersecting(poly)) {
-        for(std::vector<Polyhedron::Facet_handle>::iterator it = patch.begin(); it != patch.end(); ++it) {
-          poly.erase_facet((*it)->halfedge());
-        }
+  if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {
+    if(self_intersecting(poly)) {
+      for(std::vector<Polyhedron::Facet_handle>::iterator it = patch.begin(); it != patch.end(); ++it) {
+        poly.erase_facet((*it)->halfedge());
       }
+      return;
     }
+  }
+  // save facets for accept-reject 
+  new_facets.insert(new_facets.end(), patch.begin(), patch.end());
 }
 
 bool Polyhedron_demo_hole_filling_plugin::self_intersecting(Polyhedron& polyhedron) {
