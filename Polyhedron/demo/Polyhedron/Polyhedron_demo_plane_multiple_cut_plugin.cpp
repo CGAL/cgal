@@ -60,6 +60,12 @@ private:
 
   QDockWidget* dock_widget;
   Ui::Plane_multiple_cut_widget* ui_widget;
+
+  void intersection_of_plane_Polyhedra_3_using_AABB_wrapper(Polyhedron& mesh, 
+    const std::vector<Epic_kernel::Plane_3>& planes,
+    const std::vector<qglviewer::Vec>& plane_positions,
+    std::list<std::vector<Epic_kernel::Point_3> >& polylines);
+
 }; // end Polyhedron_demo_plane_multiple_cut_plugin
 
 void Polyhedron_demo_plane_multiple_cut_plugin::init(QMainWindow* mw,
@@ -215,6 +221,8 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
 
   // continue generating planes while inside bbox
   std::vector<Epic_kernel::Plane_3> planes;
+  std::vector<qglviewer::Vec> plane_positions;
+
   for(int dir = 1, step = 0; /* */ ; ++step) 
   {
     double distance_norm = (dir * step) * distance_with_planes;
@@ -224,11 +232,13 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
     if(!CGAL::do_intersect(cgal_bbox, plane)) { 
       if(dir == -1) { break; }
       std::reverse(planes.begin(), planes.end());
+      std::reverse(plane_positions.begin(), plane_positions.end());
       dir = -1; // reverse direction
       step = 0; // we should skip the plane itself, and we will when continue cause ++step
       continue;
     }
     planes.push_back(plane);
+    plane_positions.push_back(new_pos); 
   }
   print_message(QString("Created %1 cuts inside bbox...").arg(planes.size()));
   
@@ -244,9 +254,7 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
     Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
     QTime time; time.start();
     // call algorithm and fill polylines in polylines_item
-    CGAL::intersection_of_plane_Polyhedra_3_using_AABB<Epic_kernel>(
-      *poly, planes.begin(), planes.end(),
-      std::back_inserter(new_polylines_item->polylines ));
+    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, new_polylines_item->polylines);
     // set names etc and print timing
     print_message( QString("Processed %1 cuts in %2 ms!").arg(planes.size()).arg(time.elapsed()) );
     new_polylines_item->setName(QString("%1 with %2 cuts").
@@ -259,9 +267,7 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
     QTime time; time.start();
     std::list<std::vector<Epic_kernel::Point_3> > polylines;
     // call algorithm and fill polylines in polylines_item
-    CGAL::intersection_of_plane_Polyhedra_3_using_AABB<Epic_kernel>(
-      *poly, planes.begin(), planes.end(),
-      std::back_inserter(polylines));
+    intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, polylines);
     // set names etc and print timing
     print_message( QString("Processed %1 cuts in %2 ms!").arg(planes.size()).arg(time.elapsed()) );
 
@@ -280,6 +286,55 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
 
 void Polyhedron_demo_plane_multiple_cut_plugin::plane_destroyed() {
   dock_widget->hide(); 
+}
+
+// this function assumes 'planes' are parallel
+void Polyhedron_demo_plane_multiple_cut_plugin::intersection_of_plane_Polyhedra_3_using_AABB_wrapper(
+  Polyhedron& poly, 
+  const std::vector<Epic_kernel::Plane_3>& planes,
+  const std::vector<qglviewer::Vec>& plane_positions,
+  std::list<std::vector<Epic_kernel::Point_3> >& polylines) 
+{
+  CGAL::intersection_of_plane_Polyhedra_3_using_AABB<Epic_kernel>(
+    poly, planes.begin(), planes.end(),
+    std::back_inserter(polylines));
+
+  // return if planes are not axis oriented
+  double a = planes.front().a(); double b = planes.front().b(); double c = planes.front().c();
+  int on_axis = (a == 0.0 && b == 0.0) ? 2 :
+                (a == 0.0 && c == 0.0) ? 1 :
+                (b == 0.0 && c == 0.0) ? 0 : -1;
+
+  if( on_axis == -1) { return; }
+  
+  // process planes while keeping track of closest polylines, adjust points to be on that plane
+  // it assumes that returned polylines are ordered according to input planes
+  std::vector<Epic_kernel::Plane_3>::const_iterator active_plane_it = planes.begin(); 
+  std::vector<qglviewer::Vec>::const_iterator active_plane_position_it = plane_positions.begin(); 
+
+  for(std::list<std::vector<Epic_kernel::Point_3> >::iterator active_polyline_it = polylines.begin();
+    active_polyline_it != polylines.end(); ++active_polyline_it) 
+  {
+    // iterate forward while next plane is closer to current polyline
+    while(active_plane_it + 1 != planes.end()) {
+      double distance_to_current = CGAL::squared_distance( (*active_polyline_it)[0], *active_plane_it);
+      double distance_to_next = CGAL::squared_distance( (*active_polyline_it)[0], *(active_plane_it+1));
+
+      if(distance_to_current > distance_to_next) 
+      { ++active_plane_it; ++active_plane_position_it;}
+      else 
+      { break; }
+    }
+    // project points in active_polyline_it to active_plane_it
+    for(std::vector<Epic_kernel::Point_3>::iterator point_it = active_polyline_it->begin();
+      point_it != active_polyline_it->end(); ++ point_it) 
+    {
+      *point_it = Epic_kernel::Point_3(
+        on_axis != 0 ? point_it->x() : active_plane_position_it->x,
+        on_axis != 1 ? point_it->y() : active_plane_position_it->y,
+        on_axis != 2 ? point_it->z() : active_plane_position_it->z);
+    }
+  }
 }
 Q_EXPORT_PLUGIN2(Polyhedron_demo_plane_multiple_cut_plugin, Polyhedron_demo_plane_multiple_cut_plugin)
 
