@@ -31,7 +31,7 @@ public:
     B.begin_surface(polyline->size() -1, triangles->size());
 
     for(Scene_polylines_item::Polyline::iterator it = polyline->begin();
-      it != polyline->end(); ++it) {
+      it != --polyline->end(); ++it) {
       B.add_vertex(*it);
     }
 
