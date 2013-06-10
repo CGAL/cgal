@@ -6,9 +6,11 @@
 A model of the concept `Visibility_2` offers visibility queries within 
 an Arrangement. 
 
-\cgalHasModel `CGAL::Naive_visibility_2<Arrangement_2>`
+\cgalHasModel `CGAL::Naive_visibility_2<Arrangement_2, Traits>`
+\cgalHasModel `CGAL::Preprocessed_visibility_2<Arrangement_2, Traits>`
 
-\sa `CGAL::Naive_visibility_2<Arrangement_2>` 
+\sa `CGAL::Naive_visibility_2<Arrangement_2, Traits>` 
+\sa `CGAL::Preprocessed_visibility_2<Arrangement_2, Traits>`
 
 */
 class Visibility_2 {
@@ -31,6 +33,11 @@ public:
     Tag identifying whether `Visibility_2` computes regularized visbility area. 
   */
   typedef Hidden_type Regularization_tag; 
+
+  /*!
+    Traits showing what kind of arrangement extension the output will have
+  */
+  typedef Hidden_type Traits;
   
 /// @}
 
@@ -38,9 +45,9 @@ public:
 /// @{
 
 /*! 
-Constructs a `Visibility_2` object from a given `Arrangement_2`
+Constructs a `Visibility_2` object from a given `Arrangement_2` and a given Regularization tag.
 */ 
-Visibility_2(const Arrangement_2& arr); 
+Visibility_2(const Arrangement_2& arr, Regularization_tag Rt); 
 
 /// @}
 
