@@ -26,6 +26,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   : ui_widget(ui_widget), 
     poly_item(poly_item),
     deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map(), Array_based_vertex_point_map(&positions)),
+    is_rot_free(true),
     quadric(gluNewQuadric())
 {
   gluQuadricNormals(quadric, GLU_SMOOTH);
@@ -430,4 +431,16 @@ void Scene_edit_polyhedron_item::select(
                        dir_y,
                        dir_z);
 }
+
+bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
+{
+  //setting/unsetting rotation constraints
+  if (e->key()==Qt::Key_R && !state.ctrl_pressing)
+  {
+    is_rot_free = !is_rot_free;
+    return true;
+  }
+  return false;
+}
+
 #include "Scene_edit_polyhedron_item.moc"

@@ -96,14 +96,14 @@ public:
   qglviewer::ManipulatedFrame* frame;  // manframe assoc with handle group
   qglviewer::Vec frame_initial_center; // initial center of frame
   Scene_interface::Bbox bbox;          // bbox of handles inside group  
-
+  qglviewer::Vec rot_direction;        // vector for constraint rotation
 private:
   std::vector<qglviewer::Vec> initial_positions;
   Deform_mesh* deform_mesh;
 
 public:
   Handle_group_data(Deform_mesh::Handle_group handle_group, Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
-    : handle_group(handle_group), frame(frame), bbox(0,0,0,0,0,0), deform_mesh(deform_mesh)
+    : handle_group(handle_group), frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
   { }
   void refresh()
   {
@@ -273,6 +273,9 @@ typedef std::list<Handle_group_data> Handle_group_data_list;
   // by interleaving 'viewer's events (check constructor), keep followings:
   Mouse_keyboard_state state;
 
+  //For constraint rotation
+  qglviewer::LocalConstraint rot_constraint;
+  bool is_rot_free;
 public:
   // Deformation related functions //
   bool insert_handle(vertex_descriptor v)
@@ -408,6 +411,9 @@ public:
   {       
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     {
+      //update constraint rotation vector, set only for the last group
+      it->rot_direction = it->frame->rotation().rotate( qglviewer::Vec(0.,0.,1.) );
+      //translate center of the frame
       qglviewer::Vec vec= it->frame->position();
       it->refresh();
       it->frame_initial_center = vec;
@@ -421,6 +427,9 @@ public:
 
   void pivoting_begin()
   {
+    is_rot_free=true;
+    rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+
     // just block signals to prevent deformation
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     {
@@ -690,11 +699,24 @@ protected:
       }
     }
 
+    //set rotation constraint for the manipulated frame
+    if (!is_rot_free){
+      rot_constraint.setRotationConstraintDirection(min_it->rot_direction);
+      rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
+      min_it->frame->setConstraint(&rot_constraint);
+    }
+    else
+      rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+
     if(viewer->manipulatedFrame() == min_it->frame)
     { return false; }
-    viewer->setManipulatedFrame(min_it->frame);  
+    viewer->setManipulatedFrame(min_it->frame);
+
     return true;
   }
+
+  bool keyPressEvent(QKeyEvent* e);
+
 
 protected:
   GLUquadric* quadric; // for drawing spheres
