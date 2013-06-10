@@ -140,7 +140,7 @@ private:
     if(const Point* i_point  = object_cast<Point>(&intersection)) { 
       ret.get<0>() = *i_point;
     }
-    else if(const Segment* i_segment = object_cast<Segment>(&intersection)) {
+    else if( object_cast<Segment>(&intersection) ) {
       // is it possible to predicate not-planar but construct segment ?
       CGAL_warning(!"on interval case - predicate not-planar but construct segment");
       ret.get<1>() = PLANAR;
