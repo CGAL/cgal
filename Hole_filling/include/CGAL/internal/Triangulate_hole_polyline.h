@@ -50,8 +50,8 @@ private:
   Weight
   sigma(const Polyline_3& P, const Polyline_3& Q, int i, int j, int k)
   {
-    assert(i+1 ==j);
-    assert(j+1 ==k);
+    CGAL_assertion(i+1 ==j);
+    CGAL_assertion(j+1 ==k);
     const Point_3& p = P[i];
     const Point_3& q = P[j];
     const Point_3& r = P[k];
@@ -70,8 +70,8 @@ private:
   Weight
   sigma(const Polyline_3& P, const Polyline_3& Q, int i, int m, int k, const std::vector<int>& lambda)
   {
-    assert(i < m);
-    assert(m < k);
+    CGAL_assertion(i < m);
+    CGAL_assertion(m < k);
     int n = P.size() -1; // because the first and last point are equal
     const Point_3& pi = P[i];
     const Point_3& pm = P[m];
@@ -121,9 +121,9 @@ public:
              const Polyline_3& Q,
              OutputIterator out)
   {
-    assert(P.front() == P.back());
-    assert(Q.empty() || (Q.front() == Q.back()));
-    assert(Q.empty() || (P.size() == Q.size()));
+    CGAL_assertion(P.front() == P.back());
+    CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
+    CGAL_assertion(Q.empty() || (P.size() == Q.size()));
     
     int n = P.size() - 1; // because the first and last point are equal
     std::vector<Weight> W(n*n,Weight(0,0));
