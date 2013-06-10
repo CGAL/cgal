@@ -1,5 +1,5 @@
-#ifndef CGAL_FILL_HOLE_POLYHEDRON_H
-#define CGAL_FILL_HOLE_POLYHEDRON_H
+#ifndef CGAL_HOLE_FILLING_FILL_HOLE_POLYHEDRON_H
+#define CGAL_HOLE_FILLING_FILL_HOLE_POLYHEDRON_H
 
 // Helper functions which combine triangulate, fair, and refine 
 

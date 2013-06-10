@@ -8,7 +8,7 @@
 #include "Polyhedron_demo_plugin_interface.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/internal/Triangulate_hole_polyline.h>
+#include <CGAL/Hole_filling.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include <QAction>
