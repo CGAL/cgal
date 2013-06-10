@@ -787,7 +787,7 @@ class Reconstruction_from_parallel_slices_3{
   }
   
   double min_distance_to_constaints(const Point_2& p, Face_handle_2 f) const {
-    double min=std::numeric_limits<double>::max();
+    double min=(std::numeric_limits<double>::max)();
     for (int k=0;k<3;++k){
       if ( f->is_constrained(k) )
         min=(std::min) ( min,distance_to_supporting_line(p,f,k) );
