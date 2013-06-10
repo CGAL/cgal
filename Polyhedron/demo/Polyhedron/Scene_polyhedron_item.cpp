@@ -376,7 +376,7 @@ Scene_polyhedron_item::select(double orig_x,
                 nearest_v = v;
               }
             }
-            std::cerr << "Selected vertex: " << v->point() << std::endl;
+            // std::cerr << "Selected vertex: " << v->point() << std::endl;
             emit selected_vertex((void*)(&*nearest_v));
           }
           
@@ -388,8 +388,8 @@ Scene_polyhedron_item::select(double orig_x,
             changed();
             emit itemChanged();
           }
-          std::cerr << "Facet selected. patch_id="
-                    << selected_fh->patch_id() << std::endl;
+          // std::cerr << "Facet selected. patch_id="
+          //           << selected_fh->patch_id() << std::endl;
         }
       }
     }
