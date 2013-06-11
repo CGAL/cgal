@@ -26,6 +26,8 @@
 #include "DeleteCurveMode.h"
 #include "ArrangementGraphicsItem.h"
 
+#include <boost/math/special_functions/fpclassify.hpp>
+
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -824,10 +826,10 @@ void ArrangementDemoWindow::on_actionOpen_triggered( )
   QGraphicsView* view = currentTab->getView( );
   // std::cout << bb.left( ) << " " << bb.bottom( ) << ", " << bb.right( )
   //           << " " << bb.top( ) << std::endl;
-  if ( std::isinf(bb.left( )) || 
-       std::isinf(bb.right( )) || 
-       std::isinf(bb.top( )) || 
-       std::isinf(bb.bottom( )) )
+  if ( boost::math::isinf(bb.left( )) || 
+       boost::math::isinf(bb.right( )) || 
+       boost::math::isinf(bb.top( )) || 
+       boost::math::isinf(bb.bottom( )) )
   {
     // std::cout << "unbounded; using default bb" << std::endl;
     bb = QRectF( -100, -100, 200, 200 );

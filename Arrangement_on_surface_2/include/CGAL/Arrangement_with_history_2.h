@@ -53,13 +53,9 @@ private:
              typename Default_topology::Traits>           Base;
 
 public:
-
   typedef GeomTraits_                                     Geometry_traits_2;
-
   typedef Dcel_                                           Dcel;
-  typedef Arrangement_with_history_2<Geometry_traits_2,
-                                   Dcel>                  Self;
-
+  
   typedef typename Base::Point_2                          Point_2;
   typedef typename Base::X_monotone_curve_2               X_monotone_curve_2;
   typedef typename Base::Curve_2                          Curve_2;
@@ -125,6 +121,7 @@ public:
   typedef typename Base::Inner_ccb_const_iterator  Hole_const_iterator;
 
 private:
+  typedef Arrangement_with_history_2<Geometry_traits_2, Dcel>   Self;
 
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
