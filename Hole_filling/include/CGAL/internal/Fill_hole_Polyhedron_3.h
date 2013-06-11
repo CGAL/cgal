@@ -106,7 +106,7 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   double density_control_factor = std::sqrt(2.0)
   )
 {
-  typedef CGAL::Fairing_cotangent_weight<Polyhedron> Weight_calculator;
+  typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
   triangulate_refine_and_fair_hole<SparseLinearSolver, Weight_calculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
     (polyhedron, border_halfedge, facet_out, vertex_out,  Weight_calculator(), density_control_factor);
 }
