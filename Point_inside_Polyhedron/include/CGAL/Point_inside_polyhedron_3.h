@@ -308,7 +308,8 @@ private:
   template <class Query,bool ray_is_vertical>
   boost::logic::tribool 
   is_inside_ray_tree_traversal(const Query& query) const {
-    std::pair<boost::logic::tribool,std::size_t> status(boost::logic::indeterminate,0);
+    std::pair<boost::logic::tribool,std::size_t> status(
+      boost::logic::tribool(boost::logic::indeterminate), 0);
     Ray_3_Triangle_3_traversal_traits<Traits,Polyhedron_3,Kernel,Boolean_tag<ray_is_vertical> > traversal_traits(status);
     tree.traversal(query, traversal_traits);
     if ( !boost::logic::indeterminate(status.first) ){
@@ -335,9 +336,9 @@ public:
     if(N>0)
     {
       Vector v = p - grid_base;
-      int i = boost::math::round(v.x() / grid_dx);  
-      int j =  boost::math::round(v.y() / grid_dy);  
-      int k =  boost::math::round(v.z() / grid_dz);
+      int i = boost::math::iround(v.x() / grid_dx);  
+      int j =  boost::math::iround(v.y() / grid_dy);  
+      int k =  boost::math::iround(v.z() / grid_dz);
 
       if(i>N-1)i=N-1;
       if(j>N-1)j=N-1;
