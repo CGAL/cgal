@@ -30,6 +30,8 @@ SEARCHENGINE             = true
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
 
+SHOW_FILES= NO
+
 # all image paths, maybe auto-generate this?
 IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Algebraic_foundations/doc/Algebraic_foundations/fig \
