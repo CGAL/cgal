@@ -27,6 +27,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
     poly_item(poly_item),
     deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map(), Array_based_vertex_point_map(&positions)),
     is_rot_free(true),
+    own_poly_item(true),
     quadric(gluNewQuadric())
 {
   gluQuadricNormals(quadric, GLU_SMOOTH);
@@ -88,7 +89,7 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
     delete_handle_group(false);
   }
   gluDeleteQuadric(quadric);
-  delete poly_item;
+  if (own_poly_item) delete poly_item;
 }
 
 struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
@@ -356,7 +357,7 @@ void Scene_edit_polyhedron_item::changed()
 Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() {
   Scene_polyhedron_item* poly_item_tmp = poly_item;
   poly_item->set_color_vector_read_only(false);
-  poly_item = NULL;
+  own_poly_item=false;
   return poly_item_tmp;
 }
 
