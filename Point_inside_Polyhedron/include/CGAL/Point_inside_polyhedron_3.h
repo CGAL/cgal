@@ -51,6 +51,7 @@ class Point_inside_polyhedron_3 {
   double grid_dx, grid_dy, grid_dz;
   static const bool m_on_boundary_point_inside=false;
   static const bool m_use_a_vertical_ray=true;
+  double max_diagonal;
 
 public:
   
@@ -59,6 +60,10 @@ public:
   {
     tree.insert(polyhedron.facets_begin(),polyhedron.facets_end());
     tree.build();
+    CGAL::Bbox_3 tree_bbox = bbox();
+    max_diagonal = std::sqrt( 
+      CGAL::squared_distanceC3( tree_bbox.xmin(), tree_bbox.ymin(), tree_bbox.zmin(),
+                                tree_bbox.xmax(), tree_bbox.ymax(), tree_bbox.zmax() ) );
     if(N>0){
       initialize_grid();
     }
@@ -184,6 +189,13 @@ public:
         m_use_a_vertical_ray ?
         make_ray(p, make_vector(0,0,(2*p.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1))) :
         make_ray(p, make_vector(CGAL::ORIGIN,*random_point));
+
+      //double max_distance( max_diagonal / std::sqrt(query.to_vector().squared_length()));
+      //const Vector& scaled_direction = m_kernel.construct_scaled_vector_3_object()(query.to_vector(), max_distance);
+      //const Vector& target_vector = m_kernel.construct_sum_of_vectors_3_object()( Vector(Point(ORIGIN), p), scaled_direction);
+      //const Point&  target_point = m_kernel.construct_translated_point_3_object()(Point(ORIGIN), target_vector);
+      //Segment segment(p, target_point); 
+
       boost::logic::tribool res=is_inside_ray_tree_traversal<Ray,true>(query);
       while (boost::logic::indeterminate(res)){
         //retry with a random ray
