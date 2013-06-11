@@ -5,7 +5,6 @@
 #include <vector>
 #include <boost/tuple/tuple.hpp>
 
-
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -188,4 +187,5 @@ int main() {
   for(std::vector<std::string>::iterator it = input_files_2.begin(); it != input_files_2.end(); ++it) {
     assert(test_2(it->c_str()));
   }
+  std::cerr << "All Done!" << std::endl;
 }
