@@ -1,8 +1,8 @@
 # this package is a little peculiar and different from the other packages
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME        = CGAL
+PROJECT_NAME        = Manual
 PROJECT_BRIEF       =
-OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/CGAL
+OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/Manual
 
 INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
         ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite_cgal.txt
@@ -29,6 +29,8 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
+
+SHOW_FILES= NO
 
 # all image paths, maybe auto-generate this?
 IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \

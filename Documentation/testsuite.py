@@ -93,7 +93,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </table></body></html>'''
     
     if args.publish and args.do_copy_results:
-      link="\nLink to this <a href=output/CGAL/html/index.html>documentation</a>\n"
+      link="\nLink to this <a href=output/Manual/index.html>documentation</a>\n"
       d = pq(page_header+link+page_footer)
     else:
       d = pq(page_header+page_footer)
