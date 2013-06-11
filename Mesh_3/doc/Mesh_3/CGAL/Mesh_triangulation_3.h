@@ -11,9 +11,9 @@ triangulation of a mesh generation process.
 \tparam Gt stands for a model of `RegularTriangulationTraits_3` 
 and defaults to `Kernel_traits<MD>::Kernel`. 
 
-\tparam Concurrency_tag allows to ask for parallel meshing and optimization
-algorithms. Possible values are `CGAL::Sequential_tag` (the default) and
-`CGAL::Parallel_tag`.
+\tparam Concurrency_tag enables sequential versus parallel meshing and optimization algorithms.
+                        Possible values are `CGAL::Sequential_tag` (the default) and
+                        `CGAL::Parallel_tag`.
 
 \tparam Vertex_base stands for a model of `MeshVertexBase_3` 
 and defaults to `Mesh_vertex_base_3<Gt, MD>`. 

@@ -15,7 +15,7 @@ Cut-view of a multi-domain 3D mesh generated from a segmented image.
 
 This package is devoted to the generation of isotropic simplicial
 meshes discretizing 3D domains.
-The domain to be meshed is a region of 3D space that has to be bounded.
+The domain to be meshed is a region of 3D space, required to be bounded.
 The region may be connected or composed of multiple components
 and/or subdivided in several subdomains. 
 
@@ -55,7 +55,7 @@ the boundary and subdivision surface patches may form \cite cgal:cdl-pdma-07, \c
 The Delaunay refinement is followed by a mesh optimization phase
 to remove slivers and provide a good quality mesh.
 
-Optionnally, the meshing and optimizations algorithms support multi-core shared-memory 
+Optionally, the meshing and optimizations algorithms support multi-core shared-memory 
 architectures to take advantage of available parallelism.
 
 \subsection Mesh_3InputDomain Input Domain
@@ -334,7 +334,7 @@ represent a three dimensional complex embedded in a 3D
 triangulation. In both functions, an instance of type `C3T3` is used to maintain the current
 approximating simplicial mesh 
 and to represent the final 3D mesh at the end
-of the procedure.
+of the meshing process.
 
 The embedding 3D triangulation is required to be the nested type
 `CGAL::Mesh_triangulation_3<>::type`, provided by the meta functor 
@@ -548,10 +548,10 @@ those processes have themselves parameters (see details in reference pages) to t
 
 \subsection Mesh_3ParallelAlgorithms Parallel algorithms
 
-Enabling parallel meshing and optimization algorithms can be done by setting the third template parameter of the `Mesh_triangulation_3` class  to `Parallel_tag`, when defining the triangulation type. Note that if the user provides its own vertex and cell base classes, the `MeshVertexBase_3` and `MeshCellBase_3` concepts give additionnal requirements.
+Enabling parallel meshing and optimization algorithms is achieved through setting the third template parameter of the `Mesh_triangulation_3` class  to `Parallel_tag`, when defining the triangulation type. Note that when the user provides his/her own vertex and cell base classes, the `MeshVertexBase_3` and `MeshCellBase_3` concepts impose additionnal requirements.
 
-Parallel algorithms require the program to be linked against the Intel TBB library.
-We <b>strongly suggest</b> the user to use the TBB malloc proxy by including <tbb/tbbmalloc_proxy.h> in his source code.
+Parallel algorithms require the executable to be linked against the Intel TBB library.
+We advise the user to use the TBB malloc proxy by including <tbb/tbbmalloc_proxy.h> within his source code.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
 See TBB documentation for more details.
 
@@ -702,11 +702,10 @@ We provide here some benchmarks of the performances of the mesh generation engin
 
 \subsection Mesh_3DelaunayRefinement_1 Delaunay Refinement
 
-The machine used is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
+The computer used for benchmarking is a PC running Linux64 with two Intel Xeon CPU X5450 clocked at 3.00 GHz
 with 32GB of RAM. The program has been compiled with g++ v4.3.2 with the -O3 option. 
-Note that those benchmarks were done with the sequential version of the algorithm, 
-which does not take advantage of multi-core architectures. See next section for 
-parallel performance.
+Note that those benchmarks were obtained with the sequential version of the algorithm, 
+which does not take advantage of multi-core architectures. See next section for performances of parallel algorithms.
 
 Those benchmarks have been done using \cgal v3.8.
 
@@ -991,7 +990,7 @@ vertices/second
 
 \subsection Mesh_3Parallel_performance_1 Parallel performance
 
-In this section, we provide speed-up charts generated using the parallel version of the meshing algorithms.
+We provide below speed-up charts generated using the parallel version of the meshing algorithms.
 The machine used is a PC running Windows 7 64-bits with two 6-core Intel Xeon CPU X5660 clocked at 2.80 GHz
 with 32GB of RAM. The program has been compiled with Microsoft Visual C++ 2012 in Release mode.
 
@@ -1003,7 +1002,7 @@ Facet refinement speed-up (left) and cell refinement speed-up (right), compared 
 \cgalFigureEnd
 
 \cgalFigureBegin{figure_lloyd_speedup,lloyd_speedup.png}
-Lloyd optimization speed-up, compared to the sequential version of the algorithm. Parallel ODT shows similar performance.
+Lloyd optimization speed-up, compared to the sequential version of the algorithm. Parallel ODT exhibits similar performance.
 \cgalFigureEnd
 
 \section Mesh_3DesignAndImpl Design and Implementation History
