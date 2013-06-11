@@ -777,9 +777,6 @@ void MainWindow::open(QString filename)
                     fileinfo.absoluteDir().absolutePath());
 
   Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
-  if(scene_item != 0) {
-    this->addToRecentFiles(filename);
-  }
   selectSceneItem(scene->addItem(scene_item));
 }
 
@@ -1125,6 +1122,7 @@ void MainWindow::on_actionLoad_triggered()
       this->addToRecentFiles(filename);
     } else {
       open(filename);
+      this->addToRecentFiles(filename);
     }
   }
 }
