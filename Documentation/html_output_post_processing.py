@@ -70,12 +70,12 @@ def package_glob(target):
 
 # remove duplicate files
 def clean_doc():
-    duplicate_files=package_glob('./*/html/jquery.js')
-    duplicate_files.extend(package_glob('./*/html/dynsections.js'))
-    duplicate_files.extend(package_glob('./*/html/resize.js'))
-    duplicate_files.extend(package_glob('./*/html/stylesheet.css'))
+    duplicate_files=package_glob('./*/jquery.js')
+    duplicate_files.extend(package_glob('./*/dynsections.js'))
+    duplicate_files.extend(package_glob('./*/resize.js'))
+    duplicate_files.extend(package_glob('./*/stylesheet.css'))
     # kill _all_, including the one in CGAL tabs.css files
-    duplicate_files.extend(glob.glob('./*/html/tabs.css'))
+    duplicate_files.extend(glob.glob('./*/tabs.css'))
     # left-over by doxygen?
     duplicate_files.extend(package_glob('./*/bib2xhtml.pl'))
     duplicate_files.extend(package_glob('./*/cgal_manual.bib'))
@@ -120,7 +120,7 @@ def rearrange_img(i, dir_name):
             if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
                 img.attr("src","ftv2cpt.png")
     srcpath=img.attr("src")
-    img.attr("src", "../../CGAL/html/" + srcpath.split('/')[-1])
+    img.attr("src", "../CGAL/" + srcpath.split('/')[-1])
 
 class figure_anchor_info:
   def __init__(self):
@@ -165,16 +165,16 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     os.chdir(args.output)
 
     # number figure
-    main_pages=package_glob('./*/html/index.html')
+    main_pages=package_glob('./*/index.html')
     for fn in main_pages:
       automagically_number_figure(fn)
 
     #replace icons with CGAL colored ones
-    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("CGAL/html/", "ftv2cl.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("CGAL/html/", "ftv2ns.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("CGAL/html/", "ftv2cpt.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("CGAL/", "ftv2cl.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("CGAL/", "ftv2ns.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("CGAL/", "ftv2cpt.png"))
 
-    annotated_files=package_glob('./*/html/annotated.html')
+    annotated_files=package_glob('./*/annotated.html')
     for fn in annotated_files:
       dir_name=path.dirname(fn)
       d = pq(filename=fn, parser='html')
@@ -182,8 +182,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
       write_out_html(d,fn)
     
-    class_files=package_glob('./*/html/class*.html')
-    class_files.extend(package_glob('./*/html/struct*.html'))
+    class_files=package_glob('./*/class*.html')
+    class_files.extend(package_glob('./*/struct*.html'))
     for fn in class_files:
         d = pq(filename=fn, parser='html')
         ident = d('#CGALConcept')
@@ -194,10 +194,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         # there is a doxygen bug that prevents the correct linkage of the CGAL breadcrumb
         ident = d('#nav-path .navelem').eq(0).children().eq(0)
         if ident and ident.attr('href') == 'namespaceCGAL.html':
-            ident.attr('href', '../../CGAL/html/namespaceCGAL.html')
+            ident.attr('href', '../CGAL/namespaceCGAL.html')
         write_out_html(d, fn)
 
-    namespace_files=package_glob('./*/html/namespace*.html')
+    namespace_files=package_glob('./*/namespace*.html')
     for fn in namespace_files:
         d = pq(filename=fn, parser='html')
         ident = d('#CGALConceptNS')
@@ -207,14 +207,14 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         write_out_html(d, fn)
 
     # in a group we only need to change the nested-classes
-    group_files=package_glob('./*/html/group*Concepts*.html')
+    group_files=package_glob('./*/group*Concepts*.html')
     for fn in group_files:
         d = pq(filename=fn, parser='html')
         conceptify_nested_classes(d)
         write_out_html(d, fn)
 
     # fix up Files
-    files_files=package_glob('./*/html/files.html')
+    files_files=package_glob('./*/files.html')
     for fn in files_files:
         d = pq(filename=fn, parser='html')
         table = d("table.directory")
@@ -224,24 +224,24 @@ removes some unneeded files, and performs minor repair on some glitches.''')
             table("tr").filter(lambda i: re.match(row_id + '*', pq(this).attr('id'))).remove()
             write_out_html(d, fn)
 
-    filesjs_files=package_glob('./*/html/files.js')
+    filesjs_files=package_glob('./*/files.js')
     for fn in filesjs_files:
         re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
 
     #Rewrite the path of some images
     re_replace_in_file("'src','ftv2",
-                       "'src','../../CGAL/html/ftv2",
-                       'CGAL/html/dynsections.js')
+                       "'src','../CGAL/ftv2",
+                       'CGAL/dynsections.js')
 
     # external is placed by doxygen to mark a class from a tagfile, this
     # is more confusing then helpful in our case
 
-    re_replace_in_file('\[external\]', '', './CGAL/html/annotated.html')
+    re_replace_in_file('\[external\]', '', './CGAL/annotated.html')
 
     # fix class/concept mismatch in generated pages
-    relationship_pages=package_glob('./*/html/hasModels.html')
-    relationship_pages.extend(package_glob('./*/html/generalizes.html'))
-    relationship_pages.extend(package_glob('./*/html/refines.html'))
+    relationship_pages=package_glob('./*/hasModels.html')
+    relationship_pages.extend(package_glob('./*/generalizes.html'))
+    relationship_pages.extend(package_glob('./*/refines.html'))
     for fn in relationship_pages:
         d = pq(filename=fn, parser='html')
         dts=d(".textblock .reflist dt")
@@ -253,7 +253,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         write_out_html(d, fn)
 
     # throw out nav-sync and the detailed description title
-    all_pages=glob.glob('./*/html/*.html')
+    all_pages=glob.glob('./*/*.html')
     for fn in all_pages:
         d = pq(filename=fn, parser='html')
         d('#nav-sync').hide()
@@ -262,7 +262,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         write_out_html(d, fn)
 
     # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
-    re_replace_in_file('%CGAL','CGAL',glob.glob('./CGAL/html/navtree.js')[0])
+    re_replace_in_file('%CGAL','CGAL',glob.glob('./CGAL/navtree.js')[0])
     clean_doc()
     
     
