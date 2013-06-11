@@ -545,10 +545,10 @@ void Polyhedron_demo_hole_filling_plugin::fill
 
     if(weight_index == 0)
       CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), 
-      CGAL::Fairing_uniform_weight<Polyhedron>(), alpha);
+      CGAL::internal::Uniform_weight_fairing<Polyhedron>(), alpha);
     if(weight_index == 1)
       CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
-      CGAL::Fairing_cotangent_weight<Polyhedron>(), alpha);
+      CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(), alpha);
   }
 
   if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {

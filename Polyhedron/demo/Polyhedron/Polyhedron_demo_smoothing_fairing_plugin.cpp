@@ -443,11 +443,11 @@ void Polyhedron_demo_smoothing_fairing_plugin::on_Fair_button_clicked()
   if(weight_index == 0)
     CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices.begin(),
       selectable_item->selected_vertices.end(),
-      CGAL::Fairing_uniform_weight<Polyhedron>());
+      CGAL::internal::Uniform_weight_fairing<Polyhedron>());
   if(weight_index == 1)
     CGAL::fair(*selectable_item->polyhedron(), selectable_item->selected_vertices.begin(),
     selectable_item->selected_vertices.end(),
-      CGAL::Fairing_cotangent_weight<Polyhedron>());
+      CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>());
   selectable_item->changed_with_poly_item();
 }
 

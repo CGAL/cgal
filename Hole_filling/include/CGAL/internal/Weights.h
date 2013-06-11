@@ -437,17 +437,7 @@ public:
 }//namespace internal
 /// @endcond
 
-template <typename Polyhedron>
-struct Fairing_uniform_weight : public CGAL::internal::Uniform_weight_fairing<Polyhedron>
-{ };
 
-template <typename Polyhedron>
-struct Fairing_scale_dependent_weight : public CGAL::internal::Scale_dependent_weight_fairing<Polyhedron>
-{ };
-
-template <typename Polyhedron>
-struct Fairing_cotangent_weight : public CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> 
-{ };
 
 }//namespace CGAL
 #endif //CGAL_SURFACE_MODELING_WEIGHTS_H
