@@ -66,7 +66,7 @@ def write_out_html(d, fn):
     f.close()
 
 def package_glob(target):
-    return filter(lambda x: not './CGAL/' in x, glob.glob(target))
+    return filter(lambda x: not './Manual/' in x, glob.glob(target))
 
 # remove duplicate files
 def clean_doc():
@@ -120,7 +120,7 @@ def rearrange_img(i, dir_name):
             if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
                 img.attr("src","ftv2cpt.png")
     srcpath=img.attr("src")
-    img.attr("src", "../CGAL/" + srcpath.split('/')[-1])
+    img.attr("src", "../Manual/" + srcpath.split('/')[-1])
 
 class figure_anchor_info:
   def __init__(self):
@@ -170,9 +170,9 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       automagically_number_figure(fn)
 
     #replace icons with CGAL colored ones
-    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("CGAL/", "ftv2cl.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("CGAL/", "ftv2ns.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("CGAL/", "ftv2cpt.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("Manual/", "ftv2cl.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("Manual/", "ftv2ns.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("Manual/", "ftv2cpt.png"))
 
     annotated_files=package_glob('./*/annotated.html')
     for fn in annotated_files:
@@ -194,7 +194,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         # there is a doxygen bug that prevents the correct linkage of the CGAL breadcrumb
         ident = d('#nav-path .navelem').eq(0).children().eq(0)
         if ident and ident.attr('href') == 'namespaceCGAL.html':
-            ident.attr('href', '../CGAL/namespaceCGAL.html')
+            ident.attr('href', '../Manual/namespaceCGAL.html')
         write_out_html(d, fn)
 
     namespace_files=package_glob('./*/namespace*.html')
@@ -230,13 +230,13 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     #Rewrite the path of some images
     re_replace_in_file("'src','ftv2",
-                       "'src','../CGAL/ftv2",
-                       'CGAL/dynsections.js')
+                       "'src','../Manual/ftv2",
+                       'Manual/dynsections.js')
 
     # external is placed by doxygen to mark a class from a tagfile, this
     # is more confusing then helpful in our case
 
-    re_replace_in_file('\[external\]', '', './CGAL/annotated.html')
+    re_replace_in_file('\[external\]', '', './Manual/annotated.html')
 
     # fix class/concept mismatch in generated pages
     relationship_pages=package_glob('./*/hasModels.html')
@@ -262,7 +262,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         write_out_html(d, fn)
 
     # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
-    re_replace_in_file('%CGAL','CGAL',glob.glob('./CGAL/navtree.js')[0])
+    re_replace_in_file('%CGAL','CGAL',glob.glob('./Manual/navtree.js')[0])
     clean_doc()
     
     
