@@ -67,7 +67,7 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item)
   }
   emit updated();
   itemChanged(index);
-  QAbstractListModel::reset();
+  // QAbstractListModel::reset();
   return item;
 }
 
