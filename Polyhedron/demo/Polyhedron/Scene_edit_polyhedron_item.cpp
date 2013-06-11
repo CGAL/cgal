@@ -439,6 +439,9 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
   if (e->key()==Qt::Key_R && !state.ctrl_pressing)
   {
     is_rot_free = !is_rot_free;
+    rot_constraint.setRotationConstraintType( is_rot_free?
+        qglviewer::AxisPlaneConstraint::FREE:
+        qglviewer::AxisPlaneConstraint::AXIS);
     return true;
   }
   return false;
