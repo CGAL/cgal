@@ -29,7 +29,7 @@ if the TDS is concurrency-safe) storing the vertices and cells. They are models 
 the concept `CompactContainerStrategy`. The default values are both
 `Compact_container_strategy_base`.
 
-The `Concurrency_tag` parameter allows to ask for a concurrency-safe TDS (with regard to
+The `Concurrency_tag` parameter allows to enable a concurrency-safe TDS (with regard to
 insertion and deletion of elements). Possible values are `Sequential_tag` (the default) and
 `Parallel_tag`. The concurrency-safe version uses two `Concurrent_compact_container` to store 
 vertices and cells (instead of two `Compact_container`).
