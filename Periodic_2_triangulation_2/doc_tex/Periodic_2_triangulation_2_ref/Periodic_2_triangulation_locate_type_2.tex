@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_2_triangulation_locate_type_2.tex
+% +------------------------------------------------------------------------+
+% | 19.03.2010   Nico Kruithof
+% | Package: Periodic_2_triangulation_2
+% | 
+\RCSdef{\RCSPeriodictriangulationlocatetypeRev}{$Id$}
+\RCSdefDate{\RCSPeriodictriangulationlocatetypeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccModifierCrossRefOff
+\begin{ccRefEnum}[Periodic_2_triangulation_2::]{Locate_type}
+
+\ccDefinition
+  
+The enum \ccRefName\ is defined by \ccc{Periodic_2_triangulation_2} to
+specify which case occurs when locating a point in the
+triangulation. If the triangulation does not contain any points
+\ccc{EMPTY} is returned.
+
+\ccEnum{enum Locate_type {VERTEX=0, EDGE, FACE, EMPTY};}{}
+
+The locate type is:
+\begin{itemize}
+%
+\item{\ccc{VERTEX}:} when the located point coincides with a vertex of the triangulation
+%
+\item{\ccc{EDGE}:} when the point is in the relative interior of an edge
+%
+\item{\ccc{FACE}:} when the point is in the interior of a facet
+%
+\item{\ccc{EMPTY}:} when the triangulation is empty
+%
+\end{itemize}
+
+
+\ccSeeAlso
+
+\ccc{CGAL::Periodic_2_triangulation_2}
+
+\end{ccRefEnum}
+\ccModifierCrossRefOn
