@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_inside_polyhedron_3.h>
+#include <CGAL/Point_inside_polyhedron_3_old.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -70,7 +70,6 @@ int main(int argc, char* argv[])
     std::cerr << "  Preprocessing took " << timer.time() << " sec." << std::endl;
     timer.reset();  
     int n_inside = 0;
-    
     
     timer.start();
     for(int k=0;k<nb_points;++k){

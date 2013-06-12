@@ -18,8 +18,11 @@
 //
 // Author(s)     : Sebastien Loriot
 
-#ifndef CGAL_POINT_INSIDE_POLYHEDRON_H
-#define CGAL_POINT_INSIDE_POLYHEDRON_H
+/************************************************************************/
+/* WARNING: This file is not a part of public and tested API + code     */
+/************************************************************************/
+#ifndef CGAL_POINT_INSIDE_POLYHEDRON_OLD_H
+#define CGAL_POINT_INSIDE_POLYHEDRON_OLD_H
 
 #include <CGAL/internal/Point_inside_Polyhedron/Ray_3_Triangle_3_traversal_traits.h>
 #include <CGAL/AABB_tree.h>
