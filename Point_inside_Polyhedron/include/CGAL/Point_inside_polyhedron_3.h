@@ -29,6 +29,7 @@ class Point_inside_polyhedron_3 {
   Kernel m_kernel;
   Tree tree;
 
+  const static unsigned int seed = 1340818006;
 public:
   /** 
    * The constructor of query object. It also processes given polyhedron for multiple queries.
@@ -68,7 +69,8 @@ public:
     typename Kernel::Construct_ray_3 make_ray = m_kernel.construct_ray_3_object();
     typename Kernel::Construct_vector_3 make_vector = m_kernel.construct_vector_3_object();
      
-    Random_points_on_sphere_3<Point> random_point(1.);
+    CGAL::Random rg(seed); // seed some value for make it easy to debug
+    Random_points_on_sphere_3<Point> random_point(1.,rg);
     //the direction of the vertical ray depends on the position of the point in the bbox
     //in order to limit the expected number of nodes visited.
     Ray query = make_ray(p, make_vector(0,0,(2*p.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
