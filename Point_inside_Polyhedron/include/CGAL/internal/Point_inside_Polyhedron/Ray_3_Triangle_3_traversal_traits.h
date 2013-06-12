@@ -14,7 +14,7 @@ protected:
   //the status indicates whether the query point is strictly inside the polyhedron, and the number of intersected triangles if yes
   std::pair<boost::logic::tribool,std::size_t>& m_status;
   bool m_stop;
-  typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron_3> Primitive;
+  typedef typename AABBTraits::Primitive Primitive;
 
 public:
   Ray_3_Triangle_3_traversal_traits(std::pair<boost::logic::tribool,std::size_t>& status)
