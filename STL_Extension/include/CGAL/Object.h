@@ -88,12 +88,21 @@ class Object
     bool assign(T &t) const
     {
       if(obj) {
+        #ifdef CGAL_USE_ANY_BAD_CAST
         try {
           t = boost::any_cast<T>(*obj);
           return true;
         } catch(...) {
           return false;
         }
+        #else
+        const T* res =  boost::any_cast<T>(&(*obj));
+        if (res){
+          t=*res;
+          return true;
+        }
+        return false;
+        #endif
       } else {
         return false;
       }
