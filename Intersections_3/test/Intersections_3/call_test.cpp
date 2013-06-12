@@ -57,6 +57,8 @@ void call_do_intersect_with_kernel(const A& a, const B& b, const K&) {
 
 int main()
 {
+  CGAL::Interval_nt_advanced::Protector P;
+  CGAL_USE(P);
   try {
     call_intersection_global(S(), S());
     call_intersection_global(S(), L());
