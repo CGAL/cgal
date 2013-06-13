@@ -164,9 +164,11 @@ struct Get_convert_attribute_functor<Map1,Map2,i,Converters,false>
 // Call a given functor if both i-attribute have an non void info
 template< typename Map1, typename Map2, unsigned int i,
           typename Converters,
-          bool Withinfo1=CGAL::internal::Is_attribute_has_non_void_info
+          bool Withinfo1=CGAL::internal::template
+          Is_attribute_has_non_void_info
           <typename Map1::template Attribute_type<i>::type>::value,
-          bool Withinfo2=CGAL::internal::Is_attribute_has_non_void_info
+          bool Withinfo2=CGAL::internal::template
+          Is_attribute_has_non_void_info
           <typename Map2::template Attribute_type<i>::type>::value >
 struct Call_functor_if_both_attributes_have_info
 {
@@ -199,9 +201,9 @@ struct Call_functor_if_both_attributes_have_info<Map1, Map2, i,
 // general case i!=0 or one attribute without point.
 template< typename Map1, typename Map2, unsigned int i,
           typename Pointconverter,
-          bool Withpoint1=CGAL::internal::Is_attribute_has_point
+          bool Withpoint1=CGAL::internal::template Is_attribute_has_point
           <typename Map1::template Attribute_type<i>::type>::value,
-          bool Withpoint2=CGAL::internal::Is_attribute_has_point
+          bool Withpoint2=CGAL::internal::template Is_attribute_has_point
           <typename Map2::template Attribute_type<i>::type>::value >
 struct Call_functor_if_both_attributes_have_point
 {
@@ -287,7 +289,7 @@ struct Copy_attribute_functor_if_nonvoid<Map1, Map2, Converters,
     if ( dh2->template attribute<0>()!=NULL ) return;
 
     // Create the point if 0-attributes has Point.
-    if ( CGAL::internal::Is_attribute_has_point
+    if ( CGAL::internal::template Is_attribute_has_point
          <typename Map2::template Attribute_type<0>::type>::value )
       cmap2->template
           set_attribute<0>(dh2, cmap2->template create_attribute<0>());
