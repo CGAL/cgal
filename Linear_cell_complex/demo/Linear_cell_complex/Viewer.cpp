@@ -35,7 +35,11 @@ CGAL::Bbox_3 Viewer::bbox()
   {
     if ( it->info().is_visible() )
     {
-      empty = false;
+      if ( empty )
+      {
+        bb = LCC::point(it->dart()).bbox();
+        empty = false;
+      }
       for( LCC::Dart_of_cell_range<3>::iterator
            it2=scene->lcc->darts_of_cell<3>(it->dart()).begin();
            it2.cont(); ++it2)
