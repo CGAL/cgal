@@ -54,7 +54,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       
       foreach(depend ${DEPENDENCIES})
         file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} 
-          "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=${CGAL_DOC_OUTPUT_DIR}/${depend}/html\n")
+          "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=../${depend}\n")
       endforeach()
       
       configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in 
