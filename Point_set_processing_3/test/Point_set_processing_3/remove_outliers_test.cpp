@@ -1,4 +1,3 @@
-//#define CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 // remove_outliers_test.cpp
 
 //----------------------------------------------------------

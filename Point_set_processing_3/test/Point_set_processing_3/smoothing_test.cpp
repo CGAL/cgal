@@ -1,4 +1,3 @@
-//#define CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 // smoothing_test.cpp
 
 //----------------------------------------------------------

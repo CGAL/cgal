@@ -1,4 +1,3 @@
-//#define CGAL_USE_OLD_PAIR_PROPERTY_MAPS
 // analysis_test.cpp
 
 //----------------------------------------------------------
