@@ -73,9 +73,36 @@ public:
     Random_points_on_sphere_3<Point> random_point(1.,rg);
     //the direction of the vertical ray depends on the position of the point in the bbox
     //in order to limit the expected number of nodes visited.
-    Ray query = make_ray(p, make_vector(0,0,(2*p.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
 
+#define CAST_TO_CLOSEST
+#ifdef CAST_TO_CLOSEST
+    double dist[6];
+    dist[0] = std::pow(p.x() - tree.bbox().xmin(), 2);
+    dist[1] = std::pow(p.x() - tree.bbox().xmax(), 2);
+    dist[2] = std::pow(p.y() - tree.bbox().ymin(), 2);
+    dist[3] = std::pow(p.y() - tree.bbox().ymax(), 2);
+    dist[4] = std::pow(p.z() - tree.bbox().zmin(), 2);
+    dist[5] = std::pow(p.z() - tree.bbox().zmax(), 2);
+    
+    int min_i = std::min_element(&dist[0], &dist[6]) - &dist[0];
+
+    Ray query = make_ray(p, 
+      make_vector( min_i == 0 ? -1 : min_i == 1 ? 1 : 0,
+                   min_i == 2 ? -1 : min_i == 3 ? 1 : 0,
+                   min_i == 4 ? -1 : min_i == 5 ? 1 : 0));
+    boost::optional<Bounded_side> res;
+    if(min_i == 0 || min_i == 1) {
+      res = is_inside_ray_tree_traversal_with_axis<Ray, 0>(query);
+    } else if(min_i == 2 || min_i == 3) {
+      res = is_inside_ray_tree_traversal_with_axis<Ray, 1>(query);
+    } else {
+      res = is_inside_ray_tree_traversal_with_axis<Ray, 2>(query);
+    }
+#else
+    Ray query = make_ray(p, make_vector(0,0,(2*p.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
     boost::optional<Bounded_side> res = is_inside_ray_tree_traversal<Ray,true>(query);
+#endif
+
     while (!res){
       //retry with a random ray
       query = make_ray(p, make_vector(CGAL::ORIGIN,*random_point++));
@@ -87,10 +114,31 @@ public:
 private:
   template <class Query,bool ray_is_vertical>
   boost::optional<Bounded_side>
-    is_inside_ray_tree_traversal(const Query& query) const 
+  is_inside_ray_tree_traversal(const Query& query) const 
   {
     std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
-    internal::Ray_3_Triangle_3_traversal_traits<Traits,Polyhedron_3,Kernel,Boolean_tag<ray_is_vertical> > traversal_traits(status);
+    internal::Ray_3_Triangle_3_traversal_traits<Traits,Polyhedron_3,Kernel,Boolean_tag<ray_is_vertical>> traversal_traits(status);
+    tree.traversal(query, traversal_traits);
+
+    if ( !boost::logic::indeterminate(status.first) )
+    {
+      if (status.first) {
+        return (status.second&1) == 1 ? ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
+      }
+      //otherwise the point is on the facet
+      return ON_BOUNDARY;
+    }
+    return boost::optional<Bounded_side>(); // indeterminate
+  }
+
+  // Going to be removed 
+  template <class Query, unsigned int Axis>
+  boost::optional<Bounded_side>
+  is_inside_ray_tree_traversal_with_axis(const Query& query) const {
+    std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
+    internal::Ray_3_Triangle_3_traversal_traits_axis<Traits,Polyhedron_3,Kernel, 
+      Axis / 2
+    > traversal_traits(status);
     tree.traversal(query, traversal_traits);
 
     if ( !boost::logic::indeterminate(status.first) )

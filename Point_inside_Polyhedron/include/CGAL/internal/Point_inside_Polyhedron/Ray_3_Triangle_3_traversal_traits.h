@@ -192,6 +192,190 @@ public:
   }
 };
 
+//specialization for vertical ray
+template<typename AABBTraits,class Polyhedron_3, class Kernel, unsigned int Axis>
+class Ray_3_Triangle_3_traversal_traits_axis : 
+  public Ray_3_Triangle_3_traversal_traits<AABBTraits,Polyhedron_3,Kernel,Tag_false>
+{
+  typedef Ray_3_Triangle_3_traversal_traits<AABBTraits,Polyhedron_3,Kernel,Tag_false> Base;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Base::Primitive Primitive;
+public:
+  Ray_3_Triangle_3_traversal_traits_axis(std::pair<boost::logic::tribool,std::size_t>& status):Base(status){}
+
+  template <class Query>
+  bool do_intersect(const Query& query, const Bbox_3& bbox) const
+  {
+    const Point& source=query.point(0);
+    const Point& target=query.point(1);
+    
+    bool inc_main = get_main_axis(target) > get_main_axis(source);
+    
+    //the ray does not intersect the main-slab
+    if ( ( inc_main && get_main_axis(source) > get_main_axis_max(bbox) ) || 
+         (!inc_main && get_main_axis(source) < get_main_axis_min(bbox)) ) return false;
+    
+    //the source is not in the other_1-slab
+    if ( get_other_1(source) > get_other_1_max(bbox) || 
+         get_other_1(source) < get_other_1_min(bbox) ) return false;
+    //check if the source is not in the other_2-slab
+    return get_other_2(source) <= get_other_2_max(bbox) && 
+           get_other_2(source) >= get_other_2_min(bbox);
+  }
+
+  template <class Query,class Node>
+  bool do_intersect(const Query& query, const Node& node) const
+  {
+    return do_intersect(query,node.bbox());
+  }
+
+private:
+  typename Kernel::Point_2 main_axis_project(const typename Kernel::Point_3& p) const{
+    return typename Kernel::Point_2(get_other_1(p), get_other_2(p));
+  }
+
+  typename Kernel::FT get_main_axis(const Point& p) const {
+    return p[Axis];
+  }
+
+  typename Kernel::FT get_other_1(const Point& p) const {
+    return p[(Axis + 1) % 3];
+  }
+
+  typename Kernel::FT get_other_2(const Point& p) const {
+    return p[(Axis + 2) % 3];
+  }
+
+
+  double get_main_axis_max(const Bbox_3& bbox) const {
+    if(Axis == 0) { return bbox.xmax(); }
+    if(Axis == 1) { return bbox.ymax(); }
+    return bbox.zmax();
+  }
+
+  double get_main_axis_min(const Bbox_3& bbox) const {
+    if(Axis == 0) { return bbox.xmin(); }
+    if(Axis == 1) { return bbox.ymin(); }
+    return bbox.zmin();
+  }
+
+  double get_other_1_max(const Bbox_3& bbox) const {
+    if((Axis + 1)% 3 == 0) { return bbox.xmax(); }
+    if((Axis + 1)% 3 == 1) { return bbox.ymax(); }
+    return bbox.zmax();
+  }
+
+  double get_other_1_min(const Bbox_3& bbox) const {
+    if((Axis + 1)% 3 == 0) { return bbox.xmin(); }
+    if((Axis + 1)% 3 == 1) { return bbox.ymin(); }
+    return bbox.zmin();
+  }
+
+  double get_other_2_max(const Bbox_3& bbox) const {
+    if((Axis + 2)% 3 == 0) { return bbox.xmax(); }
+    if((Axis + 2)% 3 == 1) { return bbox.ymax(); }
+    return bbox.zmax();
+  }
+
+  double get_other_2_min(const Bbox_3& bbox) const {
+    if((Axis + 2)% 3 == 0) { return bbox.xmin(); }
+    if((Axis + 2)% 3 == 1) { return bbox.ymin(); }
+    return bbox.zmin();
+  }
+
+public:
+  template<class Query>
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    typename Kernel::Triangle_3 t=primitive.datum();
+    if ( !do_intersect(query,t.bbox()) ) return;
+    
+    
+    typename Kernel::Point_2 p0=main_axis_project(t[0]);
+    typename Kernel::Point_2 p1=main_axis_project(t[1]);
+    typename Kernel::Point_2 p2=main_axis_project(t[2]);
+    int indices[3]={0,1,2}; //to track whether triangle points have been swapt
+    typename Kernel::Point_2 q=main_axis_project( query.source() );
+    
+    Orientation orient_2=orientation(p0,p1,p2);
+    
+    //check whether the face has a normal vector in the xy-plane
+    if (orient_2==COLLINEAR){
+      //in that case the projection of the triangle along the z-axis is a segment.
+      const typename Kernel::Point_2& other_point = p0!=p1?p1:p2;
+      //~ if ( orientation(p0,other_point,q) != COLLINEAR ) return;///no intersection
+      if ( orientation(p0,other_point,q) != COLLINEAR ) return;///no intersection
+      
+      //check if the ray source is above or below the triangle and compare it 
+      //with the direction of the ray
+      //TODO and if yes return
+      //this is just an optimisation, the current code is valid
+      
+      this->m_status.first=boost::logic::indeterminate;
+      this->m_stop=true;
+      return;
+    }
+    
+    //regular case
+    if (orient_2==NEGATIVE){
+      std::swap(p1,p2);
+      std::swap(indices[1],indices[2]);
+    }
+    
+    //check whether the ray intersect the supporting plane
+    Orientation orient_3 = orientation(t[indices[0]],t[indices[1]],t[indices[2]],query.source());
+    if ( orient_3!=COPLANAR && 
+          (
+            //indicates whether the ray is oriented toward the positive side of the plane
+            ( POSITIVE == sign( query.to_vector()[Axis] )  )
+              ==
+            //indicates whether the source of the ray is in the positive side of the plane
+            (orient_3==POSITIVE)
+          )
+    ) return; //no intersection
+    
+
+    //position against first segment
+    switch( orientation(p0,p1,q) ){
+      case COLLINEAR:
+        this->m_status.first=boost::logic::indeterminate;
+        this->m_stop=true;
+      case NEGATIVE:
+        return;
+      default:
+      {}
+    }
+    //position against second segment
+    switch( orientation(p1,p2,q) ){
+      case COLLINEAR:
+        this->m_status.first=boost::logic::indeterminate;
+        this->m_stop=true;
+      case NEGATIVE:
+        return;
+      default:
+      {}
+    }
+    //position against third segment
+    switch( orientation(p2,p0,q) ){
+      case COLLINEAR:
+        this->m_status.first=boost::logic::indeterminate;
+        this->m_stop=true;
+      case NEGATIVE:
+        return;
+      default:
+      {}
+    }
+
+    if (orient_3==COPLANAR){
+      //the endpoint is inside the triangle
+      this->m_status.first=false;
+      this->m_stop=true;
+    }
+    else
+      ++(this->m_status.second);
+  }
+};
+
 }// namespace internal
 }// namespace CGAL
 
