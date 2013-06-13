@@ -64,7 +64,7 @@ public:
         typedef typename boost::property_traits<PointPMap>::value_type Point;
         
         // Round points to multiples of m_epsilon, then compare.
-    #ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+    #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
         Point a_n = get(point_pmap,&a);
         Point b_n = get(point_pmap,&b);
     #else
@@ -218,7 +218,7 @@ grid_simplify_point_set(
 {
   return grid_simplify_point_set(
     first,beyond,
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
 #else
     make_identity_property_map(

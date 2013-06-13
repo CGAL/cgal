@@ -158,7 +158,7 @@ jet_smooth_point_set(
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
   {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     Point point = get(point_pmap, it);
 #else
     Point point = get(point_pmap, *it);
@@ -171,7 +171,7 @@ jet_smooth_point_set(
   // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first; it != beyond; it++)
   {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     const Point& p = get(point_pmap, it);
     put(point_pmap, it ,
         internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge) );
@@ -222,7 +222,7 @@ jet_smooth_point_set(
 {
   jet_smooth_point_set(
     first,beyond,
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
 #else
     make_identity_property_map(

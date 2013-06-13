@@ -162,7 +162,7 @@ remove_outliers_wrt_median_knn_sq_distance(
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
   {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     Point point = get(point_pmap, it);
 #else
     Point point = get(point_pmap, *it);
@@ -176,7 +176,7 @@ remove_outliers_wrt_median_knn_sq_distance(
   for(it = first; it != beyond; it++)
   {
     FT sq_distance = internal::compute_median_knn_sq_distance_3<Kernel>(
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       get(point_pmap,it), 
 #else
       get(point_pmap,*it), 
@@ -240,7 +240,7 @@ remove_outliers_wrt_median_knn_sq_distance(
 {
   return remove_outliers_wrt_median_knn_sq_distance(
     first,beyond,
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
 #else
     make_identity_property_map(

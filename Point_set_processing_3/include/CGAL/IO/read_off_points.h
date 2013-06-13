@@ -142,7 +142,7 @@ read_off_points_and_normals(
           }
         }
         Enriched_point pwn;
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
         put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
         put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
 #else
@@ -251,7 +251,7 @@ read_off_points_and_normals(
     <OutputIteratorValueType>(
     stream,
     output,
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(output),
 #else
     make_identity_property_map(OutputIteratorValueType()),
@@ -400,7 +400,7 @@ read_off_points(
     <OutputIteratorValueType>(
     stream,
     output,
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(output)
 #else
     make_identity_property_map(OutputIteratorValueType())

@@ -128,7 +128,7 @@ private:
 
 //=========================================================================
 
-#ifndef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifndef CGAL_USE_PROPERTY_MAPS_API_V1
 /// Property map that accesses the normal vector from a Point_with_normal_3 object
 ///
 /// @heading Is Model for the Concepts:

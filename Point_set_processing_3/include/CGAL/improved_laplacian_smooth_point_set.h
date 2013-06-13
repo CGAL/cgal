@@ -238,7 +238,7 @@ improved_laplacian_smooth_point_set(
   std::vector<KdTreeElement> treeElements;
   for (it = first, i=0 ; it != beyond ; ++it,++i)
   {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     const Point& p0 = get(point_pmap,it);
 #else
     const Point& p0 = get(point_pmap,*it);
@@ -250,7 +250,7 @@ improved_laplacian_smooth_point_set(
   std::vector<Point>  p(nb_points); // positions at step iter_n
   std::vector<Vector> b(nb_points); // ...
   for(it = first, i=0; it != beyond; it++, ++i) {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       p[i] = get(point_pmap,it);
 #else
       p[i] = get(point_pmap,*it);
@@ -263,7 +263,7 @@ improved_laplacian_smooth_point_set(
       // Iterates over input points, computes (original) Laplacian smoothing and b[].
       for(it = first, i=0; it != beyond; it++, ++i)
       {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
           const Point& p0  = get(point_pmap,it);
 #else
           const Point& p0  = get(point_pmap,*it);
@@ -284,7 +284,7 @@ improved_laplacian_smooth_point_set(
   // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first, i=0; it != beyond; it++, ++i)
   {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     put(point_pmap, it, p[i]);
 #else
     put(point_pmap, *it, p[i]);
@@ -336,7 +336,7 @@ improved_laplacian_smooth_point_set(
 {
   return improved_laplacian_smooth_point_set(
     first,beyond,
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
 #else
     make_identity_property_map(

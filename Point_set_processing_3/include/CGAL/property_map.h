@@ -102,7 +102,7 @@ Identity_property_map<T>
 
 
 //=========================================================================
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
 /// \ingroup PkgProperty_map
 /// Property map that accesses the first item of a `std::pair`. 
 /// \tparam Pair Instance of `std::pair`. 
@@ -175,7 +175,7 @@ First_of_pair_property_map<Pair>
 }
 #endif
 
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
 /// \ingroup PkgProperty_map
 /// 
 /// Property map that accesses the second item of a `std::pair`. 
@@ -258,7 +258,7 @@ Second_of_pair_property_map<Pair>
 
 //=========================================================================
 
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
 /// \ingroup PkgProperty_map
 /// 
 /// Property map that accesses the Nth item of a `boost::tuple`. 

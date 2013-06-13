@@ -341,7 +341,7 @@ public:
   , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
   {
     forward_constructor(first, beyond, 
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       make_dereference_property_map(first),
 #else
       make_identity_property_map(

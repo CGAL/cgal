@@ -384,7 +384,7 @@ public:
     //std::vector<Point_with_normal> points;
     for (InputIterator it = first; it != beyond; ++it)
     {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
 #else
       Point_with_normal pwn(get(point_pmap,*it), get(normal_pmap,*it));
@@ -453,7 +453,7 @@ public:
   {
     return insert(
       first,beyond,
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       make_dereference_property_map(first),
 #else
       make_identity_property_map(

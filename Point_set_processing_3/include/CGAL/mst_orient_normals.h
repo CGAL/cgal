@@ -158,7 +158,7 @@ struct Propagate_normal_orientation
 
         // Gets source normal
         vertex_descriptor source_vertex = boost::source(edge, mst_graph);
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
         const Vector source_normal = get(mst_graph.m_normal_pmap, mst_graph[source_vertex].input_point);
 #else
         const Vector source_normal = get(mst_graph.m_normal_pmap, *(mst_graph[source_vertex].input_point) );
@@ -166,7 +166,7 @@ struct Propagate_normal_orientation
         const bool source_normal_is_oriented = mst_graph[source_vertex].is_oriented;
         // Gets target normal
         vertex_descriptor target_vertex = boost::target(edge, mst_graph);
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
         const Vector& target_normal = get( mst_graph.m_normal_pmap, mst_graph[target_vertex].input_point);
 #else
         const Vector& target_normal = get( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point) );
@@ -179,7 +179,7 @@ struct Propagate_normal_orientation
           double normals_dot = source_normal * target_normal;
           if (normals_dot < 0)
           {
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
             put( mst_graph.m_normal_pmap, mst_graph[target_vertex].input_point, -target_normal);
 #else
             put( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point), -target_normal );
@@ -233,7 +233,7 @@ mst_find_source(
     for (ForwardIterator v = ++first; v != beyond; v++)
     {
       
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       double top_z = get(point_pmap,top_point).z(); // top_point's Z coordinate
       double z = get(point_pmap,v).z();
 #else
@@ -246,7 +246,7 @@ mst_find_source(
     }
 
     // Orients its normal towards +Z axis
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     const Vector& normal = get(normal_pmap,top_point);
 #else
     const Vector& normal = get(normal_pmap,*top_point);
@@ -254,7 +254,7 @@ mst_find_source(
     const Vector Z(0, 0, 1);
     if (Z * normal < 0) {
       CGAL_TRACE("  Flip top point normal\n");
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     put(normal_pmap,top_point, -normal);
 #else
     put(normal_pmap,*top_point, -normal);
@@ -331,7 +331,7 @@ create_riemannian_graph(
     for (ForwardIterator it = first; it != beyond; it++)
     {
         
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
         Point point = get(point_pmap, it);
 #else
         Point point = get(point_pmap, *it);
@@ -367,7 +367,7 @@ create_riemannian_graph(
     for (ForwardIterator it = first; it != beyond; it++)
     {
         std::size_t it_index = get(index_pmap,it);
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
         Vector it_normal_vector = get(normal_pmap,it);
 #else
         Vector it_normal_vector = get(normal_pmap,*it);
@@ -378,7 +378,7 @@ create_riemannian_graph(
         // output first). Search may be aborted if k is greater
         // than number of input points.
         
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
         Point point = get(point_pmap, it);
 #else
         Point point = get(point_pmap, *it);
@@ -407,7 +407,7 @@ create_riemannian_graph(
                 // Computes edge weight = 1 - | normal1 * normal2 |
                 // where normal1 and normal2 are the normal at the edge extremities.
                 
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
                 Vector neighbor_normal_vector = get(normal_pmap,neighbor);
 #else
                 Vector neighbor_normal_vector = get(normal_pmap,*neighbor);
@@ -700,7 +700,7 @@ mst_orient_normals(
 {
     return mst_orient_normals(
       first,beyond,
-#ifdef CGAL_USE_OLD_PAIR_PROPERTY_MAPS
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       make_dereference_property_map(first),
 #else
       make_identity_property_map(
