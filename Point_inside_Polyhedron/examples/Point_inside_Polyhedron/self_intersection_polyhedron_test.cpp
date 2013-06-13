@@ -26,14 +26,13 @@ int main() {
   timer.start();
 
   std::vector<Triangle> intersected_tris;
-  typedef std::back_insert_iterator<std::vector<Triangle> > OutputIterator;
-  CGAL::self_intersect<Polyhedron, K, OutputIterator>(poly, OutputIterator(intersected_tris));
+  CGAL::self_intersect<K>(poly, back_inserter(intersected_tris));
 
   std::cerr << "Self-intersection test took " << timer.time() << " sec." << std::endl;
   std::cerr << intersected_tris.size() << " triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting = CGAL::self_intersect<Polyhedron, K>(poly);
+  bool intersecting = CGAL::self_intersect<K>(poly);
 
   std::cerr << "Is self-intersection test took " << timer.time() << " sec." << std::endl;
   std::cerr << (intersecting ? "There is an self-intersection." : "There is no self-intersection.") << std::endl;

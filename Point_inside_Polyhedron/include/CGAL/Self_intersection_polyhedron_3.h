@@ -139,14 +139,14 @@ struct Throw_at_output {
  * Function computing self intersecting triangles inside a triangulated polyhedron
  * @pre @a polyhedron.is_pure_triangle()
  *
- * @tparam Polyhedron a %CGAL polyhedron
  * @tparam Kernel a %CGAL kernel
+ * @tparam Polyhedron a %CGAL polyhedron
  * @tparam OutputIterator iterator holding `Kernel::Triangle_3`
  *
  * @param polyhedron polyhedron on which self intersection test is applied
  * @param out iterator over intersecting facets
  */
-template <class Polyhedron, class Kernel, class OutputIterator>
+template <class Kernel, class Polyhedron, class OutputIterator>
 void self_intersect(const Polyhedron& polyhedron, OutputIterator out)
 {
   CGAL_assertion(polyhedron.is_pure_triangle());
@@ -187,19 +187,19 @@ void self_intersect(const Polyhedron& polyhedron, OutputIterator out)
  * Function computing whether a polyhedron is self-intersecting or not
  * @pre @a polyhedron.is_pure_triangle()
  *
- * @tparam Polyhedron a %CGAL polyhedron
  * @tparam Kernel a %CGAL kernel
+ * @tparam Polyhedron a %CGAL polyhedron
  *
  * @param polyhedron polyhedron on which is-self intersecting test is applied
  * @return true if @a polyhedron is self-intersecting
  */
-template <class Polyhedron, class Kernel>
+template <class Kernel, class Polyhedron>
 bool self_intersect(const Polyhedron& polyhedron)
 {
   try 
   {
     typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
-    self_intersect<Polyhedron, Kernel, OutputIterator>(polyhedron, OutputIterator()); 
+    self_intersect<Kernel>(polyhedron, OutputIterator()); 
   }
   catch( internal::Throw_at_output::Throw_at_output_exception& ) 
   { return true; }
