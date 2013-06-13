@@ -160,6 +160,17 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
         an operator to accept and dispatch a tuple of values.
     </li>
   </ul>
+
+  <h3>CGAL and Boost Property Maps</h3>
+  <ul>
+    <li> The <code>key_type</code> of the property maps provided by CGAL used to be an iterator. In order to be more easily re-used,
+         the <code>key_type</code> has been changed to be the <code>value_type</code> of the iterator.
+         The packages that have been updated to match these changes are <b>Point Set Processing</b> and <b>Surface Reconstruction from Point Sets</b>.
+         However, for most users this change should be transparent if the default property maps were used.
+         For convenience, the former behavior can be enabled by defining the macro <code>CGAL_USE_PROPERTY_MAPS_API_V1</code>.
+    </li>
+  </ul>
+
 </div>
 
 <h2 id="release4.2">Release 4.2 </h2>

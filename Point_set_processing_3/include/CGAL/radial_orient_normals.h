@@ -58,8 +58,8 @@ ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
-    NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
+    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+    NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
     const Kernel& kernel) ///< geometric traits.
 {
     CGAL_TRACE("Calls radial_orient_normals()\n");
@@ -80,7 +80,11 @@ radial_orient_normals(
     int nb_points = 0;
     for (ForwardIterator it = first; it != beyond; it++)
     {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point point = get(point_pmap, it);
+#else
+      Point point = get(point_pmap, *it);
+#endif  
       sum = sum + (point - CGAL::ORIGIN);
       nb_points++;
     }
@@ -91,21 +95,32 @@ radial_orient_normals(
     std::deque<Enriched_point> oriented_points, unoriented_points;
     for (ForwardIterator it = first; it != beyond; it++)
     {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point point = get(point_pmap, it);
-
+#else
+      Point point = get(point_pmap, *it);
+#endif 
       // Radial vector towards exterior of the point set
       Vector vec1 = point - barycenter;
 
       // Point's normal
-      Vector vec2 = normal_pmap[it];
-
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      Vector vec2 = get(normal_pmap, it);
+#else
+      Vector vec2 = get(normal_pmap, *it);
+#endif
+      
       //         ->               ->
       // Orients vec2 parallel to vec1
       double dot = vec1 * vec2;
       if (dot < 0)
         vec2 = -vec2;
 
-      it->normal() = vec2;
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      put(normal_pmap, it, vec2); 
+#else
+      put(normal_pmap, *it, vec2);
+#endif
 
       // Is orientation robust?
       bool oriented = (std::abs(dot) > std::cos(80.*CGAL_PI/180.)); // robust iff angle < 80 degrees
@@ -136,8 +151,8 @@ ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
-    NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
+    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
+    NormalPMap normal_pmap) ///< property map: value_type of ForwardIterator -> Vector_3.
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -149,7 +164,7 @@ radial_orient_normals(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Identity_property_map.
 template <typename ForwardIterator,
           typename NormalPMap
 >
@@ -157,11 +172,16 @@ ForwardIterator
 radial_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    NormalPMap normal_pmap) ///< property map ForwardIterator -> Vector_3.
+    NormalPMap normal_pmap) ///< property map: value_type of ForwardIterator -> Vector_3.
 {
     return radial_orient_normals(
       first,beyond,
-      make_dereference_property_map(first), 
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      make_dereference_property_map(first),
+#else
+      make_identity_property_map(
+      typename std::iterator_traits<ForwardIterator>::value_type()),
+#endif
       normal_pmap);
 }
 /// @endcond

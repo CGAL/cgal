@@ -102,8 +102,13 @@ bool Point_set_scene_item::read_off_point_set(std::istream& stream)
   m_points->clear();
   bool ok = stream &&
             CGAL::read_off_points_and_normals(stream,
-                                              std::back_inserter(*m_points),
-                                              CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))) &&
+                                              std::back_inserter(*m_points),                                             
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                              CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))
+#else
+                                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())
+#endif
+                                              ) &&
             !isEmpty();
 
   return ok;
@@ -116,8 +121,13 @@ bool Point_set_scene_item::write_off_point_set(std::ostream& stream) const
 
   return stream &&
          CGAL::write_off_points_and_normals(stream,
-                                            m_points->begin(), m_points->end(),
-                                            CGAL::make_normal_of_point_with_normal_pmap(m_points->begin()));
+                                            m_points->begin(), m_points->end(),                                            
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                            CGAL::make_normal_of_point_with_normal_pmap(m_points->begin())
+#else
+                                            CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())
+#endif
+                                            );
 }
 
 // Loads point set from .XYZ file
@@ -129,7 +139,12 @@ bool Point_set_scene_item::read_xyz_point_set(std::istream& stream)
   bool ok = stream &&
             CGAL::read_xyz_points_and_normals(stream,
                                               std::back_inserter(*m_points),
-                                              CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))) &&
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                              CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(*m_points))
+#else
+                                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())
+#endif
+                                              ) &&
             !isEmpty();
 
   return ok;
@@ -142,8 +157,13 @@ bool Point_set_scene_item::write_xyz_point_set(std::ostream& stream) const
 
   return stream &&
          CGAL::write_xyz_points_and_normals(stream,
-                                            m_points->begin(), m_points->end(),
-                                            CGAL::make_normal_of_point_with_normal_pmap(m_points->begin()));
+                                            m_points->begin(), m_points->end(),                                            
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                            CGAL::make_normal_of_point_with_normal_pmap(m_points->begin())
+#else
+                                            CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())
+#endif
+                                            );
 }
 
 QString

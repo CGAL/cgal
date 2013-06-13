@@ -114,7 +114,7 @@ typename Kernel::FT
 compute_average_spacing(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
@@ -140,7 +140,11 @@ compute_average_spacing(
   std::vector<Point> kd_tree_points; 
   for(InputIterator it = first; it != beyond; it++)
   {
+  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point point = get(point_pmap, it);
+  #else
+      Point point = get(point_pmap, *it);
+  #endif
       kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -151,7 +155,14 @@ compute_average_spacing(
   unsigned int nb_points = 0;
   for(InputIterator it = first; it != beyond; it++)
   {
-    sum_spacings += internal::compute_average_spacing<Kernel,Tree>(get(point_pmap,it),tree,k);
+    sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
+      
+  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      get(point_pmap,it),
+  #else
+      get(point_pmap,*it),
+  #endif
+      tree,k);
     nb_points++;
   }
 
@@ -168,7 +179,7 @@ typename Kernel_traits<typename boost::property_traits<PointPMap>::value_type>::
 compute_average_spacing(
   InputIterator first,    ///< iterator over the first input point.
   InputIterator beyond,   ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k) ///< number of neighbors
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -182,7 +193,7 @@ compute_average_spacing(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Identity_property_map.
 template < typename InputIterator >
 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
 compute_average_spacing(
@@ -192,7 +203,12 @@ compute_average_spacing(
 {
   return compute_average_spacing(
     first,beyond,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
+#else
+    make_identity_property_map(
+    typename std::iterator_traits<InputIterator>::value_type()),
+#endif
     k);
 }
 /// @endcond

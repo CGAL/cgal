@@ -127,7 +127,12 @@ void PS_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
 
       // Estimates normals direction.
       CGAL::pca_estimate_normals(points->begin(), points->end(),
-                                CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+        CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+#else
+        CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()), 
+#endif
+
                                 dialog.directionNbNeighbors());
 
       // Mark all normals as unoriented
@@ -145,7 +150,11 @@ void PS_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
 
       // Estimates normals direction.
       CGAL::jet_estimate_normals(points->begin(), points->end(),
-                                CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+        CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+#else
+        CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()), 
+#endif
                                 dialog.directionNbNeighbors());
 
       // Mark all normals as unoriented
@@ -167,7 +176,11 @@ void PS_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
     // Tries to orient normals
     first_unoriented_point =
       CGAL::mst_orient_normals(points->begin(), points->end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+#else
+      CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()), 
+#endif
                               dialog.orientationNbNeighbors());
 
     int nb_unoriented_normals = std::distance(first_unoriented_point, points->end());

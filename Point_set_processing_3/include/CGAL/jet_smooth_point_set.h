@@ -115,7 +115,7 @@ jet_smooth_point(
 /// \pre `k >= 2`
 ///
 /// @tparam InputIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadWritePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
@@ -129,7 +129,7 @@ void
 jet_smooth_point_set(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/, ///< geometric traits.
   unsigned int degree_fitting = 2, ///< fitting degree
@@ -158,7 +158,11 @@ jet_smooth_point_set(
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     Point point = get(point_pmap, it);
+#else
+    Point point = get(point_pmap, *it);
+#endif  
     kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -167,8 +171,15 @@ jet_smooth_point_set(
   // Implementation note: the cast to Point& allows to modify only the point's position.
   for(it = first; it != beyond; it++)
   {
-    Point& p = get(point_pmap, it);
-    p = internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge);
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+    const Point& p = get(point_pmap, it);
+    put(point_pmap, it ,
+        internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge) );
+#else
+    const Point& p = get(point_pmap, *it);
+    put(point_pmap, *it ,
+        internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge) );
+#endif  
   }
 }
 
@@ -181,7 +192,7 @@ void
 jet_smooth_point_set(
   InputIterator first, ///< iterator over the first input point
   InputIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   const unsigned int degree_fitting = 2,
   const unsigned int degree_monge = 2)
@@ -198,7 +209,7 @@ jet_smooth_point_set(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Identity_property_map.
 template <typename InputIterator
 >
 void
@@ -211,7 +222,12 @@ jet_smooth_point_set(
 {
   jet_smooth_point_set(
     first,beyond,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
+#else
+    make_identity_property_map(
+    typename std::iterator_traits<InputIterator>::value_type()),
+#endif
     k,
     degree_fitting,degree_monge);
 }

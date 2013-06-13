@@ -50,6 +50,7 @@ if ( CGAL_FOUND )
 
   # Executables that do *not* require LAPACK
   create_single_source_cgal_program( "read_test.cpp" )
+  create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
   create_single_source_cgal_program( "analysis_test.cpp" )
   create_single_source_cgal_program( "remove_outliers_test.cpp" )
 
