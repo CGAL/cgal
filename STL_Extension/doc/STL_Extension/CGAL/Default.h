@@ -51,7 +51,7 @@ A nested template providing a typedef `type` which equals `Type` if
 */ 
 template <typename Parameter, typename Type>
 struct struct Get {
-  typedef Hidden_type type;
+  typedef unspecified_type type;
 };
 /// @}
 

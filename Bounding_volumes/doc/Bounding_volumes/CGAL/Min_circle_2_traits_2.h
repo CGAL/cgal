@@ -25,12 +25,12 @@ public:
 /*! 
 typedef to `K::Point_2`. 
 */ 
-typedef Hidden_type Point ; 
+typedef unspecified_type Point ; 
 
 /*! 
 internal type. 
 */ 
-typedef Hidden_type Circle; 
+typedef unspecified_type Circle; 
 
 /// @} 
 

@@ -46,17 +46,17 @@ public:
 /*! 
 Same type as the template argument `Coeff`. 
 */ 
-typedef Hidden_type Coefficient; 
+typedef unspecified_type Coefficient; 
 
 /*! 
 A model of `AlgebraicKernel_d_1::Polynomial_1`. 
 */ 
-typedef Hidden_type Polynomial_1; 
+typedef unspecified_type Polynomial_1; 
 
 /*! 
 A model of `AlgebraicKernel_d_1::AlgebraicReal_1`. 
 */ 
-typedef Hidden_type Algebraic_real_1; 
+typedef unspecified_type Algebraic_real_1; 
 
 /*! 
 The choice of `Coeff` also determines the provided bound, type. 
@@ -68,12 +68,12 @@ In case of `Coeff` is:
 
 - `leda_integer` or `leda_integer` this is `leda_rational`. 
 */ 
-typedef Hidden_type Bound; 
+typedef unspecified_type Bound; 
 
 /*! 
 The multiplicity type is `int`. 
 */ 
-typedef Hidden_type Multiplicity_type; 
+typedef unspecified_type Multiplicity_type; 
 
 /// @}
 

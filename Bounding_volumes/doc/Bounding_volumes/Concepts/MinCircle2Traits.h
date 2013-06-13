@@ -23,14 +23,14 @@ public:
 The point type must provide default and copy constructor, 
 assignment and equality test. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 
 The circle type must fulfill the requirements listed below 
 in the next section. 
 */ 
-typedef Hidden_type Circle; 
+typedef unspecified_type Circle; 
 
 /// @} 
 

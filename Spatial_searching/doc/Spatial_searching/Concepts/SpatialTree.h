@@ -18,43 +18,43 @@ public:
 /*! 
 Search traits. 
 */ 
-typedef Hidden_type SearchTraits; 
+typedef unspecified_type SearchTraits; 
 
 /*! 
 Point type. 
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 Bidirectional const iterator with value type `Point_d` that allows 
 to enumerate all points in the tree. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 Node handle. 
 */ 
-typedef Hidden_type Node_handle; 
+typedef unspecified_type Node_handle; 
 
 /*! 
 const node handle. 
 */ 
-typedef Hidden_type Node_const_handle; 
+typedef unspecified_type Node_const_handle; 
 
 /*! 
 const iterator with value type `const Point_d*`. 
 */ 
-typedef Hidden_type Point_d_iterator; 
+typedef unspecified_type Point_d_iterator; 
 
 /*! 
 Splitter. 
 */ 
-typedef Hidden_type Splitter; 
+typedef unspecified_type Splitter; 
 
 /*! 
 Distance. 
 */ 
-typedef Hidden_type Distance; 
+typedef unspecified_type Distance; 
 
 /// @} 
 

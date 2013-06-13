@@ -28,7 +28,7 @@ whose vertex and cell classes are respectively
 `Mesh_vertex_base_3<MD,Gt>` and 
 `Mesh_cell_base_3<MD,Gt>`. 
 */ 
-typedef Hidden_type type; 
+typedef unspecified_type type; 
 
 /// @}
 

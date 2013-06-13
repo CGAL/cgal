@@ -35,7 +35,7 @@ Interval();
 /*! 
 The type of the lower and upper bound of the interval. 
 */ 
-typedef Hidden_type Value; 
+typedef unspecified_type Value; 
 
 /// @} 
 

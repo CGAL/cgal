@@ -28,38 +28,38 @@ public:
 A type for the geometric traits that defines 
 the site stored. \pre The type `Geom_traits` must define the type `Site_2`. 
 */ 
-typedef Hidden_type Geom_traits; 
+typedef unspecified_type Geom_traits; 
 
 /*! 
 A Boolean that indicates if 
 hidden sites are actually stored or not. Its value is `true` if 
 hidden sites are stored, `false` otherwise. 
 */ 
-typedef Hidden_type Store_hidden; 
+typedef unspecified_type Store_hidden; 
 
 /*! 
 A type for the site stored. 
 \pre This type must coincide with the type `Geom_traits::Site_2`. 
 */ 
-typedef Hidden_type Site_2; 
+typedef unspecified_type Site_2; 
 
 /*! 
 A type for the 
 Apollonius graph data structure, to which the vertex belongs to. 
 */ 
-typedef Hidden_type Apollonius_graph_data_structure_2; 
+typedef unspecified_type Apollonius_graph_data_structure_2; 
 
 /*! 
 A type for the vertex handle of the 
 Apollonius graph data structure. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 A type for the face handle of the 
 Apollonius graph data structure. 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /*! 
 An iterator that 
@@ -67,7 +67,7 @@ iterates over the hidden sites in the hidden sites
 container of the vertex. 
 \pre Must be a model of `Iterator`. 
 */ 
-typedef Hidden_type Hidden_sites_iterator; 
+typedef unspecified_type Hidden_sites_iterator; 
 
 /// @} 
 

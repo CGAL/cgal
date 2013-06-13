@@ -25,7 +25,7 @@ public:
 The type of a matrix entry. It has to define 
 a copy constructor. 
 */ 
-typedef Hidden_type Value; 
+typedef unspecified_type Value; 
 
 /// @} 
 

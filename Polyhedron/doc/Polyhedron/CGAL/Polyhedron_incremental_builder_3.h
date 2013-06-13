@@ -68,17 +68,17 @@ public:
 /*! 
 halfedge data structure `HDS`. 
 */ 
-typedef Hidden_type HalfedgeDS; 
+typedef unspecified_type HalfedgeDS; 
 
 /*! 
 point type of the vertex. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 size type. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 

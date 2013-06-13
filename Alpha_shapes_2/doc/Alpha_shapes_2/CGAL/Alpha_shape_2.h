@@ -71,7 +71,7 @@ public:
 the alpha shape traits type. 
 it has to derive from a triangulation traits class. For example `Dt::Point` is a point class.
 */ 
-typedef Hidden_type Gt; 
+typedef unspecified_type Gt; 
 
 /*! 
 the number type of alpha values.
@@ -95,28 +95,28 @@ typedef Gt::FT FT;
 /*! 
 The size type. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different \f$ \alpha\f$-values. 
 \pre Its `value_type` is `FT`. 
 */ 
-typedef Hidden_type Alpha_iterator; 
+typedef unspecified_type Alpha_iterator; 
 
 /*! 
 A bidirectional and non-mutable iterator that allow to traverse 
 the vertices which belongs to the \f$ \alpha\f$-shape for the current \f$ \alpha\f$. 
 \pre Its `value_type` is `Dt::Vertex_handle`. 
 */ 
-typedef Hidden_type Alpha_shape_vertices_iterator; 
+typedef unspecified_type Alpha_shape_vertices_iterator; 
 
 /*! 
 A bidirectional and non-mutable iterator that allow to traverse 
 the edges which belongs to the \f$ \alpha\f$-shape for the current \f$ \alpha\f$. 
 \pre Its `value_type` is `Dt::Edge`. 
 */ 
-typedef Hidden_type Alpha_shape_edges_iterator; 
+typedef unspecified_type Alpha_shape_edges_iterator; 
 
 /*! 
 Distinguishes the different cases for classifying a \f$ k\f$-dimensional face 

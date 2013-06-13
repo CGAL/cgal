@@ -107,8 +107,6 @@ See http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html
 class ReadablePropertyMap {};
 
 /*!
-This specifies that the actual type exposed through a `typedef` is
-implementation specific. It can only be treated through the concepts
-it is said to model.
+This indicates that the definition of a type nested in a class is not documented.
 */
-class Hidden_type {};
+class unspecified_type {};

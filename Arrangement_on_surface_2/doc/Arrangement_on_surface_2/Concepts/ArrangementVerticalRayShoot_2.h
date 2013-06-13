@@ -33,12 +33,12 @@ public:
 /*! 
 the associated arrangement type. 
 */ 
-typedef Hidden_type Arrangement_2; 
+typedef unspecified_type Arrangement_2; 
 
 /*! 
 equivalent to `Arrangement_2::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /// @} 
 

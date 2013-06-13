@@ -43,7 +43,7 @@ typedef Arrangement_2<EnvTraits> Base;
 an iterator for the \f$ xy\f$-monotone surfaces that induce a diagram feature. 
 Its value-type is `EnvTraits::Xy_monotone_surface_3`. 
 */ 
-typedef Hidden_type Surface_const_iterator; 
+typedef unspecified_type Surface_const_iterator; 
 
 /// @} 
 

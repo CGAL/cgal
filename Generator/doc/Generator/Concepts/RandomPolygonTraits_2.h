@@ -23,12 +23,12 @@ public:
 /*! 
 The coordinate type of the points of the polygon.
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The point type of the polygon. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 Predicate object type that determines the orientation of three points. 
@@ -39,7 +39,7 @@ line \f$ l\f$ defined by \f$ p\f$ and \f$ q\f$, returns `RIGHT_TURN` if \f$ r\f$
 lies to the right of \f$ l\f$, and returns `COLLINEAR` if \f$ r\f$ lies 
 on \f$ l\f$. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 Binary predicate object type comparing `Point_2`s lexicographically. 
@@ -50,7 +50,7 @@ where \f$ p_x\f$ and \f$ p_y\f$ denote the \f$ x\f$ and \f$ y\f$ coordinates of 
 resp. 
 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /// @} 
 

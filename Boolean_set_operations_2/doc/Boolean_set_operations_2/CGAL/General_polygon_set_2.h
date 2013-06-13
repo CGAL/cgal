@@ -64,27 +64,27 @@ public:
 /*! 
 the traits class in use. 
 */ 
-typedef Hidden_type Traits_2; 
+typedef unspecified_type Traits_2; 
 
 /*! 
 the general polygon type. Must model the `GpsTraitsGeneralPolygon_2` concept. 
 */ 
-typedef Hidden_type Polygon_2; 
+typedef unspecified_type Polygon_2; 
 
 /*! 
 the general polygon with holes type. Must model the `GpsTraitsGeneralPolygonWithHoles_2` concept. 
 */ 
-typedef Hidden_type Polygon_with_holes_2; 
+typedef unspecified_type Polygon_with_holes_2; 
 
 /*! 
 number of polygons with holes size type. 
 */ 
-typedef Hidden_type Size; 
+typedef unspecified_type Size; 
 
 /*! 
 the arrangement type used internally. 
 */ 
-typedef Hidden_type Arrangement_2; 
+typedef unspecified_type Arrangement_2; 
 
 /// @} 
 

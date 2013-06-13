@@ -35,7 +35,7 @@ public:
 /*! 
 A model of the concept `SurfaceMeshTraits_3`. 
 */ 
-typedef Hidden_type Type; 
+typedef unspecified_type Type; 
 
 }; /* end Surface_mesh_traits_generator_3 */
 } /* end namespace CGAL */

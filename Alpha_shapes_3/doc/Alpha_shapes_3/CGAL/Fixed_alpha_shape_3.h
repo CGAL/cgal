@@ -42,7 +42,7 @@ public:
 the alpha shape traits type. It has to derive from a triangulation
 traits class. For example `Dt::Point` is a Point class.
 */ 
-typedef Hidden_type Gt; 
+typedef unspecified_type Gt; 
 
 /*! 
 the number type of alpha. 

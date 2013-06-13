@@ -38,7 +38,7 @@ struct value_type_traits
   /// `std::front_insert_iterator<Container>`, then `type` is `Container::value_type`.
   /// Otherwise, `type` is `std::iterator_traits<T>::%value_type`.
 
-  typedef Hidden_type type;
+  typedef unspecified_type type;
   #endif
 };
 

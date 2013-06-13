@@ -22,17 +22,17 @@ public:
 /*! 
 Type convertible to `CGAL::Comparison_result`. 
 */ 
-typedef Hidden_type result_type; 
+typedef unspecified_type result_type; 
 
 /*! 
 Is `RealEmbeddableTraits::Type`. 
 */ 
-typedef Hidden_type first_argument_type; 
+typedef unspecified_type first_argument_type; 
 
 /*! 
 Is `RealEmbeddableTraits::Type`. 
 */ 
-typedef Hidden_type second_argument_type; 
+typedef unspecified_type second_argument_type; 
 
 /// @} 
 

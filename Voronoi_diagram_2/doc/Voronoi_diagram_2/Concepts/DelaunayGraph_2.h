@@ -41,30 +41,30 @@ public:
 /*! 
 A type for sizes. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 A type for the geometric traits associated 
 with the Delaunay graph. 
 */ 
-typedef Hidden_type Geom_traits; 
+typedef unspecified_type Geom_traits; 
 
 /*! 
 A type for the underlying 
 triangulation data structure. It must be a model of the concept 
 `TriangulationDataStructure_2.` 
 */ 
-typedef Hidden_type Triangulation_data_structure; 
+typedef unspecified_type Triangulation_data_structure; 
 
 /*! 
 A type for the vertices of the Delaunay graph. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 A type for the faces of the Delaunay graph. 
 */ 
-typedef Hidden_type Face; 
+typedef unspecified_type Face; 
 
 /*! 
 The type of the 
@@ -75,12 +75,12 @@ typedef std::pair<Face_handle,int> Edge;
 /*! 
 Handle to the vertices of the Delaunay graph. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 Handle to the faces of the Delaunay graph. 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /// @}
 
@@ -94,59 +94,59 @@ typedef Hidden_type Face_handle;
 A type for an iterator over all edges of 
 the Delaunay graph. Its value type must be `Edge`. 
 */ 
-typedef Hidden_type All_edges_iterator; 
+typedef unspecified_type All_edges_iterator; 
 
 /*! 
 A type for an iterator over the finite 
 edges of the Delaunay graph. Its value type must be `Edge`. 
 */ 
-typedef Hidden_type Finite_edges_iterator; 
+typedef unspecified_type Finite_edges_iterator; 
 
 /*! 
 A type for an iterator over all faces of 
 the Delaunay graph. Its value type must be `Face`. 
 */ 
-typedef Hidden_type All_faces_iterator; 
+typedef unspecified_type All_faces_iterator; 
 
 /*! 
 A type for an iterator over the finite 
 faces of the Delaunay graph. Its value type must be `Face`. 
 */ 
-typedef Hidden_type Finite_faces_iterator; 
+typedef unspecified_type Finite_faces_iterator; 
 
 /*! 
 A type for an iterator over all 
 vertices of the Delaunay graph. Its value type must be `Vertex`. 
 */ 
-typedef Hidden_type All_vertices_iterator; 
+typedef unspecified_type All_vertices_iterator; 
 
 /*! 
 A type for an iterator over 
 the finite vertices of the Delaunay graph. Its value type must be 
 `Vertex`. 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 A type for a circulator over the 
 adjacent faces of a vertex of the Delaunay graph. Its value type 
 must be `Face`. 
 */ 
-typedef Hidden_type Face_circulator; 
+typedef unspecified_type Face_circulator; 
 
 /*! 
 A type for a circulator over the 
 adjacent vertices of a vertex of the Delaunay graph. Its value type 
 must be `Vertex`. 
 */ 
-typedef Hidden_type Vertex_circulator; 
+typedef unspecified_type Vertex_circulator; 
 
 /*! 
 A type for a circulator over the 
 adjacent edges of a vertex of the Delaunay graph. Its value type 
 must be `Edge`. 
 */ 
-typedef Hidden_type Edge_circulator; 
+typedef unspecified_type Edge_circulator; 
 
 /// @} 
 

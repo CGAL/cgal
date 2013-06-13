@@ -34,7 +34,7 @@ public:
 /*! 
 `CGAL::Comparison_result` or `Uncertain<CGAL::Comparison_result>` 
 */ 
-typedef Hidden_type Comparison_result; 
+typedef unspecified_type Comparison_result; 
 
 /*! 
 An object constructor able to compare the squared radius of the smallest circumscribing sphere of 
@@ -47,7 +47,7 @@ It provides:
 - `Comparison_result operator()(Point_3)` 
 
 */ 
-typedef Hidden_type Compare_squared_radius_3; 
+typedef unspecified_type Compare_squared_radius_3; 
 
 /// @} 
 

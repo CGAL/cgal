@@ -23,12 +23,12 @@ public:
 /*! 
 The point type 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 The weight type 
 */ 
-typedef Hidden_type Weight; 
+typedef unspecified_type Weight; 
 
 /*! 
 The ring type 

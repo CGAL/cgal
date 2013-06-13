@@ -26,12 +26,12 @@ public:
 Type of voxel data. Must be an 
 integral type. 
 */ 
-typedef Hidden_type Type; 
+typedef unspecified_type Type; 
 
 /*! 
 Ring number type. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /// @} 
 

@@ -23,7 +23,7 @@ public:
 /*! 
 The point type on which the sorting algorithms operate. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 Functor object type returning the \f$ x\f$ coordinate of a `Point_3`. 
@@ -32,7 +32,7 @@ Must provide
 argument of `CGAL::to_double`. 
 
 */ 
-typedef Hidden_type Compute_x_3; 
+typedef unspecified_type Compute_x_3; 
 
 /*! 
 Functor object type returning the \f$ y\f$ coordinate of a `Point_3`. 
@@ -41,7 +41,7 @@ Must provide
 argument of `CGAL::to_double`. 
 
 */ 
-typedef Hidden_type Compute_y_3; 
+typedef unspecified_type Compute_y_3; 
 
 /*! 
 Functor object type returning the \f$ z\f$ coordinate of a `Point_3`. 
@@ -50,7 +50,7 @@ Must provide
 argument of `CGAL::to_double`. 
 
 */ 
-typedef Hidden_type Compute_z_3; 
+typedef unspecified_type Compute_z_3; 
 
 /*! 
 Binary predicate object type comparing `Point_3`s 
@@ -62,7 +62,7 @@ where \f$ p_x\f$ and \f$ q_x\f$ denote \f$ x\f$ coordinate of point \f$ p\f$ and
 respectively. 
 
 */ 
-typedef Hidden_type Less_x_3; 
+typedef unspecified_type Less_x_3; 
 
 /*! 
 Binary predicate object type comparing `Point_3`s 
@@ -74,7 +74,7 @@ where \f$ p_y\f$ and \f$ q_y\f$ denote \f$ y\f$ coordinate of point \f$ p\f$ and
 respectively. 
 
 */ 
-typedef Hidden_type Less_y_3; 
+typedef unspecified_type Less_y_3; 
 
 /*! 
 Binary predicate object type comparing `Point_3`s 
@@ -86,7 +86,7 @@ where \f$ p_z\f$ and \f$ q_z\f$ denote \f$ z\f$ coordinate of point \f$ p\f$ and
 respectively. 
 
 */ 
-typedef Hidden_type Less_z_3; 
+typedef unspecified_type Less_z_3; 
 
 /// @} 
 

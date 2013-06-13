@@ -28,7 +28,7 @@ public:
 /*! 
 The point type on which the convex hull functions operate. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 Binary predicate object type comparing `Point_2`s. Must provide 
@@ -36,7 +36,7 @@ Binary predicate object type comparing `Point_2`s. Must provide
 is returned iff \f$ p ==_{xy} q\f$, false otherwise. 
 
 */ 
-typedef Hidden_type Equal_2; 
+typedef unspecified_type Equal_2; 
 
 /*! 
 Binary predicate object type comparing `Point_2`s 
@@ -48,12 +48,12 @@ where \f$ p_x\f$ and \f$ p_y\f$ denote \f$ x\f$ and \f$ y\f$ coordinate of point
 respectively. 
 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 Same as `Less_xy_2` with the roles of \f$ x\f$ and \f$ y\f$ interchanged. 
 */ 
-typedef Hidden_type Less_yx_2; 
+typedef unspecified_type Less_yx_2; 
 
 /*! 
 Predicate object type that must provide 
@@ -61,7 +61,7 @@ Predicate object type that must provide
 returns `true` iff `r` lies to the left of the 
 oriented line through `p` and `q`. 
 */ 
-typedef Hidden_type Left_turn_2; 
+typedef unspecified_type Left_turn_2; 
 
 /*! 
 Predicate object type that must provide 
@@ -76,7 +76,7 @@ endpoints
 of \f$ s\f$ is the smallest point among the points on \f$ s\f$, with respect to 
 the order given by `Less_signed_distance_to_line_2`. 
 */ 
-typedef Hidden_type Less_signed_distance_to_line_2; 
+typedef unspecified_type Less_signed_distance_to_line_2; 
 
 /*! 
 Predicate object type that must provide 
@@ -87,7 +87,7 @@ where `true` is returned iff a tangent at \f$ e\f$ to the point set
 Ties are broken such that the point with larger distance to \f$ e\f$ 
 is smaller! 
 */ 
-typedef Hidden_type Less_rotate_ccw_2; 
+typedef unspecified_type Less_rotate_ccw_2; 
 
 /// @} 
 

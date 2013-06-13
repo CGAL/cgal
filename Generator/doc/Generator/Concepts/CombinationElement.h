@@ -33,7 +33,7 @@ CombinationElement(const CombinationElement & e2);
 /*!
 the type of point being generated. 
 */ 
-typedef Hidden_type value_type; 
+typedef unspecified_type value_type; 
 
 /// @} 
 

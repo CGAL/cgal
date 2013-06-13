@@ -30,19 +30,19 @@ public:
 represents a planar (weakly) \f$ x\f$-monotone 
 curve. The type of the geometric mapping of the polygonal edges. It must model the concept ArrTraits::XMonotoneCurve_2. 
 */ 
-typedef Hidden_type X_monotone_curve_2; 
+typedef unspecified_type X_monotone_curve_2; 
 
 /*! 
 an iterator over the geometric mapping of the 
 polygon edges. Its value type is `X_monotone_curve_2`. 
 */ 
-typedef Hidden_type Curve_iterator; 
+typedef unspecified_type Curve_iterator; 
 
 /*! 
 a const iterator over the geometric 
 mapping of the polygon edges. Its value type is `X_monotone_curve_2`. 
 */ 
-typedef Hidden_type Curve_const_iterator; 
+typedef unspecified_type Curve_const_iterator; 
 
 /// @} 
 

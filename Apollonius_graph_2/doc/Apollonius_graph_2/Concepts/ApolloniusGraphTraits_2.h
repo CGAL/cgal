@@ -28,51 +28,51 @@ public:
 /*! 
 A type for a point. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 A type for an Apollonius site. Must be a model 
 of the concept `ApolloniusSite_2`. 
 */ 
-typedef Hidden_type Site_2; 
+typedef unspecified_type Site_2; 
 
 /*! 
 A type for a line. Only required if access to 
 the dual of the Apollonius graph is required or if the primal 
 or dual diagram are inserted in a stream. 
 */ 
-typedef Hidden_type Line_2; 
+typedef unspecified_type Line_2; 
 
 /*! 
 A type for a ray. Only required if access to 
 the dual of the Apollonius graph is required or if the primal 
 or dual diagram are inserted in a stream. 
 */ 
-typedef Hidden_type Ray_2; 
+typedef unspecified_type Ray_2; 
 
 /*! 
 A type for a segment. Only required if access to 
 the dual of the Apollonius graph is required or if the primal 
 or dual diagram are inserted in a stream. 
 */ 
-typedef Hidden_type Segment_2; 
+typedef unspecified_type Segment_2; 
 
 /*! 
 A type representing different types of objects 
 in two dimensions, namely: `Point_2`, `Site_2`, 
 `Line_2`, `Ray_2` and `Segment_2`. 
 */ 
-typedef Hidden_type Object_2; 
+typedef unspecified_type Object_2; 
 
 /*! 
 A type for the field number type of sites. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 A type for the ring number type of sites. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /*! 
 Must provide `template <class T> bool operator() ( T& t, 
@@ -80,14 +80,14 @@ Object_2 o)` which assigns `o` to `t` if `o` was
 constructed from an object of type `T`. Returns 
 `true`, if the assignment was possible. 
 */ 
-typedef Hidden_type Assign_2; 
+typedef unspecified_type Assign_2; 
 
 /*! 
 Must provide `template <class T> 
 Object_2 operator()( T t)` that constructs an object of type 
 `Object_2` that contains `t` and returns it. 
 */ 
-typedef Hidden_type Construct_object_2; 
+typedef unspecified_type Construct_object_2; 
 
 /*! 
 
@@ -98,7 +98,7 @@ constructs a point equidistant from the sites `s1`, `s2` and
 `s3`. 
 
 */ 
-typedef Hidden_type Construct_Apollonius_vertex_2; 
+typedef unspecified_type Construct_Apollonius_vertex_2; 
 
 /*! 
 A constructor for 
@@ -118,7 +118,7 @@ viewed as a dual Apollonius site whose center is at infinity
 and its weight is infinite. 
 
 */ 
-typedef Hidden_type Construct_Apollonius_site_2; 
+typedef unspecified_type Construct_Apollonius_site_2; 
 
 /*! 
 A predicate object type. Must 
@@ -126,7 +126,7 @@ provide `Comparison_result operator()(Site_2 s1,
 Site_2 s2)`, which compares the \f$ x\f$-coordinates of the centers of 
 `s1` and `s2`. 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 A predicate object type. Must 
@@ -134,7 +134,7 @@ provide `Comparison_result operator()(Site_2 s1,
 Site_2 s2)`, which compares the \f$ y\f$-coordinates of the centers of 
 `s1` and `s2`. 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 A predicate object type. Must 
@@ -142,7 +142,7 @@ provide `Comparison_result operator()(Site_2 s1,
 Site_2 s2)`, which compares the weights of `s1` 
 and `s2`. 
 */ 
-typedef Hidden_type Compare_weight_2; 
+typedef unspecified_type Compare_weight_2; 
 
 /*! 
 A predicate object type. Must 
@@ -158,7 +158,7 @@ which performs the usual orientation test for the Apollonius vertex of
 `p2`. 
 \pre the Apollonius vertex of `s1`, `s2` and `s3` must exist. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 A predicate object type. Must 
@@ -167,7 +167,7 @@ Site_2 s2)`, which returns `true` if the circle
 corresponding to `s2` is contained in the closure of the disk 
 corresponding to `s1`, `false` otherwise. 
 */ 
-typedef Hidden_type Is_hidden_2; 
+typedef unspecified_type Is_hidden_2; 
 
 /*! 
 A predicate object type. 
@@ -180,7 +180,7 @@ the half-space of `s1` (i.e., `p` is closer to `s1` than
 half-space of `s2`; returns `ON_ORIENTED_BOUNDARY` if `p` 
 lies on the bisector of `s1` and `s2`. 
 */ 
-typedef Hidden_type Oriented_side_of_bisector_2; 
+typedef unspecified_type Oriented_side_of_bisector_2; 
 
 /*! 
 A predicate object type. 
@@ -195,7 +195,7 @@ Site_2 s2, Site_2 q)`, which returns the sign of the distance of
 `q` from the bitangent line of `s1`, `s2` (a degenerate 
 dual Apollonius site, with its center at infinity). 
 */ 
-typedef Hidden_type Vertex_conflict_2; 
+typedef unspecified_type Vertex_conflict_2; 
 
 /*! 
 A predicate object type. 
@@ -246,7 +246,7 @@ conflict with `q`. If `b` is `false`, the predicate returns
 `false` if and only if `q` is not in conflict with the 
 Apollonius edge. 
 */ 
-typedef Hidden_type Finite_edge_interior_conflict_2; 
+typedef unspecified_type Finite_edge_interior_conflict_2; 
 
 /*! 
 A predicate 
@@ -265,7 +265,7 @@ conflict with `q`. If `b` is `false`, the predicate returns
 `false` if and only if `q` is not in conflict with the 
 Apollonius edge. 
 */ 
-typedef Hidden_type Infinite_edge_interior_conflict_2; 
+typedef unspecified_type Infinite_edge_interior_conflict_2; 
 
 /*! 
 A predicate object type. 
@@ -276,7 +276,7 @@ the Apollonius edge defined by `s1`, `s2`, `s3` and
 called degenerate if its two endpoints coincide. 
 \pre the Apollonius vertices of `s1`, `s2`, `s3`, and `s1`, `s4`, `s2` must exist. 
 */ 
-typedef Hidden_type Is_degenerate_edge_2; 
+typedef unspecified_type Is_degenerate_edge_2; 
 
 /// @} 
 

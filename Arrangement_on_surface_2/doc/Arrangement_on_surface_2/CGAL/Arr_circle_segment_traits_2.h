@@ -197,12 +197,12 @@ public:
 /*! 
 the `Kernel::FT` type. 
 */ 
-typedef Hidden_type Rational; 
+typedef unspecified_type Rational; 
 
 /*! 
 the algebraic number-type. 
 */ 
-typedef Hidden_type CoordNT; 
+typedef unspecified_type CoordNT; 
 
 /// @} 
 

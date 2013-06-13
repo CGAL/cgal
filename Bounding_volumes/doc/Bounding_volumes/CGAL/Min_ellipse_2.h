@@ -65,7 +65,7 @@ public:
 /*! 
 Typedef to `Traits::Point `. 
 */ 
-typedef Hidden_type Point ; 
+typedef unspecified_type Point ; 
 
 /*! 
 Typedef to `Traits::Ellipse`. If you 
@@ -75,7 +75,7 @@ you can access the coefficients of the ellipse, see the
 documentation of `CGAL::Min_ellipse_2_traits_2<K>` and 
 the example below. 
 */ 
-typedef Hidden_type Ellipse; 
+typedef unspecified_type Ellipse; 
 
 /*! 
 
@@ -83,7 +83,7 @@ Non-mutable model of the \stl concept <I>BidirectionalIterator</I>
 with value type `Point`. Used to access the points 
 of the smallest enclosing ellipse. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 
@@ -91,7 +91,7 @@ Non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `Point`. Used to access the support points 
 of the smallest enclosing ellipse. 
 */ 
-typedef Hidden_type Support_point_iterator; 
+typedef unspecified_type Support_point_iterator; 
 
 /// @} 
 

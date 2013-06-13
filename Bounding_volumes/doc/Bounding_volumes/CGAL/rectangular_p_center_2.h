@@ -25,39 +25,39 @@ public:
 /*! 
 typedef to `K::FT`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `K::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 typedef to `K::Iso_rectangle_2`. 
 */ 
-typedef Hidden_type Iso_rectangle_2; 
+typedef unspecified_type Iso_rectangle_2; 
 
 /*! 
 typedef to `K::Less_x_2`. 
 */ 
-typedef Hidden_type Less_x_2; 
+typedef unspecified_type Less_x_2; 
 
 /*! 
 typedef to `K::Less_y_2`. 
 */ 
-typedef Hidden_type Less_y_2; 
+typedef unspecified_type Less_y_2; 
 
 /*! 
 typedef to 
 `K::Construct_vertex_2`. 
 */ 
-typedef Hidden_type Construct_vertex_2; 
+typedef unspecified_type Construct_vertex_2; 
 
 /*! 
 typedef to 
 `K::Construct_iso_rectangle_2`. 
 */ 
-typedef Hidden_type Construct_iso_rectangle_2; 
+typedef unspecified_type Construct_iso_rectangle_2; 
 
 /*! 
 adaptable binary function 
@@ -65,7 +65,7 @@ class: `Point_2` \f$ \times\f$ `Point_2` \f$ \rightarrow\f$
 `FT` returns the signed distance of two points' 
 \f$ x\f$-coordinates. 
 */ 
-typedef Hidden_type Signed_x_distance_2; 
+typedef unspecified_type Signed_x_distance_2; 
 
 /*! 
 adaptable binary function 
@@ -73,7 +73,7 @@ class: `Point_2` \f$ \times\f$ `Point_2` \f$ \rightarrow\f$
 `FT` returns the signed distance of two points' 
 \f$ y\f$-coordinates. 
 */ 
-typedef Hidden_type Signed_y_distance_2; 
+typedef unspecified_type Signed_y_distance_2; 
 
 /*! 
 adaptable binary function 
@@ -81,7 +81,7 @@ class: `Point_2` \f$ \times\f$ `Point_2` \f$ \rightarrow\f$
 `FT` returns the \f$ ||\cdot||_{\infty}\f$ distance of two 
 points. 
 */ 
-typedef Hidden_type Infinity_distance_2; 
+typedef unspecified_type Infinity_distance_2; 
 
 /*! 
 adaptable binary 
@@ -89,7 +89,7 @@ function class: `Point_2` \f$ \times\f$ `Point_2`
 \f$ \rightarrow\f$ `FT` returns the signed \f$ ||\cdot||_{\infty}\f$ 
 distance of two points. 
 */ 
-typedef Hidden_type Signed_infinity_distance_2; 
+typedef unspecified_type Signed_infinity_distance_2; 
 
 /*! 
 
@@ -100,7 +100,7 @@ square with sidelength \f$ r\f$ and upper-right corner at the
 intersection of the vertical line through \f$ p\f$ and the horizontal 
 line through \f$ q\f$. 
 */ 
-typedef Hidden_type Construct_point_2_below_left_implicit_point_2; 
+typedef unspecified_type Construct_point_2_below_left_implicit_point_2; 
 
 /*! 
 
@@ -111,7 +111,7 @@ iso-oriented square with sidelength \f$ r\f$ and upper-left corner at
 the intersection of the vertical line through \f$ p\f$ and the 
 horizontal line through \f$ q\f$. 
 */ 
-typedef Hidden_type Construct_point_2_below_right_implicit_point_2; 
+typedef unspecified_type Construct_point_2_below_right_implicit_point_2; 
 
 /*! 
 
@@ -122,7 +122,7 @@ iso-oriented square with sidelength \f$ r\f$ and lower-left corner at
 the intersection of the vertical line through \f$ p\f$ and the 
 horizontal line through \f$ q\f$. 
 */ 
-typedef Hidden_type Construct_point_2_above_right_implicit_point_2; 
+typedef unspecified_type Construct_point_2_above_right_implicit_point_2; 
 
 /*! 
 
@@ -133,7 +133,7 @@ square with sidelength \f$ r\f$ and lower-right corner at the
 intersection of the vertical line through \f$ p\f$ and the horizontal 
 line through \f$ q\f$. 
 */ 
-typedef Hidden_type Construct_point_2_above_left_implicit_point_2; 
+typedef unspecified_type Construct_point_2_above_left_implicit_point_2; 
 
 /// @} 
 

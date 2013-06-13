@@ -30,25 +30,25 @@ function object class derived from
 `std::binary_function<Point_2, Point_2, Point_2>` 
 
 */ 
-typedef Hidden_type Sum; 
+typedef unspecified_type Sum; 
 
 /*! 
 function object class derived from 
 `std::binary_function<Point_2, Point_2, Point_2>` 
 */ 
-typedef Hidden_type Scale; 
+typedef unspecified_type Scale; 
 
 /*! 
 function object class derived from 
 `std::unary_function<Point_2, FT>` 
 */ 
-typedef Hidden_type Max_coordinate; 
+typedef unspecified_type Max_coordinate; 
 
 /*! 
 function object class derived from 
 `std::binary_function<Point_2, Point_2, bool>` 
 */ 
-typedef Hidden_type Angle_less; 
+typedef unspecified_type Angle_less; 
 
 /// @} 
 

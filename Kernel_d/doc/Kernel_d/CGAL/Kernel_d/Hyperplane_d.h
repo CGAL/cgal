@@ -41,13 +41,13 @@ public:
 /*! 
 the linear algebra layer. 
 */ 
-typedef Hidden_type LA; 
+typedef unspecified_type LA; 
 
 /*! 
 a read-only iterator for the 
 coefficients. 
 */ 
-typedef Hidden_type Coefficient_const_iterator; 
+typedef unspecified_type Coefficient_const_iterator; 
 
 /// @} 
 

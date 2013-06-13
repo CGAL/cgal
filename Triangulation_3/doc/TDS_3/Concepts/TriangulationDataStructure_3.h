@@ -83,32 +83,32 @@ public:
 /*!
   %Vertex type, requirements are described in `TriangulationDataStructure_3::Vertex`.
 */
-typedef Hidden_type Vertex;
+typedef unspecified_type Vertex;
 
 /*!
   %Cell type, requirements are described in `TriangulationDataStructure_3::Cell`.
 */
-typedef Hidden_type Cell;
+typedef unspecified_type Cell;
 
 /*! 
 Size type (unsigned integral type) 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 Difference type (signed integral type) 
 */ 
-typedef Hidden_type difference_type; 
+typedef unspecified_type difference_type; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Cell_handle; 
+typedef unspecified_type Cell_handle; 
 
 /*! 
 This template class allows to get the type of a triangulation 
@@ -118,7 +118,7 @@ one whose `TriangulationDSVertexBase_3` will be `Vb2`.
 \note It can be implemented using a nested template class.
 */ 
 template <typename Vb2> 
-using Rebind_vertex = Hidden_type;
+using Rebind_vertex = unspecified_type;
 
 /*! 
 This template class allows to get the type of a triangulation 
@@ -128,7 +128,7 @@ one whose `TriangulationDSCellBase_3` will be `Cb2`.
 \note It can be implemented using a nested template class.
 */ 
 template <typename Cb2> 
-using Rebind_cell = Hidden_type;
+using Rebind_cell = unspecified_type;
 
 /*! 
 `(c,i,j)` is the 
@@ -157,22 +157,22 @@ typedef std::pair<Cell_handle, int> Facet;
 /*! 
 
 */ 
-typedef Hidden_type Cell_iterator; 
+typedef unspecified_type Cell_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Facet_iterator; 
+typedef unspecified_type Facet_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Edge_iterator; 
+typedef unspecified_type Edge_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_iterator; 
+typedef unspecified_type Vertex_iterator; 
 
 /// @}
 
@@ -188,12 +188,12 @@ typedef Hidden_type Vertex_iterator;
 /*! 
 
 */ 
-typedef Hidden_type Facet_circulator; 
+typedef unspecified_type Facet_circulator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Cell_circulator; 
+typedef unspecified_type Cell_circulator; 
 
 /// @} 
 
@@ -1053,7 +1053,7 @@ public:
 /*! 
 <I>Optional for the triangulation data structure alone</I>.
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 

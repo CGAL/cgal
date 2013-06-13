@@ -24,7 +24,7 @@ public:
 The point type on which the sorting algorithms operate. 
 
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 Functor object type returning the dimension of a `Point_d`. 
@@ -32,7 +32,7 @@ Must provide
 `int operator()(Point_d p)` returning the dimension of \f$ p\f$. 
 
 */ 
-typedef Hidden_type Point_dimension_d; 
+typedef unspecified_type Point_dimension_d; 
 
 /*! 
 Functor object type returning the coordinates of a `Point_d`. 
@@ -42,7 +42,7 @@ coordinate of \f$ p\f$. `FT` is a type that can be used as
 argument of `CGAL::to_double`. 
 
 */ 
-typedef Hidden_type Compute_coordinate_d; 
+typedef unspecified_type Compute_coordinate_d; 
 
 /*! 
 Binary predicate object type comparing `Point_d`s 
@@ -54,7 +54,7 @@ where \f$ p_i\f$ and \f$ q_i\f$ denote \f$ i\f$th coordinate of point \f$ p\f$ a
 respectively. 
 
 */ 
-typedef Hidden_type Less_coordinate_d; 
+typedef unspecified_type Less_coordinate_d; 
 
 /// @} 
 

@@ -28,7 +28,7 @@ public:
 A number type compatible with the type used for 
 the points coordinates. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 An object constructor able to compute the squared radius of the 
@@ -40,7 +40,7 @@ two weighted points `p0, p1`,
 and the squared radius of the smallest sphere orthogonal to a single 
 point `p0`. 
 */ 
-typedef Hidden_type Compute_squared_radius_smallest_orthogonal_sphere_3; 
+typedef unspecified_type Compute_squared_radius_smallest_orthogonal_sphere_3; 
 
 /// @} 
 

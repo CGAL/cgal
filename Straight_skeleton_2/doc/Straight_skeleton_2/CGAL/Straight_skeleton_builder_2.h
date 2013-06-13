@@ -100,7 +100,7 @@ typedef StraightSkeleton_2 Ss;
 /*! 
 The 2D point type as defined by the geometric traits 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /// @} 
 

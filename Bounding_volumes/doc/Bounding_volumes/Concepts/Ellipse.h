@@ -16,7 +16,7 @@ public:
 /*!
 Point type.
 */
-typedef Hidden_type Point;
+typedef unspecified_type Point;
 
 /// @}
 

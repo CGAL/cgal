@@ -11,7 +11,7 @@ namespace cpp11 {
   struct result_of{
     /// starting from boost version 1.44, it is `boost::tr1_result_of<F>::%type`, and 
     /// `boost::result_of<F>::%type` otherwise.
-    typedef Hidden_type type;
+    typedef unspecified_type type;
   };
   
 } } //end of namespace CGAL::cpp11

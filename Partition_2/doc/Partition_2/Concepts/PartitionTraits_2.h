@@ -26,7 +26,7 @@ public:
 /*! 
 The point type on which the partitioning algorithm operates. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 The polygon type to be created by the partitioning 
@@ -36,7 +36,7 @@ type of the iterator over the polygon vertices and member functions
 `Vertex_const_iterator vertices_begin()` and 
 `Vertex_const_iterator vertices_end()`. 
 */ 
-typedef Hidden_type Polygon_2; 
+typedef unspecified_type Polygon_2; 
 
 /*! 
 
@@ -48,13 +48,13 @@ where \f$ p_x\f$ and \f$ p_y\f$ denote the \f$ x\f$ and \f$ y\f$ coordinates of 
 respectively. 
 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 
 Same as `Less_xy_2` with the roles of \f$ x\f$ and \f$ y\f$ interchanged. 
 */ 
-typedef Hidden_type Less_yx_2; 
+typedef unspecified_type Less_yx_2; 
 
 /*! 
 
@@ -63,7 +63,7 @@ Predicate object type that provides
 returns `true` iff `r` lies to the left of the 
 oriented line through `p` and `q`. 
 */ 
-typedef Hidden_type Left_turn_2; 
+typedef unspecified_type Left_turn_2; 
 
 /*! 
 Predicate object type that provides 
@@ -73,7 +73,7 @@ line \f$ l\f$ defined by \f$ p\f$ and \f$ q\f$, returns `CGAL::RIGHT_TURN` if \f
 lies to the right of \f$ l\f$, and returns `CGAL::COLLINEAR` if \f$ r\f$ lies 
 on \f$ l\f$. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 Predicate object type that provides 
@@ -82,13 +82,13 @@ the \f$ y\f$ values of two points. The operator must return
 `CGAL::SMALLER` if \f$ p_y < q_y\f$, `CGAL::LARGER` if \f$ p_y > q_y\f$ and 
 `CGAL::EQUAL` if \f$ p_y = q_y\f$. 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 The same as `Compare_y_2`, except that \f$ x\f$ 
 coordinates are compared instead of \f$ y\f$. 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /// @} 
 

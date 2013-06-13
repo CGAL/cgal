@@ -48,24 +48,24 @@ with two variables.
 
 \sa `CGAL::Polynomial_d`
 */ 
-typedef Hidden_type Polynomial_2; 
+typedef unspecified_type Polynomial_2; 
 
 /*! 
 model for the concept 
 `AlgebraicKernel_1` 
 */ 
-typedef Hidden_type Algebraic_kernel_1; 
+typedef unspecified_type Algebraic_kernel_1; 
 
 /*! 
 represents coordinates of points. 
 Typedef from `Algebraic_kernel_1::Algebraic_real_1` 
 */ 
-typedef Hidden_type Algebraic_real_1; 
+typedef unspecified_type Algebraic_real_1; 
 
 /*! 
 Typedef from `Algebraic_kernel_1::Bound` 
 */ 
-typedef Hidden_type Bound; 
+typedef unspecified_type Bound; 
 
 /// @} 
 

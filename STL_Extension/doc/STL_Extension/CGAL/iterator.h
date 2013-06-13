@@ -790,7 +790,7 @@ public:
 /*!
 size type of the \stl `std::vector`.
 */
-typedef Hidden_type size_type;
+typedef unspecified_type size_type;
 /// @}
 
 /// \name Creation

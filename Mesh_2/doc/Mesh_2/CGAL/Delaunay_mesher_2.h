@@ -60,7 +60,7 @@ typedef CDT::Geom_traits Geom_traits;
 const iterator over defined seeds. Its 
 value type is `Geom_traits::Point_2`. 
 */ 
-typedef Hidden_type Seeds_iterator; 
+typedef unspecified_type Seeds_iterator; 
 
 /// @} 
 

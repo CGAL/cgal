@@ -27,22 +27,22 @@ CombinatorialMap();
 /*!
 %Dart type, a model of the `Dart` concept.
 */
-typedef Hidden_type Dart;
+typedef unspecified_type Dart;
 
 /*!
 %Dart handle type, equal to `Dart::Dart_handle`.
 */
-typedef Hidden_type Dart_handle;
+typedef unspecified_type Dart_handle;
 
 /*!
 %Dart const handle type, equal to `Dart::Dart_const_handle`.
 */
-typedef Hidden_type Dart_const_handle;
+typedef unspecified_type Dart_const_handle;
 
 /*!
 Size type (an unsigned integral type).
 */
-typedef Hidden_type size_type;
+typedef unspecified_type size_type;
 
 /// @}
 
@@ -85,7 +85,7 @@ size of the tuple is <I>k</I>, with <I>k</I>\f$
 \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
 <I>i</I>-attributes are disabled.
 */
-typedef Hidden_type Attributes;
+typedef unspecified_type Attributes;
 
   /*!
     `Attribute_type<i>::%type` is the type of <I>i</I>-attributes, a model of `CellAttribute` concept.
@@ -98,7 +98,7 @@ typedef Hidden_type Attributes;
     \note It can be implemented using a nested template class.
   */
   template <unsigned int i>
-  using Attribute_type = Hidden_type;
+  using Attribute_type = unspecified_type;
 
   /*!
   `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes, equal to \link Dart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink.
@@ -107,7 +107,7 @@ typedef Hidden_type Attributes;
   \note It can be implemented using a nested template class.
   */
   template <unsigned int i>
-  using Attribute_handle = Hidden_type;
+  using Attribute_handle = unspecified_type;
 
   /*!
   `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes, equal to \link Dart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink.
@@ -116,7 +116,7 @@ typedef Hidden_type Attributes;
   \note It can be implemented using a nested template class.
   */
   template <unsigned int i>
-  using Attribute_const_handle = Hidden_type;
+  using Attribute_const_handle = unspecified_type;
 
 /// @}
 
@@ -128,14 +128,14 @@ typedef Hidden_type Attributes;
 This type is a model of `Range` concept, its iterator type is bidirectional and its value type is
   \ref CombinatorialMap::Dart "Dart".
 */
-typedef Hidden_type Dart_range;
+typedef unspecified_type Dart_range;
 
 /*!
 Const range of all the darts of the combinatorial map.
 This type is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is
   \ref CombinatorialMap::Dart "Dart".
 */
-typedef Hidden_type Dart_const_range;
+typedef unspecified_type Dart_const_range;
 
 
 /*!
@@ -147,7 +147,7 @@ typedef Hidden_type Dart_const_range;
   \note It can be implemented using a nested template class.
 */
   template <unsigned int i>
-  using Attribute_range = Hidden_type;
+  using Attribute_range = unspecified_type;
 
 
 /*! `Attribute_const_range<i>::%type` is the const range of all the <I>i</I>-attributes.
@@ -158,7 +158,7 @@ typedef Hidden_type Dart_const_range;
   \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
-using Attribute_const_range = Hidden_type;
+using Attribute_const_range = unspecified_type;
 
 /*!
 %Range of all the darts of the `<Beta...>` orbit.
@@ -166,7 +166,7 @@ This type is a model of `Range` concept, its iterator type is forward and its va
  \ref CombinatorialMap::Dart "Dart".
 */
 template<unsigned int... Beta>
-using Dart_of_orbit_range = Hidden_type;
+using Dart_of_orbit_range = unspecified_type;
 
 /*!
 Const range of all the darts of the `<Beta...>` orbit.
@@ -174,7 +174,7 @@ This type is a model of `ConstRange` concept, its iterator type is forward and i
   \ref CombinatorialMap::Dart "Dart".
 */
 template<unsigned int ... Beta>
-using Dart_of_orbit_const_range = Hidden_type;
+using Dart_of_orbit_const_range = unspecified_type;
 
 /*!
 %Range of all the darts of an <I>i</I>-cell.
@@ -185,7 +185,7 @@ This type is a model of `Range` concept, its iterator type is forward and its va
   \ref CombinatorialMap::Dart "Dart".
 */
 template<unsigned int i,unsigned int dim=dimension>
-using Dart_of_cell_range = Hidden_type;
+using Dart_of_cell_range = unspecified_type;
 
 /*!
 Const range of all the darts of the <I>i</I>-cell.
@@ -196,7 +196,7 @@ This type is a model of `ConstRange` concept, its iterator type is forward and i
   \ref CombinatorialMap::Dart "Dart".
 */
 template<unsigned int i,unsigned int dim=dimension>
-using Dart_of_cell_const_range = Hidden_type;
+using Dart_of_cell_const_range = unspecified_type;
 
 /*!
 %Range of one dart of each <I>i</I>-cell incident to one <I>j</I>-cell.
@@ -209,7 +209,7 @@ This type is a model of `Range` concept, its iterator type is forward and its va
   \ref CombinatorialMap::Dart "Dart".
 */
 template<unsigned int i,unsigned int j,unsigned int dim=dimension>
-using One_dart_per_incident_cell_range = Hidden_type;
+using One_dart_per_incident_cell_range = unspecified_type;
 
 /*!
 Const range of one dart of each <I>i</I>-cell incident to one <I>j</I>-cell.
@@ -222,7 +222,7 @@ This type is a model of `ConstRange` concept, its iterator type is forward and i
   \ref CombinatorialMap::Dart "Dart".
 */
 template<unsigned int i,unsigned int j,unsigned int dim=dimension>
-using One_dart_per_incident_cell_const_range = Hidden_type;
+using One_dart_per_incident_cell_const_range = unspecified_type;
 
 /*!
 %Range of one dart of each <I>i</I>-cell of the combinatorial map.
@@ -234,7 +234,7 @@ This type is a model of `Range` concept, its iterator type is forward and its va
   \ref CombinatorialMap::Dart "Dart".
 */
 template<unsigned int i,unsigned int dim=dimension>
-using One_dart_per_cell_range = Hidden_type;
+using One_dart_per_cell_range = unspecified_type;
 
 /*!
 Const range of one dart of each <I>i</I>-cell of the combinatorial map.
@@ -246,7 +246,7 @@ This type is a model of `ConstRange` concept, its iterator type is forward and i
   \ref CombinatorialMap::Dart "Dart".
 */
 template<unsigned int i,unsigned int dim=dimension>
-using One_dart_per_cell_const_range = Hidden_type;
+using One_dart_per_cell_const_range = unspecified_type;
 
 /// @}
 

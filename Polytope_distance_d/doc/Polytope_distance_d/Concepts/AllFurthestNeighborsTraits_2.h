@@ -34,31 +34,31 @@ public:
 /*! 
 model for `FieldNumberType`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 model for 
 `Kernel::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 model for 
 `Kernel::Compute_squared_distance_2`. 
 */ 
-typedef Hidden_type Compute_squared_distance_2; 
+typedef unspecified_type Compute_squared_distance_2; 
 
 /*! 
 model for 
 `Kernel::Less_xy_2`. 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 model for 
 `Kernel::Orientation_2`. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /// @} 
 

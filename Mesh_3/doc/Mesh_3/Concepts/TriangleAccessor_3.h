@@ -22,23 +22,23 @@ public:
 Triangle type. Must be a model of DefaultConstructible and 
 CopyConstructible. 
 */ 
-typedef Hidden_type Triangle_3; 
+typedef unspecified_type Triangle_3; 
 
 /*! 
 Triangle iterator type. Must be a model of InputIterator. 
 */ 
-typedef Hidden_type Triangle_iterator; 
+typedef unspecified_type Triangle_iterator; 
 
 /*! 
 Handle to a `Triangle_3`. Must be 
 constructible from `Triangle_iterator`. It may be `Triangle_Iterator` itself. 
 */ 
-typedef Hidden_type Triangle_handle; 
+typedef unspecified_type Triangle_handle; 
 
 /*! 
 Polyhedron type. 
 */ 
-typedef Hidden_type Polyhedron; 
+typedef unspecified_type Polyhedron; 
 
 /// @} 
 

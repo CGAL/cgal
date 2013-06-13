@@ -107,7 +107,7 @@ public:
 /*! 
 type of the composed functor. 
 */ 
-typedef Hidden_type Type; 
+typedef unspecified_type Type; 
 /// @} 
 
 

@@ -71,52 +71,52 @@ columnwise over the constraint matrix \f$ A\f$. The value type
 is a random access iterator type for an individual column that 
 goes over the entries in that column. 
 */ 
-typedef Hidden_type A_iterator; 
+typedef unspecified_type A_iterator; 
 
 /*! 
 A random access iterator type to go over 
 the entries of the right-hand side \f$ \qpb\f$. 
 */ 
-typedef Hidden_type B_iterator; 
+typedef unspecified_type B_iterator; 
 
 /*! 
 A random access iterator type to go over the 
 relations \f$ \qprel\f$. The value type of `R_iterator` is 
 `CGAL::Comparison_result`. 
 */ 
-typedef Hidden_type R_iterator; 
+typedef unspecified_type R_iterator; 
 
 /*! 
 A random access iterator type to go over the 
 existence (finiteness) of the lower bounds \f$ l_j, j=0,\ldots,n-1\f$. 
 The value type of `FL_iterator` is `bool`. 
 */ 
-typedef Hidden_type FL_iterator; 
+typedef unspecified_type FL_iterator; 
 
 /*! 
 A random acess iterator type to go over 
 the entries of the lower bound vector \f$ \qpl\f$. 
 */ 
-typedef Hidden_type L_iterator; 
+typedef unspecified_type L_iterator; 
 
 /*! 
 A random access iterator type to go over the 
 existence (finiteness) of the upper bounds \f$ u_j, j=0,\ldots,n-1\f$. 
 The value type of `UL_iterator` is `bool`. 
 */ 
-typedef Hidden_type UL_iterator; 
+typedef unspecified_type UL_iterator; 
 
 /*! 
 A random acess iterator type to go over 
 the entries of the upper bound vector \f$ \qpu\f$. 
 */ 
-typedef Hidden_type U_iterator; 
+typedef unspecified_type U_iterator; 
 
 /*! 
 A random access iterator type to go over the 
 entries of the linear objective function vector \f$ c\f$. 
 */ 
-typedef Hidden_type C_iterator; 
+typedef unspecified_type C_iterator; 
 
 /// @} 
 

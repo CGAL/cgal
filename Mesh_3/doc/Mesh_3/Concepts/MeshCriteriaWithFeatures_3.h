@@ -37,7 +37,7 @@ the mesh edges that discretize the input domain 1-dimensional features.
 This type must be a model 
 of the concept `MeshEdgeCriteria_3`. 
 */ 
-typedef Hidden_type Edge_criteria; 
+typedef unspecified_type Edge_criteria; 
 
 /// @} 
 

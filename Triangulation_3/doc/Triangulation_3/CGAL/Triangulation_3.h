@@ -161,28 +161,28 @@ typedef TriangulationDataStructure_3::Vertex_iterator All_vertices_iterator;
 /*! 
 iterator over finite cells 
 */ 
-typedef Hidden_type Finite_cells_iterator; 
+typedef unspecified_type Finite_cells_iterator; 
 
 /*! 
 iterator over finite facets 
 */ 
-typedef Hidden_type Finite_facets_iterator; 
+typedef unspecified_type Finite_facets_iterator; 
 
 /*! 
 iterator over finite edges 
 */ 
-typedef Hidden_type Finite_edges_iterator; 
+typedef unspecified_type Finite_edges_iterator; 
 
 /*! 
 iterator over finite vertices 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 iterator over the points corresponding to the 
 finite vertices of the triangulation. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 circulator over all cells incident to a given edge 

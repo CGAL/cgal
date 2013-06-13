@@ -94,12 +94,12 @@ public:
 /*! 
 ring type. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /*! 
 plane a `Sphere_circle` lies in. 
 */ 
-typedef Hidden_type Plane_3; 
+typedef unspecified_type Plane_3; 
 
 /// @} 
 
@@ -195,7 +195,7 @@ public:
 /*! 
 ring number type. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /// @} 
 
@@ -405,17 +405,17 @@ public:
 /*! 
 const handle to SVertex. 
 */ 
-typedef Hidden_type SVertex_handle; 
+typedef unspecified_type SVertex_handle; 
 
 /*! 
 const handle to SHalfedge. 
 */ 
-typedef Hidden_type SHalfedge_handle; 
+typedef unspecified_type SHalfedge_handle; 
 
 /*! 
 const handle to SHalfloop. 
 */ 
-typedef Hidden_type SHalfloop_handle; 
+typedef unspecified_type SHalfloop_handle; 
 
 /// @} 
 
@@ -499,32 +499,32 @@ public:
 /*! 
 type of mark. 
 */ 
-typedef Hidden_type Mark; 
+typedef unspecified_type Mark; 
 
 /*! 
 list of Object handles. 
 */ 
-typedef Hidden_type Object_list; 
+typedef unspecified_type Object_list; 
 
 /*! 
 const handle to Vertex. 
 */ 
-typedef Hidden_type Vertex_const_handle; 
+typedef unspecified_type Vertex_const_handle; 
 
 /*! 
 const handle to Volume. 
 */ 
-typedef Hidden_type Volume_const_handle; 
+typedef unspecified_type Volume_const_handle; 
 
 /*! 
 const handle to SFace. 
 */ 
-typedef Hidden_type SFace_const_handle; 
+typedef unspecified_type SFace_const_handle; 
 
 /*! 
 const iterator over the entries to all `sface` cycles of a `sface`. 
 */ 
-typedef Hidden_type SFace_cycle_const_iterator; 
+typedef unspecified_type SFace_cycle_const_iterator; 
 
 /// @} 
 
@@ -601,27 +601,27 @@ public:
 /*! 
 type of mark. 
 */ 
-typedef Hidden_type Mark; 
+typedef unspecified_type Mark; 
 
 /*! 
 sphere circle type stored in SHalfedge. 
 */ 
-typedef Hidden_type Sphere_circle; 
+typedef unspecified_type Sphere_circle; 
 
 /*! 
 const handle to SVertex. 
 */ 
-typedef Hidden_type SVertex_const_handle; 
+typedef unspecified_type SVertex_const_handle; 
 
 /*! 
 const handle to SHalfedge. 
 */ 
-typedef Hidden_type SHalfedge_const_handle; 
+typedef unspecified_type SHalfedge_const_handle; 
 
 /*! 
 const handle to SFace. 
 */ 
-typedef Hidden_type SFace_const_handle; 
+typedef unspecified_type SFace_const_handle; 
 
 /// @} 
 
@@ -729,22 +729,22 @@ public:
 /*! 
 type of mark. 
 */ 
-typedef Hidden_type Mark; 
+typedef unspecified_type Mark; 
 
 /*! 
 sphere circle type stored in SHalfloop. 
 */ 
-typedef Hidden_type Sphere_circle; 
+typedef unspecified_type Sphere_circle; 
 
 /*! 
 const handle to SHalfloop. 
 */ 
-typedef Hidden_type SHalfloop_const_handle; 
+typedef unspecified_type SHalfloop_const_handle; 
 
 /*! 
 const handle to SFace. 
 */ 
-typedef Hidden_type SFace_const_handle; 
+typedef unspecified_type SFace_const_handle; 
 
 /// @} 
 
@@ -805,27 +805,27 @@ public:
 /*! 
 type of mark. 
 */ 
-typedef Hidden_type Mark; 
+typedef unspecified_type Mark; 
 
 /*! 
 sphere point type stored in SVertex. 
 */ 
-typedef Hidden_type Sphere_point; 
+typedef unspecified_type Sphere_point; 
 
 /*! 
 const handle to SVertex. 
 */ 
-typedef Hidden_type SVertex_const_handle; 
+typedef unspecified_type SVertex_const_handle; 
 
 /*! 
 const handle to SHalfedge. 
 */ 
-typedef Hidden_type SHalfedge_const_handle; 
+typedef unspecified_type SHalfedge_const_handle; 
 
 /*! 
 const handle to SFace. 
 */ 
-typedef Hidden_type SFace_const_handle; 
+typedef unspecified_type SFace_const_handle; 
 
 /// @} 
 
@@ -869,54 +869,54 @@ SFace_const_handle incident_sface() const;
 /*! 
 non-mutable handle to svertex. 
 */ 
-typedef Hidden_type SVertex_const_handle; 
+typedef unspecified_type SVertex_const_handle; 
 
 /*! 
 non-mutable handle to shalfedge. 
 */ 
-typedef Hidden_type SHalfedge_const_handle; 
+typedef unspecified_type SHalfedge_const_handle; 
 
 /*! 
 non-mutable handle to shalfloop. 
 */ 
-typedef Hidden_type SHalfloop_const_handle; 
+typedef unspecified_type SHalfloop_const_handle; 
 
 /*! 
 non-mutable handle to sface. 
 */ 
-typedef Hidden_type SFace_const_handle; 
+typedef unspecified_type SFace_const_handle; 
 
 /*! 
 non-mutable iterator over all svertices. 
 */ 
-typedef Hidden_type SVertex_const_iterator; 
+typedef unspecified_type SVertex_const_iterator; 
 
 /*! 
 non-mutable iterator over all shalfedges. 
 */ 
-typedef Hidden_type SHalfedge_const_iterator; 
+typedef unspecified_type SHalfedge_const_iterator; 
 
 /*! 
 non-mutable iterator over all shalfloops. 
 */ 
-typedef Hidden_type SHalfloop_const_iterator; 
+typedef unspecified_type SHalfloop_const_iterator; 
 
 /*! 
 non-mutable iterator over all sfaces. 
 */ 
-typedef Hidden_type SFace_const_iterator; 
+typedef unspecified_type SFace_const_iterator; 
 
 /*! 
 circulating the 
 adjacency list of an svertex `v`. 
 */ 
-typedef Hidden_type SHalfedge_around_svertex_const_circulator; 
+typedef unspecified_type SHalfedge_around_svertex_const_circulator; 
 
 /*! 
 circulating the 
 sface cycle of an sface `f`. 
 */ 
-typedef Hidden_type SHalfedge_around_sface_const_circulator; 
+typedef unspecified_type SHalfedge_around_sface_const_circulator; 
 
 /*! 
 iterating all sface cycles of 
@@ -925,17 +925,17 @@ an sface `f`. The iterator has method `bool is_svertex()`,
 converted to the corresponding handles `SVertex_const_handle`, 
 `SHalfedge_const_handle`, or `SHalfloop_const_handle`. 
 */ 
-typedef Hidden_type SFace_cycle_const_iterator; 
+typedef unspecified_type SFace_cycle_const_iterator; 
 
 /*! 
 attributes of objects (vertices, edges, faces). 
 */ 
-typedef Hidden_type Mark; 
+typedef unspecified_type Mark; 
 
 /*! 
 size type 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 construction selection. 
@@ -1160,7 +1160,7 @@ be assigned to a corresponding handle by the three functions:
 
 where each function returns `true` iff the assignment to `h` was done.
 */ 
-typedef Hidden_type Object_handle; 
+typedef unspecified_type Object_handle; 
 
 /// @} 
 

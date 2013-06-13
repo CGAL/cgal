@@ -24,7 +24,7 @@ public:
 /*! 
 The associated type 
 */ 
-typedef Hidden_type Type; 
+typedef unspecified_type Type; 
 
 /*! 
 
@@ -33,19 +33,19 @@ decomposed into a numerator and denominator.
 
 This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
 */ 
-typedef Hidden_type Is_fraction; 
+typedef unspecified_type Is_fraction; 
 
 /*! 
 The type to represent the numerator. 
 This is undefined in case the associated type is not a fraction. 
 */ 
-typedef Hidden_type Numerator_type ; 
+typedef unspecified_type Numerator_type ; 
 
 /*! 
 The (simpler) type to represent the denominator. 
 This is undefined in case the associated type is not a fraction. 
 */ 
-typedef Hidden_type Denominator_type; 
+typedef unspecified_type Denominator_type; 
 
 /// @} 
 
@@ -56,19 +56,19 @@ typedef Hidden_type Denominator_type;
   /*!
     A model of FractionTraits_::Compose.
    */
-typedef Hidden_type Compose;
+typedef unspecified_type Compose;
 
 
   /*!
     A model of FractionTraits_::Decompose.
    */
-typedef Hidden_type Decompose;
+typedef unspecified_type Decompose;
 
 
   /*!
     A model of FractionTraits_::CommonFactor.
    */
-typedef Hidden_type Common_factor;
+typedef unspecified_type Common_factor;
 
 
 /// @}

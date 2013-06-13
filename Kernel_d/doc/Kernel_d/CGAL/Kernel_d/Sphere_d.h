@@ -35,13 +35,13 @@ public:
 /*! 
 the linear algebra layer. 
 */ 
-typedef Hidden_type LA; 
+typedef unspecified_type LA; 
 
 /*! 
 a read-only iterator for points defining 
 the sphere. 
 */ 
-typedef Hidden_type point_iterator; 
+typedef unspecified_type point_iterator; 
 
 /// @} 
 

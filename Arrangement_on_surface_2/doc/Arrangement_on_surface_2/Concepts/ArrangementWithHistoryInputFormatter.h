@@ -22,7 +22,7 @@ public:
 /*! 
 the type of arrangement to input. 
 */ 
-typedef Hidden_type Arr_with_history_2; 
+typedef unspecified_type Arr_with_history_2; 
 
 /*! 
 the inducing curve type. 

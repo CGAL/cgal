@@ -36,45 +36,45 @@ public:
 A type for the geometric traits that defines 
 the site. \pre The type `Geom_traits` must define the type `Site_2`. 
 */ 
-typedef Hidden_type Geom_traits; 
+typedef unspecified_type Geom_traits; 
 
 /*! 
 A type for the site. This type must coincide 
 with the type `Geom_traits::Site_2`. 
 */ 
-typedef Hidden_type Site_2; 
+typedef unspecified_type Site_2; 
 
 /*! 
 A type that indicates what kind of 
 storage type to use. `Storage_site_tag` must either be 
 `CGAL::Tag_true` or `CGAL::Tag_false`. 
 */ 
-typedef Hidden_type Storage_site_tag; 
+typedef unspecified_type Storage_site_tag; 
 
 /*! 
 A type for the internal representation 
 of sites. This type must satisfy the requirements of the concept 
 `SegmentDelaunayGraphStorageSite_2`. 
 */ 
-typedef Hidden_type Storage_site_2; 
+typedef unspecified_type Storage_site_2; 
 
 /*! 
 A type for the 
 underlying data structure, to which the vertex belongs to. 
 */ 
-typedef Hidden_type Data_structure; 
+typedef unspecified_type Data_structure; 
 
 /*! 
 A type for the vertex handle of the 
 segment Delaunay graph data structure. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 A type for the face handle of the 
 segment Delaunay graph data structure. 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /// @} 
 

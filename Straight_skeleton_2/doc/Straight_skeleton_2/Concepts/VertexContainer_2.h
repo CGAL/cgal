@@ -20,12 +20,12 @@ public:
 /*! 
 A 2D point type used to represent a vertex. Must be a model of the `Kernel::Point_2` concept 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 A unsigned integral type that can represent the number of vertices in the container. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /// @} 
 

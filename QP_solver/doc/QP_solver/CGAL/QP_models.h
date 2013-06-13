@@ -658,7 +658,7 @@ public:
   /*! 
     The number type of the program entries. 
   */ 
-  typedef Hidden_type NT; 
+  typedef unspecified_type NT; 
 
   /// @} 
 
@@ -884,7 +884,7 @@ public:
   /*! 
     The number type of the program entries. 
   */ 
-  typedef Hidden_type NT; 
+  typedef unspecified_type NT; 
 
   /// @} 
 

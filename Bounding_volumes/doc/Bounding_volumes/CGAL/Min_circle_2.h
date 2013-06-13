@@ -81,12 +81,12 @@ public:
 /*! 
 typedef to `Traits::Point `. 
 */ 
-typedef Hidden_type Point ; 
+typedef unspecified_type Point ; 
 
 /*! 
 typedef to `Traits::Circle`. 
 */ 
-typedef Hidden_type Circle; 
+typedef unspecified_type Circle; 
 
 /*! 
 
@@ -94,7 +94,7 @@ non-mutable model of the \stl concept <I>BidirectionalIterator</I>
 with value type `Point`. Used to access the points 
 of the smallest enclosing circle. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 
@@ -102,7 +102,7 @@ non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `Point`. Used to access the support points 
 of the smallest enclosing circle. 
 */ 
-typedef Hidden_type Support_point_iterator; 
+typedef unspecified_type Support_point_iterator; 
 
 /// @} 
 

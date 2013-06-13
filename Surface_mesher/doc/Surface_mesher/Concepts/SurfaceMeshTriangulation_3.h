@@ -41,21 +41,21 @@ public:
 The point type. It must be DefaultConstructible, CopyConstructible and 
 Assignable. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 Handle to a data representing a <I>vertex</I>. `Vertex_handle` must be 
 a model of `Handle` and its <I>value type</I> must be model of 
 `TriangulationDataStructure_3::Vertex`. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 Handle to a data representing a <I>cell</I>. `Cell_handle` must be a 
 model of `Handle` and its <I>value type</I> must be model of 
 `TriangulationDataStructure_3::Cell`. 
 */ 
-typedef Hidden_type Cell_handle; 
+typedef unspecified_type Cell_handle; 
 
 /*! 
 The edge type. 
@@ -70,23 +70,23 @@ typedef std::pair<Cell_handle, int> Facet;
 /*! 
 Iterator over finite vertices 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 Iterator over finite edges 
 */ 
-typedef Hidden_type Finite_edges_iterator; 
+typedef unspecified_type Finite_edges_iterator; 
 
 /*! 
 Iterator over finite facets 
 */ 
-typedef Hidden_type Finite_facets_iterator; 
+typedef unspecified_type Finite_facets_iterator; 
 
 /*! 
 The geometric traits class. Must be a model of 
 `DelaunayTriangulationTraits_3`. 
 */ 
-typedef Hidden_type Geom_traits; 
+typedef unspecified_type Geom_traits; 
 
 /// @} 
 

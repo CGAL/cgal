@@ -34,7 +34,7 @@ public:
 A model of the concept 
 `Periodic_3Offset_3` 
 */ 
-typedef Hidden_type Periodic_3_offset_3; 
+typedef unspecified_type Periodic_3_offset_3; 
 
 /// @} 
 

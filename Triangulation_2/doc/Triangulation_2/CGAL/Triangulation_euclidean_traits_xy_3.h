@@ -80,7 +80,7 @@ A constructor object for
 
 which constructs a segment from two points. 
 */ 
-typedef Hidden_type Construct_segment_2; 
+typedef unspecified_type Construct_segment_2; 
 
 /*! 
 A constructor object for 
@@ -90,7 +90,7 @@ A constructor object for
 
 which constructs a triangle from three points. 
 */ 
-typedef Hidden_type Construct_triangle_2; 
+typedef unspecified_type Construct_triangle_2; 
 
 /*! 
 A constructor object for 
@@ -100,7 +100,7 @@ A constructor object for
 
 which constructs a line from two points. 
 */ 
-typedef Hidden_type Construct_line_2; 
+typedef unspecified_type Construct_line_2; 
 
 /*! 
 A construction object. 
@@ -110,7 +110,7 @@ Provides the operator :
 which returns the squared distance between the projection of `p` 
 and the projection of `l`. 
 */ 
-typedef Hidden_type Compute_squared_distance_2; 
+typedef unspecified_type Compute_squared_distance_2; 
 
 /*! 
 A construction object. 
@@ -126,7 +126,7 @@ middle of the segment `p1``p2`.
 \pre The projection of `s1` and the projection of `s2` are non-degenerate `2D` segments. 
 
 */ 
-typedef Hidden_type Intersect_2; 
+typedef unspecified_type Intersect_2; 
 
 /*! 
 Predicate object. Provides 
@@ -139,7 +139,7 @@ which returns
 according to the 
 \f$ x\f$-ordering of points `p` and `q`. 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 Predicate object. Provides 
@@ -152,7 +152,7 @@ which returns
 according to the 
 \f$ y\f$-ordering of points `p` and `q`. 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 Predicate object. Provides 
@@ -166,7 +166,7 @@ according to the position of the projection of \f$ r\f$
 with respect to the projection of the 
 oriented line `pq`. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 Predicate object. 
@@ -179,7 +179,7 @@ the projection of point`s`
 with respect to the oriented circle through the projections of \f$ p,q\f$ 
 and \f$ r\f$. 
 */ 
-typedef Hidden_type Side_of_oriented_circle_2; 
+typedef unspecified_type Side_of_oriented_circle_2; 
 
 /*! 
 Predicate object. Provides 
@@ -190,7 +190,7 @@ which returns `SMALLER`, `EQUAL` or `LARGER`
 according to the distance between the projection of p and the projection of q being smaller, equal or larger 
 than the distance between the projection of p and the projection of r. 
 */ 
-typedef Hidden_type Compare_distance_2; 
+typedef unspecified_type Compare_distance_2; 
 
 /// @} 
 

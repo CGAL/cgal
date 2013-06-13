@@ -17,57 +17,57 @@ public:
 /*! 
 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Circle_2; 
+typedef unspecified_type Circle_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Segment_2; 
+typedef unspecified_type Segment_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Side_of_oriented_circle_2; 
+typedef unspecified_type Side_of_oriented_circle_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_circle_2; 
+typedef unspecified_type Construct_circle_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compute_squared_distance_2; 
+typedef unspecified_type Compute_squared_distance_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Bounded_side_2; 
+typedef unspecified_type Bounded_side_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_distance_2; 
+typedef unspecified_type Compare_distance_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_center_2; 
+typedef unspecified_type Construct_center_2; 
 
 /// @}
 

@@ -54,7 +54,7 @@ public:
 /*! 
 point type for three argument version. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /// @} 
 

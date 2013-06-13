@@ -31,7 +31,7 @@ Following the standard clone policy, the rebind struct-template must
 have a nested type named `other` that defines the type of the 
 model replica. 
 */ 
-typedef Hidden_type template <class T> rebind; 
+typedef unspecified_type template <class T> rebind; 
 
 /// @} 
 

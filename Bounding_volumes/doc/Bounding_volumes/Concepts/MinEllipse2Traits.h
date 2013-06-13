@@ -23,14 +23,14 @@ public:
 The point type must provide default and copy constructor, 
 assignment and equality test. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 
 The ellipse type must fulfill the requirements listed below 
 in the next section. 
 */ 
-typedef Hidden_type Ellipse; 
+typedef unspecified_type Ellipse; 
 
 /// @} 
 

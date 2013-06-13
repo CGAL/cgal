@@ -23,7 +23,7 @@ public:
 /*! 
 Type convertible to `CGAL::Sign` 
 */ 
-typedef Hidden_type result_type; 
+typedef unspecified_type result_type; 
 
 /*! 
 

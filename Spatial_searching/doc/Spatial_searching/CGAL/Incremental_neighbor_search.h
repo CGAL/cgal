@@ -58,7 +58,7 @@ typedef std::pair<Point_d,NT> Point_with_transformed_distance;
 const input iterator with value type `Point_with_transformed_distance` 
 for enumerating approximate neighbors. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 Query item type. 

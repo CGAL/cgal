@@ -98,27 +98,27 @@ public:
 /*! 
 the oriented lines modeling halfplanes. 
 */ 
-typedef Hidden_type Line; 
+typedef unspecified_type Line; 
 
 /*! 
 the affine points of the plane. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 directions in our plane. 
 */ 
-typedef Hidden_type Direction; 
+typedef unspecified_type Direction; 
 
 /*! 
 tag for calling polygon constructor. 
 */ 
-typedef Hidden_type Polygons_tag; 
+typedef unspecified_type Polygons_tag; 
 
 /*! 
 tag for calling polyline constructor. 
 */ 
-typedef Hidden_type Polylines_tag; 
+typedef unspecified_type Polylines_tag; 
 
 /*! 
 construction selection. 
@@ -342,23 +342,23 @@ public:
 /*! 
 The underlying plane map type 
 */ 
-typedef Hidden_type Plane_map; 
+typedef unspecified_type Plane_map; 
 
 /*! 
 The point type of vertices. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 
 All objects (vertices, edges, faces) are attributed by a `Mark` object. 
 */ 
-typedef Hidden_type Mark; 
+typedef unspecified_type Mark; 
 
 /*! 
 The size type. 
 */ 
-typedef Hidden_type Size_type; 
+typedef unspecified_type Size_type; 
 
 /// @}
 
@@ -374,14 +374,14 @@ typedef Hidden_type Size_type;
 
 circulating the outgoing halfedges in \f$ A(v)\f$. 
 */ 
-typedef Hidden_type Halfedge_around_vertex_const_circulator; 
+typedef unspecified_type Halfedge_around_vertex_const_circulator; 
 
 /*! 
 
 circulating the halfedges in the face cycle of a face `f`. 
 
 */ 
-typedef Hidden_type Halfedge_around_face_const_circulator; 
+typedef unspecified_type Halfedge_around_face_const_circulator; 
 
 /*! 
 
@@ -389,7 +389,7 @@ iterating all holes of a face `f`. The type is
 convertible to `Halfedge_const_handle`. 
 
 */ 
-typedef Hidden_type Hole_const_iterator; 
+typedef unspecified_type Hole_const_iterator; 
 
 /*! 
 
@@ -397,7 +397,7 @@ iterating all isolated vertices of a face `f`.
 The type generalizes `Vertex_const_handle`. 
 
 */ 
-typedef Hidden_type Isolated_vertex_const_iterator; 
+typedef unspecified_type Isolated_vertex_const_iterator; 
 
 /// @} 
 
@@ -711,13 +711,13 @@ public:
 the point type of finite vertices. 
 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 the ray type of vertices on the frame. 
 
 */ 
-typedef Hidden_type Ray; 
+typedef unspecified_type Ray; 
 
 /// @} 
 
@@ -768,7 +768,7 @@ where each function returns `true` iff the assignment to
 `h` was done. 
 
 */ 
-typedef Hidden_type Object_handle; 
+typedef unspecified_type Object_handle; 
 
 /*! 
 selectionflag for the point location 

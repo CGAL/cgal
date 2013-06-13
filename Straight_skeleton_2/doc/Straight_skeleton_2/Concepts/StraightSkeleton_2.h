@@ -27,17 +27,17 @@ public:
 /*! 
 A model of the `StraightSkeletonVertex_2` concept used to represent the vertices of the straight skeleton 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 A model of the `StraightSkeletonHalfedge_2` concept used to represent the halfedges of the straight skeleton 
 */ 
-typedef Hidden_type Halfedge; 
+typedef unspecified_type Halfedge; 
 
 /*! 
 Any model of the `StraightSkeletonFace_2` concept used to represent the faces of the straight skeleton 
 */ 
-typedef Hidden_type Face; 
+typedef unspecified_type Face; 
 
 /// @}
 

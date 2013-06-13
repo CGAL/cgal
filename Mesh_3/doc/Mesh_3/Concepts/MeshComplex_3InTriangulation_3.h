@@ -62,7 +62,7 @@ embedding 3D triangulation.
 This type must be a 3D 
 regular triangulation of \cgal when used for 3D mesh generation. 
 */ 
-typedef Hidden_type Triangulation; 
+typedef unspecified_type Triangulation; 
 
 /*! 
 Type `Vertex_handle` type of 
@@ -98,14 +98,14 @@ A type for indices of subdomains.
 This type must match the type `MeshDomain_3::Subdomain_index` 
 when the concept is used for mesh generation. 
 */ 
-typedef Hidden_type Subdomain_index; 
+typedef unspecified_type Subdomain_index; 
 
 /*! 
 A type for indices of surface patches. 
 This type must match the type `MeshDomain_3::Surface_patch_index` 
 when the concept is used for mesh generation. 
 */ 
-typedef Hidden_type Surface_patch_index; 
+typedef unspecified_type Surface_patch_index; 
 
 /*! 
 A type for indexing vertices that belong to some surface patches 
@@ -113,18 +113,18 @@ or subdomains.
 This type must match the type `MeshDomain_3::Index` 
 when the concept is used for mesh generation. 
 */ 
-typedef Hidden_type Index; 
+typedef unspecified_type Index; 
 
 /*! 
 An iterator type to visit the cells 
 of the triangulation belonging to the 3D complex. 
 */ 
-typedef Hidden_type Cells_in_complex_iterator; 
+typedef unspecified_type Cells_in_complex_iterator; 
 
 /*! 
 An iterator type to visit the surface facets. 
 */ 
-typedef Hidden_type Facets_in_complex_iterator; 
+typedef unspecified_type Facets_in_complex_iterator; 
 
 /// @} 
 

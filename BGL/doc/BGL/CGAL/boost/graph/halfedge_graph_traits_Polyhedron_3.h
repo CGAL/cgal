@@ -22,7 +22,7 @@ over one of the two opposite edges forming an undirected edge.
 
 The value type is `CGAL::Polyhedron_3::Halfedge_const_handle`. 
 */ 
-typedef Hidden_type undirected_edge_iterator; 
+typedef unspecified_type undirected_edge_iterator; 
 
 /*! 
 The point type of the vertex. 

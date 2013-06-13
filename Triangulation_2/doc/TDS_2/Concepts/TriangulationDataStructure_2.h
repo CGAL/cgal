@@ -81,34 +81,34 @@ public:
 /*! 
 Size type (unsigned integral type) 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 Difference type (signed integral type) 
 */ 
-typedef Hidden_type difference_type; 
+typedef unspecified_type difference_type; 
 
 /*! 
 The vertex type, requirements for this type are described in concept `TriangulationDataStructure_2::Vertex`.
 */ 
-typedef Hidden_type Vertex;
+typedef unspecified_type Vertex;
 
 /*! 
 The face type, requirements for this type are described in concept `TriangulationDataStructure_2::Face`.
 */ 
-typedef Hidden_type Face;
+typedef unspecified_type Face;
 
 /*! 
 Handle to a vertex.
 \cgalModels `Handle`
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 Handle to a face. 
 \cgalModels `Handle`
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /*! 
 This template class allows to get the type of a triangulation 
@@ -118,7 +118,7 @@ one whose `TriangulationDSVertexBase_2` will be `Vb2`.
 \note It can be implemented using a nested template class.
 */ 
 template <typename Vb2> 
-using Rebind_vertex = Hidden_type;
+using Rebind_vertex = unspecified_type;
 
 /*! 
 This template class allows to get the type of a triangulation 
@@ -128,7 +128,7 @@ one whose `TriangulationDSFaceBase_2` will be `Fb2`.
 \note It can be implemented using a nested template class.
 */ 
 template <typename Fb2> 
-using Rebind_face = Hidden_type;
+using Rebind_face = unspecified_type;
 
 /*! 
 The edge type. 
@@ -166,32 +166,32 @@ typedef std::pair<Face_handle,int> Edge;
 /*! 
 
 */ 
-typedef Hidden_type Face_iterator; 
+typedef unspecified_type Face_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Edge_iterator; 
+typedef unspecified_type Edge_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_iterator; 
+typedef unspecified_type Vertex_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Face_circulator; 
+typedef unspecified_type Face_circulator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Edge_circulator; 
+typedef unspecified_type Edge_circulator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_circulator; 
+typedef unspecified_type Vertex_circulator; 
 
 /// @} 
 
@@ -734,7 +734,7 @@ public:
 <I>Optional for the triangulation data 
 structure used alone</I>.
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /// @} 
 

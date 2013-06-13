@@ -20,12 +20,12 @@ public:
 /*! 
 The root of a function. 
 */ 
-typedef Hidden_type Root; 
+typedef unspecified_type Root; 
 
 /*! 
 The traits class for this concept. 
 */ 
-typedef Hidden_type Traits; 
+typedef unspecified_type Traits; 
 
 /// @} 
 

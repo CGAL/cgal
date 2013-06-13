@@ -28,37 +28,37 @@ public:
 /*! 
 The number type used for representation. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 A model of 
 `Kinetic::InstantaneousKernel` which can be used to apply static CGAL 
 data structures to snapshots of moving data. 
 */ 
-typedef Hidden_type Instantaneous_kernel; 
+typedef unspecified_type Instantaneous_kernel; 
 
 /*! 
 A model of `Kinetic::Kernel`. 
 */ 
-typedef Hidden_type Kinetic_kernel; 
+typedef unspecified_type Kinetic_kernel; 
 
 /*! 
 A model of `Kinetic::FunctionKernel`. 
 */ 
-typedef Hidden_type Function_kernel; 
+typedef unspecified_type Function_kernel; 
 
 /*! 
 A model of 
 `Kinetic::ActiveObjectsTable` which holds the relevant kinetic 
 primitives. 
 */ 
-typedef Hidden_type Active_points_@omtable; 
+typedef unspecified_type Active_points_@omtable; 
 
 /*! 
 A model of `Kinetic::Simulator` which will be 
 used by all the kinetic data structures. 
 */ 
-typedef Hidden_type Simulator; 
+typedef unspecified_type Simulator; 
 
 /// @} 
 

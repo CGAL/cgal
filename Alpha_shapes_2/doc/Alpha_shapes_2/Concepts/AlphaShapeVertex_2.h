@@ -21,7 +21,7 @@ declaration and initialization with a small integer constant
 (cf. requirements for number types). An obvious choice would be 
 coordinate type of the point class. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /// @} 
 

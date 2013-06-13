@@ -26,7 +26,7 @@ public:
 Model of the concept `PolygonIsValid` that tests if 
 a sequence of points is \f$ y\f$-monotone or not. 
 */ 
-typedef Hidden_type Is_y_monotone_2; 
+typedef unspecified_type Is_y_monotone_2; 
 
 /// @} 
 

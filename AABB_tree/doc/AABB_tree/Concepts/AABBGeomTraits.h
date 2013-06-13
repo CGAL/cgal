@@ -20,12 +20,12 @@ public:
 /*! 
 Sphere type, that should be consistent with the distance function chosen for the distance queries, namely the `Squared_distance_3` functor. 
 */ 
-typedef Hidden_type Sphere_3; 
+typedef unspecified_type Sphere_3; 
 
 /*! 
 Point type. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 A functor object to detect intersections between two geometric objects. 
@@ -34,45 +34,45 @@ Provides the operators:
 where `Type_1` and `Type_2` are relevant types 
 among `Ray_3`, `Segment_3`, `Line_3`, `Triangle_3`, `Plane_3` and `Bbox_3`. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box), and a solid primitive is tested against another solid primitive (box against box). The operator returns `true` iff `type_1` and `type_2` have a non empty intersection. 
 */ 
-typedef Hidden_type Do_intersect_3; 
+typedef unspecified_type Do_intersect_3; 
 
 /*! 
 A functor object to construct the intersection between two geometric objects. 
 Provides the operators: 
 `CGAL::Object operator()(const Type_1& type_1, const Type_2& type_2);` where `Type_1` and `Type_2` are any relevant types among `Ray_3`, `Segment_3`, `Line_3`, `Triangle_3`, `Plane_3` and `Bbox_3`. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box). The operator computes a `CGAL::Object` which is the intersection between the objects `type_1` and `type_2`. 
 */ 
-typedef Hidden_type Intersect_3; 
+typedef unspecified_type Intersect_3; 
 
 /*! 
 A functor object to construct the sphere centered at one point and passing through another one. Provides the operator: 
 `Sphere_3 operator()(const Point_3& p, const Point_3 & q);` which returns the sphere centered at `p` and passing through `q`. 
 */ 
-typedef Hidden_type Construct_sphere_3; 
+typedef unspecified_type Construct_sphere_3; 
 
 /*! 
 A functor object to compute the point on a geometric primitive which is closest from a query. Provides the operator: 
 `Point_3 operator()(const Point_3& p, const Type_2& type_2);` where `Type_2` is any type among `Segment_3` and `Triangle_3`. The operator returns the point on `type_2` which is closest to `p`. 
 */ 
-typedef Hidden_type Compute_closest_point_3; 
+typedef unspecified_type Compute_closest_point_3; 
 
 /*! 
 A functor object to detect if a point lies inside a sphere or not. 
 Provides the operator: 
 `bool operator()(const Sphere_3& s, const Point_3& p);` which returns `true` iff the closed volume bounded by `s` contains `p`. 
 */ 
-typedef Hidden_type Has_on_bounded_side_3; 
+typedef unspecified_type Has_on_bounded_side_3; 
 
 /*! 
 A functor object to compute the squared radius of a sphere. Provides the operator: 
 `FT operator()(const Sphere_3& s);` which returns the squared radius of `s`. 
 */ 
-typedef Hidden_type Compute_squared_radius_3; 
+typedef unspecified_type Compute_squared_radius_3; 
 
 /*!
 A functor object to compute the squared distance between two points. Provides the operator:
 `FT operator()(const Point_3& p, const Point_3& q);}` which returns the squared distance between \a p and \a q.
 */
-typedef Hidden_type Compute_squared_distance_3;
+typedef unspecified_type Compute_squared_distance_3;
 
 
 /// @} 

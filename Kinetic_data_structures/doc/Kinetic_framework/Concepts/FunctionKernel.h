@@ -151,7 +151,7 @@ public:
     /*! 
       The number type used in describing the function. 
     */ 
-    typedef Hidden_type NT; 
+    typedef unspecified_type NT; 
 
     /*! 
       Construct a constant function from a number. 
@@ -175,22 +175,22 @@ public:
   /*! 
     The basic representational number type. 
   */ 
-  typedef Hidden_type NT; 
+  typedef unspecified_type NT; 
 
   /*! 
     A type representing the roots of a `Function`. 
   */ 
-  typedef Hidden_type Root; 
+  typedef unspecified_type Root; 
 
   /*! 
     A model of `RootStack`. These objects can be created by calling the `root_stack_object` method with a `Function` and two (optional) `Root` objects. The enumerator then enumerates all roots of the function in the open inverval defined by the two root arguments. They optional arguments default to positive and negative infinity. 
   */ 
-  typedef Hidden_type Root_stack; 
+  typedef unspecified_type Root_stack; 
 
   /*! 
     The traits for the `Root_enumerator` class. 
   */ 
-  typedef Hidden_type Root_enumerator_traits; 
+  typedef unspecified_type Root_enumerator_traits; 
 
   /// @}
 
@@ -204,13 +204,13 @@ public:
     A functor which returns the sign of a 
     `Function` at a `NT` or `Root`. 
   */ 
-  typedef Hidden_type Sign_at; 
+  typedef unspecified_type Sign_at; 
 
   /*! 
     A functor which returns sign of a function 
     immediately after a root. 
   */ 
-  typedef Hidden_type Sign_after; 
+  typedef unspecified_type Sign_after; 
 
   /// @}
   
@@ -272,12 +272,12 @@ public:
     requires two `Root`s, returns the sign of a passed function 
     between the pair of roots. 
   */ 
-  typedef Hidden_type Sign_between_roots; 
+  typedef unspecified_type Sign_between_roots; 
 
   /*! 
     This functor computes the derivitive of a `Function`. Construction takes no arguments. 
   */ 
-  typedef Hidden_type Differentiate; 
+  typedef unspecified_type Differentiate; 
 
   /// @}
   
@@ -289,7 +289,7 @@ public:
   /*! 
     Map \f$ f(x)\f$ to \f$ f(-x)\f$. 
   */ 
-  typedef Hidden_type Negate_variable; 
+  typedef unspecified_type Negate_variable; 
 
   /// @}
 

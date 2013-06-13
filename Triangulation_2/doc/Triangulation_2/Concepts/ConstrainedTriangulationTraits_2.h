@@ -42,7 +42,7 @@ A function object whose `operator()` computes the intersection of two segments.
 `Object_2 operator()(Segment_2 s1, Segment_2 s2);` 
 Returns the intersection of `s1` and `s2`. 
 */ 
-typedef Hidden_type Intersect_2; 
+typedef unspecified_type Intersect_2; 
 
 /// \name Types required with Exact_predicates_tag
 /// When the constrained triangulation is instantiated with the intersection tag `CGAL::Exact_predicates_tag`, the used algorithm needs to be able to compare some distances between points and lines and the following types are further required.
@@ -51,12 +51,12 @@ typedef Hidden_type Intersect_2;
 /*! 
 A number type supporting the comparison operator `<`. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /*! 
 The line type. 
 */ 
-typedef Hidden_type Line_2; 
+typedef unspecified_type Line_2; 
 
 /*! 
 A function object whose `operator()` 
@@ -64,7 +64,7 @@ constructs a line from two points.
 
 `Line_2 operator()(Point_2 p1, Point_2 p2)`. 
 */ 
-typedef Hidden_type Construct_line_2; 
+typedef unspecified_type Construct_line_2; 
 
 /*! 
 A function object whose
@@ -74,7 +74,7 @@ a line and a point.
 `RT operator()(Line_2 l, Point_2 p);` Returns the squared distance 
 between `p` and `l`. 
 */ 
-typedef Hidden_type Compute_squared_distance_2; 
+typedef unspecified_type Compute_squared_distance_2; 
 
 /// @} 
 

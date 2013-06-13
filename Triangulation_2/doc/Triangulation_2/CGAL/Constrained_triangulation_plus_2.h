@@ -65,7 +65,7 @@ The value type of this iterator is a pair
 `std::pair<Vertex_handle, Vertex_handle>` corresponding to the 
 endpoints of the constraint. 
 */ 
-typedef Hidden_type Constraint_iterator; 
+typedef unspecified_type Constraint_iterator; 
 
 /*! 
 An iterator 
@@ -76,14 +76,14 @@ The value type of this iterator is a pair
 corresponding to the vertices of the 
 sub-constraint. 
 */ 
-typedef Hidden_type Subconstraint_iterator; 
+typedef unspecified_type Subconstraint_iterator; 
 
 /*! 
 An iterator on the 
 vertices of the chain of triangulation edges representing a 
 constraint. The value type of this iterator is `Vertex_handle`. 
 */ 
-typedef Hidden_type Vertices_in_constraint_iterator; 
+typedef unspecified_type Vertices_in_constraint_iterator; 
 
 /*! 
 This type is intended to describe 

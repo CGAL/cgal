@@ -29,7 +29,7 @@ public:
 /*! 
 a model of `SurfaceMesherTraits_3` 
 */ 
-typedef Hidden_type Surface_mesher_traits_3; 
+typedef unspecified_type Surface_mesher_traits_3; 
 
 /// @}
 

@@ -52,12 +52,12 @@ public:
   /*! 
     The type of the function kernel used to instantiate this `Kinetic::Simulator`. 
   */ 
-  typedef Hidden_type Function_kernel; 
+  typedef unspecified_type Function_kernel; 
 
   /*! 
     Extend this base class to listen to notifications from this `Kinetic::Simulator`. There are two types of notifications: `HAS_AUDIT_TIME` and `DIRECTION_OF_TIME`. The first is made when kinetic data structures can perform an audit. The second is made when the direction of time is changed. 
   */ 
-  typedef Hidden_type Listener; 
+  typedef unspecified_type Listener; 
 
   /*!
     \ingroup PkgKdsFrameworkOtherConcepts
@@ -203,17 +203,17 @@ public:
   /*! 
     The basic number type used in computations. 
   */ 
-  typedef Hidden_type NT; 
+  typedef unspecified_type NT; 
 
   /*! 
     A reference counted pointer to be used for storing references to the object. 
   */ 
-  typedef Hidden_type Handle; 
+  typedef unspecified_type Handle; 
 
   /*! 
     A reference counted pointer to be used for storing references to the object. 
   */ 
-  typedef Hidden_type Const_handle; 
+  typedef unspecified_type Const_handle; 
 
   /// @} 
 

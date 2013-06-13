@@ -30,19 +30,19 @@ public:
 /*! 
 A type for a point. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 A type for the sites of the Voronoi diagram. 
 */ 
-typedef Hidden_type Site_2; 
+typedef unspecified_type Site_2; 
 
 /*! 
 A type for the triangulated Delaunay 
 graph. The type `Delaunay_graph` must be a model of the 
 `DelaunayGraph_2` concept. 
 */ 
-typedef Hidden_type Delaunay_graph; 
+typedef unspecified_type Delaunay_graph; 
 
 /*! 
 The type of the edges of the Delaunay graph 
@@ -71,7 +71,7 @@ functor must provide the following operator:
 where the result type `result_type` must be either `Site_2` or 
 `const Site_2&`. 
 */ 
-typedef Hidden_type Access_site_2; 
+typedef unspecified_type Access_site_2; 
 
 /*! 
 A type for a functor that 
@@ -85,7 +85,7 @@ must provide the following operator:
 <CENTER>`Point_2 operator()(Delaunay_face_handle f)`</CENTER>. 
 The face handle `f` must not correspond to an infinite face. 
 */ 
-typedef Hidden_type Construct_Voronoi_point_2; 
+typedef unspecified_type Construct_Voronoi_point_2; 
 
 /*! 
 A tag for determining if the adaptation 
@@ -94,7 +94,7 @@ This tag is equal to either `CGAL::Tag_true` (a nearest site
 query functor is available) or `CGAL::Tag_false` (a nearest site 
 query functor is not available). 
 */ 
-typedef Hidden_type Has_nearest_site_2; 
+typedef unspecified_type Has_nearest_site_2; 
 
 /*! 
 A type for a functor that performs 
@@ -118,7 +118,7 @@ where the result type `result_type` is
 This type is required only if 
 `Has_nearest_site_2` is equal to `CGAL::Tag_true`. 
 */ 
-typedef Hidden_type Nearest_site_2; 
+typedef unspecified_type Nearest_site_2; 
 
 /// @} 
 

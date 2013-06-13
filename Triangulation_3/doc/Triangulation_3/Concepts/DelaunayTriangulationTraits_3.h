@@ -34,17 +34,17 @@ public:
 /*! 
 The line type. 
 */ 
-typedef Hidden_type Line_3; 
+typedef unspecified_type Line_3; 
 
 /*! 
 The object type. 
 */ 
-typedef Hidden_type Object_3; 
+typedef unspecified_type Object_3; 
 
 /*! 
 The ray type. 
 */ 
-typedef Hidden_type Ray_3; 
+typedef unspecified_type Ray_3; 
 
 /*! 
 A predicate object that must provide the function operator 
@@ -55,7 +55,7 @@ which determines the bounded side of the circle defined
 by `p`, `q`, and `r` on which `s` lies. 
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear. 
 */ 
-typedef Hidden_type Coplanar_side_of_bounded_circle_3; 
+typedef unspecified_type Coplanar_side_of_bounded_circle_3; 
 
 /*! 
 A predicate object that must provide the function operator 
@@ -65,7 +65,7 @@ A predicate object that must provide the function operator
 which determines on which side of the oriented sphere circumscribing 
 `p, q, r, s` the point `t` lies. 
 */ 
-typedef Hidden_type Side_of_oriented_sphere_3; 
+typedef unspecified_type Side_of_oriented_sphere_3; 
 
 /*! 
 A predicate object that must provide the function operator 
@@ -78,7 +78,7 @@ between `p` and `r`.
 It is only needed when using the `Fast_location` policy or the 
 `nearest_vertex` function. 
 */ 
-typedef Hidden_type Compare_distance_3; 
+typedef unspecified_type Compare_distance_3; 
 
 
 /// @}
@@ -103,7 +103,7 @@ It must also provide the function operator
 which constructs the circumcenter of three points. 
 \pre `p`, `q` and `r` must be non collinear. 
 */ 
-typedef Hidden_type Construct_circumcenter_3; 
+typedef unspecified_type Construct_circumcenter_3; 
 
 /*! 
 A constructor object that must provide the function operators 
@@ -116,7 +116,7 @@ A constructor object that must provide the function operators
 
 that construct an object respectively from a point, a segment and a ray. 
 */ 
-typedef Hidden_type Construct_object_3; 
+typedef unspecified_type Construct_object_3; 
 
 /*! 
 A constructor object that must provide the function operator 
@@ -126,7 +126,7 @@ A constructor object that must provide the function operator
 which constructs the line which is at the same distance from the three points. 
 \pre `p1`, `p2` and `p3` must be non collinear. 
 */ 
-typedef Hidden_type Construct_equidistant_line_3; 
+typedef unspecified_type Construct_equidistant_line_3; 
 
 /*! 
 A constructor object that must provide the function operator 
@@ -135,7 +135,7 @@ A constructor object that must provide the function operator
 
 which constructs the ray starting at `p` with direction given by `l`. 
 */ 
-typedef Hidden_type Construct_ray_3; 
+typedef unspecified_type Construct_ray_3; 
 
 /// @} 
 

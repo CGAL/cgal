@@ -33,20 +33,20 @@ respectively, where `B` is the actual box type. The difference
 to the box handle type lies in the first case where the box handle 
 would be `B` where this type is `const B&`. 
 */ 
-typedef Hidden_type Box_parameter; 
+typedef unspecified_type Box_parameter; 
 
 /*! 
 number type to represent the box 
 boundaries. Allowed are the built-in types `int`, `unsigned 
 int`, `float`, and `double`. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 type for the `id`-number, 
 model of the `LessThanComparable` concept. 
 */ 
-typedef Hidden_type ID; 
+typedef unspecified_type ID; 
 
 /*! 
 returns the dimension of the box. 

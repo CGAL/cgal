@@ -49,7 +49,7 @@ class of `Triangulation_data_structure_3::Cell`.
 \note It can be implemented using a nested template class.
 */ 
 template <typename TDS2> 
-using Rebind_TDS = Hidden_type;
+using Rebind_TDS = unspecified_type;
 
 /*! 
 

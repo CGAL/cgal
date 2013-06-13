@@ -43,133 +43,133 @@ public:
 Number type to represent coordinates. 
 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 
 2D point that represents (u, v) coordinates computed by parameterization methods. Must provide `x()` and `y()` methods. 
 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 
 3D point that represents vertices coordinates. Must provide `x()`, `y()` and `z()` methods. 
 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 
 2D vector. Must provide `x()` and `y()` methods. 
 
 */ 
-typedef Hidden_type Vector_2; 
+typedef unspecified_type Vector_2; 
 
 /*! 
 
 3D vector. Must provide `x()`, `y()` and `z()` methods.  
 
 */ 
-typedef Hidden_type Vector_3; 
+typedef unspecified_type Vector_3; 
 
 /*! 
 
 Opaque type representing a facet of the 3D mesh. No methods are expected. 
 
 */ 
-typedef Hidden_type Facet; 
+typedef unspecified_type Facet; 
 
 /*! 
 
 Handle to a facet. Model of the Handle concept. 
 
 */ 
-typedef Hidden_type Facet_handle; 
+typedef unspecified_type Facet_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Facet_const_handle; 
+typedef unspecified_type Facet_const_handle; 
 
 /*! 
 
 Iterator over all mesh facets. Model of the `ForwardIterator` concept. 
 
 */ 
-typedef Hidden_type Facet_iterator; 
+typedef unspecified_type Facet_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Facet_const_iterator; 
+typedef unspecified_type Facet_const_iterator; 
 
 /*! 
 
 Opaque type representing a vertex of the 3D mesh. No methods are expected. 
 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 
 Handle to a vertex. Model of the Handle concept. 
 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_const_handle; 
+typedef unspecified_type Vertex_const_handle; 
 
 /*! 
 
 Iterator over all vertices of a mesh. Model of the `ForwardIterator` concept. 
 
 */ 
-typedef Hidden_type Vertex_iterator; 
+typedef unspecified_type Vertex_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_const_iterator; 
+typedef unspecified_type Vertex_const_iterator; 
 
 /*! 
 
 Iterator over vertices of the mesh <I>main border</I>. Model of the `ForwardIterator` concept. 
 
 */ 
-typedef Hidden_type Border_vertex_iterator; 
+typedef unspecified_type Border_vertex_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Border_vertex_const_iterator; 
+typedef unspecified_type Border_vertex_const_iterator; 
 
 /*! 
 
 Counter-clockwise circulator over a facet's vertices. Model of the `BidirectionalCirculator` concept. 
 
 */ 
-typedef Hidden_type Vertex_around_facet_circulator; 
+typedef unspecified_type Vertex_around_facet_circulator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_around_facet_const_circulator; 
+typedef unspecified_type Vertex_around_facet_const_circulator; 
 
 /*! 
 
 Clockwise circulator over the vertices incident to a vertex. Model of the `BidirectionalCirculator` concept. 
 
 */ 
-typedef Hidden_type Vertex_around_vertex_circulator; 
+typedef unspecified_type Vertex_around_vertex_circulator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_around_vertex_const_circulator; 
+typedef unspecified_type Vertex_around_vertex_const_circulator; 
 
 /// @} 
 

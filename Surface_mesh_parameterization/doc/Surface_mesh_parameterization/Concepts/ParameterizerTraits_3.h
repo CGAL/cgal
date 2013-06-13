@@ -38,7 +38,7 @@ public:
 Export the type of mesh to parameterize. 
 
 */ 
-typedef Hidden_type Adaptor; 
+typedef unspecified_type Adaptor; 
 
 /// @} 
 

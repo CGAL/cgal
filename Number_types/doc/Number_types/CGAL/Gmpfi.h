@@ -43,7 +43,7 @@ public:
 Type representing the precision (number of bits 
 used to represent the mantissa) of a number. 
 */ 
-typedef Hidden_type Precision_type; 
+typedef unspecified_type Precision_type; 
 
 /// @} 
 

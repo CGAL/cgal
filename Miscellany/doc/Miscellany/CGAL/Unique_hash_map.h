@@ -45,17 +45,17 @@ public:
 /*! 
 the `Key` type. 
 */ 
-typedef Hidden_type Key; 
+typedef unspecified_type Key; 
 
 /*! 
 the `Data` type. 
 */ 
-typedef Hidden_type Data; 
+typedef unspecified_type Data; 
 
 /*! 
 the unique hash function type. 
 */ 
-typedef Hidden_type Hash_function; 
+typedef unspecified_type Hash_function; 
 
 /// @} 
 

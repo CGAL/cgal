@@ -64,7 +64,7 @@ public:
 the alpha shape traits type. 
 It has to derive from a triangulation traits class. For example `Dt::Point` is a point class.
 */ 
-typedef Hidden_type Gt; 
+typedef unspecified_type Gt; 
 
 /*! 
 the number type of alpha values. 
@@ -83,19 +83,19 @@ it is valid and has not been modified.
 For convenience, classical comparison operators are provided for the type `FT`. 
 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The size type. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different alpha values. 
 \pre Its `value_type` is `FT`. 
 */ 
-typedef Hidden_type Alpha_iterator; 
+typedef unspecified_type Alpha_iterator; 
 
 /*! 
 In GENERAL mode,  

@@ -30,7 +30,7 @@ public:
 /*! 
 The internal vector type from \ref thirdpartyEigen "Eigen". 
 */ 
-typedef Hidden_type EigenType; 
+typedef unspecified_type EigenType; 
 
 /// @}
 

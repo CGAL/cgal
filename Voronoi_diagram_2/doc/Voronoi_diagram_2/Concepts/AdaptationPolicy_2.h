@@ -38,14 +38,14 @@ public:
 /*! 
 A type for the sites of the Voronoi diagram. 
 */ 
-typedef Hidden_type Site_2; 
+typedef unspecified_type Site_2; 
 
 /*! 
 A type for the triangulated Delaunay 
 graph. The type `Delaunay_graph` must be a model of the 
 `DelaunayGraph_2` concept. 
 */ 
-typedef Hidden_type Delaunay_graph; 
+typedef unspecified_type Delaunay_graph; 
 
 /*! 
 
@@ -103,7 +103,7 @@ model of the concepts `DefaultConstructible`,
 
 The functor returns `true` iff the edge is rejected. 
 */ 
-typedef Hidden_type Edge_rejector; 
+typedef unspecified_type Edge_rejector; 
 
 /*! 
 A type for the predicate functor that is 
@@ -117,7 +117,7 @@ of the functor). It must be model of the concepts `DefaultConstructible`,
 
 The functor returns `true` iff the face is rejected. 
 */ 
-typedef Hidden_type Face_rejector; 
+typedef unspecified_type Face_rejector; 
 
 /*! 
 A tag for determining if the adaptation 
@@ -126,7 +126,7 @@ graph. This tag is equal to either `CGAL::Tag_true` (a site
 inserter functor is available) or `CGAL::Tag_false` (a site 
 inserter functor is not available). 
 */ 
-typedef Hidden_type Has_inserter; 
+typedef unspecified_type Has_inserter; 
 
 /*! 
 A type for a functor that inserts sites 
@@ -145,7 +145,7 @@ site inserted is <I>hidden</I>, i.e., it has an empty Voronoi cell.
 This type is required only if the `Has_inserter` tag is equal to 
 `CGAL::Tag_true`. 
 */ 
-typedef Hidden_type Site_inserter; 
+typedef unspecified_type Site_inserter; 
 
 /// @} 
 

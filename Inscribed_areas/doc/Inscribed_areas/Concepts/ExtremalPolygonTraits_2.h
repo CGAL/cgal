@@ -32,25 +32,25 @@ public:
 /*! 
 model for `FieldNumberType`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 model for 
 `Kernel::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 model for 
 `Kernel::Less_xy_2`. 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 model for 
 `Kernel::Orientation_2`. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 AdaptableBinaryFunction class `op`: 
@@ -64,7 +64,7 @@ sub-polygon of \f$ P\f$ with vertices from \f$ [root,\, q]\f$ increases
 when \f$ p\f$ is added to it. E.g. in the maximum area case this is 
 the area of the triangle \f$ (root,\, q,\, p)\f$. 
 */ 
-typedef Hidden_type Operation; 
+typedef unspecified_type Operation; 
 
 /// @} 
 

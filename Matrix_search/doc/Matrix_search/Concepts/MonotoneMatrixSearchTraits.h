@@ -36,7 +36,7 @@ public:
 /*! 
 The type of a matrix entry. 
 */ 
-typedef Hidden_type Value; 
+typedef unspecified_type Value; 
 
 /// @} 
 

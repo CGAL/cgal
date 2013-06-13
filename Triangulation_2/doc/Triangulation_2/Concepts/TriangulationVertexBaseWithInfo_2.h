@@ -21,7 +21,7 @@ public:
 /*! 
 A type which is `DefaultConstructible` and `Assignable`. 
 */ 
-typedef Hidden_type Info; 
+typedef unspecified_type Info; 
 
 /// @} 
 

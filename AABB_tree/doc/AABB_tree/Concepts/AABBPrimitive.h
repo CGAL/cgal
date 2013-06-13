@@ -25,17 +25,17 @@ public:
 /*! 
 3D point type. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 Type of input datum. 
 */ 
-typedef Hidden_type Datum; 
+typedef unspecified_type Datum; 
 
 /*! 
 Type of identifiers through which the input objects are referred to. It must be a model of the concepts DefaultConstructible and Assignable. 
 */ 
-typedef Hidden_type Id; 
+typedef unspecified_type Id; 
 
 /// @} 
 

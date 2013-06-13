@@ -33,7 +33,7 @@ public:
 /*! 
 number of edges size type. 
 */ 
-typedef Hidden_type Size; 
+typedef unspecified_type Size; 
 
 /// @} 
 

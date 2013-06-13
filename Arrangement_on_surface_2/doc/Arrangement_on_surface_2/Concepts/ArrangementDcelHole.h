@@ -21,7 +21,7 @@ public:
 /*! 
 the corresponding <span class="textsc">Dcel</span> face type. 
 */ 
-typedef Hidden_type Face; 
+typedef unspecified_type Face; 
 
 /*! 
 

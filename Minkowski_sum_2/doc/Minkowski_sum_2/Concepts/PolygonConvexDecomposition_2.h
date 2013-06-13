@@ -22,17 +22,17 @@ public:
 /*! 
 the geometric kernel type. 
 */ 
-typedef Hidden_type Kernel; 
+typedef unspecified_type Kernel; 
 
 /*! 
 the point type, used to represent polygon vertices. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 the polygon type. 
 */ 
-typedef Hidden_type Polygon_2; 
+typedef unspecified_type Polygon_2; 
 
 /// @} 
 

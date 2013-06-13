@@ -19,12 +19,12 @@ public:
 /*! 
 A constant handle to a straight skeleton halfedge. 
 */ 
-typedef Hidden_type Halfedge_const_handle; 
+typedef unspecified_type Halfedge_const_handle; 
 
 /*! 
 A constant handle to a straight skeleton vertex. 
 */ 
-typedef Hidden_type Vertex_const_handle; 
+typedef unspecified_type Vertex_const_handle; 
 
 /// @} 
 

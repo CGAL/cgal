@@ -46,7 +46,7 @@ public:
 /*! 
 the multiplicity type. 
 */ 
-typedef Hidden_type Multiplicity; 
+typedef unspecified_type Multiplicity; 
 
 /// @} 
 
@@ -57,7 +57,7 @@ typedef Hidden_type Multiplicity;
 indicates whether the nested functors `Are_mergeable_2` and 
 `Merge_2` are provided. 
 */ 
-typedef Hidden_type Has_merge_category; 
+typedef unspecified_type Has_merge_category; 
 
 /// @} 
 
@@ -67,12 +67,12 @@ typedef Hidden_type Has_merge_category;
 /*! 
 models the concept `ArrTraits::Intersect_2`. 
 */ 
-typedef Hidden_type Intersect_2; 
+typedef unspecified_type Intersect_2; 
 
 /*! 
 models the concept `ArrTraits::Split_2`. 
 */ 
-typedef Hidden_type Split_2; 
+typedef unspecified_type Split_2; 
 
 /// @}
 
@@ -88,12 +88,12 @@ models the concept `ArrTraits::AreMergeable_2`.
 
 
 */ 
-typedef Hidden_type Are_mergeable_2; 
+typedef unspecified_type Are_mergeable_2; 
 
 /*! 
 models the concept `ArrTraits::Merge_2`. 
 */ 
-typedef Hidden_type Merge_2; 
+typedef unspecified_type Merge_2; 
 
 /// @} 
 

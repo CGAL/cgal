@@ -18,17 +18,17 @@ public:
 /*! 
 The type of the surface to simplify. Must be a model of the `EdgeCollapsableMesh` concept. 
 */ 
-typedef Hidden_type ECM; 
+typedef unspecified_type ECM; 
 
 /*! 
 A field type representing the collapse cost 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The type of the edge profile cache. Must be a model of the `EdgeProfile` concept. 
 */ 
-typedef Hidden_type Profile; 
+typedef unspecified_type Profile; 
 
 /*! 
 The point type for the surface vertex. Must be a model of `Point_3`. 
@@ -38,7 +38,7 @@ typename CGAL::halfedge_graph_traits<ECM>::Point Point;
 /*! 
 An integer type representing the number of edges 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /// @} 
 

@@ -26,31 +26,31 @@ public:
 /*! 
 A segment type 
 */ 
-typedef Hidden_type Segment_2; 
+typedef unspecified_type Segment_2; 
 
 /*! 
 A ray type 
 */ 
-typedef Hidden_type Ray_2; 
+typedef unspecified_type Ray_2; 
 
 /*! 
 A general object type that can be either a point or a segment 
 */ 
-typedef Hidden_type Object_2; 
+typedef unspecified_type Object_2; 
 
 /*! 
 Function object type that provides 
 `Segment_2 operator()(Point_2 p, Point_2 q)`, which constructs and 
 returns the segment defined by the points \f$ p\f$ and \f$ q\f$. 
 */ 
-typedef Hidden_type Construct_segment_2; 
+typedef unspecified_type Construct_segment_2; 
 
 /*! 
 Function object type that provides 
 `Ray_2 operator()(Point_2 p, Point_2 q)`, which constructs and returns 
 the ray from point \f$ p\f$ through point \f$ q\f$. 
 */ 
-typedef Hidden_type Construct_ray_2; 
+typedef unspecified_type Construct_ray_2; 
 
 /*! 
 Predicate object type that 
@@ -60,7 +60,7 @@ returns `true`, iff `q` lies between `p`
 and `r` and `p`, `q`, and `r` satisfy the precondition 
 that they are collinear. 
 */ 
-typedef Hidden_type Collinear_are_ordered_along_line_2; 
+typedef unspecified_type Collinear_are_ordered_along_line_2; 
 
 /*! 
 Predicate object type that 
@@ -71,7 +71,7 @@ returns `true`, iff the three points are collinear and
 and `r`. Note that `false` should be returned if 
 `q==p` or `q==r`. 
 */ 
-typedef Hidden_type Are_stritcly_ordered_along_line_2; 
+typedef unspecified_type Are_stritcly_ordered_along_line_2; 
 
 /*! 
 Function object type that provides 
@@ -79,7 +79,7 @@ Function object type that provides
 the intersection of two segments (which may be either a segment or 
 a point). 
 */ 
-typedef Hidden_type Intersect_2; 
+typedef unspecified_type Intersect_2; 
 
 /*! 
 Function object type that provides 
@@ -87,7 +87,7 @@ Function object type that provides
 `true` if `o` is a segment and assigns the value of `o` 
 to `s1`; returns `false` otherwise. 
 */ 
-typedef Hidden_type Assign_2; 
+typedef unspecified_type Assign_2; 
 
 /// @} 
 

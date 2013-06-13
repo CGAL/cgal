@@ -24,22 +24,22 @@ public:
 The number type. This type must fulfill the requirements on 
 `FieldNumberType` 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 Models the concept `ArrTraits::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 Models the concept `ArrTraits::XMonotoneCurve_2`.
 */ 
-typedef Hidden_type Segment_2; 
+typedef unspecified_type Segment_2; 
 
 /*! 
 Models the concept `SRTraits_2::IsoRectangle_2`
 */ 
-typedef Hidden_type Iso_rectangle_2; 
+typedef unspecified_type Iso_rectangle_2; 
 
 /// @}
 
@@ -49,49 +49,49 @@ typedef Hidden_type Iso_rectangle_2;
 /*! 
 Models the concept `SRTraits_2::ConstructVertex_2`.
 */ 
-typedef Hidden_type Construct_vertex_2; 
+typedef unspecified_type Construct_vertex_2; 
 
 /*! 
 Models the concept `SRTraits_2::ConstructSegment_2`.
 */ 
-typedef Hidden_type Construct_segment_2; 
+typedef unspecified_type Construct_segment_2; 
 
 /*! 
 Models the concept `SRTraits_2::ConstructIsoRectangle_2`. 
 */ 
-typedef Hidden_type Construct_iso_rectangle_2; 
+typedef unspecified_type Construct_iso_rectangle_2; 
 
 /*! 
 Models the concept `RealEmbeddableTraits::ToDouble`. The precision of this operation is
 of not high significance, as it is only used in the implementation of the
 heuristic technique to exploit a cluster of kd-trees rather than just one.
 */ 
-typedef Hidden_type To_double; 
+typedef unspecified_type To_double; 
 
 /*! 
 Models the concept `SRTraits_2::CompareX_2`.
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 Models the concept `SRTraits_2::CompareY_2`. 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 Models the concept `SRTraits_2::Snap_2`.
 */ 
-typedef Hidden_type Snap_2; 
+typedef unspecified_type Snap_2; 
 
 /*! 
 Models the concept `SRTraits_2::IntegerGridPoint_2`.
 */ 
-typedef Hidden_type Integer_grid_point_2; 
+typedef unspecified_type Integer_grid_point_2; 
 
 /*! 
 Models the concept `SRTraits_2::MinkowskiSumWithPixel_2`.
 */ 
-typedef Hidden_type Minkowski_sum_with_pixel_2; 
+typedef unspecified_type Minkowski_sum_with_pixel_2; 
 
 /// @} 
 

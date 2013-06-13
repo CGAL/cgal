@@ -30,7 +30,7 @@ Handle type for the cells of the
 triangulation. Must match the `Cell_handle` type in the 
 triangulation type used by the mesh generation function. 
 */ 
-typedef Hidden_type Cell_handle; 
+typedef unspecified_type Cell_handle; 
 
 /*! 
 Type representing the quality of a 
@@ -38,7 +38,7 @@ cell. Must be a model of CopyConstructible and
 LessThanComparable. Between two cells, the one which has the lower 
 quality must have the lower `Cell_quality`. 
 */ 
-typedef Hidden_type Cell_quality; 
+typedef unspecified_type Cell_quality; 
 
 /*! 
 Type representing if a cell is bad or not. Must 
@@ -50,7 +50,7 @@ In addition, an object of this type must contain an object of type
 a bad cell. `Cell_quality` must be accessible by `operator*()`. 
 Note that `boost::optional<Cell_quality>` is a natural model of this concept. 
 */ 
-typedef Hidden_type Is_cell_bad; 
+typedef unspecified_type Is_cell_bad; 
 
 /// @} 
 
