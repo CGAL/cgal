@@ -133,6 +133,8 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
   <h3>Combinatorial Maps</h3>
   <ul>
     <li>Two bug fixes: do not use the 2 least significant bits for cell attribute without dart support; add share a mark in CMap_cell_iterator.</li>
+    <li>Add a constructor taking a given combinatorial map as argument, possibly with different dimension and/or different attributes. This allows to transform a combinatorial map. </li>
+    <li>Add operator= and swap method.</li>
   </ul>
 
   <h3>2D Apollonius graphs</h3>
