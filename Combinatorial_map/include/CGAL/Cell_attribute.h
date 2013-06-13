@@ -89,6 +89,12 @@ namespace CGAL {
     template<typename CMap, unsigned int i, typename T>
     friend struct internal::Decrease_attribute_functor_run;
 
+    template <typename CMap, typename Attrib>
+    friend struct internal::Reverse_orientation_of_map_functor;
+
+    template <typename CMap, typename Attrib>
+    friend struct internal::Reverse_orientation_of_connected_component_functor;
+
   public:
     typedef Tag_false                            Supports_cell_dart;
 
@@ -187,6 +193,12 @@ namespace CGAL {
 
     template<typename CMap, unsigned int i, typename T>
     friend struct internal::Decrease_attribute_functor_run;
+
+    template <typename CMap, typename Attrib>
+    friend struct internal::Reverse_orientation_of_map_functor;
+
+    template <typename CMap, typename Attrib>
+    friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
     typedef Tag_true                             Supports_cell_dart;

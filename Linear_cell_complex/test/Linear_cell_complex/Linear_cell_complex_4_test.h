@@ -284,6 +284,12 @@ bool test_LCC_4()
     return false;
   }
 
+  lcc.reverse_orientation();
+  lcc.reverse_orientation();
+
+  lcc.reverse_orientation_connected_component(dh1);
+  lcc.reverse_orientation_connected_component(dh1);
+
   /*    import_from_polyhedron<LCC>(lcc,ap);
 
         lcc.clear();

@@ -2022,7 +2022,7 @@ namespace CGAL {
      */
     void reverse_orientation_connected_component (Dart_handle adart)
     {
-      internal::Reverse_orientation_of_conected_component_functor<Self>::run(this, adart);
+      internal::Reverse_orientation_of_connected_component_functor<Self>::run(this, adart);
     }
 
     /** Count the marked cells (at least one marked dart).
