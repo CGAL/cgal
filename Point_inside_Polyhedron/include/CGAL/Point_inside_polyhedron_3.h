@@ -13,13 +13,13 @@ namespace CGAL {
 
 /** 
  * Class providing the functionality of locating query points with respect to closed triangulated polyhedron.
- * @tparam Polyhedron_3 a %CGAL polyhedron
+ * @tparam Polyhedron a %CGAL polyhedron
  * @tparam Kernel a %CGAL kernel
  */
-template <class Polyhedron_3, class Kernel>
+template <class Polyhedron, class Kernel>
 class Point_inside_polyhedron_3 {
 // typedefs
-  typedef CGAL::AABB_const_polyhedron_triangle_primitive<Kernel,Polyhedron_3> Primitive;
+  typedef CGAL::AABB_const_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
   typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
   typedef typename Traits::Bounding_box Bounding_box;
   typedef CGAL::AABB_tree<Traits> Tree;
@@ -38,7 +38,7 @@ public:
    * @param polyhedron polyhedron on with queries are executed
    * @param kernel kernel object
    */
-  Point_inside_polyhedron_3(const Polyhedron_3& polyhedron, const Kernel& kernel=Kernel())
+  Point_inside_polyhedron_3(const Polyhedron& polyhedron, const Kernel& kernel=Kernel())
     : m_kernel(kernel)
   {
     CGAL_assertion(polyhedron.is_pure_triangle());
@@ -117,7 +117,7 @@ private:
   is_inside_ray_tree_traversal(const Query& query) const 
   {
     std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
-    internal::Ray_3_Triangle_3_traversal_traits<Traits,Polyhedron_3,Kernel,Boolean_tag<ray_is_vertical>> traversal_traits(status);
+    internal::Ray_3_Triangle_3_traversal_traits<Traits,Polyhedron,Kernel,Boolean_tag<ray_is_vertical>> traversal_traits(status);
     tree.traversal(query, traversal_traits);
 
     if ( !boost::logic::indeterminate(status.first) )
@@ -136,7 +136,7 @@ private:
   boost::optional<Bounded_side>
   is_inside_ray_tree_traversal_with_axis(const Query& query) const {
     std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
-    internal::Ray_3_Triangle_3_traversal_traits_axis<Traits,Polyhedron_3,Kernel, 
+    internal::Ray_3_Triangle_3_traversal_traits_axis<Traits,Polyhedron,Kernel, 
       Axis / 2
     > traversal_traits(status);
     tree.traversal(query, traversal_traits);
