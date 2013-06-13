@@ -35,7 +35,7 @@ public:
    * The constructor of query object. It also processes given polyhedron for multiple queries.
    * @pre @a polyhedron.is_pure_triangle()
    * @pre @a polyhedron.is_closed()
-   * @param polyhedron polyhedron on with queries are executed
+   * @param polyhedron polyhedron on which queries are executed
    * @param kernel kernel object
    */
   Point_inside_polyhedron_3(const Polyhedron& polyhedron, const Kernel& kernel=Kernel())
