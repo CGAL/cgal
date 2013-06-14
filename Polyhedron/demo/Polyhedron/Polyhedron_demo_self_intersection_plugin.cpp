@@ -12,7 +12,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/box_intersection_d.h>
 
-#include <CGAL/self_intersect.h>
+#include <CGAL/Self_intersection_polyhedron_3.h>
 #include <CGAL/Make_triangle_soup.h>
 
 typedef Kernel::Triangle_3 Triangle;
@@ -51,19 +51,27 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
     Polyhedron* pMesh = item->polyhedron();
 
     // compute self-intersections
-    typedef std::list<Triangle>::iterator Iterator;
-    std::list<Triangle> triangles; // intersecting triangles
-    typedef std::back_insert_iterator<std::list<Triangle> > OutputIterator;
-    std::cout << "Self-intersect...";
-    ::self_intersect<Polyhedron,Kernel,OutputIterator>(*pMesh,std::back_inserter(triangles));
-    std::cout << "ok (" << triangles.size() << " triangle(s))" << std::endl;
+
+    typedef Polyhedron::Facet_const_handle Facet_const_handle;
+    std::vector<std::pair<Facet_const_handle, Facet_const_handle> > facets;
+    CGAL::self_intersect<Kernel>(*pMesh, back_inserter(facets));
+
+    std::cout << "ok (" << facets.size() << " triangle pair(s))" << std::endl;
 
     // add intersecting triangles as a new polyhedron, i.e., a triangle soup.
-    if(triangles.size() != 0)
+    if(!facets.empty())
     {
       Polyhedron *pSoup = new Polyhedron;
-      Make_triangle_soup<Polyhedron,Kernel,Iterator> soup_builder;
-      soup_builder.run(triangles.begin(),triangles.end(),*pSoup);
+
+      std::vector<Facet_const_handle> facets_flat;
+      facets_flat.reserve(2 * facets.size());
+      for(std::size_t i = 0; i < facets.size(); ++i) 
+      { facets_flat.push_back(facets[i].first); 
+        facets_flat.push_back(facets[i].second); 
+      }
+
+      Make_triangle_soup<Polyhedron,Kernel,std::vector<Facet_const_handle>::iterator> soup_builder;
+      soup_builder.run(facets_flat.begin(), facets_flat.end(),*pSoup);
 
       Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pSoup);
       new_item->setName(tr("%1 (intersecting triangles)").arg(item->name()));
