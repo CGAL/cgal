@@ -630,8 +630,21 @@ public:
 
       if (it_next == end_seg) {
         // The polyline contains a single segment:
+#ifdef CGAL_POLYLINE_FIXED_LEFT_TO_RIGHT
+        if (m_poly_traits.segment_traits_2()->
+            compare_endpoints_xy_2_object()(*start_seg) == LARGER) {
+          Segment_2 seg = m_poly_traits.segment_traits_2()->
+                              construct_opposite_2_object()(*start_seg);
+          *oi++ = make_object(construct_x_monotone_curve(seg));
+        }
+        else {
+          *oi++ = make_object(construct_x_monotone_curve(*start_seg));
+        }
+        return oi;
+#else
         *oi++ = make_object(construct_x_monotone_curve(*start_seg));
         return oi;
+#endif
       }
 
       // Polyline contains at least 2 segments!
@@ -658,8 +671,28 @@ public:
           {
             // Construct an x-monotone curve from the sub-range which
             // was found
+
+#ifdef CGAL_POLYLINE_FIXED_LEFT_TO_RIGHT
+            if (comp_endpts_xy(*it_start) == LARGER) {
+              std::vector<Segment_2> reversed_seg;
+              std::copy(it_start, it_next, reversed_seg.begin());
+              for (std::vector<Segment_2>::iterator
+                     rev_it = reversed_seg.begin();
+                   rev_it != reversed_seg.end() ; ++rev_it) {
+                *rev_it = seg_traits->construct_opposite_2_object()(*rev_it);
+              }
+              *oi++ =
+                make_object(construct_x_monotone_curve(reversed_seg.rbegin(),
+                                                       reversed_seg.rend()));
+            }
+            else {
+              *oi++ =
+                make_object(construct_x_monotone_curve(it_start, it_next));
+            }
+#else
             *oi++ =
               make_object(construct_x_monotone_curve(it_start, it_next));
+#endif
             it_start = it_next;
             is_start_vertical = is_vertical(*it_start);
             start_dir = comp_endpts_xy(*it_start);
