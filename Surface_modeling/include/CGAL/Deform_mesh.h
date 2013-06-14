@@ -381,7 +381,7 @@ public:
 
     insert_roi(vd); // also insert it as roi
 
-    is_handle(vd) = true;    
+    is_hdl_map[id(vd)] = true;    
     handle_group->push_back(vd);
     return true;
   }
@@ -411,7 +411,7 @@ public:
     need_preprocess_both();
     for(typename Handle_container::iterator it = handle_group->begin(); it != handle_group->end(); ++it) 
     {
-      is_handle(*it) = false;
+      is_hdl_map[id(*it)] = false;
     }
     handle_group_list.erase(handle_group);
   }
@@ -430,7 +430,7 @@ public:
     typename Handle_container::iterator it = std::find(handle_group->begin(), handle_group->end(), vd);
     if(it != handle_group->end())
     {
-      is_handle(*it) = false;
+      is_hdl_map[id(*it)] = false;
       handle_group->erase(it);   
       need_preprocess_both();
       return true;
@@ -519,7 +519,7 @@ public:
     if(is_roi(vd)) { return false; }
     need_preprocess_both();
 
-    is_roi(vd) = true;
+    is_roi_map[id(vd)] = true;
     roi.push_back(vd);
     return true;
   }
@@ -540,7 +540,7 @@ public:
     typename std::vector<vertex_descriptor>::iterator it = std::find(roi.begin(), roi.end(), vd);
     if(it != roi.end())
     {
-      is_roi(vd) = false;
+      is_roi_map[id(vd)] = false;
       roi.erase(it);
 
       need_preprocess_both();
@@ -1387,11 +1387,6 @@ private:
   { return ros_id_map[id(vd)]; }
   std::size_t  ros_id(vertex_descriptor vd) const 
   { return ros_id_map[id(vd)]; }
-
-  std::vector<bool>::reference is_handle(vertex_descriptor vd)
-  { return is_hdl_map[id(vd)]; }
-  std::vector<bool>::reference is_roi(vertex_descriptor vd)
-  { return is_roi_map[id(vd)]; }
 
   /// shorthand of get(edge_index_map, e)
   std::size_t id(edge_descriptor e) const
