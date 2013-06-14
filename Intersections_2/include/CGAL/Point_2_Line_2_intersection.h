@@ -28,7 +28,7 @@
 
 #include <CGAL/Line_2.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -53,70 +53,32 @@ do_intersect(const typename K::Line_2 &line,
 }
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Point_2, typename K::Line_2>::result_type
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Line_2 &line,
 	     const K& k)
 {
     if (do_intersect(pt,line, k)) {
-        return make_object(pt);
+        return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Line_2>(pt);
     }
-    return Object();
+    return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Line_2>();
 }
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Line_2, typename K::Point_2>::result_type
 intersection(const typename K::Line_2 &line,
 	     const typename K::Point_2 &pt, 
 	     const K& k)
 {
-    if (do_intersect(pt,line, k)) {
-        return make_object(pt);
-    }
-    return Object();
+  return internal::intersection(pt, line, k);
 }
 
 } // namespace internal
 
-template <class K>
-inline 
-bool
-do_intersect(const Line_2<K> &line, 
-	     const Point_2<K> &pt)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-    return Do_intersect()(pt, line);
-}
-
-template <class K>
-inline 
-bool
-do_intersect(const Point_2<K> &pt,
-	     const Line_2<K> &line)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-    return Do_intersect()(pt, line);
-}
-
-template <class K>
-inline 
-Object
-intersection(const Line_2<K> &line, 
-	     const Point_2<K> &pt)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, line);
-}
-
-template <class K>
-inline 
-Object
-intersection(const Point_2<K> &pt,
-	     const Line_2<K> &line)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, line);
-}
+CGAL_INTERSECTION_FUNCTION(Point_2, Line_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Point_2, Line_2, 2)
 
 } //namespace CGAL
 

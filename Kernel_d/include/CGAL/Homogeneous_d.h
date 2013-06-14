@@ -329,9 +329,13 @@ public:
   typedef CGAL::Ray_d_Hyperplane_d_pair<Self> Ray_d_Hyperplane_d_pair;
   typedef CGAL::Segment_d_Hyperplane_d_pair<Self> Segment_d_Hyperplane_d_pair;
 
-  typedef internal::Intersect Intersect_d;
+  typedef internal::Intersect<Self> Intersect_d;
   Intersect_d intersect_d_object() const 
   { return Intersect_d(); }
+
+  typedef internal::Do_intersect<Self> Do_intersect_d;
+  Do_intersect_d do_intersect_d_object() const
+  { return Do_intersect_d(); }
 
   // FT - RT conversion and access :
 

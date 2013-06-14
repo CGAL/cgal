@@ -99,7 +99,7 @@ public:
 
   /*! 
     A Boolean value indicating whether the predicates are filtered (as in
-    `Filtered_kernel`).  This helps propagating such decisions to traits
+    `CGAL::Filtered_kernel`).  This helps propagating such decisions to traits
     classes which are built on top of a kernel, so that they can decide to
     filter their own predicates or not.
   */ 
