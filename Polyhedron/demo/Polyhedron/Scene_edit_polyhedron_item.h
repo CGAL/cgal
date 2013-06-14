@@ -276,6 +276,8 @@ typedef std::list<Handle_group_data> Handle_group_data_list;
   //For constraint rotation
   qglviewer::LocalConstraint rot_constraint;
   bool is_rot_free;
+
+  bool own_poly_item; //indicates if the poly_item should be deleted by the destructor
 public:
   // Deformation related functions //
   bool insert_handle(vertex_descriptor v)
