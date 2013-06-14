@@ -515,6 +515,45 @@ public:
     refresh_all_handle_centers();
   }
 
+  void select_isolated_components() {
+    bool any_inserted = false;
+    std::size_t threshold_size = ui_widget->Threshold_size_spin_box->value() < 0 ? 0 :
+      ui_widget->Threshold_size_spin_box->value();
+
+    std::vector<bool> mark(polyhedron()->size_of_vertices(), false);
+    Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
+    for( ;vb != ve; ++vb) 
+    {
+      if(mark[vb->id()] || deform_mesh.is_roi(vb)) { continue; }
+      std::queue<Polyhedron::Vertex_handle> Q;
+      std::vector<Polyhedron::Vertex_handle> C;
+      Q.push(vb);
+      mark[vb->id()] = true; C.push_back(vb);
+
+      while(!Q.empty()) {
+        Polyhedron::Vertex_handle current = Q.front();
+        Q.pop();
+
+        Polyhedron::Halfedge_around_vertex_circulator circ = current->vertex_begin();
+        do {
+          Polyhedron::Vertex_handle nv = circ->opposite()->vertex();
+          if(!mark[nv->id()] && !deform_mesh.is_roi(nv)) {
+            Q.push(nv);
+            mark[nv->id()] = true; C.push_back(nv);
+          }
+        } while(++circ != current->vertex_begin());
+      } // while(!Q.empty())
+
+      if(C.size() < threshold_size) {
+        any_inserted = true;
+        deform_mesh.insert_roi(C.begin(), C.end());
+      }
+      std::cout << "Connected component found with size: " << C.size() << std::endl;
+    }
+    if(any_inserted) {
+      emit itemChanged();
+    }
+  }
 protected:
   // Deformation related functions //
   void print_message(const QString& /*message*/)
