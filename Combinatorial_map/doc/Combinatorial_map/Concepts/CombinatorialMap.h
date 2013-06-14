@@ -19,6 +19,13 @@ public:
 */
 CombinatorialMap();
 
+/*!
+Construct a new combinatorial map from another one.
+The new combinatorial map is created by copying the darts and the non void attributes of cmap. CMap must be a model of `CombinatorialMap` concept, which can be defined with a different dimension and/or different attributes than `*this`. In this case, only permutations that are common to `cmap` and `*this`, and only non void i-attributes of `cmap` whose info type is the same to the info of non void i-attributes of `*this`, are copied.
+*/
+template<typename CMap>
+CombinatorialMap cm(const CMap& cmap);
+
 /// @}
 
 /// \name Types
@@ -520,6 +527,18 @@ template <unsigned int i> void set_attribute(Dart_handle dh, Attribute_handle<i>
 Deletes all the darts and all the attributes of the combinatorial map.
 */
 void clear();
+
+/*!
+Assignment operator.
+All darts and attributes are duplicated, and the former combinatorial map is deleted.
+*/
+CombinatorialMap& operator= (const CombinatorialMap& cmap);
+
+/*!
+Swap the current combinatorial map with `cmap`.
+There is no copy of darts and attributes thus this method runs in constant time.
+*/
+void swap(CombinatorialMap& cmap);
 
 /// @}
 
