@@ -16,12 +16,13 @@
 
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/version.h>
+#include <CGAL/version.h> 
+
+#include <CGAL/Orient_polyhedron_3.h>
 
 typedef Kernel::Point_3 Point_3;
 
-struct Polygon_soup :
-  public CGAL::Modifier_base<Polyhedron::HalfedgeDS> 
+struct Polygon_soup
 {
   typedef std::vector<Point_3> Points;
   typedef std::vector<std::size_t> Polygon_3;
@@ -96,8 +97,6 @@ struct Polygon_soup :
   void inverse_orientation(const std::size_t index) {
     std::reverse(polygons[index].begin(), polygons[index].end());
   }
-
-  void operator()(Polyhedron::HalfedgeDS& out_hds);
 };
 
 struct Polyhedron_to_polygon_soup_writer {
@@ -260,124 +259,11 @@ void Scene_polygon_soup_item::inside_out()
 bool 
 Scene_polygon_soup_item::orient()
 {
-  typedef Polygon_soup::Polygons::size_type size_type;
-  typedef Polygon_soup::Edges_map Edges;
-
   if(isEmpty() || this->oriented)
     return true; // nothing to do
-
-  Polygon_soup::Polygons& polygons = soup->polygons;
-  Polygon_soup::Edges_map& edges = soup->edges;
-
-  std::vector<bool> oriented;
-  std::stack<std::size_t> stack;
-  using std::make_pair;
-
-  // no polygon is oriented
-  oriented.resize(polygons.size());
-
-  size_type polygon_index = 0;
-  bool success = true;
-
-  while (polygon_index != polygons.size()) 
-  {
-    while ( polygon_index != polygons.size() && oriented[polygon_index] ) {
-      ++polygon_index;
-    }
-    if(polygon_index == polygons.size()) break;
-
-//     qDebug() << tr("Seed %1...\n").arg(polygon_index);
-    oriented[polygon_index] = true;
-    stack.push(polygon_index);
-    while(! stack.empty() )
-    {
-      const size_type to_be_oriented_index = stack.top();
-//       qDebug() << tr("polygon #%1").arg(to_be_oriented_index);
-      stack.pop();
-      const size_type size = polygons[to_be_oriented_index].size();
-      for(size_type ih = 0 ; ih < size ; ++ih) {
-        size_type ihp1 = ih+1;
-        if(ihp1>=size) ihp1 = 0;
-        const std::size_t& i1 = polygons[to_be_oriented_index][ih];
-        const std::size_t& i2 = polygons[to_be_oriented_index][ihp1];
-
-        Polygon_soup::Edge edge;
-        edge[0] = i1;
-        edge[1] = i2;
-        if(i1 > i2) std::swap(edge[0], edge[1]);
-
-        if(soup->non_manifold_edges.count(edge) > 0) {
-          continue;
-        }
-
-//         qDebug() << tr("edge %3-%4 (%1,%2)").arg(i1).arg(i2).arg(ih).arg(ihp1);
-        // edge (i1,i2)
-        Edges::iterator it_same_orient = edges.find(make_pair(i1, i2));
-        // edges (i2,i1)
-        Edges::iterator it_other_orient = edges.find(make_pair(i2, i1));
-
-        CGAL_assertion(it_same_orient != edges.end());
-        if(it_same_orient->second.size() > 1) {
-          if((it_other_orient != edges.end() && it_other_orient->second.size() > 0) ||
-             it_same_orient->second.size() > 2) {
-            // three polygons at the edge
-//             qDebug() << "three polygons at the edge";
-            success = false; // non-orientable
-          }
-          {
-            // one neighbor polyhedron, opposite orientation
-            size_type index = *(it_same_orient->second.begin());
-            if(index == to_be_oriented_index)
-              index = *(++it_same_orient->second.begin());
-            if(oriented[index]) {
-//               qDebug() << tr("neighbor polygon #%1 is already oriented, but in opposite orientation").arg(index);
-              success = false; // non-orientable
-              continue; // next edge
-            }
-   
-            // reverse the orientation
-            const size_type size = polygons[index].size();
-            for(size_type j = 0; j < size; ++j) {
-              const std::size_t& i0 = polygons[index][j];
-              const std::size_t& i1 = polygons[index][ j+1 < size ? j+1: 0];
-              CGAL_assertion_code(const bool r = )
-                edges[std::make_pair(i0, i1)].erase(index);
-              CGAL_assertion(r);
-            }
-            soup->inverse_orientation(index);
-            for(size_type j = 0; j < size; ++j) {
-              const std::size_t& i0 = polygons[index][j];
-              const std::size_t& i1 = polygons[index][ j+1 < size ? j+1: 0];
-              edges[std::make_pair(i0, i1)].insert(index);
-            }
-//             qDebug() << tr("inverse the orientation of polygon #%1\n").arg(index);
-            oriented[index] = true;
-            stack.push(index);
-          }
-        }
-        else if(it_other_orient != edges.end() && it_other_orient->second.size() == 1) {
-          // one polygon, same orientation
-          const size_type index = *(it_other_orient->second.begin());
-          if(oriented[index])
-            continue;
-          oriented[index] = true;
-//           qDebug() << tr("keep the orientation of polygon #%1\n").arg(index);
-          stack.push(index);
-        }
-        else {
-          // qDebug() << "else" << it_same_orient->second.size() << 
-          //   (it_other_orient == edges.end() ? 0 : it_other_orient->second.size());
-          if(it_same_orient->second.size() != 1 || 
-             (it_other_orient != edges.end() && it_other_orient->second.size() > 0)) 
-          {
-            // qDebug() << tr("non orientable");
-            success = false; // non-orientable
-          }
-        }
-      } // end for on all edges of one 
-    } // end while loop on the polygons of the connected component
-  } // end while loop on all non-oriented polygons remaining 
-  return success;
+  
+  oriented = CGAL::orient_polygon_soup(soup->points, soup->polygons);
+  return oriented;
 }
 
 
@@ -413,41 +299,13 @@ Scene_polygon_soup_item::save(std::ostream& out) const
   return out;
 }
 
-void
-Polygon_soup::operator()(Polyhedron::HalfedgeDS& out_hds)
-{
-  typedef Polyhedron::HalfedgeDS Output_HDS;
-  
-  CGAL::Polyhedron_incremental_builder_3<Output_HDS> builder(out_hds);
-
-  typedef Polygon_soup::size_type size_type;
-  builder.begin_surface(points.size(),
-                        polygons.size(),
-                        edges.size() * 2);
-  for(size_type i = 0, end = points.size();
-      i < end; ++i)
-  {
-    builder.add_vertex(points[i]);
-  }
-  for(size_type i = 0, end = polygons.size();
-      i < end; ++i)
-  {
-    const Polygon_soup::Polygon_3& polygon = polygons[i]; 
-    const size_type size = polygon.size();
-    builder.begin_facet();
-    for(size_type j = 0; j < size; ++j) {
-      builder.add_vertex_to_facet(polygon[j]);
-    }
-    builder.end_facet();
-  }
-  builder.end_surface();
-}
-
 bool 
 Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 {
   orient();
-  out_polyhedron->delegate(*soup);
+  CGAL::Polygon_soup_to_polyhedron_3<Polyhedron::HalfedgeDS, Point_3> builder(
+    soup->points, soup->polygons);
+  out_polyhedron->delegate(builder);
   return out_polyhedron->size_of_vertices() > 0;
 }
 

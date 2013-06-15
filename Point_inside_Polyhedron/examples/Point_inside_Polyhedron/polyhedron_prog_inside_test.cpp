@@ -9,7 +9,8 @@
 #include <CGAL/Timer.h>
 #include <boost/lexical_cast.hpp>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 
