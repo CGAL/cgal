@@ -26,6 +26,7 @@
 #define CGAL_SPHERICAL_KERNEL_LINE_ARC_3_H
 
 #include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
+#include <CGAL/Circular_kernel_3/Intersection_traits.h>
 #include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
@@ -93,14 +94,14 @@ namespace CGAL {
                  const Sphere_3 &s,
                  bool less_xyz_first = true) 
       {
-         std::vector<Object> sols;
+        std::vector<typename SK3_Intersection_traits<SK, Line_3, Sphere_3>::type> sols;
          SK().intersect_3_object()(l, s, std::back_inserter(sols));
          // l must intersect s in 2 points 
          CGAL_kernel_precondition(sols.size() == 2);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
-            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
+           *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
-            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[1]);
+            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[1]);
          if(less_xyz_first) {
            *this = Line_arc_3(l, pair1.first, pair2.first);
          } else {
@@ -112,16 +113,16 @@ namespace CGAL {
                  const Sphere_3 &s1, bool less_xyz_s1,
                  const Sphere_3 &s2, bool less_xyz_s2) 
       {
-         std::vector<Object> sols1, sols2;
+        std::vector<typename SK3_Intersection_traits<SK, Line_3, Sphere_3>::type> sols1, sols2;
          SK().intersect_3_object()(l, s1, std::back_inserter(sols1));
          SK().intersect_3_object()(l, s2, std::back_inserter(sols2));
          // l must intersect s1 and s2
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
-            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]);
+            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
-            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]);
+            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]);
          // the source and target must be different
          CGAL_kernel_precondition(pair1.first != pair2.first);
          *this = Line_arc_3(l, pair1.first, pair2.first);
@@ -135,8 +136,11 @@ namespace CGAL {
          CGAL_kernel_precondition(!SK().has_on_3_object()(p1,l));
          CGAL_kernel_precondition(!SK().has_on_3_object()(p2,l));
          // l must intersect p1 and p2
-         const typename SK::Point_3* point1=object_cast<typename SK::Point_3>( & SK().intersect_3_object()(l, p1) );
-         const typename SK::Point_3* point2=object_cast<typename SK::Point_3>( & SK().intersect_3_object()(l, p2) );
+         typedef typename SK3_Intersection_traits<SK, Line_3, Plane_3>::type Intersection;
+         Intersection i1 = SK().intersect_3_object()(l, p1);
+         Intersection i2 = SK().intersect_3_object()(l, p2);
+         const typename SK::Point_3* point1=boost::get<typename SK::Point_3>( & *i1 );
+         const typename SK::Point_3* point2=boost::get<typename SK::Point_3>( & *i2 );
          CGAL_assertion(point1!=NULL);
          CGAL_assertion(point2!=NULL);
          // the source and target must be different

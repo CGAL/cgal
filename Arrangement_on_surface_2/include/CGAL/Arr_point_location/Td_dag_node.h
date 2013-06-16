@@ -126,7 +126,7 @@ protected:
       }
 
       template < typename Tp >
-      void operator()(Tp& t) const
+      void operator()(Tp& /*t*/) const
       {
       }
 

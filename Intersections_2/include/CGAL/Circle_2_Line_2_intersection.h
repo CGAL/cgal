@@ -28,7 +28,6 @@
 
 #include <CGAL/Circle_2.h>
 #include <CGAL/Line_2.h>
-#include <CGAL/Object.h>
 #include <CGAL/squared_distance_2_1.h>
 
 namespace CGAL {

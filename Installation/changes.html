@@ -108,6 +108,21 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <div>
   <p> Release date: September 2013 </p>
 
+  <h3>3D Fast Intersection and Distance Computation (AABB Tree)</h3>
+  <ul>
+    <li>Following the intersection API change, <code>Object_and_primitive_id</code> has been replaced by a template class
+        <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine the type depending on the
+        query object type.
+    </li>
+  </ul>
+
+  <h3>2D Arrangements</h3>
+  <ul>
+    <li> The point location functionalities now uses a <code>boost::variant</code> instead of a <code>CGAL::Object</code>.
+         For convenience, The previous behavior can be restored by defining the macro <code>CGAL_ARR_POINT_LOCATION_VERSION</code> to 1.
+    </li>
+  </ul>
+
   <h3>Algebraic Foundations</h3>
   <ul>
     <li> For convenience, add an overload of <code>make_rational()</code> taking a pair of numbers.</li>
@@ -116,6 +131,21 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
   <h3>2D and 3D Geometry Kernel </h3>
   <ul>
     <li>A <code>Iso_rectangle_2</code> can now be constructed from a <code>Bbox_2</code> and an <code>Iso_cuboid_3</code> from a <code>Bbox_3</code>. </li>
+
+    <li> The intersection functions and functors used to returned a <code>CGAL::Object</code> in order to
+         deal with the different possible return types. However, depending on the arguments it is possible
+         to reduce the possible return types to a small set. For this reason and to take advantage of the type
+         safety, we decided to use <code>boost::variant</code> instead of <code>CGAL::Object</code>.
+        <code>The result_of</code> protocol is now even more useful to determine the return type of the intersection
+        functions and functors. The change should be relatively transparent to the user thanks to the implicit constructor
+        added to <code>CGAL::Object</code>. However, it is recommended to upgrade your code.
+        The previous behavior can be restored by defining the macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
+    </li>
+
+    <li>
+      The implementation of <code>CGAL::Object</code> has been updated and now uses <code>boost::shared_ptr</code>
+      and <code>boost::any</code>. This implementation is faster.
+    </li>
   </ul>
 
   <h3>2D Triangulations</h3>

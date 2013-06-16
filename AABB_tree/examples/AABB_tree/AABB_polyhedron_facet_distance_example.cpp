@@ -17,7 +17,6 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
-typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
 
 int main()

@@ -69,21 +69,7 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
 
 } // namespace internal
 
-
-
-template <class K>
-inline bool do_intersect(const Tetrahedron_3<K> &tet,
-			 const Triangle_3<K> &tr)
-{
-  return typename K::Do_intersect_3()(tr,tet);
-}
-
-template <class K>
-inline bool do_intersect(const Triangle_3<K> &tr,
-			 const Tetrahedron_3<K> &tet)
-{
-  return typename K::Do_intersect_3()(tr,tet);
-}
+CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Tetrahedron_3, 3)
 
 } //namespace CGAL
 
