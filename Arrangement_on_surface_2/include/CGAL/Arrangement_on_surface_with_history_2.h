@@ -182,19 +182,19 @@ protected:
                           public In_place_list_base<Curve_halfedges>
   {
     friend class Curve_halfedges_observer;
-    friend class Arrangement_on_surface_with_history_2<GeomTraits_,
-                                                       TopTraits_>;
-    friend class Arr_with_history_accessor<Self>;
+    friend class Arrangement_on_surface_with_history_2<Geometry_traits_2,
+                                                       Base_topology_traits>;
+    friend class Arr_with_history_accessor<
+      Arrangement_on_surface_with_history_2<Geometry_traits_2,
+                                            Base_topology_traits> >;
 
   private:
-
     typedef std::set<Halfedge_handle, Less_halfedge_handle>  Halfedges_set;
 
     // Data members:
     Halfedges_set m_halfedges;
 
   public:
-
     /*! Default constructor. */
     Curve_halfedges ()
     {}
