@@ -8,55 +8,6 @@
 
 using namespace std;
 
-struct f1
-{
-  template<typename Attr>
-  void operator() (Attr&, Attr&)
-  {}
-};
-struct f2
-{
-  template<typename Attr>
-  void operator() (const Attr&, Attr&)
-  {}
-};
-struct f3
-{
-  template<typename Attr>
-  void operator() (Attr&, const Attr&)
-  {}
-};
-struct f4
-{
-  template<typename Attr>
-  void operator() (const Attr&, const Attr&)
-  {}
-};
-struct f5
-{
-  template<typename Attr>
-  void operator() (const Attr&, const Attr&)
-  {}
-  template<typename Attr>
-  void operator() (Attr&, const Attr&)
-  {}
-};
-struct f6
-{
-  template<typename CMap, typename Attr>
-  void operator() (CMap*, Attr&, Attr&)
-  {}
-};
-struct f7
-{
-  template<typename Attr>
-  void operator() (Attr&, const Attr&)
-  {}
-  template<typename CMap, typename Attr>
-  void operator() (CMap*, Attr&, Attr&)
-  {}
-};
-
 struct Map_2_dart_items
 {
   /// Dart_wrapper defines the type of darts used.
@@ -65,8 +16,8 @@ struct Map_2_dart_items
   {
     typedef CGAL::Dart< 2, Refs > Dart;
 
-    typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true, f1, f2 > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true, f3, f4 > Double_attrib;
+    typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
     typedef CGAL::cpp11::tuple<Double_attrib, void, Double_attrib> Attributes;
   };
@@ -80,8 +31,8 @@ struct Map_2_dart_max_items_3
   {
     typedef CGAL::Dart< 2, Refs > Dart;
 
-    typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true, f1, f2 > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true, f3, f4 > Double_attrib;
+    typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
     typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
           Double_attrib> Attributes;
@@ -96,8 +47,8 @@ struct Map_3_dart_items_3
   {
     typedef CGAL::Dart< 3, Refs > Dart;
 
-    typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true, f5, f6 > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true, f7 > Double_attrib;
+    typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
     typedef CGAL::cpp11::tuple<Double_attrib, void,
           Int_attrib, Double_attrib> Attributes;
@@ -112,8 +63,8 @@ struct Map_3_dart_max_items_3
   {
     typedef CGAL::Dart< 3, Refs > Dart;
 
-    typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true, f5, f6 > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true, f7 > Double_attrib;
+    typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
     typedef CGAL::cpp11::tuple<Int_attrib, Int_attrib,
           Int_attrib, Double_attrib> Attributes;

@@ -142,7 +142,7 @@ struct Get_convert_attribute_functor
 {
   static typename Map2::template Attribute_handle<i>::type
   run( const Map1* cmap1, Map2* cmap2, typename Map1::Dart_const_handle dh1,
-       typename Map2::Dart_handle dh2, const Converters& converters)
+       typename Map2::Dart_handle dh2, const Converters& /*converters*/)
   {
     return
         CGAL::Default_converter_cmap_attributes<Map1, Map2, i>()
@@ -157,7 +157,7 @@ struct Get_convert_attribute_functor<Map1,Map2,i,Converters,false>
   run( const Map1* cmap1, Map2* cmap2, typename Map1::Dart_const_handle dh1,
        typename Map2::Dart_handle dh2, const Converters& converters)
   {
-    return CGAL::cpp11::get<i>(converters) (*cmap1, *cmap2, dh1, dh2);
+    return converters.template get<i>() (*cmap1, *cmap2, dh1, dh2);
   }
 };
 // ****************************************************************************

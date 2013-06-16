@@ -145,7 +145,7 @@ namespace CGAL {
     { return !operator==(other); }
 
     template<typename Cellattr>
-    bool operator==(const Cellattr& other) const
+    bool operator==(const Cellattr&) const
     { return false; }
 
     //  protected:
