@@ -46,7 +46,7 @@ namespace CGAL {
 /// Faces are ignored.
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-///         It is default to `value_type_traits<OutputIterator>::type` and can be omitted when the default is fine.
+///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
 /// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
@@ -287,7 +287,7 @@ read_off_points_and_normals(
 /// Faces are ignored.
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-///         It is default to `value_type_traits<OutputIterator>::type` and can be omitted when the default is fine.
+///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
 /// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
