@@ -47,11 +47,16 @@
     \draw[polyline] ($(p12)+(-\sep,0)$) -- node[near start, left]{11} ($(p11)+(-\sep,2*\sep)$);
 
     \draw[polyline,magenta] ($(p00)+(4*\sep,0)$) -- ($(p11)+(2*\sep,-2*\sep)$) -- ($(p22)+(0,-4*\sep)$) node[above right]{12};
+    \fill[magenta] ($(p11)+(2*\sep,-2*\sep)$) circle (\sep);
     \draw[polyline,magenta] ($(p02)+(0,-4*\sep)$) -- ($(p11)+(-2*\sep,-2*\sep)$) -- node[near end, below]{13} ($(p20)+(-4*\sep,0)$);
+    \fill[magenta] ($(p11)+(-2*\sep,-2*\sep)$) circle (\sep);
+
     \draw[polyline,blue] ($(p00)+(6*\sep,0)$) -- ($(p11)+(0,-6*\sep)$) -- node[at end, below]{14} ($(p20)+(-6*\sep,0)$);
     \draw[polyline,blue] ($(p02)+(6*\sep,0)$) -- ($(p11)+(0,6*\sep)$) -- node[at end, above]{15} ($(p22)+(-6*\sep,0)$);
     \draw[polyline,magenta] ($(p22)+(-4*\sep,0)$) -- ($(p11)+(-2*\sep,2*\sep)$) -- node[near end, above]{16} ($(p00)+(0,4*\sep)$);
+    \fill[magenta] ($(p11)+(-2*\sep,2*\sep)$) circle (\sep);
     \draw[polyline,magenta] ($(p20)+(0,4*\sep)$) -- ($(p11)+(2*\sep,2*\sep)$) -- ($(p02)+(4*\sep,0)$) node[above]{17};
+    \fill[magenta] ($(p11)+(2*\sep,2*\sep)$) circle (\sep);
     \draw[polyline,blue] ($(p20)+(-8*\sep,0)$) -- ($(p11)+(0,-8*\sep)$) -- node[at end, below] {18} ($(p00)+(8*\sep,0)$);
     \draw[polyline,blue] ($(p22)+(-8*\sep,0)$) -- ($(p11)+(0,8*\sep)$) -- node[at end, above] {19} ($(p02)+(8*\sep,0)$);
 
@@ -61,14 +66,30 @@
     \draw[polyline,green,dashed] ($(p42)+(0,-10*\sep)$) -- ($(p20)+(0,-10*\sep)$) --  ($(p02)+(0,-10*\sep)$) node[above] {23};
 
     \draw[polyline,yellow!50!black] ($(p00)+(12*\sep,0)$) -- ($(p11)+(0,-12*\sep)$) -- ($(p20)+(0,-12*\sep)$) -- ($(p31)+(0,-12*\sep)$) -- ($(p40)+(-12*\sep,0)$) node[below left]{24};
-    \draw[polyline,yellow!50!black]   ($(p40)+(0,12*\sep)$) -- ($(p31)+(0,12*\sep)$) -- ($(p20)+(0,12*\sep)$) -- ($(p11)+(0,12*\sep)$) -- ($(p00)+(0,12*\sep)$) node[below]{25};
+    \draw[polyline,yellow!50!black]   ($(p40)+(0,12*\sep)$) -- ($(p31)+(0,12*\sep)$) -- ($(p20)+(0,12*\sep)$) -- ($(p11)+(0,12*\sep)$) -- ($(p00)+(0,12*\sep)$) node[above]{25};
     \draw[polyline,yellow!50!black,dashed] ($(p02)+(14*\sep,0)$) -- ($(p11)+(0,14*\sep)$) -- ($(p22)+(0,14*\sep)$) -- ($(p31)+(0,14*\sep)$) -- ($(p42)+(-14*\sep,0)$) node[above]{28};
-    \draw[polyline,yellow!50!black,dashed] ($(p42)+(0,-14*\sep)$) -- ($(p31)+(0,-14*\sep)$) -- ($(p22)+(0,-14*\sep)$) -- ($(p11)+(0,-14*\sep)$) -- ($(p02)+(0,-14*\sep)$) node[above]{29};
+    \draw[polyline,yellow!50!black,dashed] ($(p42)+(0,-14*\sep)$) -- ($(p31)+(0,-14*\sep)$) -- ($(p22)+(0,-14*\sep)$) -- ($(p11)+(0,-14*\sep)$) -- ($(p02)+(0,-14*\sep)$) node[below]{29};
 
     \draw[polyline,gray] ($(p31)$) -- node[near end,above]{26} ($(p40)$);
     \draw[polyline,gray] ($(p11)+(6*\sep,0)$) -- ($(p20)+(0,6*\sep)$) -- node[near end, below]{27} ($(p31)+(-6*\sep,0)$);
     \draw[polyline,gray] ($(p31)$) -- node[near end,above]{30} ($(p42)$);
     \draw[polyline,gray] ($(p11)+(6*\sep,0)$) -- ($(p22)+(0,-6*\sep)$) -- node[near end, above] {31} ($(p31)+(-6*\sep,0)$);
+
+    \draw[polyline,orange] ($(p00)+(-2*\sep,0)$) -- node[near end,right]{32} ($(p02)+(-2*\sep,0)$);
+    \draw[polyline,orange] ($(p02)+(-4*\sep,0)$) -- node[near end,left]{33} ($(p00)+(-4*\sep,0)$);
+
+    \draw[polyline,orange] ($(p10)+(5*\sep,0)$) -- node[near end,right]{34} ($(p12)+(5*\sep,0)$);
+    \draw[polyline,orange] ($(p12)+(-5*\sep,0)$) -- node[near end,left]{35} ($(p10)+(-5*\sep,0)$);
+
+    \draw[polyline,orange] ($(p20)+(4*\sep,0)$) -- node[near end,right]{36} ($(p22)+(4*\sep,0)$);
+    \draw[polyline,orange] ($(p22)+(-4*\sep,0)$) -- node[near end,left]{37} ($(p20)+(-4*\sep,0)$);
+
+    \draw[polyline,orange] ($(p30)+(2*\sep,0)$) -- node[near end,right]{38} ($(p32)+(2*\sep,0)$);
+    \draw[polyline,orange] ($(p32)+(-2*\sep,0)$) -- node[near end,left]{39} ($(p30)+(-2*\sep,0)$);
+
+    \draw[polyline,orange] ($(p40)+(2*\sep,0)$) -- node[near end,left]{40} ($(p42)+(2*\sep,0)$);
+    \draw[polyline,orange] ($(p42)+(4*\sep,0)$) -- node[near end,right]{41} ($(p40)+(4*\sep,0)$);
+
   \end{tikzpicture}
 \end{document}
 
