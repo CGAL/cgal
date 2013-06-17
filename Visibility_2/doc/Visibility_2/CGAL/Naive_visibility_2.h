@@ -17,19 +17,19 @@ public:
 
 
  /*! 
-   The Point_2 type which is used for queries . 
+   The Point_2 type which is used for queries. 
  */ 
   typedef Arrangement_2::Point_2 Point_2; 
 
   /*! 
-    Tag identifying whether `Visibility_2` computes regularized visbility area. 
+    Tag identifying whether `Visibility_2` computes the regularized visibility area. 
   */
   typedef bool Regularization_tag; 
 
   /*!
-    The Arrangement type which is used for output .
+    The Arrangement type which is used for output.
   */
-  typedef notknown Arrangement_output_2;
+  typedef notknown Output_Arrangement_2;
   
 /// @}
 
@@ -37,9 +37,9 @@ public:
 /// @{
 
 /*! 
-Constructs a `Visibility_2` object from a given `Arrangement_2`
+Constructs a `Visibility_2` object from a given `Input_Arrangement_2`
 */ 
-Naive_visibility_2(const Arrangement_2& arr); 
+Naive_visibility_2(const Input_Arrangement_2& arr); 
 
 /// @}
 
@@ -50,14 +50,14 @@ Naive_visibility_2(const Arrangement_2& arr);
 
 
 /*!
-Return whether the object is attachted to an arrangement.
+Return whether the object is attached to an arrangement.
 */
   bool is_attached ();
 
 /*!
 Attaches visibility object to the given arrangement arr.
 */
-  void attach ( Arrangement_2 arr);
+  void attach ( Input_Arrangement_2 arr);
 
   
 /*!
@@ -68,23 +68,25 @@ Detaches the object from the arrangement it is currently attached to.
 /*!
 Access to the attached Arrangement_2.
 */
-  Arrangement_2 arr();
+  Input_Arrangement_2 arr();
 
 /*! 
 Computes the visibility region for the given query point q. 
 \pre face is a face of  this->arr()
-\pre p is in the interior of face 
+\pre p is in the interior of face
+\pre out_arr is the output arrangement 
 
 */ 
-  Arrangement_output_2 visibility_region(const Point_2& q, const Face& face); 
+  void visibility_region(const Point_2& q, const Face& face, Output_Arrangement_2& out_arr); 
 
 /*! 
 Computes for the given query point q the visibility region that is on the side of the given halfedge.   
 \pre half_edge is a half edge of  this->arr()
 \pre p is on halfedge  
+\pre out_arr is the output arrangement 
 
 */ 
-  Arrangement_output_2 visibility_region(const Point_2& q, const Halfedge& halfedge); 
+  void visibility_region(const Point_2& q, const Halfedge& halfedge, Output_Arrangement_2& out_arr); 
 
 /// @}
 
