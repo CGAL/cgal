@@ -367,7 +367,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     new_he = _insert_in_face_interior(p_f, cv, ARR_LEFT_TO_RIGHT, v1, v2);
   else if ((fict_prev1 == NULL) && (fict_prev2 != NULL)) {
     // v1 represents a valid point and v2 is inserted using its predecessor.
-    new_he = _insert_from_vertex(fict_prev2, cv, ARR_RIGHT_TO_LEFT, v2);
+    new_he = _insert_from_vertex(fict_prev2, cv, ARR_RIGHT_TO_LEFT, v1);
     new_he = new_he->opposite();
   }
   else if ((fict_prev1 != NULL) && (fict_prev2 == NULL))
