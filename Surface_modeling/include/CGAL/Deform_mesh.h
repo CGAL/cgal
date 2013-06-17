@@ -31,6 +31,12 @@
 #include <utility>
 #include <limits>
 
+/*
+#define CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE // define it to activate optimal scale calculation,
+// then you can define below to just scale, if not both rotate and scale will be activated
+#define CGAL_DEFORM_MESH_JUST_EXPERIMENTAL_SCALE // to not to rotate but just scale
+*/
+
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
@@ -249,6 +255,10 @@ private:
   Weight_calculator weight_calculator;
 
   Vertex_point_map vertex_point_map;
+
+#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
+  std::vector<double> scales;
+#endif
 private:
   Deform_mesh(const Self& s) { } 
 
@@ -687,9 +697,13 @@ public:
     for ( unsigned int ite = 0; ite < iterations; ++ite)
     {
       // main steps of optimization
-      update_solution();       
+      update_solution();
+#ifndef CGAL_DEFORM_MESH_JUST_EXPERIMENTAL_SCALE
       optimal_rotations(); 
-
+#endif
+#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
+      optimal_scales();
+#endif
       // energy based termination
       if(tolerance > 0.0 && (ite + 1) < iterations) // if tolerance <= 0 then don't compute energy 
       {                                             // also no need compute energy if this iteration is the last iteration
@@ -934,6 +948,11 @@ private:
       original[v_ros_id] = get(vertex_point_map, outside_ros[i]);
       solution[v_ros_id] = get(vertex_point_map, outside_ros[i]);
     }
+
+#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
+    scales.resize(ros.size());
+    std::fill(scales.begin(), scales.end(), 1.0);
+#endif
   }
 
   /// Assemble Laplacian matrix A of linear system A*X=B
@@ -1087,7 +1106,6 @@ private:
       cr_helper.compute_close_rotation(cov, rot_mtr[vi_id]);
     }
   }
-
   void optimal_rotations_spokes_and_rims()
   {    
     CR_helper cr_helper;
@@ -1127,6 +1145,37 @@ private:
       cr_helper.compute_close_rotation(cov, rot_mtr[vi_id]);
     }
   }
+
+#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
+  void optimal_scales() 
+  {
+    for ( std::size_t k = 0; k < ros.size(); k++ )
+    {
+      vertex_descriptor vi = ros[k];
+      std::size_t vi_id = ros_id(vi);
+      // compute covariance matrix (user manual eq:cov_matrix)
+      double eT_eR = 0, eRT_eR = 0;
+
+      in_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::in_edges(vi, polyhedron); e != e_end; e++)
+      {
+        vertex_descriptor vj = boost::source(*e, polyhedron);
+        std::size_t vj_id = ros_id(vj);
+
+        const CR_vector& pij = sub_to_CR_vector(original[vi_id], original[vj_id]);
+        const CR_vector& qij = sub_to_CR_vector(solution[vi_id], solution[vj_id]);
+        
+        double wij = edge_weight[id(*e)];
+
+        const CR_vector& pRij = rot_mtr[vi_id] * pij;
+        eRT_eR += pRij[0]*pRij[0] + pRij[1]*pRij[1] + pRij[2]*pRij[2];
+        eT_eR  += qij[0]*pRij[0]  + qij[1]*pRij[1]  + qij[2]*pRij[2];
+      }
+
+      scales[vi_id] = eT_eR / eRT_eR;
+    }
+  }
+#endif
 
   /// Global step of iterations, updating solution
   void update_solution()
@@ -1170,8 +1219,12 @@ private:
 
           double wij = edge_weight[id(*e)];
           double wji = edge_weight[id(CGAL::opposite_edge(*e, polyhedron))];
-
+#ifndef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
           cr_helper.scalar_matrix_scalar_matrix_vector_mult(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
+#else
+        cr_helper.scalar_matrix_scalar_matrix_vector_mult(xyz, wij * scales[vi_id], rot_mtr[vi_id], 
+          wji * scales[vj_id], rot_mtr[vj_id], pij);
+#endif
           // corresponds xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij
         }
         Bx[vi_id] = cr_helper.vector_coeff(xyz, 0); 
