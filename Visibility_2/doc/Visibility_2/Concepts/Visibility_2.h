@@ -22,7 +22,7 @@ public:
  /*! 
    The supported Arrangement type. 
  */ 
-  typedef Hidden_type Arrangement_2; 
+  typedef Hidden_type Input_Arrangement_2; 
 
  /*! 
    The supported Point_2 type which is used for queries . 
@@ -47,7 +47,7 @@ public:
 /*! 
 Constructs a `Visibility_2` object from a given `Arrangement_2` and a given Regularization tag.
 */ 
-Visibility_2(const Arrangement_2& arr, Regularization_tag Rt); 
+Visibility_2(const Input_Arrangement_2& arr, Regularization_tag Rt); 
 
 /// @}
 
@@ -65,7 +65,7 @@ Return whether the object is attachted to an arrangement.
 /*!
 Attaches visibility object to the given arrangement arr.
 */
-  void attach ( Arrangement_2 arr);
+  void attach ( Input_Arrangement_2 arr);
 
   
 /*!
@@ -76,7 +76,7 @@ Detaches the object from the arrangement it is currently attached to.
 /*!
 Access to the attached Arrangement_2.
 */
-  Arrangement_2 arr();
+  Input_Arrangement_2 arr();
 
 /*! 
 Computes the visibility region for the given query point q. 
@@ -84,7 +84,7 @@ Computes the visibility region for the given query point q.
 \pre p is in the interior of face 
 
 */ 
-  Arrangement_2 visibility_region(const Point_2& q, const Face& face); 
+  void visibility_region(const Point_2& q, const Face& face, Output_Arrangement_2& out_arr); 
 
 /*! 
 Computes for the given query point q the visibility region that is on the side of the given halfedge.   
@@ -92,7 +92,7 @@ Computes for the given query point q the visibility region that is on the side o
 \pre p is on halfedge  
 
 */ 
-  Arrangement_2 visibility_region(const Point_2& q, const Halfedge& halfedge); 
+  void visibility_region(const Point_2& q, const Halfedge& halfedge, Output_Arrangement_2& out_arr); 
 
 /// @}
 
