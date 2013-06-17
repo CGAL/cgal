@@ -85,55 +85,8 @@ class Triangulate_hole_Polyhedron_3{
     return Weight((std::max)(ang1, ang2), std::sqrt(CGAL::squared_area(pi,pm,pk)));
   }
 
-  Halfedge_handle add_facets(const Polyline_3& P, const std::vector<int>& lambda, 
-    int i, int k, Polyhedron& poly, std::set<Facet_handle>& facets, bool last = true)
-  {
-    Halfedge_handle h, g;
-    int n = P.size() -1; // because the first and last point are equal
-    if(i+2 == k){
-      if(last){
-        h = poly.fill_hole(P[i+1]);
-        assert(h->facet() != Facet_handle());
-        facets.insert(h->facet());
-        return h;
-      } else {
-        h = poly.add_facet_to_border(P[i]->prev(), P[i+1]);
-        assert(h->facet() != Facet_handle());
-        facets.insert(h->facet());
-        return h->opposite();
-      }
-    } else {
-      int la = lambda[i*n + k];
-      if(la != i+1){
-        h = add_facets(P, lambda, i, la, poly, facets, false);
-        assert(h->opposite()->facet() != Facet_handle());
-        facets.insert(h->opposite()->facet());
-      } else {
-        h = P[i];
-      }
-      if(la != k-1){
-        g = add_facets(P, lambda, la, k, poly, facets, false);
-        assert(g->opposite()->facet() != Facet_handle());
-        facets.insert(g->opposite()->facet());
-      } else {
-        g = P[la];
-      }
-      if(last){
-        h = poly.fill_hole(g);
-        assert(h->facet() != Facet_handle());
-        facets.insert(h->facet());
-        return h;
-      } else {
-        h = poly.add_facet_to_border(h->prev(), g);
-        assert(h->facet() != Facet_handle());
-        facets.insert(h->facet());
-        return h->opposite();
-      }
-    }
-  }
-
   template<class OutputIterator>
-  Halfedge_handle add_facets_2(const Polyline_3& P, const std::vector<int>& lambda, 
+  Halfedge_handle add_facets(const Polyline_3& P, const std::vector<int>& lambda, 
     int i, int k, Polyhedron& poly, OutputIterator out, bool last = true)
   {
     if(i + 1 == k) { return P[i]; }
@@ -153,8 +106,8 @@ class Triangulate_hole_Polyhedron_3{
     else 
     {
       int la = lambda[i*n + k];
-      h = add_facets_2(P, lambda, i, la, poly, out, false);
-      g = add_facets_2(P, lambda, la, k, poly, out, false);
+      h = add_facets(P, lambda, i, la, poly, out, false);
+      g = add_facets(P, lambda, la, k, poly, out, false);
 
       if(last)
       { h = poly.fill_hole(g); }
@@ -209,15 +162,7 @@ public:
     compute_lambda(P, lambda);
 
     int n = P.size() - 1; // because the first and last point are equal
-
-if(true) {
-    add_facets_2(P, lambda, 0, n-1, poly, out);
-}
-else {
-    std::set<Facet_handle> facets;
-    add_facets(P, lambda, 0, n-1, poly, facets);
-    std::copy(facets.begin(), facets.end(), out);
-}
+    add_facets(P, lambda, 0, n-1, poly, out);
   }
 };
 
@@ -242,15 +187,6 @@ void triangulate_hole(Polyhedron& polyhedron,
 {
   internal::Triangulate_hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge, output);
 }
-
-//template<class Polyhedron>
-//void triangulate_hole(Polyhedron& polyhedron, 
-//  typename Polyhedron::Halfedge_handle border_halfedge
-//  ) 
-//{
-//  triangulate_hole(polyhedron, border_halfedge, 
-//    boost::make_function_output_iterator(CGAL::internal::Nop_functor()));
-//}
 
 }//namespace CGAL
 #endif //CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
