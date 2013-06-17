@@ -156,11 +156,8 @@ int main() {
 
   for(Polyhedron::Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
     if(it->is_border()) {
-      std::vector<Polyhedron::Facet_handle> patch;
       //CGAL::triangulate_and_refine_hole(poly, it, Nop_out(), Nop_out(), 14.21);
-      CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
-        CGAL::Fairing_cotangent_weight<Polyhedron>(), 14.21
-        );
+      CGAL::triangulate_refine_and_fair_hole(poly, it, Nop_out(), Nop_out(), 10.0);
       break;
     }
   }

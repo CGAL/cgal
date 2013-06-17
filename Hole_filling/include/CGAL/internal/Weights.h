@@ -113,6 +113,21 @@ public:
 };
 
 template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
+class Cotangent_value_clamped_2 : CotangentValue
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  {
+    const double cot_5 = 5.671282;
+    const double cot_175 = -cot_5;
+    double value = CotangentValue::operator()(v0, v1, v2);
+    return (std::max)(cot_175, (std::min)(value, cot_5));
+  }
+};
+
+template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >
 class Cotangent_value_minimum_zero : CotangentValue
 {
 public:
@@ -416,7 +431,7 @@ public:
   }
 
   double w_ij(edge_descriptor e, Polyhedron& polyhedron) {
-    Cotangent_weight<Polyhedron, CGAL::internal::Cotangent_value_Meyer<Polyhedron> > cotangent_functor;
+    Cotangent_weight<Polyhedron, Cotangent_value_Meyer<Polyhedron> > cotangent_functor;
     return cotangent_functor(e, polyhedron) * 2.0;
   }
 };

@@ -47,6 +47,7 @@ void write_matrix_sparse(std::ostream &stream, const SparseMatrix& m)
   {
     for(typename SparseMatrix::Index c = 0; c < m.cols(); ++c) 
     {
+      //if(m.coeff(r,c) != 0)
       stream << m.coeff(r,c) << " ";
     }
     stream << std::endl;
@@ -93,9 +94,13 @@ private:
     return weight;
   }
 
-  void one_ring(Vertex_handle v, Polyhedron& polyhedron, std::vector<std::pair<std::size_t, double> >& row, 
-    double& x, double& y, double& z, std::set<Vertex_handle>& interior_vertices, std::map<Vertex_handle, std::size_t>& vertex_id_map) 
+  void one_ring(Vertex_handle v, 
+    Polyhedron& polyhedron, 
+    std::vector<std::pair<std::size_t, double> >& row, 
+    double& x, double& y, double& z, 
+    const std::map<Vertex_handle, std::size_t>& vertex_id_map) 
   {
+    typedef typename std::map<Vertex_handle, std::size_t>::const_iterator Vertex_id_it;
     row.clear();
     x = y = z = 0.0;
 
@@ -108,9 +113,9 @@ private:
       double nv_total_weight = w_v * nv_weight ;
       diagonal_v += -nv_total_weight;
 
-      if(interior_vertices.find(nv) != interior_vertices.end()) {
-        std::size_t nv_id = vertex_id_map[nv];
-        row.push_back(std::make_pair(nv_id, nv_total_weight));
+      Vertex_id_it vertex_id_it = vertex_id_map.find(nv);
+      if(vertex_id_it != vertex_id_map.end()) {
+        row.push_back(std::make_pair(vertex_id_it->second, nv_total_weight));
       }
       else {
         x += - nv_total_weight * nv->point().x();
@@ -119,9 +124,9 @@ private:
       }
     } while(++circ != v->vertex_begin());
 
-    if(interior_vertices.find(v) != interior_vertices.end()) {
-      std::size_t v_id = vertex_id_map[v];
-      row.push_back(std::make_pair(v_id, diagonal_v));
+    Vertex_id_it vertex_id_it = vertex_id_map.find(v);
+    if(vertex_id_it != vertex_id_map.end()) {
+      row.push_back(std::make_pair(vertex_id_it->second, diagonal_v));
     }
     else {
       x += -diagonal_v * v->point().x();
@@ -151,7 +156,8 @@ public:
     }
 
     typename Sparse_linear_solver::Matrix A(nb_vertices);
-    
+    std::vector<std::pair<std::size_t, double> > row;
+
     for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin(); vb != interior_vertices.end(); ++vb) {
       std::size_t v_id = vertex_id_map[*vb];
       double w_v = weight_calculator.w_i(*vb, polyhedron);
@@ -162,8 +168,7 @@ public:
 
       double nx, ny, nz;
       nx = ny = nz = 0;
-      std::vector<std::pair<std::size_t, double> > row;
-      one_ring(*vb, polyhedron, row, nx, ny, nz, interior_vertices, vertex_id_map);
+      one_ring(*vb, polyhedron, row, nx, ny, nz, vertex_id_map);
       for(std::vector<std::pair<std::size_t, double> >::iterator it = row.begin(); it != row.end(); ++it) {
         A.add_coef(v_id, it->first, - w_v * wn_sum * it->second);
       }
@@ -176,7 +181,7 @@ public:
         Vertex_handle nv = circ->opposite()->vertex();
         double nv_w = weight_calculator.w_ij(circ, polyhedron);
 
-        one_ring(nv, polyhedron, row, nx, ny, nz, interior_vertices, vertex_id_map);
+        one_ring(nv, polyhedron, row, nx, ny, nz, vertex_id_map);
         for(std::vector<std::pair<std::size_t, double> >::iterator it = row.begin(); it != row.end(); ++it) {
           A.add_coef(v_id, it->first, w_v * nv_w * it->second);
         }
@@ -200,7 +205,7 @@ public:
     Sparse_linear_solver m_solver;
     bool prefactor_ok = m_solver.pre_factor(A, D);
     if(!prefactor_ok) {
-      CGAL_warning(false && "pre_factor failed!");
+      CGAL_warning(!"pre_factor failed!");
       return false;
     }
     CGAL_TRACE_STREAM << "**Timer** System factorization: " << timer.time() << std::endl; timer.reset();
@@ -208,7 +213,7 @@ public:
     // solve
     bool is_all_solved = m_solver.linear_solver(Bx, X) && m_solver.linear_solver(By, Y) && m_solver.linear_solver(Bz, Z);
     if(!is_all_solved) {
-      CGAL_warning(false && "linear_solver failed!"); 
+      CGAL_warning(!"linear_solver failed!"); 
       return false; 
     }
 
@@ -219,14 +224,6 @@ public:
       (*it)->point() = Point_3(X[id], Y[id], Z[id]);
     }
     return true;
-    //typedef Sparse_linear_solver::Matrix::EigenType EigenMatrix;
-    //EigenMatrix A2 = A.eigen_object()* A.eigen_object();
-    //Solver solver;
-    //solver.compute(A.eigen_object());
-    //if(solver.info() != Eigen::Success) { CGAL_warning(false); return; }
-    //X = solver.solve(Bx);
-    //Y = solver.solve(By);
-    //Z = solver.solve(Bz);
   }
 };
 
