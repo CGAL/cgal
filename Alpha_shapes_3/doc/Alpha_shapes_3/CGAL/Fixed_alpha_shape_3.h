@@ -199,7 +199,7 @@ OutputIterator get_alpha_shape_vertices(OutputIterator it, Classification_type t
 /*! 
 Inserts the fixed alpha shape `A` into the stream `os`. 
 
-Defined in \ref CGAL/IO/io.h
+Defined in `CGAL/IO/io.h`
 
 \cgalRequires The insert operator must be defined for `GT::Point`. 
 \relates Fixed_alpha_shape_3 

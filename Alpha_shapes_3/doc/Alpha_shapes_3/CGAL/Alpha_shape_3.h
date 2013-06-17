@@ -398,7 +398,7 @@ Alpha_iterator find_optimal_alpha(size_type nb_components) const;
 /*! 
 Inserts the alpha shape `A` for the current alpha value into the stream `os`. 
 
-Defined in \ref CGAL/IO/io.h
+Defined in `CGAL/IO/io.h`
 
 \pre The insert operator must be defined for `Point`. 
 \relates Alpha_shape_3 
@@ -410,7 +410,7 @@ const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 Inserts the alpha shape `A` for the current alpha value into the Geomview stream `W`. 
 \pre The insert operator must be defined for `GT::Point` and `GT::Triangle`. 
 
-Defined in \ref CGAL/IO/Geomview_stream.h and `CGAL/IO/alpha_shape_geomview_ostream_3.h`
+Defined in `CGAL/IO/Geomview_stream.h` and `CGAL/IO/alpha_shape_geomview_ostream_3.h`
 
 \relates Alpha_shape_3 
 */ 

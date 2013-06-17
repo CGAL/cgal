@@ -54,7 +54,7 @@ We provide two simple kinetic data structures, first most trivial is
 \ref Kinetic_framework/trivial_kds.cpp and a slightly more
 complicated one is:
 
-\ref CGAL/Kinetic/Sort.h
+Defined in `CGAL/Kinetic/Sort.h`
 
 \subsection Kinetic_data_structuresHowcanIusekinetic How can I use kinetic data structures to update Delaunay triangulations?
 

@@ -67,7 +67,7 @@ namespace CGAL {
   should give you a flavor of the use of this 
   model in practice. 
 
-  \ref QP_solver/solve_convex_hull_containment_lp.h 
+  `QP_solver/solve_convex_hull_containment_lp.h` 
 
   \ref QP_solver/convex_hull_containment.cpp 
 
@@ -119,7 +119,7 @@ public:
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators`. 
 
-  \ref QP_solver/solve_convex_hull_containment_lp2.h 
+  `QP_solver/solve_convex_hull_containment_lp2.h` 
 
   \ref QP_solver/convex_hull_containment2.cpp 
 
@@ -163,7 +163,7 @@ make_linear_program_from_iterators (
   Example 
   -------------- 
 
-  \ref QP_solver/solve_convex_hull_containment_lp2.h 
+  `QP_solver/solve_convex_hull_containment_lp2.h` 
 
   \ref QP_solver/convex_hull_containment2.cpp 
 
@@ -204,7 +204,7 @@ make_nonnegative_linear_program_from_iterators (
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators`. 
 
-  \ref QP_solver/solve_convex_hull_containment_lp2.h 
+  `QP_solver/solve_convex_hull_containment_lp2.h` 
 
   \ref QP_solver/convex_hull_containment2.cpp 
 
@@ -246,7 +246,7 @@ make_nonnegative_quadratic_program_from_iterators (
   The following example demonstrates the typical usage of makers 
   with the simpler function `make_nonnegative_linear_program_from_iterators`. 
 
-  \ref QP_solver/solve_convex_hull_containment_lp2.h 
+  `QP_solver/solve_convex_hull_containment_lp2.h` 
 
   \ref QP_solver/convex_hull_containment2.cpp 
 
@@ -335,7 +335,7 @@ make_quadratic_program_from_iterators (
 
   \ref QP_solver/first_nonnegative_lp_from_iterators.cpp 
 
-  \ref QP_solver/solve_convex_hull_containment_lp.h 
+  `QP_solver/solve_convex_hull_containment_lp.h` 
 
   \ref QP_solver/convex_hull_containment.cpp 
 
@@ -432,7 +432,7 @@ public:
   should give you a flavor of the use of this 
   model in practice. 
 
-  \ref QP_solver/solve_convex_hull_containment_lp.h 
+  `QP_solver/solve_convex_hull_containment_lp.h` 
 
   \ref QP_solver/convex_hull_containment.cpp 
 
@@ -532,7 +532,7 @@ public:
   should give you a flavor of the use of this 
   model in practice. 
 
-  \ref QP_solver/solve_convex_hull_containment_lp.h 
+  `QP_solver/solve_convex_hull_containment_lp.h` 
 
   \ref QP_solver/convex_hull_containment.cpp 
 
