@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>317</width>
-    <height>165</height>
+    <height>194</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,6 +43,13 @@
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Sample_random_points_from_bbox">
+      <property name="text">
+       <string>Sample Random Points from Bbox</string>
+      </property>
      </widget>
     </item>
     <item>
