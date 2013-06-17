@@ -85,7 +85,8 @@ public:
     CGAL_assertion(polyhedron.is_pure_triangle());
     CGAL_assertion(polyhedron.is_closed());
 
-    tree.insert(polyhedron.facets_begin(),polyhedron.facets_end());
+    tree.insert(TriangleAccessor_3().triangles_begin(polyhedron),
+                TriangleAccessor_3().triangles_end(polyhedron));
   }
  
   /**
@@ -140,10 +141,11 @@ public:
 private:
   template <class Query,bool ray_is_vertical>
   boost::optional<Bounded_side>
-  is_inside_ray_tree_traversal(const Query& query) const 
+  is_inside_ray_tree_traversal(const Query& query) const
   {
     std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
-    internal::Ray_3_Triangle_3_traversal_traits<Traits,Polyhedron,Kernel,Boolean_tag<ray_is_vertical>> traversal_traits(status);
+
+    internal::Ray_3_Triangle_3_traversal_traits<Traits,Kernel,Boolean_tag<ray_is_vertical>> traversal_traits(status);
     tree.traversal(query, traversal_traits);
 
     if ( !boost::logic::indeterminate(status.first) )
