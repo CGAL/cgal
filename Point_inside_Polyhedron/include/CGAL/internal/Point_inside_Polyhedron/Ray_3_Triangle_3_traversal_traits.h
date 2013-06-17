@@ -7,7 +7,7 @@
 namespace CGAL {
 namespace internal {
 
-template<typename AABBTraits, class Polyhedron_3, class Kernel,class Tag_ray_is_vertical=Tag_false>
+template<typename AABBTraits, class Kernel, class Tag_ray_is_vertical=Tag_false>
 class Ray_3_Triangle_3_traversal_traits
 {
 protected:
@@ -55,11 +55,11 @@ public:
 
 
 //specialization for vertical ray
-template<typename AABBTraits,class Polyhedron_3, class Kernel>
-class Ray_3_Triangle_3_traversal_traits<AABBTraits,Polyhedron_3,Kernel,Tag_true>: 
-  public Ray_3_Triangle_3_traversal_traits<AABBTraits,Polyhedron_3,Kernel,Tag_false>
+template<typename AABBTraits, class Kernel>
+class Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Tag_true>: 
+  public Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Tag_false>
 {
-  typedef Ray_3_Triangle_3_traversal_traits<AABBTraits,Polyhedron_3,Kernel,Tag_false> Base;
+  typedef Ray_3_Triangle_3_traversal_traits<AABBTraits,Kernel,Tag_false> Base;
   typedef typename Kernel::Point_3 Point;
   typedef typename Base::Primitive Primitive;
 public:
@@ -104,7 +104,6 @@ public:
   {
     typename Kernel::Triangle_3 t=primitive.datum();
     if ( !do_intersect(query,t.bbox()) ) return;
-    
     
     typename Kernel::Point_2 p0=z_project(t[0]);
     typename Kernel::Point_2 p1=z_project(t[1]);
