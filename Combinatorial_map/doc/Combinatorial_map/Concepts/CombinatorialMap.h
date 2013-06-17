@@ -544,6 +544,7 @@ void swap(CombinatorialMap& cmap);
 
 /// \name Operations
 /// @{
+
 /*!
   <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the combinatorial map valid.
   Links by \f$ \beta_i\f$
@@ -566,7 +567,7 @@ NULL and the other not, the non NULL attribute is associated to all
 the darts of the resulting cell. When the two attributes are non
 NULL, functor \ref CellAttribute::On_merge "Attribute_type<i>::type::On_merge"
 is called on
-the two attributes <I>attr1</I> and <I>attr2</I>. Then, the attribute
+the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onmerge function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. Then, the attribute
 <I>attr1</I> is associated to all darts of the resulting
 <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the combinatorial map.
 \pre \ref CombinatorialMap::is_sewable "is_sewable<i>(dh1,dh2)".
@@ -593,7 +594,7 @@ this attribute is duplicated into <I>attr2</I>, and all the darts
 belonging to <I>c2</I> are associated with this new attribute. Finally,
 the functor \ref CellAttribute::On_split "Attribute_type<i>::type::On_split"
 is called on the
-two attributes <I>attr1</I> and <I>attr2</I>.
+two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onsplit function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
      `*dh`\f$ \in\f$`darts()` and `*dh` is not <I>i</I>-free.
 
@@ -627,6 +628,49 @@ are not modified.
      `*dh`\f$ \in\f$`darts()`, and `*dh` is not <I>i</I>-free.
 */
 template <unsigned int i> void unlink_beta(Dart_handle dh);
+
+/// @}
+
+/// \name Dynamic Onmerge/Onsplit functors
+/// @{
+
+/*!
+  Return the current dynamic onsplit function associated with i-attributes.
+  This is a boost:function returning void and having two references to \link CombinatorialMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
+  The onsplit function is returned by reference so that we can modify it.
+*/
+  template<int i>
+  boost::function<void(typename Attribute_type< i >::type&,
+                       typename Attribute_type< i >::type&)>&
+  onsplit_function();
+
+/*!
+  Return the current dynamic onsplit function associated with i-attributes, when *this is const.
+  This is a boost:function returning void and having two references to \link CombinatorialMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
+*/
+  template<int i>
+  const boost::function<void(typename Attribute_type< i >::type&,
+                             typename Attribute_type< i >::type&)>&
+  onsplit_function() const;
+
+/*!
+  Return the current dynamic onmerge function associated with i-attributes.
+  This is a boost:function returning void and having two references to \link CombinatorialMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
+  The onmerge function is returned by reference so that we can modify it.
+*/
+  template<int i>
+  boost::function<void(typename Attribute_type< i >::type&,
+                       typename Attribute_type< i >::type&)>&
+  onmerge_function();
+
+/*!
+  Return the current dynamic onmerge function associated with i-attributes, when *this is const.
+  This is a boost:function returning void and having two references to \link CombinatorialMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
+*/
+  template<int i>
+  const boost::function<void(typename Attribute_type< i >::type&,
+                             typename Attribute_type< i >::type&)>&
+  onmerge_function() const;
 
 /// @}
 

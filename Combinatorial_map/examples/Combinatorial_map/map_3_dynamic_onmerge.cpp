@@ -125,7 +125,7 @@ int main()
                                                Face_attribute&)>();
 
   // 9) Remove one edge: this merges two faces, however no dynamic
-  //    functor is called (because in 8 it was removed).
+  //    functor is called (because it was removed).
   CGAL::remove_cell<CMap_3, 1>(cm, resdart);
 
   // 10) Display all the values of 2-attributes.
