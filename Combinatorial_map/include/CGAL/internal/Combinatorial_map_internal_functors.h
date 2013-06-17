@@ -84,7 +84,7 @@ struct Apply_cell_functor
 {
   static void run(Cell_attribute& acell1, Cell_attribute& acell2)
   {
-    Functor() (acell1,acell2);
+    Functor() (acell1, acell2);
   }
 };
 //...except for Null_functor.

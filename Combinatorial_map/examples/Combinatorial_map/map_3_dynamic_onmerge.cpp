@@ -3,61 +3,74 @@
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Cell_attribute.h>
 #include <iostream>
-#include <algorithm>
 #include <cstdlib>
 
+// My item class: no functor is associated with Face_attribute.
 struct Myitem
 {
   template<class CMap>
   struct Dart_wrapper
   {
     typedef CGAL::Dart<3, CMap> Dart;
-    typedef CGAL::Cell_attribute<CMap, int> Facet_attribute;
-    typedef CGAL::cpp11::tuple<void,void,Facet_attribute> Attributes;
+    typedef CGAL::Cell_attribute<CMap, int> Face_attribute;
+    typedef CGAL::cpp11::tuple<void,void,Face_attribute> Attributes;
   };
 };
 
+// Definition of my combinatorial map.
 typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
 typedef CMap_3::Dart_handle               Dart_handle;
-typedef CMap_3::Attribute_type<2>::type   Facet_attribute;
+typedef CMap_3::Attribute_type<2>::type   Face_attribute;
 
+// Functor called when two faces are merged.
 struct Merge_functor
 {
-  void operator()(Facet_attribute& ca1, Facet_attribute& ca2)
-  { ca1.info()=ca1.info()+ca2.info(); }
+  // operator() automatically called before a merge.
+  void operator()(Face_attribute& ca1, Face_attribute& ca2)
+  {
+    ca1.info()=ca1.info()+ca2.info();
+    std::cout<<"After on merge faces: info of face1="<<ca1.info()
+             <<", info of face2="<<ca2.info()<<std::endl;
+  }
 };
 
+// Functor called when one face is split in two.
 struct Split_functor
 {
   Split_functor(CMap_3& amap) : mmap(amap)
   {}
 
-  void operator()(Facet_attribute& ca1, Facet_attribute& ca2)
+  // operator() automatically called after a split.
+  void operator()(Face_attribute& ca1, Face_attribute& ca2)
   {
-    set_color_of_facet(ca1.dart());
-    set_color_of_facet(ca2.dart());
+    set_color_of_face(ca1.dart());
+    set_color_of_face(ca2.dart());
+    std::cout<<"After on split faces: info of face1="<<ca1.info()
+             <<", info of face2="<<ca2.info()<<std::endl;
   }
 
 private:
 
-  void set_color_of_facet(CMap_3::Dart_handle dh)
+  // The info of a face is the mean of the info of all its neighboors faces.
+  void set_color_of_face(CMap_3::Dart_handle dh)
   {
     int nb=0;
     int sum=0;
-    for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
-           mmap.one_dart_per_incident_cell<2,3>(dh).begin(),
-           itend=mmap.one_dart_per_incident_cell<2,3>(dh).end();
+    for (CMap_3::Dart_of_orbit_range<1>::iterator
+           it=mmap.darts_of_orbit<1>(dh).begin(),
+           itend=mmap.darts_of_orbit<1>(dh).end();
          it!=itend; ++it, ++nb)
-    { sum+=it->attribute<2>()->info(); }
+    { sum+=it->beta<2>()->attribute<2>()->info(); }
 
     dh->attribute<2>()->info()=(sum/nb);
   }
 
-
   CMap_3& mmap;
 };
 
-void display_map_and_2attributs(CMap_3& cm)
+// Function allowing to display all the 2-attributes, and the characteristics
+// of a given combinatorial map.
+void display_map_and_2attributes(CMap_3& cm)
 {
   for (CMap_3::Attribute_range<2>::type::iterator
        it=cm.attributes<2>().begin(), itend=cm.attributes<2>().end();
@@ -74,52 +87,49 @@ int main()
 {
   CMap_3 cm;
 
-  // Create 2 hexahedra.
+  // 0) Create 2 hexahedra.
   Dart_handle dh1 = CGAL::make_combinatorial_hexahedron(cm);
   Dart_handle dh2 = CGAL::make_combinatorial_hexahedron(cm);
 
-  // 1) Create all 2-attributes and associated them to darts.
-  for (CMap_3::Dart_range::iterator
-       it=cm.darts().begin(), itend=cm.darts().end();
-       it!=itend; ++it)
-  {
-    if ( it->attribute<2>()==NULL )
-      cm.set_attribute<2>(it, cm.create_attribute<2>());
-  }
-
-  // 2) Set the color of all facets of the first hexahedron to 7.
+  // 1) Create 2-attributes of the first hexahedron, info()==7.
   for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator
        it=cm.one_dart_per_incident_cell<2,3>(dh1).begin(),
        itend=cm.one_dart_per_incident_cell<2,3>(dh1).end(); it!=itend; ++it)
-  { it->attribute<2>()->info()=7; }
+  { cm.set_attribute<2>(it, cm.create_attribute<2>(7)); }
 
-  // 3) Set the color of all facets of the second hexahedron to 13.
+  // 2) Create 2-attributes of the second hexahedron, info()==13.
   for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
        cm.one_dart_per_incident_cell<2,3>(dh2).begin(),
        itend=cm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
-  { it->attribute<2>()->info()=13; }
+  { cm.set_attribute<2>(it, cm.create_attribute<2>(13)); }
 
+  // 3) Set the onsplit and onmerge functors.
   cm.onsplit_functor<2>()=Split_functor(cm);
   cm.onmerge_functor<2>()=Merge_functor();
 
-  // 4) 3-Sew the two hexahedra along one facet.
+  // 4) 3-Sew the two hexahedra along one face. This calls 1 onmerge.
   cm.sew<3>(dh1, dh2);
 
   // 5) Display all the values of 2-attributes.
-  display_map_and_2attributs(cm);
+  display_map_and_2attributes(cm);
 
-  // 6) Insert a vertex in the facet between the two hexahedra.
+  // 6) Insert a vertex in the face between the two hexahedra.
+  //    This calls 4 onsplit.
   Dart_handle resdart=CGAL::insert_cell_0_in_cell_2(cm, dh2);
 
   // 7) Display all the values of 2-attributes.
-  display_map_and_2attributs(cm);
+  display_map_and_2attributes(cm);
 
-  // Now there is no dynamic functor called when two 2-attributes are merged
-  cm.onmerge_functor<2>()=boost::function<void(Facet_attribute&,
-                                               Facet_attribute&)>();
+  // 8) "Remove" the dynamic onmerge functor.
+  cm.onmerge_functor<2>()=boost::function<void(Face_attribute&,
+                                               Face_attribute&)>();
 
+  // 9) Remove one edge: this merges two faces, however no dynamic
+  //    functor is called (because in 8 it was removed).
   CGAL::remove_cell<CMap_3, 1>(cm, resdart);
-  display_map_and_2attributs(cm);
+
+  // 10) Display all the values of 2-attributes.
+  display_map_and_2attributes(cm);
 
   return EXIT_SUCCESS;
 }
