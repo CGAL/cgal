@@ -121,19 +121,20 @@ public:
 
     typename Kernel::Construct_ray_3 make_ray = m_kernel.construct_ray_3_object();
     typename Kernel::Construct_vector_3 make_vector = m_kernel.construct_vector_3_object();
-     
-    CGAL::Random rg(seed); // seed some value for make it easy to debug
-    Random_points_on_sphere_3<Point> random_point(1.,rg);
+
     //the direction of the vertical ray depends on the position of the point in the bbox
     //in order to limit the expected number of nodes visited.
-
     Ray query = make_ray(point, make_vector(0,0,(2*point.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
     boost::optional<Bounded_side> res = is_inside_ray_tree_traversal<Ray,true>(query);
 
-    while (!res){
-      //retry with a random ray
-      query = make_ray(point, make_vector(CGAL::ORIGIN,*random_point++));
-      res = is_inside_ray_tree_traversal<Ray,false>(query);
+    if(!res) {
+      CGAL::Random rg(seed); // seed some value for make it easy to debug
+      Random_points_on_sphere_3<Point> random_point(1.,rg);
+
+      do { //retry with a random ray
+        query = make_ray(point, make_vector(CGAL::ORIGIN,*random_point++));
+        res = is_inside_ray_tree_traversal<Ray,false>(query);
+      } while (!res);
     }
     return *res;
   }
@@ -145,7 +146,7 @@ private:
   {
     std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
 
-    internal::Ray_3_Triangle_3_traversal_traits<Traits,Kernel,Boolean_tag<ray_is_vertical>> traversal_traits(status);
+    internal::Ray_3_Triangle_3_traversal_traits<Traits,Kernel,Boolean_tag<ray_is_vertical> > traversal_traits(status);
     tree.traversal(query, traversal_traits);
 
     if ( !boost::logic::indeterminate(status.first) )
