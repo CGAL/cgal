@@ -41,9 +41,6 @@ intersection(
     const typename K::Iso_rectangle_2 &irect2,
     const K&)
 {
-    typedef typename CGAL::Intersection_traits
-      <K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>::result_type result_type;
-
     typedef typename K::FT  FT;
     Rational_traits<FT>  rt;
     typename K::Construct_point_2 construct_point_2;

@@ -438,9 +438,6 @@ intersection(const typename K::Segment_2 &seg1,
 	     const typename K::Segment_2 &seg2,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits
-      <K, typename K::Segment_2, typename K::Segment_2>::result_type result_type;
-
     typedef Segment_2_Segment_2_pair<K> is_t;
     is_t ispair(&seg1, &seg2);
     switch (ispair.intersection_type()) {
