@@ -23,8 +23,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_AABB_HALFEDGEGRAPH_TRIANGLE_PRIMITIVE_H
-#define CGAL_AABB_HALFEDGEGRAPH_TRIANGLE_PRIMITIVE_H
+#ifndef CGAL_AABB_HALFEDGEGRAPH_SEGMENT_PRIMITIVE_H
+#define CGAL_AABB_HALFEDGEGRAPH_SEGMENT_PRIMITIVE_H
 
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/Polyhedron_3.h>
@@ -54,7 +54,7 @@ class AABB_HalfedgeGraph_segment_primitive : public AABB_primitive< Id_,
   typedef Source_point_from_edge_descriptor<HalfedgeGraph> Point_property_map;
   
   typedef AABB_primitive< Id_,
-                          Triangle_property_map,
+                          Segment_property_map,
                           Point_property_map,
                           Tag_true,
                           cache_datum > Base;
@@ -64,29 +64,29 @@ public:
   template <class Iterator>
   AABB_HalfedgeGraph_segment_primitive(Iterator it, const HalfedgeGraph& graph)
     : Base( Id_(*it),
-            Triangle_property_map(&graph),
+            Segment_property_map(&graph),
             Point_property_map(&graph) ){}
 
   //for backward-compatibility with AABB_polyhedron_segment_primitive
   AABB_HalfedgeGraph_segment_primitive(Id_ id)
     : Base( id,
-            Triangle_property_map(NULL),
+            Segment_property_map(NULL),
             Point_property_map(NULL) ){}
               
   static typename Base::Shared_data construct_shared_data( const HalfedgeGraph& graph )
   {
-    return Base::construct_shared_data(Triangle_property_map(&graph), Point_property_map(&graph));
+    return Base::construct_shared_data(Segment_property_map(&graph), Point_property_map(&graph));
   }
   
   //for backward-compatibility with AABB_polyhedron_segment_primitive
   static typename Base::Shared_data construct_shared_data()
   {
-    return Base::construct_shared_data(Triangle_property_map(NULL), Point_property_map(NULL));
+    return Base::construct_shared_data(Segment_property_map(NULL), Point_property_map(NULL));
   }
 };
 
 }  // end namespace CGAL
 
 
-#endif // CGAL_AABB_HALFEDGEGRAPH_TRIANGLE_PRIMITIVE_H
+#endif // CGAL_AABB_HALFEDGEGRAPH_SEGMENT_PRIMITIVE_H
 
