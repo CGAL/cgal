@@ -25,6 +25,8 @@ namespace CGAL {
  *         If `Polyhedron` is a \cgal Polyhedron, a default is provided.
  * \todo Doc: move the concept `TriangleAccessor_3` into the "Operation on Polyhedra" package
  * \todo Code: Use this class as an implementation detail of Mesh_3's Polyhedral_mesh_domain_3
+ * \todo Code: current version puts all polyhedra under one AABB, more proper approach might be using separate AABB for each polyhedron 
+ *       and filtering query point with bboxes of polyhedra...
  */
 template <class Polyhedron, 
           class Kernel,

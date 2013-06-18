@@ -10,21 +10,10 @@ class AABB_triangle_accessor_3_primitive
 public:
   typedef typename GeomTraits::Point_3                 Point;
   typedef typename TriangleAccessor_3::Triangle_handle Id;
-  typedef typename TriangleAccessor_3::Triangle_3      Datum;
-  typedef AABB_triangle_accessor_3_primitive<GeomTraits, TriangleAccessor_3> Self;
+  typedef typename GeomTraits::Triangle_3              Datum;
 
-  AABB_triangle_accessor_3_primitive() 
-  { }
-  AABB_triangle_accessor_3_primitive(const Self& primitive)
-  {
-    m_triangle_handle = primitive.id();
-  }
   AABB_triangle_accessor_3_primitive(const Id& handle)
-  : m_triangle_handle(handle)  
-  { }
-  AABB_triangle_accessor_3_primitive(const Id* ptr)
-  : m_triangle_handle(*ptr)  
-  { }
+  : m_triangle_handle(handle) { }
 
   Datum datum() const { return TriangleAccessor_3().triangle(m_triangle_handle); }
   Point reference_point() const { return datum().vertex(0); }
