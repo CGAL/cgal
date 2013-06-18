@@ -71,7 +71,8 @@ int main (int argc, char * argv[])
   CGAL::set_pretty_mode(std::cerr);
 #endif
 
-  Traits_test<Traits> test;
+  Traits traits;
+  Traits_test<Traits> test(traits);
   if (!test.parse(argc, argv)) return -1;
   if (!test.init()) return -1;
   if (!test.perform()) return -1;
