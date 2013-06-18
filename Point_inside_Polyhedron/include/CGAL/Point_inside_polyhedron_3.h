@@ -41,7 +41,8 @@ class Point_inside_polyhedron_3{
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Ray_3 Ray;
   //members
-  Kernel m_kernel;
+  typename Kernel::Construct_ray_3     ray_functor;
+  typename Kernel::Construct_vector_3  vector_functor;
   Tree tree;
 
   const static unsigned int seed = 1340818006;
@@ -51,14 +52,16 @@ public:
    * Default constructor. The domain is considered to be empty.
    */
   Point_inside_polyhedron_3(const Kernel& kernel=Kernel())
-  : m_kernel(kernel) 
+  : ray_functor(kernel.construct_ray_3_object()),
+  vector_functor(kernel.construct_vector_3_object())
   { }
  
   /** 
    * Constructor with one polyhedral surface. `polyhedron` must be closed and triangulated.
    */
   Point_inside_polyhedron_3(const Polyhedron& polyhedron, const Kernel& kernel=Kernel()) 
-  : m_kernel(kernel)
+  : ray_functor(kernel.construct_ray_3_object()),
+  vector_functor(kernel.construct_vector_3_object())
   {
     add_polyhedron(polyhedron);
   }
@@ -69,7 +72,8 @@ public:
    */
   template <class InputIterator>
   Point_inside_polyhedron_3(InputIterator begin, InputIterator beyond, const Kernel& kernel=Kernel()) 
-  : m_kernel(kernel)
+  : ray_functor(kernel.construct_ray_3_object()),
+  vector_functor(kernel.construct_vector_3_object())
   {
     add_polyhedra(begin, beyond);
   }
@@ -121,12 +125,9 @@ public:
       return ON_UNBOUNDED_SIDE;
     }
 
-    typename Kernel::Construct_ray_3 make_ray = m_kernel.construct_ray_3_object();
-    typename Kernel::Construct_vector_3 make_vector = m_kernel.construct_vector_3_object();
-
     //the direction of the vertical ray depends on the position of the point in the bbox
     //in order to limit the expected number of nodes visited.
-    Ray query = make_ray(point, make_vector(0,0,(2*point.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
+    Ray query = ray_functor(point, vector_functor(0,0,(2*point.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
     boost::optional<Bounded_side> res = is_inside_ray_tree_traversal<Ray,true>(query);
 
     if(!res) {
@@ -134,7 +135,7 @@ public:
       Random_points_on_sphere_3<Point> random_point(1.,rg);
 
       do { //retry with a random ray
-        query = make_ray(point, make_vector(CGAL::ORIGIN,*random_point++));
+        query = ray_functor(point, vector_functor(CGAL::ORIGIN,*random_point++));
         res = is_inside_ray_tree_traversal<Ray,false>(query);
       } while (!res);
     }
