@@ -39,17 +39,12 @@
 namespace CGAL {
 
 namespace internal{  namespace AABB_tree {
-  template <class T>
-  struct Remove_optional  { typedef T type; };
 
-  template <class T>
-  struct Remove_optional< ::boost::optional<T> >  { typedef T type; };
+template <class T>
+struct Remove_optional  { typedef T type; };
 
-} } //end of namespace internal::AABB_tree
-
-namespace internal{
-
-
+template <class T>
+struct Remove_optional< ::boost::optional<T> >  { typedef T type; };
 
 //helper controlling whether extra data should be stored in the AABB_tree traits class  
 template <class Primitive, bool has_shared_data=Has_nested_type_Shared_data<Primitive>::value>
@@ -96,7 +91,7 @@ struct AABB_traits_base<Primitive,true>{
   const typename Primitive::Shared_data& shared_data() const {return m_primitive_data;}
 };
 
-}
+} } //end of namespace internal::AABB_tree
 
 /// \addtogroup PkgAABB_tree
 /// @{
@@ -118,7 +113,7 @@ struct AABB_traits_base<Primitive,true>{
 /// \sa `AABBPrimitive`
 template<typename GeomTraits, typename AABBPrimitive>
 class AABB_traits:
-  public internal::AABB_traits_base<AABBPrimitive>
+  public internal::AABB_tree::AABB_traits_base<AABBPrimitive>
 {
   typedef typename CGAL::Object Object;
 public:
