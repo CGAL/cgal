@@ -1,4 +1,4 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Pierre Alliez, Stephane Tayeb
+// Author(s)     : Sebastien Loriot
 //
 //******************************************************************************
 // File Description :
@@ -26,46 +26,56 @@
 #ifndef CGAL_AABB_SEGMENT_PRIMITIVE_H_
 #define CGAL_AABB_SEGMENT_PRIMITIVE_H_
 
+#include <CGAL/AABB_primitive.h>
+#include <CGAL/Kernel_traits.h>
+#include <iterator>
+
 namespace CGAL {
 
-template <class GeomTraits, class Iterator>
-class AABB_segment_primitive
+namespace internal {
+  template <class Iterator>
+  struct Source_of_segment_3_iterator_property_map{
+    //classical typedefs
+    typedef typename CGAL::Kernel_traits< typename std::iterator_traits<Iterator>::value_type >::Kernel GeomTraits;
+    typedef Iterator key_type;
+    typedef typename GeomTraits::Point_3 value_type;
+    typedef const typename GeomTraits::Point_3& reference;
+    typedef boost::readable_property_map_tag category;
+  };
+  
+  //get function for property map
+  template <class Iterator>
+  inline
+  typename Source_of_segment_3_iterator_property_map<Iterator>::reference
+  get(Source_of_segment_3_iterator_property_map<Iterator>, Iterator it)
+  {
+    return it->source();
+  }
+}//namespace internal
+
+
+template < class Iterator,
+           class cache_datum=Tag_false>
+class AABB_segment_primitive : public AABB_primitive< Iterator,
+                                                      Input_iterator_property_map<Iterator>,
+                                                      internal::Source_of_segment_3_iterator_property_map<Iterator>,
+                                                      Tag_true,
+                                                      cache_datum >
 {
-        // types
+  typedef AABB_primitive< Iterator,
+                          Input_iterator_property_map<Iterator>,
+                          internal::Source_of_segment_3_iterator_property_map<Iterator>,
+                          Tag_true,
+                          cache_datum > Base;
 public:
-        typedef typename GeomTraits::Point_3 Point; // point type
-        typedef typename GeomTraits::Segment_3 Datum; // datum type
-        typedef Iterator Id; // Id type
-
-        // member data
-private:
-        Id m_it;
-        Datum m_datum;
-
-public:
-        // constructors
-        AABB_segment_primitive() {}
-        AABB_segment_primitive(Id it)
-                : m_it(it)
-        {
-                m_datum = *it; // copy segment
-        }
-        AABB_segment_primitive(const AABB_segment_primitive& primitive)
-        {
-                m_it = primitive.id();
-                m_datum = primitive.datum();
-        }
-public:
-        Id& id() { return m_it; }
-        const Id& id() const { return m_it; }
-        Datum& datum() { return m_datum; }
-        const Datum& datum() const { return m_datum; }
-
-        /// Returns a point on the primitive
-        Point reference_point() const { return m_datum.source(); }
+  // constructors
+  AABB_segment_primitive(Iterator it) : Base(it){}
+    
+  static typename Base::Shared_data construct_shared_data() {return typename Base::Shared_data();}
 };
 
 }  // end namespace CGAL
+
 
 #endif // CGAL_AABB_SEGMENT_PRIMITIVE_H_
 

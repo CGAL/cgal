@@ -81,8 +81,8 @@ public:
   #endif
   Result;
 public:
-  First_intersection_traits()
-    : m_result()
+  First_intersection_traits(const AABBTraits& traits)
+    : m_result(), m_traits(traits)
   {}
 
   bool go_further() const { 
@@ -91,12 +91,12 @@ public:
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    m_result = AABBTraits().intersection_object()(query, primitive);
+    m_result = m_traits.intersection_object()(query, primitive);
   }
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return AABBTraits().do_intersect_object()(query, node.bbox());
+    return m_traits.do_intersect_object()(query, node.bbox());
   }
 
   Result result() const { return m_result; }
@@ -106,6 +106,7 @@ public:
 
 private:
   Result m_result;
+  const AABBTraits& m_traits;
 };
 
 
@@ -125,8 +126,8 @@ class Listing_intersection_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Listing_intersection_traits(Output_iterator out_it)
-    : m_out_it(out_it) {}
+  Listing_intersection_traits(Output_iterator out_it, const AABBTraits& traits)
+    : m_out_it(out_it), m_traits(traits) {}
 
   bool go_further() const { return true; }
 
@@ -147,11 +148,12 @@ public:
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return AABBTraits().do_intersect_object()(query, node.bbox());
+    return m_traits.do_intersect_object()(query, node.bbox());
   }
 
 private:
   Output_iterator m_out_it;
+  const AABBTraits& m_traits;
 };
 
 
@@ -171,14 +173,14 @@ class Listing_primitive_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Listing_primitive_traits(Output_iterator out_it)
-    : m_out_it(out_it) {}
+  Listing_primitive_traits(Output_iterator out_it, const AABBTraits& traits)
+    : m_out_it(out_it), m_traits(traits) {}
 
   bool go_further() const { return true; }
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    if( AABBTraits().do_intersect_object()(query, primitive) )
+    if( m_traits.do_intersect_object()(query, primitive) )
     {
       *m_out_it++ = primitive.id();
     }
@@ -186,11 +188,12 @@ public:
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return AABBTraits().do_intersect_object()(query, node.bbox());
+    return m_traits.do_intersect_object()(query, node.bbox());
   }
 
 private:
   Output_iterator m_out_it;
+  const AABBTraits& m_traits;
 };
 
 
@@ -210,15 +213,16 @@ class First_primitive_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  First_primitive_traits()
+  First_primitive_traits(const AABBTraits& traits)
     : m_is_found(false)
-    , m_result() {}
+    , m_result()
+    , m_traits(traits) {}
 
   bool go_further() const { return !m_is_found; }
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    if( AABBTraits().do_intersect_object()(query, primitive) )
+    if( m_traits.do_intersect_object()(query, primitive) )
     {
       m_result = boost::optional<typename Primitive::Id>(primitive.id());
       m_is_found = true;
@@ -227,7 +231,7 @@ public:
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return AABBTraits().do_intersect_object()(query, node.bbox());
+    return m_traits.do_intersect_object()(query, node.bbox());
   }
 
   boost::optional<typename Primitive::Id> result() const { return m_result; }
@@ -236,6 +240,7 @@ public:
 private:
   bool m_is_found;
   boost::optional<typename Primitive::Id> m_result;
+  const AABBTraits& m_traits;
 };
 
 /**
@@ -254,27 +259,28 @@ class Do_intersect_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Do_intersect_traits()
-    : m_is_found(false)
+  Do_intersect_traits(const AABBTraits& traits)
+    : m_is_found(false), m_traits(traits)
   {}
 
   bool go_further() const { return !m_is_found; }
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    if( AABBTraits().do_intersect_object()(query, primitive) )
+    if( m_traits.do_intersect_object()(query, primitive) )
       m_is_found = true;
   }
 
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return AABBTraits().do_intersect_object()(query, node.bbox());
+    return m_traits.do_intersect_object()(query, node.bbox());
   }
 
   bool is_intersection_found() const { return m_is_found; }
 
 private:
   bool m_is_found;
+  const AABBTraits& m_traits;
 };
 
 
@@ -295,16 +301,18 @@ class Projection_traits
 
 public:
   Projection_traits(const Point& hint,
-                    const typename Primitive::Id& hint_primitive)
+                    const typename Primitive::Id& hint_primitive,
+                    const AABBTraits& traits)
     : m_closest_point(hint),
-      m_closest_primitive(hint_primitive)
+      m_closest_primitive(hint_primitive), 
+      m_traits(traits)
   {}
 
   bool go_further() const { return true; }
 
   void intersection(const Point& query, const Primitive& primitive)
   {
-    Point new_closest_point = AABBTraits().closest_point_object()
+    Point new_closest_point = m_traits.closest_point_object()
       (query, primitive, m_closest_point);
     if(new_closest_point != m_closest_point)
     {
@@ -315,7 +323,7 @@ public:
 
   bool do_intersect(const Point& query, const Node& node) const
   {
-    return AABBTraits().compare_distance_object()
+    return m_traits.compare_distance_object()
       (query, node.bbox(), m_closest_point) == CGAL::SMALLER;
   }
 
@@ -328,6 +336,7 @@ public:
 private:
   Point m_closest_point;
   typename Primitive::Id m_closest_primitive;
+  const AABBTraits& m_traits;
 };
 
 }}} // end namespace CGAL::internal::AABB_tree

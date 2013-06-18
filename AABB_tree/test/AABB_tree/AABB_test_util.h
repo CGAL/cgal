@@ -27,8 +27,9 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
-#include <CGAL/AABB_polyhedron_segment_primitive.h>
+#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
+#include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
+#include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
 #include <boost/mem_fn.hpp>
 
@@ -215,7 +216,7 @@ struct Primitive_generator {};
 template<class K, class Polyhedron>
 struct Primitive_generator<SEGMENT, K, Polyhedron>
 {
-    typedef CGAL::AABB_polyhedron_segment_primitive<K,Polyhedron> Primitive;
+    typedef CGAL::AABB_HalfedgeGraph_segment_primitive<Polyhedron> Primitive;
 
     typedef typename Polyhedron::Edge_iterator iterator;
     iterator begin(Polyhedron& p) { return p.edges_begin(); }
@@ -225,7 +226,7 @@ struct Primitive_generator<SEGMENT, K, Polyhedron>
 template<class K, class Polyhedron>
 struct Primitive_generator<TRIANGLE, K, Polyhedron>
 {
-    typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+    typedef CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron> Primitive;
 
     typedef typename Polyhedron::Facet_iterator iterator;
     iterator begin(Polyhedron& p) { return p.facets_begin(); }
@@ -331,16 +332,18 @@ class Naive_implementations
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef boost::optional<Object_and_primitive_id> Intersection_result;
-
-
+  
+  const Traits& m_traits;
 public:
+  Naive_implementations(const Traits& traits):m_traits(traits){}
+
   template<typename Query>
   bool do_intersect(const Query& query, Polyhedron& p) const
   {
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         return true;
     }
 
@@ -356,7 +359,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         ++result;
     }
 
@@ -371,7 +374,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         *out++ = Pr(it).id();
     }
 
@@ -391,7 +394,7 @@ public:
         intersection  = Traits().intersection_object()(query, Pr(it));
       #else
       boost::optional< typename Traits::template Intersection_and_primitive_id<Query>::Type >
-        intersection  = Traits().intersection_object()(query, Pr(it));
+        intersection  = m_traits.intersection_object()(query, Pr(it));
       #endif
       if ( intersection )
         *out++ = *intersection;
@@ -408,11 +411,11 @@ public:
     assert ( it != Pr_generator().end(p) );
 
     // Get a point on the primitive
-    Point closest_point = Pr(it).reference_point();
+    Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(Pr(it),m_traits);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      closest_point = Traits().closest_point_object()(query, Pr(it), closest_point);
+      closest_point = m_traits.closest_point_object()(query, Pr(it), closest_point);
     }
 
     return closest_point;
@@ -427,12 +430,12 @@ public:
 
     // Get a point on the primitive
     Pr closest_primitive = Pr(it);
-    Point closest_point = closest_primitive.reference_point();
+    Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(closest_primitive,m_traits);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
       Pr tmp_pr(it);
-      Point tmp_pt = Traits().closest_point_object()(query, tmp_pr, closest_point);
+      Point tmp_pt = m_traits.closest_point_object()(query, tmp_pr, closest_point);
       if ( tmp_pt != closest_point )
       {
         closest_point = tmp_pt;
@@ -469,7 +472,7 @@ public:
   Tree_vs_naive(Tree& tree, Polyhedron& p)
     : m_tree(tree)
     , m_polyhedron(p)
-    , m_naive()
+    , m_naive(m_tree.traits())
     , m_naive_time(0)
     , m_tree_time(0)    {}
 

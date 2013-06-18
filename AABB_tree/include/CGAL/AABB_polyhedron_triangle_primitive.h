@@ -26,6 +26,11 @@
 #ifndef CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 #define CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_triangle_primitive.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_FaceGraph_triangle_primitive.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
+
 namespace CGAL {
     /// \ingroup PkgAABB_tree
     /// The class AABB_polyhedron_triangle_primitive is a model of the concept
