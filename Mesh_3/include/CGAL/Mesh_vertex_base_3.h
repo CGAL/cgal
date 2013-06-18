@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Compact_mesh_vertex_base_3.h $
-// $Id: Compact_mesh_vertex_base_3.h 69674 2012-06-18 09:34:06Z jtournoi $
+// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_vertex_base_3.h $
+// $Id: Mesh_vertex_base_3.h 69674 2012-06-18 09:34:06Z jtournoi $
 //
 //
 // Author(s)     : Stéphane Tayeb, Andreas Fabri
@@ -25,8 +25,8 @@
 //******************************************************************************
 
 
-#ifndef CGAL_MESH_VERTEX_BASE_3_H
-#define CGAL_MESH_VERTEX_BASE_3_H
+#ifndef CGAL_COMPACT_MESH_VERTEX_BASE_3_H
+#define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Mesh_3/Has_features.h>
@@ -42,7 +42,7 @@ namespace CGAL {
 template<class GT,
          class MD,
          class Vb = Triangulation_vertex_base_3<GT> >
-class Compact_mesh_vertex_base_3
+class Mesh_vertex_base_3
 : public Vb
 {
 public:
@@ -53,7 +53,7 @@ public:
   template < class TDS3 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Compact_mesh_vertex_base_3 <GT, MD, Vb3> Other;
+    typedef Mesh_vertex_base_3 <GT, MD, Vb3> Other;
   };
 
   // Types
@@ -61,7 +61,7 @@ public:
   typedef typename GT::FT                         FT;
 
   // Constructor
-  Compact_mesh_vertex_base_3()
+  Mesh_vertex_base_3()
     : Vb()
     , number_of_incident_facets_(0)
     , number_of_components_(0)
@@ -178,7 +178,7 @@ private:
   Vertex_handle next_intrusive_;
   Vertex_handle previous_intrusive_;
 #endif
-};  // end class Compact_mesh_vertex_base_3
+};  // end class Mesh_vertex_base_3
 
 namespace internal {
 namespace Mesh_3 {
@@ -190,9 +190,9 @@ template<class GT,
          class Vb>
 inline
 std::istream&
-operator>>(std::istream &is, Compact_mesh_vertex_base_3<GT,MD,Vb>& v)
+operator>>(std::istream &is, Mesh_vertex_base_3<GT,MD,Vb>& v)
 {
-  typedef Compact_mesh_vertex_base_3<GT,MD,Vb> Vertex;
+  typedef Mesh_vertex_base_3<GT,MD,Vb> Vertex;
   typedef typename Vertex::Cmvb3_base Cmvb3_base;
   is >> static_cast<Cmvb3_base&>(v);
   int dimension;
@@ -237,4 +237,4 @@ operator<<(std::ostream &os, const Mesh_vertex_base_3<GT,MD,Vb>& v)
 
 
 
-#endif // CGAL_MESH_VERTEX_BASE_3_H
+#endif // CGAL_COMPACT_MESH_VERTEX_BASE_3_H
