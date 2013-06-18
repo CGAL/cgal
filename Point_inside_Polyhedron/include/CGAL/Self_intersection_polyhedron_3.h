@@ -18,6 +18,21 @@ namespace internal {
 template <class Polyhedron, class Kernel, class OutputIterator>
 struct Intersect_facets
 {
+  // wrapper to check whether anything is inserted to output iterator
+  struct Output_iterator_with_bool 
+  {
+    Output_iterator_with_bool(OutputIterator* out, bool* intersected)
+      : m_iterator(out), m_intersected(intersected) { }
+
+    template<class T>
+    void operator()(const T& t) {
+      *m_intersected = true;
+      *(*m_iterator)++ = t; 
+    }
+
+    OutputIterator* m_iterator;
+    bool* m_intersected;
+  };
 // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Triangle_3   Triangle;
@@ -25,13 +40,19 @@ struct Intersect_facets
   typedef typename Polyhedron::Halfedge_const_handle    Halfedge_const_handle;
   typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_const_handle> Box;
 // members
-  mutable OutputIterator m_iterator;
+  mutable OutputIterator  m_iterator;
+  mutable bool            m_intersected;
+  mutable boost::function_output_iterator<Output_iterator_with_bool> m_iterator_wrapper;
+
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
   Intersect_facets(OutputIterator it, const Kernel& kernel)
-    : m_iterator(it),
+    : 
+    m_iterator(it),
+    m_intersected(false),
+    m_iterator_wrapper(Output_iterator_with_bool(&m_iterator, &m_intersected)),
     segment_functor(kernel.construct_segment_3_object()),
     triangle_functor(kernel.construct_triangle_3_object()),
     do_intersect_3_functor(kernel.do_intersect_3_object())
@@ -93,11 +114,11 @@ struct Intersect_facets
 
       if(do_intersect_3_functor(t1,s2))
       {
-        *m_iterator++ = std::make_pair(b->handle(), c->handle());
+        *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
       }
       else if(do_intersect_3_functor(t2,s1))
       {
-        *m_iterator++ = std::make_pair(b->handle(), c->handle());
+        *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
       }
       return;
     }
@@ -107,7 +128,7 @@ struct Intersect_facets
     Triangle t2 = triangle_functor( g->vertex()->point(), g->next()->vertex()->point(), g->next()->next()->vertex()->point());
     if(do_intersect_3_functor(t1, t2))
     {
-      *m_iterator++ = std::make_pair(b->handle(), c->handle());
+      *m_iterator_wrapper++ = std::make_pair(b->handle(), c->handle());
     }
   } // end operator ()
 }; // end struct Intersect_facets
@@ -174,7 +195,8 @@ concept SelfIntersectionTraits{
  * \TODO Doc: move SelfIntersectionTraits concept to appropriate location.
  */
 template <class GeomTraits, class Polyhedron, class OutputIterator>
-OutputIterator self_intersect(const Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geom_traits = GeomTraits())
+std::pair<bool, OutputIterator>
+self_intersect(const Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_assertion(polyhedron.is_pure_triangle());
 
@@ -208,7 +230,7 @@ OutputIterator self_intersect(const Polyhedron& polyhedron, OutputIterator out, 
   internal::Intersect_facets<Polyhedron,GeomTraits,OutputIterator> intersect_facets(out, geom_traits);
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
-  return intersect_facets.m_iterator;
+  return std::make_pair(intersect_facets.m_intersected, intersect_facets.m_iterator);
 }
 
 /** 
