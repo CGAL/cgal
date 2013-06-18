@@ -34,7 +34,9 @@ namespace CGAL {
 
 /// \addtogroup PkgAABB_tree
 /// @{
-
+    /// \deprecated This class is deprecated since \cgal 4.3, the class
+    /// `AABB_HalfedgeGraph_segment_primitive` should be used instead.
+    ///
     /// The class AABB_polyhedron_segment_primitive is a model of the
     /// concept \ref AABBPrimitive. It wraps a halfedge handle of a
     /// polyhedron, which is used as id, and allows the construction
@@ -46,8 +48,8 @@ namespace CGAL {
     /// \tparam GeomTraits must provide a \c %Point_3
     /// type, used as \c Point, and a \c %Segment_3 type, used as \c
     /// Datum and constructible from two arguments of type \c
-    /// Point. 
-    /// \tparam Polyhedron must be a 
+    /// Point.
+    /// \tparam Polyhedron must be a
     /// \c CGAL::Polyhedron_3 whose points have type \c Point.
     ///
     /// \sa `AABBPrimitive`
@@ -79,7 +81,7 @@ namespace CGAL {
             : m_halfedge_handle(*ptr)  { };
         template <class Iterator>
         AABB_polyhedron_segment_primitive( Iterator it,
-                                           typename boost::enable_if< 
+                                           typename boost::enable_if<
                                                       boost::is_same<Id,typename Iterator::value_type>
                                             >::type* =0
         ) : m_halfedge_handle(*it)  { }

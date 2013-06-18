@@ -24,6 +24,7 @@
 
 ## Concepts ##
 - `AABBPrimitive`
+- `AABBPrimitiveWithSharedData`
 - `AABBTraits`
 - `AABBGeomTraits`
 
@@ -31,4 +32,10 @@
 - `CGAL::AABB_traits<GeomTraits,Primitive>`
 - `CGAL::AABB_tree<AT>`
 
+## Primitives ##
+- `CGAL::AABB_triangle_primitive<Iterator,cache_datum>`
+- `CGAL::AABB_segment_primitive<Iterator,cache_datum>`
+- `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>`
+- `CGAL::AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>`
+- `CGAL::AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>`
 */

@@ -9,4 +9,5 @@
 \example AABB_tree/AABB_polyhedron_facet_intersection_example.cpp
 \example AABB_tree/AABB_segment_3_example.cpp
 \example AABB_tree/AABB_triangle_3_example.cpp
+\example AABB_tree/AABB_HalfedgeGraph_edge_example.cpp
 */

@@ -18,10 +18,6 @@
 //
 // Author(s)     : Sebastien Loriot
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
 
 #ifndef CGAL_AABB_PRIMITIVE_H
 #define CGAL_AABB_PRIMITIVE_H
@@ -49,11 +45,81 @@ protected:
 public:
   // constructors
   AABB_primitive_base(Id id) : m_id(id) {}
-  
+
   Id id() const {return m_id;}
 };
 
+#ifdef DOXYGEN_RUNNING
+/*!
+ * \ingroup PkgAABB_tree
+ * Generic primitive class.
+ * If `ExternalPropertyMaps` is `CGAL::Tag_false`, the class is a model of the concept `AABBPrimitive`.
+ * If `ExternalPropertyMaps` is `CGAL::Tag_true`, the class is a model of the concept `AABBPrimitiveWithSharedData`.
+ * The two property maps which are template parameters of the class enable to get the datum and the reference point of
+ * the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.
+ *
+ * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap`with `Id` as
+ *           `key_type`. It must be default constructible.
+ * \tparam PointPropertyMap is a model of `ReadablePropertyMap` with `Id` as
+ *           `key_type`. It must be default constructible.
+ * \tparam ExternalPropertyMaps either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former
+ *          case, the property maps will be stored in the traits class, while
+ *          in the latter they will be stored in the primitive
+ *          (which increases the size of each primitive).
+ * \tparam cache_datum either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
+ *           the datum is stored in the primitive, while in the latter
+ *           it is constructed on the fly to reduce the memory footprint.
+ *           The default is `CGAL::Tag_false` (datum is not stored).
+ *
+ * \sa `AABBPrimitive`
+ * \sa `AABB_segment_primitive<Iterator,cache_datum>`
+ * \sa `AABB_triangle_primitive<Iterator,cache_datum>`
+ * \sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>`
+ * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>`
+ */
+template <  class Id,
+            class ObjectPropertyMap,
+            class PointPropertyMap,
+            class ExternalPropertyMaps,
+            class cache_datum>
+struct AABB_primitive
+{
+  /// \name Types
+  /// @{
+  /*!
+  The datum type.
+  */
+  typedef boost::property_traits< ObjectPropertyMap >::value_type Datum;
 
+  /*!
+  The point type.
+  */
+  typedef boost::property_traits< PointPropertyMap >::value_type Point;
+
+  /*!
+  The reference datum type.
+  */
+  typedef boost::property_traits< ObjectPropertyMap >::reference Datum_reference;
+
+  /*!
+  The reference point type.
+  */
+  typedef boost::property_traits< PointPropertyMap >::reference Point_reference;
+
+  /*!
+  Id type.
+  */
+  typedef Id Id;
+  /// @}
+
+  /*!
+  Constructs a primitive and initializes the property maps.
+  */
+  AABB_primitive(Id id,
+                 ObjectPropertyMap o_pmap=ObjectPropertyMap(),
+                 PointPropertyMap p_pmap=PointPropertyMap());
+};
+#else
 template <  class Id,
             class ObjectPropertyMap,
             class PointPropertyMap,
@@ -65,7 +131,7 @@ struct AABB_primitive;
 //no caching, property maps internally stored
 template <  class Id,
             class ObjectPropertyMap,
-            class PointPropertyMap >  
+            class PointPropertyMap >
 class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_false,Tag_false>
   : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
 {
@@ -75,10 +141,10 @@ class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_false,Tag_false
 public:
   AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap pt_pmap=PointPropertyMap())
     : Base(id), m_obj_pmap(obj_pmap), m_pt_pmap(pt_pmap) {}
-  
+
   typename Base::Datum_reference
   datum() const { return get(m_obj_pmap,this->m_id); }
-  
+
   typename Base::Point_reference
   reference_point() const { return get(m_pt_pmap,this->m_id); }
 };
@@ -86,7 +152,7 @@ public:
 //caching, property maps internally stored
 template <  class Id,
             class ObjectPropertyMap,
-            class PointPropertyMap >  
+            class PointPropertyMap >
 class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_false,Tag_true>
   : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
 {
@@ -98,10 +164,10 @@ public:
 
   AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap pt_pmap=PointPropertyMap())
     : Base(id), m_datum( get(obj_pmap,id) ), m_pt_pmap(pt_pmap){}
-  
-  
+
+
   Datum_reference datum() const { return m_datum; }
-  
+
   typename Base::Point_reference
   reference_point() const { return get(m_pt_pmap,this->m_id); }
 };
@@ -109,7 +175,7 @@ public:
 //no caching, property maps are stored outside the class
 template <  class Id,
             class ObjectPropertyMap,
-            class PointPropertyMap >  
+            class PointPropertyMap >
 class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_true,Tag_false>
   : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
 {
@@ -119,13 +185,13 @@ public:
 
   AABB_primitive(Id id, ObjectPropertyMap=ObjectPropertyMap(), PointPropertyMap=PointPropertyMap())
     : Base(id) {}
-  
+
   typename Base::Datum_reference
   datum(const Shared_data& data) const { return get(data.first,this->m_id); }
-  
+
   typename Base::Point_reference
   reference_point(const Shared_data& data) const { return get(data.second,this->m_id); }
-  
+
   static Shared_data construct_shared_data(ObjectPropertyMap obj, PointPropertyMap pt) {return Shared_data(obj,pt);}
 };
 
@@ -133,7 +199,7 @@ public:
 //caching, property map is stored outside the class
 template <  class Id,
             class ObjectPropertyMap,
-            class PointPropertyMap >  
+            class PointPropertyMap >
 class AABB_primitive<Id, ObjectPropertyMap, PointPropertyMap,Tag_true,Tag_true>
   : public AABB_primitive_base<Id,ObjectPropertyMap,PointPropertyMap>
 {
@@ -145,14 +211,16 @@ public:
 
   AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap=PointPropertyMap())
     : Base(id), m_datum( get(obj_pmap,id) ) {}
-  
+
   Datum_reference datum(Shared_data) const { return m_datum; }
-  
+
   typename Base::Point_reference
   reference_point(const Shared_data& data) const { return get(data,this->m_id); }
-  
+
   static Shared_data construct_shared_data(ObjectPropertyMap, PointPropertyMap pt) {return pt;}
-};  
+};
+
+#endif //DOXYGEN_RUNNING
 
 }  // end namespace CGAL
 

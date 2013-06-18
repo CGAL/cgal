@@ -3,13 +3,13 @@
 \ingroup PkgAABB_treeConcepts
 \cgalConcept
 
-The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`. 
+The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`.
 
 \cgalHasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 
-\sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>` 
-\sa `CGAL::AABB_tree<AABBTraits>` 
-\sa `AABBPrimitive` 
+\sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
+\sa `CGAL::AABB_tree<AABBTraits>`
+\sa `AABBPrimitive`
 
 */
 class AABBTraits {
@@ -30,7 +30,7 @@ typedef unspecified_type Point_3;
 
 /*! 
 Type of primitive. 
-Must be a model of the concept `AABBPrimitive`. 
+Must be a model of the concepts `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
 */ 
 typedef unspecified_type Primitive; 
 
@@ -201,8 +201,30 @@ Returns the squared distance functor.
 */ 
 Squared_distance squared_distance_object(); 
 
+/// @}
+
+/// \name Primitive with Shared Data
+/// In addition, if `Primitive` is a model of the concept `AABBPrimitiveWithSharedData`,
+/// the following functions are part of the concept:
+/// @{
+
+/*!
+the signature of that function must be the same as the static function `Primitive::construct_shared_data`.
+The type `Primitive` expects that the data constructed by a call to `Primitive::construct_shared_data(t...)`
+is the one given back when accessing the reference point and the datum of a primitive.
+*/
+template <class ... T>
+void set_shared_data(T ... t);
+{}
+
+/*!
+Returns the shared data of the primitive constructed after a call to `set_shared_data`.
+If no call to `set_shared_data` has been done, `Primitive::Shared_data()` is returned.
+*/
+const Primitive::Shared_data& shared_data() const;
 
 /// @}
+
 
 }; /* end AABBTraits */
 

@@ -18,10 +18,7 @@
 //
 // Author(s)     : Sebastien Loriot
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
+
 
 #ifndef CGAL_AABB_SEGMENT_PRIMITIVE_H_
 #define CGAL_AABB_SEGMENT_PRIMITIVE_H_
@@ -42,7 +39,7 @@ namespace internal {
     typedef const typename GeomTraits::Point_3& reference;
     typedef boost::readable_property_map_tag category;
   };
-  
+
   //get function for property map
   template <class Iterator>
   inline
@@ -54,13 +51,36 @@ namespace internal {
 }//namespace internal
 
 
+/*!
+ * \ingroup PkgAABB_tree
+ * The class AABB_segment_primitive is a model of the concept `AABBPrimitive`.
+ * An iterator with a 3D segment as `value_type}` is used as identifier.
+ * The iterator from which the primitive is built should not be invalided 
+ * while the AABB tree holding the primitive is in use.
+ *
+ * \tparam Iterator is a model of `ForwardIterator`, with `Segment_3<Kernel>`
+ *    as value type
+ * \tparam cache_datum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
+ *           the datum is stored in the primitive, while in the latter it is
+ *           constructed on the fly to reduce the memory footprint.
+ *           The default is `CGAL::Tag_false` (datum is not stored).
+ *
+ * \sa `AABBPrimitive`
+ * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>`
+ * \sa `AABB_triangle_primitive<Iterator,cache_datum>`
+ * \sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>`
+ * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>`
+ */
 template < class Iterator,
            class cache_datum=Tag_false>
-class AABB_segment_primitive : public AABB_primitive< Iterator,
-                                                      Input_iterator_property_map<Iterator>,
-                                                      internal::Source_of_segment_3_iterator_property_map<Iterator>,
-                                                      Tag_true,
-                                                      cache_datum >
+class AABB_segment_primitive
+#ifndef DOXYGEN_RUNNING
+  : public AABB_primitive<  Iterator,
+                            Input_iterator_property_map<Iterator>,
+                            internal::Source_of_segment_3_iterator_property_map<Iterator>,
+                            Tag_true,
+                            cache_datum >
+#endif
 {
   typedef AABB_primitive< Iterator,
                           Input_iterator_property_map<Iterator>,
@@ -68,9 +88,9 @@ class AABB_segment_primitive : public AABB_primitive< Iterator,
                           Tag_true,
                           cache_datum > Base;
 public:
-  // constructors
+  ///Constructor from an iterator
   AABB_segment_primitive(Iterator it) : Base(it){}
-    
+
   static typename Base::Shared_data construct_shared_data() {return typename Base::Shared_data();}
 };
 

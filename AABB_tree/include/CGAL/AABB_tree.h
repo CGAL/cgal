@@ -48,6 +48,7 @@ namespace CGAL {
    * of 3D geometric objects, and can receive intersection and distance
    * queries, provided that the corresponding predicates are
    * implemented in the traits class AABBTraits.
+   * An instance of the class `AABBTraits` is internally stored.
    *
    * \sa `AABBTraits`
    * \sa `AABBPrimitive`
@@ -104,37 +105,36 @@ namespace CGAL {
     /// \name Creation
     ///@{
 
-		/// Constructs an empty tree.
+    /// Constructs an empty tree, and initializes the internally stored traits
+    /// class using `traits`.
     AABB_tree(const AABBTraits& traits);
 
-		/**
+    /**
      * @brief Builds the datastructure from a sequence of primitives.
      * @param first iterator over first primitive to insert
      * @param beyond past-the-end iterator
      *
+     * It is equivalent to constructing an empty tree and calling `insert(first,last,t...)`.
+     * For compilers that do not support variadic templates, overloads up to 
+     * 5 template arguments are provided.
      * The tree stays empty if the memory allocation is not successful.
-		 * \tparam ConstPrimitiveIterator can be
-     * any const iterator on a container of
-     * AABB_tree::Primitive::id_type such that AABB_tree::Primitive
-     * has a constructor taking a ConstPrimitiveIterator as
-     * argument.
      */
     #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-		template<typename ConstPrimitiveIterator,typename ... T>
-		AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T...);  
+		template<typename InputIterator,typename ... T>
+		AABB_tree(InputIterator first, InputIterator beyond,T...);  
     #else
-		template<typename ConstPrimitiveIterator>
-		AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
-    template<typename ConstPrimitiveIterator, typename T1>
-		AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2>
-    AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1,T2);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3>
-		AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1,T2,T3);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4>
-		AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1,T2,T3,T4);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-		AABB_tree(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1,T2,T3,T4,T5);
+		template<typename InputIterator>
+		AABB_tree(InputIterator first, InputIterator beyond);
+    template<typename InputIterator, typename T1>
+		AABB_tree(InputIterator first, InputIterator beyond,T1);
+    template<typename InputIterator, typename T1, typename T2>
+    AABB_tree(InputIterator first, InputIterator beyond,T1,T2);
+    template<typename InputIterator, typename T1, typename T2, typename T3>
+		AABB_tree(InputIterator first, InputIterator beyond,T1,T2,T3);
+    template<typename InputIterator, typename T1, typename T2, typename T3, typename T4>
+		AABB_tree(InputIterator first, InputIterator beyond,T1,T2,T3,T4);
+    template<typename InputIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
+		AABB_tree(InputIterator first, ConstPrimitiveIterator beyond,T1,T2,T3,T4,T5);
     #endif
 
     ///@}
@@ -142,8 +142,9 @@ namespace CGAL {
 		/// \name Operations
 		///@{
 
-    /// Clears the current tree and rebuilds it from scratch. See
-    /// constructor above for the parameters.
+    /// Equivalent to calling `clear()` and then `insert(first,last,t...)`.
+    /// For compilers that do not support variadic templates, overloads up
+    /// to 5 template arguments are provided.
     #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 		template<typename ConstPrimitiveIterator,typename ... T>
 		void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T...);
@@ -163,27 +164,31 @@ namespace CGAL {
     #endif
 
 
-    /// Adds a sequence of primitives to the set of primitives of the
-    /// tree. \tparam ConstPrimitiveIterator can be any const iterator
-    /// such that `AABB_tree::Primitive` has a constructor taking an
-    /// ConstPrimitiveIterator as argument.
-		template<typename ConstPrimitiveIterator>
+    /// Add a sequence of primitives to the set of primitives of the AABB tree.
+    /// `%InputIterator` is any iterator and the parameter pack `T` are any types
+    /// such that `Primitive` has a constructor with the following signature:
+    /// `Primitive(%InputIterator, T...)`. If `Primitive` is a model of the concept
+    /// `AABBPrimitiveWithSharedData`, a call to `AABBTraits::set_shared_data(t...)`
+    /// is made using the internally stored traits.
+    /// For compilers that do not support variadic templates,
+    /// overloads up to 5 template arguments are provided.
+		template<typename InputIterator>
     #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-		template<typename ConstPrimitiveIterator,typename ... T>
-		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T...);
+		template<typename InputIterator,typename ... T>
+		void insert(InputIterator first, InputIterator beyond,T...);
     #else
-		template<typename ConstPrimitiveIterator>
-		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond);
-    template<typename ConstPrimitiveIterator, typename T1>
-		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2>
-		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1,T2);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3>
-		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1,T2,T3);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4>
-		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1,T2,T3,T4);
-    template<typename ConstPrimitiveIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-		void insert(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T1,T2,T3,T4,T5);
+		template<typename InputIterator>
+		void insert(InputIterator first, InputIterator beyond);
+    template<typename InputIterator, typename T1>
+		void insert(InputIterator first, InputIterator beyond,T1);
+    template<typename InputIterator, typename T1, typename T2>
+		void insert(InputIterator first, InputIterator beyond,T1,T2);
+    template<typename InputIterator, typename T1, typename T2, typename T3>
+		void insert(InputIterator first, InputIterator beyond,T1,T2,T3);
+    template<typename InputIterator, typename T1, typename T2, typename T3, typename T4>
+		void insert(InputIterator first, InputIterator beyond,T1,T2,T3,T4);
+    template<typename InputIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
+		void insert(InputIterator first, ConstPrimitiveIterator beyond,T1,T2,T3,T4,T5);
     #endif
 
     /// Adds a primitive to the set of primitives of the tree.
@@ -194,7 +199,7 @@ namespace CGAL {
 		{
 			clear();
 		}
-
+    /// Returns a const reference to the internally stored traits class.
     const AABBTraits& traits() const{
       return m_traits; 
     }

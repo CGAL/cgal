@@ -18,10 +18,6 @@
 //
 // Author(s)     : Stéphane Tayeb, Pierre Alliez
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
 
 #ifndef CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 #define CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
@@ -30,9 +26,11 @@
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_FaceGraph_triangle_primitive.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
-
 namespace CGAL {
     /// \ingroup PkgAABB_tree
+    /// \deprecated This class is deprecated since \cgal 4.3, the class
+    /// `AABB_HalfedgeGraph_triangle_primitive` should be used instead.
+    ///
     /// The class AABB_polyhedron_triangle_primitive is a model of the concept
     /// \ref AABBPrimitive. It wraps a facet handle of a polyhedron,
     /// which is used as id, and allows the construction of the datum on
@@ -79,7 +77,7 @@ namespace CGAL {
             : m_facet_handle(*ptr)  { };
         template <class Iterator>
         AABB_polyhedron_triangle_primitive( Iterator it,
-                                            typename boost::enable_if< 
+                                            typename boost::enable_if<
                                                        boost::is_same<Id,typename Iterator::value_type>
                                             >::type* =0
         ) : m_facet_handle(*it)  { }

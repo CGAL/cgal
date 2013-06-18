@@ -18,10 +18,6 @@
 //
 // Author(s) : Stéphane Tayeb, Pierre Alliez, Camille Wormser
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
 
 #ifndef CGAL_AABB_TRAITS_H_
 #define CGAL_AABB_TRAITS_H_
@@ -46,22 +42,22 @@ struct Remove_optional  { typedef T type; };
 template <class T>
 struct Remove_optional< ::boost::optional<T> >  { typedef T type; };
 
-//helper controlling whether extra data should be stored in the AABB_tree traits class  
+//helper controlling whether extra data should be stored in the AABB_tree traits class
 template <class Primitive, bool has_shared_data=Has_nested_type_Shared_data<Primitive>::value>
 struct AABB_traits_base;
-  
+
 template <class Primitive>
 struct AABB_traits_base<Primitive,false>{};
 
 template <class Primitive>
 struct AABB_traits_base<Primitive,true>{
   typename  Primitive::Shared_data m_primitive_data;
-  
+
   #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <class PrimitiveType, typename ... T>
   void set_shared_data(T ... t){
     m_primitive_data=PrimitiveType::construct_shared_data(t...);
-  }  
+  }
   #else
   template <class PrimitiveType>
   void set_shared_data(){
@@ -72,7 +68,7 @@ struct AABB_traits_base<Primitive,true>{
   void set_shared_data(T1 t1){
     m_primitive_data=PrimitiveType::construct_shared_data(t1);
   }
-  
+
   template <class PrimitiveType, class T1,class T2,class T3>
   void set_shared_data(T1 t1,T2 t2,T3 t3){
     m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3);
@@ -82,7 +78,7 @@ struct AABB_traits_base<Primitive,true>{
   void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4){
     m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3,t4);
   }
-  
+
   template <class PrimitiveType, class T1,class T2,class T3,class T4,class T5>
   void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4,T5 t5){
     m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3,t4,t5);
@@ -102,15 +98,16 @@ struct AABB_traits_base<Primitive,true>{
 /// constructions are implemented. It handles points, rays, lines and
 /// segments as query types for intersection detection and
 /// computations, and it handles points as query type for distance
-/// queries. 
+/// queries.
 /// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits,
 /// snd provide the geometric types as well as the intersection tests and computations.
-/// \tparam Primitive must be a model of the concept \ref AABBPrimitive and provide the
-/// type of primitives stored in the AABB_tree.
+/// \tparam Primitive provide the type of primitives stored in the AABB_tree.
+///   It is a model of the concept `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
 ///
 /// \sa `AABBTraits`
 /// \sa `AABB_tree`
 /// \sa `AABBPrimitive`
+/// \sa `AABBPrimitiveWithSharedData`
 template<typename GeomTraits, typename AABBPrimitive>
 class AABB_traits:
   public internal::AABB_tree::AABB_traits_base<AABBPrimitive>
@@ -136,7 +133,7 @@ public:
       typename GeomTraits::Intersect_3(Query, typename Primitive::Datum)
     >::type Intersection_type;
 
-    typedef std::pair< 
+    typedef std::pair<
       typename internal::AABB_tree::Remove_optional<Intersection_type>::type,
       typename Primitive::Id > Type;
   };
@@ -152,20 +149,20 @@ public:
   /// \bug This is not documented for now in the AABBTraits concept.
   typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
 
-  /// 
+  ///
   typedef typename CGAL::Bbox_3 Bounding_box;
 
   /// @}
 
   typedef typename GeomTraits::Sphere_3 Sphere_3;
-  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3; 
+  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
   typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_3;
   typedef typename GeomTraits::Construct_center_3 Construct_center_3;
   typedef typename GeomTraits::Compute_squared_radius_3 Compute_squared_radius_3;
   typedef typename GeomTraits::Construct_min_vertex_3 Construct_min_vertex_3;
-  typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;  
+  typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;
   typedef typename GeomTraits::Construct_iso_cuboid_3 Construct_iso_cuboid_3;
-  
+
 
   /// Default constructor.
   AABB_traits() { };
@@ -190,7 +187,7 @@ public:
   public:
     Sort_primitives(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
       : m_traits(traits) {}
-    
+
     template<typename PrimitiveIterator>
     void operator()(PrimitiveIterator first,
                     PrimitiveIterator beyond,
@@ -228,7 +225,7 @@ public:
   public:
     Compute_bbox(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
       :m_traits (traits) {}
-  
+
     template<typename ConstPrimitiveIterator>
     typename AT::Bounding_box operator()(ConstPrimitiveIterator first,
                                          ConstPrimitiveIterator beyond) const
@@ -339,7 +336,7 @@ Intersection intersection_object() const {return Intersection(*this);}
         return GeomTraits().do_intersect_3_object()
           (GeomTraits().construct_sphere_3_object()(p, sq_distance),
            pr) ?
-          CGAL::SMALLER : 
+          CGAL::SMALLER :
           CGAL::LARGER;
       }
   };
