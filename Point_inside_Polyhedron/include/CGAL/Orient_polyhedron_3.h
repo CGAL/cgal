@@ -191,20 +191,21 @@ public:
 
 /** 
  * Tries to consistently orient a soup of polygons in 3D space.  
- * If a consistent orientation has been found, `true` is returned
- * and `polygons` is updated accordingly. If `points` contains duplicated points
- * the first copy in the vector of each duplicated point will be used in `polygons`.
- * An overload with `std::less` as `Compare` is available.
+ * If a consistent orientation has been found, `true` is returned.
+ * In any case `polygons` is updated.
  * @tparam Point_3 the point type
- * @tparam Compare a binary functor providing an order for objects of type `Point_3`
+ *
  * @param points points of the soup of polygons.
- * @param polygons each element in the vector describes a polygon using the index of the points in the vector.
- * @param comp comparison functor
+ * @param[in, out] polygons each element in the vector describes a polygon using the index of the points in the vector.
+ *
+ * @return true if a consistent orientation has been found
+ *
+ * \TODO code: there is no check for duplicate points, yet it can be implemented as separate filter function
+ * \TODO code: support fixed size arrays for polygons, or creating a concept which provides .size and .operator[]
  */ 
-template <class Point_3>//, class Tuple, class Compare>
+template <class Point_3>
 bool orient_polygon_soup(const std::vector<Point_3>& points,
                          std::vector< std::vector<std::size_t> >& polygons)
-                         //,const Compare& comp = Compare() )
 {
   internal::Polygon_soup_orienter<Point_3> orienter(points, polygons);
   return orienter.orient();
