@@ -29,7 +29,7 @@ In addition, as the core of the code is several years old, it no longer meets th
 
 Therefore, the goal of this project is, as a first step, to upgrade and update the code that deals with polylines in the Arrangement on Surface (AoS) package.
 This upgrade lay the foundation for future generalization of the class.
-In addition, by adopting better programming style we also manage to introduce an improvement of 5--7\% in the performance of the package.
+In addition, by adopting better programming style we also manage to introduce an improvement of 4--6\% in the performance of the package.
 
 \subsection{Notations Conventions}
 \label{sec:notat-conv}
@@ -120,7 +120,7 @@ In order to keep the efficiency benefits of the usage of \code{source()} and \co
 Note that this assumption implies only a conceptual restriction, since in practice the available implementations that can be used model this concept anyway.
 Once \segtr models this concept we can remove all occurrences of \code{source()} and \code{target()}.
 In this we assert that \polytr itself will be a model of this concept as well.
-As a result, we can also provide the following invariant: \textbf{\poly and \xpoly will be \emph{well oriented}.}\marginpar{\footnotesize{\emph{well oriented}}}
+As a result, we can also provide the following invariant: \textbf{\poly and \xpoly will be \emph{well oriented}.}
 That is, the \emph{source} of the \(n\)-th \seg should be the \emph{target} of the \((n-1)\)-th \seg.
 In particular the polyline:
 \begin{center}
@@ -179,7 +179,7 @@ can now be represented as one and only one of the following:
 
 An \xpoly is x-monotone regardless of its representation.
 X-monotonicity is a geometrical property of the polyline, and it is not by its internal representation.
-Currently, an \xpoly maintains a \emph{direction invariant}\marginpar{\footnotesize{\emph{direction invariant}}} that it is oriented \emph{left-to-right}.
+Currently, an \xpoly maintains a \emph{direction invariant} that it is oriented \emph{left-to-right}.
 That is, its vertices should be given in an increasing lexicographic order.
 However, in general an \xpoly should merely be x-monotone, and its vertices (or segments) may be oriented from left-to-right \emph{or} from right-to-left.
 In this project we lifted this restriction and the new implementation allows the construction of \xpoly's which are oriented either left-to-right \emph{or} right-to-left.
@@ -195,7 +195,7 @@ This includes removing code which was in \code{CGAL_precondition}.
 \paragraph{Name spaces.}
 \label{sec:name-spaces-poly+xpoly}
 
-The implementation of \poly and \xpoly was moved into its own namespace, namely \code{POLYLINE}.\todo{What should I add here? Is it enough?}
+The implementation of \poly and \xpoly was moved into its own namespace, namely \code{POLYLINE}.
 
 
 \paragraph{Construction and Iteration.}
@@ -333,14 +333,6 @@ Note that we considered all the possible pairs of \xpoly's that arise from the f
   \label{fig:test-cases-of-intersect_2}
 \end{figure}
 
-Interesting cases:
-\begin{itemize}
-\item The intersection of the pair of \xpoly's \(\{12,34\}\) and \(\{12,13\}\).
-It finds the intersection point, namely \((1,1)\) but with multiplicity \(0\)\todo{Shouldn't it be multiplicity \(1\)?}.
-For example, the \xpoly number 34, passes through the vertex \((1,1)\) of the \xpoly number 12.
-Similar issue arises for example with the pair \(\{13,34\}\) or with the pair \(\{15,35\}\).
-\end{itemize}
-
 \section{Benchmark}
 \label{sec:benchmark}
 
@@ -353,6 +345,9 @@ Note that this code uses the \emph{deprecated} construction of polylines -- we d
 
 \section{Future Work}
 \label{sec:future-work}
+
+While working on this project we discovered several issues which have to be addressed.
+These issues vary from purely technicalities that have to be addressed to issues which involve design decisions that have to be taken.
 
 \begin{itemize}
 \item Re-implement \code{locate()} so it will return a \emph{pointer} rather then an index to the containing segment.
@@ -367,6 +362,29 @@ Note that the number of face is correct, but the other elements of the vector ar
 \item Accessing the segments of a polyline.
   Currently accessing a segment of either a \poly or \xpoly is done using the \code{operator[]}.
   Replace this accessing method with iterators/handles.
+\item The concept definition of the functor \functor{AreMergeable_2} states when two \(x\)-monotone polylines are mergable:
+\begin{quote}
+  \emph{``\emph{xc1} and \emph{xc2} are mergeable if their underlying curves are identical, they share a common endpoint, and they do not bend to form a non- x-monotone curve.''}
+\end{quote}
+This definition is rather restrictive and rule out curves that intuitively speaking should be mergeable.
+For example, the case of overlapping curves is \emph{not} considered mergeable.
+In turn, the current implementation of \functor{Merge_2} deals merely with concatenation of \xpoly's.
+We recommend to revolve the definitions of the concepts \functor{AreMergeable_2} and \functor{Merge_2}.
+A priori, allowing the merging of overlapping curves can save possibly redundant computations.
+\item Intersection at a common vertex.
+  If two \xpoly's have a proper intersection at a common vertex then the existing implementation returns a multiplicity \(0\).
+  Consider, for example, the following
+  \begin{center}
+    \begin{tikzpicture}[scale=0.5]
+      \draw[blue] (0,2) node [shape=circle,fill,inner sep = 1pt]{} -- (1,1) -- (2,2) node [shape=circle,fill,inner sep = 1pt]{};
+      \draw[red] (0,0) node [shape=circle,fill,inner sep = 1pt]{} -- (1,1) node [shape=circle,fill=black,inner sep = 1pt]{} -- (2,0) node [shape=circle,fill,inner sep = 1pt]{};
+      \pgftransformxshift{4cm}
+      \draw[blue] (0,2) node [shape=circle,fill,inner sep = 1pt]{} -- (1,1) -- (2,0) node [shape=circle,fill,inner sep = 1pt]{};
+      \draw[red] (0,0) node [shape=circle,fill,inner sep = 1pt]{} -- (1,1) node [shape=circle,fill=black,inner sep = 1pt]{} -- (2,2) node [shape=circle,fill,inner sep = 1pt]{};
+    \end{tikzpicture}
+  \end{center}
+  The current implementation will yield the right intersection point and will assign multiplicity \(0\) for both cases, although it is natural to expect that the multiplicity will be \(1\).
+See for reference, the pairs \(\{12,34\}\), \(\{15,35\}\) and others in the test cases of \functor{Intersect_2} \cref{fig:test-cases-of-intersect_2}.
 \end{itemize}
 
 \appendix
