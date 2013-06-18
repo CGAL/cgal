@@ -44,11 +44,39 @@ public:
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
   QList<QAction*> actions() const;
+  Scene_polyhedron_item* get_selected_item() {
+    int item_id = scene->mainSelectionIndex();
+    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
+    if(!poly_item) {
+      int counter = 0;
+      for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
+        if(Scene_polyhedron_item* tmp = qobject_cast<Scene_polyhedron_item*>(scene->item(i))) { 
+          poly_item = tmp;
+          counter++; 
+        }
+      }
+      if(counter != 1) { return NULL; }
+    } 
+    return poly_item;
+  }
+  bool get_base_1_2(double bases[6]) {
+    bool oks[6];
+    bases[0] = ui_widget->Base_1_x->text().toDouble(&oks[0]);
+    bases[1] = ui_widget->Base_1_y->text().toDouble(&oks[1]);
+    bases[2] = ui_widget->Base_1_z->text().toDouble(&oks[2]);
 
+    bases[3] = ui_widget->Base_2_x->text().toDouble(&oks[3]);
+    bases[4] = ui_widget->Base_2_y->text().toDouble(&oks[4]);
+    bases[5] = ui_widget->Base_2_z->text().toDouble(&oks[5]);
+
+    bool total_ok = true;
+    for(int i = 0; i < 6; ++i && total_ok) { total_ok &= oks[i];}
+    return total_ok;
+  }
 public slots:
   void multiple_plane_action();
   void on_Generate_button_clicked();
-  void on_Update_plane_button_clicked();
+  bool on_Update_plane_button_clicked();
   void plane_manipulated_frame_modified();
   void plane_destroyed();
 
@@ -146,64 +174,68 @@ void Polyhedron_demo_plane_multiple_cut_plugin::plane_manipulated_frame_modified
 }
 
 // when Update Plane button is clicked, update manipulated frame of plane with line-edits
-void Polyhedron_demo_plane_multiple_cut_plugin::on_Update_plane_button_clicked() {
+bool Polyhedron_demo_plane_multiple_cut_plugin::on_Update_plane_button_clicked() {
   qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
-  //todo: ugly code, check is there any work-around for to_double_ok 
-  bool to_double_ok = true;
-  double center_x = ui_widget->Center_x->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
-  double center_y = ui_widget->Center_y->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
-  double center_z = ui_widget->Center_z->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
+  // get center
+  bool ok_1 = true, ok_2 = true, ok_3 = true;
+  double center_x = ui_widget->Center_x->text().toDouble(&ok_1);
+  double center_y = ui_widget->Center_y->text().toDouble(&ok_2);
+  double center_z = ui_widget->Center_z->text().toDouble(&ok_3);
+  if(!ok_1 || !ok_2 || !ok_3) 
+  { print_message("Error: center coordinates not convertible to double."); return false; }
 
+  // set center
   bool oldState = mf->blockSignals(true); // dont let it signal, it will invoke plane_manipulated_frame_modified otherwise
   mf->setPosition(center_x, center_y, center_z);
   mf->blockSignals(oldState);
 
-  double base_1_x = ui_widget->Base_1_x->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
-  double base_1_y = ui_widget->Base_1_y->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
-  double base_1_z = ui_widget->Base_1_z->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
+  // get base 1 and base 2
+  double bases[6];
+  if(!get_base_1_2(bases)) 
+  { print_message("Error: Base-1, Base-2 coordinates not convertible to double."); return false; }
 
-  double base_2_x = ui_widget->Base_2_x->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
-  double base_2_y = ui_widget->Base_2_y->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
-  double base_2_z = ui_widget->Base_2_z->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { return; }
-
-  qglviewer::Vec base_1(base_1_x, base_1_y, base_1_z);
-  qglviewer::Vec base_2(base_2_x, base_2_y, base_2_z);
+  // compute other axis
+  qglviewer::Vec base_1(bases[0], bases[1], bases[2]);
+  qglviewer::Vec base_2(bases[3], bases[4], bases[5]);
+  qglviewer::Vec other = cross(base_1, base_2);
+  if(other.norm() == 0.0) { print_message("Error: collinear base vectors are not accepted!"); return false; }
   
+  // set orientation
   qglviewer::Quaternion orientation_from_bases;
-  orientation_from_bases.setFromRotatedBasis(base_1, base_2, cross(base_1, base_2));
+  orientation_from_bases.setFromRotatedBasis(base_1, base_2, other);
 
   oldState = mf->blockSignals(true); // dont let it signal, it will invoke plane_manipulated_frame_modified otherwise
   mf->setOrientation(orientation_from_bases);
   mf->blockSignals(oldState);
 
   scene->itemChanged(plane_item); // redraw
+  return true;
 }
 
 // generate multiple cuts, until any cut does not intersect with bbox
-void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
-
-  print_message("Generating multiple cuts...");
-
-  Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked()
+{
+  Scene_polyhedron_item* item = get_selected_item();
   if(!item) { 
     print_message("Error: There is no selected Scene_polyhedron_item!");
     return; 
   }
 
+  if(!on_Update_plane_button_clicked()) { return; }
+
   // get plane position and normal
   qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
   const qglviewer::Vec& pos = mf->position();
+  // WARNING: due to fp arithmetic (setting quaternion based orientation from base vectors then getting plane normal back from this orientation)
+  // for base vectors like: 1,0,0 - 0,1,0 we might not have exact corresponding normal vector.
+  // So not using below normal but construct plane directly from bases from text boxes
   const qglviewer::Vec& n = mf->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+
+  // get bases
+  double bases[6];
+  get_base_1_2(bases); // no need to check since we call on_Update_plane_button_clicked
+  Epic_kernel::Vector_3 base_1(bases[0], bases[1], bases[2]);
+  Epic_kernel::Vector_3 base_2(bases[3], bases[4], bases[5]);
 
   // get distance between planes
   bool to_double_ok = true;
@@ -226,8 +258,11 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
   for(int dir = 1, step = 0; /* */ ; ++step) 
   {
     double distance_norm = (dir * step) * distance_with_planes;
-    qglviewer::Vec new_pos = pos + (n*distance_norm); 
-    Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * new_pos);
+    qglviewer::Vec new_pos = pos + (n*distance_norm);
+
+    //Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * new_pos);
+    Epic_kernel::Point_3 new_pos_cgal(new_pos[0], new_pos[1], new_pos[2]);
+    Epic_kernel::Plane_3 plane(new_pos_cgal, new_pos_cgal + base_1, new_pos_cgal + base_2);
 
     if(!CGAL::do_intersect(cgal_bbox, plane)) { 
       if(dir == -1) { break; }
@@ -241,14 +276,8 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
     plane_positions.push_back(new_pos); 
   }
   print_message(QString("Created %1 cuts inside bbox...").arg(planes.size()));
-  
-  //CGAL::intersection_of_plane_Polyhedra_3_using_AABB(
-  //  *poly, Epic_kernel::Plane_3(0, 0,  1, -0.135),
-  //  std::back_inserter(new_polylines_item->polylines)
-  //  );
 
   bool new_polyline_item_for_polylines = ui_widget->newPolylineItemCheckBox->checkState() == Qt::Checked;
-  
   if(!new_polyline_item_for_polylines) 
   {
     Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
@@ -256,7 +285,9 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
     // call algorithm and fill polylines in polylines_item
     intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, new_polylines_item->polylines);
     // set names etc and print timing
-    print_message( QString("Processed %1 cuts in %2 ms!").arg(planes.size()).arg(time.elapsed()) );
+    print_message( QString("Done: processed %1 cuts - generated %2 polylines in %3 ms!").
+      arg(planes.size()).arg(new_polylines_item->polylines.size()).arg(time.elapsed()) );
+
     new_polylines_item->setName(QString("%1 with %2 cuts").
       arg(item->name()).arg(planes.size()) );
     new_polylines_item->setColor(Qt::green);
@@ -269,7 +300,8 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked() {
     // call algorithm and fill polylines in polylines_item
     intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*poly, planes, plane_positions, polylines);
     // set names etc and print timing
-    print_message( QString("Processed %1 cuts in %2 ms!").arg(planes.size()).arg(time.elapsed()) );
+    print_message( QString("Done: processed %1 cuts - generated %2 polylines in %3 ms!").
+      arg(planes.size()).arg(polylines.size()).arg(time.elapsed()) );
 
     int counter = 0;
     for(std::list<std::vector<Epic_kernel::Point_3> >::iterator it = polylines.begin(); it != polylines.end(); ++it, ++counter) {
@@ -295,46 +327,39 @@ void Polyhedron_demo_plane_multiple_cut_plugin::intersection_of_plane_Polyhedra_
   const std::vector<qglviewer::Vec>& plane_positions,
   std::list<std::vector<Epic_kernel::Point_3> >& polylines) 
 {
-  CGAL::intersection_of_plane_Polyhedra_3_using_AABB<Epic_kernel>(
-    poly, planes.begin(), planes.end(),
-    std::back_inserter(polylines));
+  typedef std::list<std::vector<Epic_kernel::Point_3> >::iterator Polyline_it;
 
-  // return if planes are not axis oriented
-  double a = planes.front().a(); double b = planes.front().b(); double c = planes.front().c();
-  int on_axis = (a == 0.0 && b == 0.0) ? 2 :
-                (a == 0.0 && c == 0.0) ? 1 :
-                (b == 0.0 && c == 0.0) ? 0 : -1;
-
-  if( on_axis == -1) { return; }
-  
-  // process planes while keeping track of closest polylines, adjust points to be on that plane
-  // it assumes that returned polylines are ordered according to input planes
-  std::vector<Epic_kernel::Plane_3>::const_iterator active_plane_it = planes.begin(); 
-  std::vector<qglviewer::Vec>::const_iterator active_plane_position_it = plane_positions.begin(); 
-
-  for(std::list<std::vector<Epic_kernel::Point_3> >::iterator active_polyline_it = polylines.begin();
-    active_polyline_it != polylines.end(); ++active_polyline_it) 
+  std::size_t nb_projection = 0;
+  CGAL::Polyhedron_slicer_3<Polyhedron, Epic_kernel> slicer(poly);
+  std::vector<qglviewer::Vec>::const_iterator plane_position_it = plane_positions.begin();
+  for(std::vector<Epic_kernel::Plane_3>::const_iterator plane_it = planes.begin(); plane_it != planes.end(); ++plane_it, ++plane_position_it) 
   {
-    // iterate forward while next plane is closer to current polyline
-    while(active_plane_it + 1 != planes.end()) {
-      double distance_to_current = CGAL::squared_distance( (*active_polyline_it)[0], *active_plane_it);
-      double distance_to_next = CGAL::squared_distance( (*active_polyline_it)[0], *(active_plane_it+1));
+    Polyline_it last_processed_polyline = polylines.begin();
+    slicer(*plane_it, std::front_inserter(polylines));
+    
+    double a = planes.front().a(); double b = planes.front().b(); double c = planes.front().c();
+    // std::cout << "plane a, b, c: " << a << " " << b << " " << c << std::endl;
+    int on_axis = (a == 0.0 && b == 0.0) ? 2 :
+      (a == 0.0 && c == 0.0) ? 1 :
+      (b == 0.0 && c == 0.0) ? 0 : -1;
+    
+    // continue if planes are not axis oriented
+    if( on_axis == -1) { continue; }
+    ++nb_projection;
 
-      if(distance_to_current > distance_to_next) 
-      { ++active_plane_it; ++active_plane_position_it;}
-      else 
-      { break; }
-    }
-    // project points in active_polyline_it to active_plane_it
-    for(std::vector<Epic_kernel::Point_3>::iterator point_it = active_polyline_it->begin();
-      point_it != active_polyline_it->end(); ++ point_it) 
+    for(Polyline_it polyline_it = polylines.begin(); polyline_it != last_processed_polyline; ++polyline_it) 
     {
-      *point_it = Epic_kernel::Point_3(
-        on_axis != 0 ? point_it->x() : active_plane_position_it->x,
-        on_axis != 1 ? point_it->y() : active_plane_position_it->y,
-        on_axis != 2 ? point_it->z() : active_plane_position_it->z);
+      for(std::vector<Epic_kernel::Point_3>::iterator point_it = polyline_it->begin();
+        point_it != polyline_it->end(); ++ point_it) 
+      {
+        *point_it = Epic_kernel::Point_3(
+          on_axis != 0 ? point_it->x() : plane_position_it->x,
+          on_axis != 1 ? point_it->y() : plane_position_it->y,
+          on_axis != 2 ? point_it->z() : plane_position_it->z);
+      }
     }
   }
+  print_message(QString("%1 axis aligned planes are found, and points are projected...").arg(nb_projection));
 }
 Q_EXPORT_PLUGIN2(Polyhedron_demo_plane_multiple_cut_plugin, Polyhedron_demo_plane_multiple_cut_plugin)
 

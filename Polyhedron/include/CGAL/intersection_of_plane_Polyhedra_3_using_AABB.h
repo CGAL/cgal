@@ -24,21 +24,20 @@
 
 namespace CGAL {
 
-template<class Polyhedron, class PK>
-class AABB_to_polyline_imp
+template<class Polyhedron, class Kernel>
+class Polyhedron_slicer_3
 {
 private:
-  typedef typename Polyhedron::Traits::Kernel K;
-  typedef AABB_const_polyhedron_edge_primitive<K, Polyhedron>     AABB_primitive;
-  typedef AABB_traits<K, AABB_primitive>                          AABB_traits_;
-  typedef AABB_tree<AABB_traits_>                                  AABB_tree_;
+  typedef AABB_const_polyhedron_edge_primitive<Kernel, Polyhedron>  AABB_primitive;
+  typedef AABB_traits<Kernel, AABB_primitive>                       AABB_traits_;
+  typedef AABB_tree<AABB_traits_>                                   AABB_tree_;
 
   typedef typename AABB_tree_::Object_and_primitive_id             Object_and_primitive_id;
   typedef typename AABB_tree_::Primitive_id                        Primitive_id;
 
-  typedef typename PK::Plane_3    Plane;
-  typedef typename PK::Segment_3  Segment;
-  typedef typename PK::Point_3    Point;
+  typedef typename Kernel::Plane_3    Plane;
+  typedef typename Kernel::Segment_3  Segment;
+  typedef typename Kernel::Point_3    Point;
 
   typedef typename Polyhedron::Edge_const_iterator   Edge_const_iterator;
   typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
@@ -105,11 +104,12 @@ private:
   typedef typename Edge_intersection_map::iterator Edge_intersection_map_iterator;
 
   // member variables //
+  typename Kernel::Intersect_3 intersect_3_functor;
   AABB_tree_ tree;
-  Node_graph node_graph;
+  mutable Node_graph node_graph;
 
   boost::tuple<Point, Intersection_type, Vertex_const_handle>
-  halfedge_intersection(Halfedge_const_handle hf, const Plane& plane)
+  halfedge_intersection(Halfedge_const_handle hf, const Plane& plane) const
   { 
     boost::tuple<Point, Intersection_type, Vertex_const_handle> ret;
 
@@ -135,25 +135,25 @@ private:
     CGAL_assertion(t_os != s_os); // should one positive one negative
     // in case of interval Intersection_type and point are not empty in tuple
     ret.get<1>() = INTERVAL;
-    Object intersection = CGAL::intersection(plane, Segment(s,t));
+    Object intersection = intersect_3_functor(plane, Segment(s,t));
 
     if(const Point* i_point  = object_cast<Point>(&intersection)) { 
       ret.get<0>() = *i_point;
     }
     else if(const Segment* i_segment = object_cast<Segment>(&intersection)) {
       // is it possible to predicate not-planar but construct segment ?
-      CGAL_warning(false && "on interval case - predicate not-planar but construct segment");
+      CGAL_warning(!"on interval case - predicate not-planar but construct segment");
       ret.get<1>() = PLANAR;
     }
     else {
       // prediction indicates intersection but construction returns nothing, returning closest point
-      CGAL_warning(false && "on interval case - no intersection found");
+      CGAL_warning(!"on interval case - no intersection found");
       ret.get<0>() = squared_distance(plane, s) < squared_distance(plane, t) ? s : t; 
     }
     return ret;
   }
 
-  void add_intersection_node_to_one_ring(Vertex_const_handle v, Edge_node_map& edge_node_map) {
+  void add_intersection_node_to_one_ring(Vertex_const_handle v, Edge_node_map& edge_node_map) const {
     Vertex_g v_g = boost::add_vertex(node_graph);
     node_graph[v_g].point = v->point();
 
@@ -164,7 +164,7 @@ private:
     while(++around_vertex_c != v->vertex_begin());
   }
   
-  void add_intersection_edge_to_facet_neighbors(Halfedge_const_handle hf, Edge_node_map& edge_node_map) {
+  void add_intersection_edge_to_facet_neighbors(Halfedge_const_handle hf, Edge_node_map& edge_node_map) const {
     Node_pair& hf_node_pair = edge_node_map.find(hf)->second;
     CGAL_assertion(hf_node_pair.vertex_count == 1);
 
@@ -187,7 +187,7 @@ private:
     } // for hf and hf->opposite
   }
 
-  void add_intersection_edge_to_vertex_neighbors(Halfedge_const_handle hf, Vertex_const_handle v, Edge_node_map& edge_node_map){
+  void add_intersection_edge_to_vertex_neighbors(Halfedge_const_handle hf, Vertex_const_handle v, Edge_node_map& edge_node_map) const {
     // do not worry about duplicate edges, they are not allowed (but performance might be a concern)
     Node_pair& hf_node_pair = edge_node_map.find(hf)->second;
     Vertex_g v_g = node_graph[hf_node_pair.v1].point == v->point() ? hf_node_pair.v1 : hf_node_pair.v2;// find node containing v
@@ -212,7 +212,7 @@ private:
   }
 
   template<class OutputIterator>
-  void intersect_plane(const Plane& plane, OutputIterator out) 
+  OutputIterator intersect_plane(const Plane& plane, OutputIterator out) const
   {
     node_graph.clear();
 
@@ -301,11 +301,11 @@ private:
     }
     
     // use node_graph to construct polylines
-    construct_polylines(out);
+    return construct_polylines(out);
   }
 
   // find a new node to advance, if no proper node exists return v
-  std::pair<Vertex_g, bool> find_next(Vertex_g v) {
+  std::pair<Vertex_g, bool> find_next(Vertex_g v) const {
     std::pair<Vertex_g, bool> ret;
     Out_edge_iterator_g ei_b, ei_e;
     for(boost::tie(ei_b, ei_e) = boost::out_edges(v, node_graph); ei_b != ei_e; ++ei_b) {
@@ -324,7 +324,7 @@ private:
   }
 
   template<class OutputIterator>
-  void construct_polylines(OutputIterator out) {
+  OutputIterator construct_polylines(OutputIterator out) const  {
     //std::cout << boost::num_vertices(node_graph) << std::endl;
     //std::cout << boost::num_edges(node_graph) << std::endl;
     //Vertex_iterator_g v_b, v_e;
@@ -387,54 +387,33 @@ private:
 
       } // for( ;e_b != e_e;...
     } // for(boost::tie(v_b, v_e) = boost::vertices(node_graph)...
+    return out;
   }
 
 public:
-  template<class InputIterator, class OutputIterator>
-  void operator()(Polyhedron& mesh, 
-    InputIterator plane_begin,
-    InputIterator plane_end,
-    OutputIterator out) 
-  {
-    tree.rebuild(mesh.edges_begin(), mesh.edges_end());
-    for(; plane_begin != plane_end; ++plane_begin) {
-      intersect_plane(*plane_begin, out);
-    }
+
+  /**
+  * Constructor. `polyhedron` must be valid polyhedron as long as this functor is used.
+  * @param polyhedron the polyhedron to be cut
+  * @param kernel the kernel
+  */
+  Polyhedron_slicer_3(const Polyhedron& polyhedron, const Kernel& kernel = Kernel())
+  : intersect_3_functor(kernel.intersect_3_object()),
+  tree(polyhedron.edges_begin(), polyhedron.edges_end())
+  { }
+
+  /**
+   * @tparam OutputIterator an output iterator accepting polylines. A polyline is considered to be a `std::vector<Kernel::Point_3>`. A polyline is closed if its first and last points are identical.
+   * @param plane the plane to intersect the polyhedron with
+   * @out output iterator of polylines
+   * computes the intersection polylines of the polyhedron passed in the constructor with `plane` and puts each of them in `out`
+   */
+  template <class OutputIterator>
+  OutputIterator operator() (const typename Kernel::Plane_3& plane, OutputIterator out) const {
+    CGAL_precondition(!plane.is_degenerate());
+    return intersect_plane(plane, out);
   }
 };
 
-
-template<class PK, class Polyhedron, class OutputIterator>
-void intersection_of_plane_Polyhedra_3_using_AABB(Polyhedron& mesh, 
-  const Point_3<PK>& center, 
-  const Vector_3<PK>& base1,
-  const Vector_3<PK>& base2,
-  OutputIterator out
-  )
-{
-  Plane_3<PK> plane(center, center + base1, center + base2);
-  intersection_of_plane_Polyhedra_3_using_AABB<PK>(mesh, plane, out);
-}
-
-template<class PK, class Polyhedron, class OutputIterator>
-void intersection_of_plane_Polyhedra_3_using_AABB(Polyhedron& mesh, 
-  const Plane_3<PK>& plane,
-  OutputIterator out
-  )
-{
-  intersection_of_plane_Polyhedra_3_using_AABB<PK>(mesh, &plane, &plane + 1, out);
-}
-
-template<class PK, class Polyhedron, class InputIterator, class OutputIterator>
-void intersection_of_plane_Polyhedra_3_using_AABB(Polyhedron& mesh, 
-  InputIterator plane_begin,
-  InputIterator plane_end,
-  OutputIterator out) 
-{
-  AABB_to_polyline_imp<Polyhedron, PK>()(mesh, plane_begin, plane_end, out);
-}
-
-
 }// end of namespace CGAL
 #endif //CGAL_INTERSECTION_OF_PLANE_POLYHEDRA_3_USING_AABB_H
-
