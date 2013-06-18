@@ -630,7 +630,7 @@ public:
 
       if (it_next == end_seg) {
         // The polyline contains a single segment:
-#ifdef CGAL_POLYLINE_FIXED_LEFT_TO_RIGHT
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
         if (m_poly_traits.segment_traits_2()->
             compare_endpoints_xy_2_object()(*start_seg) == LARGER) {
           Segment_2 seg = m_poly_traits.segment_traits_2()->
@@ -672,7 +672,7 @@ public:
             // Construct an x-monotone curve from the sub-range which
             // was found
 
-#ifdef CGAL_POLYLINE_FIXED_LEFT_TO_RIGHT
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
             if (comp_endpts_xy(*it_start) == LARGER) {
               std::vector<Segment_2> reversed_seg;
               std::copy(it_start, it_next, reversed_seg.begin());
