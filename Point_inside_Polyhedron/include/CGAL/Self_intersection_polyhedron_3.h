@@ -124,19 +124,57 @@ struct Throw_at_output {
 
 }// namespace internal
 
+////////////////////////////////////////////////////////////////////////////////////
+/*
+/// Geometric traits concept for the functions `self_intersect`
+concept SelfIntersectionTraits{
+  /// @name Geometric Types
+  /// @{
+  /// 3D point type
+  typedef unspecified_type Point_3;
+  /// 3D triangle type
+  typedef unspecified_type Triangle_3;
+  /// 3D segment type
+  typedef unspecified_type Segment_3;
+  /// @}
+
+  /// @name Functors
+  /// @{
+  /// Functor constructing triangles. It provides `Triangle_3 operator() const(const Point_3&, const Point_3&, const Point_3&)
+  typedef unspecified_type Construct_triangle_3;
+  /// Functor constructing segments. It provides `Segment_3 operator() const(const Point_3&, const Point_3&)
+  typedef unspecified_type Construct_segment_3;
+  /// Functor testing intersections between triangles and segment. It provides `bool operator() const (const Triangle_3&, const Segment_3&)` and `bool operator() const (const Triangle_3&, const Triangle_3&)`
+  typedef unspecified_type Do_intersect_3;
+  /// @}
+
+  /// @name Functions
+  /// @{
+  Construct_triangle_3 construct_triangle_3_object() const;
+  Construct_segment_3 construct_segment_3_object() const;
+  Do_intersect_3 do_intersect_3_object() const;
+  /// @}
+};
+*/
+////////////////////////////////////////////////////////////////////////////////////
+
 /** 
  * Detects and reports self-intersections of a triangulated polyhedral surface
  * @pre @a p.is_pure_triangle()
  *
- * @tparam Kernel a \cgal kernel
+ * @tparam GeomTraits a model of `SelfIntersectionTraits`
  * @tparam Polyhedron a \cgal polyhedron
  * @tparam OutputIterator Output iterator accepting objects of type `std::pair<Polyhedron::Facet_const_handle, Polyhedron::Facet_const_handle>`
  *
- * @param p polyhedron to be checked
+ * @param polyhedron polyhedron to be checked
  * @param out all pairs of non-adjacent facets intersecting are put in it
+ *
+ * @return out
+ *
+ * \TODO Doc: move SelfIntersectionTraits concept to appropriate location.
  */
-template <class Kernel, class Polyhedron, class OutputIterator>
-void self_intersect(const Polyhedron& polyhedron, OutputIterator out, const Kernel& kernel = Kernel())
+template <class GeomTraits, class Polyhedron, class OutputIterator>
+OutputIterator self_intersect(const Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_assertion(polyhedron.is_pure_triangle());
 
@@ -167,27 +205,30 @@ void self_intersect(const Polyhedron& polyhedron, OutputIterator out, const Kern
     box_ptr.push_back(&*b);
 
   // compute self-intersections filtered out by boxes
-  internal::Intersect_facets<Polyhedron,Kernel,OutputIterator> intersect_facets(out, kernel);
+  internal::Intersect_facets<Polyhedron,GeomTraits,OutputIterator> intersect_facets(out, geom_traits);
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
+  return intersect_facets.m_iterator;
 }
 
 /** 
  * Checks if a polyhedron is self-intersecting
  * @pre @a p.is_pure_triangle()
  *
- * @tparam Kernel a %CGAL kernel
+ * @tparam GeomTraits a model of `SelfIntersectionTraits`
  * @tparam Polyhedron a %CGAL polyhedron
  *
- * @param p polyhedron to be tested
+ * @param polyhedron polyhedron to be tested
+ *
+ * @return true if `polyhedron` is self-intersecting
  */
-template <class Kernel, class Polyhedron>
-bool self_intersect(const Polyhedron& polyhedron, const Kernel& kernel = Kernel())
+template <class GeomTraits, class Polyhedron>
+bool self_intersect(const Polyhedron& polyhedron, const GeomTraits& geom_traits = GeomTraits())
 {
   try 
   {
     typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
-    self_intersect<Kernel>(polyhedron, OutputIterator(), kernel); 
+    self_intersect<GeomTraits>(polyhedron, OutputIterator(), geom_traits); 
   }
   catch( internal::Throw_at_output::Throw_at_output_exception& ) 
   { return true; }
