@@ -1265,7 +1265,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "number_of_attributes<i> but i-attributes are disabled");
-      return  CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).size();
     }
 
@@ -1290,8 +1290,8 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
-      return mattribute_containers.template
-        get<Helper::template Dimension_index<i>::value>();
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers);
     }
 
     template<unsigned int i>
@@ -1299,8 +1299,8 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
-      return mattribute_containers.template
-        get<Helper::template Dimension_index<i>::value>();
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers);
     }
 
     // Get the ith dynamic onsplit functor (by reference so that we can
@@ -1315,8 +1315,8 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return m_onsplit_functors.template
-        get<Helper::template Dimension_index<i>::value>();
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (m_onsplit_functors);
     }
 
     // Get the ith dynamic onsplit functor (by reference so that we can
@@ -1331,8 +1331,8 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return m_onsplit_functors.template
-        get<Helper::template Dimension_index<i>::value>();
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (m_onsplit_functors);
     }
 
     // Get the ith dynamic onmerge functor (by reference so that we can
@@ -1347,8 +1347,8 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return m_onmerge_functors.template
-        get<Helper::template Dimension_index<i>::value>();
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (m_onmerge_functors);
     }
     // Get the ith dynamic onmerge functor (by reference so that we can
     // modify it directly).
@@ -1362,8 +1362,8 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return m_onmerge_functors.template
-        get<Helper::template Dimension_index<i>::value>();
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (m_onmerge_functors);
     }
 
     /** Double link a dart with beta 0 to a second dart.
