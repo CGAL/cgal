@@ -20,6 +20,7 @@
 #include <algorithm>
 
 #include <boost/function_output_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 template<class HDS>
 class Polyhedron_builder : public CGAL::Modifier_base<HDS> {
@@ -81,6 +82,12 @@ private:
   };
   typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
+  struct Get_handle {
+    typedef Polyhedron::Facet_handle result_type;
+    result_type operator()(Polyhedron::Facet& f) const
+    { return f.halfedge()->facet(); }
+  };
+  
 public slots:
   void hole_filling_polyline_action() {
     Scene_polylines_item* polylines_item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
@@ -91,8 +98,8 @@ public slots:
 
     bool also_refine;
     const double density_control_factor = 
-      QInputDialog::getDouble(mw, tr("Cancel for Just Triangulation"),
-      tr("Density Control Factor (Cancel for Just Triangulation): "), 1.41, 1, 100, 2, &also_refine);
+      QInputDialog::getDouble(mw, tr("Density Control Factor"),
+      tr("Density Control Factor (Cancel for not Refine): "), 1.41, 1, 100, 2, &also_refine);
 
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
@@ -115,13 +122,10 @@ public slots:
       poly->delegate(patch_builder);
 
       if(also_refine) {
-        // todo: remove extra vector
-        std::vector<Polyhedron::Facet_handle> facets;
-        for(Polyhedron::Facet_iterator it = poly->facets_begin(); it != poly->facets_end(); ++it) {
-          facets.push_back(it);
-        }
-
-        CGAL::refine(*poly, facets.begin(), facets.end(), Nop_out(), Nop_out());
+        CGAL::refine(*poly, 
+          boost::make_transform_iterator(poly->facets_begin(), Get_handle()),
+          boost::make_transform_iterator(poly->facets_end(), Get_handle()),
+          Nop_out(), Nop_out());
       }
 
       Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);
