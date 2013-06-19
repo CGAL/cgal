@@ -6,6 +6,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/bind.hpp>
@@ -29,13 +30,16 @@ void run(const HalfedgeGraph& graph){
   
   // constructs the AABB tree and the internal search tree for 
   // efficient distance queries.  
-  Tree tree(boost::edges(graph).first,boost::edges(graph).second,graph);
+  Tree tree( CGAL::undirected_edges(graph).first,
+             CGAL::undirected_edges(graph).second, graph);
   tree.accelerate_distance_queries();
 
   // counts #intersections with a triangle query
   Triangle triangle_query(p,q,r);
   std::cout << tree.number_of_intersected_primitives(triangle_query)
       << " intersections(s) with triangle" << std::endl;
+
+  assert( tree.number_of_intersected_primitives(triangle_query )== 6);
 
   // computes the closest point from a query point
   typename Kernel::Point_3 point_query(2.0, 2.0, 2.0);

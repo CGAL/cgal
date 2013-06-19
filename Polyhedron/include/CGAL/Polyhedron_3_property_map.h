@@ -66,7 +66,6 @@ struct Segment_from_edge_descriptor_property_map{
   typedef typename boost::property_traits< typename boost::property_map< HalfedgeGraph, vertex_point_t>::type >::value_type Point;  
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor key_type;
   typedef typename Kernel_traits<Point>::Kernel::Segment_3 value_type;
-    
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
   //data
@@ -79,11 +78,13 @@ typename Segment_from_edge_descriptor_property_map<HalfedgeGraph>::value_type
 get(Segment_from_edge_descriptor_property_map<HalfedgeGraph> pmap,
     typename Segment_from_edge_descriptor_property_map<HalfedgeGraph>::key_type h)
 {
-  typedef typename boost::property_traits< typename boost::property_map< HalfedgeGraph, vertex_point_t>::type >::value_type Point;  
+  typedef typename boost::property_map< HalfedgeGraph, vertex_point_t>::type Point_pmap;
+  typedef typename boost::property_traits< Point_pmap >::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  const Point& a = boost::source(h,*pmap.m_graph)->point();
-  const Point& b = boost::target(h,*pmap.m_graph)->point();
-  return typename Kernel::Segment_3(a,b);
+
+  return typename Kernel::Segment_3(
+    boost::get(vertex_point, *pmap.m_graph, boost::source(h, *pmap.m_graph) ),
+    boost::get(vertex_point, *pmap.m_graph, boost::target(h, *pmap.m_graph) ) );
 }
 
 
@@ -115,8 +116,9 @@ template <class HalfedgeGraph>
 struct Source_point_from_edge_descriptor{
   Source_point_from_edge_descriptor(const HalfedgeGraph* g= NULL):m_graph( const_cast<HalfedgeGraph*>(g) ){}
   //classical typedefs
-  typedef typename boost::property_traits< typename boost::property_map< HalfedgeGraph, vertex_point_t>::type >::value_type value_type;
-  typedef typename boost::property_traits< typename boost::property_map< HalfedgeGraph, vertex_point_t>::type >::reference reference;
+  typedef typename boost::property_map< HalfedgeGraph, vertex_point_t>::type Point_pmap;
+  typedef typename boost::property_traits< Point_pmap >::value_type value_type;
+  typedef typename boost::property_traits< Point_pmap >::reference reference;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor key_type;
   typedef boost::readable_property_map_tag category;
   //data
@@ -129,7 +131,9 @@ typename Source_point_from_edge_descriptor<HalfedgeGraph>::reference
 get(Source_point_from_edge_descriptor<HalfedgeGraph> pmap,
     typename boost::graph_traits<HalfedgeGraph>::edge_descriptor h)
 {
-  return boost::source(h,*pmap.m_graph)->point();
+  return  boost::get(vertex_point,
+                     *pmap.m_graph,
+                     boost::source(h, *pmap.m_graph) );
 }
 
 } //namespace CGAL
