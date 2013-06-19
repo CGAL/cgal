@@ -40,14 +40,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_geometry_traits/Polyline_2.h>
 
 namespace CGAL {
 
-  template <typename SegmentTraits_2 =
-            Arr_segment_traits_2<Exact_predicates_exact_constructions_kernel> >
+  template <typename SegmentTraits_2 = Arr_segment_traits_2<> >
 class Arr_polyline_traits_2 {
 public:
   typedef SegmentTraits_2                          Segment_traits_2;

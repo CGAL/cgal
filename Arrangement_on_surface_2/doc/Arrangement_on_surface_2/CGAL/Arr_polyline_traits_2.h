@@ -17,7 +17,8 @@ namespace CGAL {
     of the `ArrangementTraits_2` and
     `ArrangementDirectionalXMonotoneTraits_2` concepts that handles
     line segments. If no type is provided then
-    `Arr_segment_traits_2<Exact_predicates_exact_constructions_kernel>`
+    `Arr_segment_traits_2` (with `Exact_predicates_exact_constructions_kernel`
+    as the kernel)
     will be used. Otherwise, `Arr_segment_traits_2<Kernel>` or
     `Arr_non_caching_segment_traits_2<Kernel>` can be used, where the first
     alternative is recommended.
