@@ -208,9 +208,9 @@ public:
 
     triangulation_ref_impl().
       find_conflicts(p, zone.cell,
-                     zone.boundary_facets_inserter(),
-                     zone.cells_inserter(),
-                     zone.internal_facets_inserter());
+                     std::back_inserter(zone.boundary_facets),
+                     std::back_inserter(zone.cells),
+                     std::back_inserter(zone.internal_facets));
     return zone;
   }
 
@@ -225,10 +225,7 @@ public:
     for(typename Zone::Cells_iterator cit = zone.cells.begin();
 	cit != zone.cells.end();
 	++cit)
-    {
-      Cell_handle c = *cit;
-      this->remove_element(c);
-    }
+	  this->remove_element(*cit);
   }
 
   void after_insertion_impl(const Vertex_handle& v)
