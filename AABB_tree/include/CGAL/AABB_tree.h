@@ -107,7 +107,7 @@ namespace CGAL {
 
     /// Constructs an empty tree, and initializes the internally stored traits
     /// class using `traits`.
-    AABB_tree(const AABBTraits& traits);
+    AABB_tree(const AABBTraits& traits = AABBTraits());
 
     /**
      * @brief Builds the datastructure from a sequence of primitives.
