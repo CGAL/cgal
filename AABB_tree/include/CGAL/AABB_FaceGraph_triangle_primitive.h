@@ -114,13 +114,6 @@ public:
   {
     return Base::construct_shared_data(Triangle_property_map(&graph), Point_property_map(&graph));
   }
-
-  //for backward-compatibility with AABB_polyhedron_triangle_primitive
-  static typename Base::Shared_data construct_shared_data()
-  {
-    return Base::construct_shared_data(Triangle_property_map(NULL), Point_property_map(NULL));
-  }
-
 };
 
 }  // end namespace CGAL
