@@ -30,6 +30,9 @@ namespace CGAL {
     in order to avoid robustness problems, although other inexact
     number types could be used at the user's own risk.
 
+    `Arr_polyline_traits_2` uses `Arr_segment_traits_2::Point_2` as its point
+    type.
+
     \cgalModels `ArrangementTraits_2`
     \cgalModels `ArrangementLandmarkTraits_2`
     \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
