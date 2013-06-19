@@ -795,7 +795,7 @@ insert_balls_on_edges()
 template <typename C3T3, typename MD, typename Sf>
 typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-get_vertex_corner_from_point(const Bare_point& p, const Index& p_index) const
+get_vertex_corner_from_point(const Bare_point& p, const Index&) const
 {
   // Get vertex_handle associated to corner (dim=0) point
   Vertex_handle v;

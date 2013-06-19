@@ -260,7 +260,7 @@ public:
     return b;
   }
 
-  iterator insert(iterator position, 
+  iterator insert(iterator /* position */,
                   const Type_handle& ch)
   {
     CGAL_assertion( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 

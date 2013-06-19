@@ -96,14 +96,14 @@ public:
 
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs) 
     : circumcenter_(NULL)
-    , sliver_value_(rhs.sliver_value_)
-    , subdomain_index_(rhs.subdomain_index_) 
-    , bits_(0) 
-    , sliver_cache_validity_(false)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
+    , sliver_value_(rhs.sliver_value_)
+    , subdomain_index_(rhs.subdomain_index_)
+    , bits_(0)
+    , sliver_cache_validity_(false)
   {
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
