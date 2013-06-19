@@ -64,6 +64,16 @@ namespace CGAL {
       /// \name Types
       /// @{
 
+      /*!
+        The container of the segments that comprises the polyline.
+       */
+      typedef typename std::vector<Segment_2>        Segments_container;
+
+      /*!
+        The size of the container that comprises the polylines.
+       */
+      typedef typename Segments_container::size_type Segments_container_size;
+
       /*!  \deprecated
         A bidirectional iterator that allows traversing the points
         that comprise a polyline curve.
@@ -127,40 +137,48 @@ namespace CGAL {
       size_t points() const;
 
       /*!
-        returns an iterator pointing at the source point of the polyline.
+        \deprecated Returns an iterator pointing at the source point of the
+        polyline.
       */
       const_iterator begin() const;
 
       /*!
-        returns an iterator pointing after the end of the polyline.
+        \deprecated Returns an iterator pointing after the end of the polyline.
       */
       const_iterator end() const;
 
       /*!
-        returns an iterator pointing at the target point of the polyline.
+        \deprecated Returns an iterator pointing at the target point of the
+        polyline.
       */
       const_iterator rbegin() const;
 
       /*!
-        returns an iterator pointing before the beginning of the polyline.
+        \deprecated Returns an iterator pointing before the beginning of the
+        polyline.
       */
       const_iterator rend() const;
 
       /*!
-        returns the number of line segments comprising the polyline
-        (equivalent to `pi.points() - 1`).
+        \deprecated Returns the number of line segments comprising the polyline
+        (equivalent to `pi.points() - 1`). Was replaced by number_of_segments()
       */
       size_t size() const;
 
       /*!
-        returns the \f$ k\f$th segment of the polyline.
+        Returns the number of segments that comprise the polyline.
+       */
+      Segments_container_size number_of_segments() const;
+
+      /*!
+        Returns the \f$ k\f$th segment of the polyline.
         \pre `k` is not greater or equal to `pi.size() - 1`.
       */
       typename SegmentTraits::X_monotone_curve_2
       operator[] (size_t k) const;
 
       /*!
-        return a bounding box of the polyline `pi`.
+        Return a bounding box of the polyline.
       */
       Bbox_2 bbox() const;
 
@@ -170,13 +188,23 @@ namespace CGAL {
       /// @{
 
       /*!
-        adds a new point to the polyline, which becomes the new target point
-        of `pi`.
+       * Append a segment to the (x-monotone) polyline.
+       * Warning: This is a risky function! Don't use it! Prefer the
+       *          provided implementation in the traits class.
+       * \param seg The new segment to be appended to the polyline.
+       * \pre If the polyline is not empty, the source of `seg` must be the
+       *      same as the target point of the last segment in the polyline.
+       */
+      inline void push_back (const Segment_2& seg);
+
+      /*!
+        \deprecated adds a new point to the polyline, which becomes the new
+        target point of `pi`.
       */
       void push_back (const Point_2 & p);
 
       /*!
-        resets the polyline.
+        Resets the polyline.
       */
       void clear();
 

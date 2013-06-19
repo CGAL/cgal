@@ -168,8 +168,7 @@ namespace CGAL {
        *          provided implementation in the traits class.
        * \param seg The new segment to be appended to the polyline.
        * \pre If the polyline is not empty, seg source must be the
-       *      same as the target point of the last segment in the polyline
-       *      (thus it must extend it to the right).
+       *      same as the target point of the last segment in the polyline.
        */
       inline void push_back (const Segment_2& seg)
       {
