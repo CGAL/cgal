@@ -74,7 +74,7 @@ class AABB_HalfedgeGraph_segment_primitive
                             cache_datum >
 #endif
 {
-  typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Triangle_property_map;
+  typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Segment_property_map;
   typedef Source_point_from_edge_descriptor<HalfedgeGraph> Point_property_map;
 
   typedef AABB_primitive< Id_,
