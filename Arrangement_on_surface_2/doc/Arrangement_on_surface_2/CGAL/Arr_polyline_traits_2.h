@@ -45,6 +45,47 @@ namespace CGAL {
   class Arr_polyline_traits_2 {
   public:
 
+    /*!
+      Functor to augment a polyline by either adding a vertex or a segment.
+    */
+    class Push_back_2 {
+    public:
+      /// \name Types
+      /// @{
+      /// @}
+
+      /// \name Operations
+      /// @{
+
+      /*!
+       * Append a point p to an existing polyline cv.
+       * \param cv a polyline. Note, cv is not (necessarily) \f$ x\f$-monotone.
+       * \param p a point to be appended to cv
+       * \pre cv contains at least one segment
+       */
+      void operator()(Curve_2& cv, const Point_2& p) const;
+
+      /*!
+        Append a segment seg to an existing polyline cv. If cv is
+        empty, seg will be its first segment.
+
+        \param cv a polyline. Note, cv is not (necessarily)
+        x-monotone.
+
+        \param seg a segment to be appended to cv
+
+        \pre If cv is not empty then target of cv should coincide
+        with the source of seg or(!) the source of cv should coincide
+        with the target of seg.
+
+        \post The resulting cv is well oriented.
+      */
+      void operator()(Curve_2& cv, const Segment_2& seg) const;
+
+      /// @} /* end of operations */
+
+    }; /* end of Arr_polyline_traits_2::Push_back_2 */
+
 
     /*!  The `Curve_2` class nested within the polyline traits is used
       to represent general continuous piecewise-linear curves (a
@@ -237,5 +278,26 @@ namespace CGAL {
 
     }; /* end Arr_polyline_traits_2::X_monotone_curve_2 */
 
+    /// \name Functor Types
+    /// @{
+
+    /*!
+      Function object which returns the number of vertices of a polyline.
+     */
+    typedef unspecified_type Number_of_points_2;
+    /// @}
+
+    /// \name Accessing Functor Objects
+    /// @{
+
+    /*!
+     */
+    Number_of_points_2 number_of_points_2_object() const;
+
+    /*!
+     */
+    Push_back_2 push_back_2_object() const;
+
+    /// @}
   }; /* end Arr_polyline_traits_2 */
 } /* end namespace CGAL */
