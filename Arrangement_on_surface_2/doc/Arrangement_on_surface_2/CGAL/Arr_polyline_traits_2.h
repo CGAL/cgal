@@ -119,9 +119,9 @@ namespace CGAL {
       /// @{
 
       /*!
-        returns the number of points that comprise the polyline.
-        Note that if there are \f$ n\f$ points in the polyline, it is comprised
-        of \f$ (n - 1)\f$ segments.
+        \deprecated Returns the number of points that comprise the polyline.
+        Note that for a bounded polyline, if there are \f$ n\f$ points in the
+        polyline, it is comprised of \f$ (n - 1)\f$ segments.
       */
       size_t points() const;
 
