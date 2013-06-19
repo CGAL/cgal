@@ -34,6 +34,26 @@
 
 namespace CGAL {
 
+/// \cond SKIP_DOXYGEN
+/// Property map that accesses a value from an iterator
+///
+/// \cgalModels `ReadablePropertyMap`
+///
+/// \tparam InputIterator an input iterator
+/// \endcond
+template<class InputIterator>
+struct Input_iterator_property_map{
+  typedef InputIterator key_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
+  typedef typename std::iterator_traits<InputIterator>::reference reference;
+  typedef boost::readable_property_map_tag category;
+
+  /// Free function to use a get the value from an iterator using Input_iterator_property_map.
+  inline friend
+  typename std::iterator_traits<InputIterator>::reference
+  get(Input_iterator_property_map<InputIterator>,InputIterator it){ return *it; }
+};
+
 /// \ingroup PkgProperty_map
 /// Property map that converts a `T*` pointer (or in general an iterator
 /// over `T` elements) to the `T` object.
