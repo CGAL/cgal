@@ -27,6 +27,8 @@
 #ifndef CGAL_POLYHEDRAL_MESH_DOMAIN_3_H
 #define CGAL_POLYHEDRAL_MESH_DOMAIN_3_H
 
+#include <CGAL/internal/Point_inside_Polyhedron/Point_inside_vertical_ray_cast.h>
+
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 #include <CGAL/Triangle_accessor_3.h>
@@ -603,27 +605,12 @@ Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Is_in_domain::operator()(const Point_3& p) const
 {
   if(r_domain_.bounding_tree_ == 0) return Subdomain();
-  const Bounding_box bbox = r_domain_.bounding_tree_->bbox();
 
-  if(   p.x() < bbox.xmin() || p.x() > bbox.xmax()
-     || p.y() < bbox.ymin() || p.y() > bbox.ymax()
-     || p.z() < bbox.zmin() || p.z() > bbox.zmax() )
-  {
-    return Subdomain();
-  }
-  
-  // Shoot ray
-  typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
-  typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
-  
-  Random_points_on_sphere_3<Point_3> random_point(1.);
+  internal::Point_inside_vertical_ray_cast<IGT_, AABB_tree_> inside_functor;
+  Bounded_side side = inside_functor(p, *(r_domain_.bounding_tree_));
 
-  const Ray_3 ray_shot = ray(p, vector(CGAL::ORIGIN,*random_point));
-
-  if ( (r_domain_.bounding_tree_->number_of_intersected_primitives(ray_shot)&1) == 1 )
-    return Subdomain(Subdomain_index(1));
-  else
-    return Subdomain();
+  if(side == CGAL::ON_UNBOUNDED_SIDE) { return Subdomain(); }
+  else { return Subdomain(Subdomain_index(1)); } // case ON_BOUNDARY && ON_BOUNDED_SIDE
 }
 
 
