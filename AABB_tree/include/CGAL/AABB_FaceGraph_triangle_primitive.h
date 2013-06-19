@@ -31,19 +31,16 @@ namespace CGAL {
 /*!
  * \ingroup PkgAABB_tree
  * Primitive type for a facet of a polyhedral surface.
- * It wraps a `face_descriptor` of a class model of `FaceGraph` to a 3D triangle.
- * The class model of `FaceGraph` from which the primitive is built should not be deleted
+ * It wraps a handle to a facet of a polyhedron to a 3D triangle.
+ * The polyhedron from which the primitive is built should not be deleted
  * while the AABB tree holding the primitive is in use.
  *
  * \cgalModels `AABBPrimitive` if `OneFaceGraphPerTree` is `CGAL::Tag_false`,
  *    and `AABBPrimitiveWithSharedData` if `OneFaceGraphPerTree` is `CGAL::Tag_true`.
  *
- *\tparam FaceGraph is a model of the face graph concept.
- *\tparam OneFaceGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
- *        we guarantee that all the primitives will be from a common `FaceGraph` and some data
- *        will be factorized so that the size of the primitive is reduced. In the latter case,
- *        the primitives can be from different graphs and extra storage is required in the primitives.
- *        The default is `CGAL::Tag_true`.
+ *\tparam FaceGraph is a \cgal Polyhedron.
+ *\tparam OneFaceGraphPerTree must be set to `CGAL::Tag_true`.
+ *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
  *\tparam cache_datum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case, the datum is stored
  *        in the primitive, while in the latter it is constructed on the fly to reduce the memory footprint.
  *        The default is `CGAL::Tag_false` (datum is not stored).
