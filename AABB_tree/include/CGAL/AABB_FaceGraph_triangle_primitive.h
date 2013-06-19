@@ -54,7 +54,10 @@ namespace CGAL {
 template < class FaceGraph,
            class OneFaceGraphPerTree=Tag_true,
            class cache_datum=Tag_false,
-           class Id_=typename FaceGraph::Face_handle //this one should be autodetected using face_descriptor
+           class Id_= typename boost::mpl::if_<
+                        typename boost::is_const<FaceGraph>::type,
+                        typename FaceGraph::Facet_const_handle,
+                        typename FaceGraph::Facet_handle >::type
             >
 class AABB_FaceGraph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
@@ -100,7 +103,7 @@ public:
   */
   template <class Iterator>
   AABB_FaceGraph_triangle_primitive(Iterator it, const FaceGraph& graph)
-    : Base( Id_(*it),
+    : Base( Id_(it),
             Triangle_property_map(&graph),
             Point_property_map(&graph) ){}
 
