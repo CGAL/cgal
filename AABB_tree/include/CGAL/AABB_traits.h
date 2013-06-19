@@ -114,10 +114,10 @@ class AABB_traits:
 {
   typedef typename CGAL::Object Object;
 public:
-  typedef AABB_traits<GeomTraits, AABB_primitive> AT;
+  typedef AABB_traits<GeomTraits, AABBPrimitive> AT;
   // AABBTraits concept types
   typedef typename GeomTraits::FT FT;
-  typedef AABB_primitive Primitive;
+  typedef AABBPrimitive Primitive;
 
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
 

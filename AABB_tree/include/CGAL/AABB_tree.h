@@ -134,7 +134,7 @@ namespace CGAL {
     template<typename InputIterator, typename T1, typename T2, typename T3, typename T4>
 		AABB_tree(InputIterator first, InputIterator beyond,T1,T2,T3,T4);
     template<typename InputIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-		AABB_tree(InputIterator first, ConstPrimitiveIterator beyond,T1,T2,T3,T4,T5);
+		AABB_tree(InputIterator first, InputIterator beyond,T1,T2,T3,T4,T5);
     #endif
 
     ///@}
@@ -172,7 +172,6 @@ namespace CGAL {
     /// is made using the internally stored traits.
     /// For compilers that do not support variadic templates,
     /// overloads up to 5 template arguments are provided.
-		template<typename InputIterator>
     #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 		template<typename InputIterator,typename ... T>
 		void insert(InputIterator first, InputIterator beyond,T...);
@@ -188,7 +187,7 @@ namespace CGAL {
     template<typename InputIterator, typename T1, typename T2, typename T3, typename T4>
 		void insert(InputIterator first, InputIterator beyond,T1,T2,T3,T4);
     template<typename InputIterator, typename T1, typename T2, typename T3, typename T4, typename T5>
-		void insert(InputIterator first, ConstPrimitiveIterator beyond,T1,T2,T3,T4,T5);
+		void insert(InputIterator first, InputIterator beyond,T1,T2,T3,T4,T5);
     #endif
 
     /// Adds a primitive to the set of primitives of the tree.
