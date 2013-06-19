@@ -115,7 +115,7 @@ public:
             Segment_property_map(&graph),
             Point_property_map(&graph) ){}
 
-  //for backward-compatibility with AABB_polyhedron_segment_primitive
+  /// For backward-compatibility with AABB_polyhedron_segment_primitive only
   AABB_HalfedgeGraph_segment_primitive(Id_ id)
     : Base( id,
             Segment_property_map(NULL),
@@ -126,7 +126,7 @@ public:
     return Base::construct_shared_data(Segment_property_map(&graph), Point_property_map(&graph));
   }
 
-  //for backward-compatibility with AABB_polyhedron_segment_primitive
+  ///For backward-compatibility with AABB_polyhedron_segment_primitive only
   static typename Base::Shared_data construct_shared_data()
   {
     return Base::construct_shared_data(Segment_property_map(NULL), Point_property_map(NULL));
