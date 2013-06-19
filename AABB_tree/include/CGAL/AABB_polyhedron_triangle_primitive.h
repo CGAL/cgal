@@ -31,13 +31,13 @@ namespace CGAL {
     /// \deprecated This class is deprecated since \cgal 4.3, the class
     /// `AABB_HalfedgeGraph_triangle_primitive` should be used instead.
     ///
-    /// The class AABB_polyhedron_triangle_primitive is a model of the concept
-    /// \ref AABBPrimitive. It wraps a facet handle of a polyhedron,
+    /// Primitive type that wraps a facet handle of a polyhedron,
     /// which is used as id, and allows the construction of the datum on
     /// the fly. Since only the facet handle is stored in this primitive,
     /// the polyhedron from which the AABB tree is built should not be
     /// deleted while the AABB tree is in use.
     ///
+    /// \cgalModels `AABBPrimitive`
     /// \tparam GeomTraits must provides a \c %Point_3
     /// type, used as \c Point, and a \c %Triangle_3 type, used as \c
     /// Datum and constructible from three arguments of type \c

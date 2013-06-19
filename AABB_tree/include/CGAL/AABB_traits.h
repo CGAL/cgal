@@ -92,13 +92,13 @@ struct AABB_traits_base<Primitive,true>{
 /// \addtogroup PkgAABB_tree
 /// @{
 
-/// The class AABB_traits is a model of the concept \ref
-/// AABBTraits. This traits class handles any type of 3D geometric
+/// This traits class handles any type of 3D geometric
 /// primitives provided that the proper intersection tests and
 /// constructions are implemented. It handles points, rays, lines and
 /// segments as query types for intersection detection and
 /// computations, and it handles points as query type for distance
 /// queries.
+/// \cgalModels AABBTraits
 /// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits,
 /// snd provide the geometric types as well as the intersection tests and computations.
 /// \tparam Primitive provide the type of primitives stored in the AABB_tree.

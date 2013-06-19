@@ -31,11 +31,12 @@ namespace CGAL {
 /*!
  * \ingroup PkgAABB_tree
  * Primitive type for a facet of a polyhedral surface.
- * If `OneFaceGraphPerTree` is `CGAL::Tag_false`, the class is a model of the concept `AABBPrimitive`.
- * If `OneFaceGraphPerTree` is `CGAL::Tag_true`, the class  is a model of the concept `AABBPrimitiveWithSharedData`.
  * It wraps a `face_descriptor` of a class model of `FaceGraph` to a 3D triangle.
  * The class model of `FaceGraph` from which the primitive is built should not be deleted
  * while the AABB tree holding the primitive is in use.
+ *
+ * \cgalModels `AABBPrimitive` if `OneFaceGraphPerTree` is `CGAL::Tag_false`,
+ *    and `AABBPrimitiveWithSharedData` if `OneFaceGraphPerTree` is `CGAL::Tag_true`.
  *
  *\tparam FaceGraph is a model of the face graph concept.
  *\tparam OneFaceGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,

@@ -52,11 +52,13 @@ public:
 #ifdef DOXYGEN_RUNNING
 /*!
  * \ingroup PkgAABB_tree
- * Generic primitive class.
- * If `ExternalPropertyMaps` is `CGAL::Tag_false`, the class is a model of the concept `AABBPrimitive`.
- * If `ExternalPropertyMaps` is `CGAL::Tag_true`, the class is a model of the concept `AABBPrimitiveWithSharedData`.
+ * Generic primitive type.
  * The two property maps which are template parameters of the class enable to get the datum and the reference point of
  * the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.
+ *
+ * \cgalModels `AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`,
+ *    and `AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`.
+ *
  *
  * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap`with `Id` as
  *           `key_type`. It must be default constructible.

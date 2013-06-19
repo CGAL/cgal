@@ -38,12 +38,13 @@ namespace CGAL {
 
 /*!
  * \ingroup PkgAABB_tree
- * Primitive type for a facet of a polyhedral surface.
- * If `OneHalfedgeGraphPerTree is `CGAL::Tag_false, the class is a model of the concept `AABBPrimitive`.
- * If `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`, the class is a model of the concept `AABBPrimitiveWithSharedData`.
+ * Primitive type for a edge of a polyhedral surface.
  * It wraps an `edge_descriptor` into a 3D segment.
  * The class model of `HalfedgeGraph` from which the primitive is built should not be deleted
  * while the AABB tree holding the primitive is in use.
+ *
+ * \cgalModels `AABBPrimitive` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_false`,
+ *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.
  *
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
  * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true or `CGAL::Tag_false`.
@@ -105,7 +106,7 @@ public:
   /*!
   Constructs a primitive.
   \tparam Iterator is an input iterator with `Id` as value type.
-  The example \ref AABB_HalfedgeGraph_edge_example.cpp gives a way to call this constructor
+  This \ref AABB_tree/AABB_HalfedgeGraph_edge_example.cpp "example" gives a way to call this constructor
   using the the insert-by-range method of the class `AABB_tree<Traits>`.
   */
   template <class Iterator>

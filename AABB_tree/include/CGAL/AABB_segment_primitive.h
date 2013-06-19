@@ -53,10 +53,11 @@ namespace internal {
 
 /*!
  * \ingroup PkgAABB_tree
- * The class AABB_segment_primitive is a model of the concept `AABBPrimitive`.
- * An iterator with a 3D segment as `value_type}` is used as identifier.
+ * Primitive type that uses as identifier an iterator with a 3D segment as `value_type`.
  * The iterator from which the primitive is built should not be invalided 
  * while the AABB tree holding the primitive is in use.
+ *
+ * \cgalModels `AABBPrimitive`
  *
  * \tparam Iterator is a model of `ForwardIterator`, with `Segment_3<Kernel>`
  *    as value type
