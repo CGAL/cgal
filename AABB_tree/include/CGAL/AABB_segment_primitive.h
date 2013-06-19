@@ -79,20 +79,18 @@ class AABB_segment_primitive
   : public AABB_primitive<  Iterator,
                             Input_iterator_property_map<Iterator>,
                             internal::Source_of_segment_3_iterator_property_map<Iterator>,
-                            Tag_true,
+                            Tag_false,
                             cache_datum >
 #endif
 {
   typedef AABB_primitive< Iterator,
                           Input_iterator_property_map<Iterator>,
                           internal::Source_of_segment_3_iterator_property_map<Iterator>,
-                          Tag_true,
+                          Tag_false,
                           cache_datum > Base;
 public:
   ///Constructor from an iterator
   AABB_segment_primitive(Iterator it) : Base(it){}
-
-  static typename Base::Shared_data construct_shared_data() {return typename Base::Shared_data();}
 };
 
 }  // end namespace CGAL

@@ -78,20 +78,18 @@ class AABB_triangle_primitive
     : public AABB_primitive<  Iterator,
                               Input_iterator_property_map<Iterator>,
                               internal::Point_from_triangle_3_iterator_property_map<Iterator>,
-                              Tag_true,
+                              Tag_false,
                               cache_datum >
 #endif
 {
   typedef AABB_primitive< Iterator,
                           Input_iterator_property_map<Iterator>,
                           internal::Point_from_triangle_3_iterator_property_map<Iterator>,
-                          Tag_true,
+                          Tag_false,
                           cache_datum > Base;
 public:
   // constructors
   AABB_triangle_primitive(Iterator it) : Base(it){}
-
-  static typename Base::Shared_data construct_shared_data() {return typename Base::Shared_data();}
 };
 
 }  // end namespace CGAL
