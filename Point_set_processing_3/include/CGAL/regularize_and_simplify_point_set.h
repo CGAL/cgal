@@ -1,4 +1,4 @@
-// Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2013-06  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Laurent Saboret
+// Author(s) : Shihao Wu
 
 #ifndef CGAL_REGULARIZE_AND_SIMPLIFY_POINT_SET_H
 #define CGAL_REGULARIZE_AND_SIMPLIFY_POINT_SET_H
@@ -39,7 +39,7 @@ namespace CGAL {
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
-/// @return iterator over the first point to sampled points.
+/// @return iterator of the first point to downsampled points.
 
 // This variant requires all parameters.
 template <typename ForwardIterator,
@@ -50,7 +50,7 @@ ForwardIterator
 regularize_and_simplify_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap /*point_pmap*/, ///< property map ForwardIterator -> Point_3
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
   double retain_percentage, ///< percentage of points to retain.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
@@ -59,26 +59,36 @@ regularize_and_simplify_point_set(
   // Random shuffle
   std::random_shuffle (first, beyond);
 
-  // Computes first iterator to remove
-  std::size_t nb_points = std::distance(first, beyond);
-  std::size_t nb_points_remain = (std::size_t)(double(nb_points) * (retain_percentage/100.0));
-  std::size_t first_index_to_copy = nb_points - nb_points_remain;
+  // Computes original(input) and sample points size 
+  std::size_t nb_points_original = std::distance(first, beyond);
+  std::size_t nb_points_sample = (std::size_t)(double(nb_points_original) * (retain_percentage/100.0));
+  std::size_t first_index_to_sample = nb_points_original - nb_points_sample;
+
+  // The first point iter of original and sample points
+  ForwardIterator it;// point iterator
+  ForwardIterator first_original_point = first;
+  ForwardIterator first_sample_point = first;
+  std::advance(first_sample_point, first_index_to_sample);
 
   //Copy sample points
-  std::vector<Point> sample_points;
-  sample_points.assign(nb_points_remain, Point());
-  ForwardIterator first_point_to_copy_sample_points = first;
-  std::advance(first_point_to_copy_sample_points, first_index_to_copy);
-  std::copy(first_point_to_copy_sample_points, beyond, sample_points.begin());
+  std::vector<Point> sample_points(nb_points_sample);
+  unsigned int i; // sample point index
+  for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
+	  sample_points[i] = get(point_pmap, it);
 
   //Do something for sample points...
 
-  //Copy modified sample points to original points for out put
-  ForwardIterator first_point_to_copy_output = first;
-  std::advance(first_point_to_copy_output, first_index_to_copy);
-  std::copy(sample_points.begin(), sample_points.end(), first_point_to_copy_output);
 
-  return first_point_to_copy_output;
+
+  //Copy back modified sample points to original points for output
+  for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
+  {
+	  Point& original_p = get(point_pmap, it);
+	  const Point& sample_p = sample_points[i];
+	  original_p = sample_p;
+  }
+ 
+  return first_sample_point;
 }
 
 /// @cond SKIP_IN_MANUAL
