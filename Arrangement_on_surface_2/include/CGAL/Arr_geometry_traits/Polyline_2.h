@@ -35,7 +35,7 @@
 
 namespace CGAL {
 
-  namespace POLYLINE{
+  namespace polyline{
 
 
     /*! \class
@@ -601,6 +601,6 @@ namespace CGAL {
 
       return (is);
     }
-  }// namespace POLYLINE
+  }// namespace polyline
 } //namespace CGAL
 #endif
