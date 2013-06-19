@@ -14,9 +14,12 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
+#include <QInputDialog>
 
 #include <vector>
 #include <algorithm>
+
+#include <boost/function_output_iterator.hpp>
 
 template<class HDS>
 class Polyhedron_builder : public CGAL::Modifier_base<HDS> {
@@ -71,6 +74,12 @@ public:
     connect(actionHoleFillingPolyline, SIGNAL(triggered()),
       this, SLOT(hole_filling_polyline_action()));
   }
+private:
+  struct Nop_functor {
+    template<class T>
+    void operator()(const T & /*t*/) const {}
+  };
+  typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
 public slots:
   void hole_filling_polyline_action() {
@@ -79,6 +88,11 @@ public slots:
       print_message("Error: there is no selected polyline item!");
       return;
     } 
+
+    bool also_refine;
+    const double density_control_factor = 
+      QInputDialog::getDouble(mw, tr("Cancel for Just Triangulation"),
+      tr("Density Control Factor (Cancel for Just Triangulation): "), 1.41, 1, 100, 2, &also_refine);
 
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
@@ -99,7 +113,17 @@ public slots:
       Polyhedron* poly = new Polyhedron;
       Polyhedron_builder<Polyhedron::HalfedgeDS> patch_builder(&patch, &(*it));
       poly->delegate(patch_builder);
-      
+
+      if(also_refine) {
+        // todo: remove extra vector
+        std::vector<Polyhedron::Facet_handle> facets;
+        for(Polyhedron::Facet_iterator it = poly->facets_begin(); it != poly->facets_end(); ++it) {
+          facets.push_back(it);
+        }
+
+        CGAL::refine(*poly, facets.begin(), facets.end(), Nop_out(), Nop_out());
+      }
+
       Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);
       poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
       poly_item->setRenderingMode(Wireframe);
