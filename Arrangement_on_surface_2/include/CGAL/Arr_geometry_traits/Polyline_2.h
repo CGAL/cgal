@@ -469,6 +469,7 @@ namespace CGAL {
        * Constructs from a range of segments.
        * This constructor is expected to be called only from the
        * traits class, after the input was verified there.
+       * \pre The range of segments form an x-monotone polyline.
        */
       template <typename InputIterator>
       void construct_x_monotone_polyline(InputIterator begin, InputIterator end,

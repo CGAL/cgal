@@ -213,20 +213,22 @@ namespace CGAL {
     }; /* end Arr_polyline_traits_2::Curve_2 */
 
 
-    /*!
-      The `X_monotone_curve_2` class nested within the polyline traits is used
-      to represent \f$ x\f$-monotone piecewise linear curves. It inherits from the
-      `Curve_2` type. It has a default constructor and a constructor from a
-      range of points, just like the `Curve_2` class. However, there is
-      precondition that the point range define an \f$ x\f$-monotone polyline.
+    /*!  The `X_monotone_curve_2` class nested within the polyline
+      traits is used to represent \f$ x\f$-monotone piecewise linear
+      curves.
 
-      The points that define the \f$ x\f$-monotone polyline are
-      always stored in an ascending lexicographical \f$ xy\f$-order, so their order may
-      be reversed with respect to the input sequence. Also note that the
-      \f$ x\f$-monotonicity ensures that an \f$ x\f$-monotone polyline is never
-      self-intersecting (thus, a self-intersecting polyline will be subdivided
-      to several interior-disjoint \f$ x\f$-monotone subcurves).
+      It inherits from the `Curve_2` type. `X_monotone_curve_2` can be
+      constructed just like `Curve_2`. However, there is precondition
+      that the input defines an \f$ x\f$-monotone polyline. Note that
+      the \f$ x\f$-monotonicity ensures that an \f$ x\f$-monotone
+      polyline is never self-intersecting (thus, a self-intersecting
+      polyline will be subdivided to several interior-disjoint \f$
+      x\f$-monotone subcurves).
 
+      The defined \f$ x\f$-monotone polyline can be directed either from
+      right-to-left (and in turn its vertices are stored in an ascending
+      lexicographical \f$ xy\f$-order) or left-to-right (and in this case the
+      vertices are stored in a descending lexicographical \f$ xy\f$-order).
     */
     class X_monotone_curve_2 {
 
