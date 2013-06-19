@@ -23,6 +23,8 @@ robustness problems in most cases, and thus renders the program useless. The
 kernel that uses an exact number type, that is, `Gmpq` (More precisely,
 `Lazy_exact_nt<Gmpq>`), when `Gmpq` is available. Indeed, this configuration
 achieves the shortest running times in many cases.
+If no type is provided for the kernel template parameter, then
+`Exact_predicates_exact_constructions_kernel` will be used by default.
 
 `Arr_segment_traits_2` defines `Kernel::Point_2` as its point type. However, it
 does <I>not</I> define `Kernel::Segment_2` as its curve type, as one

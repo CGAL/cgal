@@ -30,11 +30,13 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <fstream>
 
 namespace CGAL {
 
-template <class Kernel_> class Arr_segment_2;
+template <class Kernel_ = Exact_predicates_exact_constructions_kernel>
+class Arr_segment_2;
 
 /*!
  * \class A traits class for maintaining an arrangement of segments, aoviding
@@ -46,7 +48,7 @@ template <class Kernel_> class Arr_segment_2;
  * Arrangement_2 type and require objects and operations supported by the
  * kernel, but not defined in this derived class.
  */
-template <class Kernel_>
+template <class Kernel_ = Exact_predicates_exact_constructions_kernel>
 class Arr_segment_traits_2 : public Kernel_
 {
   friend class Arr_segment_2<Kernel_>;
