@@ -33,7 +33,7 @@
 
 namespace CGAL {
   
-// Class Mesh_cell_base_3
+// Class Compact_mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,

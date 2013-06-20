@@ -25,8 +25,8 @@ public:
 /*! 
 `CGAL::Regular_triangulation_3` type 
 whose vertex and cell classes are respectively 
-`Mesh_vertex_base_3<MD,Gt>` and 
-`Mesh_cell_base_3<MD,Gt>`. 
+`Mesh_vertex_base_3<Gt,MD>` and 
+`Compact_mesh_cell_base_3<Gt,MD,Tds>`. 
 */ 
 typedef Hidden_type type; 
 
