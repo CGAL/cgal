@@ -28,7 +28,6 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 #include <boost/shared_ptr.hpp>
 
