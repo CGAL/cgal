@@ -1,8 +1,8 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_H
 
-#include <CGAL/internal/Point_inside_Polyhedron/Ray_3_Triangle_3_traversal_traits.h>
-#include <CGAL/internal/Point_inside_Polyhedron/AABB_triangle_accessor_3_primitive.h>
+#include <CGAL/internal/Operations_on_polyhedra/Ray_3_Triangle_3_traversal_traits.h>
+#include <CGAL/internal/Operations_on_polyhedra/AABB_triangle_accessor_3_primitive.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>

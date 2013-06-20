@@ -24,7 +24,7 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_OLD_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_OLD_H
 
-#include <CGAL/internal/Point_inside_Polyhedron/Ray_3_Triangle_3_traversal_traits.h>
+#include <CGAL/internal/Operations_on_polyhedra/Ray_3_Triangle_3_traversal_traits.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Random.h>
@@ -132,7 +132,7 @@ private:
   is_inside_ray_tree_traversal(const Query& query) const {
     std::pair<boost::logic::tribool,std::size_t> status(
       boost::logic::tribool(boost::logic::indeterminate), 0);
-    internal::Ray_3_Triangle_3_traversal_traits<Traits,Polyhedron_3,Kernel,Boolean_tag<ray_is_vertical> > traversal_traits(status);
+    internal::Ray_3_Triangle_3_traversal_traits<Traits,Kernel,Boolean_tag<ray_is_vertical> > traversal_traits(status);
     tree.traversal(query, traversal_traits);
     if ( !boost::logic::indeterminate(status.first) ){
       if (status.first) return (status.second&1) == 1;
