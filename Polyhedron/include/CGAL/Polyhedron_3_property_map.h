@@ -34,29 +34,31 @@ namespace CGAL{
 template <class Polyhedron> 
 struct Triangle_from_facet_handle_property_map{
   Triangle_from_facet_handle_property_map(Polyhedron* = NULL){}
+  typedef typename Kernel_traits<
+    typename Polyhedron::Vertex::Point>::Kernel::Triangle_3 Triangle_3;
   //classical typedefs
   typedef typename boost::mpl::if_<
     typename boost::is_const<Polyhedron>::type,
     typename Polyhedron::Facet_const_handle,
     typename Polyhedron::Facet_handle >::type key_type;
-  typedef typename Polyhedron::Traits::Kernel::Triangle_3 value_type;
+  typedef Triangle_3 value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
+
+  //get function for property map
+  inline friend
+  Triangle_3
+  get(Triangle_from_facet_handle_property_map<Polyhedron>,
+      typename Triangle_from_facet_handle_property_map<Polyhedron>::key_type f)
+  {
+    typedef typename Polyhedron::Traits Kernel;
+    CGAL_precondition(f->halfedge() == f->halfedge()->next()->next()->next());
+    const typename Kernel::Point_3& a = f->halfedge()->vertex()->point();
+    const typename Kernel::Point_3& b = f->halfedge()->next()->vertex()->point();
+    const typename Kernel::Point_3& c = f->halfedge()->next()->next()->vertex()->point();
+    return typename Kernel::Triangle_3(a,b,c);
+  }
 };
-//get function for property map
-template <class Polyhedron>
-inline
-typename Polyhedron::Traits::Kernel::Triangle_3
-get(Triangle_from_facet_handle_property_map<Polyhedron>,
-    typename Triangle_from_facet_handle_property_map<Polyhedron>::key_type f)
-{
-  typedef typename Polyhedron::Traits::Kernel Kernel;
-  CGAL_precondition(f->halfedge() == f->halfedge()->next()->next()->next());
-  const typename Kernel::Point_3& a = f->halfedge()->vertex()->point();
-  const typename Kernel::Point_3& b = f->halfedge()->next()->vertex()->point();
-  const typename Kernel::Point_3& c = f->halfedge()->next()->next()->vertex()->point();  
-  return typename Kernel::Triangle_3(a,b,c);
-}
 
 
 template <class HalfedgeGraph> 
@@ -97,7 +99,7 @@ struct One_point_from_facet_handle_property_map{
     typename boost::is_const<Polyhedron>::type,
     typename Polyhedron::Facet_const_handle,
     typename Polyhedron::Facet_handle >::type key_type;
-  typedef typename Polyhedron::Traits::Kernel::Point_3 value_type;
+  typedef typename Polyhedron::Vertex::Point_3 value_type;
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 };
