@@ -27,6 +27,7 @@
 #include <boost/mpl/if.hpp>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <boost/type_traits/remove_const.hpp>
 
 namespace CGAL{
 
@@ -63,7 +64,9 @@ struct Triangle_from_facet_handle_property_map{
 
 template <class HalfedgeGraph> 
 struct Segment_from_edge_descriptor_property_map{
-  Segment_from_edge_descriptor_property_map(const HalfedgeGraph* g= NULL):m_graph( const_cast<HalfedgeGraph*>(g) ){}
+  Segment_from_edge_descriptor_property_map(HalfedgeGraph* g= NULL)
+    :m_graph( const_cast<
+      typename boost::remove_const<HalfedgeGraph>::type*>(g) ){}
   //classical typedefs
   typedef typename boost::property_traits< typename boost::property_map< HalfedgeGraph, vertex_point_t>::type >::value_type Point;  
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor key_type;
@@ -71,7 +74,7 @@ struct Segment_from_edge_descriptor_property_map{
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
   //data
-  HalfedgeGraph* m_graph;
+  typename boost::remove_const<HalfedgeGraph>::type* m_graph;
 };
 //get function for property map
 template <class HalfedgeGraph>
@@ -116,7 +119,9 @@ get(One_point_from_facet_handle_property_map<Polyhedron>,
 //property map to access a point from an edge
 template <class HalfedgeGraph> 
 struct Source_point_from_edge_descriptor{
-  Source_point_from_edge_descriptor(const HalfedgeGraph* g= NULL):m_graph( const_cast<HalfedgeGraph*>(g) ){}
+  Source_point_from_edge_descriptor(HalfedgeGraph* g= NULL)
+    :m_graph( const_cast<
+      typename boost::remove_const<HalfedgeGraph>::type*>(g) ){}
   //classical typedefs
   typedef typename boost::property_map< HalfedgeGraph, vertex_point_t>::type Point_pmap;
   typedef typename boost::property_traits< Point_pmap >::value_type value_type;
@@ -124,7 +129,7 @@ struct Source_point_from_edge_descriptor{
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor key_type;
   typedef boost::readable_property_map_tag category;
   //data
-  HalfedgeGraph* m_graph;
+  typename boost::remove_const<HalfedgeGraph>::type* m_graph;
 };
 //get function for property map
 template <class HalfedgeGraph>
