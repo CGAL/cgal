@@ -8,7 +8,7 @@
 #include "Scene_polylines_item.h"
 
 #include "Polyhedron_demo_plugin_interface.h"
-#include "ui_Plane_multiple_cut_widget.h"
+#include "ui_Polyhedron_slicer_widget.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/bounding_box.h> 
@@ -27,7 +27,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
-class Polyhedron_demo_plane_multiple_cut_plugin :
+class Polyhedron_demo_polyhedron_slicer_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
@@ -70,7 +70,7 @@ public:
     return total_ok;
   }
 public slots:
-  void multiple_plane_action();
+  void slicer_widget_action();
   void on_Generate_button_clicked();
   bool on_Update_plane_button_clicked();
   void plane_manipulated_frame_modified();
@@ -80,31 +80,31 @@ private:
   Scene_interface* scene;
   Messages_interface* messages;
   Scene_plane_item* plane_item;
-  QAction* actionMultiplePlane;
+  QAction* actionSlicerWidget;
 
   QDockWidget* dock_widget;
-  Ui::Plane_multiple_cut_widget* ui_widget;
+  Ui::Polyhedron_slicer_widget* ui_widget;
 
   void intersection_of_plane_Polyhedra_3_using_AABB_wrapper(Polyhedron& mesh, 
     const std::vector<Epic_kernel::Plane_3>& planes,
     const std::vector<qglviewer::Vec>& plane_positions,
     std::list<std::vector<Epic_kernel::Point_3> >& polylines);
 
-}; // end Polyhedron_demo_plane_multiple_cut_plugin
+}; // end Polyhedron_demo_polyhedron_slicer_plugin
 
-void Polyhedron_demo_plane_multiple_cut_plugin::init(QMainWindow* mw,
+void Polyhedron_demo_polyhedron_slicer_plugin::init(QMainWindow* mw,
                                       Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
   scene = scene_interface;
   messages = m;
-  actionMultiplePlane = new QAction(tr("Multiple plane cut"), mw);
-  connect(actionMultiplePlane, SIGNAL(triggered()),
-          this, SLOT(multiple_plane_action()));
+  actionSlicerWidget = new QAction(tr("Polyhedron slicer"), mw);
+  connect(actionSlicerWidget, SIGNAL(triggered()),
+          this, SLOT(slicer_widget_action()));
 
-  dock_widget = new QDockWidget("Multiple plane cut parameters", mw);
+  dock_widget = new QDockWidget("Polyhedron slicer parameters", mw);
   dock_widget->setVisible(false); // do not show at the beginning
-  ui_widget = new Ui::Plane_multiple_cut_widget();
+  ui_widget = new Ui::Polyhedron_slicer_widget();
 
   QWidget* qw =new QWidget();
   ui_widget->setupUi(qw);
@@ -115,11 +115,11 @@ void Polyhedron_demo_plane_multiple_cut_plugin::init(QMainWindow* mw,
   connect(ui_widget->Update_plane_button,  SIGNAL(clicked()), this, SLOT(on_Update_plane_button_clicked())); 
 }
 
-QList<QAction*> Polyhedron_demo_plane_multiple_cut_plugin::actions() const {
-  return QList<QAction*>() << actionMultiplePlane;
+QList<QAction*> Polyhedron_demo_polyhedron_slicer_plugin::actions() const {
+  return QList<QAction*>() << actionSlicerWidget;
 }
 
-void Polyhedron_demo_plane_multiple_cut_plugin::multiple_plane_action(){
+void Polyhedron_demo_polyhedron_slicer_plugin::slicer_widget_action(){
   if(dock_widget != NULL && !dock_widget->isVisible()) { 
     dock_widget->show(); 
 
@@ -150,7 +150,7 @@ void Polyhedron_demo_plane_multiple_cut_plugin::multiple_plane_action(){
 }
 
 // when manipulated frame of plane is modified, update line-edits
-void Polyhedron_demo_plane_multiple_cut_plugin::plane_manipulated_frame_modified() {
+void Polyhedron_demo_polyhedron_slicer_plugin::plane_manipulated_frame_modified() {
   qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
   const qglviewer::Vec& pos = mf->position();
   ui_widget->Center_x->setText(QString::number(pos.x));
@@ -170,7 +170,7 @@ void Polyhedron_demo_plane_multiple_cut_plugin::plane_manipulated_frame_modified
 }
 
 // when Update Plane button is clicked, update manipulated frame of plane with line-edits
-bool Polyhedron_demo_plane_multiple_cut_plugin::on_Update_plane_button_clicked() {
+bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() {
   qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
   // get center
   bool ok_1 = true, ok_2 = true, ok_3 = true;
@@ -209,7 +209,7 @@ bool Polyhedron_demo_plane_multiple_cut_plugin::on_Update_plane_button_clicked()
 }
 
 // generate multiple cuts, until any cut does not intersect with bbox
-void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked()
+void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 {
   Scene_polyhedron_item* item = get_selected_item();
   if(!item) { 
@@ -312,12 +312,12 @@ void Polyhedron_demo_plane_multiple_cut_plugin::on_Generate_button_clicked()
   }
 }
 
-void Polyhedron_demo_plane_multiple_cut_plugin::plane_destroyed() {
+void Polyhedron_demo_polyhedron_slicer_plugin::plane_destroyed() {
   dock_widget->hide(); 
 }
 
 // this function assumes 'planes' are parallel
-void Polyhedron_demo_plane_multiple_cut_plugin::intersection_of_plane_Polyhedra_3_using_AABB_wrapper(
+void Polyhedron_demo_polyhedron_slicer_plugin::intersection_of_plane_Polyhedra_3_using_AABB_wrapper(
   Polyhedron& poly, 
   const std::vector<Epic_kernel::Plane_3>& planes,
   const std::vector<qglviewer::Vec>& plane_positions,
@@ -357,6 +357,6 @@ void Polyhedron_demo_plane_multiple_cut_plugin::intersection_of_plane_Polyhedra_
   }
   print_message(QString("%1 axis aligned planes are found, and points are projected...").arg(nb_projection));
 }
-Q_EXPORT_PLUGIN2(Polyhedron_demo_plane_multiple_cut_plugin, Polyhedron_demo_plane_multiple_cut_plugin)
+Q_EXPORT_PLUGIN2(Polyhedron_demo_polyhedron_slicer_plugin, Polyhedron_demo_polyhedron_slicer_plugin)
 
-#include "Polyhedron_demo_plane_multiple_cut_plugin.moc"
+#include "Polyhedron_demo_polyhedron_slicer_plugin.moc"
