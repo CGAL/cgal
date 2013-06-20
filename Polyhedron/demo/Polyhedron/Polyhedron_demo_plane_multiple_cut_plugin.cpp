@@ -16,7 +16,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/bounding_box.h> 
-#include <CGAL/intersection_of_plane_Polyhedra_3_using_AABB.h>
+#include <CGAL/Polyhedron_slicer_3.h>
 
 #include "Polyhedron_type.h"
 
