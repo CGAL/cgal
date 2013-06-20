@@ -33,6 +33,8 @@
 //  if the facet is infinite)  which is part of the medial axis. We intersect this segment/ray with the cdt while we do not reach the boundary.
 //  the edge intersection points are inserted into the cdt. If DO_NOT_FILTER_NOTCHES is not defined, only points on a constrained edges are inserted 
 
+/// \todo debug with ele2.cgal: one point in the first layer and one point in the last layer. (demo segfault)
+
 /// \todo Try inserting outer voronoi bisector of neighboring contours failing inside current contour as constrained edges.
 /// \todo What we actually need is to snap the voronoi diagram to the polygonal contour.
 
