@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -114,6 +114,7 @@
     <addaction name="menu_Boolean_operations"/>
     <addaction name="menuParameterization"/>
     <addaction name="actionInsideOut"/>
+    <addaction name="actionMCFSkeleton"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -287,8 +288,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
-            <height>178</height>
+            <width>534</width>
+            <height>174</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -637,6 +638,11 @@
   <action name="actionPreferences">
    <property name="text">
     <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="actionMCFSkeleton">
+   <property name="text">
+    <string>Mean Curvature Skeletonizaton</string>
    </property>
   </action>
  </widget>
