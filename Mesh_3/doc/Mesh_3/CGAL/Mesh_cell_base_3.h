@@ -4,6 +4,7 @@ namespace CGAL {
 
 /*!
 \ingroup PkgMesh_3MeshClasses
+\deprecated This class is deprecated since \cgal 4.3. Use `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>` instead.
 
 The class `Mesh_cell_base_3` is a model of the concept `MeshCellBase_3`. 
 It is designed to serve as cell base class for the 3D triangulation 
