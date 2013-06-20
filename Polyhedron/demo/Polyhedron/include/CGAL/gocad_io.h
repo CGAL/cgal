@@ -117,6 +117,9 @@ read_gocad(Polyhedron& polyhedron, std::istream& in, std::string& name, std::str
   Build_from_gocad<HDS,Point_3> builder(in);
 
   polyhedron.delegate(builder);
+  name=builder.name;
+  color=builder.color;
+
   return in.good() && polyhedron.is_valid();
 }
 
