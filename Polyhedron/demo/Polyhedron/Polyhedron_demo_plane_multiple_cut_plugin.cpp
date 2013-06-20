@@ -1,7 +1,3 @@
-#undef NDEBUG // there are assertions to notify degenarete cases which are not handled
-              // so keep it open in release mode to see whether there is a prob in algo, or a failure in predefined cases
-#define CGAL_PROFILE
-
 #include <QtCore/qglobal.h>
 #include <CGAL/AABB_intersections.h>
 
