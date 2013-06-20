@@ -24,6 +24,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+//#include <CGAL/compute_average_spacing.h>
 
 #include <iterator>
 #include <set>
@@ -74,6 +75,54 @@ namespace regularize_and_simplify_internal{
 		typedef typename Kernel::Point_3 PointType;
 	};
 
+
+	/// Computes average spacing of one query point from K nearest neighbors.
+	///
+	/// \pre `k >= 2`.
+	///
+	/// @tparam Kernel Geometric traits class.
+	/// @tparam Tree KD-tree.
+	///
+	/// @return average spacing (scalar).
+	template < typename Kernel,
+		typename Tree >
+		typename Kernel::FT
+		compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
+		Tree& tree,                            ///< KD-tree
+		unsigned int k)                        ///< number of neighbors
+	{
+		// basic geometric types
+		typedef typename Kernel::FT FT;
+		typedef typename Kernel::Point_3 Point;
+
+		// types for K nearest neighbors search
+		typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+		typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+		typedef typename Neighbor_search::iterator Search_iterator;
+
+		// performs k + 1 queries (if unique the query point is
+		// output first). search may be aborted when k is greater
+		// than number of input points
+		Neighbor_search search(tree,query,k+1);
+		Search_iterator search_iterator = search.begin();
+		FT sum_distances = (FT)0.0;
+		unsigned int i;
+		for(i=0;i<(k+1);i++)
+		{
+			if(search_iterator == search.end())
+				break; // premature ending
+
+			Point p = search_iterator->first;
+			sum_distances += std::sqrt(CGAL::squared_distance(query,p));
+			search_iterator++;
+		}
+
+		// output average spacing
+		return sum_distances / (FT)i;
+	}
+
+
+
 	/// Compute average term for each sample points
 	/// According to their KNN neighborhood original points
 	/// 
@@ -89,7 +138,8 @@ namespace regularize_and_simplify_internal{
 	compute_average_term(
 		const typename Kernel::Point_3& query, ///< 3D point to project
 		Tree& tree, ///< KD-tree
-		const unsigned int k // nb neighbors
+		const unsigned int k, // nb neighbors
+		const typename Kernel::FT radius
 		)
 	{
 		// basic geometric types
@@ -104,8 +154,9 @@ namespace regularize_and_simplify_internal{
 
 
 		// Gather set of k neighboring original points.
-		std::vector<Point> neighbor_original_points; neighbor_original_points.reserve(k);
-		Neighbor_search search(tree,query,k);
+		std::vector<Point> neighbor_original_points; 
+		neighbor_original_points.reserve(k);
+		Neighbor_search search(tree, query, k);
 		Search_iterator search_iterator = search.begin();
 		unsigned int i;
 		for(i = 0; i < k; i++)
@@ -119,18 +170,91 @@ namespace regularize_and_simplify_internal{
 
 		//Compute average term
 		FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
-		Vector average = CGAL::NULL_VECTOR; //??how to 0 0 0
+		FT radius2 = radius * radius;
+		FT iradius16 = -(FT)4.0/radius2;
+
+		Vector average = CGAL::NULL_VECTOR; 
 		for (unsigned int i = 0; i < neighbor_original_points.size(); i++)
 		{
-			weight = 1;
+			
 			Point& np = neighbor_original_points[i];
 			
+			FT dist2 = CGAL::squared_distance(query, np);
+			weight = dist2 * iradius16;
+
 			average_weight_sum += weight;
 			average = average + (np - CGAL::ORIGIN) * weight;
 		}
 
 		// output
 		return average/average_weight_sum;
+	}
+
+	/// Compute repulsion term for each sample points
+	/// According to their KNN neighborhood sample points
+	/// 
+	/// \pre `k >= 2`
+	///
+	/// @tparam Kernel Geometric traits class.
+	/// @tparam Tree KD-tree.
+	///
+	/// @return computed point
+	template <typename Kernel,
+		typename Tree>
+		typename Kernel::Vector_3
+		compute_repulsion_term(
+		const typename Kernel::Point_3& query, ///< 3D point to project
+		Tree& tree, ///< KD-tree
+		const unsigned int k, // nb neighbors
+		const typename Kernel::FT radius
+		)
+	{
+		// basic geometric types
+		typedef typename Kernel::Point_3 Point;
+		typedef typename Kernel::Vector_3 Vector;
+		typedef typename Kernel::FT FT;
+
+		// types for K nearest neighbors search
+		typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+		typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+		typedef typename Neighbor_search::iterator Search_iterator;
+
+
+		// Gather set of k neighboring original points.
+		std::vector<Point> neighbor_sample_points; 
+		neighbor_sample_points.reserve(k);
+		Neighbor_search search(tree, query, k);
+		Search_iterator search_iterator = search.begin();
+		for(unsigned int i = 0; i < k; i++)
+		{
+			if(search_iterator == search.end())
+				break; // premature ending
+			neighbor_sample_points.push_back(search_iterator->first);
+			search_iterator++;
+		}
+		CGAL_point_set_processing_precondition(neighbor_sample_points.size() >= 1);
+
+		//Compute average term
+		FT weight = (FT)0.0, repulsion_weight_sum = (FT)0.0;
+		FT radius2 = radius * radius;
+		FT iradius16 = -(FT)4.0/radius2;
+
+		Vector repulsion = CGAL::NULL_VECTOR; 
+		for (unsigned int i = 0; i < neighbor_sample_points.size(); i++)
+		{
+			Point& np = neighbor_sample_points[i];
+			Vector diff = query - np;
+
+			//FT dist2 = CGAL::squared_distance(query, np);
+			FT dist2 = diff.squared_length();
+			weight = dist2 * iradius16;
+
+			repulsion_weight_sum += weight;
+			repulsion = repulsion + diff * weight;
+		}
+
+		// output
+		return repulsion/repulsion_weight_sum;
 	}
 }
 namespace CGAL {
@@ -157,8 +281,11 @@ regularize_and_simplify_point_set(
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
   double retain_percentage, ///< percentage of points to retain.
-  const Kernel& kernel) ///< geometric traits.
+  unsigned int k, ///< number of neighbors.
+  const unsigned int iter_number,///< number of iterations.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
+
 	// basic geometric types
 	typedef typename Kernel::Point_3 Point;
 	typedef typename Kernel::Vector_3 Vector;
@@ -198,8 +325,6 @@ regularize_and_simplify_point_set(
 	for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
 		sample_points[i] = get(point_pmap, it);
 
-	//Do something for sample points...
-
 	// Initiate a KD-tree search for original points
 	std::vector<KdTreeElement> original_treeElements;
 	for (it = first_original_point, i=0 ; it != beyond ; ++it, ++i)
@@ -209,24 +334,48 @@ regularize_and_simplify_point_set(
 	}
 	Tree original_tree(original_treeElements.begin(), original_treeElements.end());
 
-	// Initiate a KD-tree search for sample points
-	std::vector<KdTreeElement> sample_treeElements;
-	for (i=0 ; i < sample_points.size(); i++)
+	// Compute average spacing
+	FT sum_spacings = (FT)0.0;
+	for(it = first_original_point; it != beyond ; ++it)
 	{
-		Point& p0 = sample_points[i];
-		sample_treeElements.push_back(KdTreeElement(p0,i));
+		sum_spacings += regularize_and_simplify_internal::compute_average_spacing<Kernel,Tree>(get(point_pmap,it),original_tree,k);
 	}
-	Tree sample_tree(sample_treeElements.begin(), sample_treeElements.end());
-	
-	// Compute average term and repulsion term for each sample points separately,
-	// then update each sample points
-	unsigned int k = 20;
-	for (i = 0; i < sample_points.size(); i++)
-	{
-		Point& p = sample_points[i];
-		Vector average = regularize_and_simplify_internal::compute_average_term<Kernel>(p, original_tree, k);
+	FT average_spacing = (FT)sum_spacings / nb_points_original;
 
-		p = CGAL::ORIGIN - average;
+	for (unsigned int iter_n = 0; iter_n < iter_number; iter_n++)
+	{
+		// Initiate a KD-tree search for sample points
+		std::vector<KdTreeElement> sample_treeElements;
+		//unsigned int k_for_sample = k * (retain_percentage/100.0) * 0.5;
+		//unsigned int k_for_sample = k;
+		unsigned int k_for_sample = 5;
+		
+		for (i=0 ; i < sample_points.size(); i++)
+		{
+			Point& p0 = sample_points[i];
+			sample_treeElements.push_back(KdTreeElement(p0,i));
+		}
+		Tree sample_tree(sample_treeElements.begin(), sample_treeElements.end());
+
+
+		// Compute average term and repulsion term for each sample points separately,
+		// then update each sample points
+		std::vector<Vector> average_set(nb_points_sample);
+		std::vector<Vector> repulsion_set(nb_points_sample);
+		for (i = 0; i < sample_points.size(); i++)
+		{
+			Point& p = sample_points[i];
+			average_set[i] = regularize_and_simplify_internal::compute_average_term<Kernel>(p, original_tree, k, average_spacing*2);
+			repulsion_set[i] = regularize_and_simplify_internal::compute_repulsion_term<Kernel>(p, sample_tree, k_for_sample, average_spacing*2);
+		}
+
+		for (i = 0; i < sample_points.size(); i++)
+		{
+			Point& p = sample_points[i];
+			p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
+		}
+
+		std::cout << "iterate:	" << iter_n + 1 <<  "	" << k_for_sample << std::endl;
 	}
 
 	//Copy back modified sample points to original points for output
@@ -250,7 +399,10 @@ regularize_and_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
-  double removed_percentage) ///< percentage of points to remove
+  double removed_percentage, ///< percentage of points to remove
+  unsigned int k, ///< number of neighbors.
+  const unsigned int iter_number ///< number of iterations.
+  ) 
 {
 	typedef typename boost::property_traits<PointPMap>::value_type Point;
 	typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -258,6 +410,8 @@ regularize_and_simplify_point_set(
 		first,beyond,
 		point_pmap,
 		removed_percentage,
+		k,
+		iter_number,
 		Kernel());
 }
 /// @endcond
@@ -270,12 +424,15 @@ ForwardIterator
 regularize_and_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  double removed_percentage) ///< percentage of points to remove
+  double removed_percentage, ///< percentage of points to remove
+  unsigned int k, ///< number of neighbors.
+  const unsigned int iter_number///< number of iterations.
+  ) 
 {
 	return regularize_and_simplify_point_set(
 		first,beyond,
 		make_dereference_property_map(first),
-		removed_percentage);
+		removed_percentage, k, iter_number);
 }
 /// @endcond
 

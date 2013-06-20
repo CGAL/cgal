@@ -30,7 +30,7 @@ int main(void)
   points_sampled.assign(points.size() * (retain_percentage / 100.), Point());
   //points_sampled.reserve(points.size() * (retain_percentage / 100.));
   
-  std::copy(CGAL::regularize_and_simplify_point_set(points.begin(), points.end(), retain_percentage), points.end(), points_sampled.begin());
+  std::copy(CGAL::regularize_and_simplify_point_set(points.begin(), points.end(), retain_percentage, 80, 50), points.end(), points_sampled.begin());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::vector<Point>(points).swap(points);
