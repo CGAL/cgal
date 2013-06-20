@@ -1,6 +1,7 @@
+
 namespace CGAL {
 
-	\deprecated{
+
 /*!
 \ingroup PkgMesh_3MeshClasses
 
@@ -32,4 +33,3 @@ public:
 
 }; /* end Mesh_cell_base_3 */
 } /* end namespace CGAL */
-}
