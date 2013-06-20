@@ -33,6 +33,7 @@ called 'intrusive'.
 \cgalRefines `RegularTriangulationCellBase_3` 
 
 \cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
+\cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
 
 \sa `CGAL::make_mesh_3()` 
 \sa `MeshDomain_3` 
