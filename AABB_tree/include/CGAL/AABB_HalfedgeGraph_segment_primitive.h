@@ -110,7 +110,7 @@ public:
   using the the insert-by-range method of the class `AABB_tree<Traits>`.
   */
   template <class Iterator>
-  AABB_HalfedgeGraph_segment_primitive(Iterator it, const HalfedgeGraph& graph)
+  AABB_HalfedgeGraph_segment_primitive(Iterator it, HalfedgeGraph& graph)
     : Base( Id_(*it),
             Segment_property_map(&graph),
             Point_property_map(&graph) ){}
@@ -121,7 +121,7 @@ public:
             Segment_property_map(NULL),
             Point_property_map(NULL) ){}
 
-  static typename Base::Shared_data construct_shared_data( const HalfedgeGraph& graph )
+  static typename Base::Shared_data construct_shared_data( HalfedgeGraph& graph )
   {
     return Base::construct_shared_data(Segment_property_map(&graph), Point_property_map(&graph));
   }

@@ -99,7 +99,7 @@ public:
     Constructs a primitive.
   */
   template <class Iterator>
-  AABB_FaceGraph_triangle_primitive(Iterator it, const FaceGraph& graph)
+  AABB_FaceGraph_triangle_primitive(Iterator it, FaceGraph& graph)
     : Base( Id_(it),
             Triangle_property_map(&graph),
             Point_property_map(&graph) ){}
@@ -110,7 +110,7 @@ public:
             Triangle_property_map(NULL),
             Point_property_map(NULL) ){}
 
-  static typename Base::Shared_data construct_shared_data( const FaceGraph& graph )
+  static typename Base::Shared_data construct_shared_data( FaceGraph& graph )
   {
     return Base::construct_shared_data(Triangle_property_map(&graph), Point_property_map(&graph));
   }
