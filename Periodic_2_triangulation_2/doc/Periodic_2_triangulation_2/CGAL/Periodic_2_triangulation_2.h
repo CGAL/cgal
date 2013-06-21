@@ -260,22 +260,34 @@ public:
   typedef Hidden_type Unique_vertex_iterator;
 
   /*!
-  \cgalAdvanced For compatibility with `Triangulation_2`.
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+  For compatibility with `Triangulation_2`.
+  \cgalAdvancedEnd
   */
   typedef Face_iterator Finite_faces_iterator;
 
   /*!
-  \cgalAdvanced For compatibility with `Triangulation_2`.
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+  For compatibility with `Triangulation_2`.
+  \cgalAdvancedEnd
   */
   typedef Edge_iterator Finite_edges_iterator;
 
   /*!
-  \cgalAdvanced For compatibility with `Triangulation_2`.
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+  For compatibility with `Triangulation_2`.
+  \cgalAdvancedEnd
   */
   typedef Vertex_iterator Finite_vertices_iterator;
 
   /*!
-  \cgalAdvanced For compatibility with `Triangulation_2`.
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+  For compatibility with `Triangulation_2`.
+  \cgalAdvancedEnd
   */
   typedef Face_iterator All_faces_iterator;
 
@@ -421,12 +433,17 @@ public:
 /// @}
 
 /// \name Non const access
-/// \cgalAdvanced This method is mainly a help for users implementing
+/// \cgalAdvancedBegin
+/// This method is mainly a help for users implementing
 /// their own triangulation algorithms.
+/// \cgalAdvancedEnd
 /// @{
 
-  /*!
+  /*!  
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Returns a reference to the triangulation data structure.
+  \cgalAdvancedEnd
   */
   Triangulation_data_structure_2 & tds();
 
@@ -450,13 +467,17 @@ public:
 /// @}
 
 /// \name Non-constant-time queries and conversions
-/// \cgalAdvanced It is not recommended to interfere with the built-in
+/// \cgalAdvancedBegin
+/// It is not recommended to interfere with the built-in
 /// covering management. Especially a premature conversion to the
 /// 1-sheeted covering space might lead to problems when modifying the
 /// triangulation later.
+/// \cgalAdvancedEnd
 /// @{
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   The current triangulation remains a triangulation in the 1-sheeted
   covering space even after adding points if this method returns
   `true`. This test relies on a heuristic, i.e. if it answers
@@ -464,36 +485,48 @@ public:
   not computing in the 1-sheeted covering space. (This test uses the length
   of the longest edge in the triangulation as a
   criterion \cite cgal:ct-c3pt-09.)
+  \cgalAdvancedEnd
   */
   bool is_extensible_triangulation_in_1_sheet_h1() const;
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   The same as `is_extensible_triangulation_in_1_sheet_h1()` but with
   a more precise heuristic, i.e. it might answer `true` in cases in which
   `is_extensible_triangulation_in_1_sheet_h1()` would not. However, it is
   much less time efficient when not computing in the 1-sheeted covering
   space. (This test uses the diameter of the largest empty circle in the
   input point set as a criterion \cite cgal:ct-c3pt-09.)
+  \cgalAdvancedEnd
   */
   bool is_extensible_triangulation_in_1_sheet_h2() const;
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Returns `true` if the current triangulation would still be a
   triangulation in the 1-sheeted covering space, returns `false` otherwise.
+  \cgalAdvancedEnd
   */
   bool is_triangulation_in_1_sheet() const;
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Converts the current triangulation into the same periodic
   triangulation in the 1-sheeted covering space.
   \pre `is_triangulation_in_1_sheet()`
-
+  \cgalAdvancedEnd
   */
   void convert_to_1_sheeted_covering();
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Converts the current triangulation into the same periodic
   triangulation in the 9-sheeted covering space.
+  \cgalAdvancedEnd
   */
   void convert_to_9_sheeted_covering();
 
@@ -954,49 +987,64 @@ public:
 /// @}
 
 /// \name
-/// \cgalAdvanced The following member functions offer more specialized
+/// \cgalAdvancedBegin
+/// The following member functions offer more specialized
 /// versions of the insertion or removal operations to be used when
 /// one knows to be in the corresponding case. The following functions
 /// are mainly intended to be used in conjunction with the
 /// `find_conflicts()` member functions of Delaunay and constrained
 /// Delaunay triangulations to perform insertions.
+/// \cgalAdvancedEnd
 /// @{
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Inserts the first vertex.
+  \cgalAdvancedEnd
   */
   Vertex_handle insert_first(const Point& p);
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Inserts vertex `v` in face
   `f`. Face `f` is modified,
   two new faces are created. If the triangulation contains periodic copies, a point is inserted in all periodic copies.
   \pre The point in vertex `v` lies inside face `f`.
+  \cgalAdvancedEnd
   */
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Removes a vertex of degree three. Two of the incident faces are
   destroyed, the third one is modified. \pre Vertex `v` is a vertex with degree three.
+  \cgalAdvancedEnd
   */
   void remove_degree_3(Vertex_handle v);
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Removes the unique vertex in the
   triangulation.
+  \cgalAdvancedEnd
   */
   void
   remove_first(Vertex_handle v);
 
 
   /*!
-    \name
-    \cgalAdvanced creates a new vertex `v` and use it to star the hole
-      whose boundary is described by the sequence of edges
-      `[edge_begin, edge_end]`. Returns a handle to the new vertex.
+    \cgalAdvancedFunction
+    \cgalAdvancedBegin
+    creates a new vertex `v` and use it to star the hole
+    whose boundary is described by the sequence of edges
+    `[edge_begin, edge_end]`. Returns a handle to the new vertex.
 
   \pre The triangulation is a triangulation of 1 sheet
-
+    \cgalAdvancedEnd
   */
   template<class EdgeIt>
   Vertex_handle star_hole( Point p,
@@ -1004,11 +1052,14 @@ public:
                            EdgeIt edge_end);
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   same as above, except that the algorithm
   first recycles faces in the sequence `[face_begin, face_end]`
   and create new ones only when the sequence is exhausted.
 
   \pre The triangulation is a triangulation of 1 sheet
+  \cgalAdvancedEnd
   */
   template<class EdgeIt, class FaceIt>
   Vertex_handle star_hole( Point p,
@@ -1018,8 +1069,11 @@ public:
                            FaceIt face_end);
 
   /*!
-  \cgalAdvanced Changes the domain. Note that this function calls `clear()`,
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+  Changes the domain. Note that this function calls `clear()`,
   i.e., it erases the existing triangulation.
+  \cgalAdvancedEnd
   */
   void set_domain(const Iso_rectangle dom);
 
@@ -1054,19 +1108,23 @@ public:
 /// @}
 
 /// \name Checking
-/// \cgalAdvanced The responsibility of keeping a valid triangulation
+/// \cgalAdvancedBegin
+/// The responsibility of keeping a valid triangulation
 /// belongs to the users if advanced operations are used. Obviously
 /// the advanced user, who implements higher levels operations may
 /// have to make a triangulation invalid at some times. The following
 /// method is provided to help the debugging.
+/// \cgalAdvancedEnd
 /// @{
 
   /*!
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
   Checks the combinatorial validity of the triangulation and
   also the validity of its geometric embedding.
   This method is mainly a debugging help
   for the users of advanced features.
-
+  \cgalAdvancedEnd
   */
   bool
   is_valid(bool verbose = false, int level = 0) const;
