@@ -423,8 +423,9 @@ public:
       if(r_domain_.query_is_cached(q))
       {
         const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id;
-        Object o = IGT().intersect_3_object()(Primitive(primitive_id).datum(),
-                                              q);
+        typename cpp11::result_of<
+          typename IGT::Intersect_3(typename Primitive::Datum, Query)>::type o
+            = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
         intersection = AABB_intersection(std::make_pair(o, primitive_id));
       } else 
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
