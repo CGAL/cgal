@@ -23,14 +23,12 @@ int main(void)
   }
 
   // Randomly simplifies using erase-remove idiom
-  const double retain_percentage = 10.0; // percentage of points to remove
-  //points.erase(CGAL::random_simplify_point_set(points.begin(), points.end(), removed_percentage),
-  //             points.end());
+  const double retain_percentage = 5.0; // percentage of points to remove
+
   std::vector<Point> points_sampled;
   points_sampled.assign(points.size() * (retain_percentage / 100.), Point());
-  //points_sampled.reserve(points.size() * (retain_percentage / 100.));
   
-  std::copy(CGAL::regularize_and_simplify_point_set(points.begin(), points.end(), retain_percentage, 80, 50), points.end(), points_sampled.begin());
+  std::copy(CGAL::regularize_and_simplify_point_set(points.begin(), points.end(), retain_percentage, 450, 50), points.end(), points_sampled.begin());
 
   // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
   std::vector<Point>(points).swap(points);
