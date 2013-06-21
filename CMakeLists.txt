@@ -25,5 +25,8 @@ add_subdirectory( Installation )
 
 # for releases, where dont_submit is honored
 if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Documentation")
-  add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/Documentation" )
+  option(BUILD_DOC "Build the doxygen documentation" OFF)
+  if (BUILD_DOC)
+    add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/Documentation" )
+  endif(BUILD_DOC)
 endif()
