@@ -943,7 +943,6 @@ public:
 
 /// @}
 
-/// \name
 /// \anchor Triangulation_ref_Fig_insert1
 /// \image html insert1.gif "Insertion of a point on an edge."
 /// \anchor Triangulation_ref_Fig_insert2
