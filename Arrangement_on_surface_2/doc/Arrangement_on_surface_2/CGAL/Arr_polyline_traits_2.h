@@ -1,4 +1,3 @@
-
 namespace CGAL {
 
   /*!
@@ -30,8 +29,18 @@ namespace CGAL {
     in order to avoid robustness problems, although other inexact
     number types could be used at the user's own risk.
 
-    `Arr_polyline_traits_2` uses `Arr_segment_traits_2::Point_2` as its point
-    type.
+    `Arr_polyline_traits_2` uses `SegmentTraits::Point_2` as its point
+    type. Its nested type `Segment_2` is nothing but `SegmentTraits::Curve_2`.
+
+    \cgalHeading{A note on Backwards compatibility}
+    In \cgal version 4.2 (and earlier) the `X_monotone_curve_2` nested type of
+    `Arr_polyline_traits_2` maintained a direction invariant, namely, its
+    vertices were ordered in an ascending lexicographical \f$(xy)\f$-order.
+    This restriction is no longer valid and `X_monotone_curve_2` can be now
+    directed either from right-to-left \a or left-to-right. If you wish to
+    maintain a left-to-right orientations of the \f$x\f$-monotone polylines set
+    the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
+    included.
 
     \cgalModels `ArrangementTraits_2`
     \cgalModels `ArrangementLandmarkTraits_2`
@@ -39,21 +48,85 @@ namespace CGAL {
 
     \sa `Arr_segment_traits_2<Kernel>`
     \sa `Arr_non_caching_segment_traits_2<Kernel>`
-
+    \sa `CGAL_ALWAYS_LEFT_TO_RIGHT`
   */
+
   template< typename SegmentTraits >
   class Arr_polyline_traits_2 {
   public:
+
+    /// \name Types
+    /// @{
+    /*! */
+    // TODO: Have to turn these into links, so whenever I mention Point_2 it
+    //       will point here and *not* to Kernel::Point_2 for instance.
+    typedef SegmentTraits::Point_2            Point_2;
+
+    /*! */
+    typedef SegmentTraits::Curve_2            Segment_2;
+    /// @}
+
+    /*!
+      Construction functor of a general (not necessarily \f$x\f$-monotone)
+      polyline.
+
+      This functor constructs general polylines given various possibilities of
+      input, as can be seen by the various overloads of the `operator()`.
+     */
+    class Construct_curve_2 {
+    public:
+      /// \name Operations
+      /// @{
+
+      /*! Returns an polyline connecting the two given endpoints.
+       * \param p The first point.
+       * \param q The second point.
+       * \pre `p` and `q` are distinct.
+       * \return A segment connecting `p` and `q`.
+       */
+      Curve_2 operator()(const Point_2& p, const Point_2& q) const;
+
+      /*! Returns a polyline consists of one given segment.
+       * \param seg input segment
+       * \pre `seg` is not degenerated
+       * \return A polyline with one segment, namely `seg`.
+       */
+      Curve_2 operator()(const Segment_2& seg) const;
+
+      /*! Construct a well-oriented polyline from a range of either
+       *  the type `SegmentTraits::Point_2` or the type
+       *  `SegmentTraits::Segment_2` and \a only one of them.
+       *  \param begin iterator pointing to the first element in the range.
+       *  \param end iterator pointing to the past-the-end element in the range.
+       *  \pre The given range form a continuous and well-oriented polyline.
+       *  \return A polyline using the corresponding construction
+       *          implementation.
+       */
+      template <typename ForwardIterator>
+      Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const;
+
+      /// @} /* end of operations */
+    }; /* end of Arr_polyline_traits_2::Construct_curve_2 */
+
+    /*!
+      Construction functor of \f$x\f$-monotone polyline.
+
+      Similar to `Construct_curve_2`, only returns \f$x\f$-monotone polylines.
+      Thus, have the same overloads of the `operator()`.
+     */
+    class Construct_x_monotone_curve_2 {};
+
+    /*!
+      Function object which returns the number of vertices of a polyline.
+    */
+    class Number_of_points_2{};
+
 
     /*!
       Functor to augment a polyline by either adding a vertex or a segment.
     */
     class Push_back_2 {
     public:
-      /// \name Types
-      /// @{
-      /// @}
-
       /// \name Operations
       /// @{
 
@@ -104,7 +177,6 @@ namespace CGAL {
 
       /// @} /* end of operations */
     }; /* end of Arr_polyline_traits_2::Push_back_2 */
-
 
     /*!  The `Curve_2` class nested within the polyline traits is used
       to represent general continuous piecewise-linear curves (a
@@ -297,26 +369,22 @@ namespace CGAL {
 
     }; /* end Arr_polyline_traits_2::X_monotone_curve_2 */
 
-    /// \name Functor Types
-    /// @{
-
-    /*!
-      Function object which returns the number of vertices of a polyline.
-     */
-    typedef unspecified_type Number_of_points_2;
-    /// @}
-
     /// \name Accessing Functor Objects
     /// @{
 
-    /*!
-     */
+    /*! */
+    Construct_curve_2 construct_curve_2_object() const;
+
+    /*! */
+    Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
+
+    /*! */
     Number_of_points_2 number_of_points_2_object() const;
 
-    /*!
-     */
+    /*! */
     Push_back_2 push_back_2_object() const;
 
     /// @}
+
   }; /* end Arr_polyline_traits_2 */
 } /* end namespace CGAL */

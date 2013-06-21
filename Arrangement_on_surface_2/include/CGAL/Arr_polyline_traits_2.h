@@ -1452,12 +1452,8 @@ namespace CGAL {
       Construct_curve_2 (const Geometry_traits_2& traits) :
         m_poly_traits(traits) {}
 
-      /*! Returns an polyline connecting the two given endpoints.
-       * \param p The first point.
-       * \param q The second point.
-       * \pre p and q are distinct.
-       * \return A segment connecting p and q.
-       */
+      /* see documentation in
+         ../../doc/Arrangement_on_surface_2/CGAL/Arr_polyline_traits_2.h */
       Curve_2 operator()(const Point_2& p, const Point_2& q) const
       {
         CGAL_precondition_msg (!m_poly_traits.
@@ -1466,11 +1462,8 @@ namespace CGAL {
         return Curve_2(Segment_2(p,q));
       }
 
-      /*! Returns an polyline consists of one given segment.
-       * \param seg input segment
-       * \pre seg is not degenerated
-       * \return A polyline with one segment, namely seg.
-       */
+      /* see documentation in
+         ../../doc/Arrangement_on_surface_2/CGAL/Arr_polyline_traits_2.h */
       Curve_2 operator()(const Segment_2& seg) const
       {
         CGAL_precondition_code
@@ -1495,13 +1488,8 @@ namespace CGAL {
         return Curve_2(seg);
       }
 
-      /*! Construct a well-oriented polyline from a range of objects.
-       *  \param begin iterator pointing to the first element in the range.
-       *  \param end iterator pointing to the past-the-end element in the range.
-       *  \pre The given range form a continuous and well-oriented polyline.
-       *  \return A polyline using the corresponding construction
-       *          implementation.
-       */
+      /* see documentation in
+         ../../doc/Arrangement_on_surface_2/CGAL/Arr_polyline_traits_2.h */
       template <typename ForwardIterator>
       Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
       {
@@ -1637,9 +1625,7 @@ namespace CGAL {
     public:
       /*! Constructor. */
       Construct_x_monotone_curve_2(const Geometry_traits_2& traits) :
-        m_poly_traits(traits)
-      {}
-
+        m_poly_traits(traits) {}
 
       /*! Returns an x-monotone polyline connecting the two given endpoints.
        * \param p The first point.
