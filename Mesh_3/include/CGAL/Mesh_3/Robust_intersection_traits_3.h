@@ -426,7 +426,7 @@ public:
   typedef Cartesian_converter<EK, typename K_::Kernel>    Back_from_exact;
   
   template<class T1, class T2>
-  Object operator() (const T1& t, const T2& s) const
+  typename cpp11::result_of<typename K_::Intersect_3(T1, T2)>::type
   operator() (const T1& t, const T2& s) const
   {
     // Switch to exact
