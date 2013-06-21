@@ -25,7 +25,9 @@
 #ifndef CGAL_MESH_3_VERTEX_PERTURBATION_H
 #define CGAL_MESH_3_VERTEX_PERTURBATION_H
 
+#include <CGAL/Mesh_3/config.h>
 
+#include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
@@ -420,7 +422,7 @@ protected:
     C3T3_helpers helper(c3t3, domain);
     
     modified_vertices.clear();
-    
+
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, sq_step_size_);
     FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
@@ -448,10 +450,10 @@ protected:
       return std::make_pair(false,v);
     
     // we know that there will be a combinatorial change
-    return helper.update_mesh(final_loc,
-                              v,
-                              criterion,
-                              std::back_inserter(modified_vertices));
+    return helper.update_mesh_topo_change(final_loc,
+                                          v,
+                                          criterion,
+                                          std::back_inserter(modified_vertices));
   }
   
   
@@ -986,7 +988,7 @@ public:
     : max_try_nb_(max_try_nb) 
     , sphere_radius_(sphere_radius)
     , sphere_sq_radius_(sphere_radius*sphere_radius)
-    , generator_(boost::uint32_t(std::time(0)))
+    , generator_() // initialize the random generator deterministically
     , uni_dist_(0,1)
     , random_(generator_, uni_dist_) {}
   
@@ -1176,7 +1178,7 @@ private:
     bool min_angle_increased = false;
     Vertex_handle moving_vertex = v;
     Point_3 best_location = initial_location;
-    std::vector<Vertex_handle> best_vertices;
+    std::set<Vertex_handle> mod_vertices;
     
     // TODO: use no_topo_change to compute new_angle without moving everything
     unsigned int try_nb = 0;
@@ -1197,7 +1199,7 @@ private:
                            moving_vertex,
                            criterion,
                            std::back_inserter(tmp_mod_vertices));
-      
+
       // get new vertex
       moving_vertex = update.second;
       
@@ -1205,43 +1207,40 @@ private:
       {
         min_angle_increased = true;
         best_location = moving_vertex->point();
-        //best_vertices = tmp_mod_vertices;
-        
-        for ( typename std::vector<Vertex_handle>::iterator it = tmp_mod_vertices.begin() ;
-             it != tmp_mod_vertices.end() ;
-             ++it )
-        {
-          if ( std::find(best_vertices.begin(), best_vertices.end(), *it)
-              == best_vertices.end() )
-          { 
-            best_vertices.push_back(*it);
-          }
-        }
-        
+
+        mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
+
+        std::size_t nois;
+#ifdef CGAL_NEW_INCIDENT_SLIVERS
+        nois  = helper.number_of_incident_slivers(moving_vertex, criterion, sliver_bound);
+#else
         std::vector<Cell_handle> new_slivers =
           helper.incident_slivers(moving_vertex, criterion, sliver_bound);
-
+        nois = new_slivers.size();
+#endif
+        
         // If sliver number has decreased, we won
-        if ( new_slivers.size() < slivers.size() )
+        if(nois < slivers.size() )
         {
-          std::copy(best_vertices.begin(),
-                    best_vertices.end(),
+          std::copy(mod_vertices.begin(),
+                    mod_vertices.end(),
                     std::back_inserter(modified_vertices));
           
           return std::make_pair(true,moving_vertex);
         }
       }
-    }
+    }//end while ( ++try_nb <= Base::max_try_nb() )
+
     
     if ( min_angle_increased )
     {
-      std::copy(best_vertices.begin(),
-                best_vertices.end(),
+      std::copy(mod_vertices.begin(),
+                mod_vertices.end(),
                 std::back_inserter(modified_vertices));
     }
     
     // Moving vertex is located on the best location
-    return std::make_pair(min_angle_increased,moving_vertex);
+    return std::make_pair(min_angle_increased, moving_vertex);
   }
   
 private:

@@ -26,6 +26,7 @@
 #define CGAL_MESH_3_GLOBAL_PARAMETERS_H
 
 #include <CGAL/config.h>
+#include <CGAL/Mesh_3/config.h>
 
 #define BOOST_PARAMETER_MAX_ARITY 12
 #include <boost/parameter.hpp>
@@ -61,8 +62,16 @@ BOOST_PARAMETER_NAME( criteria )
 BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
 BOOST_PARAMETER_NAME( (sliver_bound, tag) sliver_bound_)
 BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
+BOOST_PARAMETER_NAME( (do_freeze, tag) do_freeze_)
 BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
 BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
+
+BOOST_PARAMETER_NAME( (dump_after_init_prefix, tag ) dump_after_init_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_refine_surface_prefix, tag ) dump_after_refine_surface_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_refine_prefix, tag ) dump_after_refine_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_glob_opt_prefix, tag ) dump_after_glob_opt_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_perturb_prefix, tag ) dump_after_perturb_prefix_)
+BOOST_PARAMETER_NAME( (dump_after_exude_prefix, tag ) dump_after_exude_prefix_)
 
 } // end namespace parameters
 

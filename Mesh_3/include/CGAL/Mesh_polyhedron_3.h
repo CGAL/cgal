@@ -89,22 +89,24 @@ public:
   }
 };
 
-template <class Refs, class T_, class Pln_, class Patch_id>
+template <class Refs, class T_, class Pln_, class Patch_id_>
 class Mesh_polyhedron_face : 
 public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
 {
 private:
-  Patch_id patch_id_;
+  Patch_id_ patch_id_;
 public:
+
+  typedef Patch_id_ Patch_id;
   
   Mesh_polyhedron_face() 
   : patch_id_(1) {}
   
-  int patch_id() const {
+  const Patch_id& patch_id() const {
     return patch_id_;
   }
   
-  void set_patch_id(const int i) {
+  void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
   }
 };

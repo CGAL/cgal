@@ -45,12 +45,13 @@ BOOST_PARAMETER_FUNCTION(
     (max_iteration_number_, *, 0 )
     (convergence_, *, parameters::default_values::odt_convergence_ratio )
     (freeze_bound_, *, parameters::default_values::odt_freeze_ratio )
-  )
+    (do_freeze_, *, parameters::default_values::do_freeze ))
 )
 {
   return odt_optimize_mesh_3_impl(c3t3, domain,
                                   time_limit_, max_iteration_number_,
-                                  convergence_, freeze_bound_);
+                                  convergence_, freeze_bound_
+                                  , do_freeze_ );
 } 
 
 
@@ -62,7 +63,8 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
                          const double time_limit,
                          std::size_t max_iteration_number,
                          const double convergence,
-                         const double freeze_ratio)
+                         const double freeze_ratio,
+                         const bool do_freeze )
 {
   typedef typename C3T3::Triangulation  Tr;
   
@@ -73,7 +75,11 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
     Mesh_3::Mesh_global_optimizer<C3T3,MeshDomain,Move> Odt_optimizer;
 
   // Create optimizer
-  Odt_optimizer opt(c3t3,domain,freeze_ratio,convergence);
+  Odt_optimizer opt(c3t3,
+                    domain,
+                    freeze_ratio,
+                    do_freeze,
+                    convergence);
   
   // Set max time
   opt.set_time_limit(time_limit);

@@ -25,7 +25,11 @@
 #ifndef CGAL_MESH_3_LLOYD_MOVE_H
 #define CGAL_MESH_3_LLOYD_MOVE_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/convex_hull_2.h>
+#include <CGAL/ch_graham_andrew.h>
+
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
 
 #include <string>
@@ -68,13 +72,14 @@ public:
    * function
    */
   Vector_3 operator()(const Vertex_handle& v,
+                      const Cell_vector& incident_cells,
                       const C3T3& c3t3,
                       const Sizing_field& sizing_field = Sizing_field() ) const
   {
     switch ( c3t3.in_dimension(v) )
     {
       case 3:
-        return lloyd_move_inside_domain(v,c3t3,sizing_field);
+        return lloyd_move_inside_domain(v,incident_cells,c3t3,sizing_field);
         break;
       case 2:
         return lloyd_move_on_boundary(v,c3t3,sizing_field);
@@ -146,6 +151,7 @@ private:
    * Return move for inside vertex \c v
    */
   Vector_3 lloyd_move_inside_domain(const Vertex_handle& v,
+                                    const Cell_vector& incident_cells,
                                     const C3T3& c3t3,
                                     const Sizing_field& sizing_field) const
   {
@@ -158,14 +164,11 @@ private:
     // -----------------------------------
     // get cells incident to v
     const Tr& tr = c3t3.triangulation();
-    Cell_vector incident_cells;
-    incident_cells.reserve(64);
-    tr.incident_cells(v, std::back_inserter(incident_cells));
     
     // Stores vertex that have already been used
     std::set<Vertex_handle> treated_vertex;
     
-    for (typename Cell_vector::iterator cit = incident_cells.begin();
+    for (typename Cell_vector::const_iterator cit = incident_cells.begin();
          cit != incident_cells.end();
          ++cit)
     {
@@ -336,8 +339,10 @@ private:
     // Compute 2D convex hull
     CGAL_assertion(points_2d.size() > 3);
     std::vector<Point_2> ch_2d;
-    CGAL::convex_hull_2(points_2d.begin(),points_2d.end(),
-                        std::back_inserter(ch_2d));
+    // AF: We have to debug CGAL::convex_hull_2 = ch_akl_toussaint
+    //     as it triggers filter failures unnecessarily
+    CGAL::ch_graham_andrew(points_2d.begin(),points_2d.end(),
+                           std::back_inserter(ch_2d));
     
     // Lift back convex hull to 3D 
     std::vector<Point_3> polygon_3d;
@@ -372,8 +377,8 @@ private:
     typename Gt::Compute_area_3 area = 
       Gt().compute_area_3_object();
     
-    // Vertex current location
-    const Point_3& vertex_location = v->point();
+    // Vertex current position
+    const Point_3& vertex_position = v->point();
     
     // Use as reference point to triangulate
     const Point_3& a = *first++;
@@ -386,7 +391,7 @@ private:
     FT density = density_2d<true>(triangle_centroid, v, sizing_field);
     
     FT sum_masses = density * area(a,*b,c);
-    Vector_3 move = sum_masses * vector(vertex_location, triangle_centroid);
+    Vector_3 move = sum_masses * vector(vertex_position, triangle_centroid);
     
     b = &c;
     
@@ -399,7 +404,7 @@ private:
       FT density = density_2d<false>(triangle_centroid, v, sizing_field);
       FT mass = density * area(a,*b,c);
       
-      move = move + mass * vector(vertex_location, triangle_centroid);
+      move = move + mass * vector(vertex_position, triangle_centroid);
       sum_masses += mass;
       
       // Go one step forward
@@ -506,9 +511,6 @@ private:
     typename Gt::Construct_vector_3 vector =
       Gt().construct_vector_3_object();
     
-    typename Gt::Construct_tetrahedron_3 tetrahedron =
-      Gt().construct_tetrahedron_3_object();
-    
     Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;
     
@@ -524,13 +526,12 @@ private:
     while ( current_cell != done )
     {
       const Point_3 d = tr.dual(current_cell++);
-      Tetrahedron_3 tet = tetrahedron(a,b,c,d);
       
-      Point_3 tet_centroid = centroid(tet);
+      Point_3 tet_centroid = centroid(a,b,c,d);
       
       // Compute mass
       FT density = density_3d(tet_centroid, current_cell, sizing_field);
-      FT abs_volume = CGAL::abs(volume(tet));
+      FT abs_volume = CGAL::abs(volume(a,b,c,d));
       FT mass = abs_volume * density;
       
       move = move + mass * vector(a,tet_centroid);

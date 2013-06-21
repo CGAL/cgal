@@ -60,11 +60,26 @@ struct Detect_polylines {
   typedef typename Polyhedron::Vertex Polyhedron_vertex;
   typedef typename Polyhedron_vertex::Set_of_indices Set_of_indices;
 
+  template <typename T>
+  static 
+  void display_index(std::ostream& stream, const T& x)
+  {
+    stream << x;
+  }
+
+  template <typename T, typename U>
+  static 
+  void display_index(std::ostream& stream, const std::pair<T,U>& p)
+  {
+    stream << p.first << "+" << p.second;
+  }
+
   static 
   void display_set(std::ostream& stream, Set_of_indices set) {
     stream << "( ";
-    BOOST_FOREACH(int i, set) {
-      std::cerr << i << " ";
+    BOOST_FOREACH(typename Set_of_indices::value_type i, set) {
+      display_index(stream, i);
+      stream << " ";
     }
     stream << ")";
   }
@@ -160,7 +175,7 @@ struct Detect_polylines {
                        set_of_indices_of_current_edge.begin())) ) 
       {
         // the vertex is a special vertex, a new corner
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
         std::cerr << "New corner vertex " << v->point() << std::endl;
         std::cerr << "  indices were: ";
         BOOST_FOREACH(typename Set_of_indices::value_type i,
@@ -213,15 +228,15 @@ struct Detect_polylines {
   }
 
   /** For a non-corner vertex v (that is incident to two feature edges),
-      mesure the angle between the two edges, and mark the vertex as corner
+      measure the angle between the two edges, and mark the vertex as corner
       edge, if the angle is < 120°. **/
-  static bool mesure_angle(const Vertex_handle v)
+  static bool measure_angle(const Vertex_handle v)
   {
     Halfedge_handle e1;
     Halfedge_handle e2;
     typename Polyhedron::Halfedge_around_vertex_circulator he =
       v->vertex_begin(), end(he);
-    // std::cerr << "mesure_handle(" << (void*)(&*v)
+    // std::cerr << "measure_handle(" << (void*)(&*v)
     //           << " = " << v->point() << ")";
     bool first = true;
     bool done = false;
@@ -313,24 +328,24 @@ struct Detect_polylines {
       }
     }
 
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "Corner vertices: " << corner_vertices.size() << std::endl;
     std::cerr << "Feature vertices: " << feature_vertices.size() << std::endl;
 #endif
     
-    // // Iterate over non-corner feature vertices, and mesure the angle.
+    // // Iterate over non-corner feature vertices, and measure the angle.
     for(typename Vertices_counter::iterator it = feature_vertices.begin(),
         end = feature_vertices.end(); it != end; ++it)
     {
       const Vertex_handle v = it->first;
       if(corner_vertices.count(v) == 0) {
         CGAL_assertion(it->second == 2);
-        if(mesure_angle(v)) {
+        if(measure_angle(v)) {
           corner_vertices.insert(v);
         }
       }
     }
-#ifdef PROTECTION_DEBUG
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
     std::cerr << "New corner vertices: "
               << corner_vertices.size() << std::endl;
 #endif
