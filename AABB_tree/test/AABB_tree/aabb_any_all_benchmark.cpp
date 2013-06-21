@@ -81,11 +81,11 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
 
   // Random seeded to 23, cube size equal to the magic number 2
   CGAL::Random r(23);
-  CGAL::Random_points_in_cube_3<Point, CGAL::Creator_uniform_3<double, Point> > g( 2., r);
+  CGAL::Random_points_in_cube_3<Point, CGAL::Creator_uniform_3<FT, Point> > g( 2., r);
   
   std::vector<Point> points;
   points.reserve(elements * 2);
-  CGAL::copy_n(g, elements * 2, std::back_inserter(points));
+  CGAL::cpp11::copy_n(g, elements * 2, std::back_inserter(points));
   
   // generate a bunch of happy random primitives
   std::vector<Line> lines;
