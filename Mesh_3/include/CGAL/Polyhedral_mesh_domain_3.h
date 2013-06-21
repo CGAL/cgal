@@ -118,7 +118,11 @@ struct IGT_generator {};
 template < typename Gt >
 struct IGT_generator<Gt,CGAL::Tag_true>
 {
+#ifdef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
+  typedef CGAL::Mesh_3::Robust_intersection_traits_3_new<Gt> type;
+#else // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
   typedef CGAL::Mesh_3::Robust_intersection_traits_3<Gt> type;
+#endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
   typedef type Type;
 };
   
