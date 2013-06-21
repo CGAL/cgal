@@ -30,98 +30,88 @@
 #define CGAL_OBJECT_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Handle_for_virtual.h>
 
 #include <typeinfo>
 
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
+#include <boost/any.hpp>
+#include <boost/shared_ptr.hpp>
+
 namespace CGAL {
 
-template <class T>
-class Wrapper : public Ref_counted_virtual
-{
-    Wrapper(const Wrapper&); // deleted to make sure we don't make useless copies
-  public:
-
-    Wrapper(const T& object) : _object(object) {}
-
-#ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-    Wrapper(T && object) : _object(std::move(object)) {}
-#endif
-
-    ~Wrapper() {}
-
-    const T& get() const { return _object; }
-
-    virtual const std::type_info & type() const
-    {
-        return typeid(T);
-    }
-
-    virtual const void * object_ptr() const
-    {
-        return & _object;
-    }
-
-  private:
-    T         _object;
-};
-
 class Object
-  : public Handle_for_virtual<Ref_counted_virtual>
 {
-    struct Empty {};
-    typedef Handle_for_virtual<Ref_counted_virtual> base;
+    boost::shared_ptr<boost::any> obj;
+  
+    // returns an any pointer from a variant
+    struct Any_from_variant : public boost::static_visitor<boost::any*> {
+      template<typename T>
+      boost::any* operator()(const T& t) const { 
+        return new boost::any(t);
+      }  
+    };
 
+    template<class T>
+    friend const T* object_cast(const Object * o);
+
+    template<class T>
+    friend T object_cast(const Object & o);
+
+    typedef void (Object::*bool_type)() const;
+    void this_type_does_not_support_comparisons() const {}
   public:
 
     struct private_tag{};
 
-    Object()
-    {
-	typedef Wrapper<Empty>  Wrap;
-        ptr = new Wrap(Empty());
-    }
+    Object() : obj() { }
 
 #ifndef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
     template <class T>
-    Object(T && t, private_tag)
-    {
-	typedef Wrapper< typename std::remove_cv< typename std::remove_reference<T>::type >::type >  Wrap;
-        ptr = new Wrap(std::forward<T>(t));
-    }
+    Object(T && t, private_tag) : obj(new boost::any(std::forward<T>(t))) { }
 #else
     template <class T>
-    Object(const T&t, private_tag)
-    {
-	typedef Wrapper<T>  Wrap;
-        ptr = new Wrap(t);
-    }
+    Object(const T&t, private_tag) : obj(new boost::any(t)) { }
 #endif
+
+    // implicit constructor from optionals containing variants
+    template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    Object(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) 
+      : obj( t ? boost::apply_visitor(Any_from_variant(), *t) : NULL) { }
+  
+    // implicit constructor from  variants
+    template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    Object(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& v) 
+      : obj(boost::apply_visitor(Any_from_variant(), v)) { }
 
     template <class T>
     bool assign(T &t) const
     {
-#ifdef _MSC_VER
-      try {
-#endif
-        const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(Ptr());
-        if (wp == NULL)
-            return false;
-        t = wp->get();
-#ifdef _MSC_VER
+      if(obj) {
+        #ifdef CGAL_USE_ANY_BAD_CAST
+        try {
+          t = boost::any_cast<T>(*obj);
+          return true;
+        } catch(...) {
+          return false;
+        }
+        #else
+        const T* res =  boost::any_cast<T>(&(*obj));
+        if (res){
+          t=*res;
+          return true;
+        }
+        return false;
+        #endif
+      } else {
+        return false;
       }
-      catch (...) {
-          CGAL_error_msg("Your compiler must support Run-Time Type Information (RTTI)");
-      }
-#endif
-      return true;
     }
 
     bool
     empty() const
     {
-	Empty E;
-	return assign(E);
+      return !obj;
     }
 
     // is_empty() is kept for backward compatibility.
@@ -132,15 +122,24 @@ class Object
 	return empty();
     }
 
+    // safe-bool conversion
+    operator bool_type() const {
+      return empty() == false ? &Object::this_type_does_not_support_comparisons : 0;
+    }
+
+
     template <class T>
     bool is() const
     {
-        return NULL != dynamic_cast<const Wrapper<T> *>(Ptr());
+      return obj && boost::any_cast<T>(obj.get());
     }
 
     const std::type_info & type() const
     {
-        return empty() ? typeid(void) : Ptr()->type();
+      if(obj)
+        return obj->type();
+      else
+        return typeid(void);
     }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -196,20 +195,23 @@ template <class T>
 inline
 const T * object_cast(const Object * o)
 {
-    const Wrapper<T> *wp = dynamic_cast<const Wrapper<T> *>(o->Ptr());
-    if (wp == NULL)
-        return NULL;
-    return static_cast<const T*>(wp->object_ptr());
+  if(o->obj)
+    return boost::any_cast<T>((o->obj).get());
+  else
+    return NULL;
 }
 
 template <class T>
 inline
 T object_cast(const Object & o)
 {
-    const T * result = object_cast<T>(&o);
-    if (!result)
-        throw Bad_object_cast();
-    return *result;
+  if(!o.obj)
+    throw Bad_object_cast();
+  
+  const T * result = boost::any_cast<T>((o.obj).get());
+  if (!result)
+    throw Bad_object_cast();
+  return *result;
 }
 
 } //namespace CGAL

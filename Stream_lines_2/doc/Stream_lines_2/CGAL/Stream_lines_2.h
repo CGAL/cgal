@@ -55,12 +55,12 @@ typedef VectorField_2::Vector_2 Vector_2;
 /*! 
 iterator of points with value type `Point_2`. 
 */ 
-typedef Hidden_type Point_iterator_2; 
+typedef unspecified_type Point_iterator_2; 
 
 /*! 
 an iterator to visit the streamlines with value type `std::pair<Point_iterator_2, Point_iterator_2>`. 
 */ 
-typedef Hidden_type Stream_line_iterator_2; 
+typedef unspecified_type Stream_line_iterator_2; 
 
 /// @} 
 

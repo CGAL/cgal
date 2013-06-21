@@ -19,7 +19,7 @@ public:
 /*! 
 the type of the numerator and denominator. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /// @} 
 

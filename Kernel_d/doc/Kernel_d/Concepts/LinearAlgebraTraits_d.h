@@ -27,17 +27,17 @@ public:
 /*! 
 the number type of the components. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 the vector type. 
 */ 
-typedef Hidden_type Vector; 
+typedef unspecified_type Vector; 
 
 /*! 
 the matrix type. 
 */ 
-typedef Hidden_type Matrix; 
+typedef unspecified_type Matrix; 
 
 /// @} 
 

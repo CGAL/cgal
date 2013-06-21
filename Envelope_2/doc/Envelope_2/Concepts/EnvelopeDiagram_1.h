@@ -44,7 +44,7 @@ public:
 /*! 
 the geometric traits class. 
 */ 
-typedef Hidden_type Traits_2; 
+typedef unspecified_type Traits_2; 
 
 /*! 
 the point type. 
@@ -59,42 +59,42 @@ typedef Traits_2::X_monotone_curve_2 X_monotone_curve_2;
 /*! 
 the size type (convertible to `size_t`). 
 */ 
-typedef Hidden_type Size; 
+typedef unspecified_type Size; 
 
 /*! 
 an iterator for the \f$ x\f$-monotone curves that induce a diagram feature, with value type `X_monotone_curve_2`. 
 */ 
-typedef Hidden_type Curve_const_iterator; 
+typedef unspecified_type Curve_const_iterator; 
 
 /*! 
 the vertex type, a model of the concept `EnvelopeDiagramVertex`. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 the edge type, a model of the concept `EnvelopeDiagramEdge`. 
 */ 
-typedef Hidden_type Edge; 
+typedef unspecified_type Edge; 
 
 /*! 
 a handle to a diagram vertex. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 a non-mutable handle to a diagram vertex. 
 */ 
-typedef Hidden_type Vertex_const_handle; 
+typedef unspecified_type Vertex_const_handle; 
 
 /*! 
 a handle to a diagram edge. 
 */ 
-typedef Hidden_type Edge_handle; 
+typedef unspecified_type Edge_handle; 
 
 /*! 
 a non-mutable handle to a diagram edge. 
 */ 
-typedef Hidden_type Edge_const_handle; 
+typedef unspecified_type Edge_const_handle; 
 
 /// @} 
 

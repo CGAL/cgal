@@ -60,7 +60,7 @@ public:
 /*! 
 models the concept `ArrTraits::Curve_2`. 
 */ 
-typedef Hidden_type Curve_2; 
+typedef unspecified_type Curve_2; 
 
 /// @} 
 
@@ -70,7 +70,7 @@ typedef Hidden_type Curve_2;
 /*! 
 models the concept `ArrTraits::MakeXMonotone_2`. 
 */ 
-typedef Hidden_type Make_x_monotone_2; 
+typedef unspecified_type Make_x_monotone_2; 
 
 /// @} 
 

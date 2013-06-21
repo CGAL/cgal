@@ -38,7 +38,7 @@ An iterator corresponding to
 with the difference that its value type is a vertex descriptor and not 
 `CGAL::Arrangement_2::Vertex`. 
 */ 
-typedef Hidden_type vertex_iterator; 
+typedef unspecified_type vertex_iterator; 
 
 /*! 
 An iterator corresponding to 
@@ -46,7 +46,7 @@ An iterator corresponding to
 with the difference that its value type is an edge descriptor and not 
 `CGAL::Arrangement_2::Halfedge`. 
 */ 
-typedef Hidden_type edge_iterator; 
+typedef unspecified_type edge_iterator; 
 
 /*! 
 An edge iterator which only iterates over 
@@ -55,7 +55,7 @@ the incoming edges around a vertex. It corresponds to a
 with the difference that its value type is an edge descriptor and not 
 `CGAL::Arrangement_2::Halfedge`. 
 */ 
-typedef Hidden_type in_edge_iterator; 
+typedef unspecified_type in_edge_iterator; 
 
 /*! 
 An edge iterator which only iterates over 
@@ -64,7 +64,7 @@ the outgoing halfedges around a vertex. It corresponds to a
 with the difference that its value type is an edge descriptor and not 
 `CGAL::Arrangement_2::Halfedge`. 
 */ 
-typedef Hidden_type out_edge_iterator; 
+typedef unspecified_type out_edge_iterator; 
 
 /*! 
 Indicates that this graph does support multiedges. 

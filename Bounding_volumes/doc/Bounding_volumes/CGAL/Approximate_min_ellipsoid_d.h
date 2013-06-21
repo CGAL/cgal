@@ -149,22 +149,22 @@ public:
 `typedef Traits::FT FT` (which is always a 
 typedef to `double`). 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 `typedef Traits::ET ET` (which is an exact number type used for exact computation like for example in `achieved_epsilon()`). 
 */ 
-typedef Hidden_type ET; 
+typedef unspecified_type ET; 
 
 /*! 
 `typedef Traits::Point Point` 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 `typedef Traits::Cartesian_const_iterator Cartesian_const_iterator` 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /*! 
 A model of STL concept 
@@ -172,7 +172,7 @@ A model of STL concept
 to iterate over the Cartesian center coordinates of the computed 
 ellipsoid, see `center_cartesian_begin()`. 
 */ 
-typedef Hidden_type Center_coordinate_iterator; 
+typedef unspecified_type Center_coordinate_iterator; 
 
 /*! 
 A model of STL concept 
@@ -180,7 +180,7 @@ A model of STL concept
 to iterate over the lengths of the semiaxes of the computed ellipsoid, 
 see `axes_lengths_begin()`. 
 */ 
-typedef Hidden_type Axes_lengths_iterator; 
+typedef unspecified_type Axes_lengths_iterator; 
 
 /*! 
 A model of STL concept 
@@ -189,7 +189,7 @@ to iterate over the %Cartesian coordinates of the direction of a fixed
 axis of the computed ellipsoid, see 
 `axis_direction_cartesian_begin()`. 
 */ 
-typedef Hidden_type Axis_direction_iterator; 
+typedef unspecified_type Axis_direction_iterator; 
 
 /// @} 
 

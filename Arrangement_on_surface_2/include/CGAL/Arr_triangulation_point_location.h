@@ -17,6 +17,7 @@
 // 
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
+
 #ifndef CGAL_ARR_TRIANGULATION_POINT_LOCATION_H
 #define CGAL_ARR_TRIANGULATION_POINT_LOCATION_H
 
@@ -25,6 +26,7 @@
  */
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_point_location_result.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -42,24 +44,24 @@ namespace CGAL {
  * The Arrangement parameter corresponds to an arrangement instantiation.
  */
 template <class Arrangement_>
-class Arr_triangulation_point_location : public Arr_observer <Arrangement_>
+class Arr_triangulation_point_location : public Arr_observer<Arrangement_>
 {
 public:
-
   typedef Arrangement_                                  Arrangement_2;
+
   typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Traits_2::Kernel                     Kernel;
 
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-	typedef typename Arrangement_2::Vertex_handle		      Vertex_handle;
-	typedef typename Arrangement_2::Halfedge_handle		    Halfedge_handle;
-	typedef typename Arrangement_2::Face_handle			      Face_handle;
+  typedef typename Arrangement_2::Vertex_handle		Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle	Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle		Face_handle;
 
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Hole_const_iterator  Hole_const_iterator;
+  typedef typename Arrangement_2::Hole_const_iterator   Hole_const_iterator;
   typedef typename Arrangement_2::Halfedge_const_iterator  
     Halfedge_const_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator 
@@ -77,10 +79,10 @@ public:
   typedef std::list<Halfedge_const_handle>              Edge_list;
   typedef typename Edge_list::iterator                  Std_edge_iterator;
 
-    //----------------------------------------------------------
+  //----------------------------------------------------------
   // Triangulation Types
   //----------------------------------------------------------
-  typedef Triangulation_vertex_base_with_info_2<Vertex_const_handle,Kernel> 
+  typedef Triangulation_vertex_base_with_info_2<Vertex_const_handle, Kernel> 
                                                                       Vbb;
   typedef Triangulation_hierarchy_vertex_base_2<Vbb>                  Vb;
   //typedef Triangulation_face_base_with_info_2<CGAL::Color,Kernel>    Fbt;
@@ -101,30 +103,33 @@ public:
   typedef typename CDT::Finite_edges_iterator    CDT_Finite_edges_iterator;
   typedef typename CDT::Locate_type              CDT_Locate_type;
 
-protected:
+  typedef Arr_point_location_result<Arrangement_2>       Result;
+  typedef typename Result::Type                          Result_type;
 
+  // Support cpp11::result_of
+  typedef Result_type                                    result_type;
+
+protected:
   typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *m_traits;     // Its associated traits object.
+  const Traits_adaptor_2* m_traits;     // Its associated traits object.
   bool                    ignore_notifications;  
   CDT                     cdt;
   bool                    updated_cdt;
 
-public:
+  template<typename T>
+  Result_type make_result(T t) const { return Result::make_result(t); }
+  inline Result_type default_result() const { return Result::default_result(); }
 
+public:
   /*! Default constructor. */
-  Arr_triangulation_point_location () : 
-    m_traits (NULL)
-  {
-  }
+  Arr_triangulation_point_location() : m_traits(NULL) {}
 
   /*! Constructor given an arrangement. */
-  Arr_triangulation_point_location (const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr))
-  {
-    build_triangulation();
-  }
+  Arr_triangulation_point_location(const Arrangement_2& arr) :
+    Arr_observer<Arrangement_2>(const_cast<Arrangement_2 &>(arr))
+  { build_triangulation(); }
    
   /*!
    * Locate the arrangement feature containing the given point.
@@ -133,33 +138,27 @@ public:
    *         query point. This object is either a Face_const_handle or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  Object locate (const Point_2& p) const;
+  Object locate(const Point_2& p) const;
 
    //Observer functions that are relevant to overload
    //-------------------------------------------------
 
     /*! Attach an arrangement object. */
-    virtual void before_attach (const Arrangement_2& arr)
-    {
-      m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
-    }
+    virtual void before_attach(const Arrangement_2& arr)
+    { m_traits = static_cast<const Traits_adaptor_2*>(arr.traits()); }
 
-    virtual void after_attach ()
-    {
-      build_triangulation();
-    }
+    virtual void after_attach()
+    { build_triangulation(); }
 
-    virtual void before_detach ()
-    {
-      clear_triangulation();
-    }
+    virtual void before_detach()
+    { clear_triangulation(); }
 
    /*!
     * Notification after the arrangement has been assigned with another
     * arrangement.
     * \param u A handle to the unbounded face.
     */
-    virtual void after_assign ()
+    virtual void after_assign()
     { 
       clear_triangulation();
       build_triangulation();
@@ -169,177 +168,166 @@ public:
     * Notification after the arrangement is cleared.
     * \param u A handle to the unbounded face.
     */
-    virtual void after_clear ()
+    virtual void after_clear()
     { 
       clear_triangulation();
       build_triangulation();
     }
 
     /*! Notification before a global operation modifies the arrangement. */
-    virtual void before_global_change ()
+    virtual void before_global_change()
     { 
       clear_triangulation();
       ignore_notifications = true;
     }
 
     /*! Notification after a global operation is completed. */
-    virtual void after_global_change ()
+    virtual void after_global_change()
     {
       build_triangulation();
       ignore_notifications = false;
     }
 
     /*!
-    * Notification after the creation of a new vertex.
-    * \param v A handle to the created vertex.
-    */
-    virtual void after_create_vertex (Vertex_handle /* v */)
+     * Notification after the creation of a new vertex.
+     * \param v A handle to the created vertex.
+     */
+    virtual void after_create_vertex(Vertex_handle /* v */)
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification after the creation of a new edge.
-    * \param e A handle to one of the twin halfedges that were created.
-    */
-    virtual void after_create_edge (Halfedge_handle /* e */)
+     * Notification after the creation of a new edge.
+     * \param e A handle to one of the twin halfedges that were created.
+     */
+    virtual void after_create_edge(Halfedge_handle /* e */)
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification after an edge was split.
-    * \param e1 A handle to one of the twin halfedges forming the first edge.
-    * \param e2 A handle to one of the twin halfedges forming the second edge.
-    */
-    virtual void after_split_edge (Halfedge_handle /* e1 */,
-      Halfedge_handle /* e2 */)
+     * Notification after an edge was split.
+     * \param e1 A handle to one of the twin halfedges forming the first edge.
+     * \param e2 A handle to one of the twin halfedges forming the second edge.
+     */
+    virtual void after_split_edge(Halfedge_handle /* e1 */,
+                                  Halfedge_handle /* e2 */)
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification after a face was split.
-    * \param f A handle to the face we have just split.
-    * \param new_f A handle to the new face that has been created.
-    * \param is_hole Whether the new face forms a hole inside f.
-    */
-    virtual void after_split_face (Face_handle /* f */,
-      Face_handle /* new_f */,
+     * Notification after a face was split.
+     * \param f A handle to the face we have just split.
+     * \param new_f A handle to the new face that has been created.
+     * \param is_hole Whether the new face forms a hole inside f.
+     */
+    virtual void after_split_face(Face_handle /* f */,
+                                  Face_handle /* new_f */,
       bool /* is_hole */)
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification after a hole was created inside a face.
-    * \param h A circulator representing the boundary of the new hole.
-    */
-    virtual void after_add_hole (Ccb_halfedge_circulator /* h */)
+     * Notification after a hole was created inside a face.
+     * \param h A circulator representing the boundary of the new hole.
+     */
+    virtual void after_add_hole(Ccb_halfedge_circulator /* h */)
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification after an edge was merged.
-    * \param e A handle to one of the twin halfedges forming the merged edge.
-    */
-    virtual void after_merge_edge (Halfedge_handle /* e */)
+     * Notification after an edge was merged.
+     * \param e A handle to one of the twin halfedges forming the merged edge.
+     */
+    virtual void after_merge_edge(Halfedge_handle /* e */)
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification after a face was merged.
-    * \param f A handle to the merged face.
-    */
-    virtual void after_merge_face (Face_handle /* f */)
+     * Notification after a face was merged.
+     * \param f A handle to the merged face.
+     */
+    virtual void after_merge_face(Face_handle /* f */)
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification after a hole is moved from one face to another.
-    * \param h A circulator representing the boundary of the hole.
-    */
-    virtual void after_move_hole (Ccb_halfedge_circulator /* h */)
+     * Notification after a hole is moved from one face to another.
+     * \param h A circulator representing the boundary of the hole.
+     */
+    virtual void after_move_hole(Ccb_halfedge_circulator /* h */)
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notificaion before the removal of a vertex.
-    * \param v A handle to the vertex to be deleted.
-    */
-    virtual void after_remove_vertex ()
+     * Notificaion before the removal of a vertex.
+     * \param v A handle to the vertex to be deleted.
+     */
+    virtual void after_remove_vertex()
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification before the removal of an edge.
-    * \param e A handle to one of the twin halfedges to be deleted.
-    */
-    virtual void after_remove_edge ()
+     * Notification before the removal of an edge.
+     * \param e A handle to one of the twin halfedges to be deleted.
+     */
+    virtual void after_remove_edge()
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
     /*!
-    * Notification before the removal of a hole.
-    * \param h A circulator representing the boundary of the hole.
-    */
-    virtual void after_remove_hole ()
+     * Notification before the removal of a hole.
+     * \param h A circulator representing the boundary of the hole.
+     */
+    virtual void after_remove_hole()
     {
-      if (! ignore_notifications)
-      {
+      if (! ignore_notifications) {
         clear_triangulation();
         build_triangulation();
       }
     }
 
 protected:
-  void clear_triangulation ();
+  void clear_triangulation();
   void build_triangulation();  
 };
 

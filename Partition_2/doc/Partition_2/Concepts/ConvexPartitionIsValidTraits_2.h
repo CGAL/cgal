@@ -26,7 +26,7 @@ public:
 Model of the concept `PolygonIsValid` that tests if 
 a sequence of points is convex or not. 
 */ 
-typedef Hidden_type Is_convex_2; 
+typedef unspecified_type Is_convex_2; 
 
 /// @} 
 

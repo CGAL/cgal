@@ -45,6 +45,8 @@ namespace CGAL {
 /// optionally followed by the nx ny nz normal.
 /// Faces are ignored.
 ///
+/// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
 /// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
@@ -55,21 +57,24 @@ namespace CGAL {
 /// @return true on success.
 
 // This variant requires all parameters.
-template <typename OutputIterator,
+//-----------------------------------------------------------------------------------
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
           typename PointPMap,
           typename NormalPMap,
           typename Kernel
 >
 bool
 read_off_points_and_normals(
-  std::istream& stream, ///< input stream.
-  OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map OutputIterator -> Vector_3.
-  const Kernel& /*kernel*/) ///< geometric traits.
+    std::istream& stream, ///< input stream.
+    OutputIterator output, ///< output iterator over points.
+    PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
+    NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
+    const Kernel& /*kernel*/) ///< geometric traits.
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  typedef typename value_type_traits<OutputIterator>::type Enriched_point;
+  // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
+  typedef OutputIteratorValueType Enriched_point;
 
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
@@ -127,18 +132,23 @@ read_off_points_and_normals(
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
         if (iss >> nx)
-          {
-            // In case we could read one number, we expect that there are two more
-            if(iss  >> ny >> nz){
-              normal = Vector(nx,ny,nz);
-            } else {
-              std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-              return false;
-            }
+        {
+          // In case we could read one number, we expect that there are two more
+          if(iss  >> ny >> nz){
+            normal = Vector(nx,ny,nz);
+          } else {
+            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+            return false;
           }
+        }
         Enriched_point pwn;
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
         put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
         put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+#else
+        put(point_pmap,  pwn, point);  // point_pmap[&pwn] = point
+        put(normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
+#endif
         *output++ = pwn;
         pointsRead++;
       }
@@ -151,7 +161,57 @@ read_off_points_and_normals(
 }
 
 /// @cond SKIP_IN_MANUAL
+template <typename OutputIterator,
+          typename PointPMap,
+          typename NormalPMap,
+          typename Kernel
+>
+bool
+read_off_points_and_normals(
+  std::istream& stream, ///< input stream.
+  OutputIterator output, ///< output iterator over points.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
+  const Kernel& kernel) ///< geometric traits.
+{
+  // just deduce value_type of OutputIterator
+  return read_off_points_and_normals
+    <typename value_type_traits<OutputIterator>::type>(
+    stream,
+    output,
+    point_pmap,
+    normal_pmap,
+    kernel);
+}
+//-----------------------------------------------------------------------------------
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
+//-----------------------------------------------------------------------------------
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename PointPMap,
+          typename NormalPMap
+>
+bool
+read_off_points_and_normals(
+  std::istream& stream, ///< input stream.
+  OutputIterator output, ///< output iterator over points.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
+  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
+{
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  return read_off_points_and_normals
+    <OutputIteratorValueType>(
+    stream,
+    output,
+    point_pmap,
+    normal_pmap,
+    Kernel());
+}
+
 template <typename OutputIterator,
           typename PointPMap,
           typename NormalPMap
@@ -160,22 +220,45 @@ bool
 read_off_points_and_normals(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
-  NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
+  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return read_off_points_and_normals(
+  // just deduce value_type of OutputIterator
+  return read_off_points_and_normals
+    <typename value_type_traits<OutputIterator>::type>(
     stream,
     output,
     point_pmap,
-    normal_pmap,
-    Kernel());
+    normal_pmap);
 }
+//-----------------------------------------------------------------------------------
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Identity_property_map.
+//-----------------------------------------------------------------------------------
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename NormalPMap
+>
+bool
+read_off_points_and_normals(
+  std::istream& stream, ///< input stream.
+  OutputIterator output, ///< output iterator over points.
+  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
+{
+  return read_off_points_and_normals
+    <OutputIteratorValueType>(
+    stream,
+    output,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+    make_dereference_property_map(output),
+#else
+    make_identity_property_map(OutputIteratorValueType()),
+#endif
+    normal_pmap);
+}
+
 template <typename OutputIterator,
           typename NormalPMap
 >
@@ -183,14 +266,16 @@ bool
 read_off_points_and_normals(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
+  NormalPMap normal_pmap) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_off_points_and_normals(
+  // just deduce value_type of OutputIterator
+  return read_off_points_and_normals
+    <typename value_type_traits<OutputIterator>::type>(
     stream,
     output,
-    make_dereference_property_map(output),
     normal_pmap);
 }
+//-----------------------------------------------------------------------------------
 /// @endcond
 
 
@@ -201,6 +286,8 @@ read_off_points_and_normals(
 /// If the position is followed by the nx ny nz normal, then the normal will be ignored.
 /// Faces are ignored.
 ///
+/// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
 /// @tparam OutputIterator iterator over output points.
 /// @tparam PointPMap is a model of `WritablePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if OutputIterator value_type is convertible to Point_3<Kernel>.
@@ -210,7 +297,9 @@ read_off_points_and_normals(
 /// @return true on success.
 
 // This variant requires all parameters.
-template <typename OutputIterator,
+//-----------------------------------------------------------------------------------
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
           typename PointPMap,
           typename Kernel
 >
@@ -218,11 +307,12 @@ bool
 read_off_points(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
   const Kernel& kernel) ///< geometric traits.
 {
   // Calls read_off_points_and_normals() with a normal property map = boost::dummy_property_map
-  return read_off_points_and_normals(
+  return read_off_points_and_normals
+    <OutputIteratorValueType>(
     stream,
     output,
     point_pmap,
@@ -231,7 +321,51 @@ read_off_points(
 }
 
 /// @cond SKIP_IN_MANUAL
+template <typename OutputIterator,
+          typename PointPMap,
+          typename Kernel
+>
+bool
+read_off_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output, ///< output iterator over points.
+  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
+  const Kernel& kernel) ///< geometric traits.
+{
+  // just deduce value_type of OutputIterator
+  return read_off_points
+    <typename value_type_traits<OutputIterator>::type>(
+    stream,
+    output,
+    point_pmap,
+    kernel);
+}
+//-----------------------------------------------------------------------------------
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
+//-----------------------------------------------------------------------------------
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename PointPMap
+>
+bool
+read_off_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output, ///< output iterator over points.
+  PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
+{
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  return read_off_points
+    <OutputIteratorValueType>(
+    stream,
+    output,
+    point_pmap,
+    Kernel());
+}
+
 template <typename OutputIterator,
           typename PointPMap
 >
@@ -239,20 +373,41 @@ bool
 read_off_points(
   std::istream& stream, ///< input stream.
   OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap) ///< property map OutputIterator -> Point_3.
+  PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return read_off_points(
+  // just deduce value_type of OutputIterator
+  return read_off_points
+    <typename value_type_traits<OutputIterator>::type>(
     stream,
     output,
-    point_pmap,
-    Kernel());
+    point_pmap);
 }
+//-----------------------------------------------------------------------------------
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Identity_property_map.
+//-----------------------------------------------------------------------------------
+template <typename OutputIteratorValueType,
+          typename OutputIterator
+>
+bool
+read_off_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output) ///< output iterator over points.
+{
+  return read_off_points
+    <OutputIteratorValueType>(
+    stream,
+    output,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+    make_dereference_property_map(output)
+#else
+    make_identity_property_map(OutputIteratorValueType())
+#endif
+    );
+}
+
 template <typename OutputIterator
 >
 bool
@@ -260,11 +415,14 @@ read_off_points(
   std::istream& stream, ///< input stream.
   OutputIterator output) ///< output iterator over points.
 {
-  return read_off_points(
+  // just deduce value_type of OutputIterator
+  return read_off_points
+    <typename value_type_traits<OutputIterator>::type>(
     stream,
-    output,
-    make_dereference_property_map(output));
+    output);
 }
+//-----------------------------------------------------------------------------------
+
 /// @endcond
 
 

@@ -71,26 +71,26 @@ columnwise over the constraint matrix \f$ A\f$. The value type
 is a random access iterator type for an individual column that 
 goes over the entries in that column. 
 */ 
-typedef Hidden_type A_iterator; 
+typedef unspecified_type A_iterator; 
 
 /*! 
 A random access iterator type to go over 
 the entries of the right-hand side \f$ \qpb\f$. 
 */ 
-typedef Hidden_type B_iterator; 
+typedef unspecified_type B_iterator; 
 
 /*! 
 A random access iterator type to go over the 
 relations \f$ \qprel\f$. The value type of `R_iterator` is 
 `CGAL::Comparison_result`. 
 */ 
-typedef Hidden_type R_iterator; 
+typedef unspecified_type R_iterator; 
 
 /*! 
 A random access iterator type to go over the 
 entries of the linear objective function vector \f$ c\f$. 
 */ 
-typedef Hidden_type C_iterator; 
+typedef unspecified_type C_iterator; 
 
 /// @} 
 

@@ -31,22 +31,22 @@ public:
 /*! 
 the corresponding <span class="textsc">Dcel</span> vertex type. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 the corresponding <span class="textsc">Dcel</span> face type. 
 */ 
-typedef Hidden_type Face; 
+typedef unspecified_type Face; 
 
 /*! 
 the corresponding <span class="textsc">Dcel</span> hole type. 
 */ 
-typedef Hidden_type Hole; 
+typedef unspecified_type Hole; 
 
 /*! 
 the curve type associated with the edge. 
 */ 
-typedef Hidden_type X_monotone_curve; 
+typedef unspecified_type X_monotone_curve; 
 
 /// @} 
 

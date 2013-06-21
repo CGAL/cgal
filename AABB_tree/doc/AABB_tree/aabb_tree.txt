@@ -388,7 +388,7 @@ tree to refer to the primitive in the results provided to the user. It
 follows that, while in most cases each reference id corresponds to a
 unique primitive, this is not a requirement of the component. This way
 a user may use these reference ids as labels, each of them being
-shared by several geometric object
+shared by several geometric objects.
 
 A distance query between a query point `q` and the input primitives is
 turned into a *ball* query centered at `q`. The ball traverses the

@@ -129,23 +129,23 @@ are defined as well.
 /*! 
 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 bi-directional iterators for the elements stored in the set. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 
 /*! 
 
 */ 
-typedef Hidden_type reverse_iterator; 
+typedef unspecified_type reverse_iterator; 
 
 /*! 
 reverse bi-directional iterators for the elements stored in the set. 
 */ 
-typedef Hidden_type const_reverse_iterator; 
+typedef unspecified_type const_reverse_iterator; 
 
 /// @} 
 

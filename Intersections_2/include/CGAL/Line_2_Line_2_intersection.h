@@ -31,7 +31,7 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -71,7 +71,8 @@ inline bool do_intersect(
 
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Line_2, typename K::Line_2>::result_type
 intersection(const typename K::Line_2 &line1, 
 	     const typename K::Line_2 &line2,
 	     const K&)
@@ -81,11 +82,11 @@ intersection(const typename K::Line_2 &line1,
     switch (linepair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+      return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Line_2>();
     case is_t::POINT:
-        return make_object(linepair.intersection_point());
+        return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Line_2>(linepair.intersection_point());
     case is_t::LINE:
-        return make_object(line1);
+        return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Line_2>(line1);
     }
 }
 
@@ -201,23 +202,9 @@ Line_2_Line_2_pair<K>::intersection_line() const
 
 } // namespace internal
 
+CGAL_INTERSECTION_FUNCTION_SELF(Line_2, 2)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Line_2, 2)
 
-template <class K>
-inline bool do_intersect(
-    const Line_2<K> &p1,
-    const Line_2<K> &p2)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(p1, p2);
-}
-
-template <class K>
-Object
-intersection(const Line_2<K> &line1, const Line_2<K> &line2)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(line1, line2);
-}
 
 } //namespace CGAL
 

@@ -34,8 +34,8 @@ namespace CGAL {
 // Locate the arrangement feature containing the given point.
 //
 template <class Arrangement>
-Object Arr_walk_along_line_point_location<Arrangement>::locate
-    (const Point_2& p) const
+typename Arr_walk_along_line_point_location<Arrangement>::result_type
+Arr_walk_along_line_point_location<Arrangement>::locate(const Point_2& p) const
 {
   // Start from the initial face (as determined by the topology-traits class),
   // and an invalid halfedge representing the closest edge to p from above it
@@ -50,8 +50,7 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
   bool                                found_containing_hole;
 
   face = Face_const_handle (top_traits->initial_face());
-  do
-  {
+  do {
     // Go over the holes in the current face.
     found_containing_hole = false;
     for (ic_it = face->inner_ccbs_begin();
@@ -67,33 +66,30 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
                                                closest_to_target);
 
       // Check if the query point is located on the returned edge.
-      if (is_on_edge)
-      {
+      if (is_on_edge) {
         // Check if the point is located on one of the edge endpoints.
         if (! closest_he->source()->is_at_open_boundary() &&
             equal (p, closest_he->source()->point()))
         {
           // The query point is located on the source vertex:
           Vertex_const_handle  vh = closest_he->source();
-          return (CGAL::make_object (vh));
+          return make_result(vh);
         }
         else if (! closest_he->target()->is_at_open_boundary() &&
                  equal (p, closest_he->target()->point()))
         {
           // The query point is located on the target vertex:
           Vertex_const_handle  vh = closest_he->target();
-          return (CGAL::make_object (vh));
+          return make_result(vh);
         }
 
         // The query point is located in the edge interior:
-        return (CGAL::make_object (closest_he));
+        return make_result(closest_he);
       }
 
       // Check if the point is contained in the interior of the current hole.
-      if (is_in_face)
-      {
-        if (closest_to_target)
-        {
+      if (is_in_face) {
+        if (closest_to_target) {
           // Deal with the following scenario, where the definition of the
           // closest halfedge is not unique (all halfedges around x are
           // closest to p):
@@ -110,8 +106,9 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
           // In this case, we find the first halfegde whose target is x
           // in a clockwise direction from "6 o'clock" around x and take
           // its incident face.
-          closest_he = _first_around_vertex (closest_he->target(),
-                                             true);      // Shoot up.
+
+          // Shoot up.
+          closest_he = _first_around_vertex(closest_he->target(), true);
         }
         
         // Move inside the faces that constitute the hole, the first one
@@ -122,11 +119,9 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
 
         // Perform a vertical walk along the faces of the hole until locating
         // a face that contains the qeury point.
-        do
-        {
-          CGAL_assertion_code (
-            Halfedge_const_handle  old_closest_he = closest_he;
-          );
+        do {
+          CGAL_assertion_code
+            (Halfedge_const_handle  old_closest_he = closest_he);
 
           is_in_face = _is_in_connected_component (p, face->outer_ccb(),
                                                    true,    // Shoot up.
@@ -136,46 +131,43 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
                                                    closest_to_target);
 
           // Check if the query point was located on an edge.
-          if (is_on_edge)
-          {
+          if (is_on_edge) {
             // Check if the point is located on one of the edge endpoints.
             if (! closest_he->source()->is_at_open_boundary() &&
                 equal (p, closest_he->source()->point()))
             {
               // The query point is located on the source vertex:
               Vertex_const_handle  vh = closest_he->source();
-              return (CGAL::make_object (vh));
+              return make_result(vh);
             }
             else if (! closest_he->target()->is_at_open_boundary() &&
                      equal (p, closest_he->target()->point()))
             {
               // The query point is located on the target vertex:
               Vertex_const_handle  vh = closest_he->target();
-              return (CGAL::make_object (vh));
+              return make_result(vh);
             }
 
             // The query point is located in the edge iterior:
-            return (CGAL::make_object (closest_he));
+            return make_result(closest_he);
           }
 
           // If the point is not contained in the face, move to the neighboring
           // face from below, using the closest halfedge located so far.
-          if (! is_in_face)
-          {
-            if (closest_to_target)
-            {
+          if (! is_in_face) {
+            if (closest_to_target) {
               // The query point lies below the target vertex of the closest
               // halfedge: In this case we have to locate the first halfedge
               // we encounter when going around this target vertex from
               // "6 o'clock" (see above).
-              closest_he = _first_around_vertex (closest_he->target(),
-                                                 true);      // Shoot up.
+
+              // Shoot up.
+              closest_he = _first_around_vertex(closest_he->target(), true);
             }
 
             CGAL_assertion (old_closest_he != closest_he);
             face = closest_he->twin()->face();
           }
-
         } while (! is_in_face);
 
         // We have located a face in the hole that contains the query point.
@@ -185,7 +177,6 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
         found_containing_hole = true;
       }
     } // End loop on the current face's holes.
-
   } while (found_containing_hole);
 
   // If we reached here, we did not locate the query point in any of the holes
@@ -197,15 +188,14 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
   for (iso_verts_it = face->isolated_vertices_begin();
        iso_verts_it != face->isolated_vertices_end(); ++iso_verts_it)
   {
-    if (equal (p, iso_verts_it->point()))
-    {
+    if (equal(p, iso_verts_it->point())) {
       Vertex_const_handle  vh = iso_verts_it;
-      return (CGAL::make_object (vh));
+      return make_result(vh);
     }
   }
 
   // The query point is contained in the face interior:
-  return (CGAL::make_object (face));
+  return make_result(face);
 }
 
 //-----------------------------------------------------------------------------
@@ -213,9 +203,9 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
 // given point hits.
 //
 template <class Arrangement>
-Object Arr_walk_along_line_point_location<Arrangement>::
-_vertical_ray_shoot (const Point_2& p,
-                     bool shoot_up) const
+typename Arr_walk_along_line_point_location<Arrangement>::result_type
+Arr_walk_along_line_point_location<Arrangement>::
+_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 {
   // Start from the initial face (as determined by the topology-traits class),
   // and an invalid halfedge representing the closest edge to p from above it
@@ -231,8 +221,7 @@ _vertical_ray_shoot (const Point_2& p,
   bool                                found_containing_hole;
 
   face = Face_const_handle (top_traits->initial_face());
-  do
-  {
+  do {
     // Go over the holes in the current face.
     found_containing_hole = false;
     for (ic_it = face->inner_ccbs_begin();
@@ -249,24 +238,20 @@ _vertical_ray_shoot (const Point_2& p,
 
       // Check if the query point is located on the returned edge.
       // This can happen only if the edge is vertical.
-      if (is_on_edge)
-      {
+      if (is_on_edge) {
         CGAL_assertion (is_vertical (closest_he->curve()));
-        return (CGAL::make_object (closest_he));
+        return make_result(closest_he);
       }
 
       // Check if the point is contained in the interior of the current hole.
-      if (is_in_face)
-      {
-        if (closest_to_target)
-        {
+      if (is_in_face) {
+        if (closest_to_target) {
           // The query point lies below the target vertex of the closest
           // halfedge: In this case we have to locate the first halfedge
           // we encounter when going around this target vertex from
           // "6 o'clock" (when shooting up) or from "12 o'clock" (when
           // shooting down).
-          closest_he = _first_around_vertex (closest_he->target(),
-                                             shoot_up);
+          closest_he = _first_around_vertex(closest_he->target(), shoot_up);
         }
 
         // Move inside the faces that constitute the hole, the first one
@@ -277,8 +262,7 @@ _vertical_ray_shoot (const Point_2& p,
 
         // Perform a vertical walk along the faces of the hole until locating
         // a face that contains the qeury point.
-        do
-        {
+        do {
           CGAL_assertion_code (
             Halfedge_const_handle  old_closest_he = closest_he;
           );
@@ -292,28 +276,23 @@ _vertical_ray_shoot (const Point_2& p,
 
           // Check if the query point was located on an edge.
           // This can happen only if the edge is vertical.
-          if (is_on_edge)
-          {
+          if (is_on_edge) {
             CGAL_assertion (is_vertical (closest_he->curve()));
-            return (CGAL::make_object (closest_he));
+            return make_result(closest_he);
           }
 
           // If the point is not contained in the face, move to the neighboring
           // face from below (or above, if we shoot downward), using the
           // closest halfedge located so far.
-          if (! is_in_face)
-          {
-            if (closest_to_target)
-            {
+          if (! is_in_face) {
+            if (closest_to_target) {
               // The query point lies below the target vertex of the closest
               // halfedge: In this case we have to locate the first halfedge
               // we encounter when going around this target vertex from
               // "6 o'clock" (when shooting up) or from "12 o'clock" (when
               // shooting down).
-              closest_he = _first_around_vertex (closest_he->target(),
-                                                 shoot_up);
+              closest_he = _first_around_vertex(closest_he->target(), shoot_up);
             }
-
 
             CGAL_assertion (old_closest_he != closest_he);
             face = closest_he->twin()->face();
@@ -362,13 +341,11 @@ _vertical_ray_shoot (const Point_2& p,
 
     // Check if the current isolated vertex lies closer to the query point than
     // the closest feature so far.
-    if (closest_iso_v == invalid_v)
-    {
+    if (closest_iso_v == invalid_v) {
       // Compare the current isolated vertex with the closest halfedge.
-      if (closest_he == invalid_he ||
-          closest_he->is_fictitious() ||
-          compare_y_at_x (iso_verts_it->point(),
-                          closest_he->curve()) == point_above_under)
+      if (closest_he == invalid_he || closest_he->is_fictitious() ||
+          compare_y_at_x(iso_verts_it->point(), closest_he->curve()) ==
+          point_above_under)
       {
         // The isolated vertex is closer to the query point than thr closest
         // edge found so far (note that a fictitious edge means the edge is
@@ -376,8 +353,8 @@ _vertical_ray_shoot (const Point_2& p,
         closest_iso_v = iso_verts_it;
       }
     }
-    else if (compare_xy (iso_verts_it->point(),
-                         closest_iso_v->point()) == point_above_under)
+    else if (compare_xy(iso_verts_it->point(), closest_iso_v->point()) ==
+             point_above_under)
     {
       // The current isolated vertex is closer to the query point than the
       // closest isolated vertex found so far.
@@ -385,25 +362,22 @@ _vertical_ray_shoot (const Point_2& p,
     }
   }
 
-  if (closest_iso_v != invalid_v)
-  {
+  if (closest_iso_v != invalid_v) {
     // The first object we encounter when we shoot a vertical ray from p is
     // an isolated vertex:
-    return (CGAL::make_object (closest_iso_v));
+    return make_result(closest_iso_v);
   }
 
   // If we have no halfedge above, return the initial face.
-  if (closest_he == invalid_he)
-  {
+  if (closest_he == invalid_he) {
     Face_const_handle  uf = Face_const_handle (top_traits->initial_face());
 
-    return (CGAL::make_object (uf));
+    return make_result(uf);
   }
 
   // If we reached here, closest_he is the closest edge from above (below)
   // the query point.
-  if (closest_he->is_fictitious())
-  {
+  if (closest_he->is_fictitious()) {
     // If we have a fictitious edge, the ray we shoot is completely contained
     // in an unbounded face. This face is incident to closest_he:
     if ((shoot_up && closest_he->direction() == ARR_LEFT_TO_RIGHT) ||
@@ -413,48 +387,44 @@ _vertical_ray_shoot (const Point_2& p,
     Face_const_handle  uf = closest_he->face();
 
     CGAL_assertion (! uf->is_fictitious());
-    return (CGAL::make_object (uf));
+    return make_result(uf);
   }
 
   // Check if one of closest_he's end vertices lies directly above (below) the
   // query point, and if so, return this vertex.
-  if (! is_vertical (closest_he->curve()))
-  {
+  if (! is_vertical(closest_he->curve())) {
     if (! closest_he->source()->is_at_open_boundary() &&
         compare_x (p, closest_he->source()->point()) == EQUAL)
     {
       Vertex_const_handle  vh = closest_he->source();
-      return (CGAL::make_object (vh));
+      return make_result(vh);
     }
 
     if (! closest_he->target()->is_at_open_boundary() &&
         compare_x (p, closest_he->target()->point()) == EQUAL)
     {
       Vertex_const_handle  vh = closest_he->target();
-      return (CGAL::make_object (vh));
+      return make_result(vh);
     }
   }
-  else
-  {
+  else {
     // The entire vertical segment is above (below) the query point: Return the
     // endpoint closest to it.
     const bool is_directed_up = (closest_he->direction() == ARR_LEFT_TO_RIGHT);
 
-    if ((shoot_up && is_directed_up) ||
-        (! shoot_up && ! is_directed_up))
+    if ((shoot_up && is_directed_up) || (! shoot_up && ! is_directed_up))
     {
       Vertex_const_handle  vh = closest_he->source();
-      return (CGAL::make_object (vh));
+      return make_result(vh);
     }
-    else
-    {
+    else {
       Vertex_const_handle  vh = closest_he->target();
-      return (CGAL::make_object (vh));
+      return make_result(vh);
     }
   }
 
   // The interior of the edge is closest to the query point:
-  return (CGAL::make_object (closest_he));
+  return make_result(closest_he);
 }
 
 //-----------------------------------------------------------------------------
@@ -533,7 +503,7 @@ _is_in_connected_component (const Point_2& p,
       {
         closest_he = first;
         is_on_edge = true;
-        return (true);
+        return true;
       }
     }
     else {
@@ -555,7 +525,7 @@ _is_in_connected_component (const Point_2& p,
           {
             closest_he = first;
             is_on_edge = true;
-            return (true);
+            return true;
           }
         }
         else if (res1 == point_above_under) {
@@ -621,7 +591,7 @@ _is_in_connected_component (const Point_2& p,
       if (inclusive) {
         closest_he = curr;
         is_on_edge = true;
-        return (true);
+        return true;
       }
       else {
         if (! curr->is_fictitious() &&
@@ -633,7 +603,7 @@ _is_in_connected_component (const Point_2& p,
         {
           closest_he = curr;
           is_on_edge = true;
-          return (true);
+          return true;
         }
       }
     }
@@ -775,20 +745,17 @@ _is_in_connected_component (const Point_2& p,
         }
       }
     }
-    else
-    {
+    else {
       // Assign an edge associated with a vertical curve as the closest edge
       // only if the vertical curve has an endpoint closer to p than the
       // closest edge so far.
       if (closest_he == invalid_he ||
           (! closest_in_ccb && closest_he->twin() == curr) ||
           (! curr->source()->is_at_open_boundary() &&
-           top_traits->compare_y_at_x
-               (curr->source()->point(),
+           top_traits->compare_y_at_x(curr->source()->point(),
                 &(*closest_he)) == point_above_under) ||
           (! curr->target()->is_at_open_boundary() &&
-           top_traits->compare_y_at_x
-               (curr->target()->point(),
+           top_traits->compare_y_at_x(curr->target()->point(),
                 &(*closest_he)) == point_above_under))
       {
         closest_he = curr;
@@ -835,12 +802,10 @@ _first_around_vertex (Vertex_const_handle v, bool shoot_up) const
     v->incident_halfedges();
   typename Arrangement_2::Halfedge_around_vertex_const_circulator curr = first;
 
-  do 
-  {
+  do {
     // Check whether the current halfedge is defined to the left or to the
     // right of the given vertex.
-    if (curr->direction() == ARR_LEFT_TO_RIGHT)
-    {
+    if (curr->direction() == ARR_LEFT_TO_RIGHT) {
       // The curve associated with the current halfedge is defined to the left
       // of v.
       if (lowest_left == invalid_handle ||
@@ -853,8 +818,7 @@ _first_around_vertex (Vertex_const_handle v, bool shoot_up) const
         lowest_left = curr;
       }
     }
-    else
-    {
+    else {
       // The curve associated with the current halfedge is defined to the right
       // of v.
       if (top_right == invalid_handle ||
@@ -871,19 +835,14 @@ _first_around_vertex (Vertex_const_handle v, bool shoot_up) const
     curr++;
   } while (curr != first);
 
-  if (shoot_up)
-  {
+  if (shoot_up) {
     // As we start from "6 o'clock" in a clockwsie direction, the first
     // halfedge we encounter is the lowest to the left. However, if there
     // is no edge to the left, we first encounter the topmost halfedge to the
     // right.
-    if (lowest_left != invalid_handle)
-      return (lowest_left);
-    else
-      return (top_right);
+    return (lowest_left != invalid_handle) ? lowest_left : top_right;
   }
-  else
-  {
+  else {
     // As we start from "12 o'clock" in a clockwsie direction, the first
     // halfedge we encounter is the topmost to the right. However, if there
     // is no edge to the right, we first encounter the lowest halfedge to the

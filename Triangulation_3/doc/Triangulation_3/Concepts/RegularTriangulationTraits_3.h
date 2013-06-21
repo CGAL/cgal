@@ -27,22 +27,22 @@ public:
 /*! 
 The line type. 
 */ 
-typedef Hidden_type Line_3; 
+typedef unspecified_type Line_3; 
 
 /*! 
 The object type. 
 */ 
-typedef Hidden_type Object_3; 
+typedef unspecified_type Object_3; 
 
 /*! 
 The plane type. 
 */ 
-typedef Hidden_type Plane_3; 
+typedef unspecified_type Plane_3; 
 
 /*! 
 The ray type. 
 */ 
-typedef Hidden_type Ray_3; 
+typedef unspecified_type Ray_3; 
 
 
 /// @}
@@ -58,12 +58,12 @@ or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
 /*! 
 The weighted point type. 
 */ 
-typedef Hidden_type Weighted_point_3; 
+typedef unspecified_type Weighted_point_3; 
 
 /*! 
 The (un-weighted) point type. 
 */ 
-typedef Hidden_type Bare_point; 
+typedef unspecified_type Bare_point; 
 
 /*! 
 A predicate object which must provide the following function operators: 
@@ -115,7 +115,7 @@ have equal coordinates, then it returns the comparison of the weights
 \pre `p` and `q` have equal Bare_points. 
 
 */ 
-typedef Hidden_type Power_test_3; 
+typedef unspecified_type Power_test_3; 
 
 
 /*! 
@@ -131,7 +131,7 @@ between `p` and `r`.
 `nearest_power_vertex` or `nearest_power_vertex_in_cell` is
 issued.
 */ 
-typedef Hidden_type Compare_power_distance_3; 
+typedef unspecified_type Compare_power_distance_3; 
 
 /*! 
 A constructor type. The operator() constructs the bare point 
@@ -143,7 +143,7 @@ weighted points.
 
 \note Only required when the dual operations are used.
 */ 
-typedef Hidden_type Construct_weighted_circumcenter_3; 
+typedef unspecified_type Construct_weighted_circumcenter_3; 
 
 /*! 
 A constructor object that must provide the function operators 
@@ -158,7 +158,7 @@ that construct an object respectively from a point, a segment and a ray.
 
 \note Only required when the dual operations are used.
 */ 
-typedef Hidden_type Construct_object_3; 
+typedef unspecified_type Construct_object_3; 
 
 /*! 
 A constructor object that must provide the function operator 
@@ -169,7 +169,7 @@ which constructs the line perpendicular to `pl` passing through `p`.
 
 \note Only required when the dual operations are used.
 */ 
-typedef Hidden_type Construct_perpendicular_line_3; 
+typedef unspecified_type Construct_perpendicular_line_3; 
 
 /*! 
 A constructor object that must provide the function operator 
@@ -181,7 +181,7 @@ which constructs the plane passing through `p`, `q` and `r`.
 
 \note Only required when the dual operations are used.
 */ 
-typedef Hidden_type Construct_plane_3; 
+typedef unspecified_type Construct_plane_3; 
 
 /*! 
 A constructor object that must provide the function operator 
@@ -192,7 +192,7 @@ which constructs the ray starting at `p` with direction given by `l`.
 
 \note Only required when the dual operations are used.
 */ 
-typedef Hidden_type Construct_ray_3; 
+typedef unspecified_type Construct_ray_3; 
 
 /// @} 
 

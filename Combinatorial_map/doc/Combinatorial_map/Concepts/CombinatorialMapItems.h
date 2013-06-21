@@ -69,6 +69,6 @@ public:
   \note It can be implemented using a nested template class.
   */
   template <typename CMap>
-  using Dart_wrapper = Hidden_type;
+  using Dart_wrapper = unspecified_type;
 
 }; /* end #CombinatorialMapItems */

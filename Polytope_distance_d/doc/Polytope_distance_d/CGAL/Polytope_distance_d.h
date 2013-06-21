@@ -65,21 +65,21 @@ public:
 typedef to `Traits::Point_d`. 
 Point type used to represent the input points. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 typedef to `Traits::FT`. 
 Number type used to return the squared distance 
 between the two polytopes. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `Traits::ET`. 
 Number type used to do the exact computations in the underlying 
 solver for quadratic programs (cf. <B>Implementation</B>). 
 */ 
-typedef Hidden_type ET; 
+typedef unspecified_type ET; 
 
 /*! 
 
@@ -87,14 +87,14 @@ non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `Point`. Used to access the points 
 of the two polytopes. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the support points. 
 */ 
-typedef Hidden_type Support_point_iterator; 
+typedef unspecified_type Support_point_iterator; 
 
 /*! 
 
@@ -103,7 +103,7 @@ with value type `int`. Used to access the indices of the
 support points in the provided input order (starting from 0 
 in both point sets). 
 */ 
-typedef Hidden_type Support_point_index_iterator; 
+typedef unspecified_type Support_point_index_iterator; 
 
 /*! 
 
@@ -111,7 +111,7 @@ non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `ET`. Used to access the coordinates of 
 the realizing points. 
 */ 
-typedef Hidden_type Coordinate_iterator; 
+typedef unspecified_type Coordinate_iterator; 
 
 /// @} 
 

@@ -888,8 +888,8 @@ class Intersection_of_Polyhedra_3{
     {}
 
     void operator()( const Box* fb, const Box* eb) const {
-      Halfedge_handle fh = fb->handle();
-      Halfedge_handle eh = eb->handle();
+      Halfedge_handle fh = fb->handle(); //handle for the face
+      Halfedge_handle eh = eb->handle(); //handle for the edge
       
       
       //check if the segment intersects the plane of the facet or if it is included in the plane

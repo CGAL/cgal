@@ -24,17 +24,17 @@ public:
 /*! 
 container `Data`. 
 */ 
-typedef Hidden_type Data; 
+typedef unspecified_type Data; 
 
 /*! 
 container `Window`. 
 */ 
-typedef Hidden_type Window; 
+typedef unspecified_type Window; 
 
 /*! 
 class `Traits`. 
 */ 
-typedef Hidden_type Traits; 
+typedef unspecified_type Traits; 
 
 /// @} 
 

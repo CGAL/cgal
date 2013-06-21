@@ -22,17 +22,17 @@ public:
 /*! 
 Number type. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 Point type. 
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 Query item type. 
 */ 
-typedef Hidden_type Query_item; 
+typedef unspecified_type Query_item; 
 
 /// @} 
 

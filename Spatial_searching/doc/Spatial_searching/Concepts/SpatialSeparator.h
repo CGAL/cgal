@@ -26,7 +26,7 @@ public:
 /*! 
 Number type. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /// @} 
 

@@ -26,18 +26,18 @@ public:
 Point type. Must match the `Point_3` type in 
 the triangulation type used by the mesh generation function. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 Type for edges of the triangulation. Must match the 
 `Edge` type in the triangulation type used by the mesh generation function. 
 */ 
-typedef Hidden_type Edge; 
+typedef unspecified_type Edge; 
 
 /*! 
 Numerical type. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /// @} 
 

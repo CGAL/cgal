@@ -27,14 +27,15 @@
 #define CGAL_ISO_RECTANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
 
 #include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
 namespace internal {
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>::result_type
 intersection(
     const typename K::Iso_rectangle_2 &irect1,
     const typename K::Iso_rectangle_2 &irect2,
@@ -43,7 +44,6 @@ intersection(
     typedef typename K::FT  FT;
     Rational_traits<FT>  rt;
     typename K::Construct_point_2 construct_point_2;
-    typename K::Construct_object_2 construct_object;
     typename K::Construct_iso_rectangle_2 construct_iso_rectangle_2;
     const typename K::Point_2 &min1 = (irect1.min)();
     const typename K::Point_2 &min2 = (irect2.min)();
@@ -55,11 +55,11 @@ intersection(
     minx = (min1.x() >= min2.x()) ? min1.x() : min2.x();
     maxx = (max1.x() <= max2.x()) ? max1.x() : max2.x();
     if (maxx < minx)
-        return Object();
+        return intersection_return<typename K::Intersect_2, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>();
     miny = (min1.y() >= min2.y()) ? min1.y() : min2.y();
     maxy = (max1.y() <= max2.y()) ? max1.y() : max2.y();
     if (maxy < miny)
-        return Object();
+        return intersection_return<typename K::Intersect_2, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>();
     if (rt.denominator(minx) == rt.denominator(miny)) {
         newmin = construct_point_2(rt.numerator(minx), rt.numerator(miny),
 				   rt.denominator(minx));
@@ -76,31 +76,22 @@ intersection(
 				   rt.numerator(maxy)   * rt.denominator(maxx),
 				   rt.denominator(maxx) * rt.denominator(maxy));
     }
-    return construct_object(construct_iso_rectangle_2(newmin, newmax));
+    return intersection_return<typename K::Intersect_2, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>(construct_iso_rectangle_2(newmin, newmax));
 }
 
+template<typename K>
+inline bool
+do_intersect(const typename K::Iso_rectangle_2 &irect1,
+             const typename K::Iso_rectangle_2 &irect2,
+             const K&) {
+  return intersection(irect1, irect2);
+}
 
 } // namespace internal
 
 
-template <class K>
-inline
-Object
-intersection(const Iso_rectangle_2<K> &irect1,
-             const Iso_rectangle_2<K> &irect2)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(irect1, irect2);
-}
-
-
-template <class K>
-inline bool
-do_intersect(const Iso_rectangle_2<K> &irect1,
-             const Iso_rectangle_2<K> &irect2)
-{
-    return ! intersection(irect1, irect2).is_empty();
-}
+CGAL_INTERSECTION_FUNCTION_SELF(Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_rectangle_2, 2)
 
 } //namespace CGAL
 

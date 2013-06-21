@@ -55,7 +55,7 @@ public:
 /*! 
 The type `T`. 
 */ 
-typedef Hidden_type value_type; 
+typedef unspecified_type value_type; 
 /// @} 
 
 
@@ -66,7 +66,7 @@ The type of the exception
 thrown for uncertain conversions. It is a typedef to the type 
 `CGAL::Uncertain_conversion_exception` which derives from `std::range_error`. 
 */ 
-typedef Hidden_type Uncertain_conversion_exception; 
+typedef unspecified_type Uncertain_conversion_exception; 
 /// @} 
 
 /// \name Creation 

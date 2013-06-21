@@ -17,6 +17,7 @@
 // 
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
+
 #ifndef CGAL_ARR_TRIANGULATION_POINT_LOCATION_FUNCTIONS_H
 #define CGAL_ARR_TRIANGULATION_POINT_LOCATION_FUNCTIONS_H
 
@@ -39,8 +40,8 @@ namespace CGAL {
 // Locate the arrangement feature containing the given point.
 //
 template <class Arrangement_2>
-Object Arr_triangulation_point_location<Arrangement_2>
-::locate (const Point_2& p) const
+typename Arr_triangulation_point_location<Arrangement_2>::result_type
+Arr_triangulation_point_location<Arrangement_2>::locate(const Point_2& p) const
 {
   CGAL_TRG_PRINT_DEBUG("------ locate point "<< p);
 
@@ -55,9 +56,9 @@ Object Arr_triangulation_point_location<Arrangement_2>
   CDT_Locate_type cdt_lt;
   CDT_Face_handle fh = cdt.locate(p1,cdt_lt,li);
 
-  switch(cdt_lt) {
-  case CDT::OUTSIDE_AFFINE_HULL:
-  case CDT::OUTSIDE_CONVEX_HULL:
+  switch (cdt_lt) {
+   case CDT::OUTSIDE_AFFINE_HULL:
+   case CDT::OUTSIDE_CONVEX_HULL:
     {
       CGAL_TRG_PRINT_DEBUG("unbounded face" );
 
@@ -69,23 +70,24 @@ Object Arr_triangulation_point_location<Arrangement_2>
       for (iso_verts_it = face_found->isolated_vertices_begin();
           iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
       {
-        if (equal (p, iso_verts_it->point()))
-        {
+        if (equal (p, iso_verts_it->point())) {
           Vertex_const_handle  vh = iso_verts_it;
-          return (CGAL::make_object (vh));
+          return make_result(vh);
         }
       }
 
-      return (CGAL::make_object(face_found));
+      return make_result(face_found);
     }
-  case CDT::VERTEX:
+
+   case CDT::VERTEX:
     {
       //get the vertex from li, which is the index of the vertex
       Vertex_const_handle vertex_found = fh->vertex(li)->info();
       CGAL_TRG_PRINT_DEBUG("vertex: "<< vertex_found->point());
-      return (CGAL::make_object(vertex_found));
+      return make_result(vertex_found);
     }
-  case CDT::EDGE:
+
+   case CDT::EDGE:
     {
       CGAL_TRG_PRINT_DEBUG("locate type = edge"<<li );
       //li is the index of the vertex OPOSITE to the edge 
@@ -113,14 +115,15 @@ Object Arr_triangulation_point_location<Arrangement_2>
           }
         } while (++circ1 != circ1_done);
 
-        return (CGAL::make_object(edeg_found)); 
+        return make_result(edeg_found); 
       }
       //if the edge is not a constrained - its not an edge of the 
       //plannar map, which means we're inside of a pm face -
       //lets look at the face as if it was a face case.
       // no break - continue to the face caes
     }
-  case CDT::FACE:
+
+   case CDT::FACE:
     break;
   }
 
@@ -140,12 +143,9 @@ Object Arr_triangulation_point_location<Arrangement_2>
   CGAL_assertion(!v0->is_isolated());
   CGAL_assertion(!v1->is_isolated());
   CGAL_assertion(!v2->is_isolated());
-  if (v0->is_isolated())
-    return (CGAL::make_object(v0->face()));
-  if (v1->is_isolated())
-    return (CGAL::make_object(v1->face()));
-  if (v2->is_isolated())
-    return (CGAL::make_object(v2->face()));
+  if (v0->is_isolated()) return make_result(v0->face());
+  if (v1->is_isolated()) return make_result(v1->face());
+  if (v2->is_isolated()) return make_result(v2->face());
 
   //find the face in the pm correspond to the 3 vertices
   Halfedge_around_vertex_const_circulator havc0 = v0->incident_halfedges(); 
@@ -206,14 +206,13 @@ Object Arr_triangulation_point_location<Arrangement_2>
   for (iso_verts_it = face_found->isolated_vertices_begin();
       iso_verts_it != face_found->isolated_vertices_end(); ++iso_verts_it)
   {
-    if (equal (p, iso_verts_it->point()))
-    {
+    if (equal (p, iso_verts_it->point())) {
       Vertex_const_handle  vh = iso_verts_it;
-      return (CGAL::make_object (vh));
+      return make_result(vh);
     }
   }		
 
-  return (CGAL::make_object(face_found));
+  return make_result(face_found);
 }
 
 
@@ -292,7 +291,6 @@ void Arr_triangulation_point_location<Arrangement_2>
   CGAL_assertion(cdt.is_valid());
   CGAL_TRG_PRINT_DEBUG("finished updating the CDT " );
 }
-
 
 } //namespace CGAL
 

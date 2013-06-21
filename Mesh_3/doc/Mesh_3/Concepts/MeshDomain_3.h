@@ -50,27 +50,27 @@ public:
 Geometric traits class. This type is defined to ensure compatibility with
 `CGAL::Kernel_traits<T>`.
 */
-typedef Hidden_type R;
+typedef unspecified_type R;
 
 /*!
 Point type.
 */
-typedef Hidden_type Point_3;
+typedef unspecified_type Point_3;
 
 /*!
 Segment type.
 */
-typedef Hidden_type Segment_3;
+typedef unspecified_type Segment_3;
 
 /*!
 Ray type.
 */
-typedef Hidden_type Ray_3;
+typedef unspecified_type Ray_3;
 
 /*!
 Line type.
 */
-typedef Hidden_type Line_3;
+typedef unspecified_type Line_3;
 
 /*!
 A type to distinguish
@@ -85,7 +85,7 @@ Assignable, DefaultConstructible and EqualityComparable.
 The default constructed value must match the label of the exterior of
 the domain (which contains at least the unbounded component).
 */
-typedef Hidden_type Subdomain_index;
+typedef unspecified_type Subdomain_index;
 
 /*!
 Type of indices for surface patches
@@ -95,7 +95,7 @@ Assignable, DefaultConstructible and EqualityComparable.
 The default constructed value must be the index value assigned
 to a non surface facet.
 */
-typedef Hidden_type Surface_patch_index;
+typedef unspecified_type Surface_patch_index;
 
 /*!
 Type of indices to be stored at mesh vertices
@@ -104,7 +104,7 @@ on which the vertex lies. Must be a model of CopyConstructible,
 Assignable, DefaultConstructible and EqualityComparable.
 
 */
-typedef Hidden_type Index;
+typedef unspecified_type Index;
 
 /*!
 Return type of `Construct_intersection` queries.
@@ -132,7 +132,7 @@ output iterator `pts`, as objects of type `std::pair<Point_3,
 Index>`. If `n` is not given, the functor must provide enough
 points to initialize the mesh generation process.
 */
-typedef Hidden_type Construct_initial_points;
+typedef unspecified_type Construct_initial_points;
 
 /*!
 A function object to query whether a point is in
@@ -141,7 +141,7 @@ subdomain which includes the query point. Provides the operator:
 
 `boost::optional<Subdomain_index> operator()(Point_3 p)`
 */
-typedef Hidden_type Is_in_domain;
+typedef unspecified_type Is_in_domain;
 
 /*!
 A function object which answers
@@ -159,7 +159,7 @@ The return type of the operators tell whether or not the query intersects a
 surface patch. In the positive case, it provides (through operator*()) the
 `Surface_patch_index` of one of the intersected surface patches.
 */
-typedef Hidden_type Do_intersect_surface;
+typedef unspecified_type Do_intersect_surface;
 
 /*!
 A function object to construct the
@@ -173,7 +173,7 @@ intersection between an object of type `Segment_3`, `Ray_3` or
 `Intersection operator()(Line_3 l)`
 \pre do_intersect_surface(s/r/l) == true
 */
-typedef Hidden_type Construct_intersection;
+typedef unspecified_type Construct_intersection;
 
 /// @}
 

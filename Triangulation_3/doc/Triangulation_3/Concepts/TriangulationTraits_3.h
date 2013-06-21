@@ -29,22 +29,22 @@ public:
 The point type. It must be `DefaultConstructible`, 
 `CopyConstructible` and `Assignable`. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 The segment type. 
 */ 
-typedef Hidden_type Segment_3; 
+typedef unspecified_type Segment_3; 
 
 /*! 
 The tetrahedron type. 
 */ 
-typedef Hidden_type Tetrahedron_3; 
+typedef unspecified_type Tetrahedron_3; 
 
 /*! 
 The triangle type. 
 */ 
-typedef Hidden_type Triangle_3; 
+typedef unspecified_type Triangle_3; 
 
 /*! 
 A constructor object that must provide the function operator 
@@ -53,7 +53,7 @@ A constructor object that must provide the function operator
 
 which constructs a segment from two points. 
 */ 
-typedef Hidden_type Construct_segment_3; 
+typedef unspecified_type Construct_segment_3; 
 
 /*! 
 A constructor object that must provide the function operator 
@@ -62,7 +62,7 @@ A constructor object that must provide the function operator
 
 which constructs a triangle from three points. 
 */ 
-typedef Hidden_type Construct_triangle_3; 
+typedef unspecified_type Construct_triangle_3; 
 
 /*! 
 A constructor object that must provide the function operator 
@@ -71,7 +71,7 @@ A constructor object that must provide the function operator
 
 which constructs a tetrahedron from four points. 
 */ 
-typedef Hidden_type Construct_tetrahedron_3; 
+typedef unspecified_type Construct_tetrahedron_3; 
 
 /*! 
 A predicate object that must provide the function operator 
@@ -81,7 +81,7 @@ A predicate object that must provide the function operator
 which returns `EQUAL` if the two points are equal. Otherwise it must 
 return a consistent order for any two points chosen in a same line. 
 */ 
-typedef Hidden_type Compare_xyz_3; 
+typedef unspecified_type Compare_xyz_3; 
 
 /*! 
 A predicate object that must provide the function operator 
@@ -92,7 +92,7 @@ which returns `COLLINEAR` if the points are collinear. Otherwise it must
 return a consistent orientation for any three points chosen in a same plane. 
 
 */ 
-typedef Hidden_type Coplanar_orientation_3; 
+typedef unspecified_type Coplanar_orientation_3; 
 
 /*! 
 A predicate object that must provide the function operator 
@@ -104,7 +104,7 @@ plane `h` defined by `p`, `q`, and `r`, returns NEGATIVE if
 `s` lies on the negative side of `h`, and returns COPLANAR if `s` 
 lies on `h`. 
 */ 
-typedef Hidden_type Orientation_3; 
+typedef unspecified_type Orientation_3; 
 
 /// @} 
 

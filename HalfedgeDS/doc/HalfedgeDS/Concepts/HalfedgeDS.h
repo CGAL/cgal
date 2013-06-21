@@ -90,47 +90,47 @@ public:
 /*!
 traits class. 
 */ 
-typedef Hidden_type Traits; 
+typedef unspecified_type Traits; 
 
 /*!
 model of `HalfedgeDSItems` concept. 
 */ 
-typedef Hidden_type Items; 
+typedef unspecified_type Items; 
 
 /*!
 size type. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*!
 difference type. 
 */ 
-typedef Hidden_type difference_type; 
+typedef unspecified_type difference_type; 
 
 /*!
 iterator category for all iterators. 
 */ 
-typedef Hidden_type iterator_category; 
+typedef unspecified_type iterator_category; 
 
 /*!
 allocator type `Alloc`. 
 */ 
-typedef Hidden_type allocator_type; 
+typedef unspecified_type allocator_type; 
 
 /*!
 model of `HalfedgeDSVertex` concept. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*!
 model of `HalfedgeDSHalfedge` concept. 
 */ 
-typedef Hidden_type Halfedge; 
+typedef unspecified_type Halfedge; 
 
 /*!
 model of `HalfedgeDSFace` concept. 
 */ 
-typedef Hidden_type Face; 
+typedef unspecified_type Face; 
 
 /// @}
 
@@ -149,32 +149,32 @@ value. It will be used in analogy to `NULL` for pointers.
 /*!
 handle to vertex. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*!
 handle to halfedge. 
 */ 
-typedef Hidden_type Halfedge_handle; 
+typedef unspecified_type Halfedge_handle; 
 
 /*!
 handle to face. 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /*!
 iterator over all vertices. 
 */ 
-typedef Hidden_type Vertex_iterator; 
+typedef unspecified_type Vertex_iterator; 
 
 /*!
 iterator over all halfedges. 
 */ 
-typedef Hidden_type Halfedge_iterator; 
+typedef unspecified_type Halfedge_iterator; 
 
 /*!
 iterator over all faces. 
 */ 
-typedef Hidden_type Face_iterator; 
+typedef unspecified_type Face_iterator; 
 
 /// @} 
 
@@ -207,32 +207,32 @@ Faces are supported \f$ \Longleftrightarrow\f$
 /*!
 `Vertex::halfedge()`. 
 */ 
-typedef Hidden_type Supports_vertex_halfedge; 
+typedef unspecified_type Supports_vertex_halfedge; 
 
 /*!
 `Halfedge::prev()`. 
 */ 
-typedef Hidden_type Supports_halfedge_prev; 
+typedef unspecified_type Supports_halfedge_prev; 
 
 /*!
 `Halfedge::vertex()`. 
 */ 
-typedef Hidden_type Supports_halfedge_vertex; 
+typedef unspecified_type Supports_halfedge_vertex; 
 
 /*!
 `Halfedge::face()`. 
 */ 
-typedef Hidden_type Supports_halfedge_face; 
+typedef unspecified_type Supports_halfedge_face; 
 
 /*!
 `Face::halfedge()`. 
 */ 
-typedef Hidden_type Supports_face_halfedge; 
+typedef unspecified_type Supports_face_halfedge; 
 
 /*!
 removal of individual elements. 
 */ 
-typedef Hidden_type Supports_removal; 
+typedef unspecified_type Supports_removal; 
 
 /// @}
 

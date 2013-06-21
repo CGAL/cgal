@@ -58,7 +58,7 @@ The point type, required to match the point type
 of the three dimensional 
 triangulation in which the surface mesh is embedded. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /// @} 
 

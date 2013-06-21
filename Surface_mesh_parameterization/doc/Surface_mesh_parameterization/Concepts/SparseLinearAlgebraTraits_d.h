@@ -25,17 +25,17 @@ public:
 /*! 
 
 */ 
-typedef Hidden_type Matrix; 
+typedef unspecified_type Matrix; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vector; 
+typedef unspecified_type Vector; 
 
 /*! 
 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /// @} 
 
@@ -91,7 +91,7 @@ public:
 /*! 
 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /// @} 
 
@@ -167,7 +167,7 @@ public:
 /*! 
 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /// @} 
 

@@ -38,7 +38,7 @@ public:
 /*! 
 is the constant `Dim`. 
 */ 
-typedef Hidden_type D; 
+typedef unspecified_type D; 
 
 /// @} 
 
@@ -51,39 +51,39 @@ typedef Hidden_type D;
 /*! 
 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 
 */ 
-typedef Hidden_type Use_square_roots; 
+typedef unspecified_type Use_square_roots; 
 
 /*! 
 
 */ 
-typedef Hidden_type Algorithm; 
+typedef unspecified_type Algorithm; 
 
 /*! 
 is a typedef to the template parameter `FT` 
 */ 
-typedef Hidden_type Radius; 
+typedef unspecified_type Radius; 
 
 /*! 
 is a typedef to `K::Point_d`. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 is a typedef to 
 `std::pair<Point,Radius>`. 
 */ 
-typedef Hidden_type Sphere; 
+typedef unspecified_type Sphere; 
 
 /*! 
 is a typedef to 
 `K::Cartesian_const_iterator_d`. 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /// @} 
 

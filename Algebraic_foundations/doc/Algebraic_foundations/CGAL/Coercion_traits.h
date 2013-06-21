@@ -23,28 +23,28 @@ Tag indicating whether the two types A and B are a model of `ExplicitInteroperab
 
 This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
 */ 
-typedef Hidden_type Are_explicit_interoperable; 
+typedef unspecified_type Are_explicit_interoperable; 
 
 /*! 
 Tag indicating whether the two types A and B are a model of `ImplicitInteroperable` 
 
 This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
 */ 
-typedef Hidden_type Are_implicit_interoperable; 
+typedef unspecified_type Are_implicit_interoperable; 
 
 /*! 
 The coercion type of `A` and `B`. 
 
 In case A and B are not `ExplicitInteroperable` this is undefined. 
 */ 
-typedef Hidden_type Type; 
+typedef unspecified_type Type; 
 
 /*! 
 A model of the `AdaptableFunctor` concept, providing the conversion of `A` or `B` to `Type`. 
 
 In case A and B are not `ExplicitInteroperable` this is undefined. 
 */ 
-typedef Hidden_type Cast; 
+typedef unspecified_type Cast; 
 
 /// @}
 

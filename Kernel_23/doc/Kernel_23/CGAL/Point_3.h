@@ -31,7 +31,7 @@ public:
 An iterator for enumerating the 
 %Cartesian coordinates of a point. 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /// @} 
 

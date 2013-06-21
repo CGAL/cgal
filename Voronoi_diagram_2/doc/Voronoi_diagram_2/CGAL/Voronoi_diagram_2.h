@@ -62,28 +62,28 @@ public:
     /*! 
       A type for the vertices of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Vertex; 
+    typedef unspecified_type Vertex; 
 
     /*! 
       A type for the halfedges of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Halfedge; 
+    typedef unspecified_type Halfedge; 
 
     /*! 
       Handle for the vertices of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Vertex_handle; 
+    typedef unspecified_type Vertex_handle; 
 
     /*! 
       Handle for the faces of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Face_handle; 
+    typedef unspecified_type Face_handle; 
 
     /*! 
       Handle for the halfedges of the Voronoi 
       diagram. 
     */ 
-    typedef Hidden_type Halfedge_handle; 
+    typedef unspecified_type Halfedge_handle; 
 
     /*! 
       A type for a bidirectional 
@@ -92,13 +92,13 @@ public:
       \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge", and is convertible 
       to `Halfedge_handle`. 
     */ 
-    typedef Hidden_type Ccb_halfedge_circulator; 
+    typedef unspecified_type Ccb_halfedge_circulator; 
 
     /*! 
       A type for the Delaunay graph. It is a 
       model of the `DelaunayGraph_2` concept. 
     */ 
-    typedef Hidden_type Delaunay_graph; 
+    typedef unspecified_type Delaunay_graph; 
 
     /*! 
       A type for the handle of the dual vertex. 
@@ -190,28 +190,28 @@ public:
     /*! 
       A type for the vertices of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Vertex; 
+    typedef unspecified_type Vertex; 
 
     /*! 
       A type for the faces of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Face; 
+    typedef unspecified_type Face; 
 
     /*! 
       Handle for the vertices of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Vertex_handle; 
+    typedef unspecified_type Vertex_handle; 
 
     /*! 
       Handle for the faces of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Face_handle; 
+    typedef unspecified_type Face_handle; 
 
     /*! 
       Handle for the halfedges of the Voronoi 
       diagram. 
     */ 
-    typedef Hidden_type Halfedge_handle; 
+    typedef unspecified_type Halfedge_handle; 
 
     /*! 
       A type for a bidirectional 
@@ -220,13 +220,13 @@ public:
       \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge" and is convertible to 
       `Halfedge_handle`. 
     */ 
-    typedef Hidden_type Ccb_halfedge_circulator; 
+    typedef unspecified_type Ccb_halfedge_circulator; 
 
     /*! 
       A type for the Delaunay graph. It is a 
       model of the `DelaunayGraph_2` concept. 
     */ 
-    typedef Hidden_type Delaunay_graph; 
+    typedef unspecified_type Delaunay_graph; 
 
     /*! 
       A type for 
@@ -430,39 +430,39 @@ public:
     /*! 
       A type for the halfedges of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Halfedge; 
+    typedef unspecified_type Halfedge; 
 
     /*! 
       A type for the faces of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Face; 
+    typedef unspecified_type Face; 
 
     /*! 
       Handle for the vertices of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Vertex_handle; 
+    typedef unspecified_type Vertex_handle; 
 
     /*! 
       Handle for the faces of the Voronoi diagram. 
     */ 
-    typedef Hidden_type Face_handle; 
+    typedef unspecified_type Face_handle; 
 
     /*! 
       Handle for the halfedges of the Voronoi 
       diagram. 
     */ 
-    typedef Hidden_type Halfedge_handle; 
+    typedef unspecified_type Halfedge_handle; 
 
     /*! 
       A type for the point represented by the 
       vertex. 
     */ 
-    typedef Hidden_type Point_2; 
+    typedef unspecified_type Point_2; 
 
     /*! 
       A type for sizes. 
     */ 
-    typedef Hidden_type size_type; 
+    typedef unspecified_type size_type; 
 
     /*! 
       A type for a bidirectional 
@@ -472,13 +472,13 @@ public:
       \ref CGAL::Voronoi_diagram_2::Halfedge "CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge" and is convertible to 
       `Halfedge_handle`. 
     */ 
-    typedef Hidden_type Halfedge_around_vertex_circulator; 
+    typedef unspecified_type Halfedge_around_vertex_circulator; 
 
     /*! 
       A type for the Delaunay graph. It is a 
       model of the `DelaunayGraph_2` concept. 
     */ 
-    typedef Hidden_type Delaunay_graph; 
+    typedef unspecified_type Delaunay_graph; 
 
     /*! 
       A type for the handle of the dual face. 
@@ -632,91 +632,91 @@ typedef Delaunay_graph::Edge Delaunay_edge;
 /*! 
 Handle for halfedges. 
 */ 
-typedef Hidden_type Halfedge_handle; 
+typedef unspecified_type Halfedge_handle; 
 
 /*! 
 Handle for vertices. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 Handle for faces. 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /*! 
 A type for an iterator over Voronoi 
 edges. Edges are considered non-oriented. Its value type is 
 `Halfedge`. 
 */ 
-typedef Hidden_type Edge_iterator; 
+typedef unspecified_type Edge_iterator; 
 
 /*! 
 A type for an iterator over Voronoi 
 halfedges. Halfedges are oriented and come in pairs. Its value type 
 is `Halfedge`. 
 */ 
-typedef Hidden_type Halfedge_iterator; 
+typedef unspecified_type Halfedge_iterator; 
 
 /*! 
 A type for an iterator over Voronoi 
 faces. Its value type is `Face`. 
 */ 
-typedef Hidden_type Face_iterator; 
+typedef unspecified_type Face_iterator; 
 
 /*! 
 A type for an iterator over Voronoi 
 vertices. Its value type is `Vertex`. 
 */ 
-typedef Hidden_type Vertex_iterator; 
+typedef unspecified_type Vertex_iterator; 
 
 /*! 
 A type for a 
 circulator over the halfedges that have a common vertex as their 
 target. Its value type is `Halfedge`. 
 */ 
-typedef Hidden_type Halfedge_around_vertex_circulator; 
+typedef unspecified_type Halfedge_around_vertex_circulator; 
 
 /*! 
 A type for a circulator over 
 the halfedges on the boundary of a Voronoi face. Its value type of 
 is `Halfedge`. 
 */ 
-typedef Hidden_type Ccb_halfedge_circulator; 
+typedef unspecified_type Ccb_halfedge_circulator; 
 
 /*! 
 A type for an iterator over 
 the unbounded faces of the Voronoi diagram. Its value type is 
 `Face`. 
 */ 
-typedef Hidden_type Unbounded_faces_iterator; 
+typedef unspecified_type Unbounded_faces_iterator; 
 
 /*! 
 A type for an iterator over 
 the bounded faces of the Voronoi diagram. Its value type is 
 `Face`. 
 */ 
-typedef Hidden_type Bounded_faces_iterator; 
+typedef unspecified_type Bounded_faces_iterator; 
 
 /*! 
 A type for an iterator over 
 the unbounded halfedges of the Voronoi diagram. Its value type is 
 `Halfedge`. 
 */ 
-typedef Hidden_type Unbounded_halfedges_iterator; 
+typedef unspecified_type Unbounded_halfedges_iterator; 
 
 /*! 
 A type for an iterator over 
 the bounded halfedges of the Voronoi diagram. Its value type is 
 `Halfedge`. 
 */ 
-typedef Hidden_type Bounded_halfedges_iterator; 
+typedef unspecified_type Bounded_halfedges_iterator; 
 
 /*! 
 A type for an iterator over the 
 sites of the Voronoi diagram. Its value type is `Site_2`. 
 */ 
-typedef Hidden_type Site_iterator; 
+typedef unspecified_type Site_iterator; 
 
 /*! 
 The result type of the point location queries. 

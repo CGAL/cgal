@@ -65,102 +65,102 @@ public:
 /*! 
 halfedge data structure. 
 */ 
-typedef Hidden_type HalfedgeDS; 
+typedef unspecified_type HalfedgeDS; 
 
 /*! 
 traits class. 
 */ 
-typedef Hidden_type Traits; 
+typedef unspecified_type Traits; 
 
 /*! 
 vertex type of `HalfedgeDS`. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 halfedge type of `HalfedgeDS`. 
 */ 
-typedef Hidden_type Halfedge; 
+typedef unspecified_type Halfedge; 
 
 /*! 
 face type of `HalfedgeDS`. 
 */ 
-typedef Hidden_type Face; 
+typedef unspecified_type Face; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Halfedge_handle; 
+typedef unspecified_type Halfedge_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_iterator; 
+typedef unspecified_type Vertex_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Halfedge_iterator; 
+typedef unspecified_type Halfedge_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Face_iterator; 
+typedef unspecified_type Face_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 
 */ 
-typedef Hidden_type difference_type; 
+typedef unspecified_type difference_type; 
 
 /*! 
 
 */ 
-typedef Hidden_type iterator_category; 
+typedef unspecified_type iterator_category; 
 
 /*! 
 
 */ 
-typedef Hidden_type Supports_vertex_halfedge; 
+typedef unspecified_type Supports_vertex_halfedge; 
 
 /*! 
 
 */ 
-typedef Hidden_type Supports_halfedge_prev; 
+typedef unspecified_type Supports_halfedge_prev; 
 
 /*! 
 
 */ 
-typedef Hidden_type Supports_halfedge_vertex; 
+typedef unspecified_type Supports_halfedge_vertex; 
 
 /*! 
 
 */ 
-typedef Hidden_type Supports_halfedge_face; 
+typedef unspecified_type Supports_halfedge_face; 
 
 /*! 
 
 */ 
-typedef Hidden_type Supports_face_halfedge; 
+typedef unspecified_type Supports_face_halfedge; 
 
 /*! 
 
 */ 
-typedef Hidden_type Supports_removal; 
+typedef unspecified_type Supports_removal; 
 
 /// @} 
 

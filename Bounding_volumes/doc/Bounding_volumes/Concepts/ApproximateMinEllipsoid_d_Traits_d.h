@@ -27,7 +27,7 @@ public:
 /*! 
 `typedef double FT` 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 Some model of concept `RingNumberType` that 
@@ -39,7 +39,7 @@ The type
 `Approximate_min_ellipsoid_d<Traits>` class for internal, 
 exact computations. 
 */ 
-typedef Hidden_type ET; 
+typedef unspecified_type ET; 
 
 /*! 
 Type of the input points. `Point` must 
@@ -47,7 +47,7 @@ provide the default and copy constructor, and must be a model
 of `DefaultConstructible`, `CopyConstructible`, and 
 `Assignable`. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 Model for the STL concept 
@@ -56,7 +56,7 @@ Model for the STL concept
 coordinates of an instance of type `Point`, see 
 `cartesian_begin()` below. 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /// @} 
 

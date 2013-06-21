@@ -25,7 +25,7 @@ public:
 /*! 
 The point type of the polygon vertices. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 
@@ -36,7 +36,7 @@ We have \f$ p<_{xy}q\f$, iff \f$ p_x < q_x\f$ or \f$ p_x = q_x\f$ and \f$ p_y < 
 where \f$ p_x\f$ and \f$ p_y\f$ denote \f$ x\f$ and \f$ y\f$ coordinate of point \f$ p\f$ resp. 
 
 */ 
-typedef Hidden_type Less_yx_2; 
+typedef unspecified_type Less_yx_2; 
 
 /// @} 
 

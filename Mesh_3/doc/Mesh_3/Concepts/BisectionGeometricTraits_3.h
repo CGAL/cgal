@@ -35,38 +35,38 @@ public:
 Numerical type. Must be a model of 
 `FieldWithSqrt` and constructible from a `double`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The point type. Must have a 
 constructor `Point_3(FT, FT, FT)`. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 Segment type. 
 */ 
-typedef Hidden_type Segment_3; 
+typedef unspecified_type Segment_3; 
 
 /*! 
 Ray type. 
 */ 
-typedef Hidden_type Ray_3; 
+typedef unspecified_type Ray_3; 
 
 /*! 
 Line type. 
 */ 
-typedef Hidden_type Line_3; 
+typedef unspecified_type Line_3; 
 
 /*! 
 Vector type. 
 */ 
-typedef Hidden_type Vector_3; 
+typedef unspecified_type Vector_3; 
 
 /*! 
 Sphere type. 
 */ 
-typedef Hidden_type Sphere_3; 
+typedef unspecified_type Sphere_3; 
 
 /*! 
 Function object providing the operator 
@@ -74,7 +74,7 @@ Function object providing the operator
 `FT operator()(Vector_3 v, Vector_3 w)` which returns the scalar 
 (inner) product of the two vectors `v` and `w`. 
 */ 
-typedef Hidden_type Compute_scalar_product_3; 
+typedef unspecified_type Compute_scalar_product_3; 
 
 /*! 
 Function object providing the operator 
@@ -82,7 +82,7 @@ Function object providing the operator
 `FT operator()(Point_3, Point_3)` which returns the squared distance 
 between two points. 
 */ 
-typedef Hidden_type Compute_squared_distance_3; 
+typedef unspecified_type Compute_squared_distance_3; 
 
 /*! 
 Function object providing the operator 
@@ -90,7 +90,7 @@ Function object providing the operator
 `FT operator()(Sphere_3 s)` which returns the squared radius 
 of `s`. 
 */ 
-typedef Hidden_type Compute_squared_radius_3; 
+typedef unspecified_type Compute_squared_radius_3; 
 
 /*! 
 Function object providing the operator 
@@ -98,7 +98,7 @@ Function object providing the operator
 `Point_3 operator()(Sphere_3 s)` which returns the center of 
 the sphere `s`. 
 */ 
-typedef Hidden_type Construct_center_3; 
+typedef unspecified_type Construct_center_3; 
 
 /*! 
 Function object providing the operator 
@@ -106,7 +106,7 @@ Function object providing the operator
 `Point_3 operator()(Point_3 p, Point_3 q)` which computes 
 the midpoint of the segment `pq`. 
 */ 
-typedef Hidden_type Construct_midpoint_3; 
+typedef unspecified_type Construct_midpoint_3; 
 
 /*! 
 Function object providing the following operators: 
@@ -127,7 +127,7 @@ or target of `s`: `point(0)` returns the source of `s`,
 point. 
 
 */ 
-typedef Hidden_type Construct_point_on_3; 
+typedef unspecified_type Construct_point_on_3; 
 
 /*! 
 Function object providing the operator 
@@ -136,7 +136,7 @@ Function object providing the operator
 returns a segment with source `p` and target `q`, directed from the 
 source to the target. 
 */ 
-typedef Hidden_type Construct_segment_3; 
+typedef unspecified_type Construct_segment_3; 
 
 /*! 
 Function object providing the operator 
@@ -144,7 +144,7 @@ Function object providing the operator
 `Vector_3 operator()(Vector_3 v, FT scale)` which returns 
 the vector `v` scaled by a factor `scale`. 
 */ 
-typedef Hidden_type Construct_scaled_vector_3; 
+typedef unspecified_type Construct_scaled_vector_3; 
 
 /*! 
 Function object providing the operator 
@@ -152,7 +152,7 @@ Function object providing the operator
 `Point_3 operator()(Point_3 p, Vector_3 v)` which returns 
 the point obtained by translating `p` by the vector `v`. 
 */ 
-typedef Hidden_type Construct_translated_point_3; 
+typedef unspecified_type Construct_translated_point_3; 
 
 /*! 
 Function object providing the operator 
@@ -160,7 +160,7 @@ Function object providing the operator
 `Vector_3 operator()(Point_3 a, Point_3 b)` which returns 
 the vector `b-a`. 
 */ 
-typedef Hidden_type Construct_vector_3; 
+typedef unspecified_type Construct_vector_3; 
 
 /*! 
 Function object providing the operator 
@@ -168,7 +168,7 @@ Function object providing the operator
 `bool operator()(Sphere_3 s, Point_3 p)` which 
 returns true iff `p` lies on the bounded side of `s. 
 */ 
-typedef Hidden_type Has_on_bounded_side_3; 
+typedef unspecified_type Has_on_bounded_side_3; 
 
 /// @} 
 

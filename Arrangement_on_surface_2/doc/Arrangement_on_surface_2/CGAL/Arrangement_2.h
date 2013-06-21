@@ -68,12 +68,12 @@ public:
   /*! 
     the traits class in use. 
   */ 
-  typedef Hidden_type Traits_2; 
+  typedef unspecified_type Traits_2; 
 
   /*! 
     the <span class="textsc">Dcel</span> representation of the arrangement. 
   */ 
-  typedef Hidden_type Dcel; 
+  typedef unspecified_type Dcel; 
 
   /*! 
     the point type, as defined by the traits class. 
@@ -377,56 +377,56 @@ iterators can be passed as well.
   /*! 
     a handle for an arrangement vertex. 
   */ 
-  typedef Hidden_type Vertex_handle; 
+  typedef unspecified_type Vertex_handle; 
 
   /*! 
     a handle for a halfedge. 
     The halfedge and its twin form together an arrangement edge. 
   */ 
-  typedef Hidden_type Halfedge_handle; 
+  typedef unspecified_type Halfedge_handle; 
 
   /*! 
     a handle for an arrangement face. 
   */ 
-  typedef Hidden_type Face_handle; 
+  typedef unspecified_type Face_handle; 
 
   /*! 
     a bidirectional iterator over the 
     vertices of the arrangement. Its value-type is `Vertex`. 
   */ 
-  typedef Hidden_type Vertex_iterator; 
+  typedef unspecified_type Vertex_iterator; 
 
   /*! 
     a bidirectional iterator over the 
     halfedges of the arrangement. Its value-type is `Halfedge`. 
   */ 
-  typedef Hidden_type Halfedge_iterator; 
+  typedef unspecified_type Halfedge_iterator; 
 
   /*! 
     a bidirectional iterator over the 
     edges of the arrangement. (That is, it skips every other halfedge.) 
     Its value-type is `Halfedge`. 
   */ 
-  typedef Hidden_type Edge_iterator; 
+  typedef unspecified_type Edge_iterator; 
 
   /*! 
     a bidirectional iterator over the 
     faces of arrangement. Its value-type is `Face`. 
   */ 
-  typedef Hidden_type Face_iterator; 
+  typedef unspecified_type Face_iterator; 
 
   /*! 
     a bidirectional iterator over the 
     unbounded faces of arrangement. Its value-type is `Face`. 
   */ 
-  typedef Hidden_type Unbounded_face_iterator; 
+  typedef unspecified_type Unbounded_face_iterator; 
 
   /*! 
     a bidirectional circulator 
     over the halfedges that have a given vertex as their target. 
     Its value-type is `Halfedge`. 
   */ 
-  typedef Hidden_type Halfedge_around_vertex_circulator; 
+  typedef unspecified_type Halfedge_around_vertex_circulator; 
 
   /*! 
     a bidirectional circulator over the 
@@ -435,21 +435,21 @@ iterators can be passed as well.
     bounded face has a single CCB representing it outer boundary, and may 
     have several inner CCBs representing its holes. 
   */ 
-  typedef Hidden_type Ccb_halfedge_circulator; 
+  typedef unspecified_type Ccb_halfedge_circulator; 
 
   /*! 
     a bidirectional iterator over the holes 
     (i.e., inner CCBs) contained inside a given face. 
     Its value type is `Ccb_halfedge_circulator`. 
   */ 
-  typedef Hidden_type Hole_iterator; 
+  typedef unspecified_type Hole_iterator; 
 
   /*! 
     a bidirectional iterator over the 
     isolated vertices contained inside a given face. 
     Its value type is `Vertex`. 
   */ 
-  typedef Hidden_type Isolated_vertex_iterator; 
+  typedef unspecified_type Isolated_vertex_iterator; 
 
   /// @} 
 

@@ -402,8 +402,8 @@ public:
                               Intersection>::type
     operator()(const Query& q) const
     {
-      typedef boost::optional<
-        typename AABB_tree_::Object_and_primitive_id> AABB_intersection;
+      typedef boost::optional< typename AABB_tree_::template Intersection_and_primitive_id<Query>::Type > AABB_intersection;
+
       typedef Point_3 Bare_point;
 
       CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
@@ -420,11 +420,11 @@ public:
       if ( intersection )
       {
         // Get primitive
-        AABB_primitive_id primitive_id = (*intersection).second;
+        AABB_primitive_id primitive_id = intersection->second;
         
         // intersection may be either a point or a segment
         if ( const Bare_point* p_intersect_pt =
-                              object_cast<Bare_point>(&(*intersection).first) )
+             boost::get<Bare_point>( &(intersection->first) ) )
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
@@ -432,7 +432,7 @@ public:
                               2);
         }
         else if ( const Segment_3* p_intersect_seg =
-                              object_cast<Segment_3>(&(*intersection).first) )
+                  boost::get<Segment_3>(&(intersection->first)))
         {
           return Intersection(p_intersect_seg->source(),
                               r_domain_.index_from_surface_patch_index(

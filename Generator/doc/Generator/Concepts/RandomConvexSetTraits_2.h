@@ -18,13 +18,13 @@ public:
 /*! 
 point class. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 class used for doing computations on point and 
 vector coordinates (has to fulfill field type requirements). 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 AdaptableBinaryFunction class: 
@@ -32,7 +32,7 @@ AdaptableBinaryFunction class:
 `Point_2`. It returns the point that results from adding 
 the vectors corresponding to both arguments. 
 */ 
-typedef Hidden_type Sum; 
+typedef unspecified_type Sum; 
 
 /*! 
 AdaptableBinaryFunction class: 
@@ -41,14 +41,14 @@ AdaptableBinaryFunction class:
 results from scaling the vector corresponding to `p` by a 
 factor of `k`. 
 */ 
-typedef Hidden_type Scale; 
+typedef unspecified_type Scale; 
 
 /*! 
 AdaptableUnaryFunction class: 
 `Point_2` \f$ \rightarrow\f$ `FT`. `Max_coordinate(p)` 
 returns the coordinate of `p` with largest absolute value. 
 */ 
-typedef Hidden_type Max_coordinate; 
+typedef unspecified_type Max_coordinate; 
 
 /*! 
 AdaptableBinaryFunction class: 
@@ -58,7 +58,7 @@ direction corresponding to the first argument with respect to
 the positive \f$ x\f$-axis is less than the angle of the direction 
 corresponding to the second argument. 
 */ 
-typedef Hidden_type Angle_less; 
+typedef unspecified_type Angle_less; 
 
 /// @} 
 

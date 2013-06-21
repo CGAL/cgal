@@ -88,7 +88,7 @@ is the midpoint of segment `p1p2` where `p1` and `p2` are the two points of `s1`
 \pre The projection of `s1` and the projection of `s2` are non-degenerate `2D` segments. 
 
 */ 
-typedef Hidden_type Intersect_2; 
+typedef unspecified_type Intersect_2; 
 
 /// @} 
 

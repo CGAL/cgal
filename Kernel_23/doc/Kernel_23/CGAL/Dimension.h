@@ -52,7 +52,7 @@ Either `Dimension_tag<dim>` if the dimension is a
 compile-time constant of value `dim`, or `Dynamic_dimension_tag` 
 otherwise. It is implemented as `K::Ambient_dimension<T>::%type`.
 */ 
-typedef Hidden_type type; 
+typedef unspecified_type type; 
 
 /// @}
 
@@ -181,7 +181,7 @@ Either `Dimension_tag<dim>` if the dimension is a
 compile-time constant of value `dim`, or `Dynamic_dimension_tag` 
 otherwise. It is implemented as `K::Feature_dimension<T>::%type`. 
 */ 
-typedef Hidden_type type; 
+typedef unspecified_type type; 
 
 /// @}
 

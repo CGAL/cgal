@@ -129,19 +129,19 @@ typedef EM Exact_traits_method_tag;
 A type for the segment Delaunay 
 graph traits, where the kernel is `CK`. 
 */ 
-typedef Hidden_type Construction_traits; 
+typedef unspecified_type Construction_traits; 
 
 /*! 
 A type for the segment Delaunay 
 graph traits, where the kernel is `FK`. 
 */ 
-typedef Hidden_type Filtering_traits; 
+typedef unspecified_type Filtering_traits; 
 
 /*! 
 A type for the segment Delaunay 
 graph traits, where the kernel is `EK`. 
 */ 
-typedef Hidden_type Exact_traits; 
+typedef unspecified_type Exact_traits; 
 
 /// @}
 
@@ -280,19 +280,19 @@ typedef EM Exact_traits_method_tag;
 A type for the segment Delaunay 
 graph traits, where the kernel is `CK`. 
 */ 
-typedef Hidden_type Construction_traits; 
+typedef unspecified_type Construction_traits; 
 
 /*! 
 A type for the segment Delaunay 
 graph traits, where the kernel is `FK`. 
 */ 
-typedef Hidden_type Filtering_traits; 
+typedef unspecified_type Filtering_traits; 
 
 /*! 
 A type for the segment Delaunay 
 graph traits, where the kernel is `EK`. 
 */ 
-typedef Hidden_type Exact_traits; 
+typedef unspecified_type Exact_traits; 
 
 /// @}
 

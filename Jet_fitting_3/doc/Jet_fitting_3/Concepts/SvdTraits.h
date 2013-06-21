@@ -29,17 +29,17 @@ public:
   /*! 
     The scalar type. 
   */ 
-  typedef Hidden_type FT; 
+  typedef unspecified_type FT; 
 
   /*! 
     The vector type, model of the concept `SvdTraits::Vector`.
   */ 
-  typedef Hidden_type Vector;
+  typedef unspecified_type Vector;
 
   /*! 
     The matrix type,  model of the concept `SvdTraits::Matrix`. 
   */ 
-  typedef Hidden_type matrix;
+  typedef unspecified_type matrix;
   
   /// @} 
 

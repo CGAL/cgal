@@ -31,21 +31,21 @@ available. Access to the point coordinates is done via the `get_.()`
 functions. Constructing a point is done with the `make_point( )` 
 operation. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 The plane type. Access to the coefficients of the 
 plane is made via the `get_.()` functions. Constructing a plane is 
 done with the `make_plane()` operation. 
 */ 
-typedef Hidden_type Plane_3; 
+typedef unspecified_type Plane_3; 
 
 /*! 
 The vector type. There is no need to access the 
 coefficients of a vector; only constructing is required and is done with 
 the `make_vector` operation. 
 */ 
-typedef Hidden_type Vector_3; 
+typedef unspecified_type Vector_3; 
 
 /*! 
 The traits class for using the convex hull 
@@ -53,7 +53,7 @@ algorithm. It must be a model of the concept ConvexHullTraits_3.
 This class is used only if the width is computed from a set 
 of points. 
 */ 
-typedef Hidden_type ChullTraits; 
+typedef unspecified_type ChullTraits; 
 
 /*! 
 Ring type numbers. Internally all numbers are treated as 
@@ -65,7 +65,7 @@ values of arbitrary length. Furthermore it is assumed that the underlying
 number type of `Point_3`, `Plane_3` and `Vector_3` equals 
 `RT`. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /// @} 
 

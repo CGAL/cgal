@@ -35,13 +35,13 @@ public:
 /*! 
 Another name for the point type. 
 */ 
-typedef Hidden_type Bare_point; 
+typedef unspecified_type Bare_point; 
 
 /*! 
 The weighted point type. It has to be 
 a model of the concept `WeightedPoint`. 
 */ 
-typedef Hidden_type Weighted_point_2; 
+typedef unspecified_type Weighted_point_2; 
 
 /*! 
 A function object which must provide operators for the power test applied to two, three, and four points. 
@@ -63,7 +63,7 @@ which is the degenerated power test for weighted points
 \pre the bare points corresponding to `p` and `q` are identical. 
 
 */ 
-typedef Hidden_type Power_test_2; 
+typedef unspecified_type Power_test_2; 
 
 /// @}
 
@@ -79,7 +79,7 @@ Must provide the operator:
 which compares the power distance between `p` and `q` to the 
 power distance between `p` and `r`. 
 */ 
-typedef Hidden_type Compare_power_distance_2; 
+typedef unspecified_type Compare_power_distance_2; 
 
 /*! 
 A function
@@ -90,7 +90,7 @@ Must provide the operator:
 
 `Bare_point operator() ( Weighted_point_2 p, Weighted_point_2 q, Weighted_point_2 r);` 
 */ 
-typedef Hidden_type Construct_weighted_circumcenter_2; 
+typedef unspecified_type Construct_weighted_circumcenter_2; 
 
 /*! 
 A function object constructs 
@@ -100,7 +100,7 @@ Must provide the operator:
 
 `Line_2 operator() ( Weighted_point_2 p, Weighted_point_2 q);` 
 */ 
-typedef Hidden_type Construct_radical_axis_2; 
+typedef unspecified_type Construct_radical_axis_2; 
 
 /// @} 
 

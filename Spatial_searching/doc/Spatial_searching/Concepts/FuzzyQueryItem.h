@@ -18,12 +18,12 @@ public:
 /*! 
 represents a `d`-dimensional point. 
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 Number type. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /// @} 
 

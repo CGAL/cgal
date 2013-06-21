@@ -55,13 +55,13 @@ provided by the model of
 as first template parameter of 
 `CGAL::make_surface_mesh()`). 
 */ 
-typedef Hidden_type Facet; 
+typedef unspecified_type Facet; 
 
 /*! 
 Default constructible, copy constructible, 
 assignable, and less-than comparable type. 
 */ 
-typedef Hidden_type Quality; 
+typedef unspecified_type Quality; 
 
 /// @} 
 

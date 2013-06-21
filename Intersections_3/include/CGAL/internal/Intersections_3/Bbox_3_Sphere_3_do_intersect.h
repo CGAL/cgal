@@ -96,21 +96,27 @@ namespace internal {
 		return distance <= sphere.squared_radius();
     }
 
+    template <class K>
+    bool do_intersect(const CGAL::Bbox_3& bbox,
+                      const typename K::Sphere_3& sphere,
+                      const K&)
+    { return do_intersect(sphere, bbox, K()); }
+
+
 } // namespace internal
 
-template <class K>
-bool do_intersect(const CGAL::Sphere_3<K>& sphere,
-                  const CGAL::Bbox_3& bbox)
-{
-    return typename K::Do_intersect_3()(sphere, bbox);
+template<typename K>
+bool do_intersect(const CGAL::Bbox_3& a,
+                  const Sphere_3<K>& b) {
+  return K().do_intersect_3_object()(a, b);
 }
 
-template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-                  const CGAL::Sphere_3<K>& sphere)
-{
-    return typename K::Do_intersect_3()(sphere, bbox);
+template<typename K>
+bool do_intersect(const Sphere_3<K>& a,
+                  const CGAL::Bbox_3& b) {
+  return K().do_intersect_3_object()(a, b);
 }
+
 
 } //namespace CGAL
 

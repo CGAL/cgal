@@ -41,47 +41,47 @@ Indicates or not whether the
 intersecting segments are to be supported. The tag must either be 
 `CGAL::Tag_true` or `CGAL::Tag_false`. 
 */ 
-typedef Hidden_type Intersections_tag; 
+typedef unspecified_type Intersections_tag; 
 
 /*! 
 A type for a site of the segment Delaunay 
 graph. Must be a model of the concept 
 `SegmentDelaunayGraphSite_2`. 
 */ 
-typedef Hidden_type Site_2; 
+typedef unspecified_type Site_2; 
 
 /*! 
 A type for a point. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 A type for a line. Only required if the segment 
 Delaunay graph is inserted in a stream. 
 */ 
-typedef Hidden_type Line_2; 
+typedef unspecified_type Line_2; 
 
 /*! 
 A type for a ray. Only required if the segment 
 Delaunay graph is inserted in a stream. 
 */ 
-typedef Hidden_type Ray_2; 
+typedef unspecified_type Ray_2; 
 
 /*! 
 A type for a segment. Only required if 
 if the segment Delaunay graph is inserted in a stream. 
 */ 
-typedef Hidden_type Segment_2; 
+typedef unspecified_type Segment_2; 
 
 /*! 
 A type for the field number type of sites, points, etc...
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 A type for the ring number type of sites, points, etc. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /*! 
 An enumeration type that indicates the 
@@ -99,27 +99,27 @@ type of the arrangement of two sites. The possible values are
 of these values is shown the end of the reference manual for this 
 concept.
 */ 
-typedef Hidden_type Arrangement_type; 
+typedef unspecified_type Arrangement_type; 
 
 /*! 
 A type representing different types of objects 
 in two dimensions, namely: `Point_2`, `Site_2`, 
 `Line_2`, `Ray_2` and `Segment_2`. 
 */ 
-typedef Hidden_type Object_2; 
+typedef unspecified_type Object_2; 
 
 /*! 
 Must provide `template <class T> bool operator() ( T& t, Object_2 o)` which assigns `o` to `t` if `o` was 
 constructed from an object of type `T`. Returns 
 `true`, if the assignment was possible. 
 */ 
-typedef Hidden_type Assign_2; 
+typedef unspecified_type Assign_2; 
 
 /*! 
 Must provide `template <class T> Object_2 operator()( T t)` that constructs an object of type 
 `Object_2` that contains `t` and returns it. 
 */ 
-typedef Hidden_type Construct_object_2; 
+typedef unspecified_type Construct_object_2; 
 
 /*! 
 
@@ -130,7 +130,7 @@ constructs a point equidistant from the sites `s1`, `s2` and
 `s3`. 
 
 */ 
-typedef Hidden_type Construct_svd_vertex_2; 
+typedef unspecified_type Construct_svd_vertex_2; 
 
 /*! 
 A predicate object type. Must 
@@ -138,7 +138,7 @@ provide `Comparison_result operator()(Site_2 s1, Site_2 s2)`, which compares the
 represented by the sites `s1` and `s2`. 
 \pre `s1` and `s2` must be points. 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 A predicate object type. Must 
@@ -146,7 +146,7 @@ provide `Comparison_result operator()(Site_2 s1, Site_2 s2)`, which compares the
 represented by the sites `s1` and `s2`. 
 \pre `s1` and `s2` must be points. 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 A predicate object type. Must 
@@ -155,7 +155,7 @@ usual orientation test for three points.
 `s1`, `s2` and `s3`. 
 \pre the sites `s1`, `s2` and `s3` must be points. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 A predicate object type. Must provide 
@@ -163,7 +163,7 @@ A predicate object type. Must provide
 points represented by the sites `s1` and `s2` are identical. 
 \pre `s1` and `s2` must be points. 
 */ 
-typedef Hidden_type Equal_2; 
+typedef unspecified_type Equal_2; 
 
 /*! 
 A predicate object type. Must provide 
@@ -172,7 +172,7 @@ segments represented by the sites `s1` and `s2` are
 parallel. 
 \pre `s1` and `s2` must be segments. 
 */ 
-typedef Hidden_type Are_parallel_2; 
+typedef unspecified_type Are_parallel_2; 
 
 /*! 
 A predicate object type. 
@@ -184,7 +184,7 @@ the half-space of `s1` (i.e., `p` is closer to `s1` than
 half-space of `s2`; returns `ON_ORIENTED_BOUNDARY` if `p` 
 lies on the bisector of `s1` and `s2`. 
 */ 
-typedef Hidden_type Oriented_side_of_bisector_2; 
+typedef unspecified_type Oriented_side_of_bisector_2; 
 
 /*! 
 A predicate object type. 
@@ -200,7 +200,7 @@ Must also provide `Sign operator()(Site_2 s1, Site_2 s2, Site_2 q)`, which retur
 `q` from the bitangent line of `s1`, `s2` (a degenerate 
 Voronoi circle, with its center at infinity). 
 */ 
-typedef Hidden_type Vertex_conflict_2; 
+typedef unspecified_type Vertex_conflict_2; 
 
 /*! 
 A predicate object 
@@ -250,7 +250,7 @@ conflict with `q`. If `POSITIVE` or `ZERO` is `false`,
 the predicate returns `false` if and only if `q` is not in 
 conflict with the Voronoi edge. 
 */ 
-typedef Hidden_type Finite_edge_interior_conflict_2; 
+typedef unspecified_type Finite_edge_interior_conflict_2; 
 
 /*! 
 A predicate 
@@ -268,7 +268,7 @@ edge is in conflict with `q`. If `sgn` is `POSITIVE` or
 `ZERO`, the predicate returns `false` if and only if `q` 
 is not in conflict with the Voronoi edge. 
 */ 
-typedef Hidden_type Infinite_edge_interior_conflict_2; 
+typedef unspecified_type Infinite_edge_interior_conflict_2; 
 
 /*! 
 A predicate object type. Must provide 
@@ -278,7 +278,7 @@ that passes through the Voronoi vertex of the sites `s1`,
 `s2`, `s3` and is perpendicular to the segment site `s`. 
 \pre `s` must be a segment and `p` must be a point. 
 */ 
-typedef Hidden_type Oriented_side_2; 
+typedef unspecified_type Oriented_side_2; 
 
 /*! 
 A predicate object type. Must 
@@ -286,7 +286,7 @@ provide `Arrangement_type operator()(Site_2 s1, Site_2 s2)` that
 returns the type of the arrangement of the two sites `s1` and 
 `s2`. 
 */ 
-typedef Hidden_type Arrangement_type_2; 
+typedef unspecified_type Arrangement_type_2; 
 
 /// @} 
 

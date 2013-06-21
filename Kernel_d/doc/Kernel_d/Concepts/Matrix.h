@@ -18,54 +18,54 @@ public:
 /*! 
 the ring type of the components. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 bidirectional iterator for accessing 
 all components row-wise. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 bidirectional iterator for accessing 
 all components row-wise. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 
 /*! 
 random access iterator for accessing row 
 entries. 
 */ 
-typedef Hidden_type row_iterator; 
+typedef unspecified_type row_iterator; 
 
 /*! 
 random access iterator for accessing row 
 entries. 
 */ 
-typedef Hidden_type const_row_iterator; 
+typedef unspecified_type const_row_iterator; 
 
 /*! 
 random access iterator for accessing 
 column entries. 
 */ 
-typedef Hidden_type column_iterator; 
+typedef unspecified_type column_iterator; 
 
 /*! 
 random access iterator for accessing 
 column entries. 
 */ 
-typedef Hidden_type const_column_iterator; 
+typedef unspecified_type const_column_iterator; 
 
 /*! 
 a tag class for identity initialization 
 */ 
-typedef Hidden_type Identity; 
+typedef unspecified_type Identity; 
 
 /*! 
 the vector type used. 
 */ 
-typedef Hidden_type Vector; 
+typedef unspecified_type Vector; 
 
 /// @} 
 

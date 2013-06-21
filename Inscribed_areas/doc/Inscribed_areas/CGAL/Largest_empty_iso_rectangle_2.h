@@ -48,7 +48,7 @@ This iterator allows to enumerate the points. It is non mutable,
 bidirectional and its value type is `Point_2`. It is invalidated by
 any insertion or removal of a point.
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 /// @} 
 

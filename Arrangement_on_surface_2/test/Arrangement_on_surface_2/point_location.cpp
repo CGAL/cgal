@@ -106,6 +106,7 @@ bool test3(const char* points_filename, const char* xcurves_filename,
   Point_location_test<Traits> pl_test;
   pl_test.set_filenames(points_filename, xcurves_filename,
                         curves_filename, queries_filename);
+
   
   if (!pl_test.allocate_pl_strategies()) return false;
   if (!pl_test.init()) return false;

@@ -26,7 +26,7 @@ public:
 /*! 
 The number type used to represent the walls of the box and perform calculations. Generally this is `Traits::NT`. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /// @} 
 

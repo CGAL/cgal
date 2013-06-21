@@ -148,25 +148,25 @@ public:
 handles to the simplices of the complex.
 
 */
-typedef Hidden_type Simplex_handle;
+typedef unspecified_type Simplex_handle;
 
 /*!
 handles to vertices of the complex.
 
 */
-typedef Hidden_type Vertex_handle;
+typedef unspecified_type Vertex_handle;
 
 /*!
 the point type
 
 */
-typedef Hidden_type Point_d;
+typedef unspecified_type Point_d;
 
 /*!
 the sphere type
 
 */
-typedef Hidden_type Sphere_d;
+typedef unspecified_type Sphere_d;
 
 /*!
 interface flags
@@ -178,19 +178,19 @@ enum Delaunay_voronoi_kind { NEAREST, FURTHEST };
 the iterator for points.
 
 */
-typedef Hidden_type Point_const_iterator;
+typedef unspecified_type Point_const_iterator;
 
 /*!
 the iterator for vertices.
 
 */
-typedef Hidden_type Vertex_iterator;
+typedef unspecified_type Vertex_iterator;
 
 /*!
 the iterator for simplices.
 
 */
-typedef Hidden_type Simplex_iterator;
+typedef unspecified_type Simplex_iterator;
 
 /// @}
 

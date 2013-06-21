@@ -37,8 +37,8 @@ if ( CGAL_FOUND )
 
 # If you want to visualize a linear cell complex, there are 2 viewers 
 # based on qt and vtk. Just uncomment the corresponding line
-  #  include("CMakeLCCViewerQt.inc")
-  #  include("CMakeLCCViewerVtk.inc")
+  # include("CMakeLCCViewerQt.inc")
+  # include("CMakeLCCViewerVtk.inc")
 
   add_executable(linear_cell_complex_3_triangulation
                           linear_cell_complex_3_triangulation.cpp)

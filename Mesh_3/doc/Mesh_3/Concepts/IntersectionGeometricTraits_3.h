@@ -24,17 +24,17 @@ public:
 /*! 
 Point type. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 Segment type. 
 */ 
-typedef Hidden_type Segment_3; 
+typedef unspecified_type Segment_3; 
 
 /*! 
 Triangle type. 
 */ 
-typedef Hidden_type Triangle_3; 
+typedef unspecified_type Triangle_3; 
 
 /*! 
 Function object that detects an intersection between a 3D segment and a 3D triangle. 
@@ -47,7 +47,7 @@ Provides the operators:
 which return `true`, iff the triangle and the segment 
 have a non empty intersection. 
 */ 
-typedef Hidden_type Do_intersect_3; 
+typedef unspecified_type Do_intersect_3; 
 
 /*! 
 Function object that constructs the intersection 
@@ -63,7 +63,7 @@ the intersection between the triangle and the segment.
 `CGAL::Object` is either a point, a segment or 
 an empty object. 
 */ 
-typedef Hidden_type Intersect_3; 
+typedef unspecified_type Intersect_3; 
 
 /// @} 
 

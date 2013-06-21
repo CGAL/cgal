@@ -81,31 +81,31 @@ public:
 /*! 
 
 */ 
-typedef Hidden_type Traits; 
+typedef unspecified_type Traits; 
 
 /*! 
 typedef to `Traits::FT`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `Traits::Point`. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 non-mutable model of the STL 
 concept `BidirectionalIterator` with value type `Point`. Used 
 to access the points used to build the smallest enclosing sphere. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 non-mutable model of the STL 
 concept `BidirectionalIterator` with value type `Point`. Used 
 to access the support points defining the smallest enclosing sphere. 
 */ 
-typedef Hidden_type Support_point_iterator; 
+typedef unspecified_type Support_point_iterator; 
 
 /// @} 
 

@@ -26,7 +26,7 @@ public:
 /*! 
 The number type. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /*! 
 A constructor object which 
@@ -39,7 +39,7 @@ Constructs the anchor point in between the Delaunay and Voronoi
 centers, i.e., the point \f$ (1-s)\cdot\f$`center_del` + 
 \f$ s\cdot\f$`center_vor`, where \f$ s\f$ is the shrink factor. 
 */ 
-typedef Hidden_type Construct_anchor_point_3; 
+typedef unspecified_type Construct_anchor_point_3; 
 
 /// @} 
 

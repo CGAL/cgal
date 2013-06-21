@@ -171,16 +171,7 @@ bool do_intersect(const typename K::Triangle_2 &t1,
 
 } // namespace internal
 
-
-
-
-template <class K>
-inline bool do_intersect(const Triangle_2<K> &t1, 
-			 const Triangle_2<K> &t2)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(t1,t2);
-}
+CGAL_DO_INTERSECT_FUNCTION_SELF(Triangle_2, 2)
 
 } //namespace CGAL
 

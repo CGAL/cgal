@@ -34,7 +34,7 @@ public:
 /*! 
 the number type used to approximate point coordinates. 
 */ 
-typedef Hidden_type Approximate_number_type; 
+typedef unspecified_type Approximate_number_type; 
 
 /// @} 
 
@@ -44,12 +44,12 @@ typedef Hidden_type Approximate_number_type;
 /*! 
 models the concept `ArrTraits::Approximate_2`. 
 */ 
-typedef Hidden_type Approximate_2; 
+typedef unspecified_type Approximate_2; 
 
 /*! 
 models the concept `ArrTraits::ConstructXMonotoneCurve_2`. 
 */ 
-typedef Hidden_type Construct_x_monotone_curve_2; 
+typedef unspecified_type Construct_x_monotone_curve_2; 
 
 /// @} 
 

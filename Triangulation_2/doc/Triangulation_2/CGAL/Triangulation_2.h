@@ -276,44 +276,44 @@ typedef Tds::Vertex_iterator All_vertices_iterator;
 /*! 
 iterator over finite faces. 
 */ 
-typedef Hidden_type Finite_faces_iterator; 
+typedef unspecified_type Finite_faces_iterator; 
 
 /*! 
 iterator over finite edges. 
 */ 
-typedef Hidden_type Finite_edges_iterator 
+typedef unspecified_type Finite_edges_iterator 
 ; 
 
 /*! 
 iterator over finite vertices. 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 iterator over the points corresponding the 
 finite vertices of the triangulation. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 circulator over all faces intersected by a line. 
 */ 
-typedef Hidden_type Line_face_circulator; 
+typedef unspecified_type Line_face_circulator; 
 
 /*! 
 circulator over all faces incident to a given vertex. 
 */ 
-typedef Hidden_type Face_circulator; 
+typedef unspecified_type Face_circulator; 
 
 /*! 
 circulator over all edges incident to a given vertex. 
 */ 
-typedef Hidden_type Edge_circulator; 
+typedef unspecified_type Edge_circulator; 
 
 /*! 
 circulator over all vertices incident to a given vertex. 
 */ 
-typedef Hidden_type Vertex_circulator; 
+typedef unspecified_type Vertex_circulator; 
 
 /*!
 specifies which case occurs when locating a point in the triangulation. 

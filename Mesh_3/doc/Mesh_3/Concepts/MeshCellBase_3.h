@@ -47,17 +47,17 @@ public:
 Point type, required to match the point type 
 of the 3D triangulation in which the mesh is embedded. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 Type of indices for cells of the input complex. Must match the type `MeshDomain_3::Subdomain_index`. 
 */ 
-typedef Hidden_type Subdomain_index;; 
+typedef unspecified_type Subdomain_index;; 
 
 /*! 
 Type of indices for surface patches of the input complex. Must match the type `MeshDomain_3::Surface_patch_index`. 
 */ 
-typedef Hidden_type Surface_patch_index;; 
+typedef unspecified_type Surface_patch_index;; 
 
 /// @} 
 

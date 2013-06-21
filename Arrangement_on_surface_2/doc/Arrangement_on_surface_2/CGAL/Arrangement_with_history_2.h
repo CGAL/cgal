@@ -63,12 +63,12 @@ typedef Arrangement_with_history_2<Traits_2,Dcel> Self;
 /*! 
 the traits class in use. 
 */ 
-typedef Hidden_type Traits_2; 
+typedef unspecified_type Traits_2; 
 
 /*! 
 the <span class="textsc">Dcel</span> representation of the arrangement. 
 */ 
-typedef Hidden_type Dcel; 
+typedef unspecified_type Dcel; 
 
 /*! 
 the point type, as defined by the traits class. 
@@ -99,26 +99,26 @@ In addition, the nested types `Vertex`, `Halfedge` and `Face` are defined, as we
 /*! 
 a handle for an input curve. 
 */ 
-typedef Hidden_type Curve_handle; 
+typedef unspecified_type Curve_handle; 
 
 /*! 
 a bidirectional iterator over the 
 curves that induce the arrangement. Its value-type is 
 `Curve_2`. 
 */ 
-typedef Hidden_type Curve_iterator; 
+typedef unspecified_type Curve_iterator; 
 
 /*! 
 an iterator over the edges induced by an input curve. 
 Its value type is `Halfedge_handle`. 
 */ 
-typedef Hidden_type Induced_edge_iterator; 
+typedef unspecified_type Induced_edge_iterator; 
 
 /*! 
 an iterator for the curves that originate a given arrangement edge. 
 Its value type is `Curve_handle`. 
 */ 
-typedef Hidden_type Originating_curve_iterator; 
+typedef unspecified_type Originating_curve_iterator; 
 
 /// @} 
 

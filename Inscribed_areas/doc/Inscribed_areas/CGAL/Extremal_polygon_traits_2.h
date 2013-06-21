@@ -32,22 +32,22 @@ public:
 /*! 
 typedef to `K::FT`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `K::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 typedef to `K::Less_xy_2`. 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 typedef to `K::Orientation_2`. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 AdaptableBinaryFunction class `op`: 
@@ -55,7 +55,7 @@ AdaptableBinaryFunction class `op`:
 For a fixed `Point_2` \f$ root\f$, `op`\f$ (p,\,q)\f$ returns 
 twice the area of the triangle \f$ (root,\, q,\, p)\f$. 
 */ 
-typedef Hidden_type Operation; 
+typedef unspecified_type Operation; 
 
 /// @} 
 
@@ -137,22 +137,22 @@ public:
 /*! 
 typedef to `K::FT`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `K::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 typedef to `K::Less_xy_2`. 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 typedef to `K::Orientation_2`. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 AdaptableBinaryFunction class `op`: 
@@ -161,7 +161,7 @@ For a fixed `Point_2` \f$ root\f$, `op`\f$ (p,\,q)\f$ returns
 \f$ d(r,\,p) + d(p,\,q) - d(r,\,q)\f$ where \f$ d\f$ denotes the Euclidean 
 distance. 
 */ 
-typedef Hidden_type Operation; 
+typedef unspecified_type Operation; 
 
 /// @} 
 

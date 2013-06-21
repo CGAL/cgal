@@ -22,22 +22,22 @@ public:
 /*! 
 the size type (convertible to `size_t`). 
 */ 
-typedef Hidden_type Size; 
+typedef unspecified_type Size; 
 
 /*! 
 the corresponding diagram-edge type. 
 */ 
-typedef Hidden_type Edge; 
+typedef unspecified_type Edge; 
 
 /*! 
 the point type associated with the vertex. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 the \f$ x\f$-monotone curve type. 
 */ 
-typedef Hidden_type X_monotone_curve_2; 
+typedef unspecified_type X_monotone_curve_2; 
 
 /// @} 
 

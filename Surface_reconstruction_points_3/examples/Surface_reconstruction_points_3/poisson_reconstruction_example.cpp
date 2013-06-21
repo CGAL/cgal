@@ -45,7 +45,7 @@ int main(void)
         !CGAL::read_xyz_points_and_normals(
                               stream,
                               std::back_inserter(points),
-                              CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points))))
+                              CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())))
     {
       std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
       return EXIT_FAILURE;
@@ -57,7 +57,7 @@ int main(void)
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(points.begin(), points.end(),
-                                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()) );
+                                             CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()) );
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.

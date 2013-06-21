@@ -28,7 +28,7 @@ public:
 An iterator for enumerating the 
 %Cartesian coordinates of a vector. 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /// @} 
 

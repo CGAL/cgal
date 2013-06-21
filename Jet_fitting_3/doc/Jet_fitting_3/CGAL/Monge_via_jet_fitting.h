@@ -177,7 +177,7 @@ typedef typename Local_kernel::Vector_3 Vector_3;
 /*! 
 see the page `Monge_via_jet_fitting::Monge_form`. 
 */ 
-typedef Hidden_type Monge_form; 
+typedef unspecified_type Monge_form; 
 
 /// @} 
 

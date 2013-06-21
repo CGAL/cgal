@@ -25,12 +25,12 @@ public:
 /*! 
 A reference counted pointer to an Object. 
 */ 
-typedef Hidden_type Handle; 
+typedef unspecified_type Handle; 
 
 /*! 
 A const reference counted pointer to an Object. 
 */ 
-typedef Hidden_type Const_handle; 
+typedef unspecified_type Const_handle; 
 
 /// @} 
 

@@ -108,12 +108,12 @@ public:
 /*! 
 is a typedef to `Traits::Sphere`. 
 */ 
-typedef Hidden_type Sphere; 
+typedef unspecified_type Sphere; 
 
 /*! 
 is a typedef to `Traits::FT`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 is the type of the radius and of the center 
@@ -127,7 +127,7 @@ element of the pair and where the number \f$ t\f$ is accessed using the
 member function `discriminant()` of class 
 `Min_sphere_of_spheres_d<Traits>`. 
 */ 
-typedef Hidden_type Result; 
+typedef unspecified_type Result; 
 
 /*! 
 is either `CGAL::LP_algorithm` or 
@@ -139,7 +139,7 @@ minsphere. (Normally, `Algorithm` coincides with
 `Traits::Algorithm` should not be supported anymore in a future 
 release, then `Algorithm` will have another type.) 
 */ 
-typedef Hidden_type Algorithm; 
+typedef unspecified_type Algorithm; 
 
 /*! 
 non-mutable model of the STL 
@@ -148,7 +148,7 @@ concept
 with value type `Sphere`. Used 
 to access the support spheres defining the smallest enclosing sphere. 
 */ 
-typedef Hidden_type Support_iterator; 
+typedef unspecified_type Support_iterator; 
 
 /*! 
 non-mutable model of the STL 
@@ -156,7 +156,7 @@ concept
 `BidirectionalIterator` 
 to access the center coordinates of the minsphere. 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /// @} 
 

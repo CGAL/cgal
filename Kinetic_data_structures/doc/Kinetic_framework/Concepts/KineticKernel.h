@@ -25,19 +25,19 @@ coordinates of moving primitives. It is a model of the concept
 `FunctionKernel::Function`. This is the analog of the CGAL 
 kernel `RT`. 
 */ 
-typedef Hidden_type Motion_function; 
+typedef unspecified_type Motion_function; 
 
 /*! 
 The type representing the results of 
 predicates. See `Kinetic::Certificate`. 
 */ 
-typedef Hidden_type Certificate; 
+typedef unspecified_type Certificate; 
 
 /*! 
 The type of the function kernel used. 
 See `Kinetic::FunctionKernel`. 
 */ 
-typedef Hidden_type Function_kernel; 
+typedef unspecified_type Function_kernel; 
 
 /// @} 
 

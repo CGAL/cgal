@@ -24,17 +24,17 @@ public:
 /*! 
 Numerical type. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 Point type. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 Index type for points. Must match the type `MeshDomain_3::Index`. 
 */ 
-typedef Hidden_type Index; 
+typedef unspecified_type Index; 
 
 /// @} 
 

@@ -48,7 +48,7 @@ The type of the
 embedding 3D triangulation. Must be a model of 
 `SurfaceMeshTriangulation_3`. 
 */ 
-typedef Hidden_type Triangulation; 
+typedef unspecified_type Triangulation; 
 
 /*! 
 The type of 
@@ -107,25 +107,25 @@ SINGULAR};
 An iterator type to visit the facets 
 of the 2D complex. 
 */ 
-typedef Hidden_type Facet_iterator; 
+typedef unspecified_type Facet_iterator; 
 
 /*! 
 An iterator type to visit the 
 edges of the 2D complex. 
 */ 
-typedef Hidden_type Edge_iterator; 
+typedef unspecified_type Edge_iterator; 
 
 /*! 
 An iterator type to visit 
 vertices of the 2D complex. 
 */ 
-typedef Hidden_type Vertex_iterator; 
+typedef unspecified_type Vertex_iterator; 
 
 /*! 
 An iterator type to visit the 
 boundary edges of the 2D complex. 
 */ 
-typedef Hidden_type Boundary_edges_iterator; 
+typedef unspecified_type Boundary_edges_iterator; 
 
 /// @} 
 

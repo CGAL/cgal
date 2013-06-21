@@ -4,7 +4,6 @@
 #undef NDEBUG //this testsuite requires NDEBUG to be not defined
 #endif
 
-#include <CGAL/Object.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>

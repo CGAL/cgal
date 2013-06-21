@@ -27,12 +27,13 @@
 #define CGAL_CIRCULAR_KERNEL_LINE_ARC_2_H
 
 #include <CGAL/global_functions_circular_kernel_2.h>
-#include <CGAL/intersections.h>
 #include <CGAL/Algebraic_kernel_for_circles/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
+
 
 namespace CGAL {
 namespace internal {
@@ -75,7 +76,7 @@ public:
   intersect(const Line_2 & l, const Circle_2 & c, const bool b)
   {
       
-    typedef std::vector<CGAL::Object >
+    typedef std::vector<typename CK2_Intersection_traits<CK, Line_2, Circle_2>::type>
       solutions_container;
       
     solutions_container solutions;
@@ -86,15 +87,14 @@ public:
     CGAL_kernel_precondition( it != solutions.end() ); 
     // the circles intersect
       
-    const std::pair<typename CK::Circular_arc_point_2, unsigned> *result;
-    result = CGAL::object_cast< 
-      std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+    const std::pair<typename CK::Circular_arc_point_2, unsigned>* 
+      result = CGAL::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
+    // get must have succeeded
     if ( result->second == 2 ) // double solution
       return result->first;
     if (b) return result->first;
     ++it;
-    result = CGAL::object_cast< 
-      std::pair<typename CK::Circular_arc_point_2, unsigned> >(&(*it));
+    result = CGAL::internal::intersect_get<std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
     return result->first;
   }
 
@@ -131,12 +131,16 @@ public:
     CGAL_kernel_precondition(do_intersect(support, l1));
     CGAL_kernel_precondition(do_intersect(support, l2));
     //typedef typename Root_of_2::RT RT_2;
-    //Voir pour mettre une assertion au assign
-    Object obj = intersection(support, l1);
-    const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
+    typename Intersection_traits<CK, Line_2, Line_2>::result_type 
+      v = CGAL::internal::intersection(support, l1, CK());
+    CGAL_assertion(v);
+
+    const Point_2 *pt = CGAL::internal::intersect_get<Point_2>(v);
+    CGAL_assertion(pt != NULL);
     _begin = Circular_arc_point_2(*pt);
-    obj = intersection(support, l2);
-    const Point_2 *pt2 = CGAL::object_cast<Point_2>(&obj);
+    v = CGAL::internal::intersection(support, l2, CK());
+    const Point_2 *pt2 = CGAL::internal::intersect_get<Point_2>(v);
+    CGAL_assertion(pt2 != NULL);
     _end = Circular_arc_point_2(*pt2);
     reset_flags();
   }

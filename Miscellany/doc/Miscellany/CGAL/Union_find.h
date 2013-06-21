@@ -28,22 +28,22 @@ public:
 /*! 
 values stored in items (equal to `T`). 
 */ 
-typedef Hidden_type value_type; 
+typedef unspecified_type value_type; 
 
 /*! 
 handle to values. 
 */ 
-typedef Hidden_type handle; 
+typedef unspecified_type handle; 
 
 /*! 
 iterator over values. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 allocator. 
 */ 
-typedef Hidden_type allocator; 
+typedef unspecified_type allocator; 
 
 /// @} 
 

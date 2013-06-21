@@ -31,47 +31,47 @@ public:
 /*! 
 typedef to `K::Point_3`. 
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 typedef to `K::Rep_tag`. 
 */ 
-typedef Hidden_type Rep_tag; 
+typedef unspecified_type Rep_tag; 
 
 /*! 
 typedef to `K::RT`. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /*! 
 typedef to `K::FT`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `K::Access_dimension_3`. 
 */ 
-typedef Hidden_type Access_dimension_d; 
+typedef unspecified_type Access_dimension_d; 
 
 /*! 
 typedef to `K::Access_coordinates_begin_3`. 
 */ 
-typedef Hidden_type Access_coordinates_begin_d; 
+typedef unspecified_type Access_coordinates_begin_d; 
 
 /*! 
 typedef to `K::Construct_point_3`. 
 */ 
-typedef Hidden_type Construct_point_d; 
+typedef unspecified_type Construct_point_d; 
 
 /*! 
 second template parameter (default is `K::RT`). 
 */ 
-typedef Hidden_type ET; 
+typedef unspecified_type ET; 
 
 /*! 
 third template parameter (default is `K::RT`). 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /// @} 
 

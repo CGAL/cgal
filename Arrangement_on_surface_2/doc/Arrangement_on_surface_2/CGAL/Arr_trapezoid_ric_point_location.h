@@ -29,6 +29,11 @@ This strategy supports arbitrary subdivisions, including unbounded ones.
 \cgalModels `ArrangementPointLocation_2`
 \cgalModels `ArrangementVerticalRayShoot_2`
 
+\sa `ArrangementPointLocation_2`
+\sa `ArrangementVerticalRayShoot_2`
+\sa `CGAL::Arr_point_location_result<Arrangement>`
+\sa `CGAL_ARR_POINT_LOCATION_VERSION`
+
 */
 template< typename Arrangement >
 class Arr_trapezoid_ric_point_location {

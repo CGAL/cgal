@@ -109,7 +109,7 @@ public:
 /*! 
 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 /// @} 
 
 
@@ -118,7 +118,7 @@ typedef Hidden_type iterator;
 /*! 
 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 /// @} 
 
 
@@ -127,7 +127,7 @@ typedef Hidden_type const_iterator;
 /*! 
 
 */ 
-typedef Hidden_type value_type; 
+typedef unspecified_type value_type; 
 /// @} 
 
 
@@ -136,7 +136,7 @@ typedef Hidden_type value_type;
 /*! 
 
 */ 
-typedef Hidden_type reference; 
+typedef unspecified_type reference; 
 /// @} 
 
 
@@ -145,7 +145,7 @@ typedef Hidden_type reference;
 /*! 
 
 */ 
-typedef Hidden_type const_reference; 
+typedef unspecified_type const_reference; 
 /// @} 
 
 
@@ -154,7 +154,7 @@ typedef Hidden_type const_reference;
 /*! 
 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 /// @} 
 
 
@@ -163,7 +163,7 @@ typedef Hidden_type size_type;
 /*! 
 
 */ 
-typedef Hidden_type difference_type; 
+typedef unspecified_type difference_type; 
 /// @} 
 
 
@@ -172,7 +172,7 @@ typedef Hidden_type difference_type;
 /*! 
 
 */ 
-typedef Hidden_type reverse_iterator; 
+typedef unspecified_type reverse_iterator; 
 /// @} 
 
 
@@ -181,7 +181,7 @@ typedef Hidden_type reverse_iterator;
 /*! 
 
 */ 
-typedef Hidden_type const_reverse_iterator; 
+typedef unspecified_type const_reverse_iterator; 
 /// @} 
 
 
@@ -190,7 +190,7 @@ typedef Hidden_type const_reverse_iterator;
 /*! 
 
 */ 
-typedef Hidden_type allocator_type; 
+typedef unspecified_type allocator_type; 
 /// @} 
 
 

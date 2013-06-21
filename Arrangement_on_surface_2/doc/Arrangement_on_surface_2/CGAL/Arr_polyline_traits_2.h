@@ -57,13 +57,13 @@ public:
 A bidirectional iterator that allows 
 traversing the points that comprise a polyline curve. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 /*! 
 A bidirectional iterator that 
 allows traversing the points that comprise a polyline curve. 
 */ 
-typedef Hidden_type const_reverse_iterator; 
+typedef unspecified_type const_reverse_iterator; 
 
 /// @} 
 

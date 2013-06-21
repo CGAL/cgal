@@ -28,14 +28,14 @@ public:
 /*! 
 point type. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 plane equation. Even if plane equations 
 are not supported with a particular polyhedral surface this 
 type has to be defined (some dummy type). 
 */ 
-typedef Hidden_type Plane_3; 
+typedef unspecified_type Plane_3; 
 
 /*! 
 is an unary function object 
@@ -43,7 +43,7 @@ that reverses the plane orientation. Must provide `Plane_3 operator()(Plane_3 pl
 only if plane equations are supported and the `inside_out()` 
 method is used to reverse the polyhedral surface orientation. 
 */ 
-typedef Hidden_type Construct_opposite_plane_3; 
+typedef unspecified_type Construct_opposite_plane_3; 
 
 /// @} 
 

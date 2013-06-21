@@ -42,33 +42,33 @@ typedef Traits::FT FT;
 /*! 
 Splitter type. 
 */ 
-typedef Hidden_type Splitter; 
+typedef unspecified_type Splitter; 
 
 /*! 
 Bidirectional const iterator with value type `Point_d` that allows 
 to enumerate all points in the tree. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 A handle with value type `Kd_tree_node<Traits,Splitter>`. 
 */ 
-typedef Hidden_type Node_handle; 
+typedef unspecified_type Node_handle; 
 
 /*! 
 A const handle with value type `Kd_tree_node<Traits,Splitter>`. 
 */ 
-typedef Hidden_type Node_const_handle; 
+typedef unspecified_type Node_const_handle; 
 
 /*! 
 Random access const iterator with value type `const Point_d*`. 
 */ 
-typedef Hidden_type Point_d_iterator; 
+typedef unspecified_type Point_d_iterator; 
 
 /*! 
 A type that counts the number of elements in a `k-d` tree. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /// @} 
 

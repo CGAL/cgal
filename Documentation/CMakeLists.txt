@@ -1,6 +1,6 @@
 project(Documentation NONE)
 
-# Visuall Studio users might appreciate this
+# Visual Studio users might appreciate this
 # set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 macro(subdirlist result curdir)
@@ -25,9 +25,14 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "@INCLUDE = ${CGAL_DOC_DOXY_DEFAULT}\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "OUTPUT_DIRECTORY = ${CGAL_DOC_OUTPUT_DIR}/${CGAL_PACKAGE_NAME}\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "HTML_OUTPUT = .\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "SHOW_FILES = NO\n")
 
       if(CGAL_DOC_CREATE_LOGS)
         file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "WARN_LOGFILE = ${CGAL_DOC_LOG_DIR}/${CGAL_PACKAGE_NAME}.log\n")
+      endif()
+
+      if (CGAL_DOC_RELEASE)
+        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TODOLIST = NO\n")
       endif()
 
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "IMAGE_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/fig\n")
@@ -76,8 +81,8 @@ find_package(PythonInterp 2.6.8)
 
 if(DOXYGEN_FOUND)
   # set up the directories and variables
-  option(CGAL_DOC_MATHJAX_LOCATION "The location of MathJax to be used for the documentation." 
-    "http://cdn.mathjax.org/mathjax/latest")
+  set(CGAL_DOC_MATHJAX_LOCATION "http://cdn.mathjax.org/mathjax/latest"
+      CACHE STRING "The location of MathJax to be used for the documentation.")
 
   set(CGAL_DOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc_output")
   file(MAKE_DIRECTORY "${CGAL_DOC_OUTPUT_DIR}")

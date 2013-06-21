@@ -22,18 +22,18 @@ public:
 /*! 
 plane equation type stored in facets. 
 */ 
-typedef Hidden_type Plane; 
+typedef unspecified_type Plane; 
 
 /*! 
 handle to halfedge. 
 */ 
-typedef Hidden_type Halfedge_handle; 
+typedef unspecified_type Halfedge_handle; 
 
 /*! 
 circulator of 
 halfedges around a facet. 
 */ 
-typedef Hidden_type Halfedge_around_facet_circulator; 
+typedef unspecified_type Halfedge_around_facet_circulator; 
 
 /// @} 
 

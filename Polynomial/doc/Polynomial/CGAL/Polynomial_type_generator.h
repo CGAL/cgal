@@ -23,7 +23,7 @@ public:
 /*! 
 The generated type. 
 */ 
-typedef Hidden_type Type; 
+typedef unspecified_type Type; 
 
 /// @}
 

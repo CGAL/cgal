@@ -31,7 +31,7 @@ that constructs the center of the circle passing through the points `p`,
 `q`, and `r`. 
 \pre `p`, `q`, and `r` are not collinear. 
 */ 
-typedef Hidden_type Construct_circumcenter_2; 
+typedef unspecified_type Construct_circumcenter_2; 
 
 
 /*! 
@@ -40,7 +40,7 @@ Constructor object. Must provide an operator
 that computes the signed area of the triangle defined by 
 the points `p`, `q`, and `r`. 
 */ 
-typedef Hidden_type Compute_area_2; 
+typedef unspecified_type Compute_area_2; 
 
 /// @} 
 

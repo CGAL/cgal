@@ -39,19 +39,19 @@ public:
 /*! 
 the linear algebra layer. 
 */ 
-typedef Hidden_type LA; 
+typedef unspecified_type LA; 
 
 /*! 
 a read-only iterator for the 
 %Cartesian coordinates. 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /*! 
 a read-only iterator for the 
 homogeneous coordinates. 
 */ 
-typedef Hidden_type Homogeneous_const_iterator; 
+typedef unspecified_type Homogeneous_const_iterator; 
 
 /// @} 
 

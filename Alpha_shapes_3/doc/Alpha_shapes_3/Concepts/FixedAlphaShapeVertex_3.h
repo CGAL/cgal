@@ -21,7 +21,7 @@ public:
 Must be the same as the point type provided by 
 the geometric traits class of the triangulation. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /// @} 
 

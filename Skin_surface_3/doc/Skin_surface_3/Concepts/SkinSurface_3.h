@@ -24,26 +24,26 @@ public:
 The geometric traits used for the 
 construction of the regular triangulation. 
 */ 
-typedef Hidden_type Geometric_traits; 
+typedef unspecified_type Geometric_traits; 
 
 /*! 
 The `Weighted_point` type defined 
 by the `Geometric_traits`. 
 */ 
-typedef Hidden_type Weighted_point; 
+typedef unspecified_type Weighted_point; 
 
 /*! 
 The `Bare_point` type defined by the 
 `Geometric_traits`. 
 */ 
-typedef Hidden_type Bare_point; 
+typedef unspecified_type Bare_point; 
 
 /*! 
 The `FT` type defined by the 
 `Geometric_traits`. This is the number type used by the 
 weighted points. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /// @} 
 

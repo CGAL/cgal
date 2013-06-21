@@ -37,7 +37,7 @@ typedef R::Triangle_3 Triangle_3;
 /*! 
 A triple of points, in order to avoid the need for exact constructions. 
 */ 
-typedef Hidden_type Plane_3;; 
+typedef unspecified_type Plane_3;; 
 
 /*! 
 

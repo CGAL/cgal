@@ -35,7 +35,7 @@ public:
 /*! 
 The State type. 
 */ 
-typedef Hidden_type State; 
+typedef unspecified_type State; 
 
 /// @} 
 

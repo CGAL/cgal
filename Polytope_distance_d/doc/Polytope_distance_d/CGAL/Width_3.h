@@ -87,7 +87,7 @@ public:
 /*! 
 traits class. 
 */ 
-typedef Hidden_type Traits; 
+typedef unspecified_type Traits; 
 
 /*! 
 point type. 

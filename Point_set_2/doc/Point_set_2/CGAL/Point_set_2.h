@@ -45,7 +45,7 @@ typedef Gt::FT Numb_type;
 /*! 
 the underlying triangulation type. 
 */ 
-typedef Hidden_type Triangulation; 
+typedef unspecified_type Triangulation; 
 
 /*! 
 the size type of the underlying triangulation. 

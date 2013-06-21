@@ -22,13 +22,13 @@ public:
 /*! 
 The constant iterator type. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 /*! 
 An unsigned integral type that can represent the 
 size of a range. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /// @} 
 

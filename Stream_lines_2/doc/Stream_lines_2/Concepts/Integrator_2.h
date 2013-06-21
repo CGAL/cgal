@@ -23,22 +23,22 @@ public:
 /*! 
 The scalar type. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The point type. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 The vector type. 
 */ 
-typedef Hidden_type Vector_2; 
+typedef unspecified_type Vector_2; 
 
 /*! 
 The vector field type. 
 */ 
-typedef Hidden_type Vector_field_2; 
+typedef unspecified_type Vector_field_2; 
 
 /// @} 
 

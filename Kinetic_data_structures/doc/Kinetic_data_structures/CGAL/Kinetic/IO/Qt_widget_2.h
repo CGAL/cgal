@@ -69,7 +69,7 @@ The listener base to listen for when to update the picture. This
 class includes an extra method `Qt_widget widget()` which returns the
 `Qt_widget` object which can be used for drawing.
 */ 
-typedef Hidden_type Listener; 
+typedef unspecified_type Listener; 
 
 /// @} 
 

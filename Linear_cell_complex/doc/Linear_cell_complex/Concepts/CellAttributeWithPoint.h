@@ -23,7 +23,7 @@ public:
 /*!
 Type of the used point.
 */
-typedef Hidden_type Point;
+typedef unspecified_type Point;
 
 /*!
 Type of the information, defined in the `CellAttribute` concept.

@@ -27,18 +27,18 @@ public:
 The number type must follow the model 
 `FieldNumberType`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The point type on 
 which the function is defined and interpolated. 
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 The corresponding vector type. 
 */ 
-typedef Hidden_type Vector_d; 
+typedef unspecified_type Vector_d; 
 
 /*! 
 A constructor object for 
@@ -51,7 +51,7 @@ vector `b - a` and
 `Vector_d operator() (Null_vector NULL_VECTOR)` which introduces 
 the null vector. 
 */ 
-typedef Hidden_type Construct_vector_d; 
+typedef unspecified_type Construct_vector_d; 
 
 /*! 
 Constructor object for 
@@ -61,7 +61,7 @@ Provides :
 `Vector_d operator() (Vector_d v,FT scale)` which produces the 
 vector `v` scaled by a factor `scale`. 
 */ 
-typedef Hidden_type Construct_scaled_vector_d; 
+typedef unspecified_type Construct_scaled_vector_d; 
 
 /*! 
 Constructor 
@@ -70,7 +70,7 @@ object for `FT`. Provides the operator:
 `FT operator() (Point_d a, Point_d b)` returning the squared 
 distance between `a` and `b`. 
 */ 
-typedef Hidden_type Compute_squared_distance_d; 
+typedef unspecified_type Compute_squared_distance_d; 
 
 /*! 
 default constructor. 

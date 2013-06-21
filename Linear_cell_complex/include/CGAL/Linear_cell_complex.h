@@ -81,8 +81,35 @@ namespace CGAL {
     typedef typename Base::template Attribute_const_range<0>::type
     Vertex_attribute_const_range;
 
+    typedef typename Base::size_type size_type;
+
     /// To use previous definition of create_dart methods.
     using Base::create_dart;
+
+    Linear_cell_complex() : Base()
+    {}
+
+    /** Copy the given linear cell complex into *this.
+     *  Note that both LCC can have different dimensions and/or non void attributes.
+     *  @param alcc the linear cell complex to copy.
+     *  @post *this is valid.
+     */
+    Linear_cell_complex(const Self & alcc)
+    { Base::template copy<Self>(alcc); }
+
+    template < class LCC2 >
+    Linear_cell_complex(const LCC2& alcc)
+    { Base::template copy<LCC2>(alcc);}
+
+    template < class LCC2, typename Converters >
+    Linear_cell_complex(const LCC2& alcc, Converters& converters)
+    { Base::template copy<LCC2, Converters>(alcc, converters);}
+
+    template < class LCC2, typename Converters, typename Pointconverter >
+    Linear_cell_complex(const LCC2& alcc, Converters& converters,
+                        const Pointconverter& pointconverter)
+    { Base::template copy<LCC2, Converters, Pointconverter>
+          (alcc, converters, pointconverter);}
 
     /** Create a vertex attribute.
      * @return an handle on the new attribute.
@@ -691,7 +718,7 @@ namespace CGAL {
     { return insert_point_in_cell<i>(dh, barycenter<i>(dh)); }
 
     /** Compute the dual of a Linear_cell_complex.
-     * @param amap the lcc in which we build the dual of this lcc.
+     * @param alcc the lcc in which we build the dual of this lcc.
      * @param adart a dart of the initial lcc, NULL by default.
      * @return adart of the dual lcc, the dual of adart if adart!=NULL,
      *         any dart otherwise.

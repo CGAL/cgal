@@ -123,12 +123,12 @@ public:
 /*! 
 A `RealEmbeddable` `Field` representing the quotient field of `RT`. 
 */ 
-typedef Hidden_type Root_of_1; 
+typedef unspecified_type Root_of_1; 
 
 /*! 
 Model of `RootOf_2`. 
 */ 
-typedef Hidden_type Root_of_2; 
+typedef unspecified_type Root_of_2; 
 
 /// @}
 

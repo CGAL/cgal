@@ -66,7 +66,7 @@ A type for indexes of curve segment. The type must match the type
 `MeshDomainWithFeatures_3::Curve_segment_index` 
 when the concept is used for mesh generation. 
 */ 
-typedef Hidden_type Curve_segment_index; 
+typedef unspecified_type Curve_segment_index; 
 
 /*! 
 A type for indexes of corners. 
@@ -74,19 +74,19 @@ The type must match the type
 `MeshDomainWithFeatures_3::Corner_index` 
 when the concept is used for mesh generation. 
 */ 
-typedef Hidden_type Corner_index; 
+typedef unspecified_type Corner_index; 
 
 /*! 
 An iterator type to visit the edges 
 of the triangulation belonging to curve segments. 
 */ 
-typedef Hidden_type Edges_in_complex_iterator; 
+typedef unspecified_type Edges_in_complex_iterator; 
 
 /*! 
 An iterator type to visit the vertices 
 of the triangulation that are corners of the embedded complex. 
 */ 
-typedef Hidden_type Vertices_in_complex_iterator; 
+typedef unspecified_type Vertices_in_complex_iterator; 
 
 /// @} 
 

@@ -131,7 +131,7 @@ That's it!
 There is no need to define a copy assignment operator nor is there a 
 need to define a destructor for the derived class `My_geo_object`!  
 Handle & Rep does the rest for you!
-You get this functionality by including \ref CGAL/Handle.h
+You get this functionality by including `CGAL/Handle.h`
 
 It is common practice to add a (protected) member function `ptr()`
 to the class `My_geo_object`,
@@ -253,7 +253,7 @@ My_geo_object::set_x(double d)
   ptr->x = d;
 }
 \endcode
-You get this functionality by including \ref CGAL/Handle_for.h
+You get this functionality by including `CGAL/Handle_for.h`
 
 \section Developer_manualAllocation Allocation
 
@@ -270,7 +270,7 @@ class My_geo_object : public Handle_for<My_rep, leda_allocator<My_rep> >
 { /* ... */ };
 \endcode
 
-The default allocator is defined in \ref CGAL/memory.h
+The default allocator is defined in `CGAL/memory.h`
 
 See Chapter  \ref chapmemory_management  for more information.
 

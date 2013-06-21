@@ -193,7 +193,7 @@ corresponding points lie in the original domain, i.e.\ for each set
 of periodic copies the `Unique_vertex_iterator` iterates over 
 exactly one representative. 
 */ 
-typedef Hidden_type Unique_vertex_iterator; 
+typedef unspecified_type Unique_vertex_iterator; 
 
 /*! 
 circulator over all cells incident to a given edge 
@@ -214,25 +214,25 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 iterator over the tetrahedra 
 corresponding to cells of the triangulation. 
 */ 
-typedef Hidden_type Periodic_tetrahedron_iterator; 
+typedef unspecified_type Periodic_tetrahedron_iterator; 
 
 /*! 
 iterator over the triangles 
 corresponding to facets of the triangulation. 
 */ 
-typedef Hidden_type Periodic_triangle_iterator; 
+typedef unspecified_type Periodic_triangle_iterator; 
 
 /*! 
 iterator over the segments 
 corresponding to edges of the triangulation. 
 */ 
-typedef Hidden_type Periodic_segment_iterator; 
+typedef unspecified_type Periodic_segment_iterator; 
 
 /*! 
 iterator over the points 
 corresponding to vertices of the triangulation. 
 */ 
-typedef Hidden_type Periodic_point_iterator; 
+typedef unspecified_type Periodic_point_iterator; 
 
 /// @} 
 

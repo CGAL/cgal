@@ -124,12 +124,12 @@ public:
 /*! 
 This type is inherited from the `Interface` template argument. It is a reference counted pointer type for the object providing notifications. 
 */ 
-typedef Hidden_type Notifier_handle; 
+typedef unspecified_type Notifier_handle; 
 
 /*! 
 The type (usually an enum) used to distinguish different types of notifications. This is inherited from the `Interface` template argument. 
 */ 
-typedef Hidden_type Notification_type; 
+typedef unspecified_type Notification_type; 
 
 /// @} 
 

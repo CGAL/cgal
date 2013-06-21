@@ -35,12 +35,12 @@ public:
 /*! 
 Index type. Must match the type `MeshDomain_3::Index`. 
 */ 
-typedef Hidden_type Index;; 
+typedef unspecified_type Index;; 
 
 /*! 
 Numerical type. 
 */ 
-typedef Hidden_type FT;; 
+typedef unspecified_type FT;; 
 
 /// @} 
 

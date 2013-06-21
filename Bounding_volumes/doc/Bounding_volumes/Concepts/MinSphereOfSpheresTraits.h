@@ -22,7 +22,7 @@ public:
 specifies the dimension of the spheres you want to 
 compute the minsphere of. 
 */ 
-typedef Hidden_type D; 
+typedef unspecified_type D; 
 
 /// @} 
 
@@ -34,21 +34,21 @@ is a typedef to to some class representing a sphere.
 (The package will compute the minsphere of spheres of type 
 `Sphere`.) The type `Sphere` must provide a copy constructor. 
 */ 
-typedef Hidden_type Sphere; 
+typedef unspecified_type Sphere; 
 
 /*! 
 is a (exact or inexact) field number type. 
 
 \cgalRequires Currently, `FT` must either be `double` or `float`, or an exact field number type. (An <I>exact</I> number type is one which evaluates arithmetic expressions involving the four basic operations and comparisions with infinite precision, that is, like in \f$ \R\f$.) 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 non-mutable model of the STL 
 concept `ForwardIterator` with value type `FT`. Used 
 to access the center coordinates of a sphere. 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /*! 
 must typedef to either 
@@ -66,7 +66,7 @@ work without doing square-roots.
 <I>Note:</I> On some platforms the algorithm is much faster when 
 square-roots are disabled (due to lacking hardware support). 
 */ 
-typedef Hidden_type Use_square_roots; 
+typedef unspecified_type Use_square_roots; 
 
 /*! 
 selects the method to compute the minsphere 
@@ -88,7 +88,7 @@ compile-time flag is taken as a hint only. Should one of the
 methods not be available anymore in a future release, then the 
 default algorithm will be chosen. 
 */ 
-typedef Hidden_type Algorithm; 
+typedef unspecified_type Algorithm; 
 
 /// @} 
 

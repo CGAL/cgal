@@ -22,12 +22,12 @@ public:
 A number type. Must be the same as the number type used 
 in the traits class of the triangulation underlying the alpha shape. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 An iterator with value type `CGAL::Alpha_status<NT>`. 
 */ 
-typedef Hidden_type Alpha_status_iterator; 
+typedef unspecified_type Alpha_status_iterator; 
 
 /// @} 
 

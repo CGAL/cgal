@@ -24,7 +24,7 @@ public:
 /*! 
 allows the rebinding of the <span class="textsc">Dcel</span> with a different traits class `T`. 
 */ 
-typedef Hidden_type template <class T> rebind; 
+typedef unspecified_type template <class T> rebind; 
 
 /// @}
 

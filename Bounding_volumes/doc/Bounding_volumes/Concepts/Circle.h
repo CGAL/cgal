@@ -19,7 +19,7 @@ public:
 /*!
 Point type.
 */
-typedef Hidden_type Point;
+typedef unspecified_type Point;
 
 /*!
 Distance type. The function `squared_radius` (see below)
@@ -29,7 +29,7 @@ returns an object of this type.
 of `Min_circle_2` is used.
 
 */
-typedef Hidden_type Distance;
+typedef unspecified_type Distance;
 
 /// @}
 

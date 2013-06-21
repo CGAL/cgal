@@ -22,27 +22,27 @@ public:
 /*! 
 This is a model of `Kinetic::Certificate`. 
 */ 
-typedef Hidden_type Certificate; 
+typedef unspecified_type Certificate; 
 
 /*! 
 
 */ 
-typedef Hidden_type Point_1; 
+typedef unspecified_type Point_1; 
 
 /*! 
 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 
 */ 
-typedef Hidden_type Weighted_point_3; 
+typedef unspecified_type Weighted_point_3; 
 
 /// @}
 
@@ -55,72 +55,72 @@ typedef Hidden_type Weighted_point_3;
 /*! 
 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Orientation_3; 
+typedef unspecified_type Orientation_3; 
 
 /*! 
 
 */ 
-typedef Hidden_type Side_of_oriented_circle_2; 
+typedef unspecified_type Side_of_oriented_circle_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Side_of_oriented_sphere_3; 
+typedef unspecified_type Side_of_oriented_sphere_3; 
 
 /*! 
 
 */ 
-typedef Hidden_type Power_test_3; 
+typedef unspecified_type Power_test_3; 
 
 /*! 
 
 */ 
-typedef Hidden_type Weighted_orientation_3; 
+typedef unspecified_type Weighted_orientation_3; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_x_1; 
+typedef unspecified_type Compare_x_1; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_x_3; 
+typedef unspecified_type Compare_x_3; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_y_3; 
+typedef unspecified_type Compare_y_3; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_z_3; 
+typedef unspecified_type Compare_z_3; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_distance_2; 
+typedef unspecified_type Compare_distance_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_distance_3; 
+typedef unspecified_type Compare_distance_3; 
 
 /// @}
 

@@ -26,12 +26,12 @@ public:
 /*! 
 The point type. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 The iso rectangle type. 
 */ 
-typedef Hidden_type Iso_rectangle_2; 
+typedef unspecified_type Iso_rectangle_2; 
 
 /*! 
 Predicate object. Must provide 
@@ -42,7 +42,7 @@ which returns
 according ding to the 
 \f$ x\f$-ordering of points `p` and `q`. 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 Predicate object. Must provide 
@@ -53,7 +53,7 @@ which returns
 according to the 
 \f$ y\f$-ordering of points `p` and `q`. 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 Predicate object. Must provide 
@@ -62,7 +62,7 @@ the operator
 which returns 
 whether `p` is less than `q` according to their \f$ x\f$-ordering. 
 */ 
-typedef Hidden_type Less_x_2; 
+typedef unspecified_type Less_x_2; 
 
 /*! 
 Predicate object. Must provide 
@@ -71,7 +71,7 @@ the operator
 which returns 
 whether `p` is less than `q` according to their \f$ y\f$-ordering. 
 */ 
-typedef Hidden_type Less_y_2; 
+typedef unspecified_type Less_y_2; 
 
 /// @} 
 
