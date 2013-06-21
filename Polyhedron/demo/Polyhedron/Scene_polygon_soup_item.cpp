@@ -18,7 +18,7 @@
 #include <CGAL/IO/File_writer_OFF.h>
 #include <CGAL/version.h> 
 
-#include <CGAL/Orient_polyhedron_3.h>
+#include <CGAL/orient_polygon_soup.h>
 
 typedef Kernel::Point_3 Point_3;
 
