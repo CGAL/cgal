@@ -196,7 +196,7 @@ lp_intersection(const typename K::Point_3& p, const typename K::Point_3& q,
 {
   CGAL_MESH_3_PROFILER(std::string(CGAL_PRETTY_FUNCTION));
   typedef Exact_predicates_exact_constructions_kernel   EPEC;
-  typedef Simple_cartesian<CGAL::internal::Exact_type_selector<double>::Type> EK;
+  typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type> EK;
   typedef Simple_cartesian<Interval_nt_advanced>        FK; // filtering kernel
   typedef Cartesian_converter<typename K::Kernel, EK>    To_exact;
   typedef Cartesian_converter<typename K::Kernel, FK>    To_filtering;
