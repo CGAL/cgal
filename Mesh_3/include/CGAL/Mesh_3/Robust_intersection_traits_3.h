@@ -427,20 +427,16 @@ public:
   
   template<class T1, class T2>
   Object operator() (const T1& t, const T2& s) const
+  operator() (const T1& t, const T2& s) const
   {
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
     EK::Intersect_3 exact_intersection = EK().intersect_3_object();
     
-    Object object = exact_intersection(to_exact(t), to_exact(s));
-    
-    if ( const EK::Point_3* p = object_cast<EK::Point_3>(&object) )
-      return make_object(back_from_exact(*p));
-    else if ( const EK::Segment_3* seg = object_cast<EK::Segment_3>(&object) )
-      return make_object(back_from_exact(*seg));
-    else 
-      return Object();
+    // Cartesian converters have an undocumented, optional< variant > operator
+    return typename cpp11::result_of<typename K_::Intersect_3(T1, T2)>::type
+      (back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
   }
   
   Object operator()(const Segment_3& s, const Triangle_3& t) const
