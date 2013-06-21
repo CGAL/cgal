@@ -251,7 +251,7 @@ private:
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T ... ){}
     template <typename PrimitiveType, typename ... T>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T ... t)
-    {m_traits.set_shared_data<PrimitiveType>(t...);}
+    {m_traits.template set_shared_data<PrimitiveType>(t...);}
 
     template <typename PrimitiveType, typename ... T>
     void set_shared_data(T...t){
@@ -262,7 +262,7 @@ private:
     void set_primitive_data_impl(CGAL::Boolean_tag<false>){}
     template <typename PrimitiveType>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>)
-    {m_traits.set_shared_data<PrimitiveType>();}
+    {m_traits.template set_shared_data<PrimitiveType>();}
     template <typename PrimitiveType>
     void set_shared_data(){
       set_primitive_data_impl<PrimitiveType>(CGAL::Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>());
@@ -272,7 +272,7 @@ private:
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1){}
     template <typename PrimitiveType, typename T1>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1)
-    {m_traits.set_shared_data<PrimitiveType>(t1);}
+    {m_traits.template set_shared_data<PrimitiveType>(t1);}
     template <typename PrimitiveType, typename T1>
     void set_shared_data(T1 t1){
       set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1);
@@ -282,7 +282,7 @@ private:
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2){}
     template <typename PrimitiveType, typename T1, typename T2>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1,T2 t2)
-    {m_traits.set_shared_data<PrimitiveType>(t1,t2);}
+    {m_traits.template set_shared_data<PrimitiveType>(t1,t2);}
     template <typename PrimitiveType, typename T1, typename T2>
     void set_shared_data(T1 t1,T2 t2){
       set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1,t2);
@@ -292,7 +292,7 @@ private:
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3){}
     template <typename PrimitiveType, typename T1, typename T2, typename T3>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1,T2 t2,T3 t3)
-    {m_traits.set_shared_data<PrimitiveType>(t1,t2,t3);}
+    {m_traits.template set_shared_data<PrimitiveType>(t1,t2,t3);}
     template <typename PrimitiveType, typename T1, typename T2, typename T3>
     void set_shared_data(T1 t1,T2 t2,T3 t3){
       set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1,t2,t3);
@@ -302,7 +302,7 @@ private:
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3,T4){}
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1,T2 t2,T3 t3,T4 t4)
-    {m_traits.set_shared_data<PrimitiveType>(t1,t2,t3,t4);}
+    {m_traits.template set_shared_data<PrimitiveType>(t1,t2,t3,t4);}
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4>
     void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4){
       set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1,t2,t3,t4);
@@ -312,7 +312,7 @@ private:
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T1,T2,T3,T4,T5){}
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4, typename T5>
     void set_primitive_data_impl(CGAL::Boolean_tag<true>,T1 t1,T2 t2,T3 t3,T4 t4,T5 t5)
-    {m_traits.set_shared_data<PrimitiveType>(t1,t2,t3,t4,t5);}
+    {m_traits.template set_shared_data<PrimitiveType>(t1,t2,t3,t4,t5);}
     template <typename PrimitiveType, typename T1, typename T2, typename T3, typename T4, typename T5>
     void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4,T5 t5){
       set_primitive_data_impl<PrimitiveType>(Boolean_tag<internal::Has_nested_type_Shared_data<PrimitiveType>::value>(),t1,t2,t3,t4,t5);
