@@ -28,6 +28,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -49,8 +50,7 @@ namespace CGAL {
     typedef Self Surface_3;
 
     // AABB tree
-    typedef AABB_const_polyhedron_triangle_primitive<Kernel, Polyhedron>
-                                                                AABB_primitive;
+    typedef AABB_FaceGraph_triangle_primitive<const Polyhedron> AABB_primitive;
     typedef class AABB_traits<Kernel,AABB_primitive> AABB_traits;
     typedef AABB_tree<AABB_traits> Tree;
     typedef typename AABB_traits::Bounding_box Bounding_box;
@@ -66,7 +66,8 @@ namespace CGAL {
     AABB_polyhedral_oracle(const Polyhedron& poly)
     {
       m_pTree = Tree_shared_ptr(new Tree(poly.facets_begin(),
-                                         poly.facets_end()));
+                                         poly.facets_end(),
+                                         poly ));
     }
 
     AABB_polyhedral_oracle(const AABB_polyhedral_oracle& oracle)
