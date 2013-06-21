@@ -23,8 +23,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_segment_primitive.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
 
 #include <CGAL/Vector_3.h>
 #include <CGAL/Point_3.h>
@@ -48,7 +47,7 @@ template<class Polyhedron, class Kernel>
 class Polyhedron_slicer_3
 {
 private:
-  typedef AABB_const_polyhedron_edge_primitive<Kernel, Polyhedron>  AABB_primitive;
+  typedef AABB_HalfedgeGraph_segment_primitive<const Polyhedron>    AABB_primitive;
   typedef AABB_traits<Kernel, AABB_primitive>                       AABB_traits_;
   typedef AABB_tree<AABB_traits_>                                   AABB_tree_;
 
@@ -419,7 +418,9 @@ public:
   */
   Polyhedron_slicer_3(const Polyhedron& polyhedron, const Kernel& kernel = Kernel())
   : intersect_3_functor(kernel.intersect_3_object()),
-  tree(polyhedron.edges_begin(), polyhedron.edges_end())
+    tree( boost::edges(polyhedron).first,
+          boost::edges(polyhedron).second,
+          polyhedron)
   { }
 
   /**

@@ -23,7 +23,6 @@
 #define CGAL_POINT_INSIDE_POLYHEDRON_RAY_3_TRIANGLE_3_TRAVERSAL_TRAITS_H
 
 #include <boost/logic/tribool.hpp>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 namespace CGAL {
 namespace internal {
