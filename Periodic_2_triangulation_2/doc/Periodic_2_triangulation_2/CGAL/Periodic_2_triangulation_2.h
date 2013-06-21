@@ -259,7 +259,7 @@ public:
   */
   typedef Hidden_type Unique_vertex_iterator;
 
-  /*!
+  /*
   \cgalAdvancedFunction
   \cgalAdvancedBegin
   For compatibility with `Triangulation_2`.
@@ -267,7 +267,7 @@ public:
   */
   typedef Face_iterator Finite_faces_iterator;
 
-  /*!
+  /*
   \cgalAdvancedFunction
   \cgalAdvancedBegin
   For compatibility with `Triangulation_2`.
@@ -275,7 +275,7 @@ public:
   */
   typedef Edge_iterator Finite_edges_iterator;
 
-  /*!
+  /*
   \cgalAdvancedFunction
   \cgalAdvancedBegin
   For compatibility with `Triangulation_2`.
@@ -283,7 +283,7 @@ public:
   */
   typedef Vertex_iterator Finite_vertices_iterator;
 
-  /*!
+  /*
   \cgalAdvancedFunction
   \cgalAdvancedBegin
   For compatibility with `Triangulation_2`.
@@ -490,7 +490,6 @@ public:
   bool is_extensible_triangulation_in_1_sheet_h1() const;
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   The same as `is_extensible_triangulation_in_1_sheet_h1()` but with
   a more precise heuristic, i.e. it might answer `true` in cases in which
