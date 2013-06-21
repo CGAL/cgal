@@ -62,18 +62,17 @@ namespace CGAL {
  */
 template < class HalfedgeGraph,
            class OneHalfedgeGraphPerTree=Tag_true,
-           class cache_datum=Tag_false,
-           class Id_=typename boost::graph_traits<HalfedgeGraph>::edge_descriptor
-           >
+           class cache_datum=Tag_false >
 class AABB_HalfedgeGraph_segment_primitive
 #ifndef DOXYGEN_RUNNING
-  : public AABB_primitive<  Id_,
+  : public AABB_primitive<  typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
                             Segment_from_edge_descriptor_property_map<HalfedgeGraph>,
                             Source_point_from_edge_descriptor<HalfedgeGraph>,
                             OneHalfedgeGraphPerTree,
                             cache_datum >
 #endif
 {
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor Id_;
   typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Segment_property_map;
   typedef Source_point_from_edge_descriptor<HalfedgeGraph> Point_property_map;
 

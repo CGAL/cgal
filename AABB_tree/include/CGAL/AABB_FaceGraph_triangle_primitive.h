@@ -50,21 +50,24 @@ namespace CGAL {
  */
 template < class FaceGraph,
            class OneFaceGraphPerTree=Tag_true,
-           class cache_datum=Tag_false,
-           class Id_= typename boost::mpl::if_<
-                        typename boost::is_const<FaceGraph>::type,
-                        typename FaceGraph::Facet_const_handle,
-                        typename FaceGraph::Facet_handle >::type
-            >
+           class cache_datum=Tag_false >
 class AABB_FaceGraph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
-: public AABB_primitive< Id_,
+: public AABB_primitive<  typename boost::mpl::if_<
+                            typename boost::is_const<FaceGraph>::type,
+                            typename FaceGraph::Facet_const_handle,
+                            typename FaceGraph::Facet_handle 
+                           >::type,
                          Triangle_from_facet_handle_property_map<FaceGraph>,
                          One_point_from_facet_handle_property_map<FaceGraph>,
                          OneFaceGraphPerTree,
                          cache_datum >
 #endif
 {
+  typedef typename boost::mpl::if_<
+                          typename boost::is_const<FaceGraph>::type,
+                          typename FaceGraph::Facet_const_handle,
+                          typename FaceGraph::Facet_handle >::type  Id_;
   typedef Triangle_from_facet_handle_property_map<FaceGraph>  Triangle_property_map;
   typedef One_point_from_facet_handle_property_map<FaceGraph> Point_property_map;
 
