@@ -206,4 +206,3 @@ implemented as peripheral classes or as free (global) functions.
 - \link PkgArrangement2op_right_shift `CGAL::operator<<` \endlink
 
 */
-
