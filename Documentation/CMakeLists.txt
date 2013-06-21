@@ -76,10 +76,6 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   endforeach()
 endfunction()
 
-option(BUILD_DOC "Build the doxygen documentation" OFF)
-
-if (BUILD_DOC)
-
 find_package(Doxygen)
 find_package(PythonInterp 2.6.8)
 
@@ -166,5 +162,3 @@ if(DOXYGEN_FOUND)
   # add_custom_target(doc) dummy to depend on all docs, require to run
   # twice or something
 endif()
-
-endif(BUILD_DOC)
