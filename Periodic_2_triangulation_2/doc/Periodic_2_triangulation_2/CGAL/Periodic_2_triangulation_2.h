@@ -1075,7 +1075,7 @@ public:
   */
   int cw(int i) const;
 
-  /*!
+  /*
   Returns whether the
   union of the faces `f` and `f->neighbor(i)` form a convex
   quadrilateral.
