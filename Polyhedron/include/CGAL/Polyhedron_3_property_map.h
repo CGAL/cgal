@@ -75,23 +75,22 @@ struct Segment_from_edge_descriptor_property_map{
   typedef boost::readable_property_map_tag category;
   //data
   typename boost::remove_const<HalfedgeGraph>::type* m_graph;
+
+  //get function for property map
+  inline friend
+  value_type
+  get(Segment_from_edge_descriptor_property_map<HalfedgeGraph> pmap, 
+      key_type h)
+  {
+    typedef typename boost::property_map< HalfedgeGraph, vertex_point_t>::type Point_pmap;
+    typedef typename boost::property_traits< Point_pmap >::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Kernel;
+
+    return typename Kernel::Segment_3(
+      boost::get(vertex_point, *pmap.m_graph, boost::source(h, *pmap.m_graph) ),
+      boost::get(vertex_point, *pmap.m_graph, boost::target(h, *pmap.m_graph) ) );
+  }
 };
-//get function for property map
-template <class HalfedgeGraph>
-inline
-typename Segment_from_edge_descriptor_property_map<HalfedgeGraph>::value_type
-get(Segment_from_edge_descriptor_property_map<HalfedgeGraph> pmap,
-    typename Segment_from_edge_descriptor_property_map<HalfedgeGraph>::key_type h)
-{
-  typedef typename boost::property_map< HalfedgeGraph, vertex_point_t>::type Point_pmap;
-  typedef typename boost::property_traits< Point_pmap >::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-
-  return typename Kernel::Segment_3(
-    boost::get(vertex_point, *pmap.m_graph, boost::source(h, *pmap.m_graph) ),
-    boost::get(vertex_point, *pmap.m_graph, boost::target(h, *pmap.m_graph) ) );
-}
-
 
 //property map to access a point from a facet handle
 template <class Polyhedron> 
@@ -105,16 +104,16 @@ struct One_point_from_facet_handle_property_map{
   typedef typename Polyhedron::Vertex::Point_3 value_type;
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
+
+  //get function for property map
+  inline friend
+  reference
+  get(One_point_from_facet_handle_property_map<Polyhedron>,
+      key_type f)
+  {
+    return f->halfedge()->vertex()->point();
+  }
 };
-//get function for property map
-template <class Polyhedron>
-inline
-typename One_point_from_facet_handle_property_map<Polyhedron>::reference
-get(One_point_from_facet_handle_property_map<Polyhedron>,
-    typename One_point_from_facet_handle_property_map<Polyhedron>::key_type f)
-{
-  return f->halfedge()->vertex()->point();
-}
 
 //property map to access a point from an edge
 template <class HalfedgeGraph> 
@@ -130,18 +129,18 @@ struct Source_point_from_edge_descriptor{
   typedef boost::readable_property_map_tag category;
   //data
   typename boost::remove_const<HalfedgeGraph>::type* m_graph;
+
+  //get function for property map
+  inline friend
+  reference
+  get(Source_point_from_edge_descriptor<HalfedgeGraph> pmap,
+      key_type h)
+  {
+    return  boost::get(vertex_point,
+                       *pmap.m_graph,
+                       boost::source(h, *pmap.m_graph) );
+  }
 };
-//get function for property map
-template <class HalfedgeGraph>
-inline
-typename Source_point_from_edge_descriptor<HalfedgeGraph>::reference
-get(Source_point_from_edge_descriptor<HalfedgeGraph> pmap,
-    typename boost::graph_traits<HalfedgeGraph>::edge_descriptor h)
-{
-  return  boost::get(vertex_point,
-                     *pmap.m_graph,
-                     boost::source(h, *pmap.m_graph) );
-}
 
 } //namespace CGAL
 
