@@ -410,61 +410,6 @@ tr_intersection(const typename K::Triangle_3  &t,
   ////////////////
 
 template < typename K_ >
-class Robust_intersection_3_new
-{
-public:
-  typedef typename K_::FT                             FT;
-  
-  typedef typename K_::Triangle_3                     Triangle_3;
-  typedef typename K_::Segment_3                      Segment_3;
-  typedef typename K_::Ray_3                          Ray_3;
-  
-  typedef Object                                      result_type;
-  
-  typedef Exact_predicates_exact_constructions_kernel     EK;
-  typedef Cartesian_converter<typename K_::Kernel, EK>    To_exact;
-  typedef Cartesian_converter<EK, typename K_::Kernel>    Back_from_exact;
-  
-  template<class T1, class T2>
-  Object operator() (const T1& t, const T2& s) const
-  {
-    // Switch to exact
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-    EK::Intersect_3 exact_intersection = EK().intersect_3_object();
-    
-    Object object = exact_intersection(to_exact(t), to_exact(s));
-    
-    if ( const EK::Point_3* p = object_cast<EK::Point_3>(&object) )
-      return make_object(back_from_exact(*p));
-    else if ( const EK::Segment_3* seg = object_cast<EK::Segment_3>(&object) )
-      return make_object(back_from_exact(*seg));
-    else 
-      return Object();
-  }
-  
-  Object operator()(const Segment_3& s, const Triangle_3& t) const
-  {
-    return ts_intersection(t, s, K_());
-  }
-  
-  Object operator()(const Triangle_3& t, const Segment_3& s) const
-  {
-    return ts_intersection(t, s, K_());
-  }
-  
-  Object operator()(const Ray_3& r, const Triangle_3& t) const  {
-    return tr_intersection(t, r, K_());
-  }
-  
-  Object operator()(const Triangle_3& t, const Ray_3& r) const
-  {
-    return tr_intersection(t, r, K_());
-  }
-  
-};
-
-template < typename K_ >
 class Robust_intersection_3
 {
 public:
@@ -511,20 +456,6 @@ struct Robust_intersection_traits_3
 {
   typedef Robust_intersection_3<K_> Intersect_3;
   typedef Robust_intersection_traits_3<K_> Kernel;
-  Intersect_3
-  intersect_3_object() const
-  {
-    return Intersect_3();
-  }
-  
-};
-
-template<class K_>
-struct Robust_intersection_traits_3_new
-: public K_
-{
-  typedef Robust_intersection_3_new<K_> Intersect_3;
-  typedef Robust_intersection_traits_3_new<K_> Kernel;
   Intersect_3
   intersect_3_object() const
   {
