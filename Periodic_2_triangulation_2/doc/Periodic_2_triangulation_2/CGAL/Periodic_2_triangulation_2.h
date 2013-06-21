@@ -922,12 +922,12 @@ public:
 
 /// @}
 
-/// \name Modifiers
-/// The following operations are guaranteed to lead to a valid
-/// triangulation when they are applied on a valid triangulation.
-/// @{
+// \name Modifiers
+// The following operations are guaranteed to lead to a valid
+// triangulation when they are applied on a valid triangulation.
+// @{
 
-  /*!
+  /*
   Inserts point `p` in the triangulation and returns the
   corresponding vertex.
   If point `p` coincides with an already
@@ -949,7 +949,7 @@ public:
   Vertex_handle insert(const Point& p, Face_handle f =
                          Face_handle());
 
-  /*!
+  /*
   Same as above except that the location
   of the point `p` to be inserted is assumed to be given by
   `(lt,loc,i)` (see the description of the `locate` method
@@ -958,13 +958,13 @@ public:
   Vertex_handle insert(const Point& p, Locate_type lt,
                        Face_handle loc, int li );
 
-  /*!
+  /*
   Equivalent to
   `insert(p)`.
   */
   Vertex_handle push_back(const Point& p);
 
-  /*!
+  /*
   Inserts the points in the range
   \f$ \left[\right.\f$`first`, `last`\f$ \left.\right)\f$. Returns the
   number of inserted points. \pre The `value_type` of
@@ -974,7 +974,7 @@ public:
   template < class InputIterator > int insert(InputIterator
       first, InputIterator last);
 
-/// @}
+// @}
 
 /// \anchor Triangulation_ref_Fig_insert1
 /// \image html insert1.gif "Insertion of a point on an edge."
