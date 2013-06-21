@@ -38,6 +38,10 @@
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4348) // redefinition of default parameter in nested template class
+#endif
 
 namespace CGAL {
 
@@ -368,5 +372,10 @@ struct Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true>
 };
 
 } //namespace CGAL
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_LAZY_KERNEL_H
