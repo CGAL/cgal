@@ -266,11 +266,16 @@ lp_intersection(const typename K::Point_3& p, const typename K::Point_3& q,
 // returns a point or the empty Object. In case of degeneracy, the empty
 // Object is returned as well.
 template <class K>
-Object
+typename cpp11::result_of<
+  typename K::Intersect_3(typename K::Segment_3, typename K::Triangle_3)>::type
 ts_intersection(const typename K::Triangle_3 &t,
                 const typename K::Segment_3  &s,
                 const K & k)
 {
+  typedef typename cpp11::result_of<
+    typename K::Intersect_3(typename K::Segment_3, typename K::Triangle_3)
+  >::type result_type;
+  
   CGAL_MESH_3_BRANCH_PROFILER(std::string("coplanar/calls in   : ") +
                               std::string(CGAL_PRETTY_FUNCTION), tmp);
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
@@ -302,7 +307,7 @@ ts_intersection(const typename K::Triangle_3 &t,
         case POSITIVE:
           // the segment lies in the positive open halfspaces defined by the
           // triangle's supporting plane
-          return Object();
+          return result_type();
 
         case NEGATIVE:
           // p sees the triangle in counterclockwise order
@@ -311,13 +316,13 @@ ts_intersection(const typename K::Triangle_3 &t,
               && orientation(p,q,c,a) != POSITIVE )
           {
             // The intersection is a point
-            return make_object(lp_intersection(p, q, a, b, c, k));
+            return result_type( lp_intersection(p, q, a, b, c, k) );
           }
           else
-            return Object();
+            return result_type();
 
         default: // coplanar
-          return Object();
+          return result_type();
       }
     case NEGATIVE:
       switch ( abcq ) {
@@ -328,21 +333,21 @@ ts_intersection(const typename K::Triangle_3 &t,
             && orientation(q,p,c,a) != POSITIVE )
           {
             // The intersection is a point
-            return make_object(lp_intersection(p, q, a, b, c, k));
+            return result_type( lp_intersection(p, q, a, b, c, k) );
           }
           else
-            return Object();
+            return result_type();
 
         case NEGATIVE:
           // the segment lies in the negative open halfspaces defined by the
           // triangle's supporting plane
-          return Object();
+          return result_type();
 
         default: // coplanar
-          return Object();
+          return result_type();
       }
     default: // coplanar
-      return Object();
+      return result_type();
   }
 }
 
@@ -352,7 +357,8 @@ ts_intersection(const typename K::Triangle_3 &t,
 
 
 template <class K>
-Object
+typename cpp11::result_of<
+  typename K::Intersect_3(typename K::Ray_3, typename K::Triangle_3)>::type
 tr_intersection(const typename K::Triangle_3  &t,
                 const typename K::Ray_3 &r,
                 const K& k)
@@ -362,6 +368,10 @@ tr_intersection(const typename K::Triangle_3  &t,
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t) ) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(r) ) ;
 
+  typedef typename cpp11::result_of<
+    typename K::Intersect_3(typename K::Ray_3, typename K::Triangle_3)
+  >::type result_type;
+  
   typedef typename K::Point_3 Point_3;
 
   typename K::Construct_vertex_3 vertex_on =
@@ -386,14 +396,14 @@ tr_intersection(const typename K::Triangle_3  &t,
 
   const Orientation ray_direction = vector_plane_orient(p, q, a, b, c);
 
-  if(ray_direction == COPLANAR) return Object();
+  if(ray_direction == COPLANAR) return result_type();
 
   const Orientation abcp = orientation(a,b,c,p);
 
-  if(abcp == COPLANAR) return Object(); // p belongs to the triangle's
+  if(abcp == COPLANAR) return result_type(); // p belongs to the triangle's
                                         // supporting plane
 
-  if(ray_direction == abcp) return Object();          
+  if(ray_direction == abcp) return result_type();          
   // The ray lies entirely in one of the two open halfspaces defined by the
   // triangle's supporting plane.
 
@@ -402,9 +412,9 @@ tr_intersection(const typename K::Triangle_3  &t,
   if ( orientation(p,q,a,b) != abcp
        && orientation(p,q,b,c) != abcp
        && orientation(p,q,c,a) != abcp )
-    return make_object(lp_intersection(p, q, a, b, c, k));
+    return result_type(lp_intersection(p, q, a, b, c, k));
   else
-    return Object();
+    return result_type();
 }
 
   ////////////////
@@ -418,8 +428,14 @@ public:
   typedef typename K_::Triangle_3                     Triangle_3;
   typedef typename K_::Segment_3                      Segment_3;
   typedef typename K_::Ray_3                          Ray_3;
-  
-  typedef Object                                      result_type;
+
+  template <typename>
+  struct result;
+
+  template <typename F, typename A, typename B>
+  struct result<F(A, B)> {
+    typedef typename cpp11::result_of<typename K_::Intersect_3(A, B)>::type type;
+  };
   
   typedef Exact_predicates_exact_constructions_kernel     EK;
   typedef Cartesian_converter<typename K_::Kernel, EK>    To_exact;
@@ -439,21 +455,25 @@ public:
       (back_from_exact(exact_intersection(to_exact(t), to_exact(s))));
   }
   
-  Object operator()(const Segment_3& s, const Triangle_3& t) const
+  typename cpp11::result_of<typename K_::Intersect_3(Segment_3, Triangle_3)>::type
+  operator()(const Segment_3& s, const Triangle_3& t) const
   {
     return ts_intersection(t, s, K_());
   }
   
-  Object operator()(const Triangle_3& t, const Segment_3& s) const
+  typename cpp11::result_of<typename K_::Intersect_3(Segment_3, Triangle_3)>::type
+  operator()(const Triangle_3& t, const Segment_3& s) const
   {
     return ts_intersection(t, s, K_());
   }
   
-  Object operator()(const Ray_3& r, const Triangle_3& t) const  {
+  typename cpp11::result_of<typename K_::Intersect_3(Ray_3, Triangle_3)>::type
+  operator()(const Ray_3& r, const Triangle_3& t) const  {
     return tr_intersection(t, r, K_());
   }
   
-  Object operator()(const Triangle_3& t, const Ray_3& r) const
+  typename cpp11::result_of<typename K_::Intersect_3(Ray_3, Triangle_3)>::type
+  operator()(const Triangle_3& t, const Ray_3& r) const
   {
     return tr_intersection(t, r, K_());
   }
