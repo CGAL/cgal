@@ -260,7 +260,6 @@ public:
   typedef Hidden_type Unique_vertex_iterator;
 
   /*
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   For compatibility with `Triangulation_2`.
   \cgalAdvancedEnd
@@ -268,7 +267,6 @@ public:
   typedef Face_iterator Finite_faces_iterator;
 
   /*
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   For compatibility with `Triangulation_2`.
   \cgalAdvancedEnd
@@ -276,7 +274,6 @@ public:
   typedef Edge_iterator Finite_edges_iterator;
 
   /*
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   For compatibility with `Triangulation_2`.
   \cgalAdvancedEnd
@@ -284,7 +281,6 @@ public:
   typedef Vertex_iterator Finite_vertices_iterator;
 
   /*
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   For compatibility with `Triangulation_2`.
   \cgalAdvancedEnd
@@ -440,7 +436,6 @@ public:
 /// @{
 
   /*!  
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Returns a reference to the triangulation data structure.
   \cgalAdvancedEnd
@@ -476,7 +471,6 @@ public:
 /// @{
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   The current triangulation remains a triangulation in the 1-sheeted
   covering space even after adding points if this method returns
@@ -502,7 +496,6 @@ public:
   bool is_extensible_triangulation_in_1_sheet_h2() const;
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Returns `true` if the current triangulation would still be a
   triangulation in the 1-sheeted covering space, returns `false` otherwise.
@@ -511,7 +504,6 @@ public:
   bool is_triangulation_in_1_sheet() const;
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Converts the current triangulation into the same periodic
   triangulation in the 1-sheeted covering space.
@@ -521,7 +513,6 @@ public:
   void convert_to_1_sheeted_covering();
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Converts the current triangulation into the same periodic
   triangulation in the 9-sheeted covering space.
@@ -997,7 +988,6 @@ public:
 /// @{
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Inserts the first vertex.
   \cgalAdvancedEnd
@@ -1005,7 +995,6 @@ public:
   Vertex_handle insert_first(const Point& p);
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Inserts vertex `v` in face
   `f`. Face `f` is modified,
@@ -1016,7 +1005,6 @@ public:
   Vertex_handle insert_in_face(const Point& p, Face_handle f);
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Removes a vertex of degree three. Two of the incident faces are
   destroyed, the third one is modified. \pre Vertex `v` is a vertex with degree three.
@@ -1025,7 +1013,6 @@ public:
   void remove_degree_3(Vertex_handle v);
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Removes the unique vertex in the
   triangulation.
@@ -1036,8 +1023,7 @@ public:
 
 
   /*!
-    \cgalAdvancedFunction
-    \cgalAdvancedBegin
+      \cgalAdvancedBegin
     creates a new vertex `v` and use it to star the hole
     whose boundary is described by the sequence of edges
     `[edge_begin, edge_end]`. Returns a handle to the new vertex.
@@ -1051,7 +1037,6 @@ public:
                            EdgeIt edge_end);
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   same as above, except that the algorithm
   first recycles faces in the sequence `[face_begin, face_end]`
@@ -1068,7 +1053,6 @@ public:
                            FaceIt face_end);
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Changes the domain. Note that this function calls `clear()`,
   i.e., it erases the existing triangulation.
@@ -1117,7 +1101,6 @@ public:
 /// @{
 
   /*!
-  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Checks the combinatorial validity of the triangulation and
   also the validity of its geometric embedding.
