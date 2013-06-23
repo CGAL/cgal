@@ -316,7 +316,7 @@ struct DisplayVertexAttrib
 template<typename Map,typename Attr>
 struct DisplayVertexAttrib<Map,Attr,void>
 {
-  static void run(Map& amap)
+  static void run(Map&)
   {}
 };
 

@@ -1265,7 +1265,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "number_of_attributes<i> but i-attributes are disabled");
-      return  CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).size();
     }
 
@@ -1316,14 +1316,30 @@ namespace CGAL {
            "i-attributes are disabled");
 
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-          (m_onsplit_functors);
+        (m_onsplit_functors);
+    }
+
+    // Get the ith dynamic onsplit functor (by reference so that we can
+    // modify it directly).
+    template<int i>
+    const boost::function<void(typename Attribute_type<i>::type&,
+                               typename Attribute_type<i>::type&)>&
+    onsplit_functor() const
+    {
+      CGAL_static_assertion_msg
+          (Helper::template Dimension_index<i>::value>=0,
+           "onsplit_functor<i> but "
+           "i-attributes are disabled");
+
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (m_onsplit_functors);
     }
 
     // Get the ith dynamic onmerge functor (by reference so that we can
     // modify it directly).
     template<int i>
     boost::function<void(typename Attribute_type<i>::type&,
-                         typename Attribute_type<i>::type&)>&
+                               typename Attribute_type<i>::type&)>&
     onmerge_functor()
     {
       CGAL_static_assertion_msg
@@ -1332,9 +1348,23 @@ namespace CGAL {
            "i-attributes are disabled");
 
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-          (m_onmerge_functors);
+        (m_onmerge_functors);
     }
+    // Get the ith dynamic onmerge functor (by reference so that we can
+    // modify it directly).
+    template<int i>
+    const boost::function<void(typename Attribute_type<i>::type&,
+                               typename Attribute_type<i>::type&)>&
+    onmerge_functor() const
+    {
+      CGAL_static_assertion_msg
+          (Helper::template Dimension_index<i>::value>=0,
+           "onsplit_functor<i> but "
+           "i-attributes are disabled");
 
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (m_onmerge_functors);
+    }
 
     /** Double link a dart with beta 0 to a second dart.
      * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked

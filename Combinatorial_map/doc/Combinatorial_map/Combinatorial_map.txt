@@ -726,6 +726,8 @@ before to start the operation (i.e.\ before modifying the combinatorial
 map), and `OnSplit` is called when the operation is finished
 (i.e.\ after all the modifications were made).
 
+In addition, there are dynamic onmerge and onsplit functions that can be associated to i-attributes, and modified, thanks to the \link CombinatorialMap::onmerge_function() `onmerge_function()`\endlink and \link CombinatorialMap::onsplit_function() `onsplit_function()`\endlink. When these functions are set, they are also called in addition to the previous mechanism when two attributes are merged or one attribute is split into two (see example in Section \ref sseccombimapdynamicattibute "Use of Dynamic Onmerge and Onsplit Functors").
+
 What we said for the dart also holds for the cell attribute. The
 combinatorial map can be used with any user defined model of the
 `CellAttribute` concept.
@@ -956,7 +958,7 @@ These methods guarantee that given a valid combinatorial map and a
 possible operation we obtain a valid combinatorial map as result of
 the operation.
 
-\cgalAdvancedBegin 
+\cgalAdvancedBegin
   The \ref CombinatorialMap::link_beta "link_beta" and
   \ref CombinatorialMap::unlink_beta "unlink_beta" methods only modify
   the pointer of two darts: the obtained combinatorial maps may be not
@@ -1404,6 +1406,19 @@ value of each attribute is thus 5/2=2 (remember that information
 contained in 2-attributes in an `int`). At the end, we obtain five
 2-attributes with 7 as value, five 2-attributes with 13 as value, and
 four 2-attributes having respectively 2, 2, 5 and 10 as values.
+
+\subsection sseccombimapdynamicattibute Use of Dynamic Onmerge and Onsplit Functors
+
+In the following example, we show an example of use of dynamic onmerge and onsplit functor. We define our 3D combinatorial map with 2-attributes. Then we create two hexahedra and create all the 2-attributes. We initialize the info of the faces of the first hexahedron to 7 and the info of the faces of the second hexahedron to 13.
+
+Step 3 defines the onsplit and onmerge dynamic functors. We can see here that with this mechanism, functors can store data member. This is the case in the example for Split_functor which stores a reference to the combinatorial map.
+
+The next operations will call these functors when 2-cells are split or merged. The sew<3> operation calls 1 onmerge as two faces are identified; the insert_cell_0_in_cell_2 operation calls 4 onsplit as one face is split in 4.
+
+Lastly we remove the dynamic onmerge functor (step 8). This is done by initializing the fonctor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
+
+\cgalExample{Combinatorial_map/map_3_dynamic_onmerge.cpp}
+
 
 \section sec_definition Mathematical Definitions
 
