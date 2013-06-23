@@ -50,6 +50,11 @@ typedef Hidden_type Extend_face;
 /// \name Creation
 /// @{
 /*!
+default creator
+*/
+ArrExtensionTraits_2 ();
+
+/*!
 copy creator
 */
 ArrExtensionTraits_2 (const ArrExtensionTraits_2 & Traits);
@@ -60,11 +65,14 @@ ArrExtensionTraits_2 (const ArrExtensionTraits_2 & Traits);
 /// The following member functions to create instances of the above predicate oject types.
 /// @{
 
+/*!
+ *
+ */
 Extend_vertex extend_vertex_object();
 
 /*!
-
-*/
+ *
+ */
 Extend_halfedge extend_halfedge_object();
 
 /*!
