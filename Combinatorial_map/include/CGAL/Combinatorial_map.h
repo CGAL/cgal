@@ -2200,6 +2200,27 @@ namespace CGAL {
       if ( update_attributes ) unsew<i>(adart);
       else topo_unsew<i>(adart);
     }
+      
+    /** Reverse the orientation (swap beta 0 & 1 links) of the entire map.
+     * A valid map after this operation remains valid.
+     * @param none
+     * @return none
+     */
+    void reverse_orientation()
+    {
+      internal::Reverse_orientation_of_map_functor<Self>::run(this);
+    }
+    
+    /** Reverse the orientation (swap beta 0 & 1 links) of the connected
+     * component containing the given dart.
+     * A valid map after this operation remains valid.
+     * @param adart handle to a dart
+     * @return none
+     */
+    void reverse_orientation_connected_component (Dart_handle adart)
+    {
+      internal::Reverse_orientation_of_connected_component_functor<Self>::run(this, adart);
+    }
 
     /** Count the marked cells (at least one marked dart).
      * @param amark the mark to consider.
