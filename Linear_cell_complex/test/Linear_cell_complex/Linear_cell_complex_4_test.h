@@ -284,11 +284,41 @@ bool test_LCC_4()
     return false;
   }
 
+  lcc.clear();
+  dh1 = lcc.make_tetrahedron(apoint<LCC>(-1, 0, 0,0),apoint<LCC>(0, 2, 0,0),
+                             apoint<LCC>(1, 0, 0,0),apoint<LCC>(1, 1, 2,0));
+  dh2 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -1,0),apoint<LCC>(-1, 0, -1,0),
+                             apoint<LCC>(1, 0, -1,0),apoint<LCC>(1, 1, -3,0));
+  dh3 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -4,0),apoint<LCC>(-1, 0, -4,0),
+                             apoint<LCC>(1, 0, -4,0),apoint<LCC>(1, 1, -5,0));
+  lcc.template sew<3>(dh1, dh2);
+  lcc.template sew<4>(dh1, dh3);
+
+  LCC lcc2(lcc);
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+
   lcc.reverse_orientation();
+  if ( lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+
   lcc.reverse_orientation();
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
 
   lcc.reverse_orientation_connected_component(dh1);
+  if ( lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+
   lcc.reverse_orientation_connected_component(dh1);
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
 
   /*    import_from_polyhedron<LCC>(lcc,ap);
 
