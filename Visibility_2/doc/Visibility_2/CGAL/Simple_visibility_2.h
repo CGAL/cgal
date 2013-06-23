@@ -3,7 +3,7 @@ namespace CGAL {
 \ingroup PkgVisibility_2Classes
 
 This class is a model of the concept `Visibility_2` offers visibility queries within 
-a simple Arrangement (no holes). Uses a linear algorithm to obtain visibility.
+a simple polygon with no holes. Uses a linear algorithm to obtain visibility.
 
 \sa `Visibility_2` 
 
@@ -47,32 +47,10 @@ Simple_visibility_2(const Input_Arrangement_2& arr);
 /// \name functions 
 /// @{
 
-
-
 /*!
-Return whether the object is attached to an arrangement.
-*/
-  bool is_attached ();
 
-/*!
-Attaches visibility object to the given arrangement arr.
-*/
-  void attach ( Input_Arrangement_2 arr);
-
-  
-/*!
-Detaches the object from the arrangement it is currently attached to.
-*/
-  void detach ();
-
-/*!
-Access to the attached Arrangement_2.
-*/
-  Input_Arrangement_2 arr();
-
-/*! 
 Computes the visibility region for the given query point q. 
-\pre face is a face of  this->arr()
+\pre face is a face of this->arr() with no holes
 \pre p is in the interior of face
 \pre out_arr is the output arrangement 
 
