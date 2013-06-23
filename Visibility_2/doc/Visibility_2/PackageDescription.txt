@@ -26,6 +26,8 @@ viibility computation amidst liniar geometry in the plain.}
 - `Visibility_2`
 
 ## Classes ##
+- `CGAL::Simple_visibility_2<Arr>
 - `CGAL::Naive_visibility_2<Arr> 
+- `CGAL::Preprocessed_visibility_2<Arr>
 
 */

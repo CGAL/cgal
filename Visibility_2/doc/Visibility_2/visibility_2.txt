@@ -32,7 +32,9 @@ Goals:
 
 Principal design idea: 
 
-    The main concept is that of a visibility object that allows visibility queries.  We will have at least two different strategies in different classes:
+    The main concept is that of a visibility object that allows visibility queries.  We will have at least three different strategies in different classes:
+
+    simple visibility (for arrangements with no holes)
 
     naive visibility -- without preprocessing 
 
