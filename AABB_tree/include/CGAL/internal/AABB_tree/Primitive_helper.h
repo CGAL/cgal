@@ -16,7 +16,7 @@
 // $Id: AABB_tree.h 69132 2012-05-15 08:46:42Z sloriot $
 //
 //
-// Author(s) : Sébastien Loriot
+// Author(s) : Sebastien Loriot
 
 #ifndef CGAL_INTERNAL_AABB_TREE_PRIMITIVE_HELPER
 #define CGAL_INTERNAL_AABB_TREE_PRIMITIVE_HELPER
