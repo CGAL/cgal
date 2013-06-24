@@ -105,15 +105,16 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
     const double alpha = ui.alpha->value();
     const double zero_TH = ui.zero_TH->value();
 
-    Mean_curvature_skeleton mcs(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H);
+    Mean_curvature_skeleton mcs(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH);
 
     // skeletonize
     QTime time;
     time.start();
-    std::cout << "Skeletonize...";
+    std::cout << "Skeletonize...\n";
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     mcs.contract_geometry();
+    mcs.updateTopology();
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 

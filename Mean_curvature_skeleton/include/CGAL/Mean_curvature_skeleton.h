@@ -7,7 +7,25 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 
+// Compute cotangent Laplacian
 #include <CGAL/internal/Mean_curvature_skeleton/Weights.h>
+
+// Simplification function
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+
+// Stop-condition policy
+#include <CGAL/internal/Mean_curvature_skeleton/Edge_minimum_length_stop_predicate.h>
+
+// Non-default cost and placement policies
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
+
+// Adaptor for Polyhedron_3
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+
+// Map used to mark edges as fixed
+#include <CGAL/Unique_hash_map.h>
+
+namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
 
@@ -44,17 +62,57 @@ private:
 
   double omega_L;
   double omega_H;
+  double edgelength_TH;
+
+  std::map<size_t, bool> is_vertex_fixed_map;
+
+  //
+  // BGL property map which indicates whether an edge is border OR is marked as non-removable
+  //
+  class Constrains_map : public boost::put_get_helper<bool, Constrains_map>
+  {
+  public:
+
+    typedef boost::readable_property_map_tag                                category;
+    typedef bool                                                            value_type;
+    typedef bool                                                            reference;
+    typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
+
+    Constrains_map() : mConstrains(false) {}
+
+    reference operator[](key_type const& e) const
+    {
+      return e->is_border() || is_constrained(e);
+    }
+
+    void set_is_constrained (key_type const& e, bool is)
+    {
+      mConstrains[e] = is;
+    }
+
+    bool is_constrained(key_type const& e) const
+    {
+      return mConstrains.is_defined(e) ? mConstrains[e] : false;
+    }
+
+  private:
+
+    CGAL::Unique_hash_map<key_type, bool> mConstrains ;
+
+  };
 
   // Public methods
 public:
 
   // The constructor gets the polyhedron that we will model
-  Mean_curvature_skeleton(Polyhedron* P, PolyhedronVertexIndexMap Vertex_index_map,
-                          PolyhedronEdgeIndexMap Edge_index_map, double omega_L, double omega_H,
+  Mean_curvature_skeleton(Polyhedron* P,
+                          PolyhedronVertexIndexMap Vertex_index_map, PolyhedronEdgeIndexMap Edge_index_map,
+                          double omega_L, double omega_H, double edgelength_TH,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
-      omega_L(omega_L), omega_H(omega_H), weight_calculator(weight_calculator)
+      omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH),
+      weight_calculator(weight_calculator)
   {
     // initialize index maps
     vertex_iterator vb, ve;
@@ -70,6 +128,8 @@ public:
     {
       boost::put(edge_id_pmap, *eb, idx++);
     }
+
+    is_vertex_fixed_map.clear();
   }
 
   // Release resources
@@ -170,6 +230,51 @@ public:
       Point p(X[i], Y[i], Z[i]);
       vi->point() = p;
     }
+  }
+
+  int collapse_short_edges(double edgelength_TH)
+  {
+    Constrains_map constrains_map;
+
+    edge_iterator eb, ee;
+    for(boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      vertex_descriptor vi = boost::source(*eb, *polyhedron);
+      vertex_descriptor vj = boost::target(*eb, *polyhedron);
+      size_t vi_idx = boost::get(vertex_id_pmap, vi);
+      size_t vj_idx = boost::get(vertex_id_pmap, vj);
+
+      if (is_vertex_fixed_map.find(vi_idx) == is_vertex_fixed_map.end()
+       || is_vertex_fixed_map.find(vj_idx) == is_vertex_fixed_map.end())
+      {
+        continue;
+      }
+      // if both vertices are fixed, the edge is fixed
+      if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
+      {
+        constrains_map.set_is_constrained(*eb, true);
+      }
+    }
+
+    // This is a stop predicate (defines when the algorithm terminates).
+    // The simplification stops when the length of all edges is greater than the minimum threshold.
+    CGAL::internal::Minimum_length_predicate<Polyhedron> stop(edgelength_TH);
+
+    int r = SMS::edge_collapse
+                (*polyhedron
+                ,stop
+                ,CGAL::get_cost     (SMS::Edge_length_cost  <Polyhedron>())
+                      .get_placement(SMS::Midpoint_placement<Polyhedron>())
+                      .edge_is_border_map(constrains_map)
+                );
+    return r;
+  }
+
+  void updateTopology()
+  {
+    int num_collapses = collapse_short_edges(edgelength_TH);
+
+    std::cout << "collapse " << num_collapses << " edges.\n";
   }
 };
 
