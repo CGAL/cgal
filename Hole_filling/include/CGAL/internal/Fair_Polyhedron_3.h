@@ -273,7 +273,7 @@ bool fair(Polyhedron& poly,
   )
 {
   typedef CGAL::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
-  return fair<SparseLinearSolver, Weight_calculator, Polyhedron>(poly, vb, ve, Weight_calculator());
+  return fair<SparseLinearSolver, Weight_calculator, Polyhedron, InputIterator>(poly, vb, ve, Weight_calculator());
 }
 
 //use default SparseLinearSolver and WeightCalculator
