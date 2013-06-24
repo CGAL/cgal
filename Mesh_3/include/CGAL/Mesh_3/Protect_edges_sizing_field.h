@@ -767,8 +767,23 @@ insert_balls_on_edges()
         // if the curve is a cycle.
         if(!c3t3_.triangulation().is_vertex(Weighted_point(p), vp))
         {
-          // if 'p' is not a corner
-          vp = insert_curve_point(p,p_index);
+          // if 'p' is not a corner, find out a second point 'q' on the
+          // curve, "far" from 'p', and limit the radius of the ball of 'p'
+          // with the third of the distance from 'p' to 'q'.
+          FT p_size = query_size(p, 1, p_index);
+
+          FT curve_lenght = domain_.geodesic_distance(p, p, curve_index);
+
+          Bare_point other_point =
+            domain_.construct_point_on_curve_segment(p,
+                                                     curve_index,
+                                                     curve_lenght / 2);
+          p_size = (std::min)(p_size,
+                              compute_distance(p, other_point) / 3);
+          vp = smart_insert_point(p,
+                                  CGAL::square(p_size),
+                                  1,
+                                  p_index);
         }
         // No 'else' because in that case 'is_vertex(..)' already filled
         // the variable 'vp'.
