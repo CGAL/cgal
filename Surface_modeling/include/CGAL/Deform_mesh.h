@@ -20,10 +20,6 @@
 #define CGAL_DEFORM_MESH_H
 
 #include <CGAL/internal/Surface_modeling/Weights.h>
-
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/Default.h>
 
 #include <vector>

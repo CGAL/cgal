@@ -4,7 +4,10 @@
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
-#include <CGAL/boost/graph/properties.h>
+
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 
 #include <iostream>
 #include <fstream>

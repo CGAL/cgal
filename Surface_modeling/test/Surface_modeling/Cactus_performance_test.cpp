@@ -49,7 +49,7 @@ bool preprocess_and_deform(DeformMesh& deform_mesh, int deformation_iteration)
   std::cerr << "Preprocess time: " << timer.time() << std::endl;
   timer.reset();
 
-  deform_mesh.translate(*active_handle_group, typename DeformMesh::Vector(-0.55, -0.30, 0.0) );
+  deform_mesh.translate(*active_handle_group, CGAL::Simple_cartesian<double>::Vector_3(-0.55, -0.30, 0.0) );
   deform_mesh.deform(deformation_iteration, 0);
   timer.stop();
 
@@ -74,7 +74,7 @@ int main()
   bool successed = preprocess_and_deform(deform_mesh_arap,
     "data/cactus_roi.txt",
     "data/cactus_handle.txt",
-    Deform_mesh_arap::Vector(x, y, z),
+    CGAL::Simple_cartesian<double>::Vector_3(x, y, z),
     deformation_iteration);
   if(!successed) { return EXIT_FAILURE; }
 
@@ -82,7 +82,7 @@ int main()
   successed = preprocess_and_deform(deform_mesh_spoke,
     "data/cactus_roi.txt",
     "data/cactus_handle.txt",
-    Deform_mesh_spoke::Vector(x, y, z),
+    CGAL::Simple_cartesian<double>::Vector_3(x, y, z),
     deformation_iteration);
   if(!successed) { return EXIT_FAILURE; }
 

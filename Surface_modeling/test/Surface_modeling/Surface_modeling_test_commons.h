@@ -1,9 +1,16 @@
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+
 #include <boost/property_map/property_map.hpp>
 #include <boost/optional.hpp>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <iostream>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Timer.h>
 
 template<class PolyhedronWithId, class KeyType>
 struct Polyhedron_with_id_property_map
@@ -75,7 +82,7 @@ template<class DeformMesh>
 bool preprocess_and_deform(DeformMesh& deform_mesh, 
   const std::string& roi_file,
   const std::string& handle_file,
-  typename DeformMesh::Vector translate, 
+  CGAL::Simple_cartesian<double>::Vector_3 translate, 
   int deformation_iteration) 
 {
   boost::optional<typename DeformMesh::Handle_group> active_handle_group = 
