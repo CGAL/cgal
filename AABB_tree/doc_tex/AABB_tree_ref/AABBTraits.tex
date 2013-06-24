@@ -28,7 +28,7 @@ The concept \ccRefName\ provides the geometric primitive types and methods for t
 \ccNestedType{Point_3}{Type of a 3D point.}
 
 \ccNestedType{Primitive}{Type of primitive.
-                         Must be a model of the concept \ccc{AABBPrimitive}.}
+                         Must be a model of the concepts \ccc{AABBPrimitive} or \ccc{AABBPrimitiveWithSharedData}.}
 
 \ccNestedType{Bounding_box}{Bounding box type.}
 
@@ -108,6 +108,15 @@ for which the class \ccc{AABB_tree<AT>} may receive a distance query.
 \ccMethod{Closest_point closest_point_object();}{Returns the closest point constructor.}
 
 \ccMethod{Squared_distance squared_distance_object();}{Returns the squared distance functor.}
+
+In addition, if \ccc{Primitive} is a model of the concept \ccc{AABBPrimitiveWithSharedData}, the following functions are part of the concept:
+
+\ccMethod{template <class ... T> void set_shared_data(T ... t);}
+{the signature of that function must be the same as the static function \ccc{Primitive::construct_shared_data}. The type \ccc{Primitive} expects that the data constructed
+by a call to \ccc{Primitive::construct_shared_data(t...)} is the one given back when accessing the reference point and the datum of a primitive.}
+
+\ccMethod{const Primitive::Shared_data& shared_data() const;}{Returns the shared data of the primitive constructed after a call to \ccc{set_shared_data}. If no call to \ccc{set_shared_data}
+has been done, \ccc{Primitive::Shared_data()} is returned.}
 
 \ccHasModels
 \ccc{AABB_traits<GeomTraits,Primitive>}.

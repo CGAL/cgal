@@ -7,7 +7,7 @@
 // CGAL
 #include <CGAL/AABB_tree.h> // must be included before kernel
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -39,7 +39,7 @@ typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
 // AABB tree
-typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel,Polyhedron> Primitive;
+typedef CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
@@ -212,7 +212,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
 
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
-    AABB_tree tree(output_mesh->facets_begin(), output_mesh->facets_end());
+    AABB_tree tree(output_mesh->facets_begin(), output_mesh->facets_end(), *output_mesh);
     tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh

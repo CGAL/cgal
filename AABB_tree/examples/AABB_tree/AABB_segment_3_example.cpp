@@ -17,7 +17,7 @@ typedef K::Segment_3 Segment;
 typedef K::Triangle_3 Triangle;
 
 typedef std::list<Segment>::iterator Iterator;
-typedef CGAL::AABB_segment_primitive<K,Iterator> Primitive;
+typedef CGAL::AABB_segment_primitive<K, Iterator> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 

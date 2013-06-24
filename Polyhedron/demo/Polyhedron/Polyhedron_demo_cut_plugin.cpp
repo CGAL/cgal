@@ -10,7 +10,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
 #include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -27,12 +27,9 @@
 //typedef CGAL::Simple_cartesian<double> Epic_kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
-typedef class CGAL::AABB_polyhedron_triangle_primitive<
-                                    Epic_kernel,
-                                    Polyhedron>             AABB_primitive;
-typedef class CGAL::AABB_traits<Epic_kernel,
-                                AABB_primitive>             AABB_traits;
-typedef class CGAL::AABB_tree<AABB_traits> AABB_tree;
+typedef CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron>     AABB_primitive;
+typedef CGAL::AABB_traits<Epic_kernel,AABB_primitive>           AABB_traits;
+typedef CGAL::AABB_tree<AABB_traits>                            AABB_tree;
 
 class Q_DECL_EXPORT Scene_aabb_item : public Scene_item_with_display_list
 {
@@ -270,7 +267,8 @@ void Polyhedron_demo_cut_plugin::cut() {
       it = trees.insert(trees.begin(),
                         std::make_pair(poly_item,
                                        new AABB_tree(poly_item->polyhedron()->facets_begin(),
-                                                     poly_item->polyhedron()->facets_end() )));
+                                                     poly_item->polyhedron()->facets_end(),
+                                                     *poly_item->polyhedron() )));
       Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
       aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
       aabb_item->setRenderingMode(Wireframe);

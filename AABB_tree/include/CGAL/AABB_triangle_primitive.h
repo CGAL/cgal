@@ -1,4 +1,4 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2012 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,54 +16,85 @@
 // $Id$
 //
 //
-// Author(s)     : Pierre Alliez, Stephane Tayeb
+// Author(s)     : Sebastien Loriot
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
+
 
 #ifndef CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 #define CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 
+#include <CGAL/AABB_primitive.h>
+#include <CGAL/result_of.h>
+#include <iterator>
+
 namespace CGAL {
 
-    template <class GeomTraits, class Iterator>
-    class AABB_triangle_primitive
+namespace internal {
+  template <class GeomTraits, class Iterator>
+  struct Point_from_triangle_3_iterator_property_map{
+    //classical typedefs
+    typedef Iterator key_type;
+    typedef typename GeomTraits::Point_3 value_type;
+    typedef typename cpp11::result_of<
+      typename GeomTraits::Construct_vertex_3(typename GeomTraits::Triangle_3,int)
+    >::type reference;
+    typedef boost::readable_property_map_tag category;
+
+    inline friend
+    typename Point_from_triangle_3_iterator_property_map<GeomTraits,Iterator>::reference
+    get(Point_from_triangle_3_iterator_property_map<GeomTraits,Iterator>, Iterator it)
     {
-    public:
-        // types
-        typedef Iterator Id; // Id type
-        typedef typename GeomTraits::Point_3 Point; // point type
-        typedef typename GeomTraits::Triangle_3 Datum; // datum type
+      return typename GeomTraits::Construct_vertex_3()( *it, 0 );
+    }
+  };
+}//namespace internal
 
-    private:
-        // member data
-        Id m_it; // iterator
-        Datum m_datum; // 3D triangle
 
-        // constructor
-    public:
-        AABB_triangle_primitive() {}
-        AABB_triangle_primitive(Id it)
-            : m_it(it)
-        {
-            m_datum = *it; // copy triangle
-        }
-        AABB_triangle_primitive(const AABB_triangle_primitive& primitive)
-        {
-            m_datum = primitive.datum();
-            m_it = primitive.id();
-        }
-    public:
-        Id& id() { return m_it; }
-        const Id& id() const { return m_it; }
-        Datum& datum() { return m_datum; }
-        const Datum& datum() const { return m_datum; }
-
-        /// Returns a point on the primitive
-        Point reference_point() const { return m_datum.vertex(0); }
-    };
+/*!
+ * \ingroup PkgAABB_tree
+ * Primitive type that uses as identifier an iterator with a 3D triangle as `value_type`.
+ * The iterator from which the primitive is built should not be invalided
+ * while the AABB tree holding the primitive is in use.
+ *
+ * \cgalModels `AABBPrimitive`
+ *
+ * \tparam GeomTraits is a traits class providing the nested type `Point_3` and `Triangle_3`.
+ *         It also provides the functor `Construct_vertex_3` that has an operator taking a `Triangle_3`
+ *         and an integer as parameters and returning a triangle point as a type convertible to `Point_3`.
+ *         In addition `Construct_vertex_3` must support the result_of protocol.
+ * \tparam Iterator is a model of `ForwardIterator` with its value type convertible to `GeomTraits::Triangle_3`
+ * \tparam cache_datum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
+ *           the datum is stored in the primitive, while in the latter it is
+ *           constructed on the fly to reduce the memory footprint.
+ *           The default is `CGAL::Tag_false` (datum is not stored).
+ *
+ * \sa `AABBPrimitive`
+ * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>`
+ * \sa `AABB_segment_primitive<Iterator,cache_datum>`
+ * \sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>`
+ * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>`
+ */
+template < class GeomTraits,
+           class Iterator,
+           class cache_datum=Tag_false>
+class AABB_triangle_primitive
+#ifndef DOXYGEN_RUNNING
+  : public AABB_primitive<  Iterator,
+                            Input_iterator_property_map<Iterator>,
+                            internal::Point_from_triangle_3_iterator_property_map<GeomTraits, Iterator>,
+                            Tag_false,
+                            cache_datum >
+#endif
+{
+  typedef AABB_primitive< Iterator,
+                          Input_iterator_property_map<Iterator>,
+                          internal::Point_from_triangle_3_iterator_property_map<GeomTraits, Iterator>,
+                          Tag_false,
+                          cache_datum > Base;
+public:
+  ///Constructor from an iterator
+  AABB_triangle_primitive(Iterator it) : Base(it){}
+};
 
 }  // end namespace CGAL
 
