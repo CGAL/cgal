@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Polyhedron_slicer_widget</class>
+ <widget class="QWidget" name="Polyhedron_slicer_widget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>295</width>
+    <height>180</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QGridLayout">
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="Base_2_x"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="Base_2_label">
+       <property name="text">
+        <string>Base 2</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="Base_1_label">
+       <property name="text">
+        <string>Base 1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="Center_label">
+       <property name="text">
+        <string>Center</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="Base_1_x"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="Center_x"/>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLineEdit" name="Base_1_z"/>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLineEdit" name="Base_1_y"/>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLineEdit" name="Center_y"/>
+     </item>
+     <item row="2" column="3">
+      <widget class="QLineEdit" name="Center_z"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="Base_2_y"/>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="Base_2_z"/>
+     </item>
+     <item row="3" column="3">
+      <widget class="QPushButton" name="Update_plane_button">
+       <property name="text">
+        <string>Update Plane</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="Distance_with_planes_label">
+       <property name="text">
+        <string>Distance with planes</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="Distance_with_planes"/>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0">
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QCheckBox" name="newPolylineItemCheckBox">
+       <property name="text">
+        <string>New polyline item for each polyline</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Generate_button">
+       <property name="text">
+        <string>Generate</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
