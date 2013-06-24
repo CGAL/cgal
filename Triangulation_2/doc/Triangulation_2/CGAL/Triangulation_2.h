@@ -551,7 +551,7 @@ locate(const Point& query,
 Face_handle f = Face_handle()) const; 
 
 /*!
-Same as above but uses inexact predicates. 
+Same as `locate()` but uses inexact predicates. 
 This function returns a handle on a face that is a good approximation of the exact
 location of `query`, while being faster. 
 Note that it may return a handle on a face whose interior does not contain 

@@ -595,7 +595,7 @@ Cell_handle
 locate(const Point & query, Vertex_handle hint) const; 
 
 /*!
-Same as above but uses inexact predicates. 
+Same as `locate()` but uses inexact predicates. 
 This function returns a handle on a cell that is a good approximation of the exact
 location of `query`, while being faster. Note that it may return a handle on a cell 
 whose interior does not contain `query`.
