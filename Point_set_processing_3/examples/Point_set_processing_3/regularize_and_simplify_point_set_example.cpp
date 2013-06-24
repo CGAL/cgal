@@ -22,16 +22,27 @@ int main(void)
     return EXIT_FAILURE;
   }
 
-  // Randomly simplifies using erase-remove idiom
-  const double retain_percentage = 5.0; // percentage of points to remove
-
+  //Algorithm parameters
+  const double retain_percentage = 5.0;   // percentage of points to retain.
+  const unsigned int k = 1000;            // number of neighbors.
+  unsigned int iter_number = 50;          // number of iterations.
+  const bool need_compute_density = true; // if needed to compute density to generate more rugularized result, 
+                                          //  especially when the density of input is uneven.
+ 
+  // Make room for sample points
   std::vector<Point> points_sampled;
   points_sampled.assign(points.size() * (retain_percentage / 100.), Point());
   
-  std::copy(CGAL::regularize_and_simplify_point_set(points.begin(), points.end(), retain_percentage, 450, 50), points.end(), points_sampled.begin());
+  // Run algorithm and copy results to sample points
+  std::copy(CGAL::regularize_and_simplify_point_set(points.begin(), 
+	                                                points.end(), 
+													retain_percentage, 
+													k,
+													iter_number,
+													need_compute_density),
+	         points.end(), 
+			 points_sampled.begin());
 
-  // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-  std::vector<Point>(points).swap(points);
 
   // Saves point set.
   // Note: write_xyz_points_and_normals() requires an output iterator
