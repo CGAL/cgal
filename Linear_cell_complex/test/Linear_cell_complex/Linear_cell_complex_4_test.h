@@ -295,28 +295,33 @@ bool test_LCC_4()
   lcc.template sew<4>(dh1, dh3);
 
   LCC lcc2(lcc);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
 
   lcc.reverse_orientation();
+  if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc, false) )
   { assert(false); return false; }
 
   lcc.reverse_orientation();
+  if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc, false) )
   { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
 
   lcc.reverse_orientation_connected_component(dh1);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc, false) )
   { assert(false); return false; }
 
   lcc.reverse_orientation_connected_component(dh1);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
 

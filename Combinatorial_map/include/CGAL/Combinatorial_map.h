@@ -3344,6 +3344,14 @@ namespace CGAL {
       CGAL::Unique_hash_map<Dart_const_handle,
                             typename Map2::Dart_const_handle> bijection;
 
+      if ( testAttributes )
+      {
+        internal::Test_is_same_attribute_functor<Self, Map2>::
+            value = true;
+        internal::Test_is_same_attribute_functor<Map2, Self>::
+            value = true;
+      }
+
       while (match && !toTreat1.empty())
       {
         // Next dart

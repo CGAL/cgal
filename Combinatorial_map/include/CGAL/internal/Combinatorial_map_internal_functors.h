@@ -70,6 +70,12 @@
  *
  * internal::Is_attribute_has_point<Attr> to test if the attribute
  *   Attr is non Void and has a Point inner type
+ *
+ * internal::Reverse_orientation_of_map_functor<CMap> to reverse the
+ *   orientation of a whole combinatorial map
+ *
+ * internal::Reverse_orientation_of_connected_component_functor to reverse
+ *   the orientation of a connected component in a cmap
  */
 
 namespace CGAL
@@ -674,7 +680,7 @@ struct Reverse_orientation_of_map_functor
         current_dart_in_cell->beta(1);
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
         run(amap, current_dart_in_cell, attribute_for_first_dart);
-              attribute_for_first_dart->dec_nb_refs();
+      attribute_for_first_dart->dec_nb_refs();
       current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
       current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
     }
