@@ -642,7 +642,8 @@ public:
     {
       std::size_t v_id = ros_id(*it);
       Vect v = quat * sub_to_vector<Vect>(original[v_id], rotation_center);
-      solution[v_id] = add_to_point(rotation_center, v);
+      const Point& rotated = add_to_point(rotation_center, v);
+      solution[v_id] = Point(rotated[0] + t[0], rotated[1] + t[1], rotated[2] + t[2]);
     }
   }
 
