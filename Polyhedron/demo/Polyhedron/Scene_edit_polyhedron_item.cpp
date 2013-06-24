@@ -54,7 +54,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   //vnormals.resize(positions.size());
   Polyhedron::Vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(vb=polyhedron()->vertices_begin(), polyhedron()->vertices_end();vb != ve; ++vb, ++counter) {
+  for(vb=polyhedron()->vertices_begin(), ve = polyhedron()->vertices_end();vb != ve; ++vb, ++counter) {
     positions[counter*3] = vb->point().x();
     positions[counter*3+1] = vb->point().y();
     positions[counter*3+2] = vb->point().z();
