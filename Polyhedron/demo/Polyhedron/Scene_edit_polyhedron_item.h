@@ -78,8 +78,8 @@ put(Array_based_vertex_point_map pmap,
   (*pmap.positions)[pos+2] = val.z();
 }
 
-typedef Polyhedron_with_id_property_map<Polyhedron, Polyhedron::Vertex_handle> Vertex_index_map; 
-typedef Polyhedron_with_id_property_map<Polyhedron, Polyhedron::Halfedge_handle>   Edge_index_map; 
+typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; 
+typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map; 
 
 typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::ORIGINAL_ARAP
   ,CGAL::Default, CGAL::Default, CGAL::Default, 
