@@ -52,9 +52,9 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   // Required for drawing functionality
   positions.resize(boost::num_vertices(*polyhedron())*3);
   //vnormals.resize(positions.size());
-  vertex_iterator vb, ve;
+  Polyhedron::Vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = boost::vertices(*polyhedron()); vb != ve; ++vb, ++counter) {
+  for(vb=polyhedron()->vertices_begin(), polyhedron()->vertices_end();vb != ve; ++vb, ++counter) {
     positions[counter*3] = vb->point().x();
     positions[counter*3+1] = vb->point().y();
     positions[counter*3+2] = vb->point().z();
