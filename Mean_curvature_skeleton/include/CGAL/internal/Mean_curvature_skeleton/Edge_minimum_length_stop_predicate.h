@@ -71,7 +71,7 @@ public :
                  , size_type      aCurrentCount
                  ) const 
   {
-    return aCurrentCost < mThres ;
+    return aCurrentCost > mThres ;
   }
   
 private:
