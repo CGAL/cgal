@@ -26,7 +26,7 @@ public:
     typename Kernel::Construct_ray_3 ray_functor = Kernel().construct_ray_3_object(),
     typename Kernel::Construct_vector_3 vector_functor = Kernel().construct_vector_3_object() ) const
   {
-    const Traits::Bounding_box& bbox = tree.bbox();
+    const typename Traits::Bounding_box& bbox = tree.bbox();
 
     if(   point.x() < bbox.xmin() || point.x() > bbox.xmax()
       || point.y() < bbox.ymin() || point.y() > bbox.ymax()
