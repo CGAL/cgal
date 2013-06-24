@@ -108,14 +108,6 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 <div>
   <p> Release date: September 2013 </p>
 
-  <h3>3D Fast Intersection and Distance Computation (AABB Tree)</h3>
-  <ul>
-    <li>Following the intersection API change, <code>Object_and_primitive_id</code> has been replaced by a template class
-        <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine the type depending on the
-        query object type.
-    </li>
-  </ul>
-
   <h3>2D Arrangements</h3>
   <ul>
     <li> The point location functionalities now uses a <code>boost::variant</code> instead of a <code>CGAL::Object</code>.
@@ -184,7 +176,21 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
 
   <h3>3D Fast Intersection and Distance Computation</h3>
   <ul>
-    <li> Fix a memory leak in the destructor of the class <code>AABB-tree</code>
+    <li>Following the intersection API change, <code>Object_and_primitive_id</code> has been replaced by a template class
+        <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine the type depending on the
+        query object type.
+    </li>
+    <li> Introduce the class <code>AABB_HalfedgeGraph_segment_primitive</code> which replaces the class <code>AABB_polyhedron_segment_primitive</code>  (which is now deprecated).
+         The new class is more general and can be used with any model of <code>HalfedgeGraph</code>.</li>
+    <li>Introduce the class <code>AABB_FaceGraph_triangle_primitive</code> which replaces the class <code>AABB_polyhedron_triangle_primitive</code>  (which is now deprecated).</li>
+    <li>Document the classes <code>AABB_segment_primitive</code> and <code>AABB_triangle_primitive</code> that were already used in some examples.</li>
+    <li>Add a generic primitive class <code>AABB_primitive</code> that allows to define a primitive type by defining only two property maps.</li>
+    <li>Introduce a new concept of primitive <code>AABBPrimitiveWithSharedData</code>. It allows to have some data shared between the primitives stored in a <code>AABB_tree</code>.
+        With this you can, for example have a primitive wrapping an integer which refers to the position of a geometric object in a <code>std::vector</code>.
+        Only one reference to this vector will be stored in the traits of the tree.
+        The concept <code>AABBTraits</code>, its model <code>AABB_traits</code> and the class <code>AABB_tree</code> have been updated accordingly.
+        However, everything is  backward compatible.</li>
+    <li> Fix a memory leak in the destructor of the class <code>AABB-tree</code></li>
   </ul>
 
   <h3>STL Extensions for CGAL</h3>
