@@ -125,14 +125,6 @@ private:
   Vertex_handle get_vertex_corner_from_point(const Bare_point& p,
                                              const Index& p_index) const;
   
-  /// Insert point p as a curve segment point, using querying the sizing field to
-  /// get the weight.
-  Vertex_handle insert_curve_point(const Bare_point& p, const Index& p_index);
-  
-  /// Insert point p as a curve segment point, with a given weight.
-  Vertex_handle insert_curve_point(const Bare_point& p, const Index& p_index,
-                                   const Weight weight);
-
   /// Insert point(p,w) into triangulation and set its dimension to \c dim and
   /// it's index to \c index.
   /// The handle of the newly created vertex is returned.
@@ -823,26 +815,6 @@ get_vertex_corner_from_point(const Bare_point& p, const Index&) const
 }
 
 
-template <typename C3T3, typename MD, typename Sf>
-inline
-typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
-Protect_edges_sizing_field<C3T3, MD, Sf>::
-insert_curve_point(const Bare_point& p, const Index& p_index)
-{
-  return insert_curve_point(p, p_index, 
-                            CGAL::square(query_size(p, 1, p_index)));
-}
-  
-template <typename C3T3, typename MD, typename Sf>
-inline
-typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
-Protect_edges_sizing_field<C3T3, MD, Sf>::
-insert_curve_point(const Bare_point& p, const Index& p_index, 
-                   const Weight p_weight)
-{
-  return smart_insert_point(p, p_weight, 1, p_index);
-}
-  
 template <typename C3T3, typename MD, typename Sf>
 void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
