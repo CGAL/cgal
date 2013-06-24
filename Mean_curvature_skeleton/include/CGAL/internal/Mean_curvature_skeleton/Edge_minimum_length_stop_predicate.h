@@ -22,6 +22,8 @@
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
+namespace SMS = CGAL::Surface_mesh_simplification;
+
 namespace CGAL {
 
 namespace internal
@@ -45,7 +47,7 @@ public:
 
   typedef ECM_ ECM ;
 
-  typedef Edge_profile<ECM> Profile ;
+  typedef SMS::Edge_profile<ECM> Profile ;
   
 private :
 
