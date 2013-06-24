@@ -70,11 +70,8 @@ void test_all_intersection_query_types(Tree& tree)
     typedef typename K::Ray_3 Ray;
     typedef typename K::Line_3 Line;
     typedef typename K::Point_3 Point;
-    // typedef typename K::Vector_3 Vector;
     typedef typename K::Segment_3 Segment;
     typedef typename Tree::Primitive Primitive;
-    // typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
-    typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
 
     Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
     Point q((FT) 0.5, (FT) 0.5, (FT) 0.5);
@@ -102,7 +99,8 @@ void test_all_intersection_query_types(Tree& tree)
 
     // any_intersection
     #if CGAL_INTERSECTION_VERSION < 2
-    boost::optional<Object_and_primitive_id> optional_object_and_primitive;
+    typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
+    boost::optional<Z> optional_object_and_primitive;
     optional_object_and_primitive = tree.any_intersection(ray);
     optional_object_and_primitive = tree.any_intersection(line);
     optional_object_and_primitive = tree.any_intersection(segment);
