@@ -177,14 +177,13 @@ public:
     typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
   >::type Vertex_point_map;
 #else
-  typedef VPM Vertex_point_map; /**<  a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `Polyhedron::Point_3` as value type */
+  typedef VPM Vertex_point_map; /**<  a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `Point` as value type */
 #endif
   /// @}
 
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor		edge_descriptor;   /**< The type for edge representative objects */
-
-  typedef typename Polyhedron::Point_3 Point;  /**<The type for Point_3 from Polyhedron traits */
+  typedef typename boost::property_traits<Vertex_point_map>::value_type Point; /**<The 3D point type*/
 
 private:
   typedef Deform_mesh<P, VIM, EIM, TAG, WC, ST, CR> Self;
