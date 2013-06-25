@@ -36,7 +36,8 @@ save_binary_file(std::ostream& os,
 {
   os << "binary CGAL c3t3 " << CGAL::Get_io_signature<C3T3>()() << "\n";
   CGAL::set_binary_mode(os);
-  return os << c3t3;
+  return !!(os << c3t3);
+  // call operator!() twice, because operator bool() is C++11
 }
 
 template <class C3T3>
@@ -63,7 +64,8 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
   }
   CGAL::set_binary_mode(is);
   is >> c3t3;
-  return is;
+  return !!is;
+  // call operator!() twice, because operator bool() is C++11
 }
 
 } // end namespace Mesh_3
