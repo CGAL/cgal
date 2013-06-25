@@ -30,6 +30,15 @@
 #include <algorithm>
 #include <cmath>
 
+#include "tbb/parallel_for.h"
+#include "tbb/blocked_range.h"
+
+// Not sure...
+struct Sequential_tag {};
+struct Parallel_tag : public Sequential_tag {};
+//#ifdef CGAL_LINKED_WITH_TBB
+//#define CGAL_LINKED_WITH_TBB
+
 /// \cond SKIP_IN_MANUAL
 
 // ----------------------------------------------------------------------------
@@ -435,7 +444,11 @@ compute_density_weight_for_sample_point(
 namespace CGAL {
 
 /// \ingroup PkgPointSetProcessing
-/// WLOP Algorithm...
+/// WLOP Algorithm: The simplification algorithm can produces a set of 
+///	denoised, outlier-free and evenly distributed particles over the original dense point cloud,
+///	so as to improve the reliability of current normal orientation algorithm. 
+///	The core of the algorithm is a Weighted Locally Optimal projection operator with a density uniformization term. 
+/// More deatail please see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
@@ -512,14 +525,14 @@ regularize_and_simplify_point_set(
 	Tree original_tree(original_treeElements.begin(), original_treeElements.end());
 
 	// Guess spacing
-	FT guess_spacings = (FT)(std::numeric_limits<double>::max)(); // Or a better max number: (numeric_limits<double>::max)()?
+	FT guess_neighbor_radius = (FT)(std::numeric_limits<double>::max)(); // Or a better max number: (numeric_limits<double>::max)()?
 	for(it = first_original_point; it != beyond ; ++it)
 	{
 		FT max_spacing = regularize_and_simplify_internal::compute_max_spacing<Kernel,Tree>(get(point_pmap,it),original_tree,k);
-	    guess_spacings = max_spacing < guess_spacings ? max_spacing : guess_spacings;
+	    guess_neighbor_radius = max_spacing < guess_neighbor_radius ? max_spacing : guess_neighbor_radius;
 	}
-	guess_spacings *= 0.95;
-	std::cout << "Guess Spacing:	" << guess_spacings << std::endl;
+	guess_neighbor_radius *= 0.95;
+	std::cout << "Guess Neighborhood Radius:" << guess_neighbor_radius << std::endl;
 
 	// Compute original density weight for original points if user needed
 	std::vector<FT> original_density_weight_set;
@@ -527,7 +540,7 @@ regularize_and_simplify_point_set(
 	{
 		for (it = first_original_point; it != beyond ; ++it)
 		{
-			FT density = regularize_and_simplify_internal::compute_density_weight_for_original_point<Kernel, Tree>(get(point_pmap,it), original_tree, k, guess_spacings * 0.3);
+			FT density = regularize_and_simplify_internal::compute_density_weight_for_original_point<Kernel, Tree>(get(point_pmap,it), original_tree, k, guess_neighbor_radius * 0.3);
 			original_density_weight_set.push_back(density);
 		}
 	}
@@ -536,7 +549,7 @@ regularize_and_simplify_point_set(
 	{
 		// Initiate a KD-tree search for sample points
 		std::vector<KdTreeElement> sample_treeElements;
-		unsigned int k_for_sample = 50; // Or it can be conducted by the "guess_spacings"
+		unsigned int k_for_sample = 50; // Or it can be conducted by the "guess_neighbor_radius"
 		
 		for (i=0 ; i < sample_points.size(); i++)
 		{
@@ -551,7 +564,7 @@ regularize_and_simplify_point_set(
 		{
 			for (i=0 ; i < sample_points.size(); i++)
 			{
-				FT density = regularize_and_simplify_internal::compute_density_weight_for_sample_point<Kernel, Tree>(sample_points[i], sample_tree, k_for_sample, guess_spacings);
+				FT density = regularize_and_simplify_internal::compute_density_weight_for_sample_point<Kernel, Tree>(sample_points[i], sample_tree, k_for_sample, guess_neighbor_radius);
 				sample_density_weight_set.push_back(density);
 			}
 		}
@@ -563,8 +576,8 @@ regularize_and_simplify_point_set(
 		for (i = 0; i < sample_points.size(); i++)
 		{
 			Point& p = sample_points[i];
-			average_set[i] = regularize_and_simplify_internal::compute_average_term<Kernel>(p, original_tree, k, guess_spacings, original_density_weight_set);
-			repulsion_set[i] = regularize_and_simplify_internal::compute_repulsion_term<Kernel>(p, sample_tree, k_for_sample, guess_spacings, sample_density_weight_set);
+			average_set[i] = regularize_and_simplify_internal::compute_average_term<Kernel>(p, original_tree, k, guess_neighbor_radius, original_density_weight_set);
+			repulsion_set[i] = regularize_and_simplify_internal::compute_repulsion_term<Kernel>(p, sample_tree, k_for_sample, guess_neighbor_radius, sample_density_weight_set);
 		}
 
 		for (i = 0; i < sample_points.size(); i++)
@@ -619,7 +632,7 @@ regularize_and_simplify_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map.
-template <typename ForwardIterator
+template <typename ForwardIterator 
 >
 ForwardIterator
 regularize_and_simplify_point_set(
