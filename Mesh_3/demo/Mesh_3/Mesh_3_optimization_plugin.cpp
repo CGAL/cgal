@@ -577,6 +577,7 @@ translate(CGAL::Mesh_optimization_return_code rc)
     case CGAL::CANT_IMPROVE_ANYMORE: return QString("Can't improve anymore");
     case CGAL::CONVERGENCE_REACHED: return QString("Convergence reached");
     case CGAL::MAX_ITERATION_NUMBER_REACHED: return QString("Max iteration number reached");
+    case CGAL::ALL_VERTICES_FROZEN: return QString("All vertices have been frozen");
   }
   
   return QString("ERROR");
