@@ -38,6 +38,46 @@
 namespace CGAL {
 namespace Mesh_3 {
 
+  namespace details {
+
+    template <typename Tr>
+    class C3t3_helper_class
+    {
+    protected:
+      typedef typename Tr::Vertex_handle Vertex_handle;
+      typedef typename Tr::Cell_handle   Cell_handle;
+      typedef typename Tr::Facet         Facet;
+      typedef typename Tr::Edge          Edge;
+
+      typedef std::pair<Vertex_handle, Vertex_handle> Pair_of_vertices;
+
+      // computes and return an ordered pair of Vertex
+      Pair_of_vertices
+      make_ordered_pair(const Vertex_handle vh1, const Vertex_handle vh2) const {
+	if (vh1 < vh2) {
+	  return std::make_pair(vh1, vh2);
+	}
+	else {
+	  return std::make_pair(vh2, vh1);
+	}
+      }
+
+      // same from an Edge
+      Pair_of_vertices
+      make_ordered_pair(const Edge e) const {
+        return make_ordered_pair(e.first->vertex(e.second),
+                                 e.first->vertex(e.third));
+      }
+
+      Facet canonical_facet(Cell_handle c, int i) const {
+        Cell_handle c2 = c->neighbor(i);
+        return (c2 < c) ? std::make_pair(c2,c2->index(c)) : std::make_pair(c,i);
+      }
+
+    }; // end class template C3t3_helper_class
+
+  } // end namespace Mesh_3::details
+
 /**
  * @class Mesh_complex_3_in_triangulation_3_base
  * @brief A data-structure to represent and maintain a 3D complex embedded
@@ -45,8 +85,10 @@ namespace Mesh_3 {
  */
 template<typename Tr>
 class Mesh_complex_3_in_triangulation_3_base
+  : public details::C3t3_helper_class<Tr>
 {
   typedef Mesh_complex_3_in_triangulation_3_base<Tr> Self;
+  typedef details::C3t3_helper_class<Tr> Base;
 
 public:
   // Triangulation types
@@ -62,6 +104,26 @@ public:
   typedef typename Tr::Cell::Surface_patch_index  Surface_patch_index;
   typedef typename Tr::Vertex::Index              Index;
 
+  enum Face_status{ NOT_IN_COMPLEX = 0,
+                    ISOLATED = 1, // - An ISOLATED edge is a marked edge,
+                                  //   without any incident facets.
+                    BOUNDARY,     // - An edge is on BOUNDARY if it has only
+                                  //   one incident facet.
+                                  // - A vertex is on BOUNDARY if all its
+                                  //   incident edges are REGULAR or on
+                                  //   BOUNDARY, at least one is on
+                                  //   BOUNDARY, and the incident facets
+                                  //   form only one connected component.
+                    REGULAR,      // - A facet that is in the complex is
+                                  //   REGULAR.
+                                  // - An edge is REGULAR if it has
+                                  //   exactly two incident facets.
+                                  // - A vertex is REGULAR if all it
+                                  //   incident edges are REGULAR, and the
+                                  //   incident facets form only one
+                                  //   connected component.
+                    SINGULAR};    // - SINGULAR is for all other cases.
+
   //-------------------------------------------------------
   // Constructors / Destructors
   //-------------------------------------------------------
@@ -70,15 +132,23 @@ public:
    * Builds an empty 3D complex.
    */
   Mesh_complex_3_in_triangulation_3_base()
-    : number_of_facets_(0)
+    : Base()
     , tr_()
-    , number_of_cells_(0)    {}
+    , edge_facet_counter_()
+    , number_of_facets_(0)
+    , number_of_cells_(0)
+    , edge_facet_counter_valid_(false)
+  {}
   
   /// Copy constructor
   Mesh_complex_3_in_triangulation_3_base(const Self& rhs)
-    : number_of_facets_(rhs.number_of_facets_)
+    : Base()
     , tr_(rhs.tr_)
-    , number_of_cells_(rhs.number_of_cells_)    {}
+    , edge_facet_counter_(rhs.edge_facet_counter_)
+    , number_of_facets_(rhs.number_of_facets_)
+    , number_of_cells_(rhs.number_of_cells_)
+    , edge_facet_counter_valid_(rhs.edge_facet_counter_valid_)
+  {}
 
   /// Destructor
   ~Mesh_complex_3_in_triangulation_3_base() {}
@@ -87,6 +157,8 @@ public:
     number_of_cells_ = 0;
     number_of_facets_ = 0;
     tr_.clear();
+    edge_facet_counter_valid_ = false;
+    edge_facet_counter_.clear();
   }
   
   /// Assignment operator
@@ -133,6 +205,21 @@ public:
                          const Surface_patch_index& index)
   {
     cell->set_surface_patch_index(i, index);
+  }
+
+  /// Returns `NOT_IN_COMPLEX`, `BOUNDARY`, `REGULAR`, or `SINGULAR`,
+  /// depending on the number of incident facets int the complex
+  Face_status face_status(const Edge& edge) const
+  {
+    if(!edge_facet_counter_valid_) init_edge_facet_counter();
+
+    switch(edge_facet_counter_[this->make_ordered_pair(edge)])
+    {
+    case 0: return NOT_IN_COMPLEX;
+    case 1: return BOUNDARY;
+    case 2: return REGULAR;
+    default: return SINGULAR;
+    }
   }
 
   /// Returns true if facet \c facet is in complex
@@ -294,6 +381,29 @@ public:
   
   /// Returns bbox
   Bbox_3 bbox() const;
+
+private:
+  void init_edge_facet_counter() const {
+    for(typename Tr::Finite_facets_iterator
+          fit = triangulation().finite_facets_begin(),
+          end = triangulation().finite_facets_end();
+        fit != end; ++fit)
+    {
+      if ( is_in_complex(*fit) ) {
+        const Cell_handle cell = fit->first;
+        const int i = fit->second;
+        for(int j = 0; j < 3; ++j)
+        {
+          const int edge_index_va = tr_.vertex_triple_index(i, j);
+          const int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
+          const Vertex_handle edge_va = cell->vertex(edge_index_va);
+          const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+          ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+        }
+      }
+    }
+    edge_facet_counter_valid_ = true;
+  }
   
   //-------------------------------------------------------
   // Traversal
@@ -487,9 +597,18 @@ public:
   }
 private:
   // Private date members
-  size_type number_of_facets_;
   Triangulation tr_;
+
+  typedef typename Base::Pair_of_vertices Pair_of_vertices;
+  typedef std::map<Pair_of_vertices, int> Edge_facet_counter;
+
+  mutable Edge_facet_counter edge_facet_counter_;
+
+
+  size_type number_of_facets_;
   size_type number_of_cells_;
+
+  mutable bool edge_facet_counter_valid_;
 
 };  // end class Mesh_complex_3_in_triangulation_3_base
 
@@ -509,6 +628,16 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::add_to_complex(
     set_surface_patch_index(cell, i, index);
     set_surface_patch_index(mirror.first, mirror.second, index);
     ++number_of_facets_;
+    if(edge_facet_counter_valid_) {
+      for(int j = 0; j < 3; ++j)
+      {
+        int edge_index_va = tr_.vertex_triple_index(i, j);
+        int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
+        Vertex_handle edge_va = cell->vertex(edge_index_va);
+        Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+        ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+      }
+    }
   }
 }
 
@@ -523,6 +652,18 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::remove_from_complex(const Facet& fac
     set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
     set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
     --number_of_facets_;
+    if(edge_facet_counter_valid_) {
+      const Cell_handle cell = facet.first;
+      const int i = facet.second;
+      for(int j = 0; j < 3; ++j)
+      {
+        const int edge_index_va = tr_.vertex_triple_index(i, j);
+        const int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
+        const Vertex_handle edge_va = cell->vertex(edge_index_va);
+        const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+        --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+      }
+    }
   }
 }
   
