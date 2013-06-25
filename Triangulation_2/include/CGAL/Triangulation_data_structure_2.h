@@ -1855,7 +1855,7 @@ namespace internal { namespace TDS_2{
   template <class Face_src,class Face_tgt>
   struct Default_face_converter
   {
-    Face_tgt operator()(const Face_src& src) const {
+    Face_tgt operator()(const Face_src& /*src*/) const {
       return Face_tgt();
     } 
     
