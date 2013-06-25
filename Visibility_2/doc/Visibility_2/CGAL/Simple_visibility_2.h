@@ -3,7 +3,8 @@ namespace CGAL {
 \ingroup PkgVisibility_2Classes
 
 This class is a model of the concept `Visibility_2` offers visibility queries within 
-a simple polygon with no holes. Uses a linear algorithm to obtain visibility.
+a simple polygon with no holes. Uses the linear algorithm of B.Joe and R.B.Simpson [1] to obtain 
+the visibility polygon.
 
 \sa `Visibility_2` 
 
@@ -71,5 +72,8 @@ Computes for the given query point q the visibility region that is on the side o
 
 }; /* end Visibility_2 */
 
-
+/*!
+[1] B. Joe, R. B. Simpson, "Corrections to Lee's visibility polygon algorithm", BIT Numerical Mathematics 
+Volume 27, Issue 4 , pp 458-473
+*/
 }
