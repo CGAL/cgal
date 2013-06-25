@@ -100,7 +100,7 @@ void test_all_intersection_query_types(Tree& tree)
     // any_intersection
     #if CGAL_INTERSECTION_VERSION < 2
     typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
-    boost::optional<Z> optional_object_and_primitive;
+    boost::optional<Object_and_primitive_id> optional_object_and_primitive;
     optional_object_and_primitive = tree.any_intersection(ray);
     optional_object_and_primitive = tree.any_intersection(line);
     optional_object_and_primitive = tree.any_intersection(segment);
