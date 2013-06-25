@@ -63,6 +63,27 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
 }
 
 template<typename LCC>
+void display_lcc(LCC& lcc)
+{
+  unsigned int nb = 0;
+  for ( typename LCC::Dart_range::const_iterator it=lcc.darts().begin();
+        it!=lcc.darts().end(); ++it)
+  {
+    std::cout << " dart " << &(*it) << "; beta[i]=";
+    for ( unsigned int i=0; i<=LCC::dimension; ++i)
+    {
+      std::cout << &(*it->beta(i)) << ",\t";
+      if (it->is_free(i)) std::cout << "\t";
+    }
+    std::cout<<it->template attribute<0>()->point();
+    std::cout << std::endl;
+    ++nb;
+  }
+  std::cout << "Number of darts: " << nb <<"(sizeofdarts="
+     <<lcc.number_of_darts()<<")" << std::endl;
+}
+
+template<typename LCC>
 bool test_LCC_2()
 {
   LCC lcc;
@@ -187,6 +208,43 @@ bool test_LCC_2()
     lcc.clear();
   }
     
+  lcc.clear();
+  dh1=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
+  dh2=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));
+  lcc.template sew<2>(dh1,dh2);
+
+  LCC lcc2(lcc);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+
+  lcc.reverse_orientation();
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+
+  lcc.reverse_orientation();
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+
+  lcc.reverse_orientation_connected_component(dh1);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+
+  lcc.reverse_orientation_connected_component(dh1);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+
+
   return true;
 }
 

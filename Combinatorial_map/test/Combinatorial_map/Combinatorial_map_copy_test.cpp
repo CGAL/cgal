@@ -484,6 +484,23 @@ bool testCopy()
     assert( map5b.is_isomorphic_to(map5)==map5.is_isomorphic_to(map5b) );
   }
 
+  { // Test reverse orientation
+    Map9 map9b(map9);
+    if ( !map9.is_isomorphic_to(map9b) ) { assert(false); return false; }
+
+    map9b.reverse_orientation();
+    if ( map9.is_isomorphic_to(map9b) ) { assert(false); return false; }
+
+    map9b.reverse_orientation();
+    if ( !map9.is_isomorphic_to(map9b) ) { assert(false); return false; }
+
+    map9b.reverse_orientation_connected_component(map9b.first_dart());
+    if ( map9.is_isomorphic_to(map9b) ) { assert(false); return false; }
+
+    map9b.reverse_orientation_connected_component(map9b.first_dart());
+    if ( !map9.is_isomorphic_to(map9b) ) { assert(false); return false; }
+  }
+
   /*    displayAllAttribs4D(map9, "map9******************\n");
       displayAllAttribs3D(map9b, "map9b******************\n");*/
 
