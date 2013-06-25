@@ -5,11 +5,11 @@
  ///
  /// \code
  /// // a simple model to SurfaceModelingWeightCalculator concept, which provides uniform weights
- /// template<class Polyhedron>
  /// class Uniform_weight
  /// {
  /// public:
- ///   double operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor  /*e*/, const Polyhedron& /*polyhedron*/)
+ ///   template<class Polyhedron, class VertexPointMap>
+ ///   double operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor  /*e*/, const Polyhedron& /*p*/, VertexPointMap /*v*/)
  ///   { return 1.0; }
  /// };
  /// \endcode
@@ -22,6 +22,11 @@ public:
   typedef Hidden_type Polyhedron;
 /// @} 
 
+/// @{
+  /// a model of `ReadWritePropertyMap`</a>  with boost::graph_traits<Polyhedron>::vertex_descriptor as key and `Polyhedron::Point_3` as value type
+  typedef Hidden_type VertexPointMap;
+/// @} 
+
 /// \name Creation 
 /// @{
   /// Default constructor. Required only if the default parameter is used in the constructor of `CGAL::Deform_mesh`.
@@ -31,7 +36,7 @@ public:
 /// \name Operations 
 /// @{
   /// Function computing the edge weight of edge `e`
-  double operator()(boost::graph_traits<Polyhedron>::edge_descriptor  e, const Polyhedron& polyhedron);
+  double operator()(boost::graph_traits<Polyhedron>::edge_descriptor  e, const Polyhedron& polyhedron, VertexPointMap vpm);
 /// @}
 };
 

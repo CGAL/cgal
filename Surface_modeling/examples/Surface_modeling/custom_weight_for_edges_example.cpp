@@ -31,7 +31,8 @@ struct Weights_from_map
 {
   Weights_from_map(std::map<edge_descriptor, double>* weight_map) : weight_map(weight_map)
   { }
-  double operator()(edge_descriptor e, Polyhedron& /*P*/) {
+  template<class VertexPointMap>
+  double operator()(edge_descriptor e, Polyhedron& /*P*/, VertexPointMap /*v*/) {
     return (*weight_map)[e];
   }
   std::map<edge_descriptor, double>* weight_map;
