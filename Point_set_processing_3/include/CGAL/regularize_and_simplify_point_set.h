@@ -84,7 +84,7 @@ public:
 ///
 /// @return average spacing (scalar).
 template < typename Kernel,
-	typename Tree >
+		   typename Tree >
 typename Kernel::FT
 compute_max_spacing(const typename Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
 	Tree& tree,                            ///< KD-tree
@@ -223,7 +223,7 @@ compute_average_term(
 ///
 /// @return computed point
 template <typename Kernel,
-	typename Tree>
+	      typename Tree>
 typename Kernel::Vector_3
 compute_repulsion_term(
 	const typename Kernel::Point_3& query, ///< 3D point to project
@@ -319,7 +319,7 @@ compute_repulsion_term(
 ///
 /// @return computed point
 template <typename Kernel,
-	typename Tree>
+	      typename Tree>
 typename Kernel::FT
 compute_density_weight_for_original_point(
 	const typename Kernel::Point_3& query, ///< 3D point to project
@@ -394,13 +394,10 @@ compute_density_weight_for_sample_point(
 	typedef typename Kernel::Vector_3 Vector;
 	typedef typename Kernel::FT FT;
 
-	
-
 	// types for K nearest neighbors search
 	typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
 	typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
 	typedef typename Neighbor_search::iterator Search_iterator;
-
 
 	//Compute density weight
 	FT radius2 = radius * radius;
@@ -426,7 +423,9 @@ compute_density_weight_for_sample_point(
 	}
 	
 	// output
-	return std::sqrt(density_weight);
+	//return std::sqrt(density_weight);
+	return density_weight;
+
 }
 }
 
@@ -488,7 +487,7 @@ regularize_and_simplify_point_set(
 
 	// Computes original(input) and sample points size 
 	std::size_t nb_points_original = std::distance(first, beyond);
-	std::size_t nb_points_sample = (std::size_t)(double(nb_points_original) * (retain_percentage/100.0));
+	std::size_t nb_points_sample = (std::size_t)(FT(nb_points_original) * (retain_percentage/100.0));
 	std::size_t first_index_to_sample = nb_points_original - nb_points_sample;
 
 	// The first point iter of original and sample points
@@ -519,7 +518,7 @@ regularize_and_simplify_point_set(
 		FT max_spacing = regularize_and_simplify_internal::compute_max_spacing<Kernel,Tree>(get(point_pmap,it),original_tree,k);
 	    guess_spacings = max_spacing < guess_spacings ? max_spacing : guess_spacings;
 	}
-	guess_spacings *= 0.85;
+	guess_spacings *= 0.95;
 	std::cout << "Guess Spacing:	" << guess_spacings << std::endl;
 
 	// Compute original density weight for original points if user needed
@@ -528,7 +527,7 @@ regularize_and_simplify_point_set(
 	{
 		for (it = first_original_point; it != beyond ; ++it)
 		{
-			FT density = regularize_and_simplify_internal::compute_density_weight_for_original_point<Kernel, Tree>(get(point_pmap,it), original_tree, k, guess_spacings);
+			FT density = regularize_and_simplify_internal::compute_density_weight_for_original_point<Kernel, Tree>(get(point_pmap,it), original_tree, k, guess_spacings * 0.3);
 			original_density_weight_set.push_back(density);
 		}
 	}
@@ -552,7 +551,7 @@ regularize_and_simplify_point_set(
 		{
 			for (i=0 ; i < sample_points.size(); i++)
 			{
-				FT density = regularize_and_simplify_internal::compute_density_weight_for_original_point<Kernel, Tree>(sample_points[i], sample_tree, k_for_sample, guess_spacings);
+				FT density = regularize_and_simplify_internal::compute_density_weight_for_sample_point<Kernel, Tree>(sample_points[i], sample_tree, k_for_sample, guess_spacings);
 				sample_density_weight_set.push_back(density);
 			}
 		}

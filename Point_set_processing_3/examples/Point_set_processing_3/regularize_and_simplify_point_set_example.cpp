@@ -14,7 +14,9 @@ int main(void)
 {
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
+  //std::ifstream stream("data/ThreeLady.xyz");
   std::ifstream stream("data/sphere_20k.xyz");
+
   if (!stream ||
       !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
@@ -23,11 +25,11 @@ int main(void)
   }
 
   //Algorithm parameters
-  const double retain_percentage = 5.0;   // percentage of points to retain.
-  const unsigned int k = 1000;            // number of neighbors.
-  unsigned int iter_number = 50;          // number of iterations.
-  const bool need_compute_density = true; // if needed to compute density to generate more rugularized result, 
-                                          //  especially when the density of input is uneven.
+  const double retain_percentage = 10.0;   // percentage of points to retain.
+  const unsigned int k = 500;              // number of neighbors.
+  unsigned int iter_number = 30;           // number of iterations.
+  const bool need_compute_density = true;  // if needed to compute density to generate more rugularized result, 
+                                           //  especially when the density of input is uneven.
  
   // Make room for sample points
   std::vector<Point> points_sampled;
@@ -48,7 +50,8 @@ int main(void)
   // Note: write_xyz_points_and_normals() requires an output iterator
   // over points as well as property maps to access each
   // point position and normal.
-  std::ofstream out("data/sphere_20k_sampled.xyz");
+  //std::ofstream out("data/ThreeLady_copy.xyz");
+  std::ofstream out("data/sphere_20k_copy.xyz");  
   if (!out ||
 	  !CGAL::write_xyz_points(
 	  out, points_sampled.begin(), points_sampled.end()))
