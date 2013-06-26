@@ -192,7 +192,7 @@ typename K::Point_3
 lp_intersection(const typename K::Point_3& p, const typename K::Point_3& q,
                 const typename K::Point_3& a, const typename K::Point_3& b,
                 const typename K::Point_3& c,
-                const K & k)
+                const K &)
 {
   CGAL_MESH_3_PROFILER(std::string(CGAL_PRETTY_FUNCTION));
   typedef Exact_predicates_exact_constructions_kernel   EPEC;
