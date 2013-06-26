@@ -24,7 +24,7 @@ Construct a new combinatorial map from another one.
 The new combinatorial map is created by copying the darts and the non void attributes of cmap. CMap must be a model of `CombinatorialMap` concept, which can be defined with a different dimension and/or different attributes than `*this`. In this case, only permutations that are common to `cmap` and `*this`, and only non void i-attributes of `cmap` whose info type is the same to the info of non void i-attributes of `*this`, are copied.
 */
 template<typename CMap>
-CombinatorialMap cm(const CMap& cmap);
+CombinatorialMap(const CMap& cmap);
 
 /// @}
 
@@ -628,6 +628,17 @@ are not modified.
      `*dh`\f$ \in\f$`darts()`, and `*dh` is not <I>i</I>-free.
 */
 template <unsigned int i> void unlink_beta(Dart_handle dh);
+
+
+/*!
+  Reverse the orientation (swap \f$ \beta_0\f$ and \f$ \beta_1\f$ links) of the entire map.
+*/
+void reverse_orientation();
+
+/*!
+    Reverse the orientation (swap \f$ \beta_0\f$ and \f$ \beta_1\f$ links) of the connected component containing the given dart.
+*/
+void reverse_orientation_connected_component(Dart_handle adart);
 
 /// @}
 
