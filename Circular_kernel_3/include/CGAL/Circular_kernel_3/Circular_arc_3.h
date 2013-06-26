@@ -218,7 +218,7 @@ namespace CGAL {
 		     const Point_3 &middle,
 		     const Point_3 &end)
       {
-	CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
+	CGAL_kernel_precondition(!typename SK::Collinear_3()(begin, middle, end));
 	const Circle_3 c = Circle_3(begin, middle, end);
 	base = Rep(c,begin,end);
         _sign_cross_product =
