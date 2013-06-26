@@ -55,7 +55,7 @@ struct Dump_c3t3 {
 
 template <typename C3t3>
 struct Dump_c3t3<C3t3, false> {
-  void dump_c3t3(const C3t3& c3t3, std::string prefix) {
+  void dump_c3t3(const C3t3&, std::string) {
     std::cerr << "Warning " << __FILE__ << ":" << __LINE__ << "\n"
               << "  the c3t3 object cannot be dumped because some types are"
               << " not streamable:\n";
