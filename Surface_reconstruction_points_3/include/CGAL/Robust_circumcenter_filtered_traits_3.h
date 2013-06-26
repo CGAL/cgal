@@ -290,7 +290,7 @@ public:
   { return c.rep().squared_radius(); }
 
   result_type
-  operator()( const Point_3& p) const
+  operator()( const Point_3& ) const
   { return FT(0); }
 
 private:

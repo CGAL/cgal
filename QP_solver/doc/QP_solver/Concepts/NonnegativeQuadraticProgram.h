@@ -121,7 +121,7 @@ int get_m() const;
 /*! 
 returns an iterator over the columns 
 of \f$ A\f$. The corresponding past-the-end iterator is `get_a()+get_n()`. 
-For \f$ j=0,\ldots,n-1\f$, \f$ \ccc{*(get_a()+j)}\f$ is a random access 
+For \f$ j=0,\ldots,n-1\f$, `*(get_a()+j)` is a random access 
 iterator for column \f$ j\f$. 
 */ 
 A_iterator get_a() const; 
@@ -146,7 +146,7 @@ R_iterator get_r() const;
 /*! 
 returns an iterator over the rows of 
 \f$ 2D\f$. The corresponding past-the-end iterator is `get_d()+get_n()`. 
-For \f$ i=0,\ldots,n-1\f$, \f$ \ccc{*(get_d()+i)}\f$ is a random access 
+For \f$ i=0,\ldots,n-1\f$, `*(get_d()+i)` is a random access 
 iterator for the entries in row \f$ i\f$ <I>below or on the diagonal</I>. 
 The valid range of this iterator is 
 guaranteed to have length \f$ i+1\f$ but not more. Values to the right 

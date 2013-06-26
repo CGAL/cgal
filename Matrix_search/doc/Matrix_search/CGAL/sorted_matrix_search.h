@@ -23,7 +23,7 @@ More exactly, a matrix \f$ M = (m_{i j}) \in S^{r \times l}\f$
 \f}
 
 Now let \f$ \mathcal{M}\f$ be a set of \f$ n\f$ sorted matrices over \f$ S\f$ 
-and \f$ f\f$ be a monotone predicate on \f$ S\f$, i.e. 
+and \f$ f\f$ be a monotone predicate on \f$ S\f$, i.e.\ 
 \f[ 
 f\: :\: S \longrightarrow\, \textit{bool} \quad{\rm with}\quad f(r) 
 \;\Longrightarrow\; \forall\, t \in S\,,\: t > r \; :\; f(t)\;. 

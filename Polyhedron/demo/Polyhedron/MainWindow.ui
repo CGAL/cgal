@@ -121,7 +121,7 @@
     </property>
     <widget class="QMenu" name="menuDockWindows">
      <property name="title">
-      <string>Dock windows</string>
+      <string>&amp;Dock windows</string>
      </property>
      <addaction name="dummyAction"/>
     </widget>
@@ -574,7 +574,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Draw two sides</string>
+    <string>Draw &amp;two sides</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>

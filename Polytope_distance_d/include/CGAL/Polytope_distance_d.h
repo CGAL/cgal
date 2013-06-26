@@ -740,16 +740,12 @@ private:
 
 // Function declarations
 // =====================
-// I/O operators
+// output operator
 template < class Traits_ >
 std::ostream&
 operator << ( std::ostream& os,
               const Polytope_distance_d<Traits_>& poly_dist);
 
-template < class Traits_ >
-std::istream&
-operator >> ( std::istream& is,
-              Polytope_distance_d<Traits_>& poly_dist);
 
 // ============================================================================
 
@@ -928,34 +924,6 @@ operator << ( std::ostream& os,
   return( os);
 }
 
-// input operator
-template < class Traits_ >
-std::istream&
-operator >> ( std::istream& is,
-              CGAL::Polytope_distance_d<Traits_>& poly_dist)
-{
-  using namespace std;
-  /*
-    switch ( CGAL::get_mode( is)) {
-
-    case CGAL::IO::PRETTY:
-    cerr << endl;
-    cerr << "Stream must be in ascii or binary mode" << endl;
-    break;
-
-    case CGAL::IO::ASCII:
-    case CGAL::IO::BINARY:
-    typedef  CGAL::Polytope_distance_d<Traits_>::Point  Point;
-    typedef  istream_iterator<Point>             Is_it;
-    poly_dist.set( Is_it( is), Is_it());
-    break;
-
-    default:
-    CGAL_optimisation_assertion_msg( false, "CGAL::IO::mode invalid!");
-    break; }
-  */
-  return( is);
-}
 
 } //namespace CGAL
 

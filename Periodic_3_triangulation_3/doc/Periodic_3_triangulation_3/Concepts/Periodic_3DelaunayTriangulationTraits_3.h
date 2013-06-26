@@ -63,7 +63,7 @@ typedef Hidden_type Iso_cuboid_3;
 /// The following three types represent geometric primitives in \f$
 /// \mathbb R^3\f$. They are required to provide functions converting
 /// primitives from \f$ \mathbb T_c^3\f$ to \f$ \mathbb R^3\f$,
-/// i.e. constructing representatives in \f$ \mathbb R^3\f$.
+/// i.e.\ constructing representatives in \f$ \mathbb R^3\f$.
 /// @{
 
 /*! 

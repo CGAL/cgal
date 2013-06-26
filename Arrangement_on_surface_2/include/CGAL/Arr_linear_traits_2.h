@@ -302,7 +302,7 @@ public:
      * \param p The point to set.
      * \pre p lies on the supporting line to the left of the right endpoint.
      */
-    void set_left (const Point_2& p, bool check_validity = true)
+    void set_left (const Point_2& p, bool CGAL_assertion_code(check_validity) = true)
     {
       CGAL_precondition (! is_degen);
 
@@ -404,7 +404,7 @@ public:
      * \param p The point to set.
      * \pre p lies on the supporting line to the right of the left endpoint.
      */
-    void set_right (const Point_2& p, bool check_validity = true)
+    void set_right (const Point_2& p, bool CGAL_assertion_code(check_validity) = true)
     {
       CGAL_precondition (! is_degen);
       CGAL_precondition_code (

@@ -288,6 +288,7 @@ public:
   Filtered_predicate<EK_Orientation_2, FK_Orientation_2, C2E, C2F>
   Orientation_2;
 
+
   typedef
   Filtered_predicate<EK_Is_hidden_2, FK_Is_hidden_2, C2E, C2F>
   Is_hidden_2;

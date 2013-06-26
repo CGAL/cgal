@@ -88,7 +88,7 @@ typedef const Point_3& reference;
 /*!
 Creates an input iterator `g` generating points of type `Point_3` uniformly
 distributed in the half-open cube with side length \f$ 2 a\f$, centered
-at the origin, i.e. \f$ \forall p = *g: -a \le p.x(),p.y(),p.z() < a\f$ .
+at the origin, i.e.\ \f$ \forall p = *g: -a \le p.x(),p.y(),p.z() < a\f$ .
 Three random numbers are needed from `rnd` for each point.
 
 */
@@ -155,7 +155,7 @@ typedef const Point_3& reference;
 /*!
 creates an input iterator `g` generating points of type `Point_3` uniformly
 distributed in the open sphere with radius \f$ r\f$,
-i.e. \f$ |*g| < r\f$ . Three random numbers are needed from
+i.e.\ \f$ |*g| < r\f$ . Three random numbers are needed from
 `rnd` for each point.
 
 */
@@ -225,7 +225,7 @@ typedef const Point_3& reference;
 /*!
 creates an input iterator `g` generating points of type `Point_3` uniformly
 distributed on the boundary of a sphere with radius \f$ r\f$,
-i.e. \f$ |*g| == r\f$ . Two random numbers are needed from
+i.e.\ \f$ |*g| == r\f$ . Two random numbers are needed from
 `rnd` for each point.
 
 */

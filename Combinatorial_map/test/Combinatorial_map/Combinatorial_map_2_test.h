@@ -29,18 +29,6 @@
 using namespace std;
 
 template<class Map>
-void drawCell2 ( Map& amap, typename Map::Dart_handle adart, int aorbit, int mark )
-{
-  /*    cout << "Orbite " << Map::ORBIT_NAME[aorbit] << " (";
-    CGAL::CMap_dart_iterator_basic_of_orbit_2<Map> it2 ( amap, adart, aorbit, mark );
-    for ( ;it2.cont(); ++it2 )
-    {
-        cout << ( *it2 )->vertex()->point() << ", ";
-    }
-    cout << ")" << flush;*/
-}
-
-template<class Map>
 void drawAllPoints( Map&amap )
 {
   amap.display_characteristics(std::cout);

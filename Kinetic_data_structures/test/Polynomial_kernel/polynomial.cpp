@@ -47,7 +47,7 @@ template <class Traits>
 void check_equal(const typename Traits::Function&a, const typename Traits::Function &b) {
   if (a != b) {
     std::cerr << a <<  " != " << b << std::endl;
-    CGAL_assertion(a==b);
+    assert(a==b);
   }
 }
 
@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
   //std::cout << /*pi << " " <<*/ ep << std::endl;
 
   if ( argc > 1 ) {
-    for_maple = atoi(argv[1]);
+    for_maple = (atoi(argv[1]) != 0);
   }
 
   /*

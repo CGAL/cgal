@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>376</width>
-    <height>170</height>
+    <width>390</width>
+    <height>312</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,10 +109,17 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
+   <item row="5" column="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QCheckBox" name="m_inputTwoPasses">
+     <property name="text">
+      <string>Uses two passes</string>
      </property>
     </widget>
    </item>

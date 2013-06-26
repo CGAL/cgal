@@ -12,11 +12,10 @@ struct Sum_functor
   void operator()(Cell_attribute& ca1,Cell_attribute& ca2)
   { ca1.info()=ca1.info()+ca2.info(); }
 };
-template<typename CMap>
 struct Divide_by_two_functor
 {
   template<class Cell_attribute>
-  void operator()(CMap* amap, Cell_attribute& ca1,Cell_attribute& ca2)
+  void operator()(Cell_attribute& ca1,Cell_attribute& ca2)
   {
     ca1.info()=(ca1.info()/2);
     ca2.info()=(ca1.info());
@@ -30,8 +29,7 @@ struct Myitem
   {
     typedef CGAL::Dart<3, CMap> Dart;
     typedef CGAL::Cell_attribute<CMap, int, CGAL::Tag_true,
-     Sum_functor, Divide_by_two_functor<CMap> >
-    Facet_attribute;
+     Sum_functor, Divide_by_two_functor> Facet_attribute;
     typedef CGAL::cpp11::tuple<void,void,Facet_attribute> Attributes;
   };
 };

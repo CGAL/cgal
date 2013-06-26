@@ -48,6 +48,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
 ## Number Type Classes and Concepts ##
 
 - \link int.h `int` \endlink

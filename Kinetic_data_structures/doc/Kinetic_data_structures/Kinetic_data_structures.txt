@@ -11,7 +11,7 @@ namespace CGAL {
 Lets say you want to maintain a sorted list of items (each item is
 associate with a real number key). You can imagine placing each of the
 items on the point on the real line corresponding to its key. Now, let
-the key for each item change continuously (i.e. no jumps are allowed).
+the key for each item change continuously (i.e.\ no jumps are allowed).
 As long as no two (consecutive) items cross, the sorted order is
 intact. When two items cross, they need to be exchanged in the list and then
 the sorted order is once again correct. This is a trivial example of a
@@ -99,7 +99,7 @@ must be updated, as well as the set of certificate functions that
 verify it. We call such occurrences <I>events</I>.
 
 Maintaining a kinetic data structure is then a matter of determining
-which certificate function changes sign next, i.e. determining which
+which certificate function changes sign next, i.e.\ determining which
 certificate function has the first real root that is greater than the
 current time, and then updating the structure and the set of
 certificate functions. In addition, the trajectories of primitives are

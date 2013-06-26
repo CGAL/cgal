@@ -113,7 +113,7 @@ template < class PolynomialConstIterator,
 void write_factors_by_multiplicity(PolynomialConstIterator  fac,
                                    PolynomialConstIterator  fac_end,
                                    IntConstIterator         mul,
-                                   IntConstIterator         mul_end,
+                                   IntConstIterator         CGAL_assertion_code(mul_end),
                                    PolynomialOutputIterator oi_poly){
     // output table such that table[m] contains square-free factor of
     // multiplicity m (or else constant poly 1)

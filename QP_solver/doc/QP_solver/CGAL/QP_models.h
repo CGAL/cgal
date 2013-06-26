@@ -901,7 +901,7 @@ public:
     `default_l` (upper bound value if upper bound is finite). If all 
     parameters take their default values, we thus get equality constraints 
     and bounds \f$ x\geq0\f$ by default. Numerical entries that are not 
-    explicitly set will default to \f$ 0\f$.\pre if \f$ \ccc{default_fl}=\ccc{default_fu}=\ccc{true}\f$, then \f$ \ccc{default_l}\leq\ccc{default_u}\f$. 
+    explicitly set will default to \f$ 0\f$.\pre if `default_fl == default_fu == true`, then `default_l <= default_u`. 
   */ 
   Quadratic_program 
   (CGAL::Comparison_result default_r = CGAL::EQUAL, 

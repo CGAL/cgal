@@ -166,7 +166,7 @@ print_dag(double d, std::ostream& os, int level)
 
 inline
 void
-msg(std::ostream& os, int level, char* s)
+msg(std::ostream& os, int level, const char* s)
 {
     for(int i = 0; i < level; i++)
       os << "    ";
@@ -175,7 +175,7 @@ msg(std::ostream& os, int level, char* s)
 
 inline
 void
-print_dag(const Null_vector& nv, std::ostream& os, int level)
+print_dag(const Null_vector&, std::ostream& os, int level)
 {
   for(int i = 0; i < level; i++)
     os << "    ";
@@ -184,11 +184,20 @@ print_dag(const Null_vector& nv, std::ostream& os, int level)
 
 inline
 void
-print_dag(const Origin& nv, std::ostream& os, int level)
+print_dag(const Origin&, std::ostream& os, int level)
 {
   for(int i = 0; i < level; i++)
     os << "    ";
   os << "Origin" << std::endl;
+}
+
+inline
+void
+print_dag(const Return_base_tag&, std::ostream& os, int level)
+{
+  for(int i = 0; i < level; i++)
+    os << "    ";
+  os << "Return_base_tag" << std::endl;
 }
 #endif
 
@@ -273,6 +282,12 @@ public:
       os << "Exact: ";
       print_at(os, *et);
       os << std::endl;
+#ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+      for(int i = 0; i < level; i++){
+	os << "    ";
+      }
+      os << "  (type: " << typeid(*et).name() << ")" << std::endl;
+#endif // CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
     }
   }
 
@@ -362,12 +377,19 @@ public:
     this->set_depth(CGAL::depth(l1_) + 1);
   }
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+#  define CGAL_LAZY_PRINT_TYPEID CGAL::msg(os, level, typeid(AC).name());
+#else  // not CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+#  define CGAL_LAZY_PRINT_TYPEID
+#endif // not CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
     this->print_at_et(os, level);
     if(this->is_lazy()){
+      CGAL_LAZY_PRINT_TYPEID
       CGAL::msg(os, level, "DAG with one child node:");
       CGAL::print_dag(l1_, os, level+1);
     }
@@ -375,6 +397,21 @@ public:
 #endif
 };
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+#  define CGAL_PRINT_DAG_LN(z, n, d) \
+  CGAL::print_dag(l##n, os, level+1);
+#  define CGAL_LAZY_REP_PRINT_DAG(n)                            \
+  void print_dag(std::ostream& os, int level) const {           \
+    this->print_at_et(os, level);                               \
+    if(this->is_lazy()){                                        \
+      CGAL_LAZY_PRINT_TYPEID                                    \
+      CGAL::msg(os, level, "DAG with " #n " child nodes:");     \
+      BOOST_PP_REPEAT(n, CGAL_PRINT_DAG_LN, _)                  \
+    }                                                           \
+  }
+#else // not CGAL_LAZY_KERNEL_DEBUG
+#  define CGAL_LAZY_REP_PRINT_DAG(n)
+#endif // not CGAL_LAZY_KERNEL_DEBUG
 
 #define CGAL_LAZY_REP(z, n, d)                                               \
   template< typename AT, typename ET, typename AC, typename EC, typename E2A, BOOST_PP_ENUM_PARAMS(n, typename L)> \
@@ -394,6 +431,8 @@ public: \
   Lazy_rep_##n(const AC& ac, const EC&, BOOST_PP_ENUM(n, CGAL_LARGS, _)) \
     : Lazy_rep<AT, ET, E2A>(ac( BOOST_PP_ENUM(n, CGAL_LN, CGAL::approx) )), BOOST_PP_ENUM(n, CGAL_LINIT, _) \
   { this->set_depth(max_n( BOOST_PP_ENUM(n, CGAL_LN, CGAL::depth) ) + 1); }  \
+                                                                        \
+  CGAL_LAZY_REP_PRINT_DAG(n)                                          \
 };
 
 BOOST_PP_REPEAT_FROM_TO(2, 9, CGAL_LAZY_REP, _)
@@ -404,6 +443,9 @@ BOOST_PP_REPEAT_FROM_TO(2, 9, CGAL_LAZY_REP, _)
 #undef CGAL_LAZY_REP
 #undef CGAL_LN
 #undef CGAL_MLIST
+#undef CGAL_PRINT_DAG_LN
+#undef CGAL_LAZY_REP_PRINT_DAG
+#undef CGAL_LAZY_PRINT_TYPEID
 
 template < typename K1, typename K2 >
 struct Approx_converter

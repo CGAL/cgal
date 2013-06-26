@@ -229,7 +229,7 @@ unsigned int poisson_refine_triangulation(
   typedef Poisson_mesher_level<Tr, Tets_criteria, Surface, Oracle, Null_mesher_level> Refiner;
 
 
-  int nb_vertices = tr.number_of_vertices(); // get former #vertices
+  std::size_t nb_vertices = tr.number_of_vertices(); // get former #vertices
 
   // Delaunay refinement
   Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound, 
@@ -241,10 +241,10 @@ unsigned int poisson_refine_triangulation(
   refiner.scan_triangulation(); // Push bad cells to the queue
   refiner.refine(Null_mesh_visitor()); // Refine triangulation until queue is empty
 
-  int nb_vertices_added = tr.number_of_vertices() - nb_vertices;
+  nb_vertices = tr.number_of_vertices() - nb_vertices;
 
 
-  return (unsigned int) nb_vertices_added;
+  return static_cast<unsigned int>(nb_vertices);
 }
 
 /// \endcond

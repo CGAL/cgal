@@ -28,11 +28,11 @@ public:
   typedef Face_handle                             key_type;
 
   // The get function is required by the property map concept.
-  friend reference get(const Extended_face_property_map& map, key_type key)
+  friend reference get(const Extended_face_property_map&, key_type key)
   { return key->data(); }
 
   // The put function is required by the property map concept.
-  friend void put(const Extended_face_property_map& map,
+  friend void put(const Extended_face_property_map&,
                   key_type key, value_type val)
   { key->set_data(val); }
 };

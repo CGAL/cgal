@@ -226,6 +226,28 @@ Vertex_handle
 copy_tds(const TriangulationDataStructure_3 & tds1, 
 Vertex_handle v = Vertex_handle()); 
 
+/*!
+`tds_src` is copied into `this`. As the vertex and cell types might be different
+and incompatible, the creation of new cells and vertices is made thanks to the
+functors `convert_vertex` and `convert_cell`, that convert vertex and cell types.
+For each vertex `v_src` in `tds_src`, the corresponding vertex `v_tgt` in `this` is a
+copy of the vertex returned by `convert_vertex(v_src)`. The same operations are
+done for cells with the functor convert_cell. If `v != TDS_src::Vertex_handle()`,
+a handle to the vertex created in `this` that is the copy of `v` is returned,
+otherwise `Vertex_handle()` is returned.
+
+ - A model of `ConvertVertex` must provide two operator()'s that are responsible for converting the source vertex `v_src` into the target vertex:
+  - `Vertex operator()(const TDS_src::Vertex& v_src);` This operator is used to create the vertex from `v_src`.
+  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt);` This operator is meant to be used in case heavy data should transferred to `v_tgt`. 
+ - A model of ConvertCell must provide two operator()'s that are responsible for converting the source cell `c_src` into the target cell:
+  - `Cell operator()(const TDS_src::Cell& c_src);` This operator is used to create the cell from `c_src`.
+  - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt);` This operator is meant to be used in case heavy data should transferred to `c_tgt`.
+
+\pre The optional argument `v` is a vertex of `tds_src` or is `Vertex_handle()`.
+*/
+template <class TDS_src, class ConvertVertex, class ConvertCell>
+Vertex_handle tds.copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertCell& convert_cell);
+
 /*! 
 Swaps `tds` and `tds1`. There is no copy of cells and vertices, 
 thus this method runs in constant time. This method should be preferred to 
@@ -284,7 +306,10 @@ size_type number_of_edges() const;
 /// @{
 
 /*! 
-\cgalAdvanced Sets the dimension to `n`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Sets the dimension to `n`. 
+\cgalAdvancedEnd
 */ 
 void set_dimension(int n); 
 
@@ -628,44 +653,65 @@ void decrease_dimension(Cell_handle c, int i);
 /// @{
 
 /*! 
-\cgalAdvanced Changes the orientation of all cells of the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Changes the orientation of all cells of the triangulation data structure. 
+\cgalAdvancedEnd
 \pre `tds`.`dimension()` \f$ \geq1\f$. 
 */ 
 void reorient(); 
 
 /*! 
-\cgalAdvanced Adds a copy of the vertex `v` to the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Adds a copy of the vertex `v` to the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Vertex_handle create_vertex(const Vertex &v = Vertex()); 
 
 /*! 
-\cgalAdvanced Creates a vertex which is a copy of the one pointed to by `v` 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Creates a vertex which is a copy of the one pointed to by `v` 
 and adds it to the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Vertex_handle create_vertex(Vertex_handle v); 
 
 /*! 
-\cgalAdvanced Adds a copy of the cell `c` to the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Adds a copy of the cell `c` to the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Cell_handle create_cell(const Cell &c = Cell()); 
 
 /*! 
-\cgalAdvanced Creates a cell which is a copy of the one pointed to by `c` 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Creates a cell which is a copy of the one pointed to by `c` 
 and adds it to the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Cell_handle create_cell(Cell_handle c); 
 
 /*! 
-\cgalAdvanced Creates a cell and adds it into the triangulation data 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Creates a cell and adds it into the triangulation data 
 structure. Initializes the vertices of the cell, its neighbor handles 
-being initialized with the default constructed handle. 
-*/ 
+being initialized with the default constructed handle.
+\cgalAdvancedEnd
+*/
 Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1, 
 Vertex_handle v2, Vertex_handle v3); 
 
 /*! 
-\cgalAdvanced Creates a cell, initializes its vertices and neighbors, and adds it 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Creates a cell, initializes its vertices and neighbors, and adds it 
 into the triangulation data structure. 
+\cgalAdvancedEnd
 */ 
 Cell_handle create_cell( Vertex_handle v0, Vertex_handle v1, 
 Vertex_handle v2, Vertex_handle v3, 
@@ -673,27 +719,37 @@ Cell_handle n0, Cell_handle n1,
 Cell_handle n2, Cell_handle n3); 
 
 /*! 
-\cgalAdvanced Removes the vertex from the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Removes the vertex from the triangulation data structure. 
+\cgalAdvancedEnd
 \pre The vertex is a vertex of `tds`. 
 */ 
 void delete_vertex( Vertex_handle v ); 
 
 /*! 
-\cgalAdvanced Removes the cell from the triangulation data structure. 
-\pre The cell is a cell of `tds`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Removes the cell from the triangulation data structure. 
+\cgalAdvancedEnd
+\pre The cell is a cell of `tds`.
 */ 
 void delete_cell( Cell_handle c ); 
 
 /*! 
-\cgalAdvanced Calls `delete_vertex` over an iterator range of value type 
-`Vertex_handle`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Calls `delete_vertex` over an iterator range of value type `Vertex_handle`.
+\cgalAdvancedEnd
 */ 
 template <class VertexIt> 
 void delete_vertices(VertexIt first, VertexIt last); 
 
 /*! 
-\cgalAdvanced Calls `delete_cell` over an iterator range of value type 
-`Cell_handle`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Calls `delete_cell` over an iterator range of value type `Cell_handle`. 
+\cgalAdvancedEnd
 */ 
 template <class CellIt> 
 void delete_cells(CellIt first, CellIt last); 
@@ -915,29 +971,38 @@ Facet mirror_facet(Facet f) const;
 /// @{
 
 /*! 
-\cgalDebug Checks the combinatorial validity of the triangulation by checking 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the combinatorial validity of the triangulation by checking 
 the local validity of all its cells and vertices (see functions below). 
 (See Section \ref TDS3secintro.) Moreover, the Euler relation is 
 tested. 
 
-\cgalDebug When `verbose` is set to `true`, messages are printed to give 
+When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose = false) const; 
 
 /*! 
-\cgalDebug Checks the local validity of the adjacency relations of the triangulation. 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the local validity of the adjacency relations of the triangulation. 
 It also calls the `is_valid` member function of the vertex. 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool is_valid(Vertex_handle v, bool verbose = false) const; 
 
 /*! 
-\cgalDebug Checks the local validity of the adjacency relations of the triangulation. 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the local validity of the adjacency relations of the triangulation. 
 It also calls the `is_valid` member function of the cell. 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool is_valid(Cell_handle c, bool verbose = false) const; 
 
@@ -1043,11 +1108,14 @@ void set_point(const Point & p);
 /// @{
 
 /*! 
-\cgalDebug Checks the validity of the vertex. Must check that its incident cell 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the validity of the vertex. Must check that its incident cell 
 has this vertex. The validity of the base vertex is also checked. 
 
-\cgalDebug When `verbose` is set to `true`, messages are printed to give 
+When `verbose` is set to `true`, messages are printed to give 
 a precise indication on the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose = false) const; 
 
@@ -1192,7 +1260,10 @@ Cell_handle n3);
 /// @{
 
 /*! 
-\cgalDebug User defined local validity checking function. 
+\cgalDebugFunction
+\cgalDebugBegin
+User defined local validity checking function.
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose = false, int level = 0) const; 
 

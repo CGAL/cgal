@@ -129,7 +129,7 @@ int main() {
     CGAL::random_convex_set_2(number_of_points[n],
                               std::back_inserter(p),
                               Generator(1));
-    CGAL_assertion(p.is_convex());
+    assert(p.is_convex());
 
     for ( j = 0; j < 4; ++j) {
       // maximum area:

@@ -1,6 +1,4 @@
 /// \defgroup PkgNefS2 2D Boolean Operations on Nef Polygons Embedded on the Sphere Reference
-/// \defgroup PkgNefS2Concepts Concepts
-/// \ingroup PkgNefS2
 /*!
 \addtogroup PkgNefS2
 
@@ -46,6 +44,8 @@ The incidence structure of planar Nef polyhedra can be reused. The
 items are denoted as \em svertex, \em shalfedge and \em sface,
 analogous to their counterparts in `CGAL::Nef_polyhedron_2`. Additionally,
 there is the <I>shalfloop</I> representing the great circles.
+
+\cgalClassifedRefPages
 
 */
 

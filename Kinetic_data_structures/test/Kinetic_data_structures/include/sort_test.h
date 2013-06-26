@@ -18,7 +18,7 @@ template <class Traits>
 bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infinity())
 {
 
-  std::string etag="WARNING: ";
+  std::string etag=":NUMERICAL ISSUE: ";
   //CGAL_exactness_assertion_code(bool fail=false);
   CGAL_exactness_assertion_code(etag="ERROR: ");
   //CGAL_exactness_assertion_code(fail=true);

@@ -189,7 +189,7 @@ typedef Triangulation_data_structure::Vertex_iterator Vertex_iterator;
 
 /*! 
 iterator over the vertices whose 
-corresponding points lie in the original domain, i.e. for each set 
+corresponding points lie in the original domain, i.e.\ for each set 
 of periodic copies the `Unique_vertex_iterator` iterates over 
 exactly one representative. 
 */ 
@@ -362,8 +362,11 @@ Returns the original domain.
 Iso_cuboid domain() const; 
 
 /*! 
-\cgalAdvanced Returns the number of sheets of the covering space the triangulation is 
-currently computed in. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Returns the number of sheets of the covering space the triangulation is 
+currently computed in.
+\cgalAdvancedEnd
 */ 
 Covering_sheets number_of_sheets() const; 
 
@@ -373,18 +376,24 @@ Covering_sheets number_of_sheets() const;
 /// @{
 
 /*! 
-\cgalAdvanced Changes the domain. Note that this function calls `clear()`, 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Changes the domain. Note that this function calls `clear()`, 
 i.e., it erases the existing triangulation. 
+\cgalAdvancedEnd
 */ 
 void set_domain(const Iso_cuboid dom); 
 
 /*! 
-\cgalAdvanced Returns a reference to the triangulation data structure. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+Returns a reference to the triangulation data structure. 
 
-\cgalAdvanced The responsibility of keeping a valid triangulation belongs
+The responsibility of keeping a valid triangulation belongs
 to the user when using advanced operations allowing a direct
 manipulation of the `tds`. This method is mainly a help for users
 implementing their own triangulation algorithms.
+\cgalAdvancedEnd
 */ 
 Triangulation_data_structure & tds(); 
 
@@ -396,7 +405,7 @@ Triangulation_data_structure & tds();
 /*! 
 The current triangulation remains a triangulation in the 1-sheeted 
 covering space even after adding points if this method returns 
-`true`. This test relies on a heuristic, i.e. if it answers 
+`true`. This test relies on a heuristic, i.e.\ if it answers 
 `false` nothing is known. This test runs in constant-time when 
 not computing in the 1-sheeted covering space. (This test uses the length 
 of the longest edge in the triangulation as a 
@@ -406,7 +415,7 @@ bool is_extensible_triangulation_in_1_sheet_h1() const;
 
 /*! 
 The same as `is_extensible_triangulation_in_1_sheet_h1()` but with 
-a more precise heuristic, i.e. it might answer `true` in cases in which 
+a more precise heuristic, i.e.\ it might answer `true` in cases in which 
 `is_extensible_triangulation_in_1_sheet_h1()` would not. However, it is 
 much less time efficient when not computing in the 1-sheeted covering 
 space. (This test uses the diameter of the largest empty ball in the 
@@ -828,7 +837,7 @@ that allow one to traverse it.
 \name Cell, Face, Edge and Vertex Iterators 
 
 The following iterators allow the user to visit cells, facets, edges
-and vertices of the stored triangulation, i.e. in case of computing in
+and vertices of the stored triangulation, i.e.\ in case of computing in
 a multiply sheeted covering space all stored periodic copies of each
 item are returned. These iterators are non-mutable, bidirectional and
 their value types are respectively `Cell`, `Facet`, `Edge` and
@@ -884,7 +893,7 @@ Cell_iterator cells_end() const;
 
 /*! 
 Starts at an arbitrary vertex. Iterates over all vertices whose 
-corresponding points lie in the original domain, i.e. for each set 
+corresponding points lie in the original domain, i.e.\ for each set 
 of periodic copies the `Unique_vertex_iterator` iterates over 
 exactly one representative. Returns `unique_vertices_end()` if 
 `t`.`number_of_vertices()` \f$ =0\f$. 
@@ -1127,10 +1136,12 @@ Facet mirror_facet(Facet f) const;
 /// @} 
 
 /// \name Checking 
-/// \cgalAdvanced The responsibility of keeping a valid triangulation belongs to the
+/// \cgalAdvancedBegin
+/// The responsibility of keeping a valid triangulation belongs to the
 /// user when using advanced operations allowing a direct manipulation
 /// of cells and vertices. We provide the user with the following
 /// methods to help debugging.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

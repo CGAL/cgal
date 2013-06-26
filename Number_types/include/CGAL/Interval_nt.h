@@ -131,9 +131,11 @@ public:
   Interval_nt(double i, double s)
     : _inf(i), _sup(s)
   {
-      // VC++ should use instead : (i<=s) || !is_valid(i) || !is_valid(s)
-      // Or should I use is_valid() ? or is_valid_or_nan() ?
-    CGAL_assertion_msg(!(i>s),
+    // Previously it was:
+    //    CGAL_assertion_msg(!(i>s);
+    // But MSVC++ 2012 optimizes the test "!(i>s)" to "i<=s", even with
+    // /fp:strict. If 'i' or 's' is a NaN, that makes a difference.
+    CGAL_assertion_msg( (!is_valid(i)) || (!is_valid(s)) || (!(i>s)),
 	      " Variable used before being initialized (or CGAL bug)");
 #ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
     CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.

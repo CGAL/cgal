@@ -53,7 +53,7 @@ full-dimensional.)
 
 If \f$ P\f$ is not full-dimensional, linear algebra techniques should be 
 used to determine an affine subspace \f$ S\f$ of \f$ \E^d\f$ that contains the 
-points \f$ P\f$ as a (w.r.t. \f$ S\f$) full-dimensional pointset; once \f$ S\f$ is 
+points \f$ P\f$ as a (w.r.t.\ \f$ S\f$) full-dimensional pointset; once \f$ S\f$ is 
 determined, the algorithm can be invoked again to compute an 
 approximation to (the lower-dimensional) \f$ \mel(P)\f$ in \f$ S\f$. Since 
 `is_full_dimensional()` might (due to rounding errors, see 
@@ -315,7 +315,7 @@ returns an iterator pointing to the first of the \f$ d\f$ Cartesian
 coordinates of the computed ellipsoid's center. 
 
 The returned point is a floating-point approximation to the 
-ellipsoid's exact center; no guarantee is given w.r.t. the involved 
+ellipsoid's exact center; no guarantee is given w.r.t.\ the involved 
 relative error. \pre `ame.is_full_dimensional() == true`. 
 */ 
 Center_coordinate_iterator center_cartesian_begin(); 
@@ -334,7 +334,7 @@ returns an iterator pointing to the first of the \f$ d\f$ descendantly
 sorted lengths of the computed ellipsoid's axes. The \f$ d\f$ returned 
 numbers are floating-point approximations to the exact 
 axes-lengths of the computed ellipsoid; no guarantee is given 
-w.r.t. the involved relative error. (See also method 
+w.r.t.\ the involved relative error. (See also method 
 `axes_direction_cartesian_begin()`.) \pre `ame.is_full_dimensional() == true`, and \f$ d\in\{2,3\}\f$. 
 */ 
 Axes_lengths_iterator axes_lengths_begin(); 
@@ -353,7 +353,7 @@ computed ellipsoid's \f$ i\f$th axis direction (i.e., unit vector in
 direction of the ellipsoid's \f$ i\f$th axis). The direction described 
 by this iterator is a floating-point approximation to the exact 
 axis direction of the computed ellipsoid; no guarantee is given 
-w.r.t. the involved relative error. An approximation to the 
+w.r.t.\ the involved relative error. An approximation to the 
 length of axis \f$ i\f$ is given by the \f$ i\f$th entry of 
 `axes_lengths_begin()`. 
 \pre `ame.is_full_dimensional() == true`, and \f$ d\in\{2,3\}\f$, and \f$ 0\leq i < d\f$. 

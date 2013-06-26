@@ -100,13 +100,6 @@ private:
 }; // end class Surface_mesh_default_criteria_3
 
 
-namespace {
-  void CGALglcolor(QColor c)
-  {
-    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
-  }
-}
-
 //
 // Types for meshing
 //
@@ -115,26 +108,7 @@ typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel;
 // typedef CGAL::Mesh_3::Robust_intersection_traits_3<Kernel> IGT;
 typedef CGAL::AABB_polyhedral_oracle<Polyhedron,Kernel,Simple_cartesian_kernel> Input_surface;
 
-
-// A base non-templated class, to allow 
-class Mesher_base : public QObject {
-  Q_OBJECT
-protected:
-  bool is_stopped;
-public:
-  Mesher_base(QObject* parent) : QObject(parent) {
-    is_stopped = true;
-  };
-  virtual ~Mesher_base() {}
-public slots:
-  virtual void mesh() = 0;
-  virtual void one_step() = 0;
-
-  void stop() {
-    std::cerr << "STOP!\n";
-    is_stopped = true;
-  }
-};
+#include "Mesher_base.h"
 
 // Class template, refines Mesher_base
 // That allows to create meshers with different criteria or manifold tag,
@@ -392,5 +366,3 @@ Scene_item* cgal_code_remesh(QWidget* parent,
   else
     return 0;
 }
-
-#include "Polyhedron_demo_remeshing_plugin_cgal_code.moc"

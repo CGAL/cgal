@@ -21,12 +21,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 set( IPE_VERSION "AUTODETECT" CACHE STRING "The version of Ipe. Only 6 and 7 are supported.")
 
-find_package(CGAL QUIET COMPONENTS Core IPE)
+find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
+  find_package(IPE)
+
   if ( IPE_FOUND )
+    include_directories(BEFORE ${IPE_INCLUDE_DIR})
+
     #check IPE version
     if (${IPE_VERSION} STREQUAL "AUTODETECT")
       FILE(READ "${IPE_INCLUDE_DIR}/ipebase.h" IPEBASE_H)

@@ -29,12 +29,12 @@ void test_iterator_on_pair(){
   
   Regular R( static_cast<Cast_type&>(points).begin(),static_cast<Cast_type&>(points).end() );
 
-  CGAL_assertion( R.number_of_vertices() == 6 );
+  assert( R.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
   Regular::Finite_vertices_iterator vit;
   for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
-    CGAL_assertion( points[ vit->info() ].first == vit->point() );
+    assert( points[ vit->info() ].first == vit->point() );
 }
 
 void toto(int){}
@@ -62,12 +62,12 @@ void test_zip_iterator(){
 
   Regular R( boost::make_zip_iterator(boost::make_tuple( static_cast<Cast_type&>(points).begin(),indices.begin() )),
              boost::make_zip_iterator(boost::make_tuple( static_cast<Cast_type&>(points).end(),indices.end() ) )  );
-  CGAL_assertion( R.number_of_vertices() == 6 );
+  assert( R.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
   Regular::Finite_vertices_iterator vit;
   for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
-    CGAL_assertion( points[ vit->info() ] == vit->point() );
+    assert( points[ vit->info() ] == vit->point() );
 }
 
 struct Auto_count : public std::unary_function<const Weighted_point&,std::pair<Weighted_point,unsigned> >{
@@ -94,12 +94,12 @@ void test_transform_iterator(){
   Regular R( boost::make_transform_iterator(static_cast<Cast_type&>(points).begin(),Auto_count()),
              boost::make_transform_iterator(static_cast<Cast_type&>(points).end(),  Auto_count() )  );
 
-  CGAL_assertion( R.number_of_vertices() == 6 );
+  assert( R.number_of_vertices() == 6 );
 
   // check that the info was correctly set.
   Regular::Finite_vertices_iterator vit;
   for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
-    CGAL_assertion( points[ vit->info() ] == vit->point() );  
+    assert( points[ vit->info() ] == vit->point() );  
 }
 
 int main()

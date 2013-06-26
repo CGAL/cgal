@@ -225,7 +225,7 @@ private:
 
 public:
   Triangulation_ds_edge_circulator_2()
-    : _v(), pos()
+    : _ri(0), _v(), pos()
   {}
             
   Triangulation_ds_edge_circulator_2( Vertex_handle v, 
@@ -385,7 +385,7 @@ Triangulation_ds_vertex_circulator_2 (Vertex_handle v,
     _v = Vertex_handle(); pos = Face_handle(); return;}
   int i = pos->index(_v);
   if (pos->dimension() == 2) {_ri = ccw(i);}
-  else {_ri = 1-i;}
+  else {CGAL_assertion(i>=0 && i<=1);_ri = (i == 0) ? 1 : 0;}
   return;
 }
 
@@ -400,7 +400,8 @@ operator++()
   int i = pos->index(_v);
     
   if (pos->dimension() == 1) { 
-    pos = pos->neighbor(1-i);
+    CGAL_assertion(i>=0 && i<=1);
+    pos = pos->neighbor((i == 0) ? 1 : 0);
     _ri = 1 - pos->index(_v);
   }
   else{
@@ -431,7 +432,8 @@ operator--()
   int i = pos->index(_v);
     
   if (pos->dimension() == 1) { 
-    pos = pos->neighbor(1-i);
+    CGAL_assertion(i>=0 && i<=1);
+    pos = pos->neighbor((i == 0) ? 1 : 0);
     _ri = 1 - pos->index(_v);
   }
   else{
@@ -504,7 +506,7 @@ Triangulation_ds_edge_circulator_2(Vertex_handle v, Face_handle f)
   else if (pos==Face_handle()) {pos = v->face();}
  
   if (pos == Face_handle() || pos->dimension() < 1){
-    _v = Vertex_handle(); pos = Face_handle();return;}
+    _ri = 0; _v = Vertex_handle(); pos = Face_handle();return;}
   int i = pos->index(_v);
   if (pos->dimension() == 2) {_ri = ccw(i);}
   else {_ri = 2;}
@@ -519,8 +521,9 @@ operator++()
   CGAL_triangulation_precondition(pos != Face_handle() &&
                                   _v != Vertex_handle());
   int i = pos->index(_v);
-  if (pos->dimension() == 1) { 
-    pos = pos->neighbor(1-i);
+  if (pos->dimension() == 1) {
+    CGAL_assertion(i>=0 && i<=1);
+    pos = pos->neighbor(i == 0 ? 1 : 0);
     return *this;
   }
   else{
@@ -551,7 +554,8 @@ operator--()
   int i = pos->index(_v);
 
   if (pos->dimension() == 1) { 
-    pos = pos->neighbor(1-i);
+    CGAL_assertion(i>=0 && i<=1);
+    pos = pos->neighbor((i == 0) ? 1 : 0);
     return *this;
   }
   else{

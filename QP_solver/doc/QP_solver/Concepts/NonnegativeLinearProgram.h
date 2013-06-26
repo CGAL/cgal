@@ -112,7 +112,7 @@ int get_m() const;
 /*! 
 returns an iterator over the columns 
 of \f$ A\f$. The corresponding past-the-end iterator is `get_a()+get_n()`. 
-For \f$ j=0,\ldots,n-1\f$, \f$ \ccc{*(get_a()+j)}\f$ is a random access 
+For \f$ j=0,\ldots,n-1\f$, `*(get_a()+j)` a random access 
 iterator for column \f$ j\f$. 
 */ 
 A_iterator get_a() const; 

@@ -6,7 +6,7 @@
 The concept `GetCost` describes the requirements for the <I>policy function object</I> 
 which gets the <I>collapse cost</I> of an edge. 
 
-The cost returned is a `boost::optional` value (i.e. it can be absent). 
+The cost returned is a `boost::optional` value (i.e.\ it can be absent). 
 An <I>absent</I> cost indicates that the edge should not be collapsed. 
 This could be the result of a computational limitation (such as overflow), 
 or can be intentionally returned to prevent the edge from being collapsed. 

@@ -60,6 +60,8 @@ input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
 defining `CGAL_CH_CHECK_EXPENSIVE`.
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 
 - `ConvexHullPolyhedron_3`

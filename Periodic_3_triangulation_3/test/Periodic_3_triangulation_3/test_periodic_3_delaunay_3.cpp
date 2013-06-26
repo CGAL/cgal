@@ -53,7 +53,7 @@ int main()
   typedef CGAL::Periodic_3_Delaunay_triangulation_3< PTT2 > P3T3_2;
   _test_cls_periodic_3_delaunay_3( P3T3_2() );
 
-  typedef CGAL::Periodic_3_Delaunay_triangulation_3< PTT3 > P3T3_3;
+  // typedef CGAL::Periodic_3_Delaunay_triangulation_3< PTT3 > P3T3_3;
   // this takes too much time for the test suite.
   //_test_cls_periodic_3_delaunay_3( P3T3_3(), true );
 

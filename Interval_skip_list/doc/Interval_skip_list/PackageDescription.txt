@@ -37,5 +37,15 @@ static, that is all intervals must be known in advance.
 This package has one concept, namely for the interval with which 
 the interval skip list class is parameterized.
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `Interval`
+
+## Classes ##
+- `CGAL::Interval_skip_list<Interval>`
+- `CGAL::Interval_skip_list_interval<Value>`
+- `CGAL::Level_interval<FaceHandle>`
+
 */
 

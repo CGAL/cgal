@@ -42,7 +42,7 @@ void vertical_ray_shooting_query
   else if (CGAL::assign (f, obj))
   {
     // We did not hit anything:
-    CGAL_assertion (f->is_unbounded());
+    assert (f->is_unbounded());
     
     std::cout << "hit nothing." << std::endl; 
   }

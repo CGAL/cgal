@@ -34,7 +34,7 @@ class Color {
   GLfloat c[4];
 public:
   Color() {
-    ::glGetFloatv(GL_COLOR, &c[0]);
+    ::glGetFloatv(GL_CURRENT_COLOR, &c[0]);
   }
   ~Color() {
     set_rgb_color(c[0], c[1], c[2], c[3]);

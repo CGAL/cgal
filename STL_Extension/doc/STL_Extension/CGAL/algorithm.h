@@ -95,7 +95,7 @@ namespace CGAL {
 instead.
 
 The function `predecessor` returns the previous iterator,
-i.e. the result of `operator--` on a bidirectional iterator.
+i.e.\ the result of `operator--` on a bidirectional iterator.
 
 \sa `CGAL::successor()`
 

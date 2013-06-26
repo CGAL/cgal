@@ -65,6 +65,8 @@ indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index. See
 Figure \cgalFigureRef{Triangulation3figorient}.
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 
 - `TriangulationTraits_3`

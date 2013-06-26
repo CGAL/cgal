@@ -57,7 +57,7 @@ namespace CGAL {
     Weighted_Minkowski_distance(const int d,const SearchTraits& traits_=SearchTraits()) 
       : traits(traits_),power(2), the_weights(d)
     {
-      for (unsigned int i = 0; i < d; ++i) the_weights[i]=FT(1);
+      for (int i = 0; i < d; ++i) the_weights[i]=FT(1);
     }
 
     //default copy constructor and destructor

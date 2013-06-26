@@ -10,7 +10,7 @@ The more general class `Projection_traits_xy_3` can be found in the 2D and 3D Li
 \deprecated The class `Triangulation_euclidean_traits_xy_3` is a
 geometric traits class which allows to triangulate a terrain. This
 traits class is designed to build a two dimensional triangulation
-embedded in 3D space, i.e. a triangulated surface, such that its on
+embedded in 3D space, i.e.\ a triangulated surface, such that its on
 the \f$ xy\f$ plane is a Delaunay triangulation.  This is a usual
 construction for GIS terrains.  Instead of really projecting the 3D
 points and maintaining a mapping between each point and its projection

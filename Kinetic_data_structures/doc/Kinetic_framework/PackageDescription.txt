@@ -21,6 +21,7 @@
 /*!
 \addtogroup PkgKdsFramework
 \todo check generated documentation
+\todo there is no documentation for class CGAL::Kinetic::Active_objects_listener_helper nor  CGAL::Kinetic::Simulator_kds_listener but it's not specific to the doxygen documentation
 \cgalPkgDescriptionBegin{Kinetic Framework,PkgKdsFrameworkSummary}
 \cgalPkgPicture{kdsFramework.png}
 \cgalPkgSummaryBegin
@@ -36,6 +37,10 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
+## Definition ##
+
 %Kinetic data structures are a way of adding motion to classical
 geometric data structures. \cgal provides a number of classes to aid
 implementation of kinetic data structures.
@@ -43,7 +48,46 @@ implementation of kinetic data structures.
 There are three levels at which the user can interact with the
 package. The user can use an existing kinetic data structure, write a
 new kinetic data structure, or replace parts of the framework. The
-first level is covered in this Chapter.
+first level is covered in  \ref PkgKdsFrameworkSummary "this Chapter".
+
+## Main Support Classes and Concepts ##
+
+Here we list the main classes and concepts provided by the framework to support implementing kinetic data structures
+
+- `Kinetic::ActiveObjectsTable`
+- `CGAL::Kinetic::Active_objects_vector<MovingObject>`
+- `CGAL::Kinetic::Cartesian<FunctionKernel>`
+- `Kinetic::FunctionKernel`
+- `Kinetic::InstantaneousKernel`
+- `CGAL::Kinetic::Default_instantaneous_kernel<ActiveObjectsTable, StaticKernel>`
+- `Kinetic::Kernel Kinetic::SimulationTraits`
+- `Kinetic::Simulator`
+- `CGAL::Kinetic::Default_simulator<FunctionKernel, EventQueue>`
+
+## Other Concepts ##
+- `Kinetic::Key`
+- `Kinetic::Certificate`
+- `Kinetic::CertificateGenerator`
+- `Kinetic::EventQueue Kinetic::FunctionKernel::ConstructFunction`
+- `Kinetic::FunctionKernel::Function`
+- `Kinetic::RootStack`
+- `Kinetic::Simulator::Event`
+- `Kinetic::Simulator::Time`
+
+## Other Classes ##
+- `CGAL::Listener<Interface>`
+- `CGAL::Multi_listener<Interface>`
+- `CGAL::Ref_counted<T>`
+- `CGAL::Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>`
+- `CGAL::Kinetic::Erase_event<ActiveObjectsTable>`
+- `CGAL::Kinetic::Insert_event<ActiveObjectsTable>`
+- `CGAL::Kinetic::Qt_moving_points_2<Traits, QtWidget_2>`
+- `CGAL::Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>`
+- `CGAL::Kinetic::Qt_widget_2<Simulator>`
+- `CGAL::Kinetic::Regular_triangulation_instantaneous_kernel<ActiveObjectsTable, StaticKernel>`
+- `CGAL::Kinetic::Simulator_kds_listener<Listener, KDS>`
+- `CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, KDS>`
+
 
 ## Example ##
 The simulation traits class is simply there for convenience in order to bundle a set of related typedefs and create a few objects. As a resulting, creating your own requires little though, and just copying and changing a few lines. An example is below which sets up to use the CORE Sturm sequences to solve polynomials rather than our own (faster) solvers. It can be found in examples/Kinetic\_framework/defining\_a\_simulation\_traits.cpp.

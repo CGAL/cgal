@@ -18,5 +18,11 @@
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Functions ##
+- `CGAL::minkowski_sum_3()`
+
 */
 

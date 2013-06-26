@@ -131,20 +131,20 @@ namespace CGAL {
 
     /// Increment the reference counting.
     void inc_nb_refs()
-    { ++mrefcounting; }
+    { mrefcounting+=4; } // 4 because this is the 3rd bit (ie 1<<2)
 
     /// Decrement the reference counting.
     void dec_nb_refs()
     {
-      CGAL_assertion( mrefcounting>0 );
-      --mrefcounting; 
+      CGAL_assertion( mrefcounting>3 );
+      mrefcounting-=4; // 4 because this is the 3rd bit (ie 1<<2)
     }
 
+  public:
     /// Get the reference counting.
     unsigned int get_nb_refs() const
-    { return mrefcounting; }
+    { return (mrefcounting>>2); } // >>2 to ignore the 2 least significant bits
 
-  public:
     void * for_compact_container() const 
     { return vp; }
     void * & for_compact_container()       

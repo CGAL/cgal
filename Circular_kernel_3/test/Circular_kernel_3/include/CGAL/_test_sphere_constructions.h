@@ -26,19 +26,19 @@
 
 template <class SK>
 void _test_circular_arc_point_construct(SK sk) {
-  typedef typename SK::RT                               RT;
+
   typedef typename SK::FT                               FT;
   typedef typename SK::Root_of_2                        Root_of_2;
   typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
   typedef typename SK::Point_3                          Point_3;
-  typedef typename SK::Sphere_3                          Sphere_3;
+
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
-  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+
   typedef typename SK::Equal_3                          Equal_3;
-  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
-  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+
+
+
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
   
   (void)/* Construct_sphere_3 theConstruct_sphere_3 = */ sk.construct_sphere_3_object();
@@ -96,19 +96,19 @@ void _test_circular_arc_point_construct(SK sk) {
 
 template <class SK>
 void _test_sphere_construct(SK sk) {
-  typedef typename SK::RT                               RT;
-  typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
-  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+
+
+
+
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Sphere_3                         Sphere_3;
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Get_equation                     Get_equation;
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
-  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
-  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+
+
 
   Get_equation theGet_equation = sk.get_equation_object();
   Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
@@ -144,19 +144,19 @@ void _test_sphere_construct(SK sk) {
 
 template <class SK>
 void _test_plane_construct(SK sk) {
-  typedef typename SK::RT                               RT;
-  typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
-  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
-  typedef typename SK::Point_3                          Point_3;
+
+
+
+
+
   typedef typename SK::Plane_3                          Plane_3;
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Get_equation                     Get_equation;
   typedef typename SK::Construct_plane_3                Construct_plane_3;
-  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
-  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+
 
   Get_equation theGet_equation = sk.get_equation_object();
   Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
@@ -192,17 +192,17 @@ void _test_plane_construct(SK sk) {
 
 template <class SK>
 void _test_line_construct(SK sk) {
-  typedef typename SK::RT                               RT;
-  typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
-  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+
+
+
+
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Line_3                           Line_3;
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Get_equation                     Get_equation;
   typedef typename SK::Construct_line_3                 Construct_line_3;
-  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
-  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+
+
   typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
@@ -243,24 +243,24 @@ void _test_line_construct(SK sk) {
 
 template <class SK>
 void _test_circle_construct(SK sk) {
-  typedef typename SK::RT                               RT;
+
   typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
-  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+
+
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Plane_3                          Plane_3;
   typedef typename SK::Circle_3                         Circle_3;
-  typedef typename SK::Sphere_3                         Sphere_3;
+
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Get_equation                     Get_equation;
   typedef typename SK::Equal_3                          Equal_3;
   typedef typename SK::Construct_circle_3               Construct_circle_3;
-  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
-  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+
 
   Equal_3 theEqual_3 = sk.equal_3_object();
   Get_equation theGet_equation = sk.get_equation_object();
@@ -338,9 +338,9 @@ void _test_circle_construct(SK sk) {
 
 template <class SK>
 void _test_line_arc_construct(SK sk) {
-  typedef typename SK::RT                               RT;
-  typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
+
+
+
   typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Line_3                           Line_3;
@@ -351,10 +351,10 @@ void _test_line_arc_construct(SK sk) {
   typedef typename SK::Construct_line_3                 Construct_line_3;
   typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
   typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
-  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
-  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+
+
   typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
-  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
 
   Get_equation theGet_equation = sk.get_equation_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
@@ -405,26 +405,26 @@ void _test_line_arc_construct(SK sk) {
 template <class SK>
 void _test_circular_arc_construct(SK sk) {
 
-  typedef typename SK::RT                               RT;
+
   typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
-  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+
+
   typedef typename SK::Circular_arc_3                   Circular_arc_3;
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Plane_3                          Plane_3;
   typedef typename SK::Circle_3                         Circle_3;
-  typedef typename SK::Sphere_3                         Sphere_3;
+
   typedef typename SK::Algebraic_kernel                 AK;
-  typedef typename SK::Get_equation                     Get_equation;
+
   typedef typename SK::Equal_3                          Equal_3;
   typedef typename SK::Construct_circle_3               Construct_circle_3;
-  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+
   typedef typename SK::Construct_circular_arc_3         Construct_circular_arc_3;
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
-  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+
 
   Equal_3 theEqual_3 = sk.equal_3_object();
   (void)/* Get_equation theGet_equation = */sk.get_equation_object();
@@ -498,9 +498,9 @@ void _test_circular_arc_construct(SK sk) {
 
 template <class SK>
 void _test_intersection_construct(SK sk) {
-  typedef typename SK::RT                               RT;
+
   typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
+
   typedef CGAL::Circular_arc_point_3<SK>                Circular_arc_point_3;
   typedef CGAL::Point_3<SK>                             Point_3;
   typedef CGAL::Line_3<SK>                              Line_3;
@@ -525,7 +525,7 @@ void _test_intersection_construct(SK sk) {
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
   Has_on_3 theHas_on_3 = sk.has_on_3_object();
@@ -2150,30 +2150,30 @@ void _test_bbox(const typename SK::Circular_arc_point_3 &p)
 template <class SK>
 void _test_bbox(const typename SK::Circle_3 &c)
 {
-  typedef typename SK::RT                               RT;
+
   typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
+
   typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
-  typedef typename SK::Point_3                          Point_3;
-  typedef typename SK::Line_3                           Line_3;
-  typedef typename SK::Plane_3                          Plane_3;
-  typedef typename SK::Sphere_3                         Sphere_3;
-  typedef typename SK::Circle_3                         Circle_3;
-  typedef typename SK::Algebraic_kernel                 AK;
-  typedef typename SK::Get_equation                     Get_equation;
-  typedef typename SK::Equal_3                          Equal_3;
-  typedef typename SK::Has_on_3                         Has_on_3;
+
+
+
+
+
+
+
+
+
   typedef typename SK::Construct_bbox_3                 Construct_bbox_3;
-  typedef typename SK::Intersect_3                      Intersect_3;
-  typedef typename SK::Construct_circle_3               Construct_circle_3;
-  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
-  typedef typename SK::Construct_plane_3                Construct_plane_3;
-  typedef typename SK::Construct_line_3                 Construct_line_3;
-  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
-  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
-  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
-  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+
+
+
+
+
+
+
+
+
   typedef CGAL::Bbox_3                                  Bbox_3;
 
   (void)/* Has_on_3 theHas_on_3 = */ SK().has_on_3_object();
@@ -2236,32 +2236,32 @@ void _test_bbox(const typename SK::Circle_3 &c)
 template <class SK>
 void _test_bounding_box_construct(SK sk)
 {
-  typedef typename SK::RT                               RT;
+
   typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
+
   typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Line_3                           Line_3;
-  typedef typename SK::Plane_3                          Plane_3;
+
   typedef typename SK::Sphere_3                         Sphere_3;
   typedef typename SK::Circle_3                         Circle_3;
   typedef typename SK::Line_arc_3                       Line_arc_3;
   typedef typename SK::Algebraic_kernel                 AK;
-  typedef typename SK::Get_equation                     Get_equation;
-  typedef typename SK::Equal_3                          Equal_3;
-  typedef typename SK::Has_on_3                         Has_on_3;
+
+
+
   typedef typename SK::Construct_bbox_3                 Construct_bbox_3;
   typedef typename SK::Intersect_3                      Intersect_3;
   typedef typename SK::Construct_circle_3               Construct_circle_3;
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
-  typedef typename SK::Construct_plane_3                Construct_plane_3;
+
   typedef typename SK::Construct_line_3                 Construct_line_3;
   typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
-  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
+
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
-  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+
   typedef CGAL::Bbox_3                                  Bbox_3;
 
   (void)/* Has_on_3 theHas_on_3 = */ sk.has_on_3_object();
@@ -2404,34 +2404,34 @@ void _test_bounding_box_construct(SK sk)
 
 template <class SK>
 void _test_split_construct(SK sk) {
-  typedef typename SK::RT                               RT;
+
   typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
+
   typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Line_3                           Line_3;
-  typedef typename SK::Plane_3                          Plane_3;
-  typedef typename SK::Sphere_3                         Sphere_3;
+
+
   typedef typename SK::Circle_3                         Circle_3;
   typedef typename SK::Line_arc_3                       Line_arc_3;
   typedef typename SK::Circular_arc_3                   Circular_arc_3;
   typedef typename SK::Algebraic_kernel                 AK;
-  typedef typename SK::Get_equation                     Get_equation;
+
   typedef typename SK::Equal_3                          Equal_3;
-  typedef typename SK::Has_on_3                         Has_on_3;
+
   typedef typename SK::Split_3                          Split_3;
-  typedef typename SK::Intersect_3                      Intersect_3;
+
   typedef typename SK::Construct_circular_arc_3         Construct_circular_arc_3;
   typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
   typedef typename SK::Construct_circle_3               Construct_circle_3;
-  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
-  typedef typename SK::Construct_plane_3                Construct_plane_3;
+
+
   typedef typename SK::Construct_line_3                 Construct_line_3;
   typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
   (void)/* Has_on_3 theHas_on_3 = */ sk.has_on_3_object();
@@ -2524,34 +2524,34 @@ void _test_split_construct(SK sk) {
 
 template <class SK>
 void _test_extremal_points_construct(SK sk) {
-  typedef typename SK::RT                               RT;
+
   typedef typename SK::FT                               FT;
-  typedef typename SK::Root_of_2                        Root_of_2;
+
   typedef CGAL::Circular_arc_point_3<SK>                Circular_arc_point_3;
-  typedef typename SK::Point_3                          Point_3;
-  typedef typename SK::Line_3                           Line_3;
-  typedef typename SK::Plane_3                          Plane_3;
+
+
+
   typedef CGAL::Sphere_3<SK>                            Sphere_3;
   typedef CGAL::Circle_3<SK>                            Circle_3;
-  typedef typename SK::Line_arc_3                       Line_arc_3;
-  typedef typename SK::Circular_arc_3                   Circular_arc_3;
+
+
   typedef typename SK::Algebraic_kernel                 AK;
-  typedef typename SK::Get_equation                     Get_equation;
-  typedef typename SK::Equal_3                          Equal_3;
-  typedef typename SK::Has_on_3                         Has_on_3;
-  typedef typename SK::Split_3                          Split_3;
-  typedef typename SK::Intersect_3                      Intersect_3;
-  typedef typename SK::Construct_circular_arc_3         Construct_circular_arc_3;
-  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
+
+
+
+
+
+
+
   typedef typename SK::Construct_circle_3               Construct_circle_3;
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
-  typedef typename SK::Construct_plane_3                Construct_plane_3;
-  typedef typename SK::Construct_line_3                 Construct_line_3;
-  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+
+
+
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+
   typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
 
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();

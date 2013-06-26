@@ -1,0 +1,10 @@
+Options +FollowSymLinks
+<IfModule mod_alias.c>
+	RedirectMatch permanent /$ http://doc.cgal.org/4.2/CGAL.CGAL/html/index.html
+</IfModule>
+
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresDefault A1209600
+Header append Cache-Control "public"
+</IfModule>

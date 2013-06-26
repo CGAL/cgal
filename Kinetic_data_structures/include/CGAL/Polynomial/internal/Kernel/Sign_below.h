@@ -42,8 +42,8 @@ public:
   typedef typename K::Function first_argument_type;
   typedef typename K::Root second_argument_type;
   typedef CGAL::Sign result_type;
-  result_type operator()(const typename K::Function &p,
-				     const typename K::Root &v) const
+  result_type operator()(const typename K::Function &,
+				     const typename K::Root &) const
   {
     CGAL_Polynomial_precondition(0);
     return ZERO;

@@ -60,7 +60,7 @@ class Filtered_number
             if (!double_) return CGAL_POLYNOMIAL_TO_DOUBLE(nt_);
             return d_;
         }
-        const std::pair<double, double> &it() const
+        const std::pair<double, double> it() const
         {
             if (!double_) return CGAL_POLYNOMIAL_TO_INTERVAL(nt_);
             return std::pair<double,double>(d_, d_);

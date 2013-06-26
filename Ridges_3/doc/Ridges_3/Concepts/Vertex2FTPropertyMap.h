@@ -3,8 +3,8 @@
 \ingroup PkgRidges_3Concepts
 \cgalConcept
 
-The concept `Vertex2FTPropertyMap` specializes the concept of LvaluePropertyMap 
-of the Boost library. It is intended to be used in combination with 
+The concept `Vertex2FTPropertyMap` specializes the concept of `LvaluePropertyMap`.
+It is intended to be used in combination with 
 the concept `TriangulatedSurfaceMesh` in the class 
 `CGAL::Ridge_approximation`. It associates a field type value 
 `TriangulatedSurfaceMesh::Traits::FT` to keys which are 

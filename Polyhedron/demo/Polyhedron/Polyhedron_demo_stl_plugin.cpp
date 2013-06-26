@@ -47,9 +47,9 @@ public:
     }
     for(size_type i=0; i < mesh.size(); i++){
       B.begin_facet(); 
-      B.add_vertex_to_facet( mesh[i].get<0>());
-      B.add_vertex_to_facet( mesh[i].get<1>());
-      B.add_vertex_to_facet( mesh[i].get<2>());
+      B.add_vertex_to_facet( mesh[i].template get<0>());
+      B.add_vertex_to_facet( mesh[i].template get<1>());
+      B.add_vertex_to_facet( mesh[i].template get<2>());
       B.end_facet();
     }
     if(B.error())

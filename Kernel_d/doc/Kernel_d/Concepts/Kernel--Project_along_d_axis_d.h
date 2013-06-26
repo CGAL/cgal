@@ -3,14 +3,13 @@
 \ingroup PkgKernelDKernelConcept
 \cgalConcept
 
-A model for this must provide: 
-
 */
 
 class Kernel_d::Project_along_d_axis_d {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

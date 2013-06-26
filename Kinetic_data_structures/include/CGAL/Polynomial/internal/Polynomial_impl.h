@@ -312,8 +312,8 @@ public:
   //! check if the coefficients are equal
   bool operator==(const This &o) const
   {
-    if (degree() != o.degree()) return false;
-    int max_size = (std::max)(o.coefs_.size(), coefs_.size());
+    if (degree() != static_cast<int>(o.degree())) return false;
+    int max_size = static_cast<int>((std::max)(o.coefs_.size(), coefs_.size()));
     for (int i = 0; i < max_size; ++i) {
       if (o[i] != operator[](i)) return false;
     }

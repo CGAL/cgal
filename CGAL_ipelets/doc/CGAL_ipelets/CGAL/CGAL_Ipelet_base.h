@@ -99,12 +99,12 @@ typedef Kernel::Iso_rectangle_2 Iso_rectangle_2;
 /*! 
 Class type providing operators to extract points from segments and polygons. 
 */ 
-template<class output_iterator> Point_grabber; 
+template<class OutputIterator> Point_grabber; 
 
 /*! 
 Class type providing operators to extract segments from polygons. 
 */ 
-template<class output_iterator> Segment_grabber; 
+template<class OutputIterator> Segment_grabber; 
 
 /// @} 
 
@@ -131,14 +131,20 @@ CGAL_ipelet(const std::string fct_names[],const std::string help_msg[],const std
 /// @{
 
 /*! 
-\cgalAdvanced returns a pointer to an Ipe object representing the drawing page. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+returns a pointer to an Ipe object representing the drawing page. 
 Refer to the Ipe library documentation for more details. 
+\cgalAdvancedEnd
 */ 
 IpePage* get_ipe_page(); 
 
 /*! 
-\cgalAdvanced returns a pointer to an Ipe object providing services to Ipelets. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+returns a pointer to an Ipe object providing services to Ipelets. 
 Refer to the Ipe library documentation for more details. 
+\cgalAdvancedEnd
 */ 
 IpeletHelper* get_ipelet_helper(); 
 
@@ -185,7 +191,7 @@ bool deselect_all=true,
 bool delete_selected_objects=false); 
 
 /*! 
-returns an output iterator which wraps `it`. `Output_iterator` must be a model 
+returns an output iterator which wraps `it`. `OutputIterator` must be a model 
 of the output iterator concept accepting assignments from `Point_2`. 
 The returned output iterator will accept assignments from objects of types 
 `Polygon_2` or `Segment_2` or `Point_2`, it decomposes them in 
@@ -194,11 +200,11 @@ For more details on the returned output iterator refer to the Boost library
 <A HREF="http://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
 
 */ 
-template<class Output_iterator> 
-boost::function_output_iterator<Point_grabber<Output_iterator> > point_grabber(Output_iterator it); 
+template<class OutputIterator> 
+boost::function_output_iterator<Point_grabber<OutputIterator> > point_grabber(OutputIterator it); 
 
 /*! 
-returns an output iterator which wraps `it`. `Output_iterator` must be a model 
+returns an output iterator which wraps `it`. `OutputIterator` must be a model 
 of the output iterator concept accepting assignments from `Segment_2`. 
 The returned output iterator will accept assignments from objects of types 
 `Polygon_2` or `Segment_2`, it decomposes them in objects of type `Segment_2` 
@@ -207,8 +213,8 @@ For more details on the returned output iterator refer to the Boost library
 <A HREF="http://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html">documentation</A>. 
 
 */ 
-template<class Output_iterator> 
-boost::function_output_iterator<Segment_grabber<Output_iterator> > segment_grabber(Output_iterator it); 
+template<class OutputIterator> 
+boost::function_output_iterator<Segment_grabber<OutputIterator> > segment_grabber(OutputIterator it); 
 
 /*! 
 

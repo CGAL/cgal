@@ -88,7 +88,7 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
     // Print result
     Kernel::Sphere_3 bsphere = points->bounding_sphere();
     double radius = std::sqrt(bsphere.squared_radius());
-    long memory = CGAL::Memory_sizer().virtual_size();
+    std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Average spacing = " << average_spacing 
                                       << " = " << average_spacing/radius << " * point set radius (" 
                                       << task_timer.time() << " seconds, "

@@ -40,7 +40,7 @@ public:
   }
 
   Marching_tetrahedra_observer_default_3(
-    const  Marching_tetrahedra_observer_default_3& traits2) {
+    const  Marching_tetrahedra_observer_default_3&) {
   }
 
   void after_vertex_insertion(

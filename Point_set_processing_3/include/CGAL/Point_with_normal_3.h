@@ -131,7 +131,7 @@ private:
 /// (or in general an iterator over Point_with_normal_3 elements).
 ///
 /// @heading Is Model for the Concepts:
-/// Model of boost::LvaluePropertyMap concept.
+/// Model of `LvaluePropertyMap` concept.
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.

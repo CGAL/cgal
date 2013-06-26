@@ -76,7 +76,7 @@ int main()
         std::cerr << "A " << (*V)[i] << std::endl;
         std::cerr << "E " << CGAL::exact((*V)[i]) << std::endl;
       } 
-      CGAL_assertion(V->size()==6);
+      assert(V->size()==6);
     }
     obj = CGAL::intersection(s1,s2);
   }

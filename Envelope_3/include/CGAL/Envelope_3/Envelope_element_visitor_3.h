@@ -2146,9 +2146,7 @@ protected:
     
     virtual ~Copy_observer() {}
 
-    virtual void before_create_vertex (const Point_2& /* p */,
-                                       Arr_parameter_space /* x */,
-                                       Arr_parameter_space /* y */)
+    virtual void before_create_vertex (const Point_2& /* p */)
     {}
 
     virtual void after_create_vertex (Vertex_handle v)

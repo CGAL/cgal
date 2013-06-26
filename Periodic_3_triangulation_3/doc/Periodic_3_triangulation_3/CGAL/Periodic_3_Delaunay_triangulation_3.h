@@ -198,7 +198,7 @@ const Offset & off = Offset(0,0,0)) const;
 Returns any nearest vertex to the point `p`, or the default constructed 
 handle if the triangulation is empty. The optional argument `c` is a hint 
 specifying where to start the search. It always returns a vertex 
-corresponding to a point inside \f$ \ccc{domain}\f$ even if computing in a 
+corresponding to a point inside `domain` even if computing in a 
 multiply sheeted covering space. 
 \pre `c` is a cell of `dt` and `p` lies in the original domain `domain`. 
 

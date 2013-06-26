@@ -133,7 +133,7 @@ Subdivision_method_3::CatmullClark_subdivision(P,d);
 subdivision functions. `CatmullClark_subdivision(P,d)` computes the 
 Catmull-Clark subdivision surface of the polyhedron `P` after
 `d` iterations of the refinements. The polyhedron `P` is 
-passed by reference, and is modified (i.e. subdivided) by the 
+passed by reference, and is modified (i.e.\ subdivided) by the 
 subdivision function.
 
 This example shows how to subdivide a simple `Polyhedron_3`
@@ -365,10 +365,10 @@ can not be used with `Subdivision_method_3`.
 Although `Subdivision_method_3` does not require flags
 to support the refinements and the stencils, it
 still needs to know how to compute and store the geometry
-data (i.e. the points). `Subdivision_method_3` 
+data (i.e.\ the points). `Subdivision_method_3` 
 expects that the typename `Point_3` is 
 defined in the geometry kernel of the polyhedron
-(i.e. the `Polyhedron_3::Traits::Kernel`). 
+(i.e.\ the `Polyhedron_3::Traits::Kernel`). 
 A point of the type `Point_3` is returned by the geometry 
 policy and is then assigned to the new vertex. 
 The geometry policy is explained in next section.
@@ -392,8 +392,8 @@ Each geometry mask receives a primitive handle
 (e.g. `Halfedge_handle`) of the control mesh, 
 and returns a `Point_3` to the subdivided vertex. 
 The function collects the vertex neighbors of the primitive handle 
-(i.e. nodes on the stencil), and computes the new point 
-based on the neighbors and the mask (i.e. the stencil weights).
+(i.e.\ nodes on the stencil), and computes the new point 
+based on the neighbors and the mask (i.e.\ the stencil weights).
 
 \image html cc_mask.gif
 

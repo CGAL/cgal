@@ -65,7 +65,7 @@ int main()
 
   typedef CGAL::Periodic_3_triangulation_3<PTT3>            P3T3_3;
   _test_periodic_3_triangulation_3_constructors( P3T3_3() );
-  typedef CGAL::Periodic_3_Delaunay_triangulation_3<PTT3>   P3DT3_3;
+  // typedef CGAL::Periodic_3_Delaunay_triangulation_3<PTT3>   P3DT3_3;
   //_test_cls_periodic_3_triangulation_3( P3DT3_3(), false, true );
 
   return 0;

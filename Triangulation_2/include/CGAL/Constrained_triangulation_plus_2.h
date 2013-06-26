@@ -271,9 +271,9 @@ public:
  	++it){  
        Face_handle fh;  
        int i;  
-       CGAL_triangulation_assertion_code( bool b = )  
+       CGAL_assume_code( bool b = )
  	Triangulation::is_edge(*it, *succ, fh, i);  
-       CGAL_triangulation_assertion(b);  
+       CGAL_assume(b);
        // this does also flipping if necessary.  
        Triangulation::remove_constrained_edge(fh,i,out);  
  

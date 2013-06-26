@@ -89,7 +89,7 @@ template <typename Set>
 void 
 SetGraphicsItem<Set>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
-                                    QWidget *w)
+                                    QWidget* )
 {
   if (m_set == NULL)
     return;

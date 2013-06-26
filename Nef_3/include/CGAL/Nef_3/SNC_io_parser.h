@@ -34,6 +34,9 @@
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <vector>
 #include <CGAL/Fraction_traits.h>
+#include <CGAL/Homogeneous_converter.h>
+#include <CGAL/Cartesian_converter.h>
+
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 293
@@ -43,7 +46,80 @@
 #include <boost/any.hpp>
 #endif
 
+#include <boost/mpl/has_xxx.hpp>
+
 namespace CGAL {
+
+template <class NT> class Lazy_exact_nt;
+class Homogeneous_tag;
+class Cartesian_tag;
+template <class T> struct Simple_cartesian;
+template <class T1, class T2> struct Simple_homogeneous;
+template <class RT> class Quotient;
+
+namespace Nef_3_internal{
+
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_Exact_kernel,Exact_kernel,false)
+
+template <class R,bool has_exact_kernel=Has_nested_Exact_kernel<R>::value, class FT = typename R::RT, class Kernel_tag=typename R::Kernel_tag>
+struct Type_converter{
+  typedef const CGAL::Point_3<R>& Point_3;
+  typedef const CGAL::Vector_3<R>& Vector_3;
+  typedef const CGAL::Plane_3<R>& Plane_3;
+
+  static Point_3 convert(Point_3 p){return p;}
+  static Plane_3 convert(Plane_3 p){return p;}
+  static Vector_3 convert(Vector_3 v){return v;}
+};
+
+template <class R>
+struct Type_converter<R, true>{
+  typedef CGAL::Point_3<typename R::Exact_kernel> Point_3;
+  typedef CGAL::Plane_3<typename R::Exact_kernel> Plane_3;
+  typedef CGAL::Vector_3<typename R::Exact_kernel> Vector_3;
+
+  static Point_3 convert(const CGAL::Point_3<R>& p){return p.exact();}
+  static Plane_3 convert(const CGAL::Plane_3<R>& p){return p.exact();}
+  static Vector_3 convert(const CGAL::Vector_3<R>& v){return v.exact();}
+};
+
+template <class R, class NT>
+struct Type_converter<R, false, ::CGAL::Lazy_exact_nt<NT>, ::CGAL::Cartesian_tag >{
+  typedef CGAL::Simple_cartesian< NT > EK;
+  typedef CGAL::Cartesian_converter<R, EK> Converter;
+  typedef CGAL::Point_3<EK> Point_3;
+  typedef CGAL::Plane_3<EK> Plane_3;
+  typedef CGAL::Vector_3<EK> Vector_3;
+
+  static Point_3 convert(const CGAL::Point_3<R>& p){return Converter()(p);}
+  static Plane_3 convert(const CGAL::Plane_3<R>& p){return Converter()(p);}
+  static Vector_3 convert(const CGAL::Vector_3<R>& v){return Converter()(v);}
+};
+
+template <class R, class NT>
+struct Type_converter<R, false, ::CGAL::Lazy_exact_nt<NT>, ::CGAL::Homogeneous_tag>{
+  typedef CGAL::Simple_homogeneous< NT, CGAL::Quotient<NT> > EK;
+  typedef CGAL::Homogeneous_converter<R, EK> Converter;
+  typedef CGAL::Point_3<EK> Point_3;
+  typedef CGAL::Plane_3<EK> Plane_3;
+  typedef CGAL::Vector_3<EK> Vector_3;
+
+  static Point_3 convert(const CGAL::Point_3<R>& p){return Converter()(p);}
+  static Plane_3 convert(const CGAL::Plane_3<R>& p){return Converter()(p);}
+  static Vector_3 convert(const CGAL::Vector_3<R>& v){return Converter()(v);}
+};
+
+
+template <class R>
+typename Type_converter<R>::Point_3 get_point(const CGAL::Point_3<R>& p){ return Type_converter<R>::convert(p); }
+
+template <class R>
+typename Type_converter<R>::Plane_3 get_plane(const CGAL::Plane_3<R>& p){ return Type_converter<R>::convert(p); }
+
+template <class R>
+typename Type_converter<R>::Vector_3 get_vector(const CGAL::Vector_3<R>& v){ return Type_converter<R>::convert(v); }
+
+} //end of Nef_3_internal
 
 template<typename T>
 class moreLeft : public T {
@@ -593,81 +669,8 @@ struct find_minimal_sface_of_shell : public SNC_decorator<T> {
   SFace_handle& minimal_sface() { return sf_min; }
 };
 
-class Homogeneous_tag;
-class Cartesian_tag;
+
 template<typename Tag, typename Kernel> class Geometry_io;
-
-template<typename ET>
-class Geometry_io<Cartesian_tag, CGAL::Lazy_kernel<CGAL::Simple_cartesian<ET> > > {
- public:
-  template <typename EK, typename K> static
-  typename EK::Point_3 
-  read_point(std::istream& in) {
-    typedef Fraction_traits<typename K::FT> FracTraits;
-    typename FracTraits::Type hx, hy, hz, hw;
-    typename FracTraits::Numerator_type num;
-    typename FracTraits::Denominator_type denom(1);
-    typename FracTraits::Compose composer;
-    in >> num;
-    hx = composer(num, denom);
-    in >> num;
-    hy = composer(num, denom);
-    in >> num;
-    hz = composer(num, denom);
-    in >> num;
-    hw = composer(num, denom);
-    return typename EK::Point_3(hx,hy,hz,hw);
-  }
-
-  template <typename EK, typename K> static
-  typename EK::Plane_3 read_plane(std::istream& in) {
-    typedef Fraction_traits<typename K::FT> FracTraits;
-    typename FracTraits::Type a, b, c, d;
-    typename FracTraits::Numerator_type num;
-    typename FracTraits::Denominator_type denom(1);
-    typename FracTraits::Compose composer;
-    in >> num;
-    a = composer(num, denom);
-    in >> num;
-    b = composer(num, denom);
-    in >> num;
-    c = composer(num, denom);
-    in >> num;
-    d = composer(num, denom);
-    return typename EK::Plane_3(a,b,c,d);
-  }
-
-  template <typename R> static
-  void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
-    typedef typename CGAL::Simple_cartesian<ET> SC;
-    typedef typename SC::Point_3 Exact_point;
-    typedef Geometry_io<Cartesian_tag, SC> Gio;
-    
-    Exact_point ep(p.x().exact(), p.y().exact(), p.z().exact());
-    Gio::print_point(out, ep);
-  }  
-
-  template <typename R> static
-  void print_vector(std::ostream& out, const CGAL::Vector_3<R> vec) {
-    typedef typename CGAL::Simple_cartesian<ET> SC;
-    typedef typename SC::Vector_3 Exact_vector;
-    typedef Geometry_io<Cartesian_tag, SC> Gio;
-    
-    Exact_vector ev(vec.x().exact(), vec.y().exact(), vec.z().exact());
-    Gio::print_vector(out, ev);
-  }  
-
-  template <typename R> static
-  void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
-    typedef typename CGAL::Simple_cartesian<ET> SC;
-    typedef typename SC::Plane_3 Exact_plane;
-    typedef Geometry_io<Cartesian_tag, SC> Gio;
-    
-    Exact_plane ep(p.a().exact(), p.b().exact(), 
-		   p.c().exact(), p.d().exact());
-    Gio::print_plane(out, ep);
-  }  
-};
 
 template<typename Kernel>
 class Geometry_io<Cartesian_tag, Kernel> {
@@ -709,7 +712,7 @@ class Geometry_io<Cartesian_tag, Kernel> {
   }
 
   template <typename R> static
-    void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
+    void print_point_impl(std::ostream& out, const CGAL::Point_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
 
@@ -740,7 +743,7 @@ class Geometry_io<Cartesian_tag, Kernel> {
   }
 
   template <typename R> static
-    void print_vector(std::ostream& out, const CGAL::Vector_3<R> p) {
+    void print_vector_impl(std::ostream& out, const CGAL::Vector_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef typename FracTraits::Numerator_type NumType;
     typedef std::vector<NumType> NV;
@@ -769,7 +772,7 @@ class Geometry_io<Cartesian_tag, Kernel> {
   }
 
   template <typename R> static
-  void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
+  void print_plane_impl(std::ostream& out, const CGAL::Plane_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
 
@@ -804,6 +807,22 @@ class Geometry_io<Cartesian_tag, Kernel> {
     out << vec[0] << " " << vec[1] << " "
 	<< vec[2] << " " << vec[3];
   }
+
+  template <class R> static
+  void print_point(std::ostream& out, const CGAL::Point_3<R>& p) {
+    print_point_impl(out, Nef_3_internal::get_point(p) );
+  }
+
+  template <class R> static
+  void print_vector(std::ostream& out, const CGAL::Vector_3<R>& v) {
+    print_vector_impl(out, Nef_3_internal::get_vector(v) );
+  }
+
+  template <class R> static
+  void print_plane(std::ostream& out, const CGAL::Plane_3<R>& p) {
+    print_plane_impl(out, Nef_3_internal::get_plane(p) );
+  }
+
 };
 
 template<typename Kernel>
@@ -824,19 +843,34 @@ class Geometry_io<Homogeneous_tag, Kernel> {
   }
 
   template <typename R> static
-  void print_point(std::ostream& out, const CGAL::Point_3<R>& p) {
+  void print_point_impl(std::ostream& out, const CGAL::Point_3<R>& p) {
     out << p;
   }
 
   template <typename R> static
-  void print_vector(std::ostream& out, const CGAL::Vector_3<R>& vec) {
+  void print_vector_impl(std::ostream& out, const CGAL::Vector_3<R>& vec) {
     out << vec;
   }
 
   template <typename R> static
-  void print_plane(std::ostream& out, const CGAL::Plane_3<R>& p) {
+  void print_plane_impl(std::ostream& out, const CGAL::Plane_3<R>& p) {
     out << p;
-  }  
+  }
+
+  template <class R> static
+  void print_point(std::ostream& out, const CGAL::Point_3<R>& p) {
+    print_point_impl(out, Nef_3_internal::get_point(p) );
+  }
+
+  template <class R> static
+  void print_vector(std::ostream& out, const CGAL::Vector_3<R>& v) {
+    print_vector_impl(out, Nef_3_internal::get_vector(v) );
+  }
+
+  template <class R> static
+  void print_plane(std::ostream& out, const CGAL::Plane_3<R>& p) {
+    print_plane_impl(out, Nef_3_internal::get_plane(p) );
+  }
 };
 
 template <typename SNC_structure_>

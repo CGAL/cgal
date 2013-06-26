@@ -19,5 +19,21 @@
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `DataKernel`
+- `LocalKernel`
+- `SvdTraits`
+
+## Classes ##
+- \link CGAL::Monge_via_jet_fitting::Monge_form `CGAL::Monge_via_jet_fitting< DataKernel, LocalKernel, SvdTraits>::Monge_form` \endlink
+- `CGAL::Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`
+- `CGAL::Eigen_svd`
+
+## Global Functions ##
+The insert operator (operator<< ) is overloaded for the class \link CGAL::Monge_via_jet_fitting::Monge_form `Monge_form` \endlink. 
+
 */
 

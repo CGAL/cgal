@@ -23,5 +23,30 @@
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `TriangulatedSurfaceMesh`
+- `Vertex2FTPropertyMap`
+- `Vertex2VectorPropertyMap`
+
+## Enums ##
+- `CGAL::Ridge_type`
+- `CGAL::Ridge_order`
+- `CGAL::Umbilic_type`
+
+## Classes ##
+- `CGAL::Ridge_line<TriangulatedSurfaceMesh>`
+- `CGAL::Umbilic<TriangulatedSurfaceMesh>`
+- `CGAL::Ridge_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`
+- `CGAL::Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`
+
+## Global Functions ##
+- `CGAL::compute_max_ridges()`
+- `CGAL::compute_min_ridges()`
+- `CGAL::compute_crest_ridges()`
+- `CGAL::compute_umbilics()`
+
 */
 

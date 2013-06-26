@@ -25,7 +25,7 @@ typedef CGAL::Polyhedron_3<K,Poly_items_skin>                 Polyhedron_skin;
 Skin_surface_3 create_skin_surface(std::string &filename, double shrink) {
   std::list<Weighted_point> l;
   std::ifstream in(filename.c_str());
-  CGAL_assertion(in.is_open());
+  assert(in.is_open());
   Weighted_point wp;
   while (in >> wp) l.push_front(wp);
 
@@ -37,10 +37,10 @@ void construct_and_subdivide_mesh(Skin_surface_3 &skin_surface,
 				  Polyhedron &polyhedron) 
 {
   CGAL::mesh_skin_surface_3(skin_surface, polyhedron);
-  CGAL_assertion(polyhedron.is_valid() && polyhedron.is_closed());
+  assert(polyhedron.is_valid() && polyhedron.is_closed());
 
   CGAL::subdivide_skin_surface_mesh_3(skin_surface, polyhedron);
-  CGAL_assertion(polyhedron.is_valid() && polyhedron.is_closed());
+  assert(polyhedron.is_valid() && polyhedron.is_closed());
 }
 
 class Test_file {

@@ -72,7 +72,7 @@ Thus, a 3D-triangulation data structure can store a triangulation of a
 topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.
 
 Let us give, for each dimension, the example corresponding to the
-triangulation data structure having a minimal number of vertices, i.e. a 
+triangulation data structure having a minimal number of vertices, i.e.\ a 
 simplex. These examples are illustrated by presenting their usual
 geometric embedding. 
 <UL>
@@ -88,7 +88,7 @@ being incident to an infinite cell. See \cgalFigureRef{TDS3figtoposimplex4}.
 \cgalFigureEnd
 
 <LI><I>dimension 2.</I> We have 4 vertices forming one 3-dimensional
-simplex, i.e. the boundary of a tetrahedron. The geometric embedding in
+simplex, i.e.\ the boundary of a tetrahedron. The geometric embedding in
 the plane results from choosing one of these vertices to be infinite,
 then the geometric triangulation has one finite triangle whose edges are
 incident to the infinite triangles. See \cgalFigureRef{TDS3figtoposimplex3}.

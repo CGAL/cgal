@@ -25,6 +25,7 @@
 #ifndef CGAL_REFINE_MESH_3_H
 #define CGAL_REFINE_MESH_3_H
 
+#include <CGAL/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/optimize_mesh_3.h>
@@ -150,7 +151,7 @@ namespace parameters {
     };
     
   } // end namespace internal
-#if defined(__GNUC__) && __GNUC__ >= 4 && __GNUC_MINOR__ > 5
+#if defined(__clang__) || defined(__GNUC__) && CGAL_GCC_VERSION >= 40600
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 // remove a warning about an unused parameter "args" in the definition of
@@ -236,7 +237,7 @@ namespace parameters {
   
   inline internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
   
-#if defined(__GNUC__) && __GNUC__ >= 4 && __GNUC_MINOR__ > 5
+#if defined(__clang__) || defined(__GNUC__) && CGAL_GCC_VERSION >= 40600
 #pragma GCC diagnostic pop
 #endif
   

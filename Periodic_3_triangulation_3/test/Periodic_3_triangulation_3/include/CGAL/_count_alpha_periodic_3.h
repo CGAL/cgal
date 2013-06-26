@@ -83,10 +83,10 @@ count_faces(const AS &A, bool verbose)
 {
   typedef AS         Alpha_shape_3;
 
-  typedef typename AS::Finite_cells_iterator    Finite_cells_iterator;
-  typedef typename AS::Finite_facets_iterator   Finite_facets_iterator;
-  typedef typename AS::Finite_edges_iterator    Finite_edges_iterator;
-  typedef typename AS::Finite_vertices_iterator Finite_vertices_iterator;
+
+
+
+
   
   typedef typename AS::Alpha_shape_cells_iterator 
                                       Alpha_shape_cells_iterator;

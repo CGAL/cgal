@@ -14,7 +14,6 @@ Scene_implicit_function_item::
 Scene_implicit_function_item(Implicit_function_interface* f)
   : function_(f)
   , frame_(new ManipulatedFrame())
-  , initialized_(false)
   , grid_size_(SCENE_IMPLICIT_GRID_SIZE)
   , max_value_(0.)
   , min_value_(0.)

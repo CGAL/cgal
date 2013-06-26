@@ -372,7 +372,7 @@ Poisson solve duration (in s)
 \subsection SurfReconstPerfCont Contouring
 
 The point set chosen for benchmarking the contouring stage is the Bimba con Nastrino point
-set simplified to 100k points. We measure the contouring (i.e. the call to `make_surface_mesh()`)
+set simplified to 100k points. We measure the contouring (i.e.\ the call to `make_surface_mesh()`)
 duration and the reconstruction error for a range of approximation distances.
 The reconstruction error is expressed as the average distance from input points to the reconstructed surface
 in mm (the Bimba con Nastrino statue is 324 mm tall).

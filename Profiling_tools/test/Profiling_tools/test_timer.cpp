@@ -3,22 +3,24 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/FPU.h>
 
+#include <cassert>
+
 template <class T>
 double test_timer() {
     T t;
-    CGAL_assertion( ! t.is_running());
+    assert( ! t.is_running());
     t.start();
-    CGAL_assertion( t.is_running());
+    assert( t.is_running());
     t.reset();
-    CGAL_assertion( t.is_running());
+    assert( t.is_running());
     t.stop();
-    CGAL_assertion( ! t.is_running());
-    CGAL_assertion( t.time() >= 0.0);
+    assert( ! t.is_running());
+    assert( t.time() >= 0.0);
     std::cout << "time()                 : " << t.time() << "\n";
-    CGAL_assertion( t.intervals() == 1);
-    CGAL_assertion( t.precision() >= 0.0);
+    assert( t.intervals() == 1);
+    assert( t.precision() >= 0.0);
     std::cout << "precision()            : " << t.precision() << "\n"; 
-    CGAL_assertion( (t.max)() > 0.0);
+    assert( (t.max)() > 0.0);
 
     T s;
     s.start();

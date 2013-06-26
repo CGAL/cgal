@@ -10,24 +10,19 @@ line segments. It should be parameterized with a \cgal-kernel model that is
 templated in turn with a number type. To avoid numerical errors and 
 robustness problems, the number type should support exact rational 
 arithmetic - that is, the number type should support the arithmetic 
-operations \f$ +\f$, \f$ -\f$, \f$ \times\f$ and \f$ \div\f$ carried out without loss of 
-precision. 
+operations \f$ +\f$, \f$ -\f$, \f$ \times\f$ and \f$ \div\f$ carried out
+without loss of precision. 
 
-For example, instantiating the traits 
-template with kernels, such as `Cartesian<Quotient<MP_Float> >`, 
-or `Homogeneous<Gmpz>`, ensures the exact and robust operation of 
-the application. In particular, the `Cartesian<Gmpq>` achieves 
-the fastest running times in most cases. Using other inexact number 
-types (for example, instantiating the template with 
-`Simple_cartesian<double>`) is at the user's own risk: 
-Selecting an inexact number type usually leads to faster running time at 
-the expense of possible robustness problems. 
-
-For optimal performance, we recommend instantiating the traits class with 
-the default `Exact_predicates_exact_constructions_kernel` provided by 
-\cgal. Using this kernel guarantees exactness and robustness, while it incurs 
-only a minor overhead (in comparison to working with a fast, inexact number 
-type) for most inputs. 
+For example, instantiating the traits template with kernels that support
+exact predicates and exact constructions, such as
+`Exact_predicates_exact_constructions_kernel`, ensures the exact and
+robust operation of the application. While selecting an inexact kernel when
+developing a program usually leads to shorter running times, it causes
+robustness problems in most cases, and thus renders the program useless. The
+`Exact_predicates_exact_constructions_kernel` type is a shortcut for a
+kernel that uses an exact number type, that is, `Gmpq` (More precisely,
+`Lazy_exact_nt<Gmpq>`), when `Gmpq` is available. Indeed, this configuration
+achieves the shortest running times in many cases.
 
 `Arr_segment_traits_2` defines `Kernel::Point_2` as its point type. However, it 
 does <I>not</I> define `Kernel::Segment_2` as its curve type, as one 

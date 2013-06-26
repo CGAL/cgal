@@ -49,5 +49,20 @@ operations on them, and should be instantiated by a model of the concept
 function object that ensures the numerical integration used to
 construct the streamlines, and should be instantiated by a model of the concept
 `Integrator_2`.
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `StreamLinesTraits_2`
+- `Integrator_2`
+- `VectorField_2`
+
+## Classes ##
+- `CGAL::Stream_lines_2<VectorField_2,Integrator_2>`
+- `CGAL::Euler_integrator_2<VectorField_2>`
+- `CGAL::Runge_kutta_integrator_2<VectorField_2>`
+- `CGAL::Regular_grid_2<StreamLinesTraits_2>`
+- `CGAL::Triangular_field_2<StreamLinesTraits_2>`
+
 */
 

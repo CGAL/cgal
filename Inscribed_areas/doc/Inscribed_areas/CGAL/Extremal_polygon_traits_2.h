@@ -3,10 +3,13 @@ namespace CGAL {
 /*!
 \ingroup PkgInscribedAreas
 
-\cgalAdvanced The class `Extremal_polygon_area_traits_2` provides the types and 
+\cgalAdvancedClass
+\cgalAdvancedBegin
+The class `Extremal_polygon_area_traits_2` provides the types and 
 operations needed to compute a maximum area \f$ k\f$-gon \f$ P_k\f$ that can 
 be inscribed into a given convex polygon \f$ P\f$ using the function 
-`extremal_polygon_2`. 
+`extremal_polygon_2`.
+\cgalAdvancedEnd
 
 \tparam K must be a model of `Kernel`.
 
@@ -105,10 +108,13 @@ Orientation_2 orientation_2_object();
 /*!
 \ingroup PkgInscribedAreas
 
-\cgalAdvanced The class `Extremal_polygon_perimeter_traits_2` provides the
+\cgalAdvancedClass
+\cgalAdvancedBegin
+The class `Extremal_polygon_perimeter_traits_2` provides the
 types and operations needed to compute a maximum perimeter \f$
 k\f$-gon \f$ P_k\f$ that can be inscribed into a given convex polygon
 \f$ P\f$ using the function `extremal_polygon_2`.
+\cgalAdvancedEnd
 
 \tparam K must be a model of `Kernel`.
 

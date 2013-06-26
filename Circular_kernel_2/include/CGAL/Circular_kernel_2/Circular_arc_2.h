@@ -41,6 +41,7 @@
 #endif
 
 #include <CGAL/intersections.h>
+#include <CGAL/result_of.h>
 
 namespace CGAL {
 namespace internal {
@@ -634,12 +635,14 @@ public:
        return _support;
     }
 
-    const Point_2 & center() const           
+    typename cpp11::result_of<typename CK::Construct_center_2(Circle_2)>::type
+    center() const           
     {
        return supporting_circle().center();
     }
 
-    const FT & squared_radius() const           
+    typename cpp11::result_of<typename CK::Compute_squared_radius_2(Circle_2)>::type
+    squared_radius() const           
     {
        return supporting_circle().squared_radius();
     }

@@ -82,7 +82,7 @@ public:
   /*! A notification invoked after the sweep-line finishes handling the given
    * event.
    */
-  void after_handle_event(Event * event) { return; }
+  void after_handle_event(Event * ) { return; }
   //@}
 
   /*! Get the current top face. */

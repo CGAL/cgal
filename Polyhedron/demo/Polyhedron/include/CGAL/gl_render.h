@@ -5,20 +5,19 @@
 #include <CGAL/compute_normal.h>
 
 
-namespace {
-  void CGALglcolor(QColor c, int dv = 0)
+
+inline void CGALglcolor(QColor c, int dv = 0)
+{
+  if ( 0 != dv )
   {
-    if ( 0 != dv )
-    {
-// workaround for Qt-4.2.
+    // workaround for Qt-4.2.
 #if QT_VERSION < 0x040300
 #  define darker dark
 #endif
-      c = c.darker(dv);
+    c = c.darker(dv);
 #undef darker
-    }
-    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
   }
+  ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
 }
 
 template <class Polyhedron>
@@ -35,12 +34,18 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
   GLint shading;
   ::glGetIntegerv(GL_SHADE_MODEL, &shading);
 
+  int patch_id = 0;
+
   Facet_iterator f;
   for(f = polyhedron.facets_begin();
     f != polyhedron.facets_end();
     f++)
   {
-    CGALglcolor(colors[f->patch_id()]);
+    const int this_patch_id = f->patch_id();
+    if(patch_id != this_patch_id) {
+      CGALglcolor(colors[this_patch_id]);
+      patch_id = this_patch_id;
+    }
     ::glBegin(GL_POLYGON);
 
     // If Flat shading: 1 normal per polygon

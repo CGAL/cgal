@@ -3,67 +3,72 @@
 \ingroup PkgLinearCellComplexConcepts
 \cgalConcept
 
-The concept `CellAttributeWithPoint` is a refinement of the `CellAttribute` 
-concept, to represent a cell attribute containing a point. 
+The concept `CellAttributeWithPoint` is a refinement of the `CellAttribute`
+concept, to represent a cell attribute containing a point.
 
-\cgalRefines `CellAttribute` 
+\cgalRefines `CellAttribute`
 
-\cgalHasModel `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`
+\cgalHasModel \ref CGAL::Cell_attribute_with_point "CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>"
 
-\sa `LinearCellComplexItems` 
+\sa `LinearCellComplexItems`
 
 */
 
 class CellAttributeWithPoint {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
-/*! 
-Type of the used point. 
-*/ 
-typedef Hidden_type Point; 
+/*!
+Type of the used point.
+*/
+typedef Hidden_type Point;
 
-/// @} 
+/*!
+Type of the information, defined in the `CellAttribute` concept.
+*/
+  typedef CellAttribute::Info Info;
 
-/// \name Creation 
+/// @}
+
+/// \name Creation
 /// @{
 
-/*! 
-Default constructor. 
-*/ 
-CellAttributeWithPoint(); 
+/*!
+Default constructor.
+*/
+CellAttributeWithPoint();
 
-/*! 
-Constructor initializing the point of `cawp` by the 
-copy contructor `Point(apoint)`. 
-*/ 
-CellAttributeWithPoint(const Point&apoint); 
+/*!
+Constructor initializing the point of this attribute by the
+copy contructor \ref Point "Point"`(apoint)`.
+*/
+CellAttributeWithPoint(const Point&apoint);
 
-/*! 
-Constructor initializing the point of `cawp` by the 
-copy contructor `Point(apoint)` and initializing the 
-information of `cawp` by the 
-copy contructor `Info(info)`. 
-Defined only if `Info` is different from `void`. 
-*/ 
-CellAttributeWithPoint(const Point&apoint, const Info& info); 
+/*!
+Constructor initializing the point of this attribute by the
+copy contructor \ref Point "Point"`(apoint)` and initializing the
+information of this attribute by the
+copy contructor \ref Info "Info"`(info)`.
+Defined only if `Info` is different from `void`.
+*/
+  CellAttributeWithPoint(const Point&apoint, const Info& info);
 
-/// @} 
+/// @}
 
-/// \name Access Member Functions 
+/// \name Access Member Functions
 /// @{
 
-/*! 
-Returns the point of `cawp`. 
-*/ 
-Point& point(); 
+/*!
+Returns the point of this attribute.
+*/
+Point& point();
 
-/*! 
-Returns the point of `cawp`, when `cawp` is const. 
-*/ 
-const Point& point() const; 
+/*!
+Returns the point of this attribute, when this is const.
+*/
+const Point& point() const;
 
 /// @}
 

@@ -2,6 +2,7 @@ namespace CGAL {
 
 /*!
 \relates Polyhedron_3
+\ingroup PkgPolyhedronIOFunc
 
 This operator reads a polyhedral surface in Object File Format, OFF, 
 with file extension <TT>.off</TT>, which is also understood by 
@@ -35,6 +36,8 @@ std::istream& operator>>( std::istream& in, CGAL::Polyhedron_3<PolyhedronTraits_
 
 /*!
 \relates Polyhedron_3
+\ingroup PkgPolyhedronIOFunc
+
 This operator writes the polyhedral surface \f$P\f$ to the output
 stream out using the Object File Format, OFF, with file extension
 <TT>.off</TT>, which is also understood by GeomView \cite cgal:p-gmgv16-96. The

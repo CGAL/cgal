@@ -130,7 +130,7 @@ public:
 /// \pre `0 < angle_max <= PI/2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">boost::ReadWritePropertyMap</a>.
+/// @tparam NormalPMap is a model of `ReadWritePropertyMap`.
 /// @tparam Kernel Geometric traits class.
 
 template <typename ForwardIterator, ///< Input point iterator
@@ -190,8 +190,8 @@ private:
 /// Orients the normal of the point with maximum Z towards +Z axis.
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
-/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">boost::ReadWritePropertyMap</a> with a value_type = Vector_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return iterator over the top point.
@@ -247,9 +247,9 @@ mst_find_source(
 /// \pre `k >= 2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam IndexPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with an integral value_type.
-/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
-/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">boost::ReadWritePropertyMap</a> with a value_type = Vector_3<Kernel>.
+/// @tparam IndexPMap is a model of `ReadablePropertyMap` with an integral value_type.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return the Riemannian graph
@@ -294,7 +294,7 @@ create_riemannian_graph(
     // Number of input points
     const std::size_t num_input_points = distance(first, beyond);
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates KD-tree\n");
 
     // Instanciate a KD-tree search.
@@ -312,7 +312,7 @@ create_riemannian_graph(
     // Recover RAM
     kd_tree_points.clear();
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates Riemannian Graph\n");
 
     // Iterates over input points and creates Riemannian Graph:
@@ -387,9 +387,9 @@ create_riemannian_graph(
 /// \pre Normals must be unit vectors.
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam IndexPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with an integral value_type.
-/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
-/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">boost::ReadWritePropertyMap</a> with a value_type = Vector_3<Kernel>.
+/// @tparam IndexPMap is a model of `ReadablePropertyMap` with an integral value_type.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return the MST graph.
@@ -432,7 +432,7 @@ create_mst_graph(
     // Number of input points
     const std::size_t num_input_points = boost::num_vertices(riemannian_graph);
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Calls boost::prim_minimum_spanning_tree()\n");
 
     // Computes Minimum Spanning Tree.
@@ -444,7 +444,7 @@ create_mst_graph(
                                       weight_map( riemannian_graph_weight_map )
                                      .root_vertex( boost::vertex(source_point_index, riemannian_graph) ));
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Creates MST Graph\n");
 
     // Converts predecessor map to a MST graph:
@@ -499,9 +499,9 @@ create_mst_graph(
 /// \pre `k >= 2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadWritePropertyMap.html">boost::ReadWritePropertyMap</a> with a value_type = Vector_3<Kernel>.
+/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 ///
@@ -544,7 +544,7 @@ mst_orient_normals(
     // Precondition: at least 2 nearest neighbors
     CGAL_point_set_processing_precondition(k >= 2);
 
-    long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Create Index_property_map\n");
 
     // Create a property map Iterator -> index.
@@ -579,7 +579,7 @@ mst_orient_normals(
                                            riemannian_graph,
                                            source_point);
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("  Calls boost::breadth_first_search()\n");
 
     // Traverse the point set along the MST to propagate source_point's orientation
@@ -609,7 +609,7 @@ mst_orient_normals(
     // At this stage, we have typically 0 unoriented normals if k is large enough
     CGAL_TRACE("  => %u normals are unoriented\n", unoriented_points.size());
 
-    /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
     CGAL_TRACE("End of mst_orient_normals()\n");
 
     return first_unoriented_point;

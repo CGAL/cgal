@@ -25,8 +25,8 @@
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 template <class Kernel>
-CGAL::Sign sign_above(const typename Kernel::Function &p,
-		      const typename Kernel::NT &nt, const Kernel &k)
+CGAL::Sign sign_above(const typename Kernel::Function &,
+		      const typename Kernel::NT &, const Kernel &)
 {
   // to make sure this is not called in vain
   CGAL_precondition( false );

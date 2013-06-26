@@ -28,16 +28,18 @@ the following prototype:
 By default, the two data types are the same, so the conversion operator 
 is trivial: 
 
-<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
+<TABLE><TR><TD>
 `CData` = 
-<TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
+</TD>
+<TD>
 `XData` 
-<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
+</TD></TR>
+<TR><TD>
 `Cnv` = 
-<TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
+</TD>
+<TD>
 `_Default_convert_functor<CData,XData>` 
-
+</TD></TR>
 </TABLE> 
 
 In case two (or more) \f$ x\f$-monotone curves overlap, their data fields are 

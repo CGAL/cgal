@@ -1,8 +1,5 @@
 // example: function to check whether a point is in the convex 
 // hull of other points
-#include <boost/config.hpp>
-#include <boost/iterator/transform_iterator.hpp>
-#include <CGAL/Kernel_traits.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
@@ -41,8 +38,8 @@ solve_convex_hull_containment_lp (const Point_d& p,
     Program;
 
   // ok, we are prepared now: construct program and solve it
-  Program lp (end-begin,        // number of variables
-	      p.dimension()+1,  // number of constraints
+  Program lp (static_cast<int>(end-begin), // number of variables
+	      p.dimension()+1,             // number of constraints
 	      A_it (begin), B_it (p.homogeneous_begin()),
 	      R_it (CGAL::EQUAL), C_it (0));
   return CGAL::solve_nonnegative_linear_program (lp, dummy);

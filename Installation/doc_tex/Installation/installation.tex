@@ -96,11 +96,12 @@ supported compiler (see Section~\ref{sec:compilers}, \cmake, \boost, and at leas
 Section~\ref{sec:essential3rdpartysoftware} for more details on
 essential third party software.
 
-\section{OS-shipped \cgal\ \label{sec:shippedcgal}}
+\section{OS Specific Installation \label{sec:shippedcgal}}
 
 Some operating systems with package managers offer \cgal\ and its
 essential third party software through the manager, 
 for instance, Mac OS X, or some Linux distribution (e.g.~Debian).
+For Windows an installer is provided.
 
 \subsection{\cgal\ on MAC OS X\label{ssec:cgalmacosx}}
 
@@ -116,7 +117,7 @@ or if Qt4 demos are desired
  sudo port install cgal +qt4 +universal +demos
 \end{alltt}
 
-The setup is similar for homebrew.
+The setup is similar for \textsc{homebrew} (\path+http://mxcl.github.com/homebrew/+).
 
 \subsection{\cgal\ on Linux\label{ssec:cgaldebian}}
 
@@ -136,6 +137,18 @@ Check the \cgal-FAQ for source repository of newest releases.
 
 On other distributions, please consult your package manager documentation.
 
+\subsection{\cgal\ on Windows\label{ssec:cgalwindows}}
+
+You can download and run \texttt{\cgalrel-Setup.exe} from \cgaldownloadpage.
+
+It is a self extracting executable that installs the \cgal\ source, and that allows you
+to select and download some precompiled third party libraries.
+
+However, you will need to compile the library using your favorite compiler.
+
+A tutorial (\path+http://www.cgal.org/windows_installation.html+) is provided on how to proceed with Microsoft Visual Studio 2010.
+
+
 \section{Downloading \cgal\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
 
@@ -149,10 +162,6 @@ command:
 \begin{alltt}
       tar xzf \cgalrel.tar.gz
 \end{alltt}
-
-When you are on Windows you may download and run \texttt{\cgalrel-Setup.exe}. It
-is a self extracting executable that installs the \cgal\ source, and that allows
-you to select and download some precompiled third party libraries.
 
 In both cases the directory \cgalrel\ will be created. This directory
 contains the following subdirectories:\index{directories!structure}

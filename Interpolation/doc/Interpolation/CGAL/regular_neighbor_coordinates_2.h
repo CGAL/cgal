@@ -22,7 +22,7 @@ meet the requirements for the traits class of the
 `polygon_area_2()` function. A model of this traits class is 
 `Regular_triangulation_euclidean_traits_2<K, Weight>`. 
 <LI>The value type of `OutputIterator` is equivalent to 
-`std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`, i.e. a pair 
+`std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`, i.e.\ a pair 
 associating a point and its regular neighbor coordinate. 
 </OL> 
 

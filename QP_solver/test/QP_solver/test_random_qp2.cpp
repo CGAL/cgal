@@ -43,7 +43,7 @@ void statistics (const Solution& s,
       u++;
       break;
     default:
-      CGAL_qpe_assertion(false);
+      assert(false);
     }
 }
 

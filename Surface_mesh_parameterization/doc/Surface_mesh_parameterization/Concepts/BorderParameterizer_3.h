@@ -55,7 +55,7 @@ typedef Hidden_type Error_code;
 
 /*! 
 
-Assign to mesh's border vertices a 2D position (i.e. a `(u, v)` pair) on border's shape. Mark them as <I>parameterized</I>. Return false on error. 
+Assign to mesh's border vertices a 2D position (i.e.\ a `(u, v)` pair) on border's shape. Mark them as <I>parameterized</I>. Return false on error. 
 
 */ 
 Error_code parameterize_border(Adaptor& mesh); 

@@ -19,7 +19,22 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
 
+## Functions ##
+
+- `CGAL::read_off_points()`
+- `CGAL::read_xyz_points()`
+- `CGAL::compute_average_spacing()`
+- `CGAL::remove_outliers()`
+- `CGAL::grid_simplify_point_set()`
+- `CGAL::random_simplify_point_set()`
+- `CGAL::jet_smooth_point_set()`
+- `CGAL::jet_estimate_normals()`
+- `CGAL::pca_estimate_normals()`
+- `CGAL::mst_orient_normals()`
+- `CGAL::write_off_points()`
+- `CGAL::write_xyz_points()`
 
 */
 

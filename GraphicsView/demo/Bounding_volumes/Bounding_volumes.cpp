@@ -302,7 +302,7 @@ MainWindow::update_from_points()
     std::vector<Point_2> center;
     double radius;
 
-    CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
+    CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, static_cast<int>(P));
     Vector_2 rvec(radius, radius);
 
     for(std::size_t i = 0; i < center.size(); i++){
@@ -336,7 +336,7 @@ MainWindow::processInput(CGAL::Object o)
     std::vector<Point_2> center;
     double radius;
     if (points.size()>=P){
-      CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, P);
+      CGAL::rectangular_p_center_2 (points.begin(), points.end(), std::back_inserter(center), radius, static_cast<int>(P));
       Vector_2 rvec(radius, radius);
 
       for(std::size_t i=0; i < center.size(); i++){

@@ -766,7 +766,7 @@ void test_Type_functions( const CGAL::Field_with_root_of_tag&) {
    CGAL_SNAP_AST_FUNCTORS(AST);
    
 //   typedef typename Root_of::Boundary Boundary;
-   typedef typename Root_of::result_type result_type; 
+
    const Root_of root_of = Root_of();
    AS  real = root_of(1,coeffs.begin(),coeffs.end());
    assert( real ==  AS (3));

@@ -10,7 +10,7 @@ sets in \f$ d\f$-dimensional Euclidean space \f$ \E^d\f$. For point sets \f$ P\f
 we denote by \f$ pd(P,Q)\f$ the distance between the convex hulls of \f$ P\f$ and 
 \f$ Q\f$. Note that \f$ pd(P,Q)\f$ can be 
 degenerate, 
-i.e. \f$ pd(P,Q)=\infty\f$ if \f$ P\f$ or \f$ Q\f$ is empty. 
+i.e.\ \f$ pd(P,Q)=\infty\f$ if \f$ P\f$ or \f$ Q\f$ is empty. 
 
 Two inclusion-minimal subsets \f$ S_P\f$ of \f$ P\f$ and \f$ S_Q\f$ of \f$ Q\f$ with 
 \f$ pd(S_P,S_Q)=pd(P,Q)\f$ are called <I>pair of support 
@@ -19,7 +19,7 @@ points in \f$ S_P\f$ and \f$ S_Q\f$ are the <I>support points</I>. A pair of sup
 sets has size at most \f$ d+2\f$ (by size we mean \f$ |S_P|+|S_Q|\f$). The distance 
 between the two polytopes is <I>realized</I> by a pair of points \f$ p\f$ and 
 \f$ q\f$ lying in the convex hull of \f$ S_P\f$ and \f$ S_Q\f$, repectively, 
-i.e. \f$ \sqrt{||p-q||}=pd(P,Q)\f$. In general, neither the support sets nor the 
+i.e.\ \f$ \sqrt{||p-q||}=pd(P,Q)\f$. In general, neither the support sets nor the 
 realizing points are necessarily unique. 
 
 The underlying algorithm can cope with all kinds of input, e.g. \f$ P\f$ and \f$ Q\f$ 

@@ -2301,7 +2301,17 @@ const CGAL::Segment_3<Kernel>& s2);
 
 /// @}
 
+/// \defgroup radical_plane_grp CGAL::radical_plane()
+/// \ingroup kernel_global_function
+/// @{
 
+/*!  returns the radical plane of the two spheres.
+ \pre s1 and s2 are not cocentric.
+*/
+CGAL::Plane_3<Kernel> radical_plane(const CGAL::Sphere_3<Kernel>& s1,
+                                    const CGAL::Sphere_3<Kernel>& s2);
+
+/// @}
 
 /// \defgroup radical_line_grp CGAL::radical_line()
 /// \ingroup kernel_global_function
@@ -2678,5 +2688,17 @@ const CGAL::Point_3<Kernel> &q);
 
 /// @}
 
+
+/// \defgroup Kernel_operator_plus  CGAL::operator+
+/// \ingroup kernel_global_function
+
+/// \defgroup Kernel_operator_minus  CGAL::operator-
+/// \ingroup kernel_global_function
+
+/// \defgroup Kernel_operator_prod CGAL::operator*
+/// \ingroup kernel_global_function
+
+/// \defgroup do_overlap_grp CGAL::do_overlap()
+/// \ingroup kernel_global_function
 
 } /* namespace CGAL */

@@ -377,8 +377,7 @@ namespace CGAL {
 The adaptor `Container_from_circulator` is a class that converts any
 circulator type `C` to a kind of container class, i.e.\ a class
 that provides an `iterator` and a `const_iterator`
-type and two member functions - `begin()` and `end()`
-- that return the appropriate iterators. By analogy to \stl container classes these member functions return a const iterator in
+type and two member functions (`begin()` and `end()`) that return the appropriate iterators. By analogy to \stl container classes these member functions return a const iterator in
 the case that the container itself is constant and a mutable iterator
 otherwise.
 

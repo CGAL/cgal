@@ -65,6 +65,8 @@ both inside and outside the original domain we store an additional
 offset information in each vertex of a cell. These offsets are models
 of the concept `Periodic_3Offset_3`.
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 
 - `Periodic_3DelaunayTriangulationTraits_3`

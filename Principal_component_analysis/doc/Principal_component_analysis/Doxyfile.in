@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Principal Component Analysis"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Principal_component_analysis/doc/Principal_component_analysis/
+
+
+

@@ -158,7 +158,7 @@ symmetric_bezout_matrix
     typedef typename Polynomial_traits_d::Polynomial_d Polynomial;
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Degree degree;
-    typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;
+    CGAL_assertion_code(typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;)
     typename Polynomial_traits_d::Get_coefficient coeff;
 
     typedef typename internal::Simple_matrix<NT> Matrix;
@@ -593,13 +593,14 @@ polynomial_subresultant_matrix(typename Polynomial_traits_d::Polynomial_d f,
 
     NT divisor = ipower(lcoeff(f),n-m); 
 
+    int bit_mask = swapped ? 1 : 0;
     // Divide through the divisor and set the correct sign
     for(int i=0;i<m;i++) {
       for(int j = i;j<m;j++) {
-	bool negate = ((n-m+i+1) & 2)>>1; // (n-m+i+1)==2 or 3 mod 4
-	negate=negate ^ (swapped & ((n-m+i+1)*(i+1)));  
+	int negate = ((n-m+i+1) & 2)>>1; // (n-m+i+1)==2 or 3 mod 4
+	negate^=(bit_mask & ((n-m+i+1)*(i+1)));
 	//...XOR (swapped AND (n-m+i+1)* (i+1) is odd) 
-	Ret[i][j] = idiv(Ret[i][j],  negate ? -divisor : divisor);
+	Ret[i][j] = idiv(Ret[i][j],  negate>0 ? -divisor : divisor);
       }
     }
 

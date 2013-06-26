@@ -164,7 +164,7 @@ to the optimization function `exude_mesh_3()` through these mesh generation func
 
 \cgalHeading{Parameters}
 
-The parameters are named parameters. They are the same (i.e. they have the same 
+The parameters are named parameters. They are the same (i.e.\ they have the same 
 name and the same default values) as the parameters of `exude_mesh_3()` 
 function. See its manual page for further details. 
 
@@ -223,7 +223,7 @@ parameters to the optimization function
 
 \cgalHeading{Parameters}
 
-The parameters are named parameters. They are the same (i.e. they have the same 
+The parameters are named parameters. They are the same (i.e.\ they have the same 
 name and the same default values) as the parameters of the `lloyd_optimize_mesh_3()` 
 function. See its manual page for further details. 
 
@@ -377,7 +377,7 @@ allows the user to pass parameters to the optimization function
 
 \cgalHeading{Parameters}
 
-The parameters are named parameters. They are the same (i.e. they have the same 
+The parameters are named parameters. They are the same (i.e.\ they have the same 
 name and the same default values) as the parameters of `odt_optimize_mesh_3()` 
 function. See its manual page for further details. 
 
@@ -418,7 +418,7 @@ to the optimization function `perturb_mesh_3()` through these mesh generation fu
 
 \cgalHeading{Parameters}
 
-The parameters are named parameters. They are the same (i.e. they have the same 
+The parameters are named parameters. They are the same (i.e.\ they have the same 
 name and the same default values) as the parameters of `perturb_mesh_3()` 
 function. See its manual page for further details. 
 

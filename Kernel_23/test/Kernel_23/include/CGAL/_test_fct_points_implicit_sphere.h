@@ -65,11 +65,11 @@ _test_fct_points_implicit_sphere(const R&)
                                       -sin, RT0, cos, RT0,
                                                       den );
   
-  CGAL_kernel_assertion( CGAL::squared_distance(   p, org ) == FT1 );
+  assert( CGAL::squared_distance(   p, org ) == FT1 );
   CGAL::Point_3<R> tpt = p.transform(rot_z);
-  CGAL_kernel_assertion( CGAL::squared_distance( tpt, org ) == FT1 );
+  assert( CGAL::squared_distance( tpt, org ) == FT1 );
   p = tpt.transform(rot_z);
-  CGAL_kernel_assertion( CGAL::squared_distance(   p, org ) == FT1 );
+  assert( CGAL::squared_distance(   p, org ) == FT1 );
   
   CGAL::rational_rotation_approximation( RT(35), RT(-8),
                                          sin, cos, den,
@@ -79,11 +79,11 @@ _test_fct_points_implicit_sphere(const R&)
                                        RT0,-sin, cos, RT0,
                                                       den );
   
-  CGAL_kernel_assertion( CGAL::squared_distance(   q, org ) == FT1 );
+  assert( CGAL::squared_distance(   q, org ) == FT1 );
   tpt = q.transform(rot_x);
-  CGAL_kernel_assertion( CGAL::squared_distance( tpt, org ) == FT1 );
+  assert( CGAL::squared_distance( tpt, org ) == FT1 );
   q = tpt.transform(rot_y);
-  CGAL_kernel_assertion( CGAL::squared_distance(   q, org ) == FT1 );
+  assert( CGAL::squared_distance(   q, org ) == FT1 );
   
   CGAL::rational_rotation_approximation( RT(9), RT(-8),
                                          sin, cos, den,
@@ -93,11 +93,11 @@ _test_fct_points_implicit_sphere(const R&)
                                         -sin, RT0, cos, RT0,
                                                         den );
   
-  CGAL_kernel_assertion( CGAL::squared_distance(   r, org ) == FT1 );
+  assert( CGAL::squared_distance(   r, org ) == FT1 );
   tpt = r.transform(rot_z);
-  CGAL_kernel_assertion( CGAL::squared_distance( tpt, org ) == FT1 );
+  assert( CGAL::squared_distance( tpt, org ) == FT1 );
   r = tpt.transform(rot_y);
-  CGAL_kernel_assertion( CGAL::squared_distance(   r, org ) == FT1 );
+  assert( CGAL::squared_distance(   r, org ) == FT1 );
   
   CGAL::rational_rotation_approximation( RT(-19), RT(-1),
                                          sin, cos, den,
@@ -106,11 +106,11 @@ _test_fct_points_implicit_sphere(const R&)
                                          -sin, cos, RT0, RT0,
                                           RT0, RT0, den, RT0,
                                                          den );
-  CGAL_kernel_assertion( CGAL::squared_distance(   s, org ) == FT1 );
+  assert( CGAL::squared_distance(   s, org ) == FT1 );
   tpt = s.transform(rot_z);
-  CGAL_kernel_assertion( CGAL::squared_distance( tpt, org ) == FT1 );
+  assert( CGAL::squared_distance( tpt, org ) == FT1 );
   s = tpt.transform(rot_x);
-  CGAL_kernel_assertion( CGAL::squared_distance(   s, org ) == FT1 );
+  assert( CGAL::squared_distance(   s, org ) == FT1 );
   
   
   assert( CGAL::side_of_oriented_sphere(p,q,r,s,p) \

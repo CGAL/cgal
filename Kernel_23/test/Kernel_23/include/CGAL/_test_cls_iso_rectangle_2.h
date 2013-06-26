@@ -75,6 +75,9 @@ _test_cls_iso_rectangle_2(const R& )
  CGAL::Iso_rectangle_2<R> r13(p1, p2, p1, p2);
  CGAL::Iso_rectangle_2<R> r14(p3, p4, p1, p2);
 
+ CGAL::Iso_rectangle_2<R> r15( r14.bbox() );
+ typename R::Iso_rectangle_2 r16( r15.bbox() );
+
  r0 = r1;
 
  assert( r1 == r1 );

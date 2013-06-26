@@ -96,7 +96,7 @@ bool is_vertical();
 
 /*! 
 Test for equality. Two arcs are equal, iff their non-oriented 
-supporting lines are equal (i.e. they contain the same set of 
+supporting lines are equal (i.e.\ they contain the same set of 
 points) and their endpoints are equal. 
 \relates Line_arc_2
 */ 

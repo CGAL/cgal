@@ -21,6 +21,15 @@
 #ifndef ENVELOPE_TEST_OVERLAY_FUNCTOR_H
 #define ENVELOPE_TEST_OVERLAY_FUNCTOR_H
 
+#ifndef assert_msg
+#ifndef NDEBUG
+#  define assert_msg(EX,MSG) \
+   (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+#else
+#  define assert_msg(EX,MSG) (static_cast<void>(0))
+#endif
+#endif
+
 #include <iostream>
 
 namespace CGAL {
@@ -56,7 +65,7 @@ public:
   {
     res_f->set_aux_source(0, f1);
     res_f->set_aux_source(1, f2);
-    CGAL_assertion_msg(f1->is_equal_data(f2->begin_data(), f2->end_data()),
+    assert_msg(f1->is_equal_data(f2->begin_data(), f2->end_data()),
                        "data different over face");
   }
 
@@ -66,7 +75,7 @@ public:
   {
     res_v->set_aux_source(0, h1);
     res_v->set_aux_source(1, h2);
-    CGAL_assertion_msg(h1->is_equal_data(h2->begin_data(), h2->end_data()),
+    assert_msg(h1->is_equal_data(h2->begin_data(), h2->end_data()),
                        "data different over vertex");
 
   }
@@ -77,7 +86,7 @@ public:
   {
     res_v->set_aux_source(0, v1);
     res_v->set_aux_source(1, v2);
-    CGAL_assertion_msg(v1->is_equal_data(v2->begin_data(), v2->end_data()),
+    assert_msg(v1->is_equal_data(v2->begin_data(), v2->end_data()),
                        "data different over vertex");
   }
 
@@ -87,7 +96,7 @@ public:
   {
     res_v->set_aux_source(0, v1);
     res_v->set_aux_source(1, h2);
-    CGAL_assertion_msg(v1->is_equal_data(h2->begin_data(), h2->end_data()),
+    assert_msg(v1->is_equal_data(h2->begin_data(), h2->end_data()),
                        "data different over vertex");
   }
 
@@ -97,7 +106,7 @@ public:
   {
     res_v->set_aux_source(0, h1);
     res_v->set_aux_source(1, v2);
-    CGAL_assertion_msg(h1->is_equal_data(v2->begin_data(), v2->end_data()),
+    assert_msg(h1->is_equal_data(v2->begin_data(), v2->end_data()),
                        "data different over vertex");
   }
 
@@ -107,7 +116,7 @@ public:
   {
     res_v->set_aux_source(0, f1);
     res_v->set_aux_source(1, v2);
-    CGAL_assertion_msg(f1->is_equal_data(v2->begin_data(), v2->end_data()),
+    assert_msg(f1->is_equal_data(v2->begin_data(), v2->end_data()),
                        "data different over vertex");
   }
 
@@ -117,7 +126,7 @@ public:
   {
     res_v->set_aux_source(0, v1);
     res_v->set_aux_source(1, f2);
-    CGAL_assertion_msg(v1->is_equal_data(f2->begin_data(), f2->end_data()),
+    assert_msg(v1->is_equal_data(f2->begin_data(), f2->end_data()),
                        "data different over vertex");
   }
 
@@ -131,7 +140,7 @@ public:
     res_h->twin()->set_aux_source(0, h1->twin());
     res_h->twin()->set_aux_source(1, h2->twin());
 
-    CGAL_assertion_msg(h1->is_equal_data(h2->begin_data(), h2->end_data()),
+    assert_msg(h1->is_equal_data(h2->begin_data(), h2->end_data()),
                        "data different over edge");
   }
 
@@ -145,7 +154,7 @@ public:
     res_h->twin()->set_aux_source(0, h1->twin());
     res_h->twin()->set_aux_source(1, f2);
 
-    CGAL_assertion_msg(h1->is_equal_data(f2->begin_data(), f2->end_data()),
+    assert_msg(h1->is_equal_data(f2->begin_data(), f2->end_data()),
                        "data different over edge");
   }
 
@@ -158,7 +167,7 @@ public:
 
     res_h->twin()->set_aux_source(0, f1);
     res_h->twin()->set_aux_source(1, h2->twin());
-    CGAL_assertion_msg(f1->is_equal_data(h2->begin_data(), h2->end_data()),
+    assert_msg(f1->is_equal_data(h2->begin_data(), h2->end_data()),
                        "data different over edge");
 
   }

@@ -1,4 +1,4 @@
-
+#include <cassert>
 #include <iostream>
 #include <CGAL/enum.h>
 
@@ -41,7 +41,7 @@ public:
     if(res == CGAL::LARGER)
       return false;
 
-    CGAL_assertion(res == CGAL::EQUAL);
+    assert(res == CGAL::EQUAL);
     res = tr.compare_y_at_x_right_2_object()(c1, c2, c1_left);
     if(res == CGAL::SMALLER)
       return true;

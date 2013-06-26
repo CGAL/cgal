@@ -72,7 +72,7 @@ public:
 
 // OPERATIONS
 
-    bool operator==( Nullptr_t p) const {
+  bool operator==( Nullptr_t CGAL_assertion_code(p)) const {
         CGAL_assertion( p == NULL);
         return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
     }

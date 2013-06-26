@@ -110,8 +110,8 @@ Returns a `Curve_2` object specified by `s`.
 The passed string represents the defining polynomial of the curve 
 and must be given in a MAPLE-readable format using "x" as first 
 and "y" as second variable, e.g., 
-"(x&circ;3*y-2*x)*(-6*x-y&circ;3*x&circ;6)" 
-for integer coefficients, and "3/2*x*y&circ;4-5/7*x&circ;2+3/1" 
+"(x^3*y-2*x)*(-6*x-y^3*x^6)" 
+for integer coefficients, and "3/2*x*y^4-5/7*x^2+3/1" 
 for rational coefficients. 
 */ 
 Curve_2 operator() (std::string s); 

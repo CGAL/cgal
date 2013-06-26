@@ -121,8 +121,8 @@ public:
     p3(Creator()(d_range * (2 * this->_rnd.get_double() - 1.0),
                  d_range * (2 * this->_rnd.get_double() - 1.0)))
   {
-    CGAL_precondition(n >= 1 && n <= 4);
-    CGAL_precondition(c_size >= 0 && c_size <= r);
+    assert(n >= 1 && n <= 4);
+    assert(c_size >= 0 && c_size <= r);
     generate_point();
   }
   This& operator++() {
@@ -216,7 +216,7 @@ main(int argc, char* argv[])
     #else
           cerr << "Error: A point is not covered." << endl;
     #endif
-          CGAL_assertion(j != centers.end());
+          assert(j != centers.end());
         }
       } while (j != centers.end());
     }
@@ -252,7 +252,7 @@ main(int argc, char* argv[])
     #endif
     if (!boundary)
       cerr << "Error: No square has two points on boundary." << endl;
-    CGAL_assertion(boundary);
+    assert(boundary);
 #endif // CGAL_USE_LEDA
 
   } // for (int p(2); p < 5; ++p)

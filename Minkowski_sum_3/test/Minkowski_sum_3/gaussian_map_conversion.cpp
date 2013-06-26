@@ -38,8 +38,8 @@ void test_convex_parts(Nef_polyhedron_3& N)
 	Convertor(G);
       tmp1.delegate(Convertor, true);
 
-      CGAL_assertion(tmp1.is_valid());      
-      CGAL_assertion(tmp1.closure().symmetric_difference(tmp0).is_empty());
+      assert(tmp1.is_valid());      
+      assert(tmp1.closure().symmetric_difference(tmp0).is_empty());
       delete G.sphere_map();
     }
   }
@@ -55,12 +55,12 @@ void test_convex_parts(Nef_polyhedron_3& N)
       CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3> 
 	Convertor(G);
       tmp.delegate(Convertor, true);
-      CGAL_assertion(tmp.is_valid());
-      CGAL_assertion(tmp.number_of_vertices() == 1);
-      CGAL_assertion(tmp.number_of_volumes() == 1);
-      CGAL_assertion(tmp.vertices_begin()->mark());
-      CGAL_assertion(!tmp.volumes_begin()->mark());
-      CGAL_assertion(tmp.vertices_begin()->point() == vi->point());
+      assert(tmp.is_valid());
+      assert(tmp.number_of_vertices() == 1);
+      assert(tmp.number_of_volumes() == 1);
+      assert(tmp.vertices_begin()->mark());
+      assert(!tmp.volumes_begin()->mark());
+      assert(tmp.vertices_begin()->point() == vi->point());
 
       delete G.sphere_map();
 
@@ -78,14 +78,14 @@ void test_convex_parts(Nef_polyhedron_3& N)
     CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3> 
       Convertor(G);
     tmp.delegate(Convertor, true);
-    CGAL_assertion(tmp.is_valid());
-    CGAL_assertion(tmp.number_of_vertices() == 2);
-    CGAL_assertion(tmp.number_of_halfedges() == 2);
-    CGAL_assertion(tmp.number_of_volumes() == 1);
-    CGAL_assertion(tmp.vertices_begin()->mark());
-    CGAL_assertion((++tmp.vertices_begin())->mark());
-    CGAL_assertion(!tmp.volumes_begin()->mark());
-    CGAL_assertion(tmp.vertices_begin()->point() ==
+    assert(tmp.is_valid());
+    assert(tmp.number_of_vertices() == 2);
+    assert(tmp.number_of_halfedges() == 2);
+    assert(tmp.number_of_volumes() == 1);
+    assert(tmp.vertices_begin()->mark());
+    assert((++tmp.vertices_begin())->mark());
+    assert(!tmp.volumes_begin()->mark());
+    assert(tmp.vertices_begin()->point() ==
 		   eci->source()->point() ||
 		   tmp.vertices_begin()->point() ==
 		   eci->twin()->source()->point());
@@ -104,13 +104,13 @@ void test_convex_parts(Nef_polyhedron_3& N)
     CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3> 
       Convertor(G);
     tmp.delegate(Convertor, true);
-    CGAL_assertion(tmp.is_valid());
-    CGAL_assertion(tmp.number_of_halffacets() == 2);
-    CGAL_assertion(tmp.number_of_volumes() == 1);
-    CGAL_assertion(tmp.number_of_vertices()*2 == tmp.number_of_halfedges());
-    CGAL_assertion(tmp.halffacets_begin()->mark());
-    CGAL_assertion(!tmp.volumes_begin()->mark());
-    CGAL_assertion(tmp.halffacets_begin()->plane() == fci->plane() ||
+    assert(tmp.is_valid());
+    assert(tmp.number_of_halffacets() == 2);
+    assert(tmp.number_of_volumes() == 1);
+    assert(tmp.number_of_vertices()*2 == tmp.number_of_halfedges());
+    assert(tmp.halffacets_begin()->mark());
+    assert(!tmp.volumes_begin()->mark());
+    assert(tmp.halffacets_begin()->plane() == fci->plane() ||
 		   tmp.halffacets_begin()->plane() == fci->twin()->plane());
     delete G.sphere_map();
 

@@ -357,9 +357,9 @@ public:
   ///
   /// @commentheading Template Parameters:
   /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of boost::ReadablePropertyMap with a value_type = Point_3.
+  /// @param PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3.
   ///        It can be omitted if InputIterator value_type is convertible to Point_3.
-  /// @param NormalPMap is a model of boost::ReadablePropertyMap with a value_type = Vector_3.
+  /// @param NormalPMap is a model of `ReadablePropertyMap` with a value_type = Vector_3.
   ///
   /// @return the number of inserted points.
 
@@ -386,7 +386,7 @@ public:
         Point_with_normal pwn(get(point_pmap,it), get(normal_pmap,it));
         points.push_back(pwn);
     }
-    int n = points.size();
+    std::size_t n = points.size();
 
     initialize_bounding_sphere();
 
@@ -398,7 +398,7 @@ public:
     fractions.clear();
     fractions.push_back(1.0);
     
-    double m = n;
+    double m = static_cast<double>(n);
     
     while(m > 500){
       m /= 2;

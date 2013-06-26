@@ -43,6 +43,14 @@ struct Rational_traits_base
     const RT& numerator   (const Rational& r) const { return r; }
     RT denominator (const Rational&) const { return RT(1); }
     
+    template<class T>
+    Rational make_rational(const T & x) const
+    { return x; }
+
+    template<class T, class U>
+    Rational make_rational(const std::pair<T, U> & x) const
+    { return make_rational(x.first, x.second); }
+
     Rational make_rational(const RT & n, const RT & d) const
     { return n / d; } 
 };
@@ -70,6 +78,14 @@ public:
         return den; 
     }
     
+    template<class T>
+    Rational make_rational(const T & x) const
+    { return x; }
+
+    template<class T, class U>
+    Rational make_rational(const std::pair<T, U> & x) const
+    { return make_rational(x.first, x.second); }
+
     template<class N,class D>
     Rational make_rational(const N& n, const D& d,typename boost::enable_if_c<is_implicit_convertible<N,RT>::value&&is_implicit_convertible<D,RT>::value,int>::type=0) const
     { return Compose()(n,d); } 

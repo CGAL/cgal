@@ -216,7 +216,7 @@ public:
       const Geometric_traits & gt = Geometric_traits())
     : _gt(gt), _tds(), _domain(domain), too_long_edge_counter(0) {
     _gt.set_domain(_domain);
-    typedef typename internal::Exact_type_selector<FT>::Type EFT;
+    typedef typename internal::Exact_field_selector<FT>::Type EFT;
     typedef NT_converter<FT,EFT> NTC;
     CGAL_USE_TYPE(NTC);
     CGAL_triangulation_assertion_code( NTC ntc; )

@@ -32,11 +32,6 @@ private slots:
 private:
   void closeEvent(QCloseEvent *event);
   Surface* surface;
-  double sharp_edges_angle_lower_bound;
-  double sharp_edges_angle_upper_bound;
-  QDoubleSpinBox* spinbox_isovalue;
-  QDoubleSpinBox* spinbox_radius_bound;
-  QDoubleSpinBox* spinbox_distance_bound;
 };
 
 

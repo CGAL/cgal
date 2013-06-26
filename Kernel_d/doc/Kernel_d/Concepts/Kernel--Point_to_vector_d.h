@@ -3,14 +3,13 @@
 \ingroup PkgKernelDKernelConcept
 \cgalConcept
 
-A model for this must provide: 
-
 */
 
 class Kernel_d::Point_to_vector_d {
 public:
 
-/// \name See Also 
+/// \name Operations
+/// A model of this concept must provide:
 /// @{
 
 /*! 

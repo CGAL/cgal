@@ -39,7 +39,7 @@ class Multiplicity: public Rational_multiplicity<K>
         Multiplicity(){}
 
         using P::operator();
-        typename P::result_type operator()(const typename K::Root &v) const
+        typename P::result_type operator()(const typename K::Root &) const
         {
             CGAL_Polynomial_precondition(0);
             return 1;

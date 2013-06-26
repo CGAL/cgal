@@ -110,7 +110,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   }                
   
   // Called AFTER each edge has been collapsed
-  void OnCollapsed( Profile const&, Vertex_handle hv )
+  void OnCollapsed( Profile const&, Vertex_handle )
   {
     ++ stats->collapsed;
   }                

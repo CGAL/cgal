@@ -70,7 +70,7 @@ void replace_column( int old, int new);
 /*! 
 returns 
 a new Matrix consisting of all rows of `m` with even index, 
-(i.e. first row is row \f$ 0\f$ of `m`, second row is row \f$ 2\f$ of 
+(i.e.\ first row is row \f$ 0\f$ of `m`, second row is row \f$ 2\f$ of 
 `m` etc.). \pre `number_of_rows()` \f$ > 0\f$. 
 */ 
 Matrix* extract_all_even_rows() const; 

@@ -24,6 +24,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
 ## Concepts ##
 
 - `Polynomial_d`

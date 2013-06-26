@@ -1,0 +1,114 @@
+///This concept refers to the one described at http://www.sgi.com/tech/stl/Assignable.html.
+///
+///Using the latest concepts of the \cpp standard, a type that is a model of this concept
+///is both <a href="http://en.cppreference.com/w/cpp/concept/CopyAssignable"><tt>CopyAssignable</tt></a>
+///and <a href="http://en.cppreference.com/w/cpp/concept/CopyConstructible"><tt>CopyConstructible</tt></a>.
+class Assignable {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/DefaultConstructible
+class DefaultConstructible {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/CopyConstructible
+class CopyConstructible {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/EqualityComparable
+class EqualityComparable {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/LessThanComparable
+class LessThanComparable {};
+
+/// \cgalConcept
+/// The concept AdaptableFunctor defines an adaptable functor, that is, a functor that can be
+/// used with function object adaptors such as binders and composers.
+///
+class AdaptableFunctor {};
+/// \cgalConcept
+///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableUnaryFunction.html.
+class AdaptableUnaryFunction {};
+/// \cgalConcept
+///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableBinaryFunction.html.
+class AdaptableBinaryFunction {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/Iterator
+class Iterator {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/OutputIterator
+class OutputIterator {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/InputIterator
+class InputIterator {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/ForwardIterator
+class ForwardIterator {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/RandomAccessIterator
+class RandomAccessIterator {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/BidirectionalIterator
+class BidirectionalIterator {};
+
+/// \cgalConcept
+/// This concept refers to the one described at http://www.sgi.com/tech/stl/RandomAccessContainer.html.
+///
+/// It is a container that is a model of
+/// <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer"><tt>ReversibleContainer</tt></a> and whose iterator type is a model of
+/// <a href="http://en.cppreference.com/w/cpp/concept/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
+class RandomAccessContainer {};
+/// \cgalConcept
+/// This concepts refers to the one described at http://www.sgi.com/tech/stl/BackInsertionSequence.html.
+///
+/// It is a container that is a model of
+/// <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a>
+/// that has the ability to append elements at the end of the sequence and to access the last element, both in amortized constant time.
+class BackInsertionSequence {};
+
+/*!
+See http://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
+/// \cgalConcept
+*/
+class LvaluePropertyMap {};
+
+/*!
+See http://www.boost.org/libs/property_map/doc/ReadWritePropertyMap.html
+/// \cgalConcept
+*/
+class ReadWritePropertyMap {};
+
+/*!
+See http://www.boost.org/libs/property_map/doc/WritablePropertyMap.html
+/// \cgalConcept
+*/
+class WritablePropertyMap {};
+
+/*!
+See http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html
+/// \cgalConcept
+*/
+class ReadablePropertyMap {};
+
+/*!
+This specifies that the actual type exposed through a `typedef` is
+implementation specific. It can only be treated through the concepts
+it is said to model.
+*/
+class Hidden_type {};

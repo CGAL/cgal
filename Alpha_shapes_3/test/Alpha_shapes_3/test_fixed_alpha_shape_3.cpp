@@ -16,7 +16,6 @@
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 
-#include "copy_tds.h"
 //#include "Filtered_weighted_alpha_shape_euclidean_traits_3.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     Kernel;
@@ -218,7 +217,7 @@ void test_dynamic_insert(const std::list<Weighted_point >& lst)
 //    std::cout << ++k << " " << std::flush;    
     dynamic_as.insert(*it);
     WFixed_DT tr_copy;    
-    copy_tds(dynamic_as.tds(),tr_copy.tds(),dynamic_as.infinite_vertex(),tr_copy.infinite_vertex());
+    tr_copy.set_infinite_vertex( tr_copy.tds().copy_tds( dynamic_as.tds(), dynamic_as.infinite_vertex() ) );
     WFixed_AS static_as (tr_copy);
     compare_all(dynamic_as,static_as);
   }
@@ -234,7 +233,7 @@ void test_dynamic_remove(const std::list<Weighted_point >& lst)
   {
 //    std::cout << ++k << " " << std::flush;
     WFixed_DT tr_copy;
-    copy_tds(dynamic_as.tds(),tr_copy.tds(),dynamic_as.infinite_vertex(),tr_copy.infinite_vertex());
+    tr_copy.set_infinite_vertex( tr_copy.tds().copy_tds( dynamic_as.tds(), dynamic_as.infinite_vertex() ) );
     WFixed_AS static_as( tr_copy );
     compare_all(dynamic_as,static_as);
     dynamic_as.remove(dynamic_as.finite_vertices_begin());
@@ -262,7 +261,7 @@ void make_one_run(const char* filename){
   
 //copy triangulation for familly alpha-shape
   WDT T1;
-  copy_tds(wfixed_as.tds(),T1.tds(),wfixed_as.infinite_vertex(),T1.infinite_vertex());
+  T1.set_infinite_vertex( T1.tds().copy_tds( wfixed_as.tds(),wfixed_as.infinite_vertex() ) );
   std::cout << "Build familly weighted alpha complex" << std::endl;
   WAS w_as(T1,0,WAS::GENERAL);
   
@@ -278,7 +277,7 @@ void make_one_run(const char* filename){
 //---Test alpha shape
   Fixed_DT delaunay0(lst.begin(),lst.end());
   DT delaunay1;
-  copy_tds(delaunay0.tds(),delaunay1.tds(),delaunay0.infinite_vertex(),delaunay1.infinite_vertex());  
+  delaunay1.set_infinite_vertex( delaunay1.tds().copy_tds( delaunay0.tds(),delaunay0.infinite_vertex() ) );
 
   std::cout << "Build Fixed alpha complex" << std::endl;
   Fixed_AS fixed_as(delaunay0);

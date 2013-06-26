@@ -20,17 +20,6 @@ bool gl_vbo_available() {
 }
 #endif
 
-namespace {
-  
-  unsigned char image_data(const Image& im,
-                           unsigned int i, unsigned int j, unsigned int k)
-  {
-    if ( i<im.xdim() && j<im.ydim() && k<im.zdim() )
-      return CGAL::IMAGEIO::static_evaluate<unsigned char>(im.image(),i,j,k);
-    else
-      return 0;
-  }
-}
 
 
 // -----------------------------------
@@ -482,7 +471,6 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im,
                                                        int display_scale)
   : m_image(im)
   , m_initialized(false)
-  , m_draw_edges(true)
   , m_voxel_scale(display_scale)
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE

@@ -3,8 +3,6 @@
 \ingroup PkgKernelDKernelConcept
 \cgalConcept
 
-A model for this must provide: 
-
 */
 
 class Kernel_d::Affine_rank_d {

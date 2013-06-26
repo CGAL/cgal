@@ -91,7 +91,7 @@ namespace boost{
 }
 
 template <class TPoly>
-Facet_PM<TPoly> get_fpm(boost::vertex_attribute_t, TPoly& P) {return Facet_PM<TPoly>();}
+Facet_PM<TPoly> get_fpm(boost::vertex_attribute_t, TPoly& ) {return Facet_PM<TPoly>();}
 
 
 
@@ -134,7 +134,7 @@ public:
 
 //use the std edge_weight_t tag...
 template <class TPoly>
-HEdge_PM<TPoly> get_hepm(boost::edge_weight_t, TPoly& P)
+HEdge_PM<TPoly> get_hepm(boost::edge_weight_t, TPoly& )
 {return HEdge_PM<TPoly>();}
 
 

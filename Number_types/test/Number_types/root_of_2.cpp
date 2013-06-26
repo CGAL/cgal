@@ -90,7 +90,7 @@ struct bracket {
   template <class FT,class Tag1,class Tag2>
   RT operator()(const CGAL::Sqrt_extension<FT,FT,Tag1,Tag2>& R, int i) const { 
     typedef CGAL::Rational_traits< FT > Rational;
-    CGAL_assertion((i>=0) & (i<3));
+    assert((i>=0) & (i<3));
     Rational r;
     const RT r1 = r.numerator(R.a0());
     const RT d1 = r.denominator(R.a0());

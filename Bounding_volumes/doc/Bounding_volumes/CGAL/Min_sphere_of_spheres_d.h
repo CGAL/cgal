@@ -246,7 +246,7 @@ const;
 
 /*! 
 returns `true`, iff 
-`minsphere` is empty, i.e. iff \f$ ms(S)=\emptyset\f$. 
+`minsphere` is empty, i.e.\ iff \f$ ms(S)=\emptyset\f$. 
 */ 
 bool is_empty( ) const; 
 

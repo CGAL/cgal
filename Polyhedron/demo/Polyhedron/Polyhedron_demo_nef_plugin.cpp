@@ -31,8 +31,16 @@ public:
   }
 
   bool applicable() const {
+    const int indexA = scene->selectionAindex();
+    const int indexB = scene->selectionBindex();
+
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
-      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+      || qobject_cast<Scene_polyhedron_item*>(scene->item(indexA))
+      || qobject_cast<Scene_polyhedron_item*>(scene->item(indexB))
+      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexA))
+      || qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexB))
+      ;
   }
 
 //   QList<QAction*> actions() const {

@@ -1004,7 +1004,7 @@ Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 print_error_message() const
 {
   std::cerr << std::endl;
-  std::cerr << "WARNING:" << std::endl;
+  std::cerr << "ATTENTION:" << std::endl;
   std::cerr << "A segment-segment intersection was found."
 	    << std::endl;
   std::cerr << "The Segment_Delaunay_graph_hierarchy_2 class is not"

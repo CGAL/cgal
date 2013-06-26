@@ -24,31 +24,31 @@
 template <class SK>
 void _test_spherical_kernel_compute(SK sk)
 {
-  typedef typename SK::RT                                          RT;
+
   typedef typename SK::FT                                          FT;
-  typedef typename SK::Root_of_2                                   Root_of_2;
+
   typedef typename SK::Circular_arc_point_3                        Circular_arc_point_3;
   typedef typename SK::Circular_arc_3                              Circular_arc_3;
-  typedef typename SK::Point_3                                     Point_3;
-  typedef typename SK::Plane_3                                     Plane_3;
+
+
   typedef typename SK::Circle_3                                    Circle_3;
-  typedef typename SK::Sphere_3                                    Sphere_3;
+
   typedef typename SK::Algebraic_kernel                            AK;
-  typedef typename SK::Get_equation                                Get_equation;
-  typedef typename SK::Equal_3                                     Equal_3;
+
+
   typedef typename SK::Construct_circle_3                          Construct_circle_3;
-  typedef typename SK::Construct_sphere_3                          Construct_sphere_3;
+
   typedef typename SK::Construct_circular_arc_3                    Construct_circular_arc_3;
   typedef typename SK::Construct_circular_arc_point_3              Construct_circular_arc_point_3;
-  typedef typename SK::Compute_area_divided_by_pi_3                  Compute_area_divided_by_pi_3;
-  typedef typename SK::Compute_squared_length_divided_by_pi_square_3 Compute_squared_length_divided_by_pi_square_3;
-  typedef typename SK::Compute_approximate_area_3                    Compute_approximate_area_3;
+
+
+
   typedef typename SK::Compute_approximate_squared_length_3         Compute_approximate_squared_length_3;
   typedef typename SK::Compute_approximate_angle_3                   Compute_approximate_angle_3;
   typedef typename SK::Polynomials_for_circle_3                    Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3                  Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                              Polynomial_1_3;
-  typedef typename AK::Polynomials_for_line_3                      Polynomials_for_line_3;
+
   typedef typename AK::Root_for_spheres_2_3                        Root_for_spheres_2_3;
 
   std::cout << "TESTING COMPUTATIONS" << std::endl;

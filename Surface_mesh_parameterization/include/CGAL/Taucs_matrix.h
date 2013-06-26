@@ -77,7 +77,7 @@ private:
     public:
 
         // Return the number of elements in the column
-        int size() const    { return m_values.size(); }
+      int size() const    { return static_cast<int>(m_values.size()); }
 
         // return address of column{index}
         // (NULL if coefficient does not exist).

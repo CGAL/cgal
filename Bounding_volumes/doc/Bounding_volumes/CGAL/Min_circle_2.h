@@ -9,7 +9,7 @@ enclosing a finite (multi)set of points in two-dimensional Euclidean
 space \f$ \E^2\f$. For a point set \f$ P\f$ we denote by \f$ mc(P)\f$ the smallest circle 
 that contains all points of \f$ P\f$. Note that \f$ mc(P)\f$ can be 
 degenerate, 
-i.e. \f$ mc(P)=\emptyset\f$ if 
+i.e.\ \f$ mc(P)=\emptyset\f$ if 
 \f$ P=\emptyset\f$ and \f$ mc(P)=\{p\}\f$ if 
 \f$ P=\{p\}\f$. 
 
@@ -174,13 +174,13 @@ const Traits& traits = Traits());
 
 /*! 
 
-returns the number of points of `min_circle`, i.e. \f$ |P|\f$. 
+returns the number of points of `min_circle`, i.e.\ \f$ |P|\f$. 
 */ 
 int number_of_points( ) const; 
 
 /*! 
 
-returns the number of support points of `min_circle`, i.e. \f$ |S|\f$. 
+returns the number of support points of `min_circle`, i.e.\ \f$ |S|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
@@ -228,7 +228,7 @@ const Circle& circle( ) const;
 
 /// \name Predicates 
 /// By definition, an empty `Min_circle_2` has no boundary and no
-/// bounded side, i.e. its unbounded side equals the whole space \f$
+/// bounded side, i.e.\ its unbounded side equals the whole space \f$
 /// \E^2\f$.
 /// @{
 
@@ -271,7 +271,7 @@ bool is_empty( ) const;
 /*! 
 
 returns `true`, iff `min_circle` is degenerate, 
-i.e. if `min_circle` is empty or equal to a single point, equivalently 
+i.e.\ if `min_circle` is empty or equal to a single point, equivalently 
 if the number of support points is less than 2. 
 */ 
 bool is_degenerate( ) const; 
@@ -318,7 +318,7 @@ void clear( );
 /// An object `min_circle` is valid, iff <UL> <LI>`min_circle`
 /// contains all points of its defining set \f$ P\f$, <LI>`min_circle`
 /// is the smallest circle spanned by its support set \f$ S\f$, and
-/// <LI>\f$ S\f$ is minimal, i.e. no support point is redundant. </UL>
+/// <LI>\f$ S\f$ is minimal, i.e.\ no support point is redundant. </UL>
 /// @{
 
 /*! 

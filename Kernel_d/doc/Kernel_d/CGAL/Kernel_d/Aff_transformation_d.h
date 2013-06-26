@@ -86,7 +86,7 @@ v);
 /*! 
 returns a scaling by a scale factor `num/den`.
 
-\pre `den !=0 `. 
+\pre `den != 0 `. 
 */ 
 Aff_transformation_d<Kernel>(int d, Scaling, RT num, RT 
 den); 
@@ -113,7 +113,7 @@ rotation parameters are given by the \f$ 2\f$-dimensional direction
 `dir`, such that the difference between the sines and cosines of 
 the rotation given by `dir` and the approximated rotation are at 
 most `num/den` each. 
-\pre `dir.dimension()==2`, `!dir.is_degenerate()` and `num < den` is positive, `den != 0`, \f$ 0 \leq e_1 < e_2 < d\f$. 
+\pre `dir.dimension() == 2`, `!dir.is_degenerate()` and `num < den` is positive, `den != 0`, \f$ 0 \leq e_1 < e_2 < d\f$. 
 */ 
 Aff_transformation_d<Kernel>(int d, Rotation, Direction_d<Kernel> 
 dir, RT num, RT den, int e1 = 0, int e2 = 1); 

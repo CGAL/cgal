@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Boolean Operations on Nef Polyhedra"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Nef_3/doc/Nef_3/
+
+
+
+EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Nef_3/demo

@@ -49,7 +49,6 @@ public:
 
 private:
   bool m_initialized;
-  bool m_draw_edges;
   int m_voxel_scale;
   GLuint m_vbo[3];
   GLuint m_ibo;

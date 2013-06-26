@@ -27,5 +27,13 @@ their interior.
 
 The first two operations are performed in an output-sensitive
 manner.
+
+\cgalClassifedRefPages
+
+## Functions ##
+- `CGAL::compute_intersection_points`
+- `CGAL::compute_subcurves`
+- `CGAL::do_curves_intersect`
+
 */
 

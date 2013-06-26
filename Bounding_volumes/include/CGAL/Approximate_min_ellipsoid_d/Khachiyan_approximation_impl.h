@@ -168,7 +168,7 @@ namespace CGAL {
 
   template<bool Embed,class Traits>
   bool Khachiyan_approximation<Embed,Traits>::
-    compute_inverse_of_t_into_mi(const Tag_true exact)
+  compute_inverse_of_t_into_mi(const Tag_true /* exact*/)
   // Note: this routine is not used in CGAL; it turned out that using
   // exact arithmetic, the algorithm is very slow.
   {

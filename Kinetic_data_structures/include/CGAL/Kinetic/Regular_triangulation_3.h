@@ -360,7 +360,7 @@ protected:
     VisitorT v_;
   };
 
-  friend class Delaunay_visitor;
+  friend struct Delaunay_visitor;
 
   typedef typename Delaunay::Facet Facet;
   typedef typename Delaunay::Edge Edge;

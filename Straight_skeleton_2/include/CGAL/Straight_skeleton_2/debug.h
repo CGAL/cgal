@@ -45,6 +45,9 @@
        Straight_skeleton_external_trace(s); \
      }
 
+#include <boost/optional.hpp>
+#include <boost/intrusive_ptr.hpp>
+
 template<class T>
 inline std::string o2str( boost::optional<T> const& o )
 {

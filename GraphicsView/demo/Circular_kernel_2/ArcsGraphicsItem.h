@@ -91,8 +91,8 @@ ArcsGraphicsItem<CK>::boundingRect() const
 template <typename CK>
 void 
 ArcsGraphicsItem<CK>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem *,
+                                    QWidget * )
 {
   painter->setPen(this->inputPen());
   painterostream = PainterOstream<CK>(painter);

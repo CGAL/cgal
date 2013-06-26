@@ -1,6 +1,4 @@
 /// \defgroup PkgGeomview Geomview Reference
-/// \defgroup PkgGeomviewConcepts Concepts
-/// \ingroup PkgGeomview
 /*!
 \addtogroup PkgGeomview
 \todo check generated documentation
@@ -17,5 +15,11 @@
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Classes ##
+- `CGAL::Geomview_stream`
+
 */
 

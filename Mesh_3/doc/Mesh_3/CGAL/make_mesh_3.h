@@ -71,7 +71,7 @@ The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type. 
 <UL> 
 <LI>`parameters::features(domain)` sets `features` according to the domain, 
-i.e. 0 and 1-dimensional features are taken into account if `domain` is a 
+i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a 
 `MeshDomainWithFeatures_3`. This is the default behavior 
 if parameter `features` is not specified. 
 <LI>`parameters::no_features()` prevents the representation 

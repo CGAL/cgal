@@ -925,7 +925,7 @@ rectangular_3_center_2_type2(
 #ifndef CGAL_3COVER_NO_PREFILTER
   // Prefiltering heuristic
   while (e - s > 6) {
-    int cutoff = (e - s) / 2;
+    std::ptrdiff_t cutoff = (e - s) / 2;
     RandomAccessIterator m = s + cutoff - 1;
     nth_element(s, m, e, 
 		boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));
@@ -963,7 +963,7 @@ rectangular_3_center_2_type2(
          << ")" << endl;
     */
     // step (a)
-    int cutoff = (e - s) / fraction;
+    std::ptrdiff_t cutoff = (e - s) / fraction;
     RandomAccessIterator m = s + cutoff - 1;
     nth_element(s, m, e, 
 		boost::bind(less<FT>(), boost::bind(op.delta(), _1), boost::bind(op.delta(), _2)));

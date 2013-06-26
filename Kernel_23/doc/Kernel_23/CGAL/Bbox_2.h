@@ -86,6 +86,9 @@ Bbox_2 operator+(const Bbox_2 &c) const;
 
 }; /* end Bbox_2 */
 
+/// \ingroup do_overlap_grp
+/// @{
+
 /*!
 returns `true` iff `bb1` and `bb2` overlap, i.e., iff their
 intersection is non-empty.
@@ -94,5 +97,6 @@ intersection is non-empty.
 */
 bool do_overlap(const Bbox_2 &bb1, const Bbox_2 &bb2);
 
+/// @}
 
 } /* end namespace CGAL */

@@ -59,7 +59,7 @@ public:
 
   virtual void open(QString)
   {
-    std::cerr << "You should implement open(const QString&)const;" << std::endl; 
+    std::cerr << "You should implement open(QString);" << std::endl; 
   }
 
 public:

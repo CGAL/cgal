@@ -320,11 +320,11 @@ specifies which case occurs when locating a point in the triangulation.
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
 */ 
-enum Locate_type { VERTEX=0, //! when the located point coincides with a vertex of the triangulation
-                   EDGE, //! when the point is in the relative interior of an edge
-                   FACE, //! when the point is in the interior of a facet
-                   OUTSIDE_CONVEX_HULL, //! when the point is outside the convex hull but in the affine hull of the current triangulation
-                   OUTSIDE_AFFINE_HULL //!when the point is outside the affine hull of the current triangulation. 
+  enum Locate_type { VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
+                     EDGE, /*!< when the point is in the relative interior of an edge */
+                     FACE, /*!< when the point is in the interior of a facet */
+                     OUTSIDE_CONVEX_HULL, /*!< when the point is outside the convex hull but in the affine hull of the current triangulation */
+                     OUTSIDE_AFFINE_HULL /*!< when the point is outside the affine hull of the current triangulation. */
 }; 
 
 /// @} 
@@ -484,8 +484,6 @@ as above. In addition, if `true` is returned, the edge with
 vertices `va` and `vb` is the edge `e=(fr,i)` where 
 `fr` is a handle to the face incident to `e` and 
 on the right side of `e` oriented from `va` to `vb`.
-
-\details the details.
 */ 
 bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, 
 int & i); 
@@ -1071,18 +1069,24 @@ Point circumcenter(Face_handle f) const;
 /// @{
 
 /*! 
-  \cgalAdvanced
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
+Sets the infinite vertex.
+\cgalAdvancedEnd
 */ 
 void set_infinite_vertex(const Vertex_handle& v); 
 
 /// @} 
 
 /// \name Checking 
-/// \cgalAdvanced The responsibility of keeping a valid triangulation
+/// \cgalAdvancedBegin
+/// The responsibility of keeping a valid triangulation
 /// belongs to the users if advanced operations are used. Obviously
 /// the advanced user, who implements higher levels operations may
 /// have to make a triangulation invalid at some times. The following
 /// method is provided to help the debugging.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

@@ -50,6 +50,7 @@ public:
   typedef Sign                result_type;
   typedef Site_2              argument_type;
 
+private:
   inline
   Sign predicate(const FT& Exp, const FT& Eyp, const FT& Erp,
 		 const FT& Exrp, const FT& Eyrp, const FT& Exyp,
@@ -77,6 +78,7 @@ public:
     return sA * s;
   }
 
+public:
   inline
   Sign operator()(const Site_2& p1, const Site_2& p2,
 		  const Site_2& p3, const Site_2& q) const

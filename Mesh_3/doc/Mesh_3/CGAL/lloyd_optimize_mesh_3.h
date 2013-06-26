@@ -59,7 +59,7 @@ The parameter `convergence` gives the threshold ratio.
 - <b>`parameters::freeze_bound`</b> 
 is designed to reduce running time of each optimization iteration. Any vertex 
 that has 
-a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e. is 
+a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e.\ is 
 not relocated). The parameter `freeze_bound` gives the threshold ratio. At each iteration, any vertex that 
 moves, unfreezes all its incident vertices. 
 

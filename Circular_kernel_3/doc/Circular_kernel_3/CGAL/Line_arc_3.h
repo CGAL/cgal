@@ -81,7 +81,7 @@ bool is_vertical();
 
 /*! 
 Test for equality. Two segments are equal, iff their non-oriented 
-supporting lines are equal (i.e. they define the same set of 
+supporting lines are equal (i.e.\ they define the same set of 
 points), and their endpoints are the same. 
 */ 
 bool operator==(const Line_arc_3<SphericalKernel> &s1, const Line_arc_3<SphericalKernel> &s2); 

@@ -90,7 +90,7 @@ Gmpq(const std::string& str, int base);
 /// defined. It is guaranteed that `q.numerator()` and
 /// `q.denominator()` return values `nt_num` and `nt_den` such that `q
 /// = nt_num/nt_den`, only if `q.numerator()` and `q.denominator()`
-/// are called consecutively wrt. `q`, i.e. `q` is not involved in any
+/// are called consecutively wrt. `q`, i.e.\ `q` is not involved in any
 /// other operation between these calls.
 /// @{
 

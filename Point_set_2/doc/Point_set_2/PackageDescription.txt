@@ -38,6 +38,18 @@ templated by the type of a \cgal Delaunay triangulation and provide
 functionality similar to the corresponding member functions of the
 point set class.
 
+\cgalClassifedRefPages
+
+## Concepts ##
+- `PointSetTraits`
+
+## Classes ##
+- `CGAL::Point_set_2`
+
+## Functions ##
+- `CGAL::nearest_neighbor()`
+- `CGAL::nearest_neighbors()`
+- `CGAL::range_search()`
 
 */
 

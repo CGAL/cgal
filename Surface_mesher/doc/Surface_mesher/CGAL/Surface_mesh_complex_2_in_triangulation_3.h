@@ -25,7 +25,9 @@ respectively.)
 \cgalModels `SurfaceMeshComplex_2InTriangulation_3`
 
 \sa `make_surface_mesh` 
-\sa `SurfaceMeshTriangulation_3` 
+\sa `SurfaceMeshTriangulation_3`
+\sa `CGAL::output_surface_facets_to_off()`
+\sa `CGAL::output_surface_facets_to_polyhedron()`
 
 */
 template< typename Tr, typename Edge_info = void >

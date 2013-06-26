@@ -203,8 +203,8 @@ template <class CK>
     typedef typename CK::Point_2                     Point_2;
     typedef typename CK::Circular_arc_point_2     Circular_arc_point_2;
     typedef typename CK::Intersect_2   Intersect_2;
-    typedef typename CK::Make_x_monotone_2           Make_x_monotone_2;
-    typedef typename CK::Line_arc_2              Line_arc_2;
+
+
     
     int test_suite_cases[3][2][3] = {{{-7,-8,113},{9,9,162}},
                                      {{0,0,1},{1,2,4}},

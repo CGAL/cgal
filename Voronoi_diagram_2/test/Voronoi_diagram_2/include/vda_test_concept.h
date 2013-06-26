@@ -89,14 +89,14 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
   // testing if edges are defined as pairs of face handles and integers
   test_edge_as_pair(Edge(), std::pair<Face_handle,int>());
 
-  typedef typename DG::All_edges_iterator             All_edges_iterator;
-  typedef typename DG::Finite_edges_iterator          Finite_edges_iterator;
+  CGAL_USE_TYPE(typename DG::All_edges_iterator);
+  CGAL_USE_TYPE(typename DG::Finite_edges_iterator);
 
-  typedef typename DG::All_vertices_iterator          All_vertices_iterator;
+  CGAL_USE_TYPE(typename DG::All_vertices_iterator);
   typedef typename DG::Finite_vertices_iterator       Finite_vertices_iterator;
 
-  typedef typename DG::All_faces_iterator             All_faces_iterator;
-  typedef typename DG::Finite_faces_iterator          Finite_faces_iterator;
+  CGAL_USE_TYPE(typename DG::All_faces_iterator);
+  CGAL_USE_TYPE(typename DG::Finite_faces_iterator);
 
   typedef typename DG::Face_circulator                Face_circulator;
   typedef typename DG::Edge_circulator                Edge_circulator;
@@ -228,7 +228,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
 	 vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(at.access_site_2_object()(vit));
     }
-    CGAL_assertion( v.size() > 0 );
+    assert( v.size() > 0 );
 
     // one-site insertion
     typename AT::Site_2 s = v[0];
@@ -248,16 +248,16 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
 template<class DG, class AT>
 void test_adaptation_traits_concept(const DG& dg, const AT& at)
 {
-  typedef typename AT::Point_2                    Point_2;
-  typedef typename AT::Site_2                     Site_2;
-  typedef typename AT::Delaunay_graph             Delaunay_graph;
-  typedef typename AT::Delaunay_vertex_handle     Vertex_handle;
-  typedef typename AT::Delaunay_face_handle       Face_handle;
-  typedef typename AT::Delaunay_edge              Edge;
+  CGAL_USE_TYPE(typename AT::Point_2);
+  CGAL_USE_TYPE(typename AT::Site_2);
+  CGAL_USE_TYPE(typename AT::Delaunay_graph);
+  CGAL_USE_TYPE(typename AT::Delaunay_vertex_handle);
+  CGAL_USE_TYPE(typename AT::Delaunay_face_handle);
+  CGAL_USE_TYPE(typename AT::Delaunay_edge);
   //  typedef typename AT::Edge_degeneracy_tester     EDT;
   //  typedef typename AT::Face_degeneracy_tester     FDT;
-  typedef typename AT::Access_site_2              Access_site_2;
-  typedef typename AT::Construct_Voronoi_point_2  Construct_Voronoi_point_2;
+  CGAL_USE_TYPE(typename AT::Access_site_2);
+  CGAL_USE_TYPE(typename AT::Construct_Voronoi_point_2);
   typedef typename AT::Has_nearest_site_2         Has_ns;
   //  typedef typename AT::Has_site_inserter          Has_si;
 
@@ -265,12 +265,12 @@ void test_adaptation_traits_concept(const DG& dg, const AT& at)
   {
     AT at2(at);
     kill_warning(at2);
-    //    CGAL_assertion( at2.is_valid() );
+    //    assert( at2.is_valid() );
 
     AT at3;
     at3 = at;
     kill_warning(at3);
-    //    CGAL_assertion( at3.is_valid() );
+    //    assert( at3.is_valid() );
   }
 
   // testing clear and swap methods
@@ -278,19 +278,19 @@ void test_adaptation_traits_concept(const DG& dg, const AT& at)
   {
     AT at2(at);
     at2.clear();
-    CGAL_assertion( at2.is_valid() );
+    assert( at2.is_valid() );
 
     AT at3(at);
     at2.swap(at3);
 
-    CGAL_assertion( at2.is_valid() );
-    CGAL_assertion( at3.is_valid() );
+    assert( at2.is_valid() );
+    assert( at3.is_valid() );
   }
 
   // testing validity method
   bool b = at.is_valid();
   kill_warning( b );
-  CGAL_assertion( b );
+  assert( b );
 #endif
 
   // test nested concepts
@@ -309,49 +309,49 @@ void test_adaptation_traits_concept(const DG& dg, const AT& at)
 template<class DG, class AT, class AP>
 void test_adaptation_policy_concept(const DG& dg, const AT& at, const AP& ap)
 {
-  typedef typename AP::Site_2                          Site_2;
-  typedef typename AP::Delaunay_graph                  Delaunay_graph;
-  typedef typename AP::Delaunay_vertex_handle          Vertex_handle;
-  typedef typename AP::Delaunay_face_handle            Face_handle;
-  typedef typename AP::Delaunay_edge                   Edge;
-  typedef typename AP::All_Delaunay_edges_iterator     All_edges_iterator;
-  typedef typename AP::Finite_Delaunay_edges_iterator  Finite_edges_iterator;
-  typedef typename AP::Delaunay_edge_circulator        Edge_circulator;
-  typedef typename AP::Edge_rejector                   ER;
-  typedef typename AP::Face_rejector                   FR;
+  CGAL_USE_TYPE(typename AP::Site_2);
+  CGAL_USE_TYPE(typename AP::Delaunay_graph);
+  CGAL_USE_TYPE(typename AP::Delaunay_vertex_handle);
+  CGAL_USE_TYPE(typename AP::Delaunay_face_handle);
+  CGAL_USE_TYPE(typename AP::Delaunay_edge);
+  CGAL_USE_TYPE(typename AP::All_Delaunay_edges_iterator);
+  CGAL_USE_TYPE(typename AP::Finite_Delaunay_edges_iterator);
+  CGAL_USE_TYPE(typename AP::Delaunay_edge_circulator);
+  CGAL_USE_TYPE(typename AP::Edge_rejector);
+  CGAL_USE_TYPE(typename AP::Face_rejector);
   typedef typename AP::Has_site_inserter               Has_si;
 
   // testing copy constructor and assignment operator
   {
     AP ap2(ap);
-    CGAL_assertion( ap2.is_valid() );
+    assert( ap2.is_valid() );
 
     AP ap3;
     ap3 = ap;
-    CGAL_assertion( ap3.is_valid() );
+    assert( ap3.is_valid() );
   }
 
   // testing clear and swap methods
   {
     AP ap2(ap);
     ap2.clear();
-    CGAL_assertion( ap2.is_valid() );
-    CGAL_assertion( ap2.is_valid(dg) );
+    assert( ap2.is_valid() );
+    assert( ap2.is_valid(dg) );
 
     AP ap3(ap);
     ap2.swap(ap3);
 
-    CGAL_assertion( ap2.is_valid() );
-    CGAL_assertion( ap2.is_valid(dg) );
-    CGAL_assertion( ap3.is_valid() );
-    CGAL_assertion( ap3.is_valid(dg) );
+    assert( ap2.is_valid() );
+    assert( ap2.is_valid(dg) );
+    assert( ap3.is_valid() );
+    assert( ap3.is_valid(dg) );
   }
 
   // testing validity method
   bool b = ap.is_valid();
   b = ap.is_valid(dg);
   kill_warning( b );
-  CGAL_assertion( b );
+  assert( b );
 
   // test nested concepts
   test_er_concept( dg, ap.edge_rejector_object() );
@@ -370,14 +370,14 @@ template<class DG, class ER>
 void test_er_concept(const DG& dg, const ER& er)
 {
   // types for AdaptableFunctor concept
-  typedef typename ER::result_type               result_type;
+  CGAL_USE_TYPE(typename ER::result_type);
 
-  typedef typename ER::Delaunay_graph            Delaunay_graph;
+  CGAL_USE_TYPE(typename ER::Delaunay_graph);
   typedef typename ER::Edge                      Edge;
-  typedef typename ER::Face_handle               Face_handle;
+  CGAL_USE_TYPE(typename ER::Face_handle);
   typedef typename ER::Edge_circulator           Edge_circulator;
-  typedef typename ER::All_edges_iterator        All_edges_iterator;
-  typedef typename ER::Finite_edges_iterator     Finite_edges_iterator;
+  CGAL_USE_TYPE(typename ER::All_edges_iterator);
+  CGAL_USE_TYPE(typename ER::Finite_edges_iterator);
 
   if ( dg.dimension() < 1 ) { return; }
 
@@ -430,9 +430,9 @@ template<class DG, class FR>
 void test_fr_concept(const DG& dg, const FR& fr)
 {
   // types for the AdaptableFunctor concept
-  typedef typename FR::result_type               result_type;
+  CGAL_USE_TYPE(typename FR::result_type);
 
-  typedef typename FR::Delaunay_graph            Delaunay_graph;
+  CGAL_USE_TYPE(typename FR::Delaunay_graph);
   typedef typename FR::Vertex_handle             Vertex_handle;
 
   if ( dg.dimension() < 1 ) { return; }
@@ -474,7 +474,7 @@ void test_as_concept(const DG& dg, const AS& as)
   // types for the AdaptableFunctor concept
   typedef typename AS::result_type               result_type;
 
-  typedef typename AS::Vertex_handle             Vertex_handle;
+  CGAL_USE_TYPE(typename AS::Vertex_handle);
 
   if ( dg.number_of_vertices() > 0 ) {
     result_type site = as(dg.finite_vertices_begin());
@@ -511,7 +511,7 @@ template<class DG, class AT, class AP>
 void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
 {
   typedef typename AP::Site_inserter               Site_inserter;
-  typedef typename Site_inserter::Delaunay_graph   Delaunay_graph;
+  CGAL_USE_TYPE(typename Site_inserter::Delaunay_graph);
   typedef typename Site_inserter::Site_2           Site_2;
 
   // types for the AdaptableFunctor concept
@@ -523,29 +523,29 @@ void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
 
   DG dg2;
 
-  CGAL_assertion( dg2.number_of_vertices() == 0 );
+  assert( dg2.number_of_vertices() == 0 );
 
   Site_2 t = at.access_site_2_object()(dg.finite_vertices_begin());
   result_type v = si(dg2, t);
   kill_warning( v );
 
-  CGAL_assertion( dg2.number_of_vertices() == 1 );
+  assert( dg2.number_of_vertices() == 1 );
 
   dg2.clear();
-  CGAL_assertion( dg2.number_of_vertices() == 0 );
+  assert( dg2.number_of_vertices() == 0 );
 
   typedef std::list<result_type>               res_list;
   typedef std::back_insert_iterator<res_list>  output_iterator;
 
   res_list v_list;
 
-  CGAL_assertion( v_list.size() == 0 );
+  assert( v_list.size() == 0 );
 
   output_iterator oit(v_list);
   oit = si(dg2, t, oit);
 
-  CGAL_assertion( v_list.size() == 1 );
-  CGAL_assertion( dg2.number_of_vertices() == 1 );  
+  assert( v_list.size() == 1 );
+  assert( dg2.number_of_vertices() == 1 );  
 }
 
 //============================================================================
@@ -558,7 +558,7 @@ template<class DG, class AT>
 void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true)
 {
   typedef typename AT::Nearest_site_2             Nearest_site_2;
-  typedef typename Nearest_site_2::Delaunay_graph Delaunay_graph;
+  CGAL_USE_TYPE(typename Nearest_site_2::Delaunay_graph);
   typedef typename Nearest_site_2::Point_2        Point_2;
 
   // types for the AdaptableFunctor concept
@@ -588,7 +588,7 @@ void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true)
 
   result_type qr1 = ns(dg, p);
   bool b = (qr == qr1);
-  CGAL_assertion(b);
+  assert(b);
   kill_warning(b);
 }
 

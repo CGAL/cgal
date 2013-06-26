@@ -36,10 +36,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 
-// suppress bogus warning when compiling with gcc 4.3 or 4.4
-#if (__GNUC__ == 4 && (__GNUC_MINOR__ == 3 || __GNUC_MINOR__ == 4))
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#endif
+#include <CGAL/config.h>
 
 namespace CGAL {
 
@@ -609,7 +606,8 @@ namespace CGAL {
     {
       CGAL_assertion( is_reserved(amark) );
 
-      null_dart_handle->set_mark(amark, !mmask_marks[(size_type)amark]);
+      if ( null_dart_handle!=NULL ) // TODO to remove
+        null_dart_handle->set_mark(amark, !mmask_marks[(size_type)amark]);
     }
 
     /** Unmark null_dart.
@@ -619,7 +617,8 @@ namespace CGAL {
     {
       CGAL_assertion( is_reserved(amark) );
 
-      null_dart_handle->set_mark(amark, mmask_marks[(size_type)amark]);
+      if ( null_dart_handle!=NULL ) // TODO to remove
+        null_dart_handle->set_mark(amark, mmask_marks[(size_type)amark]);
     }
 
     /** Unmark all the darts of the map for a given mark.

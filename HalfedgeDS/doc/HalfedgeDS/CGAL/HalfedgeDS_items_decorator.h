@@ -296,7 +296,7 @@ sets the incident halfedge of `v` to `g`.
 void set_vertex_halfedge( Vertex_handle v, Halfedge_handle g) const; 
 
 /*! 
-sets the incident halfedge of the vertex incident to `h` to `h`. 
+sets the incident halfedge of the vertex `v` to `h`. 
 */ 
 void set_vertex_halfedge( Halfedge_handle h) const; 
 
@@ -321,7 +321,7 @@ sets the incident halfedge of `f` to `g`.
 void set_face_halfedge( Face_handle f, Halfedge_handle g) const; 
 
 /*! 
-sets the incident halfedge of the face incident to `h` to `h`. 
+sets the incident halfedge of the face `f` to `h`. 
 */ 
 void set_face_halfedge( Halfedge_handle h) const; 
 

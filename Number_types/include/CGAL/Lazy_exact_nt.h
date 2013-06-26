@@ -46,6 +46,7 @@
 #include <CGAL/Lazy.h>
 
 #include <CGAL/Sqrt_extension_fwd.h>
+#include <CGAL/Kernel/mpl.h>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -97,6 +98,16 @@ namespace CGAL {
 
 template <class NT> class Lazy_exact_nt;
 
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+template <typename ET>
+inline
+void
+print_dag(const Lazy_exact_nt<ET>& l, std::ostream& os, int level=0)
+{
+  l.print_dag(os, level);
+}
+#endif
 
 // Abstract base representation class for lazy numbers
 template <typename ET>
@@ -201,7 +212,7 @@ struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
     this->print_at_et(os, level);
     if(this->is_lazy()){
       msg(os, level, "Unary number operator:");
-      print_dag(op1, os, level+1);
+      CGAL::print_dag(op1, os, level+1);
     }
   }
 #endif
@@ -234,8 +245,8 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
     this->print_at_et(os, level);
     if(this->is_lazy()){
       msg(os, level, "Binary number operator:");
-      print_dag(op1, os, level+1);
-      print_dag(op2, os, level+1);
+      CGAL::print_dag(op1, os, level+1);
+      CGAL::print_dag(op2, os, level+1);
     }
   }
 #endif
@@ -1311,6 +1322,35 @@ struct NT_converter < Lazy_exact_nt<ET>, ET >
 {
   const ET& operator()(const Lazy_exact_nt<ET> &a) const
   { return a.exact(); }
+};
+
+// Forward declaration to break inclusion cycle
+namespace internal {
+template<class>struct Exact_field_selector;
+template<class>struct Exact_ring_selector;
+}
+// Compiler can deduce ET from the first argument.
+template < typename ET >
+struct NT_converter < Lazy_exact_nt<ET>,
+  typename First_if_different<
+    typename internal::Exact_field_selector<ET>::Type,
+    ET>::Type>
+{
+  typename internal::Exact_field_selector<ET>::Type
+    operator()(const Lazy_exact_nt<ET> &a) const
+  { return NT_converter<ET,typename internal::Exact_field_selector<ET>::Type>()(a.exact()); }
+};
+
+template < typename ET >
+struct NT_converter < Lazy_exact_nt<ET>,
+  typename First_if_different<
+   typename First_if_different<
+    typename internal::Exact_ring_selector<ET>::Type,
+    ET>::Type,
+   typename internal::Exact_field_selector<ET>::Type>::Type>
+{
+  typename internal::Exact_ring_selector<ET>::Type operator()(const Lazy_exact_nt<ET> &a) const
+  { return NT_converter<ET,typename internal::Exact_ring_selector<ET>::Type>()(a.exact()); }
 };
 
 namespace internal {

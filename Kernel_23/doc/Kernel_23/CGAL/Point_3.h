@@ -224,6 +224,10 @@ but not for both.
 Vector_3<Kernel> operator-(const Point_3<Kernel> &p, 
 const Point_3<Kernel> &q); 
 
+/// \ingroup Kernel_operator_plus
+
+///@{
+
 /*! 
 returns the point obtained by translating `p` by the 
 vector `v`. 
@@ -232,6 +236,12 @@ vector `v`.
 Point_3<Kernel> operator+(const Point_3<Kernel> &p, 
 const Vector_3<Kernel> &v); 
 
+/// @}
+
+/// \ingroup Kernel_operator_minus
+
+///@{
+
 /*! 
 returns the point obtained by translating `p` by the 
 vector -`v`. 
@@ -239,5 +249,7 @@ vector -`v`.
 */ 
 Point_3<Kernel> operator-(const Point_3<Kernel> &p, 
 const Vector_3<Kernel> &v); 
+
+/// @}
 
 } /* end namespace CGAL */

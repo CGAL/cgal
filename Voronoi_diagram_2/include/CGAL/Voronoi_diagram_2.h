@@ -622,7 +622,7 @@ public:
   // POINT LOCATION
   //---------------
  private:
-  Locate_result locate(const Point_2& p, const Tag_false&) const {
+  Locate_result locate(const Point_2& , const Tag_false&) const {
     static unsigned int i = 0;
     if ( i == 0 ) {
       i++;

@@ -10,7 +10,7 @@ either *running* or it is *stopped*. The state is controlled
 with `Timer::start()` and `Timer::stop()`. The timer counts the 
 time elapsed since its creation or last reset. It counts only the time 
 where it is in the running state. The time information is given in seconds. 
-The timer counts also the number of intervals it was running, i.e. it 
+The timer counts also the number of intervals it was running, i.e.\ it 
 counts the number of calls of the `Timer::start()` member function since the 
 last reset. If the reset occures while the timer is running it counts as the 
 first interval. 

@@ -76,9 +76,9 @@ bool test1(const char* points_filename, const char* xcurves_filename,
   
   if (!pl_test.allocate_arrangement()) return false;
   if (!pl_test.construct_pl_strategies()) return false;
-  if (!pl_test.init()) return -1;
+  if (!pl_test.init()) return false;
   if (!pl_test.construct_arrangement()) return false;
-  if (!pl_test.perform()) return -1;
+  if (!pl_test.perform()) return false;
 
   pl_test.clear();
   pl_test.deallocate_arrangement();

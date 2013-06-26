@@ -197,15 +197,26 @@ Vector_2<Kernel> perpendicular(const Orientation &o) const;
 /// \name Operators 
 /// @{
 
+/// \ingroup Kernel_operator_plus
+///@{
+
 /*! 
 Addition. 
 */ 
 Vector_2<Kernel> operator+(const Vector_2<Kernel> &w) const; 
 
+// @}
+
+
+/// \ingroup Kernel_operator_minus
+///@{
+
 /*! 
 Subtraction. 
 */ 
 Vector_2<Kernel> operator-(const Vector_2<Kernel> &w) const; 
+
+/// @}
 
 /*! 
 returns the opposite vector. 
@@ -231,6 +242,9 @@ Kernel::FT squared_length() const;
 
 }; /* end Vector_2 */
 
+
+/// \ingroup Kernel_operator_prod
+///@{
 
 /*! 
 Multiplication with a scalar from the right. 
@@ -259,5 +273,7 @@ Multiplication with a scalar from the left.
 */ 
 Vector_2<Kernel> 
 operator*(const Kernel::FT &s, const Vector_2<Kernel> &v); 
+
+/// @}
 
 } /* end namespace CGAL */

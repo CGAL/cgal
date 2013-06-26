@@ -25,16 +25,18 @@ the following prototype:
 By default, the two data types are the same, so the conversion operator 
 is trivial and just copies the data object: 
 
-<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-
+<TABLE><TR><TD>
 `SData` = 
-<TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
+</TD>
+<TD>
 `XyData` 
-<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
+</TD></TR>
+<TR><TD>
 `Cnv` = 
-<TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
+</TD>
+<TD>
 `_Default_convert_functor<SData,XyData>` 
-
+</TD></TR>
 </TABLE> 
 
 \cgalModels `EnvelopeTraits_3`

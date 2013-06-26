@@ -1,6 +1,5 @@
 // example: function to check whether a point is in the convex 
 // hull of other points; this version uses a maker
-#include <boost/config.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/QP_models.h>
@@ -26,7 +25,7 @@ solve_convex_hull_containment_lp (const Point_d& p,
   // construct program and solve it
   return CGAL::solve_nonnegative_linear_program
     (CGAL::make_nonnegative_linear_program_from_iterators
-     (end-begin,                                                           // n
+     (static_cast<int>(end-begin),                                         // n
       p.dimension()+1,                                                     // m
       boost::transform_iterator
       <Homogeneous_begin<Point_d>, RandomAccessIterator>(begin),           // A

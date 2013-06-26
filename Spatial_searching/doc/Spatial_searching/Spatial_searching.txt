@@ -319,7 +319,7 @@ The point type of the search traits is `std::size_t`.
 
 \subsection Spatial_searchingUsingaModelofLvalueProperty Using a Model of L-value Property Map Concept
 
-This example programs uses a <span class="textsc">Boost</span> <A HREF="http://www.boost.org/doc/libs/release/libs/property_map/doc/LvaluePropertyMap.html">LvaluePropertyMap</A>.
+This example programs uses a model of `LvaluePropertyMap`.
 Points are read from a `std::map`. The search tree stores integers of type `std::size_t`. The value type of the iterator of the neighbor searching algorithm is `std::size_t`.
 
 \cgalExample{Spatial_searching/searching_with_point_with_info_pmap.cpp}
@@ -385,7 +385,7 @@ introduced by Arya and Mount \cite am-afvq-93. This technique
 works only for neighbor queries with query items represented as points
 and with a quadratic form distance, defined by \f$ d_A(x,y)=
 (x-y)A(x-y)^T\f$, where the matrix \f$ A\f$ is positive definite,
-i.e. \f$ d_A(x,y) \geq 0\f$. An important class of quadratic form
+i.e.\ \f$ d_A(x,y) \geq 0\f$. An important class of quadratic form
 distances are weighted Minkowski distances. Given a parameter \f$ p>0\f$
 and parameters \f$ w_i \geq 0, 0 < i \leq d\f$, the weighted Minkowski
 distance is defined by \f$ l_p(w)(r,q)= ({\Sigma_{i=1}^{i=d} \,

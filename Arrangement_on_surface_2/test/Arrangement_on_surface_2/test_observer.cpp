@@ -718,7 +718,7 @@ int main (int argc, char * argv[])
     // Construct the arrangement containing one diamond-shaped face.
     Arrangement_2  arr;
     global_input_file.open(argv[1]);
-    CGAL_assertion(global_input_file.is_open());
+    assert(global_input_file.is_open());
     Test_observer    obs (arr);
     Point_2 p;
     Segment_2 s;

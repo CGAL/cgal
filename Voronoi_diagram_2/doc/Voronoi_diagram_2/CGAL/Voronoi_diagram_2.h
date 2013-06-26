@@ -503,7 +503,7 @@ public:
 
     /*! 
       Returns the in-degree of the vertex, 
-      i.e. the number of halfedges that have `v` as their target. 
+      i.e.\ the number of halfedges that have `v` as their target. 
     */ 
     size_type degree(); 
 

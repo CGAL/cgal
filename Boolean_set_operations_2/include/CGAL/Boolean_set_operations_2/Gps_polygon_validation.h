@@ -68,7 +68,7 @@ public:
    * caused by the PWH's outer boundary
    */
   virtual void create_face(Face_handle_A red_face, Face_handle_B blue_face,
-                           Face_handle_R /*r_face*/) {    
+                           Face_handle_R /*r_face*/) const {    
     if ((red_face->contained()==true) && (blue_face->contained()==false)) {
       hole_overlap = true;
     }
@@ -84,7 +84,7 @@ public:
     return;
   }
 private:    
-  bool hole_overlap;
+  mutable bool hole_overlap;
 }; 
   
 /*! \class

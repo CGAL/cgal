@@ -14,7 +14,7 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomain >` is a model of
 
 - \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< IntegralDomain >::Algebraic_category` \endlink derived from `CGAL::Integral_domain_tag` 
 - \link AlgebraicStructureTraits::Integral_division `CGAL::Algebraic_structure_traits< IntegralDomain >::Integral_division` \endlink  which is a model of `AlgebraicStructureTraits_::IntegralDivision`
-- \link AlgebraicStructureTraits::Divides`CGAL::Algebraic_structure_traits< IntegralDomain >::Divides`\endlink  which is a model of `AlgebraicStructureTraits_::Divides`
+- \link AlgebraicStructureTraits::Divides `CGAL::Algebraic_structure_traits< IntegralDomain >::Divides` \endlink  which is a model of `AlgebraicStructureTraits_::Divides`
 
 \cgalRefines `IntegralDomainWithoutDivision` 
 

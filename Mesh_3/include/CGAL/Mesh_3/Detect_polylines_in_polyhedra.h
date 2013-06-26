@@ -140,7 +140,7 @@ struct Detect_polylines {
       // std::cerr << v->point() << std::endl;
       if(corner_vertices.count(v) > 0) break;
       typename Polyhedron::Halfedge_around_vertex_circulator 
-        loop_he = v->vertex_begin(), end(loop_he);
+        loop_he = v->vertex_begin();
       ++loop_he;
       // CGAL_assertion((&*loop_he) != (&*current_he) );
       while((&*loop_he) == (&*current_he) ||

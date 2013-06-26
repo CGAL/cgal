@@ -66,7 +66,7 @@ Note that
 way that its vertices form a subset of the vertex set of \f$ P\f$ and 
 <LI>the vertices of a maximum area `k`-gon, where the `k` vertices 
 are to be drawn from a planar point set \f$ S\f$, lie on the convex 
-hull of \f$ S\f$ i.e. a convex polygon. 
+hull of \f$ S\f$ i.e.\ a convex polygon. 
 </UL> 
 
 \pre the - at least three - points denoted by the range 
@@ -131,7 +131,7 @@ Note that
 way that its vertices form a subset of the vertex set of \f$ P\f$ and 
 <LI>the vertices of a maximum perimeter `k`-gon, where the `k` 
 vertices are to be drawn from a planar point set \f$ S\f$, lie on the 
-convex hull of \f$ S\f$ i.e. a convex polygon. 
+convex hull of \f$ S\f$ i.e.\ a convex polygon. 
 </UL> 
 
 

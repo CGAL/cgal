@@ -41,7 +41,7 @@ const SphericalKernel::Circular_arc_3 &a1);
 
 /*! 
 For two segments. Two segments are equal, iff their non-oriented 
-supporting lines are equal (i.e. they define the same set of 
+supporting lines are equal (i.e.\ they define the same set of 
 points), and their endpoints are the same. 
 */ 
 bool operator() 

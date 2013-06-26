@@ -14,9 +14,6 @@ is specified with each function.
 \cgalHasModel `CGAL::Projection_traits_xy_3<K>`
 \cgalHasModel `CGAL::Projection_traits_yz_3 <K>`
 \cgalHasModel `CGAL::Projection_traits_xz_3<K>`
-\cgalHasModel `CGAL::Convex_hull_projective_xy_traits_2<Point_3>`
-\cgalHasModel `CGAL::Convex_hull_projective_xz_traits_2<Point_3>`
-\cgalHasModel `CGAL::Convex_hull_projective_yz_traits_2<Point_3>`
 
 \sa `IsStronglyConvexTraits_3` 
 

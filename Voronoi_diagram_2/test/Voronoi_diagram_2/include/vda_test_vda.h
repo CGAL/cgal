@@ -22,6 +22,7 @@
 #define VDA_TEST_VDA_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/use.h>
 #include <CGAL/Voronoi_diagram_2/Accessor.h>
 #include <cassert>
 #include "helper_functions.h"
@@ -37,13 +38,13 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
   typedef typename VDA::Face                 Face;
 
   // types  
-  typedef typename Face::Halfedge            Halfedge;
-  typedef typename Face::Vertex              Vertex;
+  CGAL_USE_TYPE(typename Face::Halfedge);
+  CGAL_USE_TYPE(typename Face::Vertex);
   typedef typename Face::Halfedge_handle     Halfedge_handle;
-  typedef typename Face::Vertex_handle       Vertex_handle;
-  typedef typename Face::Face_handle         Face_handle;
+  CGAL_USE_TYPE(typename Face::Vertex_handle);
+  CGAL_USE_TYPE(typename Face::Face_handle);
 
-  typedef typename Face::Delaunay_graph          Delaunay_graph;
+  CGAL_USE_TYPE(typename Face::Delaunay_graph);
   typedef typename Face::Delaunay_vertex_handle  Delaunay_vertex_handle;
 
   typedef typename Face::Ccb_halfedge_circulator CCBHC;
@@ -51,7 +52,7 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
   if ( dim > 0 ) {
     // access methods
     Halfedge_handle e = f->halfedge();
-    CGAL_assertion( e->face() == f );
+    assert( e->face() == f );
 
     CCBHC hc_start = f->ccb();
     CCBHC hc = hc_start;
@@ -60,7 +61,7 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
     hc = hc_start;
     do {
       bool b1 = f->is_halfedge_on_ccb(hc);
-      CGAL_assertion( b1 );
+      assert( b1 );
       ++hc;
     } while ( hc != hc_start );
   }
@@ -71,7 +72,7 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
   Delaunay_vertex_handle v = f->dual();
   kill_warning(v);
 
-  CGAL_assertion( f->is_valid() );
+  assert( f->is_valid() );
 }
 
 //==========================================================================
@@ -84,16 +85,16 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
   typedef typename VDA::Vertex              Vertex;
 
   // types  
-  typedef typename Vertex::Halfedge         Halfedge;
-  typedef typename Vertex::Face             Face;
+  CGAL_USE_TYPE(typename Vertex::Halfedge);
+  CGAL_USE_TYPE(typename Vertex::Face);
   typedef typename Vertex::Halfedge_handle  Halfedge_handle;
-  typedef typename Vertex::Vertex_handle    Vertex_handle;
-  typedef typename Vertex::Face_handle      Face_handle;
+  CGAL_USE_TYPE(typename Vertex::Vertex_handle);
+  CGAL_USE_TYPE(typename Vertex::Face_handle);
 
   typedef typename Vertex::size_type        size_type;
   typedef typename Vertex::Point_2          Point_2;
 
-  typedef typename Vertex::Delaunay_graph         Delaunay_graph;
+  CGAL_USE_TYPE(typename Vertex::Delaunay_graph);
   typedef typename Vertex::Delaunay_face_handle   Delaunay_face_handle;
   typedef typename Vertex::Delaunay_vertex_handle Delaunay_vertex_handle;
 
@@ -101,7 +102,7 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
 
   // access methods
   Halfedge_handle e = v->halfedge();
-  CGAL_assertion( e->target() == v );
+  assert( e->target() == v );
 
   HAVC hc_start = v->incident_halfedges();
   HAVC hc = hc_start;
@@ -113,13 +114,13 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
     bool b1 = v->is_incident_edge(hc);
     bool b2 = v->is_incident_face(hc->face());
     bool b3 = v->is_incident_face(hc->opposite()->face());
-    CGAL_assertion( b1 && b2 && b3 );
+    assert( b1 && b2 && b3 );
     kill_warning( b1 && b2 && b3 );
     ++hc;
   } while ( hc != hc_start );
 
   size_type d = v->degree();
-  CGAL_assertion( d == deg );
+  assert( d == deg );
   kill_warning( d );
 
   Delaunay_vertex_handle vv;
@@ -133,7 +134,7 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
   kill_warning(p);
   kill_warning(f);
 
-  CGAL_assertion( v->is_valid() );
+  assert( v->is_valid() );
 }
 
 //==========================================================================
@@ -150,7 +151,7 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   typedef typename Halfedge::Vertex_handle    Vertex_handle;
   typedef typename Halfedge::Face_handle      Face_handle;
 
-  typedef typename Halfedge::Delaunay_graph   Delaunay_graph;
+  CGAL_USE_TYPE(typename Halfedge::Delaunay_graph);
   typedef typename Halfedge::Delaunay_edge    Delaunay_edge;
 
   typedef typename Halfedge::Delaunay_vertex_handle    Delaunay_vertex_handle;
@@ -159,25 +160,25 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   // access methods
   Halfedge_handle e_opp = e->opposite();
   e_opp = e->twin();
-  CGAL_assertion( e_opp->opposite() == e );
+  assert( e_opp->opposite() == e );
 
   Halfedge_handle e_next = e->next();
   Halfedge_handle e_prev = e->previous();
 
-  CGAL_assertion( e_next->previous() == e );
-  CGAL_assertion( e_prev->next() == e );
+  assert( e_next->previous() == e );
+  assert( e_prev->next() == e );
 
   Face_handle f = e->face();
-  CGAL_assertion( f->is_halfedge_on_ccb(e) );
+  assert( f->is_halfedge_on_ccb(e) );
 
   Vertex_handle v_src, v_trg;
   if ( e->has_source() ) {
     v_src = e->source();
-    CGAL_assertion( v_src == e_opp->target() );
+    assert( v_src == e_opp->target() );
   }
   if ( e->has_target() ) {
     v_trg = e->target();
-    CGAL_assertion( v_trg == e_opp->source() );
+    assert( v_trg == e_opp->source() );
   }
 
   CCBHC hc = e->ccb();
@@ -195,15 +196,15 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   bool b1 = e->has_source();
   bool b2 = e->has_target();
   bool bu = e->is_unbounded();
-  CGAL_assertion( (bu && (!b1 || !b2)) || (!bu && (b1 && b2)) );
+  assert( (bu && (!b1 || !b2)) || (!bu && (b1 && b2)) );
 
   bool bs = e->is_segment();
   bool br = e->is_ray();
   bool bb = e->is_bisector();
-  CGAL_assertion( (bs && (b1 && b2)) || (bb && (!b1 && !b2)) ||
+  assert( (bs && (b1 && b2)) || (bb && (!b1 && !b2)) ||
 		  (br && ((!b1 && b2) || (b1 && !b2))) );
 
-  CGAL_assertion( e->is_valid() );
+  assert( e->is_valid() );
   kill_warning( b1 && b2 && bu && bs && br && bb );
 }
 
@@ -256,7 +257,7 @@ void test_vdqr_concept(const VDA& vda)
 template<class VDA>
 void test_vda(const VDA& vda)
 {
-  typedef typename VDA::Accessor                      Accessor;
+  CGAL_USE_TYPE(typename VDA::Accessor);
 
   // testing types
   //--------------
@@ -266,9 +267,9 @@ void test_vda(const VDA& vda)
 
   typedef typename VDA::size_type                     size_type;
 
-  typedef typename VDA::Point_2                       Point_2;
-  typedef typename VDA::Site_2                        Site_2;
-  typedef typename VDA::Locate_result                 Locate_result;
+  CGAL_USE_TYPE(typename VDA::Point_2);
+  CGAL_USE_TYPE(typename VDA::Site_2);
+  CGAL_USE_TYPE(typename VDA::Locate_result);
 
   typedef typename VDA::Halfedge                      Halfedge;
   typedef typename VDA::Face                          Face;
@@ -278,12 +279,12 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Face_handle                   Face_handle;
   typedef typename VDA::Vertex_handle                 Vertex_handle;
 
-  typedef typename VDA::Delaunay_geom_traits          Delaunay_geom_traits;
-  typedef typename VDA::Delaunay_edge                 Delaunay_edge;
-  typedef typename VDA::Delaunay_face_handle          Delaunay_face_handle;
-  typedef typename VDA::Delaunay_vertex_handle        Delaunay_vertex_handle;
+  CGAL_USE_TYPE(typename VDA::Delaunay_geom_traits);
+  CGAL_USE_TYPE(typename VDA::Delaunay_edge);
+  CGAL_USE_TYPE(typename VDA::Delaunay_face_handle);
+  CGAL_USE_TYPE(typename VDA::Delaunay_vertex_handle);
 
-  typedef typename VDA::Edge_iterator                 Edge_iterator;
+  CGAL_USE_TYPE(typename VDA::Edge_iterator);
   typedef typename VDA::Halfedge_iterator             Halfedge_iterator;
   typedef typename VDA::Face_iterator                 Face_iterator;
   typedef typename VDA::Vertex_iterator               Vertex_iterator;
@@ -316,16 +317,16 @@ void test_vda(const VDA& vda)
     Face_handle f;
     f = vda.unbounded_face();
     if ( vda.unbounded_faces_begin() != vda.unbounded_faces_end() ) {
-      CGAL_assertion( f != Face_handle() );
+      assert( f != Face_handle() );
     } else {
-      CGAL_assertion( f == Face_handle() );
+      assert( f == Face_handle() );
     }
 
     f = vda.bounded_face();
     if ( vda.bounded_faces_begin() != vda.bounded_faces_end() ) {
-      CGAL_assertion( f != Face_handle() );
+      assert( f != Face_handle() );
     } else {
-      CGAL_assertion( f == Face_handle() );
+      assert( f == Face_handle() );
     }
 
     kill_warning(f);
@@ -334,16 +335,16 @@ void test_vda(const VDA& vda)
     Halfedge_handle e;
     e = vda.unbounded_halfedge();
     if ( vda.unbounded_halfedges_begin() != vda.unbounded_halfedges_end() ) {
-      CGAL_assertion( e != Halfedge_handle() );
+      assert( e != Halfedge_handle() );
     } else {
-      CGAL_assertion( e == Halfedge_handle() );
+      assert( e == Halfedge_handle() );
     }
 
     e = vda.bounded_halfedge();
     if ( vda.bounded_halfedges_begin() != vda.bounded_halfedges_end() ) {
-      CGAL_assertion( e != Halfedge_handle() );
+      assert( e != Halfedge_handle() );
     } else {
-      CGAL_assertion( e == Halfedge_handle() );
+      assert( e == Halfedge_handle() );
     }
 
     kill_warning(e);
@@ -411,7 +412,7 @@ void test_vda(const VDA& vda)
 
     CCBHC ccbhc_e = vda.ccb_halfedges(f, e);
     // test that initialization was correct
-    CGAL_assertion( *ccbhc_e == *e );
+    assert( *ccbhc_e == *e );
     test_circulator( ccbhc_e );
   }
 
@@ -426,14 +427,14 @@ void test_vda(const VDA& vda)
 
     HAVC havc_e = vda.incident_halfedges(v, e);
     // test that initialization was correct
-    CGAL_assertion( *havc_e == *e );
+    assert( *havc_e == *e );
     test_circulator( havc_e );
   }
 
   test_vdqr_concept(vda);
 
   // testing validity
-  CGAL_assertion( vda.is_valid() );
+  assert( vda.is_valid() );
 
   // testing existence of non-default constructors
   {
@@ -450,7 +451,7 @@ void test_vda(const VDA& vda)
     std::size_t n_dg2 = dg2.number_of_vertices();
     VDA vda9(dg2, true);
     if ( n_dg2 != 0 ) {
-      CGAL_assertion( dg2.number_of_vertices() == 0 );
+      assert( dg2.number_of_vertices() == 0 );
     }
 
     std::vector<typename AT::Site_2> vs;
@@ -470,40 +471,40 @@ void test_vda(const VDA& vda)
   size_type nv = vda.number_of_vertices();
   size_type ne = vda.number_of_halfedges();
   size_type nf = vda.number_of_faces();
-  CGAL_assertion( vda_copy.number_of_vertices() == nv );
-  CGAL_assertion( vda_copy.number_of_halfedges() == ne );
-  CGAL_assertion( vda_copy.number_of_faces() == nf );
-  CGAL_assertion( vda_copy.is_valid() );
+  assert( vda_copy.number_of_vertices() == nv );
+  assert( vda_copy.number_of_halfedges() == ne );
+  assert( vda_copy.number_of_faces() == nf );
+  assert( vda_copy.is_valid() );
   kill_warning( nv + ne + nf );
 
   // testing assignment operator
   vda_copy.clear();
   vda_copy = vda;
   VDA vda_copy_2 = vda;
-  CGAL_assertion( vda_copy.number_of_vertices() == nv );
-  CGAL_assertion( vda_copy.number_of_halfedges() == ne );
-  CGAL_assertion( vda_copy.number_of_faces() == nf );
-  CGAL_assertion( vda_copy.is_valid() );  
+  assert( vda_copy.number_of_vertices() == nv );
+  assert( vda_copy.number_of_halfedges() == ne );
+  assert( vda_copy.number_of_faces() == nf );
+  assert( vda_copy.is_valid() );  
 
   // testing clear
   vda_copy_2.clear();
-  CGAL_assertion( vda_copy_2.number_of_vertices() == 0 );
-  CGAL_assertion( vda_copy_2.number_of_halfedges() == 0 );
-  CGAL_assertion( vda_copy_2.number_of_faces() == 0 );
-  CGAL_assertion( vda_copy_2.is_valid() );
+  assert( vda_copy_2.number_of_vertices() == 0 );
+  assert( vda_copy_2.number_of_halfedges() == 0 );
+  assert( vda_copy_2.number_of_faces() == 0 );
+  assert( vda_copy_2.is_valid() );
 
   // testing swap
   vda_copy_2.swap(vda_copy);
-  CGAL_assertion( vda_copy_2.number_of_vertices() == nv );
-  CGAL_assertion( vda_copy_2.number_of_halfedges() == ne );
-  CGAL_assertion( vda_copy_2.number_of_faces() == nf );
+  assert( vda_copy_2.number_of_vertices() == nv );
+  assert( vda_copy_2.number_of_halfedges() == ne );
+  assert( vda_copy_2.number_of_faces() == nf );
 
-  CGAL_assertion( vda_copy.number_of_vertices() == 0 );
-  CGAL_assertion( vda_copy.number_of_halfedges() == 0 );
-  CGAL_assertion( vda_copy.number_of_faces() == 0 );
+  assert( vda_copy.number_of_vertices() == 0 );
+  assert( vda_copy.number_of_halfedges() == 0 );
+  assert( vda_copy.number_of_faces() == 0 );
 
-  CGAL_assertion( vda_copy.is_valid() );
-  CGAL_assertion( vda_copy_2.is_valid() );
+  assert( vda_copy.is_valid() );
+  assert( vda_copy_2.is_valid() );
 
 #ifndef VDA_TEST_RT
   // testing file I/O
@@ -517,11 +518,11 @@ void test_vda(const VDA& vda)
   ifs >> vda_copy;
   ifs.close();
 
-  CGAL_assertion( vda_copy.number_of_vertices() == nv );
-  CGAL_assertion( vda_copy.number_of_halfedges() == ne );
-  CGAL_assertion( vda_copy.number_of_faces() == nf );
+  assert( vda_copy.number_of_vertices() == nv );
+  assert( vda_copy.number_of_halfedges() == ne );
+  assert( vda_copy.number_of_faces() == nf );
 
-  CGAL_assertion( vda_copy.is_valid() );
+  assert( vda_copy.is_valid() );
 #endif // VDA_TEST_RT
 
   // sanity tests
@@ -549,59 +550,59 @@ void test_vda(const VDA& vda)
   Unbounded_faces_iterator ufit;
   for (ufit = vda.unbounded_faces_begin();
        ufit != vda.unbounded_faces_end(); ++ufit) {
-    CGAL_assertion( ufit->is_unbounded() );
+    assert( ufit->is_unbounded() );
   }
 
   if ( vda.unbounded_faces_begin() != vda.unbounded_faces_end() ) {
     for (ufit = --vda.unbounded_faces_end();
 	 ufit != vda.unbounded_faces_begin(); --ufit) {
-      CGAL_assertion( ufit->is_unbounded() );
+      assert( ufit->is_unbounded() );
     }
-    CGAL_assertion( ufit->is_unbounded() );
+    assert( ufit->is_unbounded() );
   }
 
   Bounded_faces_iterator bfit;
   for (bfit = vda.bounded_faces_begin();
        bfit != vda.bounded_faces_end(); ++bfit) {
-    CGAL_assertion( !bfit->is_unbounded() );
+    assert( !bfit->is_unbounded() );
   }
 
   if ( vda.bounded_faces_begin() != vda.bounded_faces_end() ) {
     for (bfit = --vda.bounded_faces_end();
 	 bfit != vda.bounded_faces_begin(); --bfit) {
-      CGAL_assertion( !bfit->is_unbounded() );
+      assert( !bfit->is_unbounded() );
     }
-    CGAL_assertion( !bfit->is_unbounded() );
+    assert( !bfit->is_unbounded() );
   }
 
   // testing unbounded halfedges iterator
   UH_iterator ueit;
   for (ueit = vda.unbounded_halfedges_begin();
        ueit != vda.unbounded_halfedges_end(); ++ueit) {
-    CGAL_assertion( !ueit->has_source() || !ueit->has_target() );
+    assert( !ueit->has_source() || !ueit->has_target() );
   }
 
   if ( vda.unbounded_halfedges_begin() != vda.unbounded_halfedges_end() ) {
     for (ueit = --vda.unbounded_halfedges_end();
 	 ueit != vda.unbounded_halfedges_begin(); --ueit) {
-      CGAL_assertion( !ueit->has_source() || !ueit->has_target() );
+      assert( !ueit->has_source() || !ueit->has_target() );
     }
-    CGAL_assertion( !ueit->has_source() || !ueit->has_target() );
+    assert( !ueit->has_source() || !ueit->has_target() );
   }
 
   // testing bounded halfedges iterator
   BH_iterator beit;
   for (beit = vda.bounded_halfedges_begin();
        beit != vda.bounded_halfedges_end(); ++beit) {
-    CGAL_assertion( beit->has_source() && beit->has_target() );
+    assert( beit->has_source() && beit->has_target() );
   }
 
   if ( vda.bounded_halfedges_begin() != vda.bounded_halfedges_end() ) {
     for (beit = --vda.bounded_halfedges_end();
 	 beit != vda.bounded_halfedges_begin(); --beit) {
-      CGAL_assertion( beit->has_source() && beit->has_target() );
+      assert( beit->has_source() && beit->has_target() );
     }
-    CGAL_assertion( beit->has_source() && beit->has_target() );
+    assert( beit->has_source() && beit->has_target() );
   }
 
   // testing generator iterator

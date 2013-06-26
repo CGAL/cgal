@@ -139,7 +139,7 @@ belong to
 two corners incident on the curve segment.
 If it is a cycle, then the same `Point_3` should be given twice and must be any
 point on the cycle.
-The `Index` values associated to the points are their indices w.r.t. their dimension.
+The `Index` values associated to the points are their indices w.r.t.\ their dimension.
 */
 template <typename OutputIterator>
 OutputIterator

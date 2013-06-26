@@ -517,13 +517,13 @@ public:
   {  return _equal_2(a,b);}
 
   result_type
-  operator()( const Circular_arc_2 &a ,
-              const Line_arc_2 &b ) const
+  operator()( const Circular_arc_2 & ,
+              const Line_arc_2 & ) const
   {  return false;}
 
   result_type
-  operator()( const Line_arc_2 &a ,
-              const Circular_arc_2 &b ) const
+  operator()( const Line_arc_2 & ,
+              const Circular_arc_2 & ) const
   {  return false;}
 
 };
@@ -573,13 +573,13 @@ public:
   {  return _do_overlap_2(a,b);}
 
   result_type
-  operator()( const Circular_arc_2 &a ,
-              const Line_arc_2 &b ) const
+  operator()( const Circular_arc_2 & ,
+              const Line_arc_2 & ) const
   {  return false;}
 
   result_type
-  operator()( const Line_arc_2 &a ,
-              const Circular_arc_2 &b ) const
+  operator()( const Line_arc_2 & ,
+              const Circular_arc_2 & ) const
   {  return false;}
 
 };

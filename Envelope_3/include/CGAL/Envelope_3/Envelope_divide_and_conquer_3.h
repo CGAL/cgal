@@ -1605,7 +1605,7 @@ protected:
 
     virtual void after_split_face(Face_handle org_f,
                                   Face_handle new_f,
-                                  bool is_hole)
+                                  bool /* is_hole*/)
     {
       // update data in the new face from the original face
       if (org_f->get_aux_is_set(0))

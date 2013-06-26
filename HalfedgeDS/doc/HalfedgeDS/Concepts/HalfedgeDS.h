@@ -179,7 +179,8 @@ typedef Hidden_type Face_iterator;
 /// @} 
 
 /* \name Types for Tagging Optional Features 
-\cgalAdvanced The following types are equal to either `CGAL::Tag_true` or 
+\cgalAdvancedBegin
+The following types are equal to either `CGAL::Tag_true` or 
 `CGAL::Tag_false`, depending on whether the named feature is 
 supported or not. 
 
@@ -199,6 +200,7 @@ Faces are supported \f$ \Longleftrightarrow\f$
 
 `Supports_face_halfedge` \f$ \equiv\f$ `CGAL::Tag_true` \f$ \Longrightarrow\f$ 
 `Supports_halfedge_face` \f$ \equiv\f$ `CGAL::Tag_true`. 
+\cgalAdvancedEnd
 */
 /// @{
 
@@ -236,6 +238,7 @@ typedef Hidden_type Supports_removal;
 
 /*! \name Static Member Functions
 
+\cgalAdvancedBegin
 When writing an items type, such as a user defined vertex, certain 
 functions need to create a handle but knowing only a pointer, for 
 example, the `this`-pointer. The following static member functions 
@@ -262,7 +265,8 @@ constructed from a pointer of a contained item only. This is true and
 controlled by us for `CGAL::In_place_list`. It is true for the 
 `std::vector` of major \stl distributions, but not necessarily 
 guaranteed. We might switch to an internal implementation if need 
-arises. 
+arises.
+\cgalAdvancedEnd
 */
 /// @{
 
@@ -560,7 +564,8 @@ void clear();
 /// @} 
 
 /*! \name Operations with Border Halfedges 
-\cgalAdvanced The following notion of <I>border halfedges</I> is particular useful 
+\cgalAdvancedBegin
+The following notion of <I>border halfedges</I> is particular useful 
 where the halfedge data structure is used to model surfaces with 
 boundary, i.e., surfaces with missing faces or open regions. Halfedges 
 incident to an open region are called <I>border halfedges</I>. A 
@@ -582,6 +587,7 @@ halfedge iterator where the border edges start at, within the
 halfedge data structure. These values will be invalid after further 
 halfedge insertions or removals and changes in the border status of 
 a halfedge. There is no automatic update required. 
+\cgalAdvancedEnd
 */
 /// @{
 

@@ -278,11 +278,12 @@ const TriangulationDataStructure_3 & tds() const;
 
 
 /*! 
-Returns a reference to the triangulation data structure. 
-\cgalAdvanced This method is mainly a help for users implementing their own triangulation algorithms.
-
-\cgalAdvanced The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
-*/ 
+Returns a reference to the triangulation data structure.
+\cgalAdvancedBegin
+This method is mainly a help for users implementing their own triangulation algorithms.
+The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
+\cgalAdvancedEnd
+*/
 TriangulationDataStructure_3 & tds(); 
 
 /*! 
@@ -304,6 +305,15 @@ size_type number_of_cells() const;
 Returns the infinite vertex. 
 */ 
 Vertex_handle infinite_vertex(); 
+
+/*!
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
+Sets the infinite vertex.
+\cgalAdvancedEnd
+*/ 
+void set_infinite_vertex(Vertex_handle v);
 
 /*! 
 Returns a cell incident to the infinite vertex. 
@@ -1251,23 +1261,29 @@ Facet mirror_facet(Facet f) const;
 /// @{
 
 /*! 
-\cgalDebug Checks the combinatorial validity of the triangulation. Checks also the 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the combinatorial validity of the triangulation. Checks also the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). 
 When `verbose` is set to true, 
 messages describing the first invalidity encountered are printed. 
+\cgalDebugEnd
 */ 
 bool 
 is_valid(bool verbose = false) const; 
 
 /*! 
-\cgalDebug Checks the combinatorial validity of the cell by calling the 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the combinatorial validity of the cell by calling the 
 `is_valid` method of the `TriangulationDataStructure_3` cell class. Also checks the 
 geometric validity of `c`, if `c` is finite. (See 
 Section \ref Triangulation3secintro.) 
 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication of the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool 
 is_valid(Cell_handle c, bool verbose = false) const; 

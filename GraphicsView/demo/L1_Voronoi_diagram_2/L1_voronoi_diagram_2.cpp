@@ -112,7 +112,7 @@ public slots:
 
   void on_actionShowVoronoi_toggled(bool checked);
 
-  void open(const QString& fileName);
+  void open(QString fileName);
 
 signals:
   void changed();
@@ -284,7 +284,7 @@ MainWindow::on_actionLoadPoints_triggered()
 
 
 void
-MainWindow::open(const QString& fileName)
+MainWindow::open(QString fileName)
 {
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);

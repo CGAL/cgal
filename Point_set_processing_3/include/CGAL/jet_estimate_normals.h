@@ -114,25 +114,25 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 ///
 /// \pre `k >= 2`
 ///
-/// @tparam InputIterator iterator over input points.
-/// @tparam PointPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html">boost::ReadablePropertyMap</a> with a value_type = Point_3<Kernel>.
-///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/WritablePropertyMap.html">boost::WritablePropertyMap</a> with a value_type = Vector_3<Kernel>.
+/// @tparam ForwardIterator iterator model of the concept of the same name over input points and able to store output normals.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
 
 // This variant requires all parameters.
-template <typename InputIterator,
+template <typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap,
           typename Kernel
 >
 void
 jet_estimate_normals(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  ForwardIterator first,  ///< iterator over the first input point.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
   const Kernel& /*kernel*/, ///< geometric traits.
   unsigned int degree_fitting = 2) ///< fitting degree
@@ -158,10 +158,10 @@ jet_estimate_normals(
   // precondition: at least 2 nearest neighbors
   CGAL_point_set_processing_precondition(k >= 2);
 
-  long memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Creates KD-tree\n");
 
-  InputIterator it;
+  ForwardIterator it;
 
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
@@ -173,7 +173,7 @@ jet_estimate_normals(
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
-  /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Computes normals\n");
 
   // iterate over input points, compute and output normal
@@ -184,22 +184,22 @@ jet_estimate_normals(
     put(normal_pmap, it, normal); // normal_pmap[it] = normal
   }
 
-  /*long*/ memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
+  memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of jet_estimate_normals()\n");
 }
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename InputIterator,
+template <typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap
 >
 void
 jet_estimate_normals(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  ForwardIterator first,  ///< iterator over the first input point.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2)
 {
@@ -217,14 +217,14 @@ jet_estimate_normals(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map.
-template <typename InputIterator,
+template <typename ForwardIterator,
           typename NormalPMap
 >
 void
 jet_estimate_normals(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  NormalPMap normal_pmap, ///< property map InputIterator -> Vector_3.
+  ForwardIterator first,  ///< iterator over the first input point.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
+  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2)
 {

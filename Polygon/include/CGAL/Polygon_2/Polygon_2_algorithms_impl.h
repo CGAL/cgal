@@ -29,6 +29,8 @@
 #include <set>
 #include <vector>
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 
 
@@ -439,3 +441,5 @@ Orientation orientation_2(ForwardIterator first,
 }
 
 } //namespace CGAL
+
+/// \endcond

@@ -32,6 +32,19 @@ struct Myitems_2
   };
 };
 
+struct Myitems_2c
+{
+  template <class LCC>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Dart<2, LCC> Dart;
+
+    typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_false,Sum_functor,
+                                            Divide_by_two_functor> myattrib;
+    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib>
+    Attributes;
+  };
+};
 struct Myitems_3
 {
   template <class LCC>
@@ -40,6 +53,20 @@ struct Myitems_3
     typedef CGAL::Dart<3, LCC> Dart;
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
+                                            Divide_by_two_functor> myattrib;
+    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib>
+    Attributes;
+  };
+};
+
+struct Myitems_3c
+{
+  template <class LCC>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Dart<3, LCC> Dart;
+
+    typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_false,Sum_functor,
                                             Divide_by_two_functor> myattrib;
     typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib>
     Attributes;
@@ -60,6 +87,19 @@ struct Myitems_4
   };
 };
 
+struct Myitems_4c
+{
+  template <class LCC>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Dart<4, LCC> Dart;
+
+    typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_false,Sum_functor,
+                                            Divide_by_two_functor> myattrib;
+    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
+    Attributes;
+  };
+};
 
 int main()
 {
@@ -95,12 +135,29 @@ int main()
     return EXIT_FAILURE;
   }
   
+  typedef CGAL::Linear_cell_complex<2,2,
+                                    CGAL::Linear_cell_complex_traits<2>,
+                                    Myitems_2c> LCC2c;
+  if ( !test_LCC_2<LCC2c>() )
+  {
+    std::cout<<" Error during Test_LCC_2<LCC2c>."<<std::endl;
+    return EXIT_FAILURE;
+  }
   typedef CGAL::Linear_cell_complex<3,3,
                                     CGAL::Linear_cell_complex_traits<3>,
                                     Myitems_3> LCC3b;
   if ( !test_LCC_3<LCC3b>() )
   {
     std::cout<<" Error during Test_LCC_3<LCC3b>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  typedef CGAL::Linear_cell_complex<3,3,
+                                    CGAL::Linear_cell_complex_traits<3>,
+                                    Myitems_3c> LCC3c;
+  if ( !test_LCC_3<LCC3c>() )
+  {
+    std::cout<<" Error during Test_LCC_3<LCC3c>."<<std::endl;
     return EXIT_FAILURE;
   }
   
@@ -110,6 +167,15 @@ int main()
   if ( !test_LCC_4<LCC4b>() )
   {
     std::cout<<" Error during Test_LCC_4<LCC4b>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  typedef CGAL::Linear_cell_complex<4,4,
+                                    CGAL::Linear_cell_complex_traits<4>,
+                                    Myitems_4c> LCC4c;
+  if ( !test_LCC_4<LCC4c>() )
+  {
+    std::cout<<" Error during Test_LCC_4<LCC4c>."<<std::endl;
     return EXIT_FAILURE;
   }
 

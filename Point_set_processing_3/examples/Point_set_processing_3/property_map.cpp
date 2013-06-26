@@ -71,8 +71,8 @@ void process_point_set(Iterator beg, Iterator end)
 
 // Here comes a function that changes the orientation and the normal
 
-template <typename Iterator, typename PointPMap, typename OrientationPMap, typename NormalPMap >
-void orient_normals(Iterator beg, Iterator end, PointPMap point_pmap, OrientationPMap orient_pmap, NormalPMap normal_pmap)
+template <typename Iterator, typename OrientationPMap, typename NormalPMap >
+void orient_normals(Iterator beg, Iterator end, OrientationPMap orient_pmap, NormalPMap normal_pmap)
 {
   for(;beg!= end;++beg){
     Vector_3& v = get(normal_pmap, beg);
@@ -145,7 +145,6 @@ int main()
     //We keep the sequence in order, but determine the normal and if it is different from zero set the Boolean to true 
     orient_normals(points.begin(),
                    points.end(),
-                   CGAL::make_nth_of_tuple_property_map<1>(points.begin()),
                    CGAL::make_nth_of_tuple_property_map<2>(points.begin()),
                    CGAL::make_nth_of_tuple_property_map<3>(points.begin()));
     

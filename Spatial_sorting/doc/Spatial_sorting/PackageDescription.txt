@@ -32,5 +32,34 @@
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Functions ##
+- `CGAL::spatial_sort()`
+- `CGAL::hilbert_sort()`
+
+## Function Objects ##
+- `CGAL::Multiscale_sort<Sort>`
+- `CGAL::Hilbert_sort_2<Traits, PolicyTag>`
+- `CGAL::Hilbert_sort_3<Traits, PolicyTag>`
+- `CGAL::Hilbert_sort_d<Traits, PolicyTag>`
+
+## Traits classes ##
+- `CGAL::Spatial_sort_traits_adapter_2<Base_traits,PointPropertyMap>`
+- `CGAL::Spatial_sort_traits_adapter_3<Base_traits,PointPropertyMap>`
+- `CGAL::Spatial_sort_traits_adapter_d<Base_traits,PointPropertyMap>`
+
+## Concepts ##
+- `SpatialSortingTraits_2`
+- `SpatialSortingTraits_3`
+- `SpatialSortingTraits_d`
+
+## Utilities ##
+- `CGAL::Median`
+- `CGAL::Middle`
+- `CGAL::Hilbert_policy<Tag>`
+- `CGAL::Hilbert_sort_median_policy`
+- `CGAL::Hilbert_sort_middle_policy`
 */
 

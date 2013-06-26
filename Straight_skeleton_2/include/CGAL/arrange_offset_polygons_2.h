@@ -38,7 +38,7 @@ template<class K, class InputPolygonPtrIterator, class OutputPolygonWithHolesPtr
 void arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
                                , InputPolygonPtrIterator           aEnd
                                , OutputPolygonWithHolesPtrIterator rOut
-                               , K const&                          k  
+                               , K const&
                                )
 {
   typedef typename std::iterator_traits<InputPolygonPtrIterator>::difference_type difference_type ;
