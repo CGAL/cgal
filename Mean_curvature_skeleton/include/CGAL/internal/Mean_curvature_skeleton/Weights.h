@@ -21,6 +21,24 @@ struct Vector{
   double squared_length() const {
     return coords[0]*coords[0] + coords[1]*coords[1] + coords[2]*coords[2];
   }
+  double length() const {
+    return sqrtf(coords[0]*coords[0] + coords[1]*coords[1] + coords[2]*coords[2]);
+  }
+  bool normalize() {
+    double len = length();
+    if (len < 1e-10)
+    {
+      return false;
+    }
+    coords[0] /= len;
+    coords[1] /= len;
+    coords[2] /= len;
+    return true;
+  }
+  template<class Point>
+  double dot(const Point& b) {
+    return coords[0] * b.coords[0] + coords[1] * b.coords[1] + coords[2] + b.coords[2];
+  }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
