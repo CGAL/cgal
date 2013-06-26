@@ -40,7 +40,7 @@ edge_descriptor mesh_split(Polyhedron *polyhedron, edge_descriptor ei, Point pn)
   edge_descriptor ej = en->opposite();
   if (!(ej->is_border()))
   {
-    polyhedron->split_facet(en, ej->next());
+    polyhedron->split_facet(ei->opposite(), ej->next());
   }
 
   return en;
