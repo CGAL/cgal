@@ -657,8 +657,8 @@ void Scene::generate_edge_points(const unsigned int nb_points)
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
     std::cout << "Construct AABB tree...";
-    Tree tree( boost::edges(*m_pPolyhedron).first,
-               boost::edges(*m_pPolyhedron).second,
+    Tree tree( CGAL::undirected_edges(*m_pPolyhedron).first,
+               CGAL::undirected_edges(*m_pPolyhedron).second,
                *m_pPolyhedron);
     std::cout << "done." << std::endl;
 

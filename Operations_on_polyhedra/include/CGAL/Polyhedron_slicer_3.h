@@ -24,6 +24,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 
 #include <CGAL/Vector_3.h>
 #include <CGAL/Point_3.h>
@@ -418,8 +419,8 @@ public:
   */
   Polyhedron_slicer_3(const Polyhedron& polyhedron, const Kernel& kernel = Kernel())
   : intersect_3_functor(kernel.intersect_3_object()),
-    tree( boost::edges(polyhedron).first,
-          boost::edges(polyhedron).second,
+    tree( undirected_edges(polyhedron).first,
+          undirected_edges(polyhedron).second,
           polyhedron)
   { }
 
