@@ -37,10 +37,23 @@ edge_descriptor mesh_split(Polyhedron *polyhedron, edge_descriptor ei, Point pn)
   en->vertex()->point() = pn;
   polyhedron->split_facet(en, ei->next());
 
+  en->id() = -1;
+  en->opposite()->id() = -1;
+  ei->id() = -1;
+  ei->opposite()->id() = -1;
+  en->next()->id() = -1;
+  en->next()->opposite()->id() = -1;
+  en->next()->next()->id() = -1;
+  ei->next()->id() = -1;
   edge_descriptor ej = en->opposite();
   if (!(ej->is_border()))
   {
     polyhedron->split_facet(ei->opposite(), ej->next());
+    ej->next()->id() = -1;
+    edge_descriptor ei_op_next = ei->opposite()->next();
+    ei_op_next->id() = -1;
+    ei_op_next->opposite()->id() = -1;
+    ei_op_next->next()->id() = -1;
   }
 
   return en;
@@ -364,10 +377,12 @@ public:
     return pn;
   }
 
-  bool split_flat_triangle()
+  int split_flat_triangle()
   {
+    int ne = boost::num_edges(*polyhedron);
     compute_incident_angle();
 
+    int cnt = 0;
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
@@ -375,6 +390,11 @@ public:
       edge_descriptor ej = ei->opposite();
       int ei_id = boost::get(edge_id_pmap, ei);
       int ej_id = boost::get(edge_id_pmap, ej);
+      if (ei_id < 0 || ei_id >= ne
+       || ej_id < 0 || ej_id >= ne)
+      {
+        continue;
+      }
 
       vertex_descriptor vs = boost::source(ei, *polyhedron);
       vertex_descriptor vt = boost::target(ei, *polyhedron);
@@ -415,9 +435,9 @@ public:
       edge_descriptor en = CGAL::internal::mesh_split(polyhedron, ei, pn);
       // set id for new vertex
       boost::put(vertex_id_pmap, en->vertex(), vertex_id_count++);
-      return true;
+      cnt++;
     }
-    return false;
+    return cnt;
   }
 
   int iteratively_split_triangles()
@@ -425,13 +445,14 @@ public:
     int num_splits = 0;
     while(true)
     {
-      if (split_flat_triangle())
+      int cnt = split_flat_triangle();
+      if (cnt == 0)
       {
-        num_splits++;
+        break;
       }
       else
       {
-        break;
+        num_splits += cnt;
       }
     }
     return num_splits;
