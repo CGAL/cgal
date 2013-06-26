@@ -35,9 +35,8 @@ struct Vector{
     coords[2] /= len;
     return true;
   }
-  template<class Point>
-  double dot(const Point& b) {
-    return coords[0] * b.coords[0] + coords[1] * b.coords[1] + coords[2] + b.coords[2];
+  double dot(const Vector& b) {
+    return coords[0] * b.coords[0] + coords[1] * b.coords[1] + coords[2] * b.coords[2];
   }
 };
 
