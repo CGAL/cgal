@@ -28,6 +28,28 @@
 namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
+namespace internal {
+
+template<class Polyhedron, class edge_descriptor, class Point>
+edge_descriptor mesh_split(Polyhedron *polyhedron, edge_descriptor ei, Point pn)
+{
+  edge_descriptor en = polyhedron->split_edge(ei);
+  en->vertex()->point() = pn;
+  polyhedron->split_facet(en, ei->next());
+
+  edge_descriptor ej = en->opposite();
+  if (!(ej->is_border()))
+  {
+    polyhedron->split_facet(en, ej->next());
+  }
+
+  return en;
+}
+
+}
+}
+
+namespace CGAL {
 
 template <class Polyhedron, class SparseLinearAlgebraTraits_d,
           class PolyhedronVertexIndexMap, class PolyhedronEdgeIndexMap>
@@ -63,8 +85,12 @@ private:
   double omega_L;
   double omega_H;
   double edgelength_TH;
+  double TH_ALPHA;
+
+  int vertex_id_count;
 
   std::map<size_t, bool> is_vertex_fixed_map;
+  std::vector<double> halfedge_angle;
 
   //
   // BGL property map which indicates whether an edge is border OR is marked as non-removable
@@ -106,24 +132,27 @@ public:
 
   // The constructor gets the polyhedron that we will model
   Mean_curvature_skeleton(Polyhedron* P,
-                          PolyhedronVertexIndexMap Vertex_index_map, PolyhedronEdgeIndexMap Edge_index_map,
+                          PolyhedronVertexIndexMap Vertex_index_map,
+                          PolyhedronEdgeIndexMap Edge_index_map,
                           double omega_L, double omega_H, double edgelength_TH,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
-      omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH),
+      omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), TH_ALPHA(110),
       weight_calculator(weight_calculator)
   {
+    TH_ALPHA *= (M_PI / 180.0);
+
     // initialize index maps
     vertex_iterator vb, ve;
-    int idx = 0;
+    vertex_id_count = 0;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
-      boost::put(vertex_id_pmap, *vb, idx++);
+      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
     }
 
     edge_iterator eb, ee;
-    idx = 0;
+    int idx = 0;
     for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       boost::put(edge_id_pmap, *eb, idx++);
@@ -182,7 +211,7 @@ public:
                     typename SparseLinearAlgebraTraits_d::Vector& Bz)
   {
     // assemble right columns of linear system
-    int nver = boost::num_vertices(*polyhedron);;
+    int nver = boost::num_vertices(*polyhedron);
     vertex_iterator vb, ve;
     for (int i = 0; i < nver; i++)
     {
@@ -237,7 +266,7 @@ public:
     Constrains_map constrains_map;
 
     edge_iterator eb, ee;
-    for(boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       vertex_descriptor vi = boost::source(*eb, *polyhedron);
       vertex_descriptor vj = boost::target(*eb, *polyhedron);
@@ -270,11 +299,151 @@ public:
     return r;
   }
 
+  void compute_incident_angle()
+  {
+    halfedge_angle.clear();
+    int ne = boost::num_edges(*polyhedron);
+    halfedge_angle.resize(ne, 0);
+
+    edge_iterator eb, ee;
+    int idx = 0;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      boost::put(edge_id_pmap, *eb, idx++);
+    }
+
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      int e_id = boost::get(edge_id_pmap, *eb);
+      edge_descriptor ed = *eb;
+
+      if (ed->is_border())
+      {
+        halfedge_angle[e_id] = -1;
+      }
+      else
+      {
+        vertex_descriptor vi = boost::source(ed, *polyhedron);
+        vertex_descriptor vj = boost::target(ed, *polyhedron);
+        edge_descriptor ed_next = ed->next();
+        vertex_descriptor vk = boost::target(ed_next, *polyhedron);
+        Point pi = vi->point();
+        Point pj = vj->point();
+        Point pk = vk->point();
+
+        double dis2_ij = squared_distance(pi, pj);
+        double dis2_ik = squared_distance(pi, pk);
+        double dis2_jk = squared_distance(pj, pk);
+        double dis_ij = sqrt(dis2_ij);
+        double dis_ik = sqrt(dis2_ik);
+        double dis_jk = sqrt(dis2_jk);
+
+        /// A degenerate triangle will never undergo a split (but rather a collapse...)
+        if (dis_ij < edgelength_TH || dis_ik < edgelength_TH || dis_jk < edgelength_TH)
+        {
+          halfedge_angle[e_id] = -1;
+        }
+        else
+        {
+          halfedge_angle[e_id] = acos((dis2_ik + dis2_jk - dis2_ij) / (2.0 * dis_ik * dis_jk));
+        }
+      }
+    }
+  }
+
+  Point project_vertex(const Point& ps, const Point& pt, const Point& pk)
+  {
+    CGAL::internal::Vector vec_st = CGAL::internal::Vector(ps, pt);
+    CGAL::internal::Vector vec_sk = CGAL::internal::Vector(ps, pk);
+
+    vec_st.normalize();
+    double len = vec_st.length();
+    double t = vec_st.dot(vec_sk);
+    Point st = Point(vec_st[0] * t, vec_st[1] * t, vec_st[2] * t);
+    Point pn = Point(ps[0] + st[0], ps[1] + st[1], ps[2] + st[2]);
+    return pn;
+  }
+
+  bool split_flat_triangle()
+  {
+    compute_incident_angle();
+
+    edge_iterator eb, ee;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      edge_descriptor ei = *eb;
+      edge_descriptor ej = ei->opposite();
+      int ei_id = boost::get(edge_id_pmap, ei);
+      int ej_id = boost::get(edge_id_pmap, ej);
+
+      vertex_descriptor vs = boost::source(ei, *polyhedron);
+      vertex_descriptor vt = boost::target(ei, *polyhedron);
+      size_t vs_id = boost::get(vertex_id_pmap, vs);
+      size_t vt_id = boost::get(vertex_id_pmap, vt);
+      Point ps = vs->point();
+      Point pt = vt->point();
+
+      if (is_vertex_fixed_map.find(vs_id) != is_vertex_fixed_map.end()
+       && is_vertex_fixed_map.find(vt_id) != is_vertex_fixed_map.end())
+      {
+        if (is_vertex_fixed_map[vs_id] && is_vertex_fixed_map[vt_id])
+        {
+          continue;
+        }
+      }
+
+      // for border edge, the angle is -1
+      double angle_i = halfedge_angle[ei_id];
+      double angle_j = halfedge_angle[ej_id];
+      if (angle_i < TH_ALPHA || angle_j < TH_ALPHA)
+      {
+        continue;
+      }
+
+      edge_descriptor ek;
+      if (angle_i > angle_j)
+      {
+        ek = ei->next();
+      }
+      else
+      {
+        ek = ej->next();
+      }
+      vertex_descriptor vk = boost::target(ek, *polyhedron);
+      Point pk = vk->point();
+      Point pn = project_vertex(ps, pt, pk);
+      edge_descriptor en = CGAL::internal::mesh_split(polyhedron, ei, pn);
+      // set id for new vertex
+      boost::put(vertex_id_pmap, en->vertex(), vertex_id_count++);
+      return true;
+    }
+    return false;
+  }
+
+  int iteratively_split_triangles()
+  {
+    int num_splits = 0;
+    while(true)
+    {
+      if (split_flat_triangle())
+      {
+        num_splits++;
+      }
+      else
+      {
+        break;
+      }
+    }
+    return num_splits;
+  }
+
   void updateTopology()
   {
     int num_collapses = collapse_short_edges(edgelength_TH);
-
     std::cout << "collapse " << num_collapses << " edges.\n";
+
+    int num_splits = iteratively_split_triangles();
+    std::cout << "split " << num_splits << " edges.\n";
   }
 };
 
