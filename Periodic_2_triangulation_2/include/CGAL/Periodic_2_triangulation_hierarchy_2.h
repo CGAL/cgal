@@ -1,3 +1,4 @@
+// Copyright (c) 1997-2000 INRIA Sophia-Antipolis (France).
 // Copyright (c) 2013 Nico Kruithof (The Netherlands)
 // All rights reserved.
 //
@@ -14,7 +15,6 @@
 //
 // $URL$
 // $Id$
-//
 //
 // Author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
 //                 Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
