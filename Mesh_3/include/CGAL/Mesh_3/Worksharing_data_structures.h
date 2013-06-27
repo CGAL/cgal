@@ -30,6 +30,8 @@
 #include <tbb/task.h>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/concurrent_vector.h>
+#include <tbb/scalable_allocator.h>
+
 
 #include <vector>
 #ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
@@ -269,7 +271,7 @@ class WorkItem
 public:
   WorkItem() {}
   // Derived class defines the actual work.
-  virtual void run() const = 0;
+  virtual void run() = 0;
   virtual bool less_than(const WorkItem &) const = 0;
 };
 
@@ -296,10 +298,10 @@ public:
     : m_func(func), m_quality(quality)
   {}
 
-  void run() const
+  void run()
   {
     m_func();
-    delete this;
+    tbb::scalable_allocator<MeshRefinementWorkItem<Func, Quality> >().deallocate(this, 1);
   }
   
   bool less_than (const WorkItem &other) const
@@ -340,10 +342,10 @@ public:
     : m_func(func)
   {}
 
-  void run() const
+  void run()
   {
     m_func();
-    delete this;
+    tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().deallocate(this, 1);
   }
   
   // Irrelevant here
@@ -368,16 +370,16 @@ class WorkBatch
 public:
 
 #ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-  typedef std::multiset<const WorkItem *, CompareTwoWorkItems> Batch;
+  typedef std::multiset<WorkItem *, CompareTwoWorkItems> Batch;
 #else
-  typedef std::vector<const WorkItem *> Batch;
+  typedef std::vector<WorkItem *> Batch;
 #endif
   typedef Batch::const_iterator BatchConstIterator;
   typedef Batch::iterator       BatchIterator;
 
   WorkBatch() {}
 
-  void add_work_item(const WorkItem *p_item)
+  void add_work_item(WorkItem *p_item)
   {
 #ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
     m_batch.insert(p_item);
@@ -402,8 +404,8 @@ public:
 #ifdef CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
     std::sort(m_batch.begin(), m_batch.end(), CompareTwoWorkItems());
 #endif
-    BatchConstIterator it = m_batch.begin();
-    BatchConstIterator it_end = m_batch.end();
+    BatchIterator it = m_batch.begin();
+    BatchIterator it_end = m_batch.end();
     for ( ; it != it_end ; ++it)
       (*it)->run();
   }
@@ -434,7 +436,7 @@ class WorkItemTask
   : public tbb::task
 {
 public:
-  WorkItemTask(const WorkItem *pwi)
+  WorkItemTask(WorkItem *pwi)
     : m_pwi(pwi)
   {
   }
@@ -442,7 +444,7 @@ public:
 private:
   /*override*/inline tbb::task* execute();
 
-  const WorkItem *m_pwi;
+  WorkItem *m_pwi;
 };
 
 
@@ -467,13 +469,15 @@ public:
   template <typename Func>
   void enqueue_work(Func f, tbb::task &parent_task) const
   {
-    WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
+    //WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
+    WorkItem *p_item = tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().allocate(1);
+    new (p_item) SimpleFunctorWorkItem<Func>(f);
     enqueue_task(create_task(p_item, parent_task));
   }
   
 protected:
   
-  WorkItemTask *create_task(const WorkItem *pwi, tbb::task &parent_task) const
+  WorkItemTask *create_task(WorkItem *pwi, tbb::task &parent_task) const
   {
     return new(tbb::task::allocate_additional_child_of(parent_task)) WorkItemTask(pwi);
   }
@@ -769,7 +773,9 @@ public:
   template <typename Func, typename Quality>
   void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task)
   {
-    WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
+    //WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
+    WorkItem *p_item = tbb::scalable_allocator<MeshRefinementWorkItem<Func, Quality> >().allocate(1);
+    new (p_item) MeshRefinementWorkItem<Func, Quality>(f, quality);
     WorkBatch &workbuffer = m_tls_work_buffers.local();
     workbuffer.add_work_item(p_item);
     if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)

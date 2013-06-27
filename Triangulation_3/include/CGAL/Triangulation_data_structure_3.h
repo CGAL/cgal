@@ -58,6 +58,10 @@
 #  endif
 #endif
 
+#ifdef CGAL_LINKED_WITH_TBB
+#  include <tbb/scalable_allocator.h>
+#endif
+
 #include <boost/foreach.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -136,7 +140,7 @@ public:
   <
     boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<
-      Cell, Default, Cell_container_strategy>,
+      Cell, tbb::scalable_allocator<Cell>, Cell_container_strategy>,
     Compact_container<
       Cell, Default, Cell_container_strategy>
   >::type                                                 Cell_range;
@@ -153,7 +157,7 @@ public:
   <
     boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<
-      Vertex, Default, Vertex_container_strategy>,
+      Vertex, tbb::scalable_allocator<Vertex>, Vertex_container_strategy>,
     Compact_container<
       Vertex, Default, Vertex_container_strategy>
   >::type                                                 Vertex_range;

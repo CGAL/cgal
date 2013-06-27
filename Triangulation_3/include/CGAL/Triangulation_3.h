@@ -23,12 +23,6 @@
 
 #include <CGAL/basic.h>
 
-#ifdef CGAL_LINKED_WITH_TBB
-// Use TBB malloc proxy (for all new/delete/malloc/free calls)
-// Highly recommended
-# include <tbb/tbbmalloc_proxy.h>
-#endif
-
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
 # define CGAL_PROFILE
 # include <CGAL/Profile_counter.h>

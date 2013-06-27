@@ -45,14 +45,14 @@ namespace po = boost::program_options;
 // BENCHMARK GENERAL PARAMETERS
 // ==========================================================================
 
-#define BENCHMARK_WITH_1_TO_MAX_THREADS
+//#define BENCHMARK_WITH_1_TO_MAX_THREADS
 //#define MESH_3_POLYHEDRON_WITH_FEATURES
 //#define MESH_3_IMPLICIT_WITH_FEATURES
 //#define MESH_3_BENCHMARK_EXPORT_TO_MAYA
 //#define MESH_3_BENCHMARK_EXPORT_TO_MESH
 //#define MESH_3_BENCHMARK_LLOYD
 //#define MESH_3_BENCHMARK_PERTURB
-#define MESH_3_BENCHMARK_EXUDE
+//#define MESH_3_BENCHMARK_EXUDE
 
 // ==========================================================================
 // MESH_3 GENERAL PARAMETERS
@@ -129,23 +129,16 @@ const int     TET_SHAPE                = 3;
 
   // For profiling, etc.
 # define CGAL_CONCURRENT_MESH_3_PROFILING
-# define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+//# define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
 
   // ==========================================================================
   // TBB
   // ==========================================================================
-#if TBB_IMPLEMENT_CPP0X
-# include <tbb/compat/thread>
-#else
-# include <thread>
-#endif
-
-# ifndef _DEBUG
-    // Use TBB malloc proxy (for all new/delete/malloc/free calls)
-    // Highly recommended
-#   include <tbb/tbbmalloc_proxy.h>
+# if TBB_IMPLEMENT_CPP0X
+#   include <tbb/compat/thread>
+# else
+#   include <thread>
 # endif
-
 
 // ==========================================================================
 // SEQUENTIAL
