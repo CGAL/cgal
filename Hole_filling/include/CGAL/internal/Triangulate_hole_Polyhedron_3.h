@@ -87,7 +87,7 @@ class Triangulate_hole_Polyhedron_3{
 
   template<class OutputIterator>
   Halfedge_handle add_facets(const Polyline_3& P, const std::vector<int>& lambda, 
-    int i, int k, Polyhedron& poly, OutputIterator out, bool last = true)
+    int i, int k, Polyhedron& poly, OutputIterator& out, bool last = true)
   {
     if(i + 1 == k) { return P[i]; }
 
@@ -150,7 +150,7 @@ class Triangulate_hole_Polyhedron_3{
 
 public:
   template<class OutputIterator>
-  void operator()(Polyhedron& poly, Halfedge_handle it, OutputIterator out) {
+  void operator()(Polyhedron& poly, Halfedge_handle it, OutputIterator& out) {
     Polyline_3 P;
     Halfedge_around_facet_circulator circ(it), done(circ);
     do{ 
@@ -180,12 +180,14 @@ public:
  * 
  */
 template<class Polyhedron, class OutputIterator>
-void triangulate_hole(Polyhedron& polyhedron, 
+OutputIterator 
+triangulate_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
   OutputIterator output
   )
 {
   internal::Triangulate_hole_Polyhedron_3<Polyhedron>()(polyhedron, border_halfedge, output);
+  return output;
 }
 
 }//namespace CGAL

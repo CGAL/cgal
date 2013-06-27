@@ -543,12 +543,17 @@ void Polyhedron_demo_hole_filling_plugin::fill
   else {
     int weight_index = ui_widget->weight_combo_box->currentIndex();
 
-    if(weight_index == 0)
-      CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), 
-      CGAL::internal::Uniform_weight_fairing<Polyhedron>(), alpha);
-    if(weight_index == 1)
-      CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
-      CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(), alpha);
+    bool success;
+    if(weight_index == 0) {
+      success = CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), 
+       CGAL::internal::Uniform_weight_fairing<Polyhedron>(), alpha).get<0>();
+    }
+    else {
+      success = CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
+        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(), alpha).get<0>();
+    }
+
+    if(!success) { print_message("Error: fairing is not successful, only triangulation and refinement are applied!"); }
   }
 
   if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {
@@ -556,6 +561,7 @@ void Polyhedron_demo_hole_filling_plugin::fill
       for(std::vector<Polyhedron::Facet_handle>::iterator it = patch.begin(); it != patch.end(); ++it) {
         poly.erase_facet((*it)->halfedge());
       }
+      print_message("Self intersecting patch is generated, and it is removed.");
       return;
     }
   }

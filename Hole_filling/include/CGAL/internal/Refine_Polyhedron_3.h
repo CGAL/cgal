@@ -45,23 +45,6 @@ private:
     return true;
   }
 
-  //bool subdividable(Halfedge_handle h, const Point_3& center) {
-  //  const Point_3& p0 = h->vertex()->point();
-  //  const Point_3& p1 = h->next()->vertex()->point();
-  //  const Point_3& p2 = h->prev()->vertex()->point();
-
-  //  if( CGAL::collinear(p0, p1, center) ||
-  //      CGAL::collinear(p0, p2, center) ||
-  //      CGAL::collinear(p1, p2, center) ) {
-  //    std::cout << "------------------------------" << std::endl;
-  //    std::cout << "subdividable false" << std::endl;
-  //    std::cout << "------------------------------" << std::endl;
-  //    return false;
-  //  }
-  //  
-  //  return true;
-  //}
-
   bool relax(Polyhedron& poly, Halfedge_handle h)
   {
     const Point_3& p = h->vertex()->point();
@@ -84,7 +67,7 @@ private:
     std::vector<Facet_handle>& facets, 
     std::set<Facet_handle>& interior_map,
     std::map<Vertex_handle, double>& scale_attribute, 
-    VertexOutputIterator vertex_out,
+    VertexOutputIterator& vertex_out,
     double alpha)
   {
     std::list<Facet_handle> new_facets;
@@ -212,11 +195,10 @@ public:
   void refine(Polyhedron& poly, 
     InputIterator facet_begin, 
     InputIterator facet_end, 
-    FacetOutputIterator facet_out,
-    VertexOutputIterator vertex_out,
+    FacetOutputIterator& facet_out,
+    VertexOutputIterator& vertex_out,
     double alpha)
   {
-    
     std::vector<Facet_handle> facets(facet_begin, facet_end); // do not use just std::set, the order effects the output (for the same input we want to get same output)
     std::set<Facet_handle> interior_map(facet_begin, facet_end);
 
@@ -241,13 +223,7 @@ public:
 
     } while(true);
 
-    // according to paper it should be like below (?) IOY
-    //while(true) {
-    //  bool subdiv = subdivide(poly, facets, interior_map, scale_attribute, vertex_out, alpha);
-    //  if(!subdiv) { break; }
-    //  while(relax(poly, facets, interior_map)) {}
-    //}
-    std::copy(facets.begin(), facets.end(), facet_out);
+    facet_out = std::copy(facets.begin(), facets.end(), facet_out);
   }
 };
 
@@ -269,7 +245,8 @@ public:
  * @param density_control_factor factor for density where larger values cause denser refinements
  */
 template<class Polyhedron, class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
-void refine(Polyhedron& poly, 
+std::pair<FacetOutputIterator, VertexOutputIterator>
+refine(Polyhedron& poly, 
   InputIterator facet_begin, 
   InputIterator facet_end,
   FacetOutputIterator facet_out,
@@ -279,9 +256,8 @@ void refine(Polyhedron& poly,
 {
   internal::Refine_Polyhedron_3<Polyhedron> refine_functor;
   refine_functor.refine(poly, facet_begin, facet_end, facet_out, vertex_out, density_control_factor);
+  return std::make_pair(facet_out, vertex_out);
 }
-
-
 
 }//namespace CGAL
 #endif //CGAL_HOLE_FILLING_REFINE_POLYHEDRON_3_H

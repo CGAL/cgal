@@ -7,6 +7,7 @@
 #include <CGAL/internal/Refine_Polyhedron_3.h>
 #include <CGAL/internal/Triangulate_hole_Polyhedron_3.h>
 #include <vector>
+#include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
 
@@ -28,7 +29,9 @@ namespace CGAL {
  * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
  */
 template<class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
-void triangulate_and_refine_hole(Polyhedron& polyhedron, 
+std::pair<FacetOutputIterator, VertexOutputIterator> 
+triangulate_and_refine_hole(
+  Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
@@ -37,20 +40,8 @@ void triangulate_and_refine_hole(Polyhedron& polyhedron,
   std::vector<typename Polyhedron::Facet_handle> patch;
   triangulate_hole(polyhedron, border_halfedge, std::back_inserter(patch));
 
-  refine(polyhedron, patch.begin(), patch.end(), facet_out, vertex_out, density_control_factor);
+  return refine(polyhedron, patch.begin(), patch.end(), facet_out, vertex_out, density_control_factor);
 }
-
-//// do not use OutputIterator
-//template<class Polyhedron>
-//void triangulate_and_refine_hole(Polyhedron& polyhedron, 
-//  typename Polyhedron::Halfedge_handle border_halfedge, 
-//  double density_control_factor = std::sqrt(2.0)
-//  ) 
-//{
-//  triangulate_and_refine_hole(polyhedron, border_halfedge,
-//    boost::make_function_output_iterator(CGAL::internal::Nop_functor()),
-//    density_control_factor);
-//}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** 
@@ -68,7 +59,9 @@ void triangulate_and_refine_hole(Polyhedron& polyhedron,
  * @param weight_calculator function object to calculate weights
  */
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
-void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
+boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
+triangulate_refine_and_fair_hole(
+  Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
@@ -77,14 +70,21 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   )
 {
   std::vector<typename Polyhedron::Vertex_handle> patch;
-  triangulate_and_refine_hole(polyhedron, border_halfedge, facet_out, std::back_inserter(patch), density_control_factor);
-  fair<SparseLinearSolver>(polyhedron, patch.begin(), patch.end(), weight_calculator);
-  std::copy(patch.begin(), patch.end(), vertex_out);
+
+  facet_out = triangulate_and_refine_hole(polyhedron, border_halfedge, facet_out, std::back_inserter(patch), density_control_factor)
+              .first;
+
+  bool fair_success = fair<SparseLinearSolver>(polyhedron, patch.begin(), patch.end(), weight_calculator);
+
+  vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
+  return boost::make_tuple(fair_success, facet_out, vertex_out);
 }
 
 //use default SparseLinearSolver
 template<class WeightCalculator, class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
-void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
+boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
+triangulate_refine_and_fair_hole(
+  Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
@@ -93,13 +93,15 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  triangulate_refine_and_fair_hole<Sparse_linear_solver, WeightCalculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
+  return triangulate_refine_and_fair_hole<Sparse_linear_solver, WeightCalculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
     (polyhedron, border_halfedge, facet_out, vertex_out, weight_calculator, density_control_factor);
 }
 
 //use default WeightCalculator
 template<class SparseLinearSolver, class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
-void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
+boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
+triangulate_refine_and_fair_hole(
+  Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
@@ -107,13 +109,15 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   )
 {
   typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
-  triangulate_refine_and_fair_hole<SparseLinearSolver, Weight_calculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
+  return triangulate_refine_and_fair_hole<SparseLinearSolver, Weight_calculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
     (polyhedron, border_halfedge, facet_out, vertex_out,  Weight_calculator(), density_control_factor);
 }
 
 //use default SparseLinearSolver and WeightCalculator
 template<class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
-void triangulate_refine_and_fair_hole(Polyhedron& polyhedron, 
+boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
+triangulate_refine_and_fair_hole(
+  Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
@@ -121,7 +125,7 @@ void triangulate_refine_and_fair_hole(Polyhedron& polyhedron,
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron, FacetOutputIterator, VertexOutputIterator>
+  return triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron, FacetOutputIterator, VertexOutputIterator>
     (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor);
 }
 

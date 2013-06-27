@@ -140,7 +140,7 @@ public:
   bool fair(Polyhedron& polyhedron, InputIterator vb, InputIterator ve)
   {
     std::set<Vertex_handle> interior_vertices(vb, ve);
-    if(interior_vertices.empty()) { return false; }
+    if(interior_vertices.empty()) { return true; }
 
     CGAL::Timer timer; timer.start();
 
@@ -216,8 +216,8 @@ public:
       CGAL_warning(!"linear_solver failed!"); 
       return false; 
     }
-
     CGAL_TRACE_STREAM << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
+
     // update 
     id = 0;
     for(typename std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
