@@ -11,6 +11,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
 #include <CGAL/AABB_FaceGraph_triangle_primitive.h>
 
