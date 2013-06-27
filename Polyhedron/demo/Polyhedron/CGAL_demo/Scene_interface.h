@@ -45,17 +45,6 @@ public:
                   (std::max)(ymax, b.ymax),
                   (std::max)(zmax, b.zmax));
     }
-
-    bool operator==(const Bbox&b) const{
-      return
-        xmin==b.xmin && xmax==b.xmax &&
-        ymin==b.ymin && ymax==b.ymax &&
-        zmin==b.zmin && zmax==b.zmax;
-    }
-
-    bool operator!=(const Bbox& b) const{
-      return !(*this == b);
-    }
     
     double width() const { return xmax-xmin; }
     double height() const { return ymax-ymin; }
