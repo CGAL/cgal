@@ -6,31 +6,46 @@ This class is a model of the concept `Visibility_2` offers visibility queries wi
 an Arrangement. The algorithm it applies to obtain visibility is using preprocessing.
 
 \sa `Visibility_2` 
-\sa `CGAL::Naive_visibility_2<Arrangement_2, Traits>`
+\sa `CGAL::Naive_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
+\sa
 
 */
-template <typename Arrangement_2, typename Traits>
+template <typename ArrExtensionTraits_2, typename Regularization_tag>
 class Preprocessed_visibility_2 {
 public:
 
 /// \name Types 
 /// @{
 
+    /*!
+     *The type of Arrangement extension traits.
+     */
+    typedef ArrExtensionTraits_2 Arr_extension_traits_2
+ /*!
+  The type of input Arrangement.
+  */
+   typedef Arr_extension_traits_2::Input_Arrangement_2  Input_Arrangement_2;
+
+ /*!
+  The type of output Arrangement.
+  */
+   typedef Arr_extension_traits_2::Output_Arrangement_2 Output_Arrangement_2;
 
  /*! 
    The Point_2 type which is used for queries. 
  */ 
-  typedef Arrangement_2::Point_2 Point_2; 
-
-  /*! 
-    Tag identifying whether `Visibility_2` computes regularized visibility area. 
-  */
-  typedef bool Regularization_tag; 
+  typedef Input_Arrangement_2::Point_2 Point_2; 
 
   /*!
-    The Arrangement type which is used for output.
-  */
-  typedef notknown Ouput_Arrangement_2;
+   Face_handle type of input Arrangement.
+   */
+  typedef Input_Arrangement_2::Face_handle Face_handle;
+
+  /*!
+   Halfedge_handle type of input Arrangement.
+   */
+  typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
+
   
 /// @}
 

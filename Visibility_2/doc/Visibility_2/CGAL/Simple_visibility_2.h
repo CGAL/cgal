@@ -9,28 +9,31 @@ the visibility polygon.
 \sa `Visibility_2` 
 
 */
-template <typename Arrangement_2, typename Traits>
+template <typename ArrExtensionTraits_2, typename Regularization_tag>
 class Simple_visibility_2 {
 public:
 
 /// \name Types 
 /// @{
 
+  typedef ArrExtensionTraits_2 Arr_extension_traits_2;
+ /*!
+   The Arrangement type is used for input.
+ */
+  typedef Arr_extension_traits_2::Input_Arrangement_2 Input_Arrangement_2;
+
+ /*!
+  *The Arrangement type is used for output.
+  */
+  typedef Arr_extension_traits_2::Output_Arrangement_2 Output_Arrangement_2;
 
  /*! 
    The Point_2 type which is used for queries. 
  */ 
-  typedef Arrangement_2::Point_2 Point_2; 
+  typedef Input_Arrangement_2::Point_2 Point_2;
 
-  /*! 
-    Tag identifying whether `Visibility_2` computes the regularized visibility area. 
-  */
-  typedef bool Regularization_tag; 
 
-  /*!
-    The Arrangement type which is used for output.
-  */
-  typedef notknown Output_Arrangement_2;
+
   
 /// @}
 
