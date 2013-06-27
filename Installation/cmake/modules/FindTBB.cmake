@@ -47,15 +47,15 @@
 # TBB_INCLUDE_DIRS, where to find task_scheduler_init.h, etc.
 # TBB_LIBRARY_DIRS, where to find TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords).
 # TBB_INSTALL_DIR, the base TBB install directory.
-# TBB_LIBRARIES, all the TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords).
-# 	TBB_RELEASE_LIBRARY, the TBB release library
-# 	TBB_MALLOC_RELEASE_LIBRARY, the TBB release malloc library
-# 	TBB_MALLOCPROXY_RELEASE_LIBRARY, the TBB release malloc_proxy library
-# 	TBB_DEBUG_LIBRARY, the TBB debug library
-# 	TBB_MALLOC_DEBUG_LIBRARY, the TBB debug malloc library
-# 	TBB_MALLOCPROXY_DEBUG_LIBRARY, the TBB debug malloc_proxy library
+# TBB_LIBRARIES, all the following TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords).
+#   TBB_RELEASE_LIBRARY, the TBB release library
+#   TBB_MALLOC_RELEASE_LIBRARY, the TBB release malloc library
+#   TBB_DEBUG_LIBRARY, the TBB debug library
+#   TBB_MALLOC_DEBUG_LIBRARY, the TBB debug malloc library
 # TBB_FOUND, If false, don't try to use TBB.
 # TBB_INTERFACE_VERSION, as defined in tbb/tbb_stddef.h
+# TBB_MALLOCPROXY_DEBUG_LIBRARY, the TBB debug malloc_proxy library (not included in TBB_LIBRARIES since it's optionnal)
+# TBB_MALLOCPROXY_RELEASE_LIBRARY, the TBB release malloc_proxy library (not included in TBB_LIBRARIES since it's optionnal)
 
 
 if (WIN32)
@@ -94,10 +94,10 @@ if (UNIX)
         # libs: libtbb.dylib, libtbbmalloc.dylib, *_debug
         set(_TBB_LIB_RELEASE_NAME "tbb")
         set(_TBB_LIB_MALLOC_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc")
-        set(_TBB_LIB_MALLOCPROXY_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc_proxy")
+        #set(_TBB_LIB_MALLOCPROXY_RELEASE_NAME "${_TBB_LIB_RELEASE_NAME}malloc_proxy")
         set(_TBB_LIB_DEBUG_NAME "${_TBB_LIB_RELEASE_NAME}_debug")
         set(_TBB_LIB_MALLOC_DEBUG_NAME "${_TBB_LIB_MALLOC_RELEASE_NAME}_debug")
-        set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_RELEASE_NAME}_debug")
+        #set(_TBB_LIB_MALLOCPROXY_DEBUG_NAME "${_TBB_LIB_MALLOCPROXY_RELEASE_NAME}_debug")
         # default flavor on apple: ia32/cc4.0.1_os10.4.9
         # Jiri: There is no reason to presume there is only one flavor and
         #       that user's setting of variables should be ignored.
@@ -252,7 +252,7 @@ get_filename_component(TBB_RELEASE_LIBRARY_DIR ${TBB_RELEASE_LIBRARY} PATH)
 #TBB_CORRECT_LIB_DIR(TBB_RELEASE_LIBRARY)
 #TBB_CORRECT_LIB_DIR(TBB_MALLOC_RELEASE_LIBRARY)
 #TBB_CORRECT_LIB_DIR(TBB_MALLOCPROXY_RELEASE_LIBRARY)
-mark_as_advanced(TBB_RELEASE_LIBRARY TBB_MALLOC_RELEASE_LIBRARY TBB_MALLOCPROXY_RELEASE_LIBRARY)
+mark_as_advanced(TBB_RELEASE_LIBRARY TBB_MALLOC_RELEASE_LIBRARY)
 
 #-- Look for debug libraries
 # Jiri: Changed the same way as for the release libraries.
@@ -270,20 +270,31 @@ get_filename_component(TBB_DEBUG_LIBRARY_DIR ${TBB_DEBUG_LIBRARY} PATH)
 #TBB_CORRECT_LIB_DIR(TBB_DEBUG_LIBRARY)
 #TBB_CORRECT_LIB_DIR(TBB_MALLOC_DEBUG_LIBRARY)
 #TBB_CORRECT_LIB_DIR(TBB_MALLOCPROXY_DEBUG_LIBRARY)
-mark_as_advanced(TBB_DEBUG_LIBRARY TBB_MALLOC_DEBUG_LIBRARY TBB_MALLOCPROXY_DEBUG_LIBRARY)
-
+mark_as_advanced(TBB_DEBUG_LIBRARY TBB_MALLOC_DEBUG_LIBRARY)
 
 if (TBB_INCLUDE_DIR)
     if (TBB_RELEASE_LIBRARY)
         set (TBB_FOUND "YES")
-        set (TBB_LIBRARIES
-			optimized ${TBB_RELEASE_LIBRARY} optimized ${TBB_MALLOC_RELEASE_LIBRARY} optimized ${TBB_MALLOCPROXY_RELEASE_LIBRARY}
-			debug ${TBB_DEBUG_LIBRARY} debug ${TBB_MALLOC_DEBUG_LIBRARY} debug ${TBB_MALLOCPROXY_DEBUG_LIBRARY}
-			CACHE PATH "TBB libraries" FORCE)
+        
+        # NOTE: Removed because we don't want to link with the malloc_proxy by default
+        #if (NOT "${TBB_MALLOCPROXY_RELEASE_LIBRARY}" STREQUAL "TBB_MALLOCPROXY_RELEASE_LIBRARY-NOTFOUND")
+        #    mark_as_advanced(TBB_MALLOCPROXY_RELEASE_LIBRARY)
+        #    set (_TBB_MALLOCPROXY optimized ${TBB_MALLOCPROXY_RELEASE_LIBRARY})
+        #endif (NOT "${TBB_MALLOCPROXY_RELEASE_LIBRARY}" STREQUAL "TBB_MALLOCPROXY_RELEASE_LIBRARY-NOTFOUND")
+        #if (NOT "${TBB_MALLOCPROXY_DEBUG_LIBRARY}" STREQUAL "TBB_MALLOCPROXY_DEBUG_LIBRARY-NOTFOUND")
+        #    mark_as_advanced(TBB_MALLOCPROXY_DEBUG_LIBRARY)
+        #    set (_TBB_MALLOCPROXY ${_TBB_MALLOCPROXY} debug ${TBB_MALLOCPROXY_DEBUG_LIBRARY})
+        #endif (NOT "${TBB_MALLOCPROXY_DEBUG_LIBRARY}" STREQUAL "TBB_MALLOCPROXY_DEBUG_LIBRARY-NOTFOUND")
+        
+        set (TBB_LIBRARIES 
+            optimized ${TBB_RELEASE_LIBRARY} optimized ${TBB_MALLOC_RELEASE_LIBRARY}
+            debug ${TBB_DEBUG_LIBRARY} debug ${TBB_MALLOC_DEBUG_LIBRARY} 
+            #${_TBB_MALLOCPROXY} # NOTE: Removed because we don't want to link with the malloc_proxy by default
+            CACHE PATH "TBB libraries" FORCE)
         set (TBB_INCLUDE_DIRS ${TBB_INCLUDE_DIR} CACHE PATH "TBB include directory" FORCE)
         set (TBB_LIBRARY_DIRS
-			optimized ${TBB_RELEASE_LIBRARY_DIR} debug ${TBB_DEBUG_LIBRARY_DIR}
-			CACHE PATH "TBB library directories" FORCE)
+            optimized ${TBB_RELEASE_LIBRARY_DIR} debug ${TBB_DEBUG_LIBRARY_DIR}
+            CACHE PATH "TBB library directories" FORCE)
         mark_as_advanced(TBB_INCLUDE_DIRS TBB_LIBRARY_DIRS TBB_LIBRARIES)
         message(STATUS "Found Intel TBB")
     endif (TBB_RELEASE_LIBRARY)
@@ -302,8 +313,10 @@ endif (NOT TBB_FOUND)
 endif (NOT _TBB_INSTALL_DIR)
 
 if (TBB_FOUND)
-	set(TBB_INTERFACE_VERSION 0)
-	FILE(READ "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h" _TBB_VERSION_CONTENTS)
-	STRING(REGEX REPLACE ".*#define TBB_INTERFACE_VERSION ([0-9]+).*" "\\1" TBB_INTERFACE_VERSION "${_TBB_VERSION_CONTENTS}")
-	set(TBB_INTERFACE_VERSION "${TBB_INTERFACE_VERSION}")
+    set(TBB_INTERFACE_VERSION 0)
+    FILE(READ "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h" _TBB_VERSION_CONTENTS)
+    STRING(REGEX REPLACE ".*#define TBB_INTERFACE_VERSION ([0-9]+).*" "\\1" TBB_INTERFACE_VERSION "${_TBB_VERSION_CONTENTS}")
+    set(TBB_INTERFACE_VERSION "${TBB_INTERFACE_VERSION}")
+    include_directories ( ${TBB_INCLUDE_DIRS} )
+    link_directories( ${TBB_LIBRARY_DIRS} )
 endif (TBB_FOUND)
