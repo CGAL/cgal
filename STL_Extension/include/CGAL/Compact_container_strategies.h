@@ -87,7 +87,7 @@ public:
     return Strategy::get_erase_counter(*m_handle) != m_erase_counter_value;
   }
 
-  CC_iterator get_cc_handle() const
+  CC_iterator get_cc_iterator() const
   {
     return m_handle;
   }

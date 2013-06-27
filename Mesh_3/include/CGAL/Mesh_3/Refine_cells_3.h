@@ -126,7 +126,7 @@ public:
   Cell_handle extract_element_from_container_value(const Container_element &e) const
   {
     // We get the Cell_handle from the safe handle
-    return e.get_cc_handle();
+    return e.get_cc_iterator();
   }
 
 #else
@@ -178,7 +178,7 @@ public:
   Cell_handle extract_element_from_container_value(const Container_element &e) const
   {
     // We get the Cell_handle from the safe handle
-    return e.get_cc_handle();
+    return e.get_cc_iterator();
   }
 
 protected:
