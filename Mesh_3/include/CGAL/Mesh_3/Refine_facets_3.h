@@ -328,15 +328,15 @@ template<class Tr,
          class MeshDomain,
          class Complex3InTriangulation3,
          class Previous_level_,
+         class Base_ = Refine_facets_base_3<Tr,
+                                            Criteria_,
+                                            MeshDomain,
+                                            Complex3InTriangulation3>,
          class Container_ = Meshes::Double_map_container<
                                             typename Tr::Facet,
                                             typename Criteria_::Facet_quality> >
 class Refine_facets_3
-: public Refine_facets_base_3<Tr,
-                              Criteria_,
-                              MeshDomain,
-                              Complex3InTriangulation3,
-                              Container_>
+: public Base_
 , public Mesher_level<Tr,
                       Refine_facets_3<Tr,
                                       Criteria_,
@@ -353,12 +353,9 @@ class Refine_facets_3
                           MeshDomain,
                           Complex3InTriangulation3,
                           Previous_level_,
+                          Base_,
                           Container_>                  Self;
-  typedef Refine_facets_base_3<Tr,
-                               Criteria_,
-                               MeshDomain,
-                               Complex3InTriangulation3,
-                               Container_>             Base;
+  typedef Base_                                        Base;
 
 public:
   typedef Tr Triangulation;
@@ -483,8 +480,8 @@ private:
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+template<class Tr,class Cr,class MD,class C3T3_,class P_,class B_,class C_>
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,B_,C_>::
 Refine_facets_3(Tr& triangulation,
                 const Cr& criteria,
                 const MD& oracle,
@@ -521,9 +518,9 @@ scan_triangulation_impl()
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+template<class Tr,class Cr,class MD,class C3T3_,class P_,class B_,class C_>
 Mesher_level_conflict_status
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,B_,C_>::
 test_point_conflict_from_superior_impl(const Point& point,
                                        Zone& zone)
 {
@@ -568,9 +565,9 @@ test_point_conflict_from_superior_impl(const Point& point,
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
-typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Zone
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+template<class Tr,class Cr,class MD,class C3T3_,class P_,class B_,class C_>
+typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,B_,C_>::Zone
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,B_,C_>::
 conflicts_zone_impl(const Point& point,
                     const Facet& facet) const
 {
@@ -660,9 +657,9 @@ before_insertion_impl(const Facet& facet,
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
-typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Vertex_handle
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+template<class Tr,class Cr,class MD,class C3T3_,class P_,class B_,class C_>
+typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,B_,C_>::Vertex_handle
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,B_,C_>::
 insert_impl(const Point& point,
             const Zone& zone)
 {
