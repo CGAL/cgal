@@ -86,10 +86,13 @@ class Refine_facets_base_3
 , public No_after_no_insertion
 , public No_before_conflicts
 {
+public:
   typedef Tr Triangulation;
   typedef MeshDomain Mesh_domain;
   typedef Criteria_ Criteria;
+  typedef Complex3InTriangulation3 C3T3;
 
+private:
   typedef typename Tr::Geom_traits Gt;
   typedef typename Tr::Point Point;
   typedef typename Gt::Segment_3 Segment_3;
@@ -100,7 +103,6 @@ class Refine_facets_base_3
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
-  typedef Complex3InTriangulation3 C3T3;
 
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
@@ -134,6 +136,24 @@ public:
   /// Job to do after insertion
   void after_insertion_impl(const Vertex_handle& v)
   { restore_restricted_Delaunay(v); }
+
+  /// debug info
+  std::string debug_info() const
+  {
+    std::stringstream s;
+    s << Container_::size();
+    return s.str();
+  }
+
+  /// debug_info_header
+  std::string debug_info_header() const
+  {
+    return "#facets to refine";
+  }
+
+#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
+  std::size_t queue_size() const { return this->size(); }
+#endif
 
 private:
   /// Restore restricted Delaunay ; may be call by Cells_mesher visitor
@@ -342,7 +362,8 @@ class Refine_facets_3
                                       Criteria_,
                                       MeshDomain,
                                       Complex3InTriangulation3,
-                                      Previous_level_>,
+                                      Previous_level_,
+                                      Base_>,
                       typename Tr::Facet,
                       Previous_level_,
                       Triangulation_mesher_level_traits_3<Tr> >
@@ -427,25 +448,6 @@ public:
 
   /// Insert p into triangulation
   Vertex_handle insert_impl(const Point& p, const Zone& zone);
-
-  /// debug info
-  std::string debug_info() const
-  {
-    std::stringstream s;
-    s << Container_::size();
-    return s.str();
-  }
-
-  /// debug_info_header
-  std::string debug_info_header() const
-  {
-    return "#facets to refine";
-  }
-
-#ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
-  std::size_t queue_size() const { return this->size(); }
-#endif
-
 
 private:
   /// Sets index and dimension of vertex v
