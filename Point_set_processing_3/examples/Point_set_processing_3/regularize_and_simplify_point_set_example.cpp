@@ -5,6 +5,8 @@
 
 #include <vector>
 #include <fstream>
+#include <time.h>
+
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -20,21 +22,26 @@ int main(void)
   if (!stream ||
       !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
-    std::cerr << "Error: cannot read file data/oni.xyz" << std::endl;
+    std::cerr << "Error: cannot read file data/sphere_20k.xyz" << std::endl;
     return EXIT_FAILURE;
   }
 
   //Algorithm parameters
   const double retain_percentage = 10.0;   // percentage of points to retain.
   const unsigned int k = 500;              // number of neighbors.
-  unsigned int iter_number = 30;           // number of iterations.
+  const unsigned int iter_number = 1;     // number of iterations.
   const bool need_compute_density = true;  // if needed to compute density to generate more rugularized result, 
                                            //  especially when the density of input is uneven.
  
+
   // Make room for sample points
   std::vector<Point> points_sampled;
   points_sampled.assign(points.size() * (retain_percentage / 100.), Point());
   
+  int starttime, mid_start, mid_end, stoptime, timeused;
+  starttime = clock();
+
+
   // Run algorithm and copy results to sample points
   std::copy(CGAL::regularize_and_simplify_point_set(points.begin(), 
 	                                                points.end(), 
@@ -45,6 +52,10 @@ int main(void)
 	         points.end(), 
 			 points_sampled.begin());
 
+  stoptime = clock();
+  timeused = stoptime - starttime;
+  std::cout << "##" << "  time used:  " << timeused / double(CLOCKS_PER_SEC) << " seconds." << std::endl;
+  system("Pause");
 
   // Saves point set.
   // Note: write_xyz_points_and_normals() requires an output iterator
