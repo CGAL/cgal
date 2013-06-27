@@ -44,7 +44,7 @@ bool compare_mesh(const Polyhedron& mesh_1, const Polyhedron& mesh_2)
 template<class DeformMesh>
 bool read_handle_difs_and_deform(DeformMesh& deform_mesh, typename DeformMesh::Handle_group& active_handle_group)
 {
-  typedef typename DeformMesh::Vector Vector;
+  typedef CGAL::Simple_cartesian<double>::Vector_3 Vector;
 
   if(!deform_mesh.preprocess()) {
     std::cerr << "Error: preprocess() failed!" << std::endl;
@@ -109,6 +109,6 @@ int main()
   close_enough = read_handle_difs_and_deform(deform_mesh_spoke, *active_handle_group_2);
   if(!close_enough) { return EXIT_FAILURE; }
   std::cerr << "SPOKES AND RIMS ARAP Success!" << std::endl;
-  std::cerr << "All done!" << std::endl
+  std::cerr << "All done!" << std::endl;
 }
 

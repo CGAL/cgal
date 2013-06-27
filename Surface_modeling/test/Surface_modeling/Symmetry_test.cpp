@@ -38,7 +38,7 @@ int main()
   bool successed = preprocess_and_deform(deform_mesh_arap,
     "data/Symmetry_test_roi.txt",
     "data/Symmetry_test_handle.txt",
-    Deform_mesh_arap::Vector(x, y, z),
+    CGAL::Simple_cartesian<double>::Vector_3(x, y, z),
     deformation_iteration);
   if(!successed) { return EXIT_FAILURE; }
 
@@ -46,7 +46,7 @@ int main()
   successed = preprocess_and_deform(deform_mesh_spoke,
     "data/Symmetry_test_roi.txt",
     "data/Symmetry_test_handle.txt",
-    Deform_mesh_spoke::Vector(x, y, z),
+    CGAL::Simple_cartesian<double>::Vector_3(x, y, z),
     deformation_iteration);
   if(!successed) { return EXIT_FAILURE; }
 

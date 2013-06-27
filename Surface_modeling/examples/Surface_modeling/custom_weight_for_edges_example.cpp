@@ -1,7 +1,12 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Deform_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+// Halfedge adapters for Polyhedron_3
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+
+#include <CGAL/Deform_mesh.h>
 
 #include <fstream>
 #include <map>
@@ -26,7 +31,8 @@ struct Weights_from_map
 {
   Weights_from_map(std::map<edge_descriptor, double>* weight_map) : weight_map(weight_map)
   { }
-  double operator()(edge_descriptor e, Polyhedron& /*P*/) {
+  template<class VertexPointMap>
+  double operator()(edge_descriptor e, Polyhedron& /*P*/, VertexPointMap /*v*/) {
     return (*weight_map)[e];
   }
   std::map<edge_descriptor, double>* weight_map;

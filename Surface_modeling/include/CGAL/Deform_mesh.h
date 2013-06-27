@@ -20,10 +20,6 @@
 #define CGAL_DEFORM_MESH_H
 
 #include <CGAL/internal/Surface_modeling/Weights.h>
-
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/Default.h>
 
 #include <vector>
@@ -345,7 +341,8 @@ private:
     edge_weight.reserve(boost::num_edges(polyhedron));
     for(boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
     {
-      edge_weight.push_back(this->weight_calculator(*eb, polyhedron));
+      edge_weight.push_back(
+        this->weight_calculator(*eb, polyhedron, vertex_point_map));
     }
   }
 
@@ -802,13 +799,13 @@ public:
         std::size_t id_e = id(*e);
         if(is_weight_computed[id_e]) { continue; }
 
-        edge_weight[id_e] = weight_calculator(*e, polyhedron);
+        edge_weight[id_e] = weight_calculator(*e, polyhedron, vertex_point_map);
         is_weight_computed[id_e] = true;
 
         edge_descriptor e_opp = CGAL::opposite_edge(*e, polyhedron);
         std::size_t id_e_opp = id(e_opp);
 
-        edge_weight[id_e_opp] = weight_calculator(e_opp, polyhedron);
+        edge_weight[id_e_opp] = weight_calculator(e_opp, polyhedron, vertex_point_map);
         is_weight_computed[id_e_opp] = true;
       }
     }    
