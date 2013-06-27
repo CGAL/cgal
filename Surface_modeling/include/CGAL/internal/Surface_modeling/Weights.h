@@ -47,16 +47,19 @@ public:
     return dot_ab / divider;
   }
 
-  // Just return true for non-cgal types
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // WARNING: this two functions are just used when cotangent weight turns out to be +-inf,
+  //          just for raising a proper warning message (i.e nothing functional)
   template<class Point>
-  bool collinear(const Point& a, const Point& b, const Point& c) {
+  bool collinear(const Point&, const Point&, const Point&) {
     return true; 
   }
-
   template<class Kernel>
   bool collinear(const CGAL::Point_3<Kernel>& a, const CGAL::Point_3<Kernel>& b, const CGAL::Point_3<Kernel>& c) {
     return CGAL::collinear(a, b, c);
   }
+  ///////////////////////////////////////////////////////////////////////////////////////
+  
 };
 
 // Returns the cotangent value of half angle v0 v1 v2 by clamping between [1, 89] degrees
