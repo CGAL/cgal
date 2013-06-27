@@ -29,7 +29,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <CGAL/gl_render.h>
 
-#include <CGAL/self_intersect.h>
+#include <CGAL/Self_intersection_polyhedron_3.h>
 #include "Kernel_type.h"
 
 #include <boost/function_output_iterator.hpp>
@@ -557,7 +557,7 @@ void Polyhedron_demo_hole_filling_plugin::fill
   }
 
   if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {
-    if(self_intersecting(poly)) {
+    if(CGAL::self_intersect<Polyhedron::Traits>(poly)) {
       for(std::vector<Polyhedron::Facet_handle>::iterator it = patch.begin(); it != patch.end(); ++it) {
         poly.erase_facet((*it)->halfedge());
       }
@@ -567,16 +567,6 @@ void Polyhedron_demo_hole_filling_plugin::fill
   }
   // save facets for accept-reject 
   new_facets.insert(new_facets.end(), patch.begin(), patch.end());
-}
-
-bool Polyhedron_demo_hole_filling_plugin::self_intersecting(Polyhedron& polyhedron) {
-  typedef Kernel::Triangle_3 Triangle;
-  typedef std::list<Triangle>::iterator Iterator;
-  std::list<Triangle> triangles;
-  typedef std::back_insert_iterator<std::list<Triangle> > OutputIterator;
-  
-  self_intersect<Polyhedron,Kernel,OutputIterator>(polyhedron,std::back_inserter(triangles));
-  return !triangles.empty();
 }
 
 Q_EXPORT_PLUGIN2(Polyhedron_demo_hole_filling_plugin, Polyhedron_demo_hole_filling_plugin)
