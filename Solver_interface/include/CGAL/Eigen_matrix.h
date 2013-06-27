@@ -44,7 +44,7 @@ struct Eigen_sparse_matrix
 // Public types
 public:
 
-  typedef Eigen::SparseMatrix<T> EigenType;
+	typedef Eigen::SparseMatrix<T> EigenType;
   typedef T NT;
 
 // Public operations
