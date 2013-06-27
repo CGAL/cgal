@@ -138,7 +138,7 @@ public:
     #else
     boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
     #endif
-    intersection = AABBTraits().intersection_object()(query, primitive);
+    intersection = m_traits.intersection_object()(query, primitive);
 
     if(intersection)
     {
