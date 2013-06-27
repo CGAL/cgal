@@ -20,9 +20,14 @@
 #define CGAL_EIGEN_SOLVER_TRAITS_H
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
-
 #include <Eigen/Sparse>
+#if EIGEN_VERSION_AT_LEAST(3, 1, 91)
 #include <Eigen/SparseLU>
+#endif
+#if defined(CGAL_SUPERLU_ENABLED)
+#include <Eigen/SuperLUSupport>
+#endif
+
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <boost/shared_ptr.hpp>
@@ -45,11 +50,12 @@ namespace internal {
   struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>,FT>{
     typedef Eigen_sparse_symmetric_matrix<FT> type;
   };
-
+#if EIGEN_VERSION_AT_LEAST(3, 1, 91)
   template <class FT, class EigenMatrix, class EigenOrdering>
   struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
     typedef Eigen_sparse_matrix<FT> type;
   };
+#endif
 } //internal 
   
 /// The class Eigen_solver_traits
