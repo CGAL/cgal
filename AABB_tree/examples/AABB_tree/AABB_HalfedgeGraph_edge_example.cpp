@@ -26,8 +26,6 @@ void run(const HalfedgeGraph& graph){
   typename Kernel::Point_3 q(0.0, 1.0, 0.0);
   typename Kernel::Point_3 r(0.0, 0.0, 1.0);
 
-  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor edge_descriptor;
-  
   // constructs the AABB tree and the internal search tree for 
   // efficient distance queries.  
   Tree tree( CGAL::undirected_edges(graph).first,

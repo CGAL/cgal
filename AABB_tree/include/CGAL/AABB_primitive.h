@@ -127,7 +127,7 @@ template <  class Id,
             class PointPropertyMap,
             class ExternalPropertyMaps,
             class cache_datum>
-struct AABB_primitive;
+class AABB_primitive;
 
 
 //no caching, property maps internally stored

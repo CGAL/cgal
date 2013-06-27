@@ -65,9 +65,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   typedef typename K::Ray_3 Ray;
   typedef typename K::Line_3 Line;
   typedef typename K::Point_3 Point;
-  typedef typename K::Vector_3 Vector;
   typedef typename K::Segment_3 Segment;
-  typedef typename K::Triangle_3 Triangle;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
   typedef CGAL::AABB_FaceGraph_triangle_primitive<const Polyhedron> Primitive;

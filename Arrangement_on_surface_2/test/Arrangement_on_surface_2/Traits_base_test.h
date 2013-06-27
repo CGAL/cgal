@@ -17,6 +17,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/use.h>
 
 #include "IO_test.h"
 
@@ -276,6 +277,7 @@ bool Traits_base_test<T_Traits>::perform()
                 << " violation : ";
 #else
       std::cout << "Skipping condition tests in release mode." << std::endl;
+      CGAL_USE(location);
       continue;
 #endif
     }

@@ -301,7 +301,7 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
     else {
       const Halfedge_const_handle* p_hh =
         Result().template assign<Halfedge_const_handle>(obj);
-      CGAL_assertion(p_hh);
+      CGAL_assertion(p_hh != NULL);
       found_halfedge = true;
       closest_he = *p_hh;
     }

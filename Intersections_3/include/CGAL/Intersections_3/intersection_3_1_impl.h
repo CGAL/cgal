@@ -270,16 +270,14 @@ intersection(const typename K::Plane_3 &plane1,
 	     const typename K::Plane_3 &plane3,
 	     const K& k)
 {
+    #if CGAL_INTERSECTION_VERSION > 1
     typedef 
-      #if CGAL_INTERSECTION_VERSION < 2
-      CGAL::Object
-      #else
       typename boost::optional< 
       boost::variant<typename K::Point_3,
                      typename K::Line_3,
                      typename K::Plane_3> > 
-      #endif
-      result_type;
+    result_type;
+    #endif
 
 
     typedef typename K::Point_3      Point_3;
