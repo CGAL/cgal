@@ -470,7 +470,8 @@ public:
   void enqueue_work(Func f, tbb::task &parent_task) const
   {
     //WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
-    WorkItem *p_item = tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().allocate(1);
+    WorkItem *p_item = 
+      tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().allocate(1);
     new (p_item) SimpleFunctorWorkItem<Func>(f);
     enqueue_task(create_task(p_item, parent_task));
   }
@@ -757,7 +758,10 @@ public:
   template <typename Func>
   void enqueue_work(Func f, tbb::task &parent_task)
   {
-    WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
+    //WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
+    WorkItem *p_item = 
+      tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().allocate(1);
+    new (p_item) SimpleFunctorWorkItem<Func>(f);
     WorkBatch &workbuffer = m_tls_work_buffers.local();
     workbuffer.add_work_item(p_item);
     if (workbuffer.size() >= NUM_WORK_ITEMS_PER_BATCH)
@@ -774,7 +778,9 @@ public:
   void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task)
   {
     //WorkItem *p_item = new MeshRefinementWorkItem<Func, Quality>(f, quality);
-    WorkItem *p_item = tbb::scalable_allocator<MeshRefinementWorkItem<Func, Quality> >().allocate(1);
+    WorkItem *p_item = 
+      tbb::scalable_allocator<MeshRefinementWorkItem<Func, Quality> >()
+      .allocate(1);
     new (p_item) MeshRefinementWorkItem<Func, Quality>(f, quality);
     WorkBatch &workbuffer = m_tls_work_buffers.local();
     workbuffer.add_work_item(p_item);
