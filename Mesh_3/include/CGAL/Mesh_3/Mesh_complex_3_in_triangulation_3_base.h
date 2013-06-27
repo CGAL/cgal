@@ -137,7 +137,7 @@ public:
     , edge_facet_counter_()
     , number_of_facets_(0)
     , number_of_cells_(0)
-    , edge_facet_counter_valid_(false)
+    , manifold_info_initialized_(false)
   {}
   
   /// Copy constructor
@@ -147,7 +147,7 @@ public:
     , edge_facet_counter_(rhs.edge_facet_counter_)
     , number_of_facets_(rhs.number_of_facets_)
     , number_of_cells_(rhs.number_of_cells_)
-    , edge_facet_counter_valid_(rhs.edge_facet_counter_valid_)
+    , manifold_info_initialized_(rhs.manifold_info_initialized_)
   {}
 
   /// Destructor
@@ -157,7 +157,7 @@ public:
     number_of_cells_ = 0;
     number_of_facets_ = 0;
     tr_.clear();
-    edge_facet_counter_valid_ = false;
+    manifold_info_initialized_ = false;
     edge_facet_counter_.clear();
   }
   
@@ -211,7 +211,7 @@ public:
   /// depending on the number of incident facets int the complex
   Face_status face_status(const Edge& edge) const
   {
-    if(!edge_facet_counter_valid_) init_edge_facet_counter();
+    if(!manifold_info_initialized_) init_manifold_info();
 
     switch(edge_facet_counter_[this->make_ordered_pair(edge)])
     {
@@ -383,7 +383,7 @@ public:
   Bbox_3 bbox() const;
 
 private:
-  void init_edge_facet_counter() const {
+  void init_manifold_info() const {
     for(typename Tr::Finite_facets_iterator
           fit = triangulation().finite_facets_begin(),
           end = triangulation().finite_facets_end();
@@ -402,7 +402,7 @@ private:
         }
       }
     }
-    edge_facet_counter_valid_ = true;
+    manifold_info_initialized_ = true;
   }
   
   //-------------------------------------------------------
@@ -608,7 +608,7 @@ private:
   size_type number_of_facets_;
   size_type number_of_cells_;
 
-  mutable bool edge_facet_counter_valid_;
+  mutable bool manifold_info_initialized_;
 
 };  // end class Mesh_complex_3_in_triangulation_3_base
 
@@ -628,7 +628,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::add_to_complex(
     set_surface_patch_index(cell, i, index);
     set_surface_patch_index(mirror.first, mirror.second, index);
     ++number_of_facets_;
-    if(edge_facet_counter_valid_) {
+    if(manifold_info_initialized_) {
       for(int j = 0; j < 3; ++j)
       {
         int edge_index_va = tr_.vertex_triple_index(i, j);
@@ -652,7 +652,7 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::remove_from_complex(const Facet& fac
     set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
     set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
     --number_of_facets_;
-    if(edge_facet_counter_valid_) {
+    if(manifold_info_initialized_) {
       const Cell_handle cell = facet.first;
       const int i = facet.second;
       for(int j = 0; j < 3; ++j)

@@ -61,7 +61,7 @@ protected:
   Tr& r_tr_;
   C3t3& r_c3t3_;
   mutable std::set <std::pair <Vertex_handle, Vertex_handle> > m_bad_edges;
-  mutable bool m_bad_edges_initialized;
+  mutable bool m_manifold_info_initialized;
   bool m_with_boundary;
 
 protected:
@@ -183,7 +183,7 @@ public:
            c3t3)
     , r_tr_(triangulation)
     , r_c3t3_(c3t3)
-    , m_bad_edges_initialized(false)
+    , m_manifold_info_initialized(false)
     , m_with_boundary(with_boundary)
   {
 #ifdef CGAL_MESH_3_DEBUG_CONSTRUCTORS
@@ -196,7 +196,7 @@ public:
   }
 
   // Initialization function
-  void initialize_bad_edges() const {
+  void initialize_manifold_info() const {
 #ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "\r             \rscanning edges ";
     if(m_with_boundary)
@@ -215,7 +215,7 @@ public:
         ++n;
       }
     }
-    m_bad_edges_initialized = true;
+    m_manifold_info_initialized = true;
 #ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "   -> found " << n << " bad edges\n";
 #endif
@@ -232,8 +232,8 @@ public:
   bool no_longer_element_to_refine_impl() const {
     if(Base::no_longer_element_to_refine_impl())
     {
-      if( ! m_bad_edges_initialized )
-        initialize_bad_edges();
+      if( ! m_manifold_info_initialized )
+        initialize_manifold_info();
       return m_bad_edges.empty();
     }
     return false;
@@ -246,7 +246,7 @@ public:
       return Base::get_next_element_impl();
     }
     else {
-      CGAL_assertion(m_bad_edges_initialized);
+      CGAL_assertion(m_manifold_info_initialized);
       Edge first_bad_edge = edgevv_to_edge(*(m_bad_edges.begin()));
       return biggest_incident_facet_in_complex(first_bad_edge);
     }
@@ -254,7 +254,7 @@ public:
 
   void before_insertion_impl(const Facet& f, const Point& s,
                              Zone& zone) {
-    if( m_bad_edges_initialized )
+    if( m_manifold_info_initialized )
     {
       for (typename Zone::Facets_iterator fit =
              zone.internal_facets.begin();
@@ -273,7 +273,7 @@ public:
   void after_insertion_impl(const Vertex_handle v) {
     Base::after_insertion_impl(v);
 
-    if( ! m_bad_edges_initialized )
+    if( ! m_manifold_info_initialized )
       return;
 
     // search for incident facets around v
