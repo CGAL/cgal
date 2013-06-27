@@ -36,6 +36,7 @@
 #include <tbb/recursive_mutex.h>
 
 #include <algorithm>
+#include <vector>
 
 namespace CGAL {
 
@@ -489,15 +490,14 @@ public:
     int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
 
-    m_grid = new tbb::atomic<bool>[num_cells];
-    // Initialize grid
+    m_grid.resize(num_cells);
+    // Initialize grid (useless?)
     for (int i = 0 ; i < num_cells ; ++i)
       m_grid[i] = false;
   }
 
   ~Spatial_grid_lock_data_structure_3()
   {
-    delete [] m_grid;
   }
 
   bool is_cell_locked_impl(int cell_index)
@@ -525,7 +525,7 @@ public:
 
 protected:
 
-  tbb::atomic<bool> *                             m_grid;
+  std::vector<tbb::atomic<bool> > m_grid;
 };
 
 
@@ -551,16 +551,12 @@ public:
   {
     int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
-    m_grid = new tbb::atomic<unsigned int>[num_cells];
-    // Initialize grid
-    for (int i = 0 ; i < num_cells ; ++i)
-      m_grid[i] = 0;
+    m_grid.resize(num_cells);
   }
 
   /// Destructor
   ~Spatial_grid_lock_data_structure_3()
   {
-    delete [] m_grid;
   }
 
   bool is_cell_locked_impl(int cell_index)
@@ -629,7 +625,7 @@ private:
 
 protected:
 
-  tbb::atomic<unsigned int> *                           m_grid;
+  std::vector<tbb::atomic<unsigned int> >               m_grid;
 
   typedef tbb::enumerable_thread_specific<unsigned int> TLS_thread_uint_ids;
   TLS_thread_uint_ids                                   m_tls_thread_ids;
@@ -656,13 +652,12 @@ public:
   {
     int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
-    m_grid = new tbb::recursive_mutex[num_cells];
+    m_grid.resize(num_cells);
   }
 
   /// Destructor
   ~Spatial_grid_lock_data_structure_3()
   {
-    delete [] m_grid;
   }
 
   bool is_cell_locked_impl(int cell_index)
@@ -692,7 +687,7 @@ public:
 
 protected:
 
-  tbb::recursive_mutex *                          m_grid;
+  std::vector<tbb::recursive_mutex> m_grid;
 };
 
 } //namespace CGAL
