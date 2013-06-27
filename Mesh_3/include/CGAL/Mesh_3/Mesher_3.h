@@ -32,7 +32,7 @@
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include<CGAL/Mesh_3/Refine_facets_3.h>
-#include<CGAL/Mesh_3/Mesh_3_regular_edges.h>
+#include<CGAL/Mesh_3/Refine_facets_manifold_base.h>
 #include<CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
 #include <CGAL/Mesher_level_visitors.h>
@@ -72,7 +72,8 @@ public:
       MeshDomain,
       C3T3>                                         Facets_level_base;
 
-  typedef Mesh_3_regular_edges<Facets_level_base>   Facets_level_base_manifold;
+  typedef Mesh_3::Refine_facets_manifold_base<Facets_level_base>
+                                                    Facets_level_base_manifold;
   typedef Mesh_3::Refine_facets_3<
       Triangulation,
       typename MeshCriteria::Facet_criteria,

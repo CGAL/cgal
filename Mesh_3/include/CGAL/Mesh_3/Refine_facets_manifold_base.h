@@ -18,8 +18,8 @@
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
 
-#ifndef CGAL_MESH_3_REGULAR_EDGES_H
-#define CGAL_MESH_3_REGULAR_EDGES_H
+#ifndef CGAL_MESH_3_REFINE_FACETS_MANIFOLD_BASE_H
+#define CGAL_MESH_3_REFINE_FACETS_MANIFOLD_BASE_H
 
 #include <CGAL/utility.h>
 #include <set>
@@ -30,19 +30,19 @@ namespace CGAL {
 namespace Mesh_3 {
 
 template <
-  typename RefineFacets,
+  typename Base_,
   bool withBoundary = false
   >
-class Mesh_3_regular_edges
-  : public RefineFacets
+class Refine_facets_manifold_base
+  : public Base_
 {
 public:
 
-  typedef RefineFacets Base ;
+  typedef Base_ Base ;
 
-  typedef typename RefineFacets::C3T3 C3t3;
-  typedef typename RefineFacets::Criteria Criteria;
-  typedef typename RefineFacets::Mesh_domain Mesh_domain;
+  typedef typename Base::C3T3 C3t3;
+  typedef typename Base::Criteria Criteria;
+  typedef typename Base::Mesh_domain Mesh_domain;
   typedef typename C3t3::Triangulation Tr;
   typedef typename Tr::Geom_traits GT;
   typedef typename GT::FT FT;
@@ -172,11 +172,11 @@ protected:
   }
 
 public:
-  Mesh_3_regular_edges(Tr& triangulation,
-                       const Criteria& criteria,
-                       const Mesh_domain& oracle,
-                       C3t3& c3t3,
-                       bool with_boundary = withBoundary)
+  Refine_facets_manifold_base(Tr& triangulation,
+                              const Criteria& criteria,
+                              const Mesh_domain& oracle,
+                              C3t3& c3t3,
+                              bool with_boundary = withBoundary)
     : Base(triangulation,
            criteria,
            oracle,
@@ -187,7 +187,7 @@ public:
     , m_with_boundary(with_boundary)
   {
 #ifdef CGAL_MESH_3_DEBUG_CONSTRUCTORS
-    std::cerr << "CONS: Mesh_3_regular_edges";
+    std::cerr << "CONS: Refine_facets_manifold_base";
     if(m_with_boundary)
       std::cerr << " (with boundaries)\n";
     else
@@ -333,11 +333,11 @@ public:
     s << Base::debug_info_header() << "," << "#bad edges";
     return s.str();
   }
-};  // end Mesh_3_regular_edges
+};  // end Refine_facets_manifold_base
 
 }  // end namespace Mesh_3
 
 }  // end namespace CGAL
 
 
-#endif // CGAL_MESH_3_REGULAR_EDGES_H
+#endif // CGAL_MESH_3_REFINE_FACETS_MANIFOLD_BASE_H
