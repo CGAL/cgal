@@ -66,6 +66,18 @@ public:
       return std::sqrt(width()*width() + height()*height() + depth()*depth());
     }
 
+    friend bool operator==(const Bbox& b1, const Bbox& b2) {
+      return b1.xmin == b2.xmin &&
+             b1.ymin == b2.ymin &&
+             b1.zmin == b2.zmin &&
+             b1.xmax == b2.xmax &&
+             b1.ymax == b2.ymax &&
+             b1.zmax == b2.zmax;
+    }
+
+    friend bool operator!=(const Bbox& b1, const Bbox& b2) {
+      return !(b1 == b2);
+    }
   }; // struct BBox (ad hoc class, does not depend on CGAL kernels
 
   typedef int Item_id;
@@ -87,6 +99,7 @@ public:
   // Accessors (getters)
   virtual int numberOfEntries() const = 0;
   virtual Scene_item* item(Item_id) const = 0;
+  virtual Item_id item_id(Scene_item*) const = 0;
   virtual Item_id mainSelectionIndex() const = 0;
   virtual QList<Item_id> selectionIndices() const = 0;
   virtual Item_id selectionAindex() const = 0;
