@@ -176,6 +176,17 @@ public:
     ++*this;
     return tmp;
   }
+
+  Self& operator--() {
+    --nt;
+    return *this;
+  }
+
+  Self  operator--(int) {
+    Self tmp = *this;
+    --*this;
+    return tmp;
+  }
 };
 
 

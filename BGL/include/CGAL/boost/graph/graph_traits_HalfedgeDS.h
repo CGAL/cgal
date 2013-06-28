@@ -126,6 +126,17 @@ public:
     ++*this;
     return tmp;
   }
+
+  Self& operator--() {
+    --nt;
+    return *this;
+  }
+
+  Self  operator--(int) {
+    Self tmp = *this;
+    --*this;
+    return tmp;
+  }
 };
 
 template < class HDS >
@@ -195,6 +206,17 @@ public:
   Self  operator++(int) {
     Self tmp = *this;
     ++*this;
+    return tmp;
+  }
+
+  Self& operator--() {
+    --nt;
+    return *this;
+  }
+
+  Self  operator--(int) {
+    Self tmp = *this;
+    --*this;
     return tmp;
   }
 };
