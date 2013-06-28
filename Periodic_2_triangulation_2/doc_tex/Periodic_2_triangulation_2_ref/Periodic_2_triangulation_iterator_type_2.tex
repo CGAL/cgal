@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_2_triangulation_iterator_type_2.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2010   Nico Kruithof
+% | Package: Periodic_2_triangulation_2
+% | 
+\RCSdef{\RCSPeriodictriangulationiteratortypeRev}{$Id$}
+\RCSdefDate{\RCSPeriodictriangulationiteratortypeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccModifierCrossRefOff
+\begin{ccRefEnum}[Periodic_2_triangulation_2::]{Iterator_type}
+
+\ccDefinition
+  
+The enum \ccRefName\ is defined by \ccc{Periodic_2_triangulation_2} to
+specify the behavior of geometric iterators.
+
+\ccEnum{enum Iterator_type {STORED=0, UNIQUE, STORED_COVER_DOMAIN,
+    UNIQUE_COVER_DOMAIN};}
+{}
+
+The elements of the enum have the following meaning:
+\begin{itemize}
+%
+\item{\ccc{STORED}:} Return all geometric primitives as they are
+  stored internally in \ccc{Triangulation_data_structure_2}.
+%
+\item{\ccc{UNIQUE}:} Return only one representative of each geometric
+  primitive even if the triangulation is computed in a multiply
+  sheeted covering space. Choose the representative whose maximum
+  offset is minimal but non-negative in each direction of space.
+%
+\item{\ccc{STORED\_COVER\_DOMAIN}:} Same as \ccc{STORED} but return
+  additionally all primitives whose intersection with the original
+  domain of the current covering space is non-empty.
+%
+\item{\ccc{UNIQUE\_COVER\_DOMAIN}:} Same as \ccc{UNIQUE} but return
+  additionally all primitives whose intersection with the original
+  domain is non-empty.
+%
+\end{itemize}
+
+\ccSeeAlso
+
+\ccc{CGAL::Periodic_2_triangulation_2}
+
+\end{ccRefEnum}
+\ccModifierCrossRefOn

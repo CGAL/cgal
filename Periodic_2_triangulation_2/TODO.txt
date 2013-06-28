@@ -1,0 +1,14 @@
+=== POSTPONED
+
+The periodic regular triangulation is not implemented. This will need
+a different criterion here for changing from the 3x3 cover to the 1x1
+cover. An outline is given in the ESA paper.
+
+The 2D periodic triangulation implements a (Delaunay) triangulation on
+the 2-torus. For the Euclidean triangulation there exist interfaces
+with other packages. These have not been implemented for the periodic
+triangulation. The interfaces are:
+
+* There is no compatibility with the mesher.
+* The interface with the 2D alpha is not tested.
+

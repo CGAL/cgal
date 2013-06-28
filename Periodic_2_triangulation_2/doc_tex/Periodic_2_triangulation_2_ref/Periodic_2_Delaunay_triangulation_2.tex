@@ -1,0 +1,278 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_2_Delaunay_triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 23-11-2010 Nico Kruithof
+% | Package: Periodic_2_triangulation_2
+% | 
+\RCSdef{\RCSPeriodicDelaunaytriangulationRev}{$Id$}
+\RCSdefDate{\RCSPeriodicDelaunaytriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Periodic_2_Delaunay_triangulation_2<Traits,Tds>}
+
+\ccDefinition
+  
+The class \ccc{Periodic_2_Delaunay_triangulation_2} represents a
+Delaunay triangulation in two-dimensional periodic space.
+
+\ccInclude{CGAL/Periodic_2_Delaunay_triangulation_2.h}
+
+\ccParameters
+%
+The class \ccRefName\ has two template parameters. The first one
+\ccc{Traits} is the geometric traits, it is to be instantiated by a
+model of the concept \ccc{Periodic_2DelaunayTriangulationTraits_2}.
+
+The second parameter is the triangulation data structure, it has to be
+instantiated by a model of the concept
+\ccc{TriangulationDataStructure_2} with some additional functionality
+in faces. By default, the triangulation data structure is instantiated
+by
+%
+\ccc{CGAL::Triangulation_data_structure_2 <
+  CGAL::Triangulation_ds_vertex_base_2<Gt>,
+  CGAL::Periodic_2_triangulation_ds_face_base_2<Gt> > >}.
+
+\ccInheritsFrom{\ccc{Periodic_2_triangulation_2<Traits,Tds>}}
+
+
+\ccCreation
+\ccCreationVariable{dt}
+\ccTwo{Vertex_handle}{}
+
+\ccConstructor{Periodic_2_Delaunay_triangulation_2(
+  const Iso_rectangle & domain = Iso_rectangle(0,0,1,1),
+  const Geom_traits & traits = Geom_traits());} 
+{Creates an empty periodic Delaunay triangulation \ccVar, with
+  \ccc{domain} as original domain and possibly specifying
+  a traits class \ccc{traits}.
+\ccPrecond{\ccc{domain} is a square.}}
+
+\ccConstructor{Periodic_2_Delaunay_triangulation_2 (const
+  Periodic_2_Delaunay_triangulation_2 & dt1);} 
+{Copy constructor.}
+
+\ccConstructor{template < class InputIterator >
+       Periodic_2_Delaunay_triangulation_2 (
+       InputIterator first,
+       InputIterator last,
+       const Iso_rectangle & domain = Iso_rectangle(0,0,1,1),
+       const Geom_traits & traits = Geom_traits());} 
+{Equivalent to constructing an empty triangulation with the optional 
+domain and traits class arguments and calling \ccc{insert(first,last)}.
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} are
+  \ccc{Point}s lying inside \ccc{domain} and \ccc{domain} is a square.}} 
+
+\ccOperations
+
+\ccHeading{Insertion and removal}
+
+The following methods insert points in the triangulation ensuring the
+empty circle property of Delaunay triangulations. The inserted points
+need to lie in the original domain (see
+Section~\ref{P2Triangulation2-sec-space} of the user manual).
+
+In the degenerate case when there are co-circular points, the Delaunay
+triangulation is known not to be uniquely defined. In this case, \cgal\
+chooses a particular Delaunay triangulation using a symbolic perturbation
+scheme~\cite{cgal:dt-pvr3d-03}.
+
+Note that insertion of a new point can cause a switch from computing
+in the 9-sheeted covering space to computing in the 1-sheeted covering space,
+which invalidates some \ccc{Vertex_handle}s and \ccc{Face_handle}s.
+
+\ccThree{Vertex_handlex}{}{}
+
+\ccMethod{Vertex_handle insert(const Point & p, Face_handle start =
+  Face_handle() );}%
+{Inserts point \ccc{p} in the triangulation and returns the
+  corresponding vertex. The optional argument \ccc{start} is used as a
+  starting place for the point location.  \ccPrecond{\ccc{p} lies in
+    the original domain \ccc{domain}.}}
+
+\ccMethod{Vertex_handle insert(const Point & p, Locate_type lt,
+  Face_handle loc, int li, int lj);}%
+{Inserts point \ccc{p} in the triangulation and returns the
+  corresponding vertex. Similar to the above \ccc{insert()} function,
+  but takes as additional parameter the return values of a previous
+  location query.  See description of
+  \ccc{Periodic_2_triangulation_2::locate()}.  \ccPrecond{\ccc{p} lies
+    in the original domain \ccc{domain}.}}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator > std::ptrdiff_t
+  insert(InputIterator first, InputIterator last, bool
+  is_large_point_set = false);}%
+{Inserts the points in the iterator range \ccc{[first, last)}.
+  Returns the number of inserted points.  This function uses spatial
+  sorting (cf.\ chapter~\ref{sec:spatial_sorting}) and therefore is
+  not guaranteed to insert the points following the order of
+  \ccc{InputIterator}. If the third argument \ccc{is_large_point_set}
+  is set to \ccc{true} a heuristic for optimizing the insertion of
+  large point sets is applied.  \ccPrecond{The \ccc{value_type} of
+    \ccc{first} and \ccc{last} are \ccc{Point}s and all points in the
+    range lie inside \ccc{domain}.}}
+
+\ccMethod{void remove(Vertex_handle v);}%
+{Removes the vertex from the triangulation.}
+
+\ccHeading{Point moving}
+
+\ccMethod{Vertex_handle move_if_no_collision(Vertex_handle v, const
+  Point & p);}%
+{if there is not already another vertex placed on \ccc{p}, the
+  triangulation is modified such that the new position of vertex
+  \ccc{v} is \ccc{p}, and \ccc{v} is returned. Otherwise, the
+  triangulation is not modified and the vertex at point \ccc{p} is
+  returned. \ccPrecond{\ccc{p} lies in the original domain
+    \ccc{domain}.}}
+
+\ccMethod{Vertex_handle move_point(Vertex_handle v, const Point &
+  p);} %
+{Moves the point stored in \ccc{v} to \ccc{p}, while preserving the
+  Delaunay property.  This performs an action semantically equivalent
+  to \ccc{remove(v)} followed by \ccc{insert(p)}, but is supposedly
+  faster to performing these two operations separately when the point
+  has not moved much.  Returns the handle to the new vertex.
+  \ccPrecond{\ccc{p} lies in the original domain \ccc{domain}.}}
+
+\ccHeading{Queries}
+\ccThree{OutputItBoundaryEdges>}{side_of_}{}
+\ccThreeToTwo
+
+\ccMethod{Vertex_handle nearest_vertex(Point p,
+                                       Face_handle f = Face_handle());}
+{Returns any nearest vertex to the point \ccc{p}, or the default constructed
+handle if the triangulation is empty.  The optional argument \ccc{f} is a hint
+specifying where to start the search. It always returns a vertex
+corresponding to a point inside $\ccc{domain}$ even if computing in a
+multiply sheeted covering space.
+\ccPrecond{\ccc{f} is a face of \ccVar\ and \ccc{p} lies in the
+  original domain \ccc{domain}.}
+}
+
+A point-offset pair (\ccc{p},\ccc{off}) is said to be in conflict with
+a cell \ccc{c} iff \ccVar.\ccc{side_of_circle(c, p, off)} returns
+\ccc{ON_BOUNDED_SIDE}.  The set of faces that are in conflict with
+(\ccc{p},\ccc{off}) is star-shaped.
+
+\ccMethod{template <class OutputItFaces, class OutputItBoundaryEdges>
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  get_conflicts_and_boundary(const Point &p, OutputItFaces fit,
+  OutputItBoundaryEdges eit, Face_handle start) const;}%
+{ \ccc{OutputItFaces} is an output iterator with \ccc{Face_handle} as
+  value type.  \ccc{OutputItBoundaryEdges} stands for an output
+  iterator with \ccc{Edge} as value type.  This members function
+  outputs in the container pointed to by \ccc{fit} the faces which are
+  in conflict with point \ccc{p} i. e. the faces whose circumcircle
+  contains \ccc{p}.  It outputs in the container pointed to by
+  \ccc{eit} the boundary of the zone in conflict with \ccc{p}.
+  The boundary edges of the conflict zone are output in
+  counter-clockwise order and each edge is described through its
+  incident face which is not in conflict with \ccc{p}.  The function
+  returns in a std::pair the resulting output
+  iterators. \ccPrecond{\ccc{start} is in conflict with \ccc{p} and
+    \ccc{p} lies in the original domain \ccc{domain}.}}
+
+\ccMethod{template <class OutputItFaces> OutputItFaces get_conflicts
+  (const Point &p, OutputItFaces fit, Face_handle start) const;}%
+{same as above except that only the faces in conflict with \ccc{p} are
+  output. The function returns the resulting output
+  iterator. \ccPrecond{\ccc{start} is in conflict with \ccc{p} and \ccc{p}
+    lies in the original domain \ccc{domain}.}}
+
+\ccMethod{template <class OutputItBoundaryEdges> OutputItBoundaryEdges
+  get_boundary_of_conflicts(const Point &p, OutputItBoundaryEdges eit,
+  Face_handle start) const;}%
+{ \ccc{OutputItBoundaryEdges} stands for an output iterator with
+  \ccc{Edge} as value type.  This function outputs in the container
+  pointed to by \ccc{eit}, the boundary of the zone in conflict with
+  \ccc{p}. The boundary edges of the conflict zone are output in
+  counterclockwise order and each edge is described through the
+  incident face which is not in conflict with \ccc{p}.  The function
+  returns the resulting output iterator. \ccPrecond{\ccc{start} is in
+    conflict with \ccc{p} and \ccc{p} lies in the original domain
+    \ccc{domain}.}}
+
+\ccHeading{Voronoi diagram}
+\ccThree{Segment}{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+\ccIndexMainItem{Voronoi diagram}
+The following member functions provide the elements of the
+dual Voronoi diagram.
+
+\ccMethod{Point dual(const Face_handle &f) const;}
+{Returns the center of the circle circumscribed to face \ccc{f}.}
+\ccGlue %
+\ccMethod{Segment dual(const Edge &e) const;} %
+{returns a segment whose endpoints are the duals of both incident
+  faces.} %
+\ccGlue %
+\ccMethod{Segment dual(const Edge_circulator& ec) const;} {Idem} %
+\ccGlue %
+\ccMethod{Segment dual(const Edge_iterator& ei) const;} {Idem}
+
+\ccMethod{ template < class Stream> Stream& draw_dual(Stream & ps);} %
+{output the dual Voronoi diagram to stream \ccc{ps}.}
+
+\ccPredicates
+\ccThree{Oriented_side}{side_of_}{}
+\ccThreeToTwo
+
+\ccMethod{Oriented_side side_of_oriented_circle(Face_handle f, const
+  Point& p, const Offset &off = Offset(0,0) ) const;} %
+{Returns the side of \ccc{(p, off)} with respect to the circle
+  circumscribing the triangle associated with \ccc{f}}
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+\ccMethod{bool
+          is_valid(bool verbose = false) const;}
+{Checks the combinatorial validity of the triangulation and the
+validity of its geometric embedding (see
+Section~\ref{P2Triangulation2-sec-intro}). Also checks that all the
+circumscribing circles of cells are empty.\\
+When \ccc{verbose} is set to true,  messages describing the first
+invalidity encountered are printed.}
+
+\ccMethod{bool
+          is_valid(Face_handle f, bool verbose = false) const;}
+{Checks the combinatorial and geometric validity of the cell (see
+Section~\ref{P2Triangulation2-sec-intro}). Also checks that the
+circumscribing circle of cells is empty.\\
+When \ccc{verbose} is set to true, messages are printed to give
+a precise indication of the kind of invalidity encountered.}
+
+These methods are  mainly a debugging help for the users of advanced features.
+\end{ccAdvanced}
+
+\ccSeeAlso
+
+\ccc{CGAL::Periodic_2_triangulation_2<Traits,Tds>}, \\
+\ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>}, \\
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{Periodic_2DelaunayTriangulationTraits_2}, \\
+\ccc{CGAL::Triangulation_hierarchy_2<Tr>}.
+
+\ccHeading{Implementation}
+
+Insertion is implemented by inserting in the triangulation, then
+performing a sequence of Delaunay flips. The number of flips is $O(d)$
+if the new vertex is of degree $d$ in the new triangulation. For
+points distributed uniformly at random, insertion takes time $O(1)$ on
+average.
+
+Removal calls the removal in the triangulation and then
+re-triangulates the hole in such a way that the Delaunay criterion is
+satisfied. Removal of a vertex of degree $d$ takes time $O(d^2)$. The
+expected degree $d$ is $O(1)$ for a random vertex in the
+triangulation.
+
+After a point location step, the nearest neighbor is found in time
+$O(n)$ in the worst case, but in expected time $O(1)$ on average for
+vertices distributed uniformly at random and any query point.
+\end{ccRefClass}

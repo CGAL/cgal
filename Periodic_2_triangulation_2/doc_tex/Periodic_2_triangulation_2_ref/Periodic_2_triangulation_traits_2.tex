@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_2_triangulation_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 16.03.2010   Nico Kruithof <Nico@nghk.nl>
+% | Package: Package
+% |
+\RCSdef{\RCSPeriodictriangulationtraitsRev}{$Id$}
+\RCSdefDate{\RCSPeriodictriangulationtraitsDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Periodic_2_triangulation_traits_2<Traits,Periodic_2Offset_2>}
+  The class \ccRefName is designed as a default traits class for the
+  class
+  \ccc{Periodic_2_triangulation_2<Periodic_2TriangulationTraits_2,TriangulationDataStructure_2>}.
+
+  The argument \ccc{Traits} must be a model of the
+  \ccc{TriangulationTraits_2} concept. The argument
+  \ccc{Periodic_2Offset_2} must be a model of the concept
+  \ccc{Periodic_2Offset_2} and defaults to \ccc{Periodic_2_offset_2}.
+
+  Note that this template class is specialized for
+  \ccc{CGAL::Filtered_kernel}, so that it automatically provides filtered
+  predicates. This holds implicitly for
+  \ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, as it is an
+  instantiation of \ccc{CGAL::Filtered_kernel}.
+
+
+\ccInclude{CGAL/Periodic_2_triangulation_traits_2.h}
+
+\ccIsModel
+%
+\ccc{Periodic_2TriangulationTraits_2} and
+\ccc{Periodic_2DelaunayTriangulationTraits_2} if the template
+parameter \ccc{Traits} is a model of the
+\ccc{DelaunayTriangulationTraits_2} concept.
+
+\ccInheritsFrom{\ccc{Traits}}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

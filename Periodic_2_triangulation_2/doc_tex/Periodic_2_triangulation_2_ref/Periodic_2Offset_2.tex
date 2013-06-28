@@ -1,0 +1,104 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_2Offset_2.tex
+% +------------------------------------------------------------------------+
+% | 16.03.2010   Nico Kruithof <Nico@nghk.nl>
+% | Package: Package
+% |
+\RCSdef{\RCSPeriodicOffsetRev}{$Id$}
+\RCSdefDate{\RCSPeriodicOffsetDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{Periodic_2Offset_2}
+
+\ccDefinition
+The concept \ccc{Periodic_2Offset_2} describes a two-\/dimensional integer vector with some specialized access functions and operations.
+
+\ccCreation
+\ccCreationVariable{o}
+
+\ccThree{Periodic_2Offset_2}{Offsetxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccConstructor{Periodic_2Offset_2();}
+{Default constructor.}
+\ccGlue
+\ccConstructor{Periodic_2Offset_2(int x, int y);}
+{Constructs the offset (x,y).}
+
+\ccOperations
+\ccThree{Periodic_2Offset_2}{xxxxxxxxxxxxxxxxxxxxx}{}
+\ccMethod{Periodic_2Offset_2 operator+(const Periodic_2Offset_2 & o')
+  const;}
+{Return the vector sum of \ccc{o} and \ccc{o'}.}
+\ccGlue
+\ccMethod{Periodic_2Offset_2 operator-(const Periodic_2Offset_2 & o')
+  const;}
+{Return the vector difference of \ccc{o} and \ccc{o'}.}
+\ccGlue
+\ccMethod{Periodic_2Offset_2 operator-() const;}
+{Return the negative vector of \ccc{o}.}
+\ccGlue
+\ccMethod{void operator+=(const Periodic_2Offset_2 & o')
+  const;}
+{Add \ccc{o'} to \ccc{o} using vector addition.}
+\ccGlue
+\ccMethod{void operator-=(const Periodic_2Offset_2 & o')
+  const;}
+{Subtract \ccc{o'} from \ccc{o} using vector subtraction.}
+\ccGlue
+\ccMethod{bool operator==(const Periodic_2Offset_2 & o') const;}
+{Return \ccc{true} if \ccc{o'} and \ccc{o} represent the same vector.}
+\ccGlue
+\ccMethod{bool operator!=(const Periodic_2Offset_2 & o') const;}
+{Return \ccc{true} if \ccc{o'} and \ccc{o} do not represent the same
+  vector.}
+\ccGlue
+\ccMethod{bool operator<(const Periodic_2Offset_2 & o') const;}
+{Compare \ccc{o} and \ccc{o'} lexicographically.}
+
+\ccAccessFunctions
+
+\ccMethod{int operator[](int i);}
+{Return the $i$-th entry of \ccc{o}. \ccPrecond{$i\in\{0,1\}$}}
+\ccGlue
+\ccMethod{int x() const;}
+{Return the $x$-entry of \ccc{o}.}
+\ccGlue
+\ccMethod{int y() const;}
+{Return the $y$-entry of \ccc{o}.}
+\ccGlue
+\ccMethod{bool is_null() const;}
+{Returns \ccc{true} if \ccc{o} is equal to (0,0).}
+\ccGlue
+\ccMethod{bool is_zero() const;}
+{Returns \ccc{true} if \ccc{o} is equal to (0,0).}
+
+\ccHeading{I/O}
+\ccFunction{istream& operator>>(istream & is, Periodic_2Offset_2
+  & off);}
+{Inputs an offset from \ccc{is}.}
+\ccGlue
+\ccFunction{ostream& operator<<(ostream & os, Periodic_2Offset_2
+  & off) const;}
+{Outputs an offset from \ccc{os}.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Periodic_2_offset_2}
+
+\ccSeeAlso
+
+\ccc{Periodic_2TriangulationTraits_2}\\
+\ccc{Periodic_2DelaunayTriangulationTraits_2}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
