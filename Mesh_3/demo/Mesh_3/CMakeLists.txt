@@ -84,8 +84,7 @@ else( ACTIVATE_CONCURRENT_MESH_3 )
 endif()
 
 if( TBB_FOUND )
-  add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
-  include_directories ( ${TBB_INCLUDE_DIRS} )
+    include(${TBB_USE_FILE})
 endif()
   
 # Creates a new CMake option, turned ON by default

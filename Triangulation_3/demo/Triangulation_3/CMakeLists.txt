@@ -46,8 +46,7 @@ else( ACTIVATE_CONCURRENT_TRIANGULATION_3 )
 endif()
 
 if( TBB_FOUND )
-  add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
-  include_directories ( ${TBB_INCLUDE_DIRS} )
+  include(${TBB_USE_FILE})
 endif()
 
 if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )

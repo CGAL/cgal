@@ -44,9 +44,8 @@ if ( CGAL_FOUND )
   endif()
   
   if( TBB_FOUND )
-    add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
-    include_directories ( ${TBB_INCLUDE_DIRS} )
-	list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+    include(${TBB_USE_FILE})
+    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
 
   include( CGAL_CreateSingleSourceCGALProgram )
