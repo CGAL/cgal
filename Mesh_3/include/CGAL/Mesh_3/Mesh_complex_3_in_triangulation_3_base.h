@@ -1,4 +1,5 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2009  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2013       GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,7 +17,7 @@
 // $Id$
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Laurent Rineau, Stéphane Tayeb
 //
 //******************************************************************************
 // File Description : Implements class Mesh_complex_3_in_triangulation_3.
@@ -34,6 +35,7 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/Union_find.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -208,7 +210,54 @@ public:
   }
 
   /// Returns `NOT_IN_COMPLEX`, `BOUNDARY`, `REGULAR`, or `SINGULAR`,
-  /// depending on the number of incident facets int the complex
+  /// depending on the number of incident facets in the complex, and the
+  /// number of connected components of its link
+  Face_status face_status(const Vertex_handle v) const
+  {
+    if(!manifold_info_initialized_) init_manifold_info();
+    const int n = v->cached_number_of_incident_facets();
+
+    if(n == 0) return NOT_IN_COMPLEX;
+
+    //test incident edges for REGULARITY and count BOUNDARY edges
+    typename std::vector<Edge> edges;
+    edges.reserve(64);
+    tr_.incident_edges(v, std::back_inserter(edges));
+    int number_of_boundary_incident_edges = 0; // could be a bool
+    for (typename std::vector<Edge>::iterator
+           eit=edges.begin(), end = edges.end();
+	 eit != end; eit++)
+    {
+      switch( face_status(*eit) )
+      {
+      case NOT_IN_COMPLEX: case REGULAR: break;
+      case BOUNDARY: ++number_of_boundary_incident_edges; break;
+      default : std::cerr << "singular edge...\n"; return SINGULAR;
+      }
+    }
+
+    // From here all incident edges (in complex) are REGULAR or BOUNDARY.
+    const int nb_components = union_find_of_incident_facets(v);
+    if(nb_components > 1) {
+      std::cerr << "singular vertex: nb_components=" << nb_components << std::endl;
+      return SINGULAR;
+    }
+    else { // REGULAR OR BOUNDARY
+      if (number_of_boundary_incident_edges != 0)
+        return BOUNDARY;
+      else
+        return REGULAR;
+    }
+  }
+
+  /// This function should be called only when incident edges
+  /// are known to be REGULAR OR BOUNDARY
+  bool is_regular_or_boundary_for_vertices(Vertex_handle v) const {
+    return union_find_of_incident_facets(v) == 1;
+  }
+
+  /// Returns `NOT_IN_COMPLEX`, `BOUNDARY`, `REGULAR`, or `SINGULAR`,
+  /// depending on the number of incident facets in the complex
   Face_status face_status(const Edge& edge) const
   {
     if(!manifold_info_initialized_) init_manifold_info();
@@ -384,6 +433,13 @@ public:
 
 private:
   void init_manifold_info() const {
+    for(typename Tr::All_vertices_iterator
+          vit = triangulation().finite_vertices_begin(),
+          end = triangulation().finite_vertices_end();
+        vit != end; ++vit)
+    {
+      vit->set_c2t3_cache(0, -1);
+    }
     for(typename Tr::Finite_facets_iterator
           fit = triangulation().finite_facets_begin(),
           end = triangulation().finite_facets_end();
@@ -399,10 +455,68 @@ private:
           const Vertex_handle edge_va = cell->vertex(edge_index_va);
           const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
           ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+
+          const int n = edge_va->cached_number_of_incident_facets();
+          edge_va->set_c2t3_cache(n+1, -1);
         }
       }
     }
     manifold_info_initialized_ = true;
+  }
+
+  /// Extract the subset `F` of facets of the complex incident to `v` and
+  /// return the number of connected component of the adjacency graph of `F`.
+  int union_find_of_incident_facets(const Vertex_handle v) const
+  {
+    if( v->is_c2t3_cache_valid() )
+    {
+      const int n = v->cached_number_of_components();
+      if(n >= 0) return v->cached_number_of_components();
+    }
+
+    Union_find<Facet> facets;
+    { // fill the union find
+      std::vector<Facet> non_filtered_facets;
+      tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
+
+      for(typename std::vector<Facet>::iterator
+            fit = non_filtered_facets.begin(),
+            end = non_filtered_facets.end();
+          fit != end; ++fit)
+      {
+        if(is_in_complex(*fit)) facets.push_back(*fit);
+      }
+    }
+
+    typedef std::map<Vertex_handle,
+                     typename Union_find<Facet>::handle> Vertex_set_map;
+    typedef typename Vertex_set_map::iterator Vertex_set_map_iterator;
+
+    Vertex_set_map vsmap;
+
+    for(typename Union_find<Facet>::iterator
+          it = facets.begin(), end = facets.end();
+        it != end; ++it)
+    {
+      const Cell_handle& ch = (*it).first;
+      const int& i = (*it).second;
+      for(int j=0; j < 3; ++j) {
+	const Vertex_handle w = ch->vertex(tr_.vertex_triple_index(i,j));
+	if(w != v){
+	  Vertex_set_map_iterator vsm_it = vsmap.find(w);
+	  if(vsm_it != vsmap.end()){
+	    facets.unify_sets(vsm_it->second, it);
+	  } else {
+	    vsmap.insert(std::make_pair(w, it));
+	  }
+	}
+      }
+    }
+    const int nb_components = static_cast<int>(facets.number_of_sets());
+
+    const int n = v->cached_number_of_incident_facets();
+    v->set_c2t3_cache(n, nb_components);
+    return nb_components;
   }
   
   //-------------------------------------------------------
@@ -604,12 +718,10 @@ private:
 
   mutable Edge_facet_counter edge_facet_counter_;
 
-
   size_type number_of_facets_;
   size_type number_of_cells_;
 
   mutable bool manifold_info_initialized_;
-
 };  // end class Mesh_complex_3_in_triangulation_3_base
 
 
@@ -636,6 +748,10 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::add_to_complex(
         Vertex_handle edge_va = cell->vertex(edge_index_va);
         Vertex_handle edge_vb = cell->vertex(edge_index_vb);
         ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+
+        const int n = edge_va->cached_number_of_incident_facets();
+        const int m = edge_va->cached_number_of_components();
+        edge_va->set_c2t3_cache(n+1, m);
       }
     }
   }
@@ -662,11 +778,16 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::remove_from_complex(const Facet& fac
         const Vertex_handle edge_va = cell->vertex(edge_index_va);
         const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
         --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+
+        const int n = edge_va->cached_number_of_incident_facets();
+        CGAL_assertion(n>0);
+        const int m = edge_va->cached_number_of_components();
+        edge_va->set_c2t3_cache(n-1, m);
       }
     }
   }
 }
-  
+
 
 // -----------------------------------
 // Undocumented
