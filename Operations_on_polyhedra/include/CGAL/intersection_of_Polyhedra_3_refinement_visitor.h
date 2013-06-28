@@ -30,7 +30,7 @@
 
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h> 
 
-#include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Point_inside_polyhedron_3.h>
 #include <CGAL/property_map.h>
 #include <boost/optional.hpp>
 #include <boost/next_prior.hpp>
@@ -774,7 +774,7 @@ class Node_visitor_refine_polyhedra{
           }
         }
       }
-      #ifndef NDEBUG
+      #ifdef CGAL_COREFINEMENT_DEBUG
       else
       {
         std::cout << "X0: Found an isolated point" << std::endl;
@@ -2137,17 +2137,19 @@ public:
     //update the info of each volume knowing about only one polyhedron:
     //this happens when one polyhedron has a connected component
     //that do not intersect the other polyhedron
-    typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Kernel > Mesh_domain;
+
+    typedef Point_inside_polyhedron_3<Polyhedron, Kernel> Inside_poly_test;
+
     CGAL_precondition(polyhedron_to_map_node_to_polyhedron_vertex.size()==2);
     Polyhedron* Poly_A = polyhedron_to_map_node_to_polyhedron_vertex.begin()->first;
     Polyhedron* Poly_B = boost::next(polyhedron_to_map_node_to_polyhedron_vertex.begin())->first;
-    Mesh_domain* domain_A_ptr=NULL;
-    Mesh_domain* domain_B_ptr=NULL;
-    
+    Inside_poly_test* inside_A_test_ptr=NULL;
+    Inside_poly_test* inside_B_test_ptr=NULL;
+
     #ifdef CGAL_COREFINEMENT_DEBUG
     final_map().display_characteristics(std::cout); std::cout << "\n";
     #endif
-    
+
     typename Combinatorial_map_3::template  One_dart_per_cell_range<3> cell_range=final_map().template one_dart_per_cell<3>();
     for (typename Combinatorial_map_3::template  One_dart_per_cell_range<3>::iterator
       it = cell_range.begin(), it_end=cell_range.end();
@@ -2157,27 +2159,72 @@ public:
       internal_IOP::Volume_info<Polyhedron>& info=it->template attribute<3>()->info();
       std::size_t inside_size=info.inside.size();
       std::size_t outside_size=info.outside.size();
+
+      // if a volume is not classified wrt the two polyhedra, it means the component we look at does not
+      // is a disjoint (but maybe at a vertex TAG SL001)
       if ( inside_size + outside_size == 1)
       {
         bool is_inside = (inside_size==1);
         Polyhedron* current_poly= is_inside? (*info.inside.begin()):(*info.outside.begin());
-        Polyhedron* test_poly; 
-        Mesh_domain* domain_ptr;
+        Polyhedron* test_poly;
+        Inside_poly_test* inside_test_ptr;
         if ( current_poly==Poly_A)
         {
           test_poly=Poly_B;
-          if (domain_B_ptr == NULL) domain_B_ptr=new Mesh_domain(*Poly_B);
-          domain_ptr=domain_B_ptr;
+          if (inside_B_test_ptr == NULL) inside_B_test_ptr=new Inside_poly_test(*Poly_B);
+          inside_test_ptr=inside_B_test_ptr;
         }
         else
         {
           test_poly=Poly_A;
-          if (domain_A_ptr == NULL) domain_A_ptr=new Mesh_domain(*Poly_A);
-          domain_ptr=domain_A_ptr;
+          if (inside_A_test_ptr == NULL) inside_A_test_ptr=new Inside_poly_test(*Poly_A);
+          inside_test_ptr=inside_A_test_ptr;
         }
-        typename Mesh_domain::Is_in_domain is_in_domain(*domain_ptr);
+
+        // We need to find a point of the volume that is not on the boundary of the other volume.
+        // Then the position of this point give the position of the volume. If all the points are on
+        // the bounday, we take the mid-point of an edge (which must not be on the boundary otherwise
+        // it contradicts the fact that volumes are disjoint
+        // We first use the dart we have since one_dart_per_incident_cell has a non-negligeable cost.
         typename Kernel::Point_3 query=it->template attribute<0>()->point();
-        if ( is_in_domain(query) )
+        CGAL::Bounded_side res = (*inside_test_ptr)(query);
+        if (res==ON_BOUNDARY)
+        {
+          typedef typename Combinatorial_map_3::
+            template One_dart_per_incident_cell_range<0,3> Vertex_range;
+
+          Vertex_range vertex_range =
+            final_map().template one_dart_per_incident_cell<0,3>(it);
+          typename Vertex_range::iterator vit = vertex_range.begin();
+
+          CGAL_assertion( typename Combinatorial_map_3::Dart_handle(vit) ==
+                          typename Combinatorial_map_3::Dart_handle(it) );
+          ++vit;
+          for ( ; vit!=vertex_range.end(); ++vit)
+          {
+            query=vit->template attribute<0>()->point();
+            res = (*inside_test_ptr)(query);
+            if ( res != ON_BOUNDARY ) break;
+          }
+
+          //take edge midpoint
+          if (res == ON_BOUNDARY)
+          {
+            /// \todo see do a better test here. At least the construction cannot fail
+            ///  but the mid-point can fall outside of the volume...
+            #ifdef CGAL_COREFINEMENT_DEBUG
+            #warning this is not exact!!!
+            #endif
+            typename Kernel::Point_3 p1=it->template attribute<0>()->point();
+            typename Kernel::Point_3 p2=it->template beta<1>()->template attribute<0>()->point();
+            query=midpoint(p1,p2);
+            res = (*inside_test_ptr)(query);
+          }
+
+          CGAL_assertion( res!= ON_BOUNDARY );
+        }
+
+        if (res  == ON_BOUNDED_SIDE )
           info.inside.insert(test_poly);
         else
           info.outside.insert(test_poly);
@@ -2193,9 +2240,8 @@ public:
       std::cout << std::endl;
       #endif
     }
-    if (domain_A_ptr!=NULL) delete domain_A_ptr;
-    if (domain_B_ptr!=NULL) delete domain_B_ptr;
-    
+    if (inside_A_test_ptr!=NULL) delete inside_A_test_ptr;
+    if (inside_B_test_ptr!=NULL) delete inside_B_test_ptr;
   }
 };
 
