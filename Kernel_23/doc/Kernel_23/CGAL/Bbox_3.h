@@ -93,7 +93,12 @@ double max(int i) const;
 /*! 
 returns a bounding box of `b` and `c`. 
 */ 
-Bbox_3 operator+(const Bbox_3 &c) const; 
+Bbox_3 operator+(const Bbox_3 &c) const;
+
+/*!
+updates `b` to be the bounding box of `b` and `c` and returns itself.
+*/
+Bbox_3& operator+=(const Bbox_3 &c);
 
 /// @}
 
@@ -109,6 +114,28 @@ intersection is non-empty.
 \relates Bbox_3
 */
 bool do_overlap(const Bbox_3 &bb1, const Bbox_3 &bb2);
+
+/*!
+returns the bounding box of the objects in the range `[first,past_end[`.
+Each object in the range must have a member function `BBox_3 bbox()`
+returning its bounding box.
+
+\relates Bbox_3
+*/
+template<class InputIterator>
+Bbox_3 bbox_3(InputIterator begin, InputIterator past_end);
+
+/*!
+returns the bounding box of the objects in the range `[first,past_end[`.
+`Traits` must provide a functor `Traits::Construct_bbox_3` having an
+operator returning the bounding box of each object in the range.
+`Traits` must also have a member function 
+`Traits::Construct_bbox_3 construct_bbox_3_object() const`.
+
+\relates Bbox_3
+*/
+template<class InputIterator, class Traits>
+Bbox_3 bbox_3(InputIterator begin, InputIterator past_end, const Traits& traits);
 
 /// @}
 
