@@ -44,17 +44,20 @@ public:
   typedef typename Base::Criteria Criteria;
   typedef typename Base::Mesh_domain Mesh_domain;
   typedef typename C3t3::Triangulation Tr;
-  typedef typename Tr::Geom_traits GT;
-  typedef typename GT::FT FT;
   typedef typename Tr::Point Point;
   typedef typename Tr::Facet Facet;
+  typedef typename Tr::Vertex_handle Vertex_handle;
+
+  typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
+
+protected:
+  typedef typename Tr::Geom_traits GT;
+  typedef typename GT::FT FT;
   typedef typename Tr::Edge Edge;
   typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Facet_circulator Tr_facet_circulator;
 
+  typedef typename Tr::Facet_circulator Tr_facet_circulator;
   typedef std::pair<Vertex_handle, Vertex_handle> EdgeVV;
-  typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
 
 protected:
   Tr& r_tr_;
@@ -66,7 +69,7 @@ protected:
   mutable bool m_bad_vertices_initialized;
   bool m_with_boundary;
 
-protected:
+private:
   // computes and return an ordered pair of Vertex
   EdgeVV make_edgevv(const Vertex_handle vh1,
                      const Vertex_handle vh2) const {
