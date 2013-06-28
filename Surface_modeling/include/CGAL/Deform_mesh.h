@@ -73,8 +73,10 @@ struct Weight_calculator_selector<Polyhedron, CGAL::ORIGINAL_ARAP> {
  /// @brief Class providing the functionalities for deforming a triangulated surface mesh
  ///
  /// @tparam P a model of HalfedgeGraph 
- /// @tparam VIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type
- /// @tparam EIM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
+ /// @tparam VIM a model of `ReadOnlyPropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type,
+ ///         containing unique indices to vertices with offset 0
+ /// @tparam EIM a model of `ReadOnlyPropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
+ ///         containing unique indices to vertices with offset 0
  /// @tparam TAG tag for selecting the deformation algorithm
  /// @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Polyhedron` being `P`
  /// @tparam ST a model of SparseLinearAlgebraTraitsWithPreFactor_d. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available 
@@ -314,22 +316,8 @@ public:
 
 private:
   void init() {
-    // assign id to each vertex and edge
-    vertex_iterator vb, ve;
-    std::size_t id = 0;
-    for(boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb, ++id)
-    {
-      put(vertex_index_map, *vb, id);
-    }
-
-    edge_iterator eb, ee;
-    id = 0;
-    for(boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb, ++id)
-    {
-      put(edge_index_map, *eb, id);
-    }
-
     // compute edge weights
+    edge_iterator eb, ee;
     edge_weight.reserve(boost::num_edges(polyhedron));
     for(boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
     {
