@@ -55,6 +55,7 @@ public slots:
   void on_ReadROIPushButton_clicked();
   void dock_widget_visibility_changed(bool visible);
   void on_Select_isolated_components_button_clicked();
+  void on_Get_minimum_button_clicked();
 
   void new_item_created(int item_id);
 
@@ -124,6 +125,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   connect(ui_widget->ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
   connect(ui_widget->OverwritePushButton, SIGNAL(clicked()), this, SLOT(on_OverwritePushButton_clicked()));
   connect(ui_widget->Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
+  connect(ui_widget->Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
 
   connect(ui_widget->SaveROIPushButton, SIGNAL(clicked()), this, SLOT(on_SaveROIPushButton_clicked()));
   connect(ui_widget->ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
@@ -248,6 +250,15 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_butto
 
   edit_item->select_isolated_components();
 }
+
+void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
+  int item_id = scene->mainSelectionIndex();
+  Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
+  if(!edit_item) return;                             // the selected item is not of the right type
+
+  edit_item->get_minimum_isolated_component();
+}
+
 void Polyhedron_demo_edit_polyhedron_plugin::on_SaveROIPushButton_clicked()
 {
   int item_id = scene->mainSelectionIndex();
@@ -319,10 +330,10 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
   Scene_edit_polyhedron_item* edit_poly = new Scene_edit_polyhedron_item(poly_item, ui_widget);
   edit_poly->setColor(poly_item->color());
   edit_poly->setName(QString("%1 (edit)").arg(poly_item->name()));
-
+  edit_poly->setRenderingMode(Gouraud);
   poly_item->setName(poly_item_name); // Because it is changed when the
                                       // name of edit_poly is changed.
-
+  
   mw->installEventFilter(edit_poly); // filter mainwindows events for key(pressed/released)
   scene->replaceItem(i, edit_poly);
   return edit_poly;

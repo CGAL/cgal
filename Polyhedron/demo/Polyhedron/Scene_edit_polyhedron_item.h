@@ -9,6 +9,8 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 
+#include <CGAL/compute_normal.h>
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -209,9 +211,7 @@ public:
   
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const { 
-    return (m!=PointsPlusNormals)
-         && (m!= Gouraud)
-         && (m != Flat); 
+    return m == Gouraud; 
   }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const;
@@ -263,7 +263,7 @@ private:
   std::vector<double> positions;
   std::vector<unsigned int> tris;
   std::vector<unsigned int> edges;
-  std::vector<double> vnormals;
+  std::vector<double> normals;
 
   Deform_mesh deform_mesh;
   Deform_mesh::Handle_group active_group;
@@ -519,43 +519,91 @@ public:
     refresh_all_handle_centers();
   }
 
-  void select_isolated_components() {
-    bool any_inserted = false;
-    std::size_t threshold_size = ui_widget->Threshold_size_spin_box->value() < 0 ? 0 :
-      ui_widget->Threshold_size_spin_box->value();
-
+  template<class Visitor>
+  void travel_non_roi_connected_components(Visitor& v) 
+  {
     std::vector<bool> mark(polyhedron()->size_of_vertices(), false);
     Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
     for( ;vb != ve; ++vb) 
     {
       if(mark[vb->id()] || deform_mesh.is_roi(vb)) { continue; }
-      std::queue<Polyhedron::Vertex_handle> Q;
-      std::vector<Polyhedron::Vertex_handle> C;
-      Q.push(vb);
-      mark[vb->id()] = true; C.push_back(vb);
 
-      while(!Q.empty()) {
-        Polyhedron::Vertex_handle current = Q.front();
-        Q.pop();
+      std::vector<Polyhedron::Vertex_handle> C;
+      C.push_back(vb);
+      mark[vb->id()] = true;
+      std::size_t current_index = 0;
+
+      while(current_index < C.size()) {
+        Polyhedron::Vertex_handle current = C[current_index++];
 
         Polyhedron::Halfedge_around_vertex_circulator circ = current->vertex_begin();
         do {
           Polyhedron::Vertex_handle nv = circ->opposite()->vertex();
           if(!mark[nv->id()] && !deform_mesh.is_roi(nv)) {
-            Q.push(nv);
-            mark[nv->id()] = true; C.push_back(nv);
+            mark[nv->id()] = true; 
+            C.push_back(nv);
           }
         } while(++circ != current->vertex_begin());
       } // while(!Q.empty())
 
-      if(C.size() < threshold_size) {
-        any_inserted = true;
-        deform_mesh.insert_roi(C.begin(), C.end());
-      }
-      std::cout << "Connected component found with size: " << C.size() << std::endl;
+      v(C);
     }
-    if(any_inserted) {
+  }
+
+  // to be used in get_minimum_isolated_component function
+  struct Minimum_visitor
+  {
+    void operator()(const std::vector<Polyhedron::Vertex_handle>& C) {
+      if(!minimum) { minimum = C.size(); }
+      else         { minimum = (std::min)(*minimum, C.size()); }
+    }
+
+    boost::optional<std::size_t> minimum;
+  };
+
+  void get_minimum_isolated_component() {
+    Minimum_visitor visitor;
+    travel_non_roi_connected_components(visitor);
+    if(visitor.minimum) {
+      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum);
+    }
+  }
+
+  // to be used in select_isolated_components function
+  struct Selection_visitor
+  {
+    Selection_visitor(std::size_t threshold_size, Deform_mesh* deform_mesh) 
+      : threshold_size(threshold_size), deform_mesh(deform_mesh), any_inserted(false) { }
+
+    void operator()(const std::vector<Polyhedron::Vertex_handle>& C) {
+      if(C.size() <= threshold_size) {
+        any_inserted = true;
+        deform_mesh->insert_roi(C.begin(), C.end());
+      }
+      else { 
+        // to hold minimum of not inserted components
+        minimum_visitor(C);
+      }
+    }
+
+    std::size_t threshold_size;
+    Deform_mesh* deform_mesh;
+    bool any_inserted;
+    Minimum_visitor minimum_visitor; // hold minimum of NOT inserted components
+  };
+
+  void select_isolated_components() {
+    std::size_t threshold_size = ui_widget->Threshold_size_spin_box->value() < 0 ? 0 :
+      ui_widget->Threshold_size_spin_box->value();
+
+    Selection_visitor visitor(threshold_size, &deform_mesh);
+    travel_non_roi_connected_components(visitor);
+    if(visitor.any_inserted) {
       emit itemChanged();
+    }
+    // also set next minimum connected component
+    if(visitor.minimum_visitor.minimum) {
+      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum_visitor.minimum);
     }
   }
 protected:
@@ -760,7 +808,17 @@ protected:
 
   bool keyPressEvent(QKeyEvent* e);
 
-
+  void update_normals() {
+    Deform_mesh::Roi_const_iterator rb, re;
+    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb) {
+      std::size_t id = (*rb)->id();
+      const Polyhedron::Traits::Vector_3& n = 
+        compute_vertex_normal<Polyhedron::Vertex, Polyhedron::Traits>(**rb);
+      normals[id*3] = n.x();
+      normals[id*3+1] = n.y(); 
+      normals[id*3+2] = n.z(); 
+    }
+  }
 protected:
   GLUquadric* quadric; // for drawing spheres
 }; // end class Scene_edit_polyhedron_item

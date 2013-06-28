@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
-    <height>488</height>
+    <width>327</width>
+    <height>491</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -143,6 +143,13 @@
              </property>
              <property name="value">
               <number>8</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="Get_minimum_button">
+             <property name="text">
+              <string>Get Minimum</string>
              </property>
             </widget>
            </item>

@@ -34,6 +34,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
   poly_item->enable_facets_picking(true);
   poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in changed()
+  poly_item->update_vertex_indices();
 
   length_of_axis = bbox().diagonal_length() / 15.0;
 
@@ -50,7 +51,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
 
   // Required for drawing functionality
   positions.resize(boost::num_vertices(*polyhedron())*3);
-  //vnormals.resize(positions.size());
+  normals.resize(positions.size());
   Polyhedron::Vertex_iterator vb, ve;
   std::size_t counter = 0;
   for(vb=polyhedron()->vertices_begin(), ve = polyhedron()->vertices_end();vb != ve; ++vb, ++counter) {
@@ -58,11 +59,12 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
     positions[counter*3+1] = vb->point().y();
     positions[counter*3+2] = vb->point().z();
 
-    //const Polyhedron::Traits::Vector_3& n = compute_vertex_normal<Polyhedron::Vertex, Polyhedron::Traits>(**vb);
+    const Polyhedron::Traits::Vector_3& n = 
+      compute_vertex_normal<Polyhedron::Vertex, Polyhedron::Traits>(*vb);
 
-    //vnormals[counter*3] = n.x();
-    //vnormals[counter*3+1] = n.y();
-    //vnormals[counter*3+2] = n.z();
+    normals[counter*3] = n.x();
+    normals[counter*3+1] = n.y();
+    normals[counter*3+2] = n.z();
   }
 
   tris.resize(polyhedron()->size_of_facets()*3);
@@ -206,13 +208,10 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item::draw_edges() const {
-  //poly_item->direct_draw_edges();
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glVertexPointer(3, GL_DOUBLE, 0, positions.data());
-
   glDrawElements(GL_LINES, edges.size(), GL_UNSIGNED_INT, edges.data());
-
   glDisableClientState(GL_VERTEX_ARRAY); 
 
   if(rendering_mode == Wireframe) {
@@ -220,23 +219,27 @@ void Scene_edit_polyhedron_item::draw_edges() const {
   }
 }
 void Scene_edit_polyhedron_item::draw() const {
-  //poly_item->direct_draw();
-
   glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_NORMAL_ARRAY);
+
   glVertexPointer(3, GL_DOUBLE, 0, positions.data());
-
-  //glEnableClientState(GL_NORMAL_ARRAY);
-  //glNormalPointer(GL_DOUBLE, 0, vnormals.data());
-
+  glNormalPointer(GL_DOUBLE, 0, normals.data());
   glDrawElements(GL_TRIANGLES, tris.size(), GL_UNSIGNED_INT, tris.data());
 
   glDisableClientState(GL_VERTEX_ARRAY);
-  //glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+
+  CGAL::GL::Color color;
+  color.set_rgb_color(0, 0, 0);
+  draw_edges();
 
   draw_ROI_and_handles();
 }
 
 void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
+  GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
+  glDisable(GL_LIGHTING);
+
   CGAL::GL::Color color;
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
   color.set_rgb_color(0, 1.f, 0);
@@ -287,6 +290,8 @@ void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
       gl_draw_point( (*hb)->point() );
     }
   }
+
+  if(enable_back_lighting) { glEnable(GL_LIGHTING); }
 }
 void Scene_edit_polyhedron_item::gl_draw_point(const Point& p) const
 {
@@ -352,7 +357,8 @@ void Scene_edit_polyhedron_item::gl_draw_edge(double px, double py, double pz,
 /////////////////////////////////////////////////////////////
 
 void Scene_edit_polyhedron_item::changed()
-{ }
+{ update_normals(); }
+
 Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() {
   Scene_polyhedron_item* poly_item_tmp = poly_item;
   poly_item->set_color_vector_read_only(false);
