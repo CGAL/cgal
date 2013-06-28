@@ -2216,7 +2216,7 @@ public:
             #warning this is not exact!!!
             #endif
             typename Kernel::Point_3 p1=it->template attribute<0>()->point();
-            typename Kernel::Point_3 p2=it->template beta<1>()->template attribute<0>()->point();
+            typename Kernel::Point_3 p2=it->beta(1)->template attribute<0>()->point();
             query=midpoint(p1,p2);
             res = (*inside_test_ptr)(query);
           }
