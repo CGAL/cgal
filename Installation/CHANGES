@@ -1,4 +1,153 @@
 
+-------------------------------- Release 4.3 --------------------------------
+
+Release date: September 2013
+
+
+* 2D Periodic Triangulations (new package)
+
+  - This package allows to build and handle triangulations of point sets in the
+    two dimensional flat torus. Triangulations are built incrementally and can
+    be modified by insertion or removal of vertices. They offer point location
+    facilities. The package provides Delaunay triangulations and offers nearest
+    neighbor queries and primitives to build the dual Voronoi diagrams.
+
+
+* 2D Arrangements
+
+  - The point location functionalities now uses a boost::variant instead of a
+    CGAL::Object. For convenience, The previous behavior can be restored by
+    defining the macro CGAL_ARR_POINT_LOCATION_VERSION to 1.
+
+
+* Algebraic Foundations
+
+  - For convenience, add an overload of make_rational() taking a pair of
+    numbers.
+
+
+* 2D and 3D Geometry Kernel
+
+  - A Iso_rectangle_2 can now be constructed from a Bbox_2 and an Iso_cuboid_3
+    from a Bbox_3.
+
+  - The intersection functions and functors used to returned a CGAL::Object in
+    order to deal with the different possible return types. However, depending
+    on the arguments it is possible to reduce the possible return types to a
+    small set. For this reason and to take advantage of the type safety, we
+    decided to use boost::variant instead of CGAL::Object. The result_of
+    protocol is now even more useful to determine the return type of the
+    intersection functions and functors. The change should be relatively
+    transparent to the user thanks to the implicit constructor added to CGAL::
+    Object. However, it is recommended to upgrade your code. The previous
+    behavior can be restored by defining the macro CGAL_INTERSECTION_VERSION to
+    1.
+
+  - The implementation of CGAL::Object has been updated and now uses boost::
+    shared_ptr and boost::any. This implementation is faster.
+
+  - Add to Bbox_2 and Bbox_3 a += operator as well as free functions to get the
+    bounding box of a range of geometric objects.
+
+
+* 2D Triangulations
+
+  - Extend the concept TriangulationDataStructure_2 to require a more general
+    copy_tds function that allows a copy between TDS of different types. The
+    CGAL model has been updated.
+
+
+* 3D Triangulations
+
+  - Extend the concept TriangulationDataStructure_3 to require a more general
+    copy_tds function that allows a copy between TDS of different types. The
+    CGAL model has been updated.
+
+  - Add an advanced function to set the infinite vertex of the triangulation
+    for low level operations
+
+
+* Combinatorial Maps
+
+  - Two bug fixes: do not use the 2 least significant bits for cell attribute
+    without dart support; add share a mark in CMap_cell_iterator.
+
+  - Add a constructor taking a given combinatorial map as argument, possibly
+    with different dimension and/or different attributes. This allows to
+    transform a combinatorial map.
+
+  - Add operator= and swap method.
+
+  - Add dynamic onmerge/onsplit functions that can be associated dynamically to
+    i-attributes and which are automatically called when i-cells are split/
+    merged.
+
+  - Add a function allowing to reverse the orientation of a combinatorial map,
+    and another one to reverse one connected component of a combinatorial map.
+
+
+* 2D Apollonius graphs
+
+  - Modified insertion algorithm so that the code can handle pseudo-circles as
+    well.
+
+  - Updated implementation of the vertex conflict predicate by a faster
+    version.
+
+
+* 3D Boolean Operations on Nef Polyhedra
+
+  - Bug-fix in IO when using Lazy_exact_nt as number type or
+    Exact_predicates_exact_constructions_kernel as kernel.
+
+
+* 3D Fast Intersection and Distance Computation
+
+  - Following the intersection API change, Object_and_primitive_id has been
+    replaced by a template class Intersection_and_primitive_id<Query> to
+    determine the type depending on the query object type.
+
+  - Introduce the class AABB_HalfedgeGraph_segment_primitive which replaces the
+    class AABB_polyhedron_segment_primitive (which is now deprecated). The new
+    class is more general and can be used with any model of HalfedgeGraph.
+
+  - Introduce the class AABB_FaceGraph_triangle_primitive which replaces the
+    class AABB_polyhedron_triangle_primitive (which is now deprecated).
+
+  - Document the classes AABB_segment_primitive and AABB_triangle_primitive
+    that were already used in some examples.
+
+  - Add a generic primitive class AABB_primitive that allows to define a
+    primitive type by defining only two property maps.
+
+  - Introduce a new concept of primitive AABBPrimitiveWithSharedData. It allows
+    to have some data shared between the primitives stored in a AABB_tree. With
+    this you can, for example have a primitive wrapping an integer which refers
+    to the position of a geometric object in a std::vector. Only one reference
+    to this vector will be stored in the traits of the tree. The concept
+    AABBTraits, its model AABB_traits and the class AABB_tree have been updated
+    accordingly. However, everything is backward compatible.
+
+  - Fix a memory leak in the destructor of the class AABB-tree
+
+
+* STL Extensions for CGAL
+
+  - Add to Dispatch_output_iterator and Dispatch_or_drop_output_iterator an
+    operator to accept and dispatch a tuple of values.
+
+
+* CGAL and Boost Property Maps
+
+  - The key_type of the property maps provided by CGAL used to be an iterator.
+    In order to be more easily re-used, the key_type has been changed to be the
+    value_type of the iterator. The packages that have been updated to match
+    these changes are Point Set Processing and Surface Reconstruction from
+    Point Sets. However, for most users this change should be transparent if
+    the default property maps were used. For convenience, the former behavior
+    can be enabled by defining the macro CGAL_USE_PROPERTY_MAPS_API_V1.
+
+
 -------------------------------- Release 4.2 --------------------------------
 
 Release date: March 2013
