@@ -281,10 +281,13 @@ public:
 /// @}
 
 /// \name Checking
-/// \cgalAdvanced These methods are mainly a debugging help for the users of advanced features.
+/// \cgalAdvancedBegin
+/// These methods are mainly a debugging help for the users of advanced features.
+/// \cgalAdvancedEnd
 /// @{
 
   /*!
+  \cgalAdvancedBegin
   Checks the combinatorial validity of the triangulation and the
   validity of its geometric embedding (see
   Section \ref P2Triangulation2secintro). Also checks that all the
@@ -292,21 +295,24 @@ public:
 
   When `verbose` is set to true, messages describing the first
   invalidity encountered are printed.
+  \cgalAdvancedEnd
   */
   bool
   is_valid(bool verbose = false) const;
 
   /*!
+  \cgalAdvancedBegin
   Checks the combinatorial and geometric validity of the cell (see
   Section \ref P2Triangulation2secintro). Also checks that the
   circumscribing circle of cells is empty.
 
   When `verbose` is set to true, messages are printed to give
   a precise indication of the kind of invalidity encountered.
+  \cgalAdvancedEnd
   */
   bool
   is_valid(Face_handle f, bool verbose = false) const;
-
+  
 /// @}
 
 }; /* end Periodic_2_Delaunay_triangulation_2 */

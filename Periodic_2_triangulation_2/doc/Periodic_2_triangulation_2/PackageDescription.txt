@@ -16,7 +16,7 @@
 \addtogroup PkgPeriodic2Triangulation2
  
 \cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodicTriangulation2Summary}
-\cgalPkgPicture{thumb120x120.png}
+\cgalPkgPicture{Periodic_2_triangulation_2/fig/p2Delaunay2_thumb.png}
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Nico Kruithof}
