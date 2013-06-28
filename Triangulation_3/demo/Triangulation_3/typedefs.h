@@ -87,7 +87,7 @@ private:
  */
 #ifdef CONCURRENT_TRIANGULATION_3
 typedef CGAL::Spatial_grid_lock_data_structure_3<
-  CGAL::Tag_priority_blocking>           Lock_ds;
+  CGAL::Tag_priority_blocking>                        Lock_ds;
 typedef CGAL::Triangulation_data_structure_3< 
   Vertex_base<Kernel>, 
   CGAL::Triangulation_ds_cell_base_3<>, 
