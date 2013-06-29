@@ -38,6 +38,24 @@ bool read_to_polyhedron(const char* file_name, Polyhedron& mesh)
   return true;
 }
 
+template<class Polyhedron>
+void init_indices(Polyhedron& poly) {
+  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::edge_iterator        edge_iterator;
+
+  vertex_iterator vb, ve;
+  std::size_t counter = 0;
+  for(boost::tie(vb, ve) = boost::vertices(poly); vb != ve; ++vb, ++counter) {
+    (*vb)->id() = counter;
+  }
+
+  counter = 0;
+  edge_iterator eb, ee;
+  for(boost::tie(eb, ee) = boost::edges(poly); eb != ee; ++eb, ++counter) {
+    (*eb)->id() = counter;
+  }
+}
+
 template<class DeformMesh>
 boost::optional<typename DeformMesh::Handle_group>
 read_rois(DeformMesh& deform_mesh, 

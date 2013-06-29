@@ -91,6 +91,9 @@ int main()
   if(!read_to_polyhedron("data/cactus.off", mesh_1)) { return EXIT_FAILURE; }
   Polyhedron mesh_2 = mesh_1;
 
+  init_indices(mesh_1);
+  init_indices(mesh_2);
+
   Deform_mesh_arap deform_mesh_arap(mesh_1, Vertex_index_map(), Edge_index_map()); 
   Deform_mesh_spoke deform_mesh_spoke(mesh_2, Vertex_index_map(), Edge_index_map()); 
   // For original arap

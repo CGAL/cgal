@@ -32,7 +32,9 @@ typedef CGAL::Simple_cartesian<double>   Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron; //enriched polyhedron
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor  	  edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_iterator        edge_iterator;
 
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
@@ -48,8 +50,21 @@ int main()
     std::cerr<< "Cannot open  data/plane.off";
     return 1;
   }
+  // index maps should contain unique indices with 0 offset
+  Vertex_index_map vertex_index_map;
+  vertex_iterator vb, ve;
+  std::size_t counter = 0;
+  for(boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb, ++counter) {
+    put(vertex_index_map, *vb, counter);
+  }
 
-  Deform_mesh deform_mesh(mesh, Vertex_index_map(), Edge_index_map());
+  Edge_index_map edge_index_map;
+  counter = 0;
+  edge_iterator eb, ee;
+  for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb, ++counter) {
+    put(edge_index_map, *eb, counter);
+  }
+  Deform_mesh deform_mesh(mesh, vertex_index_map, edge_index_map);
 
   // Deform mesh as you wish
 }

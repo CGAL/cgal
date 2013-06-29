@@ -16,8 +16,8 @@ typedef CGAL::Simple_cartesian<double>   Kernel;
 typedef CGAL::Polyhedron_3<Kernel>       Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator  	  vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor  	  edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
 typedef boost::graph_traits<Polyhedron>::edge_iterator        edge_iterator;
 
 typedef std::map<vertex_descriptor, std::size_t>   Internal_vertex_map;
@@ -32,7 +32,7 @@ struct Weights_from_map
   Weights_from_map(std::map<edge_descriptor, double>* weight_map) : weight_map(weight_map)
   { }
   template<class VertexPointMap>
-  double operator()(edge_descriptor e, Polyhedron& /*P*/, VertexPointMap /*v*/) {
+  double operator()(edge_descriptor e, Polyhedron& /*P*/, VertexPointMap /*vpm*/) {
     return (*weight_map)[e];
   }
   std::map<edge_descriptor, double>* weight_map;
@@ -58,9 +58,22 @@ int main()
     weight_map[*eb] = 1.0; // store your precomputed weights
   }
 
-  Internal_vertex_map vertex_index_map;
-  Internal_edge_map   edge_index_map;
-  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map), 5, 1e-4, Weights_from_map(&weight_map));
+  // index maps should contain unique indices with 0 offset
+  Internal_vertex_map internal_vertex_index_map;
+  Vertex_index_map vertex_index_map(internal_vertex_index_map);
+  vertex_iterator vb, ve;
+  std::size_t counter = 0;
+  for(boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb, ++counter) {
+    put(vertex_index_map, *vb, counter);
+  }
+
+  Internal_edge_map internal_edge_index_map;
+  Edge_index_map edge_index_map(internal_edge_index_map);
+  counter = 0;
+  for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb, ++counter) {
+    put(edge_index_map, *eb, counter);
+  }
+  Deform_mesh deform_mesh(mesh, vertex_index_map, edge_index_map, 5, 1e-4, Weights_from_map(&weight_map));
 
   // Deform mesh as you wish
 }

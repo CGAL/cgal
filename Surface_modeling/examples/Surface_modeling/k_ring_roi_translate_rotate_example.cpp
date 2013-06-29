@@ -17,8 +17,9 @@ typedef CGAL::Simple_cartesian<double>   Kernel;
 typedef CGAL::Polyhedron_3<Kernel>       Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator  	  vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor  	  edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_iterator        edge_iterator;
 typedef boost::graph_traits<Polyhedron>::out_edge_iterator    out_edge_iterator;
 
 typedef std::map<vertex_descriptor, std::size_t>   Internal_vertex_map;
@@ -53,13 +54,6 @@ std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_desc
   return D;
 }
 
-template<class Iterator>
-Iterator next_helper(Iterator it, std::size_t n) {
-  Iterator it_next = it;
-  while(n-- > 0) { ++it_next; }
-  return it_next;
-}
-
 int main()
 {
   Polyhedron mesh;
@@ -70,18 +64,31 @@ int main()
     return 1;
   }
 
-  Internal_vertex_map vertex_index_map;
-  Internal_edge_map   edge_index_map;
+  // index maps should contain unique indices with 0 offset
+  Internal_vertex_map internal_vertex_index_map;
+  Vertex_index_map vertex_index_map(internal_vertex_index_map);
+  vertex_iterator vb, ve;
+  std::size_t counter = 0;
+  for(boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb, ++counter) {
+    put(vertex_index_map, *vb, counter);
+  }
+
+  Internal_edge_map internal_edge_index_map;
+  Edge_index_map edge_index_map(internal_edge_index_map);
+  counter = 0;
+  edge_iterator eb, ee;
+  for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb, ++counter) {
+    put(edge_index_map, *eb, counter);
+  }
 //// PREPROCESS SECTION ////
-  Deform_mesh deform_mesh(mesh, Vertex_index_map(vertex_index_map), Edge_index_map(edge_index_map));
+  Deform_mesh deform_mesh(mesh, vertex_index_map, edge_index_map);
 
   // insert region of interest
-  vertex_iterator vb, ve;
   boost::tie(vb,ve) = boost::vertices(mesh);
 
-  std::map<vertex_descriptor, int> roi_map = extract_k_ring(mesh, *next_helper(vb, 47), 9);
-  std::map<vertex_descriptor, int> handles_1_map = extract_k_ring(mesh, *next_helper(vb, 39), 1);
-  std::map<vertex_descriptor, int> handles_2_map = extract_k_ring(mesh, *next_helper(vb, 97), 1);
+  std::map<vertex_descriptor, int> roi_map = extract_k_ring(mesh, *boost::next(vb, 47), 9);
+  std::map<vertex_descriptor, int> handles_1_map = extract_k_ring(mesh, *boost::next(vb, 39), 1);
+  std::map<vertex_descriptor, int> handles_2_map = extract_k_ring(mesh, *boost::next(vb, 97), 1);
 
   for(std::map<vertex_descriptor, int>::iterator it = roi_map.begin(); it != roi_map.end(); ++it) {
     deform_mesh.insert_roi(it->first);
