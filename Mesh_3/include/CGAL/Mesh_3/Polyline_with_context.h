@@ -44,6 +44,7 @@ template <typename Surface_patch_id,
 struct Polyline_with_context
 {
   typedef Bare_polyline_ Bare_polyline;
+  typedef typename Bare_polyline::value_type Point_3;
   typedef Polyline_context<Surface_patch_id,Curve_id> Context;
 
   Context context;

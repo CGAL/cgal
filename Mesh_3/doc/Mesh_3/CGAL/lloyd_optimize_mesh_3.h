@@ -56,11 +56,12 @@ the displacement of any vertex is less than a given percentage of the
 length of the shortest edge incident to that vertex. 
 The parameter `convergence` gives the threshold ratio. 
 
-- <b>`parameters::freeze_bound`</b> 
-is designed to reduce running time of each optimization iteration. Any vertex 
-that has 
-a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e.\ is 
-not relocated). The parameter `freeze_bound` gives the threshold ratio. At each iteration, any vertex that 
+- <b>`parameters::freeze_bound`</b> is designed to reduce running time of each optimization iteration. Any vertex 
+that has a displacement less than a given percentage of the length (the  of its shortest incident edge, is frozen (i.e.\ is 
+not relocated). The parameter `freeze_bound` gives the threshold ratio.
+
+- <b>`parameters::do_freeze`</b> completes the `freeze_bound` parameter. If it is set to `true` (default value), 
+frozen vertices will not move anymore in next iterations. Otherwise, at each iteration, any vertex that 
 moves, unfreezes all its incident vertices. 
 
 
@@ -69,9 +70,13 @@ The function `lloyd_optimize_mesh_3()` returns a value of type `CGAL::Mesh_optim
 which is: 
 <UL> 
 <LI>`CGAL::TIME_LIMIT_REACHED` when the time limit is reached. 
-<LI>`CGAL::MAX_ITERATION_NUMBER_REACHED` when `lloyd_optimize_mesh_3` stops because it has performed `max_iteration_number` iterations. 
+<LI>`CGAL::MAX_ITERATION_NUMBER_REACHED` when `lloyd_optimize_mesh_3()` stops because it has performed `max_iteration_number` iterations. 
 <LI>`CGAL::CONVERGENCE_REACHED` when `lloyd_optimize_mesh_3()` stops because the convergence criterion 
 is achieved. 
+<LI>`CGAL::ALL_VERTICES_FROZEN` when all vertices have been frozen, when the 
+`do_freeze` parameter is set to true.
+<LI>`CGAL::CANT_IMPROVE_ANYMORE` when `lloyd_optimize_mesh_3()` stops because 
+most vertices have been frozen, and no better convergence can be reached.
 </UL> 
 
 \cgalHeading{Example}
@@ -83,7 +88,8 @@ is achieved.
 lloyd_optimize_mesh_3(c3t3, 
                       domain, 
                       parameters::convergence=0.01, 
-                      parameters::freeze_bound=0.001); 
+                      parameters::freeze_bound=0.001,
+                      parameters::do_freeze=true); 
 
 \endcode 
 
@@ -102,6 +108,7 @@ lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain_3 domain,
 double parameters::time_limit=0,
 std::size_t parameters::max_iteration_number=0,
 double parameters::convergence=0.02,
-double parameters::freeze_bound = 0.01);
+double parameters::freeze_bound = 0.01,
+bool parameters::do_freeze=true);
 
 } /* namespace CGAL */

@@ -26,6 +26,7 @@
 #define CGAL_MESH_EDGE_CRITERIA_3_H
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
+#include <boost/type_traits.hpp>
 
 namespace CGAL {
 
@@ -112,9 +113,17 @@ public:
   template < typename Sizing_field >
   Mesh_edge_criteria_3(const Sizing_field& size,
                        typename Sizing_field::FT /*dummy*/ = 0 )
-    : p_size_(new internal::Mesh_3::Sizing_field_container<Sizing_field>(size))
-  {}
-  
+  {
+    CGAL_static_assertion((boost::is_same<typename Sizing_field::FT,
+                                          FT>::value));
+    CGAL_static_assertion((boost::is_same<typename Sizing_field::Point_3,
+                                          Point_3>::value));
+    CGAL_static_assertion((boost::is_same<typename Sizing_field::Index,
+                                          Index>::value));
+                          
+    p_size_ = new internal::Mesh_3::Sizing_field_container<Sizing_field>(size);
+  }
+
   Mesh_edge_criteria_3(const Self& rhs)
     : p_size_(rhs.p_size_->clone()) {}
   

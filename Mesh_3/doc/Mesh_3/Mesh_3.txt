@@ -479,7 +479,8 @@ a sizing field to guide
 the sampling of 1-dimensional features with protecting balls centers.
 <UL>
 <LI><I>`edge_size`</I>. This constant or variable scalar field is used as an upper bound for the distance between two 
-protecting ball centers that are consecutive on a 1-feature.
+protecting ball centers that are consecutive on a 1-feature. This parameter has to be set to a positive value when  
+1-dimensional features protection is used.
 </UL>
 
 \subsection Mesh_3TheOptimizationParameters The Optimization Parameters

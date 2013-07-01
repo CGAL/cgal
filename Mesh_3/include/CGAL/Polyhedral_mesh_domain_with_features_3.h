@@ -26,6 +26,8 @@
 #ifndef CGAL_POLYHEDRAL_MESH_DOMAIN_WITH_FEATURES_3_H
 #define CGAL_POLYHEDRAL_MESH_DOMAIN_WITH_FEATURES_3_H
 
+#include <CGAL/Mesh_3/config.h>
+
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
@@ -95,12 +97,20 @@ public:
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p);
   Polyhedral_mesh_domain_with_features_3(const std::string& filename);
 
+  template <typename T1, typename T2>
+  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b) : Base(a, b) {}
+
+  template <typename T1, typename T2, typename T3>
+  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c)
+    : Base(a, b, c) {}
+
   /// Destructor
   ~Polyhedral_mesh_domain_with_features_3() {}
 
   /// Detect features
-  void detect_features(FT angle_in_degree = FT(60));
-  
+  void detect_features(FT angle_in_degree, Polyhedron& p);
+  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, polyhedron_); }
+
 private:
   Polyhedron polyhedron_;
 
@@ -141,22 +151,21 @@ template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-detect_features(FT angle_in_degree)
+detect_features(FT angle_in_degree, Polyhedron& p)
 {
   // Get sharp features
-  Mesh_3::detect_features(polyhedron_,angle_in_degree);
+  Mesh_3::detect_features(p,angle_in_degree);
   
   // Get polylines
   typedef std::vector<Point_3> Bare_polyline;
-  typedef Mesh_3::Polyline_with_context<Surface_patch_index,
-                                        Curve_segment_index,
-                                        Bare_polyline > Polyline;
+  typedef Mesh_3::Polyline_with_context<Surface_patch_index, Curve_segment_index,
+    Bare_polyline > Polyline;
   
   std::vector<Polyline> polylines;
   typedef std::back_insert_iterator<std::vector<Polyline> > Output_iterator;
 
   Mesh_3::detect_polylines<Polyhedron,Polyline,Output_iterator>(
-    &polyhedron_, std::back_inserter(polylines));
+    &p, std::back_inserter(polylines));
     
   // Insert polylines in domain
   Mesh_3::Extract_bare_polyline<Polyline> extractor;

@@ -18,18 +18,22 @@ and four additional helper markers
 used in some operations to mark for instance 
 the facets that have been visited. 
 
-This concept also provides storage for the centers of Delaunay surface 
-balls. 
+This concept also provides storage for the centers of Delaunay surface balls. 
 Each surface facet has a Delaunay surface ball, i. e. 
 a circumscribing ball, centered 
 on an input complex surface patch, 
 and empty of triangulation vertices. 
 In the following we call `surface center` 
-of a surface facet, the center of its biggest Delaunay surface ball. 
+of a surface facet, the center of its biggest Delaunay surface ball.
+
+The optimizers also need this concept to provide read-write access to two `Cell_handle`
+called 'intrusive'.
+
 
 \cgalRefines `RegularTriangulationCellBase_3` 
 
-\cgalHasModel `CGAL::Mesh_cell_base_3<MD,Gt,Cb>` 
+\cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
+\cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
 
 \sa `CGAL::make_mesh_3()` 
 \sa `MeshDomain_3` 
@@ -113,6 +117,43 @@ Sets point `p` as the surface center of `facet(i)`.
 */ 
 void set_facet_surface_center (int i, Point p); 
 
+/*!
+Invalidates the circumcenter value stored in the cell.
+This value is usually stored in the cell, but the optimizers need to be able to 
+invalidate this cache value.
+*/
+void invalidate_circumcenter();
+
 /// @}
+
+/*! \name Internal 
+These functions are used internally by mesh optimizers. 
+The class should provide storage, accessors and modificators for two `Vertex_handle`
+and two `Cell_handle`.*/
+/// @{
+
+/*!
+
+*/
+Cell_handle next_intrusive() const;
+
+/*!
+
+*/
+void set_next_intrusive(Cell_handle);
+
+/*!
+
+*/
+Cell_handle previous_intrusive() const;
+
+/*!
+
+*/
+void set_previous_intrusive(Cell_handle);
+
+
+/// @}
+
 
 }; /* end MeshCellBase_3 */

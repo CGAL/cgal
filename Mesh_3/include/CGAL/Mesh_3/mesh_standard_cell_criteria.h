@@ -26,6 +26,7 @@
 #ifndef CGAL_MESH_3_MESH_STANDARD_CELL_CRITERIA_H
 #define CGAL_MESH_3_MESH_STANDARD_CELL_CRITERIA_H
 
+#include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/utils.h> // for CGAL::min
@@ -259,6 +260,69 @@ private:
   
 };  // end class Cell_variable_size_criterion
 
+/// New cell criterion that disallows a cell to have points on different
+/// surfaces, if they are all of dimension 2.
+template <typename C3t3_, typename Visitor_>
+class No_bridge_cell_criterion
+  : public Abstract_criterion<typename C3t3_::Triangulation, Visitor_>
+{
+  typedef C3t3_ C3t3;
+  typedef typename C3t3::Triangulation Tr;
+  typedef typename Tr::Cell_handle Cell_handle;
+  typedef typename Tr::Geom_traits::FT FT;
+
+  typedef Abstract_criterion<Tr,Visitor_> Base;
+  typedef typename Base::Quality Quality;
+  typedef typename Base::Badness Badness;
+
+  typedef No_bridge_cell_criterion<C3t3, Visitor_> Self;
+
+public:
+  // Constructor
+  No_bridge_cell_criterion()
+  {}
+
+  // Destructor
+  ~No_bridge_cell_criterion() {}
+
+
+protected:
+  virtual void do_accept(Visitor_& v) const
+  {
+    v.visit(*this);
+  }
+
+  virtual Self* do_clone() const
+  {
+    // Call copy ctor on this
+    return new Self(*this);
+  }
+
+  virtual Badness do_is_bad(const Cell_handle& ch) const
+  {
+    typedef typename Tr::Vertex_handle Vertex_handle;
+
+    const Vertex_handle vp = ch->vertex(0);
+    const Vertex_handle vq = ch->vertex(1);
+    const Vertex_handle vr = ch->vertex(2);
+    const Vertex_handle vs = ch->vertex(3);
+
+    if(vp->in_dimension() != 2 || 
+       vq->in_dimension() != 2 || 
+       vr->in_dimension() != 2 || 
+       vs->in_dimension() != 2) return Badness();
+
+    typedef typename C3t3::Index Index;
+    const Index& vp_index = vp->index();
+
+    if(vq->index() != vp_index ||
+       vr->index() != vp_index ||
+       vs->index() != vp_index) return Badness(Quality(1));
+
+    return Badness();
+  }
+};  // end class No_bridge_cell_criterion
+
 
 template <typename Tr>
 class Cell_criterion_visitor
@@ -437,7 +501,13 @@ public:
     
     Base::do_visit(criterion);
   }
-  
+
+  template <typename C3t3>
+  void visit(const No_bridge_cell_criterion<C3t3, Self>& criterion)
+  {
+    Base::do_visit(criterion);
+  }
+
 private:
   int wp_nb_;
   bool do_spheres_intersect_;

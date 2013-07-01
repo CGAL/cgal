@@ -4,12 +4,18 @@ namespace CGAL {
 \ingroup PkgMesh_3Domains
 
 The class `Polyhedral_mesh_domain_3` implements 
-a domain whose boundary is a simplicial polyhedral surface. 
-This surface must be closed and free of intersection. 
-This class is a model of the concept `MeshDomain_3`. 
+a domain defined by a simplicial polyhedral surface.
+	
+The input polyhedral surface must be free of intersection.
+It must include (at least) one closed connected component
+that defines the boundary of the domain to be meshed.
+Inside this bounding component,
+the input polyhedral surface may contain
+several other components (closed or not)
+that will be represented in the final mesh.   
+This class is a model of the concept `MeshDomain_3`.
 
-
-\tparam Polyhedron stands for the type of the input polyhedral surface. 
+\tparam Polyhedron stands for the type of the input polyhedral surface(s). 
 The only requirements for this type is that the triangles of the surfaces 
 must be accessible through an object of the class 
 `TriangleAccessor`. 
@@ -43,9 +49,21 @@ public:
 /// @{
 
 /*! 
-Construction from a polyhedral surface. 
+Construction from a bouding polyhedral surface which should be closed, and free of intersections.
+The inside of `bounding_polyhedron` will be meshed.
 */ 
-Polyhedral_mesh_domain_3(Polyhedron polyhedron); 
+Polyhedral_mesh_domain_3(Polyhedron bounding_polyhedron); 
+
+/*!
+Construction from a polyhedral surface, and a bounding polyhedral surface,.
+The first polyhedron should be entirely included inside `bounding_polyhedron`, which has to be closed 
+and free of intersections. 
+Using this constructor allows to mesh a polyhedral surface which is not closed, or has holes.
+The inside of `bounding_polyhedron` will be meshed.
+*/
+Polyhedral_mesh_domain_3(Polyhedron polyhedron,
+				     Polyhedron bounding_polyhedron);
+			   
 
 /// @}
 

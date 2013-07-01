@@ -74,11 +74,11 @@ template <class C3T3,
 void
 output_to_tetgen(std::string filename,
                  const C3T3& c3t3,
-                 const Vertex_index_property_map& vertex_pmap,
-                 const Facet_index_property_map& facet_pmap,
-                 const Cell_index_property_map& cell_pmap,
-                 const Facet_index_property_map_twice& facet_twice_pmap = Facet_index_property_map_twice(),
-                 const bool print_each_facet_twice = false)
+                 const Vertex_index_property_map& /* vertex_pmap */,
+                 const Facet_index_property_map& /* facet_pmap */,
+                 const Cell_index_property_map& /* cell_pmap */,
+                 const Facet_index_property_map_twice& /* facet_twice_pmap */ = Facet_index_property_map_twice(),
+                 const bool /* print_each_facet_twice */ = false)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename C3T3::Facets_in_complex_iterator Facet_iterator;

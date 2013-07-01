@@ -257,6 +257,7 @@ struct Odt_parameters
   double time_limit;
   double convergence_ratio;
   double freeze_ratio;
+  bool do_freeze;
   int max_iteration_nb;
   
   QStringList log() const
@@ -265,6 +266,7 @@ struct Odt_parameters
       << QString("time limit: %1").arg(time_limit)
       << QString("convergence ratio: %1").arg(convergence_ratio)
       << QString("freeze ratio: %1").arg(freeze_ratio)
+      << QString("do freeze: %1").arg(do_freeze)
       << QString("maximum iterations: %1").arg(max_iteration_nb);
   }
 };
@@ -317,7 +319,7 @@ protected:
     if ( NULL != odt_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
 
     // Create optimizer
-    odt_ = new Odt_optimizer(c3t3, domain, p_.freeze_ratio, p_.convergence_ratio);
+    odt_ = new Odt_optimizer(c3t3, domain, p_.freeze_ratio, p_.do_freeze, p_.convergence_ratio);
     if ( NULL == odt_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Set max time
@@ -367,6 +369,7 @@ struct Lloyd_parameters
   double time_limit;
   double convergence_ratio;
   double freeze_ratio;
+  bool do_freeze;
   int max_iteration_nb;
   
   QStringList log() const
@@ -375,6 +378,7 @@ struct Lloyd_parameters
       << QString("time limit: %1").arg(time_limit)
       << QString("convergence ratio: %1").arg(convergence_ratio)
       << QString("freeze ratio: %1").arg(freeze_ratio)
+      << QString("do freeze: %1").arg(do_freeze)
       << QString("maximum iterations: %1").arg(max_iteration_nb);
   }
 };
@@ -427,7 +431,7 @@ protected:
     if ( NULL != lloyd_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Create optimizer
-    lloyd_ = new Lloyd_optimizer(c3t3, domain, p_.freeze_ratio, p_.convergence_ratio);
+    lloyd_ = new Lloyd_optimizer(c3t3, domain, p_.freeze_ratio, p_.do_freeze, p_.convergence_ratio);
     if ( NULL == lloyd_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Set max time

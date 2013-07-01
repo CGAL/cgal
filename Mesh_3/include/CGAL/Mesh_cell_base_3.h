@@ -23,10 +23,16 @@
 #ifndef CGAL_MESH_CELL_BASE_3_H
 #define CGAL_MESH_CELL_BASE_3_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_cell_base_3.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Compact_mesh_cell_base_3.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
+#include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
+#include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
   
@@ -72,7 +78,12 @@ public:
     : Base()
     , subdomain_index_()
     , sliver_value_(FT(0.))
-    , sliver_cache_validity_(false) {}
+    , sliver_cache_validity_(false)
+#ifdef CGAL_INTRUSIVE_LIST
+    , next_intrusive_()
+    , previous_intrusive_()
+#endif
+  {}
   
   Mesh_cell_base_3 (Vertex_handle v0,
                     Vertex_handle v1,
@@ -81,7 +92,12 @@ public:
     : Base (v0, v1, v2, v3)
     , subdomain_index_() 
     , sliver_value_(FT(0.))
-    , sliver_cache_validity_(false) {}
+    , sliver_cache_validity_(false)
+#ifdef CGAL_INTRUSIVE_LIST
+    , next_intrusive_()
+    , previous_intrusive_()
+#endif
+  {}
   
   Mesh_cell_base_3 (Vertex_handle v0,
                     Vertex_handle v1,
@@ -94,7 +110,12 @@ public:
     : Base (v0, v1, v2, v3, n0, n1, n2, n3)
     , subdomain_index_()
     , sliver_value_(FT(0.))
-    , sliver_cache_validity_(false) {}
+    , sliver_cache_validity_(false)
+#ifdef CGAL_INTRUSIVE_LIST
+    , next_intrusive_()
+    , previous_intrusive_()
+#endif
+  {}
   
   // Default copy constructor and assignment operator are ok
   
@@ -113,6 +134,29 @@ public:
   const FT& sliver_value() const { return sliver_value_; }
   bool is_cache_valid() const { return sliver_cache_validity_; }
   void reset_cache_validity() const { sliver_cache_validity_ = false;  }
+
+  static
+  std::string io_signature()
+  {
+    return
+      Get_io_signature<Subdomain_index>()() + "+"
+      + Get_io_signature<Base>()();
+  }
+
+#ifdef CGAL_INTRUSIVE_LIST
+public:
+  Cell_handle next_intrusive() const { return next_intrusive_; }
+  void set_next_intrusive(Cell_handle c)
+  { 
+    next_intrusive_ = c; 
+  }
+   
+  Cell_handle previous_intrusive() const { return previous_intrusive_; }
+  void set_previous_intrusive(Cell_handle c)
+  { 
+    previous_intrusive_ = c; 
+  }
+#endif // CGAL_INTRUSIVE_LIST
   
 private:
   // The index of the cell of the input complex that contains me
@@ -120,6 +164,11 @@ private:
   
   FT sliver_value_;
   mutable bool sliver_cache_validity_;
+
+#ifdef CGAL_INTRUSIVE_LIST
+  Cell_handle next_intrusive_, previous_intrusive_;
+#endif
+
 };  // end class Mesh_cell_base_3
 
 

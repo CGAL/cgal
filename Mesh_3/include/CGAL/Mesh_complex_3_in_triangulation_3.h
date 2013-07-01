@@ -1,4 +1,5 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009-2010 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010-2013 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -192,7 +193,11 @@ public:
   {
     return edges_.size();
   }
-  
+  size_type number_of_edges() const
+  {
+    return edges_.size();
+  }
+
   /**
    * Returns the number of corners of c3t3
    */
@@ -269,7 +274,7 @@ public:
   /**
    * Returns true if c3t3 is valid
    */
-  bool is_valid() const;
+  bool is_valid(bool verbose = false) const;
   
   // -----------------------------------
   // Complex traversal
@@ -437,6 +442,11 @@ private:
   void add_to_complex(const Internal_edge& edge, const Curve_segment_index& index)
   {
     CGAL_precondition(!is_in_complex(edge));
+#ifdef CGAL_MESH_3_PROTECTION_DEBUG
+    std::cerr << "Add edge ( " << edge.left->point()
+              << " , " << edge.right->point() << " ), curve_index=" << index
+              << " to c3t3.\n";
+#endif // CGAL_MESH_3_PROTECTION_DEBUG
     std::pair<typename Edge_map::iterator, bool> it = edges_.insert(edge);
     it.first->info = index;
   }
@@ -531,7 +541,7 @@ adjacent_vertices_in_complex(const Vertex_handle& v, OutputIterator out) const
 template <typename Tr, typename CI_, typename CSI_>
 bool
 Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
-is_valid() const
+is_valid(bool verbose) const
 {
   typedef typename Tr::Point::Point    Bare_point;
   typedef typename Tr::Point::Weight   Weight;
@@ -558,6 +568,11 @@ is_valid() const
   {
     if ( vit->first->in_dimension() != 0 && vit->second != 2 )
     {
+      if(verbose)
+        std::cerr << "Validity error: vertex " << (void*)(&*vit->first)
+                  << " (" << vit->first->point() << ") "
+                  << "is not a corner (dimension " << vit->first->in_dimension()
+                  << ") but has " << vit->second << " neighbor(s)!\n";
       return false;
     }
   }

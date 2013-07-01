@@ -22,6 +22,7 @@
 #ifndef CGAL_MESH_3_DETECT_FEATURES_IN_POLYHEDRA_H
 #define CGAL_MESH_3_DETECT_FEATURES_IN_POLYHEDRA_H
 
+#include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Mesh_3/Detect_features_in_polyhedra_fwd.h>
 #include <set>
 
@@ -95,7 +96,7 @@ detect_sharp_edges(Polyhedron& polyhedron, FT angle_in_deg) const
   for(typename Polyhedron::Halfedge_iterator he = polyhedron.edges_begin(),
       end = polyhedron.edges_end() ; he != end ; ++he)
   {
-    if(he->is_border() || is_sharp(he,cos_angle))
+    if(he->is_border() || angle_in_deg == FT() || is_sharp(he,cos_angle))
     {
       he->set_feature_edge(true);
       he->opposite()->set_feature_edge(true);

@@ -36,6 +36,7 @@ struct Dummy_domain
   typedef typename K::Point_3 Point_3;
   typedef typename K::FT FT;
   typedef int Index;
+  typedef int Surface_patch_index;
 };
 
 typedef Dummy_domain<K_e_i> Smooth_domain;
