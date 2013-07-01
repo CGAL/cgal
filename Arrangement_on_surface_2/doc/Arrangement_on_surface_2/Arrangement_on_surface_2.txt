@@ -2118,36 +2118,65 @@ techniques to speed up its predicates and constructions.
 
 \subsection arr_ssectr_polylines The Polyline-Traits Class
 
-The `Arr_polyline_traits_2<SegmentTraits>` class can be used
-to maintain arrangements of polylines (a.k.a. poly-segments),
-which are continuous piecewise linear curves. A polyline can be
-created from a range of points, where the \f$ i\f$-th and \f$ (i+1)\f$-st
-points in the range represent the endpoints of the \f$ i\f$-th segment
-of the polyline. The polyline traits class is parameterized with a
-segment-traits class that supports the basic operations on
-segments.
+The `Arr_polyline_traits_2<SegmentTraits>` class can be used to
+maintain arrangements of polylines (a.k.a. poly-segments), which are
+bounded, continuous and piecewise linear curves. We call the linear
+elements that a polyline comprises \a segments. The polyline traits
+class is parameterized with a segment-traits class that supports the
+basic operations on segments. Note that the provided template
+parameter has to model `ArrangementTraits_2` and
+`ArrangementDirectionalXMonotoneTraits_2`.
 
 Polylines are the simplest form of a curves that are not
 necessarily \f$ x\f$-monotone. They can be used to approximate more
 complicated curves in a convenient manner, as the algebra needed
 to handle them is elementary - rational arithmetic is sufficient
-to construct an arrangement of polylines is an exact and robust
+to construct an arrangement of polylines in an exact and robust
 manner. Note, however, that a single polyline can be split into
 many \f$ x\f$-monotone polylines, and that the number of intersection
 points (or overlapping sections) between two polylines can also
 be large.
 
-The polyline-traits class is a model of the `ArrangementTraits_2`
-concept and of the `ArrangementLandmarkTraits_2` concept.
-It inherits its point type from the segment-traits class, and defines
-the polyline type, which serves as its `Curve_2`. Polyline curve
-objects can be constructed from a range of points. They also enable
-the traversal over the range of defining points, whose first and
-past-the-end iterators can be obtained through the methods `begin()`
-and `end()`. The nested `X_monotone_curve_2` type inherits
-from `Curve_2`. The points in an \f$ x\f$-monotone curve are
-always stored in lexicographically increasing order of their
-coordinates.
+The polyline-traits class is a model of the concepts
+`ArrangementTraits_2`, `ArrangementLandmarkTraits_2` and
+`ArrangementDirectionalXMonotoneTraits_2` concepts. It inherits its
+point type from the segment-traits class, and defines the polyline
+type, which serves as its `Curve_2`. The segments of the polyline are
+represented by the `Curvre_2` nested type of the segment-traits
+template parameter. A polyline can be constructed given one of the
+following inputs:
+
+<OL>
+<LI> <b>Range of \a points</b>, where the \f$ i\f$-th and \f$
+(i+1)\f$-st points in the range represent the endpoints of the \f$
+i\f$-th segment of the polyline.
+<LI> <b>Range of \a segments</b>, where the \f$i\f$-th segment
+in the input is the \f$i\f$-th segment of the polyline.
+<LI> A pair of points \a or a single segment. In this case a polyline
+which comprise a single segment will be constructed.
+</OL>
+
+Note that degenerated polylines are not supported. That is, it is
+impossible to construct a polyline which contains a segment of length
+zero, or an isolated point. Finally, a polyline is
+<em>well-oriented</em>, that is the target of the \f$i\f$-th segment is
+the source of the \f$i+1\f$-st segment. For example, the general polyline
+\image html generic-polyline.png
+\image latex generic-polyline.pdf
+can be represented by one (and only one) of the following two
+\image html well-oriented-polyline.png
+\image latex well-oriented-polyline.pdf
+
+It is possible to traverse over the constituting segments of a given
+polyline.  The \a first and \a past-the-end iterators can be obtained
+through the functions `begin_segments()` and `end_segments()`
+respectively. The nested `X_monotone_curve_2` type inherits from
+`Curve_2`. The vertices of an \f$ x\f$-monotone curve are always
+stored in a strongly monotonic lexicographical order. In other words,
+\f$x\f$-monotone polylines can be directed \a either left-to-right \a
+or right-to-left. If the macro #CGAL_ALWAYS_LEFT_TO_RIGHT is set to 1,
+then the nested \f$x\f$-monotone polylines will be directed from
+left-to-right.
 
 \cgalFigureBegin{arr_figex_12,ex_12.gif} An arrangement of three
 polylines, as constructed in `polylines.cpp`. Disks mark vertices
