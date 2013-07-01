@@ -30,16 +30,16 @@ namespace po = boost::program_options;
 
 #ifdef WINVER
   const char * const BENCHMARK_CONFIG_FILENAME =
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg"; // CJTODO
 
   const char * const BENCHMARK_SCRIPT_FILENAME =
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/benchmark/Mesh_3/concurrency_script.txt"; // CJTODO
 #else
   const char * const BENCHMARK_CONFIG_FILENAME =
-    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg";
+    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_config.cfg"; // CJTODO
 
   const char * const BENCHMARK_SCRIPT_FILENAME =
-    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_script.txt";
+    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/benchmark/Mesh_3/concurrency_script.txt"; // CJTODO
 #endif
 
 // ==========================================================================
@@ -104,10 +104,10 @@ const int     TET_SHAPE                = 3;
 
 # ifdef WINVER
   const char * const CONFIG_FILENAME =
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg"; // CJTODO
 # else
   const char * const CONFIG_FILENAME =
-    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+    "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg"; // CJTODO
 # endif
 
   // =================
@@ -157,9 +157,9 @@ const int     TET_SHAPE                = 3;
 // ==========================================================================
 
 #ifdef WINVER
-  const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off";
+  const char * const DEFAULT_INPUT_FILE_NAME = "D:/INRIA/CGAL/workingcopy/Mesh_3/examples/Mesh_3/data/elephant.off"; // CJTODO
 #else
-  const char * const DEFAULT_INPUT_FILE_NAME = "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/examples/Mesh_3/data/elephant.off";
+  const char * const DEFAULT_INPUT_FILE_NAME = "/home/cjamin/CGAL/Mesh_3-parallel-cjamin/Mesh_3/examples/Mesh_3/data/elephant.off"; // CJTODO
 #endif
 
 // ==========================================================================
