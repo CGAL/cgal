@@ -2149,9 +2149,12 @@ from `Curve_2`. The points in an \f$ x\f$-monotone curve are
 always stored in lexicographically increasing order of their
 coordinates.
 
-\cgalFigureBegin{arr_figex_12,ex_12.gif}
-An arrangement of three polylines, as constructed in `polylines.cpp`. Disks mark vertices associated with polyline endpoints, while circles mark vertices that correspond to intersection points. Note that \f$ \pi_2\f$ is split into three \f$ x\f$-monotone polylines, and that \f$ \pi_1\f$ and \f$ \pi_3\f$ have two overlapping sections.
-\cgalFigureEnd
+\cgalFigureBegin{arr_figex_12,ex_12.gif} An arrangement of three
+polylines, as constructed in `polylines.cpp`. Disks mark vertices
+associated with polyline endpoints, while circles mark vertices that
+correspond to intersection points. Note that \f$ \pi_2\f$ is split
+into three \f$ x\f$-monotone polylines, and that \f$ \pi_1\f$ and \f$
+\pi_3\f$ have two overlapping sections.  \cgalFigureEnd
 
 
 The following example program constructs an arrangement of three
