@@ -22,6 +22,7 @@
 #include <sstream>
 #include <ctime>
 
+#include <boost/thread.hpp>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
@@ -1010,7 +1011,7 @@ int main()
 #ifdef CONCURRENT_MESH_3
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Num_threads",
-              (num_threads == -1 ? std::thread::hardware_concurrency() : num_threads));
+              (num_threads == -1 ? boost::thread::hardware_concurrency() : num_threads));
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Lockgrid_size",
               Concurrent_mesher_config::get().locking_grid_num_cells_per_axis);

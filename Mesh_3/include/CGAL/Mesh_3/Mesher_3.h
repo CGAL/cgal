@@ -57,6 +57,7 @@
 #endif
 
 #include <boost/format.hpp>
+#include <boost/thread.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <string>
 
@@ -593,7 +594,7 @@ initialize()
 #  endif
    Random_points_on_sphere_3<Point> random_point(radius);
    const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-     std::thread::hardware_concurrency()
+     boost::thread::hardware_concurrency()
      *Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
    for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
      r_c3t3_.triangulation().insert(*random_point + center);
