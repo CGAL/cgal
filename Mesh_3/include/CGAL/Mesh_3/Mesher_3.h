@@ -576,31 +576,31 @@ initialize()
 
 # ifndef CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
-   const Bbox_3 &bbox = estimated_bbox;
+    const Bbox_3 &bbox = estimated_bbox;
 
-   // Compute radius for far sphere
-   const double& xdelta = bbox.xmax()-bbox.xmin();
-   const double& ydelta = bbox.ymax()-bbox.ymin();
-   const double& zdelta = bbox.zmax()-bbox.zmin();
-   const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
-                                 ydelta*ydelta +
-                                 zdelta*zdelta);
-   const Vector center(
-     bbox.xmin() + 0.5*xdelta,
-     bbox.ymin() + 0.5*ydelta,
-     bbox.zmin() + 0.5*zdelta);
+    // Compute radius for far sphere
+    const double& xdelta = bbox.xmax()-bbox.xmin();
+    const double& ydelta = bbox.ymax()-bbox.ymin();
+    const double& zdelta = bbox.zmax()-bbox.zmin();
+    const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
+                                                ydelta*ydelta +
+                                                zdelta*zdelta);
+    const Vector center(
+      bbox.xmin() + 0.5*xdelta,
+      bbox.ymin() + 0.5*ydelta,
+      bbox.zmin() + 0.5*zdelta);
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-   std::cerr << "Adding points on a far sphere (radius = " << radius << ")...";
+    std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
 #  endif
-   Random_points_on_sphere_3<Point> random_point(radius);
-   const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-     boost::thread::hardware_concurrency()
-     *Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
-   for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
-     r_c3t3_.triangulation().insert(*random_point + center);
-
+    Random_points_on_sphere_3<Point> random_point(radius);
+    const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
+      boost::thread::hardware_concurrency()
+      * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
+    for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+      r_c3t3_.triangulation().insert(*random_point + center);
+    
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
-   std::cerr << "done." << std::endl;
+    std::cerr << "done." << std::endl;
 #  endif
 
 # endif // CGAL_PARALLEL_MESH_3_DO_NOT_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
