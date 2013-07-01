@@ -1421,7 +1421,7 @@ from the arrangement by simply calling `arr.remove_edge(e)`
 end vertices of `e` becomes isolated or redundant after the removal
 of the edge, it is removed as well.
 
-\image html h_shape.gif
+image html h_shape.gif
 
 The following example demonstrates the usage of the free removal
 functions. In creates an arrangement of four line segment forming
@@ -2125,7 +2125,8 @@ elements that a polyline comprises \a segments. The polyline traits
 class is parameterized with a segment-traits class that supports the
 basic operations on segments. Note that the provided template
 parameter has to model `ArrangementTraits_2` and
-`ArrangementDirectionalXMonotoneTraits_2`.
+`ArrangementDirectionalXMonotoneTraits_2`. By default, the traits
+class `Arr_segment_traits_2` is used as the template parameter.
 
 Polylines are the simplest form of a curves that are not
 necessarily \f$ x\f$-monotone. They can be used to approximate more
