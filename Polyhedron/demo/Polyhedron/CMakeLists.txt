@@ -107,7 +107,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
   qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
   qt4_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
-  qt4_wrap_ui( smoothing_fairingUI_FILES Smoothing_fairing_widget.ui)
+  qt4_wrap_ui( fairingUI_FILES Fairing_widget.ui)
   
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
@@ -429,8 +429,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(hole_filling_polyline_plugin Polyhedron_demo_hole_filling_polyline_plugin)
   target_link_libraries(hole_filling_polyline_plugin scene_polyhedron_item scene_polylines_item)
 	
-  polyhedron_demo_plugin(smoothing_fairing_plugin Polyhedron_demo_smoothing_fairing_plugin ${smoothing_fairingUI_FILES})
-  target_link_libraries(smoothing_fairing_plugin scene_polyhedron_item_decorator)
+  polyhedron_demo_plugin(fairing_plugin Polyhedron_demo_fairing_plugin ${fairingUI_FILES})
+  target_link_libraries(fairing_plugin scene_polyhedron_item_decorator)
 #
 # Exporting
 #

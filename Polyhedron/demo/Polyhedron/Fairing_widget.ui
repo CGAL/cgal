@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SmoothingFairing</class>
- <widget class="QDockWidget" name="SmoothingFairing">
+ <class>Fairing</class>
+ <widget class="QDockWidget" name="Fairing">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>296</width>
-    <height>412</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="toolTip">
@@ -17,7 +17,7 @@
    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;adf&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
   </property>
   <property name="windowTitle">
-   <string>Smoothing / Fairing</string>
+   <string>Fairing</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -57,13 +57,6 @@
               <widget class="QRadioButton" name="Removal_radio_button">
                <property name="text">
                 <string>Removal</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="Paint_like_smooth_radio_button">
-               <property name="text">
-                <string>Paint-like smooth</string>
                </property>
               </widget>
              </item>
@@ -202,13 +195,8 @@
          <item>
           <widget class="QComboBox" name="weight_combo_box">
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
-           <item>
-            <property name="text">
-             <string>Uniform Weight</string>
-            </property>
-           </item>
            <item>
             <property name="text">
              <string>Cotangent Weight</string>
@@ -216,7 +204,7 @@
            </item>
            <item>
             <property name="text">
-             <string>Scale-dependent Weight</string>
+             <string>Uniform Weight</string>
             </property>
            </item>
           </widget>
@@ -224,13 +212,6 @@
         </layout>
        </item>
       </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="Smooth_button">
-      <property name="text">
-       <string>Smooth</string>
-      </property>
      </widget>
     </item>
     <item>
