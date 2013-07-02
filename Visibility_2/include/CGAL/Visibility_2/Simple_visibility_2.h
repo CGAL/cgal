@@ -105,7 +105,6 @@ public:
 			s.push(vertices[0]);
 			scana(i, w, q);
 		}
-		std::cout << "gets here\n";
 		Point_2 stored_q(q);
 		q = Point_2(0, 0);
 		do {
