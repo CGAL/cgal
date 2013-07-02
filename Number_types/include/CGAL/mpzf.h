@@ -42,12 +42,12 @@
 // The following is currently assumed in several places. I hope I am not
 // making too many other assumptions.
 // * limbs are 64 bits
-// * uint64_t exists (via boost)
+// * if using gcc, sizeof(long long)==8
 // * mpn_neg(_n) exists
 // * IEEE double
 // * not too fancy endianness
 #if __GNU_MP_VERSION * 10 + __GNU_MP_VERSION_MINOR >= 43 \
-    && GMP_NUMB_BITS == 64 && defined BOOST_HAS_STDINT_H \
+    && GMP_NUMB_BITS == 64 \
     && (defined BOOST_LITTLE_ENDIAN || defined BOOST_BIG_ENDIAN)
 #define CGAL_HAS_MPZF 1
 
@@ -215,6 +215,11 @@ struct mpzf {
   // cache slows it down. A purely static cache (crash if it isn't large
   // enough) still wins by about 11% on the Delaunay_3 construction, but is
   // more complicated to handle.
+  // Evaluating a polynomial in double will never require more than roughly
+  // (2100*degree) bits, or (33*degree) mp_limb_t, which is very small. I
+  // checked by including an array of 150 limbs in every mpzf (that's where
+  // the 11% number comes from).
+  // BONUS: doing that is thread-safe!
   static const unsigned int cache_size = 9;
 #endif
 //#if !defined(CGAL_HAS_THREADS) || defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
@@ -238,13 +243,6 @@ struct mpzf {
   struct allocate{};
   struct noalloc{};
 
-  // We could also use a fixed-size allocation, since evaluating a
-  // polynomial in double will never require more than roughly
-  // (2100*degree) bits, or (33*degree) mp_limb_t, which is very
-  // small. I checked by including an array of 150 limbs in every mpzf
-  // and it shaved another 17% from the running-time.
-  // 2012-12-26: gain is closer to 11% now.
-  // BONUS: doing that would be thread-safe!
   void init(unsigned mini=2){
 #ifdef CGAL_MPZF_USE_CACHE
     if (mini <= cache_size) {

@@ -7,7 +7,7 @@ namespace CGAL {
 An object of the class `mpzf` is a multiple-precision floating-point
 number which can represent numbers of the form \f$ m*2^e\f$, where \f$
 m\f$ is an arbitrary precision integer based on the <span
-class="textsc">Gmp</span> library, and \f$ e\f$ is of type `int`. This
+class="textsc">GMP</span> library, and \f$ e\f$ is of type `int`. This
 type can be considered exact, even if the exponent is not a
 multiple-precision number. This number type offers functionality very
 similar to `MP_Float` and `Gmpzf` but is faster.
@@ -18,7 +18,7 @@ similar to `MP_Float` and `Gmpzf` but is faster.
 \cgalHeading{Implementation}
 
 This class is only available on platforms on which <span
-class="textsc">Gmp</span> uses 64 bits limbs and the endianness is
+class="textsc">GMP</span> uses 64 bit limbs and the endianness is
 either big-endian or little-endian.  If this is true, the macro
 `CGAL_HAS_MPZF` is defined.  This class makes the assumption that the
 representation of a `double` in memory follows IEEE 754.
