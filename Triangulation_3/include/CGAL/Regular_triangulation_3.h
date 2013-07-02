@@ -205,89 +205,87 @@ namespace CGAL {
         "early withdrawals / late withdrawals / successes [Regular_tri_3::insert]");
 #endif
 
-      WallClockTimer t; // CJTODO TEMP
+    WallClockTimer t; // CJTODO TEMP
 
-      size_type n = number_of_vertices();
-
-      std::vector<Weighted_point> points(first, last);
-      spatial_sort (points.begin(), points.end(), geom_traits());
+    size_type n = number_of_vertices();
+    std::vector<Weighted_point> points(first, last);
+    spatial_sort (points.begin(), points.end(), geom_traits());
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
-      if (this->is_parallel())
+    if (this->is_parallel())
+    {
+      size_t num_points = points.size();
+      int i = 0;
+      // Insert "num_points_seq" points sequentially
+      // (or more if dim < 3 after that)
+      Cell_handle hint;
+      size_t num_points_seq = (std::min)(num_points, (size_t)500);
+      while (dimension() < 3 || i < num_points_seq)
       {
-        size_t num_points = points.size();
-        int i = 0;
-        // Insert "num_points_seq" points sequentially
-        // (or more if dim < 3 after that)
-        Cell_handle hint;
-        size_t num_points_seq = (std::min)(num_points, (size_t)500);
-        while (dimension() < 3 || i < num_points_seq)
+        Locate_type lt;
+        Cell_handle c;
+        int li, lj;
+
+        c = locate (points[i], lt, li, lj, hint);
+        Vertex_handle v = insert (points[i], lt, c, li, lj);
+
+        hint = (v == Vertex_handle() ? c : v->cell());
+        ++i;
+      }
+
+      tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
+      // CJTODO: lambda functions OK?
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>( i, num_points ),
+        [&] (const tbb::blocked_range<size_t>& r)
         {
-          Locate_type lt;
-          Cell_handle c;
-          int li, lj;
-
-          c = locate (points[i], lt, li, lj, hint);
-          Vertex_handle v = insert (points[i], lt, c, li, lj);
-
-          hint = (v == Vertex_handle() ? c : v->cell());
-          ++i;
-        }
-
-        tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
-        // CJTODO: lambda functions OK?
-        tbb::parallel_for(
-          tbb::blocked_range<size_t>( i, num_points ),
-          [&] (const tbb::blocked_range<size_t>& r)
+          Vertex_handle &hint = tls_hint.local();
+          for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
           {
-            Vertex_handle &hint = tls_hint.local();
-            for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
+            bool success = false;
+            const Weighted_point &p = points[i_point];
+            while(!success)
             {
-              bool success = false;
-              const Weighted_point &p = points[i_point];
-              while(!success)
+              if (try_lock_vertex(hint) && try_lock_point(p))
               {
-                if (try_lock_vertex(hint) && try_lock_point(p))
+                bool could_lock_zone;
+                Locate_type lt;
+                int li, lj;
+
+                Cell_handle c = locate (p, lt, li, lj, hint->cell(), &could_lock_zone);
+                Vertex_handle v;
+                if (could_lock_zone)
+                  v = insert (p, lt, c, li, lj, &could_lock_zone);
+
+                if (could_lock_zone)
                 {
-                  bool could_lock_zone;
-                  Locate_type lt;
-                  int li, lj;
-
-                  Cell_handle c = locate (p, lt, li, lj, hint->cell(), &could_lock_zone);
-                  Vertex_handle v;
-                  if (could_lock_zone)
-                    v = insert (p, lt, c, li, lj, &could_lock_zone);
-
-                  if (could_lock_zone)
-                  {
-                    hint = (v == Vertex_handle() ? c->vertex(0) : v);
-                    this->unlock_all_elements();
-                    success = true;
+                  hint = (v == Vertex_handle() ? c->vertex(0) : v);
+                  this->unlock_all_elements();
+                  success = true;
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                    ++bcounter;
+                  ++bcounter;
 #endif
-                  }
-                  else
-                  {
-                    this->unlock_all_elements();
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                    bcounter.increment_branch_1(); // THIS is a late withdrawal!
-#endif
-                  }
                 }
                 else
                 {
                   this->unlock_all_elements();
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                  bcounter.increment_branch_2(); // THIS is an early withdrawal!
+                  bcounter.increment_branch_1(); // THIS is a late withdrawal!
 #endif
                 }
               }
-
+              else
+              {
+                this->unlock_all_elements();
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                bcounter.increment_branch_2(); // THIS is an early withdrawal!
+#endif
+              }
             }
+
           }
-        );
+        });
       }
       // Sequential
       else
