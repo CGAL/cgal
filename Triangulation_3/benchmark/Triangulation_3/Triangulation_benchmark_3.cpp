@@ -27,6 +27,9 @@
 // - replace drand48() by CGAL Generators
 // - move/document Time_accumulator to CGAL/Profiling_tools (?) 
 
+#define CGAL_TRIANGULATION_3_PROFILING
+//#define CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Bbox_3.h>

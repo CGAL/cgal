@@ -48,6 +48,8 @@
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 #ifdef CGAL_LINKED_WITH_TBB
+# include <CGAL/point_generators_3.h>
+# include <boost/thread.hpp>
 # include <tbb/parallel_for.h>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
@@ -94,6 +96,7 @@ public:
   typedef typename Gt::Segment_3     Segment;
   typedef typename Gt::Triangle_3    Triangle;
   typedef typename Gt::Tetrahedron_3 Tetrahedron;
+  typedef typename Gt::Vector_3      Vector;
 
   // types for dual:
   typedef typename Gt::Line_3        Line;
@@ -280,8 +283,10 @@ public:
     static Profile_branch_counter_3 bcounter(
       "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
-
+    
+#ifdef CGAL_TRIANGULATION_3_PROFILING
     WallClockTimer t; // CJTODO TEMP
+#endif
 
     size_type n = number_of_vertices();
     std::vector<Point> points (first, last);
@@ -292,11 +297,65 @@ public:
     if (this->is_parallel())
     {
       size_t num_points = points.size();
+      
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+      WallClockTimer t1; // CJTODO TEMP
+#endif
+
+      Vertex_handle hint;
+      std::vector<Vertex_handle> far_sphere_vertices;
+      
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
+      const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000; // CJTODO: ADJUST THIS
+      if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
+      {
+        // Add temporary vertices on a "far sphere" to reduce contention on
+        // the infinite vertex
+
+        // Get bbox
+        const Bbox_3 &bbox = *this->get_bbox();
+        //Bbox_3 bbox(0., 0., 0., 1., 1., 1.); // CJTODO TEMP
+        // Compute radius for far sphere
+        const double& xdelta = bbox.xmax() - bbox.xmin();
+        const double& ydelta = bbox.ymax() - bbox.ymin();
+        const double& zdelta = bbox.zmax() - bbox.zmin();
+        const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
+                                                    ydelta*ydelta +
+                                                    zdelta*zdelta);
+        const Vector center(
+          bbox.xmin() + 0.5*xdelta,
+          bbox.ymin() + 0.5*ydelta,
+          bbox.zmin() + 0.5*zdelta);
+        Random_points_on_sphere_3<Point> random_point(radius);
+        const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
+          boost::thread::hardware_concurrency() * 3.5);
+        std::vector<Point> points_on_far_sphere;
+        for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+          points_on_far_sphere.push_back(*random_point + center);
+
+        spatial_sort(points_on_far_sphere.begin(), 
+                     points_on_far_sphere.end(), 
+                     geom_traits());
+
+        std::vector<Point>::const_iterator it_p = points_on_far_sphere.begin();
+        std::vector<Point>::const_iterator it_p_end = points_on_far_sphere.end();
+        for ( ; it_p != it_p_end ; ++it_p)
+        {
+          hint = insert(*it_p, hint);
+          far_sphere_vertices.push_back(hint);
+        }
+
+# ifdef CGAL_TRIANGULATION_3_PROFILING
+        std::cerr << "  Far sphere points inserted: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+        t1.reset();
+# endif
+      }
+#endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
+      
       int i = 0;
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
-      Vertex_handle hint;
-      size_t num_points_seq = (std::min)(num_points, (size_t)500);
+      size_t num_points_seq = (std::min)(num_points, (size_t)100);
       while (dimension() < 3 || i < num_points_seq)
       {
         hint = insert(points[i], hint);
@@ -351,6 +410,22 @@ public:
           }
         }
       );
+
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+      std::cerr << "  Input points inserted in: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+      t1.reset();
+#endif
+      
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
+      if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
+      {
+        // Remove the temporary vertices on far sphere
+        remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+        std::cerr << "  Far sphere points removed in: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+#endif
+      }
+#endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
     }
     // Sequential
     else
@@ -507,7 +582,7 @@ public:
             (c, tester,
              make_triple(std::back_inserter(facets),
                          std::back_inserter(cells),
-                         ifit, could_lock_zone)).third;
+                         ifit), could_lock_zone).third;
       }
       else {
           Conflict_tester_3 tester(p, this);
@@ -515,7 +590,7 @@ public:
             (c, tester,
              make_triple(std::back_inserter(facets),
                          std::back_inserter(cells),
-                         ifit, could_lock_zone)).third;
+                         ifit), could_lock_zone).third;
       }
 
       // Reset the conflict flag on the boundary.

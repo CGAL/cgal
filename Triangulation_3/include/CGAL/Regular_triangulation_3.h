@@ -107,6 +107,7 @@ namespace CGAL {
     typedef typename Gt::Segment_3                   Segment;
     typedef typename Gt::Triangle_3                  Triangle;
     typedef typename Gt::Tetrahedron_3               Tetrahedron;
+    typedef typename Gt::Vector_3                    Vector;
 
     // types for dual:
     typedef typename Gt::Line_3        Line;
@@ -204,88 +205,168 @@ namespace CGAL {
       static Profile_branch_counter_3 bcounter(
         "early withdrawals / late withdrawals / successes [Regular_tri_3::insert]");
 #endif
+      
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+      WallClockTimer t; // CJTODO TEMP
+#endif
 
-    WallClockTimer t; // CJTODO TEMP
-
-    size_type n = number_of_vertices();
-    std::vector<Weighted_point> points(first, last);
-    spatial_sort (points.begin(), points.end(), geom_traits());
+      size_type n = number_of_vertices();
+      std::vector<Weighted_point> points(first, last);
+      spatial_sort (points.begin(), points.end(), geom_traits());
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
-    if (this->is_parallel())
-    {
-      size_t num_points = points.size();
-      int i = 0;
-      // Insert "num_points_seq" points sequentially
-      // (or more if dim < 3 after that)
-      Cell_handle hint;
-      size_t num_points_seq = (std::min)(num_points, (size_t)500);
-      while (dimension() < 3 || i < num_points_seq)
+      if (this->is_parallel())
       {
-        Locate_type lt;
-        Cell_handle c;
-        int li, lj;
-
-        c = locate (points[i], lt, li, lj, hint);
-        Vertex_handle v = insert (points[i], lt, c, li, lj);
-
-        hint = (v == Vertex_handle() ? c : v->cell());
-        ++i;
-      }
-
-      tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
-      // CJTODO: lambda functions OK?
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>( i, num_points ),
-        [&] (const tbb::blocked_range<size_t>& r)
-        {
-          Vertex_handle &hint = tls_hint.local();
-          for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
-          {
-            bool success = false;
-            const Weighted_point &p = points[i_point];
-            while(!success)
-            {
-              if (try_lock_vertex(hint) && try_lock_point(p))
-              {
-                bool could_lock_zone;
-                Locate_type lt;
-                int li, lj;
-
-                Cell_handle c = locate (p, lt, li, lj, hint->cell(), &could_lock_zone);
-                Vertex_handle v;
-                if (could_lock_zone)
-                  v = insert (p, lt, c, li, lj, &could_lock_zone);
-
-                if (could_lock_zone)
-                {
-                  hint = (v == Vertex_handle() ? c->vertex(0) : v);
-                  this->unlock_all_elements();
-                  success = true;
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                  ++bcounter;
+        size_t num_points = points.size();
+      
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+        WallClockTimer t1; // CJTODO TEMP
 #endif
+
+        Cell_handle hint;
+        std::vector<Vertex_handle> far_sphere_vertices;
+        
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
+        const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000; // CJTODO: ADJUST THIS
+        if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
+        {
+          // Add temporary vertices on a "far sphere" to reduce contention on
+          // the infinite vertex
+
+          // Get bbox
+          const Bbox_3 &bbox = *this->get_bbox();
+          //Bbox_3 bbox(0., 0., 0., 1., 1., 1.); // CJTODO TEMP
+          // Compute radius for far sphere
+          const double& xdelta = bbox.xmax() - bbox.xmin();
+          const double& ydelta = bbox.ymax() - bbox.ymin();
+          const double& zdelta = bbox.zmax() - bbox.zmin();
+          const double radius = 1.3 * 0.5 * std::sqrt(xdelta*xdelta +
+                                                      ydelta*ydelta +
+                                                      zdelta*zdelta);
+          const Vector center(
+            bbox.xmin() + 0.5*xdelta,
+            bbox.ymin() + 0.5*ydelta,
+            bbox.zmin() + 0.5*zdelta);
+          Random_points_on_sphere_3<Point> random_point(radius);
+          const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
+            boost::thread::hardware_concurrency() * 3.5);
+          std::vector<Point> points_on_far_sphere;
+          for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
+            points_on_far_sphere.push_back(*random_point + center);
+
+          spatial_sort(points_on_far_sphere.begin(), 
+                       points_on_far_sphere.end(), 
+                       geom_traits());
+
+          std::vector<Point>::const_iterator it_p = points_on_far_sphere.begin();
+          std::vector<Point>::const_iterator it_p_end = points_on_far_sphere.end();
+          for ( ; it_p != it_p_end ; ++it_p)
+          {
+            Locate_type lt;
+            Cell_handle c;
+            int li, lj;
+
+            c = locate (*it_p, lt, li, lj, hint);
+            Vertex_handle v = insert (*it_p, lt, c, li, lj);
+            hint = (v == Vertex_handle() ? c : v->cell());
+
+            far_sphere_vertices.push_back(v);
+          }
+
+# ifdef CGAL_TRIANGULATION_3_PROFILING
+          std::cerr << "  Far sphere points inserted: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+          t1.reset();
+# endif
+        }
+#endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
+      
+        int i = 0;
+        // Insert "num_points_seq" points sequentially
+        // (or more if dim < 3 after that)
+        size_t num_points_seq = (std::min)(num_points, (size_t)500);
+        while (dimension() < 3 || i < num_points_seq)
+        {
+          Locate_type lt;
+          Cell_handle c;
+          int li, lj;
+
+          c = locate (points[i], lt, li, lj, hint);
+          Vertex_handle v = insert (points[i], lt, c, li, lj);
+
+          hint = (v == Vertex_handle() ? c : v->cell());
+          ++i;
+        }
+
+        tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
+        // CJTODO: lambda functions OK?
+        tbb::parallel_for(
+          tbb::blocked_range<size_t>( i, num_points ),
+          [&] (const tbb::blocked_range<size_t>& r)
+          {
+            Vertex_handle &hint = tls_hint.local();
+            for( size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
+            {
+              bool success = false;
+              const Weighted_point &p = points[i_point];
+              while(!success)
+              {
+                if (try_lock_vertex(hint) && try_lock_point(p))
+                {
+                  bool could_lock_zone;
+                  Locate_type lt;
+                  int li, lj;
+
+                  Cell_handle c = locate (p, lt, li, lj, hint->cell(), &could_lock_zone);
+                  Vertex_handle v;
+                  if (could_lock_zone)
+                    v = insert (p, lt, c, li, lj, &could_lock_zone);
+
+                  if (could_lock_zone)
+                  {
+                    hint = (v == Vertex_handle() ? c->vertex(0) : v);
+                    this->unlock_all_elements();
+                    success = true;
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                    ++bcounter;
+#endif
+                  }
+                  else
+                  {
+                    this->unlock_all_elements();
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
+                    bcounter.increment_branch_1(); // THIS is a late withdrawal!
+#endif
+                  }
                 }
                 else
                 {
                   this->unlock_all_elements();
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                  bcounter.increment_branch_1(); // THIS is a late withdrawal!
+                  bcounter.increment_branch_2(); // THIS is an early withdrawal!
 #endif
                 }
               }
-              else
-              {
-                this->unlock_all_elements();
-#ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
-                bcounter.increment_branch_2(); // THIS is an early withdrawal!
-#endif
-              }
-            }
 
+            }
           }
-        });
+        );
+      
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+        std::cerr << "  Input points inserted in: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+        t1.reset();
+#endif
+      
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
+        if (num_points >= MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS)
+        {
+          // Remove the temporary vertices on far sphere
+          remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
+#ifdef CGAL_TRIANGULATION_3_PROFILING
+          std::cerr << "  Far sphere points removed in: " << t1.elapsed() << " seconds." << std::endl; // CJTODO TEMP
+#endif
+        }
+#endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
       }
       // Sequential
       else

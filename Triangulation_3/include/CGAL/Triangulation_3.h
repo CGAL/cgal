@@ -161,6 +161,11 @@ public:
 
   void unlock_all_elements() const {}
   template <typename P3> void unlock_all_elements_but_one_point(const P3 &) const {}
+  
+  const Bbox_3 *get_bbox() const
+  {
+    return NULL;
+  }
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -291,6 +296,11 @@ public:
   {
     if (m_lock_ds)
       m_lock_ds->unlock_all_tls_locked_locations_but_one_point(point);
+  }
+
+  const Bbox_3 *get_bbox() const
+  {
+    return &m_lock_ds->get_bbox();
   }
 
 protected:
