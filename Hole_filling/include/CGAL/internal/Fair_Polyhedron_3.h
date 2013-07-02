@@ -221,7 +221,8 @@ public:
 }//namespace internal
 
 /** 
- * @brief Function fairing a region on surface mesh.
+ * @brief Function fairing a region on surface mesh. 
+ * @note Structure is not altered in any way, only positions of the vertices get updated.
  *
  * @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d and can be omitted if Eigen defined...(give exact models etc)
  * @tparam WeightCalculator a model of "weight model" and can be omitted to use default Cotangent weights
@@ -231,7 +232,11 @@ public:
  * @param polyhedron surface mesh to be faired
  * @param vertex_begin first iterator of the range of vertices
  * @param vertex_end past-the-end iterator of the range of vertices
- * @param weight_calculator function object to calculate weights
+ * @param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
+ *
+ * @return true if fairing is successful, otherwise no vertex position is changed
+ *
+ * @todo currently Cotangent weights does not work good for near-degenerate inputs
  */
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class InputIterator>
 bool fair(Polyhedron& polyhedron, 

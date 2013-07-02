@@ -2,8 +2,6 @@
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
 
 #include <limits>
-#include <map>
-#include <set>
 #include <vector>
 
 #include <CGAL/assertions.h>
@@ -178,6 +176,7 @@ public:
  * @param border_halfedge a border halfedge incident to the hole
  * @param[out] output iterator over patch facets.
  * 
+ * @return `output`
  */
 template<class Polyhedron, class OutputIterator>
 OutputIterator 

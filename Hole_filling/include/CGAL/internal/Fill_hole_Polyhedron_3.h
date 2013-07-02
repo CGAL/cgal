@@ -26,7 +26,7 @@ namespace CGAL {
  * @param[out] vertex_out iterator over patch vertices without including boundary
  * @param density_control_factor factor for density where larger values cause denser refinements
  * 
- * \warning Using this function on very large holes might not be feasible, since the cost of triangulation is O(n^3).
+ * @return pair of `facet_out` and `vertex_out`
  */
 template<class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
 std::pair<FacetOutputIterator, VertexOutputIterator> 
@@ -35,7 +35,8 @@ triangulate_and_refine_hole(
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0)) 
+  double density_control_factor = std::sqrt(2.0)
+  ) 
 {
   std::vector<typename Polyhedron::Facet_handle> patch;
   triangulate_hole(polyhedron, border_halfedge, std::back_inserter(patch));
@@ -48,15 +49,22 @@ triangulate_and_refine_hole(
  * @brief Function triangulating, refining and fairing a hole in surface mesh.
  *
  * @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d and can be omitted if Eigen defined...(give exact models etc)
- * @tparam Polyhedron a %CGAL polyhedron
  * @tparam WeightCalculator a model of "weight model" and default to Cotangent weights
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam FacetOutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
+ * @tparam VertexOutputIterator iterator holding 'Polyhedron::Vertex_handle' for patch vertices.
  *
  * @param polyhedron surface mesh which has the hole
  * @param border_halfedge a border halfedge incident to the hole
  * @param[out] facet_out iterator over patch facets
  * @param[out] vertex_out iterator over patch vertices without including boundary
+ * @param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
  * @param density_control_factor factor for density where larger values cause denser refinements
- * @param weight_calculator function object to calculate weights
+ * 
+ * @return tuple of 
+ *  - bool: true if fairing is successful
+ *  - `facet_out`
+ *  - `vertex_out`
  */
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class FacetOutputIterator, class VertexOutputIterator>
 boost::tuple<bool, FacetOutputIterator, VertexOutputIterator>
