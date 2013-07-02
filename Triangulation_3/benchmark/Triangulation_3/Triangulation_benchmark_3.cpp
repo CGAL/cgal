@@ -94,8 +94,8 @@ typedef K::Point_3                                     Point;
     CGAL::Parallel_tag >	                             DT_Tds;
   typedef CGAL::Delaunay_triangulation_3<
     K, DT_Tds, CGAL::Default, Lock_ds>	               DT3;
-  typedef CGAL::Delaunay_triangulation_3<
-    K, DT_Tds, CGAL::Default, Lock_ds>	               DT3_FastLoc; // CJTODO (no fast location for now)
+  /*typedef CGAL::Delaunay_triangulation_3<
+    K, DT_Tds, CGAL::Default, Lock_ds>	               DT3_FastLoc;*/ // CJTODO (no parallel fast location for now)
   
   // Regular T3
   typedef CGAL::Triangulation_data_structure_3<
@@ -357,7 +357,9 @@ int main(int argc, char **argv)
   do_benchmarks<DT3>("Delaunay  [Compact_location]");
   if (input_file_selected)
     return 0;
-  //do_benchmarks<DT3_FastLoc>("Delaunay with Fast_location"); // CJTODO A REMETTRE
+#ifndef CONCURRENT_TRIANGULATION_3
+  do_benchmarks<DT3_FastLoc>("Delaunay with Fast_location");
+#endif
   do_benchmarks<RT3_WithHP>("Regular  [with hidden points kept, except there's none in the data sets]");
   do_benchmarks<RT3_NoHP>("Regular with hidden points discarded");
 }
