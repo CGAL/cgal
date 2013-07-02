@@ -311,7 +311,7 @@ struct mpzf {
   }
 #if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) \
     && !defined(CGAL_MPZF_USE_CACHE)
-  mpzf(mpzf&& x):data(x.data()),size(x.size),exp(x.exp){
+  mpzf(mpzf&& x):data_(x.data()),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
     x.size = 0;
     x.exp = 0;
@@ -325,6 +325,7 @@ struct mpzf {
   friend mpzf operator-(mpzf&& x){
     mpzf ret = std::move(x);
     ret.size = -ret.size;
+    return ret;
   }
 #endif
   mpzf(int i) : exp(0) {
@@ -377,7 +378,7 @@ struct mpzf {
 	++dexp;
       }
     } else {
-      m = (1L<<52) | u.s.man;
+      m = (1LL<<52) | u.s.man;
     }
     int e1 = (int)dexp+13;
     // FIXME: make it more general! But not slower...
