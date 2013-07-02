@@ -47,6 +47,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/utility.h>
 
+#include <CGAL/spatial_sort.h>
 
 /*
   Conventions:
@@ -504,6 +505,24 @@ public:
     }
     size_type n_after = number_of_vertices();
     return n_after - n_before;
+  }
+
+  //insert a range of points using spatial sorting
+  template <class PointIterator>
+  std::size_t insert_points(PointIterator first, PointIterator beyond)
+  {
+    size_type n = this->number_of_vertices();
+
+    std::vector<Point_2> points (first, beyond);
+    spatial_sort (points.begin(), points.end(), geom_traits());
+    Vertex_handle hint;
+    for (typename std::vector<Point_2>::const_iterator
+          p = points.begin(), end = points.end(); p != end; ++p)
+    {
+      hint = insert(*p, hint);
+    }
+
+    return this->number_of_vertices() - n;
   }
 
   // insert a point

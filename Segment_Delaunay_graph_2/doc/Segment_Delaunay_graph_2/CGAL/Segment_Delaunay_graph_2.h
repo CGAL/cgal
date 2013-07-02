@@ -550,6 +550,17 @@ either `Point_2` or `Site_2`.
 template< class Input_iterator > 
 size_type insert(Input_iterator first, Input_iterator beyond, Tag_true); 
 
+/*!
+Inserts the points in the range [first,beyond) as sites.
+Note that this function is not guaranteed to insert the points
+following the order of `PointInputIterator`, as `spatial_sort()`
+is used to improve efficiency.
+\return  the number of points inserted in the Delaunay graph
+\tparam PointIterator must be an input iterator `Point_2` or `Site_2` as value_type.
+*/
+template <class PointIterator>
+std::size_t insert_points(PointIterator first, PointIterator beyond);
+
 /*! 
 Inserts the 
 point `p` in the segment Delaunay graph. If `p` has already 
