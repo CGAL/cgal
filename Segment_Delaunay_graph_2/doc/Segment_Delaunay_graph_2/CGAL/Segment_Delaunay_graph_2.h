@@ -539,14 +539,14 @@ either `Point_2` or `Site_2`.
 template< class Input_iterator > 
 size_type insert(Input_iterator first, Input_iterator beyond, Tag_false); 
 
-/*! 
-Inserts the sites in the range 
-[`first`,`beyond`) after performing a random shuffle on 
-them. The number of additional sites inserted in the Delaunay graph is 
-returned. `Input_iterator` must be a model of 
-`InputIterator` and its value type must be 
-either `Point_2` or `Site_2`. 
-*/ 
+/*!
+Decomposes the range [first,beyond) into a range of input points and a range of input segments
+that are respectively passed to `insert_segments()` and `insert_points()`.
+Non-input sites are first random_shuffled and then inserted one by one.
+`Input_iterator` must be a model of `InputIterator` and its value type must be
+either `Point_2`, `Segment_2` or `Site_2`.
+\return  the number of sites inserted in the Delaunay graph
+*/
 template< class Input_iterator > 
 size_type insert(Input_iterator first, Input_iterator beyond, Tag_true); 
 

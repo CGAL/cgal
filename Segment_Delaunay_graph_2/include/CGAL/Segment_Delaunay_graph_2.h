@@ -486,17 +486,6 @@ public:
   }
 
   template<class Input_iterator>
-  size_type insert(Input_iterator first, Input_iterator beyond, Tag_true)
-  {
-    std::vector<Site_2> site_vec;
-    for (Input_iterator it = first; it != beyond; ++it) {
-      site_vec.push_back(Site_2(*it));
-    }
-    std::random_shuffle(site_vec.begin(), site_vec.end());
-    return insert(site_vec.begin(), site_vec.end(), Tag_false());
-  }
-
-  template<class Input_iterator>
   size_type insert(Input_iterator first, Input_iterator beyond,	Tag_false)
   {
     // do it the obvious way: insert them as they come;
@@ -511,12 +500,9 @@ public:
   }
 
   //insert a range of points using spatial sorting
-  template <class PointIterator>
-  std::size_t insert_points(PointIterator first, PointIterator beyond)
+  std::size_t insert_points(std::vector<Point_2>& points)
   {
     size_type n = this->number_of_vertices();
-
-    std::vector<Point_2> points (first, beyond);
     spatial_sort (points.begin(), points.end(), geom_traits());
     Vertex_handle hint;
     for (typename std::vector<Point_2>::const_iterator
@@ -526,6 +512,13 @@ public:
     }
 
     return this->number_of_vertices() - n;
+  }
+
+  template <class PointIterator>
+  std::size_t insert_points(PointIterator first, PointIterator beyond)
+  {
+    std::vector<Point_2> points (first, beyond);
+    return insert_points(points);
   }
 
   template <class IndicesIterator>
@@ -625,6 +618,64 @@ public:
     return insert_segments( points,
                             segment_indices.begin(),
                             segment_indices.end() );
+  }
+
+  template <class Input_iterator>
+  inline size_type
+  insert_range(Input_iterator first, Input_iterator beyond, Site_2){
+    std::vector<Point_2> points;
+    std::vector<Point_2> segment_points;
+    std::vector< std::pair<std::size_t, std::size_t> > segment_indices;
+    std::vector<Site_2> non_input_segments;
+
+    for (Input_iterator it=first; it!=beyond; ++it)
+    {
+      if ( it->is_input() )
+      {
+        if (it->is_point() ) points.push_back( it->point() );
+        else{
+          segment_points.push_back( it->source_of_supporting_site() );
+          segment_points.push_back( it->target_of_supporting_site() );
+          segment_indices.push_back( std::make_pair(segment_points.size()-2,
+                                                    segment_points.size()-1 ));
+        }
+      }
+      else
+        non_input_segments.push_back(*it);
+    }
+    //insert the points
+    size_type n = insert_points(points);
+    //insert the segments
+    n += insert_segments( segment_points,
+                          segment_indices.begin(),
+                          segment_indices.end() );
+    //insert non-input sites
+    std::random_shuffle( non_input_segments.begin(), non_input_segments.end() );
+    n += insert(non_input_segments.begin(),
+                non_input_segments.end(), Tag_false() );
+    return n;
+  }
+
+  template <class Input_iterator>
+  inline size_type
+  insert_range(Input_iterator first, Input_iterator beyond, Point_2){
+    return insert_points(first, beyond);
+  }
+
+  template <class Input_iterator, class Segment_2>
+  inline size_type
+  insert_range(Input_iterator first, Input_iterator beyond, Segment_2){
+    return insert_segments(first, beyond);
+  }
+
+  template<class Input_iterator>
+  inline size_type
+  insert(Input_iterator first, Input_iterator beyond, Tag_true)
+  {
+    return
+      insert_range(first, beyond,
+                   typename std::iterator_traits<Input_iterator>::value_type()
+      );
   }
 
   // insert a point
