@@ -35,10 +35,12 @@ void test2(){
   NT c=2*(a+b)+-a*5;
   assert(CGAL::sign(c)==0);
   NT d=b/a;
+#ifndef CGAL_NO_ASSERTIONS
   try {
     NT e=1/a; // Will throw
     exit(42);
   } catch(...) {}
+#endif
   try {
     NT e=a/0; // Will throw
     exit(43);
@@ -48,10 +50,12 @@ void test2(){
   assert(p.first<=4.5 && p.second >= 4.5);
   assert(a<b && CGAL::compare(b,a)>0);
   assert(CGAL::square(b)*4==81);
+#ifndef CGAL_NO_ASSERTIONS
   try {
     NT e=CGAL::sqrt(a); // Will throw
     exit(44);
   } catch(...) {}
+#endif
   assert(CGAL::sqrt(NT(.25))*2-1==0);
   assert(CGAL::is_zero(c));
   assert(!CGAL::is_zero(a));
