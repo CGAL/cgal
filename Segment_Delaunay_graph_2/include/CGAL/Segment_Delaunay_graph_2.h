@@ -48,6 +48,9 @@
 #include <CGAL/utility.h>
 
 #include <CGAL/spatial_sort.h>
+#include <CGAL/Spatial_sort_traits_adapter_2.h>
+
+#include <boost/iterator/counting_iterator.hpp>
 
 /*
   Conventions:
@@ -520,6 +523,53 @@ public:
           p = points.begin(), end = points.end(); p != end; ++p)
     {
       hint = insert(*p, hint);
+    }
+
+    return this->number_of_vertices() - n;
+  }
+
+  template <class PointIterator, class IndicesIterator>
+  std::size_t insert_segments(PointIterator points_first,
+                              PointIterator points_beyond,
+                              IndicesIterator indices_first,
+                              IndicesIterator indices_beyond)
+  {
+    typedef std::vector<std::ptrdiff_t> Indices;
+    typedef std::vector<Vertex_handle> Vertices;
+
+    size_type n = this->number_of_vertices();
+
+    std::vector<Point_2> points (points_first, points_beyond);
+
+    Spatial_sort_traits_adapter_2<Gt, Point_2*> sort_traits(&(points[0]));
+
+    Indices indices;
+    indices.resize(points.size());
+
+    std::copy(boost::counting_iterator<std::ptrdiff_t>(0),
+              boost::counting_iterator<std::ptrdiff_t>(points.size()),
+              std::back_inserter(indices));
+
+    spatial_sort(indices.begin(), indices.end(), sort_traits);
+
+    Vertices vertices;
+    vertices.resize(points.size());
+
+    Vertex_handle hint;
+    for(typename Indices::const_iterator
+          it_pti = indices.begin(), end = indices.end();
+          it_pti != end; ++it_pti)
+    {
+      hint = insert(points[*it_pti], hint);
+      vertices[*it_pti] = hint;
+    }
+
+    for(IndicesIterator it_cst=indices_first, end=indices_beyond;
+        it_cst!=end; ++it_cst)
+    {
+      Vertex_handle v1 = vertices[it_cst->first];
+      Vertex_handle v2 = vertices[it_cst->second];
+      if(v1 != v2) insert(v1, v2);
     }
 
     return this->number_of_vertices() - n;

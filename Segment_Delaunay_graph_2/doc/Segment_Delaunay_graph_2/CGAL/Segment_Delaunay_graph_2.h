@@ -561,6 +561,14 @@ is used to improve efficiency.
 template <class PointIterator>
 std::size_t insert_points(PointIterator first, PointIterator beyond);
 
+/// Same as above except that each segment is given as a pair of indices of the points
+/// in the range [points_first, points_beyond). The indices must start from 0 to `std::distance(points_first, points_beyond)`
+/// \tparam PointIterator is an input iterator with `Point_2` as value type.
+/// \tparam IndicesIterator is an input iterator with `std::pair<std::size_t, std::size_t>` as value type.
+template <class PointIterator, class IndicesIterator>
+std::size_t insert_segments(PointIterator points_first, PointIterator points_beyond,
+                            IndicesIterator indices_first, IndicesIterator indices_beyond);
+
 /*! 
 Inserts the 
 point `p` in the segment Delaunay graph. If `p` has already 
