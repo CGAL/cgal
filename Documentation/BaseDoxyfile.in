@@ -231,7 +231,7 @@ ALIASES += "cgalFigureBegin{10}=\anchor fig__\1 \n <CENTER> <TABLE border=0> <TR
 ALIASES += "cgalFigureEnd=\htmlonly </div> \endhtmlonly <br>"
 ALIASES += "cgalFigureCaptionBegin{1}=\htmlonly <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1"
 ALIASES += "cgalFigureCaptionEnd=\htmlonly </div> \endhtmlonly <br>"
-                         
+
 # this sets the include file of a concept to a non-existing file and
 # thus removes its include statement
 ALIASES += "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief"

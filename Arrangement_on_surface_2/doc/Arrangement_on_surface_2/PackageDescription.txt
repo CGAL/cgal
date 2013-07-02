@@ -49,6 +49,9 @@ namespace ArrTraits {}
 /// \defgroup PkgArrangement2Tags Tags
 /// \ingroup PkgArrangement2
 
+/// \defgroup PkgArrangement2Macros Macros
+/// \ingroup PkgArrangement2
+
 /// \defgroup PkgArrangement2Enums Enumerations
 /// \ingroup PkgArrangement2
 

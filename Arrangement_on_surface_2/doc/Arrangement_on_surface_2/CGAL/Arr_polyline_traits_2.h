@@ -1,3 +1,12 @@
+/// \ingroup PkgArrangement2Macros
+/// @{
+/*!
+  If macro set to one, then \f$x\f$-monotone curves are directed from
+  left-to-right.
+*/
+#define CGAL_ALWAYS_LEFT_TO_RIGHT
+/// @}
+
 namespace CGAL {
 
   /*!
@@ -57,12 +66,14 @@ namespace CGAL {
 
     /// \name Types
     /// @{
-    /*! */
+    /*!
+     */
     // TODO: Have to turn these into links, so whenever I mention Point_2 it
     //       will point here and *not* to Kernel::Point_2 for instance.
     typedef SegmentTraits::Point_2            Point_2;
 
-    /*! */
+    /*!
+     */
     typedef SegmentTraits::Curve_2            Segment_2;
     /// @}
 
@@ -78,29 +89,32 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-      /*! Returns an polyline connecting the two given endpoints.
-       * \param p The first point.
-       * \param q The second point.
-       * \pre `p` and `q` are distinct.
-       * \return A segment connecting `p` and `q`.
-       */
+      /*!
+        Returns an polyline connecting the two given endpoints.
+        \param p The first point.
+        \param q The second point.
+        \pre `p` and `q` are distinct.
+        \return A segment connecting `p` and `q`.
+      */
       Curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
-      /*! Returns a polyline consists of one given segment.
-       * \param seg input segment
-       * \pre `seg` is not degenerated
-       * \return A polyline with one segment, namely `seg`.
-       */
+      /*!
+        Returns a polyline consists of one given segment.
+        \param seg input segment
+        \pre `seg` is not degenerated
+        \return A polyline with one segment, namely `seg`.
+      */
       Curve_2 operator()(const Segment_2& seg) const;
 
-      /*! Construct a well-oriented polyline from a range of either
-       *  the type `SegmentTraits::Point_2` or the type
-       *  `SegmentTraits::Segment_2` and \a only one of them.
-       *  \param begin iterator pointing to the first element in the range.
-       *  \param end iterator pointing to the past-the-end element in the range.
-       *  \pre The given range form a continuous and well-oriented polyline.
-       *  \return A polyline using the corresponding construction
-       *          implementation.
+      /*!
+        Construct a well-oriented polyline from a range of either
+        the type `SegmentTraits::Point_2` or the type
+        `SegmentTraits::Segment_2` and \a only one of them.
+        \param begin iterator pointing to the first element in the range.
+        \param end iterator pointing to the past-the-end element in the range.
+        \pre The given range form a continuous and well-oriented polyline.
+        \return A polyline using the corresponding construction
+        implementation.
        */
       template <typename ForwardIterator>
       Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const;
@@ -178,7 +192,8 @@ namespace CGAL {
       /// @} /* end of operations */
     }; /* end of Arr_polyline_traits_2::Push_back_2 */
 
-    /*!  The `Curve_2` class nested within the polyline traits is used
+    /*!
+      The `Curve_2` class nested within the polyline traits is used
       to represent general continuous piecewise-linear curves (a
       polyline can be self-intersecting) and support their
       construction from any range of segments.  Construction of
@@ -191,7 +206,6 @@ namespace CGAL {
       curves is defined for standard output streams, and an \link
       PkgArrangement2op_right_shift `operator>>` \endlink for the
       curves is defined for standard input streams.
-
     */
     class Curve_2 {
     public:
@@ -209,24 +223,28 @@ namespace CGAL {
        */
       typedef typename Segments_container::size_type Segments_container_size;
 
-      /*!  \deprecated
+      /*!
+        \deprecated
         A bidirectional iterator that allows traversing the points
         that comprise a polyline curve.
       */
       typedef unspecified_type const_iterator;
 
-      /*! \deprecated
+      /*!
+        \deprecated
         A bidirectional iterator that allows traversing the points
         that comprise a polyline curve.
       */
       typedef unspecified_type const_reverse_iterator;
 
-      /*!  A bidirectional constant iterator that allows traversing
+      /*!
+        A bidirectional constant iterator that allows traversing
         the segments the comprise the polyline.
        */
       typedef unspecified_type Segment_const_iterator;
 
-      /*!  A bidirectional constant iterator that allows traversing
+      /*!
+        A bidirectional constant iterator that allows traversing
         the segments the comprise the polyline.
       */
       typedef unspecified_type Segment_const_reverse_iterator;
@@ -236,15 +254,18 @@ namespace CGAL {
       /// \name Creation
       /// @{
 
-      /*!  Default constructor that constructs an empty polyline.
+      /*!
+        Default constructor that constructs an empty polyline.
       */
       Curve_2 ();
 
-      /*! Construct a polyline from one segment.
+      /*!
+        Construct a polyline from one segment.
        */
       Curve_2 (const Segment_2 seg);
 
-      /*!  constructs a polyline defined by the given range of points
+      /*!
+        Constructs a polyline defined by the given range of points
         `[first, last)` (the value-type of `InputIterator` must be
         `SegmentTraits::Point_2`.  If the range contains \f$ (n +
         1)\f$ points labeled \f$ (p_{0},p_{1},\ldots,p_{n})\f$, the
@@ -348,7 +369,8 @@ namespace CGAL {
     }; /* end Arr_polyline_traits_2::Curve_2 */
 
 
-    /*!  The `X_monotone_curve_2` class nested within the polyline
+    /*!
+      The `X_monotone_curve_2` class nested within the polyline
       traits is used to represent \f$ x\f$-monotone piecewise linear
       curves.
 
@@ -372,16 +394,20 @@ namespace CGAL {
     /// \name Accessing Functor Objects
     /// @{
 
-    /*! */
+    /*!
+     */
     Construct_curve_2 construct_curve_2_object() const;
 
-    /*! */
+    /*!
+     */
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
 
-    /*! */
+    /*!
+     */
     Number_of_points_2 number_of_points_2_object() const;
 
-    /*! */
+    /*!
+     */
     Push_back_2 push_back_2_object() const;
 
     /// @}
