@@ -2026,13 +2026,15 @@ convertible to one another.
 The `Arr_segment_traits_2<Kernel>` class is very efficient for
 maintaining arrangements of a large number of intersecting line
 segments, especially if it is instantiated with the appropriate
-geometric kernel. Using `Cartesian<Gmpq>` as the kernel type is
-generally a good choice; the coordinates of the segment endpoints are
-represented as exact rational numbers, and this ensures the robustness
-and correctness of any computation. However, if the <span class="textsc">Gmp</span>
-library is not installed, it is possible to use the
-`Quotient<MP_Float>` number-type, provided by the support library
-of \cgal, which is somewhat less efficient.\cgalFootnote{Many of the example programs in the rest of the chapter include a header file named `arr_rational_nt.h`, which defines a type named `Number_type` as either `Gmpq` or `Quotient<MP_Float>`, depending on whether <span class="textsc">Gmp</span> is installed or not.}
+geometric kernel. Using `Exact_predicates_exact_constructions_kernel`
+as the kernel type, which is the default, is generally a good choice;
+the coordinates of the segment endpoints are represented as exact
+rational numbers, and this ensures the robustness and correctness of
+any computation.\cgalFootnote{Many of the example programs in the rest
+of the chapter include a header file named `arr_rational_nt.h`, which
+defines a type named `Number_type` as either `Gmpq` or
+`Quotient<MP_Float>`, depending on whether <span
+class="textsc">Gmp</span> is installed or not.}
 
 Exact computations are of course less efficient, compared to
 machine-precision floating-point arithmetic, so constructing an
