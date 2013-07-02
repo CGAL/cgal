@@ -171,6 +171,9 @@ public:
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Oriented_side_C2<K,MTag>
   Oriented_side_2;
 
+  typedef typename R::Less_x_2 Less_x_2;
+  typedef typename R::Less_y_2 Less_y_2;
+
 public:
   //-----------------------------------------------------------------------
   //                  ACCESS TO OBJECTS
@@ -264,6 +267,15 @@ public:
     return Oriented_side_2();
   }
 
+  Less_x_2
+  less_x_2_object() const {
+    return Less_x_2();
+  }
+
+  Less_y_2
+  less_y_2_object() const {
+    return Less_y_2();
+  }
 };
 
 } //namespace CGAL
