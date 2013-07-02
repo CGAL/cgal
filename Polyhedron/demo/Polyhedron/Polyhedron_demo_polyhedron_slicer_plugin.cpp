@@ -104,6 +104,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::init(QMainWindow* mw,
 
   dock_widget = new QDockWidget("Polyhedron slicer parameters", mw);
   dock_widget->setVisible(false); // do not show at the beginning
+  dock_widget->setObjectName("PolyhedronSlicerParametersDialog");
   ui_widget = new Ui::Polyhedron_slicer_widget();
 
   QWidget* qw =new QWidget();
