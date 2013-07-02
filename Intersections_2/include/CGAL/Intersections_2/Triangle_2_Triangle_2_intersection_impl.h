@@ -102,19 +102,19 @@ void _cut_off(Pointlist_2_<K> &list,
                 const typename K::Line_2 &cutter)
 {
     int i;
-    int add = 0;
+    const int list_size=list.size;
     Pointlist_2_rec_<K> *cur, *last=0, *newrec;
-    for (i=0, cur = list.first; i<list.size; i++, cur = cur->next) {
+    for (i=0, cur = list.first; i<list_size; i++, cur = cur->next) {
         cur->side = cutter.oriented_side(cur->point);
         last = cur;
     }
-    for (cur = list.first, i=0; i<list.size; i++, cur = cur->next) {
+    for (cur = list.first, i=0; i<list_size; i++, cur = cur->next) {
         if ((cur->side == ON_POSITIVE_SIDE
              && last->side == ON_NEGATIVE_SIDE)
            || (cur->side == ON_NEGATIVE_SIDE
                && last->side == ON_POSITIVE_SIDE)) {
             // add a vertex after cur
-            add++;
+            ++list.size;
             typename K::Line_2 l(cur->point, last->point);
             newrec = new Pointlist_2_rec_<K>;
             newrec->next = last->next;
@@ -128,21 +128,21 @@ void _cut_off(Pointlist_2_<K> &list,
         }
         last = cur;
     }
-    CGAL_kernel_assertion(add <= 2);
+    CGAL_kernel_assertion(list.size-list_size <= 2);
     Pointlist_2_rec_<K> **curpt;
     curpt = &list.first;
     while (*curpt != 0) {
         cur = *curpt;
         if (cur->side == ON_NEGATIVE_SIDE) {
-            add--;
+            --list.size;
             *curpt = cur->next;
             delete cur;
         } else {
             curpt = &cur->next;
         }
     }
-    if (list.size == 2 && add == 1) {
-        add = 0;
+    if (list_size == 2 && list.size-list_size == 1) {
+        --list.size;
         cur = list.first;
         if (cur->side == ON_ORIENTED_BOUNDARY) {
             list.first = cur->next;
@@ -154,7 +154,6 @@ void _cut_off(Pointlist_2_<K> &list,
             delete cur;
         }
     }
-    list.size += add;
 }
 
 
