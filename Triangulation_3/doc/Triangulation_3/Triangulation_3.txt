@@ -417,7 +417,6 @@ reference to a `SpatialLockDataStructure_3` instance is provided via the constru
 by using `set_lock_data_structure`.
 
 Parallel algorithms require the program to be linked against the Intel TBB library.
-We <b>strongly suggest</b> the user to use the TBB malloc proxy by including <tbb/tbbmalloc_proxy.h> in his source code.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
 See TBB documentation for more details.
 
