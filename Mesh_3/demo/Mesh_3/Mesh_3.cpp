@@ -1,9 +1,14 @@
+#include "config.h"
+
 #include "MainWindow.h"
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
+#include <CGAL/assertions_behaviour.h>
 
 int main(int argc, char **argv)
 {
+  CGAL::set_error_behaviour(CGAL::ABORT);
+
   QApplication app(argc, argv);
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
@@ -27,6 +32,7 @@ int main(int argc, char **argv)
   Q_FOREACH(QString filename, args) {
     mainWindow.open(filename);
   }
+
   return app.exec();
 }
 

@@ -1,3 +1,5 @@
+#include "config.h"
+
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 #  include <GL/glew.h>
 #endif

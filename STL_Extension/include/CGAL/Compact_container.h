@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>
+#include <CGAL/Compact_container_strategies.h>
 
 #include <iterator>
 #include <algorithm>
@@ -112,12 +113,21 @@ namespace internal {
   class CC_iterator;
 }
 
-template < class T, class Allocator_ = Default >
+// Class Compact_container
+//
+// Strategy_ is a functor which provides several functions
+// See Compact_container_strategy_base and 
+// Compact_container_strategy_with_counter, and/or documentation
+//
+template < class T, class Allocator_ = Default, class Strategy_ = Default >
 class Compact_container
 {
   typedef Allocator_                                Al;
+  typedef Strategy_                                 Strat;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  typedef Compact_container <T, Al>                 Self;
+  typedef typename Default::Get<
+    Strat, Compact_container_strategy_base >::type  Strategy;
+  typedef Compact_container <T, Al, Strat>          Self;
   typedef Compact_container_traits <T>              Traits;
 public:
   typedef T                                         value_type;
@@ -139,7 +149,7 @@ public:
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
   {
-    init();
+    init (); 
   }
 
   template < class InputIterator >
@@ -309,7 +319,7 @@ public:
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
   iterator
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-	  const T5 &t5)
+    const T5 &t5)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -404,10 +414,11 @@ public:
   void erase(iterator x)
   {
     CGAL_precondition(type(&*x) == USED);
+    Strategy::increment_erase_counter(*x);
     alloc.destroy(&*x);
-#ifndef CGAL_NO_ASSERTIONS
+/*#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
-#endif
+#endif*/
     put_on_free_list(&*x);
     --size_;
   }
@@ -586,8 +597,8 @@ private:
   All_items        all_items;
 };
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::merge(Self &d)
+template < class T, class Allocator, class Strategy >
+void Compact_container<T, Allocator, Strategy>::merge(Self &d)
 {
   CGAL_precondition(&d != this);
 
@@ -622,8 +633,8 @@ void Compact_container<T, Allocator>::merge(Self &d)
   d.init();
 }
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::clear()
+template < class T, class Allocator, class Strategy >
+void Compact_container<T, Allocator, Strategy>::clear()
 {
   for (typename All_items::iterator it = all_items.begin(), itend = all_items.end();
        it != itend; ++it) {
@@ -638,8 +649,8 @@ void Compact_container<T, Allocator>::clear()
   init();
 }
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::allocate_new_block()
+template < class T, class Allocator, class Strategy >
+void Compact_container<T, Allocator, Strategy>::allocate_new_block()
 {
   pointer new_block = alloc.allocate(block_size + 2);
   all_items.push_back(std::make_pair(new_block, block_size + 2));
@@ -648,7 +659,10 @@ void Compact_container<T, Allocator>::allocate_new_block()
   // We mark them free in reverse order, so that the insertion order
   // will correspond to the iterator order...
   for (size_type i = block_size; i >= 1; --i)
+  {
+    Strategy::set_erase_counter(*(new_block + i), 0);
     put_on_free_list(new_block + i);
+  }
   // We insert this new block at the end.
   if (last_item == NULL) // First time
   {
@@ -667,52 +681,52 @@ void Compact_container<T, Allocator>::allocate_new_block()
   block_size += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator==(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator==(const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return lhs.size() == rhs.size() &&
     std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator!=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator!=(const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return ! (lhs == rhs);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator< (const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator< (const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return std::lexicographical_compare(lhs.begin(), lhs.end(),
                                       rhs.begin(), rhs.end());
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator> (const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator> (const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return rhs < lhs;
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator<=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator<=(const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return ! (lhs > rhs);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Strategy >
 inline
-bool operator>=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator>=(const Compact_container<T, Allocator, Strategy> &lhs,
+                const Compact_container<T, Allocator, Strategy> &rhs)
 {
   return ! (lhs < rhs);
 }
@@ -725,6 +739,7 @@ namespace internal {
     typedef typename DSC::iterator                    iterator;
     typedef CC_iterator<DSC, Const>                   Self;
   public:
+    typedef typename DSC::Strategy                    Strategy;
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
@@ -753,13 +768,19 @@ namespace internal {
       m_ptr.p = &(*it);
       return *this;
     }
+    
+    // CJTODO: TEMP (see parallel scan_triangulation)
+    CC_iterator(value_type *p)
+    {
+      m_ptr.p = p;
+    }
 
     // Construction from NULL
-    CC_iterator (Nullptr_t CGAL_assertion_code(n))
+    /*CC_iterator (Nullptr_t CGAL_assertion_code(n))
     {
       CGAL_assertion (n == NULL);
       m_ptr.p = NULL;
-    }
+    }*/
 
   private:
 
@@ -769,7 +790,7 @@ namespace internal {
     } m_ptr;
 
     // Only Compact_container should access these constructors.
-    friend class Compact_container<value_type, typename DSC::Al>;
+    friend class Compact_container<value_type, typename DSC::Al, typename DSC::Strat>;
 
     // For begin()
     CC_iterator(pointer ptr, int, int)
@@ -794,9 +815,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+   "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
-	 "Incrementing end() ?");
+   "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do {
@@ -814,9 +835,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+   "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
-	 "Decrementing begin() ?");
+   "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do {
@@ -835,7 +856,7 @@ namespace internal {
     Self & operator++()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+   "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
                          "Incrementing an invalid iterator.");
       increment();
@@ -845,9 +866,9 @@ namespace internal {
     Self & operator--()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+   "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
-		      || DSC::type(m_ptr.p) == DSC::START_END,
+          || DSC::type(m_ptr.p) == DSC::START_END,
                          "Decrementing an invalid iterator.");
       decrement();
       return *this;
@@ -915,7 +936,7 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-		  Nullptr_t CGAL_assertion_code(n))
+      Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
