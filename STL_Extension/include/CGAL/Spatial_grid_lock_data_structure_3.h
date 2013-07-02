@@ -95,14 +95,12 @@ public:
 
   void set_bbox(const Bbox_3 &bbox)
   {
-    // Keep mins and resolutions
-    m_xmin = bbox.xmin();
-    m_ymin = bbox.ymin();
-    m_zmin = bbox.zmin();
+    // Compute resolutions
+    m_bbox = bbox;
     double n = static_cast<double>(m_num_grid_cells_per_axis);
-    m_resolution_x = n / (bbox.xmax() - m_xmin);
-    m_resolution_y = n / (bbox.ymax() - m_ymin);
-    m_resolution_z = n / (bbox.zmax() - m_zmin);
+    m_resolution_x = n / (bbox.xmax() - bbox.xmin());
+    m_resolution_y = n / (bbox.ymax() - bbox.ymin());
+    m_resolution_z = n / (bbox.zmax() - bbox.zmin());
 
 #ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
     std::cerr << "Locking data structure Bounding Box = "
@@ -111,6 +109,11 @@ public:
       << "[" << bbox.zmin() << ", " << bbox.zmax() << "]"
       << std::endl;
 #endif
+  }
+
+  const Bbox_3 &get_bbox() const
+  {
+    return m_bbox;
   }
 
   bool is_locked_by_this_thread(int cell_index)
@@ -242,7 +245,7 @@ public:
   bool try_lock(const P3 &point, int lock_radius = 0)
   {
     // Compute index on grid
-    int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_xmin) * m_resolution_x);
+    int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_bbox.xmin()) * m_resolution_x);
     //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
     index_x =
       (index_x < 0 ?
@@ -252,7 +255,7 @@ public:
             : index_x
           )
       );
-    int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_ymin) * m_resolution_y);
+    int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_bbox.ymin()) * m_resolution_y);
     //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
     index_y =
       (index_y < 0 ?
@@ -262,7 +265,7 @@ public:
             : index_y
           )
       );
-    int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_zmin) * m_resolution_z);
+    int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_bbox.zmin()) * m_resolution_z);
     //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
     index_z =
       (index_z < 0 ?
@@ -384,7 +387,7 @@ protected:
   int get_grid_index(const P3& point) const
   {
     // Compute indices on grid
-    int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_xmin) * m_resolution_x);
+    int index_x = static_cast<int>( (CGAL::to_double(point.x()) - m_bbox.xmin()) * m_resolution_x);
     //index_x = std::max( 0, std::min(index_x, m_num_grid_cells_per_axis - 1) );
     index_x =
       (index_x < 0 ?
@@ -394,7 +397,7 @@ protected:
             : index_x
           )
       );
-    int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_ymin) * m_resolution_y);
+    int index_y = static_cast<int>( (CGAL::to_double(point.y()) - m_bbox.ymin()) * m_resolution_y);
     //index_y = std::max( 0, std::min(index_y, m_num_grid_cells_per_axis - 1) );
     index_y =
       (index_y < 0 ?
@@ -404,7 +407,7 @@ protected:
             : index_y
           )
       );
-    int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_zmin) * m_resolution_z);
+    int index_z = static_cast<int>( (CGAL::to_double(point.z()) - m_bbox.zmin()) * m_resolution_z);
     //index_z = std::max( 0, std::min(index_z, m_num_grid_cells_per_axis - 1) );
     index_z =
       (index_z < 0 ?
@@ -443,9 +446,7 @@ protected:
   }
 
   int                                             m_num_grid_cells_per_axis;
-  double                                          m_xmin;
-  double                                          m_ymin;
-  double                                          m_zmin;
+  Bbox_3                                          m_bbox;
   double                                          m_resolution_x;
   double                                          m_resolution_y;
   double                                          m_resolution_z;
