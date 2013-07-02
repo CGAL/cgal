@@ -1,6 +1,8 @@
 #ifndef CGAL_DEMO_MESH_3_CONFIG_H
 #define CGAL_DEMO_MESH_3_CONFIG_H
 
+#define CGAL_PROFILE
+
 // #define CGAL_POLYHEDRON_DEMO_NO_NEF
 // #define CGAL_POLYHEDRON_DEMO_NO_SURFACE_MESHER
 // #define CGAL_POLYHEDRON_DEMO_NO_PARAMETRIZATION
@@ -82,7 +84,7 @@
   // ==========================================================================
 
   const char * const CONFIG_FILENAME = 
-    "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg";
+    "D:/INRIA/CGAL/workingcopy/Mesh_3/demo/Mesh_3/concurrent_mesher_config.cfg"; // CJTODO
   
   // =================
   // Locking strategy
