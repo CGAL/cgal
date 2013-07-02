@@ -166,7 +166,6 @@ private:
     for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it)
     { it->id() = 0; }
 
-    int counter = 0;
     for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
       if(it->is_border() && it->id() == 0){
         polyline_data_list.push_back(Polyline_data());
@@ -464,15 +463,12 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     return;
   }
 
-  double alpha = ui_widget->Density_control_factor_spin_box->value();
-  int action_index = ui_widget->action_combo_box->currentIndex();
-
   Polyhedron& poly = *poly_item->polyhedron();
   std::vector<Halfedge_iterator> border_reps;
   for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it)
   { it->id() = 0; }
 
-  int counter = 0;
+  // take one representative halfedge for each hole into border_reps
   for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
     if(it->is_border() && it->id() == 0){
       border_reps.push_back(it);

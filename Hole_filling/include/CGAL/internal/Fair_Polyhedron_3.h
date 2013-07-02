@@ -162,12 +162,9 @@ public:
       std::size_t v_id = vertex_id_map[*vb];
       double w_v = weight_calculator.w_i(*vb, polyhedron);
       double wn_sum = sum_weight(*vb, polyhedron);
-      double x, y, z;
-      x = y = z = 0.0;
-      double diagonal_v = 0.0;
+      double x, y, z, nx, ny, nz;
+      x = y = z = nx = ny = nz = 0.0;
 
-      double nx, ny, nz;
-      nx = ny = nz = 0;
       one_ring(*vb, polyhedron, row, nx, ny, nz, vertex_id_map);
       for(std::vector<std::pair<std::size_t, double> >::iterator it = row.begin(); it != row.end(); ++it) {
         A.add_coef(v_id, it->first, - w_v * wn_sum * it->second);
@@ -192,13 +189,7 @@ public:
 
       Bx[v_id] = x; By[v_id] = y; Bz[v_id] = z;
     }
-
     CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
-
-    //std::ofstream out_A("D:/A.txt");
-    //std::ofstream out_b("D:/b.txt");
-    //write_matrix_sparse(out_A, A.eigen_object());
-    //write_matrix(out_b, Bx);
 
     // factorize
     double D;
@@ -261,7 +252,7 @@ bool fair(Polyhedron& poly,
   WeightCalculator weight_calculator
   )
 {
-  typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+  typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
   return fair<Sparse_linear_solver, WeightCalculator, Polyhedron, InputIterator>(poly, vb, ve, weight_calculator);
 }
 
@@ -272,7 +263,7 @@ bool fair(Polyhedron& poly,
   InputIterator ve
   )
 {
-  typedef CGAL::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
+  typedef internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
   return fair<SparseLinearSolver, Weight_calculator, Polyhedron, InputIterator>(poly, vb, ve, Weight_calculator());
 }
 
@@ -283,7 +274,7 @@ bool fair(Polyhedron& poly,
   InputIterator ve
   )
 {
-  typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
+  typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
   return fair<Sparse_linear_solver, Polyhedron, InputIterator>(poly, vb, ve);
 }
 
