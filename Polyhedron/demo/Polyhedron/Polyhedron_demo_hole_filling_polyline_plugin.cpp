@@ -99,7 +99,7 @@ public slots:
     bool also_refine;
     const double density_control_factor = 
       QInputDialog::getDouble(mw, tr("Density Control Factor"),
-      tr("Density Control Factor (Cancel for not Refine): "), 1.41, 1, 100, 2, &also_refine);
+      tr("Density Control Factor (Cancel for not Refine): "), 1.41, 0.0, 100.0, 2, &also_refine);
 
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
@@ -125,7 +125,7 @@ public slots:
         CGAL::refine(*poly, 
           boost::make_transform_iterator(poly->facets_begin(), Get_handle()),
           boost::make_transform_iterator(poly->facets_end(), Get_handle()),
-          Nop_out(), Nop_out());
+          Nop_out(), Nop_out(), density_control_factor);
       }
 
       Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);
