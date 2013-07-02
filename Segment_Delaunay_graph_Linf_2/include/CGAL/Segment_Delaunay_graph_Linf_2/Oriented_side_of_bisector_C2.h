@@ -121,7 +121,9 @@ private:
       } else if ( os == ON_NEGATIVE_SIDE) {
 	return SMALLER;
       } else {
-	return EQUAL;
+        // philaris: here, point is closer, not interior of segment
+        //return LARGER;
+        return EQUAL;
       }
     }
 
