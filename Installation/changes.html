@@ -225,6 +225,21 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
     </li>
   </ul>
 
+  <h3>3D Mesh Generation</h3>
+  <ul>
+    <li>Speed-up <code>Mesh_3</code> and in particular the global optimizers  (Lloyd and ODT) by 
+          introducing a parameter <code>do_freeze</code> to prevent from moving vertices which would move of very small displacements.
+    <li> Introduce new data structures and options for speed-up and compacity. Note that <code>Compact_mesh_cell_base_3</code> and
+          <code>Mesh_vertex_base_3</code> are now our favoured implementations of the concepts MeshCellBase_3 and MeshVertexBase_3.
+          <code>Mesh_cell_base_3</code> is now deprecated. 
+    <li> Introduce a new constructor for <code> Polyhedral_mesh_domain_3</code> that takes a bounding polyhedron 
+           to be meshed along with a polyhedral surface entirely included in it.
+          This allows the user to mesh a polyhedral domain with internal surface(s) which can be non-watertight and even non-manifold.
+    <li> Several documentation bug fixes.
+    </li>
+  </ul>
+    
+
 </div>
 
 <h2 id="release4.2">Release 4.2 </h2>
