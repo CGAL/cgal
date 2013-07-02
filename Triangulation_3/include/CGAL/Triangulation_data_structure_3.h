@@ -740,7 +740,7 @@ private:
                         if (c < next)
                                 *it.second++ = Facet(c, i); // Incident facet.
                         if (! next->tds_data().is_clear())
-                                continue;			
+                                continue;
                         cell_stack.push(next);
                         next->tds_data().mark_in_conflict();
                         *it.first++ = next;
@@ -768,7 +768,7 @@ private:
           continue;
         Cell_handle next = c->neighbor(i);
         if (! next->tds_data().is_clear())
-          continue;			
+          continue;
         cells.push_back(next);
         ++tail;
         next->tds_data().mark_in_conflict();
@@ -1223,7 +1223,7 @@ public:
   // Helping functions
   template <class TDS_src>
   Vertex_handle copy_tds(const TDS_src & tds,
-	                 typename TDS_src::Vertex_handle vert);
+                         typename TDS_src::Vertex_handle vert);
 
   template <class TDS_src>
   Vertex_handle copy_tds(const TDS_src & tds)
@@ -3075,7 +3075,7 @@ decrease_dimension(Cell_handle c, int i)
                 
     for(int i=0; i<3; i++) if(n0->neighbor(i) == c) { i0 = i; break; }
     for(int i=0; i<3; i++) if(n1->neighbor(i) == c) { i1 = i; break; }
-    for(int i=0; i<3; i++) if(n2->neighbor(i) == c) { i2 = i; break; }				
+    for(int i=0; i<3; i++) if(n2->neighbor(i) == c) { i2 = i; break; }
                 
     Cell_handle c1 = create_cell(v, v0, v1, Vertex_handle());
     Cell_handle c2 = create_cell(v, v1, v2, Vertex_handle());
@@ -3085,7 +3085,7 @@ decrease_dimension(Cell_handle c, int i)
     c->set_vertex(2, v0);
     c->set_vertex(3, Vertex_handle());
 
-    //Cell_handle c3 = create_cell(v, v2, v0, Vertex_handle());		
+    //Cell_handle c3 = create_cell(v, v2, v0, Vertex_handle());
     Cell_handle c3 = c;
                 
     c1->set_neighbor(0, n2); n2->set_neighbor(i2, c1);
@@ -3096,7 +3096,7 @@ decrease_dimension(Cell_handle c, int i)
     c2->set_neighbor(0, n0); n0->set_neighbor(i0, c2);
     c2->set_neighbor(1, c3); 
     c2->set_neighbor(2, c1);
-    c2->set_neighbor(3, Cell_handle());	
+    c2->set_neighbor(3, Cell_handle());
                 
     c3->set_neighbor(0, n1); n1->set_neighbor(i1, c3);
     c3->set_neighbor(1, c1); 
@@ -3106,7 +3106,7 @@ decrease_dimension(Cell_handle c, int i)
     v->set_cell(c1);
     v0->set_cell(c1);
     v1->set_cell(c1);
-    v2->set_cell(c2);	
+    v2->set_cell(c2);
   }
         
   if(dimension() == 1)
@@ -3128,7 +3128,7 @@ decrease_dimension(Cell_handle c, int i)
     c->set_vertex(2, Vertex_handle());
     c->set_vertex(3, Vertex_handle());
 
-    //Cell_handle c2 = create_cell(v, v1, Vertex_handle(), Vertex_handle());	
+    //Cell_handle c2 = create_cell(v, v1, Vertex_handle(), Vertex_handle());
     Cell_handle c2 = c;
                 
     c1->set_neighbor(0, c2); 
