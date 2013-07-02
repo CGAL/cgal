@@ -199,6 +199,20 @@ inline int clz (boost::uint64_t x) {
   return __builtin_clzll (x);
 #endif
 }
+
+// In C++11, std::fill_n returns a pointer to the end, but in C++03,
+// it returns void.
+inline mp_limb_t* fill_n_ptr(mp_limb_t* p, int n, int c) {
+#if __cplusplus >= 201103L
+  return std::fill_n (p, n, c);
+#else
+  mp_limb_t* q = p + n;
+  std::fill (p, q, c);
+  //std::fill_n (p, n, c);
+  //memset (p, sizeof(mp_limb_t)*n, c);
+  return q;
+#endif
+}
 } // namespace mpzf_impl
 
 #undef CGAL_MPZF_THREAD_LOCAL
@@ -535,7 +549,7 @@ struct mpzf {
 	if(absasize<=bexp){ // no overlap
 	  mpn_copyi(rdata, adata, absasize);
 	  rdata+=absasize;
-	  rdata=std::fill_n(rdata,bexp-absasize,0);
+	  rdata=mpzf_impl::fill_n_ptr(rdata,bexp-absasize,0);
 	  mpn_copyi(rdata, bdata, absbsize);
 	  res.size=absbsize+bexp;
 	  if(bsize<0) res.size=-res.size;
@@ -552,7 +566,7 @@ struct mpzf {
 	if(absbsize<=aexp){ // no overlap
 	  mpn_copyi(rdata, bdata, absbsize);
 	  rdata+=absbsize;
-	  rdata=std::fill_n(rdata,aexp-absbsize,0);
+	  rdata=mpzf_impl::fill_n_ptr(rdata,aexp-absbsize,0);
 	  mpn_copyi(rdata, adata, absasize);
 	  res.size=absasize+aexp;
 	  if(asize<0) res.size=-res.size;
@@ -615,7 +629,7 @@ struct mpzf {
 	if(absysize<=xexp){ // no overlap
 	  mpn_neg(rdata, ydata, absysize); // assert that it returns 1
 	  rdata+=absysize;
-	  rdata=std::fill_n(rdata,xexp-absysize,-1);
+	  rdata=mpzf_impl::fill_n_ptr(rdata,xexp-absysize,-1);
 	  mpn_sub_1(rdata, xdata, absxsize, 1);
 	  res.size=absxsize+xexp;
 	  if(res.data()[res.size-1]==0) --res.size;
