@@ -100,7 +100,7 @@ public:
   }
   void set_erase_counter(unsigned int c)
   {
-	  this->m_erase_counter = c;
+    this->m_erase_counter = c;
   }
   void increment_erase_counter()
   {
@@ -157,7 +157,7 @@ public:
   }
   void set_erase_counter(unsigned int c)
   {
-	  this->m_erase_counter = c;
+    this->m_erase_counter = c;
   }
   void increment_erase_counter()
   {
@@ -228,7 +228,7 @@ public:
 
   template <typename TDS2>
   struct Rebind_TDS {
-    typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other;
+    typedef Triangulation_ds_cell_base_3<TDS2> Other;
   };
 
 
