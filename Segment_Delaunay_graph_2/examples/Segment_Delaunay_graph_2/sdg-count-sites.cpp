@@ -4,9 +4,8 @@
 #include <cassert>
 
 // define the exact number type
-#  include <CGAL/Quotient.h>
-#  include <CGAL/MP_Float.h>
-typedef CGAL::Quotient<CGAL::MP_Float>  ENT;
+#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpq  ENT;
 
 // define the kernels
 #include <CGAL/Simple_cartesian.h>
