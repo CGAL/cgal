@@ -45,9 +45,9 @@
 
 # This module defines
 # TBB_INCLUDE_DIRS, where to find task_scheduler_init.h, etc.
-# TBB_LIBRARY_DIRS, where to find TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords).
+# TBB_LIBRARY_DIRS, where to find TBB libraries
 # TBB_INSTALL_DIR, the base TBB install directory.
-# TBB_LIBRARIES, all the following TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords).
+# TBB_LIBRARIES, all the following TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords). Note that if the debug versions are not found, the release versions will be used instead for the debug mode.
 #   TBB_RELEASE_LIBRARY, the TBB release library
 #   TBB_MALLOC_RELEASE_LIBRARY, the TBB release malloc library
 #   TBB_DEBUG_LIBRARY, the TBB debug library
@@ -286,21 +286,46 @@ if (TBB_INCLUDE_DIR)
         #    set (_TBB_MALLOCPROXY ${_TBB_MALLOCPROXY} debug ${TBB_MALLOCPROXY_DEBUG_LIBRARY})
         #endif (NOT "${TBB_MALLOCPROXY_DEBUG_LIBRARY}" STREQUAL "TBB_MALLOCPROXY_DEBUG_LIBRARY-NOTFOUND")
         
-        set (TBB_LIBRARIES 
-            optimized ${TBB_RELEASE_LIBRARY} optimized ${TBB_MALLOC_RELEASE_LIBRARY}
-            debug ${TBB_DEBUG_LIBRARY} debug ${TBB_MALLOC_DEBUG_LIBRARY} 
-            #${_TBB_MALLOCPROXY} # NOTE: Removed because we don't want to link with the malloc_proxy by default
-            CACHE PATH "TBB libraries" FORCE)
+        # TBB release library
+        set (ALL_TBB_LIBRARIES optimized ${TBB_RELEASE_LIBRARY})
+        
+        # TBB debug library found?
+        if (TBB_DEBUG_LIBRARY)
+            list(APPEND ALL_TBB_LIBRARIES debug ${TBB_DEBUG_LIBRARY})
+        else (TBB_DEBUG_LIBRARY)    
+            # Otherwise, link with the release library even in debug mode
+            list(APPEND ALL_TBB_LIBRARIES debug ${TBB_RELEASE_LIBRARY})
+        endif (TBB_DEBUG_LIBRARY)
+
+        # TBB malloc - release
+        if (TBB_MALLOC_RELEASE_LIBRARY)
+            list(APPEND ALL_TBB_LIBRARIES optimized ${TBB_MALLOC_RELEASE_LIBRARY})
+            
+            # TBB malloc - debug
+            if (TBB_MALLOC_DEBUG_LIBRARY)
+                list(APPEND ALL_TBB_LIBRARIES debug ${TBB_MALLOC_DEBUG_LIBRARY})
+            else (TBB_MALLOC_DEBUG_LIBRARY)
+                list(APPEND ALL_TBB_LIBRARIES debug ${TBB_MALLOC_RELEASE_LIBRARY})
+            endif (TBB_MALLOC_DEBUG_LIBRARY)
+        endif (TBB_MALLOC_RELEASE_LIBRARY)
+        
+        set (TBB_LIBRARIES ${ALL_TBB_LIBRARIES}
+             CACHE PATH "TBB libraries" FORCE)
+        
+        # Include dirs
         set (TBB_INCLUDE_DIRS ${TBB_INCLUDE_DIR} CACHE PATH "TBB include directory" FORCE)
-        if( ${TBB_RELEASE_LIBRARY_DIR} STREQUAL ${TBB_DEBUG_LIBRARY_DIR} )
+        
+        # Library dirs
+        if( "${TBB_DEBUG_LIBRARY_DIR}" STREQUAL "" OR "${TBB_RELEASE_LIBRARY_DIR}" STREQUAL "${TBB_DEBUG_LIBRARY_DIR}" )
             set (TBB_LIBRARY_DIRS
                 ${TBB_RELEASE_LIBRARY_DIR}
                 CACHE PATH "TBB library directories" FORCE)
-        else( ${TBB_RELEASE_LIBRARY_DIR} STREQUAL ${TBB_DEBUG_LIBRARY_DIR} )
+        else( "${TBB_DEBUG_LIBRARY_DIR}" STREQUAL "" OR "${TBB_RELEASE_LIBRARY_DIR}" STREQUAL "${TBB_DEBUG_LIBRARY_DIR}" )
             set (TBB_LIBRARY_DIRS
                 ${TBB_RELEASE_LIBRARY_DIR} ${TBB_DEBUG_LIBRARY_DIR}
                 CACHE PATH "TBB library directories" FORCE)
-        endif( ${TBB_RELEASE_LIBRARY_DIR} STREQUAL ${TBB_DEBUG_LIBRARY_DIR} )
+        endif( "${TBB_DEBUG_LIBRARY_DIR}" STREQUAL "" OR "${TBB_RELEASE_LIBRARY_DIR}" STREQUAL "${TBB_DEBUG_LIBRARY_DIR}" )
+        
         message(STATUS "Found Intel TBB")
     endif (TBB_RELEASE_LIBRARY)
 endif (TBB_INCLUDE_DIR)
