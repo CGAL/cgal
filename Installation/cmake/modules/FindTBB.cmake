@@ -292,10 +292,15 @@ if (TBB_INCLUDE_DIR)
             #${_TBB_MALLOCPROXY} # NOTE: Removed because we don't want to link with the malloc_proxy by default
             CACHE PATH "TBB libraries" FORCE)
         set (TBB_INCLUDE_DIRS ${TBB_INCLUDE_DIR} CACHE PATH "TBB include directory" FORCE)
-        set (TBB_LIBRARY_DIRS
-            optimized ${TBB_RELEASE_LIBRARY_DIR} debug ${TBB_DEBUG_LIBRARY_DIR}
-            CACHE PATH "TBB library directories" FORCE)
-        mark_as_advanced(TBB_INCLUDE_DIRS TBB_LIBRARY_DIRS TBB_LIBRARIES)
+        if( ${TBB_RELEASE_LIBRARY_DIR} STREQUAL ${TBB_DEBUG_LIBRARY_DIR} )
+            set (TBB_LIBRARY_DIRS
+                ${TBB_RELEASE_LIBRARY_DIR}
+                CACHE PATH "TBB library directories" FORCE)
+        else( ${TBB_RELEASE_LIBRARY_DIR} STREQUAL ${TBB_DEBUG_LIBRARY_DIR} )
+            set (TBB_LIBRARY_DIRS
+                ${TBB_RELEASE_LIBRARY_DIR} ${TBB_DEBUG_LIBRARY_DIR}
+                CACHE PATH "TBB library directories" FORCE)
+        endif( ${TBB_RELEASE_LIBRARY_DIR} STREQUAL ${TBB_DEBUG_LIBRARY_DIR} )
         message(STATUS "Found Intel TBB")
     endif (TBB_RELEASE_LIBRARY)
 endif (TBB_INCLUDE_DIR)
