@@ -577,13 +577,17 @@ namespace CGAL {
     std::istream& operator>> (std::istream& is,
                               Polyline_2<SegmentTraits>& pl)
     {
-      typedef Polyline_2<SegmentTraits>  Curve_2;
+      typedef Polyline_2<SegmentTraits>   Curve_2;
+      typedef typename Curve_2::Segment_2 Segment_2;
       typedef typename Curve_2::Point_2   Point_2;
 
       // Read the number of input points.
       unsigned int        n_pts;
 
       is >> n_pts;
+
+      CGAL_precondition_msg(n_pts > 1,
+                            "Input must contain at least two points");
 
       // Read m_num_pts points to a list.
       Point_2             p;
@@ -596,8 +600,19 @@ namespace CGAL {
           pts.push_back(p);
         }
 
+      std::list<Segment_2> segments;
+      typename std::list<Point_2>::iterator curr = pts.begin();
+      typename std::list<Point_2>::iterator next = pts.begin();
+      ++next;
+      while (next != pts.end())
+        {
+          segments.push_back(Segment_2(*curr,*next));
+          ++curr;
+          ++next;
+        }
+
       // Create the polyline curve.
-      pl = Curve_2(pts.begin(), pts.end());
+      pl = Curve_2(segments.begin(),segments.end());
 
       return (is);
     }
