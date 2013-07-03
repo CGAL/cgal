@@ -32,7 +32,7 @@
 namespace CGAL{
 
 //property map
-template <class Polyhedron> 
+template <class Polyhedron>
 struct Triangle_from_facet_handle_property_map{
   Triangle_from_facet_handle_property_map(Polyhedron* = NULL){}
   typedef typename Kernel_traits<
@@ -62,24 +62,36 @@ struct Triangle_from_facet_handle_property_map{
 };
 
 
-template <class HalfedgeGraph> 
+template < class HalfedgeGraph,
+           class VertexPointPMap >
 struct Segment_from_edge_descriptor_property_map{
-  Segment_from_edge_descriptor_property_map(HalfedgeGraph* g= NULL)
-    :m_graph( const_cast<
-      typename boost::remove_const<HalfedgeGraph>::type*>(g) ){}
+  Segment_from_edge_descriptor_property_map(
+    HalfedgeGraph* g = NULL ) :
+  m_graph( const_cast<typename boost::remove_const<HalfedgeGraph>::type*>(g) ),
+  m_vppm( boost::get(vertex_point, *m_graph) )
+  {}
+
+  Segment_from_edge_descriptor_property_map(
+    HalfedgeGraph* g,
+    VertexPointPMap vppm ) :
+  m_graph( const_cast<typename boost::remove_const<HalfedgeGraph>::type*>(g) ),
+  m_vppm(vppm)
+  {}
+
   //classical typedefs
-  typedef typename boost::property_traits< typename boost::property_map< HalfedgeGraph, vertex_point_t>::type >::value_type Point;  
+  typedef typename boost::property_traits< VertexPointPMap >::value_type Point;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor key_type;
   typedef typename Kernel_traits<Point>::Kernel::Segment_3 value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
   //data
   typename boost::remove_const<HalfedgeGraph>::type* m_graph;
+  VertexPointPMap m_vppm;
 
   //get function for property map
   inline friend
   value_type
-  get(Segment_from_edge_descriptor_property_map<HalfedgeGraph> pmap, 
+  get(Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap> pmap,
       key_type h)
   {
     typedef typename boost::property_map< HalfedgeGraph, vertex_point_t>::type Point_pmap;
@@ -87,13 +99,13 @@ struct Segment_from_edge_descriptor_property_map{
     typedef typename Kernel_traits<Point>::Kernel Kernel;
 
     return typename Kernel::Segment_3(
-      boost::get(vertex_point, *pmap.m_graph, boost::source(h, *pmap.m_graph) ),
-      boost::get(vertex_point, *pmap.m_graph, boost::target(h, *pmap.m_graph) ) );
+      get(pmap.m_vppm, boost::source(h, *pmap.m_graph) ),
+      get(pmap.m_vppm, boost::target(h, *pmap.m_graph) ) );
   }
 };
 
 //property map to access a point from a facet handle
-template <class Polyhedron> 
+template <class Polyhedron>
 struct One_point_from_facet_handle_property_map{
   One_point_from_facet_handle_property_map(Polyhedron* = NULL){}
   //classical typedefs
@@ -116,24 +128,35 @@ struct One_point_from_facet_handle_property_map{
 };
 
 //property map to access a point from an edge
-template <class HalfedgeGraph> 
+template < class HalfedgeGraph,
+           class VertexPointPMap >
 struct Source_point_from_edge_descriptor{
-  Source_point_from_edge_descriptor(HalfedgeGraph* g= NULL)
-    :m_graph( const_cast<
-      typename boost::remove_const<HalfedgeGraph>::type*>(g) ){}
+  Source_point_from_edge_descriptor(
+    HalfedgeGraph* g = NULL ) :
+  m_graph( const_cast<typename boost::remove_const<HalfedgeGraph>::type*>(g) ),
+  m_vppm( boost::get(vertex_point, *m_graph) )
+  {}
+
+  Source_point_from_edge_descriptor(
+    HalfedgeGraph* g,
+    VertexPointPMap vppm ) :
+  m_graph( const_cast<typename boost::remove_const<HalfedgeGraph>::type*>(g) ),
+  m_vppm(vppm)
+  {}
+
   //classical typedefs
-  typedef typename boost::property_map< HalfedgeGraph, vertex_point_t>::type Point_pmap;
-  typedef typename boost::property_traits< Point_pmap >::value_type value_type;
-  typedef typename boost::property_traits< Point_pmap >::reference reference;
+  typedef typename boost::property_traits< VertexPointPMap >::value_type value_type;
+  typedef typename boost::property_traits< VertexPointPMap >::reference reference;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor key_type;
   typedef boost::readable_property_map_tag category;
   //data
   typename boost::remove_const<HalfedgeGraph>::type* m_graph;
+  VertexPointPMap m_vppm;
 
   //get function for property map
   inline friend
   reference
-  get(Source_point_from_edge_descriptor<HalfedgeGraph> pmap,
+  get(Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap> pmap,
       key_type h)
   {
     return  boost::get(vertex_point,

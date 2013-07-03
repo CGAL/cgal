@@ -42,11 +42,15 @@ namespace CGAL {
  * It wraps an `edge_descriptor` into a 3D segment.
  * The class model of `HalfedgeGraph` from which the primitive is built should not be deleted
  * while the AABB tree holding the primitive is in use.
+ * The type of the 3D segment is taken from the kernel of the point type which is the value type
+ * of `VertexPointPMap` (using the `Kernel_traits` mechanism).
  *
  * \cgalModels `AABBPrimitive` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_false`,
  *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.
  *
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
+ * \tparam VertexPointPMap is a property map with `boost::graph_traits<HalfedgeGraph>::vertex_descriptor`
+ *   as key type and a \cgal Kernel `Point_3` as value type.
  * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true or `CGAL::Tag_false`.
  * In the former case, we guarantee that all the primitives will be from a
  * common `HalfedgeGraph` and some data will be factorized so that the size of
@@ -61,20 +65,21 @@ namespace CGAL {
  * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>`
  */
 template < class HalfedgeGraph,
-           class OneHalfedgeGraphPerTree=Tag_true,
-           class cache_datum=Tag_false >
+           class VertexPointPMap = typename boost::property_map< HalfedgeGraph, vertex_point_t>::type,
+           class OneHalfedgeGraphPerTree = Tag_true,
+           class cache_datum = Tag_false >
 class AABB_HalfedgeGraph_segment_primitive
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<  typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
-                            Segment_from_edge_descriptor_property_map<HalfedgeGraph>,
-                            Source_point_from_edge_descriptor<HalfedgeGraph>,
+                            Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap>,
+                            Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap>,
                             OneHalfedgeGraphPerTree,
                             cache_datum >
 #endif
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor Id_;
-  typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph>  Segment_property_map;
-  typedef Source_point_from_edge_descriptor<HalfedgeGraph> Point_property_map;
+  typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap>  Segment_property_map;
+  typedef Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap> Point_property_map;
 
   typedef AABB_primitive< Id_,
                           Segment_property_map,
@@ -106,13 +111,24 @@ public:
   Constructs a primitive.
   \tparam Iterator is an input iterator with `Id` as value type.
   This \ref AABB_tree/AABB_HalfedgeGraph_edge_example.cpp "example" gives a way to call this constructor
-  using the the insert-by-range method of the class `AABB_tree<Traits>`.
+  using the insert-by-range method of the class `AABB_tree<Traits>`.
+  If `VertexPointPMap` is the default of the class, an additional constructor
+  is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
+  template <class Iterator>
+  AABB_HalfedgeGraph_segment_primitive(Iterator it, HalfedgeGraph& graph, VertexPointPMap vppm)
+    : Base( Id_(*it),
+            Segment_property_map(&graph, vppm),
+            Point_property_map(&graph, vppm) )
+  {}
+
+  #ifndef DOXYGEN_RUNNING
   template <class Iterator>
   AABB_HalfedgeGraph_segment_primitive(Iterator it, HalfedgeGraph& graph)
     : Base( Id_(*it),
             Segment_property_map(&graph),
             Point_property_map(&graph) ){}
+  #endif
 
   /// For backward-compatibility with AABB_polyhedron_segment_primitive only
   AABB_HalfedgeGraph_segment_primitive(Id_ id)
