@@ -44,6 +44,13 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "test_use_h.cpp" )
 
+  find_package( TBB )
+  if( TBB_FOUND )
+    include(${TBB_USE_FILE})
+	list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
+  create_single_source_cgal_program( "test_TBB.cpp" )
+  
   create_link_to_program(CGAL)
  
   if ( WITH_CGAL_Core )
