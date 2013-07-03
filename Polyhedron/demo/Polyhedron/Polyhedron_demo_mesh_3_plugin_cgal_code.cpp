@@ -1,3 +1,5 @@
+#define CGAL_MESH_3_VERBOSE 1
+#define CGAL_MESHES_DEBUG_REFINEMENT_POINTS 1
 #include <CGAL/AABB_intersections.h>
 #include <CGAL/AABB_tree.h>
 
@@ -16,7 +18,11 @@
 
 
 // @TODO: Is that the right kernel?!
-typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Kernel> Mesh_domain;
+typedef CGAL::Triangle_accessor_3<Polyhedron,Kernel> Accessor;
+typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron,
+                                       Kernel,
+                                       Accessor,
+                                       CGAL::Tag_true> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -286,6 +292,12 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
                              const double tets_sizing)
 {
   if(!pMesh) return 0;
+#if \
+  defined(CGAL_MESHES_DEBUG_REFINEMENT_POINTS) ||       \
+  defined(CGAL_MESH_3_VERBOSE)
+  std::cerr.precision(18);
+#endif
+
 
   // remesh
 
@@ -309,7 +321,9 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   // Meshing
   std::cerr << "Mesh...";
   Scene_c3t3_item* new_item = 
-    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria));
+    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                                CGAL::parameters::no_exude(),
+                                                CGAL::parameters::no_perturb()));
 
   std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 

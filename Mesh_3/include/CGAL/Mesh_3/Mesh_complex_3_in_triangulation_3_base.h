@@ -31,6 +31,7 @@
 #include <CGAL/Mesh_3/utilities.h>
 #include <CGAL/iterator.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Mesh_3/Dump_c3t3.h>
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
@@ -232,17 +233,28 @@ public:
       {
       case NOT_IN_COMPLEX: case REGULAR: break;
       case BOUNDARY: ++number_of_boundary_incident_edges; break;
-      default : std::cerr << "singular edge...\n"; return SINGULAR;
+      default :
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        std::cerr << "singular edge...\n";
+        std::cerr << v->point() << std::endl;
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        return SINGULAR;
       }
     }
 
     // From here all incident edges (in complex) are REGULAR or BOUNDARY.
     const int nb_components = union_find_of_incident_facets(v);
     if(nb_components > 1) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "singular vertex: nb_components=" << nb_components << std::endl;
+      std::cerr << v->point() << std::endl;
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       return SINGULAR;
     }
     else { // REGULAR OR BOUNDARY
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+      std::cerr << "regular or boundary: " << v->point() << std::endl;
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       if (number_of_boundary_incident_edges != 0)
         return BOUNDARY;
       else
@@ -269,6 +281,14 @@ public:
     case 2: return REGULAR;
     default: return SINGULAR;
     }
+  }
+
+  /// Returns true if the vertex \c v has is incident to at least a facet
+  /// of the complex
+  bool has_incident_facets_in_complex(const Vertex_handle& v) const
+  {
+    if(!manifold_info_initialized_) init_manifold_info();
+    return v->cached_number_of_incident_facets() > 0;
   }
 
   /// Returns true if facet \c facet is in complex
@@ -753,6 +773,17 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::add_to_complex(
         const int m = edge_va->cached_number_of_components();
         edge_va->set_c2t3_cache(n+1, m);
       }
+      const int dimension_plus_1 = tr_.dimension() + 1;
+      // update c2t3 for vertices of f
+      for (int j = 0; j < dimension_plus_1; j++) {
+        if (j != i) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          if(cell->vertex(j)->is_c2t3_cache_valid())
+            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          cell->vertex(j)->invalidate_c2t3_cache();
+        }
+      }
     }
   }
 }
@@ -783,6 +814,17 @@ Mesh_complex_3_in_triangulation_3_base<Tr>::remove_from_complex(const Facet& fac
         CGAL_assertion(n>0);
         const int m = edge_va->cached_number_of_components();
         edge_va->set_c2t3_cache(n-1, m);
+      }
+      const int dimension_plus_1 = tr_.dimension() + 1;
+      // update c2t3 for vertices of f
+      for (int j = 0; j < dimension_plus_1; j++) {
+        if (j != facet.second) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          if(cell->vertex(j)->is_c2t3_cache_valid())
+            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          cell->vertex(j)->invalidate_c2t3_cache();
+        }
       }
     }
   }

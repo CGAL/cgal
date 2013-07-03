@@ -15,6 +15,8 @@ public:
       return QApplication::notify(receiver, event);
     } catch (std::exception &e) {
       // find the mainwindow to spawn an error message
+      std::cerr << "Unhandled exception:\n"
+                << e.what() << std::endl;
       Q_FOREACH (QWidget *widget, QApplication::topLevelWidgets()) {
         if(MainWindow* mw = qobject_cast<MainWindow*>(widget)) {
           QMessageBox::critical(

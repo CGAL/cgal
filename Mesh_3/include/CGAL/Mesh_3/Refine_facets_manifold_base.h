@@ -24,6 +24,7 @@
 #include <CGAL/utility.h>
 #include <set>
 #include <vector>
+#include <boost/foreach.hpp>
 
 namespace CGAL {
 
@@ -123,9 +124,10 @@ private:
     while(fit != facets.end() && !r_c3t3_.is_in_complex(*fit)) ++fit;
     CGAL_assertion(fit!=facets.end());
 
-    Facet biggest_facet = *fit;
+    Facet biggest_facet = *fit++;
+    while(fit != facets.end() && !r_c3t3_.is_in_complex(*fit)) ++fit;
 
-    for (++fit; fit != facets.end(); )
+    for (; fit != facets.end(); )
     {
       Facet current_facet = *fit;
       // is the current facet bigger than the current biggest one
@@ -137,6 +139,7 @@ private:
       ++fit;
       while(fit != facets.end() && !r_c3t3_.is_in_complex(*fit)) ++fit;
     }
+    CGAL_assertion(r_c3t3_.is_in_complex(biggest_facet));
     return biggest_facet;
   }
 
@@ -210,7 +213,12 @@ private:
       // for each v of f
       for (int j = 0; j < 4; j++)
         if (i != j)
-          m_bad_vertices.erase(c->vertex(j));
+          if(m_bad_vertices.erase(c->vertex(j)) > 0) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+            std::cerr << "m_bad_vertices.erase("
+                      << c->vertex(j)->point() << ")\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          }
     }
   }
 
@@ -271,6 +279,8 @@ private:
 
   void initialize_bad_vertices() const
   {
+    CGAL_assertion(m_bad_vertices_initialized == false);
+    CGAL_assertion(m_bad_vertices.empty());
 #ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "\nscanning vertices..." << std::endl;
     int n = 0;
@@ -281,6 +291,10 @@ private:
          vit != end; ++vit)
     {
       if( r_c3t3_.face_status(vit) == C3t3::SINGULAR ) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        std::cerr << "m_bad_edges.insert("
+                  << vit->point() << ")\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         m_bad_vertices.insert( vit );
 #ifdef CGAL_MESH_3_VERBOSE
         ++n;
@@ -290,6 +304,14 @@ private:
     m_bad_vertices_initialized = true;
 #ifdef CGAL_MESH_3_VERBOSE
     std::cerr << "   -> found " << n << " bad vertices\n";
+#  ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+    std::cerr << "Bad vertices queue:\n";
+    BOOST_FOREACH(Vertex_handle v2, m_bad_vertices)
+    {
+      std::cerr << v2->point() << std::endl;
+    }
+    CGAL::dump_c3t3(r_c3t3_, "dump-at-scan-vertices");
+#  endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #endif
   }
 
@@ -329,10 +351,32 @@ public:
     }
     else {
       if(!m_bad_edges.empty()) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        std::cerr << "Bad edge "
+                  << m_bad_edges.begin()->first->point()
+                  << " - "
+                  << m_bad_edges.begin()->second->point()
+                  << "\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         Edge first_bad_edge = edgevv_to_edge(*(m_bad_edges.begin()));
         return biggest_incident_facet_in_complex(first_bad_edge);
       } else {
-        return biggest_incident_facet_in_complex(*m_bad_vertices.begin());
+        CGAL_assertion(!m_bad_vertices.empty());
+        const Vertex_handle& v = *m_bad_vertices.begin();
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        std::cerr << "Bad vertices queue:\n";
+        BOOST_FOREACH(Vertex_handle v2, m_bad_vertices)
+        {
+          std::cerr << v2->point() << std::endl;
+        }
+        std::cerr << "Bad vertex " << v->point() << "\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        CGAL_assertion(r_c3t3_.has_incident_facets_in_complex(v));
+        if(r_c3t3_.face_status(v) != C3t3::SINGULAR) {
+          dump_c3t3(r_c3t3_, "dump-crash");
+          CGAL_error_msg("r_c3t3_.face_status(v) != C3t3::SINGULAR");
+        }
+        return biggest_incident_facet_in_complex(v);
       }
     }
   }
@@ -403,6 +447,8 @@ public:
       }
     }
 
+    if(!m_bad_vertices_initialized) return;
+
     // foreach v' in star of v
     std::vector<Vertex_handle> vertices;
     vertices.reserve(64);
@@ -417,16 +463,28 @@ public:
            vit = vertices.begin(), end = vertices.end();
          vit != end; ++vit)
     {
-      if ( r_c3t3_.is_in_complex(*vit)  &&
-           !r_c3t3_.is_regular_or_boundary_for_vertices(*vit))
+      if ( r_c3t3_.has_incident_facets_in_complex(*vit)  &&
+           (r_c3t3_.face_status(*vit) == C3t3::SINGULAR)
+           // !r_c3t3_.is_regular_or_boundary_for_vertices(*vit)
+           )
       {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        std::cerr << "m_bad_vertices.insert("
+                  << (*vit)->point() << ")\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         m_bad_vertices.insert(*vit);
       }
     }
 
-    if ( r_c3t3_.is_in_complex(v) &&
-         !r_c3t3_.is_regular_or_boundary_for_vertices(v))
+    if ( r_c3t3_.has_incident_facets_in_complex(v) &&
+         (r_c3t3_.face_status(v) == C3t3::SINGULAR)
+         // !r_c3t3_.is_regular_or_boundary_for_vertices(v)
+         )
     {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+      std::cerr << "m_bad_vertices.insert("
+                << v->point() << ")\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       m_bad_vertices.insert(v);
     }
   }

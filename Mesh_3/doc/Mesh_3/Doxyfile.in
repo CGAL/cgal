@@ -3,8 +3,19 @@
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Mesh Generation"
 
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Mesh_3/doc/Mesh_3/
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Mesh_3/doc/Mesh_3/ \
+                              ${CMAKE_SOURCE_DIR}/Mesh_3/include/CGAL/Mesh_3/Protect_edges_sizing_field.h \
+                              ${CMAKE_SOURCE_DIR}/Mesh_3/include/CGAL/Mesh_3/Mesh_3_regular_edges.h \
+                              ${CMAKE_SOURCE_DIR}/Mesh_3/include/CGAL/Mesh_3/Refine_cells_3.h \
+                              ${CMAKE_SOURCE_DIR}/Mesh_3/include/CGAL/Mesh_3/Refine_facets_3.h \
+                              ${CMAKE_SOURCE_DIR}/Mesh_3/include/CGAL/Mesh_3/Refine_facets_manifold_base.h \
+                              ${CMAKE_SOURCE_DIR}/Surface_mesher/include/CGAL/Surface_mesher/Surface_mesher_manifold.h
 
 HTML_EXTRA_FILES           =  ${CMAKE_SOURCE_DIR}/Mesh_3/doc/Mesh_3/fig/implicit_domain_3.jpg \
                               ${CMAKE_SOURCE_DIR}/Mesh_3/doc/Mesh_3/fig/implicit_domain_4.jpg \
                               ${CMAKE_SOURCE_DIR}/Mesh_3/doc/Mesh_3/fig/implicit_domain_5.jpg
+
+EXTRACT_PRIVATE        = YES
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES

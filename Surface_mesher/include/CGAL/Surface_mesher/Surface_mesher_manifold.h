@@ -42,19 +42,12 @@ namespace CGAL {
       typedef C2T3 C2t3;
       typedef typename C2T3::Triangulation Tr;
       typedef typename Tr::Geom_traits GT;
-      typedef typename GT::FT FT;
       typedef typename Tr::Point Point;
       typedef typename Tr::Facet Facet;
-      typedef typename Tr::Cell_handle Cell_handle;
       typedef typename Tr::Vertex_handle Vertex_handle;
       typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
-      typedef std::list<Facet> Facets;
-      typedef std::list<Vertex_handle> Vertices;
-      typedef typename Facets::iterator Facets_iterator;
-      typedef typename Vertices::iterator Vertices_iterator;
-      typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
 
-  protected:
+  private:
     // because of the caching, these two members have to be mutable,
     // because they are actually updated in the const method
     // 'no_longer_element_to_refine_impl()'
@@ -62,7 +55,14 @@ namespace CGAL {
     mutable Bad_vertices bad_vertices;
     mutable bool bad_vertices_initialized;
 
-    private:
+  private:
+      typedef typename Tr::Cell_handle Cell_handle;
+      typedef std::list<Facet> Facets;
+      typedef std::list<Vertex_handle> Vertices;
+      typedef typename Facets::iterator Facets_iterator;
+      typedef typename Vertices::iterator Vertices_iterator;
+      typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
+
       Facet canonical_facet(const Facet& f) const {
 	const Cell_handle& c = f.first;
 	const Cell_handle& c2 = c->neighbor(f.second);
@@ -107,6 +107,27 @@ namespace CGAL {
 	return biggest_facet;
       }
 
+      void initialize_bad_vertices() const
+      {
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
+	std::cerr << "scanning vertices" << std::endl;
+#endif
+	int n = 0;
+	for (Finite_vertices_iterator vit = SMMBB::tr.finite_vertices_begin();
+	     vit != SMMBB::tr.finite_vertices_end();
+	     ++vit) {
+	  if ( (SMMBB::c2t3.face_status(vit)  // @TODO: appeler is_regular
+		== C2t3::SINGULAR) ) {
+	    bad_vertices.insert( vit );
+	    ++n;
+	  }
+	}
+	bad_vertices_initialized = true;
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
+	std::cerr << "   -> found " << n << " bad vertices\n";
+#endif
+      }
+
     public:
       Surface_mesher_manifold_base (C2T3& c2t3,
                                     const Surface& surface,
@@ -131,27 +152,6 @@ namespace CGAL {
 	  return bad_vertices.empty();
 	}
 	return false;
-      }
-
-      void initialize_bad_vertices() const
-      {
-#ifdef CGAL_SURFACE_MESHER_VERBOSE
-	std::cerr << "scanning vertices" << std::endl;
-#endif
-	int n = 0;
-	for (Finite_vertices_iterator vit = SMMBB::tr.finite_vertices_begin();
-	     vit != SMMBB::tr.finite_vertices_end();
-	     ++vit) {
-	  if ( (SMMBB::c2t3.face_status(vit)  // @TODO: appeler is_regular
-		== C2t3::SINGULAR) ) {
-	    bad_vertices.insert( vit );
-	    ++n;
-	  }
-	}
-	bad_vertices_initialized = true;
-#ifdef CGAL_SURFACE_MESHER_VERBOSE
-	std::cerr << "   -> found " << n << " bad vertices\n";
-#endif
       }
 
       // Lazy initialization function

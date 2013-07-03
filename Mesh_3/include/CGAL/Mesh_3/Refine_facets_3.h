@@ -418,6 +418,7 @@ public:
               << c->vertex((i+3)&3)->point() << ") : refinement point is "
               << this->get_facet_surface_center(facet) << std::endl;
 #endif
+    CGAL_assertion_code(if(!this->is_facet_on_surface(facet)) dump_c3t3(r_c3t3_, "dump-crash"));
     CGAL_assertion (this->is_facet_on_surface(facet));
     next_vertex_index_ = this->get_facet_surface_center_index(facet);
     return this->get_facet_surface_center(facet);
@@ -436,6 +437,7 @@ public:
     {
       std::stringstream sstr;
       sstr << "(" << p << ") is already inserted on surface.\n";
+      dump_c3t3(r_c3t3_, "dump-crash");
       CGAL_error_msg(sstr.str().c_str());
       return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
     }
@@ -653,6 +655,7 @@ before_insertion_impl(const Facet& facet,
       % group(setprecision(23), facet.first->vertex((facet.second + 2)&3)->point())
       % group(setprecision(23), facet.first->vertex((facet.second + 3)&3)->point());
 
+    dump_c3t3(r_c3t3_, "dump-crash");
     CGAL_error_msg(error_msg.str().c_str());
   }
 }

@@ -32,7 +32,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionMesh_3 = new QAction("Create a tetrahedral mesh", mw);
+    actionMesh_3 = new QAction("Create a tetrahedral &mesh", mw);
     if(actionMesh_3) {
       connect(actionMesh_3, SIGNAL(triggered()),
               this, SLOT(mesh_3()));
