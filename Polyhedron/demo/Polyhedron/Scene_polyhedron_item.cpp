@@ -230,6 +230,7 @@ void Scene_polyhedron_item::enable_facets_picking(bool b)
 
 void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 {
+  if(b) { facet_picking_m = true; } // automatically activate facet_picking
   erase_next_picked_facet_m = b;
 }
 
@@ -385,7 +386,7 @@ Scene_polyhedron_item::select(double orig_x,
           if(erase_next_picked_facet_m) {
             polyhedron()->erase_facet(selected_fh->halfedge());
             polyhedron()->normalize_border();
-            set_erase_next_picked_facet(false);
+            //set_erase_next_picked_facet(false);
             changed();
             emit itemChanged();
           }
