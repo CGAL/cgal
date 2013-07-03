@@ -59,8 +59,8 @@ edge_descriptor mesh_split(Polyhedron *polyhedron, edge_descriptor ei, Point pn)
   return en;
 }
 
-}
-}
+} //namespace internal
+} //namespace CGAL
 
 namespace CGAL {
 
@@ -309,6 +309,20 @@ public:
                       .get_placement(SMS::Midpoint_placement<Polyhedron>())
                       .edge_is_border_map(constrains_map)
                 );
+
+//    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+//    {
+//      vertex_descriptor vi = boost::source(*eb, *polyhedron);
+//      vertex_descriptor vj = boost::target(*eb, *polyhedron);
+//      Point pi = vi->point();
+//      Point pj = vj->point();
+//      double dis2 = squared_distance(pi, pj);
+//      double dis = sqrtf(dis2);
+//      if (dis < edgelength_TH)
+//      {
+//        std::cout << "dis " << dis << "\n";
+//      }
+//    }
     return r;
   }
 
@@ -463,9 +477,111 @@ public:
     int num_collapses = collapse_short_edges(edgelength_TH);
     std::cout << "collapse " << num_collapses << " edges.\n";
 
-    int num_splits = iteratively_split_triangles();
-    std::cout << "split " << num_splits << " edges.\n";
+//    int num_splits = iteratively_split_triangles();
+//    std::cout << "split " << num_splits << " edges.\n";
   }
+
+  bool is_collapse_ok(edge_descriptor v0v1)
+  {
+    edge_descriptor v1v0 = v0v1->opposite();
+    vertex_descriptor v0 = boost::target(v1v0, *polyhedron);
+    vertex_descriptor v1 = boost::source(v1v0, *polyhedron);
+
+    vertex_descriptor vv, vl, vr;
+    edge_descriptor  h1, h2;
+
+      // the edges v1-vl and vl-v0 must not be both boundary edges
+    if (!(v0v1->is_border()))
+    {
+      vl = boost::target(v0v1->next(), *polyhedron);
+      h1 = v0v1->next();
+      h2 = h1->next();
+      if (h1->opposite()->is_border() && h2->opposite()->is_border())
+      {
+        return false;
+      }
+    }
+
+    // the edges v0-vr and vr-v1 must not be both boundary edges
+    if (!(v1v0->is_border()))
+    {
+      vr = boost::target(v1v0->next(), *polyhedron);
+      h1 = v1v0->next();
+      h2 = h1->next();
+      if (h1->opposite()->is_border() && h2->opposite()->is_border())
+      {
+        return false;
+      }
+    }
+
+    // if vl and vr are equal or both invalid -> fail
+    if (vl == vr)
+    {
+      return false;
+    }
+
+    // edge between two boundary vertices should be a boundary edge
+    if (is_border(v0) && is_border(v1) &&
+        !(v0v1->is_border()) && !(v1v0->is_border()))
+    {
+      return false;
+    }
+
+    // test intersection of the one-rings of v0 and v1
+    in_edge_iterator eb, ee;
+    for (boost::tie(eb, ee) = in_edges(v0, *polyhedron); eb != ee; eb++)
+    {
+      vv = boost::source(*eb, *polyhedron);
+      if (vv != v1 && vv != vl && vv != vr)
+      {
+        if (find_halfedge(vv, v1))
+        {
+          return false;
+        }
+      }
+    }
+
+    // passed all tests
+    return true;
+  }
+
+  bool find_halfedge(vertex_descriptor vi, vertex_descriptor vj)
+  {
+    in_edge_iterator eb, ee;
+    for (boost::tie(eb, ee) = in_edges(vj, *polyhedron); eb != ee; eb++)
+    {
+      vertex_descriptor vv = boost::source(*eb, *polyhedron);
+      if (vv == vi)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool is_border(vertex_descriptor aV)
+  {
+    bool rR = false;
+
+    in_edge_iterator eb, ee;
+    for (boost::tie(eb, ee) = in_edges(aV, *polyhedron); eb != ee; eb++)
+    {
+      edge_descriptor lEdge = *eb;
+      if (is_undirected_edge_a_border(lEdge))
+      {
+        rR = true;
+        break;
+      }
+    }
+
+    return rR;
+  }
+
+  bool is_undirected_edge_a_border(edge_descriptor aEdge)
+  {
+    return aEdge->is_border() || aEdge->opposite()->is_border();
+  }
+
 };
 
 } //namespace CGAL
