@@ -228,7 +228,7 @@ public:
 
   template <typename TDS2>
   struct Rebind_TDS {
-    typedef Triangulation_ds_cell_base_3<TDS2> Other;
+    typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other;
   };
 
 
