@@ -91,26 +91,31 @@ public:
   		}
 
 		Point_2 w;
+		Point_2 stored_q(q);
+		q = Point_2(0, 0);
 
 		if (CGAL::orientation(q, vertices[0], vertices[1]) == CGAL::LEFT_TURN) {
+			std::cout << "left" << std::endl;
+			upcase = LEFT;
 			i = 1;
 			w = vertices[1];
 			s.push(vertices[0]);
 			s.push(vertices[1]);
-			left(i, w, q);
 		}
 		else {
+			std::cout << "right" << std::endl;
+			upcase = SCANA;
 			i = 1;
 			w = vertices[1];
 			s.push(vertices[0]);
-			scana(i, w, q);
 		}
-		Point_2 stored_q(q);
-		q = Point_2(0, 0);
 		do {
+			std::cout << "CASE: " << upcase << std::endl;
 			switch(upcase) {
 				case LEFT: 
+					std::cout << "before entering left" << std::endl;
 					left(i, w, q);
+					std::cout << "after exiting left" << std::endl;
 					break;
 				case RIGHT:
 					right(i, w, q);
@@ -131,24 +136,37 @@ public:
 			if (upcase == LEFT) {
 				// Check if (s_t-1, s_t) intersects (q, vn) 
 				Point_2 s_t = s.top();
+				std::cout << "s_t= " << s_t << std::endl;
 				s.pop();
 				Point_2 s_t_prev = s.top();
+				std::cout << "s_t-1= " << s_t_prev << std::endl;
 				Segment_2 s1(s_t_prev, s_t);
 				Segment_2 s2(q, vertices[vertices.size()-1]);
 				CGAL::Object result = CGAL::intersection(s1, s2);
 
 				if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) { 
-					upcase = SCANB;
 					Segment_2 s3(s_t_prev, vertices[i]);
 					CGAL::Object result2 = CGAL::intersection(s3, s2);
 					if (const Point_2 *vertex_new = CGAL::object_cast<Point_2>(&result2)) {
-						s.push(*vertex_new);
+						if ((*vertex_new) != (s_t_prev) && (*vertex_new != s_t)) {
+							std::cout << "switch to scanb" << std::endl;
+							upcase = SCANB;
+							s.push(*vertex_new);
+						}
+						else { // Do not alter stack if it doesn't intersect - push back s_t
+							std::cout << "skipping because it is endpoint" << std::endl;
+							s.push(s_t);
+						}
+					}
+					else {
+						s.push(s_t);
 					}
 				}
-				else { // Do not alter stack if it doesn't intersect - push back s_t
+				else {
 					s.push(s_t);
 				}
 			}
+			std::cout << "gets out" << std::endl;
 		} while(upcase != FINISH);
 
 		std::cout << "RESULT: " << std::endl;
@@ -188,11 +206,13 @@ protected:
 	}
 
 	void left(int &i, Point_2 &w, const Point_2 &query_pt) {
-
-		if (i == vertices.size()) {
+		std::cout << "begin with i = " << i << std::endl;
+		if (i == vertices.size() - 1) {
+			std::cout << "done" << std::endl;
 			upcase = FINISH;
 		}
 		else if (CGAL::orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::LEFT_TURN) {
+			std::cout << "left::left turn with i =" << i << std::endl;
 			upcase = LEFT;
 			s.push(vertices[i+1]);
 			w = vertices[i+1];
