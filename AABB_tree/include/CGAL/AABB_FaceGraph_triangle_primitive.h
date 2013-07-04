@@ -25,6 +25,7 @@
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_3_property_map.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
@@ -35,11 +36,12 @@ namespace CGAL {
  * The polyhedron from which the primitive is built should not be deleted
  * while the AABB tree holding the primitive is in use.
  *
- * \cgalModels `AABBPrimitive` if `OneFaceGraphPerTree` is `CGAL::Tag_false`,
- *    and `AABBPrimitiveWithSharedData` if `OneFaceGraphPerTree` is `CGAL::Tag_true`.
+ * \cgalModels `AABBPrimitiveWithSharedData`
  *
  *\tparam FaceGraph is a \cgal Polyhedron.
- *\tparam OneFaceGraphPerTree must be set to `CGAL::Tag_true`.
+ *\tparam VertexPointPMap must be set to `CGAL::Default`
+ *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
+ *\tparam OneFaceGraphPerTree must be set to `CGAL::Default`
  *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
  *\tparam cache_datum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case, the datum is stored
  *        in the primitive, while in the latter it is constructed on the fly to reduce the memory footprint.
@@ -49,18 +51,19 @@ namespace CGAL {
  *\sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>`
  */
 template < class FaceGraph,
-           class OneFaceGraphPerTree=Tag_true,
+           class VertexPointPMap = Default,
+           class OneFaceGraphPerTree = Default,
            class cache_datum=Tag_false >
 class AABB_FaceGraph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
 : public AABB_primitive<  typename boost::mpl::if_<
                             typename boost::is_const<FaceGraph>::type,
                             typename FaceGraph::Facet_const_handle,
-                            typename FaceGraph::Facet_handle 
+                            typename FaceGraph::Facet_handle
                            >::type,
                          Triangle_from_facet_handle_property_map<FaceGraph>,
                          One_point_from_facet_handle_property_map<FaceGraph>,
-                         OneFaceGraphPerTree,
+                         Tag_true,
                          cache_datum >
 #endif
 {
@@ -107,7 +110,8 @@ public:
             Triangle_property_map(&graph),
             Point_property_map(&graph) ){}
 
-  /// For backward-compatibility with AABB_polyhedron_triangle_primitive only
+  /// For backward-compatibility with AABB_polyhedron_triangle_primitive only.
+  /// `Id_` is `Facet_const_handle` if `FaceGraph` is const and `Facet_handle` otherwise.
   AABB_FaceGraph_triangle_primitive(Id_ id)
     : Base( id,
             Triangle_property_map(NULL),
