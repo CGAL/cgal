@@ -99,6 +99,7 @@ private:
   double omega_H;
   double edgelength_TH;
   double TH_ALPHA;
+  double zero_TH;
 
   int vertex_id_count;
 
@@ -152,7 +153,7 @@ public:
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
       omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), TH_ALPHA(110),
-      weight_calculator(weight_calculator)
+      weight_calculator(weight_calculator), zero_TH(1e-7f)
   {
     TH_ALPHA *= (M_PI / 180.0);
 
@@ -182,6 +183,7 @@ public:
   // compute cotangent weights of all edges
   void compute_edge_weight()
   {
+    edge_weight.clear();
     edge_weight.reserve(boost::num_edges(*polyhedron));
     edge_iterator eb, ee;
     for(boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
@@ -194,14 +196,23 @@ public:
   {
     int nver = boost::num_vertices(*polyhedron);
 
+    vertex_iterator vb, ve;
     // initialize the Laplacian matrix
-    for (int i = 0; i < nver; i++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
+      int i = boost::get(vertex_id_pmap, *vb);
       A.set_coef(i, i, 0.0, true);
-      A.set_coef(i + nver, i, omega_H, true);
+      if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
+          && is_vertex_fixed_map[i])
+      {
+        A.set_coef(i + nver, i, 1.0 / zero_TH, true);
+      }
+      else
+      {
+        A.set_coef(i + nver, i, omega_H, true);
+      }
     }
 
-    vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       int i = boost::get(vertex_id_pmap, *vb);
@@ -236,14 +247,74 @@ public:
     {
       vertex_descriptor vi = *vb;
       int i = boost::get(vertex_id_pmap, vi);
-      Bx[i + nver] = vi->point().x() * omega_H;
-      By[i + nver] = vi->point().y() * omega_H;
-      Bz[i + nver] = vi->point().z() * omega_H;
+      double omega;
+      if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
+          && is_vertex_fixed_map[i])
+      {
+        std::cout << "fix\n";
+        omega = 1.0 / zero_TH;
+      }
+      else
+      {
+        omega = omega_H;
+      }
+      Bx[i + nver] = vi->point().x() * omega;
+      By[i + nver] = vi->point().y() * omega;
+      Bz[i + nver] = vi->point().z() * omega;
+    }
+  }
+
+  void update_vertex_id()
+  {
+    std::cout << "update id\n";
+    std::map<size_t, bool> is_vertex_fixed_map_new;
+    is_vertex_fixed_map_new.clear();
+
+    vertex_iterator vb, ve;
+    int vertex_id_count = 0;
+    int cnt = 0;
+    std::vector<int> vertex_id_old;
+    vertex_id_old.clear();
+    vertex_id_old.resize(boost::num_vertices(*polyhedron));
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      vertex_id_old[cnt++] = boost::get(vertex_id_pmap, *vb);
+      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+    }
+
+    cnt = 0;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      int old_id = vertex_id_old[cnt++];
+      if (is_vertex_fixed_map.find(old_id) != is_vertex_fixed_map.end())
+      {
+        if (is_vertex_fixed_map[old_id])
+        {
+          int new_id = boost::get(vertex_id_pmap, *vb);
+          is_vertex_fixed_map_new[new_id] = true;
+          std::cout << "fix " << new_id << "\n";
+        }
+      }
+    }
+    is_vertex_fixed_map = is_vertex_fixed_map_new;
+
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      int id = boost::get(vertex_id_pmap, *vb);
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
+      {
+        if (is_vertex_fixed_map[id])
+        {
+          std::cout << "check fix " << id << "\n";
+        }
+      }
     }
   }
 
   void contract_geometry()
   {
+    update_vertex_id();
+
     compute_edge_weight();
 
     // Assemble linear system At * A * X = At * B
@@ -477,8 +548,52 @@ public:
     int num_collapses = collapse_short_edges(edgelength_TH);
     std::cout << "collapse " << num_collapses << " edges.\n";
 
-//    int num_splits = iteratively_split_triangles();
-//    std::cout << "split " << num_splits << " edges.\n";
+    int num_splits = iteratively_split_triangles();
+    std::cout << "split " << num_splits << " edges.\n";
+
+    int num_fixed = detect_degeneracies();
+    std::cout << "fixed " << num_fixed << " vertices.\n";
+  }
+
+  int detect_degeneracies()
+  {
+    int num_fixed = 0;
+    double elength_fixed = edgelength_TH * 1.1;
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    {
+      vertex_descriptor v = *vb;
+      int idx = boost::get(vertex_id_pmap, v);
+      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end() || !is_vertex_fixed_map[idx])
+      {
+        bool willbefixed = false;
+        int bad_counter = 0;
+
+        in_edge_iterator eb, ee;
+        for (boost::tie(eb, ee) = boost::in_edges(v, *polyhedron); eb != ee; eb++)
+        {
+          edge_descriptor edge = *eb;
+          vertex_descriptor v0 = boost::source(edge, *polyhedron);
+          vertex_descriptor v1 = boost::target(edge, *polyhedron);
+          double length = sqrt(squared_distance(v0->point(), v1->point()));
+          if (length < elength_fixed)
+          {
+            if (!is_collapse_ok(edge))
+            {
+              bad_counter++;
+            }
+          }
+        }
+        willbefixed = (bad_counter >= 2);
+        if (willbefixed)
+        {
+          std::cout << "detect " << idx << "\n";
+          is_vertex_fixed_map[idx] = willbefixed;
+          num_fixed++;
+        }
+      }
+    }
+    return num_fixed;
   }
 
   bool is_collapse_ok(edge_descriptor v0v1)
@@ -529,7 +644,7 @@ public:
 
     // test intersection of the one-rings of v0 and v1
     in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = in_edges(v0, *polyhedron); eb != ee; eb++)
+    for (boost::tie(eb, ee) = boost::in_edges(v0, *polyhedron); eb != ee; eb++)
     {
       vv = boost::source(*eb, *polyhedron);
       if (vv != v1 && vv != vl && vv != vr)
@@ -548,7 +663,7 @@ public:
   bool find_halfedge(vertex_descriptor vi, vertex_descriptor vj)
   {
     in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = in_edges(vj, *polyhedron); eb != ee; eb++)
+    for (boost::tie(eb, ee) = boost::in_edges(vj, *polyhedron); eb != ee; eb++)
     {
       vertex_descriptor vv = boost::source(*eb, *polyhedron);
       if (vv == vi)
@@ -564,7 +679,7 @@ public:
     bool rR = false;
 
     in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = in_edges(aV, *polyhedron); eb != ee; eb++)
+    for (boost::tie(eb, ee) = boost::in_edges(aV, *polyhedron); eb != ee; eb++)
     {
       edge_descriptor lEdge = *eb;
       if (is_undirected_edge_a_border(lEdge))
