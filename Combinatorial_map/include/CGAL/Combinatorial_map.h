@@ -872,7 +872,8 @@ namespace CGAL {
      *  @pre 2<=i<=n (TODO case i==1)
      *  @TODO move into Combinatorial_map_operations ?
      */
-    unsigned int close(unsigned int i)
+    template<unsigned int i>
+    unsigned int close()
     {
       CGAL_assertion( 2<=i && i<=dimension );
       unsigned int res = 0;
@@ -881,44 +882,37 @@ namespace CGAL {
       for ( typename Dart_range::iterator it(darts().begin());
            it!=darts().end(); ++it)
       {
-        if ( it->is_free(i) )
+        if ( it->template is_free<i>() )
         {
           d = create_dart();
           ++res;
 
-          // Here we cannot use link_beta as i is not a constant
-          // TODO something to solve this problem ?
-          basic_link_beta_for_involution(it, d, i);
-          // we copy all the non void attribute
-          Helper::template Foreach_enabled_attributes_except
-              <CGAL::internal::Group_attribute_functor_of_dart
-              <Self, dimension+1>, dimension+1>:: run(this,it,d);
-          // we need to remove i-attrib, how to do that ?
+          link_beta_for_involution<i>(it, d);
 
           // Special cases for 0 and 1
           if ( !it->template is_free<1>() &&
-               !it->template beta<1>()->is_free(i) )
+               !it->template beta<1>()->template is_free<i>() )
             link_beta<1>(it->beta(1)->beta(i),d);
           if ( !it->template is_free<0>() &&
-               !it->template beta<0>()->is_free(i) )
-            link_beta<0>(it->template beta<0>()->beta(i),d);
+               !it->template beta<0>()->template is_free<i>() )
+            link_beta<0>(it->template beta<0>()->template beta<i>(),d);
           // General case for 2...dimension
           for ( unsigned int j=2; j<=dimension; ++j)
           {
             if ( j+1!=i && j!=i && j!=i+1 &&
-                 !it->is_free(j) && !it->beta(j)->is_free(i) )
+                 !it->is_free(j) && !it->beta(j)->template is_free<i>() )
             {
               basic_link_beta_for_involution(it->beta(j)->beta(i), d, j);
             }
           }
 
           d2 = it;
-          while (d2 != null_dart_handle && !d2->is_free(i-1))
-          { d2 = d2->beta(i-1)->beta(i); }
+          while (d2 != null_dart_handle && !d2->template is_free<i-1>())
+          { d2 = d2->beta(i-1)->template beta<i>(); }
           if (d2 != null_dart_handle)
           {
             if (i==2) basic_link_beta<1>(d2, d);
-            else basic_link_beta_for_involution(d2, d, i-1);
+            else basic_link_beta_for_involution<i-1>(d2, d);
           }
         }
       }
