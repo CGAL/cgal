@@ -38,37 +38,7 @@ struct Fair_default_sparse_linear_solver {
   Solver;
 };
 
-template<class SparseMatrix>
-void write_matrix_sparse(std::ostream &stream, const SparseMatrix& m)
-{
-  stream << m.rows() << " " << m.cols() << std::endl;
-
-  for(typename SparseMatrix::Index r = 0; r < m.rows(); ++r) 
-  {
-    for(typename SparseMatrix::Index c = 0; c < m.cols(); ++c) 
-    {
-      //if(m.coeff(r,c) != 0)
-      stream << m.coeff(r,c) << " ";
-    }
-    stream << std::endl;
-  }
-}
-
-template<class Matrix>
-void write_matrix(std::ostream &stream, const Matrix& m)
-{
-  stream << m.rows() << " " << m.cols() << std::endl;
-
-  for(typename Matrix::Index r = 0; r < m.rows(); ++r) 
-  {
-    for(typename Matrix::Index c = 0; c < m.cols(); ++c) 
-    {
-      stream << m(r,c) << " ";
-    }
-    stream << std::endl;
-  }
-}
-
+// [On Linear Variational Surface Deformation Methods-2008]
 template<class Polyhedron, class SparseLinearSolver, class WeightCalculator>
 class Fair_Polyhedron_3 {
 // typedefs
@@ -94,44 +64,42 @@ private:
     return weight;
   }
 
-  void one_ring(Vertex_handle v, 
-    Polyhedron& polyhedron, 
-    std::vector<std::pair<std::size_t, double> >& row, 
-    double& x, double& y, double& z, 
-    const std::map<Vertex_handle, std::size_t>& vertex_id_map) 
+  // recursively computes a row (use depth parameter to compute L, L^2, L^3)
+  // Equation 6 in [On Linear Variational Surface Deformation Methods]
+  void compute_row(
+    Vertex_handle v, 
+    Polyhedron& polyhedron,
+    std::size_t row_id,                            // which row to insert in [ frees stay left-hand side ]
+    typename Sparse_linear_solver::Matrix& matrix, 
+    double& x, double& y, double& z,               // constants transfered to right-hand side
+    double multiplier,
+    const std::map<Vertex_handle, std::size_t>& vertex_id_map,
+    unsigned int depth)
   {
-    typedef typename std::map<Vertex_handle, std::size_t>::const_iterator Vertex_id_it;
-    row.clear();
-    x = y = z = 0.0;
-
-    double w_v = weight_calculator.w_i(v, polyhedron);
-    double diagonal_v = 0.0;
-    Halfedge_around_vertex_circulator circ = v->vertex_begin();
-    do {
-      Vertex_handle nv = circ->opposite()->vertex();          
-      double nv_weight = weight_calculator.w_ij(circ, polyhedron);
-      double nv_total_weight = w_v * nv_weight ;
-      diagonal_v += -nv_total_weight;
-
-      Vertex_id_it vertex_id_it = vertex_id_map.find(nv);
+    if(depth == 0) {
+      std::map<Vertex_handle, std::size_t>::const_iterator vertex_id_it = vertex_id_map.find(v);
       if(vertex_id_it != vertex_id_map.end()) {
-        row.push_back(std::make_pair(vertex_id_it->second, nv_total_weight));
+        matrix.add_coef(row_id, vertex_id_it->second, multiplier);
       }
-      else {
-        x += - nv_total_weight * nv->point().x();
-        y += - nv_total_weight * nv->point().y();
-        z += - nv_total_weight * nv->point().z();
+      else { 
+        x += multiplier * -v->point().x(); 
+        y += multiplier * -v->point().y(); 
+        z += multiplier * -v->point().z(); 
       }
-    } while(++circ != v->vertex_begin());
-
-    Vertex_id_it vertex_id_it = vertex_id_map.find(v);
-    if(vertex_id_it != vertex_id_map.end()) {
-      row.push_back(std::make_pair(vertex_id_it->second, diagonal_v));
     }
     else {
-      x += -diagonal_v * v->point().x();
-      y += -diagonal_v * v->point().y();
-      z += -diagonal_v * v->point().z();
+      double w_i = weight_calculator.w_i(v, polyhedron);
+
+      Halfedge_around_vertex_circulator circ = v->vertex_begin();
+      do {
+        double w_i_w_ij = w_i * weight_calculator.w_ij(circ, polyhedron) ;
+
+        Vertex_handle nv = circ->opposite()->vertex();
+        compute_row(nv, polyhedron, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
+      } while(++circ != v->vertex_begin());
+
+      double w_i_w_ij_sum = w_i * sum_weight(v, polyhedron);
+      compute_row(v, polyhedron, row_id, matrix, x, y, z, w_i_w_ij_sum*multiplier, vertex_id_map, depth-1);
     }
   }
 
@@ -156,38 +124,10 @@ public:
     }
 
     typename Sparse_linear_solver::Matrix A(nb_vertices);
-    std::vector<std::pair<std::size_t, double> > row;
 
     for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin(); vb != interior_vertices.end(); ++vb) {
       std::size_t v_id = vertex_id_map[*vb];
-      double w_v = weight_calculator.w_i(*vb, polyhedron);
-      double wn_sum = sum_weight(*vb, polyhedron);
-      double x, y, z, nx, ny, nz;
-      x = y = z = nx = ny = nz = 0.0;
-
-      one_ring(*vb, polyhedron, row, nx, ny, nz, vertex_id_map);
-      for(std::vector<std::pair<std::size_t, double> >::iterator it = row.begin(); it != row.end(); ++it) {
-        A.add_coef(v_id, it->first, - w_v * wn_sum * it->second);
-      }
-      x += - w_v * wn_sum * nx; 
-      y += - w_v * wn_sum * ny; 
-      z += - w_v * wn_sum * nz;
-
-      Halfedge_around_vertex_circulator circ = (*vb)->vertex_begin();
-      do {
-        Vertex_handle nv = circ->opposite()->vertex();
-        double nv_w = weight_calculator.w_ij(circ, polyhedron);
-
-        one_ring(nv, polyhedron, row, nx, ny, nz, vertex_id_map);
-        for(std::vector<std::pair<std::size_t, double> >::iterator it = row.begin(); it != row.end(); ++it) {
-          A.add_coef(v_id, it->first, w_v * nv_w * it->second);
-        }
-        x += w_v * nv_w * nx; 
-        y += w_v * nv_w * ny; 
-        z += w_v * nv_w * nz;
-      } while(++circ != (*vb)->vertex_begin());
-
-      Bx[v_id] = x; By[v_id] = y; Bz[v_id] = z;
+      compute_row(*vb, polyhedron, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, 2);
     }
     CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
 
@@ -208,6 +148,14 @@ public:
       return false; 
     }
     CGAL_TRACE_STREAM << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
+
+    // Warning: Eigen dependent
+    double rel_err_x = (A.eigen_object()*X - Bx).norm() / Bx.norm();
+    double rel_err_y = (A.eigen_object()*Y - By).norm() / By.norm();
+    double rel_err_z = (A.eigen_object()*Z - Bz).norm() / Bz.norm();
+    CGAL_TRACE_STREAM << "rel error: " << rel_err_x 
+                                << " " << rel_err_y
+                                << " " << rel_err_z << std::endl;
 
     // update 
     id = 0;
