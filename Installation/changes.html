@@ -154,6 +154,15 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
     </li>
   </ul>
 
+  <h3>2D Segment Delaunay Graph</h3>
+  <ul>
+    <li>Add functions <code>insert_points</code> and <code>insert_segments</code> to insert a range
+        of points and segments. These functions uses the spatial sorting in order to speed up the
+        time needed for the insertion. The function <code>insert(Input_iterator first, Input_iterator beyond, Tag_true)</code>
+        has been updated to dispatch the input when possible to these functions.
+    </li>
+  </ul>
+
   <h3>2D Triangulations</h3>
   <ul>
     <li>Extend the concept <code>TriangulationDataStructure_2</code> to require a more general <code>copy_tds</code>
