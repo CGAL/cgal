@@ -539,16 +539,48 @@ either `Point_2` or `Site_2`.
 template< class Input_iterator > 
 size_type insert(Input_iterator first, Input_iterator beyond, Tag_false); 
 
-/*! 
-Inserts the sites in the range 
-[`first`,`beyond`) after performing a random shuffle on 
-them. The number of additional sites inserted in the Delaunay graph is 
-returned. `Input_iterator` must be a model of 
-`InputIterator` and its value type must be 
-either `Point_2` or `Site_2`. 
-*/ 
+/*!
+Decomposes the range [first,beyond) into a range of input points and a range of input segments
+that are respectively passed to `insert_segments()` and `insert_points()`.
+Non-input sites are first random_shuffled and then inserted one by one.
+`Input_iterator` must be a model of `InputIterator` and its value type must be
+either `Point_2`, `Segment_2` or `Site_2`.
+\return  the number of sites inserted in the Delaunay graph
+*/
 template< class Input_iterator > 
 size_type insert(Input_iterator first, Input_iterator beyond, Tag_true); 
+
+/*!
+Inserts the points in the range [first,beyond) as sites.
+Note that this function is not guaranteed to insert the points
+following the order of `PointInputIterator`, as `spatial_sort()`
+is used to improve efficiency.
+\return  the number of points inserted in the Delaunay graph
+\tparam PointIterator must be an input iterator `Point_2` or `Site_2` as value_type.
+*/
+template <class PointIterator>
+std::size_t insert_points(PointIterator first, PointIterator beyond);
+
+/*!
+Inserts the segments in the range [first,beyond) as sites.
+Note that this function is not guaranteed to insert the segments
+following the order of `SegmentIterator`, as `spatial_sort()`
+is used to improve efficiency.
+\return  the number of segments inserted in the Delaunay graph
+\tparam SegmentIterator must be an input iterator with `Site_2`, `Segment_2` or `std::pair<Point_2,Point_2>` as value type.
+*/
+template <class SegmentIterator>
+std::size_t insert_segments(SegmentIterator first, SegmentIterator beyond);
+
+/*!
+Same as above except that each segment is given as a pair of indices of the points
+in the range [points_first, points_beyond). The indices must start from 0 to `std::distance(points_first, points_beyond)`
+\tparam PointIterator is an input iterator with `Point_2` as value type.
+\tparam IndicesIterator is an input iterator with `std::pair<std::size_t, std::size_t>` as value type.
+*/
+template <class PointIterator, class IndicesIterator>
+std::size_t insert_segments(PointIterator points_first, PointIterator points_beyond,
+                            IndicesIterator indices_first, IndicesIterator indices_beyond);
 
 /*! 
 Inserts the 

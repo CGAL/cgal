@@ -335,6 +335,9 @@ public:
 		     FK_Is_degenerate_edge_2, C2E, C2F>
   Is_degenerate_edge_2;
 
+  typedef typename CK::Less_x_2 Less_x_2;
+  typedef typename CK::Less_y_2 Less_y_2;
+
 private:
   typedef
   Filtered_predicate<EK_Arrangement_type_2, FK_Arrangement_type_2, C2E, C2F>
@@ -447,6 +450,16 @@ public:
   Oriented_side_2
   oriented_side_2_object() const {
     return Oriented_side_2();
+  }
+
+  Less_x_2
+  less_x_2_object() const {
+    return Less_x_2();
+  }
+
+  Less_y_2
+  less_y_2_object() const {
+    return Less_y_2();
   }
 };
 
