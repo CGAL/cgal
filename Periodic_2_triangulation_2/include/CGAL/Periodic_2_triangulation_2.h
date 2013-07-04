@@ -667,13 +667,15 @@ public:
   /// begin iterator over the non-virtual vertices
   Unique_vertex_iterator unique_vertices_begin() const
   {
-    return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this),
+    return CGAL::filter_iterator(vertices_end(), 
+                                 Periodic_2_triangulation_2_internal::Domain_tester<Self>(this),
                                  vertices_begin());
   }
   /// past-the-end iterator over the non-virtual vertices
   Unique_vertex_iterator unique_vertices_end() const
   {
-    return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this));
+    return CGAL::filter_iterator(vertices_end(),
+                                 Periodic_2_triangulation_2_internal::Domain_tester<Self>(this));
   }
 
   // \}
