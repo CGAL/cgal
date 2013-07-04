@@ -84,6 +84,9 @@ namespace regularize_and_simplify_internal{
   };
 
 
+  // ----------------------------------------------------------------------------
+  // Ball Tree section
+  // ----------------------------------------------------------------------------
   template <typename Kernel>
   class Rich_point
   {
@@ -138,24 +141,14 @@ namespace regularize_and_simplify_internal{
   template <typename Kernel>
   class Rich_grid 
   {
-  public:
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::FT FT;
     typedef std::vector<Rich_point<Kernel>*> Point_Pointer_vector;
     typedef typename Point_Pointer_vector::iterator iterator;
 
-    std::vector<Rich_point<Kernel>*> rich_points;  
-    std::vector<int> index;    // the start index of each grid in the sample points which is order by Zsort
-    int xside, yside, zside;
-    FT radius;
+  public:
 
     Rich_grid() {}
-
-    int cell(int x, int y, int z) { return x + xside*(y + yside*z); }
-    bool isEmpty(int cell) { return index[cell+1] == index[cell]; }
-    iterator startV(int origin) { return rich_points.begin() + index[origin]; }  
-    iterator endV(int origin) { return rich_points.begin() + index[origin+1]; }
-
 
     void init(std::vector<Rich_point<Kernel>> &vert, Rich_box<Kernel>& box, const FT _radius); 
 
@@ -164,19 +157,30 @@ namespace regularize_and_simplify_internal{
       void (*other)(iterator starta, iterator enda, 
       iterator startb, iterator endb, FT radius));
 
-    // Travel other self between two point set(original and rich_points) 
+    // Travel other self between two point set(original and samples) 
     void travel_others(Rich_grid &points, 
       void (*travel_others)(iterator starta, iterator enda, 
       iterator startb, iterator endb, FT radius));
 
-  public:
+
     void static __cdecl find_original_neighbors(iterator starta, iterator enda, 
       iterator startb, iterator endb, FT radius);
     void static  __cdecl find_self_neighbors(iterator start, iterator end, FT radius);
     void static  __cdecl find_other_neighbors(iterator starta, iterator enda, 
       iterator startb, iterator endb, FT radius);
-  };
 
+  private:
+  
+    std::vector<Rich_point<Kernel>*> rich_points;  
+    std::vector<int> index;    // the start index of each grid in the sample points which is order by Zsort
+    int xside, yside, zside;
+    FT radius;
+
+    int cell(int x, int y, int z) { return x + xside*(y + yside*z); }
+    bool isEmpty(int cell) { return index[cell+1] == index[cell]; }
+    iterator startV(int origin) { return rich_points.begin() + index[origin]; }  
+    iterator endV(int origin) { return rich_points.begin() + index[origin+1]; }
+  };
 
 
   template <typename Kernel>
@@ -224,7 +228,7 @@ namespace regularize_and_simplify_internal{
       rich_points[i] = &vert[i];
     }
 
-    xside = (int)ceil((max.x()- min.x())/radius);
+    xside = (int)ceil((max.x() - min.x())/radius);
     yside = (int)ceil((max.y() - min.y())/radius);
     zside = (int)ceil((max.z() - min.z())/radius);
 
@@ -232,7 +236,7 @@ namespace regularize_and_simplify_internal{
     yside = (yside > 0) ? yside : 1;
     zside = (zside > 0) ? zside : 1;
 
-    index.resize(xside*yside*zside+1, -1);  //x + xside*x + xside*yside*z
+    index.resize(xside*yside*zside + 1, -1);  
 
     std::sort(rich_points.begin(), rich_points.end(), ZSort<Kernel>()); //this would be very slow 
 
@@ -274,6 +278,7 @@ namespace regularize_and_simplify_internal{
     index[xside*yside*zside] = startz;  // in order to compute the last grid's range
   }
 
+  /// define how to travel in the same gird 
   template <typename Kernel>
   void Rich_grid<Kernel>::travel_itself(void (*self)(iterator starta, iterator enda, const typename Kernel::FT radius),
     void (*other)(iterator starta, iterator enda, 
@@ -313,7 +318,7 @@ namespace regularize_and_simplify_internal{
     }
   }
 
-
+  /// define how to travel in other gird 
   template <typename Kernel>
   void Rich_grid<Kernel>::travel_others(Rich_grid &points, 
     void (*travel_others)(iterator starta, iterator enda, 
@@ -365,6 +370,7 @@ namespace regularize_and_simplify_internal{
     }
   }
 
+  /// grid travel function to find the neighbors in the original point set
   template <typename Kernel>
   void Rich_grid<Kernel>::find_original_neighbors(
     iterator starta, 
@@ -396,6 +402,7 @@ namespace regularize_and_simplify_internal{
     }
   }
 
+  /// grid travel function to find the neighbors in the same point set
   template <typename Kernel>
   void Rich_grid<Kernel>::find_self_neighbors(iterator start, iterator end, FT radius)
   {
@@ -423,6 +430,7 @@ namespace regularize_and_simplify_internal{
     }
   }
 
+  /// grid travel function to find the neighbors in the same point set
   template <typename Kernel>
   void Rich_grid<Kernel>::find_other_neighbors(iterator starta, iterator enda, 
     iterator startb, iterator endb, FT radius)
@@ -452,12 +460,48 @@ namespace regularize_and_simplify_internal{
   }
 
 
+
+
+  /// Compute ball neighbors for each point in the same point set(sample or original points) 
+  /// 
+  /// \pre `radius > 0`
+  ///
+  /// @tparam Kernel Geometric traits class.
+  ///
+  /// @return 
   template <typename Kernel>
-  void compute_ball_neighbors_one_to_another(
-    std::vector<Rich_point<Kernel>>& samples, 
-    std::vector<Rich_point<Kernel>>& original,
+  void compute_ball_neighbors_one_self(
+    std::vector<Rich_point<Kernel>>& points,
     Rich_box<Kernel>& box,
     const typename Kernel::FT radius)
+  {
+    typedef typename Kernel::FT FT;
+    CGAL_point_set_processing_precondition(radius > 0);
+
+    for (unsigned int i = 0; i < points.size(); i++)
+    {
+      points[i].neighbors.clear();
+    }
+
+    Rich_grid<Kernel> points_grid;
+    points_grid.init(points, box, radius);
+    points_grid.travel_itself(Rich_grid<Kernel>::find_self_neighbors, Rich_grid<Kernel>::find_other_neighbors);
+  }
+
+  /// Compute ball neighbors for each point(sample points) in the other point set(original points) 
+  /// 
+  /// \pre `radius > 0`
+  ///
+  /// @tparam Kernel Geometric traits class.
+  ///
+  /// @return 
+  template <typename Kernel>
+  void compute_ball_neighbors_one_to_another(
+    std::vector<Rich_point<Kernel>>& samples, ///< sample point set
+    std::vector<Rich_point<Kernel>>& original,///< original point set
+    Rich_box<Kernel>& box, ///< bounding box
+    const typename Kernel::FT radius ///< neighbor radius
+    )
   {
     typedef typename Kernel::FT FT;
     if (radius < FT(0.0))
@@ -473,44 +517,24 @@ namespace regularize_and_simplify_internal{
     Rich_grid<Kernel> samples_grid;
     samples_grid.init(samples, box, radius);
 
+    // can be speed up by initial the original grid just one time(as paramter of this function)
     Rich_grid<Kernel> original_grid;
     original_grid.init(original, box, radius);
+
     samples_grid.travel_others(original_grid, Rich_grid<Kernel>::find_original_neighbors);
   }
 
-  template <typename Kernel>
-  void compute_ball_neighbors_one_self(
-    std::vector<Rich_point<Kernel>>& points,
-    Rich_box<Kernel>& box,
-    const typename Kernel::FT radius)
-  {
-    typedef typename Kernel::FT FT;
-    if (radius < FT(0.0))
-    {
-      return;
-    }
-
-    for (unsigned int i = 0; i < points.size(); i++)
-    {
-      points[i].neighbors.clear();
-    }
-
-    Rich_grid<Kernel> points_grid;
-    points_grid.init(points, box, radius);
-
-    points_grid.travel_itself(Rich_grid<Kernel>::find_self_neighbors, Rich_grid<Kernel>::find_other_neighbors);
-  }
-
-
+  // ----------------------------------------------------------------------------
+  // WLOP algorithm section
+  // ----------------------------------------------------------------------------
   /// Compute average term for each sample points
-  /// According to their KNN neighborhood original points
+  /// According to their ball neighborhood original points
   /// 
-  /// \pre `k >= 2`, radius > 0
+  /// \pre `radius > 0`
   ///
   /// @tparam Kernel Geometric traits class.
-  /// @tparam Tree KD-tree.
   ///
-  /// @return computed point
+  /// @return average term vector
   template <typename Kernel>
     typename Kernel::Vector_3
     compute_average_term(
@@ -557,14 +581,13 @@ namespace regularize_and_simplify_internal{
   }
 
   /// Compute repulsion term for each sample points
-  /// According to their KNN neighborhood sample points
+  /// According to their Ball neighborhood sample points
   /// 
-  /// \pre `k >= 2`, radius > 0
+  /// \pre \pre `radius > 0`
   ///
   /// @tparam Kernel Geometric traits class.
-  /// @tparam Tree KD-tree.
   ///
-  /// @return computed point
+  /// @return repulsion term vector
   template <typename Kernel>
     typename Kernel::Vector_3
     compute_repulsion_term(
@@ -619,14 +642,13 @@ namespace regularize_and_simplify_internal{
 
 
   /// Compute density weight for each original points,
-  /// according to their KNN neighborhood original points
+  /// according to their ball neighborhood original points
   /// 
-  /// \pre `k >= 2`, radius > 0
+  /// \pre `radius > 0`
   ///
   /// @tparam Kernel Geometric traits class.
-  /// @tparam Tree KD-tree.
   ///
-  /// @return computed point
+  /// @return density weight
   template <typename Kernel>
     typename Kernel::FT
     compute_density_weight_for_original_point(
@@ -660,14 +682,13 @@ namespace regularize_and_simplify_internal{
 
 
   /// Compute density weight for sample point,
-  /// according to their KNN neighborhood sample points
+  /// according to their ball neighborhood sample points
   /// 
-  /// \pre `k >= 2`, radius > 0
+  /// \pre `radius > 0`
   ///
   /// @tparam Kernel Geometric traits class.
-  /// @tparam Tree KD-tree.
   ///
-  /// @return computed point
+  /// @return density weight
   template <typename Kernel>
     typename Kernel::FT
     compute_density_weight_for_sample_point(
@@ -694,7 +715,7 @@ namespace regularize_and_simplify_internal{
     }
 
     // output
-    //return std::sqrt(density_weight);
+    //return std::sqrt(density_weight); 
     return density_weight;
   }
 }

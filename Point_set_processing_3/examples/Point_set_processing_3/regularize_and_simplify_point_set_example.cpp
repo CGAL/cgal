@@ -17,7 +17,6 @@ int main(void)
 {
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
-  //std::ifstream stream("data/ThreeLady.xyz");
   std::ifstream stream("data/sphere_20k.xyz");
 
   if (!stream || !CGAL::read_xyz_points(stream, std::back_inserter(points)))
@@ -73,7 +72,6 @@ int main(void)
   // Note: write_xyz_points_and_normals() requires an output iterator
   // over points as well as property maps to access each
   // point position and normal.
-  //std::ofstream out("data/ThreeLady_copy.xyz");
   std::ofstream out("data/sphere_20k_copy.xyz");  
   if (!out ||
     !CGAL::write_xyz_points(

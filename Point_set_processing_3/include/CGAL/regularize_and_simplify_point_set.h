@@ -51,17 +51,9 @@ public:
     std::cout << std::endl;
     starttime = clock();
     mid_start = clock();
-    std::cout << "@@@@@ Time Count Strat For: " << str << std::endl;
+   // std::cout << "@@@@@ Time Count Strat For: " << str << std::endl;
 
     _str = str;
-  }
-
-  void insert(const std::string& str)
-  {
-    mid_end = clock();
-    timeused = mid_end - mid_start;
-    std::cout << "##" << str << "  time used:  " << timeused / double(CLOCKS_PER_SEC) << " seconds." << std::endl;
-    mid_start = clock();
   }
 
   void end()
@@ -244,6 +236,11 @@ namespace regularize_and_simplify_internal{
     {
       k *= 1.1;
     }
+
+    if (neighbor_original_points.empty())
+    {
+      return query - CGAL::ORIGIN;
+    }
     CGAL_point_set_processing_precondition(neighbor_original_points.size() >= 1);
 
     //Compute average term
@@ -334,6 +331,11 @@ namespace regularize_and_simplify_internal{
       }
 
       ++search_iterator;
+    }
+
+    if (neighbor_sample_points.empty())
+    {
+      return CGAL::NULL_VECTOR; 
     }
     CGAL_point_set_processing_precondition(neighbor_sample_points.size() >= 1);
 
