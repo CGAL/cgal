@@ -210,7 +210,7 @@ mark_as_advanced(TBB_INCLUDE_DIR)
 #-- Look for libraries
 # GvdB: $ENV{TBB_ARCH_PLATFORM} is set by the build script tbbvars[.bat|.sh|.csh]
 if (NOT $ENV{TBB_ARCH_PLATFORM} STREQUAL "")
-    set (_TBB_LIBRARY_DIR 
+    set (_TBB_LIBRARY_DIR
          ${_TBB_INSTALL_DIR}/lib/$ENV{TBB_ARCH_PLATFORM}
          ${_TBB_INSTALL_DIR}/$ENV{TBB_ARCH_PLATFORM}/lib
         )
@@ -275,7 +275,7 @@ mark_as_advanced(TBB_DEBUG_LIBRARY TBB_MALLOC_DEBUG_LIBRARY TBB_MALLOCPROXY_DEBU
 if (TBB_INCLUDE_DIR)
     if (TBB_RELEASE_LIBRARY)
         set (TBB_FOUND "YES")
-        
+
         # NOTE: Removed because we don't want to link with the malloc_proxy by default
         #if (NOT "${TBB_MALLOCPROXY_RELEASE_LIBRARY}" STREQUAL "TBB_MALLOCPROXY_RELEASE_LIBRARY-NOTFOUND")
         #    mark_as_advanced(TBB_MALLOCPROXY_RELEASE_LIBRARY)
@@ -285,14 +285,14 @@ if (TBB_INCLUDE_DIR)
         #    mark_as_advanced(TBB_MALLOCPROXY_DEBUG_LIBRARY)
         #    set (_TBB_MALLOCPROXY ${_TBB_MALLOCPROXY} debug ${TBB_MALLOCPROXY_DEBUG_LIBRARY})
         #endif (NOT "${TBB_MALLOCPROXY_DEBUG_LIBRARY}" STREQUAL "TBB_MALLOCPROXY_DEBUG_LIBRARY-NOTFOUND")
-        
+
         # TBB release library
         set (ALL_TBB_LIBRARIES optimized ${TBB_RELEASE_LIBRARY})
-        
+
         # TBB debug library found?
         if (TBB_DEBUG_LIBRARY)
             list(APPEND ALL_TBB_LIBRARIES debug ${TBB_DEBUG_LIBRARY})
-        else (TBB_DEBUG_LIBRARY)    
+        else (TBB_DEBUG_LIBRARY)
             # Otherwise, link with the release library even in debug mode
             list(APPEND ALL_TBB_LIBRARIES debug ${TBB_RELEASE_LIBRARY})
         endif (TBB_DEBUG_LIBRARY)
@@ -300,7 +300,7 @@ if (TBB_INCLUDE_DIR)
         # TBB malloc - release
         if (TBB_MALLOC_RELEASE_LIBRARY)
             list(APPEND ALL_TBB_LIBRARIES optimized ${TBB_MALLOC_RELEASE_LIBRARY})
-            
+
             # TBB malloc - debug
             if (TBB_MALLOC_DEBUG_LIBRARY)
                 list(APPEND ALL_TBB_LIBRARIES debug ${TBB_MALLOC_DEBUG_LIBRARY})
@@ -308,13 +308,13 @@ if (TBB_INCLUDE_DIR)
                 list(APPEND ALL_TBB_LIBRARIES debug ${TBB_MALLOC_RELEASE_LIBRARY})
             endif (TBB_MALLOC_DEBUG_LIBRARY)
         endif (TBB_MALLOC_RELEASE_LIBRARY)
-        
+
         set (TBB_LIBRARIES ${ALL_TBB_LIBRARIES}
              CACHE PATH "TBB libraries" FORCE)
-        
+
         # Include dirs
         set (TBB_INCLUDE_DIRS ${TBB_INCLUDE_DIR} CACHE PATH "TBB include directory" FORCE)
-        
+
         # Library dirs
         if( "${TBB_DEBUG_LIBRARY_DIR}" STREQUAL "" OR "${TBB_RELEASE_LIBRARY_DIR}" STREQUAL "${TBB_DEBUG_LIBRARY_DIR}" )
             set (TBB_LIBRARY_DIRS
@@ -325,7 +325,7 @@ if (TBB_INCLUDE_DIR)
                 ${TBB_RELEASE_LIBRARY_DIR} ${TBB_DEBUG_LIBRARY_DIR}
                 CACHE PATH "TBB library directories" FORCE)
         endif( "${TBB_DEBUG_LIBRARY_DIR}" STREQUAL "" OR "${TBB_RELEASE_LIBRARY_DIR}" STREQUAL "${TBB_DEBUG_LIBRARY_DIR}" )
-        
+
         message(STATUS "Found Intel TBB")
     endif (TBB_RELEASE_LIBRARY)
 endif (TBB_INCLUDE_DIR)

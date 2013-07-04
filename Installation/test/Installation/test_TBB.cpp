@@ -27,7 +27,7 @@ private:
   std::vector<int> &m_v;
 };
 
-void change_array(std::vector<int> &v, CGAL::Parallel_tag) 
+void change_array(std::vector<int> &v, CGAL::Parallel_tag)
 {
   std::cout << "[Parallel] Using a tbb::parallel_for loop...";
   tbb::parallel_for(
@@ -38,7 +38,7 @@ void change_array(std::vector<int> &v, CGAL::Parallel_tag)
 }
 #endif
 
-void change_array(std::vector<int> &v, CGAL::Sequential_tag) 
+void change_array(std::vector<int> &v, CGAL::Sequential_tag)
 {
   std::cout << "[Sequential] Using a sequential for loop...";
   std::vector<int>::iterator it = v.begin(), it_end = v.end();
@@ -52,7 +52,7 @@ int main()
   std::vector<int> v;
   for (int i = 0 ; i < 10000 ; ++i)
     v.push_back(i);
-  
+
   std::cout << "Trying to call the sequential algorithm => ";
   change_array(v, CGAL::Sequential_tag());
   std::cout << "Trying to call the parallel algorithm => ";
