@@ -30,14 +30,8 @@
 #include <ctime>
 
 
-//#include "tbb/parallel_for.h"
-//#include "tbb/blocked_range.h"
-
-// Not sure...
-//struct Sequential_tag {};
-//struct Parallel_tag : public Sequential_tag {};
-//#ifdef CGAL_LINKED_WITH_TBB
-//#define CGAL_LINKED_WITH_TBB
+//#include <tbb/parallel_for.h>
+//#include <tbb/blocked_range.h>
 
 /// \cond SKIP_IN_MANUAL
 // ----------------------------------------------------------------------------
