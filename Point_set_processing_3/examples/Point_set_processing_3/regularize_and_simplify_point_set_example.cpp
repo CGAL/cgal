@@ -52,15 +52,18 @@ int main(void)
   //  points.end(), 
   //  points_sampled.begin());
 
-  // Run algorithm and copy results to sample points using balltree
-  std::copy(CGAL::regularize_and_simplify_point_set_using_balltree(
+  // Run algorithm
+  std::vector<Point>::const_iterator sample_points_begin =
+    CGAL::regularize_and_simplify_point_set_using_balltree(
             points.begin(), 
             points.end(), 
             retain_percentage, 
             neighbor_radius,
             iter_number,
-            need_compute_density),
-            points.end(), 
+            need_compute_density);
+  // Copy results to sample points using balltree
+  std::copy(sample_points_begin,
+            static_cast<std::vector<Point>::const_iterator>(points.end()),
             points_sampled.begin());
 
   stoptime = clock();
