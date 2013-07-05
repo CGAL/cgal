@@ -74,6 +74,8 @@ namespace regularize_and_simplify_internal{
   class KdTreeElement : public Kernel::Point_3
   {
   public:
+    typedef typename Kernel::Point_3 Base;
+
     unsigned int index;
 
     // basic geometric types
@@ -81,13 +83,13 @@ namespace regularize_and_simplify_internal{
     typedef typename Kernel::Point_3 Point;
 
     KdTreeElement(const Origin& o = ORIGIN, unsigned int id=0)
-      : Point(o), index(id)
+      : Base(o), index(id)
     {}
     KdTreeElement(const Point& p, unsigned int id=0)
-      : Point(p), index(id)
+      : Base(p), index(id)
     {}
     KdTreeElement(const KdTreeElement& other)
-      : Point(other), index(other.index)
+      : Base(other), index(other.index)
     {}
   };
 
