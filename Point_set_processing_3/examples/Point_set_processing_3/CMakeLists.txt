@@ -53,6 +53,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "random_simplification_example.cpp" )
   create_single_source_cgal_program( "read_write_xyz_point_set_example.cpp" )
   create_single_source_cgal_program( "remove_outliers_example.cpp" )
+  create_single_source_cgal_program( "regularize_and_simplify_point_set_example.cpp" )
+  
 
 
 
