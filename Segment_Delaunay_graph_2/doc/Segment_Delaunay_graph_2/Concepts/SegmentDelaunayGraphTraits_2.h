@@ -148,6 +148,18 @@ represented by the sites `s1` and `s2`.
 */ 
 typedef unspecified_type Compare_y_2; 
 
+/*!
+A predicate object type. Must
+provide `bool operator()(Point_2 p1, Point_2 p2)`, which returns `true` if `p1.x() < p2.x()`.
+*/
+typedef unspecified_type Less_x_2;
+
+/*!
+A predicate object type. Must
+provide `bool operator()(Point_2 p1, Point_2 p2)`, which returns `true` if `p1.y() < p2.y()`.
+*/
+typedef unspecified_type Less_y_2;
+
 /*! 
 A predicate object type. Must 
 provide `Orientation operator()(Site_2 s1, Site_2 s2, Site_2 s3)`, which performs the 
@@ -302,6 +314,16 @@ Compare_x_2 compare_x_2_object();
 
 */ 
 Compare_y_2 compare_y_2_object(); 
+
+/*!
+
+*/
+Less_x_2 less_x_2_object();
+
+/*!
+
+*/
+Less_y_2 less_y_2_object();
 
 /*! 
 
