@@ -24,6 +24,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "benchmark.cpp" )
   create_single_source_cgal_program( "benchmark_nox.cpp" )
   create_single_source_cgal_program( "double.cpp" )
+  create_single_source_cgal_program( "sdg-bench-traits.cpp" )
 
 else()
   
