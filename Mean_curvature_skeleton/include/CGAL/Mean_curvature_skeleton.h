@@ -148,12 +148,13 @@ public:
   Mean_curvature_skeleton(Polyhedron* P,
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
-                          double omega_L, double omega_H, double edgelength_TH,
+                          double omega_L, double omega_H,
+                          double edgelength_TH, double zero_TH,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
       omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), TH_ALPHA(110),
-      weight_calculator(weight_calculator), zero_TH(1e-7f)
+      weight_calculator(weight_calculator), zero_TH(zero_TH)
   {
     TH_ALPHA *= (M_PI / 180.0);
 
@@ -178,6 +179,36 @@ public:
   // Release resources
   ~Mean_curvature_skeleton(void)
   {
+  }
+
+  void set_omega_L(double value)
+  {
+    omega_L = value;
+  }
+
+  void set_omega_H(double value)
+  {
+    omega_H = value;
+  }
+
+  void set_edgelength_TH(double value)
+  {
+    edgelength_TH = value;
+  }
+
+  void set_TH_ALPHA(double value)
+  {
+    TH_ALPHA = value;
+  }
+
+  void set_zero_TH(double value)
+  {
+    zero_TH = value;
+  }
+
+  Polyhedron* get_polyhedron()
+  {
+    return polyhedron;
   }
 
   // compute cotangent weights of all edges
@@ -543,16 +574,13 @@ public:
     return num_splits;
   }
 
-  void updateTopology()
+  void update_topology()
   {
     int num_collapses = collapse_short_edges(edgelength_TH);
     std::cout << "collapse " << num_collapses << " edges.\n";
 
     int num_splits = iteratively_split_triangles();
     std::cout << "split " << num_splits << " edges.\n";
-
-    int num_fixed = detect_degeneracies();
-    std::cout << "fixed " << num_fixed << " vertices.\n";
   }
 
   int detect_degeneracies()
@@ -593,6 +621,7 @@ public:
         }
       }
     }
+    std::cout << "fixed " << num_fixed << " vertices.\n";
     return num_fixed;
   }
 
@@ -697,6 +726,12 @@ public:
     return aEdge->is_border() || aEdge->opposite()->is_border();
   }
 
+  void contract()
+  {
+    contract_geometry();
+    update_topology();
+    detect_degeneracies();
+  }
 };
 
 } //namespace CGAL
