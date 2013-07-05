@@ -118,12 +118,12 @@ public:
 
   void add_point(const Point& p)
   {
-    if (p[0] < min_x) min_x = p[0];
-    if (p[1] < min_y) min_y = p[1];
-    if (p[2] < min_z) min_z = p[2];
-    if (p[0] > max_x) max_x = p[0];
-    if (p[1] > max_y) max_y = p[1];
-    if (p[2] > max_z) max_z = p[2];
+    if (p.x() < min_x) min_x = p.x();
+    if (p.y() < min_y) min_y = p.y();
+    if (p.z() < min_z) min_z = p.z();
+    if (p.x() > max_x) max_x = p.x();
+    if (p.y() > max_y) max_y = p.y();
+    if (p.z() > max_z) max_z = p.z();
   }
 
   Point get_min(){return Point(min_x, min_y, min_z);}
@@ -183,7 +183,7 @@ template <typename Kernel>
 class XSort {
 public:
   bool operator()(const Rich_point<Kernel> *a, const Rich_point<Kernel> *b) {
-    return a->pt[0] < b->pt[0];
+    return a->pt.x() < b->pt.x();
   }
 };
 
@@ -191,7 +191,7 @@ template <typename Kernel>
 class YSort {
 public:
   bool operator()(const Rich_point<Kernel> *a, const Rich_point<Kernel> *b) {
-    return a->pt[1] < b->pt[1];
+    return a->pt.y() < b->pt.y();
   }
 };
 
@@ -199,7 +199,7 @@ template <typename Kernel>
 class ZSort {
 public:
   bool operator()(const Rich_point<Kernel> *a, const Rich_point<Kernel> *b) {
-    return a->pt[2] < b->pt[2];
+    return a->pt.z() < b->pt.z();
   }
 };
 
