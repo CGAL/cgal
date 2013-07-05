@@ -34,6 +34,8 @@
 //#include <tbb/parallel_for.h>
 //#include <tbb/blocked_range.h>
 
+namespace CGAL {
+
 /// \cond SKIP_IN_MANUAL
 
 class Timer
@@ -543,7 +545,6 @@ namespace regularize_and_simplify_internal{
 // ----------------------------------------------------------------------------
 // Public section
 // ----------------------------------------------------------------------------
-namespace CGAL {
 
   /// \ingroup PkgPointSetProcessing
   /// WLOP Algorithm: The simplification algorithm can produces a set of 
@@ -787,7 +788,6 @@ namespace CGAL {
       retain_percentage, k, iter_number, need_compute_density);
   }
   /// @endcond
-
 
 } //namespace CGAL
 
