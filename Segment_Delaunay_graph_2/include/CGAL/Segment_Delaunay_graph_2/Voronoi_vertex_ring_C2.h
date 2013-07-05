@@ -778,6 +778,7 @@ private:
   Sign check_easy_degeneracies(const Site_2& t, SSS_Type,
 			       bool& use_result) const
   {
+    CGAL_USE(t);
     CGAL_precondition( t.is_point() );
     use_result = false;
     // ADD THE CASES WHERE t IS AN ENDPOINT OF ONE OF THE SEGMENTS

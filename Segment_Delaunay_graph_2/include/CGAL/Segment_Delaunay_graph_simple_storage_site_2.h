@@ -134,11 +134,13 @@ public:
   }
 
   const Handle& source_of_crossing_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_segment() && !is_input(i) );
     return h_[0];
   }
 
   const Handle& target_of_crossing_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_segment() && !is_input(i) );
     return h_[0];
   }
@@ -169,11 +171,13 @@ public:
   }
 
   Self supporting_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_point() && !is_input() && i < 2 );
     return construct_storage_site_2(h_[0], h_[0]);
   }
 
   Self crossing_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_segment() && !is_input() );
     CGAL_precondition( i < 2 && !is_input(i) );
     return construct_storage_site_2(h_[0], h_[0]);
