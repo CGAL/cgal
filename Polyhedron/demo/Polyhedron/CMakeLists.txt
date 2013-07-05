@@ -108,6 +108,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
   qt4_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
   qt4_wrap_ui( fairingUI_FILES Fairing_widget.ui)
+  qt4_wrap_ui( selectionUI_FILES Selection_widget.ui)
   
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
@@ -142,6 +143,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Camera_positions_list.cpp
               Scene_points_with_normal_item.cpp
 			  Scene_polyhedron_item_decorator.cpp
+			  Scene_polyhedron_selection_item.cpp
               )
   qt4_automoc( Scene_implicit_function_item.cpp )
 
@@ -204,6 +206,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp Scene_polyhedron_item_decorator.moc)
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
+  
+  add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp Scene_polyhedron_selection_item.moc ${selectionUI_FILES})
+  target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator)
   
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
@@ -430,7 +435,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(hole_filling_polyline_plugin scene_polyhedron_item scene_polylines_item)
 	
   polyhedron_demo_plugin(fairing_plugin Polyhedron_demo_fairing_plugin ${fairingUI_FILES})
-  target_link_libraries(fairing_plugin scene_polyhedron_item_decorator)
+  target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
+  
+  polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
+  target_link_libraries(selection_plugin scene_polyhedron_selection_item)
 #
 # Exporting
 #
