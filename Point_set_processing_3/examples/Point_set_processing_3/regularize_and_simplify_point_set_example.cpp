@@ -36,7 +36,7 @@ int main(void)
 
   // Make room for sample points
   std::vector<Point> points_sampled;
-  points_sampled.assign(points.size() * (retain_percentage / 100.), Point());
+  points_sampled.resize(points.size() * (retain_percentage / 100.));
 
   int starttime, stoptime, timeused;
   starttime = clock();
